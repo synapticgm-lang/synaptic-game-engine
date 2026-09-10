@@ -9,7 +9,8 @@ import type { GameState, LogEntry } from './types';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
-import { shortRoomLabel } from './mapEngine';
+import { graphExitPads, shortRoomLabel } from './mapEngine';
+import { emptySceneFacts } from './sceneFacts';
 import {
   isDeadFoeReopenedAsLiving,
   matchesLastKillName,
@@ -55,6 +56,11 @@ export interface CompletedEventPacket {
   allowlist: string[];
   playerAction: string;
   recentBeats: string[];
+  /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
+  inspectStreak: number;
+  waitStreak: number;
+  /** Ledger noun for tier-2/3 stitch (exit, searchedEmpty, or prop). */
+  focusNoun?: string;
 }
 
 const WRITER_RHYTHM_WINDOW = 2;
@@ -302,6 +308,82 @@ function rhythmBeats(state: GameState): string[] {
     .map((e) => String(e.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP));
 }
 
+export type LoiterStreakFamily = 'inspect' | 'wait' | null;
+
+export function classifyLoiterFamily(input: string): LoiterStreakFamily {
+  const verb = classifyVerb(input);
+  if (verb === 'inspected') return 'inspect';
+  if (verb === 'waited') return 'wait';
+  return null;
+}
+
+function hereKey(state: GameState): string {
+  return (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * Persist inspect/wait depth on this HERE.
+ * Reset on travel, leave, talk, combat, or location change.
+ */
+export function nextLoiterStreaks(
+  state: GameState,
+  playerInput?: string
+): { inspectStreak: number; waitStreak: number; loiterHere: string } {
+  const here = hereKey(state);
+  const prevHere = (state.sceneFacts?.loiterHere ?? '').trim().toLowerCase();
+  const action = lastPlayerAction(state, playerInput);
+  const verb = classifyVerb(action);
+  const fam = classifyLoiterFamily(action);
+  const combat = !!state.activeEncounter;
+  const leftScene =
+    verb === 'traveled'
+    || verb === 'left'
+    || verb === 'spoke'
+    || verb === 'parleyed'
+    || verb === 'attacked'
+    || verb === 'fled';
+  const moved = !!prevHere && !!here && prevHere !== here;
+
+  if (combat || leftScene) {
+    return { inspectStreak: 0, waitStreak: 0, loiterHere: here };
+  }
+  if (!fam) {
+    return { inspectStreak: 0, waitStreak: 0, loiterHere: here };
+  }
+  const prevInspect = !moved && prevHere === here ? state.sceneFacts?.inspectStreak ?? 0 : 0;
+  const prevWait = !moved && prevHere === here ? state.sceneFacts?.waitStreak ?? 0 : 0;
+  if (fam === 'inspect') {
+    return { inspectStreak: prevInspect + 1, waitStreak: 0, loiterHere: here };
+  }
+  return { inspectStreak: 0, waitStreak: prevWait + 1, loiterHere: here };
+}
+
+function ledgerFocusNoun(state: GameState): string {
+  const empty = (state.sceneFacts?.searchedEmpty ?? []).find((s) => (s ?? '').trim().length > 2);
+  if (empty) return empty.trim();
+  const prop = (state.sceneFacts?.props ?? []).find(
+    (s) => (s ?? '').trim().length > 2 && !/^(here|room|air|dust|light)$/i.test(s.trim())
+  );
+  if (prop) return prop.trim();
+  if (state.activeDungeon) {
+    const pad = graphExitPads(state.activeDungeon)[0] ?? '';
+    const dest = pad.replace(/^.*\s+to\s+/i, '').trim();
+    if (dest.length > 1) return dest;
+  }
+  return '';
+}
+
+/** Writer-only: starve the 500-char same-room essay on inspect/wait retry. */
+export function collapseLoiterWriterBeats(packet: CompletedEventPacket): string[] {
+  const inspect = packet.inspectStreak ?? 0;
+  const wait = packet.waitStreak ?? 0;
+  if (inspect < 2 && wait < 2) return packet.recentBeats ?? [];
+  const kind = inspect >= 2 ? 'inspect' : 'wait';
+  const n = Math.max(inspect, wait);
+  const focus = packet.focusNoun ? `; focus ${packet.focusNoun}` : '; no new props';
+  return [`(HERE unchanged; ${kind} ×${n}${focus})`];
+}
+
 export function buildCompletedEventPacket(
   state: GameState,
   playerInput?: string,
@@ -333,6 +415,8 @@ export function buildCompletedEventPacket(
   const xp =
     extras?.xp
     ?? (justKilled || outcome === 'killed' ? 25 : 0);
+  const streaks = nextLoiterStreaks(state, playerInput);
+  const focusNoun = ledgerFocusNoun(state);
 
   return {
     turn: state.turn,
@@ -354,6 +438,9 @@ export function buildCompletedEventPacket(
     allowlist,
     playerAction: action || '(opening)',
     recentBeats: rhythmBeats(state),
+    inspectStreak: streaks.inspectStreak,
+    waitStreak: streaks.waitStreak,
+    focusNoun: focusNoun || undefined,
   };
 }
 
@@ -363,7 +450,18 @@ export function attachCompletedEvent(
   extras?: PacketBuildExtras
 ): GameState {
   const packet = buildCompletedEventPacket(state, playerInput, extras);
-  return { ...state, completedEvent: packet };
+  const streaks = nextLoiterStreaks(state, playerInput);
+  const facts = state.sceneFacts ?? emptySceneFacts(state.turn);
+  return {
+    ...state,
+    completedEvent: packet,
+    sceneFacts: {
+      ...facts,
+      inspectStreak: streaks.inspectStreak,
+      waitStreak: streaks.waitStreak,
+      loiterHere: streaks.loiterHere,
+    },
+  };
 }
 
 /**
@@ -400,8 +498,9 @@ export function formatWriterFacingEvent(
   lines.push('');
   lines.push(`YOU MAY ONLY MENTION: ${packet.allowlist.length ? packet.allowlist.join(', ') : 'none'}.`);
   lines.push('');
-  if (packet.recentBeats.length) {
-    lines.push(packet.recentBeats.map((b) => `GM: ${b}`).join('\n'));
+  const writerBeats = collapseLoiterWriterBeats(packet);
+  if (writerBeats.length) {
+    lines.push(writerBeats.map((b) => `GM: ${b}`).join('\n'));
   } else {
     lines.push('GM: (opening)');
   }
@@ -522,6 +621,7 @@ type StitchSlots = {
   where: string;
   who: string;
   corpse: string;
+  focus: string;
 };
 
 type StitchTemplate = {
@@ -588,21 +688,41 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
       render: (s) => `You committed at ${s.where}, and the strike went wide.`,
     },
   ],
-  inspect: [
+  'inspect-1': [
     {
-      id: 'in1',
-      fingerprint: 'same edges it had a moment ago',
-      render: (s) => `You took in ${s.where}. The room held the same edges it had a moment ago.`,
+      id: 'in1a',
+      fingerprint: 'You took in',
+      render: (s) => `You took in ${s.where}.`,
     },
     {
-      id: 'in2',
-      fingerprint: 'showed what was already there',
-      render: (s) => `A look around ${s.where} showed what was already there.`,
+      id: 'in1b',
+      fingerprint: 'You looked through',
+      render: (s) => `You looked through ${s.where}.`,
     },
     {
-      id: 'in3',
-      fingerprint: 'Nothing new stepped forward',
-      render: (s) => `You studied ${s.where}. Nothing new stepped forward.`,
+      id: 'in1c',
+      fingerprint: 'You studied',
+      render: (s) => `You studied ${s.where}.`,
+    },
+  ],
+  'inspect-2': [
+    {
+      id: 'in2a',
+      fingerprint: 'had not moved',
+      render: (s) =>
+        s.focus
+          ? `You looked again at ${s.where}. ${s.focus} had not moved.`
+          : `You looked again at ${s.where}. The walls you already had were still in place.`,
+    },
+  ],
+  'inspect-3': [
+    {
+      id: 'in3a',
+      fingerprint: 'nothing else to glean',
+      render: (s) =>
+        s.focus
+          ? `${s.focus} at ${s.where} had already given what it had.`
+          : `There is nothing else to glean from ${s.where}.`,
     },
   ],
   'inspect-fight': [
@@ -691,21 +811,33 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
       render: (s) => `You put the room at your back. ${s.where} was no longer underfoot.`,
     },
   ],
-  wait: [
+  'wait-1': [
     {
-      id: 'wt1',
-      fingerprint: 'did not invent a new arrival',
-      render: (s) => `You waited at ${s.where}. The beat did not invent a new arrival.`,
+      id: 'wt1a',
+      fingerprint: 'You waited at',
+      render: (s) => `You waited at ${s.where}.`,
     },
     {
-      id: 'wt2',
-      fingerprint: 'The wait stayed honest',
-      render: (s) => `You held still at ${s.where}. The wait stayed honest.`,
+      id: 'wt1b',
+      fingerprint: 'You held still at',
+      render: (s) => `You held still at ${s.where}.`,
     },
+  ],
+  'wait-2': [
     {
-      id: 'wt3',
-      fingerprint: 'Nothing used the pause to arrive',
-      render: (s) => `A breath at ${s.where}. Nothing used the pause to arrive.`,
+      id: 'wt2a',
+      fingerprint: 'still the way it sat',
+      render: (s) =>
+        s.focus
+          ? `You held still at ${s.where}. ${s.focus} was still the way it sat.`
+          : `You held still at ${s.where}. Nothing listed had moved.`,
+    },
+  ],
+  'wait-3': [
+    {
+      id: 'wt3a',
+      fingerprint: 'Waiting showed nothing new',
+      render: (s) => `Waiting at ${s.where} showed nothing new.`,
     },
   ],
   loot: [
@@ -834,13 +966,24 @@ function stitchBankKey(packet: CompletedEventPacket): string {
   if (verb === 'attacked' && (outcome === 'killed' || packet.justKilled)) return 'attack-kill';
   if (verb === 'attacked' && outcome === 'missed') return 'attack-miss';
   if (verb === 'attacked') return 'attack-hit';
-  if (verb === 'inspected') return packet.combatLive ? 'inspect-fight' : 'inspect';
+  if (verb === 'inspected') {
+    if (packet.combatLive) return 'inspect-fight';
+    const n = packet.inspectStreak ?? 1;
+    if (n >= 3) return 'inspect-3';
+    if (n === 2) return 'inspect-2';
+    return 'inspect-1';
+  }
   if (verb === 'spoke' || verb === 'parleyed') {
     return packet.witnesses.length > 0 && packet.outcome === 'spoke' ? 'talk' : 'talk-empty';
   }
   if (verb === 'traveled' || outcome === 'arrived') return 'travel';
   if (verb === 'left' || outcome === 'left') return 'leave';
-  if (verb === 'waited') return 'wait';
+  if (verb === 'waited') {
+    const n = packet.waitStreak ?? 1;
+    if (n >= 3) return 'wait-3';
+    if (n === 2) return 'wait-2';
+    return 'wait-1';
+  }
   if (verb === 'looted' || outcome === 'looted') return 'loot';
   if (verb === 'fled') return outcome === 'caught' ? 'flee-caught' : 'flee';
   if (verb === 'used') return 'use';
@@ -872,7 +1015,7 @@ function ledgerStitchSlots(packet: CompletedEventPacket): StitchSlots {
   }
   if (packet.verb === 'spoke' && kill?.name && matchesLastKillName(who, kill)) who = '';
   if (packet.outcome === 'spawned' && kill?.name && matchesLastKillName(who, kill)) who = '';
-  return { where, who, corpse };
+  return { where, who, corpse, focus: packet.focusNoun?.trim() ?? '' };
 }
 
 function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: number): StitchTemplate {
@@ -911,7 +1054,18 @@ export function prepareRetrospectiveWriterInput(
   extras?: PacketBuildExtras
 ): { state: GameState; packet: CompletedEventPacket; writerFacing: string } {
   const packet = buildCompletedEventPacket(state, playerInput, extras);
-  const next = { ...state, completedEvent: packet };
+  const streaks = nextLoiterStreaks(state, playerInput);
+  const facts = state.sceneFacts ?? emptySceneFacts(state.turn);
+  const next = {
+    ...state,
+    completedEvent: packet,
+    sceneFacts: {
+      ...facts,
+      inspectStreak: streaks.inspectStreak,
+      waitStreak: streaks.waitStreak,
+      loiterHere: streaks.loiterHere,
+    },
+  };
   return {
     state: next,
     packet,

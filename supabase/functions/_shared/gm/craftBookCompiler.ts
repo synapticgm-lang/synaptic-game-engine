@@ -578,6 +578,74 @@ export function formatCraftSnapshotLines(_state?: GameState, _playerInput?: stri
   return [];
 }
 
+/**
+ * Mode craft as pad rules (Manus P0): repeat inspect / wait-with-no-fork
+ * starve that family. First look and live combat are untouched.
+ * No new GM prompt lines.
+ */
+export interface CraftProgressionPolicy {
+  starveInspect: boolean;
+  starveWait: boolean;
+  preferPads: string[];
+  note: string;
+}
+
+export function craftProgressionPolicy(
+  state: GameState,
+  playerInput?: string
+): CraftProgressionPolicy {
+  const empty: CraftProgressionPolicy = {
+    starveInspect: false,
+    starveWait: false,
+    preferPads: [],
+    note: '',
+  };
+  if (state.openingEstablishment && state.openingEstablishment.complete !== true) return empty;
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return empty;
+
+  const input = lastPlayerText(state, playerInput);
+  const when = classifyCraftWhen(state, playerInput);
+  const drought = detectDrought(state, when, input);
+  const mode = state.engineMode ?? 'rpg';
+  const starveInspect = drought.inspectAgain;
+  const starveWait = drought.noFork && (when === 'wait' || (mode === 'pyoa' && /^\s*wait\b/i.test(input)));
+  const preferPads: string[] = [];
+  if (starveInspect) {
+    preferPads.push(
+      mode === 'pyoa' ? 'Choose the risky fork' : mode === 'rpg' ? 'Press for leverage' : 'Scout the exit'
+    );
+  }
+  if (starveWait) {
+    preferPads.push(mode === 'pyoa' ? 'Face the crisis now' : 'Ask a direct question');
+  }
+  const note = [
+    starveInspect ? 'craft starve inspect-again' : '',
+    starveWait ? 'craft starve wait-no-fork' : '',
+  ]
+    .filter(Boolean)
+    .join('; ');
+  return { starveInspect, starveWait, preferPads, note };
+}
+
+export function isCraftStarvedPad(label: string, policy: CraftProgressionPolicy): boolean {
+  if (!policy.starveInspect && !policy.starveWait) return false;
+  const trimmed = label.trim();
+  const lower = trimmed.toLowerCase();
+  if (
+    policy.starveInspect
+    && /^(look around|inspect the (?:room|surroundings|immediate surroundings)|examine the room|get bearings)$/i.test(
+      trimmed
+    )
+  ) {
+    return true;
+  }
+  if (policy.starveInspect && /\blook around\b/.test(lower) && !/\b(corpse|body|wound|threat)\b/.test(lower)) {
+    return true;
+  }
+  if (policy.starveWait && /^(wait|wait and watch)$/i.test(trimmed)) return true;
+  return false;
+}
+
 export function applyCraftLearning(
   ledger: CraftLedger | undefined,
   signals: CraftSignal[],

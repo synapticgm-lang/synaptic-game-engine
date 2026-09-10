@@ -48,6 +48,7 @@ import {
   shouldStarveTravelPads,
 } from './padUniverse';
 import { isClosedScenePersonPad } from './closedScenePerson';
+import { craftProgressionPolicy, isCraftStarvedPad } from './craftBookCompiler';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
@@ -644,6 +645,8 @@ export function compileChoices(
   const fingerprints = state.arcDirector?.choiceFingerprints ?? [];
   const cooldownMap = new Map(Object.entries(optionCooldowns ?? state.qualityGovernance?.optionCooldowns ?? {}));
   const excluded = excludedPadFamilies(state);
+  const craftPolicy = craftProgressionPolicy(state, playerInput);
+  if (craftPolicy.note) notes.push(craftPolicy.note);
   const legalEdges = enumerateLegalEdges(state);
   const edgeLabels = edgesToChoiceLabels(legalEdges);
   const sealedBeat =
@@ -689,6 +692,10 @@ export function compileChoices(
     const lower = c.toLowerCase();
     if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) {
       notes.push(`Branch lock drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (isCraftStarvedPad(c, craftPolicy)) {
+      notes.push(`Craft progression drop: ${c.slice(0, 32)}`);
       return false;
     }
     const doorwayDest = c.match(/doorway(?: leading)? to\s+["“]?([^"”]+?)["”]?\s*$/i)?.[1];
@@ -1000,8 +1007,20 @@ export function compileChoices(
     if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
       return false;
     }
+    if (isCraftStarvedPad(c, craftPolicy)) return false;
     return true;
   });
+
+  if (!engaged && (craftPolicy.starveInspect || craftPolicy.starveWait)) {
+    for (const pad of craftPolicy.preferPads) {
+      if (isExcludedPadLabel(pad, excluded)) continue;
+      if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, pad)) continue;
+      if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
+        filtered.unshift(pad);
+        notes.push(`Craft progression pad: ${pad.slice(0, 40)}`);
+      }
+    }
+  }
 
   // Batch G — Fate soft-lock guard: after loiter exhaust, always keep ≥1 world-moving option
   if (!engaged && stallInterrupt) {
@@ -1172,6 +1191,7 @@ export function compileChoices(
   if (
     excluded.has('talk')
     && !finalChoices.some((c) => /\binspect\b/i.test(c))
+    && !craftPolicy.starveInspect
   ) {
     finalChoices.push('Inspect the immediate surroundings');
     notes.push('Talk-loop world-moving pad');

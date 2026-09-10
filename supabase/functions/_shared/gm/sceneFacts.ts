@@ -140,6 +140,9 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     hookLock: prev?.hookLock,
     cameraLock: prev?.cameraLock,
     lastPlayerIntent: prev?.lastPlayerIntent,
+    inspectStreak: prev?.inspectStreak,
+    waitStreak: prev?.waitStreak,
+    loiterHere: prev?.loiterHere,
     lastKill: prev?.lastKill,
     pendingSpawnPreface: prev?.pendingSpawnPreface,
     pendingEncounter: prev?.pendingEncounter,
@@ -148,6 +151,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     lastSnapshotGist: prev?.lastSnapshotGist,
     givenAway: prev?.givenAway,
     resolvedCrises: prev?.resolvedCrises,
+    worldTags: prev?.worldTags,
   };
 }
 
@@ -176,6 +180,9 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     hookLock: next.hookLock ?? prev.hookLock,
     cameraLock: next.cameraLock ?? prev.cameraLock,
     lastPlayerIntent: next.lastPlayerIntent ?? prev.lastPlayerIntent,
+    inspectStreak: next.inspectStreak !== undefined ? next.inspectStreak : prev.inspectStreak,
+    waitStreak: next.waitStreak !== undefined ? next.waitStreak : prev.waitStreak,
+    loiterHere: next.loiterHere !== undefined ? next.loiterHere : prev.loiterHere,
     lastKill: next.lastKill ?? prev.lastKill,
     pendingSpawnPreface:
       next.pendingSpawnPreface !== undefined
@@ -191,6 +198,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     lastSnapshotGist: next.lastSnapshotGist ?? prev.lastSnapshotGist,
     givenAway: Array.from(new Set([...asList(prev.givenAway), ...asList(next.givenAway)])),
     resolvedCrises: Array.from(new Set([...asList(prev.resolvedCrises), ...asList(next.resolvedCrises)])),
+    worldTags: Array.from(new Set([...asList(prev.worldTags), ...asList(next.worldTags)])),
   };
 }
 

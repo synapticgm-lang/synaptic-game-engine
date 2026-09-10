@@ -470,6 +470,8 @@ export interface GameState {
   qualityGovernance?: import('./qualityGovernance').QualityGovernanceState;
   /** Craft-book compiler boosts + last signals (2026-08-31g). */
   craftLedger?: import('./craftBookCompiler').CraftLedger;
+  /** Session thumbs-up beats (shape samples). Long-term store is gm_response_feedback. */
+  craftKeepers?: import('./craftKeepers').CraftKeeper[];
   /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
   arcDirector?: import('./arcDirector').ArcDirectorState;
   /** Immutable run manifest for eval/replay binding. */
@@ -867,6 +869,13 @@ export interface SceneFacts {
     text: string;
     turn: number;
   };
+  /**
+   * 10c — consecutive inspect / wait in this HERE.
+   * Reset on travel, leave, talk, combat, or location change.
+   */
+  inspectStreak?: number;
+  waitStreak?: number;
+  loiterHere?: string;
   /** Auto-fight / terminal victory — corpse stays until looted or left. */
   lastKill?: import('./combatAuthority').LastKill;
   /**
