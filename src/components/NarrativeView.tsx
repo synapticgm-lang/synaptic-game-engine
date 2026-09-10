@@ -13,6 +13,7 @@ import {
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import { BubbleSpeakControl } from './BubbleSpeakControl';
 import { GmResponseFeedback } from './GmResponseFeedback';
+import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -248,6 +249,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
               );
             })
           )}
+          <LitrpgSystemWindowPanel window={entry.systemWindow} />
           {onSpeakEntry && onStopSpeaking && (
             <BubbleSpeakControl
               visible={ttsEnabled && !isRevealing}

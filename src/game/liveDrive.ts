@@ -22,6 +22,7 @@ import { classifyOpeningContinue } from './openingPointerCard';
 import { applyOpeningContract, stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
 import { UNNAMED_ADVENTURER } from './pcNameAuthority';
 import { withOfferedChoices } from './playTranscript';
+import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import { applyProseWarden, collectSceneObjectNames } from './proseWarden';
 import { enforcePerspective } from './perspectiveWarden';
 import { stripChoiceList } from './parser';
@@ -296,12 +297,16 @@ export async function headlessOpeningContinueTurn(
     timestamp: Date.now(),
     systemLog: [],
   };
-  const openingGm = withOfferedChoices(gmBase, {
-    ...openingState,
-    choices: pads,
-    openingEstablishment: harvested ? { ...harvested, sceneWritten: true } : harvested,
-    log: [...openingState.log, gmBase],
-  });
+  const openingGm = withLitrpgSystemWindow(
+    withOfferedChoices(gmBase, {
+      ...openingState,
+      choices: pads,
+      openingEstablishment: harvested ? { ...harvested, sceneWritten: true } : harvested,
+      log: [...openingState.log, gmBase],
+    }),
+    openingState,
+    playerInput
+  );
   const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
   const sceneFacts = applyCommittedNarrative(
     { ...openingState, sceneFacts: seeded, turn: openingTurn },

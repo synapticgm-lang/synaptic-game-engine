@@ -13,6 +13,7 @@ import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './p
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { downloadPlayDump, withOfferedChoices } from './playTranscript';
+import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
   syncGameToCloud,
   fetchLatestCloudSave,
@@ -2330,12 +2331,16 @@ export function useGame() {
           ],
           ...memorableLogFields(openingMemorable),
         };
-        const openingGm = withOfferedChoices(openingGmBase, {
-          ...openingState,
-          choices: openingChoicesForPad,
-          openingEstablishment: openingEstForPad,
-          log: [...openingState.log, openingGmBase],
-        });
+        const openingGm = withLitrpgSystemWindow(
+          withOfferedChoices(openingGmBase, {
+            ...openingState,
+            choices: openingChoicesForPad,
+            openingEstablishment: openingEstForPad,
+            log: [...openingState.log, openingGmBase],
+          }),
+          openingState,
+          contentSanitized
+        );
         const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
         const sceneFacts = applyCommittedNarrative(
           { ...openingState, sceneFacts: seeded, turn: openingTurn },
@@ -4400,15 +4405,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             : {}),
         ...memorableLogFields(memorableDecision),
       };
-      const gmLogEntry = withOfferedChoices(gmLogEntryBase, {
-        ...workingState,
-        ...updates,
-        character: baseChar,
-        sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
-        choices: committedChoices,
-        openingEstablishment: liveCurrent.openingEstablishment,
-        log: [...liveCurrent.log, gmLogEntryBase],
-      });
+      const gmLogEntry = withLitrpgSystemWindow(
+        withOfferedChoices(gmLogEntryBase, {
+          ...workingState,
+          ...updates,
+          character: baseChar,
+          sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
+          choices: committedChoices,
+          openingEstablishment: liveCurrent.openingEstablishment,
+          log: [...liveCurrent.log, gmLogEntryBase],
+        }),
+        { ...workingState, ...updates, character: baseChar },
+        sanitizedInput
+      );
 
       let mergedStateDraft: GameState = {
         ...workingState,
@@ -5125,14 +5134,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const lockedEst = newState.openingEstablishment
         ? { ...newState.openingEstablishment, sceneWritten: true }
         : newState.openingEstablishment;
-      const stitchGmEarly: LogEntry = {
-        id: uid(),
-        turn: newState.turn,
-        role: 'gm',
-        content: stitchText,
-        timestamp: Date.now(),
-        systemLog: [formatOpeningCardChrome(newState)],
-      };
+      const stitchGmEarly: LogEntry = withLitrpgSystemWindow(
+        {
+          id: uid(),
+          turn: newState.turn,
+          role: 'gm',
+          content: stitchText,
+          timestamp: Date.now(),
+          systemLog: [formatOpeningCardChrome(newState)],
+        },
+        newState
+      );
       const lockedOpening: GameState = {
         ...newState,
         turn: openingTurnEarly,
@@ -5225,12 +5237,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ],
         ...memorableLogFields(openingMemorable),
       };
-      const openingGm = withOfferedChoices(openingGmBase, {
-        ...newState,
-        choices: openingChoicesForPad,
-        openingEstablishment: openingEstForPad,
-        log: [openingGmBase],
-      });
+      const openingGm = withLitrpgSystemWindow(
+        withOfferedChoices(openingGmBase, {
+          ...newState,
+          choices: openingChoicesForPad,
+          openingEstablishment: openingEstForPad,
+          log: [openingGmBase],
+        }),
+        newState
+      );
       const seeded = seedOpeningSceneFacts({ ...newState, turn: openingTurn });
       const sceneFacts = applyCommittedNarrative(
         { ...newState, sceneFacts: seeded, turn: openingTurn },
@@ -5290,12 +5305,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           timestamp: Date.now(),
           systemLog: litrpgOpeningSystemPing(newState),
         };
-        const fallbackGm = withOfferedChoices(fallbackGmBase, {
-          ...newState,
-          choices: fallbackChoices,
-          openingEstablishment: fallbackEst,
-          log: [fallbackGmBase],
-        });
+        const fallbackGm = withLitrpgSystemWindow(
+          withOfferedChoices(fallbackGmBase, {
+            ...newState,
+            choices: fallbackChoices,
+            openingEstablishment: fallbackEst,
+            log: [fallbackGmBase],
+          }),
+          newState
+        );
         const fallback: GameState = {
           ...newState,
           turn: newState.turn + 1,

@@ -4,6 +4,7 @@ import { EnemyTargetFrame } from './EnemyTargetFrame';
 
 import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { filterSystemLogForEngine } from '@/game/systemLog';
+import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
 import type { VoiceState } from '@/game/useVoice';
 import { FormattedText } from './FormattedText';
 import { logger } from '@/game/logger';
@@ -596,7 +597,12 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
             ? () => onRetryMemorableImage(entry.id)
             : undefined
         }
-        caption={<FormattedText content={entry.content} lorebook={lorebook} />}
+        caption={
+          <>
+            <FormattedText content={entry.content} lorebook={lorebook} />
+            <LitrpgSystemWindowPanel window={entry.systemWindow} />
+          </>
+        }
       />
     );
   }
@@ -657,6 +663,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       {hasRealGmStory(entry) && (
         <div className="rounded-lg border border-slate-700/80 bg-slate-950/92 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur-sm">
           <FormattedText content={displayContent} lorebook={lorebook} />
+          <LitrpgSystemWindowPanel window={entry.systemWindow} />
           {isRevealing && (
             <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />
           )}

@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-10d';
+export const HUD_BUILD_STAMP = '2026-09-10e';
 const HUD_BUILD_TITLE =
-  'Batch 10c - diegetic loiter stitch (inspect/wait tiers; DeepSeek same-room strip)';
+  'Batch 10e - show the LitRPG System window when the blue panel is in play';
 
 interface Props {
   state: GameState;

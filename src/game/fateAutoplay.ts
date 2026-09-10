@@ -167,6 +167,7 @@ import {
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
   applyProseWarden,
   crowdSizeForWarden,
@@ -643,7 +644,7 @@ export function stampOpening(state: GameState): GameState {
     log: [gmBase],
     choices: [],
   };
-  const gm = withOfferedChoices(gmBase, withChoices);
+  const gm = withLitrpgSystemWindow(withOfferedChoices(gmBase, withChoices), state);
   const next: GameState = {
     ...withChoices,
     turn: 1,
@@ -1610,7 +1611,7 @@ Do NOT print dice notation or CODE ENFORCED.
     recentBeatFingerprints: [...(state.recentBeatFingerprints ?? []), fp].slice(-12),
     log: [...state.log, playerEntry, gmBase],
   };
-  const gm = withOfferedChoices(gmBase, mid);
+  const gm = withLitrpgSystemWindow(withOfferedChoices(gmBase, mid), working, playerInput);
   const next: GameState = {
     ...mid,
     log: [...state.log, playerEntry, gm],

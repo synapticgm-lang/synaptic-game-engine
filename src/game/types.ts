@@ -741,6 +741,8 @@ export interface LogEntry {
    * Absent on older saves — transcript omits the Options section.
    */
   offeredChoices?: string[];
+  /** Diegetic LitRPG System window (blue panel) — ledger chrome, not STATUS. */
+  systemWindow?: { heading: string; lines: string[] };
   /** Craft-book rule ids compiled for this beat (Debug / Download play). */
   craftApplied?: string[];
   /** Last thumbs vote on this GM bubble (CRAFT boost, optional). */
