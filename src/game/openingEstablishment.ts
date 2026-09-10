@@ -1033,12 +1033,14 @@ export function isHallTalkPlayerLine(raw: string): boolean {
 }
 
 /**
- * Cover / pending name-lock stays on stitchOpeningContinue.
- * After complete, hall questions must hit the writer — perpetual stitch is the one-liner lock.
+ * Cover / pending name-lock and hall Q&A stay on stitchOpeningContinue.
+ * Those lines must not depend on gm-turn (10f sent them to a 503 boot).
  */
-export function shouldStitchOpeningContinue(state: GameState, _playerInput?: string): boolean {
+export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
   if (state.activeEncounter) return false;
-  return isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state);
+  if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
+  if (!state.openingEstablishment?.sceneWritten) return false;
+  return isHallTalkPlayerLine(playerInput ?? lastPlayerLine(state));
 }
 
 /**

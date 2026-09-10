@@ -55,6 +55,7 @@
 | **09c** | Cover-continue novelist echo / `","` HERE / Inspect chip dump | Cover-continue is local `stitchOpeningContinue` (never `callOpeningGm`); `classifyOpeningContinue` + `isWriterMonologueLeak` reject packet lecture; Silent empty uses `mudDisplayBody`; fallback never prints `lastBeat` chips or `At alone in…` | 09b only locked page 1; covers + Silent empty still hit the 08a packet / 31i chip fallback |
 | **10a** | Live Drive Gemini ~2/10: quest titles as CAST, play pads on name ask, shared continue ground, inspect-during-fight, HERE/ACT book | `canHarvestAsNamedPerson` rejects quest-slot last words; `resolveOfferedChoices` never compiles play pads while covers pending; `stitchOpeningContinue` grounds in this card's page 1; live encounter graph is combat-only; Silent `composeFreeMudTurn` displays `assemblePacketStitch` | Symptom scrubs / Gemini rewrite paste would miss the owners |
 | **10f** | Treaty tent talk died as one-line Silent / stitch telegrams | `shouldStitchOpeningContinue` cover-only; `shouldUseSilentMudTurn` talk → `callGm`; treaty CAST + want line | 10d pad-lock kept questions on stitch; Silent CAST empty = “No one listed” |
+| **10g** | First typed line Failed to fetch; catch `contentSanitized is not defined` | Hall Q&A back on local stitch; edge `searchContinuity` / `openingEstablishment` stubs; catch uses `sanitizedInput` | 10f sent talk to `gm-turn`; edge sceneFacts imported a missing export; Silent had hidden the 503 |
 
 ### Quest / journal (Class C)
 

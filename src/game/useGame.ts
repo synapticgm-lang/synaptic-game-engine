@@ -2435,7 +2435,7 @@ export function useGame() {
         snapshotRef.current = null;
         setCanRewind(false);
         refundSpentTextTurn();
-        keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
+        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
         resetTurnUi();
         addToast('Combat in progress — fight, flee, or talk before moving.', 'error');
         turnInFlightRef.current = false;
@@ -3588,7 +3588,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               turn: liveCurrent.turn,
             });
             refundSpentTextTurn();
-            keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
+            keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
             setError('The story did not come through. Try that action again — this attempt was not charged.');
             return;
           }
@@ -3598,7 +3598,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             recoveryStreak: liveCurrent.sceneFacts?.engineRecoveryStreak ?? 0,
           });
           refundSpentTextTurn();
-          keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
+          keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
           setError('The story did not come through. Try that action again — this attempt was not charged.');
           return;
         }
@@ -4730,7 +4730,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         debugLogger.record('WARN', 'sendAction aborted — player line kept');
         resetTurnUi();
         refundSpentTextTurn();
-        keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
+        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
         addToast('Turn cancelled — your line is still in the box.', 'info');
         return;
       }
@@ -4755,7 +4755,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         extra: { snapshotGist: compactTrafficGist(current) },
       });
       refundSpentTextTurn();
-      keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
+      keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
       resetTurnUi();
       const failKind = classifyTurnFailure(e);
       const playerMsg =

@@ -6,3 +6,8 @@ export function emptySearchAuthorityLine(_sceneFacts: unknown): string | null {
 export function weaponAuthorityLine(_state: unknown): string {
   return 'Weapon authority: kit ledger only — do not invent PC weapons.';
 }
+
+/** sceneFacts.ts imports this; identity on edge so gm-turn can boot. */
+export function applySearchContinuityToFacts<T>(facts: T): T {
+  return facts;
+}
