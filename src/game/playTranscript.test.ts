@@ -38,7 +38,7 @@ describe('playTranscript', () => {
     expect(withPad.offeredChoices).toEqual(resolveOfferedChoices(state));
   });
 
-  it('falls back to last GM offeredChoices when opening pending and cover chips are empty', () => {
+  it('pending cover never falls through to last-GM play chips', () => {
     const base = createInitialState('Test Tale', 'litrpg');
     const offered = [
       'Examine the damaged building more closely',
@@ -67,7 +67,8 @@ describe('playTranscript', () => {
         sceneWritten: true,
       },
     };
-    expect(resolveOfferedChoices(state)).toEqual(offered);
+    const pads = resolveOfferedChoices(state);
+    expect(pads.join(' ')).not.toMatch(/Examine the damaged|Approach the doorway|Lowmarket/i);
   });
 
   it('after inspect surroundings drops name-cover chips while the name cover is still pending', () => {

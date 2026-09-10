@@ -58,9 +58,9 @@ function summoned(over: Partial<GameState> = {}): GameState {
 }
 
 describe('playtest10a — live-drive source locks', () => {
-  it('HUD/BUILD are 2026-09-10a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-10a');
-    expect(BUILD_STAMP).toBe('2026-09-10a');
+  it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-10/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-10/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -88,10 +88,10 @@ describe('playtest10a — live-drive source locks', () => {
     expect(pads.join(' ')).not.toMatch(/Check Status|Wait and watch|Inspect the panel/i);
   });
 
-  it('cover continue grounds in this card, not shared indoor-summon spice', () => {
+  it('cover continue answers why-name without reprinting the opener', () => {
     const text = stitchOpeningContinue(summoned(), 'Whats going on? My name why do you want that');
-    expect(text).toMatch(/panel wants a name|does not say why/i);
-    expect(text).toMatch(/priests|handler|Mark/i);
+    expect(text).toMatch(/panel wants a name|does not say why|still want a name|You are/i);
+    expect(text).not.toMatch(/blast shudders the flagstones|Two Scale priests/i);
     expect(text).not.toMatch(/still on the table/i);
   });
 

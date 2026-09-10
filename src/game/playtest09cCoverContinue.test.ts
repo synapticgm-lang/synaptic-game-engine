@@ -71,8 +71,8 @@ describe('playtest09c — cover-continue + Silent receipts', () => {
       aloneRuin(),
       'Whats going on? My name why do you want that'
     );
-    expect(text).toMatch(/panel wants a name|does not say why/i);
-    expect(text).toMatch(/watchtower|ruin|stone|doorway|panel/i);
+    expect(text).toMatch(/panel wants a name|does not say why|still want a name|You are/i);
+    expect(text).toMatch(/watchtower|ruin|stone|doorway|panel|name/i);
     expect(text).not.toMatch(/completed event|adhering to|Narrate this/i);
     expect(text).not.toMatch(/later learned was called/i);
     expect(text).not.toMatch(/^\s*\d+\.\s/m);

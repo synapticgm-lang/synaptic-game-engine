@@ -5,11 +5,11 @@
 
 import type { CampaignBible } from '@/data/campaigns';
 import { isWriterMonologueLeak, isTokenSaladLeak } from './beatCommitGate';
-import { compileChoices } from './choiceCompiler';
 import type { AiAgentMode } from './fateAutoplay';
 import {
   applyHarvestedOpeningCovers,
   applyOpeningAnswer,
+  coverContinuePads,
   establishmentChoices,
   isAloneArrivalOpening,
   pendingRequiredCovers,
@@ -282,7 +282,10 @@ export async function headlessOpeningContinueTurn(
     ? establishmentChoices(pending, openingState)
     : undefined;
   if (!pending.length) {
-    pads = compileChoices(openingState, [], undefined, playerInput).choices;
+    pads = coverContinuePads({
+      ...openingState,
+      openingEstablishment: harvested ?? openingState.openingEstablishment,
+    });
   }
   const openingTurn = openingState.turn + 1;
   const gmBase: LogEntry = {

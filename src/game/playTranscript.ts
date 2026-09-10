@@ -6,7 +6,9 @@ import {
   sanitizeChoiceLabel,
 } from './choicePipeline';
 import {
-  establishmentChoices,
+  coverContinuePads,
+  isCoverShapedPlayerLine,
+  isOpeningCoverTurn,
   isOpeningEstablishmentPending,
   playerEngagesOpeningCover,
 } from './openingEstablishment';
@@ -63,13 +65,21 @@ function lastPlayerActionFromLog(state: GameState): string {
 }
 
 export function resolveOfferedChoices(state: GameState): string[] {
-  if (isOpeningEstablishmentPending(state)) {
-    const lastPlayer = lastPlayerActionFromLog(state);
+  const lastPlayer = lastPlayerActionFromLog(state);
+  const coverBeat =
+    isOpeningEstablishmentPending(state)
+    || isOpeningCoverTurn(state)
+    || (
+      !!state.openingEstablishment?.sceneWritten
+      && state.openingEstablishment.complete === true
+      && (state.turn ?? 0) <= 4
+      && isCoverShapedPlayerLine(lastPlayer)
+    );
+  if (coverBeat) {
     const skipCoverChips =
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
     if (skipCoverChips) return [];
-    // Cover slot only — never fall through to the play compiler (Status / Wait / Inspect).
-    return establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
+    return coverContinuePads(state);
   }
   const storyProse = lastGmStoryProse(state);
   const fromState = (state.choices ?? [])

@@ -521,6 +521,8 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   location?: string;
   fallback?: string;
   page1?: string;
+  summonIntent?: string;
+  openingOffer?: string;
 } {
   if (typeof card === 'string') {
     const text = card.trim();
@@ -550,6 +552,8 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     location,
     fallback: fallback || undefined,
     page1: page1 || fallback || undefined,
+    summonIntent: card.summonIntent?.trim() || undefined,
+    openingOffer: card.openingOffer?.trim() || undefined,
   };
 }
 
@@ -575,7 +579,7 @@ export function resolveOpeningHookCard(
 export function resolveOpeningHookPick(
   bible: CampaignBible | undefined,
   seed?: string
-): { text: string; location?: string; fallback?: string } | undefined {
+): ReturnType<typeof normalizeOpeningHookCard> | undefined {
   const card = resolveOpeningHookCard(bible, seed);
   if (!card) return undefined;
   return normalizeOpeningHookCard(card);
@@ -949,6 +953,43 @@ export function applySystemRename(state: GameState, raw: string): GameState {
 export function isOpeningEstablishmentPending(state: GameState): boolean {
   const est = state.openingEstablishment;
   return !!est && !est.complete && est.pending.length > 0;
+}
+
+/** Cover is still the job — even if pending was emptied by a bad harvest. */
+export function isOpeningCoverTurn(state: GameState): boolean {
+  const est = state.openingEstablishment;
+  if (!est) return false;
+  if (est.complete === true) return false;
+  if (isOpeningEstablishmentPending(state)) return true;
+  if (!est.sceneWritten) return false;
+  const name = (est.answers?.name ?? state.character?.name ?? '').trim();
+  return !name || /unknown survivor/i.test(name) || !isLockablePcName(name);
+}
+
+/** Typed line that must stay on the local cover stitch, not the play writer. */
+export function isCoverShapedPlayerLine(raw: string): boolean {
+  const p = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!p) return false;
+  if (playerGivesOrRefusesName(p)) return true;
+  return (
+    /\bwhere am i\b|\bwhere are we\b|\bwhy\b.*\bname\b|\bwhy should i\b|\bwhat do you want\b|\bwhat'?s going on\b|\bgive you my name\b|\bmy name is\b|\bcall me\b/i.test(
+      p
+    )
+  );
+}
+
+/** One or two chips for the cover beat — never hub travel, never pad-to-four. */
+export function coverContinuePads(state: GameState): string[] {
+  if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) {
+    const chips = establishmentChoices(state.openingEstablishment?.pending ?? [], state);
+    if (chips.length) return chips.slice(0, 2);
+    return ['Give your name', 'Refuse to give a name'];
+  }
+  const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
+  if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
+    return ['Ask what they want'];
+  }
+  return ['Give your name', 'Refuse to give a name'];
 }
 
 export function formatPlayerCanon(state: GameState): string {

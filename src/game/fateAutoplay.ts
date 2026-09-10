@@ -603,7 +603,7 @@ export function buildNewGameState(opts: {
       pickedHookId: picked?.location
         ? picked.location.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 48)
         : undefined,
-      pickedHookFallback: picked?.fallback,
+      pickedHookFallback: picked?.page1 || picked?.fallback,
       aloneArrival,
       hookLock: seedHookLockFromPickedHook(picked?.text, picked?.fallback, 0),
     },

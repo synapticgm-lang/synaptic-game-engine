@@ -104,9 +104,11 @@ import {
   applySystemRename,
   ensureSystemReceipt,
   establishmentChoices,
+  coverContinuePads,
   litrpgOpeningSystemPing,
   sanitizeOpeningNarration,
   isOpeningEstablishmentPending,
+  isOpeningCoverTurn,
   isOpeningSetupChipLabel,
   pendingRequiredCovers,
   resolveOpeningMode,
@@ -2222,15 +2224,17 @@ export function useGame() {
       );
 
       if (
-        isOpeningEstablishmentPending(current)
+        isOpeningCoverTurn(current)
+        || isOpeningCoverTurn(liveCurrent)
+        || isOpeningEstablishmentPending(current)
         || (
           !!liveCurrent.pendingGeneratedOpening
           && liveCurrent.openingEstablishment?.complete !== true
         )
       ) {
-        const stepped = isOpeningEstablishmentPending(current)
+        const stepped = isOpeningEstablishmentPending(liveCurrent) || isOpeningEstablishmentPending(current)
           ? await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current)
-          : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true as const };
+          : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true as const, deferToPlay: true };
 
         if (!stepped.generateOpening && !stepped.deferToPlay) {
           refundSpentTextTurn();
@@ -2304,9 +2308,10 @@ export function useGame() {
           : openingState.openingEstablishment;
         const openingChoicesForPad = harvestedOpening?.pending?.length
           ? establishmentChoices(harvestedOpening.pending, openingState)
-          : openingChoices.length
-            ? openingChoices
-            : undefined;
+          : coverContinuePads({
+              ...openingState,
+              openingEstablishment: harvestedOpening ?? openingState.openingEstablishment,
+            });
         const openingEstForPad = harvestedOpening
           ? { ...harvestedOpening, sceneWritten: true }
           : harvestedOpening;
@@ -4977,7 +4982,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     );
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const pickedHook = picked?.text;
-    const pickedHookFallback = picked?.fallback;
+    const pickedHookFallback = picked?.page1 || picked?.fallback;
     const pickedHookId = compilePointerCardSlots({
       ...namedSeeded,
       currentLocation: picked?.location || namedSeeded.currentLocation,
@@ -5197,9 +5202,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         : newState.openingEstablishment;
       const openingChoicesForPad = harvestedOpening?.pending?.length
         ? establishmentChoices(harvestedOpening.pending, newState)
-        : openingChoices.length
-          ? openingChoices
-          : undefined;
+        : coverContinuePads({
+            ...newState,
+            openingEstablishment: harvestedOpening ?? newState.openingEstablishment,
+          });
       const openingEstForPad = harvestedOpening
         ? { ...harvestedOpening, sceneWritten: true }
         : harvestedOpening;

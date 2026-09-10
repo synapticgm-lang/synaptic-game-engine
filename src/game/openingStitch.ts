@@ -65,12 +65,6 @@ const KIT_ASKS = [
   'Pat yourself down. What is really on you?',
 ] as const;
 
-const CONTINUE_BRIDGES = [
-  'The room holds still around you.',
-  'Dust settles. The blue panel waits.',
-  'Nothing else has entered the room.',
-] as const;
-
 const DEFAULT_LOOK = 'everyday street clothes';
 
 export function defaultStarterLook(): string {
@@ -122,6 +116,10 @@ export function ensureStarterLookCharacter<T extends GameState['character']>(cha
   return { ...character, appearance: DEFAULT_LOOK };
 }
 
+function looksLikePointerDump(hook: string): boolean {
+  return /^(Place:|Location:|Who is here|Why this happened|Opening offer)/m.test(hook);
+}
+
 function baseSceneFromCard(state: GameState): string {
   const a = state.openingEstablishment?.answers ?? {};
   const where = a.where || state.currentLocation || 'where you already were';
@@ -129,20 +127,20 @@ function baseSceneFromCard(state: GameState): string {
   const folkBit = folk ? ` You are ${folk}.` : '';
   const bible = resolveActiveCampaignBible(state);
   const picked = resolveOpeningHookPick(bible, state.seed);
-  const hook = state.openingEstablishment?.pickedHookFallback?.trim()
+  const stored = state.openingEstablishment?.pickedHookFallback?.trim() || '';
+  const hook =
+    (stored && !looksLikePointerDump(stored) ? stored : '')
     || picked?.page1?.trim()
-    || picked?.fallback
-    || state.openingEstablishment?.pickedHook?.trim()
-    || picked?.text;
-  const looksLikePointers = !!hook && /^(Place:|Location:|Who is here|Why this happened|Opening offer)/m.test(hook);
-  if (looksLikePointers) {
+    || picked?.fallback?.trim()
+    || '';
+  if (hook && !looksLikePointerDump(hook)) return hook;
+  if (looksLikePointerDump(hook) || looksLikePointerDump(state.openingEstablishment?.pickedHook ?? '')) {
     return (
       picked?.page1
       || picked?.fallback
       || `You are in ${state.currentLocation || where}.${folkBit} People in the scene are already reacting.`
     );
   }
-  if (hook) return hook;
   if (/system integration|every human on earth/i.test(state.campaignPremise ?? '')) {
     return `You are still in ${where} — same morning, same life — while the sky stays torn and a blue panel hangs at eye level.${folkBit} People nearby are shouting.`;
   }
@@ -187,59 +185,87 @@ function inPlacePhrase(place: string): string {
   return /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
 }
 
-/** Last authored page-1 sentence — this card, not the shared indoor-summon banks. */
-function cardContinueGround(state: GameState): string {
-  const page1 = baseSceneFromCard(state);
-  const sentences = page1
-    .split(/(?<=[.!?])\s+/)
-    .map((s) => s.replace(/\s+/g, ' ').trim())
-    .filter(
-      (s) =>
-        s.length > 15
-        && !/what name|what do they call|what do you enter|what do you call yourself|designation/i.test(s)
-    );
-  return sentences[sentences.length - 1] || sentences[0] || 'The scene has not moved on.';
+/** One clause from the card — why they pulled you — never the opener paragraph. */
+function shortCardWant(state: GameState): string {
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  const raw = (picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
+  return first.length > 140 ? `${first.slice(0, 137).trim()}…` : first;
 }
 
 /**
- * After page 1 — continue locally. No network, no pad list in prose.
- * Answers why-name / search / inspect from the last player line.
+ * After page 1 — continue locally. No network, no pad list, no opener reprint.
+ * Answers the typed line: where / why / name given / what they want.
  */
 export function stitchOpeningContinue(state: GameState, playerInput = ''): string {
-  const seed = state.seed ?? state.saveId ?? '0';
   const a = state.openingEstablishment?.answers ?? {};
   const place = cleanPlaceLabel(resolveLockedOpeningPlace(state, a) || a.where || state.currentLocation || 'here');
   const alone = continueIsAlone(state, place);
-  const ground = cardContinueGround(state);
   const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const name = lockedCoverName(state);
   const here = inPlacePhrase(place);
+  const want = shortCardWant(state);
+  const asksWhere = /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b/i.test(act);
+  const asksWhy =
+    /\bwhy\b.*\bname\b|\bwhy should i\b|\bwant (?:that|my name|a name)\b|\bwhat'?s going on\b|\bgive you my name\b/i.test(
+      act
+    );
+  const asksWant = /\bwhat (?:do you|d'?you) want\b|\bwho are you\b|\bwhat(?:'s| is) your\b/i.test(act);
+  const gaveName = /\b(?:my name is|i am|i'm|call me)\b/i.test(act);
   const searches =
     /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
 
   if (/\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)) {
     if (name) {
-      return `The panel holds the name ${name}. It does not explain itself. ${ground}`;
+      return `The panel holds the name ${name}. It does not explain itself.`;
     }
-    return `The panel stays at eye level ${here}. A blank line waits. It does not say why it wants a name. ${ground}`;
+    return `The panel stays at eye level ${here}. A blank line waits. It does not say why it wants a name.`;
   }
 
   if (searches) {
     const found = alone
       ? `You search ${here}. Broken stone, a dark doorway, dust. Nothing useful has been left for you.`
-      : `You take in the room again. ${ground}`;
+      : `You look again ${here}. Nothing new has been left in reach.`;
     return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
   }
 
-  if (/\bwhy\b.*\bname\b|\bwant (?:that|my name|a name)\b|\bwhat'?s going on\b/i.test(act)) {
-    if (name) {
-      return `The panel already has ${name}. It offers no further reason. You are still ${here}. ${ground}`;
-    }
-    return `The panel wants a name to write. It does not say why. You are still ${here}. ${ground}`;
+  if (gaveName && name) {
+    const bits = [`They have the name ${name}.`];
+    if (asksWhere) bits.push(`You are ${here}.`);
+    if (asksWant || asksWhy) bits.push(want || 'They have not said what they want yet.');
+    return bits.join(' ');
   }
 
-  const bridge = pickBank(CONTINUE_BRIDGES, seed, 'continue');
-  return `${bridge} You are ${here}. ${ground}`;
+  if (asksWhere || asksWhy || asksWant) {
+    const bits: string[] = [];
+    if (asksWhere) bits.push(`You are ${here}.`);
+    if (name && (asksWhy || asksWant)) {
+      bits.push(`They already have the name ${name}.`);
+      bits.push(want || 'They have not said what they want yet.');
+    } else if (asksWhy || asksWant) {
+      bits.push(want || 'The panel wants a name to write. It does not say why.');
+      if (!asksWhere) bits.push(`You are ${here}.`);
+      if (!name) bits.push('They still want a name before they will say more.');
+    } else if (!asksWhere) {
+      bits.push(`You are ${here}.`);
+    }
+    if (name && !asksWhy && !asksWant) bits.push(`They already have the name ${name}.`);
+    else if (!name && asksWhere && !asksWhy && !asksWant) {
+      bits.push('They still want a name before they will say more.');
+    }
+    return bits.filter(Boolean).join(' ');
+  }
+
+  if (!act) {
+    return `You are ${here}.`;
+  }
+
+  if (name) {
+    return `They have the name ${name}. You are ${here}.`;
+  }
+  return `You are ${here}. They still want a name.`;
 }
 
 /** True when this tier may attempt a non-blocking polish (reserved; page-1 never waits). */
