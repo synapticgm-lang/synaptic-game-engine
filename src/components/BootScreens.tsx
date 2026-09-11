@@ -1,7 +1,12 @@
-import { useEffect } from 'react';
-import { RefreshCw, Cloud, ChevronRight, UserRound } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { RefreshCw, Cloud, ChevronRight, UserRound, ChevronDown } from 'lucide-react';
 import type { BootPhase } from '@/game/useGame';
+import { FOUNDER_EMAIL_DENIED, founderEmailLoginEnabled, isFounderLoginEmail } from '@/game/founderLogin';
+import { signupsPaused } from '@/game/opsKillSwitches';
+import { isSupabaseConfigured, signInWithPassword } from '@/lib/supabase';
 import { LegalLinks } from './LegalLinks';
+
+export type AuthToast = (message: string, type?: 'success' | 'error' | 'info') => void;
 
 export function WelcomeSplash({ onTap }: { onTap: () => void }) {
   useEffect(() => {
@@ -94,9 +99,10 @@ export function BootSplash({ phase }: { phase: BootPhase }) {
 interface AuthProps {
   onSignIn: () => void;
   onGuest?: () => void;
+  onToast?: AuthToast;
 }
 
-export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
+export function AuthOverlay({ onSignIn, onGuest, onToast }: AuthProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4">
       <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl border border-sky-700/40 bg-slate-900 shadow-2xl shadow-sky-900/30">
@@ -140,6 +146,7 @@ export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
                 Play as Guest
               </button>
             )}
+            <FounderEmailSignIn onToast={onToast} />
           </div>
 
           <div className="flex flex-col items-center gap-1 text-[11px] text-slate-500">
@@ -149,6 +156,81 @@ export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
           <LegalLinks className="mt-1" />
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Collapsed founder-only email/password. Hidden unless the build allowlist is set. */
+export function FounderEmailSignIn({ onToast }: { onToast?: AuthToast }) {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  if (!founderEmailLoginEnabled()) return null;
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (signupsPaused()) {
+      onToast?.('New sign-ins are temporarily paused. Try again later.', 'error');
+      return;
+    }
+    if (!isSupabaseConfigured) {
+      onToast?.('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.', 'error');
+      return;
+    }
+    if (!isFounderLoginEmail(email)) {
+      onToast?.(FOUNDER_EMAIL_DENIED, 'error');
+      return;
+    }
+    setBusy(true);
+    const { error } = await signInWithPassword({ email, password });
+    setBusy(false);
+    if (error) onToast?.(error.message, 'error');
+  };
+
+  return (
+    <div className="w-full">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-center gap-1 py-1 text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
+        aria-expanded={open}
+      >
+        Email sign-in
+        <ChevronDown size={12} className={open ? 'rotate-180 transition-transform' : 'transition-transform'} />
+      </button>
+      {open && (
+        <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2 text-left">
+          <label className="sr-only" htmlFor="founder-email">Email</label>
+          <input
+            id="founder-email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-slate-500 focus:outline-none"
+          />
+          <label className="sr-only" htmlFor="founder-password">Password</label>
+          <input
+            id="founder-password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-slate-500 focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={busy || !email.trim() || !password}
+            className="flex w-full items-center justify-center rounded-lg border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800 transition-colors disabled:opacity-50"
+          >
+            {busy ? 'Signing in…' : 'Sign in with email'}
+          </button>
+        </form>
+      )}
     </div>
   );
 }

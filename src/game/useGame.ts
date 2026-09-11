@@ -859,7 +859,7 @@ export function useGame() {
       setComicMode(false);
       setNarrativeMode(false);
     }
-    debugLogger.record('SYSTEM', 'Supabase Google session active', {
+    debugLogger.record('SYSTEM', 'Supabase session active', {
       userId: session.user.id,
       email: session.user.email,
     });

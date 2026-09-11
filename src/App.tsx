@@ -117,7 +117,7 @@ export default function App() {
     return (
       <>
         <BootSplash phase="syncing" />
-        <AuthOverlay onSignIn={game.handleBootSignIn} />
+        <AuthOverlay onSignIn={game.handleBootSignIn} onToast={game.addToast} />
         <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
       </>
     );
@@ -495,6 +495,7 @@ export default function App() {
       {game.showWelcome && (
         <WelcomeModal
           onSignIn={game.handleGoogleSignIn}
+          onToast={game.addToast}
         />
       )}
 

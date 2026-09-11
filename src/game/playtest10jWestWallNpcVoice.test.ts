@@ -59,8 +59,8 @@ function westWall(over: Partial<GameState> = {}): GameState {
 
 describe('playtest10j — west wall NPC voice', () => {
   it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-10/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-10/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

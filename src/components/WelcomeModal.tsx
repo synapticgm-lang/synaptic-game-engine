@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { ShieldCheck, RefreshCw, Cloud } from 'lucide-react';
+import { FounderEmailSignIn, type AuthToast } from './BootScreens';
 
 interface Props {
   onSignIn: () => void;
+  onToast?: AuthToast;
 }
 
-export function WelcomeModal({ onSignIn }: Props) {
+export function WelcomeModal({ onSignIn, onToast }: Props) {
   const [signingIn, setSigningIn] = useState(false);
 
   const handleSignIn = () => {
@@ -40,6 +42,7 @@ export function WelcomeModal({ onSignIn }: Props) {
               {signingIn ? <RefreshCw size={18} className="animate-spin" /> : <GoogleG size={18} />}
               {signingIn ? 'Connecting...' : 'Sign in with Google'}
             </button>
+            <FounderEmailSignIn onToast={onToast} />
           </div>
 
           <div className="flex items-center gap-1.5 text-[11px] text-slate-600">

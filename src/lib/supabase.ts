@@ -9,8 +9,9 @@ export const isSupabaseConfigured = Boolean(
 );
 
 /**
- * Shared browser Supabase client for Google OAuth and Ops Console telemetry.
- * Null when env vars are missing so guest/local play still boots cleanly.
+ * Shared browser Supabase client for Google OAuth, optional founder
+ * email/password, and Ops Console telemetry.
+ * Null when env vars are missing so the boot overlay still paints.
  */
 export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(supabaseUrl!.trim(), supabaseAnonKey!.trim(), {
@@ -38,6 +39,25 @@ export async function signInWithGoogleOAuth(): Promise<{ error: Error | null }> 
     },
   });
 
+  return { error: error ? new Error(error.message) : null };
+}
+
+export async function signInWithPassword(creds: {
+  email: string;
+  password: string;
+}): Promise<{ error: Error | null }> {
+  if (!supabase) {
+    return {
+      error: new Error(
+        'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+      ),
+    };
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: creds.email.trim(),
+    password: creds.password,
+  });
   return { error: error ? new Error(error.message) : null };
 }
 
