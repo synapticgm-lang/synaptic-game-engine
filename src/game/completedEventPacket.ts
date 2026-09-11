@@ -75,6 +75,8 @@ export interface CompletedEventPacket {
   /** 10d — card CAST / why, for hall-talk answers (not settle stubs). */
   answerWho?: string;
   answerWant?: string;
+  /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
+  engineMode?: string;
 }
 
 const WRITER_RHYTHM_WINDOW = 2;
@@ -464,6 +466,7 @@ export function buildCompletedEventPacket(
     focusNoun: focusNoun || undefined,
     answerWho: openingCastLabel(state) || undefined,
     answerWant: openingWantLine(state) || undefined,
+    engineMode: state.engineMode,
   };
 }
 
@@ -1062,7 +1065,15 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const bits: string[] = [];
   if (asksWhere) bits.push(`You were at ${slots.where}.`);
-  if (asksWho) bits.push(openingWhoAskLineFromLabel(who));
+  if (asksWho) {
+    bits.push(
+      openingWhoAskLineFromLabel(who, {
+        location: packet.location,
+        engineMode: packet.engineMode,
+        quote: undefined,
+      })
+    );
+  }
   if (asksPanel) bits.push('The blue panel was yours — a System window, not a person.');
   if (asksWant) bits.push(want || `${who} had not said what they wanted yet.`);
   if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);

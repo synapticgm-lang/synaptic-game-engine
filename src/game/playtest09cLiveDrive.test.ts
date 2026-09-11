@@ -57,4 +57,29 @@ describe('playtest09c — live drive harness', () => {
     });
     expect(nameChip.some((f) => f.code === 'name-chip-after-lock')).toBe(true);
   });
+
+  it('critic thumbs NPC non-answer and one-line no-speech', () => {
+    const state = createInitialState('The Summoned Pact', 'litrpg') as GameState;
+    const loop = criticLiveDriveTurn({
+      story: 'They have the name Jax. The chanter already answered you.',
+      pads: ['Who are you'],
+      player: "What's your name? I am not swearing anything yet.",
+      prevStories: [],
+      coversPending: false,
+      nameLocked: 'Jax',
+      state,
+    });
+    expect(loop.some((f) => f.code === 'npc-non-answer')).toBe(true);
+
+    const short = criticLiveDriveTurn({
+      story: 'The chanter is the one asking.',
+      pads: ['Who are you'],
+      player: 'Who are you? Answer me properly.',
+      prevStories: [],
+      coversPending: false,
+      nameLocked: 'Jax',
+      state,
+    });
+    expect(short.some((f) => f.code === 'one-line-no-npc' || f.code === 'npc-non-answer')).toBe(true);
+  });
 });

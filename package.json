@@ -21,6 +21,7 @@
     "fate-gemini-pastes": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/writeGeminiPastes.ts --",
     "opening-stitch-paste": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/exportOpeningStitchPaste.ts",
     "live-drive-t20": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/runLiveDriveFourModeT20.ts",
+    "live-drive-t10": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/runLiveDriveFourModeT10.ts",
     "opening-stitch-teach": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/geminiOpeningMasterclass.ts",
     "fate-gemini-review": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/geminiReview.ts --",
     "eval:12x300": "npm run fate-autoplay -- --modes-agents-300 --turns 300 --seed 100"

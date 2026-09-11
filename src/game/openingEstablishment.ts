@@ -829,6 +829,11 @@ export function resolveLockedOpeningPlace(
 
   const usable = (place: string) => !!place && !isUnusablePlace(place, state);
 
+  // Save already agreed — do not jump to a different seed card.
+  if (usable(fromState) && usable(fromAnswers) && fromState === fromAnswers) {
+    return fromState;
+  }
+
   // Card / live location wins when answers still hold the generic bible start.
   if (usable(fromState) && (!fromAnswers || (bibleStart && fromAnswers === bibleStart && fromState !== bibleStart))) {
     return fromState;
@@ -1108,21 +1113,37 @@ export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): b
 }
 
 function openingSceneHay(state: GameState): string {
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
-  return [
-    picked?.page1,
-    picked?.faction,
+  const fromSave = [
     state.openingEstablishment?.pickedHookFallback,
     state.openingEstablishment?.pickedHook,
   ]
     .filter(Boolean)
     .join(' ');
+  if (fromSave.trim()) return fromSave;
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  return [picked?.page1, picked?.faction].filter(Boolean).join(' ');
 }
 
 /** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
 export function openingCastLabel(state: GameState): string {
   const hay = openingSceneHay(state);
+  const loc = `${state.currentLocation ?? ''} ${state.campaignBibleId ?? ''} ${state.engineMode ?? ''}`;
+  const blob = `${hay} ${loc}`;
+  if (/\bWren Holt\b/i.test(blob) || (state.engineMode === 'pyoa' && /\bWren\b/i.test(blob))) {
+    return 'Wren Holt';
+  }
+  if (/\bVessa\b/i.test(blob) || state.campaignBibleId === 'salt-road-heist') {
+    return 'Vessa';
+  }
+  if (
+    state.engineMode === 'dnd'
+    || /\bGreyhollow\b/i.test(blob)
+    || /\b(?:inn book|common room|tavern hire)\b/i.test(blob)
+  ) {
+    if (/\bFather Aldous\b/i.test(hay)) return 'Father Aldous';
+    return 'the innkeep';
+  }
   const occupied = openingHayHasOccupancy(hay);
   if (!occupied && state.openingEstablishment?.aloneArrival === true) return 'the panel';
   if (/\blead priest\b/i.test(hay) || /\biron mask\b/i.test(hay)) {
@@ -1191,34 +1212,72 @@ export function shortCardOffer(state: GameState): string {
   return clipCardClause(first, 180);
 }
 
-export function openingWhoAskLineFromLabel(who: string, opts?: { nameLocked?: boolean }): string {
-  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const plural = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who);
-  if (opts?.nameLocked) {
-    return plural ? `${head} are the ones asking.` : `${head} is the one asking.`;
-  }
-  return plural
-    ? `${head} are the ones asking. They have not given you a name back.`
-    : `${head} is the one asking. They have not given you a name back.`;
-}
-
-function openingSpokenIdentityQuote(who: string): string {
+export function openingSpokenIdentityQuote(
+  who: string,
+  ctx?: { location?: string; engineMode?: string; hay?: string }
+): string {
+  const blob = `${who} ${ctx?.location ?? ''} ${ctx?.hay ?? ''} ${ctx?.engineMode ?? ''}`;
   if (/\bpanel\b/i.test(who)) return '';
+  if (/\bWren\b/i.test(who)) {
+    return '"Wren Holt. I brought the charter. Walk with me or don\'t — I need an answer."';
+  }
+  if (/\bVessa\b/i.test(who)) {
+    return '"Vessa. I hire on the Salt Road. Give me a name I can say when the watch walks this aisle."';
+  }
+  if (/\binnkeep|Father Aldous|Greyhollow\b/i.test(blob) || ctx?.engineMode === 'dnd') {
+    return '"I keep this book. I asked your name because strangers who skip it start fights."';
+  }
   if (/\bmilitia\b/i.test(who)) return '"Watch. We got here late. The circle is already dead."';
   if (/\bscavenger\b/i.test(who)) return '"Not my rite. I got to the rings first."';
   if (/\benvoys?\b/i.test(who)) return '"Both sides want a name on the paper."';
-  if (/\bhandler\b/i.test(who)) return '"You came through. Stay where we can see you."';
-  if (/\bpriest|chanter|robed\b/i.test(who)) return '"Pactborn. The Mark looks wrong."';
-  return '"Answer. We are still in this room."';
+  if (/\bhandler\b/i.test(who)) return '"Handler. You came through. Stay where we can see you."';
+  const litrpgMark =
+    ctx?.engineMode === 'litrpg'
+    && /\b(pactborn|calamity mark|sevenfold|summoning circle|cathedral)\b/i.test(blob);
+  if (/\bpriest|chanter|robed\b/i.test(who)) {
+    return litrpgMark
+      ? '"Pactborn. The Mark looks wrong. I am the one who has to write what you are."'
+      : '"I asked your name. I am still in this room."';
+  }
+  return '"I am still in this room. That is the name I will give you."';
+}
+
+export function openingWhoAskLineFromLabel(
+  who: string,
+  opts?: { nameLocked?: boolean; quote?: string; location?: string; engineMode?: string; hay?: string }
+): string {
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
+    ? 'answer'
+    : 'answers';
+  const quote =
+    opts?.quote
+    ?? openingSpokenIdentityQuote(who, {
+      location: opts?.location,
+      engineMode: opts?.engineMode,
+      hay: opts?.hay,
+    });
+  if (quote) return `${head} ${verb} you. ${quote}`;
+  if (opts?.nameLocked) return `${head} ${verb} you. They already have your name.`;
+  return `${head} ${verb} you. They have not given you a name back.`;
 }
 
 export function openingWhoAskLine(state: GameState): string {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   const nameLocked = !!(name && isLockablePcName(name) && !/unknown survivor/i.test(name));
   const who = openingCastLabel(state);
-  const ask = openingWhoAskLineFromLabel(who, { nameLocked });
-  const quote = openingSpokenIdentityQuote(who);
-  return quote ? `${ask} ${quote}` : ask;
+  const quote = openingSpokenIdentityQuote(who, {
+    location: state.currentLocation,
+    engineMode: state.engineMode,
+    hay: openingSceneHay(state),
+  });
+  return openingWhoAskLineFromLabel(who, {
+    nameLocked,
+    quote,
+    location: state.currentLocation,
+    engineMode: state.engineMode,
+    hay: openingSceneHay(state),
+  });
 }
 
 /** Card want/offer as the people speaking — not a narrator reprint. */
@@ -1240,12 +1299,23 @@ export function openingSpokenWant(state: GameState): string {
 
 export function openingAlreadyToldLine(state: GameState): string {
   const who = openingCastLabel(state);
-  if (/\bmilitia\b/i.test(who)) return 'The militia already answered you. The spear has not moved.';
-  if (/\bscavenger\b/i.test(who)) return 'The scavenger already said that. He is still watching the rings.';
+  const quote = openingSpokenIdentityQuote(who, {
+    location: state.currentLocation,
+    engineMode: state.engineMode,
+    hay: openingSceneHay(state),
+  });
+  if (/\bmilitia\b/i.test(who)) {
+    return quote
+      ? `The militia already answered you. The spear has not moved. ${quote}`
+      : 'The militia already answered you. The spear has not moved.';
+  }
+  if (/\bscavenger\b/i.test(who)) {
+    return 'The scavenger already said that. He is still watching the rings.';
+  }
   if (/\benvoys?\b/i.test(who)) return 'The envoys already said that. The maps have not moved.';
   if (/\bpanel\b/i.test(who)) return 'The panel already holds what it will say.';
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  return `${head} already answered you.`;
+  return quote ? `${head} already said it. ${quote}` : `${head} already answered you.`;
 }
 
 export function openingWantLine(state: GameState): string {
@@ -1277,6 +1347,10 @@ export function coverContinuePads(state: GameState): string[] {
   }
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
+    const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
+    if (hallTalkAsksWho(lastPlayer)) {
+      return ['Ask what they want', 'Look around'];
+    }
     const askedWant = (state.log ?? []).some(
       (e) => e.role === 'player' && hallTalkAsksWant(e.content ?? '')
     );

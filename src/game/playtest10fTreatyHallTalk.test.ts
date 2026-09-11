@@ -139,7 +139,9 @@ describe('playtest10f — treaty tent one-line lock', () => {
   it('Who are you uses plural envoys, not “people who pulled you is”', () => {
     const text = stitchOpeningContinue(namedJax(), 'Who are you');
     expect(text).toMatch(/envoys at this table/i);
-    expect(text).toMatch(/are the ones asking/i);
+    expect(text).toMatch(/answer you/i);
+    expect(text).toMatch(/"/);
+    expect(text).not.toMatch(/is the one asking|are the ones asking/i);
     expect(text).not.toMatch(/people who pulled you is/i);
   });
 

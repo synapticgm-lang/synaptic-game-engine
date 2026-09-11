@@ -120,6 +120,11 @@ export function liveDriveScriptedLines(persona: AiAgentMode, mode?: EngineMode):
     'Whats going on? My name why do you want that',
     "Think in your head 'why does it need to know my name is Jax' search the room you are in for anything of use or intel",
     inspect,
+    "What's your name? I am not swearing anything yet.",
+    'Who are you? Answer me properly.',
+    'Why should I help you?',
+    'What happens if I refuse?',
+    'Look around',
   ];
 }
 
@@ -239,6 +244,40 @@ export function criticLiveDriveTurn(input: {
         });
       }
     }
+  }
+  const askedPerson =
+    /\b(who are you|what(?:'s| is) your name|what do (?:you|they) want|why (?:did|do|should)|where am i|what'?s going on)\b/i.test(
+      input.player
+    );
+  if (askedPerson && /is the one asking/i.test(story)) {
+    flags.push({
+      code: 'npc-non-answer',
+      severity: 'hard',
+      note: 'Player asked a person; stitch refused to let them speak',
+    });
+  }
+  if (
+    askedPerson
+    && /already answered you/i.test(story)
+    && !/"[^"]{12,}"/.test(story)
+  ) {
+    flags.push({
+      code: 'npc-non-answer',
+      severity: 'hard',
+      note: 'Player asked a person; already-told beat had no spoken line',
+    });
+  }
+  if (
+    askedPerson
+    && story.replace(/\s+/g, ' ').trim().length < 200
+    && !/"[^"]{12,}"/.test(story)
+    && !/\b(said|says|asked|replies|replied|answers|answered)\b/i.test(story)
+  ) {
+    flags.push({
+      code: 'one-line-no-npc',
+      severity: 'hard',
+      note: 'Short beat with no spoken NPC reply',
+    });
   }
   return flags;
 }

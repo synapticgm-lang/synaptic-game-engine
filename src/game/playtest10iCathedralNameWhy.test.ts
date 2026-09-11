@@ -93,7 +93,9 @@ describe('playtest10i — cathedral name+why', () => {
   it('who-ask does not claim they have no name when Jax is locked', () => {
     const text = stitchOpeningContinue(cathedral(), 'Who are you? Where am I?');
     expect(text).toMatch(/You are/i);
-    expect(text).toMatch(/asking/i);
+    expect(text).toMatch(/answer(?:s)? you/i);
+    expect(text).toMatch(/"/);
+    expect(text).not.toMatch(/is the one asking/i);
     expect(text).not.toMatch(/have not given you a name back/i);
     expect(openingWhoAskLine(cathedral())).not.toMatch(/have not given you a name back/i);
   });

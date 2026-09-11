@@ -22,7 +22,7 @@ const NAMED_THREAT_CLAIM =
 
 /** Verbs that imply using a specific inventory item. */
 const ITEM_USE_CLAIM =
-  /\b(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull(?:\s+out)?|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
+  /\b(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
 
 /** Combat verbs that only count when a named weapon follows (swing/slash your shortsword). */
 const WEAPON_USE_CLAIM =

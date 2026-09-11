@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-11a';
+export const HUD_BUILD_STAMP = '2026-09-11b';
 const HUD_BUILD_TITLE =
-  'Founder email login; Google still default';
+  'Cover talk spoken; no Pactborn leak; pull-me-here not an item';
 
 interface Props {
   state: GameState;

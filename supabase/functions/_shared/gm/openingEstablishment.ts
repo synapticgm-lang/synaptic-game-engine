@@ -65,10 +65,50 @@ export function openingWantLine(_state?: unknown): string {
   return '';
 }
 
-export function openingWhoAskLineFromLabel(who: string): string {
+export function openingSpokenIdentityQuote(
+  who: string,
+  ctx?: { location?: string; engineMode?: string; hay?: string }
+): string {
+  const blob = `${who} ${ctx?.location ?? ''} ${ctx?.hay ?? ''} ${ctx?.engineMode ?? ''}`;
+  if (/\bpanel\b/i.test(who)) return '';
+  if (/\bWren\b/i.test(who)) {
+    return '"Wren Holt. I brought the charter. Walk with me or don\'t — I need an answer."';
+  }
+  if (/\bVessa\b/i.test(who)) {
+    return '"Vessa. I hire on the Salt Road. Give me a name I can say when the watch walks this aisle."';
+  }
+  if (/\binnkeep|Father Aldous|Greyhollow\b/i.test(blob) || ctx?.engineMode === 'dnd') {
+    return '"I keep this book. I asked your name because strangers who skip it start fights."';
+  }
+  if (/\bmilitia\b/i.test(who)) return '"Watch. We got here late. The circle is already dead."';
+  if (/\bhandler\b/i.test(who)) return '"Handler. You came through. Stay where we can see you."';
+  const litrpgMark =
+    ctx?.engineMode === 'litrpg'
+    && /\b(pactborn|calamity mark|sevenfold|summoning circle|cathedral)\b/i.test(blob);
+  if (/\bpriest|chanter|robed\b/i.test(who)) {
+    return litrpgMark
+      ? '"Pactborn. The Mark looks wrong. I am the one who has to write what you are."'
+      : '"I asked your name. I am still in this room."';
+  }
+  return '"I am still in this room. That is the name I will give you."';
+}
+
+export function openingWhoAskLineFromLabel(
+  who: string,
+  opts?: { nameLocked?: boolean; quote?: string; location?: string; engineMode?: string; hay?: string }
+): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const plural = /\b(people|envoys|priests|handlers|sides)\b/i.test(who);
-  return plural
-    ? `${head} are the ones asking. They have not given you a name back.`
-    : `${head} is the one asking. They have not given you a name back.`;
+  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
+    ? 'answer'
+    : 'answers';
+  const quote =
+    opts?.quote
+    ?? openingSpokenIdentityQuote(who, {
+      location: opts?.location,
+      engineMode: opts?.engineMode,
+      hay: opts?.hay,
+    });
+  if (quote) return `${head} ${verb} you. ${quote}`;
+  if (opts?.nameLocked) return `${head} ${verb} you. They already have your name.`;
+  return `${head} ${verb} you. They have not given you a name back.`;
 }

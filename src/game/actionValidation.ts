@@ -14,6 +14,7 @@ import {
   findHardItemUseClaims,
   referencesAbsentCompanion,
 } from './suggestionValidation';
+import { isHallTalkPlayerLine, playerAskedWhyPulled } from './openingEstablishment';
 
 export interface ValidationResult {
   valid: boolean;
@@ -106,6 +107,8 @@ export function shouldSkipHardGate(input: string, state: GameState): boolean {
   if (LOOK_AROUND.test(t) && !/\b(use|draw|wield|unsheathe|brandish|my companion)\b/i.test(t)) {
     return true;
   }
+  if (isHallTalkPlayerLine(t) || playerAskedWhyPulled(t)) return true;
+  if (/\bpull me (?:here|there|through)\b|\bbrought me here\b/i.test(t)) return true;
   return false;
 }
 

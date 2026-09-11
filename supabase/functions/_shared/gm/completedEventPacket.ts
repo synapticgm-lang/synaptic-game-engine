@@ -18,7 +18,17 @@ import {
 } from './combatAuthority.ts';
 import { canHarvestAsNamedPerson } from './entityRegistry.ts';
 import { isNeverCastTitle } from './neverCast.ts';
-import { isHallTalkPlayerLine, openingCastLabel, shortCardWant } from './openingEstablishment.ts';
+import {
+  hallTalkAsksPanel,
+  hallTalkAsksWant,
+  hallTalkAsksWhere,
+  hallTalkAsksWho,
+  isHallTalkPlayerLine,
+  openingCastLabel,
+  openingWantLine,
+  openingWhoAskLineFromLabel,
+  playerAskedWhyPulled,
+} from './openingEstablishment.ts';
 
 export type EventOutcome =
   | 'killed'
@@ -65,6 +75,8 @@ export interface CompletedEventPacket {
   /** 10d — card CAST / why, for hall-talk answers (not settle stubs). */
   answerWho?: string;
   answerWant?: string;
+  /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
+  engineMode?: string;
 }
 
 const WRITER_RHYTHM_WINDOW = 2;
@@ -453,7 +465,8 @@ export function buildCompletedEventPacket(
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
     answerWho: openingCastLabel(state) || undefined,
-    answerWant: shortCardWant(state) || undefined,
+    answerWant: openingWantLine(state) || undefined,
+    engineMode: state.engineMode,
   };
 }
 
@@ -1046,14 +1059,21 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   if (!isHallTalkPlayerLine(act)) return null;
   const who = (packet.answerWho || slots.who || 'the people who pulled you').trim();
   const want = (packet.answerWant ?? '').trim();
-  const asksWhere = /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b/i.test(act);
-  const asksWho =
-    /\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b/i.test(act);
-  const asksPanel = /\bblue (?:screen|panel)\b/i.test(act);
-  const asksWant = /\bwhat (?:do you|they) want\b|\bwhat'?s going on\b/i.test(act);
+  const asksWhere = hallTalkAsksWhere(act);
+  const asksWho = hallTalkAsksWho(act);
+  const asksPanel = hallTalkAsksPanel(act);
+  const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const bits: string[] = [];
   if (asksWhere) bits.push(`You were at ${slots.where}.`);
-  if (asksWho) bits.push(`${who} did not give a name back.`);
+  if (asksWho) {
+    bits.push(
+      openingWhoAskLineFromLabel(who, {
+        location: packet.location,
+        engineMode: packet.engineMode,
+        quote: undefined,
+      })
+    );
+  }
   if (asksPanel) bits.push('The blue panel was yours — a System window, not a person.');
   if (asksWant) bits.push(want || `${who} had not said what they wanted yet.`);
   if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);
