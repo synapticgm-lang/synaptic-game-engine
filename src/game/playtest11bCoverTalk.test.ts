@@ -1,11 +1,13 @@
 /**
  * 11b — cover who/why is spoken, mode-safe, and "pull me here" is not an item.
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
-import { createInitialState } from './defaults';
+import { createDefaultSettings, createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import {
   coverContinuePads,
@@ -13,12 +15,14 @@ import {
   hallTalkAsksWant,
   openingCastLabel,
   openingWhoAskLine,
+  shouldStitchOpeningContinue,
 } from './openingEstablishment';
 import { stitchOpeningContinue } from './openingStitch';
 import { shouldSkipHardGate, validateActionHard } from './actionValidation';
 import { findHardItemUseClaims } from './suggestionValidation';
-import { buildNewGameState, stampOpening } from './fateAutoplay';
+import { buildNewGameState, headlessFateTurn, stampOpening } from './fateAutoplay';
 import { criticLiveDriveTurn, reopenCoversForLiveDrive } from './liveDrive';
+import { mulberry32 } from './fatePick';
 import { getCampaignBibleById } from '@/data/campaigns';
 import type { GameState } from './types';
 
@@ -367,5 +371,57 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       ],
     };
     expect(coverContinuePads(asked).join(' ')).not.toMatch(/Who are you/i);
+  });
+
+  it('hall Q&A stays on stitch after covers; Look/Wait do not', () => {
+    const done = greyhollow();
+    expect(done.openingEstablishment?.complete).toBe(true);
+    expect(shouldStitchOpeningContinue(done, 'Ask what they want')).toBe(true);
+    expect(shouldStitchOpeningContinue(done, 'Who are you?')).toBe(true);
+    expect(shouldStitchOpeningContinue(done, 'What happens if I refuse?')).toBe(true);
+    expect(shouldStitchOpeningContinue(done, 'Look around')).toBe(false);
+    expect(shouldStitchOpeningContinue(done, 'Wait')).toBe(false);
+    const fateSrc = readFileSync(resolve(__dirname, 'fateAutoplay.ts'), 'utf8');
+    expect(fateSrc).toContain('shouldStitchOpeningContinue');
+    expect(fateSrc).toContain('headlessOpeningContinueTurn');
+    const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
+    expect(useGame).toContain('shouldStitchOpeningContinue');
+  });
+
+  it('Fate-picked Ask what they want after covers stays on stitch (Greyhollow T10)', async () => {
+    const settings = createDefaultSettings();
+    const rng = mulberry32(42);
+    const meta = {
+      bibleId: 'cursed-keep',
+      personalityId: 'dry-wit',
+      seed: 42,
+      mode: 'fate' as const,
+      aiAgentMode: 'storyfollower' as const,
+      dryRun: false,
+    };
+    const want = await headlessFateTurn(greyhollow(), settings, rng, {
+      ...meta,
+      playerInputOverride: 'Ask what they want',
+    });
+    expect(want.telemetry.repairNote).toMatch(/hall_talk_stitch/);
+    expect(want.telemetry.gmText).toMatch(/have not said what they want/i);
+    expect(want.telemetry.gmText).not.toMatch(/Patched Leather|Chain Shirt|already said it/i);
+    expect(want.telemetry.durationMs).toBeLessThan(2000);
+
+    const who = await headlessFateTurn(greyhollow(), settings, rng, {
+      ...meta,
+      playerInputOverride: 'Who are you?',
+    });
+    expect(who.telemetry.repairNote).toMatch(/hall_talk_stitch/);
+    expect(who.telemetry.gmText).toMatch(/innkeep|Aldous|answers you/i);
+    expect(who.telemetry.gmText).not.toMatch(/Patched Leather|Chain Shirt|Pactborn/i);
+
+    const look = await headlessFateTurn(greyhollow(), settings, rng, {
+      ...meta,
+      dryRun: true,
+      playerInputOverride: 'Look around',
+    });
+    expect(look.telemetry.repairNote ?? '').not.toMatch(/hall_talk_stitch/);
+    expect(look.telemetry.dryRun).toBe(true);
   });
 });

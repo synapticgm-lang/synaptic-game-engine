@@ -76,7 +76,7 @@ const CELLS: Cell[] = [
 
 const TURNS = 10;
 const SEED = 42;
-const OUT_ROOT = join(process.cwd(), 'scripts/fate-autoplay/runs/gemini-paste-2026-09-11d-livedrive-t10');
+const OUT_ROOT = join(process.cwd(), 'scripts/fate-autoplay/runs/gemini-paste-2026-09-11e-livedrive-t10');
 
 function installNodeShims(): void {
   const store = new Map<string, string>();

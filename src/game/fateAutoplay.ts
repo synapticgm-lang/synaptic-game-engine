@@ -74,7 +74,9 @@ import {
   resolveOpeningPrompts,
   resolveOpeningRegistrar,
   seedCoverAnswers,
+  shouldStitchOpeningContinue,
 } from './openingEstablishment';
+import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
 import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
@@ -890,6 +892,38 @@ export async function headlessFateTurn(
   } else if (hard.rewritten) {
     playerInput = hard.rewritten;
     repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
+  }
+
+  // 11e — hall who/want/refuse/where/panel stay on stitch after covers (live useGame already does).
+  // First ask speaks the ledger line; repeats use already-told. Never callGm for these.
+  if (shouldStitchOpeningContinue(state, playerInput)) {
+    const next = await headlessOpeningContinueTurn(state, playerInput);
+    const ended = Date.now();
+    return {
+      state: next.state,
+      telemetry: {
+        turn: next.state.turn,
+        startedAt,
+        endedAt: new Date(ended).toISOString(),
+        durationMs: ended - started,
+        bibleId: meta.bibleId,
+        engineMode: state.engineMode,
+        personalityId: meta.personalityId,
+        seed: meta.seed,
+        fatePick,
+        offeredChoices: next.offeredChoices,
+        offeredChoiceIds: next.offeredChoices.map((_, i) => `choice-${next.state.turn}-${i}`),
+        playerInput,
+        gmText: next.gmText,
+        systemLog: [],
+        questUnlocks: [],
+        itemsEquipped: [],
+        itemsUsed: [],
+        loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
+        transportRetries: 0,
+        repairNote: (repairNote ? `${repairNote}; ` : '') + 'hall_talk_stitch',
+      },
+    };
   }
 
   const govInputState = processMetaInput(state, playerInput).state;

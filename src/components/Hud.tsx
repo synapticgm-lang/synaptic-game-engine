@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-11d';
+export const HUD_BUILD_STAMP = '2026-09-11e';
 const HUD_BUILD_TITLE =
-  'Refuse already-told is the walk-away cost, not the want';
+  'Hall talk stays on stitch after covers (Fate parity)';
 
 interface Props {
   state: GameState;
