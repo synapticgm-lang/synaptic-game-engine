@@ -2236,9 +2236,7 @@ export function useGame() {
           && liveCurrent.openingEstablishment?.complete !== true
         )
       ) {
-        const stepped = isOpeningEstablishmentPending(liveCurrent) || isOpeningEstablishmentPending(current)
-          ? await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current)
-          : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true as const, deferToPlay: true };
+        const stepped = await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current);
 
         if (!stepped.generateOpening && !stepped.deferToPlay) {
           refundSpentTextTurn();

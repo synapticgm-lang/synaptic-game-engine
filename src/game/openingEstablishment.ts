@@ -171,6 +171,7 @@ export function playerGivesOrRefusesName(raw: string): boolean {
     return false;
   }
   if (extractGivenName(t)) return true;
+  if (isNameRefusalUtterance(t)) return true;
   return /\b(my name is|call me|i(?:'m| am) called|won'?t give|no name|won'?t say (?:my )?name|i (?:will )?not (?:give|say) (?:you )?(?:my )?name|i refuse (?:to )?(?:give|say) (?:my )?name)\b/i.test(
     t
   );
@@ -1040,10 +1041,17 @@ export function hallTalkAsksWant(raw: string): boolean {
   if (/\bask\b.+\bwhat they want\b/i.test(t) && !/\bask what they want\b/i.test(t)) {
     return false;
   }
+  if (/\bi want to (?:leave|go|walk|run)\b/i.test(t) && !/\bwhat\b/i.test(t)) {
+    return false;
+  }
   return (
-    /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b|\bwhy\b.*\bname\b/i.test(
-      t
-    )
+    /\bwhat\b.{0,32}\bwant\b/i.test(t)
+    || /\bask what they want\b/i.test(t)
+    || /\bwhat they want\b/i.test(t)
+    || /\bwhat'?s going on\b/i.test(t)
+    || /\bwhy should i(?: help)?\b/i.test(t)
+    || /\bwhy\b.{0,24}\bname\b/i.test(t)
+    || /\bwhat(?:'s| is|s)\b.{0,24}\b(?:actual(?:ly)? )?deal\b/i.test(t)
   );
 }
 
@@ -1052,7 +1060,11 @@ export function hallTalkAsksRefuse(raw: string): boolean {
   const t = raw ?? '';
   if (!t.trim()) return false;
   if (/\brefuse to (?:give|say)\b/i.test(t)) return false;
-  return /\bwhat happens if i refuse\b|\bif i refuse\b/i.test(t);
+  return (
+    /\bwhat happens if i refuse\b/i.test(t)
+    || /\b(?:if|when|should) i refuse\b/i.test(t)
+    || (/\brefuse\b/i.test(t) && !/\brefuse to (?:give|say)\b/i.test(t))
+  );
 }
 
 export function hallTalkAsksPanel(raw: string): boolean {
@@ -1066,10 +1078,20 @@ export function hallTalkAsksPanel(raw: string): boolean {
   );
 }
 
+/** Kit / pockets inspect — ledger noun, not a name harvest or identity reprint. */
+export function isKitOrCarryInspect(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  return /\b(?:check|inspect|look at|search|dump)\b.{0,32}\b(?:carry|carrying|kit|pockets?|bag|inventory|gear|what i (?:have|got|am carrying))\b/i.test(
+    t
+  );
+}
+
 /** Typed line that must stay on the local cover stitch, not the play writer. */
 export function isCoverShapedPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
+  if (isKitOrCarryInspect(p) && !hallTalkAsksWant(p) && !hallTalkAsksWho(p)) return true;
   if (playerGivesOrRefusesName(p)) return true;
   if (
     hallTalkAsksWhere(p)
@@ -1086,16 +1108,18 @@ export function isCoverShapedPlayerLine(raw: string): boolean {
   );
 }
 
-/** Name lock plus a real question — not a bare “My name is Jax.” */
+/** Name lock plus a real question — leftover ask stays on this turn. */
 export function playerGaveNameAndAskedMore(raw: string): boolean {
   const act = (raw ?? '').replace(/\s+/g, ' ').trim();
-  if (!/\b(?:my name is|i am|i'm|call me)\b/i.test(act)) return false;
-  const rest = act
-    .replace(/\b(?:my name is|i am|i'm|call me)\s+[A-Za-z][A-Za-z'-]*/gi, ' ')
-    .replace(/[^A-Za-z\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return rest.length > 2;
+  if (!extractGivenName(act)) return false;
+  return (
+    hallTalkAsksWho(act)
+    || hallTalkAsksWant(act)
+    || hallTalkAsksRefuse(act)
+    || hallTalkAsksWhere(act)
+    || hallTalkAsksPanel(act)
+    || playerAskedWhyPulled(act)
+  );
 }
 
 /** Hall Q&A — where / who / panel / name — not travel or a fight. */
@@ -1112,11 +1136,31 @@ export function isHallTalkPlayerLine(raw: string): boolean {
  * Cover / pending name-lock and hall Q&A stay on stitchOpeningContinue.
  * Those lines must not depend on gm-turn (10f sent them to a 503 boot).
  */
+const OPENING_CARD_NOUNS = ['book', 'pouch', 'charter'] as const;
+
+export function asksOpeningCardNoun(state: GameState, raw: string): string | null {
+  const act = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!act) return null;
+  const hay = `${openingSceneHay(state)} ${state.currentLocation ?? ''}`;
+  for (const noun of OPENING_CARD_NOUNS) {
+    if (!new RegExp(`\\b${noun}\\b`, 'i').test(hay)) continue;
+    if (
+      new RegExp(`\\b(?:what(?:'s| is)|inspect|look at|check)\\b.{0,32}\\b${noun}\\b`, 'i').test(act)
+      || new RegExp(`\\b${noun}\\b.{0,20}\\bfor\\b`, 'i').test(act)
+    ) {
+      return noun;
+    }
+  }
+  return null;
+}
+
 export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
   if (state.activeEncounter) return false;
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
   if (!state.openingEstablishment?.sceneWritten) return false;
-  return isHallTalkPlayerLine(playerInput ?? lastPlayerLine(state));
+  const line = playerInput ?? lastPlayerLine(state);
+  if (asksOpeningCardNoun(state, line)) return true;
+  return isHallTalkPlayerLine(line);
 }
 
 /**
@@ -1499,7 +1543,28 @@ const NAME_STOP = new Set([
   'the', 'a', 'an', 'what', 'whats', 'going', 'on', 'please', 'confirm', 'uk', 'usa',
   'hello', 'hi', 'hey', 'yes', 'no', 'ok', 'okay', 'why',
   'refuse', 'protest', 'demand', 'wait', 'look', 'inspect', 'leave', 'stay', 'send', 'back',
+  'not', 'just', 'really', 'actually', 'never', 'none', 'sorry', 'maybe', 'well', 'still',
+  'telling', 'saying', 'giving', 'carrying', 'wearing', 'looking', 'waiting', 'going',
+  'coming', 'trying', 'asking', 'holding', 'standing', 'sitting', 'leaving', 'staying',
+  'human', 'elf', 'dwarf', 'halfling', 'orc', 'beast', 'goblin', 'here', 'there', 'man',
+  'guess', 'idk', 'dunno',
 ]);
+
+const SPECIES_WORDS = new Set([
+  'human', 'elf', 'dwarf', 'halfling', 'orc', 'beast', 'goblin', 'tiefling', 'dragonborn',
+]);
+
+function isNameRefusalUtterance(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  return (
+    /\brefuse to (?:give|say)\b/i.test(t)
+    || /\bwon'?t (?:give|say|tell)\b/i.test(t)
+    || /\bnot (?:telling|saying|giving)\b/i.test(t)
+    || /\bno name\b/i.test(t)
+    || /\bi(?:'m| am) not (?:telling|saying|giving)\b/i.test(t)
+  );
+}
 
 function titleName(raw: string): string {
   return raw
@@ -1517,28 +1582,90 @@ function titlePlace(raw: string): string {
     .join(' ');
 }
 
+function acceptHarvestedNameToken(token: string | undefined): string | null {
+  const t = token?.trim();
+  if (!t) return null;
+  const key = t.toLowerCase();
+  if (NAME_STOP.has(key) || SPECIES_WORDS.has(key) || isDeniedPcName(t)) return null;
+  if (!isLockablePcName(titleName(t))) return null;
+  return titleName(t);
+}
+
 /** Pull a real given name out of chat, not the whole sentence. */
 export function extractGivenName(raw: string): string | null {
   const text = raw.replace(/\s+/g, ' ').trim();
+  if (!text || isNameRefusalUtterance(text)) return null;
   const patterns = [
     /\bit(?:'s|s|\s+is)\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
     /\bmy\s+name\s+is\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
     /\bcall\s+me\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
     /\bname[:\s]+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+    /\bi guess(?: it'?s)?\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+    /\b([A-Za-z][A-Za-z'-]{1,20})\s+i guess\b/i,
     /\bi(?:'m|m|\s+am)\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
   ];
   for (const re of patterns) {
     const m = text.match(re);
-    const token = m?.[1]?.trim();
-    if (token && !NAME_STOP.has(token.toLowerCase()) && !isDeniedPcName(token)) {
-      return titleName(token);
-    }
+    const accepted = acceptHarvestedNameToken(m?.[1]);
+    if (accepted) return accepted;
   }
   const lonely = text.match(/^([A-Za-z][A-Za-z'-]{1,20})$/);
-  if (lonely && !NAME_STOP.has(lonely[1].toLowerCase()) && !isDeniedPcName(lonely[1])) {
-    return titleName(lonely[1]);
+  return acceptHarvestedNameToken(lonely?.[1]);
+}
+
+/** Name / species write when the field is empty — ignores the cover chip queue. */
+export function openingNameIsUnlocked(state: GameState): boolean {
+  const n = (
+    state.openingEstablishment?.answers?.name
+    ?? state.character?.name
+    ?? ''
+  ).trim();
+  return !n || /unknown survivor/i.test(n) || !isLockablePcName(n);
+}
+
+function openingSpeciesIsUnlocked(state: GameState): boolean {
+  if (state.openingEstablishment?.answers?.species?.trim()) return false;
+  if (state.openingEstablishment?.pending?.some((p) => p.kind === 'species' || p.kind === 'identity')) {
+    return true;
   }
-  return null;
+  return state.engineMode === 'dnd';
+}
+
+export function applyLedgerDeficit(state: GameState, rawInput: string): GameState {
+  const est = state.openingEstablishment;
+  if (!est) return state;
+  const answer = stripChoicePrefix(rawInput);
+  if (!answer || isNameRefusalUtterance(answer)) return state;
+  const answers = { ...est.answers };
+  let character = state.character;
+  let changed = false;
+  if (openingNameIsUnlocked(state)) {
+    const harvested = extractGivenName(answer);
+    if (harvested) {
+      answers.name = harvested;
+      character = { ...character, name: harvested.slice(0, 40) };
+      changed = true;
+    }
+  }
+  if (openingSpeciesIsUnlocked(state)) {
+    const folk = extractSpecies(answer);
+    if (folk) {
+      answers.species = folk;
+      const bio = character.bio?.trim() ? `${character.bio} ${folk}`.slice(0, 400) : folk;
+      character = {
+        ...character,
+        bio,
+        appearance: character.appearance?.trim() || folk,
+      };
+      changed = true;
+    }
+  }
+  if (!changed) return state;
+  return {
+    ...state,
+    character,
+    openingEstablishment: { ...est, answers },
+  };
 }
 
 const NOT_A_PLACE =
@@ -1648,7 +1775,7 @@ function harvestUtterance(raw: string): {
   askedWhere: boolean;
 } {
   return {
-    name: extractGivenName(raw),
+    name: isKitOrCarryInspect(raw) ? null : extractGivenName(raw),
     location: extractLocation(raw),
     appearance: extractAppearance(raw),
     kit: extractKit(raw),
@@ -1952,8 +2079,13 @@ export async function applyOpeningAnswer(
   }
 
   const est = state.openingEstablishment;
-  if (!est || est.complete || !est.pending.length) {
-    return { state, generateOpening: false };
+  if (!est) return { state, generateOpening: false };
+  if (est.complete || !est.pending.length) {
+    return {
+      state: applyLedgerDeficit(state, rawInput),
+      generateOpening: true,
+      deferToPlay: true,
+    };
   }
   const answer = stripChoicePrefix(rawInput);
   if (!answer) return { state, generateOpening: false };
@@ -2194,6 +2326,12 @@ export async function applyOpeningAnswer(
     answers[prompt.id] = locked;
     markCoverResolved(prompt, locked);
   }
+
+  nextState = applyLedgerDeficit(
+    { ...nextState, openingEstablishment: { ...est, answers, pending: stillPending } },
+    answer
+  );
+  Object.assign(answers, nextState.openingEstablishment?.answers ?? answers);
 
   const lockedName =
     answers.name?.trim()

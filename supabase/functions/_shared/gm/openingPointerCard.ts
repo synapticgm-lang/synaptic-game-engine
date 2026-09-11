@@ -256,6 +256,20 @@ function inventedTitleNames(prose: string, allow: Set<string>): string[] {
   return found.slice(0, 8);
 }
 
+/** Filter leftover — legal name-ask may keep the words; smash always repeats the stub. */
+export function hasOpeningInventSmashLeak(prose: string): boolean {
+  const withoutAsk = prose.replace(/need someone here to write/gi, '');
+  return /\bsomeone here\b/i.test(withoutAsk);
+}
+
+function openingCollidesEarthStreet(prose: string, here: string): boolean {
+  if (/\b(?:street|mall|earth|crosswalk|pavement)\b/i.test(here)) return false;
+  return (
+    /\b(?:you (?:are|wake) (?:in|on|at) (?:an? )?(?:ordinary )?(?:street|mall|apartment|earth))\b/i.test(prose)
+    || /\b(?:remember the street|cracked street|ordinary street|the street the moment)\b/i.test(prose)
+  );
+}
+
 /** Drop extra invented proper names only. Never rewrite English into "someone here". */
 export function stripOpeningInventQuota(state: GameState, prose: string, maxNew = 1): string {
   if (!prose) return prose;
@@ -276,13 +290,12 @@ export function classifyOpeningContinue(
   const reasons: string[] = [];
   let next = stripOpeningInventQuota(state, prose, openingInventBudgetZero(state) ? 0 : 1);
   const slots = compilePointerCardSlots(state);
+  if (hasOpeningInventSmashLeak(next)) {
+    reasons.push('invent-smash');
+  }
   if (slots?.where) {
     const here = slots.where.toLowerCase();
-    const moved =
-      /\b(?:you (?:are|wake) (?:in|on|at) (?:an? )?(?:ordinary )?(?:street|mall|apartment|earth))\b/i.test(next)
-      && !here.includes('street')
-      && !here.includes('earth');
-    if (moved) reasons.push('invented-earth-street');
+    if (openingCollidesEarthStreet(next, here)) reasons.push('invented-earth-street');
   }
   if (slots && slots.whoCount === 0 && /\b(handlers?|bystanders?|crowd|people who saw you)\b/i.test(next)) {
     reasons.push('invented-crowd');
@@ -294,12 +307,33 @@ export function classifyOpeningContinue(
   if (slots?.why && /bought here as a pawn|pellane'?s game/i.test(next) && !/pawn/i.test(slots.why)) {
     reasons.push('invented-why');
   }
+  if (
+    /\bnarrate this completed event\b/i.test(next)
+    || /\bcompleted event in past tense\b/i.test(next)
+    || /\bhere is the narrative of the completed event\b/i.test(next)
+    || /\badhering to the (?:provided )?guidelines\b/i.test(next)
+    || /\bYOU MAY ONLY MENTION\b/.test(next)
+    || /\bCOMPLETED EVENT:\s*/.test(next)
+  ) {
+    reasons.push('writer-monologue');
+  }
+  if (
+    /\b(?:later )?learned was called\s*[,“"']?\s*,/.test(next)
+    || /\bcalled\s+[“"']\s*,\s*[”"']/.test(next)
+  ) {
+    reasons.push('empty-here');
+  }
   const extras = inventedTitleNames(next, pointerCardAllowlist(state));
   if (openingInventBudgetZero(state) && extras.length > 0) {
     reasons.push('invent-budget');
     next = stripOpeningInventQuota(state, next, 0);
   }
-  const accept = !reasons.includes('invented-earth-street') && !reasons.includes('invented-why');
+  const accept =
+    !reasons.includes('invented-earth-street')
+    && !reasons.includes('invented-why')
+    && !reasons.includes('invent-smash')
+    && !reasons.includes('writer-monologue')
+    && !reasons.includes('empty-here');
   return { accept, prose: next.trim(), reasons };
 }
 

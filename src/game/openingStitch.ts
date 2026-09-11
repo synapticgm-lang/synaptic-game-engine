@@ -9,14 +9,18 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
 import { isLockablePcName } from './pcNameAuthority';
 import {
+  extractGivenName,
   hallTalkAsksPanel,
   hallTalkAsksRefuse,
   hallTalkAsksWant,
   hallTalkAsksWhere,
+  asksOpeningCardNoun,
   hallTalkAsksWho,
   isAloneArrivalOpening,
+  isKitOrCarryInspect,
   isEarthOriginPrompt,
   openingAlreadyToldLine,
+  openingCastLabel,
   openingRefuseLine,
   openingSpokenRefuse,
   openingSpokenWant,
@@ -256,10 +260,21 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const asksRefuse = hallTalkAsksRefuse(act);
   const asksWho = hallTalkAsksWho(act);
   const asksPanel = hallTalkAsksPanel(act);
-  const gaveName = /\b(?:my name is|i am|i'm|call me)\b/i.test(act);
+  const gaveName = !!extractGivenName(act);
   const namePlusMore = playerGaveNameAndAskedMore(act);
   const searches =
     /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
+
+  if (isKitOrCarryInspect(act) && !asksWant && !asksWho && !asksRefuse) {
+    return 'You still have what you arrived with. Nothing new is in your hands.';
+  }
+
+  const cardNoun = asksOpeningCardNoun(state, act);
+  if (cardNoun && !asksWant && !asksWho && !asksRefuse && !gaveName) {
+    const who = openingCastLabel(state);
+    const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+    return `${head} still has the ${cardNoun}. They have not said more than that.`;
+  }
 
   if (
     /\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)
@@ -275,7 +290,10 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     const found = alone
       ? `You search ${here}. Broken stone, a dark doorway, dust. Nothing useful has been left for you.`
       : `You look again ${here}. Nothing new has been left in reach.`;
-    return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
+    if (state.engineMode === 'litrpg') {
+      return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
+    }
+    return found;
   }
 
   if (gaveName && name) {

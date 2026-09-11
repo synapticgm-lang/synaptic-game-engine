@@ -416,15 +416,61 @@ export function isThornferryCluster(s: string): boolean {
 }
 
 /** Parse "Travel toward X" / "Return to X" into a known hub when possible. */
+/**
+ * Parse hub travel pads into a known hub.
+ * 08d — also accepts "Travel to X" (graphChoices) not only "Travel toward X".
+ */
 export function parseTravelDestination(
   action: string,
   bibleId: string | undefined | null
 ): OutdoorHub | null {
   const a = (action ?? '').replace(/\s+/g, ' ').trim();
-  const m = a.match(/^(?:travel\s+toward|return\s+to)\s+(.+)$/i);
+  const m = a.match(
+    /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:toward|to|for)|go\s+to|move\s+to|walk\s+to)\s+(.+)$/i
+  );
   if (!m) return null;
   const name = m[1].replace(/[.!?]+$/, '').trim();
   return matchHub(hubsForBibleId(bibleId), name);
+}
+
+/** Leave / Walk away / Leave the scene — not a named hub, but must still move HERE. */
+export function isLeaveSceneAction(action: string | undefined): boolean {
+  const a = (action ?? '').replace(/\s+/g, ' ').trim();
+  if (!a) return false;
+  return /^(?:leave(?:\s+the\s+scene)?|walk\s+away|go\s+another\s+direction|exit(?:\s+the\s+(?:room|scene|area))?)\b/i.test(
+    a
+  );
+}
+
+/**
+ * Destination when the player leaves without naming a hub.
+ * Prefer previous hub / sheet; else first alternate outdoor hub.
+ * Returns a display name that must differ from HERE.
+ */
+export function resolveLeaveSceneDestination(
+  state: {
+    currentLocation?: string | null;
+    previousLocationSheet?: { name?: string } | null;
+    campaignBibleId?: string | null;
+    bibleId?: string | null;
+  }
+): string | null {
+  const bibleId = state.campaignBibleId ?? state.bibleId;
+  const hubs = hubsForBibleId(bibleId);
+  const here = (state.currentLocation ?? '').trim().toLowerCase();
+  const prev = (state.previousLocationSheet?.name ?? '').trim();
+  if (prev && prev.toLowerCase() !== here) {
+    const hit = matchHub(hubs, prev);
+    if (hit) return hit.name;
+    return prev;
+  }
+  for (const h of hubs) {
+    if (h.name.toLowerCase() === here) continue;
+    if (here.includes(h.name.toLowerCase()) || h.name.toLowerCase().includes(here)) continue;
+    return h.name;
+  }
+  const alt = hubs.find((h) => h.name.toLowerCase() !== here);
+  return alt?.name ?? null;
 }
 
 /**

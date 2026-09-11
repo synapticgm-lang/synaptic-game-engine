@@ -63,6 +63,7 @@
 | **11c** | Why-help reprinted the Who already-told line | `openingAlreadyToldLine(who\|want)`; empty want fallback is not spoken; refuse phrases stay hall talk | Who and want shared one identity already-told |
 | **11d** | Refuse reprinted the want already-told line | `hallTalkAsksRefuse` + `openingAlreadyToldLine(refuse)` / `shortCardCost`; empty refuse fallback is a different sentence | 11c glued refuse onto the want slot |
 | **11e** | Greyhollow T10 Ask-what-they-want left stitch; writer invented kit + reused Who quote | `headlessFateTurn` uses `shouldStitchOpeningContinue` after covers (same as live `useGame`); first ask speaks, repeat is already-told | Live Drive T9+ Fate-picks chips; Fate never called the live hall-talk gate |
+| **11f** | Salt/PYOA T2 name never locked after covers; actually-want → Silent; kit inspect harvested Carrying | `applyLedgerDeficit` writes unlocked name/species ignoring empty `pending`; hall topics by inclusion; kit inspect is a carry receipt; leftover ask same turn | `coversPending` was treated as the write gate; want regex was exact-phrase; `I am [token]` harvested gerunds |
 
 ### Quest / journal (Class C)
 

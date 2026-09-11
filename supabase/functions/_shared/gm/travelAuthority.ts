@@ -19,7 +19,7 @@ export interface CameraLock {
 }
 
 const TRAVEL_COMMIT =
-  /\b(travel(?:\s+toward)?|return to|enter|go (?:inside|in|through|into)|walk(?:\s+\w+){0,4}\s+(?:through|into|inside)|step (?:inside|through|into)|leave|exit|flee|run away|head (?:inside|through|into|to)|open the door|through the (?:door|threshold)|into the (?:foyer|entry|hall|room))\b/i;
+  /\b(travel(?:\s+(?:toward|to|into))?|return to|enter|go (?:inside|in|through|into|to)|walk(?:\s+\w+){0,4}\s+(?:through|into|inside|to)|step (?:inside|through|into)|leave(?:\s+the\s+scene)?|exit|flee|run away|head (?:inside|through|into|to|toward|for)|open the door|through the (?:door|threshold)|into the (?:foyer|entry|hall|room))\b/i;
 
 const OUTDOOR_CAMERA =
   /\b(mosaic|bombardment|under fire|open (?:air|street)|outdoors?|outside|cracked street|street tiles|sky overhead|rain on|under the sky)\b/i;
@@ -40,7 +40,7 @@ export function playerCommittedTravel(input: string | undefined): boolean {
 export function playerCommittedArrivalTravel(input: string | undefined): boolean {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
-  return /^(?:travel\s+toward|return\s+to|enter\b|go (?:inside|in|through|into)|head (?:inside|through|into|to))\b/i.test(
+  return /^(?:travel\s+(?:toward|to)|return\s+to|enter\b|go (?:inside|in|through|into)|head (?:inside|through|into|to|toward|for))\b/i.test(
     t
   );
 }

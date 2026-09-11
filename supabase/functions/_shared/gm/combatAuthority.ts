@@ -97,14 +97,51 @@ export function formatLastKillSnapshotLine(lastKill?: LastKill | null): string |
   return `Last kill: ${lastKill.name} (${lastKill.outcome}, T${lastKill.turn}).`;
 }
 
-/** True when `token` is the lastKill foe (full name or last token ≥5 chars). */
+/**
+ * Talk/Ask/Offer/Listen pads that name lastKill as if they were still living.
+ * Loot/body inspect stay legal. 08d — also catches Offer + possessive mash
+ * ("Offer Hunter Skirmisher's", "Ask … Skirmisher's what they want").
+ */
+export function isLastKillTalkPad(label: string, lastKill?: LastKill | null): boolean {
+  if (!lastKill?.name || lastKill.outcome !== 'victory') return false;
+  if (/\b(loot|search the (?:body|corpse)|inspect (?:the )?(?:body|corpse)|search remains)\b/i.test(label)) {
+    return false;
+  }
+  // Social verbs — living talk on a corpse is illegal
+  if (
+    !/\b(talk(?:\s+to)?|ask|speak|listen|press(?:\s+for)?|offer|bargain|negotiate|greet|approach)\b/i.test(
+      label
+    )
+  ) {
+    // Still cull bare "Hunter Skirmisher's …" social mash without a verb
+    if (!matchesLastKillName(label, lastKill)) return false;
+    if (!/\b(what they want|what (?:he|she|they) want|about|with)\b/i.test(label)) return false;
+  }
+  return matchesLastKillName(label, lastKill);
+}
+
+/** True when `token` is the lastKill foe (full name, role token, or possessive mash). */
 export function matchesLastKillName(token: string, lastKill?: LastKill | null): boolean {
   const needle = (lastKill?.name ?? '').trim().toLowerCase();
-  const t = (token ?? '').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '');
+  let t = (token ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/^(?:the|a|an)\s+/, '')
+    .replace(/['’]s\b/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (!needle || !t) return false;
-  if (t === needle || t.includes(needle) || needle.includes(t)) return true;
-  const last = needle.split(/\s+/).pop() ?? '';
-  return last.length >= 5 && (t === last || t.endsWith(` ${last}`));
+  const needleBare = needle.replace(/['’]s\b/g, '');
+  if (t === needleBare || t.includes(needleBare) || needleBare.includes(t)) return true;
+  const parts = needleBare.split(/\s+/).filter(Boolean);
+  const last = parts[parts.length - 1] ?? '';
+  if (last.length >= 5 && (t === last || t.endsWith(` ${last}`) || t.includes(last))) return true;
+  // "Hunter Skirmisher" ↔ "Pact-Hunter Skirmisher"
+  if (parts.length >= 2) {
+    const tail = parts.slice(-2).join(' ');
+    if (tail.length >= 8 && (t === tail || t.includes(tail) || tail.includes(t))) return true;
+  }
+  return false;
 }
 
 const DEAD_FOE_CORPSE_OK =

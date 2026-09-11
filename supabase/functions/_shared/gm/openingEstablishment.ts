@@ -16,14 +16,26 @@ export function hallTalkAsksWho(raw: string): boolean {
 export function hallTalkAsksWant(raw: string): boolean {
   const t = raw ?? '';
   if (/\bask\b.+\bwhat they want\b/i.test(t) && !/\bask what they want\b/i.test(t)) return false;
-  return /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b/i.test(t);
+  if (/\bi want to (?:leave|go|walk|run)\b/i.test(t) && !/\bwhat\b/i.test(t)) return false;
+  return (
+    /\bwhat\b.{0,32}\bwant\b/i.test(t)
+    || /\bask what they want\b/i.test(t)
+    || /\bwhat they want\b/i.test(t)
+    || /\bwhat'?s going on\b/i.test(t)
+    || /\bwhy should i(?: help)?\b/i.test(t)
+    || /\bwhat(?:'s| is|s)\b.{0,24}\b(?:actual(?:ly)? )?deal\b/i.test(t)
+  );
 }
 
 export function hallTalkAsksRefuse(raw: string): boolean {
   const t = raw ?? '';
   if (!t.trim()) return false;
   if (/\brefuse to (?:give|say)\b/i.test(t)) return false;
-  return /\bwhat happens if i refuse\b|\bif i refuse\b/i.test(t);
+  return (
+    /\bwhat happens if i refuse\b/i.test(t)
+    || /\b(?:if|when|should) i refuse\b/i.test(t)
+    || (/\brefuse\b/i.test(t) && !/\brefuse to (?:give|say)\b/i.test(t))
+  );
 }
 
 export function hallTalkAsksPanel(raw: string): boolean {

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getCampaignBibleById } from '@/data/campaigns';
 import {
   criticLiveDriveTurn,
+  liveDriveAltHumanLines,
   liveDriveScriptedLines,
   reopenCoversForLiveDrive,
 } from './liveDrive';
@@ -30,6 +31,16 @@ describe('playtest09c — live drive harness', () => {
 
   it('storyfollower first line is the live why-name type-in', () => {
     expect(liveDriveScriptedLines('storyfollower', 'litrpg')[0]).toMatch(/why do you want that/i);
+  });
+
+  it('alt-human locks name/folk and stays on ledger nouns', () => {
+    expect(liveDriveAltHumanLines('litrpg')).toHaveLength(10);
+    expect(liveDriveAltHumanLines('litrpg')[1]).toMatch(/My name is Jax/i);
+    expect(liveDriveAltHumanLines('dnd')[1]).toMatch(/Jax/);
+    expect(liveDriveAltHumanLines('dnd')[1]).toMatch(/human/i);
+    expect(liveDriveAltHumanLines('rpg')[1]).toMatch(/My name is Jax/i);
+    expect(liveDriveAltHumanLines('pyoa')[1]).toMatch(/My name is Jax/i);
+    expect(liveDriveAltHumanLines('dnd').join(' ')).not.toMatch(/satchel|Kael|silver|ferry/i);
   });
 
   it('critic thumbs packet echo and leftover name chips', () => {

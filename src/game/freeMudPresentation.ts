@@ -5,7 +5,12 @@
  */
 
 import { assemblePacketStitch, type CompletedEventPacket } from './completedEventPacket';
-import { hallTalkAsksPanel, hallTalkAsksRefuse, playerAskedWhyPulled } from './openingEstablishment';
+import {
+  hallTalkAsksPanel,
+  hallTalkAsksRefuse,
+  isHallTalkPlayerLine,
+  playerAskedWhyPulled,
+} from './openingEstablishment';
 import type { HostedAiTier } from './testLab';
 import { effectiveWriterTier } from './testLab';
 
@@ -54,6 +59,7 @@ export function shouldSkipMicroFlavor(): boolean {
 export function isSilentReceiptAction(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
+  if (isHallTalkPlayerLine(t)) return false;
   if (hallTalkAsksPanel(t)) return false;
   if (hallTalkAsksRefuse(t)) return false;
   if (playerAskedWhyPulled(t)) return false;

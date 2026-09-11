@@ -4,6 +4,15 @@ import type { GameState } from './types.ts';
  * Location name safe to put in player-facing prose or GM prompts.
  * Encyclopedia lore titles (e.g. "Dungeon Zones & Dead Zones") are not places.
  */
+/** Strip leading "alone in …" meta so grammar stays clean. */
+export function cleanPlaceLabel(place: string): string {
+  return (place ?? '')
+    .replace(/^\s*alone\s+in\s+/i, '')
+    .replace(/^\s*alone\s*,\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim() || 'here';
+}
+
 export function playerFacingLocation(state: GameState): string {
   const raw =
     state.locationSheet?.name

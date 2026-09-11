@@ -15,6 +15,7 @@ import { sealedCastNames } from './beatContract.ts';
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger.ts';
 import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue.ts';
 import { ledgerNeverCastTitles } from './neverCast.ts';
+import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority.ts';
 
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
@@ -214,7 +215,10 @@ export function closedUniverseFallbacks(
     if (fleeAvailable(state.activeEncounter)) out.push('Try to flee');
     if (parleyAvailable(state.activeEncounter)) out.push('Parley');
   }
-  const people = sealedCastNames(state);
+  const lastKill = state.sceneFacts?.lastKill;
+  const people = sealedCastNames(state).filter(
+    (p) => !matchesLastKillName(p, lastKill) && !isLastKillTalkPad(`Talk to ${p}`, lastKill)
+  );
   for (const p of people.slice(0, 2)) {
     if (/sergeant|guard|warden/i.test(p)) out.push(`Talk to ${p}`);
     else if (/fence|contact|handler|merchant|vendor/i.test(p)) out.push(`Talk to ${p}`);
@@ -236,7 +240,9 @@ export function closedUniverseFallbacks(
   for (const pad of banks) {
     if (!out.some((c) => c.toLowerCase() === pad.toLowerCase())) out.push(pad);
   }
-  const kept = filterPadsByUniverse(out, excluded, state);
+  const kept = filterPadsByUniverse(out, excluded, state).filter(
+    (p) => !isLastKillTalkPad(p, lastKill)
+  );
   if (kept.length) return kept;
   return ['Inspect the immediate surroundings'];
 }

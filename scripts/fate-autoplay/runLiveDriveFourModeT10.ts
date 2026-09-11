@@ -12,6 +12,7 @@ import {
   liveDriveGeminiBrief,
   pickLiveDriveLine,
   reopenCoversForLiveDrive,
+  type LiveDriveScriptId,
   type LiveDriveTurnRecord,
 } from '../../src/game/liveDrive';
 import {
@@ -76,7 +77,16 @@ const CELLS: Cell[] = [
 
 const TURNS = 10;
 const SEED = 42;
-const OUT_ROOT = join(process.cwd(), 'scripts/fate-autoplay/runs/gemini-paste-2026-09-11e-livedrive-t10');
+const SCRIPT: LiveDriveScriptId =
+  process.argv.includes('--alt-human') || process.env.LIVE_DRIVE_SCRIPT === 'alt-human'
+    ? 'alt-human'
+    : 'storyfollower';
+const OUT_ROOT = join(
+  process.cwd(),
+  SCRIPT === 'alt-human'
+    ? 'scripts/fate-autoplay/runs/gemini-paste-2026-09-11f-althuman-t10'
+    : 'scripts/fate-autoplay/runs/gemini-paste-2026-09-11f-livedrive-t10'
+);
 
 function installNodeShims(): void {
   const store = new Map<string, string>();
@@ -152,7 +162,7 @@ async function runCell(cell: Cell, settings: Settings): Promise<{
 
   for (let i = 0; i < TURNS; i++) {
     const started = Date.now();
-    const scripted = pickLiveDriveLine(cell.persona, cell.mode, scriptedIndex);
+    const scripted = pickLiveDriveLine(cell.persona, cell.mode, scriptedIndex, SCRIPT);
     const coverPending = isOpeningEstablishmentPending(state);
     const hallTalk = shouldStitchOpeningContinue(state, scripted ?? '');
     if (coverPending || hallTalk) {
@@ -267,7 +277,12 @@ async function main(): Promise<void> {
   mkdirSync(OUT_ROOT, { recursive: true });
 
   const parts: string[] = [
-    liveDriveGeminiBrief().replace('4×T20', '4×T10').replace('2026-09-09c', BUILD_STAMP),
+    liveDriveGeminiBrief()
+      .replace('4×T20', SCRIPT === 'alt-human' ? '4×T10 alt-human' : '4×T10')
+      .replace('2026-09-09c', BUILD_STAMP)
+      + (SCRIPT === 'alt-human'
+        ? '\nScript: **alt-human** — clearer name/folk lock, grounded book/pouch/charter/kit asks. Same stitch law. Do not invent CAST or want.\n'
+        : ''),
   ];
   const index: Array<{ cell: string; hard: number; thumbs: number }> = [];
 
@@ -318,7 +333,7 @@ async function main(): Promise<void> {
   writeFileSync(join(OUT_ROOT, 'ALL-MODES__gemini-pro-PASTE.md'), parts.join('\n'));
   writeFileSync(
     join(OUT_ROOT, 'INDEX.json'),
-    JSON.stringify({ stamp: BUILD_STAMP, seed: SEED, turns: TURNS, cells: index, outDir: OUT_ROOT }, null, 2) + '\n'
+    JSON.stringify({ stamp: BUILD_STAMP, seed: SEED, turns: TURNS, script: SCRIPT, cells: index, outDir: OUT_ROOT }, null, 2) + '\n'
   );
   console.log(`[live-drive-t10] paste → ${OUT_ROOT}`);
 }

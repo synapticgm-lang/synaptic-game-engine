@@ -99,6 +99,69 @@ function inspectLine(mode: EngineMode | undefined): string {
   return 'Inspect the room';
 }
 
+export type LiveDriveScriptId = 'storyfollower' | 'alt-human';
+
+/**
+ * Second human — clearer name lock, Greyhollow folk, grounded asks (book / pouch / charter / kit).
+ * Ten lines so T1–T10 stay typed. Does not invent want, kit, or CAST.
+ */
+export function liveDriveAltHumanLines(mode?: EngineMode): string[] {
+  if (mode === 'dnd') {
+    return [
+      "Where am I? This heat isn't right.",
+      "I'm Jax. I'm human.",
+      'Look at the innkeep and that book',
+      'Who are you?',
+      'What do you actually want from me?',
+      'What happens if I refuse?',
+      'Look around',
+      "What's in the book?",
+      'Wait',
+      'Ask what they want',
+    ];
+  }
+  if (mode === 'rpg') {
+    return [
+      "What's going on? Why is your hand on that pouch?",
+      'My name is Jax.',
+      'Inspect the room',
+      'Who are you?',
+      'What do you want from me?',
+      'What happens if I refuse?',
+      'Look around',
+      'Look at the pouch',
+      'Wait',
+      'Ask what they want',
+    ];
+  }
+  if (mode === 'pyoa') {
+    return [
+      'Where is this? Who are you?',
+      'My name is Jax.',
+      'Inspect Wren and the room',
+      "What's the charter for?",
+      'What do you want from me?',
+      'What happens if I refuse?',
+      'Look around',
+      'Ask what they want',
+      'Wait',
+      'Look at the landing',
+    ];
+  }
+  return [
+    "Where am I and why is there a blue panel?",
+    'My name is Jax. Who are you?',
+    'Inspect the panel',
+    'What do you want from me?',
+    'Why should I help you?',
+    'What happens if I refuse?',
+    'Look around',
+    'Check what I am carrying',
+    'Wait',
+    'Ask what they want',
+  ];
+}
+
 /** Human typed first beats — John's live false-start plus persona variants. */
 export function liveDriveScriptedLines(persona: AiAgentMode, mode?: EngineMode): string[] {
   const inspect = inspectLine(mode);
@@ -131,8 +194,10 @@ export function liveDriveScriptedLines(persona: AiAgentMode, mode?: EngineMode):
 export function pickLiveDriveLine(
   persona: AiAgentMode,
   mode: EngineMode | undefined,
-  scriptedIndex: number
+  scriptedIndex: number,
+  script: LiveDriveScriptId = 'storyfollower'
 ): string | undefined {
+  if (script === 'alt-human') return liveDriveAltHumanLines(mode)[scriptedIndex];
   return liveDriveScriptedLines(persona, mode)[scriptedIndex];
 }
 
