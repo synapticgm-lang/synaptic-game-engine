@@ -15,6 +15,9 @@ import {
 import { stitchOpeningContinue } from './openingStitch';
 import { shouldSkipHardGate, validateActionHard } from './actionValidation';
 import { findHardItemUseClaims } from './suggestionValidation';
+import { buildNewGameState, stampOpening } from './fateAutoplay';
+import { criticLiveDriveTurn, reopenCoversForLiveDrive } from './liveDrive';
+import { getCampaignBibleById } from '@/data/campaigns';
 import type { GameState } from './types';
 
 function cathedral(): GameState {
@@ -118,6 +121,54 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
     expect(findHardItemUseClaims(line, cathedral())).toEqual([]);
     expect(shouldSkipHardGate(line, cathedral())).toBe(true);
     expect(validateActionHard(line, cathedral(), '').valid).toBe(true);
+  });
+
+  it('seed-42 Live Drive who-asks speak, with no Pactborn on tabletop or panel-Wren', () => {
+    const cells = [
+      { bibleId: 'summoned-pact', mode: 'litrpg' as const, personality: 'cold-system' },
+      { bibleId: 'cursed-keep', mode: 'dnd' as const, personality: 'dry-wit' },
+      { bibleId: 'salt-road-heist', mode: 'rpg' as const, personality: 'fireside' },
+      { bibleId: 'thornferry-road', mode: 'pyoa' as const, personality: 'mission-lead' },
+    ];
+    for (const cell of cells) {
+      const bible = getCampaignBibleById(cell.bibleId);
+      expect(bible).toBeTruthy();
+      const { state: raw } = buildNewGameState({
+        bibleId: cell.bibleId,
+        characterName: 'Jax',
+        seed: 42,
+        personality: cell.personality,
+        engineMode: cell.mode,
+      });
+      const opened = stampOpening(reopenCoversForLiveDrive(raw, bible!));
+      const named = {
+        ...opened,
+        character: { ...opened.character, name: 'Jax' },
+        openingEstablishment: {
+          ...opened.openingEstablishment!,
+          pending: [],
+          complete: true,
+          answers: { ...(opened.openingEstablishment?.answers ?? {}), name: 'Jax' },
+        },
+      };
+      const who = stitchOpeningContinue(named, 'Who are you? Answer me properly.');
+      expect(who, cell.bibleId).toMatch(/"/);
+      expect(who, cell.bibleId).not.toMatch(/is the one asking/i);
+      if (cell.mode === 'dnd') expect(who).not.toMatch(/Pactborn|Calamity Mark/i);
+      if (cell.mode === 'pyoa') expect(who).not.toMatch(/the panel (?:is|answers)/i);
+      const flags = criticLiveDriveTurn({
+        story: who,
+        pads: ['Ask what they want'],
+        player: 'Who are you? Answer me properly.',
+        prevStories: [],
+        coversPending: false,
+        nameLocked: 'Jax',
+        state: named,
+      });
+      expect(flags.some((f) => f.code === 'npc-non-answer' || f.code === 'one-line-no-npc'), cell.bibleId).toBe(
+        false
+      );
+    }
   });
 
   it('Who chip starves after a who-ask', () => {
