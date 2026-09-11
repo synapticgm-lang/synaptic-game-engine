@@ -1036,7 +1036,7 @@ export function hallTalkAsksWant(raw: string): boolean {
     return false;
   }
   return (
-    /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i\b|\bwhy\b.*\bname\b/i.test(
+    /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b|\bwhat happens if i refuse\b|\bif i refuse\b|\bwhy\b.*\bname\b/i.test(
       t
     )
   );
@@ -1297,8 +1297,16 @@ export function openingSpokenWant(state: GameState): string {
   return `${head} ${verb} you. "${body}"`;
 }
 
-export function openingAlreadyToldLine(state: GameState): string {
+export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' = 'who'): string {
   const who = openingCastLabel(state);
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  if (topic === 'want') {
+    const body = [shortCardWant(state), shortCardOffer(state)].filter(Boolean).join(' ').trim();
+    if (!body || /they have not said what they want yet/i.test(body)) {
+      return 'They have not said what they want yet.';
+    }
+    return `${head} already said it. "${body}"`;
+  }
   const quote = openingSpokenIdentityQuote(who, {
     location: state.currentLocation,
     engineMode: state.engineMode,
@@ -1314,7 +1322,6 @@ export function openingAlreadyToldLine(state: GameState): string {
   }
   if (/\benvoys?\b/i.test(who)) return 'The envoys already said that. The maps have not moved.';
   if (/\bpanel\b/i.test(who)) return 'The panel already holds what it will say.';
-  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   return quote ? `${head} already said it. ${quote}` : `${head} already answered you.`;
 }
 

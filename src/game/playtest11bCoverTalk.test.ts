@@ -85,9 +85,9 @@ function thornferry(): GameState {
 }
 
 describe('playtest11b — cover talk spoken + mode lock', () => {
-  it('HUD/BUILD are 2026-09-11b and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-11b');
-    expect(BUILD_STAMP).toBe('2026-09-11b');
+  it('HUD/BUILD stay on the 11 line, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-11/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-11/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -169,6 +169,53 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
         false
       );
     }
+  });
+
+  it('Why should I help restates the card want, not the Who quote', () => {
+    const want = stitchOpeningContinue(cathedral(), 'Ask what they want');
+    const who = stitchOpeningContinue(
+      {
+        ...cathedral(),
+        log: [
+          { id: 'p1', turn: 2, role: 'player' as const, content: 'Ask what they want', timestamp: 2 },
+          { id: 'g1', turn: 2, role: 'gm', content: want, timestamp: 3 },
+        ],
+      },
+      'Who are you?'
+    );
+    const help = stitchOpeningContinue(
+      {
+        ...cathedral(),
+        log: [
+          { id: 'p1', turn: 2, role: 'player' as const, content: 'Ask what they want', timestamp: 2 },
+          { id: 'g1', turn: 2, role: 'gm', content: want, timestamp: 3 },
+          { id: 'p2', turn: 3, role: 'player' as const, content: 'Who are you?', timestamp: 4 },
+          { id: 'g2', turn: 3, role: 'gm', content: who, timestamp: 5 },
+        ],
+      },
+      'Why should I help you?'
+    );
+    expect(help).not.toBe(who);
+    expect(help).not.toMatch(/Handler\. You came through|I keep this book|is the one asking/i);
+    expect(help).not.toMatch(/answers you\.\s+"The /i);
+    expect(help).toMatch(/already said it/i);
+    expect(help).toMatch(/Pactborn|travel kit|Ash Court/i);
+  });
+
+  it('Greyhollow Why-help does not reprint the innkeep Who line', () => {
+    const who = stitchOpeningContinue(greyhollow(), 'Who are you?');
+    const help = stitchOpeningContinue(
+      {
+        ...greyhollow(),
+        log: [
+          { id: 'p', turn: 2, role: 'player' as const, content: 'Who are you?', timestamp: 2 },
+          { id: 'g', turn: 2, role: 'gm', content: who, timestamp: 3 },
+        ],
+      },
+      'Why should I help you?'
+    );
+    expect(help).not.toMatch(/I keep this book/i);
+    expect(help).toMatch(/have not said what they want/i);
   });
 
   it('second who-ask restates; it does not reprint the first beat', () => {

@@ -188,6 +188,7 @@ function lastGmBodies(state: GameState): string[] {
 function clauseAlreadySpoken(state: GameState, clause: string): boolean {
   const n = (clause ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   if (n.length < 16) return false;
+  if (n.includes('they have not said what they want yet')) return false;
   const key = n.slice(0, 48);
   return lastGmBodies(state).some((g) => g.toLowerCase().includes(key));
 }
@@ -240,7 +241,8 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const want = openingSpokenWant(state);
   const ledgerWant = openingWantLine(state);
   const whoLine = openingWhoAskLine(state);
-  const alreadyTold = openingAlreadyToldLine(state);
+  const alreadyToldWho = openingAlreadyToldLine(state, 'who');
+  const alreadyToldWant = openingAlreadyToldLine(state, 'want');
   const asksWhere = hallTalkAsksWhere(act);
   const asksWhy = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
@@ -271,12 +273,12 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (gaveName && name) {
     const bits = [`They have the name ${name}.`];
     if (asksWhere || namePlusMore) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyTold : whoLine);
+    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
     if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
     if (asksWant || asksWhy || namePlusMore) {
       bits.push(
         clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
-          ? alreadyTold
+          ? alreadyToldWant
           : want || 'They have not said what they want yet.'
       );
     }
@@ -286,12 +288,12 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (asksWhere || asksWhy || asksWant || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyTold : whoLine);
+    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
     if (asksPanel) bits.push('The blue panel is yours — a System window at eye level, not a person.');
     if (asksWhy || asksWant) {
       bits.push(
         clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
-          ? alreadyTold
+          ? alreadyToldWant
           : want || (name ? 'They have not said what they want yet.' : 'The panel wants a name to write. It does not say why.')
       );
       if (!asksWhere && !name) bits.push(`You are ${here}.`);

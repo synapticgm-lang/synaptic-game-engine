@@ -111,9 +111,9 @@ describe('playtest10j — west wall NPC voice', () => {
       }),
       'You ask why should I join you? What do you want from me'
     );
-    expect(second).toMatch(/already answered|spear has not moved/i);
+    expect(second).toMatch(/already said it|already answered|spear has not moved/i);
     expect(second).not.toBe(first);
-    expect(second).not.toMatch(/The rite already failed for someone else/i);
+    expect(second).toMatch(/"/);
   });
 
   it('Where am I does not reprint the name-lock telegram', () => {

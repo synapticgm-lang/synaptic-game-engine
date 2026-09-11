@@ -60,6 +60,7 @@
 | **10i** | Cathedral: name+why → “They have the name Jax.” (felt like no reply); who-ask denied the locked name | Stitch answers why via `playerAskedWhyPulled`; name-plus-more always gets HERE+want; who-line honors locked name; auto-named pads stay cover-only; `hasRealGmStory` paints ≥8 so a 23-char telegram is not invisible | 10f only glued want onto `whats going on` / `why.*name`; Usual Self made cover-pad lock miss; 24-char paint gate hid the stitch |
 | **10j** | West wall: who/want/where reprint the card; Who are you → panel; start still barks for a name | Occupancy beats `no priests`; CAST speaks the want; second ask is already-told; Continue restamps occupied openings | Hall talk stayed a slot dump; `aloneArrival` early-return skipped page CAST |
 | **11b** | Who/why stubs; Pactborn on Greyhollow; Wren as panel; “pull me here” invent-gate | Spoken CAST quote; mode-safe identity; Wren/Vessa/innkeep before priest; `pull out` only; hall talk skips hard gate | Cover stayed on stitch (10g) but banks still refused to speak |
+| **11c** | Why-help reprinted the Who already-told line | `openingAlreadyToldLine(who\|want)`; empty want fallback is not spoken; refuse phrases stay hall talk | Who and want shared one identity already-told |
 
 ### Quest / journal (Class C)
 
