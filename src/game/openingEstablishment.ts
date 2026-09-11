@@ -1343,6 +1343,10 @@ export function coverContinuePads(state: GameState): string[] {
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) {
     const chips = establishmentChoices(state.openingEstablishment?.pending ?? [], state);
     if (chips.length) return chips.slice(0, 2);
+    const locked = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
+    if (locked && isLockablePcName(locked) && !/unknown survivor/i.test(locked)) {
+      return ['Ask what they want', 'Look around'];
+    }
     return ['Give your name', 'Refuse to give a name'];
   }
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();

@@ -20,7 +20,7 @@ import {
   stampOpening,
   type AiAgentMode,
 } from '../../src/game/fateAutoplay';
-import { isOpeningEstablishmentPending } from '../../src/game/openingEstablishment';
+import { isOpeningEstablishmentPending, shouldStitchOpeningContinue } from '../../src/game/openingEstablishment';
 import { createDefaultSettings } from '../../src/game/defaults';
 import { mulberry32 } from '../../src/game/fatePick';
 import { enableAutoplayTestLab } from '../../src/game/testLab';
@@ -154,7 +154,8 @@ async function runCell(cell: Cell, settings: Settings): Promise<{
     const started = Date.now();
     const scripted = pickLiveDriveLine(cell.persona, cell.mode, scriptedIndex);
     const coverPending = isOpeningEstablishmentPending(state);
-    if (coverPending) {
+    const hallTalk = shouldStitchOpeningContinue(state, scripted ?? '');
+    if (coverPending || hallTalk) {
       const playerInput = scripted ?? 'Look around';
       if (scripted) scriptedIndex += 1;
       const next = await headlessOpeningContinueTurn(state, playerInput);

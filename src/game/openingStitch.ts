@@ -271,7 +271,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (gaveName && name) {
     const bits = [`They have the name ${name}.`];
     if (asksWhere || namePlusMore) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(whoLine);
+    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyTold : whoLine);
     if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
     if (asksWant || asksWhy || namePlusMore) {
       bits.push(
@@ -286,7 +286,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (asksWhere || asksWhy || asksWant || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(whoLine);
+    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyTold : whoLine);
     if (asksPanel) bits.push('The blue panel is yours — a System window at eye level, not a person.');
     if (asksWhy || asksWant) {
       bits.push(

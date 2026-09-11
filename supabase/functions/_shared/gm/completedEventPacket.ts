@@ -1075,7 +1075,13 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
     );
   }
   if (asksPanel) bits.push('The blue panel was yours — a System window, not a person.');
-  if (asksWant) bits.push(want || `${who} had not said what they wanted yet.`);
+  if (asksWant) {
+    bits.push(
+      want
+        ? `${who.charAt(0).toUpperCase() + who.slice(1)} answers you. "${want}"`
+        : `${who} had not said what they wanted yet.`
+    );
+  }
   if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);
   return bits.join(' ').replace(/\s+/g, ' ').trim();
 }

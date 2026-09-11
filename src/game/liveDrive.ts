@@ -321,7 +321,7 @@ export async function headlessOpeningContinueTurn(
   let pads: string[] | undefined = pending.length
     ? establishmentChoices(pending, openingState)
     : undefined;
-  if (!pending.length) {
+  if (!pending.length || !pads?.length) {
     pads = coverContinuePads({
       ...openingState,
       openingEstablishment: harvested ?? openingState.openingEstablishment,

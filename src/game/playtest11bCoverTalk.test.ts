@@ -171,6 +171,35 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
     }
   });
 
+  it('second who-ask restates; it does not reprint the first beat', () => {
+    const first = stitchOpeningContinue(cathedral(), 'Who are you?');
+    const second = stitchOpeningContinue(
+      {
+        ...cathedral(),
+        log: [
+          { id: 'p', turn: 2, role: 'player' as const, content: 'Who are you?', timestamp: 2 },
+          { id: 'g', turn: 2, role: 'gm', content: first, timestamp: 3 },
+        ],
+      },
+      'Who are you? Answer me properly.'
+    );
+    expect(second).toMatch(/already said|already answered/i);
+    expect(second).toMatch(/"/);
+    expect(second).not.toBe(first);
+  });
+
+  it('name-locked species cover does not keep Give your name', () => {
+    const dnd = {
+      ...greyhollow(),
+      openingEstablishment: {
+        ...greyhollow().openingEstablishment!,
+        complete: false,
+        pending: [{ id: 'species', kind: 'species' as const, question: 'What folk are you?' }],
+      },
+    };
+    expect(coverContinuePads(dnd).join(' ')).not.toMatch(/Give your name/i);
+  });
+
   it('Who chip starves after a who-ask', () => {
     const asked = {
       ...cathedral(),
