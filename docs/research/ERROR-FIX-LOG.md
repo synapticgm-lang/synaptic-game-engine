@@ -58,6 +58,7 @@
 | **10g** | First typed line Failed to fetch; catch `contentSanitized is not defined` | Hall Q&A back on local stitch; edge `searchContinuity` / `openingEstablishment` stubs; catch uses `sanitizedInput` | 10f sent talk to `gm-turn`; edge sceneFacts imported a missing export; Silent had hidden the 503 |
 | **10h** | Watchtower: Inspect the panel → room look; explore-or → force door; name ask after Jax; “Jaxax” plate | `hallTalkAsksPanel` + Silent skip; explore compound-target; drop locked name-ask tail; System UI mono | 10g hall regex required “blue panel”; 21j skip missed `explore`; authored page1 always asks a name |
 | **10i** | Cathedral: name+why → “They have the name Jax.” (felt like no reply); who-ask denied the locked name | Stitch answers why via `playerAskedWhyPulled`; name-plus-more always gets HERE+want; who-line honors locked name; auto-named pads stay cover-only; `hasRealGmStory` paints ≥8 so a 23-char telegram is not invisible | 10f only glued want onto `whats going on` / `why.*name`; Usual Self made cover-pad lock miss; 24-char paint gate hid the stitch |
+| **10j** | West wall: who/want/where reprint the card; Who are you → panel; start still barks for a name | Occupancy beats `no priests`; CAST speaks the want; second ask is already-told; Continue restamps occupied openings | Hall talk stayed a slot dump; `aloneArrival` early-return skipped page CAST |
 
 ### Quest / journal (Class C)
 

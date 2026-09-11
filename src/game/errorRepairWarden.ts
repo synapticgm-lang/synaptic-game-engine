@@ -210,26 +210,43 @@ export function isDnsResolutionFailure(err: unknown): boolean {
 
 function stampAloneArrival(state: GameState, notes: ErrorRepairNote[]): GameState {
   const est = state.openingEstablishment;
-  if (!est || est.aloneArrival !== undefined) return state;
+  if (!est) return state;
   if (state.campaignBibleId !== 'summoned-pact') return state;
   const alone = isAloneArrivalPick({
     text: est.pickedHook,
     location: state.currentLocation,
     fallback: est.pickedHookFallback,
+    page1: est.pickedHookFallback,
   });
-  notes.push({
-    class: 'opening_contract',
-    code: 'ERR_ALONE_STAMP',
-    detail: alone ? 'stamped aloneArrival=true from hook' : 'stamped aloneArrival=false',
-  });
-  return {
-    ...state,
-    openingEstablishment: { ...est, aloneArrival: alone },
-  };
+  if (est.aloneArrival === undefined) {
+    notes.push({
+      class: 'opening_contract',
+      code: 'ERR_ALONE_STAMP',
+      detail: alone ? 'stamped aloneArrival=true from hook' : 'stamped aloneArrival=false',
+    });
+    return {
+      ...state,
+      openingEstablishment: { ...est, aloneArrival: alone },
+    };
+  }
+  if (est.aloneArrival === true && !alone) {
+    notes.push({
+      class: 'opening_contract',
+      code: 'ERR_ALONE_OCCUPANCY',
+      detail: 'cleared aloneArrival — page CAST is occupied',
+    });
+    return {
+      ...state,
+      openingEstablishment: { ...est, aloneArrival: false },
+    };
+  }
+  return state;
 }
 
 function repairAloneStarterQuest(state: GameState, notes: ErrorRepairNote[]): GameState {
-  if (!isAloneArrivalOpening(state)) return state;
+  const alone =
+    state.openingEstablishment?.aloneArrival === true || isAloneArrivalOpening(state);
+  if (!alone) return state;
   if (state.campaignBibleId !== 'summoned-pact') return state;
   const bible = getCampaignBibleById('summoned-pact');
   const seeds = bible?.starterQuests ?? [];

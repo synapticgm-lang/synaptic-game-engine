@@ -15,6 +15,8 @@ import {
   hallTalkAsksWho,
   isAloneArrivalOpening,
   isEarthOriginPrompt,
+  openingAlreadyToldLine,
+  openingSpokenWant,
   openingWantLine,
   openingWhoAskLine,
   playerAskedWhyPulled,
@@ -170,7 +172,24 @@ function dropCoverNameAsk(body: string): string {
   return body
     .replace(LOCKED_NAME_ASK_TAIL, '')
     .replace(/\s+The panel waits on a name\.\s*$/i, '')
+    .replace(/\b(?:and )?(?:barks|asks|shouts|waits) for a name\b[^.?!]{0,80}[.?!]/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+\./g, '.')
     .trim();
+}
+
+function lastGmBodies(state: GameState): string[] {
+  return (state.log ?? [])
+    .filter((e) => e.role === 'gm' && typeof e.content === 'string')
+    .slice(-2)
+    .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim());
+}
+
+function clauseAlreadySpoken(state: GameState, clause: string): boolean {
+  const n = (clause ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (n.length < 16) return false;
+  const key = n.slice(0, 48);
+  return lastGmBodies(state).some((g) => g.toLowerCase().includes(key));
 }
 
 /**
@@ -218,8 +237,10 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const name = lockedCoverName(state);
   const here = inPlacePhrase(place);
-  const want = openingWantLine(state);
+  const want = openingSpokenWant(state);
+  const ledgerWant = openingWantLine(state);
   const whoLine = openingWhoAskLine(state);
+  const alreadyTold = openingAlreadyToldLine(state);
   const asksWhere = hallTalkAsksWhere(act);
   const asksWhy = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
@@ -252,7 +273,13 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     if (asksWhere || namePlusMore) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(whoLine);
     if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
-    if (asksWant || asksWhy || namePlusMore) bits.push(want || 'They have not said what they want yet.');
+    if (asksWant || asksWhy || namePlusMore) {
+      bits.push(
+        clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
+          ? alreadyTold
+          : want || 'They have not said what they want yet.'
+      );
+    }
     return bits.join(' ');
   }
 
@@ -261,17 +288,16 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     if (asksWhere) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(whoLine);
     if (asksPanel) bits.push('The blue panel is yours — a System window at eye level, not a person.');
-    if (name && (asksWhy || asksWant)) {
-      bits.push(`They already have the name ${name}.`);
-      bits.push(want || 'They have not said what they want yet.');
-    } else if (asksWhy || asksWant) {
-      bits.push(want || 'The panel wants a name to write. It does not say why.');
-      if (!asksWhere) bits.push(`You are ${here}.`);
+    if (asksWhy || asksWant) {
+      bits.push(
+        clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
+          ? alreadyTold
+          : want || (name ? 'They have not said what they want yet.' : 'The panel wants a name to write. It does not say why.')
+      );
+      if (!asksWhere && !name) bits.push(`You are ${here}.`);
       if (!name) bits.push('They still want a name before they will say more.');
     }
-    if (name && asksWhere && !asksWhy && !asksWant && !asksWho) {
-      bits.push(`They already have the name ${name}.`);
-    } else if (!name && asksWhere && !asksWhy && !asksWant && !asksWho) {
+    if (!name && asksWhere && !asksWhy && !asksWant && !asksWho) {
       bits.push('They still want a name before they will say more.');
     }
     return bits.filter(Boolean).join(' ');

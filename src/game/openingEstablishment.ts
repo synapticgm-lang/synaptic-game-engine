@@ -622,17 +622,44 @@ const SUMMONED_ALONE_COVERS: Partial<Record<OpeningPromptKind, string>> = {
 const ALONE_ARRIVAL_MARK =
   /\balone\b|nobody here|no summoners|no handlers|no priests|no welcome|outline of a building|foundation stones|burnt husk|wall-shell|half-collapsed ruin/i;
 
+/** People on the page — “no priests / no handlers” is not occupancy. */
+export function openingHayHasOccupancy(raw: string): boolean {
+  const cleaned = (raw ?? '')
+    .replace(/\bno\s+(?:priests?|handlers?|summoners?)\b/gi, ' ')
+    .replace(/\bnobody\s+(?:here|came|stayed)\b/gi, ' ');
+  return /\b(?:militia|scavengers?|handlers?|chanter|envoys?|robed figures)\b/i.test(cleaned);
+}
+
+function openingPickHay(picked?: {
+  text?: string;
+  location?: string;
+  fallback?: string;
+  page1?: string;
+  faction?: string;
+} | null): string {
+  return [
+    picked?.location,
+    picked?.page1,
+    picked?.text,
+    picked?.fallback,
+    picked?.faction,
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 /** Seed-picked alone dump (ruin with no summoners on page one). */
 export function isAloneArrivalPick(picked?: {
   text?: string;
   location?: string;
   fallback?: string;
   page1?: string;
+  faction?: string;
 } | null): boolean {
   if (!picked) return false;
-  return ALONE_ARRIVAL_MARK.test(
-    `${picked.location ?? ''}\n${picked.page1 ?? ''}\n${picked.text ?? ''}\n${picked.fallback ?? ''}`
-  );
+  const hay = openingPickHay(picked);
+  if (openingHayHasOccupancy(hay)) return false;
+  return ALONE_ARRIVAL_MARK.test(hay);
 }
 
 export function isAloneArrivalOpening(state: GameState): boolean {
@@ -1080,18 +1107,24 @@ export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): b
   return isHallTalkPlayerLine(line);
 }
 
-/** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
-export function openingCastLabel(state: GameState): string {
-  if (state.openingEstablishment?.aloneArrival === true) return 'the panel';
+function openingSceneHay(state: GameState): string {
   const bible = resolveActiveCampaignBible(state);
   const picked = resolveOpeningHookPick(bible, state.seed);
-  const hay = [
+  return [
     picked?.page1,
     picked?.faction,
     state.openingEstablishment?.pickedHookFallback,
+    state.openingEstablishment?.pickedHook,
   ]
     .filter(Boolean)
     .join(' ');
+}
+
+/** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
+export function openingCastLabel(state: GameState): string {
+  const hay = openingSceneHay(state);
+  const occupied = openingHayHasOccupancy(hay);
+  if (!occupied && state.openingEstablishment?.aloneArrival === true) return 'the panel';
   if (/\blead priest\b/i.test(hay) || /\biron mask\b/i.test(hay)) {
     return 'the lead priest behind the iron mask';
   }
@@ -1100,9 +1133,9 @@ export function openingCastLabel(state: GameState): string {
   if (/\bhandler\b/i.test(hay)) return 'the handler';
   if (/\bAsh Court priests\b/i.test(hay)) return 'the priests in this hall';
   if (/\bScale priests\b/i.test(hay)) return 'the Scale priests';
-  if (/\bpriests?\b/i.test(hay)) return 'the priests';
-  if (/\bscavenger\b/i.test(hay)) return 'the scavenger';
   if (/\bmilitia\b/i.test(hay)) return 'the militia';
+  if (/\bscavenger\b/i.test(hay)) return 'the scavenger';
+  if (/\bpriests?\b/i.test(hay)) return 'the priests';
   if (
     /\benvoys?\b/i.test(hay)
     || /\btreaty tent\b/i.test(hay)
@@ -1110,6 +1143,10 @@ export function openingCastLabel(state: GameState): string {
   ) {
     return 'the envoys at this table';
   }
+  if (/\bchanter\b/i.test(hay)) return 'the chanter';
+  if (/\brobed figures\b/i.test(hay)) return 'the robed figures';
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
   const first = (picked?.faction ?? '').split(/[,.]/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
   if (first && !/^(ash|the ash court|ash court)$/i.test(first) && first.length < 56) {
     return first;
@@ -1156,7 +1193,7 @@ export function shortCardOffer(state: GameState): string {
 
 export function openingWhoAskLineFromLabel(who: string, opts?: { nameLocked?: boolean }): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const plural = /\b(people|envoys|priests|handlers|sides)\b/i.test(who) || /^both /i.test(who);
+  const plural = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who);
   if (opts?.nameLocked) {
     return plural ? `${head} are the ones asking.` : `${head} is the one asking.`;
   }
@@ -1165,10 +1202,50 @@ export function openingWhoAskLineFromLabel(who: string, opts?: { nameLocked?: bo
     : `${head} is the one asking. They have not given you a name back.`;
 }
 
+function openingSpokenIdentityQuote(who: string): string {
+  if (/\bpanel\b/i.test(who)) return '';
+  if (/\bmilitia\b/i.test(who)) return '"Watch. We got here late. The circle is already dead."';
+  if (/\bscavenger\b/i.test(who)) return '"Not my rite. I got to the rings first."';
+  if (/\benvoys?\b/i.test(who)) return '"Both sides want a name on the paper."';
+  if (/\bhandler\b/i.test(who)) return '"You came through. Stay where we can see you."';
+  if (/\bpriest|chanter|robed\b/i.test(who)) return '"Pactborn. The Mark looks wrong."';
+  return '"Answer. We are still in this room."';
+}
+
 export function openingWhoAskLine(state: GameState): string {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   const nameLocked = !!(name && isLockablePcName(name) && !/unknown survivor/i.test(name));
-  return openingWhoAskLineFromLabel(openingCastLabel(state), { nameLocked });
+  const who = openingCastLabel(state);
+  const ask = openingWhoAskLineFromLabel(who, { nameLocked });
+  const quote = openingSpokenIdentityQuote(who);
+  return quote ? `${ask} ${quote}` : ask;
+}
+
+/** Card want/offer as the people speaking — not a narrator reprint. */
+export function openingSpokenWant(state: GameState): string {
+  const who = openingCastLabel(state);
+  const want = shortCardWant(state);
+  const offer = shortCardOffer(state);
+  const body = [want, offer].filter(Boolean).join(' ');
+  if (!body) return openingWantLine(state);
+  if (/\bpanel\b/i.test(who)) {
+    return `The panel does not speak. ${body}`;
+  }
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
+    ? 'answer'
+    : 'answers';
+  return `${head} ${verb} you. "${body}"`;
+}
+
+export function openingAlreadyToldLine(state: GameState): string {
+  const who = openingCastLabel(state);
+  if (/\bmilitia\b/i.test(who)) return 'The militia already answered you. The spear has not moved.';
+  if (/\bscavenger\b/i.test(who)) return 'The scavenger already said that. He is still watching the rings.';
+  if (/\benvoys?\b/i.test(who)) return 'The envoys already said that. The maps have not moved.';
+  if (/\bpanel\b/i.test(who)) return 'The panel already holds what it will say.';
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  return `${head} already answered you.`;
 }
 
 export function openingWantLine(state: GameState): string {
