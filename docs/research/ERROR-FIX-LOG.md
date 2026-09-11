@@ -61,6 +61,7 @@
 | **10j** | West wall: who/want/where reprint the card; Who are you → panel; start still barks for a name | Occupancy beats `no priests`; CAST speaks the want; second ask is already-told; Continue restamps occupied openings | Hall talk stayed a slot dump; `aloneArrival` early-return skipped page CAST |
 | **11b** | Who/why stubs; Pactborn on Greyhollow; Wren as panel; “pull me here” invent-gate | Spoken CAST quote; mode-safe identity; Wren/Vessa/innkeep before priest; `pull out` only; hall talk skips hard gate | Cover stayed on stitch (10g) but banks still refused to speak |
 | **11c** | Why-help reprinted the Who already-told line | `openingAlreadyToldLine(who\|want)`; empty want fallback is not spoken; refuse phrases stay hall talk | Who and want shared one identity already-told |
+| **11d** | Refuse reprinted the want already-told line | `hallTalkAsksRefuse` + `openingAlreadyToldLine(refuse)` / `shortCardCost`; empty refuse fallback is a different sentence | 11c glued refuse onto the want slot |
 
 ### Quest / journal (Class C)
 

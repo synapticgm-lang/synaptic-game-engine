@@ -20,6 +20,7 @@ import { canHarvestAsNamedPerson } from './entityRegistry';
 import { isNeverCastTitle } from './neverCast';
 import {
   hallTalkAsksPanel,
+  hallTalkAsksRefuse,
   hallTalkAsksWant,
   hallTalkAsksWhere,
   hallTalkAsksWho,
@@ -1063,6 +1064,7 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   const asksWho = hallTalkAsksWho(act);
   const asksPanel = hallTalkAsksPanel(act);
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
+  const asksRefuse = hallTalkAsksRefuse(act);
   const bits: string[] = [];
   if (asksWhere) bits.push(`You were at ${slots.where}.`);
   if (asksWho) {
@@ -1081,6 +1083,9 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
         ? `${who.charAt(0).toUpperCase() + who.slice(1)} answers you. "${want}"`
         : `${who} had not said what they wanted yet.`
     );
+  }
+  if (asksRefuse) {
+    bits.push(`${who} had not said what happens if you refuse.`);
   }
   if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);
   return bits.join(' ').replace(/\s+/g, ' ').trim();

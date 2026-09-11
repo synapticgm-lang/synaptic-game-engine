@@ -523,6 +523,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   page1?: string;
   summonIntent?: string;
   openingOffer?: string;
+  openingCost?: string;
   faction?: string;
 } {
   if (typeof card === 'string') {
@@ -536,6 +537,9 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   if (card.summonIntent?.trim()) lines.push(`Why this happened: ${card.summonIntent.trim()}`);
   if (card.openingOffer?.trim()) {
     lines.push(`Opening offer (optional — player may refuse): ${card.openingOffer.trim()}`);
+  }
+  if (card.openingCost?.trim()) {
+    lines.push(`If you refuse: ${card.openingCost.trim()}`);
   }
   for (const beat of card.beats ?? []) {
     const b = beat.trim();
@@ -555,6 +559,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     page1: page1 || fallback || undefined,
     summonIntent: card.summonIntent?.trim() || undefined,
     openingOffer: card.openingOffer?.trim() || undefined,
+    openingCost: card.openingCost?.trim() || undefined,
     faction: card.faction?.trim() || undefined,
   };
 }
@@ -1036,10 +1041,18 @@ export function hallTalkAsksWant(raw: string): boolean {
     return false;
   }
   return (
-    /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b|\bwhat happens if i refuse\b|\bif i refuse\b|\bwhy\b.*\bname\b/i.test(
+    /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b|\bwhy\b.*\bname\b/i.test(
       t
     )
   );
+}
+
+/** Consequence / walk-away — not the offer slot, not “Refuse to give a name”. */
+export function hallTalkAsksRefuse(raw: string): boolean {
+  const t = raw ?? '';
+  if (!t.trim()) return false;
+  if (/\brefuse to (?:give|say)\b/i.test(t)) return false;
+  return /\bwhat happens if i refuse\b|\bif i refuse\b/i.test(t);
 }
 
 export function hallTalkAsksPanel(raw: string): boolean {
@@ -1058,7 +1071,13 @@ export function isCoverShapedPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
   if (playerGivesOrRefusesName(p)) return true;
-  if (hallTalkAsksWhere(p) || hallTalkAsksWho(p) || hallTalkAsksWant(p) || hallTalkAsksPanel(p)) {
+  if (
+    hallTalkAsksWhere(p)
+    || hallTalkAsksWho(p)
+    || hallTalkAsksWant(p)
+    || hallTalkAsksRefuse(p)
+    || hallTalkAsksPanel(p)
+  ) {
     return true;
   }
   if (playerAskedWhyPulled(p)) return true;
@@ -1181,7 +1200,12 @@ function wantFromPickedHookBlob(blob?: string): string {
 }
 
 function offerFromPickedHookBlob(blob?: string): string {
-  const m = (blob ?? '').match(/Opening offer[^:]*:\s*([\s\S]+?)(?:\n- |\nLocation:|$)/i);
+  const m = (blob ?? '').match(/Opening offer[^:]*:\s*([\s\S]+?)(?:\nIf you refuse:|\n- |\nLocation:|$)/i);
+  return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function costFromPickedHookBlob(blob?: string): string {
+  const m = (blob ?? '').match(/If you refuse:\s*([\s\S]+?)(?:\n- |\nLocation:|\nOpening offer|$)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
 
@@ -1198,6 +1222,18 @@ export function shortCardWant(state: GameState): string {
   const bible = resolveActiveCampaignBible(state);
   const picked = resolveOpeningHookPick(bible, state.seed);
   return clipCardClause((picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim());
+}
+
+/** Authored walk-away cost from this card — never invent one. */
+export function shortCardCost(state: GameState): string {
+  const fromSave = costFromPickedHookBlob(state.openingEstablishment?.pickedHook);
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  const raw =
+    fromSave
+    || (picked?.openingCost ?? '').replace(/\s+/g, ' ').trim();
+  const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
+  return clipCardClause(first, 180);
 }
 
 /** Optional kit/banner offer from this card — one clause. */
@@ -1297,13 +1333,40 @@ export function openingSpokenWant(state: GameState): string {
   return `${head} ${verb} you. "${body}"`;
 }
 
-export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' = 'who'): string {
+export function openingRefuseLine(state: GameState): string {
+  const cost = shortCardCost(state);
+  return cost || 'They have not said what happens if you refuse.';
+}
+
+/** Card walk-away cost as speech — empty cards stay honest. */
+export function openingSpokenRefuse(state: GameState): string {
+  const who = openingCastLabel(state);
+  const body = shortCardCost(state).trim();
+  if (!body) return openingRefuseLine(state);
+  if (/\bpanel\b/i.test(who)) {
+    return `The panel does not speak. ${body}`;
+  }
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
+    ? 'answer'
+    : 'answers';
+  return `${head} ${verb} you. "${body}"`;
+}
+
+export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' | 'refuse' = 'who'): string {
   const who = openingCastLabel(state);
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   if (topic === 'want') {
     const body = [shortCardWant(state), shortCardOffer(state)].filter(Boolean).join(' ').trim();
     if (!body || /they have not said what they want yet/i.test(body)) {
       return 'They have not said what they want yet.';
+    }
+    return `${head} already said it. "${body}"`;
+  }
+  if (topic === 'refuse') {
+    const body = shortCardCost(state).trim();
+    if (!body || /they have not said what happens if you refuse/i.test(body)) {
+      return 'They have not said what happens if you refuse.';
     }
     return `${head} already said it. "${body}"`;
   }

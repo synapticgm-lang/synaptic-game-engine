@@ -5,7 +5,7 @@
  */
 
 import { assemblePacketStitch, type CompletedEventPacket } from './completedEventPacket';
-import { hallTalkAsksPanel, playerAskedWhyPulled } from './openingEstablishment';
+import { hallTalkAsksPanel, hallTalkAsksRefuse, playerAskedWhyPulled } from './openingEstablishment';
 import type { HostedAiTier } from './testLab';
 import { effectiveWriterTier } from './testLab';
 
@@ -55,6 +55,7 @@ export function isSilentReceiptAction(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (hallTalkAsksPanel(t)) return false;
+  if (hallTalkAsksRefuse(t)) return false;
   if (playerAskedWhyPulled(t)) return false;
   if (
     /\b(ask|talk|speak|tell|say |who are you|where am|what'?s going on|what is going on|what do (?:you|they) want|what they want|why should i|my name is|call me)\b/i.test(

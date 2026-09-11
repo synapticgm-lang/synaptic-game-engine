@@ -10,12 +10,15 @@ import { cleanPlaceLabel } from './locationName';
 import { isLockablePcName } from './pcNameAuthority';
 import {
   hallTalkAsksPanel,
+  hallTalkAsksRefuse,
   hallTalkAsksWant,
   hallTalkAsksWhere,
   hallTalkAsksWho,
   isAloneArrivalOpening,
   isEarthOriginPrompt,
   openingAlreadyToldLine,
+  openingRefuseLine,
+  openingSpokenRefuse,
   openingSpokenWant,
   openingWantLine,
   openingWhoAskLine,
@@ -189,6 +192,7 @@ function clauseAlreadySpoken(state: GameState, clause: string): boolean {
   const n = (clause ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   if (n.length < 16) return false;
   if (n.includes('they have not said what they want yet')) return false;
+  if (n.includes('they have not said what happens if you refuse')) return false;
   const key = n.slice(0, 48);
   return lastGmBodies(state).some((g) => g.toLowerCase().includes(key));
 }
@@ -240,12 +244,16 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const here = inPlacePhrase(place);
   const want = openingSpokenWant(state);
   const ledgerWant = openingWantLine(state);
+  const refuse = openingSpokenRefuse(state);
+  const ledgerRefuse = openingRefuseLine(state);
   const whoLine = openingWhoAskLine(state);
   const alreadyToldWho = openingAlreadyToldLine(state, 'who');
   const alreadyToldWant = openingAlreadyToldLine(state, 'want');
+  const alreadyToldRefuse = openingAlreadyToldLine(state, 'refuse');
   const asksWhere = hallTalkAsksWhere(act);
   const asksWhy = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
+  const asksRefuse = hallTalkAsksRefuse(act);
   const asksWho = hallTalkAsksWho(act);
   const asksPanel = hallTalkAsksPanel(act);
   const gaveName = /\b(?:my name is|i am|i'm|call me)\b/i.test(act);
@@ -255,7 +263,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
 
   if (
     /\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)
-    || (asksPanel && !asksWhere && !asksWho && !asksWant && !asksWhy && !gaveName)
+    || (asksPanel && !asksWhere && !asksWho && !asksWant && !asksWhy && !asksRefuse && !gaveName)
   ) {
     if (name) {
       return `The panel holds the name ${name}. It is a System window at eye level — not a person.`;
@@ -282,10 +290,17 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
           : want || 'They have not said what they want yet.'
       );
     }
+    if (asksRefuse) {
+      bits.push(
+        clauseAlreadySpoken(state, ledgerRefuse) || clauseAlreadySpoken(state, refuse)
+          ? alreadyToldRefuse
+          : refuse || 'They have not said what happens if you refuse.'
+      );
+    }
     return bits.join(' ');
   }
 
-  if (asksWhere || asksWhy || asksWant || asksWho || asksPanel) {
+  if (asksWhere || asksWhy || asksWant || asksRefuse || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
@@ -296,10 +311,19 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
           ? alreadyToldWant
           : want || (name ? 'They have not said what they want yet.' : 'The panel wants a name to write. It does not say why.')
       );
+      if (!asksWhere && !name && !asksRefuse) bits.push(`You are ${here}.`);
+      if (!name && !asksRefuse) bits.push('They still want a name before they will say more.');
+    }
+    if (asksRefuse) {
+      bits.push(
+        clauseAlreadySpoken(state, ledgerRefuse) || clauseAlreadySpoken(state, refuse)
+          ? alreadyToldRefuse
+          : refuse || 'They have not said what happens if you refuse.'
+      );
       if (!asksWhere && !name) bits.push(`You are ${here}.`);
       if (!name) bits.push('They still want a name before they will say more.');
     }
-    if (!name && asksWhere && !asksWhy && !asksWant && !asksWho) {
+    if (!name && asksWhere && !asksWhy && !asksWant && !asksRefuse && !asksWho) {
       bits.push('They still want a name before they will say more.');
     }
     return bits.filter(Boolean).join(' ');

@@ -9,6 +9,8 @@ import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import {
   coverContinuePads,
+  hallTalkAsksRefuse,
+  hallTalkAsksWant,
   openingCastLabel,
   openingWhoAskLine,
 } from './openingEstablishment';
@@ -58,6 +60,27 @@ function greyhollow(): GameState {
       mode: 'weave',
       aloneArrival: false,
       pickedHook: 'Location: Greyhollow tavern common room\nWho is here: the innkeep and a quiet room',
+    },
+    sceneFacts: emptySceneFacts(1),
+  };
+}
+
+function saltHire(): GameState {
+  const base = createInitialState('Salt Road Heist', 'rpg');
+  return {
+    ...base,
+    campaignBibleId: 'salt-road-heist',
+    engineMode: 'rpg',
+    currentLocation: 'a Salt Road tavern hire',
+    character: { ...base.character, name: '' },
+    openingEstablishment: {
+      pending: [{ id: 'name', kind: 'name' as const, question: 'What name should they write?' }],
+      answers: { where: 'a Salt Road tavern hire' },
+      complete: false,
+      sceneWritten: true,
+      mode: 'weave',
+      aloneArrival: false,
+      pickedHook: 'Location: a Salt Road tavern hire\nWho is here / who summoned: Vessa',
     },
     sceneFacts: emptySceneFacts(1),
   };
@@ -216,6 +239,95 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
     );
     expect(help).not.toMatch(/I keep this book/i);
     expect(help).toMatch(/have not said what they want/i);
+  });
+
+  it('refuse is not the want slot and does not steal the name chip', () => {
+    expect(hallTalkAsksWant('Why should I help you?')).toBe(true);
+    expect(hallTalkAsksWant('What happens if I refuse?')).toBe(false);
+    expect(hallTalkAsksRefuse('What happens if I refuse?')).toBe(true);
+    expect(hallTalkAsksRefuse('if I refuse')).toBe(true);
+    expect(hallTalkAsksRefuse('Refuse to give a name')).toBe(false);
+    expect(hallTalkAsksWant('Refuse to give a name')).toBe(false);
+  });
+
+  it('Why-help then refuse are different sentences on empty-cost cards', () => {
+    const who = stitchOpeningContinue(greyhollow(), 'Who are you?');
+    const help = stitchOpeningContinue(
+      {
+        ...greyhollow(),
+        log: [
+          { id: 'p', turn: 2, role: 'player' as const, content: 'Who are you?', timestamp: 2 },
+          { id: 'g', turn: 2, role: 'gm', content: who, timestamp: 3 },
+        ],
+      },
+      'Why should I help you?'
+    );
+    const refuse = stitchOpeningContinue(
+      {
+        ...greyhollow(),
+        log: [
+          { id: 'p', turn: 2, role: 'player' as const, content: 'Who are you?', timestamp: 2 },
+          { id: 'g', turn: 2, role: 'gm', content: who, timestamp: 3 },
+          { id: 'p2', turn: 3, role: 'player' as const, content: 'Why should I help you?', timestamp: 4 },
+          { id: 'g2', turn: 3, role: 'gm', content: help, timestamp: 5 },
+        ],
+      },
+      'What happens if I refuse?'
+    );
+    expect(help).toMatch(/have not said what they want/i);
+    expect(refuse).toMatch(/have not said what happens if you refuse/i);
+    expect(refuse).not.toBe(help);
+    expect(refuse).not.toMatch(/I keep this book|Handler\. You came through/i);
+  });
+
+  it('unnamed Salt refuse keeps the name-gate and does not reprint Why-help', () => {
+    const help = stitchOpeningContinue(saltHire(), 'Why should I help you?');
+    const refuse = stitchOpeningContinue(
+      {
+        ...saltHire(),
+        log: [
+          { id: 'p', turn: 2, role: 'player' as const, content: 'Why should I help you?', timestamp: 2 },
+          { id: 'g', turn: 2, role: 'gm', content: help, timestamp: 3 },
+        ],
+      },
+      'What happens if I refuse?'
+    );
+    expect(help).toMatch(/have not said what they want/i);
+    expect(help).toMatch(/still want a name/i);
+    expect(refuse).toMatch(/have not said what happens if you refuse/i);
+    expect(refuse).toMatch(/still want a name/i);
+    expect(refuse).not.toBe(help);
+  });
+
+  it('cathedral refuse does not reprint the vault want already-told', () => {
+    const want = stitchOpeningContinue(cathedral(), 'Ask what they want');
+    const help = stitchOpeningContinue(
+      {
+        ...cathedral(),
+        log: [
+          { id: 'p1', turn: 2, role: 'player' as const, content: 'Ask what they want', timestamp: 2 },
+          { id: 'g1', turn: 2, role: 'gm', content: want, timestamp: 3 },
+        ],
+      },
+      'Why should I help you?'
+    );
+    const refuse = stitchOpeningContinue(
+      {
+        ...cathedral(),
+        log: [
+          { id: 'p1', turn: 2, role: 'player' as const, content: 'Ask what they want', timestamp: 2 },
+          { id: 'g1', turn: 2, role: 'gm', content: want, timestamp: 3 },
+          { id: 'p2', turn: 3, role: 'player' as const, content: 'Why should I help you?', timestamp: 4 },
+          { id: 'g2', turn: 3, role: 'gm', content: help, timestamp: 5 },
+        ],
+      },
+      'What happens if I refuse?'
+    );
+    expect(help).toMatch(/already said it/i);
+    expect(help).toMatch(/Pactborn|travel kit|Ash Court/i);
+    expect(refuse).not.toBe(help);
+    expect(refuse).toMatch(/have not said what happens if you refuse/i);
+    expect(refuse).not.toMatch(/Handler\. You came through|Pactborn|travel kit|Ash Court/i);
   });
 
   it('second who-ask restates; it does not reprint the first beat', () => {

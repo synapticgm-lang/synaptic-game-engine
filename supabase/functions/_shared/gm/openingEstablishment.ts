@@ -16,7 +16,14 @@ export function hallTalkAsksWho(raw: string): boolean {
 export function hallTalkAsksWant(raw: string): boolean {
   const t = raw ?? '';
   if (/\bask\b.+\bwhat they want\b/i.test(t) && !/\bask what they want\b/i.test(t)) return false;
-  return /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b|\bwhat happens if i refuse\b|\bif i refuse\b/i.test(t);
+  return /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i(?: help)?\b/i.test(t);
+}
+
+export function hallTalkAsksRefuse(raw: string): boolean {
+  const t = raw ?? '';
+  if (!t.trim()) return false;
+  if (/\brefuse to (?:give|say)\b/i.test(t)) return false;
+  return /\bwhat happens if i refuse\b|\bif i refuse\b/i.test(t);
 }
 
 export function hallTalkAsksPanel(raw: string): boolean {
@@ -47,7 +54,8 @@ export function isHallTalkPlayerLine(raw: string): boolean {
   return (
     hallTalkAsksWhere(p)
     || hallTalkAsksWho(p)
-    || hallTalkAsksWant(p)
+    ||     hallTalkAsksWant(p)
+    || hallTalkAsksRefuse(p)
     || hallTalkAsksPanel(p)
     || playerAskedWhyPulled(p)
   );

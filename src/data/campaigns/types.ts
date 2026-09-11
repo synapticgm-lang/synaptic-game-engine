@@ -53,6 +53,8 @@ export interface OpeningBeatCard {
   summonIntent?: string;
   /** Optional bargain they may voice — player can refuse. Do not put offered gear on the sheet until accepted. */
   openingOffer?: string;
+  /** Authored walk-away / refuse cost. Empty means they have not said what happens if you refuse. */
+  openingCost?: string;
   /** Player-visible New Game page 1. Assembler prints this and nothing else from the card. */
   page1?: string;
   /** Writer ingredients / GM pointer notes. Never concatenated onto page 1. */
