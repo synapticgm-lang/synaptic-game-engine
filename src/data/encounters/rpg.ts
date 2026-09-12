@@ -23,4 +23,8 @@ export const RPG_ENCOUNTERS: EncounterSeed[] = [
   { id: 'RPG-BOSS-001', mode: 'rpg', tier: 'boss', title: 'Consul Guard', foeName: 'Consul Road Captain', premise: 'The caravan’s last captain will not lose the tax.', xpReward: B, goldReward: 55, cooldown: 40 },
   { id: 'RPG-BOSS-002', mode: 'rpg', tier: 'boss', title: 'Keep Claim', foeName: 'Salt-Stained Keep Warden', premise: 'The keep above the harbor names a defender.', xpReward: B, goldReward: 60, cooldown: 45 },
   { id: 'RPG-BOSS-003', mode: 'rpg', tier: 'boss', title: 'Crew Betrayal', foeName: 'Crew Betrayer', premise: 'The person who planned the heist wants you gone.', xpReward: B, goldReward: 50, cooldown: 40 },
+  { id: 'RPG-TRASH-009', mode: 'rpg', tier: 'trash', title: 'Salt Lane Purse', foeName: 'Salt Lane Cutpurse', premise: 'A lane cutpurse wants the sealed pouch more than the walk.', xpReward: T, goldReward: 5, cooldown: 14 },
+  { id: 'RPG-TRASH-010', mode: 'rpg', tier: 'trash', title: 'Dock Rope', foeName: 'Dock Rope Tough', premise: 'A dock tough tries to walk you into the ropes.', xpReward: T, goldReward: 4, cooldown: 14 },
+  { id: 'RPG-ELITE-006', mode: 'rpg', tier: 'elite', title: 'Ledger Knife', foeName: 'Ledger Knife', premise: 'Someone who can read the tax book wants you silent.', xpReward: E, goldReward: 18, cooldown: 20 },
+  { id: 'RPG-ELITE-007', mode: 'rpg', tier: 'elite', title: 'Road Claim', foeName: 'Road Claim Bravo', premise: 'The salt road already has an owner tonight.', xpReward: E, goldReward: 16, cooldown: 20 },
 ];

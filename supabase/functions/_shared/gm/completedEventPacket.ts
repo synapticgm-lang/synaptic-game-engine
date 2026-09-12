@@ -21,11 +21,13 @@ import { isNeverCastTitle } from './neverCast.ts';
 import {
   hallTalkAsksPanel,
   hallTalkAsksRefuse,
+  hallTalkAsksStayLeave,
   hallTalkAsksWant,
   hallTalkAsksWhere,
   hallTalkAsksWho,
   isHallTalkPlayerLine,
   openingCastLabel,
+  openingStayLeaveLine,
   openingWantLine,
   openingWhoAskLineFromLabel,
   playerAskedWhyPulled,
@@ -76,6 +78,8 @@ export interface CompletedEventPacket {
   /** 10d — card CAST / why, for hall-talk answers (not settle stubs). */
   answerWho?: string;
   answerWant?: string;
+  /** 12d — stay/leave bargain from the card (grain-ship home/earth). */
+  answerStayLeave?: string;
   /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
   engineMode?: string;
 }
@@ -107,14 +111,31 @@ function lastPlayerAction(state: GameState, playerInput?: string): string {
   return '';
 }
 
-function classifyVerb(input: string): string {
+export function classifyVerb(input: string): string {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
   if (/\b(attack|fight|strike|engage|press the attack|slash|stab|punch)\b/i.test(t)) return 'attacked';
   if (/\b(flee|run away|escape|retreat)\b/i.test(t)) return 'fled';
   if (/\b(parley|negotiate|talk (?:it|them) down)\b/i.test(t)) return 'parleyed';
   if (/\b(travel|go to|head (?:to|for|toward)|return to|enter)\b/i.test(t)) return 'traveled';
-  if (/\b(leave|exit|walk away)\b/i.test(t)) return 'left';
-  if (/\b(ask|talk|speak|tell|say|press for|listen)\b/i.test(t)) return 'spoke';
+  if (
+    /\b(leave the scene|leave through|walk away)\b/i.test(t)
+    && !hallTalkAsksStayLeave(t)
+    && !playerAskedWhyPulled(t)
+    && !isHallTalkPlayerLine(t)
+  ) {
+    return 'left';
+  }
+  if (/\b(leave|exit)\b/i.test(t) && !hallTalkAsksStayLeave(t) && !isHallTalkPlayerLine(t) && !playerAskedWhyPulled(t)) {
+    return 'left';
+  }
+  if (
+    isHallTalkPlayerLine(t)
+    || playerAskedWhyPulled(t)
+    || hallTalkAsksStayLeave(t)
+    || /\b(ask|talk|speak|tell|say|press for|listen|you summoned me|get back home|to earth|cargo run)\b/i.test(t)
+  ) {
+    return 'spoke';
+  }
   if (
     /\b(where am(?: i)?|where are we|where is this|what(?:'s| is) going on|who (?:is|are|asks)|what'?s yours|ask what they want|what they want|what do you want|why should i|why .*(?:name|here|summon))\b/i.test(
       t
@@ -212,12 +233,25 @@ function liveEncounterHp(state: GameState): { current: number; max: number } | u
   return undefined;
 }
 
+function isGenericHereLabel(raw: string): boolean {
+  return !raw.trim() || /^(?:your surroundings|nearby cover|just ahead of you|this room)$/i.test(raw);
+}
+
 function locationLabel(state: GameState): string {
-  const raw = cleanPlaceLabel(
-    playerFacingLocation(state) || String(state.currentLocation ?? '') || 'this room'
+  const fromCover = (state.openingEstablishment?.answers?.where ?? '').trim();
+  const live = cleanPlaceLabel(
+    playerFacingLocation(state) || String(state.currentLocation ?? '') || ''
   );
-  if (raw && raw.length <= 48 && !/^alone\b/i.test(raw) && !/,/.test(raw)) return raw;
-  return shortRoomLabel(raw, 'this room');
+  const raw = !isGenericHereLabel(live) ? live : fromCover || live;
+  if (raw && raw.length <= 48 && !/^alone\b/i.test(raw) && !/,/.test(raw) && !isGenericHereLabel(raw)) {
+    return raw;
+  }
+  if (fromCover && isGenericHereLabel(live)) {
+    return fromCover.length <= 72 ? fromCover : fromCover.slice(0, 72).trim();
+  }
+  const short = shortRoomLabel(raw, fromCover || 'this room');
+  if (short && !isGenericHereLabel(short)) return short;
+  return fromCover || short || 'this room';
 }
 
 function pushUnique(list: string[], seen: Set<string>, raw: string | undefined): void {
@@ -467,6 +501,7 @@ export function buildCompletedEventPacket(
     focusNoun: focusNoun || undefined,
     answerWho: openingCastLabel(state) || undefined,
     answerWant: openingWantLine(state) || undefined,
+    answerStayLeave: openingStayLeaveLine(state) || undefined,
     engineMode: state.engineMode,
   };
 }
@@ -1065,6 +1100,7 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   const asksPanel = hallTalkAsksPanel(act);
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksRefuse = hallTalkAsksRefuse(act);
+  const asksStayLeave = hallTalkAsksStayLeave(act);
   const bits: string[] = [];
   if (asksWhere) bits.push(`You were at ${slots.where}.`);
   if (asksWho) {
@@ -1086,6 +1122,10 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   }
   if (asksRefuse) {
     bits.push(`${who} had not said what happens if you refuse.`);
+  }
+  if (asksStayLeave) {
+    const stay = (packet.answerStayLeave ?? '').trim();
+    bits.push(stay || `${who} had not said whether you must stay or may leave.`);
   }
   if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);
   return bits.join(' ').replace(/\s+/g, ' ').trim();

@@ -49,11 +49,26 @@ export function hallTalkAsksPanel(raw: string): boolean {
   );
 }
 
+export function hallTalkAsksStayLeave(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/\b(leave the scene|leave through|walk away|travel|attack|flee)\b/i.test(t)) return false;
+  return (
+    /\b(?:can|may|should|do) i (?:leave|stay)\b/i.test(t)
+    || /\bdo i need to stay\b/i.test(t)
+    || /\bstay on the (?:ship|boat|deck|hold)\b/i.test(t)
+    || /\bcan i (?:ever )?(?:go|get) (?:home|back)\b/i.test(t)
+    || /\bget back home\b/i.test(t)
+    || /\bto earth\b/i.test(t)
+    || (/\bor (?:can i )?leave\b/i.test(t) && /\b(?:stay|ship|need)\b/i.test(t))
+  );
+}
+
 export function playerAskedWhyPulled(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
   return (
-    /\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat(?:'s| is) going on\b|\bwhat they want\b|\bask what they want\b/i.test(
+    /\bwho summoned\b|\byou summoned me\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat(?:'s| is) going on\b|\bwhat they want\b|\bask what they want\b|\bget back home\b|\bto earth\b|\bcargo run\b|\bcan i ever get (?:back )?home\b/i.test(
       p
     )
   );
@@ -62,15 +77,32 @@ export function playerAskedWhyPulled(raw: string): boolean {
 export function isHallTalkPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
-  if (/\b(travel|attack|flee|leave|exit)\b/i.test(p)) return false;
+  if (/\b(travel|attack|flee)\b/i.test(p)) return false;
+  if (/\b(leave the scene|leave through|walk away)\b/i.test(p) && !hallTalkAsksStayLeave(p)) {
+    return false;
+  }
+  if (
+    /\b(leave|exit)\b/i.test(p)
+    && !hallTalkAsksStayLeave(p)
+    && !hallTalkAsksWant(p)
+    && !hallTalkAsksRefuse(p)
+    && !playerAskedWhyPulled(p)
+  ) {
+    return false;
+  }
   return (
     hallTalkAsksWhere(p)
     || hallTalkAsksWho(p)
-    ||     hallTalkAsksWant(p)
+    || hallTalkAsksWant(p)
     || hallTalkAsksRefuse(p)
+    || hallTalkAsksStayLeave(p)
     || hallTalkAsksPanel(p)
     || playerAskedWhyPulled(p)
   );
+}
+
+export function openingStayLeaveLine(_state?: unknown): string {
+  return 'They have not said whether you must stay or may leave.';
 }
 
 export function openingCastLabel(_state?: unknown): string {

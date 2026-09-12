@@ -1103,8 +1103,9 @@ export function hallTalkAsksStayLeave(raw: string): boolean {
     /\b(?:can|may|should|do) i (?:leave|stay)\b/i.test(t)
     || /\bdo i need to stay\b/i.test(t)
     || /\bstay on the (?:ship|boat|deck|hold)\b/i.test(t)
-    || /\bcan i (?:go|get) (?:home|back)\b/i.test(t)
+    || /\bcan i (?:ever )?(?:go|get) (?:home|back)\b/i.test(t)
     || /\bget back home\b/i.test(t)
+    || /\bto earth\b/i.test(t)
     || (/\bor (?:can i )?leave\b/i.test(t) && /\b(?:stay|ship|need)\b/i.test(t))
   );
 }
@@ -1554,7 +1555,7 @@ export function playerAskedWhyPulled(raw: string): boolean {
     return false;
   }
   return (
-    /\bwho summoned\b|\byou summoned me\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bask what they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b|\bget back home\b|\bto earth\b/i.test(
+    /\bwho summoned\b|\byou summoned me\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bask what they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b|\bget back home\b|\bto earth\b|\bcargo run\b|\bcan i ever get (?:back )?home\b/i.test(
       p
     )
   );

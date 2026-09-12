@@ -23,4 +23,8 @@ export const DND_ENCOUNTERS: EncounterSeed[] = [
   { id: 'DND-BOSS-001', mode: 'dnd', tier: 'boss', title: 'Keep Heart', foeName: 'Greymark Keep Warden', premise: 'The hill keep names a last defender.', xpReward: B, goldReward: 50, cooldown: 40 },
   { id: 'DND-BOSS-002', mode: 'dnd', tier: 'boss', title: 'Crypt Lord', foeName: 'Greyhollow Crypt Lord', premise: 'The opened graves answer to one voice.', xpReward: B, goldReward: 55, cooldown: 40 },
   { id: 'DND-BOSS-003', mode: 'dnd', tier: 'boss', title: 'Curse Seat', foeName: 'Cursed Seat Shade', premise: 'The keep’s curse sits down in a chair and fights.', xpReward: B, goldReward: 60, cooldown: 50 },
+  { id: 'DND-TRASH-009', mode: 'dnd', tier: 'trash', title: 'Watch Stair', foeName: 'Watchtower Stair Guard', premise: 'The stair watch will not let a stranger pass the slate.', xpReward: T, goldReward: 5, cooldown: 14 },
+  { id: 'DND-TRASH-010', mode: 'dnd', tier: 'trash', title: 'Coast Fog Cut', foeName: 'Fog-Bank Cutter', premise: 'Fog hides a cutter who wants the last dry cloak.', xpReward: T, goldReward: 4, cooldown: 14 },
+  { id: 'DND-ELITE-006', mode: 'dnd', tier: 'elite', title: 'Mire Bridge', foeName: 'Mire Bridge Toll-Pike', premise: 'The only dry crossing wants a name and a cut.', xpReward: E, goldReward: 16, cooldown: 20 },
+  { id: 'DND-ELITE-007', mode: 'dnd', tier: 'elite', title: 'Inn Yard Steel', foeName: 'Greyhollow Yard Bravo', premise: 'The inn yard decides you are the night’s trouble.', xpReward: E, goldReward: 15, cooldown: 20 },
 ];

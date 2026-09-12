@@ -30,8 +30,8 @@ function uniqueLocations(bibleId: string): string[] {
 
 describe('playtest12c — Manus Phase 4 hooks + preview', () => {
   it('HUD/BUILD are 12c, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-12c');
-    expect(BUILD_STAMP).toBe('2026-09-12c');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-12/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-12/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

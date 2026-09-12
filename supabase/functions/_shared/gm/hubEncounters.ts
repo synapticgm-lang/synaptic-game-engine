@@ -73,6 +73,34 @@ const SP_HUB_BEATS: Record<string, HubArrivalBeat[]> = {
     { id: 'ks-explore', kind: 'explore', pressure: 'Bread steam and quiet charity behind the close.', choiceHints: ['Follow the bread smell', 'Check the alley for panel-glint', 'Stay out of the kitchen path'], revealQuestId: 'sp-quest-side-child' },
     { id: 'ks-social', kind: 'social', pressure: 'Brother Tam may pass a loaf without a sermon.', choiceHints: ['Talk to Brother Tam', 'Thank him for the bread', 'Ask about the marked child'], contactName: 'Brother Tam', revealQuestId: 'sp-quest-side-child' },
   ],
+  'sp-hub-mireglass': [
+    { id: 'mg-explore', kind: 'explore', pressure: 'Reed water and a reflection that is one step late.', choiceHints: ['Walk the reed path', 'Watch the water', 'Ask who else came through'], revealQuestId: 'sp-quest-price-calling' },
+    { id: 'mg-social', kind: 'social', pressure: 'Ilyra Fen or Tekk Reed may name a debt that is not yours.', choiceHints: ['Talk to Ilyra Fen', 'Talk to Tekk Reed', 'Ask Nomi Vale what she heard'], contactName: 'Ilyra Fen', revealQuestId: 'sp-quest-price-reflection' },
+  ],
+  'sp-hub-cinderwake': [
+    { id: 'cw-explore', kind: 'explore', pressure: 'Ash-heat and prints that are already yours.', choiceHints: ['Read the prints', 'Find shade', 'Turn back toward Valespire'], revealQuestId: 'sp-quest-cinder-evidence' },
+    { id: 'cw-social', kind: 'social', pressure: 'Brother Oren will not admit he is following.', choiceHints: ['Talk to Brother Oren', 'Ask Marn Holt about the caravan', 'Hard refuse the hunt'], contactName: 'Brother Oren', revealQuestId: 'sp-quest-cinder-pursuit' },
+  ],
+  'sp-hub-sump-court': [
+    { id: 'sc-explore', kind: 'explore', pressure: 'Below-street contracts and a ferry price board.', choiceHints: ['Read the clause board', 'Find the night ferry', 'Leave before a stamp'], revealQuestId: 'sp-quest-sump-bindings' },
+    { id: 'sc-social', kind: 'social', pressure: 'Sula Vane or Nox Kade will price a name.', choiceHints: ['Talk to Sula Vane', 'Talk to Nox Kade', 'Ask Ado Ferry the night price'], contactName: 'Sula Vane', revealQuestId: 'sp-quest-sump-leverage' },
+  ],
+  'sp-hub-hollow-engine': [
+    { id: 'he-explore', kind: 'explore', pressure: 'Dead machine-hall. Alert clock not yet live.', choiceHints: ['Map the aisle', 'Find the power ring', 'Hold at the stair'], revealQuestId: 'sp-quest-hollow-power' },
+    { id: 'he-social', kind: 'social', pressure: 'Caldrin Hollow still wants the hall powered.', choiceHints: ['Talk to Caldrin Hollow', 'Ask Orr Hollow', 'Ask Osa Hollow'], contactName: 'Caldrin Hollow', revealQuestId: 'sp-quest-hollow-contain' },
+  ],
+  'sp-hub-argent': [
+    { id: 'ag-explore', kind: 'explore', pressure: 'A moving license desk and a rival’s paper.', choiceHints: ['Read the mission board', 'Check your rank paper', 'Step off the wagon'], revealQuestId: 'sp-quest-argent-license' },
+    { id: 'ag-social', kind: 'social', pressure: 'Yara Quill will stamp you. Kade Voss will try to void it.', choiceHints: ['Talk to Yara Quill', 'Talk to Senn Vale', 'Hard refuse Kade Voss'], contactName: 'Yara Quill', revealQuestId: 'sp-quest-argent-audit' },
+  ],
+  'sp-hub-reliquary': [
+    { id: 'rq-explore', kind: 'explore', pressure: 'Fortress-shrine. Credentials before relics.', choiceHints: ['Study the nave lock', 'Note the sentinel pattern', 'Ask for an audience'], revealQuestId: 'sp-quest-reliquary-doctrine' },
+    { id: 'rq-social', kind: 'social', pressure: 'Maelis Curate wants doctrine. Hev Ash sells a route.', choiceHints: ['Talk to Maelis Curate', 'Talk to Fia Lamp', 'Ask Hev Ash the price'], contactName: 'Maelis Curate', revealQuestId: 'sp-quest-reliquary-infiltrate' },
+  ],
+  'sp-hub-integration-scar': [
+    { id: 'is-explore', kind: 'explore', pressure: 'The seam is outdoor and final. Clock, not lecture.', choiceHints: ['Walk the scar edge', 'Read the pact loadout', 'Turn back once'], revealQuestId: 'sp-quest-scar-answers' },
+    { id: 'is-social', kind: 'social', pressure: 'Soren Vale speaks as if you already chose. Mira Flint will not go back through.', choiceHints: ['Talk to Soren Vale', 'Talk to Mira Flint', 'Refuse the alignment'], contactName: 'Mira Flint', revealQuestId: 'sp-quest-scar-answers' },
+  ],
 };
 
 const HA_HUB_BEATS: Record<string, HubArrivalBeat[]> = {

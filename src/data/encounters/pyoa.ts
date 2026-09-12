@@ -10,4 +10,6 @@ export const PYOA_ENCOUNTERS: EncounterSeed[] = [
   { id: 'PYOA-CRISIS-006', mode: 'pyoa', tier: 'crisis', title: 'Debt Crowd', foeName: 'Debt Crowd', premise: 'A street crowd wants payment you do not have.', xpReward: 0, goldReward: 0, cooldown: 20 },
   { id: 'PYOA-CRISIS-007', mode: 'pyoa', tier: 'crisis', title: 'Sealed Letter', foeName: 'Sealed Letter Deadline', premise: 'A letter must be delivered before the next bell.', xpReward: 0, goldReward: 0, cooldown: 18 },
   { id: 'PYOA-CRISIS-008', mode: 'pyoa', tier: 'crisis', title: 'Ending Fork', foeName: 'Ending Fork Pressure', premise: 'Accept, refuse, or walk — the spine will lock.', xpReward: 0, goldReward: 0, cooldown: 24 },
+  { id: 'PYOA-CRISIS-009', mode: 'pyoa', tier: 'crisis', title: 'Mill Gate', foeName: 'Mill Gate Crowd', premise: 'The mill gate will not open unless you pick a side.', xpReward: 0, goldReward: 0, cooldown: 20 },
+  { id: 'PYOA-CRISIS-010', mode: 'pyoa', tier: 'crisis', title: 'Ferry Toll', foeName: 'Ferry Toll Crowd', premise: 'The last ferry wants a name, a coin, or a promise.', xpReward: 0, goldReward: 0, cooldown: 18 },
 ];

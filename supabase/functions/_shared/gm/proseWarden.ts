@@ -5,7 +5,8 @@
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
-import type { GameState, Item } from './types.ts';
+import type { GameState, Item, NpcMemory } from './types.ts';
+import { scrubNpcIntroRepeat } from './npcMemory.ts';
 import { playerTypedDialogue } from './intentParser.ts';
 import {
   scrubInventedEmptySearchLoot,
@@ -106,6 +107,8 @@ export type ProseWardenContext = {
   priorLocation?: string;
   /** P0-5 — destroyed PYOA key items that must not resurrect in kit/prose. */
   destroyedItems?: string[];
+  /** 12a — already-met NPCs; strip a second self-intro sentence. */
+  npcMemories?: NpcMemory[];
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -1629,6 +1632,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubDestroyedPyoaItems(next, ctx?.destroyedItems);
   next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
   next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
+  next = scrubNpcIntroRepeat(next, ctx?.npcMemories);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubSlotGlue(
     next,
