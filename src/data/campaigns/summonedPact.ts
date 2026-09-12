@@ -1,4 +1,5 @@
 import type { CampaignBible } from './types';
+import { SUMMONED_PACT_PHASE4_HOOKS } from './summonedPactPhase4Hooks';
 
 /**
  * Original SynapticGM isekai bible.
@@ -381,6 +382,7 @@ export const summonedPact: CampaignBible = {
       fallback:
         'Wet charcoal. You are alone in the burnt husk of a roadside waystation — charcoal ribs, no roof, old room-lines in the floor. A blue panel hangs at eye level. Nobody is here.',
     },
+    ...SUMMONED_PACT_PHASE4_HOOKS,
   ],
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Confirm designation.' },
@@ -565,6 +567,36 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       description: 'Does not appear until a special seed or a player who hunts rumors. Soft-spoken. Offers a letter, not a knife, the first time.',
       hooks: ['Ash Court Letter', 'Name the other summoned', 'Ask what you want that Pellane will not give'],
     },
+    { id: 'sp-npc-5', name: 'Ilyra Fen', role: 'informant', disposition: 'ambiguous', description: 'Reed-walker who reads reflections that are not hers.', hooks: ['Reflection state', 'Hidden reed route'] },
+    { id: 'sp-npc-6', name: 'Tekk Reed', role: 'gatekeeper', disposition: 'neutral', description: 'Mirror warden of the March. Counts who comes back twice.', hooks: ['March permit', 'False-double warning'] },
+    { id: 'sp-npc-7', name: 'Nomi Vale', role: 'witness', disposition: 'friendly', description: 'A child-echo who repeats debts spoken over water.', hooks: ['Name a debt', 'Follow the echo'] },
+    { id: 'sp-npc-8', name: 'Pash Fen', role: 'artisan', disposition: 'neutral', description: 'Reed-cutter who sells dry paths for coin or a secret.', hooks: ['Buy a path', 'Ask who paid last'] },
+    { id: 'sp-npc-9', name: 'Brother Oren', role: 'guide', disposition: 'friendly', description: 'Ash-road novice who will not admit he is following someone.', hooks: ['Cinderwake pursuit', 'Share water'] },
+    { id: 'sp-npc-10', name: 'Kessa Cinder', role: 'bounty-target', disposition: 'hostile', description: 'Ashhound tracker. Heat and prints are her language.', hooks: ['Lose the track', 'Turn the hunt'] },
+    { id: 'sp-npc-11', name: 'Vey Quill', role: 'informant', disposition: 'neutral', description: 'Trail archivist who buys footprints as evidence.', hooks: ['Sell a print', 'Ask what the Crown already knows'] },
+    { id: 'sp-npc-12', name: 'Marn Holt', role: 'refugee', disposition: 'ambiguous', description: 'Deserter with a caravan story that does not stay still.', hooks: ['Caravan crisis', 'Hear his other version'] },
+    { id: 'sp-npc-13', name: 'Sula Vane', role: 'ruler', disposition: 'neutral', description: 'Sump magistrate. Contracts are cheaper than mercy.', hooks: ['Illegal bindings', 'Price a hearing'] },
+    { id: 'sp-npc-14', name: 'Nox Kade', role: 'merchant', disposition: 'ambiguous', description: 'Broker of leverage tokens under the street.', hooks: ['Buy leverage', 'Sell a name'] },
+    { id: 'sp-npc-15', name: 'Rell Iron', role: 'captive', disposition: 'neutral', description: 'Bound knight who still has one clause left.', hooks: ['Ask the clause', 'Offer a rewrite'] },
+    { id: 'sp-npc-16', name: 'Ado Ferry', role: 'courier', disposition: 'neutral', description: 'Ferrymaster. Night prices change with reputation.', hooks: ['Night crossing', 'Who else paid'] },
+    { id: 'sp-npc-17', name: 'Jiin Vale', role: 'conspirator', disposition: 'ambiguous', description: 'Sump spy who smiles like a clerk.', hooks: ['Faction branch', 'Plant a rumor'] },
+    { id: 'sp-npc-18', name: 'Varra Linen', role: 'guide', disposition: 'friendly', description: 'Sump healer who treats bindings as wounds.', hooks: ['Untie a mark', 'Pay in silence'] },
+    { id: 'sp-npc-19', name: 'Caldrin Hollow', role: 'artisan', disposition: 'ambiguous', description: 'Engineer-ghost who still wants the hall powered.', hooks: ['Restore power', 'Ask what the Bell was'] },
+    { id: 'sp-npc-20', name: 'Orr Hollow', role: 'witness', disposition: 'neutral', description: 'Twin who remembers the alert clock from one side.', hooks: ['Power routing', 'Name the twin'] },
+    { id: 'sp-npc-21', name: 'Osa Hollow', role: 'witness', disposition: 'neutral', description: 'Twin who remembers containment from the other side.', hooks: ['Containment', 'Disagree with Orr'] },
+    { id: 'sp-npc-22', name: 'Yara Quill', role: 'quest-patron', disposition: 'neutral', description: 'Argent commander. Licenses are a leash she will admit.', hooks: ['License rank', 'Reform or capture'] },
+    { id: 'sp-npc-23', name: 'Kade Voss', role: 'rival', disposition: 'hostile', description: 'Argent rival who wants your paper voided.', hooks: ['Rival contract', 'Refuse the duel'] },
+    { id: 'sp-npc-24', name: 'Nemi Salt', role: 'merchant', disposition: 'friendly', description: 'Quartermaster of the moving ledger.', hooks: ['Mission board', 'Kit for a stamp'] },
+    { id: 'sp-npc-25', name: 'Senn Vale', role: 'mentor', disposition: 'friendly', description: 'Advocate who can argue a Mark without swearing it.', hooks: ['Audit defense', 'Name in the ledger'] },
+    { id: 'sp-npc-26', name: 'Aster Wren', role: 'guide', disposition: 'neutral', description: 'Argent pathfinder for licensed jobs.', hooks: ['Pick a contract', 'Walk away clean'] },
+    { id: 'sp-npc-27', name: 'Maelis Curate', role: 'keeper', disposition: 'neutral', description: 'Reliquary curator. Doctrine first, then the relic.', hooks: ['Doctrine choice', 'Ask what is corrupted'] },
+    { id: 'sp-npc-28', name: 'Jor Stone', role: 'gatekeeper', disposition: 'neutral', description: 'Reliquary sentinel who counts credentials, not prayers.', hooks: ['Access paper', 'Stealth route'] },
+    { id: 'sp-npc-29', name: 'Fia Lamp', role: 'guide', disposition: 'friendly', description: 'Novice who still believes the shrine is kind.', hooks: ['Ask the novice', 'Hide a guest'] },
+    { id: 'sp-npc-30', name: 'Hev Ash', role: 'traitor', disposition: 'ambiguous', description: 'Apostate who will sell a relic route.', hooks: ['Infiltration', 'Hear the heresy'] },
+    { id: 'sp-npc-31', name: 'Tolan Reed', role: 'conspirator', disposition: 'ambiguous', description: 'Smuggler with a crate that should not be holy.', hooks: ['Relic crate', 'Pay in silence'] },
+    { id: 'sp-npc-32', name: 'Sere Vhal', role: 'ruler', disposition: 'neutral', description: 'Abbot of the reliquary. Soft voice, hard lock.', hooks: ['Audience', 'Doctrine fork'] },
+    { id: 'sp-npc-33', name: 'Soren Vale', role: 'antagonist', disposition: 'ambiguous', description: 'Scar architect. Speaks as if the seam already chose you.', hooks: ['Integration clock', 'Finale alignment'] },
+    { id: 'sp-npc-34', name: 'Mira Flint', role: 'refugee', disposition: 'friendly', description: 'Scar survivor who will not go back through.', hooks: ['Alliance', 'Refuse the scar'] },
   ],
 
   starterQuests: [
@@ -612,6 +644,22 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       objectives: ['Get a reason to enter the palace', 'Read or steal a true account'],
       rewards: 'Leverage over the Crown — and a hunt',
     },
+    { id: 'sp-quest-price-calling', title: 'The Price of Calling', description: 'Every pact transferred a debt into the March. Find whose name it wears now.', recommendedLevel: 2, objectives: ['Reach Mireglass March', 'Hear one transferred debt', 'Choose to carry, refuse, or sell it'], rewards: 'A named debt — or a lighter Mark' },
+    { id: 'sp-quest-price-reflection', title: 'Mirror Debt', description: 'The March can summon a duplicate. Decide if it is evidence or a rival.', recommendedLevel: 2, objectives: ['See a reflection that is not yours', 'Ask Tekk Reed what it costs', 'Close or keep the double'], rewards: 'A path change — or a second claim on you' },
+    { id: 'sp-quest-price-route', title: 'Hidden Reed Route', description: 'Pash Fen sells a dry path that skips a Crown checkpoint.', recommendedLevel: 2, objectives: ['Find Pash Fen', 'Pay, threaten, or trade a secret', 'Walk the reed route once'], rewards: 'A hidden exit off the Cinderflow' },
+    { id: 'sp-quest-cinder-pursuit', title: 'Ashhound Pursuit', description: 'Kessa Cinder is already on your prints. Turn the hunt or be the quarry.', recommendedLevel: 2, objectives: ['Notice the heat-track', 'Lose, parley, or fight the Ashhound', 'Tell Brother Oren a true version'], rewards: 'Pursuit clock eased or a new enemy' },
+    { id: 'sp-quest-cinder-caravan', title: 'Cinderwake Caravan', description: 'Marn Holt’s caravan story is a crisis with two endings.', recommendedLevel: 2, objectives: ['Find the caravan sign', 'Hear Marn’s first version', 'Pick rescue, salvage, or walk-away'], rewards: 'Supply, witnesses, or heat' },
+    { id: 'sp-quest-cinder-evidence', title: 'Footprint Ledger', description: 'Vey Quill buys ash evidence. The Crown will too.', recommendedLevel: 3, objectives: ['Collect one print or ash scrap', 'Sell to Vey or keep it', 'Survive the attention'], rewards: 'Coin or a warrant' },
+    { id: 'sp-quest-sump-bindings', title: 'Illegal Bindings', description: 'Sula Vane’s court sells bindings the cathedral will not stamp.', recommendedLevel: 2, objectives: ['Enter the Sump Court', 'Read one illegal clause', 'Break, buy, or report it'], rewards: 'A leverage token or a magistrate problem' },
+    { id: 'sp-quest-sump-leverage', title: 'Sump Court Leverage', description: 'Nox Kade prices names. Reputation moves the number.', recommendedLevel: 3, objectives: ['Buy or refuse a token', 'Ask Jiin Vale who else bid', 'Spend the token once'], rewards: 'A faction branch lock' },
+    { id: 'sp-quest-sump-ferry', title: 'Night Ferry Price', description: 'Ado Ferry’s night crossing costs more if the Sump already knows you.', recommendedLevel: 2, objectives: ['Reach the Sump quay', 'Pay, work, or sneak the ferry', 'Land without a new binding'], rewards: 'A night exit under the city' },
+    { id: 'sp-quest-hollow-power', title: 'Hollow Engine Power', description: 'Caldrin Hollow wants the hall alive. The twins remember why it died.', recommendedLevel: 3, objectives: ['Enter Hollow Engine', 'Hear Orr and Osa disagree', 'Restore or refuse power'], rewards: 'A working hall — or a quieter ruin' },
+    { id: 'sp-quest-hollow-contain', title: 'Bell Containment', description: 'The last lock is not a person. Keep it seated.', recommendedLevel: 3, objectives: ['Find the containment aisle', 'Choose power-routing or a hard lock', 'Leave before the alert clock'], rewards: 'Containment held or a live hazard' },
+    { id: 'sp-quest-argent-license', title: 'Licensed Blood', description: 'Yara Quill will rank you. Kade Voss will try to void the paper.', recommendedLevel: 2, objectives: ['Find the Argent Ledger', 'Accept, reform, or refuse a license', 'Survive Kade’s claim'], rewards: 'A rank stamp — or a burned paper' },
+    { id: 'sp-quest-argent-audit', title: 'A Name in the Ledger', description: 'Senn Vale can argue a summoned identity back onto a page — or sell it.', recommendedLevel: 3, objectives: ['Sit an audit', 'Restore, commodify, or sacrifice the name', 'Walk out with one version'], rewards: 'Identity leverage' },
+    { id: 'sp-quest-reliquary-doctrine', title: 'Relic Doctrine', description: 'Maelis Curate wants a doctrine choice before the relic moves.', recommendedLevel: 3, objectives: ['Enter Saint Vhal’s Reliquary', 'Hear doctrine from Maelis or Sere', 'Pick a relic stance'], rewards: 'Access credentials or a quiet exile' },
+    { id: 'sp-quest-reliquary-infiltrate', title: 'Reliquary Infiltration', description: 'Hev Ash and Tolan Reed sell a route that Jor Stone is paid to close.', recommendedLevel: 3, objectives: ['Buy or refuse the apostate route', 'Pass Jor Stone by paper or stealth', 'Touch or leave the relic'], rewards: 'A relic, a hunt, or both' },
+    { id: 'sp-quest-scar-answers', title: 'The Scar That Answers', description: 'The Integration Scar connects transferred debts to a last clock. Mira Flint will not go back through.', recommendedLevel: 4, objectives: ['Reach the Integration Scar', 'Hear Soren Vale’s alignment', 'Choose alliance, loadout, or refusal'], rewards: 'A finale lock — not a recap lecture' },
   ],
 
   starterItems: [

@@ -8,7 +8,7 @@ import { applyOpeningContract } from './openingStitch';
 describe('ready-made opening hook decks', () => {
   it('gives Summoned Pact more than the cathedral circle', () => {
     const deck = openingHookDeck(summonedPact);
-    expect(deck.length).toBeGreaterThanOrEqual(18);
+    expect(deck.length).toBeGreaterThanOrEqual(40);
     const seen = new Set<string>();
     for (let i = 0; i < 200; i++) {
       seen.add(resolveOpeningHook(summonedPact, `seed-${i}`) ?? '');

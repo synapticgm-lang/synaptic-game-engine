@@ -18,6 +18,7 @@ import {
   sanitizePcName,
 } from './pcNameAuthority';
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
+import { rememberPlayerName } from './npcMemory';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -597,6 +598,41 @@ export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: stri
   return resolveOpeningHookPick(bible, seed)?.text;
 }
 
+/** Short New Game preview of the same card `startNewGame` will stitch. No GM call. */
+export interface OpeningHookPreview {
+  location?: string;
+  why?: string;
+  cast?: string;
+  firstLine: string;
+}
+
+export function firstOpeningLine(text: string | undefined): string {
+  const raw = (text ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  const sentence = raw.split(/(?<=[.!?])\s+/)[0] ?? raw;
+  return sentence.slice(0, 180);
+}
+
+export function previewOpeningHook(
+  bible: CampaignBible | undefined,
+  seed?: string,
+): OpeningHookPreview | undefined {
+  const pick = resolveOpeningHookPick(bible, seed);
+  if (!pick) return undefined;
+  const firstLine = firstOpeningLine(pick.page1 || pick.fallback || pick.text);
+  if (!firstLine && !pick.location) return undefined;
+  return {
+    location: pick.location,
+    why: pick.summonIntent,
+    cast: pick.faction,
+    firstLine,
+  };
+}
+
+export function freshOpenerSeed(): string {
+  return Math.random().toString(36).slice(2, 10);
+}
+
 const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
   'summoned-pact': {
     name: 'Someone in the scene needs a name for you. What do they call you?',
@@ -1052,6 +1088,24 @@ export function hallTalkAsksWant(raw: string): boolean {
     || /\bwhy should i(?: help)?\b/i.test(t)
     || /\bwhy\b.{0,24}\bname\b/i.test(t)
     || /\bwhat(?:'s| is|s)\b.{0,24}\b(?:actual(?:ly)? )?deal\b/i.test(t)
+    || /\bwhat(?:'s| is|s)\b.{0,24}\b(?:the )?pay\b/i.test(t)
+    || /\b(?:the )?pay then\b/i.test(t)
+    || /\bwages?\b/i.test(t)
+  );
+}
+
+/** Stay-or-walk-away bargain — not Leave-the-scene travel. */
+export function hallTalkAsksStayLeave(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/\b(leave the scene|leave through|walk away|travel|attack|flee)\b/i.test(t)) return false;
+  return (
+    /\b(?:can|may|should|do) i (?:leave|stay)\b/i.test(t)
+    || /\bdo i need to stay\b/i.test(t)
+    || /\bstay on the (?:ship|boat|deck|hold)\b/i.test(t)
+    || /\bcan i (?:go|get) (?:home|back)\b/i.test(t)
+    || /\bget back home\b/i.test(t)
+    || (/\bor (?:can i )?leave\b/i.test(t) && /\b(?:stay|ship|need)\b/i.test(t))
   );
 }
 
@@ -1098,6 +1152,7 @@ export function isCoverShapedPlayerLine(raw: string): boolean {
     || hallTalkAsksWho(p)
     || hallTalkAsksWant(p)
     || hallTalkAsksRefuse(p)
+    || hallTalkAsksStayLeave(p)
     || hallTalkAsksPanel(p)
   ) {
     return true;
@@ -1116,6 +1171,7 @@ export function playerGaveNameAndAskedMore(raw: string): boolean {
     hallTalkAsksWho(act)
     || hallTalkAsksWant(act)
     || hallTalkAsksRefuse(act)
+    || hallTalkAsksStayLeave(act)
     || hallTalkAsksWhere(act)
     || hallTalkAsksPanel(act)
     || playerAskedWhyPulled(act)
@@ -1126,7 +1182,18 @@ export function playerGaveNameAndAskedMore(raw: string): boolean {
 export function isHallTalkPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
-  if (/\b(travel|attack|flee|leave|exit|head (?:to|toward)|go to|press the attack)\b/i.test(p)) {
+  if (/\b(travel|attack|flee|head (?:to|toward)|go to|press the attack)\b/i.test(p)) {
+    return false;
+  }
+  if (/\b(leave the scene|leave through|walk away)\b/i.test(p) && !hallTalkAsksStayLeave(p)) {
+    return false;
+  }
+  if (
+    /\b(leave|exit)\b/i.test(p)
+    && !hallTalkAsksStayLeave(p)
+    && !hallTalkAsksWant(p)
+    && !hallTalkAsksRefuse(p)
+  ) {
     return false;
   }
   return isCoverShapedPlayerLine(p);
@@ -1280,16 +1347,31 @@ export function shortCardCost(state: GameState): string {
   return clipCardClause(first, 180);
 }
 
-/** Optional kit/banner offer from this card — one clause. */
-export function shortCardOffer(state: GameState): string {
+function rawCardOffer(state: GameState): string {
   const fromSave = offerFromPickedHookBlob(state.openingEstablishment?.pickedHook);
   const bible = resolveActiveCampaignBible(state);
   const picked = resolveOpeningHookPick(bible, state.seed);
-  const raw =
-    fromSave
-    || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim();
+  return fromSave || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim();
+}
+
+/** Optional kit/banner offer from this card — one clause. */
+export function shortCardOffer(state: GameState): string {
+  const raw = rawCardOffer(state);
   const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
   return clipCardClause(first, 180);
+}
+
+/** Authored stay-or-walk cost — card cost, else leftover offer sentence. Never invent. */
+export function shortCardStayLeave(state: GameState): string {
+  const cost = shortCardCost(state);
+  if (cost) return cost;
+  const raw = rawCardOffer(state);
+  const parts = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const rest = parts.slice(1).join(' ').trim();
+  if (rest && /\b(dump|quay|leave|shout|walk|stay|refuse|keep earth)\b/i.test(rest)) {
+    return clipCardClause(rest, 180);
+  }
+  return '';
 }
 
 export function openingSpokenIdentityQuote(
@@ -1397,7 +1479,26 @@ export function openingSpokenRefuse(state: GameState): string {
   return `${head} ${verb} you. "${body}"`;
 }
 
-export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' | 'refuse' = 'who'): string {
+export function openingStayLeaveLine(state: GameState): string {
+  return shortCardStayLeave(state) || 'They have not said whether you must stay or may leave.';
+}
+
+/** Card stay/leave clause as speech — empty cards stay honest. */
+export function openingSpokenStayLeave(state: GameState): string {
+  const who = openingCastLabel(state);
+  const body = shortCardStayLeave(state).trim();
+  if (!body) return openingStayLeaveLine(state);
+  if (/\bpanel\b/i.test(who)) {
+    return `The panel does not speak. ${body}`;
+  }
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
+    ? 'answer'
+    : 'answers';
+  return `${head} ${verb} you. "${body}"`;
+}
+
+export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' | 'refuse' | 'stayLeave' = 'who'): string {
   const who = openingCastLabel(state);
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   if (topic === 'want') {
@@ -1411,6 +1512,13 @@ export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' |
     const body = shortCardCost(state).trim();
     if (!body || /they have not said what happens if you refuse/i.test(body)) {
       return 'They have not said what happens if you refuse.';
+    }
+    return `${head} already said it. "${body}"`;
+  }
+  if (topic === 'stayLeave') {
+    const body = shortCardStayLeave(state).trim();
+    if (!body) {
+      return 'They have not said whether you must stay or may leave.';
     }
     return `${head} already said it. "${body}"`;
   }
@@ -1446,7 +1554,7 @@ export function playerAskedWhyPulled(raw: string): boolean {
     return false;
   }
   return (
-    /\bwho summoned\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bask what they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b/i.test(
+    /\bwho summoned\b|\byou summoned me\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bask what they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b|\bget back home\b|\bto earth\b/i.test(
       p
     )
   );
@@ -1661,11 +1769,12 @@ export function applyLedgerDeficit(state: GameState, rawInput: string): GameStat
     }
   }
   if (!changed) return state;
-  return {
+  const next = {
     ...state,
     character,
     openingEstablishment: { ...est, answers },
   };
+  return answers.name ? rememberPlayerName(next, answers.name) : next;
 }
 
 const NOT_A_PLACE =

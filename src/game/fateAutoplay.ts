@@ -98,6 +98,7 @@ import {
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { maybeRevealFromLocation } from './worldAtlas';
 import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
+import { applySocialLedgerTurn } from './npcMemory';
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import {
   extractUpdates,
@@ -1281,6 +1282,7 @@ Do NOT print dice notation or CODE ENFORCED.
     ].filter((n) => n && !isChromePersonToken(n)),
     lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
     hookLock: hookLockForWarden(working, cleanText),
+    npcMemories: working.npcMemories ?? state.npcMemories,
   });
   {
     const prefaced = ensureEncounterSpawnPreface(working, cleanText);
@@ -1544,6 +1546,20 @@ Do NOT print dice notation or CODE ENFORCED.
     character = leveled.character;
     levelNotes = [...levelNotes, ...leveled.notes];
   }
+  working = applySocialLedgerTurn({
+    state: {
+      ...working,
+      character,
+      places: sandboxXp.places ?? working.places,
+      sandboxAwardKeys: sandboxKeys,
+      quests: updatedQuests,
+    },
+    playerAction: playerInput,
+    gainedItemNames: [],
+    questsBefore,
+    questsAfter: updatedQuests,
+    turn: nextTurn,
+  });
   working = {
     ...working,
     character,

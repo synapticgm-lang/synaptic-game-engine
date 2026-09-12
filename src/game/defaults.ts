@@ -11,7 +11,12 @@ export function isPlayableSave(state: GameState | null | undefined): state is Ga
   return !!state && typeof state.saveId === 'string' && (state.version ?? 0) >= CURRENT_SAVE_VERSION;
 }
 
-export function createInitialState(storyName?: string, engineMode: EngineMode = 'litrpg', archetype?: CampaignArchetype): GameState {
+export function createInitialState(
+  storyName?: string,
+  engineMode: EngineMode = 'litrpg',
+  archetype?: CampaignArchetype,
+  openerSeed?: string,
+): GameState {
   const now = Date.now();
   const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
   return syncContainerOccupancy({
@@ -98,7 +103,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
     ],
     rolls: [],
     turn: 0,
-    seed: Math.random().toString(36).slice(2, 10),
+    seed: openerSeed?.trim() || Math.random().toString(36).slice(2, 10),
     pendingImagePrompt: null,
     lorebook: [],
     timeline: [],

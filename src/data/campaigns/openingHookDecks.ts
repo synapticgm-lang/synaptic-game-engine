@@ -290,6 +290,20 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
       text:
         'The gate is barred. They still let you in because the rain left you no choice. Someone on the wall watches the keep, not you.',
     },
+    {
+      location: 'Greyhollow well at midnight',
+      page1:
+        'Midnight at the Greyhollow well. The bucket rope is cut. You arrive alone; the inn lights are a rumor uphill. Something answered from the shaft before you spoke. Father Aldous is already on the cobbles with a lantern, as if he dreamed you would come here first.',
+      text:
+        'You start at the well, not the inn. The rope is cut. Aldous dreamed you would come here first.',
+    },
+    {
+      location: 'the keep gate above Greyhollow',
+      page1:
+        'You are already at the keep gate above Greyhollow, not the village. The oak is swollen shut. Crow-shot holes in the door. No inn book, no coach. A steward’s voice behind the planks asks who sent you — and will not open until you answer.',
+      text:
+        'Keep gate first. The village is a smear downhill. Someone behind the oak wants a name before the bar moves.',
+    },
   ],
 
   'shattered-coast': [
@@ -532,6 +546,20 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Dusk paints the river at the Thornferry mill a deep purple. The ferry is already late. Wren Holt stands on the slick dock with the sealed charter tight against their chest. Something dark breaks the water by the pilings and is gone. Wren steps back. “The ferry isn’t coming. We take the ford in the dark, or we wait in the mill until dawn.” The river is still moving.',
       text:
         'Dusk, not dawn. The ferry is already late. Wren’s question is sharper. The charter is heavier.',
+    },
+    {
+      location: 'the magistrate’s porch at Thornferry',
+      page1:
+        'You start on the magistrate’s porch, not the mill. Wren Holt is already arguing the sealed charter under a lamp. A clerk wants your name for the writ before anyone walks the road. The river is a sound behind the house. Wren looks at you and waits.',
+      text:
+        'Magistrate’s porch. The mill is a rumor. Wren still has the charter. The clerk wants a name for the writ.',
+    },
+    {
+      location: 'the mill loft before Wren finds you',
+      page1:
+        'Grain-dust in the Thornferry mill loft. You are here first. The ferry rope knocks below. Wren Holt’s boots hit the ladder with the sealed charter already in hand. “I was told you’d be on the landing,” Wren says. “We still walk together, or I walk it alone.”',
+      text:
+        'Mill loft first. Wren finds you late. The landing question is the same; the room is not.',
     },
   ],
 
@@ -874,6 +902,20 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'The safehouse reeks of sweat and spilled drink. The rehearsal went loud — fake guards fought, bells rang — and Heat is already up in the district. The real Salt Road score will be worse. Someone in this room wants out, and might sell the rest. The muscle stops in front of you with a bloodied crowbar, waiting to hear whose name you give if the watch kicks the door.',
       text:
         'Rehearsal already made Heat. The real score is worse. Someone wants out. The Consul does not know — yet.',
+    },
+    {
+      location: 'a salt-pan camp at dawn',
+      page1:
+        'Dawn glare off the salt pans. You join the crew here, not in a loft. The Consul caravan is two ridges over. Vessa has the map weighted with a stone. Heat is still zero. The cutter across the fire is waiting to hear if you lead, cut, or walk.',
+      text:
+        'Salt pans at dawn. The loft is a rumor. The caravan is two ridges over. First move is still yours.',
+    },
+    {
+      location: 'the Consul counting-house back door',
+      page1:
+        'You start at the Consul counting-house back door, not the road. The tax ledger is inside an iron cage you can already see through a grate. A hired lockpick is waiting on your word. Go loud and Heat rises in the district before the caravan ever moves.',
+      text:
+        'Back door, not the Salt Road. The ledger is already in sight. Heat will rise if you go loud here.',
     },
   ],
 

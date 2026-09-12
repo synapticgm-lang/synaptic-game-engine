@@ -222,7 +222,12 @@ import {
   buildThinStoryExpandBlock,
   isUnresolvedActionNarrative,
 } from './actionResolution';
-import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
+import {
+  applyNpcExitToPresent,
+  applySocialLedgerTurn,
+  mergeNpcMemoriesFromTurn,
+  recordNpcTreatmentFromAction,
+} from './npcMemory';
 import {
   resolveLitrpgSystemPersonality,
   resolvePyoaGmPersonality,
@@ -3708,6 +3713,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
           ].filter((n) => n && !isChromePersonToken(n)),
           hookLock: hookLockForWarden(workingState, cleanText),
+          npcMemories: workingState.npcMemories ?? liveCurrent.npcMemories,
           lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,
           enemyName:
             workingState.activeEncounter?.name
@@ -4109,6 +4115,32 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
 
       const npcMemoriesWithRel = upsertNpcRelationshipSummary(npcMemories, nextTurn);
+      const socialLedger = applySocialLedgerTurn({
+        state: {
+          ...workingState,
+          npcMemories: npcMemoriesWithRel,
+          quests: updatedQuests,
+          openingEstablishment:
+            workingState.openingEstablishment ?? liveCurrent.openingEstablishment,
+        },
+        playerAction: sanitizedInput,
+        gainedItemNames: [
+          ...structural.gainedItems.map((i) => i.name),
+          ...newInventoryItems.map((i) => i.name),
+          ...events
+            .filter((e) => e.type === 'item-gain' && e.name)
+            .map((e) => e.name!),
+        ],
+        questsBefore: liveCurrent.quests ?? [],
+        questsAfter: updatedQuests,
+        turn: nextTurn,
+      });
+      workingState = {
+        ...workingState,
+        npcMemories: socialLedger.npcMemories,
+        sceneFacts: socialLedger.sceneFacts ?? workingState.sceneFacts,
+      };
+      const npcMemoriesSocial = socialLedger.npcMemories ?? npcMemoriesWithRel;
       const statusReveal = tutorialAdv.progress.fullStatusUnlocked
         ? 'full'
         : nextTurn >= 5
@@ -4405,12 +4437,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             : {}),
         ...memorableLogFields(memorableDecision),
       };
+      const committedFacts = applyNpcExitToPresent({
+        ...workingState,
+        npcMemories: npcMemoriesSocial,
+        sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
+      }).sceneFacts;
       const gmLogEntry = withLitrpgSystemWindow(
         withOfferedChoices(gmLogEntryBase, {
           ...workingState,
           ...updates,
           character: baseChar,
-          sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
+          sceneFacts: committedFacts,
           choices: committedChoices,
           openingEstablishment: liveCurrent.openingEstablishment,
           log: [...liveCurrent.log, gmLogEntryBase],
@@ -4430,7 +4467,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         activeDungeon: areaMap,
         currentCoordinates: workingState.currentCoordinates ?? liveCurrent.currentCoordinates,
         timeline: mergedTimeline,
-        npcMemories: npcMemoriesWithRel,
+        npcMemories: npcMemoriesSocial,
         locationSheet,
         previousLocationSheet: locMem.previousLocationSheet,
         tutorialProgress: tutorialAdv.progress,
@@ -4439,7 +4476,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         statusReveal,
         pendingContentRewrite: null,
         previousSceneFacts: liveCurrent.sceneFacts,
-        sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
+        sceneFacts: committedFacts,
         discoveredLocations: liveCurrent.discoveredLocations,
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
@@ -4893,6 +4930,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     gmPersonality?: GmPersonalityId,
     systemPersonality?: SystemPersonalityId,
     useUsualSelf?: boolean,
+    openerSeed?: string,
   ) => {
     debugLogger.beginPlaySession('new-game');
     if (settingsRef.current.ttsEnabled) {
@@ -4947,7 +4985,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const resolvedName =
       storyName?.trim()
       || (bible ? formatCampaignStoryName(bible.title) : undefined);
-    const base = createInitialState(resolvedName, engineMode, resolvedArchetype);
+    const base = createInitialState(resolvedName, engineMode, resolvedArchetype, openerSeed);
     const seeded = bible
       ? seedStateFromCampaignBible(base, bible)
       : seedStateFromArchetype(base, engineMode, resolvedArchetype ?? base.campaignArchetype);

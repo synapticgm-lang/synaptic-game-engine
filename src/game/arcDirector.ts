@@ -42,6 +42,7 @@ import {
   forceClearIfStale,
   isEncounterOnCooldown,
 } from './encounterTerminalFsm';
+import { catalogDroughtNames, selectCatalogEncounter } from './encounterBible';
 import {
   lockPyoaBranchOnCrisis,
   exhaustDelayPads,
@@ -197,8 +198,10 @@ function committedSet(state: GameState): Set<string> {
   return new Set(state.arcDirector?.committedBeatIds ?? []);
 }
 
-/** 29c — bible-aware drought tables (no Keep Wraith on Shattered Coast). */
+/** 29c / 12b — catalog drought names first; bible-aware fallback if catalog empty. */
 export function droughtSkirmishTable(state: GameState): string[] {
+  const catalog = catalogDroughtNames(state);
+  if (catalog.length) return catalog;
   const id = (state.campaignBibleId ?? '').toLowerCase();
   if (id.includes('shattered') || id.includes('coast') || id.includes('saltmar')) {
     return ['Saltmar Raider', 'Coastal Wight', 'Brine Scout', 'Cliff Cutpurse'];
@@ -296,19 +299,23 @@ function resolveCombatContract(state: GameState, committed: Set<string>): BeatCo
 function hubSkirmishEncounter(state: GameState): ActiveEncounter {
   const lvl = state.character?.level ?? 1;
   const hp = 12 + lvl * 4;
+  const seed = selectCatalogEncounter(state);
   const table = droughtSkirmishTable(state);
   const clearCount = (state.stateTxLog ?? []).filter(
     (t) => /Encounter cleared|Encounter:/i.test(t.summary)
   ).length;
-  // Rotate by clears+turn; skip names still on re-engage cooldown
-  let name = table[(clearCount + state.turn) % table.length]!;
-  for (let i = 0; i < table.length; i++) {
-    const candidate = table[(clearCount + state.turn + i) % table.length]!;
-    if (!isEncounterOnCooldown(state, candidate)) {
-      name = candidate;
-      break;
+  let name = seed?.foeName ?? table[(clearCount + state.turn) % table.length]!;
+  if (!seed) {
+    for (let i = 0; i < table.length; i++) {
+      const candidate = table[(clearCount + state.turn + i) % table.length]!;
+      if (!isEncounterOnCooldown(state, candidate)) {
+        name = candidate;
+        break;
+      }
     }
   }
+  const xp = seed?.xpReward ?? 25 + lvl * 5;
+  const gold = seed?.goldReward ?? 5 + lvl * 2;
   return initEncounterTerminal(
     {
       name,
@@ -319,11 +326,11 @@ function hubSkirmishEncounter(state: GameState): ActiveEncounter {
       strength: 12,
       dexterity: 12,
       constitution: 12,
-      xpReward: 25 + lvl * 5,
-      goldReward: 5 + lvl * 2,
+      xpReward: xp,
+      goldReward: gold,
     },
     state,
-    { forcedSpawnKey: name, source: 'arcDirector' }
+    { forcedSpawnKey: name, source: seed?.id ?? 'arcDirector' }
   );
 }
 

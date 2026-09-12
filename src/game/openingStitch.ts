@@ -12,6 +12,7 @@ import {
   extractGivenName,
   hallTalkAsksPanel,
   hallTalkAsksRefuse,
+  hallTalkAsksStayLeave,
   hallTalkAsksWant,
   hallTalkAsksWhere,
   asksOpeningCardNoun,
@@ -23,7 +24,9 @@ import {
   openingCastLabel,
   openingRefuseLine,
   openingSpokenRefuse,
+  openingSpokenStayLeave,
   openingSpokenWant,
+  openingStayLeaveLine,
   openingWantLine,
   openingWhoAskLine,
   playerAskedWhyPulled,
@@ -250,14 +253,18 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const ledgerWant = openingWantLine(state);
   const refuse = openingSpokenRefuse(state);
   const ledgerRefuse = openingRefuseLine(state);
+  const stayLeave = openingSpokenStayLeave(state);
+  const ledgerStayLeave = openingStayLeaveLine(state);
   const whoLine = openingWhoAskLine(state);
   const alreadyToldWho = openingAlreadyToldLine(state, 'who');
   const alreadyToldWant = openingAlreadyToldLine(state, 'want');
   const alreadyToldRefuse = openingAlreadyToldLine(state, 'refuse');
+  const alreadyToldStayLeave = openingAlreadyToldLine(state, 'stayLeave');
   const asksWhere = hallTalkAsksWhere(act);
   const asksWhy = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksRefuse = hallTalkAsksRefuse(act);
+  const asksStayLeave = hallTalkAsksStayLeave(act);
   const asksWho = hallTalkAsksWho(act);
   const asksPanel = hallTalkAsksPanel(act);
   const gaveName = !!extractGivenName(act);
@@ -265,12 +272,12 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const searches =
     /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
 
-  if (isKitOrCarryInspect(act) && !asksWant && !asksWho && !asksRefuse) {
+  if (isKitOrCarryInspect(act) && !asksWant && !asksWho && !asksRefuse && !asksStayLeave) {
     return 'You still have what you arrived with. Nothing new is in your hands.';
   }
 
   const cardNoun = asksOpeningCardNoun(state, act);
-  if (cardNoun && !asksWant && !asksWho && !asksRefuse && !gaveName) {
+  if (cardNoun && !asksWant && !asksWho && !asksRefuse && !asksStayLeave && !gaveName) {
     const who = openingCastLabel(state);
     const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
     return `${head} still has the ${cardNoun}. They have not said more than that.`;

@@ -10,6 +10,12 @@ import {
   shouldForceNpcStageAdvance,
   presentNpcForPads,
 } from './npcTopicFsm';
+import {
+  dispositionBlocksPad,
+  hasMetBefore,
+  isRepeatPurchasePad,
+  npcShouldExit,
+} from './npcMemory';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { compileGraphChoiceLabels } from './graphChoices';
@@ -111,6 +117,13 @@ function isGenericInspectPad(choice: string): boolean {
 
 function isFirstSpeechLecturePad(choice: string): boolean {
   return /\b(ask who (?:they|he|she) (?:are|is)|ask (?:them|him|her) (?:their|his|her) name|introduce yourself|ask what(?:'s| is) going on|ask (?:them )?to explain (?:everything|the situation)|hear (?:their|his|her) story)\b/i.test(
+    choice
+  );
+}
+
+/** Identity intro only — not hall-talk "what's going on". */
+function isIdentityIntroPad(choice: string): boolean {
+  return /\b(ask who (?:they|he|she) (?:are|is)|ask (?:them|him|her) (?:their|his|her) name|introduce yourself)\b/i.test(
     choice
   );
 }
@@ -814,6 +827,34 @@ export function compileChoices(
     // P1-6 — NPC tactic: drop first-speech lecture chips once topics advanced
     if (npcTacticAdvance && isFirstSpeechLecturePad(c)) {
       notes.push(`NPC tactic drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    // 12a — after covers, do not re-offer who/name/introduce once this CAST is met.
+    if (
+      state.openingEstablishment?.complete
+      && npc
+      && hasMetBefore(state, npc)
+      && isIdentityIntroPad(c)
+    ) {
+      notes.push(`Met-before intro drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    // 12c — merchant already sold this item; quest-giver left; disposition vs kind/hard pads.
+    if (state.openingEstablishment?.complete && isRepeatPurchasePad(state, c)) {
+      notes.push(`Purchase memory drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (
+      state.openingEstablishment?.complete
+      && npc
+      && npcShouldExit(state, npc)
+      && /\b(ask|talk|speak|listen|press|offer)\b/i.test(c)
+    ) {
+      notes.push(`Quest-giver exit drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (state.openingEstablishment?.complete && dispositionBlocksPad(state, c)) {
+      notes.push(`Disposition pad drop: ${c.slice(0, 32)}`);
       return false;
     }
     if (npc) {

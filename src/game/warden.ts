@@ -286,6 +286,7 @@ export async function runWarden(
       state.arcDirector?.lastEncounterClearedTurn === state.turn ||
       state.arcDirector?.lastEncounterClearedTurn === state.turn - 1,
     hookLock: hookLockForWarden(state, narrativeText),
+    npcMemories: state.npcMemories,
     selectedIntentKind: intent?.kind,
     fleeFailed,
     priorLocation: priorLoc,

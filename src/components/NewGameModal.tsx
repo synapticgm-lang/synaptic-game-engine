@@ -40,6 +40,7 @@ import {
   type GmPersonalityId,
   type SystemPersonalityId,
 } from '@/game/gmVoiceProfile';
+import { freshOpenerSeed, previewOpeningHook } from '@/game/openingEstablishment';
 
 interface Props {
   contentMode?: ContentMode;
@@ -60,6 +61,7 @@ interface Props {
     gmPersonality?: GmPersonalityId,
     systemPersonality?: SystemPersonalityId,
     useUsualSelf?: boolean,
+    openerSeed?: string,
   ) => void;
   onClose: () => void;
 }
@@ -117,6 +119,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [storyName, setStoryName] = useState(formatCampaignStoryName('New Campaign'));
   const [archetype, setArchetype] = useState<CampaignArchetype>('ai_random');
   const [bibleId, setBibleId] = useState<string | undefined>(undefined);
+  const [openerSeed, setOpenerSeed] = useState(freshOpenerSeed);
   const [visualMode, setVisualMode] = useState<'comic' | 'classic'>('classic');
   const [artStylePreset, setArtStylePreset] = useState<ArtStylePreset>('classic-book');
   const [classicMemorableImages, setClassicMemorableImages] = useState(false);
@@ -148,6 +151,14 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const premadeBibles = useMemo(
     () => getCampaignBiblesByEngineMode(engineMode, contentMode),
     [engineMode, contentMode],
+  );
+  const selectedPremade = useMemo(
+    () => premadeBibles.find((b) => b.id === bibleId),
+    [premadeBibles, bibleId],
+  );
+  const hookPreview = useMemo(
+    () => (path === 'premade' && selectedPremade ? previewOpeningHook(selectedPremade, openerSeed) : undefined),
+    [path, selectedPremade, openerSeed],
   );
 
   const selectPremade = (bible: CampaignBible) => {
@@ -255,6 +266,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       resolveNarratorPersonality(),
       engineMode === 'litrpg' ? systemPersonality : undefined,
       useUsual,
+      openerSeed,
     );
   };
 
@@ -573,6 +585,48 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                       );
                     })}
                   </div>
+                  {hookPreview ? (
+                    <div
+                      className="mt-2 rounded-lg border border-slate-700 bg-slate-900/70 p-2.5"
+                      data-testid="opening-hook-preview"
+                    >
+                      <div className="mb-1 flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                          Opening this run
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setOpenerSeed(freshOpenerSeed())}
+                          className="text-[10px] text-crimson-300 underline-offset-2 hover:text-crimson-200 hover:underline"
+                        >
+                          Another opening
+                        </button>
+                      </div>
+                      {hookPreview.location ? (
+                        <p className="text-[11px] leading-snug text-slate-200">
+                          <span className="text-slate-500">Place · </span>
+                          {hookPreview.location}
+                        </p>
+                      ) : null}
+                      {hookPreview.why ? (
+                        <p className="mt-0.5 text-[11px] leading-snug text-slate-300">
+                          <span className="text-slate-500">Why · </span>
+                          {hookPreview.why}
+                        </p>
+                      ) : null}
+                      {hookPreview.cast ? (
+                        <p className="mt-0.5 text-[11px] leading-snug text-slate-300">
+                          <span className="text-slate-500">Cast · </span>
+                          {hookPreview.cast}
+                        </p>
+                      ) : null}
+                      {hookPreview.firstLine ? (
+                        <p className="mt-1 text-[11px] italic leading-snug text-slate-400">
+                          {hookPreview.firstLine}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div>

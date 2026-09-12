@@ -28,6 +28,7 @@ import {
 import { isPlannerUiPersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
+import { upsertHarvestedNpcMemory } from './npcMemory';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -90,27 +91,8 @@ function extractProperNamesFromProse(prose: string, bibleId?: string | null): st
 }
 
 function ensureNpcMemory(state: GameState, name: string, turn: number): NpcMemory[] {
-  const list = [...(state.npcMemories ?? [])];
-  if (list.some((n) => n.npcName.toLowerCase() === name.toLowerCase())) {
-    return list.map((n) =>
-      n.npcName.toLowerCase() === name.toLowerCase()
-        ? {
-            ...n,
-            facts: [...(n.facts ?? []).slice(-8), `Seen in play T${turn}`].slice(-10),
-          }
-        : n
-    );
-  }
-  return [
-    ...list,
-    {
-      npcId: `harvest-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
-      npcName: name,
-      disposition: 'neutral',
-      facts: [`Introduced in play T${turn}`],
-      lastSeenTurn: turn,
-    },
-  ];
+  const locked = state.character?.name?.trim();
+  return upsertHarvestedNpcMemory(state.npcMemories ?? [], name, turn, locked);
 }
 
 function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number): LoreCard[] {

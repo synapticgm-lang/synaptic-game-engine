@@ -976,6 +976,24 @@ export interface NpcMemory {
   // Pack 12 Mood Tracking
   currentMood?: NpcMood;
   lastMoodChange?: number;
+
+  /** 12a — first harvest / spoken intro already landed. */
+  introSpoken?: boolean;
+  /** 12a — locked PC name this NPC has heard. */
+  knownPlayerName?: string;
+  /** 12a — distinct meet beats (same-turn harvest does not increment). */
+  meetCount?: number;
+  /** 12a — exhausted dialogue basins (`intro`, later topics). */
+  completedTopics?: string[];
+  /** 12a — stranger on first harvest; acquaintance after a later meet. */
+  relationshipStatus?: 'stranger' | 'acquaintance' | 'ally' | 'rival' | 'friend' | 'enemy';
+  /** 12c — bible / inferred role (merchant stays; quest-patron may exit). */
+  roleHint?: string;
+  /** 12c — item names this merchant already sold the player. */
+  purchases?: string[];
+  /** 12c — quest-giver function complete; drop from CAST / Talk. */
+  shouldExit?: boolean;
+  exitReason?: 'quest-accepted' | 'goods-sold' | 'function-complete';
 }
 
 /** Location sheet — spatial facts for the current zone. */

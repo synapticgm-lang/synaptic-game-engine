@@ -8,6 +8,7 @@ import { stampMysteryCulprit } from './mysteryCulprit';
 import { seedWorldAtlas } from './worldAtlas';
 import { archetypePrefersBlankCanvas, blankBibleIdForMode } from './customBlank';
 import { discoverLocation } from './locationDiscovery';
+import { seedBibleNpcRoster } from './npcMemory';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -117,7 +118,7 @@ export function seedStateFromCampaignBible(
 
   // Pack 12 fog-of-war: discover starting location
   const withAtlas = seedWorldAtlas(seeded, bible);
-  return discoverLocation(withAtlas, startingLocation);
+  return seedBibleNpcRoster(discoverLocation(withAtlas, startingLocation), bible);
 }
 
 /** Resolve catalog bible or player-authored snapshot. */

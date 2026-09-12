@@ -15,6 +15,8 @@ import { realPresentPeople } from './chromeAuthority';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
+import { isCatalogFoeTalkForbidden } from './encounterBible';
+import { npcShouldExit } from './npcMemory';
 
 export type EdgeType =
   | 'attack'
@@ -100,8 +102,17 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
   if (state.openingEstablishment?.complete && isOutdoorScene(state) && !excluded.has('travel')) {
     const here = (state.currentLocation ?? '').toLowerCase();
     const fromBible = hubsForBibleId(state.campaignBibleId);
+    const activeIds = new Set(
+      (state.quests ?? []).filter((q) => q.revealed && q.status === 'active').map((q) => q.id)
+    );
     const listed = fromBible.length
-      ? fromBible.map((h) => ({ name: h.name }))
+      ? [...fromBible]
+          .sort((a, b) => {
+            const aLink = a.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
+            const bLink = b.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
+            return aLink - bLink;
+          })
+          .map((h) => ({ name: h.name }))
       : extraHubs(state);
     for (const hub of listed) {
       if (!hub.name || hub.name.toLowerCase() === here) continue;
@@ -121,6 +132,8 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     for (const npc of realPresentPeople(state.sceneFacts?.present ?? [])) {
       if (!canHarvestAsNamedPerson(npc, bibleId)) continue;
       if (matchesLastKillName(npc, lastKill)) continue;
+      if (isCatalogFoeTalkForbidden(state, npc)) continue;
+      if (npcShouldExit(state, npc)) continue;
       edges.push({
         type: 'talk',
         label: `Talk to ${npc}`,

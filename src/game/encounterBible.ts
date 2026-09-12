@@ -1,579 +1,115 @@
 /**
- * WS-4 Wave A: Encounter Bible Template Schema
- * 
- * Genre-appropriate encounter templates with full lifecycle:
- * telegraph → stakes → resolution → aftermath
+ * Encounter bible (Manus WS-4 / Phase 2).
+ * Catalog pick for ArcDirector drought — existing encounterTerminalFsm stays the FSM.
+ * No SNAPSHOT pile. No stitch-as-writer. No novel foe tokens at the director layer.
  */
 
-import type { GameState, EngineMode } from './types';
+import {
+  allCatalogEncounters,
+  catalogFoeNames,
+  encountersForMode,
+  isCatalogFoeName,
+  type EncounterSeed,
+} from '@/data/encounters';
+import { matchesLastKillName } from './combatAuthority';
+import { isEncounterOnCooldown } from './encounterTerminalFsm';
+import type { EngineMode, GameState } from './types';
 
-// ============================================================================
-// TEMPLATE SCHEMA
-// ============================================================================
+export type { EncounterSeed } from '@/data/encounters';
+export {
+  allCatalogEncounters,
+  catalogFoeNames,
+  encountersForMode,
+  findCatalogEncounter,
+  isCatalogFoeName,
+} from '@/data/encounters';
 
-export interface EncounterTemplate {
-  /** Template identifier */
-  id: string;
-  
-  /** Template name */
-  name: string;
-  
-  /** Bible identifier (which campaign) */
-  bibleId: string;
-  
-  /** Engine mode */
-  mode: EngineMode;
-  
-  /** Template version */
-  version: string;
-  
-  /** Telegraph phase */
-  telegraph: EncounterTelegraph;
-  
-  /** Stakes phase */
-  stakes: EncounterStakes;
-  
-  /** Resolution mechanics */
-  resolution: EncounterResolution;
-  
-  /** Aftermath receipts */
-  aftermath: EncounterAftermath;
-  
-  /** Biome constraints */
-  biomeConstraints: BiomeConstraints;
-  
-  /** Tier range */
-  tierRange: [number, number];
-  
-  /** Density role */
-  densityRole: 'trash' | 'elite' | 'miniboss' | 'boss' | 'patrol' | 'ambient';
-  
-  /** Max spawns per run */
-  maxSpawns?: number;
-}
-
-// ============================================================================
-// TELEGRAPH PHASE
-// ============================================================================
-
-export interface EncounterTelegraph {
-  /** Telegraph timing */
-  timing: 'none' | 'same-turn' | '1-turn-before' | '2-turns-before';
-  
-  /** Telegraph patterns */
-  patterns: TelegraphPattern[];
-  
-  /** Avoidable? */
-  avoidable: boolean;
-}
-
-export interface TelegraphPattern {
-  /** Pattern type */
-  type: 'status' | 'npc' | 'scene' | 'item' | 'faction';
-  
-  /** Pattern text */
-  text: string;
-  
-  /** Probability (0-1) */
-  probability: number;
-}
-
-// ============================================================================
-// STAKES PHASE
-// ============================================================================
-
-export interface EncounterStakes {
-  /** Win outcome */
-  win: StakeOutcome;
-  
-  /** Lose outcome */
-  lose: StakeOutcome;
-  
-  /** Flee outcome (if available) */
-  flee?: StakeOutcome;
-  
-  /** Parley outcome (if available) */
-  parley?: StakeOutcome;
-}
-
-export interface StakeOutcome {
-  /** Outcome description */
-  description: string;
-  
-  /** XP range */
-  xpRange: [number, number];
-  
-  /** Resource changes */
-  resources?: Array<{
-    resourceId: string;
-    deltaRange: [number, number];
-  }>;
-  
-  /** Faction deltas */
-  factionDeltas?: Record<string, [number, number]>;
-  
-  /** Quest progress */
-  questProgress?: Array<{
-    questPattern: string;
-    stage: number;
-  }>;
-  
-  /** Loot tables */
-  loot?: LootTable[];
-}
-
-export interface LootTable {
-  /** Loot tier */
-  tier: 'trash' | 'common' | 'uncommon' | 'rare' | 'boss';
-  
-  /** Item patterns */
-  items: Array<{
-    pattern: string;
-    probability: number;
-  }>;
-}
-
-// ============================================================================
-// RESOLUTION MECHANICS
-// ============================================================================
-
-export interface EncounterResolution {
-  /** Resolution type */
-  type: 'combat' | 'skill-check' | 'leverage' | 'crisis' | 'hybrid';
-  
-  /** Combat resolution (if type=combat) */
-  combat?: CombatResolution;
-  
-  /** Skill check resolution (if type=skill-check) */
-  skillCheck?: SkillCheckResolution;
-  
-  /** Leverage resolution (if type=leverage) */
-  leverage?: LeverageResolution;
-  
-  /** Crisis resolution (if type=crisis) */
-  crisis?: CrisisResolution;
-}
-
-export interface CombatResolution {
-  /** Enemy count */
-  enemyCount: [number, number]; // [min, max]
-  
-  /** Enemy HP range */
-  hpRange: [number, number];
-  
-  /** Flee difficulty */
-  fleeDifficulty: 'easy' | 'medium' | 'hard' | 'impossible';
-  
-  /** Parley difficulty */
-  parleyDifficulty: 'easy' | 'medium' | 'hard' | 'impossible';
-  
-  /** Max engagement turns */
-  maxEngagementTurns: number;
-}
-
-export interface SkillCheckResolution {
-  /** Skill type */
-  skill: 'stealth' | 'investigation' | 'athletics' | 'persuasion' | 'arcana' | 'perception';
-  
-  /** DC range */
-  dcRange: [number, number];
-  
-  /** Partial success available? */
-  partialSuccess: boolean;
-  
-  /** Retry allowed? */
-  retryAllowed: boolean;
-}
-
-export interface LeverageResolution {
-  /** Leverage topic pattern */
-  topicPattern: string;
-  
-  /** NPC vulnerability */
-  npcVulnerability?: string;
-  
-  /** Cost types */
-  costTypes: Array<'trust' | 'favor' | 'item' | 'faction'>;
-  
-  /** Outcomes */
-  outcomes: Array<'alliance' | 'enemy' | 'debt_owed' | 'exile'>;
-}
-
-export interface CrisisResolution {
-  /** Crisis forks */
-  forks: Array<{
-    forkId: string;
-    label: string;
-    exclusiveFacts: string[];
-  }>;
-  
-  /** Delayed payoff turn offset */
-  delayedPayoffOffset: [number, number]; // [min, max]
-}
-
-// ============================================================================
-// AFTERMATH PHASE
-// ============================================================================
-
-export interface EncounterAftermath {
-  /** Receipt types */
-  receiptTypes: Array<'xp' | 'loot' | 'faction' | 'quest' | 'npc' | 'dungeon'>;
-  
-  /** Mandatory receipts (always fire) */
-  mandatoryReceipts: string[];
-  
-  /** Optional receipts (conditional) */
-  optionalReceipts: Array<{
-    receiptType: string;
-    condition: string;
-  }>;
-}
-
-// ============================================================================
-// BIOME CONSTRAINTS
-// ============================================================================
-
-export interface BiomeConstraints {
-  /** Allowed biomes */
-  allowedBiomes: string[];
-  
-  /** Excluded biomes */
-  excludedBiomes?: string[];
-  
-  /** Required location types */
-  requiredLocations?: string[];
-  
-  /** Excluded location types */
-  excludedLocations?: string[];
-}
-
-/**
- * Biome taxonomy (shared across bibles)
- */
-export const BIOME_TAXONOMY = {
-  // Urban
-  urban: ['city', 'town', 'settlement', 'outpost', 'hub'],
-  urban_ruin: ['ruin', 'destroyed', 'abandoned', 'desolate'],
-  
-  // Dungeon
-  dungeon: ['dungeon', 'crypt', 'tomb', 'vault', 'keep'],
-  dungeon_natural: ['cave', 'cavern', 'grotto', 'underground'],
-  
-  // Wilderness
-  wilderness: ['forest', 'woods', 'jungle', 'swamp', 'marsh'],
-  wilderness_open: ['plains', 'grassland', 'field', 'meadow'],
-  wilderness_mountain: ['mountain', 'hills', 'peak', 'cliff'],
-  
-  // Coastal
-  coastal: ['coast', 'shore', 'beach', 'harbor', 'dock'],
-  coastal_water: ['sea', 'ocean', 'bay', 'inlet'],
-  
-  // Road
-  road: ['road', 'path', 'trail', 'highway', 'route'],
-  
-  // Special
-  desert: ['desert', 'dunes', 'wasteland', 'badlands'],
-  arctic: ['tundra', 'ice', 'snow', 'frozen'],
-  volcanic: ['volcano', 'lava', 'ash', 'crater'],
-} as const;
-
-// ============================================================================
-// TEMPLATE REGISTRY
-// ============================================================================
-
-export interface EncounterTemplateRegistry {
-  /** All templates */
-  templates: EncounterTemplate[];
-  
-  /** Templates by bible */
-  byBible: Map<string, EncounterTemplate[]>;
-  
-  /** Templates by ID */
-  byId: Map<string, EncounterTemplate>;
-  
-  /** Templates by mode */
-  byMode: Map<EngineMode, EncounterTemplate[]>;
-  
-  /** Registry version */
-  version: string;
-}
-
-/**
- * Create empty registry
- */
-export function createTemplateRegistry(): EncounterTemplateRegistry {
-  return {
-    templates: [],
-    byBible: new Map(),
-    byId: new Map(),
-    byMode: new Map(),
-    version: '1.0.0',
-  };
-}
-
-/**
- * Register template
- */
-export function registerTemplate(
-  registry: EncounterTemplateRegistry,
-  template: EncounterTemplate
-): void {
-  // Add to templates array
-  registry.templates.push(template);
-  
-  // By ID
-  registry.byId.set(template.id, template);
-  
-  // By bible
-  const bibleTemplates = registry.byBible.get(template.bibleId) ?? [];
-  registry.byBible.set(template.bibleId, [...bibleTemplates, template]);
-  
-  // By mode
-  const modeTemplates = registry.byMode.get(template.mode) ?? [];
-  registry.byMode.set(template.mode, [...modeTemplates, template]);
-}
-
-/**
- * Get templates for bible (optionally filtered by mode)
- */
-export function getTemplatesForBible(
-  registry: EncounterTemplateRegistry,
-  bibleId: string,
-  mode?: EngineMode
-): EncounterTemplate[] {
-  const templates = registry.byBible.get(bibleId) ?? [];
-  
-  if (mode) {
-    return templates.filter(t => t.mode === mode);
+function inferCatalogTier(state: GameState): EncounterSeed['tier'] {
+  const turn = state.turn ?? 0;
+  const threat =
+    (state as GameState & { currentLocation?: { threatTier?: string | number } }).currentLocation &&
+    typeof state.currentLocation === 'object'
+      ? (state.currentLocation as { threatTier?: string | number }).threatTier
+      : undefined;
+  const here = String(state.currentLocation ?? '');
+  const dungeon = !!state.activeDungeon;
+  if (dungeon && (threat === 'high' || threat === 3 || /boss|keep|undercroft|engine|scar|reliquary/i.test(here))) {
+    return turn >= 20 ? 'boss' : 'elite';
   }
-  
-  return templates;
+  if (turn > 18) return 'elite';
+  return 'trash';
+}
+
+function hereHubId(state: GameState): string | undefined {
+  const here = String(state.currentLocation ?? '').toLowerCase();
+  if (!here) return undefined;
+  const hits = allCatalogEncounters().filter((s) => s.hubId && here.includes(s.hubId.replace(/^sp-hub-/, '').replace(/-/g, ' ')));
+  if (hits[0]?.hubId) return hits[0].hubId;
+  if (/mireglass/.test(here)) return 'sp-hub-mireglass';
+  if (/cinderwake/.test(here)) return 'sp-hub-cinderwake';
+  if (/sump/.test(here)) return 'sp-hub-sump-court';
+  if (/hollow engine/.test(here)) return 'sp-hub-hollow-engine';
+  if (/argent/.test(here)) return 'sp-hub-argent';
+  if (/vhal|reliquary/.test(here)) return 'sp-hub-reliquary';
+  if (/integration scar/.test(here)) return 'sp-hub-integration-scar';
+  return undefined;
+}
+
+function seedLegal(state: GameState, seed: EncounterSeed): boolean {
+  if (seed.tier === 'crisis') return false;
+  if (isEncounterOnCooldown(state, seed.foeName)) return false;
+  if (matchesLastKillName(seed.foeName, state.sceneFacts?.lastKill)) return false;
+  return true;
+}
+
+function scoreSeed(state: GameState, seed: EncounterSeed, want: EncounterSeed['tier'], hubId?: string): number {
+  let score = 0;
+  if (seed.tier === want) score += 4;
+  else if (want === 'boss' && seed.tier === 'elite') score += 2;
+  else if (want === 'elite' && seed.tier === 'trash') score += 1;
+  if (hubId && seed.hubId === hubId) score += 3;
+  return score;
 }
 
 /**
- * Get template by ID
+ * Director pick: a named catalog row. Never invents a foe token.
+ * PYOA drought stays off (caller); catalog still lists crisis seeds for tests.
  */
-export function getTemplateById(
-  registry: EncounterTemplateRegistry,
-  templateId: string
-): EncounterTemplate | null {
-  return registry.byId.get(templateId) ?? null;
+export function selectCatalogEncounter(state: GameState): EncounterSeed | null {
+  const mode: EngineMode = state.engineMode ?? 'litrpg';
+  if (mode === 'pyoa') return null;
+  const pool = encountersForMode(mode).filter((s) => seedLegal(state, s));
+  const want = inferCatalogTier(state);
+  const hubId = hereHubId(state);
+  const ranked = [...pool].sort((a, b) => scoreSeed(state, b, want, hubId) - scoreSeed(state, a, want, hubId));
+  const top = ranked.filter((s) => scoreSeed(state, s, want, hubId) === scoreSeed(state, ranked[0]!, want, hubId));
+  if (!top.length) {
+    return encountersForMode(mode).find((s) => s.tier === 'trash') ?? null;
+  }
+  const clearCount = (state.stateTxLog ?? []).filter((t) => /Encounter cleared|Encounter:/i.test(t.summary)).length;
+  return top[(clearCount + state.turn) % top.length] ?? top[0]!;
 }
 
-// ============================================================================
-// TEMPLATE FILTERING
-// ============================================================================
-
-/**
- * Filter templates by biome
- */
-export function filterTemplatesByBiome(
-  templates: EncounterTemplate[],
-  location: string,
-  biome: string
-): EncounterTemplate[] {
-  const locationLower = location.toLowerCase();
-  const biomeLower = biome.toLowerCase();
-  
-  return templates.filter(template => {
-    const constraints = template.biomeConstraints;
-    
-    // Check excluded biomes first
-    if (constraints.excludedBiomes) {
-      for (const excluded of constraints.excludedBiomes) {
-        if (biomeLower.includes(excluded.toLowerCase())) {
-          return false;
-        }
-      }
-    }
-    
-    // Check excluded locations
-    if (constraints.excludedLocations) {
-      for (const excluded of constraints.excludedLocations) {
-        if (locationLower.includes(excluded.toLowerCase())) {
-          return false;
-        }
-      }
-    }
-    
-    // Check allowed biomes
-    let biomeMatch = false;
-    if (constraints.allowedBiomes && Array.isArray(constraints.allowedBiomes)) {
-      for (const allowed of constraints.allowedBiomes) {
-        if (biomeLower.includes(allowed.toLowerCase())) {
-          biomeMatch = true;
-          break;
-        }
-      }
-      
-      if (!biomeMatch) return false;
-    }
-    
-    // Check required locations
-    if (constraints.requiredLocations) {
-      let locationMatch = false;
-      for (const required of constraints.requiredLocations) {
-        if (locationLower.includes(required.toLowerCase())) {
-          locationMatch = true;
-          break;
-        }
-      }
-      if (!locationMatch) return false;
-    }
-    
-    return true;
+/** Catalog display names the drought table may rotate — never a novel token. */
+export function catalogDroughtNames(state: GameState): string[] {
+  const mode = state.engineMode ?? 'litrpg';
+  const names = catalogFoeNames(mode).filter((n) => {
+    const seed = encountersForMode(mode).find((s) => s.foeName === n);
+    return seed && seed.tier !== 'crisis';
   });
+  return names.length ? names : catalogFoeNames(mode);
 }
 
-/**
- * Filter templates by tier
- */
-export function filterTemplatesByTier(
-  templates: EncounterTemplate[],
-  tier: number
-): EncounterTemplate[] {
-  return templates.filter(t => tier >= t.tierRange[0] && tier <= t.tierRange[1]);
+/** True when lastKill is a catalog foe — living Talk for that noun is illegal. */
+export function isCatalogFoeTalkForbidden(state: GameState, name: string): boolean {
+  const kill = state.sceneFacts?.lastKill;
+  if (!kill?.name || kill.outcome !== 'victory') return false;
+  if (!isCatalogFoeName(kill.name, state.engineMode) && !isCatalogFoeName(kill.name)) return false;
+  return matchesLastKillName(name, kill);
 }
 
-/**
- * Filter templates by density role
- */
-export function filterTemplatesByDensity(
-  templates: EncounterTemplate[],
-  role: EncounterTemplate['densityRole']
-): EncounterTemplate[] {
-  return templates.filter(t => t.densityRole === role);
-}
-
-// ============================================================================
-// TEMPLATE PICKER
-// ============================================================================
-
-/**
- * Pick encounter template
- * 
- * Filters by biome, tier, and density role, then picks one.
- */
-export function pickEncounterTemplate(
-  registry: EncounterTemplateRegistry,
-  state: GameState,
-  opts: {
-    bibleId: string;
-    location: string;
-    biome: string;
-    tier: number;
-    densityRole: EncounterTemplate['densityRole'];
-    seed: number;
-  }
-): EncounterTemplate | null {
-  const bibleTemplates = getTemplatesForBible(registry, opts.bibleId);
-  if (bibleTemplates.length === 0) return null;
-  
-  // Filter by biome
-  let candidates = filterTemplatesByBiome(bibleTemplates, opts.location, opts.biome);
-  if (candidates.length === 0) return null;
-  
-  // Filter by tier
-  candidates = filterTemplatesByTier(candidates, opts.tier);
-  if (candidates.length === 0) return null;
-  
-  // Filter by density role
-  candidates = filterTemplatesByDensity(candidates, opts.densityRole);
-  if (candidates.length === 0) return null;
-  
-  // Filter by spawn count
-  candidates = candidates.filter(t => {
-    if (!t.maxSpawns) return true;
-    
-    // Count how many times this template has spawned
-    const receipts = state.arcDirector?.encounterClearedReceipts ?? [];
-    const spawnCount = receipts.filter(r => r.name.includes(t.id)).length;
-    
-    return spawnCount < t.maxSpawns;
-  });
-  
-  if (candidates.length === 0) return null;
-  
-  // Seed-stable pick
-  const index = Math.abs(opts.seed) % candidates.length;
-  return candidates[index];
-}
-
-// ============================================================================
-// VALIDATION
-// ============================================================================
-
-/**
- * Validate template schema
- */
-export function validateTemplate(template: EncounterTemplate): {
-  valid: boolean;
-  errors: string[];
-} {
-  const errors: string[] = [];
-  
-  // Required fields
-  if (!template.id) errors.push('Missing template ID');
-  if (!template.name) errors.push('Missing template name');
-  if (!template.bibleId) errors.push('Missing bible ID');
-  if (!template.mode) errors.push('Missing engine mode');
-  if (!template.version) errors.push('Missing version');
-  
-  // Telegraph
-  if (!template.telegraph) {
-    errors.push('Missing telegraph phase');
-  } else if (template.telegraph.patterns.length === 0) {
-    errors.push('Telegraph has no patterns');
-  }
-  
-  // Stakes
-  if (!template.stakes) {
-    errors.push('Missing stakes phase');
-  } else {
-    // Check for either new structure (win/lose) or old structure (headline/approaches)
-    const hasNewStructure = template.stakes.win && template.stakes.lose;
-    const hasOldStructure = (template.stakes as any).headline && (template.stakes as any).approaches;
-    if (!hasNewStructure && !hasOldStructure) {
-      errors.push('Stakes must have either win/lose outcomes or headline/approaches');
-    }
-  }
-  
-  // Resolution
-  if (!template.resolution) {
-    errors.push('Missing resolution mechanics');
-  } else {
-    const hasType = template.resolution.type;
-    const hasMechanic = (template.resolution as any).mechanic;
-    if (!hasType && !hasMechanic) {
-      errors.push('Resolution must have either type or mechanic');
-    }
-  }
-  
-  // Aftermath
-  if (!template.aftermath) {
-    errors.push('Missing aftermath phase');
-  } else {
-    const hasReceiptTypes = template.aftermath.receiptTypes && template.aftermath.receiptTypes.length > 0;
-    const hasByTerminal = (template.aftermath as any).byTerminal;
-    const hasMinimumReceiptTypes = (template.aftermath as any).minimumReceiptTypes !== undefined;
-    if (!hasReceiptTypes && !hasByTerminal && !hasMinimumReceiptTypes) {
-      errors.push('Aftermath must have receiptTypes, byTerminal, or minimumReceiptTypes');
-    }
-  }
-  
-  // Biome constraints
-  if (!template.biomeConstraints) {
-    errors.push('Missing biome constraints');
-  } else {
-    const hasAllowedBiomes = template.biomeConstraints.allowedBiomes && template.biomeConstraints.allowedBiomes.length > 0;
-    const hasAllow = (template.biomeConstraints as any).allow && (template.biomeConstraints as any).allow.length > 0;
-    if (!hasAllowedBiomes && !hasAllow) {
-      errors.push('No allowed biomes specified');
-    }
-  }
-  
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
+/** Living catalog foe names that may still be talked to (not lastKill). */
+export function livingCatalogTalkTargets(state: GameState): string[] {
+  const mode = state.engineMode ?? 'litrpg';
+  return catalogFoeNames(mode).filter((n) => !isCatalogFoeTalkForbidden(state, n));
 }

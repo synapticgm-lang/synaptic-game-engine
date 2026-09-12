@@ -69,10 +69,10 @@ describe('Act-3 faction standings', () => {
 });
 
 describe('Act-3 outdoor hubs', () => {
-  it('has 6–12 Summoned Pact hubs with original names', () => {
+  it('has 6–20 Summoned Pact hubs with original names', () => {
     const hubs = hubsForBibleId('summoned-pact');
     expect(hubs.length).toBeGreaterThanOrEqual(6);
-    expect(hubs.length).toBeLessThanOrEqual(12);
+    expect(hubs.length).toBeLessThanOrEqual(20);
     expect(hubs.some((h) => h.name === 'Lowmarket')).toBe(true);
     expect(hubs.some((h) => /fable|albion|fallout/i.test(h.name))).toBe(false);
   });

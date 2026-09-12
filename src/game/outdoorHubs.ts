@@ -33,6 +33,13 @@ export const SUMMONED_PACT_HUBS: OutdoorHub[] = [
   { id: 'sp-hub-harbor', name: 'Harbor Quay', blurb: 'Grain ships, smugglers, and quay gossip.', threatTier: 2, aliases: ['the quay', 'Valespire harbor'] },
   { id: 'sp-hub-war-camp', name: 'Pellane War Camp', blurb: 'Banner-smoke and quartermaster crates beyond the walls.', threatTier: 2, aliases: ['war camp', 'the war camp'] },
   { id: 'sp-hub-kitchen-saint', name: 'Kitchen Saint Alley', blurb: 'Bread steam and quiet charity behind the close.', threatTier: 1, linkedQuestIds: ['sp-quest-side-child'], aliases: ['Kitchen Saint', 'kitchen alley'] },
+  { id: 'sp-hub-mireglass', name: 'Mireglass March', blurb: 'Reed water and false reflections east of the Cinderflow.', threatTier: 2, linkedQuestIds: ['sp-quest-price-calling', 'sp-quest-price-reflection', 'sp-quest-price-route'], aliases: ['the March', 'Mireglass'] },
+  { id: 'sp-hub-cinderwake', name: 'Cinderwake Trail', blurb: 'Ash-heat road and pursuit tracks toward the Ash Court.', threatTier: 3, linkedQuestIds: ['sp-quest-cinder-pursuit', 'sp-quest-cinder-caravan', 'sp-quest-cinder-evidence'], aliases: ['Cinderwake', 'the ash trail'] },
+  { id: 'sp-hub-sump-court', name: 'The Sump Court', blurb: 'Below-street contracts, illegal bindings, and ferry prices.', threatTier: 2, linkedQuestIds: ['sp-quest-sump-bindings', 'sp-quest-sump-leverage', 'sp-quest-sump-ferry'], aliases: ['Sump Court', 'the Sump'] },
+  { id: 'sp-hub-hollow-engine', name: 'Hollow Engine', blurb: 'A dead machine-hall under the city — power, alert, containment.', threatTier: 3, linkedQuestIds: ['sp-quest-hollow-power', 'sp-quest-hollow-contain'], aliases: ['the Engine', 'Hollow Engine halls'] },
+  { id: 'sp-hub-argent', name: 'The Argent Ledger', blurb: 'A mobile license desk — rank, audits, and rival contracts.', threatTier: 2, linkedQuestIds: ['sp-quest-argent-license', 'sp-quest-argent-audit'], aliases: ['Argent Ledger', 'the Ledger wagon'] },
+  { id: 'sp-hub-reliquary', name: "Saint Vhal's Reliquary", blurb: 'Fortress-shrine of doctrine, relics, and quiet infiltration.', threatTier: 3, linkedQuestIds: ['sp-quest-reliquary-doctrine', 'sp-quest-reliquary-infiltrate'], aliases: ['the Reliquary', 'Saint Vhal'] },
+  { id: 'sp-hub-integration-scar', name: 'The Integration Scar', blurb: 'Final outdoor seam where pact loadouts and debts meet.', threatTier: 3, linkedQuestIds: ['sp-quest-scar-answers'], aliases: ['Integration Scar', 'the Scar'] },
 ];
 
 export const HERO_AWAKENING_HUBS: OutdoorHub[] = [

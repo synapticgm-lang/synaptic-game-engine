@@ -50,7 +50,7 @@ function systemsState(partial: Partial<GameState> = {}): GameState {
       complete: true,
       aloneArrival: false,
     },
-    arcDirector: { turnsSinceCombatReceipt: 8 },
+    arcDirector: { turnsSinceCombatReceipt: 8, committedBeatIds: ['sp-beat-orient'] },
     ...partial,
   };
 }

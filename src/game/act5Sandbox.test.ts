@@ -51,7 +51,7 @@ describe('Act-5 all LitRPG sandbox floor', () => {
     for (const id of LITRPG_IDS) {
       const hubs = hubsForBibleId(id);
       expect(hubs.length, id + ' hubs').toBeGreaterThanOrEqual(6);
-      expect(hubs.length, id + ' hub cap').toBeLessThanOrEqual(12);
+      expect(hubs.length, id + ' hub cap').toBeLessThanOrEqual(id === 'summoned-pact' ? 20 : 12);
       expect(hubs.some((h) => /fable|albion|fallout|megaton|whiterun/i.test(h.name))).toBe(false);
       const factions = seedFactionStandingsForBible(BIBLES[id]);
       expect(factions.length, id + ' factions').toBeGreaterThanOrEqual(2);

@@ -7,21 +7,10 @@ import type { EngineMode, GameState, PendingRepair } from './types';
 import { resolveVoiceIdForState } from './gmVoiceProfile';
 import { lookupRepairCopyRow } from './repairCopyBank';
 
-export type RepairSituation =
-  | 'ambiguous_action'
-  | 'unsupported'
-  | 'contradiction'
-  | 'protest'
-  | 'safety'
-  | 'correction_needed';
+export type RepairSituation = 'safety';
 
 const SITUATION_TO_CSV: Record<RepairSituation, string> = {
-  ambiguous_action: 'ambiguous_action',
-  unsupported: 'unsupported',
-  contradiction: 'contradiction',
-  protest: 'protest',
   safety: 'kid_boundary',
-  correction_needed: 'compound_split',
 };
 
 const ENGINE_TO_CSV: Record<EngineMode, string> = {
@@ -100,48 +89,6 @@ export function detectRepairSituation(playerInput: string, _state: GameState): R
     return 'safety';
   }
 
-  if (
-    /\b(that('s| was) not what i|i didn'?t mean|wrong roll|that('s| is) unfair|\bunfair\b)/i.test(lower)
-  ) {
-    return 'protest';
-  }
-
-  if (/\bno,?\s+.+\s+not\s+.+/i.test(text) || /\bnot .+ but .+/i.test(text)) {
-    return 'contradiction';
-  }
-
-  if (/\bactually (it'?s|its|the)\b/i.test(lower)) {
-    const afterCorrection = /[.;]\s*(i |and |then |try|ask|tell|go|take|pocket|leave)/i.test(text);
-    if (afterCorrection || text.length > 55) return 'correction_needed';
-    return 'contradiction';
-  }
-
-  if (/^no,?\s/i.test(text) && text.length > 12) {
-    return 'contradiction';
-  }
-
-  if (text.length <= 120 && /\bor\b/i.test(text)) {
-    // Explore / panel / "info or option" asks are not action hinges — never fire door/listen copy.
-    if (isExploreOrLayoutAsk(text) || isInformationalOrAsk(text)) {
-      return null;
-    }
-    // Examine/inspect/check/search "for X or Y" is a single action with compound target, not ambiguous.
-    if (isSpecificActionWithCompoundTarget(text)) {
-      return null;
-    }
-    const parts = text.split(/\bor\b/i);
-    if (parts.length === 2) {
-      const left = parts[0].trim();
-      const right = parts[1].replace(/[?.!]+$/, '').trim();
-      if (left.length >= 2 && left.length <= 50 && right.length >= 2 && right.length <= 50) {
-        return 'ambiguous_action';
-      }
-    }
-    if (/\b(the )?\w[\w\s-]{0,20}\s+or\s+(the )?\w[\w\s-]{0,20}/i.test(text) && text.length <= 90) {
-      return 'ambiguous_action';
-    }
-  }
-
   return null;
 }
 
@@ -169,51 +116,6 @@ export function isInformationalOrAsk(playerInput: string): boolean {
   if (/\b(does (?:that|it|this) have|is there|are there|any (?:info|option|menu))\b/.test(t)) {
     return true;
   }
-  return false;
-}
-
-/**
- * "Examine the cell for details or weaknesses" — single action with compound search target, not two competing moves.
- * Also covers "Press your ear against X to listen for Y" and other specific action descriptions.
- */
-export function isSpecificActionWithCompoundTarget(playerInput: string): boolean {
-  const t = playerInput.replace(/\s+/g, ' ').trim().toLowerCase();
-  if (!t) return false;
-
-  // Pattern 1: "Examine/Inspect/Check/Search X for Y or Z"
-  // The "or" is part of a list of what to look for, not two different actions
-  if (
-    /\b(examine|inspect|check|search|look|scan|study|explore)\b/.test(t)
-    && /\bfor\b/.test(t)
-    && /\bor\b/.test(t)
-  ) {
-    // Ensure "or" comes after "for" (it's part of the search target list)
-    const forIndex = t.indexOf(' for ');
-    const orIndex = t.indexOf(' or ');
-    if (forIndex !== -1 && orIndex > forIndex) {
-      return true;
-    }
-  }
-
-  // Pattern 2: "Press your ear against X to listen for Y"
-  // Specific action with clear intent, even if it mentions alternatives
-  if (
-    /\b(press|put|place)\b/.test(t)
-    && /\b(ear|head)\b/.test(t)
-    && /\b(to listen|for sounds?)\b/.test(t)
-  ) {
-    return true;
-  }
-
-  // Pattern 3: Choice chips are typically complete sentences with action verbs
-  // If it starts with a specific action verb and has a clear target, it's not ambiguous
-  if (
-    /^\s*(examine|inspect|check|search|look at|explore|press|try|attempt|call out|shout)\b/i.test(playerInput)
-    && playerInput.length > 30  // Choice chips are typically longer, specific descriptions
-  ) {
-    return true;
-  }
-
   return false;
 }
 
