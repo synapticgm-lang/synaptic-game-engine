@@ -128,10 +128,14 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
+import { prepareRetrospectiveWriterInput } from './completedEventPacket';
 import {
-  formatWriterFacingEvent,
-  prepareRetrospectiveWriterInput,
-} from './completedEventPacket';
+  classifyResponsePath,
+  formatTalkWriterFacing,
+  tallyResponsePaths,
+  type ResponsePath,
+  type WriterOutcome,
+} from './talkEnvelope';
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
@@ -298,6 +302,10 @@ export type TurnTelemetry = {
   presentation?: 'mud-receipt' | 'standard';
   flavorQuote?: string;
   receiptLines?: string[];
+  /** 12f — A page1 / B cover / C hall / D Silent / E callGm */
+  responsePath?: ResponsePath;
+  /** 12f — E only: first accept, quality retry, or stitch/render fallback */
+  writerOutcome?: WriterOutcome;
 };
 
 export type RunSummary = {
@@ -329,6 +337,8 @@ export type RunSummary = {
     p0Count: number;
     violations: Array<{ kind: string; turn: number; quote: string }>;
   };
+  /** 12f — A–E share + E accept/retry/fallback */
+  pathCounts?: ReturnType<typeof tallyResponsePaths>;
 };
 
 function uid(): string {
@@ -923,6 +933,11 @@ export async function headlessFateTurn(
         loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
         transportRetries: 0,
         repairNote: (repairNote ? `${repairNote}; ` : '') + 'hall_talk_stitch',
+        responsePath: classifyResponsePath({
+          state,
+          playerInput,
+          subscriptionTier: settings.subscriptionTier,
+        }),
       },
     };
   }
@@ -968,7 +983,6 @@ export async function headlessFateTurn(
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
   arcState = preparedEvent.state;
-  const eventWriterFacing = preparedEvent.writerFacing;
   const useMud = shouldUseSilentMudTurn({
     subscriptionTier: settings.subscriptionTier,
     openingComplete: arcState.openingEstablishment?.complete === true,
@@ -1030,6 +1044,11 @@ export async function headlessFateTurn(
         transportRetries: 0,
         repairNote,
         dryRun: true,
+        responsePath: classifyResponsePath({
+          state,
+          playerInput,
+          subscriptionTier: settings.subscriptionTier,
+        }),
       },
     };
   }
@@ -1048,7 +1067,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const silentMud = useMud && shouldSkipMicroFlavor();
   const payload = useMud
     ? (silentMud ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
-    : eventWriterFacing;
+    : formatTalkWriterFacing(preparedEvent.packet, arcState);
 
   // 08d Silent Engine — receipts only; never call DeepSeek for micro-flavor.
   const gmResult = silentMud
@@ -1165,6 +1184,11 @@ Do NOT print dice notation or CODE ENFORCED.
         transportRetries,
         dnsFailure: gmResult.dnsFailure === true,
         renderFallbackUsed: false,
+        responsePath: classifyResponsePath({
+          state: arcState,
+          playerInput,
+          subscriptionTier: settings.subscriptionTier,
+        }),
       },
     };
   }
@@ -1180,6 +1204,8 @@ Do NOT print dice notation or CODE ENFORCED.
   const sameBeatHit = isSameBeat(gmText, fps);
   const collageReject = shouldRetryUnaskedCollage(gmText, recentGmBeatTexts(state), playerInput);
   const commitGate = classifyBeatCommit(arcState, gmText, playerInput);
+  let usedWriterRetry = false;
+  let usedPacketStitch = false;
   if (
     !useMud
     && !error
@@ -1189,7 +1215,7 @@ Do NOT print dice notation or CODE ENFORCED.
     && transportRetries === 0
   ) {
     const retryPayload = arcState.completedEvent
-      ? formatWriterFacingEvent(arcState.completedEvent, { stricter: true })
+      ? formatTalkWriterFacing(arcState.completedEvent, arcState, { stricter: true })
       : buildResolutionUserPayload({
           mandateBlock: turnMandate.block,
           playerAction: playerInput,
@@ -1205,6 +1231,7 @@ Do NOT print dice notation or CODE ENFORCED.
     transportRetries += retry.transportRetries + 1;
     if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly || classifyBeatCommit(arcState, retry.text, playerInput).accept)) {
       gmText = retry.text;
+      usedWriterRetry = true;
       if (!error) error = undefined;
     }
   }
@@ -1212,7 +1239,10 @@ Do NOT print dice notation or CODE ENFORCED.
     const stillGate = classifyBeatCommit(arcState, gmText, playerInput);
     if (!useMud && !stillGate.accept && !askedRepeat && storyHasBody(gmText)) {
       const repaired = repairRejectedBeat(arcState, gmText, stillGate.reasons);
-      if (repaired.repaired) gmText = repaired.prose;
+      if (repaired.repaired) {
+        gmText = repaired.prose;
+        usedPacketStitch = true;
+      }
     }
   }
 
@@ -1682,6 +1712,20 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   governed = recordReplayHash(governed);
 
+  const responsePath = classifyResponsePath({
+    state: arcState,
+    playerInput,
+    subscriptionTier: settings.subscriptionTier,
+  });
+  const writerOutcome: WriterOutcome | undefined =
+    responsePath !== 'E'
+      ? undefined
+      : renderFallbackUsed || usedPacketStitch
+        ? 'fallback'
+        : usedWriterRetry
+          ? 'retry'
+          : 'accepted';
+
   const ended = Date.now();
   const receiptCounts = countTurnReceipts(governed, nextTurn);
   return {
@@ -1724,6 +1768,8 @@ Do NOT print dice notation or CODE ENFORCED.
       location: governed.currentLocation,
       flavorQuote: mudTurn?.flavorQuote || undefined,
       receiptLines: mudTurn?.receiptLines,
+      responsePath,
+      writerOutcome,
     },
   };
 }
@@ -1931,6 +1977,7 @@ export async function runFateAutoplay(opts: {
     runManifest: state.runManifest,
     receiptTotals: countRunReceipts(state),
     finalReplayHash: hashCanonicalState(state),
+    pathCounts: tallyResponsePaths(turns),
   };
   summary.evalHarness = validateEvalRun(state, summary, turns);
   const readability = readabilityGatePass(state);

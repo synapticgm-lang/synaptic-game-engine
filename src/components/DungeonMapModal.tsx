@@ -487,18 +487,18 @@ function InteriorFloorPlan({
       <svg className="absolute inset-0" width={width} height={height} aria-hidden>
         <defs>
           <pattern id="sgm-stone-hatch" width="8" height="8" patternUnits="userSpaceOnUse">
-            <path d="M0 8 L8 0" stroke="#3d3428" strokeWidth="0.6" opacity="0.35" />
+            <path d="M0 8 L8 0" stroke="#3a4a4a" strokeWidth="0.6" opacity="0.35" />
           </pattern>
           <pattern id="sgm-unvisited-hatch" width="6" height="6" patternUnits="userSpaceOnUse">
-            <path d="M0 6 L6 0" stroke="#1a1612" strokeWidth="1" opacity="0.55" />
+            <path d="M0 6 L6 0" stroke="#1a2024" strokeWidth="1" opacity="0.55" />
           </pattern>
           <radialGradient id="sgm-room-fog" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#0c0e12" stopOpacity="0.2" />
             <stop offset="100%" stopColor="#0c0e12" stopOpacity="0.82" />
           </radialGradient>
         </defs>
-        <rect width={width} height={height} fill="#1a1510" opacity="0.35" />
-        <rect width={width} height={height} fill="url(#sgm-stone-hatch)" opacity="0.5" />
+        <rect width={width} height={height} fill="#0e1012" opacity="1" />
+        <rect width={width} height={height} fill="url(#sgm-stone-hatch)" opacity="0.2" />
         {nodes.map((node) =>
           node.connections.map((targetId) => {
             if (node.id >= targetId) return null;
@@ -523,10 +523,10 @@ function InteriorFloorPlan({
                 height={box.h + 4}
                 rx={organic ? 3 : 4}
                 fill="none"
-                stroke={isCurrent ? '#c9a227' : isVisited ? '#8a7a5e' : isSecret ? '#3d352c' : '#4a4034'}
+                stroke={isCurrent ? '#8a9a6a' : isVisited ? '#4a6a4a' : isSecret ? '#3a4a4a' : '#5a6a7a'}
                 strokeWidth={isCurrent ? 2 : 1}
                 strokeDasharray={isSecret ? '4 5' : undefined}
-                opacity={isVisited ? 0.95 : isSecret ? 0.4 : 0.7}
+                opacity={1}
               />
               <rect
                 x={box.x}
@@ -541,20 +541,21 @@ function InteriorFloorPlan({
                       ? 'sgm-map-room--secret'
                       : 'sgm-map-room--unvisited'
                 }
-                fill={isCurrent ? '#6b5638' : isVisited ? '#3d3428' : isSecret ? '#12100e' : '#1a1612'}
-                stroke={isCurrent ? '#e8d5a3' : isVisited ? '#c4b08a' : isSecret ? '#3d352c' : '#2a241c'}
-                strokeWidth={isCurrent ? 2.2 : 1.4}
-                strokeDasharray={isSecret ? '5 4' : isVisited ? undefined : '3 3'}
-                opacity={isVisited ? 1 : isSecret ? 0.4 : 0.85}
+                fill={isCurrent ? '#4a5a3a' : isVisited ? '#2a3428' : isSecret ? '#0a0c0e' : '#0e1214'}
+                stroke={isCurrent ? '#8a9a6a' : isVisited ? '#4a6a4a' : isSecret ? '#3a4a4a' : '#5a6a7a'}
+                strokeWidth={isCurrent ? 2.5 : isVisited ? 2.0 : 1.5}
+                strokeDasharray={isSecret ? '4 4' : undefined}
+                opacity={1}
               />
-              {!isVisited && (
+              {!isVisited && !isSecret && (
                 <rect
-                  x={box.x}
-                  y={box.y}
-                  width={box.w}
-                  height={box.h}
+                  x={box.x + 2}
+                  y={box.y + 2}
+                  width={Math.max(0, box.w - 4)}
+                  height={Math.max(0, box.h - 4)}
                   rx={organic ? 2 : 3}
-                  fill={isSecret ? 'url(#sgm-unvisited-hatch)' : 'url(#sgm-room-fog)'}
+                  fill="rgba(8, 10, 12, 0.92)"
+                  pointerEvents="none"
                 />
               )}
             </g>
@@ -616,7 +617,7 @@ function InteriorFloorPlan({
             ) : isSecret ? (
               <span className="text-[10px] text-stone-700 font-serif opacity-60">···</span>
             ) : (
-              <span className="text-[12px] text-stone-500 font-serif">?</span>
+              <span className="text-[18px] text-stone-400 font-bold tracking-wider">?</span>
             )}
           </button>
         );
@@ -682,20 +683,20 @@ function StreetMapCanvas({
             <stop offset="100%" stopColor="#0c100e" stopOpacity="0.55" />
           </radialGradient>
         </defs>
-        <rect width={size} height={size} fill="#1a241c" opacity="0.25" />
-        <ellipse cx="140" cy="160" rx="90" ry="70" fill="#243428" opacity="0.45" />
-        <ellipse cx="400" cy="200" rx="110" ry="80" fill="#1e2c24" opacity="0.4" />
-        <ellipse cx="280" cy="400" rx="130" ry="70" fill="#223028" opacity="0.35" />
-        <ellipse cx="420" cy="420" rx="70" ry="55" fill="#2a3428" opacity="0.3" />
-        <ellipse cx="280" cy="280" rx="200" ry="160" fill="none" stroke="#3d4a40" strokeWidth="1" opacity="0.35" />
-        <ellipse cx="280" cy="280" rx="140" ry="110" fill="none" stroke="#3d4a40" strokeWidth="0.8" opacity="0.28" />
-        <ellipse cx="280" cy="280" rx="80" ry="60" fill="none" stroke="#3d4a40" strokeWidth="0.7" opacity="0.22" />
+        <rect width={size} height={size} fill="#0a0e0c" opacity="0.95" />
+        <ellipse cx="140" cy="160" rx="90" ry="70" fill="#1a2a1c" opacity="0.6" />
+        <ellipse cx="400" cy="200" rx="110" ry="80" fill="#182818" opacity="0.55" />
+        <ellipse cx="280" cy="400" rx="130" ry="70" fill="#1a2a1a" opacity="0.5" />
+        <ellipse cx="420" cy="420" rx="70" ry="55" fill="#1e2e1e" opacity="0.45" />
+        <ellipse cx="280" cy="280" rx="200" ry="160" fill="none" stroke="#3a4a3a" strokeWidth="1.5" opacity="0.65" />
+        <ellipse cx="280" cy="280" rx="140" ry="110" fill="none" stroke="#3a4a3a" strokeWidth="1.2" opacity="0.55" />
+        <ellipse cx="280" cy="280" rx="80" ry="60" fill="none" stroke="#3a4a3a" strokeWidth="1" opacity="0.45" />
         <rect width={size} height={size} fill="url(#sgm-zone-vignette)" />
 
         {pathEdges.map(({ key, d }) => (
           <g key={key}>
-            <path d={d} fill="none" stroke="#3d4a40" strokeWidth={14} strokeLinecap="round" opacity={0.55} />
-            <path d={d} fill="none" stroke="#6b7a68" strokeWidth={5} strokeLinecap="round" opacity={0.45} />
+            <path d={d} fill="none" stroke="#4a5a4a" strokeWidth={16} strokeLinecap="round" opacity={0.85} />
+            <path d={d} fill="none" stroke="#7a8a7a" strokeWidth={6} strokeLinecap="round" opacity={0.95} />
           </g>
         ))}
 
@@ -713,44 +714,72 @@ function StreetMapCanvas({
         const isCurrent = node.id === currentNodeId;
         const canMove = !combatLocked && !!current?.connections.includes(node.id);
         const isEntrance = (node.tags ?? []).some((t) => t === 'entrance' || t === 'micro_dungeon');
+        const isMapped = dungeon.visitedNodeIds.includes(node.id);
         return (
-          <button
-            key={node.id}
-            type="button"
-            onClick={() => {
-              if (isEntrance && isCurrent && onEnterSite) {
-                onEnterSite(node.name);
-                return;
-              }
-              if (canMove) onMoveNode(node.id);
-            }}
-            disabled={!canMove && !isCurrent}
-            title={isEntrance ? `${node.name} (enter site)` : node.name}
-            style={{ left: `${x - 70}px`, top: `${y - 28}px` }}
-            className={`sgm-map-poi absolute z-10 w-[140px] rounded border px-2 py-1.5 text-center transition ${
-              isCurrent
-                ? 'sgm-map-poi--here border-amber-400/90 bg-[#2a2118]/95 text-amber-50'
-                : isEntrance
-                  ? 'border-amber-600/70 bg-[#1a241c]/92 text-amber-50 hover:border-amber-400'
-                  : 'border-stone-500/70 bg-[#152018]/90 text-stone-100 hover:border-amber-500/70'
-            } ${canMove || (isEntrance && isCurrent) ? 'cursor-pointer' : ''}`}
-          >
-            <span className="flex items-center justify-center gap-1">
-              {isCurrent && <YouAreHereMarker size={14} />}
-              {isEntrance && !isCurrent && (
-                <span className="inline-block h-2 w-2 rounded-sm bg-amber-500/90" aria-hidden />
+          <React.Fragment key={node.id}>
+            {!isMapped && !isCurrent && (
+              <div
+                style={{ left: `${x - 80}px`, top: `${y - 40}px` }}
+                className="absolute z-[8] h-[80px] w-[160px] rounded bg-black/50 pointer-events-none"
+                aria-hidden
+              />
+            )}
+            <div
+              style={{ left: `${x - 6}px`, top: `${y - 16}px` }}
+              className="absolute z-[9] pointer-events-none"
+              aria-hidden
+            >
+              {isEntrance ? (
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <rect x="0.5" y="0.5" width="11" height="11" fill="#6a5a3a" stroke="#ca9a2a" strokeWidth="1.5" rx="1" />
+                </svg>
+              ) : isCurrent ? (
+                <svg width="10" height="10" viewBox="0 0 10 10">
+                  <polygon points="5,1 9,5 5,9 1,5" fill="#8a7a4a" stroke="#e8d5a3" strokeWidth="1.2" />
+                </svg>
+              ) : (
+                <svg width="8" height="8" viewBox="0 0 8 8">
+                  <rect x="0.5" y="0.5" width="7" height="7" fill="#5a6a5a" stroke="#7a8a7a" strokeWidth="1" rx="0.5" />
+                </svg>
               )}
-              <span className="block text-[11px] font-medium leading-tight break-words">{node.name}</span>
-            </span>
-            {isEntrance && (
-              <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">
-                {isCurrent ? 'Tap to enter' : 'Site entrance'}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isEntrance && isCurrent && onEnterSite) {
+                  onEnterSite(node.name);
+                  return;
+                }
+                if (canMove) onMoveNode(node.id);
+              }}
+              disabled={!canMove && !isCurrent}
+              title={isEntrance ? `${node.name} (enter site)` : node.name}
+              style={{ left: `${x - 70}px`, top: `${y - 28}px` }}
+              className={`sgm-map-poi absolute z-10 w-[140px] rounded border px-2 py-1.5 text-center transition ${
+                isCurrent
+                  ? 'sgm-map-poi--here border-amber-400/90 bg-[#2a2118]/95 text-amber-50'
+                  : isEntrance
+                    ? 'border-amber-600/70 bg-[#1a241c]/92 text-amber-50 hover:border-amber-400'
+                    : 'border-stone-500/70 bg-[#152018]/90 text-stone-100 hover:border-amber-500/70'
+              } ${canMove || (isEntrance && isCurrent) ? 'cursor-pointer' : ''}`}
+            >
+              <span className="flex items-center justify-center gap-1">
+                {isCurrent && <YouAreHereMarker size={14} />}
+                {isEntrance && !isCurrent && (
+                  <span className="inline-block h-2 w-2 rounded-sm bg-amber-500/90" aria-hidden />
+                )}
+                <span className="block text-[11px] font-medium leading-tight break-words">{node.name}</span>
               </span>
-            )}
-            {isCurrent && !isEntrance && (
-              <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">You are here</span>
-            )}
-          </button>
+              {isEntrance && (
+                <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">
+                  {isCurrent ? 'Tap to enter' : 'Site entrance'}
+                </span>
+              )}
+              {isCurrent && !isEntrance && (
+                <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">You are here</span>
+              )}
+            </button>
+          </React.Fragment>
         );
       })}
     </div>

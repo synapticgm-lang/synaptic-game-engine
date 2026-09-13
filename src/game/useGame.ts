@@ -332,10 +332,8 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import {
-  formatWriterFacingEvent,
-  prepareRetrospectiveWriterInput,
-} from './completedEventPacket';
+import { prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { formatTalkWriterFacing } from './talkEnvelope';
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
@@ -2697,7 +2695,6 @@ export function useGame() {
       });
       liveCurrent = preparedEvent.state;
       stateRef.current = liveCurrent;
-      const eventWriterFacing = preparedEvent.writerFacing;
       const useMud = shouldUseSilentMudTurn({
         subscriptionTier: settingsRef.current.subscriptionTier,
         openingComplete: liveCurrent.openingEstablishment?.complete === true,
@@ -2765,7 +2762,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent, typedAction);
       const gmPlayerPayload = useMud
         ? (shouldSkipMicroFlavor() ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
-        : eventWriterFacing;
+        : formatTalkWriterFacing(preparedEvent.packet, liveCurrent);
 
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
@@ -2964,7 +2961,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           setRetryStatus('Refining story resolution…');
           result = await callGmDurable(
             liveCurrent.completedEvent
-              ? formatWriterFacingEvent(liveCurrent.completedEvent, { stricter: true })
+              ? formatTalkWriterFacing(liveCurrent.completedEvent, liveCurrent, { stricter: true })
               : buildResolutionUserPayload({
                   mandateBlock: turnMandate.block,
                   playerAction: sanitizedInput,
