@@ -109,7 +109,7 @@ export function isLastKillTalkPad(label: string, lastKill?: LastKill | null): bo
   }
   // Social verbs — living talk on a corpse is illegal
   if (
-    !/\b(talk(?:\s+to)?|ask|speak|listen|press(?:\s+for)?|offer|bargain|negotiate|greet|approach)\b/i.test(
+    !/\b(talk(?:\s+to)?|ask|speak|listen|press(?:\s+for)?|offer|bargain|negotiate|greet|approach|converse|chat|reply)\b/i.test(
       label
     )
   ) {

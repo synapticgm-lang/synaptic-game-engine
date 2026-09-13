@@ -266,7 +266,9 @@ export function applyUiThemeToDocument(
               ? '"Special Elite", Georgia, serif'
               : theme?.themeKey === 'cyborg-chassis'
                 ? 'Orbitron, ui-sans-serif, system-ui, sans-serif'
-                : undefined;
+                : theme?.themeKey === 'phoenix-ashrise'
+                  ? '"Playfair Display", Palatino, Georgia, serif'
+                  : undefined;
   ensureGoogleFonts(fontUi, fontStory, displayStack);
   if (fontUi) root.style.setProperty('--sgm-font-ui', fontUi);
   if (fontStory) root.style.setProperty('--sgm-font-story', fontStory);

@@ -250,6 +250,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'cursed-keep': [
     {
       location: 'Greyhollow, at the inn',
+      faction: 'the innkeep',
+      summonIntent: 'A name in the inn book before they will talk about the keep.',
+      openingCost: 'The road is already washed out. You stay in Greyhollow or you walk the flood.',
       page1:
         'The last coach is already gone. Autumn rain hits the leaded windows of the Greyhollow Inn. You stand in the entry, water on the floorboards, an open ledger on the oak counter. The few by the hearth will not talk about the keep on the hill. Something up there already knows you are here.',
       text:
@@ -257,6 +260,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Greyhollow mill lane at dusk',
+      faction: 'exhausted faces on the porch',
+      summonIntent: 'The notice wants the missing child found. The porch wants to know if you are help.',
+      openingCost: 'Night on the mill lane with no honest light but the inn.',
       page1:
         'Dusk on the Greyhollow mill lane. You arrive on foot, boots in cold mud. The mill wheel turns with no water in the bed. A tattered notice says a child has been missing three nights. Ahead, the inn light is the only honest one. Exhausted faces on the porch watch you come.',
       text:
@@ -264,6 +270,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Greyhollow churchyard',
+      faction: 'Father Aldous',
+      summonIntent: 'Father Aldous wants to know if you are the face from his dream.',
+      openingCost: 'The opened graves stay open. He will not walk you back to the coach.',
       page1:
         'You are left in the Greyhollow churchyard, shin-deep in wet grass. The carriage is already rattling into fog. Three fresh graves gape; the coffins are splintered from the inside. Father Aldous stands by the iron gate with a silver icon, hollow-eyed, as if you stepped out of his dream. He raises a lantern toward your face.',
       text:
@@ -271,6 +280,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the washed-out road into Greyhollow',
+      faction: 'two sentries',
+      summonIntent: 'The sentries want a name and a reason you waded in.',
+      openingCost: 'The road behind you is gone. They can leave you in the reeds.',
       page1:
         'The road into Greyhollow is already gone. You wade the last mile through floodwater. Drained livestock float in the reeds. The keep on the hill is a silhouette that does not match the stories. Two sentries step from a ruined wall as you drag onto the bank, crossbows half-raised.',
       text:
@@ -278,6 +290,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Greyhollow tavern common room',
+      faction: 'the woodcutter and the innkeep',
+      summonIntent: 'The woodcutter wants help for the missing child. The mayor wants the keep unnamed.',
+      openingCost: 'Greyhollow will not help you if you name the keep.',
       page1:
         'You are already in the Greyhollow tavern common room when the mayor denies everything. The woodcutter will not sit, knuckles white on a felling axe. In the corner a priest’s hands shake around a cup. Heat from the hearth feels wrong. Nobody will name the keep. They are measuring whether you are help or another trouble.',
       text:
@@ -285,6 +300,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Greyhollow gate after dark',
+      faction: 'two militia',
+      summonIntent: 'The militia want you inside the bar, not back in the woods.',
+      openingCost: 'The gate stays barred. The rain and the keep are what you get.',
       page1:
         'The oak gate of Greyhollow slams and the bar slides home. They let you in because the rain and the woods left you no choice. You stand in the muddy courtyard. On the palisade a sentry watches the keep, not you. Two militia step from the guardhouse with lanterns and the look of people who already regret the night.',
       text:
@@ -292,6 +310,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Greyhollow well at midnight',
+      faction: 'Father Aldous',
+      summonIntent: 'Aldous wants to know what answered from the shaft.',
+      openingCost: 'The inn lights stay a rumor uphill if you refuse him.',
       page1:
         'Midnight at the Greyhollow well. The bucket rope is cut. You arrive alone; the inn lights are a rumor uphill. Something answered from the shaft before you spoke. Father Aldous is already on the cobbles with a lantern, as if he dreamed you would come here first.',
       text:
@@ -299,6 +320,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the keep gate above Greyhollow',
+      faction: 'a steward behind the oak',
+      summonIntent: 'The steward wants to know who sent you before the bar moves.',
+      openingCost: 'The oak stays shut. The village stays a smear downhill.',
       page1:
         'You are already at the keep gate above Greyhollow, not the village. The oak is swollen shut. Crow-shot holes in the door. No inn book, no coach. A steward’s voice behind the planks asks who sent you — and will not open until you answer.',
       text:
@@ -507,6 +531,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'thornferry-road': [
     {
       location: 'the mill landing at Thornferry',
+      faction: 'Wren Holt',
+      summonIntent: 'Wren wants you on the road with the charter, or they walk it alone.',
+      openingCost: 'Refuse and Wren walks alone. The ferry rope keeps pulling without you.',
       page1:
         'Dawn mist on the mill landing at Thornferry. The ferry rope is wet against the current. Wren Holt stands at the end of the dock with a sealed charter, wax still red. “This has to move,” Wren says. “We walk the road together, or I walk it alone.” The rope keeps pulling. Wren waits.',
       text:
@@ -514,6 +541,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the ferry inn at Thornferry',
+      faction: 'Wren Holt',
+      summonIntent: "Wren wants a partner on the charter before Pell's coin decides.",
+      openingCost: 'The oak door is at your back. You can still walk away and leave Wren the road.',
       page1:
         'The Thornferry inn is warm with mutton and wet wool. Wren Holt sits across a scarred table, already arguing Pell’s coin. The sealed charter lies between you. The oak door is at your back; you can still walk away and leave Wren the road.',
       text:
@@ -521,6 +551,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the ford below Thornferry',
+      faction: 'Wren Holt',
+      summonIntent: 'Wren wants help across the ford with the charter.',
+      openingCost: "Refuse and you are the problem that gets you killed. The magistrate's man is already on the far bank.",
       page1:
         'Freezing water at the rocky ford below Thornferry. The mill landing is only a shadow upstream. The crossing rope is frayed. Wren clutches a sealed charter — help, or the problem that gets you killed. On the far bank the magistrate’s man sits a black horse with a crossbow on the pommel.',
       text:
@@ -528,6 +561,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Thornferry chapel stoop',
+      faction: 'Wren Holt',
+      summonIntent: 'Wren wants your name on the writ.',
+      openingCost: 'The oak doors stay shut. The road does not care about hymns.',
       page1:
         'Morning bell from the Thornferry chapel. You stand on the cracked stoop; the oak doors stay shut. Wren Holt is already on the steps with a sealed charter, blocking the easy exit. The road does not care about hymns. The next word is whether your name goes on the writ.',
       text:
@@ -535,6 +571,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'a side-path off Thornferry Road',
+      faction: 'Wren Holt',
+      summonIntent: 'Wren still wants the partnership answered.',
+      openingCost: 'Pell still holds the coin. Heavy feet are already in the undergrowth.',
       page1:
         'Canopy keeps the side-path off Thornferry Road in twilight. The mill landing is miles behind. Wren Holt followed into the brush with the sealed charter and will not drop the partnership question. Pell still holds the coin. A branch snaps ahead — heavy feet in the undergrowth. Wren’s hand is already on a short blade. They look at you and wait.',
       text:
@@ -542,6 +581,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'Thornferry mill at last light',
+      faction: 'Wren Holt',
+      summonIntent: 'Wren wants the ford in the dark, or the mill until dawn.',
+      openingCost: 'The ferry is not coming. Wait alone and the river still moves.',
       page1:
         'Dusk paints the river at the Thornferry mill a deep purple. The ferry is already late. Wren Holt stands on the slick dock with the sealed charter tight against their chest. Something dark breaks the water by the pilings and is gone. Wren steps back. “The ferry isn’t coming. We take the ford in the dark, or we wait in the mill until dawn.” The river is still moving.',
       text:
@@ -549,6 +591,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the magistrate’s porch at Thornferry',
+      faction: 'Wren Holt',
+      summonIntent: 'The clerk wants your name for the writ before anyone walks the road.',
+      openingCost: 'Refuse the name and the mill stays a rumor. Wren still has the charter.',
       page1:
         'You start on the magistrate’s porch, not the mill. Wren Holt is already arguing the sealed charter under a lamp. A clerk wants your name for the writ before anyone walks the road. The river is a sound behind the house. Wren looks at you and waits.',
       text:
@@ -556,6 +601,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the mill loft before Wren finds you',
+      faction: 'Wren Holt',
+      summonIntent: 'Wren wants you to walk together, or they walk it alone.',
+      openingCost: 'Refuse and Wren takes the landing question without you.',
       page1:
         'Grain-dust in the Thornferry mill loft. You are here first. The ferry rope knocks below. Wren Holt’s boots hit the ladder with the sealed charter already in hand. “I was told you’d be on the landing,” Wren says. “We still walk together, or I walk it alone.”',
       text:
@@ -863,6 +911,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'salt-road-heist': [
     {
       location: 'a warehouse loft before the salt-tax score',
+      faction: 'the crew',
+      summonIntent: 'First move is yours — the plan, the cut, or the walk.',
+      openingCost: 'Walk and you are out of the crew before Heat is even up.',
       page1:
         'The warehouse loft smells of dust and old rope. A stolen map of the Salt Road is pinned to a crate, the Consul tax ledger marked as the prize. Heat is still zero. Nobody in the crew is watching the map — they are watching each other’s hands. The muscle leans across the crate. “Talk is done. First move is yours — the plan, the cut, or the walk.”',
       text:
@@ -870,6 +921,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'a Salt Road waystation',
+      faction: 'an enforcer',
+      summonIntent: 'The enforcer wants to hear why you are late.',
+      openingCost: 'Someone already sold a name. He can sell yours next.',
       page1:
         'The waystation is a cramped shack on the Salt Road, woodsmoke and stale ale. You are supposed to join the crew here, a day out from the Consul caravan. Someone in the local syndicate has already sold a name, and the room is too quiet. An enforcer at the bar blocks the path to their table. “You’re late,” he says, and waits. What do you tell him?',
       text:
@@ -877,6 +931,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the Consul caravan’s night camp',
+      faction: 'the thief beside you',
+      summonIntent: 'The thief wants your move on the lockbox.',
+      openingCost: 'Go loud and Heat rises before dawn.',
       page1:
         'Night camp on the Salt Road. You are already on the job, crouched in the wagon-shadow. The tax ledger sits in an iron lockbox a few feet away. Armed hirelings move between lanterns. Go loud and Heat rises before dawn. The thief beside you has picks out and is waiting on your move.',
       text:
@@ -884,6 +941,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'a Salt Road tavern hire',
+      faction: 'Vessa',
+      summonIntent: 'Vessa wants a cutter and a name she can use.',
+      openingCost: 'The watch is already in the door. She can leave you to them.',
       page1:
         'Pipe smoke and cheap wine in a Salt Road tavern booth. Vessa sits across the sticky wood and wants a cutter. The score is local politics wearing a padlock; rivals are buying names before you have one. The door opens on two watchmen scanning the room. She keeps a silver pouch under her hand and waits to hear what you call yourself.',
       text:
@@ -891,6 +951,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'a cliff path above the caravan road',
+      faction: 'the scout',
+      summonIntent: 'The scout wants who leads — wait, strike, or abort.',
+      openingCost: 'Abort and the caravan rolls without you.',
       page1:
         'Wind on the cliff path above the Salt Road. You are in the scrub, eyes on the wagons below. The crew is late. Twenty outriders surround a rumor of a ledger. Wait, strike in the pass, or abort. Down below a horse whinnies and the caravan starts to halt. The scout beside you is waiting on who leads.',
       text:
@@ -898,6 +961,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'a safehouse after a rehearsal gone loud',
+      faction: 'the muscle',
+      summonIntent: 'The muscle wants a name to give if the watch kicks the door.',
+      openingCost: 'Someone in this room wants out, and may sell the rest.',
       page1:
         'The safehouse reeks of sweat and spilled drink. The rehearsal went loud — fake guards fought, bells rang — and Heat is already up in the district. The real Salt Road score will be worse. Someone in this room wants out, and might sell the rest. The muscle stops in front of you with a bloodied crowbar, waiting to hear whose name you give if the watch kicks the door.',
       text:
@@ -905,6 +971,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'a salt-pan camp at dawn',
+      faction: 'Vessa',
+      summonIntent: 'The cutter wants to hear if you lead, cut, or walk.',
+      openingCost: 'Walk and the crew goes on without you.',
       page1:
         'Dawn glare off the salt pans. You join the crew here, not in a loft. The Consul caravan is two ridges over. Vessa has the map weighted with a stone. Heat is still zero. The cutter across the fire is waiting to hear if you lead, cut, or walk.',
       text:
@@ -912,6 +981,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
       location: 'the Consul counting-house back door',
+      faction: 'a hired lockpick',
+      summonIntent: 'The lockpick wants your word before the grate.',
+      openingCost: 'Go loud and Heat rises in the district before the caravan moves.',
       page1:
         'You start at the Consul counting-house back door, not the road. The tax ledger is inside an iron cage you can already see through a grate. A hired lockpick is waiting on your word. Go loud and Heat rises in the district before the caravan ever moves.',
       text:

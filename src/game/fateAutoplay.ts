@@ -132,6 +132,7 @@ import { prepareRetrospectiveWriterInput } from './completedEventPacket';
 import {
   classifyResponsePath,
   formatTalkWriterFacing,
+  spokenTalkFallback,
   tallyResponsePaths,
   type ResponsePath,
   type WriterOutcome,
@@ -1095,6 +1096,13 @@ Do NOT print dice notation or CODE ENFORCED.
     }
     arcState = clearEngineRecoveryStreak(arcState);
   } else if (!gmText.trim()) {
+    const spoken = spokenTalkFallback(arcState, playerInput);
+    if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
+      gmText = spoken;
+      renderFallbackUsed = true;
+    }
+  }
+  if (!useMud && !gmText.trim()) {
     const failLabel = gmResult.dnsFailure
       ? 'network_dns'
       : gmResult.failKind === 'rate_limit'
@@ -1241,6 +1249,13 @@ Do NOT print dice notation or CODE ENFORCED.
       const repaired = repairRejectedBeat(arcState, gmText, stillGate.reasons);
       if (repaired.repaired) {
         gmText = repaired.prose;
+        usedPacketStitch = true;
+      }
+    }
+    if (/Silence held the question|No one listed on the ledger answered/i.test(gmText)) {
+      const spoken = spokenTalkFallback(arcState, playerInput);
+      if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
+        gmText = spoken;
         usedPacketStitch = true;
       }
     }

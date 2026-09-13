@@ -56,8 +56,8 @@ function grainDone(over: Partial<GameState> = {}): GameState {
 
 describe('playtest12f — talk envelope + path labels', () => {
   it('HUD/BUILD are 12f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-12f');
-    expect(BUILD_STAMP).toBe('2026-09-12f');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-12/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-12/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

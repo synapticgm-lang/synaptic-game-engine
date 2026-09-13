@@ -63,7 +63,8 @@ function greyhollow(): GameState {
       sceneWritten: true,
       mode: 'weave',
       aloneArrival: false,
-      pickedHook: 'Location: Greyhollow tavern common room\nWho is here: the innkeep and a quiet room',
+      pickedHook:
+        'Location: Greyhollow tavern common room\nWho is here: the innkeep and a quiet room\nWhy this happened: The woodcutter wants help for the missing child. The mayor wants the keep unnamed.\nIf you refuse: Greyhollow will not help you if you name the keep.',
     },
     sceneFacts: emptySceneFacts(1),
   };
@@ -84,7 +85,8 @@ function saltHire(): GameState {
       sceneWritten: true,
       mode: 'weave',
       aloneArrival: false,
-      pickedHook: 'Location: a Salt Road tavern hire\nWho is here / who summoned: Vessa',
+      pickedHook:
+        'Location: a Salt Road tavern hire\nWho is here / who summoned: Vessa\nWhy this happened: Vessa wants a cutter and a name she can use.\nIf you refuse: The watch is already in the door. She can leave you to them.',
     },
     sceneFacts: emptySceneFacts(1),
   };
@@ -105,7 +107,8 @@ function thornferry(): GameState {
       sceneWritten: true,
       mode: 'plunge',
       aloneArrival: false,
-      pickedHook: 'Location: mill landing\nWho is here: Wren Holt waits with a sealed charter',
+      pickedHook:
+        'Location: mill landing\nWho is here: Wren Holt waits with a sealed charter\nWhy this happened: Wren wants you on the road with the charter, or they walk it alone.\nIf you refuse: Refuse and Wren walks alone. The ferry rope keeps pulling without you.',
     },
     sceneFacts: emptySceneFacts(1),
   };
@@ -242,7 +245,7 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       'Why should I help you?'
     );
     expect(help).not.toMatch(/I keep this book/i);
-    expect(help).toMatch(/have not said what they want/i);
+    expect(help).toMatch(/woodcutter|missing child|keep unnamed/i);
   });
 
   it('refuse is not the want slot and does not steal the name chip', () => {
@@ -278,8 +281,8 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       },
       'What happens if I refuse?'
     );
-    expect(help).toMatch(/have not said what they want/i);
-    expect(refuse).toMatch(/have not said what happens if you refuse/i);
+    expect(help).toMatch(/woodcutter|missing child|keep unnamed/i);
+    expect(refuse).toMatch(/name the keep|will not help/i);
     expect(refuse).not.toBe(help);
     expect(refuse).not.toMatch(/I keep this book|Handler\. You came through/i);
   });
@@ -296,9 +299,9 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       },
       'What happens if I refuse?'
     );
-    expect(help).toMatch(/have not said what they want/i);
+    expect(help).toMatch(/Vessa|cutter|name she can use/i);
     expect(help).toMatch(/still want a name/i);
-    expect(refuse).toMatch(/have not said what happens if you refuse/i);
+    expect(refuse).toMatch(/watch|leave you/i);
     expect(refuse).toMatch(/still want a name/i);
     expect(refuse).not.toBe(help);
   });
@@ -404,7 +407,7 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       playerInputOverride: 'Ask what they want',
     });
     expect(want.telemetry.repairNote).toMatch(/hall_talk_stitch/);
-    expect(want.telemetry.gmText).toMatch(/have not said what they want/i);
+    expect(want.telemetry.gmText).toMatch(/woodcutter|missing child|keep unnamed/i);
     expect(want.telemetry.gmText).not.toMatch(/Patched Leather|Chain Shirt|already said it/i);
     expect(want.telemetry.durationMs).toBeLessThan(2000);
 

@@ -49,7 +49,7 @@ describe('playtest10c — loiter stitch + writer strip', () => {
     const packet = buildCompletedEventPacket(ruin(), 'Look around');
     expect(packet.inspectStreak).toBe(1);
     const stitch = assemblePacketStitch(packet);
-    expect(stitch).toMatch(/took in|looked through|studied/i);
+    expect(stitch).toMatch(/took in|studied|eyes went over/i);
     expect(stitch).toMatch(/half-collapsed loft/i);
     expect(stitch).not.toMatch(/same edges|already there|Nothing new stepped/i);
   });

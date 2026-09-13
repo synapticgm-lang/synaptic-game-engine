@@ -1424,6 +1424,11 @@ html[data-sgm-theme='undead-ossuary'] .sgm-hud {
   background-color: color-mix(in srgb, var(--sgm-panel, #1c1917) 92%, transparent);
   border-bottom-color: color-mix(in srgb, #e7e5e4 35%, #44403c);
 }
+html[data-sgm-theme='phoenix-ashrise'] .sgm-info-heading,
+html[data-sgm-theme='phoenix-ashrise'] .sgm-hud-brand {
+  font-family: var(--sgm-font-display, 'Playfair Display', Georgia, serif);
+  letter-spacing: 0.02em;
+}
 html[data-sgm-theme='cyborg-chassis'] .sgm-info-heading,
 html[data-sgm-theme='cyborg-chassis'] .sgm-hud-brand {
   font-family: var(--sgm-font-display, Orbitron, ui-sans-serif, system-ui, sans-serif);

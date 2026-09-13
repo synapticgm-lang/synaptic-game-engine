@@ -754,17 +754,32 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     {
       id: 'in1a',
       fingerprint: 'You took in',
-      render: (s) => `You took in ${s.where}.`,
-    },
-    {
-      id: 'in1b',
-      fingerprint: 'You looked through',
-      render: (s) => `You looked through ${s.where}.`,
+      render: (s) =>
+        s.focus
+          ? `You took in ${s.where}. ${s.focus} sat where the ledger already had it. Nothing new had been added to the list.`
+          : s.who
+            ? `You took in ${s.where}. ${s.who} was still in the room. The walls you already had were still in place.`
+            : `You took in ${s.where}. The walls you already had were still in place. Nothing listed had been added.`,
     },
     {
       id: 'in1c',
       fingerprint: 'You studied',
-      render: (s) => `You studied ${s.where}.`,
+      render: (s) =>
+        s.focus
+          ? `You studied ${s.where}. ${s.focus} had not grown a new name. The next move was still yours.`
+          : s.who
+            ? `You studied ${s.where}. ${s.who} had not left. What you already knew of the room stayed put.`
+            : `You studied ${s.where}. What you already knew of the room stayed put. The next move was still yours.`,
+    },
+    {
+      id: 'in1d',
+      fingerprint: 'eyes went over',
+      render: (s) =>
+        s.focus
+          ? `Your eyes went over ${s.where} again. ${s.focus} was the only named thing worth the look. No new prop had appeared.`
+          : s.who
+            ? `Your eyes went over ${s.where} again. ${s.who} was still here. The room held only what the ledger already named.`
+            : `Your eyes went over ${s.where} again. The room held only what the ledger already named.`,
     },
   ],
   'inspect-2': [
@@ -773,8 +788,18 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
       fingerprint: 'had not moved',
       render: (s) =>
         s.focus
-          ? `You looked again at ${s.where}. ${s.focus} had not moved.`
-          : `You looked again at ${s.where}. The walls you already had were still in place.`,
+          ? `You looked again at ${s.where}. ${s.focus} had not moved. A second look did not invent a new thing.`
+          : s.who
+            ? `You looked again at ${s.where}. ${s.who} was still in place. The walls you already had had not moved.`
+            : `You looked again at ${s.where}. The walls you already had were still in place.`,
+    },
+    {
+      id: 'in2b',
+      fingerprint: 'same named things',
+      render: (s) =>
+        s.focus
+          ? `A second look at ${s.where} found ${s.focus} where you left it. ${s.focus} had not moved.`
+          : `A second look at ${s.where} found the same named things. The walls you already had had not moved.`,
     },
   ],
   'inspect-3': [
@@ -783,8 +808,28 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
       fingerprint: 'nothing else to glean',
       render: (s) =>
         s.focus
-          ? `${s.focus} at ${s.where} had already given what it had.`
-          : `There is nothing else to glean from ${s.where}.`,
+          ? `${s.focus} at ${s.where} had already given what it had. There is nothing else to glean.`
+          : `There is nothing else to glean from ${s.where}. A third look did not add a name.`,
+    },
+  ],
+  'inspect-corpse': [
+    {
+      id: 'ic1',
+      fingerprint: 'still on the floor',
+      render: (s) =>
+        `You looked at ${s.where}. The body of ${s.corpse} was still on the floor. Leave it, or search what they left.`,
+    },
+    {
+      id: 'ic2',
+      fingerprint: 'stayed down',
+      render: (s) =>
+        `${s.corpse} stayed down at ${s.where}. A look did not make them stand. The next move was loot or leave.`,
+    },
+    {
+      id: 'ic3',
+      fingerprint: 'was a corpse, not a speaker',
+      render: (s) =>
+        `The fight was already over at ${s.where}. ${s.corpse} was a corpse, not a speaker.`,
     },
   ],
   'inspect-fight': [
@@ -813,8 +858,8 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     },
     {
       id: 'tk2',
-      fingerprint: 'answered from where they stood',
-      render: (s) => `You spoke at ${s.where}. ${s.who} answered from where they stood.`,
+      fingerprint: 'spoke from where they stood',
+      render: (s) => `You spoke at ${s.where}. ${s.who} spoke from where they stood.`,
     },
     {
       id: 'tk3',
@@ -824,19 +869,39 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
   ],
   'talk-empty': [
     {
-      id: 'te1',
-      fingerprint: 'No one listed on the ledger answered',
-      render: (s) => `You spoke at ${s.where}. No one listed on the ledger answered.`,
-    },
-    {
       id: 'te2',
       fingerprint: 'The room did not invent a speaker',
       render: (s) => `Your question hung at ${s.where}. The room did not invent a speaker.`,
     },
     {
-      id: 'te3',
-      fingerprint: 'Silence held the question',
-      render: (s) => `You asked at ${s.where}. Silence held the question.`,
+      id: 'te4',
+      fingerprint: 'empty ledger stayed empty',
+      render: (s) => `You asked at ${s.where}. The empty ledger stayed empty.`,
+    },
+    {
+      id: 'te5',
+      fingerprint: 'No living name took it',
+      render: (s) => `You spoke at ${s.where}. No living name took it.`,
+    },
+  ],
+  'talk-corpse': [
+    {
+      id: 'tc1',
+      fingerprint: 'body did not speak',
+      render: (s) =>
+        `You spoke at ${s.where}. Only the body of ${s.corpse} was left. The body did not speak.`,
+    },
+    {
+      id: 'tc2',
+      fingerprint: 'was a corpse, not a speaker',
+      render: (s) =>
+        `${s.corpse} stayed down at ${s.where}. They were a corpse, not a speaker. Leave, or search what they left.`,
+    },
+    {
+      id: 'tc3',
+      fingerprint: 'fight was already over',
+      render: (s) =>
+        `The fight was already over at ${s.where}. ${s.corpse} could not take a question.`,
     },
   ],
   travel: [
@@ -848,7 +913,7 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     {
       id: 'tr2',
       fingerprint: 'arrival already done',
-      render: (s) => `The walk ended at ${s.where}. The arrival already done, the room waited.`,
+      render: (s) => `The walk ended at ${s.where}. The arrival already done, you were through.`,
     },
     {
       id: 'tr3',
@@ -875,14 +940,32 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
   ],
   'wait-1': [
     {
-      id: 'wt1a',
-      fingerprint: 'You waited at',
-      render: (s) => `You waited at ${s.where}.`,
-    },
-    {
       id: 'wt1b',
       fingerprint: 'You held still at',
-      render: (s) => `You held still at ${s.where}.`,
+      render: (s) =>
+        s.focus
+          ? `You held still at ${s.where}. ${s.focus} did not offer a new beat. The pause did not invent a speaker.`
+          : s.who
+            ? `You held still at ${s.where}. ${s.who} did not fill the pause. Nothing listed moved.`
+            : `You held still at ${s.where}. Nothing listed moved. The pause did not invent a speaker.`,
+    },
+    {
+      id: 'wt1c',
+      fingerprint: 'let a beat pass',
+      render: (s) =>
+        s.focus
+          ? `You let a beat pass at ${s.where}. ${s.focus} stayed put. The room stayed the way you already had it.`
+          : s.who
+            ? `You let a beat pass at ${s.where}. ${s.who} stayed where they stood. The room stayed the way you already had it.`
+            : `You let a beat pass at ${s.where}. The room stayed the way you already had it.`,
+    },
+    {
+      id: 'wt1d',
+      fingerprint: 'gave the room a pause',
+      render: (s) =>
+        s.focus
+          ? `You gave ${s.where} a pause. ${s.focus} was still the named thing. No new name arrived.`
+          : `You gave ${s.where} a pause. No new name arrived. What you already had stayed put.`,
     },
   ],
   'wait-2': [
@@ -891,15 +974,37 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
       fingerprint: 'still the way it sat',
       render: (s) =>
         s.focus
-          ? `You held still at ${s.where}. ${s.focus} was still the way it sat.`
+          ? `You held still at ${s.where}. ${s.focus} was still the way it sat. A second wait added nothing.`
           : `You held still at ${s.where}. Nothing listed had moved.`,
+    },
+    {
+      id: 'wt2b',
+      fingerprint: 'second pause found the same',
+      render: (s) =>
+        s.focus
+          ? `A second pause at ${s.where} found ${s.focus} unchanged. The ledger had not grown.`
+          : `A second pause at ${s.where} found the same named things. The ledger had not grown.`,
     },
   ],
   'wait-3': [
     {
       id: 'wt3a',
       fingerprint: 'Waiting showed nothing new',
-      render: (s) => `Waiting at ${s.where} showed nothing new.`,
+      render: (s) => `Waiting at ${s.where} showed nothing new. The pause had already done its work.`,
+    },
+  ],
+  'wait-corpse': [
+    {
+      id: 'wc1',
+      fingerprint: 'did not get up',
+      render: (s) =>
+        `You held still at ${s.where}. ${s.corpse} did not get up. Leave the body, or search what they left.`,
+    },
+    {
+      id: 'wc2',
+      fingerprint: 'stayed down through the pause',
+      render: (s) =>
+        `A pause at ${s.where} changed nothing. ${s.corpse} stayed down. The next move was loot or leave.`,
     },
   ],
   loot: [
@@ -1002,8 +1107,22 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     },
     {
       id: 'st3',
-      fingerprint: 'The room waited without a speech',
-      render: (s) => `You finished the beat at ${s.where}. The room waited without a speech.`,
+      fingerprint: 'Nothing listed had moved on',
+      render: (s) => `You finished the beat at ${s.where}. Nothing listed had moved on.`,
+    },
+  ],
+  'settle-corpse': [
+    {
+      id: 'sc1',
+      fingerprint: 'body still on the floor',
+      render: (s) =>
+        `The beat closed at ${s.where}. The body of ${s.corpse} was still on the floor. Leave, or search what they left.`,
+    },
+    {
+      id: 'sc2',
+      fingerprint: 'was a corpse, not a speaker',
+      render: (s) =>
+        `${s.corpse} stayed down at ${s.where}. They were a corpse, not a speaker.`,
     },
   ],
 };
@@ -1022,25 +1141,34 @@ export function isPacketStitchProse(text: string): boolean {
   return PACKET_STITCH_FINGERPRINTS.some((fp) => body.includes(fp));
 }
 
+function corpseRemains(packet: CompletedEventPacket): boolean {
+  const kill = packet.lastKill;
+  return !!(kill?.name && kill.remains && kill.outcome === 'victory' && !packet.combatLive);
+}
+
 function stitchBankKey(packet: CompletedEventPacket): string {
   const verb = packet.verb;
   const outcome = packet.outcome;
+  const corpse = corpseRemains(packet);
   if (verb === 'attacked' && (outcome === 'killed' || packet.justKilled)) return 'attack-kill';
   if (verb === 'attacked' && outcome === 'missed') return 'attack-miss';
   if (verb === 'attacked') return 'attack-hit';
   if (verb === 'inspected') {
     if (packet.combatLive) return 'inspect-fight';
+    if (corpse) return 'inspect-corpse';
     const n = packet.inspectStreak ?? 1;
     if (n >= 3) return 'inspect-3';
     if (n === 2) return 'inspect-2';
     return 'inspect-1';
   }
   if (verb === 'spoke' || verb === 'parleyed') {
+    if (corpse) return 'talk-corpse';
     return packet.witnesses.length > 0 && packet.outcome === 'spoke' ? 'talk' : 'talk-empty';
   }
   if (verb === 'traveled' || outcome === 'arrived') return 'travel';
   if (verb === 'left' || outcome === 'left') return 'leave';
   if (verb === 'waited') {
+    if (corpse) return 'wait-corpse';
     const n = packet.waitStreak ?? 1;
     if (n >= 3) return 'wait-3';
     if (n === 2) return 'wait-2';
@@ -1050,6 +1178,7 @@ function stitchBankKey(packet: CompletedEventPacket): string {
   if (verb === 'fled') return outcome === 'caught' ? 'flee-caught' : 'flee';
   if (verb === 'used') return 'use';
   if (outcome === 'spawned') return 'spawn';
+  if (corpse) return 'settle-corpse';
   return 'settle';
 }
 
@@ -1131,6 +1260,32 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   return bits.join(' ').replace(/\s+/g, ' ').trim();
 }
 
+function clipSpoken(raw: string, max = 180): string {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return '';
+  return t.length > max ? `${t.slice(0, max - 1).trim()}…` : t;
+}
+
+/** E-talk / Silent spoke: CAST + card want, never Silence-held when someone is listed. */
+function renderSpokenTalkFallback(packet: CompletedEventPacket, slots: StitchSlots): string | null {
+  if (packet.verb !== 'spoke' && packet.verb !== 'parleyed') return null;
+  if (corpseRemains(packet)) return null;
+  const who = (packet.answerWho || slots.who || '').trim();
+  if (!who || /\bpanel\b/i.test(who)) return null;
+  const rawWant = (packet.answerWant ?? '').replace(/\s+/g, ' ').trim();
+  const want = /they have not said what they want yet/i.test(rawWant) ? '' : clipSpoken(rawWant);
+  const head = who.charAt(0).toUpperCase() + who.slice(1);
+  const heard =
+    !!want
+    && (packet.recentBeats ?? []).some((b) => b.includes(want.slice(0, Math.min(24, want.length))));
+  if (want) {
+    return heard
+      ? `${head} already said it. "${want}"`
+      : `${head} answers you. "${want}"`;
+  }
+  return `${head} heard you at ${slots.where}. Their answer stayed short.`;
+}
+
 export function assemblePacketStitch(
   packet: CompletedEventPacket,
   recentGm: string[] = packet.recentBeats ?? []
@@ -1138,6 +1293,8 @@ export function assemblePacketStitch(
   const slots = ledgerStitchSlots(packet);
   const hall = renderHallTalkAnswer(packet, slots);
   if (hall) return hall;
+  const spoken = renderSpokenTalkFallback(packet, slots);
+  if (spoken) return spoken;
   const key = stitchBankKey(packet);
   const bank = STITCH_BANKS[key] ?? STITCH_BANKS.settle!;
   const picked = pickStitchTemplate(bank, recentGm, packet.turn);

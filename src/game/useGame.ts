@@ -333,7 +333,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { prepareRetrospectiveWriterInput } from './completedEventPacket';
-import { formatTalkWriterFacing } from './talkEnvelope';
+import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
@@ -3040,6 +3040,22 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }
         }
 
+        {
+          const bannedTalk =
+            /Silence held the question|No one listed on the ledger answered/i;
+          if (
+            !useMud
+            && (preparedEvent.packet.verb === 'spoke' || preparedEvent.packet.verb === 'parleyed')
+            && (!storyHasBody(probeText) || bannedTalk.test(probeText))
+          ) {
+            const spoken = spokenTalkFallback(liveCurrent, sanitizedInput);
+            if (spoken && !bannedTalk.test(spoken)) {
+              probeText = spoken;
+              result = { ...result, text: spoken };
+            }
+          }
+        }
+
         // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
         // Free is already slow — skip expand when near the floor (≥70 words) to avoid a second call.
         // Also skip after transport retry so the player is not stacked into another long wait.
@@ -3559,6 +3575,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       if (!storyHasBody(cleanText) && mudTurnLive) {
         cleanText = mudDisplayBody(mudTurnLive);
+      }
+      if (
+        !storyHasBody(cleanText)
+        && !useMud
+        && (preparedEvent.packet.verb === 'spoke' || preparedEvent.packet.verb === 'parleyed')
+      ) {
+        const spoken = spokenTalkFallback(liveCurrent, sanitizedInput);
+        if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
+          cleanText = spoken;
+        }
       }
       if (!storyHasBody(cleanText)) {
         const manifest = liveCurrent.sealedManifest;

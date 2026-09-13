@@ -18,7 +18,7 @@ import {
   sanitizePcName,
 } from './pcNameAuthority';
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
-import { rememberPlayerName } from './npcMemory';
+import { hasMetBefore, rememberPlayerName } from './npcMemory';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1499,6 +1499,21 @@ export function openingSpokenStayLeave(state: GameState): string {
   return `${head} ${verb} you. "${body}"`;
 }
 
+function pickAlreadyToldVariant(state: GameState, variants: string[]): string {
+  const pool = variants
+    .map((v) => v.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .filter((v) => !hasMetBefore(state, openingCastLabel(state)) || !/introduced in play/i.test(v));
+  const use = pool.length ? pool : variants;
+  const recent = (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .slice(-10)
+    .map((e) => e.content ?? '');
+  const free = use.filter((v) => !recent.some((b) => b.includes(v.slice(0, Math.min(36, v.length)))));
+  const pickFrom = free.length ? free : use;
+  return pickFrom[Math.abs(state.turn ?? 0) % pickFrom.length]!;
+}
+
 export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' | 'refuse' | 'stayLeave' = 'who'): string {
   const who = openingCastLabel(state);
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
@@ -1507,21 +1522,33 @@ export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' |
     if (!body || /they have not said what they want yet/i.test(body)) {
       return 'They have not said what they want yet.';
     }
-    return `${head} already said it. "${body}"`;
+    return pickAlreadyToldVariant(state, [
+      `${head} already said it. "${body}"`,
+      `${head} already answered you. "${body}"`,
+      `${head} already answered you — you already heard it. "${body}"`,
+    ]);
   }
   if (topic === 'refuse') {
     const body = shortCardCost(state).trim();
     if (!body || /they have not said what happens if you refuse/i.test(body)) {
       return 'They have not said what happens if you refuse.';
     }
-    return `${head} already said it. "${body}"`;
+    return pickAlreadyToldVariant(state, [
+      `${head} already said it. "${body}"`,
+      `${head} already answered you. "${body}"`,
+      `${head} already answered you on the cost. "${body}"`,
+    ]);
   }
   if (topic === 'stayLeave') {
     const body = shortCardStayLeave(state).trim();
     if (!body) {
       return 'They have not said whether you must stay or may leave.';
     }
-    return `${head} already said it. "${body}"`;
+    return pickAlreadyToldVariant(state, [
+      `${head} already said it. "${body}"`,
+      `${head} already answered you. "${body}"`,
+      `${head} already answered you on stay or leave. "${body}"`,
+    ]);
   }
   const quote = openingSpokenIdentityQuote(who, {
     location: state.currentLocation,
@@ -1529,16 +1556,35 @@ export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' |
     hay: openingSceneHay(state),
   });
   if (/\bmilitia\b/i.test(who)) {
-    return quote
-      ? `The militia already answered you. The spear has not moved. ${quote}`
-      : 'The militia already answered you. The spear has not moved.';
+    return pickAlreadyToldVariant(state, [
+      quote
+        ? `The militia already answered you. The spear has not moved. ${quote}`
+        : 'The militia already answered you. The spear has not moved.',
+      quote
+        ? `The militia already said it. The spear has not moved. ${quote}`
+        : 'The militia already said it. The spear has not moved.',
+    ]);
   }
   if (/\bscavenger\b/i.test(who)) {
-    return 'The scavenger already said that. He is still watching the rings.';
+    return pickAlreadyToldVariant(state, [
+      'The scavenger already said that. He is still watching the rings.',
+      'The scavenger already answered you. He is still watching the rings.',
+    ]);
   }
-  if (/\benvoys?\b/i.test(who)) return 'The envoys already said that. The maps have not moved.';
+  if (/\benvoys?\b/i.test(who)) {
+    return pickAlreadyToldVariant(state, [
+      'The envoys already said that. The maps have not moved.',
+      'The envoys already answered you. The maps have not moved.',
+    ]);
+  }
   if (/\bpanel\b/i.test(who)) return 'The panel already holds what it will say.';
-  return quote ? `${head} already said it. ${quote}` : `${head} already answered you.`;
+  return quote
+    ? pickAlreadyToldVariant(state, [
+        `${head} already said it. ${quote}`,
+        `${head} already answered you. ${quote}`,
+        `${head} already answered you — you already heard it. ${quote}`,
+      ])
+    : `${head} already answered you.`;
 }
 
 export function openingWantLine(state: GameState): string {
