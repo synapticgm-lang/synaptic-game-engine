@@ -124,6 +124,7 @@ import {
   characterNameIsGeneric,
   tryHandleQuickResponseButton,
   ensureSealedOpeningBag,
+  openingCastNames,
 } from './openingEstablishment';
 import { ensureOpeningNpcPinned, resolveOpeningPinnedNames } from './openingPin';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
@@ -332,7 +333,8 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { isDroughtStubProse, lastResortStoryBody, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
   composeFreeMudTurn,
@@ -2228,15 +2230,22 @@ export function useGame() {
         contentSanitized
       );
 
+      const openingSceneWritten =
+        liveCurrent.openingEstablishment?.sceneWritten === true
+        || current.openingEstablishment?.sceneWritten === true;
+      // 13b — page 1 stitch only. After sceneWritten, ledger write then callGm (never premade continue).
       if (
-        isOpeningCoverTurn(current)
-        || isOpeningCoverTurn(liveCurrent)
-        || isOpeningEstablishmentPending(current)
-        || shouldStitchOpeningContinue(current, contentSanitized)
-        || shouldStitchOpeningContinue(liveCurrent, contentSanitized)
-        || (
-          !!liveCurrent.pendingGeneratedOpening
-          && liveCurrent.openingEstablishment?.complete !== true
+        !openingSceneWritten
+        && (
+          isOpeningCoverTurn(current)
+          || isOpeningCoverTurn(liveCurrent)
+          || isOpeningEstablishmentPending(current)
+          || shouldStitchOpeningContinue(current, contentSanitized)
+          || shouldStitchOpeningContinue(liveCurrent, contentSanitized)
+          || (
+            !!liveCurrent.pendingGeneratedOpening
+            && liveCurrent.openingEstablishment?.complete !== true
+          )
         )
       ) {
         const stepped = await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current);
@@ -2384,6 +2393,10 @@ export function useGame() {
         setRestoreDraft(null);
         return;
         }
+      } else if (liveCurrent.openingEstablishment) {
+        const stepped = await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current);
+        liveCurrent = { ...stepped.state, pendingGeneratedOpening: false };
+        stateRef.current = liveCurrent;
       }
 
       if (!liveCurrent.sceneFacts) {
@@ -3017,6 +3030,46 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           });
         }
 
+        {
+          let accepted = acceptTokenOrLedgerStory(
+            probeText,
+            liveCurrent,
+            liveCurrent.completedEvent
+          );
+          if (
+            accepted.needsRepair
+            && liveCurrent.completedEvent
+            && !skipStackedGmAfterTransport
+            && !playerAsksRepeat(sanitizedInput)
+          ) {
+            setRetryStatus('Repairing the beat…');
+            result = await callGmDurable(
+              formatTokenRepairFacing(liveCurrent.completedEvent, accepted.needsRepair.missingFns)
+            );
+            accepted = acceptTokenOrLedgerStory(
+              result.text,
+              liveCurrent,
+              liveCurrent.completedEvent,
+              { alreadyRepaired: true, alt: probeText }
+            );
+          }
+          if (accepted.prose) {
+            probeText = accepted.prose;
+            result = { ...result, text: accepted.prose };
+          }
+          if (
+            (accepted.path === 'json' || accepted.path === 'json-partial')
+            && accepted.refs?.length
+            && liveCurrent.completedEvent
+          ) {
+            liveCurrent = {
+              ...liveCurrent,
+              completedEvent: { ...liveCurrent.completedEvent, tokenRefs: accepted.refs },
+            };
+            stateRef.current = liveCurrent;
+          }
+        }
+
         if (openingInventBudgetZero(liveCurrent)) {
           const gated = classifyOpeningContinue(liveCurrent, probeText);
           if (gated.prose && gated.prose !== probeText) {
@@ -3582,8 +3635,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         && (preparedEvent.packet.verb === 'spoke' || preparedEvent.packet.verb === 'parleyed')
       ) {
         const spoken = spokenTalkFallback(liveCurrent, sanitizedInput);
-        if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
+        if (
+          spoken
+          && !isDroughtStubProse(spoken)
+          && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)
+        ) {
           cleanText = spoken;
+        }
+      }
+      if (!storyHasBody(cleanText) || isDroughtStubProse(cleanText)) {
+        const resort = lastResortStoryBody(liveCurrent, preparedEvent.packet);
+        if (resort.prose && !isDroughtStubProse(resort.prose)) {
+          cleanText = resort.prose;
+          mergedSystemLog = [...mergedSystemLog, resort.status];
         }
       }
       if (!storyHasBody(cleanText)) {
@@ -3735,6 +3799,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...((workingState.companions ?? liveCurrent.companions ?? []).map((c) => c.name)),
             ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
           ].filter((n) => n && !isChromePersonToken(n)),
+          namedCast: openingCastNames(workingState),
+          ledgerState: workingState,
           hookLock: hookLockForWarden(workingState, cleanText),
           npcMemories: workingState.npcMemories ?? liveCurrent.npcMemories,
           lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,

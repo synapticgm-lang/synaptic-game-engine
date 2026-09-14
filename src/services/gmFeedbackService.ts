@@ -45,6 +45,19 @@ export interface GmFeedbackResult {
 /**
  * Submit or update GM response feedback (upsert based on user + save + turn).
  */
+export const SIGNED_OUT_FEEDBACK_COPY =
+  'Sign in on the home screen to leave thumbs. Your play save stays here.';
+
+/** Play session first (local JWT), then Auth server. getUser() alone can fail while play still works. */
+export async function resolvePlayAuthUser(): Promise<{ id: string } | null> {
+  if (!isSupabaseConfigured || !supabase) return null;
+  const { data: sessionData } = await supabase.auth.getSession();
+  const fromSession = sessionData.session?.user;
+  if (fromSession?.id) return fromSession;
+  const { data: userData } = await supabase.auth.getUser();
+  return userData.user ?? null;
+}
+
 export async function submitGmFeedback(
   input: SubmitGmFeedbackInput
 ): Promise<GmFeedbackResult> {
@@ -52,9 +65,9 @@ export async function submitGmFeedback(
     return { ok: false, error: 'Feedback is not available (Supabase not configured).' };
   }
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await resolvePlayAuthUser();
   if (!user) {
-    return { ok: false, error: 'You must be signed in to submit feedback.' };
+    return { ok: false, error: SIGNED_OUT_FEEDBACK_COPY };
   }
 
   // Validate comment length client-side
@@ -105,7 +118,7 @@ export async function getGmFeedback(
 ): Promise<GmFeedbackRecord | null> {
   if (!isSupabaseConfigured || !supabase) return null;
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await resolvePlayAuthUser();
   if (!user) return null;
 
   const entryKey = (logEntryId ?? '').trim() || `turn-${turnNumber}`;
@@ -139,9 +152,9 @@ export async function deleteGmFeedback(
     return { ok: false, error: 'Feedback is not available (Supabase not configured).' };
   }
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await resolvePlayAuthUser();
   if (!user) {
-    return { ok: false, error: 'You must be signed in to delete feedback.' };
+    return { ok: false, error: SIGNED_OUT_FEEDBACK_COPY };
   }
 
   const entryKey = (logEntryId ?? '').trim() || `turn-${turnNumber}`;

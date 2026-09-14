@@ -57,9 +57,7 @@ export function hasHanScript(text: string): boolean {
   return /[\u4e00-\u9fff\uac00-\ud7af\u0e00-\u0e7f]/.test(text ?? '');
 }
 
-export function extractChatCompletionText(data: unknown): string {
-  if (!data || typeof data !== 'object') return '';
-  const choice = (data as { choices?: unknown[] }).choices?.[0];
+function extractOneChoice(choice: unknown): string {
   if (!choice || typeof choice !== 'object') return '';
   const rec = choice as {
     text?: unknown;
@@ -75,9 +73,31 @@ export function extractChatCompletionText(data: unknown): string {
     const text = flattenChatContent(raw);
     if (text) return hasHanScript(text) ? '' : text;
   }
-  // Last resort: some DeepSeek routes only populate reasoning. Do not prefer it.
   const fallback = flattenChatContent(msg.reasoning) || flattenChatContent(msg.reasoning_content);
   return hasHanScript(fallback) ? '' : fallback;
+}
+
+export function extractChatCompletionText(data: unknown): string {
+  if (!data || typeof data !== 'object') return '';
+  const choice = (data as { choices?: unknown[] }).choices?.[0];
+  return extractOneChoice(choice);
+}
+
+/** 14a — n:2 candidates. Empty / Han rows dropped. */
+export function extractChatCompletionTexts(data: unknown): string[] {
+  if (!data || typeof data !== 'object') return [];
+  const choices = (data as { choices?: unknown[] }).choices;
+  if (!Array.isArray(choices) || !choices.length) {
+    const one = extractChatCompletionText(data);
+    return one ? [one] : [];
+  }
+  return choices.map(extractOneChoice).filter((t) => t.trim());
+}
+
+export function packGmCandidateTexts(texts: string[]): string {
+  const clean = texts.map((t) => t.trim()).filter(Boolean);
+  if (clean.length <= 1) return clean[0] ?? '';
+  return JSON.stringify({ candidates: clean });
 }
 
 function flattenChatContent(raw: unknown): string {
@@ -103,8 +123,14 @@ export function openRouterChatHeaders(apiKey: string): Record<string, string> {
   };
 }
 
-export function openRouterChatBody(model: string, systemPrompt: string, prompt: string, maxTokens: number) {
-  return {
+export function openRouterChatBody(
+  model: string,
+  systemPrompt: string,
+  prompt: string,
+  maxTokens: number,
+  opts?: { tokenProse?: boolean; n?: number }
+) {
+  const body: Record<string, unknown> = {
     model,
     messages: [
       { role: 'system', content: systemPrompt },
@@ -116,4 +142,51 @@ export function openRouterChatBody(model: string, systemPrompt: string, prompt: 
     reasoning: { effort: 'low', exclude: true },
     provider: { allow_fallbacks: true, sort: 'latency' },
   };
+  if (opts?.tokenProse) {
+    body.response_format = {
+      type: 'json_schema',
+      json_schema: {
+        name: 'token_prose',
+        strict: true,
+        schema: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            refs: {
+              type: 'array',
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  tok: { type: 'string' },
+                  id: { type: 'string' },
+                  use: {
+                    type: 'string',
+                    enum: ['speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place'],
+                  },
+                },
+                required: ['tok', 'id', 'use'],
+              },
+            },
+            lines: {
+              type: 'array',
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  fn: { type: 'string', enum: ['place', 'action', 'speech', 'react', 'hook'] },
+                  text: { type: 'string' },
+                  speaker_tok: { type: 'string' },
+                },
+                required: ['fn', 'text'],
+              },
+            },
+          },
+          required: ['refs', 'lines'],
+        },
+      },
+    };
+    if (opts.n && opts.n > 1) body.n = opts.n;
+  }
+  return body;
 }

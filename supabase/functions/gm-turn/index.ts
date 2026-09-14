@@ -2,6 +2,8 @@ import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPromp
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 import {
   extractChatCompletionText,
+  extractChatCompletionTexts,
+  packGmCandidateTexts,
   FIREWORKS_INFERENCE_BASE,
   fireworksChatBody,
   fireworksChatHeaders,
@@ -162,36 +164,49 @@ async function callOpenAICompat(
   systemPrompt: string,
   apiKey: string,
   model: string,
-  baseUrl: string
+  baseUrl: string,
+  opts?: { tokenProse?: boolean }
 ): Promise<string> {
   const fireworks = /fireworks\.ai/i.test(baseUrl);
   const openRouter = /openrouter\.ai/i.test(baseUrl);
-  const res = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
-    method: 'POST',
-    headers: fireworks
-      ? fireworksChatHeaders(apiKey)
-      : openRouter
-        ? openRouterChatHeaders(apiKey)
-        : {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
-    body: JSON.stringify(
-      fireworks
-        ? fireworksChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+  const tokenProse = !!opts?.tokenProse && openRouter && !fireworks;
+  const post = (withSchema: boolean) =>
+    fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
+      method: 'POST',
+      headers: fireworks
+        ? fireworksChatHeaders(apiKey)
         : openRouter
-          ? openRouterChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+          ? openRouterChatHeaders(apiKey)
           : {
-              model,
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: prompt },
-              ],
-              temperature: 0.9,
-              max_tokens: AI_MAX_OUTPUT_TOKENS,
-            }
-    ),
-  });
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+            },
+      body: JSON.stringify(
+        fireworks
+          ? fireworksChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+          : openRouter
+            ? openRouterChatBody(
+                model,
+                systemPrompt,
+                prompt,
+                AI_MAX_OUTPUT_TOKENS,
+                withSchema ? { tokenProse: true, n: 2 } : undefined
+              )
+            : {
+                model,
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: prompt },
+                ],
+                temperature: 0.9,
+                max_tokens: AI_MAX_OUTPUT_TOKENS,
+              }
+      ),
+    });
+  let res = await post(tokenProse);
+  if (!res.ok && tokenProse && res.status !== 429) {
+    res = await post(false);
+  }
   if (res.status === 429) {
     const err = new Error('Rate limit exceeded (429).');
     (err as Error & { status: number }).status = 429;
@@ -202,7 +217,8 @@ async function callOpenAICompat(
     throw new Error(errBody?.error?.message ?? `OpenAI-compat error ${res.status}`);
   }
   const data = await res.json();
-  return extractChatCompletionText(data);
+  const packed = packGmCandidateTexts(extractChatCompletionTexts(data));
+  return packed || extractChatCompletionText(data);
 }
 
 async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
@@ -320,7 +336,9 @@ Deno.serve(async (req) => {
             : provider === 'groq'
               ? 'llama-3.3-70b-versatile'
               : 'gpt-4o-mini');
-      return callOpenAICompat(userPrompt, systemPrompt, apiKey, modelName, base);
+      return callOpenAICompat(userPrompt, systemPrompt, apiKey, modelName, base, {
+        tokenProse: mode === 'turn',
+      });
     };
 
     const emptyRetryProviders = provider === 'openrouter' || provider === 'fireworks';
@@ -343,7 +361,8 @@ Deno.serve(async (req) => {
           systemPrompt,
           llamaKey,
           'meta-llama/llama-3.1-8b-instruct',
-          'https://openrouter.ai/api/v1'
+          'https://openrouter.ai/api/v1',
+          { tokenProse: mode === 'turn' }
         );
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;

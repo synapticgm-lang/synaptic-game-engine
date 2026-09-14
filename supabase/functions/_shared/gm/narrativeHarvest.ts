@@ -16,7 +16,9 @@ import { harvestCrowdIntoSceneFacts } from './crowdAuthority.ts';
 import { harvestHookIntoSceneFacts } from './hookLock.ts';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority.ts';
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority.ts';
+import { compileNounAllowlist, mentionAllowlistHas } from './completedEventPacket.ts';
 import { getRegisteredNpcs, canHarvestAsNamedPerson } from './entityRegistry.ts';
+import { openingCastNames } from './openingEstablishment.ts';
 import { matchesLastKillName } from './combatAuthority.ts';
 import { harvestRoleOccupancy } from './closedScenePerson.ts';
 import { applyPyoaCharterProseBurn } from './pyoaBranchLedger.ts';
@@ -128,12 +130,26 @@ export function harvestNarrativeIntoLedger(
   turn: number
 ): GameState {
   if (!prose?.trim()) return state;
-  
-  // Batch Y Milestone 1: Only harvest NPCs that are in the entity registry
-  const registeredNpcs = [
-    ...extractRegisteredNpcs(prose, state.bibleId ?? state.campaignBibleId),
-    ...extractProperNamesFromProse(prose, state.bibleId ?? state.campaignBibleId),
-  ].filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+
+  const fromTokenRefs = (state.completedEvent?.tokenRefs ?? [])
+    .filter((r) => r.use === 'speaker' || r.use === 'actor' || r.use === 'addressed')
+    .map((r) => {
+      const row = (state.completedEvent?.refEnum ?? []).find(
+        (e) => e.tok === r.tok || e.id.toLowerCase() === r.id.toLowerCase()
+      );
+      return row?.display ?? '';
+    })
+    .filter(Boolean);
+
+  // 14a — when JSON bind succeeded, occupancy comes from refs ids, not prose invent.
+  const registeredNpcs = (
+    fromTokenRefs.length
+      ? fromTokenRefs
+      : [
+          ...extractRegisteredNpcs(prose, state.bibleId ?? state.campaignBibleId),
+          ...extractProperNamesFromProse(prose, state.bibleId ?? state.campaignBibleId),
+        ]
+  ).filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
   
   if (!registeredNpcs.length) {
     const crowded = {
@@ -164,9 +180,14 @@ export function harvestNarrativeIntoLedger(
     if (c.name) companionsKeep.add(c.name.toLowerCase());
   }
 
+  const ledgerNouns = compileNounAllowlist(state, openingCastNames(state));
   for (const name of registeredNpcs) {
     if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId)) {
       console.warn(`[narrativeHarvest 02j] Rejected role/anonymous NPC: ${name}`);
+      continue;
+    }
+    // 13c — registry membership is not occupancy. Hall-talk invents (Orel Vane) stay off present[].
+    if (!mentionAllowlistHas(ledgerNouns, name)) {
       continue;
     }
     if (isPlannerUiPersonToken(name)) continue;

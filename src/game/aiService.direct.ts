@@ -13,8 +13,10 @@ import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import { getAutoplayWriterOverride } from './autoplayWriter';
 import {
   extractChatCompletionText,
+  extractChatCompletionTexts,
   openRouterChatBody,
   openRouterChatHeaders,
+  packGmCandidateTexts,
 } from './openRouterChat';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
@@ -133,24 +135,38 @@ async function callOpenRouter(
   systemPrompt: string,
   apiKey: string,
   model?: string,
-  baseUrl?: string
+  baseUrl?: string,
+  tokenProse = false
 ): Promise<string> {
   const base = baseUrl?.trim() || 'https://openrouter.ai/api/v1';
   const url = `${base}/chat/completions`;
   const modelName = model || 'deepseek/deepseek-chat';
   logRequest('OpenRouter', url, modelName, systemPrompt.length, prompt.length);
   const start = performance.now();
-  let res: Response;
-  try {
-    res = await fetchWithTimeout(
+  const post = (withSchema: boolean) =>
+    fetchWithTimeout(
       url,
       {
         method: 'POST',
         headers: openRouterChatHeaders(apiKey),
-        body: JSON.stringify(openRouterChatBody(modelName, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)),
+        body: JSON.stringify(
+          openRouterChatBody(
+            modelName,
+            systemPrompt,
+            prompt,
+            AI_MAX_OUTPUT_TOKENS,
+            withSchema ? { tokenProse: true, n: 2 } : undefined
+          )
+        ),
       },
       'OpenRouter'
     );
+  let res: Response;
+  try {
+    res = await post(tokenProse);
+    if (!res.ok && tokenProse && res.status !== 429) {
+      res = await post(false);
+    }
   } catch (e) {
     logError('OpenRouter', e);
     throw e;
@@ -166,7 +182,7 @@ async function callOpenRouter(
     throw new Error(errBody?.error?.message ?? `OpenRouter error ${res.status}`);
   }
   const data = await res.json();
-  return extractChatCompletionText(data);
+  return packGmCandidateTexts(extractChatCompletionTexts(data)) || extractChatCompletionText(data);
 }
 
 async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
@@ -274,7 +290,8 @@ async function dispatchLlm(
   prompt: string,
   systemPrompt: string,
   settings: Settings,
-  onRetry?: (attempt: number, delayMs: number) => void
+  onRetry?: (attempt: number, delayMs: number) => void,
+  tokenProse = false
 ): Promise<string> {
   const { provider, apiKey, model } = normalizeProvider(settings);
   logger.info('ai-dispatch', `direct GM — provider: "${provider}", model: "${model ?? 'default'}", hasKey: ${!!apiKey}`);
@@ -290,7 +307,7 @@ async function dispatchLlm(
       const key = autoplay?.apiKey || apiKey;
       const m = autoplay?.model || model;
       const base = autoplay?.baseUrl || settings.baseUrl;
-      return callOpenRouter(prompt, systemPrompt, key, m, base);
+      return callOpenRouter(prompt, systemPrompt, key, m, base, tokenProse);
     }, onRetry);
   }
   if (provider === 'anthropic') {
@@ -302,7 +319,7 @@ async function dispatchLlm(
       onRetry
     );
   }
-  return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, settings.baseUrl), onRetry);
+  return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, settings.baseUrl, tokenProse), onRetry);
 }
 
 function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[]): string {
@@ -328,7 +345,7 @@ export async function callGmDirect(
 ): Promise<GmResult> {
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
   const prompt = buildContextPrompt(state, playerInput, activeLoreCards);
-  const text = await dispatchLlm(prompt, systemPrompt, settings, onRetry);
+  const text = await dispatchLlm(prompt, systemPrompt, settings, onRetry, true);
   if (!text) throw new Error('The AI provider returned no content.');
   return processGmCompletion(text, state.engineMode);
 }

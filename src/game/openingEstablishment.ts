@@ -1146,6 +1146,7 @@ export function isKitOrCarryInspect(raw: string): boolean {
 export function isCoverShapedPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
+  if (isOpeningCardActLine(p)) return true;
   if (isKitOrCarryInspect(p) && !hallTalkAsksWant(p) && !hallTalkAsksWho(p)) return true;
   if (playerGivesOrRefusesName(p)) return true;
   if (
@@ -1201,34 +1202,68 @@ export function isHallTalkPlayerLine(raw: string): boolean {
 }
 
 /**
- * Cover / pending name-lock and hall Q&A stay on stitchOpeningContinue.
- * Those lines must not depend on gm-turn (10f sent them to a 503 boot).
+ * Page 1 only — after sceneWritten the writer owns the book.
+ * 13b: hall talk / cover-continue / sign-read / Look / Wait must not stitch.
+ * applyOpeningAnswer still writes the name/where ledger on the callGm path.
  */
-const OPENING_CARD_NOUNS = ['book', 'pouch', 'charter'] as const;
+const OPENING_CARD_NOUNS = ['book', 'pouch', 'charter', 'page', 'folio', 'ribbon', 'mesh'] as const;
+const OPENING_CARD_NOUN_RE = OPENING_CARD_NOUNS.join('|');
+const OPENING_CARD_ACT_VERB_RE = 'sign|read|outline|copy|open|take|inspect|look at|check|what(?:\'s| is)';
+
+/** Sign / read / outline the offered page — not Look/Wait, not a drought settle. */
+export function isOpeningCardActLine(raw: string): boolean {
+  const act = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!act) return false;
+  if (/\b(travel|attack|flee|head (?:to|toward)|go to|press the attack)\b/i.test(act)) return false;
+  return (
+    new RegExp(`\\b(?:${OPENING_CARD_ACT_VERB_RE})\\b.{0,48}\\b(?:${OPENING_CARD_NOUN_RE})\\b`, 'i').test(act)
+    || new RegExp(`\\b(?:${OPENING_CARD_NOUN_RE})\\b.{0,28}\\b(?:sign|read|outline|say(?:ing)?)\\b`, 'i').test(act)
+  );
+}
+
+function inferOpeningCardNoun(raw: string): string | null {
+  const act = (raw ?? '').replace(/\s+/g, ' ').trim();
+  for (const noun of OPENING_CARD_NOUNS) {
+    if (new RegExp(`\\b${noun}\\b`, 'i').test(act)) return noun;
+  }
+  return null;
+}
 
 export function asksOpeningCardNoun(state: GameState, raw: string): string | null {
   const act = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!act) return null;
   const hay = `${openingSceneHay(state)} ${state.currentLocation ?? ''}`;
   for (const noun of OPENING_CARD_NOUNS) {
-    if (!new RegExp(`\\b${noun}\\b`, 'i').test(hay)) continue;
+    const inHay = new RegExp(`\\b${noun}\\b`, 'i').test(hay);
+    const inAct = new RegExp(`\\b${noun}\\b`, 'i').test(act);
+    if (!inHay && !inAct) continue;
     if (
-      new RegExp(`\\b(?:what(?:'s| is)|inspect|look at|check)\\b.{0,32}\\b${noun}\\b`, 'i').test(act)
-      || new RegExp(`\\b${noun}\\b.{0,20}\\bfor\\b`, 'i').test(act)
+      new RegExp(`\\b(?:${OPENING_CARD_ACT_VERB_RE})\\b.{0,48}\\b${noun}\\b`, 'i').test(act)
+      || new RegExp(`\\b${noun}\\b.{0,28}\\b(?:sign|read|outline|say(?:ing)?|for)\\b`, 'i').test(act)
     ) {
       return noun;
     }
   }
+  if (isOpeningCardActLine(act)) return inferOpeningCardNoun(act);
   return null;
 }
 
 export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
+  if (state.openingEstablishment?.sceneWritten) return false;
   if (state.activeEncounter) return false;
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
-  if (!state.openingEstablishment?.sceneWritten) return false;
   const line = playerInput ?? lastPlayerLine(state);
-  if (asksOpeningCardNoun(state, line)) return true;
+  if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return true;
   return isHallTalkPlayerLine(line);
+}
+
+/** After page 1, live / Fate must call the writer. Premade continue is last-resort only. */
+export function storyBeatWriterPath(
+  state: GameState,
+  playerInput?: string
+): 'page1-stitch' | 'callGm' {
+  if (shouldStitchOpeningContinue(state, playerInput)) return 'page1-stitch';
+  return 'callGm';
 }
 
 /**
@@ -1256,6 +1291,94 @@ function openingSceneHay(state: GameState): string {
   return [picked?.page1, picked?.faction].filter(Boolean).join(' ');
 }
 
+/** Named CAST on this card — Lene Quill, Wren Holt — never a novel First Last. */
+export function openingCastNames(state: GameState): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const push = (raw?: string) => {
+    const name = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
+    if (!name || name.length < 3) return;
+    if (/^(the panel|the people who pulled you)$/i.test(name)) return;
+    const key = name.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(name);
+  };
+
+  const label = openingCastLabel(state);
+  push(label);
+  const bare = label.replace(/^(the|a|an)\s+/i, '').trim();
+  if (bare && bare !== label) push(bare);
+  const bits = bare.split(/\s+/).filter(Boolean);
+  if (bits.length >= 2) {
+    push(bits.slice(-2).join(' '));
+    const last = bits[bits.length - 1] ?? '';
+    if (last.length >= 5) push(last);
+  }
+
+  const hay = openingSceneHay(state);
+  const who = hay.match(/Who is here[^:\n]*:\s*([^\n]+)/i)?.[1] ?? '';
+  for (const part of who.split(/\s+and\s+|,\s*/i)) {
+    const t = part.replace(/\s+/g, ' ').trim();
+    if (!t) continue;
+    push(t);
+    push(t.replace(/^(a|an|the)\s+/i, '').trim());
+  }
+  const titled =
+    hay.match(
+      /\b(?:Archivist|Father|Captain|Brother|Sister|Envoy|High Chanter)\s+[A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+)?\b/g
+    ) ?? [];
+  for (const n of titled) push(n);
+  const firstLast = hay.match(/\b[A-Z][a-z'-]+\s+[A-Z][a-z'-]+\b/g) ?? [];
+  for (const n of firstLast) {
+    if (/^(Who is|Why this|Opening offer|If you|Location:)/i.test(n)) continue;
+    push(n);
+  }
+  return out;
+}
+
+const CARD_GRAMMAR = new Set([
+  'who', 'is', 'here', 'why', 'this', 'happened', 'opening', 'offer', 'optional',
+  'player', 'may', 'refuse', 'location', 'they', 'the', 'a', 'an', 'and', 'you',
+]);
+
+/** Title-Case tokens already printed on the card (Earth, Scale, Crown) — not novel names. */
+export function cardSceneMentionTokens(state: GameState): string[] {
+  const hay = openingSceneHay(state);
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const re = /\b[A-Z][A-Za-z'-]+\b/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(hay))) {
+    const w = (m[0] ?? '').trim();
+    if (w.length < 3 || CARD_GRAMMAR.has(w.toLowerCase())) continue;
+    const key = w.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(w);
+  }
+  return out;
+}
+
+/** Role stand-in when a novel name must be rewritten (“the Archivist”, “the witness”). */
+export function cardRoleStandIn(state: GameState): string {
+  const hay = `${openingSceneHay(state)} ${openingCastLabel(state)}`;
+  if (/\barchivist\b/i.test(hay)) return 'the Archivist';
+  if (/\bwitness\b/i.test(hay)) return 'the witness';
+  if (/\binnkeep\b/i.test(hay)) return 'the innkeep';
+  if (/\bhandler\b/i.test(hay)) return 'the handler';
+  if (/\bchanter\b/i.test(hay)) return 'the chanter';
+  if (/\bpriest/i.test(hay)) return 'the priest';
+  if (/\benvoy/i.test(hay)) return 'the envoy';
+  const label = openingCastLabel(state).replace(/\s+/g, ' ').trim();
+  if (/^the\s+/i.test(label) && label.length < 40) return label;
+  const role = label.replace(/^(the|a|an)\s+/i, '').split(/\s+/)[0] ?? '';
+  if (role && /^(Archivist|Father|Captain|Brother|Sister|Envoy|Innkeep|Handler)$/i.test(role)) {
+    return `the ${role}`;
+  }
+  return label && !/people who pulled you/i.test(label) ? label : 'the witness';
+}
+
 /** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
 export function openingCastLabel(state: GameState): string {
   const hay = openingSceneHay(state);
@@ -1280,6 +1403,7 @@ export function openingCastLabel(state: GameState): string {
   if (/\blead priest\b/i.test(hay) || /\biron mask\b/i.test(hay)) {
     return 'the lead priest behind the iron mask';
   }
+  if (/\bLene Quill\b/i.test(hay) || /\bArchivist Lene\b/i.test(hay)) return 'Archivist Lene Quill';
   if (/\bCaptain Sera Quill\b/i.test(hay)) return 'Captain Sera Quill';
   if (/\bhandler on the (?:far|other) side\b/i.test(hay)) return 'the handler beyond the grate';
   if (/\bhandler\b/i.test(hay)) return 'the handler';
@@ -1591,6 +1715,38 @@ export function openingWantLine(state: GameState): string {
   const want = shortCardWant(state);
   const offer = shortCardOffer(state);
   return [want || 'They have not said what they want yet.', offer].filter(Boolean).join(' ');
+}
+
+function recentGmHay(state: GameState): string {
+  return (state.log ?? [])
+    .filter((e) => e.role === 'gm' && typeof e.content === 'string')
+    .slice(-6)
+    .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim())
+    .join(' ');
+}
+
+/**
+ * Sign / read / outline the offered page — spoken card paragraph, never a 1-line drought.
+ */
+export function openingCardActLine(state: GameState, playerInput = ''): string {
+  const who = openingCastLabel(state);
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  const offer = rawCardOffer(state) || shortCardOffer(state);
+  const noun = asksOpeningCardNoun(state, playerInput) || inferOpeningCardNoun(playerInput) || 'page';
+  const place = (
+    state.openingEstablishment?.answers?.where
+    || state.currentLocation
+    || 'this room'
+  ).replace(/\s+/g, ' ').trim();
+  const offerKey = offer.slice(0, 48).toLowerCase();
+  const already = offerKey.length >= 16 && recentGmHay(state).toLowerCase().includes(offerKey);
+  if (offer) {
+    if (already) {
+      return `${head} already showed the allowed ${noun} at ${place}. ${offer}`;
+    }
+    return `${head} turns the allowed ${noun}. ${offer} The witness does not add a second page.`;
+  }
+  return `${head} still has the ${noun} at ${place}. They have not said more than the card already gave you.`;
 }
 
 /** Player asked why they were pulled / what the room wants — not “what’s yours”. */

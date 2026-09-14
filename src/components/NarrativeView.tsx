@@ -224,7 +224,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
           {entry.presentation === 'mud-receipt' ? (
             <div className="space-y-3">
               {(entry.flavorQuote || entry.content)?.trim() ? (
-                <p className="font-serif text-sm italic leading-relaxed text-slate-300/95">
+                <p className="sgm-prose-face font-serif text-sm italic leading-relaxed text-slate-300/95">
                   {(entry.flavorQuote || entry.content).trim()}
                 </p>
               ) : (
@@ -240,7 +240,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
               if (seg.type === 'system') return <InlineSystemTag key={i} text={seg.text} />;
               const isLast = i === segments.length - 1;
               return (
-                <p key={i} className="mb-3 font-serif text-sm leading-relaxed text-slate-200 last:mb-0">
+                <p key={i} className="sgm-prose-face mb-3 font-serif text-sm leading-relaxed text-slate-200 last:mb-0">
                   {seg.text}
                   {isRevealing && isLast && (
                     <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />

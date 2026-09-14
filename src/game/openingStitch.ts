@@ -16,12 +16,13 @@ import {
   hallTalkAsksWant,
   hallTalkAsksWhere,
   asksOpeningCardNoun,
+  isOpeningCardActLine,
+  openingCardActLine,
   hallTalkAsksWho,
   isAloneArrivalOpening,
   isKitOrCarryInspect,
   isEarthOriginPrompt,
   openingAlreadyToldLine,
-  openingCastLabel,
   openingRefuseLine,
   openingSpokenRefuse,
   openingSpokenStayLeave,
@@ -277,10 +278,15 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   }
 
   const cardNoun = asksOpeningCardNoun(state, act);
-  if (cardNoun && !asksWant && !asksWho && !asksRefuse && !asksStayLeave && !gaveName) {
-    const who = openingCastLabel(state);
-    const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-    return `${head} still has the ${cardNoun}. They have not said more than that.`;
+  if (
+    (cardNoun || isOpeningCardActLine(act))
+    && !asksWant
+    && !asksWho
+    && !asksRefuse
+    && !asksStayLeave
+    && !gaveName
+  ) {
+    return openingCardActLine(state, act);
   }
 
   if (

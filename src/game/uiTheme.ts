@@ -217,6 +217,17 @@ export function themeFrameFiligreeUrl(themeKey: string | undefined): string | un
   return `/themes/${themeKey}/frame-filigree.png`;
 }
 
+/** Play log / chips / input — never a smash display face. */
+export const PLAY_PROSE_FONT_STACK =
+  '"Libre Baskerville", Georgia, "Times New Roman", serif';
+
+const SMASH_DISPLAY_FACE = /Playfair|Cinzel|Grenze Gotisch|MedievalSharp/i;
+
+export function readablePlayStoryStack(stack?: string): string {
+  if (!stack || SMASH_DISPLAY_FACE.test(stack)) return PLAY_PROSE_FONT_STACK;
+  return stack;
+}
+
 /** Apply theme + optional font/dice/frame kit CSS variables to :root. */
 export function applyUiThemeToDocument(
   theme: ShopItem | null | undefined,
@@ -252,7 +263,7 @@ export function applyUiThemeToDocument(
   root.style.setProperty('--sgm-text', p.text);
   root.style.setProperty('--sgm-muted', p.muted);
   const fontUi = extras?.font?.preview?.fontUi ?? p.fontUi;
-  const fontStory = extras?.font?.preview?.fontStory ?? p.fontStory;
+  const fontStory = readablePlayStoryStack(extras?.font?.preview?.fontStory ?? p.fontStory);
   const displayStack =
     theme?.themeKey === 'vampire-nocturne'
       ? '"Grenze Gotisch", "Playfair Display", Georgia, serif'

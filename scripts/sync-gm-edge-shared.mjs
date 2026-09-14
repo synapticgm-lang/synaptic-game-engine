@@ -80,6 +80,7 @@ const FILES = [
   'padUniverse.ts',
   'beatContract.ts',
   'completedEventPacket.ts',
+  'ledgerNounObey.ts',
   'presentAuthority.ts',
   'outdoorHubs.ts',
   'hubEncounters.ts',

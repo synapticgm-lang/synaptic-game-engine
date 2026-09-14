@@ -18,6 +18,7 @@ import {
 } from './combatAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { isNeverCastTitle } from './neverCast';
+import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 import {
   hallTalkAsksPanel,
   hallTalkAsksRefuse,
@@ -26,7 +27,11 @@ import {
   hallTalkAsksWhere,
   hallTalkAsksWho,
   isHallTalkPlayerLine,
+  isOpeningCardActLine,
+  cardSceneMentionTokens,
   openingCastLabel,
+  openingCastNames,
+  shortCardOffer,
   openingStayLeaveLine,
   openingWantLine,
   openingWhoAskLineFromLabel,
@@ -80,8 +85,31 @@ export interface CompletedEventPacket {
   answerWant?: string;
   /** 12d — stay/leave bargain from the card (grain-ship home/earth). */
   answerStayLeave?: string;
+  /** 13a — offered page / ribbon line so card acts never settle-stub. */
+  answerOffer?: string;
   /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
   engineMode?: string;
+  /** 14a — this-turn ledger ids for token prose. Single source with compileRefEnum. */
+  refEnum?: LedgerRef[];
+  /** 14a — bound uses after a successful JSON beat (harvest prefers these). */
+  tokenRefs?: TokenUseRef[];
+}
+
+export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion';
+
+export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
+
+export interface LedgerRef {
+  tok: string;
+  id: string;
+  display: string;
+  klass: LedgerRefClass;
+}
+
+export interface TokenUseRef {
+  tok: string;
+  id: string;
+  use: TokenUse;
 }
 
 const WRITER_RHYTHM_WINDOW = 2;
@@ -132,6 +160,7 @@ export function classifyVerb(input: string): string {
     isHallTalkPlayerLine(t)
     || playerAskedWhyPulled(t)
     || hallTalkAsksStayLeave(t)
+    || isOpeningCardActLine(t)
     || /\b(ask|talk|speak|tell|say|press for|listen|you summoned me|get back home|to earth|cargo run)\b/i.test(t)
   ) {
     return 'spoke';
@@ -271,40 +300,59 @@ function pushUnique(list: string[], seen: Set<string>, raw: string | undefined):
   }
 }
 
+export type NounAllowlistOpts = {
+  /** Hall talk: addressee + card CAST names only (plus HERE / card tokens). */
+  hallTalk?: boolean;
+};
+
 /**
- * Ledger-only nouns. HERE short label, present named, encounter, lastKill corpse,
- * equipped kit, listed props, companions. No invented Title-Case.
+ * Ledger-only nouns. HERE short label, present named, opening CAST from the card,
+ * companions, live encounter role, lastKill corpse, kit, props.
+ * Hall talk strips novel present[] so a leftover invent cannot re-license itself.
  */
-export function compileNounAllowlist(state: GameState, extras: string[] = []): string[] {
+export function compileNounAllowlist(
+  state: GameState,
+  extras: string[] = [],
+  opts?: NounAllowlistOpts
+): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
-  const bible = bibleIdOf(state);
 
   pushUnique(out, seen, locationLabel(state));
 
-  for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) {
-    if (!canHarvestAsNamedPerson(p, bible) || isNeverCastTitle(p, state)) continue;
-    pushUnique(out, seen, p);
+  for (const n of openingCastNames(state)) {
+    if (isNeverCastTitle(n, state)) continue;
+    pushUnique(out, seen, n);
+  }
+  for (const tok of cardSceneMentionTokens(state)) {
+    pushUnique(out, seen, tok);
   }
 
-  const encName = state.activeEncounter?.name?.trim() || state.sceneFacts?.pendingEncounter?.name?.trim();
-  pushUnique(out, seen, encName);
+  if (!opts?.hallTalk) {
+    for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) {
+      if (isNeverCastTitle(p, state)) continue;
+      pushUnique(out, seen, p);
+    }
 
-  const kill = state.sceneFacts?.lastKill;
-  if (kill?.name) {
-    pushUnique(out, seen, kill.name);
-  }
+    const encName = state.activeEncounter?.name?.trim() || state.sceneFacts?.pendingEncounter?.name?.trim();
+    pushUnique(out, seen, encName);
 
-  for (const item of state.inventory ?? []) {
-    if (item.equipped && item.name) pushUnique(out, seen, item.name);
+    const kill = state.sceneFacts?.lastKill;
+    if (kill?.name) {
+      pushUnique(out, seen, kill.name);
+    }
+
+    for (const item of state.inventory ?? []) {
+      if (item.equipped && item.name) pushUnique(out, seen, item.name);
+    }
+
+    for (const c of state.companions ?? []) {
+      pushUnique(out, seen, c.name);
+    }
   }
 
   for (const prop of state.sceneFacts?.props ?? []) {
     pushUnique(out, seen, prop);
-  }
-
-  for (const c of state.companions ?? []) {
-    pushUnique(out, seen, c.name);
   }
 
   const pc = (state.character?.name ?? '').trim();
@@ -313,6 +361,96 @@ export function compileNounAllowlist(state: GameState, extras: string[] = []): s
   for (const extra of extras) pushUnique(out, seen, extra);
 
   return out;
+}
+
+function slugRefId(raw: string): string {
+  return (raw ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+}
+
+const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
+  place: ['place'],
+  person: ['speaker', 'actor', 'addressed'],
+  companion: ['speaker', 'actor', 'addressed'],
+  corpse: ['corpse'],
+  prop: ['prop_used'],
+  kit: ['worn', 'prop_used'],
+};
+
+/** `use` must match the ledger class — Lene cannot be `prop_used`. */
+export function tokenUseMatchesClass(use: TokenUse, klass: LedgerRefClass): boolean {
+  return TOKEN_USES_FOR_CLASS[klass].includes(use);
+}
+
+/**
+ * This-turn ref enum. HERE, card CAST, present, companions, lastKill corpse, kit, props.
+ * Hall talk matches compileNounAllowlist — leftover invent cannot re-license itself.
+ */
+export function compileRefEnum(
+  state: GameState,
+  extras: string[] = [],
+  opts?: NounAllowlistOpts
+): LedgerRef[] {
+  const out: LedgerRef[] = [];
+  const seenId = new Set<string>();
+  const seenDisplay = new Set<string>();
+  let n = 1;
+  const add = (id: string, display: string, klass: LedgerRefClass) => {
+    const label = (display ?? '').replace(/\s+/g, ' ').trim();
+    if (!label || label.length < 2) return;
+    const key = id.toLowerCase();
+    const dkey = label.toLowerCase();
+    if (seenId.has(key) || seenDisplay.has(dkey)) return;
+    seenId.add(key);
+    seenDisplay.add(dkey);
+    out.push({ tok: `t${n++}`, id, display: label, klass });
+  };
+
+  add('here', locationLabel(state), 'place');
+
+  for (const name of openingCastNames(state)) {
+    if (isNeverCastTitle(name, state)) continue;
+    add(`cast:${slugRefId(name)}`, name, 'person');
+  }
+
+  if (!opts?.hallTalk) {
+    for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) {
+      if (isNeverCastTitle(p, state)) continue;
+      add(`present:${slugRefId(p)}`, p, 'person');
+    }
+    const encName = state.activeEncounter?.name?.trim() || state.sceneFacts?.pendingEncounter?.name?.trim();
+    if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
+    const kill = state.sceneFacts?.lastKill;
+    if (kill?.name && kill.remains && kill.outcome === 'victory') {
+      add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');
+    }
+    for (const item of state.inventory ?? []) {
+      if (item.equipped && item.name) add(`kit:${slugRefId(item.name)}`, item.name, 'kit');
+    }
+    for (const c of state.companions ?? []) {
+      if (c.name) add(`companion:${slugRefId(c.name)}`, c.name, 'companion');
+    }
+  }
+
+  for (const prop of state.sceneFacts?.props ?? []) {
+    add(`prop:${slugRefId(prop)}`, prop, 'prop');
+  }
+  for (const extra of extras) {
+    if (!extra || isNeverCastTitle(extra, state)) continue;
+    add(`extra:${slugRefId(extra)}`, extra, 'person');
+  }
+  return out;
+}
+
+export function formatRefEnumForWriter(refs: LedgerRef[]): string {
+  if (!refs.length) return 'REF ENUM: (none this turn)';
+  return [
+    'REF ENUM (id must be one of these; names in lines.text only as @tN — code paints the display):',
+    ...refs.map((r) => `${r.tok}  ${r.id}  ${r.klass}  "${r.display}"`),
+  ].join('\n');
 }
 
 function isCombatVerb(verb: string): boolean {
@@ -467,7 +605,13 @@ export function buildCompletedEventPacket(
   );
   const allowExtras: string[] = [];
   if (target && !isIntentRemainderNoun(target)) allowExtras.push(target);
-  const allowlist = compileNounAllowlist(state, allowExtras);
+  const hallTalk = verb === 'spoke' || isHallTalkPlayerLine(action);
+  if (hallTalk) {
+    const cast = openingCastLabel(state);
+    if (cast) allowExtras.push(cast);
+  }
+  const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk });
+  const refEnum = compileRefEnum(state, allowExtras, { hallTalk });
   const enc = state.activeEncounter;
   const hp = liveEncounterHp(state);
   const xp =
@@ -494,6 +638,7 @@ export function buildCompletedEventPacket(
     mood: state.sceneFacts?.tension,
     phase: justKilled ? 'cleared' : enc?.phase ? enc.phase : state.sceneFacts?.pendingEncounter ? 'pending' : 'idle',
     allowlist,
+    refEnum,
     playerAction: action || '(opening)',
     recentBeats: rhythmBeats(state),
     inspectStreak: streaks.inspectStreak,
@@ -502,6 +647,7 @@ export function buildCompletedEventPacket(
     answerWho: openingCastLabel(state) || undefined,
     answerWant: openingWantLine(state) || undefined,
     answerStayLeave: openingStayLeaveLine(state) || undefined,
+    answerOffer: shortCardOffer(state) || undefined,
     engineMode: state.engineMode,
   };
 }
@@ -560,6 +706,15 @@ export function formatWriterFacingEvent(
   lines.push('');
   lines.push(`YOU MAY ONLY MENTION: ${packet.allowlist.length ? packet.allowlist.join(', ') : 'none'}.`);
   lines.push('');
+  lines.push('TOKEN PROSE — return JSON only (no markdown):');
+  lines.push('{"refs":[{"tok":"t1","id":"here","use":"place"}],"lines":[{"fn":"place","text":"... @t1 ..."}]}');
+  lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
+  lines.push('lines.text may name entities only as @t1-style tokens. Write 4–6 lines. Prefer place then action.');
+  lines.push(formatRefEnumForWriter(packet.refEnum ?? []));
+  if (opts?.stricter) {
+    lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');
+  }
+  lines.push('');
   const writerBeats = collapseLoiterWriterBeats(packet);
   if (writerBeats.length) {
     lines.push(writerBeats.map((b) => `GM: ${b}`).join('\n'));
@@ -571,7 +726,7 @@ export function formatWriterFacingEvent(
   return lines.join('\n').trim();
 }
 
-function allowlistHas(allowlist: string[], token: string): boolean {
+export function mentionAllowlistHas(allowlist: string[], token: string): boolean {
   const t = token.trim().toLowerCase();
   if (!t) return false;
   return allowlist.some((n) => {
@@ -580,6 +735,10 @@ function allowlistHas(allowlist: string[], token: string): boolean {
     const last = a.split(/\s+/).pop() ?? '';
     return last.length >= 4 && (last === t || t.endsWith(` ${last}`));
   });
+}
+
+function allowlistHas(allowlist: string[], token: string): boolean {
+  return mentionAllowlistHas(allowlist, token);
 }
 
 export function inventedTitleCaseNotOnAllowlist(prose: string, allowlist: string[]): string[] {
@@ -1102,8 +1261,11 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     },
     {
       id: 'st2',
-      fingerprint: 'Whatever you tried had already happened',
-      render: (s) => `Dust hung at ${s.where}. Whatever you tried had already happened.`,
+      fingerprint: 'the room held its place',
+      render: (s) =>
+        s.who
+          ? `The room at ${s.where} held its place. ${s.who} was still here. The next move was still yours.`
+          : `The room at ${s.where} held its place. The next move was still yours.`,
     },
     {
       id: 'st3',
@@ -1134,10 +1296,69 @@ export const PACKET_STITCH_FINGERPRINTS: readonly string[] = Object.values(STITC
 const OLD_LANDING_STUB =
   /You acted at landing|That beat closed\.|The next move was yours\.|The blow landed/i;
 
+/** 13a/13b — retired 1–2 line droughts. Never commit these as the story body. */
+export const RETIRED_DROUGHT_STUB =
+  /Whatever you tried had already happened|Dust hung at/i;
+
+export function isDroughtStubProse(text: string): boolean {
+  return RETIRED_DROUGHT_STUB.test((text ?? '').trim());
+}
+
+const SHORT_ALREADY_TOLD = /already answered you|already said it|Their answer stayed short/i;
+
+function lastGoodGmBody(state: GameState): string {
+  const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
+  for (const e of rows) {
+    const body = String(e.content ?? '').replace(/\s+/g, ' ').trim();
+    if (body.length < 40) continue;
+    if (isDroughtStubProse(body) || SHORT_ALREADY_TOLD.test(body)) continue;
+    if (isAtmosphereOnlyBeat(body)) continue;
+    if (isPacketStitchProse(body) && body.length < 160) continue;
+    return body.length > 720 ? `${body.slice(0, 719).trim()}…` : body;
+  }
+  return '';
+}
+
+function cardPageParagraph(state: GameState): string {
+  const card = String(state.openingEstablishment?.pickedHookFallback ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (card.length >= 40 && !isDroughtStubProse(card)) return card;
+  return '';
+}
+
+/**
+ * Last-resort book body after empty/timeout GM (retries already spent).
+ * Never Dust-hung / already-happened. Prefer last good GM, then page-1 card.
+ */
+export function lastResortStoryBody(
+  state: GameState,
+  packet?: CompletedEventPacket
+): { prose: string; status: string } {
+  const last = lastGoodGmBody(state);
+  const card = cardPageParagraph(state);
+  let prose = last || card;
+  if (!prose || isDroughtStubProse(prose)) {
+    const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
+    const who = (packet?.answerWho || packet?.witnesses?.[0] || '').replace(/\s+/g, ' ').trim();
+    prose = who
+      ? `${who} was still at ${where}. The writer did not return a new beat after retries. What you already knew of the room still held.`
+      : `The room at ${where} was still the room you already knew. The writer did not return a new beat after retries. What you already saw still held.`;
+  }
+  if (isDroughtStubProse(prose)) {
+    prose =
+      'The beat waited on the writer. What you already knew of the room still held. Try the same line again.';
+  }
+  return {
+    prose,
+    status: 'Writer empty after retries — last good beat held (not a drought stub)',
+  };
+}
+
 export function isPacketStitchProse(text: string): boolean {
   const body = (text ?? '').trim();
   if (!body) return false;
-  if (OLD_LANDING_STUB.test(body)) return true;
+  if (OLD_LANDING_STUB.test(body) || RETIRED_DROUGHT_STUB.test(body)) return true;
   return PACKET_STITCH_FINGERPRINTS.some((fp) => body.includes(fp));
 }
 
@@ -1292,16 +1513,35 @@ export function assemblePacketStitch(
 ): string {
   const slots = ledgerStitchSlots(packet);
   const hall = renderHallTalkAnswer(packet, slots);
-  if (hall) return hall;
+  if (hall && !isDroughtStubProse(hall)) return hall;
+  if (isOpeningCardActLine(packet.playerAction ?? '')) {
+    const offer = (packet.answerOffer || packet.answerWant || '').replace(/\s+/g, ' ').trim();
+    const who = (packet.answerWho || slots.who || 'They').trim();
+    const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+    const card = offer
+      ? `${head} turns the allowed page. ${offer} The witness does not add a second page.`
+      : `${head} still has the page at ${slots.where}. They have not said more than the card already gave you.`;
+    if (!isDroughtStubProse(card)) return card.replace(/\s+/g, ' ').trim();
+  }
   const spoken = renderSpokenTalkFallback(packet, slots);
-  if (spoken) return spoken;
+  if (spoken && !isDroughtStubProse(spoken)) return spoken;
   const key = stitchBankKey(packet);
   const bank = STITCH_BANKS[key] ?? STITCH_BANKS.settle!;
   const picked = pickStitchTemplate(bank, recentGm, packet.turn);
-  const text = picked.render(slots).replace(/\s+/g, ' ').trim();
-  if (OLD_LANDING_STUB.test(text) || /what is going on|a direct question|with what you are holding/i.test(text)) {
-    const alt = bank.find((t) => t.id !== picked.id) ?? STITCH_BANKS.settle![0]!;
-    return alt.render(slots).replace(/\s+/g, ' ').trim();
+  let text = picked.render(slots).replace(/\s+/g, ' ').trim();
+  if (
+    OLD_LANDING_STUB.test(text)
+    || RETIRED_DROUGHT_STUB.test(text)
+    || /what is going on|a direct question|with what you are holding/i.test(text)
+  ) {
+    const alt = bank.find((t) => t.id !== picked.id && !RETIRED_DROUGHT_STUB.test(t.render(slots)))
+      ?? STITCH_BANKS.settle![0]!;
+    text = alt.render(slots).replace(/\s+/g, ' ').trim();
+  }
+  if (RETIRED_DROUGHT_STUB.test(text)) {
+    return slots.who
+      ? `${slots.who} was still at ${slots.where}. The next move was still yours.`
+      : `The room at ${slots.where} held its place. The next move was still yours.`;
   }
   return text;
 }

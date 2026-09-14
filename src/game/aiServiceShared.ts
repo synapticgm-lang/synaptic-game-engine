@@ -99,6 +99,11 @@ function stripSystemLog(text: string): string {
 
 /** Shared post-processing for model completions (proxy + direct). */
 export function processGmCompletion(text: string, engineMode: EngineMode): GmResult {
+  const raw = (text ?? '').trim();
+  // 14a — leave token JSON / n-candidate packs intact for the code gate.
+  if (raw.startsWith('{') || /```json/i.test(raw) || /"refs"\s*:/.test(raw)) {
+    return { text: raw, imagePrompt: null, rolls: [], systemLog: [] };
+  }
   const imagePrompt = extractImagePrompt(text);
   let cleanText = imagePrompt ? stripImageBlock(text) : text;
   const systemLog = extractSystemLog(cleanText);

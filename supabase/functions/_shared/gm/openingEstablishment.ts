@@ -164,3 +164,33 @@ export function openingWhoAskLineFromLabel(
   if (opts?.nameLocked) return `${head} ${verb} you. They already have your name.`;
   return `${head} ${verb} you. They have not given you a name back.`;
 }
+
+export function isOpeningCardActLine(raw: string): boolean {
+  return /\b(sign the book|read the page|outline what the page says)\b/i.test(raw ?? '');
+}
+
+export function openingCastNames(state?: {
+  sceneFacts?: { present?: string[] };
+  openingEstablishment?: { pickedHook?: string };
+}): string[] {
+  const present = (state?.sceneFacts?.present ?? []).filter((n) => (n ?? '').trim().length > 1);
+  if (present.length) return present;
+  const who = (state?.openingEstablishment?.pickedHook ?? '').match(
+    /Who is here[^:\n]*:\s*([^\n]+)/i
+  );
+  return who?.[1] ? [who[1].replace(/\s+and\s+.*$/, '').trim()] : [];
+}
+
+export function cardSceneMentionTokens(state?: { openingEstablishment?: { pickedHook?: string } }): string[] {
+  const hook = state?.openingEstablishment?.pickedHook ?? '';
+  const offer = hook.match(/Opening offer[^:\n]*:\s*([^\n]+)/i);
+  return offer?.[1] ? [offer[1].slice(0, 48).trim()] : [];
+}
+
+export function cardRoleStandIn(state?: { sceneFacts?: { present?: string[] } }): string {
+  return openingCastNames(state)[0] || 'someone here';
+}
+
+export function shortCardOffer(_state?: unknown): string {
+  return '';
+}

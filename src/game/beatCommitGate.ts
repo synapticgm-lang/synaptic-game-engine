@@ -33,7 +33,7 @@ import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
-import { assemblePacketStitch, proseViolatesEventPacket } from './completedEventPacket';
+import { assemblePacketStitch, isDroughtStubProse, lastResortStoryBody, proseViolatesEventPacket } from './completedEventPacket';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -89,6 +89,8 @@ export function classifyBeatCommit(
   const text = (prose ?? '').trim();
   if (!text) return { accept: true, reasons };
   if (playerAsksRepeat(playerInput ?? '')) return { accept: true, reasons };
+  // 14a — leftover tokens / drought body never commit (stitch banks are not the success path).
+  if (/@t\d+\b/.test(text) || isDroughtStubProse(text)) reasons.push('event-packet');
 
   if (missingPointerCardSlot(state, text)) reasons.push('missing-pointer-slot');
 
@@ -483,18 +485,38 @@ export function repairRejectedBeat(
     }
   }
 
-  const stillBad = !classifyBeatCommit(state, next).accept;
+  const classified = classifyBeatCommit(state, next);
+  const stillBad =
+    !classified.accept
+    || _reasons.includes('event-packet')
+    || _reasons.includes('atmosphere-only')
+    || _reasons.includes('same-room-essay');
   if (stillBad) {
-    const move = state.completedEvent
+    const resort = lastResortStoryBody(state, state.completedEvent);
+    const stitch = state.completedEvent
       ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
       : codedSceneMove(state);
+    const sameAsRejected =
+      resort.prose.replace(/\s+/g, ' ').trim() === (prose ?? '').replace(/\s+/g, ' ').trim();
+    let move =
+      !isDroughtStubProse(resort.prose)
+      && !sameAsRejected
+      && !/writer did not return a new beat/i.test(resort.prose)
+      && !isAtmosphereOnlyBeat(resort.prose)
+        ? resort.prose
+        : !isDroughtStubProse(stitch)
+          ? stitch
+          : resort.prose;
+    if (isAtmosphereOnlyBeat(move) && stitch && !isDroughtStubProse(stitch) && !isAtmosphereOnlyBeat(stitch)) {
+      move = stitch;
+    }
     const hardEssay =
       _reasons.includes('same-room-essay')
       || _reasons.includes('craft-ignore')
       || _reasons.includes('event-packet')
       || isAtmosphereOnlyBeat(prose)
       || missingPointerCardSlot(state, prose);
-    // Batch U — never sandwich collage + meta stitch; force a single coded scene move.
+    // 13b — last good GM / card paragraph, not Dust-hung drought stitch.
     if (hardEssay || _reasons.includes('atmosphere-only') || _reasons.includes('recycle-without-delta')) {
       next = move;
     } else if (collage.hit && collage.tailHasNewContent && next.trim() && next.trim().length > 40) {
@@ -502,14 +524,22 @@ export function repairRejectedBeat(
     } else {
       next = move;
     }
-    notes.push(state.completedEvent ? 'Commit gate: packet stitch' : 'Commit gate: coded scene move');
+    notes.push(isDroughtStubProse(move) ? 'Commit gate: packet stitch' : 'Commit gate: last-resort body');
   }
 
-  // Never leave banned stall / stitch bank / director chrome in the repaired draft.
-  if (isVerbatimStallStub(next) || isDirectorChromeLeak(next) || isStitchBankFingerprint(next)) {
-    next = state.completedEvent
-      ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
-      : codedSceneMove(state);
+  // Never leave banned stall / stitch bank / director chrome / drought in the repaired draft.
+  if (
+    isVerbatimStallStub(next)
+    || isDirectorChromeLeak(next)
+    || isStitchBankFingerprint(next)
+    || isDroughtStubProse(next)
+  ) {
+    const resort = lastResortStoryBody(state, state.completedEvent);
+    next = !isDroughtStubProse(resort.prose)
+      ? resort.prose
+      : state.completedEvent
+        ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
+        : codedSceneMove(state);
     notes.push('Commit gate: replaced stall/stitch-bank stub');
   }
 

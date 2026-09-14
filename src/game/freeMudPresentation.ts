@@ -9,6 +9,7 @@ import {
   hallTalkAsksPanel,
   hallTalkAsksRefuse,
   isHallTalkPlayerLine,
+  isOpeningCardActLine,
   playerAskedWhyPulled,
 } from './openingEstablishment';
 import type { HostedAiTier } from './testLab';
@@ -53,13 +54,14 @@ export function shouldSkipMicroFlavor(): boolean {
 }
 
 /**
- * Look / wait / combat / travel stay Silent receipts.
- * Talk and questions must hit callGm — Silent talk is the one-line "game over" lock.
+ * Classifier only — Look / wait / combat / travel used to skip the writer.
+ * 13b: this must not skip callGm. shouldUseSilentMudTurn is the live gate and stays false.
  */
 export function isSilentReceiptAction(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (isHallTalkPlayerLine(t)) return false;
+  if (isOpeningCardActLine(t)) return false;
   if (hallTalkAsksPanel(t)) return false;
   if (hallTalkAsksRefuse(t)) return false;
   if (playerAskedWhyPulled(t)) return false;
@@ -77,18 +79,18 @@ export function isSilentReceiptAction(raw: string): boolean {
   return false;
 }
 
-/** Free Silent mud only for receipt verbs after covers — not conversation. */
-export function shouldUseSilentMudTurn(opts: {
+/**
+ * 13b — player-facing story beats always call the writer.
+ * Look / Wait / talk / ask / inspect / act / combat / travel are not Silent skips.
+ * Receipts stay STATUS chrome. Banks are last-resort only after empty GM.
+ */
+export function shouldUseSilentMudTurn(_opts: {
   subscriptionTier?: string;
   openingComplete?: boolean;
   freeOpeningTurn?: boolean;
   playerInput: string;
 }): boolean {
-  if (!SILENT_ENGINE) return false;
-  if (opts.freeOpeningTurn) return false;
-  if (opts.openingComplete !== true) return false;
-  if (!shouldUseFreeMudPresentation(opts.subscriptionTier)) return false;
-  return isSilentReceiptAction(opts.playerInput);
+  return false;
 }
 
 /** Factual receipt from sealed packet + ArcDirector STATUS lines — never AI. */

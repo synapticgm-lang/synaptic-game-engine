@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-12g';
+export const HUD_BUILD_STAMP = '2026-09-14a';
 const HUD_BUILD_TITLE =
-  'Grain-ship hall talk; honest catalog seeds; edge sync';
+  'AI writes every beat; ledger owns the nouns';
 
 interface Props {
   state: GameState;

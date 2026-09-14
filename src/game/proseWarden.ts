@@ -25,6 +25,7 @@ import {
   type LastKill,
 } from './combatAuthority';
 import { scrubMetaRecoveryStrings } from './diegeticFallbacks';
+import { obeyLedgerNouns } from './ledgerNounObey';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
 
@@ -109,6 +110,8 @@ export type ProseWardenContext = {
   destroyedItems?: string[];
   /** 12a — already-met NPCs; strip a second self-intro sentence. */
   npcMemories?: NpcMemory[];
+  /** 13c — ledger for noun rewrite (invented First Last / CAST-as-permit). */
+  ledgerState?: GameState;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -1541,6 +1544,13 @@ export function scrubNamedCastAsObject(text: string, namedPeople: string[] = [])
       new RegExp(`\\bpatterns etched into (?:the\\s+)?${esc}\\b`, 'gi'),
       `the marks on ${name}'s ledger`
     );
+    next = next.replace(
+      new RegExp(
+        `\\b(?:the\\s+)?${esc}\\s+is\\s+a\\s+(?:permit|mark(?:\\s+of\\s+sanctioned\\s+access)?|token|pass)\\b`,
+        'gi'
+      ),
+      'the ribbon is a permit'
+    );
   }
   return tidyClauses(next);
 }
@@ -1699,6 +1709,9 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   // Batch Z-2: scrub extra player actions (requires selectedIntentKind in context)
   if (ctx?.selectedIntentKind) {
     next = scrubExtraPlayerActions(next, ctx.selectedIntentKind);
+  }
+  if (ctx?.ledgerState) {
+    next = obeyLedgerNouns(next, ctx.ledgerState).prose;
   }
   return next;
 }

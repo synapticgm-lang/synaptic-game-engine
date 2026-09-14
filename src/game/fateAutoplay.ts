@@ -65,6 +65,7 @@ import { parsePlayerIntent } from './intentParser';
 import { scanAndScrubLeaks } from './leakScanner';
 import { ensureTurnProse, stripResidualMechanicTags } from './narrativeSanitize';
 import {
+  applyOpeningAnswer,
   ensureSealedOpeningBag,
   isAloneArrivalOpening,
   isAloneArrivalPick,
@@ -75,6 +76,7 @@ import {
   resolveOpeningRegistrar,
   seedCoverAnswers,
   shouldStitchOpeningContinue,
+  openingCastNames,
 } from './openingEstablishment';
 import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
@@ -128,7 +130,8 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { isDroughtStubProse, lastResortStoryBody, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import {
   classifyResponsePath,
   formatTalkWriterFacing,
@@ -906,8 +909,7 @@ export async function headlessFateTurn(
     repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
   }
 
-  // 11e — hall who/want/refuse/where/panel stay on stitch after covers (live useGame already does).
-  // First ask speaks the ledger line; repeats use already-told. Never callGm for these.
+  // 13b — page 1 stitch only (sceneWritten false). After page 1, writer owns hall / Look / Wait / sign.
   if (shouldStitchOpeningContinue(state, playerInput)) {
     const next = await headlessOpeningContinueTurn(state, playerInput);
     const ended = Date.now();
@@ -941,6 +943,11 @@ export async function headlessFateTurn(
         }),
       },
     };
+  }
+
+  if (state.openingEstablishment) {
+    const stepped = await applyOpeningAnswer(state, playerInput);
+    state = { ...stepped.state, pendingGeneratedOpening: false };
   }
 
   const govInputState = processMetaInput(state, playerInput).state;
@@ -1102,6 +1109,14 @@ Do NOT print dice notation or CODE ENFORCED.
       renderFallbackUsed = true;
     }
   }
+  if ((!useMud && !gmText.trim()) || isDroughtStubProse(gmText)) {
+    const resort = lastResortStoryBody(arcState, preparedEvent.packet);
+    if (resort.prose && !isDroughtStubProse(resort.prose) && (!gmText.trim() || isDroughtStubProse(gmText))) {
+      gmText = resort.prose;
+      gmSystemLog = [...gmSystemLog, resort.status];
+      renderFallbackUsed = true;
+    }
+  }
   if (!useMud && !gmText.trim()) {
     const failLabel = gmResult.dnsFailure
       ? 'network_dns'
@@ -1244,6 +1259,32 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   {
+    let accepted = acceptTokenOrLedgerStory(gmText, arcState, arcState.completedEvent);
+    if (accepted.needsRepair && arcState.completedEvent && transportRetries === 0) {
+      const repair = await callGmWithRetries(
+        arcState,
+        formatTokenRepairFacing(arcState.completedEvent, accepted.needsRepair.missingFns),
+        settings
+      );
+      transportRetries += repair.transportRetries + 1;
+      accepted = acceptTokenOrLedgerStory(repair.text || gmText, arcState, arcState.completedEvent, {
+        alreadyRepaired: true,
+        alt: gmText,
+      });
+    }
+    if (accepted.prose) gmText = accepted.prose;
+    if (
+      (accepted.path === 'json' || accepted.path === 'json-partial')
+      && accepted.refs?.length
+      && arcState.completedEvent
+    ) {
+      arcState = {
+        ...arcState,
+        completedEvent: { ...arcState.completedEvent, tokenRefs: accepted.refs },
+      };
+    }
+  }
+  {
     const stillGate = classifyBeatCommit(arcState, gmText, playerInput);
     if (!useMud && !stillGate.accept && !askedRepeat && storyHasBody(gmText)) {
       const repaired = repairRejectedBeat(arcState, gmText, stillGate.reasons);
@@ -1325,6 +1366,8 @@ Do NOT print dice notation or CODE ENFORCED.
       ...((working.companions ?? state.companions ?? []).map((c) => c.name)),
       ...((working.npcMemories ?? state.npcMemories ?? []).map((n) => n.npcName)),
     ].filter((n) => n && !isChromePersonToken(n)),
+    namedCast: openingCastNames(working),
+    ledgerState: working,
     lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
     hookLock: hookLockForWarden(working, cleanText),
     npcMemories: working.npcMemories ?? state.npcMemories,

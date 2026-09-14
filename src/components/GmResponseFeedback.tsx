@@ -139,7 +139,7 @@ export function GmResponseFeedback({
   const commentOverLimit = commentCharCount > MAX_COMMENT_LENGTH;
 
   return (
-    <div className="flex items-start gap-2 px-1">
+    <div className="flex items-start gap-2 px-1" data-sgm-feedback="1">
       {/* Feedback buttons — any signed-in tester/player/staff/admin. */}
       <div className="flex items-center gap-1">
         <button

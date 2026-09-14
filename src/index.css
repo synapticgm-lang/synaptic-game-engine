@@ -1606,6 +1606,27 @@ html[data-sgm-material='1'] .sgm-home-title-panel {
 .sgm-play-story-panel {
   background-color: rgb(2 6 23 / 0.9);
 }
+/* 13a — play log / chips / input / thumbs copy stay a book face. Display never eats spaces. */
+.sgm-prose-face,
+.sgm-play-story-panel,
+.sgm-play-story-panel .font-serif,
+.sgm-play-input-footer,
+.sgm-play-input-footer textarea,
+.sgm-choice-btn,
+[data-sgm-feedback] {
+  font-family: var(--sgm-font-story, "Libre Baskerville", Georgia, "Times New Roman", serif) !important;
+  letter-spacing: 0 !important;
+  word-spacing: 0.04em;
+  font-variant-ligatures: none;
+  font-kerning: normal;
+}
+html[data-sgm-theme='phoenix-ashrise'] .sgm-play-story-panel,
+html[data-sgm-theme='phoenix-ashrise'] .sgm-play-story-panel .font-serif,
+html[data-sgm-theme='phoenix-ashrise'] .sgm-choice-btn,
+html[data-sgm-theme='phoenix-ashrise'] .sgm-play-input-footer,
+html[data-sgm-theme='phoenix-ashrise'] [data-sgm-feedback] {
+  font-family: "Libre Baskerville", Georgia, "Times New Roman", serif !important;
+}
 /* Ledger plate — never inherit Cinzel Decorative (Ashrise “Jaxax” / “lockeded”). */
 [data-sgm-system-window],
 [data-sgm-system-window] .sgm-system-window-type {

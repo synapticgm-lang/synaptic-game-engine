@@ -81,6 +81,7 @@ export function classifyResponsePath(opts: {
   const { state, playerInput } = opts;
   const complete = state.openingEstablishment?.complete === true;
   const sceneWritten = state.openingEstablishment?.sceneWritten === true;
+  // 13b — C/D only if a skip gate still fires. After page 1 both gates are off → E.
   if (shouldStitchOpeningContinue(state, playerInput)) {
     return complete ? 'C' : 'B';
   }
