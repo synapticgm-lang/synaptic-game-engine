@@ -155,7 +155,7 @@ import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight'
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
-import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
+import { formatCampaignStoryName, getCampaignBibleById, isKidRestrictedCampaign, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, playerVisibleActionText, gmFacingPlayerAction, isSaferSceneLeak, playerTypedDialogue, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
 import { validateActionHard } from './actionValidation';
@@ -5102,8 +5102,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     }
 
     const bible = playerBible ?? (bibleId ? getCampaignBibleById(bibleId) : undefined);
-    if (bible && isNsfwCampaign(bible) && settingsRef.current.contentMode === 'kid') {
-      addToast('This adventure is NSFW. Exit Kid Mode (PIN) to play it.', 'error');
+    if (bible && isKidRestrictedCampaign(bible) && settingsRef.current.contentMode === 'kid') {
+      addToast(
+        isNsfwCampaign(bible)
+          ? 'This adventure is NSFW. Exit Kid Mode (PIN) to play it.'
+          : `This adventure is ${bible.ageRating}+. Exit Kid Mode (PIN) to play it.`,
+        'error'
+      );
       return;
     }
     const resolvedArchetype = bible?.archetype ?? archetype;
@@ -6246,8 +6251,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         addToast('Campaign bible not found', 'error');
         return;
       }
-      if (isNsfwCampaign(bible) && settingsRef.current.contentMode === 'kid') {
-        addToast('This adventure is NSFW. Exit Kid Mode (PIN) to play it.', 'error');
+      if (isKidRestrictedCampaign(bible) && settingsRef.current.contentMode === 'kid') {
+        addToast(
+          isNsfwCampaign(bible)
+            ? 'This adventure is NSFW. Exit Kid Mode (PIN) to play it.'
+            : `This adventure is ${bible.ageRating}+. Exit Kid Mode (PIN) to play it.`,
+          'error'
+        );
         return;
       }
       const seeded = seedStateFromCampaignBible(previous, bible);

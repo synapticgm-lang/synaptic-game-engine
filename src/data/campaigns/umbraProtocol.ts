@@ -11,6 +11,7 @@ export const umbraProtocol: CampaignBible = {
   engineMode: 'pyoa',
   difficulty: 'Standard',
   genreTag: 'Rooftop assassin',
+  ageRating: 16,
   tagline: 'To kill a king, you only need a blade; to kill an empire, you need the names of its architects.',
   shortDescription:
     'Blood on the bell-tower floor, the Architect’s Ledger ticking in your hands, Sable offering a climbing harness as the Sovereign Guard grapples in. Silk-Weavers or Iron Syndicate — several endings.',

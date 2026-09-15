@@ -4,6 +4,7 @@ import type { ContentMode, EngineMode, GmStrictness, ArtStylePreset, ComicLayout
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
 import {
+  campaignAgeChip,
   formatCampaignStoryName,
   getCampaignBiblesByEngineMode,
   getCampaignBlurb,
@@ -563,6 +564,10 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                                 {bible.nsfw ? (
                                   <span className="inline-block rounded-full border border-rose-500/80 bg-rose-950/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-100">
                                     NSFW
+                                  </span>
+                                ) : campaignAgeChip(bible) ? (
+                                  <span className="inline-block rounded-full border border-amber-600/80 bg-amber-950/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-100">
+                                    {campaignAgeChip(bible)}
                                   </span>
                                 ) : null}
                                 {bible.genreTag ? (

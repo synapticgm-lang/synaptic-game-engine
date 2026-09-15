@@ -25,6 +25,7 @@ import type { CampaignArchetype } from '@/game/archetypes';
 import type { ContentMode, EngineMode } from '@/game/types';
 import {
   ALL_CAMPAIGN_BIBLES,
+  campaignAgeChip,
   filterBiblesForContentMode,
   getCampaignBlurb,
   type CampaignBible,
@@ -54,6 +55,7 @@ interface CampaignStarter {
   accent: string;
   icon: LucideIcon;
   nsfw?: boolean;
+  ageRating?: 12 | 16 | 18;
   genreTag?: string;
 }
 
@@ -151,6 +153,7 @@ function bibleToStarter(bible: CampaignBible): CampaignStarter {
     accent: ARCHETYPE_ACCENTS[bible.archetype] ?? 'crimson',
     icon: ARCHETYPE_ICONS[bible.archetype] ?? Sparkles,
     nsfw: bible.nsfw,
+    ageRating: bible.ageRating,
     genreTag: bible.genreTag,
   };
 }
@@ -465,11 +468,15 @@ function CampaignCarousel({
                     {c.difficulty}
                   </span>
                 </div>
-                {(c.nsfw || c.genreTag) && (
+                {(c.nsfw || c.ageRating || c.genreTag) && (
                   <div className="flex flex-wrap items-center gap-1">
                     {c.nsfw ? (
                       <span className="rounded-full border border-rose-500/80 bg-rose-950/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-100">
                         NSFW
+                      </span>
+                    ) : campaignAgeChip(c) ? (
+                      <span className="rounded-full border border-amber-600/80 bg-amber-950/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-100">
+                        {campaignAgeChip(c)}
                       </span>
                     ) : null}
                     {c.genreTag ? (

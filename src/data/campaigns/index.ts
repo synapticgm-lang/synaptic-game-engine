@@ -166,7 +166,27 @@ export function isNsfwCampaign(bible: Pick<CampaignBible, 'nsfw'> | undefined): 
   return bible?.nsfw === true;
 }
 
-/** Kid Mode hides NSFW campaigns. Adult mode shows the NSFW chip. Store builds hide NSFW entirely. */
+/** Violence / mature floor — Kid Mode hides 16+ and 18+ as well as NSFW. */
+export function isKidRestrictedCampaign(
+  bible: Pick<CampaignBible, 'nsfw' | 'ageRating'> | undefined,
+): boolean {
+  if (!bible) return false;
+  if (bible.nsfw === true) return true;
+  return (bible.ageRating ?? 0) >= 16;
+}
+
+export function campaignAgeChip(
+  bible: Pick<CampaignBible, 'nsfw' | 'ageRating'> | undefined,
+): string | null {
+  if (!bible) return null;
+  if (bible.nsfw) return 'NSFW';
+  if (bible.ageRating === 18) return '18+';
+  if (bible.ageRating === 16) return '16+';
+  if (bible.ageRating === 12) return '12+';
+  return null;
+}
+
+/** Kid Mode hides NSFW and 16+/18+. Adult mode shows the chips. Store builds hide NSFW entirely. */
 export function filterBiblesForContentMode(
   bibles: CampaignBible[],
   contentMode?: ContentMode,
@@ -176,7 +196,7 @@ export function filterBiblesForContentMode(
     pool = pool.filter((b) => !isNsfwCampaign(b));
   }
   if (contentMode === 'kid') {
-    pool = pool.filter((b) => !isNsfwCampaign(b));
+    pool = pool.filter((b) => !isKidRestrictedCampaign(b));
   }
   return pool;
 }

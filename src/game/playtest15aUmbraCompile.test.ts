@@ -18,6 +18,13 @@ import {
   spineChoiceLabels,
 } from './pyoaSpine';
 import type { GameState } from './types';
+import {
+  campaignAgeChip,
+  filterBiblesForContentMode,
+  getCampaignBibleById,
+  getCampaignBiblesByEngineMode,
+  isKidRestrictedCampaign,
+} from '@/data/campaigns';
 
 function umbraState(over: Partial<GameState> = {}): GameState {
   let state = createInitialState(undefined, 'pyoa') as GameState;
@@ -85,6 +92,19 @@ describe('playtest15a — Umbra compiled book', () => {
     const page = authoredPageText(state) ?? '';
     expect(page.length).toBeGreaterThan(40);
     expect(page).not.toBe(authoredStartPage());
+  });
+
+  it('is marked 16+ and hidden in Kid Mode, not as NSFW', () => {
+    const bible = getCampaignBibleById('umbra-protocol');
+    expect(bible?.ageRating).toBe(16);
+    expect(bible?.nsfw).not.toBe(true);
+    expect(campaignAgeChip(bible)).toBe('16+');
+    expect(isKidRestrictedCampaign(bible)).toBe(true);
+    const adult = getCampaignBiblesByEngineMode('pyoa', 'adult');
+    const kid = getCampaignBiblesByEngineMode('pyoa', 'kid');
+    expect(adult.some((b) => b.id === 'umbra-protocol')).toBe(true);
+    expect(kid.some((b) => b.id === 'umbra-protocol')).toBe(false);
+    expect(filterBiblesForContentMode([bible!], 'kid')).toEqual([]);
   });
 
   it('an ending chip closes the book', () => {

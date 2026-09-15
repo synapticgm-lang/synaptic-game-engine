@@ -1,5 +1,5 @@
 import type { CampaignBible, StarterItem } from '@/data/campaigns/types';
-import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
+import { ALL_CAMPAIGN_BIBLES, isKidRestrictedCampaign } from '@/data/campaigns';
 import type { CampaignArchetype } from './archetypes';
 import type { Character, Container, EngineMode, GameState, Item, LoreCard, LoreCardType } from './types';
 import { isFictionEngine } from './types';
@@ -23,7 +23,7 @@ export function findBibleForArchetype(
   archetype?: CampaignArchetype
 ): CampaignBible | undefined {
   // Never silently seed an NSFW bible from an archetype fallback.
-  const catalog = ALL_CAMPAIGN_BIBLES.filter((b) => !b.nsfw);
+  const catalog = ALL_CAMPAIGN_BIBLES.filter((b) => !isKidRestrictedCampaign(b));
   if (archetypePrefersBlankCanvas(archetype)) {
     const blank = catalog.find((b) => b.id === blankBibleIdForMode(engineMode));
     if (blank) return blank;

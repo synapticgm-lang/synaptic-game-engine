@@ -121,6 +121,12 @@ export interface CampaignBible {
    * that are written as NSFW — do not mark other PYOA by default.
    */
   nsfw?: boolean;
+  /**
+   * Store-style floor (PEGI-like). 16+ and 18+ stay out of Kid Mode.
+   * Show a 16+ / 18+ chip. Not the same as `nsfw` (sex) — violence can be 16
+   * without an NSFW chip. Unset = no age chip, Kid Mode may still list it.
+   */
+  ageRating?: 12 | 16 | 18;
   /** Copyright / license note for creators (never copy closed IP). */
   licenseNote?: string;
   loreSnippets: LoreSnippet[];
