@@ -1,10 +1,10 @@
 /**
- * PYOA spine v1 — Thornferry Road only.
- * Structure is fixed (nodes + legal exits); AI still writes unique prose per visit.
+ * PYOA spine — Thornferry (AI prose + 12 nodes) and Umbra (authored book).
  * Other PYOA bibles keep old branch-lock / crisis behavior.
  */
 
 import type { GameState } from './types';
+import umbraBook from '@/data/pyoa/umbraBook.json';
 
 export type PyoaSpineNodeId = string;
 
@@ -24,10 +24,14 @@ export interface PyoaSpineNode {
   majorFork?: boolean;
   /** When set, arriving here commits an ending (honest gate). */
   endingId?: string;
+  /** Compiled book prose. Thornferry omits this and still calls the writer. */
+  page?: string;
 }
 
+export type PyoaSpineBibleId = 'thornferry-road' | 'umbra-protocol';
+
 export interface PyoaSpineState {
-  bibleId: 'thornferry-road';
+  bibleId: PyoaSpineBibleId;
   currentNodeId: PyoaSpineNodeId;
   visited: PyoaSpineNodeId[];
   flags: Record<string, string | boolean>;
@@ -176,13 +180,33 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
 
 const NODE_BY_ID = new Map(THORNFERRY_SPINE.map((n) => [n.id, n]));
 
+const UMBRA_START = (umbraBook as { startId?: string }).startId || 'up-bell-tower';
+const UMBRA_SPINE: PyoaSpineNode[] = ((umbraBook as { nodes?: PyoaSpineNode[] }).nodes ?? []).map((n) => ({
+  id: n.id,
+  stake: n.stake,
+  majorFork: !!n.majorFork,
+  endingId: n.endingId || undefined,
+  page: typeof n.page === 'string' ? n.page : undefined,
+  exits: (n.exits ?? []).map((e) => ({
+    id: e.id,
+    label: e.label,
+    to: e.to,
+    setFlags: e.setFlags,
+  })),
+}));
+const UMBRA_BY_ID = new Map(UMBRA_SPINE.map((n) => [n.id, n]));
+
 export function spineBibleSupported(bibleId: string | undefined | null): boolean {
-  return bibleId === 'thornferry-road';
+  return bibleId === 'thornferry-road' || bibleId === 'umbra-protocol';
+}
+
+export function isAuthoredPyoaBook(bibleId: string | undefined | null): boolean {
+  return bibleId === 'umbra-protocol';
 }
 
 export function getSpineNode(id: string | undefined | null): PyoaSpineNode | undefined {
   if (!id) return undefined;
-  return NODE_BY_ID.get(id);
+  return NODE_BY_ID.get(id) ?? UMBRA_BY_ID.get(id);
 }
 
 export function initThornferrySpine(): PyoaSpineState {
@@ -196,11 +220,36 @@ export function initThornferrySpine(): PyoaSpineState {
   };
 }
 
+export function initUmbraSpine(): PyoaSpineState {
+  return {
+    bibleId: 'umbra-protocol',
+    currentNodeId: UMBRA_START,
+    visited: [UMBRA_START],
+    flags: {},
+    delayCount: 0,
+    endingId: null,
+  };
+}
+
+export function initPyoaSpine(bibleId: string | undefined | null): PyoaSpineState {
+  return bibleId === 'umbra-protocol' ? initUmbraSpine() : initThornferrySpine();
+}
+
+export function authoredPageText(state: GameState): string | null {
+  const node = currentSpineNode(state) ?? getSpineNode(state.pyoaSpine?.currentNodeId);
+  const page = node?.page?.trim();
+  return page || null;
+}
+
+export function authoredStartPage(): string {
+  return UMBRA_BY_ID.get(UMBRA_START)?.page?.trim() || '';
+}
+
 export function ensurePyoaSpine(state: GameState): GameState {
   if (state.engineMode !== 'pyoa') return state;
   if (!spineBibleSupported(state.campaignBibleId)) return state;
   if (state.pyoaSpine?.currentNodeId) return state;
-  return { ...state, pyoaSpine: initThornferrySpine() };
+  return { ...state, pyoaSpine: initPyoaSpine(state.campaignBibleId) };
 }
 
 export function currentSpineNode(state: GameState): PyoaSpineNode | undefined {
@@ -278,7 +327,7 @@ export function advancePyoaSpine(state: GameState, playerInput: string): GameSta
   const lower = (playerInput ?? '').toLowerCase().trim();
   const exits = legalSpineExits(working);
 
-  if (isSpineDelayPad(playerInput)) {
+  if (isSpineDelayPad(playerInput) && !isAuthoredPyoaBook(working.campaignBibleId)) {
     const delayCount = (spine.delayCount ?? 0) + 1;
     if (delayCount < 2 || !exits.length) {
       return {
@@ -326,7 +375,7 @@ function fuzzyExitMatch(exits: PyoaSpineExit[], lower: string): PyoaSpineExit | 
 }
 
 function applyExit(state: GameState, exit: PyoaSpineExit): GameState {
-  const spine = state.pyoaSpine ?? initThornferrySpine();
+  const spine = state.pyoaSpine ?? initPyoaSpine(state.campaignBibleId);
   const flags = { ...spine.flags, ...(exit.setFlags ?? {}) };
   const to = resolveEndingLeaf(exit.to, flags);
   const dest = getSpineNode(to);
@@ -334,6 +383,8 @@ function applyExit(state: GameState, exit: PyoaSpineExit): GameState {
   const endingId = dest?.endingId ?? null;
   return {
     ...state,
+    playPhase:
+      endingId && isAuthoredPyoaBook(state.campaignBibleId) ? 'ended' : state.playPhase,
     pyoaSpine: {
       ...spine,
       currentNodeId: to,
@@ -388,7 +439,7 @@ export function evaluateSpineEndingGate(state: GameState): {
 
 export function formatPyoaSpineSnapshotLines(state: GameState): string[] {
   if (state.engineMode !== 'pyoa' || !spineBibleSupported(state.campaignBibleId)) return [];
-  const spine = state.pyoaSpine ?? initThornferrySpine();
+  const spine = state.pyoaSpine ?? initPyoaSpine(state.campaignBibleId);
   const node = getSpineNode(spine.currentNodeId);
   if (!node) return [];
   const exits = legalSpineExits({ ...state, pyoaSpine: spine });

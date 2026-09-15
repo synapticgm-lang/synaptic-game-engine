@@ -5,6 +5,7 @@
 
 import type { CampaignBible, OpeningPrompt, OpeningPromptKind } from '@/data/campaigns/types';
 import type { GameState } from './types';
+import { authoredStartPage } from './pyoaSpine';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
 import { isLockablePcName } from './pcNameAuthority';
@@ -209,6 +210,14 @@ function clauseAlreadySpoken(state: GameState, clause: string): boolean {
  * Instant first page — one authored paragraph + optional cover ask. No collage.
  */
 export function stitchOpeningScene(state: GameState): string {
+  if (state.campaignBibleId === 'umbra-protocol') {
+    const book = authoredStartPage().trim();
+    if (book) {
+      const cover = state.openingEstablishment?.pending[0]?.question?.trim();
+      if (!cover || state.openingEstablishment?.complete) return book;
+      return `${book}\n\n${cover}`;
+    }
+  }
   const body = baseSceneFromCard(state).trim();
   if (lockedCoverName(state)) {
     return dropCoverNameAsk(body);

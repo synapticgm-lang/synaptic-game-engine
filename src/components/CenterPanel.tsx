@@ -127,9 +127,10 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   const userSetHideRef = useRef(false);
   const logRef = useRef<HTMLDivElement>(null);
   const isDnd = engineMode === 'dnd';
+  const isPyoaChipsOnly = engineMode === 'pyoa' || state.engineMode === 'pyoa';
   const showRollsPanel = isDnd && showRolls && state.rolls.length > 0;
   const showSystemLog = statVerbosity !== 'minimal';
-  const bothChromeHidden = hideOptions && hideText;
+  const bothChromeHidden = hideOptions && hideText && !isPyoaChipsOnly;
   const turnUiBlocked = isTurnUiBlocked(busy, turnPhase, streamingReveal);
   const turnStatusMessage = busy ? turnPhaseStatusMessage(turnPhase) : null;
 
@@ -173,6 +174,12 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   }, [state.saveId, state.openingEstablishment?.complete]);
 
   useEffect(() => {
+    if (!isPyoaChipsOnly) return;
+    setHideOptions(false);
+    writeBoolPref(HIDE_OPTIONS_KEY, false);
+  }, [isPyoaChipsOnly]);
+
+  useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);
   }, [voice.transcript]);
 
@@ -205,6 +212,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   }, [busy, isDnd, diceAnimation]);
 
   const handleSend = () => {
+    if (isPyoaChipsOnly) return;
     if (!input.trim() || busy || !!state.pendingTurn) return;
     onSend(input);
     setInput('');
@@ -434,6 +442,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               <List size={14} className="opacity-70" />
               <span>{hideOptions ? 'Show options' : 'Hide options'}</span>
             </button>
+            {isPyoaChipsOnly ? null : (
             <button
               type="button"
               onClick={toggleHideText}
@@ -450,6 +459,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               <Type size={14} className="opacity-70" />
               <span>{hideText ? 'Show text' : 'Hide text'}</span>
             </button>
+            )}
             {bothChromeHidden && (
               <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-600">
                 More room for story
@@ -518,7 +528,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </button>
             )}
           </div>
-          {!hideText && (
+          {!hideText && !isPyoaChipsOnly && (
           <div className="flex gap-2">
             {voice.sttSupported && (
               <button

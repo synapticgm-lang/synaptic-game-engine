@@ -112,9 +112,9 @@ describe('playtest10f — treaty tent one-line lock', () => {
     expect(hallTalkAsksWant('Ask what they want')).toBe(true);
     expect(hallTalkAsksWant('Ask Wren Holt what they want')).toBe(false);
     expect(isOpeningHallTalkTurn(namedJax(), 'Ask what they want')).toBe(true);
-    expect(shouldStitchOpeningContinue(namedJax(), 'Ask what they want')).toBe(true);
-    expect(shouldStitchOpeningContinue(namedJax(), 'Where am whats going on')).toBe(true);
-    expect(shouldStitchOpeningContinue(treaty(), 'My name is Jax')).toBe(true);
+    expect(shouldStitchOpeningContinue(namedJax(), 'Ask what they want')).toBe(false);
+    expect(shouldStitchOpeningContinue(namedJax(), 'Where am whats going on')).toBe(false);
+    expect(shouldStitchOpeningContinue(treaty(), 'My name is Jax')).toBe(false);
   });
 
   it('cover name+where+going-on answers the card, not a telegram only', () => {
@@ -145,7 +145,7 @@ describe('playtest10f — treaty tent one-line lock', () => {
     expect(text).not.toMatch(/people who pulled you is/i);
   });
 
-  it('talk after complete is not a Silent receipt; Look around still is', () => {
+  it('talk after complete is not a Silent skip; Look around is not Silent skip either', () => {
     expect(isSilentReceiptAction('Ask what they want')).toBe(false);
     expect(isSilentReceiptAction('Who are you')).toBe(false);
     expect(isSilentReceiptAction('Whats going on')).toBe(false);
@@ -164,7 +164,7 @@ describe('playtest10f — treaty tent one-line lock', () => {
         openingComplete: true,
         playerInput: 'Look around',
       })
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('Silent fallback for Ask what they want is not “No one listed”', () => {

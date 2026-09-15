@@ -19,6 +19,7 @@ import {
 } from './pcNameAuthority';
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
+import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1765,6 +1766,9 @@ export function playerAskedWhyPulled(raw: string): boolean {
 
 /** One or two chips for the cover beat — never hub travel, never pad-to-four. */
 export function coverContinuePads(state: GameState): string[] {
+  if (isAuthoredPyoaBook(state.campaignBibleId)) {
+    return spineChoiceLabels(ensurePyoaSpine(state));
+  }
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) {
     const chips = establishmentChoices(state.openingEstablishment?.pending ?? [], state);
     if (chips.length) return chips.slice(0, 2);

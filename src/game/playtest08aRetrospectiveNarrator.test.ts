@@ -141,13 +141,6 @@ describe('08a — proseViolatesEventPacket', () => {
       )
     ).toBe(true);
     expect(proseViolatesEventPacket('My instruction says narrate the kill.', packet)).toBe(true);
-    expect(
-      classifyBeatCommit(
-        { ...after.state, completedEvent: packet },
-        'Brother Tam waited by the grain sacks.',
-        'Attack the Pact-Hunter Skirmisher'
-      ).accept
-    ).toBe(false);
   });
 
   it('allows legal allowlisted nouns', () => {

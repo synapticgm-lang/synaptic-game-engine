@@ -32,6 +32,7 @@ import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerpr
 import { isPyoaBranchLocked, eligiblePyoaPadsAfterLock } from './pyoaBranchLedger';
 import {
   ensurePyoaSpine,
+  isAuthoredPyoaBook,
   spineBibleSupported,
   spineChoiceLabels,
   spineForceEdgeAfterDelay,
@@ -1133,6 +1134,14 @@ export function compileChoices(
   if (!engaged && state.engineMode === 'pyoa' && spineBibleSupported(state.campaignBibleId)) {
     const spineState = ensurePyoaSpine(state);
     const legal = spineChoiceLabels(spineState);
+    if (isAuthoredPyoaBook(state.campaignBibleId) && legal.length) {
+      const authored = legal.slice(0, 6);
+      return {
+        choices: authored,
+        notes: [...notes, 'PYOA authored book — chips only'],
+        intentEnums: authored.map((c) => inferIntent(c)),
+      };
+    }
     const forceEdge = spineForceEdgeAfterDelay(spineState);
     if (legal.length) {
       if (forceEdge) {

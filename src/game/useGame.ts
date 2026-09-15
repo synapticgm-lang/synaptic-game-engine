@@ -13,6 +13,15 @@ import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './p
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { downloadPlayDump, withOfferedChoices } from './playTranscript';
+import { pyoaRejectsFreeText } from './pyoaChoiceLock';
+import {
+  authoredPageText,
+  authoredStartPage,
+  ensurePyoaSpine,
+  initUmbraSpine,
+  isAuthoredPyoaBook,
+  spineChoiceLabels,
+} from './pyoaSpine';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
   syncGameToCloud,
@@ -1860,6 +1869,10 @@ export function useGame() {
 
     let skipRepairDetection = false;
     let transportRetriesUsed = 0;
+    if (!current.pendingRepair && pyoaRejectsFreeText(current, input)) {
+      addToast('Pick one of the listed options.', 'info');
+      return;
+    }
     if (current.pendingRepair) {
       const picked = matchRepairOption(input, current.pendingRepair);
       if (!picked) {
@@ -2038,7 +2051,7 @@ export function useGame() {
         ? effectiveWriterTier(settingsRef.current.subscriptionTier)
         : (settingsRef.current.subscriptionTier ?? 'free')
     );
-    if (!freeOpeningTurn) {
+    if (!freeOpeningTurn && !isAuthoredPyoaBook(current.campaignBibleId)) {
       if (honeymoonLeft > 0) {
         honeymoonSpent = true;
       } else if (!canSpend('text')) {
@@ -2841,11 +2854,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
       };
       // 08d Silent Engine — receipt only; skip DeepSeek micro-flavor entirely.
+      const authoredBook = isAuthoredPyoaBook(liveCurrent.campaignBibleId);
+      const authoredBeat = authoredBook
+        ? (authoredPageText(liveCurrent) || authoredStartPage()).trim()
+        : '';
       let result: GmResult =
-        useMud && shouldSkipMicroFlavor()
-          ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
-          : await callGmDurable(gmPlayerPayload);
-      if (useMud) {
+        authoredBook
+          ? { text: authoredBeat, imagePrompt: null, rolls: [], systemLog: [] }
+          : useMud && shouldSkipMicroFlavor()
+            ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
+            : await callGmDurable(gmPlayerPayload);
+      if (useMud && !authoredBook) {
         mudTurnLive = composeFreeMudTurn(preparedEvent.packet, {
           arcReceipts: pendingArcStatusReceipts,
           flavorRaw: shouldSkipMicroFlavor() ? '' : result.text,
@@ -2864,7 +2883,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       // System-wide: if the model returned bridge-only / empty / no findings, regenerate.
       // Never swap a real GM beat for a local story template.
       // 08c Free MUD: skip novelist quality retry / stitch — receipt is enough.
-      if (!useMud) {
+      if (!useMud && !authoredBook) {
         const probeOf = (text: string) =>
           ensureTurnProse(
             stripResidualMechanicTags(stripChoiceList(stripActionTags(text))),
@@ -3319,13 +3338,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       };
       // Choice tier (4-tier pipeline): ground options in this turn's story prose + active info cards.
       // Rejects unprompted environmental events / plot jumps and regenerates when needed.
-      const pipelineChoices = await resolvePipelineChoices({
-        gmText: narrativeSource,
-        state: suggestionState,
-        loreCards: activeLoreCards,
-        settings: settingsRef.current,
-        lastPlayerAction: sanitizedInput,
-      });
+      const pipelineChoices = authoredBook
+        ? {
+            choices: spineChoiceLabels(ensurePyoaSpine(suggestionState)),
+            regenerated: false,
+            rejectedCount: 0,
+          }
+        : await resolvePipelineChoices({
+            gmText: narrativeSource,
+            state: suggestionState,
+            loreCards: activeLoreCards,
+            settings: settingsRef.current,
+            lastPlayerAction: sanitizedInput,
+          });
       const habitAugmented = extractChoicesFromText(
         pipelineChoices.choices.map((c, i) => `${i + 1}. ${c}`).join('\n'),
         suggestionState,
@@ -3375,6 +3400,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const govChoices = filterGovernanceChoices(suggestionState, finalChoices, sanitizedInput);
         finalChoices = govChoices.choices;
         if (govChoices.notes.length) warden.notes.push(...govChoices.notes);
+      }
+      if (authoredBook) {
+        const book = authoredPageText(suggestionState) || authoredBeat;
+        if (book) cleanText = book;
+        finalChoices = spineChoiceLabels(ensurePyoaSpine(suggestionState));
       }
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
@@ -4508,6 +4538,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
 
+      if (authoredBook) {
+        const book = authoredPageText(workingState) || authoredBeat;
+        if (book) cleanText = book;
+        finalChoices = spineChoiceLabels(ensurePyoaSpine(workingState));
+      }
+
       const gmLogEntryBase: LogEntry = {
         ...gmEntry,
         content: cleanText,
@@ -5119,7 +5155,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       aloneArrival,
       namedSeeded.seed ?? namedSeeded.saveId ?? '0'
     );
-    const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
+    const umbraBookNew = (bible?.id ?? namedSeeded.campaignBibleId) === 'umbra-protocol';
+    const pendingCovers = umbraBookNew
+      ? []
+      : pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
+    const umbraSpine = umbraBookNew ? initUmbraSpine() : undefined;
+    const umbraStartChips = umbraBookNew
+      ? spineChoiceLabels({
+          ...namedSeeded,
+          engineMode: 'pyoa',
+          campaignBibleId: 'umbra-protocol',
+          pyoaSpine: umbraSpine,
+        })
+      : [];
     const pickedHook = picked?.text;
     const pickedHookFallback = picked?.page1 || picked?.fallback;
     const pickedHookId = compilePointerCardSlots({
@@ -5146,7 +5194,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         || bible?.startingLocation
         || namedSeeded.currentLocation,
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
-      choices: pendingCovers.length ? establishmentChoices(pendingCovers, namedSeeded) : [],
+      choices: umbraBookNew
+        ? umbraStartChips
+        : pendingCovers.length
+          ? establishmentChoices(pendingCovers, namedSeeded)
+          : [],
+      pyoaSpine: umbraSpine ?? namedSeeded.pyoaSpine,
       log: [],
       worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
       places: seedWorldMapPlaces(
@@ -5160,7 +5213,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       openingEstablishment: {
         pending: pendingCovers,
         answers: coverAnswers,
-        complete: pendingCovers.length === 0,
+        complete: umbraBookNew || pendingCovers.length === 0,
         registrar,
         sceneWritten: false,
         mode: openingMode,
@@ -5305,6 +5358,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (settingsRef.current.contentMode === 'kid') {
         openingText = filterKidModeText(openingText);
       }
+      if (umbraBookNew) {
+        openingText = authoredStartPage() || stitchText;
+      }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
       const openingBible = resolveActiveCampaignBible(newState) ?? getCampaignBibleById(newState.campaignBibleId ?? '');
@@ -5341,15 +5397,28 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         canSpend('memorable')
       );
       offerMemorableAdIfCapHit(openingMemorable.skippedForCapacity);
-      const harvestedOpening = newState.openingEstablishment
-        ? applyHarvestedOpeningCovers(newState.openingEstablishment, cleanOpening)
-        : newState.openingEstablishment;
-      const openingChoicesForPad = harvestedOpening?.pending?.length
-        ? establishmentChoices(harvestedOpening.pending, newState)
-        : coverContinuePads({
-            ...newState,
-            openingEstablishment: harvestedOpening ?? newState.openingEstablishment,
-          });
+      const harvestedOpening = umbraBookNew
+        ? {
+            ...(newState.openingEstablishment ?? {
+              pending: [] as NonNullable<GameState['openingEstablishment']>['pending'],
+              answers: {},
+              complete: true,
+            }),
+            pending: [],
+            complete: true,
+            sceneWritten: true,
+          }
+        : newState.openingEstablishment
+          ? applyHarvestedOpeningCovers(newState.openingEstablishment, cleanOpening)
+          : newState.openingEstablishment;
+      const openingChoicesForPad = umbraBookNew
+        ? spineChoiceLabels(ensurePyoaSpine(newState))
+        : harvestedOpening?.pending?.length
+          ? establishmentChoices(harvestedOpening.pending, newState)
+          : coverContinuePads({
+              ...newState,
+              openingEstablishment: harvestedOpening ?? newState.openingEstablishment,
+            });
       const openingEstForPad = harvestedOpening
         ? { ...harvestedOpening, sceneWritten: true }
         : harvestedOpening;
@@ -5422,7 +5491,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const fallbackText = stitchOpeningScene(newState);
         const fallbackChoices = newState.openingEstablishment?.pending?.length
           ? establishmentChoices(newState.openingEstablishment.pending, newState)
-          : undefined;
+          : umbraBookNew
+            ? spineChoiceLabels(ensurePyoaSpine(newState))
+            : undefined;
         const fallbackEst = newState.openingEstablishment
           ? { ...newState.openingEstablishment, sceneWritten: true }
           : newState.openingEstablishment;

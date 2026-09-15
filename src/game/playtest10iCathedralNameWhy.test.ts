@@ -75,7 +75,7 @@ describe('playtest10i — cathedral name+why', () => {
     expect(playerGaveNameAndAskedMore(LINE)).toBe(true);
     expect(playerGaveNameAndAskedMore('My name is Jax')).toBe(false);
     expect(isCoverShapedPlayerLine(LINE)).toBe(true);
-    expect(shouldStitchOpeningContinue(cathedral(), LINE)).toBe(true);
+    expect(shouldStitchOpeningContinue(cathedral(), LINE)).toBe(false);
     expect(isSilentReceiptAction(LINE)).toBe(false);
     expect(hallTalkAsksWant('Ask Wren Holt what they want')).toBe(false);
   });

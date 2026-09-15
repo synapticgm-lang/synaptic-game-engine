@@ -120,6 +120,13 @@ for (const file of FILES) {
       .replace(/^export \{ KID_MODE_RULES \} from '\.\/contentModeRules';\r?\n/m, '')
       .replace(/^export \{ buildImagePromptModifier \} from '\.\/imagePromptModifier';\r?\n/m, '');
   }
+  if (file === 'pyoaSpine.ts') {
+    // Authored Umbra book lives on the client. Edge only needs Thornferry SNAPSHOT/TURN JOB.
+    next = next.replace(
+      /import umbraBook from ['"]@\/data\/pyoa\/umbraBook\.json['"];\r?\n/,
+      "const umbraBook = { startId: 'up-bell-tower', nodes: [] };\n"
+    );
+  }
   if (file === 'situationPacket.ts') {
     // sandboxXp pulls parser/faction graph; edge only needs look/wait for BEAT DELTA.
     next = next

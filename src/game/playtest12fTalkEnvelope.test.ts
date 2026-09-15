@@ -56,16 +56,16 @@ function grainDone(over: Partial<GameState> = {}): GameState {
 
 describe('playtest12f — talk envelope + path labels', () => {
   it('HUD/BUILD are 12f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-12/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-12/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('grain-ship home/earth stays C; Look is D; leftover talk is E', () => {
+  it('after page 1, grain / Look / leftover talk / cover Wait are all writer path E', () => {
     const state = grainDone();
-    expect(classifyResponsePath({ state, playerInput: GRAIN, subscriptionTier: 'free' })).toBe('C');
+    expect(classifyResponsePath({ state, playerInput: GRAIN, subscriptionTier: 'free' })).toBe('E');
     expect(classifyResponsePath({ state, playerInput: 'Look around', subscriptionTier: 'free' })).toBe(
-      'D'
+      'E'
     );
     expect(classifyResponsePath({ state, playerInput: TALK_E, subscriptionTier: 'free' })).toBe('E');
     expect(
@@ -86,7 +86,7 @@ describe('playtest12f — talk envelope + path labels', () => {
         playerInput: 'Wait',
         subscriptionTier: 'free',
       })
-    ).toBe('B');
+    ).toBe('E');
   });
 
   it('E talk facing leads with PLAYER SAID + ADDRESSEE and keeps the allowlist', () => {

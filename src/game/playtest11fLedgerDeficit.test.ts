@@ -144,7 +144,7 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     expect(hallTalkAsksWant("What's your actual deal?")).toBe(true);
     expect(hallTalkAsksWant('I want to leave')).toBe(false);
     expect(shouldStitchOpeningContinue(saltDoneUnnamed(), 'What do you actually want from me?')).toBe(
-      true
+      false
     );
   });
 
@@ -152,7 +152,7 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     const line = 'Wait and see what happens if I refuse';
     expect(hallTalkAsksRefuse(line)).toBe(true);
     expect(hallTalkAsksRefuse('Refuse to give a name')).toBe(false);
-    expect(shouldStitchOpeningContinue(greyhollowNamed(), line)).toBe(true);
+    expect(shouldStitchOpeningContinue(greyhollowNamed(), line)).toBe(false);
     expect(isSilentReceiptAction(line)).toBe(false);
     expect(isSilentReceiptAction('Wait')).toBe(true);
     expect(shouldStitchOpeningContinue(greyhollowNamed(), 'Wait')).toBe(false);
@@ -173,7 +173,7 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     const text = stitchOpeningContinue(cathedralNamed(), 'Check what I am carrying');
     expect(text).toMatch(/arrived with|nothing new is in your hands/i);
     expect(text).not.toMatch(/Pactborn|Handler\. You came through|answers you/i);
-    expect(shouldStitchOpeningContinue(cathedralNamed(), 'Check what I am carrying')).toBe(true);
+    expect(shouldStitchOpeningContinue(cathedralNamed(), 'Check what I am carrying')).toBe(false);
     expect(isSilentReceiptAction('Check what I am carrying')).toBe(false);
   });
 

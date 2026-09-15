@@ -12,6 +12,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { isPyoaBranchExhausted, isPyoaBranchLocked, isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import {
   ensurePyoaSpine,
+  isAuthoredPyoaBook,
   legalSpineExits,
   spineBibleSupported,
   spineForceEdgeAfterDelay,
@@ -86,11 +87,11 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
         risk: getSpineNodeMajor(ex.to) ? 'high' : 'med',
       });
     }
-    if (spineState.pyoaSpine?.endingId && !excluded.has('leave')) {
+    if (spineState.pyoaSpine?.endingId) {
       const endingDone =
         state.playPhase === 'ended'
         || spineState.pyoaSpine.flags?.endingAccepted === '1';
-      if (!endingDone) {
+      if (!endingDone && !excluded.has('leave') && !isAuthoredPyoaBook(state.campaignBibleId)) {
         edges.push({
           id: 'spine-ending',
           label: 'Accept the ending that follows',
@@ -100,11 +101,13 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
       }
       return closeEdgeUniverse(state, edges);
     }
-    if (!force && exits.length) {
-      // One delay pad allowed before force
+    if (!force && exits.length && !isAuthoredPyoaBook(state.campaignBibleId)) {
+      // One delay pad allowed before force (Thornferry). Authored books are chips only.
       edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
     }
-    if (exits.length) return closeEdgeUniverse(state, edges);
+    if (exits.length || isAuthoredPyoaBook(state.campaignBibleId)) {
+      return closeEdgeUniverse(state, edges);
+    }
     // Fall through to legacy PYOA edges if spine not seeded somehow
   }
 

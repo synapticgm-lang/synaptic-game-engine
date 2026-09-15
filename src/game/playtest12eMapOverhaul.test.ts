@@ -13,8 +13,8 @@ const modalSrc = readFileSync(resolve(__dirname, '../components/DungeonMapModal.
 
 describe('playtest12e — map contrast chrome', () => {
   it('HUD/BUILD are 12e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-12/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-12/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

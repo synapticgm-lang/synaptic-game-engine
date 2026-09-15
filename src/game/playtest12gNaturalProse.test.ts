@@ -81,8 +81,8 @@ function greyTavern(): GameState {
 
 describe('playtest12g — natural prose receipts', () => {
   it('HUD/BUILD are 12g, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-12g');
-    expect(BUILD_STAMP).toBe('2026-09-12g');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

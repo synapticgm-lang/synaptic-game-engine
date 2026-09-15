@@ -15,7 +15,7 @@ describe('playtest29g — hide text is action box, hide options is chips', () =>
   });
 
   it('Hide text gates the action box, not the story; Hide options gates chips only', () => {
-    expect(panel).toContain('{!hideText && (');
+    expect(panel).toContain('{!hideText && !isPyoaChipsOnly && (');
     expect(panel).toContain('hidden={hideOptions}');
     expect(panel).toContain("title={hideText ? 'Show the action box' : 'Hide the action box'}");
     expect(panel).toContain("title={hideOptions ? 'Show choice buttons' : 'Hide choice buttons'}");

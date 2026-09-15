@@ -6,6 +6,7 @@ const { mockSupabase } = vi.hoisted(() => {
   const mockSupabase = {
     auth: {
       getUser: vi.fn(),
+      getSession: vi.fn(),
     },
     from: vi.fn(() => ({
       upsert: vi.fn(() => ({
@@ -57,6 +58,9 @@ describe('playtest30h — GM response feedback system', () => {
     vi.clearAllMocks();
     mockSupabase.auth.getUser.mockResolvedValue({
       data: { user: { id: 'test-user-id' } },
+    });
+    mockSupabase.auth.getSession.mockResolvedValue({
+      data: { session: { user: { id: 'test-user-id' } } },
     });
   });
 

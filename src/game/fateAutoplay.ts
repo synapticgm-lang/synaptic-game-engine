@@ -84,6 +84,14 @@ import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
 import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
 import {
+  authoredPageText,
+  authoredStartPage,
+  ensurePyoaSpine,
+  initUmbraSpine,
+  isAuthoredPyoaBook,
+  spineChoiceLabels,
+} from './pyoaSpine';
+import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
   isLeaveSceneAction,
@@ -610,6 +618,7 @@ export function buildNewGameState(opts: {
     mapFocusPlace: null,
     pendingGeneratedOpening: false,
     storyStartTextTurnsRemaining: honeymoon,
+    pyoaSpine: bible.id === 'umbra-protocol' ? initUmbraSpine() : namedSeeded.pyoaSpine,
     openingEstablishment: {
       pending: [],
       answers: coverAnswers,
@@ -662,12 +671,15 @@ export function stampOpening(state: GameState): GameState {
     choices: [],
   };
   const gm = withLitrpgSystemWindow(withOfferedChoices(gmBase, withChoices), state);
+  const authoredChips = isAuthoredPyoaBook(state.campaignBibleId)
+    ? spineChoiceLabels(ensurePyoaSpine(state))
+    : null;
   const next: GameState = {
     ...withChoices,
     turn: 1,
     sceneFacts: facts,
     log: [gm],
-    choices: gm.offeredChoices ?? resolveOfferedChoices(withChoices),
+    choices: authoredChips ?? gm.offeredChoices ?? resolveOfferedChoices(withChoices),
   };
   return next;
 }
@@ -1078,9 +1090,15 @@ Do NOT print dice notation or CODE ENFORCED.
     : formatTalkWriterFacing(preparedEvent.packet, arcState);
 
   // 08d Silent Engine — receipts only; never call DeepSeek for micro-flavor.
-  const gmResult = silentMud
-    ? { text: '', systemLog: [] as string[], transportRetries: 0 }
-    : await callGmWithRetries(arcState, payload, settings);
+  const authoredBook = isAuthoredPyoaBook(arcState.campaignBibleId);
+  const authoredBeat = authoredBook
+    ? (authoredPageText(arcState) || authoredStartPage()).trim()
+    : '';
+  const gmResult = authoredBook
+    ? { text: authoredBeat, systemLog: [] as string[], transportRetries: 0 }
+    : silentMud
+      ? { text: '', systemLog: [] as string[], transportRetries: 0 }
+      : await callGmWithRetries(arcState, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
   let gmSystemLog = gmResult.systemLog ?? [];
@@ -1476,25 +1494,37 @@ Do NOT print dice notation or CODE ENFORCED.
     fromLoc
   );
 
-  const pipeline = await resolvePipelineChoices({
-    gmText: narrativeSource,
-    state: working,
-    loreCards: [],
-    settings,
-    lastPlayerAction: playerInput,
-  });
+  const pipeline = authoredBook
+    ? {
+        choices: spineChoiceLabels(ensurePyoaSpine(working)),
+        regenerated: false,
+        rejectedCount: 0,
+      }
+    : await resolvePipelineChoices({
+        gmText: narrativeSource,
+        state: working,
+        loreCards: [],
+        settings,
+        lastPlayerAction: playerInput,
+      });
   const storyProse = normalizeStoryCorpus(cleanText);
-  let finalChoices = padChoicesToCount(
-    pipeline.choices.length ? pipeline.choices : [],
-    working,
-    storyProse,
-    3,
-    playerInput
-  );
-  {
+  let finalChoices = authoredBook
+    ? pipeline.choices
+    : padChoicesToCount(
+        pipeline.choices.length ? pipeline.choices : [],
+        working,
+        storyProse,
+        3,
+        playerInput
+      );
+  if (!authoredBook) {
     const govChoices = filterGovernanceChoices(working, finalChoices, playerInput);
     finalChoices = govChoices.choices;
     if (govChoices.notes.length) warden.notes.push(...govChoices.notes);
+  } else {
+    const book = authoredPageText(working) || authoredBeat;
+    if (book) cleanText = book;
+    finalChoices = spineChoiceLabels(ensurePyoaSpine(working));
   }
 
   const nextTurn = state.turn + 1;

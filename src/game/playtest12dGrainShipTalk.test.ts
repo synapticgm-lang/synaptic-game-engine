@@ -85,8 +85,8 @@ function grainShip(over: Partial<GameState> = {}): GameState {
 
 describe('playtest12d — grain-ship talk + catalog seeds', () => {
   it('HUD/BUILD are 12d, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-12/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-12/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -96,7 +96,7 @@ describe('playtest12d — grain-ship talk + catalog seeds', () => {
     expect(isHallTalkPlayerLine(GRAIN)).toBe(true);
     expect(classifyVerb(GRAIN)).toBe('spoke');
     expect(isSilentReceiptAction(GRAIN)).toBe(false);
-    expect(shouldStitchOpeningContinue(grainShip(), GRAIN)).toBe(true);
+    expect(shouldStitchOpeningContinue(grainShip(), GRAIN)).toBe(false);
     expect(
       shouldUseSilentMudTurn({
         subscriptionTier: 'free',

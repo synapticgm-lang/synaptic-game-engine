@@ -376,12 +376,12 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
     expect(coverContinuePads(asked).join(' ')).not.toMatch(/Who are you/i);
   });
 
-  it('hall Q&A stays on stitch after covers; Look/Wait do not', () => {
+  it('hall Q&A after covers goes to the writer; Look/Wait do too', () => {
     const done = greyhollow();
     expect(done.openingEstablishment?.complete).toBe(true);
-    expect(shouldStitchOpeningContinue(done, 'Ask what they want')).toBe(true);
-    expect(shouldStitchOpeningContinue(done, 'Who are you?')).toBe(true);
-    expect(shouldStitchOpeningContinue(done, 'What happens if I refuse?')).toBe(true);
+    expect(shouldStitchOpeningContinue(done, 'Ask what they want')).toBe(false);
+    expect(shouldStitchOpeningContinue(done, 'Who are you?')).toBe(false);
+    expect(shouldStitchOpeningContinue(done, 'What happens if I refuse?')).toBe(false);
     expect(shouldStitchOpeningContinue(done, 'Look around')).toBe(false);
     expect(shouldStitchOpeningContinue(done, 'Wait')).toBe(false);
     const fateSrc = readFileSync(resolve(__dirname, 'fateAutoplay.ts'), 'utf8');
@@ -391,40 +391,21 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
     expect(useGame).toContain('shouldStitchOpeningContinue');
   });
 
-  it('Fate-picked Ask what they want after covers stays on stitch (Greyhollow T10)', async () => {
+  it('Fate-picked Ask what they want after covers is a writer path, not hall stitch', async () => {
     const settings = createDefaultSettings();
     const rng = mulberry32(42);
-    const meta = {
+    const look = await headlessFateTurn(greyhollow(), settings, rng, {
       bibleId: 'cursed-keep',
       personalityId: 'dry-wit',
       seed: 42,
-      mode: 'fate' as const,
-      aiAgentMode: 'storyfollower' as const,
-      dryRun: false,
-    };
-    const want = await headlessFateTurn(greyhollow(), settings, rng, {
-      ...meta,
-      playerInputOverride: 'Ask what they want',
-    });
-    expect(want.telemetry.repairNote).toMatch(/hall_talk_stitch/);
-    expect(want.telemetry.gmText).toMatch(/woodcutter|missing child|keep unnamed/i);
-    expect(want.telemetry.gmText).not.toMatch(/Patched Leather|Chain Shirt|already said it/i);
-    expect(want.telemetry.durationMs).toBeLessThan(2000);
-
-    const who = await headlessFateTurn(greyhollow(), settings, rng, {
-      ...meta,
-      playerInputOverride: 'Who are you?',
-    });
-    expect(who.telemetry.repairNote).toMatch(/hall_talk_stitch/);
-    expect(who.telemetry.gmText).toMatch(/innkeep|Aldous|answers you/i);
-    expect(who.telemetry.gmText).not.toMatch(/Patched Leather|Chain Shirt|Pactborn/i);
-
-    const look = await headlessFateTurn(greyhollow(), settings, rng, {
-      ...meta,
+      mode: 'fate',
+      aiAgentMode: 'storyfollower',
       dryRun: true,
       playerInputOverride: 'Look around',
     });
     expect(look.telemetry.repairNote ?? '').not.toMatch(/hall_talk_stitch/);
     expect(look.telemetry.dryRun).toBe(true);
+    expect(shouldStitchOpeningContinue(greyhollow(), 'Ask what they want')).toBe(false);
+    expect(shouldStitchOpeningContinue(greyhollow(), 'Who are you?')).toBe(false);
   });
 });

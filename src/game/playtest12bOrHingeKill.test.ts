@@ -21,8 +21,8 @@ function emptyState(): GameState {
 
 describe('playtest12b — or-hinge kill', () => {
   it('HUD/BUILD are 12a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-12/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-12/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

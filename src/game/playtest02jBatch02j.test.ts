@@ -91,6 +91,13 @@ describe('Batch 02j — Lock B: CAST named-only', () => {
       bibleId: 'summoned-pact',
       campaignBibleId: 'summoned-pact',
       sceneFacts: emptySceneFacts(3),
+      openingEstablishment: {
+        pending: [],
+        answers: {},
+        complete: true,
+        sceneWritten: true,
+        pickedHook: 'Who is here / who summoned: Father Karel\nLocation: Lowmarket stall',
+      },
     };
     const harvested = harvestNarrativeIntoLedger(
       state,
