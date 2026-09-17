@@ -1,18 +1,208 @@
-/** Edge stub — intent streak for SNAPSHOT stagnation rail. */
+/**
+ * beatFingerprint — content hash of accepted prose so retries cannot resample the same beat.
+ */
+
+/** Normalize prose into 4+ letter tokens (full set — not the every-3rd sketch). */
+export function normalizeProseTokens(prose: string): string[] {
+  const norm = (prose ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/["“”']/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return norm.match(/[a-z]{4,}/g) ?? [];
+}
+
+/** Jaccard on the full 4+ letter token sets (sentence-scale; not the beat sketch). */
+export function tokenJaccard(a: string, b: string): number {
+  const A = new Set(normalizeProseTokens(a));
+  const B = new Set(normalizeProseTokens(b));
+  if (!A.size || !B.size) return 0;
+  let inter = 0;
+  for (const t of A) if (B.has(t)) inter++;
+  const union = A.size + B.size - inter;
+  return union ? inter / union : 0;
+}
+
+export function beatFingerprint(prose: string): string {
+  const norm = (prose ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/["“”']/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 1200);
+  // FNV-1a 32-bit
+  let h = 0x811c9dc5;
+  for (let i = 0; i < norm.length; i++) {
+    h ^= norm.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  // Token sketch for Jaccard
+  const tokens = norm.match(/[a-z]{4,}/g) ?? [];
+  const sketch = tokens.filter((_, i) => i % 3 === 0).slice(0, 24).join(',');
+  return `${(h >>> 0).toString(16)}:${sketch}`;
+}
+
+function sketchSet(fp: string): Set<string> {
+  const sketch = fp.split(':')[1] ?? '';
+  return new Set(sketch.split(',').filter(Boolean));
+}
+
+/** Jaccard similarity of token sketches (0–1). */
+export function beatSimilarity(a: string, b: string): number {
+  if (!a || !b) return 0;
+  if (a.split(':')[0] === b.split(':')[0]) return 1;
+  const A = sketchSet(a);
+  const B = sketchSet(b);
+  if (!A.size || !B.size) return 0;
+  let inter = 0;
+  for (const t of A) if (B.has(t)) inter++;
+  const union = A.size + B.size - inter;
+  return union ? inter / union : 0;
+}
+
+/** True when draft is too close to a recent accepted beat or discarded speculative take. */
+export function isSameBeat(
+  draftProse: string,
+  recentFingerprints: string[],
+  threshold = 0.72
+): boolean {
+  const fp = beatFingerprint(draftProse);
+  return recentFingerprints.some((r) => beatSimilarity(fp, r) >= threshold);
+}
+
+/** Max Jaccard vs recent fingerprints (0–1). */
+export function maxBeatSimilarity(draftProse: string, recentFingerprints: string[]): number {
+  if (!draftProse || !recentFingerprints.length) return 0;
+  const fp = beatFingerprint(draftProse);
+  let max = 0;
+  for (const r of recentFingerprints) {
+    const s = beatSimilarity(fp, r);
+    if (s > max) max = s;
+  }
+  return max;
+}
+
+/** Near-verbatim paragraph clone — always force novelty retry (even Free). */
+export function isNearClone(
+  draftProse: string,
+  recentFingerprints: string[],
+  threshold = 0.85
+): boolean {
+  return maxBeatSimilarity(draftProse, recentFingerprints) >= threshold;
+}
+
+export function buildBeatNoveltyRetryBlock(recentFingerprints: string[]): string {
+  return `=== BEAT NOVELTY RETRY (BINDING) ===
+Your prior draft resampled a beat already used this session (same sensory collage / dialogue stub).
+Write NEW concrete details — different sensory focus, different spoken content, different local result.
+Do not reuse prior sentences. Do not soft-reset the scene.
+If the player is stalling (same ask / listen / browse), inject a concrete interrupt: new arrival, expired offer, distant danger, or quest-relevant beat.
+Recent beat ids (do not echo): ${recentFingerprints.slice(-3).join(' | ') || 'none'}
+================================================`;
+}
+
+/** Normalize a player line into a coarse intent key for stagnation tracking. */
+export function normalizePlayerIntentKey(input: string): string {
+  const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!s) return 'empty';
+  if (/\bearth junk\b/.test(s)) return 'ask_earth_junk';
+  if (/\blisten\b.*\b(corner|table|bar)\b|\bcorner table\b/.test(s)) return 'listen_corner';
+  if (/\bbrowse\b.*\bstall\b|\bnearest stall\b/.test(s)) return 'browse_stall';
+  if (/\bwalk away\b|\bgo another direction\b/.test(s)) return 'walk_away';
+  if (/\bchange position\b/.test(s)) return 'change_position';
+  if (/\bwait(?:\s+and\s+watch)?\b|\bstand around\b|\bdo nothing\b|\bready yourself\b/.test(s)) {
+    return 'wait_watch';
+  }
+  if (/\bscout(?:\s+for\s+danger)?\b|\bscout the (?:area|room|exit|cell)\b/.test(s)) {
+    return 'scout_danger';
+  }
+  if (/\b(inspect|examine|check|study|look around|get (?:your )?bearings)\b/.test(s) && !/\bstatus\b/.test(s)) {
+    return `inspect_${s.slice(0, 24).replace(/\W+/g, '_')}`;
+  }
+  if (/\bcheck (?:the )?(?:contents of )?your (?:bag|pack|pockets?)\b|\bcheck your bag\b/.test(s)) {
+    return 'check_bag';
+  }
+  if (/\btravel (?:to|toward|towards)\b|\bgo to\b|\bhead to\b|\bmove to\b/.test(s)) {
+    const m = s.match(/\b(?:travel (?:to|toward|towards)|go to|head to|move to)\s+(?:the\s+)?(.+)$/);
+    return `travel_${(m?.[1] ?? 'hub').slice(0, 24).replace(/\W+/g, '_')}`;
+  }
+  return s.slice(0, 48);
+}
+
+/** Collapse destination-specific travel/inspect keys into loiter families. */
+export function loiterFamilyKey(intentKey: string): string | null {
+  if (!intentKey || intentKey === 'empty') return null;
+  if (intentKey.startsWith('travel_')) return 'travel';
+  if (intentKey.startsWith('inspect_')) return 'inspect';
+  if (intentKey === 'scout_danger') return 'scout';
+  if (
+    intentKey === 'wait_watch' ||
+    intentKey === 'walk_away' ||
+    intentKey === 'change_position' ||
+    intentKey === 'listen_corner' ||
+    intentKey === 'browse_stall'
+  ) {
+    return intentKey === 'listen_corner' || intentKey === 'browse_stall' ? 'pad' : intentKey;
+  }
+  return null;
+}
+
+/** Coerce a log `content` field to text. Objects (CAST/state leaks) never walk as strings. */
+export function coerceLogContent(content: unknown): string {
+  return typeof content === 'string' ? content : '';
+}
+
+export type IntentStreak = { key: string; count: number };
+
+/** Max log entries walked for streak (consecutive-from-end; older rows cannot extend the streak). */
+const STREAK_WALK_CAP = 80;
+
+/**
+ * 29c — consecutive travel/wait/inspect/change-position intents (hubs may differ).
+ * Catches Ward Rest↔Ashline and Camp↔Waystation triangles that never hit same-key streak≥5.
+ */
+export function countLoiterFamilyStreak(state: {
+  log?: Array<{ role?: string; content?: unknown }>;
+}): IntentStreak {
+  const log = state.log ?? [];
+  const start = Math.max(0, log.length - STREAK_WALK_CAP);
+  let family = '';
+  let count = 0;
+  for (let i = log.length - 1; i >= start; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    const raw = normalizePlayerIntentKey(coerceLogContent(e.content));
+    const fam = loiterFamilyKey(raw);
+    if (!fam) break;
+    // Any loiter family continues the loiter streak (travel A → travel B still counts)
+    if (!family) {
+      family = 'loiter';
+      count = 1;
+      continue;
+    }
+    count += 1;
+  }
+  return { key: family || 'empty', count };
+}
+
+/** Count consecutive identical intent keys from the end of the player log. */
 export function countPlayerIntentStreak(state: {
   log?: Array<{ role?: string; content?: unknown }>;
-}): { key: string; count: number } {
+}): IntentStreak {
   const log = state.log ?? [];
-  const start = Math.max(0, log.length - 80);
+  const start = Math.max(0, log.length - STREAK_WALK_CAP);
   let key = '';
   let count = 0;
   for (let i = log.length - 1; i >= start; i--) {
     const e = log[i];
     if (e?.role !== 'player') continue;
-    const raw = typeof e.content === 'string' ? e.content : '';
-    const k = raw.toLowerCase().slice(0, 48);
+    const k = normalizePlayerIntentKey(coerceLogContent(e.content));
     if (!key) {
-      key = k || 'empty';
+      key = k;
       count = 1;
       continue;
     }
