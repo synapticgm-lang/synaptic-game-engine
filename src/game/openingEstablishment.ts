@@ -6,6 +6,7 @@ import type { EngineMode, GameState, Item, LogEntry, OpeningEstablishment, Setti
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
+import { hookCtxFromState, resolveLitRpgFolkStamp, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
 import { isPlayerQuestion } from './actionResolution';
 import { pickQuickResponseButtons, supportsQuickResponseButtons, generateQuickResponse } from './quickResponseButtons';
@@ -818,13 +819,15 @@ export function applyHarvestedOpeningCovers(
 
 export function litrpgOpeningSystemPing(state: GameState): string[] {
   if (state.engineMode !== 'litrpg') return [];
+  const stamp = resolveLitRpgFolkStamp(state);
   if (state.campaignBibleId === 'summoned-pact') {
     return [
       'Registration incomplete',
-      'Stamp: Pactborn / Calamity Mark — unresolved',
+      `Stamp: ${stamp ?? 'Pactborn'} / Calamity Mark — unresolved`,
       'Gift channel: unresolved — Appraisal names it',
     ];
   }
+  if (stamp) return ['Interface online', `Stamp: ${stamp}`, 'Awaiting designation'];
   return ['Interface online', 'Awaiting designation'];
 }
 
@@ -1502,7 +1505,7 @@ export function shortCardStayLeave(state: GameState): string {
 
 export function openingSpokenIdentityQuote(
   who: string,
-  ctx?: { location?: string; engineMode?: string; hay?: string }
+  ctx?: { location?: string; engineMode?: string; hay?: string; stamp?: string }
 ): string {
   const blob = `${who} ${ctx?.location ?? ''} ${ctx?.hay ?? ''} ${ctx?.engineMode ?? ''}`;
   if (/\bpanel\b/i.test(who)) return '';
@@ -1523,8 +1526,9 @@ export function openingSpokenIdentityQuote(
     ctx?.engineMode === 'litrpg'
     && /\b(pactborn|calamity mark|sevenfold|summoning circle|cathedral)\b/i.test(blob);
   if (/\bpriest|chanter|robed\b/i.test(who)) {
+    const stamp = ctx?.stamp?.trim() || 'Pactborn';
     return litrpgMark
-      ? '"Pactborn. The Mark looks wrong. I am the one who has to write what you are."'
+      ? `"The Mark looks wrong. ${stamp}. I am the one who has to write what you are."`
       : '"I asked your name. I am still in this room."';
   }
   return '"I am still in this room. That is the name I will give you."';
@@ -1532,7 +1536,7 @@ export function openingSpokenIdentityQuote(
 
 export function openingWhoAskLineFromLabel(
   who: string,
-  opts?: { nameLocked?: boolean; quote?: string; location?: string; engineMode?: string; hay?: string }
+  opts?: { nameLocked?: boolean; quote?: string; location?: string; engineMode?: string; hay?: string; stamp?: string }
 ): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
@@ -1544,6 +1548,7 @@ export function openingWhoAskLineFromLabel(
       location: opts?.location,
       engineMode: opts?.engineMode,
       hay: opts?.hay,
+      stamp: opts?.stamp,
     });
   if (quote) return `${head} ${verb} you. ${quote}`;
   if (opts?.nameLocked) return `${head} ${verb} you. They already have your name.`;
@@ -1554,10 +1559,12 @@ export function openingWhoAskLine(state: GameState): string {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   const nameLocked = !!(name && isLockablePcName(name) && !/unknown survivor/i.test(name));
   const who = openingCastLabel(state);
+  const stamp = resolveLitRpgFolkStamp(state);
   const quote = openingSpokenIdentityQuote(who, {
     location: state.currentLocation,
     engineMode: state.engineMode,
     hay: openingSceneHay(state),
+    stamp,
   });
   return openingWhoAskLineFromLabel(who, {
     nameLocked,
@@ -1565,6 +1572,7 @@ export function openingWhoAskLine(state: GameState): string {
     location: state.currentLocation,
     engineMode: state.engineMode,
     hay: openingSceneHay(state),
+    stamp,
   });
 }
 
@@ -1679,6 +1687,7 @@ export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' |
     location: state.currentLocation,
     engineMode: state.engineMode,
     hay: openingSceneHay(state),
+    stamp: resolveLitRpgFolkStamp(state),
   });
   if (/\bmilitia\b/i.test(who)) {
     return pickAlreadyToldVariant(state, [
@@ -2754,7 +2763,10 @@ export async function applyOpeningAnswer(
       },
       quests: seedLocalStarterQuest(
         nextState.quests ?? [],
-        resolveActiveCampaignBible(nextState)?.starterQuests ?? [],
+        withMatchedLitRpgSpine(
+          resolveActiveCampaignBible(nextState)?.starterQuests ?? [],
+          hookCtxFromState(nextState)
+        ),
         isAloneArrivalOpening(nextState)
       ),
       pendingGeneratedOpening: false,

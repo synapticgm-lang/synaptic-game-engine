@@ -1,0 +1,127 @@
+Here are the main-quest spines for the requested LitRPG bibles, following your constraints for uniqueness, brevity, and formatting.
+1. The Summoned Pact
+- bible_id: summoned-pact
+- spine_id: cathedral-royal-vanguard
+- title: The Crown’s Meat Shield
+- opening_family: Cathedral
+- who_wants_what: High Priest Arus wants you to act as a frontline shock-trooper for the Crown’s endless war against the encroaching rot.
+- first_objective: Clear the infestation in the cathedral’s lower crypts to prove your baseline stats.
+- refuse_or_walk_away: Execution for heresy, or so they claim; fleeing means living as a hunted apostate.
+- map_pin: Consecrated Sanctuary
+- folk_or_stamp_alts: Star-Touched, The Drafted, Mana-Thrall
+- three_beats: 1. Arus reads the binding terms of your summoning. 2. Survive the crypt rats and light the brazier. 3. Receive your first copper stipend, minus a "housing tax."
+- do_not: Do not involve ancient ruins or broken tethers; this is a highly organized, institutionalized draft.
+- bible_id: summoned-pact
+- spine_id: alone-ruin-tether
+- title: Echoes of a Dead Summoner
+- opening_family: Alone Ruin
+- who_wants_what: A recorded magical echo of the dead mage who summoned you wants you to retrieve their research before rivals arrive.
+- first_objective: Find the mage's hidden vault key amidst the rubble of their destroyed sanctum.
+- refuse_or_walk_away: The echo slowly fades, leaving you with no guidance in a hostile, unfamiliar wilderness.
+- map_pin: Collapsed Mage Tower
+- folk_or_stamp_alts: Void-Spit, The Masterless, Anomaly
+- three_beats: 1. The projection begs you to secure their legacy. 2. Dig through cursed rubble to find the brass key. 3. Unlock the vault to get your first weapon, but it binds to your soul (cannot unequip).
+- do_not: Do not include standing armies, royalty, or active courts.
+- bible_id: summoned-pact
+- spine_id: war-camp-mercenary
+- title: Blood for the Ledger
+- opening_family: War Camp
+- who_wants_what: Commander Vane wants you to join the Iron Hounds mercenary company to pay off the massive mana-debt incurred by pulling you here.
+- first_objective: Survive the gauntlet pit against a captured goblin to earn your unit patch.
+- refuse_or_walk_away: You are stripped of your starting gear and tossed out the front gates into active enemy territory.
+- map_pin: Mud-Torn Garrison
+- folk_or_stamp_alts: Debt-Bound, Camp-Meat, Iron-Rookie
+- three_beats: 1. Vane hands you a bill for your summoning materials. 2. Kill the goblin in the pit. 3. Get your unit patch and first meal, but take a permanent scar (stamina penalty for 1 day).
+- do_not: Do not involve holy quests or dead mages; this is pure, gritty economics of war.
+- bible_id: summoned-pact
+- spine_id: hollow-transit-glitch
+- title: The Accidental Passenger
+- opening_family: Transit Transit/Wagon
+- who_wants_what: The terrified caravan merchant, Elara, wants you to guard her cargo because the summoning spell misfired and landed you on her wagon during an ambush.
+- first_objective: Repel the three highwaymen currently attempting to board the moving wagon.
+- refuse_or_walk_away: Elara kicks you off the wagon, leaving you stranded on the perilous Merchant's Road.
+- map_pin: Moving Caravan Wagon
+- folk_or_stamp_alts: Stowaway, Rift-Fallen, Bycatch
+- three_beats: 1. Elara screams at you to grab a sword and help. 2. Defeat the boarding bandits. 3. Earn passage to the next town and a rusty blade, but forfeit any claim to the actual cargo.
+- do_not: Do not involve intentional summoners or debts; this was a pure cosmic accident.
+2. Hero Awakening
+- bible_id: hero-awakening
+- spine_id: village-ledger-debt
+- title: The Ancestral Debt
+- opening_family: Wake-Ledger / Rural
+- who_wants_what: The Village Elder wants you to honor the awakening of your System Class by clearing the generation-old monster bounty your family owes.
+- first_objective: Hunt three razor-boars in the perimeter woods to secure the town's winter meat.
+- refuse_or_walk_away: Your family is exiled from the safety of the village wards.
+- map_pin: Elder’s Hearth
+- folk_or_stamp_alts: Hearth-Born, Ledger-Bound, Scion
+- three_beats: 1. Elder explains the blood-debt triggered by your awakening. 2. Hunt the boars and harvest the meat. 3. Receive your grandfather’s armor, but lose your standing with the local merchant guild for taking so long.
+- do_not: Do not make the player a foreigner or out-of-worlder; they are a local who just woke up to the System.
+- bible_id: hero-awakening
+- spine_id: academy-flunk-out
+- title: Prove Your Class
+- opening_family: Academy
+- who_wants_what: Instructor Kael wants you to pass the remedial combat exam immediately, as your delayed awakening nearly got you expelled.
+- first_objective: Complete the wooden dummy obstacle course in under two minutes without using prohibited spells.
+- refuse_or_walk_away: Immediate expulsion and stripping of your Academy status and dormitory.
+- map_pin: Training Yard Beta
+- folk_or_stamp_alts: Late-Bloomer, The Remedial, Crest-Bearer
+- three_beats: 1. Kael hands you an expulsion notice with one loophole. 2. Run the obstacle course perfectly. 3. Keep your dorm key, but you are assigned the worst chore duties for a month.
+- do_not: Do not involve family debts or ancient ruins; keep it strictly institutional and academic.
+- bible_id: hero-awakening
+- spine_id: fallen-shrine-inheritance
+- title: The Forgotten Patron
+- opening_family: Alone Ruin / Shrine
+- who_wants_what: A forgotten local deity wants you to restore its altars using your newly awakened Class powers to prevent its total fade from existence.
+- first_objective: Clear the overgrown vines and defeat the corrupted slime occupying the primary altar.
+- refuse_or_walk_away: The deity goes silent; you receive no divine buffs, and the shrine slowly crumbles completely.
+- map_pin: Overgrown Shrine
+- folk_or_stamp_alts: God-Touched, Shrine-Keeper, The Awakened Hand
+- three_beats: 1. Hear the whisper of the fading god in your mind. 2. Purge the slime from the altar. 3. Gain a minor blessing of vitality, but the local dominant church marks you as a minor heretic.
+- do_not: Do not involve academic instructors or village elders; this is a solitary, mystical awakening.
+3. System Integration
+- bible_id: system-integration
+- spine_id: urban-office-survival
+- title: Corporate Restructuring
+- opening_family: Urban Office
+- who_wants_what: Your middle-manager, Dave, wants you to secure the stairwell so the surviving accounting team can reach the ground floor.
+- first_objective: Kill the mutated feral dogs that have taken over the 4th-floor landing.
+- refuse_or_walk_away: Dave leaves you behind, locking the department doors behind him.
+- map_pin: Cubicle Block 4A
+- folk_or_stamp_alts: Wage-Mage, Survivor, Level-1 Employee
+- three_beats: 1. Dave leverages your new "Fighter" class for group survival. 2. Bash the feral dogs with a heavy fire extinguisher. 3. Get first pick of the vending machine rations, but take the vanguard risk.
+- do_not: Do not involve wilderness survival or commuter trains; confine the early tension to the claustrophobic office building.
+- bible_id: system-integration
+- spine_id: commuter-transit-wreck
+- title: Derailment Protocol
+- opening_family: Transit
+- who_wants_what: A wounded Transit Police officer wants you to recover the medical kit from the crushed front car to save bleeding passengers.
+- first_objective: Navigate the twisted metal of the train cars and defeat the newly spawned Goblin Scavengers looting the bags.
+- refuse_or_walk_away: The passengers bleed out, and their restless, system-infected spirits haunt the tunnel.
+- map_pin: Sub-Tunnel Train Wreck
+- folk_or_stamp_alts: Commuter, Tunnel-Rat, The Unticketed
+- three_beats: 1. Officer gasps out a request for the medkit. 2. Slay the looting goblins. 3. Hand over the kit to get a police baton, but spend all your starting stamina.
+- do_not: Do not use office politics or wilderness cabins; focus on the immediate disaster of the crash.
+- bible_id: system-integration
+- spine_id: wilderness-retreat-siege
+- title: Cabin in the Woods
+- opening_family: Alone / Camp
+- who_wants_what: The park ranger wants you to help barricade the ranger station against the suddenly hyper-aggressive local wildlife.
+- first_objective: Chop 10 logs of System-infused wood from the perimeter while dodging enraged stags.
+- refuse_or_walk_away: The ranger locks you out of the reinforced cabin for the night.
+- map_pin: Ranger Station Alpha
+- folk_or_stamp_alts: Hiker, Woods-Bound, Prey
+- three_beats: 1. Ranger warns of the incoming blood-moon wildlife wave. 2. Harvest the infused wood under pressure. 3. Gain access to the safehouse, but the ranger confiscates your modern lighter.
+- do_not: Do not include urban mobs (like goblins in a subway) or office settings; keep it strictly nature-gone-wild.
+4. Gatebreak Ward
+- bible_id: gatebreak-ward
+- spine_id: border-fort-breach
+- title: Plug the Hole
+- opening_family: Border Fort
+- who_wants_what: Captain Thorne wants you to hold the eastern palisade breach against the endless swarm so the engineers can set explosives.
+- first_objective: Survive for 3 minutes against low-level Chitin-Crawlers at the broken gate.
+- refuse_or_walk_away: Court-martial and immediate demotion to unarmed bait duty.
+- map_pin: Eastern Palisade Breach
+- folk_or_stamp_alts: Ward-Grunt, Breach-Walker, Shield-Brother
+- three_beats: 1. Thorne yells the orders over the roar of the swarm. 2. Hold the line with a standard-issue spear. 3. Get paid 5 silver chits, but your armor is badly degraded from the acid spit.
+- do_not: Do not involve slums or abandoned outposts; you are part of an active, functioning military unit holding a wall.
+NEXT BIBLE: ascending-spire

@@ -374,6 +374,7 @@ import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matc
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay, applyBiomeSaneQuestSites, revealQuestsFromHubLinks } from './questPlay';
+import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -2302,7 +2303,10 @@ export function useGame() {
         const questsAfterScene = journalReady
           ? revealLocalStarterQuest(
               openingState.quests ?? [],
-              openingBible?.starterQuests ?? [],
+              withMatchedLitRpgSpine(
+                openingBible?.starterQuests ?? [],
+                hookCtxFromState(openingState)
+              ),
               isAloneArrivalOpening(openingState)
             )
           : openingState.quests ?? [];
@@ -5376,7 +5380,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const questsAfterScene = journalReady
         ? revealLocalStarterQuest(
             newState.quests ?? [],
-            openingBible?.starterQuests ?? [],
+            withMatchedLitRpgSpine(
+              openingBible?.starterQuests ?? [],
+              hookCtxFromState(newState)
+            ),
             isAloneArrivalOpening(newState)
           )
         : newState.quests ?? [];

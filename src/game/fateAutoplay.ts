@@ -204,7 +204,9 @@ import {
   questsLockedDuringOpening,
   revealQuestsFromHubLinks,
   applyBiomeSaneQuestSites,
+  revealLocalStarterQuest,
 } from './questPlay';
+import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { touchPlaceVisit } from './places';
 import { buildTurnMandate } from './sceneFocus';
 import { groundedWeaponNames, listEmptySearchTargets } from './searchContinuity';
@@ -642,7 +644,14 @@ export function buildNewGameState(opts: {
     ensureCampaignContract(
       {
         ...sealed,
-        quests: sealed.quests ?? [],
+        quests: revealLocalStarterQuest(
+          sealed.quests ?? [],
+          withMatchedLitRpgSpine(bible.starterQuests ?? [], hookCtxFromState({
+            ...sealed,
+            campaignBibleId: bible.id,
+          })),
+          aloneArrival
+        ),
         recentBeatFingerprints: [],
         stateTxLog: [],
       },

@@ -22,6 +22,7 @@ import {
   shouldStitchOpeningContinue,
 } from './openingEstablishment';
 import { shouldUseSilentMudTurn } from './freeMudPresentation';
+import { resolveLitRpgFolkStamp } from '@/data/quests/litrpgMainSpines';
 
 export type ResponsePath = 'A' | 'B' | 'C' | 'D' | 'E';
 export type WriterOutcome = 'accepted' | 'retry' | 'fallback';
@@ -63,6 +64,7 @@ export function legalAddresseeFact(state: GameState, playerInput: string): strin
     location: state.currentLocation,
     engineMode: state.engineMode,
     hay: identityHay(state),
+    stamp: resolveLitRpgFolkStamp(state),
   });
   if (hallTalkAsksWho(playerInput)) return clip(quote, 180);
   if (hallTalkAsksWant(playerInput)) {
@@ -140,11 +142,13 @@ export function spokenTalkFallback(state: GameState, playerInput: string): strin
           location: state.currentLocation,
           engineMode: state.engineMode,
           hay: identityHay(state),
+          stamp: resolveLitRpgFolkStamp(state),
         })
         ? `${who.charAt(0).toUpperCase() + who.slice(1)} answers you. ${openingSpokenIdentityQuote(who, {
             location: state.currentLocation,
             engineMode: state.engineMode,
             hay: identityHay(state),
+            stamp: resolveLitRpgFolkStamp(state),
           })}`
         : openingAlreadyToldLine(state, 'who');
   }
