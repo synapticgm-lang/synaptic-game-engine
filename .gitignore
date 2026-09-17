@@ -21,5 +21,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+scripts/ai-player-browser/runs/
 supabase/.temp/
 docs/research/pasted/gemini-activity*.txt
