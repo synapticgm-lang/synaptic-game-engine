@@ -18,6 +18,8 @@ import { KID_MODE_RULES, ADULT_MODE_RULES, NSFW_CAMPAIGN_RULES } from './content
 import { campaignIsNsfw } from './campaignNsfw.ts';
 import { formatCustomTabletopRulesForPrompt } from './customTabletopRules.ts';
 import { compileLitrpgCoreIdentity } from './openingPointerCard.ts';
+import { formatGoldShapeForPrompt } from './fluidProseRails.ts';
+import { formatLikedKeeperForPrompt } from './craftKeepers.ts';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -497,6 +499,9 @@ ${CRITICAL_DIRECTIVES}
 ═══════════════════════════════════════════════════════════════════════════
 
 ${modeBlock}
+
+${formatGoldShapeForPrompt(state.engineMode)}
+${formatLikedKeeperForPrompt(state.engineMode, state.craftKeepers)}
 
 ${TURN_STRUCTURE}
 

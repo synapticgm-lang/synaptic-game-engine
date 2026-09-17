@@ -39,6 +39,7 @@ const FILES = [
   'openingPointerCard.ts',
   'gmVoiceProfile.ts',
   'fluidProseRails.ts',
+  'craftKeepers.ts',
   'folkVoiceExpectations.ts',
   'speechActRails.ts',
   'factLocks.ts',

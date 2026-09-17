@@ -14,6 +14,7 @@ import { gmProxyTimeoutMsForState } from './errorRepairWarden';
 import { effectiveWriterTier } from './testLab';
 import { logApiLatency } from '../services/telemetryService';
 import { getAutoplayWriterOverride } from './autoplayWriter';
+import { listCraftKeepers } from './craftKeepers';
 import { buildOpeningGmPlayerInput, compactTrafficGist } from './openingPointerCard';
 import { hasHanScript } from './openRouterChat';
 
@@ -43,6 +44,10 @@ export async function callGm(
   signal?: AbortSignal,
   timeoutMs?: number
 ): Promise<GmResult> {
+  if (!state.craftKeepers?.length) {
+    const ring = listCraftKeepers();
+    if (ring.length) state = { ...state, craftKeepers: ring };
+  }
   const autoplayWriter = getAutoplayWriterOverride();
   if (autoplayWriter) {
     if (!(import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true')) {

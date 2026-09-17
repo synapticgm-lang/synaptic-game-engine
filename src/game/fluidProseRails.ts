@@ -42,7 +42,19 @@ const GLOBAL_RAILS = `=== FLUID GM PROSE RAILS (BINDING) ===
 * EARNED HANDOFF: End with playable pressure or one clear affordance. Do not spam "What do you do?" or leave numbered option lists in story prose — buttons carry choices.
 * VALUE FLOOR (EVERY PAID TURN): Advance one new concrete — a fact, tactic, cost, exit, or honest empty. Do not pad with smell/light essays to hit a word count. A short complete beat that changes the situation beats a long reprint. Soft length: a paragraph is enough when the delta is clear; set-pieces may run longer.
 * MAP / ALONE / FACTIONS: Honor SNAPSHOT, EXPLORE AUTHORITY, Crowd=none, zone threat, and faction standings. Code owns geometry and invent gates — write freely inside those facts. Atmosphere is optional seasoning, not a substitute for a delta.
+* GROUND FIRST: Open on a physical fact (wet floor, slipped boot, a plate pushed back). Never welcome the player, name destiny, or announce that choices matter.
 =====================================`;
+
+const GOLD_FENCE =
+  'GOLD SHAPE (this mode only): Copy density, verbs, and where chrome sits. Do not copy this room, these names, or this grammatical person. Honor configured PERSPECTIVE. If Kid Mode is on, keep this density and withhold gore.';
+
+/** One original beat per mode — shape only; the pointer card / packet owns the start. */
+export const MODE_GOLD_SHAPE: Record<EngineMode, string> = {
+  litrpg: `The impact felt less like hitting flesh and more like colliding with a stack of wet paving slabs, sending a shockwave up the collarbone and down the spine. The left shoulder went numb, the joint grinding as cartilage took the kinetic debt of the charge. The creature did not fly back; it buckled inward, ribcage shattering with the dry crack of a rotten fence post. A thin line of white light flickered across the left retina, burning through sweat and dust. Kinetic feedback absorbed. Structural integrity compromised: left clavicle. There was no time to check the rest of the readouts before a clawed hand locked around the bicep, cold fingers digging into the muscle like iron spikes.`,
+  dnd: `The boot slipped clean off the third rung, coated in thick black turbine grease that smeared across the leather. Ribs slammed the sharp edge of the vertical steel upright, knocking the air out in a wet wheeze. The klaxon overhead drowned the scramble as fingers clawed at frozen iron and found no purchase. Gravity took the decision, dropping three feet to the grating with a crash that rattled every tooth. The ladder is permanently out of reach now, rungs vibrating like plucked strings while the emergency shutter begins its slow metallic grind downward.`,
+  rpg: `Elena stared at the mold-spotted hardtack against her tin cup, fingers trembling over it. She did not take it. Her eyes lifted with a look of defensive pride that hardened the lines around her mouth. She pushed the plate back across the scarred wood, jaw clenched tight enough to show the bone. "I'm not a charity case, and I'm not taking the food out of your kit," she said, voice a flat dangerous whisper. She stood, snatched her wool cloak off the peg, and walked out into the freezing rain, leaving the rations untouched on the table.`,
+  pyoa: `The glass shattered with a brittle snap, spraying hot paraffin and shards across the iron plating. A wall of blue-white fire roared up, licking the damp stone ceiling and turning the corridor into a kiln. The oak beam bracing the door caught with a greedy snap, wood charring as heat warped the frame beyond repair. Behind, the tunnel roof groaned; loose shale choked the escape with a roar of falling dust. There is no going back. The air in the sealed vault is burning down to ash. Ahead through the smoke, the inner sanctum stands open, its threshold lit by a cold green glow that smells of ozone and old salt.`,
+};
 
 /** Per-mode diction — original SynapticGM wording (style inspiration only; no licensed text). */
 const ENGINE_TEMPLATES: Record<EngineMode, string> = {
@@ -76,7 +88,13 @@ Reply shape: (1) consequence of the last choice (2) authored texture (3) honest 
 Soft length: a paragraph when the delta is clear; set-pieces may run longer. Do not pad to a word count.`,
 };
 
+/** Live writer: one gold beat for the active mode. Not a hook catalog. */
+export function formatGoldShapeForPrompt(engineMode: EngineMode): string {
+  const gold = MODE_GOLD_SHAPE[engineMode] ?? MODE_GOLD_SHAPE.rpg;
+  return `${GOLD_FENCE}\n${gold}`;
+}
+
 export function formatFluidProseRailsForPrompt(engineMode: EngineMode): string {
   const engine = ENGINE_TEMPLATES[engineMode] ?? ENGINE_TEMPLATES.rpg;
-  return `${GLOBAL_RAILS}\n\n${formatModeStoryAuthorityLine(engineMode)}\n\n${engine}`;
+  return `${GLOBAL_RAILS}\n\n${formatModeStoryAuthorityLine(engineMode)}\n\n${engine}\n\n${formatGoldShapeForPrompt(engineMode)}`;
 }

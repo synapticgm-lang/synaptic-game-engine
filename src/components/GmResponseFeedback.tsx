@@ -8,6 +8,7 @@ import {
 } from '@/services/gmFeedbackService';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { noteThumbsDownFeedback } from '@/game/craftBookCompiler';
+import { noteThumbsUpKeeper } from '@/game/craftKeepers';
 
 interface Props {
   saveId: string;
@@ -97,7 +98,15 @@ export function GmResponseFeedback({
     setSaving(false);
     
     if (result.ok) {
-      if (type === 'down') noteThumbsDownFeedback(turnNumber);
+      if (type === 'negative') noteThumbsDownFeedback(turnNumber);
+      if (type === 'positive') {
+        noteThumbsUpKeeper({
+          mode: gameMode,
+          story: gmStory,
+          playerAction,
+          turn: turnNumber,
+        });
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } else {
