@@ -26,7 +26,7 @@ import { seedBibleNpcRoster } from './npcMemory';
 import { pickAuthoredTopicLine } from './manusTopicBanks';
 import { legalAddresseeFact, spokenTalkFallback } from './talkEnvelope';
 import { SUMMONED_PACT_HUBS, CURSED_KEEP_HUBS, SALT_ROAD_HUBS } from './outdoorHubs';
-import { seedLocalStarterQuest } from './questPlay';
+import { revealQuestsFromBanks, seedLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
 import type { GameState } from './types';
 
 function openedPact(partial: Partial<GameState> = {}): GameState {
@@ -52,8 +52,8 @@ function openedPact(partial: Partial<GameState> = {}): GameState {
 
 describe('playtest17c — Manus honest leftover', () => {
   it('HUD/BUILD are 17c, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-17c');
-    expect(BUILD_STAMP).toBe('2026-09-17c');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-17d');
+    expect(BUILD_STAMP).toBe('2026-09-17d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -129,5 +129,20 @@ describe('playtest17c — Manus honest leftover', () => {
     expect(SUMMONED_PACT_HUBS.find((h) => h.id === 'sp-hub-harbor')?.linkedQuestIds).toContain('sp-quest-harbor-harker');
     expect(CURSED_KEEP_HUBS.find((h) => h.id === 'ck-hub-gate')?.linkedQuestIds).toContain('ck-quest-dain-watch');
     expect(SALT_ROAD_HUBS.find((h) => h.id === 'sr-hub-waystation')?.linkedQuestIds).toContain('sr-quest-yara-page');
+  });
+
+  it('Thornferry leftover sides reveal from HERE / CAST, not hubs', () => {
+    const seeded = seedLocalStarterQuest([], thornferryRoad.starterQuests);
+    expect(seeded.find((q) => q.id === 'tf-quest-1')?.type ?? 'main').toBe('main');
+    expect(seeded.find((q) => q.id === 'tf-quest-ferry-debt')?.type).toBe('side');
+    expect(seeded.find((q) => q.id === 'tf-quest-clerk-copy')?.status).toBe('hidden');
+    const locked = syncQuestsFromPlay(seeded, [], 'the mill landing at Thornferry', { locked: true });
+    expect(locked.find((q) => q.id === 'tf-quest-ferry-debt')?.revealed).toBeFalsy();
+    const here = revealQuestsFromBanks(seeded, 'the mill landing at Thornferry');
+    expect(here.find((q) => q.id === 'tf-quest-ferry-debt')?.revealed).toBe(true);
+    expect(here.find((q) => q.id === 'tf-quest-ferry-debt')?.status).toBe('active');
+    const clerk = revealQuestsFromBanks(seeded, 'Orin Quill offers a duplicate seal');
+    expect(clerk.find((q) => q.id === 'tf-quest-clerk-copy')?.revealed).toBe(true);
+    expect(clerk.find((q) => q.id === 'tf-quest-1')?.revealed).toBeFalsy();
   });
 });

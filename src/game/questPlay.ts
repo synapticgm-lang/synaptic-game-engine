@@ -310,6 +310,25 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
   },
   // Cursed Keep
   {
+    questId: 'tf-quest-ferry-debt',
+    patterns: [
+      /\btomas\s+reed\b/i,
+      /\bmill\s+landing\b/i,
+      /\bferry\s+rope\b/i,
+      /\blast\s+crossing\b/i,
+      /\bthornferry\b/i,
+    ],
+  },
+  {
+    questId: 'tf-quest-clerk-copy',
+    patterns: [
+      /\borin\s+quill\b/i,
+      /\bduplicate\s+seal\b/i,
+      /\bmillstone\s+seal\b/i,
+      /\bpell'?s\s+(?:visiting\s+)?clerk\b/i,
+    ],
+  },
+  {
     questId: 'ck-quest-2',
     patterns: [
       /\bfather\s+aldous\b/i,
@@ -382,6 +401,8 @@ const QUEST_SEED_LOCATIONS: Record<string, string> = {
   'ck-quest-2': 'Greyhollow Church',
   'ck-quest-3': "Mira's Apothecary",
   'salt-road-heist-quest-1': 'Salt Road Waystation',
+  'tf-quest-ferry-debt': 'the mill landing at Thornferry',
+  'tf-quest-clerk-copy': 'the mill landing at Thornferry',
 };
 
 /** Alone Summoned Pact starter — no handlers to hear yet. */
@@ -763,7 +784,7 @@ export function mainSpineQuest(state: GameState): Quest | null {
   const visible = visibleJournalQuests(state).filter((q) => q.status === 'active');
   if (!visible.length) return null;
   return (
-    visible.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt)-spine-/.test(q.id))
+    visible.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht)-spine-/.test(q.id))
     ?? visible.find(
       (q) =>
         q.id === 'sp-quest-1'
@@ -870,7 +891,7 @@ export function revealLocalStarterQuest(
   const extra = adapted.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   const pool = [...quests, ...extra];
   const first =
-    pool.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt)-spine-/.test(q.id))
+    pool.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht)-spine-/.test(q.id))
     ?? pool.find((q) => q.id === 'si-quest-1' || /first blood/i.test(q.name))
     ?? pool.find((q) => q.id === 'sp-quest-1')
     ?? pool.find((q) => (q.recommendedLevel ?? 1) <= 1 && (q.type === 'main' || !q.type));

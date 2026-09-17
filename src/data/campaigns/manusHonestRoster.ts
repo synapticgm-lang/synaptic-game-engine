@@ -41,8 +41,8 @@ export const MANUS_TF_NPCS: KeyNPC[] = [
 ];
 
 export const MANUS_TF_QUESTS: StarterQuest[] = [
-  { id: 'tf-quest-ferry-debt', title: 'Ferry Debt', description: 'Tomas Reed wants a signature or a favor before the last crossing.', recommendedLevel: 1, objectives: ['Find Tomas Reed at the mill landing', 'Sign, work, or refuse the debt', 'Cross or wait'], rewards: 'A crossing — or a late ferry' },
-  { id: 'tf-quest-clerk-copy', title: 'Clerk’s Copy', description: 'Orin Quill offers a duplicate Millstone seal. Wren will remember who you told.', recommendedLevel: 1, objectives: ['Hear Orin’s offer', 'Take, refuse, or expose the copy', 'Tell Wren or keep it'], rewards: 'A forged path — or a cleaner one' },
+  { id: 'tf-quest-ferry-debt', title: 'Ferry Debt', description: 'Tomas Reed wants a signature or a favor before the last crossing.', recommendedLevel: 1, objectives: ['Find Tomas Reed at the mill landing', 'Sign, work, or refuse the debt', 'Cross or wait'], rewards: 'A crossing — or a late ferry', type: 'side' },
+  { id: 'tf-quest-clerk-copy', title: 'Clerk’s Copy', description: 'Orin Quill offers a duplicate Millstone seal. Wren will remember who you told.', recommendedLevel: 1, objectives: ['Hear Orin’s offer', 'Take, refuse, or expose the copy', 'Tell Wren or keep it'], rewards: 'A forged path — or a cleaner one', type: 'side' },
 ];
 
 export const MANUS_SR_NPCS: KeyNPC[] = [

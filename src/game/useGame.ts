@@ -3960,7 +3960,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let updatedQuests = syncQuestsFromPlay(
         eventsToQuestUpdates(events, workingState.quests ?? [], nextTurn),
         mergedSystemLog,
-        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}`,
+        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}\n${workingState.currentLocation ?? ''}\n${(workingState.sceneFacts?.present ?? []).join(' ')}`,
         { locked: questsLockedDuringOpening(liveCurrent) }
       );
       updatedQuests = applyBiomeSaneQuestSites(workingState, updatedQuests);

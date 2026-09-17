@@ -1543,7 +1543,7 @@ Do NOT print dice notation or CODE ENFORCED.
     syncQuestsFromPlay(
       eventsToQuestUpdates(events, working.quests ?? [], nextTurn),
       gmSystemLog,
-      `${playerInput}\n${cleanText}`,
+      `${playerInput}\n${cleanText}\n${working.currentLocation ?? ''}\n${(working.sceneFacts?.present ?? []).join(' ')}`,
       { locked: questsLockedDuringOpening(state) }
     )
   );

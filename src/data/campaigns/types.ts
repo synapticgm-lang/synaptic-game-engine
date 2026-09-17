@@ -36,6 +36,7 @@ export interface StarterQuest {
   recommendedLevel: number;
   objectives: string[];
   rewards: string;
+  type?: 'main' | 'side' | 'faction';
 }
 
 export type OpeningPromptKind = 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';

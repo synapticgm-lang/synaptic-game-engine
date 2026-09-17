@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-17c';
+export const HUD_BUILD_STAMP = '2026-09-17d';
 const HUD_BUILD_TITLE =
-  'Manus honest catalog, roster, and talk leftover';
+  'Story RPG spines and Thornferry here-reveal';
 
 interface Props {
   state: GameState;
