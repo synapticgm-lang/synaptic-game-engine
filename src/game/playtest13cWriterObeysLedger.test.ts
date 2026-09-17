@@ -77,8 +77,6 @@ function crown(over: Partial<GameState> = {}): GameState {
   };
 }
 
-const LINES = [SIGN_READ, 'Wait', 'Who are you', 'Look around'] as const;
-
 describe('playtest13c — writer obeys the ledger', () => {
   it('HUD/BUILD are 13c, Mid writer OFF', () => {
     expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
@@ -86,10 +84,10 @@ describe('playtest13c — writer obeys the ledger', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('Who / Look / Wait / sign-the-book still callGm, never Silent or hall stitch', () => {
+  it('Look / Wait / sign-the-book still callGm; first Who hall-stitches (17f)', () => {
     const state = crown();
     const callGm = vi.fn();
-    for (const line of LINES) {
+    for (const line of [SIGN_READ, 'Wait', 'Look around'] as const) {
       expect(shouldStitchOpeningContinue(state, line)).toBe(false);
       expect(
         shouldUseSilentMudTurn({
@@ -101,7 +99,9 @@ describe('playtest13c — writer obeys the ledger', () => {
       expect(storyBeatWriterPath(state, line)).toBe('callGm');
       callGm(line);
     }
-    expect(callGm).toHaveBeenCalledTimes(4);
+    expect(shouldStitchOpeningContinue(state, 'Who are you')).toBe(true);
+    expect(storyBeatWriterPath(state, 'Who are you')).toBe('page1-stitch');
+    expect(callGm).toHaveBeenCalledTimes(3);
   });
 
   it('writer packet lists card CAST only — Lene, not Orel', () => {

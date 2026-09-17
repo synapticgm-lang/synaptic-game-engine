@@ -108,13 +108,13 @@ describe('playtest10f — treaty tent one-line lock', () => {
     expect(useGame).not.toMatch(/keepSentLineOnFail\(contentSanitized/);
   });
 
-  it('Ask what they want is hall talk for pads, but not a cover stitch after name lock', () => {
+  it('Ask what they want is hall talk; first/second still stitch (17f), name-give on cover stitches', () => {
     expect(hallTalkAsksWant('Ask what they want')).toBe(true);
     expect(hallTalkAsksWant('Ask Wren Holt what they want')).toBe(false);
     expect(isOpeningHallTalkTurn(namedJax(), 'Ask what they want')).toBe(true);
-    expect(shouldStitchOpeningContinue(namedJax(), 'Ask what they want')).toBe(false);
-    expect(shouldStitchOpeningContinue(namedJax(), 'Where am whats going on')).toBe(false);
-    expect(shouldStitchOpeningContinue(treaty(), 'My name is Jax')).toBe(false);
+    expect(shouldStitchOpeningContinue(namedJax(), 'Ask what they want')).toBe(true);
+    expect(shouldStitchOpeningContinue(namedJax(), 'Where am whats going on')).toBe(true);
+    expect(shouldStitchOpeningContinue(treaty(), 'My name is Jax')).toBe(true);
   });
 
   it('cover name+where+going-on answers the card, not a telegram only', () => {

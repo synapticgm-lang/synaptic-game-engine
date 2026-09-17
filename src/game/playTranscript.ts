@@ -7,10 +7,12 @@ import {
 } from './choicePipeline';
 import {
   coverContinuePads,
+  isCombatFamilyPad,
   isOpeningCoverTurn,
   isOpeningEstablishmentPending,
   isOpeningHallTalkTurn,
   playerEngagesOpeningCover,
+  shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
 import { isLookAroundAction } from './sandboxXp';
@@ -78,15 +80,17 @@ export function resolveOfferedChoices(state: GameState): string[] {
     const skipCoverChips =
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
     if (skipCoverChips) return [];
-    return coverContinuePads(state);
+    return coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
   }
+  const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);
   const fromState = (state.choices ?? [])
     .map((c) => sanitizeChoiceLabel(c))
     .filter((c) => c && c !== FALLBACK_CHOICE);
   const source = fromState.length ? fromState : lastGmOfferedChoices(state).map((c) => sanitizeChoiceLabel(c));
   const gmChoices = source.filter((c) => c && c !== FALLBACK_CHOICE)
-    .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse));
+    .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse))
+    .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
 
   const contextFiltered = filterInventedContextChoices(gmChoices, state);
   const compiled = compileChoices(
@@ -95,9 +99,12 @@ export function resolveOfferedChoices(state: GameState): string[] {
     undefined,
     lastPlayerActionFromLog(state) || state.sceneFacts?.lastPlayerIntent?.text
   );
-  const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)));
+  const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
+    .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
   if (deduped.length >= 3) return deduped.slice(0, 4);
-  return padChoicesToCount(deduped, state, storyProse, 3);
+  return padChoicesToCount(deduped, state, storyProse, 3).filter(
+    (c) => !starveCoverCombat || !isCombatFamilyPad(c)
+  );
 }
 
 /** Attach post-pipeline labels the player will see after this GM beat. */

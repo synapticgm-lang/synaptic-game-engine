@@ -36,6 +36,7 @@ import {
   openingWantLine,
   openingWhoAskLineFromLabel,
   playerAskedWhyPulled,
+  sanitizeLockedNameBeat,
 } from './openingEstablishment';
 
 export type EventOutcome =
@@ -1309,7 +1310,8 @@ const SHORT_ALREADY_TOLD = /already answered you|already said it|Their answer st
 function lastGoodGmBody(state: GameState): string {
   const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
   for (const e of rows) {
-    const body = String(e.content ?? '').replace(/\s+/g, ' ').trim();
+    const raw = String(e.content ?? '').replace(/\s+/g, ' ').trim();
+    const body = sanitizeLockedNameBeat(state, raw);
     if (body.length < 40) continue;
     if (isDroughtStubProse(body) || SHORT_ALREADY_TOLD.test(body)) continue;
     if (isAtmosphereOnlyBeat(body)) continue;
@@ -1337,7 +1339,7 @@ export function lastResortStoryBody(
 ): { prose: string; status: string } {
   const last = lastGoodGmBody(state);
   const card = cardPageParagraph(state);
-  let prose = last || card;
+  let prose = sanitizeLockedNameBeat(state, last || card);
   if (!prose || isDroughtStubProse(prose)) {
     const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
     const who = (packet?.answerWho || packet?.witnesses?.[0] || '').replace(/\s+/g, ' ').trim();
@@ -1462,7 +1464,9 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
       })
     );
   }
-  if (asksPanel) bits.push('The blue panel was yours — a System window, not a person.');
+  if (asksPanel && packet.engineMode === 'litrpg') {
+    bits.push('The blue panel was yours — a System window, not a person.');
+  }
   if (asksWant) {
     bits.push(
       want

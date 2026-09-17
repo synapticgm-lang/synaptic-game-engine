@@ -66,7 +66,7 @@ describe('playtest10h — watchtower start', () => {
   it('Inspect the panel is hall talk and stitches the window, not a room look', () => {
     expect(hallTalkAsksPanel('Inspect the panel')).toBe(true);
     expect(playerAskedAboutSystemPanel('Inspect the panel')).toBe(true);
-    expect(shouldStitchOpeningContinue(watchtower(), 'Inspect the panel')).toBe(false);
+    expect(shouldStitchOpeningContinue(watchtower(), 'Inspect the panel')).toBe(true);
     expect(isSilentReceiptAction('Inspect the panel')).toBe(false);
     expect(
       shouldUseSilentMudTurn({

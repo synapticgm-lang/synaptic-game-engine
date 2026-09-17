@@ -5,7 +5,7 @@
  */
 
 import type { GameState, Quest } from './types';
-import { isAloneArrivalPick, isAloneArrivalOpening } from './openingEstablishment';
+import { dropLockedNameCovers, isAloneArrivalPick, isAloneArrivalOpening } from './openingEstablishment';
 import { adaptStarterQuestsForArrival, isAtmospherePlaceName } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
 import { filterChromeFromPresent, isChromePersonToken, isHubRoleCompoundToken } from './chromeAuthority';
@@ -23,8 +23,9 @@ import { shortRoomLabel } from './mapEngine';
  *  Rev 5 = hookLock backfill. repairChromePresent still runs every Continue.
  *  Rev 6 = deny-list PC name (here / Place / you). repairDeniedPcName runs every Continue.
  *  Rev 7 = atmosphere room pins + lastKill backfill from auto-fight log.
- *  Rev 8 = Batch Y-1: strip unregistered entities from present[] (entity registry lockdown). */
-export const CURRENT_ERROR_REPAIR_REVISION = 8;
+ *  Rev 8 = Batch Y-1: strip unregistered entities from present[] (entity registry lockdown).
+ *  Rev 9 = 17f: drop leftover name/identity covers once a lockable PC name is set. */
+export const CURRENT_ERROR_REPAIR_REVISION = 9;
 
 export type FailureClass =
   | 'turn_proxy'
@@ -206,6 +207,19 @@ export function transportRetryBackoffMs(
 export function isDnsResolutionFailure(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err ?? '');
   return /ENOTFOUND|getaddrinfo|EAI_AGAIN/i.test(msg);
+}
+
+function repairLockedNameCover(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const est = state.openingEstablishment;
+  if (!est) return state;
+  const next = dropLockedNameCovers(est, state.character?.name);
+  if (next === est) return state;
+  notes.push({
+    class: 'opening_contract',
+    code: 'ERR_LOCKED_NAME_COVER',
+    detail: 'dropped leftover name/identity covers — PC name already locked',
+  });
+  return { ...state, openingEstablishment: next };
 }
 
 function stampAloneArrival(state: GameState, notes: ErrorRepairNote[]): GameState {
@@ -462,7 +476,8 @@ function repairHookLock(state: GameState, notes: ErrorRepairNote[]): GameState {
 
 export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   const notes: ErrorRepairNote[] = [];
-  let next = stampAloneArrival(state, notes);
+  let next = repairLockedNameCover(state, notes);
+  next = stampAloneArrival(next, notes);
   next = repairAloneStarterQuest(next, notes);
   next = repairOrphanCircleBlessing(next, notes);
   next = repairCircleBlessingSlot(next, notes);

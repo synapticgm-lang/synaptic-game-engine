@@ -8,7 +8,6 @@ import type { GameState } from './types';
 import { authoredStartPage } from './pyoaSpine';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
-import { isLockablePcName } from './pcNameAuthority';
 import {
   extractGivenName,
   hallTalkAsksPanel,
@@ -23,7 +22,11 @@ import {
   isAloneArrivalOpening,
   isKitOrCarryInspect,
   isEarthOriginPrompt,
+  isLitrpgSystemPanelMode,
+  lockedOpeningPcName,
   openingAlreadyToldLine,
+  sanitizeLockedNameBeat,
+  stripLockedNameAsk,
   openingRefuseLine,
   openingSpokenRefuse,
   openingSpokenStayLeave,
@@ -176,18 +179,8 @@ function bodyAlreadyAsksCover(body: string, cover: string): boolean {
   return slice.length > 8 && hay.includes(slice);
 }
 
-/** Authored cards still end on a name ask — drop that tail when Usual Self already locked one. */
-const LOCKED_NAME_ASK_TAIL =
-  /(?:\s+The panel waits on a name\.)?(?:\s+What (?:name do you (?:give(?: them| it)?|enter|lock)|name does it take|do you enter)[^?]{0,48}\?)\s*$/i;
-
 function dropCoverNameAsk(body: string): string {
-  return body
-    .replace(LOCKED_NAME_ASK_TAIL, '')
-    .replace(/\s+The panel waits on a name\.\s*$/i, '')
-    .replace(/\b(?:and )?(?:barks|asks|shouts|waits) for a name\b[^.?!]{0,80}[.?!]/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/\s+\./g, '.')
-    .trim();
+  return stripLockedNameAsk(body);
 }
 
 function lastGmBodies(state: GameState): string[] {
@@ -220,7 +213,7 @@ export function stitchOpeningScene(state: GameState): string {
   }
   const body = baseSceneFromCard(state).trim();
   if (lockedCoverName(state)) {
-    return dropCoverNameAsk(body);
+    return sanitizeLockedNameBeat(state, dropCoverNameAsk(body));
   }
   const cover = state.openingEstablishment?.pending[0]?.question?.trim();
   if (!cover || bodyAlreadyAsksCover(body, cover)) return body;
@@ -233,9 +226,7 @@ export function synthesizeOpeningScene(state: GameState): string {
 }
 
 function lockedCoverName(state: GameState): string | null {
-  const n = (state.character?.name ?? state.openingEstablishment?.answers?.name ?? '').trim();
-  if (!n || /unknown survivor/i.test(n) || !isLockablePcName(n)) return null;
-  return n;
+  return lockedOpeningPcName(state);
 }
 
 function continueIsAlone(state: GameState, place: string): boolean {
@@ -276,7 +267,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const asksRefuse = hallTalkAsksRefuse(act);
   const asksStayLeave = hallTalkAsksStayLeave(act);
   const asksWho = hallTalkAsksWho(act);
-  const asksPanel = hallTalkAsksPanel(act);
+  const asksPanel = isLitrpgSystemPanelMode(state) && hallTalkAsksPanel(act);
   const gaveName = !!extractGivenName(act);
   const namePlusMore = playerGaveNameAndAskedMore(act);
   const searches =
@@ -299,8 +290,11 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   }
 
   if (
-    /\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)
-    || (asksPanel && !asksWhere && !asksWho && !asksWant && !asksWhy && !asksRefuse && !gaveName)
+    isLitrpgSystemPanelMode(state)
+    && (
+      /\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)
+      || (asksPanel && !asksWhere && !asksWho && !asksWant && !asksWhy && !asksRefuse && !gaveName)
+    )
   ) {
     if (name) {
       return `The panel holds the name ${name}. It is a System window at eye level — not a person.`;
@@ -322,7 +316,9 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     const bits = [`They have the name ${name}.`];
     if (asksWhere || namePlusMore) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
-    if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
+    if (asksPanel && isLitrpgSystemPanelMode(state)) {
+      bits.push('The blue panel is a System window at eye level — not a person.');
+    }
     if (asksWant || asksWhy || namePlusMore) {
       bits.push(
         clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
@@ -337,14 +333,16 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
           : refuse || 'They have not said what happens if you refuse.'
       );
     }
-    return bits.join(' ');
+    return sanitizeLockedNameBeat(state, bits.join(' '));
   }
 
   if (asksWhere || asksWhy || asksWant || asksRefuse || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
-    if (asksPanel) bits.push('The blue panel is yours — a System window at eye level, not a person.');
+    if (asksPanel && isLitrpgSystemPanelMode(state)) {
+      bits.push('The blue panel is yours — a System window at eye level, not a person.');
+    }
     if (asksWhy || asksWant) {
       bits.push(
         clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
@@ -366,15 +364,15 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     if (!name && asksWhere && !asksWhy && !asksWant && !asksRefuse && !asksWho) {
       bits.push('They still want a name before they will say more.');
     }
-    return bits.filter(Boolean).join(' ');
+    return sanitizeLockedNameBeat(state, bits.filter(Boolean).join(' '));
   }
 
   if (!act) {
-    return `You are ${here}.`;
+    return sanitizeLockedNameBeat(state, `You are ${here}.`);
   }
 
   if (name) {
-    return `They have the name ${name}. You are ${here}.`;
+    return sanitizeLockedNameBeat(state, `They have the name ${name}. You are ${here}.`);
   }
   return `You are ${here}. They still want a name.`;
 }

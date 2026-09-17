@@ -17,6 +17,7 @@ import { canHarvestAsNamedPerson } from './entityRegistry';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { isCatalogFoeTalkForbidden } from './encounterBible';
 import { npcShouldExit } from './npcMemory';
+import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment';
 
 export type EdgeType =
   | 'attack'
@@ -73,7 +74,7 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
   const excluded = excludedPadFamilies(state);
   const bibleId = state.campaignBibleId ?? (state as GameState & { bibleId?: string }).bibleId;
 
-  if (state.activeEncounter) {
+  if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) {
     edges.push({
       type: 'attack',
       label: 'Press the attack',
@@ -237,7 +238,10 @@ export function compileGraphChoiceLabels(state: GameState): string[] {
   const labels = edgesToChoiceLabels(graph);
   // Live fight — combat edges only. Do not merge inspect / quest / talk from the beat registry.
   if (state.activeEncounter) {
-    return labels.slice(0, 6);
+    const live = labels.slice(0, 6);
+    return shouldStarveCombatPadsOnCover(state)
+      ? live.filter((l) => !isCombatFamilyPad(l))
+      : live;
   }
   const beatLabels = beatEdgesToLabels(enumerateBeatEdges(state));
   const lastKill = state.sceneFacts?.lastKill;
@@ -249,7 +253,11 @@ export function compileGraphChoiceLabels(state: GameState): string[] {
     seen.add(key);
     labels.push(label);
   }
-  return labels.filter((l) => !isLastKillTalkPad(l, lastKill)).slice(0, 6);
+  const cleaned = labels.filter((l) => !isLastKillTalkPad(l, lastKill));
+  if (shouldStarveCombatPadsOnCover(state)) {
+    return cleaned.filter((l) => !isCombatFamilyPad(l)).slice(0, 6);
+  }
+  return cleaned.slice(0, 6);
 }
 
 export function inferEdgeIntent(label: string): PlayerIntent {

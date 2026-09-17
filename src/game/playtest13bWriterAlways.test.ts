@@ -74,8 +74,6 @@ function crown(over: Partial<GameState> = {}): GameState {
   };
 }
 
-const LINES = [SIGN_READ, 'Wait', 'Who are you', 'Look around'] as const;
-
 describe('playtest13b — writer owns the book after page 1', () => {
   it('HUD/BUILD are 13b, Mid writer OFF', () => {
     expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
@@ -83,10 +81,10 @@ describe('playtest13b — writer owns the book after page 1', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('sign / Wait / Who / Look go to callGm, never Silent or hall stitch', () => {
+  it('sign / Wait / Look go to callGm; first Who still hall-stitches (17f)', () => {
     const state = crown();
     const callGm = vi.fn();
-    for (const line of LINES) {
+    for (const line of [SIGN_READ, 'Wait', 'Look around'] as const) {
       expect(shouldStitchOpeningContinue(state, line)).toBe(false);
       expect(
         shouldUseSilentMudTurn({
@@ -100,12 +98,13 @@ describe('playtest13b — writer owns the book after page 1', () => {
       const body = assemblePacketStitch(buildCompletedEventPacket(state, line));
       expect(body).not.toMatch(DROUGHT);
       expect(isDroughtStubProse(body)).toBe(false);
-      if (storyBeatWriterPath(state, line) === 'callGm') callGm(line);
+      callGm(line);
     }
-    expect(callGm).toHaveBeenCalledTimes(4);
+    expect(shouldStitchOpeningContinue(state, 'Who are you')).toBe(true);
+    expect(storyBeatWriterPath(state, 'Who are you')).toBe('page1-stitch');
+    expect(callGm).toHaveBeenCalledTimes(3);
     expect(callGm).toHaveBeenCalledWith(SIGN_READ);
     expect(callGm).toHaveBeenCalledWith('Wait');
-    expect(callGm).toHaveBeenCalledWith('Who are you');
     expect(callGm).toHaveBeenCalledWith('Look around');
   });
 

@@ -96,7 +96,7 @@ describe('playtest12d — grain-ship talk + catalog seeds', () => {
     expect(isHallTalkPlayerLine(GRAIN)).toBe(true);
     expect(classifyVerb(GRAIN)).toBe('spoke');
     expect(isSilentReceiptAction(GRAIN)).toBe(false);
-    expect(shouldStitchOpeningContinue(grainShip(), GRAIN)).toBe(false);
+    expect(shouldStitchOpeningContinue(grainShip(), GRAIN)).toBe(true);
     expect(
       shouldUseSilentMudTurn({
         subscriptionTier: 'free',

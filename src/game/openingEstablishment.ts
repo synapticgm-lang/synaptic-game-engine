@@ -809,12 +809,12 @@ export function applyHarvestedOpeningCovers(
     answers.where = origin;
     pending = pending.filter((p) => p.kind !== 'location' || !isEarthOriginPrompt(p));
   }
-  return {
+  return dropLockedNameCovers({
     ...est,
     answers,
     pending,
     complete: pending.length === 0,
-  };
+  });
 }
 
 export function litrpgOpeningSystemPing(state: GameState): string[] {
@@ -1206,9 +1206,9 @@ export function isHallTalkPlayerLine(raw: string): boolean {
 }
 
 /**
- * Page 1 only — after sceneWritten the writer owns the book.
- * 13b: hall talk / cover-continue / sign-read / Look / Wait must not stitch.
- * applyOpeningAnswer still writes the name/where ledger on the callGm path.
+ * Page 1 only — after sceneWritten the writer owns Look/Wait/sign-read.
+ * 17f: first/second same who/want/refuse stay on stitch (already-told);
+ * third+ leaves so callGm writes. applyOpeningAnswer still writes the name ledger.
  */
 const OPENING_CARD_NOUNS = ['book', 'pouch', 'charter', 'page', 'folio', 'ribbon', 'mesh'] as const;
 const OPENING_CARD_NOUN_RE = OPENING_CARD_NOUNS.join('|');
@@ -1253,12 +1253,35 @@ export function asksOpeningCardNoun(state: GameState, raw: string): string | nul
 }
 
 export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
-  if (state.openingEstablishment?.sceneWritten) return false;
-  if (state.activeEncounter) return false;
+  if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
   const line = playerInput ?? lastPlayerLine(state);
-  if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return true;
-  return isHallTalkPlayerLine(line);
+  if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) {
+    return !state.openingEstablishment?.sceneWritten;
+  }
+  if (
+    isKitOrCarryInspect(line)
+    && !hallTalkAsksWant(line)
+    && !hallTalkAsksWho(line)
+    && !hallTalkAsksRefuse(line)
+    && !playerAskedWhyPulled(line)
+  ) {
+    return false;
+  }
+  if (!isHallTalkPlayerLine(line)) return false;
+  if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) {
+    const onlyPanel =
+      !hallTalkAsksWho(line)
+      && !hallTalkAsksWant(line)
+      && !hallTalkAsksWhere(line)
+      && !hallTalkAsksRefuse(line)
+      && !hallTalkAsksStayLeave(line)
+      && !playerAskedWhyPulled(line);
+    if (onlyPanel) return false;
+  }
+  // First/second same who/want/refuse stay on stitch (already-told). Third+ leaves for callGm.
+  if (countSameHallTopicRepeats(state, line) >= 3) return false;
+  return true;
 }
 
 /** After page 1, live / Fate must call the writer. Premade continue is last-resort only. */
@@ -1275,11 +1298,10 @@ export function storyBeatWriterPath(
  * Does not send the turn to stitch after covers complete.
  */
 export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): boolean {
-  if (state.activeEncounter) return false;
+  if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
   const line = (playerInput ?? lastPlayerLine(state)).replace(/\s+/g, ' ').trim();
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
-  if (!state.openingEstablishment?.sceneWritten) return false;
-  return isHallTalkPlayerLine(line);
+  return shouldStitchOpeningContinue(state, line);
 }
 
 function openingSceneHay(state: GameState): string {
@@ -1796,7 +1818,11 @@ export function coverContinuePads(state: GameState): string[] {
     const askedWant = (state.log ?? []).some(
       (e) => e.role === 'player' && hallTalkAsksWant(e.content ?? '')
     );
-    return askedWant ? ['Who are you', 'Inspect the panel'] : ['Ask what they want'];
+    return askedWant
+      ? isLitrpgSystemPanelMode(state)
+        ? ['Who are you', 'Inspect the panel']
+        : ['Who are you', 'Look around']
+      : ['Ask what they want'];
   }
   return ['Give your name', 'Refuse to give a name'];
 }
@@ -1947,6 +1973,130 @@ export function openingNameIsUnlocked(state: GameState): boolean {
   return !n || /unknown survivor/i.test(n) || !isLockablePcName(n);
 }
 
+/** Lockable PC name already written — every bible, not summoned-pact only. */
+export function lockedOpeningPcName(state: GameState): string | null {
+  const n = (
+    state.openingEstablishment?.answers?.name
+    ?? state.character?.name
+    ?? ''
+  ).trim();
+  if (!n || /unknown survivor/i.test(n) || !isLockablePcName(n)) return null;
+  return n;
+}
+
+/** Blue-panel / System window chips and hall-talk — LitRPG only. */
+export function isLitrpgSystemPanelMode(state: Pick<GameState, 'engineMode'>): boolean {
+  return state.engineMode === 'litrpg';
+}
+
+export function hallTalkAsksSystemPanel(state: Pick<GameState, 'engineMode'>, raw: string): boolean {
+  return isLitrpgSystemPanelMode(state) && hallTalkAsksPanel(raw);
+}
+
+const NAME_ASK_PROSE =
+  /\b(?:what name|what do they call|what do you (?:enter|call|give)|give(?: them)? (?:your |a )?name|the panel waits on a name|barks for a name|asks for a name|waits on a name|what is yours\?|a blank line (?:sits|waits)|first word they will accept|what name shall|what name does)\b/i;
+
+export function proseAsksForPcName(body: string): boolean {
+  return NAME_ASK_PROSE.test(body ?? '');
+}
+
+const LOCKED_NAME_ASK_STRIP =
+  /(?:\s+The panel waits on a name\.)?(?:\s+What (?:name do you (?:give(?: them| it)?|enter|lock)|name does it take|do you enter|do they call you|do you call yourself|name shall[^?]{0,24}|name does (?:this|the)[^?]{0,32})[^?]{0,64}\?)\s*$/i;
+
+/** Drop page-1 / cover name-ask tails once a lockable name is already set. */
+export function stripLockedNameAsk(body: string): string {
+  return (body ?? '')
+    .replace(LOCKED_NAME_ASK_STRIP, '')
+    .replace(/\s+The panel waits on a name\.\s*$/i, '')
+    .replace(/\b(?:and )?(?:barks|asks|shouts|waits) for a name\b[^.?!]{0,80}[.?!]/gi, '')
+    .replace(/\s+What (?:name|do they call you|do you enter|is yours)\b[^?]{0,48}\?\s*$/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+\./g, '.')
+    .trim();
+}
+
+export function sanitizeLockedNameBeat(state: GameState, body: string): string {
+  if (!lockedOpeningPcName(state) || !body) return body;
+  if (!proseAsksForPcName(body)) return body;
+  return stripLockedNameAsk(body);
+}
+
+/** Name / identity cover is still the job — pending queue or incomplete lock. */
+export function isOpeningIdentityCover(state: GameState): boolean {
+  const est = state.openingEstablishment;
+  if (!est) return false;
+  if ((est.pending ?? []).some((p) => p.kind === 'name' || p.kind === 'identity')) return true;
+  return isOpeningCoverTurn(state);
+}
+
+export function isCombatFamilyPad(choice: string): boolean {
+  return /\b(press the attack|attack|flee|parley|strike|engage|fight|keep running|try to flee)\b/i.test(
+    choice ?? ''
+  );
+}
+
+/** No Attack/Flee/Parley (or mash) while covers / name-ask are still the job. */
+export function shouldStarveCombatPadsOnCover(state: GameState): boolean {
+  if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state) || isOpeningIdentityCover(state)) {
+    return true;
+  }
+  const lastGm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+  return !lockedOpeningPcName(state) && proseAsksForPcName(lastGm);
+}
+
+export type HallTalkTopic = 'who' | 'want' | 'refuse' | 'stayLeave' | 'panel' | 'where';
+
+export function hallTalkTopic(raw: string): HallTalkTopic | null {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return null;
+  if (hallTalkAsksWho(t)) return 'who';
+  if (hallTalkAsksRefuse(t)) return 'refuse';
+  if (hallTalkAsksStayLeave(t)) return 'stayLeave';
+  if (hallTalkAsksWant(t) || playerAskedWhyPulled(t)) return 'want';
+  if (hallTalkAsksPanel(t)) return 'panel';
+  if (hallTalkAsksWhere(t)) return 'where';
+  return null;
+}
+
+/** Same who/want/refuse pad in recent player lines, including the line about to fire. */
+export function countSameHallTopicRepeats(state: GameState, playerInput?: string): number {
+  const incoming = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  const topic = hallTalkTopic(incoming || lastPlayerLine(state));
+  if (!topic) return 0;
+  const lines: string[] = [];
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0 && lines.length < 8; i--) {
+    if (log[i]?.role !== 'player') continue;
+    const c = (log[i]?.content ?? '').replace(/\s+/g, ' ').trim();
+    if (c) lines.push(c);
+  }
+  // Incoming is the pad about to fire — always count it, even when it matches the last pad.
+  if (incoming) {
+    lines.unshift(incoming);
+    if (lines.length > 8) lines.pop();
+  }
+  return lines.filter((l) => hallTalkTopic(l) === topic).length;
+}
+
+/**
+ * Name already locked → drop leftover name/identity covers. Completed stays completed.
+ * Site-wide — not a summoned-pact special case.
+ */
+export function dropLockedNameCovers<T extends NonNullable<GameState['openingEstablishment']>>(
+  est: T,
+  characterName?: string | null
+): T {
+  const locked = (est.answers?.name ?? characterName ?? '').trim();
+  if (!locked || /unknown survivor/i.test(locked) || !isLockablePcName(locked)) return est;
+  const pending = (est.pending ?? []).filter((p) => p.kind !== 'name' && p.kind !== 'identity');
+  if (pending.length === (est.pending ?? []).length && est.complete === true) return est;
+  return {
+    ...est,
+    pending,
+    complete: est.complete === true || pending.length === 0,
+  };
+}
+
 function openingSpeciesIsUnlocked(state: GameState): boolean {
   if (state.openingEstablishment?.answers?.species?.trim()) return false;
   if (state.openingEstablishment?.pending?.some((p) => p.kind === 'species' || p.kind === 'identity')) {
@@ -1984,11 +2134,16 @@ export function applyLedgerDeficit(state: GameState, rawInput: string): GameStat
       changed = true;
     }
   }
-  if (!changed) return state;
+  if (!changed) {
+    const dropped = dropLockedNameCovers(est, character.name);
+    if (dropped === est) return state;
+    return { ...state, openingEstablishment: dropped };
+  }
+  const nextEst = dropLockedNameCovers({ ...est, answers }, character.name);
   const next = {
     ...state,
     character,
-    openingEstablishment: { ...est, answers },
+    openingEstablishment: nextEst,
   };
   return answers.name ? rememberPlayerName(next, answers.name) : next;
 }
@@ -2388,6 +2543,12 @@ export async function applyOpeningAnswer(
   const beforeSeal = state.openingEstablishment;
   // Drop kit questionnaire; sealed bag — never block with chip banks / "Pat yourself down".
   state = sealKitOpeningCovers(state);
+  if (state.openingEstablishment) {
+    const dropped = dropLockedNameCovers(state.openingEstablishment, state.character?.name);
+    if (dropped !== state.openingEstablishment) {
+      state = { ...state, openingEstablishment: dropped };
+    }
+  }
   const sealedFinishedOpening =
     !!beforeSeal
     && !beforeSeal.complete

@@ -144,7 +144,7 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     expect(hallTalkAsksWant("What's your actual deal?")).toBe(true);
     expect(hallTalkAsksWant('I want to leave')).toBe(false);
     expect(shouldStitchOpeningContinue(saltDoneUnnamed(), 'What do you actually want from me?')).toBe(
-      false
+      true
     );
   });
 
@@ -152,7 +152,7 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     const line = 'Wait and see what happens if I refuse';
     expect(hallTalkAsksRefuse(line)).toBe(true);
     expect(hallTalkAsksRefuse('Refuse to give a name')).toBe(false);
-    expect(shouldStitchOpeningContinue(greyhollowNamed(), line)).toBe(false);
+    expect(shouldStitchOpeningContinue(greyhollowNamed(), line)).toBe(true);
     expect(isSilentReceiptAction(line)).toBe(false);
     expect(isSilentReceiptAction('Wait')).toBe(true);
     expect(shouldStitchOpeningContinue(greyhollowNamed(), 'Wait')).toBe(false);

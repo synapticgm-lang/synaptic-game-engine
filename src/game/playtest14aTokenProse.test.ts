@@ -77,8 +77,6 @@ function crown(over: Partial<GameState> = {}): GameState {
   };
 }
 
-const LINES = [SIGN_READ, 'Wait', 'Who are you', 'Look around'] as const;
-
 describe('playtest14a — token prose', () => {
   it('HUD/BUILD are 14a, Mid writer OFF', () => {
     expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
@@ -86,10 +84,10 @@ describe('playtest14a — token prose', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('Look / Who / sign-the-book still callGm', () => {
+  it('Look / sign-the-book still callGm; first Who hall-stitches (17f)', () => {
     const state = crown();
     const callGm = vi.fn();
-    for (const line of LINES) {
+    for (const line of [SIGN_READ, 'Wait', 'Look around'] as const) {
       expect(shouldStitchOpeningContinue(state, line)).toBe(false);
       expect(
         shouldUseSilentMudTurn({
@@ -101,7 +99,9 @@ describe('playtest14a — token prose', () => {
       expect(storyBeatWriterPath(state, line)).toBe('callGm');
       callGm(line);
     }
-    expect(callGm).toHaveBeenCalledTimes(4);
+    expect(shouldStitchOpeningContinue(state, 'Who are you')).toBe(true);
+    expect(storyBeatWriterPath(state, 'Who are you')).toBe('page1-stitch');
+    expect(callGm).toHaveBeenCalledTimes(3);
   });
 
   it('bind reject Lene-as-prop', () => {

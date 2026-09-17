@@ -39,10 +39,13 @@ import {
   isSpineDelayPad,
 } from './pyoaSpine';
 import {
+  isCombatFamilyPad,
   isHallTalkPlayerLine,
+  isLitrpgSystemPanelMode,
   isNameOriginKitCoverChoice,
   isOpeningHallTalkTurn,
   isPlayDemand,
+  shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
@@ -155,7 +158,9 @@ export function namedPropPadsFromBeat(state: GameState): string[] {
   consider(/\bchests?\b/i, 'Check the chest');
   consider(/\bcrates?\b/i, 'Open the crate');
   consider(/\b(door|doorway)\b/i, 'Try the door');
-  consider(/\b(blue )?panel\b/i, 'Inspect the panel');
+  if (isLitrpgSystemPanelMode(state)) {
+    consider(/\b(blue )?panel\b/i, 'Inspect the panel');
+  }
   return pads;
 }
 
@@ -283,7 +288,7 @@ function filterPadsByFsmState(state: GameState, pads: string[], notes: string[])
       notes.push(`FSM caught drop: ${pad.slice(0, 40)}`);
       return false;
     });
-    if (filtered.length === 0) {
+    if (filtered.length === 0 && !shouldStarveCombatPadsOnCover(state)) {
       // Ensure at least one combat action
       filtered.push('Press the attack');
     }
@@ -707,8 +712,17 @@ export function compileChoices(
         && (state.arcDirector?.npcTopics?.[npcKey] ?? []).length >= 2));
   const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill || talkRecycle;
 
+  const coverCombatLock = shouldStarveCombatPadsOnCover(state);
   let filtered = (graphLabels.length ? graphLabels : choices).filter((c) => {
     const lower = c.toLowerCase();
+    if (coverCombatLock && isCombatFamilyPad(c)) {
+      notes.push(`Cover combat starve: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (!isLitrpgSystemPanelMode(state) && /\binspect the panel\b|\bsystem window\b/i.test(c)) {
+      notes.push(`Non-LitRPG panel starve: ${c.slice(0, 32)}`);
+      return false;
+    }
     if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) {
       notes.push(`Branch lock drop: ${c.slice(0, 32)}`);
       return false;
@@ -936,7 +950,7 @@ export function compileChoices(
         notes.push('Scene-grounded pad refill');
       }
       const mandate = state.arcDirector?.lastMandate ?? '';
-      if (state.activeEncounter && !supplements.length) {
+      if (state.activeEncounter && !supplements.length && !coverCombatLock) {
         supplements.push('Press the attack');
         if (fleeAvailable(state.activeEncounter)) supplements.push('Try to flee');
         if (parleyAvailable(state.activeEncounter)) supplements.push('Parley');
@@ -1093,8 +1107,8 @@ export function compileChoices(
     notes.push(`Vignette cast lock dropped ${beforeVig - filtered.length}`);
   }
 
-  // Engaged: ensure combat options exist for Fate
-  if (engaged) {
+  // Engaged: ensure combat options exist for Fate — never on a name/cover beat
+  if (engaged && !coverCombatLock) {
     if (!filtered.some((c) => /\b(attack|fight|press the attack|engage)\b/i.test(c))) {
       filtered.unshift('Press the attack');
     }
@@ -1216,6 +1230,9 @@ export function compileChoices(
   if (!finalChoices.length) {
     finalChoices = closedUniverseFallbacks(state, excluded);
     notes.push('Closed-universe empty-pad refill');
+  }
+  if (coverCombatLock) {
+    finalChoices = finalChoices.filter((c) => !isCombatFamilyPad(c));
   }
   // 08d — after CLEAR / topic exhaust, force Leave/Loot/Travel if social was culled empty of progress
   if (

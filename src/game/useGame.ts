@@ -119,6 +119,7 @@ import {
   sanitizeOpeningNarration,
   isOpeningEstablishmentPending,
   isOpeningCoverTurn,
+  lockedOpeningPcName,
   shouldStitchOpeningContinue,
   isOpeningSetupChipLabel,
   pendingRequiredCovers,
@@ -2247,18 +2248,21 @@ export function useGame() {
       const openingSceneWritten =
         liveCurrent.openingEstablishment?.sceneWritten === true
         || current.openingEstablishment?.sceneWritten === true;
-      // 13b — page 1 stitch only. After sceneWritten, ledger write then callGm (never premade continue).
+      // 17f — cover / first-second hall talk still stitch. Third+ same pad leaves for callGm.
+      // Never reprint page-1 after sceneWritten or a locked name.
       if (
-        !openingSceneWritten
-        && (
-          isOpeningCoverTurn(current)
-          || isOpeningCoverTurn(liveCurrent)
-          || isOpeningEstablishmentPending(current)
-          || shouldStitchOpeningContinue(current, contentSanitized)
-          || shouldStitchOpeningContinue(liveCurrent, contentSanitized)
-          || (
-            !!liveCurrent.pendingGeneratedOpening
-            && liveCurrent.openingEstablishment?.complete !== true
+        shouldStitchOpeningContinue(current, contentSanitized)
+        || shouldStitchOpeningContinue(liveCurrent, contentSanitized)
+        || (
+          !openingSceneWritten
+          && (
+            isOpeningCoverTurn(current)
+            || isOpeningCoverTurn(liveCurrent)
+            || isOpeningEstablishmentPending(current)
+            || (
+              !!liveCurrent.pendingGeneratedOpening
+              && liveCurrent.openingEstablishment?.complete !== true
+            )
           )
         )
       ) {
@@ -2275,9 +2279,10 @@ export function useGame() {
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
         // Cover-continue stays local — never callOpeningGm / packet lecture.
         const openingRaw = '';
-        let openingText = openingState.openingEstablishment?.sceneWritten
-          ? stitchOpeningContinue(openingState, contentSanitized)
-          : stitchOpeningScene(openingState);
+        let openingText =
+          openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
+            ? stitchOpeningContinue(openingState, contentSanitized)
+            : stitchOpeningScene(openingState);
         
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(

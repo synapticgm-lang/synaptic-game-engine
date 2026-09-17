@@ -16,6 +16,7 @@ import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue';
 import { ledgerNeverCastTitles } from './neverCast';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
+import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment';
 
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
@@ -210,7 +211,7 @@ export function closedUniverseFallbacks(
     isEncounterEngaged(state) ||
     !!state.activeEncounter ||
     !!state.sceneFacts?.pendingEncounter;
-  if (live) {
+  if (live && !shouldStarveCombatPadsOnCover(state)) {
     out.push('Press the attack');
     if (fleeAvailable(state.activeEncounter)) out.push('Try to flee');
     if (parleyAvailable(state.activeEncounter)) out.push('Parley');
@@ -241,7 +242,7 @@ export function closedUniverseFallbacks(
     if (!out.some((c) => c.toLowerCase() === pad.toLowerCase())) out.push(pad);
   }
   const kept = filterPadsByUniverse(out, excluded, state).filter(
-    (p) => !isLastKillTalkPad(p, lastKill)
+    (p) => !isLastKillTalkPad(p, lastKill) && (!shouldStarveCombatPadsOnCover(state) || !isCombatFamilyPad(p))
   );
   if (kept.length) return kept;
   return ['Inspect the immediate surroundings'];

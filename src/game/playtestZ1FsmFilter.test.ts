@@ -47,7 +47,8 @@ describe('Z-1 FSM Pad Filtering', () => {
     const travelFilterNotes = notes.filter(n => 
       n.includes('FSM') || 
       n.includes('pending-enc') || 
-      n.includes('Travel yo-yo lock')
+      n.includes('Travel yo-yo lock') ||
+      n.includes('Encounter lock')
     );
     expect(travelFilterNotes.length).toBeGreaterThan(0);
     
