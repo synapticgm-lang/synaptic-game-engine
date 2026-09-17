@@ -1,11 +1,12 @@
 import type { CampaignBible } from './types';
+import { withManusHonestRoster } from './manusHonestRoster';
 
 /**
  * Original SynapticGM story-RPG: a main-spine pick-your-own-adventure with optional sides.
  * Moral choice, inner commentary, ally/betray, party/solo — genre tropes only.
  * Not Fable, Albion, Heroes Guild, or any licensed world.
  */
-export const thornferryRoad: CampaignBible = {
+const thornferryRoadBase: CampaignBible = {
   id: 'thornferry-road',
   title: 'Thornferry Road',
   archetype: 'custom_world',
@@ -164,3 +165,5 @@ Do not name distant capitals until the road actually reaches them. Unique story 
     },
   ],
 };
+
+export const thornferryRoad: CampaignBible = withManusHonestRoster(thornferryRoadBase);

@@ -28,7 +28,9 @@
           "entries": [
             { "id": "gold-small", "category": "currency", "weight": 45, "quantity": "8-18", "tags": ["generic"] },
             { "id": "common-material", "category": "crafting", "weight": 30, "quantity": "1-3", "tags": ["biome-derived"] },
-            { "id": "minor-consumable", "category": "consumable", "weight": 20, "quantity": "1", "tags": ["healing", "mana", "stamina"] },
+            { "id": "minor-consumable", "category": "consumable", "weight": 16, "quantity": "1", "tags": ["healing", "mana", "stamina"] },
+            { "id": "health-tonic", "category": "consumable", "weight": 3, "quantity": "1", "tags": ["healing", "vendor-stock"] },
+            { "id": "iron-nail", "category": "crafting", "weight": 1, "quantity": "1", "tags": ["vendor-stock"] },
             { "id": "uncommon-weapon-part", "category": "weapon-component", "weight": 5, "quantity": "1", "tags": ["build-relevant"] }
           ],
           "guarantees": ["one currency or crafting entry"]

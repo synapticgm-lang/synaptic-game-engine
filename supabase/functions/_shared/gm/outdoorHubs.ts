@@ -22,23 +22,23 @@ export interface OutdoorHub {
 }
 
 export const SUMMONED_PACT_HUBS: OutdoorHub[] = [
-  { id: 'sp-hub-lowmarket', name: 'Lowmarket', blurb: 'Crowded stalls, fences, and Earth junk buyers.', threatTier: 1, linkedQuestIds: ['sp-quest-side-junk'], aliases: ['the Lowmarket'] },
-  { id: 'sp-hub-west-wall', name: 'West Wall', blurb: 'Battlements and gate traffic above the city.', threatTier: 2, aliases: ['the west wall', 'Valespire west wall'] },
+  { id: 'sp-hub-lowmarket', name: 'Lowmarket', blurb: 'Crowded stalls, fences, and Earth junk buyers.', threatTier: 1, linkedQuestIds: ['sp-quest-side-junk', 'sp-quest-lark-tonic'], aliases: ['the Lowmarket'] },
+  { id: 'sp-hub-west-wall', name: 'West Wall', blurb: 'Battlements and gate traffic above the city.', threatTier: 2, linkedQuestIds: ['sp-quest-kell-levy'], aliases: ['the west wall', 'Valespire west wall'] },
   { id: 'sp-hub-weighing-cup', name: 'The Weighing Cup', blurb: 'Inn and rumor house near the cathedral close.', threatTier: 1, aliases: ['Weighing Cup'] },
   { id: 'sp-hub-contract-hall', name: 'Contract Hall', blurb: 'Notice-board and Crown job postings.', threatTier: 1, linkedQuestIds: ['sp-quest-1'], aliases: ['the Contract Hall'] },
   { id: 'sp-hub-cathedral-close', name: 'Cathedral Close', blurb: 'Courtyard and kitchens around Valespire Cathedral.', threatTier: 1, linkedQuestIds: ['sp-quest-side-child'], aliases: ['the close'] },
   { id: 'sp-hub-undercroft', name: 'Cathedral Undercroft', blurb: 'Numbered dungeon floors under the cathedral.', threatTier: 2, aliases: ['Undercroft'] },
   { id: 'sp-hub-palace', name: 'Palace Approach', blurb: 'Guarded approach to Pellane\'s palace ledgers.', threatTier: 2, linkedQuestIds: ['sp-quest-special-ledger'], aliases: ['the palace', 'Valespire Palace'] },
   { id: 'sp-hub-cinderflow', name: 'Cinderflow Road', blurb: 'East road toward Ash Court territory.', threatTier: 3, linkedQuestIds: ['sp-quest-special-other'], aliases: ['the Cinderflow'] },
-  { id: 'sp-hub-harbor', name: 'Harbor Quay', blurb: 'Grain ships, smugglers, and quay gossip.', threatTier: 2, aliases: ['the quay', 'Valespire harbor'] },
+  { id: 'sp-hub-harbor', name: 'Harbor Quay', blurb: 'Grain ships, smugglers, and quay gossip.', threatTier: 2, linkedQuestIds: ['sp-quest-harbor-harker'], aliases: ['the quay', 'Valespire harbor'] },
   { id: 'sp-hub-war-camp', name: 'Pellane War Camp', blurb: 'Banner-smoke and quartermaster crates beyond the walls.', threatTier: 2, aliases: ['war camp', 'the war camp'] },
-  { id: 'sp-hub-kitchen-saint', name: 'Kitchen Saint Alley', blurb: 'Bread steam and quiet charity behind the close.', threatTier: 1, linkedQuestIds: ['sp-quest-side-child'], aliases: ['Kitchen Saint', 'kitchen alley'] },
-  { id: 'sp-hub-mireglass', name: 'Mireglass March', blurb: 'Reed water and false reflections east of the Cinderflow.', threatTier: 2, linkedQuestIds: ['sp-quest-price-calling', 'sp-quest-price-reflection', 'sp-quest-price-route'], aliases: ['the March', 'Mireglass'] },
+  { id: 'sp-hub-kitchen-saint', name: 'Kitchen Saint Alley', blurb: 'Bread steam and quiet charity behind the close.', threatTier: 1, linkedQuestIds: ['sp-quest-side-child', 'sp-quest-pip-loaf'], aliases: ['Kitchen Saint', 'kitchen alley'] },
+  { id: 'sp-hub-mireglass', name: 'Mireglass March', blurb: 'Reed water and false reflections east of the Cinderflow.', threatTier: 2, linkedQuestIds: ['sp-quest-price-calling', 'sp-quest-price-reflection', 'sp-quest-price-route', 'sp-quest-reed-rook'], aliases: ['the March', 'Mireglass'] },
   { id: 'sp-hub-cinderwake', name: 'Cinderwake Trail', blurb: 'Ash-heat road and pursuit tracks toward the Ash Court.', threatTier: 3, linkedQuestIds: ['sp-quest-cinder-pursuit', 'sp-quest-cinder-caravan', 'sp-quest-cinder-evidence'], aliases: ['Cinderwake', 'the ash trail'] },
   { id: 'sp-hub-sump-court', name: 'The Sump Court', blurb: 'Below-street contracts, illegal bindings, and ferry prices.', threatTier: 2, linkedQuestIds: ['sp-quest-sump-bindings', 'sp-quest-sump-leverage', 'sp-quest-sump-ferry'], aliases: ['Sump Court', 'the Sump'] },
   { id: 'sp-hub-hollow-engine', name: 'Hollow Engine', blurb: 'A dead machine-hall under the city — power, alert, containment.', threatTier: 3, linkedQuestIds: ['sp-quest-hollow-power', 'sp-quest-hollow-contain'], aliases: ['the Engine', 'Hollow Engine halls'] },
   { id: 'sp-hub-argent', name: 'The Argent Ledger', blurb: 'A mobile license desk — rank, audits, and rival contracts.', threatTier: 2, linkedQuestIds: ['sp-quest-argent-license', 'sp-quest-argent-audit'], aliases: ['Argent Ledger', 'the Ledger wagon'] },
-  { id: 'sp-hub-reliquary', name: "Saint Vhal's Reliquary", blurb: 'Fortress-shrine of doctrine, relics, and quiet infiltration.', threatTier: 3, linkedQuestIds: ['sp-quest-reliquary-doctrine', 'sp-quest-reliquary-infiltrate'], aliases: ['the Reliquary', 'Saint Vhal'] },
+  { id: 'sp-hub-reliquary', name: "Saint Vhal's Reliquary", blurb: 'Fortress-shrine of doctrine, relics, and quiet infiltration.', threatTier: 3, linkedQuestIds: ['sp-quest-reliquary-doctrine', 'sp-quest-reliquary-infiltrate', 'sp-quest-asha-door'], aliases: ['the Reliquary', 'Saint Vhal'] },
   { id: 'sp-hub-integration-scar', name: 'The Integration Scar', blurb: 'Final outdoor seam where pact loadouts and debts meet.', threatTier: 3, linkedQuestIds: ['sp-quest-scar-answers'], aliases: ['Integration Scar', 'the Scar'] },
 ];
 
@@ -155,9 +155,9 @@ export const DUNGEON_TRANSPORT_HUBS: OutdoorHub[] = [
 
 /** Cursed Keep — flagship tabletop (thin). */
 export const CURSED_KEEP_HUBS: OutdoorHub[] = [
-  { id: 'ck-hub-inn', name: 'Greyhollow Inn', blurb: 'Last coach stop — warm ale, cold silence.', threatTier: 1, linkedQuestIds: ['ck-quest-1'], aliases: ['the inn', 'Greyhollow Tavern', 'the tavern'] },
+  { id: 'ck-hub-inn', name: 'Greyhollow Inn', blurb: 'Last coach stop — warm ale, cold silence.', threatTier: 1, linkedQuestIds: ['ck-quest-1', 'ck-quest-elara-inn'], aliases: ['the inn', 'Greyhollow Tavern', 'the tavern'] },
   { id: 'ck-hub-church', name: 'Greyhollow Church', blurb: 'Father Aldous and six sleepless nights.', threatTier: 1, linkedQuestIds: ['ck-quest-2'], aliases: ['the church', 'the chapel'] },
-  { id: 'ck-hub-gate', name: 'Keep Gate', blurb: 'Chained gate on the granite hill — footprints stop here.', threatTier: 2, linkedQuestIds: ['ck-quest-1'], aliases: ['the keep gate', 'Greymark gate'] },
+  { id: 'ck-hub-gate', name: 'Keep Gate', blurb: 'Chained gate on the granite hill — footprints stop here.', threatTier: 2, linkedQuestIds: ['ck-quest-1', 'ck-quest-dain-watch'], aliases: ['the keep gate', 'Greymark gate'] },
   { id: 'ck-hub-graveyard', name: 'Greyhollow Graveyard', blurb: 'Fresh graves opened from the inside.', threatTier: 2, linkedQuestIds: ['ck-quest-2'], aliases: ['the graveyard'] },
   { id: 'ck-hub-apothecary', name: 'Mira\'s Apothecary', blurb: 'Remedies and a decade of hidden journals.', threatTier: 1, linkedQuestIds: ['ck-quest-3'], aliases: ['the apothecary', 'apothecary shop'] },
   { id: 'ck-hub-treeline', name: 'Blackspine Treeline', blurb: 'Forest edge where kindling baskets tip over.', threatTier: 2, aliases: ['the treeline', 'Blackspine edge'] },
@@ -165,21 +165,21 @@ export const CURSED_KEEP_HUBS: OutdoorHub[] = [
 
 /** Salt Road Heist — flagship story-RPG (thin). */
 export const SALT_ROAD_HUBS: OutdoorHub[] = [
-  { id: 'sr-hub-waystation', name: 'Salt Road Waystation', blurb: 'Staging point before the Consul\'s caravan.', threatTier: 1, linkedQuestIds: ['salt-road-heist-quest-1'], aliases: ['the waystation', 'Salt Road'] },
-  { id: 'sr-hub-caravan', name: 'Consul Caravan Camp', blurb: 'Guards, sealed crates, and the tax ledger.', threatTier: 2, linkedQuestIds: ['salt-road-heist-quest-1'], aliases: ['caravan camp', 'the caravan'] },
+  { id: 'sr-hub-waystation', name: 'Salt Road Waystation', blurb: 'Staging point before the Consul\'s caravan.', threatTier: 1, linkedQuestIds: ['salt-road-heist-quest-1', 'sr-quest-yara-page'], aliases: ['the waystation', 'Salt Road'] },
+  { id: 'sr-hub-caravan', name: 'Consul Caravan Camp', blurb: 'Guards, sealed crates, and the tax ledger.', threatTier: 2, linkedQuestIds: ['salt-road-heist-quest-1', 'sr-quest-gideon-claim'], aliases: ['caravan camp', 'the caravan'] },
   { id: 'sr-hub-safehouse', name: 'Safehouse Alley', blurb: 'Vessa\'s bribe-priced bolt-hole.', threatTier: 1, aliases: ['the safehouse', 'Vessa\'s alley'] },
   { id: 'sr-hub-fence', name: 'Harbor Fence', blurb: 'Coast buyers for hot ledgers.', threatTier: 2, aliases: ['the fence', 'harbor buyer'] },
-  { id: 'sr-hub-market', name: 'Bribe Market', blurb: 'Every favor has a Salt Road price.', threatTier: 1, aliases: ['the bribe market'] },
+  { id: 'sr-hub-market', name: 'Bribe Market', blurb: 'Every favor has a Salt Road price.', threatTier: 1, linkedQuestIds: ['sr-quest-yara-page'], aliases: ['the bribe market'] },
   { id: 'sr-hub-checkpoint', name: 'Checkpoint Rise', blurb: 'Heat rises here — papers or a fight.', threatTier: 2, aliases: ['the checkpoint'] },
 ];
 
 /** Shattered Coast — tabletop coast flagship (Saltmar + atlas outlying, 29e follow-up). */
 export const SHATTERED_COAST_HUBS: OutdoorHub[] = [
   { id: 'sc-hub-saltmar', name: 'Saltmar', blurb: 'Cliff-city capital of the Compact.', threatTier: 1, linkedQuestIds: ['sc-quest-1'], aliases: ['Saltmar City', 'the harborside streets of Saltmar'] },
-  { id: 'sc-hub-lower', name: 'Lower Ward', blurb: 'Harbor, fish markets, and sea-cave undercity.', threatTier: 1, linkedQuestIds: ['sc-quest-1'], aliases: ['Saltmar Lower Ward', 'the harbor'] },
+  { id: 'sc-hub-lower', name: 'Lower Ward', blurb: 'Harbor, fish markets, and sea-cave undercity.', threatTier: 1, linkedQuestIds: ['sc-quest-1', 'sc-quest-nessa-lift'], aliases: ['Saltmar Lower Ward', 'the harbor'] },
   { id: 'sc-hub-middle', name: 'Middle Ward', blurb: 'Markets and workshops on the cliff face.', threatTier: 1, linkedQuestIds: ['sc-quest-2'], aliases: ['Saltmar Middle Ward'] },
   { id: 'sc-hub-upper', name: 'Upper Ward', blurb: 'Guild halls and Sentinel barracks atop the cliffs.', threatTier: 2, linkedQuestIds: ['sc-quest-3'], aliases: ['Saltmar Upper Ward'] },
-  { id: 'sc-hub-lift', name: 'Great Lift', blurb: 'Counterweight elevators between the three wards.', threatTier: 1, aliases: ['the Great Lift'] },
+  { id: 'sc-hub-lift', name: 'Great Lift', blurb: 'Counterweight elevators between the three wards.', threatTier: 1, linkedQuestIds: ['sc-quest-nessa-lift'], aliases: ['the Great Lift'] },
   { id: 'sc-hub-brinewatch', name: 'Brinewatch', blurb: 'Fishing town under a salt-stained keep.', threatTier: 1, aliases: ['Brinewatch Town', 'the fishing town'] },
   { id: 'sc-hub-keep', name: 'Salt-Stained Keep', blurb: 'Keep above Brinewatch harbor — dungeon site.', threatTier: 2, linkedQuestIds: ['sc-quest-4'], aliases: ['the keep', 'salt keep'] },
   { id: 'sc-hub-stonevein', name: 'Stonevein Quarry', blurb: 'Quarry and dwarf-cut halls.', threatTier: 2, linkedQuestIds: ['sc-quest-2'], aliases: ['Stonevein', 'the quarry'] },

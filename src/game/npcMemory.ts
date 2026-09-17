@@ -3,6 +3,7 @@ import type { GameState, NpcMemory, Quest, TimelineFact } from './types';
 import type { GameEvent } from './parser';
 import type { NpcRole } from './npcRoleRegistry';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks';
 
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
@@ -406,11 +407,16 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
     const key = normalizeName(name);
     if (map.has(key)) continue;
     const role = roleFromBibleNpc(npc);
+    const extras = [
+      roleVoiceFactFor(role),
+      merchantStockFactFor(role, name),
+      ...authoredTopicsFor(name).slice(0, 1).map((t) => `Authored line: ${t.line}`),
+    ].filter(Boolean);
     map.set(key, {
       npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
       npcName: name,
       disposition: bibleDisp(npc.disposition),
-      facts: [`Bible roster: ${role}`],
+      facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
       lastSeenTurn: 0,
       roleHint: role,
     });

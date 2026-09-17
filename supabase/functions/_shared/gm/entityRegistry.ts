@@ -266,6 +266,12 @@ const SUMMONED_PACT_NPCS = [
   'Sere Vhal', 'Sere',
   'Soren Vale', 'Soren',
   'Mira Flint', 'Mira Flint',
+  'Harker Vale', 'Harker',
+  'Rook Fen', 'Rook',
+  'Fenn Lark', 'Fenn',
+  'Asha Rune', 'Asha',
+  'Kell Ward', 'Kell',
+  'Pip Aster', 'Pip',
 ];
 
 /** Hero Awakening NPCs */
@@ -383,6 +389,10 @@ const CURSED_KEEP_NPCS = [
   'Gravedigger', 'village gravedigger', 'Vess',
   'Keep Guardian', 'cursed guardian',
   'Traveler', 'fellow traveler', 'Kael',
+  'Dain Holt', 'Dain', 'Captain Dain',
+  'Elara Moss', 'Elara',
+  'Bram Coyle', 'Bram',
+  'Oskar', 'Greta', 'Helga Brask', 'Helga',
 ];
 
 /** Salt Road Heist NPCs */
@@ -394,6 +404,8 @@ const SALT_ROAD_HEIST_NPCS = [
   'Checkpoint Officer', 'gate officer',
   'Caravan Driver', 'wagon driver',
   'Fellow Thief', 'heist partner', 'Senna',
+  'Yara Flint', 'Yara',
+  'Gideon Ash', 'Gideon',
 ];
 
 /** Shattered Coast NPCs */
@@ -406,6 +418,7 @@ const SHATTERED_COAST_NPCS = [
   'Fisher', 'Brinewatch fisher', 'Kael',
   'Keep Warden', 'salt keep warden',
   'Quarry Foreman', 'Stonevein foreman', 'Dren',
+  'Nessa Crow', 'Nessa',
 ];
 
 const NPC_REGISTRY_BY_BIBLE: Record<string, string[]> = {
@@ -422,6 +435,13 @@ const NPC_REGISTRY_BY_BIBLE: Record<string, string[]> = {
   'cursed-keep': CURSED_KEEP_NPCS,
   'salt-road-heist': SALT_ROAD_HEIST_NPCS,
   'shattered-coast': SHATTERED_COAST_NPCS,
+  'thornferry-road': [
+    'Wren Holt', 'Wren',
+    'Nedda Mill', 'Nedda',
+    'Magistrate Pell', 'Pell',
+    'Tomas Reed', 'Tomas',
+    'Orin Quill', 'Orin',
+  ],
 };
 
 // ============================================================================

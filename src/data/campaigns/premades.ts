@@ -1,4 +1,5 @@
 import { makeBible } from './makeBible';
+import { withManusHonestRoster } from './manusHonestRoster';
 
 /**
  * Additional premade worlds — ORIGINAL SynapticGM content.
@@ -616,7 +617,7 @@ export const blankCanvasDnd = makeBible({
  * Story RPG premades — fiction-first original worlds.
  * Prefer `custom_world` (or a matching RPG opening) so archetype rules don't inject LitRPG/cyber HUD tone.
  */
-export const saltRoadHeist = makeBible({
+export const saltRoadHeist = withManusHonestRoster(makeBible({
   id: 'salt-road-heist',
   title: 'Salt Road Heist',
   archetype: 'custom_world',
@@ -669,7 +670,7 @@ export const saltRoadHeist = makeBible({
       description: 'Marks you as part of Vessa’s crew for one night.',
     },
   ],
-});
+}));
 
 export const glassHarborLetters = makeBible({
   id: 'glass-harbor-letters',

@@ -1,4 +1,5 @@
 import type { CampaignBible } from './types';
+import { withManusHonestRoster } from './manusHonestRoster';
 import { SUMMONED_PACT_PHASE4_HOOKS } from './summonedPactPhase4Hooks';
 
 /**
@@ -6,7 +7,7 @@ import { SUMMONED_PACT_PHASE4_HOOKS } from './summonedPactPhase4Hooks';
  * Genre tropes only — not any novel, anime, or game IP.
  * Hero vs villain is a stamp + player choice, not a forced allegiance.
  */
-export const summonedPact: CampaignBible = {
+const summonedPactBase: CampaignBible = {
   id: 'summoned-pact',
   title: 'The Summoned Pact',
   archetype: 'isekai',
@@ -677,3 +678,5 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
     // Circle Blessing is NOT starter kit — grant via <item-gain> when registration/Appraisal awards it in play.
   ],
 };
+
+export const summonedPact: CampaignBible = withManusHonestRoster(summonedPactBase);

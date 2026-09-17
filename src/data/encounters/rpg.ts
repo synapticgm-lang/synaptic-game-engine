@@ -1,4 +1,5 @@
 import { FAST_XP_AWARDS } from '@/game/xpPolicy';
+import { MANUS_RPG_EXTRAS } from './manusHonestExtras';
 import type { EncounterSeed } from './types';
 
 const T = FAST_XP_AWARDS.combatTrash;
@@ -27,4 +28,5 @@ export const RPG_ENCOUNTERS: EncounterSeed[] = [
   { id: 'RPG-TRASH-010', mode: 'rpg', tier: 'trash', title: 'Dock Rope', foeName: 'Dock Rope Tough', premise: 'A dock tough tries to walk you into the ropes.', xpReward: T, goldReward: 4, cooldown: 14 },
   { id: 'RPG-ELITE-006', mode: 'rpg', tier: 'elite', title: 'Ledger Knife', foeName: 'Ledger Knife', premise: 'Someone who can read the tax book wants you silent.', xpReward: E, goldReward: 18, cooldown: 20 },
   { id: 'RPG-ELITE-007', mode: 'rpg', tier: 'elite', title: 'Road Claim', foeName: 'Road Claim Bravo', premise: 'The salt road already has an owner tonight.', xpReward: E, goldReward: 16, cooldown: 20 },
+  ...MANUS_RPG_EXTRAS,
 ];

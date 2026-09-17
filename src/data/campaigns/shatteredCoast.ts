@@ -1,6 +1,7 @@
 import type { CampaignBible } from './types';
+import { withManusHonestRoster } from './manusHonestRoster';
 
-export const shatteredCoast: CampaignBible = {
+const shatteredCoastBase: CampaignBible = {
   id: 'shattered-coast',
   title: 'Shattered Coast',
   archetype: 'patrons_quest',
@@ -270,3 +271,5 @@ export const shatteredCoast: CampaignBible = {
     },
   ],
 };
+
+export const shatteredCoast: CampaignBible = withManusHonestRoster(shatteredCoastBase);

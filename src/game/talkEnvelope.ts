@@ -23,6 +23,7 @@ import {
 } from './openingEstablishment';
 import { shouldUseSilentMudTurn } from './freeMudPresentation';
 import { resolveLitRpgFolkStamp } from '@/data/quests/litrpgMainSpines';
+import { authoredTopicForState } from './manusTopicBanks';
 
 export type ResponsePath = 'A' | 'B' | 'C' | 'D' | 'E';
 export type WriterOutcome = 'accepted' | 'retry' | 'fallback';
@@ -71,7 +72,8 @@ export function legalAddresseeFact(state: GameState, playerInput: string): strin
     return clip([shortCardWant(state), shortCardOffer(state)].filter(Boolean).join(' '), 180);
   }
   if (hallTalkAsksRefuse(playerInput)) return clip(shortCardCost(state), 180);
-  return clip([shortCardWant(state), shortCardOffer(state)].filter(Boolean).join(' ') || quote, 180);
+  const topic = authoredTopicForState(state, openingCastLabel(state), playerInput);
+  return clip([shortCardWant(state), shortCardOffer(state)].filter(Boolean).join(' ') || topic || quote, 180);
 }
 
 export function classifyResponsePath(opts: {
@@ -157,8 +159,11 @@ export function spokenTalkFallback(state: GameState, playerInput: string): strin
     return met ? openingAlreadyToldLine(state, 'refuse') : first;
   }
   const first = openingSpokenWant(state);
-  if (met) return openingAlreadyToldLine(state, 'want');
-  return first;
+  if (met) {
+    const topic = authoredTopicForState(state, who, playerInput);
+    return topic || openingAlreadyToldLine(state, 'want');
+  }
+  return first || authoredTopicForState(state, who, playerInput);
 }
 
 export function formatTalkWriterFacing(

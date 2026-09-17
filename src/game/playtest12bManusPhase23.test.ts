@@ -171,7 +171,14 @@ describe('Phase 3: Summoned Pact hubs / NPCs / quests', () => {
 
 describe('12a first-meet still holds on roster seed', () => {
   it('first harvest of a seeded NPC is stranger; later meet is acquaintance', () => {
-    const seeded = seedBibleNpcRoster(openedPact({ npcMemories: [], turn: 2 }), summonedPact);
+    const seeded = seedBibleNpcRoster(
+      openedPact({
+        npcMemories: [],
+        turn: 2,
+        sceneFacts: { ...emptySceneFacts(2), present: ['Ilyra Fen'] },
+      }),
+      summonedPact
+    );
     expect(hasMetBefore(seeded, 'Ilyra Fen')).toBe(false);
     const first = harvestNarrativeIntoLedger(
       { ...seeded, turn: 2 },

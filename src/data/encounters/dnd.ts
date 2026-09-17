@@ -1,4 +1,5 @@
 import { FAST_XP_AWARDS } from '@/game/xpPolicy';
+import { MANUS_DND_EXTRAS } from './manusHonestExtras';
 import type { EncounterSeed } from './types';
 
 const T = FAST_XP_AWARDS.combatTrash;
@@ -27,4 +28,5 @@ export const DND_ENCOUNTERS: EncounterSeed[] = [
   { id: 'DND-TRASH-010', mode: 'dnd', tier: 'trash', title: 'Coast Fog Cut', foeName: 'Fog-Bank Cutter', premise: 'Fog hides a cutter who wants the last dry cloak.', xpReward: T, goldReward: 4, cooldown: 14 },
   { id: 'DND-ELITE-006', mode: 'dnd', tier: 'elite', title: 'Mire Bridge', foeName: 'Mire Bridge Toll-Pike', premise: 'The only dry crossing wants a name and a cut.', xpReward: E, goldReward: 16, cooldown: 20 },
   { id: 'DND-ELITE-007', mode: 'dnd', tier: 'elite', title: 'Inn Yard Steel', foeName: 'Greyhollow Yard Bravo', premise: 'The inn yard decides you are the night’s trouble.', xpReward: E, goldReward: 15, cooldown: 20 },
+  ...MANUS_DND_EXTRAS,
 ];

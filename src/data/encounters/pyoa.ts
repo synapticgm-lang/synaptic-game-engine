@@ -1,3 +1,4 @@
+import { MANUS_PYOA_EXTRAS } from './manusHonestExtras';
 import type { EncounterSeed } from './types';
 
 /** PYOA crisis rows — drought combat stays off; catalog is authored crisis nouns only. */
@@ -12,4 +13,5 @@ export const PYOA_ENCOUNTERS: EncounterSeed[] = [
   { id: 'PYOA-CRISIS-008', mode: 'pyoa', tier: 'crisis', title: 'Ending Fork', foeName: 'Ending Fork Pressure', premise: 'Accept, refuse, or walk — the spine will lock.', xpReward: 0, goldReward: 0, cooldown: 24 },
   { id: 'PYOA-CRISIS-009', mode: 'pyoa', tier: 'crisis', title: 'Mill Gate', foeName: 'Mill Gate Crowd', premise: 'The mill gate will not open unless you pick a side.', xpReward: 0, goldReward: 0, cooldown: 20 },
   { id: 'PYOA-CRISIS-010', mode: 'pyoa', tier: 'crisis', title: 'Ferry Toll', foeName: 'Ferry Toll Crowd', premise: 'The last ferry wants a name, a coin, or a promise.', xpReward: 0, goldReward: 0, cooldown: 18 },
+  ...MANUS_PYOA_EXTRAS,
 ];

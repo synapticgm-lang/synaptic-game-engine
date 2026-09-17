@@ -1,6 +1,7 @@
 import type { CampaignBible } from './types';
+import { withManusHonestRoster } from './manusHonestRoster';
 
-export const cursedKeep: CampaignBible = {
+const cursedKeepBase: CampaignBible = {
   id: 'cursed-keep',
   title: 'Cursed Keep',
   archetype: 'cursed_manor',
@@ -297,3 +298,5 @@ export const cursedKeep: CampaignBible = {
     },
   ],
 };
+
+export const cursedKeep: CampaignBible = withManusHonestRoster(cursedKeepBase);

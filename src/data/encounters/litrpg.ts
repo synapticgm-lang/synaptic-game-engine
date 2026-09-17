@@ -1,4 +1,5 @@
 import { FAST_XP_AWARDS } from '@/game/xpPolicy';
+import { MANUS_LITRPG_EXTRAS } from './manusHonestExtras';
 import type { EncounterSeed } from './types';
 
 const T = FAST_XP_AWARDS.combatTrash;
@@ -33,4 +34,5 @@ export const LITRPG_ENCOUNTERS: EncounterSeed[] = [
   { id: 'LITRPG-TRASH-016', mode: 'litrpg', tier: 'trash', title: 'Reed Double', foeName: 'Mireglass False-Step', premise: 'A reflection-wrong step tries to walk you into the water.', xpReward: T, goldReward: 6, cooldown: 15, hubId: 'sp-hub-mireglass' },
   { id: 'LITRPG-ELITE-006', mode: 'litrpg', tier: 'elite', title: 'Quay Debt', foeName: 'Harbor Debt Collector', premise: 'A collector wants luck-pay for a cargo run you did not sign.', xpReward: E, goldReward: 18, cooldown: 20, hubId: 'sp-hub-harbor' },
   { id: 'LITRPG-ELITE-007', mode: 'litrpg', tier: 'elite', title: 'Palace Stair', foeName: 'Palace Stair Warden', premise: 'The approach stair will not take an unnamed soul.', xpReward: E, goldReward: 20, cooldown: 22, hubId: 'sp-hub-palace' },
+  ...MANUS_LITRPG_EXTRAS,
 ];
