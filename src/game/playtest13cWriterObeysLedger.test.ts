@@ -84,10 +84,10 @@ describe('playtest13c — writer obeys the ledger', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('Look / Wait / sign-the-book still callGm; first Who hall-stitches (17f)', () => {
+  it('Look / Wait / sign-the-book / first Who still callGm after page 1 (17g)', () => {
     const state = crown();
     const callGm = vi.fn();
-    for (const line of [SIGN_READ, 'Wait', 'Look around'] as const) {
+    for (const line of [SIGN_READ, 'Wait', 'Look around', 'Who are you'] as const) {
       expect(shouldStitchOpeningContinue(state, line)).toBe(false);
       expect(
         shouldUseSilentMudTurn({
@@ -99,9 +99,7 @@ describe('playtest13c — writer obeys the ledger', () => {
       expect(storyBeatWriterPath(state, line)).toBe('callGm');
       callGm(line);
     }
-    expect(shouldStitchOpeningContinue(state, 'Who are you')).toBe(true);
-    expect(storyBeatWriterPath(state, 'Who are you')).toBe('page1-stitch');
-    expect(callGm).toHaveBeenCalledTimes(3);
+    expect(callGm).toHaveBeenCalledTimes(4);
   });
 
   it('writer packet lists card CAST only — Lene, not Orel', () => {

@@ -81,10 +81,10 @@ describe('playtest13b — writer owns the book after page 1', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('sign / Wait / Look go to callGm; first Who still hall-stitches (17f)', () => {
+  it('sign / Wait / Look / first Who go to callGm after page 1 (17g)', () => {
     const state = crown();
     const callGm = vi.fn();
-    for (const line of [SIGN_READ, 'Wait', 'Look around'] as const) {
+    for (const line of [SIGN_READ, 'Wait', 'Look around', 'Who are you'] as const) {
       expect(shouldStitchOpeningContinue(state, line)).toBe(false);
       expect(
         shouldUseSilentMudTurn({
@@ -100,12 +100,11 @@ describe('playtest13b — writer owns the book after page 1', () => {
       expect(isDroughtStubProse(body)).toBe(false);
       callGm(line);
     }
-    expect(shouldStitchOpeningContinue(state, 'Who are you')).toBe(true);
-    expect(storyBeatWriterPath(state, 'Who are you')).toBe('page1-stitch');
-    expect(callGm).toHaveBeenCalledTimes(3);
+    expect(callGm).toHaveBeenCalledTimes(4);
     expect(callGm).toHaveBeenCalledWith(SIGN_READ);
     expect(callGm).toHaveBeenCalledWith('Wait');
     expect(callGm).toHaveBeenCalledWith('Look around');
+    expect(callGm).toHaveBeenCalledWith('Who are you');
   });
 
   it('last-resort after empty GM is page 1 / last good beat, not Dust hung', () => {
@@ -127,7 +126,7 @@ describe('playtest13b — writer owns the book after page 1', () => {
     expect(live).toContain('lastResortStoryBody');
     expect(live).toContain('await callGm(');
     expect(fate).toContain('lastResortStoryBody');
-    expect(fate).toContain('page 1 stitch only');
+    expect(fate).toContain('already-told who/want/refuse still stitches');
     expect(fate).toContain('applyOpeningAnswer');
   });
 });

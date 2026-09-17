@@ -930,7 +930,8 @@ export async function headlessFateTurn(
     repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
   }
 
-  // 13b — page 1 stitch only (sceneWritten false). After page 1, writer owns hall / Look / Wait / sign.
+  // 17g — page 1 / unlocked-name covers stitch. After sceneWritten + locked name, writer owns
+  // hall / Look / Wait / inspect. First already-told who/want/refuse still stitches.
   if (shouldStitchOpeningContinue(state, playerInput)) {
     const next = await headlessOpeningContinueTurn(state, playerInput);
     const ended = Date.now();

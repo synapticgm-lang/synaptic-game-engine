@@ -2248,8 +2248,8 @@ export function useGame() {
       const openingSceneWritten =
         liveCurrent.openingEstablishment?.sceneWritten === true
         || current.openingEstablishment?.sceneWritten === true;
-      // 17f — cover / first-second hall talk still stitch. Third+ same pad leaves for callGm.
-      // Never reprint page-1 after sceneWritten or a locked name.
+      // 17g — after sceneWritten + locked name, only first already-told who/want/refuse stitches.
+      // Page 1 / unlocked-name covers still stitch. Never reprint page-1 after a lock.
       if (
         shouldStitchOpeningContinue(current, contentSanitized)
         || shouldStitchOpeningContinue(liveCurrent, contentSanitized)

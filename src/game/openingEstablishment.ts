@@ -1206,9 +1206,10 @@ export function isHallTalkPlayerLine(raw: string): boolean {
 }
 
 /**
- * Page 1 only — after sceneWritten the writer owns Look/Wait/sign-read.
- * 17f: first/second same who/want/refuse stay on stitch (already-told);
- * third+ leaves so callGm writes. applyOpeningAnswer still writes the name ledger.
+ * Page 1 / unlocked-name covers stitch locally.
+ * 17g: after sceneWritten + locked name the writer owns the book.
+ * Only the first already-told who/want/refuse (17f second hit) stays on stitch;
+ * third+ already leaves. applyOpeningAnswer still writes the name ledger.
  */
 const OPENING_CARD_NOUNS = ['book', 'pouch', 'charter', 'page', 'folio', 'ribbon', 'mesh'] as const;
 const OPENING_CARD_NOUN_RE = OPENING_CARD_NOUNS.join('|');
@@ -1252,13 +1253,43 @@ export function asksOpeningCardNoun(state: GameState, raw: string): string | nul
   return null;
 }
 
+/** Second same who/want/refuse — already-told stitch, not the book. */
+function isFirstAlreadyToldHallStitch(state: GameState, line: string): boolean {
+  const topic = hallTalkTopic(line);
+  if (topic !== 'who' && topic !== 'want' && topic !== 'refuse') return false;
+  return countSameHallTopicRepeats(state, line) === 2;
+}
+
 export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
   if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
-  if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
+  const sceneWritten = state.openingEstablishment?.sceneWritten === true;
+  const nameLocked = !!lockedOpeningPcName(state);
   const line = playerInput ?? lastPlayerLine(state);
-  if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) {
-    return !state.openingEstablishment?.sceneWritten;
+  const coverOpen = isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state);
+
+  // Unlocked-name covers still stitch locally. After a lock, cover-continue is not page-1.
+  if (coverOpen && !nameLocked) return true;
+
+  // After page 1: writer owns Look / Wait / inspect / talk / name-locked cover-continue.
+  // Only the first already-told who/want/refuse stays on stitch. Third+ already leaves.
+  if (sceneWritten) {
+    if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return false;
+    if (
+      isKitOrCarryInspect(line)
+      && !hallTalkAsksWant(line)
+      && !hallTalkAsksWho(line)
+      && !hallTalkAsksRefuse(line)
+      && !playerAskedWhyPulled(line)
+    ) {
+      return false;
+    }
+    if (!isHallTalkPlayerLine(line)) return false;
+    if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) return false;
+    return isFirstAlreadyToldHallStitch(state, line);
   }
+
+  if (coverOpen) return true;
+  if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return true;
   if (
     isKitOrCarryInspect(line)
     && !hallTalkAsksWant(line)
@@ -1279,7 +1310,6 @@ export function shouldStitchOpeningContinue(state: GameState, playerInput?: stri
       && !playerAskedWhyPulled(line);
     if (onlyPanel) return false;
   }
-  // First/second same who/want/refuse stay on stitch (already-told). Third+ leaves for callGm.
   if (countSameHallTopicRepeats(state, line) >= 3) return false;
   return true;
 }
@@ -1301,7 +1331,18 @@ export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): b
   if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
   const line = (playerInput ?? lastPlayerLine(state)).replace(/\s+/g, ' ').trim();
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
-  return shouldStitchOpeningContinue(state, line);
+  if (!isHallTalkPlayerLine(line)) return false;
+  if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) {
+    const onlyPanel =
+      !hallTalkAsksWho(line)
+      && !hallTalkAsksWant(line)
+      && !hallTalkAsksWhere(line)
+      && !hallTalkAsksRefuse(line)
+      && !hallTalkAsksStayLeave(line)
+      && !playerAskedWhyPulled(line);
+    if (onlyPanel) return false;
+  }
+  return true;
 }
 
 function openingSceneHay(state: GameState): string {
