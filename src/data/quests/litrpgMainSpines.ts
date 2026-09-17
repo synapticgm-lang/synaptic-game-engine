@@ -4,6 +4,11 @@ import {
   pickStoryRpgStampAlt,
   withMatchedStoryRpgSpine,
 } from '@/data/quests/storyRpgMainSpines';
+import {
+  matchTabletopMainSpineFromCtx,
+  pickTabletopStampAlt,
+  withMatchedTabletopSpine,
+} from '@/data/quests/tabletopMainSpines';
 
 /**
  * LitRPG main-quest spines (2026-09-17a). One spine per New Game, matched to
@@ -983,7 +988,7 @@ export function isLitRpgSpineBibleId(id: string | null | undefined): id is LitRp
 }
 
 export function isLitRpgSpineQuestId(id: string | undefined): boolean {
-  return /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht)-spine-/.test(id ?? '');
+  return /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht|ck|mr|bc|vb|sv|sc)-spine-/.test(id ?? '');
 }
 
 export function spineQuestId(spine: LitRpgMainSpine): string {
@@ -1072,7 +1077,7 @@ export function withMatchedLitRpgSpine(
     if (seeds.some((s) => s.id === extra.id)) return seeds;
     return [extra, ...seeds];
   }
-  return withMatchedStoryRpgSpine(seeds, ctx);
+  return withMatchedTabletopSpine(withMatchedStoryRpgSpine(seeds, ctx), ctx);
 }
 
 function hashSeed(raw: string): number {
@@ -1106,6 +1111,10 @@ export function resolveLitRpgFolkStamp(state: {
     return picked || undefined;
   }
   const story = matchStoryRpgMainSpineFromCtx(ctx);
-  if (!story) return undefined;
-  return pickStoryRpgStampAlt(story, ctx.seed) || undefined;
+  if (story) {
+    return pickStoryRpgStampAlt(story, ctx.seed) || undefined;
+  }
+  const tabletop = matchTabletopMainSpineFromCtx(ctx);
+  if (!tabletop) return undefined;
+  return pickTabletopStampAlt(tabletop, ctx.seed) || undefined;
 }

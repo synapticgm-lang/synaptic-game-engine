@@ -784,7 +784,7 @@ export function mainSpineQuest(state: GameState): Quest | null {
   const visible = visibleJournalQuests(state).filter((q) => q.status === 'active');
   if (!visible.length) return null;
   return (
-    visible.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht)-spine-/.test(q.id))
+    visible.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht|ck|mr|bc|vb|sv|sc)-spine-/.test(q.id))
     ?? visible.find(
       (q) =>
         q.id === 'sp-quest-1'
@@ -891,7 +891,7 @@ export function revealLocalStarterQuest(
   const extra = adapted.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   const pool = [...quests, ...extra];
   const first =
-    pool.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht)-spine-/.test(q.id))
+    pool.find((q) => /^(sp|ha|si|gw|as|fl|ia|va|hc|dt|sr|gh|ec|rg|sh|dw|ac|tl|rm|cd|wm|ht|ck|mr|bc|vb|sv|sc)-spine-/.test(q.id))
     ?? pool.find((q) => q.id === 'si-quest-1' || /first blood/i.test(q.name))
     ?? pool.find((q) => q.id === 'sp-quest-1')
     ?? pool.find((q) => (q.recommendedLevel ?? 1) <= 1 && (q.type === 'main' || !q.type));
