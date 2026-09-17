@@ -74,16 +74,18 @@ function isGameUrl(url) {
  * open — leftover 5173 tabs were not parallel stories. Close extras only.
  */
 async function attachGameTab(browser) {
-  const pages = await browser.pages();
   const gamePages = [];
-  for (const page of pages) {
-    let url = '';
+  for (const target of browser.targets()) {
+    if (target.type() !== 'page' || !isGameUrl(target.url())) continue;
     try {
-      url = page.url();
+      const page = await Promise.race([
+        target.page(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('game_page_timeout')), 12000)),
+      ]);
+      if (page) gamePages.push(page);
     } catch {
       continue;
     }
-    if (isGameUrl(url)) gamePages.push(page);
   }
   const keep = gamePages[0];
   for (const extra of gamePages.slice(1)) {
@@ -269,7 +271,11 @@ async function main() {
 
   let browser;
   try {
-    browser = await puppeteer.connect({ browserURL: cdp, defaultViewport: null });
+    browser = await puppeteer.connect({
+      browserURL: cdp,
+      defaultViewport: null,
+      protocolTimeout: 120000,
+    });
   } catch (err) {
     console.log(JSON.stringify({
       ok: false,
