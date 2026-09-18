@@ -76,7 +76,11 @@ export async function readGameSnapshot(page) {
     );
     const hasAuth = /Enter the Realm|Sign in with Google|Email sign-in/i.test(body);
     const hasMenu = /Start New Game/i.test(body) && !document.querySelector('.sgm-play-center');
-    const inNewGame = Boolean(document.querySelector('.sgm-modal-shell'));
+    const modalText = (document.querySelector('.sgm-modal-shell')?.innerText || '');
+    const inNewGame = Boolean(
+      document.querySelector('.sgm-modal-shell')
+      && /Quick Start|Pre-Made|Begin Journey|Someone new this time/i.test(modalText)
+    );
     const hasWelcome = /Press any key or tap/i.test(body);
     const hideOptions = /Show options/i.test(body);
     const hideText = /Show text/i.test(body);
@@ -121,12 +125,26 @@ async function revealPlayChrome(page) {
   if (snap.hideText) await clickText(page, 'Show text', { timeoutMs: 800, exact: true });
 }
 
+async function dismissQuestUnlock(page) {
+  await page.evaluate(() => {
+    const modal = document.querySelector('.sgm-modal-shell');
+    if (!modal) return;
+    const text = (modal.innerText || '');
+    if (!/Quest unlocked|Quests unlocked/i.test(text)) return;
+    const btn = [...modal.querySelectorAll('button')].find((b) =>
+      /^(Continue|Open journal)$/i.test((b.textContent || '').replace(/\s+/g, ' ').trim())
+    );
+    if (btn && /Continue/i.test(btn.textContent || '')) btn.click();
+  });
+}
+
 /** Page 1 is local stitch — wait for prose and/or cover chips, not merely !busy. */
 export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
   const start = Date.now();
   let last = await readGameSnapshot(page);
   while (Date.now() - start < timeoutMs) {
     await dismissWelcome(page);
+    await dismissQuestUnlock(page);
     await revealPlayChrome(page);
     last = await readGameSnapshot(page);
     const story = (last.lastGm || '').trim();
@@ -143,17 +161,14 @@ export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
 export async function waitNewGmBeat(page, prev, { timeoutMs = 180000 } = {}) {
   const start = Date.now();
   const prevStory = (prev.lastGm || '').trim();
-  const prevChips = (prev.chips || []).join('\n');
   const prevProse = Number(prev.proseCount || 0);
-  const prevThumbs = Number(prev.feedbacks || 0);
   while (Date.now() - start < timeoutMs) {
+    await dismissQuestUnlock(page);
     const snap = await readGameSnapshot(page);
     const story = (snap.lastGm || '').trim();
     const storyGrew = story.length >= 8 && story !== prevStory;
-    const chipsChanged = (snap.chips || []).join('\n') !== prevChips;
     const proseGrew = Number(snap.proseCount || 0) > prevProse;
-    const thumbsGrew = Number(snap.feedbacks || 0) > prevThumbs;
-    if (!snap.busy && (storyGrew || chipsChanged || proseGrew || thumbsGrew)) return snap;
+    if (!snap.busy && (storyGrew || proseGrew)) return snap;
     await sleep(500);
   }
   throw new Error('Timed out waiting for a real GM bubble (not STATUS-only)');
@@ -193,8 +208,11 @@ export async function loginFounderEmail(page, email, password) {
     return {
       ok: false,
       blocked: 'wrong_session',
-      message: `Game tab is signed in as ${snap.signedHint}. Open a fresh localhost tab or sign out, then rerun.`,
+      message: `Game tab is signed in as ${snap.signedHint}. Stay on the tester tab or sign out, then rerun.`,
     };
+  }
+  if (snap.hasMenu && !snap.hasAuth) {
+    return { ok: true, already: true };
   }
   if (!snap.hasAuth) {
     return { ok: false, blocked: 'no_auth_overlay', message: 'Email sign-in overlay not visible.' };

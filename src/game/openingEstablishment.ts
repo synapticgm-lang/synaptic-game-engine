@@ -2099,6 +2099,20 @@ export function hallTalkTopic(raw: string): HallTalkTopic | null {
   return null;
 }
 
+/** Optimistic send already appended this player line (no GM after it). */
+function incomingAlreadyOnOpenLog(state: GameState, incoming: string): boolean {
+  const want = incoming.replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!want) return false;
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i];
+    if (e?.role === 'gm') return false;
+    if (e?.role !== 'player') continue;
+    return ((e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase()) === want;
+  }
+  return false;
+}
+
 /** Same who/want/refuse pad in recent player lines, including the line about to fire. */
 export function countSameHallTopicRepeats(state: GameState, playerInput?: string): number {
   const incoming = (playerInput ?? '').replace(/\s+/g, ' ').trim();
@@ -2111,8 +2125,9 @@ export function countSameHallTopicRepeats(state: GameState, playerInput?: string
     const c = (log[i]?.content ?? '').replace(/\s+/g, ' ').trim();
     if (c) lines.push(c);
   }
-  // Incoming is the pad about to fire — always count it, even when it matches the last pad.
-  if (incoming) {
+  // Count the pad about to fire once. Do not add it again when sendAction already
+  // committed the optimistic player bubble — that made first who/want look like already-told.
+  if (incoming && !incomingAlreadyOnOpenLog(state, incoming)) {
     lines.unshift(incoming);
     if (lines.length > 8) lines.pop();
   }

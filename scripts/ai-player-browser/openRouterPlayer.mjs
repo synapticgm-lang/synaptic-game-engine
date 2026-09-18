@@ -5,7 +5,7 @@
 import { buildPlaytesterPrompt, parsePlaytesterDecision } from './geminiTab.mjs';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const DEFAULT_MODEL = 'google/gemini-2.5-pro';
+const DEFAULT_MODEL = 'google/gemini-2.5-flash';
 
 export function openRouterKey() {
   return (

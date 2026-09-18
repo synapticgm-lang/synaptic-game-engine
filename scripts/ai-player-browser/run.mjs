@@ -1,7 +1,7 @@
 /**
  * Watched browser AI-player (4 flagships × T10).
  * Real React sendAction in a visible Chrome tab. Player-brain is OpenRouter
- * (google/gemini-2.5-pro). Never closes Chrome / never kills chrome.exe.
+ * (google/gemini-2.5-flash). Never closes Chrome / never kills chrome.exe.
  *
  * ONE Synaptic tab for the whole run. Login, all four bibles, and any
  * retry reuse that same page. New Game is Start New Game / reload in
@@ -65,7 +65,14 @@ function appendMd(file, text) {
 }
 
 function isGameUrl(url) {
-  return /127\.0\.0\.1:5173|localhost:5173/i.test(String(url || ''));
+  const u = String(url || '');
+  if (/127\.0\.0\.1:5173|localhost:5173/i.test(u)) return true;
+  if (/synapticgm\.com/i.test(u)) return true;
+  try {
+    return u.startsWith(new URL(host).origin);
+  } catch {
+    return false;
+  }
 }
 
 /**

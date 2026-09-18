@@ -2251,8 +2251,7 @@ export function useGame() {
       // 17g — after sceneWritten + locked name, only first already-told who/want/refuse stitches.
       // Page 1 / unlocked-name covers still stitch. Never reprint page-1 after a lock.
       if (
-        shouldStitchOpeningContinue(current, contentSanitized)
-        || shouldStitchOpeningContinue(liveCurrent, contentSanitized)
+        shouldStitchOpeningContinue(liveCurrent, contentSanitized)
         || (
           !openingSceneWritten
           && (

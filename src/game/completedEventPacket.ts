@@ -29,8 +29,10 @@ import {
   isHallTalkPlayerLine,
   isOpeningCardActLine,
   cardSceneMentionTokens,
+  lockedOpeningPcName,
   openingCastLabel,
   openingCastNames,
+  proseAsksForPcName,
   shortCardOffer,
   openingStayLeaveLine,
   openingWantLine,
@@ -1329,31 +1331,48 @@ function cardPageParagraph(state: GameState): string {
   return '';
 }
 
+function ledgerAdvanceBeat(state: GameState, packet?: CompletedEventPacket): string {
+  const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
+  const who = (packet?.answerWho || packet?.witnesses?.[0] || openingCastLabel(state) || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const name = lockedOpeningPcName(state);
+  const head = who && !/\bpanel\b/i.test(who)
+    ? who.charAt(0).toUpperCase() + who.slice(1)
+    : '';
+  if (name && head) {
+    return `${head} was still at ${where}. The name ${name} already stood. The room waited on what you did next.`;
+  }
+  if (name) {
+    return `You stayed at ${where}. The name ${name} already stood. The room waited on what you did next.`;
+  }
+  if (head) {
+    return `${head} was still at ${where}. What you already knew of the room still held.`;
+  }
+  return `The room at ${where} was still the room you already knew. What you already saw still held.`;
+}
+
 /**
  * Last-resort book body after empty/timeout GM (retries already spent).
- * Never Dust-hung / already-happened. Prefer last good GM, then page-1 card.
+ * Never Dust-hung / already-happened. After a locked name, do not reprint
+ * page-1 or the last GM beat — advance from the ledger.
  */
 export function lastResortStoryBody(
   state: GameState,
   packet?: CompletedEventPacket
 ): { prose: string; status: string } {
-  const last = lastGoodGmBody(state);
-  const card = cardPageParagraph(state);
-  let prose = sanitizeLockedNameBeat(state, last || card);
-  if (!prose || isDroughtStubProse(prose)) {
-    const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
-    const who = (packet?.answerWho || packet?.witnesses?.[0] || '').replace(/\s+/g, ' ').trim();
-    prose = who
-      ? `${who} was still at ${where}. The writer did not return a new beat after retries. What you already knew of the room still held.`
-      : `The room at ${where} was still the room you already knew. The writer did not return a new beat after retries. What you already saw still held.`;
-  }
-  if (isDroughtStubProse(prose)) {
-    prose =
-      'The beat waited on the writer. What you already knew of the room still held. Try the same line again.';
+  const named = !!lockedOpeningPcName(state);
+  let prose = named
+    ? sanitizeLockedNameBeat(state, ledgerAdvanceBeat(state, packet))
+    : sanitizeLockedNameBeat(state, lastGoodGmBody(state) || cardPageParagraph(state));
+  if (!prose || isDroughtStubProse(prose) || (named && proseAsksForPcName(prose))) {
+    prose = ledgerAdvanceBeat(state, packet);
   }
   return {
     prose,
-    status: 'Writer empty after retries — last good beat held (not a drought stub)',
+    status: named
+      ? 'Writer empty after retries — ledger advance (not a page-1 reprint)'
+      : 'Writer empty after retries — last good beat held (not a drought stub)',
   };
 }
 
