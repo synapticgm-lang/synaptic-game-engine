@@ -10,6 +10,7 @@ import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import { compileChoices } from './choiceCompiler';
+import { lastResortStoryBody, buildCompletedEventPacket } from './completedEventPacket';
 import {
   castSpeakVerb,
   coverContinuePads,
@@ -106,5 +107,20 @@ describe('playtest18c — pads refill and CAST glue', () => {
     expect(pads.join(' ')).toMatch(/Wait/);
     expect(compileChoices(afterInspect, ['Inspect the panel', 'Look around', 'Wait']).choices)
       .not.toContain('Inspect the panel');
+  });
+
+  it('last-resort for Where/Joss is not the already-answered want telegram', () => {
+    const lock = openingNameLockSpokenBeat(namedWatchtower());
+    const state = namedWatchtower({
+      log: [
+        { id: 'g0', turn: 0, role: 'gm', content: PAGE1, timestamp: 0 },
+        { id: 'p1', turn: 1, role: 'player', content: 'Jax', timestamp: 1 },
+        { id: 'g1', turn: 1, role: 'gm', content: lock, timestamp: 2 },
+      ],
+    });
+    const line = 'Okay, fine. Let\'s just go. Where is this Joss guy?';
+    const resort = lastResortStoryBody(state, buildCompletedEventPacket(state, line), line);
+    expect(resort.prose).toMatch(/Joss|way out|loft/i);
+    expect(resort.prose).not.toMatch(/the ask was already answered|did not say it twice/i);
   });
 });

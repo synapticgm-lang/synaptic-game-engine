@@ -1361,6 +1361,13 @@ export function isLastGmReprint(prose: string, lastGm: string): boolean {
   return false;
 }
 
+function destFromAct(act: string): string {
+  const names = (act.match(/\b[A-Z][a-z]{2,20}\b/g) ?? []).filter(
+    (n) => !/^(Okay|Where|What|Who|Why|The|This|That|Lets|Let|You|Your|Jax)\b/.test(n)
+  );
+  return names[0] || 'the next way out';
+}
+
 function herePhrase(where: string): string {
   const place = (where || 'this place').replace(/\s+/g, ' ').trim();
   return /^(?:a|an|the)\s/i.test(place) ? place : `the ${place}`;
@@ -1426,6 +1433,12 @@ function topicAdvanceStitch(
     `You are still at ${here}. ${head ? `${head} already answered who they are.` : 'They already answered who they are.'} They wait on what you do next. The room does not add a second name. ${nextMove}`,
     `At ${here} the name-ask was already answered. ${head ? `${head} did not introduce twice.` : 'They did not introduce twice.'} ${nextMove}`,
   ];
+  const dest = destFromAct(act);
+  const go = [
+    `You are still at ${here}. You look for ${dest}. ${stay} The loft does not move with you yet. ${nextMove}`,
+    `You push toward ${dest} from ${here}. ${stay} Hay and tack stay where they were. ${nextMove}`,
+    `You call for ${dest} at ${here}. ${head ? `${head} is still in earshot.` : 'The room holds.'} No new doorway opened. ${nextMove}`,
+  ];
   const spokenWant = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
   const spokenWho = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
   const wantFirst = `You are at ${here}. ${spokenWant} ${head ? `${head} stays where you can see them.` : 'They stay in the room.'} ${nextMove}`;
@@ -1435,12 +1448,14 @@ function topicAdvanceStitch(
     pool = hallTopicAlreadyAnswered(state, 'want') ? wantAgain : [wantFirst, ...wantAgain];
   } else if (hallTalkAsksWho(act)) {
     pool = hallTopicAlreadyAnswered(state, 'who') ? whoAgain : [whoFirst, ...whoAgain];
+  } else if (hallTalkAsksWhere(act) || /\b(?:joss|go|walk|leave|door|ladder|toward)\b/i.test(act)) {
+    pool = go;
   } else if (packet?.verb === 'waited' || /\bwait\b/i.test(act)) {
     pool = wait;
   } else if (packet?.verb === 'inspected' || /\blook\b|\binspect\b|\bscout\b/i.test(act)) {
     pool = look;
   } else if (packet?.verb === 'spoke' || packet?.verb === 'parleyed') {
-    pool = hallTopicAlreadyAnswered(state, 'want') ? wantAgain : look;
+    pool = go;
   }
   return pickAdvanceVariant(pool, recent, salt).replace(/\s+/g, ' ').trim();
 }
