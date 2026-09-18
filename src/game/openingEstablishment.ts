@@ -1856,10 +1856,7 @@ export function coverContinuePads(state: GameState): string[] {
     if (hallTalkAsksWho(lastPlayer)) {
       return liveCoverPads(state, ['Ask what they want', 'Look around']);
     }
-    const askedWant = (state.log ?? []).some(
-      (e) => e.role === 'player' && hallTalkAsksWant(e.content ?? '')
-    );
-    return askedWant
+    return hallTopicAlreadyAnswered(state, 'want')
       ? liveCoverPads(
         state,
         isLitrpgSystemPanelMode(state)
@@ -2125,11 +2122,53 @@ export function isNameTelegramProse(body: string): boolean {
   return false;
 }
 
-/** Player already asked this hall topic in the opening scene. */
+/** GM already spoke this hall topic (name-lock want, who-line, refuse). */
+export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolean {
+  const gms = (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim())
+    .filter((t) => t.length >= 8);
+  if (!gms.length) return false;
+  const has = (needle: string, min = 16) => {
+    const n = (needle ?? '').replace(/\s+/g, ' ').trim();
+    if (n.length < min) return false;
+    const clip = n.slice(0, Math.min(48, n.length));
+    return gms.some((g) => g.includes(clip));
+  };
+  if (topic === 'want') {
+    if (has(openingNameLockSpokenBeat(state), 24)) return true;
+    if (has(openingSpokenWant(state), 20)) return true;
+    if (has(shortCardWant(state), 16)) return true;
+    if (has(shortCardOffer(state), 20)) return true;
+    return false;
+  }
+  if (topic === 'who') {
+    if (has(openingWhoAskLine(state), 20)) return true;
+    const who = openingCastLabel(state);
+    const quote = openingSpokenIdentityQuote(who, {
+      location: state.currentLocation,
+      engineMode: state.engineMode,
+      hay: openingSceneHay(state),
+    });
+    return has(quote, 18);
+  }
+  if (topic === 'refuse') {
+    return has(openingSpokenRefuse(state), 20) || has(shortCardCost(state), 16);
+  }
+  return false;
+}
+
+/** Player already asked this hall topic, or the book already answered it. */
 export function hallTopicAlreadyAnswered(state: GameState, topic: HallTalkTopic): boolean {
-  return (state.log ?? []).some(
+  if ((state.log ?? []).some(
     (e) => e.role === 'player' && hallTalkTopic(e.content ?? '') === topic
-  );
+  )) {
+    return true;
+  }
+  if (topic === 'who' || topic === 'want' || topic === 'refuse') {
+    return gmSpokeHallTopic(state, topic);
+  }
+  return false;
 }
 
 /** Starve Who / Want / refuse chips once that topic is logged. */

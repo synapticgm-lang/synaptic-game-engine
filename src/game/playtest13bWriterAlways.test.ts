@@ -123,9 +123,9 @@ describe('playtest13b — writer owns the book after page 1', () => {
     const live = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
     const fate = readFileSync(resolve(__dirname, './fateAutoplay.ts'), 'utf8');
     expect(live).toContain('openingSceneWritten');
-    expect(live).toContain('lastResortStoryBody');
+    expect(live).toContain('bookBodyAfterWriterMiss');
     expect(live).toContain('await callGm(');
-    expect(fate).toContain('lastResortStoryBody');
+    expect(fate).toContain('bookBodyAfterWriterMiss');
     expect(fate).toContain('already-told who/want/refuse still stitches');
     expect(fate).toContain('applyOpeningAnswer');
   });

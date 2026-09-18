@@ -343,7 +343,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { isDroughtStubProse, lastResortStoryBody, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
@@ -2841,6 +2841,20 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             if (turnAbort.signal.aborted) throw err;
             const kind = classifyTurnFailure(err);
             if (!shouldAutoRetryTurn(kind) || attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES) {
+              // Fate already returns empty here so lastResortStoryBody can paint.
+              // Live used to throw → catch restored the draft and left the optimistic
+              // player bubble with no GM row (hosted T2 "Ask what they want" after 18a name-lock).
+              if (shouldAutoRetryTurn(kind)) {
+                debugLogger.record('WARN', 'GM transport exhausted — last-resort will write the book', {
+                  kind,
+                  attempt: attempt + 1,
+                  timeoutMs: gmTimeoutMs,
+                  writerTier: writerTierForBudget,
+                  turn: liveCurrent.turn,
+                  host: gmProxyHost(),
+                });
+                return { text: '', imagePrompt: null, rolls: [], systemLog: [] };
+              }
               throw err;
             }
             transportRetriesUsed = attempt + 1;
@@ -2859,6 +2873,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             await new Promise((r) => setTimeout(r, transportRetryBackoffMs(attempt, kind)));
           }
         }
+        if (lastErr && shouldAutoRetryTurn(classifyTurnFailure(lastErr))) {
+          debugLogger.record('WARN', 'GM transport exhausted — last-resort will write the book', {
+            kind: classifyTurnFailure(lastErr),
+            turn: liveCurrent.turn,
+            host: gmProxyHost(),
+          });
+          return { text: '', imagePrompt: null, rolls: [], systemLog: [] };
+        }
         throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
       };
       // 08d Silent Engine — receipt only; skip DeepSeek micro-flavor entirely.
@@ -2866,12 +2888,29 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const authoredBeat = authoredBook
         ? (authoredPageText(liveCurrent) || authoredStartPage()).trim()
         : '';
-      let result: GmResult =
-        authoredBook
-          ? { text: authoredBeat, imagePrompt: null, rolls: [], systemLog: [] }
-          : useMud && shouldSkipMicroFlavor()
-            ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
-            : await callGmDurable(gmPlayerPayload);
+      let result: GmResult;
+      try {
+        result =
+          authoredBook
+            ? { text: authoredBeat, imagePrompt: null, rolls: [], systemLog: [] }
+            : useMud && shouldSkipMicroFlavor()
+              ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
+              : await callGmDurable(gmPlayerPayload);
+      } catch (err) {
+        const kind = classifyTurnFailure(err);
+        if (shouldAutoRetryTurn(kind) || kind === 'timeout' || kind === 'empty' || kind === 'network') {
+          debugLogger.record('WARN', 'GM transport threw — last-resort will write the book', {
+            kind,
+            timeoutMs: gmTimeoutMs,
+            writerTier: writerTierForBudget,
+            turn: liveCurrent.turn,
+            host: gmProxyHost(),
+          });
+          result = { text: '', imagePrompt: null, rolls: [], systemLog: [] };
+        } else {
+          throw err;
+        }
+      }
       if (useMud && !authoredBook) {
         mudTurnLive = composeFreeMudTurn(preparedEvent.packet, {
           arcReceipts: pendingArcStatusReceipts,
@@ -3681,11 +3720,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           cleanText = spoken;
         }
       }
-      if (!storyHasBody(cleanText) || isDroughtStubProse(cleanText)) {
-        const resort = lastResortStoryBody(liveCurrent, preparedEvent.packet, sanitizedInput);
-        if (resort.prose && !isDroughtStubProse(resort.prose)) {
-          cleanText = resort.prose;
-          mergedSystemLog = [...mergedSystemLog, resort.status];
+      {
+        const lastGmRow = [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+        if (
+          !storyHasBody(cleanText)
+          || isDroughtStubProse(cleanText)
+          || isLastGmReprint(cleanText, lastGmRow)
+        ) {
+          const painted = bookBodyAfterWriterMiss(
+            liveCurrent,
+            preparedEvent.packet,
+            sanitizedInput,
+            cleanText
+          );
+          if (painted.prose && !isDroughtStubProse(painted.prose) && !isLastGmReprint(painted.prose, lastGmRow)) {
+            cleanText = painted.prose;
+            if (painted.status) mergedSystemLog = [...mergedSystemLog, painted.status];
+          }
         }
       }
       if (!storyHasBody(cleanText)) {

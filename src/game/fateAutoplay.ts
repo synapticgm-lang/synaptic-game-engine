@@ -138,7 +138,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { isDroughtStubProse, lastResortStoryBody, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import {
   classifyResponsePath,
@@ -1137,12 +1137,19 @@ Do NOT print dice notation or CODE ENFORCED.
       renderFallbackUsed = true;
     }
   }
-  if ((!useMud && !gmText.trim()) || isDroughtStubProse(gmText)) {
-    const resort = lastResortStoryBody(arcState, preparedEvent.packet, playerInput);
-    if (resort.prose && !isDroughtStubProse(resort.prose) && (!gmText.trim() || isDroughtStubProse(gmText))) {
-      gmText = resort.prose;
-      gmSystemLog = [...gmSystemLog, resort.status];
-      renderFallbackUsed = true;
+  {
+    const lastGmRow = [...(arcState.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+    if (
+      (!useMud && !gmText.trim())
+      || isDroughtStubProse(gmText)
+      || isLastGmReprint(gmText, lastGmRow)
+    ) {
+      const painted = bookBodyAfterWriterMiss(arcState, preparedEvent.packet, playerInput, gmText);
+      if (painted.prose && !isDroughtStubProse(painted.prose) && !isLastGmReprint(painted.prose, lastGmRow)) {
+        gmText = painted.prose;
+        if (painted.status) gmSystemLog = [...gmSystemLog, painted.status];
+        renderFallbackUsed = true;
+      }
     }
   }
   if (!useMud && !gmText.trim()) {

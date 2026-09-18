@@ -62,15 +62,79 @@ export async function readGameSnapshot(page) {
     );
     const autoBtn = document.querySelector('button[title="Auto-resolve combat"]');
     const autoFightReady = Boolean(autoBtn && visible(autoBtn) && !autoBtn.disabled);
-    const gmBlocks = [...document.querySelectorAll('.sgm-prose-face')].filter((el) => {
-      return !el.closest('.justify-end') && visible(el);
+    // Real GM book rows only (hasRealGmStory). Never: player bubbles, HUD
+    // adventurer cards (.sgm-turn-frame is also used there), or quest chrome.
+    // NEVER treat SYSTEM / STATUS / Quest Unlocked as the beat — classic LogRow
+    // puts LitrpgSystemWindow (also `.px-4.py-3`) inside the same card as the
+    // festival paragraph. querySelector('.px-4.py-3') used to steal that plate.
+    const storyRoot = document.querySelector('.sgm-play-story-panel');
+    const scope = storyRoot || document.querySelector('.sgm-play-center') || document;
+    const isChromeNode = (el) => Boolean(
+      el?.closest('[data-sgm-system-window]')
+      || el?.closest('[data-sgm-feedback="1"]')
+      || el?.closest('.sgm-modal-shell')
+    );
+    const storyFromCard = (card) => {
+      if (!card) return '';
+      const paras = [...card.querySelectorAll('.sgm-prose-face')].filter((el) => {
+        if (el === card) return false;
+        if (isChromeNode(el)) return false;
+        if (el.closest('.justify-end')) return false;
+        return true;
+      });
+      if (paras.length) {
+        return paras.map((p) => (p.innerText || '').trim()).filter(Boolean).join('\n\n');
+      }
+      const clone = card.cloneNode(true);
+      clone.querySelectorAll('[data-sgm-system-window], [data-sgm-feedback="1"], button').forEach((n) => n.remove());
+      return (clone.innerText || '').trim();
+    };
+    const chromeFromCard = (card) => {
+      if (!card) return '';
+      return [...card.querySelectorAll('[data-sgm-system-window]')]
+        .map((n) => (n.innerText || '').trim())
+        .filter(Boolean)
+        .join('\n');
+    };
+    const isRealBook = (text) => {
+      const t = String(text || '').replace(/\s+/g, ' ').trim();
+      if (t.length < 8 || !/[a-z]/i.test(t)) return false;
+      if (/equipped set:|Show Profile/i.test(t) && t.length < 240) return false;
+      if (/^(?:_>\s*)?SYSTEM\b/i.test(t) && /\b(?:Name|Level|HP|Registration)\b/i.test(t) && t.length < 400) {
+        return false;
+      }
+      if (/^(?:quest unlocked|xp gained|status:|level up)\b/i.test(t) && t.length < 80) return false;
+      return true;
+    };
+    const gmNarrative = [...scope.querySelectorAll('.sgm-turn-frame')].filter((el) => {
+      if (!visible(el)) return false;
+      return /\bGame Master\b/i.test(el.innerText || '');
     });
-    let lastGm = (gmBlocks.at(-1)?.innerText || '').trim();
-    if (lastGm.length < 8) {
-      const panel = document.querySelector('.sgm-play-story-panel');
-      if (panel && visible(panel)) lastGm = (panel.innerText || '').trim();
-    }
-    const feedbacks = document.querySelectorAll('[data-sgm-feedback="1"]').length;
+    const gmClassic = [...scope.querySelectorAll('.sgm-prose-face')].filter((el) => {
+      if (!visible(el)) return false;
+      if (el.closest('.justify-end')) return false;
+      if (el.closest('.sgm-turn-frame')) return false;
+      if (el.closest('.sgm-modal-shell')) return false;
+      if (el.closest('[data-sgm-system-window]')) return false;
+      if (el.parentElement?.closest('.sgm-prose-face')) return false;
+      return true;
+    });
+    const gmBlocks = gmNarrative.length ? gmNarrative : gmClassic;
+    const storyCards = gmBlocks.map((card) => ({
+      story: storyFromCard(card),
+      chrome: chromeFromCard(card),
+    })).filter((row) => isRealBook(row.story));
+    const lastStory = storyCards.at(-1);
+    const lastGm = lastStory?.story || '';
+    const lastGmChrome = lastStory?.chrome || '';
+    const playerLines = [...scope.querySelectorAll('.justify-end .sgm-prose-face')]
+      .filter((el) => visible(el) && !el.closest('.sgm-modal-shell'))
+      .map((el) => (el.innerText || '').replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+    const feedbacks = [...document.querySelectorAll('[data-sgm-feedback="1"]')].filter((el) => {
+      return visible(el) && !el.closest('.sgm-modal-shell');
+    }).length;
+    const gmStoryCount = Math.max(storyCards.length, feedbacks);
     const input = document.querySelector('[aria-label="Player action input"]');
     const body = document.body.innerText || '';
     const busy = Boolean(
@@ -94,12 +158,13 @@ export async function readGameSnapshot(page) {
       document.querySelector('.sgm-play-center')
       && ((lastGm && lastGm.length >= 8) || chips.length > 0),
     );
-    const proseCount = document.querySelectorAll('.sgm-prose-face').length;
     return {
       chips,
       lastGm,
+      lastGmChrome,
+      playerLines,
       feedbacks,
-      proseCount,
+      gmStoryCount,
       busy,
       hasAuth,
       hasMenu,
@@ -126,10 +191,19 @@ export async function waitPlayIdle(page, { timeoutMs = 120000 } = {}) {
   return readGameSnapshot(page);
 }
 
-async function revealPlayChrome(page) {
+export async function revealPlayChrome(page) {
   const snap = await readGameSnapshot(page);
   if (snap.hideOptions) await clickText(page, 'Show options', { timeoutMs: 800, exact: true });
   if (snap.hideText) await clickText(page, 'Show text', { timeoutMs: 800, exact: true });
+}
+
+/** Attach to an already-open play tab. Never goto / never New Game. */
+export async function prepareLivePlay(page) {
+  await dismissWelcome(page);
+  await dismissQuestUnlock(page);
+  await dismissAutoFightTip(page);
+  await revealPlayChrome(page);
+  return waitPlayIdle(page, { timeoutMs: 20000 });
 }
 
 async function dismissQuestUnlock(page) {
@@ -156,7 +230,7 @@ export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
     await revealPlayChrome(page);
     last = await readGameSnapshot(page);
     const story = (last.lastGm || '').trim();
-    const hasStory = story.length >= 8;
+    const hasStory = story.length >= 8 && !/^(?:_>\s*)?SYSTEM\b/i.test(story);
     const hasChips = last.chips.length > 0;
     if (!last.busy && !last.hasMenu && !last.inNewGame && (hasStory || hasChips) && last.playReady) {
       return last;
@@ -166,20 +240,41 @@ export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
   return last;
 }
 
+/** A turn is not done until a new GM story bubble lands (hasRealGmStory). Player lines do not count. */
 export async function waitNewGmBeat(page, prev, { timeoutMs = 180000 } = {}) {
   const start = Date.now();
+  const prevGmCount = Number(prev.gmStoryCount || 0);
+  const prevFeedbacks = Number(prev.feedbacks || 0);
   const prevStory = (prev.lastGm || '').trim();
-  const prevProse = Number(prev.proseCount || 0);
   while (Date.now() - start < timeoutMs) {
     await dismissQuestUnlock(page);
     const snap = await readGameSnapshot(page);
     const story = (snap.lastGm || '').trim();
-    const storyGrew = story.length >= 8 && story !== prevStory;
-    const proseGrew = Number(snap.proseCount || 0) > prevProse;
-    if (!snap.busy && (storyGrew || proseGrew)) return snap;
+    const countGrew = Number(snap.gmStoryCount || 0) > prevGmCount
+      || Number(snap.feedbacks || 0) > prevFeedbacks;
+    const storyChanged = Boolean(story && story !== prevStory);
+    const newGmBubble = countGrew || storyChanged;
+    const hudNotBook = /equipped set:|Show Profile/i.test(story) && story.length < 240;
+    const plateOnly = /^(?:_>\s*)?SYSTEM\b/i.test(story)
+      && /\b(?:Name|Level|HP|Registration)\b/i.test(story)
+      && story.length < 400;
+    const realBook = story.length >= 8 && /[a-z]/i.test(story) && !hudNotBook && !plateOnly;
+    if (!snap.busy && newGmBubble && realBook) {
+      snap.newGmBubble = true;
+      snap.prevGmStoryCount = prevGmCount;
+      snap.waitTimedOut = false;
+      return snap;
+    }
     await sleep(500);
   }
-  throw new Error('Timed out waiting for a real GM bubble (not STATUS-only)');
+  const last = await readGameSnapshot(page);
+  const lastStory = (last.lastGm || '').trim();
+  last.newGmBubble = Number(last.gmStoryCount || 0) > prevGmCount
+    || Number(last.feedbacks || 0) > prevFeedbacks
+    || Boolean(lastStory && lastStory !== prevStory);
+  last.prevGmStoryCount = prevGmCount;
+  last.waitTimedOut = !last.newGmBubble;
+  return last;
 }
 
 async function insertInto(page, selector, text) {

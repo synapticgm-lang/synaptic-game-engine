@@ -32,6 +32,7 @@ import {
   clickChip,
   dismissAutoFightTip,
   loginFounderEmail,
+  prepareLivePlay,
   readGameSnapshot,
   startPremade,
   submitThumb,
@@ -45,6 +46,7 @@ import {
   isFlashJudgeModel,
   judgeGmBeat,
   markHallTopics,
+  peelChromeFromBeat,
   pickNonHallChip,
 } from './humanJudge.mjs';
 
@@ -54,6 +56,8 @@ const FLAGSHIPS = ['summoned-pact', 'cursed-keep', 'salt-road-heist', 'thornferr
 const args = process.argv.slice(2);
 const smoke = args.includes('--smoke');
 const loginCheck = args.includes('--login-check');
+const resume = args.includes('--resume');
+const fromTurn = Number(args.find((a) => a.startsWith('--from='))?.slice('--from='.length) || 0);
 const turns = Number(process.env.AI_PLAYER_TURNS || (smoke ? 1 : 10));
 const host = (process.env.AI_PLAYER_HOST || 'http://127.0.0.1:5173').replace(/\/$/, '');
 const cdp = process.env.AI_PLAYER_CDP || 'http://127.0.0.1:9222';
@@ -129,24 +133,90 @@ async function showGameMenu(page) {
   await new Promise((r) => setTimeout(r, 1200));
 }
 
-async function playBible(gamePage, bibleId) {
+function storyForBrain(snap) {
+  const peeled = peelChromeFromBeat(snap?.lastGm || '');
+  return peeled.story || String(snap?.lastGm || '').trim();
+}
+
+async function playBible(gamePage, bibleId, opts = {}) {
   const spec = BIBLES[bibleId];
   const folder = path.join(runDir, bibleId);
   fs.mkdirSync(folder, { recursive: true });
   const jsonl = path.join(folder, 'turns.jsonl');
   const transcript = path.join(folder, 'transcript.md');
-  appendMd(transcript, `# ${spec.title} (${bibleId})\n\nHost: ${host}\n\n`);
+  const resumeThis = Boolean(opts.resume);
+  appendMd(transcript, `# ${spec.title} (${bibleId})\n\nHost: ${host}${resumeThis ? '\n\nResume: live tab (no New Game)\n' : '\n'}`);
 
-  await showGameMenu(gamePage);
+  let snap;
+  let startTurn = 1;
+  let lastPlayer = '';
+  let lastJudgedGm = '';
+  let hallAnswered = { who: false, want: false, refuse: false };
+  let nameTyped = false;
+  let completed = 0;
+  let autoFightFired = 0;
 
-  const login = await loginFounderEmail(gamePage, email, password);
-  if (!login.ok) {
-    appendJsonl(jsonl, { event: 'login_blocked', ...login });
-    return { bibleId, blocked: login };
+  if (resumeThis) {
+    snap = await prepareLivePlay(gamePage);
+    const live = snap.playReady && !snap.hasMenu && !snap.inNewGame;
+    if (!live) {
+      appendJsonl(jsonl, {
+        event: 'resume_dead_tab',
+        bibleId,
+        hasMenu: snap.hasMenu,
+        inNewGame: snap.inNewGame,
+        playReady: snap.playReady,
+        playerLines: snap.playerLines || [],
+      });
+      await showGameMenu(gamePage);
+      const login = await loginFounderEmail(gamePage, email, password);
+      if (!login.ok) {
+        appendJsonl(jsonl, { event: 'login_blocked', ...login });
+        return { bibleId, blocked: login };
+      }
+      await startPremade(gamePage, bibleId);
+      snap = await waitOpeningReady(gamePage, { timeoutMs: 90000 });
+      startTurn = 1;
+    } else {
+      const lines = snap.playerLines || [];
+      startTurn = fromTurn > 0 ? fromTurn : Math.max(1, lines.length + 1);
+      lastPlayer = lines.at(-1) || '';
+      lastJudgedGm = storyForBrain(snap);
+      nameTyped = lines.some((l) => /^jax$/i.test(l) || /\bmy name is\b/i.test(l));
+      for (const line of lines) hallAnswered = markHallTopics(hallAnswered, line);
+      appendJsonl(jsonl, {
+        event: 'resume',
+        bibleId,
+        startTurn,
+        playerLines: lines,
+        gmStory: lastJudgedGm,
+        lastGmChrome: snap.lastGmChrome || '',
+        chips: snap.chips,
+        feedbacks: snap.feedbacks,
+        gmStoryCount: snap.gmStoryCount,
+        hallAnswered,
+      });
+      appendMd(
+        transcript,
+        `## Resume T${startTurn}–T${turns}\n\nPlayer lines already on tab: ${lines.join(' | ') || '(none)'}\n\n`
+        + `**GM story:** ${lastJudgedGm || '(none)'}\n\n`
+        + (snap.lastGmChrome ? `_Chrome (not the book): ${snap.lastGmChrome}_\n\n` : '')
+        + `Chips: ${snap.chips.join(' | ') || '(none)'}\n\n`,
+      );
+    }
+  } else {
+    await showGameMenu(gamePage);
+
+    const login = await loginFounderEmail(gamePage, email, password);
+    if (!login.ok) {
+      appendJsonl(jsonl, { event: 'login_blocked', ...login });
+      return { bibleId, blocked: login };
+    }
+
+    await startPremade(gamePage, bibleId);
+    snap = await waitOpeningReady(gamePage, { timeoutMs: 90000 });
   }
 
-  await startPremade(gamePage, bibleId);
-  let snap = await waitOpeningReady(gamePage, { timeoutMs: 90000 });
   if (!snap.playReady) {
     appendJsonl(jsonl, {
       event: 'opening_blocked',
@@ -162,28 +232,33 @@ async function playBible(gamePage, bibleId) {
     );
   }
 
-  appendJsonl(jsonl, {
-    event: 'opening',
-    bibleId,
-    gmStory: snap.lastGm,
-    chips: snap.chips,
-    feedbacks: snap.feedbacks,
-  });
-  appendMd(transcript, `## Opening\n\n${snap.lastGm}\n\nChips: ${snap.chips.join(' | ') || '(none)'}\n\n`);
+  if (!resumeThis || startTurn === 1) {
+    appendJsonl(jsonl, {
+      event: 'opening',
+      bibleId,
+      gmStory: storyForBrain(snap),
+      lastGmChrome: snap.lastGmChrome || '',
+      chips: snap.chips,
+      feedbacks: snap.feedbacks,
+      gmStoryCount: snap.gmStoryCount,
+    });
+    appendMd(
+      transcript,
+      `## Opening\n\n${storyForBrain(snap)}\n\n`
+      + (snap.lastGmChrome ? `_Chrome (not the book): ${snap.lastGmChrome}_\n\n` : '')
+      + `Chips: ${snap.chips.join(' | ') || '(none)'}\n\n`,
+    );
+  }
 
-  let lastPlayer = '';
-  let lastJudgedGm = '';
-  let hallAnswered = { who: false, want: false, refuse: false };
-  let nameTyped = false;
-  let completed = 0;
-  let autoFightFired = 0;
-  for (let turn = 1; turn <= turns; turn++) {
+  for (let turn = startTurn; turn <= turns; turn++) {
     hallAnswered = markHallTopics(hallAnswered, lastPlayer);
     const liveChips = filterAnsweredHallChips(snap.chips, hallAnswered);
+    const gmStory = storyForBrain(snap);
     const hardJudge = judgeGmBeat({
-      gmStory: snap.lastGm,
+      gmStory,
       lastGm: lastJudgedGm,
       lastPlayer,
+      waitTimedOut: Boolean(snap.waitTimedOut),
     });
     const decision = await askOpenRouterPlayer({
       bibleId,
@@ -192,7 +267,7 @@ async function playBible(gamePage, bibleId) {
       chipsOnly: spec.chipsOnly || !snap.inputPresent,
       chips: liveChips,
       lastPlayer,
-      gmStory: snap.lastGm,
+      gmStory,
       lastGm: lastJudgedGm,
       hallAnswered,
     });
@@ -215,7 +290,14 @@ async function playBible(gamePage, bibleId) {
       }
     }
 
-    const comment = [
+    if (!liveChips.length && !spec.chipsOnly) {
+      decision.action_kind = 'type';
+      if (!decision.action || /who are you|ask what they want|what happens if i refuse/i.test(decision.action)) {
+        decision.action = 'Look around.';
+      }
+    }
+
+    let comment = [
       decision.comment,
       decision.note && `note: ${decision.note}`,
       decision.nonsense_options ? 'flag:nonsense_options' : '',
@@ -263,13 +345,13 @@ async function playBible(gamePage, bibleId) {
       acted = await clickChip(gamePage, decision.action);
     }
     if (!acted && kind === 'chip') {
-      const safe = snap.chips.find((c) => !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(c));
+      const safe = pickNonHallChip(snap.chips, hallAnswered);
       if (safe) {
         acted = await clickChip(gamePage, safe);
         kind = 'chip_fallback';
       }
     }
-    if (!acted && !chipsOnly && (kind === 'type' || !snap.chips.length)) {
+    if (!acted && !chipsOnly) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : 'Look around.');
       await typePlayerAction(gamePage, line);
       acted = line;
@@ -279,12 +361,21 @@ async function playBible(gamePage, bibleId) {
     if (!acted) throw new Error(`No legal action on ${bibleId} T${turn}`);
 
     let next;
-    let waitTimedOut = false;
     try {
       next = await waitNewGmBeat(gamePage, afterThumb, { timeoutMs: kind === 'auto_fight' ? 180000 : 90000 });
-    } catch {
-      next = await readGameSnapshot(gamePage);
-      waitTimedOut = true;
+    } catch (err) {
+      next = err?.snapshot || await readGameSnapshot(gamePage);
+      next.waitTimedOut = true;
+    }
+    const waitTimedOut = Boolean(next.waitTimedOut) && !next.newGmBubble;
+    const newGmBubble = Boolean(next.newGmBubble)
+      || Number(next.gmStoryCount || 0) > Number(afterThumb.gmStoryCount || 0);
+    const nextStory = storyForBrain(next);
+    if (waitTimedOut) {
+      decision.thumb = 'down';
+      decision.nonsense_options = true;
+      comment = [comment, 'timeout: no new GM story'].filter(Boolean).join(' · ').slice(0, 500);
+      await submitThumb(gamePage, { thumb: 'down', comment: 'timeout: no new GM story' });
     }
     appendJsonl(jsonl, {
       event: waitTimedOut ? 'turn_timeout' : 'turn',
@@ -295,10 +386,17 @@ async function playBible(gamePage, bibleId) {
       autoFightFired: kind === 'auto_fight',
       playerAction: acted,
       chipsSeen: snap.chips,
-      gmStory: next.lastGm,
-      thumb: decision.thumb,
+      gmStory: nextStory,
+      lastGmChrome: next.lastGmChrome || '',
+      gmStoryCount: next.gmStoryCount,
+      prevGmStoryCount: afterThumb.gmStoryCount,
+      feedbacks: next.feedbacks,
+      prevFeedbacks: afterThumb.feedbacks,
+      newGmBubble,
+      thumb: waitTimedOut ? 'down' : decision.thumb,
       thumbOk: thumb.ok,
       waitTimedOut,
+      continuedAfterTimeout: waitTimedOut,
       gemini: {
         note: decision.note,
         nonsense_options: decision.nonsense_options,
@@ -309,17 +407,29 @@ async function playBible(gamePage, bibleId) {
     });
     appendMd(
       transcript,
-      `## T${turn}\n\n**You:** ${acted} (${kind})\n\n**GM:** ${next.lastGm}\n\n`
-      + `Thumb: ${decision.thumb} · ${comment}\n\n`,
+      `## T${turn}\n\n**You:** ${acted} (${kind})\n\n**GM:** ${nextStory || '(no new story — not faked)'}\n\n`
+      + `New GM bubble: ${newGmBubble ? 'yes' : 'NO'} · count ${afterThumb.gmStoryCount || 0}→${next.gmStoryCount || 0}`
+      + `${waitTimedOut ? ' · WAIT TIMEOUT (continuing)' : ''}\n\n`
+      + `Thumb: ${waitTimedOut ? 'down' : decision.thumb} · ${comment}\n\n`,
     );
     lastPlayer = acted;
-    lastJudgedGm = snap.lastGm;
+    lastJudgedGm = newGmBubble ? nextStory : lastJudgedGm;
     snap = next;
+    if (waitTimedOut) snap.waitTimedOut = true;
     completed = turn;
     if (kind === 'auto_fight') autoFightFired += 1;
   }
 
-  return { bibleId, ok: true, turns: completed, autoFightSelector: AUTO_FIGHT_SELECTOR, autoFightFired };
+  return {
+    bibleId,
+    ok: true,
+    turns: completed,
+    startTurn,
+    resumed: resumeThis,
+    autoFightSelector: AUTO_FIGHT_SELECTOR,
+    autoFightFired,
+    stoppedNoGm: false,
+  };
 }
 
 async function main() {
@@ -374,6 +484,7 @@ async function main() {
     host,
     cdp,
     smoke,
+    resume,
     turns,
     bibles,
     runDir,
@@ -393,7 +504,7 @@ async function main() {
       for (const bibleId of bibles) {
         console.log(`AI_PLAYER start ${bibleId}`);
         try {
-          const result = await playBible(gamePage, bibleId);
+          const result = await playBible(gamePage, bibleId, { resume });
           summary.results.push(result);
           if (result.blocked) continue;
         } catch (err) {

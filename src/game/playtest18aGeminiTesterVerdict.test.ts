@@ -5,6 +5,8 @@
  * Telegram / STATUS-only is not a successful story beat.
  * Mid writer OFF. No SNAPSHOT/CRAFT.
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
@@ -90,9 +92,9 @@ function saltFenReed(over: Partial<GameState> = {}): GameState {
 }
 
 describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
-  it('HUD/BUILD are 18a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-18a');
-    expect(BUILD_STAMP).toBe('2026-09-18a');
+  it('HUD/BUILD are 18b, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-18b');
+    expect(BUILD_STAMP).toBe('2026-09-18b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -121,6 +123,20 @@ describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
     expect(compileChoices(afterWant, ['Ask what they want', 'Who are you', 'Look around']).choices)
       .not.toContain('Ask what they want');
 
+    const lock = openingNameLockSpokenBeat(namedWatchtower());
+    const afterSpokenWant = namedWatchtower({
+      log: [
+        { id: 'g0', turn: 0, role: 'gm', content: PAGE1, timestamp: 0 },
+        { id: 'p1', turn: 1, role: 'player', content: 'Jax', timestamp: 1 },
+        { id: 'g1', turn: 1, role: 'gm', content: lock, timestamp: 2 },
+      ],
+    });
+    expect(hallTopicAlreadyAnswered(afterSpokenWant, 'want')).toBe(true);
+    expect(shouldStarveHallTopicPad(afterSpokenWant, 'Ask what they want')).toBe(true);
+    expect(coverContinuePads(afterSpokenWant).join(' ')).not.toMatch(/Ask what they want/i);
+    expect(compileChoices(afterSpokenWant, ['Ask what they want', 'Who are you', 'Look around']).choices)
+      .not.toContain('Ask what they want');
+
     const afterWho = namedWatchtower({
       log: [
         { id: 'p1', turn: 1, role: 'player', content: 'Who are you', timestamp: 1 },
@@ -143,6 +159,44 @@ describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
     expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(already.replace(/\s+/g, ' ').trim());
     expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(lastGm.replace(/\s+/g, ' ').trim());
     expect(isNameTelegramProse(resort.prose)).toBe(false);
+  });
+
+  it('first want after the name-lock beat is callGm; last-resort still paints a new book row', () => {
+    const lock = openingNameLockSpokenBeat(namedWatchtower());
+    const afterLock = namedWatchtower({
+      log: [
+        { id: 'g0', turn: 0, role: 'gm', content: PAGE1, timestamp: 0 },
+        { id: 'p1', turn: 1, role: 'player', content: 'Jax', timestamp: 1 },
+        { id: 'g1', turn: 1, role: 'gm', content: lock, timestamp: 2 },
+      ],
+    });
+    expect(shouldStitchOpeningContinue(afterLock, 'Ask what they want')).toBe(false);
+    const resort = lastResortStoryBody(
+      afterLock,
+      buildCompletedEventPacket(afterLock, 'Ask what they want'),
+      'Ask what they want'
+    );
+    expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(lock.replace(/\s+/g, ' ').trim());
+    expect(isNameTelegramProse(resort.prose)).toBe(false);
+    expect(
+      hasRealGmStory({
+        id: 'resort',
+        turn: 2,
+        role: 'gm',
+        content: resort.prose,
+        timestamp: 3,
+      })
+    ).toBe(true);
+  });
+
+  it('live sendAction last-resorts when GM transport is exhausted (Fate already did)', () => {
+    const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
+    expect(useGame).toContain('GM transport exhausted — last-resort will write the book');
+    expect(useGame).toContain('bookBodyAfterWriterMiss');
+    expect(useGame).toContain('GM transport threw — last-resort will write the book');
+    expect(useGame).not.toMatch(
+      /if \(!shouldAutoRetryTurn\(kind\) \|\| attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES\) \{\s*throw err;/
+    );
   });
 
   it('name telegram and STATUS-only chrome are not a successful story beat', () => {

@@ -23,6 +23,25 @@ export function normalizeBeat(raw) {
   return String(raw || '').replace(/\s+/g, ' ').trim();
 }
 
+/** Story paragraph only. SYSTEM / STATUS / Quest Unlocked is chrome, not the book. */
+export function peelChromeFromBeat(raw) {
+  const text = String(raw || '');
+  const parts = text.split(/\n(?=(?:_>\s*)?SYSTEM\b)/i);
+  if (parts.length > 1) {
+    const story = normalizeBeat(parts[0]);
+    const chrome = normalizeBeat(parts.slice(1).join('\n'));
+    if (story.length >= 8 && /[a-z]/i.test(story) && !/^(?:_>\s*)?SYSTEM\b/i.test(story)) {
+      return { story, chrome };
+    }
+  }
+  const t = normalizeBeat(text);
+  const plateOnly = /^(?:_>\s*)?SYSTEM\b/i.test(t)
+    && /\b(?:Name|Level|HP|Registration|Mark)\b/i.test(t);
+  if (plateOnly) return { story: '', chrome: t };
+  if (STATUS_ONLY.test(t) && t.length < 80) return { story: '', chrome: t };
+  return { story: t, chrome: '' };
+}
+
 export function isTelegramSpeak(story) {
   const t = normalizeBeat(story);
   if (!t) return true;
@@ -44,13 +63,17 @@ function hasConcreteBeat(story) {
   return here || speech || action;
 }
 
-export function judgeGmBeat({ gmStory, lastGm, lastPlayer } = {}) {
-  const story = normalizeBeat(gmStory);
-  const prev = normalizeBeat(lastGm);
+export function judgeGmBeat({ gmStory, lastGm, lastPlayer, waitTimedOut } = {}) {
+  const peeled = peelChromeFromBeat(gmStory);
+  const story = peeled.story;
+  const prev = peelChromeFromBeat(lastGm).story;
   const reasons = [];
-  if (!story || story.length < 12) reasons.push('empty');
-  if (isTelegramSpeak(story)) reasons.push('telegram');
-  if (STATUS_ONLY.test(story) && story.length < 80) reasons.push('chrome');
+  if (waitTimedOut) reasons.push('timeout');
+  if (!story || story.length < 12) {
+    reasons.push(peeled.chrome ? 'chrome' : 'empty');
+  }
+  if (story && isTelegramSpeak(story)) reasons.push('telegram');
+  if (story && STATUS_ONLY.test(story) && story.length < 80) reasons.push('chrome');
   if (prev && story && story === prev) reasons.push('loop');
   if (ALREADY_TOLD.test(story) && prev && (story === prev || prev.includes(story.slice(0, 48)))) {
     reasons.push('already_told_loop');
@@ -68,7 +91,7 @@ export function judgeGmBeat({ gmStory, lastGm, lastPlayer } = {}) {
     down,
     thumb: down ? 'down' : 'up',
     nonsense_options: reasons.some((r) => (
-      r === 'telegram' || r === 'loop' || r === 'already_told_loop' || r === 'combat_in_talk' || r === 'chrome'
+      r === 'telegram' || r === 'loop' || r === 'already_told_loop' || r === 'combat_in_talk' || r === 'chrome' || r === 'timeout'
     )),
     reasons,
   };

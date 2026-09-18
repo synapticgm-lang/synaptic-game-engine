@@ -240,6 +240,31 @@ export function openingSpokenWant(_state?: unknown): string {
   return 'They have not said what they want yet.';
 }
 
+export function openingWhoAskLine(state?: {
+  currentLocation?: string;
+  engineMode?: string;
+}): string {
+  return openingWhoAskLineFromLabel(openingCastLabel(state), {
+    location: state?.currentLocation,
+    engineMode: state?.engineMode,
+  });
+}
+
+export function hallTopicAlreadyAnswered(
+  state?: { log?: Array<{ role?: string; content?: string }> },
+  topic?: string
+): boolean {
+  if (!topic) return false;
+  return (state?.log ?? []).some((e) => {
+    if (e.role !== 'player') return false;
+    const line = e.content ?? '';
+    if (topic === 'want') return hallTalkAsksWant(line) || playerAskedWhyPulled(line);
+    if (topic === 'who') return hallTalkAsksWho(line);
+    if (topic === 'refuse') return hallTalkAsksRefuse(line);
+    return false;
+  });
+}
+
 export function openingNameLockSpokenBeat(state?: {
   openingEstablishment?: { answers?: { where?: string; name?: string } };
   currentLocation?: string;
