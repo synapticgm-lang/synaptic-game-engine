@@ -29,13 +29,16 @@ import {
   isHallTalkPlayerLine,
   isOpeningCardActLine,
   cardSceneMentionTokens,
+  lockedOpeningPcName,
   openingCastLabel,
   openingCastNames,
+  proseAsksForPcName,
   shortCardOffer,
   openingStayLeaveLine,
   openingWantLine,
   openingWhoAskLineFromLabel,
   playerAskedWhyPulled,
+  sanitizeLockedNameBeat,
 } from './openingEstablishment.ts';
 
 export type EventOutcome =
@@ -1309,7 +1312,8 @@ const SHORT_ALREADY_TOLD = /already answered you|already said it|Their answer st
 function lastGoodGmBody(state: GameState): string {
   const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
   for (const e of rows) {
-    const body = String(e.content ?? '').replace(/\s+/g, ' ').trim();
+    const raw = String(e.content ?? '').replace(/\s+/g, ' ').trim();
+    const body = sanitizeLockedNameBeat(state, raw);
     if (body.length < 40) continue;
     if (isDroughtStubProse(body) || SHORT_ALREADY_TOLD.test(body)) continue;
     if (isAtmosphereOnlyBeat(body)) continue;
@@ -1327,31 +1331,98 @@ function cardPageParagraph(state: GameState): string {
   return '';
 }
 
+function ledgerAdvanceBeat(state: GameState, packet?: CompletedEventPacket): string {
+  const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
+  const who = (packet?.answerWho || packet?.witnesses?.[0] || openingCastLabel(state) || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const name = lockedOpeningPcName(state);
+  const head = who && !/\bpanel\b/i.test(who)
+    ? who.charAt(0).toUpperCase() + who.slice(1)
+    : '';
+  if (name && head) {
+    return `${head} was still at ${where}. The name ${name} already stood. The room waited on what you did next.`;
+  }
+  if (name) {
+    return `You stayed at ${where}. The name ${name} already stood. The room waited on what you did next.`;
+  }
+  if (head) {
+    return `${head} was still at ${where}. What you already knew of the room still held.`;
+  }
+  return `The room at ${where} was still the room you already knew. What you already saw still held.`;
+}
+
+const LEDGER_WAIT_FP = /The name \S+ already stood|The room waited on what you did next/i;
+
+function lastCommittedGmBody(state: GameState): string {
+  const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
+  return String(rows[0]?.content ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function sameBeat(a: string, b: string): boolean {
+  const left = (a ?? '').replace(/\s+/g, ' ').trim();
+  const right = (b ?? '').replace(/\s+/g, ' ').trim();
+  return !!left && !!right && left === right;
+}
+
+function lastResortUsable(state: GameState, prose: string, lastGm: string): string {
+  const body = sanitizeLockedNameBeat(state, (prose ?? '').replace(/\s+/g, ' ').trim());
+  if (!body || body.length < 8) return '';
+  if (isDroughtStubProse(body) || proseAsksForPcName(body)) return '';
+  if (sameBeat(body, lastGm)) return '';
+  if (LEDGER_WAIT_FP.test(body) && LEDGER_WAIT_FP.test(lastGm)) return '';
+  return body;
+}
+
 /**
  * Last-resort book body after empty/timeout GM (retries already spent).
- * Never Dust-hung / already-happened. Prefer last good GM, then page-1 card.
+ * Never Dust-hung / already-happened. After a locked name, do not reprint
+ * page-1 or the last GM beat. Prefer the topic stitch for this line; never
+ * loop the same ledger telegram.
  */
 export function lastResortStoryBody(
   state: GameState,
-  packet?: CompletedEventPacket
+  packet?: CompletedEventPacket,
+  playerInput?: string
 ): { prose: string; status: string } {
-  const last = lastGoodGmBody(state);
-  const card = cardPageParagraph(state);
-  let prose = last || card;
-  if (!prose || isDroughtStubProse(prose)) {
-    const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
-    const who = (packet?.answerWho || packet?.witnesses?.[0] || '').replace(/\s+/g, ' ').trim();
-    prose = who
-      ? `${who} was still at ${where}. The writer did not return a new beat after retries. What you already knew of the room still held.`
-      : `The room at ${where} was still the room you already knew. The writer did not return a new beat after retries. What you already saw still held.`;
+  const named = !!lockedOpeningPcName(state);
+  const lastGm = lastCommittedGmBody(state);
+  const recent = (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .slice(-10)
+    .map((e) => String(e.content ?? ''));
+  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
+  const pkt = packet
+    ? (act && !(packet.playerAction ?? '').trim() ? { ...packet, playerAction: act } : packet)
+    : undefined;
+  const where = (pkt?.location || packet?.location || state.currentLocation || 'this place')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const candidates: string[] = [];
+  if (named && pkt) candidates.push(assemblePacketStitch(pkt, recent));
+  if (named) candidates.push(ledgerAdvanceBeat(state, pkt ?? packet));
+  else candidates.push(lastGoodGmBody(state), cardPageParagraph(state));
+  candidates.push(`The room at ${where} held its place. The next move was still yours.`);
+
+  for (const raw of candidates) {
+    const body = lastResortUsable(state, raw, lastGm);
+    if (body) {
+      return {
+        prose: body,
+        status: named
+          ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
+          : 'Writer empty after retries — last good beat held (not a drought stub)',
+      };
+    }
   }
-  if (isDroughtStubProse(prose)) {
-    prose =
-      'The beat waited on the writer. What you already knew of the room still held. Try the same line again.';
-  }
+  const fallback = `The room at ${where} held its place. The next move was still yours.`;
   return {
-    prose,
-    status: 'Writer empty after retries — last good beat held (not a drought stub)',
+    prose: sameBeat(fallback, lastGm)
+      ? `${fallback} What you already knew still held.`
+      : fallback,
+    status: named
+      ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
+      : 'Writer empty after retries — last good beat held (not a drought stub)',
   };
 }
 
@@ -1462,7 +1533,9 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
       })
     );
   }
-  if (asksPanel) bits.push('The blue panel was yours — a System window, not a person.');
+  if (asksPanel && packet.engineMode === 'litrpg') {
+    bits.push('The blue panel was yours — a System window, not a person.');
+  }
   if (asksWant) {
     bits.push(
       want

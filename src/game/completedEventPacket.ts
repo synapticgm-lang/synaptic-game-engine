@@ -1352,26 +1352,76 @@ function ledgerAdvanceBeat(state: GameState, packet?: CompletedEventPacket): str
   return `The room at ${where} was still the room you already knew. What you already saw still held.`;
 }
 
+const LEDGER_WAIT_FP = /The name \S+ already stood|The room waited on what you did next/i;
+
+function lastCommittedGmBody(state: GameState): string {
+  const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
+  return String(rows[0]?.content ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function sameBeat(a: string, b: string): boolean {
+  const left = (a ?? '').replace(/\s+/g, ' ').trim();
+  const right = (b ?? '').replace(/\s+/g, ' ').trim();
+  return !!left && !!right && left === right;
+}
+
+function lastResortUsable(state: GameState, prose: string, lastGm: string): string {
+  const body = sanitizeLockedNameBeat(state, (prose ?? '').replace(/\s+/g, ' ').trim());
+  if (!body || body.length < 8) return '';
+  if (isDroughtStubProse(body) || proseAsksForPcName(body)) return '';
+  if (sameBeat(body, lastGm)) return '';
+  if (LEDGER_WAIT_FP.test(body) && LEDGER_WAIT_FP.test(lastGm)) return '';
+  return body;
+}
+
 /**
  * Last-resort book body after empty/timeout GM (retries already spent).
  * Never Dust-hung / already-happened. After a locked name, do not reprint
- * page-1 or the last GM beat — advance from the ledger.
+ * page-1 or the last GM beat. Prefer the topic stitch for this line; never
+ * loop the same ledger telegram.
  */
 export function lastResortStoryBody(
   state: GameState,
-  packet?: CompletedEventPacket
+  packet?: CompletedEventPacket,
+  playerInput?: string
 ): { prose: string; status: string } {
   const named = !!lockedOpeningPcName(state);
-  let prose = named
-    ? sanitizeLockedNameBeat(state, ledgerAdvanceBeat(state, packet))
-    : sanitizeLockedNameBeat(state, lastGoodGmBody(state) || cardPageParagraph(state));
-  if (!prose || isDroughtStubProse(prose) || (named && proseAsksForPcName(prose))) {
-    prose = ledgerAdvanceBeat(state, packet);
+  const lastGm = lastCommittedGmBody(state);
+  const recent = (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .slice(-10)
+    .map((e) => String(e.content ?? ''));
+  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
+  const pkt = packet
+    ? (act && !(packet.playerAction ?? '').trim() ? { ...packet, playerAction: act } : packet)
+    : undefined;
+  const where = (pkt?.location || packet?.location || state.currentLocation || 'this place')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const candidates: string[] = [];
+  if (named && pkt) candidates.push(assemblePacketStitch(pkt, recent));
+  if (named) candidates.push(ledgerAdvanceBeat(state, pkt ?? packet));
+  else candidates.push(lastGoodGmBody(state), cardPageParagraph(state));
+  candidates.push(`The room at ${where} held its place. The next move was still yours.`);
+
+  for (const raw of candidates) {
+    const body = lastResortUsable(state, raw, lastGm);
+    if (body) {
+      return {
+        prose: body,
+        status: named
+          ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
+          : 'Writer empty after retries — last good beat held (not a drought stub)',
+      };
+    }
   }
+  const fallback = `The room at ${where} held its place. The next move was still yours.`;
   return {
-    prose,
+    prose: sameBeat(fallback, lastGm)
+      ? `${fallback} What you already knew still held.`
+      : fallback,
     status: named
-      ? 'Writer empty after retries — ledger advance (not a page-1 reprint)'
+      ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
       : 'Writer empty after retries — last good beat held (not a drought stub)',
   };
 }

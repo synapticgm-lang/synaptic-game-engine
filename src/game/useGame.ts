@@ -3682,7 +3682,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
       if (!storyHasBody(cleanText) || isDroughtStubProse(cleanText)) {
-        const resort = lastResortStoryBody(liveCurrent, preparedEvent.packet);
+        const resort = lastResortStoryBody(liveCurrent, preparedEvent.packet, sanitizedInput);
         if (resort.prose && !isDroughtStubProse(resort.prose)) {
           cleanText = resort.prose;
           mergedSystemLog = [...mergedSystemLog, resort.status];

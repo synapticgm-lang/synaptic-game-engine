@@ -194,3 +194,36 @@ export function cardRoleStandIn(state?: { sceneFacts?: { present?: string[] } })
 export function shortCardOffer(_state?: unknown): string {
   return '';
 }
+
+export function lockedOpeningPcName(state?: {
+  openingEstablishment?: { answers?: { name?: string } };
+  character?: { name?: string };
+}): string | null {
+  const n = (state?.openingEstablishment?.answers?.name ?? state?.character?.name ?? '').trim();
+  if (!n || /unknown survivor/i.test(n)) return null;
+  if (n.split(/\s+/).length > 4 || n.length > 40) return null;
+  return n;
+}
+
+export function proseAsksForPcName(body: string): boolean {
+  return /what name|the panel waits on a name|what do you enter/i.test(body ?? '');
+}
+
+export function stripLockedNameAsk(body: string): string {
+  return (body ?? '')
+    .replace(/(?:\s+The panel waits on a name\.)?(?:\s+What name[^?]*\?)\s*$/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+export function sanitizeLockedNameBeat(
+  state: {
+    openingEstablishment?: { answers?: { name?: string } };
+    character?: { name?: string };
+  },
+  body: string
+): string {
+  if (!lockedOpeningPcName(state) || !body) return body;
+  if (!proseAsksForPcName(body)) return body;
+  return stripLockedNameAsk(body);
+}

@@ -1138,7 +1138,7 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   if ((!useMud && !gmText.trim()) || isDroughtStubProse(gmText)) {
-    const resort = lastResortStoryBody(arcState, preparedEvent.packet);
+    const resort = lastResortStoryBody(arcState, preparedEvent.packet, playerInput);
     if (resort.prose && !isDroughtStubProse(resort.prose) && (!gmText.trim() || isDroughtStubProse(gmText))) {
       gmText = resort.prose;
       gmSystemLog = [...gmSystemLog, resort.status];
