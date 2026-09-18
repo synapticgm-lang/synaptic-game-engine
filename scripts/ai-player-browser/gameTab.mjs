@@ -296,10 +296,21 @@ async function insertInto(page, selector, text) {
 }
 
 export async function dismissWelcome(page) {
-  const snap = await readGameSnapshot(page);
-  if (!snap.hasWelcome) return;
-  await page.keyboard.press('Enter');
-  await sleep(400);
+  for (let i = 0; i < 6; i++) {
+    const snap = await readGameSnapshot(page);
+    if (!snap.hasWelcome) return;
+    const clicked = await page.evaluate(() => {
+      const nodes = [...document.querySelectorAll('button')];
+      const splash = nodes.find((n) => /Press any key or tap/i.test(n.innerText || ''));
+      if (!splash) return false;
+      splash.click();
+      return true;
+    });
+    if (!clicked) {
+      await page.keyboard.press('Enter');
+    }
+    await sleep(350);
+  }
 }
 
 export async function loginFounderEmail(page, email, password) {
