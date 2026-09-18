@@ -32,6 +32,7 @@ import {
   hallTopicAlreadyAnswered,
   isNameTelegramProse,
   lockedOpeningPcName,
+  castSpeakVerb,
   openingCastLabel,
   openingCastNames,
   openingSpokenWant,
@@ -1647,7 +1648,7 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   if (asksWant) {
     bits.push(
       want
-        ? `${who.charAt(0).toUpperCase() + who.slice(1)} answers you. "${want}"`
+        ? `${who.charAt(0).toUpperCase() + who.slice(1)} ${castSpeakVerb(who)} you. "${want}"`
         : `${who} had not said what they wanted yet.`
     );
   }
@@ -1683,7 +1684,7 @@ function renderSpokenTalkFallback(packet: CompletedEventPacket, slots: StitchSlo
   if (want) {
     return heard
       ? `${head} already said it. "${want}"`
-      : `${head} answers you. "${want}"`;
+      : `${head} ${castSpeakVerb(who)} you. "${want}"`;
   }
   return `${head} heard you at ${slots.where}. Their answer stayed short.`;
 }

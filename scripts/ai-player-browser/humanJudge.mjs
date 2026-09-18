@@ -18,6 +18,9 @@ const WHO_CHIP = /\bwho are you\b/i;
 const WANT_CHIP = /\bask what they want\b|\bwhat do they want\b/i;
 const REFUSE_CHIP = /\bwhat happens if i refuse\b|\bask what happens if\b/i;
 const TALK_LINE = /\bwho are you\b|\bask what they want\b|\bwhat do you want\b|\bwhat happens if i refuse\b/i;
+/** Last-resort leftover fingerprints (18b inspect / 17i room-waited) — tester abort, not a game deny-list. */
+const LAST_RESORT_MARK = /still has the next move|the same walls held|nothing new had come|took the room in once more|heat sits on the stones you already know|heat sat where you already felt it|a pause at .+ added nothing|the room waited on what you did next|the name \S+ already stood|you looked through .+ again/i;
+const TESTER_REPEAT_TALK = /\b(?:loop(?:ing|ed)?|identical|last[- ]?resort|reprint|word-for-word|word for word|exact copy|copy-paste|copy paste|same paragraph|direct copy|stuck in a loop)\b/i;
 
 export function normalizeBeat(raw) {
   return String(raw || '').replace(/\s+/g, ' ').trim();
@@ -78,6 +81,9 @@ export function judgeGmBeat({ gmStory, lastGm, lastPlayer, waitTimedOut } = {}) 
   if (ALREADY_TOLD.test(story) && prev && (story === prev || prev.includes(story.slice(0, 48)))) {
     reasons.push('already_told_loop');
   }
+  if (prev && story && story !== prev && isLastResortReprint(story, prev)) {
+    reasons.push('last_resort_reprint');
+  }
   if (TALK_LINE.test(lastPlayer || '') && COMBAT_IN_TALK.test(story)) {
     reasons.push('combat_in_talk');
   }
@@ -91,7 +97,8 @@ export function judgeGmBeat({ gmStory, lastGm, lastPlayer, waitTimedOut } = {}) 
     down,
     thumb: down ? 'down' : 'up',
     nonsense_options: reasons.some((r) => (
-      r === 'telegram' || r === 'loop' || r === 'already_told_loop' || r === 'combat_in_talk' || r === 'chrome' || r === 'timeout'
+      r === 'telegram' || r === 'loop' || r === 'already_told_loop' || r === 'last_resort_reprint'
+      || r === 'combat_in_talk' || r === 'chrome' || r === 'timeout'
     )),
     reasons,
   };
@@ -115,12 +122,86 @@ export function filterAnsweredHallChips(chips, answered) {
   });
 }
 
-export function pickNonHallChip(chips, answered) {
+export function pickNonHallChip(chips, answered, skip = []) {
   const live = filterAnsweredHallChips(chips, answered);
-  return live.find((c) => !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(c)) || '';
+  const skipNorm = new Set((skip || []).map((s) => String(s || '').trim().toLowerCase()).filter(Boolean));
+  return live.find((c) => {
+    if (/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(c)) return false;
+    if (skipNorm.has(String(c).trim().toLowerCase())) return false;
+    return true;
+  }) || '';
+}
+
+const LOITER_CHIP = /\binspect the panel\b|\blook around\b|\bwait and watch\b|\bwait\b/i;
+
+/** Same leftover inspect/look twice = not a human. Force a typed line. */
+export function shouldForceTypedHumanMove(chips, recentActions, chipsOnly) {
+  if (chipsOnly) return false;
+  const live = (chips || []).filter(Boolean);
+  if (!live.length) return true;
+  if (live.length === 1 && LOITER_CHIP.test(live[0])) return true;
+  const last = String(recentActions?.at(-1) || '').trim().toLowerCase();
+  if (last && live.some((c) => c.trim().toLowerCase() === last && LOITER_CHIP.test(c))) return true;
+  const inspects = (recentActions || []).filter((a) => /inspect the panel/i.test(a)).length;
+  if (inspects >= 1 && live.every((c) => /inspect the panel/i.test(c))) return true;
+  return false;
+}
+
+const HUMAN_TYPE_FALLBACKS = [
+  'I look the handler in the eye. What happens if I walk away?',
+  'I take a step toward the nearest doorway.',
+  'I wait and watch their faces.',
+  'What do you need from me right now?',
+  'I check what I am wearing and what I still have.',
+];
+
+export function naturalTypedFallback(recentActions = []) {
+  const used = new Set((recentActions || []).map((a) => String(a).trim().toLowerCase()));
+  return HUMAN_TYPE_FALLBACKS.find((line) => !used.has(line.toLowerCase()))
+    || HUMAN_TYPE_FALLBACKS[recentActions.length % HUMAN_TYPE_FALLBACKS.length];
 }
 
 export function isFlashJudgeModel(model) {
   const id = String(model || '').trim();
   return id === 'google/gemini-2.5-flash' || id === 'gemini-2.5-flash';
+}
+
+export function isLastResortReprint(story, lastGm) {
+  const t = normalizeBeat(story);
+  const prev = normalizeBeat(lastGm);
+  if (!t || !prev) return false;
+  if (t === prev) return true;
+  if (LAST_RESORT_MARK.test(t) && LAST_RESORT_MARK.test(prev)) return true;
+  if (ALREADY_TOLD.test(t) && (t === prev || prev.includes(t.slice(0, 48)))) return true;
+  return false;
+}
+
+/** Tester note / hard floor said loop, identical, or last-resort reprint. */
+export function testerFlagsRepeat(decision = {}, hardJudge = {}) {
+  const reasons = hardJudge.reasons || [];
+  if (reasons.some((r) => r === 'loop' || r === 'already_told_loop' || r === 'last_resort_reprint')) {
+    return true;
+  }
+  const blob = [decision.comment, decision.note, decision.flag].filter(Boolean).join(' ');
+  return TESTER_REPEAT_TALK.test(blob);
+}
+
+/**
+ * One repeat signal for the stop-after-2-consecutive abort.
+ * lastGm must be the prior beat, never the same string as gmStory.
+ */
+export function detectRepeatSignal({ gmStory, lastGm, decision, hardJudge } = {}) {
+  const story = peelChromeFromBeat(gmStory).story;
+  const prev = peelChromeFromBeat(lastGm).story;
+  const reasons = [];
+  if (!prev || !story) {
+    return { hit: false, reasons };
+  }
+  if (story === prev) reasons.push('same_gm');
+  if (isLastResortReprint(story, prev) && story !== prev) reasons.push('last_resort_reprint');
+  if ((hardJudge?.reasons || []).some((r) => r === 'loop' || r === 'already_told_loop')) {
+    reasons.push('hard_loop');
+  }
+  if (testerFlagsRepeat(decision, {})) reasons.push('tester_flag');
+  return { hit: reasons.length > 0, reasons: [...new Set(reasons)] };
 }

@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-18b';
+export const HUD_BUILD_STAMP = '2026-09-18c';
 const HUD_BUILD_TITLE =
-  'First hall talk after name is the writer';
+  'Cover pads refill; CAST glue is plural-safe';
 
 interface Props {
   state: GameState;

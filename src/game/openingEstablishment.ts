@@ -1597,14 +1597,23 @@ export function openingSpokenIdentityQuote(
   return '"I am still in this room. That is the name I will give you."';
 }
 
+/** Compound / plural CAST never gets singular "answers you". */
+export function castSpeakVerb(who: string): 'answer' | 'answers' {
+  const w = (who ?? '').replace(/\s+/g, ' ').trim();
+  if (!w) return 'answer';
+  if (/\band\b/i.test(w) || /^both\b/i.test(w)) return 'answer';
+  if (/\b(people|envoys|priests|handlers|sides|militia|figures|scouts|pickets)\b/i.test(w)) {
+    return 'answer';
+  }
+  return 'answers';
+}
+
 export function openingWhoAskLineFromLabel(
   who: string,
   opts?: { nameLocked?: boolean; quote?: string; location?: string; engineMode?: string; hay?: string; stamp?: string }
 ): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
-    ? 'answer'
-    : 'answers';
+  const verb = castSpeakVerb(who);
   const quote =
     opts?.quote
     ?? openingSpokenIdentityQuote(who, {
@@ -1650,10 +1659,7 @@ export function openingSpokenWant(state: GameState): string {
     return `The panel does not speak. ${body}`;
   }
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
-    ? 'answer'
-    : 'answers';
-  return `${head} ${verb} you. "${body}"`;
+  return `${head} ${castSpeakVerb(who)} you. "${body}"`;
 }
 
 export function openingRefuseLine(state: GameState): string {
@@ -1670,10 +1676,7 @@ export function openingSpokenRefuse(state: GameState): string {
     return `The panel does not speak. ${body}`;
   }
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
-    ? 'answer'
-    : 'answers';
-  return `${head} ${verb} you. "${body}"`;
+  return `${head} ${castSpeakVerb(who)} you. "${body}"`;
 }
 
 export function openingStayLeaveLine(state: GameState): string {
@@ -1689,10 +1692,7 @@ export function openingSpokenStayLeave(state: GameState): string {
     return `The panel does not speak. ${body}`;
   }
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-  const verb = /\b(people|envoys|priests|handlers|sides|militia|figures)\b/i.test(who) || /^both /i.test(who)
-    ? 'answer'
-    : 'answers';
-  return `${head} ${verb} you. "${body}"`;
+  return `${head} ${castSpeakVerb(who)} you. "${body}"`;
 }
 
 function pickAlreadyToldVariant(state: GameState, variants: string[]): string {
@@ -2143,14 +2143,14 @@ export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolea
     return false;
   }
   if (topic === 'who') {
-    if (has(openingWhoAskLine(state), 20)) return true;
     const who = openingCastLabel(state);
     const quote = openingSpokenIdentityQuote(who, {
       location: state.currentLocation,
       engineMode: state.engineMode,
       hay: openingSceneHay(state),
     });
-    return has(quote, 18);
+    const inner = quote.replace(/^["“]|["”]$/g, '').trim();
+    return inner.length >= 18 && has(inner, 18);
   }
   if (topic === 'refuse') {
     return has(openingSpokenRefuse(state), 20) || has(shortCardCost(state), 16);
@@ -2171,10 +2171,10 @@ export function hallTopicAlreadyAnswered(state: GameState, topic: HallTalkTopic)
   return false;
 }
 
-/** Starve Who / Want / refuse chips once that topic is logged. */
+/** Starve Who / Want / refuse / panel chips once that topic is logged. */
 export function shouldStarveHallTopicPad(state: GameState, choice: string): boolean {
   const topic = hallTalkTopic(choice);
-  if (topic !== 'who' && topic !== 'want' && topic !== 'refuse') return false;
+  if (topic !== 'who' && topic !== 'want' && topic !== 'refuse' && topic !== 'panel') return false;
   return hallTopicAlreadyAnswered(state, topic);
 }
 
@@ -2192,8 +2192,16 @@ export function openingNameLockSpokenBeat(state: GameState): string {
 
 function liveCoverPads(state: GameState, pads: string[]): string[] {
   const kept = pads.filter((c) => !shouldStarveHallTopicPad(state, c));
-  if (kept.length) return kept;
-  return isLitrpgSystemPanelMode(state) ? ['Look around', 'Inspect the panel'] : ['Look around'];
+  const onlyPanel = kept.length === 1 && /\binspect the panel\b|\bsystem window\b/i.test(kept[0] ?? '');
+  if (kept.length && !onlyPanel) return kept;
+  const refill = ['Look around', 'Wait'];
+  if (
+    isLitrpgSystemPanelMode(state)
+    && !hallTopicAlreadyAnswered(state, 'panel')
+  ) {
+    return [...refill, 'Inspect the panel'];
+  }
+  return refill;
 }
 
 /** Same who/want/refuse pad in recent player lines, including the line about to fire. */

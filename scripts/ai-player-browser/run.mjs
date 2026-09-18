@@ -11,6 +11,9 @@
  * this tab — never browser.newPage() per bible. Extra 5173 tabs from
  * older sequential leftovers get closed; Gemini tabs stay.
  *
+ * Stop after 2 consecutive same GM / tester loop / last-resort reprint.
+ * Writes REVIEW.md in the run folder. Does not start another T10. Chrome stays open.
+ *
  *   npm run ai-player-smoke
  *   npm run ai-player-t10
  *
@@ -42,12 +45,15 @@ import {
 } from './gameTab.mjs';
 import { askOpenRouterPlayer, openRouterKey, openRouterPlayerModel } from './openRouterPlayer.mjs';
 import {
+  detectRepeatSignal,
   filterAnsweredHallChips,
   isFlashJudgeModel,
   judgeGmBeat,
   markHallTopics,
+  naturalTypedFallback,
   peelChromeFromBeat,
   pickNonHallChip,
+  shouldForceTypedHumanMove,
 } from './humanJudge.mjs';
 
 loadProjectEnv();
@@ -138,6 +144,32 @@ function storyForBrain(snap) {
   return peeled.story || String(snap?.lastGm || '').trim();
 }
 
+function writeRepeatReview(runDir, payload) {
+  const turns = (payload.turns || []).join(', ') || '(none)';
+  const pads = (payload.pads || []).join(' | ') || '(none)';
+  const body = [
+    '# REVIEW — stopped after 2 consecutive repeats',
+    '',
+    'Do not start another T10 until this is reviewed. Chrome left open.',
+    '',
+    `- **bible:** ${payload.bibleId}`,
+    `- **stopped before acting:** T${payload.stopBeforeTurn}`,
+    `- **consecutive repeats:** ${payload.consecutiveRepeats}`,
+    `- **what repeated:** ${payload.what || '(unspecified)'}`,
+    `- **repeat turns:** ${turns}`,
+    `- **pads (chips on screen):** ${pads}`,
+    `- **last player:** ${payload.lastPlayer || '(none)'}`,
+    `- **lastGm:** ${payload.lastGm || '(none)'}`,
+    `- **prevGm:** ${payload.prevGm || '(none)'}`,
+    `- **reasons:** ${(payload.reasons || []).join(', ') || '(none)'}`,
+    '',
+    'Harness abort: 2 consecutive same GM story, or tester/hard-floor loop / identical / last-resort reprint.',
+    '',
+  ].join('\n');
+  fs.writeFileSync(path.join(runDir, 'REVIEW.md'), body, 'utf8');
+  return body;
+}
+
 async function playBible(gamePage, bibleId, opts = {}) {
   const spec = BIBLES[bibleId];
   const folder = path.join(runDir, bibleId);
@@ -150,11 +182,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
   let snap;
   let startTurn = 1;
   let lastPlayer = '';
+  const recentActions = [];
   let lastJudgedGm = '';
   let hallAnswered = { who: false, want: false, refuse: false };
   let nameTyped = false;
   let completed = 0;
   let autoFightFired = 0;
+  let consecutiveRepeats = 0;
+  const repeatTurns = [];
 
   if (resumeThis) {
     snap = await prepareLivePlay(gamePage);
@@ -181,6 +216,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       const lines = snap.playerLines || [];
       startTurn = fromTurn > 0 ? fromTurn : Math.max(1, lines.length + 1);
       lastPlayer = lines.at(-1) || '';
+      recentActions.push(...lines.filter(Boolean));
       lastJudgedGm = storyForBrain(snap);
       nameTyped = lines.some((l) => /^jax$/i.test(l) || /\bmy name is\b/i.test(l));
       for (const line of lines) hallAnswered = markHallTopics(hallAnswered, line);
@@ -254,23 +290,34 @@ async function playBible(gamePage, bibleId, opts = {}) {
     hallAnswered = markHallTopics(hallAnswered, lastPlayer);
     const liveChips = filterAnsweredHallChips(snap.chips, hallAnswered);
     const gmStory = storyForBrain(snap);
+    const prevGm = lastJudgedGm;
+    const skipSelfCompare = resumeThis && turn === startTurn && prevGm && prevGm === gmStory;
     const hardJudge = judgeGmBeat({
       gmStory,
-      lastGm: lastJudgedGm,
+      lastGm: skipSelfCompare ? '' : prevGm,
       lastPlayer,
       waitTimedOut: Boolean(snap.waitTimedOut),
     });
+    const chipsOnly = spec.chipsOnly || !snap.inputPresent;
     const decision = await askOpenRouterPlayer({
       bibleId,
       modeLabel: spec.mode,
       turn,
-      chipsOnly: spec.chipsOnly || !snap.inputPresent,
+      chipsOnly,
       chips: liveChips,
       lastPlayer,
+      recentActions: recentActions.slice(-8),
       gmStory,
-      lastGm: lastJudgedGm,
+      lastGm: skipSelfCompare ? '' : prevGm,
       hallAnswered,
     });
+    if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly)) {
+      decision.action_kind = 'type';
+      if (!decision.action || liveChips.includes(decision.action)
+        || /inspect the panel|look around|who are you|ask what they want/i.test(decision.action)) {
+        decision.action = naturalTypedFallback(recentActions);
+      }
+    }
     if (hardJudge.down) {
       decision.thumb = 'down';
       if (hardJudge.nonsense_options) decision.nonsense_options = true;
@@ -280,20 +327,20 @@ async function playBible(gamePage, bibleId, opts = {}) {
     if (decision.action && !liveChips.includes(decision.action)
       && /who are you|ask what they want/i.test(decision.action)
       && (hallAnswered.who || hallAnswered.want)) {
-      const nextChip = pickNonHallChip(snap.chips, hallAnswered);
-      if (nextChip) {
+      const nextChip = pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      if (nextChip && !shouldForceTypedHumanMove([nextChip], recentActions, chipsOnly)) {
         decision.action_kind = 'chip';
         decision.action = nextChip;
       } else if (!spec.chipsOnly) {
         decision.action_kind = 'type';
-        decision.action = 'Look around.';
+        decision.action = naturalTypedFallback(recentActions);
       }
     }
 
     if (!liveChips.length && !spec.chipsOnly) {
       decision.action_kind = 'type';
-      if (!decision.action || /who are you|ask what they want|what happens if i refuse/i.test(decision.action)) {
-        decision.action = 'Look around.';
+      if (!decision.action || /who are you|ask what they want|what happens if i refuse|inspect the panel/i.test(decision.action)) {
+        decision.action = naturalTypedFallback(recentActions);
       }
     }
 
@@ -304,12 +351,80 @@ async function playBible(gamePage, bibleId, opts = {}) {
       decision.future_leak ? 'flag:future_leak' : '',
     ].filter(Boolean).join(' · ').slice(0, 500);
 
+    const repeat = skipSelfCompare
+      ? { hit: false, reasons: [] }
+      : detectRepeatSignal({
+        gmStory,
+        lastGm: prevGm,
+        decision: { ...decision, comment },
+        hardJudge,
+      });
+    if (prevGm && !skipSelfCompare) {
+      if (repeat.hit) {
+        consecutiveRepeats += 1;
+        repeatTurns.push(completed || turn);
+      } else {
+        consecutiveRepeats = 0;
+        repeatTurns.length = 0;
+      }
+    }
+
+    if (consecutiveRepeats >= 2) {
+      await gamePage.bringToFront();
+      const thumb = await submitThumb(gamePage, { thumb: 'down', comment });
+      appendJsonl(jsonl, {
+        event: 'repeat_abort',
+        turn,
+        bibleId,
+        consecutiveRepeats,
+        reasons: repeat.reasons,
+        gmStory,
+        prevGm,
+        chipsSeen: snap.chips,
+        lastPlayer,
+        thumb: 'down',
+        thumbOk: thumb.ok,
+      });
+      appendMd(
+        transcript,
+        `## T${turn} (not acted)\n\n**GM:** ${gmStory || '(none)'}\n\n`
+        + `Thumb: down · ${comment}\n\n`
+        + `_Stopped: 2 consecutive GM repeats at T${turn}. Did not click the next chip._\n\n`,
+      );
+      writeRepeatReview(runDir, {
+        bibleId,
+        stopBeforeTurn: turn,
+        consecutiveRepeats,
+        what: repeat.reasons.join(', ') || 'repeat',
+        turns: repeatTurns,
+        pads: snap.chips,
+        lastPlayer,
+        lastGm: gmStory,
+        prevGm,
+        reasons: repeat.reasons,
+      });
+      console.log(`AI_PLAYER abort ${bibleId}: 2 consecutive GM repeats — wrote REVIEW.md; Chrome left open.`);
+      return {
+        bibleId,
+        ok: false,
+        stoppedRepeat: true,
+        turns: completed,
+        startTurn,
+        resumed: resumeThis,
+        autoFightSelector: AUTO_FIGHT_SELECTOR,
+        autoFightFired,
+        stoppedNoGm: false,
+        stopBeforeTurn: turn,
+        consecutiveRepeats,
+        review: path.join(runDir, 'REVIEW.md'),
+      };
+    }
+
     await gamePage.bringToFront();
     await dismissAutoFightTip(gamePage);
     const thumb = await submitThumb(gamePage, { thumb: decision.thumb, comment });
     const afterThumb = await readGameSnapshot(gamePage);
 
-    const chipsOnly = spec.chipsOnly || !snap.inputPresent;
     const nameChip = snap.chips.some((c) => /give (your |them your )?name/i.test(c));
     const alreadyGaveNameChip = /give (your |them your )?name/i.test(lastPlayer);
     let acted = '';
@@ -345,14 +460,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
       acted = await clickChip(gamePage, decision.action);
     }
     if (!acted && kind === 'chip') {
-      const safe = pickNonHallChip(snap.chips, hallAnswered);
-      if (safe) {
+      const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      if (safe && !shouldForceTypedHumanMove([safe], recentActions, chipsOnly)) {
         acted = await clickChip(gamePage, safe);
         kind = 'chip_fallback';
       }
     }
     if (!acted && !chipsOnly) {
-      const line = decision.action || (nameChip && !nameTyped ? 'Jax' : 'Look around.');
+      const line = decision.action || (nameChip && !nameTyped ? 'Jax' : naturalTypedFallback(recentActions));
       await typePlayerAction(gamePage, line);
       acted = line;
       kind = 'type';
@@ -413,7 +528,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
       + `Thumb: ${waitTimedOut ? 'down' : decision.thumb} · ${comment}\n\n`,
     );
     lastPlayer = acted;
-    lastJudgedGm = newGmBubble ? nextStory : lastJudgedGm;
+    recentActions.push(acted);
+    lastJudgedGm = gmStory;
     snap = next;
     if (waitTimedOut) snap.waitTimedOut = true;
     completed = turn;
@@ -429,6 +545,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     autoFightSelector: AUTO_FIGHT_SELECTOR,
     autoFightFired,
     stoppedNoGm: false,
+    stoppedRepeat: false,
   };
 }
 
@@ -491,6 +608,7 @@ async function main() {
     playerBrain: 'openrouter',
     playerModel: openRouterPlayerModel(),
     results: [],
+    abortedRepeat: false,
     chromeLeftOpen: true,
   };
 
@@ -506,6 +624,11 @@ async function main() {
         try {
           const result = await playBible(gamePage, bibleId, { resume });
           summary.results.push(result);
+          if (result.stoppedRepeat) {
+            summary.abortedRepeat = true;
+            console.log('AI_PLAYER stopped the run after 2 consecutive repeats. No next T10.');
+            break;
+          }
           if (result.blocked) continue;
         } catch (err) {
           console.error(`AI_PLAYER fail ${bibleId}: ${err?.message || err}`);

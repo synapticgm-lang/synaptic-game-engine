@@ -325,6 +325,7 @@ export function buildPlaytesterPrompt({
   chipsOnly,
   chips,
   lastPlayer,
+  recentActions,
   gmStory,
   lastGm,
   hallAnswered,
@@ -332,17 +333,26 @@ export function buildPlaytesterPrompt({
   const chipList = chips.length
     ? chips.map((c, i) => `${i + 1}. ${c}`).join('\n')
     : '(no chips)';
+  const history = (recentActions || []).filter(Boolean);
+  const historyBlock = history.length
+    ? history.map((line, i) => `${i + 1}. ${line}`).join('\n')
+    : lastPlayer || '(opening / none)';
   const typeRule = chipsOnly
-    ? 'This book is chips-only. NEVER choose type. Pick a chip.'
-    : 'Click a chip when it is a sane human move. Type free text when chips are empty or look wrong.';
+    ? 'This book is chips-only. NEVER choose type. Pick a chip you have not already used this scene if you can.'
+    : [
+      'Play like a person in this room, not a test script.',
+      'Type a short natural line whenever chips are empty, leftover junk, or the same inspect/look you already did.',
+      'Click a chip only when it is a new sane human move you have not already done.',
+      'If the bar is one leftover Inspect the panel, TYPE (speak to the handler, try a doorway, wait, walk toward a named place).',
+    ].join(' ');
   const answered = hallAnswered || {};
   const answeredLine = [
-    answered.who ? 'Who already answered — IGNORE Who are you chips; pick something else or type a new line.' : '',
-    answered.want ? 'Want already answered — IGNORE Ask what they want chips; pick something else or type a new line.' : '',
+    answered.who ? 'Who already answered — IGNORE Who are you chips; type something new.' : '',
+    answered.want ? 'Want already answered — IGNORE Ask what they want chips; type something new.' : '',
     answered.refuse ? 'Refuse already answered — IGNORE refuse chips.' : '',
   ].filter(Boolean).join(' ');
   return [
-    'You are a human fiction reader playtesting a browser text RPG. You forget prior turns — use only this packet.',
+    'You are a person playing this browser RPG. Gemini Pro is the player so the moves stay human — not chip mash, not Fate autoplay.',
     `Campaign: ${bibleId} (${modeLabel}). Player turn ${turn} (after this GM beat).`,
     typeRule,
     'Do not pick Fate\'s Pick unless every other chip is nonsense.',
@@ -352,8 +362,8 @@ export function buildPlaytesterPrompt({
     answeredLine || 'Track conversational state: once Who or Want is answered this scene, leave those chips.',
     'Flag future_leak if a chip or the prose spoils something that has not happened yet.',
     '',
-    'LAST PLAYER ACTION:',
-    lastPlayer || '(opening / none)',
+    'WHAT YOU ALREADY DID THIS SCENE (do not mash these):',
+    historyBlock,
     '',
     'PREVIOUS GM (for loop check):',
     lastGm || '(none)',

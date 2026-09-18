@@ -14,6 +14,7 @@ import {
   openingAlreadyToldLine,
   openingCastLabel,
   openingSpokenIdentityQuote,
+  openingWhoAskLineFromLabel,
   openingSpokenRefuse,
   openingSpokenWant,
   shortCardCost,
@@ -146,12 +147,12 @@ export function spokenTalkFallback(state: GameState, playerInput: string): strin
           hay: identityHay(state),
           stamp: resolveLitRpgFolkStamp(state),
         })
-        ? `${who.charAt(0).toUpperCase() + who.slice(1)} answers you. ${openingSpokenIdentityQuote(who, {
+        ? openingWhoAskLineFromLabel(who, {
             location: state.currentLocation,
             engineMode: state.engineMode,
             hay: identityHay(state),
             stamp: resolveLitRpgFolkStamp(state),
-          })}`
+          })
         : openingAlreadyToldLine(state, 'who');
   }
   if (hallTalkAsksRefuse(playerInput)) {
