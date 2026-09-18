@@ -107,10 +107,22 @@ describe('08c — Free MUD presentation', () => {
     expect(turn.receiptLines.length).toBeGreaterThan(0);
   });
 
-  it('mud receipt LogEntry counts as real story', () => {
+  it('mud receipt with a flavor quote counts as real story; STATUS chrome alone does not', () => {
     expect(
       hasRealGmStory({
         id: '1',
+        turn: 1,
+        role: 'gm',
+        content: 'You held still at Lowmarket.',
+        timestamp: 0,
+        presentation: 'mud-receipt',
+        flavorQuote: 'You held still at Lowmarket.',
+        systemLog: ['HERE: Lowmarket', 'ACT: waited', 'OUTCOME: resolved'],
+      })
+    ).toBe(true);
+    expect(
+      hasRealGmStory({
+        id: 'chrome',
         turn: 1,
         role: 'gm',
         content: '',
@@ -118,7 +130,7 @@ describe('08c — Free MUD presentation', () => {
         presentation: 'mud-receipt',
         systemLog: ['HERE: Lowmarket', 'ACT: waited', 'OUTCOME: resolved'],
       })
-    ).toBe(true);
+    ).toBe(false);
   });
 });
 

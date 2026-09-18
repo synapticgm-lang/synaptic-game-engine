@@ -46,6 +46,7 @@ import {
   isOpeningHallTalkTurn,
   isPlayDemand,
   shouldStarveCombatPadsOnCover,
+  shouldStarveHallTopicPad,
 } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
@@ -717,6 +718,10 @@ export function compileChoices(
     const lower = c.toLowerCase();
     if (coverCombatLock && isCombatFamilyPad(c)) {
       notes.push(`Cover combat starve: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (shouldStarveHallTopicPad(state, c)) {
+      notes.push(`Hall topic starve: ${c.slice(0, 32)}`);
       return false;
     }
     if (!isLitrpgSystemPanelMode(state) && /\binspect the panel\b|\bsystem window\b/i.test(c)) {

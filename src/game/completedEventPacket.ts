@@ -29,8 +29,10 @@ import {
   isHallTalkPlayerLine,
   isOpeningCardActLine,
   cardSceneMentionTokens,
+  isNameTelegramProse,
   lockedOpeningPcName,
   openingCastLabel,
+  openingNameLockSpokenBeat,
   openingCastNames,
   proseAsksForPcName,
   shortCardOffer,
@@ -1332,20 +1334,16 @@ function cardPageParagraph(state: GameState): string {
 }
 
 function ledgerAdvanceBeat(state: GameState, packet?: CompletedEventPacket): string {
+  if (lockedOpeningPcName(state)) {
+    return openingNameLockSpokenBeat(state);
+  }
   const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const who = (packet?.answerWho || packet?.witnesses?.[0] || openingCastLabel(state) || '')
     .replace(/\s+/g, ' ')
     .trim();
-  const name = lockedOpeningPcName(state);
   const head = who && !/\bpanel\b/i.test(who)
     ? who.charAt(0).toUpperCase() + who.slice(1)
     : '';
-  if (name && head) {
-    return `${head} was still at ${where}. The name ${name} already stood. The room waited on what you did next.`;
-  }
-  if (name) {
-    return `You stayed at ${where}. The name ${name} already stood. The room waited on what you did next.`;
-  }
   if (head) {
     return `${head} was still at ${where}. What you already knew of the room still held.`;
   }
@@ -1369,8 +1367,8 @@ function lastResortUsable(state: GameState, prose: string, lastGm: string): stri
   const body = sanitizeLockedNameBeat(state, (prose ?? '').replace(/\s+/g, ' ').trim());
   if (!body || body.length < 8) return '';
   if (isDroughtStubProse(body) || proseAsksForPcName(body)) return '';
+  if (isNameTelegramProse(body) || LEDGER_WAIT_FP.test(body)) return '';
   if (sameBeat(body, lastGm)) return '';
-  if (LEDGER_WAIT_FP.test(body) && LEDGER_WAIT_FP.test(lastGm)) return '';
   return body;
 }
 

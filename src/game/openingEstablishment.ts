@@ -1846,7 +1846,7 @@ export function coverContinuePads(state: GameState): string[] {
     if (chips.length) return chips.slice(0, 2);
     const locked = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
     if (locked && isLockablePcName(locked) && !/unknown survivor/i.test(locked)) {
-      return ['Ask what they want', 'Look around'];
+      return liveCoverPads(state, ['Ask what they want', 'Look around']);
     }
     return ['Give your name', 'Refuse to give a name'];
   }
@@ -1854,16 +1854,19 @@ export function coverContinuePads(state: GameState): string[] {
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
     const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
     if (hallTalkAsksWho(lastPlayer)) {
-      return ['Ask what they want', 'Look around'];
+      return liveCoverPads(state, ['Ask what they want', 'Look around']);
     }
     const askedWant = (state.log ?? []).some(
       (e) => e.role === 'player' && hallTalkAsksWant(e.content ?? '')
     );
     return askedWant
-      ? isLitrpgSystemPanelMode(state)
-        ? ['Who are you', 'Inspect the panel']
-        : ['Who are you', 'Look around']
-      : ['Ask what they want'];
+      ? liveCoverPads(
+        state,
+        isLitrpgSystemPanelMode(state)
+          ? ['Who are you', 'Inspect the panel']
+          : ['Who are you', 'Look around']
+      )
+      : liveCoverPads(state, ['Ask what they want']);
   }
   return ['Give your name', 'Refuse to give a name'];
 }
@@ -2111,6 +2114,47 @@ function incomingAlreadyOnOpenLog(state: GameState, incoming: string): boolean {
     return ((e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase()) === want;
   }
   return false;
+}
+
+/** Ledger / STATUS telegram — not a chapter beat. */
+export function isNameTelegramProse(body: string): boolean {
+  const t = (body ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^They have the name [A-Za-z][A-Za-z'-]{1,20}\.?$/i.test(t)) return true;
+  if (/The name \S+ already stood/i.test(t) && /The room waited/i.test(t)) return true;
+  return false;
+}
+
+/** Player already asked this hall topic in the opening scene. */
+export function hallTopicAlreadyAnswered(state: GameState, topic: HallTalkTopic): boolean {
+  return (state.log ?? []).some(
+    (e) => e.role === 'player' && hallTalkTopic(e.content ?? '') === topic
+  );
+}
+
+/** Starve Who / Want / refuse chips once that topic is logged. */
+export function shouldStarveHallTopicPad(state: GameState, choice: string): boolean {
+  const topic = hallTalkTopic(choice);
+  if (topic !== 'who' && topic !== 'want' && topic !== 'refuse') return false;
+  return hallTopicAlreadyAnswered(state, topic);
+}
+
+/** Name-lock book: HERE + spoken card want. Never the telegram alone. */
+export function openingNameLockSpokenBeat(state: GameState): string {
+  const place = (
+    state.openingEstablishment?.answers?.where
+    || state.currentLocation
+    || 'this room'
+  ).replace(/\s+/g, ' ').trim();
+  const here = /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
+  const want = openingSpokenWant(state);
+  return sanitizeLockedNameBeat(state, `You are ${here}. ${want}`.replace(/\s+/g, ' ').trim());
+}
+
+function liveCoverPads(state: GameState, pads: string[]): string[] {
+  const kept = pads.filter((c) => !shouldStarveHallTopicPad(state, c));
+  if (kept.length) return kept;
+  return isLitrpgSystemPanelMode(state) ? ['Look around', 'Inspect the panel'] : ['Look around'];
 }
 
 /** Same who/want/refuse pad in recent player lines, including the line about to fire. */

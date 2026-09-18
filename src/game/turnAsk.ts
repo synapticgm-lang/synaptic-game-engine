@@ -1,4 +1,5 @@
 import type { LogEntry } from './types';
+import { isNameTelegramProse } from './openingEstablishment';
 
 /** End-of-turn ask. Never a reply to a command the player already sent. */
 export const TURN_ASK = 'What do you do?';
@@ -37,14 +38,16 @@ export function gmStoryText(entry: LogEntry | undefined): string {
 
 export function hasRealGmStory(entry: LogEntry | undefined): boolean {
   if (!entry) return false;
-  // 08c Free MUD — receipt and/or short flavor quote counts as a real turn.
+  const story = gmStoryText(entry);
+  // Telegram / ledger speak is chrome, not the book.
+  if (isNameTelegramProse(story)) return false;
+  // 08c Free MUD — a short flavor quote can count. STATUS chrome alone cannot.
   if (entry.presentation === 'mud-receipt') {
     const quote = String(entry.flavorQuote ?? entry.content ?? '').trim();
-    if ((entry.systemLog?.length ?? 0) > 0) return true;
-    if (quote.length >= 8) return true;
+    if (isNameTelegramProse(quote)) return false;
+    if (quote.length >= 8 && /[a-z]/i.test(quote)) return true;
+    return false;
   }
-  const story = gmStoryText(entry);
-  // Any real sentence paints. 24 hid “They have the name Jax.” (23) — send looked like no reply.
   return story.length >= 8 && /[a-z]/i.test(story);
 }
 

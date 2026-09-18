@@ -94,8 +94,9 @@ describe('playtest10b — cover answers the line', () => {
       },
     });
     const text = stitchOpeningContinue(named, 'My name is Jax what your and what do you want');
-    expect(text).toMatch(/Jax/);
+    expect(text).toMatch(/You are/i);
     expect(text).toMatch(/want|body on the line|have not said/i);
+    expect(text).not.toBe('They have the name Jax.');
     expect(text).not.toMatch(/What is your name/i);
     expect(text).not.toMatch(/banner-smoke|horn-calls/i);
   });
@@ -121,7 +122,8 @@ describe('playtest10b — cover answers the line', () => {
       ],
     });
     const pads = coverContinuePads(named);
-    expect(pads).toEqual(['Who are you', 'Inspect the panel']);
-    expect(resolveOfferedChoices(named)).toEqual(['Who are you', 'Inspect the panel']);
+    expect(pads).not.toContain('Ask what they want');
+    expect(pads.join(' ')).toMatch(/Look around|Inspect the panel|Who are you/i);
+    expect(resolveOfferedChoices(named)).not.toContain('Ask what they want');
   });
 });

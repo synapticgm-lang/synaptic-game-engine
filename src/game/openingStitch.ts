@@ -23,8 +23,10 @@ import {
   isKitOrCarryInspect,
   isEarthOriginPrompt,
   isLitrpgSystemPanelMode,
+  isNameTelegramProse,
   lockedOpeningPcName,
   openingAlreadyToldLine,
+  openingNameLockSpokenBeat,
   sanitizeLockedNameBeat,
   stripLockedNameAsk,
   openingRefuseLine,
@@ -313,19 +315,16 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   }
 
   if (gaveName && name) {
-    const bits = [`They have the name ${name}.`];
-    if (asksWhere || namePlusMore) bits.push(`You are ${here}.`);
+    const bits = [`You are ${here}.`];
     if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
     if (asksPanel && isLitrpgSystemPanelMode(state)) {
       bits.push('The blue panel is a System window at eye level — not a person.');
     }
-    if (asksWant || asksWhy || namePlusMore) {
-      bits.push(
-        clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
-          ? alreadyToldWant
-          : want || 'They have not said what they want yet.'
-      );
-    }
+    bits.push(
+      clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
+        ? alreadyToldWant
+        : want || 'They have not said what they want yet.'
+    );
     if (asksRefuse) {
       bits.push(
         clauseAlreadySpoken(state, ledgerRefuse) || clauseAlreadySpoken(state, refuse)
@@ -333,7 +332,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
           : refuse || 'They have not said what happens if you refuse.'
       );
     }
-    return sanitizeLockedNameBeat(state, bits.join(' '));
+    return finalizeContinue(state, bits.join(' '));
   }
 
   if (asksWhere || asksWhy || asksWant || asksRefuse || asksWho || asksPanel) {
@@ -364,17 +363,25 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     if (!name && asksWhere && !asksWhy && !asksWant && !asksRefuse && !asksWho) {
       bits.push('They still want a name before they will say more.');
     }
-    return sanitizeLockedNameBeat(state, bits.filter(Boolean).join(' '));
+    return finalizeContinue(state, bits.filter(Boolean).join(' '));
   }
 
   if (!act) {
-    return sanitizeLockedNameBeat(state, `You are ${here}.`);
+    return finalizeContinue(state, name ? openingNameLockSpokenBeat(state) : `You are ${here}.`);
   }
 
   if (name) {
-    return sanitizeLockedNameBeat(state, `They have the name ${name}. You are ${here}.`);
+    return finalizeContinue(state, openingNameLockSpokenBeat(state));
   }
   return `You are ${here}. They still want a name.`;
+}
+
+function finalizeContinue(state: GameState, text: string): string {
+  const body = sanitizeLockedNameBeat(state, (text ?? '').replace(/\s+/g, ' ').trim());
+  if (lockedOpeningPcName(state) && isNameTelegramProse(body)) {
+    return openingNameLockSpokenBeat(state);
+  }
+  return body;
 }
 
 /** True when this tier may attempt a non-blocking polish (reserved; page-1 never waits). */

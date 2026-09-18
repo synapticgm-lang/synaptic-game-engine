@@ -128,7 +128,8 @@ describe('playtest10f — treaty tent one-line lock', () => {
       }),
       'My name is Jax where am.whats going on'
     );
-    expect(text).toMatch(/Jax/);
+    expect(text).toMatch(/You are/i);
+    expect(text).not.toBe('They have the name Jax.');
     expect(text).toMatch(/treaty tent|Cinderflow/i);
     expect(text).toMatch(/pause in the war|named as theirs/i);
     expect(openingCastLabel(treaty())).toMatch(/envoys at this table/i);

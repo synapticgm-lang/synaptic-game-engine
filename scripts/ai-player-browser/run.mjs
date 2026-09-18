@@ -1,7 +1,10 @@
 /**
  * Watched browser AI-player (4 flagships × T10).
  * Real React sendAction in a visible Chrome tab. Player-brain is OpenRouter
- * (google/gemini-2.5-flash). Never closes Chrome / never kills chrome.exe.
+ * google/gemini-2.5-pro. Never closes Chrome / never kills chrome.exe.
+ *
+ * BANNER: Do not run a quality T10 on Flash. Flash is not the judge.
+ * Default / documented model is google/gemini-2.5-pro via OpenRouter.
  *
  * ONE Synaptic tab for the whole run. Login, all four bibles, and any
  * retry reuse that same page. New Game is Start New Game / reload in
@@ -16,14 +19,18 @@
  *   OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY
  *   AI_PLAYER_HOST=http://127.0.0.1:5173
  *   AI_PLAYER_CDP=http://127.0.0.1:9222
+ *   AI_PLAYER_MODEL=google/gemini-2.5-pro
  */
 import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer-core';
 import { loadProjectEnv, ROOT } from './loadEnv.mjs';
 import {
+  AUTO_FIGHT_SELECTOR,
   BIBLES,
+  clickAutoFight,
   clickChip,
+  dismissAutoFightTip,
   loginFounderEmail,
   readGameSnapshot,
   startPremade,
@@ -33,6 +40,13 @@ import {
   waitOpeningReady,
 } from './gameTab.mjs';
 import { askOpenRouterPlayer, openRouterKey, openRouterPlayerModel } from './openRouterPlayer.mjs';
+import {
+  filterAnsweredHallChips,
+  isFlashJudgeModel,
+  judgeGmBeat,
+  markHallTopics,
+  pickNonHallChip,
+} from './humanJudge.mjs';
 
 loadProjectEnv();
 
@@ -158,18 +172,48 @@ async function playBible(gamePage, bibleId) {
   appendMd(transcript, `## Opening\n\n${snap.lastGm}\n\nChips: ${snap.chips.join(' | ') || '(none)'}\n\n`);
 
   let lastPlayer = '';
+  let lastJudgedGm = '';
+  let hallAnswered = { who: false, want: false, refuse: false };
   let nameTyped = false;
   let completed = 0;
+  let autoFightFired = 0;
   for (let turn = 1; turn <= turns; turn++) {
+    hallAnswered = markHallTopics(hallAnswered, lastPlayer);
+    const liveChips = filterAnsweredHallChips(snap.chips, hallAnswered);
+    const hardJudge = judgeGmBeat({
+      gmStory: snap.lastGm,
+      lastGm: lastJudgedGm,
+      lastPlayer,
+    });
     const decision = await askOpenRouterPlayer({
       bibleId,
       modeLabel: spec.mode,
       turn,
       chipsOnly: spec.chipsOnly || !snap.inputPresent,
-      chips: snap.chips,
+      chips: liveChips,
       lastPlayer,
       gmStory: snap.lastGm,
+      lastGm: lastJudgedGm,
+      hallAnswered,
     });
+    if (hardJudge.down) {
+      decision.thumb = 'down';
+      if (hardJudge.nonsense_options) decision.nonsense_options = true;
+      const why = `human_floor:${hardJudge.reasons.join(',')}`;
+      decision.comment = [decision.comment, why].filter(Boolean).join(' · ').slice(0, 500);
+    }
+    if (decision.action && !liveChips.includes(decision.action)
+      && /who are you|ask what they want/i.test(decision.action)
+      && (hallAnswered.who || hallAnswered.want)) {
+      const nextChip = pickNonHallChip(snap.chips, hallAnswered);
+      if (nextChip) {
+        decision.action_kind = 'chip';
+        decision.action = nextChip;
+      } else if (!spec.chipsOnly) {
+        decision.action_kind = 'type';
+        decision.action = 'Look around.';
+      }
+    }
 
     const comment = [
       decision.comment,
@@ -179,6 +223,7 @@ async function playBible(gamePage, bibleId) {
     ].filter(Boolean).join(' · ').slice(0, 500);
 
     await gamePage.bringToFront();
+    await dismissAutoFightTip(gamePage);
     const thumb = await submitThumb(gamePage, { thumb: decision.thumb, comment });
     const afterThumb = await readGameSnapshot(gamePage);
 
@@ -188,6 +233,19 @@ async function playBible(gamePage, bibleId) {
     let acted = '';
     let kind = decision.action_kind;
     if (chipsOnly) kind = 'chip';
+    const fightLive = afterThumb.autoFightReady || snap.autoFightReady
+      || afterThumb.combatChips || snap.combatChips;
+    if (!chipsOnly && fightLive && !nameChip) {
+      let auto = await clickAutoFight(gamePage);
+      if (!auto) {
+        await new Promise((r) => setTimeout(r, 800));
+        auto = await clickAutoFight(gamePage);
+      }
+      if (auto) {
+        acted = auto;
+        kind = 'auto_fight';
+      }
+    }
 
     const pickingNameChip = /give (your |them your )?name/i.test(decision.action || '');
     if (!chipsOnly && nameChip && !nameTyped && (alreadyGaveNameChip || pickingNameChip || turn === 1)) {
@@ -201,12 +259,15 @@ async function playBible(gamePage, bibleId) {
       kind = 'type';
       nameTyped = true;
     }
-    if (!acted && kind === 'chip' && decision.action) {
+    if (!acted && kind === 'chip' && decision.action && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(decision.action)) {
       acted = await clickChip(gamePage, decision.action);
     }
-    if (!acted && kind === 'chip' && snap.chips[0]) {
-      acted = await clickChip(gamePage, snap.chips[0]);
-      kind = 'chip_fallback';
+    if (!acted && kind === 'chip') {
+      const safe = snap.chips.find((c) => !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(c));
+      if (safe) {
+        acted = await clickChip(gamePage, safe);
+        kind = 'chip_fallback';
+      }
     }
     if (!acted && !chipsOnly && (kind === 'type' || !snap.chips.length)) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : 'Look around.');
@@ -220,7 +281,7 @@ async function playBible(gamePage, bibleId) {
     let next;
     let waitTimedOut = false;
     try {
-      next = await waitNewGmBeat(gamePage, afterThumb, { timeoutMs: 90000 });
+      next = await waitNewGmBeat(gamePage, afterThumb, { timeoutMs: kind === 'auto_fight' ? 180000 : 90000 });
     } catch {
       next = await readGameSnapshot(gamePage);
       waitTimedOut = true;
@@ -230,6 +291,8 @@ async function playBible(gamePage, bibleId) {
       turn,
       bibleId,
       actionKind: kind,
+      autoFightSelector: AUTO_FIGHT_SELECTOR,
+      autoFightFired: kind === 'auto_fight',
       playerAction: acted,
       chipsSeen: snap.chips,
       gmStory: next.lastGm,
@@ -250,11 +313,13 @@ async function playBible(gamePage, bibleId) {
       + `Thumb: ${decision.thumb} · ${comment}\n\n`,
     );
     lastPlayer = acted;
+    lastJudgedGm = snap.lastGm;
     snap = next;
     completed = turn;
+    if (kind === 'auto_fight') autoFightFired += 1;
   }
 
-  return { bibleId, ok: true, turns: completed };
+  return { bibleId, ok: true, turns: completed, autoFightSelector: AUTO_FIGHT_SELECTOR, autoFightFired };
 }
 
 async function main() {
@@ -263,6 +328,18 @@ async function main() {
       ok: false,
       blocked: 'missing_login_env',
       message: 'Run node scripts/ai-player-browser/ensure-tester.mjs then set AI_PLAYER_EMAIL / AI_PLAYER_PASSWORD in .env.local',
+    }, null, 2));
+    process.exit(2);
+  }
+
+  const playerModel = openRouterPlayerModel();
+  console.log(`AI_PLAYER banner: judge=${playerModel} — do not run quality T10 on Flash; Flash is not the judge.`);
+  if (!loginCheck && isFlashJudgeModel(playerModel) && process.env.AI_PLAYER_ALLOW_FLASH !== '1') {
+    console.log(JSON.stringify({
+      ok: false,
+      blocked: 'flash_is_not_the_judge',
+      message: 'Quality T10 must use google/gemini-2.5-pro. Flash is not the judge. Set AI_PLAYER_ALLOW_FLASH=1 only for a throwaway smoke.',
+      playerModel,
     }, null, 2));
     process.exit(2);
   }

@@ -1,11 +1,14 @@
 /**
  * OpenRouter player-brain (decisions / thumbs / notes).
  * Game still plays in visible Chrome. Never logs the API key.
+ *
+ * HARD: default judge is google/gemini-2.5-pro.
+ * Do not run a quality T10 on Flash. Flash is not the judge.
  */
 import { buildPlaytesterPrompt, parsePlaytesterDecision } from './geminiTab.mjs';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const DEFAULT_MODEL = 'google/gemini-2.5-flash';
+export const DEFAULT_PLAYER_MODEL = 'google/gemini-2.5-pro';
 
 export function openRouterKey() {
   return (
@@ -17,8 +20,11 @@ export function openRouterKey() {
 }
 
 export function openRouterPlayerModel() {
-  const raw = (process.env.AI_PLAYER_MODEL || process.env.GEMINI_REVIEW_MODEL || DEFAULT_MODEL).trim();
-  if (!raw || raw === 'gemini-2.5-pro' || raw === 'gemini-3.1-pro-preview') return DEFAULT_MODEL;
+  const raw = (process.env.AI_PLAYER_MODEL || process.env.GEMINI_REVIEW_MODEL || DEFAULT_PLAYER_MODEL).trim();
+  if (!raw || raw === 'gemini-2.5-pro' || raw === 'gemini-3.1-pro-preview') {
+    return DEFAULT_PLAYER_MODEL;
+  }
+  if (raw === 'gemini-2.5-flash') return 'google/gemini-2.5-flash';
   return raw;
 }
 
@@ -34,12 +40,22 @@ function extractText(payload) {
 }
 
 const SYSTEM = [
-  'You are a human playtester for a browser text RPG.',
+  'You are a human fiction reader playtesting a browser text RPG — not a JSON parser.',
   'Use only the packet. Return ONE JSON object and nothing else.',
   'Required keys: action_kind, action, thumb, comment, nonsense_options, future_leak, note.',
   'action_kind is "chip" or "type". thumb is "up" or "down".',
   'nonsense_options and future_leak are booleans.',
-  'If chips exist, prefer action_kind chip and copy exact chip text (or a 1-based chip number).',
+  'MUST vote thumb=down and nonsense_options=true if the GM beat is any of:',
+  'system text as story (They have the name Jax. / The room waited. / name telegrams);',
+  'looping stitch or the same paragraph as the last GM;',
+  'combat resolving inside a talk/dialogue beat;',
+  'STATUS/XP/Quest Unlocked chrome with no real story paragraph;',
+  'already-told who/want reprint;',
+  'a wordy padded essay / purple pile a human would skim;',
+  'dull empty filler with no concrete HERE, action, or spoken want.',
+  'UP only when it reads like a short interesting chapter beat: clear, spoken, one new thing, not a paragraph dump.',
+  'If Who or Want was already answered this scene, IGNORE those chips. Pick a new chip or TYPE a new line.',
+  'If chips exist and are still live, prefer action_kind chip and copy exact chip text (or a 1-based chip number).',
 ].join(' ');
 
 export function buildJsonPlaytesterPrompt(packet) {

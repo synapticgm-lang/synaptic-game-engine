@@ -326,6 +326,8 @@ export function buildPlaytesterPrompt({
   chips,
   lastPlayer,
   gmStory,
+  lastGm,
+  hallAnswered,
 }) {
   const chipList = chips.length
     ? chips.map((c, i) => `${i + 1}. ${c}`).join('\n')
@@ -333,22 +335,33 @@ export function buildPlaytesterPrompt({
   const typeRule = chipsOnly
     ? 'This book is chips-only. NEVER choose type. Pick a chip.'
     : 'Click a chip when it is a sane human move. Type free text when chips are empty or look wrong.';
+  const answered = hallAnswered || {};
+  const answeredLine = [
+    answered.who ? 'Who already answered — IGNORE Who are you chips; pick something else or type a new line.' : '',
+    answered.want ? 'Want already answered — IGNORE Ask what they want chips; pick something else or type a new line.' : '',
+    answered.refuse ? 'Refuse already answered — IGNORE refuse chips.' : '',
+  ].filter(Boolean).join(' ');
   return [
-    'You are a human playtester for a browser text RPG. You forget prior turns — use only this packet.',
+    'You are a human fiction reader playtesting a browser text RPG. You forget prior turns — use only this packet.',
     `Campaign: ${bibleId} (${modeLabel}). Player turn ${turn} (after this GM beat).`,
     typeRule,
     'Do not pick Fate\'s Pick unless every other chip is nonsense.',
-    'Flag nonsense_options if chips invent people/places/items not in the GM beat or are unreadable.',
+    'MUST vote THUMB down and NONSENSE yes if the GM beat is any of: system text as story ("They have the name Jax.", "The room waited.", name telegrams); looping stitch / same paragraph as last GM; combat resolving inside a talk beat; STATUS/XP/Quest Unlocked chrome with no real story paragraph; already-told who/want reprint; a wordy padded essay a human would skim; dull filler with no HERE / action / spoken want.',
+    'UP only when it reads like a short interesting chapter beat: clear, spoken, one new thing, not a paragraph dump.',
+    'If the GM response reads like a telegram, repeats the previous turn, or resolves combat in a dialogue box, you must vote down and flag nonsense_options.',
+    answeredLine || 'Track conversational state: once Who or Want is answered this scene, leave those chips.',
     'Flag future_leak if a chip or the prose spoils something that has not happened yet.',
-    'Recommend a thumb on the GM beat: up if playable and coherent, down if broken, empty, recycled, or spoiling.',
     '',
     'LAST PLAYER ACTION:',
     lastPlayer || '(opening / none)',
     '',
-    'GM STORY (ignore STATUS / XP chrome):',
+    'PREVIOUS GM (for loop check):',
+    lastGm || '(none)',
+    '',
+    'GM STORY (ignore STATUS / XP chrome — chrome is not the book):',
     gmStory || '(none yet)',
     '',
-    'CHIPS ON SCREEN:',
+    'CHIPS ON SCREEN (dead Who/Want already stripped when answered):',
     chipList,
     '',
     'Reply with EXACTLY these 6 lines and nothing else (no markdown, no JSON):',

@@ -82,10 +82,10 @@ describe('playtest10i — cathedral name+why', () => {
 
   it('name + why answers the card, not only They have the name Jax', () => {
     const text = stitchOpeningContinue(cathedral(), LINE);
-    expect(text).toMatch(/They have the name Jax/i);
     expect(text).toMatch(/You are/i);
     expect(text).toMatch(/Pactborn|Ash Court|war|Mark/i);
     expect(text).not.toBe('They have the name Jax.');
+    expect(text).not.toMatch(/^They have the name Jax\./i);
     expect(text.length).toBeGreaterThan(40);
     expect(openingWantLine(cathedral()).length).toBeGreaterThan(8);
   });
@@ -100,7 +100,7 @@ describe('playtest10i — cathedral name+why', () => {
     expect(openingWhoAskLine(cathedral())).not.toMatch(/have not given you a name back/i);
   });
 
-  it('short name-lock telegram still paints as a GM bubble', () => {
+  it('short name-lock telegram is not a successful story beat', () => {
     expect(
       hasRealGmStory({
         id: 't2',
@@ -109,7 +109,7 @@ describe('playtest10i — cathedral name+why', () => {
         content: 'They have the name Jax.',
         timestamp: 2,
       })
-    ).toBe(true);
+    ).toBe(false);
     expect(hasRealGmStory({ id: 'empty', turn: 2, role: 'gm', content: '', timestamp: 2 })).toBe(false);
     expect(
       hasRealGmStory({ id: 'ask', turn: 2, role: 'gm', content: 'What do you do?', timestamp: 2 })

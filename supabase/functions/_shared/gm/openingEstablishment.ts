@@ -227,3 +227,29 @@ export function sanitizeLockedNameBeat(
   if (!proseAsksForPcName(body)) return body;
   return stripLockedNameAsk(body);
 }
+
+export function isNameTelegramProse(body: string): boolean {
+  const t = (body ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^They have the name [A-Za-z][A-Za-z'-]{1,20}\.?$/i.test(t)) return true;
+  if (/The name \S+ already stood/i.test(t) && /The room waited/i.test(t)) return true;
+  return false;
+}
+
+export function openingSpokenWant(_state?: unknown): string {
+  return 'They have not said what they want yet.';
+}
+
+export function openingNameLockSpokenBeat(state?: {
+  openingEstablishment?: { answers?: { where?: string; name?: string } };
+  currentLocation?: string;
+  character?: { name?: string };
+}): string {
+  const place = (
+    state?.openingEstablishment?.answers?.where
+    || state?.currentLocation
+    || 'this room'
+  ).replace(/\s+/g, ' ').trim();
+  const here = /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
+  return sanitizeLockedNameBeat(state ?? {}, `You are ${here}. ${openingSpokenWant(state)}`);
+}

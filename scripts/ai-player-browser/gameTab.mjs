@@ -57,6 +57,11 @@ export async function readGameSnapshot(page) {
       .filter((b) => visible(b) && !b.disabled)
       .map((b) => (b.textContent || '').replace(/\s+/g, ' ').trim())
       .filter((t) => t && !/^Fate'?s Pick$/i.test(t));
+    const combatChips = chips.some((t) =>
+      /\b(press the attack|try to flee|parley|attack|flee|strike|engage|fight)\b/i.test(t)
+    );
+    const autoBtn = document.querySelector('button[title="Auto-resolve combat"]');
+    const autoFightReady = Boolean(autoBtn && visible(autoBtn) && !autoBtn.disabled);
     const gmBlocks = [...document.querySelectorAll('.sgm-prose-face')].filter((el) => {
       return !el.closest('.justify-end') && visible(el);
     });
@@ -105,6 +110,8 @@ export async function readGameSnapshot(page) {
       signedHint,
       inputPresent: Boolean(input),
       playReady,
+      combatChips,
+      autoFightReady,
     };
   });
 }
@@ -145,6 +152,7 @@ export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
   while (Date.now() - start < timeoutMs) {
     await dismissWelcome(page);
     await dismissQuestUnlock(page);
+    await dismissAutoFightTip(page);
     await revealPlayChrome(page);
     last = await readGameSnapshot(page);
     const story = (last.lastGm || '').trim();
@@ -292,6 +300,51 @@ export async function startPremade(page, bibleId) {
   if (!began) throw new Error('Modal Continue / Begin Journey not found (refusing Continue Journey on the hub)');
   await sleep(400);
   await clickText(page, 'Someone new this time', { timeoutMs: 2500, root: modal });
+}
+
+/** CenterPanel toolbar — only mounted while `state.activeEncounter` is live. */
+export const AUTO_FIGHT_SELECTOR = 'button[title="Auto-resolve combat"]';
+
+export async function dismissAutoFightTip(page) {
+  const hit = await page.evaluate(() => {
+    const nodes = [...document.querySelectorAll('button')];
+    const gotIt = nodes.find((b) => /^(Got it)$/i.test((b.textContent || '').replace(/\s+/g, ' ').trim()));
+    const tip = (document.body.innerText || '').includes('Save turns with Auto Fight');
+    if (!tip || !gotIt) return false;
+    gotIt.click();
+    return true;
+  });
+  if (hit) await sleep(300);
+  return hit;
+}
+
+export async function confirmAutoFightWarning(page) {
+  const hit = await page.evaluate(() => {
+    const nodes = [...document.querySelectorAll('button')];
+    const risk = nodes.find((b) => /Risk It/i.test((b.textContent || '').replace(/\s+/g, ' ').trim()));
+    if (!risk) return false;
+    risk.click();
+    return true;
+  });
+  if (hit) await sleep(400);
+  return hit;
+}
+
+/** Click the existing Auto Fight control. Never Attack/Flee/Parley mash. */
+export async function clickAutoFight(page) {
+  await dismissAutoFightTip(page);
+  const clicked = await page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (!el || el.disabled) return false;
+    const r = el.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return false;
+    el.click();
+    return true;
+  }, AUTO_FIGHT_SELECTOR);
+  if (!clicked) return '';
+  await sleep(250);
+  await confirmAutoFightWarning(page);
+  return 'Auto-Fight';
 }
 
 export async function clickChip(page, label) {
