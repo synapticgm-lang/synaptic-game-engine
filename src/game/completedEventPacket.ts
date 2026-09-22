@@ -9,7 +9,8 @@ import type { GameState, LogEntry } from './types';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
-import { graphExitPads, shortRoomLabel } from './mapEngine';
+import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
+import { hubsForBibleId, parseTravelDestination } from './outdoorHubs';
 import { emptySceneFacts } from './sceneFacts';
 import {
   isDeadFoeReopenedAsLiving,
@@ -29,9 +30,13 @@ import {
   isHallTalkPlayerLine,
   isOpeningCardActLine,
   cardSceneMentionTokens,
+  hallTalkTopic,
   hallTopicAlreadyAnswered,
   isNameTelegramProse,
+  isAcceptOfferLine,
+  isOpeningNameGiveLine,
   lockedOpeningPcName,
+  openingNameLockSpokenBeat,
   castSpeakVerb,
   openingCastLabel,
   openingCastNames,
@@ -39,6 +44,7 @@ import {
   openingWhoAskLine,
   proseAsksForPcName,
   shortCardOffer,
+  openingSpokenRefuse,
   openingStayLeaveLine,
   openingWantLine,
   openingWhoAskLineFromLabel,
@@ -367,6 +373,11 @@ export function compileNounAllowlist(
   if (pc && !/^(you|adventurer|player)$/i.test(pc)) pushUnique(out, seen, pc);
 
   for (const extra of extras) pushUnique(out, seen, extra);
+
+  for (const h of hubsForBibleId(state.campaignBibleId)) {
+    pushUnique(out, seen, h.name);
+    for (const alias of h.aliases ?? []) pushUnique(out, seen, alias);
+  }
 
   return out;
 }
@@ -1337,6 +1348,12 @@ function cardPageParagraph(state: GameState): string {
 }
 
 const LEDGER_WAIT_FP = /The name \S+ already stood|The room waited on what you did next/i;
+const COMBAT_CLOSE_FP = /You close with |loot is legal|The exchange goes badly\. You go down/i;
+
+export function isUnaskedCombatClose(prose: string, playerInput: string): boolean {
+  if (!COMBAT_CLOSE_FP.test(prose ?? '')) return false;
+  return !/\b(attack|fight|auto[- ]?fight|strike|draw|press the attack)\b/i.test(playerInput ?? '');
+}
 
 function lastCommittedGmBody(state: GameState): string {
   const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
@@ -1363,13 +1380,19 @@ export function isLastGmReprint(prose: string, lastGm: string): boolean {
 
 function destFromAct(act: string): string {
   const names = (act.match(/\b[A-Z][a-z]{2,20}\b/g) ?? []).filter(
-    (n) => !/^(Okay|Where|What|Who|Why|The|This|That|Lets|Let|You|Your|Jax)\b/.test(n)
+    (n) =>
+      !/^(Okay|Where|What|Who|Why|The|This|That|Lets|Let|You|Your|Jax|Good|Fine|Whats|Are|Which|Lets|Going|Still|Travel|Toward|Can|Done|Ask|So|Please|They|We|North|South|East|West|Doorway)\b/.test(
+        n
+      )
   );
   return names[0] || 'the next way out';
 }
 
 function herePhrase(where: string): string {
   const place = (where || 'this place').replace(/\s+/g, ' ').trim();
+  if (/\bof the\s*$/i.test(place) || /^(?:the\s+)?(?:outdoor\s+)?seam of the$/i.test(place)) {
+    return 'this hall';
+  }
   return /^(?:a|an|the)\s/i.test(place) ? place : `the ${place}`;
 }
 
@@ -1393,18 +1416,18 @@ function pickAdvanceVariant(variants: string[], recent: string[], salt: number):
  * Last-resort / stitch advance: interesting + simple 4–6 short sentences,
  * or a short spoken HERE line. Never the name telegram. Never last GM.
  */
-function topicAdvanceStitch(
+function topicAdvancePool(
   state: GameState,
   packet?: CompletedEventPacket,
   playerInput?: string
-): string {
+): string[] {
   const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
   const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const here = herePhrase(where);
   const head = castHead(state, packet);
   const pc = lockedOpeningPcName(state);
   const stay = head
-    ? (/\band\b|,/.test(head) || /\b(priests|handlers|envoys|people|sides|militia)\b/i.test(head)
+    ? (/\band\b|,/.test(head) || /\b(priests|handlers|envoys|people|sides|militia|engineers|guards|chirurgeons)\b/i.test(head)
       ? `${head} have not left.`
       : `${head} has not left.`)
     : 'The room you already had is still in place.';
@@ -1433,30 +1456,124 @@ function topicAdvanceStitch(
     `You are still at ${here}. ${head ? `${head} already answered who they are.` : 'They already answered who they are.'} They wait on what you do next. The room does not add a second name. ${nextMove}`,
     `At ${here} the name-ask was already answered. ${head ? `${head} did not introduce twice.` : 'They did not introduce twice.'} ${nextMove}`,
   ];
-  const dest = destFromAct(act);
-  const go = [
-    `You are still at ${here}. You look for ${dest}. ${stay} The loft does not move with you yet. ${nextMove}`,
-    `You push toward ${dest} from ${here}. ${stay} Hay and tack stay where they were. ${nextMove}`,
-    `You call for ${dest} at ${here}. ${head ? `${head} is still in earshot.` : 'The room holds.'} No new doorway opened. ${nextMove}`,
-  ];
+  const graphHit = matchGraphExitPad(state.activeDungeon, act);
+  const hubHit = parseTravelDestination(act, state.campaignBibleId);
+  const dest = graphHit?.name || hubHit?.name || destFromAct(act);
+  const padDest = (
+    graphHit?.name
+    || hubHit?.name
+    || (act.match(/\b(?:to|toward)\s+([^.,!?]+)/i)?.[1] ?? '')
+  )
+    .replace(/[.!?]+$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const arrived =
+    !!graphHit
+    || !!hubHit
+    || /go through|take the stairs|walk toward.+\bdoorway\b|\b(?:north|south|east|west)\s+doorway\b/i.test(act)
+    || (!!dest && dest !== 'the next way out' && here.toLowerCase().includes(dest.toLowerCase()));
+  const wantsMove =
+    arrived
+    || !!hubHit
+    || /\b(?:let'?s go|walk with|are we going\b(?!\s+to\s+stand)|said we were (?:walk|go)|still here|travel toward|go through|take the stairs|head(?:ing)? (?:to|toward))\b/i.test(
+      act
+    )
+    || (/\bi(?:'m| am) going to\b/i.test(act) && !/\bgoing to (?:stand|wait|make|sit|stay|talk|ask)\b/i.test(act));
+  const shortDest = (
+    graphHit?.name
+    || hubHit?.name
+    || (padDest && !/\bdoorway\b/i.test(padDest) && padDest !== 'the next way out'
+      ? padDest.split(/\s+[—–]\s+/).pop()
+      : '')
+    || (arrived ? (here.split(/\s+[—–]\s+/).pop() ?? '') : '')
+  )
+    .replace(/\s+/g, ' ')
+    .trim();
+  const arriveHere = arrived && shortDest ? herePhrase(shortDest) : here;
+  const go = arrived
+    ? [
+      `You are at ${arriveHere} now. The last doorway is behind you. This room is quiet and new. ${nextMove}`,
+      `You step onto ${arriveHere}. Stone underfoot changed. Nobody followed through the door yet. ${nextMove}`,
+      `The way opens onto ${arriveHere}. You are not in the last hall. ${nextMove}`,
+    ]
+    : [
+      `You set out with ${dest} from ${here}. The trail is open under you. ${nextMove}`,
+      `You start toward ${dest} from ${here}. The road remembers the next step. ${nextMove}`,
+      `You take ${dest} at their word and move from ${here}. ${nextMove}`,
+    ];
   const spokenWant = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
   const spokenWho = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
   const wantFirst = `You are at ${here}. ${spokenWant} ${head ? `${head} stays where you can see them.` : 'They stay in the room.'} ${nextMove}`;
   const whoFirst = `You are at ${here}. ${spokenWho} They stay in the room. ${nextMove}`;
+  const keepVerb = head && (/\band\b/.test(head) || /\b(people|engineers|guards|chirurgeons|priests|handlers)\b/i.test(head))
+    ? 'keep'
+    : 'keeps';
+  const accept = [
+    `You take the work at ${here}. ${head ? `${head} ${keepVerb} the offered kit where you can take it.` : 'The offered kit stays in reach.'} The deal stays in the room. ${nextMove}`,
+    `You say yes at ${here}. ${spokenWant} The offered kit is in reach. ${nextMove}`,
+  ];
   let pool = look;
-  if (hallTalkAsksWant(act) || playerAskedWhyPulled(act)) {
-    pool = hallTopicAlreadyAnswered(state, 'want') ? wantAgain : [wantFirst, ...wantAgain];
+  if (isOpeningNameGiveLine(act) && !hallTopicAlreadyAnswered(state, 'want')) {
+    pool = [openingNameLockSpokenBeat(state)];
+  } else if (isAcceptOfferLine(act)) {
+    pool = accept;
+  } else if (hallTalkAsksStayLeave(act) || hallTalkAsksRefuse(act)) {
+    const spoken = (hallTalkAsksRefuse(act) ? openingSpokenRefuse(state) : openingStayLeaveLine(state))
+      .replace(/\s+/g, ' ')
+      .trim();
+    pool = spoken
+      ? [`You are at ${here}. ${spoken} ${nextMove}`]
+      : look;
+  } else if (wantsMove) {
+    pool = go;
+  } else if (hallTalkAsksWant(act) || playerAskedWhyPulled(act)) {
+    const incoming = act.replace(/\s+/g, ' ').trim().toLowerCase();
+    const playerAskedWant = (state.log ?? []).some((e) => {
+      if (e.role !== 'player') return false;
+      if (hallTalkTopic(e.content ?? '') !== 'want') return false;
+      return (e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() !== incoming;
+    });
+    pool = playerAskedWant ? wantAgain : [wantFirst];
   } else if (hallTalkAsksWho(act)) {
-    pool = hallTopicAlreadyAnswered(state, 'who') ? whoAgain : [whoFirst, ...whoAgain];
+    const incoming = act.replace(/\s+/g, ' ').trim().toLowerCase();
+    const playerAskedWho = (state.log ?? []).some((e) => {
+      if (e.role !== 'player') return false;
+      if (hallTalkTopic(e.content ?? '') !== 'who') return false;
+      return (e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() !== incoming;
+    });
+    pool = playerAskedWho ? whoAgain : [whoFirst];
   } else if (hallTalkAsksWhere(act) || /\b(?:joss|go|walk|leave|door|ladder|toward)\b/i.test(act)) {
     pool = go;
   } else if (packet?.verb === 'waited' || /\bwait\b/i.test(act)) {
     pool = wait;
   } else if (packet?.verb === 'inspected' || /\blook\b|\binspect\b|\bscout\b/i.test(act)) {
     pool = look;
-  } else if (packet?.verb === 'spoke' || packet?.verb === 'parleyed') {
-    pool = go;
+  } else if (packet?.verb === 'spoke' || packet?.verb === 'parleyed' || packet?.verb === 'used') {
+    if (!hallTopicAlreadyAnswered(state, 'who')) pool = [whoFirst];
+    else if (!hallTopicAlreadyAnswered(state, 'want')) pool = [wantFirst];
+    else pool = look;
+  } else if (!hallTopicAlreadyAnswered(state, 'who')) {
+    pool = [whoFirst];
+  } else if (!hallTopicAlreadyAnswered(state, 'want')) {
+    pool = [wantFirst];
+  } else {
+    pool = look;
   }
+  return pool;
+}
+
+function topicAdvanceStitch(
+  state: GameState,
+  packet?: CompletedEventPacket,
+  playerInput?: string
+): string {
+  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
+  const recent = (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .slice(-10)
+    .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
+  const salt = (state.turn ?? 0) + act.length;
+  const pool = topicAdvancePool(state, packet, playerInput);
   return pickAdvanceVariant(pool, recent, salt).replace(/\s+/g, ' ').trim();
 }
 
@@ -1470,6 +1587,11 @@ function lastResortUsable(state: GameState, prose: string, lastGm: string): stri
   if (isDroughtStubProse(body) || proseAsksForPcName(body)) return '';
   if (isNameTelegramProse(body) || LEDGER_WAIT_FP.test(body)) return '';
   if (isLastGmReprint(body, lastGm)) return '';
+  if (
+    /Nothing listed had moved on|The moment at .+ settled|You still had the next move|the room(?: at .+)? held its place|You close with |loot is legal|The exchange goes badly\. You go down/i.test(body)
+  ) {
+    return '';
+  }
   return body;
 }
 
@@ -1494,12 +1616,16 @@ export function lastResortStoryBody(
   const pkt = packet
     ? (act && !(packet.playerAction ?? '').trim() ? { ...packet, playerAction: act } : packet)
     : undefined;
-  const candidates: string[] = [];
-  if (named) candidates.push(topicAdvanceStitch(state, pkt ?? packet, act));
-  if (named && pkt) candidates.push(assemblePacketStitch(pkt, recent));
-  if (named) candidates.push(ledgerAdvanceBeat(state, pkt ?? packet, act));
-  else candidates.push(lastGoodGmBody(state), cardPageParagraph(state));
-  candidates.push(topicAdvanceStitch(state, pkt ?? packet, act || 'Look around'));
+  const candidates: string[] = [
+    ...topicAdvancePool(state, pkt ?? packet, act || 'Look around'),
+  ];
+  if (named && pkt) {
+    const stitch = assemblePacketStitch(pkt, recent);
+    if (stitch && !/Nothing listed had moved on|The moment at .+ settled|You still had the next move/i.test(stitch)) {
+      candidates.push(stitch);
+    }
+  }
+  if (!named) candidates.push(lastGoodGmBody(state), cardPageParagraph(state));
 
   for (const raw of candidates) {
     const body = lastResortUsable(state, raw, lastGm);
@@ -1544,6 +1670,7 @@ export function bookBodyAfterWriterMiss(
     && !LEDGER_WAIT_FP.test(raw)
     && !proseAsksForPcName(raw)
     && !isLastGmReprint(raw, lastGm)
+    && !isUnaskedCombatClose(raw, playerInput)
   ) {
     return { prose: raw };
   }

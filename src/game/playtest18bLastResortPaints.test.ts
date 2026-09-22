@@ -1,5 +1,5 @@
 /**
- * 2026-09-18c — Live timeout paints a NEW GM row. Last-resort is not
+ * 2026-09-22a — Live timeout paints a NEW GM row. Last-resort is not
  * a reprint of the previous book. Who/Want starve after the handler spoke.
  * Mid writer OFF. No SNAPSHOT/CRAFT.
  */
@@ -73,8 +73,8 @@ function afterNameLock(): { state: GameState; lock: string } {
 
 describe('playtest18b — live timeout paints a new book beat', () => {
   it('HUD/BUILD are 18b, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-18c');
-    expect(BUILD_STAMP).toBe('2026-09-18c');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-22a');
+    expect(BUILD_STAMP).toBe('2026-09-22a');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

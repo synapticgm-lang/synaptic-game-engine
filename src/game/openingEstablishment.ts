@@ -1068,11 +1068,38 @@ export function hallTalkAsksWhere(raw: string): boolean {
 }
 
 export function hallTalkAsksWho(raw: string): boolean {
+  const t = raw ?? '';
   return (
-    /\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b|\bwhat(?:'s| is) your(?:s| name)\b/i.test(
-      raw ?? ''
-    )
+    /\bwho (?:is|are) (?:it|that|you|the|this)\b/i.test(t)
+    || /\bwho (?:is it that )?asks\b/i.test(t)
+    || /\bwho (?:is|are) [A-Za-z][A-Za-z'-]{1,20}\b/i.test(t)
+    || /\bwhat'?s yours\b|\bwhat(?:'s| is) your(?:s| name)\b/i.test(t)
   );
+}
+
+/** Player takes the opening bargain / offered kit — not a look-around. */
+export function isAcceptOfferLine(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  return (
+    /\b(?:i )?(?:agree|accept)\b/i.test(t)
+    || /\bi(?:'ll| will) (?:work|help|take|do)\b/i.test(t)
+    || /\bgive me the (?:kit|lamp|tabard|gloves|work)\b/i.test(t)
+    || /\byes to the work\b/i.test(t)
+    || /\btake the (?:deal|kit|offer|work|lamp)\b/i.test(t)
+  );
+}
+
+/** Bare name / "my name is X" / Give-your-name chip — not name-plus-a-question. */
+export function isOpeningNameGiveLine(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^give (?:them )?your name$/i.test(t)) return true;
+  if (playerGaveNameAndAskedMore(t)) return false;
+  if (hallTalkAsksWho(t) || hallTalkAsksWant(t) || hallTalkAsksWhere(t) || hallTalkAsksRefuse(t)) {
+    return false;
+  }
+  return !!extractGivenName(t);
 }
 
 export function hallTalkAsksWant(raw: string): boolean {
@@ -1102,9 +1129,11 @@ export function hallTalkAsksWant(raw: string): boolean {
 export function hallTalkAsksStayLeave(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
+  if (/\bwhat happens if i (?:walk|leave|go)\b|\bif i walk away\b/i.test(t)) return true;
   if (/\b(leave the scene|leave through|walk away|travel|attack|flee)\b/i.test(t)) return false;
   return (
-    /\b(?:can|may|should|do) i (?:leave|stay)\b/i.test(t)
+    /\b(?:can|may|should|do) i (?:leave|stay|go)\b/i.test(t)
+    || /\bare we done(?: here)?\b/i.test(t)
     || /\bdo i need to stay\b/i.test(t)
     || /\bstay on the (?:ship|boat|deck|hold)\b/i.test(t)
     || /\bcan i (?:ever )?(?:go|get) (?:home|back)\b/i.test(t)
@@ -1270,8 +1299,8 @@ export function shouldStitchOpeningContinue(state: GameState, playerInput?: stri
   // Unlocked-name covers still stitch locally. After a lock, cover-continue is not page-1.
   if (coverOpen && !nameLocked) return true;
 
-  // After page 1: writer owns Look / Wait / inspect / talk / name-locked cover-continue.
-  // Only the first already-told who/want/refuse stays on stitch. Third+ already leaves.
+  // After page 1: who/want/refuse (why-pulled = want) stitch when repeats ≤2.
+  // ≤1 → spoken cover (fast); ===2 → already-told; ≥3 → callGm. Look/Wait/travel stay writer.
   if (sceneWritten) {
     if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return false;
     if (
@@ -1285,6 +1314,10 @@ export function shouldStitchOpeningContinue(state: GameState, playerInput?: stri
     }
     if (!isHallTalkPlayerLine(line)) return false;
     if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) return false;
+    const topic = hallTalkTopic(line);
+    if (topic === 'who' || topic === 'want' || topic === 'refuse') {
+      return countSameHallTopicRepeats(state, line) < 3;
+    }
     return isFirstAlreadyToldHallStitch(state, line);
   }
 
@@ -1588,13 +1621,20 @@ export function openingSpokenIdentityQuote(
   const litrpgMark =
     ctx?.engineMode === 'litrpg'
     && /\b(pactborn|calamity mark|sevenfold|summoning circle|cathedral)\b/i.test(blob);
-  if (/\bpriest|chanter|robed\b/i.test(who)) {
+  if (/\bpriest|chanter|robed|robes\b/i.test(who)) {
     const stamp = ctx?.stamp?.trim() || 'Pactborn';
     return litrpgMark
       ? `"The Mark looks wrong. ${stamp}. I am the one who has to write what you are."`
       : '"I asked your name. I am still in this room."';
   }
-  return '"I am still in this room. That is the name I will give you."';
+  if (/\barena|masters?\b/i.test(who)) {
+    return '"The rail. We called a body onto the sand. Give a name we can shout."';
+  }
+  if (/\bpeople who pulled you|the people who\b/i.test(who)) {
+    return '"We pulled you. That is all the name we will give until you take the deal or walk."';
+  }
+  const label = (who || 'They').replace(/\s+/g, ' ').trim();
+  return `"${label}. You asked who. We are still the ones in this room."`;
 }
 
 /** Compound / plural CAST never gets singular "answers you". */
@@ -1602,7 +1642,7 @@ export function castSpeakVerb(who: string): 'answer' | 'answers' {
   const w = (who ?? '').replace(/\s+/g, ' ').trim();
   if (!w) return 'answer';
   if (/\band\b/i.test(w) || /^both\b/i.test(w)) return 'answer';
-  if (/\b(people|envoys|priests|handlers|sides|militia|figures|scouts|pickets)\b/i.test(w)) {
+  if (/\b(people|envoys|priests|handlers|sides|militia|figures|scouts|pickets|engineers|guards|chirurgeons)\b/i.test(w)) {
     return 'answer';
   }
   return 'answers';
@@ -1827,6 +1867,14 @@ export function playerAskedWhyPulled(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
   if (/\bwhat'?s yours\b/i.test(p) && !/\bwhat do you want\b|\bwhat they want\b/i.test(p)) {
+    return false;
+  }
+  if (
+    /\bwhy are we still here\b/i.test(p)
+    || /\bwhy (?:aren'?t|are not) we (?:going|walking|moving)\b/i.test(p)
+    || /\byou said we were (?:walking|going)\b/i.test(p)
+    || /\bare we going\b/i.test(p)
+  ) {
     return false;
   }
   return (
@@ -2122,12 +2170,30 @@ export function isNameTelegramProse(body: string): boolean {
   return false;
 }
 
-/** GM already spoke this hall topic (name-lock want, who-line, refuse). */
-export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolean {
-  const gms = (state.log ?? [])
+/**
+ * GM bodies after the first player ask of this hall topic.
+ * Empty when the player has never asked — page-1 / name-lock never count as answers.
+ */
+export function gmBodiesAfterFirstHallAsk(state: GameState, topic: HallTalkTopic): string[] {
+  const log = state.log ?? [];
+  let firstAsk = -1;
+  for (let i = 0; i < log.length; i++) {
+    if (log[i]?.role === 'player' && hallTalkTopic(log[i]?.content ?? '') === topic) {
+      firstAsk = i;
+      break;
+    }
+  }
+  if (firstAsk < 0) return [];
+  return log
+    .slice(firstAsk + 1)
     .filter((e) => e.role === 'gm')
     .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim())
     .filter((t) => t.length >= 8);
+}
+
+/** GM already spoke this hall topic after the player asked it — never page-1 overlap. */
+export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolean {
+  const gms = gmBodiesAfterFirstHallAsk(state, topic);
   if (!gms.length) return false;
   const has = (needle: string, min = 16) => {
     const n = (needle ?? '').replace(/\s+/g, ' ').trim();

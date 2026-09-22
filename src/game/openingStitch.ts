@@ -37,6 +37,8 @@ import {
   openingWantLine,
   openingWhoAskLine,
   playerAskedWhyPulled,
+  gmBodiesAfterFirstHallAsk,
+  type HallTalkTopic,
   playerGaveNameAndAskedMore,
   resolveLockedOpeningPlace,
   resolveOpeningHookPick,
@@ -192,13 +194,25 @@ function lastGmBodies(state: GameState): string[] {
     .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim());
 }
 
-function clauseAlreadySpoken(state: GameState, clause: string): boolean {
+/**
+ * Already-told for who/want/refuse: only GM after the first player ask of that topic.
+ * Page-1 / name-lock want never poison the first Ask/Who.
+ */
+function clauseAlreadySpoken(
+  state: GameState,
+  clause: string,
+  topic?: 'who' | 'want' | 'refuse'
+): boolean {
   const n = (clause ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   if (n.length < 16) return false;
   if (n.includes('they have not said what they want yet')) return false;
   if (n.includes('they have not said what happens if you refuse')) return false;
   const key = n.slice(0, 48);
-  return lastGmBodies(state).some((g) => g.toLowerCase().includes(key));
+  const bodies =
+    topic === 'who' || topic === 'want' || topic === 'refuse'
+      ? gmBodiesAfterFirstHallAsk(state, topic as HallTalkTopic).slice(-4)
+      : lastGmBodies(state);
+  return bodies.some((g) => g.toLowerCase().includes(key));
 }
 
 /**
@@ -316,18 +330,18 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
 
   if (gaveName && name) {
     const bits = [`You are ${here}.`];
-    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
+    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine, 'who') ? alreadyToldWho : whoLine);
     if (asksPanel && isLitrpgSystemPanelMode(state)) {
       bits.push('The blue panel is a System window at eye level — not a person.');
     }
     bits.push(
-      clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
+      clauseAlreadySpoken(state, ledgerWant, 'want') || clauseAlreadySpoken(state, want, 'want')
         ? alreadyToldWant
         : want || 'They have not said what they want yet.'
     );
     if (asksRefuse) {
       bits.push(
-        clauseAlreadySpoken(state, ledgerRefuse) || clauseAlreadySpoken(state, refuse)
+        clauseAlreadySpoken(state, ledgerRefuse, 'refuse') || clauseAlreadySpoken(state, refuse, 'refuse')
           ? alreadyToldRefuse
           : refuse || 'They have not said what happens if you refuse.'
       );
@@ -338,13 +352,13 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (asksWhere || asksWhy || asksWant || asksRefuse || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine) ? alreadyToldWho : whoLine);
+    if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine, 'who') ? alreadyToldWho : whoLine);
     if (asksPanel && isLitrpgSystemPanelMode(state)) {
       bits.push('The blue panel is yours — a System window at eye level, not a person.');
     }
     if (asksWhy || asksWant) {
       bits.push(
-        clauseAlreadySpoken(state, ledgerWant) || clauseAlreadySpoken(state, want)
+        clauseAlreadySpoken(state, ledgerWant, 'want') || clauseAlreadySpoken(state, want, 'want')
           ? alreadyToldWant
           : want || (name ? 'They have not said what they want yet.' : 'The panel wants a name to write. It does not say why.')
       );
@@ -353,7 +367,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     }
     if (asksRefuse) {
       bits.push(
-        clauseAlreadySpoken(state, ledgerRefuse) || clauseAlreadySpoken(state, refuse)
+        clauseAlreadySpoken(state, ledgerRefuse, 'refuse') || clauseAlreadySpoken(state, refuse, 'refuse')
           ? alreadyToldRefuse
           : refuse || 'They have not said what happens if you refuse.'
       );
