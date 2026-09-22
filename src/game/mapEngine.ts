@@ -1125,9 +1125,71 @@ export function graphExitPads(dungeon: ActiveDungeonState): string[] {
     .filter((e) => e.name.trim() && !/hangs heavy|this chamber|atmosphere/i.test(e.name))
     .map((e) => {
       const dest = dungeon.nodes.find((n) => n.name === e.name);
-      return graphExitPadLabel(here, dest, e);
+      return { e, dest };
     })
+    .filter(({ dest }) => dest && dest.id !== here.id)
+    .map(({ e, dest }) => graphExitPadLabel(here, dest, e))
     .slice(0, 4);
+}
+
+/** Legal floor-plan pad or a typed “to {room}” that matches an exit from HERE. */
+export function matchGraphExitPad(
+  dungeon: ActiveDungeonState | null | undefined,
+  raw: string
+): { nodeId: string; name: string } | null {
+  if (!dungeon) return null;
+  const act = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!act) return null;
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
+  if (!here) return null;
+  for (const e of listInteriorExitsFromHere(dungeon)) {
+    const dest = dungeon.nodes.find((n) => n.name === e.name);
+    if (!dest || dest.id === here.id) continue;
+    const label = graphExitPadLabel(here, dest, e).replace(/\s+/g, ' ').trim();
+    if (label.toLowerCase() === act.toLowerCase()) {
+      return { nodeId: dest.id, name: dest.name };
+    }
+    const destRe = e.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp(`\\b(?:to|toward)\\s+${destRe}\\b`, 'i').test(act)) {
+      return { nodeId: dest.id, name: dest.name };
+    }
+    const namedTo = act.match(/\b(?:to|toward)\s+([^.,!?]+)/i)?.[1]?.trim();
+    if (namedTo) continue;
+    const face = exitFacingLabel(here, dest);
+    if (
+      face
+      && new RegExp(`\\b${face}\\s+doorway\\b`, 'i').test(act)
+      && /\b(?:go through|walk toward|leaving|doorway|door)\b/i.test(act)
+    ) {
+      return { nodeId: dest.id, name: dest.name };
+    }
+  }
+  return null;
+}
+
+/** HERE label: dungeon title once, then the room — never “Infirmary — Infirmary”. */
+export function dungeonHereLabel(dungeonName: string | undefined, nodeName: string | undefined): string {
+  const room = (nodeName ?? '').replace(/\s+/g, ' ').trim();
+  const title = (dungeonName ?? '').split(/\s+[—–]\s+/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
+  if (!room) return title;
+  if (!title || title.toLowerCase() === room.toLowerCase()) return room;
+  return `${title} — ${room}`;
+}
+
+/** Commit a legal graph-exit pad onto the dungeon node + HERE before the writer. */
+export function applyGraphExitTravel<T extends {
+  activeDungeon?: ActiveDungeonState | null;
+  currentLocation?: string;
+  activeEncounter?: { id?: string } | null;
+}>(state: T, raw: string): T {
+  if (state.activeEncounter) return state;
+  const hit = matchGraphExitPad(state.activeDungeon, raw);
+  if (!hit || !state.activeDungeon) return state;
+  const updatedDungeon = moveToNode(state.activeDungeon, hit.nodeId);
+  if (updatedDungeon.currentNodeId === state.activeDungeon.currentNodeId) return state;
+  const node = updatedDungeon.nodes.find((n) => n.id === updatedDungeon.currentNodeId);
+  const placeName = node ? dungeonHereLabel(updatedDungeon.dungeonName, node.name) : hit.name;
+  return { ...state, activeDungeon: updatedDungeon, currentLocation: placeName };
 }
 
 /** Prompt authority: exits from the current room with door vs gap language. */

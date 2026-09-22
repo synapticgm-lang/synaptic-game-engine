@@ -432,12 +432,41 @@ export function parseTravelDestination(
   bibleId: string | undefined | null
 ): OutdoorHub | null {
   const a = (action ?? '').replace(/\s+/g, ' ').trim();
+  if (!a) return null;
+  const hubs = hubsForBibleId(bibleId);
   const m = a.match(
     /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:toward|to|for)|go\s+to|move\s+to|walk\s+to)\s+(.+)$/i
   );
-  if (!m) return null;
-  const name = m[1].replace(/[.!?]+$/, '').trim();
-  return matchHub(hubsForBibleId(bibleId), name);
+  if (m) {
+    const name = m[1].replace(/[.!?]+$/, '').trim();
+    const hit = matchHub(hubs, name);
+    if (hit) return hit;
+  }
+  const loose = a.match(
+    /(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move)\s+(?:to|toward|into|for)\s+(.+)$/i
+  );
+  if (loose) {
+    const name = loose[1].replace(/[.!?]+$/, '').trim();
+    const hit = matchHub(hubs, name);
+    if (hit) return hit;
+  }
+  if (/\b(?:travel|go(?:ing)?|head(?:ing)?|walk(?:ing)?|i(?:'m| am) going)\b/i.test(a)) {
+    return matchHub(hubs, a);
+  }
+  return null;
+}
+
+/** Commit a named hub travel pad onto HERE before the writer (street maps included). */
+export function applyNamedHubTravel<T extends {
+  campaignBibleId?: string | null;
+  currentLocation?: string;
+  activeEncounter?: { id?: string } | null;
+}>(state: T, raw: string): T {
+  const hub = parseTravelDestination(raw, state.campaignBibleId);
+  if (!hub) return state;
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  if (here.toLowerCase() === hub.name.toLowerCase()) return state;
+  return { ...state, currentLocation: hub.name };
 }
 
 /** Leave / Walk away / Leave the scene — not a named hub, but must still move HERE. */
@@ -492,6 +521,9 @@ export function ensureTravelArrivalProse(
   const text = (prose ?? '').trim();
   const hub = hubName.trim();
   if (!hub) return text;
+  if (/last doorway is behind you|You are at .+ now\.|You step onto |The way opens onto /i.test(text)) {
+    return text;
+  }
   const from = (fromLocation ?? '').trim();
   // Already here — never invent a second arrival (Batch E location amnesia).
   if (
