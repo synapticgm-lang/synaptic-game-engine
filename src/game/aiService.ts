@@ -17,6 +17,7 @@ import { getAutoplayWriterOverride } from './autoplayWriter';
 import { listCraftKeepers } from './craftKeepers';
 import { buildOpeningGmPlayerInput, compactTrafficGist } from './openingPointerCard';
 import { hasHanScript } from './openRouterChat';
+import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -44,6 +45,8 @@ export async function callGm(
   signal?: AbortSignal,
   timeoutMs?: number
 ): Promise<GmResult> {
+  assertNoLiveAiTurnForUmbra(state, 'callGm');
+
   if (!state.craftKeepers?.length) {
     const ring = listCraftKeepers();
     if (ring.length) state = { ...state, craftKeepers: ring };

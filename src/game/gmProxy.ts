@@ -15,6 +15,7 @@ import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
 import { resolveFreeWriterFailover } from './writerPolicy';
 import { hasHanScript, hostedWriterProvider } from './openRouterChat';
+import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -78,6 +79,7 @@ export async function invokeGmProxy(params: {
   /** Per-call budget; early / first-post-open turns pass a longer value (Class A). */
   timeoutMs?: number;
 }): Promise<string> {
+  assertNoLiveAiTurnForUmbra(params.state, 'invokeGmProxy');
   if (!isGmProxyAvailable()) {
     throw new Error('GM proxy unavailable — configure VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.');
   }
