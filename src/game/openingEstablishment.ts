@@ -20,7 +20,7 @@ import {
 } from './pcNameAuthority';
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
-import { openingCastRecords } from './npcRecords';
+import { openingCastRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -702,8 +702,10 @@ export function isAloneArrivalPick(picked?: {
   fallback?: string;
   page1?: string;
   faction?: string;
+  castNpcIds?: string[];
 } | null): boolean {
   if (!picked) return false;
+  if (picked.castNpcIds?.length) return false;
   const hay = openingPickHay(picked);
   if (openingHayHasOccupancy(hay)) return false;
   return ALONE_ARRIVAL_MARK.test(hay);
@@ -1591,38 +1593,11 @@ export function shortCardStayLeave(state: GameState): string {
 
 export function openingSpokenIdentityQuote(
   who: string,
-  ctx?: { location?: string; engineMode?: string; hay?: string; stamp?: string }
+  ctx?: { location?: string; engineMode?: string; hay?: string; stamp?: string; state?: GameState }
 ): string {
-  const blob = `${who} ${ctx?.location ?? ''} ${ctx?.hay ?? ''} ${ctx?.engineMode ?? ''}`;
   if (/\bpanel\b/i.test(who)) return '';
-  if (/\bWren\b/i.test(who)) {
-    return '"Wren Holt. I brought the charter. Walk with me or don\'t — I need an answer."';
-  }
-  if (/\bVessa\b/i.test(who)) {
-    return '"Vessa. I hire on the Salt Road. Give me a name I can say when the watch walks this aisle."';
-  }
-  if (/\binnkeep|Father Aldous|Greyhollow\b/i.test(blob) || ctx?.engineMode === 'dnd') {
-    return '"I keep this book. I asked your name because strangers who skip it start fights."';
-  }
-  if (/\bmilitia\b/i.test(who)) return '"Watch. We got here late. The circle is already dead."';
-  if (/\bscavenger\b/i.test(who)) return '"Not my rite. I got to the rings first."';
-  if (/\benvoys?\b/i.test(who)) return '"Both sides want a name on the paper."';
-  if (/\bhandler\b/i.test(who)) return '"Handler. You came through. Stay where we can see you."';
-  const litrpgMark =
-    ctx?.engineMode === 'litrpg'
-    && /\b(pactborn|calamity mark|sevenfold|summoning circle|cathedral)\b/i.test(blob);
-  if (/\bpriest|chanter|robed|robes\b/i.test(who)) {
-    const stamp = ctx?.stamp?.trim() || 'Pactborn';
-    return litrpgMark
-      ? `"The Mark looks wrong. ${stamp}. I am the one who has to write what you are."`
-      : '"I asked your name. I am still in this room."';
-  }
-  if (/\barena|masters?\b/i.test(who)) {
-    return '"The rail. We called a body onto the sand. Give a name we can shout."';
-  }
-  if (/\bpeople who pulled you|the people who\b/i.test(who)) {
-    return '"We pulled you. That is all the name we will give until you take the deal or walk."';
-  }
+  const record = ctx?.state ? resolveNpcRecord(ctx.state, who) : undefined;
+  if (record) return `"${record.npcName}. You asked who."`;
   const label = (who || 'They').replace(/\s+/g, ' ').trim();
   return `"${label}. You asked who. We are the ones who found you here."`;
 }
@@ -1640,7 +1615,15 @@ export function castSpeakVerb(who: string): 'answer' | 'answers' {
 
 export function openingWhoAskLineFromLabel(
   who: string,
-  opts?: { nameLocked?: boolean; quote?: string; location?: string; engineMode?: string; hay?: string; stamp?: string }
+  opts?: {
+    nameLocked?: boolean;
+    quote?: string;
+    location?: string;
+    engineMode?: string;
+    hay?: string;
+    stamp?: string;
+    state?: GameState;
+  }
 ): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   const verb = castSpeakVerb(who);
@@ -1651,6 +1634,7 @@ export function openingWhoAskLineFromLabel(
       engineMode: opts?.engineMode,
       hay: opts?.hay,
       stamp: opts?.stamp,
+      state: opts?.state,
     });
   if (quote) return `${head} ${verb} you. ${quote}`;
   if (opts?.nameLocked) return `${head} ${verb} you. They already have your name.`;
@@ -1667,6 +1651,7 @@ export function openingWhoAskLine(state: GameState): string {
     engineMode: state.engineMode,
     hay: openingSceneHay(state),
     stamp,
+    state,
   });
   return openingWhoAskLineFromLabel(who, {
     nameLocked,
@@ -1675,6 +1660,7 @@ export function openingWhoAskLine(state: GameState): string {
     engineMode: state.engineMode,
     hay: openingSceneHay(state),
     stamp,
+    state,
   });
 }
 
@@ -1781,6 +1767,7 @@ export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' |
     engineMode: state.engineMode,
     hay: openingSceneHay(state),
     stamp: resolveLitRpgFolkStamp(state),
+    state,
   });
   if (/\bmilitia\b/i.test(who)) {
     return pickAlreadyToldVariant(state, [
@@ -2204,6 +2191,7 @@ export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolea
       location: state.currentLocation,
       engineMode: state.engineMode,
       hay: openingSceneHay(state),
+      state,
     });
     const inner = quote.replace(/^["“]|["”]$/g, '').trim();
     return inner.length >= 18 && has(inner, 18);

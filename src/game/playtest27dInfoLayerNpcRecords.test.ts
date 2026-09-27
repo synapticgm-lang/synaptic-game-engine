@@ -6,7 +6,10 @@ import { emptySceneFacts } from './sceneFacts';
 import { buildContextPrompt } from './systemPrompt';
 import { formatWriterInfoLayer, WRITER_INFO_LAYER_CHAR_CAP } from './writerInfoLayer';
 import { formatHiddenRoomLedger } from './dungeonSeed';
-import { seedBibleNpcRoster, upsertHarvestedNpcMemory } from './npcMemory';
+import { rememberPlayerName, seedBibleNpcRoster, upsertHarvestedNpcMemory } from './npcMemory';
+import { openingSpokenIdentityQuote, openingWhoAskLine } from './openingEstablishment';
+import { ledgerActionStitch } from './completedEventPacket';
+import { buildNewGameState } from './fateAutoplay';
 import { sealedCastNames } from './beatContract';
 import { namedPeopleForTest } from './stanceDensity';
 import { repairSaveSchema } from './saveMigration';
@@ -217,6 +220,62 @@ describe('27d one record per NPC', () => {
     expect(oren?.present).toBe(false);
     expect(kessa?.met).toBe(false);
     expect(state.sceneFacts?.present).toEqual(['Brother Oren', 'Kessa Cinder']);
+  });
+
+  it('Pell Wren on the SP seed-28 Harbor Quay card answers from her record, not a charter line', () => {
+    const { state } = buildNewGameState({
+      bibleId: 'summoned-pact',
+      characterName: 'Jax',
+      seed: 28,
+      personality: 'cold-system',
+      engineMode: 'litrpg',
+    });
+    expect(state.openingEstablishment?.castNpcIds).toContain('sp-npc-pell-wren');
+    const quote = openingSpokenIdentityQuote('Pell Wren', { state });
+    expect(quote).toBe('"Pell Wren. You asked who."');
+    expect(openingWhoAskLine(state)).toContain('"Pell Wren. You asked who."');
+    expect(openingWhoAskLine(state)).not.toMatch(/charter/i);
+  });
+
+  it('left-behind stitch names exactly Brother Oren and Kessa Cinder', () => {
+    const entries = ['Brother Oren and tracker Kessa Cinder', 'Brother Oren', 'Kessa Cinder', 'Oren and Kessa'];
+    const behind = spState({
+      turn: 6,
+      currentLocation: 'Cinderwake Trail',
+      sceneFacts: { ...emptySceneFacts(6), present: [], leftBehind: entries, indoor: false },
+    });
+    const fromLeftBehind = ledgerActionStitch(behind, 'Travel toward Lowmarket');
+    expect(fromLeftBehind.match(/([A-Z][^.]*?) stayed/)?.[1]).toBe('Brother Oren and Kessa Cinder');
+
+    const atOrigin = spState({
+      turn: 6,
+      currentLocation: 'Cinderwake Trail',
+      sceneFacts: { ...emptySceneFacts(6), present: entries, indoor: false },
+    });
+    const fromPresent = ledgerActionStitch(atOrigin, 'Travel toward Lowmarket');
+    expect(fromPresent.match(/([A-Z][^.]*?) stayed/)?.[1]).toBe('Brother Oren and Kessa Cinder');
+  });
+
+  it('rememberPlayerName leaves unmet records unchanged', () => {
+    const state = spState();
+    const before = state.npcMemories ?? [];
+    const after = rememberPlayerName(state, 'Jax').npcMemories ?? [];
+    for (const m of after) {
+      const prior = before.find((b) => b.npcId === m.npcId);
+      if (!prior?.met && !prior?.introSpoken && !prior?.meetCount) expect(m).toBe(prior);
+    }
+    const met = before.map((m) => (m.npcName === 'Pell Wren' ? { ...m, met: true } : m));
+    const named = rememberPlayerName({ ...state, npcMemories: met }, 'Jax').npcMemories ?? [];
+    expect(named.find((m) => m.npcName === 'Pell Wren')?.knownPlayerName).toBe('Jax');
+  });
+
+  it('stanceFallbacks does not name a met NPC who is not present', () => {
+    const base = spState({ lorebook: [] });
+    const npcMemories = (base.npcMemories ?? []).map((m) => (m.npcName === 'Venn Scale' ? { ...m, met: true } : m));
+    const away = { ...base, npcMemories, sceneFacts: { ...emptySceneFacts(12), present: ['Pell Wren'] } };
+    expect(namedPeopleForTest(away)).not.toContain('Venn Scale');
+    const here = { ...away, sceneFacts: { ...emptySceneFacts(12), present: ['Venn Scale'] } };
+    expect(namedPeopleForTest(here)).toContain('Venn Scale');
   });
 
   it('entityRegistry no longer carries per-bible NPC name lists', () => {

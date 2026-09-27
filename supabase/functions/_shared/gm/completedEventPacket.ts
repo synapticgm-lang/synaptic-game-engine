@@ -18,8 +18,7 @@ import {
   matchesLastKillName,
   type LastKill,
 } from './combatAuthority.ts';
-import { canHarvestAsNamedPerson } from './entityRegistry.ts';
-import { npcRecordNames } from './npcRecords.ts';
+import { openingCastRecords, presentNpcRecords, recordsForEntries } from './npcRecords.ts';
 import { sealedCastNames } from './beatContract.ts';
 import { ledgerSheetLine } from './litrpgSystemWindow.ts';
 import { isNeverCastTitle } from './neverCast.ts';
@@ -44,6 +43,7 @@ import {
   castSpeakVerb,
   openingCastLabel,
   openingCastNames,
+  openingSpokenIdentityQuote,
   openingSpokenWant,
   openingWhoAskLine,
   proseAsksForPcName,
@@ -100,6 +100,7 @@ export interface CompletedEventPacket {
   focusNoun?: string;
   /** 10d — card CAST / why, for hall-talk answers (not settle stubs). */
   answerWho?: string;
+  answerWhoQuote?: string;
   answerWant?: string;
   /** 12d — stay/leave bargain from the card (grain-ship home/earth). */
   answerStayLeave?: string;
@@ -146,10 +147,6 @@ const SENTENCE_STARTERS = new Set([
   'but', 'and', 'so', 'now', 'there', 'this', 'that', 'these', 'those', 'its',
   'his', 'her', 'their', 'our', 'my', 'once', 'still', 'next', 'last', 'first',
 ]);
-
-function bibleIdOf(state: GameState): string | undefined {
-  return state.campaignBibleId ?? (state as GameState & { bibleId?: string }).bibleId;
-}
 
 function lastPlayerAction(state: GameState, playerInput?: string): string {
   const typed = (playerInput ?? '').replace(/\s+/g, ' ').trim();
@@ -332,6 +329,12 @@ export type NounAllowlistOpts = {
  * companions, live encounter role, lastKill corpse, kit, props.
  * Hall talk strips novel present[] so a leftover invent cannot re-license itself.
  */
+function castMentionNames(state: GameState): string[] {
+  return state.openingEstablishment?.castNpcIds?.length
+    ? openingCastRecords(state).map((r) => r.npcName)
+    : openingCastNames(state);
+}
+
 export function compileNounAllowlist(
   state: GameState,
   extras: string[] = [],
@@ -342,7 +345,7 @@ export function compileNounAllowlist(
 
   pushUnique(out, seen, locationLabel(state));
 
-  for (const n of openingCastNames(state)) {
+  for (const n of castMentionNames(state)) {
     if (isNeverCastTitle(n, state)) continue;
     pushUnique(out, seen, n);
   }
@@ -351,7 +354,7 @@ export function compileNounAllowlist(
   }
 
   if (!opts?.hallTalk) {
-    for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) {
+    for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
       pushUnique(out, seen, p);
     }
@@ -438,13 +441,13 @@ export function compileRefEnum(
 
   add('here', locationLabel(state), 'place');
 
-  for (const name of openingCastNames(state)) {
+  for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
     add(`cast:${slugRefId(name)}`, name, 'person');
   }
 
   if (!opts?.hallTalk) {
-    for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) {
+    for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
@@ -624,12 +627,9 @@ export function buildCompletedEventPacket(
     && kill.turn === state.turn
     && !state.activeEncounter;
   const outcome = resolveOutcome(state, verb, action);
-  const witnesses = realPresentPeople(state.sceneFacts?.present ?? []).filter(
-    (n) =>
-      !matchesLastKillName(n, kill)
-      && canHarvestAsNamedPerson(n, bibleIdOf(state), npcRecordNames(state))
-      && !isNeverCastTitle(n, state)
-  );
+  const witnesses = presentNpcRecords(state)
+    .map((r) => r.npcName)
+    .filter((n) => !matchesLastKillName(n, kill));
   const allowExtras: string[] = [];
   if (target && !isIntentRemainderNoun(target)) allowExtras.push(target);
   const hallTalk = verb === 'spoke' || isHallTalkPlayerLine(action);
@@ -673,6 +673,12 @@ export function buildCompletedEventPacket(
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
     answerWho: openingCastLabel(state) || undefined,
+    answerWhoQuote:
+      openingSpokenIdentityQuote(openingCastLabel(state), {
+        location: state.currentLocation,
+        engineMode: state.engineMode,
+        state,
+      }) || undefined,
     answerWant: openingWantLine(state) || undefined,
     answerStayLeave: openingStayLeaveLine(state) || undefined,
     answerOffer: shortCardOffer(state) || undefined,
@@ -713,7 +719,7 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
     descriptor: hubDescriptor(state, place),
     exits: exits.filter((e) => e.length > 1),
     present: sealedCastNames(state),
-    leftBehind: realPresentPeople(state.sceneFacts?.leftBehind ?? []),
+    leftBehind: recordsForEntries(state, state.sceneFacts?.leftBehind ?? []).map((r) => r.npcName),
     leftFrom: (state.previousLocationSheet?.name ?? '').replace(/\s+/g, ' ').trim(),
   };
 }
@@ -1936,7 +1942,7 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
       openingWhoAskLineFromLabel(who, {
         location: packet.location,
         engineMode: packet.engineMode,
-        quote: undefined,
+        quote: packet.answerWhoQuote,
       })
     );
   }

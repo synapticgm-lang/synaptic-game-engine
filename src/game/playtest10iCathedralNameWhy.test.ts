@@ -6,6 +6,7 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
+import { newGameState } from './newGameTestState';
 import { emptySceneFacts } from './sceneFacts';
 import {
   hallTalkAsksWhere,
@@ -91,10 +92,15 @@ describe('playtest10i — cathedral name+why', () => {
   });
 
   it('who-ask does not claim they have no name when Jax is locked', () => {
-    const text = stitchOpeningContinue(cathedral(), 'Who are you? Where am I?');
+    const records = newGameState('summoned-pact', { npcId: 'sp-npc-1' }).npcMemories;
+    const withCast = cathedral({
+      npcMemories: records,
+      openingEstablishment: { ...cathedral().openingEstablishment!, castNpcIds: ['sp-npc-1'] },
+    });
+    const text = stitchOpeningContinue(withCast, 'Who are you? Where am I?');
     expect(text).toMatch(/You are/i);
     expect(text).toMatch(/answer(?:s)? you/i);
-    expect(text).toMatch(/"/);
+    expect(text).toContain('"High Chanter Orel Vane. You asked who."');
     expect(text).not.toMatch(/is the one asking/i);
     expect(text).not.toMatch(/have not given you a name back/i);
     expect(openingWhoAskLine(cathedral())).not.toMatch(/have not given you a name back/i);

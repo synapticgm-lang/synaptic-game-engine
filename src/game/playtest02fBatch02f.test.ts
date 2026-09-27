@@ -29,6 +29,7 @@ import { extractChatCompletionText, hasHanScript } from './openRouterChat';
 import { applyStructuralEvents } from './structuralEvents';
 import { enumerateLegalEdges } from './choiceEdge';
 import { ensureTravelArrivalProse } from './outdoorHubs';
+import { newGameState } from './newGameTestState';
 import type { GameState } from './types';
 
 describe('Batch 02f — P0-1: Delete crowd empty-claim rewrite', () => {
@@ -182,17 +183,15 @@ describe('Batch 02f — P0-3: Extend CAST harvest deny-lists', () => {
   });
 
   it('does not list They / Child / hub-role compounds in CAST', () => {
-    const state = {
-      ...({} as GameState),
+    const base = newGameState('summoned-pact', { engineMode: 'litrpg' });
+    const state: GameState = {
+      ...base,
       saveId: 'cast-block',
-      seed: '42',
       turn: 4,
-      engineMode: 'litrpg' as const,
       bibleId: 'summoned-pact',
-      character: { name: 'Jax', level: 1, xp: 0, hp: 10, maxHp: 10 },
       inventory: [],
       quests: [],
-      sceneFacts: { present: ['They', 'Child', 'Lowmarket Fence', 'Tomas'] },
+      sceneFacts: { ...base.sceneFacts!, present: ['They', 'Child', 'Lowmarket Fence', 'Tomas'] },
     };
     const cast = buildEntityCast(state);
     expect(cast).not.toMatch(/\bThey\b/);

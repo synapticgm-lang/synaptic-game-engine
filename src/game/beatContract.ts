@@ -11,8 +11,8 @@ import {
   isBareHonorificTitle,
   isRegisteredLocation,
 } from './entityRegistry';
-import { npcRecordNames, presentNpcRecords, resolveNpcRecord } from './npcRecords';
-import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority';
+import { npcRecordNames, presentNpcRecords } from './npcRecords';
+import { isPlannerUiPersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { playerFacingLocation } from './locationName';
 import {
@@ -378,20 +378,10 @@ function openingPinsLockedOut(state: GameState): boolean {
   return !!prev && placesDiffer(here, prev);
 }
 
-const nameTokens = (name: string): string[] =>
-  name
-    .split(/\s+/)
-    .filter((w) => /^[A-Z][a-z']+$/.test(w) && !isBareHonorificTitle(w))
-    .map((w) => w.toLowerCase());
-
-const tokensWithin = (a: string[], b: string[]): boolean => a.length > 0 && a.every((t) => b.includes(t));
-
 /** The one present-cast source: harvest rules + one display name per person (bible name wins). */
 export function sealedCastNames(state: GameState): string[] {
-  const bibleId = state.campaignBibleId ?? state.bibleId;
   const pinsOut = openingPinsLockedOut(state);
   const pinSet = new Set(openingPinNames(state).map((n) => n.toLowerCase()));
-  const knownNames = npcRecordNames(state);
   const out: string[] = [];
 
   const passesExclusions = (name: string): boolean => {
@@ -406,23 +396,6 @@ export function sealedCastNames(state: GameState): string[] {
     if (!name || !passesExclusions(name)) continue;
     if (!out.some((k) => k.toLowerCase() === name.toLowerCase())) out.push(name);
   }
-
-  const consider = (raw: string | undefined) => {
-    const name = (raw ?? '').trim();
-    if (!name || /\s(?:and|&)\s|&|,/i.test(name)) return;
-    if (resolveNpcRecord(state, name)) return;
-    if (!passesExclusions(name)) return;
-    if (!canHarvestAsNamedPerson(name, bibleId, knownNames)) return;
-    const dToks = nameTokens(name);
-    const i = out.findIndex(
-      (k) => k.toLowerCase() === name.toLowerCase() || tokensWithin(dToks, nameTokens(k)) || tokensWithin(nameTokens(k), dToks)
-    );
-    if (i < 0) out.push(name);
-  };
-
-  for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) consider(p);
-  if (state.companion) consider(state.companion);
-  for (const c of state.companions ?? []) consider(c.name);
   return out;
 }
 

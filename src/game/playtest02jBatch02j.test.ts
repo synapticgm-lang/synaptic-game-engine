@@ -31,6 +31,8 @@ import {
 import { attachLastKill } from './combatAuthority';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { createInitialState } from './defaults';
+import { newGameState } from './newGameTestState';
+import { npcRecordNames } from './npcRecords';
 import { emptySceneFacts } from './sceneFacts';
 import { initPyoaBranchLedger } from './pyoaBranchLedger';
 import type { GameState } from './types';
@@ -62,13 +64,15 @@ describe('Batch 02j — Lock B: CAST named-only', () => {
     expect(isHubContactProperName('Wren Holt')).toBe(true);
     expect(canHarvestAsNamedPerson('Brother Tam', 'summoned-pact')).toBe(false);
     expect(canHarvestAsNamedPerson('Lowmarket Fence', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('Orel Vane', 'summoned-pact')).toBe(true);
-    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact')).toBe(true);
-    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road')).toBe(true);
+    const sp = npcRecordNames(newGameState('summoned-pact'));
+    const tf = npcRecordNames(newGameState('thornferry-road'));
+    expect(canHarvestAsNamedPerson('Orel Vane', 'summoned-pact', sp)).toBe(true);
+    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact', sp)).toBe(true);
+    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road', tf)).toBe(true);
   });
 
   it('does not promote trader/clerk into CAST named[]', () => {
-    let state = createInitialState(undefined, 'litrpg') as GameState;
+    let state = newGameState('summoned-pact', { engineMode: 'litrpg' });
     state = {
       ...state,
       campaignBibleId: 'summoned-pact',
@@ -85,7 +89,7 @@ describe('Batch 02j — Lock B: CAST named-only', () => {
   });
 
   it('harvest skips trader from prose but keeps Father Karel', () => {
-    let state = createInitialState(undefined, 'litrpg') as GameState;
+    let state = newGameState('summoned-pact', { engineMode: 'litrpg' });
     state = {
       ...state,
       bibleId: 'summoned-pact',

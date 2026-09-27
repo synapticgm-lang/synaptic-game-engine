@@ -62,21 +62,28 @@ export function npcRecordNames(state: GameState): string[] {
   return (state.npcMemories ?? []).flatMap(namesOf);
 }
 
-export function presentNpcRecords(state: GameState): NpcMemory[] {
+export function recordsForEntries(state: GameState, entries: string[]): NpcMemory[] {
   const out: NpcMemory[] = [];
   const seen = new Set<string>();
-  const push = (m: NpcMemory | undefined) => {
-    if (!m || seen.has(m.npcId)) return;
-    seen.add(m.npcId);
-    out.push(m);
-  };
-  for (const entry of state.sceneFacts?.present ?? []) {
+  for (const entry of entries) {
     for (const part of splitCompoundCastEntry(entry, state)) {
-      push(resolveNpcRecord(state, part));
+      const m = resolveNpcRecord(state, part);
+      if (!m || seen.has(m.npcId)) continue;
+      seen.add(m.npcId);
+      out.push(m);
     }
   }
+  return out;
+}
+
+export function presentNpcRecords(state: GameState): NpcMemory[] {
+  const out = recordsForEntries(state, state.sceneFacts?.present ?? []);
+  const seen = new Set(out.map((m) => m.npcId));
   for (const c of state.companions ?? []) {
-    if (c?.name) push(resolveNpcRecord(state, c.name));
+    const m = c?.name ? resolveNpcRecord(state, c.name) : undefined;
+    if (!m || seen.has(m.npcId)) continue;
+    seen.add(m.npcId);
+    out.push(m);
   }
   return out;
 }

@@ -31,6 +31,7 @@ import {
 } from './pyoaBranchLedger';
 import { detectTalkUltimatumRecycle } from './semanticLoopDetector';
 import { applyProseWarden } from './proseWarden';
+import { newGameState, rosterRecord } from './newGameTestState';
 import type { GameState } from './types';
 
 function litrpgState(partial: Partial<GameState> = {}): GameState {
@@ -74,6 +75,7 @@ function roadState(partial: Partial<GameState> = {}): GameState {
       },
     ],
     sceneFacts: { ...emptySceneFacts(20), present: ['Wren Holt'] },
+    npcMemories: [rosterRecord(newGameState('thornferry-road'), 'Wren Holt')],
     pyoaBranchLedger: initPyoaBranchLedger(),
     ...partial,
   };

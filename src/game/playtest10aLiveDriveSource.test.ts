@@ -6,6 +6,8 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames } from './npcRecords';
+import { newGameState } from './newGameTestState';
 import { rewriteChromeSpeakerTags } from './chromeAuthority';
 import { establishmentChoices } from './openingEstablishment';
 import { resolveOfferedChoices } from './playTranscript';
@@ -65,10 +67,13 @@ describe('playtest10a — live-drive source locks', () => {
   });
 
   it('quest titles fail harvest; Wren Holt stays', () => {
-    expect(canHarvestAsNamedPerson("Circle's Price", 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('Greyhollow Quest', 'cursed-keep')).toBe(false);
-    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road')).toBe(true);
-    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact')).toBe(true);
+    const sp = npcRecordNames(newGameState('summoned-pact'));
+    const ck = npcRecordNames(newGameState('cursed-keep'));
+    const tf = npcRecordNames(newGameState('thornferry-road'));
+    expect(canHarvestAsNamedPerson("Circle's Price", 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('Greyhollow Quest', 'cursed-keep', ck)).toBe(false);
+    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road', tf)).toBe(true);
+    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact', sp)).toBe(true);
   });
 
   it('chrome keeps panel wants a name (cover ask, not a speaker)', () => {

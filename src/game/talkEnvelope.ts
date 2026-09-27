@@ -74,6 +74,7 @@ export function legalAddresseeFact(state: GameState, playerInput: string): strin
     engineMode: state.engineMode,
     hay: identityHay(state),
     stamp: resolveLitRpgFolkStamp(state),
+    state,
   });
   if (hallTalkAsksWho(playerInput)) return clip(quote, 180);
   if (hallTalkAsksWant(playerInput)) {
@@ -179,12 +180,14 @@ function spokenTalkFallbackInner(state: GameState, playerInput: string, who: str
           engineMode: state.engineMode,
           hay: identityHay(state),
           stamp: resolveLitRpgFolkStamp(state),
+          state,
         })
         ? openingWhoAskLineFromLabel(who, {
             location: state.currentLocation,
             engineMode: state.engineMode,
             hay: identityHay(state),
             stamp: resolveLitRpgFolkStamp(state),
+            state,
           })
         : openingAlreadyToldLine(state, 'who');
   }

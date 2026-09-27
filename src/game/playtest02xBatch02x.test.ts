@@ -15,6 +15,8 @@ import {
 } from './entityRegistry';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { buildEntityCast } from './entityCast';
+import { npcRecordNames } from './npcRecords';
+import { newGameState } from './newGameTestState';
 import {
   classifyBeatCommit,
   isEngineChromeOnlyBeat,
@@ -117,14 +119,16 @@ describe('Batch 02x — Lock B: CAST named-only', () => {
   });
 
   it('keeps real given names and registry people', () => {
-    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road')).toBe(true);
-    expect(canHarvestAsNamedPerson('Orel Vane', 'summoned-pact')).toBe(true);
-    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact')).toBe(true);
-    expect(canHarvestAsNamedPerson('Tomas', 'summoned-pact')).toBe(true);
+    const sp = npcRecordNames(newGameState('summoned-pact'));
+    const tf = npcRecordNames(newGameState('thornferry-road'));
+    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road', tf)).toBe(true);
+    expect(canHarvestAsNamedPerson('Orel Vane', 'summoned-pact', sp)).toBe(true);
+    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact', sp)).toBe(true);
+    expect(canHarvestAsNamedPerson('Tomas', 'summoned-pact', sp)).toBe(true);
   });
 
   it('does not harvest role compounds or invented Title+Given into present[] / CAST', () => {
-    let state = litrpgState({ sceneFacts: emptySceneFacts(6) });
+    const state = { ...newGameState('thornferry-road'), sceneFacts: emptySceneFacts(6) };
     const harvested = harvestNarrativeIntoLedger(
       state,
       'The Pact-Hunter Skirmisher priest waits. Brother Tam nods. Wren Holt keeps pace.',

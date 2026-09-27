@@ -14,6 +14,7 @@ import { isUiLabel } from './narrativeTranslator';
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { isNeverCastTitle } from './neverCast';
+import { npcRecordNames } from './npcRecords';
 import * as hubEncounters from './hubEncounters';
 
 export interface CastMember {
@@ -77,6 +78,7 @@ function extractNamedCharacters(state: GameState): CastMember[] {
   const named: CastMember[] = [];
   
   const bibleId = state.campaignBibleId ?? state.bibleId;
+  const recordNames = npcRecordNames(state);
   
   for (const token of present) {
     if (typeof token !== 'string' || !token.trim()) continue;
@@ -88,7 +90,7 @@ function extractNamedCharacters(state: GameState): CastMember[] {
     // Lock B — hub compounds enter CAST via extractHubArrivalContact only.
     if (isHubRoleCompoundToken(token)) continue;
     
-    const namedEligible = canHarvestAsNamedPerson(token, bibleId);
+    const namedEligible = canHarvestAsNamedPerson(token, bibleId, recordNames);
     
     // Check if this is a known NPC
     const memory = memories.find(m => m.npcName === token);

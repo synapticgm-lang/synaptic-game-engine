@@ -8,6 +8,8 @@
 
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
   getCampaignBibleById,
   getCampaignBiblesByEngineMode,
@@ -829,6 +831,26 @@ function pickGoalOrientedChoice(
   return picked.choice;
 }
 
+const writerPromptSink: { dir?: string; turn: number } = { turn: 0 };
+
+async function saveWriterPrompt(state: GameState, payload: string): Promise<void> {
+  if (!writerPromptSink.dir) return;
+  let body: string;
+  try {
+    const edgePath = pathToFileURL(
+      join(process.cwd(), 'supabase', 'functions', '_shared', 'gm', 'masterPrompt.ts')
+    ).href;
+    const edge = (await import(/* @vite-ignore */ edgePath)) as {
+      buildContextPrompt: (s: GameState, input: string, lore: unknown[]) => string;
+    };
+    body = `# source: edge _shared/gm\n${edge.buildContextPrompt(state, payload, [])}`;
+  } catch {
+    body = `# source: client (edge import failed)\n${buildClientContextPrompt(state, payload, [])}`;
+  }
+  const nn = String(writerPromptSink.turn).padStart(2, '0');
+  writeFileSync(join(writerPromptSink.dir, `turn-${nn}.txt`), body + '\n');
+}
+
 async function callGmWithRetries(
   state: GameState,
   payload: string,
@@ -850,6 +872,7 @@ async function callGmWithRetries(
   });
   for (let attempt = 0; attempt <= TURN_TRANSPORT_MAX_AUTO_RETRIES; attempt++) {
     try {
+      await saveWriterPrompt(state, payload);
       const result = await callGm(state, payload, settings, [], undefined, undefined, timeoutMs);
       return {
         text: result.text ?? '',
@@ -1961,6 +1984,8 @@ export async function runFateAutoplay(opts: {
   const slug = `${bible.id}_${personalityId}_s${opts.seed}`;
   const outDir = join(opts.outRoot, `${runId}_${slug}`);
   mkdirSync(outDir, { recursive: true });
+  writerPromptSink.dir = join(outDir, 'writer-prompts');
+  mkdirSync(writerPromptSink.dir, { recursive: true });
 
   const turns: TurnTelemetry[] = [];
   const startedAt = new Date().toISOString();
@@ -1975,6 +2000,7 @@ export async function runFateAutoplay(opts: {
   try {
     for (let i = 0; i < opts.turns; i++) {
       const turnNo = i + 1;
+      writerPromptSink.turn = turnNo;
       writeFileSync(
         heartbeatPath,
         JSON.stringify(
@@ -2061,6 +2087,7 @@ export async function runFateAutoplay(opts: {
       }
     }
   } finally {
+    writerPromptSink.dir = undefined;
     // Keep Test Lab override for matrix multi-run; caller clears at process end.
   }
 

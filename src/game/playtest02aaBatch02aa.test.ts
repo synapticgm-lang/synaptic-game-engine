@@ -10,6 +10,8 @@ import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames } from './npcRecords';
+import { newGameState, rosterRecord } from './newGameTestState';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { sealedCastNames } from './beatContract';
 import { classifyBeatCommit, isFactClosedViolation, codedSceneMove } from './beatCommitGate';
@@ -99,14 +101,16 @@ describe('Batch 02aa stamps', () => {
 describe('Batch 02aa — never-CAST lock', () => {
   it('place/concept titles fail harvest; Wren Holt stays', () => {
     const state = litrpgState();
-    expect(canHarvestAsNamedPerson('West Wall', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('Scattered Scale', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('The Weighing', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('Old Garrison', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('The Mark', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('At Saltmeet', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road')).toBe(true);
-    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact')).toBe(true);
+    const sp = npcRecordNames(newGameState('summoned-pact'));
+    const tf = npcRecordNames(newGameState('thornferry-road'));
+    expect(canHarvestAsNamedPerson('West Wall', 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('Scattered Scale', 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('The Weighing', 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('Old Garrison', 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('The Mark', 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('At Saltmeet', 'summoned-pact', sp)).toBe(false);
+    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road', tf)).toBe(true);
+    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact', sp)).toBe(true);
 
     expect(isNeverCastTitle('West Wall', state)).toBe(true);
     expect(isNeverCastTitle('The Weighing', state)).toBe(true);
@@ -176,6 +180,7 @@ describe('Batch 02aa — talk-loop starve', () => {
     const state = litrpgState({
       sceneFacts: { ...emptySceneFacts(51), present: ['Wren Holt'] },
       companions: roadState().companions,
+      npcMemories: [rosterRecord(newGameState('thornferry-road'), 'Wren Holt')],
       log: beats.map((content, i) => ({
         id: `g${i}`,
         role: 'gm' as const,
@@ -200,6 +205,7 @@ describe('Batch 02aa — talk-loop starve', () => {
     const first = litrpgState({
       sceneFacts: { ...emptySceneFacts(24), present: ['Wren Holt'] },
       companions: roadState().companions,
+      npcMemories: [rosterRecord(newGameState('thornferry-road'), 'Wren Holt')],
       log: [{ id: 'g1', role: 'gm', content: beats[0], timestamp: 1, turn: 24 }],
     });
     expect(isTalkQaLoopStarved(first)).toBe(false);

@@ -22,7 +22,9 @@ import {
 import { droughtSkirmishTable, runArcDirectorBeforeGm, shouldSpawnCombat } from './arcDirector';
 import { compileGraphChoiceLabels, enumerateLegalEdges } from './graphChoices';
 import { hubsForBibleId, SUMMONED_PACT_HUBS } from './outdoorHubs';
-import { canHarvestAsNamedPerson, getRegisteredNpcs } from './entityRegistry';
+import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames } from './npcRecords';
+import { newGameState, rosterRecord } from './newGameTestState';
 import {
   hasMetBefore,
   seedBibleNpcRoster,
@@ -126,12 +128,12 @@ describe('Phase 3: Summoned Pact hubs / NPCs / quests', () => {
   });
 
   it('bible NPCs seed into registry + dormant memory without Title-Case soup', () => {
-    const registered = getRegisteredNpcs('summoned-pact');
+    const registered = npcRecordNames(newGameState('summoned-pact'));
     expect(registered).toContain('Ilyra Fen');
     expect(registered).toContain('Yara Quill');
-    expect(canHarvestAsNamedPerson('Ilyra Fen', 'summoned-pact')).toBe(true);
-    expect(canHarvestAsNamedPerson('The Bell', 'summoned-pact')).toBe(false);
-    expect(canHarvestAsNamedPerson('Mireglass March', 'summoned-pact')).toBe(false);
+    expect(canHarvestAsNamedPerson('Ilyra Fen', 'summoned-pact', registered)).toBe(true);
+    expect(canHarvestAsNamedPerson('The Bell', 'summoned-pact', registered)).toBe(false);
+    expect(canHarvestAsNamedPerson('Mireglass March', 'summoned-pact', registered)).toBe(false);
     const seeded = seedBibleNpcRoster(openedPact({ npcMemories: [] }), summonedPact);
     const ilyra = seeded.npcMemories?.find((m) => m.npcName === 'Ilyra Fen');
     expect(ilyra).toBeTruthy();
@@ -198,7 +200,8 @@ describe('12a first-meet still holds on roster seed', () => {
     const again = second.npcMemories?.find((n) => n.npcName === 'Ilyra Fen');
     expect(again?.meetCount).toBe(2);
     expect(again?.relationshipStatus).toBe('acquaintance');
-    const emptyFirst = upsertHarvestedNpcMemory([], 'Father Aldous', 2);
+    const aldous = rosterRecord(newGameState('cursed-keep'), 'Father Aldous');
+    const emptyFirst = upsertHarvestedNpcMemory([aldous], 'Father Aldous', 2);
     expect(emptyFirst[0]?.relationshipStatus).toBe('stranger');
     expect(emptyFirst[0]?.meetCount).toBe(1);
   });

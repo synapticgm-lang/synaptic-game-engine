@@ -4,7 +4,7 @@ import type { GameEvent } from './parser';
 import type { NpcRole } from './npcRoleRegistry';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks';
-import { syncNpcPresence } from './npcRecords';
+import { isMetNpc, syncNpcPresence } from './npcRecords';
 
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
@@ -252,7 +252,7 @@ export function rememberPlayerName(state: GameState, playerName: string): GameSt
   if (!list.length) return state;
   let dirty = false;
   const next = list.map((m) => {
-    if (m.knownPlayerName === name) return m;
+    if (!isMetNpc(m) || m.knownPlayerName === name) return m;
     dirty = true;
     const fact = `Knows the player as ${name}`;
     return {

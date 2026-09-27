@@ -11,7 +11,7 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { shopItemById } from './cosmeticCatalog';
 import { PLAY_PROSE_FONT_STACK, readablePlayStoryStack } from './uiTheme';
-import { createInitialState } from './defaults';
+import { newGameState } from './newGameTestState';
 import { emptySceneFacts } from './sceneFacts';
 import {
   assemblePacketStitch,
@@ -40,11 +40,10 @@ const HOOK = [
 ].join('\n');
 
 function crown(over: Partial<GameState> = {}): GameState {
-  const state = createInitialState('The Summoned Pact', 'litrpg');
+  const state = newGameState('summoned-pact', { npcId: 'sp-npc-lene-quill', engineMode: 'litrpg' });
   return {
     ...state,
     campaignBibleId: 'summoned-pact',
-    seed: 'dp4yq4yh',
     turn: 7,
     currentLocation: 'a Crown archive stack behind iron mesh',
     character: { ...state.character, name: 'Jax' },
@@ -55,6 +54,7 @@ function crown(over: Partial<GameState> = {}): GameState {
       sceneWritten: true,
       mode: 'weave',
       aloneArrival: false,
+      castNpcIds: state.openingEstablishment?.castNpcIds,
       pickedHook: HOOK,
       pickedHookFallback:
         'Dust and iron mesh. You are on the archive floor behind the stack, a circle of library-chalk around a pulled folio. A blue panel hangs over empty shelves. Archivist Lene Quill has one page turned face-down. A Scale witness does not speak. A reader’s ribbon lies on the folio — offered if you take the page, not if you grab the rest.',
@@ -124,7 +124,7 @@ describe('playtest13a — Crown archive', () => {
     expect(isDroughtStubProse('Dust hung at a Crown archive stack behind iron mesh. Whatever you tried had already happened.')).toBe(true);
     const wait = assemblePacketStitch(buildCompletedEventPacket(crown(), 'Wait and watch'));
     expect(wait).not.toMatch(DROUGHT);
-    expect(openingCastLabel(crown())).toBe('Archivist Lene Quill');
+    expect(openingCastLabel(crown())).toBe('Lene Quill');
     const told = stitchOpeningContinue(
       {
         ...crown(),

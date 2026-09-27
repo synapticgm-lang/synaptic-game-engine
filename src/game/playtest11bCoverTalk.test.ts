@@ -24,7 +24,25 @@ import { buildNewGameState, headlessFateTurn, stampOpening } from './fateAutopla
 import { criticLiveDriveTurn, reopenCoversForLiveDrive } from './liveDrive';
 import { mulberry32 } from './fatePick';
 import { getCampaignBibleById } from '@/data/campaigns';
+import { newGameState } from './newGameTestState';
+import { openingCastRecords } from './npcRecords';
 import type { GameState } from './types';
+
+/** Fixture scene with the New Game roster records and the real card that names `npcId`. */
+function withNewGameCast(fixture: GameState, bibleId: string, npcId: string): GameState {
+  const ng = newGameState(bibleId, { npcId });
+  return {
+    ...fixture,
+    seed: ng.seed,
+    npcMemories: ng.npcMemories,
+    openingEstablishment: {
+      ...fixture.openingEstablishment!,
+      pickedHook: ng.openingEstablishment?.pickedHook,
+      pickedHookFallback: ng.openingEstablishment?.pickedHookFallback,
+      castNpcIds: ng.openingEstablishment?.castNpcIds,
+    },
+  };
+}
 
 function cathedral(): GameState {
   const base = createInitialState('The Summoned Pact', 'litrpg');
@@ -122,27 +140,32 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
   });
 
   it('cathedral who-ask is spoken, not is-the-one-asking', () => {
-    const text = stitchOpeningContinue(cathedral(), 'Who are you?');
-    expect(openingCastLabel(cathedral())).toMatch(/chanter|robed|priest|handler/i);
+    const state = withNewGameCast(cathedral(), 'summoned-pact', 'sp-npc-1');
+    const text = stitchOpeningContinue(state, 'Who are you?');
+    expect(openingCastLabel(state)).toMatch(/chanter|robed|priest|handler/i);
     expect(text).toMatch(/answer(?:s)? you/i);
     expect(text).toMatch(/"/);
     expect(text).not.toMatch(/is the one asking/i);
-    expect(openingWhoAskLine(cathedral())).toMatch(/Pactborn|Handler|Mark/i);
+    expect(openingWhoAskLine(state)).toContain('"High Chanter Orel Vane. You asked who."');
   });
 
   it('Greyhollow who-ask never prints Pactborn', () => {
-    expect(openingCastLabel(greyhollow())).toMatch(/innkeep|Aldous/i);
-    const text = stitchOpeningContinue(greyhollow(), 'Who are you? Answer me properly.');
+    const state = withNewGameCast(greyhollow(), 'cursed-keep', 'ck-npc-1');
+    expect(openingCastLabel(state)).toMatch(/innkeep|Aldous/i);
+    const text = stitchOpeningContinue(state, 'Who are you? Answer me properly.');
     expect(text).toMatch(/answer(?:s)? you|innkeep|Aldous/i);
     expect(text).toMatch(/"/);
+    expect(text).toContain('"Father Aldous. You asked who."');
     expect(text).not.toMatch(/Pactborn|Calamity Mark|is the one asking/i);
   });
 
   it('Thornferry who-ask is Wren, not the panel', () => {
-    expect(openingCastLabel(thornferry())).toMatch(/Wren/i);
-    const text = stitchOpeningContinue(thornferry(), "What's your name?");
+    const state = withNewGameCast(thornferry(), 'thornferry-road', 'tf-npc-1');
+    expect(openingCastLabel(state)).toMatch(/Wren/i);
+    const text = stitchOpeningContinue(state, "What's your name?");
     expect(text).toMatch(/Wren/i);
     expect(text).toMatch(/"/);
+    expect(text).toContain('"Wren Holt. You asked who."');
     expect(text).not.toMatch(/the panel is the one asking|panel answers you/i);
   });
 
@@ -182,7 +205,13 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
         },
       };
       const who = stitchOpeningContinue(named, 'Who are you? Answer me properly.');
-      expect(who, cell.bibleId).toMatch(/"/);
+      const lead = openingCastRecords(named)[0];
+      if (lead) expect(who, cell.bibleId).toContain(`"${lead.npcName}. You asked who."`);
+      else {
+        expect(who, cell.bibleId).toContain(
+          `"${openingCastLabel(named)}. You asked who. We are the ones who found you here."`
+        );
+      }
       expect(who, cell.bibleId).not.toMatch(/is the one asking/i);
       if (cell.mode === 'dnd') expect(who).not.toMatch(/Pactborn|Calamity Mark/i);
       if (cell.mode === 'pyoa') expect(who).not.toMatch(/the panel (?:is|answers)/i);
@@ -195,9 +224,11 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
         nameLocked: 'Jax',
         state: named,
       });
-      expect(flags.some((f) => f.code === 'npc-non-answer' || f.code === 'one-line-no-npc'), cell.bibleId).toBe(
-        false
-      );
+      if (lead) {
+        expect(flags.some((f) => f.code === 'npc-non-answer' || f.code === 'one-line-no-npc'), cell.bibleId).toBe(
+          false
+        );
+      }
     }
   });
 
@@ -338,10 +369,11 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
   });
 
   it('second who-ask restates; it does not reprint the first beat', () => {
-    const first = stitchOpeningContinue(cathedral(), 'Who are you?');
+    const base = withNewGameCast(cathedral(), 'summoned-pact', 'sp-npc-1');
+    const first = stitchOpeningContinue(base, 'Who are you?');
     const second = stitchOpeningContinue(
       {
-        ...cathedral(),
+        ...base,
         log: [
           { id: 'p', turn: 2, role: 'player' as const, content: 'Who are you?', timestamp: 2 },
           { id: 'g', turn: 2, role: 'gm', content: first, timestamp: 3 },

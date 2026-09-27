@@ -45,6 +45,7 @@ import {
   initPyoaBranchLedger,
   isPyoaCharterClosed,
 } from './pyoaBranchLedger';
+import { newGameState, rosterRecord } from './newGameTestState';
 import type { GameState } from './types';
 
 function litrpgState(partial: Partial<GameState> = {}): GameState {
@@ -88,6 +89,7 @@ function roadState(partial: Partial<GameState> = {}): GameState {
       },
     ],
     sceneFacts: { ...emptySceneFacts(20), present: ['Wren Holt'] },
+    npcMemories: [rosterRecord(newGameState('thornferry-road'), 'Wren Holt')],
     pyoaBranchLedger: initPyoaBranchLedger(),
     ...partial,
   };
@@ -238,6 +240,7 @@ describe('Batch 02z — occupancy after leave', () => {
         cameraLock: { scale: 'outdoor', label: 'West Wall', lockedTurn: 7 },
       },
       companions: roadState().companions,
+      npcMemories: roadState().npcMemories,
       log: [
         { id: 'p', role: 'player', content: 'Leave the circle', timestamp: 1, turn: 7 },
         { id: 'g', role: 'gm', content: 'You reach the West Wall in the rain.', timestamp: 2, turn: 7 },

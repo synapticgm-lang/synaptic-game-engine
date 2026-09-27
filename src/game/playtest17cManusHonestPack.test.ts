@@ -7,6 +7,7 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
+import { newGameState } from './newGameTestState';
 import { emptySceneFacts } from './sceneFacts';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import { cursedKeep } from '@/data/campaigns/cursedKeep';
@@ -52,8 +53,8 @@ function openedPact(partial: Partial<GameState> = {}): GameState {
 
 describe('playtest17c — Manus honest leftover', () => {
   it('HUD/BUILD are 17c, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-27d');
-    expect(BUILD_STAMP).toBe('2026-09-27d');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-27e');
+    expect(BUILD_STAMP).toBe('2026-09-27e');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -106,11 +107,13 @@ describe('playtest17c — Manus honest leftover', () => {
       engineMode: 'pyoa',
       currentLocation: 'the mill landing at Thornferry',
       sceneFacts: { ...emptySceneFacts(4), present: ['Wren Holt'] },
+      npcMemories: newGameState('thornferry-road', { npcId: 'tf-npc-1' }).npcMemories,
       openingEstablishment: {
         pending: [],
         answers: { name: 'Jax', where: 'the mill landing at Thornferry' },
         complete: true,
         sceneWritten: true,
+        castNpcIds: ['tf-npc-1'],
         pickedHook: 'Who is here: Wren Holt waits with a sealed charter',
         pickedHookFallback: 'Wren Holt stands at the dock with a sealed charter.',
       },

@@ -80,7 +80,6 @@ export function inferWhoCountFromHook(
 ): PointerWhoBand {
   if (alone) return 0;
   const blob = `${who} ${why} ${beats.join(' ')}`.toLowerCase();
-  if (/\balone\b/.test(blob) && !/\bnot alone\b/.test(blob)) return 0;
   if (/\b(crowd|betting|mass summon|four bodies|festival)\b/.test(blob)) return 5;
   if (/\b(handlers|figures|robes|soldiers|robed)\b/.test(blob)) return 4;
   if (/\b(two|pair|both)\b/.test(blob)) return 2;

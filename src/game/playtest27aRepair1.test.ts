@@ -3,7 +3,6 @@
  * talk target, readability P0/P1 kinds.
  */
 import { describe, expect, it } from 'vitest';
-import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import { isBlockedPaint } from './beatCommitGate';
 import { ledgerActionStitch } from './completedEventPacket';
@@ -14,44 +13,15 @@ import { compileGraphChoiceLabels } from './graphChoices';
 import { sealedCastNames } from './beatContract';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { ledgerSheetLine } from './litrpgSystemWindow';
-import { openingCastLabel, resolveOpeningHookPick } from './openingEstablishment';
+import { openingCastLabel } from './openingEstablishment';
 import { applyCardCrowdToFacts } from './openingPointerCard';
 import { craftProgressionPolicy } from './craftBookCompiler';
 import { compileChoices } from './choiceCompiler';
-import { seedStateFromCampaignBible } from './campaignSeed';
-import { getCampaignBibleById } from '@/data/campaigns';
-import type { CampaignBible } from '@/data/campaigns/types';
+import { newGameState } from './newGameTestState';
 import type { GameState, LogEntry } from './types';
 
-/** First seed whose New Game card pick names `npcId`, the same picker useGame / fateAutoplay use. */
-function seedPickingCast(bible: CampaignBible, npcId: string) {
-  for (let i = 0; i < 500; i++) {
-    const seed = String(i);
-    const picked = resolveOpeningHookPick(bible, seed);
-    if (picked?.castNpcIds?.includes(npcId)) return { seed, picked };
-  }
-  throw new Error(`no opening card for ${npcId} on ${bible.id}`);
-}
-
-/** New Game shape: bible roster records seeded, castNpcIds from the picked card. */
 function newGameBase(bibleId: string, npcId: string, storyName: string): GameState {
-  const bible = getCampaignBibleById(bibleId)!;
-  const { seed, picked } = seedPickingCast(bible, npcId);
-  const seeded = seedStateFromCampaignBible(
-    { ...createInitialState(storyName, 'litrpg'), seed },
-    bible
-  );
-  return {
-    ...seeded,
-    openingEstablishment: {
-      pending: [],
-      answers: {},
-      complete: true,
-      pickedHook: picked.text,
-      pickedHookFallback: picked.page1 || picked.fallback,
-      castNpcIds: picked.castNpcIds ?? [],
-    },
-  };
+  return newGameState(bibleId, { npcId, storyName, engineMode: 'litrpg' });
 }
 
 const PRIOR =

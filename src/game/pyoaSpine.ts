@@ -50,7 +50,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
     exits: [
       { id: 'accept-wren', label: 'Walk the road with Wren', to: 'tf-streets', setFlags: { wren: 'with' } },
       { id: 'refuse-wren', label: 'Go alone', to: 'tf-streets', setFlags: { wren: 'solo' } },
-      { id: 'hear-pell', label: 'Hear Pell’s coin offer', to: 'tf-streets', setFlags: { heardPell: true } },
+      { id: 'hear-pell', label: 'Hear a stranger’s coin offer', to: 'tf-streets', setFlags: { heardPell: true } },
     ],
   },
   {
@@ -66,7 +66,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
       },
       {
         id: 'take-pell',
-        label: 'Take Pell’s coin in secret',
+        label: 'Take the stranger’s coin in secret',
         to: 'tf-road',
         setFlags: { charterIntent: 'pell' },
       },
@@ -134,7 +134,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
       },
       {
         id: 'gate-pell',
-        label: 'Sell the charter to Pell',
+        label: 'Sell the charter to the stranger',
         to: 'tf-end-pell-wren',
         setFlags: { resolution: 'pell' },
       },
