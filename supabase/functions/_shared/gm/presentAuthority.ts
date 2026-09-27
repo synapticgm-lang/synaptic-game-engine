@@ -6,6 +6,7 @@
 import type { GameState } from './types.ts';
 import { trimAnonymousRolesOnLocationChange } from './closedScenePerson.ts';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords.ts';
+import { ensurePlaceCard } from './outdoorHubs.ts';
 
 function thornferryClusterCore(s: string): boolean {
   return /\b(mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');
@@ -46,7 +47,11 @@ export function applyPresentTrimOnTravel(
 ): GameState {
   const state = locationsEquivalentForPresence(fromLocation, toLocation)
     ? input
-    : stampNpcLocationsOnMove(input, fromLocation, toLocation);
+    : ensurePlaceCard(
+      ensurePlaceCard(stampNpcLocationsOnMove(input, fromLocation, toLocation), fromLocation),
+      toLocation,
+      fromLocation
+    );
   const trimmed = trimPresentOnLocationChange(state, fromLocation, toLocation);
   const sameLoc = locationsEquivalentForPresence(fromLocation, toLocation);
   const nextRoles = trimAnonymousRolesOnLocationChange(state, sameLoc);

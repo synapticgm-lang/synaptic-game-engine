@@ -1070,6 +1070,12 @@ export interface PlaceRecord {
   /** True if seeded from premade world map (not GM invent). */
   mapCanonical?: boolean;
   allowsDungeon?: boolean;
+  /** 27g place card — plain player-facing description, built once on first entry. */
+  description?: string;
+  /** 27g place card — plain exit names (the way back plus known hubs), built once on first entry. */
+  exits?: string[];
+  /** 27g place card — turn the card was built; set means reuse, never rebuild. */
+  cardBuiltTurn?: number;
 }
 
 export interface TutorialProgress {

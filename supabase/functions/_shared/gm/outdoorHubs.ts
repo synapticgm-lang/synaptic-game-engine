@@ -10,7 +10,7 @@
 import type { CampaignBible } from './campaignBibleTypes.ts';
 import type { GameState, PlaceRecord } from './types.ts';
 import { excludedPadFamilies } from './padUniverse.ts';
-import { placeIdFromName } from './places.ts';
+import { placeIdFromName, resolvePlace } from './places.ts';
 
 export interface OutdoorHub {
   id: string;
@@ -569,4 +569,76 @@ export function ensureTravelArrivalProse(
     return `${leave} ${text}`;
   }
   return text;
+}
+
+/** 27g — place card: plain description + exits, no engine tags. Built from the hub bank and the way you came. */
+export function buildPlaceCard(state: GameState, placeName: string, fromLocation?: string): PlaceRecord {
+  const raw = (placeName ?? '').replace(/\s+/g, ' ').trim();
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), raw);
+  const name = hub?.name ?? raw;
+  const existing = resolvePlace(state.places, name) ?? resolvePlace(state.places, raw);
+  const description = (existing?.description || hub?.blurb || '').replace(/\s+/g, ' ').trim();
+  // Card exits are facts, not chips: canonical hub names, no chip cooldown/encounter gates.
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  const backRaw = (fromLocation ?? '').replace(/\s+/g, ' ').trim();
+  const back = matchHub(hubs, backRaw)?.name ?? backRaw;
+  const discovered = state.discoveredLocations ?? [];
+  const early = (state.turn ?? 0) <= 5 && discovered.length <= 1;
+  const known = (h: OutdoorHub): boolean =>
+    early
+    || discovered.includes(h.id)
+    || discovered.includes(placeIdFromName(h.name))
+    || (h.aliases ?? []).some((a) => discovered.includes(placeIdFromName(a)))
+    || (state.places ?? []).some((p) => p.name.toLowerCase() === h.name.toLowerCase() && p.lastVisitedTurn != null);
+  const hubExits = hubs
+    .filter((h) => h.name.toLowerCase() !== name.toLowerCase() && !raw.toLowerCase().includes(h.name.toLowerCase()) && known(h))
+    .map((h) => h.name)
+    .slice(0, 3);
+  const seen = new Set<string>();
+  const exits: string[] = [];
+  for (const e of [back, ...hubExits]) {
+    const key = e.toLowerCase();
+    if (!e || key === name.toLowerCase() || seen.has(key)) continue;
+    seen.add(key);
+    exits.push(e);
+  }
+  return {
+    id: existing?.id ?? placeIdFromName(name),
+    name: existing?.name ?? name,
+    aliases: existing?.aliases ?? Array.from(new Set([name, raw, ...(hub?.aliases ?? [])])).slice(0, 12),
+    mapScale: existing?.mapScale ?? 'street',
+    arcStatus: existing?.arcStatus ?? 'open',
+    description: description || undefined,
+    exits: exits.slice(0, 4),
+    cardBuiltTurn: state.turn ?? 0,
+  };
+}
+
+/** 27g — make the place card on first entry; a place that already has a card is reused, never rebuilt. */
+export function ensurePlaceCard(state: GameState, placeName: string, fromLocation?: string): GameState {
+  const raw = (placeName ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return state;
+  const places = state.places ?? [];
+  const hubName = matchHub(hubsForBibleId(state.campaignBibleId), raw)?.name ?? raw;
+  const existing = resolvePlace(places, hubName) ?? resolvePlace(places, raw);
+  if (existing?.cardBuiltTurn != null) return state;
+  const card = buildPlaceCard(state, raw, fromLocation);
+  const next = existing
+    ? places.map((p) =>
+      p.id === existing.id
+        ? { ...p, description: card.description, exits: card.exits, cardBuiltTurn: card.cardBuiltTurn }
+        : p
+    )
+    : [...places, card];
+  return { ...state, places: next };
+}
+
+/** 27g — the card for a place: the stored card when built, else the same card built on the fly (not stored). */
+export function placeCardFor(state: GameState, placeName: string | undefined): PlaceRecord | null {
+  const raw = (placeName ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return null;
+  const hubName = matchHub(hubsForBibleId(state.campaignBibleId), raw)?.name ?? raw;
+  const stored = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
+  if (stored?.cardBuiltTurn != null) return stored;
+  return buildPlaceCard(state, raw);
 }

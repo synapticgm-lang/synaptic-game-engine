@@ -3,7 +3,7 @@ import { computeInventoryCapacity } from './inventory';
 import { playerFacingLocation } from './locationName';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { formatHiddenRoomLedger } from './dungeonSeed';
-import { formatPlacesForPrompt } from './places';
+import { placeCardFor } from './outdoorHubs';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
@@ -115,15 +115,17 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   const currentName = playerFacingLocation(state);
 
   const here: string[] = [`Here: ${currentName}`];
-  const placeText = formatPlacesForPrompt(state.places, currentName);
-  if (placeText) here.push(...placeText.split('\n').slice(0, 2));
+  // 27g — the place card is the fact authority: plain description and exits, no engine tags.
+  const card = placeCardFor(state, currentName);
+  if (card?.description) here.push(`What it is: ${card.description}`);
   const things = state.locationSheet?.interactables ?? [];
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);
   }
-  const exits = state.locationSheet?.exits ?? [];
+  const sheetExits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
+  const exits = sheetExits.length ? sheetExits : card?.exits ?? [];
   if (exits.length) {
-    here.push(`Exits: ${exits.slice(0, 5).map((e) => e.label).join(', ')}`);
+    here.push(`Exits: ${exits.slice(0, 5).join(', ')}`);
   }
 
   const people = presentNpcRecords(state);

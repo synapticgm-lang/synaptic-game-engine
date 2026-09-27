@@ -10,7 +10,7 @@ import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
-import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination } from './outdoorHubs';
+import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
 import { spokenTalkFallback } from './talkEnvelope';
 import { emptySceneFacts } from './sceneFacts';
 import {
@@ -712,12 +712,16 @@ function hubDescriptor(state: GameState, place: string): string {
 function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
   const place = (state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), place);
+  // 27g — the stitch reads the same place card as the writer.
+  const card = state.activeDungeon ? null : placeCardFor(state, place);
   const exits = state.activeDungeon
     ? graphExitPads(state.activeDungeon).map((p) => p.replace(/^.*\s+to\s+/i, '').trim())
-    : outdoorHubTravelChoices(state, 3).map((c) => c.replace(/^Travel\s+(?:to|toward)\s+/i, '').trim());
+    : card?.exits?.length
+      ? card.exits
+      : outdoorHubTravelChoices(state, 3).map((c) => c.replace(/^Travel\s+(?:to|toward)\s+/i, '').trim());
   return {
     place: hub?.name ?? place,
-    descriptor: hubDescriptor(state, place),
+    descriptor: card?.description || hubDescriptor(state, place),
     exits: exits.filter((e) => e.length > 1),
     present: sealedCastNames(state),
     leftBehind: recordsForEntries(state, state.sceneFacts?.leftBehind ?? []).map((r) => r.npcName),
