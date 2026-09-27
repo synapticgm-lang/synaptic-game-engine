@@ -104,6 +104,7 @@ import {
 } from './outdoorHubs';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
+import { seedOpeningCastLocations } from './npcRecords';
 import {
   clearVignetteOnHubLeave,
   openVignetteFromHubBeat,
@@ -664,7 +665,7 @@ export function buildNewGameState(opts: {
       bible
     )
   );
-  return { state, bible, personalityId: voices.personalityId };
+  return { state: seedOpeningCastLocations(state), bible, personalityId: voices.personalityId };
 }
 
 export function stampOpening(state: GameState): GameState {

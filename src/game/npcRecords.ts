@@ -76,16 +76,72 @@ export function recordsForEntries(state: GameState, entries: string[]): NpcMemor
   return out;
 }
 
-export function presentNpcRecords(state: GameState): NpcMemory[] {
-  const out = recordsForEntries(state, state.sceneFacts?.present ?? []);
-  const seen = new Set(out.map((m) => m.npcId));
-  for (const c of state.companions ?? []) {
-    const m = c?.name ? resolveNpcRecord(state, c.name) : undefined;
-    if (!m || seen.has(m.npcId)) continue;
-    seen.add(m.npcId);
-    out.push(m);
+function samePlace(a: string | undefined, b: string | undefined): boolean {
+  const x = (a ?? '').trim().toLowerCase();
+  const y = (b ?? '').trim().toLowerCase();
+  return !!x && x === y;
+}
+
+function companionRecords(state: GameState): NpcMemory[] {
+  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter(
+    (n): n is string => !!n
+  );
+  const out: NpcMemory[] = [];
+  for (const n of names) {
+    const m = resolveNpcRecord(state, n);
+    if (m && !out.includes(m)) out.push(m);
   }
   return out;
+}
+
+/** 27f — NPCs at the player's place: the record location decides; records not placed yet fall back to sceneFacts.present; companions always. */
+export function presentNpcRecords(state: GameState): NpcMemory[] {
+  const out: NpcMemory[] = [];
+  const seen = new Set<string>();
+  const push = (m: NpcMemory) => {
+    if (seen.has(m.npcId)) return;
+    seen.add(m.npcId);
+    out.push(m);
+  };
+  for (const m of state.npcMemories ?? []) {
+    if (m.location && samePlace(m.location, state.currentLocation)) push(m);
+  }
+  for (const m of recordsForEntries(state, state.sceneFacts?.present ?? [])) {
+    if (!m.location) push(m);
+  }
+  for (const m of companionRecords(state)) push(m);
+  return out;
+}
+
+/** 27f — names of NPC records located at a place. */
+export function npcNamesAt(state: GameState, place: string): string[] {
+  return (state.npcMemories ?? []).filter((m) => samePlace(m.location, place)).map((m) => m.npcName);
+}
+
+/** 27f — New Game: the opening card's NPCs are where the game starts. */
+export function seedOpeningCastLocations(state: GameState): GameState {
+  const ids = new Set(state.openingEstablishment?.castNpcIds ?? []);
+  const here = state.currentLocation;
+  if (!ids.size || !here) return state;
+  return {
+    ...state,
+    npcMemories: (state.npcMemories ?? []).map((m) =>
+      ids.has(m.npcId) && !m.location ? { ...m, location: here } : m
+    ),
+  };
+}
+
+/** 27f — a move: companions go with the player; everyone else present stays where they were. */
+export function stampNpcLocationsOnMove(state: GameState, fromLocation: string, toLocation: string): GameState {
+  const companions = new Set(companionRecords(state).map((m) => m.npcId));
+  const hereBefore = new Set(presentNpcRecords({ ...state, currentLocation: fromLocation }).map((m) => m.npcId));
+  const memories = state.npcMemories ?? [];
+  const next = memories.map((m) => {
+    if (companions.has(m.npcId)) return m.location === toLocation ? m : { ...m, location: toLocation };
+    if (!m.location && hereBefore.has(m.npcId)) return { ...m, location: fromLocation };
+    return m;
+  });
+  return next.every((m, i) => m === memories[i]) ? state : { ...state, npcMemories: next };
 }
 
 export function openingCastRecords(state: GameState): NpcMemory[] {

@@ -12,6 +12,7 @@ import {
 } from './encounterTerminalFsm';
 import { filterClosedScenePersonPads } from './closedScenePerson';
 import { sealedCastNames } from './beatContract';
+import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue';
 import { ledgerNeverCastTitles } from './neverCast';
@@ -217,7 +218,7 @@ export function closedUniverseFallbacks(
     if (parleyAvailable(state.activeEncounter)) out.push('Parley');
   }
   const lastKill = state.sceneFacts?.lastKill;
-  const people = sealedCastNames(state).filter(
+  const people = presentNpcRecords(state).filter(isMetNpc).map((r) => r.npcName).filter(
     (p) => !matchesLastKillName(p, lastKill) && !isLastKillTalkPad(`Talk to ${p}`, lastKill)
   );
   for (const p of people.slice(0, 2)) {

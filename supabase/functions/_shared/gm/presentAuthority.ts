@@ -5,6 +5,7 @@
 
 import type { GameState } from './types.ts';
 import { trimAnonymousRolesOnLocationChange } from './closedScenePerson.ts';
+import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords.ts';
 
 function thornferryClusterCore(s: string): boolean {
   return /\b(mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');
@@ -27,22 +28,25 @@ export function trimPresentOnLocationChange(
   if (locationsEquivalentForPresence(fromLocation, toLocation)) {
     return state.sceneFacts?.present ?? [];
   }
-  const present = state.sceneFacts?.present ?? [];
-  const keepLower = new Set<string>();
-  if (state.companion) keepLower.add(state.companion.toLowerCase());
-  for (const c of state.companions ?? []) {
-    if (c.name) keepLower.add(c.name.toLowerCase());
+  // 27f — rebuild the scene cast from the new place: companions plus NPC records located there. No carry-forward.
+  const companionNames = [state.companion, ...(state.companions ?? []).map((c) => c.name)].filter(
+    (n): n is string => !!n
+  );
+  const out: string[] = [];
+  for (const n of [...companionNames, ...npcNamesAt(state, toLocation)]) {
+    if (!out.some((o) => o.toLowerCase() === n.toLowerCase())) out.push(n);
   }
-  // Opening pins stay in the opening room only — leave must not restore that occupancy.
-
-  return present.filter((p) => keepLower.has(p.toLowerCase()));
+  return out;
 }
 
 export function applyPresentTrimOnTravel(
-  state: GameState,
+  input: GameState,
   fromLocation: string,
   toLocation: string
 ): GameState {
+  const state = locationsEquivalentForPresence(fromLocation, toLocation)
+    ? input
+    : stampNpcLocationsOnMove(input, fromLocation, toLocation);
   const trimmed = trimPresentOnLocationChange(state, fromLocation, toLocation);
   const sameLoc = locationsEquivalentForPresence(fromLocation, toLocation);
   const nextRoles = trimAnonymousRolesOnLocationChange(state, sameLoc);

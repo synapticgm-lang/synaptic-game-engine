@@ -672,13 +672,14 @@ export function buildCompletedEventPacket(
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
-    answerWho: openingCastLabel(state) || undefined,
-    answerWhoQuote:
-      openingSpokenIdentityQuote(openingCastLabel(state), {
-        location: state.currentLocation,
-        engineMode: state.engineMode,
-        state,
-      }) || undefined,
+    answerWho: sceneAnswerWho(state) || undefined,
+    answerWhoQuote: sceneAnswerWho(state)
+      ? openingSpokenIdentityQuote(sceneAnswerWho(state), {
+          location: state.currentLocation,
+          engineMode: state.engineMode,
+          state,
+        }) || undefined
+      : undefined,
     answerWant: openingWantLine(state) || undefined,
     answerStayLeave: openingStayLeaveLine(state) || undefined,
     answerOffer: shortCardOffer(state) || undefined,
@@ -722,6 +723,14 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
     leftBehind: recordsForEntries(state, state.sceneFacts?.leftBehind ?? []).map((r) => r.npcName),
     leftFrom: (state.previousLocationSheet?.name ?? '').replace(/\s+/g, ' ').trim(),
   };
+}
+
+/** Who can answer in this scene: a record present here; the opening role label only when no opening-cast record exists (so a left-behind NPC is never named). */
+function sceneAnswerWho(state: GameState): string {
+  const here = presentNpcRecords(state);
+  if (here.length) return here[0].npcName;
+  if (openingCastRecords(state).length) return '';
+  return openingCastLabel(state);
 }
 
 function listNames(names: string[]): string {
@@ -1927,7 +1936,8 @@ function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: numb
 function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots): string | null {
   const act = packet.playerAction ?? '';
   if (!isHallTalkPlayerLine(act)) return null;
-  const who = (packet.answerWho || slots.who || 'the people who pulled you').trim();
+  const who = (packet.answerWho || slots.who || '').trim();
+  if (!who) return null;
   const want = (packet.answerWant ?? '').trim();
   const asksWhere = hallTalkAsksWhere(act);
   const asksWho = hallTalkAsksWho(act);

@@ -12,7 +12,7 @@ import {
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
-import { presentNpcRecords } from './npcRecords';
+import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { isCatalogFoeTalkForbidden } from './encounterBible';
 import { npcShouldExit } from './npcMemory';
@@ -128,7 +128,7 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
 
   const lastKill = state.sceneFacts?.lastKill;
   if (!excluded.has('talk')) {
-    for (const npc of presentNpcRecords(state).map((r) => r.npcName)) {
+    for (const npc of presentNpcRecords(state).filter(isMetNpc).map((r) => r.npcName)) {
       if (matchesLastKillName(npc, lastKill)) continue;
       if (isCatalogFoeTalkForbidden(state, npc)) continue;
       if (npcShouldExit(state, npc)) continue;

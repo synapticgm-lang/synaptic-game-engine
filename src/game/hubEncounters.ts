@@ -11,6 +11,7 @@ import {
   formatVignetteBindingLine,
   isOpenVignette,
 } from './vignetteLock';
+import { isMetNpc, presentNpcRecords } from './npcRecords';
 
 export type HubBeatKind = 'explore' | 'social' | 'threat' | 'hook';
 
@@ -573,9 +574,10 @@ export function formatHubArrivalForPrompt(state: GameState): string {
 }
 
 export function hubArrivalChoicePads(state: GameState, max = 2): string[] {
+  const metHere = presentNpcRecords(state).filter(isMetNpc).map((r) => r.npcName.toLowerCase());
   const open = state.sceneFacts?.openVignette;
   if (isOpenVignette(open)) {
-    const lead = open.cast[0] ?? 'the contact';
+    const lead = open.cast.find((n) => metHere.includes(n.toLowerCase())) ?? 'the contact';
     const pads = [
       `Talk to ${lead}`,
       open.props[0] ? `Inspect the ${open.props[0]}` : `Press ${lead} on the dispute`,
@@ -590,6 +592,7 @@ export function hubArrivalChoicePads(state: GameState, max = 2): string[] {
     state.openingEstablishment?.complete === false
     || (state.openingEstablishment?.aloneArrival === true && !atMappedHubAfterOpening(state));
   const hints = beat.choiceHints.filter((h) => {
+    if (beat.contactName && h.includes(beat.contactName) && !metHere.includes(beat.contactName.toLowerCase())) return false;
     if (!aloneOpening) return true;
     return beat.kind === 'explore' || !/\b(talk|ask|help|thank|offer|refuse|invite)\b/i.test(h);
   });

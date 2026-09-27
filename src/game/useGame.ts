@@ -319,6 +319,7 @@ import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
+import { seedOpeningCastLocations } from './npcRecords';
 import {
   clearVignetteOnHubLeave,
   openVignetteFromHubBeat,
@@ -5345,7 +5346,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       },
       bible
     );
-    const newState = mergePreferredProfileIntoOpening(
+    const newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
       withUpdatedHookArc(
         ensureCampaignContract(
           {
@@ -5357,7 +5358,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           bible
         )
       )
-    ).state;
+    ).state);
     setState(newState);
     stateRef.current = newState;
     bindSessionImageCache(newState.saveId);

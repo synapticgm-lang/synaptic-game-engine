@@ -75,7 +75,7 @@ describe('playtest31rPyoaSpine', () => {
   it('ChoiceCompiler / choiceEdge offer spine exits; SNAPSHOT + TURN JOB name node', () => {
     const state = thornferryState();
     const edges = enumerateLegalEdges(state);
-    expect(edges.some((e) => /walk the road with wren/i.test(e.label))).toBe(true);
+    expect(edges.some((e) => /walk the road together/i.test(e.label))).toBe(true);
 
     const { choices } = compileChoices(state, ['Wait and watch', 'Look around'], undefined, 'look');
     expect(choices.some((c) => /wren|alone|pell/i.test(c))).toBe(true);

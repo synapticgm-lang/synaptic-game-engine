@@ -1002,6 +1002,8 @@ export interface NpcMemory {
   met?: boolean;
   /** 27d — refreshed at merge time from sceneFacts.present; read-time truth is presentNpcRecords(). */
   present?: boolean;
+  /** 27f — where this NPC is. Seeded at New Game from the opening card; set when left behind; companions move with the player. Read-time presence comes from this (presentNpcRecords). */
+  location?: string;
 }
 
 /** Location sheet — spatial facts for the current zone. */
