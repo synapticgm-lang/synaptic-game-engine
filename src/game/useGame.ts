@@ -303,6 +303,7 @@ import {
 import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
+  applyNamedHubTravel,
   isLeaveSceneAction,
   resolveLeaveSceneDestination,
   mergeHubLandmarks,
@@ -343,7 +344,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
@@ -377,7 +378,7 @@ import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay, applyBiomeSaneQuestSites, revealQuestsFromHubLinks } from './questPlay';
 import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { inferItemType } from './salvage';
-import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere } from './mapEngine';
+import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere, applyGraphExitTravel } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
 import {
   syncToDrive,
@@ -2724,6 +2725,8 @@ export function useGame() {
           stateRef.current = liveCurrent;
         }
       }
+      liveCurrent = applyNamedHubTravel(applyGraphExitTravel(liveCurrent, sanitizedInput), sanitizedInput);
+      stateRef.current = liveCurrent;
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,
       });
@@ -3726,6 +3729,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           !storyHasBody(cleanText)
           || isDroughtStubProse(cleanText)
           || isLastGmReprint(cleanText, lastGmRow)
+          || isUnaskedCombatClose(cleanText, sanitizedInput)
         ) {
           const painted = bookBodyAfterWriterMiss(
             liveCurrent,
@@ -4168,12 +4172,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               })
             : null;
         const destName = travelHub?.name ?? leaveDest;
-        const liveEnc = workingState.activeEncounter ?? liveCurrent.activeEncounter;
-        const fightBlocksTravel =
-          !!liveEnc
-          || encounterBlocksTravel(workingState)
-          || encounterBlocksTravel(liveCurrent);
-        if (destName && !workingState.activeDungeon && !liveCurrent.activeDungeon && !fightBlocksTravel) {
+        if (destName) {
           const fromLoc = liveCurrent.currentLocation;
           finalLocationName = destName;
           cleanText = stampTravelArrivalIfSafe(cleanText, destName, fromLoc, workingState);

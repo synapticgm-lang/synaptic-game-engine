@@ -227,7 +227,14 @@ export function droughtSkirmishTable(state: GameState): string[] {
  * Combat drought gate (02ac). Honors live/pending encounter, lastKill cooldown,
  * and existing engineAllowsCombat — never double-spawns.
  */
-export function shouldSpawnCombat(state: GameState): boolean {
+function playerIsTravelingAway(input: string | undefined): boolean {
+  return /(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:toward|to|for)|go\s+to|i(?:'m| am) going\s+to|walk\s+away|leave the scene|go through)/i.test(
+    input ?? ''
+  );
+}
+
+export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
+  if (playerIsTravelingAway(playerInput)) return false;
   if (!state.openingEstablishment?.complete) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
   if (!engineAllowsCombat(state)) return false;
@@ -453,6 +460,9 @@ function shouldCommitBeat(
         playerInput
       )
     );
+  }
+  if (playerIsTravelingAway(playerInput) && (contract.kind === 'encounter' || contract.spawnEncounter)) {
+    return false;
   }
   if (contract.kind === 'encounter') {
     return true;
@@ -814,7 +824,7 @@ export function runArcDirectorBeforeGm(
 
   let forceDroughtSpawn = false;
   if (
-    shouldSpawnCombat(working)
+    shouldSpawnCombat(working, playerInput)
     && !working.activeEncounter
     && !(contract && contract.kind === 'quest_stage' && shouldCommitBeat(contract, working, playerInput))
   ) {

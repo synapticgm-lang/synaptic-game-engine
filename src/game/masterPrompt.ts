@@ -495,7 +495,7 @@ export function buildMasterPrompt(
 ${CRITICAL_DIRECTIVES}
 
 ═══════════════════════════════════════════════════════════════════════════
- ACTIVE ENGINE MODE: ${state.engineMode.toUpperCase()}
+ ACTIVE ENGINE MODE: ${String(state.engineMode ?? 'rpg').toUpperCase()}
 ═══════════════════════════════════════════════════════════════════════════
 
 ${modeBlock}

@@ -1180,7 +1180,7 @@ export function dungeonHereLabel(dungeonName: string | undefined, nodeName: stri
 export function applyGraphExitTravel<T extends {
   activeDungeon?: ActiveDungeonState | null;
   currentLocation?: string;
-  activeEncounter?: { id?: string } | null;
+  activeEncounter?: unknown;
 }>(state: T, raw: string): T {
   if (state.activeEncounter) return state;
   const hit = matchGraphExitPad(state.activeDungeon, raw);

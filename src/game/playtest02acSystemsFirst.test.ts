@@ -71,6 +71,12 @@ describe('Phase 1: ArcDirector + combat receipts', () => {
     expect(shouldSpawnCombat(systemsState({ turn: 8 }))).toBe(true);
   });
 
+  it('shouldSpawnCombat is false when the player is traveling away', () => {
+    expect(shouldSpawnCombat(systemsState({ turn: 8 }), 'Travel toward Lowmarket')).toBe(false);
+    const travel = runArcDirectorBeforeGm(systemsState(), 'Travel toward Lowmarket');
+    expect(travel.systemReceipts.some((r) => /Encounter:/i.test(r))).toBe(false);
+  });
+
   it('shouldSpawnCombat is false at T7', () => {
     expect(
       shouldSpawnCombat(

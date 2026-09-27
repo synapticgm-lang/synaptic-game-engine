@@ -460,7 +460,7 @@ export function parseTravelDestination(
 export function applyNamedHubTravel<T extends {
   campaignBibleId?: string | null;
   currentLocation?: string;
-  activeEncounter?: { id?: string } | null;
+  activeEncounter?: unknown;
 }>(state: T, raw: string): T {
   const hub = parseTravelDestination(raw, state.campaignBibleId);
   if (!hub) return state;

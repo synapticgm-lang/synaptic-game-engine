@@ -496,18 +496,29 @@ export function repairRejectedBeat(
     const stitch = state.completedEvent
       ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
       : codedSceneMove(state);
+    const settleStall = (t: string) =>
+      /Nothing listed had moved on|The moment at .+ settled|the room(?: at .+)? held its place|You still had the next move|You close with |loot is legal/i.test(
+        t ?? ''
+      );
     const sameAsRejected =
       resort.prose.replace(/\s+/g, ' ').trim() === (prose ?? '').replace(/\s+/g, ' ').trim();
     let move =
       !isDroughtStubProse(resort.prose)
+      && !settleStall(resort.prose)
       && !sameAsRejected
       && !/writer did not return a new beat/i.test(resort.prose)
       && !isAtmosphereOnlyBeat(resort.prose)
         ? resort.prose
-        : !isDroughtStubProse(stitch)
+        : !isDroughtStubProse(stitch) && !settleStall(stitch)
           ? stitch
           : resort.prose;
-    if (isAtmosphereOnlyBeat(move) && stitch && !isDroughtStubProse(stitch) && !isAtmosphereOnlyBeat(stitch)) {
+    if (
+      (isAtmosphereOnlyBeat(move) || settleStall(move))
+      && stitch
+      && !isDroughtStubProse(stitch)
+      && !settleStall(stitch)
+      && !isAtmosphereOnlyBeat(stitch)
+    ) {
       move = stitch;
     }
     const hardEssay =

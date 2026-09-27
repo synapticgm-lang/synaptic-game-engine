@@ -94,6 +94,7 @@ import {
 import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
+  applyNamedHubTravel,
   isLeaveSceneAction,
   resolveLeaveSceneDestination,
   matchHub,
@@ -138,7 +139,8 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { applyGraphExitTravel } from './mapEngine';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import {
   classifyResponsePath,
@@ -1011,6 +1013,7 @@ export async function headlessFateTurn(
   }
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
+  arcState = applyNamedHubTravel(applyGraphExitTravel(arcState, playerInput), playerInput);
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
   arcState = preparedEvent.state;
   const useMud = shouldUseSilentMudTurn({
@@ -1143,6 +1146,7 @@ Do NOT print dice notation or CODE ENFORCED.
       (!useMud && !gmText.trim())
       || isDroughtStubProse(gmText)
       || isLastGmReprint(gmText, lastGmRow)
+      || isUnaskedCombatClose(gmText, playerInput)
     ) {
       const painted = bookBodyAfterWriterMiss(arcState, preparedEvent.packet, playerInput, gmText);
       if (painted.prose && !isDroughtStubProse(painted.prose) && !isLastGmReprint(painted.prose, lastGmRow)) {
@@ -1484,13 +1488,7 @@ Do NOT print dice notation or CODE ENFORCED.
         })
       : null;
   const travelDestName = travelHub?.name ?? leaveDestName;
-  if (
-    travelDestName
-    && !working.activeDungeon
-    && !state.activeDungeon
-    && !encounterBlocksTravel(working)
-    && !encounterBlocksTravel(state)
-  ) {
+  if (travelDestName) {
     working = {
       ...working,
       currentLocation: travelDestName,

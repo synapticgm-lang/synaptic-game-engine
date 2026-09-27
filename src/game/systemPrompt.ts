@@ -402,7 +402,7 @@ Active Side Quests: ${sideQuestStr}
 }
 
 function buildLoreContext(cards: LoreCard[]): string {
-  const summaries = cards.map(c => `[${c.type.toUpperCase()}] ${c.name} — ${c.summary}`).join('\n');
+  const summaries = cards.map(c => `[${String(c.type ?? 'lore').toUpperCase()}] ${c.name} — ${c.summary}`).join('\n');
   return `=== RELEVANT WORLD LORE & TIMELINE MILESTONES ===\n${summaries}\n===================================================`;
 }
 
