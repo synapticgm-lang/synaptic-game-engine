@@ -212,239 +212,6 @@ const LOCATION_REGISTRY_BY_BIBLE: Record<string, string[]> = {
 };
 
 // ============================================================================
-// NPC REGISTRY — All valid NPC names from quests, opening cards, and encounters
-// ============================================================================
-
-/** Summoned Pact NPCs */
-const SUMMONED_PACT_NPCS = [
-  'Pellane', 'King Pellane', 'the Ash King',
-  'Registrar', 'the registrar', 'the official',
-  'Handler', 'the handler',
-  'Sergeant', 'Watch Sergeant', 'Sergeant Dren',
-  'Corporal', 'Corporal Vess',
-  'Fence', 'Lowmarket fence', 'Tomas',
-  'Priest', 'Father Karel',
-  'lost child', 'Jory',
-  'Merchant', 'Contract Hall clerk',
-  'Innkeeper', 'Weighing Cup innkeeper', 'Marren',
-  'Guardian', 'cathedral guardian',
-  'Cook', 'kitchen worker', 'Essa',
-  'Quartermaster', 'war camp quartermaster',
-  'Sentry', 'palace sentry',
-  'Runner', 'courier', 'message runner',
-  'High Chanter Orel Vane', 'Orel Vane', 'Orel',
-  'Captain Sera Quill', 'Sera Quill', 'Sera',
-  'Brother Tam', 'Tam',
-  'Envoy Cinder-Ash', 'Cinder-Ash',
-  'Ilyra Fen', 'Ilyra',
-  'Tekk Reed', 'Tekk',
-  'Nomi Vale', 'Nomi',
-  'Pash Fen', 'Pash',
-  'Brother Oren', 'Oren',
-  'Kessa Cinder', 'Kessa',
-  'Vey Quill', 'Vey',
-  'Marn Holt', 'Marn',
-  'Sula Vane', 'Sula',
-  'Nox Kade', 'Nox',
-  'Rell Iron', 'Rell',
-  'Ado Ferry', 'Ado',
-  'Jiin Vale', 'Jiin',
-  'Varra Linen', 'Varra',
-  'Caldrin Hollow', 'Caldrin',
-  'Orr Hollow', 'Orr',
-  'Osa Hollow', 'Osa',
-  'Yara Quill', 'Yara',
-  'Kade Voss', 'Kade',
-  'Nemi Salt', 'Nemi',
-  'Senn Vale', 'Senn',
-  'Aster Wren', 'Aster',
-  'Maelis Curate', 'Maelis',
-  'Jor Stone', 'Jor',
-  'Fia Lamp', 'Fia',
-  'Hev Ash', 'Hev',
-  'Tolan Reed', 'Tolan',
-  'Sere Vhal', 'Sere',
-  'Soren Vale', 'Soren',
-  'Mira Flint', 'Mira Flint',
-  'Harker Vale', 'Harker',
-  'Rook Fen', 'Rook',
-  'Fenn Lark', 'Fenn',
-  'Asha Rune', 'Asha',
-  'Kell Ward', 'Kell',
-  'Pip Aster', 'Pip',
-];
-
-/** Hero Awakening NPCs */
-const HERO_AWAKENING_NPCS = [
-  'Auditor', 'MCA auditor', 'Auditor Lin',
-  'Pax Orr', 'fence', 'Pax',
-  'Crew Lead', 'crew leader', 'Ashline lead',
-  'Healer', 'Ward Rest healer', 'Mira',
-  'Delver', 'fellow delver', 'Kael',
-  'Cartel Agent', 'Vesper agent', 'Senna',
-  'Merchant', 'market vendor',
-  'Scout', 'guild scout', 'Renn',
-  'Watch Captain', 'wall captain', 'Tovar',
-  'Researcher', 'archive researcher', 'Solenne',
-  'Handler', 'the handler',
-];
-
-/** System Integration NPCs */
-const SYSTEM_INTEGRATION_NPCS = [
-  'System', 'the System',
-  'Handler', 'the handler',
-  'Yusuf Okafor', 'Yusuf', 'Okafor',
-  'Broker', 'intel broker',
-  'Wave Survivor', 'survivor', 'Mara',
-  'Guard Captain', 'stronghold captain', 'Jin',
-  'Researcher', 'System researcher',
-  'Merchant', 'crystal trader',
-  'Scout', 'corridor scout', 'Dren',
-];
-
-/** Gatebreak Ward NPCs */
-const GATEBREAK_WARD_NPCS = [
-  'Sergeant Rill', 'Rill', 'militia sergeant',
-  'Vex', 'guild hunter', 'Hunter Vex',
-  'Shelter Clerk', 'Ward 9 clerk',
-  'Scrap Merchant', 'scrap dealer',
-  'Night Watch', 'watch sentry', 'Torin',
-  'Armband Officer', 'depot officer',
-  'Evacuee', 'shelter evacuee', 'Mara',
-  'Guild Scout', 'hunter scout',
-];
-
-/** Ascending Spire NPCs */
-const ASCENDING_SPIRE_NPCS = [
-  'Gatekeeper', 'Spire gatekeeper',
-  'Board Officer', 'ranking officer',
-  'Map Broker', 'intel broker', 'Venn',
-  'Rival Climber', 'guild rival', 'Kael',
-  'Floor Warden', 'Floor 1 warden',
-  'Merchant', 'Spire merchant',
-  'Camp Leader', 'climber leader', 'Senna',
-  'Coin Trader', 'exchange trader',
-];
-
-/** Fabled Legacy NPCs */
-const FABLED_LEGACY_NPCS = [
-  'Marta', 'blacksmith Marta', 'the smith',
-  'Father Aldous', 'Aldous', 'village priest',
-  'Fen', 'baker Fen',
-  'Innkeeper', 'Crooked Beam keeper', 'Torin',
-  'Miller', 'mill worker', 'Vess',
-  'Stranger', 'wounded stranger', 'Kael',
-  'Elder', 'village elder', 'Mira',
-  'Chapel Keeper', 'menhir keeper',
-];
-
-/** Inkbound Academy NPCs */
-const INKBOUND_ACADEMY_NPCS = [
-  'Dean Solenne', 'Solenne', 'the dean',
-  'House Rival', 'rival student', 'Venn',
-  'Atelier Master', 'ink master', 'Professor Lin',
-  'Librarian', 'stack librarian', 'Oren',
-  'Duel Partner', 'courtyard rival', 'Kael',
-  'Roommate', 'dorm roommate', 'Mara',
-  'Discipline Officer', 'dean officer',
-];
-
-/** Void Audience NPCs */
-const VOID_AUDIENCE_NPCS = [
-  'The Auditor', 'Auditor', 'void negotiator',
-  'Pellara', 'innkeeper Pellara',
-  'Caster Drenn', 'Drenn', 'Node caster',
-  'Kael', 'Reborn Kael', 'trial peer',
-  'Scout Solenne', 'Solenne', 'academy scout',
-  'The Gallery', 'Gallery entity',
-  'Spectator', 'Audience spectator',
-  'Resonance Judge', 'stage judge',
-];
-
-/** Hollow Core NPCs */
-const HOLLOW_CORE_NPCS = [
-  'Whisper-Mite', 'spawn advisor', 'the Mite',
-  'Bren', 'guild hunter', 'Hunter Bren',
-  'Adventurer', 'visiting adventurer', 'Kael',
-  'Rival Core', 'neighboring core', 'Core Vex',
-  'Bargain Delegate', 'delegation speaker',
-  'Spawn', 'defender spawn',
-];
-
-/** Dungeon Transport NPCs */
-const DUNGEON_TRANSPORT_NPCS = [
-  'Scratch', 'Cave Imp Scratch', 'imp guide',
-  'Kira', 'delver Kira', 'log writer',
-  'Wandering Merchant', 'dungeon merchant',
-  'Gatekeeper Boss', 'boss entity',
-  'Fellow Delver', 'party delver', 'Venn',
-  'Rest Shrine Keeper', 'shrine keeper',
-];
-
-/** Cursed Keep NPCs */
-const CURSED_KEEP_NPCS = [
-  'Father Aldous', 'Aldous', 'village priest',
-  'Mira', 'apothecary Mira', 'the apothecary',
-  'Innkeeper', 'Greyhollow keeper', 'Torin',
-  'Gravedigger', 'village gravedigger', 'Vess',
-  'Keep Guardian', 'cursed guardian',
-  'Traveler', 'fellow traveler', 'Kael',
-  'Dain Holt', 'Dain', 'Captain Dain',
-  'Elara Moss', 'Elara',
-  'Bram Coyle', 'Bram',
-  'Oskar', 'Greta', 'Helga Brask', 'Helga',
-];
-
-/** Salt Road Heist NPCs */
-const SALT_ROAD_HEIST_NPCS = [
-  'Vessa', 'safehouse Vessa', 'bolt-hole keeper',
-  'Consul Guard', 'caravan guard', 'Captain Torin',
-  'Harbor Fence', 'fence', 'coast buyer',
-  'Bribe Dealer', 'market dealer',
-  'Checkpoint Officer', 'gate officer',
-  'Caravan Driver', 'wagon driver',
-  'Fellow Thief', 'heist partner', 'Senna',
-  'Yara Flint', 'Yara',
-  'Gideon Ash', 'Gideon',
-];
-
-/** Shattered Coast NPCs */
-const SHATTERED_COAST_NPCS = [
-  'Sentinel', 'Compact sentinel', 'Captain Vess',
-  'Harbor Master', 'Lower Ward master', 'Torin',
-  'Merchant', 'Middle Ward merchant',
-  'Guild Officer', 'Upper Ward officer', 'Mira',
-  'Lift Operator', 'Great Lift operator',
-  'Fisher', 'Brinewatch fisher', 'Kael',
-  'Keep Warden', 'salt keep warden',
-  'Quarry Foreman', 'Stonevein foreman', 'Dren',
-  'Nessa Crow', 'Nessa',
-];
-
-const NPC_REGISTRY_BY_BIBLE: Record<string, string[]> = {
-  'summoned-pact': SUMMONED_PACT_NPCS,
-  'hero-awakening': HERO_AWAKENING_NPCS,
-  'system-integration': SYSTEM_INTEGRATION_NPCS,
-  'gatebreak-ward': GATEBREAK_WARD_NPCS,
-  'ascending-spire': ASCENDING_SPIRE_NPCS,
-  'fabled-legacy': FABLED_LEGACY_NPCS,
-  'inkbound-academy': INKBOUND_ACADEMY_NPCS,
-  'void-audience': VOID_AUDIENCE_NPCS,
-  'hollow-core': HOLLOW_CORE_NPCS,
-  'dungeon-transport': DUNGEON_TRANSPORT_NPCS,
-  'cursed-keep': CURSED_KEEP_NPCS,
-  'salt-road-heist': SALT_ROAD_HEIST_NPCS,
-  'shattered-coast': SHATTERED_COAST_NPCS,
-  'thornferry-road': [
-    'Wren Holt', 'Wren',
-    'Nedda Mill', 'Nedda',
-    'Magistrate Pell', 'Pell',
-    'Tomas Reed', 'Tomas',
-    'Orin Quill', 'Orin',
-  ],
-};
-
-// ============================================================================
 // COMMON ENTITIES — Roles and generic NPCs that appear across all campaigns
 // ============================================================================
 
@@ -488,10 +255,14 @@ export function isTitlePlusGiven(name: string): boolean {
   );
 }
 
-function isRegistryProperName(name: string, bibleId?: string | null): boolean {
+function isRegistryProperName(
+  name: string,
+  _bibleId?: string | null,
+  knownNames?: readonly string[]
+): boolean {
   const t = (name ?? '').trim();
-  if (!t || !bibleId) return false;
-  const campaignNpcs = NPC_REGISTRY_BY_BIBLE[bibleId] ?? [];
+  if (!t) return false;
+  const campaignNpcs = knownNames ?? [];
   const hit = (needle: string) =>
     campaignNpcs.find((n) => n.toLowerCase() === needle.toLowerCase());
   const match = hit(t);
@@ -547,7 +318,11 @@ export function isHubContactProperName(name: string): boolean {
  * Lock B — only proper names / hub contacts may enter present[] or CAST named[].
  * COMMON_NPCS and pad-harvested role tokens stay anonymous.
  */
-export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): boolean {
+export function canHarvestAsNamedPerson(
+  name: string,
+  bibleId?: string | null,
+  knownNames?: readonly string[]
+): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 2) return false;
   // 08d — pad-fragment harvest (Saying Your / Your Name)
@@ -560,9 +335,9 @@ export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): 
   if (isHubRoleCompoundToken(t)) return false;
   if (isBareHonorificTitle(t)) return false;
   if (isCommonRoleNpc(t) && !isHubContactProperName(t)) return false;
-  if (isTitlePlusGiven(t)) return isRegistryProperName(t, bibleId);
+  if (isTitlePlusGiven(t)) return isRegistryProperName(t, bibleId, knownNames);
   if (isHubContactProperName(t)) return true;
-  if (isRegistryProperName(t, bibleId)) return true;
+  if (isRegistryProperName(t, bibleId, knownNames)) return true;
   return false;
 }
 
@@ -570,25 +345,12 @@ export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): 
  * Check if a name is a registered NPC for the given campaign.
  * Includes common role nouns (for prose matching) — use canHarvestAsNamedPerson for CAST/harvest.
  */
-export function isRegisteredNpc(name: string, bibleId?: string | null): boolean {
+export function isRegisteredNpc(name: string, _bibleId?: string | null): boolean {
   if (!name || name.length < 2) return false;
   
   const normalized = name.trim().toLowerCase();
   
-  // Check common NPCs first
-  if (COMMON_NPCS.some(n => n.toLowerCase() === normalized)) {
-    return true;
-  }
-  
-  // Check campaign-specific NPCs
-  if (bibleId) {
-    const campaignNpcs = NPC_REGISTRY_BY_BIBLE[bibleId] ?? [];
-    if (campaignNpcs.some(n => n.toLowerCase() === normalized)) {
-      return true;
-    }
-  }
-  
-  return false;
+  return COMMON_NPCS.some(n => n.toLowerCase() === normalized);
 }
 
 /**
@@ -639,9 +401,8 @@ export function isRegisteredEntity(
 /**
  * Get all registered NPCs for a campaign (for debugging / testing).
  */
-export function getRegisteredNpcs(bibleId?: string | null): string[] {
-  const campaignNpcs = bibleId ? (NPC_REGISTRY_BY_BIBLE[bibleId] ?? []) : [];
-  return [...COMMON_NPCS, ...campaignNpcs];
+export function getRegisteredNpcs(_bibleId?: string | null): string[] {
+  return [...COMMON_NPCS];
 }
 
 /**

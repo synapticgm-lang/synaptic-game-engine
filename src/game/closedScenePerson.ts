@@ -8,6 +8,7 @@
 import type { GameState } from './types';
 import { canHarvestAsNamedPerson, isCommonRoleNpc, isHubContactProperName, isTitlePlusGiven } from './entityRegistry';
 import { resolveHubArrival } from './hubEncounters';
+import { npcRecordNames } from './npcRecords';
 import { isPyoaCharterClosed } from './pyoaBranchLedger';
 import { locationChangedRecently } from './sceneContextTail';
 
@@ -130,7 +131,7 @@ export function isInventedNamedIdentity(state: GameState, text: string): boolean
   while ((m = re.exec(body))) {
     const name = (m[1] ?? '').trim();
     if (!name || !isTitlePlusGiven(name)) continue;
-    if (canHarvestAsNamedPerson(name, bibleId)) continue;
+    if (canHarvestAsNamedPerson(name, bibleId, npcRecordNames(state))) continue;
     if (occupancyHasName(state, name)) continue;
     const after = body.slice(m.index + name.length, m.index + name.length + 36);
     const before = body.slice(Math.max(0, m.index - 8), m.index);

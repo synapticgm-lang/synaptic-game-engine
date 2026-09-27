@@ -19,6 +19,7 @@ export interface KeyNPC {
   disposition: 'friendly' | 'neutral' | 'hostile' | 'ambiguous';
   description: string;
   hooks: string[];
+  aliases?: string[];
 }
 
 /** One possible murderer. Code picks one at New Game; the writer must honor the stamp. */
@@ -36,6 +37,7 @@ export interface StarterQuest {
   recommendedLevel: number;
   objectives: string[];
   rewards: string;
+  type?: 'main' | 'side' | 'faction';
 }
 
 export type OpeningPromptKind = 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';
@@ -65,6 +67,8 @@ export interface OpeningBeatCard {
   text?: string;
   /** Short grammatical scene if page1 is missing. */
   fallback?: string;
+  /** 27d — ids of keyNPCs named in faction/page1. */
+  castNpcIds?: string[];
 }
 
 /** One New Game opener. Strings are ingredients; objects may also move the camera. */
@@ -121,6 +125,12 @@ export interface CampaignBible {
    * that are written as NSFW — do not mark other PYOA by default.
    */
   nsfw?: boolean;
+  /**
+   * Store-style floor (PEGI-like). 16+ and 18+ stay out of Kid Mode.
+   * Show a 16+ / 18+ chip. Not the same as `nsfw` (sex) — violence can be 16
+   * without an NSFW chip. Unset = no age chip, Kid Mode may still list it.
+   */
+  ageRating?: 12 | 16 | 18;
   /** Copyright / license note for creators (never copy closed IP). */
   licenseNote?: string;
   loreSnippets: LoreSnippet[];

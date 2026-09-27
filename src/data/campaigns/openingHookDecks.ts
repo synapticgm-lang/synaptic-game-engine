@@ -271,6 +271,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'Greyhollow churchyard',
       faction: 'Father Aldous',
+      castNpcIds: ['ck-npc-1'],
       summonIntent: 'Father Aldous wants to know if you are the face from his dream.',
       openingCost: 'The opened graves stay open. He will not walk you back to the coach.',
       page1:
@@ -311,6 +312,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'Greyhollow well at midnight',
       faction: 'Father Aldous',
+      castNpcIds: ['ck-npc-1'],
       summonIntent: 'Aldous wants to know what answered from the shaft.',
       openingCost: 'The inn lights stay a rumor uphill if you refuse him.',
       page1:
@@ -532,6 +534,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'the mill landing at Thornferry',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1'],
       summonIntent: 'Wren wants you on the road with the charter, or they walk it alone.',
       openingCost: 'Refuse and Wren walks alone. The ferry rope keeps pulling without you.',
       page1:
@@ -542,6 +545,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'the ferry inn at Thornferry',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1', 'tf-npc-3'],
       summonIntent: "Wren wants a partner on the charter before Pell's coin decides.",
       openingCost: 'The oak door is at your back. You can still walk away and leave Wren the road.',
       page1:
@@ -552,6 +556,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'the ford below Thornferry',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1'],
       summonIntent: 'Wren wants help across the ford with the charter.',
       openingCost: "Refuse and you are the problem that gets you killed. The magistrate's man is already on the far bank.",
       page1:
@@ -562,6 +567,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'Thornferry chapel stoop',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1'],
       summonIntent: 'Wren wants your name on the writ.',
       openingCost: 'The oak doors stay shut. The road does not care about hymns.',
       page1:
@@ -572,6 +578,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'a side-path off Thornferry Road',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1', 'tf-npc-3'],
       summonIntent: 'Wren still wants the partnership answered.',
       openingCost: 'Pell still holds the coin. Heavy feet are already in the undergrowth.',
       page1:
@@ -582,6 +589,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'Thornferry mill at last light',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1'],
       summonIntent: 'Wren wants the ford in the dark, or the mill until dawn.',
       openingCost: 'The ferry is not coming. Wait alone and the river still moves.',
       page1:
@@ -592,6 +600,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'the magistrate’s porch at Thornferry',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1'],
       summonIntent: 'The clerk wants your name for the writ before anyone walks the road.',
       openingCost: 'Refuse the name and the mill stays a rumor. Wren still has the charter.',
       page1:
@@ -602,6 +611,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'the mill loft before Wren finds you',
       faction: 'Wren Holt',
+      castNpcIds: ['tf-npc-1'],
       summonIntent: 'Wren wants you to walk together, or they walk it alone.',
       openingCost: 'Refuse and Wren takes the landing question without you.',
       page1:
@@ -942,6 +952,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'a Salt Road tavern hire',
       faction: 'Vessa',
+      castNpcIds: ['salt-road-heist-npc-1'],
       summonIntent: 'Vessa wants a cutter and a name she can use.',
       openingCost: 'The watch is already in the door. She can leave you to them.',
       page1:
@@ -972,6 +983,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
       location: 'a salt-pan camp at dawn',
       faction: 'Vessa',
+      castNpcIds: ['salt-road-heist-npc-1'],
       summonIntent: 'The cutter wants to hear if you lead, cut, or walk.',
       openingCost: 'Walk and the crew goes on without you.',
       page1:

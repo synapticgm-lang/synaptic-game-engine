@@ -53,6 +53,7 @@ export function makeBible(opts: {
       disposition: n.disposition,
       description: n.description,
       hooks: n.hooks,
+      ...(n.aliases ? { aliases: n.aliases } : {}),
     })),
     starterQuests: opts.quests.map((q, i) => ({
       id: q.id ?? `${p}-quest-${i + 1}`,

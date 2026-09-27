@@ -19,6 +19,7 @@ import {
   type LastKill,
 } from './combatAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames } from './npcRecords';
 import { sealedCastNames } from './beatContract';
 import { ledgerSheetLine } from './litrpgSystemWindow';
 import { isNeverCastTitle } from './neverCast';
@@ -626,7 +627,7 @@ export function buildCompletedEventPacket(
   const witnesses = realPresentPeople(state.sceneFacts?.present ?? []).filter(
     (n) =>
       !matchesLastKillName(n, kill)
-      && canHarvestAsNamedPerson(n, bibleIdOf(state))
+      && canHarvestAsNamedPerson(n, bibleIdOf(state), npcRecordNames(state))
       && !isNeverCastTitle(n, state)
   );
   const allowExtras: string[] = [];

@@ -120,6 +120,7 @@ Do not name distant capitals until the road actually reaches them. Unique story 
     {
       id: 'tf-npc-1',
       name: 'Wren Holt',
+      aliases: ['Wren'],
       role: 'Charter courier, optional companion',
       disposition: 'ambiguous',
       description: 'Tired, dry humor, keeps the charter close. Will walk with the player or against them. Never a silent pack mule.',
@@ -128,6 +129,7 @@ Do not name distant capitals until the road actually reaches them. Unique story 
     {
       id: 'tf-npc-2',
       name: 'Nedda Mill',
+      aliases: ['Nedda'],
       role: 'Miller',
       disposition: 'friendly',
       description: 'Flour on her sleeves. Wants the charter local. Will feed you; will not forgive a sale to Pell without a fight of words.',
@@ -136,6 +138,7 @@ Do not name distant capitals until the road actually reaches them. Unique story 
     {
       id: 'tf-npc-3',
       name: 'Magistrate Pell',
+      aliases: ['Pell'],
       role: 'Highmark’s voice',
       disposition: 'neutral',
       description: 'Polite, paid, patient. Offers coin and protection for the charter. Betrayal of the mill is a business hour to Pell.',

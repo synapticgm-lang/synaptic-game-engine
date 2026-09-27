@@ -638,6 +638,7 @@ export function buildNewGameState(opts: {
       pickedHookFallback: picked?.page1 || picked?.fallback,
       aloneArrival,
       hookLock: seedHookLockFromPickedHook(picked?.text, picked?.fallback, 0),
+      castNpcIds: picked?.castNpcIds ?? [],
     },
     gmPersonality: voices.gmPersonality,
     systemPersonality: voices.systemPersonality,

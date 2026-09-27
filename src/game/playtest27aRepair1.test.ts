@@ -14,11 +14,45 @@ import { compileGraphChoiceLabels } from './graphChoices';
 import { sealedCastNames } from './beatContract';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { ledgerSheetLine } from './litrpgSystemWindow';
-import { openingCastLabel } from './openingEstablishment';
+import { openingCastLabel, resolveOpeningHookPick } from './openingEstablishment';
 import { applyCardCrowdToFacts } from './openingPointerCard';
 import { craftProgressionPolicy } from './craftBookCompiler';
 import { compileChoices } from './choiceCompiler';
+import { seedStateFromCampaignBible } from './campaignSeed';
+import { getCampaignBibleById } from '@/data/campaigns';
+import type { CampaignBible } from '@/data/campaigns/types';
 import type { GameState, LogEntry } from './types';
+
+/** First seed whose New Game card pick names `npcId`, the same picker useGame / fateAutoplay use. */
+function seedPickingCast(bible: CampaignBible, npcId: string) {
+  for (let i = 0; i < 500; i++) {
+    const seed = String(i);
+    const picked = resolveOpeningHookPick(bible, seed);
+    if (picked?.castNpcIds?.includes(npcId)) return { seed, picked };
+  }
+  throw new Error(`no opening card for ${npcId} on ${bible.id}`);
+}
+
+/** New Game shape: bible roster records seeded, castNpcIds from the picked card. */
+function newGameBase(bibleId: string, npcId: string, storyName: string): GameState {
+  const bible = getCampaignBibleById(bibleId)!;
+  const { seed, picked } = seedPickingCast(bible, npcId);
+  const seeded = seedStateFromCampaignBible(
+    { ...createInitialState(storyName, 'litrpg'), seed },
+    bible
+  );
+  return {
+    ...seeded,
+    openingEstablishment: {
+      pending: [],
+      answers: {},
+      complete: true,
+      pickedHook: picked.text,
+      pickedHookFallback: picked.page1 || picked.fallback,
+      castNpcIds: picked.castNpcIds ?? [],
+    },
+  };
+}
 
 const PRIOR =
   'Brother Oren and tracker Kessa Cinder answer you. "They finished a tracking-rite on the ash road and found you in the ash."';
@@ -28,7 +62,7 @@ function gm(id: string, turn: number, content: string): LogEntry {
 }
 
 function pactState(over: Partial<GameState> = {}): GameState {
-  const base = createInitialState('The Summoned Pact', 'litrpg');
+  const base = newGameBase('summoned-pact', 'sp-npc-9', 'The Summoned Pact');
   return {
     ...base,
     campaignBibleId: 'summoned-pact',
@@ -45,6 +79,7 @@ function pactState(over: Partial<GameState> = {}): GameState {
       aloneArrival: false,
       pickedHook:
         'Location: Cinderwake Trail\nWho is here / who summoned: Brother Oren and tracker Kessa Cinder\nWhy this happened: they finished a tracking-rite on the ash road.',
+      castNpcIds: base.openingEstablishment?.castNpcIds ?? [],
     },
     sceneFacts: { ...emptySceneFacts(11), present: [], indoor: false },
     log: [gm('g2', 2, PRIOR)],
@@ -153,7 +188,15 @@ describe('27c tidy-ups', () => {
     const cast = openingCastLabel(s);
     if (cast) expect(line).not.toContain(cast);
 
-    const salt = pactState({ campaignBibleId: 'salt-road-heist', turn: 0 });
+    const saltBase = newGameBase('salt-road-heist', 'salt-road-heist-npc-1', 'Salt Road');
+    const salt = pactState({
+      ...saltBase,
+      campaignBibleId: 'salt-road-heist',
+      turn: 0,
+      openingEstablishment: { ...saltBase.openingEstablishment!, sceneWritten: true },
+      sceneFacts: { ...emptySceneFacts(0), present: [], indoor: false },
+      log: [],
+    });
     expect(openingCastLabel(salt)).toBe('Vessa');
     const facts = applyCardCrowdToFacts(salt, { ...emptySceneFacts(0), present: [] });
     expect(facts.present).toContain('Vessa');

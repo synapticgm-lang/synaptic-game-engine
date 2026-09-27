@@ -249,6 +249,7 @@ Do not name Quiet Hands leadership or the second residue until earned. Unique st
     {
       id: 'ha-npc-2',
       name: 'Lin Vos',
+      aliases: ['Auditor Lin'],
       role: 'MCA Auditor',
       disposition: 'ambiguous',
       description:
@@ -262,6 +263,7 @@ Do not name Quiet Hands leadership or the second residue until earned. Unique st
     {
       id: 'ha-npc-3',
       name: 'Pax “Penny” Orr',
+      aliases: ['Pax Orr', 'Pax'],
       role: 'Fence, Vesper-adjacent',
       disposition: 'ambiguous',
       description:
@@ -311,6 +313,12 @@ Do not name Quiet Hands leadership or the second residue until earned. Unique st
         'Hint that a second ledger exists in the region',
       ],
     },
+    { id: 'ha-npc-mira', name: 'Mira', role: 'healer', disposition: 'neutral', description: 'Ward Rest healer', hooks: [], aliases: [] },
+    { id: 'ha-npc-kael', name: 'Kael', role: 'delver', disposition: 'neutral', description: 'Fellow delver', hooks: [], aliases: [] },
+    { id: 'ha-npc-senna', name: 'Senna', role: 'cartel agent', disposition: 'neutral', description: 'Vesper agent', hooks: [], aliases: [] },
+    { id: 'ha-npc-renn', name: 'Renn', role: 'scout', disposition: 'neutral', description: 'Guild scout', hooks: [], aliases: [] },
+    { id: 'ha-npc-tovar', name: 'Tovar', role: 'watch captain', disposition: 'neutral', description: 'Wall captain', hooks: [], aliases: [] },
+    { id: 'ha-npc-solenne', name: 'Solenne', role: 'researcher', disposition: 'neutral', description: 'Archive researcher', hooks: [], aliases: [] },
   ],
 
   starterQuests: [

@@ -88,6 +88,8 @@ const FILES = [
   'outdoorHubs.ts',
   'hubEncounters.ts',
   'pyoaSpine.ts',
+  'npcRecords.ts',
+  'writerInfoLayer.ts',
   'openRouterChat.ts',
 ];
 

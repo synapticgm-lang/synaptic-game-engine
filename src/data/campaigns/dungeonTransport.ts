@@ -91,6 +91,7 @@ export const dungeonTransport: CampaignBible = {
     {
       id: 'dt-npc-2',
       name: 'Scratch',
+      aliases: ['Cave Imp Scratch'],
       role: 'Floor 2 Resident, Sentient Creature',
       disposition: 'ambiguous',
       description:
@@ -104,6 +105,7 @@ export const dungeonTransport: CampaignBible = {
     {
       id: 'dt-npc-3',
       name: 'Delver Kira (Descent Log)',
+      aliases: ['Kira', 'delver Kira'],
       role: 'Previous Delver, Status Unknown',
       disposition: 'friendly',
       description:
@@ -153,6 +155,7 @@ export const dungeonTransport: CampaignBible = {
         'Endgame hook: the voice\'s identity is tied to the Spire\'s ultimate secret',
       ],
     },
+    { id: 'dt-npc-venn', name: 'Venn', role: 'delver', disposition: 'neutral', description: 'Party delver', hooks: [], aliases: [] },
   ],
 
   starterQuests: [

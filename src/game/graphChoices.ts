@@ -14,6 +14,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { realPresentPeople } from './chromeAuthority';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { isCatalogFoeTalkForbidden } from './encounterBible';
 import { npcShouldExit } from './npcMemory';
@@ -130,8 +131,15 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
 
   const lastKill = state.sceneFacts?.lastKill;
   if (!excluded.has('talk')) {
+    const knownNames = npcRecordNames(state);
+    const talkNames = presentNpcRecords(state).map((r) => r.npcName);
     for (const npc of realPresentPeople(state.sceneFacts?.present ?? [])) {
-      if (!canHarvestAsNamedPerson(npc, bibleId)) continue;
+      if (resolveNpcRecord(state, npc)) continue;
+      if (/\s(?:and|&)\s|&|,/i.test(npc)) continue;
+      if (!canHarvestAsNamedPerson(npc, bibleId, knownNames)) continue;
+      if (!talkNames.some((n) => n.toLowerCase() === npc.toLowerCase())) talkNames.push(npc);
+    }
+    for (const npc of talkNames) {
       if (matchesLastKillName(npc, lastKill)) continue;
       if (isCatalogFoeTalkForbidden(state, npc)) continue;
       if (npcShouldExit(state, npc)) continue;

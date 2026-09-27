@@ -93,8 +93,8 @@ function saltFenReed(over: Partial<GameState> = {}): GameState {
 
 describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
   it('HUD/BUILD are 18b, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-27c');
-    expect(BUILD_STAMP).toBe('2026-09-27c');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-27d');
+    expect(BUILD_STAMP).toBe('2026-09-27d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

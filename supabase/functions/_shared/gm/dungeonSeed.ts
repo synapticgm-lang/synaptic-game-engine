@@ -280,11 +280,31 @@ export function mergeSheetWithNode(
  * never invent a different tier.
  */
 export function formatHiddenRoomLedger(
-  dungeon: ActiveDungeonState | null | undefined
+  dungeon: ActiveDungeonState | null | undefined,
+  opts?: { factsOnly?: boolean }
 ): string {
   const node = currentDungeonNode(dungeon);
   if (!dungeon || !node?.hidden) return '';
   const h = node.hidden;
+  if (opts?.factsOnly) {
+    const facts: string[] = [`Room: ${node.name}`];
+    for (const loot of h.lootables) {
+      facts.push(`- ${loot.label}: ${loot.opened ? 'opened' : 'closed'} (${loot.loot.rarity})`);
+    }
+    for (const trap of h.traps) {
+      if (!trap.revealed) continue;
+      facts.push(`- Trap (${trap.skillHint}): ${trap.disarmed ? 'disarmed' : 'armed'}`);
+    }
+    for (const secret of h.secrets) {
+      if (!secret.revealed) continue;
+      facts.push(`- Found: ${secret.clue ?? secret.id}`);
+    }
+    for (const mob of h.mobs) {
+      if (!mob.spawned || mob.defeated) continue;
+      facts.push(`- ${mob.name} (${mob.role} L${mob.level})`);
+    }
+    return facts.length > 1 ? facts.join('\n') : '';
+  }
   const lines: string[] = [
     `HIDDEN ROOM LEDGER @ ${node.name} (ENGINE AUTHORITY — narrate when revealed; do not invent alternate loot tiers, traps, or bosses):`,
   ];

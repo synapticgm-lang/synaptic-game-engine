@@ -16,6 +16,7 @@ import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger.ts'
 import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue.ts';
 import { ledgerNeverCastTitles } from './neverCast.ts';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority.ts';
+import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment.ts';
 
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
@@ -210,7 +211,7 @@ export function closedUniverseFallbacks(
     isEncounterEngaged(state) ||
     !!state.activeEncounter ||
     !!state.sceneFacts?.pendingEncounter;
-  if (live) {
+  if (live && !shouldStarveCombatPadsOnCover(state)) {
     out.push('Press the attack');
     if (fleeAvailable(state.activeEncounter)) out.push('Try to flee');
     if (parleyAvailable(state.activeEncounter)) out.push('Parley');
@@ -225,23 +226,13 @@ export function closedUniverseFallbacks(
     else out.push(`Ask ${p} what they want`);
   }
   const banks = people.length
-    ? [
-        people[0] ? `Talk to ${people[0]}` : 'Ask a direct question',
-        'Take a stake in what is unfolding',
-        'Inspect the immediate surroundings',
-      ]
-    : [
-        'Ask a direct question',
-        'Press for leverage',
-        'Listen for the real answer',
-        'Take a stake in what is unfolding',
-        'Inspect the immediate surroundings',
-      ];
+    ? [`Talk to ${people[0]}`, 'Inspect the immediate surroundings']
+    : ['Inspect the immediate surroundings'];
   for (const pad of banks) {
     if (!out.some((c) => c.toLowerCase() === pad.toLowerCase())) out.push(pad);
   }
   const kept = filterPadsByUniverse(out, excluded, state).filter(
-    (p) => !isLastKillTalkPad(p, lastKill)
+    (p) => !isLastKillTalkPad(p, lastKill) && (!shouldStarveCombatPadsOnCover(state) || !isCombatFamilyPad(p))
   );
   if (kept.length) return kept;
   return ['Inspect the immediate surroundings'];

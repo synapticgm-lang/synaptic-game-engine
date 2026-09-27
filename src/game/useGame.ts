@@ -5294,6 +5294,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         pickedHookFallback,
         aloneArrival,
         hookLock: seededHookLock,
+        castNpcIds: picked?.castNpcIds ?? [],
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,

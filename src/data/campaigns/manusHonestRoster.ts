@@ -7,12 +7,12 @@ import type { CampaignBible, KeyNPC, StarterQuest } from './types';
  */
 
 export const MANUS_SP_NPCS: KeyNPC[] = [
-  { id: 'sp-npc-35', name: 'Harker Vale', role: 'merchant', disposition: 'ambiguous', description: 'Harbor hold broker. Sells dry papers and wet lies.', hooks: ['Buy a hold stamp', 'Ask who paid last'] },
-  { id: 'sp-npc-36', name: 'Rook Fen', role: 'informant', disposition: 'neutral', description: 'Reed-side watcher who sells which reflection is a trap.', hooks: ['Buy a true path', 'Warn of a false-step'] },
-  { id: 'sp-npc-37', name: 'Fenn Lark', role: 'merchant', disposition: 'friendly', description: 'Lowmarket stall with Earth junk that is actually Earth junk.', hooks: ['Buy a tonic', 'Refuse a fake blessing'] },
-  { id: 'sp-npc-38', name: 'Asha Rune', role: 'guide', disposition: 'neutral', description: 'Reliquary novice who still believes doctrine can be kind.', hooks: ['Ask the novice door', 'Hide a guest'] },
-  { id: 'sp-npc-39', name: 'Kell Ward', role: 'gatekeeper', disposition: 'neutral', description: 'West Wall levy clerk who counts names, not prayers.', hooks: ['Pass the stair', 'Pay a levy lie'] },
-  { id: 'sp-npc-40', name: 'Pip Aster', role: 'witness', disposition: 'friendly', description: 'Kitchen-saint runner who remembers who took bread.', hooks: ['Name the snatcher', 'Ask for a spare loaf'] },
+  { id: 'sp-npc-35', name: 'Harker Vale', role: 'merchant', disposition: 'ambiguous', description: 'Harbor hold broker. Sells dry papers and wet lies.', hooks: ['Buy a hold stamp', 'Ask who paid last'], aliases: ['Harker'] },
+  { id: 'sp-npc-36', name: 'Rook Fen', role: 'informant', disposition: 'neutral', description: 'Reed-side watcher who sells which reflection is a trap.', hooks: ['Buy a true path', 'Warn of a false-step'], aliases: ['Rook'] },
+  { id: 'sp-npc-37', name: 'Fenn Lark', role: 'merchant', disposition: 'friendly', description: 'Lowmarket stall with Earth junk that is actually Earth junk.', hooks: ['Buy a tonic', 'Refuse a fake blessing'], aliases: ['Fenn'] },
+  { id: 'sp-npc-38', name: 'Asha Rune', role: 'guide', disposition: 'neutral', description: 'Reliquary novice who still believes doctrine can be kind.', hooks: ['Ask the novice door', 'Hide a guest'], aliases: ['Asha'] },
+  { id: 'sp-npc-39', name: 'Kell Ward', role: 'gatekeeper', disposition: 'neutral', description: 'West Wall levy clerk who counts names, not prayers.', hooks: ['Pass the stair', 'Pay a levy lie'], aliases: ['Kell'] },
+  { id: 'sp-npc-40', name: 'Pip Aster', role: 'witness', disposition: 'friendly', description: 'Kitchen-saint runner who remembers who took bread.', hooks: ['Name the snatcher', 'Ask for a spare loaf'], aliases: ['Pip'] },
 ];
 
 export const MANUS_SP_QUESTS: StarterQuest[] = [
@@ -25,9 +25,9 @@ export const MANUS_SP_QUESTS: StarterQuest[] = [
 ];
 
 export const MANUS_CK_NPCS: KeyNPC[] = [
-  { id: 'ck-npc-7', name: 'Dain Holt', role: 'gatekeeper', disposition: 'neutral', description: 'Greyhollow watch captain. Wants eyes on the keep gate, not boasts in the inn.', hooks: ['Ask for the watch job', 'Report the broken chain'] },
-  { id: 'ck-npc-8', name: 'Elara Moss', role: 'witness', disposition: 'friendly', description: 'Inn regular who heard Oskar first and will not pretend it is weather.', hooks: ['Ask what the inn will not say', 'Walk her to the church'] },
-  { id: 'ck-npc-9', name: 'Bram Coyle', role: 'informant', disposition: 'ambiguous', description: 'Coach-yard hand who saw the last footprints and sold the story twice.', hooks: ['Buy the second version', 'Confront the lie'] },
+  { id: 'ck-npc-7', name: 'Dain Holt', role: 'gatekeeper', disposition: 'neutral', description: 'Greyhollow watch captain. Wants eyes on the keep gate, not boasts in the inn.', hooks: ['Ask for the watch job', 'Report the broken chain'], aliases: ['Dain', 'Captain Dain'] },
+  { id: 'ck-npc-8', name: 'Elara Moss', role: 'witness', disposition: 'friendly', description: 'Inn regular who heard Oskar first and will not pretend it is weather.', hooks: ['Ask what the inn will not say', 'Walk her to the church'], aliases: ['Elara'] },
+  { id: 'ck-npc-9', name: 'Bram Coyle', role: 'informant', disposition: 'ambiguous', description: 'Coach-yard hand who saw the last footprints and sold the story twice.', hooks: ['Buy the second version', 'Confront the lie'], aliases: ['Bram'] },
 ];
 
 export const MANUS_CK_QUESTS: StarterQuest[] = [
@@ -36,8 +36,8 @@ export const MANUS_CK_QUESTS: StarterQuest[] = [
 ];
 
 export const MANUS_TF_NPCS: KeyNPC[] = [
-  { id: 'tf-npc-4', name: 'Tomas Reed', role: 'courier', disposition: 'neutral', description: 'Ferry boatman. Wants a signature or a favor before the rope goes slack.', hooks: ['Sign the ferry debt', 'Work the crossing'] },
-  { id: 'tf-npc-5', name: 'Orin Quill', role: 'clerk', disposition: 'ambiguous', description: 'Pell’s visiting clerk. Offers a duplicate seal. Forgery is a choice.', hooks: ['Take the copy', 'Tell Nedda', 'Tell Wren'] },
+  { id: 'tf-npc-4', name: 'Tomas Reed', role: 'courier', disposition: 'neutral', description: 'Ferry boatman. Wants a signature or a favor before the rope goes slack.', hooks: ['Sign the ferry debt', 'Work the crossing'], aliases: ['Tomas'] },
+  { id: 'tf-npc-5', name: 'Orin Quill', role: 'clerk', disposition: 'ambiguous', description: 'Pell’s visiting clerk. Offers a duplicate seal. Forgery is a choice.', hooks: ['Take the copy', 'Tell Nedda', 'Tell Wren'], aliases: ['Orin'] },
 ];
 
 export const MANUS_TF_QUESTS: StarterQuest[] = [
@@ -46,8 +46,8 @@ export const MANUS_TF_QUESTS: StarterQuest[] = [
 ];
 
 export const MANUS_SR_NPCS: KeyNPC[] = [
-  { id: 'sr-npc-2', name: 'Yara Flint', role: 'informant', disposition: 'ambiguous', description: 'Salt-lane reader who already copied one page of the tax book.', hooks: ['Buy the page', 'Ask who paid her'] },
-  { id: 'sr-npc-3', name: 'Gideon Ash', role: 'rival', disposition: 'hostile', description: 'Rival crew lead who claims this score was spoken for.', hooks: ['Refuse the cut', 'Share the night'] },
+  { id: 'sr-npc-2', name: 'Yara Flint', role: 'informant', disposition: 'ambiguous', description: 'Salt-lane reader who already copied one page of the tax book.', hooks: ['Buy the page', 'Ask who paid her'], aliases: ['Yara'] },
+  { id: 'sr-npc-3', name: 'Gideon Ash', role: 'rival', disposition: 'hostile', description: 'Rival crew lead who claims this score was spoken for.', hooks: ['Refuse the cut', 'Share the night'], aliases: ['Gideon'] },
 ];
 
 export const MANUS_SR_QUESTS: StarterQuest[] = [
@@ -56,7 +56,7 @@ export const MANUS_SR_QUESTS: StarterQuest[] = [
 ];
 
 export const MANUS_SC_NPCS: KeyNPC[] = [
-  { id: 'sc-npc-7', name: 'Nessa Crow', role: 'informant', disposition: 'neutral', description: 'Lower-ward runner who sells which lift is watched.', hooks: ['Buy a lift hour', 'Ask who paid the Sentinels'] },
+  { id: 'sc-npc-7', name: 'Nessa Crow', role: 'informant', disposition: 'neutral', description: 'Lower-ward runner who sells which lift is watched.', hooks: ['Buy a lift hour', 'Ask who paid the Sentinels'], aliases: ['Nessa'] },
 ];
 
 export const MANUS_SC_QUESTS: StarterQuest[] = [

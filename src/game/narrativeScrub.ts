@@ -8,6 +8,14 @@ import { findUngroundedNamedClaims } from './suggestionValidation';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { realPresentPeople, isPolityFactionOrPlaceToken } from './chromeAuthority';
 import { hubsForBibleId } from './outdoorHubs';
+import { presentNpcRecords } from './npcRecords';
+
+function groundedPresentNames(state: GameState): string[] {
+  return [
+    ...presentNpcRecords(state).flatMap((r) => [r.npcName, ...(r.aliases ?? [])]),
+    ...(state.sceneFacts?.present ?? []).filter((p) => !/\s(?:and|&)\s|,/.test(p)),
+  ];
+}
 
 const ALWAYS_ALLOW = new Set(
   [
@@ -100,7 +108,7 @@ function atNamedInterior(state: GameState): boolean {
  */
 function personSlotFromScene(state: GameState): GenericSlot {
   const present = realPresentPeople(
-    (state.sceneFacts?.present ?? [])
+    groundedPresentNames(state)
       .map((p) => (typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''))
       .map((s) => s.trim())
       .filter((s) => s.length > 1 && !/^(you|pc|player|unknown)$/i.test(s))
@@ -125,7 +133,7 @@ function personSlotFromScene(state: GameState): GenericSlot {
 export function buildProtectedEntityNames(state: GameState): Set<string> {
   const names: string[] = [];
   if (state.activeEncounter?.name) names.push(state.activeEncounter.name);
-  for (const n of state.sceneFacts?.present ?? []) {
+  for (const n of groundedPresentNames(state)) {
     if (typeof n === 'string') names.push(n);
   }
   for (const c of state.companions ?? []) {
@@ -253,7 +261,7 @@ export function scrubOfficialPlaceholder(text: string, state: GameState): string
     /\b(official|registrar|clerk|envoy|taxman|alderman)\b/i.test(
       [
         ...realPresentPeople(
-          (state.sceneFacts?.present ?? []).map((p) =>
+          groundedPresentNames(state).map((p) =>
             typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
           )
         ),
@@ -264,7 +272,7 @@ export function scrubOfficialPlaceholder(text: string, state: GameState): string
     return scrubPolityBleedInChrome(text);
   }
   const people = realPresentPeople(
-    (state.sceneFacts?.present ?? []).map((p) =>
+    groundedPresentNames(state).map((p) =>
       typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
     )
   ).filter((n) => !isPolityFactionOrPlaceToken(n));

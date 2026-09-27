@@ -58,6 +58,9 @@ export const ascendingSpire = makeBible({
       description: 'Cheerful, ruthless, always one floor ahead. May ally — or steal your clear credit.',
       hooks: ['Temporary party', 'Race to Floor Warden', 'Betrayal risk'],
     },
+    { id: 'ascending-spire-npc-venn', name: 'Venn', role: 'map broker', disposition: 'neutral', description: 'Intel broker', hooks: [], aliases: [] },
+    { id: 'ascending-spire-npc-kael', name: 'Kael', role: 'rival climber', disposition: 'neutral', description: 'Guild rival', hooks: [], aliases: [] },
+    { id: 'ascending-spire-npc-senna', name: 'Senna', role: 'camp leader', disposition: 'neutral', description: 'Climber leader', hooks: [], aliases: [] },
   ],
   quests: [
     {
@@ -121,6 +124,7 @@ export const inkboundAcademy = makeBible({
   npcs: [
     {
       name: 'Dean Solenne',
+      aliases: ['Solenne'],
       role: 'Head of Discipline',
       disposition: 'neutral',
       description: 'Polite, terrifying, always holding a red pen that edits reality.',
@@ -133,6 +137,11 @@ export const inkboundAcademy = makeBible({
       description: 'Overconfident ink-mage student who wants your help cheating — ethically, of course.',
       hooks: ['Study duo', 'House challenge', 'Secret crush on the dean’s assistant'],
     },
+    { id: 'inkbound-academy-npc-venn', name: 'Venn', role: 'house rival', disposition: 'neutral', description: 'Rival student', hooks: [], aliases: [] },
+    { id: 'inkbound-academy-npc-professor-lin', name: 'Professor Lin', role: 'atelier master', disposition: 'neutral', description: 'Ink master', hooks: [], aliases: [] },
+    { id: 'inkbound-academy-npc-oren', name: 'Oren', role: 'librarian', disposition: 'neutral', description: 'Stack librarian', hooks: [], aliases: [] },
+    { id: 'inkbound-academy-npc-kael', name: 'Kael', role: 'duel partner', disposition: 'neutral', description: 'Courtyard rival', hooks: [], aliases: [] },
+    { id: 'inkbound-academy-npc-mara', name: 'Mara', role: 'roommate', disposition: 'neutral', description: 'Dorm roommate', hooks: [], aliases: [] },
   ],
   quests: [
     {
@@ -190,6 +199,7 @@ export const hollowCore = makeBible({
   npcs: [
     {
       name: 'Whisper-Mite',
+      aliases: ['the Mite'],
       role: 'First Spawn / Advisor',
       disposition: 'friendly',
       description: 'Tiny floating mite that translates System menus into sarcasm.',
@@ -197,11 +207,14 @@ export const hollowCore = makeBible({
     },
     {
       name: 'Captain Bren Holtz',
+      aliases: ['Bren', 'Hunter Bren'],
       role: 'Guild Scout',
       disposition: 'hostile',
       description: 'Professional Core hunter who prefers capture over destruction — for the bounty.',
       hooks: ['First raid', 'Negotiation for tribute', 'Rival Core tip'],
     },
+    { id: 'hollow-core-npc-kael', name: 'Kael', role: 'adventurer', disposition: 'neutral', description: 'Visiting adventurer', hooks: [], aliases: [] },
+    { id: 'hollow-core-npc-core-vex', name: 'Core Vex', role: 'rival core', disposition: 'neutral', description: 'Neighboring core', hooks: [], aliases: [] },
   ],
   quests: [
     {
@@ -511,6 +524,7 @@ export const gatebreakWard = makeBible({
   npcs: [
     {
       name: 'Sergeant Rill',
+      aliases: ['Rill'],
       role: 'Ward Militia',
       disposition: 'friendly',
       description: 'Tired officer who ignores unlicensed clears if you protect civilians.',
@@ -518,11 +532,14 @@ export const gatebreakWard = makeBible({
     },
     {
       name: 'Vex Harlan',
+      aliases: ['Vex', 'Hunter Vex'],
       role: 'Guild Recruiter',
       disposition: 'ambiguous',
       description: 'Smiles like a contract. Wants your talent for a cut of your future.',
       hooks: ['Guild offer', 'Sabotage rival', 'Reveal B-gate intel for a price'],
     },
+    { id: 'gatebreak-ward-npc-torin', name: 'Torin', role: 'night watch', disposition: 'neutral', description: 'Watch sentry', hooks: [], aliases: [] },
+    { id: 'gatebreak-ward-npc-mara', name: 'Mara', role: 'evacuee', disposition: 'neutral', description: 'Shelter evacuee', hooks: [], aliases: [] },
   ],
   quests: [
     {
@@ -647,11 +664,14 @@ export const saltRoadHeist = withManusHonestRoster(makeBible({
   npcs: [
     {
       name: 'Vessa',
+      aliases: ['safehouse Vessa'],
       role: 'Crew Fixer',
       disposition: 'friendly',
       description: 'Knows every bribe price on the Salt Road. Will sell you out if Heat gets her family hurt.',
       hooks: ['Offer a safehouse', 'Demand a bigger cut', 'Warn about a rival crew'],
     },
+    { id: 'salt-road-heist-npc-captain-torin', name: 'Captain Torin', role: 'consul guard', disposition: 'neutral', description: 'Caravan guard', hooks: [], aliases: [] },
+    { id: 'salt-road-heist-npc-senna', name: 'Senna', role: 'fellow thief', disposition: 'neutral', description: 'Heist partner', hooks: [], aliases: [] },
   ],
   quests: [
     {

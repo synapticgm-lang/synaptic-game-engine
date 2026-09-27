@@ -1,11 +1,10 @@
 import type { GameState, Settings, LoreCard, GmStrictness } from './types.ts';
-import { computeInventoryCapacity } from './inventory.ts';
 import { resolvePanelBudget } from './panelBudget.ts';
 import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules.ts';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
 import { campaignIsNsfw } from './campaignNsfw.ts';
 import { formatWriterFacingPacket } from './beatContract.ts';
-import { playerFacingLocation } from './locationName.ts';
+import { formatWriterInfoLayer } from './writerInfoLayer.ts';
 import { formatMaturityRules } from './maturity.ts';
 import {
   formatCustomTabletopRulesForPrompt,
@@ -352,58 +351,6 @@ export function buildSystemPrompt(state: GameState, settings: Settings, _activeL
   return `${BASE_PROMPT}\n\n${choiceModeDna}\n\n${voiceRail}\n\n${modeRules}\n\n${playerRules}\n\n${contentRules}\n\n${narrativePreferenceRules}`.trim();
 }
 
-function buildGroundTruthLedger(state: GameState): string {
-  const c = state.character;
-  const invList = state.inventory
-    .map((i) => `${i.name} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
-    .join('; ') || 'None';
-  const companions = (state.companions ?? [])
-    .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
-    .join('; ') || 'None';
-  const statusList = c.conditions.length > 0 ? c.conditions.join(', ') : 'None';
-  
-  const mainQuests = (state.quests ?? []).filter(q => q.type === 'main');
-  const sideQuests = (state.quests ?? []).filter(q => q.type === 'side' && q.status === 'active');
-  
-  const mainQuestStr = mainQuests.length > 0 
-    ? mainQuests.map(q => `[MAIN] ${q.name} (${q.status})`).join('; ')
-    : 'None active';
-    
-  const sideQuestStr = sideQuests.length > 0
-    ? sideQuests.map(q => `[SIDE] ${q.name}`).join('; ')
-    : 'None active';
-
-  const cap = computeInventoryCapacity(state);
-  const equippedGear = state.inventory.filter(i => i.equipped).map(i => `${i.name}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
-  const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
-  const isTabletop = state.engineMode === 'dnd';
-  const header = isTabletop
-    ? '=== TABLETOP CHARACTER STATE (GENERIC TTRPG TERMS ONLY) ==='
-    : '=== GROUND TRUTH CHARACTER & QUEST STATE ===';
-  const progressLine = isTabletop
-    ? `Level: ${c.level} | Do not mention Integration, Wave, Salvage, Foundation Core, or First Blood.`
-    : `Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}`;
-
-  return `${header}
-HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}
-${progressLine}
-Location: ${playerFacingLocation(state)}
-Equipped Gear: ${equippedGear}
-Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
-Active Companions: ${companions}
-Containers: ${containerInfo}
-Materials: ${state.materials.map(m => `${m.name} x${m.quantity}`).join(', ') || 'None'}${cap.hasMagicalContainer ? ' (infinite stacking)' : ''}
-Status Effects: ${statusList}
-Active Main Story: ${mainQuestStr}
-Active Side Quests: ${sideQuestStr}
-===================================`;
-}
-
-function buildLoreContext(cards: LoreCard[]): string {
-  const summaries = cards.map(c => `[${c.type.toUpperCase()}] ${c.name} — ${c.summary}`).join('\n');
-  return `=== RELEVANT WORLD LORE & TIMELINE MILESTONES ===\n${summaries}\n===================================================`;
-}
-
 const ACTION_TAG_INSTRUCTIONS = `
 ACTION TAG PROTOCOL (MANDATORY):
 Emit structural XML tags for state changes: <item-gain name="Item" rarity="Rare" qty="1" />, <item-use />, <heal />, <damage />, <lore-card />, <quest-add />, <quest-update />, <quest-complete />.
@@ -563,7 +510,9 @@ export const RECENT_LOG_CHAR_CAP = 500;
 export function buildContextPrompt(
   state: GameState,
   playerInput: string,
-  _activeLoreCards: LoreCard[] = []
+  activeLoreCards: LoreCard[] = []
 ): string {
-  return formatWriterFacingPacket(state, playerInput);
+  const facts = formatWriterInfoLayer(state, activeLoreCards);
+  const packet = formatWriterFacingPacket(state, playerInput);
+  return facts ? `${facts}\n\n${packet}` : packet;
 }

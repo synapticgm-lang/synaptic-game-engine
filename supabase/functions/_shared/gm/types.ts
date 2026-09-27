@@ -387,6 +387,8 @@ export interface OpeningEstablishment {
   aloneArrival?: boolean;
   /** 29c — opening NPC names pinned into scene presence for early turns. */
   pinnedNpcNames?: string[];
+  /** 27d — npc ids named on the picked opening card. */
+  castNpcIds?: string[];
   /** Locked why-you’re-here from the hook card (first lock; sceneFacts is live authority). */
   hookLock?: import('./hookLock').HookLock;
 }
@@ -994,6 +996,12 @@ export interface NpcMemory {
   /** 12c — quest-giver function complete; drop from CAST / Talk. */
   shouldExit?: boolean;
   exitReason?: 'quest-accepted' | 'goods-sold' | 'function-complete';
+  /** 27d — other names this same person is called (title forms, short forms). */
+  aliases?: string[];
+  /** 27d — player has actually met this person in play. */
+  met?: boolean;
+  /** 27d — refreshed at merge time from sceneFacts.present; read-time truth is presentNpcRecords(). */
+  present?: boolean;
 }
 
 /** Location sheet — spatial facts for the current zone. */

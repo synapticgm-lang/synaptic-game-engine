@@ -19,6 +19,7 @@ export interface KeyNPC {
   disposition: 'friendly' | 'neutral' | 'hostile' | 'ambiguous';
   description: string;
   hooks: string[];
+  aliases?: string[];
 }
 
 /** One possible murderer. Code picks one at New Game; the writer must honor the stamp. */
@@ -66,6 +67,8 @@ export interface OpeningBeatCard {
   text?: string;
   /** Short grammatical scene if page1 is missing. */
   fallback?: string;
+  /** 27d — ids of keyNPCs named in faction/page1. */
+  castNpcIds?: string[];
 }
 
 /** One New Game opener. Strings are ingredients; objects may also move the camera. */

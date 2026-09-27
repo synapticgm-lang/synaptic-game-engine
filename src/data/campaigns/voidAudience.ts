@@ -91,6 +91,7 @@ export const voidAudience: CampaignBible = {
     {
       id: 'va-npc-2',
       name: 'Pellara Vohn',
+      aliases: ['Pellara', 'innkeeper Pellara'],
       role: 'Innkeeper, Threshold Village',
       disposition: 'friendly',
       description:
@@ -104,6 +105,7 @@ export const voidAudience: CampaignBible = {
     {
       id: 'va-npc-3',
       name: 'Caster Drenn',
+      aliases: ['Drenn'],
       role: 'Node Warden, Threshold Node',
       disposition: 'neutral',
       description:
@@ -117,6 +119,7 @@ export const voidAudience: CampaignBible = {
     {
       id: 'va-npc-4',
       name: 'Kael the Unfinished',
+      aliases: ['Kael', 'Reborn Kael'],
       role: 'Reborn, Active Trial #219',
       disposition: 'ambiguous',
       description:
@@ -130,6 +133,7 @@ export const voidAudience: CampaignBible = {
     {
       id: 'va-npc-5',
       name: 'Magistra Solenne',
+      aliases: ['Scout Solenne', 'Solenne'],
       role: 'Archmage, Resonance Academy',
       disposition: 'neutral',
       description:

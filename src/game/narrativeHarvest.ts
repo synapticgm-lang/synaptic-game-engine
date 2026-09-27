@@ -17,7 +17,8 @@ import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority';
 import { compileNounAllowlist, mentionAllowlistHas } from './completedEventPacket';
-import { getRegisteredNpcs, canHarvestAsNamedPerson } from './entityRegistry';
+import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames, resolveNpcRecord } from './npcRecords';
 import { openingCastNames } from './openingEstablishment';
 import { matchesLastKillName } from './combatAuthority';
 import { harvestRoleOccupancy } from './closedScenePerson';
@@ -37,11 +38,11 @@ import { upsertHarvestedNpcMemory } from './npcMemory';
  * DELETED: Title-Case heuristic (NAME_PATTERNS) that auto-harvested capitalized words.
  * NEW: Only harvest names that exist in the immutable NPC registry for this campaign.
  */
-function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[] {
+function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
   
   // Get all valid NPCs for this campaign
-  const validNpcs = getRegisteredNpcs(bibleId);
+  const validNpcs = npcRecordNames(state);
   if (!validNpcs.length) return [];
   
   const found = new Set<string>();
@@ -49,7 +50,7 @@ function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[]
   
   // Only find NPCs that are explicitly in the registry AND eligible as named people
   for (const npcName of validNpcs) {
-    if (!canHarvestAsNamedPerson(npcName, bibleId)) continue;
+    if (!canHarvestAsNamedPerson(npcName, bibleId, validNpcs)) continue;
     const npcLower = npcName.toLowerCase();
     // Simple word boundary check
     const pattern = new RegExp(`\\b${npcLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
@@ -63,7 +64,7 @@ function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[]
   let tagMatch: RegExpExecArray | null;
   while ((tagMatch = tagPattern.exec(prose))) {
     const taggedName = (tagMatch[1] ?? '').trim();
-    if (taggedName.length >= 2 && canHarvestAsNamedPerson(taggedName, bibleId)) {
+    if (taggedName.length >= 2 && canHarvestAsNamedPerson(taggedName, bibleId, validNpcs)) {
       found.add(taggedName);
     }
   }
@@ -72,8 +73,9 @@ function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[]
 }
 
 /** Lock B — harvest multi-word proper names / hub contacts from prose (not COMMON_NPCS). */
-function extractProperNamesFromProse(prose: string, bibleId?: string | null): string[] {
+function extractProperNamesFromProse(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
+  const knownNames = npcRecordNames(state);
   const found = new Set<string>();
   const patterns = [
     /\b(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z][a-z'-]+\b/g,
@@ -84,7 +86,7 @@ function extractProperNamesFromProse(prose: string, bibleId?: string | null): st
     let m: RegExpExecArray | null;
     while ((m = re.exec(prose))) {
       const name = (m[0] ?? '').trim();
-      if (name.length >= 3 && canHarvestAsNamedPerson(name, bibleId)) {
+      if (name.length >= 3 && canHarvestAsNamedPerson(name, bibleId, knownNames)) {
         found.add(name);
       }
     }
@@ -97,7 +99,7 @@ function ensureNpcMemory(state: GameState, name: string, turn: number): NpcMemor
   return upsertHarvestedNpcMemory(state.npcMemories ?? [], name, turn, locked);
 }
 
-function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number): LoreCard[] {
+function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number, hasRecord = true): LoreCard[] {
   if (lorebook.some((c) => c.name.toLowerCase() === name.toLowerCase() && c.type === 'npc')) {
     return lorebook.map((c) =>
       c.name.toLowerCase() === name.toLowerCase() && c.type === 'npc'
@@ -105,6 +107,7 @@ function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number): LoreCa
         : c
     );
   }
+  if (!hasRecord) return lorebook;
   return [
     ...lorebook,
     {
@@ -146,8 +149,8 @@ export function harvestNarrativeIntoLedger(
     fromTokenRefs.length
       ? fromTokenRefs
       : [
-          ...extractRegisteredNpcs(prose, state.bibleId ?? state.campaignBibleId),
-          ...extractProperNamesFromProse(prose, state.bibleId ?? state.campaignBibleId),
+          ...extractRegisteredNpcs(prose, state.bibleId ?? state.campaignBibleId, state),
+          ...extractProperNamesFromProse(prose, state.bibleId ?? state.campaignBibleId, state),
         ]
   ).filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
   
@@ -182,7 +185,7 @@ export function harvestNarrativeIntoLedger(
 
   const ledgerNouns = compileNounAllowlist(state, openingCastNames(state));
   for (const name of registeredNpcs) {
-    if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId)) {
+    if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId, npcRecordNames(state))) {
       console.warn(`[narrativeHarvest 02j] Rejected role/anonymous NPC: ${name}`);
       continue;
     }
@@ -218,7 +221,7 @@ export function harvestNarrativeIntoLedger(
     // Skip if this string is actually a map settlement (already canonical)
     if (isLegalMapPlace(next, name) && looksLikeGeographyInvent(name)) continue;
     
-    lorebook = ensureNpcLore(lorebook, name, turn);
+    lorebook = ensureNpcLore(lorebook, name, turn, !!resolveNpcRecord({ ...next, npcMemories }, name));
     npcMemories = ensureNpcMemory({ ...next, npcMemories }, name, turn);
     present.add(name);
   }

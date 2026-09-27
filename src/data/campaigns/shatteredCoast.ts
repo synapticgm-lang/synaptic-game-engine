@@ -155,6 +155,11 @@ const shatteredCoastBase: CampaignBible = {
         'Emotional anchor: Sable represents the people the guilds forget — her perspective challenges the player\'s loyalties',
       ],
     },
+    { id: 'sc-npc-captain-vess', name: 'Captain Vess', role: 'sentinel', disposition: 'neutral', description: 'Compact sentinel', hooks: [], aliases: [] },
+    { id: 'sc-npc-torin', name: 'Torin', role: 'harbor master', disposition: 'neutral', description: 'Lower Ward harbor master', hooks: [], aliases: [] },
+    { id: 'sc-npc-mira', name: 'Mira', role: 'guild officer', disposition: 'neutral', description: 'Upper Ward guild officer', hooks: [], aliases: [] },
+    { id: 'sc-npc-kael', name: 'Kael', role: 'fisher', disposition: 'neutral', description: 'Brinewatch fisher', hooks: [], aliases: [] },
+    { id: 'sc-npc-dren', name: 'Dren', role: 'quarry foreman', disposition: 'neutral', description: 'Stonevein foreman', hooks: [], aliases: [] },
   ],
 
   starterQuests: [

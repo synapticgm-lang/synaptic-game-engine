@@ -20,6 +20,7 @@ import {
 } from './pcNameAuthority';
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
+import { openingCastRecords } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -529,6 +530,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   openingOffer?: string;
   openingCost?: string;
   faction?: string;
+  castNpcIds?: string[];
 } {
   if (typeof card === 'string') {
     const text = card.trim();
@@ -565,6 +567,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     openingOffer: card.openingOffer?.trim() || undefined,
     openingCost: card.openingCost?.trim() || undefined,
     faction: card.faction?.trim() || undefined,
+    castNpcIds: card.castNpcIds,
   };
 }
 
@@ -1481,21 +1484,16 @@ export function cardRoleStandIn(state: GameState): string {
 
 /** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
 export function openingCastLabel(state: GameState): string {
+  const lead = openingCastRecords(state)[0];
+  if (lead) return lead.npcName;
   const hay = openingSceneHay(state);
   const loc = `${state.currentLocation ?? ''} ${state.campaignBibleId ?? ''} ${state.engineMode ?? ''}`;
   const blob = `${hay} ${loc}`;
-  if (/\bWren Holt\b/i.test(blob) || (state.engineMode === 'pyoa' && /\bWren\b/i.test(blob))) {
-    return 'Wren Holt';
-  }
-  if (/\bVessa\b/i.test(blob) || state.campaignBibleId === 'salt-road-heist') {
-    return 'Vessa';
-  }
   if (
     state.engineMode === 'dnd'
     || /\bGreyhollow\b/i.test(blob)
     || /\b(?:inn book|common room|tavern hire)\b/i.test(blob)
   ) {
-    if (/\bFather Aldous\b/i.test(hay)) return 'Father Aldous';
     return 'the innkeep';
   }
   const occupied = openingHayHasOccupancy(hay);
@@ -1503,8 +1501,6 @@ export function openingCastLabel(state: GameState): string {
   if (/\blead priest\b/i.test(hay) || /\biron mask\b/i.test(hay)) {
     return 'the lead priest behind the iron mask';
   }
-  if (/\bLene Quill\b/i.test(hay) || /\bArchivist Lene\b/i.test(hay)) return 'Archivist Lene Quill';
-  if (/\bCaptain Sera Quill\b/i.test(hay)) return 'Captain Sera Quill';
   if (/\bhandler on the (?:far|other) side\b/i.test(hay)) return 'the handler beyond the grate';
   if (/\bhandler\b/i.test(hay)) return 'the handler';
   if (/\bAsh Court priests\b/i.test(hay)) return 'the priests in this hall';
@@ -1521,12 +1517,6 @@ export function openingCastLabel(state: GameState): string {
   }
   if (/\bchanter\b/i.test(hay)) return 'the chanter';
   if (/\brobed figures\b/i.test(hay)) return 'the robed figures';
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
-  const first = (picked?.faction ?? '').split(/[,.]/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
-  if (first && !/^(ash|the ash court|ash court)$/i.test(first) && first.length < 56) {
-    return first;
-  }
   return 'the people who pulled you';
 }
 

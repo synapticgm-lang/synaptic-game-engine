@@ -278,3 +278,61 @@ export function openingNameLockSpokenBeat(state?: {
   const here = /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
   return sanitizeLockedNameBeat(state ?? {}, `You are ${here}. ${openingSpokenWant(state)}`);
 }
+
+// --- 27d edge stubs: names completedEventPacket / padUniverse import from the client module. ---
+export type HallTalkTopic = 'who' | 'refuse' | 'stayLeave' | 'want' | 'panel' | 'where';
+
+export function hallTalkTopic(raw: string): HallTalkTopic | null {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return null;
+  if (hallTalkAsksWho(t)) return 'who';
+  if (hallTalkAsksRefuse(t)) return 'refuse';
+  if (hallTalkAsksStayLeave(t)) return 'stayLeave';
+  if (hallTalkAsksWant(t) || playerAskedWhyPulled(t)) return 'want';
+  if (hallTalkAsksPanel(t)) return 'panel';
+  if (hallTalkAsksWhere(t)) return 'where';
+  return null;
+}
+
+export function isAcceptOfferLine(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  return (
+    /\b(?:i )?(?:agree|accept)\b/i.test(t)
+    || /\bi(?:'ll| will) (?:work|help|take|do)\b/i.test(t)
+    || /\bgive me the (?:kit|lamp|tabard|gloves|work)\b/i.test(t)
+    || /\byes to the work\b/i.test(t)
+    || /\btake the (?:deal|kit|offer|work|lamp)\b/i.test(t)
+  );
+}
+
+/** Edge stub: name-give detection lives on the client. */
+export function isOpeningNameGiveLine(_raw: string): boolean {
+  return false;
+}
+
+export function castSpeakVerb(who: string): 'answer' | 'answers' {
+  const w = (who ?? '').replace(/\s+/g, ' ').trim();
+  if (!w) return 'answer';
+  if (/\band\b/i.test(w) || /^both\b/i.test(w)) return 'answer';
+  if (/\b(people|envoys|priests|handlers|sides|militia|figures|scouts|pickets|engineers|guards|chirurgeons)\b/i.test(w)) {
+    return 'answer';
+  }
+  return 'answers';
+}
+
+/** Edge stub: card cost lives on the client. */
+export function openingSpokenRefuse(_state?: unknown): string {
+  return 'They have not said what refusing would cost.';
+}
+
+export function isCombatFamilyPad(choice: string): boolean {
+  return /\b(press the attack|attack|flee|parley|strike|engage|fight|keep running|try to flee)\b/i.test(
+    choice ?? ''
+  );
+}
+
+/** Edge stub: cover-turn starvation is decided on the client. */
+export function shouldStarveCombatPadsOnCover(_state?: unknown): boolean {
+  return false;
+}

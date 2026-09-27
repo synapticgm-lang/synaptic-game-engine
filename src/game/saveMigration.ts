@@ -6,6 +6,10 @@ import {
 import { applyErrorRepairs } from './errorRepairWarden';
 import { debugLogger } from './debugLogger';
 import { emptyWorldLedger } from './worldSim';
+import { isMetNpc, resolveNpcRecord, splitCompoundCastEntry } from './npcRecords';
+import { seedBibleNpcRoster } from './npcMemory';
+import { resolveActiveCampaignBible } from './campaignSeed';
+import { resolveOpeningHookPick } from './openingEstablishment';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -22,6 +26,58 @@ function defaultPlayPhase(state: GameState): { playPhase: PlayPhase; changed: bo
     return { playPhase: state.playPhase, changed: false };
   }
   return { playPhase: 'live', changed: true };
+}
+
+function repairNpcRecords(state: GameState): { state: GameState; changed: boolean } {
+  let changed = false;
+  let next = state;
+
+  const memories = (next.npcMemories ?? []).map((m) => {
+    if (m.aliases !== undefined && m.met !== undefined && m.present !== undefined) return m;
+    changed = true;
+    return {
+      ...m,
+      aliases: m.aliases ?? [],
+      met: m.met ?? isMetNpc(m),
+      present: m.present ?? false,
+    };
+  });
+  if (changed) next = { ...next, npcMemories: memories };
+
+  const bible = resolveActiveCampaignBible(next);
+  const seeded = seedBibleNpcRoster(next, bible);
+  if ((seeded.npcMemories?.length ?? 0) !== (next.npcMemories?.length ?? 0)) {
+    next = seeded;
+    changed = true;
+  }
+
+  if (next.openingEstablishment && next.openingEstablishment.castNpcIds === undefined) {
+    const pick = bible ? resolveOpeningHookPick(bible, next.seed) : null;
+    next = {
+      ...next,
+      openingEstablishment: { ...next.openingEstablishment, castNpcIds: pick?.castNpcIds ?? [] },
+    };
+    changed = true;
+  }
+
+  const present = next.sceneFacts?.present;
+  if (present?.some((p) => /\sand\s|&|,/i.test(p))) {
+    const split: string[] = [];
+    for (const entry of present) {
+      if (!/\sand\s|&|,/i.test(entry)) {
+        split.push(entry);
+        continue;
+      }
+      for (const part of splitCompoundCastEntry(entry, next)) {
+        const name = resolveNpcRecord(next, part)?.npcName;
+        if (name && !split.includes(name)) split.push(name);
+      }
+    }
+    next = { ...next, sceneFacts: { ...next.sceneFacts!, present: split } };
+    changed = true;
+  }
+
+  return { state: next, changed };
 }
 
 /**
@@ -85,6 +141,12 @@ export function repairSaveSchema(state: GameState): SaveRepairResult {
       discoveredLocations: startingLocation ? [startingLocation] : [],
     };
     note('hydrate discoveredLocations with starting location', 'cosmetic');
+  }
+
+  const npcRecords = repairNpcRecords(next);
+  if (npcRecords.changed) {
+    next = npcRecords.state;
+    note('27d npc records: aliases/met/present + card-only NPCs', 'cosmetic');
   }
 
   if (dirty) {

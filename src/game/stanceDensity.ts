@@ -3,6 +3,7 @@ import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { excludedPadFamilies } from './padUniverse';
+import { isMetNpc } from './npcRecords';
 
 /**
  * Opportunity density: non-lethal beats should offer stance, not three look-arounds.
@@ -85,17 +86,24 @@ function namedPeople(state: GameState): string[] {
     if (c.name?.trim()) names.push(c.name.trim());
   }
   for (const m of state.npcMemories ?? []) {
-    if (m.npcName?.trim() && (state.turn - (m.lastSeenTurn ?? 0)) <= 10) {
+    if (
+      m.npcName?.trim()
+      && isMetNpc(m)
+      && (state.turn - (m.lastSeenTurn ?? 0)) <= 10
+      && (m.lastSeenTurn ?? 0) > 0
+    ) {
       names.push(m.npcName.trim());
     }
   }
   for (const card of state.lorebook ?? []) {
-    if (card.type === 'npc' && card.name?.trim() && (card.revealed || (card.lastSeenTurn ?? 0) > 0)) {
+    if (card.type === 'npc' && card.name?.trim() && (card.lastSeenTurn ?? 0) > 0) {
       names.push(card.name.trim());
     }
   }
   return Array.from(new Set(names));
 }
+
+export const namedPeopleForTest = namedPeople;
 
 function someonePresent(state: GameState, storyProse: string): boolean {
   if (namedPeople(state).length > 0) return true;

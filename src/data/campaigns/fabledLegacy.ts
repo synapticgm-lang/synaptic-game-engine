@@ -91,6 +91,7 @@ export const fabledLegacy: CampaignBible = {
     {
       id: 'fl-npc-2',
       name: 'Marta Ashforge',
+      aliases: ['Marta', 'blacksmith Marta'],
       role: 'Blacksmith, Village Pragmatist',
       disposition: 'neutral',
       description:
@@ -117,6 +118,7 @@ export const fabledLegacy: CampaignBible = {
     {
       id: 'fl-npc-4',
       name: 'Fen the Baker',
+      aliases: ['Fen', 'baker Fen'],
       role: 'Baker, Village Heart',
       disposition: 'friendly',
       description:
@@ -153,6 +155,11 @@ export const fabledLegacy: CampaignBible = {
         'Branching: helping Aldric opens the kingdom faction; opposing him opens the village independence path',
       ],
     },
+    { id: 'fl-npc-father-aldous', name: 'Father Aldous', role: 'village priest', disposition: 'neutral', description: 'Village priest', hooks: [], aliases: ['Aldous'] },
+    { id: 'fl-npc-torin', name: 'Torin', role: 'innkeeper', disposition: 'neutral', description: 'Crooked Beam keeper', hooks: [], aliases: [] },
+    { id: 'fl-npc-vess', name: 'Vess', role: 'miller', disposition: 'neutral', description: 'Mill worker', hooks: [], aliases: [] },
+    { id: 'fl-npc-kael', name: 'Kael', role: 'stranger', disposition: 'neutral', description: 'Wounded stranger', hooks: [], aliases: [] },
+    { id: 'fl-npc-mira', name: 'Mira', role: 'elder', disposition: 'neutral', description: 'Village elder', hooks: [], aliases: [] },
   ],
 
   starterQuests: [

@@ -21,6 +21,7 @@ import { listInteriorExitsFromHere } from './mapEngine';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
 import { isChromePersonToken } from './chromeAuthority';
+import { presentNpcRecords } from './npcRecords';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -272,8 +273,9 @@ export async function runWarden(
     lastGmProse:
       [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '',
     presentNames: [
-      ...(state.sceneFacts?.present ?? []),
-      ...((state.companions ?? []).map((c) => c.name)),
+      ...presentNpcRecords(state).flatMap((r) => [r.npcName, ...(r.aliases ?? [])]),
+      ...(state.sceneFacts?.present ?? []).filter((p) => !/\s(?:and|&)\s|,/.test(p)),
+      ...(state.companions ?? []).map((c) => c.name),
     ].filter(
       (n) => typeof n === 'string' && n.trim().length >= 2 && !isChromePersonToken(n)
     ),

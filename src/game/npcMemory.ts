@@ -4,6 +4,7 @@ import type { GameEvent } from './parser';
 import type { NpcRole } from './npcRoleRegistry';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks';
+import { syncNpcPresence } from './npcRecords';
 
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
@@ -25,17 +26,20 @@ export function mergeNpcMemoriesFromTurn(
   for (const m of state.npcMemories ?? []) {
     map.set(normalizeName(m.npcName), { ...m, facts: [...m.facts] });
   }
+  const findKey = (name: string): string | undefined => {
+    const k = normalizeName(name);
+    if (map.has(k)) return k;
+    for (const [key, m] of map) {
+      if ((m.aliases ?? []).some((a) => normalizeName(a) === k)) return key;
+    }
+    return undefined;
+  };
 
   for (const e of events) {
     if (e.type === 'lore-card' && e.cardType === 'npc' && e.name) {
-      const key = normalizeName(e.name);
-      const existing = map.get(key) ?? {
-        npcId: e.id || key,
-        npcName: e.name,
-        disposition: 'unknown' as const,
-        facts: [] as string[],
-        lastSeenTurn: turn,
-      };
+      const key = findKey(e.name);
+      if (!key) continue;
+      const existing = map.get(key)!;
       const summary = (e.summary ?? '').trim();
       if (summary && !existing.facts.includes(summary.slice(0, 160))) {
         existing.facts = [...existing.facts, summary.slice(0, 160)].slice(-MAX_FACTS_PER_NPC);
@@ -56,14 +60,9 @@ export function mergeNpcMemoriesFromTurn(
     const nameMatch = fact.text.match(/(?:met|spoke with|told|asked)\s+([A-Z][\w'-]+(?:\s+[A-Z][\w'-]+)?)/);
     if (!nameMatch) continue;
     const name = nameMatch[1];
-    const key = normalizeName(name);
-    const existing = map.get(key) ?? {
-      npcId: key,
-      npcName: name,
-      disposition: 'unknown' as const,
-      facts: [] as string[],
-      lastSeenTurn: turn,
-    };
+    const key = findKey(name);
+    if (!key) continue;
+    const existing = map.get(key)!;
     if (!existing.facts.includes(fact.text)) {
       existing.facts = [...existing.facts, fact.text].slice(-MAX_FACTS_PER_NPC);
     }
@@ -71,23 +70,13 @@ export function mergeNpcMemoriesFromTurn(
     map.set(key, existing);
   }
 
-  return Array.from(map.values())
+  const result = Array.from(map.values())
     .sort((a, b) => b.lastSeenTurn - a.lastSeenTurn)
     .slice(0, MAX_NPC_MEMORIES);
+  return syncNpcPresence(result, state);
 }
 
-export function formatNpcMemoriesForPrompt(memories: NpcMemory[] | undefined, limit = 6): string {
-  const list = (memories ?? []).slice(0, limit);
-  if (!list.length) return '(none)';
-  return list
-    .map(
-      (m) =>
-        `${m.npcName} [${m.disposition}] — ${(m.facts.slice(-3).join('; ') || 'no notes')}${
-          m.relationshipSummary ? ` | ${m.relationshipSummary}` : ''
-        }`
-    )
-    .join('\n');
-}
+export { formatNpcMemoriesForPrompt } from './npcRecords';
 
 const KIND_ACT =
   /\b(help|heal|spare|thank|apologiz|give|share|comfort|protect|honest|kind|offer)\b/i;
@@ -286,7 +275,11 @@ export function upsertHarvestedNpcMemory(
   playerName?: string
 ): NpcMemory[] {
   const key = name.toLowerCase();
-  const existing = memories.find((n) => n.npcName.toLowerCase() === key);
+  const existing = memories.find(
+    (n) =>
+      n.npcName.toLowerCase() === key
+      || (n.aliases ?? []).some((a) => a.toLowerCase() === key)
+  );
   const known = playerName?.trim() || undefined;
   if (existing) {
     const rosterOnly =
@@ -295,9 +288,10 @@ export function upsertHarvestedNpcMemory(
       && !(existing.completedTopics ?? []).includes('intro');
     if (rosterOnly) {
       return memories.map((n) =>
-        n.npcName.toLowerCase() === key
+        n === existing
           ? {
               ...n,
+              met: true,
               meetCount: 1,
               lastSeenTurn: turn,
               introSpoken: true,
@@ -317,9 +311,10 @@ export function upsertHarvestedNpcMemory(
       : Math.max(existing.meetCount ?? 1, 1) + 1;
     const seen = `Seen in play T${turn}`;
     return memories.map((n) =>
-      n.npcName.toLowerCase() === key
+      n === existing
         ? {
             ...n,
+            met: true,
             meetCount,
             lastSeenTurn: turn,
             introSpoken: true,
@@ -338,21 +333,7 @@ export function upsertHarvestedNpcMemory(
         : n
     );
   }
-  return [
-    ...memories,
-    {
-      npcId: `harvest-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
-      npcName: name,
-      disposition: 'neutral',
-      facts: [`Introduced in play T${turn}`],
-      lastSeenTurn: turn,
-      meetCount: 1,
-      introSpoken: true,
-      completedTopics: ['intro'],
-      relationshipStatus: 'stranger',
-      knownPlayerName: known,
-    },
-  ].slice(-MAX_NPC_MEMORIES);
+  return memories;
 }
 
 function rosterDisplayName(raw: string): string {
@@ -401,9 +382,10 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
   for (const m of state.npcMemories ?? []) {
     map.set(normalizeName(m.npcName), { ...m, facts: [...m.facts] });
   }
+  const knownNames = bible.keyNPCs.flatMap((n) => [rosterDisplayName(n.name), n.name, ...(n.aliases ?? [])]);
   for (const npc of bible.keyNPCs) {
     const name = rosterDisplayName(npc.name);
-    if (!name || !canHarvestAsNamedPerson(name, bibleId)) continue;
+    if (!name || !canHarvestAsNamedPerson(name, bibleId, knownNames)) continue;
     const key = normalizeName(name);
     if (map.has(key)) continue;
     const role = roleFromBibleNpc(npc);
@@ -419,6 +401,9 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
       facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
       lastSeenTurn: 0,
       roleHint: role,
+      aliases: npc.aliases ?? [],
+      met: false,
+      present: false,
     });
   }
   const next = Array.from(map.values())

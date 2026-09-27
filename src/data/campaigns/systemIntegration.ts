@@ -90,6 +90,7 @@ export const systemIntegration: CampaignBible = {
     {
       id: 'si-npc-2',
       name: 'Dr. Yusuf Okafor',
+      aliases: ['Yusuf Okafor', 'Yusuf', 'Okafor'],
       role: 'System Researcher, Independent',
       disposition: 'neutral',
       description:
@@ -152,6 +153,9 @@ export const systemIntegration: CampaignBible = {
         'Assassination quest: a rival hub leader asks the player to eliminate Garrick',
       ],
     },
+    { id: 'si-npc-mara', name: 'Mara', role: 'wave survivor', disposition: 'neutral', description: 'Wave survivor', hooks: [], aliases: [] },
+    { id: 'si-npc-jin', name: 'Jin', role: 'guard captain', disposition: 'neutral', description: 'Stronghold captain', hooks: [], aliases: [] },
+    { id: 'si-npc-dren', name: 'Dren', role: 'scout', disposition: 'neutral', description: 'Corridor scout', hooks: [], aliases: [] },
   ],
 
   starterQuests: [

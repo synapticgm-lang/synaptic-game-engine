@@ -107,6 +107,7 @@ const cursedKeepBase: CampaignBible = {
     {
       id: 'ck-npc-1',
       name: 'Father Aldous',
+      aliases: ['Aldous'],
       role: 'Town Priest, Dreamer',
       disposition: 'friendly',
       description:
@@ -120,6 +121,7 @@ const cursedKeepBase: CampaignBible = {
     {
       id: 'ck-npc-2',
       name: 'Oskar the Woodcutter',
+      aliases: ['Oskar'],
       role: 'Lina\'s Father, Desperate Man',
       disposition: 'friendly',
       description:
@@ -133,6 +135,7 @@ const cursedKeepBase: CampaignBible = {
     {
       id: 'ck-npc-3',
       name: 'Mayor Helga Brask',
+      aliases: ['Helga Brask', 'Helga'],
       role: 'Town Mayor, Denialist',
       disposition: 'neutral',
       description:
@@ -146,6 +149,7 @@ const cursedKeepBase: CampaignBible = {
     {
       id: 'ck-npc-4',
       name: 'Greta the Hunter',
+      aliases: ['Greta'],
       role: 'Town Hunter, Practical Ally',
       disposition: 'friendly',
       description:
@@ -172,6 +176,7 @@ const cursedKeepBase: CampaignBible = {
     {
       id: 'ck-npc-6',
       name: 'Mira the Apothecary',
+      aliases: ['Mira', 'apothecary Mira'],
       role: 'Town Healer, Hidden Scholar',
       disposition: 'neutral',
       description:
@@ -182,6 +187,9 @@ const cursedKeepBase: CampaignBible = {
         'Alchemical aid: Mira can brew potions, antidotes, and holy water for the keep expedition',
       ],
     },
+    { id: 'ck-npc-torin', name: 'Torin', role: 'innkeeper', disposition: 'neutral', description: 'Greyhollow keeper', hooks: [], aliases: [] },
+    { id: 'ck-npc-vess', name: 'Vess', role: 'gravedigger', disposition: 'neutral', description: 'Village gravedigger', hooks: [], aliases: [] },
+    { id: 'ck-npc-kael', name: 'Kael', role: 'traveler', disposition: 'neutral', description: 'Fellow traveler', hooks: [], aliases: [] },
   ],
 
   starterQuests: [

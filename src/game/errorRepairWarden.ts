@@ -10,6 +10,7 @@ import { adaptStarterQuestsForArrival, isAtmospherePlaceName } from './questPlay
 import { getCampaignBibleById } from '@/data/campaigns';
 import { filterChromeFromPresent, isChromePersonToken, isHubRoleCompoundToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames } from './npcRecords';
 import { isNeverCastTitle } from './neverCast';
 import { applyPyoaCharterProseBurn } from './pyoaBranchLedger';
 import { attachHookLock, backfillHookLockFromSave } from './hookLock';
@@ -384,7 +385,7 @@ function repairUnregisteredEntities(state: GameState, notes: ErrorRepairNote[]):
   const registeredPresent = present.filter((name) => {
     if (isChromePersonToken(name)) return false;
     if (isHubRoleCompoundToken(name)) return true;
-    if (canHarvestAsNamedPerson(name, bibleId) && !isNeverCastTitle(name, state)) return true;
+    if (canHarvestAsNamedPerson(name, bibleId, npcRecordNames(state)) && !isNeverCastTitle(name, state)) return true;
     return false;
   });
   

@@ -611,13 +611,9 @@ export function craftProgressionPolicy(
   const starveWait = drought.noFork && (when === 'wait' || (mode === 'pyoa' && /^\s*wait\b/i.test(input)));
   const preferPads: string[] = [];
   if (starveInspect) {
-    preferPads.push(
-      mode === 'pyoa' ? 'Choose the risky fork' : mode === 'rpg' ? 'Press for leverage' : 'Scout the exit'
-    );
+    preferPads.push(mode === 'pyoa' ? 'Choose the risky fork' : 'Scout the exit');
   }
-  if (starveWait) {
-    preferPads.push(mode === 'pyoa' ? 'Face the crisis now' : 'Ask a direct question');
-  }
+  if (starveWait && mode === 'pyoa') preferPads.push('Face the crisis now');
   const note = [
     starveInspect ? 'craft starve inspect-again' : '',
     starveWait ? 'craft starve wait-no-fork' : '',

@@ -8,10 +8,10 @@ import type { GameState } from './types';
 import { formatPyoaSpineTurnJob } from './pyoaSpine';
 import {
   canHarvestAsNamedPerson,
-  getRegisteredNpcs,
   isBareHonorificTitle,
   isRegisteredLocation,
 } from './entityRegistry';
+import { npcRecordNames, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { playerFacingLocation } from './locationName';
@@ -391,25 +391,33 @@ export function sealedCastNames(state: GameState): string[] {
   const bibleId = state.campaignBibleId ?? state.bibleId;
   const pinsOut = openingPinsLockedOut(state);
   const pinSet = new Set(openingPinNames(state).map((n) => n.toLowerCase()));
-  const bibleFullNames = (bibleId ? getRegisteredNpcs(bibleId) : []).filter((n) => nameTokens(n).length >= 2);
+  const knownNames = npcRecordNames(state);
   const out: string[] = [];
+
+  const passesExclusions = (name: string): boolean => {
+    if (isPlannerUiPersonToken(name)) return false;
+    if (isNeverCastTitle(name, state)) return false;
+    if (pinsOut && (pinSet.has(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))) return false;
+    return true;
+  };
+
+  for (const r of presentNpcRecords(state)) {
+    const name = r.npcName.trim();
+    if (!name || !passesExclusions(name)) continue;
+    if (!out.some((k) => k.toLowerCase() === name.toLowerCase())) out.push(name);
+  }
 
   const consider = (raw: string | undefined) => {
     const name = (raw ?? '').trim();
-    if (!name || /\s(?:and|&)\s/i.test(name)) return;
-    if (isPlannerUiPersonToken(name)) return;
-    if (isNeverCastTitle(name, state)) return;
-    if (pinsOut && (pinSet.has(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))) return;
-    if (!canHarvestAsNamedPerson(name, bibleId)) return;
-    const toks = nameTokens(name);
-    const bibleHits = bibleFullNames.filter((n) => tokensWithin(toks, nameTokens(n)));
-    const display = bibleHits.length === 1 ? bibleHits[0] : name;
-    const dToks = nameTokens(display);
+    if (!name || /\s(?:and|&)\s|&|,/i.test(name)) return;
+    if (resolveNpcRecord(state, name)) return;
+    if (!passesExclusions(name)) return;
+    if (!canHarvestAsNamedPerson(name, bibleId, knownNames)) return;
+    const dToks = nameTokens(name);
     const i = out.findIndex(
-      (k) => k.toLowerCase() === display.toLowerCase() || tokensWithin(dToks, nameTokens(k)) || tokensWithin(nameTokens(k), dToks)
+      (k) => k.toLowerCase() === name.toLowerCase() || tokensWithin(dToks, nameTokens(k)) || tokensWithin(nameTokens(k), dToks)
     );
-    if (i < 0) out.push(display);
-    else if (dToks.length > nameTokens(out[i]).length) out[i] = display;
+    if (i < 0) out.push(name);
   };
 
   for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) consider(p);
@@ -540,7 +548,7 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
     if (self && name.toLowerCase() === self) continue;
     if (isPlannerUiPersonToken(name)) continue;
     if (isRegisteredLocation(name, bibleId)) continue;
-    if (!canHarvestAsNamedPerson(name, bibleId)) continue;
+    if (!canHarvestAsNamedPerson(name, bibleId, npcRecordNames(state))) continue;
     if (cast.has(name.toLowerCase())) continue;
     const after = body.slice(m.index + name.length, m.index + name.length + 40);
     const before = body.slice(Math.max(0, m.index - 12), m.index);

@@ -7,6 +7,7 @@ import type { GameState, SceneFacts } from './types';
 import { filterChromeFromPresent, realPresentPeople } from './chromeAuthority';
 import { syncPresentToCount } from './crowdAuthority';
 import { openingCastLabel } from './openingEstablishment';
+import { openingCastRecords } from './npcRecords';
 
 export type PointerWhoBand = 0 | 1 | 2 | 4 | 5;
 
@@ -390,7 +391,11 @@ export function applyCardCrowdToFacts(state: GameState, facts: SceneFacts): Scen
   if (!slots) return facts;
   const pins = state.openingEstablishment?.pinnedNpcNames ?? [];
   const pinned = filterChromeFromPresent([
-    ...(pins.length || slots.whoCount === 0 ? pins : [openingCastLabel(state)].filter(Boolean)),
+    ...(pins.length || slots.whoCount === 0
+      ? pins
+      : openingCastRecords(state).length
+        ? openingCastRecords(state).map((r) => r.npcName)
+        : [openingCastLabel(state)].filter(Boolean)),
     ...(facts.present ?? []),
   ]);
   if (slots.whoCount === 0) {

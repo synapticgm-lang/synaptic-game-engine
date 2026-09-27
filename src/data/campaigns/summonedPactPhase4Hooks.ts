@@ -8,6 +8,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the common room of the Weighing Cup',
     faction: 'Innkeep Mara Vell and two Scale clerks drinking off-duty',
+    castNpcIds: ['sp-npc-mara-vell'],
     summonIntent: 'The rite misfired into an inn, not a cathedral. They need a name before the close hears you arrived in a taproom.',
     openingOffer:
       'Stay as a guest and they will issue a room-key and a traveler’s cloak. Walk out and you keep Earth kit — Mara will still write you in the book.',
@@ -24,6 +25,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the Contract Hall notice board',
     faction: 'Clerk Brin Holt posting Crown jobs, already late',
+    castNpcIds: ['sp-npc-brin-holt'],
     summonIntent: 'Someone stamped a summon onto a job-board rite. They wanted a contractor. They got an Earth soul.',
     openingOffer:
       'Take the posted job and they will issue a contractor’s chit and a short blade. Refuse the board and you keep Earth kit while Brin panics at the stamp.',
@@ -40,6 +42,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the cathedral kitchens in the Close',
     faction: 'Brother Tam and the night cooks who were not supposed to see this',
+    castNpcIds: ['sp-npc-3'],
     summonIntent: 'The seventh ring dumped you into bread-steam, not the vault. Tam will hide you or sell you upstairs.',
     openingOffer:
       'Help them finish the night bake and they will wrap bread and a kitchen knife for the road. Shout for the Chanter and you keep Earth kit — Tam may still get blamed.',
@@ -56,6 +59,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the ledger stair on the Palace Approach',
     faction: 'Court clerk Ila Pellane and two pike-guards',
+    castNpcIds: ['sp-npc-ila-pellane'],
     summonIntent: 'They meant to summon a witness onto the palace stair, not a Pactborn. The ledger already has a blank line.',
     openingOffer:
       'Sign the blank and they will issue a visitor’s tabard and a pass-token. Refuse and you keep Earth kit while the pikes decide if you are an incident.',
@@ -72,6 +76,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'Kitchen Saint Alley behind the Close',
     faction: 'Sister Pell and a marked child who will not speak first',
+    castNpcIds: ['sp-npc-sister-pell'],
     summonIntent: 'Charity-circle, not Crown brass. They pulled you because the child’s mark woke and they had no priest left.',
     openingOffer:
       'Stay and they will share a blanket and a heel of bread. Leave and you keep Earth kit — the child still watches the panel.',
@@ -88,6 +93,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the reed water of Mireglass March',
     faction: 'Ilyra Fen and Tekk Reed counting who comes back twice',
+    castNpcIds: ['sp-npc-5', 'sp-npc-6'],
     summonIntent: 'A marsh circle meant to call a reflection, not an Earth soul. The March already has one of you in the water.',
     openingOffer:
       'Take a dry-path token and they will kit you with reed-wraps and a pole. Refuse the token and you keep Earth kit while the water still shows someone else.',
@@ -104,6 +110,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the ash-heat of Cinderwake Trail',
     faction: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
+    castNpcIds: ['sp-npc-9', 'sp-npc-10'],
     summonIntent: 'They finished a tracking-rite on the ash road. You arrived in the prints they were following.',
     openingOffer:
       'Walk with Oren and he will share water and a pilgrim scarf. Stay for Kessa and she will offer a brand-iron if you take her hunt — or you keep Earth kit and both of them.',
@@ -120,6 +127,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the hearing pit of the Sump Court',
     faction: 'Magistrate Sula Vane and broker Nox Kade',
+    castNpcIds: ['sp-npc-13', 'sp-npc-14'],
     summonIntent: 'They summoned a clause, not a hero. The Sump wants a living signature on an illegal binding.',
     openingOffer:
       'Sign Sula’s cheap contract and they will issue a court token and a ferryman’s chit. Buy Nox’s leverage instead — or keep Earth kit and pay night prices later.',
@@ -152,6 +160,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the wagon desk of the Argent Ledger',
     faction: 'Yara Quill ranking bodies and Kade Voss trying to void the paper',
+    castNpcIds: ['sp-npc-22', 'sp-npc-23'],
     summonIntent: 'A mobile license rite. They wanted a ranked contractor. The Mark on you is an audit problem.',
     openingOffer:
       'Accept Yara’s rank stamp and she will issue a license plate and a short blade. Let Kade void the paper and you keep Earth kit — and his claim.',
@@ -200,6 +209,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'a Lowmarket junk stall under tarps',
     faction: 'Fence Nemi Salt and a Crown watcher pretending to browse',
+    castNpcIds: ['sp-npc-24'],
     summonIntent: 'They used a stolen Scale chalk to pull luck for a sale. They pulled you. The watcher already saw.',
     openingOffer:
       'Play customer and Nemi will press a junk-knife and a rain-cloak into the deal. Speak to the watcher and you keep Earth kit — Nemi may dump the stall.',
@@ -216,6 +226,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'Valespire Harbor Quay at night tide',
     faction: 'Quay-master Pell Wren and two grain-hands who want you off the boards',
+    castNpcIds: ['sp-npc-pell-wren'],
     summonIntent: 'A dock-luck rite at tide-turn. They wanted a fair wind. They got an Earth soul on the wet boards.',
     openingOffer:
       'Sign as extra crew and they will issue oilskins and a barge-hook. Stay on the quay and shout and you keep Earth kit — Pell may call the watch.',
@@ -232,6 +243,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'a Scale counting-house on Ledger Row',
     faction: 'Auditor Venn Scale and two junior counters',
+    castNpcIds: ['sp-npc-venn-scale'],
     summonIntent: 'They tried to summon a missing account into the book. The account was you.',
     openingOffer:
       'Sit the audit and they will issue a clerk’s sash and a numbered chit. Walk out mid-count and you keep Earth kit while Venn writes “unaccounted.”',
@@ -248,6 +260,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'a Crown courier loft above the Close',
     faction: 'Courier Ado Ferry and a sealed bag that was not meant to open',
+    castNpcIds: ['sp-npc-16'],
     summonIntent: 'A delivery-rite to move a sealed name. The bag opened on an Earth soul instead of a letter.',
     openingOffer:
       'Carry the remaining seals and they will issue a courier sash and a night-pass. Drop the bag and you keep Earth kit — Ado still has a route to run.',
@@ -296,6 +309,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'a Crown archive stack behind iron mesh',
     faction: 'Archivist Lene Quill and a silent Scale witness',
+    castNpcIds: ['sp-npc-lene-quill'],
     summonIntent: 'They tried to summon a forbidden name out of the stack. The name arrived wearing Earth clothes.',
     openingOffer:
       'Read the one page they allow and they will issue a reader’s ribbon and a copied line. Refuse the page and you keep Earth kit — Lene will lock the mesh.',
@@ -328,6 +342,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the bell-tower of Valespire Cathedral',
     faction: 'Bell-warden Orth and a frightened novice on the ladder',
+    castNpcIds: ['sp-npc-orth'],
     summonIntent: 'They pulled you into the tower to hide a failed vault-rite from the nave. The city can already hear the bells wrong.',
     openingOffer:
       'Help them still the bells and they will issue a rope-belt and a tower-pass. Climb down shouting and you keep Earth kit — Orth may lock the trapdoor.',
@@ -344,6 +359,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'a quarry circle outside Valespire’s east wall',
     faction: 'Quarry-boss Harn and Crown surveyors who want the cut blamed on you',
+    castNpcIds: ['sp-npc-harn'],
     summonIntent: 'A work-rite to pull a strong back. They got an Earth soul. The surveyors need someone to sign the collapse.',
     openingOffer:
       'Take the blame-line and they will issue a work-coat and a chit. Refuse the line and you keep Earth kit — Harn may still walk you to the watch.',
@@ -376,6 +392,7 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
     location: 'the stable loft behind the Weighing Cup',
     faction: 'Ostler Joss and a Crown handler who followed the wrong door',
+    castNpcIds: ['sp-npc-joss'],
     summonIntent: 'The inn rite dumped you into hay, not the common room. The handler still wants a cathedral ending.',
     openingOffer:
       'Stay with Joss and he will issue a duster-coat and a back-gate key. Go with the handler and they will promise vault kit you have not seen — or keep Earth clothes and the horses.',

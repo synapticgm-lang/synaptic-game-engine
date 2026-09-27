@@ -6,6 +6,7 @@ import type { CampaignBible } from './campaignBibleTypes';
 import type { GameState } from './types';
 import { isChromePersonToken, isNonPersonNameToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { npcRecordNames } from './npcRecords';
 
 const OPENING_PIN_TURN_CAP = 20;
 
@@ -64,7 +65,7 @@ export function resolveOpeningPinnedNames(
   const bibleId = state.campaignBibleId ?? bible?.id;
   for (const n of merged) {
     if (isChromePersonToken(n) || isNonPersonNameToken(n)) continue;
-    if (!canHarvestAsNamedPerson(n, bibleId)) continue;
+    if (!canHarvestAsNamedPerson(n, bibleId, npcRecordNames(state))) continue;
     if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
     if (out.length >= 2) break;
   }

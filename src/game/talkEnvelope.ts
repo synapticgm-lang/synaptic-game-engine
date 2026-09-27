@@ -7,13 +7,13 @@ import { sealedCastNames } from './beatContract';
 import { formatWriterFacingEvent, type CompletedEventPacket } from './completedEventPacket';
 import { matchesLastKillName } from './combatAuthority';
 import { hasMetBefore } from './npcMemory';
+import { openingCastRecords } from './npcRecords';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import {
   hallTalkAsksRefuse,
   hallTalkAsksWant,
   hallTalkAsksWho,
   openingAlreadyToldLine,
-  openingCastLabel,
   openingSpokenIdentityQuote,
   openingWhoAskLineFromLabel,
   openingSpokenRefuse,
@@ -133,12 +133,10 @@ export function buildTalkEnvelope(
 }
 
 function openingCastIsHere(state: GameState, present: string[]): boolean {
-  const cast = openingCastLabel(state).toLowerCase();
-  if (!cast) return false;
-  return present.some((p) => {
-    const last = p.toLowerCase().split(/\s+/).pop() ?? '';
-    return last.length > 2 && cast.includes(last);
-  });
+  const here = new Set(present.map((p) => p.trim().toLowerCase()));
+  return openingCastRecords(state).some((r) =>
+    [r.npcName, ...(r.aliases ?? [])].some((n) => here.has(n.trim().toLowerCase()))
+  );
 }
 
 function priorGmBodies(state: GameState): Set<string> {
