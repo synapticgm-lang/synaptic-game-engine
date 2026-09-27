@@ -41,6 +41,7 @@ import {
   lockedOpeningPcName,
   openingNameLockSpokenBeat,
   castSpeakVerb,
+  lineNamesOtherNpc,
   openingCastLabel,
   openingCastNames,
   openingSpokenIdentityQuote,
@@ -787,9 +788,9 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   const fresh = (s: string) => !!s && !priorBodies.has(s.replace(/\s+/g, ' ').trim().toLowerCase());
   const sheet = /\bpanel\b|\bcheck status\b/i.test(act) ? ledgerSheetLine(state) : '';
   if (sheet) return sheet;
-  if (/\b(?:talk|speak|ask)\b/i.test(act)) {
+  if (/\b(?:talk|speak|ask|press|offer|refuse|tell|persuade)\b/i.test(act)) {
     const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
-    if (fresh(talk)) return talk;
+    if (fresh(talk) && !/^Nobody here answered/i.test(talk)) return talk;
   }
   const f = ledgerPlaceFacts(state);
   if (isExitsAsk(act)) {
@@ -1595,12 +1596,9 @@ function topicAdvancePool(
   const look = [
     `You looked over ${placeName}. ${desc || groundLine} ${peopleLine} ${nextMove}`,
     `${capFirst(placeName)} held your eye a moment. ${desc || groundLine} ${peopleLine} ${nextMove}`,
-    `You took ${placeName} in again. ${desc || groundLine} ${peopleLine} ${nextMove}`,
   ];
   const wait = [
     `You held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${desc || groundLine} ${nextMove}`,
-    `A pause at ${placeName} added nothing new. ${people ? `${people} stayed where they stood.` : 'The place stayed quiet.'} ${nextMove}`,
-    `You gave ${placeName} a beat. ${groundLine} ${people ? `${people} did not speak again.` : 'No new voice arrived.'} ${nextMove}`,
   ];
   const exitsPool = [
     `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleLine} ${nextMove}`,
@@ -1679,7 +1677,11 @@ function topicAdvancePool(
     `You say yes at ${here}. ${spokenWant} The offered kit is in reach. ${nextMove}`,
   ];
   let pool = look;
-  if (isOpeningNameGiveLine(act) && !hallTopicAlreadyAnswered(state, 'want')) {
+  if (lineNamesOtherNpc(state, act) && !wantsMove) {
+    // 27i — a line naming another known NPC is answered by that NPC, never the opener's card.
+    const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
+    pool = talk && !/^Nobody here answered/i.test(talk) ? [talk] : look;
+  } else if (isOpeningNameGiveLine(act) && !hallTopicAlreadyAnswered(state, 'want')) {
     pool = [openingNameLockSpokenBeat(state)];
   } else if (isAcceptOfferLine(act)) {
     pool = accept;
@@ -1719,7 +1721,11 @@ function topicAdvancePool(
   } else if (packet?.verb === 'spoke' || packet?.verb === 'parleyed' || packet?.verb === 'used') {
     if (!hallTopicAlreadyAnswered(state, 'who')) pool = [whoFirst];
     else if (!hallTopicAlreadyAnswered(state, 'want')) pool = [wantFirst];
-    else pool = look;
+    else if (packet?.verb === 'used') pool = look;
+    else {
+      const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
+      pool = talk && !/^Nobody here answered/i.test(talk) ? [talk] : look;
+    }
   } else if (!hallTopicAlreadyAnswered(state, 'who')) {
     pool = [whoFirst];
   } else if (!hallTopicAlreadyAnswered(state, 'want')) {
@@ -1999,7 +2005,7 @@ function renderSpokenTalkFallback(packet: CompletedEventPacket, slots: StitchSlo
     && (packet.recentBeats ?? []).some((b) => b.includes(want.slice(0, Math.min(24, want.length))));
   if (want) {
     return heard
-      ? `${head} already said it. "${want}"`
+      ? `${head} had already told you what they wanted.`
       : `${head} ${castSpeakVerb(who)} you. "${want}"`;
   }
   return `${head} heard you at ${slots.where}. Their answer stayed short.`;

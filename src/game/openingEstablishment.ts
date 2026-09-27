@@ -1294,6 +1294,20 @@ function isFirstAlreadyToldHallStitch(state: GameState, line: string): boolean {
   return countSameHallTopicRepeats(state, line) === 2;
 }
 
+/** 27i — the opening hall stitch speaks for the opener only; a line naming another known NPC goes to that NPC. */
+export function lineNamesOtherNpc(state: GameState, line: string): boolean {
+  const low = (line ?? '').toLowerCase();
+  if (!low.trim()) return false;
+  const opener = openingCastLabel(state).toLowerCase();
+  const openerIds = new Set(state.openingEstablishment?.castNpcIds ?? []);
+  return (state.npcMemories ?? []).some((m) => {
+    const name = (m.npcName ?? '').trim().toLowerCase();
+    if (!name || openerIds.has(m.npcId)) return false;
+    if (opener && (opener.includes(name) || name.includes(opener))) return false;
+    return low.includes(name);
+  });
+}
+
 export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
   if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
   const sceneWritten = state.openingEstablishment?.sceneWritten === true;
@@ -1318,6 +1332,7 @@ export function shouldStitchOpeningContinue(state: GameState, playerInput?: stri
       return false;
     }
     if (!isHallTalkPlayerLine(line)) return false;
+    if (lineNamesOtherNpc(state, line)) return false;
     if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) return false;
     const topic = hallTalkTopic(line);
     if (topic === 'who' || topic === 'want' || topic === 'refuse') {

@@ -1771,7 +1771,7 @@ Do NOT print dice notation or CODE ENFORCED.
   let filteredSystemLog = filterSystemLogForEngine(
     useMud && mudTurn
       ? [...mudTurn.receiptLines, ...arcStatusReceipts, ...sandboxNotes, ...levelNotes]
-      : [...gmSystemLog, ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
+      : [...gmSystemLog, ...(warden.notes.length ? [`Warden: ${[...warden.notes.slice(0, 3), ...warden.notes.slice(3).filter((n) => /^Paint blocked/i.test(n))].join('; ')}`] : [])],
     state.engineMode
   );
   if (!useMud) {

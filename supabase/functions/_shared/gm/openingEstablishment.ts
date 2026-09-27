@@ -330,3 +330,8 @@ export function isCombatFamilyPad(choice: string): boolean {
 export function shouldStarveCombatPadsOnCover(_state?: unknown): boolean {
   return false;
 }
+
+/** Edge stub (27i): the client decides whether a line names another NPC (src/game/openingEstablishment.ts). */
+export function lineNamesOtherNpc(_state?: unknown, _line?: string): boolean {
+  return false;
+}

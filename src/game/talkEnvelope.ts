@@ -13,7 +13,7 @@ import {
   hallTalkAsksRefuse,
   hallTalkAsksWant,
   hallTalkAsksWho,
-  openingAlreadyToldLine,
+  openingCastLabel,
   openingSpokenIdentityQuote,
   openingWhoAskLineFromLabel,
   openingSpokenRefuse,
@@ -172,35 +172,34 @@ function spokenTalkFallbackInner(state: GameState, playerInput: string, who: str
     return `${kill.name} stayed down at ${where}. They were a corpse, not a speaker. Leave, or search what they left.`;
   }
   const met = hasMetBefore(state, who);
+  // 27i — opening-card lines belong to the opener only; never another NPC's want, never a reprint.
+  const opener = openingCastLabel(state).trim().toLowerCase();
+  const low = who.trim().toLowerCase();
+  const isOpener =
+    (!!opener && (low === opener || opener.includes(low) || low.includes(opener)))
+    || openingCastRecords(state).some((r) =>
+      [r.npcName, ...(r.aliases ?? [])].some((n) => n.trim().toLowerCase() === low)
+    );
+  const place = matchHub(hubsForBibleId(state.campaignBibleId), where)?.name ?? where;
+  const head = who.charAt(0).toUpperCase() + who.slice(1);
+  const plain = `${head} listened at ${place} and kept the answer short.`;
+  const idOpts = {
+    location: state.currentLocation,
+    engineMode: state.engineMode,
+    hay: identityHay(state),
+    stamp: resolveLitRpgFolkStamp(state),
+    state,
+  };
   if (hallTalkAsksWho(playerInput)) {
-    return met || /already said|already answered/i.test((state.log ?? []).slice(-2).map((e) => e.content).join(' '))
-      ? openingAlreadyToldLine(state, 'who')
-      : openingSpokenIdentityQuote(who, {
-          location: state.currentLocation,
-          engineMode: state.engineMode,
-          hay: identityHay(state),
-          stamp: resolveLitRpgFolkStamp(state),
-          state,
-        })
-        ? openingWhoAskLineFromLabel(who, {
-            location: state.currentLocation,
-            engineMode: state.engineMode,
-            hay: identityHay(state),
-            stamp: resolveLitRpgFolkStamp(state),
-            state,
-          })
-        : openingAlreadyToldLine(state, 'who');
+    if (met) return `${head} had already told you who they are.`;
+    return openingSpokenIdentityQuote(who, idOpts) ? openingWhoAskLineFromLabel(who, idOpts) : plain;
   }
   if (hallTalkAsksRefuse(playerInput)) {
-    const first = openingSpokenRefuse(state);
-    return met ? openingAlreadyToldLine(state, 'refuse') : first;
+    return isOpener && !met ? openingSpokenRefuse(state) || plain : plain;
   }
-  const first = openingSpokenWant(state);
-  if (met) {
-    const topic = authoredTopicForState(state, who, playerInput);
-    return topic || openingAlreadyToldLine(state, 'want');
-  }
-  return first || authoredTopicForState(state, who, playerInput);
+  const topic = authoredTopicForState(state, who, playerInput);
+  if (isOpener && !met) return openingSpokenWant(state) || topic || plain;
+  return topic || plain;
 }
 
 export function formatTalkWriterFacing(
