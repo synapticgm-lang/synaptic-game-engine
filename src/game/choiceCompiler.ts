@@ -142,7 +142,6 @@ function intentSupplements(family: PlayerIntentFamily, engaged: boolean): string
   if (family === 'demand') return ['Demand they send you back', 'Argue you do not belong here', 'Wait and watch'];
   if (family === 'inspect') return ['Check the exits', 'Wait and watch'];
   if (family === 'flee') return ['Keep running', 'Look for an exit', 'Find cover'];
-  if (family === 'talk') return ['Ask a direct question', 'Press for leverage'];
   return [];
 }
 
@@ -961,22 +960,22 @@ export function compileChoices(
         if (parleyAvailable(state.activeEncounter)) supplements.push('Parley');
       } else if (mandate.includes('crisis') || state.engineMode === 'pyoa') {
         if (pyoaLocked) {
-          supplements.push('Choose the risky fork', 'Face the crisis now', 'Press for leverage');
+          supplements.push('Choose the risky fork', 'Face the crisis now');
         } else {
           supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
         }
       } else if (npcTacticAdvance) {
-        supplements.push('Press for leverage', 'Change the subject');
+        supplements.push('Change the subject');
         if (!excluded.has('leave')) supplements.push('Walk away with consequence');
       } else if (state.engineMode === 'litrpg') {
         // 31i — no Check Status / Wait spam under drought (same dead path)
         supplements.push('Ask what they want', 'Scout the exit', 'Inspect the immediate surroundings');
       } else if (stallInterrupt) {
         // 29b/29c — no wait/walk-away/travel refill under hard streak/loiter
-        supplements.push('Ask a direct question', 'Press for leverage', 'Scout the exit');
+        supplements.push('Scout the exit');
       } else {
         // 31i — drop Change position / Wait (meta verbs that mapped to stubs)
-        supplements.push('Ask a direct question', 'Scout the exit', 'Inspect the surroundings');
+        supplements.push('Scout the exit', 'Inspect the surroundings');
       }
     }
     for (const s of supplements) {
@@ -1011,11 +1010,7 @@ export function compileChoices(
       if (interruptPads.length >= 2) break;
     }
     if (interruptPads.length < 2) {
-      interruptPads.push(
-        ...(talkRecycle
-          ? closedUniverseFallbacks(state, excluded).slice(0, 2)
-          : ['Ask a direct question', 'Press for leverage'])
-      );
+      interruptPads.push(...closedUniverseFallbacks(state, excluded).slice(0, 2));
     }
     for (const pad of interruptPads) {
       if (isTravelPad(pad) || isLeaveFamilyPad(pad)) continue;
@@ -1097,8 +1092,8 @@ export function compileChoices(
       /\b(travel|leave|exit|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i.test(c)
     );
     if (!worldMoving) {
-      const fallback = closedUniverseFallbacks(state, excluded)[0] ?? 'Ask a direct question';
-      if (!isExcludedPadLabel(fallback, excluded) && !filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
+      const fallback = closedUniverseFallbacks(state, excluded)[0];
+      if (fallback && !isExcludedPadLabel(fallback, excluded) && !filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
         filtered.unshift(fallback);
         notes.push('Fate world-moving pad forced');
       }
@@ -1125,21 +1120,8 @@ export function compileChoices(
     }
   }
 
-  // Batch V — hub travel treadmill without combat: force talk/stake pads (not another Travel)
+  // Batch V — hub travel treadmill without combat: no another Travel
   if (travelStarve && !engaged && !liveStakes) {
-    const stakePads = [
-      'Ask a direct question',
-      'Press for leverage',
-      'Listen for the real answer',
-      'Take a stake in what is unfolding',
-    ];
-    for (const pad of stakePads) {
-      if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
-        filtered.unshift(pad);
-        notes.push(`Travel-starve stake pad: ${pad.slice(0, 40)}`);
-      }
-      if (filtered.length >= 4) break;
-    }
     filtered = filtered.filter((c) => {
       if (isTravelPad(c)) {
         notes.push(`Travel-starve drop: ${c.slice(0, 32)}`);

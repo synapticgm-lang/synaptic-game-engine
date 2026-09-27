@@ -226,18 +226,8 @@ export function closedUniverseFallbacks(
     else out.push(`Ask ${p} what they want`);
   }
   const banks = people.length
-    ? [
-        people[0] ? `Talk to ${people[0]}` : 'Ask a direct question',
-        'Take a stake in what is unfolding',
-        'Inspect the immediate surroundings',
-      ]
-    : [
-        'Ask a direct question',
-        'Press for leverage',
-        'Listen for the real answer',
-        'Take a stake in what is unfolding',
-        'Inspect the immediate surroundings',
-      ];
+    ? [`Talk to ${people[0]}`, 'Inspect the immediate surroundings']
+    : ['Inspect the immediate surroundings'];
   for (const pad of banks) {
     if (!out.some((c) => c.toLowerCase() === pad.toLowerCase())) out.push(pad);
   }

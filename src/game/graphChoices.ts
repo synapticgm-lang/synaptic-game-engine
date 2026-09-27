@@ -163,19 +163,6 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     }
   }
 
-  const activeQuest = (state.quests ?? []).find((q) => q.status === 'active');
-  if (activeQuest) {
-    const nextObj = (activeQuest.objectives ?? []).find((o) => !o.completed);
-    if (nextObj?.description) {
-      edges.push({
-        type: 'quest',
-        label: nextObj.description.slice(0, 42),
-        intent: PlayerIntent.INTENT_CONTINUE,
-        cooldown: 0,
-      });
-    }
-  }
-
   for (const prop of state.sceneFacts?.props ?? []) {
     if (!/chest|crate|corpse|body/i.test(prop)) continue;
     edges.push({

@@ -1014,7 +1014,11 @@ export async function headlessFateTurn(
   }
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
+  const hereBeforeMove = arcState.currentLocation ?? '';
   arcState = applyNamedHubTravel(applyGraphExitTravel(arcState, playerInput), playerInput);
+  if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
+    arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
+  }
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
   arcState = preparedEvent.state;
   const useMud = shouldUseSilentMudTurn({
@@ -1496,12 +1500,13 @@ Do NOT print dice notation or CODE ENFORCED.
       : null;
   const travelDestName = travelHub?.name ?? leaveDestName;
   if (travelDestName) {
+    const hereBefore = working.currentLocation ?? fromLoc ?? '';
     working = {
       ...working,
       currentLocation: travelDestName,
       places: touchPlaceVisit(working.places ?? state.places ?? [], travelDestName, state.turn + 1),
     };
-    working = applyPresentTrimOnTravel(working, fromLoc ?? '', travelDestName);
+    working = applyPresentTrimOnTravel(working, hereBefore, travelDestName);
     cleanText = stampTravelArrivalIfSafe(cleanText, travelDestName, fromLoc, working);
   }
   working = enforceCameraOnState(working, playerInput);
@@ -1670,7 +1675,7 @@ Do NOT print dice notation or CODE ENFORCED.
   let levelNotes: string[] = [];
   const sandboxNotes = [...sandboxXp.notes];
   let sandboxKeys = sandboxXp.awardKeys;
-  if (sandboxXp.xp > 0) {
+  if (sandboxXp.xp > 0 && !blockedPaint) {
     const leveled = applyCharacterXpGain(character, sandboxXp.xp);
     character = leveled.character;
     levelNotes = leveled.notes;

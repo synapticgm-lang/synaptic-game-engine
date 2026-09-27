@@ -6,7 +6,12 @@
 
 import type { GameState } from './types';
 import { formatPyoaSpineTurnJob } from './pyoaSpine';
-import { canHarvestAsNamedPerson, isRegisteredLocation } from './entityRegistry';
+import {
+  canHarvestAsNamedPerson,
+  getRegisteredNpcs,
+  isBareHonorificTitle,
+  isRegisteredLocation,
+} from './entityRegistry';
 import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { playerFacingLocation } from './locationName';
@@ -373,23 +378,38 @@ function openingPinsLockedOut(state: GameState): boolean {
   return !!prev && placesDiffer(here, prev);
 }
 
-/** Named people actually HERE — harvest rules, not last-GM Title-Case. */
+const nameTokens = (name: string): string[] =>
+  name
+    .split(/\s+/)
+    .filter((w) => /^[A-Z][a-z']+$/.test(w) && !isBareHonorificTitle(w))
+    .map((w) => w.toLowerCase());
+
+const tokensWithin = (a: string[], b: string[]): boolean => a.length > 0 && a.every((t) => b.includes(t));
+
+/** The one present-cast source: harvest rules + one display name per person (bible name wins). */
 export function sealedCastNames(state: GameState): string[] {
   const bibleId = state.campaignBibleId ?? state.bibleId;
   const pinsOut = openingPinsLockedOut(state);
   const pinSet = new Set(openingPinNames(state).map((n) => n.toLowerCase()));
+  const bibleFullNames = (bibleId ? getRegisteredNpcs(bibleId) : []).filter((n) => nameTokens(n).length >= 2);
   const out: string[] = [];
-  const seen = new Set<string>();
 
   const consider = (raw: string | undefined) => {
     const name = (raw ?? '').trim();
-    if (!name || seen.has(name.toLowerCase())) return;
+    if (!name || /\s(?:and|&)\s/i.test(name)) return;
     if (isPlannerUiPersonToken(name)) return;
     if (isNeverCastTitle(name, state)) return;
     if (pinsOut && (pinSet.has(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))) return;
     if (!canHarvestAsNamedPerson(name, bibleId)) return;
-    seen.add(name.toLowerCase());
-    out.push(name);
+    const toks = nameTokens(name);
+    const bibleHits = bibleFullNames.filter((n) => tokensWithin(toks, nameTokens(n)));
+    const display = bibleHits.length === 1 ? bibleHits[0] : name;
+    const dToks = nameTokens(display);
+    const i = out.findIndex(
+      (k) => k.toLowerCase() === display.toLowerCase() || tokensWithin(dToks, nameTokens(k)) || tokensWithin(nameTokens(k), dToks)
+    );
+    if (i < 0) out.push(display);
+    else if (dToks.length > nameTokens(out[i]).length) out[i] = display;
   };
 
   for (const p of realPresentPeople(state.sceneFacts?.present ?? [])) consider(p);

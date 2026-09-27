@@ -166,7 +166,6 @@ export const TRAVEL_BEATS: Record<string, BeatTemplate> = {
     proseHints: ['New ground underfoot', 'The hub is live'],
     nextLegalEdges: [
       { label: 'Look around', intent: PlayerIntent.INTENT_LOOK_AROUND, cooldown: 5 },
-      { label: 'Ask a direct question', intent: PlayerIntent.INTENT_TALK, cooldown: 0 },
     ],
     once: false,
     minTurn: 4,

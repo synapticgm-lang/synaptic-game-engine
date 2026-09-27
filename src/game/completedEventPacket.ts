@@ -19,6 +19,8 @@ import {
   type LastKill,
 } from './combatAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { sealedCastNames } from './beatContract';
+import { ledgerSheetLine } from './litrpgSystemWindow';
 import { isNeverCastTitle } from './neverCast';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 import {
@@ -108,9 +110,9 @@ export interface CompletedEventPacket {
   refEnum?: LedgerRef[];
   /** 14a — bound uses after a successful JSON beat (harvest prefers these). */
   tokenRefs?: TokenUseRef[];
-  /** 27a — ledger place facts for stitch banks (no indoor words outdoors). */
-  sceneIndoor?: boolean;
+  /** 27a — ledger place facts for stitch banks. */
   placeDescriptor?: string;
+  ledgerSheet?: string;
   exitNames?: string[];
 }
 
@@ -674,9 +676,9 @@ export function buildCompletedEventPacket(
     answerStayLeave: openingStayLeaveLine(state) || undefined,
     answerOffer: shortCardOffer(state) || undefined,
     engineMode: state.engineMode,
-    sceneIndoor: placeFacts.indoor,
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
+    ledgerSheet: ledgerSheetLine(state) || undefined,
   };
 }
 
@@ -687,7 +689,6 @@ type LedgerPlaceFacts = {
   present: string[];
   leftBehind: string[];
   leftFrom: string;
-  indoor: boolean;
 };
 
 function hubDescriptor(state: GameState, place: string): string {
@@ -706,15 +707,13 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
   const exits = state.activeDungeon
     ? graphExitPads(state.activeDungeon).map((p) => p.replace(/^.*\s+to\s+/i, '').trim())
     : outdoorHubTravelChoices(state, 3).map((c) => c.replace(/^Travel\s+(?:to|toward)\s+/i, '').trim());
-  const present = realPresentPeople(state.sceneFacts?.present ?? []).filter((n) => !/\bpanel\b/i.test(n));
   return {
     place: hub?.name ?? place,
     descriptor: hubDescriptor(state, place),
     exits: exits.filter((e) => e.length > 1),
-    present,
+    present: sealedCastNames(state),
     leftBehind: realPresentPeople(state.sceneFacts?.leftBehind ?? []),
     leftFrom: (state.previousLocationSheet?.name ?? '').replace(/\s+/g, ' ').trim(),
-    indoor: state.sceneFacts?.indoor === true || !!state.activeDungeon,
   };
 }
 
@@ -737,11 +736,9 @@ function peopleHereSentence(present: string[]): string {
   return `${listNames(present)} ${present.length > 1 ? 'were' : 'was'} still there.`;
 }
 
-function exitsSentence(place: string, exits: string[] | undefined, indoor: boolean): string {
+function exitsSentence(place: string, exits: string[] | undefined): string {
   if (exits?.length) return `The ways out of ${place} were ${listNames(exits)}.`;
-  return indoor
-    ? `The only way out of ${place} you knew was the doorway you came through.`
-    : `The only way out of ${place} you knew was the road you came by.`;
+  return `The only way out of ${place} you knew was the way you came.`;
 }
 
 function stayedPreposition(place: string): string {
@@ -768,13 +765,15 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
       .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase())
   );
   const fresh = (s: string) => !!s && !priorBodies.has(s.replace(/\s+/g, ' ').trim().toLowerCase());
+  const sheet = /\bpanel\b|\bcheck status\b/i.test(act) ? ledgerSheetLine(state) : '';
+  if (sheet) return sheet;
   if (/\b(?:talk|speak|ask)\b/i.test(act)) {
     const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
     if (fresh(talk)) return talk;
   }
   const f = ledgerPlaceFacts(state);
   if (isExitsAsk(act)) {
-    const line = `You checked the ways out of ${f.place}. ${exitsSentence(f.place, f.exits, f.indoor)} ${peopleHereSentence(f.present)}`;
+    const line = `You checked the ways out of ${f.place}. ${exitsSentence(f.place, f.exits)} ${peopleHereSentence(f.present)}`;
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
   }
   if (isLookAroundAct(act) && !/\btravel\b/i.test(act)) {
@@ -983,7 +982,6 @@ type StitchSlots = {
   who: string;
   corpse: string;
   focus: string;
-  indoor?: boolean;
   descriptor?: string;
   exits?: string[];
 };
@@ -995,8 +993,7 @@ function lookFocus(s: StitchSlots): string {
 
 function lookTail(s: StitchSlots): string {
   const desc = descriptorSentence(s.descriptor);
-  if (desc) return desc;
-  return s.indoor ? 'The walls you already had were still in place.' : 'The ground you already knew held nothing new.';
+  return desc || 'The ground you already knew held nothing new.';
 }
 
 type StitchTemplate = {
@@ -1238,10 +1235,7 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     {
       id: 'lv1',
       fingerprint: 'behind. The',
-      render: (s) =>
-        s.indoor
-          ? `You left ${s.where} behind. The threshold closed on the last room.`
-          : `You left ${s.where} behind. The road took you on. ${exitsSentence(s.where, s.exits, false)}`,
+      render: (s) => `You left ${s.where} behind. ${exitsSentence(s.where, s.exits)}`,
     },
     {
       id: 'lv2',
@@ -1251,10 +1245,7 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     {
       id: 'lv3',
       fingerprint: 'You put ',
-      render: (s) =>
-        s.indoor
-          ? `You put the room at your back. ${capFirst(s.where)} was no longer underfoot. ${exitsSentence(s.where, s.exits, true)}`
-          : `You put ${s.where} at your back. ${exitsSentence(s.where, s.exits, false)}`,
+      render: (s) => `You put ${s.where} at your back. ${exitsSentence(s.where, s.exits)}`,
     },
   ],
   'wait-1': [
@@ -1580,9 +1571,7 @@ function topicAdvancePool(
   const peopleLine = people
     ? `${people} ${facts.present.length > 1 || /\band\b/.test(people) ? 'were' : 'was'} still there.`
     : 'Nobody you knew by name stood close.';
-  const groundLine = facts.indoor
-    ? 'The walls you already knew stayed put.'
-    : 'The ground you already knew held nothing new.';
+  const groundLine = 'The ground you already knew held nothing new.';
   const look = [
     `You looked over ${placeName}. ${desc || groundLine} ${peopleLine} ${nextMove}`,
     `${capFirst(placeName)} held your eye a moment. ${desc || groundLine} ${peopleLine} ${nextMove}`,
@@ -1594,7 +1583,7 @@ function topicAdvancePool(
     `You gave ${placeName} a beat. ${groundLine} ${people ? `${people} did not speak again.` : 'No new voice arrived.'} ${nextMove}`,
   ];
   const exitsPool = [
-    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits, facts.indoor)} ${peopleLine} ${nextMove}`,
+    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleLine} ${nextMove}`,
   ];
   const wantAgain = [
     `You are still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They wait on what you do next. The room does not add a second speech. ${nextMove}`,
@@ -1640,7 +1629,6 @@ function topicAdvancePool(
     .trim();
   const arriveHub = arrived && shortDest ? matchHub(hubsForBibleId(state.campaignBibleId), shortDest) : null;
   const arriveHere = arriveHub?.name ?? (arrived && shortDest ? herePhrase(shortDest) : here);
-  const arriveIndoor = !!graphHit || (!arriveHub && facts.indoor);
   const arriveDesc = descriptorSentence(arriveHub?.blurb ?? (arrived && shortDest ? hubDescriptor(state, shortDest) : ''));
   const stillAtOrigin = !!arriveHub && !placeName.toLowerCase().includes(arriveHub.name.toLowerCase());
   const behindPeople = facts.leftBehind.length ? facts.leftBehind : stillAtOrigin ? facts.present : [];
@@ -1649,17 +1637,11 @@ function topicAdvancePool(
     ? `${listNames(behindPeople)} stayed ${stayedPreposition(behindFrom)} ${behindFrom}.`
     : '';
   const go = arrived
-    ? arriveIndoor
-      ? [
-        `You are at ${arriveHere} now. The last doorway is behind you. ${arriveDesc} ${behindLine} ${nextMove}`,
-        `You step into ${arriveHere}. Stone underfoot changed. ${arriveDesc} ${behindLine} ${nextMove}`,
-        `The way opens onto ${arriveHere}. You are not in the last hall. ${arriveDesc} ${behindLine} ${nextMove}`,
-      ]
-      : [
-        `You reached ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
-        `You came into ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
-        `The road gave onto ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
-      ]
+    ? [
+      `You reached ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
+      `You came into ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
+      `The way gave onto ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
+    ]
     : [
       `You set out with ${dest} from ${here}. The trail is open under you. ${nextMove}`,
       `You start toward ${dest} from ${here}. The road remembers the next step. ${nextMove}`,
@@ -1920,7 +1902,6 @@ function ledgerStitchSlots(packet: CompletedEventPacket): StitchSlots {
     who,
     corpse,
     focus: packet.focusNoun?.trim() ?? '',
-    indoor: packet.sceneIndoor,
     descriptor: packet.placeDescriptor,
     exits: packet.exitNames,
   };
@@ -1958,9 +1939,7 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
       })
     );
   }
-  if (asksPanel && packet.engineMode === 'litrpg') {
-    bits.push('The blue panel was yours — a System window, not a person.');
-  }
+  if (asksPanel && packet.ledgerSheet) bits.push(packet.ledgerSheet);
   if (asksWant) {
     bits.push(
       want

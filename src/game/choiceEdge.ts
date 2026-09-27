@@ -149,12 +149,6 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
             beatId: contract.id,
           });
         }
-        edges.push({
-          id: `${contract.id}-ask`,
-          label: 'Ask a direct question',
-          kind: 'talk',
-          beatId: contract.id,
-        });
       } else {
         edges.push(
           {
@@ -172,25 +166,6 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
           }
         );
       }
-    } else if (
-      contract.kind === 'quest_stage' ||
-      contract.kind === 'leverage' ||
-      contract.kind === 'check'
-    ) {
-      edges.push(
-        {
-          id: `${contract.id}-ask`,
-          label: 'Ask a direct question',
-          kind: 'talk',
-          beatId: contract.id,
-        },
-        {
-          id: `${contract.id}-listen`,
-          label: 'Listen for the real answer',
-          kind: 'talk',
-          beatId: contract.id,
-        }
-      );
     }
   }
 
@@ -221,9 +196,6 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   }
   if (state.engineMode === 'dnd' && engineAllowsCombat(state) && !state.activeEncounter) {
     edges.push({ id: 'dnd-investigate', label: 'Investigate the keep', kind: 'inspect' });
-  }
-  if (state.engineMode === 'rpg') {
-    edges.push({ id: 'rpg-leverage', label: 'Press for leverage', kind: 'leverage', risk: 'med' });
   }
   if (state.engineMode === 'pyoa') {
     if (isPyoaCharterClosed(state) || isPyoaItemDestroyed(state, 'charter')) {

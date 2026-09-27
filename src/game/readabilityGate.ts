@@ -21,11 +21,9 @@ export type ReadabilityViolationKind =
   | 'spawn-log'
   | 'verbatim-repeat'
   | 'unresolved-painted'
-  | 'recycle-painted'
-  | 'indoor-outdoors'
-  | 'short-beat';
+  | 'recycle-painted';
 
-const P1_KINDS: ReadonlySet<ReadabilityViolationKind> = new Set(['travel-streak', 'indoor-outdoors', 'short-beat']);
+const P1_KINDS: ReadonlySet<ReadabilityViolationKind> = new Set(['travel-streak']);
 
 export interface ReadabilityViolation {
   kind: ReadabilityViolationKind;
@@ -68,7 +66,6 @@ export function scanReadabilityViolations(state: GameState): ReadabilityViolatio
   const knownPlaces = (state.places ?? []).map((p) => p.name).filter(Boolean) as string[];
   const prevLoc = '';
   const seenBodies = new Set<string>();
-  const outdoorsNow = state.sceneFacts?.indoor !== true && !state.activeDungeon;
 
   for (const { turn, content, systemLog } of gmEntries(state)) {
     const body = normBody(content);
@@ -83,12 +80,6 @@ export function scanReadabilityViolations(state: GameState): ReadabilityViolatio
     }
     if (!repainted && /recycle-without-delta|Collage reject: no new tail/i.test(sys)) {
       out.push({ kind: 'recycle-painted', turn, quote: clipQuote(content) });
-    }
-    if (outdoorsNow && /\b(?:room|walls?|doorway)\b/i.test(content)) {
-      out.push({ kind: 'indoor-outdoors', turn, quote: clipQuote(content) });
-    }
-    if (content.length < 100) {
-      out.push({ kind: 'short-beat', turn, quote: clipQuote(content) });
     }
     if (isStitchBankFingerprint(content)) {
       out.push({ kind: 'stitch-leak', turn, quote: clipQuote(content) });

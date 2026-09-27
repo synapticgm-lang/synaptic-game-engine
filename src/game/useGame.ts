@@ -2725,7 +2725,11 @@ export function useGame() {
           stateRef.current = liveCurrent;
         }
       }
+      const hereBeforeMove = liveCurrent.currentLocation ?? '';
       liveCurrent = applyNamedHubTravel(applyGraphExitTravel(liveCurrent, sanitizedInput), sanitizedInput);
+      if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {
+        liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
+      }
       stateRef.current = liveCurrent;
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,
@@ -3923,7 +3927,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           // Batch F — parley success must ledger-resolve from diegetic cues (not free-clear).
           const settled = settleParleyAfterProse(workingState, cleanText, sanitizedInput);
           workingState = settled.state;
-          if (settled.xpAward && settled.xpAward.amount > 0) {
+          if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint) {
             const leveled = applyCharacterXpGain(workingState.character, settled.xpAward.amount);
             workingState = {
               ...workingState,
@@ -4575,7 +4579,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
           baseChar.xp = (baseChar.xp ?? 0) + dailyMilestone.xp;
         }
-        if (sandboxXp.xp > 0) {
+        if (sandboxXp.xp > 0 && !blockedPaint) {
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
         }
         // STATUS XP: only code-awarded lines with reasons (strip bare GM invent).
