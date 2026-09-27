@@ -139,7 +139,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { applyGraphExitTravel } from './mapEngine';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import {
@@ -197,7 +197,7 @@ import {
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
-import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
+import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
 import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
 import { readabilityGatePass } from './readabilityGate';
 import { compactTrafficGist } from './openingPointerCard';
@@ -351,6 +351,7 @@ export type RunSummary = {
   readabilityGate?: {
     pass: boolean;
     p0Count: number;
+    p1Count?: number;
     violations: Array<{ kind: string; turn: number; quote: string }>;
   };
   /** 12f — A–E share + E accept/retry/fallback */
@@ -1422,10 +1423,11 @@ Do NOT print dice notation or CODE ENFORCED.
       };
     }
   }
+  let blockedPaint = isBlockedPaint(warden.notes, state, cleanText);
   {
     const settled = settleParleyAfterProse(working, cleanText, playerInput);
     working = settled.state;
-    if (settled.xpAward && settled.xpAward.amount > 0) {
+    if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint) {
       const leveled = applyCharacterXpGain(working.character, settled.xpAward.amount);
       working = {
         ...working,
@@ -1458,6 +1460,11 @@ Do NOT print dice notation or CODE ENFORCED.
     const govProse = applyGovernanceToProse(working, cleanText, playerInput);
     cleanText = govProse.prose;
     if (govProse.notes.length) warden.notes.push(...govProse.notes);
+  }
+  if (blockedPaint || isBlockedPaint(warden.notes, state, cleanText)) {
+    cleanText = ledgerActionStitch(working, playerInput);
+    warden.notes.push('Paint blocked: ledger stitch');
+    blockedPaint = true;
   }
 
   const updates = extractUpdates(working, narrativeSource);
@@ -1808,7 +1815,7 @@ Do NOT print dice notation or CODE ENFORCED.
   {
     const govCommit = applyGovernanceCommit(state, next, playerInput);
     governed = { ...next, ...govCommit.patches };
-    if (govCommit.xpAward && govCommit.xpAward.amount > 0) {
+    if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint) {
       const leveled = applyCharacterXpGain(governed.character, govCommit.xpAward.amount);
       governed = { ...governed, character: leveled.character };
     }
@@ -2087,6 +2094,7 @@ export async function runFateAutoplay(opts: {
   summary.readabilityGate = {
     pass: readability.pass,
     p0Count: readability.p0Count,
+    p1Count: readability.p1Count,
     violations: readability.violations,
   };
 

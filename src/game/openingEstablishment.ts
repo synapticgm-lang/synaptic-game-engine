@@ -1634,7 +1634,7 @@ export function openingSpokenIdentityQuote(
     return '"We pulled you. That is all the name we will give until you take the deal or walk."';
   }
   const label = (who || 'They').replace(/\s+/g, ' ').trim();
-  return `"${label}. You asked who. We are still the ones in this room."`;
+  return `"${label}. You asked who. We are the ones who found you here."`;
 }
 
 /** Compound / plural CAST never gets singular "answers you". */

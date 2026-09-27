@@ -151,7 +151,7 @@ import {
   formatOpeningCardChrome,
   openingInventBudgetZero,
 } from './openingPointerCard';
-import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
+import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
 import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
@@ -344,7 +344,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
@@ -3368,6 +3368,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         cleanText = govProse.prose;
         if (govProse.notes.length) warden.notes.push(...govProse.notes);
       }
+      const blockedPaint = isBlockedPaint(warden.notes, liveCurrent, cleanText);
+      if (blockedPaint) {
+        cleanText = ledgerActionStitch(liveCurrent, sanitizedInput);
+        warden.notes.push('Paint blocked: ledger stitch');
+      }
       const storyBeforeCuts = cleanText;
 
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
@@ -4739,7 +4744,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       {
         const govCommit = applyGovernanceCommit(liveCurrent, mergedState, sanitizedInput);
-        if (govCommit.xpAward && govCommit.xpAward.amount > 0) {
+        if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint) {
           const leveled = applyCharacterXpGain(mergedState.character, govCommit.xpAward.amount);
           mergedState = {
             ...mergedState,

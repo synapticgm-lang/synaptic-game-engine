@@ -459,6 +459,17 @@ export function isExactPriorGmBody(state: GameState, text: string): boolean {
   return recentGmBeatTexts(state, 6).some((b) => normalizeCommittedBeat(b) === body);
 }
 
+/** Warden / collage / commit-gate rejects must not paint the writer body. */
+export function isBlockedPaint(notes: string[], state: GameState, prose: string): boolean {
+  const hit = (notes ?? []).some(
+    (n) =>
+      /Narrative does not resolve the player action/i.test(n)
+      || /Collage reject: no new tail/i.test(n)
+      || /Commit gate:.*recycle-without-delta/i.test(n)
+  );
+  return hit || isExactPriorGmBody(state, prose);
+}
+
 /** Strip director chrome sentences; leave diegetic prose. */
 export function scrubDirectorChrome(text: string): { prose: string; scrubbed: boolean } {
   if (!text?.trim()) return { prose: text ?? '', scrubbed: false };

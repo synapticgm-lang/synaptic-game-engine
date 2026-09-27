@@ -46,8 +46,8 @@ function umbraState(over: Partial<GameState> = {}): GameState {
 
 describe('playtest15a — Umbra compiled book', () => {
   it('HUD/BUILD are 15a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-27a');
-    expect(BUILD_STAMP).toBe('2026-09-27a');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-27b');
+    expect(BUILD_STAMP).toBe('2026-09-27b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

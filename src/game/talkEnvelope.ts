@@ -7,6 +7,7 @@ import { realPresentPeople } from './chromeAuthority';
 import { formatWriterFacingEvent, type CompletedEventPacket } from './completedEventPacket';
 import { matchesLastKillName } from './combatAuthority';
 import { hasMetBefore } from './npcMemory';
+import { hubsForBibleId, matchHub } from './outdoorHubs';
 import {
   hallTalkAsksRefuse,
   hallTalkAsksWant,
@@ -125,9 +126,83 @@ export function buildTalkEnvelope(
   ].join('\n');
 }
 
+const TALK_TARGET_SKIP = /^(?:them|him|her|they|someone|anyone|everyone|people|what|who|why|where|how|if|when|about)\b/i;
+
+/** Target noun after talk to / speak to|with / ask (article stripped). */
+export function talkTargetFromInput(playerInput: string): string {
+  const line = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  const m =
+    line.match(/\b(?:talk|speak)\s+(?:to|with)\s+(.+?)(?:\s+(?:about|and|for)\b|[.?!,]|$)/i)
+    ?? line.match(/\bask\s+(.+?)(?:\s+(?:about|for|what|why|if|to|who|where|how)\b|[.?!,]|$)/i);
+  const raw = (m?.[1] ?? '').replace(/^(?:the|a|an)\s+/i, '').trim();
+  if (!raw || TALK_TARGET_SKIP.test(raw)) return '';
+  return raw;
+}
+
+function namesMatch(target: string, name: string): boolean {
+  const t = target.toLowerCase();
+  const n = name.toLowerCase();
+  return n.includes(t) || t.includes(n) || n.split(/\s+/).some((w) => w.length > 2 && t.split(/\s+/).includes(w));
+}
+
+function openingCastIsHere(state: GameState, present: string[]): boolean {
+  const cast = openingCastLabel(state).toLowerCase();
+  if (!cast) return false;
+  return present.some((p) => {
+    const last = p.toLowerCase().split(/\s+/).pop() ?? '';
+    return last.length > 2 && cast.includes(last);
+  });
+}
+
+function priorGmBodies(state: GameState): Set<string> {
+  return new Set(
+    (state.log ?? [])
+      .filter((e) => e.role === 'gm')
+      .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase())
+  );
+}
+
 /** E talk: addressee header + existing packet. Other verbs keep the packet only. */
 /** E fail / empty GM: same spoken card pool as hall talk. Never Silence-held when CAST lives. */
 export function spokenTalkFallback(state: GameState, playerInput: string): string {
+  const where = (state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
+  const kill = state.sceneFacts?.lastKill?.name?.toLowerCase();
+  const present = realPresentPeople(state.sceneFacts?.present ?? []).filter((n) => {
+    const low = n.toLowerCase();
+    return !/\bpanel\b/i.test(n) && (!kill || (low !== kill && !kill.includes(low)));
+  });
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), where);
+  const place = hub?.name ?? where;
+  const target = talkTargetFromInput(playerInput);
+  const hereLine = present.length
+    ? ` ${present.join(' and ')} ${present.length > 1 ? 'are' : 'is'} here.`
+    : '';
+  if (target && !present.some((p) => namesMatch(target, p))) {
+    const castHere = openingCastIsHere(state, present);
+    const castLabel = openingCastLabel(state);
+    if (!(castHere && castLabel && namesMatch(target, castLabel))) {
+      const role = target.split(/\s+/).pop()!.toLowerCase();
+      const blurb = (hub?.blurb ?? '').toLowerCase();
+      if (role.length > 2 && new RegExp(`\\b${role}s?\\b`).test(blurb)) {
+        const spot = /\bstalls?\b/.test(blurb) ? `at the stalls of ${place}` : `at ${place}`;
+        return `You caught the eye of a ${role} ${spot}. They looked you over and waited for you to name your business.${hereLine}`;
+      }
+      return `No ${target} answers at ${place} yet.${hereLine}`;
+    }
+  }
+  const out = spokenTalkFallbackInner(state, playerInput).replace(/\s+/g, ' ').trim();
+  const openingLine = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
+  const openingBlocked =
+    (state.turn ?? 0) > 3 || (present.length > 0 && !openingCastIsHere(state, present));
+  const isOpening = !!openingLine && out.includes(openingLine);
+  if (!priorGmBodies(state).has(out.toLowerCase()) && !(isOpening && openingBlocked)) return out;
+  const who = present[0] ?? '';
+  return who
+    ? `${who} heard you out at ${place} and did not repeat themselves. They waited for something new.`
+    : `Nobody at ${place} took up the question.${hereLine}`;
+}
+
+function spokenTalkFallbackInner(state: GameState, playerInput: string): string {
   const kill = state.sceneFacts?.lastKill;
   const who = addressedCastName(state, playerInput);
   const where = (state.currentLocation || 'this room').replace(/\s+/g, ' ').trim();

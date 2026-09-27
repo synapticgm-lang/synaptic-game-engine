@@ -18,7 +18,14 @@ export type ReadabilityViolationKind =
   | 'entity-madlib'
   | 'ui-bleed'
   | 'quest-tracker'
-  | 'spawn-log';
+  | 'spawn-log'
+  | 'verbatim-repeat'
+  | 'unresolved-painted'
+  | 'recycle-painted'
+  | 'indoor-outdoors'
+  | 'short-beat';
+
+const P1_KINDS: ReadonlySet<ReadabilityViolationKind> = new Set(['travel-streak', 'indoor-outdoors', 'short-beat']);
 
 export interface ReadabilityViolation {
   kind: ReadabilityViolationKind;
@@ -29,10 +36,14 @@ export interface ReadabilityViolation {
 const FALSE_SEVENFOLD =
   /\bYou reach\s+(?:the\s+)?Sevenfold\s+Circle(?:\s+under\s+bombardment)?\b/i;
 
-function gmEntries(state: GameState): Array<{ turn: number; content: string }> {
+function gmEntries(state: GameState): Array<{ turn: number; content: string; systemLog?: string[] }> {
   return (state.log ?? [])
     .filter((e) => e.role === 'gm' && e.content?.trim())
-    .map((e) => ({ turn: e.turn ?? 0, content: e.content!.trim() }));
+    .map((e) => ({ turn: e.turn ?? 0, content: e.content!.trim(), systemLog: e.systemLog }));
+}
+
+function normBody(text: string): string {
+  return text.replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
 const ENTITY_MADLIB =
@@ -56,8 +67,29 @@ export function scanReadabilityViolations(state: GameState): ReadabilityViolatio
   const loc = state.currentLocation ?? '';
   const knownPlaces = (state.places ?? []).map((p) => p.name).filter(Boolean) as string[];
   const prevLoc = '';
+  const seenBodies = new Set<string>();
+  const outdoorsNow = state.sceneFacts?.indoor !== true && !state.activeDungeon;
 
-  for (const { turn, content } of gmEntries(state)) {
+  for (const { turn, content, systemLog } of gmEntries(state)) {
+    const body = normBody(content);
+    if (body.length >= 24 && seenBodies.has(body)) {
+      out.push({ kind: 'verbatim-repeat', turn, quote: clipQuote(content) });
+    }
+    seenBodies.add(body);
+    const sys = (systemLog ?? []).join('\n');
+    const repainted = /Paint blocked: ledger stitch/i.test(sys);
+    if (!repainted && /Narrative does not resolve the player action/i.test(sys)) {
+      out.push({ kind: 'unresolved-painted', turn, quote: clipQuote(content) });
+    }
+    if (!repainted && /recycle-without-delta|Collage reject: no new tail/i.test(sys)) {
+      out.push({ kind: 'recycle-painted', turn, quote: clipQuote(content) });
+    }
+    if (outdoorsNow && /\b(?:room|walls?|doorway)\b/i.test(content)) {
+      out.push({ kind: 'indoor-outdoors', turn, quote: clipQuote(content) });
+    }
+    if (content.length < 100) {
+      out.push({ kind: 'short-beat', turn, quote: clipQuote(content) });
+    }
     if (isStitchBankFingerprint(content)) {
       out.push({ kind: 'stitch-leak', turn, quote: clipQuote(content) });
     }
@@ -123,12 +155,14 @@ export function readabilityGatePass(state: GameState): {
   pass: boolean;
   violations: ReadabilityViolation[];
   p0Count: number;
+  p1Count: number;
 } {
   const violations = scanReadabilityViolations(state);
-  const p0 = violations.filter((v) => v.kind !== 'travel-streak');
+  const p0 = violations.filter((v) => !P1_KINDS.has(v.kind));
   return {
     pass: p0.length === 0,
     violations,
     p0Count: p0.length,
+    p1Count: violations.length - p0.length,
   };
 }
