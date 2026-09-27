@@ -355,18 +355,14 @@ export function acceptTokenOrLedgerStory(
     }
   }
 
+  // 27h — a repair request still returns engine fallback prose below, so raw JSON never reaches the player.
+  let needsRepair: { missingFns: LineFn[] } | undefined;
   const parsedAny = candidates.map(parseTokenBeat).find(Boolean);
   if (parsedAny && !opts?.alreadyRepaired) {
     const clean = keepCleanLines(parsedAny, enumRefs);
     const miss = missingFns(clean.length ? clean : parsedAny.lines);
     if (miss.includes('place') || miss.includes('action') || clean.length < 3) {
-      return {
-        prose: '',
-        path: 'json',
-        notes: ['token-repair'],
-        needsRepair: { missingFns: miss.length ? miss : ['place', 'action'] },
-        usedLastResort: false,
-      };
+      needsRepair = { missingFns: miss.length ? miss : ['place', 'action'] };
     }
   }
 
@@ -380,6 +376,7 @@ export function acceptTokenOrLedgerStory(
       path: obeyed.usedLastResort ? 'last-resort' : '13c',
       notes: [...obeyed.notes, '13c-fallback'],
       usedLastResort: obeyed.usedLastResort,
+      ...(needsRepair ? { needsRepair } : {}),
     };
   }
   const resort = lastResortStoryBody(state, packet);
@@ -388,5 +385,6 @@ export function acceptTokenOrLedgerStory(
     path: 'last-resort',
     notes: ['last-resort'],
     usedLastResort: true,
+    ...(needsRepair ? { needsRepair } : {}),
   };
 }

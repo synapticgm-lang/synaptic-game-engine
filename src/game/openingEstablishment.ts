@@ -1523,17 +1523,17 @@ export function openingCastLabel(state: GameState): string {
 }
 
 function wantFromPickedHookBlob(blob?: string): string {
-  const m = (blob ?? '').match(/Why this happened:\s*([\s\S]+?)(?:\nOpening offer|\n- |\nLocation:|$)/i);
+  const m = (blob ?? '').match(/Why this happened:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
 
 function offerFromPickedHookBlob(blob?: string): string {
-  const m = (blob ?? '').match(/Opening offer[^:]*:\s*([\s\S]+?)(?:\nIf you refuse:|\n- |\nLocation:|$)/i);
+  const m = (blob ?? '').match(/Opening offer[^:\n]*:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
 
 function costFromPickedHookBlob(blob?: string): string {
-  const m = (blob ?? '').match(/If you refuse:\s*([\s\S]+?)(?:\n- |\nLocation:|\nOpening offer|$)/i);
+  const m = (blob ?? '').match(/If you refuse:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
 
