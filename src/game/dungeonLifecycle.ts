@@ -109,6 +109,7 @@ export function closeDungeon(
         arcStatus: (opts?.cleared ? 'cleared' : 'closed') as PlaceRecord['arcStatus'],
         arcSummary: opts?.summary ?? p.arcSummary ?? (opts?.cleared ? 'Dungeon cleared' : 'Left dungeon'),
         lastVisitedTurn: state.turn,
+        ...(dungeon.blueprintId === 'dungeon-card' ? { dungeonCard: dungeon } : {}),
       };
     }
     return p;
@@ -145,6 +146,7 @@ export function shouldAutoCloseDungeon(state: GameState): boolean {
 }
 
 export function maybeAutoCloseDungeon(state: GameState): GameState {
+  if (state.activeDungeon?.blueprintId === 'dungeon-card') return state; // 28i — the player leaves by choice
   if (!shouldAutoCloseDungeon(state)) return state;
   return closeDungeon(state, { cleared: true, summary: 'All threats cleared' });
 }

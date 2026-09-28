@@ -3,7 +3,8 @@ import type { ActiveDungeonState, MapNode } from './mapEngine';
 import { initializeDungeon, moveToNode } from './mapEngine';
 import { seedDungeonState } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
-import { openDungeonAtSite, placeAllowsDungeon } from './dungeonLifecycle';
+import { placeAllowsDungeon } from './dungeonLifecycle';
+import { isDungeonCard, openDungeonCard } from './dungeonCard';
 
 const ENTER_ACTION =
   /\b(enter|go in|step in|head in|inside|forward|sneak(?:ing)? in|move (?:in|forward)|scout(?:ing)?(?:\s+the)?\s+entrance|through the (?:door|doors))\b/i;
@@ -128,6 +129,7 @@ export function maybeAdvanceDungeonRoom(state: GameState, action: string): GameS
 }
 
 export function maybeEnterInteriorDungeon(state: GameState, action: string): GameState {
+  if (isDungeonCard(state.activeDungeon)) return state; // 28i — the dungeon card handles moves inside
   if (alreadyInSeededDungeon(state)) return maybeAdvanceDungeonRoom(state, action);
   if (!playerEntersInterior(action, state)) return state;
   const place =
@@ -160,5 +162,5 @@ export function maybeEnterInteriorDungeon(state: GameState, action: string): Gam
   if (!placeAllowsDungeon(state, place)) {
     return state;
   }
-  return openDungeonAtSite(state, { siteName: place, seed: state.seed || 'seed' });
+  return openDungeonCard(state, place);
 }

@@ -1082,6 +1082,8 @@ export interface PlaceRecord {
   exits?: string[];
   /** 27g place card — turn the card was built; set means reuse, never rebuild. */
   cardBuiltTurn?: number;
+  /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
+  dungeonCard?: ActiveDungeonState;
 }
 
 export interface TutorialProgress {

@@ -145,6 +145,7 @@ import {
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
+import { advanceDungeonCard } from './dungeonCard';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, tokenLineVerdicts } from './tokenProse';
 import {
   classifyResponsePath,
@@ -1048,12 +1049,16 @@ export async function headlessFateTurn(
   arcState = applyNamedHubTravel(applyGraphExitTravel(arcState, playerInput), playerInput);
   // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
   arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+  // 28i — dungeon card turn: room facts, room actions (move/search/open), foes, loot, dungeon XP.
+  const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
+  arcState = dungeonTurn.state;
+  arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
   if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
     arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
   }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-  const engineFact = (arcResult?.systemReceipts ?? [])
-    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest):/.test(r))
+  const engineFact = [...(arcResult?.systemReceipts ?? []), ...dungeonTurn.receipts]
+    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained)\b/.test(r))
     .join(' ');
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
   arcState = preparedEvent.state;

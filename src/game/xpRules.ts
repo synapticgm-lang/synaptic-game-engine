@@ -20,6 +20,8 @@ export type MilestoneKind =
   | 'miniBoss'
   | 'boss'
   | 'dungeonCleared'
+  | 'dungeonEntry'
+  | 'roomCleared'
   | 'questStep'
   | 'questComplete'
   | 'significantPerson'
@@ -55,6 +57,8 @@ export const LITRPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
   miniBoss: 80,
   boss: 150,
   dungeonCleared: 100,
+  dungeonEntry: 25,
+  roomCleared: 30,
   questStep: 50,
   questComplete: 100,
   significantPerson: 25,
@@ -128,7 +132,7 @@ function milestoneXpBase(
   const lvl = Math.max(1, Math.min(20, Math.floor(opts.level ?? 1)));
   const [low, moderate, high] = DND_XP_BUDGET_PER_CHARACTER[lvl - 1]!;
   const band: [string, number] =
-    kind === 'significantPerson' || kind === 'significantPlace'
+    kind === 'significantPerson' || kind === 'significantPlace' || kind === 'dungeonEntry' || kind === 'roomCleared'
       ? ['Low', low]
       : kind === 'questStep'
         ? ['Moderate', moderate]

@@ -7,6 +7,7 @@ import { buildArchetypeIntro } from './archetypes';
 import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
+import { advanceDungeonCard, isDungeonCard } from './dungeonCard';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
@@ -2565,7 +2566,7 @@ export function useGame() {
       }
       const ledgerRound = null as LedgerCombatRound | null; // 28f — engineFight owns the outcome
       const ledgerFlee = null as LedgerFleeRound | null;
-      if (intentForMandate.kind === 'attack') {
+      if (intentForMandate.kind === 'attack' && !isDungeonCard(liveCurrent.activeDungeon)) {
         // 28f — spawn only. The fight / flee / parley outcome is settled once by the engine
         // (runArcDirectorBeforeGm → engineFight). The old round-by-round ledger paths are removed.
         liveCurrent = spawnRoomEncounter(liveCurrent);
@@ -2676,10 +2677,14 @@ export function useGame() {
       if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {
         liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
       }
+      // 28i — dungeon card turn (live parity with the harness).
+      const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
+      liveCurrent = dungeonTurn.state;
+      pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...dungeonTurn.receipts];
       stateRef.current = liveCurrent;
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-      const engineFact = (systemsArc?.systemReceipts ?? [])
-        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest):/.test(r))
+      const engineFact = [...(systemsArc?.systemReceipts ?? []), ...dungeonTurn.receipts]
+        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained)\b/.test(r))
         .join(' ');
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,

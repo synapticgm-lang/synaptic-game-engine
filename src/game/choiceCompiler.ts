@@ -54,6 +54,7 @@ import { filterPadsAgainstOpenVignette } from './vignetteLock';
 import { realPresentPeople } from './chromeAuthority';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad } from './mapEngine';
+import { dungeonCardChoices, isDungeonCard } from './dungeonCard';
 import { inferIntent, isCombatIntent, isTravelIntent, isInspectIntent, PlayerIntent } from './intentEnums';
 import {
   closedUniverseFallbacks,
@@ -922,6 +923,22 @@ export function compileChoices(
       filtered.push(pad);
       notes.push(`Graph exit pad: ${pad.slice(0, 40)}`);
       if (filtered.length >= 6) break;
+    }
+  }
+
+  // 28i — inside a dungeon card: the room's own actions, the next unexplored room and the way out replace per-door pads.
+  if (isDungeonCard(state.activeDungeon) && !state.activeEncounter) {
+    const card = dungeonCardChoices(state);
+    if (card.length) {
+      filtered = [
+        ...card,
+        ...filtered.filter(
+          (f) =>
+            !card.some((c) => c.toLowerCase() === f.toLowerCase())
+            && !/^(?:go through|walk toward|take the stairs|travel (?:to|toward)|enter)\b/i.test(f)
+        ),
+      ].slice(0, 6);
+      notes.push(`Dungeon card chips: ${card.length}`);
     }
   }
 
