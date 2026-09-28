@@ -158,3 +158,96 @@ How to read knip's noise:
 - `socialSkills` → `checkRules` social DC path.
 - `questGuards.applyQuestCompleteGuard` → `questPlay` quest-complete handling.
 - `GmFeedbackReview.tsx` → Admin section of `SettingsModal`.
+
+## Review of dead + unsure items (28 Sep)
+
+Judged against the current design: engine-owned milestone XP, engine loot, one-turn `engineFight` combat, generated dungeon cards/interiors from existing templates, open-world light premade stories, NPC tracking, anti-circling chips. The audit tables above hold 20 "truly dead" rows (the summary says 19) and 22 "unsure" rows; all 42 are reviewed here.
+
+### Maps / templates
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Default atlas shortcut (`worldAtlas.defaultAtlasForMode`) | One-line wrapper that picks a world outline and builds an atlas from it. | No. Callers already call the two underlying steps directly. | REMOVE — safe, nothing calls it; `pickWorldOutline` + `instantiateWorldAtlas` do the job. |
+| Place-to-location-sheet converter (`places.sheetFromPlace`) | Turns a saved place record into a location sheet. | No. Dungeon cards and interiors are built from templates (`dungeonCard` / `interiorGenerator`), not converted from place records. | REMOVE — safe, no callers; superseded by the dungeon card path. |
+
+### Loot
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Add crafting materials (`inventory.addMaterials`) | Merges salvage materials into the player's material storage. | No. Salvage already returns a new state with the materials merged (`MerchantWindow` uses `result.newState`). | REMOVE — safe; superseded by the salvage module's own commit. |
+| Bag snapshot / rollback / conservation check (`inventoryConservation` helpers) | Snapshot the bag before a turn, restore it, and check nothing appeared or vanished. | No. Engine loot is the only thing that changes the bag, and a failed turn already falls back to the last committed state. | REMOVE the uncalled helpers — safe; engine loot + commit-only state cover it. Keep the parts `qualityGovernance` calls. |
+
+### XP
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Resolution / risk / inspect XP math + leveling pace check (`discoveryXpLedger` four helpers) | Computes XP for resolving, risking, and inspecting, plus a "are they levelling on pace" check. | The three XP formulas: no — milestone XP is engine-owned (`arcDirector` / `xpPolicy`). The pace check: yes, as a measuring tool for the open "L2 by T15–25" question. | WIRE IN — `checkLevelingPace` only, into the Fate autoplay `summary.json` writer; remove the three XP formulas (superseded by engine milestone XP). |
+
+### Combat
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Encounter resolution validator (`encounterResolution.validateEncounterResolution` / `formatEncounterAftermath` / metrics) | 27w check that a fight actually resolved, plus an aftermath text line. | No. `engineFight` settles a fight in one turn and `encounterTerminalFsm` writes the clear receipt. | REMOVE — safe; superseded by `engineFight` + terminal FSM receipts. |
+| One-line threat warning (`combatReceipt.formatCombatTelegraph`) | Prints a short "a threat approaches" line. | No. The spawn preface (`autoFightSpawnPreface` / drought preface) does this, and `encounterTelegraph` is the shortlisted richer version. | REMOVE — safe; superseded by the spawn preface. |
+| Weapon-name guess (`ledgerCombat.itemLooksLikeWeapon`) | Regex that guesses whether an item name is a weapon. | No. Weapon grounding lives in `searchContinuity`. | REMOVE — safe, no callers. |
+| Encounter approaches with requirements (`encounterStakes`) | Builds per-template approach options (fight / talk / sneak…) and marks which ones the player qualifies for. | Unclear. `graphChoices` already gives Attack / Flee / Talk pads; this would add requirement-gated approaches on top. | JOHN DECIDES — should fights offer template-specific approaches gated by kit/skills, or are the existing Attack / Flee / Parley pads enough? |
+| Encounter template loader (`encounterTemplateLoader`) | Loads the 48 WS-4 encounter templates. | No. The authored catalog in `src/data/encounters` feeds `encounterBible` already (12b). | REMOVE — safe; superseded by the `src/data/encounters` catalog. |
+| Encounter end receipts (`encounterAftermath` + `encounterResolutionMechanics`) | Multi-step fight resolution plus typed XP / loot / faction / quest receipts at the end. | No. One-turn `engineFight`, engine loot, and the terminal FSM clear receipts own all of this. | REMOVE — safe, test-only; superseded by `engineFight` + `encounterTerminalFsm`. |
+| Auto Fight writer call (`aiService.callGmAutoFight` + `aiService.direct.callGmAutoFightDirect`) | Asked the writer to narrate an Auto Fight. | No. Auto Fight now narrates from a template (`narrateAutoFightTemplate`) and commits with `commitAutoFightLedger` in `useGame`. | REMOVE — safe; superseded by the template + ledger Auto Fight path. |
+
+### NPCs
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| NPC turnover engine (`npcTurnover`) | Decides when an NPC leaves, relocates, changes role, or hands off to a successor. | Mostly no. NPC exit is already handled by `npcMemory` `shouldExit` (12c) and `npcLifecycleFsm`; this is only reached from the dead coordinator. | REMOVE — safe; superseded by 12c exit + lifecycle FSM. |
+| Per-NPC memory block for the writer (`npcMemoryLedger.buildMemorySituationSection`) | Writes a memory section about each NPC into the writer packet. | No. `npcMemory.formatNpcMemoriesForPrompt` is the live version. | REMOVE — safe; duplicate of the live formatter. |
+| Leverage and social stakes (`leverageMechanics`, `socialStakes`) | Templates for leverage assets and what is at stake in social crises. | Unclear. Social crises run in `arcDirector` without them. | JOHN DECIDES — should social crises carry mechanical leverage (items/secrets that change outcomes), or stay as story beats? |
+
+### Quests / PYOA
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Quest end-state check (`questCompletionSchema` `checkQuestTerminalState` etc.) | 27w check that a finished quest is really in a finished state. | No. `questGuards.applyQuestCompleteGuard` (shortlisted) covers the real risk. | REMOVE the uncalled checks — safe; superseded by the quest-complete guard. |
+| Milestone mandate line (`spineMapRegistry.formatMilestoneMandate`) | Writes "MILESTONE DUE / OVERDUE" into the writer prompt. | No. Milestones are committed by the engine, and the packet diet removed mandate lines. | REMOVE — safe; only reached by scripts. |
+| PYOA ending gates (`pyoaEndingGates`) | Ending catalog with prerequisites, priority pick, and a turn-150 deadline. | Unclear. Umbra plays a compiled book with ending chips; Thornferry has 4 ending leaves on `pyoaSpine`; other PYOA books have neither. | JOHN DECIDES — will every PYOA book become a compiled chip book, or do AI-prose PYOA books need gated endings? |
+| PYOA crisis catalogs (`pyoaCrisisRegistry`, `pyoaCatalogLoader`) | Catalogs of PYOA crises per book. | Only as content. No live code reads them. | JOHN DECIDES — is this catalog the content source for future PYOA book compiles, or can it go? |
+| Delayed consequence builders (`pyoaDelayedConsequences` `create*Consequence` / `cancelConsequence`) | Creates "echo / return / reckoning" consequences that fire later. | No. Nothing creates them, and compiled books write consequences into the pages. | REMOVE the constructors — safe; keep the live part of the module. |
+| Branch convergence detector (`pyoaConvergence`) | Detects when branches rejoin. | No. | REMOVE — safe, test-only; superseded by `pyoaSpine`. |
+| Replay / speedrun scaffolding (`pyoaReplay`) | Replays a PYOA run. | No. | REMOVE — safe, test-only. |
+| Version 2 branch ledger + consequences (`pyoaBranchLedgerV2`, `pyoaDelayedConsequencesV2`) | WS-5 rewrites of the branch ledger. | No. Version 1 `pyoaBranchLedger` is live; V2 needs the unlisted `nanoid`. | REMOVE — safe; superseded by V1. |
+| Pre-turn coordinator (`packageCoordination` + `exclusiveFactsRegistry` + `receiptLedger`) | WS-2/4/5 orchestrator that was meant to commit facts before the writer. | No. `arcDirector` does pre-writer commits. | REMOVE — safe, test-only; `exclusiveFactsRegistry` has a broken import. |
+
+### UI / art
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Stripe checkout on the client (`game/stripeCheckout.ts`) | Buy button → Stripe checkout → entitlement sync. | Only when payments launch. | JOHN DECIDES — is Stripe still the web payment path for capacity packs, or will packs go through a store billing path instead? |
+| Comic Director (`services/llmDirectorService.ts`) | Asks a model to script multi-panel comic pages. | No while Director is off; Comic-lite single plates are the live path. | JOHN DECIDES — are multi-panel Director comics ever coming back, or is single-plate Comic-lite final? |
+| Old image call (`imageGen.generateImage`) | Legacy browser-side image request. | No. Hosted art goes through the `generate-image` edge function. | REMOVE `generateImage` only — safe; keep `softenPrompt` / `ImageModerationError`, which `useGame` imports. |
+| Recent-choice window (`game/choiceTracking.ts`) | Remembers the last 10 choices. | No. Anti-circling lives in `choiceCompiler` semantic cooldown + `graphChoices`. | REMOVE — safe; superseded by the chip cooldown. |
+| Comic page bake (`comicPageCompositor.bakeComicPageSnapshot`) | Flattens a comic page into one image. | No. | REMOVE — safe, no callers. |
+| Old transcript download (`playTranscript.downloadPlayTranscript`) | Earlier play-transcript download. | No, if Settings "Download play" uses the dump export as the audit says. | REMOVE — safe once the Settings button is confirmed on the dump export (file is excluded from agent reads, so not opened here). |
+| Grammar fixer (`grammarCheck`) | Sends writer text to LanguageTool for fixes. | No. Prose fixes are deterministic in `proseWarden`. | REMOVE — safe, test-only. |
+| Day-1 narrator stub (`narratorProvider`) | Early placeholder narrator. | No. | REMOVE — safe, test-only. |
+
+### Edge functions
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Stripe checkout + webhook endpoints (`create-checkout`, `stripe-webhook`) | Server side of Stripe payments. | Only when payments launch. | JOHN DECIDES — same question as the client Stripe checkout: keep for launch, or drop for store billing? |
+
+### Other
+
+| Item | What it does / was meant for | Does the game need it? | Recommendation |
+|---|---|---|---|
+| Research code pastes (`docs/research/**`) | Manus/Gemini prototypes kept as reference. | Not as code. | REMOVE from the audit scope — add to knip `ignore`; keep the files as docs. |
+| One-off probes (`scripts/tmp-*`, `scripts/_probe/*`, `_tmp-*`, `_dbg-*`, `_longrun-*`) | Throwaway debugging scripts. | No. | REMOVE — safe, no npm script uses them. |
+| Old batch runners (`run0*FourModeT50.ts`, `write-02*-owner-map.mjs`, old paste writers) | Scripts for past test batches. | No. Their runs and pastes are already on disk. | REMOVE — safe; `run.ts` is the live harness. |
+| Old prompt formatters (`worldSim.formatWorldLedgerForPrompt`, `sceneFacts.formatSceneFactsForPrompt`) | Wrote world and scene facts into the prompt. | No. | REMOVE — safe; replaced by SNAPSHOT / packet diet. |
+| Scored memory retrieval (`campaignMemory.retrieveMemoriesSmartly`) | Async ranked pick of old memories for the prompt. | No. The live keyword retrieve + SNAPSHOT (25b) is enough, and an async scorer adds wait time on Free. | REMOVE — safe; superseded by the live retrieve. |
+| Open-obligation turn block (`intentContract.checkUnresolvedObligations`) | Would block a turn while the writer owes the player an answer. | No. Blocking a send conflicts with the always-respond / lost-send rules; obligations already drive a retry. | REMOVE — safe; superseded by the obligation retry. |
+| Unused exported types (127) | Type exports nobody imports. | No. | REMOVE — harmless cleanup. |
+| Duplicate exports (`memorableMoments` caps, `NPC_ROLE_REGISTRY` = `ROLE_OBLIGATIONS`) | Second names for the same value. | No. | REMOVE the aliases — safe cleanup. |
+| Broken import paths (`exclusiveFactsRegistry`, `playtest31aCoordination.test`, WOF paste test) | Point at a sibling `./crossPackageContracts` that does not exist (the real file is `src/game/types/crossPackageContracts.ts`). | No. | REMOVE together with the pre-turn coordinator; ignore the WOF paste test in knip. |
+
+**Counts: WIRE IN 1, REMOVE 34, JOHN DECIDES 7.**
