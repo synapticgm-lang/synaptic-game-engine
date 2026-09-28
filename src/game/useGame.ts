@@ -36,6 +36,7 @@ import { callGm, type GmResult } from './aiService';
 import { gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import type { EnemyStats } from './combat';
+import { profileForEncounter } from './lootTableRegistry';
 import {
   autoFightSpawnPreface,
   commitAutoFightLedger,
@@ -5629,6 +5630,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       armorClass: liveCurrent.activeEncounter.armorClass,
       xpReward: liveCurrent.activeEncounter.xpReward,
       goldReward: liveCurrent.activeEncounter.goldReward,
+      // 28d — engine loot profile + CR (D&D treasure band).
+      lootProfile: profileForEncounter(liveCurrent.activeEncounter),
+      cr: liveCurrent.activeEncounter.cr,
     };
 
     const needsWarning = enemy.level > liveCurrent.character.level;
@@ -5705,6 +5709,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             level: liveCurrent.character.level,
             partySize: 1 + (liveCurrent.companions ?? []).filter((c) => c.type === 'party').length,
             cr: liveCurrent.activeEncounter?.cr,
+            strictness: liveCurrent.gmStrictness,
           })
         : { amount: 0, detail: '' };
       const autoEvents = parseActionTags(narrativeText);
@@ -5747,6 +5752,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ...(autoXp.amount > 0 ? [`XP Gained: ${autoXp.amount} (defeated ${enemy.name}${autoXp.detail ? ` — ${autoXp.detail}` : ''})`] : []),
           `Gold Gained: ${result.goldGained}`,
           ...(result.loot.length > 0 ? [`Loot: ${result.loot.map(l => `[${l.rarity}] ${l.name}`).join(', ')}`] : []),
+          ...(result.lootLines ?? []),
         ],
         ...memorableLogFields(autoMemorable),
       };
@@ -5768,6 +5774,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         character: updatedCharacter,
         inventory: updatedInventory,
         gold: liveCurrent.gold + result.goldGained,
+        lootPity: result.lootPity
+          ? { byTier: { ...(liveCurrent.lootPity?.byTier ?? {}), [result.lootPity.tier]: result.lootPity.next } }
+          : liveCurrent.lootPity,
         memorableMoments: autoMemorable.nextState,
         log: [...liveCurrent.log, playerEntry, gmEntry],
         sceneFacts: {

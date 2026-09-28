@@ -2,6 +2,7 @@ import type { GameState, Item, Rarity } from './types';
 import { equippedWeaponName } from './ledgerCombat';
 import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
 import { enemyBodyAuthorityLine } from './combatAuthority';
+import { rollLoot as rollEngineLoot, type LootProfile } from './lootTableRegistry';
 
 export interface EnemyStats {
   name: string;
@@ -14,6 +15,10 @@ export interface EnemyStats {
   xpReward: number;
   goldReward: number;
   lootTable?: Array<{ name: string; rarity: Rarity; chance: number }>;
+  /** 28d — loot source profile (mob / miniBoss / boss / rareEncounter). Default mob. */
+  lootProfile?: LootProfile;
+  /** 28d — CR for D&D treasure bands. */
+  cr?: string | number;
 }
 
 export interface CombatRound {
@@ -39,6 +44,10 @@ export interface CombatResult {
   loot: Item[];
   roundsLog: CombatRound[];
   summary: string;
+  /** 28d — engine loot lines: D&D dice; empty in other modes (the Loot line shows rarity). */
+  lootLines?: string[];
+  /** 28d — dry-streak pity update for GameState.lootPity. */
+  lootPity?: { tier: 1 | 2 | 3 | 4; next: number };
 }
 
 function rollD20(): number {
@@ -134,8 +143,22 @@ export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResul
 
   const victory = enemyHp <= 0 && playerHp > 0;
   const xpGained = victory ? enemy.xpReward : Math.floor(enemy.xpReward * 0.1);
-  const goldGained = victory ? enemy.goldReward : 0;
-  const loot = victory ? rollLoot(enemy) : [];
+  // 28d — the engine loot roll (lootTableRegistry.rollLoot): seeded, never the AI.
+  const firstKill = !(state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.name === enemy.name);
+  const engineLoot = victory
+    ? rollEngineLoot({
+        profile: enemy.lootProfile ?? 'mob',
+        state,
+        seed: `${state.seed || 'seed'}:${state.turn}:${enemy.name}`,
+        cr: enemy.cr ?? null,
+        firstKill,
+      })
+    : null;
+  const goldGained = victory ? (state.engineMode === 'dnd' && engineLoot ? engineLoot.gold : enemy.goldReward) : 0;
+  const loot = victory ? [...rollLoot(enemy), ...(engineLoot?.items ?? [])] : [];
+  const lootLines = engineLoot && state.engineMode === 'dnd' ? engineLoot.dice : [];
+  const lootPity =
+    engineLoot && engineLoot.nextPity != null ? { tier: engineLoot.pityTier, next: engineLoot.nextPity } : undefined;
 
   const summary = victory
     ? `Player defeated ${enemy.name} in ${rounds} rounds. Dealt ${damageDealt} damage, took ${damageReceived} damage. Gained ${xpGained} XP and ${goldGained} gold.`
@@ -154,6 +177,8 @@ export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResul
     loot,
     roundsLog,
     summary,
+    lootLines,
+    lootPity,
   };
 }
 

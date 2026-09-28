@@ -15,6 +15,7 @@ import { ensureLocationSheet } from './pendingTurn';
 import { closePlaceArc, upsertPlaceFromSheet } from './places';
 import { exhaustOpenedContainer, shouldBlockContainerItemGain } from './searchContinuity';
 import { isPyoaItemDestroyed } from './pyoaBranchLedger';
+import { difficultyRow } from './difficultyRules';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -81,6 +82,7 @@ export function applyStructuralEvents(
         source: e.lootSource,
         claimedRarity: e.rarity,
         firstChestUncommonBias: next.tutorialProgress?.firstChestUncommonBiasPending === true,
+        pityThresholdScale: difficultyRow(next.gmStrictness).pityThresholdScale,
       });
       const rarity = (seeded.rarity || (e.rarity as Rarity) || 'Common') as Rarity;
       if (seeded.tier != null && seeded.nextPity != null) {

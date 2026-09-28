@@ -130,7 +130,7 @@ export function applySandboxXpAwards(
   const pay = (key: string, kind: MilestoneKind, label: string, cr?: string | number | null) => {
     if (hasAward(awardKeys, key)) return;
     awardKeys.push(key);
-    const r = milestoneXp(mode, kind, { level, partySize, cr });
+    const r = milestoneXp(mode, kind, { level, partySize, cr, strictness: state.gmStrictness });
     if (r.amount <= 0) return;
     xp += r.amount;
     notes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);

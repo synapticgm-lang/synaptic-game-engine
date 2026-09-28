@@ -15,7 +15,12 @@ export interface HiddenLoot {
   itemHint?: string;
   /** Key into GameState.lootPity for dry-streak tracking. */
   pityKey?: string;
+  /** 28d — chest grade 1–3 (Bronze / Silver / Gold, DCC-style): number of items (qty). */
+  grade?: 1 | 2 | 3;
 }
+
+/** 28d — chest grade labels (LOOT-RESEARCH.md §4). */
+export const CHEST_GRADE_LABELS: Record<1 | 2 | 3, string> = { 1: 'Bronze', 2: 'Silver', 3: 'Gold' };
 
 const RARITIES: Rarity[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
 
@@ -53,10 +58,12 @@ export function rollLootRarity(tier: MapTier | number, rng: () => number): Rarit
 export function rollLootRarityWithPity(
   tier: MapTier | number,
   rng: () => number,
-  pityCount: number
+  pityCount: number,
+  /** 28d — difficulty table pityThresholdScale (Easy 0.8: T1 50 → 40). */
+  thresholdScale = 1
 ): { rarity: Rarity; pityTriggered: boolean; nextPity: number } {
   const t = Math.max(1, Math.min(4, Math.floor(Number(tier) || 1))) as 1 | 2 | 3 | 4;
-  const threshold = PITY_THRESHOLDS[t];
+  const threshold = Math.max(1, Math.round(PITY_THRESHOLDS[t] * (thresholdScale > 0 ? thresholdScale : 1)));
   const softStart = Math.floor(threshold * 0.8);
 
   if (pityCount >= threshold) {
@@ -136,13 +143,16 @@ function buildHiddenForNode(
     // Seed-time roll uses base table; pity applies at open time via rollLootRarityWithPity.
     const rarity = rollLootRarity(tier, rng);
     const trapId = traps[0]?.id;
+    // 28d — chest grade from the room (no extra RNG): last room Gold, treasure/cache Silver, else Bronze.
+    const grade: 1 | 2 | 3 = index === total - 1 ? 3 : tags.includes('treasure') || tags.includes('cache') ? 2 : 1;
     lootables.push({
       id: `${node.id}_chest`,
       label: tags.includes('control') ? 'Locked Console Cache' : 'Stash Cache',
       opened: false,
       loot: {
         rarity,
-        qty: 1,
+        qty: grade,
+        grade,
         gold: rarity === 'Common' ? Math.floor(rng() * 8) : Math.floor(5 + rng() * tier * 12),
         itemHint:
           rarity === 'Legendary'
@@ -391,6 +401,8 @@ export interface ResolveLootOptions {
   claimedRarity?: string | null;
   /** Tutorial first chest: floor Uncommon. */
   firstChestUncommonBias?: boolean;
+  /** 28d — difficulty table pity threshold multiplier. */
+  pityThresholdScale?: number;
 }
 
 /** Prefer seeded rarity when an item-gain matches a closed/open lootable this turn. */
@@ -467,7 +479,7 @@ export function resolveSeededRarity(
 
     const count = pity?.byTier?.[tier] ?? 0;
     const rng = createHashRng(seed, dungeon!.blueprintId, target.id, 'open', count);
-    const rolled = rollLootRarityWithPity(tier, rng, count);
+    const rolled = rollLootRarityWithPity(tier, rng, count, opts.pityThresholdScale ?? 1);
     let rarity = rolled.rarity;
     let runFloorApplied = false;
 

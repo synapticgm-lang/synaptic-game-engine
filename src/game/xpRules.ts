@@ -12,7 +12,8 @@
  * The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at
  * https://creativecommons.org/licenses/by/4.0/legalcode.
  */
-import type { EngineMode } from './types';
+import type { EngineMode, GmStrictness } from './types';
+import { difficultyRow } from './difficultyRules';
 
 export type MilestoneKind =
   | 'encounter'
@@ -90,8 +91,23 @@ export interface MilestoneXpResult {
   detail: string;
 }
 
-/** The one engine rule for every milestone. */
+/** The one engine rule for every milestone. 28d: scaled by the shared difficulty table (Hard ×1.25). */
 export function milestoneXp(
+  mode: EngineMode | undefined,
+  kind: MilestoneKind,
+  opts: { level?: number; partySize?: number; cr?: string | number | null; strictness?: GmStrictness | null } = {}
+): MilestoneXpResult {
+  const base = milestoneXpBase(mode, kind, opts);
+  const row = difficultyRow(opts.strictness);
+  if (row.xpScale === 1 || base.amount <= 0) return base;
+  const amount = Math.round(base.amount * row.xpScale);
+  return {
+    amount,
+    detail: mode === 'dnd' ? `${base.detail} × ${row.xpScale} (${row.label}) = ${amount}` : base.detail,
+  };
+}
+
+function milestoneXpBase(
   mode: EngineMode | undefined,
   kind: MilestoneKind,
   opts: { level?: number; partySize?: number; cr?: string | number | null } = {}

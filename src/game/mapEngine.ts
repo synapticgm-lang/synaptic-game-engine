@@ -18,6 +18,8 @@ export interface NodeHiddenLoot {
   gold?: number;
   itemHint?: string;
   pityKey?: string;
+  /** 28d — chest grade 1–3 (Bronze / Silver / Gold). */
+  grade?: 1 | 2 | 3;
 }
 
 export interface NodeHidden {
