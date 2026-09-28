@@ -58,7 +58,10 @@ describe('Batch 02h — P0-1: travel yo-yo starve', () => {
       undefined,
       'Travel toward West Wall'
     );
-    expect(compiled.choices.filter((c) => /^Travel toward/i.test(c)).length).toBe(0);
+    // 28g — John: one hub exit chip overrides the yo-yo lock, but never back toward the yo-yo pair.
+    const travel = compiled.choices.filter((c) => /^Travel toward/i.test(c));
+    expect(travel.length).toBeLessThanOrEqual(1);
+    expect(travel.some((c) => /lowmarket|west wall/i.test(c))).toBe(false);
   });
 });
 

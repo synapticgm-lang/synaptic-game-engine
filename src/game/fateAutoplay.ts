@@ -24,7 +24,7 @@ import {
   parseAutoplayWriterKind,
   type AutoplayWriterKind,
 } from './autoplayWriter';
-import { buildResolutionUserPayload } from './actionResolution';
+import { buildResolutionUserPayload, isUnresolvedActionNarrative, unresolvedActionReason } from './actionResolution';
 import { validateActionHard } from './actionValidation';
 import { seedStateFromCampaignBible, applyCampaignCharacter } from './campaignSeed';
 import { ensureCampaignContract } from './campaignContract';
@@ -144,7 +144,8 @@ import {
 } from './arcDirector';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { applyGraphExitTravel } from './mapEngine';
-import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
+import { maybeEnterInteriorDungeon } from './enterInterior';
+import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, tokenLineVerdicts } from './tokenProse';
 import {
   classifyResponsePath,
   formatTalkWriterFacing,
@@ -329,6 +330,15 @@ export type TurnTelemetry = {
   responsePath?: ResponsePath;
   /** 12f — E only: first accept, quality retry, or stitch/render fallback */
   writerOutcome?: WriterOutcome;
+  /** 28g — writer text the action check rejected (first 200 chars), the reason, and the engine fact. */
+  rejectedWriterText?: string;
+  rejectedReason?: string;
+  engineFact?: string;
+  /** 28g — diagnostics: raw writer reply (first 600 chars), token line verdicts, accept path. */
+  writerRawHead?: string;
+  tokenVerdicts?: string[];
+  tokenPath?: string;
+  retryTokenVerdicts?: string[];
 };
 
 export type RunSummary = {
@@ -1036,10 +1046,16 @@ export async function headlessFateTurn(
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const hereBeforeMove = arcState.currentLocation ?? '';
   arcState = applyNamedHubTravel(applyGraphExitTravel(arcState, playerInput), playerInput);
+  // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
+  arcState = maybeEnterInteriorDungeon(arcState, playerInput);
   if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
     arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
   }
-  const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
+  // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
+  const engineFact = (arcResult?.systemReceipts ?? [])
+    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest):/.test(r))
+    .join(' ');
+  const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
   arcState = preparedEvent.state;
   const useMud = shouldUseSilentMudTurn({
     subscriptionTier: settings.subscriptionTier,
@@ -1287,17 +1303,24 @@ Do NOT print dice notation or CODE ENFORCED.
   const fps = state.recentBeatFingerprints ?? [];
   const askedRepeat = playerAsksRepeat(playerInput);
   const askedContinue = playerAsksContinuation(playerInput);
-  const nearClone = isNearClone(gmText, fps);
-  const sameBeatHit = isSameBeat(gmText, fps);
-  const collageReject = shouldRetryUnaskedCollage(gmText, recentGmBeatTexts(state), playerInput);
-  const commitGate = classifyBeatCommit(arcState, gmText, playerInput);
+  // 28g — novelty / commit checks judge the story the player would see, not the raw token JSON
+  // (raw JSON always holds @tN tokens, which the commit gate reads as leftover tokens → a retry every turn).
+  const storyOf = (text: string) =>
+    looksLikeTokenJson(text)
+      ? acceptTokenOrLedgerStory(text, arcState, arcState.completedEvent, { alreadyRepaired: true }).prose
+      : text;
+  const probeText = storyOf(gmText);
+  const nearClone = isNearClone(probeText, fps);
+  const sameBeatHit = isSameBeat(probeText, fps);
+  const collageReject = shouldRetryUnaskedCollage(probeText, recentGmBeatTexts(state), playerInput);
+  const commitGate = classifyBeatCommit(arcState, probeText, playerInput);
   let usedWriterRetry = false;
   let usedPacketStitch = false;
   if (
     !useMud
     && !error
     && !askedRepeat
-    && storyHasBody(gmText)
+    && storyHasBody(probeText)
     && (nearClone || collageReject || !commitGate.accept || (sameBeatHit && !askedContinue))
     && transportRetries === 0
   ) {
@@ -1316,12 +1339,19 @@ Do NOT print dice notation or CODE ENFORCED.
         });
     const retry = await callGmWithRetries(arcState, retryPayload, settings);
     transportRetries += retry.transportRetries + 1;
-    if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly || classifyBeatCommit(arcState, retry.text, playerInput).accept)) {
+    const retryStory = storyOf(retry.text);
+    if (retry.text.trim() && (!isSameBeat(retryStory, fps) || travelHubEarly || classifyBeatCommit(arcState, retryStory, playerInput).accept)) {
       gmText = retry.text;
       usedWriterRetry = true;
       if (!error) error = undefined;
     }
   }
+  const writerRawHead = gmText.replace(/\s+/g, ' ').trim().slice(0, 600) || undefined;
+  const tokenVerdicts = arcState.completedEvent && gmText.trim()
+    ? tokenLineVerdicts(gmText, arcState, arcState.completedEvent)
+    : undefined;
+  let tokenPath: string | undefined;
+  let retryTokenVerdicts: string[] | undefined;
   {
     let accepted = acceptTokenOrLedgerStory(gmText, arcState, arcState.completedEvent);
     if (accepted.needsRepair && arcState.completedEvent && transportRetries === 0) {
@@ -1336,6 +1366,7 @@ Do NOT print dice notation or CODE ENFORCED.
         alt: gmText,
       });
     }
+    tokenPath = accepted.path;
     if (accepted.prose) gmText = accepted.prose;
     if (
       (accepted.path === 'json' || accepted.path === 'json-partial')
@@ -1366,8 +1397,46 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
 
+  // 28g — one writer retry before the ledger stitch when the prose does not resolve the action.
+  let rejectedWriterText: string | undefined;
+  let rejectedReason: string | undefined;
+  if (!useMud && !error && !authoredBook && gmText.trim()) {
+    const why = unresolvedActionReason(playerInput, gmText, intent, '', engineFact);
+    if (why) {
+      rejectedWriterText = gmText.replace(/\s+/g, ' ').trim().slice(0, 200);
+      rejectedReason = why;
+      const retryLine = `RETRY: your last reply did not resolve the player's action (${why}). Show the player doing "${playerInput}" and what came of it.${
+        engineFact ? `\nENGINE RESULT (required fact — state it plainly): ${engineFact}` : ''
+      }`;
+      const again = await callGmWithRetries(
+        arcState,
+        arcState.completedEvent
+          ? `${formatTalkWriterFacing(arcState.completedEvent, arcState, { stricter: true })}\n\n${retryLine}`
+          : buildResolutionUserPayload({
+              mandateBlock: turnMandate.block,
+              playerAction: playerInput,
+              deterministicBlock: `${deterministicBlock}\n${retryLine}`,
+              retry: true,
+              intent,
+            }),
+        settings
+      );
+      transportRetries += again.transportRetries + 1;
+      if (arcState.completedEvent && again.text.trim()) {
+        retryTokenVerdicts = tokenLineVerdicts(again.text, arcState, arcState.completedEvent);
+      }
+      const candidate = again.text.trim()
+        ? acceptTokenOrLedgerStory(again.text, arcState, arcState.completedEvent, { alreadyRepaired: true }).prose
+        : '';
+      if (candidate && !isUnresolvedActionNarrative(playerInput, candidate, intent, '', engineFact)) {
+        gmText = candidate;
+        usedWriterRetry = true;
+      }
+    }
+  }
+
   const rawEvents = parseActionTags(gmText);
-  const warden = await runWarden(state, rawEvents, gmText, playerInput, intent, lastGm);
+  const warden = await runWarden(state, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
   const events = warden.events;
   const narrativeSource = useMud ? gmText : (warden.scrubbedNarrative ?? gmText);
 
@@ -1486,6 +1555,10 @@ Do NOT print dice notation or CODE ENFORCED.
     if (govProse.notes.length) warden.notes.push(...govProse.notes);
   }
   if (blockedPaint || isBlockedPaint(warden.notes, state, cleanText)) {
+    if (!rejectedWriterText) {
+      rejectedWriterText = gmText.replace(/\s+/g, ' ').trim().slice(0, 200);
+      rejectedReason = warden.notes.find((n) => /Narrative does not resolve|Collage reject|Commit gate/i.test(n)) ?? 'blocked paint';
+    }
     cleanText = ledgerActionStitch(working, playerInput);
     warden.notes.push('Paint blocked: ledger stitch');
     blockedPaint = true;
@@ -1910,6 +1983,13 @@ Do NOT print dice notation or CODE ENFORCED.
       receiptLines: mudTurn?.receiptLines,
       responsePath,
       writerOutcome,
+      rejectedWriterText,
+      rejectedReason,
+      engineFact: engineFact || undefined,
+      writerRawHead,
+      tokenVerdicts,
+      tokenPath,
+      retryTokenVerdicts,
     },
   };
 }
@@ -1953,6 +2033,8 @@ export async function runFateAutoplay(opts: {
   writer?: AutoplayWriterKind;
   /** 28b — scripted player lines per turn (harness only); a blank entry = normal pick. */
   inputs?: string[];
+  /** 28g — LOOP STOP auto-stop (default on). false or env SGM_AUTOPLAY_LOOP_STOP=off turns it off. */
+  loopStop?: boolean;
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
   setActiveSubscriptionTier(opts.aiTier);
@@ -1994,6 +2076,14 @@ export async function runFateAutoplay(opts: {
   const startedAt = new Date().toISOString();
   let fatal: string | undefined;
   let dnsFailStreak = 0;
+  // 28g — LOOP STOP: the same GM line on its second repeat (3rd time), or 5 turns in a row with
+  // no XP, no movement and no new chip.
+  const loopStopOn = opts.loopStop !== false && process.env.SGM_AUTOPLAY_LOOP_STOP !== 'off';
+  const gmSeen = new Map<string, number>();
+  const chipsSeen = new Set<string>();
+  let noProgress = 0;
+  let lastXpKey = '';
+  let lastLoc = '';
   const turnsPath = join(outDir, 'turns.jsonl');
   const heartbeatPath = join(outDir, 'heartbeat.json');
   const crashPath = join(outDir, 'crash.log');
@@ -2054,6 +2144,37 @@ export async function runFateAutoplay(opts: {
           }
         } else {
           dnsFailStreak = 0;
+        }
+        if (loopStopOn) {
+          const tel = result.telemetry;
+          const gm = String(tel.gmText ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+          const seen = gm.length >= 24 ? (gmSeen.get(gm) ?? 0) + 1 : 0;
+          if (gm.length >= 24) gmSeen.set(gm, seen);
+          const xpKey = `${tel.level ?? ''}:${tel.characterXp ?? ''}`;
+          const loc = String((tel as { location?: string }).location ?? '');
+          let newChip = false;
+          for (const c of tel.offeredChoices ?? []) {
+            const k = String(c).trim().toLowerCase();
+            if (k && !chipsSeen.has(k)) {
+              chipsSeen.add(k);
+              newChip = true;
+            }
+          }
+          const progressed = xpKey !== lastXpKey || loc !== lastLoc || newChip;
+          noProgress = progressed ? 0 : noProgress + 1;
+          lastXpKey = xpKey;
+          lastLoc = loc;
+          const reason =
+            seen >= 3
+              ? `same GM line a third time: "${gm.slice(0, 80)}"`
+              : noProgress >= 5
+                ? '5 turns with no XP, no movement and no new chip'
+                : '';
+          if (reason) {
+            fatal = `LOOP STOP: ${reason} (turn ${turnNo})`;
+            console.warn(`[fate-autoplay] ${fatal}`);
+            break;
+          }
         }
       } catch (err) {
         const msg = err instanceof Error ? `${err.name}: ${err.message}\n${err.stack || ''}` : String(err);

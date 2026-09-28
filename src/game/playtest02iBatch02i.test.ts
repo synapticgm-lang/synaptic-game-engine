@@ -72,7 +72,10 @@ function stubEncounter() {
 
 function assertClosedPad(pads: string[]) {
   expect(pads.length).toBeGreaterThan(0);
-  expect(pads.filter((c) => isTravelPad(c)).length).toBe(0);
+  // 28g — John: one hub exit chip overrides the yo-yo lock, but never back toward the yo-yo pair.
+  const travel = pads.filter((c) => isTravelPad(c));
+  expect(travel.length).toBeLessThanOrEqual(1);
+  expect(travel.some((c) => /lowmarket|west wall/i.test(c))).toBe(false);
   expect(pads.filter((c) => isLeaveFamilyPad(c)).length).toBe(0);
 }
 

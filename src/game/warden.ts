@@ -69,7 +69,9 @@ export async function runWarden(
   narrativeText: string,
   playerInput: string,
   intent?: PlayerIntent,
-  establishedProse = ''
+  establishedProse = '',
+  /** 28g — the engine's resolved result for the action (fight / flee / parley / rest receipts). */
+  engineFact = ''
 ): Promise<WardenResult> {
   const notes: string[] = [];
   const systemLogExtra: string[] = [];
@@ -334,7 +336,7 @@ export async function runWarden(
   }
 
   const resolvedIntent = intent ?? { kind: 'other' as const, label: 'Free action', targets: [] };
-  if (isUnresolvedActionNarrative(playerInput, polished, resolvedIntent)) {
+  if (isUnresolvedActionNarrative(playerInput, polished, resolvedIntent, '', engineFact)) {
     notes.push('Narrative does not resolve the player action');
   }
 

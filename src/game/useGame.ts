@@ -348,7 +348,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
-import { acceptTokenOrLedgerStory, formatTokenRepairFacing } from './tokenProse';
+import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
   composeFreeMudTurn,
@@ -2677,8 +2677,13 @@ export function useGame() {
         liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
       }
       stateRef.current = liveCurrent;
+      // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
+      const engineFact = (systemsArc?.systemReceipts ?? [])
+        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest):/.test(r))
+        .join(' ');
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,
+        engineResult: engineFact,
       });
       liveCurrent = preparedEvent.state;
       stateRef.current = liveCurrent;
@@ -2884,9 +2889,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       // Never swap a real GM beat for a local story template.
       // 08c Free MUD: skip novelist quality retry / stitch — receipt is enough.
       if (!useMud && !authoredBook) {
+        // 28g — judge the story the player would see: render token JSON first (raw JSON always holds
+        // @tN tokens, which the commit gate reads as leftover tokens → a writer retry on most turns).
         const probeOf = (text: string) =>
           ensureTurnProse(
-            stripResidualMechanicTags(stripChoiceList(stripActionTags(text))),
+            stripResidualMechanicTags(stripChoiceList(stripActionTags(
+              looksLikeTokenJson(text)
+                ? acceptTokenOrLedgerStory(text, liveCurrent, liveCurrent.completedEvent, { alreadyRepaired: true }).prose
+                : text
+            ))),
             sanitizedInput,
           );
         let probeText = probeOf(result.text);
@@ -3251,7 +3262,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         result.text,
         sanitizedInput,
         intent,
-        establishedProseForScrub
+        establishedProseForScrub,
+        engineFact
       );
       const events = warden.events;
       // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).

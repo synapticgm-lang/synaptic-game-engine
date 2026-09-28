@@ -14,6 +14,7 @@ import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, weaponCategory } from './checkRules';
+import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -116,7 +117,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     level: enc.level,
     hp: enc.hp,
     maxHp: enc.maxHp,
-    attack: Math.max(1, Math.floor(enc.strength / 2)),
+    // 28g — early fights: enemy attack capped by player level (recoveryRules).
+    attack: earlyEnemyAttack(working, Math.max(1, Math.floor(enc.strength / 2))),
     defense: Math.max(0, Math.floor(enc.constitution / 4)),
     armorClass: enc.armorClass,
     xpReward: enc.xpReward,
@@ -126,7 +128,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   };
   const result = simulateCombat(working, enemy);
   const hpBefore = working.character.hp;
-  const hpAfter = Math.max(1, result.finalPlayerHp);
+  // 28g — some HP back on a win; a defeat never leaves the character at 1 HP (recoveryRules).
+  const hpAfter = hpAfterFight(working, result.victory, result.finalPlayerHp);
   let next = commitAutoFightLedger(working, { victory: result.victory, finalPlayerHp: result.finalPlayerHp });
   next = {
     ...next,

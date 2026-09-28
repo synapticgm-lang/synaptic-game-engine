@@ -52,6 +52,7 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
+import { applyRestHeal } from './recoveryRules';
 import { isLookAroundAction } from './sandboxXp';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import {
@@ -613,7 +614,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check):/.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest):/.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social:')) {
@@ -673,6 +674,16 @@ export function runArcDirectorBeforeGm(
     if (stale.forcedTerminal) {
       working = stale.state;
       systemReceipts.push(...stale.receipts);
+    }
+  }
+
+  // 28g — rest / wait at a safe hub restores HP (recoveryRules).
+  {
+    const rest = applyRestHeal(working, playerInput);
+    if (rest.receipt) {
+      working = rest.state;
+      systemReceipts.push(rest.receipt);
+      mandates.push(`ENGINE RESULT (required fact — state it plainly): ${rest.receipt}. The player rested and recovered.`);
     }
   }
 

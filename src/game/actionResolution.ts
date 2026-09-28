@@ -23,14 +23,8 @@ const BRIDGE_MARKERS =
 const DEAD_STUB_MARKERS =
   /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre|the last beat holds|the people who were already here are still here|green crystals still split the concrete|the system panel still hangs|you stand still and take in what is around you|ordinary wreckage: torn material|the familiar street is breaking — cracks through walls|shelves (?:are )?(?:overturned|toppled)|broken glass (?:and debris|litter)|glass shards glitter|boots crunching on broken glass|the integration has only just begun/i;
 
-const FINDING_CUES =
-  /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword|knife|integration|registered|earth|crystal|street|city|people|scream)\b/i;
-
-const NEEDS_FINDINGS_ACTION =
-  /\b(scout|circle|search|look|inspect|examin|listen|check\s+for|find|survey|recon|practice|test|ask|what|where|how|who|why|observe|scan|watch|study|wonder)\b/i;
-
 const FOCUS_NOUN =
-  /\b(car|van|truck|bus|vehicle|door|gate|alley|panel|tunic|clothes|shirt|jacket|coat|crate|body|corpse|shop|stall|store|market|mart|tesco|entrance|sword|knife|blade|dumpster|window|wreck)\b/i;
+  /\b(car|van|truck|bus|vehicle|door|gate|alley|panel|tunic|clothes|shirt|jacket|coat|crate|body|corpse|shop|stall|store|market|mart|tesco|entrance|sword|knife|blade|dumpster|window|wreck)\b(?!-)/i;
 
 function proseOnly(text: string): string {
   return stripChoiceList(text)
@@ -59,72 +53,78 @@ export function isGenericBridgeNarrative(narrative: string): boolean {
 }
 
 /**
- * True when the narrative fails to resolve the player's stated action with concrete results.
+ * 28g — why the narrative fails to resolve the player's action, or null when it resolves it.
+ * When the engine already resolved the action (fight / flee / parley / rest), the check is that the
+ * prose states the engine result — not which verbs it used. Deleted (too strict, guessed from wording):
+ * the attack-verb list, the Earth-only "finding cue" vocabulary and the action-word overlap rule.
  */
+export function unresolvedActionReason(
+  playerAction: string,
+  narrative: string,
+  intent: PlayerIntent,
+  previousNarrative = '',
+  engineFact = ''
+): string | null {
+  const job = primaryActionClause(playerAction);
+  const prose = proseOnly(narrative);
+  if (!prose || prose.length < 60) return 'too short';
+  if (/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i.test(prose)) return 'question only';
+  if (isGenericBridgeNarrative(narrative)) return 'bridge or stub text';
+  if (engineFact.trim()) return proseStatesEngineFact(prose, engineFact) ? null : 'engine result not stated';
+  if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return 'panel stub';
+  if (isRecycledLookAround(playerAction, intent, prose, previousNarrative)) return 'recycled look-around';
+  if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return 'gear question unanswered';
+  if (isCreatureWithoutRoom(playerAction, prose)) return 'creature before room';
+  if (isHealQuestion(playerAction) && !proseAnswersHeal(prose)) return 'heal question unanswered';
+  if (isPlayerQuestion(playerAction) && !gmBeatAnswersPlayerAsk(playerAction, narrative)) return 'question unanswered';
+
+  if (isAskNearbyPerson(playerAction)) {
+    return proseResolvesTalk(prose) ? null : 'asked person, no reply';
+  }
+
+  // 28g — "Wait" / "Ready yourself and watch" are not speech even when the parser tags them as talk.
+  const quietAction = /^(?:wait|hold|rest|pause|stay|ready|watch|keep watch)\b/i.test(job.trim());
+  const speech = !quietAction && (intent.kind === 'talk' || isSpeechOrProtest(playerAction));
+  if (speech) {
+    if (!proseResolvesSpeech(prose)) return 'speech, no reply';
+    if (isRecycledTalkBeat(prose, previousNarrative)) return 'recycled talk';
+    // Atmosphere / premise keywords alone must not count as answering dialogue.
+    return null;
+  }
+
+  const worldAsk = isWorldSituationQuestion(playerAction);
+  if (worldAsk && proseTracksPremise(prose) && prose.length >= 80) return null;
+  if (isGearOriginQuestion(playerAction) && proseExplainsGear(prose)) return null;
+
+  const focus = job.match(FOCUS_NOUN)?.[1];
+  if (focus && !worldAsk && !isGearOriginQuestion(playerAction) && !new RegExp(`\\b${focus}s?\\b`, 'i').test(prose)) {
+    return `named target missing (${focus})`;
+  }
+
+  return null;
+}
+
+/** True when the narrative fails to resolve the player's stated action (see unresolvedActionReason). */
 export function isUnresolvedActionNarrative(
   playerAction: string,
   narrative: string,
   intent: PlayerIntent,
-  previousNarrative = ''
+  previousNarrative = '',
+  engineFact = ''
 ): boolean {
-  const job = primaryActionClause(playerAction);
-  const prose = proseOnly(narrative);
-  if (!prose || prose.length < 60) return true;
-  if (/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i.test(prose)) return true;
-  if (isGenericBridgeNarrative(narrative)) return true;
-  if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return true;
-  if (isRecycledLookAround(playerAction, intent, prose, previousNarrative)) return true;
-  if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return true;
-  if (isCreatureWithoutRoom(playerAction, prose)) return true;
-  if (isHealQuestion(playerAction) && !proseAnswersHeal(prose)) return true;
-  if (isPlayerQuestion(playerAction) && !gmBeatAnswersPlayerAsk(playerAction, narrative)) return true;
-  if (
-    intent.kind === 'attack'
-    && !/\b(strike|stab|cut|slash|hit|knife|blow|drive|wrench|claw|blood|miss|dodge|parry|shriek)\b/i.test(prose)
-  ) {
-    return true;
-  }
+  return unresolvedActionReason(playerAction, narrative, intent, previousNarrative, engineFact) !== null;
+}
 
-  const askedSomeone = isAskNearbyPerson(playerAction);
-  if (askedSomeone) {
-    return !proseResolvesTalk(prose);
-  }
+const ENGINE_FACT_SKIP = /^(?:Fight|Flee|Parley|Rest|Check|Encounter|Loot|Gold|Gained|Victory|Defeat|Round|Rounds)$/i;
+const ENGINE_OUTCOME_WORDS =
+  /\b(?:went down|goes down|go down|fell|falls|fallen|dead|dies|died|killed|slain|beaten|beat|won|wins|victory|defeat(?:ed)?|lost|loses|driven back|knocked|broke away|break away|got clear|escaped?|escaping|fled|flees?|stood down|stands? down|terms|yield(?:s|ed)?|surrender(?:s|ed)?|rest(?:s|ed|ing)?|recover(?:s|ed)?|breath|heal(?:s|ed)?|wound(?:s|ed)?|bleed(?:s|ing)?|blood)\b/i;
 
-  const speech = intent.kind === 'talk' || isSpeechOrProtest(playerAction);
-  if (speech) {
-    if (!proseResolvesSpeech(prose)) return true;
-    if (isRecycledTalkBeat(prose, previousNarrative)) return true;
-    // Atmosphere / premise keywords alone must not count as answering dialogue.
-    return false;
-  }
-
-  const worldAsk = isWorldSituationQuestion(playerAction);
-  if (worldAsk && proseTracksPremise(prose) && prose.length >= 80) return false;
-  if (isGearOriginQuestion(playerAction) && proseExplainsGear(prose)) return false;
-
-  const needsFindings =
-    NEEDS_FINDINGS_ACTION.test(job)
-    || intent.kind === 'observe'
-    || intent.kind === 'search'
-    || intent.kind === 'move';
-
-  if (needsFindings && !FINDING_CUES.test(prose) && !proseTracksPremise(prose)) return true;
-
-  const focus = job.match(FOCUS_NOUN)?.[1];
-  if (focus && !worldAsk && !isGearOriginQuestion(playerAction) && !new RegExp(`\\b${focus}\\b`, 'i').test(prose)) {
-    return true;
-  }
-
-  const tokens = (job.toLowerCase().match(/[a-z]{4,}/g) ?? []).filter(
-    (t) => !/^(with|from|that|this|have|into|your|their|about|would|could|should|first|other|more|closely|additional|nearest|nearby|wonder)$/.test(t)
-  );
-  if (tokens.length >= 3 && !worldAsk && !isGearOriginQuestion(playerAction)) {
-    const hay = prose.toLowerCase();
-    const hits = tokens.filter((t) => hay.includes(t)).length;
-    if (hits === 0 && needsFindings) return true;
-  }
-
-  return false;
+/** 28g — the prose states the engine's resolved result: it names the enemy, or says how it ended. */
+export function proseStatesEngineFact(prose: string, engineFact: string): boolean {
+  const text = prose.toLowerCase();
+  const names = (engineFact.match(/\b[A-Z][a-z]{3,}\b/g) ?? []).filter((w) => !ENGINE_FACT_SKIP.test(w));
+  if (names.some((w) => text.includes(w.toLowerCase()))) return true;
+  return ENGINE_OUTCOME_WORDS.test(prose);
 }
 
 /** Extra user-message block when the beat resolved but was too short for a paid turn. */

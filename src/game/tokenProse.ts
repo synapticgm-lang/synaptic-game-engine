@@ -105,8 +105,46 @@ function extractJsonObject(raw: string): string | null {
   const body = (fenced?.[1] ?? t).trim();
   const start = body.indexOf('{');
   const end = body.lastIndexOf('}');
-  if (start < 0 || end <= start) return null;
-  return body.slice(start, end + 1);
+  if (start < 0) return null;
+  const cut = end > start ? body.slice(start, end + 1) : '';
+  if (cut) {
+    try {
+      JSON.parse(cut);
+      return cut;
+    } catch {
+      /* 28g — the writer often drops the final bracket(s); close them below */
+    }
+  }
+  const balanced = balanceJson(body.slice(start));
+  try {
+    JSON.parse(balanced);
+    return balanced;
+  } catch {
+    return cut || null;
+  }
+}
+
+/** 28g — close unclosed strings / arrays / objects at the end of a cut-off JSON reply. */
+function balanceJson(s: string): string {
+  const stack: string[] = [];
+  let inStr = false;
+  let esc = false;
+  for (const ch of s) {
+    if (inStr) {
+      if (esc) esc = false;
+      else if (ch === '\\') esc = true;
+      else if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') inStr = true;
+    else if (ch === '{') stack.push('}');
+    else if (ch === '[') stack.push(']');
+    else if (ch === '}' || ch === ']') stack.pop();
+  }
+  let out = s.trimEnd();
+  if (inStr) out += '"';
+  out = out.replace(/,\s*$/, '');
+  return out + stack.reverse().join('');
 }
 
 export function parseTokenBeat(raw: string): TokenBeat | null {
@@ -136,7 +174,8 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const rec = row as { fn?: unknown; text?: unknown; speaker_tok?: unknown };
       const fn = String(rec.fn ?? '').trim() as LineFn;
       const text = String(rec.text ?? '').trim();
-      if (!LINE_FNS.has(fn) || !text) continue;
+      // 28g — skip the prompt example line when the writer echoes it (... @t1 ...).
+      if (!LINE_FNS.has(fn) || !text || /^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text)) continue;
       const speaker = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';
       lines.push(speaker ? { fn, text, speaker_tok: speaker } : { fn, text });
     }
@@ -170,7 +209,9 @@ export function lineHasMidSentenceCapital(text: string): boolean {
     if (/^\s+$/.test(part)) continue;
     const word = part.replace(/^["'`([{]+/, '');
     if (!word) continue;
-    if (!sentenceStart && /^[A-Z][A-Za-z''-]*$/.test(word.replace(/[.,!?;:)"'\]]+$/, ''))) {
+    // 28g — a capital right after an opening quote starts spoken words, not an invented name.
+    const opensQuote = /^["'`\u201c\u2018]/.test(part);
+    if (!sentenceStart && !opensQuote && /^[A-Z][A-Za-z''-]*$/.test(word.replace(/[.,!?;:)"'\]]+$/, ''))) {
       return true;
     }
     sentenceStart = /[.!?]["')\]]*$/.test(part);
@@ -211,12 +252,33 @@ function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | 
 
 export type LineVerdict = { ok: boolean; reason?: string };
 
+/** 28g — diagnostics only: why each writer JSON line was kept or dropped (run telemetry). */
+export function tokenLineVerdicts(raw: string, state: GameState, packet?: CompletedEventPacket): string[] {
+  const enumRefs = refEnumOf(state, packet);
+  const beat = extractTokenCandidates(raw ?? '').map(parseTokenBeat).find((b): b is TokenBeat => !!b);
+  if (!beat) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
+  const out = bindCheckFails(beat, enumRefs).map((n) => `ref ${n}`);
+  for (const line of beat.lines) {
+    const v = classifyTokenLine(line, beat, enumRefs, knownProperNames(state));
+    out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
+  }
+  return out;
+}
+
 export function classifyTokenLine(
   line: TokenLine,
   beat: TokenBeat,
-  enumRefs: LedgerRef[]
+  enumRefs: LedgerRef[],
+  knownNames: string[] = []
 ): LineVerdict {
-  if (lineHasMidSentenceCapital(line.text)) {
+  // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
+  let capText = line.text;
+  for (const name of [...enumRefs.map((r) => r.display), ...knownNames]
+    .filter((n) => !!n && /[A-Z]/.test(n))
+    .sort((a, b) => b.length - a.length)) {
+    capText = capText.split(name).join('·');
+  }
+  if (lineHasMidSentenceCapital(capText)) {
     return { ok: false, reason: 'capital' };
   }
   if (lineHasUnboundAnimate(line.text)) {
@@ -269,13 +331,23 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[]): string 
   return tidy(sentences.join(' '));
 }
 
-function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[]): boolean {
+function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = []): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames).ok);
 }
 
-function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[]): TokenLine[] {
-  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs).ok);
+function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = []): TokenLine[] {
+  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames).ok);
+}
+
+/** 28g — proper names the ledger already holds: places, their exits, the current location, the player. */
+export function knownProperNames(state: GameState): string[] {
+  const names = [
+    state.currentLocation,
+    state.character?.name,
+    ...(state.places ?? []).flatMap((p) => [p.name, ...(p.exits ?? [])]),
+  ];
+  return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1).map((n) => n.trim()))];
 }
 
 function missingFns(lines: TokenLine[]): LineFn[] {
@@ -311,6 +383,7 @@ export function acceptTokenOrLedgerStory(
   usedLastResort: boolean;
 } {
   const enumRefs = refEnumOf(state, packet);
+  const known = knownProperNames(state);
   const candidates = [
     ...extractTokenCandidates(raw),
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),
@@ -321,7 +394,7 @@ export function acceptTokenOrLedgerStory(
   for (const cand of candidates) {
     const beat = parseTokenBeat(cand);
     if (!beat) continue;
-    if (isFullyClean(beat, enumRefs)) {
+    if (isFullyClean(beat, enumRefs, known)) {
       const prose = renderTokenBeat(beat, enumRefs);
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
@@ -333,7 +406,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = keepCleanLines(beat, enumRefs);
+    const clean = keepCleanLines(beat, enumRefs, known);
     const fns = new Set(clean.map((l) => l.fn));
     if (clean.length >= 3 && fns.has('place') && fns.has('action')) {
       if (!bestPartial || clean.length > bestPartial.lines.length) {
@@ -359,7 +432,7 @@ export function acceptTokenOrLedgerStory(
   let needsRepair: { missingFns: LineFn[] } | undefined;
   const parsedAny = candidates.map(parseTokenBeat).find(Boolean);
   if (parsedAny && !opts?.alreadyRepaired) {
-    const clean = keepCleanLines(parsedAny, enumRefs);
+    const clean = keepCleanLines(parsedAny, enumRefs, known);
     const miss = missingFns(clean.length ? clean : parsedAny.lines);
     if (miss.includes('place') || miss.includes('action') || clean.length < 3) {
       needsRepair = { missingFns: miss.length ? miss : ['place', 'action'] };

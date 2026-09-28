@@ -116,6 +116,8 @@ export interface CompletedEventPacket {
   /** 27a — ledger place facts for stitch banks. */
   placeDescriptor?: string;
   ledgerSheet?: string;
+  /** 28g — the engine's resolved result for the player's action (fight / flee / parley / rest). Required fact. */
+  engineResult?: string;
   exitNames?: string[];
 }
 
@@ -270,6 +272,8 @@ function extractTarget(input: string, state: GameState): string | undefined {
 
 export type PacketBuildExtras = {
   xp?: number;
+  /** 28g — engine receipts for this action; the writer must state them. */
+  engineResult?: string;
   damage?: number;
   loot?: string[];
 };
@@ -688,6 +692,7 @@ export function buildCompletedEventPacket(
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
     ledgerSheet: ledgerSheetLine(state) || undefined,
+    engineResult: extras?.engineResult?.trim() || undefined,
   };
 }
 
@@ -833,9 +838,29 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
     .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
   const pool = topicAdvancePool(state, undefined, act || 'Look around').filter(fresh);
   if (pool.length) return pickAdvanceVariant(pool, recent, (state.turn ?? 0) + act.length);
-  return `You stayed at ${f.place} a moment longer. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))} The next move was yours.`
-    .replace(/\s+/g, ' ')
-    .trim();
+  // 28g — last fallback: never a line used in the last 10 GM turns. Rotate the stay line, the exits line
+  // and the next quest step (engine facts); if all were used, the least recently used one.
+  const stayLine = `You stayed ${stayedPreposition(f.place)} ${f.place} a moment longer. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))} The next move was yours.`;
+  const lead = (state.quests ?? []).find(
+    (q) => q.revealed && q.status === 'active' && (q.objectives ?? []).some((o) => !o.completed)
+  );
+  const step = lead?.objectives?.find((o) => !o.completed)?.description.replace(/[.!?]+$/, '').trim();
+  const lastLines = [
+    stayLine,
+    `You weighed the ways on from ${f.place}. ${exitsSentence(f.place, f.exits)}`,
+    ...(lead && step
+      ? [`Your open lead was ${lead.name}: ${step}.`, `Nothing here moved ${lead.name} on. The next step was still: ${step}.`]
+      : []),
+    ...(f.exits ?? []).map((x) => `From ${f.place}, the way to ${x} stayed open.`),
+  ].map((s) => s.replace(/\s+/g, ' ').trim());
+  const recentLower = recent.map((b) => b.toLowerCase());
+  const unused = lastLines.find((s) => !recentLower.some((b) => b.includes(s.toLowerCase())));
+  if (unused) return unused;
+  const lastUse = (s: string) => {
+    const i = [...recentLower].reverse().findIndex((b) => b.includes(s.toLowerCase()));
+    return i < 0 ? 99 : i;
+  };
+  return [...lastLines].sort((a, b) => lastUse(b) - lastUse(a))[0] ?? stayLine;
 }
 
 export function attachCompletedEvent(
@@ -874,6 +899,9 @@ export function formatWriterFacingEvent(
     `You ${packet.verb}${target}.`,
     `Outcome: ${packet.outcome}.`,
   ];
+  if (packet.engineResult) {
+    lines.push(`ENGINE RESULT (required fact — the story must state this plainly): ${packet.engineResult}`);
+  }
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);
@@ -893,7 +921,8 @@ export function formatWriterFacingEvent(
   lines.push(`YOU MAY ONLY MENTION: ${packet.allowlist.length ? packet.allowlist.join(', ') : 'none'}.`);
   lines.push('');
   lines.push('TOKEN PROSE — return JSON only (no markdown):');
-  lines.push('{"refs":[{"tok":"t1","id":"here","use":"place"}],"lines":[{"fn":"place","text":"... @t1 ..."}]}');
+  // 28g — a real example; writers copied the old "... @t1 ..." placeholder as a line.
+  lines.push('{"refs":[{"tok":"t1","id":"here","use":"place"}],"lines":[{"fn":"place","text":"Rain ran off the stones of @t1."},{"fn":"action","text":"You did it, and it showed."}]}');
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
   lines.push('lines.text may name entities only as @t1-style tokens. Write 4–6 lines. Prefer place then action.');
   lines.push(formatRefEnumForWriter(packet.refEnum ?? []));

@@ -1259,20 +1259,38 @@ export function compileChoices(
     notes.push('Talk-loop world-moving pad');
   }
   
-  // 28f — a named hub with no live threat always offers one travel / exit chip.
-  // Respects the tested travel yo-yo / treadmill starve (travelStarve, stallInterrupt, excluded families).
-  if (
-    !engaged
-    && !travelStarve
-    && !stallInterrupt
-    && !finalChoices.some((c) => isTravelPad(c) || isLeaveFamilyPad(c))
-  ) {
+  // 28f/28g — hub exits. A named hub with no live threat always offers one travel chip, even under the
+  // travel yo-yo lock (John, 28g) — but never toward a hub named in the last 4 player moves.
+  // Uncleared dungeon hubs come first, then unvisited hubs. At a dungeon hub the way in is offered.
+  if (!engaged) {
     const hubs = hubsForBibleId(state.campaignBibleId);
     const hereHub = matchHub(hubs, state.currentLocation);
-    if (hereHub) {
-      const exit =
-        edgeLabels.find((l) => isTravelPad(l))
-        ?? hubs.filter((h) => h.id !== hereHub.id).map((h) => `Travel toward ${h.name}`)[0];
+    const dungeonHubRe = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
+    const cleared = new Set(
+      (state.places ?? []).filter((p) => p.arcStatus === 'cleared').map((p) => p.name.toLowerCase())
+    );
+    const isOpenDungeonHub = (h: { name: string; blurb?: string }) =>
+      dungeonHubRe.test(`${h.name} ${h.blurb ?? ''}`) && !cleared.has(h.name.toLowerCase());
+    if (hereHub && !state.activeDungeon && isOpenDungeonHub(hereHub)
+      && !finalChoices.some((c) => /^enter\b/i.test(c))) {
+      const enter = `Enter ${hereHub.name}`;
+      finalChoices = [...finalChoices.slice(0, 5), enter];
+      notes.push(`Dungeon entry chip: ${enter.slice(0, 32)}`);
+    }
+    if (hereHub && !finalChoices.some((c) => isTravelPad(c) || isLeaveFamilyPad(c))) {
+      const recentMoves = (state.log ?? [])
+        .filter((e) => e.role === 'player')
+        .slice(-4)
+        .map((e) => String(e.content ?? '').toLowerCase());
+      const visited = new Set(
+        (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
+      );
+      const rank = (h: { name: string; blurb?: string }) =>
+        (isOpenDungeonHub(h) ? 0 : 2) + (visited.has(h.name.toLowerCase()) ? 1 : 0);
+      const candidates = hubs
+        .filter((h) => h.id !== hereHub.id && !recentMoves.some((m) => m.includes(h.name.toLowerCase())))
+        .sort((a, b) => rank(a) - rank(b));
+      const exit = candidates[0] ? `Travel toward ${candidates[0].name}` : undefined;
       if (exit) {
         finalChoices = [...finalChoices.slice(0, 5), exit];
         notes.push(`Hub exit chip: ${exit.slice(0, 32)}`);

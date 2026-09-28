@@ -47,6 +47,9 @@ function isOutdoorScene(state: GameState): boolean {
   return !!matchHub(hubsForBibleId(state.campaignBibleId ?? state.bibleId), state.currentLocation);
 }
 
+/** 28g — a hub whose name or blurb marks a dungeon (e.g. Cathedral Undercroft). */
+const DUNGEON_HUB_RE = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
+
 function extraHubs(state: GameState): Array<{ name: string }> {
   const extra = (state as GameState & { hubs?: Array<{ name: string }> }).hubs;
   return Array.isArray(extra) ? extra : [];
@@ -104,17 +107,28 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     const activeIds = new Set(
       (state.quests ?? []).filter((q) => q.revealed && q.status === 'active').map((q) => q.id)
     );
+    const visited = new Set(
+      (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
+    );
     const listed = fromBible.length
       ? [...fromBible]
           .sort((a, b) => {
             const aLink = a.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
             const bLink = b.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
-            return aLink - bLink;
+            if (aLink !== bLink) return aLink - bLink;
+            // 28g — unvisited hubs before visited ones
+            return Number(visited.has(a.name.toLowerCase())) - Number(visited.has(b.name.toLowerCase()));
           })
-          .map((h) => ({ name: h.name }))
-      : extraHubs(state);
-    for (const hub of listed) {
-      if (!hub.name || hub.name.toLowerCase() === here) continue;
+          .map((h) => ({ name: h.name, dungeon: DUNGEON_HUB_RE.test(`${h.name} ${h.blurb ?? ''}`) }))
+      : extraHubs(state).map((h) => ({ name: h.name, dungeon: false }));
+    const open = listed.filter((h) => !!h.name && h.name.toLowerCase() !== here);
+    const picks = open.slice(0, 4);
+    // 28g — always keep one travel slot for a reachable dungeon hub.
+    const dungeonHub = open.find((h) => h.dungeon);
+    if (dungeonHub && !picks.includes(dungeonHub)) {
+      picks.splice(picks.length >= 4 ? 3 : picks.length, 1, dungeonHub);
+    }
+    for (const hub of picks) {
       edges.push({
         type: 'travel',
         label: `Travel toward ${hub.name}`,
