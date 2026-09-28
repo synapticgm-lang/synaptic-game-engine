@@ -62,13 +62,72 @@ export function propagateKnowledge(
   
   // 4. Hub gossip (if event is public at a hub)
   if (sourceMoment.visibility === 'hub' || sourceMoment.visibility === 'public') {
-    const hubId = state.location?.name;
+    const hubId =
+      state.currentLocation?.trim() ||
+      (state as { location?: { name?: string } }).location?.name?.trim();
     if (hubId) {
       next = spreadHubGossip(sourceMoment, hubId, next);
     }
   }
   
   return next;
+}
+
+const TREATMENT_NOTE = /^(Treated kindly|Treated harshly \/ refused|Player walked away) \(T(\d+)\)$/;
+
+function treatmentWitnessFact(note: string, target: string, turn: number): string {
+  if (note.startsWith('Treated kindly')) return `Saw you treat ${target} kindly (T${turn})`;
+  if (note.startsWith('Treated harshly')) return `Saw you treat ${target} harshly (T${turn})`;
+  return `Saw you walk away from ${target} (T${turn})`;
+}
+
+/**
+ * Post-harvest: when this turn's treatment note lands on one NPC, present
+ * witnesses learn it (key-moment ledger) and it shows in their live memory facts.
+ */
+export function shareTreatmentWithWitnesses(
+  state: GameState,
+  before: GameState['npcMemories'],
+  after: NonNullable<GameState['npcMemories']>
+): { npcMemories: NonNullable<GameState['npcMemories']>; ledgers?: NonNullable<GameState['arcDirector']>['npcMemories'] } {
+  const prior = new Map((before ?? []).map((m) => [m.npcName.trim().toLowerCase(), new Set(m.facts)]));
+  let target: string | null = null;
+  let note: string | null = null;
+  for (const m of after) {
+    const old = prior.get(m.npcName.trim().toLowerCase());
+    const fresh = m.facts.find((f) => TREATMENT_NOTE.test(f) && !old?.has(f));
+    if (fresh) {
+      target = m.npcName;
+      note = fresh;
+      break;
+    }
+  }
+  if (!target || !note) return { npcMemories: after };
+
+  const moment = createKeyMoment(target, 'relationship_change', { treatment: note }, state, {
+    visibility: 'witnessed',
+    provenance: 'direct_participant',
+  });
+  let next = appendKeyMoment(target, moment, state);
+  next = propagateKnowledge(moment, next);
+
+  const ledgers = next.arcDirector?.npcMemories ?? [];
+  const witnesses = new Set(
+    ledgers
+      .filter((l) =>
+        l.keyMoments?.some((km) => km.id !== moment.id && km.turn === state.turn && km.data?.witnessedNpc === target)
+      )
+      .map((l) => l.npcId.trim().toLowerCase())
+  );
+  if (!witnesses.size) return { npcMemories: after, ledgers };
+
+  const fact = treatmentWitnessFact(note, target, state.turn);
+  const npcMemories = after.map((m) =>
+    witnesses.has(m.npcName.trim().toLowerCase()) && !m.facts.includes(fact)
+      ? { ...m, facts: [...m.facts, fact].slice(-10) }
+      : m
+  );
+  return { npcMemories, ledgers };
 }
 
 // ============================================================================

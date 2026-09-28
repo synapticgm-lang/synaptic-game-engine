@@ -35,6 +35,8 @@ import {
   applySocialMilestone,
   detectSocialMilestone,
 } from './socialMilestoneLedger';
+import { awardSocialXp, calculateSocialXp } from './socialProgression';
+import { telegraphForPendingSpawn } from './encounterTelegraph';
 import { pushBeatStateTx, type BeatStateTxExtras } from './stateTx';
 import {
   initEncounterTerminal,
@@ -76,11 +78,8 @@ import {
   buildNpcPacket,
   type MemorySelection,
 } from './npcMemoryRetrieval';
-import {
-  checkLifecycleTurnover,
-  advanceLifecycleState,
-  type TurnoverCheck,
-} from './npcLifecycleFsm';
+import { seedPresentNpcLifecycles, updateAllNpcLifecycles } from './npcLifecycleFsm';
+import { presentNpcRecords } from './npcRecords';
 // WS-5 Wave B: PYOA Delayed Consequences
 import {
   getDueConsequences,
@@ -160,6 +159,10 @@ export interface ArcDirectorState {
   }>;
   /** WS-7 Wave 1 — Leverage assets (tracked per NPC target) */
   leverageAssets?: import('./socialCrisisTypes').LeverageAsset[];
+  /** 28q — telegraph cues for the parked drought spawn (writer WORLD FACTS). */
+  pendingTelegraph?: string;
+  /** 28q — social skill track (separate from character XP). */
+  socialProgression?: import('./socialProgression').SocialProgressionState;
   /** WS-7 Wave 1 — Leverage pressure profiles (per NPC) */
   leveragePressureProfiles?: import('./socialCrisisTypes').LeveragePressureProfile[];
   /** WS-7 Wave 1 — NPC relationships (trust, respect, fear, milestones) */
@@ -487,8 +490,9 @@ function applyBeatEffects(
   contract: BeatContract,
   seq: number,
   opts?: { forceSpawn?: boolean }
-): { state: GameState; xp: number; receipts: string[] } {
+): { state: GameState; xp: number; receipts: string[]; telegraph?: string } {
   let next = { ...state };
+  let telegraph: string | undefined;
   const receipts: string[] = [];
   const isCombat = !!(contract.spawnEncounter || contract.kind === 'encounter');
   const combatTier = /boss/i.test(contract.id)
@@ -576,6 +580,7 @@ function applyBeatEffects(
         }, preview.name);
         receipts.push(`Encounter: ${preview.name}`);
         receipts.push(`Encounter preface pending: ${preview.name}`);
+        telegraph = telegraphForPendingSpawn((preview as { threatTier?: string }).threatTier, next) ?? undefined;
       }
 
       // Update density state after spawn
@@ -595,7 +600,7 @@ function applyBeatEffects(
 
   next = pushBeatStateTx(next, contract.summary, extras, state.turn + 1);
 
-  return { state: next, xp, receipts };
+  return { state: next, xp, receipts, telegraph };
 }
 
 /** Player-visible STATUS lines for arc commits (T12 hook — quest stage + XP receipt). */
@@ -616,6 +621,8 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest):/.test(r)) {
       // 28f — engine fight outcome on STATUS
+      lines.push(r);
+    } else if (r.startsWith('Social track:')) {
       lines.push(r);
     } else if (r.startsWith('Social:')) {
       const m = r.match(/Social: \+(\d+) XP \((.+)\)/);
@@ -729,6 +736,22 @@ export function runArcDirectorBeforeGm(
   ) {
     working = applySocialMilestone(working, social);
     systemReceipts.push(`Social: ${social.kind}`);
+    // Social track only — character XP stays milestone-only via sandboxXp.
+    const socialXp = calculateSocialXp({
+      eventId: `${social.key}#${working.turn}`,
+      actorId: 'player',
+      source: social.kind === 'negotiate' ? 'favor_granted' : 'new_information',
+      sourceObjectId: social.key,
+      noveltyKey: social.key,
+      turn: working.turn,
+      stakesTier: 1,
+      difficultyTier: 1,
+      alreadyAwardedNoveltyKeys: new Set(working.arcDirector?.socialProgression?.awardedNoveltyKeys ?? []),
+    });
+    if (socialXp.finalXp > 0) {
+      working = awardSocialXp(working, socialXp);
+      systemReceipts.push(`Social track: +${socialXp.finalXp} (${social.kind})`);
+    }
   }
 
   const committed = committedSet(working);
@@ -737,22 +760,11 @@ export function runArcDirectorBeforeGm(
   const loiterStreak = countLoiterFamilyStreak(working);
 
   // WS-2 Wave C: Check NPC lifecycle turnover (before GM)
-  const lifecycles = working.arcDirector?.npcLifecycles ?? [];
-  for (const lifecycle of lifecycles) {
-    const turnoverCheck = checkLifecycleTurnover(lifecycle, working.turn);
-    if (turnoverCheck.shouldAdvance) {
-      const advanced = advanceLifecycleState(lifecycle, turnoverCheck.reason || 'auto');
-      working = {
-        ...working,
-        arcDirector: {
-          ...working.arcDirector,
-          npcLifecycles: (working.arcDirector?.npcLifecycles ?? []).map(l =>
-            l.npcId === lifecycle.npcId ? advanced : l
-          ),
-        },
-      };
-      systemReceipts.push(`NPC Lifecycle: ${lifecycle.npcId} → ${advanced.state}`);
-    }
+  working = seedPresentNpcLifecycles(working, presentNpcRecords(working));
+  const lifecycleTurn = updateAllNpcLifecycles(working);
+  working = lifecycleTurn.state;
+  for (const t of lifecycleTurn.transitions) {
+    systemReceipts.push(`NPC Lifecycle: ${t.npcId} → ${t.to}`);
   }
 
   // WS-5 Wave B: Deliver due consequences (before GM)
@@ -868,6 +880,13 @@ export function runArcDirectorBeforeGm(
     working = applied.state;
     systemReceipts.push(...applied.receipts);
     mandates.push(contract.mandate);
+    if (applied.telegraph) {
+      mandates.push(applied.telegraph);
+      working = {
+        ...working,
+        arcDirector: { ...working.arcDirector, pendingTelegraph: applied.telegraph },
+      };
+    }
     beatId = contract.id;
     beatCommitted = true;
 

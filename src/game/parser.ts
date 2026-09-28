@@ -1,5 +1,6 @@
 import type { GameState, LoreCard, LoreCardType, TurnFrameTheme, Quest, QuestType, QuestStatus, MapTier, ActiveEncounter, ComicPanel } from './types';
 import { stripTurnCloser } from './turnAsk';
+import { applyQuestCompleteGuard } from './questGuards';
 
 export { stripTurnCloser, isTurnCloserLine, shouldShowTurnAsk, TURN_ASK, storyHasBody, storyWordCount, isStoryTooThin, STORY_VALUE_FLOOR_WORDS } from './turnAsk';
 
@@ -1016,19 +1017,9 @@ export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[]
           : quest
       );
     } else if (e.type === 'quest-complete' && e.id) {
-      const q = updatedQuests.find((x) => x.id === e.id);
-      if (!q) continue;
-      const activated = q.activatedTurn ?? q.revealedTurn ?? turn;
-      const min = q.minTurnsBeforeComplete ?? 1;
-      if (q.status === 'hidden' || turn - activated < min) {
-        // Block same-turn create→complete (Hidden Door anti-pattern)
-        continue;
-      }
-      updatedQuests = updatedQuests.map((quest) =>
-        quest.id === e.id
-          ? { ...quest, status: 'completed' as QuestStatus, revealed: true, completedTurn: turn }
-          : quest
-      );
+      const guard = applyQuestCompleteGuard({ quests: updatedQuests } as GameState, e.id, turn);
+      if (guard.blocked) continue;
+      updatedQuests = guard.quests;
     }
   }
 

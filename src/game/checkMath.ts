@@ -21,6 +21,8 @@ import {
   type CheckMod,
   type CheckResultRecord,
 } from './checkRules';
+import { calculateSocialModifiers, getOutcomeDescription, socialOutcomeBand } from './socialSkills';
+import type { OutcomeBand } from './socialCrisisTypes';
 
 export type CheckSkill =
   | 'athletics'
@@ -59,6 +61,8 @@ export interface PlayerCheckResult extends RollOutcome {
   record?: CheckResultRecord;
   /** 28c — player-facing line: D&D full maths, LitRPG outcome only. */
   displayLine?: string;
+  /** 28q — five-band social outcome (partial = achieved with a cost). */
+  socialBand?: OutcomeBand;
 }
 
 const CONTESTED_SOCIAL =
@@ -282,7 +286,8 @@ export function runPlayerCheck(
   let adv: AdvState = 'normal';
   let auto: 'willing' | 'unwilling' | undefined;
   let cue: string | undefined;
-  if (ctx.attr === 'CHA' && ctx.skill === 'persuasion') {
+  const social = ctx.attr === 'CHA' && ctx.skill === 'persuasion';
+  if (social) {
     const target = socialTarget(state, actionText);
     if (target) {
       const s = DISPOSITION_SOCIAL[target.disposition];
@@ -290,6 +295,10 @@ export function runPlayerCheck(
       adv = s.adv;
       const flat = s.flat < 0 && row.socialRemoveHostilePenalty ? 0 : s.flat;
       mods.push({ label: `${target.disposition} (${target.name})`, value: flat });
+      // Skill + relationship already come from skillBonus + disposition.
+      const sm = calculateSocialModifiers('persuasion', target.name, state, {});
+      if (sm.faction) mods.push({ label: 'faction standing', value: sm.faction });
+      if (sm.leverage) mods.push({ label: 'leverage', value: sm.leverage });
       if (s.willing.includes(size)) auto = 'willing';
       else if (s.unwilling.includes(size)) auto = 'unwilling';
       cue = dispositionCue(target.name, target.disposition);
@@ -338,12 +347,15 @@ export function runPlayerCheck(
   const modifier = record.total - record.kept;
   const outcome = evaluateRoll(d20, modifier, ctx.dc);
   const narrativeOutcomeLabel = outcome.isSuccess ? 'SUCCESS' : 'FAILURE';
+  const socialBand = social ? socialOutcomeBand(d20, outcome.totalScore - ctx.dc) : undefined;
+  const bandTail = socialBand ? ` — ${getOutcomeDescription(socialBand)}` : '';
   const codeResolutionText = outcome.isSuccess
-    ? `SUCCESS (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})`
-    : `FAILURE (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})`;
+    ? `SUCCESS (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}`
+    : `FAILURE (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}`;
 
   return {
     ...outcome,
+    socialBand,
     d20,
     modifier,
     dc: ctx.dc,

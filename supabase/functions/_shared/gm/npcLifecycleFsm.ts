@@ -5,8 +5,8 @@
  * Tracks role obligations, deadlines, and turnover logic.
  */
 
-import type { GameState } from './types';
-import type { NpcRole } from './npcRoleRegistry';
+import type { GameState } from './types.ts';
+import type { NpcRole } from './npcRoleRegistry.ts';
 import {
   ROLE_OBLIGATIONS,
   inferNpcRole,
@@ -14,7 +14,7 @@ import {
   isRoleSatisfied,
   formatRoleObligation,
   formatExitMandate,
-} from './npcRoleRegistry';
+} from './npcRoleRegistry.ts';
 
 // ============================================================================
 // LIFECYCLE STATES

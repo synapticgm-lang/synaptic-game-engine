@@ -19,6 +19,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
 import { tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
+import { openSeededLootable } from './looseItems';
 import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
 import { CHEST_GRADE_LABELS } from './dungeonSeed';
@@ -573,7 +574,8 @@ export function advanceDungeonCard(
   let next = state;
   const receipts: string[] = [];
   const d0 = next.activeDungeon;
-  if (!isDungeonCard(d0)) return { state, receipts };
+  // Seeded (non-card) dungeons: chests roll by code and land on the floor for pickup.
+  if (!isDungeonCard(d0)) return openSeededLootable(state, playerInput);
   const input = (playerInput ?? '').trim();
 
   // Left by travel: the place is no longer this dungeon's room → park the card.

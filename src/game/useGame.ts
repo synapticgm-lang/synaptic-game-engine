@@ -243,6 +243,7 @@ import {
   mergeNpcMemoriesFromTurn,
   recordNpcTreatmentFromAction,
 } from './npcMemory';
+import { shareTreatmentWithWitnesses } from './npcCrossIntegration';
 import {
   resolveLitrpgSystemPersonality,
   resolvePyoaGmPersonality,
@@ -3870,7 +3871,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneBeat: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput).lastBeat,
       });
       const mergedTimeline = mergeTimeline(workingState.timeline, turnFacts);
-      const npcMemories = recordNpcTreatmentFromAction(
+      const npcMemoriesTreated = recordNpcTreatmentFromAction(
         mergeNpcMemoriesFromTurn(
           workingState,
           events,
@@ -3886,6 +3887,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ),
         ]
       );
+      const witnessShare = shareTreatmentWithWitnesses(
+        { ...workingState, arcDirector: liveCurrent.arcDirector ?? workingState.arcDirector, turn: nextTurn },
+        workingState.npcMemories,
+        npcMemoriesTreated
+      );
+      const npcMemories = witnessShare.npcMemories;
       const resolvedLocation =
         workingState.currentLocation ??
         updates.currentLocation ??
@@ -4437,7 +4444,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         worldLedger,
         sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,
         mapFocusPlace: workingState.mapFocusPlace ?? liveCurrent.mapFocusPlace ?? null,
-        arcDirector: liveCurrent.arcDirector ?? workingState.arcDirector,
+        arcDirector: witnessShare.ledgers
+          ? { ...(liveCurrent.arcDirector ?? workingState.arcDirector), npcMemories: witnessShare.ledgers }
+          : liveCurrent.arcDirector ?? workingState.arcDirector,
         runManifest: liveCurrent.runManifest ?? workingState.runManifest,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };

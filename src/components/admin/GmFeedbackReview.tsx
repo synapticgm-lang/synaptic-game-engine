@@ -67,7 +67,9 @@ export function GmFeedbackReview() {
     setExpandedId((current) => (current === id ? null : id));
   };
 
-  const uniqueModes = Array.from(new Set(records.map((r) => r.game_mode).filter(Boolean)));
+  const uniqueModes = Array.from(
+    new Set(records.map((r) => r.game_mode).filter((m): m is string => Boolean(m)))
+  );
 
   return (
     <div className="space-y-4 p-4">
@@ -202,7 +204,9 @@ function FeedbackCard({ record, expanded, onToggle }: FeedbackCardProps) {
               {FEEDBACK_TYPE_LABELS[record.feedback_type]}
             </span>
             {hasComment && (
-              <MessageSquare size={12} className="text-cyan-500" title="Has comment" />
+              <span title="Has comment">
+                <MessageSquare size={12} className="text-cyan-500" />
+              </span>
             )}
             <span className="text-xs text-slate-600">•</span>
             <span className="text-xs text-slate-500">

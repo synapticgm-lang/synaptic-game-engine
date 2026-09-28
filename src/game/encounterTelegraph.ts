@@ -5,15 +5,17 @@
  */
 
 import type { GameState, EngineMode } from './types';
-import type { EncounterTemplate, TelegraphPattern } from './encounterBible';
+import telegraphCatalogData from './data/encounters/D6_telegraph_catalog.json';
 
 // ============================================================================
 // TELEGRAPH CATALOG SCHEMA
 // ============================================================================
 
+export type TelegraphChannel = 'status' | 'npc' | 'scene' | 'item' | 'faction';
+
 export interface TelegraphCatalogEntry {
   id: string;
-  channel: 'status' | 'npc' | 'scene' | 'item' | 'faction';
+  channel: TelegraphChannel;
   appliesTo: EngineMode[];
   signalTemplate: string;
   inference: string;
@@ -41,168 +43,98 @@ export interface TelegraphCatalog {
   patterns: TelegraphCatalogEntry[];
 }
 
+export interface TelegraphPattern {
+  type: string;
+  text: string;
+  probability: number;
+}
+
+/** The slice of an encounter template the telegraph needs. */
+export interface TelegraphTemplate {
+  densityRole?: string;
+  tierRange: [number, number];
+  telegraph: {
+    timing: string;
+    patterns: TelegraphPattern[];
+    channels?: string[];
+    avoidable?: boolean;
+  };
+}
+
 // ============================================================================
 // CATALOG LOADING
 // ============================================================================
 
-let _catalogCache: TelegraphCatalog | null = null;
+const CATALOG = telegraphCatalogData as unknown as TelegraphCatalog;
 
-/**
- * Load the telegraph catalog from JSON.
- * Cached after first load.
- */
+/** Bundled catalog — sync, same data in browser, Node and tests. */
+export function getTelegraphCatalog(): TelegraphCatalog {
+  return CATALOG;
+}
+
 export async function loadTelegraphCatalog(): Promise<TelegraphCatalog> {
-  if (_catalogCache) {
-    return _catalogCache;
-  }
-
-  try {
-    let catalog: TelegraphCatalog;
-    
-    // In Node.js test environment, use fs to load file
-    if (typeof process !== 'undefined' && process.versions?.node) {
-      const fs = await import('fs');
-      const path = await import('path');
-      const filePath = path.join(process.cwd(), 'src/game/data/encounters/D6_telegraph_catalog.json');
-      const jsonText = fs.readFileSync(filePath, 'utf-8');
-      catalog = JSON.parse(jsonText) as TelegraphCatalog;
-    } else {
-      // In browser, use fetch
-      const response = await fetch('/data/encounters/D6_telegraph_catalog.json');
-      if (!response.ok) {
-        throw new Error(`Failed to load telegraph catalog: ${response.statusText}`);
-      }
-      catalog = await response.json() as TelegraphCatalog;
-    }
-    
-    _catalogCache = catalog;
-    return catalog;
-  } catch (error) {
-    console.error('Failed to load telegraph catalog:', error);
-    // Return a minimal fallback catalog
-    return {
-      schemaVersion: '1.0.0',
-      catalogId: 'ws4.telegraph.fallback',
-      selectionPolicy: {
-        preEngagementCoverageTarget: 0.8,
-        defaultMinimumChannels: 1,
-        eliteMinimumChannels: 2,
-        bossMinimumChannels: 3,
-        maxSamePatternConsecutive: 2,
-        surprisePolicy: {
-          maximumShare: 0.2,
-          requiresSurpriseEligibleTemplate: true,
-          requiresSuspicionCueOrReactionWindow: true,
-          openingSeverityCap: 'moderate',
-        },
-      },
-      patterns: [],
-    };
-  }
+  return CATALOG;
 }
 
-/**
- * Clear the catalog cache (for testing).
- */
-export function clearTelegraphCache(): void {
-  _catalogCache = null;
-}
+/** Kept for tests; the catalog is a static import. */
+export function clearTelegraphCache(): void {}
 
 // ============================================================================
 // CUE SELECTION
 // ============================================================================
 
+function minimumChannels(role: string | undefined, catalog: TelegraphCatalog): number {
+  if (role === 'elite' || role === 'miniboss') return catalog.selectionPolicy.eliteMinimumChannels;
+  if (role === 'boss') return catalog.selectionPolicy.bossMinimumChannels;
+  return catalog.selectionPolicy.defaultMinimumChannels;
+}
+
 /**
  * Select telegraph cues for a template based on its role and channels.
+ * `rotate` picks a different pattern per channel on later spawns.
  */
 export function selectTelegraphCues(
-  template: EncounterTemplate,
+  template: TelegraphTemplate,
   mode: EngineMode,
-  catalog: TelegraphCatalog
+  catalog: TelegraphCatalog,
+  rotate = 0
 ): TelegraphPattern[] {
-  const role = template.densityRole;
-  
-  // Extract channels from template patterns
   const requiredChannels = Array.from(
-    new Set(template.telegraph.patterns.map(p => p.type))
+    new Set(template.telegraph.channels ?? template.telegraph.patterns.map((p) => p.type))
   );
-  
-  // Determine minimum channels based on role
-  let minChannels = catalog.selectionPolicy.defaultMinimumChannels;
-  if (role === 'elite' || role === 'miniboss') {
-    minChannels = catalog.selectionPolicy.eliteMinimumChannels;
-  } else if (role === 'boss') {
-    minChannels = catalog.selectionPolicy.bossMinimumChannels;
-  }
-  
-  // Filter patterns that match mode and required channels
+  const minChannels = minimumChannels(template.densityRole, catalog);
   const eligiblePatterns = catalog.patterns.filter(
     (p) => p.appliesTo.includes(mode) && requiredChannels.includes(p.channel)
   );
-  
-  if (eligiblePatterns.length === 0) {
-    return [];
-  }
-  
-  // Select patterns ensuring coverage across channels
+  if (eligiblePatterns.length === 0) return [];
+
   const selectedPatterns: TelegraphPattern[] = [];
-  const channelCoverage = new Set<string>();
-  
-  // First, ensure we have at least one pattern per required channel
   for (const channel of requiredChannels) {
     const channelPatterns = eligiblePatterns.filter((p) => p.channel === channel);
     if (channelPatterns.length > 0) {
-      // Pick a random pattern for this channel (in Wave 1, just pick first)
-      const pattern = channelPatterns[0];
-      selectedPatterns.push({
-        type: pattern.channel,
-        text: pattern.inference,
-        probability: 1.0,
-      });
-      channelCoverage.add(channel);
+      const pattern = channelPatterns[Math.abs(rotate) % channelPatterns.length]!;
+      selectedPatterns.push({ type: pattern.channel, text: pattern.inference, probability: 1.0 });
     }
   }
-  
-  // If we still need more patterns to meet minimum channels, add more
-  while (selectedPatterns.length < minChannels && eligiblePatterns.length > selectedPatterns.length) {
-    for (const pattern of eligiblePatterns) {
-      if (selectedPatterns.length >= minChannels) break;
-      
-      // Skip if we already have this pattern
-      if (selectedPatterns.some((p) => p.text === pattern.inference)) {
-        continue;
-      }
-      
-      selectedPatterns.push({
-        type: pattern.channel,
-        text: pattern.inference,
-        probability: 0.8,
-      });
-    }
+  for (const pattern of eligiblePatterns) {
+    if (selectedPatterns.length >= minChannels) break;
+    if (selectedPatterns.some((p) => p.text === pattern.inference)) continue;
+    selectedPatterns.push({ type: pattern.channel, text: pattern.inference, probability: 0.8 });
   }
-  
   return selectedPatterns;
 }
 
 /**
- * Build telegraph section for situation packet.
+ * Build telegraph section for the writer packet.
  */
 export function buildTelegraphContext(
-  template: EncounterTemplate | null,
-  state: GameState
+  template: TelegraphTemplate | null,
+  _state: GameState
 ): string | null {
-  if (!template || !template.telegraph) {
-    return null;
-  }
-  
+  if (!template || !template.telegraph) return null;
   const { timing, patterns } = template.telegraph;
-  
-  if (timing === 'none' || !patterns || patterns.length === 0) {
-    return null;
-  }
-  
+  if (timing === 'none' || !patterns || patterns.length === 0) return null;
   const cueTexts = patterns.map((p) => `[${p.type.toUpperCase()}] ${p.text}`);
-  
   return `TELEGRAPH (${timing}):\n${cueTexts.join('\n')}`;
 }
 
@@ -210,18 +142,34 @@ export function buildTelegraphContext(
  * Check if a template should be a surprise encounter (no telegraph).
  */
 export function isSurpriseEligible(
-  template: EncounterTemplate,
+  template: TelegraphTemplate,
   state: GameState
 ): boolean {
-  if (!template.telegraph.avoidable) {
-    return false;
-  }
-  
-  // Check if this is an opening encounter (should not be severe surprise)
+  if (!template.telegraph.avoidable) return false;
   const turn = state.turn ?? 0;
-  if (turn < 5 && template.tierRange[0] > 1) {
-    return false;
-  }
-  
+  if (turn < 5 && template.tierRange[0] > 1) return false;
   return true;
+}
+
+const TIER_CHANNELS: Record<string, TelegraphChannel[]> = {
+  trash: ['scene'],
+  elite: ['scene', 'npc'],
+  boss: ['scene', 'npc', 'status'],
+};
+
+/** Drought spawn preface — cue lines for a pending encounter of this threat tier. */
+export function telegraphForPendingSpawn(
+  threatTier: string | undefined,
+  state: GameState
+): string | null {
+  const role = threatTier === 'boss' ? 'boss' : threatTier === 'elite' ? 'elite' : 'trash';
+  const channels = TIER_CHANNELS[role]!;
+  const template: TelegraphTemplate = {
+    densityRole: role,
+    tierRange: [1, 1],
+    telegraph: { timing: '1-turn-before', patterns: [], channels, avoidable: true },
+  };
+  const cues = selectTelegraphCues(template, state.engineMode, getTelegraphCatalog(), state.turn ?? 0);
+  if (!cues.length) return null;
+  return buildTelegraphContext({ ...template, telegraph: { ...template.telegraph, patterns: cues } }, state);
 }

@@ -55,6 +55,7 @@ import { realPresentPeople } from './chromeAuthority';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad } from './mapEngine';
 import { dungeonCardChoices, isDungeonCard } from './dungeonCard';
+import { seededLootChips } from './looseItems';
 import { inferIntent, isCombatIntent, isTravelIntent, isInspectIntent, PlayerIntent } from './intentEnums';
 import {
   closedUniverseFallbacks,
@@ -940,6 +941,14 @@ export function compileChoices(
         ),
       ].slice(0, 6);
       notes.push(`Dungeon card chips: ${card.length}`);
+    }
+  } else if (state.activeDungeon && !isDungeonCard(state.activeDungeon)) {
+    const loot = seededLootChips(state).filter(
+      (c) => !filtered.some((f) => f.toLowerCase() === c.toLowerCase())
+    );
+    if (loot.length) {
+      filtered = [...loot, ...filtered].slice(0, 6);
+      notes.push(`Seeded loot chips: ${loot.length}`);
     }
   }
 

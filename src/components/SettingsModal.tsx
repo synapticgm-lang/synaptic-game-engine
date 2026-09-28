@@ -34,7 +34,8 @@ import {
   setTestLabEnabled,
   type HostedAiTier,
 } from '@/game/testLab';
-import { setActiveSubscriptionTier } from '@/game/subscriptionTiers';
+import { isAdminSubscriptionTier, setActiveSubscriptionTier } from '@/game/subscriptionTiers';
+import { GmFeedbackReview } from './admin/GmFeedbackReview';
 import { pickSpeechVoice, primeTts, sortSpeechVoices, speakTtsNow, stopAllSpeech } from '@/game/useVoice';
 import { displayAdventurerName } from '@/game/pcNameAuthority';
 
@@ -100,6 +101,8 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
     email: accountEmail,
     subscriptionTier: draft.subscriptionTier,
   });
+  const showAdminFeedback = showTestLab || isAdminSubscriptionTier(draft.subscriptionTier);
+  const [feedbackReviewOpen, setFeedbackReviewOpen] = useState(false);
 
   // Check if a story/campaign is actively underway (turns > 0 or log exists)
   const isStoryActive = !!gameState && (gameState.turn > 0 || (gameState.log && gameState.log.length > 1));
@@ -1185,6 +1188,23 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                     Production allowlist: set VITE_TEST_ACCOUNT_EMAILS.
                   </p>
                 </div>
+              )}
+            </Section>
+          )}
+
+          {/* Admin — GM response feedback review (RLS: staff see all rows) */}
+          {showAdminFeedback && (
+            <Section icon={<MessageSquareMore size={16} />} title="Admin: GM feedback review" visible={activeTab === 'general'}>
+              {feedbackReviewOpen ? (
+                <GmFeedbackReview />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setFeedbackReviewOpen(true)}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800/70 transition-colors"
+                >
+                  <MessageSquareMore size={15} /> Open thumbs review
+                </button>
               )}
             </Section>
           )}

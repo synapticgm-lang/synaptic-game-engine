@@ -90,6 +90,8 @@ const FILES = [
   'hubEncounters.ts',
   'pyoaSpine.ts',
   'npcRecords.ts',
+  'npcRoleRegistry.ts',
+  'npcLifecycleFsm.ts',
   'writerInfoLayer.ts',
   'openRouterChat.ts',
 ];

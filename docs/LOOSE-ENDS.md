@@ -6,8 +6,8 @@ Source: `docs/loose-ends-raw.txt` (knip compact: 473 unused files, 231 unused-ex
 
 | Status | Rows |
 |---|---|
-| connected | 34 |
-| disconnected-but-valuable | 8 |
+| connected | 42 (8 rewired in 28q) |
+| disconnected-but-valuable | 0 |
 | truly dead | 19 |
 | unsure | 22 |
 | **total** | **83** |
@@ -38,7 +38,7 @@ How to read knip's noise:
 
 | Item | What it was for | Status | The one place it should connect |
 |---|---|---|---|
-| `dungeonSeed.openLootableInDungeon` | Open a named lootable (chest/crate) on the current dungeon node; returns hidden loot | disconnected-but-valuable | `useGame` search/inspect branch when `activeDungeon` node has lootables (feed result to `looseItems` pickup) |
+| `dungeonSeed.openLootableInDungeon` | Open a named lootable (chest/crate) on the current dungeon node; returns hidden loot | connected (28q) | `advanceDungeonCard` non-card branch → `looseItems.openSeededLootable` (live `useGame` + Fate). Items roll via `lootTables` and land on the floor; "Pick up X" takes them. `choiceCompiler` offers Open/Pick up chips. |
 | `dungeonSeed` `rollLootRarity` / `PITY_THRESHOLDS` / `interactablesFromNode` | Rarity roll with pity; node interactables | connected | Used internally |
 | `lootTableRegistry` `SGM_COIN_PURSE` / `SGM_TREASURE_CACHE` / `sgmItemRarity` / `CLASS_FIT_SHARE` | Loot tables | connected | Used internally; module imported by `combat` / `engineFight` / `dungeonCard` / `useGame` |
 | `salvage` `generateSalvageYield` / `getAvailableProfessions` | System Salvage yields | connected | Used internally; module in `MerchantWindow` / `useGame` |
@@ -54,7 +54,7 @@ How to read knip's noise:
 | `beatRegistry` `COMBAT_BEATS` / `QUEST_BEATS` / `TRAVEL_BEATS` / `xpFromTemplate` | Versioned beat templates (02ac) | connected | Used internally; module in `arcDirector` |
 | `dailyMilestoneLedger.DAILY_QUEST_MILESTONE_XP` | B045 daily +20 | connected | Used internally |
 | `discoveryXpLedger` `calculateResolutionXp` / `calculateRiskXp` / `calculateInspectXpShare` / `checkLevelingPace` | Resolution/risk XP math + pace check | unsure | Module live via `qualityGovernance`; these four are uncalled. `checkLevelingPace` would fit the Fate run summary |
-| `socialProgression` (whole module) | Social XP track, novelty-key XP, relationship/faction unlocks | disconnected-but-valuable | `arcDirector` social milestone step (beside `socialMilestoneLedger`) — matches the open "social track" pacing question |
+| `socialProgression` (whole module) | Social XP track, novelty-key XP, relationship/faction unlocks | connected (28q) | `arcDirector` social milestone step (after `applySocialMilestone`): `calculateSocialXp` + `awardSocialXp` on `arcDirector.socialProgression`; STATUS `Social track: +N`. Character XP stays milestone-only. |
 
 ## Combat
 
@@ -63,7 +63,7 @@ How to read knip's noise:
 | `encounterBible` catalog exports | Authored encounter catalog | connected | Imported by `arcDirector`, `graphChoices`, and 5 encounter modules |
 | `encounterTerminalFsm` `formatEncounterClearedStatus` / `encounterCapsForMode` | Terminal FSM receipts + caps | connected | Used internally |
 | `recoveryRules` `RECOVERY_TABLE` / `isSafeHubRest` | Rest/recovery table | connected | Used internally; module in `arcDirector` / `engineFight` |
-| `encounterTelegraph` (whole module, test-only) | Pre-engagement warning cues so a fight is legible before commit | disconnected-but-valuable | `arcDirector` drought spawn (`shouldSpawnCombat` preface) |
+| `encounterTelegraph` (whole module, test-only) | Pre-engagement warning cues so a fight is legible before commit | connected (28q) | `arcDirector` drought spawn preface → `telegraphForPendingSpawn` (catalog `D6_telegraph_catalog.json`). Stored on `arcDirector.pendingTelegraph` and shown by `writerInfoLayer` while `pendingEncounter` is live (the arc mandate string has no reader). |
 | `encounterStakes` (test-only) | Materialize stakes + legal actions per template | unsure | `arcDirector` spawn commit, if stakes should gate pads |
 | `encounterTemplateLoader` (test-only) | Loads 48 WS-4 templates (8/8/8 + 24 PYOA) | unsure | Overlaps `src/data/encounters` catalog; would feed `encounterBible` |
 | `encounterAftermath` + `encounterResolutionMechanics` (test-only) | Typed receipts on encounter end (XP/loot/faction/quest) | unsure | Overlaps `encounterTerminalFsm` clear receipts; would sit at clear commit in `useGame` |
@@ -76,9 +76,9 @@ How to read knip's noise:
 
 | Item | What it was for | Status | The one place it should connect |
 |---|---|---|---|
-| `npcLifecycleFsm` `buildLifecycleSituationSection` / `formatLifecycleMandates` / `shouldNpcExit` | Tells the writer which NPCs are entering/leaving/overdue | disconnected-but-valuable | `situationPacket` (module already live via `arcDirector`, but the packet never shows it) |
-| `npcCrossIntegration` (whole module, test-only) | Witness memory sync, gossip, faction propagation between NPCs | disconnected-but-valuable | `useGame` post-harvest commit, next to the `npcMemories[]` update |
-| `socialSkills` (test-only) | Hybrid auto/roll social resolution with outcome bands | disconnected-but-valuable | `checkRules` social DC path |
+| `npcLifecycleFsm` `buildLifecycleSituationSection` / `formatLifecycleMandates` / `shouldNpcExit` | Tells the writer which NPCs are entering/leaving/overdue | connected (28q) | `writerInfoLayer` (the live writer packet; `situationPacket.formatSituationForPrompt` has no callers). `arcDirector` seeds present NPCs via `seedPresentNpcLifecycles` + `updateAllNpcLifecycles`; the section lists present NPCs only. Edge-synced. |
+| `npcCrossIntegration` (whole module, test-only) | Witness memory sync, gossip, faction propagation between NPCs | connected (28q) | `useGame` post-harvest commit → `shareTreatmentWithWitnesses`: a new treatment note becomes a witnessed key moment; present witnesses get a "Saw you treat X…" fact. Ledger dedupe keys are arrays (JSON-safe). `updateRelationship` still unused (shape conflict with `npcRelationships`). |
+| `socialSkills` (test-only) | Hybrid auto/roll social resolution with outcome bands | connected (28q) | `checkMath` persuasion path (where the social DC is rolled): faction standing + target leverage mods from `calculateSocialModifiers`; `socialOutcomeBand` text on the resolution line and `socialBand` on the result. |
 | `npcTurnover` | NPC turnover actions | unsure | Only reached via `packageCoordination` (test-only); would be `arcDirector` |
 | `npcMemoryLedger.buildMemorySituationSection` | Per-NPC memory block for the packet | unsure | Overlaps `npcMemory.formatNpcMemoriesForPrompt` (live) |
 | `leverageMechanics`, `socialStakes` (test-only) | Leverage assets / social stakes templates | unsure | `socialCrisis` in `arcDirector`, if social crises need them |
@@ -92,7 +92,7 @@ How to read knip's noise:
 
 | Item | What it was for | Status | The one place it should connect |
 |---|---|---|---|
-| `questGuards.applyQuestCompleteGuard` | Refuses completing a quest that was never revealed/active | disconnected-but-valuable | `questPlay` `<quest-complete>` handling |
+| `questGuards.applyQuestCompleteGuard` | Refuses completing a quest that was never revealed/active | connected (28q) | `parser.eventsToQuestUpdates` `quest-complete` branch (where the tag is applied — not `questPlay`). A blocked completion leaves the quest as it was. |
 | `questCompletionSchema` `checkQuestTerminalState` etc. | Quest terminal-state schema (27w) | unsure | Module live via `qualityGovernance`; check call would be in `questPlay` |
 | `questPlay` `mainSpineQuest` / `nextMainObjective` / `mainQuestPlacePin` | Resume-main + map pin | connected | Used internally |
 | `litrpg/storyRpg/tabletopMainSpines` helpers | 17a/d/e spine matchers | connected | Used internally |
@@ -111,7 +111,7 @@ How to read knip's noise:
 
 | Item | What it was for | Status | The one place it should connect |
 |---|---|---|---|
-| `components/admin/GmFeedbackReview.tsx` | Admin review of thumbs feedback (filters, CSV) | disconnected-but-valuable | Admin section of `SettingsModal` (notes say "Admin Play Feedback page still unmounted") |
+| `components/admin/GmFeedbackReview.tsx` | Admin review of thumbs feedback (filters, CSV) | connected (28q) | `SettingsModal` General tab, "Admin: GM feedback review" section (Test Lab or admin tier) → Open thumbs review. |
 | `comic/NarrativeText` | Comic/narrative text renderer | connected | 5 importers (knip flags the export style only) |
 | `game/stripeCheckout.ts` | Client Stripe checkout + entitlement sync | unsure | `CapacityPackShop` buy button — payments are parked as ops |
 | `services/llmDirectorService.ts` | Graphic-novel Director panel scripting | unsure | Director deliberately off; would be memorable/comic pipeline |
@@ -148,16 +148,18 @@ How to read knip's noise:
 | Duplicate exports (`memorableMoments` caps, `npcRoleRegistry`) | Aliases | truly dead | — (cleanup) |
 | Unresolved imports (`exclusiveFactsRegistry`, `playtest31aCoordination.test`, WOF paste test) | Broken paths to `crossPackageContracts` | unsure | Only matters if `packageCoordination` is ever revived |
 
-## Disconnected but valuable — shortlist
+## Disconnected but valuable — shortlist (all connected in 28q)
 
-- `dungeonSeed.openLootableInDungeon` → `useGame` dungeon search/inspect branch (real chest loot instead of prose).
-- `socialProgression` → `arcDirector` social milestone step (social XP track).
-- `encounterTelegraph` → `arcDirector` drought spawn preface.
-- `npcLifecycleFsm.buildLifecycleSituationSection` → `situationPacket`.
-- `npcCrossIntegration` → `useGame` post-harvest `npcMemories[]` commit.
-- `socialSkills` → `checkRules` social DC path.
-- `questGuards.applyQuestCompleteGuard` → `questPlay` quest-complete handling.
-- `GmFeedbackReview.tsx` → Admin section of `SettingsModal`.
+- `dungeonSeed.openLootableInDungeon` → **connected** via `advanceDungeonCard` → `looseItems.openSeededLootable` (seeded non-card dungeons; card dungeons already had chest loot).
+- `socialProgression` → **connected** in the `arcDirector` social milestone step (social XP track only).
+- `encounterTelegraph` → **connected** at the `arcDirector` drought spawn preface; the writer sees it through `writerInfoLayer` (`arcDirector.pendingTelegraph`).
+- `npcLifecycleFsm.buildLifecycleSituationSection` → **connected** in `writerInfoLayer` (moved from `situationPacket`, which has no callers).
+- `npcCrossIntegration` → **connected** at the `useGame` post-harvest `npcMemories[]` commit.
+- `socialSkills` → **connected** in the `checkMath` persuasion path (moved from `checkRules`).
+- `questGuards.applyQuestCompleteGuard` → **connected** in `parser.eventsToQuestUpdates` (moved from `questPlay`).
+- `GmFeedbackReview.tsx` → **connected** in the Admin section of `SettingsModal`.
+
+Tests: `src/game/playtest28qLooseEnds.test.ts`.
 
 ## Review of dead + unsure items (28 Sep)
 

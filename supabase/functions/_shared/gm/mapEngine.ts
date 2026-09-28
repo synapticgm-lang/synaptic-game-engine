@@ -1,4 +1,4 @@
-import type { Location3D, MapTier } from './types.ts';
+import type { Item, Location3D, MapTier, Rarity } from './types.ts';
 import {
   INTERIOR_MAP_BLUEPRINT,
   STREET_MAP_BLUEPRINT,
@@ -13,7 +13,7 @@ import { createHashRng } from './seededRng.ts';
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
 export interface NodeHiddenLoot {
-  rarity: import('./types').Rarity;
+  rarity: Rarity;
   qty: number;
   gold?: number;
   itemHint?: string;
@@ -61,6 +61,8 @@ export interface NodeHidden {
     id: string;
     label: string;
     inventoryItemId?: string;
+    /** 28q — rolled chest item parked on the floor; pickup restores it as-is. */
+    item?: Item;
   }>;
 }
 

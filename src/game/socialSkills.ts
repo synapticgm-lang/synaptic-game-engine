@@ -101,7 +101,7 @@ export function calculateSocialModifiers(
   opts: {
     evidenceIds?: string[];
     leverageAssetId?: string;
-  }
+  } = {}
 ): SocialModifiers {
   const modifiers: SocialModifiers = {
     skill: 0,
@@ -129,30 +129,52 @@ export function calculateSocialModifiers(
   }
   
   // Leverage (from active leverage asset)
-  if (opts.leverageAssetId) {
+  {
     const assets = state.arcDirector?.leverageAssets ?? [];
-    const asset = assets.find(a => a.id === opts.leverageAssetId);
+    const asset = opts.leverageAssetId
+      ? assets.find(a => a.id === opts.leverageAssetId)
+      : assets.find(a => !a.exhausted && (a.targetNpc ?? '').toLowerCase() === targetNpc.toLowerCase());
     if (asset && !asset.exhausted) {
-      // Leverage modifier is pre-calculated in leverageMechanics.ts
-      // Here we just apply it
-      modifiers.leverage = asset.modifier ?? 0;
+      const strength = (Number(asset.evidenceStrength ?? 0) + Number(asset.credibility ?? 0)) / 2;
+      modifiers.leverage = Math.max(-6, Math.min(6, Math.round(strength * 6)));
     }
   }
   
-  // Faction standing (if NPC belongs to faction)
+  // Faction standing — the NPC belongs when their memory names the faction.
   const factions = state.worldLedger?.factionStandings ?? [];
-  for (const faction of factions) {
-    // Check if NPC is faction member (simple heuristic for Wave 1)
-    const factionMembers = faction.members ?? [];
-    if (factionMembers.includes(targetNpc.toLowerCase())) {
-      // Standing: -50 to +50 → -2 to +2
-      modifiers.faction = Math.floor((faction.standing ?? 0) / 25);
-      modifiers.faction = Math.max(-2, Math.min(2, modifiers.faction));
-      break;
+  const mem = (state.npcMemories ?? []).find(
+    (m) => (m.npcName ?? '').toLowerCase() === targetNpc.toLowerCase()
+  );
+  if (mem) {
+    const blob = [mem.roleHint ?? '', ...(mem.facts ?? [])].join(' ').toLowerCase();
+    for (const faction of factions) {
+      const name = (faction.name ?? '').toLowerCase().trim();
+      if (name.length >= 3 && blob.includes(name)) {
+        modifiers.faction = FACTION_STANDING_MOD[faction.standing] ?? 0;
+        break;
+      }
     }
   }
   
   return modifiers;
+}
+
+const FACTION_STANDING_MOD: Record<string, number> = {
+  hostile: -2,
+  unfriendly: -1,
+  neutral: 0,
+  friendly: 1,
+  allied: 2,
+};
+
+/** Five outcome bands from a d20 face and the margin over the DC. */
+export function socialOutcomeBand(roll: number, margin: number): OutcomeBand {
+  if (roll === 20) return 'critical_success';
+  if (roll === 1) return 'critical_failure';
+  if (margin >= 5) return 'success';
+  if (margin >= 0) return 'partial';
+  if (margin >= -5) return 'failure';
+  return 'critical_failure';
 }
 
 /**
@@ -212,21 +234,7 @@ export function resolveSocialSkillCheck(
     roll = rollD20(state);
     const total = roll + totalModifier;
     margin = total - dc;
-    
-    // Outcome bands
-    if (roll === 20) {
-      outcome = 'critical_success';
-    } else if (roll === 1) {
-      outcome = 'critical_failure';
-    } else if (margin >= 5) {
-      outcome = 'success';
-    } else if (margin >= 0) {
-      outcome = 'partial';
-    } else if (margin >= -5) {
-      outcome = 'failure';
-    } else {
-      outcome = 'critical_failure';
-    }
+    outcome = socialOutcomeBand(roll, margin);
   }
   
   return {

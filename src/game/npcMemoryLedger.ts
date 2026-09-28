@@ -26,8 +26,15 @@ export interface NpcMemoryLedger {
   /** Last updated turn */
   lastUpdated: number;
   
-  /** Dedupe keys (prevent duplicate moments) */
-  dedupeKeys: Set<string>;
+  /** Dedupe keys (prevent duplicate moments). Array so saves round-trip through JSON. */
+  dedupeKeys: string[];
+}
+
+/** Saves written before 28q may hold a Set, or `{}` after a JSON round-trip. */
+function dedupeList(keys: unknown): string[] {
+  if (Array.isArray(keys)) return keys.filter((k): k is string => typeof k === 'string');
+  if (keys instanceof Set) return Array.from(keys).filter((k): k is string => typeof k === 'string');
+  return [];
 }
 
 // ============================================================================
@@ -230,7 +237,8 @@ export function appendKeyMoment(
   
   if (existing) {
     // Check for duplicate
-    if (existing.dedupeKeys?.has(dedupeKey)) {
+    const known = dedupeList(existing.dedupeKeys);
+    if (known.includes(dedupeKey)) {
       // Skip duplicate
       return state;
     }
@@ -238,9 +246,9 @@ export function appendKeyMoment(
     // Append to existing
     const updated: NpcMemoryLedger = {
       ...existing,
-      keyMoments: [...existing.keyMoments, moment].slice(-100), // Keep last 100
+      keyMoments: [...(existing.keyMoments ?? []), moment].slice(-100), // Keep last 100
       lastUpdated: state.turn,
-      dedupeKeys: new Set([...(existing.dedupeKeys ?? []), dedupeKey]),
+      dedupeKeys: [...known, dedupeKey].slice(-200),
     };
     
     return {
@@ -256,7 +264,7 @@ export function appendKeyMoment(
       npcId,
       keyMoments: [moment],
       lastUpdated: state.turn,
-      dedupeKeys: new Set([dedupeKey]),
+      dedupeKeys: [dedupeKey],
     };
     
     return {
@@ -331,7 +339,7 @@ function isEligibleWitness(npcId: string, state: GameState): boolean {
   // Check consciousness (not defeated/unconscious)
   const encounter = state.activeEncounter;
   if (encounter) {
-    const enemy = encounter.enemies.find(e => e.name === npcId);
+    const enemy = encounter.enemies?.find(e => e.name === npcId);
     if (enemy && enemy.currentHP <= 0) return false;
   }
   
@@ -659,7 +667,7 @@ export function cleanupOldMemories(state: GameState): GameState {
     });
     
     // Rebuild dedupe keys
-    const dedupeKeys = new Set(
+    const dedupeKeys = Array.from(new Set(
       filtered.map(km => 
         createDedupeKey(
           km.npcId,
@@ -668,7 +676,7 @@ export function cleanupOldMemories(state: GameState): GameState {
           km.data
         )
       )
-    );
+    ));
     
     return {
       ...ledger,
