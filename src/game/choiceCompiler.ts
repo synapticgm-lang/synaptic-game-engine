@@ -69,6 +69,7 @@ import { craftProgressionPolicy, isCraftStarvedPad } from './craftBookCompiler';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
+import { rankChoices } from './choiceRanking';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -1277,7 +1278,7 @@ export function compileChoices(
   }
   
   // 28f/28g — hub exits. A named hub with no live threat always offers one travel chip, even under the
-  // travel yo-yo lock (John, 28g) — but never toward a hub named in the last 4 player moves.
+  // travel yo-yo lock (John, 28g) — the previous place is ranked last as 'Go back' by choiceRanking (28j).
   // Uncleared dungeon hubs come first, then unvisited hubs. At a dungeon hub the way in is offered.
   if (!engaged) {
     const hubs = hubsForBibleId(state.campaignBibleId);
@@ -1295,17 +1296,13 @@ export function compileChoices(
       notes.push(`Dungeon entry chip: ${enter.slice(0, 32)}`);
     }
     if (hereHub && !finalChoices.some((c) => isTravelPad(c) || isLeaveFamilyPad(c))) {
-      const recentMoves = (state.log ?? [])
-        .filter((e) => e.role === 'player')
-        .slice(-4)
-        .map((e) => String(e.content ?? '').toLowerCase());
       const visited = new Set(
         (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
       );
       const rank = (h: { name: string; blurb?: string }) =>
         (isOpenDungeonHub(h) ? 0 : 2) + (visited.has(h.name.toLowerCase()) ? 1 : 0);
       const candidates = hubs
-        .filter((h) => h.id !== hereHub.id && !recentMoves.some((m) => m.includes(h.name.toLowerCase())))
+        .filter((h) => h.id !== hereHub.id)
         .sort((a, b) => rank(a) - rank(b));
       const exit = candidates[0] ? `Travel toward ${candidates[0].name}` : undefined;
       if (exit) {
@@ -1324,6 +1321,13 @@ export function compileChoices(
         notes.push(`Tag trigger pad: ${pad.slice(0, 40)}`);
       }
     }
+  }
+
+  // 28j — anti-circling rank: quest step / unvisited / unexplored / unmet first, stale loiter rested, 'Go back' last.
+  {
+    const ranked = rankChoices(state, finalChoices);
+    finalChoices = ranked.choices;
+    notes.push(...ranked.notes);
   }
 
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context

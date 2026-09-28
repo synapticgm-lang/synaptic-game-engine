@@ -8,6 +8,7 @@ import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
 import { advanceDungeonCard, isDungeonCard } from './dungeonCard';
+import { nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
@@ -2681,10 +2682,15 @@ export function useGame() {
       const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
       liveCurrent = dungeonTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...dungeonTurn.receipts];
+      // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
+      liveCurrent = recordCirclingTurn(liveCurrent, sanitizedInput, [...(systemsArc?.systemReceipts ?? []), ...pendingArcStatusReceipts]);
+      const nudge = nudgeIfStuck(liveCurrent);
+      liveCurrent = nudge.state;
+      pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...nudge.receipts];
       stateRef.current = liveCurrent;
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-      const engineFact = [...(systemsArc?.systemReceipts ?? []), ...dungeonTurn.receipts]
-        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained)\b/.test(r))
+      const engineFact = [...(systemsArc?.systemReceipts ?? []), ...dungeonTurn.receipts, ...nudge.receipts]
+        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge)\b/.test(r))
         .join(' ');
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,

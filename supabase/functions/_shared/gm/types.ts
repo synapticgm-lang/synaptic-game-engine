@@ -536,6 +536,8 @@ export interface GameState {
   currentLocation?: string;
   currentCoordinates?: Location3D;
   activeDungeon?: ActiveDungeonState | null;
+  /** 28j — anti-circling memory used by choiceRanking. */
+  circling?: CirclingMemory;
   worldLedger?: WorldLedger;
   /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
   sandboxAwardKeys?: string[];
@@ -1053,6 +1055,17 @@ export interface LocationSheet {
 /** Per-tier dry-chest counts for Epic+ pity (Pack 1). */
 export interface LootPityState {
   byTier: Partial<Record<1 | 2 | 3 | 4, number>>;
+}
+
+/** 28j — anti-circling memory (engine): stale loiter families per place, last progress turn, previous place, nudges, visits. */
+export interface CirclingMemory {
+  /** place key → action family → last turn it was tried with no new result. */
+  stale: Record<string, Record<string, number>>;
+  lastProgressTurn: number;
+  lastLocation?: string;
+  prevPlace?: string;
+  nudgedTurn?: number;
+  visits?: Record<string, number>;
 }
 
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */

@@ -6,6 +6,7 @@
  *   npm run fate-autoplay -- --matrix-40 --turns 20
  *   npm run fate-autoplay -- --night-storyforge
  *   npm run fate-autoplay -- --dry-run --turns 2
+ *   npm run fate-autoplay -- --turns 60 --bible summoned-pact --seed 53 --resume-from scripts/fate-autoplay/runs/<run>
  */
 
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
@@ -74,6 +75,7 @@ Options:
   --batch-dir PATH     Batch folder for --split-modes-gemini
   --combined-gemini    Also write optional combined 12-run file (default off)
   --resume-dir PATH    Resume modes-agents batch (skip completed cells)
+  --resume-from DIR    Continue a run from DIR/snapshot.json (saved every 10 turns and at stop)
   --night-storyforge   ~7h batch @ observed ~1.6s/turn: 3×500 AI spines + 3× matrix-40×100 (~13.5k turns)
   --matrix-40          John's 40 plan (10×4 modes; every premade once when ≤10)
   --matrix             Full Launch cartesian (mode × premade × narrator)
@@ -383,6 +385,7 @@ async function main(): Promise<void> {
         characterName: opts.characterName,
         writer: opts.writer,
         inputs: opts.inputs,
+        resumeFrom: opts.resumeFrom,
       });
       log(`Done → ${summary.outDir}`);
       console.log(JSON.stringify(summary, null, 2));

@@ -6,8 +6,9 @@
  * Capacity: enableAutoplayTestLab() so Free week-cap never stops the run.
  */
 
-import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { pathToFileURL } from 'node:url';
 import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
@@ -269,6 +270,7 @@ export type FateAutoplayCliOpts = {
   combinedGemini?: boolean;
   /** Resume an existing modes-agents batch folder (skip completed cells). */
   resumeDir?: string;
+  resumeFrom?: string;
   /** Batch folder for --split-modes-gemini. */
   batchDir?: string;
   outRoot: string;
@@ -1053,12 +1055,18 @@ export async function headlessFateTurn(
   const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
+  // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
+  arcState = recordCirclingTurn(arcState, playerInput, [...(arcResult?.systemReceipts ?? []), ...arcStatusReceipts]);
+  const nudge = nudgeIfStuck(arcState);
+  arcState = nudge.state;
+  arcStatusReceipts = [...arcStatusReceipts, ...nudge.receipts];
+  for (const n of nudge.notes) console.info(`[anti-circling] ${n}`);
   if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
     arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
   }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-  const engineFact = [...(arcResult?.systemReceipts ?? []), ...dungeonTurn.receipts]
-    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained)\b/.test(r))
+  const engineFact = [...(arcResult?.systemReceipts ?? []), ...dungeonTurn.receipts, ...nudge.receipts]
+    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge)\b/.test(r))
     .join(' ');
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
   arcState = preparedEvent.state;
@@ -2040,6 +2048,8 @@ export async function runFateAutoplay(opts: {
   inputs?: string[];
   /** 28g — LOOP STOP auto-stop (default on). false or env SGM_AUTOPLAY_LOOP_STOP=off turns it off. */
   loopStop?: boolean;
+  /** 28j — continue from <runDir>/snapshot.json. */
+  resumeFrom?: string;
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
   setActiveSubscriptionTier(opts.aiTier);
@@ -2068,6 +2078,14 @@ export async function runFateAutoplay(opts: {
     engineMode: opts.engineMode,
   });
   let state = stampOpening(raw);
+  let startIndex = 0;
+  if (opts.resumeFrom) {
+    const snapPath = join(opts.resumeFrom, 'snapshot.json');
+    const snap = JSON.parse(readFileSync(snapPath, 'utf8')) as { loopIndex: number; state: GameState };
+    state = snap.state;
+    startIndex = snap.loopIndex;
+    console.log(`[fate-autoplay] resumed from ${snapPath} at loop turn ${startIndex} (game turn ${state.turn})`);
+  }
   const rng = mulberry32(opts.seed);
 
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
@@ -2094,9 +2112,12 @@ export async function runFateAutoplay(opts: {
   const crashPath = join(outDir, 'crash.log');
   // Truncate turns file once; append per turn so a mid-run kill keeps all completed turns.
   writeFileSync(turnsPath, '');
+  // 28j — GameState snapshot every 10 turns and at stop (resume with --resume-from <runDir>).
+  const writeSnapshot = (loopIndex: number) =>
+    writeFileSync(join(outDir, 'snapshot.json'), JSON.stringify({ loopIndex, turn: state.turn, savedAt: new Date().toISOString(), state }) + '\n');
 
   try {
-    for (let i = 0; i < opts.turns; i++) {
+    for (let i = startIndex; i < opts.turns; i++) {
       const turnNo = i + 1;
       writerPromptSink.turn = turnNo;
       writeFileSync(
@@ -2128,6 +2149,7 @@ export async function runFateAutoplay(opts: {
         state = result.state;
         turns.push(result.telemetry);
         appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');
+        if (turnNo % 10 === 0) writeSnapshot(turnNo);
          
         console.log(
           `[fate-autoplay] turn ${turnNo}/${opts.turns} ${result.telemetry.durationMs}ms pick="${String(result.telemetry.fatePick ?? '').slice(0, 56)}"${
@@ -2291,6 +2313,7 @@ export async function runFateAutoplay(opts: {
           : undefined,
     })
   );
+  writeSnapshot(startIndex + turns.length);
   writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => safeJsonLine(t)).join('\n') + '\n');
   writeFileSync(join(outDir, 'summary.json'), safeJsonLine(summary, true) + '\n');
   writeFileSync(join(outDir, 'eval.json'), safeJsonLine(summary.evalHarness, true) + '\n');
@@ -2383,6 +2406,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--split-modes-gemini') out.splitModesGemini = true;
     else if (a === '--combined-gemini') out.combinedGemini = true;
     else if (a === '--resume-dir') out.resumeDir = next();
+    else if (a === '--resume-from') out.resumeFrom = next();
     else if (a === '--batch-dir') out.batchDir = next();
     else if (a === '--inputs') out.inputs = next().split('|').map((s) => s.trim());
     else if (a === '--out') out.outRoot = next();

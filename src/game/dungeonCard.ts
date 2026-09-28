@@ -10,7 +10,8 @@
  */
 import type { ActiveEncounter, GameState, PlaceRecord } from './types';
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine';
-import { dungeonHereLabel, generateProceduralBlueprint, moveToNode } from './mapEngine';
+import { dungeonHereLabel, moveToNode } from './mapEngine';
+import { MULTI_FLOOR_WORDS, generateInterior, type GeneratedRoom } from './interiorGenerator';
 import { detectBiome } from './encounterBiomeMatrix';
 import { createHashRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
@@ -212,20 +213,46 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   const danger = Math.max(1, Math.min(4, Math.floor(hub?.threatTier ?? 2))) as 1 | 2 | 3 | 4;
   const level = Math.max(1, state.character?.level ?? 1);
 
-  const middle = siteTheme ? [...theme.rooms.slice(0, 5), ...family.rooms.slice(0, 2)] : [...theme.rooms];
+  const siteTag = ['crypt', 'mine', 'sewer', 'engine', 'keep', 'cave'][THEMES.findIndex((t) => t.theme === siteTheme)] ?? 'any';
+  // 28j — layout from the generic interior generator: seeded template pick, optional stacked floors
+  // (stairs / ladders), seeded extra doors, optional secret room. Cached on the card / place record.
+  const floors = danger >= 3 || MULTI_FLOOR_WORDS.test(`${name} ${hub?.blurb ?? ''}`) ? 2 : rng() < 0.3 ? 2 : 1;
+  const gen = generateInterior({ seed, key: name, kind: 'dungeon', tags: [siteTag], floors, needBoss: true, needCache: true, secretChance: 0.6 });
+  const secretOf = new Map(gen.secrets.map((x) => [x.fromId, x.id]));
+
+  const middle = siteTheme ? [...theme.rooms, ...family.rooms] : [...theme.rooms];
   for (let i = middle.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [middle[i], middle[j]] = [middle[j]!, middle[i]!];
   }
-  const roomNames = [theme.entry, ...middle.slice(0, 4), theme.cacheRoom, theme.miniBossRoom];
-  const ids = roomNames.map((_, i) => `r${i}`);
-  // Layout reuses the engine's procedural grid/chain template (mapEngine.generateProceduralBlueprint):
-  // grid coordinates + chain links, entry first and boss last. Its node_gen_N ids map to rN-1.
-  const layout = generateProceduralBlueprint('grid', name, roomNames.length, -1).nodes;
-  const toId = (genId: string) => `r${Number(genId.replace('node_gen_', '')) - 1}`;
-  const links: Record<string, string[]> = Object.fromEntries(
-    layout.map((n, i) => [ids[i]!, n.connections.map(toId)])
-  );
+  const spare = [...DEFAULT_THEME.rooms];
+  const usedNames = new Set<string>();
+  const nextRoomName = (): string => {
+    const n = middle.find((m) => !usedNames.has(m)) ?? spare.find((m) => !usedNames.has(m)) ?? `Chamber ${usedNames.size + 1}`;
+    usedNames.add(n);
+    return n;
+  };
+  const floorWord = (f: number) => (f <= 1 ? 'Lower' : f === 2 ? 'Deep' : 'Deepest');
+  let cacheNamed = false;
+  // Template room labels are kept when they are real names; generic ones get the site theme's names.
+  const genericLabel = (l?: string) => !l || / - (?:hex|sector|core hub)\b/i.test(l) || /^(?:entry|stairs?|chamber|hex \d+)$/i.test(l);
+  const roomName = (r: GeneratedRoom): string => {
+    if (r.role === 'entry') return theme.entry;
+    if (!genericLabel(r.label) && r.role !== 'boss' && !usedNames.has(r.label!)) {
+      usedNames.add(r.label!);
+      return r.label!;
+    }
+    if (r.role === 'boss') return theme.miniBossRoom;
+    if (r.role === 'stair') return r.via === 'ladder' ? 'Ladder Shaft' : 'Stairwell Down';
+    if (r.role === 'secret') return `Hidden ${theme.cacheRoom.split(' ').pop()}`;
+    if (r.landing) return `${floorWord(r.floor)} Landing`;
+    if (r.role === 'cache' && !cacheNamed) {
+      cacheNamed = true;
+      return theme.cacheRoom;
+    }
+    return nextRoomName();
+  };
+
   const trash = foePool(state, 'trash', hub?.id);
   const elite = foePool(state, 'elite', hub?.id);
   const hubBound = (list: EncounterSeed[]) => !!hub?.id && list.some((e) => e.hubId === hub.id);
@@ -238,20 +265,23 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   const eliteFromHub = hubBound(elite);
   if (typeof console !== 'undefined') {
     console.info(
-      `[dungeon-card] ${name}: biome=${ctx.biome} source=${ctx.source}${ctx.modifiers.length ? ` modifiers=${ctx.modifiers.map((m) => m.tag).join(',')}` : ''}${trashFromHub ? ' trash=hub-cards' : ''}${eliteFromHub ? ' elite=hub-cards' : ''}`
+      `[dungeon-card] ${name}: biome=${ctx.biome} source=${ctx.source}${ctx.modifiers.length ? ` modifiers=${ctx.modifiers.map((m) => m.tag).join(',')}` : ''}${trashFromHub ? ' trash=hub-cards' : ''}${eliteFromHub ? ' elite=hub-cards' : ''} templates=${gen.templateIds.join('+')} floors=${gen.floors}${gen.secrets.length ? ` secret-rooms=${gen.secrets.length}` : ''}`
     );
   }
-  const bronzeRoom = 1 + Math.floor(rng() * 4); // one middle room holds a Bronze chest
+  const foeRooms = gen.rooms.filter((r) => r.role === 'room' && !r.landing);
+  const bronzeRoom = foeRooms.length ? foeRooms[Math.floor(rng() * foeRooms.length)]!.id : null;
 
-  const nodes: MapNode[] = roomNames.map((roomName, i) => {
-    const id = ids[i]!;
+  const nodes: MapNode[] = gen.nodes.map((g) => {
+    const r = gen.rooms.find((x) => x.id === g.id)!;
+    const id = g.id;
+    const label = roomName(r);
     const hidden: NodeHidden = { traps: [], lootables: [], secrets: [], mobs: [] };
-    const tags = ['dungeon-card'];
-    if (i === 0) {
-      tags.push('entry', `biome:${ctx.biome}`, `theme-source:${ctx.source}`);
+    const tags = ['dungeon-card', ...(g.tags ?? [])];
+    if (r.role === 'entry') {
+      tags.push('entry', `biome:${ctx.biome}`, `theme-source:${ctx.source}`, `layout:${gen.templateIds.join('+')}`);
       for (const m of ctx.modifiers) tags.push(`threat:${m.tag}`);
     }
-    if (i >= 1 && i <= 4) {
+    if (r.role === 'room' && !r.landing) {
       tags.push('combat');
       const card = pick(trash, rng);
       hidden.mobs.push({
@@ -271,14 +301,20 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
           disarmed: false,
         });
       }
-      if (rng() < 0.45) {
+      if (!secretOf.has(id) && rng() < 0.35) {
         hidden.secrets.push({ id: `${id}_secret`, clue: 'a loose stone with a hollow behind it', revealed: false });
       }
-      if (i === bronzeRoom) {
+      if (id === bronzeRoom) {
         hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[1]} chest`, opened: false, loot: { rarity: 'Common', qty: 1, grade: 1 } });
       }
     }
-    if (i === 5) {
+    if (r.role === 'stair') {
+      tags.push('stair');
+      if (rng() < 0.5) {
+        hidden.traps.push({ id: `${id}_trap`, dc: 10 + danger, skillHint: 'perception', damage: 1 + danger, revealed: false, disarmed: false });
+      }
+    }
+    if (r.role === 'cache') {
       tags.push('cache');
       hidden.traps.push({
         id: `${id}_trap`,
@@ -289,9 +325,13 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
         disarmed: false,
       });
       hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[2]} chest`, opened: false, loot: { rarity: 'Common', qty: 2, grade: 2 } });
-      hidden.secrets.push({ id: `${id}_secret`, clue: 'a false panel behind the shelves', revealed: false });
+      if (!secretOf.has(id)) hidden.secrets.push({ id: `${id}_secret`, clue: 'a false panel behind the shelves', revealed: false });
     }
-    if (i === 6) {
+    if (r.role === 'secret') {
+      tags.push('secret-room');
+      hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[2]} chest`, opened: false, loot: { rarity: 'Common', qty: 2, grade: 2 } });
+    }
+    if (r.role === 'boss') {
       tags.push('mini_boss');
       const card = pick(elite, rng);
       hidden.mobs.push({
@@ -303,30 +343,32 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
       });
       hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[3]} chest`, opened: false, loot: { rarity: 'Common', qty: 3, grade: 3 } });
     }
+    const hiddenRoomId = secretOf.get(id);
+    if (hiddenRoomId) {
+      hidden.secrets.push({ id: `${id}_to_${hiddenRoomId}`, clue: 'a hidden door behind a loose panel', revealed: false, unlocksNodeId: hiddenRoomId });
+    }
     return {
-      id,
-      name: roomName,
-      description: `${roomName}, inside ${name}.`,
-      connections: links[id] ?? [],
-      coordinates: layout[i]?.coordinates ?? { x: i, y: 0 },
-      zLevel: -1,
+      ...g,
+      name: label,
+      description: `${label}, inside ${name}.`,
       tags,
       hidden,
     };
   });
 
+  const entryZ = nodes.find((n) => n.id === gen.entryId)?.zLevel ?? -1;
   return {
     blueprintId: DUNGEON_CARD_BLUEPRINT,
     dungeonName: name,
     siteName: name,
     tier: 4,
     dangerTier: danger,
-    currentZLevel: -1,
-    currentNodeId: 'r0',
-    visitedNodeIds: ['r0'],
+    currentZLevel: entryZ,
+    currentNodeId: gen.entryId,
+    visitedNodeIds: [gen.entryId],
     clearedNodeIds: [],
     nodes,
-    dungeonRules: { bossNode: 'r6' },
+    dungeonRules: { bossNode: gen.bossId ?? nodes[nodes.length - 1]!.id },
   };
 }
 
@@ -341,7 +383,7 @@ export function openDungeonCard(state: GameState, site: string): GameState {
   const place = findPlace(state, hubName);
   const stored = place?.dungeonCard;
   const card: ActiveDungeonState = stored
-    ? { ...stored, currentNodeId: 'r0', currentZLevel: -1 }
+    ? { ...stored, currentNodeId: 'r0', currentZLevel: stored.nodes.find((n) => n.id === 'r0')?.zLevel ?? -1 }
     : buildDungeonCard(state, hubName);
   const id = place?.id ?? placeIdFromName(hubName);
   const places = place
@@ -504,7 +546,7 @@ export function dungeonCardChoices(state: GameState): string[] {
     const chest = (node?.hidden?.lootables ?? []).find((l) => !l.opened);
     if (chest) out.push(`Open the ${chest.label}`);
     const searched = (state.sandboxAwardKeys ?? []).includes(`dungeon-search:${d.dungeonName}:${node?.id}`);
-    if (!searched && node?.id !== 'r0') out.push(`Search the ${node?.name}`);
+    if (!searched && (node?.id !== 'r0' || (node?.hidden?.secrets ?? []).some((x) => !x.revealed))) out.push(`Search the ${node?.name}`);
   }
   if (nearestUnexploredStep(d)) out.push('Next unexplored room');
   out.push('Head back to the exit');
@@ -676,7 +718,24 @@ export function advanceDungeonCard(
             secrets: h.secrets.map((s) => (s.id === secret.id ? { ...s, revealed: true } : s)),
           })),
         };
-        receipts.push(rollLine(next, `search of ${node.name}`, roll, m, dc, true, `you found ${secret.clue}.`));
+        const hiddenRoom = secret.unlocksNodeId ? next.activeDungeon!.nodes.find((n) => n.id === secret.unlocksNodeId) : undefined;
+        if (hiddenRoom) {
+          // 28j — a found secret opens its hidden room onto the door graph (both ways).
+          next = {
+            ...next,
+            activeDungeon: {
+              ...next.activeDungeon!,
+              nodes: next.activeDungeon!.nodes.map((n) =>
+                n.id === node.id
+                  ? { ...n, connections: Array.from(new Set([...n.connections, hiddenRoom.id])) }
+                  : n.id === hiddenRoom.id
+                    ? { ...n, connections: Array.from(new Set([...n.connections, node.id])) }
+                    : n
+              ),
+            },
+          };
+        }
+        receipts.push(rollLine(next, `search of ${node.name}`, roll, m, dc, true, `you found ${secret.clue}${hiddenRoom ? ` — a way into ${hiddenRoom.name}` : ''}.`));
         if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
         if (loot.gold > 0) receipts.push(`Gold Gained: ${loot.gold}`);
       } else {

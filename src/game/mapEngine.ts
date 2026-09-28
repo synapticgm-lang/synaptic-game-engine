@@ -730,7 +730,7 @@ function nextInteriorSlot(dungeon: ActiveDungeonState, z = 0): { x: number; y: n
   return INTERIOR_SLOTS.find((slot) => !used.has(`${slot.x},${slot.y}`)) ?? { x: 3, y: 2 };
 }
 
-type InteriorRoomSpec = {
+export type InteriorRoomSpec = {
   id: string;
   label: string;
   /** Top-left in continuous layout units (varied footprints — not a uniform grid stamp). */
@@ -748,7 +748,7 @@ type InteriorRoomSpec = {
 };
 
 /** Single-floor sheds / booths — not every dump needs a cellar. */
-const SHED_LAYOUTS: InteriorRoomSpec[][] = [
+export const SHED_LAYOUTS: InteriorRoomSpec[][] = [
   [
     { id: 'entry', label: 'Entry', x: 0.15, y: 1.4, z: 0, w: 1.2, h: 0.95, links: ['main'], entry: true },
     { id: 'main', label: 'Main room', x: 0, y: 0, z: 0, w: 1.75, h: 1.3, links: ['entry', 'back'] },
@@ -773,7 +773,7 @@ const SHED_LAYOUTS: InteriorRoomSpec[][] = [
  * - Upper floors (2F) have similar or slightly smaller footprint
  * - Room counts are balanced across floors (no 7-room ground + 2-room upper)
  */
-const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
+export const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
   [
     // 1F: 5 rooms (entry, corridor, hall, side, stairs)
     { id: 'entry', label: 'Entry', x: 1.05, y: 2.45, z: 0, w: 1.15, h: 0.95, links: ['corridor'], entry: true },
@@ -905,7 +905,7 @@ const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
  * - Upper floors (2F) have similar footprint (galleries/chambers above)
  * - Room counts are balanced across floors
  */
-const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
+export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
   [
     // 1F: 7 rooms (narthex, nave, aisle, vestry, choir, sanctum, stairs)
     { id: 'entry', label: 'Narthex', x: 1.1, y: 2.55, z: 0, w: 1.3, h: 0.95, links: ['nave'], entry: true },
