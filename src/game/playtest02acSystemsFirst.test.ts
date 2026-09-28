@@ -127,12 +127,12 @@ describe('Phase 1: ArcDirector + combat receipts', () => {
     const result = runArcDirectorBeforeGm(systemsState(), 'Look around');
     expect(result.beatCommitted).toBe(true);
     expect(result.systemReceipts.some((r) => /Encounter:/i.test(r))).toBe(true);
-    expect(result.xpAwards.length).toBeGreaterThan(0);
-    expect(result.xpAwards[0]?.reason).toMatch(/combat|skirmish/i);
-    expect(result.xpAwards[0]?.amount).toBe(FAST_XP_AWARDS.combatTrash);
+    // 28a — the Arc Director no longer pays XP; milestone XP is paid after the text commits (sandboxXp).
+    expect(result.xpAwards.length).toBe(0);
+    expect(FAST_XP_AWARDS.combatTrash).toBeGreaterThan(0);
     const receipts = formatArcStatusReceipts(result).join('\n');
     expect(receipts).toMatch(/Encounter:/i);
-    expect(receipts).toMatch(/XP|xp/);
+    expect(receipts).not.toMatch(/XP Gained/);
   });
 });
 

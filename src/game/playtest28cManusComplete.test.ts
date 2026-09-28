@@ -241,7 +241,8 @@ describe('playtest28c — Manus complete ranked backlog', () => {
     state.arcDirector = { committedBeatIds: ['sp-beat-orient'] };
     const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me and why');
     const status = formatArcStatusReceipts(arc);
-    expect(status.some((l) => /XP Gained: 45/i.test(l))).toBe(true);
+    // 28a — no pre-writer XP receipt; milestone XP is paid after the text commits.
+    expect(status.some((l) => /XP Gained: 45/i.test(l))).toBe(false);
   });
 
   it('receipt liveness gate helper', () => {

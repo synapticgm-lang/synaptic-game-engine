@@ -55,8 +55,8 @@ describe('26t sandbox XP FO3 drip', () => {
       events: [],
       turn: 5,
     });
-    expect(meet.xp).toBeGreaterThanOrEqual(SANDBOX_XP.npcMeet);
-    expect(meet.notes.some((n) => /met Mira/.test(n))).toBe(true);
+    // 28a — drip retired: an ordinary NPC (not opening cast / bible roster) pays nothing.
+    expect(meet.notes.some((n) => /met Mira/.test(n))).toBe(false);
 
     const browse = applySandboxXpAwards(
       { ...state, sandboxAwardKeys: meet.awardKeys, places: meet.places },
@@ -70,7 +70,7 @@ describe('26t sandbox XP FO3 drip', () => {
         turn: 6,
       }
     );
-    expect(browse.notes.some((n) => /wares/.test(n))).toBe(true);
+    expect(browse.notes.some((n) => /wares/.test(n))).toBe(false);
     expect(bible.id).toBe('summoned-pact');
   });
 
@@ -91,7 +91,8 @@ describe('26t sandbox XP FO3 drip', () => {
       events: [],
       turn: 4,
     });
-    expect(first.xp).toBe(SANDBOX_XP.landmarkInspect);
+    // 28a — drip retired: inspecting a landmark pays nothing (reaching the hub may).
+    expect(first.notes.some((n) => /slate|studied|inspect/i.test(n))).toBe(false);
     const second = applySandboxXpAwards(
       { ...state, sandboxAwardKeys: first.awardKeys },
       {
@@ -103,6 +104,7 @@ describe('26t sandbox XP FO3 drip', () => {
         turn: 5,
       }
     );
-    expect(second.xp).toBe(0);
+    // 28a — turn 5 may pay the LitRPG "First Steps" achievement; the landmark itself never pays.
+    expect(second.notes.some((n) => /slate|studied|inspect/i.test(n))).toBe(false);
   });
 });

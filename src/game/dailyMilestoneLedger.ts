@@ -17,10 +17,15 @@ function hasAward(keys: string[] | undefined, key: string): boolean {
 }
 
 /** First real quest objective completion of the UTC day earns a bonus milestone. */
+/** 28a — milestone XP only; daily bonus retired. */
+const DAILY_XP_RETIRED: boolean = true;
+
 export function applyDailyQuestMilestone(
   state: GameState,
   opts: { questsBefore: Quest[]; questsAfter: Quest[]; playerAction?: string }
 ): { xp: number; note: string; awardKey: string } | null {
+  // 28a — daily bonus XP retired (daily caps/bonuses are a pricing decision, XP-PLAN.md).
+  if (DAILY_XP_RETIRED) return null;
   if (state.engineMode !== 'litrpg') return null;
   if (isLookAroundAction(opts.playerAction ?? '')) return null;
 

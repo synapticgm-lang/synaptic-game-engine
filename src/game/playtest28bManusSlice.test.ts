@@ -38,7 +38,8 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
     expect(arc.beatId).toBe('sp-beat-hear-reason');
     const status = formatArcStatusReceipts(arc);
     expect(status.some((l) => /Circle's Price/i.test(l))).toBe(true);
-    expect(status.some((l) => /XP Gained: 45/i.test(l))).toBe(true);
+    // 28a — no pre-writer XP receipt; milestone XP is paid after the text commits.
+    expect(status.some((l) => /XP Gained: 45/i.test(l))).toBe(false);
     const nextTurn = state.turn + 1;
     const receipts = countTurnReceipts(arc.state, nextTurn);
     expect(receipts.questStage).toBeGreaterThanOrEqual(1);
@@ -58,7 +59,8 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
     expect(tx[tx.length - 1]?.turn).toBe(6);
   });
 
-  it('B045 daily quest milestone awards once per UTC day', () => {
+  // 28a — daily bonus XP retired (XP-PLAN.md); kept as skipped for history.
+  it.skip('B045 daily quest milestone awards once per UTC day', () => {
     const state = createInitialState(undefined, 'litrpg');
     const questsBefore = [
       {
@@ -86,7 +88,8 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
     expect(second).toBeNull();
   });
 
-  it('B045 daily milestone skips look-around / bearings ticks', () => {
+  // 28a — daily bonus XP retired (XP-PLAN.md); kept as skipped for history.
+  it.skip('B045 daily milestone skips look-around / bearings ticks', () => {
     const state = createInitialState(undefined, 'litrpg');
     const bearingsBefore = [
       {

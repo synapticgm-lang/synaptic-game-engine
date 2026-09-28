@@ -3,7 +3,8 @@
  * never trust GM STATUS invent for sheet progression.
  */
 
-import type { Character } from './types';
+import type { Character, EngineMode } from './types';
+import { dndXpToNext } from './xpRules';
 
 export interface CharacterXpApplyResult {
   character: Character;
@@ -14,14 +15,16 @@ export interface CharacterXpApplyResult {
 /** Apply XP and cascade level-ups (same curve as auto-fight). */
 export function applyCharacterXpGain(
   character: Character,
-  xpGain: number
+  xpGain: number,
+  /** 28a — 'dnd' uses the 5e thresholds (SRD 5.1); other modes keep the ×1.5 curve. */
+  mode?: EngineMode
 ): CharacterXpApplyResult {
   if (!xpGain || xpGain <= 0) {
     return { character, levelsGained: 0, notes: [] };
   }
   let xp = (character.xp ?? 0) + xpGain;
   let level = character.level ?? 1;
-  let xpToNext = Math.max(1, character.xpToNext ?? 150);
+  let xpToNext = mode === 'dnd' ? dndXpToNext(level) : Math.max(1, character.xpToNext ?? 150);
   let maxHp = character.maxHp ?? character.hp ?? 20;
   let hp = character.hp ?? maxHp;
   let levelsGained = 0;
@@ -31,7 +34,7 @@ export function applyCharacterXpGain(
     xp -= xpToNext;
     level += 1;
     levelsGained += 1;
-    xpToNext = Math.floor(xpToNext * 1.5);
+    xpToNext = mode === 'dnd' ? dndXpToNext(level) : Math.floor(xpToNext * 1.5);
     maxHp = Math.floor(maxHp * 1.1);
     hp = maxHp;
     notes.push(`Level Up! Now level ${level}`);

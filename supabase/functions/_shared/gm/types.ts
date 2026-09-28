@@ -338,6 +338,8 @@ export interface ActiveEncounter {
   dexterity: number;
   constitution: number;
   xpReward: number;
+  /** 28a — 5e Challenge Rating for milestone XP (e.g. '1/4', 2). Monster cards should set this. */
+  cr?: string | number;
   goldReward: number;
   /** 29a Encounter Terminal FSM */
   encounterId?: string;

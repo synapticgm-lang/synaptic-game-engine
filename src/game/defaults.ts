@@ -31,7 +31,7 @@ export function createInitialState(
       name: 'Unknown Survivor',
       level: 1,
       xp: 0,
-      xpToNext: 150,
+      xpToNext: engineMode === 'dnd' ? 300 : 150, // 28a — 5e level 2 at 300 XP (SRD 5.1)
       hp: 24,
       maxHp: 24,
       mp: 12,

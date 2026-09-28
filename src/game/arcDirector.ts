@@ -588,14 +588,6 @@ function applyBeatEffects(
 
   next = pushBeatStateTx(next, contract.summary, extras, state.turn + 1);
 
-  if (xp > 0) {
-    receipts.push(
-      isCombat
-        ? `XP Gained: ${xp} (combat)`
-        : `Arc XP: +${xp} (${contract.summary})`
-    );
-  }
-
   return { state: next, xp, receipts };
 }
 
@@ -646,9 +638,6 @@ export function runArcDirectorBeforeGm(
     const tick = tickEncounterTerminal(working, playerInput);
     working = tick.state;
     systemReceipts.push(...tick.receipts);
-    if (tick.xpAward) {
-      xpAwards.push(tick.xpAward);
-    }
     if (!working.activeEncounter) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
       // 29b — voice line on combat clear
@@ -672,7 +661,6 @@ export function runArcDirectorBeforeGm(
     if (stale.forcedTerminal) {
       working = stale.state;
       systemReceipts.push(...stale.receipts);
-      if (stale.xpAward) xpAwards.push(stale.xpAward);
     }
   }
 
@@ -717,8 +705,7 @@ export function runArcDirectorBeforeGm(
     && !talkContradictsLockedWhy(playerInput, resolveHookLock(working))
   ) {
     working = applySocialMilestone(working, social);
-    xpAwards.push({ amount: social.amount, reason: social.reason });
-    systemReceipts.push(`Social: +${social.amount} XP (${social.kind})`);
+    systemReceipts.push(`Social: ${social.kind}`);
   }
 
   const committed = committedSet(working);
@@ -856,9 +843,6 @@ export function runArcDirectorBeforeGm(
     working = seqState;
     const applied = applyBeatEffects(working, contract, seq, { forceSpawn: forceDroughtSpawn });
     working = applied.state;
-    if (applied.xp > 0) {
-      xpAwards.push({ amount: applied.xp, reason: contract.summary });
-    }
     systemReceipts.push(...applied.receipts);
     mandates.push(contract.mandate);
     beatId = contract.id;

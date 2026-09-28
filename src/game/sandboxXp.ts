@@ -1,29 +1,28 @@
 ﻿/**
- * Off-spine XP banks — modest code awards (discover / clear / quest / meet / non-lethal).
- * Free-economy safe. STATUS shows real XP when awarded — always with a reason.
- * FO3/Fable spirit: travel, NPC meets, side progress, and clears all drip XP.
+ * 28a — Milestone XP only (XP-PLAN.md). One engine function, amounts from xpRules.
+ * Pays: encounter end (victory or neutralised), dungeon cleared, quest step, quest complete,
+ * first meeting with a story-significant person, first time at a named hub,
+ * and the LitRPG "First Steps" achievement. No drip (talk / look / inspect / vendor).
+ * Callers run this once per turn, after the turn's text is chosen.
  */
 
 import type { GameEvent } from './parser';
-import type { GameState, Quest } from './types';
-import { detectStanceTreatment } from './factionStandings';
+import type { ActiveEncounter, GameState, NpcMemory, Quest } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
-import { matchesLastKillName } from './combatAuthority';
+import { LITRPG_MILESTONE_XP, milestoneXp, type MilestoneKind } from './xpRules';
 
+/** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
 export const SANDBOX_XP = {
-  discoverHub: 20,
-  clearIncidental: 25,
-  questTick: 20,
-  questCompleteSide: 30,
-  questCompleteMain: 50,
-  nonLethalResolve: 18,
-  /** First real talk/ask with a named present NPC. */
-  npcMeet: 8,
-  /** First vendor / fence browse at a hub. */
-  vendorBrowse: 6,
-  /** First examine of a named landmark / prop (not generic look-around). */
-  landmarkInspect: 5,
+  discoverHub: LITRPG_MILESTONE_XP.significantPlace,
+  clearIncidental: LITRPG_MILESTONE_XP.encounter,
+  questTick: LITRPG_MILESTONE_XP.questStep,
+  questCompleteSide: LITRPG_MILESTONE_XP.questComplete,
+  questCompleteMain: LITRPG_MILESTONE_XP.questComplete,
+  nonLethalResolve: LITRPG_MILESTONE_XP.encounter,
+  npcMeet: LITRPG_MILESTONE_XP.significantPerson,
+  vendorBrowse: 0,
+  landmarkInspect: 0,
 } as const;
 
 export interface SandboxXpResult {
@@ -35,10 +34,6 @@ export interface SandboxXpResult {
 
 function hasAward(keys: string[] | undefined, key: string): boolean {
   return (keys ?? []).includes(key);
-}
-
-function questTypeXp(q: Quest): number {
-  return q.type === 'main' ? SANDBOX_XP.questCompleteMain : SANDBOX_XP.questCompleteSide;
 }
 
 /** Room/cell/floor scout nouns — looking at these is bearings, not a named landmark. */
@@ -53,7 +48,7 @@ function normalizeActionText(action: string): string {
 }
 
 /**
- * Circle's Price "get your bearings" / orient steps — journal may tick, but no quest-tick XP.
+ * Circle's Price "get your bearings" / orient steps.
  */
 export function isBearingsStyleObjective(description: string): boolean {
   const d = (description ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -62,8 +57,8 @@ export function isBearingsStyleObjective(description: string): boolean {
 }
 
 /**
- * True look-around / same-place re-scout — no explore/discover/quest-tick XP.
- * Specific examine/inspect/listen of a named target is NOT look-around (FO3 inspect reward).
+ * True look-around / same-place re-scout.
+ * Specific examine/inspect/listen of a named target is NOT look-around.
  */
 export function isLookAroundAction(action: string): boolean {
   const a = normalizeActionText(action);
@@ -84,14 +79,6 @@ export function isLookAroundAction(action: string): boolean {
   );
   const target = (scout?.[1] ?? '').replace(/\s+/g, ' ').trim();
   if (target && GENERIC_SCOUT_TARGET.test(target)) return true;
-  // Named-target inspect/examine/search/listen → not a generic re-scout.
-  if (
-    /\b(?:inspect|examine|search|check|study|listen(?:\s+(?:at|to|from))?|ask|talk|speak|tell|browse|buy|sell|fight|attack|engage|map|travel|walk\s+the|watch\s+the)\b/.test(
-      a
-    )
-  ) {
-    return false;
-  }
   return false;
 }
 
@@ -99,8 +86,22 @@ function normalizeNpcKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
 }
 
+/** Story-significant person: on the bible roster, or on the opening card. */
+function isSignificantNpc(state: GameState, m: NpcMemory): boolean {
+  if ((state.openingEstablishment?.castNpcIds ?? []).includes(m.npcId)) return true;
+  return (m.facts ?? []).some((f) => /\bBible roster:/i.test(String(f)));
+}
+
+function encounterKind(enc: ActiveEncounter): MilestoneKind {
+  const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
+  if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
+  if (/\bboss\b/i.test(src)) return 'boss';
+  return 'encounter';
+}
+
 /**
- * Apply one turn of off-spine XP. Idempotent via sandboxAwardKeys.
+ * Apply one turn of milestone XP. Idempotent via sandboxAwardKeys.
+ * Also stamps hub visits on the places ledger (unchanged behaviour).
  */
 export function applySandboxXpAwards(
   state: GameState,
@@ -113,6 +114,8 @@ export function applySandboxXpAwards(
     events: GameEvent[];
     encounterCleared?: boolean;
     enemyKilled?: boolean;
+    /** 28a — the encounter that was live at the start of this turn (for CR / boss). */
+    endedEncounter?: ActiveEncounter | null;
     turn: number;
   }
 ): SandboxXpResult {
@@ -120,186 +123,117 @@ export function applySandboxXpAwards(
   const awardKeys = [...(state.sandboxAwardKeys ?? [])];
   let xp = 0;
   let places = [...(state.places ?? [])];
+  const mode = state.engineMode;
+  const level = state.character?.level ?? 1;
+  const partySize = 1 + (state.companions ?? []).filter((c) => c.type === 'party').length;
+
+  const pay = (key: string, kind: MilestoneKind, label: string, cr?: string | number | null) => {
+    if (hasAward(awardKeys, key)) return;
+    awardKeys.push(key);
+    const r = milestoneXp(mode, kind, { level, partySize, cr });
+    if (r.amount <= 0) return;
+    xp += r.amount;
+    notes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
+  };
 
   const loc = opts.locationName ?? state.currentLocation;
   const prevLoc = (opts.previousLocationName ?? '').trim().toLowerCase();
   const locKey = (loc ?? '').trim().toLowerCase();
   const locationChanged = !!locKey && !!prevLoc && locKey !== prevLoc;
   const lookAround = isLookAroundAction(opts.playerAction);
-  const hubs = hubsForBibleId(state.campaignBibleId);
-  const hub = matchHub(hubs, loc);
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), loc);
   const action = (opts.playerAction ?? '').trim();
 
-  // Hub discover: once per hub id, only when arriving at / traveling to that hub — not re-look in a ruin.
-  if (hub && !lookAround) {
-    const key = `discover-hub:${hub.id}`;
+  // Significant place: first time at a named hub (the start hub counts).
+  if (hub) {
+    pay(`discover-hub:${hub.id}`, 'significantPlace', `reached ${hub.name}`);
     const placeId = placeIdFromName(hub.name);
     const existing = places.find(
       (p) => p.id === placeId || p.name.toLowerCase() === hub.name.toLowerCase()
     );
-    const firstVisit = !existing || existing.lastVisitedTurn == null;
-    const arrived =
-      locationChanged
-      || /^(?:travel\s+toward|return\s+to)\b/i.test(action);
-    if (firstVisit && arrived && !hasAward(awardKeys, key)) {
-      xp += SANDBOX_XP.discoverHub;
-      notes.push(`XP Gained: ${SANDBOX_XP.discoverHub} (discovered ${hub.name})`);
-      awardKeys.push(key);
-    }
-    if (existing) {
-      places = places.map((p) =>
-        p.id === existing.id ? { ...p, lastVisitedTurn: opts.turn, arcStatus: p.arcStatus ?? 'visited' } : p
-      );
-    } else if (arrived) {
-      places.push({
-        id: placeId,
-        name: hub.name,
-        aliases: hub.aliases,
-        threatTier: hub.threatTier,
-        mapScale: 'street',
-        arcStatus: 'visited',
-        lastVisitedTurn: opts.turn,
-      });
-    }
-  } else if (hub && lookAround) {
-    // Re-look at a known hub: stamp visit without XP.
-    const placeId = placeIdFromName(hub.name);
-    const existing = places.find(
-      (p) => p.id === placeId || p.name.toLowerCase() === hub.name.toLowerCase()
-    );
-    if (existing && existing.lastVisitedTurn != null) {
-      places = places.map((p) =>
-        p.id === existing.id ? { ...p, lastVisitedTurn: opts.turn } : p
-      );
-    }
-  }
-
-  if (opts.encounterCleared && !opts.enemyKilled) {
-    const key = `nonlethal:${opts.turn}`;
-    if (!hasAward(awardKeys, key) && detectStanceTreatment(opts.playerAction)) {
-      xp += SANDBOX_XP.nonLethalResolve;
-      notes.push(`XP Gained: ${SANDBOX_XP.nonLethalResolve} (non-lethal resolve)`);
-      awardKeys.push(key);
-    }
-  } else if (opts.encounterCleared && opts.enemyKilled) {
-    // Incidental (non-dungeon) clear bonus beyond ledger kill XP — once per encounter name/turn.
-    const encName = state.activeEncounter?.name ?? 'threat';
-    const key = `incidental-clear:${encName}:${opts.turn}`;
-    if (!state.activeDungeon && !hasAward(awardKeys, key)) {
-      xp += SANDBOX_XP.clearIncidental;
-      notes.push(`XP Gained: ${SANDBOX_XP.clearIncidental} (cleared incidental threat)`);
-      awardKeys.push(key);
-    }
-  }
-
-  // NPC meet — first talk/ask with a named present person (FO3/Fable social XP drip).
-  // 08d — never award meet XP for lastKill / corpse.
-  if (/\b(?:ask|talk|speak|tell|greet|approach|inquire)\b/i.test(action)) {
-    const lastKill = state.sceneFacts?.lastKill;
-    const present = [
-      ...(state.sceneFacts?.present ?? []),
-      ...(state.companions ?? []).map((c) => c.name).filter(Boolean),
-    ].filter((raw) => {
-      const name = (raw ?? '').trim();
-      if (!name) return false;
-      if (lastKill?.outcome === 'victory' && matchesLastKillName(name, lastKill)) return false;
-      return true;
-    });
-    for (const raw of present) {
-      const name = (raw ?? '').trim();
-      if (name.length < 2) continue;
-      if (/^(?:you|your|panel|system|status|crowd|people|someone|stranger|figure)$/i.test(name)) continue;
-      if (lastKill?.outcome === 'victory' && matchesLastKillName(action, lastKill)) continue;
-      const key = `npc-meet:${normalizeNpcKey(name)}`;
-      if (hasAward(awardKeys, key)) continue;
-      // Prefer names that appear in the action, else first unmet present.
-      const namedInAction = action.toLowerCase().includes(name.toLowerCase());
-      if (!namedInAction && present.length > 1) continue;
-      xp += SANDBOX_XP.npcMeet;
-      notes.push(`XP Gained: ${SANDBOX_XP.npcMeet} (met ${name})`);
-      awardKeys.push(key);
-      break;
-    }
-  }
-
-  // Vendor / fence browse at a hub.
-  if (
-    hub
-    && /\b(?:browse|ask about.*(?:price|junk|wares|goods)|fence|buy|sell|vendor|stall|merchant)\b/i.test(action)
-  ) {
-    const key = `vendor-browse:${hub.id}`;
-    if (!hasAward(awardKeys, key)) {
-      xp += SANDBOX_XP.vendorBrowse;
-      notes.push(`XP Gained: ${SANDBOX_XP.vendorBrowse} (checked ${hub.name} wares)`);
-      awardKeys.push(key);
-    }
-  }
-
-  // Landmark / named prop inspect (once per place+target).
-  if (!lookAround) {
-    const m = action.match(
-      /\b(?:inspect|examine|check|study|map|search)\s+(?:the\s+)?([\w\s'’\-.]{3,48}?)(?:\s+more\s+closely)?[.?!]?$/i
-    );
-    const target = (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
-    if (target && !GENERIC_SCOUT_TARGET.test(target)) {
-      const placeSlug = normalizeNpcKey(locKey || 'here');
-      const key = `landmark:${placeSlug}:${normalizeNpcKey(target)}`;
-      if (!hasAward(awardKeys, key)) {
-        xp += SANDBOX_XP.landmarkInspect;
-        notes.push(`XP Gained: ${SANDBOX_XP.landmarkInspect} (studied ${target.slice(0, 40)})`);
-        awardKeys.push(key);
+    const arrived = locationChanged || /^(?:travel\s+toward|return\s+to)\b/i.test(action);
+    if (!lookAround) {
+      if (existing) {
+        places = places.map((p) =>
+          p.id === existing.id ? { ...p, lastVisitedTurn: opts.turn, arcStatus: p.arcStatus ?? 'visited' } : p
+        );
+      } else if (arrived) {
+        places.push({
+          id: placeId,
+          name: hub.name,
+          aliases: hub.aliases,
+          threatTier: hub.threatTier,
+          mapScale: 'street',
+          arcStatus: 'visited',
+          lastVisitedTurn: opts.turn,
+        });
       }
+    } else if (existing && existing.lastVisitedTurn != null) {
+      places = places.map((p) => (p.id === existing.id ? { ...p, lastVisitedTurn: opts.turn } : p));
     }
   }
 
+  // Encounter end: victory or neutralised (parley). Escape / defeat / capture pay nothing.
+  const ended = opts.endedEncounter ?? null;
+  if (ended && opts.encounterCleared !== false && !state.activeEncounter) {
+    const receipts = state.arcDirector?.encounterClearedReceipts ?? [];
+    const rec = [...receipts].reverse().find((r) => r.name === ended.name && r.turn >= opts.turn - 2);
+    const outcome = rec?.outcome ?? (opts.enemyKilled ? 'victory' : ended.terminalOutcome);
+    if (outcome === 'victory' || outcome === 'parleyResolved') {
+      pay(
+        `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
+        encounterKind(ended),
+        `${outcome === 'victory' ? 'defeated' : 'resolved'} ${ended.name}`,
+        ended.cr
+      );
+    }
+  }
+
+  // Dungeon cleared (closeDungeon marks the site place 'cleared').
+  for (const p of places) {
+    if (p.arcStatus === 'cleared') pay(`dungeon-clear:${p.id}`, 'dungeonCleared', `cleared ${p.name}`);
+  }
+
+  // Significant person: the opening cast, and anyone on the bible roster the player talks to here.
+  const memories = state.npcMemories ?? [];
+  for (const m of memories) {
+    if ((state.openingEstablishment?.castNpcIds ?? []).includes(m.npcId)) {
+      pay(`npc-meet:${normalizeNpcKey(m.npcName)}`, 'significantPerson', `met ${m.npcName}`);
+    }
+  }
+  if (/\b(?:ask|talk|speak|tell|greet|approach|inquire|press|offer)\b/i.test(action)) {
+    const low = action.toLowerCase();
+    const present = new Set((state.sceneFacts?.present ?? []).map((n) => String(n).trim().toLowerCase()));
+    for (const m of memories) {
+      if (!isSignificantNpc(state, m)) continue;
+      const names = [m.npcName, ...(m.aliases ?? [])].map((n) => (n ?? '').trim().toLowerCase()).filter(Boolean);
+      const here = m.present === true || names.some((n) => present.has(n));
+      if (!here || !names.some((n) => low.includes(n))) continue;
+      pay(`npc-meet:${normalizeNpcKey(m.npcName)}`, 'significantPerson', `met ${m.npcName}`);
+    }
+  }
+
+  // Quest steps and quest completion.
   const beforeById = new Map(opts.questsBefore.map((q) => [q.id, q]));
   for (const after of opts.questsAfter) {
     const before = beforeById.get(after.id);
     if (!before) continue;
-
-    // Look-around / generic bearings must not farm quest-tick XP (ArcDirector may still journal-tick).
-    if (!lookAround) {
-      const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
-      for (const obj of after.objectives ?? []) {
-        if (!obj.completed || beforeDone.has(obj.id)) continue;
-        if (isBearingsStyleObjective(obj.description)) continue;
-        const key = `quest-tick:${after.id}:${obj.id}`;
-        if (hasAward(awardKeys, key)) continue;
-        xp += SANDBOX_XP.questTick;
-        notes.push(
-          `XP Gained: ${SANDBOX_XP.questTick} (quest progress: ${obj.description.slice(0, 48)})`
-        );
-        awardKeys.push(key);
-      }
+    const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
+    for (const obj of after.objectives ?? []) {
+      if (!obj.completed || beforeDone.has(obj.id)) continue;
+      // Bearings / look-around ticks are orientation, not a milestone.
+      if (lookAround || isBearingsStyleObjective(obj.description)) continue;
+      pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${obj.description.slice(0, 48)}`);
     }
-
     if (after.status === 'completed' && before.status !== 'completed') {
-      const key = `quest-complete:${after.id}`;
-      if (!hasAward(awardKeys, key)) {
-        const amt = questTypeXp(after);
-        xp += amt;
-        notes.push(`XP Gained: ${amt} (quest complete: ${after.name})`);
-        awardKeys.push(key);
-      }
+      pay(`quest-complete:${after.id}`, 'questComplete', `quest complete: ${after.name}`);
     }
   }
 
-  // Soft accept: newly revealed+active from hidden counts as accept for XP floor (tiny).
-  for (const after of opts.questsAfter) {
-    const before = beforeById.get(after.id);
-    if (!before) continue;
-    if (
-      after.revealed === true
-      && after.status === 'active'
-      && (before.revealed !== true || before.status === 'hidden')
-      && (after.recommendedLevel ?? 1) >= 2
-    ) {
-      const key = `quest-accept:${after.id}`;
-      if (!hasAward(awardKeys, key)) {
-        // Accept itself is not XP — faction handles that. Skip.
-        awardKeys.push(key);
-      }
-    }
+  // LitRPG achievement (engine event, no AI): first quest step, or turn 5 reached.
+  if (mode === 'litrpg') {
+    const firstStep = awardKeys.some((k) => k.startsWith('quest-tick:') || k.startsWith('quest-complete:'));
+    if (firstStep || opts.turn >= 5) pay('achv:first-steps', 'achievement', 'Achievement: First Steps');
   }
 
   void opts.events;

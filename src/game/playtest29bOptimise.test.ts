@@ -90,9 +90,10 @@ describe('playtest29b — optimise after terminal authority', () => {
     );
     const tick = tickEncounterTerminal(state, 'Press the attack');
     expect(tick.cleared?.outcome).toBe('victory');
-    expect(tick.xpAward?.amount).toBe(40);
+    // 28a — clear XP moved to the post-text milestone (sandboxXp).
+    expect(tick.xpAward).toBeUndefined();
     expect(tick.receipts.some((r) => /Encounter cleared/i.test(r))).toBe(true);
-    expect(tick.receipts.some((r) => /Arc XP: \+40/i.test(r))).toBe(true);
+    expect(tick.receipts.some((r) => /Arc XP/i.test(r))).toBe(false);
     expect(tick.state.arcDirector?.lastEncounterClearedTurn).toBe(15);
     expect(isEncounterOnCooldown(tick.state, 'Pact-Hunter Skirmisher')).toBe(true);
     expect(tick.state.arcDirector?.encounterCooldownUntil?.['Pact-Hunter Skirmisher']).toBe(

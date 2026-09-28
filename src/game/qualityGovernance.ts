@@ -640,7 +640,7 @@ export function applyGovernanceCommit(
     ) {
       systemNotes.push(`Discovery blocked: ${discovery.reason} (evidence-id exhausted)`);
     } else {
-      xpAward = { amount: discovery.amount, reason: discovery.reason };
+      // 28a — discovery XP retired (milestone XP only, XP-PLAN.md). Ledger still records the find.
       const updatedLedger = updateDiscoveryLedger([discovery], nextWithNpc.turn, ledger);
       qualityGovernance.discoveryLedger = Object.fromEntries(updatedLedger);
       qualityGovernance.recentXpAwards = [

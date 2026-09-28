@@ -2698,19 +2698,6 @@ export function useGame() {
         sealedManifestBlock = formatSealedManifestBlock(manifest);
         arcMandateBlock = formatArcDirectorMandateBlock(arc);
         pendingArcStatusReceipts = formatArcStatusReceipts(arc);
-        if (arc.xpAwards.length) {
-          let char = liveCurrent.character;
-          const arcXpNotes: string[] = [];
-          for (const award of arc.xpAwards) {
-            const leveled = applyCharacterXpGain(char, award.amount);
-            char = leveled.character;
-            arcXpNotes.push(...leveled.notes);
-          }
-          pendingArcStatusReceipts = Array.from(
-            new Set([...pendingArcStatusReceipts, ...arcXpNotes])
-          );
-          liveCurrent = { ...liveCurrent, character: char };
-        }
         if (arc.systemReceipts.length) {
           arcReceiptLine = `\n[ARC RECEIPTS]: ${arc.systemReceipts.join('; ')}`;
         }
@@ -3673,7 +3660,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   formatCombatReceipt({ combat: ledgerRound }) ||
                     `Damage Dealt: ${ledgerRound.dealt} (${ledgerRound.enemyName} HP ${ledgerRound.enemyHpBefore} -> ${ledgerRound.enemyHpAfter})`,
                   ...(ledgerRound.received ? [`Damage Received: ${ledgerRound.received}`] : []),
-                  ...(ledgerRound.xp ? [`XP Gained: ${ledgerRound.xp} (combat)`] : []),
                 ]
               : []),
             ...(ledgerFlee ? [formatFleeReceipt({ flee: ledgerFlee })] : []),
@@ -3819,9 +3805,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const baseChar = { ...workingState.character, ...(updates.character ?? {}) };
       if (ledgerRound) {
         baseChar.hp = ledgerRound.playerHpAfter;
-        if (ledgerRound.xp > 0) {
-          baseChar.xp = (baseChar.xp ?? 0) + ledgerRound.xp;
-        }
       } else if (ledgerFlee && !ledgerFlee.fled) {
         baseChar.hp = ledgerFlee.playerHpAfter;
       } else if (ledgerTrap) {
@@ -4566,6 +4549,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             events,
             encounterCleared: !!(ledgerRound?.enemyDead || ledgerFlee?.fled || (liveCurrent.activeEncounter && !updatedEncounter)),
             enemyKilled: !!ledgerRound?.enemyDead,
+            endedEncounter: liveCurrent.activeEncounter ?? null,
             turn: nextTurn,
           }
         );
@@ -4580,7 +4564,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
           baseChar.xp = (baseChar.xp ?? 0) + dailyMilestone.xp;
         }
-        if (sandboxXp.xp > 0 && !blockedPaint) {
+        if (sandboxXp.xp > 0) {
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
         }
         // STATUS XP: only code-awarded lines with reasons (strip bare GM invent).
@@ -4598,7 +4582,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const xpBefore = liveCurrent.character?.xp ?? 0;
         const gained = Math.max(0, (baseChar.xp ?? 0) - xpBefore);
         if (gained > 0) {
-          const leveled = applyCharacterXpGain({ ...baseChar, xp: xpBefore }, gained);
+          const leveled = applyCharacterXpGain({ ...baseChar, xp: xpBefore }, gained, liveCurrent.engineMode);
           Object.assign(baseChar, leveled.character);
           if (leveled.notes.length) {
             mergedSystemLog = [...mergedSystemLog, ...leveled.notes];

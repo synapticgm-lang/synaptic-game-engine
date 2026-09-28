@@ -175,7 +175,8 @@ describe('playtest31qBatchF', () => {
       expect(win.cleared?.outcome).toBe('parleyResolved');
       expect(win.cleared?.resolutionReason).toBe('parley_success');
       expect(win.state.activeEncounter).toBeNull();
-      expect(win.xpAward?.amount).toBeGreaterThan(0);
+      // 28a — parley XP moved to the post-text milestone (sandboxXp).
+      expect(win.xpAward).toBeUndefined();
 
       // Refuse path (Batch E residual kept)
       state.activeEncounter = initEncounterTerminal(

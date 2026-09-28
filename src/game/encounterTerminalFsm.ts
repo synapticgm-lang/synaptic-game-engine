@@ -265,15 +265,6 @@ export function settleParleyAfterProse(
   };
 }
 
-function clearXpForOutcome(enc: ActiveEncounter, outcome: TerminalOutcome): number {
-  const base = enc.xpReward || 25;
-  if (outcome === 'victory') return base;
-  if (outcome === 'parleyResolved') return Math.max(10, Math.floor(base * 0.6));
-  if (outcome === 'escape') return Math.max(5, Math.floor(base * 0.35));
-  if (outcome === 'capture') return Math.max(8, Math.floor(base * 0.5));
-  return 0;
-}
-
 /** Same-commit lastKill when HP hits 0 / victory — before GM. Avoids combatAuthority cycle. */
 function attachLastKillOnVictory(
   state: GameState,
@@ -325,7 +316,6 @@ function commitClear(
   };
   const prior = state.arcDirector?.encounterClearedReceipts ?? [];
   const statusLine = formatEncounterClearedStatus(receipt);
-  const xpAmount = clearXpForOutcome(enc, outcome);
   const spawnKey = enc.forcedSpawnKey ?? enc.name;
   const cooldownKeys = {
     ...(state.arcDirector?.encounterCooldownUntil ?? {}),
@@ -335,9 +325,6 @@ function commitClear(
     `Encounter cleared: ${enc.name} (${outcome})`,
     statusLine,
   ];
-  if (xpAmount > 0) {
-    receipts.push(`Arc XP: +${xpAmount} (encounter clear: ${enc.name})`);
-  }
   const clearedState = attachLastKillOnVictory(state, enc, outcome);
   return {
     state: {
@@ -354,10 +341,6 @@ function commitClear(
     cleared: receipt,
     receipts,
     forcedTerminal: true,
-    xpAward:
-      xpAmount > 0
-        ? { amount: xpAmount, reason: `Encounter clear: ${enc.name} (${outcome})` }
-        : undefined,
   };
 }
 

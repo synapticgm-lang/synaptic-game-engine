@@ -1018,15 +1018,6 @@ export async function headlessFateTurn(
     const manifest = buildSealedManifest(arcState, playerInput, arc);
     arcState = attachSealedManifest(arcState, manifest);
     sealedManifestBlock = formatSealedManifestBlock(manifest);
-    if (arc.xpAwards.length) {
-      let char = arcState.character;
-      for (const award of arc.xpAwards) {
-        const leveled = applyCharacterXpGain(char, award.amount);
-        char = leveled.character;
-        arcStatusReceipts.push(...leveled.notes);
-      }
-      arcState = { ...arcState, character: char };
-    }
   }
 
   // 08c Tag & Trigger — consume claim pad before packet/writer.
@@ -1692,6 +1683,7 @@ Do NOT print dice notation or CODE ENFORCED.
       questsAfter: updatedQuests,
       events,
       encounterCleared: !!(state.activeEncounter && !working.activeEncounter),
+      endedEncounter: state.activeEncounter ?? null,
       enemyKilled: false,
       turn: nextTurn,
     }
@@ -1700,8 +1692,8 @@ Do NOT print dice notation or CODE ENFORCED.
   let levelNotes: string[] = [];
   const sandboxNotes = [...sandboxXp.notes];
   let sandboxKeys = sandboxXp.awardKeys;
-  if (sandboxXp.xp > 0 && !blockedPaint) {
-    const leveled = applyCharacterXpGain(character, sandboxXp.xp);
+  if (sandboxXp.xp > 0) {
+    const leveled = applyCharacterXpGain(character, sandboxXp.xp, working.engineMode);
     character = leveled.character;
     levelNotes = leveled.notes;
   }
@@ -1889,7 +1881,8 @@ Do NOT print dice notation or CODE ENFORCED.
       questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
       itemsUsed: extractUsedItems(state, next),
-      xpGained: sandboxXp.xp + (dailyMilestone?.xp ?? 0) + (governed.character?.xp ?? 0) - (state.character?.xp ?? 0),
+      // 28a — milestone XP is the only source; the old sum double-counted it.
+      xpGained: sandboxXp.xp,
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,

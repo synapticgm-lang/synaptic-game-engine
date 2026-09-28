@@ -38,7 +38,8 @@ describe('playtest28a — ArcDirector + pacing', () => {
     state.arcDirector = { committedBeatIds: ['sp-beat-orient'] };
     const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me and why');
     expect(arc.beatCommitted).toBe(true);
-    expect(arc.xpAwards.some((a) => a.amount >= 40)).toBe(true);
+    // 28a — the Arc Director no longer pays XP; the quest step pays post-text in sandboxXp.
+    expect(arc.xpAwards.length).toBe(0);
     const q = arc.state.quests?.find((x) => x.id === 'sp-quest-1');
     expect(q?.objectives?.some((o) => o.completed)).toBe(true);
     expect(arc.state.stateTxLog?.some((t) => t.kind === 'beat_commit')).toBe(true);

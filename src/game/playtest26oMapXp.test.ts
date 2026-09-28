@@ -123,8 +123,8 @@ describe('26o XP — reasons + look-around suppress', () => {
       events: [],
       turn: 16,
     });
-    expect(look.xp).toBe(0);
-    expect(look.notes).toEqual([]);
+    // 28a — no quest-step XP for a bearings tick (the turn-5 "First Steps" achievement may still pay).
+    expect(look.notes.some((n) => /quest step/i.test(n))).toBe(false);
   });
 
   it('explore-the-cell / bearings tick awards no quest-tick XP', () => {
@@ -203,7 +203,7 @@ describe('26o XP — reasons + look-around suppress', () => {
       turn: 3,
     });
     expect(first.xp).toBe(SANDBOX_XP.discoverHub);
-    expect(first.notes.some((n) => /discovered Lowmarket/i.test(n))).toBe(true);
+    expect(first.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(true);
     const second = applySandboxXpAwards(
       { ...state, places: first.places, sandboxAwardKeys: first.awardKeys },
       {

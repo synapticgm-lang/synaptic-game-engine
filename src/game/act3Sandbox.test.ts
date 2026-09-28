@@ -259,7 +259,8 @@ describe('Act-3 off-spine XP', () => {
       events: [],
       turn: 5,
     });
-    expect(tick.xp).toBe(SANDBOX_XP.questTick);
+    // 28a — the first quest step also unlocks the LitRPG "First Steps" achievement (+75).
+    expect(tick.xp).toBe(SANDBOX_XP.questTick + 75);
     const afterDone = [{ ...afterTick[0], status: 'completed' as const }];
     const done = applySandboxXpAwards(
       { ...state, sandboxAwardKeys: tick.awardKeys },
