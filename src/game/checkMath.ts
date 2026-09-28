@@ -23,6 +23,7 @@ import {
 } from './checkRules';
 import { calculateSocialModifiers, getOutcomeDescription, socialOutcomeBand } from './socialSkills';
 import type { OutcomeBand } from './socialCrisisTypes';
+import { leverageCue, socialLeverageMods, type LeverageMod } from './socialLeverage';
 
 export type CheckSkill =
   | 'athletics'
@@ -287,6 +288,7 @@ export function runPlayerCheck(
   let auto: 'willing' | 'unwilling' | undefined;
   let cue: string | undefined;
   const social = ctx.attr === 'CHA' && ctx.skill === 'persuasion';
+  let leverage: LeverageMod[] = [];
   if (social) {
     const target = socialTarget(state, actionText);
     if (target) {
@@ -303,6 +305,14 @@ export function runPlayerCheck(
       else if (s.unwilling.includes(size)) auto = 'unwilling';
       cue = dispositionCue(target.name, target.disposition);
     }
+    // 28r — knowledge, shown items, worn gear vs the target's role, stat/skill leverage.
+    leverage = socialLeverageMods(state, actionText, target?.name);
+    for (const m of leverage) mods.push({ label: m.label, value: m.value });
+    cue = cue ?? leverageCue(leverage);
+    // Strong leverage reopens a flat refusal to a roll; strong offence takes a free yes back to a roll.
+    const leverageSum = leverage.reduce((s, m) => s + m.value, 0);
+    if (auto === 'unwilling' && leverageSum >= 3) auto = undefined;
+    else if (auto === 'willing' && leverageSum <= -3) auto = undefined;
   }
   if (intent.kind === 'attack' && state.activeEncounter) {
     const cat = weaponCategory(equippedWeaponName(state));
@@ -349,9 +359,10 @@ export function runPlayerCheck(
   const narrativeOutcomeLabel = outcome.isSuccess ? 'SUCCESS' : 'FAILURE';
   const socialBand = social ? socialOutcomeBand(d20, outcome.totalScore - ctx.dc) : undefined;
   const bandTail = socialBand ? ` — ${getOutcomeDescription(socialBand)}` : '';
+  const leverageTail = leverage.length ? ` — leverage: ${leverage.map((m) => m.note).join(' ')}` : '';
   const codeResolutionText = outcome.isSuccess
-    ? `SUCCESS (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}`
-    : `FAILURE (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}`;
+    ? `SUCCESS (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}${leverageTail}`
+    : `FAILURE (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}${leverageTail}`;
 
   return {
     ...outcome,

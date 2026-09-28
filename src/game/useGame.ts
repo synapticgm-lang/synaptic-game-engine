@@ -37,6 +37,7 @@ import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLine
 import { callGm, type GmResult } from './aiService';
 import { drainWriterRawIssues, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
+import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
 import type { EnemyStats } from './combat';
 import { profileForEncounter } from './lootTableRegistry';
 import {
@@ -5430,8 +5431,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setError(null);
     try {
       let liveCurrent = startState;
-      const result = simulateCombat(liveCurrent, enemy);
+      // 28r — Auto Fight uses the best approach the gear/skills unlock.
+      const approach = bestFightApproach(liveCurrent, enemy);
+      const result = simulateCombat(liveCurrent, enemy, { approach });
       let narrativeText = narrateAutoFightTemplate(enemy.name, result);
+      if (approach.id !== 'melee') {
+        narrativeText = narrativeText.replace(/^You close with [^.]*\./, approachOpener(approach, enemy.name));
+      }
 
       narrativeText = postFilterGmOutput(narrativeText, settingsRef.current);
       if (settingsRef.current.contentMode === 'kid') {
@@ -5514,6 +5520,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         timestamp: Date.now(),
         systemLog: [
           `Auto-Resolve Combat: ${result.victory ? 'VICTORY' : 'DEFEAT'}`,
+          ...(approachReceipt(approach) ? [approachReceipt(approach)!] : []),
           `Rounds: ${result.rounds}`,
           `Damage Dealt: ${result.damageDealt}`,
           `Damage Received: ${result.damageReceived}`,

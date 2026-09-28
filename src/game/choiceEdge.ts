@@ -18,6 +18,7 @@ import {
   spineForceEdgeAfterDelay,
 } from './pyoaSpine';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
+import { fightApproachChips } from './fightApproach';
 import { countLoiterFamilyStreak } from './beatFingerprint';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 
@@ -62,6 +63,9 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     edges.push(
       { id: 'enc-attack', label: 'Press the attack', kind: 'combat', risk: 'high' }
     );
+    fightApproachChips(state)
+      .slice(0, 2)
+      .forEach((label, i) => edges.push({ id: `enc-approach-${i}`, label, kind: 'combat', risk: 'high' }));
     if (fleeAvailable(state.activeEncounter)) {
       edges.push({ id: 'enc-flee', label: 'Try to flee', kind: 'combat', risk: 'med' });
     }

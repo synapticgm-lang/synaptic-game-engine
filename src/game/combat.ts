@@ -1,4 +1,5 @@
-import type { GameState, Item, Rarity } from './types';
+import type { AttributeKey, GameState, Item, Rarity } from './types';
+import { attrMod, meleeApproach, type FightApproach } from './fightApproach';
 import { equippedWeaponName } from './ledgerCombat';
 import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
 import { enemyBodyAuthorityLine } from './combatAuthority';
@@ -48,14 +49,30 @@ export interface CombatResult {
   lootLines?: string[];
   /** 28d — dry-streak pity update for GameState.lootPity. */
   lootPity?: { tier: 1 | 2 | 3 | 4; next: number };
+  /** 28r — the approach the engine used. */
+  approach?: FightApproach;
 }
 
-function rollD20(): number {
-  return Math.floor(Math.random() * 20) + 1;
+function rollD20(rng: () => number = Math.random): number {
+  return Math.floor(rng() * 20) + 1;
 }
 
-function rollDamage(base: number, modifier: number): number {
-  return Math.max(1, base + Math.floor(Math.random() * 4) + modifier);
+function rollDamage(base: number, modifier: number, rng: () => number = Math.random): number {
+  return Math.max(1, base + Math.floor(rng() * 4) + modifier);
+}
+
+function equippedGearMod(state: GameState, key: AttributeKey): number {
+  let bonus = 0;
+  for (const item of state.inventory ?? []) {
+    if (item.equipped && item.modifiers) bonus += item.modifiers[key] ?? 0;
+  }
+  return bonus;
+}
+
+export interface SimulateCombatOptions {
+  /** 28r — gear/skill approach (fightApproach). Default melee. */
+  approach?: FightApproach;
+  rng?: () => number;
 }
 
 function rollLoot(enemy: EnemyStats): Item[] {
@@ -74,36 +91,54 @@ function rollLoot(enemy: EnemyStats): Item[] {
   return loot;
 }
 
-export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResult {
+export function simulateCombat(state: GameState, enemy: EnemyStats, opts: SimulateCombatOptions = {}): CombatResult {
   const player = state.character;
-  const strMod = Math.floor(((player.strength ?? player.attributes?.STR ?? 14) - 10) / 2);
+  const approach = opts.approach ?? meleeApproach();
+  const rng = opts.rng ?? Math.random;
   const dexMod = Math.floor(((player.attributes?.DEX ?? 12) - 10) / 2);
-  const conMod = Math.floor(((player.attributes?.CON ?? 12) - 10) / 2);
-  const playerAC = player.armorClass ?? 12 + dexMod;
-  const playerAttackMod = strMod + Math.max(1, Math.floor(player.level / 2));
-  const playerDamageBase = 6 + Math.floor(player.level / 2);
+  const atkAttrMod = attrMod(state, approach.attr);
+  const playerAC = (player.armorClass ?? 12 + dexMod) + approach.ac;
+  const playerAttackMod =
+    atkAttrMod + Math.max(1, Math.floor(player.level / 2)) + approach.toHit + equippedGearMod(state, approach.attr);
+  const playerDamageBase = 6 + Math.floor(player.level / 2) + approach.damage;
   const enemyAttackMod = enemy.attack + Math.max(0, Math.floor(enemy.level / 2));
   const enemyDamageBase = enemy.attack;
 
   let playerHp = player.hp;
-  const playerMp = player.mp;
+  const playerMp = Math.max(0, player.mp - approach.mpCost);
   let enemyHp = enemy.hp;
   let rounds = 0;
   let damageDealt = 0;
   let damageReceived = 0;
   const roundsLog: CombatRound[] = [];
 
+  // 28r — opening attacks (a shot before the foe closes, a strike from hiding): no reply this round.
+  for (let i = 0; i < approach.openingAttacks && enemyHp > 0; i++) {
+    const a = rollD20(rng);
+    const b = approach.openingAdvantage ? rollD20(rng) : a;
+    const roll = Math.max(a, b);
+    const hits = roll === 20 || (roll !== 1 && roll + playerAttackMod >= enemy.armorClass);
+    let dmg = 0;
+    if (hits) {
+      dmg = rollDamage(playerDamageBase, atkAttrMod, rng);
+      if (roll === 20) dmg = Math.floor(dmg * 1.5);
+      enemyHp = Math.max(0, enemyHp - dmg);
+      damageDealt += dmg;
+    }
+    roundsLog.push({ round: 0, attacker: 'player', hit: hits, roll, damage: dmg, enemyHpAfter: enemyHp, playerHpAfter: playerHp });
+  }
+
   const maxRounds = 50;
   while (playerHp > 0 && enemyHp > 0 && rounds < maxRounds) {
     rounds++;
 
     // Player attacks
-    const playerRoll = rollD20();
+    const playerRoll = rollD20(rng);
     const playerTotal = playerRoll + playerAttackMod;
     const playerHits = playerRoll === 20 || (playerRoll !== 1 && playerTotal >= enemy.armorClass);
     let dmgToEnemy = 0;
     if (playerHits) {
-      dmgToEnemy = rollDamage(playerDamageBase, strMod);
+      dmgToEnemy = rollDamage(playerDamageBase, atkAttrMod, rng);
       if (playerRoll === 20) dmgToEnemy = Math.floor(dmgToEnemy * 1.5);
       enemyHp = Math.max(0, enemyHp - dmgToEnemy);
       damageDealt += dmgToEnemy;
@@ -120,12 +155,12 @@ export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResul
     if (enemyHp <= 0) break;
 
     // Enemy attacks
-    const enemyRoll = rollD20();
+    const enemyRoll = rollD20(rng);
     const enemyTotal = enemyRoll + enemyAttackMod;
     const enemyHits = enemyRoll === 20 || (enemyRoll !== 1 && enemyTotal >= playerAC);
     let dmgToPlayer = 0;
     if (enemyHits) {
-      dmgToPlayer = rollDamage(enemyDamageBase, 0);
+      dmgToPlayer = rollDamage(enemyDamageBase, 0, rng);
       if (enemyRoll === 20) dmgToPlayer = Math.floor(dmgToPlayer * 1.5);
       playerHp = Math.max(0, playerHp - dmgToPlayer);
       damageReceived += dmgToPlayer;
@@ -183,6 +218,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResul
     summary,
     lootLines,
     lootPity,
+    approach,
   };
 }
 

@@ -15,10 +15,12 @@ import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, weaponCategory } from './checkRules';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
+import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
-const ATTACK_RE = /\b(attack|fight|strike|engage|slash|stab|shoot|punch|lash out|auto[- ]?fight)\b/i;
+const ATTACK_RE =
+  /\b(attack|fight|strike|engage|slash|stab|shoot|punch|lash out|auto[- ]?fight|ambush|sneak attack|loose an arrow|cast (?:a |an )?spell)\b/i;
 
 export interface EngineFightResult {
   state: GameState;
@@ -76,6 +78,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const parley = !flee && PARLEY_RE.test(input);
   const attack = !flee && !parley && ATTACK_RE.test(input);
   if (!flee && !parley && !attack) return null;
+  // 28r — gear/skill approach, read before the foe is engaged (a strike from hiding needs an unaware foe).
+  const approach = approachFromInput(state, input);
 
   let working: GameState = state;
   if (pending && state.sceneFacts) {
@@ -126,7 +130,11 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     lootProfile: profileForEncounter(enc),
     cr: enc.cr,
   };
-  const result = simulateCombat(working, enemy);
+  // A failed flee/parley means the foe forced the fight: no opening strike from hiding.
+  const used = (flee || parley) && approach.id === 'ambush' ? meleeApproach() : approach;
+  const result = simulateCombat(working, enemy, { approach: used });
+  const approachLine = approachReceipt(used);
+  if (approachLine) receipts.push(approachLine);
   const hpBefore = working.character.hp;
   // 28g — some HP back on a win; a defeat never leaves the character at 1 HP (recoveryRules).
   const hpAfter = hpAfterFight(working, result.victory, result.finalPlayerHp);
@@ -140,7 +148,10 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       ? { byTier: { ...(next.lootPity?.byTier ?? {}), [result.lootPity.tier]: result.lootPity.next } }
       : next.lootPity,
   };
-  next = growWeaponFamiliarity(next, weaponCategory(equippedWeaponName(next)));
+  next = growWeaponFamiliarity(
+    next,
+    used.id === 'ranged' ? weaponCategory(used.source) : weaponCategory(equippedWeaponName(next))
+  );
   receipts.push(
     `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${result.rounds} round${result.rounds === 1 ? '' : 's'} — dealt ${result.damageDealt}, took ${result.damageReceived} (HP ${hpBefore} → ${hpAfter})${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
@@ -159,8 +170,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ];
     if (bits.length) found = ` On the body: ${bits.join(', ')}.`;
   }
-  const what = result.victory
+  const opener = used.id === 'melee' ? '' : `${approachOpener(used, enc.name)} `;
+  const what = opener + (result.victory
     ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}, dealt ${result.damageDealt} damage and took ${result.damageReceived}. ${enc.name} went down and stayed down.${found}`
-    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, alive at ${hpAfter} HP.`;
+    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, alive at ${hpAfter} HP.`);
   return { state: next, receipts, facts: `${FACTS_HEAD} ${what}` };
 }

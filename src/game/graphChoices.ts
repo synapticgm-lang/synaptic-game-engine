@@ -17,6 +17,7 @@ import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { isCatalogFoeTalkForbidden } from './encounterBible';
 import { npcShouldExit } from './npcMemory';
 import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment';
+import { availableFightApproaches, fightApproachChips } from './fightApproach';
 
 export type EdgeType =
   | 'attack'
@@ -82,6 +83,9 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
       intent: PlayerIntent.INTENT_ATTACK,
       cooldown: 0,
     });
+    for (const label of fightApproachChips(state).slice(0, 2)) {
+      edges.push({ type: 'attack', label, intent: PlayerIntent.INTENT_ATTACK, cooldown: 0 });
+    }
     if (fleeAvailable(state.activeEncounter)) {
       edges.push({
         type: 'flee',
@@ -99,6 +103,14 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
       });
     }
     return edges.filter((e) => !isExcludedPadLabel(e.label, excluded));
+  }
+
+  // 28r — a foe that has not closed yet: gear/skill openers (a shot from range, a strike from hiding).
+  if (state.sceneFacts?.pendingEncounter && !shouldStarveCombatPadsOnCover(state)) {
+    const openers = availableFightApproaches(state).filter((a) => a.openingAttacks > 0);
+    for (const a of openers.slice(0, 2)) {
+      edges.push({ type: 'attack', label: a.label, intent: PlayerIntent.INTENT_ATTACK, cooldown: 0 });
+    }
   }
 
   if (state.openingEstablishment?.complete && isOutdoorScene(state) && !excluded.has('travel')) {
