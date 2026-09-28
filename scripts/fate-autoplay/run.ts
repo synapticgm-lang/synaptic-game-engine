@@ -382,6 +382,7 @@ async function main(): Promise<void> {
         outRoot: opts.outRoot,
         characterName: opts.characterName,
         writer: opts.writer,
+        inputs: opts.inputs,
       });
       log(`Done → ${summary.outDir}`);
       console.log(JSON.stringify(summary, null, 2));

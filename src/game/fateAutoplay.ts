@@ -238,6 +238,8 @@ export type FateAutoplayCliOpts = {
   bibleId: string;
   /** LitRPG systemPersonality or gmPersonality for other modes. */
   personality: string;
+  /** 28b — `--inputs "a|b|c"` scripted player lines (blank = normal pick). */
+  inputs?: string[];
   engineMode?: EngineMode;
   aiTier: HostedAiTier;
   mode: FateMode;
@@ -303,6 +305,8 @@ export type TurnTelemetry = {
   level?: number;
   characterXp?: number;
   xpToNext?: number;
+  /** 28b — every stored place card (hub revisit check: a card is built once, reused on return). */
+  placeCards?: Array<{ name: string; cardBuiltTurn?: number; description?: string; exits?: string[] }>;
   loopFlags: { officialCount: number; atmosphereRepeat: boolean; strangerCount: number };
   error?: string;
   failKind?: string;
@@ -1886,6 +1890,9 @@ Do NOT print dice notation or CODE ENFORCED.
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,
+      placeCards: (governed.places ?? [])
+        .filter((p) => p.cardBuiltTurn != null)
+        .map((p) => ({ name: p.name, cardBuiltTurn: p.cardBuiltTurn, description: p.description, exits: p.exits })),
       loopFlags: detectLoopFlags(mudBody, state),
       error,
       failKind: gmResult.failKind,
@@ -1944,6 +1951,8 @@ export async function runFateAutoplay(opts: {
   characterName: string;
   /** When set, forces Flash Lite (or default hosted) for this run via client GM path. */
   writer?: AutoplayWriterKind;
+  /** 28b — scripted player lines per turn (harness only); a blank entry = normal pick. */
+  inputs?: string[];
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
   setActiveSubscriptionTier(opts.aiTier);
@@ -2019,6 +2028,7 @@ export async function runFateAutoplay(opts: {
           mode: opts.mode,
           aiAgentMode: opts.aiAgentMode ?? 'default',
           dryRun: opts.dryRun,
+          playerInputOverride: opts.inputs?.[i] || undefined,
         });
         state = result.state;
         turns.push(result.telemetry);
@@ -2248,6 +2258,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--combined-gemini') out.combinedGemini = true;
     else if (a === '--resume-dir') out.resumeDir = next();
     else if (a === '--batch-dir') out.batchDir = next();
+    else if (a === '--inputs') out.inputs = next().split('|').map((s) => s.trim());
     else if (a === '--out') out.outRoot = next();
     else if (a === '--name') out.characterName = next();
     else if (a === '--help' || a === '-h') {

@@ -127,7 +127,9 @@ export function openingSpokenIdentityQuote(
   if (/\bpanel\b/i.test(who)) return '';
   const record = ctx?.state ? resolveNpcRecord(ctx.state, who) : undefined;
   if (record) return `"${record.npcName}. You asked who."`;
-  const label = (who || 'They').replace(/\s+/g, ' ').trim();
+  const raw = (who || 'They').replace(/\s+/g, ' ').trim();
+  // 28b — a spoken line starts with a capital ("The innkeep. You asked who.").
+  const label = raw.charAt(0).toUpperCase() + raw.slice(1);
   return `"${label}. You asked who. We are the ones who found you here."`;
 }
 

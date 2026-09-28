@@ -92,7 +92,8 @@ describe('playtest10j — west wall NPC voice', () => {
   it('Who are you is the militia speaking, not the panel', () => {
     const text = stitchOpeningContinue(westWall(), 'Who are you');
     expect(text).toMatch(/militia/i);
-    expect(text).toContain('"the militia. You asked who. We are the ones who found you here."');
+    // 28b — spoken who-line starts with a capital.
+    expect(text).toContain('"The militia. You asked who. We are the ones who found you here."');
     expect(text).not.toMatch(/the panel is the one asking/i);
   });
 

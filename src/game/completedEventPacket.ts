@@ -1014,7 +1014,16 @@ function lookFocus(s: StitchSlots): string {
 
 function lookTail(s: StitchSlots): string {
   const desc = descriptorSentence(s.descriptor);
-  return desc || 'The ground you already knew held nothing new.';
+  return desc || NO_DESCRIPTION_LOOK_LINE;
+}
+
+/** 28b — plain line when the place has no description (never claims you knew it). */
+const NO_DESCRIPTION_LOOK_LINE = 'You saw nothing that called for a closer look.';
+
+/** 28b — "was" / "were" for a named person or group ("West Wall Levy was", "Guards were"). */
+function beVerbFor(who: string): 'was' | 'were' {
+  const w = (who ?? '').trim();
+  return /\band\b/i.test(w) || /[^s]s$/i.test(w) ? 'were' : 'was';
 }
 
 type StitchTemplate = {
@@ -1377,7 +1386,7 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     {
       id: 'fc1',
       fingerprint: 'The flee failed',
-      render: (s) => `The flee failed at ${s.where}. ${s.who || 'They'} were still on you.`,
+      render: (s) => `The flee failed at ${s.where}. ${s.who ? `${capFirst(s.who)} ${beVerbFor(s.who)}` : 'They were'} still on you.`,
     },
     {
       id: 'fc2',
@@ -1387,7 +1396,7 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     {
       id: 'fc3',
       fingerprint: 'still in reach after the run',
-      render: (s) => `${s.who || 'The foe'} stayed still in reach after the run at ${s.where}.`,
+      render: (s) => `${s.who ? `${capFirst(s.who)} ${beVerbFor(s.who)}` : 'The foe was'} still in reach after the run at ${s.where}.`,
     },
   ],
   use: [
@@ -1592,7 +1601,7 @@ function topicAdvancePool(
   const peopleLine = people
     ? `${people} ${facts.present.length > 1 || /\band\b/.test(people) ? 'were' : 'was'} still there.`
     : 'Nobody you knew by name stood close.';
-  const groundLine = 'The ground you already knew held nothing new.';
+  const groundLine = NO_DESCRIPTION_LOOK_LINE;
   const look = [
     `You looked over ${placeName}. ${desc || groundLine} ${peopleLine} ${nextMove}`,
     `${capFirst(placeName)} held your eye a moment. ${desc || groundLine} ${peopleLine} ${nextMove}`,
@@ -1935,8 +1944,13 @@ function ledgerStitchSlots(packet: CompletedEventPacket): StitchSlots {
 
 function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: number): StitchTemplate {
   const free = bank.filter((t) => !recent.some((b) => b.includes(t.fingerprint)));
-  const pool = free.length ? free : bank;
-  return pool[Math.abs(salt) % pool.length]!;
+  if (free.length) return free[Math.abs(salt) % free.length]!;
+  // 28b — every line was used recently: take the one seen longest ago, never repeat the last one.
+  const lastSeen = (t: StitchTemplate): number => {
+    for (let i = recent.length - 1; i >= 0; i--) if ((recent[i] ?? '').includes(t.fingerprint)) return i;
+    return -1;
+  };
+  return [...bank].sort((a, b) => lastSeen(a) - lastSeen(b))[0]!;
 }
 
 /**
@@ -1971,17 +1985,17 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
     bits.push(
       want
         ? `${who.charAt(0).toUpperCase() + who.slice(1)} ${castSpeakVerb(who)} you. "${want}"`
-        : `${who} had not said what they wanted yet.`
+        : `${capFirst(who)} had not said what they wanted yet.`
     );
   }
   if (asksRefuse) {
-    bits.push(`${who} had not said what happens if you refuse.`);
+    bits.push(`${capFirst(who)} had not said what happens if you refuse.`);
   }
   if (asksStayLeave) {
     const stay = (packet.answerStayLeave ?? '').trim();
-    bits.push(stay || `${who} had not said whether you must stay or may leave.`);
+    bits.push(stay || `${capFirst(who)} had not said whether you must stay or may leave.`);
   }
-  if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);
+  if (!bits.length) bits.push(`You spoke at ${slots.where}. ${capFirst(who)} ${beVerbFor(who)} still close enough to hear.`);
   return bits.join(' ').replace(/\s+/g, ' ').trim();
 }
 

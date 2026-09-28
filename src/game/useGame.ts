@@ -326,6 +326,7 @@ import {
 } from './vignetteLock';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
+import { milestoneXp } from './xpRules';
 import {
   applyGovernanceCommit,
   applyGovernanceToProse,
@@ -5696,6 +5697,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
 
       const newTurn = liveCurrent.turn + 1;
+      // 28a2 — auto-fight pays the same encounter milestone as every other path (xpRules).
+      const autoXp = result.victory
+        ? milestoneXp(liveCurrent.engineMode, 'encounter', {
+            level: liveCurrent.character.level,
+            partySize: 1 + (liveCurrent.companions ?? []).filter((c) => c.type === 'party').length,
+            cr: liveCurrent.activeEncounter?.cr,
+          })
+        : { amount: 0, detail: '' };
       const autoEvents = parseActionTags(narrativeText);
       const autoMemorable = decideClassicMemorable(
         {
@@ -5733,7 +5742,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           `Damage Dealt: ${result.damageDealt}`,
           `Damage Received: ${result.damageReceived}`,
           `Player HP: ${liveCurrent.character.hp} -> ${result.finalPlayerHp}`,
-          `XP Gained: ${result.xpGained} (combat)`,
+          ...(autoXp.amount > 0 ? [`XP Gained: ${autoXp.amount} (defeated ${enemy.name}${autoXp.detail ? ` — ${autoXp.detail}` : ''})`] : []),
           `Gold Gained: ${result.goldGained}`,
           ...(result.loot.length > 0 ? [`Loot: ${result.loot.map(l => `[${l.rarity}] ${l.name}`).join(', ')}`] : []),
         ],
@@ -5741,19 +5750,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       };
 
       const updatedCharacter = { ...liveCurrent.character, hp: result.finalPlayerHp, mp: result.finalPlayerMp };
-      let updatedXp = updatedCharacter.xp + result.xpGained;
-      let updatedLevel = updatedCharacter.level;
-      let updatedXpToNext = updatedCharacter.xpToNext;
-      while (updatedXp >= updatedXpToNext) {
-        updatedXp -= updatedXpToNext;
-        updatedLevel++;
-        updatedXpToNext = Math.floor(updatedXpToNext * 1.5);
-        updatedCharacter.maxHp = Math.floor(updatedCharacter.maxHp * 1.1);
-        updatedCharacter.hp = updatedCharacter.maxHp;
-      }
-      updatedCharacter.xp = updatedXp;
-      updatedCharacter.level = updatedLevel;
-      updatedCharacter.xpToNext = updatedXpToNext;
+      Object.assign(
+        updatedCharacter,
+        applyCharacterXpGain(updatedCharacter, autoXp.amount, liveCurrent.engineMode).character
+      );
 
       const updatedInventory = [...liveCurrent.inventory, ...result.loot];
 

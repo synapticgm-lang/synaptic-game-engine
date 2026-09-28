@@ -139,7 +139,8 @@ describe('playtest12g — natural prose receipts', () => {
       'Who are you? Answer me properly.'
     );
     expect(second).toMatch(/already said|already answered/i);
-    expect(second).toContain('"the innkeep. You asked who. We are the ones who found you here."');
+    // 28b — spoken who-line starts with a capital.
+    expect(second).toContain('"The innkeep. You asked who. We are the ones who found you here."');
     expect(second).not.toBe(first);
     expect(second).not.toMatch(/Introduced in play/i);
 

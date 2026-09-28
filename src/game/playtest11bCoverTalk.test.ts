@@ -209,7 +209,8 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       if (lead) expect(who, cell.bibleId).toContain(`"${lead.npcName}. You asked who."`);
       else {
         expect(who, cell.bibleId).toContain(
-          `"${openingCastLabel(named)}. You asked who. We are the ones who found you here."`
+          // 28b — spoken who-line starts with a capital.
+          `"${openingCastLabel(named).charAt(0).toUpperCase() + openingCastLabel(named).slice(1)}. You asked who. We are the ones who found you here."`
         );
       }
       expect(who, cell.bibleId).not.toMatch(/is the one asking/i);
