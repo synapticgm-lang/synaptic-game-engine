@@ -20,6 +20,27 @@ import { formatCustomTabletopRulesForPrompt } from './customTabletopRules.ts';
 import { compileLitrpgCoreIdentity } from './openingPointerCard.ts';
 import { formatGoldShapeForPrompt } from './fluidProseRails.ts';
 import { formatLikedKeeperForPrompt } from './craftKeepers.ts';
+import { formatPerspectiveRule, pcPov, povExample, type PcPov } from './narrativePov.ts';
+
+/** Story-prose example lines in the mode blocks, rendered in the configured POV. System/choice examples stay "you". */
+const STORY_EXAMPLES: Array<{ second: string; third: string; first: string }> = [
+  {
+    second: '"The blade catches bone. You feel the resistance."',
+    third: '"The blade catches bone. {N} feels the resistance."',
+    first: '"The blade catches bone. I feel the resistance."',
+  },
+  { second: '"Your grip slips"', third: '"{His} grip slips"', first: '"My grip slips"' },
+  { second: 'Three figures huddle at the corner table, watching you.', third: 'Three figures huddle at the corner table, watching {him}.', first: 'Three figures huddle at the corner table, watching me.' },
+  { second: 'You approach the table.', third: '{N} approaches the table.', first: 'I approach the table.' },
+  { second: '"She believes you"', third: '"She believes {N}"', first: '"She believes me"' },
+  { second: '<narrative>You step into darkness.</narrative>', third: '<narrative>{N} steps into darkness.</narrative>', first: '<narrative>I step into darkness.</narrative>' },
+];
+
+function storyExamplesInPov(block: string, pov: PcPov): string {
+  let out = block;
+  for (const ex of STORY_EXAMPLES) out = out.split(ex.second).join(povExample(pov, ex));
+  return out;
+}
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -462,13 +483,15 @@ export function buildMasterPrompt(
 ): string {
   const kidMode = settings.contentMode === 'kid';
   const nsfw = campaignIsNsfw(state);
+  const pov = pcPov(state.character, settings.perspective);
 
-  const modeBlock = {
+  const modeBlockRaw = {
     litrpg: MODE_LITRPG.replace('{{LITRPG_CORE_IDENTITY}}', compileLitrpgCoreIdentity(state)),
     dnd: MODE_DND,
     rpg: MODE_RPG,
     pyoa: MODE_PYOA,
   }[state.engineMode] ?? MODE_RPG;
+  const modeBlock = storyExamplesInPov(modeBlockRaw, pov);
 
   const contentRules = kidMode
     ? KID_MODE_RULES
@@ -493,6 +516,9 @@ export function buildMasterPrompt(
 ═══════════════════════════════════════════════════════════════════════════
 
 ${CRITICAL_DIRECTIVES}
+【 RULE 4: POINT OF VIEW 】
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${formatPerspectiveRule(pov)}
 
 ═══════════════════════════════════════════════════════════════════════════
  ACTIVE ENGINE MODE: ${String(state.engineMode ?? 'rpg').toUpperCase()}
@@ -505,7 +531,7 @@ ${formatLikedKeeperForPrompt(state.engineMode, state.craftKeepers)}
 
 ${TURN_STRUCTURE}
 
-${OUTPUT_FORMATTING}
+${storyExamplesInPov(OUTPUT_FORMATTING, pov)}
 
 ${voiceRail}
 

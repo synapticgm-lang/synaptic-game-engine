@@ -4,7 +4,7 @@
  * 02z — sealed HERE/CAST/VERB/CLOSED/TONE card is the writer leaf; code stays trunk.
  */
 
-import type { GameState } from './types';
+import type { GameState, NarrativePerspective } from './types';
 import { formatPyoaSpineTurnJob } from './pyoaSpine';
 import {
   canHarvestAsNamedPerson,
@@ -489,9 +489,13 @@ export function formatSealedBeatCard(card: SealedBeatCard): string {
  * Live writer leaf (08a). Completed-event packet + last 2 GM beats + allowlist.
  * No SNAPSHOT essay, kit dump, CRAFT, or AUTHORITY rails.
  */
-export function formatWriterFacingPacket(state: GameState, playerInput?: string): string {
+export function formatWriterFacingPacket(
+  state: GameState,
+  playerInput?: string,
+  perspective?: NarrativePerspective
+): string {
   const packet = state.completedEvent ?? buildCompletedEventPacket(state, playerInput);
-  return formatWriterFacingEvent(packet);
+  return formatWriterFacingEvent(packet, { perspective });
 }
 
 const TITLE_NAME =

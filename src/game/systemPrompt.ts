@@ -6,6 +6,7 @@ import { campaignIsNsfw } from './campaignNsfw';
 import { formatWriterFacingPacket } from './beatContract';
 import { formatWriterInfoLayer } from './writerInfoLayer';
 import { formatMaturityRules } from './maturity';
+import { formatPerspectiveRule, pcPov } from './narrativePov';
 import {
   formatCustomTabletopRulesForPrompt,
 } from './customTabletopRules';
@@ -275,13 +276,8 @@ Do not append character-sheet/stat-screen readouts and do not add decorative <sy
   return `STAT SCREENS: ENABLED.\n${verbosity}\n${frequency}\n${turnNote}`;
 }
 
-function buildNarrativePreferenceRules(settings: Settings, nsfw?: boolean): string {
-  const perspectiveRule =
-    settings.perspective === 'first-person'
-      ? `PERSPECTIVE: FIRST PERSON. Write prose from the player character's viewpoint using I/me/my. Do not address them as "you" and do not narrate them in third person (no "Jax places his finger").`
-      : settings.perspective === 'third-person'
-        ? `PERSPECTIVE: THIRD PERSON. Refer to the player character by name or they/them. Do not use I/me/my or you/your for the player character.`
-        : `PERSPECTIVE: SECOND PERSON (ENTIRE TURN). Address the player as you/your from the first sentence to the last. Write "You place your finger to your lips," never "Jax places his finger", never "His fingers brush his phone", and never "I place my finger." Do not flip to third person mid-paragraph.`;
+function buildNarrativePreferenceRules(settings: Settings, nsfw: boolean | undefined, state: GameState): string {
+  const perspectiveRule = formatPerspectiveRule(pcPov(state.character, settings.perspective));
 
   const violenceRules = {
     none: `VIOLENCE: NONE. Avoid physical injury, gore, and visceral detail. Resolve danger through escape, restraint, surrender, or non-graphic consequences.`,
@@ -343,7 +339,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, _activeL
     : nsfw
       ? NSFW_CAMPAIGN_RULES
       : ADULT_MODE_RULES;
-  const narrativePreferenceRules = buildNarrativePreferenceRules(settings, nsfw);
+  const narrativePreferenceRules = buildNarrativePreferenceRules(settings, nsfw, state);
   const voiceRail = formatGmVoiceForPrompt(
     resolveVoiceIdForState(state, settings.gmVoiceProfileId),
     { engineMode: state.engineMode, kidMode },
@@ -512,9 +508,10 @@ export const RECENT_LOG_CHAR_CAP = 500;
 export function buildContextPrompt(
   state: GameState,
   playerInput: string,
-  activeLoreCards: LoreCard[] = []
+  activeLoreCards: LoreCard[] = [],
+  perspective?: Settings['perspective']
 ): string {
   const facts = formatWriterInfoLayer(state, activeLoreCards);
-  const packet = formatWriterFacingPacket(state, playerInput);
+  const packet = formatWriterFacingPacket(state, playerInput, perspective);
   return facts ? `${facts}\n\n${packet}` : packet;
 }

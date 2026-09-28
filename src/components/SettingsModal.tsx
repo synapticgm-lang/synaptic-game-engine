@@ -316,7 +316,13 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           </Section>
 
           <Section icon={<BookText size={16} />} title="Narrative Perspective" visible={activeTab === 'narrative'}>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <ChoiceCard
+                label="Hybrid"
+                sublabel="Story: name / he / she · System: you"
+                selected={draft.perspective === 'hybrid'}
+                onClick={() => update('perspective', 'hybrid' as NarrativePerspective)}
+              />
               <ChoiceCard
                 label="First Person"
                 sublabel="I / me / my"

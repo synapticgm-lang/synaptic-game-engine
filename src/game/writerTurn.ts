@@ -4,7 +4,8 @@
  * only falls back when every writer call came back empty (transport outage).
  * Shared by the live client (`useGame`) and the headless harness (`fateAutoplay`).
  */
-import type { GameState } from './types';
+import type { GameState, NarrativePerspective } from './types';
+import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { isLastGmReprint, isUnaskedCombatClose } from './completedEventPacket';
@@ -113,10 +114,11 @@ export function formatWriterRevisionFacing(
   packet: CompletedEventPacket,
   state: GameState,
   draft: string,
-  problems: string[]
+  problems: string[],
+  perspective?: NarrativePerspective
 ): string {
   return [
-    formatTalkWriterFacing(packet, state),
+    formatTalkWriterFacing(packet, state, { perspective }),
     '',
     'YOUR DRAFT:',
     draft.replace(/\s+/g, ' ').trim().slice(0, 1200),
@@ -148,10 +150,20 @@ export function writerTurnIssues(rawIssues: readonly string[], notes: readonly s
 }
 
 /** Last resort: the same writer, a much simpler prompt, plain prose. */
-export function formatPlainProseFacing(packet: CompletedEventPacket, state: GameState): string {
+export function formatPlainProseFacing(
+  packet: CompletedEventPacket,
+  state: GameState,
+  perspective?: NarrativePerspective
+): string {
   const lastGm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+  const pov = pcPov(state.character ?? packet.pc, perspective);
+  const person = narratesPcInThirdPerson(pov)
+    ? `close third person on ${pcStorySubject(pov)} (${pov.he}/${pov.him}/${pov.his}), never "you" for ${pcStorySubject(pov)}`
+    : pov.perspective === 'first-person'
+      ? 'first person ("I")'
+      : 'second person ("you")';
   const lines = [
-    'Write 3–5 sentences of story in past tense, second person ("you"). Plain prose only: no JSON, no lists, no headings.',
+    `Write 3–5 sentences of story in past tense, ${person}. Plain prose only: no JSON, no lists, no headings.`,
     `The player did: ${packet.playerAction || '(looked around)'}`,
     `Where: ${packet.location}.`,
   ];
@@ -172,6 +184,7 @@ export async function runWriterTurn(opts: {
   callWriter: (payload: string) => Promise<string>;
   /** False after a transport retry this turn: skip the revision (the turn is already slow). */
   allowRevision?: boolean;
+  perspective?: NarrativePerspective;
 }): Promise<WriterTurnResult> {
   const { packet, check, callWriter } = opts;
   const state = check.state;
@@ -184,7 +197,7 @@ export async function runWriterTurn(opts: {
 
   if (draft.prose && problems.length && opts.allowRevision !== false) {
     extraCalls += 1;
-    const raw = await callWriter(formatWriterRevisionFacing(packet, state, draft.prose, problems));
+    const raw = await callWriter(formatWriterRevisionFacing(packet, state, draft.prose, problems, opts.perspective));
     const revised = renderWriterDraft(raw, state, packet);
     if (revised.prose) {
       const left = writerDraftProblems(revised.prose, check);
@@ -203,7 +216,7 @@ export async function runWriterTurn(opts: {
   const stillThin = !!draft.prose && extraCalls > 0 && sentenceCount(draft.prose) < 2;
   if (!draft.prose || stillThin) {
     extraCalls += 1;
-    const raw = await callWriter(formatPlainProseFacing(packet, state));
+    const raw = await callWriter(formatPlainProseFacing(packet, state, opts.perspective));
     const plain = renderWriterDraft(raw, state, packet);
     const plainLeft = plain.prose ? writerDraftProblems(plain.prose, check) : [];
     if (plain.prose && (!draft.prose || plainLeft.length <= remaining.length)) {

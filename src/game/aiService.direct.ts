@@ -346,7 +346,7 @@ export async function callGmDirect(
   onRetry?: (attempt: number, delayMs: number) => void
 ): Promise<GmResult> {
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
-  const prompt = buildContextPrompt(state, playerInput, activeLoreCards);
+  const prompt = buildContextPrompt(state, playerInput, activeLoreCards, settings.perspective);
   let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, true));
   if (!text) {
     // 28l — same model, one re-ask with a no-reasoning hint (never a model switch).

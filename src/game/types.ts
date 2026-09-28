@@ -785,7 +785,8 @@ export type GmStrictness = 'forgiving' | 'standard' | 'hardcore';
 export type StatDisplayMode = 'inline' | 'tapToReveal';
 export type StatVerbosity = 'detailed' | 'core' | 'minimal';
 export type StatFrequency = 'every-turn' | 'every-5-turns' | 'end-of-combat';
-export type NarrativePerspective = 'first-person' | 'second-person' | 'third-person';
+/** hybrid: story prose close third person on the PC; System voice / choices second person. */
+export type NarrativePerspective = 'first-person' | 'second-person' | 'third-person' | 'hybrid';
 export type ViolenceLevel = 'none' | 'mild' | 'graphic';
 export type CursingLevel = 'none' | 'mild' | 'strong';
 
@@ -1348,6 +1349,8 @@ export interface Settings {
   statVerbosity: StatVerbosity;
   statFrequency: StatFrequency;
   perspective: NarrativePerspective;
+  /** 28n — 1 once stored settings moved off the old second-person default. */
+  perspectiveDefaultRev?: number;
   /** GM/System narrative voice profile (prompt tone). Separate from TTS cosmetics. */
   gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;

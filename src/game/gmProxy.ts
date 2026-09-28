@@ -136,6 +136,7 @@ export async function invokeGmProxy(params: {
         statVerbosity: params.settings.statVerbosity,
         statFrequency: params.settings.statFrequency,
         dndMode: params.settings.dndMode,
+        perspective: params.settings.perspective,
       },
       // BYOK passthrough — never logged server-side in responses
       clientApiKey: pickClientApiKey(params.settings) || undefined,

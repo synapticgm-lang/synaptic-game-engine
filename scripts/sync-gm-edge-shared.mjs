@@ -31,6 +31,7 @@ const FILES = [
   'closedFactLedger.ts',
   'chromeAuthority.ts',
   'pcNameAuthority.ts',
+  'narrativePov.ts',
   'combatAuthority.ts',
   'encounterTerminalFsm.ts',
   'sceneManifest.ts',

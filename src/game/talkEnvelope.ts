@@ -2,7 +2,7 @@
  * Batch 12f — Manus option 1 (talk-only E path).
  * Compact addressee envelope for callGm. Does not write A–D. No SNAPSHOT/CRAFT.
  */
-import type { GameState } from './types';
+import type { GameState, NarrativePerspective } from './types';
 import { sealedCastNames } from './beatContract';
 import { formatWriterFacingEvent, type CompletedEventPacket } from './completedEventPacket';
 import { matchesLastKillName } from './combatAuthority';
@@ -205,7 +205,7 @@ function spokenTalkFallbackInner(state: GameState, playerInput: string, who: str
 export function formatTalkWriterFacing(
   packet: CompletedEventPacket,
   state: GameState,
-  opts?: { stricter?: boolean }
+  opts?: { stricter?: boolean; perspective?: NarrativePerspective }
 ): string {
   const base = formatWriterFacingEvent(packet, opts);
   const spoke = packet.outcome === 'spoke' || packet.verb === 'spoke';

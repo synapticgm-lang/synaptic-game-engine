@@ -1,5 +1,6 @@
 import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
+import { formatPerspectiveRule, pcPov, resolvePerspective } from '../_shared/gm/narrativePov.ts';
 import {
   FIREWORKS_INFERENCE_BASE,
   fireworksChatBody,
@@ -348,13 +349,22 @@ Deno.serve(async (req) => {
   let systemPrompt: string;
   let userPrompt: string;
   if (mode === 'auto-fight') {
+    // deno-lint-ignore no-explicit-any
+    const pov = pcPov((body.state as any).character, settings.perspective);
     systemPrompt =
-      'You are a LitRPG Game Master. Write visceral, fast-paced combat narration. Output only the narrative paragraph — no tags, no headers, no meta commentary.';
+      `You are a LitRPG Game Master. Write visceral, fast-paced combat narration. Output only the narrative paragraph — no tags, no headers, no meta commentary.\n\n${formatPerspectiveRule(pov)}`;
     userPrompt = playerInput;
   } else {
     systemPrompt = assembleSystemPrompt(body.state, settings, loreCards);
-    // deno-lint-ignore no-explicit-any
-    userPrompt = buildContextPrompt(body.state as any, playerInput, loreCards as any);
+    userPrompt = buildContextPrompt(
+      // deno-lint-ignore no-explicit-any
+      body.state as any,
+      playerInput,
+      // deno-lint-ignore no-explicit-any
+      loreCards as any,
+      // deno-lint-ignore no-explicit-any
+      resolvePerspective(settings.perspective) as any
+    );
   }
 
   try {

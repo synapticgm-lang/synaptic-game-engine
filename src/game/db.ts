@@ -114,6 +114,12 @@ export function loadSettings(): Settings {
             ? parsed.combatResolveMode
             : createDefaultSettings().combatResolveMode,
         diceAnimation: migrateDiceAnimation(parsed.diceAnimation),
+        // 28n — second person was the only old default; move it to hybrid once. Later picks stick.
+        perspective:
+          parsed.perspectiveDefaultRev !== 1 && (!parsed.perspective || parsed.perspective === 'second-person')
+            ? 'hybrid'
+            : (parsed.perspective ?? 'hybrid'),
+        perspectiveDefaultRev: 1,
       };
       try {
         setActiveSubscriptionTier(merged.subscriptionTier);

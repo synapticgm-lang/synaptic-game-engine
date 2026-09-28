@@ -5,7 +5,8 @@
  * Classifier-only validation — no Continuity-Warden LLM, no novel-token deny-lists.
  */
 
-import type { GameState, LogEntry } from './types.ts';
+import type { GameState, LogEntry, NarrativePerspective } from './types.ts';
+import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName.ts';
 import { realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
@@ -77,6 +78,8 @@ export type EventOutcome =
 export interface CompletedEventPacket {
   turn: number;
   actor: string;
+  /** 28n — PC name + gender so the writer prompt can follow the PC in third person. */
+  pc?: { name: string | null; gender: string | null };
   verb: string;
   target?: string;
   outcome: EventOutcome;
@@ -656,6 +659,7 @@ export function buildCompletedEventPacket(
   return {
     turn: state.turn,
     actor: 'you',
+    pc: { name: state.character?.name ?? null, gender: state.character?.gender ?? null },
     verb,
     target,
     outcome,
@@ -891,14 +895,19 @@ export function attachCompletedEvent(
  */
 export function formatWriterFacingEvent(
   packet: CompletedEventPacket,
-  opts?: { stricter?: boolean }
+  opts?: { stricter?: boolean; perspective?: NarrativePerspective }
 ): string {
   const target = packet.target ? ` ${packet.target}` : '';
+  const pov = pcPov(packet.pc, opts?.perspective);
+  const who = pcStorySubject(pov);
+  const thirdPerson = narratesPcInThirdPerson(pov);
   const lines: string[] = [
-    'Narrate this completed event in past tense.',
+    thirdPerson
+      ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
+      : 'Narrate this completed event in past tense.',
     '',
     'COMPLETED EVENT:',
-    `You ${packet.verb}${target}.`,
+    `${who} ${packet.verb}${target}.`,
     `Outcome: ${packet.outcome}.`,
   ];
   if (packet.engineResult) {
@@ -927,9 +936,16 @@ export function formatWriterFacingEvent(
   // example's shape, and a one-line example came back as one place-name line.
   lines.push('Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
   lines.push('Shape (replace every <...> with your own words):');
-  lines.push('{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"actor"}],"lines":[{"fn":"place","text":"<sentence: where you were, using @t1>"},{"fn":"action","text":"<sentence: what you did and what came of it>"},{"fn":"react","text":"<sentence: how @t2 or the room answered>"},{"fn":"hook","text":"<sentence: what now waits or threatens>"}]}');
+  const whereWas = povExample(pov, { second: 'where you were', third: 'where {N} was', first: 'where I was' });
+  const whatDid = povExample(pov, {
+    second: 'what you did and what came of it',
+    third: 'what {N} did and what came of it, told close on {him}',
+    first: 'what I did and what came of it',
+  });
+  lines.push(`{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"actor"}],"lines":[{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${whatDid}>"},{"fn":"react","text":"<sentence: how @t2 or the room answered>"},{"fn":"hook","text":"<sentence: what now waits or threatens>"}]}`);
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
   lines.push('Name entities as @tN tokens from the REF ENUM; use no other names.');
+  if (thirdPerson) lines.push(`The player character is ${who}: write that name plainly (no token) and ${pov.he}/${pov.him}/${pov.his} for them.`);
   lines.push(formatRefEnumForWriter(packet.refEnum ?? []));
   if (opts?.stricter) {
     lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');

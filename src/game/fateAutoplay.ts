@@ -1174,7 +1174,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const silentMud = useMud && shouldSkipMicroFlavor();
   const payload = useMud
     ? (silentMud ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
-    : formatTalkWriterFacing(preparedEvent.packet, arcState);
+    : formatTalkWriterFacing(preparedEvent.packet, arcState, { perspective: settings.perspective });
 
   // 08d Silent Engine — receipts only; never call DeepSeek for micro-flavor.
   const authoredBook = isAuthoredPyoaBook(arcState.campaignBibleId);
@@ -1210,6 +1210,7 @@ Do NOT print dice notation or CODE ENFORCED.
         return r.text;
       },
       allowRevision: gmResult.transportRetries === 0,
+      perspective: settings.perspective,
     });
     gmText = writerTurn.prose;
     if ((writerTurn.path === 'json' || writerTurn.path === 'json-partial') && writerTurn.refs?.length && arcState.completedEvent) {

@@ -2766,7 +2766,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent, typedAction);
       const gmPlayerPayload = useMud
         ? (shouldSkipMicroFlavor() ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
-        : formatTalkWriterFacing(preparedEvent.packet, liveCurrent);
+        : formatTalkWriterFacing(preparedEvent.packet, liveCurrent, { perspective: settingsRef.current.perspective });
 
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
@@ -2925,6 +2925,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             }
           },
           allowRevision: transportRetriesUsed === 0,
+          perspective: settingsRef.current.perspective,
         });
         writerRemaining = writerTurn.remaining;
         if (writerTurn.problems.length) {
