@@ -18,6 +18,9 @@ import { displayAdventurerName, isLockablePcName, UNNAMED_ADVENTURER } from './p
 import { attachLastKill, lastKillFromAutoFightLog } from './combatAuthority';
 import { isInteriorMap } from './placeAuthority';
 import { shortRoomLabel } from './mapEngine';
+import { resolveActiveCampaignBible } from './campaignSeed';
+import { hubsForBibleId } from './outdoorHubs';
+import { seedStoryPlaces, stripAuthorNotes } from './storyDataBoundary';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
@@ -221,6 +224,45 @@ function repairLockedNameCover(state: GameState, notes: ErrorRepairNote[]): Game
     detail: 'dropped leftover name/identity covers — PC name already locked',
   });
   return { ...state, openingEstablishment: next };
+}
+
+function stripNotesByLine(text: string | undefined): string | undefined {
+  if (!text) return text;
+  const out = text
+    .split('\n')
+    .filter((line) => !line.trim() || stripAuthorNotes(line))
+    .map((line) => (line.trim() ? stripAuthorNotes(line) : line))
+    .join('\n');
+  return out === text ? text : out;
+}
+
+/** 28p — saves made before the story-data boundary: author notes out of stored card/lore text; story places seeded. */
+function repairStoryAuthorNotes(state: GameState, notes: ErrorRepairNote[]): GameState {
+  let next = state;
+  const est = state.openingEstablishment;
+  if (est) {
+    const hook = stripNotesByLine(est.pickedHook);
+    const fallback = stripNotesByLine(est.pickedHookFallback);
+    if (hook !== est.pickedHook || fallback !== est.pickedHookFallback) {
+      next = { ...next, openingEstablishment: { ...est, pickedHook: hook, pickedHookFallback: fallback } };
+    }
+  }
+  const lore = (next.lorebook ?? []).map((card) => {
+    const summary = stripAuthorNotes(card.summary);
+    return summary === card.summary ? card : { ...card, summary };
+  });
+  if (lore.some((card, i) => card !== next.lorebook[i])) next = { ...next, lorebook: lore };
+  const bible = resolveActiveCampaignBible(next);
+  const places = seedStoryPlaces(next.places, bible, hubsForBibleId(next.campaignBibleId).length > 0);
+  if (places !== (next.places ?? [])) next = { ...next, places };
+  if (next !== state) {
+    notes.push({
+      class: 'opening_contract',
+      code: 'ERR_STORY_AUTHOR_NOTES',
+      detail: 'dropped author notes from stored card/lore text; seeded story place cards',
+    });
+  }
+  return next;
 }
 
 function stampAloneArrival(state: GameState, notes: ErrorRepairNote[]): GameState {
@@ -478,6 +520,7 @@ function repairHookLock(state: GameState, notes: ErrorRepairNote[]): GameState {
 export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   const notes: ErrorRepairNote[] = [];
   let next = repairLockedNameCover(state, notes);
+  next = repairStoryAuthorNotes(next, notes);
   next = stampAloneArrival(next, notes);
   next = repairAloneStarterQuest(next, notes);
   next = repairOrphanCircleBlessing(next, notes);

@@ -19,6 +19,7 @@ import {
   sanitizePcName,
 } from './pcNameAuthority';
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
+import { sanitizeHookCardForPlay } from './storyDataBoundary';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
@@ -532,6 +533,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   faction?: string;
   castNpcIds?: string[];
 } {
+  card = sanitizeHookCardForPlay(card);
   if (typeof card === 'string') {
     const text = card.trim();
     return { text, fallback: text || undefined, page1: text || undefined };
@@ -551,8 +553,9 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     const b = beat.trim();
     if (b && !isWriterNoteBeat(b)) lines.push(`- ${b}`);
   }
-  if (card.text?.trim()) lines.push(card.text.trim());
   const page1 = card.page1?.trim() || undefined;
+  // Leftover `text` is author telegram; page 1 (when authored) is the scene.
+  if (card.text?.trim() && !page1) lines.push(card.text.trim());
   const fallback =
     page1
     || card.fallback?.trim()

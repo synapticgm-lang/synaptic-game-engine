@@ -9,6 +9,7 @@ import { seedWorldAtlas } from './worldAtlas';
 import { archetypePrefersBlankCanvas, blankBibleIdForMode } from './customBlank';
 import { discoverLocation } from './locationDiscovery';
 import { seedBibleNpcRoster } from './npcMemory';
+import { sanitizeBibleForPlay } from './storyDataBoundary';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -48,8 +49,9 @@ export function findBibleForArchetype(
  */
 export function seedStateFromCampaignBible(
   state: GameState,
-  bible: CampaignBible
+  authored: CampaignBible
 ): GameState {
+  const bible = sanitizeBibleForPlay(authored);
   const lorebook: LoreCard[] = [
     ...state.lorebook,
     ...bible.loreSnippets.map((s) => ({
@@ -128,7 +130,7 @@ export function resolveActiveCampaignBible(state: GameState): CampaignBible | un
     && state.campaignBibleId
     && state.campaignBibleSnapshot.id === state.campaignBibleId
   ) {
-    return state.campaignBibleSnapshot;
+    return sanitizeBibleForPlay(state.campaignBibleSnapshot);
   }
   if (state.campaignBibleId) {
     return ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId);

@@ -5,6 +5,7 @@ import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
 import { placeCardFor } from './outdoorHubs.ts';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords.ts';
+import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson.ts';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
@@ -129,9 +130,12 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   }
 
   const people = presentNpcRecords(state);
+  const unnamed = Array.from(new Set([...listedAnonymousRoles(state), ...storyMinorRoles(state)]));
   const peopleSection = people.length
     ? `People here:\n${formatNpcMemoriesForPrompt(people, 4)}`
-    : '';
+    : unnamed.length
+      ? `People here: no one named. Unnamed local${unnamed.length > 1 ? 's' : ''} who may be about: ${unnamed.map((r) => `${/^[aeiou]/i.test(r) ? 'an' : 'a'} ${r}`).join(', ')} (may speak; give no name).`
+      : '';
 
   const roomSection = state.activeDungeon
     ? formatHiddenRoomLedger(state.activeDungeon, { factsOnly: true })

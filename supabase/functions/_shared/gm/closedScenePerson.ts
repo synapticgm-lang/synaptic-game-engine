@@ -8,7 +8,7 @@
 import type { GameState } from './types.ts';
 import { canHarvestAsNamedPerson, isCommonRoleNpc, isHubContactProperName, isTitlePlusGiven } from './entityRegistry.ts';
 import { resolveHubArrival } from './hubEncounters.ts';
-import { npcRecordNames } from './npcRecords.ts';
+import { npcRecordNames, presentNpcRecords } from './npcRecords.ts';
 import { isPyoaCharterClosed } from './pyoaBranchLedger.ts';
 import { locationChangedRecently } from './sceneContextTail.ts';
 
@@ -76,6 +76,40 @@ export function isThornferryClerkSite(location: string | undefined): boolean {
   return /\b(mill(?:\s+landing)?|the ford|harbor quay|inn|weighing cup)\b/i.test(location ?? '');
 }
 
+/** 28p — the common local a kind of place has when the story names nobody there. First match wins. */
+const PLACE_ROLE_TABLE: Array<[RegExp, string]> = [
+  [/\b(?:inn|tavern|taproom|common room|saloon|alehouse|pub)\b/i, 'innkeeper'],
+  [/\b(?:kitchen|galley|refectory|canteen)\b/i, 'cook'],
+  [/\b(?:smithy|forge)\b/i, 'smith'],
+  [/\b(?:market|stall|bazaar|shop|store|exchange)\b/i, 'vendor'],
+  [/\b(?:chapel|church|shrine|temple|cathedral|abbey)\b/i, 'priest'],
+  [/\b(?:office|registry|magistrate|customs|court)\b/i, 'clerk'],
+  [/\b(?:gate|gatehouse|palisade|checkpoint|barracks|wall)\b/i, 'guard'],
+  [/\b(?:dock|quay|pier|harbou?r|wharf|ferry|landing|ford|road|path|crossroads|lane|trail)\b/i, 'traveler'],
+];
+
+export function minorRoleForPlace(place: string | undefined): string {
+  const p = (place ?? '').trim();
+  if (!p) return '';
+  for (const [re, role] of PLACE_ROLE_TABLE) {
+    if (re.test(p)) return role;
+  }
+  return '';
+}
+
+/**
+ * 28p — the story names nobody here (no record, no hub contact, no fight): the place's common
+ * local may appear, unnamed. Engine-generated minor character; never a CAST name.
+ */
+export function storyMinorRoles(state: GameState): string[] {
+  if (state.openingEstablishment && state.openingEstablishment.complete !== true) return [];
+  if (state.activeEncounter || state.activeDungeon) return [];
+  if (presentNpcRecords(state).length) return [];
+  if (resolveHubArrival(state, state.currentLocation)?.beat.contactName) return [];
+  const role = minorRoleForPlace(state.currentLocation);
+  return role ? [role] : [];
+}
+
 export function sceneHasRoleOccupancy(state: GameState, role: string): boolean {
   const want = normalizeRole(role);
   if (!want || !isCommonRoleNpc(want)) return false;
@@ -96,6 +130,7 @@ export function sceneAllowsRoleIntroduction(
   const player = (playerInput ?? lastPlayerLine(state)).toLowerCase();
   if (player && new RegExp(`\\b${want}\\b`, 'i').test(player)) return true;
   if (want === 'clerk' && isThornferryClerkSite(state.currentLocation)) return true;
+  if (storyMinorRoles(state).includes(want)) return true;
   if (want === 'handler' && !locationChangedRecently(state) && (state.turn ?? 0) <= 3) {
     return true;
   }

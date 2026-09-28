@@ -590,7 +590,13 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     || discovered.includes(placeIdFromName(h.name))
     || (h.aliases ?? []).some((a) => discovered.includes(placeIdFromName(a)))
     || (state.places ?? []).some((p) => p.name.toLowerCase() === h.name.toLowerCase() && p.lastVisitedTurn != null);
-  const hubExits = hubs
+  // 28p — a story with no hub bank uses its own story places (seeded at New Game) as exits.
+  const exitPool: OutdoorHub[] = hubs.length
+    ? hubs
+    : (state.places ?? [])
+      .filter((p) => p.settlementKind === 'story-place')
+      .map((p) => ({ id: p.id, name: p.name, blurb: p.description ?? '', threatTier: 1, aliases: p.aliases }));
+  const hubExits = exitPool
     .filter((h) => h.name.toLowerCase() !== name.toLowerCase() && !raw.toLowerCase().includes(h.name.toLowerCase()) && known(h))
     .map((h) => h.name)
     .slice(0, 3);

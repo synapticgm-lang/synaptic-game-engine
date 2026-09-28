@@ -94,8 +94,10 @@ import {
   isAuthoredPyoaBook,
   spineChoiceLabels,
 } from './pyoaSpine';
+import { seedStoryPlaces } from './storyDataBoundary';
 import {
   seedOutdoorHubPlaces,
+  hubsForBible,
   parseTravelDestination,
   applyNamedHubTravel,
   isLeaveSceneAction,
@@ -645,9 +647,13 @@ export function buildNewGameState(opts: {
     choices: [],
     log: [],
     worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
-    places: seedWorldMapPlaces(
-      seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
-      namedSeeded.worldAtlas
+    places: seedStoryPlaces(
+      seedWorldMapPlaces(
+        seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
+        namedSeeded.worldAtlas
+      ),
+      bible,
+      hubsForBible(bible).length > 0
     ),
     sandboxAwardKeys: [],
     mapFocusPlace: null,

@@ -304,8 +304,10 @@ import {
   mutateFactionOnStance,
   seedWorldLedgerFactions,
 } from './factionStandings';
+import { seedStoryPlaces } from './storyDataBoundary';
 import {
   seedOutdoorHubPlaces,
+  hubsForBible,
   parseTravelDestination,
   applyNamedHubTravel,
   isLeaveSceneAction,
@@ -5017,9 +5019,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       pyoaSpine: umbraSpine ?? namedSeeded.pyoaSpine,
       log: [],
       worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
-      places: seedWorldMapPlaces(
-        seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
-        namedSeeded.worldAtlas
+      places: seedStoryPlaces(
+        seedWorldMapPlaces(
+          seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
+          namedSeeded.worldAtlas
+        ),
+        bible,
+        hubsForBible(bible).length > 0
       ),
       sandboxAwardKeys: [],
       mapFocusPlace: null,
