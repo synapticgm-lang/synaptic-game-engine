@@ -341,13 +341,12 @@ export function applyBossBuildGuarantee(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 28d — LOOT-RESEARCH.md §4: one engine loot roll. Source profiles, 5e treasure for D&D (dice shown),
+// 28d — LOOT-RESEARCH.md §4: one engine loot roll. Source profiles, SynapticGM treasure tables for D&D (dice shown),
 // no duplicate Legendary, 80% class fit, shared difficulty table. The AI never rolls loot.
 // Rarity curves + pity are the existing dungeonSeed rollLootRarityWithPity (no parallel system).
 //
-// D&D treasure: the Individual Treasure / Treasure Hoard / magic-item-rarity-by-level tables are from the
-// 2024 Dungeon Master's Guide (Roll20 compendium transcription, see LOOT-RESEARCH.md). They are NOT part of
-// SRD 5.2.1; only the numbers (dice + bands) are used here, no rules text.
+// D&D treasure: SynapticGM treasure tables (original) — coin purse, treasure cache and item rarity by level.
+// 28e: our own dice, amounts, CR bands and rarity splits.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type LootProfile = 'mob' | 'miniBoss' | 'boss' | 'chestBronze' | 'chestSilver' | 'chestGold' | 'rareEncounter';
@@ -369,19 +368,19 @@ export interface LootProfileRow {
   /** Maps onto the D9 catalog role (trash / elite / boss). */
   tableRole: 'trash' | 'elite' | 'boss';
   /** D&D: which 5e table. */
-  dndTable: 'individual' | 'hoard';
+  dndTable: 'purse' | 'cache';
   /** DCC-style chest / box label (LitRPG shows it). */
   boxLabel?: 'Bronze' | 'Silver' | 'Gold';
 }
 
 export const LOOT_PROFILES: Readonly<Record<LootProfile, LootProfileRow>> = {
-  mob: { label: 'Mob', rolls: 1, tierBonus: 0, noDropPct: 35, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'trash', dndTable: 'individual' },
-  miniBoss: { label: 'Mini-boss', rolls: 2, tierBonus: 1, noDropPct: 0, floor: 'Uncommon', firstKillFloor: null, resetsPity: false, tableRole: 'elite', dndTable: 'individual' },
-  boss: { label: 'Boss', rolls: 3, tierBonus: 1, noDropPct: 0, floor: 'Rare', firstKillFloor: 'Epic', resetsPity: false, tableRole: 'boss', dndTable: 'hoard' },
-  chestBronze: { label: 'Bronze chest', rolls: 1, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'trash', dndTable: 'hoard', boxLabel: 'Bronze' },
-  chestSilver: { label: 'Silver chest', rolls: 2, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'elite', dndTable: 'hoard', boxLabel: 'Silver' },
-  chestGold: { label: 'Gold chest', rolls: 3, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'boss', dndTable: 'hoard', boxLabel: 'Gold' },
-  rareEncounter: { label: 'Rare encounter', rolls: 1, tierBonus: 2, noDropPct: 0, floor: 'Epic', firstKillFloor: null, resetsPity: true, tableRole: 'elite', dndTable: 'hoard' },
+  mob: { label: 'Mob', rolls: 1, tierBonus: 0, noDropPct: 35, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'trash', dndTable: 'purse' },
+  miniBoss: { label: 'Mini-boss', rolls: 2, tierBonus: 1, noDropPct: 0, floor: 'Uncommon', firstKillFloor: null, resetsPity: false, tableRole: 'elite', dndTable: 'purse' },
+  boss: { label: 'Boss', rolls: 3, tierBonus: 1, noDropPct: 0, floor: 'Rare', firstKillFloor: 'Epic', resetsPity: false, tableRole: 'boss', dndTable: 'cache' },
+  chestBronze: { label: 'Bronze chest', rolls: 1, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'trash', dndTable: 'cache', boxLabel: 'Bronze' },
+  chestSilver: { label: 'Silver chest', rolls: 2, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'elite', dndTable: 'cache', boxLabel: 'Silver' },
+  chestGold: { label: 'Gold chest', rolls: 3, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'boss', dndTable: 'cache', boxLabel: 'Gold' },
+  rareEncounter: { label: 'Rare encounter', rolls: 1, tierBonus: 2, noDropPct: 0, floor: 'Epic', firstKillFloor: null, resetsPity: true, tableRole: 'elite', dndTable: 'cache' },
 };
 
 /** Chest grade 1–3 (dungeonSeed HiddenLoot.grade) → profile. */
@@ -485,41 +484,35 @@ function crNumber(cr: string | number | null | undefined, fallbackLevel: number)
   return Math.max(0, fallbackLevel);
 }
 
+/** SynapticGM treasure tables (original): CR bands 0–3 / 4–9 / 10–15 / 16+. */
 function crBand(cr: number): { label: string; band: 0 | 1 | 2 | 3 } {
-  if (cr <= 4) return { label: 'CR 0–4', band: 0 };
-  if (cr <= 10) return { label: 'CR 5–10', band: 1 };
-  if (cr <= 16) return { label: 'CR 11–16', band: 2 };
-  return { label: 'CR 17+', band: 3 };
+  if (cr <= 3) return { label: 'CR 0–3', band: 0 };
+  if (cr <= 9) return { label: 'CR 4–9', band: 1 };
+  if (cr <= 15) return { label: 'CR 10–15', band: 2 };
+  return { label: 'CR 16+', band: 3 };
 }
 
-/** 2024 DMG Individual Treasure, one roll per creature: [dice, sides, multiplier, coin]. */
-export const DND_INDIVIDUAL_TREASURE: ReadonlyArray<readonly [number, number, number, 'gp' | 'pp']> = [
-  [3, 6, 1, 'gp'],
-  [2, 8, 10, 'gp'],
-  [2, 10, 10, 'pp'],
-  [2, 8, 100, 'pp'],
+/** SynapticGM coin purse (original), one roll per creature: [dice, sides, flat bonus, multiplier], gp. */
+export const SGM_COIN_PURSE: ReadonlyArray<readonly [number, number, number, number]> = [
+  [2, 8, 2, 1],
+  [4, 10, 0, 4],
+  [5, 6, 0, 60],
+  [4, 10, 0, 400],
 ];
 
-/**
- * 2024 DMG Treasure Hoard: coins [dice, sides, multiplier] + magic items [dice, sides, minus].
- * CR 11–16 is printed as 8d8×10,000 but with an average of 36,000; we use ×1,000 (the likely misprint).
- */
-export const DND_HOARD: ReadonlyArray<{ coins: readonly [number, number, number]; items: readonly [number, number, number] }> = [
-  { coins: [2, 4, 100], items: [1, 4, 1] },
-  { coins: [8, 10, 100], items: [1, 3, 0] },
-  { coins: [8, 8, 1000], items: [1, 4, 0] },
-  { coins: [6, 10, 10000], items: [1, 6, 0] },
+/** SynapticGM treasure cache (original): coins [dice, sides, multiplier] gp + items [dice, sides, signed modifier]. */
+export const SGM_TREASURE_CACHE: ReadonlyArray<{ coins: readonly [number, number, number]; items: readonly [number, number, number] }> = [
+  { coins: [4, 6, 30], items: [1, 3, -1] },
+  { coins: [5, 10, 80], items: [2, 2, -1] },
+  { coins: [6, 8, 700], items: [1, 3, 1] },
+  { coins: [5, 12, 4000], items: [1, 4, 1] },
 ];
 
-/**
- * 2024 DMG magic item rarity by level, levels 1–4 row (01–54 Common, 55–91 Uncommon, 92–00 Rare).
- * Only this row was confirmed (LOOT-RESEARCH.md); higher levels use it too until the other rows are verified.
- * Very Rare maps to Epic.
- */
-export function dndItemRarity(d100: number): Rarity {
-  if (d100 <= 54) return 'Common';
-  if (d100 <= 91) return 'Uncommon';
-  return 'Rare';
+/** SynapticGM item rarity by character level (original), d20. */
+export function sgmItemRarity(d20: number, level: number): Rarity {
+  if (level <= 4) return d20 <= 10 ? 'Common' : d20 <= 17 ? 'Uncommon' : 'Rare';
+  if (level <= 10) return d20 <= 6 ? 'Common' : d20 <= 14 ? 'Uncommon' : d20 <= 19 ? 'Rare' : 'Epic';
+  return d20 <= 3 ? 'Common' : d20 <= 10 ? 'Uncommon' : d20 <= 17 ? 'Rare' : 'Epic';
 }
 
 export interface LootRollResult {
@@ -527,7 +520,7 @@ export interface LootRollResult {
   items: Item[];
   /** Category of each item (same order) — class fit audit. */
   categories: LootItemCategory[];
-  /** Engine gold from the roll (D&D 5e coins; 0 in other modes, where cards carry goldReward). */
+  /** Engine gold from the roll (D&D SynapticGM treasure tables; 0 in other modes, where cards carry goldReward). */
   gold: number;
   coin: 'gp' | 'pp';
   noDrop: boolean;
@@ -580,7 +573,7 @@ function makeItem(
 
 /**
  * The one engine loot roll. Seeded; runs when an encounter resolves (kills) or a chest is opened.
- * LitRPG / RPG / PYOA: profile rolls on the tier curves with pity. D&D: 5e Individual / Hoard with dice shown.
+ * LitRPG / RPG / PYOA: profile rolls on the tier curves with pity. D&D: SynapticGM coin purse / treasure cache with dice shown.
  */
 export function rollLoot(input: {
   profile: LootProfile;
@@ -633,35 +626,36 @@ export function rollLoot(input: {
   if (dnd) {
     const cr = crNumber(input.cr, level);
     const band = crBand(cr);
-    if (row.dndTable === 'individual') {
-      const [n, sides, mult, coin] = DND_INDIVIDUAL_TREASURE[band.band]!;
+    const signed = (m: number) => (m > 0 ? `+${m}` : m < 0 ? `−${-m}` : '');
+    if (row.dndTable === 'purse') {
+      const [n, sides, bonus, mult] = SGM_COIN_PURSE[band.band]!;
       const times = profile === 'miniBoss' ? 2 : 1;
       let gold = 0;
       for (let t = 0; t < times; t++) {
         const r = rollDice(n, sides, rng);
-        const amount = r.sum * mult;
+        const amount = (r.sum + bonus) * mult;
         gold += amount;
         dice.push(
-          `Individual treasure ${band.label}: ${n}d${sides} (${r.rolls.join('+')})${mult > 1 ? `×${mult}` : ''} = ${amount} ${coin}`
+          `Coin purse ${band.label}: ${n}d${sides}${signed(bonus)} (${r.rolls.join('+')})${signed(bonus)}${mult > 1 ? `×${mult}` : ''} = ${amount} gp`
         );
       }
-      return result({ gold, coin, displayLines: [...dice] });
+      return result({ gold, coin: 'gp', displayLines: [...dice] });
     }
-    const h = DND_HOARD[band.band]!;
+    const h = SGM_TREASURE_CACHE[band.band]!;
     const c = rollDice(h.coins[0], h.coins[1], rng);
     const gold = c.sum * h.coins[2];
     const ir = rollDice(h.items[0], h.items[1], rng);
     const extra = isBoss ? diff.lootExtraBossRolls : 0;
-    const count = Math.max(0, ir.sum - h.items[2]) + extra;
-    dice.push(`Hoard ${band.label}: ${h.coins[0]}d${h.coins[1]} (${c.rolls.join('+')})×${h.coins[2]} = ${gold} gp`);
+    const count = Math.max(0, ir.sum + h.items[2]) + extra;
+    dice.push(`Treasure cache ${band.label}: ${h.coins[0]}d${h.coins[1]} (${c.rolls.join('+')})×${h.coins[2]} = ${gold} gp`);
     dice.push(
-      `Magic items: 1d${h.items[1]}${h.items[2] ? `−${h.items[2]}` : ''} (${ir.rolls[0]}${h.items[2] ? `−${h.items[2]}` : ''})${extra ? ` +${extra} (${diff.label})` : ''} = ${count}`
+      `Items: ${h.items[0]}d${h.items[1]}${signed(h.items[2])} (${ir.rolls.join('+')})${signed(h.items[2])}${extra ? ` +${extra} (${diff.label})` : ''} = ${count}`
     );
     for (let i = 0; i < count; i++) {
-      const d = rollDie(100, rng);
-      const rarity = dndItemRarity(d);
+      const d = rollDie(20, rng);
+      const rarity = sgmItemRarity(d, level);
       push(rarity);
-      dice.push(`d100 = ${d} → ${rarity}: ${items[items.length - 1]!.name}`);
+      dice.push(`d20 = ${d} → ${rarity}: ${items[items.length - 1]!.name}`);
     }
     return result({ gold, coin: 'gp', displayLines: [...dice] });
   }

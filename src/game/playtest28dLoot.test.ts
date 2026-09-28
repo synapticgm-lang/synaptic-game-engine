@@ -95,22 +95,22 @@ describe('28d loot engine', () => {
     expect(share).toBeLessThan(0.9);
   });
 
-  it('D&D: 5e individual treasure and hoard with every die shown', () => {
+  it('D&D: SynapticGM coin purse and treasure cache (original tables) with every die shown', () => {
     const mob = rollLoot({ profile: 'mob', state: st('dnd'), seed: 'x', cr: '1/4' });
-    expect(mob.gold).toBeGreaterThanOrEqual(3);
+    expect(mob.gold).toBeGreaterThanOrEqual(4);
     expect(mob.gold).toBeLessThanOrEqual(18);
-    expect(mob.displayLines[0]).toMatch(/^Individual treasure CR 0–4: 3d6 \(\d\+\d\+\d\) = \d+ gp$/);
+    expect(mob.displayLines[0]).toMatch(/^Coin purse CR 0–3: 2d8\+2 \(\d\+\d\)\+2 = \d+ gp$/);
     const mini = rollLoot({ profile: 'miniBoss', state: st('dnd'), seed: 'x', cr: 7 });
     expect(mini.dice).toHaveLength(2);
-    expect(mini.dice[0]).toMatch(/2d8 \(\d\+\d\)×10 = \d+ gp/);
+    expect(mini.dice[0]).toMatch(/^Coin purse CR 4–9: 4d10 \(\d+\+\d+\+\d+\+\d+\)×4 = \d+ gp$/);
     const boss = many('boss', st('dnd'), 40, {});
     for (const r of boss) {
-      expect(r.dice[0]).toMatch(/^Hoard CR 0–4: 2d4 \(\d\+\d\)×100 = \d+ gp$/);
-      expect(r.gold % 100).toBe(0);
-      expect(r.items.length).toBeLessThanOrEqual(3);
+      expect(r.dice[0]).toMatch(/^Treasure cache CR 0–3: 4d6 \(\d\+\d\+\d\+\d\)×30 = \d+ gp$/);
+      expect(r.gold % 30).toBe(0);
+      expect(r.items.length).toBeLessThanOrEqual(2);
       expect(r.items.every((i) => ['Common', 'Uncommon', 'Rare'].includes(i.rarity))).toBe(true);
     }
-    expect(boss.some((r) => r.dice.some((l) => /^d100 = \d+ → (Common|Uncommon|Rare): /.test(l)))).toBe(true);
+    expect(boss.some((r) => r.dice.some((l) => /^d20 = \d+ → (Common|Uncommon|Rare): /.test(l)))).toBe(true);
   });
 
   it('difficulty table: Hard adds a boss roll and ×1.25 XP; Easy pity kicks in at 40 on T1', () => {
@@ -130,7 +130,7 @@ describe('28d loot engine', () => {
     const enemy = { name: 'Rat', level: 1, hp: 1, maxHp: 1, attack: 1, defense: 0, armorClass: 1, xpReward: 10, goldReward: 7, cr: '1/8' };
     const d = simulateCombat(st('dnd'), enemy);
     if (d.victory) {
-      expect(d.lootLines?.[0]).toMatch(/^Individual treasure CR 0–4: 3d6/);
+      expect(d.lootLines?.[0]).toMatch(/^Coin purse CR 0–3: 2d8\+2/);
       expect(d.goldGained).toBeGreaterThanOrEqual(3);
     }
     const l = simulateCombat(st('litrpg'), enemy);
