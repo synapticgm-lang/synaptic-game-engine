@@ -18,10 +18,8 @@ const WHO_CHIP = /\bwho are you\b/i;
 const WANT_CHIP = /\bask what they want\b|\bwhat do they want\b/i;
 const REFUSE_CHIP = /\bwhat happens if i refuse\b|\bask what happens if\b/i;
 const TALK_LINE = /\bwho are you\b|\bask what they want\b|\bwhat do you want\b|\bwhat happens if i refuse\b/i;
-/** Same last-resort LOOK family, not every beat that ends “still has the next move”. */
-const LOOK_STALL = /you looked through .+ again|the same walls held|nothing new had come|heat sits on the stones you already know|took the room in once more/i;
-const WAIT_STALL = /a pause at .+ added nothing|heat sat where you already felt it|you held still at .+|you gave .+ a beat/i;
-const LEDGER_STALL = /the room waited on what you did next|the name \S+ already stood|nothing listed had moved on|the moment at .+ settled/i;
+/** Last-resort leftover fingerprints (18b inspect / 17i room-waited) — tester abort, not a game deny-list. */
+const LAST_RESORT_MARK = /still has the next move|the same walls held|nothing new had come|took the room in once more|heat sits on the stones you already know|heat sat where you already felt it|a pause at .+ added nothing|the room waited on what you did next|the name \S+ already stood|you looked through .+ again/i;
 const TESTER_REPEAT_TALK = /\b(?:loop(?:ing|ed)?|identical|last[- ]?resort|reprint|word-for-word|word for word|exact copy|copy-paste|copy paste|same paragraph|direct copy|stuck in a loop)\b/i;
 
 export function normalizeBeat(raw) {
@@ -173,9 +171,7 @@ export function isLastResortReprint(story, lastGm) {
   const prev = normalizeBeat(lastGm);
   if (!t || !prev) return false;
   if (t === prev) return true;
-  if (LOOK_STALL.test(t) && LOOK_STALL.test(prev)) return true;
-  if (WAIT_STALL.test(t) && WAIT_STALL.test(prev)) return true;
-  if (LEDGER_STALL.test(t) && LEDGER_STALL.test(prev)) return true;
+  if (LAST_RESORT_MARK.test(t) && LAST_RESORT_MARK.test(prev)) return true;
   if (ALREADY_TOLD.test(t) && (t === prev || prev.includes(t.slice(0, 48)))) return true;
   return false;
 }
@@ -206,11 +202,6 @@ export function detectRepeatSignal({ gmStory, lastGm, decision, hardJudge } = {}
   if ((hardJudge?.reasons || []).some((r) => r === 'loop' || r === 'already_told_loop')) {
     reasons.push('hard_loop');
   }
-  if (
-    testerFlagsRepeat(decision, {})
-    && (story === prev || isLastResortReprint(story, prev))
-  ) {
-    reasons.push('tester_flag');
-  }
+  if (testerFlagsRepeat(decision, {})) reasons.push('tester_flag');
   return { hit: reasons.length > 0, reasons: [...new Set(reasons)] };
 }
