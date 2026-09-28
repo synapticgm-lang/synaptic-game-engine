@@ -8,7 +8,7 @@
 
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
+import { chipProgressScore, chipProgressWeights, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { pathToFileURL } from 'node:url';
 import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
@@ -49,7 +49,7 @@ import {
   transportRetryBackoffMs,
 } from './errorRepairWarden';
 import { applyFactLocks } from './factLocks';
-import { mulberry32, pickFateChoice, type Rng } from './fatePick';
+import { mulberry32, pickWeightedChoice, type Rng } from './fatePick';
 import { seedWorldLedgerFactions } from './factionStandings';
 import {
   LAUNCH_GM_PERSONALITY_IDS,
@@ -788,8 +788,9 @@ function pickGoalOrientedChoice(
   mode: AiAgentMode,
   rng: Rng
 ): string {
+  // 28o — default play prefers chips that move the game on (unexplored exits, quest step), same scores as the chip rank.
   if (mode === 'default' || offered.length === 0) {
-    return pickFateChoice(offered, rng);
+    return pickWeightedChoice(offered, chipProgressWeights(state, offered), rng);
   }
 
   // Score each choice based on the agent's goal
@@ -843,6 +844,7 @@ function pickGoalOrientedChoice(
     // Shared: penalize recently offered identical labels (from recentChoices)
     const recent = (state.recentChoices ?? []).slice(-5).flatMap((e) => e.choices.map((c) => c.toLowerCase().trim()));
     if (recent.filter((c) => c === lower).length >= 2) score -= 6;
+    score -= Math.min(6, chipProgressScore(state, choice) - 3);
 
     return { choice, index, score };
   });

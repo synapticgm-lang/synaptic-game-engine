@@ -1075,6 +1075,12 @@ export interface CirclingMemory {
   lastNudge?: string;
   nudgeCursor?: number;
   visits?: Record<string, number>;
+  /** 28o — place key → exact action label → last turn it was tried there with no progress. */
+  tried?: Record<string, Record<string, number>>;
+  /** 28o — last places arrived at, newest last (yo-yo demote beyond the previous place). */
+  recentPlaces?: string[];
+  /** 28o — action families of the last turns, newest last. */
+  recentFamilies?: string[];
 }
 
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */

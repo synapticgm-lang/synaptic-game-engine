@@ -5,6 +5,11 @@
  *   the way back to the previous place is labelled "Go back to …" and ranks last;
  * - rests Inspect / Wait / Look-type chips at a place where they produced nothing new recently;
  * - after 3 turns with no progress, injects one nudge built from existing engine facts.
+ * 28o — circling:
+ * - the exact action tried at a place with no progress is rested/demoted there (any family, not only loiter);
+ * - travel back to any of the last few places ranks below fresh places, not only the previous one;
+ * - stuck in place (2+ turns, no move) with no way on offered → one exit chip to the best hub;
+ * - chipProgressWeights feeds the autoplay picker so ranking changes what gets picked.
  */
 import type { CirclingMemory, GameState } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
@@ -30,9 +35,24 @@ export function actionFamily(input: string): string {
 }
 
 const LOITER = new Set(['inspect', 'wait', 'look']);
+const TRIED_TURNS = 6;
+const TRIED_PER_PLACE = 12;
+const RECENT_PLACES = 4;
 
 function placeKey(state: GameState): string {
   return (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function actionKey(input: string): string {
+  return (input ?? '').toLowerCase().replace(/[…]|\.{3}/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Turns since this exact action was tried here with no progress (null = not recently). */
+function triedAgo(state: GameState, chip: string): number | null {
+  const last = state.circling?.tried?.[placeKey(state)]?.[actionKey(chip)];
+  if (last == null) return null;
+  const ago = (state.turn ?? 0) - last;
+  return ago < TRIED_TURNS ? ago : null;
 }
 
 /** Record this turn: what was tried here, and whether the game moved on. */
@@ -48,12 +68,29 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
   if (progressed) delete stale[key]![fam];
   const visits = { ...(mem.visits ?? {}) };
   if (moved || !mem.lastLocation) visits[key] = (visits[key] ?? 0) + 1;
+  const act = actionKey(playerInput);
+  const triedHere = { ...(mem.tried?.[key] ?? {}) };
+  if (act) {
+    if (progressed) delete triedHere[act];
+    else triedHere[act] = state.turn ?? 0;
+  }
+  const trimmed = Object.fromEntries(
+    Object.entries(triedHere).sort((a, b) => b[1] - a[1]).slice(0, TRIED_PER_PLACE)
+  );
+  const tried = { ...(mem.tried ?? {}), [key]: trimmed };
+  const recentPlaces = moved || !mem.lastLocation
+    ? [...(mem.recentPlaces ?? []).filter((p) => p !== key), key].slice(-RECENT_PLACES)
+    : mem.recentPlaces ?? [];
+  const recentFamilies = [...(mem.recentFamilies ?? []), fam].slice(-3);
   return {
     ...state,
     circling: {
       ...mem,
       stale,
       visits,
+      tried,
+      recentPlaces,
+      recentFamilies,
       lastProgressTurn: progressed ? state.turn ?? 0 : mem.lastProgressTurn,
       prevPlace: moved ? mem.lastLocation : mem.prevPlace,
       lastLocation: here,
@@ -163,24 +200,98 @@ export function storyChip(state: GameState): string | null {
   return null;
 }
 
-/** Final chip order: move-the-story-on and new things first, stale loiter rested, "Go back" last. */
+const samePlace = (a: string, b: string) => !!a && !!b && (a === b || a.includes(b) || b.includes(a));
+
+/**
+ * Lower = moves the game on. 0 story step · 1 fresh place / room / fight · 2 unmet person · 3 other ·
+ * 4 place visited before · 5 one of the last few places · 6 loiter · 7 head back · 9 the previous place.
+ * An exact action already tried here with no progress adds 5.
+ */
+export function chipProgressScore(state: GameState, chip: string): number {
+  const lower = chip.toLowerCase();
+  const story = storyChip(state);
+  const mem = state.circling;
+  const repeat = triedAgo(state, chip) != null ? 5 : 0;
+  if (story && lower === story.toLowerCase()) return repeat;
+  const dest = travelDest(chip);
+  if (dest) {
+    const d = dest.toLowerCase();
+    const prev = (mem?.prevPlace ?? '').toLowerCase();
+    if (samePlace(d, prev)) return 9 + repeat;
+    if ((mem?.recentPlaces ?? []).some((p) => samePlace(d, p))) return 5 + repeat;
+    const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && p.name.toLowerCase() === d);
+    return (visited ? 4 : 1) + repeat;
+  }
+  if (/^(?:enter|next unexplored room|fight the|open the|search the)\b/i.test(chip)) return 1 + repeat;
+  const unmet = presentNpcRecords(state).filter((m) => !isMetNpc(m)).map((m) => m.npcName.toLowerCase());
+  if (unmet.some((n) => lower.includes(n))) return 2 + repeat;
+  const fam = actionFamily(chip);
+  if (fam === 'fight') return 1 + repeat;
+  if (LOITER.has(fam)) return 6 + repeat;
+  if (/^head back to the exit$/i.test(chip)) return 7 + repeat;
+  return 3 + repeat;
+}
+
+/** Picker weights from chipProgressScore: progress chips are likelier, repeats and yo-yo still possible. */
+export function chipProgressWeights(state: GameState, choices: string[]): number[] {
+  return choices.map((c) => {
+    const s = chipProgressScore(state, c);
+    if (s <= 0) return 8;
+    if (s === 1) return 6;
+    if (s === 2) return 5;
+    if (s === 3) return 3;
+    if (s === 4) return 2;
+    if (s <= 6) return 1;
+    if (s <= 8) return 0.5;
+    return 0.25;
+  });
+}
+
+/** Stuck in place with no way on: one travel chip to the best hub (quest-linked, then fresh, then least recent). */
+function stuckExitChip(state: GameState, list: string[]): string | null {
+  const mem = state.circling;
+  if (!mem || state.activeDungeon || state.openingEstablishment?.complete === false) return null;
+  if (turnsWithoutProgress(state) < 2) return null;
+  if ((mem.recentFamilies ?? []).slice(-2).includes('move')) return null;
+  if (list.some((c) => travelDest(c) || /^(?:enter|next unexplored room)\b/i.test(c))) return null;
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  if (!hubs.length) return null;
+  const here = placeKey(state);
+  const hereHub = matchHub(hubs, state.currentLocation);
+  const active = new Set((state.quests ?? []).filter((q) => q.status === 'active' && q.revealed).map((q) => q.id));
+  const recent = mem.recentPlaces ?? [];
+  const rank = (h: (typeof hubs)[number]) => {
+    const name = h.name.toLowerCase();
+    const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && p.name.toLowerCase() === name);
+    return (h.linkedQuestIds?.some((id) => active.has(id)) ? 0 : 4)
+      + (visited ? 2 : 0)
+      + (recent.some((p) => samePlace(name, p)) ? 1 : 0);
+  };
+  const pick = hubs
+    .filter((h) => h.id !== hereHub?.id && !here.includes(h.name.toLowerCase()))
+    .map((h, i) => ({ h, i, r: rank(h) }))
+    .sort((a, b) => a.r - b.r || a.i - b.i)[0]?.h;
+  return pick ? `Travel toward ${pick.name}` : null;
+}
+
+/** Final chip order: move-the-story-on and new things first, stale loiter and tried repeats rested, "Go back" last. */
 export function rankChoices(state: GameState, choices: string[]): { choices: string[]; notes: string[] } {
   const notes: string[] = [];
   if (state.activeEncounter || !choices.length) return { choices, notes };
   const mem = state.circling;
   const key = placeKey(state);
   const turn = state.turn ?? 0;
-  const visited = new Set(
-    (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
-  );
-  const prev = (mem?.prevPlace ?? '').toLowerCase();
-  const unmet = presentNpcRecords(state).filter((m) => !isMetNpc(m)).map((m) => m.npcName.toLowerCase());
   const story = storyChip(state);
 
   let list = [...choices];
   if (story && !list.some((c) => c.toLowerCase() === story.toLowerCase())) {
     list = [story, ...list];
     notes.push(`Story chip: ${story.slice(0, 40)}`);
+  }
+  const exit = stuckExitChip(state, list);
+  if (exit && !list.some((c) => c.toLowerCase() === exit.toLowerCase())) {
+    list = [exit, ...list];
+    notes.push(`Stuck exit chip: ${exit.slice(0, 40)}`);
   }
 
   const kept: string[] = [];
@@ -189,6 +300,11 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     const last = mem?.stale[key]?.[fam];
     if (LOITER.has(fam) && last != null && turn - last < REST_TURNS) {
       notes.push(`Rested chip: ${c.slice(0, 32)}`);
+      continue;
+    }
+    const ago = triedAgo(state, c);
+    if (ago != null && ago < REST_TURNS && !(story && c.toLowerCase() === story.toLowerCase())) {
+      notes.push(`Rested repeat: ${c.slice(0, 32)}`);
       continue;
     }
     kept.push(c);
@@ -200,29 +316,13 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     kept.push(back);
   }
 
-  const score = (c: string): number => {
-    const lower = c.toLowerCase();
-    if (story && lower === story.toLowerCase()) return 0;
-    const dest = travelDest(c);
-    if (dest) {
-      const d = dest.toLowerCase();
-      if (prev && (d === prev || prev.includes(d) || d.includes(prev))) return 9;
-      return visited.has(d) ? 4 : 1;
-    }
-    if (/^(?:enter|next unexplored room|fight the|open the|search the)\b/i.test(c)) return 1;
-    if (unmet.some((n) => lower.includes(n))) return 2;
-    const fam = actionFamily(c);
-    if (fam === 'fight') return 1;
-    if (LOITER.has(fam)) return 6;
-    if (/^head back to the exit$/i.test(c)) return 7;
-    return 3;
-  };
+  const prev = (mem?.prevPlace ?? '').toLowerCase();
   const ranked = kept
-    .map((c, i) => ({ c, i, s: score(c) }))
+    .map((c, i) => ({ c, i, s: chipProgressScore(state, c) }))
     .sort((a, b) => a.s - b.s || a.i - b.i)
-    .map(({ c, s }) => {
-      const dest = s === 9 ? travelDest(c) : null;
-      return dest && !/^go back to\b/i.test(c) ? `Go back to ${dest}` : c;
+    .map(({ c }) => {
+      const dest = travelDest(c);
+      return dest && samePlace(dest.toLowerCase(), prev) && !/^go back to\b/i.test(c) ? `Go back to ${dest}` : c;
     });
   if (ranked.join('|') !== choices.join('|')) notes.push('Anti-circling rank');
   return { choices: ranked, notes };
