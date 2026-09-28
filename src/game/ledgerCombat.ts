@@ -3,6 +3,7 @@ import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
 import { parkMobHpAtCurrentNode, restoreParkedEncounter } from './dungeonMobLedger';
 import { isExplorableDungeon } from './placeAuthority';
+import { growWeaponFamiliarity, weaponCategory } from './checkRules';
 
 export { remainingDungeonMobs } from './dungeonPresence';
 
@@ -176,11 +177,15 @@ export function resolveLedgerCombat(
     ? { ...encounter, hp: 0 }
     : { ...encounter, hp: enemyHpAfter };
   return {
-    state: {
-      ...state,
-      character: { ...state.character, hp: playerHpAfter },
-      activeEncounter: nextEncounter,
-    },
+    // 28c — using a weapon in a fight grows its familiarity (+1, capped at 69 untrained).
+    state: growWeaponFamiliarity(
+      {
+        ...state,
+        character: { ...state.character, hp: playerHpAfter },
+        activeEncounter: nextEncounter,
+      },
+      weaponCategory(weaponName)
+    ),
     round,
   };
 }

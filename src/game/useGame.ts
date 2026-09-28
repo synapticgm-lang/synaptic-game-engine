@@ -3250,8 +3250,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
 
       // Dice math belongs in the player-facing system log only for tabletop fantasy.
-      const codeSystemLogLine =
-        isDndEngine && !check.skippedRoll
+      // 28c — engine check record: D&D shows the full maths; LitRPG only the outcome, and only when a modifier cue applies.
+      const codeSystemLogLine = !check.skippedRoll && check.displayLine && (isDndEngine || check.record?.cue)
+        ? check.displayLine
+        : isDndEngine && !check.skippedRoll
           ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
           : null;
       const rawSystemLog = [

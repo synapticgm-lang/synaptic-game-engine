@@ -2,6 +2,25 @@ import type { AttributeKey, GameState, GmStrictness, ProfessionSkill } from './t
 import type { PlayerIntent } from './intentParser';
 import { evaluateRoll, type RollOutcome } from './gameEngine';
 import { currentDungeonNode } from './dungeonSeed';
+import { difficultyRow } from './difficultyRules';
+import { equippedWeaponName } from './ledgerCombat';
+import {
+  DISPOSITION_SOCIAL,
+  dispositionCue,
+  familiarityCue,
+  familiarityTier,
+  familiarityToHit,
+  formatCheckRecord,
+  proficiencyBonus,
+  requestSize,
+  resolveCheckRecord,
+  socialTarget,
+  weaponCategory,
+  weaponFamiliarityScore,
+  type AdvState,
+  type CheckMod,
+  type CheckResultRecord,
+} from './checkRules';
 
 export type CheckSkill =
   | 'athletics'
@@ -36,6 +55,10 @@ export interface PlayerCheckResult extends RollOutcome {
   narrativeOutcomeLabel: 'SUCCESS' | 'FAILURE';
   /** True when casual talk skipped the Social d20. */
   skippedRoll?: boolean;
+  /** 28c — the one engine result record (dice, named mods, adv state, outcome). */
+  record?: CheckResultRecord;
+  /** 28c — player-facing line: D&D full maths, LitRPG outcome only. */
+  displayLine?: string;
 }
 
 const CONTESTED_SOCIAL =
@@ -102,9 +125,9 @@ function professionBonus(state: GameState, professionName?: string): number {
 }
 
 function dcForStrictness(base: number, strictness: GmStrictness | undefined): number {
-  if (strictness === 'hardcore') return base + 2;
-  if (strictness === 'forgiving') return Math.max(8, base - 2);
-  return base;
+  // 28c — the shared difficulty table (difficultyRules) owns the DC shift (Easy −2, min 8; Hard +2).
+  const shift = difficultyRow(strictness).checkDcShift;
+  return shift < 0 ? Math.max(8, base + shift) : base + shift;
 }
 
 /**
@@ -248,12 +271,71 @@ export function runPlayerCheck(
       skippedRoll: true,
     };
   }
-  const d20 = d20Roll ?? Math.floor(Math.random() * 20) + 1;
-  const modifier =
-    attrMod(attrScore(state, ctx.attr)) +
-    gearMod(state, ctx.attr) +
-    skillBonus(state, ctx.skill) +
-    professionBonus(state, ctx.profession);
+  // 28c — named modifiers, disposition (social) and weapon familiarity (attack), one result record.
+  const mods: CheckMod[] = [
+    { label: ctx.attr, value: attrMod(attrScore(state, ctx.attr)) },
+    { label: 'gear', value: gearMod(state, ctx.attr) },
+    { label: ctx.skill ?? 'skill', value: skillBonus(state, ctx.skill) },
+    { label: 'profession', value: professionBonus(state, ctx.profession) },
+  ];
+  const row = difficultyRow(state.gmStrictness);
+  let adv: AdvState = 'normal';
+  let auto: 'willing' | 'unwilling' | undefined;
+  let cue: string | undefined;
+  if (ctx.attr === 'CHA' && ctx.skill === 'persuasion') {
+    const target = socialTarget(state, actionText);
+    if (target) {
+      const s = DISPOSITION_SOCIAL[target.disposition];
+      const size = requestSize(actionText);
+      adv = s.adv;
+      const flat = s.flat < 0 && row.socialRemoveHostilePenalty ? 0 : s.flat;
+      mods.push({ label: `${target.disposition} (${target.name})`, value: flat });
+      if (s.willing.includes(size)) auto = 'willing';
+      else if (s.unwilling.includes(size)) auto = 'unwilling';
+      cue = dispositionCue(target.name, target.disposition);
+    }
+  }
+  if (intent.kind === 'attack' && state.activeEncounter) {
+    const cat = weaponCategory(equippedWeaponName(state));
+    const score = weaponFamiliarityScore(state, cat);
+    const tier = familiarityTier(score);
+    mods.push({ label: `${tier} ${cat}`, value: familiarityToHit(score, proficiencyBonus(state.character.level)) });
+    mods.push({ label: `${row.label} difficulty`, value: row.playerToHitBonus });
+    cue = familiarityCue(tier);
+  }
+  const record = resolveCheckRecord({
+    label: ctx.label,
+    mods,
+    dc: ctx.dc,
+    adv,
+    auto,
+    cue,
+    d20s: d20Roll != null ? [d20Roll] : undefined,
+  });
+  const displayLine = formatCheckRecord(record, state.engineMode);
+  if (record.auto) {
+    const ok = record.outcome === 'success';
+    return {
+      totalScore: 0,
+      margin: 0,
+      isSuccess: ok,
+      isCriticalSuccess: false,
+      isCriticalFailure: false,
+      d20: 0,
+      modifier: 0,
+      dc: ctx.dc,
+      label: ctx.label,
+      attr: ctx.attr,
+      skill: ctx.skill,
+      codeResolutionText: `${ok ? 'SUCCESS' : 'FAILURE'} (${ctx.label}: ${record.auto}, no roll)`,
+      narrativeOutcomeLabel: ok ? 'SUCCESS' : 'FAILURE',
+      skippedRoll: false,
+      record,
+      displayLine,
+    };
+  }
+  const d20 = record.kept;
+  const modifier = record.total - record.kept;
   const outcome = evaluateRoll(d20, modifier, ctx.dc);
   const narrativeOutcomeLabel = outcome.isSuccess ? 'SUCCESS' : 'FAILURE';
   const codeResolutionText = outcome.isSuccess
@@ -271,5 +353,7 @@ export function runPlayerCheck(
     codeResolutionText,
     narrativeOutcomeLabel,
     skippedRoll: false,
+    record,
+    displayLine,
   };
 }

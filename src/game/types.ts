@@ -106,6 +106,10 @@ export interface Character {
   /** Last portrait attempt for portraitKey failed — compact fail, retry when the look/kit changes. */
   portraitFailed?: boolean;
   armorClass?: number;
+  /** 28c — weapon familiarity 0–100 per weapon category (checkRules). */
+  weaponFamiliarity?: Partial<Record<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed', number>>;
+  /** 28c — class/background weapon proficiencies; each sets familiarity to at least 70. */
+  weaponProficiencies?: Array<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed'>;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
