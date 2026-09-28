@@ -166,6 +166,7 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const id = String(rec.id ?? '').trim();
       const use = String(rec.use ?? '').trim() as TokenUse;
       if (!tok || !id || !TOKEN_USES.has(use)) return null;
+      if (id.includes('<')) continue;
       refs.push({ tok, id, use });
     }
     const lines: TokenLine[] = [];
@@ -174,8 +175,8 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const rec = row as { fn?: unknown; text?: unknown; speaker_tok?: unknown };
       const fn = String(rec.fn ?? '').trim() as LineFn;
       const text = String(rec.text ?? '').trim();
-      // 28g — skip the prompt example line when the writer echoes it (... @t1 ...).
-      if (!LINE_FNS.has(fn) || !text || /^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text)) continue;
+      // 28g/28h — skip echoed prompt placeholders (... @t1 ... or <placeholder>).
+      if (!LINE_FNS.has(fn) || !text || /^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text) || /<[^<>]{2,40}>/.test(text)) continue;
       const speaker = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';
       lines.push(speaker ? { fn, text, speaker_tok: speaker } : { fn, text });
     }

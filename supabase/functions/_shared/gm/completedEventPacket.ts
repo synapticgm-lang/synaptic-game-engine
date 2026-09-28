@@ -719,8 +719,10 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
   const place = (state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), place);
   // 27g — the stitch reads the same place card as the writer.
-  const card = state.activeDungeon ? null : placeCardFor(state, place);
-  const exits = state.activeDungeon
+  const dungeonNode = state.activeDungeon?.nodes?.find((n) => n.id === state.activeDungeon?.currentNodeId);
+  const inDungeonRoom = !!dungeonNode && place.toLowerCase().includes(dungeonNode.name.toLowerCase());
+  const card = inDungeonRoom ? null : placeCardFor(state, place);
+  const exits = inDungeonRoom && state.activeDungeon
     ? graphExitPads(state.activeDungeon).map((p) => p.replace(/^.*\s+to\s+/i, '').trim())
     : card?.exits?.length
       ? card.exits
@@ -900,7 +902,7 @@ export function formatWriterFacingEvent(
     `Outcome: ${packet.outcome}.`,
   ];
   if (packet.engineResult) {
-    lines.push(`ENGINE RESULT (required fact — the story must state this plainly): ${packet.engineResult}`);
+    lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
   }
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
@@ -921,8 +923,8 @@ export function formatWriterFacingEvent(
   lines.push(`YOU MAY ONLY MENTION: ${packet.allowlist.length ? packet.allowlist.join(', ') : 'none'}.`);
   lines.push('');
   lines.push('TOKEN PROSE — return JSON only (no markdown):');
-  // 28g — a real example; writers copied the old "... @t1 ..." placeholder as a line.
-  lines.push('{"refs":[{"tok":"t1","id":"here","use":"place"}],"lines":[{"fn":"place","text":"Rain ran off the stones of @t1."},{"fn":"action","text":"You did it, and it showed."}]}');
+  // 28h — schema-only example with obvious <placeholders>; writers copied the old real example.
+  lines.push('{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"<use>"}],"lines":[{"fn":"<fn>","text":"<your own sentence using @t1>"}]}');
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
   lines.push('lines.text may name entities only as @t1-style tokens. Write 4–6 lines. Prefer place then action.');
   lines.push(formatRefEnumForWriter(packet.refEnum ?? []));
@@ -1491,11 +1493,6 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
   ],
   settle: [
     {
-      id: 'st1',
-      fingerprint: 'You still had the next move',
-      render: (s) => `The moment at ${s.where} settled. You still had the next move.`,
-    },
-    {
       id: 'st2',
       fingerprint: 'the room held its place',
       render: (s) =>
@@ -1642,8 +1639,6 @@ function topicAdvancePool(
   const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const here = herePhrase(where);
   const head = castHead(state, packet);
-  const pc = lockedOpeningPcName(state);
-  const nextMove = pc ? `${pc} still has the next move.` : 'You have the next move.';
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')
     .slice(-10)
@@ -1661,23 +1656,23 @@ function topicAdvancePool(
   const placeOnce = onceSaid(state, desc || groundLine);
   const peopleOnce = onceSaid(state, peopleLine);
   const look = [
-    `You looked over ${placeName}. ${placeOnce} ${peopleOnce} ${nextMove}`,
-    `${capFirst(placeName)} held your eye a moment. ${placeOnce} ${peopleOnce} ${nextMove}`,
+    `You looked over ${placeName}. ${placeOnce} ${peopleOnce}`,
+    `${capFirst(placeName)} held your eye a moment. ${placeOnce} ${peopleOnce}`,
   ];
   const wait = [
-    `You held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${placeOnce} ${nextMove}`,
+    `You held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${placeOnce}`,
   ];
   const exitsPool = [
-    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleOnce} ${nextMove}`,
+    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleOnce}`,
   ];
   const wantAgain = [
-    `You are still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They wait on what you do next. The room does not add a second speech. ${nextMove}`,
-    `At ${here} the ask was already answered. ${head ? `${head} did not say it twice.` : 'They did not say it twice.'} The room stayed the same. ${nextMove}`,
-    `You asked again at ${here}. ${head ? `${head} had already given the want.` : 'The want had already been given.'} They stay in sight. Nothing new was added. ${nextMove}`,
+    `You are still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They wait on what you do next. The room does not add a second speech.`,
+    `At ${here} the ask was already answered. ${head ? `${head} did not say it twice.` : 'They did not say it twice.'} The room stayed the same.`,
+    `You asked again at ${here}. ${head ? `${head} had already given the want.` : 'The want had already been given.'} They stay in sight. Nothing new was added.`,
   ];
   const whoAgain = [
-    `You are still at ${here}. ${head ? `${head} already answered who they are.` : 'They already answered who they are.'} They wait on what you do next. The room does not add a second name. ${nextMove}`,
-    `At ${here} the name-ask was already answered. ${head ? `${head} did not introduce twice.` : 'They did not introduce twice.'} ${nextMove}`,
+    `You are still at ${here}. ${head ? `${head} already answered who they are.` : 'They already answered who they are.'} They wait on what you do next. The room does not add a second name.`,
+    `At ${here} the name-ask was already answered. ${head ? `${head} did not introduce twice.` : 'They did not introduce twice.'}`,
   ];
   const graphHit = matchGraphExitPad(state.activeDungeon, act);
   const hubHit = parseTravelDestination(act, state.campaignBibleId);
@@ -1723,25 +1718,25 @@ function topicAdvancePool(
     : '';
   const go = arrived
     ? [
-      `You reached ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
-      `You came into ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
-      `The way gave onto ${arriveHere}. ${arriveDesc} ${behindLine} ${nextMove}`,
+      `You reached ${arriveHere}. ${arriveDesc} ${behindLine}`,
+      `You came into ${arriveHere}. ${arriveDesc} ${behindLine}`,
+      `The way gave onto ${arriveHere}. ${arriveDesc} ${behindLine}`,
     ]
     : [
-      `You set out with ${dest} from ${here}. The trail is open under you. ${nextMove}`,
-      `You start toward ${dest} from ${here}. The road remembers the next step. ${nextMove}`,
-      `You take ${dest} at their word and move from ${here}. ${nextMove}`,
+      `You set out with ${dest} from ${here}. The trail is open under you.`,
+      `You start toward ${dest} from ${here}. The road remembers the next step.`,
+      `You take ${dest} at their word and move from ${here}.`,
     ];
   const spokenWant = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
   const spokenWho = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
-  const wantFirst = `You are at ${here}. ${spokenWant} ${head ? `${head} stays where you can see them.` : 'They stay in the room.'} ${nextMove}`;
-  const whoFirst = `You are at ${here}. ${spokenWho} They stay in the room. ${nextMove}`;
+  const wantFirst = `You are at ${here}. ${spokenWant} ${head ? `${head} stays where you can see them.` : 'They stay in the room.'}`;
+  const whoFirst = `You are at ${here}. ${spokenWho} They stay in the room.`;
   const keepVerb = head && (/\band\b/.test(head) || /\b(people|engineers|guards|chirurgeons|priests|handlers)\b/i.test(head))
     ? 'keep'
     : 'keeps';
   const accept = [
-    `You take the work at ${here}. ${head ? `${head} ${keepVerb} the offered kit where you can take it.` : 'The offered kit stays in reach.'} The deal stays in the room. ${nextMove}`,
-    `You say yes at ${here}. ${spokenWant} The offered kit is in reach. ${nextMove}`,
+    `You take the work at ${here}. ${head ? `${head} ${keepVerb} the offered kit where you can take it.` : 'The offered kit stays in reach.'} The deal stays in the room.`,
+    `You say yes at ${here}. ${spokenWant} The offered kit is in reach.`,
   ];
   let pool = look;
   if (lineNamesOtherNpc(state, act) && !wantsMove) {
@@ -1759,7 +1754,7 @@ function topicAdvancePool(
       .replace(/\s+/g, ' ')
       .trim();
     pool = spoken
-      ? [`You are at ${here}. ${spoken} ${nextMove}`]
+      ? [`You are at ${here}. ${spoken}`]
       : look;
   } else if (wantsMove) {
     pool = go;

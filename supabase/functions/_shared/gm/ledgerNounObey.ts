@@ -12,7 +12,7 @@ import {
   mentionAllowlistHas,
   type CompletedEventPacket,
 } from './completedEventPacket.ts';
-import { cardRoleStandIn, openingCastNames } from './openingEstablishment.ts';
+import { openingCastNames } from './openingEstablishment.ts';
 
 const PERSON_INVENT =
   /\b((?:High Chanter|Brother|Sister|Father|Mother|Captain|Envoy)\s+[A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+)?|[A-Z][a-z'-]+\s+[A-Z][a-z'-]+)\b/g;
@@ -83,14 +83,12 @@ function scrubCastAsPermit(text: string, castNames: string[]): string {
   return next;
 }
 
-function dropOrRewriteInvented(sent: string, invented: string[], role: string): string {
-  let next = sent;
+function dropOrRewriteInvented(sent: string, invented: string[]): string {
   for (const name of invented) {
-    if (!name || !new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(next)) continue;
-    if (PRESENCE_VERB.test(next)) return '';
-    next = next.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), role);
+    if (!name) continue;
+    if (new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(sent)) return '';
   }
-  return next;
+  return sent;
 }
 
 /**
@@ -111,7 +109,6 @@ export function obeyLedgerNouns(
     ? packet.allowlist
     : compileNounAllowlist(state, [], { hallTalk });
   const cast = openingCastNames(state);
-  const role = cardRoleStandIn(state);
 
   const beforePermit = next;
   next = scrubCastAsPermit(next, cast);
@@ -120,7 +117,7 @@ export function obeyLedgerNouns(
   const invented = inventedPersonNamesNotOnAllowlist(next, allowlist);
   if (invented.length) {
     const kept = splitSentences(next)
-      .map((s) => dropOrRewriteInvented(s, invented, role))
+      .map((s) => dropOrRewriteInvented(s, invented))
       .filter((s) => s.trim().length > 8);
     next = tidy(kept.join(' '));
     notes.push('invented-name');

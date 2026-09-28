@@ -60,6 +60,8 @@ export function scrubInventedProperNouns(
     const key = name.toLowerCase();
     if (ALWAYS_ALLOW.has(key)) continue;
     if (grounded.has(key)) continue;
+    const tail = key.split(/\s+/).slice(1).join(' ');
+    if (tail && grounded.has(tail)) continue;
     if (key.split(/\s+/).every((p) => ALWAYS_ALLOW.has(p))) continue;
     found.push(name);
   }
@@ -70,21 +72,6 @@ export function scrubInventedProperNouns(
   }
 
   const alone = isAloneArrivalOpening(state);
-  for (const claim of interactionClaims) {
-    if (claim.length < 3) continue;
-    // Never scrub the grounded PC name into a role slot.
-    const pc = (state.character?.name ?? '').trim().toLowerCase();
-    if (pc && claim.toLowerCase() === pc) continue;
-    const generic = /\b(chest|door|crate|cache|altar|console|panel|window)\b/i.test(claim)
-      ? { afterThe: 'something nearby', afterA: 'something nearby', bare: 'something nearby' }
-      : /\b(creature|beast|enemy|foe|hatchling|mob)\b/i.test(claim)
-        ? { afterThe: 'a nearby threat', afterA: 'a nearby threat', bare: 'a nearby threat' }
-        : alone
-          ? { afterThe: 'the panel', afterA: 'a panel glow', bare: 'the panel' }
-          : personSlotFromScene(state);
-    text = replaceUngroundedName(text, claim, generic);
-  }
-
   // Never leave soft placeholders as dialogue subjects / room furniture.
   text = scrubSomeoneNearbyActor(text, alone);
   text = scrubSpeakerLeak(text, state);

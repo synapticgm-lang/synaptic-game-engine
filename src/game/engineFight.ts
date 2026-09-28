@@ -142,7 +142,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   };
   next = growWeaponFamiliarity(next, weaponCategory(equippedWeaponName(next)));
   receipts.push(
-    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${result.rounds} round${result.rounds === 1 ? '' : 's'} — dealt ${result.damageDealt}, took ${result.damageReceived} (HP ${hpBefore} → ${hpAfter})`,
+    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${result.rounds} round${result.rounds === 1 ? '' : 's'} — dealt ${result.damageDealt}, took ${result.damageReceived} (HP ${hpBefore} → ${hpAfter})${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );
   let found = '';

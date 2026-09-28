@@ -5,7 +5,7 @@
 
 import type { GameState, PlaceRecord } from './types';
 import type { ActiveDungeonState } from './mapEngine';
-import { buildInteriorFloorPlan } from './mapEngine';
+import { buildInteriorFloorPlan, dungeonHereLabel } from './mapEngine';
 import { seedDungeonState } from './dungeonSeed';
 import { findSettlement } from './worldMapAuthority';
 import { placeIdFromName } from './places';
@@ -55,11 +55,12 @@ export function openDungeonAtSite(
   };
   dungeon = seedDungeonState(dungeon, `${seed}-${site}`);
   const places = markPlaceDungeonRef(state.places ?? [], site, dungeon.dungeonName ?? site);
+  const entryNode = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
   return {
     ...state,
     activeDungeon: dungeon,
     places,
-    currentLocation: dungeon.nodes?.[0]?.name ?? site,
+    currentLocation: entryNode ? dungeonHereLabel(dungeon.dungeonName, entryNode.name) : site,
   };
 }
 
