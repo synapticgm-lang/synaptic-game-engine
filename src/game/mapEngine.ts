@@ -107,6 +107,8 @@ export interface ActiveDungeonState {
   tier: MapTier;
   /** Dungeon danger T1–T4 for loot/enemies. Omit on street maps. */
   dangerTier?: MapTier;
+  /** 28m — dungeon card level for treasure scaling (set when the card is built). */
+  areaLevel?: number;
   parentCoordinates?: Location3D;
   currentZLevel: number;
   currentNodeId: string;

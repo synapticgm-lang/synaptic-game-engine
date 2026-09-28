@@ -17,6 +17,7 @@ import { createHashRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
+import { tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
@@ -363,6 +364,7 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
     siteName: name,
     tier: 4,
     dangerTier: danger,
+    areaLevel: Math.max(level, tierToAreaLevel(danger)),
     currentZLevel: entryZ,
     currentNodeId: gen.entryId,
     visitedNodeIds: [gen.entryId],

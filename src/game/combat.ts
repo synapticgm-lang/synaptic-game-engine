@@ -2,7 +2,7 @@ import type { GameState, Item, Rarity } from './types';
 import { equippedWeaponName } from './ledgerCombat';
 import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
 import { enemyBodyAuthorityLine } from './combatAuthority';
-import { rollLoot as rollEngineLoot, type LootProfile } from './lootTableRegistry';
+import { rollLoot as rollEngineLoot, scaleTreasureGold, type LootProfile } from './lootTableRegistry';
 
 export interface EnemyStats {
   name: string;
@@ -154,7 +154,11 @@ export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResul
         firstKill,
       })
     : null;
-  const goldGained = victory ? (state.engineMode === 'dnd' && engineLoot ? engineLoot.gold : enemy.goldReward) : 0;
+  const goldGained = victory
+    ? state.engineMode === 'dnd' && engineLoot
+      ? engineLoot.gold
+      : scaleTreasureGold(state, enemy.goldReward)
+    : 0;
   const loot = victory ? [...rollLoot(enemy), ...(engineLoot?.items ?? [])] : [];
   const lootLines = engineLoot && state.engineMode === 'dnd' ? engineLoot.dice : [];
   const lootPity =

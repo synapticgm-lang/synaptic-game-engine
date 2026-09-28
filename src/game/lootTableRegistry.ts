@@ -21,6 +21,7 @@ import { rollLootRarityWithPity } from './dungeonSeed';
 import { difficultyRow } from './difficultyRules';
 import { createHashRng } from './seededRng';
 import { weaponCategory, type WeaponCategory } from './checkRules';
+import { resolveLocalAreaLevel, type AreaLevelSource } from './placeAuthority';
 import lootTablesData from './data/encounters/D9_loot_tables.json';
 
 export interface LootEntry {
@@ -570,6 +571,29 @@ function makeItem(
   };
 }
 
+export interface TreasureScale {
+  areaLevel: number;
+  partyLevel: number;
+  source: AreaLevelSource;
+  /** Loot tier 1–4: L1–3 → 1, L4–6 → 2, L7–9 → 3, L10+ → 4. */
+  tier: 1 | 2 | 3 | 4;
+  /** Gold multiplier 1 + 0.15 × (area level − 1), capped at 3. */
+  goldMult: number;
+}
+
+/** 28m — every loot source scales gold + tier from the local area level (clamped to party ±3). */
+export function treasureScale(state: GameState): TreasureScale {
+  const area = resolveLocalAreaLevel(state);
+  const tier = Math.max(1, Math.min(4, 1 + Math.floor((area.level - 1) / 3))) as 1 | 2 | 3 | 4;
+  const goldMult = Math.min(3, 1 + 0.15 * (area.level - 1));
+  return { areaLevel: area.level, partyLevel: area.partyLevel, source: area.source, tier, goldMult };
+}
+
+export function scaleTreasureGold(state: GameState, baseGold: number): number {
+  if (!Number.isFinite(baseGold) || baseGold <= 0) return 0;
+  return Math.round(baseGold * treasureScale(state).goldMult);
+}
+
 /**
  * The one engine loot roll. Seeded; runs when an encounter resolves (kills) or a chest is opened.
  * LitRPG / RPG / PYOA: profile rolls on the tier curves with pity. D&D: SynapticGM coin purse / treasure cache with dice shown.
@@ -578,7 +602,7 @@ export function rollLoot(input: {
   profile: LootProfile;
   state: GameState;
   seed: string;
-  /** Map tier 1–4 (defaults to the active dungeon, else from level). */
+  /** Loot tier 1–4 (defaults to the local area level via treasureScale). */
   tier?: number;
   cr?: string | number | null;
   firstKill?: boolean;
@@ -589,11 +613,9 @@ export function rollLoot(input: {
   const diff = difficultyRow(state.gmStrictness);
   const rng = input.rng ?? createHashRng(input.seed, 'loot', profile);
   const dnd = state.engineMode === 'dnd';
-  const level = state.character?.level ?? 1;
-  const baseTier = Math.max(
-    1,
-    Math.min(4, Math.floor(Number(input.tier ?? state.activeDungeon?.dangerTier ?? state.activeDungeon?.tier ?? Math.ceil(level / 5)) || 1))
-  ) as 1 | 2 | 3 | 4;
+  const scale = treasureScale(state);
+  const level = scale.areaLevel;
+  const baseTier = Math.max(1, Math.min(4, Math.floor(Number(input.tier ?? scale.tier) || 1))) as 1 | 2 | 3 | 4;
   const owned = new Set(
     (state.inventory ?? []).filter((i) => i.rarity === 'Legendary').map((i) => i.name.toLowerCase())
   );

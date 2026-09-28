@@ -80,6 +80,32 @@ export function resolveThreatTier(state: GameState): number | null {
   return danger ?? null;
 }
 
+/** 28m — level a threat/danger tier (1–4) stands for: T1→1, T2→4, T3→7, T4→10. */
+export function tierToAreaLevel(tier: number): number {
+  return Math.max(1, Math.round(tier) * 3 - 2);
+}
+
+export type AreaLevelSource = 'dungeon' | 'region' | 'party';
+
+/**
+ * 28m — local area level for treasure: dungeon card level when inside one, else the
+ * region/zone threat, else party level. Clamped to party level ±3.
+ */
+export function resolveLocalAreaLevel(state: GameState): { level: number; partyLevel: number; source: AreaLevelSource } {
+  const partyLevel = Math.max(1, Math.floor(state.character?.level ?? 1));
+  const clamp = (n: number) => Math.max(1, Math.max(partyLevel - 3, Math.min(partyLevel + 3, Math.round(n))));
+  const dungeon = state.activeDungeon;
+  if (isExplorableDungeon(dungeon)) {
+    const raw = dungeon.areaLevel ?? (dungeon.dangerTier ? tierToAreaLevel(dungeon.dangerTier) : null);
+    if (typeof raw === 'number' && Number.isFinite(raw)) return { level: clamp(raw), partyLevel, source: 'dungeon' };
+  }
+  const tier = resolveThreatTier(state);
+  if (typeof tier === 'number' && Number.isFinite(tier) && tier > 0) {
+    return { level: clamp(tierToAreaLevel(tier)), partyLevel, source: 'region' };
+  }
+  return { level: partyLevel, partyLevel, source: 'party' };
+}
+
 export function resolveMapScale(state: GameState): MapScale {
   const dungeon = state.activeDungeon;
   const camera = state.sceneFacts?.cameraLock;
