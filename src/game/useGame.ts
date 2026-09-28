@@ -2563,60 +2563,16 @@ export function useGame() {
       ) {
         liveCurrent = spawnRoomEncounter(liveCurrent);
       }
-      let ledgerRound: LedgerCombatRound | null = null;
-      let ledgerFlee: LedgerFleeRound | null = null;
+      const ledgerRound = null as LedgerCombatRound | null; // 28f — engineFight owns the outcome
+      const ledgerFlee = null as LedgerFleeRound | null;
       if (intentForMandate.kind === 'attack') {
+        // 28f — spawn only. The fight / flee / parley outcome is settled once by the engine
+        // (runArcDirectorBeforeGm → engineFight). The old round-by-round ledger paths are removed.
         liveCurrent = spawnRoomEncounter(liveCurrent);
-        const resolved = resolveLedgerCombat(liveCurrent, check);
-        if (resolved) {
-          liveCurrent = resolved.state;
-          ledgerRound = resolved.round;
-        }
-      } else if (intentForMandate.kind === 'flee' && isCombatLocked(liveCurrent)) {
-        const resolved = resolveLedgerFlee(liveCurrent, check);
-        if (resolved) {
-          liveCurrent = resolved.state;
-          ledgerFlee = resolved.round;
-        }
       }
       
-      // Batch Z Milestone 2 — Z-2: Ledger-first combat resolution
-      // Roll combat outcome BEFORE GM call to prevent combat purgatory
-      let ledgerCombatOutcome: CombatOutcome | null = null;
-      let ledgerCombatPrompt = '';
-      if (liveCurrent.activeEncounter && !ledgerRound && !ledgerFlee) {
-        const isAttack = /\b(attack|strike|fight|engage|press the attack|slash|stab)\b/i.test(sanitizedInput);
-        const isFleeManual = /\b(flee|run|escape|retreat)\b/i.test(sanitizedInput);
-        const isParley = /\b(parley|negotiate|talk.*down|truce)\b/i.test(sanitizedInput);
-        const isStruggle = /\b(struggle|resist|break free)\b/i.test(sanitizedInput);
-        const isPlead = /\b(plead|beg|mercy)\b/i.test(sanitizedInput);
-        
-        if (isAttack || isFleeManual || isParley || isStruggle || isPlead) {
-          const action = isAttack ? 'attack' 
-            : isFleeManual ? 'flee' 
-            : isParley ? 'parley'
-            : isStruggle ? 'struggle'
-            : 'plead';
-          
-          try {
-            ledgerCombatOutcome = rollCombatOutcome(action, liveCurrent);
-            liveCurrent = applyCombatOutcome(liveCurrent, ledgerCombatOutcome);
-            ledgerCombatPrompt = formatCombatOutcomeForPrompt(ledgerCombatOutcome);
-            stateRef.current = liveCurrent;
-            
-            debugLogger.record('INFO', 'Ledger-first combat outcome', {
-              action,
-              damage: ledgerCombatOutcome.damage,
-              enemyHp: `${ledgerCombatOutcome.enemyHpBefore}→${ledgerCombatOutcome.enemyHpAfter}`,
-              enemyDied: ledgerCombatOutcome.enemyDied,
-            });
-          } catch (err) {
-            debugLogger.record('ERROR', 'Combat resolution failed', {
-              error: err instanceof Error ? err.message : String(err),
-            });
-          }
-        }
-      }
+      // 28f — the Z-2 per-action combat roll is removed: engineFight (runArcDirectorBeforeGm) owns the outcome.
+      const ledgerCombatPrompt = '';
       
       const outcomeToken = buildOutcomeToken(check, intentForMandate, {
         kitWeapon: equippedWeaponName(liveCurrent),

@@ -51,6 +51,7 @@ import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerpr
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
+import { resolveEngineFight } from './engineFight';
 import { isLookAroundAction } from './sandboxXp';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import {
@@ -528,7 +529,12 @@ function applyBeatEffects(
     extras.questStage = contract.summary;
   }
 
-  if (contract.spawnEncounter && !next.activeEncounter) {
+  // 28f — never spawn a new fight on the turn one cleared.
+  if (
+    contract.spawnEncounter
+    && !next.activeEncounter
+    && next.arcDirector?.lastEncounterClearedTurn !== next.turn
+  ) {
     // WS-4 Wave D+: Check density before spawning
     const locationId = next.currentLocation?.name ?? 'unknown';
     const isDungeon = !!(next.currentLocation?.isDungeon);
@@ -607,6 +613,9 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check):/.test(r)) {
+      // 28f — engine fight outcome on STATUS
+      lines.push(r);
     } else if (r.startsWith('Social:')) {
       const m = r.match(/Social: \+(\d+) XP \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (${m[2]})`);
@@ -634,10 +643,13 @@ export function runArcDirectorBeforeGm(
   if (openPin) mandates.push(openPin);
 
   // 29a — tick / force-clear active encounter before new beat commits
-  if (working.activeEncounter) {
-    const tick = tickEncounterTerminal(working, playerInput);
+  // 28f — fight / flee / parley: the engine settles the encounter this turn; the writer gets the facts once.
+  const engineFight = resolveEngineFight(working, playerInput);
+  if (engineFight || working.activeEncounter) {
+    const tick = engineFight ?? tickEncounterTerminal(working, playerInput);
     working = tick.state;
     systemReceipts.push(...tick.receipts);
+    if (engineFight) mandates.push(engineFight.facts);
     if (!working.activeEncounter) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
       // 29b — voice line on combat clear

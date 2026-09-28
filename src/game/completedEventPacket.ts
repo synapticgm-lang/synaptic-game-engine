@@ -752,6 +752,17 @@ function descriptorSentence(descriptor: string | undefined): string {
   return d ? `${capFirst(d)}.` : '';
 }
 
+/** 28f — place / presence lines once per arrival or change: '' when a recent GM beat already said it. */
+function onceSaid(state: GameState, line: string): string {
+  const l = (line ?? '').replace(/\s+/g, ' ').trim();
+  if (!l) return '';
+  const recent = (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .slice(-10)
+    .map((e) => String(e.content ?? '').replace(/\s+/g, ' '));
+  return recent.some((b) => b.includes(l)) ? '' : l;
+}
+
 function peopleHereSentence(present: string[]): string {
   if (!present.length) return 'Nobody you knew by name stood close.';
   return `${listNames(present)} ${present.length > 1 ? 'were' : 'was'} still there.`;
@@ -786,6 +797,21 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
       .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase())
   );
   const fresh = (s: string) => !!s && !priorBodies.has(s.replace(/\s+/g, ' ').trim().toLowerCase());
+  // 28f — a fight the engine settled this turn: the stitch states that outcome, never a scenery line.
+  const cleared = [...(state.arcDirector?.encounterClearedReceipts ?? [])]
+    .reverse()
+    .find((r) => r.turn === state.turn);
+  if (cleared) {
+    const fightLine =
+      cleared.outcome === 'escape'
+        ? `You broke away from ${cleared.name} and got clear. The fight was over.`
+        : cleared.outcome === 'parleyResolved'
+          ? `${cleared.name} accepted terms and stood down. The fight was over.`
+          : cleared.outcome === 'defeat'
+            ? `${cleared.name} put you down and left you there. The fight was over.`
+            : `${cleared.name} went down and stayed down. The fight was over.`;
+    if (fresh(fightLine)) return fightLine;
+  }
   const sheet = /\bpanel\b|\bcheck status\b/i.test(act) ? ledgerSheetLine(state) : '';
   if (sheet) return sheet;
   if (/\b(?:talk|speak|ask|press|offer|refuse|tell|persuade)\b/i.test(act)) {
@@ -794,11 +820,11 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   }
   const f = ledgerPlaceFacts(state);
   if (isExitsAsk(act)) {
-    const line = `You checked the ways out of ${f.place}. ${exitsSentence(f.place, f.exits)} ${peopleHereSentence(f.present)}`;
+    const line = `You checked the ways out of ${f.place}. ${exitsSentence(f.place, f.exits)} ${onceSaid(state, peopleHereSentence(f.present))}`;
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
   }
   if (isLookAroundAct(act) && !/\btravel\b/i.test(act)) {
-    const line = `You looked over ${f.place}. ${descriptorSentence(f.descriptor)} ${peopleHereSentence(f.present)}`;
+    const line = `You looked over ${f.place}. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))}`;
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
   }
   const recent = (state.log ?? [])
@@ -807,7 +833,7 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
     .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
   const pool = topicAdvancePool(state, undefined, act || 'Look around').filter(fresh);
   if (pool.length) return pickAdvanceVariant(pool, recent, (state.turn ?? 0) + act.length);
-  return `You stayed at ${f.place} a moment longer. ${descriptorSentence(f.descriptor)} ${peopleHereSentence(f.present)} The next move was yours.`
+  return `You stayed at ${f.place} a moment longer. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))} The next move was yours.`
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -1602,15 +1628,18 @@ function topicAdvancePool(
     ? `${people} ${facts.present.length > 1 || /\band\b/.test(people) ? 'were' : 'was'} still there.`
     : 'Nobody you knew by name stood close.';
   const groundLine = NO_DESCRIPTION_LOOK_LINE;
+  // 28f — the place / presence line is said once per arrival or change, not every stitch.
+  const placeOnce = onceSaid(state, desc || groundLine);
+  const peopleOnce = onceSaid(state, peopleLine);
   const look = [
-    `You looked over ${placeName}. ${desc || groundLine} ${peopleLine} ${nextMove}`,
-    `${capFirst(placeName)} held your eye a moment. ${desc || groundLine} ${peopleLine} ${nextMove}`,
+    `You looked over ${placeName}. ${placeOnce} ${peopleOnce} ${nextMove}`,
+    `${capFirst(placeName)} held your eye a moment. ${placeOnce} ${peopleOnce} ${nextMove}`,
   ];
   const wait = [
-    `You held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${desc || groundLine} ${nextMove}`,
+    `You held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${placeOnce} ${nextMove}`,
   ];
   const exitsPool = [
-    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleLine} ${nextMove}`,
+    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleOnce} ${nextMove}`,
   ];
   const wantAgain = [
     `You are still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They wait on what you do next. The room does not add a second speech. ${nextMove}`,

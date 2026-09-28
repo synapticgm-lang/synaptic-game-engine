@@ -64,7 +64,7 @@ const LARGE_SPAN =
   /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)(?:\s+of)?\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|watchers|voices|souls|bodies)\b/gi;
 
 const GROUP_SPAN =
-  /\b(?:a\s+)?(?:scattered\s+|sparse\s+|modest\s+|small\s+|large\s+|meager\s+)?(?:group|crowd|gathering)(?:\s+of\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))?|(?:several|many)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
+  /\b(?:a\s+)?(?:scattered\s+|sparse\s+|modest\s+|small\s+|large\s+|meager\s+)?(?:group|crowd|gathering)s?\b(?:\s+of\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))?|(?:several|many)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
 
 const FEW_SPAN =
   /\b(?:a\s+)?(?:few|handful of)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;

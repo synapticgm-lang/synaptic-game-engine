@@ -1259,6 +1259,27 @@ export function compileChoices(
     notes.push('Talk-loop world-moving pad');
   }
   
+  // 28f — a named hub with no live threat always offers one travel / exit chip.
+  // Respects the tested travel yo-yo / treadmill starve (travelStarve, stallInterrupt, excluded families).
+  if (
+    !engaged
+    && !travelStarve
+    && !stallInterrupt
+    && !finalChoices.some((c) => isTravelPad(c) || isLeaveFamilyPad(c))
+  ) {
+    const hubs = hubsForBibleId(state.campaignBibleId);
+    const hereHub = matchHub(hubs, state.currentLocation);
+    if (hereHub) {
+      const exit =
+        edgeLabels.find((l) => isTravelPad(l))
+        ?? hubs.filter((h) => h.id !== hereHub.id).map((h) => `Travel toward ${h.name}`)[0];
+      if (exit) {
+        finalChoices = [...finalChoices.slice(0, 5), exit];
+        notes.push(`Hub exit chip: ${exit.slice(0, 32)}`);
+      }
+    }
+  }
+
   // 08c Tag & Trigger — thin bounty pad when worldTags fire (Summoned Pact hub).
   if (!engaged) {
     for (const pad of tagTriggerPads(state)) {
