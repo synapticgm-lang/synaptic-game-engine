@@ -18,6 +18,36 @@ function samePlace(a: string | undefined, b: string | undefined): boolean {
 }
 
 /**
+ * HERE moved this turn (hub travel, graph exit, story spine) before the writer runs:
+ * the sheet must follow, or the writer is painted the old place and the arrival stamp
+ * names a stale origin. Previous sheet carries the turn-start place name.
+ */
+export function syncSheetToMovedHere<T extends GameState>(state: T, hereAtTurnStart: string | undefined): T {
+  const here = (state.currentLocation ?? '').trim();
+  const start = (hereAtTurnStart ?? '').trim();
+  if (!here || samePlace(here, start)) return state;
+  const sheet = state.locationSheet;
+  if (sheet?.name && samePlace(sheet.name, here)) return state;
+  const previous: LocationSheet | null = sheet
+    ? { ...cloneSheet(sheet), name: start || sheet.name }
+    : start
+      ? { name: start, climate: '', timeOfDay: '', interactables: [], exits: [], presentNpcIds: [] }
+      : state.previousLocationSheet ?? null;
+  return {
+    ...state,
+    previousLocationSheet: previous,
+    locationSheet: {
+      name: here,
+      climate: '',
+      timeOfDay: '',
+      interactables: [],
+      exits: [],
+      presentNpcIds: [],
+    },
+  };
+}
+
+/**
  * When the player leaves a place, stash the current sheet as previous,
  * then set / refresh the current sheet for the new place.
  */

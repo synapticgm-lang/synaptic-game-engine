@@ -113,7 +113,9 @@ export function compilePointerCardSlots(state: GameState): PointerCardSlots | nu
     'Do not invent a new room, crowd size, or summon-why.',
     'Do not write an ordinary Earth street first unless this card is Earth Integration.',
     'Do not add named people or places beyond this card.',
-    'Chrome (blue panel, Place, Registration) is not a person.',
+    state.engineMode === 'litrpg'
+      ? 'Chrome (blue panel, Place, Registration) is not a person.'
+      : 'Chrome labels (Place) are not a person.',
   ];
   if (alone) {
     forbid.push('Alone card: no handlers, bystanders, or welcoming NPC on page one.');

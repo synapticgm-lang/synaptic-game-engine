@@ -26,6 +26,8 @@ export interface PyoaSpineNode {
   endingId?: string;
   /** Compiled book prose. Thornferry omits this and still calls the writer. */
   page?: string;
+  /** HERE label committed when the player arrives on this node; omitted = stay put. */
+  place?: string;
 }
 
 export type PyoaSpineBibleId = 'thornferry-road' | 'umbra-protocol';
@@ -47,6 +49,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-landing',
     stake: 'Mill landing — Wren offers the road; charter is sealed.',
+    place: 'The mill landing at Thornferry',
     exits: [
       { id: 'accept-wren', label: 'Walk the road together', to: 'tf-streets', setFlags: { wren: 'with' } },
       { id: 'refuse-wren', label: 'Go alone', to: 'tf-streets', setFlags: { wren: 'solo' } },
@@ -56,6 +59,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-streets',
     stake: 'Thornferry streets — mill, inn, clerk. One pressure.',
+    place: 'Thornferry streets',
     majorFork: true,
     exits: [
       {
@@ -81,6 +85,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-road',
     stake: 'Road east toward Highmark — choose the next stop.',
+    place: 'The road east toward Highmark',
     exits: [
       { id: 'to-hamlet', label: 'Stop at the mill hamlet', to: 'tf-hamlet' },
       { id: 'to-ford', label: 'Press on to the ford', to: 'tf-ford' },
@@ -90,6 +95,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-hamlet',
     stake: 'Mill hamlet — local grain politics and a name on the seal.',
+    place: 'The mill hamlet',
     exits: [
       { id: 'hamlet-onward', label: 'Take the road onward', to: 'tf-proof' },
       { id: 'hamlet-ford', label: 'Cut down to the ford', to: 'tf-ford' },
@@ -98,6 +104,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-ford',
     stake: 'Rain at the ford — help, rob, or pass a traveler.',
+    place: 'the ford below Thornferry',
     exits: [
       { id: 'ford-help', label: 'Help the traveler', to: 'tf-proof', setFlags: { ford: 'help' } },
       { id: 'ford-rob', label: 'Rob the traveler', to: 'tf-proof', setFlags: { ford: 'rob' } },
@@ -107,6 +114,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-chapel',
     stake: 'Quiet Bell — bless, refuse, or leave the charter unblessed.',
+    place: 'The Quiet Bell chapel',
     exits: [
       { id: 'chapel-bless', label: 'Let the chapel bless the charter', to: 'tf-proof', setFlags: { chapel: 'bless' } },
       { id: 'chapel-refuse', label: 'Refuse the blessing', to: 'tf-proof', setFlags: { chapel: 'refuse' } },
@@ -124,6 +132,7 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   {
     id: 'tf-gate',
     stake: 'Highmark gate — deliver, sell, burn, or rewrite the charter.',
+    place: 'Highmark gate',
     majorFork: true,
     exits: [
       {
@@ -187,6 +196,7 @@ const UMBRA_SPINE: PyoaSpineNode[] = ((umbraBook as { nodes?: PyoaSpineNode[] })
   majorFork: !!n.majorFork,
   endingId: n.endingId || undefined,
   page: typeof n.page === 'string' ? n.page : undefined,
+  place: typeof n.place === 'string' && n.place.trim() ? n.place.trim() : undefined,
   exits: (n.exits ?? []).map((e) => ({
     id: e.id,
     label: e.label,
@@ -381,8 +391,12 @@ function applyExit(state: GameState, exit: PyoaSpineExit): GameState {
   const dest = getSpineNode(to);
   const visited = [...spine.visited, to].filter((v, i, a) => a.indexOf(v) === i).slice(-24);
   const endingId = dest?.endingId ?? null;
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const moveTo =
+    dest?.place && dest.place.toLowerCase() !== here.toLowerCase() ? dest.place : null;
   return {
     ...state,
+    ...(moveTo ? { currentLocation: moveTo } : {}),
     playPhase:
       endingId && isAuthoredPyoaBook(state.campaignBibleId) ? 'ended' : state.playPhase,
     pyoaSpine: {
@@ -471,6 +485,23 @@ export function formatPyoaSpineTurnJob(state: GameState): string | null {
 
 export function spineChoiceLabels(state: GameState): string[] {
   return legalSpineExits(state).map((e) => e.label);
+}
+
+export const SPINE_ENDING_CHIP = 'Accept the ending that follows';
+
+/**
+ * Chips the spine itself offers this turn (legal exits + the ending close).
+ * These are engine edges, never invented context.
+ */
+export function spineEngineChipLabels(state: GameState): string[] {
+  if (state.engineMode !== 'pyoa' || !spineBibleSupported(state.campaignBibleId)) return [];
+  const spine = state.pyoaSpine;
+  if (!spine) return [];
+  const labels = spineChoiceLabels(state);
+  if (spine.endingId && state.playPhase !== 'ended' && spine.flags?.endingAccepted !== '1') {
+    labels.push(SPINE_ENDING_CHIP);
+  }
+  return labels;
 }
 
 export function spineForceEdgeAfterDelay(state: GameState): boolean {

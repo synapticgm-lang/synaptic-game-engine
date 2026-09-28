@@ -1,5 +1,5 @@
 import type { GameState, LoreCard } from './types.ts';
-import { computeInventoryCapacity } from './inventory.ts';
+import { computeInventoryCapacity, kitRefDisplay } from './inventory.ts';
 import { playerFacingLocation } from './locationName.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
@@ -15,13 +15,13 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   const c = state.character;
   const invList = compact
     ? (() => {
-        const names = state.inventory.map((i) => `${i.name} x${i.quantity}`);
+        const names = state.inventory.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`);
         const shown = names.slice(0, 12).join('; ');
         const more = names.length > 12 ? `; +${names.length - 12} more` : '';
         return shown ? `${shown}${more}` : 'None';
       })()
     : state.inventory
-    .map((i) => `${i.name} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
+    .map((i) => `${kitRefDisplay(i.name)} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
     .join('; ') || 'None';
   const companions = (state.companions ?? [])
     .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
@@ -40,7 +40,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
     : 'None active';
 
   const cap = computeInventoryCapacity(state);
-  const equippedGear = state.inventory.filter(i => i.equipped).map(i => `${i.name}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
+  const equippedGear = state.inventory.filter(i => i.equipped).map(i => `${kitRefDisplay(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
   const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
   const isTabletop = state.engineMode === 'dnd';
   const header = isTabletop

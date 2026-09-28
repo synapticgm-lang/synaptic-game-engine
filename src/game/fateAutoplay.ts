@@ -85,6 +85,7 @@ import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
 import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
+import { syncSheetToMovedHere } from './locationMemory';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
 import {
   authoredPageText,
@@ -1077,6 +1078,7 @@ export async function headlessFateTurn(
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const hereBeforeMove = arcState.currentLocation ?? '';
   arcState = applyNamedHubTravel(applyGraphExitTravel(arcState, playerInput), playerInput);
+  arcState = syncSheetToMovedHere(arcState, state.currentLocation);
   // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
   arcState = maybeEnterInteriorDungeon(arcState, playerInput);
   // 28i — dungeon card turn: room facts, room actions (move/search/open), foes, loot, dungeon XP.
@@ -1542,10 +1544,11 @@ Do NOT print dice notation or CODE ENFORCED.
       places: touchPlaceVisit(working.places ?? state.places ?? [], travelDestName, state.turn + 1),
     };
     working = applyPresentTrimOnTravel(working, hereBefore, travelDestName);
+    working = syncSheetToMovedHere(working, fromLoc);
     cleanText = stampTravelArrivalIfSafe(cleanText, travelDestName, fromLoc, working);
   }
   working = enforceCameraOnState(working, playerInput);
-  cleanText = enforceCameraOnProse(cleanText, working, playerInput);
+  cleanText = enforceCameraOnProse(cleanText, working, playerInput, fromLoc);
   cleanText = scrubOneCameraFight(cleanText, working, playerInput);
   // 02g — prepend can land after the warden; strip mill / already-here arrivals once more.
   cleanText = scrubFalseArrivalWhenHere(

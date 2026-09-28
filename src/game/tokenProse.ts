@@ -323,13 +323,50 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[]): string 
     const row = findEnum(enumRefs, ref.tok, ref.id);
     if (row) byTok.set(ref.tok.replace(/^@/, '').toLowerCase(), row.display);
   }
+  const painted = new Set<string>();
+  const paint = (n: string) => {
+    const display = byTok.get(`t${n}`) ?? '';
+    if (display) painted.add(display);
+    return display;
+  };
   const sentences = beat.lines.map((line) => {
     let next = line.text;
-    next = next.replace(TOK_RE, (_m, n: string) => byTok.get(`t${n}`) ?? '');
-    next = next.replace(/@t(\d+)\b/g, (_m, n: string) => byTok.get(`t${n}`) ?? '');
-    return tidy(next);
+    next = next.replace(TOK_RE, (_m, n: string) => paint(n));
+    next = next.replace(/@t(\d+)\b/g, (_m, n: string) => paint(n));
+    for (const display of painted) next = collapseEchoedLabel(next, display);
+    return capitalizeSentenceStarts(tidy(next));
   }).filter((s) => s.length > 0);
   return tidy(sentences.join(' '));
+}
+
+const ARTICLE_RE = /^(?:the|a|an)\s+/i;
+
+function escRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Writer typed the head of a ledger label and then the token ("The quarry circle outside @t1",
+ * @t1 = "a quarry circle outside Valespire's east wall"): drop the typed echo before the painted label.
+ */
+export function collapseEchoedLabel(text: string, display: string): string {
+  const core = display.replace(ARTICLE_RE, '').trim();
+  const words = core.split(/\s+/);
+  if (words.length < 3) return text;
+  let next = text;
+  for (let k = Math.min(words.length - 1, 6); k >= 2; k--) {
+    const head = words.slice(0, k).join(' ');
+    const echo = new RegExp(
+      `\\b(?:(?:the|a|an)\\s+)?${escRe(head)}\\s+(?=(?:(?:the|a|an)\\s+)?${escRe(core)})`,
+      'gi'
+    );
+    next = next.replace(echo, '');
+  }
+  return next;
+}
+
+function capitalizeSentenceStarts(text: string): string {
+  return text.replace(/(^|[.!?]["”’)]?\s+)([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
 function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = []): boolean {

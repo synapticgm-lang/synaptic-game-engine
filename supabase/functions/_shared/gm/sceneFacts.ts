@@ -202,7 +202,19 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
   };
 }
 
+/** System panel chrome is a LitRPG prop only — other modes never carry it in HERE props. */
+export function stripModeChromeProps(state: Pick<GameState, 'engineMode'>, facts: SceneFacts): SceneFacts {
+  if (state.engineMode === 'litrpg') return facts;
+  const props = facts.props ?? [];
+  if (!props.some((p) => PANEL.test(p))) return facts;
+  return { ...facts, props: props.filter((p) => !PANEL.test(p)) };
+}
+
 export function seedOpeningSceneFacts(state: GameState): SceneFacts {
+  return stripModeChromeProps(state, seedOpeningSceneFactsRaw(state));
+}
+
+function seedOpeningSceneFactsRaw(state: GameState): SceneFacts {
   const hookLock = state.sceneFacts?.hookLock ?? state.openingEstablishment?.hookLock;
   const integration = /system integration|every human on earth|integration protocol/i.test(
     state.campaignPremise ?? ''
@@ -365,12 +377,13 @@ export function applyCommittedNarrative(
           lastPlayerIntent: { family, text: t.slice(0, 160), turn },
         };
       })();
+  const moded = stripModeChromeProps(state, withIntent);
   return {
-    ...withIntent,
+    ...moded,
     lastSnapshotGist: buildSnapshotGist({
       ...state,
       turn,
-      sceneFacts: withIntent,
+      sceneFacts: moded,
     }),
   };
 }

@@ -225,7 +225,7 @@ import {
   mergeSheetWithNode,
   currentDungeonNode,
 } from './dungeonSeed';
-import { advanceLocationMemory } from './locationMemory';
+import { advanceLocationMemory, syncSheetToMovedHere } from './locationMemory';
 import {
   buildTurnMandate,
   detectSceneHijack,
@@ -2245,6 +2245,7 @@ export function useGame() {
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
       const questsAtTurnStart = liveCurrent.quests ?? [];
+      const hereAtTurnStart = liveCurrent.currentLocation ?? '';
       liveCurrent = applySystemRename(
         {
           ...liveCurrent,
@@ -2680,6 +2681,7 @@ export function useGame() {
       }
       const hereBeforeMove = liveCurrent.currentLocation ?? '';
       liveCurrent = applyNamedHubTravel(applyGraphExitTravel(liveCurrent, sanitizedInput), sanitizedInput);
+      liveCurrent = syncSheetToMovedHere(liveCurrent, hereAtTurnStart);
       if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {
         liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
       }
@@ -4002,7 +4004,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         activeDungeon: areaMap,
       };
       workingState = enforceCameraOnState(workingState, sanitizedInput);
-      cleanText = enforceCameraOnProse(cleanText, workingState, sanitizedInput);
+      cleanText = enforceCameraOnProse(cleanText, workingState, sanitizedInput, hereAtTurnStart);
       cleanText = scrubOneCameraFight(cleanText, workingState, sanitizedInput);
       cleanText = scrubFalseArrivalWhenHere(
         cleanText,

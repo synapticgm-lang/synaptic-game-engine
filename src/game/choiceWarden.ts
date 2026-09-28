@@ -11,6 +11,7 @@ import { coerceLogContent } from './beatFingerprint';
 import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
+import { spineEngineChipLabels } from './pyoaSpine';
 
 /**
  * References that require story context to exist.
@@ -161,8 +162,10 @@ export function filterInventedContextChoices(
 
   const pcName = state.character?.name;
   const lastPlayer = lastPlayerAction(state);
+  const spineChips = new Set(spineEngineChipLabels(state).map((l) => l.toLowerCase()));
 
   return choices.filter((choice) => {
+    if (spineChips.has(choice.trim().toLowerCase())) return true;
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
       return false;

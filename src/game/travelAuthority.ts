@@ -157,13 +157,15 @@ export function enforceCameraOnState(state: GameState, playerInput?: string): Ga
 export function enforceCameraOnProse(
   prose: string,
   state: GameState,
-  playerInput?: string
+  playerInput?: string,
+  hereAtTurnStart?: string | null
 ): string {
   let next = prose ?? '';
   const lock = resolveCameraLock(state);
   const traveled = playerCommittedTravel(playerInput);
   const dest = (state.currentLocation ?? '').trim();
-  const from = (state.previousLocationSheet?.name ?? '').trim();
+  const start = (hereAtTurnStart ?? '').trim();
+  const from = start || (state.previousLocationSheet?.name ?? '').trim();
 
   // Batch U — arrival prepend ONLY on real location change; use travel snap, not stale camera lock.
   // Batch 02g — Leave / Walk away / Exit must not invent "You reach <current dest>".

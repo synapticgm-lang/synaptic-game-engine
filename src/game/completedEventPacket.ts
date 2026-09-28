@@ -23,6 +23,7 @@ import { openingCastRecords, presentNpcRecords, recordsForEntries } from './npcR
 import { sealedCastNames } from './beatContract';
 import { ledgerSheetLine } from './litrpgSystemWindow';
 import { isNeverCastTitle } from './neverCast';
+import { kitRefDisplay } from './inventory';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 import {
   hallTalkAsksPanel,
@@ -376,7 +377,7 @@ export function compileNounAllowlist(
     }
 
     for (const item of state.inventory ?? []) {
-      if (item.equipped && item.name) pushUnique(out, seen, item.name);
+      if (item.equipped && item.name) pushUnique(out, seen, kitRefDisplay(item.name));
     }
 
     for (const c of state.companions ?? []) {
@@ -466,7 +467,7 @@ export function compileRefEnum(
       add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');
     }
     for (const item of state.inventory ?? []) {
-      if (item.equipped && item.name) add(`kit:${slugRefId(item.name)}`, item.name, 'kit');
+      if (item.equipped && item.name) add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name), 'kit');
     }
     for (const c of state.companions ?? []) {
       if (c.name) add(`companion:${slugRefId(c.name)}`, c.name, 'companion');

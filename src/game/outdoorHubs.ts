@@ -524,6 +524,10 @@ export function ensureTravelArrivalProse(
   if (/last doorway is behind you|You are at .+ now\.|You step onto |The way opens onto /i.test(text)) {
     return text;
   }
+  const hubEsc = hub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  if (new RegExp(`\\bYou (?:leave [^.]{2,80} behind and )?reach ${hubEsc}\\.`, 'i').test(text)) {
+    return text;
+  }
   const from = (fromLocation ?? '').trim();
   // Already here — never invent a second arrival (Batch E location amnesia).
   if (

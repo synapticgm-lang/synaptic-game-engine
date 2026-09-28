@@ -25,6 +25,7 @@ import {
 import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad } from './combatAuthority';
+import { spineEngineChipLabels } from './pyoaSpine';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -411,6 +412,7 @@ export function choiceNamesUnnarratedObject(
   state: GameState
 ): boolean {
   const trimmed = choice.trim();
+  if (spineEngineChipLabels(state).some((l) => l.toLowerCase() === trimmed.toLowerCase())) return false;
   // Allow short pure generics (Wait / Ask what… / Inspect the surroundings).
   // Do NOT early-exit every "Inspect …" — that let "Inspect the crystals breaking the street" through.
   if (PURE_GENERIC_PAD.test(trimmed) && trimmed.length < 56) return false;
