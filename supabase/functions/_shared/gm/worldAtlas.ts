@@ -1,6 +1,6 @@
 import { pickWorldOutline, type WorldOutlineDef } from './worldOutlines.ts';
 import type { CampaignBible } from './campaignBibleTypes.ts';
-import type { EngineMode, GameState, WorldAtlasState } from './types.ts';
+import type { GameState, WorldAtlasState } from './types.ts';
 import { attachSettlementsToAtlas } from './worldMapAuthority.ts';
 
 export function instantiateWorldAtlas(outline: WorldOutlineDef): WorldAtlasState {
@@ -116,9 +116,4 @@ export function formatWorldAtlasBlock(state: GameState): string {
     'Settlements (fixed):',
     ...settle,
   ].join('\n');
-}
-
-export function defaultAtlasForMode(mode: EngineMode, seed: string): WorldAtlasState | null {
-  const outline = pickWorldOutline(mode, seed);
-  return outline ? instantiateWorldAtlas(outline) : null;
 }

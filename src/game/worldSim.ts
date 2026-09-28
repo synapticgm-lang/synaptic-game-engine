@@ -529,35 +529,6 @@ export function reportsForVisit(
   return reports;
 }
 
-export function formatWorldLedgerForPrompt(ledger: WorldLedger): string {
-  const L = normalizeWorldLedger(ledger);
-  const hasWork =
-    L.deals.length + L.holdings.length + L.hostiles.length + L.actors.length > 0;
-  if (!hasWork && L.caravans.length === 0) {
-    return `In-game calendar: day ${L.clock.day.toFixed(1)}, week ${L.clock.week}. No off-screen deals or holdings yet.`;
-  }
-  const deals = L.deals
-    .filter((d) => d.active)
-    .map((d) => `- DEAL ${d.name} / ${d.partnerName}: ${Math.round(d.playerShare * 100)}% of ${d.runsPerWeek}/wk ${d.risk} runs (${d.workEthic}). Paid so far ${d.goldPaid}g. ${d.lastWeekSummary ?? ''}`)
-    .join('\n');
-  const holdings = L.holdings
-    .map((h) => `- HOLDING ${h.name} [${h.kind}] order=${h.order} ethic=${h.workEthic} rank=${h.level} progress=${h.progress} treasury=${h.treasury}g heat=${h.heat}. ${h.lastWeekSummary ?? ''}`)
-    .join('\n');
-  const hostiles = L.hostiles
-    .map((h) => `- RIVAL ${h.name}: pressure ${h.progress}/100 rank ${h.level} (${h.workEthic}).`)
-    .join('\n');
-  const actors = L.actors
-    .map((a) => `- ACTOR ${a.name}: lvl ${a.level}${a.profession ? ` ${a.profession} ${a.professionLevel}` : ''} (${a.workEthic}).`)
-    .join('\n');
-  return `In-game calendar: day ${L.clock.day.toFixed(1)}, week ${L.clock.week}.
-These operations resolve on in-game weeks as the player takes turns. Do NOT invent extra results.
-Only narrate a deal/holding/actor report if the player is there, asks, or a visit report is supplied.
-${deals || '- (no deals)'}
-${holdings || '- (no holdings)'}
-${hostiles || '- (no rival clocks)'}
-${actors || '- (no off-screen actors)'}`;
-}
-
 export function formatTickForGm(tick: WorldTickResult, visitReports: string[]): string {
   const parts: string[] = [];
   if (tick.weeksResolved > 0 && tick.weekSummaries.length) {

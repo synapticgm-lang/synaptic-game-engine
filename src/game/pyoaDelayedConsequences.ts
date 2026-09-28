@@ -6,7 +6,7 @@
  */
 
 import type { GameState } from './types';
-import type { DelayedConsequence, FactWrite, ResourceDelta, RelationshipDelta } from './types/crossPackageContracts';
+import type { DelayedConsequence, ResourceDelta, RelationshipDelta } from './types/crossPackageContracts';
 
 // ============================================================================
 // CONSEQUENCE SCHEDULING
@@ -82,30 +82,6 @@ export function markConsequenceDelivered(
   const updated = consequences.map(c =>
     c.id === consequenceId
       ? { ...c, status: 'delivered' as const }
-      : c
-  );
-  
-  return {
-    ...state,
-    arcDirector: {
-      ...state.arcDirector,
-      pyoaDelayedConsequences: updated,
-    },
-  };
-}
-
-/**
- * Cancel consequence
- */
-export function cancelConsequence(
-  consequenceId: string,
-  state: GameState
-): GameState {
-  const consequences = state.arcDirector?.pyoaDelayedConsequences ?? [];
-  
-  const updated = consequences.map(c =>
-    c.id === consequenceId
-      ? { ...c, status: 'cancelled' as const }
       : c
   );
   
@@ -201,95 +177,6 @@ function buildConsequenceMandate(consequence: DelayedConsequence): string {
   lines.push(`Narrative: ${consequence.payload.narrativeBeat}`);
   
   return lines.join('\n');
-}
-
-// ============================================================================
-// CONSEQUENCE PATTERNS
-// ============================================================================
-
-/**
- * Create echo consequence (20-40 turn delay)
- * 
- * Echo: Minor callback, reminder of choice
- */
-export function createEchoConsequence(
-  state: GameState,
-  crisisId: string,
-  forkId: string,
-  narrativeBeat: string,
-  writes?: readonly FactWrite[]
-): GameState {
-  const delayTurns = 20 + Math.floor(Math.random() * 20);
-  
-  return scheduleDelayedConsequence(state, {
-    sourceCrisisId: crisisId,
-    sourceForkId: forkId,
-    dueAtTurn: state.turn + delayTurns,
-    type: 'reveal',
-    payload: {
-      writes,
-      narrativeBeat,
-      journalHint: 'A consequence echoes from your past choice...',
-    },
-  });
-}
-
-/**
- * Create return consequence (50-80 turn delay)
- * 
- * Return: NPC/faction remembers choice, significant impact
- */
-export function createReturnConsequence(
-  state: GameState,
-  crisisId: string,
-  forkId: string,
-  narrativeBeat: string,
-  relationshipDeltas?: readonly RelationshipDelta[]
-): GameState {
-  const delayTurns = 50 + Math.floor(Math.random() * 30);
-  
-  return scheduleDelayedConsequence(state, {
-    sourceCrisisId: crisisId,
-    sourceForkId: forkId,
-    dueAtTurn: state.turn + delayTurns,
-    type: 'relationship_shift',
-    payload: {
-      relationshipDeltas,
-      narrativeBeat,
-      journalHint: 'Someone returns from your past...',
-    },
-  });
-}
-
-/**
- * Create reckoning consequence (100-150 turn delay)
- * 
- * Reckoning: Major consequence, near ending
- */
-export function createReckoningConsequence(
-  state: GameState,
-  crisisId: string,
-  forkId: string,
-  narrativeBeat: string,
-  opts: {
-    writes?: readonly FactWrite[];
-    resourceDeltas?: readonly ResourceDelta[];
-    unlockEndingId?: string;
-  }
-): GameState {
-  const delayTurns = 100 + Math.floor(Math.random() * 50);
-  
-  return scheduleDelayedConsequence(state, {
-    sourceCrisisId: crisisId,
-    sourceForkId: forkId,
-    dueAtTurn: state.turn + delayTurns,
-    type: opts.unlockEndingId ? 'ending_unlock' : 'world_state',
-    payload: {
-      ...opts,
-      narrativeBeat,
-      journalHint: 'The reckoning approaches...',
-    },
-  });
 }
 
 // ============================================================================

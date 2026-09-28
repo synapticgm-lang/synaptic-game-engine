@@ -1,4 +1,4 @@
-import type { ActiveEncounter, GameState, Item } from './types';
+import type { ActiveEncounter, GameState } from './types';
 import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
 import { parkMobHpAtCurrentNode, restoreParkedEncounter } from './dungeonMobLedger';
@@ -188,8 +188,4 @@ export function resolveLedgerCombat(
     ),
     round,
   };
-}
-
-export function itemLooksLikeWeapon(item: Item): boolean {
-  return /\b(knife|sword|blade|axe|club|bat|spear|staff|pistol|gun|dagger|mace|hammer|bow)\b/i.test(item.name);
 }

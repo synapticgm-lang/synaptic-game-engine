@@ -349,16 +349,3 @@ export async function callGmDirect(
   if (!text) throw new Error('The AI provider returned no content.');
   return processGmCompletion(text, state.engineMode);
 }
-
-export async function callGmAutoFightDirect(
-  state: GameState,
-  autoFightPrompt: string,
-  settings: Settings,
-  onRetry?: (attempt: number, delayMs: number) => void
-): Promise<string> {
-  const systemPrompt =
-    'You are a LitRPG Game Master. Write visceral, fast-paced combat narration. Output only the narrative paragraph — no tags, no headers, no meta commentary.';
-  const text = await dispatchLlm(autoFightPrompt, systemPrompt, settings, onRetry);
-  if (!text) throw new Error('The AI provider returned no content for auto-fight summary.');
-  return text.trim();
-}

@@ -30,8 +30,3 @@ export function formatFleeReceipt(args: { flee: LedgerFleeRound }): string {
   }
   return `Flee failed: ${f.enemyName} (${f.enemyHpBefore} HP) still engaged. ${f.fleeReason} Damage ${f.received}. Your HP ${f.playerHpAfter}.`;
 }
-
-/** Pre-writer telegraph one-liner (already in outcome token; keep for HUD chips). */
-export function formatCombatTelegraph(combat: LedgerCombatRound): string {
-  return `${combat.enemyName} threatens — legal counters: fight / flee / talk if safe. Declared: strike with ${combat.weaponName}.`;
-}

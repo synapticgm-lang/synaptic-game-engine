@@ -452,45 +452,6 @@ export function retrieveMemorySnippets(
 }
 
 /**
- * Smart memory retrieval (Pack 12):
- * - Use hybrid semantic+keyword search if embeddings available
- * - Fall back to keyword-only if not
- */
-export async function retrieveMemoriesSmartly(
-  memory: CampaignMemoryState,
-  query: string,
-  limit = 4
-): Promise<TurnSummary[]> {
-  const summaries = memory.turnSummaries ?? [];
-  
-  if (summaries.length === 0) {
-    return [];
-  }
-  
-  // Try semantic search if available (dynamic import to avoid initialization issues)
-  try {
-    const { areEmbeddingsAvailable, hybridSearchMemories } = await import('./semanticMemory');
-    if (areEmbeddingsAvailable()) {
-      try {
-        return await hybridSearchMemories(query, summaries, limit);
-      } catch (error) {
-        console.warn('[Memory] Semantic search failed, falling back to keyword:', error);
-        // Fall through to keyword search
-      }
-    }
-  } catch (importError) {
-    // Semantic memory module not available, fall through to keyword
-    console.warn('[Memory] Semantic memory module not available, using keyword search');
-  }
-  
-  // Keyword fallback
-  const snippets = retrieveMemorySnippets(memory, query, limit);
-  return summaries.filter(s => 
-    snippets.some(snippet => snippet.includes(`T${s.turn}`))
-  );
-}
-
-/**
  * Ordered memory block with hierarchical structure (Pack 12).
  * Dynamically expands when more context budget available.
  */

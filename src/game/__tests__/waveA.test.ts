@@ -4,7 +4,7 @@
  * Tests:
  * - WS-2: NPC Role Registry, Lifecycle FSM, Memory Ledger
  * - WS-4: Encounter Bible, Telegraph, Biome Matrix
- * - WS-5: Exclusive Facts, Delayed Consequences, Crisis Registry
+ * - WS-5: Exclusive Facts, Delayed Consequences
  */
 
 import { describe, it, expect } from 'vitest';
@@ -62,11 +62,6 @@ import {
   deliverConsequence,
   markConsequenceDelivered,
 } from '../pyoaDelayedConsequences';
-import {
-  PYOA_CRISIS_REGISTRY,
-  isCrisisEligible,
-  pickCrisis,
-} from '../pyoaCrisisRegistry';
 
 // ============================================================================
 // TEST HELPERS
@@ -617,53 +612,5 @@ describe('WS-5 Wave A: Delayed Consequences', () => {
     
     const updated = state.arcDirector?.pyoaDelayedConsequences ?? [];
     expect(updated[0]?.status).toBe('delivered');
-  });
-});
-
-// ============================================================================
-// WS-5: CRISIS REGISTRY TESTS
-// ============================================================================
-
-describe('WS-5 Wave A: Crisis Registry', () => {
-  it('has Thornferry Road crises', () => {
-    const crises = PYOA_CRISIS_REGISTRY.getCrisesForBible('thornferry-road');
-    expect(crises.length).toBeGreaterThan(0);
-  });
-  
-  it('each crisis has required fields', () => {
-    const crises = PYOA_CRISIS_REGISTRY.getCrisesForBible('thornferry-road');
-    
-    for (const crisis of crises) {
-      expect(crisis.id).toBeTruthy();
-      expect(crisis.name).toBeTruthy();
-      expect(crisis.bibleId).toBe('thornferry-road');
-      expect(crisis.forks.length).toBeGreaterThanOrEqual(2);
-      
-      for (const fork of crisis.forks) {
-        expect(fork.id).toBeTruthy();
-        expect(fork.label).toBeTruthy();
-        expect(fork.exclusiveFacts.length).toBeGreaterThan(0);
-      }
-    }
-  });
-  
-  it('checks crisis eligibility by turn window', () => {
-    const crisis = PYOA_CRISIS_REGISTRY.getCrisis('millstone-charter');
-    expect(crisis).toBeTruthy();
-    
-    // Before window
-    let state = createTestState({ turn: 10, engineMode: 'pyoa' });
-    let result = isCrisisEligible(crisis!, state);
-    expect(result.eligible).toBe(false);
-    
-    // Within window
-    state = createTestState({ turn: 30, engineMode: 'pyoa' });
-    result = isCrisisEligible(crisis!, state);
-    expect(result.eligible).toBe(true);
-    
-    // After window
-    state = createTestState({ turn: 50, engineMode: 'pyoa' });
-    result = isCrisisEligible(crisis!, state);
-    expect(result.eligible).toBe(false);
   });
 });

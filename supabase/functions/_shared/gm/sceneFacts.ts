@@ -255,24 +255,6 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
   });
 }
 
-export function formatSceneFactsForPrompt(facts?: SceneFacts): string {
-  if (!facts || (facts.crowd === 'unknown' && !facts.lastBeat)) return '';
-  const present = facts.present.length ? facts.present.join(', ') : 'none listed';
-  const props = facts.props.length ? facts.props.join(', ') : 'none listed';
-  const countLine =
-    typeof facts.crowdCount === 'number' ? `\nCrowd count: ${facts.crowdCount}` : '';
-  return `SCENE FACTS (AUTHORITY — last committed beat; do not invert without time passing):
-Crowd: ${facts.crowd}${countLine}
-Noise: ${facts.noise}
-Present: ${present}
-Props: ${props}
-Last beat: ${facts.lastBeat || '—'}
-If crowd is present, people are still here. Do not write an empty or silent street.
-If noise is shouting, the shouting is still happening unless you narrate it stopping.
-Do not write "hours ago" or "hours later" unless the world clock has advanced.
-Do not list inventory or pat pockets on look-around.`;
-}
-
 /** True when new prose wipes a bound crowd/noise without time passing. */
 export function detectSceneContradiction(prev: SceneFacts | undefined, narrative: string): string | null {
   if (!prev) return null;

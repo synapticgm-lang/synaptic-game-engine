@@ -267,60 +267,6 @@ export function calculateDiscoveryXp(
 }
 
 /**
- * Calculate XP for quest resolution (completion/failure).
- */
-export function calculateResolutionXp(
-  questName: string,
-  completed: boolean,
-  questType: 'main' | 'side' | 'daily',
-  ledger: Map<string, DiscoveryRecord>
-): XpAward | null {
-  const check = hasDiscoveryBeenAwarded(questName, 'resolution', 'quest');
-  
-  if (check.awarded) {
-    // Already awarded resolution XP for this quest
-    return null;
-  }
-  
-  const baseXp = questType === 'main' ? 100 : questType === 'side' ? 50 : 25;
-  const multiplier = completed ? 1.0 : 0.5; // Half XP for failed quests
-  
-  return {
-    amount: Math.floor(baseXp * multiplier),
-    reason: `${completed ? 'Completed' : 'Failed'}: ${questName}`,
-    type: 'resolution',
-    oneTime: true,
-    discoveryKey: buildDiscoveryKey(questName, 'resolution', 'quest'),
-  };
-}
-
-/**
- * Calculate XP for risk-taking actions.
- */
-export function calculateRiskXp(
-  action: string,
-  threatTier: number,
-  playerLevel: number
-): XpAward | null {
-  const lower = action.toLowerCase();
-  
-  // Risky actions in high-threat zones
-  if (/\b(attack|confront|challenge|force|threaten)\b/i.test(lower)) {
-    if (threatTier > playerLevel) {
-      const riskBonus = (threatTier - playerLevel) * 5;
-      return {
-        amount: 10 + riskBonus,
-        reason: `Risky action in Tier ${threatTier} zone`,
-        type: 'risk',
-        oneTime: false, // Risk XP can be earned multiple times
-      };
-    }
-  }
-  
-  return null;
-}
-
-/**
  * Update discovery ledger after awarding XP.
  */
 export function updateDiscoveryLedger(

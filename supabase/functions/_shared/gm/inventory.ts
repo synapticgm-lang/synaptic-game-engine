@@ -1,4 +1,4 @@
-import type { Container, CraftingMaterial, GameState, Item, Rarity } from './types.ts';
+import type { Container, GameState, Item, Rarity } from './types.ts';
 
 const RARITY_VALUE: Record<Rarity, number> = {
   Common: 1,
@@ -188,21 +188,6 @@ export function canAddMaterials(state: GameState, count: number): { ok: boolean;
     ok: false,
     reason: `Your ${cap.containerBreakdown.map((c) => c.name).join(' and ') || 'pack'} is too full to carry these materials.`,
   };
-}
-
-export function addMaterials(state: GameState, newMaterials: CraftingMaterial[]): GameState {
-  const existing = [...state.materials];
-
-  for (const mat of newMaterials) {
-    const idx = existing.findIndex((m) => m.id === mat.id);
-    if (idx >= 0) {
-      existing[idx] = { ...existing[idx], quantity: existing[idx].quantity + mat.quantity };
-    } else {
-      existing.push({ ...mat });
-    }
-  }
-
-  return { ...state, materials: existing };
 }
 
 export function removeItem(state: GameState, itemId: string): GameState {

@@ -19,11 +19,9 @@ import { formatSceneArtLock, type SceneArtFactsInput } from './sceneArtLock';
 export const MEMORABLE_COOLDOWN_TURNS = 3;
 /** Opener + at most one more in the first sitting. Death, first-dungeon-boss, and PYOA ending may exceed. */
 export const FIRST_SESSION_HARD_CAP = 2;
-export const FIRST_SESSION_SOFT_CAP = FIRST_SESSION_HARD_CAP;
 export const FIRST_SESSION_TURN_HORIZON = 16;
 /** Later sittings (after ~16 turns, or a new night). Death, first-dungeon-boss, and PYOA ending may exceed. */
 export const SESSION_HARD_CAP = 3;
-export const SESSION_SOFT_CAP = SESSION_HARD_CAP;
 /** PYOA rails forbid ending in the opening hour — refuse a writer tag before this turn. */
 export const PYOA_ENDING_MIN_TURN = 8;
 /** Treat a gap this long as a new night / sitting. */

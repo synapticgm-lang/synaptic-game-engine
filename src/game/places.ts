@@ -1,4 +1,4 @@
-import type { GameState, LocationSheet, MapScale, MapTier, PlaceRecord } from './types';
+import type { GameState, LocationSheet, MapScale, PlaceRecord } from './types';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
 import { placeIdFromName } from './placeUtils';
 
@@ -153,15 +153,4 @@ export function formatPlacesForPrompt(places: PlaceRecord[] | undefined, current
       return `- ${p.name}${p.loreName ? ` (${p.loreName})` : ''} [${p.mapScale ?? 'street'}, ${tier}]${p.dungeonRef ? ` dungeonRef=${p.dungeonRef}` : ''}${arc}`;
     })
     .join('\n');
-}
-
-export function sheetFromPlace(place: PlaceRecord, sheet?: LocationSheet | null): LocationSheet {
-  return {
-    name: place.name,
-    dangerTier: place.dangerTier as MapTier | undefined,
-    mapScale: place.mapScale,
-    interactables: sheet?.interactables ?? [],
-    exits: sheet?.exits ?? [],
-    presentNpcIds: sheet?.presentNpcIds ?? [],
-  };
 }

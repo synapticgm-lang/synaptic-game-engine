@@ -3,13 +3,11 @@
  * 
  * Tests for:
  * - Loot table registry
- * - Encounter template loader
- * - PYOA crisis catalog loader
  * - Eval harness (all G1-G5 gates)
  * - 300-turn regression fixtures
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   generateLoot,
   getLootPreview,
@@ -18,15 +16,6 @@ import {
   applyBossBuildGuarantee,
   type LootReceipt
 } from '../lootTableRegistry';
-import {
-  initializeEncounterTemplates,
-  getEncounterRegistry,
-  selectEncounterTemplate
-} from '../encounterTemplateLoader';
-import {
-  initializePyoaCatalogs,
-  getPyoaRegistry
-} from '../pyoaCatalogLoader';
 import {
   runEvaluationSuite,
   evalNpcExitLatency,
@@ -128,226 +117,6 @@ describe('Loot Table Registry', () => {
     // Shield should be removed, currency should increase
     expect(converted.items.find(i => i.id === 'legendary-shield')).toBeUndefined();
     expect(converted.currency.amount).toBeGreaterThan(receipt.currency.amount);
-  });
-});
-
-// ============================================================================
-// ENCOUNTER TEMPLATE LOADER TESTS
-// ============================================================================
-
-describe('Encounter Template Loader', () => {
-  beforeAll(() => {
-    initializeEncounterTemplates();
-  });
-  
-  it('loads all 48 templates', () => {
-    const registry = getEncounterRegistry();
-    const stats = registry.getStats();
-    
-    // Should have loaded templates from all modes
-    expect(stats.total).toBeGreaterThan(0);
-    expect(stats.byMode).toHaveProperty('litrpg');
-    expect(stats.byMode).toHaveProperty('dnd');
-    expect(stats.byMode).toHaveProperty('rpg');
-    expect(stats.byMode).toHaveProperty('pyoa');
-  });
-  
-  it('indexes templates by mode', () => {
-    const registry = getEncounterRegistry();
-    const litrpgTemplates = registry.getByMode('litrpg');
-    
-    expect(litrpgTemplates.length).toBeGreaterThan(0);
-    expect(litrpgTemplates.every(t => t.mode === 'litrpg')).toBe(true);
-  });
-  
-  it('indexes templates by bible', () => {
-    const registry = getEncounterRegistry();
-    const summonedPactTemplates = registry.getByBible('summoned-pact');
-    
-    expect(summonedPactTemplates.length).toBeGreaterThan(0);
-    expect(summonedPactTemplates.every(t => t.bibleId === 'summoned-pact')).toBe(true);
-  });
-  
-  it('indexes templates by role', () => {
-    const registry = getEncounterRegistry();
-    const trashTemplates = registry.getByRole('trash');
-    
-    expect(trashTemplates.length).toBeGreaterThan(0);
-  });
-  
-  it('selects templates with biome filtering', () => {
-    const selected = selectEncounterTemplate({
-      templateId: '',
-      biome: 'forest',
-      tier: 2,
-      mode: 'litrpg',
-      bibleId: 'summoned-pact',
-      role: 'trash'
-    });
-    
-    // Should return a template or null if no match
-    if (selected) {
-      expect(selected.mode).toBe('litrpg');
-      expect(selected.bibleId).toBe('summoned-pact');
-    }
-  });
-  
-  it('rejects templates outside tier range', () => {
-    const selected = selectEncounterTemplate({
-      templateId: '',
-      biome: 'forest',
-      tier: 99, // Way outside range
-      mode: 'litrpg',
-      bibleId: 'summoned-pact',
-      role: 'trash'
-    });
-    
-    expect(selected).toBeNull();
-  });
-  
-  it('enforces biome forbidden list', () => {
-    // Try to spawn a Keep Wraith on Shattered Coast
-    const selected = selectEncounterTemplate({
-      templateId: '',
-      biome: 'shattered-coast',
-      tier: 3,
-      mode: 'dnd',
-      bibleId: 'shattered-coast',
-      role: 'boss'
-    });
-    
-    // Should not return a cursed-keep template
-    if (selected) {
-      expect(selected.bibleId).not.toBe('cursed-keep');
-    }
-  });
-});
-
-// ============================================================================
-// PYOA CRISIS CATALOG LOADER TESTS
-// ============================================================================
-
-describe('PYOA Crisis Catalog Loader', () => {
-  beforeAll(() => {
-    initializePyoaCatalogs();
-  });
-  
-  it('loads 3 catalogs (18 crises, 18 endings)', () => {
-    const registry = getPyoaRegistry();
-    const stats = registry.getStats();
-    
-    expect(stats.totalCatalogs).toBe(3);
-    expect(stats.totalCrises).toBeGreaterThanOrEqual(18);
-    expect(stats.totalEndings).toBeGreaterThanOrEqual(18);
-  });
-  
-  it('retrieves catalog by bible ID', () => {
-    const registry = getPyoaRegistry();
-    const catalog = registry.getCatalog('thornferry-road');
-    
-    expect(catalog).toBeDefined();
-    expect(catalog?.bibleId).toBe('thornferry-road');
-    expect(catalog?.title).toBe('Thornferry Road');
-  });
-  
-  it('gets crises for a bible', () => {
-    const registry = getPyoaRegistry();
-    const crises = registry.getCrises('thornferry-road');
-    
-    expect(crises.length).toBeGreaterThan(0);
-    expect(crises.every(c => c.id.startsWith('thornferry-road'))).toBe(true);
-  });
-  
-  it('gets endings for a bible', () => {
-    const registry = getPyoaRegistry();
-    const endings = registry.getEndings('vesper-glass-cipher');
-    
-    expect(endings.length).toBeGreaterThan(0);
-    expect(endings.every(e => e.id.includes('vesper-glass'))).toBe(true);
-  });
-  
-  it('selects next eligible crisis', () => {
-    const registry = getPyoaRegistry();
-    
-    const nextCrisis = registry.getNextCrisis(
-      'thornferry-road',
-      [], // No active facts
-      10, // Turn 10
-      [] // No completed crises
-    );
-    
-    // Should return first crisis in order
-    if (nextCrisis) {
-      expect(nextCrisis.window).toBeDefined();
-      expect(nextCrisis.window.target).toBeGreaterThanOrEqual(1);
-    }
-  });
-  
-  it('filters crises by prerequisites', () => {
-    const registry = getPyoaRegistry();
-    
-    const nextCrisis = registry.getNextCrisis(
-      'thornferry-road',
-      ['thornferry-road.allegiance.lord'], // Has lord allegiance
-      50, // Turn 50
-      ['thornferry-road:crisis:1_millstone_charter'] // Completed first crisis
-    );
-    
-    // Should return a later crisis
-    if (nextCrisis) {
-      expect(nextCrisis.window).toBeDefined();
-      expect(nextCrisis.window.target).toBeGreaterThan(1);
-    }
-  });
-  
-  it('gets eligible endings', () => {
-    const registry = getPyoaRegistry();
-    
-    const endings = registry.getEligibleEndings(
-      'erebus-9',
-      ['erebus-9.swarm.revealed'],
-      [],
-      [],
-      {},
-      140 // Near T150 deadline
-    );
-    
-    // Should return at least one ending
-    expect(endings.length).toBeGreaterThan(0);
-  });
-  
-  it('sorts endings by priority', () => {
-    const registry = getPyoaRegistry();
-    
-    const endings = registry.getEligibleEndings(
-      'vesper-glass-cipher',
-      [],
-      [],
-      [],
-      {},
-      100
-    );
-    
-    if (endings.length > 1) {
-      // Higher priority should come first
-      expect(endings[0].priority).toBeGreaterThanOrEqual(endings[1].priority);
-    }
-  });
-  
-  it('enforces T150 deadline for endings', () => {
-    const registry = getPyoaRegistry();
-    
-    const endings = registry.getEligibleEndings(
-      'thornferry-road',
-      [],
-      [],
-      [],
-      {},
-      151 // Past deadline
-    );
-    
-    // Should still return endings (emergency catch)
-    expect(endings).toBeDefined();
   });
 });
 

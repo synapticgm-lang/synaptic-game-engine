@@ -13,7 +13,6 @@ import {
 } from './ledgerNounObey';
 import { isUmbraCampaign, umbraAllowsLiveAiTurn } from './umbraOffline';
 import { isAuthoredPyoaBook } from './pyoaSpine';
-import { createFreeNarratorProvider, resolveNarratorProvider } from './narratorProvider';
 import { isFullProseNarration } from './fullProseGate';
 import type { GameState } from './types';
 
@@ -117,14 +116,7 @@ describe('day-1 — Umbra offline (zero live AI turns)', () => {
   });
 });
 
-describe('day-1 — Free NarratorProvider stub', () => {
-  it('resolveNarratorProvider exposes Free path interface', () => {
-    const provider = resolveNarratorProvider('free');
-    expect(provider.tier).toBe('free');
-    expect(typeof provider.narrate).toBe('function');
-    expect(createFreeNarratorProvider().tier).toBe('free');
-  });
-
+describe('day-1 — full-prose gate', () => {
   it('full-prose gate rejects two-line stubs', () => {
     expect(isFullProseNarration('Dust hung.\nYou waited.')).toBe(false);
     expect(
@@ -132,18 +124,5 @@ describe('day-1 — Free NarratorProvider stub', () => {
         'You stepped into the pale hall and let your eyes travel the cracked stone. Dust drifted in the half-light between fallen columns. Somewhere ahead, a ribbon of blue light waited on a turned folio. Your breath slowed as you asked what this place was called.'
       )
     ).toBe(true);
-  });
-
-  it('Free narrate refuses Umbra (offline book)', async () => {
-    const provider = createFreeNarratorProvider();
-    const state = createInitialState('The Umbra Protocol', 'pyoa');
-    state.campaignBibleId = 'umbra-protocol';
-    await expect(
-      provider.narrate({
-        state,
-        playerInput: 'look',
-        settings: { subscriptionTier: 'free' } as never,
-      })
-    ).rejects.toThrow(/Umbra is offline/i);
   });
 });

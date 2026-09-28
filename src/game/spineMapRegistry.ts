@@ -382,11 +382,3 @@ export function getSpineMapHash(): string {
   const data = loadSpineMaps();
   return `${data.commission}-${data.schemaVersion}`;
 }
-
-/**
- * Format milestone for mandate
- */
-export function formatMilestoneMandate(milestone: Milestone, turn: number): string {
-  const status = isMilestoneOverdue(milestone, turn) ? 'OVERDUE' : 'DUE';
-  return `MILESTONE ${status} (${milestone.id}): ${milestone.durableOutcomes.join(', ')}`;
-}

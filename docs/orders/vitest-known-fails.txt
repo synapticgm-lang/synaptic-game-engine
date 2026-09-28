@@ -1,0 +1,134 @@
+﻿08c — Free MUD presentation micro-prompt is short and sealed
+08d — Silent Engine locks Silent Engine on + Mid OFF + stamp 08d
+09a — Free hosted Fireworks routing (no network) HUD/BUILD stay on the 09 line, Mid writer OFF
+20r map-authority explore + alone presence + status dedupe alone fallbacks prefer mapped doorway when interior graph exists
+autoplayWriter + dual critic + auto-improve rails builds distinct story vs vibe critic briefs
+Batch 02n — writer packet diet CAST keeps the named list and drops the CONSTRAINTS lecture
+day-1 — noun-authority hard reject nounAuthorityHardRejects fires for raw invented prose before accept
+entityCast builds CAST block with named and anonymous entities
+entityCast filters out UI labels from cast
+entityCast getCastSummary returns correct counts
+integration - full pipeline all modules work together without errors
+integration - full pipeline UI labels are consistently filtered across modules
+narrativeTranslator allows grounded choice references
+narrativeTranslator identifies UI labels correctly
+narrativeTranslator translates faction tokens to background entities
+narrativeTranslator translates raw state to natural language
+Pack 12 Fog-of-War Location Discovery detects locations mentioned in narrative
+Pack 12 Fog-of-War Location Discovery only shows discovered settlements from world atlas
+Pack 12 Fog-of-War Travel Options Filtering does not offer travel to undiscovered locations
+playtest02a — RPG T50 residual fixes Fix 3: Tighter loiter interrupt forces exit pads after 2 loiter actions (not 3)
+playtest02d hang debug — CAST / log / choice pad 02c CAST is prompt-only: no objects in present[] or log, no cycles
+playtest09b — page 1 is one authored paragraph HUD/BUILD stay on 2026-09-09, Mid writer OFF
+playtest09c — cover-continue + Silent receipts HUD/BUILD stay on the 09/10 opening line, Mid writer OFF
+playtest10a — live-drive source locks HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10b — cover answers the line HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10c — loiter stitch + writer strip HUD/BUILD stay on the 10 line and Mid writer stays OFF
+playtest10d — ash hall Silent break HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10d — ash hall Silent break name + what’s yours names the priest, not only Jax
+playtest10e — LitRPG System window HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10f — treaty tent one-line lock Ask what they want is hall talk; after name lock first ask is callGm (17g), name-give on cover stitches
+playtest10f — treaty tent one-line lock HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10h — watchtower start HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10i — cathedral name+why HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest10i — cathedral name+why why-brought and dont-know-of-this are hall talk, not Silent
+playtest10j — west wall NPC voice HUD/BUILD stay on the 10 line, Mid writer OFF
+playtest11a — founder email login HUD/BUILD stay on the 11 line, Mid writer OFF
+playtest11b — cover talk spoken + mode lock Fate-picked Ask what they want after covers is a writer path, not hall stitch
+playtest11b — cover talk spoken + mode lock first hall Q&A after covers goes to the writer (17g); Look/Wait too
+playtest11b — cover talk spoken + mode lock HUD/BUILD stay on the 11 line, Mid writer OFF
+playtest11f — ledger deficit + topic inclusion HUD/BUILD are 11f, Mid writer OFF
+playtest11f — ledger deficit + topic inclusion name plus leftover ask writes the name and answers the other topic
+playtest11f — ledger deficit + topic inclusion Wait+refuse is hall refuse, not Silent
+playtest11f — ledger deficit + topic inclusion want inclusion catches actually-want; I-want-to-leave is not hall want
+playtest11f — ledger deficit + topic inclusion writes Jax after covers even when the name chip queue is empty
+playtest12a — NPC memory first-meet HUD/BUILD are 12a, Mid writer OFF
+playtest12b — Manus Phase 2+3 stamps HUD/BUILD are 12b, Mid writer OFF
+playtest12b — or-hinge kill HUD/BUILD are 12a, Mid writer OFF
+playtest12c — Manus Phase 4 hooks + preview HUD/BUILD are 12c, Mid writer OFF
+playtest12c — social leftover HUD/BUILD are 12c, Mid writer OFF
+playtest12d — grain-ship talk + catalog seeds HUD/BUILD are 12d, Mid writer OFF
+playtest12e — map contrast chrome HUD/BUILD are 12e, Mid writer OFF
+playtest12f — talk envelope + path labels HUD/BUILD are 12f, Mid writer OFF
+playtest12g — natural prose receipts E fallback with living CAST uses the spoken card pool, not Silence held
+playtest12g — natural prose receipts HUD/BUILD are 12g, Mid writer OFF
+playtest13a — Crown archive HUD/BUILD are 13a+, Mid writer OFF
+playtest13b — writer owns the book after page 1 HUD/BUILD are 13b, Mid writer OFF
+playtest13b — writer owns the book after page 1 sign / Wait / Look / first Who go to callGm after page 1 (17g)
+playtest13c — writer obeys the ledger HUD/BUILD are 13c, Mid writer OFF
+playtest13c — writer obeys the ledger Look / Wait / sign-the-book / first Who still callGm after page 1 (17g)
+playtest14a — token prose HUD/BUILD are 14a, Mid writer OFF
+playtest14a — token prose Look / sign-the-book / first Who still callGm after page 1 (17g)
+playtest17g — writer always + Token Prose after page 1 Silent mud stays false; Look / Wait / inspect / first hall are callGm
+playtest17h — optimistic hall count + last-resort advance first want is one repeat even after the optimistic player bubble
+playtest17h — optimistic hall count + last-resort advance last-resort after a locked name is not page-1 or the last GM reprint
+playtest18a — Gemini tester verdict + simple prose floor first want after the name-lock beat is callGm; last-resort still paints a new book row
+playtest18a — Gemini tester verdict + simple prose floor Who/Want pads starve after that topic is logged
+playtest18b — live timeout paints a new book beat Want pad starves after the handler already spoke the want
+playtest27w — P0+P1 quality governance rejects Check the stranger when alone
+playtest29a — Manus score boost terminal authority Encounter Terminal FSM clears at max engaged turns
+playtest29a — Manus score boost terminal authority Entity scrub allowlist preserves encounter / inventory / location names
+playtest29c — kit scrub kill + Free-hook recovery bible-aware drought: no Keep Wraith on Shattered Coast
+playtest29e — world map overhaul harvests NPC names into lorebook without inventing cities
+playtest30x — site-wide crowd presence authority applyCommittedNarrative + harvest ledger stay consistent on later turns
+playtest30x — site-wide crowd presence authority harvest locks two / group and refuses shrink or grow without enter/leave
+playtest30y — chrome is not a person present[] does not include Place or blue panel after harvest / seed / commit
+playtest30y — chrome is not a person scrubs the raw official, Place hop before the panel rewrite
+playtest31d — force-latest + 30S chrome leftover applySaveRepair strips Place / blue panel from an old 30S present[] and keeps the story
+playtest31h — gap close P0 ledger owners P1-6 NPC tactic disposition drops first-speech lecture after topic advance
+playtest31jCriticBatchCD Batch C — Lowmarket vignette continuity lock mergeSceneFacts preserves openVignette; argument harvest locks cast
+playtest31pBatchE P0 — inspect/wait/scout treadmill scout/ready/wait count as loiter family and interrupt injects exit/talk
+playtest31qBatchF P0 — drought invent residual scrubs breaks-from-debris / unsupported geometry after preface
+playtest31sGeminiT50P0 P0-A — choice-pad labels never become NPCs blocks They / One / Press from present and harvest
+playtest31tBatchT P0-1 — ban unresolved deixis / occupancy nouns blocks Ahead / Behind / figure N from present and harvest
+playtest31tBatchT P0-3 — never commit stitch/chrome as the sole beat rejects old stitch bank lines and emits a scene-move stitch
+playtest31tBatchT stamp is 2026-08-31t / 31l and Mid writer stays OFF
+playtest31vBatchV P0-A/B — Rasped / They never become cast blocks dialogue verbs and They from person tokens
+playtest31vBatchV P0-C — combat purgatory interrupts detects identical little-true-effect combat recycle
+playtest31vBatchV P0-D — stitch meta never commits + travel starve on hub treadmill starves travel after hub walk/travel treadmill without live combat
+playtest31vBatchV stamp is 2026-08-31v / 31n and Mid writer stays OFF
+playtest31wBatchW P0-1 — entity / role-label collapse blocks stall contact and Scattered Scale from person slots
+playtest31wBatchW P0-4 — abstract dead pads starved under live context drops Press for leverage / Ask a direct question when NPCs present
+playtest31wBatchW stamp is 2026-08-31w / 31o and Mid writer stays OFF
+playtest31xBatchX P0-1 — hub+role entity mad-lib collapse Lowmarket Fence is a valid NPC compound, not a polity slot
+playtest31xBatchX P0-4 — abstract pads starved under live NPC context drops Press/Ask/Listen/Leave when NPCs present (T25 tape)
+playtest31xBatchX stamp is 2026-08-31x / 31p and Mid writer stays OFF
+playTranscript falls back to last GM offeredChoices when opening is complete and state.choices is empty
+povRails detects POV violations - mixed possession
+repairCopyBank maps dnd engine to tabletop rows
+repairCopyBank maps rpg engine to story_rpg rows
+repairEngine detects ambiguous short or-phrases
+repairEngine detects protest phrasing
+snapshot packet uniqueness emits one SNAPSHOT truth block instead of repeating crowd/exits
+story↔options consistency (20l) continue stitch grounds the room without meta lock / anti-sword
+WS-2 Wave A: NPC Memory Ledger broadcasts key moment to witnesses
+WS-2 Wave B: Turnover Engine decideTurnover should delegate on deadline
+WS-4 Integration: Full Encounter Flow complete encounter lifecycle (telegraph → resolution → aftermath)
+WS-4 Wave 1 — Biome Matrix B021: Hard filter prevents wrong-bible spawns
+WS-4 Wave 1 — Biome Matrix B023: Filter templates by biome returns legal candidates only
+WS-4 Wave 1 — Encounter Bible B001: Template registry creation and validation
+WS-4 Wave 1 — Encounter Bible B002: Template registration and retrieval
+WS-4 Wave 1 — Encounter Bible B003: Template validation
+WS-4 Wave 1 — Encounter Bible B004: Filter templates by tier range
+WS-4 Wave 1 — Encounter Bible B005: Pick encounter template with seeding
+WS-4 Wave A: Encounter Bible creates empty registry
+WS-4 Wave A: Encounter Bible detects invalid template
+WS-4 Wave A: Encounter Bible registers template
+WS-4 Wave A: Encounter Bible validates template schema
+WS-4 Wave A: Template Foundation creates and populates template registry
+WS-4 Wave A: Template Foundation filters templates by biome
+WS-4 Wave A: Template Foundation filters templates by density role
+WS-4 Wave A: Template Foundation filters templates by tier
+WS-4 Wave A: Template Foundation registers template and indexes by bible, mode, and ID
+WS-4 Wave A: Template Foundation validates template catches missing fields
+WS-4 Wave A: Template Foundation validates template schema
+WS-4 Wave D+: Density Enforcement selects encounter respecting density constraints
+WS-5 Wave A: Exclusive Facts detects fact conflict
+WS-5 Wave A: Exclusive Facts validates batch of fact writes
+WS-5 Wave C: Convergence Detection detectConvergencePoints should find convergence points for thornferry-road
+WS-5 Wave C: Convergence Detection extractBranchState should extract exclusive facts
+WS-5 Wave C: Convergence Detection validateCatalog should detect empty catalog
+WS-5 Wave C: Convergence Detection validateCatalog should validate known catalog
+WS-7 Wave D+: Social Progression calculateSocialXp should apply parity adjustment
+WS-7 Wave D+: Social Progression SOCIAL_SKILL_TREE should have 10 nodes across 5 tiers
+WS-7 Wave D+: Social Progression unlockSkillNode should not unlock node without prerequisites

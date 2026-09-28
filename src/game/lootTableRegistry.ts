@@ -12,7 +12,6 @@
  * - Idempotent commit requirements
  * 
  * Related:
- * - encounterAftermath.ts - Receipt generation
  * - encounterBiomeMatrix.ts - Biome detection
  * - data/encounters/D9_loot_tables.json - Content catalog
  */

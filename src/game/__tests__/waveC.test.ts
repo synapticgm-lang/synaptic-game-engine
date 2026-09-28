@@ -4,7 +4,6 @@
  * Tests for:
  * - WS-2 Wave C: Memory retrieval, grounding verification
  * - WS-4 Wave C: Density governance, variety scoring
- * - WS-5 Wave C: Convergence detection, catalog validation
  */
 
 import { describe, it, expect } from 'vitest';
@@ -32,19 +31,6 @@ import {
   selectEncounterWithDensity,
   shouldSpawnEncounter
 } from '../encounterDensity';
-
-// WS-5 Wave C
-import {
-  extractBranchState,
-  compareBranchStates,
-  detectConvergencePoints,
-  checkConvergence,
-  validateMerge,
-  inspectCatalogStructure,
-  validateCatalog,
-  buildFogOfWarJournalSection,
-  getConvergenceTelemetry
-} from '../pyoaConvergence';
 
 import type { GameState } from '../types';
 import type { NpcMemoryLedger, KeyMoment } from '../npcMemoryLedger';
@@ -435,141 +421,3 @@ describe('WS-4 Wave C: Density Governance', () => {
   });
 });
 
-// ============================================================================
-// WS-5 Wave C: Convergence Detection Tests
-// ============================================================================
-
-describe('WS-5 Wave C: Convergence Detection', () => {
-  describe('extractBranchState', () => {
-    it('should extract exclusive facts', () => {
-      const gs = createMockGameState({
-        arcDirector: {
-          exclusiveFacts: {
-            'ally_chosen': true,
-            'betrayer_marked': false
-          }
-        }
-      });
-      
-      const state = extractBranchState('test', gs);
-      
-      expect(state.activeFacts.has('ally_chosen')).toBe(true);
-      expect(state.excludedFacts.has('betrayer_marked')).toBe(true);
-    });
-  });
-  
-  describe('compareBranchStates', () => {
-    it('should detect equivalent states', () => {
-      const stateA = {
-        branchId: 'A',
-        activeFacts: new Set(['fact1', 'fact2']),
-        excludedFacts: new Set(['fact3']),
-        crisisPath: []
-      };
-      
-      const stateB = {
-        branchId: 'B',
-        activeFacts: new Set(['fact1', 'fact2']),
-        excludedFacts: new Set(['fact3']),
-        crisisPath: []
-      };
-      
-      const comparison = compareBranchStates(stateA, stateB);
-      
-      expect(comparison.equivalent).toBe(true);
-      expect(comparison.sharedFacts).toEqual(['fact1', 'fact2']);
-    });
-    
-    it('should detect different states', () => {
-      const stateA = {
-        branchId: 'A',
-        activeFacts: new Set(['fact1']),
-        excludedFacts: new Set(),
-        crisisPath: []
-      };
-      
-      const stateB = {
-        branchId: 'B',
-        activeFacts: new Set(['fact2']),
-        excludedFacts: new Set(),
-        crisisPath: []
-      };
-      
-      const comparison = compareBranchStates(stateA, stateB);
-      
-      expect(comparison.equivalent).toBe(false);
-      expect(comparison.differentFacts).toContain('fact1');
-      expect(comparison.differentFacts).toContain('fact2');
-    });
-  });
-  
-  describe('detectConvergencePoints', () => {
-    it('should find convergence points for thornferry-road', () => {
-      const points = detectConvergencePoints('thornferry-road');
-      
-      expect(points.length).toBeGreaterThan(0);
-      expect(points[0].crisisId).toBeDefined();
-      expect(points[0].convergingBranches.length).toBeGreaterThan(1);
-    });
-  });
-  
-  describe('validateMerge', () => {
-    it('should allow merge with no conflicts', () => {
-      const source = {
-        branchId: 'source',
-        activeFacts: new Set(['fact1']),
-        excludedFacts: new Set(['fact2']),
-        crisisPath: []
-      };
-      
-      const target = {
-        branchId: 'target',
-        activeFacts: new Set(['fact1']),
-        excludedFacts: new Set(['fact2']),
-        crisisPath: []
-      };
-      
-      const validation = validateMerge(source, target);
-      
-      expect(validation.valid).toBe(true);
-      expect(validation.conflicts.length).toBe(0);
-    });
-    
-    it('should detect merge conflicts', () => {
-      const source = {
-        branchId: 'source',
-        activeFacts: new Set(['fact1']),
-        excludedFacts: new Set(),
-        crisisPath: []
-      };
-      
-      const target = {
-        branchId: 'target',
-        activeFacts: new Set(),
-        excludedFacts: new Set(['fact1']),
-        crisisPath: []
-      };
-      
-      const validation = validateMerge(source, target);
-      
-      expect(validation.valid).toBe(false);
-      expect(validation.conflicts.length).toBeGreaterThan(0);
-    });
-  });
-  
-  describe('validateCatalog', () => {
-    it('should validate known catalog', () => {
-      const validation = validateCatalog('thornferry-road');
-      
-      expect(validation.valid).toBe(true);
-      expect(validation.errors.length).toBe(0);
-    });
-    
-    it('should detect empty catalog', () => {
-      const validation = validateCatalog('unknown-bible');
-      
-      expect(validation.valid).toBe(false);
-      expect(validation.errors).toContain('No crises defined for this bible');
-    });
-  });
-});
