@@ -922,11 +922,14 @@ export function formatWriterFacingEvent(
   lines.push('');
   lines.push(`YOU MAY ONLY MENTION: ${packet.allowlist.length ? packet.allowlist.join(', ') : 'none'}.`);
   lines.push('');
-  lines.push('TOKEN PROSE — return JSON only (no markdown):');
-  // 28h — schema-only example with obvious <placeholders>; writers copied the old real example.
-  lines.push('{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"<use>"}],"lines":[{"fn":"<fn>","text":"<your own sentence using @t1>"}]}');
+  lines.push('TOKEN PROSE — return JSON only (no markdown).');
+  // 28l — the count comes before the example and the example has four full lines: writers copy the
+  // example's shape, and a one-line example came back as one place-name line.
+  lines.push('Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
+  lines.push('Shape (replace every <...> with your own words):');
+  lines.push('{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"actor"}],"lines":[{"fn":"place","text":"<sentence: where you were, using @t1>"},{"fn":"action","text":"<sentence: what you did and what came of it>"},{"fn":"react","text":"<sentence: how @t2 or the room answered>"},{"fn":"hook","text":"<sentence: what now waits or threatens>"}]}');
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
-  lines.push('lines.text may name entities only as @t1-style tokens. Write 4–6 lines. Prefer place then action.');
+  lines.push('Name entities as @tN tokens from the REF ENUM; use no other names.');
   lines.push(formatRefEnumForWriter(packet.refEnum ?? []));
   if (opts?.stricter) {
     lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');

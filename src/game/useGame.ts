@@ -35,7 +35,7 @@ import {
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, type GmResult } from './aiService';
-import { gmProxyHost } from './gmProxy';
+import { drainWriterRawIssues, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import type { EnemyStats } from './combat';
 import { profileForEncounter } from './lootTableRegistry';
@@ -155,6 +155,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
+import { runWriterTurn, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
@@ -2858,6 +2859,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ? (authoredPageText(liveCurrent) || authoredStartPage()).trim()
         : '';
       let result: GmResult;
+      let writerRemaining: string[] = [];
+      drainWriterRawIssues();
       try {
         result =
           authoredBook
@@ -2896,310 +2899,70 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         };
       }
 
-      // System-wide: if the model returned bridge-only / empty / no findings, regenerate.
-      // Never swap a real GM beat for a local story template.
-      // 08c Free MUD: skip novelist quality retry / stitch — receipt is enough.
+      // 28l — one writer turn: draft → code-found problems → at most one short revision → same-writer
+      // plain prose. Never swap a real GM beat for a stitched / canned line.
+      // 08c Free MUD: receipt is enough — no writer turn.
       if (!useMud && !authoredBook) {
-        // 28g — judge the story the player would see: render token JSON first (raw JSON always holds
-        // @tN tokens, which the commit gate reads as leftover tokens → a writer retry on most turns).
-        const probeOf = (text: string) =>
-          ensureTurnProse(
-            stripResidualMechanicTags(stripChoiceList(stripActionTags(
-              looksLikeTokenJson(text)
-                ? acceptTokenOrLedgerStory(text, liveCurrent, liveCurrent.completedEvent, { alreadyRepaired: true }).prose
-                : text
-            ))),
-            sanitizedInput,
-          );
-        let probeText = probeOf(result.text);
-        const probeLocks = detectFactLockViolations(liveCurrent, probeText, sanitizedInput);
+        const writerPacket = liveCurrent.completedEvent ?? preparedEvent.packet;
         const previousGm =
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
-        const obligationCoverage = checkObligationCoverage(turnMandate.intentContract, probeText);
-        const sameBeat = isSameBeat(probeText, liveCurrent.recentBeatFingerprints ?? []);
-        const softLedgerOnly =
-          obligationCoverage.missing.length > 0
-          && obligationCoverage.missing.every((o) => o.kind === 'open_ask' || o.kind === 'silenced_thread')
-          && storyHasBody(probeText)
-          && !isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
-          && (intentForMandate.kind === 'observe'
-            || intentForMandate.kind === 'search'
-            || isRoomLayoutExploreAsk(sanitizedInput));
-        // Free: moderate same-beat alone is soft — don't burn a second slow GM call
-        // UNLESS Travel lands OR near-verbatim clone (≥0.85) which must retry.
-        const travelAction = !!parseTravelDestination(
-          sanitizedInput,
-          liveCurrent.campaignBibleId
-        );
-        const recentGmBeats = recentGmBeatTexts(liveCurrent);
-        const nearClone = isNearClone(probeText, liveCurrent.recentBeatFingerprints ?? []);
-        const inventGate = openingInventBudgetZero(liveCurrent)
-          ? classifyOpeningContinue(liveCurrent, probeText)
-          : { accept: true, prose: probeText, reasons: [] as string[] };
-        const collageReject = shouldRetryUnaskedCollage(probeText, recentGmBeats, sanitizedInput);
-        const commitGate = classifyBeatCommit(liveCurrent, probeText, sanitizedInput);
-        const askedRepeat = playerAsksRepeat(sanitizedInput);
-        const askedContinue = playerAsksContinuation(sanitizedInput);
-        // Free may skip a moderate same-beat retry only when the player asked to keep doing X.
-        // Near-clones and unprompted recycle always retry — all modes.
-        const freeSoftSameBeatOnly =
-          effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free') === 'free'
-          && sameBeat
-          && !nearClone
-          && !collageReject
-          && !travelAction
-          && askedContinue
-          && !askedRepeat
-          && storyHasBody(probeText)
-          && obligationCoverage.ok
-          && !isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
-          && !probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared');
-        const needsStoryRetry =
-          !askedRepeat
-          && !softLedgerOnly
-          && !freeSoftSameBeatOnly
-          && (!storyHasBody(probeText)
-            || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
-            || !obligationCoverage.ok
-            || sameBeat
-            || nearClone
-            || collageReject
-            || !commitGate.accept
-            || !inventGate.accept
-            || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
-        // Fact-lock slips are cut locally after this. Only burn extra GM calls when
-        // the turn did not resolve the player's action at all, or returned no story.
-        // After a transport retry, skip quality/expand — don't stack another full GM wait.
-        const skipStackedGmAfterTransport = transportRetriesUsed > 0;
-        if (needsStoryRetry && skipStackedGmAfterTransport) {
-          debugLogger.record('INFO', 'Skip resolution retry — already used transport retry this turn', {
+        const writerTurn = await runWriterTurn({
+          firstRaw: result.text,
+          packet: writerPacket,
+          check: {
+            state: liveCurrent,
+            playerInput: sanitizedInput,
+            intent: intentForMandate,
+            engineFact,
+            previousGm,
+          },
+          callWriter: async (payload) => {
+            setRetryStatus('Refining the beat…');
+            try {
+              return (await callGmDurable(payload)).text ?? '';
+            } catch {
+              return '';
+            }
+          },
+          allowRevision: transportRetriesUsed === 0,
+        });
+        writerRemaining = writerTurn.remaining;
+        if (writerTurn.problems.length) {
+          debugLogger.record('WARN', 'Writer draft problems', {
             turn: liveCurrent.turn,
-            transportRetriesUsed,
-            intent: intentForMandate.kind,
-          });
-        } else if (needsStoryRetry) {
-          debugLogger.record('WARN', 'Unresolved or empty action narrative — resolution retry', {
-            turn: liveCurrent.turn,
-            intent: intentForMandate.kind,
-            empty: !storyHasBody(probeText),
-            factLocks: probeLocks.map((v) => v.kind),
-            obligationMissing: obligationCoverage.missing.map((o) => o.kind),
-            sameBeat,
-            collageReject,
-          });
-          const firstResult = result;
-          const firstProbe = probeText;
-          const firstUnresolved = isUnresolvedActionNarrative(
-            sanitizedInput,
-            firstProbe,
-            intentForMandate,
-            previousGm
-          );
-          const firstObligations = checkObligationCoverage(turnMandate.intentContract, firstProbe);
-          const firstSameBeat = isSameBeat(firstProbe, liveCurrent.recentBeatFingerprints ?? []);
-          const firstCollageReject = shouldRetryUnaskedCollage(
-            firstProbe,
-            recentGmBeats,
-            sanitizedInput
-          );
-          const extraBlocks = [
-            !firstObligations.ok
-              ? buildObligationRetryBlock(turnMandate.intentContract, firstObligations)
-              : '',
-            firstSameBeat || firstCollageReject
-              ? buildBeatNoveltyRetryBlock(liveCurrent.recentBeatFingerprints ?? [])
-              : '',
-          ]
-            .filter(Boolean)
-            .join('\n\n');
-          setRetryStatus('Refining story resolution…');
-          result = await callGmDurable(
-            liveCurrent.completedEvent
-              ? formatTalkWriterFacing(liveCurrent.completedEvent, liveCurrent, { stricter: true })
-              : buildResolutionUserPayload({
-                  mandateBlock: turnMandate.block,
-                  playerAction: sanitizedInput,
-                  deterministicBlock: deterministicStateBlock,
-                  retry: true,
-                  intent: intentForMandate,
-                  factLocks: probeLocks,
-                  extraRetryBlock: extraBlocks || undefined,
-                }),
-          );
-          probeText = probeOf(result.text);
-          const retryUnresolved = isUnresolvedActionNarrative(
-            sanitizedInput,
-            probeText,
-            intentForMandate,
-            previousGm
-          );
-          const retryObligations = checkObligationCoverage(turnMandate.intentContract, probeText);
-          const retrySameBeat = isSameBeat(probeText, liveCurrent.recentBeatFingerprints ?? []);
-          const firstOk =
-            storyHasBody(firstProbe) && !firstUnresolved && firstObligations.ok && !firstSameBeat;
-          const retryOk =
-            storyHasBody(probeText) && !retryUnresolved && retryObligations.ok && !retrySameBeat;
-          // Prefer a real first beat over a thinner / recycled retry.
-          let discardedNarrative: string | null = null;
-          if (
-            (firstOk && !retryOk)
-            || (!retryOk && storyHasBody(firstProbe) && !storyHasBody(probeText))
-            || (!firstOk && !retryOk && storyHasBody(firstProbe) && firstProbe.length >= (probeText?.length ?? 0))
-          ) {
-            discardedNarrative = probeOf(result.text);
-            result = firstResult;
-            probeText = firstProbe;
-          } else if (storyHasBody(firstProbe) && result !== firstResult) {
-            discardedNarrative = firstProbe;
-          }
-          if (discardedNarrative) {
-            liveCurrent = appendSpeculativeTake(liveCurrent, {
-              turnPlanned: liveCurrent.turn + 1,
-              expectedRevision: currentLedgerRevision(liveCurrent),
-              playerAction: sanitizedInput,
-              narrative: discardedNarrative.slice(0, 4000),
-              reason: !firstObligations.ok || !retryObligations.ok
-                ? 'obligation-retry-discarded'
-                : 'resolution-retry-discarded',
-            });
-            stateRef.current = liveCurrent;
-          }
-        } else if (probeLocks.length) {
-          debugLogger.record('STATE_UPDATE', 'Fact-lock slips will be cut locally — skipping GM retry', {
-            turn: liveCurrent.turn,
-            factLocks: probeLocks.map((v) => v.kind),
+            problems: writerTurn.problems,
+            outcome: writerTurn.outcome,
+            remaining: writerTurn.remaining,
           });
         }
-
-        {
-          let accepted = acceptTokenOrLedgerStory(
-            probeText,
-            liveCurrent,
-            liveCurrent.completedEvent
-          );
-          if (
-            accepted.needsRepair
-            && liveCurrent.completedEvent
-            && !skipStackedGmAfterTransport
-            && !playerAsksRepeat(sanitizedInput)
-          ) {
-            setRetryStatus('Repairing the beat…');
-            result = await callGmDurable(
-              formatTokenRepairFacing(liveCurrent.completedEvent, accepted.needsRepair.missingFns)
-            );
-            accepted = acceptTokenOrLedgerStory(
-              result.text,
-              liveCurrent,
-              liveCurrent.completedEvent,
-              { alreadyRepaired: true, alt: probeText }
-            );
-          }
-          if (accepted.prose) {
-            probeText = accepted.prose;
-            result = { ...result, text: accepted.prose };
-          }
-          if (
-            (accepted.path === 'json' || accepted.path === 'json-partial')
-            && accepted.refs?.length
-            && liveCurrent.completedEvent
-          ) {
-            liveCurrent = {
-              ...liveCurrent,
-              completedEvent: { ...liveCurrent.completedEvent, tokenRefs: accepted.refs },
-            };
-            stateRef.current = liveCurrent;
-          }
+        if (writerTurn.firstDraft && writerTurn.outcome === 'revised') {
+          liveCurrent = appendSpeculativeTake(liveCurrent, {
+            turnPlanned: liveCurrent.turn + 1,
+            expectedRevision: currentLedgerRevision(liveCurrent),
+            playerAction: sanitizedInput,
+            narrative: writerTurn.firstDraft.slice(0, 4000),
+            reason: 'resolution-retry-discarded',
+          });
+          stateRef.current = liveCurrent;
+        }
+        result = { ...result, text: writerTurn.prose };
+        if (
+          (writerTurn.path === 'json' || writerTurn.path === 'json-partial')
+          && writerTurn.refs?.length
+          && liveCurrent.completedEvent
+        ) {
+          liveCurrent = {
+            ...liveCurrent,
+            completedEvent: { ...liveCurrent.completedEvent, tokenRefs: writerTurn.refs },
+          };
+          stateRef.current = liveCurrent;
         }
 
         if (openingInventBudgetZero(liveCurrent)) {
-          const gated = classifyOpeningContinue(liveCurrent, probeText);
-          if (gated.prose && gated.prose !== probeText) {
-            probeText = gated.prose;
+          const gated = classifyOpeningContinue(liveCurrent, result.text);
+          if (gated.prose && gated.prose !== result.text) {
             result = { ...result, text: gated.prose };
           }
-        }
-
-        {
-          const stillGate = classifyBeatCommit(liveCurrent, probeText, sanitizedInput);
-          if (!stillGate.accept && !playerAsksRepeat(sanitizedInput)) {
-            const repaired = repairRejectedBeat(liveCurrent, probeText, stillGate.reasons);
-            if (repaired.repaired) {
-              probeText = repaired.prose;
-              result = { ...result, text: repaired.prose };
-              debugLogger.record('WARN', 'Commit gate repaired beat (no CRAFT)', {
-                turn: liveCurrent.turn,
-                reasons: stillGate.reasons,
-              });
-            }
-          }
-        }
-
-        {
-          const bannedTalk =
-            /Silence held the question|No one listed on the ledger answered/i;
-          if (
-            !useMud
-            && (preparedEvent.packet.verb === 'spoke' || preparedEvent.packet.verb === 'parleyed')
-            && (!storyHasBody(probeText) || bannedTalk.test(probeText))
-          ) {
-            const spoken = spokenTalkFallback(liveCurrent, sanitizedInput);
-            if (spoken && !bannedTalk.test(spoken)) {
-              probeText = spoken;
-              result = { ...result, text: spoken };
-            }
-          }
-        }
-
-        // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
-        // Free is already slow — skip expand when near the floor (≥70 words) to avoid a second call.
-        // Also skip after transport retry so the player is not stacked into another long wait.
-        probeText = probeOf(result.text);
-        const writerTier = effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free');
-        const thinWords = storyWordCount(probeText);
-        const skipFreeNearFloor = writerTier === 'free' && thinWords >= 70;
-        if (
-          storyHasBody(probeText)
-          && isStoryTooThin(probeText)
-          && !skipFreeNearFloor
-          && !skipStackedGmAfterTransport
-        ) {
-          debugLogger.record('WARN', 'Thin story beat — value expand', {
-            turn: liveCurrent.turn,
-            wordCount: thinWords,
-            writerTier,
-          });
-          const thinFirst = result;
-          const thinFirstProbe = probeText;
-          setRetryStatus('Expanding the beat for turn value…');
-          result = await callGmDurable(
-            buildResolutionUserPayload({
-              mandateBlock: turnMandate.block,
-              playerAction: sanitizedInput,
-              deterministicBlock: deterministicStateBlock,
-              retry: true,
-              intent: intentForMandate,
-              extraRetryBlock: buildThinStoryExpandBlock(sanitizedInput, thinWords),
-            }),
-          );
-          probeText = probeOf(result.text);
-          const expandedOk =
-            storyHasBody(probeText)
-            && storyWordCount(probeText) >= storyWordCount(thinFirstProbe);
-          if (!expandedOk) {
-            result = thinFirst;
-            probeText = thinFirstProbe;
-          }
-        } else if (skipStackedGmAfterTransport && storyHasBody(probeText) && isStoryTooThin(probeText)) {
-          debugLogger.record('INFO', 'Skip value expand — already used transport retry this turn', {
-            turn: liveCurrent.turn,
-            wordCount: thinWords,
-            transportRetriesUsed,
-          });
-        } else if (skipFreeNearFloor) {
-          debugLogger.record('INFO', 'Skip Free value expand — near floor', {
-            turn: liveCurrent.turn,
-            wordCount: thinWords,
-          });
         }
       }
 
@@ -3339,14 +3102,21 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
       cleanText = ensureTurnProse(cleanText, sanitizedInput);
       {
-        const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput);
+        const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput, {
+          keepWriterProse: !useMud && !authoredBook,
+        });
         cleanText = govProse.prose;
         if (govProse.notes.length) warden.notes.push(...govProse.notes);
       }
+      // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
       const blockedPaint = isBlockedPaint(warden.notes, liveCurrent, cleanText);
-      if (blockedPaint) {
+      if (blockedPaint && !storyHasBody(cleanText)) {
         cleanText = ledgerActionStitch(liveCurrent, sanitizedInput);
-        warden.notes.push('Paint blocked: ledger stitch');
+        warden.notes.push('Paint blocked: ledger stitch (empty beat)');
+      }
+      if (!useMud && !authoredBook) {
+        const writerIssues = writerTurnIssues(drainWriterRawIssues(), [...warden.notes, ...writerRemaining]);
+        if (writerIssues.length) gmEntry.writerIssues = writerIssues;
       }
       const storyBeforeCuts = cleanText;
 
@@ -3704,11 +3474,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       {
         const lastGmRow = [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+        // 28l — writer turns reach this only on a total outage (the writer turn already revised any
+        // reprint / stub / unasked fight close); MUD receipt turns keep the old stub guard.
         if (
           !storyHasBody(cleanText)
-          || isDroughtStubProse(cleanText)
-          || isLastGmReprint(cleanText, lastGmRow)
-          || isUnaskedCombatClose(cleanText, sanitizedInput)
+          || (useMud && (
+            isDroughtStubProse(cleanText)
+            || isLastGmReprint(cleanText, lastGmRow)
+            || isUnaskedCombatClose(cleanText, sanitizedInput)
+          ))
         ) {
           const painted = bookBodyAfterWriterMiss(
             liveCurrent,

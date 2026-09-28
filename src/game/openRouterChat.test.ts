@@ -19,12 +19,12 @@ describe('extractChatCompletionText', () => {
     ).toBe('The door groans.');
   });
 
-  it('reads DeepSeek reasoning when content is empty', () => {
+  it('28l: never paints reasoning as the story when content is empty', () => {
     expect(
       extractChatCompletionText({
         choices: [{ message: { content: '', reasoning_content: 'The door groans.' } }],
       })
-    ).toBe('The door groans.');
+    ).toBe('');
   });
 
   it('joins array content parts', () => {
@@ -50,7 +50,7 @@ describe('extractChatCompletionText', () => {
 
 describe('Fireworks Free writer routing (no network)', () => {
   it('default Free id is Fireworks V4 Flash, not OpenRouter DeepSeek or retired v3p1', () => {
-    expect(FREE_WRITER_FIREWORKS_MODEL).toBe('accounts/fireworks/models/deepseek-v4-flash-0731');
+    expect(FREE_WRITER_FIREWORKS_MODEL).toBe('accounts/fireworks/models/deepseek-v4p1-flash');
     expect(FREE_WRITER_FIREWORKS_MODEL).not.toMatch(/deepseek-v3p1/);
     expect(FREE_WRITER_FIREWORKS_MODEL).not.toBe('deepseek/deepseek-v4-flash-0731');
     expect(FIREWORKS_INFERENCE_BASE).toBe('https://api.fireworks.ai/inference/v1');

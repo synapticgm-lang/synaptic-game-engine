@@ -315,13 +315,17 @@ export function processMetaInput(state: GameState, input: string): {
 export function applyGovernanceToProse(
   state: GameState,
   prose: string,
-  playerInput = ''
+  playerInput = '',
+  opts: { keepWriterProse?: boolean } = {}
 ): {
   prose: string;
   notes: string[];
   rejectClone?: boolean;
 } {
   const notes: string[] = [];
+  // 28l — writer turns keep the writer's prose (flags stay as notes); only an empty beat gets a coded move.
+  const keep = opts.keepWriterProse === true;
+  const sceneMoveOr = (text: string) => (keep && text.trim() ? text : codedSceneMove(state));
   const context = extractEntityContext(state);
   const report = validateEntityReferences(prose, context);
   let out = prose;
@@ -402,7 +406,7 @@ export function applyGovernanceToProse(
       if (ignore.ignored) {
         rejectClone = true;
         notes.push(`CRAFT ignore: ${ignore.ids.join(',')}`);
-        const repaired = repairRejectedBeat(state, out, ['craft-ignore']);
+        const repaired = repairRejectedBeat(state, out, ['craft-ignore'], { stripOnly: keep });
         if (repaired.repaired) {
           out = repaired.prose;
           notes.push(...repaired.notes);
@@ -415,7 +419,7 @@ export function applyGovernanceToProse(
   if (!gate.accept) {
     rejectClone = true;
     notes.push(`Commit gate: ${gate.reasons.join(',')}`);
-    const repaired = repairRejectedBeat(state, out, gate.reasons);
+    const repaired = repairRejectedBeat(state, out, gate.reasons, { stripOnly: keep });
     if (repaired.repaired) {
       out = repaired.prose;
       notes.push(...repaired.notes);
@@ -430,7 +434,7 @@ export function applyGovernanceToProse(
       notes.push('Director chrome scrubbed from prose');
       if (!out.trim() || isDirectorChromeLeak(out) || isVerbatimStallStub(out) || isStitchBankFingerprint(out)) {
         rejectClone = true;
-        out = codedSceneMove(state);
+        out = sceneMoveOr(out);
         notes.push('Director/stitch chrome — coded scene move');
       }
     }
@@ -449,28 +453,28 @@ export function applyGovernanceToProse(
   if (hasQuestTrackerLeak(out)) {
     rejectClone = true;
     notes.push('Quest tracker leak reject');
-    out = codedSceneMove(state);
+    out = sceneMoveOr(out);
   }
   if (hasCombatSpawnLogInBody(out) || detectHubRoleMadlib(out)) {
     rejectClone = true;
     notes.push('Spawn log / hub-role mad-lib reject');
-    const repaired = repairRejectedBeat(state, out, ['recycle-without-delta']);
+    const repaired = repairRejectedBeat(state, out, ['recycle-without-delta'], { stripOnly: keep });
     if (repaired.repaired) out = repaired.prose;
   }
   if (isStitchBankFingerprint(out)) {
     rejectClone = true;
     notes.push('Stitch bank fingerprint reject');
-    out = codedSceneMove(state);
+    out = sceneMoveOr(out);
   }
   if (isTokenSaladLeak(out)) {
     rejectClone = true;
     notes.push('Token-salad leak reject');
-    out = codedSceneMove(state);
+    out = sceneMoveOr(out);
   }
   if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out) || isStitchBankFingerprint(out) || isTokenSaladLeak(out) || isHudCombatChromeLeak(out) || isEngineChromeOnlyBeat(out)) {
     rejectClone = true;
     notes.push('Banned stall/fallback/director/stitch stub — reject');
-    out = codedSceneMove(state);
+    out = sceneMoveOr(out);
   }
 
   return { prose: out, notes, rejectClone };

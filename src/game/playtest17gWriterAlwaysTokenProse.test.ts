@@ -105,8 +105,8 @@ function saltAfterFirstWant(): GameState {
 
 describe('playtest17g — writer always + Token Prose after page 1', () => {
   it('HUD/BUILD are 17g, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-28k');
-    expect(BUILD_STAMP).toBe('2026-09-28k');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-28l');
+    expect(BUILD_STAMP).toBe('2026-09-28l');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -180,13 +180,14 @@ describe('playtest17g — writer always + Token Prose after page 1', () => {
     const fate = readFileSync(resolve(__dirname, './fateAutoplay.ts'), 'utf8');
     expect(live).toContain('shouldStitchOpeningContinue');
     expect(live).toContain('shouldUseSilentMudTurn');
-    expect(live).toContain('acceptTokenOrLedgerStory');
-    expect(live).toContain('formatTokenRepairFacing');
+    // 28l — both share one writer turn (writerTurn.ts), which owns the token-prose accept path.
+    const shared = readFileSync(resolve(__dirname, './writerTurn.ts'), 'utf8');
+    expect(live).toContain('runWriterTurn');
     expect(live).toContain('await callGm(');
     expect(fate).toContain('shouldStitchOpeningContinue');
     expect(fate).toContain('shouldUseSilentMudTurn');
-    expect(fate).toContain('acceptTokenOrLedgerStory');
-    expect(fate).toContain('formatTokenRepairFacing');
+    expect(fate).toContain('runWriterTurn');
+    expect(shared).toContain('acceptTokenOrLedgerStory');
     expect(fate).toContain('already-told who/want/refuse still stitches');
   });
 });

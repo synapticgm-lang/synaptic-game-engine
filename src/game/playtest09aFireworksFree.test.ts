@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { SUBSCRIPTION_TIERS } from './subscriptionTiers';
-import { STAGNATION_MID_WRITER_ENABLED, resolveFreeWriterFailover } from './writerPolicy';
+import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { FREE_WRITER_FIREWORKS_MODEL, hostedWriterProvider } from './openRouterChat';
 
 const playPrivileges = readFileSync(
@@ -41,11 +41,10 @@ describe('09a — Free hosted Fireworks routing (no network)', () => {
     expect(gmTurn).not.toMatch(/provider === 'openrouter'\s*\n\s*\? 'deepseek\/deepseek-v4-flash-0731'/);
   });
 
-  it('empty-GM failover stays Llama on OpenRouter (no Mid writer)', () => {
-    expect(resolveFreeWriterFailover(FREE_WRITER_FIREWORKS_MODEL)).toBe(
-      'meta-llama/llama-3.1-8b-instruct'
-    );
-    expect(gmTurn).toContain('meta-llama/llama-3.1-8b-instruct');
+  it('empty-GM re-asks the same model once (28l: never a model switch, no Mid writer)', () => {
+    expect(gmTurn).not.toContain('meta-llama/llama-3.1-8b-instruct');
+    expect(gmTurn).toContain('NO_REASONING_HINT');
+    expect(gmTurn).toContain('WRITER_REASK_MAX_TOKENS');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

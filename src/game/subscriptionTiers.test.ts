@@ -8,7 +8,7 @@ import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
 describe('hosted AI catalog', () => {
   it('gives Free Fireworks DeepSeek V4 Flash, Mid Claude Haiku, High Claude Sonnet 4.6', () => {
     expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe(
-      'accounts/fireworks/models/deepseek-v4-flash-0731'
+      'accounts/fireworks/models/deepseek-v4p1-flash'
     );
     expect(SUBSCRIPTION_TIERS.mid.writerOpenRouterId).toBe('anthropic/claude-haiku-4.5');
     expect(SUBSCRIPTION_TIERS.high.writerOpenRouterId).toBe('anthropic/claude-sonnet-4.6');

@@ -46,6 +46,8 @@ export type CommitGateReason =
 export type CommitGateResult = {
   accept: boolean;
   reasons: CommitGateReason[];
+  /** 28l — one plain problem line per failed check (the writer revision list). */
+  details?: string[];
 };
 
 const SLOT_STOP = new Set([
@@ -86,94 +88,67 @@ export function classifyBeatCommit(
   playerInput?: string
 ): CommitGateResult {
   const reasons: CommitGateReason[] = [];
+  const details: string[] = [];
+  const flag = (reason: CommitGateReason, detail: string) => {
+    if (!reasons.includes(reason)) reasons.push(reason);
+    if (!details.includes(detail)) details.push(detail);
+  };
+  const recycle = (detail: string) => flag('recycle-without-delta', detail);
   const text = (prose ?? '').trim();
-  if (!text) return { accept: true, reasons };
-  if (playerAsksRepeat(playerInput ?? '')) return { accept: true, reasons };
+  if (!text) return { accept: true, reasons, details };
+  if (playerAsksRepeat(playerInput ?? '')) return { accept: true, reasons, details };
   // 14a — leftover tokens / drought body never commit (stitch banks are not the success path).
-  if (/@t\d+\b/.test(text) || isDroughtStubProse(text)) reasons.push('event-packet');
+  if (/@t\d+\b/.test(text)) flag('event-packet', 'Leftover @t tokens: write the names as words.');
+  if (isDroughtStubProse(text)) flag('event-packet', 'Stub text: write a real beat.');
 
-  if (missingPointerCardSlot(state, text)) reasons.push('missing-pointer-slot');
+  if (missingPointerCardSlot(state, text)) flag('missing-pointer-slot', 'Name where you are and who is here.');
 
   const afterOpening = state.openingEstablishment?.complete === true && (state.turn ?? 0) > 0;
   const recent = recentGmBeatTexts(state);
   if (afterOpening || recent.length > 0) {
-    if (isAtmosphereOnlyBeat(text)) reasons.push('atmosphere-only');
+    if (isAtmosphereOnlyBeat(text)) flag('atmosphere-only', 'Mood only: add one concrete action or new fact.');
     const collage = detectLeadingCollage(text, recent);
     if ((collage.hit && !collage.tailHasNewContent) || detectAtmosphereReprint(text, recent)) {
-      reasons.push('recycle-without-delta');
+      recycle('Reuses sentences from an earlier beat: write new ones.');
     }
   }
 
   // Batch F — HARD same-room essay on inspect/wait/scout (pad interrupt alone is not enough).
   if (detectSameRoomEssayHard(text, recent, playerInput ?? '')) {
-    if (!reasons.includes('same-room-essay')) reasons.push('same-room-essay');
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+    flag('same-room-essay', 'Same room described again: show one new detail or change.');
+    recycle('Same room described again: show one new detail or change.');
   }
-
   // Batch S — HARD dialogue treadmill (Wall Sergeant rain/leather recycle).
-  if (detectDialogueTreadmillHard(text, recent, playerInput ?? '')) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
-  if (detectTalkUltimatumRecycle(text, recent, playerInput ?? '')) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
-  if (detectTalkQaShapeLoop(text, recent, playerInput ?? '')) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
-  if (isAmbientStubRecycle(state, text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (detectDialogueTreadmillHard(text, recent, playerInput ?? '')) recycle('Dialogue repeats the last exchange: move the talk forward.');
+  if (detectTalkUltimatumRecycle(text, recent, playerInput ?? '')) recycle('The same demand is repeated: move the talk forward.');
+  if (detectTalkQaShapeLoop(text, recent, playerInput ?? '')) recycle('Same question-and-answer shape as before: move the talk forward.');
+  if (isAmbientStubRecycle(state, text)) recycle('Ambient filler repeated: write what happens.');
   // Batch V — combat purgatory (identical fist / little-true-effect loops).
-  if (detectCombatPurgatoryHard(text, recent, playerInput ?? '')) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (detectCombatPurgatoryHard(text, recent, playerInput ?? '')) recycle('Fight beat repeats with no effect: show a result.');
   // Batch W — stitch / codedSceneMove UI bleed must never commit.
-  if (isStitchBankFingerprint(text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (isStitchBankFingerprint(text)) recycle('Canned filler line: write a real beat.');
   // 02m — writer planning notes / instruction echo must never commit as story.
-  if (isWriterMonologueLeak(text) || isDirectorChromeLeak(text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (isWriterMonologueLeak(text) || isDirectorChromeLeak(text)) recycle('Planning notes or instructions in the story: write only the story.');
   // 02h — SYSTEM / marker / mill-panel token salad must never commit.
-  if (isTokenSaladLeak(text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (isTokenSaladLeak(text)) recycle('Garbled words: write plain sentences.');
   // 02x Lock D — HUD / RECORD / bracket-slot / SNAPSHOT chrome as the beat.
-  if (isHudCombatChromeLeak(text) || isEngineChromeOnlyBeat(text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (isHudCombatChromeLeak(text) || isEngineChromeOnlyBeat(text)) recycle('Game UI text in the story: write the scene instead.');
   // 02x Lock C — exact prior GM body recycle (player-asked repeat already returned).
-  if (isExactPriorGmBody(state, text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (isExactPriorGmBody(state, text)) recycle('Same text as the last beat: write a new one.');
   // 02j Lock C — destroyed charter / dead foe cannot reopen as live facts.
-  if (isFactClosedViolation(state, text)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
-  }
-
+  if (isFactClosedViolation(state, text)) recycle('Reopens a closed fact (a destroyed item or a dead foe acting).');
   // 02z — sealed card: invented CAST, wrong HERE, excluded-pad-only progress.
   if (isSealedCardViolation(state, text, playerInput) || isExcludedPadProgress(state, text, playerInput)) {
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+    recycle('Invents a person or place not in the facts, or moves somewhere the player did not go.');
   }
-
   // 08b — packet: ledger contradictions only (living lastKill, instruction, lists, loot-too-early, wrong HERE).
   if (state.completedEvent && proseViolatesEventPacket(text, state.completedEvent)) {
-    if (!reasons.includes('event-packet')) reasons.push('event-packet');
-    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+    const d = 'Contradicts the completed event (dead foe acting, lists, early loot, or wrong place).';
+    flag('event-packet', d);
+    recycle(d);
   }
 
-  return { accept: reasons.length === 0, reasons };
+  return { accept: reasons.length === 0, reasons, details };
 }
 
 /** Lock C — prose that reopens a ledger-closed fact. */
@@ -482,7 +457,8 @@ export function scrubDirectorChrome(text: string): { prose: string; scrubbed: bo
 export function repairRejectedBeat(
   state: GameState,
   prose: string,
-  _reasons: CommitGateReason[] = []
+  _reasons: CommitGateReason[] = [],
+  opts: { stripOnly?: boolean } = {}
 ): { prose: string; repaired: boolean; notes: string[] } {
   const notes: string[] = [];
   let next = prose ?? '';
@@ -496,6 +472,10 @@ export function repairRejectedBeat(
     }
   }
 
+  // 28l — normal play keeps the writer's prose: strip the recycled prefix only, never swap in a stitch.
+  if (opts.stripOnly) {
+    return { prose: next.trim(), repaired: notes.length > 0 && next.trim() !== (prose ?? '').trim(), notes };
+  }
   const classified = classifyBeatCommit(state, next);
   const stillBad =
     !classified.accept

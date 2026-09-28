@@ -23,7 +23,13 @@ export type ReadabilityViolationKind =
   | 'unresolved-painted'
   | 'recycle-painted';
 
-const P1_KINDS: ReadonlySet<ReadabilityViolationKind> = new Set(['travel-streak']);
+// 28l — warden recycle / unresolved flags feed the one revision pass and are logged as writer issues;
+// they never fail a turn, so a painted flagged beat is reported, not blocking.
+const P1_KINDS: ReadonlySet<ReadabilityViolationKind> = new Set([
+  'travel-streak',
+  'unresolved-painted',
+  'recycle-painted',
+]);
 
 export interface ReadabilityViolation {
   kind: ReadabilityViolationKind;

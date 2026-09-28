@@ -370,11 +370,75 @@ export function formatTokenRepairFacing(
   ].join('\n');
 }
 
+/**
+ * 28l — code fixes what code knows: a declared ref whose `use` does not fit its ledger class takes the
+ * first use that does, and an @tN written in a line but not declared binds to that REF ENUM row.
+ */
+export function normalizeBeatRefs(beat: TokenBeat, enumRefs: LedgerRef[]): TokenBeat {
+  const firstUse = (row: LedgerRef): TokenUse =>
+    [...TOKEN_USES].find((u) => tokenUseMatchesClass(u, row.klass)) ?? 'actor';
+  const refs: TokenUseRef[] = beat.refs.map((ref) => {
+    const row = findEnum(enumRefs, ref.tok, ref.id);
+    if (!row) return ref;
+    return tokenUseMatchesClass(ref.use, row.klass) ? ref : { ...ref, use: firstUse(row) };
+  });
+  const declared = new Set(refs.map((r) => r.tok.replace(/^@/, '').toLowerCase()));
+  for (const line of beat.lines) {
+    for (const tok of toksInText(line.text)) {
+      if (declared.has(tok.toLowerCase())) continue;
+      const row = findEnum(enumRefs, tok);
+      if (!row) continue;
+      refs.push({ tok, id: row.id, use: firstUse(row) });
+      declared.add(tok.toLowerCase());
+    }
+  }
+  return { ...beat, refs };
+}
+
+/**
+ * 28l — tolerant read of a token reply the JSON parser cannot use (broken, cut off, or wrong shape):
+ * every `"text"` value becomes a sentence, tokens painted from the reply's own refs or the REF ENUM.
+ */
+export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): string {
+  const src = raw ?? '';
+  const displayByTok = new Map<string, string>();
+  for (const m of src.matchAll(/"tok"\s*:\s*"@?(t\d+)"[^{}]*?"id"\s*:\s*"([^"]+)"/g)) {
+    const row = findEnum(enumRefs, m[1], m[2]);
+    if (row) displayByTok.set(m[1].toLowerCase(), row.display);
+  }
+  const texts: string[] = [];
+  for (const m of src.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)) {
+    let text = m[1];
+    try {
+      text = JSON.parse(`"${text}"`) as string;
+    } catch {
+      text = text.replace(/\\"/g, '"').replace(/\\n/g, ' ');
+    }
+    if (/^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text.trim()) || /<[^<>]{2,40}>/.test(text)) continue;
+    const painted = text.replace(/@t(\d+)\b/gi, (_m, n: string) =>
+      displayByTok.get(`t${n}`) ?? findEnum(enumRefs, `t${n}`)?.display ?? '');
+    const line = tidy(painted);
+    if (line) texts.push(/[.!?]["')\]]*$/.test(line) ? line : `${line}.`);
+  }
+  return tidy(texts.join(' '));
+}
+
+function storySentences(prose: string): number {
+  return (prose.match(/[^.!?]+[.!?]+["')\]]*/g) ?? []).filter((s) => s.trim().split(/\s+/).length >= 3).length;
+}
+
 export function acceptTokenOrLedgerStory(
   raw: string,
   state: GameState,
   packet?: CompletedEventPacket,
-  opts?: { alreadyRepaired?: boolean; alt?: string }
+  opts?: {
+    alreadyRepaired?: boolean;
+    alt?: string;
+    /** 28l — fix ref uses in code and keep any clean lines (thinness is judged by the caller). */
+    lenient?: boolean;
+    /** 28l — return empty prose instead of the ledger stitch / last-resort body. */
+    noLedgerFallback?: boolean;
+  }
 ): {
   prose: string;
   path: TokenAcceptPath;
@@ -393,8 +457,9 @@ export function acceptTokenOrLedgerStory(
   let bestPartial: { lines: TokenLine[]; beat: TokenBeat } | null = null;
 
   for (const cand of candidates) {
-    const beat = parseTokenBeat(cand);
-    if (!beat) continue;
+    const parsed = parseTokenBeat(cand);
+    if (!parsed) continue;
+    const beat = opts?.lenient ? normalizeBeatRefs(parsed, enumRefs) : parsed;
     if (isFullyClean(beat, enumRefs, known)) {
       const prose = renderTokenBeat(beat, enumRefs);
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
@@ -409,7 +474,10 @@ export function acceptTokenOrLedgerStory(
     }
     const clean = keepCleanLines(beat, enumRefs, known);
     const fns = new Set(clean.map((l) => l.fn));
-    if (clean.length >= 3 && fns.has('place') && fns.has('action')) {
+    const partialOk = opts?.lenient
+      ? clean.length >= 1
+      : clean.length >= 3 && fns.has('place') && fns.has('action');
+    if (partialOk) {
       if (!bestPartial || clean.length > bestPartial.lines.length) {
         bestPartial = { lines: clean, beat: { ...beat, lines: clean } };
       }
@@ -418,6 +486,15 @@ export function acceptTokenOrLedgerStory(
 
   if (bestPartial) {
     const prose = renderTokenBeat(bestPartial.beat, enumRefs);
+    // Lenient: a partial that kept only a line or two (e.g. just a place name) loses to the whole
+    // reply read as prose, which the ledger-noun obey pass still polices.
+    if (opts?.lenient && prose && storySentences(prose) < 2) {
+      const whole = acceptObeyedStoryBody(salvageTokenJsonProse(raw, enumRefs), state, packet);
+      if (!whole.usedLastResort && whole.prose && !isDroughtStubProse(whole.prose)
+        && storySentences(whole.prose) > storySentences(prose)) {
+        return { prose: whole.prose, path: '13c', notes: [...whole.notes, 'token-salvage'], usedLastResort: false };
+      }
+    }
     if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
       return {
         prose,
@@ -442,8 +519,11 @@ export function acceptTokenOrLedgerStory(
 
   const freeform =
     candidates.find((c) => !parseTokenBeat(c) && !looksLikeTokenJson(c))
-    ?? (looksLikeTokenJson(raw) ? '' : raw);
+    ?? (looksLikeTokenJson(raw) ? (opts?.lenient ? salvageTokenJsonProse(raw, enumRefs) : '') : raw);
   const obeyed = acceptObeyedStoryBody(freeform, state, packet);
+  if (opts?.noLedgerFallback && (obeyed.usedLastResort || !obeyed.prose || isDroughtStubProse(obeyed.prose))) {
+    return { prose: '', path: 'last-resort', notes: ['no-usable-prose'], usedLastResort: false };
+  }
   if (obeyed.prose && !isDroughtStubProse(obeyed.prose)) {
     return {
       prose: obeyed.prose,

@@ -76,40 +76,68 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
   if (turnsWithoutProgress(state) < STUCK_TURNS) return { state, receipts: [], notes: [] };
   if (mem.nudgedTurn != null && turn - mem.nudgedTurn < STUCK_TURNS) return { state, receipts: [], notes: [] };
   const notes: string[] = [];
+  // 28l — sources rotate (room → person → quest → hub → generic) from where the last nudge left off,
+  // and the same line never repeats twice in a row.
+  const sources: Array<() => string> = [
+    () => {
+      const d = state.activeDungeon;
+      if (!d) return '';
+      const node = d.nodes.find((n) => n.id === d.currentNodeId);
+      const next = node?.connections.map((id) => d.nodes.find((n) => n.id === id)).find((n) => n && !d.visitedNodeIds.includes(n.id));
+      return next ? `Nudge: a sound carries from ${next.name}.` : '';
+    },
+    () => {
+      const unmet = presentNpcRecords(state).find((m) => !isMetNpc(m));
+      return unmet ? `Nudge: ${unmet.npcName} comes over to you.` : '';
+    },
+    () => {
+      const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
+      const obj = quest?.objectives?.find((o) => !o.completed && !o.optional);
+      if (quest && obj) return `Nudge: word reaches you about ${quest.name}: ${obj.description.replace(/[.!?]+$/, '')}.`;
+      return quest?.location ? `Nudge: word reaches you that ${quest.name} leads to ${quest.location}.` : '';
+    },
+    () => {
+      const hubs = hubsForBibleId(state.campaignBibleId);
+      const here = matchHub(hubs, state.currentLocation);
+      const visited = new Set((state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase()));
+      const fresh = hubs.filter((h) => h.id !== here?.id && !visited.has(h.name.toLowerCase()));
+      const pick = fresh.find((h) => !(mem.lastNudge ?? '').includes(h.name)) ?? fresh[0];
+      return pick ? `Nudge: someone nearby mentions ${pick.name}: ${pick.blurb.replace(/[.!?]+$/, '')}.` : '';
+    },
+    () =>
+      GENERIC_NUDGES.find((g) => g !== mem.lastNudge) ?? GENERIC_NUDGES[0]!,
+  ];
+  const start = (mem.nudgeCursor ?? 0) % sources.length;
   let line = '';
-  const d = state.activeDungeon;
-  if (d) {
-    const node = d.nodes.find((n) => n.id === d.currentNodeId);
-    const next = node?.connections.map((id) => d.nodes.find((n) => n.id === id)).find((n) => n && !d.visitedNodeIds.includes(n.id));
-    if (next) line = `Nudge: a sound carries from ${next.name}.`;
+  let used = start;
+  for (let i = 0; i < sources.length && !line; i++) {
+    const idx = (start + i) % sources.length;
+    const candidate = sources[idx]!();
+    if (candidate && candidate !== mem.lastNudge) {
+      line = candidate;
+      used = idx;
+    }
   }
   if (!line) {
-    const unmet = presentNpcRecords(state).find((m) => !isMetNpc(m));
-    if (unmet) line = `Nudge: ${unmet.npcName} comes over to you.`;
+    line = GENERIC_NUDGES.find((g) => g !== mem.lastNudge) ?? GENERIC_NUDGES[0]!;
+    used = sources.length - 1;
   }
-  if (!line) {
-    const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
-    const obj = quest?.objectives?.find((o) => !o.completed && !o.optional);
-    if (quest && obj) line = `Nudge: word reaches you about ${quest.name}: ${obj.description.replace(/[.!?]+$/, '')}.`;
-    else if (quest?.location) line = `Nudge: word reaches you that ${quest.name} leads to ${quest.location}.`;
-  }
-  if (!line) {
-    const hubs = hubsForBibleId(state.campaignBibleId);
-    const here = matchHub(hubs, state.currentLocation);
-    const visited = new Set((state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase()));
-    const fresh = hubs.find((h) => h.id !== here?.id && !visited.has(h.name.toLowerCase()));
-    if (fresh) line = `Nudge: someone nearby mentions ${fresh.name}: ${fresh.blurb.replace(/[.!?]+$/, '')}.`;
-  }
-  if (!line) {
-    line = 'Nudge: a noise close by draws your attention.';
-    notes.push('Generic engine nudge (no bible fact to draw on)');
-  }
+  if (used === sources.length - 1) notes.push('Generic engine nudge (no bible fact to draw on)');
   return {
-    state: { ...state, circling: { ...mem, nudgedTurn: turn, lastProgressTurn: turn } },
+    state: {
+      ...state,
+      circling: { ...mem, nudgedTurn: turn, lastProgressTurn: turn, lastNudge: line, nudgeCursor: (used + 1) % sources.length },
+    },
     receipts: [line],
     notes,
   };
 }
+
+const GENERIC_NUDGES = [
+  'Nudge: a noise close by draws your attention.',
+  'Nudge: something moves at the edge of your sight.',
+  'Nudge: a draft carries a new smell from somewhere near.',
+];
 
 function travelDest(chip: string): string | null {
   const m = chip.match(/^(?:travel\s+(?:toward|to)|go\s+to|head\s+(?:to|toward)|walk\s+to|return\s+to|go\s+back\s+to)\s+(.+)$/i);

@@ -19,6 +19,8 @@ interface Props {
   playerAction?: string | null;
   gameMode?: string | null;
   bibleId?: string | null;
+  /** Raw writer issues on this beat (stored with the thumbs for training). */
+  writerIssues?: string[] | null;
 }
 
 const MAX_COMMENT_LENGTH = 500;
@@ -31,6 +33,7 @@ export function GmResponseFeedback({
   playerAction,
   gameMode,
   bibleId,
+  writerIssues,
 }: Props) {
   const [feedbackType, setFeedbackType] = useState<GmFeedbackType | null>(null);
   const [comment, setComment] = useState('');
@@ -94,6 +97,7 @@ export function GmResponseFeedback({
       playerAction,
       gameMode,
       bibleId,
+      writerIssues,
     });
     setSaving(false);
     
@@ -131,6 +135,7 @@ export function GmResponseFeedback({
       playerAction,
       gameMode,
       bibleId,
+      writerIssues,
     });
     setSaving(false);
     

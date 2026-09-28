@@ -760,6 +760,11 @@ export interface LogEntry {
   /** Compact SNAPSHOT the writer saw — dumps diagnose packet lies. Never the full prompt. */
   snapshotGist?: import('./openingPointerCard').SnapshotGist;
   /**
+   * 28l — raw writer problems this beat survived (empty / reasoning-only / cut-off reply, recycled or
+   * unresolved prose). Training signal sent with thumbs; never a reason to fail the turn.
+   */
+  writerIssues?: string[];
+  /**
    * 08c Free MUD-modern: `mud-receipt` = code receipt is primary; content/flavorQuote is optional 1-liner.
    */
   presentation?: 'mud-receipt' | 'standard';
@@ -1065,6 +1070,9 @@ export interface CirclingMemory {
   lastLocation?: string;
   prevPlace?: string;
   nudgedTurn?: number;
+  /** 28l — last nudge line and the next source to try (sources rotate). */
+  lastNudge?: string;
+  nudgeCursor?: number;
   visits?: Record<string, number>;
 }
 

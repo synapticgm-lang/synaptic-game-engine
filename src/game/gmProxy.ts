@@ -13,8 +13,7 @@ import {
 } from './distributionChannel';
 import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
-import { resolveFreeWriterFailover } from './writerPolicy';
-import { hasHanScript, hostedWriterProvider } from './openRouterChat';
+import { hasHanScript, hostedWriterProvider, type WriterRawIssue } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
@@ -62,6 +61,17 @@ export function hostedBackendDiagnostics(): {
   };
 }
 
+/** Raw writer-reply problems seen since the last drain (one turn); logged with thumbs for training. */
+const writerRawIssues: WriterRawIssue[] = [];
+
+export function noteWriterRawIssue(issue: unknown): void {
+  if (issue === 'empty' || issue === 'reasoning-only' || issue === 'cut-off') writerRawIssues.push(issue);
+}
+
+export function drainWriterRawIssues(): WriterRawIssue[] {
+  return writerRawIssues.splice(0, writerRawIssues.length);
+}
+
 function pickClientApiKey(settings: Settings): string | undefined {
   if (!canConfigurePlayerAiKeys(settings)) return undefined;
   const key = resolveClientTextApiKey(settings);
@@ -99,18 +109,14 @@ export async function invokeGmProxy(params: {
     const tier = forceFreeModel()
       ? 'free'
       : effectiveWriterTier(params.settings.subscriptionTier);
-    let modelId = forceFreeModel()
+    // 28l — one writer model per turn; retries never switch model.
+    const modelId = forceFreeModel()
       ? getTierDefinition('free').writerOpenRouterId
       : resolveWriterModel({
           aiProvider: 'openrouter',
           customModelId: isTestLabEnabled() ? null : params.settings.customModelId,
           tier,
         });
-    // 29d — Free empty/timeout → Llama 8B on OpenRouter (same physics)
-    if (attempt > 0 && (tier === 'free' || forceFreeModel())) {
-      const failover = resolveFreeWriterFailover(modelId);
-      if (failover) modelId = failover;
-    }
     const writerProvider = hostedWriterProvider(modelId);
 
     const body = {
@@ -173,10 +179,6 @@ export async function invokeGmProxy(params: {
         throw err instanceof Error ? err : new Error(String(err));
       }
       if (timedOut || controller.signal.aborted) {
-        if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
-          logger.warn('ai-proxy', 'Free writer timeout — retrying with Llama failover');
-          return run(1);
-        }
         throw new Error('The System is still compiling. Try again, or cancel and keep the last scene.');
       }
       const errMsg = err instanceof Error ? err.message : String(err);
@@ -185,9 +187,7 @@ export async function invokeGmProxy(params: {
           host: gmProxyHost(),
           path: '/functions/v1/gm-turn',
         });
-        if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
-          return run(1);
-        }
+        if (attempt === 0) return run(1);
       }
       throw err;
     } finally {
@@ -201,19 +201,17 @@ export async function invokeGmProxy(params: {
     }
 
     const payload = await res.json().catch(() => ({}));
+    noteWriterRawIssue(payload?.rawIssue);
     if (!res.ok) {
+      // gm-turn already re-asked the same model once; the caller's plain-prose last resort takes over.
+      if (payload?.rawIssue) {
+        logger.warn('ai-proxy', 'Writer reply empty after the edge re-ask', { rawIssue: payload.rawIssue });
+        return '';
+      }
       const msg =
         typeof payload?.error === 'string'
           ? payload.error
           : `GM proxy error ${res.status}`;
-      if (
-        attempt === 0 &&
-        (tier === 'free' || forceFreeModel()) &&
-        resolveFreeWriterFailover(modelId) &&
-        /empty|timeout|unavailable|503|502/i.test(msg)
-      ) {
-        return run(1);
-      }
       throw new Error(msg);
     }
 
@@ -223,16 +221,10 @@ export async function invokeGmProxy(params: {
     }
 
     const text = typeof payload?.text === 'string' ? payload.text : '';
-    // P0-4 Batch 02f: Han in committed story is empty-GM (same-model retry then Llama).
+    // P0-4 Batch 02f: Han in committed story is an empty reply.
     if (!text || hasHanScript(text)) {
-      if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
-        logger.warn(
-          'ai-proxy',
-          hasHanScript(text) ? 'Free writer Han script — retrying with Llama failover' : 'Free writer empty — retrying with Llama failover'
-        );
-        return run(1);
-      }
-      throw new Error('GM proxy returned empty content.');
+      noteWriterRawIssue('empty');
+      return '';
     }
     return text;
   };

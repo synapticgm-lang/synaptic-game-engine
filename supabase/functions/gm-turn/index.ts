@@ -1,17 +1,22 @@
 import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 import {
-  extractChatCompletionText,
-  extractChatCompletionTexts,
-  packGmCandidateTexts,
   FIREWORKS_INFERENCE_BASE,
   fireworksChatBody,
   fireworksChatHeaders,
   FREE_WRITER_FIREWORKS_MODEL,
+  hasHanScript,
+  isCutOffFinish,
   isFireworksWriterModel,
   normalizeFireworksWriterModel,
+  NO_REASONING_HINT,
   openRouterChatBody,
   openRouterChatHeaders,
+  readChatCompletion,
+  stripReasoningBlocks,
+  WRITER_REASK_MAX_TOKENS,
+  type ChatCompletionRead,
+  type FireworksReasoningLevel,
 } from '../_shared/gm/openRouterChat.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
@@ -134,7 +139,21 @@ function resolveCredentials(body: GmRequestBody): {
   };
 }
 
-async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
+/** Plain-text reply (Google / Anthropic) → story text with thinking stripped, plus the raw issue. */
+function readPlainReply(raw: string, finish: unknown): ChatCompletionRead {
+  const stripped = stripReasoningBlocks(raw ?? '');
+  const text = hasHanScript(stripped) ? '' : stripped;
+  if (!text) return { text: '', issue: /<(?:think|thinking|reasoning)\b/i.test(raw ?? '') ? 'reasoning-only' : 'empty' };
+  return { text, issue: isCutOffFinish(finish) ? 'cut-off' : null };
+}
+
+async function callGoogle(
+  prompt: string,
+  systemPrompt: string,
+  apiKey: string,
+  model: string | undefined,
+  maxTokens: number
+): Promise<ChatCompletionRead> {
   const modelName = model || 'gemini-2.0-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
   const res = await fetch(url, {
@@ -143,7 +162,7 @@ async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, 
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.9, maxOutputTokens: AI_MAX_OUTPUT_TOKENS },
+      generationConfig: { temperature: 0.9, maxOutputTokens: maxTokens },
     }),
   });
   if (res.status === 429) {
@@ -156,8 +175,16 @@ async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, 
     throw new Error(errBody?.error?.message ?? `AI service error ${res.status}`);
   }
   const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const cand = data.candidates?.[0];
+  const parts = (cand?.content?.parts ?? []) as Array<{ text?: string; thought?: boolean }>;
+  const story = parts.filter((p) => !p.thought).map((p) => p.text ?? '').join('');
+  const read = readPlainReply(story, cand?.finishReason);
+  if (!read.text && parts.some((p) => p.thought)) return { text: '', issue: 'reasoning-only' };
+  return read;
 }
+
+const FIREWORKS_REASONING_LEVELS: FireworksReasoningLevel[] = ['none', 'low', null];
+let fireworksReasoningLevel: FireworksReasoningLevel = 'none';
 
 async function callOpenAICompat(
   prompt: string,
@@ -165,12 +192,13 @@ async function callOpenAICompat(
   apiKey: string,
   model: string,
   baseUrl: string,
-  opts?: { tokenProse?: boolean }
-): Promise<string> {
+  opts: { tokenProse?: boolean; maxTokens: number }
+): Promise<ChatCompletionRead> {
+  const maxTokens = opts.maxTokens;
   const fireworks = /fireworks\.ai/i.test(baseUrl);
   const openRouter = /openrouter\.ai/i.test(baseUrl);
   const tokenProse = !!opts?.tokenProse && openRouter && !fireworks;
-  const post = (withSchema: boolean) =>
+  const post = (withSchema: boolean, reasoning: FireworksReasoningLevel = null) =>
     fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
       method: 'POST',
       headers: fireworks
@@ -183,13 +211,13 @@ async function callOpenAICompat(
             },
       body: JSON.stringify(
         fireworks
-          ? fireworksChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+          ? fireworksChatBody(model, systemPrompt, prompt, maxTokens, reasoning)
           : openRouter
             ? openRouterChatBody(
                 model,
                 systemPrompt,
                 prompt,
-                AI_MAX_OUTPUT_TOKENS,
+                maxTokens,
                 withSchema ? { tokenProse: true, n: 2 } : undefined
               )
             : {
@@ -199,13 +227,26 @@ async function callOpenAICompat(
                   { role: 'user', content: prompt },
                 ],
                 temperature: 0.9,
-                max_tokens: AI_MAX_OUTPUT_TOKENS,
+                max_tokens: maxTokens,
               }
       ),
     });
-  let res = await post(tokenProse);
-  if (!res.ok && tokenProse && res.status !== 429) {
-    res = await post(false);
+  let res: Response;
+  if (fireworks) {
+    // 28l — reasoning off; step down once per level if Fireworks rejects the parameter (it answers 400 or
+    // 404 "Model not found"), and keep the level that worked for this warm instance.
+    const levels = FIREWORKS_REASONING_LEVELS.slice(FIREWORKS_REASONING_LEVELS.indexOf(fireworksReasoningLevel));
+    res = await post(false, levels[0] ?? null);
+    for (const next of levels.slice(1)) {
+      if (res.ok || res.status < 400 || res.status >= 500 || [401, 403, 429].includes(res.status)) break;
+      fireworksReasoningLevel = next;
+      res = await post(false, next);
+    }
+  } else {
+    res = await post(tokenProse);
+    if (!res.ok && tokenProse && res.status !== 429) {
+      res = await post(false);
+    }
   }
   if (res.status === 429) {
     const err = new Error('Rate limit exceeded (429).');
@@ -216,12 +257,16 @@ async function callOpenAICompat(
     const errBody = await res.json().catch(() => ({}));
     throw new Error(errBody?.error?.message ?? `OpenAI-compat error ${res.status}`);
   }
-  const data = await res.json();
-  const packed = packGmCandidateTexts(extractChatCompletionTexts(data));
-  return packed || extractChatCompletionText(data);
+  return readChatCompletion(await res.json());
 }
 
-async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
+async function callAnthropic(
+  prompt: string,
+  systemPrompt: string,
+  apiKey: string,
+  model: string | undefined,
+  maxTokens: number
+): Promise<ChatCompletionRead> {
   const modelName = model || 'claude-3-5-sonnet-latest';
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -233,7 +278,7 @@ async function callAnthropic(prompt: string, systemPrompt: string, apiKey: strin
     body: JSON.stringify({
       model: modelName,
       system: systemPrompt,
-      max_tokens: AI_MAX_OUTPUT_TOKENS,
+      max_tokens: maxTokens,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -247,7 +292,11 @@ async function callAnthropic(prompt: string, systemPrompt: string, apiKey: strin
     throw new Error(errBody?.error?.message ?? `Anthropic error ${res.status}`);
   }
   const data = await res.json();
-  return data.content?.[0]?.text ?? '';
+  const blocks = (data.content ?? []) as Array<{ type?: string; text?: string }>;
+  const story = blocks.filter((b) => b.type === 'text' || (!b.type && b.text)).map((b) => b.text ?? '').join('');
+  const read = readPlainReply(story, data.stop_reason);
+  if (!read.text && blocks.some((b) => b.type === 'thinking')) return { text: '', issue: 'reasoning-only' };
+  return read;
 }
 
 Deno.serve(async (req) => {
@@ -309,14 +358,14 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const runOnce = async (modelOverride?: string): Promise<string> => {
+    const runOnce = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       if (provider === 'gemini') {
-        return callGoogle(userPrompt, systemPrompt, apiKey, modelOverride || model);
+        return callGoogle(userPrompt, sys, apiKey, model, maxTokens);
       }
       if (provider === 'anthropic') {
-        return callAnthropic(userPrompt, systemPrompt, apiKey, modelOverride || model);
+        return callAnthropic(userPrompt, sys, apiKey, model, maxTokens);
       }
-      const fireworks = provider === 'fireworks' || isFireworksWriterModel(modelOverride || model);
+      const fireworks = provider === 'fireworks' || isFireworksWriterModel(model);
       const base = fireworks
         ? FIREWORKS_INFERENCE_BASE
         : provider === 'openrouter'
@@ -327,7 +376,6 @@ Deno.serve(async (req) => {
               ? 'http://localhost:11434/v1'
               : baseUrl?.trim() || 'https://api.openai.com/v1';
       const modelName =
-        modelOverride ||
         model ||
         (fireworks
           ? FREE_WRITER_FIREWORKS_MODEL
@@ -336,54 +384,44 @@ Deno.serve(async (req) => {
             : provider === 'groq'
               ? 'llama-3.3-70b-versatile'
               : 'gpt-4o-mini');
-      return callOpenAICompat(userPrompt, systemPrompt, apiKey, modelName, base, {
+      return callOpenAICompat(userPrompt, sys, apiKey, modelName, base, {
         tokenProse: mode === 'turn',
+        maxTokens,
       });
     };
 
-    const emptyRetryProviders = provider === 'openrouter' || provider === 'fireworks';
-    const tryCall = async (modelOverride?: string): Promise<string> => {
+    // Any model: a thrown provider error (not 429) is the same case as an empty reply.
+    let providerError = '';
+    const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       try {
-        return await runOnce(modelOverride);
+        return await runOnce(sys, maxTokens);
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;
-        if (!emptyRetryProviders) throw err;
-        return '';
+        providerError = err instanceof Error ? err.message : String(err);
+        return { text: '', issue: 'empty' };
       }
     };
 
-    const tryOpenRouterLlama = async (): Promise<string> => {
-      const llamaKey = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
-      if (!llamaKey) return '';
-      try {
-        return await callOpenAICompat(
-          userPrompt,
-          systemPrompt,
-          llamaKey,
-          'meta-llama/llama-3.1-8b-instruct',
-          'https://openrouter.ai/api/v1',
-          { tokenProse: mode === 'turn' }
-        );
-      } catch (err) {
-        if ((err as { status?: number })?.status === 429) throw err;
-        return '';
-      }
-    };
-
-    let text = await tryCall();
-    if (!text.trim() && emptyRetryProviders) {
-      text = await tryCall();
+    // 28l — empty / reasoning-only / cut-off is a normal case: re-ask the SAME model once with a larger
+    // output allowance and a no-reasoning hint. Never switch model.
+    const first = await tryCall(systemPrompt, AI_MAX_OUTPUT_TOKENS);
+    let best = first;
+    if (first.issue) {
+      const again = await tryCall(`${systemPrompt}\n\n${NO_REASONING_HINT}`, WRITER_REASK_MAX_TOKENS);
+      const complete = (r: ChatCompletionRead) => !!r.text && r.issue !== 'cut-off';
+      if (complete(again) || (!complete(first) && again.text.length > first.text.length)) best = again;
     }
-    if (!text.trim() && emptyRetryProviders && !String(model ?? '').includes('llama-3.1-8b')) {
-      text = provider === 'fireworks' ? await tryOpenRouterLlama() : await tryCall('meta-llama/llama-3.1-8b-instruct');
-    }
+    const rawIssue = first.issue ?? undefined;
 
-    if (!text) {
-      return jsonResponse({ error: 'The AI provider returned no content.' }, 502);
+    if (!best.text) {
+      return jsonResponse(
+        { error: providerError || 'The AI provider returned no content.', rawIssue: rawIssue ?? 'empty' },
+        502
+      );
     }
 
     // Scrubbed response — never return prompts, keys, or pipeline diagnostics.
-    return jsonResponse({ text });
+    return jsonResponse(rawIssue ? { text: best.text, rawIssue } : { text: best.text });
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
     const message = err instanceof Error ? err.message : 'GM proxy failure';

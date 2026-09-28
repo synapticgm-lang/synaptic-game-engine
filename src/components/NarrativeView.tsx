@@ -296,6 +296,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
           playerAction={playerAction}
           gameMode={engineMode}
           bibleId={bibleId}
+          writerIssues={entry.writerIssues}
         />
       )}
       

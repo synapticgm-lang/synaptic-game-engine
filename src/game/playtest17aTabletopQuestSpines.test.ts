@@ -27,8 +27,8 @@ const BIBLES = [
 
 describe('playtest17e — Tabletop quest spines', () => {
   it('HUD/BUILD are 17e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-28k');
-    expect(BUILD_STAMP).toBe('2026-09-28k');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-28l');
+    expect(BUILD_STAMP).toBe('2026-09-28l');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

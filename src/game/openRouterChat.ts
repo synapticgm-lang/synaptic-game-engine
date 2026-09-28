@@ -10,7 +10,7 @@ type ChatPart = { text?: unknown } | string;
 export const FIREWORKS_INFERENCE_BASE = 'https://api.fireworks.ai/inference/v1';
 
 /** Live Free hosted writer. Do not use retired `deepseek-v3p1` (404). */
-export const FREE_WRITER_FIREWORKS_MODEL = 'accounts/fireworks/models/deepseek-v4-flash-0731';
+export const FREE_WRITER_FIREWORKS_MODEL = 'accounts/fireworks/models/deepseek-v4p1-flash';
 
 export function isFireworksWriterModel(modelId: string | null | undefined): boolean {
   const id = (modelId ?? '').trim().toLowerCase();
@@ -36,7 +36,19 @@ export function fireworksChatHeaders(apiKey: string): Record<string, string> {
   };
 }
 
-export function fireworksChatBody(model: string, systemPrompt: string, prompt: string, maxTokens: number) {
+/**
+ * 28l — the writer's thinking pass took 1.3–3.5k tokens (11–30 s) and often left `content` empty.
+ * Reasoning off where the provider supports it; `stripReasoningBlocks` covers every other model.
+ */
+export type FireworksReasoningLevel = 'none' | 'low' | null;
+
+export function fireworksChatBody(
+  model: string,
+  systemPrompt: string,
+  prompt: string,
+  maxTokens: number,
+  reasoning: FireworksReasoningLevel = null
+) {
   return {
     model: normalizeFireworksWriterModel(model) || FREE_WRITER_FIREWORKS_MODEL,
     messages: [
@@ -45,7 +57,67 @@ export function fireworksChatBody(model: string, systemPrompt: string, prompt: s
     ],
     temperature: 0.9,
     max_tokens: maxTokens,
+    ...(reasoning ? { reasoning_effort: reasoning } : {}),
   };
+}
+
+/** Raw writer reply problems, logged per turn for training (never a reason to fail the turn). */
+export type WriterRawIssue = 'empty' | 'reasoning-only' | 'cut-off';
+
+/** Appended to the system prompt on the single re-ask after an empty / cut-off reply. */
+export const NO_REASONING_HINT =
+  'Reply with the story itself right away. Do not think out loud, plan, or write reasoning; no <think> blocks.';
+
+/** Output allowance for the single re-ask (first ask uses the normal budget). */
+export const WRITER_REASK_MAX_TOKENS = 8192;
+
+const REASONING_TAGS = 'think|thinking|reasoning|reflection|thought|scratchpad';
+
+/**
+ * Any provider: drop thinking blocks from reply text. An opened block that never closes means the reply
+ * was all reasoning (cut off mid-thought) — nothing after it is story. A lone closing tag means the
+ * provider ate the opener; only the text after it is story.
+ */
+export function stripReasoningBlocks(text: string): string {
+  let out = String(text ?? '');
+  out = out.replace(new RegExp(`<(${REASONING_TAGS})\\b[^>]*>[\\s\\S]*?<\\/\\1\\s*>`, 'gi'), ' ');
+  out = out.replace(/<\|begin_of_thought\|>[\s\S]*?<\|end_of_thought\|>/gi, ' ');
+  const open = out.search(new RegExp(`<(?:${REASONING_TAGS})\\b[^>]*>|<\\|begin_of_thought\\|>`, 'i'));
+  if (open >= 0) out = out.slice(0, open);
+  const close = [...out.matchAll(new RegExp(`<\\/(?:${REASONING_TAGS})\\s*>|<\\|end_of_thought\\|>`, 'gi'))].pop();
+  if (close?.index != null) out = out.slice(close.index + close[0].length);
+  return out.trim();
+}
+
+/** Stop reasons that mean the reply ran out of output allowance. */
+export function isCutOffFinish(reason: unknown): boolean {
+  return /^(?:length|max_tokens|MAX_TOKENS)$/.test(String(reason ?? ''));
+}
+
+export type ChatCompletionRead = {
+  /** Story text (reasoning stripped; n-candidate packs joined as `{candidates}` JSON). */
+  text: string;
+  issue: WriterRawIssue | null;
+};
+
+/** Read an OpenAI-compatible completion: story text only, plus what went wrong with the raw reply. */
+export function readChatCompletion(data: unknown): ChatCompletionRead {
+  const choices = (data && typeof data === 'object' ? (data as { choices?: unknown[] }).choices : undefined) ?? [];
+  const first = (choices[0] ?? {}) as {
+    finish_reason?: unknown;
+    message?: { content?: unknown; reasoning?: unknown; reasoning_content?: unknown };
+    text?: unknown;
+  };
+  const text = packGmCandidateTexts(extractChatCompletionTexts(data));
+  const rawContent = flattenChatContent(first.message?.content) || flattenChatContent(first.text);
+  const hadReasoning =
+    !!flattenChatContent(first.message?.reasoning)
+    || !!flattenChatContent(first.message?.reasoning_content)
+    || new RegExp(`<(?:${REASONING_TAGS})\\b`, 'i').test(rawContent);
+  let issue: WriterRawIssue | null = null;
+  if (!text) issue = hadReasoning ? 'reasoning-only' : 'empty';
+  else if (isCutOffFinish(first.finish_reason)) issue = 'cut-off';
+  return { text, issue };
 }
 
 /**
@@ -68,13 +140,13 @@ function extractOneChoice(choice: unknown): string {
     };
   };
   const msg = rec.message ?? {};
+  // Reasoning fields are the model thinking, never the story.
   const candidates: unknown[] = [msg.content, rec.text];
   for (const raw of candidates) {
-    const text = flattenChatContent(raw);
+    const text = stripReasoningBlocks(flattenChatContent(raw));
     if (text) return hasHanScript(text) ? '' : text;
   }
-  const fallback = flattenChatContent(msg.reasoning) || flattenChatContent(msg.reasoning_content);
-  return hasHanScript(fallback) ? '' : fallback;
+  return '';
 }
 
 export function extractChatCompletionText(data: unknown): string {
@@ -139,7 +211,8 @@ export function openRouterChatBody(
     temperature: 0.9,
     max_tokens: maxTokens,
     // Keep completion tokens in content — thinking-only replies 502'd hosted Free.
-    reasoning: { effort: 'low', exclude: true },
+    // 28l — DeepSeek writes the beat without a thinking pass (thinking cost 11–30 s per call).
+    reasoning: /deepseek/i.test(model) ? { enabled: false } : { effort: 'low', exclude: true },
     provider: { allow_fallbacks: true, sort: 'latency' },
   };
   if (opts?.tokenProse) {

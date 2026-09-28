@@ -21,6 +21,8 @@ export interface GmFeedbackRecord {
   player_action: string | null;
   game_mode: string | null;
   bible_id: string | null;
+  /** 28l — raw writer issues on the rated beat (comma list), for model training. */
+  writer_issue?: string | null;
 }
 
 export interface SubmitGmFeedbackInput {
@@ -34,6 +36,8 @@ export interface SubmitGmFeedbackInput {
   playerAction?: string | null;
   gameMode?: string | null;
   bibleId?: string | null;
+  /** 28l — `LogEntry.writerIssues` of the rated beat. */
+  writerIssues?: string[] | null;
 }
 
 export interface GmFeedbackResult {
@@ -89,16 +93,25 @@ export async function submitGmFeedback(
     player_action: input.playerAction || null,
     game_mode: input.gameMode || null,
     bible_id: input.bibleId || null,
+    writer_issue: input.writerIssues?.length ? input.writerIssues.join(',') : null,
   };
 
-  const { data, error } = await supabase
-    .from('gm_response_feedback')
-    .upsert(payload, {
-      onConflict: 'user_id,save_id,log_entry_id',
-      ignoreDuplicates: false,
-    })
-    .select()
-    .single();
+  const upsert = (row: Partial<GmFeedbackRecord>) =>
+    supabase!
+      .from('gm_response_feedback')
+      .upsert(row, {
+        onConflict: 'user_id,save_id,log_entry_id',
+        ignoreDuplicates: false,
+      })
+      .select()
+      .single();
+  let { data, error } = await upsert(payload);
+  // Migration 022 not applied yet: keep the thumbs, drop the training column.
+  if (error && /writer_issue/i.test(error.message ?? '')) {
+    const { writer_issue: _drop, ...rest } = payload;
+    void _drop;
+    ({ data, error } = await upsert(rest));
+  }
 
   if (error) {
     console.error('Failed to submit GM feedback:', error);
@@ -253,6 +266,7 @@ export function exportGmFeedbackToCsv(records: GmFeedbackRecord[]): string {
     'Created At',
     'GM Story (truncated)',
     'Player Action (truncated)',
+    'Writer Issue',
   ];
 
   const rows = records.map((r) => [
@@ -267,6 +281,7 @@ export function exportGmFeedbackToCsv(records: GmFeedbackRecord[]): string {
     r.created_at,
     (r.gm_story || '').slice(0, 200).replace(/"/g, '""'),
     (r.player_action || '').slice(0, 100).replace(/"/g, '""'),
+    r.writer_issue || '',
   ]);
 
   const csvRows = [headers, ...rows].map((row) =>

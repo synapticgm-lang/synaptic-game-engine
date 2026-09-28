@@ -147,7 +147,9 @@ import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnasked
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
-import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, tokenLineVerdicts } from './tokenProse';
+import { tokenLineVerdicts } from './tokenProse';
+import { runWriterTurn, writerTurnIssues, type WriterTurnResult } from './writerTurn';
+import { drainWriterRawIssues } from './gmProxy';
 import {
   classifyResponsePath,
   formatTalkWriterFacing,
@@ -342,6 +344,14 @@ export type TurnTelemetry = {
   tokenVerdicts?: string[];
   tokenPath?: string;
   retryTokenVerdicts?: string[];
+  /** 28l — writer HTTP calls this turn (incl. transport retries) and ms spent in them. */
+  writerCalls?: number;
+  writerMs?: number;
+  /** 28l — code-found problems on the first draft, and whether a stitch/canned line was painted. */
+  draftProblems?: string[];
+  stitchedLine?: boolean;
+  /** 28l — raw writer issues on the committed beat (training signal; see `writerTurnIssues`). */
+  writerIssues?: string[];
 };
 
 export type RunSummary = {
@@ -869,6 +879,9 @@ async function saveWriterPrompt(state: GameState, payload: string): Promise<void
   writeFileSync(join(writerPromptSink.dir, `turn-${nn}.txt`), body + '\n');
 }
 
+/** 28l — writer HTTP calls and time spent in them, reset at the start of each headless turn. */
+const writerCallMeter = { calls: 0, ms: 0 };
+
 async function callGmWithRetries(
   state: GameState,
   payload: string,
@@ -889,9 +902,13 @@ async function callGmWithRetries(
       : 'free',
   });
   for (let attempt = 0; attempt <= TURN_TRANSPORT_MAX_AUTO_RETRIES; attempt++) {
+    const callStarted = Date.now();
+    writerCallMeter.calls += 1;
     try {
       await saveWriterPrompt(state, payload);
-      const result = await callGm(state, payload, settings, [], undefined, undefined, timeoutMs);
+      const result = await callGm(state, payload, settings, [], undefined, undefined, timeoutMs).finally(() => {
+        writerCallMeter.ms += Date.now() - callStarted;
+      });
       return {
         text: result.text ?? '',
         systemLog: result.systemLog ?? [],
@@ -946,6 +963,9 @@ export async function headlessFateTurn(
 ): Promise<{ state: GameState; telemetry: TurnTelemetry }> {
   const started = Date.now();
   const startedAt = new Date(started).toISOString();
+  writerCallMeter.calls = 0;
+  writerCallMeter.ms = 0;
+  drainWriterRawIssues();
   const offered = resolveOfferedChoices(state);
   const fatePick =
     meta.playerInputOverride?.trim()
@@ -1171,6 +1191,34 @@ Do NOT print dice notation or CODE ENFORCED.
   let gmSystemLog = gmResult.systemLog ?? [];
   let transportRetries = gmResult.transportRetries;
   let renderFallbackUsed = false;
+  const writerRawHead = gmText.replace(/\s+/g, ' ').trim().slice(0, 600) || undefined;
+  const tokenVerdicts = arcState.completedEvent && gmText.trim()
+    ? tokenLineVerdicts(gmText, arcState, arcState.completedEvent)
+    : undefined;
+
+  // 28l — one writer turn: draft → code problems → at most one revision → same-writer plain prose.
+  let writerTurn: WriterTurnResult | null = null;
+  const writerPacket = arcState.completedEvent ?? preparedEvent.packet;
+  if (!useMud && !authoredBook && writerPacket) {
+    writerTurn = await runWriterTurn({
+      firstRaw: gmResult.text,
+      packet: writerPacket,
+      check: { state: arcState, playerInput, intent, engineFact, previousGm: '' },
+      callWriter: async (p) => {
+        const r = await callGmWithRetries(arcState, p, settings);
+        transportRetries += r.transportRetries + 1;
+        return r.text;
+      },
+      allowRevision: gmResult.transportRetries === 0,
+    });
+    gmText = writerTurn.prose;
+    if ((writerTurn.path === 'json' || writerTurn.path === 'json-partial') && writerTurn.refs?.length && arcState.completedEvent) {
+      arcState = {
+        ...arcState,
+        completedEvent: { ...arcState.completedEvent, tokenRefs: writerTurn.refs },
+      };
+    }
+  }
 
   if (useMud) {
     // Free MUD: receipt is primary; Silent Engine never invents a flavor quote.
@@ -1188,6 +1236,7 @@ Do NOT print dice notation or CODE ENFORCED.
     }
     arcState = clearEngineRecoveryStreak(arcState);
   } else if (!gmText.trim()) {
+    // Outage only (every writer call came back empty): the spoken card line keeps the turn alive.
     const spoken = spokenTalkFallback(arcState, playerInput);
     if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
       gmText = spoken;
@@ -1196,12 +1245,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   {
     const lastGmRow = [...(arcState.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
-    if (
-      (!useMud && !gmText.trim())
-      || isDroughtStubProse(gmText)
-      || isLastGmReprint(gmText, lastGmRow)
-      || isUnaskedCombatClose(gmText, playerInput)
-    ) {
+    if (!useMud && !gmText.trim()) {
       const painted = bookBodyAfterWriterMiss(arcState, preparedEvent.packet, playerInput, gmText);
       if (painted.prose && !isDroughtStubProse(painted.prose) && !isLastGmReprint(painted.prose, lastGmRow)) {
         gmText = painted.prose;
@@ -1309,143 +1353,16 @@ Do NOT print dice notation or CODE ENFORCED.
     };
   }
 
-  // Novelty retry on same-beat OR near-verbatim clone (merchant ×20 loops).
-  // Skip only when the player asked to hear the last beat again.
-  // 08c Free MUD: never novelist retry / packet stitch — receipt already committed.
-  const travelHubEarly = parseTravelDestination(playerInput, meta.bibleId);
-  const fps = state.recentBeatFingerprints ?? [];
   const askedRepeat = playerAsksRepeat(playerInput);
-  const askedContinue = playerAsksContinuation(playerInput);
-  // 28g — novelty / commit checks judge the story the player would see, not the raw token JSON
-  // (raw JSON always holds @tN tokens, which the commit gate reads as leftover tokens → a retry every turn).
-  const storyOf = (text: string) =>
-    looksLikeTokenJson(text)
-      ? acceptTokenOrLedgerStory(text, arcState, arcState.completedEvent, { alreadyRepaired: true }).prose
-      : text;
-  const probeText = storyOf(gmText);
-  const nearClone = isNearClone(probeText, fps);
-  const sameBeatHit = isSameBeat(probeText, fps);
-  const collageReject = shouldRetryUnaskedCollage(probeText, recentGmBeatTexts(state), playerInput);
-  const commitGate = classifyBeatCommit(arcState, probeText, playerInput);
-  let usedWriterRetry = false;
+  const usedWriterRetry = writerTurn?.outcome === 'revised' || writerTurn?.outcome === 'last-resort';
   let usedPacketStitch = false;
-  if (
-    !useMud
-    && !error
-    && !askedRepeat
-    && storyHasBody(probeText)
-    && (nearClone || collageReject || !commitGate.accept || (sameBeatHit && !askedContinue))
-    && transportRetries === 0
-  ) {
-    const retryPayload = arcState.completedEvent
-      ? formatTalkWriterFacing(arcState.completedEvent, arcState, { stricter: true })
-      : buildResolutionUserPayload({
-          mandateBlock: turnMandate.block,
-          playerAction: playerInput,
-          deterministicBlock: `${deterministicBlock}\n${buildBeatNoveltyRetryBlock(fps)}${
-            travelHubEarly
-              ? `\nTRAVEL AUTHORITY: Player is traveling to ${travelHubEarly.name}. Narrate arrival THERE — do not keep them in the previous room.`
-              : ''
-          }`,
-          retry: true,
-          intent,
-        });
-    const retry = await callGmWithRetries(arcState, retryPayload, settings);
-    transportRetries += retry.transportRetries + 1;
-    const retryStory = storyOf(retry.text);
-    if (retry.text.trim() && (!isSameBeat(retryStory, fps) || travelHubEarly || classifyBeatCommit(arcState, retryStory, playerInput).accept)) {
-      gmText = retry.text;
-      usedWriterRetry = true;
-      if (!error) error = undefined;
-    }
-  }
-  const writerRawHead = gmText.replace(/\s+/g, ' ').trim().slice(0, 600) || undefined;
-  const tokenVerdicts = arcState.completedEvent && gmText.trim()
-    ? tokenLineVerdicts(gmText, arcState, arcState.completedEvent)
-    : undefined;
-  let tokenPath: string | undefined;
-  let retryTokenVerdicts: string[] | undefined;
-  {
-    let accepted = acceptTokenOrLedgerStory(gmText, arcState, arcState.completedEvent);
-    if (accepted.needsRepair && arcState.completedEvent && transportRetries === 0) {
-      const repair = await callGmWithRetries(
-        arcState,
-        formatTokenRepairFacing(arcState.completedEvent, accepted.needsRepair.missingFns),
-        settings
-      );
-      transportRetries += repair.transportRetries + 1;
-      accepted = acceptTokenOrLedgerStory(repair.text || gmText, arcState, arcState.completedEvent, {
-        alreadyRepaired: true,
-        alt: gmText,
-      });
-    }
-    tokenPath = accepted.path;
-    if (accepted.prose) gmText = accepted.prose;
-    if (
-      (accepted.path === 'json' || accepted.path === 'json-partial')
-      && accepted.refs?.length
-      && arcState.completedEvent
-    ) {
-      arcState = {
-        ...arcState,
-        completedEvent: { ...arcState.completedEvent, tokenRefs: accepted.refs },
-      };
-    }
-  }
-  {
-    const stillGate = classifyBeatCommit(arcState, gmText, playerInput);
-    if (!useMud && !stillGate.accept && !askedRepeat && storyHasBody(gmText)) {
-      const repaired = repairRejectedBeat(arcState, gmText, stillGate.reasons);
-      if (repaired.repaired) {
-        gmText = repaired.prose;
-        usedPacketStitch = true;
-      }
-    }
-    if (/Silence held the question|No one listed on the ledger answered/i.test(gmText)) {
-      const spoken = spokenTalkFallback(arcState, playerInput);
-      if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
-        gmText = spoken;
-        usedPacketStitch = true;
-      }
-    }
-  }
-
-  // 28g — one writer retry before the ledger stitch when the prose does not resolve the action.
+  const tokenPath: string | undefined = writerTurn?.path;
+  const retryTokenVerdicts: string[] | undefined = undefined;
   let rejectedWriterText: string | undefined;
   let rejectedReason: string | undefined;
-  if (!useMud && !error && !authoredBook && gmText.trim()) {
-    const why = unresolvedActionReason(playerInput, gmText, intent, '', engineFact);
-    if (why) {
-      rejectedWriterText = gmText.replace(/\s+/g, ' ').trim().slice(0, 200);
-      rejectedReason = why;
-      const retryLine = `RETRY: your last reply did not resolve the player's action (${why}). Show the player doing "${playerInput}" and what came of it.${
-        engineFact ? `\nENGINE RESULT (required fact — state it plainly): ${engineFact}` : ''
-      }`;
-      const again = await callGmWithRetries(
-        arcState,
-        arcState.completedEvent
-          ? `${formatTalkWriterFacing(arcState.completedEvent, arcState, { stricter: true })}\n\n${retryLine}`
-          : buildResolutionUserPayload({
-              mandateBlock: turnMandate.block,
-              playerAction: playerInput,
-              deterministicBlock: `${deterministicBlock}\n${retryLine}`,
-              retry: true,
-              intent,
-            }),
-        settings
-      );
-      transportRetries += again.transportRetries + 1;
-      if (arcState.completedEvent && again.text.trim()) {
-        retryTokenVerdicts = tokenLineVerdicts(again.text, arcState, arcState.completedEvent);
-      }
-      const candidate = again.text.trim()
-        ? acceptTokenOrLedgerStory(again.text, arcState, arcState.completedEvent, { alreadyRepaired: true }).prose
-        : '';
-      if (candidate && !isUnresolvedActionNarrative(playerInput, candidate, intent, '', engineFact)) {
-        gmText = candidate;
-        usedWriterRetry = true;
-      }
-    }
+  if (writerTurn?.problems.length) {
+    rejectedWriterText = writerTurn.firstDraft.replace(/\s+/g, ' ').trim().slice(0, 200) || undefined;
+    rejectedReason = writerTurn.problems.join(' | ').slice(0, 300);
   }
 
   const rawEvents = parseActionTags(gmText);
@@ -1563,17 +1480,20 @@ Do NOT print dice notation or CODE ENFORCED.
   const leak = scanAndScrubLeaks(cleanText);
   if (leak.notes.length) cleanText = leak.clean;
   {
-    const govProse = applyGovernanceToProse(working, cleanText, playerInput);
+    const govProse = applyGovernanceToProse(working, cleanText, playerInput, { keepWriterProse: !useMud && !authoredBook });
     cleanText = govProse.prose;
     if (govProse.notes.length) warden.notes.push(...govProse.notes);
   }
+  // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
   if (blockedPaint || isBlockedPaint(warden.notes, state, cleanText)) {
     if (!rejectedWriterText) {
       rejectedWriterText = gmText.replace(/\s+/g, ' ').trim().slice(0, 200);
       rejectedReason = warden.notes.find((n) => /Narrative does not resolve|Collage reject|Commit gate/i.test(n)) ?? 'blocked paint';
     }
-    cleanText = ledgerActionStitch(working, playerInput);
-    warden.notes.push('Paint blocked: ledger stitch');
+    if (!cleanText.trim()) {
+      cleanText = ledgerActionStitch(working, playerInput);
+      usedPacketStitch = true;
+    }
     blockedPaint = true;
   }
 
@@ -1884,6 +1804,9 @@ Do NOT print dice notation or CODE ENFORCED.
     ? mudTurn.content.trim() || mudDisplayBody(mudTurn)
     : cleanText;
   const fp = beatFingerprint(mudBody || filteredSystemLog.join(' '));
+  const writerIssues = useMud || authoredBook
+    ? []
+    : writerTurnIssues(drainWriterRawIssues(), [...warden.notes, ...(writerTurn?.remaining ?? [])]);
   const playerEntry: LogEntry = {
     id: uid(),
     turn: state.turn,
@@ -1899,6 +1822,7 @@ Do NOT print dice notation or CODE ENFORCED.
     timestamp: Date.now(),
     systemLog: filteredSystemLog,
     snapshotGist: compactTrafficGist(arcState),
+    ...(writerIssues.length ? { writerIssues } : {}),
     ...(useMud && mudTurn
       ? {
           presentation: 'mud-receipt' as const,
@@ -2003,6 +1927,11 @@ Do NOT print dice notation or CODE ENFORCED.
       tokenVerdicts,
       tokenPath,
       retryTokenVerdicts,
+      writerCalls: writerCallMeter.calls,
+      writerMs: writerCallMeter.ms,
+      draftProblems: writerTurn?.problems.length ? writerTurn.problems : undefined,
+      stitchedLine: renderFallbackUsed || usedPacketStitch,
+      writerIssues: writerIssues.length ? writerIssues : undefined,
     },
   };
 }

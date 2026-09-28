@@ -705,6 +705,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           playerAction={(log ?? []).slice(0, (log ?? []).findIndex((e) => e.id === entry.id)).reverse().find((e) => e.role === 'player')?.content}
           gameMode={engineMode}
           bibleId={bibleId}
+          writerIssues={entry.writerIssues}
         />
       )}
       <BeautyMomentOfferLink

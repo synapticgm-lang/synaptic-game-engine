@@ -67,10 +67,12 @@ export function unresolvedActionReason(
 ): string | null {
   const job = primaryActionClause(playerAction);
   const prose = proseOnly(narrative);
-  if (!prose || prose.length < 60) return 'too short';
+  // 28l — a valid short line resolves the action; only a fragment is too short.
+  if (!prose || prose.length < 30 || prose.split(/\s+/).filter(Boolean).length < 5) return 'too short';
   if (/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i.test(prose)) return 'question only';
   if (isGenericBridgeNarrative(narrative)) return 'bridge or stub text';
-  if (engineFact.trim()) return proseStatesEngineFact(prose, engineFact) ? null : 'engine result not stated';
+  // 28l — only a settled outcome (fight / flee / parley / rest) must be stated; room facts and loot are context.
+  if (ENGINE_OUTCOME_FACT.test(engineFact)) return proseStatesEngineFact(prose, engineFact) ? null : 'engine result not stated';
   if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return 'panel stub';
   if (isRecycledLookAround(playerAction, intent, prose, previousNarrative)) return 'recycled look-around';
   if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return 'gear question unanswered';
@@ -115,6 +117,7 @@ export function isUnresolvedActionNarrative(
   return unresolvedActionReason(playerAction, narrative, intent, previousNarrative, engineFact) !== null;
 }
 
+const ENGINE_OUTCOME_FACT = /(?:^|\s)(?:Fight|Flee check|Parley check|Rest)\b/;
 const ENGINE_FACT_SKIP = /^(?:Fight|Flee|Parley|Rest|Check|Encounter|Loot|Gold|Gained|Victory|Defeat|Round|Rounds)$/i;
 const ENGINE_OUTCOME_WORDS =
   /\b(?:went down|goes down|go down|fell|falls|fallen|dead|dies|died|killed|slain|beaten|beat|won|wins|victory|defeat(?:ed)?|lost|loses|driven back|knocked|broke away|break away|got clear|escaped?|escaping|fled|flees?|stood down|stands? down|terms|yield(?:s|ed)?|surrender(?:s|ed)?|rest(?:s|ed|ing)?|recover(?:s|ed)?|breath|heal(?:s|ed)?|wound(?:s|ed)?|bleed(?:s|ing)?|blood)\b/i;

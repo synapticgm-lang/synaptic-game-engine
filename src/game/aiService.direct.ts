@@ -14,10 +14,13 @@ import { getAutoplayWriterOverride } from './autoplayWriter';
 import {
   extractChatCompletionText,
   extractChatCompletionTexts,
+  NO_REASONING_HINT,
   openRouterChatBody,
   openRouterChatHeaders,
   packGmCandidateTexts,
+  stripReasoningBlocks,
 } from './openRouterChat';
+import { noteWriterRawIssue } from './gmProxy';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -282,8 +285,7 @@ async function callOpenAICompatible(
     logResponse(`OpenAI-compat (${provider})`, res.status, false, elapsed, JSON.stringify(errBody));
     throw new Error(errBody?.error?.message ?? `API error ${res.status}`);
   }
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? '';
+  return extractChatCompletionText(await res.json());
 }
 
 async function dispatchLlm(
@@ -345,7 +347,14 @@ export async function callGmDirect(
 ): Promise<GmResult> {
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
   const prompt = buildContextPrompt(state, playerInput, activeLoreCards);
-  const text = await dispatchLlm(prompt, systemPrompt, settings, onRetry, true);
+  let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, true));
+  if (!text) {
+    // 28l — same model, one re-ask with a no-reasoning hint (never a model switch).
+    noteWriterRawIssue('empty');
+    text = stripReasoningBlocks(
+      await dispatchLlm(prompt, `${systemPrompt}\n\n${NO_REASONING_HINT}`, settings, onRetry, true)
+    );
+  }
   if (!text) throw new Error('The AI provider returned no content.');
   return processGmCompletion(text, state.engineMode);
 }
