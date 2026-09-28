@@ -28,7 +28,9 @@
     "ai-player-ensure-tester": "node scripts/ai-player-browser/ensure-tester.mjs",
     "ai-player-login-check": "node scripts/ai-player-browser/run.mjs --login-check",
     "ai-player-smoke": "node scripts/ai-player-browser/run.mjs --smoke",
-    "ai-player-t10": "node scripts/ai-player-browser/run.mjs"
+    "ai-player-t10": "node scripts/ai-player-browser/run.mjs",
+    "codemap": "node scripts/codemap.mjs",
+    "prepush": "node scripts/codemap.mjs"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
