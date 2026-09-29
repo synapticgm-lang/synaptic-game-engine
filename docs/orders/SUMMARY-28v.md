@@ -6,3 +6,9 @@
 - T10 is now one run per mode with --game-mode: litrpg summoned-pact s27, tabletop cursed-keep s27, rpg salt-road-heist s27 (each prints P0=<n>).
 - Harness: new --game-mode litrpg|tabletop|rpg (alias --engine); PYOA mode and PYOA bibles (incl. Thornferry Road) refused by the CLI; matrix/premade lists, modes-agents, live-drive T10/T20, opening paste, Gemini pack order and ai-player flagships drop PYOA.
 - Fix run used once: first gate run flagged 12 stamp-pinned tests (expected 2026-09-29u1); updated to v0, rerun passed.
+
+## 28v1 — travel-arrival stamp through the recycle trim
+- Commit 441a039, stamp 2026-09-29v1; pushed, gm-turn deployed. Gates passed on the first run (no fix run used).
+- Gates: tsc=601 (max 601), vitest fails=128 new=0, build exit=0, deno errors=52 (max 52), T10 P0=0 runs=3.
+- `stampTravelArrivalIfSafe` (the one owner used by live `useGame`, Fate and `enforceCameraOnProse`) now runs the stamped beat through `trimRecycledSentences` against the same last GM beats as `finishCommittedProse`. A repeat-trip "You leave X behind and reach Y." that was already told drops out; the 2-sentence floor still holds, and a first-trip stamp stays.
+- The edge `semanticLoopDetector.ts` had never been synced after 28u1 (it was missing `trimRecycledSentences`); it is synced in this commit. Vitest playtest28v1ArrivalTrim (4).
