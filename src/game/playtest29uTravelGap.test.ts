@@ -40,9 +40,9 @@ function keepState(): GameState {
 }
 
 describe('29u stamps', () => {
-  it('HUD and BUILD are 2026-09-29u1 and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29u1');
-    expect(BUILD_STAMP).toBe('2026-09-29u1');
+  it('HUD and BUILD are 2026-09-29w1 and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29w1');
+    expect(BUILD_STAMP).toBe('2026-09-29w1');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -95,15 +95,16 @@ describe('29u — the ground has its own chips', () => {
     const t = commitTravel(coastState(), 'Travel toward Brinewatch');
     const pads = compileChoices(t.state, ['Travel toward Brinewatch', 'Look around']).choices;
     expect(pads).toContain('Walk on');
-    expect(pads.some((p) => /^talk to/i.test(p))).toBe(true);
+    expect(pads).toContain('Turn back toward Saltmar');
     expect(pads.some((p) => /arrive|reach|travel toward/i.test(p))).toBe(false);
   });
 
-  it('a forest gap can offer an animal', () => {
+  it('a forest gap is forest ground (29w: the animal chip is a chance, not every stretch)', () => {
     const t = commitTravel(keepState(), 'Travel toward Blackspine Treeline');
     expect(t.arrived).toBe(false);
     expect(t.state.journey?.terrain).toBe('forest');
-    expect(journeyPads(t.state).some((p) => /animal/i.test(p))).toBe(true);
+    const pads = journeyPads(t.state);
+    expect(pads.some((p) => /animal/i.test(p))).toBe(t.state.journey?.encounter?.kind === 'wildlife');
   });
 
   it('turning back leaves the ground toward where you came from', () => {

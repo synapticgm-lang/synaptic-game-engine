@@ -5,15 +5,20 @@
  * More than a step puts the player on the ground between, moves the clock by
  * the distance, and gives that ground its own chips. The code writes no story
  * sentences — the writer narrates every leg from the ENGINE RESULT line.
+ * 29w — each stretch rolls once for a chance meeting that fits the ground and the
+ * area level. The roll picks a kind and level only; the writer names who or what.
  */
 
 import type {
   GameState,
   JourneyTerrain,
+  RoadEncounter,
+  RoadEncounterKind,
   TimeOfDay,
   TravelJourney,
   WorldAtlasState,
 } from './types';
+import { resolveLocalAreaLevel, resolveThreatTier } from './placeAuthority';
 import {
   hubsForBibleId,
   isLeaveSceneAction,
@@ -31,11 +36,17 @@ interface Endpoint {
   mapped: boolean;
   outside: boolean;
   text: string;
+  /** Threat tier of the place when the map knows it. */
+  tier?: number;
+  /** Ruin / graveyard / crypt / old battlefield. */
+  haunted: boolean;
 }
 
 const OUTSIDE_KINDS = new Set(['landmark', 'ruin', 'fort', 'shore']);
 const WILD_TEXT =
   /\b(forest|woods?|timber|pines?|treeline|trees|trail|road|track|march|marsh|reeds?|fen|bog|swamp|moor|hills?|mountains?|pass|ridge|wilds?|wilderness|steppe|dunes?)\b/i;
+const HAUNT_TEXT =
+  /\b(ruins?|ruined|graves?|graveyards?|cemeter(?:y|ies)|crypts?|tombs?|barrows?|ossuar(?:y|ies)|catacombs?|mausoleums?|battlefields?|battlegrounds?|haunted|undead)\b/i;
 
 const TERRAIN_TESTS: Array<[JourneyTerrain, RegExp]> = [
   ['forest', /\b(forest|woods?|woodland|timber|pines?|treeline|trees)\b/i],
@@ -91,12 +102,15 @@ function endpointFor(state: GameState, rawName: string): Endpoint {
     (hub?.threatTier ?? 0) >= 3
     || (!!kind && OUTSIDE_KINDS.has(kind))
     || WILD_TEXT.test(`${hub?.blurb ?? ''} ${settlement?.blurb ?? ''} ${place?.description ?? ''}`);
+  const tier = hub?.threatTier ?? place?.threatTier ?? (kind && OUTSIDE_KINDS.has(kind) ? 2 : undefined);
   return {
     name,
     regionId: settlement?.regionId ?? place?.regionId ?? region?.id ?? atlas?.currentRegionId,
     mapped: !!(hub || settlement || region),
     outside,
     text,
+    tier: typeof tier === 'number' && Number.isFinite(tier) ? tier : undefined,
+    haunted: kind === 'ruin' || HAUNT_TEXT.test(text),
   };
 }
 
@@ -145,14 +159,19 @@ export interface MapGap {
   steps: number;
   terrain: JourneyTerrain;
   hoursPerLeg: number;
+  /** Threat tier (1–4) of the country between: the wilder end, else the zone. */
+  areaTier: number;
+  haunted: boolean;
 }
 
 /** Distance between two places from the existing map (atlas regions, then place scale). */
 export function mapGapBetween(state: GameState, from: string, to: string): MapGap {
   const a = endpointFor(state, from);
   const b = endpointFor(state, to);
+  const known = [a.tier, b.tier].filter((t): t is number => typeof t === 'number');
+  const areaTier = Math.max(1, Math.min(4, known.length ? Math.max(...known) : resolveThreatTier(state) ?? 1));
   if (!a.name || !b.name || a.name.toLowerCase() === b.name.toLowerCase()) {
-    return { steps: 0, terrain: 'streets', hoursPerLeg: 0 };
+    return { steps: 0, terrain: 'streets', hoursPerLeg: 0, areaTier, haunted: false };
   }
   const atlas = state.worldAtlas;
   const path =
@@ -160,6 +179,8 @@ export function mapGapBetween(state: GameState, from: string, to: string): MapGa
   const hops = path ? path.length - 1 : 0;
   let steps: number;
   let terrain: JourneyTerrain;
+  const haunted =
+    a.haunted || b.haunted || !!path?.slice(1, -1).some((id) => HAUNT_TEXT.test(regionText(atlas, id)));
   if (hops >= 1 && path) {
     steps = Math.min(MAX_LEGS, hops + 1);
     const between = path.slice(1, -1);
@@ -176,7 +197,13 @@ export function mapGapBetween(state: GameState, from: string, to: string): MapGa
     steps = 1;
     terrain = 'streets';
   }
-  return { steps, terrain, hoursPerLeg: steps <= 1 ? STEP_HOURS : LEG_HOURS[terrain] };
+  return {
+    steps,
+    terrain,
+    hoursPerLeg: steps <= 1 ? STEP_HOURS : LEG_HOURS[terrain],
+    areaTier,
+    haunted,
+  };
 }
 
 const SLOT_START: Record<Exclude<TimeOfDay, 'unknown'>, number> = {
@@ -247,21 +274,151 @@ const LIVES_PAD: Record<JourneyTerrain, string> = {
   road: 'Deal with what lurks by the roadside',
 };
 
-/** Chips for the ground between: walk on, someone met there, what lives there, turn back. */
+const FIXED_ENCOUNTER_PADS: Partial<Record<RoadEncounterKind, string[]>> = {
+  meeting: ['Greet whoever is coming'],
+  thugs: ['Face the thugs', 'Talk your way past the thugs'],
+  camp: ['Approach the camp', 'Skirt around the camp'],
+  undead: ['Face the dead', 'Slip past the dead'],
+  monster: ['Face the creature', 'Hide from the creature'],
+  villain: ['Face whoever blocks the way', 'Talk to whoever blocks the way'],
+};
+
+function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
+  if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
+  if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
+  return FIXED_ENCOUNTER_PADS[enc.kind] ?? [];
+}
+
+/** Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back. */
 export function journeyPads(state: Pick<GameState, 'journey'>): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
-  return ['Walk on', TALK_PAD[j.terrain], LIVES_PAD[j.terrain], `Turn back toward ${j.from}`];
+  const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
+  return ['Walk on', ...met, `Turn back toward ${j.from}`];
 }
 
 export function isJourneyPad(choice: string): boolean {
-  const t = (choice ?? '').trim();
-  return (
-    WALK_ON.test(t)
-    || /^turn back toward\s+\S/i.test(t)
-    || Object.values(TALK_PAD).some((p) => p.toLowerCase() === t.toLowerCase())
-    || Object.values(LIVES_PAD).some((p) => p.toLowerCase() === t.toLowerCase())
+  const t = (choice ?? '').trim().toLowerCase();
+  const known = [
+    ...Object.values(TALK_PAD),
+    ...Object.values(LIVES_PAD),
+    ...Object.values(FIXED_ENCOUNTER_PADS).flat(),
+  ];
+  return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || known.some((p) => p.toLowerCase() === t);
+}
+
+/** Base chance a stretch has a meeting; each quiet stretch in a row adds QUIET_STEP. */
+const ENCOUNTER_CHANCE = 0.4;
+const QUIET_STEP = 0.25;
+/** After this many quiet stretches in a row the next one always has a meeting. */
+const MAX_QUIET = 2;
+
+export interface StretchContext {
+  terrain: JourneyTerrain;
+  haunted: boolean;
+  areaTier: number;
+  /** Leg index being walked (1-based). */
+  stretch: number;
+  legsTotal: number;
+  quietStretches: number;
+}
+
+/** Kinds that fit the ground. Monsters and villains only where the area is dangerous (tier 3+). */
+export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
+  const high = ctx.areaTier >= 3;
+  const edgeOfWilds = ctx.stretch <= 1 || ctx.stretch >= ctx.legsTotal - 1;
+  const pool: RoadEncounterKind[] = [];
+  if (ctx.haunted) pool.push('undead', 'undead', 'undead');
+  if (ctx.terrain === 'forest' || ctx.terrain === 'marsh' || ctx.terrain === 'mountain') {
+    pool.push('wildlife', 'wildlife');
+    if (edgeOfWilds && ctx.terrain !== 'mountain') pool.push('camp');
+    if (high) pool.push('monster');
+  } else if (ctx.terrain === 'road' || ctx.terrain === 'coast') {
+    pool.push('traveler', 'meeting', 'thugs', 'camp');
+    if (high) pool.push('villain', 'monster');
+  } else {
+    pool.push('traveler', 'meeting', 'thugs');
+    if (high) pool.push('villain');
+  }
+  return pool;
+}
+
+/**
+ * One roll per stretch. `chanceRoll` and `kindRoll` are in [0, 1).
+ * Returns null for a quiet stretch.
+ */
+export function rollRoadEncounter(
+  ctx: StretchContext,
+  level: number,
+  chanceRoll: number,
+  kindRoll: number
+): RoadEncounter | null {
+  const chance = ctx.quietStretches >= MAX_QUIET ? 1 : ENCOUNTER_CHANCE + QUIET_STEP * ctx.quietStretches;
+  if (chanceRoll >= chance) return null;
+  const pool = encounterPool(ctx);
+  if (!pool.length) return null;
+  const kind = pool[Math.min(pool.length - 1, Math.floor(kindRoll * pool.length))];
+  return { kind, level, stretch: ctx.stretch, dangerous: ctx.areaTier >= 3 };
+}
+
+/** Encounter level from the area tier by the treasure rule (tier → level, clamped to party ±3). */
+export function roadEncounterLevel(state: GameState, areaTier: number): number {
+  return resolveLocalAreaLevel({
+    ...state,
+    activeDungeon: null,
+    locationSheet: null,
+    places: [],
+    threatTier: areaTier,
+  }).level;
+}
+
+function hashUnit(key: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < key.length; i++) {
+    h ^= key.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0) / 0x100000000;
+}
+
+/** Roll this stretch (seed-stable for the save, trip and leg). */
+function rollStretch(state: GameState, j: TravelJourney): TravelJourney {
+  const key = `${state.seed ?? ''}|${j.from}|${j.to}|${j.startedTurn}|${j.legsDone}`;
+  const areaTier = j.areaTier ?? 1;
+  const quiet = j.quietStretches ?? 0;
+  const encounter = rollRoadEncounter(
+    {
+      terrain: j.terrain,
+      haunted: !!j.haunted,
+      areaTier,
+      stretch: j.legsDone,
+      legsTotal: j.legsTotal,
+      quietStretches: quiet,
+    },
+    roadEncounterLevel(state, areaTier),
+    hashUnit(`${key}|chance`),
+    hashUnit(`${key}|kind`)
   );
+  return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1 };
+}
+
+const ENCOUNTER_LABEL: Record<RoadEncounterKind, string> = {
+  wildlife: 'wildlife',
+  traveler: 'a traveler',
+  meeting: 'someone on the way',
+  thugs: 'thugs',
+  camp: 'a camp',
+  undead: 'the restless dead',
+  monster: 'a monster',
+  villain: 'a villain',
+};
+
+/** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
+function encounterNote(j: TravelJourney): string {
+  const e = j.encounter;
+  if (!e) return '; quiet stretch';
+  const label = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
+  return `; chance meeting: ${label} (level ${e.level})`;
 }
 
 export interface TravelCommit {
@@ -285,7 +442,7 @@ function arrive(state: GameState, dest: string, hours: number, from: string): Tr
 }
 
 function startJourney(state: GameState, from: string, to: string, gap: MapGap): TravelCommit {
-  const journey: TravelJourney = {
+  const journey = rollStretch(state, {
     from,
     to,
     ground: GROUND_LABEL[gap.terrain],
@@ -294,13 +451,16 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap): 
     legsDone: 1,
     hoursPerLeg: gap.hoursPerLeg,
     startedTurn: state.turn ?? 0,
-  };
+    areaTier: gap.areaTier,
+    haunted: gap.haunted,
+    quietStretches: 0,
+  });
   const clock = advanceClock({ ...state, currentLocation: journey.ground, journey }, gap.hoursPerLeg);
   return {
     state: clock.state,
     handled: true,
     arrived: false,
-    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} — leg 1 of ${journey.legsTotal - 1} — ${clock.note}; ${to} still ahead`,
+    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} — leg 1 of ${journey.legsTotal - 1} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
@@ -314,13 +474,13 @@ function goTo(state: GameState, from: string, dest: string): TravelCommit {
 function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const legsDone = j.legsDone + 1;
   if (legsDone >= j.legsTotal) return arrive(state, j.to, j.hoursPerLeg, j.ground.toLowerCase());
-  const journey = { ...j, legsDone };
+  const journey = rollStretch(state, { ...j, legsDone });
   const clock = advanceClock({ ...state, currentLocation: j.ground, journey }, j.hoursPerLeg);
   return {
     state: clock.state,
     handled: true,
     arrived: false,
-    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} — leg ${legsDone} of ${j.legsTotal - 1} — ${clock.note}; ${j.to} still ahead`,
+    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} — leg ${legsDone} of ${j.legsTotal - 1} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
 
@@ -361,7 +521,7 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
       state: { ...state, currentLocation: j.ground },
       handled: true,
       arrived: false,
-      receipt: `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to}; ${j.to} still ahead`,
+      receipt: `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
     };
   }
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();

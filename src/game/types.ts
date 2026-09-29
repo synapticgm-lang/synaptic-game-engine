@@ -671,6 +671,34 @@ export interface TravelJourney {
   legsDone: number;
   hoursPerLeg: number;
   startedTurn: number;
+  /** 29w — threat tier (1–4) of the country the road runs through; encounter level follows it. */
+  areaTier?: number;
+  /** 29w — a ruin, graveyard, crypt or old battlefield lies along the way. */
+  haunted?: boolean;
+  /** 29w — this stretch's chance roll. null = a quiet stretch (walk and time only). */
+  encounter?: RoadEncounter | null;
+  /** 29w — quiet stretches in a row on this trip (a long trip is not all quiet). */
+  quietStretches?: number;
+}
+
+export type RoadEncounterKind =
+  | 'wildlife'
+  | 'traveler'
+  | 'meeting'
+  | 'thugs'
+  | 'camp'
+  | 'undead'
+  | 'monster'
+  | 'villain';
+
+/** 29w — a chance meeting on one stretch. Kind and level only; the writer names it. */
+export interface RoadEncounter {
+  kind: RoadEncounterKind;
+  level: number;
+  /** Leg index (legsDone) the roll was made on. */
+  stretch: number;
+  /** Area tier 3+ — wildlife there is not harmless. */
+  dangerous: boolean;
 }
 
 /** Premade settlement on the world map (29e). */
