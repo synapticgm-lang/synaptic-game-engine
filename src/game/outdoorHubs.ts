@@ -346,6 +346,22 @@ export function matchHub(
   );
 }
 
+/** 29q — authored linked quests on the hub that is this settlement (count toward its two cards). */
+export function hubLinkedQuestCount(
+  bible: CampaignBible | undefined | null,
+  settlement: { name: string; aliases?: string[] }
+): number {
+  const hubs = hubsForBible(bible);
+  if (!hubs.length) return 0;
+  const names = [settlement.name, ...(settlement.aliases ?? [])].map((n) => n.toLowerCase());
+  const hub = hubs.find(
+    (h) =>
+      names.includes(h.name.toLowerCase())
+      || h.aliases?.some((a) => names.includes(a.toLowerCase()))
+  );
+  return hub?.linkedQuestIds?.length ?? 0;
+}
+
 export function formatOutdoorHubsForPrompt(state: GameState): string {
   const hubs = hubsForBibleId(state.campaignBibleId);
   if (!hubs.length) return '';

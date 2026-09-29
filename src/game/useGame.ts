@@ -318,8 +318,10 @@ import {
   visitedHubLandmarkNames,
   matchHub,
   hubsForBibleId,
+  hubLinkedQuestCount,
 } from './outdoorHubs';
 import { seedWorldMapPlaces } from './worldMapAuthority';
+import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import { maybeRevealFromLocation } from './worldAtlas';
@@ -4406,6 +4408,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sanitizedInput
       );
 
+      if (!authoredBook) {
+        const talkCard = openTalkQuestCard(
+          { places, currentLocation: finalLocationName },
+          spokenLines(cleanText),
+          nextTurn
+        );
+        if (talkCard.card) places = talkCard.places;
+      }
+
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
@@ -5037,7 +5048,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       places: seedStoryPlaces(
         seedWorldMapPlaces(
           seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
-          namedSeeded.worldAtlas
+          namedSeeded.worldAtlas,
+          { seed: namedSeeded.seed, authoredQuestCount: (s) => hubLinkedQuestCount(bible, s) }
         ),
         bible,
         hubsForBible(bible).length > 0

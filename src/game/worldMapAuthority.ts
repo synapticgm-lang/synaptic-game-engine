@@ -6,6 +6,7 @@
 import type { WorldOutlineDef, WorldOutlineSettlement } from '@/data/worldOutlines';
 import type { GameState, PlaceRecord, WorldAtlasState } from './types';
 import { placeIdFromName } from './placeUtils';
+import { seedSettlementQuestCards } from './settlementQuestCards';
 
 /** Normalize location name for comparison. */
 export function normalizeLocationName(name: string): string {
@@ -22,6 +23,8 @@ const BIOME_QUEST_ALLOW: Record<string, string[]> = {
   ruin: ['ruin', 'dungeon', 'hazard', 'mine', 'delve'],
   social: ['town', 'city', 'urban', 'village', 'trade'],
   dungeon: ['dungeon', 'mine', 'ruin', 'hazard', 'delve', 'urban', 'industrial'],
+  forest: ['forest', 'wood', 'wild'],
+  desert: ['desert', 'dry', 'dune', 'caldera', 'ash', 'salt'],
 };
 
 export function settlementBiomeTags(s: WorldOutlineSettlement): string[] {
@@ -112,7 +115,8 @@ export function looksLikeGeographyInvent(name: string): boolean {
 /** Seed atlas settlements into PlaceRecord[] at New Game. */
 export function seedWorldMapPlaces(
   places: PlaceRecord[] | undefined,
-  atlas: WorldAtlasState | null | undefined
+  atlas: WorldAtlasState | null | undefined,
+  cards: { seed?: string; authoredQuestCount?: (s: WorldOutlineSettlement) => number } = {}
 ): PlaceRecord[] {
   const settlements = settlementsFromAtlas(atlas);
   if (!settlements.length) return places ?? [];
@@ -144,10 +148,15 @@ export function seedWorldMapPlaces(
         s.allowsDungeon ??
         (s.kind === 'ruin' || s.biome === 'dungeon' || s.biome === 'mine'),
     };
+    const merged = seedSettlementQuestCards(existing ? { ...existing, ...place } : place, {
+      settlement: s,
+      authoredQuestCount: cards.authoredQuestCount?.(s) ?? 0,
+      seed: cards.seed,
+    });
     if (existing) {
-      next = next.map((p) => (p.id === existing.id ? { ...existing, ...place } : p));
+      next = next.map((p) => (p.id === existing.id ? merged : p));
     } else {
-      next.push(place);
+      next.push(merged);
     }
   }
   return next;

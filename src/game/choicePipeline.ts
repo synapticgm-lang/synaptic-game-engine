@@ -12,6 +12,7 @@ import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierR
 import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn } from './stanceDensity';
 import { outdoorHubTravelChoices } from './outdoorHubs';
 import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
+import { settlementQuestCardChoices } from './settlementQuestCards';
 import { isAtmospherePlaceName, resumeMainTravelChoice } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
@@ -893,6 +894,10 @@ export function padChoicesToCount(
     if (!inventsPresenceOnEmptyScene(resumeChoice, state, storyProse)) {
       if (!merged.some((c) => c.toLowerCase() === resumeChoice.toLowerCase())) merged.push(resumeChoice);
     }
+  }
+  for (const cardPad of settlementQuestCardChoices(state, 1)) {
+    if (merged.length >= 4) break;
+    if (!merged.some((c) => c.toLowerCase() === cardPad.toLowerCase())) merged.push(cardPad);
   }
   // Act-4: hub arrival beat pads
   for (const hubPad of hubArrivalChoicePads(state, 2)) {

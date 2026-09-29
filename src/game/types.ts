@@ -1122,6 +1122,26 @@ export interface PlaceRecord {
   cardBuiltTurn?: number;
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
+  /** 29q — settlement quest cards (two seeded once at creation, plus talk-opened). */
+  questCards?: SettlementQuestCard[];
+  /** 29q — set once the two seed cards were stamped; never stamp again. */
+  questCardsSeeded?: boolean;
+}
+
+export interface SettlementQuestParams {
+  who?: string;
+  what?: string;
+  where?: string;
+}
+
+export interface SettlementQuestCard {
+  id: string;
+  templateId: string;
+  label: string;
+  params: SettlementQuestParams;
+  source: 'seed' | 'talk';
+  status: 'open' | 'done';
+  offeredTurn: number;
 }
 
 export interface TutorialProgress {

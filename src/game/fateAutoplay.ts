@@ -105,7 +105,9 @@ import {
   resolveLeaveSceneDestination,
   matchHub,
   hubsForBibleId,
+  hubLinkedQuestCount,
 } from './outdoorHubs';
+import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { seedOpeningCastLocations } from './npcRecords';
@@ -680,7 +682,8 @@ export function buildNewGameState(opts: {
     places: seedStoryPlaces(
       seedWorldMapPlaces(
         seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
-        namedSeeded.worldAtlas
+        namedSeeded.worldAtlas,
+        { seed: namedSeeded.seed, authoredQuestCount: (s) => hubLinkedQuestCount(bible, s) }
       ),
       bible,
       hubsForBible(bible).length > 0
@@ -1789,6 +1792,10 @@ Do NOT print dice notation or CODE ENFORCED.
     arcDirector: arcState.arcDirector,
     runManifest: arcState.runManifest,
   };
+  {
+    const talkCard = openTalkQuestCard(working, spokenLines(cleanText), nextTurn);
+    if (talkCard.card) working = { ...working, places: talkCard.places };
+  }
   if (arcState.sceneFacts?.worldTags?.length) {
     working = {
       ...working,
