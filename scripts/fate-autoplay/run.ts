@@ -9,6 +9,7 @@
  *   npm run fate-autoplay -- --turns 60 --bible summoned-pact --seed 53 --resume-from scripts/fate-autoplay/runs/<run>
  */
 
+import { spawnSync } from 'node:child_process';
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -49,6 +50,21 @@ function installNodeShims(): void {
   };
   if (!g.localStorage) g.localStorage = localStorage;
   if (!g.window) g.window = { localStorage };
+}
+
+/** A thumbs failure must never stop the run. */
+function scoreRunThumbs(runDir: string | undefined, log: (msg: string) => void = console.log): void {
+  if (!runDir) return;
+  try {
+    const res = spawnSync(process.execPath, [join('scripts', 'fate-autoplay', 'autoThumbs.mjs'), runDir], {
+      encoding: 'utf8',
+    });
+    if (res.error) log(`  → thumbs failed: ${res.error.message}`);
+    else if (res.status !== 0) log(`  → thumbs failed (exit ${res.status}): ${String(res.stderr ?? '').trim().slice(0, 300)}`);
+    else log(`  → thumbs.json written: ${runDir}`);
+  } catch (e) {
+    log(`  → thumbs failed: ${(e as Error).message}`);
+  }
 }
 
 function printHelp(): void {
@@ -175,6 +191,7 @@ async function runNightStoryforge(
       characterName: opts.characterName,
       writer: opts.writer,
     });
+    scoreRunThumbs(summary.outDir, log);
     summaries.push({ block: 'A', aiAgentMode: s.mode, ...summary });
     log(
       `  → done turns=${summary.completedTurns} errors=${summary.errorCount} timeouts=${summary.timeoutCount} p50=${summary.latencyMs.p50}ms dir=${summary.outDir}`
@@ -219,6 +236,7 @@ async function runNightStoryforge(
         characterName: opts.characterName,
         writer: opts.writer,
       });
+      scoreRunThumbs(summary.outDir, log);
       summaries.push({ block: `B${round + 1}`, aiAgentMode: 'default', ...summary });
       log(
         `  → done turns=${summary.completedTurns} errors=${summary.errorCount} timeouts=${summary.timeoutCount} p50=${summary.latencyMs.p50}ms dir=${summary.outDir}`
@@ -354,6 +372,7 @@ async function main(): Promise<void> {
           characterName: opts.characterName,
           writer: opts.writer,
         });
+        scoreRunThumbs(summary.outDir, log);
         summaries.push(summary);
         log(
           `  → done turns=${summary.completedTurns} errors=${summary.errorCount} timeouts=${summary.timeoutCount} p50=${summary.latencyMs.p50}ms dir=${summary.outDir}`
@@ -396,6 +415,7 @@ async function main(): Promise<void> {
         resumeFrom: opts.resumeFrom,
       });
       log(`Done → ${summary.outDir}`);
+      scoreRunThumbs(summary.outDir, log);
       console.log(JSON.stringify(summary, null, 2));
     }
   } finally {
