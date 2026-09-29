@@ -35,7 +35,7 @@ import {
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, type GmResult } from './aiService';
-import { drainWriterRawIssues, gmProxyHost } from './gmProxy';
+import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
 import type { EnemyStats } from './combat';
@@ -2867,6 +2867,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let result: GmResult;
       let writerRemaining: string[] = [];
       drainWriterRawIssues();
+      drainWriterUsage();
       try {
         result =
           authoredBook
@@ -3125,6 +3126,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const writerIssues = writerTurnIssues(drainWriterRawIssues(), [...warden.notes, ...writerRemaining]);
         if (writerIssues.length) gmEntry.writerIssues = writerIssues;
       }
+      const writerUsage = drainWriterUsage();
+      if (writerUsage) gmEntry.writerUsage = writerUsage;
       const storyBeforeCuts = cleanText;
 
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.

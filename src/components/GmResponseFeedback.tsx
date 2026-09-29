@@ -9,6 +9,7 @@ import {
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { noteThumbsDownFeedback } from '@/game/craftBookCompiler';
 import { noteThumbsUpKeeper } from '@/game/craftKeepers';
+import type { TurnWriterUsage } from '@/game/openRouterChat';
 
 interface Props {
   saveId: string;
@@ -21,6 +22,8 @@ interface Props {
   bibleId?: string | null;
   /** Raw writer issues on this beat (stored with the thumbs for training). */
   writerIssues?: string[] | null;
+  /** 28w — token use of this beat (stored on the same row for costing). */
+  writerUsage?: TurnWriterUsage | null;
 }
 
 const MAX_COMMENT_LENGTH = 500;
@@ -34,6 +37,7 @@ export function GmResponseFeedback({
   gameMode,
   bibleId,
   writerIssues,
+  writerUsage,
 }: Props) {
   const [feedbackType, setFeedbackType] = useState<GmFeedbackType | null>(null);
   const [comment, setComment] = useState('');
@@ -98,6 +102,7 @@ export function GmResponseFeedback({
       gameMode,
       bibleId,
       writerIssues,
+      writerUsage,
     });
     setSaving(false);
     
@@ -136,6 +141,7 @@ export function GmResponseFeedback({
       gameMode,
       bibleId,
       writerIssues,
+      writerUsage,
     });
     setSaving(false);
     

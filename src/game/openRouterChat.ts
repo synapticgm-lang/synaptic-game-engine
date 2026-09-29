@@ -94,11 +94,104 @@ export function isCutOffFinish(reason: unknown): boolean {
   return /^(?:length|max_tokens|MAX_TOKENS)$/.test(String(reason ?? ''));
 }
 
+/**
+ * 28w — provider-reported token use for one model call. `tokensIn` is the whole prompt (cached included),
+ * `tokensCached` the cached part of it. A field the provider did not report is null — never estimated.
+ */
+export type WriterUsage = {
+  tokensIn: number | null;
+  tokensOut: number | null;
+  tokensCached: number | null;
+};
+
+/** 28w — token use summed over every model call of one turn (re-asks included). */
+export type TurnWriterUsage = WriterUsage & {
+  modelCalls: number | null;
+  modelId: string | null;
+};
+
 export type ChatCompletionRead = {
   /** Story text (reasoning stripped; n-candidate packs joined as `{candidates}` JSON). */
   text: string;
   issue: WriterRawIssue | null;
+  /** 28w — absent / null when the provider sent no usage block. */
+  usage?: WriterUsage | null;
 };
+
+function usageCount(raw: unknown): number | null {
+  const n = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() ? Number(raw) : NaN;
+  return Number.isFinite(n) && n >= 0 ? Math.round(n) : null;
+}
+
+function addCounts(...parts: Array<number | null>): number | null {
+  const known = parts.filter((p): p is number => p != null);
+  return known.length ? known.reduce((a, b) => a + b, 0) : null;
+}
+
+/**
+ * 28w — read the usage block of any provider reply: OpenAI-compatible (OpenRouter / Fireworks / DeepSeek),
+ * Google `usageMetadata`, Anthropic `usage`. Returns null when there is no usage block at all.
+ */
+export function readChatUsage(data: unknown): WriterUsage | null {
+  if (!data || typeof data !== 'object') return null;
+  const rec = data as Record<string, unknown>;
+  const google = rec.usageMetadata as Record<string, unknown> | undefined;
+  if (google && typeof google === 'object') {
+    const out = usageCount(google.candidatesTokenCount);
+    const thoughts = usageCount(google.thoughtsTokenCount);
+    return {
+      tokensIn: usageCount(google.promptTokenCount),
+      tokensOut: out == null && thoughts == null ? null : addCounts(out, thoughts),
+      tokensCached: usageCount(google.cachedContentTokenCount),
+    };
+  }
+  const u = rec.usage as Record<string, unknown> | undefined;
+  if (!u || typeof u !== 'object') return null;
+  if ('input_tokens' in u || 'output_tokens' in u) {
+    // Anthropic input_tokens excludes cache reads/writes; tokensIn is the whole prompt.
+    const read = usageCount(u.cache_read_input_tokens);
+    const write = usageCount(u.cache_creation_input_tokens);
+    const input = usageCount(u.input_tokens);
+    return {
+      tokensIn: input == null ? null : addCounts(input, read, write),
+      tokensOut: usageCount(u.output_tokens),
+      tokensCached: read,
+    };
+  }
+  const details = u.prompt_tokens_details as Record<string, unknown> | undefined;
+  return {
+    tokensIn: usageCount(u.prompt_tokens),
+    tokensOut: usageCount(u.completion_tokens),
+    tokensCached: usageCount(details?.cached_tokens) ?? usageCount(u.prompt_cache_hit_tokens),
+  };
+}
+
+/**
+ * 28w — sum per-call usage for one turn. A token field is null if any call left it unreported (a partial sum
+ * would under-count); `modelCalls` is null if any call's usage is unknown. No calls → null.
+ */
+export function sumWriterUsage(
+  calls: ReadonlyArray<(Partial<TurnWriterUsage> & { modelCalls?: number | null }) | null | undefined>
+): TurnWriterUsage | null {
+  if (!calls.length) return null;
+  const field = (k: 'tokensIn' | 'tokensOut' | 'tokensCached' | 'modelCalls'): number | null => {
+    let total = 0;
+    for (const c of calls) {
+      const v = c?.[k];
+      if (typeof v !== 'number' || !Number.isFinite(v)) return null;
+      total += v;
+    }
+    return total;
+  };
+  const modelId = [...calls].reverse().find((c) => typeof c?.modelId === 'string' && c.modelId)?.modelId ?? null;
+  return {
+    tokensIn: field('tokensIn'),
+    tokensOut: field('tokensOut'),
+    tokensCached: field('tokensCached'),
+    modelCalls: field('modelCalls'),
+    modelId,
+  };
+}
 
 /** Read an OpenAI-compatible completion: story text only, plus what went wrong with the raw reply. */
 export function readChatCompletion(data: unknown): ChatCompletionRead {
@@ -117,7 +210,8 @@ export function readChatCompletion(data: unknown): ChatCompletionRead {
   let issue: WriterRawIssue | null = null;
   if (!text) issue = hadReasoning ? 'reasoning-only' : 'empty';
   else if (isCutOffFinish(first.finish_reason)) issue = 'cut-off';
-  return { text, issue };
+  const usage = readChatUsage(data);
+  return usage ? { text, issue, usage } : { text, issue };
 }
 
 /**

@@ -706,6 +706,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           gameMode={engineMode}
           bibleId={bibleId}
           writerIssues={entry.writerIssues}
+          writerUsage={entry.writerUsage}
         />
       )}
       <BeautyMomentOfferLink

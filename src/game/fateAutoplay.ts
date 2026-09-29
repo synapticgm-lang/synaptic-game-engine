@@ -152,7 +152,7 @@ import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
 import { runWriterTurn, writerTurnIssues, type WriterTurnResult } from './writerTurn';
-import { drainWriterRawIssues } from './gmProxy';
+import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
   formatTalkWriterFacing,
@@ -355,6 +355,8 @@ export type TurnTelemetry = {
   stitchedLine?: boolean;
   /** 28l — raw writer issues on the committed beat (training signal; see `writerTurnIssues`). */
   writerIssues?: string[];
+  /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
+  writerUsage?: import('./openRouterChat').TurnWriterUsage;
 };
 
 export type RunSummary = {
@@ -1002,6 +1004,7 @@ export async function headlessFateTurn(
   writerCallMeter.calls = 0;
   writerCallMeter.ms = 0;
   drainWriterRawIssues();
+  drainWriterUsage();
   const offered = resolveOfferedChoices(state);
   const fatePick =
     meta.playerInputOverride?.trim()
@@ -1847,6 +1850,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const writerIssues = useMud || authoredBook
     ? []
     : writerTurnIssues(drainWriterRawIssues(), [...warden.notes, ...(writerTurn?.remaining ?? [])]);
+  const writerUsage = drainWriterUsage();
   const playerEntry: LogEntry = {
     id: uid(),
     turn: state.turn,
@@ -1863,6 +1867,7 @@ Do NOT print dice notation or CODE ENFORCED.
     systemLog: filteredSystemLog,
     snapshotGist: compactTrafficGist(arcState),
     ...(writerIssues.length ? { writerIssues } : {}),
+    ...(writerUsage ? { writerUsage } : {}),
     ...(useMud && mudTurn
       ? {
           presentation: 'mud-receipt' as const,
@@ -1972,6 +1977,7 @@ Do NOT print dice notation or CODE ENFORCED.
       draftProblems: writerTurn?.problems.length ? writerTurn.problems : undefined,
       stitchedLine: renderFallbackUsed || usedPacketStitch,
       writerIssues: writerIssues.length ? writerIssues : undefined,
+      writerUsage: writerUsage ?? undefined,
     },
   };
 }

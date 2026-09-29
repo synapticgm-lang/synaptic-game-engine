@@ -149,6 +149,8 @@ for (const r of rows) {
     excerpt: t.replace(/\s+/g, ' ').slice(0, 220),
     // 28l — raw writer issues (empty / reasoning-only / cut-off / recycled / unresolved) for training.
     ...(r.writerIssues?.length ? { writerIssues: r.writerIssues } : {}),
+    // 28w — token use of the turn, next to the issues (same row as the live feedback record).
+    ...(r.writerUsage ? { writerUsage: r.writerUsage } : {}),
   });
 }
 

@@ -13,7 +13,13 @@ import {
 } from './distributionChannel';
 import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
-import { hasHanScript, hostedWriterProvider, type WriterRawIssue } from './openRouterChat';
+import {
+  hasHanScript,
+  hostedWriterProvider,
+  sumWriterUsage,
+  type TurnWriterUsage,
+  type WriterRawIssue,
+} from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
@@ -70,6 +76,26 @@ export function noteWriterRawIssue(issue: unknown): void {
 
 export function drainWriterRawIssues(): WriterRawIssue[] {
   return writerRawIssues.splice(0, writerRawIssues.length);
+}
+
+/** 28w — token use of every gm-turn reply since the last drain (one turn, re-asks included). */
+const writerUsageCalls: Array<Partial<TurnWriterUsage>> = [];
+
+/** A gm-turn reply without a usage block is unknown usage: the turn's sums become null. */
+export function noteWriterUsage(usage: unknown): void {
+  const u = usage && typeof usage === 'object' ? (usage as Record<string, unknown>) : {};
+  const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+  writerUsageCalls.push({
+    tokensIn: num(u.tokensIn),
+    tokensOut: num(u.tokensOut),
+    tokensCached: num(u.tokensCached),
+    modelCalls: num(u.modelCalls),
+    modelId: typeof u.modelId === 'string' ? u.modelId : null,
+  });
+}
+
+export function drainWriterUsage(): TurnWriterUsage | null {
+  return sumWriterUsage(writerUsageCalls.splice(0, writerUsageCalls.length));
 }
 
 function pickClientApiKey(settings: Settings): string | undefined {
@@ -203,6 +229,7 @@ export async function invokeGmProxy(params: {
 
     const payload = await res.json().catch(() => ({}));
     noteWriterRawIssue(payload?.rawIssue);
+    if (res.ok || payload?.rawIssue) noteWriterUsage(payload?.usage);
     if (!res.ok) {
       // gm-turn already re-asked the same model once; the caller's plain-prose last resort takes over.
       if (payload?.rawIssue) {

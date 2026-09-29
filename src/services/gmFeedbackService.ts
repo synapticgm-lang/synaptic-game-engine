@@ -4,6 +4,7 @@
  */
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import type { TurnWriterUsage } from '@/game/openRouterChat';
 
 export type GmFeedbackType = 'positive' | 'negative';
 
@@ -23,6 +24,12 @@ export interface GmFeedbackRecord {
   bible_id: string | null;
   /** 28l — raw writer issues on the rated beat (comma list), for model training. */
   writer_issue?: string | null;
+  /** 28w — provider-reported token use of the rated beat (null = not reported), for costing. */
+  tokens_in?: number | null;
+  tokens_out?: number | null;
+  tokens_cached?: number | null;
+  model_calls?: number | null;
+  model_id?: string | null;
 }
 
 export interface SubmitGmFeedbackInput {
@@ -38,6 +45,8 @@ export interface SubmitGmFeedbackInput {
   bibleId?: string | null;
   /** 28l — `LogEntry.writerIssues` of the rated beat. */
   writerIssues?: string[] | null;
+  /** 28w — `LogEntry.writerUsage` of the rated beat. */
+  writerUsage?: TurnWriterUsage | null;
 }
 
 export interface GmFeedbackResult {
@@ -94,6 +103,11 @@ export async function submitGmFeedback(
     game_mode: input.gameMode || null,
     bible_id: input.bibleId || null,
     writer_issue: input.writerIssues?.length ? input.writerIssues.join(',') : null,
+    tokens_in: input.writerUsage?.tokensIn ?? null,
+    tokens_out: input.writerUsage?.tokensOut ?? null,
+    tokens_cached: input.writerUsage?.tokensCached ?? null,
+    model_calls: input.writerUsage?.modelCalls ?? null,
+    model_id: input.writerUsage?.modelId ?? null,
   };
 
   const upsert = (row: Partial<GmFeedbackRecord>) =>
@@ -106,10 +120,16 @@ export async function submitGmFeedback(
       .select()
       .single();
   let { data, error } = await upsert(payload);
+  // Migration 023 not applied yet: keep the thumbs and writer_issue, drop the token columns.
+  if (error && /tokens_(?:in|out|cached)|model_(?:calls|id)/i.test(error.message ?? '')) {
+    const { tokens_in: _i, tokens_out: _o, tokens_cached: _c, model_calls: _n, model_id: _m, ...rest } = payload;
+    void [_i, _o, _c, _n, _m];
+    ({ data, error } = await upsert(rest));
+  }
   // Migration 022 not applied yet: keep the thumbs, drop the training column.
   if (error && /writer_issue/i.test(error.message ?? '')) {
-    const { writer_issue: _drop, ...rest } = payload;
-    void _drop;
+    const { writer_issue: _drop, tokens_in: _i, tokens_out: _o, tokens_cached: _c, model_calls: _n, model_id: _m, ...rest } = payload;
+    void [_drop, _i, _o, _c, _n, _m];
     ({ data, error } = await upsert(rest));
   }
 

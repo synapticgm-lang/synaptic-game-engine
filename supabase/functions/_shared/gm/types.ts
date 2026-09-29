@@ -764,6 +764,14 @@ export interface LogEntry {
    * unresolved prose). Training signal sent with thumbs; never a reason to fail the turn.
    */
   writerIssues?: string[];
+  /** 28w — provider-reported token use summed over this beat's model calls (null fields = not reported). */
+  writerUsage?: {
+    tokensIn: number | null;
+    tokensOut: number | null;
+    tokensCached: number | null;
+    modelCalls: number | null;
+    modelId: string | null;
+  };
   /**
    * 08c Free MUD-modern: `mud-receipt` = code receipt is primary; content/flavorQuote is optional 1-liner.
    */

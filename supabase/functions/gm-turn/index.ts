@@ -14,7 +14,9 @@ import {
   openRouterChatBody,
   openRouterChatHeaders,
   readChatCompletion,
+  readChatUsage,
   stripReasoningBlocks,
+  sumWriterUsage,
   WRITER_REASK_MAX_TOKENS,
   type ChatCompletionRead,
   type FireworksReasoningLevel,
@@ -179,9 +181,10 @@ async function callGoogle(
   const cand = data.candidates?.[0];
   const parts = (cand?.content?.parts ?? []) as Array<{ text?: string; thought?: boolean }>;
   const story = parts.filter((p) => !p.thought).map((p) => p.text ?? '').join('');
+  const usage = readChatUsage(data);
   const read = readPlainReply(story, cand?.finishReason);
-  if (!read.text && parts.some((p) => p.thought)) return { text: '', issue: 'reasoning-only' };
-  return read;
+  if (!read.text && parts.some((p) => p.thought)) return { text: '', issue: 'reasoning-only', usage };
+  return { ...read, usage };
 }
 
 const FIREWORKS_REASONING_LEVELS: FireworksReasoningLevel[] = ['none', 'low', null];
@@ -295,9 +298,10 @@ async function callAnthropic(
   const data = await res.json();
   const blocks = (data.content ?? []) as Array<{ type?: string; text?: string }>;
   const story = blocks.filter((b) => b.type === 'text' || (!b.type && b.text)).map((b) => b.text ?? '').join('');
+  const usage = readChatUsage(data);
   const read = readPlainReply(story, data.stop_reason);
-  if (!read.text && blocks.some((b) => b.type === 'thinking')) return { text: '', issue: 'reasoning-only' };
-  return read;
+  if (!read.text && blocks.some((b) => b.type === 'thinking')) return { text: '', issue: 'reasoning-only', usage };
+  return { ...read, usage };
 }
 
 Deno.serve(async (req) => {
@@ -367,12 +371,19 @@ Deno.serve(async (req) => {
     );
   }
 
+  // 28w — every model call that answered this turn, for per-turn token logging.
+  let calledModel: string | null = null;
+  const callUsage: Array<{ tokensIn: number | null; tokensOut: number | null; tokensCached: number | null; modelCalls: number }> = [];
+  const turnUsage = () => (callUsage.length ? { ...sumWriterUsage(callUsage), modelId: calledModel } : undefined);
+
   try {
     const runOnce = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       if (provider === 'gemini') {
+        calledModel = model || 'gemini-2.0-flash';
         return callGoogle(userPrompt, sys, apiKey, model, maxTokens);
       }
       if (provider === 'anthropic') {
+        calledModel = model || 'claude-3-5-sonnet-latest';
         return callAnthropic(userPrompt, sys, apiKey, model, maxTokens);
       }
       const fireworks = provider === 'fireworks' || isFireworksWriterModel(model);
@@ -394,6 +405,7 @@ Deno.serve(async (req) => {
             : provider === 'groq'
               ? 'llama-3.3-70b-versatile'
               : 'gpt-4o-mini');
+      calledModel = fireworks ? normalizeFireworksWriterModel(modelName) || FREE_WRITER_FIREWORKS_MODEL : modelName;
       return callOpenAICompat(userPrompt, sys, apiKey, modelName, base, {
         tokenProse: mode === 'turn',
         maxTokens,
@@ -404,7 +416,14 @@ Deno.serve(async (req) => {
     let providerError = '';
     const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       try {
-        return await runOnce(sys, maxTokens);
+        const read = await runOnce(sys, maxTokens);
+        callUsage.push({
+          tokensIn: read.usage?.tokensIn ?? null,
+          tokensOut: read.usage?.tokensOut ?? null,
+          tokensCached: read.usage?.tokensCached ?? null,
+          modelCalls: 1,
+        });
+        return read;
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;
         providerError = err instanceof Error ? err.message : String(err);
@@ -423,15 +442,20 @@ Deno.serve(async (req) => {
     }
     const rawIssue = first.issue ?? undefined;
 
+    const usage = turnUsage();
     if (!best.text) {
       return jsonResponse(
-        { error: providerError || 'The AI provider returned no content.', rawIssue: rawIssue ?? 'empty' },
+        {
+          error: providerError || 'The AI provider returned no content.',
+          rawIssue: rawIssue ?? 'empty',
+          ...(usage ? { usage } : {}),
+        },
         502
       );
     }
 
     // Scrubbed response — never return prompts, keys, or pipeline diagnostics.
-    return jsonResponse(rawIssue ? { text: best.text, rawIssue } : { text: best.text });
+    return jsonResponse({ text: best.text, ...(rawIssue ? { rawIssue } : {}), ...(usage ? { usage } : {}) });
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
     const message = err instanceof Error ? err.message : 'GM proxy failure';

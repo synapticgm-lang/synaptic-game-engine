@@ -1,0 +1,4 @@
+{
+  "_note": "USD per 1M tokens, keyed by model id (matched when the logged model id ends with the key). Used by docs/orders/t50-metrics.ps1 for the estimated cost per turn.",
+  "deepseek-v4p1-flash": { "in": 0.22, "cached": 0.007, "out": 0.66 }
+}
