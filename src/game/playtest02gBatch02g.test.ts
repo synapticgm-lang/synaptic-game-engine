@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { detectHubRoleMadlib, isChoicePadPersonToken } from './chromeAuthority';
-import { ensureTravelArrivalProse, isThornferryCluster } from './outdoorHubs';
+import { isThornferryCluster } from './outdoorHubs';
 import { scrubEntityMadLibs, scrubFalseArrivalWhenHere } from './proseWarden';
 import { enforceCameraOnProse, playerCommittedArrivalTravel } from './travelAuthority';
 import type { GameState } from './types';
@@ -39,18 +39,6 @@ describe('Batch 02g — P0-1: leave/exit is not an arrival', () => {
     expect(next).toContain('hedgerows');
   });
 
-  it('ensureTravelArrivalProse skips mill dest with empty from', () => {
-    expect(ensureTravelArrivalProse('Silas waits by the water.', 'mill landing at Thornferry', '')).toBe(
-      'Silas waits by the water.'
-    );
-  });
-
-  it('ensureTravelArrivalProse skips when body already leaves the landing', () => {
-    const body = 'You set out along the muddy track, the mill landing already shrinking behind you.';
-    expect(ensureTravelArrivalProse(body, 'mill landing at Thornferry', 'chapel')).not.toMatch(
-      /You reach the mill landing/i
-    );
-  });
 });
 
 describe('Batch 02g — P0-2: Thornferry cluster lock', () => {

@@ -28,7 +28,6 @@ import { buildEntityCast } from './entityCast';
 import { extractChatCompletionText, hasHanScript } from './openRouterChat';
 import { applyStructuralEvents } from './structuralEvents';
 import { enumerateLegalEdges } from './choiceEdge';
-import { ensureTravelArrivalProse } from './outdoorHubs';
 import { newGameState } from './newGameTestState';
 import type { GameState } from './types';
 
@@ -395,15 +394,6 @@ describe('Batch 02f — P0-5: PYOA false-arrival hardening', () => {
     // P0-5: Allow legitimate travel narration when location changed
     expect(result).toContain('You leave the West Wall');
     expect(result).toContain('reach the mill landing');
-  });
-
-  it('does not prepend mill-landing when already on the Thornferry cluster', () => {
-    expect(
-      ensureTravelArrivalProse('Silas waits by the water.', 'mill landing at Thornferry', 'the ford')
-    ).toBe('Silas waits by the water.');
-    expect(
-      ensureTravelArrivalProse('Dust hangs.', 'mill landing at Thornferry', 'Thornferry Road')
-    ).toBe('Dust hangs.');
   });
 
   it('should handle case-insensitive mill landing matches', () => {

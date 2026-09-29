@@ -346,6 +346,22 @@ export function matchHub(
   );
 }
 
+/** 29q — authored linked quests on the hub that is this settlement (count toward its two cards). */
+export function hubLinkedQuestCount(
+  bible: CampaignBible | undefined | null,
+  settlement: { name: string; aliases?: string[] }
+): number {
+  const hubs = hubsForBible(bible);
+  if (!hubs.length) return 0;
+  const names = [settlement.name, ...(settlement.aliases ?? [])].map((n) => n.toLowerCase());
+  const hub = hubs.find(
+    (h) =>
+      names.includes(h.name.toLowerCase())
+      || h.aliases?.some((a) => names.includes(a.toLowerCase()))
+  );
+  return hub?.linkedQuestIds?.length ?? 0;
+}
+
 export function formatOutdoorHubsForPrompt(state: GameState): string {
   const hubs = hubsForBibleId(state.campaignBibleId);
   if (!hubs.length) return '';
@@ -507,72 +523,6 @@ export function resolveLeaveSceneDestination(
   }
   const alt = hubs.find((h) => h.name.toLowerCase() !== here);
   return alt?.name ?? null;
-}
-
-/**
- * When code snaps location to a hub but GM prose still narrates the old room,
- * prepend a short arrival beat so Travel is not theater (matrix-40 Summoned Pact).
- */
-export function ensureTravelArrivalProse(
-  prose: string,
-  hubName: string,
-  fromLocation?: string | null
-): string {
-  const text = (prose ?? '').trim();
-  const hub = hubName.trim();
-  if (!hub) return text;
-  if (/last doorway is behind you|You are at .+ now\.|You step onto |The way opens onto /i.test(text)) {
-    return text;
-  }
-  const hubEsc = hub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  if (new RegExp(`\\bYou (?:leave [^.]{2,80} behind and )?reach ${hubEsc}\\.`, 'i').test(text)) {
-    return text;
-  }
-  const from = (fromLocation ?? '').trim();
-  // Already here — never invent a second arrival (Batch E location amnesia).
-  if (
-    from
-    && (from.toLowerCase() === hub.toLowerCase()
-      || from.toLowerCase().includes(hub.toLowerCase())
-      || hub.toLowerCase().includes(from.toLowerCase()))
-  ) {
-    return text;
-  }
-  // P0-5 / 02g: Thornferry mill / ford / landing aliases are the same already-here cluster.
-  if (from && isThornferryCluster(from) && isThornferryCluster(hub)) {
-    return text;
-  }
-  // 02g: unknown from + mill dest = already-here default (do not invent arrival).
-  if (!from && isThornferryCluster(hub)) {
-    return text;
-  }
-  // 02g: body is already leaving / standing on the landing — no second arrival.
-  if (
-    isThornferryCluster(hub) &&
-    /\b(mill landing|road out of Thornferry|already shrinking|step off the mill|track (?:north|away|climbs)|leave the landing|ferry rope)\b/i.test(
-      text
-    )
-  ) {
-    return text;
-  }
-  const mentionsHub = new RegExp(hub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text);
-  const stillAtFrom =
-    from.length > 3
-    && new RegExp(from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 40), 'i').test(text.slice(0, 280))
-    && !mentionsHub;
-  if (mentionsHub && !stillAtFrom) return text;
-  // Batch U — never prepend opening-plate Sevenfold when traveling between hubs.
-  if (/sevenfold\s+circle/i.test(hub) && from && !/sevenfold\s+circle/i.test(from)) {
-    return text;
-  }
-  const leave = from
-    ? `You leave ${from} behind and reach ${hub}.`
-    : `You reach ${hub}.`;
-  if (!text) return leave;
-  if (stillAtFrom || !mentionsHub) {
-    return `${leave} ${text}`;
-  }
-  return text;
 }
 
 /** 27g — place card: plain description + exits, no engine tags. Built from the hub bank and the way you came. */

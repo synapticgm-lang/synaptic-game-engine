@@ -14,7 +14,6 @@ import {
   isLeaveReachFightBleed,
   proseHasFightBleed,
   scrubOneCameraFight,
-  stampTravelArrivalIfSafe,
 } from './oneCameraFight';
 import type { GameState } from './types';
 
@@ -49,25 +48,21 @@ describe('Batch 02s stamps', () => {
 });
 
 describe('Batch 02s — stamp after commit cannot glue steel', () => {
-  it('refuses leave-reach on 02r D&D T28 curved-blade body', () => {
+  it('no leave-reach on 02r D&D T28 curved-blade body', () => {
     expect(proseHasFightBleed(DND_T28_BODY)).toBe(true);
-    const stamped = stampTravelArrivalIfSafe(DND_T28_BODY, 'West Wall', 'Lowmarket');
-    expect(stamped).toBe(DND_T28_BODY);
-    expect(isLeaveReachFightBleed(stamped)).toBe(false);
     const camera = enforceCameraOnProse(DND_T28_BODY, roadState(), 'Travel toward West Wall');
-    expect(camera).not.toMatch(/You leave Lowmarket behind and reach West Wall/i);
+    expect(camera).toBe(DND_T28_BODY);
+    expect(isLeaveReachFightBleed(camera)).toBe(false);
   });
 
-  it('refuses leave-reach on 02r RPG T14 live-blade body', () => {
-    const stamped = stampTravelArrivalIfSafe(RPG_T14_BODY, 'The Weighing Cup', 'West Wall');
-    expect(stamped).toBe(RPG_T14_BODY);
-    expect(isLeaveReachFightBleed(`${stamped}`)).toBe(false);
+  it('no leave-reach on 02r RPG T14 live-blade body', () => {
+    const camera = enforceCameraOnProse(RPG_T14_BODY, roadState(), 'Travel toward The Weighing Cup');
+    expect(camera).toBe(RPG_T14_BODY);
   });
 
-  it('still stamps legal travel with no steel', () => {
-    const stamped = stampTravelArrivalIfSafe(LEGAL_TRAVEL, 'West Wall', 'Lowmarket');
-    expect(stamped).toMatch(/^You leave Lowmarket behind and reach West Wall\./);
-    expect(isLeaveReachFightBleed(stamped)).toBe(false);
+  it('legal travel prose stays the writer\'s (29u: no stamp)', () => {
+    const camera = enforceCameraOnProse(LEGAL_TRAVEL, roadState(), 'Travel toward West Wall');
+    expect(camera).toBe(LEGAL_TRAVEL);
   });
 
   it('drops leftover steel on arrival after a refused stamp', () => {

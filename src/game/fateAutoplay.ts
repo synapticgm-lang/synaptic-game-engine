@@ -99,10 +99,6 @@ import { seedStoryPlaces } from './storyDataBoundary';
 import {
   seedOutdoorHubPlaces,
   hubsForBible,
-  parseTravelDestination,
-  applyNamedHubTravel,
-  isLeaveSceneAction,
-  resolveLeaveSceneDestination,
   matchHub,
   hubsForBibleId,
   hubLinkedQuestCount,
@@ -211,7 +207,8 @@ import {
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
-import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
+import { scrubOneCameraFight } from './oneCameraFight';
+import { commitTravel, pinClockTimeOfDay } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
 import { compactTrafficGist } from './openingPointerCard';
 import {
@@ -1110,7 +1107,10 @@ export async function headlessFateTurn(
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const hereBeforeMove = arcState.currentLocation ?? '';
-  arcState = applyNamedHubTravel(applyGraphExitTravel(arcState, playerInput), playerInput);
+  const graphMoved = applyGraphExitTravel(arcState, playerInput);
+  const travelCommit = graphMoved === arcState ? commitTravel(arcState, playerInput) : null;
+  arcState = travelCommit?.state ?? graphMoved;
+  if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt];
   arcState = syncSheetToMovedHere(arcState, state.currentLocation);
   // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
   arcState = maybeEnterInteriorDungeon(arcState, playerInput);
@@ -1128,8 +1128,13 @@ export async function headlessFateTurn(
     arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
   }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-  const engineFact = [...(arcResult?.systemReceipts ?? []), ...dungeonTurn.receipts, ...nudge.receipts]
-    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge)\b/.test(r))
+  const engineFact = [
+    ...(arcResult?.systemReceipts ?? []),
+    ...dungeonTurn.receipts,
+    ...nudge.receipts,
+    ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
+  ]
+    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
     .join(' ');
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
   arcState = preparedEvent.state;
@@ -1558,28 +1563,23 @@ Do NOT print dice notation or CODE ENFORCED.
     };
   }
 
-  // Hard gate: Travel toward/to / Leave the scene must mutate HERE (08d spatial pointer).
+  // 29u — travel committed HERE before the writer (ground between, or the arrival); prose never moves it.
   const fromLoc = state.currentLocation;
-  const travelHub = parseTravelDestination(playerInput, meta.bibleId);
-  const leaveDestName =
-    !travelHub && isLeaveSceneAction(playerInput)
-      ? resolveLeaveSceneDestination({
-          ...working,
-          campaignBibleId: meta.bibleId,
-          previousLocationSheet: working.previousLocationSheet ?? state.previousLocationSheet,
-        })
-      : null;
-  const travelDestName = travelHub?.name ?? leaveDestName;
-  if (travelDestName) {
+  if (travelCommit?.handled && travelCommit.state.currentLocation) {
+    const here = travelCommit.state.currentLocation;
     const hereBefore = working.currentLocation ?? fromLoc ?? '';
     working = {
       ...working,
-      currentLocation: travelDestName,
-      places: touchPlaceVisit(working.places ?? state.places ?? [], travelDestName, state.turn + 1),
+      currentLocation: here,
+      journey: travelCommit.state.journey ?? null,
+      worldHour: travelCommit.state.worldHour,
+      sceneFacts: pinClockTimeOfDay(working.sceneFacts, travelCommit.state),
+      places: travelCommit.arrived
+        ? touchPlaceVisit(working.places ?? state.places ?? [], here, state.turn + 1)
+        : working.places,
     };
-    working = applyPresentTrimOnTravel(working, hereBefore, travelDestName);
+    if (hereBefore !== here) working = applyPresentTrimOnTravel(working, hereBefore, here);
     working = syncSheetToMovedHere(working, fromLoc);
-    cleanText = stampTravelArrivalIfSafe(cleanText, travelDestName, fromLoc, working);
   }
   working = enforceCameraOnState(working, playerInput);
   cleanText = enforceCameraOnProse(cleanText, working, playerInput, fromLoc);
@@ -1640,9 +1640,7 @@ Do NOT print dice notation or CODE ENFORCED.
 
   // 29e — hub linkedQuestIds reveal on travel / location change (parity with useGame)
   {
-    const traveled =
-      !!parseTravelDestination(playerInput, meta.bibleId)
-      || isLeaveSceneAction(playerInput);
+    const traveled = travelCommit?.arrived === true;
     const justArrived =
       !!working.currentLocation &&
       !!state.currentLocation &&

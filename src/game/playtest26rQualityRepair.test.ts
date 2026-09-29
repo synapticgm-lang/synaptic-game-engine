@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { classifyTurnFailure, shouldAutoRetryTurn } from './errorRepairWarden';
 import { scrubOfficialPlaceholder, scrubInventedProperNouns } from './narrativeScrub';
 import { filterInventedContextChoices } from './choiceWarden';
-import { ensureTravelArrivalProse, parseTravelDestination } from './outdoorHubs';
+import { parseTravelDestination } from './outdoorHubs';
 import { createInitialState } from './defaults';
 import type { GameState } from './types';
 
@@ -89,16 +89,9 @@ describe('26r quality repair', () => {
     expect(kept).toContain('Wait');
   });
 
-  it('Travel toward Lowmarket parses and arrival prose lands', () => {
+  it('Travel toward Lowmarket parses to the hub', () => {
     expect(parseTravelDestination('Travel toward Lowmarket', 'summoned-pact')?.name).toBe(
       'Lowmarket'
     );
-    const prose = ensureTravelArrivalProse(
-      'Acrid smoke still fills the burnt husk. Dust motes hang.',
-      'Lowmarket',
-      'alone in a burnt husk that still has a shape'
-    );
-    expect(prose).toMatch(/Lowmarket/);
-    expect(prose.toLowerCase()).toMatch(/leave|reach/);
   });
 });

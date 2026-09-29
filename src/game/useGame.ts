@@ -157,7 +157,8 @@ import {
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
 import { runWriterTurn, writerTurnIssues } from './writerTurn';
-import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
+import { scrubOneCameraFight } from './oneCameraFight';
+import { commitTravel, pinClockTimeOfDay } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -310,10 +311,6 @@ import { seedStoryPlaces } from './storyDataBoundary';
 import {
   seedOutdoorHubPlaces,
   hubsForBible,
-  parseTravelDestination,
-  applyNamedHubTravel,
-  isLeaveSceneAction,
-  resolveLeaveSceneDestination,
   mergeHubLandmarks,
   visitedHubLandmarkNames,
   matchHub,
@@ -2682,7 +2679,12 @@ export function useGame() {
         }
       }
       const hereBeforeMove = liveCurrent.currentLocation ?? '';
-      liveCurrent = applyNamedHubTravel(applyGraphExitTravel(liveCurrent, sanitizedInput), sanitizedInput);
+      const graphMoved = applyGraphExitTravel(liveCurrent, sanitizedInput);
+      const travelCommit = graphMoved === liveCurrent ? commitTravel(liveCurrent, sanitizedInput) : null;
+      liveCurrent = travelCommit?.state ?? graphMoved;
+      if (travelCommit?.receipt) {
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, travelCommit.receipt];
+      }
       liveCurrent = syncSheetToMovedHere(liveCurrent, hereAtTurnStart);
       if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {
         liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
@@ -2698,8 +2700,13 @@ export function useGame() {
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...nudge.receipts];
       stateRef.current = liveCurrent;
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-      const engineFact = [...(systemsArc?.systemReceipts ?? []), ...dungeonTurn.receipts, ...nudge.receipts]
-        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge)\b/.test(r))
+      const engineFact = [
+        ...(systemsArc?.systemReceipts ?? []),
+        ...dungeonTurn.receipts,
+        ...nudge.receipts,
+        ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
+      ]
+        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
         .join(' ');
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,
@@ -3925,26 +3932,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
           sanitizedInput
         ) ?? resolvedLocation;
-      // Act-4 / 08d: Travel toward/to / Leave the scene must mutate HERE.
-      {
-        const bibleId = workingState.campaignBibleId ?? liveCurrent.campaignBibleId;
-        const travelHub = parseTravelDestination(sanitizedInput, bibleId);
-        const leaveDest =
-          !travelHub && isLeaveSceneAction(sanitizedInput)
-            ? resolveLeaveSceneDestination({
-                ...workingState,
-                currentLocation: liveCurrent.currentLocation,
-                previousLocationSheet:
-                  workingState.previousLocationSheet ?? liveCurrent.previousLocationSheet,
-                campaignBibleId: bibleId,
-              })
-            : null;
-        const destName = travelHub?.name ?? leaveDest;
-        if (destName) {
-          const fromLoc = liveCurrent.currentLocation;
-          finalLocationName = destName;
-          cleanText = stampTravelArrivalIfSafe(cleanText, destName, fromLoc, workingState);
-        }
+      // 29u — travel committed HERE before the writer (ground between, or the arrival); prose never moves it.
+      if (travelCommit?.handled && travelCommit.state.currentLocation) {
+        finalLocationName = travelCommit.state.currentLocation;
       }
       const landmarks = isInteriorPlace(mapName || finalLocationName)
         && cameraAllowsInteriorMap(workingState, sanitizedInput)
@@ -4186,12 +4176,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         // Act-4: hub arrival beat — only on travel / location change
         {
-          const traveled =
-            !!parseTravelDestination(
-              sanitizedInput,
-              workingState.campaignBibleId ?? liveCurrent.campaignBibleId
-            )
-            || isLeaveSceneAction(sanitizedInput);
+          const traveled = travelCommit?.arrived === true;
           const justArrived =
             !!finalLocationName
             && !!liveCurrent.currentLocation
@@ -4403,7 +4388,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const committedFacts = applyNpcExitToPresent({
         ...workingState,
         npcMemories: npcMemoriesSocial,
-        sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
+        sceneFacts: travelCommit?.handled
+          ? pinClockTimeOfDay(applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput), liveCurrent)
+          : applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
       }).sceneFacts;
       const gmLogEntry = withLitrpgSystemWindow(
         withOfferedChoices(gmLogEntryBase, {
@@ -4431,6 +4418,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
+        journey: liveCurrent.journey ?? null,
+        worldHour: liveCurrent.worldHour,
         character: baseChar,
         playPhase: phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase,
         quests: enrichQuests(preserveArcQuestProgress(liveCurrent.quests, updatedQuests)),

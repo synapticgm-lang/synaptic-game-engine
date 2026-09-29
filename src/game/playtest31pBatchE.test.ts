@@ -25,7 +25,6 @@ import {
   scrubRoleAdjectivePersonSlot,
   applyProseWarden,
 } from './proseWarden';
-import { ensureTravelArrivalProse } from './outdoorHubs';
 import {
   countLoiterFamilyStreak,
   normalizePlayerIntentKey,
@@ -123,7 +122,6 @@ describe('playtest31pBatchE', () => {
       expect(
         scrubFalseArrivalWhenHere('You reach the cathedral infirmary. Dust hangs.', here)
       ).not.toMatch(/you reach/i);
-      expect(ensureTravelArrivalProse('Dust hangs.', here, here)).toBe('Dust hangs.');
       expect(
         applyProseWarden('You reach the cathedral infirmary. The cots wait.', {
           currentLocation: here,

@@ -71,6 +71,7 @@ import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
 import { rankChoices } from './choiceRanking';
+import { isJourneyUnderway, withJourneyPads } from './travelJourney';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -666,6 +667,9 @@ export function compileChoices(
   playerInput?: string
 ): CompileChoicesResult {
   const notes: string[] = [];
+  if (isJourneyUnderway(state) && !state.activeEncounter && !state.sceneFacts?.pendingEncounter) {
+    return { choices: withJourneyPads(state, choices), notes: ['Journey pads: ground between places'] };
+  }
   const turn = state.turn;
   const intentText = (playerInput ?? lastPlayerLine(state)).trim();
   const intent = classifyPlayerIntent(intentText);

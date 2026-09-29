@@ -19,7 +19,6 @@ import {
 import { hasNumberedChoiceLeak, stripChoiceList } from './parser';
 import { compileChoices } from './choiceCompiler';
 import { enforceCameraOnProse } from './travelAuthority';
-import { ensureTravelArrivalProse } from './outdoorHubs';
 import { readabilityGatePass, scanReadabilityViolations } from './readabilityGate';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
@@ -115,13 +114,7 @@ describe('playtest31uBatchU', () => {
       const prose = 'Dust hangs over the ramparts.';
       const out = enforceCameraOnProse(prose, state, 'Travel toward West Wall');
       expect(out).not.toMatch(/Sevenfold Circle/i);
-      expect(out).toMatch(/leave Lowmarket|reach West Wall/i);
-    });
-
-    it('ensureTravelArrivalProse skips Sevenfold when traveling between hubs', () => {
-      expect(
-        ensureTravelArrivalProse('Rain falls.', 'The Sevenfold Circle under bombardment', 'Lowmarket')
-      ).toBe('Rain falls.');
+      expect(out).toBe(prose);
     });
   });
 

@@ -2,12 +2,11 @@
  * Site-wide camera / travel authority.
  * Location string + map + dungeon cannot snap outdoor → indoor (or room → room)
  * without a player travel/enter commit. Writer room-jumps snap back; real travel
- * prepends leave/reach (26r). All modes — not Summoned Pact only.
+ * is narrated by the writer from the committed HERE (29u). All modes.
  */
 
 import type { GameState, SceneFacts } from './types.ts';
 import { isExplorableDungeon, isInteriorMap } from './placeAuthority.ts';
-import { stampTravelArrivalIfSafe } from './oneCameraFight.ts';
 
 export type CameraScale = 'outdoor' | 'indoor';
 
@@ -152,27 +151,21 @@ export function enforceCameraOnState(state: GameState, playerInput?: string): Ga
 
 /**
  * Writer jumped rooms without a travel commit → snap invented indoor room nouns
- * back to the locked label. Real travel prepends leave/reach when prose stays put.
+ * back to the locked label.
  */
 export function enforceCameraOnProse(
   prose: string,
   state: GameState,
   playerInput?: string,
-  hereAtTurnStart?: string | null
+  _hereAtTurnStart?: string | null
 ): string {
   let next = prose ?? '';
   const lock = resolveCameraLock(state);
   const traveled = playerCommittedTravel(playerInput);
   const dest = (state.currentLocation ?? '').trim();
-  const start = (hereAtTurnStart ?? '').trim();
-  const from = start || (state.previousLocationSheet?.name ?? '').trim();
 
-  // Batch U — arrival prepend ONLY on real location change; use travel snap, not stale camera lock.
-  // Batch 02g — Leave / Walk away / Exit must not invent "You reach <current dest>".
-  if (traveled && dest && playerCommittedArrivalTravel(playerInput)) {
-    if (from && from.toLowerCase() === dest.toLowerCase()) return next;
-    return stampTravelArrivalIfSafe(next, dest, from || null, state);
-  }
+  // 29u — a travel turn is narrated by the writer from the committed HERE; code adds no arrival line.
+  if (traveled && dest && playerCommittedArrivalTravel(playerInput)) return next;
 
   const here = (lock?.label || dest || '').trim();
   if (!lock || lock.scale !== 'outdoor' || !here) return next;

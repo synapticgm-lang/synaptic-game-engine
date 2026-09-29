@@ -549,6 +549,10 @@ export interface GameState {
    * null = closed story (typical PYOA) — no continent atlas.
    */
   worldAtlas?: WorldAtlasState | null;
+  /** 29u — crossing a mapped gap: HERE is the ground between two places until the last leg. */
+  journey?: TravelJourney | null;
+  /** 29u — hour of day (0–24) moved by travel time; sceneFacts.timeOfDay follows it. */
+  worldHour?: number;
   /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
   memorableMoments?: MemorableMomentState;
   /**
@@ -651,6 +655,22 @@ export interface WorldAtlasRegionState {
   connections: string[];
   tags?: string[];
   revealed: boolean;
+}
+
+export type JourneyTerrain = 'forest' | 'marsh' | 'mountain' | 'coast' | 'streets' | 'road';
+
+/** 29u — a trip across the map that takes more than one step. */
+export interface TravelJourney {
+  from: string;
+  to: string;
+  /** Map label for the ground walked on (HERE while underway). */
+  ground: string;
+  terrain: JourneyTerrain;
+  /** Moves from `from` to `to`; the last one arrives. */
+  legsTotal: number;
+  legsDone: number;
+  hoursPerLeg: number;
+  startedTurn: number;
 }
 
 /** Premade settlement on the world map (29e). */
@@ -1122,6 +1142,28 @@ export interface PlaceRecord {
   cardBuiltTurn?: number;
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
+  /** 29q — settlement quest cards (two seeded once at creation, plus talk-opened). */
+  questCards?: SettlementQuestCard[];
+  /** 29q — set once the two seed cards were stamped; never stamp again. */
+  questCardsSeeded?: boolean;
+}
+
+export interface SettlementQuestParams {
+  who?: string;
+  what?: string;
+  where?: string;
+}
+
+export interface SettlementQuestCard {
+  id: string;
+  templateId: string;
+  label: string;
+  params: SettlementQuestParams;
+  source: 'seed' | 'talk';
+  status: 'open' | 'done';
+  offeredTurn: number;
+  /** 29s — turn the player picked this card's chip; the card stays open until its stake resolves. */
+  takenTurn?: number;
 }
 
 export interface TutorialProgress {

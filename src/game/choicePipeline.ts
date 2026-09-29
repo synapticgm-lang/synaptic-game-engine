@@ -378,6 +378,7 @@ export function isLegalEnginePad(choice: string): boolean {
   if (/^travel (?:to|toward|towards)\s+\S/i.test(t)) return true;
   if (/^talk to\s+\S/i.test(t)) return true;
   if (/^walk away from\s+\S/i.test(t)) return true;
+  if (/^(?:walk on|turn back toward\s+\S)/i.test(t)) return true;
   if (/^offer a kindness(?:\s+to\s+.+)?$/i.test(t)) return true;
   if (/^press\s+.+\s+on the dispute$/i.test(t)) return true;
   return false;

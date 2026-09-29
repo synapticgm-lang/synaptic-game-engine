@@ -10,7 +10,6 @@ import { seedOpeningSceneFacts } from './sceneFacts';
 import { kitRefDisplay } from './inventory';
 import { collapseEchoedLabel } from './tokenProse';
 import { syncSheetToMovedHere } from './locationMemory';
-import { ensureTravelArrivalProse } from './outdoorHubs';
 import { enforceCameraOnProse } from './travelAuthority';
 
 function thornferryState() {
@@ -75,10 +74,7 @@ describe('playtest28sSpineTravelKit', () => {
     expect(syncSheetToMovedHere(s, 'Cathedral Undercroft')).toBe(s);
   });
 
-  it('no second arrival stamp and none on a repeat trip', () => {
-    const once = ensureTravelArrivalProse('Cold stone.', 'Cathedral Undercroft', 'Cathedral Close');
-    expect(once).toBe('You leave Cathedral Close behind and reach Cathedral Undercroft. Cold stone.');
-    expect(ensureTravelArrivalProse(once, 'Cathedral Undercroft', 'Lowmarket')).toBe(once);
+  it('no arrival stamp on a travel turn (29u: the writer narrates it)', () => {
     const s = createInitialState(undefined, 'litrpg');
     s.currentLocation = 'Cathedral Undercroft';
     s.previousLocationSheet = { name: 'Cathedral Close', interactables: [], exits: [], presentNpcIds: [] };
