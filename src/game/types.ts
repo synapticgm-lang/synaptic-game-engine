@@ -1082,6 +1082,8 @@ export interface CirclingMemory {
   /** 28l — last nudge line and the next source to try (sources rotate). */
   lastNudge?: string;
   nudgeCursor?: number;
+  /** 28x - every nudge line already fired this save (never fired again unchanged). */
+  firedNudges?: string[];
   visits?: Record<string, number>;
   /** 28o — place key → exact action label → last turn it was tried there with no progress. */
   tried?: Record<string, Record<string, number>>;

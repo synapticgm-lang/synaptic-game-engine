@@ -143,10 +143,11 @@ describe('28l nudge rotation', () => {
     const lines: string[] = [];
     for (let i = 0; i < 4; i++) {
       const r = nudgeIfStuck(s);
-      expect(r.receipts).toHaveLength(1);
-      lines.push(r.receipts[0]!);
-      s = { ...r.state, turn: (r.state.turn ?? 0) + 3, circling: { ...r.state.circling!, lastProgressTurn: r.state.turn ?? 0 } };
+      expect(r.receipts.length).toBeLessThanOrEqual(1);
+      lines.push(...r.receipts);
+      s = { ...r.state, turn: (s.turn ?? 0) + 3, circling: { ...r.state.circling!, lastProgressTurn: s.turn ?? 0 } };
     }
-    for (let i = 1; i < lines.length; i++) expect(lines[i]).not.toBe(lines[i - 1]);
+    expect(lines.length).toBeGreaterThanOrEqual(3);
+    expect(new Set(lines).size).toBe(lines.length);
   });
 });

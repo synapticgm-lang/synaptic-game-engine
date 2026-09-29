@@ -16,6 +16,7 @@ import {
 import { buildBeatContractFromTemplate, getBeatTemplate } from './beatRegistry';
 import { FAST_XP_AWARDS } from './xpPolicy';
 import { updateChoiceFingerprints } from './choiceCompiler';
+import { isSeekFightChip } from './choiceRanking';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
 import { tickPressureClock, type PressureClockState } from './pressureClock';
 import {
@@ -247,6 +248,7 @@ export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
   if (isEncounterOnCooldown(state, state.sceneFacts?.lastKill?.name ?? '')) return false;
   const lastKillTurn = state.sceneFacts?.lastKill?.turn;
   if (typeof lastKillTurn === 'number' && state.turn - lastKillTurn <= 1) return false;
+  if (isSeekFightChip(playerInput)) return true;
   const turnsSinceLast = state.arcDirector?.turnsSinceCombatReceipt ?? state.turn;
   const mode = state.engineMode;
   if (mode === 'rpg') return turnsSinceLast >= (state.turn < 25 ? 15 : 20);

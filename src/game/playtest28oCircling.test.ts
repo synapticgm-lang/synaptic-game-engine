@@ -52,14 +52,16 @@ describe('28o circling', () => {
     expect(r.choices.some((c) => /^Travel toward /.test(c))).toBe(false);
   });
 
-  it('recent places rank below fresh ones; the previous place is Go back and last', () => {
+  it('a fresh place beats recent ones (28x: revisits drop); with no way on the previous place is Go back and last', () => {
     let s = recordCirclingTurn(base({ currentLocation: 'Greyhollow Inn' }), 'Look around', []);
     s = recordCirclingTurn({ ...s, turn: 5, currentLocation: 'Greyhollow Church' }, 'Travel toward Greyhollow Church', []);
     s = recordCirclingTurn({ ...s, turn: 6, currentLocation: 'Keep Gate' }, 'Travel toward Keep Gate', []);
     s = { ...s, turn: 7 };
     const r = rankChoices(s, ['Travel toward Greyhollow Church', 'Travel toward Greyhollow Inn', 'Travel toward Blackspine Treeline']);
-    expect(r.choices[0]).toBe('Travel toward Blackspine Treeline');
-    expect(r.choices[r.choices.length - 1]).toBe('Go back to Greyhollow Church');
+    expect(r.choices).toEqual(['Travel toward Blackspine Treeline']);
+    const noWayOn = rankChoices({ ...s, engineMode: 'rpg', campaignBibleId: 'no-hubs' }, ['Travel toward Greyhollow Church', 'Travel toward Greyhollow Inn', 'Offer help, honestly']);
+    expect(noWayOn.choices[0]).toBe('Offer help, honestly');
+    expect(noWayOn.choices[noWayOn.choices.length - 1]).toBe('Go back to Greyhollow Church');
   });
 
   it('weighted picker prefers the progress chip', () => {

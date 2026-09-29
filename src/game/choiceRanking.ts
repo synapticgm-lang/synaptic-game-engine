@@ -10,10 +10,15 @@
  * - travel back to any of the last few places ranks below fresh places, not only the previous one;
  * - stuck in place (2+ turns, no move) with no way on offered → one exit chip to the best hub;
  * - chipProgressWeights feeds the autoplay picker so ranking changes what gets picked.
+ * 28x — opening places used up:
+ * - travel to a place already visited this save is dropped when an unvisited exit, a fight or the quest step is offered;
+ * - when none is offered, one is added: an unvisited hub, else a fight chip in modes that allow combat;
+ * - a nudge line already fired this save never fires again unchanged.
  */
 import type { CirclingMemory, GameState } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
+import { engineAllowsCombat } from './beatContract';
 
 export type { CirclingMemory } from './types';
 
@@ -113,6 +118,7 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
   if (turnsWithoutProgress(state) < STUCK_TURNS) return { state, receipts: [], notes: [] };
   if (mem.nudgedTurn != null && turn - mem.nudgedTurn < STUCK_TURNS) return { state, receipts: [], notes: [] };
   const notes: string[] = [];
+  const fired = new Set([...(mem.firedNudges ?? []), ...(mem.lastNudge ? [mem.lastNudge] : [])]);
   // 28l — sources rotate (room → person → quest → hub → generic) from where the last nudge left off,
   // and the same line never repeats twice in a row.
   const sources: Array<() => string> = [
@@ -138,11 +144,10 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
       const here = matchHub(hubs, state.currentLocation);
       const visited = new Set((state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase()));
       const fresh = hubs.filter((h) => h.id !== here?.id && !visited.has(h.name.toLowerCase()));
-      const pick = fresh.find((h) => !(mem.lastNudge ?? '').includes(h.name)) ?? fresh[0];
+      const pick = fresh.find((h) => ![...fired].some((f) => f.includes(h.name))) ?? fresh[0];
       return pick ? `Nudge: someone nearby mentions ${pick.name}: ${pick.blurb.replace(/[.!?]+$/, '')}.` : '';
     },
-    () =>
-      GENERIC_NUDGES.find((g) => g !== mem.lastNudge) ?? GENERIC_NUDGES[0]!,
+    () => GENERIC_NUDGES.find((g) => !fired.has(g)) ?? '',
   ];
   const start = (mem.nudgeCursor ?? 0) % sources.length;
   let line = '';
@@ -150,20 +155,28 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
   for (let i = 0; i < sources.length && !line; i++) {
     const idx = (start + i) % sources.length;
     const candidate = sources[idx]!();
-    if (candidate && candidate !== mem.lastNudge) {
+    if (candidate && !fired.has(candidate)) {
       line = candidate;
       used = idx;
     }
   }
   if (!line) {
-    line = GENERIC_NUDGES.find((g) => g !== mem.lastNudge) ?? GENERIC_NUDGES[0]!;
+    line = GENERIC_NUDGES.find((g) => !fired.has(g)) ?? '';
     used = sources.length - 1;
   }
+  if (!line) return { state, receipts: [], notes: ['Nudge skipped: every nudge line already fired this save'] };
   if (used === sources.length - 1) notes.push('Generic engine nudge (no bible fact to draw on)');
   return {
     state: {
       ...state,
-      circling: { ...mem, nudgedTurn: turn, lastProgressTurn: turn, lastNudge: line, nudgeCursor: (used + 1) % sources.length },
+      circling: {
+        ...mem,
+        nudgedTurn: turn,
+        lastProgressTurn: turn,
+        lastNudge: line,
+        nudgeCursor: (used + 1) % sources.length,
+        firedNudges: [...fired, line].slice(-64),
+      },
     },
     receipts: [line],
     notes,
@@ -247,31 +260,71 @@ export function chipProgressWeights(state: GameState, choices: string[]): number
   });
 }
 
-/** Stuck in place with no way on: one travel chip to the best hub (quest-linked, then fresh, then least recent). */
-function stuckExitChip(state: GameState, list: string[]): string | null {
+export const SEEK_FIGHT_CHIP = 'Look for a fight';
+
+export function isSeekFightChip(input: string): boolean {
+  return actionKey(input) === actionKey(SEEK_FIGHT_CHIP);
+}
+
+/** Visited this save: a place record with a visit turn, or a place the circling memory arrived at. */
+function placeVisited(state: GameState, name: string): boolean {
+  const n = name.toLowerCase();
+  if ((state.places ?? []).some((p) => p.lastVisitedTurn != null && samePlace(p.name.toLowerCase(), n))) return true;
+  return Object.keys(state.circling?.visits ?? {}).some((k) => samePlace(k, n));
+}
+
+function isRevisitChip(state: GameState, chip: string): boolean {
+  const dest = travelDest(chip);
+  return !!dest && placeVisited(state, dest);
+}
+
+/** An unvisited exit, a fight or the quest step, not already tried here with no progress. */
+function movesOn(state: GameState, chip: string, story: string | null): boolean {
+  if (triedAgo(state, chip) != null) return false;
+  if (story && chip.toLowerCase() === story.toLowerCase()) return true;
+  if (travelDest(chip)) return !isRevisitChip(state, chip);
+  if (/^(?:enter|next unexplored room|fight the)\b/i.test(chip)) return true;
+  return actionFamily(chip) === 'fight';
+}
+
+function canSeekFight(state: GameState): boolean {
+  if (!engineAllowsCombat(state) || state.sceneFacts?.pendingEncounter) return false;
+  if (state.arcDirector?.lastEncounterClearedTurn === state.turn) return false;
+  const lastKillTurn = state.sceneFacts?.lastKill?.turn;
+  return !(typeof lastKillTurn === 'number' && (state.turn ?? 0) - lastKillTurn <= 1);
+}
+
+/**
+ * No way on offered (revisits only, or stuck in place): one chip that moves the game on —
+ * the best unvisited hub (quest-linked first), else a fight where the mode allows combat,
+ * else (stuck with no travel at all) the least recent hub.
+ */
+function wayOnChip(state: GameState, list: string[], story: string | null): string | null {
   const mem = state.circling;
   if (!mem || state.activeDungeon || state.openingEstablishment?.complete === false) return null;
-  if (turnsWithoutProgress(state) < 2) return null;
-  if ((mem.recentFamilies ?? []).slice(-2).includes('move')) return null;
-  if (list.some((c) => travelDest(c) || /^(?:enter|next unexplored room)\b/i.test(c))) return null;
+  if (list.some((c) => movesOn(state, c, story))) return null;
+  const revisitsOnly = list.some((c) => isRevisitChip(state, c));
+  const stuck = turnsWithoutProgress(state) >= 2 && !(mem.recentFamilies ?? []).slice(-2).includes('move');
+  if (!revisitsOnly && !stuck) return null;
   const hubs = hubsForBibleId(state.campaignBibleId);
-  if (!hubs.length) return null;
   const here = placeKey(state);
   const hereHub = matchHub(hubs, state.currentLocation);
   const active = new Set((state.quests ?? []).filter((q) => q.status === 'active' && q.revealed).map((q) => q.id));
   const recent = mem.recentPlaces ?? [];
-  const rank = (h: (typeof hubs)[number]) => {
-    const name = h.name.toLowerCase();
-    const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && p.name.toLowerCase() === name);
-    return (h.linkedQuestIds?.some((id) => active.has(id)) ? 0 : 4)
-      + (visited ? 2 : 0)
-      + (recent.some((p) => samePlace(name, p)) ? 1 : 0);
-  };
-  const pick = hubs
+  const others = hubs
     .filter((h) => h.id !== hereHub?.id && !here.includes(h.name.toLowerCase()))
-    .map((h, i) => ({ h, i, r: rank(h) }))
-    .sort((a, b) => a.r - b.r || a.i - b.i)[0]?.h;
-  return pick ? `Travel toward ${pick.name}` : null;
+    .map((h, i) => ({
+      h,
+      i,
+      visited: placeVisited(state, h.name),
+      r: (h.linkedQuestIds?.some((id) => active.has(id)) ? 0 : 4) + (recent.some((p) => samePlace(h.name.toLowerCase(), p)) ? 1 : 0),
+    }));
+  const fresh = others.filter((o) => !o.visited).sort((a, b) => a.r - b.r || a.i - b.i)[0]?.h;
+  if (fresh) return `Travel toward ${fresh.name}`;
+  if (canSeekFight(state)) return SEEK_FIGHT_CHIP;
+  if (list.some((c) => travelDest(c) || /^(?:enter|next unexplored room)\b/i.test(c))) return null;
+  const old = others.sort((a, b) => a.r - b.r || a.i - b.i)[0]?.h;
+  return old ? `Travel toward ${old.name}` : null;
 }
 
 /** Final chip order: move-the-story-on and new things first, stale loiter and tried repeats rested, "Go back" last. */
@@ -288,10 +341,17 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     list = [story, ...list];
     notes.push(`Story chip: ${story.slice(0, 40)}`);
   }
-  const exit = stuckExitChip(state, list);
+  const exit = wayOnChip(state, list, story);
   if (exit && !list.some((c) => c.toLowerCase() === exit.toLowerCase())) {
     list = [exit, ...list];
     notes.push(`Stuck exit chip: ${exit.slice(0, 40)}`);
+  }
+  if (list.some((c) => movesOn(state, c, story))) {
+    const dropped = list.filter((c) => isRevisitChip(state, c) && !(story && c.toLowerCase() === story.toLowerCase()));
+    if (dropped.length) {
+      list = list.filter((c) => !dropped.includes(c));
+      notes.push(`Dropped revisit: ${dropped.map((c) => c.slice(0, 32)).join(' / ')}`);
+    }
   }
 
   const kept: string[] = [];
