@@ -58,7 +58,9 @@ import {
 
 loadProjectEnv();
 
-const FLAGSHIPS = ['summoned-pact', 'cursed-keep', 'salt-road-heist', 'thornferry-road'];
+// PYOA is never tested (books unfinished); Thornferry Road plays as PYOA.
+const FLAGSHIPS = ['summoned-pact', 'cursed-keep', 'salt-road-heist'];
+const PYOA_EXCLUDED = new Set(['thornferry-road']);
 const args = process.argv.slice(2);
 const smoke = args.includes('--smoke');
 const loginCheck = args.includes('--login-check');
@@ -70,6 +72,10 @@ const cdp = process.env.AI_PLAYER_CDP || 'http://127.0.0.1:9222';
 const email = (process.env.AI_PLAYER_EMAIL || '').trim();
 const password = process.env.AI_PLAYER_PASSWORD || '';
 const onlyBible = args.find((a) => a.startsWith('--bible='))?.slice('--bible='.length);
+if (onlyBible && PYOA_EXCLUDED.has(onlyBible)) {
+  console.error(`[ai-player] ${onlyBible} plays as PYOA — PYOA is never tested.`);
+  process.exit(2);
+}
 const bibles = smoke
   ? [onlyBible || 'summoned-pact']
   : onlyBible

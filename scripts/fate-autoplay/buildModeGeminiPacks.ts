@@ -1,6 +1,6 @@
 /**
  * Build per-mode Gemini critic packs from a modes-agents batch.
- * Primary output: 4 mode files (litrpg / dnd / rpg / pyoa) + GEMINI-FEED-INDEX.md.
+ * Primary output: 3 mode files (litrpg / dnd / rpg; PYOA never tested) + GEMINI-FEED-INDEX.md.
  * Combined 12-run file is optional (default off).
  */
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
@@ -13,7 +13,7 @@ import { BUILD_STAMP } from '../../src/game/runManifest';
 /** HUD / quality-governance stamp at batch export time. */
 export const MODES_AGENTS_BUILD_STAMP = BUILD_STAMP;
 
-export const MODE_ORDER: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
+export const MODE_ORDER: EngineMode[] = ['litrpg', 'dnd', 'rpg'];
 
 export const MODE_LABEL: Record<EngineMode, string> = {
   litrpg: 'LitRPG',

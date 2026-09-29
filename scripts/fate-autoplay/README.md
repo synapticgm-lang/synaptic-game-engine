@@ -34,7 +34,7 @@ Outputs: `scripts/fate-autoplay/runs/<timestamp>_<bible>_<personality>_s<seed>/`
 # Single Summoned Pact / Cold Registrar, 20 turns
 npm run fate-autoplay -- --turns 20 --seed 1 --bible summoned-pact --personality cold-system
 
-# John's 40 plan (10 LitRPG + 10 tabletop + 10 RPG + 10 PYOA)
+# Balanced matrix (10 LitRPG + 10 tabletop + 10 RPG; PYOA is never tested)
 npm run fate-autoplay -- --matrix-40 --turns 20 --seed 1
 
 # Dry-run smoke (no GM / no secrets)
@@ -69,7 +69,7 @@ npm run fate-curriculum -- --ladder 50 --max-iters 3
 npm run fate-curriculum:detach -- --ladder 50 --max-iters 3
 
 # Optional breadth (≤6): add LitRPG mid-flight bibles
-npm run fate-curriculum:detach -- --ladder 50 --premades summoned-pact,hero-awakening,system-integration,cursed-keep,salt-road-heist,thornferry-road
+npm run fate-curriculum:detach -- --ladder 50 --premades summoned-pact,hero-awakening,system-integration,cursed-keep,salt-road-heist
 ```
 
 Curriculum stop rule: if any premade still has P0 tickets after `--max-iters` at tier N, **do not** raise turns — fix/allowlist that cell first.
@@ -141,9 +141,10 @@ Matrix = **game mode × premade × narrator**, each run distinct Fate playthroug
 | litrpg | 10 ready | 5 System (Simple 4 + Cozy Brutal) |
 | dnd | 6 ready | 4 GM (Simple) |
 | rpg | 12 ready | 4 GM |
-| pyoa | 10 ready | 4 GM |
 
-**`--matrix-40`:** 10 runs per mode (40 total). Every premade once when ≤10; DND extras cycle narrator/seed; RPG has 12 → first 10 included, 2 deferred (listed in plan JSON).
+PYOA books are unfinished and never tested (Thornferry Road plays as PYOA and is excluded too). Force a mode with `--game-mode litrpg|tabletop|rpg`; the CLI refuses PYOA bibles.
+
+**`--matrix-40`:** 10 runs per test mode (30 total). Every premade once when ≤10; DND extras cycle narrator/seed; RPG has 12 → first 10 included, 2 deferred (listed in plan JSON).
 
 **ETA matrix-40 @ N=20:** ~**6–10 hours** sequential (45–75s/turn). If overnight is tight, use `--turns 15` (~4.5–7.5 h).
 

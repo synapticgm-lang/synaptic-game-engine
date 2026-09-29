@@ -37,7 +37,6 @@ const CELLS: Cell[] = [
   { mode: 'litrpg', bibleId: 'summoned-pact', label: 'LitRPG — The Summoned Pact', fileSlug: '01-LITRPG-summoned-pact' },
   { mode: 'dnd', bibleId: 'cursed-keep', label: 'Tabletop — Cursed Keep', fileSlug: '02-DND-cursed-keep' },
   { mode: 'rpg', bibleId: 'salt-road-heist', label: 'Story RPG — Salt Road Heist', fileSlug: '03-RPG-salt-road' },
-  { mode: 'pyoa', bibleId: 'thornferry-road', label: 'PYOA — Thornferry Road', fileSlug: '04-PYOA-thornferry' },
 ];
 
 const OUT_DIR = join(

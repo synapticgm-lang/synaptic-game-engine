@@ -1,6 +1,6 @@
 /**
- * 4 engine modes × 3 AI agent modes × N turns.
- * Writes progress log + **4 mode-specific Gemini packs** (primary) + improvement telemetry.
+ * 3 test engine modes (litrpg / tabletop / rpg; PYOA never tested) × 3 AI agent modes × N turns.
+ * Writes progress log + mode-specific Gemini packs (primary) + improvement telemetry.
  * Combined 12-run file is optional (--combined-gemini, default off).
  *
  *   npm run fate-autoplay -- --modes-agents-300
@@ -28,7 +28,6 @@ const FLAGSHIPS: Array<{ engineMode: EngineMode; bibleId: string; personality: s
   { engineMode: 'litrpg', bibleId: 'summoned-pact', personality: 'cold-system' },
   { engineMode: 'dnd', bibleId: 'cursed-keep', personality: 'dry-wit' },
   { engineMode: 'rpg', bibleId: 'cape-district-vigil', personality: 'chilled-gm' },
-  { engineMode: 'pyoa', bibleId: 'thornferry-road', personality: 'army-brief' },
 ];
 
 const AGENTS: AiAgentMode[] = ['maxlevel', 'storyfollower', 'completionist'];
@@ -55,13 +54,6 @@ export const WORST_CELLS_27W: Cell[] = [
     personality: 'chilled-gm',
     agent: 'completionist',
     seed: 137,
-  },
-  {
-    engineMode: 'pyoa',
-    bibleId: 'thornferry-road',
-    personality: 'army-brief',
-    agent: 'completionist',
-    seed: 188,
   },
 ];
 
@@ -90,13 +82,6 @@ export const ALT_CELLS_29B: Cell[] = [
     personality: 'chilled-gm',
     agent: 'storyfollower',
     seed: 435,
-  },
-  {
-    engineMode: 'pyoa',
-    bibleId: 'vesper-glass-cipher',
-    personality: 'army-brief',
-    agent: 'storyfollower',
-    seed: 452,
   },
 ];
 

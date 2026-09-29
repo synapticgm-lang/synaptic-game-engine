@@ -65,14 +65,6 @@ const CELLS: Cell[] = [
     persona: 'storyfollower',
     personality: 'fireside',
   },
-  {
-    mode: 'pyoa',
-    bibleId: 'thornferry-road',
-    label: 'PYOA — Thornferry Road',
-    fileSlug: '04-PYOA-thornferry',
-    persona: 'storyfollower',
-    personality: 'mission-lead',
-  },
 ];
 
 const TURNS = 10;

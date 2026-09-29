@@ -15,6 +15,7 @@ import {
   buildBalancedMatrix40,
   disableAutoplayTestLab,
   enumerateLaunchMatrix,
+  isTestExcludedBible,
   matrixBudgetLines,
   parseFateArgs,
   runFateAutoplay,
@@ -59,9 +60,11 @@ Fate autoplay (headless)
 Options:
   --turns N            Turns per run (default 20)
   --seed N             RNG seed (default 1)
-  --bible ID           Premade id (default summoned-pact)
+  --bible ID           Premade id (default summoned-pact; PYOA bibles are refused)
   --personality ID     LitRPG systemPersonality or gmPersonality
-  --engine MODE        litrpg | dnd | rpg | pyoa
+  --game-mode MODE     litrpg | tabletop | rpg (alias --engine). Forces the engine mode;
+                       without --bible picks summoned-pact / cursed-keep / salt-road-heist.
+                       PYOA is never tested.
   --ai-tier free|mid|high
   --writer default|flash-lite|openrouter
                        flash-lite/openrouter = OpenRouter google/gemini-2.5-flash-lite (needs OPENROUTER_API_KEY)
@@ -77,7 +80,7 @@ Options:
   --resume-dir PATH    Resume modes-agents batch (skip completed cells)
   --resume-from DIR    Continue a run from DIR/snapshot.json (saved every 10 turns and at stop)
   --night-storyforge   ~7h batch @ observed ~1.6s/turn: 3×500 AI spines + 3× matrix-40×100 (~13.5k turns)
-  --matrix-40          John's 40 plan (10×4 modes; every premade once when ≤10)
+  --matrix-40          Balanced matrix (10 per test mode: litrpg / tabletop / rpg)
   --matrix             Full Launch cartesian (mode × premade × narrator)
   --matrix-limit N     Cap matrix runs
   --dry-run            No GM calls (smoke harness)
@@ -366,8 +369,13 @@ async function main(): Promise<void> {
       );
       log(`Batch complete — ${summaries.length}/${combos.length} runs`);
     } else {
+      if (isTestExcludedBible(opts.bibleId)) {
+        throw new Error(`Bible ${opts.bibleId} is PYOA or unknown — PYOA is never tested (use litrpg | tabletop | rpg).`);
+      }
       log(
-        `Single run bible=${opts.bibleId} personality=${opts.personality} turns=${opts.turns} seed=${opts.seed}` +
+        `Single run bible=${opts.bibleId}` +
+          (opts.engineMode ? ` game-mode=${opts.engineMode}` : '') +
+          ` personality=${opts.personality} turns=${opts.turns} seed=${opts.seed}` +
           (opts.aiAgentMode ? ` ai-agent=${opts.aiAgentMode}` : '') +
           (opts.dryRun ? ' (DRY RUN)' : '')
       );

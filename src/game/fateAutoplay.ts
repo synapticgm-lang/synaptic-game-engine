@@ -254,7 +254,7 @@ export type FateAutoplayCliOpts = {
   aiAgentMode?: AiAgentMode;
   dryRun: boolean;
   matrix: boolean;
-  /** John's 40 plan: 10 LitRPG + 10 tabletop + 10 RPG + 10 PYOA. */
+  /** Balanced matrix: 10 per test mode (LitRPG / tabletop / RPG). */
   matrix40: boolean;
   /** Cap matrix combos (0 = no cap). */
   matrixLimit: number;
@@ -412,13 +412,42 @@ export function isBlankCanvasBible(id: string): boolean {
   return id.startsWith('blank-canvas');
 }
 
+/** PYOA books are unfinished: never tested. Only these modes run in harnesses. */
+export const TEST_ENGINE_MODES: readonly EngineMode[] = ['litrpg', 'dnd', 'rpg'];
+
+export const DEFAULT_TEST_BIBLE_BY_MODE: Readonly<Record<string, string>> = {
+  litrpg: 'summoned-pact',
+  dnd: 'cursed-keep',
+  rpg: 'salt-road-heist',
+};
+
+/** `--game-mode` value → engine mode (tabletop = dnd). Null for PYOA / unknown. */
+export function parseTestGameMode(raw: string): EngineMode | null {
+  const v = raw.trim().toLowerCase();
+  if (v === 'litrpg') return 'litrpg';
+  if (v === 'tabletop' || v === 'dnd') return 'dnd';
+  if (v === 'rpg' || v === 'story-rpg') return 'rpg';
+  return null;
+}
+
+/** True for any bible that plays as PYOA (its engine mode is pyoa, e.g. Thornferry Road). */
+export function isTestExcludedBible(id: string): boolean {
+  const bible = getCampaignBibleById(id);
+  return !bible || bible.engineMode === 'pyoa';
+}
+
+function testableBibles(engineMode: EngineMode): CampaignBible[] {
+  return getCampaignBiblesByEngineMode(engineMode).filter(
+    (b) => !isBlankCanvasBible(b.id) && !isTestExcludedBible(b.id)
+  );
+}
+
 /** Launch matrix: mode × ready premade (skip blank) × Launch narrator (full cartesian). */
 export function enumerateLaunchMatrix(baseSeed = 1): MatrixCombo[] {
   const combos: MatrixCombo[] = [];
-  const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
   let i = 0;
-  for (const engineMode of modes) {
-    const bibles = getCampaignBiblesByEngineMode(engineMode).filter((b) => !isBlankCanvasBible(b.id));
+  for (const engineMode of TEST_ENGINE_MODES) {
+    const bibles = testableBibles(engineMode);
     const personalities =
       engineMode === 'litrpg'
         ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
@@ -445,10 +474,9 @@ export function enumerateLaunchMatrix(baseSeed = 1): MatrixCombo[] {
  */
 export function enumeratePremadesOnce(baseSeed = 1): MatrixCombo[] {
   const combos: MatrixCombo[] = [];
-  const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
   let i = 0;
-  for (const engineMode of modes) {
-    const bibles = getCampaignBiblesByEngineMode(engineMode).filter((b) => !isBlankCanvasBible(b.id));
+  for (const engineMode of TEST_ENGINE_MODES) {
+    const bibles = testableBibles(engineMode);
     const personalities =
       engineMode === 'litrpg'
         ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
@@ -469,24 +497,23 @@ export function enumeratePremadesOnce(baseSeed = 1): MatrixCombo[] {
 }
 
 /**
- * John's 40 plan: 10 LitRPG + 10 tabletop + 10 RPG + 10 PYOA.
+ * Balanced matrix: 10 per test mode (LitRPG / tabletop / RPG); PYOA is never tested.
  * Every premade at least once when count ≤ 10; extras cycle narrator + seed.
- * RPG has 12 ready premades → first 10 included; 2 deferred (listed in notes).
+ * Modes with more than 10 ready premades use the first 10; the rest are deferred (listed in notes).
  */
 export function buildBalancedMatrix40(baseSeed = 1): {
   combos: MatrixCombo[];
   deferred: Array<{ engineMode: EngineMode; bibleId: string; bibleTitle: string }>;
   notes: string[];
 } {
-  const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
   const perMode = 10;
   const combos: MatrixCombo[] = [];
   const deferred: Array<{ engineMode: EngineMode; bibleId: string; bibleTitle: string }> = [];
   const notes: string[] = [];
   let slot = 0;
 
-  for (const engineMode of modes) {
-    const all = getCampaignBiblesByEngineMode(engineMode).filter((b) => !isBlankCanvasBible(b.id));
+  for (const engineMode of TEST_ENGINE_MODES) {
+    const all = testableBibles(engineMode);
     const personalities =
       engineMode === 'litrpg'
         ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
@@ -543,8 +570,8 @@ export function matrixBudgetLines(turnsPerRun: number, comboCount?: number): str
   const runs12hOptimistic = Math.floor((12 * 60) / Math.max(1, (turnsPerRun * 45) / 60));
   const runs12hPessimistic = Math.floor((12 * 60) / Math.max(1, (turnsPerRun * 75) / 60));
   const m40 = buildBalancedMatrix40();
-  const m40Min = Math.round((40 * turnsPerRun * 45) / 60);
-  const m40Max = Math.round((40 * turnsPerRun * 75) / 60);
+  const m40Min = Math.round((m40.combos.length * turnsPerRun * 45) / 60);
+  const m40Max = Math.round((m40.combos.length * turnsPerRun * 75) / 60);
   return [
     `Full Launch cartesian: ${full.length} combos (mode × premade × narrator; blank skipped).`,
     ...[...byMode.entries()].map(([m, c]) => `  - ${m}: ${c}`),
@@ -2320,14 +2347,22 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     writer: 'default',
   };
   const out = { ...defaults };
+  let bibleGiven = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const next = () => argv[++i] ?? '';
     if (a === '--turns') out.turns = Math.max(1, Number(next()) || 20);
     else if (a === '--seed') out.seed = Number(next()) || 1;
-    else if (a === '--bible') out.bibleId = next();
-    else if (a === '--personality') out.personality = next();
-    else if (a === '--engine' || a === '--mode-engine') out.engineMode = next() as EngineMode;
+    else if (a === '--bible') {
+      out.bibleId = next();
+      bibleGiven = true;
+    } else if (a === '--personality') out.personality = next();
+    else if (a === '--engine' || a === '--mode-engine' || a === '--game-mode') {
+      const raw = next();
+      const mode = parseTestGameMode(raw);
+      if (!mode) throw new Error(`Unsupported test game mode "${raw}" (use litrpg | tabletop | rpg; PYOA is never tested).`);
+      out.engineMode = mode;
+    }
     else if (a === '--ai-tier') {
       const t = next();
       out.aiTier = t === 'mid' || t === 'high' ? t : 'free';
@@ -2361,6 +2396,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
       out.turns = -1;
     }
   }
+  if (out.engineMode && !bibleGiven) out.bibleId = DEFAULT_TEST_BIBLE_BY_MODE[out.engineMode] ?? out.bibleId;
   return out;
 }
 

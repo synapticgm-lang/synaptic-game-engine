@@ -1,4 +1,6 @@
-# T10 gate: SP s27, SP s28, CK s27 (pick-mode fate, Free writer via edge gm-turn, loop stop off).
+# T10 gate: one run per test game mode (PYOA is never tested; Thornferry Road plays as PYOA):
+#   litrpg = summoned-pact s27, tabletop = cursed-keep s27, rpg = salt-road-heist s27
+# (pick-mode fate, Free writer via edge gm-turn, loop stop off, --game-mode forces the mode).
 # Prints one line per run: 'P0=<n>' (summary.json readabilityGate.p0Count; a run with no summary counts as P0=1).
 # Set T10_DRY=1 to smoke the plumbing with --dry-run (no writer calls).
 $ErrorActionPreference = 'Continue'
@@ -6,16 +8,16 @@ Set-Location (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent)
 $env:SGM_AUTOPLAY_LOOP_STOP = 'off'
 $dry = if ($env:T10_DRY) { ' --dry-run' } else { '' }
 $runs = @(
-  @{ tag = 'sp-s27'; bible = 'summoned-pact'; seed = 27 },
-  @{ tag = 'sp-s28'; bible = 'summoned-pact'; seed = 28 },
-  @{ tag = 'ck-s27'; bible = 'cursed-keep';   seed = 27 }
+  @{ tag = 'litrpg-sp-s27';   mode = 'litrpg';   bible = 'summoned-pact';   seed = 27 },
+  @{ tag = 'tabletop-ck-s27'; mode = 'tabletop'; bible = 'cursed-keep';     seed = 27 },
+  @{ tag = 'rpg-srh-s27';     mode = 'rpg';      bible = 'salt-road-heist'; seed = 27 }
 )
 $logDir = Join-Path (Get-Location) 'docs\orders\t10-logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $procs = @()
 foreach ($r in $runs) {
   $log = Join-Path $logDir "$($r.tag).log"
-  $cmdLine = "/c npm run fate-autoplay -- --turns 10 --seed $($r.seed) --bible $($r.bible) --writer default --pick-mode fate$dry > `"$log`" 2>&1"
+  $cmdLine = "/c npm run fate-autoplay -- --turns 10 --seed $($r.seed) --game-mode $($r.mode) --bible $($r.bible) --writer default --pick-mode fate$dry > `"$log`" 2>&1"
   $p = Start-Process -FilePath cmd.exe -ArgumentList $cmdLine -PassThru -WindowStyle Hidden
   $procs += @{ run = $r; log = $log; p = $p }
 }
