@@ -10,7 +10,8 @@ import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { isLastGmReprint, isUnaskedCombatClose } from './completedEventPacket';
 import { formatTalkWriterFacing } from './talkEnvelope';
-import { acceptTokenOrLedgerStory, type TokenAcceptPath } from './tokenProse';
+import { acceptTokenOrLedgerStory, refEnumOf, type TokenAcceptPath } from './tokenProse';
+import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit } from './beatCommitGate';
 import { isNearClone, isSameBeat } from './beatFingerprint';
@@ -21,7 +22,9 @@ import {
   playerAsksContinuation,
   playerAsksRepeat,
   recentGmBeatTexts,
+  recycledSentencesIn,
   shouldRetryUnaskedCollage,
+  trimRecycledSentences,
 } from './semanticLoopDetector';
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
@@ -102,7 +105,12 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
     || detectAtmosphereReprint(text, recent)
     || detectSameRoomEssayHard(text, recent, check.playerInput)
   ) {
-    out.push('Repeats an earlier beat: write what is new this turn.');
+    const reused = recycledSentencesIn(text, recent).slice(0, 3);
+    out.push(
+      reused.length
+        ? `Repeats an earlier beat: write what is new this turn. Do not reuse these lines: ${reused.map((s) => `"${s.slice(0, 110)}"`).join(' ')}`
+        : 'Repeats an earlier beat: write what is new this turn.'
+    );
   }
   if (check.previousGm && isLastGmReprint(text, check.previousGm)) out.push('Same text as the last beat: write a new one.');
   if (isUnaskedCombatClose(text, check.playerInput)) out.push('Do not end or restart a fight the engine did not settle this turn.');
@@ -228,5 +236,18 @@ export async function runWriterTurn(opts: {
     }
   }
 
+  if (draft.prose) draft = { ...draft, prose: finishCommittedProse(draft.prose, check, packet) };
   return { ...draft, outcome, problems, remaining, extraCalls, firstDraft };
+}
+
+/**
+ * 28u — last pass on the beat that commits: sentences already told in recent beats drop out
+ * (at least two sentences stay), and full labels are named once per beat.
+ */
+export function finishCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
+  let next = prose;
+  if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
+    next = trimRecycledSentences(next, recentGmBeatTexts(check.state)).text;
+  }
+  return polishMentions(next, refEnumOf(check.state, packet));
 }

@@ -10,6 +10,7 @@ import type { GameEvent } from './parser';
 import type { ActiveEncounter, GameState, NpcMemory, Quest } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
+import { getSpineNode } from './pyoaSpine';
 import { LITRPG_MILESTONE_XP, milestoneXp, type MilestoneKind } from './xpRules';
 
 /** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
@@ -228,6 +229,22 @@ export function applySandboxXpAwards(
     if (after.status === 'completed' && before.status !== 'completed') {
       pay(`quest-complete:${after.id}`, 'questComplete', `quest complete: ${after.name}`);
     }
+  }
+
+  // Main-path spine: the node walk is the main quest even when no journal objective ticks.
+  const spine = state.pyoaSpine;
+  if (spine?.visited?.length) {
+    const walked = spine.visited.slice(1);
+    for (const id of walked) {
+      const place = getSpineNode(id)?.place?.replace(/\s+/g, ' ').trim();
+      if (place) pay(`spine-place:${place.toLowerCase()}`, 'significantPlace', `reached ${place}`);
+    }
+    spine.visited.forEach((id, i) => {
+      if (i < spine.visited.length - 1 && getSpineNode(id)?.majorFork) {
+        pay(`spine-fork:${id}`, 'questStep', 'main path: a road chosen');
+      }
+    });
+    if (spine.endingId) pay(`spine-ending:${spine.endingId}`, 'questComplete', 'main path: an ending reached');
   }
 
   // LitRPG achievement (engine event, no AI): first quest step, or turn 5 reached.
