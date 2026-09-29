@@ -1201,10 +1201,6 @@ export function compileChoices(
       ) {
         filtered.unshift('Accept the ending that follows');
       }
-      if (endingDone) {
-        filtered = filtered.filter((c) => !/\baccept the ending\b/i.test(c));
-        if (!filtered.length) filtered = ['Look around'];
-      }
     }
     filtered = filtered.filter((c) => !isExcludedPadLabel(c, excluded));
   }

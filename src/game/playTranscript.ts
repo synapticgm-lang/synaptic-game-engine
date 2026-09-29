@@ -67,6 +67,7 @@ function lastPlayerActionFromLog(state: GameState): string {
 }
 
 export function resolveOfferedChoices(state: GameState): string[] {
+  if (state.playPhase === 'ended') return [];
   const lastPlayer = lastPlayerActionFromLog(state);
   const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
   const autoNamedOpeningPad =

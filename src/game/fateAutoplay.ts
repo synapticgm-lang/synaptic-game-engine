@@ -2060,6 +2060,11 @@ export async function runFateAutoplay(opts: {
   try {
     for (let i = startIndex; i < opts.turns; i++) {
       const turnNo = i + 1;
+      if (state.playPhase === 'ended') {
+        fatal = `PLAY ENDED: the run is over before turn ${turnNo}`;
+        console.log(`[fate-autoplay] ${fatal}`);
+        break;
+      }
       writerPromptSink.turn = turnNo;
       writeFileSync(
         heartbeatPath,
