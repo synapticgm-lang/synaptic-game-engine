@@ -159,7 +159,7 @@ async function addNotes() {
   const targets = out.filter((o) => o.verdict === 'unclear').slice(0, 15);
   if (!key) return 'skipped (no OPENROUTER_API_KEY found)';
   if (!targets.length) return 'skipped (no unclear turns)';
-  const model = process.env.SGM_THUMBS_MODEL || 'google/gemini-2.5-flash';
+  const model = process.env.SGM_THUMBS_MODEL || 'google/gemini-2.5-pro';
   const prompt =
     'You review turns of a text RPG. For each turn give ONE line: "T<n>: up|down — <short reason>". ' +
     'Down if the prose is vague, contradicts the action, or is filler; up if it is concrete and moves the story.\n\n' +
