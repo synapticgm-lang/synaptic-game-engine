@@ -141,8 +141,8 @@ describe('playtest10f — treaty tent one-line lock', () => {
     const text = stitchOpeningContinue(namedJax(), 'Who are you');
     expect(text).toMatch(/envoys at this table/i);
     expect(text).toMatch(/answer you/i);
-    // 28b — spoken who-line starts with a capital.
-    expect(text).toContain('"The envoys at this table. You asked who. We are the ones who found you here."');
+    // 29z4 — the envoys have no info sheet: no canned "we found you here" answer.
+    expect(text).not.toMatch(/We are the ones who found you here/);
     expect(text).not.toMatch(/is the one asking|are the ones asking/i);
     expect(text).not.toMatch(/people who pulled you is/i);
   });

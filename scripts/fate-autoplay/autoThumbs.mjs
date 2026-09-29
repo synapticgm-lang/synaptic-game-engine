@@ -6,10 +6,11 @@
  * 29z2 — each row's turnCheck (who is here, the chips, the last action) adds P0 fails and thumbs-down.
  * --notes: a judge model reads every turn (batches of 20) for stiff / abstract / broken lines and for
  * prose that ignores the player's action. Stiff lines come back with a plainer rewrite and are
- * written to <runDir>/writer-lessons.jsonl. Skipped when no OPENROUTER_API_KEY is found.
+ * written to <runDir>/writer-lessons.jsonl. Skipped when no OPENROUTER_API_KEY / VITE_OPENROUTER_API_KEY is found.
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { applyVerdicts, notesStatus as judgeStatus, parseJudge, readOpenRouterKey, replyText } from './judgeNotes.mjs';
 
 const args = process.argv.slice(2);
 const runDir = args.find((a) => !a.startsWith('--'));
@@ -178,27 +179,17 @@ const JUDGE_RUBRIC = [
   'verdict=down when followed is false or a stiff line is found; up when the prose is concrete, natural and moves the story.',
 ].join('\n');
 
-function parseJudge(body) {
-  const start = body.indexOf('[');
-  const end = body.lastIndexOf(']');
-  if (start < 0 || end <= start) return [];
-  try {
-    const arr = JSON.parse(body.slice(start, end + 1));
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
-}
-
 async function addNotes() {
-  const key = process.env.OPENROUTER_API_KEY || readKeyFromEnvFiles();
-  if (!key) return 'skipped (no OPENROUTER_API_KEY found)';
+  const key = readOpenRouterKey();
+  if (!key) return 'skipped (no OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY found)';
   const targets = out.filter((o) => o.prose && o.prose.trim().length > 0).slice(0, 300);
   if (!targets.length) return 'skipped (no prose turns)';
   const model = process.env.SGM_THUMBS_MODEL || 'google/gemini-2.5-pro';
   let judged = 0;
   let failed = 0;
+  let batches = 0;
   for (let i = 0; i < targets.length; i += 20) {
+    batches++;
     const batch = targets.slice(i, i + 20);
     const prompt =
       JUDGE_RUBRIC +
@@ -220,47 +211,15 @@ async function addNotes() {
         continue;
       }
       const j = await res.json();
-      for (const v of parseJudge(String(j.choices?.[0]?.message?.content ?? ''))) {
-        const o = batch.find((x) => x.turn === Number(v?.turn));
-        if (!o) continue;
-        judged++;
-        o.note = String(v.why ?? '').trim();
-        if (v.followed === false) {
-          const flag = `P0 ignored-action (judge): ${o.note || 'prose does not do the player action'}`;
-          o.p0 = [...(o.p0 ?? []), flag];
-          o.down.push(flag);
-        }
-        for (const s of Array.isArray(v.stiff) ? v.stiff.slice(0, 3) : []) {
-          const line = String(s?.line ?? '').trim();
-          if (!line || !o.prose.includes(line)) continue;
-          const better = String(s?.better ?? '').trim();
-          // 29z3 — stiff / abstract / broken language fails the turn, not only a thumbs-down.
-          const flag = `P0 stiff-line (judge, ${s?.why || 'stiff'}): "${line.slice(0, 90)}"${better ? ` → "${better.slice(0, 90)}"` : ''}`;
-          o.p0 = [...(o.p0 ?? []), flag];
-          o.down.push(flag);
-          lessons.push({ turn: o.turn, action: o.input, line, better, why: s?.why || 'stiff' });
-        }
-        if (v.verdict === 'up' && !o.down.length) o.up.push(`judge: ${o.note}`);
-        else if (v.verdict === 'down' && o.note && !o.down.some((d) => d.includes(o.note))) o.down.push(`judge: ${o.note}`);
-        o.verdict = o.down.length ? 'down' : o.up.length ? 'up' : o.verdict;
-      }
+      // 29z4 — an empty reply or one with no usable verdict is a failed batch, not "0 judged, ok".
+      const got = applyVerdicts(batch, parseJudge(replyText(j)), lessons);
+      if (!got) failed++;
+      judged += got;
     } catch {
       failed++;
     }
   }
-  return `ok (${model}, ${judged}/${targets.length} turns judged${failed ? `, ${failed} batch(es) failed` : ''})`;
-}
-
-function readKeyFromEnvFiles() {
-  for (const f of ['.env.local', '.env', 'scripts/.env']) {
-    try {
-      const m = fs.readFileSync(f, 'utf8').match(/^\s*OPENROUTER_API_KEY\s*=\s*"?([^"\r\n]+)"?/m);
-      if (m) return m[1].trim();
-    } catch {
-      /* none */
-    }
-  }
-  return '';
+  return judgeStatus(model, judged, targets.length, failed, batches);
 }
 
 const notesStatus = wantNotes ? await addNotes() : 'not requested';

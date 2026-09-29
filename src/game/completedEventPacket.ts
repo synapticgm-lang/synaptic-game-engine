@@ -327,7 +327,8 @@ function pushUnique(list: string[], seen: Set<string>, raw: string | undefined):
   seen.add(key);
   list.push(name);
   const last = name.split(/\s+/).pop() ?? '';
-  if (last.length >= 5 && last.toLowerCase() !== key) {
+  // Only a proper-noun tail is a short name ("Close" for Cathedral Close); "streets" from "Back streets" is not.
+  if (last.length >= 5 && /^[A-Z]/.test(last) && last.toLowerCase() !== key) {
     const lastKey = last.toLowerCase();
     if (!seen.has(lastKey)) {
       seen.add(lastKey);

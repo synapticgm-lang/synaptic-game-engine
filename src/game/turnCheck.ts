@@ -123,15 +123,56 @@ export function restatedShare(prose: string, earlier: string[]): number {
 
 const TRAVEL_ACTION = /^(?:travel(?:\s+(?:toward|to|into))?|head (?:toward|to|for)|go to|return to|walk to)\s+(?:the\s+)?(.+)$/i;
 const STOP =
-  /^(?:with|from|that|this|have|into|your|their|about|would|could|should|then|will|just|them|they|what|when|where|which|there|here|some|more|look|search|inspect|check|examine|study|take|try|find|carefully|around|toward|towards|again|slowly|quietly|closer|nearby|area|room|scene|place|while|still|keep|move|make|give|open|pick|read|touch|down|over|back|away)$/;
+  /^(?:with|from|that|this|have|into|your|their|about|would|could|should|then|will|just|them|they|what|when|where|which|there|here|some|more|look|search|inspect|check|examine|study|take|try|find|carefully|around|toward|towards|again|slowly|quietly|closer|nearby|area|room|scene|place|while|still|move|make|give|open|pick|read|touch|down|over|back|away)$/;
+/** Words before the verb of a typed line ("I", "carefully"): skipped so the verb itself can be dropped. */
+const LEAD = /^(?:i|we|you|then|now|so|carefully|slowly|quietly|quickly|just|try|to|and)$/;
+const MOTION_VERB = /^(?:walk|walks|walking|move|moving|go|going|keep|continue|press|proceed|step|stroll|wander|head|carry)$/;
+/** The prose moves the body: a walk can be told with any travel verb. */
+const MOTION_TOLD =
+  /\b(?:walk|stepp?|cross|pass|strode|stride|went|moved?|moving|continu|head(?:ed|ing)|made (?:their|his|her|your|my) way|kept (?:to|on|going|walking)|carried on|pressed on|wander|stroll|trudg|climb|descend|follow|leav|left|reach|enter|arriv)/i;
 
+/** The words the action acts on: the verb (first word after any lead-in) is the action, not its object. */
 function objectWords(action: string): string[] {
-  return (low(action).match(/[a-z]{4,}/g) ?? []).filter((w) => !STOP.test(w)).slice(0, 4);
+  const words = low(action).match(/[a-z]+/g) ?? [];
+  let i = 0;
+  while (i < words.length && LEAD.test(words[i]!)) i++;
+  const walking = MOTION_VERB.test(words[i] ?? '');
+  return words
+    .slice(i + 1)
+    .filter((w) => w.length >= 4 && !STOP.test(w) && !(walking && MOTION_VERB.test(w)))
+    .slice(0, 4);
+}
+
+function actionVerb(action: string): string {
+  const words = low(action).match(/[a-z]+/g) ?? [];
+  return words.find((w) => !LEAD.test(w)) ?? '';
+}
+
+/** Word stem: a plural or verb ending does not make "exits" miss "exit". */
+function stemOf(word: string): string {
+  const w = word.toLowerCase();
+  const cut = w.replace(/(?:ings?|ed|es|s)$/, '');
+  if (cut.length >= 3) return cut.slice(0, 5);
+  const plural = w.replace(/s$/, '');
+  return (plural.length >= 3 ? plural : w).slice(0, 5);
 }
 
 function stemHit(prose: string, word: string): boolean {
-  const stem = word.slice(0, Math.max(4, Math.min(5, word.length)));
-  return new RegExp(`\\b${stem}`, 'i').test(prose);
+  return new RegExp(`\\b${stemOf(word)}`, 'i').test(prose);
+}
+
+/**
+ * A place is named when its whole name appears, or one of its capitalised words does as a name
+ * ("the Close" for Cathedral Close). A lowercase common word ("road", "close") is not the place.
+ */
+function placeNamed(prose: string, place: string): boolean {
+  const core = norm(place).replace(/^(?:the|a|an)\s+/i, '');
+  if (!core) return false;
+  if (low(prose).includes(core.toLowerCase())) return true;
+  return core
+    .split(/[\s'’-]+/)
+    .filter((w) => /^[A-Z][a-z]{3,}$/.test(w))
+    .some((w) => new RegExp(`\\b${w}\\b`).test(prose));
 }
 
 /**
@@ -184,10 +225,11 @@ export function checkActionFollowed(
     p0.push({ kind: 'ignored-action', detail: `player attacked ${before.activeEncounter.name}; the prose shows no blow` });
   }
   if (travel && moved) {
-    const dest = travel[1]!;
-    const where = [dest, after.currentLocation ?? '', after.journey?.to ?? '', after.journey?.ground ?? ''].filter(Boolean);
-    if (!where.some((w) => mentionsName(text, w))) {
-      p0.push({ kind: 'ignored-action', detail: `player travelled toward ${dest}; the prose never says where they went` });
+    // The destination itself must be named: the ground on the way ("Back streets") is not where they went.
+    const dest = travel[1]!.replace(/\s+[—–-]\s+.*$/, '').trim();
+    const where = [dest, after.journey?.to ?? ''].filter(Boolean);
+    if (!where.some((w) => placeNamed(text, w))) {
+      p0.push({ kind: 'ignored-action', detail: `player travelled toward ${dest}; the prose never names ${dest}` });
     }
   }
 
@@ -206,6 +248,8 @@ export function checkActionFollowed(
     const words = objectWords(act);
     if (words.length && !words.some((w) => stemHit(text, w))) {
       down.push({ kind: 'action-object-missing', detail: `prose never names what the player acted on (${words.join(', ')})` });
+    } else if (!words.length && MOTION_VERB.test(actionVerb(act)) && !MOTION_TOLD.test(text)) {
+      down.push({ kind: 'action-object-missing', detail: `player chose "${act.slice(0, 60)}"; the prose never moves them` });
     }
   }
   return { p0, down };

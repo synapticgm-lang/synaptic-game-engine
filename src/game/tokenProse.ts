@@ -369,12 +369,23 @@ export function bindCheckFails(beat: TokenBeat, enumRefs: LedgerRef[]): string[]
 const DETERMINER_RE =
   /^(?:the|a|an|this|that|these|those|their|his|her|its|your|my|our|one|each|every|some|any|no)$/i;
 
-/** True when one of the two words before `offset` (same clause) already determines the noun. */
+const PREPOSITION_RE =
+  /^(?:in|on|at|of|to|into|onto|from|with|without|by|for|over|under|through|across|past|toward|towards|behind|beside|near|against|around|between|along|inside|outside)$/i;
+
+const isDeterminerWord = (w: string) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w);
+
+/**
+ * True when the noun phrase before `offset` (same clause) has already begun. After a preposition
+ * within three words, any word between it and the noun starts the phrase ("in the same worn @t3",
+ * "in worn @t3"), so a determiner there would land mid-phrase. Otherwise a determiner within three words.
+ */
 function hasDeterminerBefore(text: string, offset: number): boolean {
   const before = text.slice(0, offset);
   const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
-  const words = clause.trim().split(/\s+/).filter(Boolean).slice(-2);
-  return words.some((w) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w));
+  const near = clause.trim().split(/\s+/).filter(Boolean).slice(-3);
+  const cut = near.map((w) => PREPOSITION_RE.test(w)).lastIndexOf(true);
+  if (cut >= 0) return cut < near.length - 1;
+  return near.some(isDeterminerWord);
 }
 
 /**
@@ -554,7 +565,7 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
     const line = tidy(painted);
     if (line) texts.push(/[.!?]["')\]]*$/.test(line) ? line : `${line}.`);
   }
-  return tidy(texts.join(' '));
+  return capitalizeSentenceStarts(tidy(texts.join(' ')));
 }
 
 function storySentences(prose: string): number {

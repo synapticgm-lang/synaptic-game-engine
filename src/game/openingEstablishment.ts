@@ -21,7 +21,7 @@ import {
 import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
 import { sanitizeHookCardForPlay } from './storyDataBoundary';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
-import { openingCastRecords, resolveNpcRecord } from './npcRecords';
+import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -1616,10 +1616,14 @@ export function openingSpokenIdentityQuote(
   if (/\bpanel\b/i.test(who)) return '';
   const record = ctx?.state ? resolveNpcRecord(ctx.state, who) : undefined;
   if (record) return `"${record.npcName}. You asked who."`;
-  const raw = (who || 'They').replace(/\s+/g, ' ').trim();
-  // 28b — a spoken line starts with a capital ("The innkeep. You asked who.").
-  const label = raw.charAt(0).toUpperCase() + raw.slice(1);
-  return `"${label}. You asked who. We are the ones who found you here."`;
+  // 29z4 — a role label with no info sheet has no name to give: no canned answer, the writer answers as them.
+  return '';
+}
+
+/** 29z4 — who answers a who-are-you: the opening cast lead, else a person whose sheet puts them here, else the card role. */
+export function openingWhoSpeaker(state: GameState): string {
+  if (openingCastRecords(state).length) return openingCastLabel(state);
+  return presentNpcRecords(state)[0]?.npcName ?? openingCastLabel(state);
 }
 
 /** Compound / plural CAST never gets singular "answers you". */
@@ -1664,7 +1668,7 @@ export function openingWhoAskLineFromLabel(
 export function openingWhoAskLine(state: GameState): string {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   const nameLocked = !!(name && isLockablePcName(name) && !/unknown survivor/i.test(name));
-  const who = openingCastLabel(state);
+  const who = openingWhoSpeaker(state);
   const stamp = resolveLitRpgFolkStamp(state);
   const quote = openingSpokenIdentityQuote(who, {
     location: state.currentLocation,
@@ -2206,7 +2210,7 @@ export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolea
     return false;
   }
   if (topic === 'who') {
-    const who = openingCastLabel(state);
+    const who = openingWhoSpeaker(state);
     const quote = openingSpokenIdentityQuote(who, {
       location: state.currentLocation,
       engineMode: state.engineMode,

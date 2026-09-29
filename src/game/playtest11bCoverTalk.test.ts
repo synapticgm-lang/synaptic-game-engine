@@ -208,10 +208,11 @@ describe('playtest11b — cover talk spoken + mode lock', () => {
       const lead = openingCastRecords(named)[0];
       if (lead) expect(who, cell.bibleId).toContain(`"${lead.npcName}. You asked who."`);
       else {
-        expect(who, cell.bibleId).toContain(
-          // 28b — spoken who-line starts with a capital.
-          `"${openingCastLabel(named).charAt(0).toUpperCase() + openingCastLabel(named).slice(1)}. You asked who. We are the ones who found you here."`
-        );
+        // 29z4 — a role with no info sheet answers without the canned "we found you here" line.
+        expect(who, cell.bibleId).not.toMatch(/We are the ones who found you here/);
+        if (!/\bpanel\b/i.test(openingCastLabel(named))) {
+          expect(who.toLowerCase(), cell.bibleId).toContain(openingCastLabel(named).toLowerCase());
+        }
       }
       expect(who, cell.bibleId).not.toMatch(/is the one asking/i);
       if (cell.mode === 'dnd') expect(who).not.toMatch(/Pactborn|Calamity Mark/i);
