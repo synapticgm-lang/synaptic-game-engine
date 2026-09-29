@@ -58,6 +58,10 @@ export function resolveDangerTier(state: GameState): MapTier | null {
  * then GameState.threatTier, then dungeon/sheet dangerTier.
  */
 export function resolveThreatTier(state: GameState): number | null {
+  const road = state.journey;
+  if (road && road.legsDone < road.legsTotal && typeof road.areaTier === 'number' && Number.isFinite(road.areaTier)) {
+    return road.areaTier;
+  }
   const sheetTier = state.locationSheet?.threatTier;
   if (typeof sheetTier === 'number' && Number.isFinite(sheetTier)) return sheetTier;
 

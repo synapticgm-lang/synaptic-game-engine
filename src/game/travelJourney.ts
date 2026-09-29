@@ -7,9 +7,13 @@
  * sentences — the writer narrates every leg from the ENGINE RESULT line.
  * 29w — each stretch rolls once for a chance meeting that fits the ground and the
  * area level. The roll picks a kind and level only; the writer names who or what.
+ * 29x — a hostile meeting can be a rare spawn (a little tougher, slightly better loot),
+ * a camp can hold a mini-boss, and facing either opens a live fight on activeEncounter
+ * that the combat engine resolves. Everything stays at the area level.
  */
 
 import type {
+  ActiveEncounter,
   GameState,
   JourneyTerrain,
   RoadEncounter,
@@ -28,6 +32,8 @@ import {
 } from './outdoorHubs';
 import { resolvePlace } from './places';
 import { findSettlement } from './worldMapAuthority';
+import { engineAllowsCombat } from './beatContract';
+import { initEncounterTerminal } from './encounterTerminalFsm';
 
 interface Endpoint {
   name: string;
@@ -283,9 +289,19 @@ const FIXED_ENCOUNTER_PADS: Partial<Record<RoadEncounterKind, string[]>> = {
   villain: ['Face whoever blocks the way', 'Talk to whoever blocks the way'],
 };
 
+const CHAMPION_PAD = "Face the camp's champion";
+
+/** The chip that opens a live fight for this meeting (null = no fight on offer). */
+function fightPad(enc: RoadEncounter): string | null {
+  if (enc.kind === 'camp') return enc.miniBoss ? CHAMPION_PAD : null;
+  return FIGHT_KINDS.has(enc.kind) ? FIXED_ENCOUNTER_PADS[enc.kind]![0]! : null;
+}
+
 function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
+  if (enc.engaged) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
+  if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'];
   return FIXED_ENCOUNTER_PADS[enc.kind] ?? [];
 }
 
@@ -303,6 +319,7 @@ export function isJourneyPad(choice: string): boolean {
     ...Object.values(TALK_PAD),
     ...Object.values(LIVES_PAD),
     ...Object.values(FIXED_ENCOUNTER_PADS).flat(),
+    CHAMPION_PAD,
   ];
   return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || known.some((p) => p.toLowerCase() === t);
 }
@@ -312,6 +329,12 @@ const ENCOUNTER_CHANCE = 0.4;
 const QUIET_STEP = 0.25;
 /** After this many quiet stretches in a row the next one always has a meeting. */
 const MAX_QUIET = 2;
+/** Meetings that can be faced as a fight. */
+const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'villain']);
+/** Share of hostile meetings that are a rare spawn (uncommon, not every meeting). */
+export const RARE_SPAWN_CHANCE = 0.12;
+/** Share of camps that hold a mini-boss. */
+export const CAMP_MINI_BOSS_CHANCE = 0.5;
 
 export interface StretchContext {
   terrain: JourneyTerrain;
@@ -344,21 +367,65 @@ export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
 }
 
 /**
- * One roll per stretch. `chanceRoll` and `kindRoll` are in [0, 1).
+ * One roll per stretch. `chanceRoll`, `kindRoll` and `spawnRoll` are in [0, 1).
+ * `spawnRoll` decides a rare spawn (hostile kinds) or a camp mini-boss; 1 = neither.
  * Returns null for a quiet stretch.
  */
 export function rollRoadEncounter(
   ctx: StretchContext,
   level: number,
   chanceRoll: number,
-  kindRoll: number
+  kindRoll: number,
+  spawnRoll = 1
 ): RoadEncounter | null {
   const chance = ctx.quietStretches >= MAX_QUIET ? 1 : ENCOUNTER_CHANCE + QUIET_STEP * ctx.quietStretches;
   if (chanceRoll >= chance) return null;
   const pool = encounterPool(ctx);
   if (!pool.length) return null;
   const kind = pool[Math.min(pool.length - 1, Math.floor(kindRoll * pool.length))];
-  return { kind, level, stretch: ctx.stretch, dangerous: ctx.areaTier >= 3 };
+  const enc: RoadEncounter = { kind, level, stretch: ctx.stretch, dangerous: ctx.areaTier >= 3 };
+  if (FIGHT_KINDS.has(kind) && spawnRoll < RARE_SPAWN_CHANCE) enc.rare = true;
+  if (kind === 'camp' && spawnRoll < CAMP_MINI_BOSS_CHANCE) enc.miniBoss = true;
+  return enc;
+}
+
+const FOE_NAME: Partial<Record<RoadEncounterKind, string>> = {
+  thugs: 'the thugs',
+  undead: 'the restless dead',
+  monster: 'the creature',
+  villain: 'whoever blocks the way',
+  camp: "the camp's champion",
+};
+
+/**
+ * The live foe for a faced meeting, at the area level. A rare spawn is a little tougher than the
+ * ordinary foe on that ground; a camp mini-boss is a level higher with about twice the HP. The name is
+ * a role; the writer names who or what it is.
+ */
+export function roadFoe(enc: RoadEncounter): ActiveEncounter {
+  const lvl = Math.max(1, Math.round(enc.level));
+  const boss = enc.kind === 'camp' && !!enc.miniBoss;
+  const level = boss ? lvl + 1 : lvl;
+  const hp = 10 + level * 4;
+  const ac = 10 + Math.min(5, Math.ceil(level / 2));
+  const xp = 20 + level * 5;
+  const gold = 3 + level * 2;
+  const mult = boss ? 2.2 : enc.rare ? 1.25 : 1;
+  const maxHp = Math.round(hp * mult);
+  const step = boss ? 3 : enc.rare ? 1 : 0;
+  return {
+    name: FOE_NAME[enc.kind] ?? 'the foe',
+    level,
+    hp: maxHp,
+    maxHp,
+    armorClass: ac + (boss ? 2 : step),
+    strength: 10 + level + step,
+    dexterity: 10 + (boss ? 2 : 0),
+    constitution: 10 + level + step,
+    xpReward: Math.round(xp * (boss ? 2 : enc.rare ? 1.25 : 1)),
+    goldReward: Math.round(gold * (boss ? 2 : enc.rare ? 1.5 : 1)),
+    source: boss ? 'road-camp-elite' : enc.rare ? 'road-rare-spawn' : 'road-encounter',
+  };
 }
 
 /** Encounter level from the area tier by the treasure rule (tier → level, clamped to party ±3). */
@@ -368,6 +435,7 @@ export function roadEncounterLevel(state: GameState, areaTier: number): number {
     activeDungeon: null,
     locationSheet: null,
     places: [],
+    journey: null,
     threatTier: areaTier,
   }).level;
 }
@@ -397,7 +465,8 @@ function rollStretch(state: GameState, j: TravelJourney): TravelJourney {
     },
     roadEncounterLevel(state, areaTier),
     hashUnit(`${key}|chance`),
-    hashUnit(`${key}|kind`)
+    hashUnit(`${key}|kind`),
+    engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1
   );
   return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1 };
 }
@@ -413,12 +482,39 @@ const ENCOUNTER_LABEL: Record<RoadEncounterKind, string> = {
   villain: 'a villain',
 };
 
+/** The stretch already has a life: what the meeting is doing there before the player arrives. */
+const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
+  wildlife: 'going about its own day',
+  traveler: 'on their own errand',
+  meeting: 'on their own errand',
+  thugs: 'working this stretch',
+  camp: 'camped here for its own reason',
+  undead: 'bound to this ground',
+  monster: 'hunting its own ground',
+  villain: 'here on their own business',
+};
+
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
   const e = j.encounter;
   if (!e) return '; quiet stretch';
-  const label = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
-  return `; chance meeting: ${label} (level ${e.level})`;
+  const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
+  if (e.engaged) return `; ${base} dealt with`;
+  const label = e.kind === 'camp' && e.miniBoss
+    ? 'a camp with a mini-boss'
+    : e.rare
+      ? `rare spawn, ${base}`
+      : base;
+  return `; chance meeting: ${label} (level ${e.level}), ${ENCOUNTER_LIFE[e.kind]}`;
+}
+
+const FIGHT_WORDS = /^(?:face|fight|attack|charge|challenge)\b/i;
+
+/** The player faces a meeting that can be fought and has not been fought yet. */
+function facesFight(input: string, enc: RoadEncounter): boolean {
+  const pad = fightPad(enc);
+  if (!pad || enc.engaged) return false;
+  return input.toLowerCase() === pad.toLowerCase() || FIGHT_WORDS.test(input);
 }
 
 export interface TravelCommit {
@@ -517,11 +613,24 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
       return stepAlong({ ...state, journey: back }, back);
     }
     if (named) return goTo({ ...state, journey: null }, j.ground, named.name);
+    const slot = timeOfDayForHour(currentHour(state));
+    const where = `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot})`;
+    if (j.encounter && facesFight(input, j.encounter) && engineAllowsCombat(state)) {
+      const foe = initEncounterTerminal(roadFoe(j.encounter), state, { forcedSpawnKey: `road-${j.encounter.kind}` });
+      const journey: TravelJourney = { ...j, encounter: { ...j.encounter, engaged: true } };
+      const what = j.encounter.kind === 'camp' ? 'mini-boss' : j.encounter.rare ? 'rare spawn' : 'foe';
+      return {
+        state: { ...state, currentLocation: j.ground, journey, activeEncounter: foe },
+        handled: true,
+        arrived: false,
+        receipt: `${where}; fight: ${foe.name}, ${what} (level ${foe.level}, ${foe.maxHp} HP)`,
+      };
+    }
     return {
       state: { ...state, currentLocation: j.ground },
       handled: true,
       arrived: false,
-      receipt: `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
+      receipt: `${where}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
     };
   }
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();

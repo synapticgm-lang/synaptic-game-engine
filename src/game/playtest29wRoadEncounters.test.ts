@@ -44,9 +44,9 @@ function tripsTo(dest: string, n = 200) {
 }
 
 describe('29w stamps', () => {
-  it('HUD and BUILD are 2026-09-29w1 and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29w1');
-    expect(BUILD_STAMP).toBe('2026-09-29w1');
+  it('HUD and BUILD are 2026-09-29x1 and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29x1');
+    expect(BUILD_STAMP).toBe('2026-09-29x1');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -123,7 +123,7 @@ describe('29w — level follows the area (treasure rule)', () => {
 describe('29w — deal with it by chips, then the road continues', () => {
   it('an encounter chip keeps HERE on the ground; Walk on carries on', () => {
     const hit = tripsTo('Greyhollow Graveyard').find((t) => t.state.journey?.encounter)!;
-    const chip = journeyPads(hit.state)[1];
+    const chip = journeyPads(hit.state).slice(1, -1).find((c) => !/^face\b/i.test(c))!;
     const dealt = commitTravel(hit.state, chip);
     expect(dealt.arrived).toBe(false);
     expect(dealt.state.currentLocation).toBe(hit.state.journey!.ground);

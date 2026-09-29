@@ -699,6 +699,12 @@ export interface RoadEncounter {
   stretch: number;
   /** Area tier 3+ — wildlife there is not harmless. */
   dangerous: boolean;
+  /** 29x — an uncommon spawn: a little tougher, slightly better loot, still the area level. */
+  rare?: boolean;
+  /** 29x — a camp that holds a mini-boss (a real fight through the combat engine). */
+  miniBoss?: boolean;
+  /** 29x — the fight on this stretch was opened; once it is over the meeting is dealt with. */
+  engaged?: boolean;
 }
 
 /** Premade settlement on the world map (29e). */

@@ -349,7 +349,15 @@ export function applyBossBuildGuarantee(
 // 28e: our own dice, amounts, CR bands and rarity splits.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type LootProfile = 'mob' | 'miniBoss' | 'boss' | 'chestBronze' | 'chestSilver' | 'chestGold' | 'rareEncounter';
+export type LootProfile =
+  | 'mob'
+  | 'miniBoss'
+  | 'boss'
+  | 'chestBronze'
+  | 'chestSilver'
+  | 'chestGold'
+  | 'rareEncounter'
+  | 'rareSpawn';
 
 export interface LootProfileRow {
   label: string;
@@ -371,6 +379,8 @@ export interface LootProfileRow {
   dndTable: 'purse' | 'cache';
   /** DCC-style chest / box label (LitRPG shows it). */
   boxLabel?: 'Bronze' | 'Silver' | 'Gold';
+  /** No item above this many rarity steps over the area tier (tier 1 + 1 = Rare), so a low path never drops endgame loot. */
+  ceilingAboveTier?: number;
 }
 
 export const LOOT_PROFILES: Readonly<Record<LootProfile, LootProfileRow>> = {
@@ -381,6 +391,7 @@ export const LOOT_PROFILES: Readonly<Record<LootProfile, LootProfileRow>> = {
   chestSilver: { label: 'Silver chest', rolls: 2, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'elite', dndTable: 'cache', boxLabel: 'Silver' },
   chestGold: { label: 'Gold chest', rolls: 3, tierBonus: 0, noDropPct: 0, floor: null, firstKillFloor: null, resetsPity: false, tableRole: 'boss', dndTable: 'cache', boxLabel: 'Gold' },
   rareEncounter: { label: 'Rare encounter', rolls: 1, tierBonus: 2, noDropPct: 0, floor: 'Epic', firstKillFloor: null, resetsPity: true, tableRole: 'elite', dndTable: 'cache' },
+  rareSpawn: { label: 'Rare spawn', rolls: 1, tierBonus: 0, noDropPct: 0, floor: 'Uncommon', firstKillFloor: null, resetsPity: false, tableRole: 'elite', dndTable: 'purse', ceilingAboveTier: 1 },
 };
 
 /** Chest grade 1–3 (dungeonSeed HiddenLoot.grade) → profile. */
@@ -395,6 +406,7 @@ export function profileForEncounter(
   const key = `${enc?.encounterId ?? ''} ${enc?.source ?? ''} ${enc?.forcedSpawnKey ?? ''}`;
   if (/boss/i.test(key)) return 'boss';
   if (/rare[-_ ]?encounter/i.test(key)) return 'rareEncounter';
+  if (/rare[-_ ]?spawn/i.test(key)) return 'rareSpawn';
   if (/elite|mini[-_ ]?boss/i.test(key)) return 'miniBoss';
   return 'mob';
 }
@@ -660,6 +672,13 @@ export function rollLoot(input: {
           `Coin purse ${band.label}: ${n}d${sides}${signed(bonus)} (${r.rolls.join('+')})${signed(bonus)}${mult > 1 ? `×${mult}` : ''} = ${amount} gp`
         );
       }
+      if (row.floor && profile === 'rareSpawn') {
+        const d = rollDie(20, rng);
+        const rolled = sgmItemRarity(d, level);
+        const rarity = rarityIdx(rolled) < rarityIdx(row.floor) ? row.floor : rolled;
+        push(rarity);
+        dice.push(`d20 = ${d} → ${rarity}: ${items[items.length - 1]!.name}`);
+      }
       return result({ gold, coin: 'gp', displayLines: [...dice] });
     }
     const h = SGM_TREASURE_CACHE[band.band]!;
@@ -698,6 +717,12 @@ export function rollLoot(input: {
   const floor = isBoss && input.firstKill && row.firstKillFloor ? row.firstKillFloor : row.floor;
   if (floor && !rarities.some((r) => rarityIdx(r) >= rarityIdx(floor))) {
     rarities[0] = floor;
+  }
+  if (row.ceilingAboveTier != null) {
+    const cap = LOOT_RARITIES[Math.min(LOOT_RARITIES.length - 1, baseTier + row.ceilingAboveTier)]!;
+    for (let i = 0; i < rarities.length; i++) {
+      if (rarityIdx(rarities[i]!) > rarityIdx(cap)) rarities[i] = cap;
+    }
   }
   if (rarities.some((r) => r === 'Epic' || r === 'Legendary')) pity = 0;
   if (row.resetsPity) pity = 0;

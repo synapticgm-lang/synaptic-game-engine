@@ -327,6 +327,52 @@ function wayOnChip(state: GameState, list: string[], story: string | null): stri
   return old ? `Travel toward ${old.name}` : null;
 }
 
+const JOB_CHIP = /\b(?:accept|take (?:on |up )?(?:the )?(?:job|work|quest|contract|bounty)|job|quest|contract|bounty)\b/i;
+const WAY_ON_CHIP = /^(?:walk on|enter|next unexplored room)\b/i;
+
+/** The quest step or a job chip, not already tried here with no progress. */
+function isUntriedJob(state: GameState, chip: string, story: string | null): boolean {
+  if (triedAgo(state, chip) != null) return false;
+  if (story && chip.toLowerCase() === story.toLowerCase()) return true;
+  return JOB_CHIP.test(chip) && !travelDest(chip) && actionFamily(chip) !== 'talk';
+}
+
+/** An exit to a place not visited yet (or the way on along a road / into a room), not already tried here. */
+function isUnusedExit(state: GameState, chip: string): boolean {
+  if (triedAgo(state, chip) != null) return false;
+  if (travelDest(chip)) return !isRevisitChip(state, chip);
+  return WAY_ON_CHIP.test(chip);
+}
+
+/** Talk to someone whose answer was already heard: a met NPC named in the chip, or this talk already tried here. */
+function isHeardTalk(state: GameState, chip: string): boolean {
+  if (actionFamily(chip) !== 'talk') return false;
+  if (triedAgo(state, chip) != null) return true;
+  const lower = chip.toLowerCase();
+  return presentNpcRecords(state).some((m) => isMetNpc(m) && lower.includes(m.npcName.toLowerCase()));
+}
+
+/**
+ * 29x — auto player only (a person can still tap any chip). Replaces the pick with the untried job, else an
+ * unused exit, when (1) the pick is talking again to someone whose answer was already heard, or (2) the last
+ * auto picks were only look / wait / inspect. Returns the pick unchanged when neither applies.
+ */
+export function applyAutoPlayerStallRules(
+  state: GameState,
+  offered: string[],
+  pick: string
+): { pick: string; rule: 'heard-talk' | 'loiter' | null } {
+  if (state.activeEncounter) return { pick, rule: null };
+  const story = storyChip(state);
+  const wayOn =
+    offered.find((c) => isUntriedJob(state, c, story)) ?? offered.find((c) => isUnusedExit(state, c));
+  if (!wayOn || wayOn === pick) return { pick, rule: null };
+  if (isHeardTalk(state, pick)) return { pick: wayOn, rule: 'heard-talk' };
+  const recent = state.circling?.recentFamilies ?? [];
+  if (recent.length >= 2 && recent.every((f) => LOITER.has(f))) return { pick: wayOn, rule: 'loiter' };
+  return { pick, rule: null };
+}
+
 /** Final chip order: move-the-story-on and new things first, stale loiter and tried repeats rested, "Go back" last. */
 export function rankChoices(state: GameState, choices: string[]): { choices: string[]; notes: string[] } {
   const notes: string[] = [];

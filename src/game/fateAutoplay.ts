@@ -8,7 +8,13 @@
 
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { chipProgressScore, chipProgressWeights, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
+import {
+  applyAutoPlayerStallRules,
+  chipProgressScore,
+  chipProgressWeights,
+  nudgeIfStuck,
+  recordCirclingTurn,
+} from './choiceRanking';
 import { pathToFileURL } from 'node:url';
 import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
@@ -1011,7 +1017,7 @@ export async function headlessFateTurn(
       ? meta.playerInputOverride.trim()
       : meta.mode === 'first-pad'
         ? offered[0] ?? 'Look around'
-        : pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng);
+        : applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng)).pick;
 
   let playerInput = fatePick;
   let repairNote: string | undefined;
