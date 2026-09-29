@@ -31,7 +31,7 @@ The hypothesis was right on all three points.
 
 ## Tests
 
-- New `src/game/playtest29z4TesterTruth.test.ts` (21 tests) passes.
+- New `src/game/playtest29z4TesterTruth.test.ts` (20 tests) passes.
 - Four older tests asserted the canned "we found you here" line (10f, 10j, 11b, 12g). They now assert the role answers without it.
 
 ## Checks
