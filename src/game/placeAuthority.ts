@@ -6,7 +6,7 @@ export const INTERIOR_MAP_BLUEPRINT = 'interior-plan';
 
 /** Named interiors: cathedral, circle, vault, hall, court, building/ruin/husk — not outdoor streets. */
 const INTERIOR_PLACE_CUES =
-  /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
+  /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|house|cottage|shop|barn|stable|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
 
 const OUTDOOR_OVERRIDE =
   /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?)\b/i;
@@ -91,19 +91,34 @@ export type AreaLevelSource = 'dungeon' | 'region' | 'party';
  * 28m — local area level for treasure: dungeon card level when inside one, else the
  * region/zone threat, else party level. Clamped to party level ±3.
  */
-export function resolveLocalAreaLevel(state: GameState): { level: number; partyLevel: number; source: AreaLevelSource } {
+export function resolveLocalAreaLevel(state: GameState): {
+  level: number;
+  partyLevel: number;
+  source: AreaLevelSource;
+  /** 29r — area level before the party ±3 clamp (the over-level XP cut reads this). */
+  rawLevel: number;
+} {
   const partyLevel = Math.max(1, Math.floor(state.character?.level ?? 1));
   const clamp = (n: number) => Math.max(1, Math.max(partyLevel - 3, Math.min(partyLevel + 3, Math.round(n))));
   const dungeon = state.activeDungeon;
   if (isExplorableDungeon(dungeon)) {
     const raw = dungeon.areaLevel ?? (dungeon.dangerTier ? tierToAreaLevel(dungeon.dangerTier) : null);
-    if (typeof raw === 'number' && Number.isFinite(raw)) return { level: clamp(raw), partyLevel, source: 'dungeon' };
+    if (typeof raw === 'number' && Number.isFinite(raw)) {
+      return { level: clamp(raw), partyLevel, source: 'dungeon', rawLevel: Math.max(1, Math.round(raw)) };
+    }
   }
   const tier = resolveThreatTier(state);
   if (typeof tier === 'number' && Number.isFinite(tier) && tier > 0) {
-    return { level: clamp(tierToAreaLevel(tier)), partyLevel, source: 'region' };
+    const raw = tierToAreaLevel(tier);
+    return { level: clamp(raw), partyLevel, source: 'region', rawLevel: raw };
   }
-  return { level: partyLevel, partyLevel, source: 'party' };
+  return { level: partyLevel, partyLevel, source: 'party', rawLevel: partyLevel };
+}
+
+/** 29r — player and area level for milestoneXp's over-level cut at the place the player is. */
+export function milestoneAreaOpts(state: GameState): { playerLevel: number; areaLevel: number } {
+  const area = resolveLocalAreaLevel(state);
+  return { playerLevel: area.partyLevel, areaLevel: area.rawLevel };
 }
 
 export function resolveMapScale(state: GameState): MapScale {

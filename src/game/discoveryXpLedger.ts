@@ -14,6 +14,29 @@
 
 import type { GameState } from './types';
 import { isLookAroundAction } from './sandboxXp';
+import { milestoneAreaOpts } from './placeAuthority';
+import { milestoneXp, type MilestoneKind } from './xpRules';
+
+/** 29r — discovery types pay the shared milestone amounts (mode rule + over-level cut). */
+const DISCOVERY_MILESTONE: Record<DiscoveryType, MilestoneKind> = {
+  location: 'significantPlace',
+  object: 'roomCleared',
+  npc: 'significantPerson',
+  fact: 'roomCleared',
+  secret: 'roomCleared',
+  quest_clue: 'questStep',
+  combat_victory: 'encounter',
+  skill_use: 'roomCleared',
+  resolution: 'questComplete',
+};
+
+export function discoveryXpAmount(state: GameState, type: DiscoveryType): number {
+  return milestoneXp(state.engineMode, DISCOVERY_MILESTONE[type], {
+    level: state.character?.level ?? 1,
+    strictness: state.gmStrictness,
+    ...milestoneAreaOpts(state),
+  }).amount;
+}
 
 export interface DiscoveryKey {
   /** What was discovered (location name, object, fact, NPC, etc.) */
@@ -161,7 +184,7 @@ export function calculateDiscoveryXp(
       
       if (!check.awarded) {
         return {
-          amount: 15,
+          amount: discoveryXpAmount(state, 'location'),
           reason: `First visit: ${location}`,
           type: 'discovery',
           oneTime: true,
@@ -183,7 +206,7 @@ export function calculateDiscoveryXp(
       if (!check.awarded) {
         // First inspection awards XP
         return {
-          amount: 5,
+          amount: discoveryXpAmount(state, 'object'),
           reason: `Examined: ${object}`,
           type: 'novelty',
           oneTime: true,
@@ -205,7 +228,7 @@ export function calculateDiscoveryXp(
       
       if (!check.awarded) {
         return {
-          amount: 10,
+          amount: discoveryXpAmount(state, 'npc'),
           reason: `Met: ${npc}`,
           type: 'discovery',
           oneTime: true,
@@ -224,7 +247,7 @@ export function calculateDiscoveryXp(
       
       if (!check.awarded) {
         return {
-          amount: 20,
+          amount: discoveryXpAmount(state, 'quest_clue'),
           reason: `Quest clue: ${quest.name}`,
           type: 'quest',
           oneTime: true,
@@ -241,7 +264,7 @@ export function calculateDiscoveryXp(
     
     if (!check.awarded && /\b(attack|fight|defeat)\b/i.test(lower)) {
       return {
-        amount: 25,
+        amount: discoveryXpAmount(state, 'combat_victory'),
         reason: `First combat: ${enemyName}`,
         type: 'combat',
         oneTime: true,

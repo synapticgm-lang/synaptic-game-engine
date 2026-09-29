@@ -17,7 +17,7 @@ import { createHashRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
-import { tierToAreaLevel } from './placeAuthority';
+import { milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { openSeededLootable } from './looseItems';
 import { milestoneXp, type MilestoneKind } from './xpRules';
@@ -450,7 +450,7 @@ function rollLine(state: GameState, what: string, roll: number, m: number, dc: n
 
 function payDungeonXp(state: GameState, kind: MilestoneKind, key: string, label: string): { state: GameState; receipts: string[] } {
   if ((state.sandboxAwardKeys ?? []).includes(key)) return { state, receipts: [] };
-  const r = milestoneXp(state.engineMode, kind, { level: state.character.level, strictness: state.gmStrictness });
+  const r = milestoneXp(state.engineMode, kind, { level: state.character.level, strictness: state.gmStrictness, ...milestoneAreaOpts(state) });
   const keys = [...(state.sandboxAwardKeys ?? []), key];
   if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: keys }, receipts: [] };
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode);

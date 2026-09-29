@@ -9,6 +9,7 @@ import {
 } from './placeAuthority';
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
 import { createHashRng } from './seededRng';
+import { insideTemplateFor } from './placeTemplates';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
@@ -655,11 +656,12 @@ function isAuthoredInterior(dungeon: ActiveDungeonState): boolean {
 }
 
 /** Tiny sheds stay one floor; ruined halls / mansions / cathedrals get 2–3. */
-export type InteriorBuildingScale = 'shed' | 'ruin' | 'grand';
+export type InteriorBuildingScale = 'shed' | 'ruin' | 'grand' | 'inside';
 
 export function interiorBuildingScale(place: string): InteriorBuildingScale {
   const n = (place ?? '').replace(/\s+/g, ' ').trim();
   if (/\b(?:shed|shack|hut|hovel|booth|closet|lean-?to)\b/i.test(n)) return 'shed';
+  if (insideTemplateFor(n)) return 'inside';
   if (
     /\b(?:cathedral|manor|mansion|palace|castle|keep|temple|guildhall|abbey|sanctum|circle)\b/i.test(n)
   ) {
@@ -697,7 +699,7 @@ function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: s
   const place = placeHint || dungeon.dungeonName || '';
   const scale = interiorBuildingScale(place);
   const openRooms = dungeon.nodes.filter((n) => !n.isSecret).length;
-  if (scale === 'shed') {
+  if (scale === 'shed' || scale === 'inside') {
     if (openRooms < 2) return true;
   } else {
     if (openRooms < 5) return true;
@@ -978,8 +980,10 @@ export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
 function pickInteriorLayout(seed: string, place: string): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
   const scale = interiorBuildingScale(place);
-  const pool =
-    scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
+  const inside = scale === 'inside' ? insideTemplateFor(place)?.layout : undefined;
+  const pool = inside
+    ? [inside]
+    : scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
   const idx = Math.min(pool.length - 1, Math.floor(rng() * pool.length));
   return pool[idx]!.map((r) => ({
     ...r,

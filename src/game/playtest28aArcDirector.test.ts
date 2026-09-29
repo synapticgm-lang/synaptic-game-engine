@@ -3,7 +3,7 @@ import { createInitialState } from './defaults';
 import { applyCharacterXpGain } from './characterXp';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import { compileChoices, updateChoiceFingerprints } from './choiceCompiler';
-import { calculateDiscoveryXp } from './discoveryXpLedger';
+import { calculateDiscoveryXp, discoveryXpAmount } from './discoveryXpLedger';
 import { contractsForState } from './beatContract';
 
 describe('playtest28a — ArcDirector + pacing', () => {
@@ -50,7 +50,8 @@ describe('playtest28a — ArcDirector + pacing', () => {
     state.currentLocation = 'Ruin Hall';
     const ledger = new Map();
     const first = calculateDiscoveryXp('Inspect the cracked wall', state, ledger);
-    expect(first?.amount).toBe(5);
+    expect(first?.amount).toBeGreaterThan(0);
+    expect(first?.amount).toBe(discoveryXpAmount(state, 'object'));
     const updated = new Map([
       [
         first!.discoveryKey!,

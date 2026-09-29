@@ -1746,7 +1746,8 @@ Do NOT print dice notation or CODE ENFORCED.
   );
   let character = working.character;
   let levelNotes: string[] = [];
-  const sandboxNotes = [...sandboxXp.notes];
+  const sandboxNotes = [...sandboxXp.notes, ...sandboxXp.lootNotes];
+  if (sandboxXp.items.length) working = { ...working, inventory: [...(working.inventory ?? []), ...sandboxXp.items] };
   let sandboxKeys = sandboxXp.awardKeys;
   if (sandboxXp.xp > 0) {
     const leveled = applyCharacterXpGain(character, sandboxXp.xp, working.engineMode);

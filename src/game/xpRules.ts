@@ -95,26 +95,65 @@ export interface MilestoneXpResult {
   detail: string;
 }
 
-/** The one engine rule for every milestone. 28d: scaled by the shared difficulty table (Hard ×1.25). */
-export function milestoneXp(
-  mode: EngineMode | undefined,
-  kind: MilestoneKind,
-  opts: { level?: number; partySize?: number; cr?: string | number | null; strictness?: GmStrictness | null } = {}
-): MilestoneXpResult {
+/** 29r — player this many levels above the area: every milestone there pays OVER_LEVEL_SHARE. */
+export const OVER_LEVEL_GAP = 6;
+export const OVER_LEVEL_SHARE = 0.05;
+
+export function isOverLevel(playerLevel: number | undefined, areaLevel: number | undefined): boolean {
+  if (playerLevel == null || areaLevel == null) return false;
+  if (!Number.isFinite(playerLevel) || !Number.isFinite(areaLevel)) return false;
+  return playerLevel - areaLevel >= OVER_LEVEL_GAP;
+}
+
+/** 5 percent, rounded, never zero when the full amount was at least 1. */
+export function overLevelAmount(amount: number): number {
+  if (amount < 1) return 0;
+  return Math.max(1, Math.round(amount * OVER_LEVEL_SHARE));
+}
+
+export interface MilestoneXpOpts {
+  /** D&D budget level (player level, or the area level for a settlement card). */
+  level?: number;
+  partySize?: number;
+  cr?: string | number | null;
+  strictness?: GmStrictness | null;
+  /** 29r — player level and unclamped area level for the over-level cut. */
+  playerLevel?: number;
+  areaLevel?: number;
+}
+
+/**
+ * The one engine rule for every milestone. 28d: scaled by the shared difficulty table (Hard ×1.25).
+ * 29r: then the over-level cut when the player is 6+ levels above the area.
+ */
+export function milestoneXp(mode: EngineMode | undefined, kind: MilestoneKind, opts: MilestoneXpOpts = {}): MilestoneXpResult {
   const base = milestoneXpBase(mode, kind, opts);
   const row = difficultyRow(opts.strictness);
-  if (row.xpScale === 1 || base.amount <= 0) return base;
-  const amount = Math.round(base.amount * row.xpScale);
-  return {
-    amount,
-    detail: mode === 'dnd' ? `${base.detail} × ${row.xpScale} (${row.label}) = ${amount}` : base.detail,
-  };
+  let result = base;
+  if (row.xpScale !== 1 && base.amount > 0) {
+    const amount = Math.round(base.amount * row.xpScale);
+    result = {
+      amount,
+      detail: mode === 'dnd' ? `${base.detail} × ${row.xpScale} (${row.label}) = ${amount}` : base.detail,
+    };
+  }
+  if (result.amount > 0 && isOverLevel(opts.playerLevel, opts.areaLevel)) {
+    const amount = overLevelAmount(result.amount);
+    result = {
+      amount,
+      detail:
+        mode === 'dnd'
+          ? `${result.detail} × 5% (level ${opts.playerLevel} vs area ${opts.areaLevel}) = ${amount}`
+          : result.detail,
+    };
+  }
+  return result;
 }
 
 function milestoneXpBase(
   mode: EngineMode | undefined,
   kind: MilestoneKind,
-  opts: { level?: number; partySize?: number; cr?: string | number | null } = {}
+  opts: MilestoneXpOpts = {}
 ): MilestoneXpResult {
   if (mode !== 'dnd') return { amount: LITRPG_MILESTONE_XP[kind] ?? 0, detail: '' };
   if (kind === 'encounter' || kind === 'miniBoss' || kind === 'boss') {

@@ -7,8 +7,10 @@
  */
 
 import type { GameEvent } from './parser';
-import type { ActiveEncounter, GameState, NpcMemory, Quest } from './types';
+import type { ActiveEncounter, GameState, Item, NpcMemory, Quest } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { milestoneAreaOpts } from './placeAuthority';
+import { finishSettlementQuestCard, settlementCardForChip } from './settlementQuestCards';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
 import { LITRPG_MILESTONE_XP, milestoneXp, type MilestoneKind } from './xpRules';
@@ -31,6 +33,9 @@ export interface SandboxXpResult {
   notes: string[];
   awardKeys: string[];
   places: GameState['places'];
+  /** 29r — items granted this turn (settlement card finish). */
+  items: Item[];
+  lootNotes: string[];
 }
 
 function hasAward(keys: string[] | undefined, key: string): boolean {
@@ -127,11 +132,12 @@ export function applySandboxXpAwards(
   const mode = state.engineMode;
   const level = state.character?.level ?? 1;
   const partySize = 1 + (state.companions ?? []).filter((c) => c.type === 'party').length;
+  const areaOpts = milestoneAreaOpts(state);
 
   const pay = (key: string, kind: MilestoneKind, label: string, cr?: string | number | null) => {
     if (hasAward(awardKeys, key)) return;
     awardKeys.push(key);
-    const r = milestoneXp(mode, kind, { level, partySize, cr, strictness: state.gmStrictness });
+    const r = milestoneXp(mode, kind, { level, partySize, cr, strictness: state.gmStrictness, ...areaOpts });
     if (r.amount <= 0) return;
     xp += r.amount;
     notes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
@@ -231,6 +237,22 @@ export function applySandboxXpAwards(
     }
   }
 
+  // 29r — settlement card finished: its chip picked at its place, paid once.
+  const lootNotes: string[] = [];
+  const items: Item[] = [];
+  const chipCard = settlementCardForChip({ ...state, places }, action, [opts.previousLocationName, loc]);
+  if (chipCard) {
+    const fin = finishSettlementQuestCard({ ...state, places, sandboxAwardKeys: awardKeys }, chipCard.id);
+    if (fin.card && fin.awardKey) {
+      places = fin.places;
+      awardKeys.push(fin.awardKey);
+      xp += fin.xp;
+      notes.push(...fin.notes);
+      lootNotes.push(...fin.lootNotes);
+      if (fin.item) items.push(fin.item);
+    }
+  }
+
   // Main-path spine: the node walk is the main quest even when no journal objective ticks.
   const spine = state.pyoaSpine;
   if (spine?.visited?.length) {
@@ -254,5 +276,5 @@ export function applySandboxXpAwards(
   }
 
   void opts.events;
-  return { xp, notes, awardKeys, places };
+  return { xp, notes, awardKeys, places, items, lootNotes };
 }

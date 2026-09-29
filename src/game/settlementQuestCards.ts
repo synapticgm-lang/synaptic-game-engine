@@ -28,8 +28,11 @@
  */
 
 import type { WorldOutlineSettlement } from '@/data/worldOutlines';
-import type { GameState, PlaceRecord, SettlementQuestCard, SettlementQuestParams } from './types';
+import type { GameState, Item, PlaceRecord, SettlementQuestCard, SettlementQuestParams } from './types';
 import { questFitsSettlement } from './worldMapAuthority';
+import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
+import { resolveLocalAreaLevel } from './placeAuthority';
+import { milestoneXp } from './xpRules';
 
 export type SettlementPlaceType = 'harbour' | 'forest' | 'desert' | 'city' | 'farm';
 
@@ -189,6 +192,86 @@ export function completeSettlementQuestCard(places: PlaceRecord[], cardId: strin
       ? { ...p, questCards: p.questCards.map((c) => (c.id === cardId ? { ...c, status: 'done' as const } : c)) }
       : p
   );
+}
+
+export interface SettlementCardFinish {
+  places: PlaceRecord[];
+  card: SettlementQuestCard | null;
+  xp: number;
+  /** STATUS XP line (reasoned). */
+  notes: string[];
+  lootNotes: string[];
+  awardKey: string | null;
+  item: Item | null;
+}
+
+export function settlementCardAwardKey(cardId: string): string {
+  return `settlement-card:${cardId}`;
+}
+
+/** One item from the grade-1 chest roll at the local area level (reseeded if a roll comes up empty). */
+function settlementCardItem(state: GameState, cardId: string): Item | null {
+  for (let i = 0; i < 12; i++) {
+    const loot = rollLoot({ profile: chestProfileForGrade(1), state, seed: `${state.seed ?? 'seed'}:${cardId}:${i}` });
+    if (loot.items[0]) return loot.items[0];
+  }
+  return null;
+}
+
+/**
+ * 29r — finish an open settlement card once: mark it done, pay the quest-complete milestone
+ * (D&D reads the area level for the High band; rpg / litrpg the flat amount; over-level cut
+ * applies) and grant one grade-1 chest item. A done or already-paid card returns nothing.
+ * PYOA never pays.
+ */
+export function finishSettlementQuestCard(state: GameState, cardId: string): SettlementCardFinish {
+  const places = state.places ?? [];
+  const none: SettlementCardFinish = { places, card: null, xp: 0, notes: [], lootNotes: [], awardKey: null, item: null };
+  const card = places.flatMap((p) => p.questCards ?? []).find((c) => c.id === cardId);
+  const awardKey = settlementCardAwardKey(cardId);
+  if (!card || card.status !== 'open' || (state.sandboxAwardKeys ?? []).includes(awardKey)) return none;
+  if (state.engineMode === 'pyoa') return none;
+  const done = completeSettlementQuestCard(places, cardId);
+  const area = resolveLocalAreaLevel(state);
+  const r = milestoneXp(state.engineMode, 'questComplete', {
+    level: area.level,
+    strictness: state.gmStrictness,
+    playerLevel: area.partyLevel,
+    areaLevel: area.rawLevel,
+  });
+  const item = settlementCardItem(state, cardId);
+  return {
+    places: done,
+    card: { ...card, status: 'done' },
+    xp: r.amount,
+    notes: r.amount > 0 ? [`XP Gained: ${r.amount} (quest complete: ${card.label}${r.detail ? ` — ${r.detail}` : ''})`] : [],
+    lootNotes: item ? [`Loot: [${item.rarity}] ${item.name}`] : [],
+    awardKey,
+    item,
+  };
+}
+
+function chipKey(s: string): string {
+  return (s ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** The open card whose chip the player picked at its own place (turn-start or this-turn location). */
+export function settlementCardForChip(
+  state: GameState,
+  action: string,
+  locations: Array<string | undefined>
+): SettlementQuestCard | null {
+  if (state.openingEstablishment?.complete === false) return null;
+  if (state.activeDungeon || state.activeEncounter) return null;
+  const said = chipKey(action);
+  if (!said) return null;
+  for (const loc of locations) {
+    if (!loc) continue;
+    const place = settlementPlaceHere({ places: state.places, currentLocation: loc });
+    const card = (place?.questCards ?? []).find((c) => c.status === 'open' && chipKey(c.label) === said);
+    if (card) return card;
+  }
+  return null;
 }
 
 const SMALL_TALK = /\b(how are you|good (?:morning|evening|day|afternoon)|well met|hello|greetings|nice weather|the weather|looks like rain|price list|costs? (?:\w+ )?(?:copper|silver|gold|coins?)|that'?ll be \d+)\b/i;

@@ -1,6 +1,7 @@
 /**
  * 28j — Generic interior generator (anything you can go in or get into: dungeons, buildings, vehicles).
- * Uses ONLY the game's existing map templates (no new templates):
+ * Uses ONLY the game's map templates:
+ *  - placeTemplates INSIDE_TEMPLATES / VEHICLE_TEMPLATES — house / shop / tavern / barn, carts, wagons, boats;
  *  - mapEngine SHED_LAYOUTS / RUIN_LAYOUTS / GRAND_LAYOUTS — whole-building plans with rooms, sizes,
  *    floors (B1 / 1F / 2F), stairs and secret rooms;
  *  - mapEngine CORE_BLUEPRINTS — small cave (dungeon) and spaceship (vehicle);
@@ -21,6 +22,7 @@ import {
   type InteriorRoomSpec,
 } from './mapEngine';
 import { createHashRng } from './seededRng';
+import { INSIDE_TEMPLATES, VEHICLE_TEMPLATES } from './placeTemplates';
 
 export type InteriorKind = 'dungeon' | 'building' | 'vehicle';
 export type RoomRole = 'entry' | 'room' | 'cache' | 'boss' | 'stair' | 'secret';
@@ -90,7 +92,9 @@ export function interiorTemplates(kind?: InteriorKind): InteriorTemplate[] {
   const all: InteriorTemplate[] = [
     ...SHED_LAYOUTS.map((l, i) => fromBuildingLayout(`building-shed-${i + 1}`, l, ['building'], ['shed', 'small'])),
     ...RUIN_LAYOUTS.map((l, i) => fromBuildingLayout(`building-ruin-${i + 1}`, l, ['building', 'dungeon'], ['ruin', 'crypt', 'keep', 'chapel'])),
-    ...GRAND_LAYOUTS.map((l, i) => fromBuildingLayout(`building-grand-${i + 1}`, l, ['building'], ['grand', 'house', 'manor'])),
+    ...GRAND_LAYOUTS.map((l, i) => fromBuildingLayout(`building-grand-${i + 1}`, l, ['building'], ['grand', 'manor'])),
+    ...INSIDE_TEMPLATES.map((t) => fromBuildingLayout(t.id, t.layout!, ['building'], t.reuse)),
+    ...VEHICLE_TEMPLATES.map((t) => fromBuildingLayout(t.id, t.layout!, ['vehicle'], t.reuse)),
     ...CORE_BLUEPRINTS.map((b) =>
       fromBlueprint(b, b.category === 'spaceship' || b.category === 'ship' ? ['vehicle'] : b.category === 'house' ? ['building'] : ['dungeon'], [b.category, ...b.tags, ...(b.category === 'cave' ? ['mine'] : [])])
     ),

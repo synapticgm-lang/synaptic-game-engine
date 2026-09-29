@@ -213,7 +213,7 @@ import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
-import { isExplorableDungeon, isInteriorMap, isInteriorPlace, normalizeSheetAuthority } from './placeAuthority';
+import { isExplorableDungeon, isInteriorMap, isInteriorPlace, milestoneAreaOpts, normalizeSheetAuthority } from './placeAuthority';
 import {
   cameraAllowsInteriorMap,
   enforceCameraOnProse,
@@ -4344,6 +4344,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
         // STATUS XP: only code-awarded lines with reasons (strip bare GM invent).
         mergedSystemLog = reconcileXpStatusLines(mergedSystemLog, sandboxNotes);
+        if (sandboxXp.lootNotes.length) mergedSystemLog = [...mergedSystemLog, ...sandboxXp.lootNotes];
+        newInventoryItems.push(...sandboxXp.items);
         places = sandboxXp.places ?? places;
         workingState = {
           ...workingState,
@@ -5502,6 +5504,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             partySize: 1 + (liveCurrent.companions ?? []).filter((c) => c.type === 'party').length,
             cr: liveCurrent.activeEncounter?.cr,
             strictness: liveCurrent.gmStrictness,
+            ...milestoneAreaOpts(liveCurrent),
           })
         : { amount: 0, detail: '' };
       const autoEvents = parseActionTags(narrativeText);

@@ -11,6 +11,7 @@ import { commitAutoFightLedger } from './combatAuthority';
 import { initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
 import { profileForEncounter } from './lootTableRegistry';
 import { milestoneXp, type MilestoneKind } from './xpRules';
+import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, weaponCategory } from './checkRules';
@@ -57,6 +58,7 @@ function payEncounterXp(
     partySize,
     cr: raw.cr,
     strictness: state.gmStrictness,
+    ...milestoneAreaOpts(state),
   });
   if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode);
