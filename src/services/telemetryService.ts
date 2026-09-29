@@ -17,6 +17,7 @@ export interface TelemetryLogInsert {
 
 /** Row shape written to `public.ai_traffic` (Game Ops Console / AI Traffic page). */
 export interface AiTrafficInsert {
+  id?: string;
   player_id: string;
   engine_mode?: string | null;
   provider?: string | null;
@@ -137,6 +138,7 @@ export async function logAiTraffic(
 ): Promise<void> {
   if (!isSupabaseConfigured || !supabase) return;
   const row: AiTrafficInsert = {
+    id: event.id ?? crypto.randomUUID(),
     player_id: event.player_id ?? playerId,
     engine_mode: event.engine_mode ?? mapEngineMode(),
     provider: event.provider ?? mapProvider(),
@@ -151,7 +153,8 @@ export async function logAiTraffic(
     payload: event.payload ?? null,
   };
 
-  const { data: inserted, error } = await supabase.from('ai_traffic').insert(row).select('id').maybeSingle();
+  // Only staff may read ai_traffic (017), so the insert must not ask for the row back.
+  const { error } = await supabase.from('ai_traffic').insert(row);
   if (error) {
     console.warn('[telemetry] ai_traffic insert failed', error.message);
   }
@@ -168,7 +171,7 @@ export async function logAiTraffic(
       player_id: row.player_id,
       campaign: row.save_id ?? null,
       engine_mode: row.engine_mode ?? null,
-      ai_traffic_id: inserted?.id ? String(inserted.id) : null,
+      ai_traffic_id: error ? null : row.id ?? null,
       payload: {
         provider: row.provider,
         latency: row.latency,
