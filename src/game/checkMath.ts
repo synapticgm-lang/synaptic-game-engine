@@ -24,16 +24,9 @@ import {
 import { calculateSocialModifiers, getOutcomeDescription, socialOutcomeBand } from './socialSkills';
 import type { OutcomeBand } from './socialCrisisTypes';
 import { leverageCue, socialLeverageMods, type LeverageMod } from './socialLeverage';
+import { skillRankOf, type CheckSkillName } from './skillRanks';
 
-export type CheckSkill =
-  | 'athletics'
-  | 'perception'
-  | 'investigation'
-  | 'stealth'
-  | 'thievery'
-  | 'persuasion'
-  | 'arcana'
-  | 'survival';
+export type CheckSkill = CheckSkillName;
 
 export interface CheckContext {
   label: string;
@@ -107,14 +100,7 @@ function gearMod(state: GameState, key: AttributeKey): number {
 
 function skillBonus(state: GameState, skill?: CheckSkill): number {
   if (!skill) return 0;
-  const skills = (state.character as { skills?: Partial<Record<CheckSkill, number>> }).skills;
-  if (skills?.[skill] != null) return Math.floor(Number(skills[skill]) || 0);
-  // Soft practice bonus from level for core exploration skills
-  const lvl = state.character.level ?? 1;
-  if (skill === 'perception' || skill === 'investigation' || skill === 'athletics') {
-    return Math.floor(lvl / 4);
-  }
-  return Math.floor(lvl / 5);
+  return skillRankOf(state.character, skill);
 }
 
 function professionBonus(state: GameState, professionName?: string): number {

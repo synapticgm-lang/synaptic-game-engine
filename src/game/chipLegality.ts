@@ -17,6 +17,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
 import { commitTravel, isJourneyPad, isJourneyUnderway } from './travelJourney';
 import { choiceNamesUnnarratedObject } from './choicePipeline';
+import { gateChipProblem } from './skillGates';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -218,6 +219,8 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   if (VERTICAL_CHIP.test(label) && isOpenGround(state) && !basementEstablished(state)) {
     return { kind: 'impossible-chip', detail: `"${label}" goes to another floor on open ground` };
   }
+  const gate = gateChipProblem(state, label);
+  if (gate) return { kind: 'impossible-chip', detail: gate };
   if (/^(?:inspect|examine|check|search|study|read|open|investigate|take|pick up)\b/i.test(label)
     && choiceNamesUnnarratedObject(label, storyProse, state)) {
     return { kind: 'unrelated-chip', detail: `"${label}" acts on something the scene never set up` };

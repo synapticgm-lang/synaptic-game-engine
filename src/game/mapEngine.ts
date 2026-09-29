@@ -1,4 +1,5 @@
-import type { Item, Location3D, MapTier, Rarity } from './types';
+import type { Character, Item, Location3D, MapTier, Rarity } from './types';
+import { skillRanksOf } from './skillRanks';
 import {
   INTERIOR_MAP_BLUEPRINT,
   STREET_MAP_BLUEPRINT,
@@ -24,7 +25,15 @@ export interface NodeHiddenLoot {
   grade?: 1 | 2 | 3;
 }
 
+/** 29z3 — a lock that stays shut until the character has this check-skill rank. */
+export interface SkillGate {
+  skill: 'athletics' | 'thievery' | 'arcana';
+  rank: number;
+}
+
 export interface NodeHidden {
+  /** 29z3 — the door into this room is locked behind a skill. */
+  doorLock?: SkillGate;
   traps: Array<{
     id: string;
     dc: number;
@@ -40,6 +49,8 @@ export interface NodeHidden {
     opened: boolean;
     loot: NodeHiddenLoot;
     trapId?: string;
+    /** 29z3 — safe / locked chest. */
+    lock?: SkillGate;
   }>;
   secrets: Array<{
     id: string;
@@ -309,7 +320,23 @@ export function isInteriorSecretUnlocked(
   );
 }
 
-export function moveToNode(currentState: ActiveDungeonState, targetNodeId: string): ActiveDungeonState {
+/** 29z3 — the door into this room is still locked for these skill ranks (an opened door stays open). */
+export function isDoorLockedFor(
+  dungeon: ActiveDungeonState,
+  nodeId: string,
+  ranks?: Partial<Record<string, number>>
+): boolean {
+  const node = dungeon.nodes.find((n) => n.id === nodeId);
+  const lock = node?.hidden?.doorLock;
+  if (!lock || (node?.tags ?? []).includes('door-opened')) return false;
+  return (ranks?.[lock.skill] ?? 0) < lock.rank;
+}
+
+export function moveToNode(
+  currentState: ActiveDungeonState,
+  targetNodeId: string,
+  ranks?: Partial<Record<string, number>>
+): ActiveDungeonState {
   const currentNode = currentState.nodes.find((n) => n.id === currentState.currentNodeId);
   const targetNode = currentState.nodes.find((n) => n.id === targetNodeId);
 
@@ -319,12 +346,19 @@ export function moveToNode(currentState: ActiveDungeonState, targetNodeId: strin
   if (isInteriorMap(currentState) && !isInteriorSecretUnlocked(currentState, targetNodeId)) {
     return currentState;
   }
+  if (isDoorLockedFor(currentState, targetNodeId, ranks)) {
+    return currentState;
+  }
 
   const visitedSet = new Set(currentState.visitedNodeIds);
   visitedSet.add(targetNodeId);
+  const nodes = targetNode.hidden?.doorLock && !(targetNode.tags ?? []).includes('door-opened')
+    ? currentState.nodes.map((n) => (n.id === targetNodeId ? { ...n, tags: [...(n.tags ?? []), 'door-opened'] } : n))
+    : currentState.nodes;
 
   return {
     ...currentState,
+    nodes,
     currentNodeId: targetNodeId,
     currentZLevel: targetNode.zLevel ?? currentState.currentZLevel,
     visitedNodeIds: Array.from(visitedSet),
@@ -1220,11 +1254,12 @@ export function applyGraphExitTravel<T extends {
   activeDungeon?: ActiveDungeonState | null;
   currentLocation?: string;
   activeEncounter?: unknown;
+  character?: Pick<Character, 'level' | 'skills'>;
 }>(state: T, raw: string): T {
   if (state.activeEncounter) return state;
   const hit = matchGraphExitPad(state.activeDungeon, raw);
   if (!hit || !state.activeDungeon) return state;
-  const updatedDungeon = moveToNode(state.activeDungeon, hit.nodeId);
+  const updatedDungeon = moveToNode(state.activeDungeon, hit.nodeId, skillRanksOf(state.character));
   if (updatedDungeon.currentNodeId === state.activeDungeon.currentNodeId) return state;
   const node = updatedDungeon.nodes.find((n) => n.id === updatedDungeon.currentNodeId);
   const placeName = node ? dungeonHereLabel(updatedDungeon.dungeonName, node.name) : hit.name;

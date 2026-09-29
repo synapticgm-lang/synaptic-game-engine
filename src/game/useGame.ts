@@ -387,7 +387,9 @@ import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay, applyBiomeSaneQuestSites, revealQuestsFromHubLinks } from './questPlay';
 import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { inferItemType } from './salvage';
-import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere, applyGraphExitTravel } from './mapEngine';
+import { initializeDungeon, moveToNode, isDoorLockedFor, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere, applyGraphExitTravel } from './mapEngine';
+import { skillRanksOf } from './skillRanks';
+import { grantLevelSkills, skillGateBlockedLine } from './skillGates';
 import type { Toast } from '@/components/ToastStack';
 import {
   syncToDrive,
@@ -1765,7 +1767,12 @@ export function useGame() {
       addToast('Combat in progress — resolve the fight or flee before moving.', 'error');
       return;
     }
-    let updatedDungeon = moveToNode(previous.activeDungeon, targetNodeId);
+    if (isDoorLockedFor(previous.activeDungeon, targetNodeId, skillRanksOf(previous.character))) {
+      const lock = previous.activeDungeon.nodes.find((n) => n.id === targetNodeId)?.hidden?.doorLock;
+      if (lock) addToast(skillGateBlockedLine('The door', lock, previous), 'error');
+      return;
+    }
+    let updatedDungeon = moveToNode(previous.activeDungeon, targetNodeId, skillRanksOf(previous.character));
     updatedDungeon = seedDungeonState(updatedDungeon, previous.seed || 'seed');
     const threshold = settingsRef.current.fogRevealThreshold ?? 'adjacent';
     // Interior floor plans show the full building outline; only mark rooms the player entered.
@@ -4367,6 +4374,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             mergedSystemLog = [...mergedSystemLog, ...leveled.notes];
           }
         }
+        const granted = grantLevelSkills({ ...workingState, character: baseChar }, liveCurrent.character?.level ?? 1);
+        Object.assign(baseChar, granted.state.character);
+        if (granted.receipts.length) mergedSystemLog = [...mergedSystemLog, ...granted.receipts];
       }
 
       if (authoredBook) {

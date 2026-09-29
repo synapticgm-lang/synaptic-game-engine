@@ -1,16 +1,46 @@
 import type { GameState, NpcMemory } from './types';
 
-export function formatNpcMemoriesForPrompt(memories: NpcMemory[] | undefined, limit = 6): string {
+const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line)\b/i;
+
+/**
+ * 29z3 — what this person's info sheet says about the main character, for the writer:
+ * they have met, how many times, the name they know, and how the player treated them.
+ * Empty for someone the player has not met.
+ */
+export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
+  if (!isMetNpc(m)) return '';
+  const pc = (m.knownPlayerName || pcName || '').trim() || 'the player';
+  const times = Math.max(1, m.meetCount ?? 1);
+  const bits = [`${m.npcName} has met ${pc} before (${times === 1 ? 'once' : `${times} times`})`];
+  if (m.knownPlayerName) bits.push(`knows them as ${m.knownPlayerName}`);
+  const history = m.facts.filter((f) => !SHEET_BOOKKEEPING.test(f)).slice(-2);
+  if (history.length) bits.push(`remembers: ${history.join('; ')}`);
+  return `${bits.join(', ')}. They greet ${pc} as someone they know: no introducing themselves again, no asking the name again.`;
+}
+
+export function formatNpcMemoriesForPrompt(
+  memories: NpcMemory[] | undefined,
+  limit = 6,
+  pcName?: string | null
+): string {
   const list = (memories ?? []).slice(0, limit);
   if (!list.length) return '(none)';
   return list
-    .map(
-      (m) =>
-        `${m.npcName} [${m.disposition}] — ${(m.facts.slice(-3).join('; ') || 'no notes')}${
-          m.relationshipSummary ? ` | ${m.relationshipSummary}` : ''
-        }`
-    )
+    .map((m) => {
+      const line = `${m.npcName} [${m.disposition}] — ${(m.facts.slice(-3).join('; ') || 'no notes')}${
+        m.relationshipSummary ? ` | ${m.relationshipSummary}` : ''
+      }`;
+      const sheet = sheetMemoryLine(m, pcName);
+      return sheet ? `${line}\n  ${sheet}` : line;
+    })
     .join('\n');
+}
+
+/** 29z3 — sheet lines for everyone here who has met the player. */
+export function sheetMemoryLinesHere(state: GameState): string[] {
+  return presentNpcRecords(state)
+    .map((m) => sheetMemoryLine(m, state.character?.name))
+    .filter(Boolean);
 }
 
 const COMPOUND_SPLIT = /\s*(?:,|\band\b|&)\s*/i;

@@ -25,6 +25,9 @@ import {
   roadMeetingPeople,
 } from './chipLegality';
 import { floorPlanIssues } from './floorPlan';
+import { isMetNpc, presentNpcRecords } from './npcRecords';
+import { sentenceLooksLikeSelfIntro } from './npcMemory';
+import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 
 export { chipAddressee, peopleHere } from './chipLegality';
 
@@ -38,7 +41,10 @@ export type TurnCheckKind =
   | 'unestablished-quest-place'
   | 'action-object-missing'
   | 'broken-line'
-  | 'broken-prose';
+  | 'broken-prose'
+  | 'sheet-forgotten'
+  | 'levelup-no-change'
+  | 'lock-without-skill';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -63,6 +69,9 @@ export const TURN_CHECK_P0_KINDS: ReadonlySet<TurnCheckKind> = new Set([
   'bad-floor-plan',
   'unestablished-quest-place',
   'broken-prose',
+  'sheet-forgotten',
+  'levelup-no-change',
+  'lock-without-skill',
 ]);
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
@@ -345,6 +354,9 @@ export function checkPlayerTurn(
     ...followed.p0,
     ...checkQuestPlaces(before, after),
     ...brokenProse(prose, after.character?.name),
+    ...checkSheetMemory(before, prose),
+    ...checkLevelUpChanges(before, after),
+    ...locksOpenedWithoutSkill(before, after).map((detail) => ({ kind: 'lock-without-skill' as const, detail })),
   ];
   const mapIssue = openGroundMapIssue(after);
   if (mapIssue && openGroundMapIssue(before) !== mapIssue) p0.push({ kind: 'open-ground-interior', detail: mapIssue });
@@ -355,6 +367,52 @@ export function checkPlayerTurn(
     p0.push({ kind: 'bad-floor-plan', detail: `${drawnMap(after)?.dungeonName ?? 'map'}: ${newPlanIssues.slice(0, 3).join('; ')}` });
   }
   return { p0, down: [...followed.down, ...brokenLines(prose)], presentNames: peopleHere(before) };
+}
+
+const ASKS_NAME = /\b(?:your name|who are you|who might you be|what are you called|what do they call you)\b/i;
+const NEVER_MET = /\b(?:never (?:met|seen) (?:you|him|her|them)(?: before)?|(?:do|does|did)(?:n['’]t| not) know (?:you|him|her|them)|(?:a|the) stranger to (?:me|him|her|them)|first time (?:we['’]ve|we have|they had|she had|he had) met)\b/i;
+
+/**
+ * 29z3 — a person whose info sheet says they met the player must not act as if they never did:
+ * introduce themselves again, ask the name they already know, or say they have never met.
+ */
+export function checkSheetMemory(before: GameState, prose: string): TurnCheckFlag[] {
+  const known = presentNpcRecords(before).filter(isMetNpc);
+  if (!known.length || !norm(prose)) return [];
+  const out: TurnCheckFlag[] = [];
+  const sentences = norm(prose).split(/(?<=[.!?]["”']?)\s+/).map((s) => s.trim()).filter(Boolean);
+  for (const m of known) {
+    const names = [m.npcName, ...(m.aliases ?? [])].filter((n) => n.trim().length >= 3);
+    const about: string[] = [];
+    sentences.forEach((s, i) => {
+      if (!names.some((n) => mentionsName(s, n))) return;
+      const next = sentences[i + 1] ?? '';
+      about.push(/^["“]/.test(next.trim()) ? `${s} ${next}` : s);
+    });
+    const intro = about.find((s) => names.some((n) => sentenceLooksLikeSelfIntro(s, n)));
+    if (intro) {
+      out.push({ kind: 'sheet-forgotten', detail: `${m.npcName} has met the player but introduces themselves again: "${intro.slice(0, 120)}"` });
+      continue;
+    }
+    const ask = m.knownPlayerName ? about.find((s) => ASKS_NAME.test(s) && s.includes('?')) : undefined;
+    if (ask) {
+      out.push({ kind: 'sheet-forgotten', detail: `${m.npcName} knows the player as ${m.knownPlayerName} but asks the name again: "${ask.slice(0, 120)}"` });
+      continue;
+    }
+    const never = about.find((s) => NEVER_MET.test(s));
+    if (never) out.push({ kind: 'sheet-forgotten', detail: `${m.npcName} has met the player but acts as if they never did: "${never.slice(0, 120)}"` });
+  }
+  return out;
+}
+
+/** 29z3 — a level-up must change something the player can do (a skill rank or a lock in reach). */
+export function checkLevelUpChanges(before: GameState, after: GameState): TurnCheckFlag[] {
+  const was = before.character?.level ?? 1;
+  const now = after.character?.level ?? 1;
+  if (now <= was) return [];
+  const old = new Set(canDoKeys(before));
+  if (canDoKeys(after).some((k) => !old.has(k))) return [];
+  return [{ kind: 'levelup-no-change', detail: `level ${was} → ${now} changed nothing the player can do (no new skill rank, lock or option)` }];
 }
 
 /** Floor-plan problems on the drawn building / dungeon map (street maps are not floor plans). */

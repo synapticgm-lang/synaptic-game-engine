@@ -1,5 +1,7 @@
 import type { GameState, Item } from './types';
-import { currentDungeonNode, openLootableInDungeon } from './dungeonSeed';
+import { currentDungeonNode, lootableLockedFor, openLootableInDungeon } from './dungeonSeed';
+import { skillRanksOf } from './skillRanks';
+import { recordGateTry, skillGateBlockedLine, skillLabel } from './skillGates';
 import { isExplorableDungeon } from './placeAuthority';
 import type { LooseNodeItem } from './dungeonMobLedger';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
@@ -120,8 +122,14 @@ export function openSeededLootable(
     return { state, receipts };
   }
 
-  const opened = openLootableInDungeon(dungeon, target.id);
+  const ranks = skillRanksOf(state.character);
+  if (target.lock && lootableLockedFor(target, ranks)) {
+    receipts.push(`Dungeon: ${skillGateBlockedLine(`The ${target.label}`, target.lock, state)}`);
+    return { state: recordGateTry(state, { id: target.id, label: target.label, lock: target.lock }), receipts };
+  }
+  const opened = openLootableInDungeon(dungeon, target.id, ranks);
   if (!opened.loot) return { state, receipts };
+  if (target.lock) receipts.push(`Dungeon: your ${skillLabel(target.lock.skill)} ${ranks[target.lock.skill]} opened the lock.`);
   const loot = rollLoot({
     profile: chestProfileForGrade(opened.loot.grade ?? 1),
     state,

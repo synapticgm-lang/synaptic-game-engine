@@ -1,7 +1,9 @@
 import type { GameEvent } from './parser';
 import type { GameState, Item, Rarity } from './types';
 import { addItem, canAddItem } from './inventory';
-import { initializeDungeon, moveToNode, exitDungeon } from './mapEngine';
+import { initializeDungeon, isDoorLockedFor, moveToNode, exitDungeon } from './mapEngine';
+import { skillRanksOf } from './skillRanks';
+import { lockedContainerBlocksGain } from './skillGates';
 import type { MapTier } from './types';
 import {
   markLootablesOpenedOnGain,
@@ -75,6 +77,13 @@ export function applyStructuralEvents(
         notes.push(`Blocked duplicate/exhausted container loot: ${e.name}`);
         continue;
       }
+      if (!e.lootSource || e.lootSource === 'random') {
+        const shut = lockedContainerBlocksGain(next, playerInput);
+        if (shut) {
+          notes.push(`Blocked item-gain from a locked ${shut}: ${e.name}`);
+          continue;
+        }
+      }
       const qty = Math.max(1, e.qty ?? 1);
       const seeded = resolveSeededRarity(next.activeDungeon, e.name, e.rarity, {
         pity: next.lootPity,
@@ -133,7 +142,7 @@ export function applyStructuralEvents(
       if (next.activeDungeon) {
         next = {
           ...next,
-          activeDungeon: markLootablesOpenedOnGain(next.activeDungeon, [item.name]) ?? next.activeDungeon,
+          activeDungeon: markLootablesOpenedOnGain(next.activeDungeon, [item.name], skillRanksOf(next.character)) ?? next.activeDungeon,
         };
       }
       notes.push(`Loot granted: [${rarity}] ${item.name}`);
@@ -204,7 +213,11 @@ export function applyStructuralEvents(
     }
 
     if (e.type === 'dungeon-move' && e.nodeId && next.activeDungeon) {
-      const moved = moveToNode(next.activeDungeon, e.nodeId);
+      const moved = moveToNode(next.activeDungeon, e.nodeId, skillRanksOf(next.character));
+      if (moved === next.activeDungeon && isDoorLockedFor(next.activeDungeon, e.nodeId, skillRanksOf(next.character))) {
+        notes.push(`Blocked dungeon-move: the door to ${e.nodeId} is locked behind a skill`);
+        continue;
+      }
       // Run floor becomes eligible once half the site is visited.
       if (
         !moved.runFloorMet &&

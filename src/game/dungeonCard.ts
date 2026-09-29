@@ -10,7 +10,9 @@
  */
 import type { ActiveEncounter, GameState, PlaceRecord } from './types';
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine';
-import { dungeonHereLabel, moveToNode } from './mapEngine';
+import { dungeonHereLabel, isDoorLockedFor, moveToNode } from './mapEngine';
+import { skillRanksOf } from './skillRanks';
+import { recordGateTry, skillGateBlockedLine, skillLabel } from './skillGates';
 import { MULTI_FLOOR_WORDS, generateInterior, type GeneratedRoom } from './interiorGenerator';
 import { detectBiome } from './encounterBiomeMatrix';
 import { createHashRng } from './seededRng';
@@ -22,7 +24,7 @@ import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { openSeededLootable } from './looseItems';
 import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
-import { CHEST_GRADE_LABELS } from './dungeonSeed';
+import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
 
 export const DUNGEON_CARD_BLUEPRINT = 'dungeon-card';
@@ -326,7 +328,13 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
         revealed: false,
         disarmed: false,
       });
-      hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[2]} chest`, opened: false, loot: { rarity: 'Common', qty: 2, grade: 2 } });
+      hidden.lootables.push({
+        id: `${id}_chest`,
+        label: `${CHEST_GRADE_LABELS[2]} chest`,
+        opened: false,
+        loot: { rarity: 'Common', qty: 2, grade: 2 },
+        lock: { skill: 'thievery', rank: 1 },
+      });
       if (!secretOf.has(id)) hidden.secrets.push({ id: `${id}_secret`, clue: 'a false panel behind the shelves', revealed: false });
     }
     if (r.role === 'secret') {
@@ -460,7 +468,7 @@ function payDungeonXp(state: GameState, kind: MilestoneKind, key: string, label:
   };
 }
 
-function nearestUnexploredStep(d: ActiveDungeonState): string | null {
+function nearestUnexploredStep(d: ActiveDungeonState, ranks?: Partial<Record<string, number>>): string | null {
   const start = d.currentNodeId;
   const prev = new Map<string, string>();
   const queue = [start];
@@ -473,7 +481,7 @@ function nearestUnexploredStep(d: ActiveDungeonState): string | null {
       return step;
     }
     for (const next of d.nodes.find((n) => n.id === id)?.connections ?? []) {
-      if (seen.has(next)) continue;
+      if (seen.has(next) || isDoorLockedFor(d, next, ranks)) continue;
       seen.add(next);
       prev.set(next, id);
       queue.push(next);
@@ -526,7 +534,15 @@ export function dungeonRoomFacts(state: GameState): string {
   const foe = liveFoe(node);
   if (foe) bits.push(`${foe.name} is here${foe.role === 'miniBoss' ? ' (the mini-boss)' : ''}.`);
   else if ((h?.mobs ?? []).length) bits.push('The room is cleared; its foe lies dead.');
-  for (const l of h?.lootables ?? []) bits.push(`A ${l.label}, ${l.opened ? 'already opened' : 'closed'}.`);
+  const ranks = skillRanksOf(state.character);
+  for (const l of h?.lootables ?? []) {
+    const lock = !l.opened && l.lock
+      ? lootableLockedFor(l, ranks)
+        ? `, locked (needs ${skillLabel(l.lock.skill)} ${l.lock.rank}; it stays shut)`
+        : `, locked (the player's ${skillLabel(l.lock.skill)} can open it)`
+      : '';
+    bits.push(`A ${l.label}, ${l.opened ? 'already opened' : 'closed'}${lock}.`);
+  }
   for (const t of h?.traps ?? []) if (t.revealed) bits.push(`A trap here is ${t.disarmed ? 'sprung' : 'spotted'}.`);
   for (const s of h?.secrets ?? []) if (s.revealed) bits.push(`Found: ${s.clue}.`);
   const ways = node.connections
@@ -547,11 +563,13 @@ export function dungeonCardChoices(state: GameState): string[] {
   if (foe) out.push(`Fight the ${foe.name}`);
   if (!foe) {
     const chest = (node?.hidden?.lootables ?? []).find((l) => !l.opened);
-    if (chest) out.push(`Open the ${chest.label}`);
+    if (chest && !lootableLockedFor(chest, skillRanksOf(state.character))) {
+      out.push(chest.lock ? `Pick the lock on the ${chest.label}` : `Open the ${chest.label}`);
+    }
     const searched = (state.sandboxAwardKeys ?? []).includes(`dungeon-search:${d.dungeonName}:${node?.id}`);
     if (!searched && (node?.id !== 'r0' || (node?.hidden?.secrets ?? []).some((x) => !x.revealed))) out.push(`Search the ${node?.name}`);
   }
-  if (nearestUnexploredStep(d)) out.push('Next unexplored room');
+  if (nearestUnexploredStep(d, skillRanksOf(state.character))) out.push('Next unexplored room');
   out.push('Head back to the exit');
   return out;
 }
@@ -559,7 +577,7 @@ export function dungeonCardChoices(state: GameState): string[] {
 const EXIT_RE = /\b(head back to the exit|leave the dungeon|exit the dungeon|climb (?:back )?out)\b/i;
 const NEXT_RE = /\b(next unexplored room|go deeper|press on|explore (?:on|further|deeper))\b/i;
 const SEARCH_RE = /\b(search|look for (?:secrets|hidden))\b/i;
-const OPEN_RE = /\b(open|loot|pry)\b.*\b(chest|cache|coffer)\b/i;
+const OPEN_RE = /\b(open|loot|pry|pick the lock|unlock|crack)\b.*\b(chest|cache|coffer)\b/i;
 const FIGHT_RE = /\b(fight|attack|engage|strike)\b/i;
 
 /**
@@ -647,9 +665,15 @@ export function advanceDungeonCard(
         const n = d.nodes.find((x) => x.id === id);
         return !!n && input.toLowerCase().includes(n.name.toLowerCase());
       });
-      const target = named ?? nearestUnexploredStep(d);
+      const ranks = skillRanksOf(next.character);
+      const lockedDoor = named && isDoorLockedFor(d, named, ranks) ? d.nodes.find((n) => n.id === named) : undefined;
+      const target = lockedDoor ? null : named ?? nearestUnexploredStep(d, ranks);
+      if (lockedDoor?.hidden?.doorLock) {
+        receipts.push(`Dungeon: ${skillGateBlockedLine(`The door to ${lockedDoor.name}`, lockedDoor.hidden.doorLock, next)}`);
+        next = recordGateTry(next, { id: `door:${lockedDoor.id}`, label: `door to ${lockedDoor.name}`, lock: lockedDoor.hidden.doorLock });
+      }
       if (target) {
-        const moved = moveToNode(d, target);
+        const moved = moveToNode(d, target, ranks);
         next = { ...next, activeDungeon: moved, currentLocation: hereLabel(moved) };
         if (next.locationSheet) next = { ...next, locationSheet: { ...next.locationSheet, name: hereLabel(moved) } };
         const room = currentNode(moved)!;
@@ -679,6 +703,9 @@ export function advanceDungeonCard(
     const chest = (node.hidden?.lootables ?? []).find((l) => !l.opened);
     if (foeHere) {
       receipts.push(`Dungeon: ${foeHere.name} stands between you and the chest.`);
+    } else if (chest?.lock && lootableLockedFor(chest, skillRanksOf(next.character))) {
+      receipts.push(`Dungeon: ${skillGateBlockedLine(`The ${chest.label}`, chest.lock, next)}`);
+      next = recordGateTry(next, { id: chest.id, label: chest.label, lock: chest.lock });
     } else if (chest) {
       const grade = chest.loot.grade ?? 1;
       const loot = rollLoot({ profile: chestProfileForGrade(grade), state: next, seed: `${next.seed ?? 'seed'}:${d.dungeonName}:${chest.id}` });

@@ -1,6 +1,7 @@
 import type { GameState } from './types';
 import type { ActiveDungeonState, MapNode } from './mapEngine';
-import { initializeDungeon, moveToNode } from './mapEngine';
+import { initializeDungeon, isDoorLockedFor, moveToNode } from './mapEngine';
+import { skillRanksOf } from './skillRanks';
 import { seedDungeonState } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
 import { placeAllowsDungeon } from './dungeonLifecycle';
@@ -112,11 +113,13 @@ export function maybeAdvanceDungeonRoom(state: GameState, action: string): GameS
   }
   const dungeon = state.activeDungeon;
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
+  const ranks = skillRanksOf(state.character);
+  const open = (here?.connections ?? []).filter((id) => !isDoorLockedFor(dungeon, id, ranks));
   const nextId =
-    here?.connections.find((id) => !dungeon.visitedNodeIds.includes(id))
-    ?? here?.connections.find((id) => id !== dungeon.currentNodeId);
+    open.find((id) => !dungeon.visitedNodeIds.includes(id))
+    ?? open.find((id) => id !== dungeon.currentNodeId);
   if (!nextId) return state;
-  const moved = moveToNode(dungeon, nextId);
+  const moved = moveToNode(dungeon, nextId, ranks);
   const room = moved.nodes.find((n) => n.id === moved.currentNodeId);
   return {
     ...state,

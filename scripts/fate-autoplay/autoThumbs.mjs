@@ -269,6 +269,8 @@ for (const r of rows) {
   for (const f of [...(r.turnCheck?.down ?? []), ...(r.turnCheck?.p0 ?? [])]) {
     if (f.kind === 'broken-line' || f.kind === 'broken-prose') {
       lessons.push({ turn: r.turn, action: r.playerInput, line: f.detail, better: '', why: 'broken' });
+    } else if (f.kind === 'sheet-forgotten') {
+      lessons.push({ turn: r.turn, action: r.playerInput, line: f.detail, better: 'greet the player as someone already met', why: 'forgot the info sheet' });
     }
   }
 }

@@ -7,6 +7,8 @@ import { placeCardFor } from './outdoorHubs';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm';
+import { gateFactLines } from './skillGates';
+import { skillRanksOf } from './skillRanks';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
@@ -133,7 +135,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   const people = presentNpcRecords(state);
   const unnamed = Array.from(new Set([...listedAnonymousRoles(state), ...storyMinorRoles(state)]));
   const peopleSection = people.length
-    ? `People here:\n${formatNpcMemoriesForPrompt(people, 4)}`
+    ? `People here:\n${formatNpcMemoriesForPrompt(people, 4, state.character?.name)}`
     : unnamed.length
       ? `People here: no one named. Unnamed local${unnamed.length > 1 ? 's' : ''} who may be about: ${unnamed.map((r) => `${/^[aeiou]/i.test(r) ? 'an' : 'a'} ${r}`).join(', ')} (may speak; give no name).`
       : '';
@@ -146,9 +148,13 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
     ? `Threat building (show a sign before the foe appears):\n${state.arcDirector.pendingTelegraph.trim()}`
     : '';
 
-  const roomSection = state.activeDungeon
-    ? formatHiddenRoomLedger(state.activeDungeon, { factsOnly: true })
-    : '';
+  const gates = gateFactLines(state);
+  const roomSection = [
+    state.activeDungeon
+      ? formatHiddenRoomLedger(state.activeDungeon, { factsOnly: true, ranks: skillRanksOf(state.character) })
+      : '',
+    gates.length ? `Locks:\n${gates.join('\n')}` : '',
+  ].filter(Boolean).join('\n');
 
   const ledgerSection = buildGroundTruthLedger(state, { compact: true });
 

@@ -20,7 +20,8 @@ import {
   matchesLastKillName,
   type LastKill,
 } from './combatAuthority';
-import { openingCastRecords, presentNpcRecords, recordsForEntries } from './npcRecords';
+import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLine } from './npcRecords';
+import { gateFactLines } from './skillGates';
 import { sealedCastNames } from './beatContract';
 import { ledgerSheetLine } from './litrpgSystemWindow';
 import { isNeverCastTitle } from './neverCast';
@@ -90,6 +91,10 @@ export interface CompletedEventPacket {
   loot: string[];
   xp: number;
   witnesses: string[];
+  /** 29z3 — info-sheet lines for people here who have met the player. */
+  knownBy?: string[];
+  /** 29z3 — skill-gated locks in reach and whether they open. */
+  gates?: string[];
   location: string;
   lastKill?: LastKill;
   justKilled: boolean;
@@ -681,6 +686,11 @@ export function buildCompletedEventPacket(
     loot: extras?.loot ?? [],
     xp,
     witnesses,
+    knownBy: presentNpcRecords(state)
+      .filter((r) => !matchesLastKillName(r.npcName, kill))
+      .map((r) => sheetMemoryLine(r, state.character?.name))
+      .filter(Boolean),
+    gates: gateFactLines(state),
     location,
     lastKill: justKilled || (kill?.remains && kill.outcome === 'victory') ? kill : undefined,
     justKilled,
@@ -972,6 +982,8 @@ export function formatWriterFacingEvent(
   if (packet.xp > 0) lines.push(`XP: ${packet.xp}.`);
   if (packet.loot.length) lines.push(`Loot: ${packet.loot.join(', ')}.`);
   if (packet.witnesses.length) lines.push(`Witnesses: ${packet.witnesses.join(', ')}.`);
+  if (packet.knownBy?.length) lines.push(`INFO SHEETS (these people remember ${who}):\n${packet.knownBy.join('\n')}`);
+  if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
   if (packet.mood) lines.push(`Mood: ${packet.mood}.`);
   if (opts?.stricter) {
     lines.push('STRICT: Use only the nouns listed. Outcome is immutable.');

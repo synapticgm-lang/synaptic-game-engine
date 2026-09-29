@@ -110,6 +110,10 @@ export interface Character {
   weaponFamiliarity?: Partial<Record<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed', number>>;
   /** 28c — class/background weapon proficiencies; each sets familiarity to at least 70. */
   weaponProficiencies?: Array<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed'>;
+  /** 29z3 — check-skill ranks granted by level-ups (checkMath skills). Missing = level-derived rank. */
+  skills?: Partial<Record<'athletics' | 'perception' | 'investigation' | 'stealth' | 'thievery' | 'persuasion' | 'arcana' | 'survival', number>>;
+  /** 29z3 — highest level whose skill rank has been granted. */
+  skillsGrantedThrough?: number;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
@@ -553,6 +557,8 @@ export interface GameState {
   worldLedger?: WorldLedger;
   /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
   sandboxAwardKeys?: string[];
+  /** 29z3 — locks the player tried without the skill (the next level-up rank prefers these). */
+  skillGateTries?: Array<{ id: string; label: string; skill: string; rank: number; turn: number }>;
   /** Journal Resume main pin — map chrome highlights this place name. */
   mapFocusPlace?: string | null;
   activeEncounter?: ActiveEncounter | null;

@@ -220,6 +220,7 @@ import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck } from './turnCheck';
+import { grantLevelSkills } from './skillGates';
 import { compactTrafficGist } from './openingPointerCard';
 import {
   syncQuestsFromPlay,
@@ -1931,6 +1932,17 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   governed = creditCommittedProgress(circlingRecorded, governed, playerInput);
+  {
+    const granted = grantLevelSkills(governed, state.character?.level ?? 1);
+    governed = granted.state;
+    if (granted.receipts.length) {
+      filteredSystemLog = [...filteredSystemLog, ...granted.receipts];
+      const log = [...(governed.log ?? [])];
+      const last = log[log.length - 1];
+      if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), ...granted.receipts] };
+      governed = { ...governed, log };
+    }
+  }
   governed = recordReplayHash(governed);
 
   const responsePath = classifyResponsePath({
