@@ -4022,6 +4022,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       locationSheet = workingState.locationSheet ?? locationSheet;
       finalLocationName = workingState.currentLocation ?? finalLocationName;
 
+      let deedRelationships: NonNullable<GameState['arcDirector']>['npcRelationships'] | undefined;
       let places = upsertPlaceFromSheet(
         touchPlaceVisit(
           workingState.places ?? liveCurrent.places ?? [],
@@ -4314,7 +4315,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
 
         const sandboxXp = applySandboxXpAwards(
-          { ...workingState, places, worldLedger, sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys },
+          {
+            ...workingState,
+            places,
+            worldLedger,
+            sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,
+            arcDirector: liveCurrent.arcDirector ?? workingState.arcDirector,
+          },
           {
             playerAction: sanitizedInput,
             locationName: finalLocationName,
@@ -4326,8 +4333,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             enemyKilled: !!ledgerRound?.enemyDead,
             endedEncounter: liveCurrent.activeEncounter ?? null,
             turn: nextTurn,
+            checkSucceeded: check.isSuccess,
           }
         );
+        if (sandboxXp.npcRelationships) deedRelationships = sandboxXp.npcRelationships;
         const sandboxNotes = [...sandboxXp.notes];
         let sandboxKeys = sandboxXp.awardKeys;
         const dailyMilestone = applyDailyQuestMilestone(
@@ -4463,9 +4472,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         worldLedger,
         sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,
         mapFocusPlace: workingState.mapFocusPlace ?? liveCurrent.mapFocusPlace ?? null,
-        arcDirector: witnessShare.ledgers
-          ? { ...(liveCurrent.arcDirector ?? workingState.arcDirector), npcMemories: witnessShare.ledgers }
-          : liveCurrent.arcDirector ?? workingState.arcDirector,
+        arcDirector:
+          witnessShare.ledgers || deedRelationships
+            ? {
+                ...(liveCurrent.arcDirector ?? workingState.arcDirector),
+                ...(witnessShare.ledgers ? { npcMemories: witnessShare.ledgers } : {}),
+                ...(deedRelationships ? { npcRelationships: deedRelationships } : {}),
+              }
+            : liveCurrent.arcDirector ?? workingState.arcDirector,
         runManifest: liveCurrent.runManifest ?? workingState.runManifest,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };

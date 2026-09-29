@@ -1142,6 +1142,8 @@ export interface SettlementQuestCard {
   source: 'seed' | 'talk';
   status: 'open' | 'done';
   offeredTurn: number;
+  /** 29s — turn the player picked this card's chip; the card stays open until its stake resolves. */
+  takenTurn?: number;
 }
 
 export interface TutorialProgress {

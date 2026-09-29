@@ -10,7 +10,16 @@ import type { GameEvent } from './parser';
 import type { ActiveEncounter, GameState, Item, NpcMemory, Quest } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { milestoneAreaOpts } from './placeAuthority';
-import { finishSettlementQuestCard, settlementCardForChip } from './settlementQuestCards';
+import {
+  finishSettlementQuestCard,
+  settlementCardForChip,
+  settlementCardResolvedBy,
+  settlementPlaceHere,
+  takeSettlementQuestCard,
+} from './settlementQuestCards';
+import { applyWitnessedDeed, presentNpcNames } from './npcRelationships';
+import { detectStanceTreatment } from './factionStandings';
+import { parsePlayerIntent } from './intentParser';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
 import { LITRPG_MILESTONE_XP, milestoneXp, type MilestoneKind } from './xpRules';
@@ -36,6 +45,8 @@ export interface SandboxXpResult {
   /** 29r — items granted this turn (settlement card finish). */
   items: Item[];
   lootNotes: string[];
+  /** 29s — NPC relationships after a witnessed deed this turn; undefined when none changed. */
+  npcRelationships?: NonNullable<GameState['arcDirector']>['npcRelationships'];
 }
 
 function hasAward(keys: string[] | undefined, key: string): boolean {
@@ -98,6 +109,16 @@ function isSignificantNpc(state: GameState, m: NpcMemory): boolean {
   return (m.facts ?? []).some((f) => /\bBible roster:/i.test(String(f)));
 }
 
+/** 29s — harm a witness would see: a hard act that attacks a present local by name, or steals. */
+function isWitnessedHarm(state: GameState, action: string): boolean {
+  if (detectStanceTreatment(action) !== 'hard') return false;
+  if (parsePlayerIntent(action).kind === 'attack') {
+    const low = action.toLowerCase();
+    return presentNpcNames(state).some((n) => low.includes(n.toLowerCase()));
+  }
+  return /\b(?:steal|steals|stole|rob|robs|robbed)\b/i.test(action);
+}
+
 function encounterKind(enc: ActiveEncounter): MilestoneKind {
   const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
   if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
@@ -123,6 +144,8 @@ export function applySandboxXpAwards(
     /** 28a — the encounter that was live at the start of this turn (for CR / boss). */
     endedEncounter?: ActiveEncounter | null;
     turn: number;
+    /** 29s — the turn's code check result; a failed check never resolves a card's stake. */
+    checkSucceeded?: boolean;
   }
 ): SandboxXpResult {
   const notes: string[] = [];
@@ -237,20 +260,46 @@ export function applySandboxXpAwards(
     }
   }
 
-  // 29r — settlement card finished: its chip picked at its place, paid once.
+  // 29s — picking a card chip takes the card (no pay); a later turn that resolves its stake finishes it once.
   const lootNotes: string[] = [];
   const items: Item[] = [];
-  const chipCard = settlementCardForChip({ ...state, places }, action, [opts.previousLocationName, loc]);
+  let npcRelationships: NonNullable<GameState['arcDirector']>['npcRelationships'] | undefined;
+  const cardLocations = [opts.previousLocationName, loc];
+  const chipCard = settlementCardForChip({ ...state, places }, action, cardLocations);
   if (chipCard) {
-    const fin = finishSettlementQuestCard({ ...state, places, sandboxAwardKeys: awardKeys }, chipCard.id);
-    if (fin.card && fin.awardKey) {
+    if (chipCard.takenTurn == null) places = takeSettlementQuestCard(places, chipCard.id, opts.turn);
+  } else {
+    const resolved = settlementCardResolvedBy({ ...state, places }, action, cardLocations, opts.turn, {
+      checkSucceeded: opts.checkSucceeded,
+      lookAround,
+    });
+    const fin = resolved ? finishSettlementQuestCard({ ...state, places, sandboxAwardKeys: awardKeys }, resolved.id) : null;
+    if (fin?.card && fin.awardKey) {
       places = fin.places;
       awardKeys.push(fin.awardKey);
       xp += fin.xp;
       notes.push(...fin.notes);
       lootNotes.push(...fin.lootNotes);
       if (fin.item) items.push(fin.item);
+      npcRelationships =
+        applyWitnessedDeed(state.arcDirector?.npcRelationships, {
+          kind: 'good',
+          id: fin.card.id,
+          turn: opts.turn,
+          witnesses: presentNpcNames(state),
+        }) ?? undefined;
     }
+  }
+
+  // 29s — harm the NPCs here saw (attacking a local by name, or stealing at a settlement place).
+  if (settlementPlaceHere({ places, currentLocation: loc ?? '' }) && isWitnessedHarm(state, action)) {
+    npcRelationships =
+      applyWitnessedDeed(npcRelationships ?? state.arcDirector?.npcRelationships, {
+        kind: 'harm',
+        id: String(opts.turn),
+        turn: opts.turn,
+        witnesses: presentNpcNames(state),
+      }) ?? npcRelationships;
   }
 
   // Main-path spine: the node walk is the main quest even when no journal objective ticks.
@@ -276,5 +325,5 @@ export function applySandboxXpAwards(
   }
 
   void opts.events;
-  return { xp, notes, awardKeys, places, items, lootNotes };
+  return { xp, notes, awardKeys, places, items, lootNotes, npcRelationships };
 }

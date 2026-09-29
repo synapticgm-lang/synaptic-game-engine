@@ -302,6 +302,134 @@ export function relationshipUiView(r: NpcRelationship): {
   };
 }
 
+/** 29s — shifts for a deed the NPC saw. Code owns these numbers, never the writer. */
+export const TOWN_DEED_SHIFT = { respect: 3, trust: 2, familiarity: 1, fear: 0 } as const;
+export const WITNESSED_DEED_SHIFT = { respect: 1, trust: 1, familiarity: 0, fear: 0 } as const;
+export const WITNESSED_HARM_SHIFT = { respect: 0, trust: -2, familiarity: 0, fear: 1 } as const;
+
+type StoredNpcRelationship = NonNullable<NonNullable<GameState['arcDirector']>['npcRelationships']>[number] & {
+  disposition?: Disposition;
+};
+
+function npcSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
+
+function hydrateStored(rec: StoredNpcRelationship, turn: number): NpcRelationship {
+  return {
+    schemaVersion: 1,
+    npcId: npcSlug(rec.npcName),
+    playerId: 'player',
+    disposition: rec.disposition ?? 'neutral',
+    trust: Number(rec.trust ?? rec.affinity ?? 0),
+    respect: Number(rec.respect ?? 0),
+    fear: Number(rec.fear ?? 0),
+    intimacy: 0,
+    familiarity: Number(rec.familiarity ?? 0),
+    firstMetTurn: turn,
+    lastInteractionTurn: turn,
+    milestones: (rec.milestones ?? []).map((m, i) => ({
+      milestoneId: `${npcSlug(rec.npcName)}-${m.type}-${m.turn ?? 0}-${i}`,
+      type: m.type as RelationshipMilestoneType,
+      turn: m.turn ?? 0,
+      sourceEventId: 'stored',
+      summary: m.summary ?? '',
+      valence: 0,
+      salience: 0,
+      permanent: false,
+      relatedNpcIds: [],
+      relatedFactionIds: [],
+      tags: [],
+    })),
+    promises: [],
+    knowledge: [],
+    boundaries: [],
+    roles: [],
+    factionIds: [],
+    availableUnlocks: [],
+    closedPaths: [],
+    revision: 0,
+  };
+}
+
+/** Names of the NPCs present here (scene presence plus present memories), minus the live foe. */
+export function presentNpcNames(state: GameState): string[] {
+  const foe = (state.activeEncounter?.name ?? '').trim().toLowerCase();
+  const out = new Map<string, string>();
+  const add = (n: unknown) => {
+    const name = String(n ?? '').trim();
+    const key = name.toLowerCase();
+    if (!name || key === foe || out.has(key)) return;
+    out.set(key, name);
+  };
+  (state.sceneFacts?.present ?? []).forEach(add);
+  (state.npcMemories ?? []).filter((m) => m.present === true).forEach((m) => add(m.npcName));
+  return [...out.values()];
+}
+
+/**
+ * 29s — apply one deed to every NPC who saw it, through applyRelationshipEvent. Respect lives on
+ * the NPC record, so it follows them to other places. A good deed shifts a first-time witness by
+ * TOWN_DEED_SHIFT and anyone who already saw one of the player's good deeds by WITNESSED_DEED_SHIFT;
+ * harm shifts trust and fear. Each deed id applies once per NPC. Returns null when nothing changed.
+ */
+export function applyWitnessedDeed(
+  stored: StoredNpcRelationship[] | undefined,
+  deed: { kind: 'good' | 'harm'; id: string; turn: number; witnesses: string[] }
+): StoredNpcRelationship[] | null {
+  const list = [...(stored ?? [])];
+  const deedKey = `${deed.kind}:${deed.id}`;
+  let changed = false;
+  for (const witness of deed.witnesses) {
+    const name = witness.trim();
+    if (!name) continue;
+    const idx = list.findIndex((r) => (r.npcName ?? '').trim().toLowerCase() === name.toLowerCase());
+    const rec: StoredNpcRelationship = idx >= 0 ? list[idx] : { npcName: name, trust: 0, respect: 0, fear: 0, familiarity: 0 };
+    const seen = rec.witnessedDeeds ?? [];
+    if (seen.includes(deedKey)) continue;
+    const shift =
+      deed.kind === 'harm'
+        ? WITNESSED_HARM_SHIFT
+        : seen.some((k) => k.startsWith('good:'))
+          ? WITNESSED_DEED_SHIFT
+          : TOWN_DEED_SHIFT;
+    const current = hydrateStored(rec, deed.turn);
+    const next = applyRelationshipEvent(current, {
+      eventId: `${deedKey}:${current.npcId}`,
+      npcId: current.npcId,
+      turn: deed.turn,
+      kind: deed.kind === 'harm' ? 'threat' : 'public_act',
+      trustDelta: shift.trust,
+      respectDelta: shift.respect,
+      fearDelta: shift.fear,
+      intimacyDelta: 0,
+      familiarityDelta: shift.familiarity,
+      notes: [],
+    });
+    const updated: StoredNpcRelationship = {
+      ...rec,
+      trust: next.trust,
+      affinity: next.trust,
+      respect: next.respect,
+      fear: next.fear,
+      familiarity: next.familiarity,
+      witnessedDeeds: [...seen, deedKey],
+    };
+    if (idx >= 0) list[idx] = updated;
+    else list.push(updated);
+    changed = true;
+  }
+  return changed ? list : null;
+}
+
+/** Stored relationship record for an NPC by name (any place). */
+export function storedRelationshipFor(state: GameState, npcName: string): StoredNpcRelationship | undefined {
+  const key = npcName.trim().toLowerCase();
+  return (state.arcDirector?.npcRelationships ?? []).find((r) => (r.npcName ?? '').trim().toLowerCase() === key) as
+    | StoredNpcRelationship
+    | undefined;
+}
+
 /**
  * Get or create relationship for NPC
  */

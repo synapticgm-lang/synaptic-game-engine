@@ -218,18 +218,27 @@ function settlementCardItem(state: GameState, cardId: string): Item | null {
   return null;
 }
 
+/** 29s — the player picked this card's chip: stamp it taken. It stays open and pays nothing. */
+export function takeSettlementQuestCard(places: PlaceRecord[], cardId: string, turn: number): PlaceRecord[] {
+  return places.map((p) =>
+    p.questCards?.some((c) => c.id === cardId && c.status === 'open' && c.takenTurn == null)
+      ? { ...p, questCards: p.questCards.map((c) => (c.id === cardId ? { ...c, takenTurn: turn } : c)) }
+      : p
+  );
+}
+
 /**
- * 29r — finish an open settlement card once: mark it done, pay the quest-complete milestone
- * (D&D reads the area level for the High band; rpg / litrpg the flat amount; over-level cut
- * applies) and grant one grade-1 chest item. A done or already-paid card returns nothing.
- * PYOA never pays.
+ * 29r / 29s — finish a taken, open settlement card once: mark it done, pay the quest-complete
+ * milestone (D&D reads the area level for the High band; rpg / litrpg the flat amount; over-level
+ * cut applies) and grant one grade-1 chest item. A card whose chip was never picked, a done card,
+ * or an already-paid card returns nothing. PYOA never pays.
  */
 export function finishSettlementQuestCard(state: GameState, cardId: string): SettlementCardFinish {
   const places = state.places ?? [];
   const none: SettlementCardFinish = { places, card: null, xp: 0, notes: [], lootNotes: [], awardKey: null, item: null };
   const card = places.flatMap((p) => p.questCards ?? []).find((c) => c.id === cardId);
   const awardKey = settlementCardAwardKey(cardId);
-  if (!card || card.status !== 'open' || (state.sandboxAwardKeys ?? []).includes(awardKey)) return none;
+  if (!card || card.status !== 'open' || card.takenTurn == null || (state.sandboxAwardKeys ?? []).includes(awardKey)) return none;
   if (state.engineMode === 'pyoa') return none;
   const done = completeSettlementQuestCard(places, cardId);
   const area = resolveLocalAreaLevel(state);
@@ -270,6 +279,55 @@ export function settlementCardForChip(
     const place = settlementPlaceHere({ places: state.places, currentLocation: loc });
     const card = (place?.questCards ?? []).find((c) => c.status === 'open' && chipKey(c.label) === said);
     if (card) return card;
+  }
+  return null;
+}
+
+/** Verbs that carry a card's stake through to an outcome (on top of find / bring / stop / deliver). */
+const RESOLVE_BY_STAKE: Record<SettlementQuestTemplate['stake'], RegExp> = {
+  missing: /\b(return(?:s|ed)?|fetch(?:es|ed)?|rescue[sd]?|lead|led|carry|carried)\b/i,
+  theft: /\b(recover(?:s|ed)?|return(?:s|ed)?|catch(?:es)?|caught|get back|got back)\b/i,
+  job: /\b(finish(?:es|ed)?|complete[sd]?|mend(?:s|ed)?|cut|cuts|clear(?:s|ed)?|fix(?:es|ed)?|repair(?:s|ed)?|haul(?:s|ed)?|hand(?:s|ed)? (?:over|it)|take[ns]? (?:it|the \w+) (?:to|across))\b/i,
+  threat: /\b(clear(?:s|ed)?|fix(?:es|ed)?|drive (?:off|out)|drove (?:off|out)|kill(?:s|ed)?|seal(?:s|ed)?|purif(?:y|ies|ied)|mend(?:s|ed)?|repair(?:s|ed)?)\b/i,
+  debt: /\b(collect(?:s|ed)?|get paid|got paid|recover(?:s|ed)?)\b/i,
+};
+
+function cardWords(card: SettlementQuestCard): string[] {
+  return chipKey(`${card.label} ${card.params.what ?? ''}`)
+    .split(' ')
+    .filter((w) => w.length >= 4);
+}
+
+/**
+ * 29s — the taken card whose stake this turn resolves, at its own place. The chip must have been
+ * picked on an earlier turn; this line is not the chip again, not a look-around, carries a verb that
+ * moves the stake to an outcome, and the turn's code check did not fail. Otherwise null.
+ */
+export function settlementCardResolvedBy(
+  state: GameState,
+  action: string,
+  locations: Array<string | undefined>,
+  turn: number,
+  opts: { checkSucceeded?: boolean; lookAround?: boolean } = {}
+): SettlementQuestCard | null {
+  if (state.openingEstablishment?.complete === false) return null;
+  if (state.activeDungeon || state.activeEncounter) return null;
+  if (opts.checkSucceeded === false || opts.lookAround) return null;
+  const said = chipKey(action);
+  if (!said) return null;
+  for (const loc of locations) {
+    if (!loc) continue;
+    const place = settlementPlaceHere({ places: state.places, currentLocation: loc });
+    const taken = (place?.questCards ?? []).filter(
+      (c) => c.status === 'open' && c.takenTurn != null && c.takenTurn < turn && chipKey(c.label) !== said
+    );
+    const resolving = taken.filter((c) => {
+      const stake = SETTLEMENT_QUEST_LIBRARY.find((t) => t.id === c.templateId)?.stake;
+      return ACTION.test(action) || (!!stake && RESOLVE_BY_STAKE[stake].test(action));
+    });
+    if (!resolving.length) continue;
+    const named = resolving.find((c) => cardWords(c).some((w) => said.includes(w)));
+    return named ?? resolving[0];
   }
   return null;
 }

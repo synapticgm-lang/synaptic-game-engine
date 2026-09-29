@@ -1730,6 +1730,7 @@ Do NOT print dice notation or CODE ENFORCED.
     {
       ...working,
       sandboxAwardKeys: working.sandboxAwardKeys ?? state.sandboxAwardKeys,
+      arcDirector: arcState.arcDirector,
     },
     {
       playerAction: playerInput,
@@ -1790,7 +1791,9 @@ Do NOT print dice notation or CODE ENFORCED.
       'activeEncounter' in working
         ? (working.activeEncounter ?? null)
         : (arcState.activeEncounter ?? null),
-    arcDirector: arcState.arcDirector,
+    arcDirector: sandboxXp.npcRelationships
+      ? { ...arcState.arcDirector, npcRelationships: sandboxXp.npcRelationships }
+      : arcState.arcDirector,
     runManifest: arcState.runManifest,
   };
   {

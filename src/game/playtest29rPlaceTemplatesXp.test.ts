@@ -13,7 +13,7 @@ import {
   placeTemplateById,
   settlementShapeTemplate,
 } from './placeTemplates';
-import { finishSettlementQuestCard } from './settlementQuestCards';
+import { finishSettlementQuestCard, takeSettlementQuestCard } from './settlementQuestCards';
 import { applySandboxXpAwards } from './sandboxXp';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { DND_XP_BUDGET_PER_CHARACTER, LITRPG_MILESTONE_XP, milestoneXp, type MilestoneKind } from './xpRules';
@@ -27,9 +27,10 @@ const farmVillage: WorldOutlineSettlement = {
 const atlas = (settlements: WorldOutlineSettlement[]) =>
   ({ settlements, regions: [], outlineName: 'Test', description: '' }) as never;
 
-function st(mode: EngineMode, level: number, threatTier: number): GameState {
+function st(mode: EngineMode, level: number, threatTier: number, take = true): GameState {
   const s = createInitialState('Ria', mode);
-  const place: PlaceRecord = { ...seedWorldMapPlaces([], atlas([farmVillage]), { seed: 'seed-29r' })[0], threatTier };
+  const seeded: PlaceRecord = { ...seedWorldMapPlaces([], atlas([farmVillage]), { seed: 'seed-29r' })[0], threatTier };
+  const place: PlaceRecord = take ? takeSettlementQuestCard([seeded], seeded.questCards![0].id, 1)[0] : seeded;
   return {
     ...s,
     engineMode: mode,
@@ -129,10 +130,10 @@ describe('29r XP in every mode', () => {
     }
   });
 
-  it('picking the card chip at its place finishes it through the sandbox XP pass, once', () => {
-    const s = st('litrpg', 1, 1);
+  it('picking the card chip at its place takes the card and pays nothing (29s)', () => {
+    const s = st('litrpg', 1, 1, false);
     const card = cardOf(s);
-    const opts = {
+    const first = applySandboxXpAwards(s, {
       playerAction: card.label,
       locationName: 'Oakfield',
       previousLocationName: 'Oakfield',
@@ -140,14 +141,11 @@ describe('29r XP in every mode', () => {
       questsAfter: [],
       events: [],
       turn: 2,
-    };
-    const first = applySandboxXpAwards(s, opts);
-    expect(first.notes.some((n) => n.includes('quest complete') && n.includes(String(LITRPG_MILESTONE_XP.questComplete)))).toBe(true);
-    expect(first.items).toHaveLength(1);
-    expect(first.places![0].questCards![0].status).toBe('done');
-    const second = applySandboxXpAwards({ ...s, places: first.places, sandboxAwardKeys: first.awardKeys }, opts);
-    expect(second.items).toHaveLength(0);
-    expect(second.notes.some((n) => n.includes('quest complete'))).toBe(false);
+    });
+    expect(first.notes.some((n) => n.includes('quest complete'))).toBe(false);
+    expect(first.items).toHaveLength(0);
+    expect(first.places![0].questCards![0].status).toBe('open');
+    expect(first.places![0].questCards![0].takenTurn).toBe(2);
   });
 
   it('six levels above the area pays 5 percent in all three modes', () => {
@@ -185,8 +183,8 @@ describe('29r XP in every mode', () => {
     expect(finishSettlementQuestCard(s, cardOf(s).id).xp).toBe(0);
   });
 
-  it('stamp is 2026-09-29r1', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29r1');
-    expect(BUILD_STAMP).toBe('2026-09-29r1');
+  it('stamp is 2026-09-29s1', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29s1');
+    expect(BUILD_STAMP).toBe('2026-09-29s1');
   });
 });

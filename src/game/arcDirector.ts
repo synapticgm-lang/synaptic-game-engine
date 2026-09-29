@@ -173,11 +173,14 @@ export interface ArcDirectorState {
     respect?: number;
     fear?: number;
     affinity?: number;
+    familiarity?: number;
     milestones?: Array<{
       type: string;
       turn: number;
       summary: string;
     }>;
+    /** 29s — deeds this NPC saw (`good:<cardId>` / `harm:<turn>`); each applies once. */
+    witnessedDeeds?: string[];
   }>;
   
   // WS-4 Wave D+: Encounter Density Governance
