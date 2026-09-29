@@ -35,7 +35,7 @@ export type WriterDraft = {
   refs?: TokenUseRef[];
 };
 
-export type WriterTurnOutcome = 'accepted' | 'revised' | 'last-resort' | 'empty';
+export type WriterTurnOutcome = 'accepted' | 'revised' | 'reasked' | 'last-resort' | 'empty';
 
 export type WriterTurnResult = WriterDraft & {
   outcome: WriterTurnOutcome;
@@ -137,6 +137,43 @@ export function formatWriterRevisionFacing(
   ].join('\n');
 }
 
+const WHOLE_REPEAT_PROBLEM = /^(Repeats an earlier beat|Same text as the last beat)/;
+
+/** A draft-check list that flags the beat as a repeat of earlier text (not just one reused line). */
+export function repeatsEarlierBeat(problems: readonly string[]): boolean {
+  return problems.some((p) => WHOLE_REPEAT_PROBLEM.test(p));
+}
+
+/** The sentences of a repeated draft that were already told, for naming them to the writer. */
+export function recycledLinesToName(draft: string, check: DraftCheck): string[] {
+  const recent = recentGmBeatTexts(check.state);
+  if (check.previousGm && !recent.includes(check.previousGm)) recent.push(check.previousGm);
+  const reused = recycledSentencesIn(draft, recent).map((s) => s.replace(/\s+/g, ' ').trim());
+  if (reused.length) return [...new Set(reused)].slice(0, 5);
+  const whole = draft.replace(/\s+/g, ' ').trim();
+  return whole ? [whole.slice(0, 240)] : [];
+}
+
+/**
+ * 28v2 — a fresh ask (no draft to edit) after the beat and its revision both repeated earlier text.
+ * The already-told sentences are named as issues so the writer writes around them.
+ */
+export function formatFreshReaskFacing(
+  packet: CompletedEventPacket,
+  state: GameState,
+  recycled: readonly string[],
+  perspective?: NarrativePerspective
+): string {
+  return [
+    formatTalkWriterFacing(packet, state, { perspective }),
+    '',
+    'ISSUES (an earlier attempt at this beat repeated what the story already told):',
+    ...recycled.map((s) => `- Already told, do not reuse: "${s.slice(0, 160)}"`),
+    '- Write this beat fresh from the facts above: what is new this turn, in new sentences.',
+    'Return the whole beat in the same JSON shape (plain prose is also accepted).',
+  ].join('\n');
+}
+
 export type WriterIssue = WriterRawIssue | 'recycled' | 'unresolved';
 
 const RECYCLE_NOTE =
@@ -217,6 +254,22 @@ export async function runWriterTurn(opts: {
         remaining = left;
         outcome = 'revised';
       }
+    }
+  }
+
+  // 28v2 — the beat still repeats earlier text after the revision: never commit it. One fresh ask to
+  // the same writer with the recycled sentences named; an empty reply drops to the plain-prose ask.
+  if (draft.prose && repeatsEarlierBeat(remaining)) {
+    extraCalls += 1;
+    const recycled = recycledLinesToName(draft.prose, check);
+    const raw = await callWriter(formatFreshReaskFacing(packet, state, recycled, opts.perspective));
+    const fresh = renderWriterDraft(raw, state, packet);
+    if (fresh.prose) {
+      draft = fresh;
+      remaining = writerDraftProblems(fresh.prose, check);
+      outcome = 'reasked';
+    } else {
+      draft = { prose: '', path: draft.path };
     }
   }
 

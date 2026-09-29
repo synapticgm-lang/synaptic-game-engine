@@ -1392,7 +1392,8 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   const askedRepeat = playerAsksRepeat(playerInput);
-  const usedWriterRetry = writerTurn?.outcome === 'revised' || writerTurn?.outcome === 'last-resort';
+  const usedWriterRetry =
+    writerTurn?.outcome === 'revised' || writerTurn?.outcome === 'reasked' || writerTurn?.outcome === 'last-resort';
   let usedPacketStitch = false;
   const tokenPath: string | undefined = writerTurn?.path;
   const retryTokenVerdicts: string[] | undefined = undefined;

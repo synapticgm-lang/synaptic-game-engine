@@ -2942,7 +2942,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             remaining: writerTurn.remaining,
           });
         }
-        if (writerTurn.firstDraft && writerTurn.outcome === 'revised') {
+        if (writerTurn.firstDraft && (writerTurn.outcome === 'revised' || writerTurn.outcome === 'reasked')) {
           liveCurrent = appendSpeculativeTake(liveCurrent, {
             turnPlanned: liveCurrent.turn + 1,
             expectedRevision: currentLedgerRevision(liveCurrent),
