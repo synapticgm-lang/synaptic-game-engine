@@ -240,15 +240,33 @@ export function refEnumOf(state: GameState, packet?: CompletedEventPacket): Ledg
   return compileRefEnum(state, [], { hallTalk });
 }
 
+/**
+ * 29y — a declared ref binds by its id. The writer's own numbering can differ from the REF ENUM
+ * ({"tok":"t3","id":"kit:shortsword"} while t3 is a person), so the tok only decides when no id is given
+ * or the id is itself a token ("t6"). An id the ledger does not hold binds to nothing.
+ */
 function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | undefined {
-  const t = tok.replace(/^@/, '').toLowerCase();
-  const byTok = enumRefs.find((r) => r.tok.toLowerCase() === t);
-  if (byTok) return byTok;
-  if (id) {
-    const want = id.toLowerCase();
-    return enumRefs.find((r) => r.id.toLowerCase() === want);
+  const byTokOf = (s: string) => {
+    const t = s.replace(/^@/, '').toLowerCase();
+    return enumRefs.find((r) => r.tok.toLowerCase() === t);
+  };
+  if (id?.trim()) {
+    const want = id.trim().toLowerCase();
+    const byId = enumRefs.find((r) => r.id.toLowerCase() === want);
+    if (byId) return byId;
+    if (/^@?t\d+$/.test(want)) return byTokOf(want);
+    return undefined;
   }
-  return undefined;
+  return byTokOf(tok);
+}
+
+/** Toks the reply declared with an id the ledger does not hold: their lines cannot be painted honestly. */
+function unboundDeclaredToks(beat: TokenBeat, enumRefs: LedgerRef[]): Set<string> {
+  const out = new Set<string>();
+  for (const ref of beat.refs) {
+    if (!findEnum(enumRefs, ref.tok, ref.id)) out.add(ref.tok.replace(/^@/, '').toLowerCase());
+  }
+  return out;
 }
 
 export type LineVerdict = { ok: boolean; reason?: string };
@@ -319,6 +337,8 @@ export function bindCheckFails(beat: TokenBeat, enumRefs: LedgerRef[]): string[]
 
 export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[]): string {
   const byTok = new Map(enumRefs.map((r) => [r.tok.toLowerCase(), r.display]));
+  const unbound = unboundDeclaredToks(beat, enumRefs);
+  for (const tok of unbound) byTok.delete(tok);
   for (const ref of beat.refs) {
     const row = findEnum(enumRefs, ref.tok, ref.id);
     if (row) byTok.set(ref.tok.replace(/^@/, '').toLowerCase(), row.display);
@@ -329,7 +349,12 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[]): string 
     if (display) painted.add(display);
     return display;
   };
-  const sentences = beat.lines.map((line) => {
+  const lines = beat.lines.filter((line) => {
+    const used = toksInText(line.text).map((t) => t.toLowerCase());
+    if (line.speaker_tok) used.push(line.speaker_tok.replace(/^@/, '').toLowerCase());
+    return !used.some((t) => unbound.has(t));
+  });
+  const sentences = lines.map((line) => {
     let next = line.text;
     next = next.replace(TOK_RE, (_m, n: string) => paint(n));
     next = next.replace(/@t(\d+)\b/g, (_m, n: string) => paint(n));
@@ -439,9 +464,11 @@ export function normalizeBeatRefs(beat: TokenBeat, enumRefs: LedgerRef[]): Token
 export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): string {
   const src = raw ?? '';
   const displayByTok = new Map<string, string>();
+  const unbound = new Set<string>();
   for (const m of src.matchAll(/"tok"\s*:\s*"@?(t\d+)"[^{}]*?"id"\s*:\s*"([^"]+)"/g)) {
     const row = findEnum(enumRefs, m[1], m[2]);
     if (row) displayByTok.set(m[1].toLowerCase(), row.display);
+    else unbound.add(m[1].toLowerCase());
   }
   const texts: string[] = [];
   for (const m of src.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)) {
@@ -452,6 +479,7 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
       text = text.replace(/\\"/g, '"').replace(/\\n/g, ' ');
     }
     if (/^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text.trim()) || /<[^<>]{2,40}>/.test(text)) continue;
+    if ([...text.matchAll(/@t(\d+)\b/gi)].some((t) => unbound.has(`t${t[1]}`) && !displayByTok.has(`t${t[1]}`))) continue;
     const painted = text.replace(/@t(\d+)\b/gi, (_m, n: string) =>
       displayByTok.get(`t${n}`) ?? findEnum(enumRefs, `t${n}`)?.display ?? '');
     const line = tidy(painted);

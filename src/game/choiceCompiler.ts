@@ -71,6 +71,7 @@ import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
 import { rankChoices } from './choiceRanking';
+import { withRememberedThreatChip } from './placeThreats';
 import { isJourneyUnderway, withJourneyPads } from './travelJourney';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
@@ -1337,6 +1338,13 @@ export function compileChoices(
     const ranked = rankChoices(state, finalChoices);
     finalChoices = ranked.choices;
     notes.push(...ranked.notes);
+  }
+
+  // 29y — a threat remembered at this place keeps the fight chip on the card.
+  if (!engaged && !coverCombatLock) {
+    const withThreat = withRememberedThreatChip(state, finalChoices);
+    if (withThreat !== finalChoices) notes.push('Remembered threat: fight chip');
+    finalChoices = withThreat;
   }
 
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context

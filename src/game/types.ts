@@ -362,6 +362,18 @@ export interface ActiveEncounter {
   caught?: boolean;
 }
 
+/** 29y — a threat remembered at one place (the existing encounter, parked while no fight is live). */
+export interface PlaceThreat {
+  /** Place name as the engine had it (display only; the map key is the lowercased name). */
+  place: string;
+  encounter: ActiveEncounter;
+  storedTurn: number;
+  /** Parleys this threat has refused (engine check failed / refused on the ledger). */
+  parleyRefused?: number;
+  /** How the last try ended while it stayed: still live, the player lost, or nothing settled it. */
+  lastOutcome?: 'live' | 'defeat' | 'unsettled';
+}
+
 export interface OpeningEstablishment {
   pending: Array<{
     id: string;
@@ -544,6 +556,8 @@ export interface GameState {
   /** Journal Resume main pin — map chrome highlights this place name. */
   mapFocusPlace?: string | null;
   activeEncounter?: ActiveEncounter | null;
+  /** 29y — a hostile threat that entered the scene at a place, kept there until beaten or fled. Keyed by place. */
+  placeThreats?: Record<string, PlaceThreat>;
   /**
    * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).
    * null = closed story (typical PYOA) — no continent atlas.
@@ -1145,6 +1159,10 @@ export interface CirclingMemory {
   recentPlaces?: string[];
   /** 28o — action families of the last turns, newest last. */
   recentFamilies?: string[];
+  /** 29y — the turn the engine last committed a change of place (the writer is told whether this turn moved). */
+  movedTurn?: number;
+  /** 29y — the place the run started in (the first circling record). */
+  openingPlace?: string;
 }
 
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */

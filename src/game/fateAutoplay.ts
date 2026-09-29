@@ -15,6 +15,7 @@ import {
   nudgeIfStuck,
   recordCirclingTurn,
 } from './choiceRanking';
+import { applyRememberedThreatPick } from './placeThreats';
 import { pathToFileURL } from 'node:url';
 import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
@@ -1017,7 +1018,11 @@ export async function headlessFateTurn(
       ? meta.playerInputOverride.trim()
       : meta.mode === 'first-pad'
         ? offered[0] ?? 'Look around'
-        : applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng)).pick;
+        : applyRememberedThreatPick(
+            state,
+            offered,
+            applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng)).pick
+          ).pick;
 
   let playerInput = fatePick;
   let repairNote: string | undefined;

@@ -55,6 +55,7 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
+import { parkedThreatHere, syncPlaceThreat } from './placeThreats';
 import { applyRestHeal } from './recoveryRules';
 import { isLookAroundAction } from './sandboxXp';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
@@ -246,6 +247,7 @@ export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
   if (playerIsTravelingAway(playerInput)) return false;
   if (!state.openingEstablishment?.complete) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
+  if (parkedThreatHere(state)) return false;
   if (!engineAllowsCombat(state)) return false;
   if (state.arcDirector?.lastEncounterClearedTurn === state.turn) return false;
   if (isEncounterOnCooldown(state, state.sceneFacts?.lastKill?.name ?? '')) return false;
@@ -544,6 +546,7 @@ function applyBeatEffects(
     contract.spawnEncounter
     && !next.activeEncounter
     && next.arcDirector?.lastEncounterClearedTurn !== next.turn
+    && !parkedThreatHere(next)
   ) {
     // WS-4 Wave D+: Check density before spawning
     const locationId = next.currentLocation?.name ?? 'unknown';
@@ -663,7 +666,9 @@ export function runArcDirectorBeforeGm(
     working = tick.state;
     systemReceipts.push(...tick.receipts);
     if (engineFight) mandates.push(engineFight.facts);
-    if (!working.activeEncounter) {
+    if (!working.activeEncounter && engineFight?.foeAfter) {
+      mandates.push(`ENCOUNTER HELD: ${engineFight.foeAfter.name} beat you back and still holds this place. It was not beaten or talked down.`);
+    } else if (!working.activeEncounter) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
       // 29b — voice line on combat clear
       const voice = pickStatusVoiceLine(working, 'xp_gain');
@@ -1046,6 +1051,9 @@ export function runArcDirectorBeforeGm(
       lastTurnJob: turnJob,
     },
   };
+
+  // 29y — a threat stays on its place until beaten or fled.
+  working = syncPlaceThreat(state, working, systemReceipts, engineFight?.foeAfter);
 
   return {
     state: working,

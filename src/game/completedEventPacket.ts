@@ -123,6 +123,8 @@ export interface CompletedEventPacket {
   /** 28g — the engine's resolved result for the player's action (fight / flee / parley / rest). Required fact. */
   engineResult?: string;
   exitNames?: string[];
+  /** 29y — did the state move this turn: the story narrates only the move the engine committed. */
+  movement?: string;
 }
 
 export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion';
@@ -339,9 +341,18 @@ export type NounAllowlistOpts = {
  * Hall talk strips novel present[] so a leftover invent cannot re-license itself.
  */
 function castMentionNames(state: GameState): string[] {
-  return state.openingEstablishment?.castNpcIds?.length
-    ? openingCastRecords(state).map((r) => r.npcName)
-    : openingCastNames(state);
+  if (state.openingEstablishment?.castNpcIds?.length) return openingCastRecords(state).map((r) => r.npcName);
+  // 29y — a card role label with no NPC record ("the innkeep") belongs to the opening place only;
+  // offered elsewhere it stood in for a priest, a weapon or a trap.
+  return atOpeningPlace(state) ? openingCastNames(state) : [];
+}
+
+function atOpeningPlace(state: GameState): boolean {
+  const c = state.circling;
+  if (!c?.lastLocation) return true;
+  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (c.openingPlace) return key(state.currentLocation) === key(c.openingPlace);
+  return !c.prevPlace;
 }
 
 export function compileNounAllowlist(
@@ -644,7 +655,7 @@ export function buildCompletedEventPacket(
   const hallTalk = verb === 'spoke' || isHallTalkPlayerLine(action);
   if (hallTalk) {
     const cast = openingCastLabel(state);
-    if (cast) allowExtras.push(cast);
+    if (cast && (openingCastRecords(state).length || atOpeningPlace(state))) allowExtras.push(cast);
   }
   const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk });
   const refEnum = compileRefEnum(state, allowExtras, { hallTalk });
@@ -698,7 +709,27 @@ export function buildCompletedEventPacket(
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
     ledgerSheet: ledgerSheetLine(state) || undefined,
     engineResult: extras?.engineResult?.trim() || undefined,
+    movement: movementFact(state) || undefined,
   };
+}
+
+/** 29y — one visit per place: the move the engine committed this turn, or that nothing moved. */
+export function movementFact(state: GameState): string {
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  if (!here) return '';
+  const c = state.circling;
+  const movedNow = c?.movedTurn != null && c.movedTurn === state.turn;
+  const j = state.journey;
+  if (j && j.legsDone < j.legsTotal) {
+    return movedNow
+      ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${j.ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
+      : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.`;
+  }
+  if (movedNow && c?.prevPlace) {
+    return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
+  }
+  if (!c?.lastLocation) return '';
+  return `No move this turn: at ${here} before and after. Do not narrate leaving, travelling or arriving.`;
 }
 
 type LedgerPlaceFacts = {
@@ -747,7 +778,7 @@ function sceneAnswerWho(state: GameState): string {
   const here = presentNpcRecords(state);
   if (here.length) return here[0].npcName;
   if (openingCastRecords(state).length) return '';
-  return openingCastLabel(state);
+  return atOpeningPlace(state) ? openingCastLabel(state) : '';
 }
 
 function listNames(names: string[]): string {
@@ -917,6 +948,7 @@ export function formatWriterFacingEvent(
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);
+  if (packet.movement) lines.push(packet.movement);
   if (packet.justKilled && packet.lastKill?.name) {
     lines.push(`Last kill: ${packet.lastKill.name} (corpse).`);
   } else if (packet.lastKill?.name && packet.lastKill.remains) {

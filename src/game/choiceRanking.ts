@@ -99,6 +99,8 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       lastProgressTurn: progressed ? state.turn ?? 0 : mem.lastProgressTurn,
       prevPlace: moved ? mem.lastLocation : mem.prevPlace,
       lastLocation: here,
+      movedTurn: moved ? state.turn ?? 0 : mem.movedTurn,
+      openingPlace: mem.openingPlace ?? (state.circling ? undefined : here || undefined),
     },
   };
 }

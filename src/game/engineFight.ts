@@ -17,6 +17,7 @@ import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, weaponCategory } from './checkRules';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
+import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -28,6 +29,8 @@ export interface EngineFightResult {
   receipts: string[];
   /** The one writer mandate: the engine outcome as facts. */
   facts: string;
+  /** 29y — the foe as the fight left it when the player lost (it stays at the place). */
+  foeAfter?: ActiveEncounter;
 }
 
 function nameKey(name: string): string {
@@ -74,12 +77,15 @@ const FACTS_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once, add no 
 export function resolveEngineFight(state: GameState, playerInput: string): EngineFightResult | null {
   const input = (playerInput ?? '').trim();
   const pending = state.activeEncounter ? null : state.sceneFacts?.pendingEncounter ?? null;
-  const raw = state.activeEncounter ?? pending;
+  // 29y — a threat remembered at this place is the same foe, fought through the same path.
+  const parked = state.activeEncounter || pending ? null : parkedThreatHere(state);
+  const raw = state.activeEncounter ?? pending ?? (parked ? wakeParkedThreat(parked) : null);
   if (!raw || !input) return null;
   const flee = FLEE_RE.test(input);
   const parley = !flee && PARLEY_RE.test(input);
   const attack = !flee && !parley && ATTACK_RE.test(input);
   if (!flee && !parley && !attack) return null;
+  if (parked && (flee || /\b(talk|ask|speak|conversation)\b/i.test(input))) return null;
   // 28r — gear/skill approach, read before the foe is engaged (a strike from hiding needs an unaware foe).
   const approach = approachFromInput(state, input);
 
@@ -176,5 +182,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const what = opener + (result.victory
     ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}, dealt ${result.damageDealt} damage and took ${result.damageReceived}. ${enc.name} went down and stayed down.${found}`
     : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, alive at ${hpAfter} HP.`);
-  return { state: next, receipts, facts: `${FACTS_HEAD} ${what}` };
+  const foeAfter = result.victory
+    ? undefined
+    : { ...enc, hp: Math.max(1, Math.min(enc.maxHp || enc.hp, result.finalEnemyHp)), phase: 'engaged' as const };
+  return { state: next, receipts, facts: `${FACTS_HEAD} ${what}`, foeAfter };
 }
