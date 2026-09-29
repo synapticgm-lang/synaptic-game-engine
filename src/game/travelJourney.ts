@@ -494,6 +494,14 @@ const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
   villain: 'here on their own business',
 };
 
+/** Writer fact: the meeting on this stretch is on the page before any chip meets it. */
+export function roadMeetingFact(j: TravelJourney | null | undefined): string {
+  const e = j?.encounter;
+  if (!e || e.engaged) return '';
+  const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
+  return `On this stretch: ${base}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
+}
+
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
   const e = j.encounter;

@@ -70,7 +70,7 @@ export const INSIDE_TEMPLATES: PlaceTemplate[] = [
     'A lived-in house',
     ['Front room', 'Kitchen', 'Bedroom', 'Pantry'],
     ['house', 'cottage', 'home', 'farmhouse', 'homestead', 'dwelling', 'croft'],
-    [[0.9, 1.3, 1.5, 1.1], [0.9, 0, 1.3, 1.15], [2.55, 1.35, 1.05, 1.0], [2.35, 0.1, 0.8, 0.85]],
+    [[0.9, 1.4, 2.5, 1.0], [0.9, 0, 1.3, 1.2], [2.3, 0.5, 1.1, 0.85], [2.3, 0, 0.8, 0.45]],
     [[1, 3]]
   ),
   template(
@@ -79,7 +79,7 @@ export const INSIDE_TEMPLATES: PlaceTemplate[] = [
     'A shop with a counter',
     ['Shop floor', 'Counter', 'Workroom', 'Stockroom'],
     ['shop', 'store', 'smithy', 'forge', 'bakery', 'apothecary', 'chandlery', 'workshop'],
-    [[0, 1.2, 1.9, 1.2], [0.4, 0.35, 1.1, 0.7], [2.05, 0.2, 1.1, 1.0], [2.05, 1.35, 1.0, 0.9]],
+    [[0, 1.2, 1.9, 1.2], [0.4, 0.2, 1.55, 0.85], [2.05, 0.2, 1.1, 1.0], [2.05, 1.35, 1.0, 0.9]],
     [[0, 3]]
   ),
   template(
@@ -97,7 +97,7 @@ export const INSIDE_TEMPLATES: PlaceTemplate[] = [
     'A barn with stalls and a loft ladder',
     ['Barn floor', 'Stalls', 'Hayloft ladder', 'Tack room'],
     ['barn', 'stable', 'stables', 'granary', 'byre', 'cowshed'],
-    [[0, 0.8, 2.4, 1.6], [2.55, 0.8, 0.9, 1.6], [0.3, 0, 0.7, 0.7], [1.2, 0, 1.0, 0.7]],
+    [[0, 0.8, 2.4, 1.6], [2.55, 0.8, 0.9, 1.6], [2.55, 0, 0.9, 0.7], [1.45, 0, 1.0, 0.7]],
     [[0, 3]]
   ),
 ];
@@ -165,7 +165,7 @@ export const VEHICLE_TEMPLATES: PlaceTemplate[] = [
     'A fishing boat',
     ['Deck', 'Wheelhouse', 'Fish hold'],
     ['fishing boat', 'trawler', 'smack'],
-    [[0, 0.3, 1.8, 1.0], [1.9, 0.35, 0.8, 0.9], [0.4, 1.45, 1.2, 0.7]]
+    [[0, 0.3, 1.8, 1.0], [1.9, 0.35, 0.8, 0.9], [1.3, 1.35, 1.4, 0.7]]
   ),
   template(
     'veh-boat-barge',
@@ -173,7 +173,7 @@ export const VEHICLE_TEMPLATES: PlaceTemplate[] = [
     'A river barge',
     ['Open deck', 'Cabin', 'Cargo well'],
     ['barge', 'keelboat', 'flatboat'],
-    [[0, 0, 2.2, 1.0], [2.3, 0.1, 0.9, 0.8], [0.3, 1.1, 1.6, 0.8]]
+    [[0, 0, 2.2, 1.0], [2.3, 0.1, 0.9, 0.8], [1.6, 1.1, 1.6, 0.8]]
   ),
   template(
     'veh-boat-cargo',
@@ -181,7 +181,7 @@ export const VEHICLE_TEMPLATES: PlaceTemplate[] = [
     'A cargo ship',
     ['Main deck', 'Captain cabin', 'Crew quarters', 'Cargo hold'],
     ['cargo ship', 'merchant ship', 'cog', 'freighter', 'ship'],
-    [[0, 0.4, 2.2, 1.0], [2.35, 0.45, 0.9, 0.9], [0.1, 1.55, 1.0, 0.8], [1.2, 1.55, 1.3, 0.9]],
+    [[0, 0.4, 2.2, 1.0], [2.35, 0.45, 0.9, 0.9], [2.0, 1.45, 1.25, 0.8], [0.1, 1.5, 1.8, 0.9]],
     [[0, 3]]
   ),
   template('veh-boat-rowboat', 'vehicle', 'A rowboat', ['Benches'], ['rowboat', 'dinghy', 'skiff', 'boat'], [[0, 0, 1.4, 0.7]]),

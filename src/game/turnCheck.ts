@@ -7,29 +7,38 @@
  */
 
 import type { GameState } from './types';
-import { presentNpcNames } from './npcRelationships';
-import { isChromePersonToken } from './chromeAuthority';
-import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
-import { encounterBlocksTravel } from './encounterTerminalFsm';
-import { classifyEdgeType } from './graphChoices';
 import { checkObligationCoverage, buildIntentContract } from './intentContract';
 import { parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
-import { openingCastNames } from './openingEstablishment';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubsForBibleId } from './outdoorHubs';
 import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
 import { resolvePlayAreaMap, type ActiveDungeonState } from './mapEngine';
-import { isExplorableDungeon, isInteriorMap, isInteriorPlace } from './placeAuthority';
+import { isExplorableDungeon, isInteriorMap } from './placeAuthority';
+import {
+  basementEstablished,
+  chipAddressee,
+  chipProblem,
+  isOpenGround,
+  mentionsName,
+  peopleHere,
+  roadMeetingPeople,
+} from './chipLegality';
+import { floorPlanIssues } from './floorPlan';
+
+export { chipAddressee, peopleHere } from './chipLegality';
 
 export type TurnCheckKind =
   | 'ghost-chip'
   | 'impossible-chip'
+  | 'unrelated-chip'
   | 'ignored-action'
   | 'open-ground-interior'
+  | 'bad-floor-plan'
   | 'unestablished-quest-place'
   | 'action-object-missing'
-  | 'broken-line';
+  | 'broken-line'
+  | 'broken-prose';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -48,115 +57,23 @@ export interface TurnCheck {
 export const TURN_CHECK_P0_KINDS: ReadonlySet<TurnCheckKind> = new Set([
   'ghost-chip',
   'impossible-chip',
+  'unrelated-chip',
   'ignored-action',
   'open-ground-interior',
+  'bad-floor-plan',
   'unestablished-quest-place',
+  'broken-prose',
 ]);
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
-function nameTokens(name: string): string[] {
-  return low(name)
-    .replace(/^(?:the|a|an)\s+/, '')
-    .split(/[\s'’-]+/)
-    .filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
-}
-
-function mentionsName(text: string, name: string): boolean {
-  const hay = low(text);
-  if (!hay) return false;
-  if (hay.includes(low(name))) return true;
-  return nameTokens(name).some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay));
-}
-
-/** Everyone who could answer at turn start: scene presence, companions, the live foe, the opening cast. */
-export function peopleHere(state: GameState): string[] {
-  const out = new Map<string, string>();
-  const add = (n?: string | null) => {
-    const name = norm(n);
-    if (!name || isChromePersonToken(name)) return;
-    if (!out.has(name.toLowerCase())) out.set(name.toLowerCase(), name);
-  };
-  presentNpcNames(state).forEach(add);
-  (state.companions ?? []).forEach((c) => add(c.name));
-  add(state.activeEncounter?.name);
-  add(state.sceneFacts?.pendingEncounter?.name);
-  if (state.openingEstablishment?.complete !== true) openingCastNames(state).forEach(add);
-  (state.sceneFacts?.anonymousRoles ?? []).forEach(add);
-  return [...out.values()];
-}
-
-function crowdHere(state: GameState): boolean {
-  const f = state.sceneFacts;
-  return f?.crowd === 'present' || f?.crowd === 'sparse' || (f?.crowdCount ?? 0) > 0;
-}
-
-const TALK_CHIP =
-  /^(?:talk (?:to|with)|speak (?:to|with)|ask|tell|greet|question|thank|introduce yourself to|parley with)\s+(?!about\b|for\b|around\b|what\b|who\b|why\b|how\b|where\b|if\b|whether\b)(?:the\s+)?(.+)$/i;
-
-/** Named person or role the chip addresses; '' for an unnamed ask ("Ask what they want"). */
-export function chipAddressee(label: string): { kind: 'named' | 'role' | 'none'; who: string } | null {
-  const t = norm(label).replace(/[.!?]+$/, '');
-  const m = t.match(TALK_CHIP);
-  if (!m) {
-    if (/^(?:ask|talk|speak|greet|tell)\b/i.test(t)) return { kind: 'none', who: '' };
-    return null;
-  }
-  const rest = m[1]!;
-  const named = rest.match(/^([A-Z][\w'’-]+(?:\s+(?:of\s+)?[A-Z][\w'’-]+)*)/);
-  if (named && !/['’]s$/.test(named[1]!)) return { kind: 'named', who: named[1]! };
-  if (named) return { kind: 'role', who: rest.slice(named[1]!.length).trim().split(/\s+/)[0] || named[1]! };
-  const role = rest.match(/^([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)/);
-  if (role && !/^(?:them|him|her|someone|anyone|everyone|people|nearby|around)\b/.test(role[1]!)) {
-    return { kind: 'role', who: role[1]!.split(/\s+(?:about|for|what|who|why|how|where|if)\b/)[0]! };
-  }
-  return { kind: 'none', who: '' };
-}
-
-const ENGINE_COMBAT_CHIP = /^(?:press the attack|try to flee|parley|flee)\b/i;
-
-/** P0 chip checks against the turn-start state. */
+/** P0 chip checks against the turn-start state (same rules the chip pipeline filters on). */
 export function checkChips(state: GameState, chips: string[]): TurnCheckFlag[] {
   const out: TurnCheckFlag[] = [];
-  const here = peopleHere(state);
-  const lastKill = state.sceneFacts?.lastKill;
-  const blocksTravel = encounterBlocksTravel(state);
   for (const chip of chips) {
-    const label = norm(chip);
-    if (!label) continue;
-    if (isLastKillTalkPad(label, lastKill)) {
-      out.push({ kind: 'impossible-chip', detail: `"${label}" talks to ${lastKill?.name}, who is dead` });
-      continue;
-    }
-    const addr = chipAddressee(label);
-    if (addr?.kind === 'named') {
-      if (isChromePersonToken(addr.who)) continue;
-      if (matchesLastKillName(addr.who, lastKill) && lastKill?.outcome === 'victory') {
-        out.push({ kind: 'impossible-chip', detail: `"${label}" talks to ${addr.who}, who is dead` });
-      } else if (!here.some((p) => mentionsName(p, addr.who) || mentionsName(addr.who, p))) {
-        out.push({
-          kind: 'ghost-chip',
-          detail: `"${label}" talks to ${addr.who}, who is not here (here: ${here.join(', ') || 'nobody'})`,
-        });
-      }
-    } else if (addr && !here.length && !crowdHere(state)) {
-      const who = addr.who ? ` the ${addr.who}` : '';
-      out.push({ kind: 'ghost-chip', detail: `"${label}" talks to${who || ' someone'} but nobody is here` });
-    }
-    const type = classifyEdgeType(label);
-    if (ENGINE_COMBAT_CHIP.test(label) && !state.activeEncounter && !state.sceneFacts?.pendingEncounter) {
-      out.push({ kind: 'impossible-chip', detail: `"${label}" offers a fight move with no fight` });
-    }
-    if (/^loot the body of\b/i.test(label)) {
-      const target = label.replace(/^loot the body of\s+/i, '');
-      if (!lastKill?.remains || !matchesLastKillName(target, lastKill)) {
-        out.push({ kind: 'impossible-chip', detail: `"${label}" loots a body that is not here` });
-      }
-    }
-    if (type === 'travel' && blocksTravel) {
-      out.push({ kind: 'impossible-chip', detail: `"${label}" travels while the fight blocks travel` });
-    }
+    const problem = chipProblem(state, chip);
+    if (problem) out.push({ kind: problem.kind, detail: problem.detail });
   }
   return out;
 }
@@ -229,7 +146,8 @@ export function checkActionFollowed(
   const addr = chipAddressee(act);
   const typedNamed = !addr ? peopleHere(before).find((p) => mentionsName(act, p)) : undefined;
   const intent = parsePlayerIntent(act, before);
-  const talkish = !!addr || intent.kind === 'talk' || intent.kind === 'refuse';
+  const bodyAction = NON_TALK_ACTION.test(act);
+  const talkish = !!addr || (!bodyAction && (intent.kind === 'talk' || intent.kind === 'refuse'));
 
   if (addr?.kind === 'named' || (talkish && typedNamed)) {
     const who = addr?.kind === 'named' ? addr.who : typedNamed!;
@@ -249,6 +167,13 @@ export function checkActionFollowed(
 
   const travel = act.match(TRAVEL_ACTION);
   const moved = low(after.currentLocation) !== low(before.currentLocation) || (!!after.journey && after.journey !== before.journey);
+  const fighting = !!before.activeEncounter || !!before.sceneFacts?.pendingEncounter;
+  if (travel && !moved && !fighting) {
+    p0.push({ kind: 'ignored-action', detail: `player chose to travel toward ${travel[1]}; they never left ${before.currentLocation || 'here'}` });
+  }
+  if (ATTACK_ACTION.test(act) && before.activeEncounter && !BLOW.test(text)) {
+    p0.push({ kind: 'ignored-action', detail: `player attacked ${before.activeEncounter.name}; the prose shows no blow` });
+  }
   if (travel && moved) {
     const dest = travel[1]!;
     const where = [dest, after.currentLocation ?? '', after.journey?.to ?? '', after.journey?.ground ?? ''].filter(Boolean);
@@ -297,31 +222,48 @@ export function brokenLines(prose: string): TurnCheckFlag[] {
   return out;
 }
 
-function isOpenGround(state: GameState): boolean {
-  const loc = state.currentLocation ?? '';
-  if (isInteriorPlace(loc)) return false;
-  const f = state.sceneFacts as (GameState['sceneFacts'] & { outdoor?: boolean }) | undefined;
-  if (f?.cameraLock?.scale === 'outdoor') return true;
-  if (f?.outdoor === true || f?.indoor === false) return true;
-  const road = state.journey;
-  if (road && road.legsDone < road.legsTotal) return true;
-  return !!matchHub(hubsForBibleId(state.campaignBibleId), loc);
+/**
+ * Sentence shapes that can only come from a broken paint or a mangled clause (P0 — the reader stops):
+ * a name dropped between an article and its verb ("the stepped from"), stacked determiners
+ * ("their your hands"), a plural given a possessive 's ("streets's"), a verb glued after "didn't know",
+ * and "your" in narration that tells the PC by name in the third person.
+ */
+/** A body action, not speech: the talk check does not apply to it. */
+const NON_TALK_ACTION =
+  /^(?:wait|look|inspect|examine|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read)\b/i;
+
+export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
+  const out: TurnCheckFlag[] = [];
+  const text = norm(prose);
+  if (!text) return out;
+  const narration = text.replace(/["“][^"”]*["”]/g, ' ');
+  const hit = (re: RegExp, why: string) => {
+    const m = narration.match(re);
+    if (m) out.push({ kind: 'broken-prose', detail: `${why}: "${m[0].trim()}"` });
+  };
+  hit(
+    /\b(?:the|a|an)\s+[a-z]+ed\s+(?:the|a|an|his|her|their|its|from|into|onto|toward|towards|across|through|past|off|out of|between|on|at)\s/i,
+    'a name is missing before its verb'
+  );
+  hit(/\b(?:the|a|an|their|his|her|its|my|our)\s+(?:your|their|his|her|my|the)\s+[a-z]/i, 'stacked determiners');
+  hit(/\b[a-z]{3,}s['’]s\b/i, 'plural with a possessive s');
+  hit(/\b(?:didn['’]t|did not|don['’]t|doesn['’]t|never) know\s+[a-z]+ed\s+(?:the|a|an|their|his|her|its)\b/i, 'mangled clause');
+  const name = norm(pcName);
+  if (name && name.length >= 2) {
+    const first = name.split(/\s+/)[0]!;
+    const told = new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(narration);
+    if (told && /\byour\b/i.test(narration) && !/\byou\b/i.test(narration)) {
+      const m = narration.match(/\byour\s+[a-z]+/i);
+      out.push({ kind: 'broken-prose', detail: `"${m?.[0] ?? 'your'}" in narration that tells ${first} in the third person` });
+    }
+  }
+  return out;
 }
 
-const BASEMENT = /\b(?:basements?|cellars?|undercrofts?|crypts?|catacombs?|stairs? down|trapdoor)\b/i;
-
-function basementEstablished(state: GameState): boolean {
-  const loc = low(state.currentLocation);
-  const card = (state.places ?? []).find((p) => low(p.name) === loc);
-  const hay = [
-    state.currentLocation,
-    state.locationSheet?.name,
-    card?.description,
-    ...(state.sceneFacts?.props ?? []),
-    ...gmBodies(state).slice(-3),
-  ].join(' ');
-  return BASEMENT.test(hay);
-}
+const ATTACK_ACTION = /^(?:press the attack|attack|strike|hit|swing at|slash|stab|charge|fight|face)\b/i;
+/** Contact in a fight beat: a blow landing, missing, or being turned aside. */
+const BLOW =
+  /\b(?:strik|struck|hit|slash|cut|swing|swung|stab|thrust|lung|parr|block|miss|drove|drive|slam|smash|bash|club|kick|punch|bit|bite|clash|batter|hack|chop|pierc|knock|blow|blade (?:bit|caught|found)|steel (?:bit|rang|met))/i;
 
 /** The map the player would see (same path as the Map modal). */
 function drawnMap(state: GameState): ActiveDungeonState | null {
@@ -397,8 +339,41 @@ export function checkPlayerTurn(
   const prose = row.gmText ?? '';
   const action = row.playerInput || row.fatePick || '';
   const followed = checkActionFollowed(before, after, action, prose);
-  const p0 = [...checkChips(before, row.offeredChoices ?? []), ...followed.p0, ...checkQuestPlaces(before, after)];
+  const p0 = [
+    ...checkChips(before, row.offeredChoices ?? []),
+    ...checkChosenChip(before, row.fatePick || action),
+    ...followed.p0,
+    ...checkQuestPlaces(before, after),
+    ...brokenProse(prose, after.character?.name),
+  ];
   const mapIssue = openGroundMapIssue(after);
   if (mapIssue && openGroundMapIssue(before) !== mapIssue) p0.push({ kind: 'open-ground-interior', detail: mapIssue });
+  const planIssues = drawnPlanIssues(after);
+  const oldPlanIssues = new Set(drawnPlanIssues(before));
+  const newPlanIssues = planIssues.filter((i) => !oldPlanIssues.has(i));
+  if (newPlanIssues.length) {
+    p0.push({ kind: 'bad-floor-plan', detail: `${drawnMap(after)?.dungeonName ?? 'map'}: ${newPlanIssues.slice(0, 3).join('; ')}` });
+  }
   return { p0, down: [...followed.down, ...brokenLines(prose)], presentNames: peopleHere(before) };
+}
+
+/** Floor-plan problems on the drawn building / dungeon map (street maps are not floor plans). */
+export function drawnPlanIssues(state: GameState): string[] {
+  const map = drawnMap(state);
+  if (!map || !(isInteriorMap(map) || isExplorableDungeon(map))) return [];
+  return floorPlanIssues(map, { building: isInteriorMap(map), minRooms: 1 });
+}
+
+/** Someone on the road, in the prose: a person word, not a story name. */
+const SOMEONE =
+  /\b(?:someone|somebody|figure|figures|man|woman|men|women|traveler|traveller|stranger|rider|riders|merchant|pilgrim|thugs?|bandits?|people|camp|voice|voices|footsteps|hooded|cloaked)\b/i;
+
+/** The picked chip must follow the prose before it: a road-meeting chip needs the meeting on the page. */
+export function checkChosenChip(before: GameState, chosen: string): TurnCheckFlag[] {
+  const pick = norm(chosen);
+  if (!pick || !roadMeetingPeople(before)) return [];
+  if (!chipAddressee(pick) && !/^(?:greet|face|approach|skirt|slip past|hide from|talk your way)\b/i.test(pick)) return [];
+  const lastGm = gmBodies(before).slice(-1)[0] ?? '';
+  if (SOMEONE.test(lastGm)) return [];
+  return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
 }

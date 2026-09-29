@@ -234,7 +234,10 @@ async function addNotes() {
           const line = String(s?.line ?? '').trim();
           if (!line || !o.prose.includes(line)) continue;
           const better = String(s?.better ?? '').trim();
-          o.down.push(`${s?.why || 'stiff'} line: "${line.slice(0, 90)}"${better ? ` → "${better.slice(0, 90)}"` : ''}`);
+          // 29z3 — stiff / abstract / broken language fails the turn, not only a thumbs-down.
+          const flag = `P0 stiff-line (judge, ${s?.why || 'stiff'}): "${line.slice(0, 90)}"${better ? ` → "${better.slice(0, 90)}"` : ''}`;
+          o.p0 = [...(o.p0 ?? []), flag];
+          o.down.push(flag);
           lessons.push({ turn: o.turn, action: o.input, line, better, why: s?.why || 'stiff' });
         }
         if (v.verdict === 'up' && !o.down.length) o.up.push(`judge: ${o.note}`);
@@ -263,8 +266,10 @@ function readKeyFromEnvFiles() {
 const notesStatus = wantNotes ? await addNotes() : 'not requested';
 
 for (const r of rows) {
-  for (const f of r.turnCheck?.down ?? []) {
-    if (f.kind === 'broken-line') lessons.push({ turn: r.turn, action: r.playerInput, line: f.detail, better: '', why: 'broken' });
+  for (const f of [...(r.turnCheck?.down ?? []), ...(r.turnCheck?.p0 ?? [])]) {
+    if (f.kind === 'broken-line' || f.kind === 'broken-prose') {
+      lessons.push({ turn: r.turn, action: r.playerInput, line: f.detail, better: '', why: 'broken' });
+    }
   }
 }
 const p0Turns = out.filter((o) => o.p0?.length);

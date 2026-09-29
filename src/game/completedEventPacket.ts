@@ -12,6 +12,7 @@ import { realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
+import { roadMeetingFact } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { emptySceneFacts } from './sceneFacts';
 import {
@@ -733,9 +734,11 @@ function movementLine(state: GameState, stay: string): string {
   const movedNow = c?.movedTurn != null && c.movedTurn === state.turn;
   const j = state.journey;
   if (j && j.legsDone < j.legsTotal) {
-    return movedNow
+    const meeting = roadMeetingFact(j);
+    const road = movedNow
       ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${j.ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
       : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
+    return meeting ? `${road} ${meeting}` : road;
   }
   if (movedNow && c?.prevPlace) {
     return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
@@ -1004,8 +1007,18 @@ export function formatWriterFacingEvent(
   }
   lines.push('');
   lines.push(`PLAYER: ${packet.playerAction || '(opening)'}`);
+  const act = (packet.playerAction ?? '').trim();
+  if (act && act !== '(opening)') {
+    lines.push(`ACTION: this beat carries out the PLAYER line above — show ${who} doing it and what came of it. Do not retell an arrival already written, and do not answer a different action.`);
+    if (packet.combatLive && WRITER_ATTACK.test(act)) {
+      lines.push('The attack is on the page: show the blow landing, glancing or missing, and the foe answering it.');
+    }
+    lines.push('Plain speech: short concrete sentences a reader could say aloud. No abstract summary, no fragments.');
+  }
   return lines.join('\n').trim();
 }
+
+const WRITER_ATTACK = /^(?:press the attack|attack|strike|swing|stab|slash|hit|charge|fight)\b/i;
 
 export function mentionAllowlistHas(allowlist: string[], token: string): boolean {
   const t = token.trim().toLowerCase();

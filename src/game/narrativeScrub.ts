@@ -57,7 +57,8 @@ export function scrubInventedProperNouns(
   let m: RegExpExecArray | null;
   while ((m = re.exec(narrative)) !== null) {
     const name = m[1]!.trim();
-    const key = name.toLowerCase();
+    // 29z3 — "Father Aldous's" is the held name plus a possessive, not a new name.
+    const key = name.toLowerCase().replace(/'s$/, '');
     if (ALWAYS_ALLOW.has(key)) continue;
     if (grounded.has(key)) continue;
     const tail = key.split(/\s+/).slice(1).join(' ');

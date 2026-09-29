@@ -16,6 +16,7 @@ import type { InteriorEdgeKind } from '../game/mapEngine';
 import { isGenericMapPlace } from '../game/questPlay';
 import { isInteriorMap, isInteriorPlace, isStreetMap, mapScaleLabel } from '../game/placeAuthority';
 import type { Location3D } from '../game/types';
+import { exteriorDoor, exteriorWalls, planRoomOf, windowMarks } from '../game/floorPlan';
 
 interface DungeonMapModalProps {
   isOpen: boolean;
@@ -275,7 +276,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
                 const dest = displayDungeon.nodes.find((n) => n.id === nodeId);
                 if (dest && typeof dest.zLevel === 'number') setViewZ(dest.zLevel);
               }}
-              organic={isHallPlan}
+              building={isHallPlan}
               combatLocked={combatLocked}
             />
           )}
@@ -331,31 +332,42 @@ function InteriorFloorPlan({
   currentNodeId,
   viewZ,
   onMoveNode,
-  organic = false,
+  building = false,
   combatLocked = false,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
   viewZ: number;
   onMoveNode: (nodeId: string) => void;
-  organic?: boolean;
+  /** Building plan (shared walls, doors, windows, stairs) — otherwise cave/dungeon chambers and tunnels. */
+  building?: boolean;
   combatLocked?: boolean;
 }) {
   const nodes = nodesOnInteriorFloor(dungeon, viewZ);
-  const unit = organic ? 92 : 84;
-  const pad = organic ? 40 : 32;
+  const organic = building;
+  const unit = building ? 92 : 84;
+  const pad = building ? 40 : 32;
+  const toPx = (x: number, y: number) => ({ x: pad + x * unit, y: pad + y * unit });
   const roomBox = (node: MapNode) => {
     const gx = node.coordinates?.x ?? 0;
     const gy = node.coordinates?.y ?? 0;
     const fw = node.footprint?.w ?? 1;
     const fh = node.footprint?.h ?? 1;
+    if (building) {
+      return { x: pad + gx * unit, y: pad + gy * unit, w: fw * unit, h: fh * unit };
+    }
     return {
-      x: pad + gx * unit,
-      y: pad + gy * unit,
-      w: Math.max(44, fw * unit - 6),
-      h: Math.max(40, fh * unit - 6),
+      x: pad + gx * unit + 5,
+      y: pad + gy * unit + 5,
+      w: Math.max(44, fw * unit - 10),
+      h: Math.max(40, fh * unit - 10),
     };
   };
+  const floorRooms = nodes.map(planRoomOf);
+  const outerWalls = building ? exteriorWalls(floorRooms) : [];
+  const frontDoor = building ? exteriorDoor(dungeon) : null;
+  const doorOnFloor = frontDoor && nodes.some((n) => n.id === frontDoor.roomId) ? frontDoor : null;
+  const windows = building ? windowMarks(dungeon, viewZ) : [];
   const boxes = nodes.map((n) => ({ id: n.id, box: roomBox(n) }));
   const maxRight = Math.max(...boxes.map((b) => b.box.x + b.box.w), pad + unit);
   const maxBottom = Math.max(...boxes.map((b) => b.box.y + b.box.h), pad + unit);
@@ -387,6 +399,27 @@ function InteriorFloorPlan({
     const key = `${node.id}-${target.id}`;
 
     if (kind === 'stairs') return null;
+
+    if (!building) {
+      // Cave / dungeon: chambers joined by a worn tunnel, drawn under the rooms.
+      const ca = { x: a.x + a.w / 2, y: a.y + a.h / 2 };
+      const cb = { x: b.x + b.w / 2, y: b.y + b.h / 2 };
+      const mx = (ca.x + cb.x) / 2 + (ca.y - cb.y) * 0.12;
+      const my = (ca.y + cb.y) / 2 + (cb.x - ca.x) * 0.12;
+      const secret = kind === 'secret';
+      return (
+        <path
+          key={key}
+          d={`M ${ca.x} ${ca.y} Q ${mx} ${my} ${cb.x} ${cb.y}`}
+          fill="none"
+          stroke={secret ? '#2a2a24' : eitherVisited ? '#3b3a2c' : '#23241f'}
+          strokeWidth={secret ? 6 : kind === 'damaged' ? 11 : 16}
+          strokeLinecap="round"
+          strokeDasharray={secret ? '4 6' : undefined}
+          opacity={secret ? 0.5 : 1}
+        />
+      );
+    }
 
     if (kind === 'door') {
       const doorW = organic ? 14 : 12;
@@ -474,6 +507,15 @@ function InteriorFloorPlan({
     );
   };
 
+  const connectionMarks = nodes.map((node) =>
+    node.connections.map((targetId) => {
+      if (node.id >= targetId) return null;
+      const target = nodes.find((n) => n.id === targetId);
+      if (!target) return null;
+      return drawConnection(node, target, resolveInteriorEdgeKind(node, target));
+    })
+  );
+
   if (nodes.length === 0) {
     return (
       <p className="text-sm text-slate-400 py-8 text-center">
@@ -499,41 +541,36 @@ function InteriorFloorPlan({
         </defs>
         <rect width={width} height={height} fill="#0e1012" opacity="1" />
         <rect width={width} height={height} fill="url(#sgm-stone-hatch)" opacity="0.2" />
-        {nodes.map((node) =>
-          node.connections.map((targetId) => {
-            if (node.id >= targetId) return null;
-            const target = nodes.find((n) => n.id === targetId);
-            if (!target) return null;
-            const kind = resolveInteriorEdgeKind(node, target);
-            return drawConnection(node, target, kind);
-          })
-        )}
+        {!building && connectionMarks}
         {nodes.map((node) => {
           const box = roomBox(node);
           const fill = interiorRoomFillKind(dungeon, node);
           const isCurrent = playerOnThisFloor && node.id === currentNodeId;
           const isVisited = fill === 'visited';
           const isSecret = fill === 'secret';
+          const cornerR = building ? 0 : Math.min(box.w, box.h) * 0.42;
           return (
             <g key={`floor-${node.id}`}>
-              <rect
-                x={box.x - 2}
-                y={box.y - 2}
-                width={box.w + 4}
-                height={box.h + 4}
-                rx={organic ? 3 : 4}
-                fill="none"
-                stroke={isCurrent ? '#8a9a6a' : isVisited ? '#4a6a4a' : isSecret ? '#3a4a4a' : '#5a6a7a'}
-                strokeWidth={isCurrent ? 2 : 1}
-                strokeDasharray={isSecret ? '4 5' : undefined}
-                opacity={1}
-              />
+              {!building && (
+                <rect
+                  x={box.x - 3}
+                  y={box.y - 3}
+                  width={box.w + 6}
+                  height={box.h + 6}
+                  rx={cornerR + 3}
+                  fill="none"
+                  stroke={isCurrent ? '#8a9a6a' : isVisited ? '#4a5a3e' : isSecret ? '#3a4a4a' : '#3e4448'}
+                  strokeWidth={isCurrent ? 2 : 1}
+                  strokeDasharray={isSecret ? '4 5' : '9 3 4 3'}
+                  opacity={1}
+                />
+              )}
               <rect
                 x={box.x}
                 y={box.y}
                 width={box.w}
                 height={box.h}
-                rx={organic ? 2 : 3}
+                rx={cornerR}
                 className={
                   isVisited
                     ? 'sgm-map-room--visited'
@@ -553,14 +590,83 @@ function InteriorFloorPlan({
                   y={box.y + 2}
                   width={Math.max(0, box.w - 4)}
                   height={Math.max(0, box.h - 4)}
-                  rx={organic ? 2 : 3}
+                  rx={Math.max(0, cornerR - 2)}
                   fill="rgba(8, 10, 12, 0.92)"
                   pointerEvents="none"
                 />
               )}
+              {building && roomHasVerticalLink(dungeon, node) && (
+                <g pointerEvents="none" opacity={isVisited ? 0.85 : 0.45}>
+                  {[0, 1, 2, 3, 4].map((i) => {
+                    const along = box.w >= box.h;
+                    const t = 6 + i * 6;
+                    return along ? (
+                      <line key={i} x1={box.x + box.w - t} y1={box.y + 5} x2={box.x + box.w - t} y2={box.y + box.h - 5} stroke="#b8a77f" strokeWidth={1.2} />
+                    ) : (
+                      <line key={i} x1={box.x + 5} y1={box.y + box.h - t} x2={box.x + box.w - 5} y2={box.y + box.h - t} stroke="#b8a77f" strokeWidth={1.2} />
+                    );
+                  })}
+                </g>
+              )}
             </g>
           );
         })}
+        {building && (
+          <g pointerEvents="none">
+            {outerWalls.map((w, i) => {
+              const p1 = toPx(w.x1, w.y1);
+              const p2 = toPx(w.x2, w.y2);
+              return <line key={`ow-${i}`} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#c9b98f" strokeWidth={5} strokeLinecap="square" />;
+            })}
+            {windows.map((w, i) => {
+              const c = toPx(w.cx, w.cy);
+              const vertical = w.x1 === w.x2;
+              const half = 8;
+              return (
+                <g key={`win-${i}`}>
+                  <rect
+                    x={vertical ? c.x - 3 : c.x - half}
+                    y={vertical ? c.y - half : c.y - 3}
+                    width={vertical ? 6 : half * 2}
+                    height={vertical ? half * 2 : 6}
+                    fill="#0e1012"
+                  />
+                  <line x1={vertical ? c.x - 2 : c.x - half} y1={vertical ? c.y - half : c.y - 2} x2={vertical ? c.x - 2 : c.x + half} y2={vertical ? c.y + half : c.y - 2} stroke="#8fb3c4" strokeWidth={1.2} />
+                  <line x1={vertical ? c.x + 2 : c.x - half} y1={vertical ? c.y - half : c.y + 2} x2={vertical ? c.x + 2 : c.x + half} y2={vertical ? c.y + half : c.y + 2} stroke="#8fb3c4" strokeWidth={1.2} />
+                </g>
+              );
+            })}
+            {doorOnFloor && (() => {
+              const c = toPx(doorOnFloor.cx, doorOnFloor.cy);
+              const vertical = doorOnFloor.x1 === doorOnFloor.x2;
+              const half = 10;
+              const out = doorOnFloor.side === 'bottom' || doorOnFloor.side === 'right' ? 1 : -1;
+              return (
+                <g>
+                  <rect
+                    x={vertical ? c.x - 4 : c.x - half}
+                    y={vertical ? c.y - half : c.y - 4}
+                    width={vertical ? 8 : half * 2}
+                    height={vertical ? half * 2 : 8}
+                    fill="#3d3428"
+                    stroke="#e8d5a3"
+                    strokeWidth={1.4}
+                  />
+                  <text
+                    x={vertical ? c.x + out * 16 : c.x}
+                    y={vertical ? c.y + 3 : c.y + out * 16 + 3}
+                    textAnchor="middle"
+                    fontSize={9}
+                    fill="#e8d5a3"
+                  >
+                    OUT
+                  </text>
+                </g>
+              );
+            })()}
+            {connectionMarks}
+          </g>
+        )}
         <MapCompass x={width - 36} y={36} />
       </svg>
       {nodes.map((node) => {

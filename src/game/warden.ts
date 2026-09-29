@@ -22,6 +22,7 @@ import { isAloneArrivalOpening } from './openingEstablishment';
 import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
 import { isChromePersonToken } from './chromeAuthority';
 import { presentNpcRecords } from './npcRecords';
+import { compileRefEnum } from './completedEventPacket';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -210,8 +211,12 @@ export async function runWarden(
     notes.push(`Narrative referenced missing item: ${claim}`);
   }
 
+  // REF ENUM names are painted by code from the ledger — never an invention to scrub.
+  const grounding = [establishedProse, ...compileRefEnum(state).map((r) => `${r.display}.`)]
+    .filter(Boolean)
+    .join('\n');
   // Flag prose that names major entities not present in sheets/timeline (confirm UI surfaces these).
-  const inventedInProse = findUngroundedNamedClaims(narrativeText, state, establishedProse);
+  const inventedInProse = findUngroundedNamedClaims(narrativeText, state, grounding);
   for (const claim of inventedInProse.slice(0, 4)) {
     if (
       /\b(dragon|lich|demon|artifact|relic|portal|kingdom|empire|ancient|legendary|boss)\b/i.test(
@@ -223,7 +228,7 @@ export async function runWarden(
     }
   }
 
-  const scrub = scrubInventedProperNouns(narrativeText, state, establishedProse);
+  const scrub = scrubInventedProperNouns(narrativeText, state, grounding);
   const exits =
     state.activeDungeon && isInteriorMap(state.activeDungeon)
       ? listInteriorExitsFromHere(state.activeDungeon)

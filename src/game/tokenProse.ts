@@ -17,6 +17,7 @@ import {
   type TokenUseRef,
 } from './completedEventPacket';
 import { acceptObeyedStoryBody } from './ledgerNounObey';
+import { pcPov } from './narrativePov';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -37,6 +38,32 @@ const LINE_FNS = new Set<LineFn>(['place', 'action', 'speech', 'react', 'hook'])
 const TOKEN_USES = new Set<TokenUse>([
   'speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place',
 ]);
+
+/** Writers shorten the enum ("prop", "location"); one unknown word must not throw away the whole beat. */
+const TOKEN_USE_ALIAS: Record<string, TokenUse> = {
+  prop: 'prop_used',
+  item: 'prop_used',
+  object: 'prop_used',
+  thing: 'prop_used',
+  kit: 'worn',
+  gear: 'worn',
+  equipped: 'worn',
+  location: 'place',
+  setting: 'place',
+  person: 'actor',
+  npc: 'actor',
+  character: 'actor',
+  subject: 'actor',
+  target: 'addressed',
+  listener: 'addressed',
+  body: 'corpse',
+};
+
+function readTokenUse(raw: string): TokenUse | null {
+  const u = raw.trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if (TOKEN_USES.has(u as TokenUse)) return u as TokenUse;
+  return TOKEN_USE_ALIAS[u] ?? null;
+}
 
 /** Fixed lexicon. Do not grow this list per incident. */
 const UNBOUND_ANIMATE =
@@ -164,8 +191,8 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const rec = row as { tok?: unknown; id?: unknown; use?: unknown };
       const tok = String(rec.tok ?? '').replace(/^@/, '').trim();
       const id = String(rec.id ?? '').trim();
-      const use = String(rec.use ?? '').trim() as TokenUse;
-      if (!tok || !id || !TOKEN_USES.has(use)) return null;
+      if (!tok || !id) return null;
+      const use = readTokenUse(String(rec.use ?? '')) ?? 'actor';
       if (id.includes('<')) continue;
       refs.push({ tok, id, use });
     }
@@ -292,9 +319,13 @@ export function classifyTokenLine(
 ): LineVerdict {
   // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
   let capText = line.text;
-  for (const name of [...enumRefs.map((r) => r.display), ...knownNames]
-    .filter((n) => !!n && /[A-Z]/.test(n))
-    .sort((a, b) => b.length - a.length)) {
+  const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n));
+  // 29z3 — a short form of a held name ("the Scout" for Integration Scar Scout) is not an invention.
+  const parts = whole.flatMap((n) => {
+    const words = n.split(/[\s—–-]+/).filter((w) => /^[A-Z][a-z'’]{3,}$/.test(w));
+    return words.length > 1 || n.split(/\s+/).length > 1 ? words : [];
+  });
+  for (const name of [...new Set([...whole, ...parts])].sort((a, b) => b.length - a.length)) {
     capText = capText.split(name).join('·');
   }
   if (lineHasMidSentenceCapital(capText)) {
@@ -335,29 +366,61 @@ export function bindCheckFails(beat: TokenBeat, enumRefs: LedgerRef[]): string[]
   return notes;
 }
 
-export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[]): string {
-  const byTok = new Map(enumRefs.map((r) => [r.tok.toLowerCase(), r.display]));
+const DETERMINER_RE =
+  /^(?:the|a|an|this|that|these|those|their|his|her|its|your|my|our|one|each|every|some|any|no)$/i;
+
+/** True when one of the two words before `offset` (same clause) already determines the noun. */
+function hasDeterminerBefore(text: string, offset: number): boolean {
+  const before = text.slice(0, offset);
+  const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
+  const words = clause.trim().split(/\s+/).filter(Boolean).slice(-2);
+  return words.some((w) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w));
+}
+
+/**
+ * 29z3 — a thing painted with no determiner ("blue panel flickered", "They kept clothes bunched")
+ * gets one: kit takes the PC's possessive, a prop or bare common-noun place takes "the".
+ */
+function paintDisplay(row: { display: string; klass?: string }, text: string, offset: number, possessive: string): string {
+  const display = row.display;
+  if (!display) return display;
+  const thing = row.klass === 'kit' || row.klass === 'prop';
+  if (!thing || /^[A-Z]/.test(display) || ARTICLE_RE.test(display) || /^(?:their|his|her|your|my|its)\s/i.test(display)) {
+    return display;
+  }
+  if (hasDeterminerBefore(text, offset)) return display;
+  return `${row.klass === 'kit' ? possessive : 'the'} ${display}`;
+}
+
+/** The PC possessive this beat already uses: "your" when the lines address the PC as you, else the PC pronoun. */
+export function beatPcPossessive(lines: { text: string }[], state?: GameState): string {
+  const outsideQuotes = lines.map((l) => l.text.replace(/["“][^"”]*["”]/g, ' ')).join(' ');
+  if (/\byour?\b/i.test(outsideQuotes)) return 'your';
+  return pcPov(state?.character).his;
+}
+
+export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: { possessive?: string }): string {
+  const byTok = new Map(enumRefs.map((r) => [r.tok.toLowerCase(), r as { display: string; klass?: string }]));
   const unbound = unboundDeclaredToks(beat, enumRefs);
   for (const tok of unbound) byTok.delete(tok);
   for (const ref of beat.refs) {
     const row = findEnum(enumRefs, ref.tok, ref.id);
-    if (row) byTok.set(ref.tok.replace(/^@/, '').toLowerCase(), row.display);
+    if (row) byTok.set(ref.tok.replace(/^@/, '').toLowerCase(), row);
   }
+  const possessive = opts?.possessive ?? beatPcPossessive(beat.lines);
   const painted = new Set<string>();
-  const paint = (n: string) => {
-    const display = byTok.get(`t${n}`) ?? '';
-    if (display) painted.add(display);
-    return display;
-  };
   const lines = beat.lines.filter((line) => {
     const used = toksInText(line.text).map((t) => t.toLowerCase());
     if (line.speaker_tok) used.push(line.speaker_tok.replace(/^@/, '').toLowerCase());
-    return !used.some((t) => unbound.has(t));
+    return !used.some((t) => unbound.has(t) || !byTok.get(t)?.display);
   });
   const sentences = lines.map((line) => {
-    let next = line.text;
-    next = next.replace(TOK_RE, (_m, n: string) => paint(n));
-    next = next.replace(/@t(\d+)\b/g, (_m, n: string) => paint(n));
+    let next = line.text.replace(/@t(\d+)\b/g, (_m, n: string, offset: number, src: string) => {
+      const row = byTok.get(`t${n}`);
+      if (!row?.display) return '';
+      painted.add(row.display);
+      return paintDisplay(row, src, offset, possessive);
+    });
     for (const display of painted) next = collapseEchoedLabel(next, display);
     return capitalizeSentenceStarts(tidy(next));
   }).filter((s) => s.length > 0);
@@ -436,20 +499,26 @@ export function formatTokenRepairFacing(
  * 28l — code fixes what code knows: a declared ref whose `use` does not fit its ledger class takes the
  * first use that does, and an @tN written in a line but not declared binds to that REF ENUM row.
  */
-export function normalizeBeatRefs(beat: TokenBeat, enumRefs: LedgerRef[]): TokenBeat {
+export function normalizeBeatRefs(
+  beat: TokenBeat,
+  enumRefs: LedgerRef[],
+  opts?: { thingsOnly?: boolean }
+): TokenBeat {
   const firstUse = (row: LedgerRef): TokenUse =>
     [...TOKEN_USES].find((u) => tokenUseMatchesClass(u, row.klass)) ?? 'actor';
+  // 29z3 — a place or thing declared with the wrong use is a label slip; a person used as a thing stays a bind fail.
+  const retype = (row: LedgerRef) => !opts?.thingsOnly || row.klass === 'place' || row.klass === 'prop' || row.klass === 'kit';
   const refs: TokenUseRef[] = beat.refs.map((ref) => {
     const row = findEnum(enumRefs, ref.tok, ref.id);
     if (!row) return ref;
-    return tokenUseMatchesClass(ref.use, row.klass) ? ref : { ...ref, use: firstUse(row) };
+    return tokenUseMatchesClass(ref.use, row.klass) || !retype(row) ? ref : { ...ref, use: firstUse(row) };
   });
   const declared = new Set(refs.map((r) => r.tok.replace(/^@/, '').toLowerCase()));
   for (const line of beat.lines) {
     for (const tok of toksInText(line.text)) {
       if (declared.has(tok.toLowerCase())) continue;
       const row = findEnum(enumRefs, tok);
-      if (!row) continue;
+      if (!row || !retype(row)) continue;
       refs.push({ tok, id: row.id, use: firstUse(row) });
       declared.add(tok.toLowerCase());
     }
@@ -524,9 +593,9 @@ export function acceptTokenOrLedgerStory(
   for (const cand of candidates) {
     const parsed = parseTokenBeat(cand);
     if (!parsed) continue;
-    const beat = opts?.lenient ? normalizeBeatRefs(parsed, enumRefs) : parsed;
+    const beat = normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient });
     if (isFullyClean(beat, enumRefs, known)) {
-      const prose = renderTokenBeat(beat, enumRefs);
+      const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
           prose,
@@ -550,7 +619,9 @@ export function acceptTokenOrLedgerStory(
   }
 
   if (bestPartial) {
-    const prose = renderTokenBeat(bestPartial.beat, enumRefs);
+    const prose = renderTokenBeat(bestPartial.beat, enumRefs, {
+      possessive: beatPcPossessive(bestPartial.beat.lines, state),
+    });
     // Lenient: a partial that kept only a line or two (e.g. just a place name) loses to the whole
     // reply read as prose, which the ledger-noun obey pass still polices.
     if (opts?.lenient && prose && storySentences(prose) < 2) {
@@ -573,7 +644,8 @@ export function acceptTokenOrLedgerStory(
 
   // 27h — a repair request still returns engine fallback prose below, so raw JSON never reaches the player.
   let needsRepair: { missingFns: LineFn[] } | undefined;
-  const parsedAny = candidates.map(parseTokenBeat).find(Boolean);
+  const parsedRaw = candidates.map(parseTokenBeat).find(Boolean);
+  const parsedAny = parsedRaw ? normalizeBeatRefs(parsedRaw, enumRefs, { thingsOnly: !opts?.lenient }) : parsedRaw;
   if (parsedAny && !opts?.alreadyRepaired) {
     const clean = keepCleanLines(parsedAny, enumRefs, known);
     const miss = missingFns(clean.length ? clean : parsedAny.lines);

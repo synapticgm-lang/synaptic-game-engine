@@ -23,6 +23,7 @@ import {
 } from './mapEngine';
 import { createHashRng } from './seededRng';
 import { INSIDE_TEMPLATES, VEHICLE_TEMPLATES } from './placeTemplates';
+import { attachBeside, nearWall, packFloorRooms } from './floorPlan';
 
 export type InteriorKind = 'dungeon' | 'building' | 'vehicle';
 export type RoomRole = 'entry' | 'room' | 'cache' | 'boss' | 'stair' | 'secret';
@@ -225,7 +226,10 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
     const plain = rooms.filter((r) => [...idMap.values()].includes(r.id) && r.role !== 'secret');
     if (plain.length > 3 && rng() < 0.5) {
       const a = pick(plain, rng);
-      const b = pick(plain.filter((r) => r.id !== a.id && r.floor === a.floor), rng);
+      const boxOf = (id: string) => spec.find((s) => s.id === id)!;
+      // A loop door goes through a wall the two rooms share, never across the plan.
+      const facing = plain.filter((r) => r.id !== a.id && r.floor === a.floor && nearWall(boxOf(a.id), boxOf(r.id)));
+      const b = facing.length ? pick(facing, rng) : undefined;
       if (b && !floorLinks.some(([x, y]) => (x === a.id && y === b.id) || (x === b.id && y === a.id))) floorLinks.push([a.id, b.id]);
     }
     links.push(...floorLinks);
@@ -291,7 +295,8 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
       const hs = spec.find((n) => n.id === host.id)!;
       const id = `r${counter++}`;
       rooms.push({ id, role: 'secret', floor: host.floor });
-      spec.push({ id, x: hs.x + hs.w + 0.2, y: hs.y + 0.1, w: 0.9, h: 0.8, z: hs.z });
+      const beside = attachBeside({ ...hs }, { w: 0.9, h: 0.8 }, spec.map((s) => ({ ...s })));
+      spec.push({ id, ...beside, z: hs.z });
       secrets.push({ id, fromId: host.id });
     }
   }
@@ -302,7 +307,9 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
   const shut = ([a, b]: [string, string]) =>
     (secretIds.has(a) && openReach.has(b) && !secretIds.has(b)) || (secretIds.has(b) && openReach.has(a) && !secretIds.has(a));
 
-  const nodes: MapNode[] = spec.map((n) => {
+  // Buildings and vehicles read as one packed footprint; dungeon/cave rooms keep their tunnels.
+  const laidOut = opts.kind === 'dungeon' ? spec : packFloorRooms(spec, links);
+  const nodes: MapNode[] = laidOut.map((n) => {
     const room = rooms.find((r) => r.id === n.id)!;
     const connections = Array.from(
       new Set(

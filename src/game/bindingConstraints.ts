@@ -397,7 +397,7 @@ export function repairConstraintViolations(
 
     if (constraint.category === 'time' && TIME_SKIP_CLAIM.test(next)) {
       next = next.replace(/\bhours? (?:later|pass(?:es|ed)?|ago)\b/gi, 'moments later');
-      next = next.replace(/\bnext (?:morning|day|evening)\b/gi, 'a moment later');
+      next = next.replace(/\b(?:the\s+)?next (?:morning|day|evening)\b/gi, 'a moment later');
     }
 
     if (constraint.category === 'location' && constraint.rule.includes('indoors') && STEP_OUTSIDE.test(next)) {

@@ -72,17 +72,17 @@ describe('playtest30x — site-wide crowd presence authority', () => {
     const severalLine = 'Several onlookers press closer.';
 
     expect(scrubInventedCrowdSize(groupLine, 0, false)).not.toMatch(/group of individuals/i);
-    expect(scrubInventedCrowdSize(pairLine, 1, true)).toMatch(/the person here/i);
+    expect(scrubInventedCrowdSize(pairLine, 1, true)).toMatch(/the one person/i);
     expect(scrubInventedCrowdSize(pairLine, 1, true)).not.toMatch(/two figures/i);
 
     const pairFromGroup = scrubInventedCrowdSize(groupLine, 2, true);
-    expect(pairFromGroup).toMatch(/two people here/i);
+    expect(pairFromGroup).toMatch(/the two of them/i);
     expect(pairFromGroup).not.toMatch(/group of individuals/i);
     expect(scrubInventedCrowdSize(severalLine, 2, true)).not.toMatch(/several/i);
     expect(scrubInventedCrowdSize(largeLine, 2, true)).not.toMatch(/hundred people/i);
 
     const groupFromPair = scrubInventedCrowdSize(pairLine, 5, true);
-    expect(groupFromPair).toMatch(/the people here/i);
+    expect(groupFromPair).toMatch(/the group/i);
     expect(groupFromPair).not.toMatch(/two figures/i);
     expect(scrubInventedCrowdSize(fewLine, 5, true)).not.toMatch(/a few people/i);
 

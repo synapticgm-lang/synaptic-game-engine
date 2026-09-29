@@ -63,8 +63,17 @@ const EMPTY_CLAIMS =
 const LARGE_SPAN =
   /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)(?:\s+of)?\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|watchers|voices|souls|bodies)\b/gi;
 
-const GROUP_SPAN =
-  /\b(?:a\s+)?(?:scattered\s+|sparse\s+|modest\s+|small\s+|large\s+|meager\s+)?(?:group|crowd|gathering)s?\b(?:\s+of\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))?|(?:several|many)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
+// A bare group noun is a headcount only as a noun phrase ("a crowd", "the small group"); "hedges crowd
+// the track" is a verb and "the gathering dark" an adjective, so bare "gathering" needs "a" or "of <people>".
+const GROUP_PEOPLE_OF = '(?:\\s+of\\s+(?:the\\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))';
+const GROUP_ADJ = '(?:scattered\\s+|sparse\\s+|modest\\s+|small\\s+|large\\s+|meager\\s+)?';
+const GROUP_SPAN = new RegExp(
+  `\\b(?:a|the|this|that)\\s+${GROUP_ADJ}(?:group|crowd)s?\\b(?!\\s+of\\b)${GROUP_PEOPLE_OF}?`
+    + `|\\b(?:(?:a|the|this|that)\\s+)?${GROUP_ADJ}(?:group|crowd|gathering)s?${GROUP_PEOPLE_OF}`
+    + `|\\ba\\s+${GROUP_ADJ}gathering\\b(?!\\s+of\\b)`
+    + `|\\b(?:several|many)\\s+(?:people|figures|individuals|onlookers|bystanders)\\b`,
+  'gi'
+);
 
 const FEW_SPAN =
   /\b(?:a\s+)?(?:few|handful of)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
@@ -77,7 +86,7 @@ const SOLO_SPAN =
 
 /** Already-canonical warden phrases — never re-match / re-expand these. */
 const CANONICAL_CROWD_PHRASE =
-  /\bthe\s+(?:person|two people|few people|people|crowd)\s+here\b/gi;
+  /\bthe\s+(?:person|two people|few people|people|crowd)\s+here\b|\bthe\s+(?:one person|two of them|few people)\b/gi;
 
 const NUMBERED_SPAN = new RegExp(
   `\\b(\\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\s+(${PEOPLE_NOUN})\\b`,
@@ -98,15 +107,15 @@ export function canonicalCrowdPhrase(bucket: CrowdBucket): string {
     case 'empty':
       return 'no one';
     case 'solo':
-      return 'the person here';
+      return 'the one person';
     case 'pair':
-      return 'the two people here';
+      return 'the two of them';
     case 'few':
-      return 'the few people here';
+      return 'the few people';
     case 'group':
-      return 'the people here';
+      return 'the group';
     case 'large':
-      return 'the crowd here';
+      return 'the crowd';
   }
 }
 

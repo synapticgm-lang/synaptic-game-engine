@@ -22,6 +22,7 @@ import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
+import { legalChips } from './chipLegality';
 import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
@@ -102,10 +103,15 @@ export function resolveOfferedChoices(state: GameState): string[] {
   );
   const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
-  if (deduped.length >= 3) return deduped.slice(0, 4);
-  return padChoicesToCount(deduped, state, storyProse, 3).filter(
-    (c) => !starveCoverCombat || !isCombatFamilyPad(c)
+  const legal = legalChips(state, deduped, storyProse);
+  if (legal.length >= 3) return legal.slice(0, 4);
+  const padded = legalChips(
+    state,
+    padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c)),
+    storyProse
   );
+  if (padded.length) return padded;
+  return legalChips(state, ['Look around', 'Wait and listen'], storyProse);
 }
 
 /** Attach post-pipeline labels the player will see after this GM beat. */

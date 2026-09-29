@@ -1192,11 +1192,12 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
   // Allow if time actually changed
   if (prevTime && prevTime !== 'unknown' && currentTime !== prevTime) return text;
   
-  // Scrub invented time skip
-  return text.replace(
-    /\b(hours? (?:later|pass(?:es|ed)?)|next (?:morning|day)|(?:that|the) (?:evening|afternoon))\b/gi,
-    'moments later'
-  ).replace(
+  // Scrub invented time skip. "the evening light" names the hour it already is, so only a
+  // clause-leading "That evening," is a skip.
+  return text.replace(/\bhours? (?:later|pass(?:es|ed)?)\b/gi, 'moments later')
+    .replace(/\b(?:the\s+)?next (?:morning|day)\b/gi, 'a moment later')
+    .replace(/(^|[.!?]\s+)(?:that|by) (?:evening|afternoon|nightfall)\s*,/gi, (_m, lead: string) => `${lead}Moments later,`)
+    .replace(
     /\b(much|some) (?:time|while) (?:later|passes)\b/gi,
     'a moment later'
   );

@@ -10,6 +10,7 @@ import {
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
 import { createHashRng } from './seededRng';
 import { insideTemplateFor } from './placeTemplates';
+import { attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
@@ -699,7 +700,11 @@ function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: s
   const place = placeHint || dungeon.dungeonName || '';
   const scale = interiorBuildingScale(place);
   const openRooms = dungeon.nodes.filter((n) => !n.isSecret).length;
-  if (scale === 'shed' || scale === 'inside') {
+  const allowZ = allowedInteriorZ(place, dungeon.nodes.map((n) => n.name));
+  if (dungeon.nodes.some((n) => !allowZ(n.zLevel ?? 0))) return true;
+  if (isRooflessPlace(place)) {
+    if (openRooms < 2) return true;
+  } else if (scale === 'shed' || scale === 'inside') {
     if (openRooms < 2) return true;
   } else {
     if (openRooms < 5) return true;
@@ -710,6 +715,9 @@ function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: s
   // Legacy equal-stamp rooms (pre-20q): rebuild for varied footprints + door edges.
   if (!dungeon.nodes.every((n) => n.footprint && n.footprint.w > 0 && n.footprint.h > 0)) return true;
   if (!dungeon.nodes.some((n) => (n.tags ?? []).includes('varied-footprint'))) return true;
+  // Pre-29z3 plans drew rooms as islands with doors across empty gaps.
+  const harvestedAddOn = dungeon.nodes.some((n) => (n.tags ?? []).includes('room'));
+  if (!harvestedAddOn && floorPlanIssues(dungeon, { building: true, minRooms: 1 }).length) return true;
   return false;
 }
 
@@ -808,8 +816,8 @@ export const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
     { id: 'stairs', label: 'Stairs', x: 2.55, y: 0.05, z: 0, w: 0.7, h: 0.85, links: ['hall', 'cellar', 'landing'] },
     // B1: 4 rooms (undercroft, cellar, vault, storage) — similar footprint to 1F
     { id: 'undercroft', label: 'Undercroft', x: 0.55, y: 0, z: -1, w: 1.85, h: 1.15, links: ['cellar', 'storage'] },
-    { id: 'cellar', label: 'Cellar', x: 0.55, y: 1.25, z: -1, w: 1.3, h: 1.1, links: ['stairs', 'undercroft', 'vault'] },
-    { id: 'vault', label: 'Vault', x: 2.0, y: 1.3, z: -1, w: 1.05, h: 0.9, links: ['cellar'], isSecret: true },
+    { id: 'cellar', label: 'Cellar', x: 1.05, y: 1.25, z: -1, w: 1.3, h: 1.1, links: ['stairs', 'undercroft', 'vault'] },
+    { id: 'vault', label: 'Vault', x: 2.4, y: 1.3, z: -1, w: 1.05, h: 0.9, links: ['cellar'], isSecret: true },
     { id: 'storage', label: 'Storage', x: 0, y: 1.25, z: -1, w: 1.0, h: 1.0, links: ['undercroft'] },
     // 2F: 4 rooms (landing, chamber, loft, alcove) — similar footprint to 1F
     { id: 'landing', label: 'Upper landing', x: 1.05, y: 1.2, z: 1, w: 1.1, h: 0.95, links: ['stairs', 'chamber', 'loft'] },
@@ -927,7 +935,7 @@ export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
     },
     { id: 'aisle', label: 'Aisle', x: 0, y: 1.15, z: 0, w: 0.6, h: 1.35, links: ['nave', 'vestry'] },
     { id: 'vestry', label: 'Vestry', x: 0, y: 0, z: 0, w: 1.05, h: 1.0, links: ['aisle'] },
-    { id: 'choir', label: 'Choir', x: 1.0, y: 0, z: 0, w: 1.4, h: 0.95, links: ['nave', 'sanctum'] },
+    { id: 'choir', label: 'Choir', x: 1.1, y: 0, z: 0, w: 1.35, h: 0.95, links: ['nave', 'sanctum'] },
     { id: 'sanctum', label: 'Sanctum', x: 2.55, y: 0, z: 0, w: 1.15, h: 1.05, links: ['choir'] },
     { id: 'stairs', label: 'Stairs', x: 2.85, y: 1.2, z: 0, w: 0.7, h: 0.85, links: ['nave', 'crypt', 'gallery'] },
     // B1: 6 rooms (crypt, reliquary, ossuary, tomb, vault, catacomb) — full undercroft
@@ -940,9 +948,9 @@ export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
     // 2F: 6 rooms (gallery, belfry, organ, balcony, scriptorium, bell chamber) — full upper level
     { id: 'gallery', label: 'Gallery', x: 2.7, y: 1.05, z: 1, w: 0.55, h: 1.35, links: ['stairs', 'belfry', 'organ'] },
     { id: 'belfry', label: 'Belfry', x: 3.4, y: 1.15, z: 1, w: 1.0, h: 1.0, links: ['gallery', 'bell'] },
-    { id: 'organ', label: 'Organ loft', x: 1.1, y: 1.1, z: 1, w: 1.3, h: 1.05, links: ['gallery', 'balcony'] },
-    { id: 'balcony', label: 'Balcony', x: 0.7, y: 1.0, z: 1, w: 0.6, h: 1.2, links: ['organ', 'scriptorium'] },
-    { id: 'scriptorium', label: 'Scriptorium', x: 0, y: 0.9, z: 1, w: 1.05, h: 1.15, links: ['balcony'] },
+    { id: 'organ', label: 'Organ loft', x: 1.65, y: 1.1, z: 1, w: 1.0, h: 1.05, links: ['gallery', 'balcony'] },
+    { id: 'balcony', label: 'Balcony', x: 1.0, y: 1.0, z: 1, w: 0.6, h: 1.2, links: ['organ', 'scriptorium'] },
+    { id: 'scriptorium', label: 'Scriptorium', x: 0, y: 0.9, z: 1, w: 0.95, h: 1.15, links: ['balcony'] },
     { id: 'bell', label: 'Bell chamber', x: 3.5, y: 0, z: 1, w: 0.9, h: 1.0, links: ['belfry'] },
   ],
   [
@@ -959,7 +967,7 @@ export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
       links: ['entry', 'salon', 'stairs', 'study'],
     },
     { id: 'salon', label: 'Salon', x: 0, y: 1.15, z: 0, w: 0.85, h: 1.25, links: ['foyer', 'dining'] },
-    { id: 'dining', label: 'Dining hall', x: 0, y: 0, z: 0, w: 1.55, h: 1.05, links: ['salon'] },
+    { id: 'dining', label: 'Dining hall', x: 0, y: 0, z: 0, w: 1.2, h: 1.05, links: ['salon'] },
     { id: 'study', label: 'Study', x: 2.6, y: 1.25, z: 0, w: 1.1, h: 1.0, links: ['foyer'] },
     { id: 'stairs', label: 'Stairs', x: 1.25, y: 0, z: 0, w: 0.7, h: 1.05, links: ['foyer', 'cellar', 'landing'] },
     // B1: 5 rooms (cellar, wine, root, vault, storage) — full foundation
@@ -977,7 +985,23 @@ export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
   ],
 ];
 
-function pickInteriorLayout(seed: string, place: string): InteriorRoomSpec[] {
+/** A place with no roof left (foundation, outline, shell): nothing stands above the ground floor. */
+const ROOFLESS_PLACE =
+  /\b(?:foundations?|footings?|outline|roofless|open to the sky|wall-?shell|shell|husk|burnt[- ]out|rubble)\b/i;
+const BASEMENT_WORD = /\b(?:basements?|cellars?|undercrofts?|crypts?|catacombs?|stairs? down|trapdoor)\b/i;
+
+export function isRooflessPlace(place: string): boolean {
+  return ROOFLESS_PLACE.test(place ?? '');
+}
+
+/** Floors a place can have: roofless ground keeps 1F only, plus a basement when the place names one. */
+function allowedInteriorZ(place: string, rooms: string[] = []): (z: number) => boolean {
+  if (!isRooflessPlace(place)) return () => true;
+  const basement = BASEMENT_WORD.test([place, ...rooms].join(' '));
+  return (z) => z === 0 || (z < 0 && basement);
+}
+
+function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
   const scale = interiorBuildingScale(place);
   const inside = scale === 'inside' ? insideTemplateFor(place)?.layout : undefined;
@@ -985,14 +1009,19 @@ function pickInteriorLayout(seed: string, place: string): InteriorRoomSpec[] {
     ? [inside]
     : scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
   const idx = Math.min(pool.length - 1, Math.floor(rng() * pool.length));
-  return pool[idx]!.map((r) => ({
+  const allowZ = allowedInteriorZ(place, rooms);
+  const kept = pool[idx]!.filter((r) => allowZ(r.z));
+  const ids = new Set(kept.map((r) => r.id));
+  const specs = kept.map((r) => ({
     ...r,
-    links: [...r.links],
+    links: r.links.filter((l) => ids.has(l)),
     edgeKinds: r.edgeKinds ? { ...r.edgeKinds } : undefined,
     z: r.z,
     w: r.w,
     h: r.h,
   }));
+  const links = specs.flatMap((r) => r.links.map((l) => [r.id, l] as [string, string]));
+  return packFloorRooms(specs, links);
 }
 
 /** Resolve door vs damaged/secret/stairs for a graph edge. */
@@ -1374,7 +1403,7 @@ export function buildInteriorFloorPlan(
 ): ActiveDungeonState {
   const rawHere = place.replace(/\s+/g, ' ').trim();
   const building = shortBuildingTitle(usableInteriorHere(rawHere) ? rawHere : 'Interior');
-  const layout = pickInteriorLayout(seed, rawHere || building);
+  const layout = pickInteriorLayout(seed, rawHere || building, rooms);
   const entry = layout.find((r) => r.entry) ?? layout[0]!;
 
   let nodes: MapNode[] = layout.map((spec) => {
@@ -1526,15 +1555,18 @@ export function addRoomToInteriorMap(dungeon: ActiveDungeonState, room: string):
   const id = `room_${dungeon.nodes.length}`;
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
   const z = here?.zLevel ?? dungeon.currentZLevel ?? 0;
-  const slot = nextInteriorSlot(dungeon, z);
+  const size = { w: 1.05, h: 0.95 };
+  const slot = here
+    ? attachBeside(planRoomOf(here), size, dungeon.nodes.map(planRoomOf))
+    : { ...nextInteriorSlot(dungeon, z), ...size };
   const node: MapNode = {
     id,
     name,
     description: `${name}, inside ${dungeon.dungeonName}.`,
     connections: here ? [here.id] : [],
-    coordinates: slot,
+    coordinates: { x: slot.x, y: slot.y },
     zLevel: z,
-    footprint: { w: 1.05, h: 0.95 },
+    footprint: size,
     edgeKinds: here ? { [here.id]: 'door' } : undefined,
     tags: ['interior', 'room', 'varied-footprint'],
   };

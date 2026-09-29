@@ -52,7 +52,7 @@ describe('playtest28sSpineTravelKit', () => {
   });
 
   it('kit labels read mid-sentence', () => {
-    expect(kitRefDisplay('The clothes you had on when the light took you')).toBe('your clothes');
+    expect(kitRefDisplay('The clothes you had on when the light took you')).toBe('clothes');
     expect(kitRefDisplay('The Iron Shield')).toBe('the Iron Shield');
     expect(kitRefDisplay('Shortbow')).toBe('Shortbow');
   });
