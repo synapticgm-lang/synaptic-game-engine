@@ -12,8 +12,10 @@ import {
   applyAutoPlayerStallRules,
   chipProgressScore,
   chipProgressWeights,
+  creditCommittedProgress,
   nudgeIfStuck,
   recordCirclingTurn,
+  turnProgress,
 } from './choiceRanking';
 import { applyRememberedThreatPick } from './placeThreats';
 import { pathToFileURL } from 'node:url';
@@ -332,6 +334,9 @@ export type TurnTelemetry = {
   dryRun?: boolean;
   receiptCounts?: ReceiptCounts;
   arcStatusReceipts?: string[];
+  /** 29z1 — turnProgress for this turn (loop stop + thumbs no-progress count). */
+  progress?: boolean;
+  progressReasons?: string[];
   sealedManifestHash?: string;
   replayHash?: string;
   renderFallbackUsed?: boolean;
@@ -1130,9 +1135,10 @@ export async function headlessFateTurn(
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
-  arcState = recordCirclingTurn(arcState, playerInput, [...(arcResult?.systemReceipts ?? []), ...arcStatusReceipts]);
+  arcState = recordCirclingTurn(arcState, playerInput, [...(arcResult?.systemReceipts ?? []), ...arcStatusReceipts], state);
   const nudge = nudgeIfStuck(arcState);
   arcState = nudge.state;
+  const circlingRecorded = arcState;
   arcStatusReceipts = [...arcStatusReceipts, ...nudge.receipts];
   for (const n of nudge.notes) console.info(`[anti-circling] ${n}`);
   if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
@@ -1921,6 +1927,7 @@ Do NOT print dice notation or CODE ENFORCED.
       governed = { ...governed, character: leveled.character };
     }
   }
+  governed = creditCommittedProgress(circlingRecorded, governed, playerInput);
   governed = recordReplayHash(governed);
 
   const responsePath = classifyResponsePath({
@@ -2095,13 +2102,10 @@ export async function runFateAutoplay(opts: {
   let fatal: string | undefined;
   let dnsFailStreak = 0;
   // 28g — LOOP STOP: the same GM line on its second repeat (3rd time), or 5 turns in a row with
-  // no XP, no movement and no new chip.
+  // no progress (29z1: turnProgress — a new chip label is not progress; a bounce is not movement).
   const loopStopOn = opts.loopStop !== false && process.env.SGM_AUTOPLAY_LOOP_STOP !== 'off';
   const gmSeen = new Map<string, number>();
-  const chipsSeen = new Set<string>();
   let noProgress = 0;
-  let lastXpKey = '';
-  let lastLoc = '';
   const turnsPath = join(outDir, 'turns.jsonl');
   const heartbeatPath = join(outDir, 'heartbeat.json');
   const crashPath = join(outDir, 'crash.log');
@@ -2137,6 +2141,7 @@ export async function runFateAutoplay(opts: {
         ) + '\n'
       );
       try {
+        const turnStart = state;
         const result = await headlessFateTurn(state, settings, rng, {
           bibleId: bible.id,
           personalityId,
@@ -2147,6 +2152,13 @@ export async function runFateAutoplay(opts: {
           playerInputOverride: opts.inputs?.[i] || undefined,
         });
         state = result.state;
+        {
+          // 29z1 — the one progress meaning, stored on the row for the loop stop and the thumbs count.
+          const tel = result.telemetry;
+          const p = turnProgress(turnStart, state, [...(tel.arcStatusReceipts ?? []), ...(tel.systemLog ?? [])]);
+          tel.progress = p.progressed;
+          tel.progressReasons = p.reasons;
+        }
         turns.push(result.telemetry);
         appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');
         if (turnNo % 10 === 0) writeSnapshot(turnNo);
@@ -2177,25 +2189,12 @@ export async function runFateAutoplay(opts: {
           const gm = String(tel.gmText ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
           const seen = gm.length >= 24 ? (gmSeen.get(gm) ?? 0) + 1 : 0;
           if (gm.length >= 24) gmSeen.set(gm, seen);
-          const xpKey = `${tel.level ?? ''}:${tel.characterXp ?? ''}`;
-          const loc = String((tel as { location?: string }).location ?? '');
-          let newChip = false;
-          for (const c of tel.offeredChoices ?? []) {
-            const k = String(c).trim().toLowerCase();
-            if (k && !chipsSeen.has(k)) {
-              chipsSeen.add(k);
-              newChip = true;
-            }
-          }
-          const progressed = xpKey !== lastXpKey || loc !== lastLoc || newChip;
-          noProgress = progressed ? 0 : noProgress + 1;
-          lastXpKey = xpKey;
-          lastLoc = loc;
+          noProgress = tel.progress ? 0 : noProgress + 1;
           const reason =
             seen >= 3
               ? `same GM line a third time: "${gm.slice(0, 80)}"`
               : noProgress >= 5
-                ? '5 turns with no XP, no movement and no new chip'
+                ? '5 turns with no progress (no XP, loot, quest change, fight won, new place or social change)'
                 : '';
           if (reason) {
             fatal = `LOOP STOP: ${reason} (turn ${turnNo})`;

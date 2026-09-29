@@ -27,6 +27,117 @@ const STUCK_TURNS = 3;
 
 const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: VICTORY|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:)/i;
 
+/** 29z1 — what a person-facing change looks like on the ledger: memories, answered facts, topics, standing. */
+function socialSignature(state: GameState): string {
+  const mems = (state.npcMemories ?? [])
+    .map((m) =>
+      [
+        m.npcId,
+        m.facts?.length ?? 0,
+        m.completedTopics?.length ?? 0,
+        m.met ? 1 : 0,
+        m.disposition,
+        m.relationshipStatus ?? '',
+        m.knownPlayerName ?? '',
+        (m.purchases ?? []).length,
+      ].join(':')
+    )
+    .sort()
+    .join('|');
+  const arc = state.arcDirector;
+  const topics = Object.entries(arc?.npcTopics ?? {})
+    .map(([k, v]) => `${k}:${v.length}`)
+    .sort()
+    .join('|');
+  return [
+    mems,
+    topics,
+    Object.keys(arc?.topicCommits ?? {}).length,
+    (arc?.socialMilestones ?? []).length,
+    JSON.stringify(arc?.npcRelationships ?? null),
+  ].join('#');
+}
+
+/** A new person remembered, a new answered fact or topic, or a relationship change committed this turn. */
+export function socialChanged(before: GameState, after: GameState): boolean {
+  return socialSignature(before) !== socialSignature(after);
+}
+
+function questSignature(state: GameState): string {
+  return (state.quests ?? [])
+    .map((q) => `${q.id}:${q.status}:${q.revealed ? 1 : 0}:${(q.objectives ?? []).filter((o) => o.completed).length}`)
+    .sort()
+    .join('|');
+}
+
+const placeName = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/**
+ * A move that goes somewhere: the place (or the far end of the road being walked) is not one of the
+ * last few places. A bounce between two places, road included, is not movement.
+ */
+export function movedOn(before: GameState, after: GameState): boolean {
+  const from = placeName(before.currentLocation);
+  const to = placeName(after.currentLocation);
+  const aj = after.journey && after.journey.legsDone < after.journey.legsTotal ? after.journey : null;
+  const bj = before.journey;
+  const legOn = !!aj && !!bj && placeName(bj.to) === placeName(aj.to) && aj.legsDone > bj.legsDone;
+  if ((!to || to === from) && !legOn) return false;
+  const target = placeName(aj ? aj.to : after.currentLocation);
+  const recent = [...(before.circling?.recentPlaces ?? []), from].filter(Boolean);
+  return !recent.some((p) => samePlace(p, target));
+}
+
+export interface TurnProgress {
+  progressed: boolean;
+  reasons: string[];
+}
+
+/**
+ * 29z1 — the one meaning of progress (loop stop, thumbs no-progress count, recordCirclingTurn):
+ * XP or level, loot, a quest change, a fight won, a move that is not a bounce, or a committed social
+ * change. A new chip label is not progress.
+ */
+export function turnProgress(before: GameState, after: GameState, receipts: string[] = []): TurnProgress {
+  const reasons: string[] = [];
+  if ((after.character?.xp ?? 0) !== (before.character?.xp ?? 0) || (after.character?.level ?? 1) !== (before.character?.level ?? 1)) {
+    reasons.push('xp');
+  }
+  if ((after.inventory ?? []).length > (before.inventory ?? []).length) reasons.push('loot');
+  if (questSignature(after) !== questSignature(before)) reasons.push('quest');
+  if (receipts.some((r) => PROGRESS_RECEIPT.test(r))) reasons.push('receipt');
+  if (movedOn(before, after)) reasons.push('moved');
+  if (socialChanged(before, after)) reasons.push('social');
+  return { progressed: reasons.length > 0, reasons };
+}
+
+/**
+ * After the writer's facts are committed: a social / quest / XP / loot change this turn counts as progress
+ * for the turn circling already recorded (the stuck count resets; the ask is no longer "tried with nothing").
+ */
+export function creditCommittedProgress(recorded: GameState, after: GameState, playerInput: string): GameState {
+  const mem = after.circling;
+  if (!mem) return after;
+  const p = turnProgress(recorded, after, []);
+  if (!p.reasons.some((r) => r !== 'moved')) return after;
+  const turn = recorded.turn ?? 0;
+  const key = placeKey(recorded);
+  const act = actionKey(playerInput);
+  const triedHere = { ...(mem.tried?.[key] ?? {}) };
+  if (act) delete triedHere[act];
+  const staleHere = { ...(mem.stale?.[key] ?? {}) };
+  delete staleHere[actionFamily(playerInput)];
+  return {
+    ...after,
+    circling: {
+      ...mem,
+      stale: { ...mem.stale, [key]: staleHere },
+      tried: { ...(mem.tried ?? {}), [key]: triedHere },
+      lastProgressTurn: Math.max(mem.lastProgressTurn, turn),
+    },
+  };
+}
+
 export function actionFamily(input: string): string {
   const a = (input ?? '').toLowerCase();
   if (/\b(inspect|examine|study)\b/.test(a)) return 'inspect';
@@ -60,12 +171,18 @@ function triedAgo(state: GameState, chip: string): number | null {
   return ago < TRIED_TURNS ? ago : null;
 }
 
-/** Record this turn: what was tried here, and whether the game moved on. */
-export function recordCirclingTurn(state: GameState, playerInput: string, receipts: string[]): GameState {
+/**
+ * Record this turn: what was tried here, and whether the game moved on (turnProgress against the
+ * state at the start of the turn; without it, against the last recorded place).
+ */
+export function recordCirclingTurn(state: GameState, playerInput: string, receipts: string[], before?: GameState): GameState {
   const mem: CirclingMemory = state.circling ?? { stale: {}, lastProgressTurn: state.turn ?? 0 };
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
   const moved = !!mem.lastLocation && here !== mem.lastLocation;
-  const progressed = moved || receipts.some((r) => PROGRESS_RECEIPT.test(r));
+  const start: GameState = before ?? { ...state, currentLocation: mem.lastLocation ?? here, journey: state.journey };
+  const progressed = mem.lastLocation
+    ? turnProgress({ ...start, circling: mem }, state, receipts).progressed
+    : receipts.some((r) => PROGRESS_RECEIPT.test(r));
   const key = placeKey(state);
   const fam = actionFamily(playerInput);
   const stale = { ...mem.stale, [key]: { ...(mem.stale[key] ?? {}) } };
@@ -323,7 +440,9 @@ function wayOnChip(state: GameState, list: string[], story: string | null): stri
     }));
   const fresh = others.filter((o) => !o.visited).sort((a, b) => a.r - b.r || a.i - b.i)[0]?.h;
   if (fresh) return `Travel toward ${fresh.name}`;
-  if (canSeekFight(state)) return SEEK_FIGHT_CHIP;
+  // 29z1 — standing still is not a reason to fight while an unanswered talk is on offer.
+  const talkOpen = list.some((c) => actionFamily(c) === 'talk' && triedAgo(state, c) == null);
+  if (canSeekFight(state) && (revisitsOnly || !talkOpen)) return SEEK_FIGHT_CHIP;
   if (list.some((c) => travelDest(c) || /^(?:enter|next unexplored room)\b/i.test(c))) return null;
   const old = others.sort((a, b) => a.r - b.r || a.i - b.i)[0]?.h;
   return old ? `Travel toward ${old.name}` : null;
@@ -346,18 +465,18 @@ function isUnusedExit(state: GameState, chip: string): boolean {
   return WAY_ON_CHIP.test(chip);
 }
 
-/** Talk to someone whose answer was already heard: a met NPC named in the chip, or this talk already tried here. */
+/**
+ * 29z1 — this same ask was already answered: tried here and nothing new came of it (a talk that committed
+ * a fact is progress and leaves the tried memory). Having met the person is not enough.
+ */
 function isHeardTalk(state: GameState, chip: string): boolean {
-  if (actionFamily(chip) !== 'talk') return false;
-  if (triedAgo(state, chip) != null) return true;
-  const lower = chip.toLowerCase();
-  return presentNpcRecords(state).some((m) => isMetNpc(m) && lower.includes(m.npcName.toLowerCase()));
+  return actionFamily(chip) === 'talk' && triedAgo(state, chip) != null;
 }
 
 /**
  * 29x — auto player only (a person can still tap any chip). Replaces the pick with the untried job, else an
- * unused exit, when (1) the pick is talking again to someone whose answer was already heard, or (2) the last
- * auto picks were only look / wait / inspect. Returns the pick unchanged when neither applies.
+ * unused exit, when (1) the pick asks again what was already answered, or (2) the last auto picks were only
+ * look / wait / inspect and the pick is not a talk. Returns the pick unchanged when neither applies.
  */
 export function applyAutoPlayerStallRules(
   state: GameState,
@@ -371,7 +490,9 @@ export function applyAutoPlayerStallRules(
   if (!wayOn || wayOn === pick) return { pick, rule: null };
   if (isHeardTalk(state, pick)) return { pick: wayOn, rule: 'heard-talk' };
   const recent = state.circling?.recentFamilies ?? [];
-  if (recent.length >= 2 && recent.every((f) => LOITER.has(f))) return { pick: wayOn, rule: 'loiter' };
+  if (actionFamily(pick) !== 'talk' && recent.length >= 2 && recent.every((f) => LOITER.has(f))) {
+    return { pick: wayOn, rule: 'loiter' };
+  }
   return { pick, rule: null };
 }
 

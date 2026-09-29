@@ -709,12 +709,24 @@ export function buildCompletedEventPacket(
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
     ledgerSheet: ledgerSheetLine(state) || undefined,
     engineResult: extras?.engineResult?.trim() || undefined,
-    movement: movementFact(state) || undefined,
+    movement: movementFact(state, action) || undefined,
   };
 }
 
-/** 29y — one visit per place: the move the engine committed this turn, or that nothing moved. */
-export function movementFact(state: GameState): string {
+/** Same talk family as choiceRanking.actionFamily (inspect / wait / look win there first). */
+const TALK_ACTION = /^(?![\s\S]*\b(?:inspect|examine|study|wait|ready yourself|watch|hold still|keep watch|look around|look over|survey|scout|scan)\b)[\s\S]*\b(?:talk|ask|speak|greet|offer)\b/i;
+const TALK_STAYS = ' A talk, ask or offer with no move is valid play: answer it in dialogue here and do not travel.';
+
+/**
+ * 29y — one visit per place: the move the engine committed this turn, or that nothing moved.
+ * 29z1 — on a talk turn with no move, say that talking in place is the play.
+ */
+export function movementFact(state: GameState, playerAction?: string): string {
+  const stay = playerAction && TALK_ACTION.test(playerAction) ? TALK_STAYS : '';
+  return movementLine(state, stay);
+}
+
+function movementLine(state: GameState, stay: string): string {
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
   if (!here) return '';
   const c = state.circling;
@@ -723,13 +735,13 @@ export function movementFact(state: GameState): string {
   if (j && j.legsDone < j.legsTotal) {
     return movedNow
       ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${j.ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
-      : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.`;
+      : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
   }
   if (movedNow && c?.prevPlace) {
     return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
   }
   if (!c?.lastLocation) return '';
-  return `No move this turn: at ${here} before and after. Do not narrate leaving, travelling or arriving.`;
+  return `No move this turn: at ${here} before and after. Do not narrate leaving, travelling or arriving.${stay}`;
 }
 
 type LedgerPlaceFacts = {

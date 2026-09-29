@@ -83,9 +83,9 @@ afterEach(() => {
 });
 
 describe('29y stamps', () => {
-  it('HUD and BUILD are 2026-09-29y1 and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29y1');
-    expect(BUILD_STAMP).toBe('2026-09-29y1');
+  it('HUD and BUILD are 2026-09-29z1 and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29z1');
+    expect(BUILD_STAMP).toBe('2026-09-29z1');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -205,9 +205,11 @@ describe('29y — playback reads as one visit', () => {
   });
 
   it('a card role label is offered at the opening place only', () => {
+    // One initial state for both: createInitialState picks a random seed, and the seed picks the opening card.
     const opening = base(INN);
     const moved = {
-      ...base(CHURCH),
+      ...opening,
+      currentLocation: CHURCH,
       circling: { stale: {}, lastProgressTurn: 19, lastLocation: CHURCH, prevPlace: INN, openingPlace: INN, movedTurn: 19 },
     } as GameState;
     const castAway = compileRefEnum(moved).filter((r) => r.id.startsWith('cast:'));

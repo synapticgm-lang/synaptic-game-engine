@@ -8,7 +8,7 @@ import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
 import { advanceDungeonCard, isDungeonCard } from './dungeonCard';
-import { nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
+import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
@@ -2245,6 +2245,8 @@ export function useGame() {
       if (!liveCurrent) return;
       const questsAtTurnStart = liveCurrent.quests ?? [];
       const hereAtTurnStart = liveCurrent.currentLocation ?? '';
+      const stateAtTurnStart = liveCurrent;
+      let circlingRecorded: GameState | null = null;
       liveCurrent = applySystemRename(
         {
           ...liveCurrent,
@@ -2694,9 +2696,15 @@ export function useGame() {
       liveCurrent = dungeonTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...dungeonTurn.receipts];
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
-      liveCurrent = recordCirclingTurn(liveCurrent, sanitizedInput, [...(systemsArc?.systemReceipts ?? []), ...pendingArcStatusReceipts]);
+      liveCurrent = recordCirclingTurn(
+        liveCurrent,
+        sanitizedInput,
+        [...(systemsArc?.systemReceipts ?? []), ...pendingArcStatusReceipts],
+        stateAtTurnStart
+      );
       const nudge = nudgeIfStuck(liveCurrent);
       liveCurrent = nudge.state;
+      circlingRecorded = liveCurrent;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...nudge.receipts];
       stateRef.current = liveCurrent;
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
@@ -4582,6 +4590,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }
         }
       }
+      if (circlingRecorded) mergedState = creditCommittedProgress(circlingRecorded, mergedState, sanitizedInput);
       mergedState = recordReplayHash(mergedState);
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();

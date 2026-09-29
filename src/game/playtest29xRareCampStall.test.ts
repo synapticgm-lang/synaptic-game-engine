@@ -64,9 +64,9 @@ afterEach(() => {
 });
 
 describe('29x stamps', () => {
-  it('HUD and BUILD are 2026-09-29y1 and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29y1');
-    expect(BUILD_STAMP).toBe('2026-09-29y1');
+  it('HUD and BUILD are 2026-09-29z1 and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29z1');
+    expect(BUILD_STAMP).toBe('2026-09-29z1');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -211,16 +211,20 @@ describe('29x — auto-player stall rules', () => {
     };
   }
 
-  it('talking again to someone already heard is not progress: take the job, else the unused exit', () => {
+  // 29z1 — "already heard" is this same ask tried here with nothing new, not "the person is met".
+  const heard = (): GameState =>
+    withMira({ turn: 6, circling: { stale: {}, lastProgressTurn: 0, tried: { 'greyhollow inn': { 'talk to mira': 5 } } } });
+
+  it('asking again what was already answered is not progress: take the job, else the unused exit', () => {
     const offered = ['Talk to Mira', EXIT, 'Look around'];
-    expect(applyAutoPlayerStallRules(withMira(), offered, 'Talk to Mira')).toEqual({ pick: EXIT, rule: 'heard-talk' });
+    expect(applyAutoPlayerStallRules(heard(), offered, 'Talk to Mira')).toEqual({ pick: EXIT, rule: 'heard-talk' });
     const withJob = ['Talk to Mira', EXIT, 'Accept the job'];
-    expect(applyAutoPlayerStallRules(withMira(), withJob, 'Talk to Mira').pick).toBe('Accept the job');
+    expect(applyAutoPlayerStallRules(heard(), withJob, 'Talk to Mira').pick).toBe('Accept the job');
     expect(offered).toContain('Talk to Mira');
   });
 
   it('talk stays when there is no way on, or the person has not answered yet', () => {
-    expect(applyAutoPlayerStallRules(withMira(), ['Talk to Mira', 'Look around'], 'Talk to Mira').pick).toBe('Talk to Mira');
+    expect(applyAutoPlayerStallRules(heard(), ['Talk to Mira', 'Look around'], 'Talk to Mira').pick).toBe('Talk to Mira');
     const unmet = withMira({
       npcMemories: [{ npcId: 'mira', npcName: 'Mira', disposition: 'neutral', facts: [], lastSeenTurn: 1, location: 'Greyhollow Inn' }],
     });

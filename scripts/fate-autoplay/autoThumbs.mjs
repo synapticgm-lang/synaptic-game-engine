@@ -101,7 +101,8 @@ for (const r of rows) {
   const levelUp = (r.level ?? prevLevel) > prevLevel;
   prevLevel = r.level ?? prevLevel;
   if (xp > 0) lastXpTurn = r.turn;
-  const progress = xp > 0 || moved || loot || quest || won;
+  // 29z1 — the harness writes turnProgress on each row (same meaning as the loop stop); older runs fall back.
+  const progress = typeof r.progress === 'boolean' ? r.progress : xp > 0 || moved || loot || quest || won;
   if (!progress) {
     noProgress++;
     noProgressRun++;

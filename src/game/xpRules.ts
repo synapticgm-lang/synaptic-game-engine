@@ -26,7 +26,8 @@ export type MilestoneKind =
   | 'questComplete'
   | 'significantPerson'
   | 'significantPlace'
-  | 'achievement';
+  | 'achievement'
+  | 'deed';
 
 /** SRD 5.1 "Experience Points by Challenge Rating". CR 0 is "0 or 10"; a real threat pays 10. */
 export const DND_XP_BY_CR: Readonly<Record<string, number>> = {
@@ -64,7 +65,25 @@ export const LITRPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
   significantPerson: 25,
   significantPlace: 25,
   achievement: 75,
+  /** 29z1 — LitRPG deeds pay through deedXp on the flat kinds; story RPG deeds pay no XP. */
+  deed: 0,
 };
+
+/** 29z1 — a deed the engine already counts: the first one, a count step, the top count step. */
+export type DeedStep = 'first' | 'count' | 'capstone';
+
+/**
+ * 29z1 — pay for an engine-seen deed, by mode. LitRPG: significant-place / quest-step / quest-complete
+ * amounts. Tabletop: half the level's Low budget (never a level, never the flat 75). Story RPG: 0 XP
+ * (its reward is an item, see sandboxXp). Difficulty scale and the over-level cut apply as for any milestone.
+ */
+export function deedXp(mode: EngineMode | undefined, step: DeedStep, opts: MilestoneXpOpts = {}): MilestoneXpResult {
+  if (mode === 'litrpg') {
+    return milestoneXp(mode, step === 'first' ? 'significantPlace' : step === 'count' ? 'questStep' : 'questComplete', opts);
+  }
+  if (mode === 'dnd') return milestoneXp(mode, 'deed', opts);
+  return { amount: 0, detail: '' };
+}
 
 /** CR used when a D&D monster has no `cr` yet (the note says so). */
 export const DND_DEFAULT_CR = '1/4';
@@ -170,6 +189,10 @@ function milestoneXpBase(
   if (kind === 'achievement') return { amount: 0, detail: '' };
   const lvl = Math.max(1, Math.min(20, Math.floor(opts.level ?? 1)));
   const [low, moderate, high] = DND_XP_BUDGET_PER_CHARACTER[lvl - 1]!;
+  if (kind === 'deed') {
+    const amount = Math.floor(low / 2);
+    return { amount, detail: `level ${lvl} Low milestone ${low} ÷ 2 = ${amount} XP` };
+  }
   const band: [string, number] =
     kind === 'significantPerson' || kind === 'significantPlace' || kind === 'dungeonEntry' || kind === 'roomCleared'
       ? ['Low', low]

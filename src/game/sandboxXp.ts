@@ -22,7 +22,9 @@ import { detectStanceTreatment } from './factionStandings';
 import { parsePlayerIntent } from './intentParser';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
-import { LITRPG_MILESTONE_XP, milestoneXp, type MilestoneKind } from './xpRules';
+import { LITRPG_MILESTONE_XP, deedXp, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
+import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
+import { weaponCategory } from './checkRules';
 
 /** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
 export const SANDBOX_XP = {
@@ -119,6 +121,60 @@ function isWitnessedHarm(state: GameState, action: string): boolean {
   return /\b(?:steal|steals|stole|rob|robs|robbed)\b/i.test(action);
 }
 
+export const DEED_FIRST_KILL = 'achv:first-kill';
+export const DEED_FIGHTS_COUNT = 'achv:fights-won-3';
+export const DEED_FIGHTS_CAPSTONE = 'achv:fights-won-10';
+export const FIGHTS_COUNT_STEP = 3;
+export const FIGHTS_CAPSTONE_STEP = 10;
+
+/** Fights won or talked down: one paid `encounter:<id>:<turn>` key per fight (engineFight marks two ids on the same turn). */
+export function fightsWon(keys: string[] | undefined): number {
+  const turns = new Set<string>();
+  for (const k of keys ?? []) {
+    if (!k.startsWith('encounter:')) continue;
+    turns.add(k.slice(k.lastIndexOf(':') + 1));
+  }
+  return turns.size;
+}
+
+/** The engine already recorded a kill (last kill on the scene, or a victory receipt). */
+function hasKilled(state: GameState): boolean {
+  if (state.sceneFacts?.lastKill?.outcome === 'victory') return true;
+  return (state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.outcome === 'victory');
+}
+
+const RARITY_ORDER: Item['rarity'][] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
+
+/** A weapon the player owns (equipped first): its kind and grade. */
+function ownedTool(state: GameState): { category: string; rank: number } | null {
+  const tools = (state.inventory ?? []).filter((i) => /hand|weapon|main/i.test(i.slot ?? ''));
+  const held = tools.find((i) => i.equipped) ?? tools[0];
+  if (!held?.name) return null;
+  const category = weaponCategory(held.name);
+  if (category === 'unarmed') return null;
+  return { category, rank: RARITY_ORDER.indexOf(held.rarity ?? 'Common') };
+}
+
+/**
+ * One grade-1 chest item, rolled the way a finished settlement card rolls it. When the player owns a
+ * weapon, a better one of the same kind wins, then the same kind, then the first roll.
+ */
+export function deedItem(state: GameState, key: string): Item | null {
+  const tool = ownedTool(state);
+  let first: Item | null = null;
+  let sameKind: Item | null = null;
+  for (let i = 0; i < 12; i++) {
+    const loot = rollLoot({ profile: chestProfileForGrade(1), state, seed: `${state.seed ?? 'seed'}:${key}:${i}` });
+    const item = loot.items[0];
+    if (!item) continue;
+    first ??= item;
+    if (!tool || loot.categories[0] !== tool.category) continue;
+    if (RARITY_ORDER.indexOf(item.rarity ?? 'Common') > tool.rank) return item;
+    sameKind ??= item;
+  }
+  return sameKind ?? first;
+}
+
 function encounterKind(enc: ActiveEncounter): MilestoneKind {
   const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
   if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
@@ -205,10 +261,12 @@ export function applySandboxXpAwards(
 
   // Encounter end: victory or neutralised (parley). Escape / defeat / capture pay nothing.
   const ended = opts.endedEncounter ?? null;
+  let wonThisTurn = opts.enemyKilled === true;
   if (ended && opts.encounterCleared !== false && !state.activeEncounter) {
     const receipts = state.arcDirector?.encounterClearedReceipts ?? [];
     const rec = [...receipts].reverse().find((r) => r.name === ended.name && r.turn >= opts.turn - 2);
     const outcome = rec?.outcome ?? (opts.enemyKilled ? 'victory' : ended.terminalOutcome);
+    if (outcome === 'victory') wonThisTurn = true;
     if (outcome === 'victory' || outcome === 'parleyResolved') {
       pay(
         `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
@@ -322,6 +380,34 @@ export function applySandboxXpAwards(
   if (mode === 'litrpg') {
     const firstStep = awardKeys.some((k) => k.startsWith('quest-tick:') || k.startsWith('quest-complete:'));
     if (firstStep || opts.turn >= 5) pay('achv:first-steps', 'achievement', 'Achievement: First Steps');
+  }
+
+  // 29z1 — fight deeds the engine already counts (first kill; fights won), paid once each by mode.
+  if (mode === 'litrpg' || mode === 'dnd' || mode === 'rpg') {
+    const payDeed = (key: string, step: DeedStep, label: string): boolean => {
+      if (hasAward(awardKeys, key)) return false;
+      awardKeys.push(key);
+      const r = deedXp(mode, step, { level, strictness: state.gmStrictness, ...areaOpts });
+      if (r.amount > 0) {
+        xp += r.amount;
+        notes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
+      }
+      return true;
+    };
+    const grant = (key: string, label: string) => {
+      const item = deedItem(state, key);
+      if (!item) return;
+      items.push(item);
+      lootNotes.push(`Loot: [${item.rarity}] ${item.name} (${label})`);
+    };
+    if ((wonThisTurn || hasKilled(state)) && payDeed(DEED_FIRST_KILL, 'first', 'Achievement: First Kill') && mode === 'rpg') {
+      grant(DEED_FIRST_KILL, 'Achievement: First Kill');
+    }
+    const won = fightsWon(awardKeys);
+    if (won >= FIGHTS_COUNT_STEP) payDeed(DEED_FIGHTS_COUNT, 'count', `Achievement: ${FIGHTS_COUNT_STEP} fights won`);
+    if (won >= FIGHTS_CAPSTONE_STEP && payDeed(DEED_FIGHTS_CAPSTONE, 'capstone', `Achievement: ${FIGHTS_CAPSTONE_STEP} fights won`) && mode === 'litrpg') {
+      grant(DEED_FIGHTS_CAPSTONE, `Achievement: ${FIGHTS_CAPSTONE_STEP} fights won`);
+    }
   }
 
   void opts.events;
