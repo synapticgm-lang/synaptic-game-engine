@@ -5,6 +5,7 @@
  * Works from ledger refs only — no word lists of story content.
  */
 import type { LedgerRef } from './completedEventPacket';
+import type { GameState } from './types';
 
 const LINK_RE = /\s+(?:at|of|on|in|near|outside|toward|towards|by|beside|past|off|under|over|behind|below|above)\s+|,\s*/i;
 const DIRECTION_RE = /^(?:east|west|north|south|eastward|westward|northward|southward|up|down|ahead)$/i;
@@ -46,17 +47,42 @@ function capitalize(s: string): string {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
 
+/** Every named person the save knows: this turn's refs, NPC memories, companions and world-ledger actors. */
+export function knownPersonNames(refs: LedgerRef[], state?: Pick<GameState, 'npcMemories' | 'companions' | 'worldLedger'>): string[] {
+  const out = new Map<string, string>();
+  const add = (raw?: string) => {
+    const name = (raw ?? '').replace(/\s+/g, ' ').trim();
+    if (!/^[A-Z]/.test(name) || name.length < 2) return;
+    if (!name.includes(' ') && HONORIFIC_RE.test(name)) return;
+    if (!out.has(name.toLowerCase())) out.set(name.toLowerCase(), name);
+  };
+  for (const ref of refs) if (ref.klass === 'person' || ref.klass === 'companion') add(ref.display);
+  for (const m of state?.npcMemories ?? []) add(m.npcName);
+  for (const c of state?.companions ?? []) add(c.name);
+  for (const a of state?.worldLedger?.actors ?? []) add(a.name);
+  return [...out.values()].sort((a, b) => b.length - a.length);
+}
+
 /** Article glue around painted labels. */
-export function repairLabelArticles(prose: string, refs: LedgerRef[]): string {
+export function repairLabelArticles(
+  prose: string,
+  refs: LedgerRef[],
+  state?: Pick<GameState, 'npcMemories' | 'companions' | 'worldLedger'>
+): string {
   let next = (prose ?? '')
-    .replace(/\b(the|a|an)\s+((?:[a-z][\w-]*\s+)?)The\s+/g, (_m, art: string, adj: string) => `${art} ${adj}`)
+    .replace(/\b(the|a|an)\s+((?:[a-z][\w-]*,?\s+){0,3})The\s+/g, (_m, art: string, adj: string) => `${art} ${adj}`)
+    .replace(/(["“]\s*)No\s+(the|a|an)\s+/g, '$1No, $2 ')
+    .replace(/\b([Nn]o)\s+(?:the|a|an)\s+(?=\S)/g, '$1 ')
     .replace(/(\w)\s+(['’]s)\b/g, '$1$2');
   for (const ref of refs) {
-    if (ref.klass !== 'person' && ref.klass !== 'companion') continue;
-    const display = ref.display.trim();
-    if (!/^[A-Z]/.test(display)) continue;
-    next = next.replace(new RegExp(`\\b[Tt]he\\s+(${escRe(display)})\\b`, 'g'), (m, name: string, offset: number) =>
-      atSentenceStart(next, offset) ? capitalize(name) : name
+    const m = ref.display.trim().match(/^The\s+([\w'’-]+)/);
+    if (!m) continue;
+    next = next.replace(new RegExp(`(?<=[\\w,;:]\\s+)The\\s+(${escRe(m[1]!)})\\b`, 'g'), 'the $1');
+  }
+  for (const name of knownPersonNames(refs, state)) {
+    const source = next;
+    next = source.replace(new RegExp(`\\b[Tt]he\\s+(${escRe(name)})\\b`, 'g'), (_m, found: string, offset: number) =>
+      atSentenceStart(source, offset) ? capitalize(found) : found
     );
   }
   return next;
@@ -92,6 +118,10 @@ export function varyRepeatMentions(prose: string, refs: LedgerRef[]): string {
   return next;
 }
 
-export function polishMentions(prose: string, refs: LedgerRef[]): string {
-  return varyRepeatMentions(repairLabelArticles(prose, refs), refs);
+export function polishMentions(
+  prose: string,
+  refs: LedgerRef[],
+  state?: Pick<GameState, 'npcMemories' | 'companions' | 'worldLedger'>
+): string {
+  return varyRepeatMentions(repairLabelArticles(prose, refs, state), refs);
 }

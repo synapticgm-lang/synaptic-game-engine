@@ -302,5 +302,5 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
     next = trimRecycledSentences(next, recentGmBeatTexts(check.state)).text;
   }
-  return polishMentions(next, refEnumOf(check.state, packet));
+  return polishMentions(next, refEnumOf(check.state, packet), check.state);
 }
