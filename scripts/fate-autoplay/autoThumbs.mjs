@@ -3,8 +3,10 @@
  * 28j — model-free thumbs review for a fate-autoplay run.
  * Usage: node scripts/fate-autoplay/autoThumbs.mjs <runDir> [--notes] [--out <file>]
  * Reads <runDir>/turns.jsonl, writes <runDir>/thumbs.json and <runDir>/report.md.
- * --notes: sends up to 15 unclear turns (short excerpts) in ONE batch call to a cheap
- * OpenRouter model for a one-line note each. Skipped when no OPENROUTER_API_KEY is found.
+ * 29z2 — each row's turnCheck (who is here, the chips, the last action) adds P0 fails and thumbs-down.
+ * --notes: a judge model reads every turn (batches of 20) for stiff / abstract / broken lines and for
+ * prose that ignores the player's action. Stiff lines come back with a plainer rewrite and are
+ * written to <runDir>/writer-lessons.jsonl. Skipped when no OPENROUTER_API_KEY is found.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -115,6 +117,9 @@ for (const r of rows) {
   if (quest) up.push('quest step');
   if (xp > 0 && !won) up.push(`+${xp} XP`);
 
+  const p0 = (r.turnCheck?.p0 ?? []).map((f) => `P0 ${f.kind}: ${f.detail}`);
+  down.push(...p0);
+  for (const f of r.turnCheck?.down ?? []) down.push(`${f.kind}: ${f.detail}`);
   if (isFallback(r)) down.push('fallback / stitch');
   for (const [re, why] of JUNK) if (re.test(t)) down.push(why);
   const sents = sentences(t);
@@ -144,10 +149,14 @@ for (const r of rows) {
     input: r.playerInput,
     location: loc,
     verdict,
+    ...(p0.length ? { p0 } : {}),
     down,
     up,
     unclear,
     excerpt: t.replace(/\s+/g, ' ').slice(0, 220),
+    prose: t,
+    present: r.turnCheck?.presentNames ?? [],
+    chips: r.offeredChoices ?? [],
     // 28l — raw writer issues (empty / reasoning-only / cut-off / recycled / unresolved) for training.
     ...(r.writerIssues?.length ? { writerIssues: r.writerIssues } : {}),
     // 28w — token use of the turn, next to the issues (same row as the live feedback record).
@@ -155,38 +164,88 @@ for (const r of rows) {
   });
 }
 
+const lessons = [];
+
+const JUDGE_RUBRIC = [
+  'You judge turns of a text RPG. The player directs the main character; the prose must do THAT action.',
+  'For each turn you get the player action, who is here, the chips that were offered, and the prose.',
+  'Return ONLY a JSON array, one object per turn:',
+  '{"turn":<n>,"verdict":"up"|"down","followed":true|false,"why":"<short reason>","stiff":[{"line":"<exact words from the prose>","better":"<how a person telling the story would say it>","why":"stiff"|"abstract"|"broken"}]}',
+  'followed=false when the prose ignores the action, answers a different action, or restates the arrival instead of acting.',
+  'stiff: lines a storyteller would never say aloud: abstract, report-like, over-formal, or broken grammar.',
+  'Example: "The horizon is empty of people." is stiff; better: "Not a soul in sight."',
+  'Quote at most 3 stiff lines per turn, exact words only. Empty array when the prose sounds natural.',
+  'verdict=down when followed is false or a stiff line is found; up when the prose is concrete, natural and moves the story.',
+].join('\n');
+
+function parseJudge(body) {
+  const start = body.indexOf('[');
+  const end = body.lastIndexOf(']');
+  if (start < 0 || end <= start) return [];
+  try {
+    const arr = JSON.parse(body.slice(start, end + 1));
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
 async function addNotes() {
   const key = process.env.OPENROUTER_API_KEY || readKeyFromEnvFiles();
-  const targets = out.filter((o) => o.verdict === 'unclear').slice(0, 15);
   if (!key) return 'skipped (no OPENROUTER_API_KEY found)';
-  if (!targets.length) return 'skipped (no unclear turns)';
+  const targets = out.filter((o) => o.prose && o.prose.trim().length > 0).slice(0, 300);
+  if (!targets.length) return 'skipped (no prose turns)';
   const model = process.env.SGM_THUMBS_MODEL || 'google/gemini-2.5-pro';
-  const prompt =
-    'You review turns of a text RPG. For each turn give ONE line: "T<n>: up|down — <short reason>". ' +
-    'Down if the prose is vague, contradicts the action, or is filler; up if it is concrete and moves the story.\n\n' +
-    targets.map((o) => `T${o.turn} [action: ${o.input}] ${o.excerpt}`).join('\n');
-  try {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 900, temperature: 0 }),
-    });
-    if (!res.ok) return `failed (HTTP ${res.status})`;
-    const j = await res.json();
-    const body = String(j.choices?.[0]?.message?.content ?? '');
-    for (const line of body.split(/\r?\n/)) {
-      const m = line.match(/T(\d+)\s*:\s*(up|down)\s*[—-]+\s*(.+)$/i);
-      if (!m) continue;
-      const o = out.find((x) => x.turn === Number(m[1]));
-      if (!o) continue;
-      o.verdict = m[2].toLowerCase();
-      o.note = m[3].trim();
-      (o.verdict === 'up' ? o.up : o.down).push(`model note: ${o.note}`);
+  let judged = 0;
+  let failed = 0;
+  for (let i = 0; i < targets.length; i += 20) {
+    const batch = targets.slice(i, i + 20);
+    const prompt =
+      JUDGE_RUBRIC +
+      '\n\n' +
+      batch
+        .map(
+          (o) =>
+            `T${o.turn}\nACTION: ${o.input}\nHERE: ${o.present.join(', ') || 'nobody named'}\nCHIPS: ${o.chips.join(' | ') || 'none'}\nPROSE: ${o.prose.replace(/\s+/g, ' ').slice(0, 1400)}`
+        )
+        .join('\n\n');
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 6000, temperature: 0 }),
+      });
+      if (!res.ok) {
+        failed++;
+        continue;
+      }
+      const j = await res.json();
+      for (const v of parseJudge(String(j.choices?.[0]?.message?.content ?? ''))) {
+        const o = batch.find((x) => x.turn === Number(v?.turn));
+        if (!o) continue;
+        judged++;
+        o.note = String(v.why ?? '').trim();
+        if (v.followed === false) {
+          const flag = `P0 ignored-action (judge): ${o.note || 'prose does not do the player action'}`;
+          o.p0 = [...(o.p0 ?? []), flag];
+          o.down.push(flag);
+        }
+        for (const s of Array.isArray(v.stiff) ? v.stiff.slice(0, 3) : []) {
+          const line = String(s?.line ?? '').trim();
+          if (!line || !o.prose.includes(line)) continue;
+          const better = String(s?.better ?? '').trim();
+          o.down.push(`${s?.why || 'stiff'} line: "${line.slice(0, 90)}"${better ? ` → "${better.slice(0, 90)}"` : ''}`);
+          lessons.push({ turn: o.turn, action: o.input, line, better, why: s?.why || 'stiff' });
+        }
+        if (v.verdict === 'up' && !o.down.length) o.up.push(`judge: ${o.note}`);
+        else if (v.verdict === 'down' && o.note && !o.down.some((d) => d.includes(o.note))) o.down.push(`judge: ${o.note}`);
+        o.verdict = o.down.length ? 'down' : o.up.length ? 'up' : o.verdict;
+      }
+    } catch {
+      failed++;
     }
-    return `ok (${model}, ${targets.length} turns)`;
-  } catch (e) {
-    return `failed (${e.message})`;
   }
+  return `ok (${model}, ${judged}/${targets.length} turns judged${failed ? `, ${failed} batch(es) failed` : ''})`;
 }
 
 function readKeyFromEnvFiles() {
@@ -202,6 +261,14 @@ function readKeyFromEnvFiles() {
 }
 
 const notesStatus = wantNotes ? await addNotes() : 'not requested';
+
+for (const r of rows) {
+  for (const f of r.turnCheck?.down ?? []) {
+    if (f.kind === 'broken-line') lessons.push({ turn: r.turn, action: r.playerInput, line: f.detail, better: '', why: 'broken' });
+  }
+}
+const p0Turns = out.filter((o) => o.p0?.length);
+const p0Count = p0Turns.reduce((n, o) => n + o.p0.length, 0);
 
 const cnt = (k) => out.filter((o) => o.verdict === k).length;
 const last = rows[rows.length - 1] ?? {};
@@ -267,6 +334,12 @@ const md = [
   '## Thumbs',
   `- 👍 ${cnt('up')} · 👎 ${cnt('down')} · unclear ${cnt('unclear')} · neutral ${cnt('neutral')} · model notes: ${notesStatus}`,
   '',
+  `### P0 (turn fails): ${p0Count} on ${p0Turns.length} turn(s)`,
+  ...p0Turns.slice(0, 20).map((o) => `- T${o.turn} [${String(o.input ?? '').slice(0, 50)}] ${o.p0.join('; ')}`),
+  '',
+  `### Writer lessons (stiff / abstract / broken lines): ${lessons.length}`,
+  ...lessons.slice(0, 10).map((l) => `- T${l.turn} ${l.why}: "${l.line.slice(0, 90)}"${l.better ? ` → "${l.better.slice(0, 90)}"` : ''}`),
+  '',
   '### Top 5 👍',
   ...top('up').map((o) => `- T${o.turn} ${o.up.join('; ')} — "${o.excerpt.slice(0, 110)}"`),
   '',
@@ -282,6 +355,10 @@ const md = [
   '',
 ].join('\n');
 
-fs.writeFileSync(path.join(runDir, 'thumbs.json'), JSON.stringify({ circling, turns: out }, null, 1));
+fs.writeFileSync(
+  path.join(runDir, 'thumbs.json'),
+  JSON.stringify({ circling, p0Count, lessons: lessons.length, turns: out.map(({ prose, ...o }) => o) }, null, 1)
+);
+fs.writeFileSync(path.join(runDir, 'writer-lessons.jsonl'), lessons.map((l) => JSON.stringify(l)).join('\n') + (lessons.length ? '\n' : ''));
 fs.writeFileSync(path.join(runDir, 'report.md'), md);
 console.log(md);

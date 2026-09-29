@@ -219,6 +219,7 @@ import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCo
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
+import { checkPlayerTurn, type TurnCheck } from './turnCheck';
 import { compactTrafficGist } from './openingPointerCard';
 import {
   syncQuestsFromPlay,
@@ -337,6 +338,8 @@ export type TurnTelemetry = {
   /** 29z1 — turnProgress for this turn (loop stop + thumbs no-progress count). */
   progress?: boolean;
   progressReasons?: string[];
+  /** 29z2 — tester check: P0 (ghost/impossible chip, ignored action, open-ground interior, unset quest place) + thumbs-down. */
+  turnCheck?: TurnCheck;
   sealedManifestHash?: string;
   replayHash?: string;
   renderFallbackUsed?: boolean;
@@ -2158,6 +2161,7 @@ export async function runFateAutoplay(opts: {
           const p = turnProgress(turnStart, state, [...(tel.arcStatusReceipts ?? []), ...(tel.systemLog ?? [])]);
           tel.progress = p.progressed;
           tel.progressReasons = p.reasons;
+          if (!tel.error) tel.turnCheck = checkPlayerTurn(turnStart, state, tel);
         }
         turns.push(result.telemetry);
         appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');
@@ -2275,11 +2279,15 @@ export async function runFateAutoplay(opts: {
   };
   summary.evalHarness = validateEvalRun(state, summary, turns);
   const readability = readabilityGatePass(state);
+  // 29z2 — tester turn-check P0s fail the run the same way as readability P0s.
+  const turnP0 = turns.flatMap((t) =>
+    (t.turnCheck?.p0 ?? []).map((f) => ({ kind: `turn-${f.kind}`, turn: t.turn, quote: f.detail.slice(0, 160) }))
+  );
   summary.readabilityGate = {
-    pass: readability.pass,
-    p0Count: readability.p0Count,
+    pass: readability.pass && turnP0.length === 0,
+    p0Count: readability.p0Count + turnP0.length,
     p1Count: readability.p1Count,
-    violations: readability.violations,
+    violations: [...readability.violations, ...turnP0],
   };
 
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
