@@ -9,6 +9,7 @@ import type { GameState } from './types.ts';
 import { isEncounterEngaged } from './encounterTerminalFsm.ts';
 import { isDeadFoeCorpseOk, isDeadFoeReopenedAsLiving, matchesLastKillName } from './combatAuthority.ts';
 import { ensureTravelArrivalProse } from './outdoorHubs.ts';
+import { recentGmBeatTexts, trimRecycledSentences } from './semanticLoopDetector.ts';
 
 const LEAVE_REACH =
   /\bYou leave\s+.+?\s+behind and reach\s+.+?\./i;
@@ -41,19 +42,22 @@ export function proseHasFightBleed(text: string): boolean {
 /**
  * Post-commit arrival stamp. Never glue `You leave X and reach Y` onto a
  * steel beat (02r D&D T28 / RPG T14). Live fight skips the stamp entirely.
+ * 28v1: the stamp lands after the writer's recycle trim, so the stamped beat
+ * goes through the same trim against the same recent GM beats.
  */
 export function stampTravelArrivalIfSafe(
   prose: string,
   dest: string,
   from: string | null | undefined,
-  state?: Pick<GameState, 'activeEncounter' | 'sceneFacts'>
+  state?: Pick<GameState, 'activeEncounter' | 'sceneFacts'> & Partial<Pick<GameState, 'log'>>
 ): string {
   const body = prose ?? '';
   if (state && shouldSkipTravelArrivalPrepend(state as GameState)) return body;
   if (proseHasFightBleed(body)) return body;
   const stamped = ensureTravelArrivalProse(body, dest, from ?? null);
   if (isLeaveReachFightBleed(stamped)) return body;
-  return stamped;
+  if (stamped === body || !state?.log?.length || /<[^>]+>/.test(stamped)) return stamped;
+  return trimRecycledSentences(stamped, recentGmBeatTexts(state)).text;
 }
 
 export function isOneCameraFightViolation(state: GameState, text: string): boolean {

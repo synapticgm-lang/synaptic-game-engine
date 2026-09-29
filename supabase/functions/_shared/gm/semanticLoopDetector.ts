@@ -691,6 +691,55 @@ export function detectLeadingCollage(
   };
 }
 
+const QUOTE_SPAN_RE = /[“"]([^”"]{12,})[”"]/g;
+
+function quoteKey(q: string): string {
+  return q.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function recentQuoteKeys(recentBeats: string[]): Set<string> {
+  const keys = new Set<string>();
+  for (const beat of recentBeats) {
+    for (const m of String(beat ?? '').matchAll(QUOTE_SPAN_RE)) {
+      const k = quoteKey(m[1] ?? '');
+      if (k.split(' ').length >= 4) keys.add(k);
+    }
+  }
+  return keys;
+}
+
+/** Sentences of `draft` already told in a recent GM beat — anywhere in the beat, or a spoken line said again. */
+export function recycledSentencesIn(draft: string, recentBeats: string[], lastK = COLLAGE_LOOKBACK): string[] {
+  const beats = (recentBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-lastK);
+  if (!beats.length) return [];
+  const prior = beats.flatMap((b) => splitStorySentences(b));
+  const quotes = recentQuoteKeys(beats);
+  return splitStorySentences(draft).filter((s) => {
+    if (prior.some((p) => sentenceMatches(s, p))) return true;
+    for (const m of s.matchAll(QUOTE_SPAN_RE)) {
+      if (quotes.has(quoteKey(m[1] ?? ''))) return true;
+    }
+    return false;
+  });
+}
+
+/**
+ * Drop recycled sentences from a committed beat when at least `minKeep` sentences are left.
+ * A beat that is all reprint stays as written (the caller already asked the writer once).
+ */
+export function trimRecycledSentences(
+  draft: string,
+  recentBeats: string[],
+  minKeep = 2
+): { text: string; dropped: string[] } {
+  const recycled = new Set(recycledSentencesIn(draft, recentBeats));
+  if (!recycled.size) return { text: draft, dropped: [] };
+  const sentences = splitStorySentences(draft);
+  const kept = sentences.filter((s) => !recycled.has(s));
+  if (kept.length < minKeep) return { text: draft, dropped: [] };
+  return { text: kept.join(' ').replace(/\s+/g, ' ').trim(), dropped: [...recycled] };
+}
+
 export function stripRecycledPrefix(draft: string, hit: LeadingCollageHit): string {
   if (!hit.hit || hit.stripIndex <= 0) return draft;
   const sentences = splitStorySentences(draft);
