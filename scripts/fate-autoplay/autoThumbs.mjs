@@ -7,10 +7,12 @@
  * --notes: a judge model reads every turn (batches of 20) for stiff / abstract / broken lines and for
  * prose that ignores the player's action. Stiff lines come back with a plainer rewrite and are
  * written to <runDir>/writer-lessons.jsonl. Skipped when no OPENROUTER_API_KEY / VITE_OPENROUTER_API_KEY is found.
+ * 29z5 — prose thumbs come only from the notes model under PROSE_THUMB_RUBRIC (judgeNotes.mjs). Progress stays
+ * in the progress section; a turn the model never marked stays unmarked.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { applyVerdicts, notesStatus as judgeStatus, parseJudge, readOpenRouterKey, replyText } from './judgeNotes.mjs';
+import { applyVerdicts, buildJudgePrompt, notesStatus as judgeStatus, parseJudge, readOpenRouterKey, replyText } from './judgeNotes.mjs';
 
 const args = process.argv.slice(2);
 const runDir = args.find((a) => !a.startsWith('--'));
@@ -78,6 +80,7 @@ for (const r of rows) {
   const loc = String(r.location ?? r.snapshotGist?.location ?? '');
   const down = [];
   const up = [];
+  const progressBeats = [];
   const unclear = [];
 
   const moved = !!loc && loc !== lastLoc;
@@ -111,12 +114,13 @@ for (const r of rows) {
     noProgressRun++;
   } else noProgressRun = 0;
 
-  if (won) up.push('fight won');
-  if (levelUp) up.push(`level up to L${r.level}`);
-  if (newPlace && r.turn > 1) up.push(`new place: ${loc}`);
-  if (loot) up.push('loot');
-  if (quest) up.push('quest step');
-  if (xp > 0 && !won) up.push(`+${xp} XP`);
+  // 29z5 — progress is reported, never a prose thumbs-up; only the notes model thumbs prose up.
+  if (won) progressBeats.push('fight won');
+  if (levelUp) progressBeats.push(`level up to L${r.level}`);
+  if (newPlace && r.turn > 1) progressBeats.push(`new place: ${loc}`);
+  if (loot) progressBeats.push('loot');
+  if (quest) progressBeats.push('quest step');
+  if (xp > 0 && !won) progressBeats.push(`+${xp} XP`);
 
   const p0 = (r.turnCheck?.p0 ?? []).map((f) => `P0 ${f.kind}: ${f.detail}`);
   down.push(...p0);
@@ -138,21 +142,23 @@ for (const r of rows) {
   if (/Flee check:.*success/i.test(recJoin) && /\b(?:cornered|trapped|cannot escape)\b/i.test(t))
     down.push('prose contradicts a successful flee');
 
-  if (!down.length && !up.length) {
+  if (!down.length) {
     if (r.writerOutcome === 'retry') unclear.push('writer retry');
     if (t.length < 140) unclear.push('short beat');
     if (t && !/[.!?"”']\s*$/.test(t)) unclear.push('cut off');
     if (/\b(?:saw|see)\.\s*$/.test(t)) unclear.push('ends on an empty verb');
   }
-  const verdict = down.length ? 'down' : up.length ? 'up' : unclear.length ? 'unclear' : 'neutral';
+  const verdict = down.length ? 'down' : unclear.length ? 'unclear' : 'neutral';
   out.push({
     turn: r.turn,
     input: r.playerInput,
     location: loc,
     verdict,
+    thumb: null,
     ...(p0.length ? { p0 } : {}),
     down,
     up,
+    progress: progressBeats,
     unclear,
     excerpt: t.replace(/\s+/g, ' ').slice(0, 220),
     prose: t,
@@ -167,18 +173,6 @@ for (const r of rows) {
 
 const lessons = [];
 
-const JUDGE_RUBRIC = [
-  'You judge turns of a text RPG. The player directs the main character; the prose must do THAT action.',
-  'For each turn you get the player action, who is here, the chips that were offered, and the prose.',
-  'Return ONLY a JSON array, one object per turn:',
-  '{"turn":<n>,"verdict":"up"|"down","followed":true|false,"why":"<short reason>","stiff":[{"line":"<exact words from the prose>","better":"<how a person telling the story would say it>","why":"stiff"|"abstract"|"broken"}]}',
-  'followed=false when the prose ignores the action, answers a different action, or restates the arrival instead of acting.',
-  'stiff: lines a storyteller would never say aloud: abstract, report-like, over-formal, or broken grammar.',
-  'Example: "The horizon is empty of people." is stiff; better: "Not a soul in sight."',
-  'Quote at most 3 stiff lines per turn, exact words only. Empty array when the prose sounds natural.',
-  'verdict=down when followed is false or a stiff line is found; up when the prose is concrete, natural and moves the story.',
-].join('\n');
-
 async function addNotes() {
   const key = readOpenRouterKey();
   if (!key) return 'skipped (no OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY found)';
@@ -191,15 +185,7 @@ async function addNotes() {
   for (let i = 0; i < targets.length; i += 20) {
     batches++;
     const batch = targets.slice(i, i + 20);
-    const prompt =
-      JUDGE_RUBRIC +
-      '\n\n' +
-      batch
-        .map(
-          (o) =>
-            `T${o.turn}\nACTION: ${o.input}\nHERE: ${o.present.join(', ') || 'nobody named'}\nCHIPS: ${o.chips.join(' | ') || 'none'}\nPROSE: ${o.prose.replace(/\s+/g, ' ').slice(0, 1400)}`
-        )
-        .join('\n\n');
+    const prompt = buildJudgePrompt(batch);
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -219,7 +205,9 @@ async function addNotes() {
       failed++;
     }
   }
-  return judgeStatus(model, judged, targets.length, failed, batches);
+  const tally = { up: 0, down: 0, unmarked: 0 };
+  for (const o of targets) if (o.thumb) tally[o.thumb]++;
+  return judgeStatus(model, judged, targets.length, failed, batches, tally);
 }
 
 const notesStatus = wantNotes ? await addNotes() : 'not requested';
@@ -237,6 +225,8 @@ const p0Turns = out.filter((o) => o.p0?.length);
 const p0Count = p0Turns.reduce((n, o) => n + o.p0.length, 0);
 
 const cnt = (k) => out.filter((o) => o.verdict === k).length;
+const thumbCnt = (k) => out.filter((o) => o.thumb === k).length;
+const progressTurns = out.filter((o) => o.progress.length);
 const last = rows[rows.length - 1] ?? {};
 const writer = {};
 const tokenPath = {};
@@ -296,9 +286,11 @@ const md = [
   `- XP events: ${xpLines.length ? xpLines.join('; ') : 'none'}`,
   `- Dungeon events: ${dungeonLines.length ? dungeonLines.join('; ') : 'none'}`,
   `- Engine nudges: ${nudges.length}${nudges.length ? ` (${nudges.join('; ')})` : ''}`,
+  `- Progress turns: ${progressTurns.length}${progressTurns.length ? ` (${progressTurns.slice(0, 15).map((o) => `T${o.turn} ${o.progress.join(', ')}`).join('; ')})` : ''}`,
   '',
   '## Thumbs',
-  `- 👍 ${cnt('up')} · 👎 ${cnt('down')} · unclear ${cnt('unclear')} · neutral ${cnt('neutral')} · model notes: ${notesStatus}`,
+  `- Prose thumbs (notes model, rubric): 👍 ${thumbCnt('up')} · 👎 ${thumbCnt('down')} · unmarked ${thumbCnt('unmarked')} · never marked ${out.filter((o) => o.thumb === null).length} · model notes: ${notesStatus}`,
+  `- Turn verdicts (local flags + model): 👍 ${cnt('up')} · 👎 ${cnt('down')} · unclear ${cnt('unclear')} · neutral ${cnt('neutral')}`,
   '',
   `### P0 (turn fails): ${p0Count} on ${p0Turns.length} turn(s)`,
   ...p0Turns.slice(0, 20).map((o) => `- T${o.turn} [${String(o.input ?? '').slice(0, 50)}] ${o.p0.join('; ')}`),
