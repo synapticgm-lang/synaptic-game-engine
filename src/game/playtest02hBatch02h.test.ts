@@ -109,13 +109,13 @@ describe('Batch 02h — P0-3: CAST deny growth', () => {
     expect(isChoicePadPersonToken('Jax')).toBe(false);
   });
 
-  it('rewrites the Fine / Don / Cup / Now / traveler mad-libs', () => {
+  it('rewrites the Fine / Don / Cup / Now mad-libs; the traveler stays a traveler', () => {
     expect(scrubEntityMadLibs('You raise your open the Fine, the universal sign.')).toMatch(/open your hands/);
     expect(scrubEntityMadLibs('brush-marked letters claiming the Fine')).not.toMatch(/\bthe Fine\b/);
     expect(scrubEntityMadLibs('the Don waits at the stall')).toMatch(/the vendor/);
     expect(scrubEntityMadLibs('Word moves fast. the Cup collect')).toMatch(/the inn/);
     expect(scrubEntityMadLibs('the Now hangs over the street')).toMatch(/the moment/);
-    expect(scrubEntityMadLibs('the traveler steps closer')).toMatch(/someone nearby/);
+    expect(scrubEntityMadLibs('the traveler steps closer')).toBe('the traveler steps closer');
     expect(scrubEntityMadLibs('you take Scattered Scale that gets you clear')).toMatch(/take the stair that/);
   });
 });

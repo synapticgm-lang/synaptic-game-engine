@@ -58,10 +58,8 @@ describe('playtest29d — Gemini-calibrated prompt diet + soft stakes', () => {
     expect(out).not.toMatch(/The merchant nods/i);
   });
 
-  it('replaces stranger with present named NPC only', () => {
-    const out = scrubStrangerArtifact('The stranger looks up.', ['Vessa'], false);
-    expect(out).toMatch(/Vessa/);
-    expect(out).not.toMatch(/stranger/i);
+  it('"the stranger" is never swapped for a present named NPC', () => {
+    expect(scrubStrangerArtifact('The stranger looks up.', ['Vessa'], false)).toBe('The stranger looks up.');
   });
 
   it('scrubs unearned victory outside live encounter', () => {

@@ -1,9 +1,9 @@
 /**
  * 29z9 — a who / want / where question put to someone here is answered in their own quoted words.
  * Runs on the committed draft after the one writer call. When the draft has no quote from them, code
- * prints one short line taken from what the ledger already holds for that person (an authored topic
- * line, their sheet name, the place name, or the last thing they actually said). No real line means
- * nothing is added: the turn stays as written and the miss is logged. Nothing here writes new dialogue.
+ * prints that person's authored line for the question. No authored line means nothing is added: an
+ * earlier quote is never reused, the turn stays as written and the miss is logged. Nothing here writes
+ * new dialogue.
  */
 import type { GameState, NpcMemory } from './types';
 import { hallTalkTopic } from './openingEstablishment';
@@ -16,7 +16,7 @@ export type SpokenTopic = 'who' | 'want' | 'where';
 export type SpokenAnswer =
   | { status: 'not-asked' | 'nobody-here' }
   | { status: 'already-quoted'; speaker: string }
-  | { status: 'added'; speaker: string; source: 'authored' | 'sheet' | 'place' | 'last-said'; line: string }
+  | { status: 'added'; speaker: string; source: 'authored'; line: string }
   | { status: 'no-line'; speaker: string };
 
 type Speaker = { label: string; record?: NpcMemory; names: string[] };
@@ -29,6 +29,7 @@ const TOPIC_ALIASES: Record<SpokenTopic, RegExp> = {
 const HONORIFIC = /^(?:captain|father|mother|brother|sister|sergeant|lord|lady|sir|dame|master|mistress|elder|old|young|the)$/i;
 const CROWD = /\b(?:bystanders|crowd|people|locals|onlookers|folk|patrons|handlers|guards|figures)\b/i;
 const QUOTE = /["“]([^"“”]{2,}?)["”]/g;
+const QUESTION_OR_CHIP = /^(?:who|what|where|why|how|ask|look|talk|wait|inspect|travel|check|attack|flee)$/i;
 
 function asked(playerInput: string): SpokenTopic | null {
   const topic = hallTalkTopic(playerInput);
@@ -43,11 +44,19 @@ function nameParts(label: string, record?: NpcMemory): string[] {
 }
 
 function speakersHere(state: GameState): Speaker[] {
-  const records = presentNpcRecords(state);
+  const records = presentNpcRecords(state).filter((r) => isCleanName(r.npcName));
   if (records.length) return records.map((r) => ({ label: r.npcName, record: r, names: nameParts(r.npcName, r) }));
   return realPresentPeople(state.sceneFacts?.present ?? [])
-    .filter((p) => !CROWD.test(p))
+    .filter((p) => !CROWD.test(p) && isCleanName(p))
     .map((p) => ({ label: p, names: nameParts(p) }));
+}
+
+/** A speaker label must read as a name: one line, a few words, no question or chip word ("Greyhollow Who"). */
+function isCleanName(p: string): boolean {
+  if (!p || /[\n\r?!:;]/.test(p)) return false;
+  const words = p.trim().split(/\s+/);
+  if (words.length > 5) return false;
+  return !words.some((w) => QUESTION_OR_CHIP.test(w));
 }
 
 /** The person the question is put to: the one the player named, else the opening lead, else the first here. */
@@ -107,18 +116,10 @@ function firstSentence(words: string): string {
   return /[.!?…—-]$/.test(s) ? s : `${s}.`;
 }
 
-function realLine(state: GameState, topic: SpokenTopic, speaker: Speaker, others: Speaker[]): { line: string; source: 'authored' | 'sheet' | 'place' | 'last-said' } | null {
+/** Only the person's authored line for this question. An earlier quote reprinted is an echo, not an answer. */
+function realLine(topic: SpokenTopic, speaker: Speaker): { line: string; source: 'authored' } | null {
   const authored = authoredTopicsFor(speaker.label).find((t) => t.aliases.some((a) => TOPIC_ALIASES[topic].test(a)));
-  if (authored) return { line: firstSentence(authored.line), source: 'authored' };
-  if (topic === 'who' && speaker.record) return { line: `${speaker.record.npcName}.`, source: 'sheet' };
-  const here = (state.currentLocation ?? '').trim();
-  if (topic === 'where' && here) return { line: `${here}.`, source: 'place' };
-  const gm = (state.log ?? []).filter((e) => e.role === 'gm').map((e) => e.content ?? '').reverse();
-  for (const body of gm) {
-    const said = quotesBy(body, speaker, false, others);
-    if (said.length) return { line: firstSentence(said[said.length - 1]!), source: 'last-said' };
-  }
-  return null;
+  return authored ? { line: firstSentence(authored.line), source: 'authored' } : null;
 }
 
 function capitalize(s: string): string {
@@ -140,12 +141,9 @@ export function ensureSpokenAnswer(
   if (quotesBy(prose, speaker, alone, others).length) {
     return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
   }
-  const real = realLine(state, topic, speaker, others);
+  const real = realLine(topic, speaker);
   if (!real) return { prose, answer: { status: 'no-line', speaker: speaker.label } };
-  // A name given back already says who is speaking; naming them twice would echo it.
-  const line = real.source === 'sheet'
-    ? `"${real.line.replace(/\.$/, ',')}" came the answer.`
-    : `${capitalize(speaker.label)} said, "${real.line}"`;
+  const line = `${capitalize(speaker.label)} said, "${real.line}"`;
   const body = prose.trim();
   return {
     prose: body ? `${body} ${line}` : line,

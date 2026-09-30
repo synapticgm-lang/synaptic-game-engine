@@ -326,19 +326,20 @@ export function scrubChoicePadPersonNames(text: string): string {
   let next = text;
   const PAD =
     'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain|Rasped|Easy';
+  // A pad word is a name only when written as one (capitalised or quoted); "named their price" is a verb.
   next = next.replace(
     new RegExp(
-      `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
-      'gi'
+      `\\b(?:[Tt]he\\s+)?(?:Scattered\\s+Scale\\s+)?(?:[Kk]nown\\s+as|[Cc]alled|[Nn]amed)\\s+(?:[“"'](?:${PAD})[”"']|(?:${PAD})\\b)`,
+      'g'
     ),
     'a nearby figure'
   );
   next = next.replace(
-    new RegExp(`[“"'](${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])+`, 'gi'),
+    new RegExp(`[“"'](${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])+`, 'g'),
     'other onlookers'
   );
   next = next.replace(new RegExp(`\\bthe figures of\\s+[“"'](?:${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])*`, 'gi'), 'the figures nearby');
-  next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'gi'), 'Approach a nearby figure');
+  next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'g'), 'Approach a nearby figure');
   return tidyClauses(next);
 }
 
@@ -467,8 +468,9 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
     new RegExp(`\\b(?:the\\s+)?(?:${DEIXIS})\\s+half-hidden\\b`, 'g'),
     'someone half-hidden'
   );
+  // Sentence case is not a noun: "Ahead, the lane bent" opens a sentence with the adverb.
   next = next.replace(
-    new RegExp(`\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'g'),
+    new RegExp(`(?<![.!?"“”\\n]\\s{0,3})(?<!^\\s{0,3})\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'g'),
     'someone nearby'
   );
   // P0-2 Batch 02f: Only rewrite CAPITALIZED deixis-as-noun in final pattern
@@ -603,7 +605,6 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   next = next.replace(/\bthe Don\b/g, 'the vendor');
   next = next.replace(/\bthe Cup\b/g, 'the inn');
   next = next.replace(/\bthe Now\b/g, 'the moment');
-  next = next.replace(/\bthe traveler\b/g, 'someone nearby');
   next = next.replace(/\btake Scattered Scale that\b/gi, 'take the stair that');
   next = next.replace(
     /\b(?:somewhere|anywhere|everywhere)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
@@ -846,11 +847,8 @@ export function scrubFigurePlaceholder(text: string, alone = false): string {
     .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
     .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
     .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, alone ? 'you carry the sealed bag' : 'you carry the sign')
-    .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
-    .replace(/\bthe\s+a\s+figure\b/gi, personSlot)
-    .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
-      /glowing/i.test(hit) ? (alone ? 'the glowing panel' : personSlot) : personSlot
-    );
+    .replace(/\bthe\s+a\s+figure\b/gi, personSlot);
+  // A plain "a figure" is the writer's own passer-by; it stays.
 }
 
 /** UI / journal verbs must not be spoken in-world. */
@@ -908,29 +906,11 @@ export function scrubStrangerArtifact(
   presentNames: string[] = [],
   alone = false
 ): string {
-  if (!text || !/\bthe stranger\b/i.test(text)) return text;
-
-  const namedPerson = presentNames.find(
-    (n) =>
-      n.length >= 2
-      && !/\b(?:you|your|panel|system|status)\b/i.test(n)
-      && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(n)
-  );
-
-  const replacement = (() => {
-    if (namedPerson) return namedPerson;
-    if (alone) return 'the panel';
-    return 'the stranger';
-  })();
-
-  if (replacement === 'the stranger') return text;
-
-  let next = text;
-  const possessiveRepl = namedPerson ? `${namedPerson}'s` : `${replacement}'s`;
-  next = next.replace(/\bthe stranger(?:'s|’s)\b/gi, possessiveRepl);
-  next = next.replace(/\bthe stranger\b/gi, replacement);
-
-  return next;
+  // "The stranger" is somebody unnamed. Code cannot tell which present person that is, if any,
+  // so it is never rewritten into a named person (or the panel).
+  void presentNames;
+  void alone;
+  return text;
 }
 
 /**

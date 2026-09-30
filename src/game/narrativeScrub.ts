@@ -73,8 +73,10 @@ export function scrubInventedProperNouns(
   }
 
   for (const name of Array.from(new Set(found))) {
+    const slot = guessGenericReplacement(name, state);
+    if (!slot) continue;
     stripped.push(name);
-    text = replaceUngroundedName(text, name, guessGenericReplacement(name, state));
+    text = replaceUngroundedName(text, name, slot);
   }
   // A replacement slot is a real person's name; it must not land beside that same name.
   text = collapseRepeatedNames(text, people);
@@ -143,32 +145,6 @@ function atNamedInterior(state: GameState): boolean {
   );
 }
 
-/** Prefer a grounded present *person* over the old default "the official" (matrix-40 leak).
- * Never use polity/faction/place tokens (Pellane → "the Pellane" contagion).
- */
-function personSlotFromScene(state: GameState): GenericSlot {
-  const present = realPresentPeople(
-    groundedPresentNames(state)
-      .map((p) => (typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''))
-      .map((s) => s.trim())
-      .filter((s) => s.length > 1 && !/^(you|pc|player|unknown)$/i.test(s))
-  ).filter((n) => !isPolityFactionOrPlaceToken(n));
-  if (present[0]) {
-    const n = present[0];
-    // Already a "the X" role phrase — keep; never invent "the Pellane"
-    if (/^the\s+/i.test(n) && !isPolityFactionOrPlaceToken(n.replace(/^the\s+/i, ''))) {
-      return { afterThe: n, afterA: n.replace(/^the\s+/i, 'a '), bare: n };
-    }
-    if (isPolityFactionOrPlaceToken(n)) {
-      return { afterThe: 'the stranger', afterA: 'a stranger', bare: 'the stranger' };
-    }
-    const bare = /^the\s+/i.test(n) ? n : `the ${n}`;
-    return { afterThe: bare, afterA: bare.replace(/^the\s+/i, 'a '), bare };
-  }
-  return { afterThe: 'the stranger', afterA: 'a stranger', bare: 'the stranger' };
-}
-
-
 /** 29a — names that must never be replaced with mark/panel/building generics. */
 export function buildProtectedEntityNames(state: GameState): Set<string> {
   const names: string[] = [];
@@ -208,7 +184,7 @@ function isProtectedName(name: string, protectedNames: Set<string>): boolean {
   return false;
 }
 
-function guessGenericReplacement(name: string, state: GameState): GenericSlot {
+function guessGenericReplacement(name: string, state: GameState): GenericSlot | null {
   const protectedNames = buildProtectedEntityNames(state);
   if (isProtectedName(name, protectedNames)) {
     const bare = /^the\s+/i.test(name.trim()) ? name.trim() : `the ${name.trim()}`;
@@ -248,16 +224,9 @@ function guessGenericReplacement(name: string, state: GameState): GenericSlot {
   if (/\b(court|order|covenant|compact|faction|guild|circle|keepers?|warden)\b/i.test(name)) {
     return { afterThe: 'the court', afterA: 'a court', bare: 'the court' };
   }
-  if (/\b(official|registrar|speaker|figure|robed)\b/i.test(name)) {
-    if (isAloneArrivalOpening(state)) {
-      return { afterThe: 'the panel', afterA: 'a panel', bare: 'the panel' };
-    }
-    return personSlotFromScene(state);
-  }
-  if (isAloneArrivalOpening(state)) {
-    return { afterThe: 'the panel', afterA: 'a panel', bare: 'the panel' };
-  }
-  return personSlotFromScene(state);
+  // Anything else could be a person, a place or a thing. Swapping it for someone present (or the
+  // panel) states a false fact, so the writer's words stay.
+  return null;
 }
 
 /** Rewrite leftover placeholder actors into role language. */
@@ -272,66 +241,13 @@ export function scrubSomeoneNearbyActor(text: string, alone = false): string {
 }
 
 /**
- * "the official" was the default invented-name slot and leaked into prose + choice pads (~329 matrix hits).
- * Keep it only when the scene already has an official/registrar; else → stranger / panel / grounded present.
- * Never rewrite REGISTRATION / STATUS chrome fields (Batch B — the Pellane: spam).
+ * "The official", "the king" and "a figure" are the writer's own people. Deleting one leaves a hole
+ * ("Halfway down the lane passed them"); mapping one onto whoever is present states a false fact.
+ * Both stay as written. Only REGISTRATION / STATUS chrome is cleaned (Batch B — the Pellane: spam).
  */
-function dropPlaceholderActorClauses(text: string): string {
-  return text
-    .replace(/\b(?:the|an) official(?:'s|’s)?\b/gi, '')
-    .replace(/\bthe king(?:'s|’s)?\b/gi, '')
-    .replace(/\b(?:a|the) (?:lone )?figure\b/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/\s+([,.;:!?])/g, '$1')
-    .replace(/^[,\s]+/gm, '')
-    .replace(/\(\s*\)/g, '')
-    .trim();
-}
-
-/**
- * Allowlist-only: official / King / figure may become a *real present person*.
- * Never map them onto the blue panel. If no person, drop the clause.
- */
-export function scrubOfficialPlaceholder(text: string, state: GameState): string {
+export function scrubOfficialPlaceholder(text: string, _state: GameState): string {
   if (!text) return text;
-  if (!/\bthe official\b|\ban official\b|\bthe king\b|\ba figure\b|\bthe figure\b/i.test(text)) {
-    return scrubPolityBleedInChrome(text);
-  }
-  const groundedOfficial =
-    /\b(official|registrar|clerk|envoy|taxman|alderman)\b/i.test(
-      [
-        ...realPresentPeople(
-          groundedPresentNames(state).map((p) =>
-            typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
-          )
-        ),
-        state.sceneFacts?.lastBeat ?? '',
-      ].join(' ')
-    );
-  if (groundedOfficial && /\bthe official\b|\ban official\b/i.test(text)) {
-    return scrubPolityBleedInChrome(text);
-  }
-  const people = realPresentPeople(
-    groundedPresentNames(state).map((p) =>
-      typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
-    )
-  ).filter((n) => !isPolityFactionOrPlaceToken(n));
-  const person = people[0];
-  if (!person) {
-    return withProtectedChromeBlocks(text, dropPlaceholderActorClauses);
-  }
-  const the = /^the\s+/i.test(person) ? person : `the ${person}`;
-  const a = the.replace(/^the\s+/i, 'a ');
-  const poss = `${the}'s`;
-  return withProtectedChromeBlocks(text, (body) =>
-    body
-      .replace(/\bthe official(?:'s|’s)\b/gi, poss)
-      .replace(/\ban official\b/gi, a)
-      .replace(/\bthe official\b/gi, the)
-      .replace(/\bthe king(?:'s|’s)\b/gi, poss)
-      .replace(/\bthe king\b/gi, the)
-      .replace(/\b(?:a|the) (?:lone )?figure\b/gi, the)
-  );
+  return scrubPolityBleedInChrome(text);
 }
 
 /** Run a rewrite on prose while freezing REGISTRATION / STATUS chrome blocks. */

@@ -41,10 +41,11 @@ describe('warden: sentence words are not names', () => {
     expect(out.stripped).not.toContain("Then I'll");
   });
 
-  it('a real invented name after "The" is still scrubbed', () => {
-    const out = scrubInventedProperNouns('The Crimson Hand watched from the rafters.', church(), '');
-    expect(out.text).not.toMatch(/Crimson Hand/);
-    expect(out.stripped).toContain('Crimson Hand');
+  it('an unknown name that is not a known person is left as written, not swapped for someone present', () => {
+    const line = 'The Crimson Hand watched from the rafters.';
+    const out = scrubInventedProperNouns(line, church(), '');
+    expect(out.text).toBe(line);
+    expect(out.stripped).not.toContain('Crimson Hand');
   });
 });
 

@@ -453,7 +453,7 @@ export function scrubInventedCrowdSize(
 
   if (trackedCrowdSize >= 20) {
     const mentions = listCrowdMentions(next);
-    if (!mentions.some((x) => x.bucket === 'solo' || x.bucket === 'pair' || x.bucket === 'few')) {
+    if (!mentions.some((x) => x.bucket === 'pair' || x.bucket === 'few')) {
       return normalizeCrowdRewriteArtifacts(next);
     }
   }
@@ -465,6 +465,8 @@ export function scrubInventedCrowdSize(
   let rebuilt = next;
   for (const hit of [...mentions].reverse()) {
     if (hit.bucket === target) continue;
+    // One passer-by is a person in the sentence, not a headcount; rewriting it deletes them.
+    if (hit.bucket === 'solo') continue;
     if (trackedCrowdSize >= 20 && hit.bucket === 'group') continue;
     if (trackedCrowdSize >= 20 && hit.bucket === 'large') continue;
     // Never expand a span that already ends with " here" into another "… here"

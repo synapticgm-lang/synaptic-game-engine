@@ -39,11 +39,33 @@ const WANT_DRAFT =
   'Jax pushed up off the scraped dirt at Pellane War Camp and asked Captain Sera Quill straight what she wanted from them. Her hand never left the pommel at her hip while she said it, and the drizzle kept tapping the dented plate over her shoulder.';
 
 describe('spoken answer after the writer (who / want / where)', () => {
-  it('a who question with a person here and no quote gains one quoted line in their own words', () => {
+  it('a who question to someone with an authored line gains that line in their own words', () => {
+    const state = createInitialState();
+    state.campaignBibleId = 'cursed-keep';
+    state.engineMode = 'dnd';
+    state.currentLocation = "Mira's shop";
+    state.openingEstablishment = { pending: [], answers: {}, complete: true, sceneWritten: true } as never;
+    state.npcMemories = [{ npcId: 'mira', npcName: 'Mira the Apothecary', aliases: ['Mira'], disposition: 'neutral', facts: [], lastSeenTurn: 1, location: "Mira's shop" }] as never;
+    state.sceneFacts = { props: [], present: ['Mira the Apothecary'], crowd: 'present', noise: 'quiet', lastBeat: '', updatedTurn: 1 };
+    const draft = 'Jax leaned on the counter and asked the woman behind it who she was. She kept grinding the root in her mortar.';
+    const out = ensureSpokenAnswer(draft, state, 'Who are you');
+    expect(out.prose.startsWith(draft)).toBe(true);
+    expect(quotes(out.prose)).toEqual(['"Mira."']);
+    expect(out.answer).toMatchObject({ status: 'added', speaker: 'Mira the Apothecary', source: 'authored' });
+  });
+
+  it('a who question to someone with no authored line adds nothing (no sheet-name echo)', () => {
     const out = ensureSpokenAnswer(WHO_DRAFT, camp(), 'Who are you');
-    expect(out.prose.startsWith(WHO_DRAFT)).toBe(true);
-    expect(quotes(out.prose)).toEqual(['"Captain Sera Quill,"']);
-    expect(out.answer).toMatchObject({ status: 'added', speaker: 'Captain Sera Quill', source: 'sheet' });
+    expect(out.prose).toBe(WHO_DRAFT);
+    expect(out.answer).toEqual({ status: 'no-line', speaker: 'Captain Sera Quill' });
+  });
+
+  it('a junk present token ("Greyhollow\\nWho") is never a speaker', () => {
+    const state = camp([], false);
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Greyhollow\nWho', 'Greyhollow Who'] };
+    const out = ensureSpokenAnswer(WHO_DRAFT, state, 'Who are you');
+    expect(out.prose).toBe(WHO_DRAFT);
+    expect(out.answer.status).toBe('nobody-here');
   });
 
   it('a draft that already has a quote is unchanged', () => {
@@ -68,7 +90,7 @@ describe('spoken answer after the writer (who / want / where)', () => {
     expect(out.answer).toEqual({ status: 'no-line', speaker: 'Captain Sera Quill' });
   });
 
-  it('a want question reuses the last thing that person actually said', () => {
+  it('a want question never reuses an earlier quote from that person (t50-29z8 summoned-pact T13 echo)', () => {
     const earlier: LogEntry = {
       id: 'gm-1',
       role: 'gm',
@@ -76,8 +98,8 @@ describe('spoken answer after the writer (who / want / where)', () => {
       timestamp: 1,
     } as LogEntry;
     const out = ensureSpokenAnswer(WANT_DRAFT, camp([earlier]), 'Ask what they want');
-    expect(quotes(out.prose)).toEqual(['"You will hold the line or you will be buried behind it."']);
-    expect(out.answer).toMatchObject({ status: 'added', source: 'last-said' });
+    expect(out.prose).toBe(WANT_DRAFT);
+    expect(out.answer).toEqual({ status: 'no-line', speaker: 'Captain Sera Quill' });
   });
 
   it('a turn that is not a who / want / where question is untouched', () => {

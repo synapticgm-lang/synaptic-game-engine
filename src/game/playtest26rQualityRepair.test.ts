@@ -23,7 +23,7 @@ describe('26r quality repair', () => {
     expect(shouldAutoRetryTurn('empty')).toBe(true);
   });
 
-  it('scrubs ungrounded "the official" to stranger/panel', () => {
+  it('"the official" stays the writer\'s official — never deleted, never the panel', () => {
     const alone = baseState({
       openingEstablishment: {
         complete: false,
@@ -43,9 +43,9 @@ describe('26r quality repair', () => {
       } as GameState['openingEstablishment'],
     });
     expect(scrubOfficialPlaceholder('Approach the official.', alone)).not.toMatch(/panel/i);
-    expect(scrubOfficialPlaceholder('Approach the official.', alone)).not.toMatch(/official/i);
+    expect(scrubOfficialPlaceholder('Approach the official.', alone)).toBe('Approach the official.');
     expect(scrubOfficialPlaceholder('Approach the official.', crowded)).not.toMatch(/panel/i);
-    expect(scrubOfficialPlaceholder('Approach the official.', crowded)).not.toMatch(/official/i);
+    expect(scrubOfficialPlaceholder('Approach the official.', crowded)).toBe('Approach the official.');
   });
 
   it('ungrounded proper names do not become the official', () => {

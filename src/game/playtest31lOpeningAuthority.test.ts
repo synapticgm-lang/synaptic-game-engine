@@ -125,20 +125,20 @@ describe('playtest31lOpeningAuthority', () => {
       updatedTurn: 1,
       crowdCount: 2,
     };
-    const dropped = scrubOfficialPlaceholder(
+    const kept = scrubOfficialPlaceholder(
       'The official, Place, remains. The King believes. A figure waits.',
       empty
     );
-    expect(dropped.toLowerCase()).not.toMatch(/blue panel/);
-    expect(dropped.toLowerCase()).not.toMatch(/the official/);
+    expect(kept.toLowerCase()).not.toMatch(/blue panel/);
+    expect(kept).toBe('The official, Place, remains. The King believes. A figure waits.');
 
     const withPerson = {
       ...empty,
       sceneFacts: { ...empty.sceneFacts!, present: ['Mira'] },
     };
-    const swapped = scrubOfficialPlaceholder('Approach the official.', withPerson);
-    expect(swapped).toMatch(/Mira/i);
-    expect(swapped.toLowerCase()).not.toMatch(/blue panel/);
+    const notSwapped = scrubOfficialPlaceholder('Approach the official.', withPerson);
+    expect(notSwapped).toBe('Approach the official.');
+    expect(notSwapped.toLowerCase()).not.toMatch(/blue panel/);
   });
 
   it('crowdCount is seeded from the pointer card at T0', () => {

@@ -174,7 +174,7 @@ describe('playtest31iCriticBatchAB', () => {
       expect(scrubbed).not.toMatch(/the Pellane/i);
       expect(scrubbed).toMatch(/REGISTRATION/i);
       expect(scrubbed).not.toMatch(/blue panel/i);
-      expect(scrubbed).not.toMatch(/the official/i);
+      expect(scrubbed).toMatch(/^Approach the official\./);
     });
 
     it('typedEntityValidator never maps panel/mark onto Pellane; REGISTRATION frozen', () => {
