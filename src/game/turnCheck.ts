@@ -44,7 +44,12 @@ export type TurnCheckKind =
   | 'broken-prose'
   | 'sheet-forgotten'
   | 'levelup-no-change'
-  | 'lock-without-skill';
+  | 'lock-without-skill'
+  | 'plays-player'
+  | 'absent-speaker'
+  | 'wrong-voice'
+  | 'lecture-ending'
+  | 'repeated-habit';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -72,6 +77,10 @@ export const TURN_CHECK_P0_KINDS: ReadonlySet<TurnCheckKind> = new Set([
   'sheet-forgotten',
   'levelup-no-change',
   'lock-without-skill',
+  'plays-player',
+  'absent-speaker',
+  'wrong-voice',
+  'lecture-ending',
 ]);
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
@@ -402,6 +411,8 @@ export function checkPlayerTurn(
     ...checkLevelUpChanges(before, after),
     ...locksOpenedWithoutSkill(before, after).map((detail) => ({ kind: 'lock-without-skill' as const, detail })),
   ];
+  const crimes = checkPlayCrimes(before, after, action, prose);
+  p0.push(...crimes.p0);
   const mapIssue = openGroundMapIssue(after);
   if (mapIssue && openGroundMapIssue(before) !== mapIssue) p0.push({ kind: 'open-ground-interior', detail: mapIssue });
   const planIssues = drawnPlanIssues(after);
@@ -410,7 +421,92 @@ export function checkPlayerTurn(
   if (newPlanIssues.length) {
     p0.push({ kind: 'bad-floor-plan', detail: `${drawnMap(after)?.dungeonName ?? 'map'}: ${newPlanIssues.slice(0, 3).join('; ')}` });
   }
-  return { p0, down: [...followed.down, ...brokenLines(prose)], presentNames: peopleHere(before) };
+  return { p0, down: [...followed.down, ...brokenLines(prose), ...crimes.down], presentNames: peopleHere(before) };
+}
+
+const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const SPEECH_VERB =
+  '(?:said|says|answered|answers|asked|asks|added|replied|replies|told|tells|called|calls|whispered|whispers|muttered|mutters|snapped|snaps|let the name)';
+const SYSTEM_TERMS =
+  /\blevel (?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b|\bXP\b|\bHP\b|\bhit points\b|\bexperience points\b|\bstat (?:sheet|block)\b/i;
+const ASKS_ROLL = /\b(?:roll (?:a|an|for|your)\b|make an? [a-z]+ (?:check|save|saving throw)\b)/i;
+const PROMPT_ENDING =
+  /\b(?:what (?:do|will|would|should) you do|what now|your move|the choice is yours|what happens next is up to you)\b[^.!?]*[.!?]?["”']?\s*$/i;
+
+function fiveGrams(text: string): string[] {
+  const w = low(text).match(/[a-z'’~]+/g) ?? [];
+  const out: string[] = [];
+  for (let i = 0; i + 5 <= w.length; i++) {
+    const g = w.slice(i, i + 5);
+    if (g.includes('~') || g.filter((x) => x.length >= 4).length < 2) continue;
+    out.push(g.join(' '));
+  }
+  return out;
+}
+
+/**
+ * 29z7 — the prose crimes of the standing brief that code can see. Shared by the tester and the
+ * writer's commit gate (`writerDraftProblems`), so both hold the same line.
+ * P0: the prose writes the player's words; a known person who is not here speaks; system ledger or a
+ * roll request outside LitRPG (a roll request anywhere); the beat ends by asking what the player does.
+ * Down: a five-word run from the last three beats comes back (names and places masked).
+ */
+export function checkPlayCrimes(
+  before: GameState,
+  after: GameState,
+  action: string,
+  prose: string
+): { p0: TurnCheckFlag[]; down: TurnCheckFlag[] } {
+  const p0: TurnCheckFlag[] = [];
+  const down: TurnCheckFlag[] = [];
+  const text = norm(prose);
+  if (!text) return { p0, down };
+  const narration = text.replace(/["“][^"”]*["”]/g, ' ');
+
+  const pc = norm(after.character?.name).split(/\s+/)[0] ?? '';
+  const who = pc.length >= 2 ? `(?:${esc(pc)}|you)` : 'you';
+  const pcLine = text.match(new RegExp(`["“]([^"”]{3,})["”]\\s*,?\\s*${who}\\s+${SPEECH_VERB}\\b|\\b${who}\\s+${SPEECH_VERB}\\b[^.!?"“]{0,40}["“]([^"”]{3,})["”]`, 'i'));
+  if (pcLine) {
+    const said = low(pcLine[1] ?? pcLine[2]);
+    const typed = new Set(low(action).match(/[a-z]{3,}/g) ?? []);
+    const saidWords = said.match(/[a-z]{3,}/g) ?? [];
+    const echoes = saidWords.length > 0 && saidWords.filter((w) => typed.has(w)).length / saidWords.length >= 0.6;
+    if (!echoes) p0.push({ kind: 'plays-player', detail: `the prose writes the player's own words: "${pcLine[0].slice(0, 100)}"` });
+  }
+
+  const here = peopleHere(after).map(low);
+  for (const m of after.npcMemories ?? []) {
+    const names = [m.npcName, ...(m.aliases ?? [])].map(norm).filter((n) => n.length >= 3);
+    if (names.some((n) => here.some((h) => h === low(n) || h.includes(low(n)) || low(n).includes(h)))) continue;
+    const spoke = names.find((n) =>
+      new RegExp(`\\b${esc(n)}\\b[^.!?]{0,30}\\b${SPEECH_VERB}\\b|\\b${esc(n)}\\b[^.!?"“]{0,20}["“]`, 'i').test(text)
+    );
+    if (spoke) p0.push({ kind: 'absent-speaker', detail: `${m.npcName} speaks but is not here at ${after.currentLocation || 'this place'}` });
+  }
+
+  if (after.engineMode !== 'litrpg') {
+    const sys = narration.match(SYSTEM_TERMS);
+    if (sys) p0.push({ kind: 'wrong-voice', detail: `system ledger in the story: "${sys[0]}"` });
+  }
+  const roll = narration.match(ASKS_ROLL);
+  if (roll) p0.push({ kind: 'wrong-voice', detail: `the writer asks for a roll: "${roll[0]}"` });
+  if (PROMPT_ENDING.test(text)) p0.push({ kind: 'lecture-ending', detail: 'the beat ends by asking what the player does' });
+
+  const masks = [
+    after.currentLocation,
+    before.currentLocation,
+    after.character?.name,
+    ...(after.npcMemories ?? []).map((m) => m.npcName),
+    ...hubsForBibleId(after.campaignBibleId).map((h) => h.name),
+  ]
+    .map(norm)
+    .filter((n) => n.length >= 3)
+    .sort((a, b) => b.length - a.length);
+  const mask = (t: string) => masks.reduce((acc, n) => acc.replace(new RegExp(esc(n), 'gi'), ' ~ '), t);
+  const old = new Set(gmBodies(before).slice(-3).flatMap((b) => fiveGrams(mask(b))));
+  const again = fiveGrams(mask(text)).find((g) => old.has(g));
+  if (again) down.push({ kind: 'repeated-habit', detail: `"${again}" comes back from an earlier beat` });
+  return { p0, down };
 }
 
 const ASKS_NAME = /\b(?:your name|who are you|who might you be|what are you called|what do they call you)\b/i;

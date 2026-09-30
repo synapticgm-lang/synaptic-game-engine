@@ -47,16 +47,20 @@ export function scrubInventedProperNouns(
 ): { text: string; stripped: string[] } {
   if (!narrative?.trim()) return { text: narrative, stripped: [] };
 
-  const interactionClaims = findUngroundedNamedClaims(narrative, state, establishedProse);
+  const people = knownPersonNames(state);
+  const collapsed = collapseRepeatedNames(narrative, people);
+  const interactionClaims = findUngroundedNamedClaims(collapsed, state, establishedProse);
   const stripped: string[] = [...interactionClaims];
-  let text = narrative;
+  let text = collapsed;
 
   const grounded = buildLooseGroundSet(state, establishedProse);
+  const protectedNames = buildProtectedEntityNames(state);
   const found: string[] = [];
   const re = /\b([A-Z][\p{L}'-]{2,}(?:\s+[A-Z][\p{L}'-]{2,}){1,3})\b/gu;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(narrative)) !== null) {
-    const name = m[1]!.trim();
+  while ((m = re.exec(collapsed)) !== null) {
+    const name = nameCandidateCore(m[1]!);
+    if (!name) continue;
     // 29z3 — "Father Aldous's" is the held name plus a possessive, not a new name.
     const key = name.toLowerCase().replace(/'s$/, '');
     if (ALWAYS_ALLOW.has(key)) continue;
@@ -64,6 +68,7 @@ export function scrubInventedProperNouns(
     const tail = key.split(/\s+/).slice(1).join(' ');
     if (tail && grounded.has(tail)) continue;
     if (key.split(/\s+/).every((p) => ALWAYS_ALLOW.has(p))) continue;
+    if (isProtectedName(name, protectedNames)) continue;
     found.push(name);
   }
 
@@ -71,6 +76,8 @@ export function scrubInventedProperNouns(
     stripped.push(name);
     text = replaceUngroundedName(text, name, guessGenericReplacement(name, state));
   }
+  // A replacement slot is a real person's name; it must not land beside that same name.
+  text = collapseRepeatedNames(text, people);
 
   const alone = isAloneArrivalOpening(state);
   // Never leave soft placeholders as dialogue subjects / room furniture.
@@ -82,6 +89,51 @@ export function scrubInventedProperNouns(
 }
 
 type GenericSlot = { afterThe: string; afterA: string; bare: string };
+
+const CONTRACTION = /^I$|['’](?:ll|m|re|ve|d)$|n['’]t$/i;
+
+/**
+ * The name part of a Title-Case run. A leading article is sentence case, not the name ("The Back
+ * streets"), and a contraction ends it ("Then I'll not press"). Null when under two words remain,
+ * since single words are left alone.
+ */
+function nameCandidateCore(raw: string): string | null {
+  const words = raw.trim().split(/\s+/);
+  while (words.length && /^(?:the|a|an)$/i.test(words[0]!)) words.shift();
+  const cut = words.findIndex((w) => CONTRACTION.test(w));
+  const core = cut < 0 ? words : words.slice(0, cut);
+  return core.length >= 2 ? core.join(' ') : null;
+}
+
+/** Every person the ledger knows by name: records, companions, scene presence, the player. */
+function knownPersonNames(state: GameState): string[] {
+  const names = [
+    ...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
+    ...(state.companions ?? []).map((c) => c?.name ?? ''),
+    ...groundedPresentNames(state),
+    state.character?.name ?? '',
+  ];
+  return [...new Set(names.map((n) => (typeof n === 'string' ? n.trim() : '')).filter((n) => n.length >= 2))];
+}
+
+const NAME_JOINERS = new Set(['the', 'of', 'a', 'an']);
+
+/**
+ * A person's full name followed straight on by more of that same name ("Edda Merrow Edda",
+ * "Oskar the Woodcutter Oskar the Woodcutter") is one mention: keep the full name once.
+ * Longest names first so "Edda Merrow" wins over "Edda".
+ */
+export function collapseRepeatedNames(text: string, names: string[]): string {
+  if (!text) return text;
+  let next = text;
+  for (const name of [...names].sort((a, b) => b.length - a.length)) {
+    const parts = name.split(/\s+/).filter((p) => p.length >= 2 && !NAME_JOINERS.has(p.toLowerCase()));
+    const repeat = [name, ...parts].sort((a, b) => b.length - a.length).map(escapeReg).join('|');
+    const re = new RegExp(`\\b${escapeReg(name)}(?:\\s+(?:${repeat}))+\\b`, 'g');
+    next = next.replace(re, name);
+  }
+  return next;
+}
 
 /** Prefer role slots — never "someone nearby" as a spoken name. */
 function atNamedInterior(state: GameState): boolean {

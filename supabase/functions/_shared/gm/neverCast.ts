@@ -24,6 +24,18 @@ function pushUnique(out: string[], raw?: string | null): void {
   if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
 }
 
+/** Capitalised runs in a card sentence ("Sevenfold Circle", "Pellane's court"), minus a sentence-start word alone. */
+function cardProperNames(sentence: string): string[] {
+  const out: string[] = [];
+  for (const m of sentence.matchAll(/\b[A-Z][\w'’-]*(?:\s+(?:of\s+)?[A-Z][\w'’-]*)*/g)) {
+    const run = m[0].replace(/^(?:The|A|An)\s+/, '').trim();
+    if (run.length < 3 || /^(?:The|A|An|If|When|Someone|Somebody|They|You|Your|He|She|It|We|I)$/.test(run)) continue;
+    if (m.index === 0 && !run.includes(' ') && m[0] === run) continue;
+    out.push(run);
+  }
+  return out;
+}
+
 /** Extra concept titles from hooks / quests / lore / props — still ledger, not quotes. */
 export function ledgerConceptTitles(state?: {
   lorebook?: Array<{ name?: string; type?: string }>;
@@ -47,7 +59,11 @@ export function ledgerConceptTitles(state?: {
     add(card.name);
   }
   for (const q of state?.quests ?? []) add(q.name);
-  add(state?.openingEstablishment?.pickedHook);
+  // The card is sentences: only its proper names are titles. Its "Who is here" slot names people.
+  for (const line of (state?.openingEstablishment?.pickedHook ?? '').split('\n')) {
+    if (/^\s*who\b/i.test(line)) continue;
+    for (const name of cardProperNames(line.replace(/^[^:\n]{1,40}:\s*/, ''))) add(name);
+  }
   add(state?.sceneFacts?.hookLock?.summary);
   for (const p of state?.sceneFacts?.props ?? []) add(p);
   return out;

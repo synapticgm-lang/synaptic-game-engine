@@ -153,7 +153,8 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch } from './completedEventPacket';
+import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
@@ -258,6 +259,8 @@ export type FateAutoplayCliOpts = {
   personality: string;
   /** 28b — `--inputs "a|b|c"` scripted player lines (blank = normal pick). */
   inputs?: string[];
+  /** `--route <place>` — from turn 2, travel toward this place until arrived, then normal picks. */
+  routeTo?: string;
   engineMode?: EngineMode;
   aiTier: HostedAiTier;
   mode: FateMode;
@@ -367,6 +370,8 @@ export type TurnTelemetry = {
   writerMs?: number;
   /** 28l — code-found problems on the first draft, and whether a stitch/canned line was painted. */
   draftProblems?: string[];
+  /** 29z9 — who / want / where: code added the addressee's own line, or found no real line to add (logged, not marked). */
+  spokenLine?: import('./spokenAnswer').SpokenAnswer;
   stitchedLine?: boolean;
   /** 28l — raw writer issues on the committed beat (training signal; see `writerTurnIssues`). */
   writerIssues?: string[];
@@ -1157,7 +1162,7 @@ export async function headlessFateTurn(
   ]
     .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
     .join(' ');
-  const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
+  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
   arcState = preparedEvent.state;
   const useMud = shouldUseSilentMudTurn({
     subscriptionTier: settings.subscriptionTier,
@@ -1265,21 +1270,14 @@ Do NOT print dice notation or CODE ENFORCED.
     ? tokenLineVerdicts(gmText, arcState, arcState.completedEvent)
     : undefined;
 
-  // 28l — one writer turn: draft → code problems → at most one revision → same-writer plain prose.
+  // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
   let writerTurn: WriterTurnResult | null = null;
   const writerPacket = arcState.completedEvent ?? preparedEvent.packet;
   if (!useMud && !authoredBook && writerPacket) {
-    writerTurn = await runWriterTurn({
+    writerTurn = runWriterTurn({
       firstRaw: gmResult.text,
       packet: writerPacket,
       check: { state: arcState, playerInput, intent, engineFact, previousGm: '' },
-      callWriter: async (p) => {
-        const r = await callGmWithRetries(arcState, p, settings);
-        transportRetries += r.transportRetries + 1;
-        return r.text;
-      },
-      allowRevision: gmResult.transportRetries === 0,
-      perspective: settings.perspective,
     });
     gmText = writerTurn.prose;
     if ((writerTurn.path === 'json' || writerTurn.path === 'json-partial') && writerTurn.refs?.length && arcState.completedEvent) {
@@ -1424,8 +1422,6 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   const askedRepeat = playerAsksRepeat(playerInput);
-  const usedWriterRetry =
-    writerTurn?.outcome === 'revised' || writerTurn?.outcome === 'reasked' || writerTurn?.outcome === 'last-resort';
   let usedPacketStitch = false;
   const tokenPath: string | undefined = writerTurn?.path;
   const retryTokenVerdicts: string[] | undefined = undefined;
@@ -1437,10 +1433,9 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   const rawEvents = parseActionTags(gmText);
-  const warden = await runWarden(state, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
+  const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
   const events = warden.events;
   const narrativeSource = useMud ? gmText : (warden.scrubbedNarrative ?? gmText);
-
   const structural = applyStructuralEvents(arcState, events, {
     strictEncumbrance: settings.strictEncumbrance === true,
     playerInput,
@@ -1453,8 +1448,7 @@ Do NOT print dice notation or CODE ENFORCED.
   });
   cleanText = ensureTurnProse(cleanText, playerInput);
   cleanText = applyFactLocks(state, cleanText, playerInput);
-  cleanText = enforcePerspective(cleanText, settings, state.character.name);
-  if (arcResult?.beatCommitted) {
+  cleanText = enforcePerspective(cleanText, settings, state.character.name);  if (arcResult?.beatCommitted) {
     validateProseAgainstBeat(
       beatCommitFromReceipts({
         type: arcResult.systemReceipts.some((r) => /^Encounter:/i.test(r))
@@ -1955,9 +1949,7 @@ Do NOT print dice notation or CODE ENFORCED.
       ? undefined
       : renderFallbackUsed || usedPacketStitch
         ? 'fallback'
-        : usedWriterRetry
-          ? 'retry'
-          : 'accepted';
+        : 'accepted';
 
   const ended = Date.now();
   const receiptCounts = countTurnReceipts(governed, nextTurn);
@@ -2017,6 +2009,10 @@ Do NOT print dice notation or CODE ENFORCED.
       writerCalls: writerCallMeter.calls,
       writerMs: writerCallMeter.ms,
       draftProblems: writerTurn?.problems.length ? writerTurn.problems : undefined,
+      spokenLine:
+        writerTurn?.spoken?.status === 'added' || writerTurn?.spoken?.status === 'no-line'
+          ? writerTurn.spoken
+          : undefined,
       stitchedLine: renderFallbackUsed || usedPacketStitch,
       writerIssues: writerIssues.length ? writerIssues : undefined,
       writerUsage: writerUsage ?? undefined,
@@ -2063,6 +2059,8 @@ export async function runFateAutoplay(opts: {
   writer?: AutoplayWriterKind;
   /** 28b — scripted player lines per turn (harness only); a blank entry = normal pick. */
   inputs?: string[];
+  /** `--route <place>` — from turn 2, travel toward this place until arrived, then normal picks. */
+  routeTo?: string;
   /** 28g — LOOP STOP auto-stop (default on). false or env SGM_AUTOPLAY_LOOP_STOP=off turns it off. */
   loopStop?: boolean;
   /** 28j — continue from <runDir>/snapshot.json. */
@@ -2121,6 +2119,8 @@ export async function runFateAutoplay(opts: {
   const loopStopOn = opts.loopStop !== false && process.env.SGM_AUTOPLAY_LOOP_STOP !== 'off';
   const gmSeen = new Map<string, number>();
   let noProgress = 0;
+  const routeTo = opts.routeTo?.trim() ?? '';
+  let routeReached = false;
   const turnsPath = join(outDir, 'turns.jsonl');
   const heartbeatPath = join(outDir, 'heartbeat.json');
   const crashPath = join(outDir, 'crash.log');
@@ -2157,6 +2157,8 @@ export async function runFateAutoplay(opts: {
       );
       try {
         const turnStart = state;
+        if (routeTo && (state.currentLocation ?? '').trim().toLowerCase() === routeTo.toLowerCase()) routeReached = true;
+        const routeLine = routeTo && !routeReached && i >= 1 ? `Travel toward ${routeTo}` : undefined;
         const result = await headlessFateTurn(state, settings, rng, {
           bibleId: bible.id,
           personalityId,
@@ -2164,7 +2166,7 @@ export async function runFateAutoplay(opts: {
           mode: opts.mode,
           aiAgentMode: opts.aiAgentMode ?? 'default',
           dryRun: opts.dryRun,
-          playerInputOverride: opts.inputs?.[i] || undefined,
+          playerInputOverride: routeLine ?? (opts.inputs?.[i] || undefined),
         });
         state = result.state;
         {
@@ -2436,6 +2438,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--resume-from') out.resumeFrom = next();
     else if (a === '--batch-dir') out.batchDir = next();
     else if (a === '--inputs') out.inputs = next().split('|').map((s) => s.trim());
+    else if (a === '--route') out.routeTo = next();
     else if (a === '--out') out.outRoot = next();
     else if (a === '--name') out.characterName = next();
     else if (a === '--help' || a === '-h') {

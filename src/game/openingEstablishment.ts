@@ -23,6 +23,7 @@ import { sanitizeHookCardForPlay } from './storyDataBoundary';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
+import { shortPlaceName } from './placeNames';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -525,6 +526,8 @@ function isWriterNoteBeat(line: string): boolean {
 export function normalizeOpeningHookCard(card: OpeningHookCard): {
   text: string;
   location?: string;
+  /** 29z7 — the card's own scene description when `location` is the engine's short name. */
+  locationDescription?: string;
   fallback?: string;
   page1?: string;
   summonIntent?: string;
@@ -599,7 +602,10 @@ export function resolveOpeningHookPick(
 ): ReturnType<typeof normalizeOpeningHookCard> | undefined {
   const card = resolveOpeningHookCard(bible, seed);
   if (!card) return undefined;
-  return normalizeOpeningHookCard(card);
+  const pick = normalizeOpeningHookCard(card);
+  if (!pick.location) return pick;
+  const name = shortPlaceName(bible?.id, pick.location, pick.text);
+  return name && name !== pick.location ? { ...pick, location: name, locationDescription: pick.location } : pick;
 }
 
 export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {
@@ -1290,13 +1296,6 @@ export function asksOpeningCardNoun(state: GameState, raw: string): string | nul
   return null;
 }
 
-/** Second same who/want/refuse — already-told stitch, not the book. */
-function isFirstAlreadyToldHallStitch(state: GameState, line: string): boolean {
-  const topic = hallTalkTopic(line);
-  if (topic !== 'who' && topic !== 'want' && topic !== 'refuse') return false;
-  return countSameHallTopicRepeats(state, line) === 2;
-}
-
 /** 27i — the opening hall stitch speaks for the opener only; a line naming another known NPC goes to that NPC. */
 export function lineNamesOtherNpc(state: GameState, line: string): boolean {
   const low = (line ?? '').toLowerCase();
@@ -1321,28 +1320,9 @@ export function shouldStitchOpeningContinue(state: GameState, playerInput?: stri
   // Unlocked-name covers still stitch locally. After a lock, cover-continue is not page-1.
   if (coverOpen && !nameLocked) return true;
 
-  // After page 1: who/want/refuse (why-pulled = want) stitch when repeats ≤2.
-  // ≤1 → spoken cover (fast); ===2 → already-told; ≥3 → callGm. Look/Wait/travel stay writer.
-  if (sceneWritten) {
-    if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return false;
-    if (
-      isKitOrCarryInspect(line)
-      && !hallTalkAsksWant(line)
-      && !hallTalkAsksWho(line)
-      && !hallTalkAsksRefuse(line)
-      && !playerAskedWhyPulled(line)
-    ) {
-      return false;
-    }
-    if (!isHallTalkPlayerLine(line)) return false;
-    if (lineNamesOtherNpc(state, line)) return false;
-    if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) return false;
-    const topic = hallTalkTopic(line);
-    if (topic === 'who' || topic === 'want' || topic === 'refuse') {
-      return countSameHallTopicRepeats(state, line) < 3;
-    }
-    return isFirstAlreadyToldHallStitch(state, line);
-  }
+  // 29z7 — after page 1 the writer answers every hall line (who / want / refuse / already asked) from
+  // the talk envelope's card facts and sheets. A stitch never speaks for a person.
+  if (sceneWritten) return false;
 
   if (coverOpen) return true;
   if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return true;
@@ -1421,7 +1401,7 @@ export function openingCastNames(state: GameState): string[] {
   const push = (raw?: string) => {
     const name = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
     if (!name || name.length < 3) return;
-    if (/^(the panel|the people who pulled you)$/i.test(name)) return;
+    if (/^(the panel|the people who pulled you|the people here)$/i.test(name)) return;
     const key = name.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
@@ -1499,7 +1479,7 @@ export function cardRoleStandIn(state: GameState): string {
   if (role && /^(Archivist|Father|Captain|Brother|Sister|Envoy|Innkeep|Handler)$/i.test(role)) {
     return `the ${role}`;
   }
-  return label && !/people who pulled you/i.test(label) ? label : 'the witness';
+  return label && !/people who pulled you|^the people here$/i.test(label) ? label : 'the witness';
 }
 
 /** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
@@ -1537,7 +1517,26 @@ export function openingCastLabel(state: GameState): string {
   }
   if (/\bchanter\b/i.test(hay)) return 'the chanter';
   if (/\brobed figures\b/i.test(hay)) return 'the robed figures';
-  return 'the people who pulled you';
+  // 29z8 — before the generic guess, the card's own who-is-here slot names the cast.
+  const carded = whoFromPickedHookBlob(state.openingEstablishment?.pickedHook);
+  if (carded) return carded;
+  // 29z7 — "pulled you" is a summon; a heist or a keep has people here, not summoners.
+  return state.engineMode === 'litrpg' ? 'the people who pulled you' : 'the people here';
+}
+
+/**
+ * The card's "Who is here" slot, cut to its first person or group ("the muscle", "Captain Sera Quill").
+ * A slot that opens with nobody ("No priests — …", "(none)") names no lead, so it gives none.
+ */
+function whoFromPickedHookBlob(blob?: string): string {
+  const m = (blob ?? '').match(/Who is here[^:\n]*:[ \t]*([^\n]+)/i);
+  const who = (m?.[1] ?? '')
+    .split(/[;,(]|\s[—–-]\s|\s(?:and|with|plus)\s/i)[0]
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[.!]+$/, '');
+  if (!who || /^(?:no|nobody|none|alone|you alone)\b/i.test(who) || who.split(' ').length > 6) return '';
+  return who;
 }
 
 function wantFromPickedHookBlob(blob?: string): string {

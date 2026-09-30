@@ -86,6 +86,7 @@ Options:
                        flash-lite/openrouter = OpenRouter google/gemini-2.5-flash-lite (needs OPENROUTER_API_KEY)
                        default = hosted Free via edge gm-turn
   --pick-mode fate|first-pad
+  --route <place>           from turn 2, travel toward <place> until arrived, then normal picks
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
   --modes-agents-300   4 modes × 3 AI agents × 300 turns → 4 mode Gemini packs + telemetry
   --worst-cells-only   With --modes-agents-300: only 27w worst cell per mode (4 runs)
@@ -412,6 +413,7 @@ async function main(): Promise<void> {
         characterName: opts.characterName,
         writer: opts.writer,
         inputs: opts.inputs,
+        routeTo: opts.routeTo,
         resumeFrom: opts.resumeFrom,
       });
       log(`Done → ${summary.outDir}`);

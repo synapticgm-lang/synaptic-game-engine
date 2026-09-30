@@ -87,6 +87,20 @@ const CURIOUS_ACT =
 const WALK_ACT =
   /\b(walk away|leave|go another|another direction|ignore)\b/i;
 
+const FREE_ACT =
+  /\b(free|release|unlock|untie|unchain|unshackle|rescue|cut (?:\w+ )?loose|break (?:\w+ )?out)\b/i;
+const HARM_ACT = /\b(attack|steal|shove|rob|stab|strike|hit|punch|kick|kill|betray|sell (?:\w+ )?out)\b/i;
+const THREAT_ACT = /\b(threaten|intimidate|demand)\b/i;
+
+/** What the player's action does to the person it targets, for stance: the same verb classes as treatment. */
+export function stanceActionKind(action: string): 'free' | 'harm' | 'threat' | 'kind' | null {
+  if (FREE_ACT.test(action)) return 'free';
+  if (HARM_ACT.test(action)) return 'harm';
+  if (THREAT_ACT.test(action)) return 'threat';
+  if (KIND_ACT.test(action) && !HARD_ACT.test(action)) return 'kind';
+  return null;
+}
+
 function treatmentLabel(action: string): 'kind' | 'hard' | 'curious' | 'walkaway' | null {
   if (HARD_ACT.test(action) && !KIND_ACT.test(action)) return 'hard';
   if (KIND_ACT.test(action)) return 'kind';

@@ -353,7 +353,8 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch } from './completedEventPacket';
+import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
@@ -2723,7 +2724,7 @@ export function useGame() {
       ]
         .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
         .join(' ');
-      const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
+      const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,
         engineResult: engineFact,
       });
@@ -2930,14 +2931,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         };
       }
 
-      // 28l — one writer turn: draft → code-found problems → at most one short revision → same-writer
-      // plain prose. Never swap a real GM beat for a stitched / canned line.
+      // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
+      // Never swap a real GM beat for a stitched / canned line.
       // 08c Free MUD: receipt is enough — no writer turn.
       if (!useMud && !authoredBook) {
         const writerPacket = liveCurrent.completedEvent ?? preparedEvent.packet;
         const previousGm =
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
-        const writerTurn = await runWriterTurn({
+        const writerTurn = runWriterTurn({
           firstRaw: result.text,
           packet: writerPacket,
           check: {
@@ -2947,16 +2948,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             engineFact,
             previousGm,
           },
-          callWriter: async (payload) => {
-            setRetryStatus('Refining the beat…');
-            try {
-              return (await callGmDurable(payload)).text ?? '';
-            } catch {
-              return '';
-            }
-          },
-          allowRevision: transportRetriesUsed === 0,
-          perspective: settingsRef.current.perspective,
         });
         writerRemaining = writerTurn.remaining;
         if (writerTurn.problems.length) {
@@ -2967,15 +2958,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             remaining: writerTurn.remaining,
           });
         }
-        if (writerTurn.firstDraft && (writerTurn.outcome === 'revised' || writerTurn.outcome === 'reasked')) {
-          liveCurrent = appendSpeculativeTake(liveCurrent, {
-            turnPlanned: liveCurrent.turn + 1,
-            expectedRevision: currentLedgerRevision(liveCurrent),
-            playerAction: sanitizedInput,
-            narrative: writerTurn.firstDraft.slice(0, 4000),
-            reason: 'resolution-retry-discarded',
+        if (writerTurn.spoken?.status === 'added' || writerTurn.spoken?.status === 'no-line') {
+          debugLogger.record(writerTurn.spoken.status === 'added' ? 'INFO' : 'WARN', 'Spoken answer', {
+            turn: liveCurrent.turn,
+            ...writerTurn.spoken,
           });
-          stateRef.current = liveCurrent;
         }
         result = { ...result, text: writerTurn.prose };
         if (

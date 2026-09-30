@@ -239,7 +239,10 @@ export function lineHasMidSentenceCapital(text: string): boolean {
     if (!word) continue;
     // 28g — a capital right after an opening quote starts spoken words, not an invented name.
     const opensQuote = /^["'`\u201c\u2018]/.test(part);
-    if (!sentenceStart && !opensQuote && /^[A-Z][A-Za-z''-]*$/.test(word.replace(/[.,!?;:)"'\]]+$/, ''))) {
+    const bare = word.replace(/[.,!?;:)"'\]\u201d\u2019]+$/, '');
+    // The pronoun "I" ("What I want", "I'm") is grammar in any spoken line, never an invented name.
+    const pronounI = /^I(?:['\u2019](?:m|ll|ve|d))?$/.test(bare);
+    if (!sentenceStart && !opensQuote && !pronounI && /^[A-Z][A-Za-z''-]*$/.test(bare)) {
       return true;
     }
     sentenceStart = /[.!?]["')\]]*$/.test(part);
@@ -559,13 +562,22 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
       text = text.replace(/\\"/g, '"').replace(/\\n/g, ' ');
     }
     if (/^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text.trim()) || /<[^<>]{2,40}>/.test(text)) continue;
-    if ([...text.matchAll(/@t(\d+)\b/gi)].some((t) => unbound.has(`t${t[1]}`) && !displayByTok.has(`t${t[1]}`))) continue;
-    const painted = text.replace(/@t(\d+)\b/gi, (_m, n: string) =>
-      displayByTok.get(`t${n}`) ?? findEnum(enumRefs, `t${n}`)?.display ?? '');
-    const line = tidy(painted);
+    const display = (tok: string) =>
+      displayByTok.get(tok) ?? (unbound.has(tok) ? undefined : findEnum(enumRefs, tok)?.display);
+    const line = paintTokensOrDrop(text, display);
     if (line) texts.push(/[.!?]["')\]]*$/.test(line) ? line : `${line}.`);
   }
   return capitalizeSentenceStarts(tidy(texts.join(' ')));
+}
+
+/**
+ * 29z8 — paint every @tN from `display`; a sentence holding a token nothing can paint is dropped whole,
+ * so a beat never keeps a hole where a name was ("the kept its slow boots coming").
+ */
+export function paintTokensOrDrop(text: string, display: (tok: string) => string | undefined): string {
+  const sentences = (text ?? '').match(/[^.!?]+(?:[.!?]+["')\]”’]*|$)/g) ?? [];
+  const kept = sentences.filter((s) => [...s.matchAll(/@t(\d+)\b/gi)].every((t) => display(`t${t[1]}`.toLowerCase())));
+  return tidy(kept.map((s) => s.replace(/@t(\d+)\b/gi, (_m, n: string) => display(`t${n}`.toLowerCase()) ?? '')).join(' '));
 }
 
 function storySentences(prose: string): number {
@@ -668,7 +680,12 @@ export function acceptTokenOrLedgerStory(
   const freeform =
     candidates.find((c) => !parseTokenBeat(c) && !looksLikeTokenJson(c))
     ?? (looksLikeTokenJson(raw) ? (opts?.lenient ? salvageTokenJsonProse(raw, enumRefs) : '') : raw);
-  const obeyed = acceptObeyedStoryBody(freeform, state, packet);
+  // 29z8 — plain prose that still uses @tN tags: paint them from the REF ENUM, never leave a hole.
+  const obeyed = acceptObeyedStoryBody(
+    /@t\d+\b/i.test(freeform) ? paintTokensOrDrop(freeform, (tok) => findEnum(enumRefs, tok)?.display) : freeform,
+    state,
+    packet
+  );
   if (opts?.noLedgerFallback && (obeyed.usedLastResort || !obeyed.prose || isDroughtStubProse(obeyed.prose))) {
     return { prose: '', path: 'last-resort', notes: ['no-usable-prose'], usedLastResort: false };
   }

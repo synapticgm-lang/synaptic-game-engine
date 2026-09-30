@@ -63,9 +63,9 @@ function namedWatchtower(over: Partial<GameState> = {}): GameState {
 }
 
 describe('playtest18c — pads refill and CAST glue', () => {
-  it('HUD/BUILD are 2026-09-29z4, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29z4');
-    expect(BUILD_STAMP).toBe('2026-09-29z4');
+  it('HUD/BUILD are 2026-09-29z8, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29z8');
+    expect(BUILD_STAMP).toBe('2026-09-29z8');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -219,7 +219,8 @@ describe('playtest18c — pads refill and CAST glue', () => {
       ],
     });
     expect(hallTopicAlreadyAnswered(low, 'want')).toBe(false);
-    expect(shouldStitchOpeningContinue(low, 'Ask what they want')).toBe(true);
+    // 29z7 — after page 1 the writer answers hall talk; the stitch still exists as the fallback.
+    expect(shouldStitchOpeningContinue(low, 'Ask what they want')).toBe(false);
     const stitch = stitchOpeningContinue(low, 'Ask what they want');
     expect(stitch).not.toMatch(/ask was already answered|did not say it twice|already said it/i);
     expect(stitch.length).toBeGreaterThan(24);
@@ -233,7 +234,7 @@ describe('playtest18c — pads refill and CAST glue', () => {
 
     const free = 'why should I help you?';
     expect(hallTalkAsksWant(free) || /why should i help/i.test(free)).toBe(true);
-    expect(shouldStitchOpeningContinue(low, free)).toBe(true);
+    expect(shouldStitchOpeningContinue(low, free)).toBe(false);
     const freeStitch = stitchOpeningContinue(low, free);
     expect(freeStitch).not.toMatch(/ask was already answered|did not say it twice/i);
     const freeResort = lastResortStoryBody(low, buildCompletedEventPacket(low, free), free);
@@ -246,7 +247,7 @@ describe('playtest18c — pads refill and CAST glue', () => {
         { id: 'p2', turn: 2, role: 'player' as const, content: 'Who are you', timestamp: 3 },
       ],
     };
-    expect(shouldStitchOpeningContinue(withOptimisticWho, 'Who are you')).toBe(true);
+    expect(shouldStitchOpeningContinue(withOptimisticWho, 'Who are you')).toBe(false);
     const whoStitch = stitchOpeningContinue(withOptimisticWho, 'Who are you');
     expect(whoStitch).not.toMatch(/already answered who they are|did not introduce twice/i);
     const whoResort = lastResortStoryBody(
@@ -272,7 +273,7 @@ describe('playtest18c — pads refill and CAST glue', () => {
         { id: 'p3', turn: 3, role: 'player' as const, content: 'Ask what they want', timestamp: 5 },
       ],
     };
-    expect(shouldStitchOpeningContinue(afterWant, 'Ask what they want')).toBe(true);
+    expect(shouldStitchOpeningContinue(afterWant, 'Ask what they want')).toBe(false);
     const second = stitchOpeningContinue(afterWant, 'Ask what they want');
     expect(second).toMatch(/already (?:said|answered)/i);
   });

@@ -12,6 +12,8 @@ import { realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs.ts';
+import { nearbyPlaceNames } from './placeNames.ts';
+import { roadMeetingFact } from './travelJourney.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
 import { emptySceneFacts } from './sceneFacts.ts';
 import {
@@ -19,7 +21,8 @@ import {
   matchesLastKillName,
   type LastKill,
 } from './combatAuthority.ts';
-import { openingCastRecords, presentNpcRecords, recordsForEntries } from './npcRecords.ts';
+import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLine } from './npcRecords.ts';
+import { gateFactLines } from './skillGates.ts';
 import { sealedCastNames } from './beatContract.ts';
 import { ledgerSheetLine } from './litrpgSystemWindow.ts';
 import { isNeverCastTitle } from './neverCast.ts';
@@ -57,6 +60,7 @@ import {
   openingWhoAskLineFromLabel,
   playerAskedWhyPulled,
   sanitizeLockedNameBeat,
+  countSameHallTopicRepeats,
 } from './openingEstablishment.ts';
 
 export type EventOutcome =
@@ -89,6 +93,14 @@ export interface CompletedEventPacket {
   loot: string[];
   xp: number;
   witnesses: string[];
+  /** 29z3 — info-sheet lines for people here who have met the player. */
+  knownBy?: string[];
+  /** Engine-made townsfolk here: name, job, one motive, one fear, one way of speaking. */
+  townsfolk?: string[];
+  /** How people here are toward the player now, and the engine event that made them so. */
+  stances?: string[];
+  /** 29z3 — skill-gated locks in reach and whether they open. */
+  gates?: string[];
   location: string;
   lastKill?: LastKill;
   justKilled: boolean;
@@ -97,6 +109,9 @@ export interface CompletedEventPacket {
   phase?: string;
   allowlist: string[];
   playerAction: string;
+  /** 29z8 — who/want/where… asked this turn, and how often the player has asked it (1 = first). */
+  talkTopic?: string;
+  talkAsked?: number;
   recentBeats: string[];
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
   inspectStreak: number;
@@ -123,6 +138,8 @@ export interface CompletedEventPacket {
   /** 28g — the engine's resolved result for the player's action (fight / flee / parley / rest). Required fact. */
   engineResult?: string;
   exitNames?: string[];
+  /** 29y — did the state move this turn: the story narrates only the move the engine committed. */
+  movement?: string;
 }
 
 export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion';
@@ -319,7 +336,8 @@ function pushUnique(list: string[], seen: Set<string>, raw: string | undefined):
   seen.add(key);
   list.push(name);
   const last = name.split(/\s+/).pop() ?? '';
-  if (last.length >= 5 && last.toLowerCase() !== key) {
+  // Only a proper-noun tail is a short name ("Close" for Cathedral Close); "streets" from "Back streets" is not.
+  if (last.length >= 5 && /^[A-Z]/.test(last) && last.toLowerCase() !== key) {
     const lastKey = last.toLowerCase();
     if (!seen.has(lastKey)) {
       seen.add(lastKey);
@@ -339,9 +357,18 @@ export type NounAllowlistOpts = {
  * Hall talk strips novel present[] so a leftover invent cannot re-license itself.
  */
 function castMentionNames(state: GameState): string[] {
-  return state.openingEstablishment?.castNpcIds?.length
-    ? openingCastRecords(state).map((r) => r.npcName)
-    : openingCastNames(state);
+  if (state.openingEstablishment?.castNpcIds?.length) return openingCastRecords(state).map((r) => r.npcName);
+  // 29y — a card role label with no NPC record ("the innkeep") belongs to the opening place only;
+  // offered elsewhere it stood in for a priest, a weapon or a trap.
+  return atOpeningPlace(state) ? openingCastNames(state) : [];
+}
+
+function atOpeningPlace(state: GameState): boolean {
+  const c = state.circling;
+  if (!c?.lastLocation) return true;
+  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (c.openingPlace) return key(state.currentLocation) === key(c.openingPlace);
+  return !c.prevPlace;
 }
 
 export function compileNounAllowlist(
@@ -393,6 +420,7 @@ export function compileNounAllowlist(
   if (pc && !/^(you|adventurer|player)$/i.test(pc)) pushUnique(out, seen, pc);
 
   for (const extra of extras) pushUnique(out, seen, extra);
+  for (const place of nearbyPlaceNames(state)) pushUnique(out, seen, place);
 
   for (const h of hubsForBibleId(state.campaignBibleId)) {
     pushUnique(out, seen, h.name);
@@ -441,7 +469,7 @@ export function compileRefEnum(
     const label = (display ?? '').replace(/\s+/g, ' ').trim();
     if (!label || label.length < 2) return;
     const key = id.toLowerCase();
-    const dkey = label.toLowerCase();
+    const dkey = label.toLowerCase().replace(/^(?:the|a|an)\s+/, '');
     if (seenId.has(key) || seenDisplay.has(dkey)) return;
     seenId.add(key);
     seenDisplay.add(dkey);
@@ -449,6 +477,7 @@ export function compileRefEnum(
   };
 
   add('here', locationLabel(state), 'place');
+  for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
 
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
@@ -644,7 +673,7 @@ export function buildCompletedEventPacket(
   const hallTalk = verb === 'spoke' || isHallTalkPlayerLine(action);
   if (hallTalk) {
     const cast = openingCastLabel(state);
-    if (cast) allowExtras.push(cast);
+    if (cast && (openingCastRecords(state).length || atOpeningPlace(state))) allowExtras.push(cast);
   }
   const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk });
   const refEnum = compileRefEnum(state, allowExtras, { hallTalk });
@@ -669,6 +698,11 @@ export function buildCompletedEventPacket(
     loot: extras?.loot ?? [],
     xp,
     witnesses,
+    knownBy: presentNpcRecords(state)
+      .filter((r) => !matchesLastKillName(r.npcName, kill))
+      .map((r) => sheetMemoryLine(r, state.character?.name))
+      .filter(Boolean),
+    gates: gateFactLines(state),
     location,
     lastKill: justKilled || (kill?.remains && kill.outcome === 'victory') ? kill : undefined,
     justKilled,
@@ -678,6 +712,8 @@ export function buildCompletedEventPacket(
     allowlist,
     refEnum,
     playerAction: action || '(opening)',
+    talkTopic: hallTalkTopic(action) ?? undefined,
+    talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
@@ -698,7 +734,41 @@ export function buildCompletedEventPacket(
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
     ledgerSheet: ledgerSheetLine(state) || undefined,
     engineResult: extras?.engineResult?.trim() || undefined,
+    movement: movementFact(state, action) || undefined,
   };
+}
+
+/** Same talk family as choiceRanking.actionFamily (inspect / wait / look win there first). */
+const TALK_ACTION = /^(?![\s\S]*\b(?:inspect|examine|study|wait|ready yourself|watch|hold still|keep watch|look around|look over|survey|scout|scan)\b)[\s\S]*\b(?:talk|ask|speak|greet|offer)\b/i;
+const TALK_STAYS = ' A talk, ask or offer with no move is valid play: answer it in dialogue here and do not travel.';
+
+/**
+ * 29y — one visit per place: the move the engine committed this turn, or that nothing moved.
+ * 29z1 — on a talk turn with no move, say that talking in place is the play.
+ */
+export function movementFact(state: GameState, playerAction?: string): string {
+  const stay = playerAction && TALK_ACTION.test(playerAction) ? TALK_STAYS : '';
+  return movementLine(state, stay);
+}
+
+function movementLine(state: GameState, stay: string): string {
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  if (!here) return '';
+  const c = state.circling;
+  const movedNow = c?.movedTurn != null && c.movedTurn === state.turn;
+  const j = state.journey;
+  if (j && j.legsDone < j.legsTotal) {
+    const meeting = roadMeetingFact(j);
+    const road = movedNow
+      ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${j.ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
+      : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
+    return meeting ? `${road} ${meeting}` : road;
+  }
+  if (movedNow && c?.prevPlace) {
+    return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
+  }
+  if (!c?.lastLocation) return '';
+  return `No move this turn: at ${here} before and after. Do not narrate leaving, travelling or arriving.${stay}`;
 }
 
 type LedgerPlaceFacts = {
@@ -747,7 +817,7 @@ function sceneAnswerWho(state: GameState): string {
   const here = presentNpcRecords(state);
   if (here.length) return here[0].npcName;
   if (openingCastRecords(state).length) return '';
-  return openingCastLabel(state);
+  return atOpeningPlace(state) ? openingCastLabel(state) : '';
 }
 
 function listNames(names: string[]): string {
@@ -898,7 +968,7 @@ export function formatWriterFacingEvent(
   packet: CompletedEventPacket,
   opts?: { stricter?: boolean; perspective?: NarrativePerspective }
 ): string {
-  const target = packet.target ? ` ${packet.target}` : '';
+  const target = packet.target ? ` ${packet.verb === 'spoke' ? 'to ' : ''}${packet.target}` : '';
   const pov = pcPov(packet.pc, opts?.perspective);
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
@@ -917,6 +987,7 @@ export function formatWriterFacingEvent(
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);
+  if (packet.movement) lines.push(packet.movement);
   if (packet.justKilled && packet.lastKill?.name) {
     lines.push(`Last kill: ${packet.lastKill.name} (corpse).`);
   } else if (packet.lastKill?.name && packet.lastKill.remains) {
@@ -925,6 +996,10 @@ export function formatWriterFacingEvent(
   if (packet.xp > 0) lines.push(`XP: ${packet.xp}.`);
   if (packet.loot.length) lines.push(`Loot: ${packet.loot.join(', ')}.`);
   if (packet.witnesses.length) lines.push(`Witnesses: ${packet.witnesses.join(', ')}.`);
+  if (packet.knownBy?.length) lines.push(`INFO SHEETS (these people remember ${who}):\n${packet.knownBy.join('\n')}`);
+  if (packet.townsfolk?.length) lines.push(`PEOPLE HERE (their sheets — play them this way; each one is only the @tN at the start of their line):\n${packet.townsfolk.join('\n')}`);
+  if (packet.stances?.length) lines.push(`HOW THEY ARE NOW (set by what happened; play it, do not change it):\n${packet.stances.join('\n')}`);
+  if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
   if (packet.mood) lines.push(`Mood: ${packet.mood}.`);
   if (opts?.stricter) {
     lines.push('STRICT: Use only the nouns listed. Outcome is immutable.');
@@ -935,15 +1010,40 @@ export function formatWriterFacingEvent(
   lines.push('TOKEN PROSE — return JSON only (no markdown).');
   // 28l — the count comes before the example and the example has four full lines: writers copy the
   // example's shape, and a one-line example came back as one place-name line.
-  lines.push('Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
-  lines.push('Shape (replace every <...> with your own words):');
   const whereWas = povExample(pov, { second: 'where you were', third: 'where {N} was', first: 'where I was' });
   const whatDid = povExample(pov, {
     second: 'what you did and what came of it',
     third: 'what {N} did and what came of it, told close on {him}',
     first: 'what I did and what came of it',
   });
-  lines.push(`{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"actor"}],"lines":[{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${whatDid}>"},{"fn":"react","text":"<sentence: how @t2 or the room answered>"},{"fn":"hook","text":"<sentence: what now waits or threatens>"}]}`);
+  // 29z8 — writers copy the shape. A place line on every turn came back as the same room described
+  // again each turn, so once HERE is on the page and nobody moved, the shape opens on what changed.
+  const writerBeats = collapseLoiterWriterBeats(packet);
+  // `movement` also carries "No move this turn: …"; only a committed move re-opens the place.
+  const placeGiven = writerBeats.length > 0 && !/^Moved this turn/.test(packet.movement ?? '') && packet.verb !== 'arrived';
+  // A talk turn with someone here carries the answer as their own quoted words, said now: a shape with
+  // no speech line came back as "he answered", and a repeated question came back as a report.
+  const talkedTo = (packet.verb === 'spoke' || !!packet.talkTopic)
+    && (packet.refEnum ?? []).some((r) => r.klass === 'person' || r.klass === 'companion');
+  const askedBefore = talkedTo && (packet.talkAsked ?? 0) >= 2;
+  const answerLine = talkedTo
+    ? `{"fn":"speech","text":"<@t2 answers in their own quoted words, said now: \\"...\\" — not a report of what they said>"}`
+    : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
+  const refsShape = `{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"${talkedTo ? 'speaker' : 'actor'}"}`;
+  const bodyLines = placeGiven
+    ? `{"fn":"action","text":"<sentence: ${whatDid} — the first thing that changed>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`
+    : `{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${whatDid}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
+  lines.push(placeGiven
+    ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
+    : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
+  if (placeGiven) {
+    lines.push('HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
+  }
+  if (askedBefore) {
+    lines.push('The player has asked this before. The answer is a new quoted line said now, in new words — not "they told" or "they said" about an earlier answer.');
+  }
+  lines.push('Shape (replace every <...> with your own words):');
+  lines.push(`{"refs":[${refsShape}],"lines":[${bodyLines}]}`);
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
   lines.push('Name entities as @tN tokens from the REF ENUM; use no other names.');
   if (thirdPerson) lines.push(`The player character is ${who}: write that name plainly (no token) and ${pov.he}/${pov.him}/${pov.his} for them.`);
@@ -952,7 +1052,6 @@ export function formatWriterFacingEvent(
     lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');
   }
   lines.push('');
-  const writerBeats = collapseLoiterWriterBeats(packet);
   if (writerBeats.length) {
     lines.push(writerBeats.map((b) => `GM: ${b}`).join('\n'));
   } else {
@@ -960,8 +1059,18 @@ export function formatWriterFacingEvent(
   }
   lines.push('');
   lines.push(`PLAYER: ${packet.playerAction || '(opening)'}`);
+  const act = (packet.playerAction ?? '').trim();
+  if (act && act !== '(opening)') {
+    lines.push(`ACTION: this beat carries out the PLAYER line above — show ${who} doing it and what came of it. Do not retell an arrival already written, and do not answer a different action.`);
+    if (packet.combatLive && WRITER_ATTACK.test(act)) {
+      lines.push('The attack is on the page: show the blow landing, glancing or missing, and the foe answering it.');
+    }
+    lines.push('Plain speech: short concrete sentences a reader could say aloud. No abstract summary, no fragments.');
+  }
   return lines.join('\n').trim();
 }
+
+const WRITER_ATTACK = /^(?:press the attack|attack|strike|swing|stab|slash|hit|charge|fight)\b/i;
 
 export function mentionAllowlistHas(allowlist: string[], token: string): boolean {
   const t = token.trim().toLowerCase();

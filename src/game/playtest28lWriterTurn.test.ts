@@ -1,6 +1,5 @@
 /**
- * 28l — one writer turn: at most one revision on code-found problems, same-writer plain prose as the
- * last resort, never a stitched / canned line; relaxed checks; rotating no-progress nudge.
+ * 28l — one writer turn: one pass, code-found problems logged, never a stitched / canned line; relaxed checks; rotating no-progress nudge.
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
@@ -27,62 +26,41 @@ const GOOD =
   'You walked the length of the undercroft with slow steps. Dust lifted where your boots fell on the flagstones. '
   + 'A cracked font stood against the far wall, dry for years. Somewhere above, a bell rope creaked once and went still.';
 
-describe('28l writer turn', () => {
-  it('a clean first draft costs no extra writer call', async () => {
+describe('28l writer turn (29z8: one pass)', () => {
+  it('a clean first draft commits as-is', () => {
     const { state, packet, input } = setup();
-    let calls = 0;
-    const r = await runWriterTurn({
+    const r = runWriterTurn({
       firstRaw: GOOD,
       packet,
       check: { state, playerInput: input, intent: LOOK, engineFact: '', previousGm: '' },
-      callWriter: async () => { calls += 1; return ''; },
     });
-    expect(calls).toBe(0);
     expect(r.outcome).toBe('accepted');
     expect(r.prose).toContain('undercroft');
   });
 
-  it('a thin draft gets exactly one revision with the problem list', async () => {
+  it('a thin draft is logged and committed, never sent back to the writer', () => {
     const { state, packet, input } = setup();
-    const payloads: string[] = [];
-    const r = await runWriterTurn({
+    const r = runWriterTurn({
       firstRaw: 'You looked around the hall and saw only dust on the old floor',
       packet,
       check: { state, playerInput: input, intent: LOOK, engineFact: '', previousGm: '' },
-      callWriter: async (p) => { payloads.push(p); return GOOD; },
     });
-    expect(payloads).toHaveLength(1);
-    expect(payloads[0]).toMatch(/YOUR DRAFT:/);
-    expect(payloads[0]).toMatch(/FIX ONLY THESE PROBLEMS/);
-    expect(r.outcome).toBe('revised');
-    expect(r.prose).toContain('cracked font');
+    expect(r.outcome).toBe('accepted');
+    expect(r.problems.length).toBeGreaterThan(0);
+    expect(r.prose).toMatch(/dust/);
   });
 
-  it('an empty draft goes to the same writer with a plain-prose prompt, never a stitch', async () => {
+  it('an empty draft or outage returns empty prose instead of canned lines', () => {
     const { state, packet, input } = setup();
-    const payloads: string[] = [];
-    const r = await runWriterTurn({
-      firstRaw: '{"refs":[],"lines":[]}',
-      packet,
-      check: { state, playerInput: input, intent: LOOK, engineFact: '', previousGm: '' },
-      callWriter: async (p) => { payloads.push(p); return GOOD; },
-    });
-    expect(payloads).toHaveLength(1);
-    expect(payloads[0]).toMatch(/Plain prose only/);
-    expect(r.outcome).toBe('last-resort');
-    expect(r.prose).toContain('bell rope');
-  });
-
-  it('total outage returns empty prose instead of canned lines', async () => {
-    const { state, packet, input } = setup();
-    const r = await runWriterTurn({
-      firstRaw: '',
-      packet,
-      check: { state, playerInput: input, intent: LOOK, engineFact: '', previousGm: '' },
-      callWriter: async () => '',
-    });
-    expect(r.outcome).toBe('empty');
-    expect(r.prose).toBe('');
+    for (const firstRaw of ['', '{"refs":[],"lines":[]}']) {
+      const r = runWriterTurn({
+        firstRaw,
+        packet,
+        check: { state, playerInput: input, intent: LOOK, engineFact: '', previousGm: '' },
+      });
+      expect(r.outcome).toBe('empty');
+      expect(r.prose).toBe('');
+    }
     expect(renderWriterDraft('{"refs":[],"lines":[]}', state, packet).prose).toBe('');
   });
 

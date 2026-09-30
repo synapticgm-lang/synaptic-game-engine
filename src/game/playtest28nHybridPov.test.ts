@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { createDefaultSettings, createInitialState } from './defaults';
 import { buildMasterPrompt } from './masterPrompt';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
-import { formatPlainProseFacing } from './writerTurn';
 import { formatPerspectiveRule, pcPov } from './narrativePov';
 
 function jaxState() {
@@ -38,7 +37,6 @@ describe('28n — hybrid POV is the default writer shape', () => {
     expect(facing).toMatch(/COMPLETED EVENT:\nJax /);
     expect(facing).toContain('where Jax was');
     expect(facing).not.toContain('where you were');
-    expect(formatPlainProseFacing(packet, state)).toMatch(/close third person on Jax/);
   });
 
   it('no locked name: role label, not "you"', () => {

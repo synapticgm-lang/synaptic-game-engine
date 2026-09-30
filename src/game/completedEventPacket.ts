@@ -12,6 +12,7 @@ import { realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
+import { nearbyPlaceNames } from './placeNames';
 import { roadMeetingFact } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { emptySceneFacts } from './sceneFacts';
@@ -59,6 +60,7 @@ import {
   openingWhoAskLineFromLabel,
   playerAskedWhyPulled,
   sanitizeLockedNameBeat,
+  countSameHallTopicRepeats,
 } from './openingEstablishment';
 
 export type EventOutcome =
@@ -93,6 +95,10 @@ export interface CompletedEventPacket {
   witnesses: string[];
   /** 29z3 — info-sheet lines for people here who have met the player. */
   knownBy?: string[];
+  /** Engine-made townsfolk here: name, job, one motive, one fear, one way of speaking. */
+  townsfolk?: string[];
+  /** How people here are toward the player now, and the engine event that made them so. */
+  stances?: string[];
   /** 29z3 — skill-gated locks in reach and whether they open. */
   gates?: string[];
   location: string;
@@ -103,6 +109,9 @@ export interface CompletedEventPacket {
   phase?: string;
   allowlist: string[];
   playerAction: string;
+  /** 29z8 — who/want/where… asked this turn, and how often the player has asked it (1 = first). */
+  talkTopic?: string;
+  talkAsked?: number;
   recentBeats: string[];
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
   inspectStreak: number;
@@ -411,6 +420,7 @@ export function compileNounAllowlist(
   if (pc && !/^(you|adventurer|player)$/i.test(pc)) pushUnique(out, seen, pc);
 
   for (const extra of extras) pushUnique(out, seen, extra);
+  for (const place of nearbyPlaceNames(state)) pushUnique(out, seen, place);
 
   for (const h of hubsForBibleId(state.campaignBibleId)) {
     pushUnique(out, seen, h.name);
@@ -459,7 +469,7 @@ export function compileRefEnum(
     const label = (display ?? '').replace(/\s+/g, ' ').trim();
     if (!label || label.length < 2) return;
     const key = id.toLowerCase();
-    const dkey = label.toLowerCase();
+    const dkey = label.toLowerCase().replace(/^(?:the|a|an)\s+/, '');
     if (seenId.has(key) || seenDisplay.has(dkey)) return;
     seenId.add(key);
     seenDisplay.add(dkey);
@@ -467,6 +477,7 @@ export function compileRefEnum(
   };
 
   add('here', locationLabel(state), 'place');
+  for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
 
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
@@ -701,6 +712,8 @@ export function buildCompletedEventPacket(
     allowlist,
     refEnum,
     playerAction: action || '(opening)',
+    talkTopic: hallTalkTopic(action) ?? undefined,
+    talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
@@ -955,7 +968,7 @@ export function formatWriterFacingEvent(
   packet: CompletedEventPacket,
   opts?: { stricter?: boolean; perspective?: NarrativePerspective }
 ): string {
-  const target = packet.target ? ` ${packet.target}` : '';
+  const target = packet.target ? ` ${packet.verb === 'spoke' ? 'to ' : ''}${packet.target}` : '';
   const pov = pcPov(packet.pc, opts?.perspective);
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
@@ -984,6 +997,8 @@ export function formatWriterFacingEvent(
   if (packet.loot.length) lines.push(`Loot: ${packet.loot.join(', ')}.`);
   if (packet.witnesses.length) lines.push(`Witnesses: ${packet.witnesses.join(', ')}.`);
   if (packet.knownBy?.length) lines.push(`INFO SHEETS (these people remember ${who}):\n${packet.knownBy.join('\n')}`);
+  if (packet.townsfolk?.length) lines.push(`PEOPLE HERE (their sheets — play them this way; each one is only the @tN at the start of their line):\n${packet.townsfolk.join('\n')}`);
+  if (packet.stances?.length) lines.push(`HOW THEY ARE NOW (set by what happened; play it, do not change it):\n${packet.stances.join('\n')}`);
   if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
   if (packet.mood) lines.push(`Mood: ${packet.mood}.`);
   if (opts?.stricter) {
@@ -995,15 +1010,40 @@ export function formatWriterFacingEvent(
   lines.push('TOKEN PROSE — return JSON only (no markdown).');
   // 28l — the count comes before the example and the example has four full lines: writers copy the
   // example's shape, and a one-line example came back as one place-name line.
-  lines.push('Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
-  lines.push('Shape (replace every <...> with your own words):');
   const whereWas = povExample(pov, { second: 'where you were', third: 'where {N} was', first: 'where I was' });
   const whatDid = povExample(pov, {
     second: 'what you did and what came of it',
     third: 'what {N} did and what came of it, told close on {him}',
     first: 'what I did and what came of it',
   });
-  lines.push(`{"refs":[{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"actor"}],"lines":[{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${whatDid}>"},{"fn":"react","text":"<sentence: how @t2 or the room answered>"},{"fn":"hook","text":"<sentence: what now waits or threatens>"}]}`);
+  // 29z8 — writers copy the shape. A place line on every turn came back as the same room described
+  // again each turn, so once HERE is on the page and nobody moved, the shape opens on what changed.
+  const writerBeats = collapseLoiterWriterBeats(packet);
+  // `movement` also carries "No move this turn: …"; only a committed move re-opens the place.
+  const placeGiven = writerBeats.length > 0 && !/^Moved this turn/.test(packet.movement ?? '') && packet.verb !== 'arrived';
+  // A talk turn with someone here carries the answer as their own quoted words, said now: a shape with
+  // no speech line came back as "he answered", and a repeated question came back as a report.
+  const talkedTo = (packet.verb === 'spoke' || !!packet.talkTopic)
+    && (packet.refEnum ?? []).some((r) => r.klass === 'person' || r.klass === 'companion');
+  const askedBefore = talkedTo && (packet.talkAsked ?? 0) >= 2;
+  const answerLine = talkedTo
+    ? `{"fn":"speech","text":"<@t2 answers in their own quoted words, said now: \\"...\\" — not a report of what they said>"}`
+    : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
+  const refsShape = `{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"${talkedTo ? 'speaker' : 'actor'}"}`;
+  const bodyLines = placeGiven
+    ? `{"fn":"action","text":"<sentence: ${whatDid} — the first thing that changed>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`
+    : `{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${whatDid}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
+  lines.push(placeGiven
+    ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
+    : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
+  if (placeGiven) {
+    lines.push('HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
+  }
+  if (askedBefore) {
+    lines.push('The player has asked this before. The answer is a new quoted line said now, in new words — not "they told" or "they said" about an earlier answer.');
+  }
+  lines.push('Shape (replace every <...> with your own words):');
+  lines.push(`{"refs":[${refsShape}],"lines":[${bodyLines}]}`);
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
   lines.push('Name entities as @tN tokens from the REF ENUM; use no other names.');
   if (thirdPerson) lines.push(`The player character is ${who}: write that name plainly (no token) and ${pov.he}/${pov.him}/${pov.his} for them.`);
@@ -1012,7 +1052,6 @@ export function formatWriterFacingEvent(
     lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');
   }
   lines.push('');
-  const writerBeats = collapseLoiterWriterBeats(packet);
   if (writerBeats.length) {
     lines.push(writerBeats.map((b) => `GM: ${b}`).join('\n'));
   } else {

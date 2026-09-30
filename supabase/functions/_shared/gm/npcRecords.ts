@@ -1,5 +1,10 @@
 import type { GameState, NpcMemory } from './types.ts';
 
+/** Edge stub (29z8): sheet memory lines are built on the client (src/game/npcRecords.ts) and arrive in the packet. */
+export function sheetMemoryLine(_m: NpcMemory, _pcName?: string | null): string {
+  return '';
+}
+
 export function formatNpcMemoriesForPrompt(memories: NpcMemory[] | undefined, limit = 6): string {
   const list = (memories ?? []).slice(0, limit);
   if (!list.length) return '(none)';

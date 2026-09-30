@@ -116,8 +116,8 @@ function nameCover(mode: GameState['engineMode'], bibleId: string, over: Partial
 
 describe('playtest17f — site-wide opening / pad locks', () => {
   it('HUD/BUILD are 17f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29z4');
-    expect(BUILD_STAMP).toBe('2026-09-29z4');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29z8');
+    expect(BUILD_STAMP).toBe('2026-09-29z8');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -159,7 +159,8 @@ describe('playtest17f — site-wide opening / pad locks', () => {
     expect(second).toMatch(/already said it|already answered you/i);
     expect(second).not.toBe(firstWant);
     expect(second).toBe(openingAlreadyToldLine(afterFirst, 'want'));
-    expect(shouldStitchOpeningContinue(afterFirst, 'Ask what they want')).toBe(true);
+    // 29z7 — after page 1 the writer answers every hall line.
+    expect(shouldStitchOpeningContinue(afterFirst, 'Ask what they want')).toBe(false);
 
     const third = saltHire({
       log: [

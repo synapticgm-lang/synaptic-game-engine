@@ -46,6 +46,11 @@ function insideLongerName(src: string, offset: number, name: string, names: stri
   });
 }
 
+/** `Wren Holt` can be glued into an object slot; a role noun (`the muscle`) is plain English there. */
+function isProperPersonName(name: string): boolean {
+  return /^[A-Z]/.test((name ?? '').trim().replace(/^(?:the|a|an)\s+/i, ''));
+}
+
 export function isPlotObjectName(name: string): boolean {
   const t = (name ?? '').trim().replace(/^(the|a|an)\s+/i, '');
   return /^(charter|millstone)$/i.test(t);
@@ -75,7 +80,7 @@ export function ledgerSlotPeople(state?: {
 export function isCompanionObjectGlue(text: string, names: string[] = []): boolean {
   const t = text ?? '';
   if (!t.trim() || !names.length) return false;
-  for (const name of names) {
+  for (const name of names.filter(isProperPersonName)) {
     const esc = escapeRe(name);
     if (new RegExp(`\\b${OBJECT_TAKE}\\s+the\\s+${esc}\\b`, 'i').test(t)) return true;
     const adj = new RegExp(`\\bthe\\s+${esc}\\s+([a-z]{3,})\\b`).exec(t);
@@ -255,7 +260,7 @@ export function scrubSlotGlue(
     /\b((?:examine|inspect|study|tip|nod(?:s)?\s+toward)\s+)the\s+((?:Brother|Sister|Father|Mother|Captain)\s+[A-Z][a-z'-]+)\b/gi,
     '$1$2'
   );
-  for (const name of namedPeople) {
+  for (const name of namedPeople.filter(isProperPersonName)) {
     const esc = escapeRe(name);
     next = next.replace(new RegExp(`\\b(${OBJECT_TAKE}\\s+)the\\s+${esc}\\b`, 'gi'), '$1');
     next = next.replace(

@@ -1,15 +1,13 @@
 /**
- * 28l — one writer turn: first draft → code-found problems → at most one short revision → last-resort
- * plain-prose call to the same writer. Canned / stitched lines are never the success path; the caller
- * only falls back when every writer call came back empty (transport outage).
+ * 28l / 29z8 — one writer turn: the first draft is the beat. Code checks it, trims already-told
+ * sentences and logs what is left; nothing goes back to the writer. Canned / stitched lines are never
+ * the success path; the caller only falls back when the reply came back empty (transport outage).
  * Shared by the live client (`useGame`) and the headless harness (`fateAutoplay`).
  */
-import type { GameState, NarrativePerspective } from './types';
-import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
+import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { isLastGmReprint, isUnaskedCombatClose } from './completedEventPacket';
-import { formatTalkWriterFacing } from './talkEnvelope';
 import { acceptTokenOrLedgerStory, refEnumOf, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
@@ -28,6 +26,7 @@ import {
 } from './semanticLoopDetector';
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
+import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
 
 export type WriterDraft = {
   prose: string;
@@ -35,16 +34,16 @@ export type WriterDraft = {
   refs?: TokenUseRef[];
 };
 
-export type WriterTurnOutcome = 'accepted' | 'revised' | 'reasked' | 'last-resort' | 'empty';
+export type WriterTurnOutcome = 'accepted' | 'empty';
 
 export type WriterTurnResult = WriterDraft & {
   outcome: WriterTurnOutcome;
-  /** Problems found on the first draft (empty when it passed). */
+  /** 29z9 — who / want / where: whether the addressee's own words are on the page, and where they came from. */
+  spoken?: SpokenAnswer;
+  /** Problems found on the first draft (logged, never re-asked). */
   problems: string[];
-  /** Problems left on the committed draft. */
+  /** Problems left on the committed draft after code trims. */
   remaining: string[];
-  /** Writer calls made inside this helper (the first draft is the caller's). */
-  extraCalls: number;
   firstDraft: string;
 };
 
@@ -83,7 +82,7 @@ function unresolvedProblem(why: string, playerInput: string, engineFact: string)
   return `Resolve the player's action "${playerInput.slice(0, 120)}" (${why}).`;
 }
 
-/** Cheap code checks on a rendered draft. Each entry is one plain instruction for the revision. */
+/** Cheap code checks on a rendered draft. Each entry is one plain problem, logged with the turn. */
 export function writerDraftProblems(prose: string, check: DraftCheck): string[] {
   const text = stripChoiceList(stripActionTags(prose ?? '')).trim();
   if (!text) return ['No usable story came back.'];
@@ -117,63 +116,6 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   return [...new Set(out)];
 }
 
-/** The revision call: the same facts, the writer's own draft, and the code-found problems. */
-export function formatWriterRevisionFacing(
-  packet: CompletedEventPacket,
-  state: GameState,
-  draft: string,
-  problems: string[],
-  perspective?: NarrativePerspective
-): string {
-  return [
-    formatTalkWriterFacing(packet, state, { perspective }),
-    '',
-    'YOUR DRAFT:',
-    draft.replace(/\s+/g, ' ').trim().slice(0, 1200),
-    '',
-    'FIX ONLY THESE PROBLEMS (keep everything else):',
-    ...problems.map((p) => `- ${p}`),
-    'Return the whole beat again in the same JSON shape (plain prose is also accepted).',
-  ].join('\n');
-}
-
-const WHOLE_REPEAT_PROBLEM = /^(Repeats an earlier beat|Same text as the last beat)/;
-
-/** A draft-check list that flags the beat as a repeat of earlier text (not just one reused line). */
-export function repeatsEarlierBeat(problems: readonly string[]): boolean {
-  return problems.some((p) => WHOLE_REPEAT_PROBLEM.test(p));
-}
-
-/** The sentences of a repeated draft that were already told, for naming them to the writer. */
-export function recycledLinesToName(draft: string, check: DraftCheck): string[] {
-  const recent = recentGmBeatTexts(check.state);
-  if (check.previousGm && !recent.includes(check.previousGm)) recent.push(check.previousGm);
-  const reused = recycledSentencesIn(draft, recent).map((s) => s.replace(/\s+/g, ' ').trim());
-  if (reused.length) return [...new Set(reused)].slice(0, 5);
-  const whole = draft.replace(/\s+/g, ' ').trim();
-  return whole ? [whole.slice(0, 240)] : [];
-}
-
-/**
- * 28v2 — a fresh ask (no draft to edit) after the beat and its revision both repeated earlier text.
- * The already-told sentences are named as issues so the writer writes around them.
- */
-export function formatFreshReaskFacing(
-  packet: CompletedEventPacket,
-  state: GameState,
-  recycled: readonly string[],
-  perspective?: NarrativePerspective
-): string {
-  return [
-    formatTalkWriterFacing(packet, state, { perspective }),
-    '',
-    'ISSUES (an earlier attempt at this beat repeated what the story already told):',
-    ...recycled.map((s) => `- Already told, do not reuse: "${s.slice(0, 160)}"`),
-    '- Write this beat fresh from the facts above: what is new this turn, in new sentences.',
-    'Return the whole beat in the same JSON shape (plain prose is also accepted).',
-  ].join('\n');
-}
-
 export type WriterIssue = WriterRawIssue | 'recycled' | 'unresolved';
 
 const RECYCLE_NOTE =
@@ -194,103 +136,30 @@ export function writerTurnIssues(rawIssues: readonly string[], notes: readonly s
   return [...out];
 }
 
-/** Last resort: the same writer, a much simpler prompt, plain prose. */
-export function formatPlainProseFacing(
-  packet: CompletedEventPacket,
-  state: GameState,
-  perspective?: NarrativePerspective
-): string {
-  const lastGm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
-  const pov = pcPov(state.character ?? packet.pc, perspective);
-  const person = narratesPcInThirdPerson(pov)
-    ? `close third person on ${pcStorySubject(pov)} (${pov.he}/${pov.him}/${pov.his}), never "you" for ${pcStorySubject(pov)}`
-    : pov.perspective === 'first-person'
-      ? 'first person ("I")'
-      : 'second person ("you")';
-  const lines = [
-    `Write 3–5 sentences of story in past tense, ${person}. Plain prose only: no JSON, no lists, no headings.`,
-    `The player did: ${packet.playerAction || '(looked around)'}`,
-    `Where: ${packet.location}.`,
-  ];
-  if (packet.engineResult) lines.push(`Already settled (state it as finished): ${packet.engineResult}`);
-  if (packet.allowlist.length) lines.push(`Names you may use: ${packet.allowlist.join(', ')}. Use no other names.`);
-  if (lastGm.trim()) lines.push(`Previous beat (do not repeat it): ${lastGm.replace(/\s+/g, ' ').trim().slice(0, 300)}`);
-  return lines.join('\n');
-}
-
 /**
- * Judge the first draft; revise once only when code found a real problem; if still nothing usable,
- * ask the same writer for plain prose. Never paints a stitch.
+ * 29z8 - one writer pass per turn. The first draft is the beat: code trims already-told sentences and
+ * names labels once; any problem left is logged for the tester, never sent back to the writer.
  */
-export async function runWriterTurn(opts: {
+export function runWriterTurn(opts: {
   firstRaw: string;
   packet: CompletedEventPacket;
   check: DraftCheck;
-  callWriter: (payload: string) => Promise<string>;
-  /** False after a transport retry this turn: skip the revision (the turn is already slow). */
-  allowRevision?: boolean;
-  perspective?: NarrativePerspective;
-}): Promise<WriterTurnResult> {
-  const { packet, check, callWriter } = opts;
-  const state = check.state;
-  let extraCalls = 0;
-  let draft = renderWriterDraft(opts.firstRaw, state, packet);
-  const firstDraft = draft.prose;
-  const problems = writerDraftProblems(draft.prose, check);
-  let remaining = problems;
-  let outcome: WriterTurnOutcome = 'accepted';
-
-  if (draft.prose && problems.length && opts.allowRevision !== false) {
-    extraCalls += 1;
-    const raw = await callWriter(formatWriterRevisionFacing(packet, state, draft.prose, problems, opts.perspective));
-    const revised = renderWriterDraft(raw, state, packet);
-    if (revised.prose) {
-      const left = writerDraftProblems(revised.prose, check);
-      if (
-        left.length < problems.length
-        || (left.length === problems.length && sentenceCount(revised.prose) > sentenceCount(draft.prose))
-      ) {
-        draft = revised;
-        remaining = left;
-        outcome = 'revised';
-      }
-    }
-  }
-
-  // 28v2 — the beat still repeats earlier text after the revision: never commit it. One fresh ask to
-  // the same writer with the recycled sentences named; an empty reply drops to the plain-prose ask.
-  if (draft.prose && repeatsEarlierBeat(remaining)) {
-    extraCalls += 1;
-    const recycled = recycledLinesToName(draft.prose, check);
-    const raw = await callWriter(formatFreshReaskFacing(packet, state, recycled, opts.perspective));
-    const fresh = renderWriterDraft(raw, state, packet);
-    if (fresh.prose) {
-      draft = fresh;
-      remaining = writerDraftProblems(fresh.prose, check);
-      outcome = 'reasked';
-    } else {
-      draft = { prose: '', path: draft.path };
-    }
-  }
-
-  // A beat still under two sentences after the revision is not a story beat: ask for plain prose.
-  const stillThin = !!draft.prose && extraCalls > 0 && sentenceCount(draft.prose) < 2;
-  if (!draft.prose || stillThin) {
-    extraCalls += 1;
-    const raw = await callWriter(formatPlainProseFacing(packet, state, opts.perspective));
-    const plain = renderWriterDraft(raw, state, packet);
-    const plainLeft = plain.prose ? writerDraftProblems(plain.prose, check) : [];
-    if (plain.prose && (!draft.prose || plainLeft.length <= remaining.length)) {
-      draft = { ...plain, path: 'plain' };
-      remaining = plainLeft;
-      outcome = 'last-resort';
-    } else if (!draft.prose) {
-      outcome = 'empty';
-    }
-  }
-
-  if (draft.prose) draft = { ...draft, prose: finishCommittedProse(draft.prose, check, packet) };
-  return { ...draft, outcome, problems, remaining, extraCalls, firstDraft };
+}): WriterTurnResult {
+  const { packet, check } = opts;
+  const first = renderWriterDraft(opts.firstRaw, check.state, packet);
+  const problems = writerDraftProblems(first.prose, check);
+  if (!first.prose) return { ...first, outcome: 'empty', problems, remaining: problems, firstDraft: '' };
+  const spoken = ensureSpokenAnswer(finishCommittedProse(first.prose, check, packet), check.state, check.playerInput);
+  const prose = spoken.prose;
+  return {
+    ...first,
+    prose,
+    outcome: 'accepted',
+    problems,
+    remaining: writerDraftProblems(prose, check),
+    firstDraft: first.prose,
+    spoken: spoken.answer,
+  };
 }
 
 /**

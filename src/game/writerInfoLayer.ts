@@ -4,6 +4,7 @@ import { playerFacingLocation } from './locationName';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { formatHiddenRoomLedger } from './dungeonSeed';
 import { placeCardFor } from './outdoorHubs';
+import { exitPlaceNames } from './placeNames';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm';
@@ -126,8 +127,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);
   }
-  const sheetExits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
-  const exits = sheetExits.length ? sheetExits : card?.exits ?? [];
+  const exits = exitPlaceNames(state);
   if (exits.length) {
     here.push(`Exits: ${exits.slice(0, 5).join(', ')}`);
   }

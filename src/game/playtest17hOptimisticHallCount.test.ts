@@ -48,8 +48,8 @@ function namedAfterPage1(over: Partial<GameState> = {}): GameState {
 
 describe('playtest17h — optimistic hall count + last-resort advance', () => {
   it('HUD/BUILD are 17h, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-29z4');
-    expect(BUILD_STAMP).toBe('2026-09-29z4');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-29z8');
+    expect(BUILD_STAMP).toBe('2026-09-29z8');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -80,7 +80,8 @@ describe('playtest17h — optimistic hall count + last-resort advance', () => {
       ],
     });
     expect(countSameHallTopicRepeats(afterFirst, want)).toBe(2);
-    expect(shouldStitchOpeningContinue(afterFirst, want)).toBe(true);
+    // 29z7 — after page 1 the writer answers every hall line.
+    expect(shouldStitchOpeningContinue(afterFirst, want)).toBe(false);
 
     const thirdOptimistic = namedAfterPage1({
       log: [

@@ -334,6 +334,11 @@ export function shouldStarveCombatPadsOnCover(_state?: unknown): boolean {
 }
 
 /** Edge stub (27i): the client decides whether a line names another NPC (src/game/openingEstablishment.ts). */
+/** Stub (29z8): the repeat count is set on the client packet (`talkAsked`). */
+export function countSameHallTopicRepeats(_state?: unknown, _playerInput?: string): number {
+  return 0;
+}
+
 export function lineNamesOtherNpc(_state?: unknown, _line?: string): boolean {
   return false;
 }

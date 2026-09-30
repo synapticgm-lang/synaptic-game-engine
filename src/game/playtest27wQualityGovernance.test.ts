@@ -9,7 +9,7 @@ import {
 import { formatSceneSnapshotForPrompt } from './situationPacket';
 
 describe('playtest27w — P0+P1 quality governance', () => {
-  it('rewrites orphan them references when one NPC is present', () => {
+  it('keeps them as written when one NPC is present (29c: pronouns are never rewritten)', () => {
     const state = createInitialState();
     state.sceneFacts = {
       props: [],
@@ -23,8 +23,7 @@ describe('playtest27w — P0+P1 quality governance', () => {
       state,
       'You watch them shuffle papers without a word.'
     );
-    expect(prose.toLowerCase()).toContain('registrar mira');
-    expect(prose.toLowerCase()).not.toMatch(/\bwatch them\b/);
+    expect(prose).toBe('You watch them shuffle papers without a word.');
   });
 
   it('rejects Check the stranger when alone', () => {

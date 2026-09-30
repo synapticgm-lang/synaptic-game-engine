@@ -30,6 +30,27 @@ function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** `the Woodcutter tracked` / `the Warden slowly` — the name is the subject, not a slot adjective. */
+function wordAfterNameOk(word: string): boolean {
+  return AFTER_NAME_OK.test(word) || /^[a-z]{3,}(?:ed|ly)$/.test(word);
+}
+
+/** `Oskar the Woodcutter` — `the Woodcutter` is the tail of a longer held name. */
+function insideLongerName(src: string, offset: number, name: string, names: string[]): boolean {
+  const tail = `the ${name}`.toLowerCase();
+  return names.some((longer) => {
+    const l = longer.toLowerCase();
+    if (l.length <= tail.length || !l.endsWith(tail)) return false;
+    const start = offset - (l.length - tail.length);
+    return start >= 0 && src.slice(start, start + l.length).toLowerCase() === l;
+  });
+}
+
+/** `Wren Holt` can be glued into an object slot; a role noun (`the muscle`) is plain English there. */
+function isProperPersonName(name: string): boolean {
+  return /^[A-Z]/.test((name ?? '').trim().replace(/^(?:the|a|an)\s+/i, ''));
+}
+
 export function isPlotObjectName(name: string): boolean {
   const t = (name ?? '').trim().replace(/^(the|a|an)\s+/i, '');
   return /^(charter|millstone)$/i.test(t);
@@ -59,11 +80,13 @@ export function ledgerSlotPeople(state?: {
 export function isCompanionObjectGlue(text: string, names: string[] = []): boolean {
   const t = text ?? '';
   if (!t.trim() || !names.length) return false;
-  for (const name of names) {
+  for (const name of names.filter(isProperPersonName)) {
     const esc = escapeRe(name);
     if (new RegExp(`\\b${OBJECT_TAKE}\\s+the\\s+${esc}\\b`, 'i').test(t)) return true;
-    const adj = t.match(new RegExp(`\\bthe\\s+${esc}\\s+([a-z]{3,})\\b`));
-    if (adj?.[1] && !AFTER_NAME_OK.test(adj[1])) return true;
+    const adj = new RegExp(`\\bthe\\s+${esc}\\s+([a-z]{3,})\\b`).exec(t);
+    if (adj?.[1] && !wordAfterNameOk(adj[1]) && !insideLongerName(t, adj.index, name, names)) {
+      return true;
+    }
   }
   return false;
 }
@@ -237,12 +260,13 @@ export function scrubSlotGlue(
     /\b((?:examine|inspect|study|tip|nod(?:s)?\s+toward)\s+)the\s+((?:Brother|Sister|Father|Mother|Captain)\s+[A-Z][a-z'-]+)\b/gi,
     '$1$2'
   );
-  for (const name of namedPeople) {
+  for (const name of namedPeople.filter(isProperPersonName)) {
     const esc = escapeRe(name);
     next = next.replace(new RegExp(`\\b(${OBJECT_TAKE}\\s+)the\\s+${esc}\\b`, 'gi'), '$1');
     next = next.replace(
       new RegExp(`\\bthe\\s+${esc}\\s+([a-z]{3,})\\b`, 'g'),
-      (full, word: string) => (AFTER_NAME_OK.test(word) ? full : `the ${word}`)
+      (full, word: string, offset: number, src: string) =>
+        wordAfterNameOk(word) || insideLongerName(src, offset, name, namedPeople) ? full : `the ${word}`
     );
   }
   for (const title of placeTitles) {

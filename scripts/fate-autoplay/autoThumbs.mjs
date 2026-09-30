@@ -182,29 +182,35 @@ async function addNotes() {
   let judged = 0;
   let failed = 0;
   let batches = 0;
-  for (let i = 0; i < targets.length; i += 20) {
-    batches++;
-    const batch = targets.slice(i, i + 20);
-    const prompt = buildJudgePrompt(batch);
-    try {
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 6000, temperature: 0 }),
-      });
-      if (!res.ok) {
+  const ask = async (list, size) => {
+    for (let i = 0; i < list.length; i += size) {
+      batches++;
+      const batch = list.slice(i, i + size);
+      const prompt = buildJudgePrompt(batch);
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 12000, temperature: 0 }),
+        });
+        if (!res.ok) {
+          failed++;
+          continue;
+        }
+        const j = await res.json();
+        // 29z4 — an empty reply or one with no usable verdict is a failed batch, not "0 judged, ok".
+        const got = applyVerdicts(batch, parseJudge(replyText(j)), lessons);
+        if (!got) failed++;
+        judged += got;
+      } catch {
         failed++;
-        continue;
       }
-      const j = await res.json();
-      // 29z4 — an empty reply or one with no usable verdict is a failed batch, not "0 judged, ok".
-      const got = applyVerdicts(batch, parseJudge(replyText(j)), lessons);
-      if (!got) failed++;
-      judged += got;
-    } catch {
-      failed++;
     }
-  }
+  };
+  await ask(targets, 20);
+  // 29z7 — one more ask for only the turns the model skipped; whatever is still missing stays unmarked.
+  const missing = targets.filter((o) => o.thumb == null);
+  if (missing.length) await ask(missing, 5);
   const tally = { up: 0, down: 0, unmarked: 0 };
   for (const o of targets) if (o.thumb) tally[o.thumb]++;
   return judgeStatus(model, judged, targets.length, failed, batches, tally);

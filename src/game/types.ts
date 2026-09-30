@@ -478,6 +478,8 @@ export interface GameState {
   npcMemories?: NpcMemory[];
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
+  /** Places the engine already filled with townsfolk (first entry is the opening place, which the card owns). */
+  townsfolkPlaces?: string[];
   previousSceneFacts?: SceneFacts;
   /**
    * Monotonic campaign ledger revision. Bumped on every accepted turn commit.
@@ -1100,6 +1102,29 @@ export interface NpcMemory {
   present?: boolean;
   /** 27f — where this NPC is. Seeded at New Game from the opening card; set when left behind; companions move with the player. Read-time presence comes from this (presentNpcRecords). */
   location?: string;
+  /** Generated townsfolk only: code-picked sheet, saved on first meet (see npcSheet.ts). */
+  sheet?: NpcSheet;
+  stance?: NpcStance;
+}
+
+/** A generated person's sheet. A part the place filter left no pick for is blank, never invented. */
+export interface NpcSheet {
+  job: string;
+  motive: string;
+  fear: string;
+  speech: string;
+  secret: string;
+  place: string;
+}
+
+/** How someone is now toward the player — moved only by an engine-recorded event; the sheet never changes. */
+export interface NpcStance {
+  now: 'grateful' | 'warm' | 'wary' | 'afraid' | 'hostile';
+  /** Why, in words the writer can use: "Jax freed them from the cell". */
+  cause: string;
+  turn: number;
+  /** Event ids already applied; the same event never applies twice. */
+  events: string[];
 }
 
 /** Location sheet — spatial facts for the current zone. */
