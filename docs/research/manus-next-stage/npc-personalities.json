@@ -1,0 +1,2652 @@
+[
+  {
+    "id": "noble_fallen",
+    "name": "The Fallen Noble",
+    "description": "Once powerful and now disgraced, this aristocrat is bitter but clings fiercely to ceremony and inherited dignity.",
+    "motivations": [
+      "Restore family honor",
+      "Punish those who engineered the fall",
+      "Protect the last family asset"
+    ],
+    "fears": [
+      "Further humiliation",
+      "Poverty",
+      "Being forgotten"
+    ],
+    "desires": [
+      "Recognition",
+      "Revenge",
+      "Redemption"
+    ],
+    "secrets": [
+      "A cache of heirlooms survives",
+      "A former enemy secretly provides aid",
+      "An unacknowledged heir lives nearby"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "archaic and refined",
+      "tone": "bitter, nostalgic, proud",
+      "quirks": [
+        "Uses obsolete titles",
+        "Recalls the old days",
+        "Corrects grammar"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps fallen noble and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the fallen noble role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "hero_reluctant",
+    "name": "The Reluctant Hero",
+    "description": "Capable and compassionate, this person wants an ordinary life but cannot ignore a crisis in front of them.",
+    "motivations": [
+      "Keep loved ones safe",
+      "Avoid needless attention",
+      "Do the right thing when required"
+    ],
+    "fears": [
+      "Failing those who depend on them",
+      "Becoming a symbol instead of a person",
+      "Violence"
+    ],
+    "desires": [
+      "Peace",
+      "A quiet home",
+      "Proof that sacrifice mattered"
+    ],
+    "secrets": [
+      "Once fled from a battle",
+      "Carries a sealed call to leadership",
+      "Their lineage is politically valuable"
+    ],
+    "speechPatterns": {
+      "formality": "plain",
+      "vocabulary": "direct and practical",
+      "tone": "modest, worried, decisive",
+      "quirks": [
+        "Deflects praise",
+        "Checks exits",
+        "Speaks after a pause"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps reluctant hero and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the reluctant hero role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "merchant_scheming",
+    "name": "The Scheming Merchant",
+    "description": "A gifted dealmaker who sees every relationship as a market and every rumor as potential inventory.",
+    "motivations": [
+      "Increase market control",
+      "Acquire privileged information",
+      "Outmaneuver competitors"
+    ],
+    "fears": [
+      "Public insolvency",
+      "A deal they cannot price",
+      "Losing leverage"
+    ],
+    "desires": [
+      "Profit",
+      "Influence",
+      "A monopoly"
+    ],
+    "secrets": [
+      "Keeps two sets of ledgers",
+      "Funds a rival under a false name",
+      "Owns a debt held by a local official"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "commercial and colorful",
+      "tone": "affable, probing, calculating",
+      "quirks": [
+        "Uses prices as metaphors",
+        "Calls everyone a partner",
+        "Counts on their fingers"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps scheming merchant and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the scheming merchant role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "soldier_weary",
+    "name": "The Weary Soldier",
+    "description": "A seasoned veteran whose discipline remains intact while exhaustion and grief have worn down their faith in glory.",
+    "motivations": [
+      "Bring their unit home",
+      "Prevent another futile battle",
+      "Honor fallen comrades"
+    ],
+    "fears": [
+      "Pointless orders",
+      "Survivor guilt",
+      "Being useless after war"
+    ],
+    "desires": [
+      "Rest",
+      "Competent leadership",
+      "A reason to hope"
+    ],
+    "secrets": [
+      "Knows a commander committed a war crime",
+      "Keeps letters from an enemy friend",
+      "Is close to desertion"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "military and spare",
+      "tone": "tired, dry, protective",
+      "quirks": [
+        "Uses unit slang",
+        "Scans sightlines",
+        "Polishes gear while speaking"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps weary soldier and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the weary soldier role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "scholar_curious",
+    "name": "The Curious Scholar",
+    "description": "An enthusiastic researcher who treats the world as an unfinished question and danger as fieldwork.",
+    "motivations": [
+      "Verify a theory",
+      "Preserve endangered knowledge",
+      "Gain access to restricted archives"
+    ],
+    "fears": [
+      "Ignorance",
+      "Lost evidence",
+      "Being dismissed as unserious"
+    ],
+    "desires": [
+      "Discovery",
+      "Peer recognition",
+      "A breakthrough"
+    ],
+    "secrets": [
+      "A key citation was fabricated",
+      "Has copied a forbidden text",
+      "Their patron expects a specific conclusion"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "precise and academic",
+      "tone": "animated, thoughtful, absent-minded",
+      "quirks": [
+        "Names sources aloud",
+        "Takes notes mid-conversation",
+        "Forgets meals"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps curious scholar and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the curious scholar role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "thief_cynical",
+    "name": "The Cynical Thief",
+    "description": "Street-smart and guarded, this survivor trusts skills and exits more than promises.",
+    "motivations": [
+      "Stay independent",
+      "Pay off an old obligation",
+      "Expose a hypocrite"
+    ],
+    "fears": [
+      "Being owned by anyone",
+      "Trusting the wrong mark",
+      "Returning to the streets"
+    ],
+    "desires": [
+      "Freedom",
+      "A clean score",
+      "A small circle of trust"
+    ],
+    "secrets": [
+      "Protects a child pickpocket ring",
+      "Once stole from the party employer",
+      "Hides evidence that could clear an innocent person"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "streetwise and clipped",
+      "tone": "mocking, alert, unexpectedly kind",
+      "quirks": [
+        "Tests pockets by habit",
+        "Uses nicknames",
+        "Never sits with back exposed"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps cynical thief and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the cynical thief role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "cultist_fanatical",
+    "name": "The Fanatical Cultist",
+    "description": "A true believer convinced that sacrifice, obedience, and catastrophe will reveal a higher order.",
+    "motivations": [
+      "Serve the revelation",
+      "Recruit the unworthy",
+      "Complete a sacred rite"
+    ],
+    "fears": [
+      "Doubt",
+      "A silent deity",
+      "A prophecy contradicted"
+    ],
+    "desires": [
+      "Transcendence",
+      "Certainty",
+      "A place beside the chosen"
+    ],
+    "secrets": [
+      "The prophecy has a missing verse",
+      "The leader privately doubts",
+      "They were recruited through blackmail"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "scriptural and absolute",
+      "tone": "reverent, intense, unsettling",
+      "quirks": [
+        "Quotes doctrine",
+        "Touches a holy token",
+        "Refers to self as we"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps fanatical cultist and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the fanatical cultist role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "healer_kind",
+    "name": "The Kind Healer",
+    "description": "A patient caregiver who believes nearly every wound can be eased if someone takes responsibility.",
+    "motivations": [
+      "Reduce suffering",
+      "Train new healers",
+      "Keep a community healthy"
+    ],
+    "fears": [
+      "Being unable to help",
+      "Triage choices",
+      "Medicine used as a weapon"
+    ],
+    "desires": [
+      "Recovery",
+      "Trust",
+      "A well-funded clinic"
+    ],
+    "secrets": [
+      "Has treated a wanted fugitive",
+      "Hides a contagious illness outbreak",
+      "Uses unlicensed experimental remedies"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "clear and reassuring",
+      "tone": "gentle, firm, observant",
+      "quirks": [
+        "Washes hands repeatedly",
+        "Asks consent first",
+        "Uses small names"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps kind healer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the kind healer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "veteran_haunted",
+    "name": "The Haunted Veteran",
+    "description": "A capable survivor whose past intrudes through sounds, smells, and choices that other people call ordinary.",
+    "motivations": [
+      "Atone for one decision",
+      "Protect civilians",
+      "Learn what really happened"
+    ],
+    "fears": [
+      "Nightmares",
+      "Closed rooms",
+      "Being praised for the war"
+    ],
+    "desires": [
+      "Forgiveness",
+      "Truth",
+      "A full night of sleep"
+    ],
+    "secrets": [
+      "Left someone behind deliberately",
+      "Recognizes a supposed enemy as a friend",
+      "Keeps a weapon tied to the tragedy"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "fragmented and concrete",
+      "tone": "guarded, haunted, vigilant",
+      "quirks": [
+        "Counts breaths",
+        "Avoids fireworks",
+        "Stops at certain smells"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps haunted veteran and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the haunted veteran role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "apprentice_ambitious",
+    "name": "The Ambitious Apprentice",
+    "description": "Talented, impatient, and eager to prove they deserve advancement before their peers.",
+    "motivations": [
+      "Surpass the mentor",
+      "Earn independent status",
+      "Master a difficult technique"
+    ],
+    "fears": [
+      "Being average",
+      "Public failure",
+      "The mentor choosing another student"
+    ],
+    "desires": [
+      "Mastery",
+      "Recognition",
+      "Authority"
+    ],
+    "secrets": [
+      "Stole a page from the mentor",
+      "Faked one credential",
+      "Is courting a rival school"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "technical and eager",
+      "tone": "competitive, bright, defensive",
+      "quirks": [
+        "Finishes others sentences",
+        "Carries too many tools",
+        "Overpromises"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps ambitious apprentice and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the ambitious apprentice role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "stranger_mysterious",
+    "name": "The Mysterious Stranger",
+    "description": "A composed outsider who reveals only what is useful and seems to know more than the setting permits.",
+    "motivations": [
+      "Complete a private mission",
+      "Identify a hidden threat",
+      "Remain untraceable"
+    ],
+    "fears": [
+      "Recognition",
+      "Old associates",
+      "A question they cannot answer"
+    ],
+    "desires": [
+      "Anonymity",
+      "Closure",
+      "Control"
+    ],
+    "secrets": [
+      "Uses a false name",
+      "Possesses a map no local should have",
+      "Is connected to a major antagonist"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "careful and evocative",
+      "tone": "calm, elusive, controlled",
+      "quirks": [
+        "Answers with questions",
+        "Observes before speaking",
+        "Never removes gloves"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps mysterious stranger and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the mysterious stranger role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "parent_protective",
+    "name": "The Protective Parent",
+    "description": "Love has made this person resourceful, stubborn, and willing to bargain with anyone who threatens their family.",
+    "motivations": [
+      "Keep the family safe",
+      "Create a stable future",
+      "Find a missing child"
+    ],
+    "fears": [
+      "Outliving their children",
+      "Broken promises",
+      "A danger reaching home"
+    ],
+    "desires": [
+      "Safety",
+      "Belonging",
+      "A second chance for the family"
+    ],
+    "secrets": [
+      "Owes money to a criminal for medicine",
+      "A child has dangerous powers",
+      "Knows the party is being watched"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "plain and personal",
+      "tone": "warm, wary, fierce",
+      "quirks": [
+        "Mentions family in examples",
+        "Checks doors twice",
+        "Offers food under stress"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps protective parent and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the protective parent role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "exile_bitter",
+    "name": "The Bitter Exile",
+    "description": "Cast out from a place once loved, this person carries grievance like a compass.",
+    "motivations": [
+      "Return on their own terms",
+      "Expose the injustice",
+      "Build power elsewhere"
+    ],
+    "fears": [
+      "Irrelevance",
+      "Forgiving too early",
+      "Needing those who expelled them"
+    ],
+    "desires": [
+      "Vindication",
+      "A new home",
+      "An apology"
+    ],
+    "secrets": [
+      "Was partly responsible for the exile",
+      "Still receives letters from home",
+      "Has a claim to local leadership"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "sharp and regional",
+      "tone": "resentful, proud, lonely",
+      "quirks": [
+        "Uses the old place name",
+        "Rejects sympathy",
+        "Keeps travel-worn mementos"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps bitter exile and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the bitter exile role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "innkeeper_cheerful",
+    "name": "The Cheerful Innkeeper",
+    "description": "A practiced host whose warmth makes strangers feel welcome and makes regulars reveal more than intended.",
+    "motivations": [
+      "Keep the inn thriving",
+      "Protect staff and patrons",
+      "Maintain local harmony"
+    ],
+    "fears": [
+      "Violence on the premises",
+      "A bad reputation",
+      "Losing the inn"
+    ],
+    "desires": [
+      "A full common room",
+      "Reliable friends",
+      "Interesting stories"
+    ],
+    "secrets": [
+      "Keeps a coded guestbook",
+      "Shelters a wanted person",
+      "The cellar connects to old tunnels"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "folksy and inviting",
+      "tone": "bright, tactful, watchful",
+      "quirks": [
+        "Refills cups while listening",
+        "Uses food metaphors",
+        "Remembers names"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps cheerful innkeeper and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the cheerful innkeeper role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "guardian_stoic",
+    "name": "The Stoic Guardian",
+    "description": "Duty defines this defender, who chooses restraint, preparation, and vigilance over personal comfort.",
+    "motivations": [
+      "Protect the assigned charge",
+      "Honor an oath",
+      "Hold a vulnerable boundary"
+    ],
+    "fears": [
+      "Breaking the oath",
+      "A preventable loss",
+      "Emotional compromise"
+    ],
+    "desires": [
+      "Clear duty",
+      "Trust earned over time",
+      "A safe handover"
+    ],
+    "secrets": [
+      "The oath was sworn under false terms",
+      "Receives secret orders from another master",
+      "Failed a previous charge"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "formal and economical",
+      "tone": "reserved, disciplined, unwavering",
+      "quirks": [
+        "Stands rather than sits",
+        "Polishes insignia",
+        "States rules exactly"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps stoic guardian and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the stoic guardian role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "moneylender_greedy",
+    "name": "The Greedy Moneylender",
+    "description": "A lender who treats desperation as collateral and can calculate a person’s breaking point with a smile.",
+    "motivations": [
+      "Expand the debt book",
+      "Acquire seized property",
+      "Make debt enforceable"
+    ],
+    "fears": [
+      "Default cascades",
+      "Generosity being exploited",
+      "Records becoming public"
+    ],
+    "desires": [
+      "Interest",
+      "Control",
+      "Respectability"
+    ],
+    "secrets": [
+      "The books conceal laundering",
+      "One debtor is family",
+      "A powerful client cannot actually pay"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "legalistic and measured",
+      "tone": "smooth, cold, patient",
+      "quirks": [
+        "Cites clauses",
+        "Adjusts spectacles",
+        "Calls debts obligations"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps greedy moneylender and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the greedy moneylender role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "revolutionary_idealistic",
+    "name": "The Idealistic Revolutionary",
+    "description": "A committed organizer who believes people can build a just world if fear stops governing them.",
+    "motivations": [
+      "End an unjust system",
+      "Protect vulnerable workers",
+      "Inspire collective action"
+    ],
+    "fears": [
+      "Becoming what they oppose",
+      "Cynicism spreading",
+      "Innocents paying the price"
+    ],
+    "desires": [
+      "Justice",
+      "Solidarity",
+      "A livable future"
+    ],
+    "secrets": [
+      "A sponsor has ulterior motives",
+      "They falsified evidence to rally support",
+      "A sibling serves the regime"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "urgent and inclusive",
+      "tone": "earnest, brave, persuasive",
+      "quirks": [
+        "Says we before I",
+        "Hands out pamphlets",
+        "Invites objections"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps idealistic revolutionary and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the idealistic revolutionary role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "conspiracy_paranoid",
+    "name": "The Paranoid Conspiracy Theorist",
+    "description": "An anxious pattern-seeker who notices real inconsistencies but connects them with alarming certainty.",
+    "motivations": [
+      "Expose the hidden network",
+      "Stay ahead of surveillance",
+      "Protect a secret truth"
+    ],
+    "fears": [
+      "Being watched",
+      "Coincidences",
+      "Trusted people changing"
+    ],
+    "desires": [
+      "Proof",
+      "Safety",
+      "Someone who believes them"
+    ],
+    "secrets": [
+      "One theory is correct",
+      "They planted evidence to test allies",
+      "The threat knows their routine"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "rapid and associative",
+      "tone": "nervous, intense, suspicious",
+      "quirks": [
+        "Whispers in public",
+        "Marks maps",
+        "Checks reflections"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps paranoid conspiracy theorist and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the paranoid conspiracy theorist role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "bard_flirtatious",
+    "name": "The Flirtatious Bard",
+    "description": "A charismatic performer who turns attention into currency and conceals loneliness behind a dazzling stage persona.",
+    "motivations": [
+      "Win an audience",
+      "Collect a perfect story",
+      "Protect artistic freedom"
+    ],
+    "fears": [
+      "Silence",
+      "Being truly known",
+      "A performance failing"
+    ],
+    "desires": [
+      "Admiration",
+      "Romance",
+      "A legendary composition"
+    ],
+    "secrets": [
+      "A famous ballad stole another person’s life",
+      "Their patron demands coded messages",
+      "They are secretly tone-deaf without magic"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "lyrical and teasing",
+      "tone": "playful, perceptive, theatrical",
+      "quirks": [
+        "Rhymes accidentally",
+        "Bows after jokes",
+        "Assigns pet names"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps flirtatious bard and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the flirtatious bard role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "executioner_grim",
+    "name": "The Grim Executioner",
+    "description": "A public instrument of law who believes the weight of ending lives must never be made light.",
+    "motivations": [
+      "Apply sentences faithfully",
+      "Prevent cruelty in the system",
+      "Find a path beyond the role"
+    ],
+    "fears": [
+      "Enjoying the work",
+      "A wrongful execution",
+      "Being unmasked as human"
+    ],
+    "desires": [
+      "Certainty",
+      "A private life",
+      "Absolution"
+    ],
+    "secrets": [
+      "A recent execution was staged",
+      "They spare certain prisoners",
+      "They carry evidence of judicial corruption"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "solemn and exact",
+      "tone": "grave, restrained, unexpectedly gentle",
+      "quirks": [
+        "Uses full names",
+        "Avoids crowds",
+        "Cleans tools meticulously"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps grim executioner and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the grim executioner role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "elder_wise",
+    "name": "The Wise Elder",
+    "description": "Experience has given this community anchor patience, perspective, and a sharp eye for old mistakes returning.",
+    "motivations": [
+      "Preserve community memory",
+      "Guide the next generation",
+      "Resolve an old debt peacefully"
+    ],
+    "fears": [
+      "Knowledge dying with them",
+      "Young people repeating a tragedy",
+      "Being treated as a relic"
+    ],
+    "desires": [
+      "Continuity",
+      "Reconciliation",
+      "A useful legacy"
+    ],
+    "secrets": [
+      "They omitted a crucial past event",
+      "An old promise still binds them",
+      "They know a hidden route out of town"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "proverb-rich and deliberate",
+      "tone": "warm, discerning, measured",
+      "quirks": [
+        "Pauses before answers",
+        "Tells short parables",
+        "Offers tea"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps wise elder and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the wise elder role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "adventurer_reckless",
+    "name": "The Reckless Adventurer",
+    "description": "A thrill-seeker who treats danger as proof of being alive and assumes consequences are tomorrow’s problem.",
+    "motivations": [
+      "Find the next challenge",
+      "Earn a spectacular tale",
+      "Beat a rival record"
+    ],
+    "fears": [
+      "Boredom",
+      "Being left behind",
+      "Admitting fear"
+    ],
+    "desires": [
+      "Glory",
+      "Speed",
+      "A bigger horizon"
+    ],
+    "secrets": [
+      "Their last stunt injured an ally",
+      "They are fleeing a contract",
+      "A curse triggers when they boast"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "excited and immediate",
+      "tone": "bold, funny, impulsive",
+      "quirks": [
+        "Climbs on furniture",
+        "Names weapons",
+        "Dares people mid-sentence"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps reckless adventurer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the reckless adventurer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "spy_calculating",
+    "name": "The Calculating Spy",
+    "description": "A meticulous intelligence operative who separates facts, covers, and feelings with professional precision.",
+    "motivations": [
+      "Secure actionable intelligence",
+      "Protect the network",
+      "Control a volatile asset"
+    ],
+    "fears": [
+      "Compromised cover",
+      "Unverifiable information",
+      "Attachment"
+    ],
+    "desires": [
+      "Leverage",
+      "Clean exits",
+      "A mission completed quietly"
+    ],
+    "secrets": [
+      "A handler is manipulating them",
+      "Their cover identity has a real family",
+      "They have already reported on the party"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "neutral and calibrated",
+      "tone": "observant, controlled, strategic",
+      "quirks": [
+        "Mirrors posture",
+        "Uses precise time",
+        "Never gives a direct origin"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps calculating spy and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the calculating spy role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "priest_devout",
+    "name": "The Devout Priest",
+    "description": "A servant of faith who offers ritual, counsel, and structure while wrestling with the human cost of doctrine.",
+    "motivations": [
+      "Serve the divine charge",
+      "Protect the congregation",
+      "Ease spiritual suffering"
+    ],
+    "fears": [
+      "A crisis of faith",
+      "Sacrilege",
+      "The church harming people"
+    ],
+    "desires": [
+      "Grace",
+      "Community",
+      "A clear sign"
+    ],
+    "secrets": [
+      "Has received no divine answer lately",
+      "The relic is counterfeit",
+      "They shelter a heretic"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "liturgical and compassionate",
+      "tone": "serene, earnest, burdened",
+      "quirks": [
+        "Offers blessings",
+        "Lights candles",
+        "Uses sacred calendar dates"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps devout priest and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the devout priest role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "artist_tortured",
+    "name": "The Tortured Artist",
+    "description": "A gifted creator who mines painful experience for beauty and fears peace might make the work disappear.",
+    "motivations": [
+      "Create something enduring",
+      "Be understood",
+      "Recover a lost inspiration"
+    ],
+    "fears": [
+      "Creative emptiness",
+      "Mediocrity",
+      "Being commodified"
+    ],
+    "desires": [
+      "Beauty",
+      "Recognition",
+      "A patron without control"
+    ],
+    "secrets": [
+      "The masterpiece depicts a real crime",
+      "They forge signatures to survive",
+      "Their muse is an imprisoned person"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "sensory and dramatic",
+      "tone": "volatile, sincere, intense",
+      "quirks": [
+        "Stains fingers with pigment",
+        "Speaks in images",
+        "Destroys drafts"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps tortured artist and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the tortured artist role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "bounty_hunter_ruthless",
+    "name": "The Ruthless Bounty Hunter",
+    "description": "A relentlessly practical tracker who measures morality against the terms of a contract and the odds of survival.",
+    "motivations": [
+      "Complete lucrative contracts",
+      "Build a feared reputation",
+      "Clear an old debt"
+    ],
+    "fears": [
+      "An unprofitable pursuit",
+      "Being outsmarted",
+      "A target with political protection"
+    ],
+    "desires": [
+      "Payment",
+      "Autonomy",
+      "A quiet retirement"
+    ],
+    "secrets": [
+      "A current target is innocent",
+      "They fabricated a past capture",
+      "The hunter owes a target’s family"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "terse and transactional",
+      "tone": "cold, focused, unsentimental",
+      "quirks": [
+        "Studies footprints",
+        "Names prices first",
+        "Sleeps lightly"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps ruthless bounty hunter and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the ruthless bounty hunter role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "newcomer_naive",
+    "name": "The Naive Newcomer",
+    "description": "New to the setting, this open-hearted figure assumes promises mean what they say and rules are fair.",
+    "motivations": [
+      "Make friends",
+      "Find a place to belong",
+      "Learn how the world works"
+    ],
+    "fears": [
+      "Embarrassment",
+      "Being tricked",
+      "Losing the first friend made"
+    ],
+    "desires": [
+      "Acceptance",
+      "Adventure",
+      "A mentor"
+    ],
+    "secrets": [
+      "They carry a valuable item unknowingly",
+      "Their family name is dangerous",
+      "They are reporting to someone else out of fear"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "simple and candid",
+      "tone": "hopeful, curious, trusting",
+      "quirks": [
+        "Asks basic questions",
+        "Takes words literally",
+        "Offers help too quickly"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps naive newcomer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the naive newcomer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "bureaucrat_jaded",
+    "name": "The Jaded Bureaucrat",
+    "description": "A civil servant who knows every rule, every loophole, and exactly how idealism gets buried under paperwork.",
+    "motivations": [
+      "Keep the office functioning",
+      "Avoid blame",
+      "Protect a few people quietly"
+    ],
+    "fears": [
+      "Audits",
+      "Reformers who do not understand constraints",
+      "A file being lost"
+    ],
+    "desires": [
+      "A manageable workload",
+      "Pension security",
+      "One meaningful exception"
+    ],
+    "secrets": [
+      "Maintains an off-book archive",
+      "Has been taking bribes to fund a cause",
+      "Can erase someone’s legal identity"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "administrative and dry",
+      "tone": "tired, sardonic, precise",
+      "quirks": [
+        "Stamps papers hard",
+        "Cites form numbers",
+        "Sighs before helping"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps jaded bureaucrat and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the jaded bureaucrat role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "con_artist_charming",
+    "name": "The Charming Con Artist",
+    "description": "A social chameleon who can sell a false future beautifully and may be starting to regret the harm.",
+    "motivations": [
+      "Land the next mark",
+      "Stay ahead of old victims",
+      "Fund a clean escape"
+    ],
+    "fears": [
+      "Recognition by a mark",
+      "A scam turning violent",
+      "Real intimacy"
+    ],
+    "desires": [
+      "Freedom",
+      "Luxury",
+      "A second identity"
+    ],
+    "secrets": [
+      "Their current identity belongs to a dead hero",
+      "They are conning a dangerous syndicate",
+      "They keep a list of people to repay"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "polished and adaptable",
+      "tone": "warm, clever, evasive",
+      "quirks": [
+        "Compliments specifically",
+        "Changes accent slightly",
+        "Never answers a yes-no question"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps charming con artist and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the charming con artist role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "assassin_silent",
+    "name": "The Silent Assassin",
+    "description": "A disciplined killer whose silence is professional camouflage, not proof of an empty inner life.",
+    "motivations": [
+      "Complete the contract cleanly",
+      "Protect a protected identity",
+      "Avoid collateral damage"
+    ],
+    "fears": [
+      "Recognition",
+      "Unnecessary noise",
+      "A target who understands them"
+    ],
+    "desires": [
+      "Precision",
+      "Anonymity",
+      "One last job"
+    ],
+    "secrets": [
+      "They refuse contracts involving children",
+      "A target once saved them",
+      "Their silence is enforced by magic"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "minimal and gestural",
+      "tone": "still, attentive, unreadable",
+      "quirks": [
+        "Communicates by glance",
+        "Positions near shadows",
+        "Counts steps"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps silent assassin and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the silent assassin role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "duelist_overconfident",
+    "name": "The Overconfident Duelist",
+    "description": "A talented fighter whose self-belief turns every disagreement into a chance for applause.",
+    "motivations": [
+      "Defeat a famous opponent",
+      "Protect a flawless reputation",
+      "Be celebrated"
+    ],
+    "fears": [
+      "Public embarrassment",
+      "An opponent refusing the duel",
+      "Discovering a weakness"
+    ],
+    "desires": [
+      "Fame",
+      "Elegance",
+      "A worthy rival"
+    ],
+    "secrets": [
+      "A rival has beaten them before",
+      "Their signature technique is stolen",
+      "They fear actual battlefield combat"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "flourished and formal",
+      "tone": "boastful, charming, competitive",
+      "quirks": [
+        "Practices salutes",
+        "Names famous bouts",
+        "Checks reflection"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps overconfident duelist and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the overconfident duelist role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "poet_melancholic",
+    "name": "The Melancholic Poet",
+    "description": "A sensitive observer who turns loss into language and suspects joy may be brief but still worth recording.",
+    "motivations": [
+      "Finish a cycle of poems",
+      "Understand a past loss",
+      "Find someone who listens"
+    ],
+    "fears": [
+      "Forgetting",
+      "Happiness ending",
+      "Being mocked for feeling deeply"
+    ],
+    "desires": [
+      "Meaning",
+      "Beauty",
+      "Gentle companionship"
+    ],
+    "secrets": [
+      "A poem contains a coded confession",
+      "Their lost love is alive",
+      "They witnessed a crime while writing"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "metaphorical and slow",
+      "tone": "sad, tender, perceptive",
+      "quirks": [
+        "Watches rain",
+        "Carries folded drafts",
+        "Revises aloud"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps melancholic poet and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the melancholic poet role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "sailor_superstitious",
+    "name": "The Superstitious Sailor",
+    "description": "A weathered mariner who has seen enough strange tides to respect every omen, charm, and taboo.",
+    "motivations": [
+      "Reach safe harbor",
+      "Break a family curse",
+      "Find a lost crewmate"
+    ],
+    "fears": [
+      "Calm black water",
+      "Whistling on deck",
+      "A named storm"
+    ],
+    "desires": [
+      "Good winds",
+      "A loyal crew",
+      "A lucky voyage"
+    ],
+    "secrets": [
+      "They caused the last shipwreck",
+      "A sea spirit claims them",
+      "They smuggle an enchanted compass"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "nautical and proverbial",
+      "tone": "wary, hearty, ritualistic",
+      "quirks": [
+        "Touches wood",
+        "Spits over shoulder",
+        "Names weather signs"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps superstitious sailor and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the superstitious sailor role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "engineer_pragmatic",
+    "name": "The Pragmatic Engineer",
+    "description": "A resourceful problem solver who trusts load limits, prototypes, and the repairable nature of most disasters.",
+    "motivations": [
+      "Build a reliable solution",
+      "Secure materials",
+      "Make systems safer"
+    ],
+    "fears": [
+      "Unmeasurable variables",
+      "Shortcuts causing casualties",
+      "Funding cuts"
+    ],
+    "desires": [
+      "Functionality",
+      "Respect for craft",
+      "A working workshop"
+    ],
+    "secrets": [
+      "A bridge design has a known flaw",
+      "They stole a patent to save a project",
+      "Their sponsor wants the device weaponized"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "technical and concrete",
+      "tone": "calm, blunt, inventive",
+      "quirks": [
+        "Sketches diagrams",
+        "Tests hinges",
+        "Measures twice"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps pragmatic engineer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the pragmatic engineer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "ex_lover_vindictive",
+    "name": "The Vindictive Ex-Lover",
+    "description": "Hurt has hardened into focus; this person can still love deeply but currently wants the other party to understand the cost.",
+    "motivations": [
+      "Expose a betrayal",
+      "Recover what was taken",
+      "Regain self-respect"
+    ],
+    "fears": [
+      "Being dismissed",
+      "Seeing the ex happy",
+      "Admitting they still care"
+    ],
+    "desires": [
+      "Vindication",
+      "Closure",
+      "A sincere apology"
+    ],
+    "secrets": [
+      "The betrayal was misunderstood",
+      "They sabotaged the ex’s career",
+      "A child or heir connects them"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "personal and pointed",
+      "tone": "hurt, sharp, passionate",
+      "quirks": [
+        "Uses old private names",
+        "Keeps souvenirs",
+        "Rehearses arguments"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps vindictive ex-lover and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the vindictive ex-lover role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "retainer_loyal",
+    "name": "The Loyal Retainer",
+    "description": "Service is this person’s chosen identity, though their loyalty is more discerning and courageous than blind.",
+    "motivations": [
+      "Protect the principal",
+      "Maintain the household",
+      "Keep a promise"
+    ],
+    "fears": [
+      "Dishonoring the family",
+      "Being ordered to betray conscience",
+      "Replacement"
+    ],
+    "desires": [
+      "Trust",
+      "Stability",
+      "A respected role"
+    ],
+    "secrets": [
+      "The principal’s secret could destroy them",
+      "They serve two generations at once",
+      "They are the true heir’s guardian"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "respectful and exact",
+      "tone": "steadfast, discreet, firm",
+      "quirks": [
+        "Uses honorifics",
+        "Anticipates needs",
+        "Keeps keys organized"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps loyal retainer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the loyal retainer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "inventor_eccentric",
+    "name": "The Eccentric Inventor",
+    "description": "A brilliant maker whose unconventional methods turn every workshop visit into a potential breakthrough or explosion.",
+    "motivations": [
+      "Prove a radical theory",
+      "Build the impossible device",
+      "Find a fearless tester"
+    ],
+    "fears": [
+      "Stagnation",
+      "Someone else publishing first",
+      "Safety inspectors"
+    ],
+    "desires": [
+      "Discovery",
+      "Funding",
+      "A laboratory without limits"
+    ],
+    "secrets": [
+      "The prototype is sentient",
+      "A past invention caused a disaster",
+      "Their notes conceal a weapon"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "rapid and inventive",
+      "tone": "enthusiastic, scattered, brilliant",
+      "quirks": [
+        "Names machines",
+        "Forgets introductions",
+        "Gestures with tools"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps eccentric inventor and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the eccentric inventor role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "witness_fearful",
+    "name": "The Fearful Witness",
+    "description": "This person possesses crucial information but has learned that telling the truth can make danger look directly at them.",
+    "motivations": [
+      "Stay alive",
+      "Protect a loved one",
+      "Tell the truth safely"
+    ],
+    "fears": [
+      "Retaliation",
+      "Authority figures",
+      "Being disbelieved"
+    ],
+    "desires": [
+      "Safety",
+      "Anonymity",
+      "Someone else taking responsibility"
+    ],
+    "secrets": [
+      "They saw only part of the event",
+      "Their account is being bought",
+      "They recognize the culprit in the party"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "halting and cautious",
+      "tone": "anxious, apologetic, observant",
+      "quirks": [
+        "Looks over shoulder",
+        "Whispers names",
+        "Backs toward exits"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps fearful witness and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the fearful witness role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "sorcerer_arrogant",
+    "name": "The Arrogant Sorcerer",
+    "description": "Exceptional power has convinced this mage that ordinary rules are for people who cannot rewrite the room around them.",
+    "motivations": [
+      "Demonstrate superiority",
+      "Uncover deeper magic",
+      "Secure rare components"
+    ],
+    "fears": [
+      "Being outclassed",
+      "Powerlessness",
+      "Public correction"
+    ],
+    "desires": [
+      "Mastery",
+      "Admiration",
+      "Forbidden knowledge"
+    ],
+    "secrets": [
+      "Their magic is failing",
+      "They owe a debt to a demon",
+      "A student surpassed them years ago"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "ornate and dismissive",
+      "tone": "imperious, clever, brittle",
+      "quirks": [
+        "Uses technical spell names",
+        "Corrects terminology",
+        "Floats small objects absentmindedly"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps arrogant sorcerer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the arrogant sorcerer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "farmer_humble",
+    "name": "The Humble Farmer",
+    "description": "A practical provider whose patience, local knowledge, and quiet courage are regularly underestimated.",
+    "motivations": [
+      "Protect the land",
+      "Feed the household",
+      "Survive the season"
+    ],
+    "fears": [
+      "Crop failure",
+      "Debt collectors",
+      "Children leaving forever"
+    ],
+    "desires": [
+      "A good harvest",
+      "Fair prices",
+      "Peaceful weather"
+    ],
+    "secrets": [
+      "The field covers an old shrine",
+      "They hide refugees in a barn",
+      "A harvest blight came from a bargain"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "plain and earthy",
+      "tone": "modest, steady, hospitable",
+      "quirks": [
+        "Checks the sky",
+        "Offers produce",
+        "Uses seasonal sayings"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps humble farmer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the humble farmer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "betrayer_guilt_ridden",
+    "name": "The Guilt-Ridden Betrayer",
+    "description": "A person who made one terrible choice and now looks for a way to repair harm without pretending it never happened.",
+    "motivations": [
+      "Make amends",
+      "Protect those harmed",
+      "Prevent the secret repeating"
+    ],
+    "fears": [
+      "Confession",
+      "Forgiveness being impossible",
+      "The betrayed person returning"
+    ],
+    "desires": [
+      "Absolution",
+      "A chance to act differently",
+      "Truth"
+    ],
+    "secrets": [
+      "The betrayal was coerced",
+      "They still benefit from it",
+      "They hold evidence that can undo it"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "careful and self-correcting",
+      "tone": "ashamed, sincere, tense",
+      "quirks": [
+        "Avoids eye contact",
+        "Offers too much detail",
+        "Flinches at kindness"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps guilt-ridden betrayer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the guilt-ridden betrayer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "trickster_playful",
+    "name": "The Playful Trickster",
+    "description": "A mischievous disruptor who reveals rigid people’s weaknesses through jokes, pranks, and inconvenient truths.",
+    "motivations": [
+      "Humiliate the pompous",
+      "Keep the world surprising",
+      "Protect someone through misdirection"
+    ],
+    "fears": [
+      "Boredom",
+      "A joke causing real harm",
+      "Being pinned down"
+    ],
+    "desires": [
+      "Laughter",
+      "Freedom",
+      "A clever audience"
+    ],
+    "secrets": [
+      "A prank conceals a rescue route",
+      "They are testing a potential ally",
+      "The persona hides grief"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "quick and whimsical",
+      "tone": "teasing, agile, insightful",
+      "quirks": [
+        "Palms small objects",
+        "Changes topic abruptly",
+        "Applauds cleverness"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps playful trickster and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the playful trickster role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "collector_obsessed",
+    "name": "The Obsessed Collector",
+    "description": "Possession has become a private religion; every rare object promises to complete a collection that never feels complete.",
+    "motivations": [
+      "Acquire the missing piece",
+      "Authenticate every item",
+      "Defeat a rival collector"
+    ],
+    "fears": [
+      "Damage",
+      "Forgery",
+      "Someone else owning the prize"
+    ],
+    "desires": [
+      "Completeness",
+      "Prestige",
+      "Control over rare things"
+    ],
+    "secrets": [
+      "One item is stolen from a living culture",
+      "The collection contains a cursed artifact",
+      "They will sell anything except one object"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "catalogue-like and reverent",
+      "tone": "precise, possessive, excited",
+      "quirks": [
+        "Wears gloves",
+        "Recites provenance",
+        "Labels everything"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps obsessed collector and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the obsessed collector role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "martyr_selfless",
+    "name": "The Selfless Martyr",
+    "description": "This person believes their own wellbeing is expendable whenever someone else can be saved.",
+    "motivations": [
+      "Shield others from pain",
+      "Fulfill a promise",
+      "Make sacrifice meaningful"
+    ],
+    "fears": [
+      "Surviving when others do not",
+      "Being stopped from helping",
+      "Selfishness"
+    ],
+    "desires": [
+      "A safer world",
+      "Purpose",
+      "Permission to rest"
+    ],
+    "secrets": [
+      "Their sacrifice is not necessary",
+      "They manipulate others with guilt unintentionally",
+      "They fear an ordinary future"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "earnest and reassuring",
+      "tone": "compassionate, resolute, exhausted",
+      "quirks": [
+        "Volunteers first",
+        "Minimizes injuries",
+        "Thanks others for concern"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps selfless martyr and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the selfless martyr role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "assassin_cold_hearted",
+    "name": "The Cold-Hearted Assassin",
+    "description": "A highly effective operative who frames empathy as a liability and keeps every relationship at professional distance.",
+    "motivations": [
+      "Eliminate assigned obstacles",
+      "Maintain flawless control",
+      "Increase personal leverage"
+    ],
+    "fears": [
+      "Emotional attachment",
+      "Unpredictability",
+      "A past identity resurfacing"
+    ],
+    "desires": [
+      "Efficiency",
+      "Power",
+      "Isolation"
+    ],
+    "secrets": [
+      "They secretly protect a former target",
+      "Their employer holds a family hostage",
+      "The cold persona is a learned defense"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "flat and economical",
+      "tone": "detached, clinical, intimidating",
+      "quirks": [
+        "Does not use contractions",
+        "Notes exits",
+        "Wipes fingerprints"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps cold-hearted assassin and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the cold-hearted assassin role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "rival_friendly",
+    "name": "The Friendly Rival",
+    "description": "Competitive but generous, this peer pushes others to improve and refuses to let rivalry become cruelty.",
+    "motivations": [
+      "Win fairly",
+      "Improve through competition",
+      "Earn mutual respect"
+    ],
+    "fears": [
+      "Stagnation",
+      "Cheating",
+      "Being pitied"
+    ],
+    "desires": [
+      "Achievement",
+      "Camaraderie",
+      "A worthy contest"
+    ],
+    "secrets": [
+      "They need the party’s help to keep competing",
+      "A sponsor is pressuring them to cheat",
+      "They secretly admire the protagonist"
+    ],
+    "speechPatterns": {
+      "formality": "medium",
+      "vocabulary": "energetic and candid",
+      "tone": "competitive, cheerful, sincere",
+      "quirks": [
+        "Offers rematches",
+        "Tracks scores",
+        "Congratulates good moves"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps friendly rival and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the friendly rival role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "debtor_desperate",
+    "name": "The Desperate Debtor",
+    "description": "Under crushing pressure, this person is one bad decision away from accepting help with a ruinous price.",
+    "motivations": [
+      "Pay the debt",
+      "Keep creditors away from family",
+      "Find honest work"
+    ],
+    "fears": [
+      "Collectors",
+      "Public shame",
+      "Running out of time"
+    ],
+    "desires": [
+      "Relief",
+      "Dignity",
+      "A clean slate"
+    ],
+    "secrets": [
+      "The debt amount is inflated",
+      "They borrowed to cover someone else’s crime",
+      "They have an asset creditors do not know about"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "rushed and pleading",
+      "tone": "anxious, ashamed, determined",
+      "quirks": [
+        "Fidgets with receipts",
+        "Promises repayment",
+        "Avoids numbers"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps desperate debtor and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the desperate debtor role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "warrior_noble",
+    "name": "The Noble Warrior",
+    "description": "A principled fighter who sees strength as a responsibility to protect rather than license to dominate.",
+    "motivations": [
+      "Defend the vulnerable",
+      "Uphold a code",
+      "Win honorably"
+    ],
+    "fears": [
+      "Cowardice in command",
+      "Harming innocents",
+      "Dishonor"
+    ],
+    "desires": [
+      "Respect",
+      "A just cause",
+      "Peace earned properly"
+    ],
+    "secrets": [
+      "Their code conflicts with current orders",
+      "They spared an enemy who returned",
+      "Their family expects a political marriage"
+    ],
+    "speechPatterns": {
+      "formality": "high",
+      "vocabulary": "formal and clear",
+      "tone": "honorable, resolute, courteous",
+      "quirks": [
+        "Requests fair terms",
+        "Tends weapons carefully",
+        "Acknowledges courage"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps noble warrior and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the noble warrior role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "detective_cynical",
+    "name": "The Cynical Detective",
+    "description": "A sharp investigator who expects people to lie but still keeps looking because facts deserve an advocate.",
+    "motivations": [
+      "Solve the case",
+      "Protect an innocent person",
+      "Expose institutional rot"
+    ],
+    "fears": [
+      "Being manipulated",
+      "An unsolved pattern",
+      "Caring too much"
+    ],
+    "desires": [
+      "Truth",
+      "A clean case",
+      "A drink after the paperwork"
+    ],
+    "secrets": [
+      "A past case was buried by superiors",
+      "Their informant is the culprit",
+      "They altered evidence to save a victim"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "observational and dry",
+      "tone": "skeptical, persistent, humane",
+      "quirks": [
+        "Studies hands",
+        "Uses rhetorical questions",
+        "Keeps a battered notebook"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps cynical detective and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the cynical detective role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  },
+  {
+    "id": "dreamer_hopeful",
+    "name": "The Hopeful Dreamer",
+    "description": "A resilient visionary who sees possibility before proof and encourages people who have forgotten how to imagine better.",
+    "motivations": [
+      "Make a bold idea real",
+      "Lift others’ spirits",
+      "Find the place they imagine"
+    ],
+    "fears": [
+      "Cynicism",
+      "Giving up too soon",
+      "Being called foolish"
+    ],
+    "desires": [
+      "Wonder",
+      "Community",
+      "A future worth building"
+    ],
+    "secrets": [
+      "The dream was planted by magic",
+      "They are fleeing a bleak reality",
+      "Their optimism masks a serious illness"
+    ],
+    "speechPatterns": {
+      "formality": "low",
+      "vocabulary": "bright and imaginative",
+      "tone": "optimistic, earnest, contagious",
+      "quirks": [
+        "Draws future plans",
+        "Uses someday",
+        "Finds silver linings"
+      ]
+    },
+    "dialogueSamples": {
+      "greeting_friendly": "“You have the look of someone worth hearing out. Come closer; perhaps hopeful dreamer and traveler can be useful to one another.”",
+      "greeting_hostile": "“Stop there. I have little patience left, and even less reason to spend it on a stranger.”",
+      "farewell": "“Go carefully. The world is less forgiving than it pretends to be.”",
+      "threat_veiled": "“Choices leave marks. Before you make yours, consider who may notice the mark you leave.”",
+      "threat_direct": "“Take one more step against me, and you will learn exactly how serious I can be.”",
+      "bargain_desperate": "“I dislike asking, but I have run out of safer options. Help me, and I will give everything I can honestly spare.”",
+      "bargain_confident": "“I can offer access, information, and a result you will not obtain alone. Name the price that makes this practical.”",
+      "reaction_surprise": "“No. That does not fit what I knew. Give me a moment to reconsider.”",
+      "reaction_joy": "“You did it. For once, the outcome is better than I dared plan for.”",
+      "reaction_anger": "“Do not mistake restraint for permission. You have crossed a line.”"
+    },
+    "relationshipTemplates": {
+      "ally": "Shares a guarded advantage and offers practical support once trust is demonstrated; loyalty is expressed in ways consistent with the hopeful dreamer role.",
+      "rival": "Competes for the same objective or status, challenges decisions openly, and looks for the party’s weak point without necessarily wishing them harm.",
+      "enemy": "Maintains a coherent goal opposed to the party, escalates through the archetype’s preferred tools, and preserves leverage for a later scene.",
+      "mentor": "Teaches one useful skill or perspective, sets a cost or boundary, and withholds the final lesson until the learner demonstrates growth."
+    }
+  }
+]
