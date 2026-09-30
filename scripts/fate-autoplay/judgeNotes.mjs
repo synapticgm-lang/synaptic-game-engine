@@ -2,6 +2,7 @@
  * 29z4 — the judge pass of autoThumbs --notes: key lookup, reply parsing and applying verdicts.
  * Kept apart from autoThumbs.mjs (which runs on import) so it can be tested with no API call.
  * 29z5 — the prose-thumb rubric and the whole notes prompt live here, so the model can change and the standard cannot.
+ * 29z6 — the rubric also asks "is this turn good to play?" (five more downs, fair-fail exception restated).
  */
 import fs from 'node:fs';
 
@@ -45,6 +46,13 @@ export const PROSE_THUMB_RUBRIC = [
   'Up: no prose crime, plus one thing worth copying (a sharp physical detail, a real cost, an NPC with a spine, or a short honest empty). Pretty-and-empty is not an up.',
   'Down: one prose crime is enough. Crimes: welcome or destiny or "here is the narrative"; an invented name, "someone here", or leftover smash; the same smell or light essay as last turn; a look/speak/move checklist; raw markup or an instruction leak; the wrong mode voice; talking as a slot label or a dead last kill.',
   'Do not down a fair fail, a short honest empty, or a dice result you dislike. Code owns those.',
+  'The vote is also "is this turn good to play?", not only "did the turn break?". These are downs too:',
+  '- The prose plays the player: it writes their dialogue, feelings, or next decision instead of stopping after the world\'s reaction.',
+  '- The same habit, smell, light, or sentence shape comes back in new words.',
+  '- A fact appears that the scene and the info sheet never established (an invented person, place, or past event).',
+  '- The voice is wrong for the mode: a system ledger in tabletop or story RPG, or novel interiority where the mode wants a shared table.',
+  '- The turn ends by lecturing, listing options, or asking "what do you do?"',
+  'Still do not down a fair dice fail, a short honest empty, or a rules result. A failed roll is not bad writing.',
   'Not every check applies every turn. A physical first line matters on openings and scene changes; a reply can start with speech. One new concrete thing applies every turn, and "searched and found nothing" counts when it is short and honest. Only-named-people matters only when someone is in the scene. Mode voice is easiest on a hit, a refusal, or a locked door; a plain walk can be unmarked. Ending pressure matters when the player needs a next move; a combat result or a short honest empty can just stop.',
   'Unmarked: fine but not a teacher. Most turns should be unmarked. Do not force a thumb.',
   'A comment names one concrete thing: the crime, or the thing worth copying.',

@@ -35,6 +35,19 @@ describe('29z5 — prose-thumb rubric is the notes contract', () => {
     expect(prompt).toMatch(/"verdict":"up"\|"down"\|"unmarked"/);
   });
 
+  it('29z6 — the standard asks "good to play?" with five more downs and the fair-fail exception', () => {
+    const prompt = buildJudgePrompt([row(1)]);
+    expect(prompt).toContain('is this turn good to play?');
+    expect(prompt).toContain('The prose plays the player: it writes their dialogue, feelings, or next decision');
+    expect(prompt).toContain('The same habit, smell, light, or sentence shape comes back in new words.');
+    expect(prompt).toContain('A fact appears that the scene and the info sheet never established');
+    expect(prompt).toContain('a system ledger in tabletop or story RPG, or novel interiority where the mode wants a shared table');
+    expect(prompt).toContain('The turn ends by lecturing, listing options, or asking "what do you do?"');
+    expect(prompt).toContain('Still do not down a fair dice fail, a short honest empty, or a rules result. A failed roll is not bad writing.');
+    expect(prompt).toContain('one prose crime is enough');
+    expect(prompt).toContain('Never thumb a turn up for progress.');
+  });
+
   it('a reply that marks one turn of three is not ok and leaves the rest unmarked', () => {
     const rows = [row(1), row(2), row(3)];
     const n = applyVerdicts(rows, parseJudge('[{"turn":"T2","verdict":"up","followed":true,"why":"cracked bench"}]'), []);
