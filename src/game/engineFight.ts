@@ -10,7 +10,7 @@ import { simulateCombat, type EnemyStats } from './combat';
 import { commitAutoFightLedger } from './combatAuthority';
 import { initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
 import { profileForEncounter } from './lootTableRegistry';
-import { milestoneXp, type MilestoneKind } from './xpRules';
+import { milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare, type MilestoneKind } from './xpRules';
 import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
@@ -44,8 +44,11 @@ function encounterKind(enc: ActiveEncounter): MilestoneKind {
   return 'encounter';
 }
 
-/** Pay the encounter milestone once; mark the same keys sandboxXp uses so it never pays twice. */
-function payEncounterXp(
+/**
+ * Pay the encounter milestone once; mark the same keys sandboxXp uses so it never pays twice.
+ * D&D: each party member gets the same share as the player (and pets/summons their own total), hidden.
+ */
+export function payEncounterXp(
   state: GameState,
   raw: ActiveEncounter,
   label: string
@@ -55,7 +58,7 @@ function payEncounterXp(
     `encounter:${nameKey(raw.name)}:${state.turn}`,
   ];
   const awardKeys = [...(state.sandboxAwardKeys ?? []), ...keys];
-  const partySize = 1 + (state.companions ?? []).filter((c) => c.type === 'party').length;
+  const partySize = 1 + (state.companions ?? []).filter(takesPartyShare).length;
   const r = milestoneXp(state.engineMode, encounterKind(raw), {
     level: state.character.level,
     partySize,
@@ -65,8 +68,11 @@ function payEncounterXp(
   });
   if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode);
+  const dnd = state.engineMode === 'dnd';
+  const companions = dnd ? payCompanionsFightXp(state.companions, r.amount) : state.companions;
+  const character = dnd ? { ...leveled.character, summons: paySummonsFightXp(leveled.character.summons, r.amount) } : leveled.character;
   return {
-    state: { ...state, character: leveled.character, sandboxAwardKeys: awardKeys },
+    state: { ...state, character, companions, sandboxAwardKeys: awardKeys },
     receipts: [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`, ...leveled.notes],
   };
 }

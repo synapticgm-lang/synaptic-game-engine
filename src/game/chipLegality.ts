@@ -19,6 +19,7 @@ import { playerCommittedTravel } from './travelAuthority';
 import { commitTravel, isJourneyPad, isJourneyUnderway } from './travelJourney';
 import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
+import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -75,6 +76,12 @@ export function peopleHere(state: GameState): string[] {
   (state.sceneFacts?.anonymousRoles ?? []).forEach(add);
   add(roadMeetingPeople(state));
   return [...out.values()];
+}
+
+/** Who can hear a talk chip when the place text says the room is empty: never the opening card's cast. */
+export function listenersOnEmptyText(state: GameState): string[] {
+  const cast = openingCastNames(state);
+  return peopleHere(state).filter((n) => !cast.some((c) => mentionsName(n, c) || mentionsName(c, n)));
 }
 
 /** The opening card's cast stays while the player is still in the card's place and has not travelled. */
@@ -180,8 +187,12 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   if (isLastKillTalkPad(label, lastKill)) {
     return { kind: 'impossible-chip', detail: `"${label}" talks to ${lastKill?.name}, who is dead` };
   }
-  const here = peopleHere(state);
+  const here = placeSaysEmpty(state, storyProse) ? listenersOnEmptyText(state) : peopleHere(state);
   const nobody = !here.length && !crowdHere(state);
+
+  if (chipHandlesSystemWindow(state, label)) {
+    return { kind: 'impossible-chip', detail: `"${label}" handles the System window, which only the player sees and nobody can touch` };
+  }
 
   if (isJourneyPad(label)) {
     return isJourneyUnderway(state) ? null : { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
@@ -244,4 +255,17 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
 export function legalChips(state: GameState, chips: string[], storyProse?: string): string[] {
   const prose = storyProse ?? lastStory(state);
   return chips.filter((c) => !chipProblem(state, c, prose));
+}
+
+function lastPlayerLine(state: GameState): string {
+  return [...(state.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content))?.content ?? '';
+}
+
+/**
+ * The live chip list after a beat: legal here and not the action the player just took
+ * (typed or tapped — an inspect chip after a typed investigate of the same thing is the same move).
+ */
+export function liveChips(state: GameState, chips: string[], storyProse?: string): string[] {
+  const action = lastPlayerLine(state);
+  return legalChips(state, chips, storyProse).filter((c) => !chipRepeatsAction(c, action));
 }

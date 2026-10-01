@@ -12,7 +12,7 @@
  * The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at
  * https://creativecommons.org/licenses/by/4.0/legalcode.
  */
-import type { EngineMode, GmStrictness } from './types';
+import type { Companion, EngineMode, GmStrictness, SummonEntity } from './types';
 import { difficultyRow } from './difficultyRules';
 
 export type MilestoneKind =
@@ -106,6 +106,68 @@ export function dndXpToNext(level: number): number {
   const lvl = Math.max(1, Math.min(20, Math.floor(level || 1)));
   if (lvl >= 20) return 1_000_000;
   return DND_LEVEL_THRESHOLDS[lvl]! - DND_LEVEL_THRESHOLDS[lvl - 1]!;
+}
+
+/** Level on the 5e thresholds for a total XP. */
+export function dndLevelForXp(xp: number): number {
+  let lvl = 1;
+  while (lvl < 20 && (xp ?? 0) >= DND_LEVEL_THRESHOLDS[lvl]!) lvl++;
+  return lvl;
+}
+
+/** A party member splits fight XP with the player. Pets, mounts and summons do not. */
+export function takesPartyShare(c: Companion): boolean {
+  return c.type === 'party' && !c.summon;
+}
+
+/** Pets, mounts and summons: a separate XP total and level, outside the party split. */
+export function keepsOwnXp(c: Companion): boolean {
+  return c.summon === true || c.type === 'beast' || c.type === 'mount';
+}
+
+/** Max HP gained per level from the hidden total. */
+const COMPANION_HP_PER_LEVEL = { party: 5, pet: 3 } as const;
+
+/**
+ * D&D fight XP for everyone who fought beside the player: each party member gets the same per-member
+ * share the player got; pets and summons add the same amount to their own total without counting in
+ * the split. A companion with no level starts at level 1. A level-up raises max HP (their powers
+ * advance from the hidden total). Caretakers take nothing. The writer never sees these numbers.
+ */
+export function payCompanionsFightXp(companions: Companion[] | undefined, share: number): Companion[] {
+  const list = companions ?? [];
+  if (share <= 0) return list;
+  return list.map((c) => {
+    const party = takesPartyShare(c);
+    if (!party && !keepsOwnXp(c)) return c;
+    const xp = (c.xp ?? 0) + share;
+    const was = c.level ?? 1;
+    const level = Math.max(was, dndLevelForXp(xp));
+    const gain = (level - was) * (party ? COMPANION_HP_PER_LEVEL.party : COMPANION_HP_PER_LEVEL.pet);
+    return { ...c, xp, level, maxHp: c.maxHp + gain, hp: Math.min(c.maxHp + gain, c.hp + gain) };
+  });
+}
+
+/** Active summons on the sheet: their own hidden total; a level-up raises max HP, attack and defense. */
+export function paySummonsFightXp(summons: SummonEntity[] | undefined, share: number): SummonEntity[] | undefined {
+  if (!summons?.length || share <= 0) return summons;
+  return summons.map((s) => {
+    if (!s.active) return s;
+    const xp = (s.xp ?? 0) + share;
+    const was = s.level ?? 1;
+    const level = Math.max(was, dndLevelForXp(xp));
+    const up = level - was;
+    const hpGain = up * COMPANION_HP_PER_LEVEL.pet;
+    return {
+      ...s,
+      xp,
+      level,
+      maxHp: s.maxHp + hpGain,
+      hp: Math.min(s.maxHp + hpGain, s.hp + hpGain),
+      attack: s.attack + up,
+      defense: s.defense + up,
+    };
+  });
 }
 
 export interface MilestoneXpResult {

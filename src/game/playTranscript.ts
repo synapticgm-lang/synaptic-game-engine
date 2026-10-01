@@ -23,7 +23,7 @@ import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
-import { chipProblem, legalChips } from './chipLegality';
+import { liveChips } from './chipLegality';
 import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
@@ -84,10 +84,9 @@ export function resolveOfferedChoices(state: GameState): string[] {
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
     if (skipCoverChips) return [];
     const coverProse = lastGmStoryProse(state);
-    return coverContinuePads(state)
-      .filter((c) => !isCombatFamilyPad(c))
-      .filter((c) => isNameCoverChip(c) || !chipProblem(state, c, coverProse))
-      .slice(0, 3);
+    const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
+    const live = new Set(liveChips(state, pads, coverProse));
+    return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 3);
   }
   const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);
@@ -108,15 +107,15 @@ export function resolveOfferedChoices(state: GameState): string[] {
   );
   const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
-  const legal = legalChips(state, deduped, storyProse);
+  const legal = liveChips(state, deduped, storyProse);
   if (legal.length >= 3) return legal.slice(0, 4);
-  const padded = legalChips(
+  const padded = liveChips(
     state,
     padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c)),
     storyProse
   );
   if (padded.length) return padded;
-  return legalChips(state, ['Look around', 'Wait and listen'], storyProse);
+  return liveChips(state, ['Look around', 'Wait and listen'], storyProse);
 }
 
 /** Attach post-pipeline labels the player will see after this GM beat. */

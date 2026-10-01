@@ -65,6 +65,9 @@ export interface SummonEntity {
   duration?: string;
   status?: string;
   active: boolean;
+  /** Hidden XP total and level (engine-only; never shown to the writer or in STATUS). */
+  xp?: number;
+  level?: number;
 }
 
 export type RelationshipStatus = 'Friendly' | 'Hostile' | 'Neutral' | 'Rival' | 'Loyal';
@@ -128,6 +131,11 @@ export interface Companion {
   maintenanceCost: string;
   assignment: string;
   notes: string;
+  /** A summoned creature: like a pet, it takes no party share and keeps its own XP total. */
+  summon?: boolean;
+  /** Hidden XP total and level (engine-only; never shown to the writer or in STATUS). */
+  xp?: number;
+  level?: number;
 }
 
 export interface Container {

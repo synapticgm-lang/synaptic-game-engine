@@ -1,4 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  fitViewport,
+  MAP_SYMBOL_GLYPH,
+  MAP_SYMBOL_LABEL,
+  panViewport,
+  roomSymbols,
+  zoomViewportAt,
+  type MapSymbol,
+  type MapSymbolContext,
+  type MapViewport,
+} from '../game/mapView';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
 import {
   interiorDoorAnchor,
@@ -28,6 +39,8 @@ interface DungeonMapModalProps {
   combatLocked?: boolean;
   /** Empty ruin / Summoned Pact alone arrival — pending copy must not invent crowds. */
   aloneArrival?: boolean;
+  /** People the ledger places with the player right now (person symbol on your room). */
+  peopleHereCount?: number;
   onMoveNode: (nodeId: string) => void;
   onExitDungeon: () => void;
   onEnsureLocalMap?: () => void;
@@ -56,6 +69,43 @@ function YouAreHereMarker({ size = 18 }: { size?: number }) {
   );
 }
 
+const SYMBOL_COLOR: Record<MapSymbol | 'door', string> = {
+  here: 'text-amber-300',
+  door: 'text-[#e8d5a3]',
+  stairs: 'text-amber-200',
+  person: 'text-sky-300',
+  quest: 'text-yellow-300',
+  danger: 'text-rose-400',
+};
+
+function SymbolRow({ symbols }: { symbols: MapSymbol[] }) {
+  const shown = symbols.filter((s) => s !== 'here' && s !== 'stairs');
+  if (shown.length === 0) return null;
+  return (
+    <span className="mt-0.5 flex items-center gap-1 text-[11px] font-bold leading-none" aria-label={shown.map((s) => MAP_SYMBOL_LABEL[s]).join(', ')}>
+      {shown.map((s) => (
+        <span key={s} className={SYMBOL_COLOR[s]} title={MAP_SYMBOL_LABEL[s]}>
+          {MAP_SYMBOL_GLYPH[s]}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function MapLegend({ street }: { street: boolean }) {
+  const keys: (MapSymbol | 'door')[] = street ? ['here', 'person', 'quest', 'danger'] : ['here', 'door', 'stairs', 'person', 'quest', 'danger'];
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-400" aria-label="Map key">
+      {keys.map((k) => (
+        <span key={k} className="flex items-center gap-1">
+          <span className={`font-bold ${SYMBOL_COLOR[k]}`}>{MAP_SYMBOL_GLYPH[k]}</span>
+          {MAP_SYMBOL_LABEL[k]}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function MapCompass({ x, y }: { x: number; y: number }) {
   return (
     <g transform={`translate(${x}, ${y})`} aria-hidden>
@@ -79,6 +129,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   mapFocusPlace,
   combatLocked = false,
   aloneArrival = false,
+  peopleHereCount = 0,
   onMoveNode,
   onExitDungeon,
   onEnsureLocalMap,
@@ -112,6 +163,67 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
     const z = displayDungeon.currentZLevel ?? 0;
     setViewZ(floorLevels.includes(z) ? z : floorLevels[0] ?? 0);
   }, [isOpen, displayDungeon?.currentNodeId, displayDungeon?.blueprintId, floorLevels.join(',')]);
+
+  const frameRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState<MapViewport>({ scale: 1, x: 0, y: 0 });
+  const drag = useRef<{ id: number; x: number; y: number; moved: boolean } | null>(null);
+  const justDragged = useRef(false);
+
+  const fitView = useCallback(() => {
+    const frame = frameRef.current;
+    const content = contentRef.current;
+    if (!frame || !content) return;
+    setView(fitViewport(content.offsetWidth, content.offsetHeight, frame.clientWidth, frame.clientHeight));
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isOpen && displayDungeon) fitView();
+  }, [isOpen, displayDungeon?.blueprintId, viewZ, fitView]);
+
+  const zoomBy = (factor: number, clientX?: number, clientY?: number) => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const r = frame.getBoundingClientRect();
+    const px = clientX != null ? clientX - r.left : r.width / 2;
+    const py = clientY != null ? clientY - r.top : r.height / 2;
+    setView((v) => zoomViewportAt(v, factor, px, py));
+  };
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!isOpen || !frame) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      zoomBy(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX, e.clientY);
+    };
+    frame.addEventListener('wheel', onWheel, { passive: false });
+    return () => frame.removeEventListener('wheel', onWheel);
+  });
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.moved && Math.hypot(dx, dy) < 5) return;
+    if (!d.moved) {
+      d.moved = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    d.x = e.clientX;
+    d.y = e.clientY;
+    setView((v) => panViewport(v, dx, dy));
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    justDragged.current = d.moved;
+    drag.current = null;
+  };
 
   if (!isOpen) return null;
 
@@ -158,6 +270,13 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   const currentNode = displayDungeon.nodes.find((n) => n.id === displayDungeon.currentNodeId);
   const isStreet = isStreetMap(displayDungeon);
   const isHallPlan = isInteriorMap(displayDungeon);
+
+  const symbolCtx: MapSymbolContext = {
+    currentNodeId: displayDungeon.currentNodeId,
+    peopleHereCount: aloneArrival ? 0 : peopleHereCount,
+    questPlace: mapFocusPlace ?? undefined,
+    liveFight: combatLocked,
+  };
 
   const mapScaleStreet = mapScaleLabel('street');
   const mapScaleInterior = isHallPlan ? mapScaleLabel('interior') : mapScaleLabel('dungeon');
@@ -246,17 +365,47 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           </div>
         )}
 
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <MapLegend street={isStreet} />
+          <div className="flex items-center gap-1" role="group" aria-label="Map zoom">
+            <button type="button" onClick={() => zoomBy(1 / 1.25)} aria-label="Zoom out" className="h-7 w-7 rounded border border-slate-700 bg-slate-900/80 text-slate-200 hover:border-slate-500 text-sm">−</button>
+            <button type="button" onClick={() => zoomBy(1.25)} aria-label="Zoom in" className="h-7 w-7 rounded border border-slate-700 bg-slate-900/80 text-slate-200 hover:border-slate-500 text-sm">+</button>
+            <button type="button" onClick={fitView} className="h-7 rounded border border-slate-700 bg-slate-900/80 px-2 text-xs text-slate-200 hover:border-slate-500">
+              {isHallPlan ? 'Fit floor' : 'Fit map'}
+            </button>
+          </div>
+        </div>
+
         <div
-          className={`relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg p-4 sgm-adventure-map-canvas ${
+          ref={frameRef}
+          data-testid="map-pan-frame"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onClickCapture={(e) => {
+            if (justDragged.current) {
+              justDragged.current = false;
+              e.stopPropagation();
+              e.preventDefault();
+            }
+          }}
+          className={`relative flex-1 my-3 h-[55vh] min-h-[360px] overflow-hidden touch-none cursor-grab active:cursor-grabbing rounded-lg sgm-adventure-map-canvas ${
             isStreet ? 'sgm-adventure-map-canvas--zone' : 'sgm-adventure-map-canvas--interior'
           }`}
         >
+          <div
+            ref={contentRef}
+            className="absolute left-0 top-0"
+            style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`, transformOrigin: '0 0' }}
+          >
           {isStreet ? (
             <StreetMapCanvas
               dungeon={displayDungeon}
               currentNodeId={displayDungeon.currentNodeId}
               onMoveNode={onMoveNode}
               combatLocked={combatLocked}
+              symbolCtx={symbolCtx}
               onEnterSite={
                 onLoadDungeon
                   ? (siteName) => {
@@ -278,8 +427,10 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               }}
               building={isHallPlan}
               combatLocked={combatLocked}
+              symbolCtx={symbolCtx}
             />
           )}
+          </div>
         </div>
 
         <div className="sgm-adventure-map-footer border rounded-lg p-3 text-sm">
@@ -334,6 +485,7 @@ function InteriorFloorPlan({
   onMoveNode,
   building = false,
   combatLocked = false,
+  symbolCtx,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
@@ -342,6 +494,7 @@ function InteriorFloorPlan({
   /** Building plan (shared walls, doors, windows, stairs) — otherwise cave/dungeon chambers and tunnels. */
   building?: boolean;
   combatLocked?: boolean;
+  symbolCtx: MapSymbolContext;
 }) {
   const nodes = nodesOnInteriorFloor(dungeon, viewZ);
   const organic = building;
@@ -713,6 +866,7 @@ function InteriorFloorPlan({
                     {stair}
                   </span>
                 )}
+                <SymbolRow symbols={roomSymbols(dungeon, node, { ...symbolCtx, currentNodeId: playerOnThisFloor ? currentNodeId : '' })} />
                 {isCurrent && (
                   <span className="mt-1 flex items-center gap-1 text-[8px] uppercase tracking-wide text-amber-200">
                     <YouAreHereMarker size={12} />
@@ -756,12 +910,14 @@ function StreetMapCanvas({
   onMoveNode,
   onEnterSite,
   combatLocked = false,
+  symbolCtx,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
   onMoveNode: (nodeId: string) => void;
   onEnterSite?: (siteName: string) => void;
   combatLocked?: boolean;
+  symbolCtx: MapSymbolContext;
 }) {
   const size = 560;
   const current = dungeon.nodes.find((n) => n.id === currentNodeId);
@@ -875,6 +1031,9 @@ function StreetMapCanvas({
                   <span className="inline-block h-2 w-2 rounded-sm bg-amber-500/90" aria-hidden />
                 )}
                 <span className="block text-[11px] font-medium leading-tight break-words">{node.name}</span>
+              </span>
+              <span className="flex justify-center">
+                <SymbolRow symbols={roomSymbols(dungeon, node, symbolCtx)} />
               </span>
               {isEntrance && (
                 <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">
