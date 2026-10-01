@@ -15,6 +15,7 @@ import { openingCastNames } from './openingEstablishment';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
+import { playerCommittedTravel } from './travelAuthority';
 import { commitTravel, isJourneyPad, isJourneyUnderway } from './travelJourney';
 import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
@@ -70,10 +71,18 @@ export function peopleHere(state: GameState): string[] {
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   add(state.sceneFacts?.pendingEncounter?.name);
-  if (state.openingEstablishment?.complete !== true) openingCastNames(state).forEach(add);
+  if (openingCastStillHere(state)) openingCastNames(state).forEach(add);
   (state.sceneFacts?.anonymousRoles ?? []).forEach(add);
   add(roadMeetingPeople(state));
   return [...out.values()];
+}
+
+/** The opening card's cast stays while the player is still in the card's place and has not travelled. */
+function openingCastStillHere(state: GameState): boolean {
+  if (state.openingEstablishment?.complete !== true) return true;
+  const where = low(state.openingEstablishment?.answers?.where);
+  if (!where || where !== low(state.currentLocation)) return false;
+  return !(state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
 }
 
 export function crowdHere(state: GameState): boolean {
@@ -106,6 +115,9 @@ export function chipAddressee(label: string): { kind: 'named' | 'role' | 'none';
 /** Chips that need someone to hear them (beyond talk/ask). */
 const SOCIAL_CHIP =
   /^(?:offer|greet|talk your way|call (?:out|to)|bargain|haggle|plead|persuade|befriend|flatter|threaten|intimidate|bribe|refuse|accept|decline|agree|thank|apologi[sz]e|introduce yourself|use what you know|trade|barter|negotiate|reassure|comfort|warn)\b/i;
+
+/** A question put to someone ("Who are you", "What do they want"). */
+const ADDRESSED_QUESTION = /^(?:who|what|why|where|how)\b.*\b(?:you|your|they|them|their)\b/i;
 
 const ENGINE_COMBAT_CHIP = /^(?:press the attack|try to flee|parley|flee)\b/i;
 
@@ -188,7 +200,7 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
         };
       }
     }
-  } else if ((addr || SOCIAL_CHIP.test(label)) && nobody) {
+  } else if ((addr || SOCIAL_CHIP.test(label) || ADDRESSED_QUESTION.test(label)) && nobody) {
     const who = addr?.who ? ` the ${addr.who}` : '';
     return { kind: 'ghost-chip', detail: `"${label}" needs${who || ' someone'} to hear it but nobody is here` };
   }

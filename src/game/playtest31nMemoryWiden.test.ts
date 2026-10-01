@@ -47,7 +47,8 @@ describe('playtest31nMemoryWiden', () => {
     expect(RECENT_LOG_CHAR_CAP).toBe(500);
   });
 
-  it('live packet keeps last 2 GM beats and drops older raw lines', () => {
+  // 29z9i — the live writer reads the info sheet in place of raw GM beats.
+  it('live packet carries the info sheet and no raw GM beat text', () => {
     const log: LogEntry[] = [
       line('g1', 1, 'gm', 'MARKER_OLD_GM_ONE ozone and a blue panel.'),
       line('p1', 2, 'player', 'MARKER_OLD_PLAYER_ONE look around'),
@@ -62,10 +63,13 @@ describe('playtest31nMemoryWiden', () => {
     expect(text).toMatch(/COMPLETED EVENT:/);
     expect(text).toMatch(/YOU MAY ONLY MENTION/);
     expect(text).not.toMatch(/RECENT CHAT BEATS/);
-    expect(text).toMatch(/MARKER_KEEP_GM_TWO/);
-    expect(text).toMatch(/MARKER_KEEP_GM_THREE/);
+    expect(text).toMatch(/INFO SHEET/);
+    expect(text).toMatch(/- T4 MARKER_KEEP_PLAYER_TWO I stand up → /);
+    expect(text).toMatch(/- T2 MARKER_OLD_PLAYER_ONE look around → /);
+    expect(text).not.toMatch(/T6 MARKER_KEEP_PLAYER_THREE/);
+    expect(text).not.toMatch(/MARKER_KEEP_GM_TWO/);
+    expect(text).not.toMatch(/MARKER_KEEP_GM_THREE/);
     expect(text).not.toMatch(/MARKER_OLD_GM_ONE/);
-    expect(text).not.toMatch(/MARKER_OLD_PLAYER_ONE/);
     expect(text).toMatch(/PLAYER: ask the chanter/);
   });
 
@@ -98,12 +102,9 @@ describe('playtest31nMemoryWiden', () => {
     expect(text).not.toMatch(/last 15, full detail/);
     expect(text).not.toMatch(/MARKER_T15_DUMP_/);
     expect(text).not.toMatch(/T1: Beat number 1/);
-    expect(text).toMatch(/MARKER_LONG/);
+    expect(text).not.toMatch(/MARKER_LONG/);
     expect(text).not.toMatch(longTail);
-
-    const longLine = text.split('\n').find((row) => row.includes('MARKER_LONG')) ?? '';
-    expect(longLine.startsWith('GM: ')).toBe(true);
-    expect(longLine.slice('GM: '.length).length).toBeLessThanOrEqual(RECENT_LOG_CHAR_CAP);
+    expect(text).toMatch(/INFO SHEET/);
 
     const memory = formatCampaignMemoryForPrompt(state, 'SITUATION', 'xyzzy', 4000);
     expect(memory).not.toMatch(/last 15, full detail/);

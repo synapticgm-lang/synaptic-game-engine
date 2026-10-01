@@ -68,7 +68,8 @@ export type OpeningFamilyTag =
   | 'spireBase'
   | 'inkAnnex'
   | 'spiritBeast'
-  | 'slaveCart';
+  | 'slaveCart'
+  | 'mageTower';
 
 export interface LitRpgMainSpine {
   bibleId: LitRpgSpineBibleId;
@@ -98,6 +99,8 @@ const FAMILY_PATTERNS: Record<OpeningFamilyTag, RegExp> = {
     /\b(cathedral|sevenfold|consecrated sanctuary|summoning circle|high priest|chanter|lower crypts?)\b/i,
   aloneRuin:
     /\b(alone|ruined?|rubble|collapsed|abandoned|burnt|watchtower|foundation|bathhouse|gutted|destroyed sanctum|mage tower|half-collapsed)\b/i,
+  mageTower:
+    /\b(?:collapsed mage tower|mage'?s? tower|wizard'?s? tower|sorcer(?:er|ess)'?s? tower|destroyed sanctum|mage'?s sanctum)\b/i,
   warCamp:
     /\b(war[- ]?camp|garrison|banner-smoke|enlist|quartermaster|brigandine|mercenary|mud-torn|iron hounds)\b/i,
   transitWagon:
@@ -200,8 +203,8 @@ export const LITRPG_MAIN_SPINES: LitRpgMainSpine[] = [
     bibleId: 'summoned-pact',
     spineId: 'alone-ruin-tether',
     title: 'Echoes of a Dead Summoner',
-    openingFamily: 'Alone Ruin',
-    familyTags: ['aloneRuin'],
+    openingFamily: 'Alone Ruin / Collapsed Mage Tower',
+    familyTags: ['mageTower'],
     whoWantsWhat:
       'A recorded magical echo of the dead mage who summoned you wants you to retrieve their research before rivals arrive.',
     firstObjective: "Find the mage's hidden vault key amidst the rubble of their destroyed sanctum.",

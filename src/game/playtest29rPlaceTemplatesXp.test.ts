@@ -53,6 +53,7 @@ describe('29r place templates', () => {
   it('every template has an id, a label, up to four interior names, a reuse list, and empty who/where', () => {
     const ids = [
       'bld-inside-house', 'bld-inside-shop', 'bld-inside-tavern', 'bld-inside-barn',
+      'bld-inside-bathhouse', 'bld-inside-guardhouse', 'bld-inside-watchtower',
       'bld-shape-cliff-village', 'bld-shape-cave-dwelling', 'bld-shape-sea-harbour', 'bld-shape-river-harbour',
       'veh-cart-hand', 'veh-wagon-covered', 'veh-wagon-merchant', 'veh-cart-farm',
       'veh-boat-fishing', 'veh-boat-barge', 'veh-boat-cargo', 'veh-boat-rowboat',

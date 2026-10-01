@@ -325,11 +325,19 @@ export function storyChip(state: GameState): string | null {
   const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
   if (!site && linked) return `Travel toward ${linked.name}`;
   const obj = quest.objectives?.find((o) => !o.completed && !o.optional);
-  if (obj) {
-    const text = obj.description.replace(/[.!?]+$/, '').trim();
-    return text.length <= 60 ? text : `${text.slice(0, 57).replace(/\s+\S*$/, '')}…`;
-  }
-  return null;
+  return obj ? objectiveChip(obj.description) : null;
+}
+
+const OBJECTIVE_TAIL =
+  /,|;|\s(?:amidst|amid|among|in|inside|within|at|from|before|after|while|near|beneath|under|on|across|through|by|and|then|until|without|so)\s/i;
+
+/** An objective as a whole chip: the sentence if it fits, else its verb and object. Never a cut-off line. */
+export function objectiveChip(description: string): string | null {
+  const text = (description ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
+  if (!text) return null;
+  if (text.length <= 60) return text;
+  const head = text.split(OBJECTIVE_TAIL)[0]!.trim();
+  return head.split(' ').length >= 2 && head.length <= 60 ? head : null;
 }
 
 const samePlace = (a: string, b: string) => !!a && !!b && (a === b || a.includes(b) || b.includes(a));

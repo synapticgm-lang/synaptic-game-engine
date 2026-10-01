@@ -68,7 +68,10 @@ describe('Batch 02r — scene context tail', () => {
     expect(text).toMatch(/MARKER_STREET/);
     const prompt = buildContextPrompt(state, 'ask the stall-hand');
     expect(prompt).not.toMatch(/MARKER_VAULT/);
-    expect(prompt).toMatch(/MARKER_STREET/);
+    // 29z9i — the writer reads the info sheet; the travel line is on it, raw GM prose is not.
+    expect(prompt).toMatch(/INFO SHEET/);
+    expect(prompt).toMatch(/MARKER_TRAVEL Travel toward Lowmarket/);
+    expect(prompt).not.toMatch(/MARKER_STREET/);
   });
 
   it('keeps last 4 when the camera has not moved', () => {

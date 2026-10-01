@@ -14,6 +14,7 @@ import { hubsForBibleId } from './outdoorHubs';
 import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
 import { resolvePlayAreaMap, type ActiveDungeonState } from './mapEngine';
+import { previewDungeonCard } from './dungeonCard';
 import { isExplorableDungeon, isInteriorMap } from './placeAuthority';
 import {
   basementEstablished,
@@ -25,6 +26,8 @@ import {
   roadMeetingPeople,
 } from './chipLegality';
 import { floorPlanIssues } from './floorPlan';
+import { isSystemWindowLabel } from './chromeAuthority';
+import { openingCastNames } from './openingEstablishment';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
@@ -49,7 +52,11 @@ export type TurnCheckKind =
   | 'absent-speaker'
   | 'wrong-voice'
   | 'lecture-ending'
-  | 'repeated-habit';
+  | 'repeated-habit'
+  | 'ghost-talk'
+  | 'window-touched'
+  | 'repeat-chip'
+  | 'verb-swapped';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -81,6 +88,8 @@ export const TURN_CHECK_P0_KINDS: ReadonlySet<TurnCheckKind> = new Set([
   'absent-speaker',
   'wrong-voice',
   'lecture-ending',
+  'ghost-talk',
+  'window-touched',
 ]);
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
@@ -151,6 +160,43 @@ function objectWords(action: string): string[] {
     .filter((w) => w.length >= 4 && !STOP.test(w) && !(walking && MOTION_VERB.test(w)))
     .slice(0, 4);
 }
+
+/**
+ * The typed verb and the body verbs that tell it. A named object is not enough: "search the crate"
+ * told as "you kick the crate" did a different action. A failed or empty result still uses the verb.
+ */
+const VERB_FAMILY: { name: string; verb: RegExp; told: RegExp }[] = [
+  {
+    name: 'search',
+    verb: /^(?:search|rummage|sift|comb|dig|hunt)$/,
+    told: /\b(?:search|rummag|sift|comb|dig|dug|hunt|pat(?:s|ted)? (?:down|through)|feel (?:through|along|inside|under)|felt (?:through|along|inside|under)|go(?:es)? through|went through|turn(?:s|ed)? (?:over|out|up)|empt|nothing|check|look(?:s|ed)? (?:through|under|behind|inside|in|over)|pull(?:s|ed)? (?:aside|back|out|open)|lift|open|pri(?:es|ed)|pry|prise|lever|inside|within|contain|find|found)/i,
+  },
+  {
+    name: 'inspect',
+    verb: /^(?:inspect|examine|investigate|check|study|scan|observe|survey)$/,
+    told: /\b(?:look|inspect|examin|check|stud(?:y|ie)|peer|scan|eye[sd]?\b|gaze|glanc|survey|observ|investigat|search|squint|watch|see|saw|seen|notic|spot|find|found|read|make out|made out|catch|caught|run (?:a|your|their|his|her) (?:eye|gaze)|ask(?:s|ed|ing)? (?:after|about|around)|question|inquir|enquir|(?:take|took|taking) stock|mark|count|tally|test|tri(?:es|ed)|try)/i,
+  },
+  {
+    name: 'take',
+    verb: /^(?:take|grab|pick|lift|pocket|snatch|collect)$/,
+    told: /\b(?:take|took|taken|grab|pick|lift|pocket|snatch|seiz|hold|held|clutch|scoop|tuck|stow|carr|collect|close (?:your|a|their) (?:hand|fingers)|won['’]t (?:come|budge)|will not (?:come|budge))/i,
+  },
+  {
+    name: 'open',
+    verb: /^(?:open|unlatch|pry|prise|unlock)$/,
+    told: /\b(?:open|pull|push|pri(?:es|ed)|prise|pry|lever|unlatch|unlock|swing|swung|creak|gives? way|gave way|lid|hinge|lock|won['’]t|will not|refus|stuck|jam|budge)/i,
+  },
+  {
+    name: 'read',
+    verb: /^(?:read|decipher)$/,
+    told: /\b(?:read|decipher|word|letter|text|writ|ink|script|scrawl|rune|line|says|said)/i,
+  },
+  {
+    name: 'climb',
+    verb: /^(?:climb|scale|clamber)$/,
+    told: /\b(?:climb|scal|clamber|haul|ascend|hand ?hold|foothold|pull(?:s|ed)? (?:yourself|himself|herself|themselves|up)|slip|fall|fell)/i,
+  },
+];
 
 function actionVerb(action: string): string {
   const words = low(action).match(/[a-z]+/g) ?? [];
@@ -257,6 +303,15 @@ export function checkActionFollowed(
     const words = objectWords(act);
     if (words.length && !words.some((w) => stemHit(text, w))) {
       down.push({ kind: 'action-object-missing', detail: `prose never names what the player acted on (${words.join(', ')})` });
+    } else if (words.length) {
+      const verb = actionVerb(act);
+      const family = VERB_FAMILY.find((f) => f.verb.test(verb));
+      if (family && !family.told.test(text.replace(/["“][^"”]*["”]/g, ' '))) {
+        down.push({
+          kind: 'verb-swapped',
+          detail: `player chose to ${verb} the ${words.join(' ')}; the prose names it but never ${family.name}s it`,
+        });
+      }
     } else if (!words.length && MOTION_VERB.test(actionVerb(act)) && !MOTION_TOLD.test(text)) {
       down.push({ kind: 'action-object-missing', detail: `player chose "${act.slice(0, 60)}"; the prose never moves them` });
     }
@@ -292,7 +347,7 @@ export function brokenLines(prose: string): TurnCheckFlag[] {
  */
 /** A body action, not speech: the talk check does not apply to it. */
 const NON_TALK_ACTION =
-  /^(?:wait|look|inspect|examine|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read)\b/i;
+  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read)\b/i;
 
 export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
   const out: TurnCheckFlag[] = [];
@@ -332,7 +387,9 @@ function drawnMap(state: GameState): ActiveDungeonState | null {
   if (state.activeDungeon) return state.activeDungeon;
   const place = norm(state.currentLocation);
   if (!place) return null;
-  return resolvePlayAreaMap(null, place, [], state.currentCoordinates);
+  return resolvePlayAreaMap(null, place, [], state.currentCoordinates, state.seed || state.saveId || 'interior', {
+    underground: (site) => previewDungeonCard(state, site),
+  });
 }
 
 function openGroundMapIssue(state: GameState): string | null {
@@ -411,6 +468,11 @@ export function checkPlayerTurn(
     ...checkLevelUpChanges(before, after),
     ...locksOpenedWithoutSkill(before, after).map((detail) => ({ kind: 'lock-without-skill' as const, detail })),
   ];
+  const chips = row.offeredChoices ?? [];
+  p0.push(
+    ...checkEmptyRoomTalk(after, chips.filter((c) => !chipProblem(before, c)), prose, action),
+    ...checkSystemWindow(after, chips, prose)
+  );
   const crimes = checkPlayCrimes(before, after, action, prose);
   p0.push(...crimes.p0);
   const mapIssue = openGroundMapIssue(after);
@@ -421,7 +483,132 @@ export function checkPlayerTurn(
   if (newPlanIssues.length) {
     p0.push({ kind: 'bad-floor-plan', detail: `${drawnMap(after)?.dungeonName ?? 'map'}: ${newPlanIssues.slice(0, 3).join('; ')}` });
   }
-  return { p0, down: [...followed.down, ...brokenLines(prose), ...crimes.down], presentNames: peopleHere(before) };
+  return {
+    p0,
+    down: [...followed.down, ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, action)],
+    presentNames: peopleHere(before),
+  };
+}
+
+/** Narration or the place card says nobody is here. Spoken lines do not count: a speaker is someone. */
+const EMPTY_ROOM =
+  /\b(?:nobody|no one|no-one|not a soul|no other (?:soul|person|people)|no sign of (?:anyone|life|people)|(?:you are|you're|you were|you stand|you stood|you're still|you are still) alone|alone (?:here|now|in (?:the|this))|deserted|(?:room|hall|chamber|place|building|house|ruin|street|square|space|corridor|bathhouse|cell|court|yard) (?:is|was|stood|lay|sat|stands|lies|sits) (?:empty|silent and empty)|empty (?:room|hall|chamber|ruin|building|house|street|square|corridor|bathhouse|cell))\b/i;
+
+export function placeSaysEmpty(state: GameState, prose: string): boolean {
+  const card = (state.places ?? []).find((p) => low(p.name) === low(state.currentLocation));
+  const text = [prose, card?.description].filter(Boolean).join(' ').replace(/["“][^"”]*["”]/g, ' ');
+  return EMPTY_ROOM.test(text);
+}
+
+/** Who can hear a talk chip when the place text says the room is empty: never the opening card's cast. */
+export function listenersOnEmptyText(state: GameState): string[] {
+  const cast = openingCastNames(state);
+  return peopleHere(state).filter((n) => !cast.some((c) => mentionsName(n, c) || mentionsName(c, n)));
+}
+
+const TALK_NEEDS_EAR =
+  /^(?:offer|greet|talk your way|call (?:out|to)|bargain|haggle|plead|persuade|befriend|threaten|intimidate|bribe|refuse|accept|decline|agree|thank|apologi[sz]e|introduce yourself|negotiate|reassure|warn)\b|^(?:who|what|why|where|how)\b.*\b(?:you|your|they|them|their)\b/i;
+const WHO_ASK = /\bwho are you\b/i;
+
+/**
+ * Talk on empty-room text. A talk chip is illegal when the beat or the place card says nobody is here
+ * and no listener is left once the opening cast is dropped. A "who are you" in the prose is flagged on
+ * empty-room text whoever the people list holds (unless the player typed it).
+ */
+export function checkEmptyRoomTalk(state: GameState, chips: string[], prose: string, action = ''): TurnCheckFlag[] {
+  if (!placeSaysEmpty(state, prose)) return [];
+  const out: TurnCheckFlag[] = [];
+  const ears = listenersOnEmptyText(state);
+  for (const chip of chips) {
+    const label = norm(chip);
+    const addr = chipAddressee(label);
+    if (!addr && !TALK_NEEDS_EAR.test(label)) continue;
+    const addressed = addr?.kind === 'named' || addr?.kind === 'role';
+    if (addressed && ears.some((p) => mentionsName(p, addr!.who) || mentionsName(addr!.who, p))) continue;
+    if (!addressed && ears.length) continue;
+    out.push({ kind: 'ghost-chip', detail: `"${label}" talks to someone, but the place text says nobody is here` });
+  }
+  if (WHO_ASK.test(prose) && !WHO_ASK.test(action)) {
+    out.push({ kind: 'ghost-talk', detail: 'the prose asks "who are you" in a place its own text says is empty' });
+  }
+  return out;
+}
+
+const WINDOW_NOUN = /\b(?:(?:blue|system|status|translucent|glowing|floating)\s+(?:panel|window|screen|box|plate)|the panel)\b/i;
+const WINDOW_QUALIFIED = /\b(?:blue|system|status)\s+(?:panel|window|screen)\b/i;
+const WINDOW_PHYSICAL =
+  /\b(?:touch|tap(?:s|ped)?\b|press|push|poke|prod|grab|grasp|grip|lift|weigh|weight|heavy|surface|rippl|heat|warmth|textur|smooth|rough|knock|rap(?:s|ped)?\b|brush|strok|solid|vibrat|shatter)/i;
+const WINDOW_NOT_PHYSICAL =
+  /\b(?:pass(?:es|ed)? (?:straight |clean |right )?through|nothing to (?:touch|hold|grip)|can(?:not|['’]t) (?:touch|feel|hold)|only you (?:can )?see)/i;
+const PHYSICAL_CHIP = /^(?:touch|tap|press|push|poke|grab|take|pick up|lift|knock on|break|smash|pull|hold|weigh)\b/i;
+
+function systemWindowInPlay(state: GameState, prose: string): boolean {
+  if (state.engineMode !== 'litrpg') return false;
+  if ((state.sceneFacts?.props ?? []).some((p) => isSystemWindowLabel(p))) return true;
+  return [prose, ...gmBodies(state).slice(-3)].some((t) => WINDOW_QUALIFIED.test(t));
+}
+
+/**
+ * The LitRPG System window is not a thing in the room: only the PC sees it and nobody can touch it.
+ * P0 when the prose gives it a surface, heat, weight or a touch, or a chip handles it like an object.
+ */
+export function checkSystemWindow(state: GameState, chips: string[], prose: string): TurnCheckFlag[] {
+  if (!systemWindowInPlay(state, prose)) return [];
+  const out: TurnCheckFlag[] = [];
+  const narration = norm(prose).replace(/["“][^"”]*["”]/g, ' ');
+  const lines = narration.split(/(?<=[.!?])\s+/);
+  const touched = lines
+    .map((s, i) => {
+      if (!WINDOW_NOUN.test(s)) return '';
+      const next = lines[i + 1] ?? '';
+      return /\b(?:it|its)\b/i.test(next) ? `${s} ${next}` : s;
+    })
+    .find((s) => s && WINDOW_PHYSICAL.test(s) && !WINDOW_NOT_PHYSICAL.test(s));
+  if (touched) out.push({ kind: 'window-touched', detail: `the System window is handled like an object: "${touched.slice(0, 120)}"` });
+  for (const chip of chips) {
+    const label = norm(chip);
+    if (PHYSICAL_CHIP.test(label) && WINDOW_NOUN.test(label)) {
+      out.push({ kind: 'window-touched', detail: `"${label}" handles the System window like an object` });
+    }
+  }
+  return out;
+}
+
+/** Verb families for "the same move again": a chip worded differently is still the action just taken. */
+const MOVE_FAMILY: RegExp[] = [
+  /^(?:look|inspect|examine|investigate|check|study|scan|observe|survey|peer)$/,
+  /^(?:search|rummage|sift|comb)$/,
+  /^(?:wait|rest|pause|linger|watch)$/,
+  /^(?:listen)$/,
+  /^(?:take|grab|pick|lift|pocket)$/,
+  /^(?:open|unlatch|pry|prise)$/,
+  /^(?:read|decipher)$/,
+];
+
+function moveFamily(verb: string): number {
+  return MOVE_FAMILY.findIndex((f) => f.test(verb));
+}
+
+/** Does this chip repeat the action the player just took? */
+export function chipRepeatsAction(chip: string, action: string): boolean {
+  const clean = (s: string) => low(s).replace(/[.!?]+$/, '').replace(/^(?:i|we)\s+/, '');
+  const c = clean(chip);
+  const a = clean(action);
+  if (!c || !a || /^\(crash/.test(a)) return false;
+  if (c === a) return true;
+  const fam = moveFamily(actionVerb(c));
+  if (fam < 0 || fam !== moveFamily(actionVerb(a))) return false;
+  const chipObjects = objectWords(c);
+  const actObjects = objectWords(a);
+  if (!chipObjects.length) return !actObjects.length;
+  return chipObjects.every((w) => stemHit(a, w));
+}
+
+/** Down for any offered chip that repeats the action the player just took. */
+export function checkRepeatChips(chips: string[], action: string): TurnCheckFlag[] {
+  return chips
+    .filter((c) => chipRepeatsAction(c, action))
+    .map((c) => ({ kind: 'repeat-chip' as const, detail: `"${norm(c)}" repeats the action just taken ("${norm(action).slice(0, 60)}")` }));
 }
 
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

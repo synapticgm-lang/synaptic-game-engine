@@ -7,7 +7,7 @@ import { buildArchetypeIntro } from './archetypes';
 import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
-import { advanceDungeonCard, isDungeonCard } from './dungeonCard';
+import { advanceDungeonCard, isDungeonCard, previewDungeonCard } from './dungeonCard';
 import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
@@ -1733,6 +1733,7 @@ export function useGame() {
         {
           visitedLandmarkNames: visitedHubLandmarkNames(previous),
           allowInterior: cameraAllowsInteriorMap(previous),
+          underground: (site) => previewDungeonCard(previous, site),
         }
       );
     }
@@ -4016,6 +4017,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               places: workingState.places ?? liveCurrent.places,
             }),
             allowInterior: cameraAllowsInteriorMap(workingState, sanitizedInput),
+            underground: (site) => previewDungeonCard(workingState, site),
           }
         );
       }

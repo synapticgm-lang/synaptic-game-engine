@@ -101,6 +101,7 @@ describe('playtest31c — Josie authority owners', () => {
 
   it('does not snap outdoor camera to indoor Entry without travel', () => {
     const state = summonedNameCover();
+    state.currentLocation = 'Lowmarket square';
     state.locationSheet = {
       name: state.currentLocation,
       mapScale: 'interior',
@@ -124,22 +125,19 @@ describe('playtest31c — Josie authority owners', () => {
     expect(snapped.sceneFacts?.indoor).toBe(false);
     expect(snapped.locationSheet?.mapScale).toBe('street');
     expect(snapped.activeDungeon).toBeNull();
-    expect(snapped.currentLocation).toMatch(/Sevenfold Circle/i);
+    expect(snapped.currentLocation).toMatch(/Lowmarket square/i);
 
     const afterWalk = enforceCameraOnState(state, 'I walk through the door');
     expect(afterWalk.activeDungeon).toBeTruthy();
   });
 
-  it('harvests outdoor camera from mosaic / bombardment prose', () => {
-    const facts = harvestCameraIntoSceneFacts(
-      undefined,
-      'You stand on the circular mosaic under bombardment. The cracked street shakes.',
-      0,
-      '(opening)',
-      'The Sevenfold Circle under bombardment'
-    );
-    expect(facts.cameraLock?.scale).toBe('outdoor');
-    expect(facts.indoor).toBe(false);
+  it('camera scale comes from the place, not mosaic / cracked-street prose', () => {
+    const prose = 'You stand on the circular mosaic under bombardment. The cracked street shakes.';
+    const circle = harvestCameraIntoSceneFacts(undefined, prose, 0, '(opening)', 'The Sevenfold Circle under bombardment');
+    expect(circle.cameraLock?.scale).toBe('indoor');
+    const square = harvestCameraIntoSceneFacts(undefined, 'Candles gutter on the ceiling beams.', 0, '(opening)', 'Lowmarket square');
+    expect(square.cameraLock?.scale).toBe('outdoor');
+    expect(square.indoor).toBe(false);
   });
 
   it('choice pad after a demand drops leftover name / opening chips', () => {

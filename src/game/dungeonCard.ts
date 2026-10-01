@@ -19,7 +19,7 @@ import { createHashRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
-import { milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
+import { INTERIOR_MAP_BLUEPRINT, milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { openSeededLootable } from './looseItems';
 import { milestoneXp, type MilestoneKind } from './xpRules';
@@ -34,7 +34,7 @@ type Theme = { entry: string; rooms: string[]; miniBossRoom: string; cacheRoom: 
 /** Engine room vocabulary by site kind (not story content). First match on hub name + blurb wins. */
 const THEMES: Array<{ match: RegExp; theme: Theme }> = [
   {
-    match: /\b(undercroft|crypt|catacomb|tomb|ossuary|cathedral|chapel|reliquary|grave|barrow)\b/i,
+    match: /\b(?:undercroft|crypt|catacomb|tomb|ossuary|cathedral|chapel|reliquary|grave|barrow)s?\b/i,
     theme: {
       entry: 'Stair Descent',
       rooms: ['Ossuary Passage', 'Bone Gallery', 'Flooded Crypt', 'Candle Vault', 'Collapsed Chapel', 'Charnel Hall', 'Sealed Niche Row'],
@@ -45,7 +45,7 @@ const THEMES: Array<{ match: RegExp; theme: Theme }> = [
     },
   },
   {
-    match: /\b(mine|delve|shaft|quarry|dig)\b/i,
+    match: /\b(?:mine|delve|shaft|quarry|dig)s?\b/i,
     theme: {
       entry: 'Shaft Head',
       rooms: ['Timbered Tunnel', 'Ore Gallery', 'Flooded Drift', 'Collapsed Stope', 'Cart Junction', 'Echoing Cavern'],
@@ -56,7 +56,7 @@ const THEMES: Array<{ match: RegExp; theme: Theme }> = [
     },
   },
   {
-    match: /\b(sewer|sump|drain|cistern|culvert|below-street)\b/i,
+    match: /\b(?:sewer|sump|drain|cistern|culvert|below-street)s?\b/i,
     theme: {
       entry: 'Grate Ladder',
       rooms: ['Overflow Channel', 'Brick Culvert', 'Sluice Chamber', 'Rat Warren', 'Silted Cistern', 'Pump Gallery'],
@@ -78,7 +78,7 @@ const THEMES: Array<{ match: RegExp; theme: Theme }> = [
     },
   },
   {
-    match: /\b(keep|castle|fort|ruin|tower|citadel|spire|stronghold)\b/i,
+    match: /\b(?:keep|castle|fort|ruin|tower|citadel|spire|stronghold)s?\b/i,
     theme: {
       entry: 'Broken Gate',
       rooms: ['Guard Passage', 'Fallen Hall', 'Armoury Ruin', 'Collapsed Stair', 'Cold Barracks', 'Well Chamber'],
@@ -89,7 +89,7 @@ const THEMES: Array<{ match: RegExp; theme: Theme }> = [
     },
   },
   {
-    match: /\b(cave|cavern|grotto|hollow|lair|den|burrow)\b/i,
+    match: /\b(?:cave|cavern|grotto|hollow|lair|den|burrow)s?\b/i,
     theme: {
       entry: 'Cave Mouth',
       rooms: ['Dripping Passage', 'Fungus Grotto', 'Bat Roost', 'Underground Pool', 'Narrow Squeeze', 'Crystal Hollow'],
@@ -248,7 +248,10 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
     }
     if (r.role === 'boss') return theme.miniBossRoom;
     if (r.role === 'stair') return r.via === 'ladder' ? 'Ladder Shaft' : 'Stairwell Down';
-    if (r.role === 'secret') return `Hidden ${theme.cacheRoom.split(' ').pop()}`;
+    if (r.role === 'secret') {
+      const last = theme.cacheRoom.split(' ').pop();
+      return `Hidden ${last}` === theme.cacheRoom ? `Sealed ${last}` : `Hidden ${last}`;
+    }
     if (r.landing) return `${floorWord(r.floor)} Landing`;
     if (r.role === 'cache' && !cacheNamed) {
       cacheNamed = true;
@@ -412,6 +415,34 @@ export function openDungeonCard(state: GameState, site: string): GameState {
       ? { ...state.locationSheet, name: hereLabel(card), mapScale: 'dungeon' }
       : state.locationSheet,
     sceneFacts: { ...(state.sceneFacts ?? {}), indoor: true } as GameState['sceneFacts'],
+  };
+}
+
+/**
+ * The Map at a cave / mine / crypt before the player goes in: the same card `openDungeonCard`
+ * would open (stored or built), drawn as a plan with nothing seeded.
+ */
+export function previewDungeonCard(state: GameState, site: string): ActiveDungeonState {
+  const hubName = siteHub(state, site)?.name ?? site;
+  const card = findPlace(state, hubName)?.dungeonCard ?? buildDungeonCard(state, hubName);
+  const entryId = card.nodes.find((n) => n.id === 'r0')?.id ?? card.currentNodeId;
+  const entry = card.nodes.find((n) => n.id === entryId);
+  return {
+    ...card,
+    blueprintId: INTERIOR_MAP_BLUEPRINT,
+    siteName: site,
+    currentNodeId: entryId,
+    currentZLevel: entry?.zLevel ?? card.currentZLevel,
+    visitedNodeIds: [entryId],
+    clearedNodeIds: [],
+    nodes: card.nodes.map((n) => {
+      const tags = (n.tags ?? []).filter((t) => t !== 'here' && t !== 'interior' && t !== 'underground');
+      return {
+        ...n,
+        hidden: undefined,
+        tags: [...tags, 'interior', 'underground', ...(n.id === entryId ? ['here', 'entry'] : [])],
+      };
+    }),
   };
 }
 

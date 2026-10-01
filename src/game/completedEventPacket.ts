@@ -8,8 +8,9 @@
 import type { GameState, LogEntry, NarrativePerspective } from './types';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName';
-import { realPresentPeople } from './chromeAuthority';
+import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
+import { formatInfoSheet } from './infoSheet';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
@@ -112,7 +113,10 @@ export interface CompletedEventPacket {
   /** 29z8 — who/want/where… asked this turn, and how often the player has asked it (1 = first). */
   talkTopic?: string;
   talkAsked?: number;
+  /** Code checks only (collage, talk repeat). The writer reads `infoSheet` instead. */
   recentBeats: string[];
+  /** 29z9i — the diary the writer reads in place of raw recent turns (`infoSheet.ts`). */
+  infoSheet?: string;
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
   inspectStreak: number;
   waitStreak: number;
@@ -142,7 +146,8 @@ export interface CompletedEventPacket {
   movement?: string;
 }
 
-export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion';
+/** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
+export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion' | 'window';
 
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
 
@@ -151,6 +156,8 @@ export interface LedgerRef {
   id: string;
   display: string;
   klass: LedgerRefClass;
+  /** How the writer may use this ref, printed on its REF ENUM line. */
+  note?: string;
 }
 
 export interface TokenUseRef {
@@ -460,6 +467,7 @@ const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   corpse: ['corpse'],
   prop: ['prop_used'],
   kit: ['worn', 'prop_used'],
+  window: ['prop_used'],
 };
 
 /** `use` must match the ledger class — Lene cannot be `prop_used`. */
@@ -480,7 +488,7 @@ export function compileRefEnum(
   const seenId = new Set<string>();
   const seenDisplay = new Set<string>();
   let n = 1;
-  const add = (id: string, display: string, klass: LedgerRefClass) => {
+  const add = (id: string, display: string, klass: LedgerRefClass, note?: string) => {
     const label = (display ?? '').replace(/\s+/g, ' ').trim();
     if (!label || label.length < 2) return;
     if (id !== 'here' && (klass === 'person' || klass === 'place' || klass === 'companion') && !isPaintableRefLabel(label)) return;
@@ -489,8 +497,11 @@ export function compileRefEnum(
     if (seenId.has(key) || seenDisplay.has(dkey)) return;
     seenId.add(key);
     seenDisplay.add(dkey);
-    out.push({ tok: `t${n++}`, id, display: label, klass });
+    out.push({ tok: `t${n++}`, id, display: label, klass, ...(note ? { note } : {}) });
   };
+  const pcName = (state.character?.name ?? '').trim() || 'the player character';
+  const windowNote =
+    `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
 
   add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
@@ -520,7 +531,11 @@ export function compileRefEnum(
   }
 
   for (const prop of state.sceneFacts?.props ?? []) {
-    add(`prop:${slugRefId(prop)}`, prop, 'prop');
+    if (state.engineMode === 'litrpg' && isSystemWindowLabel(prop)) {
+      add(`window:${slugRefId(prop)}`, prop, 'window', windowNote);
+    } else {
+      add(`prop:${slugRefId(prop)}`, prop, 'prop');
+    }
   }
   for (const extra of extras) {
     if (!extra || isNeverCastTitle(extra, state)) continue;
@@ -533,7 +548,7 @@ export function formatRefEnumForWriter(refs: LedgerRef[]): string {
   if (!refs.length) return 'REF ENUM: (none this turn)';
   return [
     'REF ENUM (id must be one of these; names in lines.text only as @tN — code paints the display):',
-    ...refs.map((r) => `${r.tok}  ${r.id}  ${r.klass}  "${r.display}"`),
+    ...refs.map((r) => `${r.tok}  ${r.id}  ${r.klass}  "${r.display}"${r.note ? `  (${r.note})` : ''}`),
   ].join('\n');
 }
 
@@ -731,6 +746,7 @@ export function buildCompletedEventPacket(
     talkTopic: hallTalkTopic(action) ?? undefined,
     talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
+    infoSheet: formatInfoSheet(state),
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
@@ -1053,7 +1069,9 @@ export function formatWriterFacingEvent(
     ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
     : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
   if (placeGiven) {
-    lines.push('HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
+    lines.push(packet.infoSheet
+      ? 'HERE is already on the page (see INFO SHEET below). Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures from earlier turns are spent — use a new detail or none.'
+      : 'HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
   }
   if (askedBefore) {
     lines.push('The player has asked this before. The answer is a new quoted line said now, in new words — not "they told" or "they said" about an earlier answer.');
@@ -1068,7 +1086,11 @@ export function formatWriterFacingEvent(
     lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');
   }
   lines.push('');
-  if (writerBeats.length) {
+  if (packet.infoSheet) {
+    lines.push(packet.infoSheet);
+    const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
+    if (loiter) lines.push(`GM: ${loiter}`);
+  } else if (writerBeats.length) {
     lines.push(writerBeats.map((b) => `GM: ${b}`).join('\n'));
   } else {
     lines.push('GM: (opening)');

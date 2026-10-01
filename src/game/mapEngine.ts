@@ -7,6 +7,7 @@ import {
   isInteriorMap,
   isInteriorPlace,
   isStreetMap,
+  isUndergroundPlace,
 } from './placeAuthority';
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
 import { createHashRng } from './seededRng';
@@ -736,15 +737,20 @@ function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: s
   const openRooms = dungeon.nodes.filter((n) => !n.isSecret).length;
   const allowZ = allowedInteriorZ(place, dungeon.nodes.map((n) => n.name));
   if (dungeon.nodes.some((n) => !allowZ(n.zLevel ?? 0))) return true;
+  if (dungeon.nodes.some((n) => /^stairs?$/i.test(n.name) && !roomHasVerticalLink(dungeon, n))) return true;
+  const authored = dungeon.nodes.filter((n) => !(n.tags ?? []).includes('room'));
+  if (!burialFitsPlace(place) && authored.some((n) => BURIAL_ROOM.test(n.name))) return true;
   if (isRooflessPlace(place)) {
     if (openRooms < 2) return true;
   } else if (scale === 'shed' || scale === 'inside') {
     if (openRooms < 2) return true;
+    const templateFloors = new Set((insideTemplateFor(place)?.layout ?? []).map((r) => r.z).filter(allowZ)).size;
+    if (listInteriorZLevels(dungeon).length < templateFloors) return true;
   } else {
     if (openRooms < 5) return true;
     // Legacy 20n single-floor graphs: rebuild when the building wants multi-z.
     const zs = listInteriorZLevels(dungeon);
-    if (zs.length < 2) return true;
+    if (zs.length < 2 && (allowZ(-1) || allowZ(1))) return true;
   }
   // Legacy equal-stamp rooms (pre-20q): rebuild for varied footprints + door edges.
   if (!dungeon.nodes.every((n) => n.footprint && n.footprint.w > 0 && n.footprint.h > 0)) return true;
@@ -1021,39 +1027,89 @@ export const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
 
 /** A place with no roof left (foundation, outline, shell): nothing stands above the ground floor. */
 const ROOFLESS_PLACE =
-  /\b(?:foundations?|footings?|outline|roofless|open to the sky|wall-?shell|shell|husk|burnt[- ]out|rubble)\b/i;
+  /\b(?:foundations?|footings?|outline|roofless|no roof|no walls|open to the sky|wall-?shell|shell|husk|burnt[- ]out|rubble|gutted)\b/i;
+/** Still standing but broken: whatever was upstairs is not there to walk on. */
+const DAMAGED_PLACE =
+  /\b(?:ruin|ruins|ruined|collapsed|half-collapsed|caved-in|fallen (?:roof|ceiling)|burnt|burned|charred|wrecked|derelict)\b/i;
+/** Fire takes the floors with it: no basement unless the place names one. */
+const BURNT_PLACE = /\b(?:burnt|burned|charred|scorched|fire-gutted)\b/i;
 const BASEMENT_WORD = /\b(?:basements?|cellars?|undercrofts?|crypts?|catacombs?|stairs? down|trapdoor)\b/i;
+/** Places that bury their dead or keep relics: the only ones whose plan may hold crypt rooms. */
+const SACRED_PLACE =
+  /\b(?:chapel|church|kirk|temple|abbey|priory|monastery|shrine|cathedral|chantry|sanctum|sanctuary|circle|keep|castle|tomb|crypt|mausoleum|graveyard|cemetery|necropolis|ossuary)\b/i;
+const BURIAL_ROOM = /\b(?:crypt|ossuary|tomb|reliquary|catacomb)s?\b/i;
+
+function burialFitsPlace(place: string): boolean {
+  return SACRED_PLACE.test(place ?? '');
+}
 
 export function isRooflessPlace(place: string): boolean {
   return ROOFLESS_PLACE.test(place ?? '');
 }
 
-/** Floors a place can have: roofless ground keeps 1F only, plus a basement when the place names one. */
+export function isDamagedPlace(place: string): boolean {
+  return isRooflessPlace(place) || DAMAGED_PLACE.test(place ?? '');
+}
+
+/**
+ * Floors a place can have: roofless ground keeps 1F only, plus a basement when the place names one;
+ * a damaged building keeps 1F and anything below, never an upper floor.
+ */
 function allowedInteriorZ(place: string, rooms: string[] = []): (z: number) => boolean {
-  if (!isRooflessPlace(place)) return () => true;
-  const basement = BASEMENT_WORD.test([place, ...rooms].join(' '));
-  return (z) => z === 0 || (z < 0 && basement);
+  if (isRooflessPlace(place) || BURNT_PLACE.test(place ?? '')) {
+    const basement = BASEMENT_WORD.test([place, ...rooms].join(' '));
+    return (z) => z === 0 || (z < 0 && basement);
+  }
+  if (DAMAGED_PLACE.test(place ?? '')) return (z) => z <= 0;
+  return () => true;
+}
+
+/** Ruin-layout room names / gaps that only fit a damaged building. */
+const RUIN_ROOM_WORD = /^(?:ruined|collapsed|fallen|broken)\s+/i;
+
+/** Room labels and edges follow the place: a stair to a floor that is not there is broken; an intact building has no ruin rooms. */
+function fitLayoutToPlace(specs: InteriorRoomSpec[], place: string): InteriorRoomSpec[] {
+  const damaged = isDamagedPlace(place);
+  const zOf = new Map(specs.map((r) => [r.id, r.z]));
+  return specs.map((r) => {
+    const climbs = r.links.some((l) => zOf.has(l) && zOf.get(l) !== r.z);
+    let label = r.label;
+    if (/\bstairs?\b|\bladder\b/i.test(label) && !climbs) label = damaged ? 'Broken stair' : 'Landing';
+    else if (!damaged && RUIN_ROOM_WORD.test(label)) {
+      const rest = label.replace(RUIN_ROOM_WORD, '');
+      label = rest.charAt(0).toUpperCase() + rest.slice(1);
+    }
+    const edgeKinds = !damaged && r.edgeKinds
+      ? Object.fromEntries(Object.entries(r.edgeKinds).map(([k, v]) => [k, v === 'damaged' ? 'door' : v]))
+      : r.edgeKinds;
+    return { ...r, label, edgeKinds: edgeKinds as InteriorRoomSpec['edgeKinds'] };
+  });
 }
 
 function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
   const scale = interiorBuildingScale(place);
   const inside = scale === 'inside' ? insideTemplateFor(place)?.layout : undefined;
-  const pool = inside
+  const layouts = inside
     ? [inside]
     : scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
+  const secular = burialFitsPlace(place) ? layouts : layouts.filter((l) => !l.some((r) => BURIAL_ROOM.test(r.label)));
+  const pool = secular.length ? secular : layouts;
   const idx = Math.min(pool.length - 1, Math.floor(rng() * pool.length));
   const allowZ = allowedInteriorZ(place, rooms);
   const kept = pool[idx]!.filter((r) => allowZ(r.z));
   const ids = new Set(kept.map((r) => r.id));
-  const specs = kept.map((r) => ({
-    ...r,
-    links: r.links.filter((l) => ids.has(l)),
-    edgeKinds: r.edgeKinds ? { ...r.edgeKinds } : undefined,
-    z: r.z,
-    w: r.w,
-    h: r.h,
-  }));
+  const specs = fitLayoutToPlace(
+    kept.map((r) => ({
+      ...r,
+      links: r.links.filter((l) => ids.has(l)),
+      edgeKinds: r.edgeKinds ? { ...r.edgeKinds } : undefined,
+      z: r.z,
+      w: r.w,
+      h: r.h,
+    })),
+    place
+  );
   const links = specs.flatMap((r) => r.links.map((l) => [r.id, l] as [string, string]));
   return packFloorRooms(specs, links);
 }
@@ -1655,11 +1711,18 @@ export function resolvePlayAreaMap(
     visitedLandmarkNames?: string[];
     /** Outdoor camera lock — do not author Entry/Foyer without a travel commit. */
     allowInterior?: boolean;
+    /** Caves / mines / crypts: the site's dungeon card drawn as a plan (built by the caller). */
+    underground?: (place: string) => ActiveDungeonState;
   }
 ): ActiveDungeonState | null {
   if (isExplorableDungeon(existing ?? null)) return existing ?? null;
   const here = (place ?? '').replace(/\s+/g, ' ').trim();
   let next: ActiveDungeonState | null = null;
+  if (opts?.allowInterior !== false && isUndergroundPlace(here)) {
+    const drawn = existing && isInteriorMap(existing) && existing.nodes.some((n) => (n.tags ?? []).includes('underground'));
+    if (drawn && (existing.siteName ?? existing.dungeonName) === here) return existing;
+    return opts?.underground ? opts.underground(here) : (existing ?? null);
+  }
   if (opts?.allowInterior === false) {
     if (existing && isStreetMap(existing)) {
       next = presentLocalAreaMap(existing, here || existing.dungeonName);

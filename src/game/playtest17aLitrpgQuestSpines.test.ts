@@ -85,14 +85,17 @@ describe('playtest17a — LitRPG quest spines', () => {
     expect(seeded.some((s) => s.id === 'sp-spine-cathedral-royal-vanguard')).toBe(true);
   });
 
-  it('SP alone-ruin hook reveals Echoes of a Dead Summoner', () => {
-    const spine = matchLitRpgMainSpine('summoned-pact', ALONE_RUIN_HOOK, 'alone in a ruined bathhouse');
+  it('SP collapsed mage tower reveals Echoes of a Dead Summoner; a bathhouse does not', () => {
+    expect(matchLitRpgMainSpine('summoned-pact', ALONE_RUIN_HOOK, 'alone in a ruined bathhouse')?.spineId)
+      .not.toBe('alone-ruin-tether');
+    const towerHook = ALONE_RUIN_HOOK.replace('a ruined bathhouse off the Valespire roads', 'a collapsed mage tower');
+    const spine = matchLitRpgMainSpine('summoned-pact', towerHook, 'alone in a collapsed mage tower');
     expect(spine?.spineId).toBe('alone-ruin-tether');
     const quests = revealFor(
       'summoned-pact',
       summonedPact.starterQuests,
-      ALONE_RUIN_HOOK,
-      'alone in a ruined bathhouse',
+      towerHook,
+      'alone in a collapsed mage tower',
       true
     );
     const visible = quests.filter((q) => q.revealed && q.status === 'active');

@@ -1900,7 +1900,12 @@ export function playerAskedWhyPulled(raw: string): boolean {
   );
 }
 
-/** One or two chips for the cover beat — never hub travel, never pad-to-four. */
+/** The name-cover answer itself (give / refuse a name) — it answers the card, not a listener. */
+export function isNameCoverChip(label: string): boolean {
+  return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
+}
+
+/** Up to three chips for the cover beat — never hub travel, never pad-to-four. */
 export function coverContinuePads(state: GameState): string[] {
   if (isAuthoredPyoaBook(state.campaignBibleId)) {
     return spineChoiceLabels(ensurePyoaSpine(state));
@@ -1910,7 +1915,7 @@ export function coverContinuePads(state: GameState): string[] {
     if (chips.length) return chips.slice(0, 2);
     const locked = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
     if (locked && isLockablePcName(locked) && !/unknown survivor/i.test(locked)) {
-      return liveCoverPads(state, ['Ask what they want', 'Look around']);
+      return liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]);
     }
     return ['Give your name', 'Refuse to give a name'];
   }
@@ -1918,16 +1923,11 @@ export function coverContinuePads(state: GameState): string[] {
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
     const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
     if (hallTalkAsksWho(lastPlayer)) {
-      return liveCoverPads(state, ['Ask what they want', 'Look around']);
+      return liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]);
     }
     return hallTopicAlreadyAnswered(state, 'want')
-      ? liveCoverPads(
-        state,
-        isLitrpgSystemPanelMode(state)
-          ? ['Who are you', 'Inspect the panel']
-          : ['Who are you', 'Look around']
-      )
-      : liveCoverPads(state, ['Ask what they want']);
+      ? liveCoverPads(state, ['Who are you', ...coverLookPads(state)])
+      : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]);
   }
   return ['Give your name', 'Refuse to give a name'];
 }
@@ -2163,6 +2163,20 @@ export function hallTalkTopic(raw: string): HallTalkTopic | null {
   return null;
 }
 
+/** Every hall topic a line touches — one line can ask about the panel and what is going on. */
+export function hallTalkTopics(raw: string): HallTalkTopic[] {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return [];
+  const out: HallTalkTopic[] = [];
+  if (hallTalkAsksWho(t)) out.push('who');
+  if (hallTalkAsksRefuse(t)) out.push('refuse');
+  if (hallTalkAsksStayLeave(t)) out.push('stayLeave');
+  if (hallTalkAsksWant(t) || playerAskedWhyPulled(t)) out.push('want');
+  if (hallTalkAsksPanel(t)) out.push('panel');
+  if (hallTalkAsksWhere(t)) out.push('where');
+  return out;
+}
+
 /** Optimistic send already appended this player line (no GM after it). */
 function incomingAlreadyOnOpenLog(state: GameState, incoming: string): boolean {
   const want = incoming.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -2244,7 +2258,7 @@ export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolea
 /** Player already asked this hall topic, or the book already answered it. */
 export function hallTopicAlreadyAnswered(state: GameState, topic: HallTalkTopic): boolean {
   if ((state.log ?? []).some(
-    (e) => e.role === 'player' && hallTalkTopic(e.content ?? '') === topic
+    (e) => e.role === 'player' && hallTalkTopics(e.content ?? '').includes(topic)
   )) {
     return true;
   }
@@ -2273,16 +2287,34 @@ export function openingNameLockSpokenBeat(state: GameState): string {
   return sanitizeLockedNameBeat(state, `You are ${here}. ${want}`.replace(/\s+/g, ' ').trim());
 }
 
+/** The pad repeats the player's last move (look / wait / search); talk and panel repeats starve by topic. */
+function repeatsLastPlayerAction(state: GameState, pad: string): boolean {
+  const last = lastPlayerLine(state);
+  if (!last) return false;
+  if (/^look around\b/i.test(pad)) return isLookAroundAction(last);
+  if (/^wait\b/i.test(pad)) return /\bwait\b/i.test(last);
+  if (/^search\b/i.test(pad)) return /\b(?:search|rummage|go through)\b/i.test(last);
+  return false;
+}
+
+/** Non-talk cover pads; talk pads go first and drop out when nobody is there to hear them. */
+function coverLookPads(state: GameState): string[] {
+  return isLitrpgSystemPanelMode(state)
+    ? ['Inspect the panel', 'Look around', 'Search the area']
+    : ['Look around', 'Search the area'];
+}
+
 function liveCoverPads(state: GameState, pads: string[]): string[] {
-  const kept = pads.filter((c) => !shouldStarveHallTopicPad(state, c));
+  const fresh = (c: string) => !shouldStarveHallTopicPad(state, c) && !repeatsLastPlayerAction(state, c);
+  const kept = pads.filter(fresh);
   const onlyPanel = kept.length === 1 && /\binspect the panel\b|\bsystem window\b/i.test(kept[0] ?? '');
-  if (kept.length && !onlyPanel) return kept;
-  const refill = ['Look around', 'Wait'];
+  if (kept.length && !onlyPanel) return kept.slice(0, 3);
+  const refill = ['Look around', 'Search the area', 'Wait'].filter(fresh);
   if (
     isLitrpgSystemPanelMode(state)
     && !hallTopicAlreadyAnswered(state, 'panel')
   ) {
-    return [...refill, 'Inspect the panel'];
+    return [...refill.slice(0, 2), 'Inspect the panel'];
   }
   return refill;
 }

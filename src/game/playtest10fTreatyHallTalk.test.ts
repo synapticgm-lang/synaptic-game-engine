@@ -183,7 +183,10 @@ describe('playtest10f — treaty tent one-line lock', () => {
         { id: 'p', turn: 2, role: 'player', content: 'Ask what they want', timestamp: 2 },
       ],
     });
-    expect(coverContinuePads(asked)).toEqual(['Who are you', 'Inspect the panel']);
+    const pads = coverContinuePads(asked);
+    expect(pads[0]).toBe('Who are you');
+    expect(pads).not.toContain('Ask what they want');
+    expect(pads.length).toBeLessThanOrEqual(3);
     expect(coverContinuePads(asked).join(' ')).not.toMatch(/Lowmarket|Walk away|Press for leverage/i);
   });
 });

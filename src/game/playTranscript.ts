@@ -8,6 +8,7 @@ import {
 import {
   coverContinuePads,
   isCombatFamilyPad,
+  isNameCoverChip,
   isOpeningCoverTurn,
   isOpeningEstablishmentPending,
   isOpeningHallTalkTurn,
@@ -22,7 +23,7 @@ import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
-import { legalChips } from './chipLegality';
+import { chipProblem, legalChips } from './chipLegality';
 import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
@@ -82,7 +83,11 @@ export function resolveOfferedChoices(state: GameState): string[] {
     const skipCoverChips =
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
     if (skipCoverChips) return [];
-    return coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
+    const coverProse = lastGmStoryProse(state);
+    return coverContinuePads(state)
+      .filter((c) => !isCombatFamilyPad(c))
+      .filter((c) => isNameCoverChip(c) || !chipProblem(state, c, coverProse))
+      .slice(0, 3);
   }
   const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);

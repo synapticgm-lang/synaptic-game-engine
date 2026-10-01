@@ -157,8 +157,10 @@ describe('Batch 02z — slim writer packet', () => {
       expect(text).toMatch(/PLAYER:/);
     }
     expect(formatCraftSnapshotLines(state)).toEqual([]);
-    expect(packet).toMatch(/Rain drums the West Wall/);
-    expect(packet).toMatch(/no one else at the gate/);
+    // 29z9i — the writer reads the info sheet, not raw GM beat text.
+    expect(packet).toMatch(/INFO SHEET/);
+    expect(packet).not.toMatch(/Rain drums the West Wall/);
+    expect(packet).not.toMatch(/no one else at the gate/);
     expect(packet).not.toMatch(/Inventory \(/);
   });
 

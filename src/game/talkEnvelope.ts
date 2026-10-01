@@ -119,7 +119,7 @@ export function buildTalkEnvelope(
 ): string {
   const who = addressedCastName(state, playerInput);
   const fact = legalAddresseeFact(state, playerInput);
-  const beats = (packet.recentBeats ?? []).slice(-2).map((b) => `- ${clip(b, 220)}`);
+  const beats = packet.infoSheet ? [] : (packet.recentBeats ?? []).slice(-2).map((b) => `- ${clip(b, 220)}`);
   return [
     'TALK:',
     `PLAYER SAID: ${clip(playerInput, 240) || '(empty)'}`,
@@ -127,8 +127,7 @@ export function buildTalkEnvelope(
     fact
       ? `ALREADY SAID (reuse if they asked this; do not invent a different deal): ${fact}`
       : 'ALREADY SAID: (none on the card — do not invent a want or name)',
-    'LAST BEATS:',
-    ...(beats.length ? beats : ['- (none)']),
+    ...(packet.infoSheet ? [] : ['LAST BEATS:', ...(beats.length ? beats : ['- (none)'])]),
     'Answer PLAYER SAID. Only ADDRESSEE may speak. Stay inside YOU MAY ONLY MENTION below.',
   ].join('\n');
 }
