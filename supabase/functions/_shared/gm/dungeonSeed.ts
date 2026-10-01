@@ -1,4 +1,4 @@
-import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine.ts';
+import type { ActiveDungeonState, MapNode, NodeHidden, SkillGate } from './mapEngine.ts';
 import type { LocationInteractable, LocationSheet, MapTier, Rarity } from './types.ts';
 import { createHashRng } from './seededRng.ts';
 import { mobCountsAsRemaining } from './dungeonMobLedger.ts';
@@ -163,6 +163,7 @@ function buildHiddenForNode(
         pityKey,
       },
       trapId,
+      ...(lootLock(tags, grade) ? { lock: lootLock(tags, grade)! } : {}),
     });
   }
 
@@ -200,7 +201,22 @@ function buildHiddenForNode(
     });
   }
 
-  return { traps, lootables, secrets, mobs };
+  // 29z3 — a dead-end store room with something in it sits behind a stuck door. Dead ends only,
+  // so a lock never cuts the way on or the boss room.
+  const deadEnd = node.connections.length === 1 && index > 0 && index < total - 1 && !tags.includes('entry');
+  const doorLock: SkillGate | undefined = deadEnd && lootable && !isBossNode(node, dungeon)
+    ? { skill: 'athletics', rank: 1 }
+    : undefined;
+
+  return { traps, lootables, secrets, mobs, ...(doorLock ? { doorLock } : {}) };
+}
+
+/** 29z3 — safes and better chests need a skill (existing check skills; no new tree). */
+function lootLock(tags: string[], grade: 1 | 2 | 3): SkillGate | null {
+  if (tags.includes('control')) return { skill: 'arcana', rank: 1 };
+  if (grade >= 3) return { skill: 'thievery', rank: 2 };
+  if (grade === 2) return { skill: 'thievery', rank: 1 };
+  return null;
 }
 
 /** Ensure every node has engine-side hidden truth (idempotent if already seeded). */
@@ -291,15 +307,21 @@ export function mergeSheetWithNode(
  */
 export function formatHiddenRoomLedger(
   dungeon: ActiveDungeonState | null | undefined,
-  opts?: { factsOnly?: boolean }
+  opts?: { factsOnly?: boolean; ranks?: Partial<Record<string, number>> }
 ): string {
   const node = currentDungeonNode(dungeon);
   if (!dungeon || !node?.hidden) return '';
   const h = node.hidden;
+  const lockNote = (loot: { lock?: SkillGate }) =>
+    loot.lock
+      ? lootableLockedFor(loot, opts?.ranks)
+        ? ` — locked, needs ${loot.lock.skill} ${loot.lock.rank}; it stays shut`
+        : ` — locked, but ${loot.lock.skill} ${loot.lock.rank} opens it`
+      : '';
   if (opts?.factsOnly) {
     const facts: string[] = [`Room: ${node.name}`];
     for (const loot of h.lootables) {
-      facts.push(`- ${loot.label}: ${loot.opened ? 'opened' : 'closed'} (${loot.loot.rarity})`);
+      facts.push(`- ${loot.label}: ${loot.opened ? 'opened' : `closed${lockNote(loot)}`} (${loot.loot.rarity})`);
     }
     for (const trap of h.traps) {
       if (!trap.revealed) continue;
@@ -322,7 +344,9 @@ export function formatHiddenRoomLedger(
     lines.push(
       loot.opened
         ? `- Lootable "${loot.label}" (${loot.id}): already opened`
-        : `- Lootable "${loot.label}" (${loot.id}): CLOSED. On open emit <item-gain name="FittingName" rarity="${loot.loot.rarity}" qty="${loot.loot.qty}" /> — rarity MUST be ${loot.loot.rarity} (code-rolled). Hint: ${loot.loot.itemHint ?? 'site-appropriate gear'}.${loot.loot.gold ? ` Optional gold ~${loot.loot.gold}.` : ''}${loot.trapId ? ` May be trapped (${loot.trapId}).` : ''}`
+        : lootableLockedFor(loot, opts?.ranks)
+          ? `- Lootable "${loot.label}" (${loot.id}): LOCKED${lockNote(loot)}. Do not open it and do not emit item-gain for it.`
+          : `- Lootable "${loot.label}" (${loot.id}): CLOSED. On open emit <item-gain name="FittingName" rarity="${loot.loot.rarity}" qty="${loot.loot.qty}" /> — rarity MUST be ${loot.loot.rarity} (code-rolled). Hint: ${loot.loot.itemHint ?? 'site-appropriate gear'}.${loot.loot.gold ? ` Optional gold ~${loot.loot.gold}.` : ''}${loot.trapId ? ` May be trapped (${loot.trapId}).` : ''}`
     );
   }
   for (const trap of h.traps) {
@@ -353,7 +377,8 @@ export function formatHiddenRoomLedger(
 /** Mark matching lootable opened; return the code-rolled loot if found. */
 export function openLootableInDungeon(
   dungeon: ActiveDungeonState,
-  lootableIdOrLabel: string
+  lootableIdOrLabel: string,
+  ranks?: Partial<Record<string, number>>
 ): { dungeon: ActiveDungeonState; loot: HiddenLoot | null; label: string | null } {
   const key = lootableIdOrLabel.trim().toLowerCase();
   let found: HiddenLoot | null = null;
@@ -361,7 +386,7 @@ export function openLootableInDungeon(
   const nodes = dungeon.nodes.map((node) => {
     if (!node.hidden) return node;
     const lootables = node.hidden.lootables.map((loot) => {
-      if (loot.opened) return loot;
+      if (loot.opened || lootableLockedFor(loot, ranks)) return loot;
       if (loot.id.toLowerCase() === key || loot.label.toLowerCase() === key) {
         found = loot.loot;
         label = loot.label;
@@ -525,20 +550,29 @@ export function resolveSeededRarity(
   return { rarity: null, pityTriggered: false };
 }
 
+/** 29z3 — a safe / locked chest stays shut until the character has the rank. */
+export function lootableLockedFor(
+  loot: { lock?: { skill: string; rank: number } },
+  ranks?: Partial<Record<string, number>>
+): boolean {
+  return !!loot.lock && (ranks?.[loot.lock.skill] ?? 0) < loot.lock.rank;
+}
+
 export function markLootablesOpenedOnGain(
   dungeon: ActiveDungeonState | null | undefined,
-  gainedNames: string[]
+  gainedNames: string[],
+  ranks?: Partial<Record<string, number>>
 ): ActiveDungeonState | null | undefined {
   if (!dungeon?.nodes?.length || !gainedNames.length) return dungeon;
   const node = currentDungeonNode(dungeon);
   if (!node?.hidden) return dungeon;
-  const hasClosed = node.hidden.lootables.some((l) => !l.opened);
+  const hasClosed = node.hidden.lootables.some((l) => !l.opened && !lootableLockedFor(l, ranks));
   if (!hasClosed) return dungeon;
   const nodes = dungeon.nodes.map((n) => {
     if (n.id !== node.id || !n.hidden) return n;
     let openedOne = false;
     const lootables = n.hidden.lootables.map((loot) => {
-      if (loot.opened || openedOne) return loot;
+      if (loot.opened || openedOne || lootableLockedFor(loot, ranks)) return loot;
       openedOne = true;
       return { ...loot, opened: true };
     });

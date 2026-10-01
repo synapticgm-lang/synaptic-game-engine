@@ -110,6 +110,10 @@ export interface Character {
   weaponFamiliarity?: Partial<Record<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed', number>>;
   /** 28c — class/background weapon proficiencies; each sets familiarity to at least 70. */
   weaponProficiencies?: Array<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed'>;
+  /** 29z3 — check-skill ranks granted by level-ups (checkMath skills). Missing = level-derived rank. */
+  skills?: Partial<Record<'athletics' | 'perception' | 'investigation' | 'stealth' | 'thievery' | 'persuasion' | 'arcana' | 'survival', number>>;
+  /** 29z3 — highest level whose skill rank has been granted. */
+  skillsGrantedThrough?: number;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
@@ -362,6 +366,18 @@ export interface ActiveEncounter {
   caught?: boolean;
 }
 
+/** 29y — a threat remembered at one place (the existing encounter, parked while no fight is live). */
+export interface PlaceThreat {
+  /** Place name as the engine had it (display only; the map key is the lowercased name). */
+  place: string;
+  encounter: ActiveEncounter;
+  storedTurn: number;
+  /** Parleys this threat has refused (engine check failed / refused on the ledger). */
+  parleyRefused?: number;
+  /** How the last try ended while it stayed: still live, the player lost, or nothing settled it. */
+  lastOutcome?: 'live' | 'defeat' | 'unsettled';
+}
+
 export interface OpeningEstablishment {
   pending: Array<{
     id: string;
@@ -462,6 +478,8 @@ export interface GameState {
   npcMemories?: NpcMemory[];
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
+  /** Places the engine already filled with townsfolk (first entry is the opening place, which the card owns). */
+  townsfolkPlaces?: string[];
   previousSceneFacts?: SceneFacts;
   /**
    * Monotonic campaign ledger revision. Bumped on every accepted turn commit.
@@ -541,9 +559,13 @@ export interface GameState {
   worldLedger?: WorldLedger;
   /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
   sandboxAwardKeys?: string[];
+  /** 29z3 — locks the player tried without the skill (the next level-up rank prefers these). */
+  skillGateTries?: Array<{ id: string; label: string; skill: string; rank: number; turn: number }>;
   /** Journal Resume main pin — map chrome highlights this place name. */
   mapFocusPlace?: string | null;
   activeEncounter?: ActiveEncounter | null;
+  /** 29y — a hostile threat that entered the scene at a place, kept there until beaten or fled. Keyed by place. */
+  placeThreats?: Record<string, PlaceThreat>;
   /**
    * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).
    * null = closed story (typical PYOA) — no continent atlas.
@@ -671,6 +693,40 @@ export interface TravelJourney {
   legsDone: number;
   hoursPerLeg: number;
   startedTurn: number;
+  /** 29w — threat tier (1–4) of the country the road runs through; encounter level follows it. */
+  areaTier?: number;
+  /** 29w — a ruin, graveyard, crypt or old battlefield lies along the way. */
+  haunted?: boolean;
+  /** 29w — this stretch's chance roll. null = a quiet stretch (walk and time only). */
+  encounter?: RoadEncounter | null;
+  /** 29w — quiet stretches in a row on this trip (a long trip is not all quiet). */
+  quietStretches?: number;
+}
+
+export type RoadEncounterKind =
+  | 'wildlife'
+  | 'traveler'
+  | 'meeting'
+  | 'thugs'
+  | 'camp'
+  | 'undead'
+  | 'monster'
+  | 'villain';
+
+/** 29w — a chance meeting on one stretch. Kind and level only; the writer names it. */
+export interface RoadEncounter {
+  kind: RoadEncounterKind;
+  level: number;
+  /** Leg index (legsDone) the roll was made on. */
+  stretch: number;
+  /** Area tier 3+ — wildlife there is not harmless. */
+  dangerous: boolean;
+  /** 29x — an uncommon spawn: a little tougher, slightly better loot, still the area level. */
+  rare?: boolean;
+  /** 29x — a camp that holds a mini-boss (a real fight through the combat engine). */
+  miniBoss?: boolean;
+  /** 29x — the fight on this stretch was opened; once it is over the meeting is dealt with. */
+  engaged?: boolean;
 }
 
 /** Premade settlement on the world map (29e). */
@@ -1046,6 +1102,29 @@ export interface NpcMemory {
   present?: boolean;
   /** 27f — where this NPC is. Seeded at New Game from the opening card; set when left behind; companions move with the player. Read-time presence comes from this (presentNpcRecords). */
   location?: string;
+  /** Generated townsfolk only: code-picked sheet, saved on first meet (see npcSheet.ts). */
+  sheet?: NpcSheet;
+  stance?: NpcStance;
+}
+
+/** A generated person's sheet. A part the place filter left no pick for is blank, never invented. */
+export interface NpcSheet {
+  job: string;
+  motive: string;
+  fear: string;
+  speech: string;
+  secret: string;
+  place: string;
+}
+
+/** How someone is now toward the player — moved only by an engine-recorded event; the sheet never changes. */
+export interface NpcStance {
+  now: 'grateful' | 'warm' | 'wary' | 'afraid' | 'hostile';
+  /** Why, in words the writer can use: "Jax freed them from the cell". */
+  cause: string;
+  turn: number;
+  /** Event ids already applied; the same event never applies twice. */
+  events: string[];
 }
 
 /** Location sheet — spatial facts for the current zone. */
@@ -1111,6 +1190,10 @@ export interface CirclingMemory {
   recentPlaces?: string[];
   /** 28o — action families of the last turns, newest last. */
   recentFamilies?: string[];
+  /** 29y — the turn the engine last committed a change of place (the writer is told whether this turn moved). */
+  movedTurn?: number;
+  /** 29y — the place the run started in (the first circling record). */
+  openingPlace?: string;
 }
 
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */

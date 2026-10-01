@@ -63,8 +63,17 @@ const EMPTY_CLAIMS =
 const LARGE_SPAN =
   /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)(?:\s+of)?\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|watchers|voices|souls|bodies)\b/gi;
 
-const GROUP_SPAN =
-  /\b(?:a\s+)?(?:scattered\s+|sparse\s+|modest\s+|small\s+|large\s+|meager\s+)?(?:group|crowd|gathering)s?\b(?:\s+of\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))?|(?:several|many)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
+// A bare group noun is a headcount only as a noun phrase ("a crowd", "the small group"); "hedges crowd
+// the track" is a verb and "the gathering dark" an adjective, so bare "gathering" needs "a" or "of <people>".
+const GROUP_PEOPLE_OF = '(?:\\s+of\\s+(?:the\\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))';
+const GROUP_ADJ = '(?:scattered\\s+|sparse\\s+|modest\\s+|small\\s+|large\\s+|meager\\s+)?';
+const GROUP_SPAN = new RegExp(
+  `\\b(?:a|the|this|that)\\s+${GROUP_ADJ}(?:group|crowd)s?\\b(?!\\s+of\\b)${GROUP_PEOPLE_OF}?`
+    + `|\\b(?:(?:a|the|this|that)\\s+)?${GROUP_ADJ}(?:group|crowd|gathering)s?${GROUP_PEOPLE_OF}`
+    + `|\\ba\\s+${GROUP_ADJ}gathering\\b(?!\\s+of\\b)`
+    + `|\\b(?:several|many)\\s+(?:people|figures|individuals|onlookers|bystanders)\\b`,
+  'gi'
+);
 
 const FEW_SPAN =
   /\b(?:a\s+)?(?:few|handful of)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
@@ -77,7 +86,7 @@ const SOLO_SPAN =
 
 /** Already-canonical warden phrases — never re-match / re-expand these. */
 const CANONICAL_CROWD_PHRASE =
-  /\bthe\s+(?:person|two people|few people|people|crowd)\s+here\b/gi;
+  /\bthe\s+(?:person|two people|few people|people|crowd)\s+here\b|\bthe\s+(?:one person|two of them|few people)\b/gi;
 
 const NUMBERED_SPAN = new RegExp(
   `\\b(\\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\s+(${PEOPLE_NOUN})\\b`,
@@ -98,15 +107,15 @@ export function canonicalCrowdPhrase(bucket: CrowdBucket): string {
     case 'empty':
       return 'no one';
     case 'solo':
-      return 'the person here';
+      return 'the one person';
     case 'pair':
-      return 'the two people here';
+      return 'the two of them';
     case 'few':
-      return 'the few people here';
+      return 'the few people';
     case 'group':
-      return 'the people here';
+      return 'the group';
     case 'large':
-      return 'the crowd here';
+      return 'the crowd';
   }
 }
 
@@ -352,8 +361,25 @@ export function listCrowdMentions(text: string): CrowdMention[] {
     if (spansCanonicalPhrase(text, m.index, span.length)) continue;
     found.push(mention(m.index, span, crowdBucket(n), n));
   }
-  found.sort((a, b) => a.index - b.index);
-  return found;
+  // Spans overlap ("the two figures" is both a pair and a numbered mention); keep the longest at each spot.
+  found.sort((a, b) => a.index - b.index || b.length - a.length);
+  const kept: CrowdMention[] = [];
+  for (const hit of found) {
+    const last = kept[kept.length - 1];
+    if (last && hit.index < last.index + last.length) continue;
+    kept.push(hit);
+  }
+  return kept;
+}
+
+const COUNT_PEOPLE_NOUN = new RegExp(`\\b(?:${PEOPLE_NOUN})\\b`, 'i');
+
+/** The span states how many people are here: a number, dozens/hundreds, or a gathering of named people-nouns. */
+function statesHeadcount(hit: CrowdMention): boolean {
+  if (/\d|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety)\b/i.test(hit.text)) {
+    return true;
+  }
+  return COUNT_PEOPLE_NOUN.test(hit.text);
 }
 
 function applyCase(sample: string, replacement: string): string {
@@ -442,22 +468,17 @@ export function scrubInventedCrowdSize(
     return normalizeCrowdRewriteArtifacts(next);
   }
 
-  if (trackedCrowdSize >= 20) {
-    const mentions = listCrowdMentions(next);
-    if (!mentions.some((x) => x.bucket === 'solo' || x.bucket === 'pair' || x.bucket === 'few')) {
-      return normalizeCrowdRewriteArtifacts(next);
-    }
-  }
-
   const target = crowdBucket(trackedCrowdSize);
   const mentions = listCrowdMentions(next);
-  if (!mentions.length) return normalizeCrowdRewriteArtifacts(next);
+  if (!mentions.length || target === 'empty') return normalizeCrowdRewriteArtifacts(next);
 
   let rebuilt = next;
   for (const hit of [...mentions].reverse()) {
-    if (hit.bucket === target) continue;
-    if (trackedCrowdSize >= 20 && hit.bucket === 'group') continue;
-    if (trackedCrowdSize >= 20 && hit.bucket === 'large') continue;
+    // Only an inflated gathering shrinks. One to four people in a sentence are people the
+    // sentence acts on ("the two figures standing nearest"); rewriting them deletes them.
+    // A bare "the crowd" states no count, and nothing is ever rewritten to "no one".
+    if (hit.bucket !== 'group' && hit.bucket !== 'large') continue;
+    if (hit.count <= trackedCrowdSize || !statesHeadcount(hit)) continue;
     // Never expand a span that already ends with " here" into another "… here"
     if (/\bhere\b/i.test(hit.text) && canonicalCrowdPhrase(target).includes('here')) {
       continue;

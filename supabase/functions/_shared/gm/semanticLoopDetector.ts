@@ -15,6 +15,7 @@
 
 import type { GameState, EngineMode } from './types.ts';
 import { normalizeProseTokens, tokenJaccard } from './beatFingerprint.ts';
+import { splitProseSentences } from './proseSentences.ts';
 
 export interface SemanticIntent {
   /** Canonical action type (inspect, ask, listen, travel, wait, attack, etc.) */
@@ -566,10 +567,7 @@ function wordCount(text: string): number {
 
 /** Split story prose into sentences. Short fragments stay attached to the nearest period. */
 export function splitStorySentences(text: string): string[] {
-  const cleaned = (text ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  if (!cleaned) return [];
-  const parts = cleaned.match(/[^.!?]+[.!?]+(?:["”'])?|[^.!?]+$/g) ?? [cleaned];
-  return parts.map((s) => s.trim()).filter((s) => s.length > 0);
+  return splitProseSentences((text ?? '').replace(/<[^>]+>/g, ' '));
 }
 
 export function isSubstantialSentence(sentence: string): boolean {
@@ -708,13 +706,40 @@ function recentQuoteKeys(recentBeats: string[]): Set<string> {
   return keys;
 }
 
+/** The spoken words in one sentence, also when the sentence split fell inside the quote. */
+function spokenWordsIn(sentence: string, openQuote: boolean): string {
+  const s = sentence ?? '';
+  if (openQuote) {
+    const close = s.search(/[”"]/);
+    return quoteKey(close >= 0 ? s.slice(0, close) : s);
+  }
+  const open = s.search(/[“"]/);
+  if (open < 0) return '';
+  const rest = s.slice(open + 1);
+  const close = rest.search(/[”"]/);
+  return quoteKey(close >= 0 ? rest.slice(0, close) : rest);
+}
+
+function quoteOpenAfter(sentence: string, openQuote: boolean): boolean {
+  const marks = ((sentence ?? '').match(/["“”]/g) ?? []).length;
+  return marks % 2 === 1 ? !openQuote : openQuote;
+}
+
 /** Sentences of `draft` already told in a recent GM beat — anywhere in the beat, or a spoken line said again. */
 export function recycledSentencesIn(draft: string, recentBeats: string[], lastK = COLLAGE_LOOKBACK): string[] {
   const beats = (recentBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-lastK);
   if (!beats.length) return [];
   const prior = beats.flatMap((b) => splitStorySentences(b));
   const quotes = recentQuoteKeys(beats);
+  const priorSpoken = beats
+    .flatMap((b) => [...String(b).matchAll(/[“"]([^”"]+)[”"]/g)].map((m) => quoteKey(m[1] ?? '')))
+    .join(' | ');
+  let openQuote = false;
   return splitStorySentences(draft).filter((s) => {
+    const spoken = spokenWordsIn(s, openQuote);
+    openQuote = quoteOpenAfter(s, openQuote);
+    // A line the person has not said before is new, however the look before it reads.
+    if (spoken.split(' ').filter(Boolean).length >= 2 && !priorSpoken.includes(spoken)) return false;
     if (prior.some((p) => sentenceMatches(s, p))) return true;
     for (const m of s.matchAll(QUOTE_SPAN_RE)) {
       if (quotes.has(quoteKey(m[1] ?? ''))) return true;
@@ -730,9 +755,11 @@ export function recycledSentencesIn(draft: string, recentBeats: string[], lastK 
 export function trimRecycledSentences(
   draft: string,
   recentBeats: string[],
-  minKeep = 2
+  minKeep = 2,
+  /** This turn's own event (the move the player made) is told again on purpose. */
+  isThisTurnsEvent: (sentence: string) => boolean = () => false
 ): { text: string; dropped: string[] } {
-  const recycled = new Set(recycledSentencesIn(draft, recentBeats));
+  const recycled = new Set(recycledSentencesIn(draft, recentBeats).filter((s) => !isThisTurnsEvent(s)));
   if (!recycled.size) return { text: draft, dropped: [] };
   const sentences = splitStorySentences(draft);
   const kept = sentences.filter((s) => !recycled.has(s));

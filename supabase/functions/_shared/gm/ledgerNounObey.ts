@@ -13,6 +13,7 @@ import {
   type CompletedEventPacket,
 } from './completedEventPacket.ts';
 import { openingCastNames } from './openingEstablishment.ts';
+import { splitProseSentences } from './proseSentences.ts';
 
 const PERSON_INVENT =
   /\b((?:High Chanter|Brother|Sister|Father|Mother|Captain|Envoy)\s+[A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+)?|[A-Z][a-z'-]+\s+[A-Z][a-z'-]+)\b/g;
@@ -28,7 +29,7 @@ const PRESENCE_VERB =
   /\b(?:stood|stands|watched|watching|arrived|entered|stepped behind|behind you|beside you|arms folded)\b/i;
 
 function splitSentences(text: string): string[] {
-  return (text ?? '').split(/(?<=[.!?])\s+/).filter((s) => s.trim());
+  return splitProseSentences(text ?? '').filter((s) => s.trim());
 }
 
 function tidy(text: string): string {
@@ -41,18 +42,32 @@ function tidy(text: string): string {
 }
 
 export function inventedPersonNamesNotOnAllowlist(prose: string, allowlist: string[]): string[] {
-  const body = (prose ?? '').trim();
+  let body = (prose ?? '').trim();
   if (!body) return [];
+  // Names the ledger holds are not inventions, however the prose glues them ("The Salt Road Waystation").
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const heldNames = allowlist.filter((n) => n && /[A-Z]/.test(n)).sort((a, b) => b.length - a.length);
+  for (const held of heldNames) {
+    body = body.replace(new RegExp(`\\b${esc(held)}\\b`, 'gi'), '·');
+  }
+  // Mention polish shortens a held name to one of its words ("Brannoc Rudd" → "Brannoc").
+  const heldWords = new Set(heldNames.flatMap((n) => n.split(/\s+/)).filter((w) => /^[A-Z][\w'-]{2,}$/.test(w)));
+  for (const word of heldWords) {
+    body = body.replace(new RegExp(`\\b${esc(word)}\\b`, 'g'), '·');
+  }
   const found: string[] = [];
   const seen = new Set<string>();
   const re = new RegExp(PERSON_INVENT.source, 'g');
   let m: RegExpExecArray | null;
   while ((m = re.exec(body))) {
     const name = (m[1] ?? '').trim();
-    if (!name || seen.has(name.toLowerCase())) continue;
     const first = name.split(/\s+/)[0]?.toLowerCase() ?? '';
-    const atStart = m.index === 0 || /[\n.!?]\s*$/.test(body.slice(Math.max(0, m.index - 8), m.index));
-    if (atStart && SENTENCE_START_SKIP.has(first) && !/\s/.test(name)) continue;
+    // A grammar word ("The", "Then", "She") is never the first half of a person's name: scan on from the next word.
+    if (SENTENCE_START_SKIP.has(first)) {
+      re.lastIndex = m.index + m[0].indexOf(' ') + 1;
+      continue;
+    }
+    if (!name || seen.has(name.toLowerCase())) continue;
     if (mentionAllowlistHas(allowlist, name)) continue;
     seen.add(name.toLowerCase());
     found.push(name);
@@ -105,9 +120,10 @@ export function obeyLedgerNouns(
   if (!next) return { prose: '', notes };
 
   const hallTalk = packet?.verb === 'spoke' || packet?.outcome === 'spoke';
-  const allowlist = packet?.allowlist?.length
-    ? packet.allowlist
-    : compileNounAllowlist(state, [], { hallTalk });
+  const allowlist = [
+    ...(packet?.allowlist?.length ? packet.allowlist : compileNounAllowlist(state, [], { hallTalk })),
+    ...(state.inventory ?? []).map((item) => item.name).filter(Boolean),
+  ];
   const cast = openingCastNames(state);
 
   const beforePermit = next;

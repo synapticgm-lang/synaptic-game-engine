@@ -13,10 +13,23 @@ export function cleanPlaceLabel(place: string): string {
     .trim() || 'here';
 }
 
+const placeKey = (s: string | undefined) =>
+  (s ?? '').toLowerCase().replace(/^\s*(?:the|a|an)\s+/, '').replace(/\s+/g, ' ').trim();
+
+/** The location sheet names this place (same place or one inside it), not one the player has left. */
+function sheetIsHere(sheet: string, here: string): boolean {
+  const a = placeKey(sheet);
+  const b = placeKey(here);
+  return !!a && !!b && (a === b || a.includes(b) || b.includes(a));
+}
+
 export function playerFacingLocation(state: GameState): string {
+  const sheet = state.locationSheet?.name?.trim() ?? '';
+  const here = state.currentLocation?.trim() ?? '';
+  // 29z4 — after a move the sheet can still hold the place left; the place just entered wins.
   const raw =
-    state.locationSheet?.name
-    || state.currentLocation
+    (sheet && (!here || sheetIsHere(sheet, here)) ? sheet : here)
+    || sheet
     || state.activeDungeon?.dungeonName
     || '';
   const name = stripTimeClause(raw.trim());

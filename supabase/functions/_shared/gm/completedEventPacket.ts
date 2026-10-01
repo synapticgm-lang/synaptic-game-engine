@@ -438,6 +438,21 @@ function slugRefId(raw: string): string {
     .slice(0, 40);
 }
 
+/**
+ * A ref the writer may paint as a person or a place is a name or a short noun phrase. A card line
+ * that is a sentence ("alone on the stone outline of a building that is gone"), a denial
+ * ("Nobody here — only a footprint") or deixis ("the thief beside you") is not a thing to paint.
+ */
+export function isPaintableRefLabel(label: string): boolean {
+  const t = (label ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^(?:no|nobody|no one|nothing|none|alone|only|empty)\b/i.test(t)) return false;
+  if (/\b(?:you|your|yours|yourself|me|my)\b/i.test(t)) return false;
+  if (/\b(?:that|who|which)\s+(?:is|are|was|were|has|have|had)\b/i.test(t)) return false;
+  if (/\s[—–-]\s|[;:]/.test(t)) return false;
+  return t.split(' ').length <= 8;
+}
+
 const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   place: ['place'],
   person: ['speaker', 'actor', 'addressed'],
@@ -468,6 +483,7 @@ export function compileRefEnum(
   const add = (id: string, display: string, klass: LedgerRefClass) => {
     const label = (display ?? '').replace(/\s+/g, ' ').trim();
     if (!label || label.length < 2) return;
+    if (id !== 'here' && (klass === 'person' || klass === 'place' || klass === 'companion') && !isPaintableRefLabel(label)) return;
     const key = id.toLowerCase();
     const dkey = label.toLowerCase().replace(/^(?:the|a|an)\s+/, '');
     if (seenId.has(key) || seenDisplay.has(dkey)) return;

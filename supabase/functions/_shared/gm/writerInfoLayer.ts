@@ -4,9 +4,12 @@ import { playerFacingLocation } from './locationName.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
 import { placeCardFor } from './outdoorHubs.ts';
+import { exitPlaceNames } from './placeNames.ts';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords.ts';
 import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson.ts';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm.ts';
+import { gateFactLines } from './skillGates.ts';
+import { skillRanksOf } from './skillRanks.ts';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
@@ -124,8 +127,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);
   }
-  const sheetExits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
-  const exits = sheetExits.length ? sheetExits : card?.exits ?? [];
+  const exits = exitPlaceNames(state);
   if (exits.length) {
     here.push(`Exits: ${exits.slice(0, 5).join(', ')}`);
   }
@@ -133,7 +135,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   const people = presentNpcRecords(state);
   const unnamed = Array.from(new Set([...listedAnonymousRoles(state), ...storyMinorRoles(state)]));
   const peopleSection = people.length
-    ? `People here:\n${formatNpcMemoriesForPrompt(people, 4)}`
+    ? `People here:\n${formatNpcMemoriesForPrompt(people, 4, state.character?.name)}`
     : unnamed.length
       ? `People here: no one named. Unnamed local${unnamed.length > 1 ? 's' : ''} who may be about: ${unnamed.map((r) => `${/^[aeiou]/i.test(r) ? 'an' : 'a'} ${r}`).join(', ')} (may speak; give no name).`
       : '';
@@ -146,9 +148,13 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
     ? `Threat building (show a sign before the foe appears):\n${state.arcDirector.pendingTelegraph.trim()}`
     : '';
 
-  const roomSection = state.activeDungeon
-    ? formatHiddenRoomLedger(state.activeDungeon, { factsOnly: true })
-    : '';
+  const gates = gateFactLines(state);
+  const roomSection = [
+    state.activeDungeon
+      ? formatHiddenRoomLedger(state.activeDungeon, { factsOnly: true, ranks: skillRanksOf(state.character) })
+      : '',
+    gates.length ? `Locks:\n${gates.join('\n')}` : '',
+  ].filter(Boolean).join('\n');
 
   const ledgerSection = buildGroundTruthLedger(state, { compact: true });
 

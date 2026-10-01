@@ -21,8 +21,9 @@ export interface InventoryCapacity {
 
 /**
  * Kit names are catalog labels, sometimes whole clauses ("The clothes you had on when the light took you").
- * Writer-facing labels must read mid-sentence: clause labels shrink to "your <head noun>",
- * a leading article drops to lowercase.
+ * Writer-facing labels must read mid-sentence: clause labels shrink to the bare head noun (the painter
+ * adds the PC's possessive, so third-person prose never reads "your clothes"), a leading article drops
+ * to lowercase.
  */
 export function kitRefDisplay(name: string): string {
   const clean = (name ?? '').replace(/\s+/g, ' ').trim();
@@ -30,7 +31,7 @@ export function kitRefDisplay(name: string): string {
     /^(?:(?:the|a|an|your)\s+)?(.+?)\s+(?:you|that|which|who|when|where|from|brought|carried|worn)\b/i
   );
   if (clause && clause[1] && clause[1].split(' ').length <= 3) {
-    return `your ${clause[1].toLowerCase()}`;
+    return clause[1].toLowerCase();
   }
   return clean.replace(/^(The|A|An)\s+/, (a) => a.toLowerCase());
 }

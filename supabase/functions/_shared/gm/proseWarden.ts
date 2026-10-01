@@ -26,6 +26,7 @@ import {
 } from './combatAuthority.ts';
 import { scrubMetaRecoveryStrings } from './diegeticFallbacks.ts';
 import { obeyLedgerNouns } from './ledgerNounObey.ts';
+import { splitProseSentences } from './proseSentences.ts';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority.ts';
 
@@ -96,6 +97,8 @@ export type ProseWardenContext = {
   recentlyClearedEncounter?: boolean;
   /** Auto-fight / terminal last kill — deny-loot scrub. */
   lastKill?: LastKill | null;
+  /** Turn being narrated; a kill the engine committed this turn is the beat, not a re-engage. */
+  currentTurn?: number;
   /** Live or just-cleared enemy name — humanoid body lock. */
   enemyName?: string;
   /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
@@ -326,19 +329,20 @@ export function scrubChoicePadPersonNames(text: string): string {
   let next = text;
   const PAD =
     'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain|Rasped|Easy';
+  // A pad word is a name only when written as one (capitalised or quoted); "named their price" is a verb.
   next = next.replace(
     new RegExp(
-      `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
-      'gi'
+      `\\b(?:[Tt]he\\s+)?(?:Scattered\\s+Scale\\s+)?(?:[Kk]nown\\s+as|[Cc]alled|[Nn]amed)\\s+(?:[“"'](?:${PAD})[”"']|(?:${PAD})\\b)`,
+      'g'
     ),
     'a nearby figure'
   );
   next = next.replace(
-    new RegExp(`[“"'](${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])+`, 'gi'),
+    new RegExp(`[“"'](${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])+`, 'g'),
     'other onlookers'
   );
   next = next.replace(new RegExp(`\\bthe figures of\\s+[“"'](?:${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])*`, 'gi'), 'the figures nearby');
-  next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'gi'), 'Approach a nearby figure');
+  next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'g'), 'Approach a nearby figure');
   return tidyClauses(next);
 }
 
@@ -467,8 +471,9 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
     new RegExp(`\\b(?:the\\s+)?(?:${DEIXIS})\\s+half-hidden\\b`, 'g'),
     'someone half-hidden'
   );
+  // Sentence case is not a noun: "Ahead, the lane bent" opens a sentence with the adverb.
   next = next.replace(
-    new RegExp(`\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'g'),
+    new RegExp(`(?<![.!?"“”\\n]\\s{0,3})(?<!^\\s{0,3})\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'g'),
     'someone nearby'
   );
   // P0-2 Batch 02f: Only rewrite CAPITALIZED deixis-as-noun in final pattern
@@ -603,7 +608,6 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   next = next.replace(/\bthe Don\b/g, 'the vendor');
   next = next.replace(/\bthe Cup\b/g, 'the inn');
   next = next.replace(/\bthe Now\b/g, 'the moment');
-  next = next.replace(/\bthe traveler\b/g, 'someone nearby');
   next = next.replace(/\btake Scattered Scale that\b/gi, 'take the stair that');
   next = next.replace(
     /\b(?:somewhere|anywhere|everywhere)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
@@ -846,11 +850,8 @@ export function scrubFigurePlaceholder(text: string, alone = false): string {
     .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
     .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
     .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, alone ? 'you carry the sealed bag' : 'you carry the sign')
-    .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
-    .replace(/\bthe\s+a\s+figure\b/gi, personSlot)
-    .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
-      /glowing/i.test(hit) ? (alone ? 'the glowing panel' : personSlot) : personSlot
-    );
+    .replace(/\bthe\s+a\s+figure\b/gi, personSlot);
+  // A plain "a figure" is the writer's own passer-by; it stays.
 }
 
 /** UI / journal verbs must not be spoken in-world. */
@@ -908,29 +909,11 @@ export function scrubStrangerArtifact(
   presentNames: string[] = [],
   alone = false
 ): string {
-  if (!text || !/\bthe stranger\b/i.test(text)) return text;
-
-  const namedPerson = presentNames.find(
-    (n) =>
-      n.length >= 2
-      && !/\b(?:you|your|panel|system|status)\b/i.test(n)
-      && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(n)
-  );
-
-  const replacement = (() => {
-    if (namedPerson) return namedPerson;
-    if (alone) return 'the panel';
-    return 'the stranger';
-  })();
-
-  if (replacement === 'the stranger') return text;
-
-  let next = text;
-  const possessiveRepl = namedPerson ? `${namedPerson}'s` : `${replacement}'s`;
-  next = next.replace(/\bthe stranger(?:'s|’s)\b/gi, possessiveRepl);
-  next = next.replace(/\bthe stranger\b/gi, replacement);
-
-  return next;
+  // "The stranger" is somebody unnamed. Code cannot tell which present person that is, if any,
+  // so it is never rewritten into a named person (or the panel).
+  void presentNames;
+  void alone;
+  return text;
 }
 
 /**
@@ -1192,11 +1175,12 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
   // Allow if time actually changed
   if (prevTime && prevTime !== 'unknown' && currentTime !== prevTime) return text;
   
-  // Scrub invented time skip
-  return text.replace(
-    /\b(hours? (?:later|pass(?:es|ed)?)|next (?:morning|day)|(?:that|the) (?:evening|afternoon))\b/gi,
-    'moments later'
-  ).replace(
+  // Scrub invented time skip. "the evening light" names the hour it already is, so only a
+  // clause-leading "That evening," is a skip.
+  return text.replace(/\bhours? (?:later|pass(?:es|ed)?)\b/gi, 'moments later')
+    .replace(/\b(?:the\s+)?next (?:morning|day)\b/gi, 'a moment later')
+    .replace(/(^|[.!?]\s+)(?:that|by) (?:evening|afternoon|nightfall)\s*,/gi, (_m, lead: string) => `${lead}Moments later,`)
+    .replace(
     /\b(much|some) (?:time|while) (?:later|passes)\b/gi,
     'a moment later'
   );
@@ -1516,12 +1500,17 @@ export function scrubNamedCastAsObject(text: string, namedPeople: string[] = [])
 }
 
 /** Lock C — dead foe must not re-engage or greet as a living NPC without a new spawn. */
-export function scrubDeadFoeReengage(text: string, lastKill?: LastKill | null, liveEncounter?: boolean): string {
+export function scrubDeadFoeReengage(
+  text: string,
+  lastKill?: LastKill | null,
+  liveEncounter?: boolean,
+  currentTurn?: number
+): string {
   if (!text || !lastKill?.name || liveEncounter) return text;
   if (lastKill.outcome !== 'victory') return text;
+  if (currentTurn != null && lastKill.turn >= currentTurn) return text;
   const replacement = `The fallen ${lastKill.name} lies where you left them.`;
-  const next = text
-    .split(/(?<=[.!?])\s+/)
+  const next = splitProseSentences(text)
     .map((sent) => (shouldRewriteDeadFoeSentence(sent, lastKill) ? replacement : sent))
     .join(' ');
   return tidyClauses(next);
@@ -1540,9 +1529,7 @@ export function scrubSaferSceneMeta(text: string): string {
   );
   next = next.replace(/\bI scan(?:\s+\w+){0,8}\s+before committing\b[,.]?/gi, '');
   next = next.replace(/\bchoose a safer scene action\b[,.]?/gi, '');
-  next = next.replace(/\bif none is present\b[,.]?/gi, '');
   next = next.replace(/\bstay alert and choose a safer\b[\s\S]{0,24}/gi, '');
-  next = next.replace(/\bbefore committing\b/gi, '');
   return tidyClauses(next);
 }
 
@@ -1601,7 +1588,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   );
   next = scrubDestroyedPyoaItems(next, ctx?.destroyedItems);
   next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
-  next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
+  next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true, ctx?.currentTurn);
   next = scrubNpcIntroRepeat(next, ctx?.npcMemories);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubSlotGlue(
