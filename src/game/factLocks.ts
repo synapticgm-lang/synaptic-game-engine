@@ -1,5 +1,6 @@
 import type { GameState } from './types';
 import { remainingDungeonMobs } from './dungeonPresence';
+import { splitProseSentences } from './proseSentences';
 
 export type FactLockKind = 'clock' | 'silence' | 'kit' | 'stub' | 'weapon' | 'cleared';
 
@@ -39,6 +40,10 @@ const INVENTED_SWORD =
 
 const DUNGEON_CLEARED =
   /\b(?:micro-?)?dungeon has been cleared|no active threats remain|dungeon (?:is|was) (?:cleared|finished|done)\b/i;
+
+function holdsSword(state: GameState): boolean {
+  return (state.inventory ?? []).some((i) => /sword/i.test(i.name ?? ''));
+}
 
 function clockAllowsSkip(state: GameState): boolean {
   const day = Number(state.worldLedger?.clock?.day ?? 0);
@@ -94,8 +99,7 @@ export function detectFactLockViolations(
   if (REFUSAL_CLOTHES.test(prose) && /clothing|streetwear|wearing/i.test(prose)) {
     found.push({ kind: 'kit', reason: 'A refusal is not a clothing name.' });
   }
-  const hasSwordItem = (state.inventory ?? []).some((i) => /\bsword\b/i.test(i.name));
-  if (!hasSwordItem && INVENTED_SWORD.test(prose)) {
+  if (!holdsSword(state) && INVENTED_SWORD.test(prose)) {
     found.push({
       kind: 'weapon',
       reason: 'Equipped kit has no sword. Narrate the real weapon name only.',
@@ -112,8 +116,8 @@ export function detectFactLockViolations(
 }
 
 function splitSentences(prose: string): string[] {
-  const chunks = prose.match(/[^.!?]+[.!?]+|[^.!?]+$/g);
-  return (chunks ?? [prose]).map((s) => s.trim()).filter(Boolean);
+  const chunks = splitProseSentences(prose);
+  return chunks.length ? chunks : [prose.trim()].filter(Boolean);
 }
 
 function lockSentence(state: GameState, sentence: string, playerAction: string, full: string): string | null {
@@ -121,8 +125,7 @@ function lockSentence(state: GameState, sentence: string, playerAction: string, 
   if (!playerAskedKit(playerAction) && KIT_RECAP.test(sentence)) return null;
   if (STUB_MARKERS.test(sentence)) return null;
   if (REFUSAL_CLOTHES.test(sentence) && /clothing|streetwear|wearing/i.test(sentence)) return null;
-  const hasSwordItem = (state.inventory ?? []).some((i) => /\bsword\b/i.test(i.name));
-  if (!hasSwordItem && INVENTED_SWORD.test(sentence)) return null;
+  if (!holdsSword(state) && INVENTED_SWORD.test(sentence)) return null;
   if (remainingDungeonMobs(state).alive > 0 && DUNGEON_CLEARED.test(sentence)) return null;
 
   let next = sentence;
@@ -160,9 +163,14 @@ function sanitizeSystemBlock(block: string): string {
 export function applyFactLocks(
   state: GameState,
   narrative: string,
-  playerAction: string
+  playerAction: string,
+  /** Writer turns keep the writer's sentences; the warden logs the hits as notes. */
+  opts: { keepWriterProse?: boolean } = {}
 ): string {
   const parts = narrative.split(/(<system>[\s\S]*?<\/system>)/gi);
+  if (opts.keepWriterProse) {
+    return parts.map((part) => (/^<system>/i.test(part) ? sanitizeSystemBlock(part) : part)).join('');
+  }
   const next = parts
     .map((part) => {
       if (/^<system>/i.test(part)) return sanitizeSystemBlock(part);

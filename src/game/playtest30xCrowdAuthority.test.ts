@@ -71,9 +71,9 @@ describe('playtest30x — site-wide crowd presence authority', () => {
     const largeLine = 'A hundred people cheer.';
     const severalLine = 'Several onlookers press closer.';
 
-    expect(scrubInventedCrowdSize(groupLine, 0, false)).not.toMatch(/group of individuals/i);
-    expect(scrubInventedCrowdSize(pairLine, 1, true)).toMatch(/the one person/i);
-    expect(scrubInventedCrowdSize(pairLine, 1, true)).not.toMatch(/two figures/i);
+    // 29z9c — nothing is rewritten to "no one"; one to four people in a sentence stay as written.
+    expect(scrubInventedCrowdSize(groupLine, 0, false)).toBe(groupLine);
+    expect(scrubInventedCrowdSize(pairLine, 1, true)).toBe(pairLine);
 
     const pairFromGroup = scrubInventedCrowdSize(groupLine, 2, true);
     expect(pairFromGroup).toMatch(/the two of them/i);
@@ -81,14 +81,12 @@ describe('playtest30x — site-wide crowd presence authority', () => {
     expect(scrubInventedCrowdSize(severalLine, 2, true)).not.toMatch(/several/i);
     expect(scrubInventedCrowdSize(largeLine, 2, true)).not.toMatch(/hundred people/i);
 
-    const groupFromPair = scrubInventedCrowdSize(pairLine, 5, true);
-    expect(groupFromPair).toMatch(/the group/i);
-    expect(groupFromPair).not.toMatch(/two figures/i);
-    expect(scrubInventedCrowdSize(fewLine, 5, true)).not.toMatch(/a few people/i);
+    expect(scrubInventedCrowdSize(pairLine, 5, true)).toBe(pairLine);
+    expect(scrubInventedCrowdSize(fewLine, 5, true)).toBe(fewLine);
 
     const largeKeepsCrowd = scrubInventedCrowdSize(largeLine, 20, true);
     expect(largeKeepsCrowd).toMatch(/hundred people/i);
-    expect(scrubInventedCrowdSize(pairLine, 20, true)).not.toMatch(/two figures/i);
+    expect(scrubInventedCrowdSize(pairLine, 20, true)).toBe(pairLine);
   });
 
   it('does not rewrite object pairs or the two of you', () => {
@@ -107,8 +105,8 @@ describe('playtest30x — site-wide crowd presence authority', () => {
     const n = crowdSizeForWarden(state, mixed);
     expect(n).toBe(5);
     const sameBeat = applyProseWarden(mixed, { crowdSize: n, crowdPresent: true });
-    expect(sameBeat).not.toMatch(/two figures/i);
-    expect(sameBeat).toMatch(/people here|group of individuals/i);
+    expect(sameBeat).toMatch(/two figures/i);
+    expect(sameBeat).toMatch(/group of individuals/i);
   });
 
   it('harvest locks two / group and refuses shrink or grow without enter/leave', () => {

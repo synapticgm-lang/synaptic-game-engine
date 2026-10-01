@@ -3056,7 +3056,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sanitizedInput,
         intent,
         establishedProseForScrub,
-        engineFact
+        engineFact,
+        { keepWriterProse: !useMud && !authoredBook }
       );
       const events = warden.events;
       // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).
@@ -3197,7 +3198,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ? filterHijackChoices(parsedChoices, turnMandate.focusKeywords)
         : parsedChoices;
       // Keep the GM's story. Do not replace it with a local template.
-      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
+      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput, { keepWriterProse: !useMud && !authoredBook });
       const groundedAfterResolve = focusFiltered.filter((choice) =>
         isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
       );
@@ -3462,7 +3463,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         });
       }
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
-      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
+      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput, { keepWriterProse: !useMud && !authoredBook });
       if (warden.continuityBreak || detectSceneContradiction(liveCurrent.sceneFacts, cleanText)) {
         cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
         warden.notes.push('Continuity break rewritten locally (crowd/noise kept).');
@@ -3668,6 +3669,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           hookLock: hookLockForWarden(workingState, cleanText),
           npcMemories: workingState.npcMemories ?? liveCurrent.npcMemories,
           lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,
+          currentTurn: liveCurrent.turn,
+          keepWriterProse: !useMud && !authoredBook,
           enemyName:
             workingState.activeEncounter?.name
             ?? liveCurrent.activeEncounter?.name
@@ -5503,6 +5506,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         lastKill: result.victory
           ? { name: enemy.name, outcome: 'victory', turn: liveCurrent.turn + 1, remains: true }
           : liveCurrent.sceneFacts?.lastKill,
+        currentTurn: liveCurrent.turn + 1,
       });
 
       const newTurn = liveCurrent.turn + 1;

@@ -210,7 +210,10 @@ export function groundedWeaponNames(state: Pick<GameState, 'inventory' | 'sceneF
     if (t) names.push(t);
   };
   for (const item of state.inventory ?? []) {
-    if (/\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i.test(item.name)) {
+    if (
+      item.itemType === 'weapon' ||
+      /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i.test(item.name)
+    ) {
       push(item.name);
     }
   }

@@ -20,6 +20,7 @@ import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
+import { groundedWeaponNames } from './searchContinuity';
 import { isChromePersonToken } from './chromeAuthority';
 import { presentNpcRecords } from './npcRecords';
 import { compileRefEnum } from './completedEventPacket';
@@ -72,7 +73,9 @@ export async function runWarden(
   intent?: PlayerIntent,
   establishedProse = '',
   /** 28g — the engine's resolved result for the action (fight / flee / parley / rest receipts). */
-  engineFact = ''
+  engineFact = '',
+  /** Writer turns keep the writer's words; constraint hits become notes. */
+  opts: { keepWriterProse?: boolean } = {}
 ): Promise<WardenResult> {
   const notes: string[] = [];
   const systemLogExtra: string[] = [];
@@ -287,7 +290,9 @@ export async function runWarden(
       (n) => typeof n === 'string' && n.trim().length >= 2 && !isChromePersonToken(n)
     ),
     lastKill: state.sceneFacts?.lastKill,
-    groundedWeapons: undefined,
+    currentTurn: state.turn,
+    keepWriterProse: opts.keepWriterProse === true,
+    groundedWeapons: groundedWeaponNames(state),
     playerName: state.character?.name,
     hasLiveEncounter:
       !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter,
@@ -307,7 +312,7 @@ export async function runWarden(
     : applyProseWarden(scrub.text, wardenCtx);
   const constraints = buildBindingConstraints(state);
   const constraintHits = detectConstraintViolations(polishedBase, constraints);
-  const polished = constraintHits.length
+  const polished = constraintHits.length && !opts.keepWriterProse
     ? repairConstraintViolations(polishedBase, constraints)
     : polishedBase;
   if (constraintHits.length) {

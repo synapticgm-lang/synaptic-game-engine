@@ -362,6 +362,10 @@ export type TurnTelemetry = {
   engineFact?: string;
   /** 28g — diagnostics: raw writer reply (first 600 chars), token line verdicts, accept path. */
   writerRawHead?: string;
+  /** Full raw writer reply, so a draft-vs-final check can see every line. */
+  writerRaw?: string;
+  /** Text after each post-writer step that changed it (render first, final last). */
+  stageTrace?: { stage: string; text: string }[];
   tokenVerdicts?: string[];
   tokenPath?: string;
   retryTokenVerdicts?: string[];
@@ -1272,6 +1276,10 @@ Do NOT print dice notation or CODE ENFORCED.
 
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
   let writerTurn: WriterTurnResult | null = null;
+  const stageTrace: { stage: string; text: string }[] = [];
+  const traceStage = (stage: string, text: string) => {
+    if (stageTrace[stageTrace.length - 1]?.text !== text) stageTrace.push({ stage, text });
+  };
   const writerPacket = arcState.completedEvent ?? preparedEvent.packet;
   if (!useMud && !authoredBook && writerPacket) {
     writerTurn = runWriterTurn({
@@ -1279,6 +1287,8 @@ Do NOT print dice notation or CODE ENFORCED.
       packet: writerPacket,
       check: { state: arcState, playerInput, intent, engineFact, previousGm: '' },
     });
+    traceStage('render', writerTurn.firstDraft);
+    traceStage('finishCommittedProse+spoken', writerTurn.prose);
     gmText = writerTurn.prose;
     if ((writerTurn.path === 'json' || writerTurn.path === 'json-partial') && writerTurn.refs?.length && arcState.completedEvent) {
       arcState = {
@@ -1433,9 +1443,12 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   const rawEvents = parseActionTags(gmText);
-  const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
+  const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact, {
+    keepWriterProse: !useMud && !authoredBook,
+  });
   const events = warden.events;
   const narrativeSource = useMud ? gmText : (warden.scrubbedNarrative ?? gmText);
+  traceStage('runWarden', narrativeSource);
   const structural = applyStructuralEvents(arcState, events, {
     strictEncumbrance: settings.strictEncumbrance === true,
     playerInput,
@@ -1443,12 +1456,18 @@ Do NOT print dice notation or CODE ENFORCED.
   let working = structural.state;
 
   let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)));
+  traceStage('stripTags+choiceList', cleanText);
   cleanText = postFilterGmOutput(cleanText, settings, {
     nsfw: isNsfwCampaign(getCampaignBibleById(meta.bibleId)),
   });
+  traceStage('postFilterGmOutput', cleanText);
   cleanText = ensureTurnProse(cleanText, playerInput);
-  cleanText = applyFactLocks(state, cleanText, playerInput);
-  cleanText = enforcePerspective(cleanText, settings, state.character.name);  if (arcResult?.beatCommitted) {
+  traceStage('ensureTurnProse', cleanText);
+  cleanText = applyFactLocks(state, cleanText, playerInput, { keepWriterProse: !useMud && !authoredBook });
+  traceStage('applyFactLocks', cleanText);
+  cleanText = enforcePerspective(cleanText, settings, state.character.name);
+  traceStage('enforcePerspective', cleanText);
+  if (arcResult?.beatCommitted) {
     validateProseAgainstBeat(
       beatCommitFromReceipts({
         type: arcResult.systemReceipts.some((r) => /^Encounter:/i.test(r))
@@ -1497,12 +1516,16 @@ Do NOT print dice notation or CODE ENFORCED.
     namedCast: openingCastNames(working),
     ledgerState: working,
     lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
+    currentTurn: state.turn,
+    keepWriterProse: !useMud && !authoredBook,
     hookLock: hookLockForWarden(working, cleanText),
     npcMemories: working.npcMemories ?? state.npcMemories,
   });
+  traceStage('applyProseWarden', cleanText);
   {
     const prefaced = ensureEncounterSpawnPreface(working, cleanText);
     cleanText = prefaced.prose;
+    traceStage('ensureEncounterSpawnPreface', cleanText);
     working = prefaced.state;
     if (prefaced.spawnReceipt) {
       working = {
@@ -1534,7 +1557,9 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   cleanText = scrubOfficialPlaceholder(cleanText, working);
+  traceStage('scrubOfficialPlaceholder', cleanText);
   cleanText = scrubInventedGeography(cleanText, working);
+  traceStage('scrubInventedGeography', cleanText);
   working = harvestNarrativeIntoLedger(working, cleanText, state.turn + 1);
   working = {
     ...working,
@@ -1544,9 +1569,11 @@ Do NOT print dice notation or CODE ENFORCED.
   working = maybeAutoCloseDungeon(working);
   const leak = scanAndScrubLeaks(cleanText);
   if (leak.notes.length) cleanText = leak.clean;
+  traceStage('scanAndScrubLeaks', cleanText);
   {
     const govProse = applyGovernanceToProse(working, cleanText, playerInput, { keepWriterProse: !useMud && !authoredBook });
     cleanText = govProse.prose;
+    traceStage('applyGovernanceToProse', cleanText);
     if (govProse.notes.length) warden.notes.push(...govProse.notes);
   }
   // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
@@ -1558,6 +1585,7 @@ Do NOT print dice notation or CODE ENFORCED.
     if (!cleanText.trim()) {
       cleanText = ledgerActionStitch(working, playerInput);
       usedPacketStitch = true;
+      traceStage('ledgerActionStitch', cleanText);
     }
     blockedPaint = true;
   }
@@ -1598,7 +1626,9 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   working = enforceCameraOnState(working, playerInput);
   cleanText = enforceCameraOnProse(cleanText, working, playerInput, fromLoc);
+  traceStage('enforceCameraOnProse', cleanText);
   cleanText = scrubOneCameraFight(cleanText, working, playerInput);
+  traceStage('scrubOneCameraFight', cleanText);
   // 02g — prepend can land after the warden; strip mill / already-here arrivals once more.
   cleanText = scrubFalseArrivalWhenHere(
     cleanText,
@@ -1607,6 +1637,7 @@ Do NOT print dice notation or CODE ENFORCED.
     false,
     fromLoc
   );
+  traceStage('scrubFalseArrivalWhenHere', cleanText);
 
   const pipeline = authoredBook
     ? {
@@ -2003,6 +2034,8 @@ Do NOT print dice notation or CODE ENFORCED.
       rejectedReason,
       engineFact: engineFact || undefined,
       writerRawHead,
+      writerRaw: gmResult.text || undefined,
+      stageTrace: stageTrace.length ? stageTrace : undefined,
       tokenVerdicts,
       tokenPath,
       retryTokenVerdicts,

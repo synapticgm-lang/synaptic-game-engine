@@ -26,6 +26,7 @@ import {
 } from './combatAuthority';
 import { scrubMetaRecoveryStrings } from './diegeticFallbacks';
 import { obeyLedgerNouns } from './ledgerNounObey';
+import { splitProseSentences } from './proseSentences';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
 
@@ -96,6 +97,10 @@ export type ProseWardenContext = {
   recentlyClearedEncounter?: boolean;
   /** Auto-fight / terminal last kill — deny-loot scrub. */
   lastKill?: LastKill | null;
+  /** Turn being narrated; a kill the engine committed this turn is the beat, not a re-engage. */
+  currentTurn?: number;
+  /** Writer turn: scenery the writer names stays in the writer's words. */
+  keepWriterProse?: boolean;
   /** Live or just-cleared enemy name — humanoid body lock. */
   enemyName?: string;
   /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
@@ -1301,46 +1306,6 @@ export function scrubDualLocationOpenings(
 }
 
 /**
- * Batch Z-2 — scrub player actions beyond the selected choice.
- * "You press him..." when player selected "Wait and observe" (passive intent).
- * Detects GM narrating player actions that weren't selected.
- */
-export function scrubExtraPlayerActions(
-  text: string,
-  selectedIntentKind?: string
-): string {
-  if (!text) return text;
-  
-  // Forbidden active action patterns
-  const forbiddenActions = [
-    /\bYou (?:press|ask|speak|turn|move|step|reach|grab|take|pull|push|strike|demand|insist)\s+/gi,
-    /\b(?:Pressing|Asking|Speaking|Turning|Moving|Stepping|Reaching|Grabbing|Taking)\s+/gi,
-    /\bYou then\s+/gi,
-    /\bYou also\s+/gi,
-  ];
-  
-  // Passive intent kinds that should not have active verbs added
-  // Maps to IntentKind from intentParser.ts
-  const passiveIntentKinds = [
-    'observe',    // Wait, Observe, Look around
-    'rest',       // Rest, Wait
-    'search',     // Inspect (when not attacking)
-    // 'other' is too generic to filter
-  ];
-  
-  // If selected intent kind was passive, strip active verbs
-  if (selectedIntentKind && passiveIntentKinds.includes(selectedIntentKind)) {
-    let next = text;
-    for (const pattern of forbiddenActions) {
-      next = next.replace(pattern, '');
-    }
-    return tidyClauses(next);
-  }
-  
-  return text;
-}
-
-/**
  * Pack 12 Extended Validation: Tension
  * Scrubs "calm settles" or "danger passes" if tension state didn't actually change.
  */
@@ -1537,12 +1502,17 @@ export function scrubNamedCastAsObject(text: string, namedPeople: string[] = [])
 }
 
 /** Lock C — dead foe must not re-engage or greet as a living NPC without a new spawn. */
-export function scrubDeadFoeReengage(text: string, lastKill?: LastKill | null, liveEncounter?: boolean): string {
+export function scrubDeadFoeReengage(
+  text: string,
+  lastKill?: LastKill | null,
+  liveEncounter?: boolean,
+  currentTurn?: number
+): string {
   if (!text || !lastKill?.name || liveEncounter) return text;
   if (lastKill.outcome !== 'victory') return text;
+  if (currentTurn != null && lastKill.turn >= currentTurn) return text;
   const replacement = `The fallen ${lastKill.name} lies where you left them.`;
-  const next = text
-    .split(/(?<=[.!?])\s+/)
+  const next = splitProseSentences(text)
     .map((sent) => (shouldRewriteDeadFoeSentence(sent, lastKill) ? replacement : sent))
     .join(' ');
   return tidyClauses(next);
@@ -1561,9 +1531,7 @@ export function scrubSaferSceneMeta(text: string): string {
   );
   next = next.replace(/\bI scan(?:\s+\w+){0,8}\s+before committing\b[,.]?/gi, '');
   next = next.replace(/\bchoose a safer scene action\b[,.]?/gi, '');
-  next = next.replace(/\bif none is present\b[,.]?/gi, '');
   next = next.replace(/\bstay alert and choose a safer\b[\s\S]{0,24}/gi, '');
-  next = next.replace(/\bbefore committing\b/gi, '');
   return tidyClauses(next);
 }
 
@@ -1622,7 +1590,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   );
   next = scrubDestroyedPyoaItems(next, ctx?.destroyedItems);
   next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
-  next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
+  next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true, ctx?.currentTurn);
   next = scrubNpcIntroRepeat(next, ctx?.npcMemories);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubSlotGlue(
@@ -1656,7 +1624,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubHookReversals(next, ctx?.hookLock);
   next = scrubSaferSceneMeta(next);
   next = scrubFalseSpokenAction(next, ctx?.playerInput);
-  next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
+  if (!ctx?.keepWriterProse) next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
   next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
   next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);
   next = scrubBeastifiedHumanoid(next, ctx?.enemyName);
@@ -1687,10 +1655,6 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubArticleCollisions(next);
   next = scrubPronounSubjectSlips(next);
   next = scrubPossessiveDeterminerSlips(next);
-  // Batch Z-2: scrub extra player actions (requires selectedIntentKind in context)
-  if (ctx?.selectedIntentKind) {
-    next = scrubExtraPlayerActions(next, ctx.selectedIntentKind);
-  }
   if (ctx?.ledgerState) {
     next = obeyLedgerNouns(next, ctx.ledgerState).prose;
   }

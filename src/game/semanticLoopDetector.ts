@@ -15,6 +15,7 @@
 
 import type { GameState, EngineMode } from './types';
 import { normalizeProseTokens, tokenJaccard } from './beatFingerprint';
+import { splitProseSentences } from './proseSentences';
 
 export interface SemanticIntent {
   /** Canonical action type (inspect, ask, listen, travel, wait, attack, etc.) */
@@ -566,10 +567,7 @@ function wordCount(text: string): number {
 
 /** Split story prose into sentences. Short fragments stay attached to the nearest period. */
 export function splitStorySentences(text: string): string[] {
-  const cleaned = (text ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  if (!cleaned) return [];
-  const parts = cleaned.match(/[^.!?]+[.!?]+(?:["”'])?|[^.!?]+$/g) ?? [cleaned];
-  return parts.map((s) => s.trim()).filter((s) => s.length > 0);
+  return splitProseSentences((text ?? '').replace(/<[^>]+>/g, ' '));
 }
 
 export function isSubstantialSentence(sentence: string): boolean {

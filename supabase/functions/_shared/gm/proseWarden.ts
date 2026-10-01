@@ -1320,46 +1320,6 @@ export function scrubDualLocationOpenings(
 }
 
 /**
- * Batch Z-2 — scrub player actions beyond the selected choice.
- * "You press him..." when player selected "Wait and observe" (passive intent).
- * Detects GM narrating player actions that weren't selected.
- */
-export function scrubExtraPlayerActions(
-  text: string,
-  selectedIntentKind?: string
-): string {
-  if (!text) return text;
-  
-  // Forbidden active action patterns
-  const forbiddenActions = [
-    /\bYou (?:press|ask|speak|turn|move|step|reach|grab|take|pull|push|strike|demand|insist)\s+/gi,
-    /\b(?:Pressing|Asking|Speaking|Turning|Moving|Stepping|Reaching|Grabbing|Taking)\s+/gi,
-    /\bYou then\s+/gi,
-    /\bYou also\s+/gi,
-  ];
-  
-  // Passive intent kinds that should not have active verbs added
-  // Maps to IntentKind from intentParser.ts
-  const passiveIntentKinds = [
-    'observe',    // Wait, Observe, Look around
-    'rest',       // Rest, Wait
-    'search',     // Inspect (when not attacking)
-    // 'other' is too generic to filter
-  ];
-  
-  // If selected intent kind was passive, strip active verbs
-  if (selectedIntentKind && passiveIntentKinds.includes(selectedIntentKind)) {
-    let next = text;
-    for (const pattern of forbiddenActions) {
-      next = next.replace(pattern, '');
-    }
-    return tidyClauses(next);
-  }
-  
-  return text;
-}
-
-/**
  * Pack 12 Extended Validation: Tension
  * Scrubs "calm settles" or "danger passes" if tension state didn't actually change.
  */
@@ -1706,10 +1666,6 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubArticleCollisions(next);
   next = scrubPronounSubjectSlips(next);
   next = scrubPossessiveDeterminerSlips(next);
-  // Batch Z-2: scrub extra player actions (requires selectedIntentKind in context)
-  if (ctx?.selectedIntentKind) {
-    next = scrubExtraPlayerActions(next, ctx.selectedIntentKind);
-  }
   if (ctx?.ledgerState) {
     next = obeyLedgerNouns(next, ctx.ledgerState).prose;
   }

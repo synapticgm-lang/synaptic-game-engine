@@ -131,8 +131,10 @@ export function matchesLastKillName(token: string, lastKill?: LastKill | null): 
     .replace(/\s+/g, ' ')
     .trim();
   if (!needle || !t) return false;
-  const needleBare = needle.replace(/['’]s\b/g, '');
-  if (t === needleBare || t.includes(needleBare) || needleBare.includes(t)) return true;
+  const needleBare = needle.replace(/['’]s\b/g, '').replace(/^(?:the|a|an)\s+/, '');
+  if (t === needleBare || t.includes(needleBare)) return true;
+  // A token inside the name counts only as whole name words ("Skirmisher" in "Pact-Hunter Skirmisher"), never "the" or "he".
+  if (t.length >= 4 && new RegExp(`(?:^|[\\s-])${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:e?s)?(?:$|[\\s-])`).test(needleBare)) return true;
   const parts = needleBare.split(/\s+/).filter(Boolean);
   const last = parts[parts.length - 1] ?? '';
   if (last.length >= 5 && (t === last || t.endsWith(` ${last}`) || t.includes(last))) return true;

@@ -70,7 +70,9 @@ export function repairLabelArticles(
   state?: Pick<GameState, 'npcMemories' | 'companions' | 'worldLedger'>
 ): string {
   let next = (prose ?? '')
-    .replace(/\b(the|a|an)\s+((?:[a-z][\w-]*,?\s+){0,3})The\s+/g, (_m, art: string, adj: string) => `${art} ${adj}`)
+    // Glue is an article, then a comma list of modifiers on the same noun, then the label's own "The".
+    .replace(/\b(the|a|an)\s+((?:[a-z][\w-]*,\s+){0,2}(?:[a-z][\w-]*\s+)?)The\s+/g, (m, art: string, adj: string) =>
+      LINK_RE.test(` ${adj.replace(/,/g, ' ').trim()} `) ? m : `${art} ${adj}`)
     .replace(/(["“]\s*)No\s+(the|a|an)\s+/g, '$1No, $2 ')
     .replace(/\b([Nn]o)\s+(?:the|a|an)\s+(?=\S)/g, '$1 ')
     .replace(/(\w)\s+(['’]s)\b/g, '$1$2');
@@ -106,7 +108,8 @@ export function varyRepeatMentions(prose: string, refs: LedgerRef[]): string {
     const short = isPlace ? placeShortForm(ref.display) : personShortForm(ref.display, givenCounts);
     if (!short) continue;
     const core = isPlace ? ref.display.replace(/^(?:the|a|an)\s+/i, '').trim() : ref.display.trim();
-    const re = new RegExp(`${isPlace ? '\\b(?:(?:the|a|an)\\s+)?' : '\\b'}${escRe(core)}\\b`, 'gi');
+    // The label as the ledger spells it (what paint writes); the writer's own lowercase wording is theirs.
+    const re = new RegExp(`${isPlace ? '\\b(?:(?:[Tt]he|[Aa]n?)\\s+)?' : '\\b'}${escRe(core)}\\b`, 'g');
     let seen = 0;
     const source = next;
     next = source.replace(re, (m: string, offset: number) => {

@@ -361,8 +361,25 @@ export function listCrowdMentions(text: string): CrowdMention[] {
     if (spansCanonicalPhrase(text, m.index, span.length)) continue;
     found.push(mention(m.index, span, crowdBucket(n), n));
   }
-  found.sort((a, b) => a.index - b.index);
-  return found;
+  // Spans overlap ("the two figures" is both a pair and a numbered mention); keep the longest at each spot.
+  found.sort((a, b) => a.index - b.index || b.length - a.length);
+  const kept: CrowdMention[] = [];
+  for (const hit of found) {
+    const last = kept[kept.length - 1];
+    if (last && hit.index < last.index + last.length) continue;
+    kept.push(hit);
+  }
+  return kept;
+}
+
+const COUNT_PEOPLE_NOUN = new RegExp(`\\b(?:${PEOPLE_NOUN})\\b`, 'i');
+
+/** The span states how many people are here: a number, dozens/hundreds, or a gathering of named people-nouns. */
+function statesHeadcount(hit: CrowdMention): boolean {
+  if (/\d|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety)\b/i.test(hit.text)) {
+    return true;
+  }
+  return COUNT_PEOPLE_NOUN.test(hit.text);
 }
 
 function applyCase(sample: string, replacement: string): string {
@@ -451,24 +468,17 @@ export function scrubInventedCrowdSize(
     return normalizeCrowdRewriteArtifacts(next);
   }
 
-  if (trackedCrowdSize >= 20) {
-    const mentions = listCrowdMentions(next);
-    if (!mentions.some((x) => x.bucket === 'pair' || x.bucket === 'few')) {
-      return normalizeCrowdRewriteArtifacts(next);
-    }
-  }
-
   const target = crowdBucket(trackedCrowdSize);
   const mentions = listCrowdMentions(next);
-  if (!mentions.length) return normalizeCrowdRewriteArtifacts(next);
+  if (!mentions.length || target === 'empty') return normalizeCrowdRewriteArtifacts(next);
 
   let rebuilt = next;
   for (const hit of [...mentions].reverse()) {
-    if (hit.bucket === target) continue;
-    // One passer-by is a person in the sentence, not a headcount; rewriting it deletes them.
-    if (hit.bucket === 'solo') continue;
-    if (trackedCrowdSize >= 20 && hit.bucket === 'group') continue;
-    if (trackedCrowdSize >= 20 && hit.bucket === 'large') continue;
+    // Only an inflated gathering shrinks. One to four people in a sentence are people the
+    // sentence acts on ("the two figures standing nearest"); rewriting them deletes them.
+    // A bare "the crowd" states no count, and nothing is ever rewritten to "no one".
+    if (hit.bucket !== 'group' && hit.bucket !== 'large') continue;
+    if (hit.count <= trackedCrowdSize || !statesHeadcount(hit)) continue;
     // Never expand a span that already ends with " here" into another "… here"
     if (/\bhere\b/i.test(hit.text) && canonicalCrowdPhrase(target).includes('here')) {
       continue;

@@ -331,7 +331,7 @@ export function applyGovernanceToProse(
   let out = prose;
 
   if (report.shouldRegenerate || report.themCount + report.strangerCount + report.thisPlaceCount > 0) {
-    out = rewriteInvalidReferences(out, context, report);
+    if (!keep) out = rewriteInvalidReferences(out, context, report);
     if (report.themCount) notes.push(`Entity scrub: them×${report.themCount} (pronouns kept — no kit rewrite)`);
     if (report.strangerCount) notes.push(`Entity scrub: stranger×${report.strangerCount}`);
     if (report.thisPlaceCount) notes.push(`Entity scrub: this-place×${report.thisPlaceCount}`);

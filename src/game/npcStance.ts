@@ -87,6 +87,9 @@ function stanceTarget(state: GameState, input: string): NpcMemory | undefined {
   return byJob.length === 1 ? byJob[0] : undefined;
 }
 
+const OFFER_ONLY =
+  /\b(?:offer(?:s|ed|ing)?|propos\w*|promis\w*|volunteer\w*|(?:can|could|will|would|shall|may|might)\s+(?:\w+\s+)?help|i'll\s+help|(?:want|like|happy|glad|willing|ready|here)\s+to\s+help|let me help)\b/i;
+
 const VERB_CAUSE: Record<StanceEventKind, string> = {
   rescued: 'freed them',
   helped: 'helped them',
@@ -106,6 +109,8 @@ export function stanceEventFromAction(
   if (/\b(?:fail(?:s|ed|ure)?|miss(?:es|ed)?)\b/i.test(opts.engineResult ?? '')) return null;
   const act = stanceActionKind(playerInput);
   if (!act) return null;
+  // Offering help is talk; the stance moves on the turn the help is actually done.
+  if (act === 'kind' && OFFER_ONLY.test(playerInput)) return null;
   const target = stanceTarget(state, playerInput);
   if (!target) return null;
   const kind: StanceEventKind | null =

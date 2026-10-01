@@ -18,6 +18,8 @@ import {
 } from './completedEventPacket';
 import { acceptObeyedStoryBody } from './ledgerNounObey';
 import { pcPov } from './narrativePov';
+import { splitProseSentences } from './proseSentences';
+import { presentNpcRecords } from './npcRecords';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -65,9 +67,12 @@ function readTokenUse(raw: string): TokenUse | null {
   return TOKEN_USE_ALIAS[u] ?? null;
 }
 
-/** Fixed lexicon. Do not grow this list per incident. */
+/**
+ * Fixed lexicon of job roles a ledger cast slot fills. Do not grow this list per incident.
+ * An unnamed passer-by ("the stranger", "a figure") claims no slot and is not on it.
+ */
 const UNBOUND_ANIMATE =
-  /\b(?:a|an|the)\s+(?:chanter|vendor|guard|stranger|merchant|priest|innkeep|handler|clerk|official|registrar|witness|archivist)\b/i;
+  /\b(?:a|an|the)\s+(?:chanter|vendor|guard|merchant|priest|innkeep|handler|clerk|official|registrar|witness|archivist)\b/i;
 
 const TOK_RE = /@t(\d+)\b/g;
 
@@ -334,7 +339,11 @@ export function classifyTokenLine(
   if (lineHasMidSentenceCapital(capText)) {
     return { ok: false, reason: 'capital' };
   }
-  if (lineHasUnboundAnimate(line.text)) {
+  let animateText = line.text;
+  for (const name of [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean).sort((a, b) => b.length - a.length)) {
+    animateText = animateText.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '·');
+  }
+  if (lineHasUnboundAnimate(animateText)) {
     return { ok: false, reason: 'unbound-animate' };
   }
   const used = toksInText(line.text);
@@ -346,6 +355,14 @@ export function classifyTokenLine(
     if (!row) return { ok: false, reason: 'unknown-id' };
     if (!tokenUseMatchesClass(declared.use, row.klass)) {
       return { ok: false, reason: 'use-class' };
+    }
+    // A named person takes no article; "the @t2 run of streets" uses the person as a place or thing.
+    if (
+      row.klass === 'person' &&
+      /^[A-Z]/.test(row.display ?? '') &&
+      new RegExp(`\\b(?:the|a|an)\\s+@${tok.replace(/^@/, '')}\\b`, 'i').test(line.text)
+    ) {
+      return { ok: false, reason: 'article-person' };
     }
   }
   return { ok: true };
@@ -480,12 +497,14 @@ function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: stri
   return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames).ok);
 }
 
-/** 28g — proper names the ledger already holds: places, their exits, the current location, the player. */
+/** 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry. */
 export function knownProperNames(state: GameState): string[] {
   const names = [
     state.currentLocation,
     state.character?.name,
     ...(state.places ?? []).flatMap((p) => [p.name, ...(p.exits ?? [])]),
+    ...presentNpcRecords(state).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
+    ...(state.inventory ?? []).map((item) => item.name),
   ];
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1).map((n) => n.trim()))];
 }
@@ -575,7 +594,7 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
  * so a beat never keeps a hole where a name was ("the kept its slow boots coming").
  */
 export function paintTokensOrDrop(text: string, display: (tok: string) => string | undefined): string {
-  const sentences = (text ?? '').match(/[^.!?]+(?:[.!?]+["')\]”’]*|$)/g) ?? [];
+  const sentences = splitProseSentences(text ?? '');
   const kept = sentences.filter((s) => [...s.matchAll(/@t(\d+)\b/gi)].every((t) => display(`t${t[1]}`.toLowerCase())));
   return tidy(kept.map((s) => s.replace(/@t(\d+)\b/gi, (_m, n: string) => display(`t${n}`.toLowerCase()) ?? '')).join(' '));
 }

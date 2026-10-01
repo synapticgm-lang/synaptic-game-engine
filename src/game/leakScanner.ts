@@ -2,6 +2,8 @@
  * Visibility leak scanner — engine notes must not reach player prose.
  */
 
+import { splitProseSentences } from './proseSentences';
+
 const ENGINE_LEAK =
   /\b(?:the sheet|not a place you traveled to|not a list of what you are carrying|this is still [A-Z]|CODE ENFORCED|Action Resolved|XP:\s*\d+\s*\/\s*\d+|warden'?s?\s+expectation|engine reading|intent contract|scene manifest|introduction permit|state\s*tx|hookarc)\b/i;
 
@@ -17,7 +19,7 @@ export interface LeakScanResult {
 export function scanAndScrubLeaks(narrative: string): LeakScanResult {
   const notes: string[] = [];
   let text = narrative;
-  const sentences = text.split(/(?<=[.!?])\s+/);
+  const sentences = splitProseSentences(text);
   const kept: string[] = [];
   for (const s of sentences) {
     if (ENGINE_LEAK.test(s) || META_UI.test(s)) {
