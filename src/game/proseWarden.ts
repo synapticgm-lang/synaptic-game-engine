@@ -99,8 +99,6 @@ export type ProseWardenContext = {
   lastKill?: LastKill | null;
   /** Turn being narrated; a kill the engine committed this turn is the beat, not a re-engage. */
   currentTurn?: number;
-  /** Writer turn: scenery the writer names stays in the writer's words. */
-  keepWriterProse?: boolean;
   /** Live or just-cleared enemy name — humanoid body lock. */
   enemyName?: string;
   /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
@@ -1624,7 +1622,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubHookReversals(next, ctx?.hookLock);
   next = scrubSaferSceneMeta(next);
   next = scrubFalseSpokenAction(next, ctx?.playerInput);
-  if (!ctx?.keepWriterProse) next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
+  next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
   next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
   next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);
   next = scrubBeastifiedHumanoid(next, ctx?.enemyName);

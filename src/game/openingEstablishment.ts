@@ -1429,10 +1429,10 @@ export function openingCastNames(state: GameState): string[] {
   }
   const titled =
     hay.match(
-      /\b(?:Archivist|Father|Captain|Brother|Sister|Envoy|High Chanter)\s+[A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+)?\b/g
+      /\b(?:Archivist|Father|Captain|Brother|Sister|Envoy|High Chanter)[ \t]+[A-Z][a-z'-]+(?:[ \t]+[A-Z][a-z'-]+)?\b/g
     ) ?? [];
   for (const n of titled) push(n);
-  const firstLast = hay.match(/\b[A-Z][a-z'-]+\s+[A-Z][a-z'-]+\b/g) ?? [];
+  const firstLast = hay.match(/\b[A-Z][a-z'-]+[ \t]+[A-Z][a-z'-]+\b/g) ?? [];
   for (const n of firstLast) {
     if (/^(Who is|Why this|Opening offer|If you|Location:)/i.test(n)) continue;
     push(n);

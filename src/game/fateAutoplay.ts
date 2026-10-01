@@ -146,6 +146,7 @@ import {
   filterGovernanceChoices,
   processMetaInput,
 } from './qualityGovernance';
+import { writerWordsGuard } from './writerWords';
 import {
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
@@ -1442,12 +1443,11 @@ Do NOT print dice notation or CODE ENFORCED.
     rejectedReason = writerTurn.problems.join(' | ').slice(0, 300);
   }
 
+  const words = writerWordsGuard(!!writerTurn && !renderFallbackUsed && gmText === writerTurn.prose);
   const rawEvents = parseActionTags(gmText);
-  const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact, {
-    keepWriterProse: !useMud && !authoredBook,
-  });
+  const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
   const events = warden.events;
-  const narrativeSource = useMud ? gmText : (warden.scrubbedNarrative ?? gmText);
+  const narrativeSource = useMud ? gmText : words.step('runWarden', gmText, warden.scrubbedNarrative ?? gmText);
   traceStage('runWarden', narrativeSource);
   const structural = applyStructuralEvents(arcState, events, {
     strictEncumbrance: settings.strictEncumbrance === true,
@@ -1455,17 +1455,21 @@ Do NOT print dice notation or CODE ENFORCED.
   });
   let working = structural.state;
 
-  let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)));
+  let cleanText = words.step(
+    'stripTags+choiceList',
+    narrativeSource,
+    stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)))
+  );
   traceStage('stripTags+choiceList', cleanText);
   cleanText = postFilterGmOutput(cleanText, settings, {
     nsfw: isNsfwCampaign(getCampaignBibleById(meta.bibleId)),
   });
   traceStage('postFilterGmOutput', cleanText);
-  cleanText = ensureTurnProse(cleanText, playerInput);
+  cleanText = words.step('ensureTurnProse', cleanText, ensureTurnProse(cleanText, playerInput));
   traceStage('ensureTurnProse', cleanText);
-  cleanText = applyFactLocks(state, cleanText, playerInput, { keepWriterProse: !useMud && !authoredBook });
+  cleanText = words.step('applyFactLocks', cleanText, applyFactLocks(state, cleanText, playerInput));
   traceStage('applyFactLocks', cleanText);
-  cleanText = enforcePerspective(cleanText, settings, state.character.name);
+  cleanText = words.step('enforcePerspective', cleanText, enforcePerspective(cleanText, settings, state.character.name));
   traceStage('enforcePerspective', cleanText);
   if (arcResult?.beatCommitted) {
     validateProseAgainstBeat(
@@ -1479,7 +1483,7 @@ Do NOT print dice notation or CODE ENFORCED.
       cleanText
     );
   }
-  cleanText = applyProseWarden(cleanText, {
+  cleanText = words.step('applyProseWarden', cleanText, applyProseWarden(cleanText, {
     currentLocation: working.currentLocation ?? state.currentLocation,
     priorLocation: state.previousSceneFacts?.location ?? state.currentLocation,
     aloneArrival: isAloneArrivalOpening(working) || isAloneArrivalOpening(state),
@@ -1517,14 +1521,13 @@ Do NOT print dice notation or CODE ENFORCED.
     ledgerState: working,
     lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
     currentTurn: state.turn,
-    keepWriterProse: !useMud && !authoredBook,
     hookLock: hookLockForWarden(working, cleanText),
     npcMemories: working.npcMemories ?? state.npcMemories,
-  });
+  }));
   traceStage('applyProseWarden', cleanText);
   {
     const prefaced = ensureEncounterSpawnPreface(working, cleanText);
-    cleanText = prefaced.prose;
+    cleanText = words.step('ensureEncounterSpawnPreface', cleanText, prefaced.prose);
     traceStage('ensureEncounterSpawnPreface', cleanText);
     working = prefaced.state;
     if (prefaced.spawnReceipt) {
@@ -1556,9 +1559,9 @@ Do NOT print dice notation or CODE ENFORCED.
       };
     }
   }
-  cleanText = scrubOfficialPlaceholder(cleanText, working);
+  cleanText = words.step('scrubOfficialPlaceholder', cleanText, scrubOfficialPlaceholder(cleanText, working));
   traceStage('scrubOfficialPlaceholder', cleanText);
-  cleanText = scrubInventedGeography(cleanText, working);
+  cleanText = words.step('scrubInventedGeography', cleanText, scrubInventedGeography(cleanText, working));
   traceStage('scrubInventedGeography', cleanText);
   working = harvestNarrativeIntoLedger(working, cleanText, state.turn + 1);
   working = {
@@ -1568,11 +1571,11 @@ Do NOT print dice notation or CODE ENFORCED.
   working = maybeRevealFromLocation(working, working.currentLocation);
   working = maybeAutoCloseDungeon(working);
   const leak = scanAndScrubLeaks(cleanText);
-  if (leak.notes.length) cleanText = leak.clean;
+  if (leak.notes.length) cleanText = words.step('scanAndScrubLeaks', cleanText, leak.clean);
   traceStage('scanAndScrubLeaks', cleanText);
   {
-    const govProse = applyGovernanceToProse(working, cleanText, playerInput, { keepWriterProse: !useMud && !authoredBook });
-    cleanText = govProse.prose;
+    const govProse = applyGovernanceToProse(working, cleanText, playerInput);
+    cleanText = words.step('applyGovernanceToProse', cleanText, govProse.prose);
     traceStage('applyGovernanceToProse', cleanText);
     if (govProse.notes.length) warden.notes.push(...govProse.notes);
   }
@@ -1625,19 +1628,18 @@ Do NOT print dice notation or CODE ENFORCED.
     working = syncSheetToMovedHere(working, fromLoc);
   }
   working = enforceCameraOnState(working, playerInput);
-  cleanText = enforceCameraOnProse(cleanText, working, playerInput, fromLoc);
+  cleanText = words.step('enforceCameraOnProse', cleanText, enforceCameraOnProse(cleanText, working, playerInput, fromLoc));
   traceStage('enforceCameraOnProse', cleanText);
-  cleanText = scrubOneCameraFight(cleanText, working, playerInput);
+  cleanText = words.step('scrubOneCameraFight', cleanText, scrubOneCameraFight(cleanText, working, playerInput));
   traceStage('scrubOneCameraFight', cleanText);
   // 02g — prepend can land after the warden; strip mill / already-here arrivals once more.
-  cleanText = scrubFalseArrivalWhenHere(
+  cleanText = words.step(
+    'scrubFalseArrivalWhenHere',
     cleanText,
-    working.currentLocation,
-    [],
-    false,
-    fromLoc
+    scrubFalseArrivalWhenHere(cleanText, working.currentLocation, [], false, fromLoc)
   );
   traceStage('scrubFalseArrivalWhenHere', cleanText);
+  if (words.notes.length) warden.notes.push(...words.notes);
 
   const pipeline = authoredBook
     ? {

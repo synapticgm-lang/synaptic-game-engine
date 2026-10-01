@@ -446,7 +446,8 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
     return !used.some((t) => unbound.has(t) || !byTok.get(t)?.display);
   });
   const sentences = lines.map((line) => {
-    let next = line.text.replace(/@t(\d+)\b/g, (_m, n: string, offset: number, src: string) => {
+    const once = dropTypedNameAfterToken(line.text, (tok) => byTok.get(tok)?.display);
+    let next = once.replace(/@t(\d+)\b/g, (_m, n: string, offset: number, src: string) => {
       const row = byTok.get(`t${n}`);
       if (!row?.display) return '';
       painted.add(row.display);
@@ -482,6 +483,23 @@ export function collapseEchoedLabel(text: string, display: string): string {
     next = next.replace(echo, '');
   }
   return next;
+}
+
+/** A token paints once: the label the writer also typed right after the token ("@t5 Hobb Dunmore") is the same mention. */
+export function dropTypedNameAfterToken(text: string, display: (tok: string) => string | undefined): string {
+  let out = '';
+  let at = 0;
+  for (const m of (text ?? '').matchAll(/@t(\d+)\b/gi)) {
+    const end = (m.index ?? 0) + m[0].length;
+    if (end < at) continue;
+    out += text.slice(at, end);
+    at = end;
+    const core = (display(`t${m[1]}`.toLowerCase()) ?? '').replace(ARTICLE_RE, '').trim();
+    if (!core) continue;
+    const echo = text.slice(end).match(new RegExp(`^\\s+(?:(?:the|a|an)\\s+)?${escRe(core)}(?![\\w'-])`, 'i'));
+    if (echo) at = end + echo[0].length;
+  }
+  return out + text.slice(at);
 }
 
 function capitalizeSentenceStarts(text: string): string {
@@ -594,7 +612,7 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
  * so a beat never keeps a hole where a name was ("the kept its slow boots coming").
  */
 export function paintTokensOrDrop(text: string, display: (tok: string) => string | undefined): string {
-  const sentences = splitProseSentences(text ?? '');
+  const sentences = splitProseSentences(dropTypedNameAfterToken(text ?? '', display));
   const kept = sentences.filter((s) => [...s.matchAll(/@t(\d+)\b/gi)].every((t) => display(`t${t[1]}`.toLowerCase())));
   return tidy(kept.map((s) => s.replace(/@t(\d+)\b/gi, (_m, n: string) => display(`t${n}`.toLowerCase()) ?? '')).join(' '));
 }

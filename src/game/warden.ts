@@ -73,9 +73,7 @@ export async function runWarden(
   intent?: PlayerIntent,
   establishedProse = '',
   /** 28g — the engine's resolved result for the action (fight / flee / parley / rest receipts). */
-  engineFact = '',
-  /** Writer turns keep the writer's words; constraint hits become notes. */
-  opts: { keepWriterProse?: boolean } = {}
+  engineFact = ''
 ): Promise<WardenResult> {
   const notes: string[] = [];
   const systemLogExtra: string[] = [];
@@ -291,7 +289,6 @@ export async function runWarden(
     ),
     lastKill: state.sceneFacts?.lastKill,
     currentTurn: state.turn,
-    keepWriterProse: opts.keepWriterProse === true,
     groundedWeapons: groundedWeaponNames(state),
     playerName: state.character?.name,
     hasLiveEncounter:
@@ -312,7 +309,7 @@ export async function runWarden(
     : applyProseWarden(scrub.text, wardenCtx);
   const constraints = buildBindingConstraints(state);
   const constraintHits = detectConstraintViolations(polishedBase, constraints);
-  const polished = constraintHits.length && !opts.keepWriterProse
+  const polished = constraintHits.length
     ? repairConstraintViolations(polishedBase, constraints)
     : polishedBase;
   if (constraintHits.length) {

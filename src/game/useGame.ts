@@ -340,6 +340,7 @@ import {
   filterGovernanceChoices,
   processMetaInput,
 } from './qualityGovernance';
+import { writerWordsGuard } from './writerWords';
 import {
   playerAsksRepeat,
   playerAsksContinuation,
@@ -2891,6 +2892,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         : '';
       let result: GmResult;
       let writerRemaining: string[] = [];
+      let writerProse: string | null = null;
       drainWriterRawIssues();
       drainWriterUsage();
       try {
@@ -2965,6 +2967,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           });
         }
         result = { ...result, text: writerTurn.prose };
+        writerProse = writerTurn.prose;
         if (
           (writerTurn.path === 'json' || writerTurn.path === 'json-partial')
           && writerTurn.refs?.length
@@ -3056,12 +3059,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sanitizedInput,
         intent,
         establishedProseForScrub,
-        engineFact,
-        { keepWriterProse: !useMud && !authoredBook }
+        engineFact
       );
       const events = warden.events;
+      const words = writerWordsGuard(!!writerProse?.trim() && result.text === writerProse);
       // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).
-      const narrativeSource = warden.scrubbedNarrative ?? result.text;
+      const narrativeSource = words.step('runWarden', result.text, warden.scrubbedNarrative ?? result.text);
       const appliedWorld = applyWorldEvents(worldLedger, events, worldLedger.clock.week);
       worldLedger = appliedWorld.ledger;
       worldNotes.push(...appliedWorld.notes);
@@ -3116,16 +3119,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         // keep XP progression lines only when present in the sanitized partial.
       }
       const regexLoot = extractNewItems(result.text);
-      let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)));
+      let cleanText = words.step(
+        'stripTags+choiceList',
+        narrativeSource,
+        stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)))
+      );
       cleanText = postFilterGmOutput(cleanText, settingsRef.current, {
         nsfw: isNsfwCampaign(getCampaignBibleById(stateRef.current?.campaignBibleId ?? '')),
       });
-      cleanText = ensureTurnProse(cleanText, sanitizedInput);
+      cleanText = words.step('ensureTurnProse', cleanText, ensureTurnProse(cleanText, sanitizedInput));
       {
-        const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput, {
-          keepWriterProse: !useMud && !authoredBook,
-        });
-        cleanText = govProse.prose;
+        const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput);
+        cleanText = words.step('applyGovernanceToProse', cleanText, govProse.prose);
         if (govProse.notes.length) warden.notes.push(...govProse.notes);
       }
       // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
@@ -3185,8 +3190,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const hijack = detectSceneHijack(sanitizedInput, narrativeSource, suggestionState);
       if (hijack.hijacked) {
         warden.notes.push(...hijack.notes);
-        cleanText = stripHijackSentences(cleanText, hijack.keywordsHit);
-        cleanText = ensureTurnProse(cleanText, sanitizedInput);
+        cleanText = words.step(
+          'stripHijackSentences',
+          cleanText,
+          ensureTurnProse(stripHijackSentences(cleanText, hijack.keywordsHit), sanitizedInput)
+        );
       }
       const parsedChoices = (habitAugmented.length > 0 ? habitAugmented : pipelineChoices.choices)
         .filter((choice) => isChoiceGroundedInTurn(choice, storyProseForChoices, suggestionState, activeLoreCards))
@@ -3198,7 +3206,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ? filterHijackChoices(parsedChoices, turnMandate.focusKeywords)
         : parsedChoices;
       // Keep the GM's story. Do not replace it with a local template.
-      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput, { keepWriterProse: !useMud && !authoredBook });
+      cleanText = words.step('applyFactLocks', cleanText, applyFactLocks(liveCurrent, cleanText, sanitizedInput));
       const groundedAfterResolve = focusFiltered.filter((choice) =>
         isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
       );
@@ -3462,13 +3470,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           questFocus: knownQuest,
         });
       }
-      cleanText = ensureXpNarration(cleanText, mergedSystemLog);
-      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput, { keepWriterProse: !useMud && !authoredBook });
+      cleanText = words.step('ensureXpNarration', cleanText, ensureXpNarration(cleanText, mergedSystemLog));
+      cleanText = words.step('applyFactLocks', cleanText, applyFactLocks(liveCurrent, cleanText, sanitizedInput));
       if (warden.continuityBreak || detectSceneContradiction(liveCurrent.sceneFacts, cleanText)) {
-        cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
+        cleanText = words.step(
+          'rewriteContinuityBreak',
+          cleanText,
+          rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText)
+        );
         warden.notes.push('Continuity break rewritten locally (crowd/noise kept).');
       }
-      cleanText = stripUnearnedXpProse(cleanText);
+      cleanText = words.step('stripUnearnedXpProse', cleanText, stripUnearnedXpProse(cleanText));
       if (!storyHasBody(cleanText) && storyHasBody(storyBeforeCuts)) {
         cleanText = storyBeforeCuts;
       }
@@ -3597,8 +3609,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const hasFirearm = (workingState.inventory ?? []).some((i) =>
         /\b(pistol|handgun|revolver|rifle|shotgun|firearm|gun)\b/i.test(i.name)
       );
-      cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
-      cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
+      cleanText = words.step(
+        'applyLocalityWarden',
+        cleanText,
+        applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm)
+      );
+      cleanText = words.step(
+        'enforcePerspective',
+        cleanText,
+        enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name)
+      );
       // Declared before the prose-warden / harvest block — using it above this line
       // was `ReferenceError: Cannot access 'nextTurn' before initialization` (client_bug toast).
       const nextTurn = liveCurrent.turn + 1;
@@ -3619,7 +3639,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             cleanText
           );
         }
-        cleanText = applyProseWarden(cleanText, {
+        cleanText = words.step('applyProseWarden', cleanText, applyProseWarden(cleanText, {
           currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
           priorLocation: liveCurrent.previousSceneFacts?.location ?? liveCurrent.currentLocation,
           aloneArrival: isAloneArrivalOpening(workingState) || isAloneArrivalOpening(liveCurrent),
@@ -3670,16 +3690,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           npcMemories: workingState.npcMemories ?? liveCurrent.npcMemories,
           lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,
           currentTurn: liveCurrent.turn,
-          keepWriterProse: !useMud && !authoredBook,
           enemyName:
             workingState.activeEncounter?.name
             ?? liveCurrent.activeEncounter?.name
             ?? workingState.sceneFacts?.lastKill?.name
             ?? liveCurrent.sceneFacts?.lastKill?.name,
-        });
+        }));
         {
           const prefaced = ensureEncounterSpawnPreface(workingState, cleanText);
-          cleanText = prefaced.prose;
+          cleanText = words.step('ensureEncounterSpawnPreface', cleanText, prefaced.prose);
           workingState = prefaced.state;
           if (prefaced.spawnReceipt) {
             workingState = {
@@ -3710,8 +3729,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             };
           }
         }
-        cleanText = scrubOfficialPlaceholder(cleanText, workingState);
-        cleanText = scrubInventedGeography(cleanText, workingState);
+        cleanText = words.step('scrubOfficialPlaceholder', cleanText, scrubOfficialPlaceholder(cleanText, workingState));
+        cleanText = words.step('scrubInventedGeography', cleanText, scrubInventedGeography(cleanText, workingState));
         workingState = harvestNarrativeIntoLedger(workingState, cleanText, nextTurn);
         workingState = maybeRevealFromLocation(workingState, workingState.currentLocation);
         workingState = maybeAutoCloseDungeon(workingState);
@@ -3720,8 +3739,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const leak = scanAndScrubLeaks(cleanText);
         if (leak.notes.length) {
           debugLogger.record('WARN', 'Leak scanner scrubbed engine notes', { notes: leak.notes.slice(0, 4) });
-          cleanText = leak.clean;
+          cleanText = words.step('scanAndScrubLeaks', cleanText, leak.clean);
         }
+      }
+      if (words.notes.length) {
+        warden.notes.push(...words.notes);
+        debugLogger.record('INFO', 'Writer words kept', { turn: liveCurrent.turn, notes: words.notes });
       }
 
       if (mode === 'kid') {

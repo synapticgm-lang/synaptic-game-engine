@@ -134,3 +134,28 @@ Tests: `cursed-keep T7 / summoned-pact T8 check 6…`, `salt-road T10 check 6…
 
 **Cut: 0.** Clean draft lines kept whole: cursed-keep 36/38, salt-road 32/33, summoned-pact 39/39 (the rest dropped as repeats). No new cut. Gate drops only (writer lines the gate fails, incl. two `article-person`).
 tsc (app config) 601. vitest 116 failed; 0 new vs `vitest.json`, 0 new vs `vitest-29z9b.json`. Not committed.
+
+## One writer-words guard (John, 09:06): four writer-turn flags deleted
+
+`src/game/writerWords.ts` `writerWordsGuard(writerOwns)`: every post-writer stage in `fateAutoplay.ts` and `useGame.ts` goes through `words.step(stage, before, after)`. On a writer turn a stage may add an engine line around the writer's words; a stage that would drop or change them logs `Writer words kept: <stage> would change|drop "<sentence>"` into `warden.notes` and the words stay. Flags deleted: `runWarden` opts, `applyFactLocks` opts, `ProseWardenContext.keepWriterProse`, `applyGovernanceToProse` opts (incl. the 28l `keep` / `sceneMoveOr` / `stripOnly`). The scrubs now run the same on every turn. `postFilterGmOutput` (player maturity / Kid filter) is a player setting, not a stage, and is not guarded. Tests rewritten on the guard from the live lines; `playtest29hTurnFail` anchor is the `enforcePerspective(...)` call.
+
+## Check 8 — `check-8/` (one check)
+
+**Cuts: 3, all at `finishCommittedProse+spoken` (the writer turn's own pass, before the guard).** None at a post-writer stage. Guard kept the words 3 times (cursed-keep `applyGovernanceToProse`, salt-road `runWarden`, summoned-pact `applyGovernanceToProse`).
+- salt-road T11 "@t5 Hobb Dunmore unfolded his arms…" painted as "Hobb Dunmore Hobb Dunmore…" then dropped.
+- salt-road T11 "@t6 Sefa Crane lifted her head…" painted as "Sefa Crane Sefa Crane…" then dropped.
+- summoned-pact T3 "I am ~~the Cinderflow Who~~ Cinderflow, the voice…" (the `@t8` display is "Cinderflow Who").
+tsc (app config) 601. vitest 116 failed; 0 new vs both baselines. Not pushed (not 0 cuts). Not deployed.
+
+## Paint step (John, 10:06): a token paints once; a junk label is never a name
+
+| What broke (live line) | File | Change |
+|---|---|---|
+| salt-road T11 "@t5 Hobb Dunmore unfolded…" painted "Hobb Dunmore Hobb Dunmore…" (same for Sefa Crane), then dropped | `src/game/tokenProse.ts` `dropTypedNameAfterToken` (in `renderTokenBeat` and `paintTokensOrDrop`) | the label the writer also typed right after its token is the same mention; the token paints it once |
+| summoned-pact T3 "I am the Cinderflow Who" (`cast:cinderflow-who`) | `src/game/openingEstablishment.ts` `openingCastNames` | First Last / titled names are read on one card line; "…on the Cinderflow" + next line "Who is here:" is not a name |
+
+The writer turn's own pass is not behind the guard. Kid Mode stays outside the guard. Tests: `salt-road T11 check 8…`, `summoned-pact T3 check 8…` (both fail on the old code).
+
+## Check 9 — `check-9/` (one check)
+
+**Cuts: 0.** Clean draft lines kept whole: cursed-keep 36/39, salt-road 38/38, summoned-pact 34/35 (the rest dropped as repeats). No doubled name, no "Cinderflow Who". Guard kept the words once per run, each at `applyGovernanceToProse`. tsc (app config) 601. vitest 116 failed; 0 new vs both baselines. Not pushed. Not deployed.

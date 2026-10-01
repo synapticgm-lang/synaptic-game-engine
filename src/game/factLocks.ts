@@ -163,14 +163,9 @@ function sanitizeSystemBlock(block: string): string {
 export function applyFactLocks(
   state: GameState,
   narrative: string,
-  playerAction: string,
-  /** Writer turns keep the writer's sentences; the warden logs the hits as notes. */
-  opts: { keepWriterProse?: boolean } = {}
+  playerAction: string
 ): string {
   const parts = narrative.split(/(<system>[\s\S]*?<\/system>)/gi);
-  if (opts.keepWriterProse) {
-    return parts.map((part) => (/^<system>/i.test(part) ? sanitizeSystemBlock(part) : part)).join('');
-  }
   const next = parts
     .map((part) => {
       if (/^<system>/i.test(part)) return sanitizeSystemBlock(part);

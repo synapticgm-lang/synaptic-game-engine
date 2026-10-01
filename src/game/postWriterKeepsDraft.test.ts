@@ -1,11 +1,13 @@
-/**
- * 29z9c — later post-writer steps must keep a clean draft whole. Lines are quoted from
+﻿/**
+ * 29z9c â€” later post-writer steps must keep a clean draft whole. Lines are quoted from
  * docs/orders/t100-29z9/MORNING-REVIEW.md (cursed-keep / salt-road-heist / summoned-pact, T100 seed 70).
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { applyProseWarden, scrubInventedCrowdSize } from './proseWarden';
-import { classifyTokenLine, knownProperNames, renderTokenBeat, type TokenBeat } from './tokenProse';
+import { classifyTokenLine, dropTypedNameAfterToken, knownProperNames, renderTokenBeat, type TokenBeat } from './tokenProse';
+import { normalizeOpeningHookCard, openingCastNames } from './openingEstablishment';
+import { SUMMONED_PACT_PHASE4_HOOKS as summonedPactPhase4Hooks } from '../data/campaigns/summonedPactPhase4Hooks';
 import { applyFactLocks } from './factLocks';
 import { trimRecycledSentences } from './semanticLoopDetector';
 import { splitProseSentences } from './proseSentences';
@@ -13,6 +15,7 @@ import { compileRefEnum, isPaintableRefLabel } from './completedEventPacket';
 import { stanceEventFromAction } from './npcStance';
 import { inventedPersonNamesNotOnAllowlist, obeyLedgerNouns } from './ledgerNounObey';
 import { applyGovernanceToProse } from './qualityGovernance';
+import { writerWordsGuard } from './writerWords';
 import { polishMentions } from './mentionVariety';
 import { runWarden } from './warden';
 import type { GameState, NpcMemory } from './types';
@@ -39,7 +42,7 @@ function townState(here: string, people: string[]): GameState {
   };
 }
 
-describe('1 — a group is never turned into "no one"', () => {
+describe('1 â€” a group is never turned into "no one"', () => {
   const t33 =
     'Jax straightened from the rubble and swept the whole west wall with a slow turn, cataloguing gate traffic, stairwells, and the two figures standing nearest.';
   const t46 =
@@ -66,7 +69,7 @@ describe('1 — a group is never turned into "no one"', () => {
   });
 });
 
-describe('2 — "the stranger" and present townsfolk lines are kept', () => {
+describe('2 â€” "the stranger" and present townsfolk lines are kept', () => {
   const beatOf = (text: string): TokenBeat => ({ refs: [], lines: [{ fn: 'action', text }] });
   const strangerLines = [
     'The stranger stopped short, boots scuffing once, and turned a shadowed face toward the sound.',
@@ -101,7 +104,7 @@ describe('2 — "the stranger" and present townsfolk lines are kept', () => {
   });
 });
 
-describe('3 — motion words are never cut out of a sentence', () => {
+describe('3 â€” motion words are never cut out of a sentence', () => {
   const lines = [
     'They kept moving toward Consul Caravan Camp, taking the long way round instead of the open salt road.',
     'Jax looked both ways, nothing moving on either side of the road.',
@@ -128,7 +131,7 @@ describe('3 — motion words are never cut out of a sentence', () => {
   });
 });
 
-describe('4 — no space before a closing quote, no quote cut in half', () => {
+describe('4 â€” no space before a closing quote, no quote cut in half', () => {
   const t57 =
     'The traveler shifted their pack, looked Jax over once, and said, "I\'ve got it, friend, but I won\'t forget you asked." The road went quiet behind them.';
   const t80 = '"I\'ve got one token and no coin," Jax said. "Take it or let me walk to the camp."';
@@ -160,8 +163,8 @@ describe('4 — no space before a closing quote, no quote cut in half', () => {
   });
 });
 
-describe('5 — junk card labels are never painted as a place or a person', () => {
-  const junk = ['alone on the stone outline of a building that is gone', 'Nobody here — only a footprint in the grass', 'the thief beside you'];
+describe('5 â€” junk card labels are never painted as a place or a person', () => {
+  const junk = ['alone on the stone outline of a building that is gone', 'Nobody here â€” only a footprint in the grass', 'the thief beside you'];
   const real = ['Consul Caravan Camp', 'Salt Road Waystation', 'Idra Fenwick', 'Oskar the Woodcutter', 'the ferry inn at Thornferry'];
 
   it('label shape rejects the three review labels and keeps real names', () => {
@@ -183,7 +186,7 @@ describe('5 — junk card labels are never painted as a place or a person', () =
   });
 });
 
-describe('6 — stance moves when the help is done, not offered', () => {
+describe('6 â€” stance moves when the help is done, not offered', () => {
   const state = townState('the Millstone inn', ['Edda Merrow']);
 
   it('an offer of help is no stance event', () => {
@@ -196,8 +199,8 @@ describe('6 — stance moves when the help is done, not offered', () => {
   });
 });
 
-/** 29z9d — lines from the seed-71 T10 check (docs/orders/t10-29z9c). */
-describe('29z9d — seed-71 check lines', () => {
+/** 29z9d â€” lines from the seed-71 T10 check (docs/orders/t10-29z9c). */
+describe('29z9d â€” seed-71 check lines', () => {
   it('cursed-keep T3: dropping an invented-name sentence takes its whole quote', () => {
     const body =
       'Jax rested both hands on the damp oak of the counter and asked the innkeep plainly who they were. The innkeep set down the rag and said, "Name\'s Wenna Barrow. Kept this house eleven years, and I\'ll keep it eleven more if the hill stays where it is." The rain thickened against the leaded glass.';
@@ -283,12 +286,14 @@ describe('29z9d — seed-71 check lines', () => {
     const s = { ...base, worldLedger: { ...(base.worldLedger as any), clock: { day: 0.2, week: 0 } } } as GameState;
     const t6 = 'Jax walked the whole morning with the Keep Gate somewhere ahead of them, and the two hours passed without trouble of any kind.';
     const t7 = 'Jax stood over the thugs with split knuckles and a purse of gold that had not been theirs an hour ago, and the west wall still waited ahead.';
-    for (const [line, words] of [[t6, 'the two hours passed'], [t7, 'theirs an hour ago']]) {
-      const kept = await runWarden(s, [], line, 'Walk on', undefined, '', '', { keepWriterProse: true });
-      expect(kept.scrubbedNarrative ?? line).toContain(words);
-    }
     const repaired = await runWarden(s, [], t6, 'Walk on');
     expect(repaired.scrubbedNarrative ?? t6).not.toContain('hours passed');
+    for (const line of [t6, t7]) {
+      const scrub = (await runWarden(s, [], line, 'Walk on')).scrubbedNarrative ?? line;
+      const guard = writerWordsGuard(true);
+      expect(guard.step('runWarden', line, scrub)).toBe(line);
+      if (scrub !== line) expect(guard.notes[0]).toMatch(/^Writer words kept: runWarden/);
+    }
   });
 
   it('cursed-keep T7 / summoned-pact T8 check 6: a fact lock does not delete a writer sentence', () => {
@@ -302,15 +307,64 @@ describe('29z9d — seed-71 check lines', () => {
     const t7 = 'The chain on Keep Gate was thick and old, and no one here had yet said what they wanted from a stranger at this hour.';
     const t8 = 'Tilde Crane added that the gate crews had gone quiet an hour ago, and she did not like a quiet gate.';
     for (const line of [t7, t8]) {
-      expect(applyFactLocks(s, line, 'Walk on', { keepWriterProse: true })).toBe(line);
-      expect(applyFactLocks(s, line, 'Walk on')).toBe('');
+      const scrub = applyFactLocks(s, line, 'Walk on');
+      expect(scrub).toBe('');
+      const guard = writerWordsGuard(true);
+      expect(guard.step('applyFactLocks', line, scrub)).toBe(line);
+      expect(guard.notes[0]).toMatch(/^Writer words kept: applyFactLocks would drop "/);
+      expect(writerWordsGuard(false).step('applyFactLocks', line, scrub)).toBe('');
     }
   });
 
   it('salt-road T10 check 6: scenery crates on a writer turn are not rewritten to "the area"', () => {
     const line = 'Jax stepped past the last crate into Safehouse Alley, where the alley narrowed to a damp brick throat between two shuttered buildings.';
-    expect(applyProseWarden(line, { keepWriterProse: true })).toContain('past the last crate into Safehouse Alley');
-    expect(applyProseWarden(line)).toContain('past the area');
+    const scrub = applyProseWarden(line);
+    expect(scrub).toContain('past the area');
+    const guard = writerWordsGuard(true);
+    expect(guard.step('applyProseWarden', line, scrub)).toBe(line);
+    expect(guard.notes[0]).toMatch(/^Writer words kept: applyProseWarden would change "/);
+  });
+
+  it('salt-road T11 check 8: "@t5 Hobb Dunmore" paints the name once', () => {
+    const refs = [
+      { tok: 't5', id: 'present:hobb-dunmore', klass: 'person' as const, display: 'Hobb Dunmore' },
+      { tok: 't6', id: 'present:sefa-crane', klass: 'person' as const, display: 'Sefa Crane' },
+    ];
+    const beat: TokenBeat = {
+      refs: [{ tok: 't5', id: 'present:hobb-dunmore', use: 'actor' }, { tok: 't6', id: 'present:sefa-crane', use: 'speaker' }],
+      lines: [
+        { fn: 'react', text: "@t5 Hobb Dunmore unfolded his arms and drifted two steps closer, watching Jax's hands the way a man watches a sum he has not finished adding." },
+        { fn: 'speech', text: '@t6 Sefa Crane lifted her head off the cold cup and said, low and even, that whatever was behind that door had better be worth the noise of a snapped pin.' },
+      ],
+    } as TokenBeat;
+    const out = renderTokenBeat(beat, refs as any);
+    expect(out).toContain('Hobb Dunmore unfolded his arms');
+    expect(out).toContain('Sefa Crane lifted her head');
+    expect(out).not.toMatch(/Hobb Dunmore Hobb Dunmore|Sefa Crane Sefa Crane/);
+    expect(dropTypedNameAfterToken('@t5 nodded to Hobb Dunmore.', (t) => (t === 't5' ? 'Hobb Dunmore' : undefined)))
+      .toBe('@t5 nodded to Hobb Dunmore.');
+  });
+
+  it('summoned-pact T3 check 8: the frozen-ford card never names "Cinderflow Who"', () => {
+    const card = summonedPactPhase4Hooks.find((h) => typeof h !== 'string' && h.location === 'the frozen ford on the Cinderflow');
+    const picked = normalizeOpeningHookCard(card!).text;
+    expect(picked).toContain('Cinderflow\nWho is here');
+    const base = createInitialState(undefined, 'litrpg');
+    const s = {
+      ...base,
+      openingEstablishment: { ...(base.openingEstablishment as any), pickedHook: picked },
+    } as GameState;
+    expect(openingCastNames(s).map((n) => n.toLowerCase())).not.toContain('cinderflow who');
+    expect(openingCastNames(s).join('|')).not.toMatch(/\bWho\b/);
+  });
+
+  it('a stage that only adds an engine line around the writer words passes through', () => {
+    const line = 'Jax stepped past the last crate into Safehouse Alley.';
+    const guard = writerWordsGuard(true);
+    expect(guard.step('ensureEncounterSpawnPreface', line, `A shape moved at the alley mouth. ${line}`)).toBe(
+      `A shape moved at the alley mouth. ${line}`
+    );
+    expect(guard.notes).toEqual([]);
   });
 
   it('summoned-pact T10 check 6: "The Weighing Cup" keeps its article after "a leaning sign marked"', () => {
@@ -328,10 +382,10 @@ describe('29z9d — seed-71 check lines', () => {
       character: { ...base.character, name: 'Jax' },
       inventory: [{ id: 'w1', name: 'Worn Iron Shortsword', rarity: 'Common', quantity: 1, equipped: true, itemType: 'weapon' }],
     } as GameState;
-    const kept = await runWarden(armed, [], line, 'Walk on', undefined, '', '', { keepWriterProse: true });
+    const kept = await runWarden(armed, [], line, 'Walk on');
     expect(kept.scrubbedNarrative ?? line).toContain("at Jax's sword");
     const unarmed = { ...armed, inventory: [] } as GameState;
-    const scrubbed = await runWarden(unarmed, [], line, 'Walk on', undefined, '', '', { keepWriterProse: true });
+    const scrubbed = await runWarden(unarmed, [], line, 'Walk on');
     expect(scrubbed.scrubbedNarrative ?? line).not.toContain("Jax's sword");
   });
 
@@ -374,8 +428,10 @@ describe('29z9d — seed-71 check lines', () => {
     const t2 = 'Jax held the innkeep\'s gaze and asked again, slower, what they wanted from the stranger who just walked in wet.';
     const t11 =
       'Half a street ahead, past a shuttered front, a figure in a travel-stained coat worked a stubborn latch with both hands, on their own errand and paying Jax no mind yet.';
-    expect(applyGovernanceToProse(state, t2, 'Ask what they want', { keepWriterProse: true }).prose).toContain('from the stranger who');
-    expect(applyGovernanceToProse(state, t11, 'Walk on', { keepWriterProse: true }).prose).toContain('a figure in a travel-stained coat');
+    for (const [line, input] of [[t2, 'Ask what they want'], [t11, 'Walk on']]) {
+      const scrub = applyGovernanceToProse(state, line, input).prose;
+      expect(writerWordsGuard(true).step('applyGovernanceToProse', line, scrub)).toBe(line);
+    }
   });
 
   it('summoned-pact T9: mention polish leaves the writer\'s own words and the word before a label', () => {
