@@ -4,3 +4,7 @@ import type { GameState } from './types.ts';
 export function nearbyPlaceNames(_state: GameState): string[] {
   return [];
 }
+
+export function exitPlaceNames(_state: GameState): string[] {
+  return [];
+}

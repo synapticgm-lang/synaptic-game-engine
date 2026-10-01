@@ -106,6 +106,7 @@ const FILES = [
   'diegeticFallbacks.ts',
   'intentParser.ts',
   'suggestionValidation.ts',
+  'searchContinuity.ts',
 ];
 
 function rewriteImports(source, file) {
