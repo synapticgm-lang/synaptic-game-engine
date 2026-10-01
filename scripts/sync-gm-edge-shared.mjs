@@ -94,6 +94,18 @@ const FILES = [
   'npcLifecycleFsm.ts',
   'writerInfoLayer.ts',
   'openRouterChat.ts',
+  'proseSentences.ts',
+  'skillRanks.ts',
+  'floorPlan.ts',
+  'placeTemplates.ts',
+  'ledgerCombat.ts',
+  'checkRules.ts',
+  'npcRelationships.ts',
+  'npcMemory.ts',
+  'manusTopicBanks.ts',
+  'diegeticFallbacks.ts',
+  'intentParser.ts',
+  'suggestionValidation.ts',
 ];
 
 function rewriteImports(source, file) {
