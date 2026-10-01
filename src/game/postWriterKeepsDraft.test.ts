@@ -6,7 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { applyProseWarden, scrubInventedCrowdSize } from './proseWarden';
 import { classifyTokenLine, dropTypedNameAfterToken, knownProperNames, renderTokenBeat, type TokenBeat } from './tokenProse';
-import { normalizeOpeningHookCard, openingCastNames } from './openingEstablishment';
+import { normalizeOpeningHookCard, openingCastNames, slotNamesOnePerson } from './openingEstablishment';
+import { finishCommittedProse, moveSentenceCheck } from './writerTurn';
 import { SUMMONED_PACT_PHASE4_HOOKS as summonedPactPhase4Hooks } from '../data/campaigns/summonedPactPhase4Hooks';
 import { applyFactLocks } from './factLocks';
 import { trimRecycledSentences } from './semanticLoopDetector';
@@ -356,6 +357,54 @@ describe('29z9d â€” seed-71 check lines', () => {
     } as GameState;
     expect(openingCastNames(s).map((n) => n.toLowerCase())).not.toContain('cinderflow who');
     expect(openingCastNames(s).join('|')).not.toMatch(/\bWho\b/);
+  });
+
+  it('cursed-keep T11 check 10: a new quote stays though the look before it matches; the same quote again drops', () => {
+    const t9 =
+      'Jax turned back from Open road and walked the rise again until Keep Gate stood chained across the granite hill. Jax climbed the last of the road without hurry and stopped a few paces short of the gate, where the footprints in the dust simply ended. Wenna Barrow and Rosel Tew were still there by the gate, and neither of them moved to meet Jax or wave them off. Wenna looked Jax over once and said, "Back already. Most people keep walking when they see the chain." The chain hung slack across Keep Gate, and whatever the gate was holding sat quiet on the other side of it.';
+    const tail =
+      ' Rosel Tew stood a step behind her with her arms folded, watching Jax the way a person watches a door they expect to open. The chain hung slack across Keep Gate, and the evening wind carried the smell of cold stone down off the hill.';
+    const t11 = `Wenna Barrow looked Jax over once and said, "Back already. Most people keep walking when they see the chain."${tail}`;
+    const fresh = `Wenna Barrow and Rosel Tew were still there by the gate, and neither of them moved to meet Jax, until Wenna said, "Twice in one day, and still no business at this chain."${tail}`;
+    expect(trimRecycledSentences(fresh, [t9]).text).toContain('until Wenna said, "Twice in one day');
+    expect(trimRecycledSentences(t11, [t9]).text).not.toContain('Back already');
+  });
+
+  it('salt-road T6 check 10: the travel sentence naming the leaving and the arrival stays', () => {
+    const base = townState('Back streets', []);
+    const prior = [
+      'Jax stayed low against the brick of the Consul counting-house back door and put the question straight to the crouched figure sorting picks. A hired lockpick didn\'t look up from their tools, just answered flat: "A name\'s worth less than the iron in that grate, friend." Jax watched the picks turn over in the lockpick\'s fingers and understood the dodge for exactly what it was.',
+      'Jax walked the back wall of the counting-house and read the three ways out of the yard one at a time. A hired lockpick kept their shoulder against the brick and watched Jax count instead of the doors. The cracked street ran wide and pale toward the Salt Road Waystation, easy to cross and easy to be seen crossing.',
+    ];
+    const s = {
+      ...base,
+      log: prior.map((content, i) => ({ id: `g${i}`, turn: i + 3, role: 'gm', content, timestamp: i })),
+    } as GameState;
+    const refEnum = [
+      { tok: 't1', id: 'here', klass: 'place' as const, display: 'Back streets' },
+      { tok: 't2', id: 'place:consul-counting-house-back-door', klass: 'place' as const, display: 'Consul counting-house back door' },
+      { tok: 't3', id: 'place:salt-road-waystation', klass: 'place' as const, display: 'Salt Road Waystation' },
+    ];
+    const move = 'Jax left the Consul counting-house back door behind and worked their way along Back streets toward Salt Road Waystation.';
+    const rendered = `${move} Jax kept to the cracked pavement and counted each turn, moving quick and quiet through the morning. Halfway along the block a lone traveler stepped out on their own errand and glanced at Jax once, then kept walking. The waystation still waited ahead, and the streets around Jax had gone tight and watchful.`;
+    const check = (playerInput: string) => ({ state: s, playerInput, intent: {} as any, engineFact: '', previousGm: prior[1] });
+    expect(finishCommittedProse(rendered, check('Travel toward Salt Road Waystation'), { refEnum } as any)).toContain(move);
+    expect(moveSentenceCheck('Look around', refEnum as any)(move)).toBe(false);
+  });
+
+  it('summoned-pact T4 check 10: the halves of a faction line never become names', () => {
+    const card = summonedPactPhase4Hooks.find((h) => typeof h !== 'string' && h.location === 'the frozen ford on the Cinderflow');
+    const base = createInitialState(undefined, 'litrpg');
+    const s = {
+      ...base,
+      openingEstablishment: { ...(base.openingEstablishment as any), pickedHook: normalizeOpeningHookCard(card!).text },
+    } as GameState;
+    const names = openingCastNames(s).join('|');
+    expect(names).not.toMatch(/Pellane scouts|Ash pickets/i);
+    expect(slotNamesOnePerson('Pellane scouts on one bank')).toBe(false);
+    expect(slotNamesOnePerson('Ash pickets on the other')).toBe(false);
+    expect(slotNamesOnePerson('Archivist Lene Quill')).toBe(true);
+    expect(slotNamesOnePerson('a hired lockpick')).toBe(true);
   });
 
   it('a stage that only adds an engine line around the writer words passes through', () => {

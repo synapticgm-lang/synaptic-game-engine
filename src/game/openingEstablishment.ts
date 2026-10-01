@@ -1423,7 +1423,7 @@ export function openingCastNames(state: GameState): string[] {
   const who = hay.match(/Who is here[^:\n]*:\s*([^\n]+)/i)?.[1] ?? '';
   for (const part of who.split(/\s+and\s+|,\s*/i)) {
     const t = part.replace(/\s+/g, ' ').trim();
-    if (!t) continue;
+    if (!t || !slotNamesOnePerson(t)) continue;
     push(t);
     push(t.replace(/^(a|an|the)\s+/i, '').trim());
   }
@@ -1536,7 +1536,23 @@ function whoFromPickedHookBlob(blob?: string): string {
     .trim()
     .replace(/[.!]+$/, '');
   if (!who || /^(?:no|nobody|none|alone|you alone)\b/i.test(who) || who.split(' ').length > 6) return '';
-  return who;
+  return slotNamesOnePerson(who) ? who : '';
+}
+
+/**
+ * A part of the card's "Who is here" line is a cast name only when it is one person: a proper name
+ * ("Archivist Lene Quill", "Vessa") or a singular role ("the innkeep", "a hired lockpick"). A group
+ * ("Pellane scouts on one bank", "two militia") is who is present, not someone to name.
+ */
+export function slotNamesOnePerson(part: string): boolean {
+  const words = part.replace(/\s+/g, ' ').trim().replace(/^(?:the|a|an)\s+/i, '').split(' ');
+  if (!words[0] || /^(?:two|three|four|five|several|some|many|both|\d+)$/i.test(words[0])) return false;
+  const stop = words.findIndex(
+    (w, i) => i > 0 && /^(?:on|at|in|of|who|with|from|behind|beside|by|near|already|that|which|plus|for|to)$/i.test(w)
+  );
+  const head = (stop > 0 ? words.slice(0, stop) : words).slice(-1)[0] ?? '';
+  if (/^[A-Z]/.test(head)) return true;
+  return !/[^s]s$/i.test(head);
 }
 
 function wantFromPickedHookBlob(blob?: string): string {

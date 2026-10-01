@@ -7,7 +7,7 @@
 import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
-import { isLastGmReprint, isUnaskedCombatClose } from './completedEventPacket';
+import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, refEnumOf, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
@@ -168,8 +168,26 @@ export function runWriterTurn(opts: {
  */
 export function finishCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
   let next = prose;
+  const refs = refEnumOf(check.state, packet);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
-    next = trimRecycledSentences(next, recentGmBeatTexts(check.state)).text;
+    const move = moveSentenceCheck(check.playerInput, refs);
+    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, move).text;
   }
-  return polishMentions(next, refEnumOf(check.state, packet), check.state);
+  return polishMentions(next, refs, check.state);
+}
+
+/** On a turn the player traveled or left, a sentence naming the place left and the place reached is that move. */
+export function moveSentenceCheck(playerInput: string, refs: LedgerRef[]): (sentence: string) => boolean {
+  const verb = classifyVerb(playerInput);
+  if (verb !== 'traveled' && verb !== 'left') return () => false;
+  const places = [...new Set(
+    refs
+      .filter((r) => r.klass === 'place')
+      .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase())
+      .filter((p) => p.length > 2)
+  )];
+  return (sentence) => {
+    const s = sentence.toLowerCase();
+    return places.filter((p) => s.includes(p)).length >= 2;
+  };
 }

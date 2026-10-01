@@ -159,3 +159,25 @@ The writer turn's own pass is not behind the guard. Kid Mode stays outside the g
 ## Check 9 — `check-9/` (one check)
 
 **Cuts: 0.** Clean draft lines kept whole: cursed-keep 36/39, salt-road 38/38, summoned-pact 34/35 (the rest dropped as repeats). No doubled name, no "Cinderflow Who". Guard kept the words once per run, each at `applyGovernanceToProse`. tsc (app config) 601. vitest 116 failed; 0 new vs both baselines. Not pushed. Not deployed.
+
+## Check 10 — `check-10/` (one check, after commit `2a9af60`)
+
+**Cuts: 3, all at `finishCommittedProse+spoken`: the repeat trim dropped a sentence the check does not count as already told.** No doubled name; the writer never typed a name after its token this run, so the paint-once fix was not exercised live (the vitest covers it).
+- cursed-keep T11 (Turn back toward Keep Gate): `Wenna Barrow looked Jax over once and said, "Back already. Most people keep walking when they see the chain."` dropped; T9 had `Wenna looked Jax over once and said, "…`.
+- salt-road T6 (Travel toward Salt Road Waystation): `Jax left the Consul counting-house back door behind and worked their way along Back streets toward Salt Road Waystation.` dropped; the travel sentence itself.
+- summoned-pact T4 (Look around): `Pellane scouts on one bank held their ground… while Ash pickets on the other across the Cinderflow shifted weight…` dropped. Also: "Pellane scouts on one bank" / "Ash pickets on the other" are card faction halves used as names (same family as "Cinderflow Who").
+Not fixed (one check). Not pushed. Not deployed.
+
+## Repeat trim + faction halves (John, 10:18)
+
+| What broke (live line) | File | Change |
+|---|---|---|
+| cursed-keep T11 Wenna line dropped | `src/game/semanticLoopDetector.ts` `recycledSentencesIn` | a sentence carrying spoken words the person has not said in recent beats is new, however the look before it reads (works when the sentence split falls inside the quote). The live T11 quote was word-for-word T9's, so that one still drops |
+| salt-road T6 travel sentence dropped | `src/game/writerTurn.ts` `finishCommittedProse` / `moveSentenceCheck`; `trimRecycledSentences(…, isThisTurnsEvent)` | on a turn the player traveled or left (`classifyVerb`), a sentence naming two ledger places (left / reached) is this turn's move and stays |
+| summoned-pact T4 "Pellane scouts on one bank" / "Ash pickets on the other" as names | `src/game/openingEstablishment.ts` `slotNamesOnePerson` (in `openingCastNames` and `whoFromPickedHookBlob`) | a "Who is here" part is a cast name only when it is one person (a proper name or a singular role); a group is presence |
+
+Tests: `cursed-keep T11 check 10…`, `salt-road T6 check 10…`, `summoned-pact T4 check 10…` (each fails on the old code).
+
+## Check 11 — `check-11/` (one check)
+
+**Cuts: 0.** Clean draft lines kept whole: cursed-keep 36/36, salt-road 39/39, summoned-pact 40/40; no repeats dropped. No faction-half label, no "Cinderflow Who". The writer did not type a name after its token this run either, so paint-once is still covered only by its vitest. tsc (app config) 601. vitest 116 failed; 0 new vs both baselines. Not committed. Not pushed. Not deployed.
