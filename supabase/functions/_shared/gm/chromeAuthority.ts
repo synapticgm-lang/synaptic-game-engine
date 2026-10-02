@@ -43,6 +43,14 @@ export function isUiChromeNoun(token: string): boolean {
   return UI_CHROME_EXACT.test(t) || UI_CHROME_EXACT.test(normalizeChromeToken(t));
 }
 
+const SYSTEM_WINDOW_EXACT =
+  /^(?:blue\s+system\s+panel|blue\s+panel|system\s+panel|system\s+window|status\s+window|blue\s+screen|blue\s+window|panel)$/i;
+
+/** The LitRPG System window: shown to the PC alone, never a thing in the room. */
+export function isSystemWindowLabel(token: string): boolean {
+  return SYSTEM_WINDOW_EXACT.test(normalizeChromeToken(token));
+}
+
 /** True when a present[] / roster / pin token is chrome or a cover-slot dummy name. */
 export function isChromePersonToken(token: string): boolean {
   const t = (token ?? '').replace(/\s+/g, ' ').trim();
@@ -289,6 +297,10 @@ export function isAggregatePersonToken(token: string): boolean {
 export function chromeSpeechAnchor(presentPeople: string[] = [], prose = ''): string | null {
   const named = realPresentPeople(presentPeople);
   if (named[0]) return named[0];
+  const role = presentPeople.find(
+    (p) => typeof p === 'string' && isRoleContactLabel(p) && !isChromePersonToken(p) && !isAggregatePersonToken(p)
+  );
+  if (role) return role.trim();
   if (/\bhandlers?\b/i.test(prose)) return 'the handler';
   return null;
 }

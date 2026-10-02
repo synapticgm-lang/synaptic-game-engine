@@ -627,6 +627,36 @@ export function dispositionBlocksPad(state: GameState, choice: string): boolean 
  * 12c leftover social ledger — merchant purchases, quest-giver exit, present trim.
  * Does not touch opening stitch / hooks. No new GM prompt rails.
  */
+const SAID_TOPICS = new Set(['who', 'want', 'refuse']);
+const SPEECH_CUE = /["“”]|\b(?:said|says|saying|spoke|told|tells|answered|answers|replied|replies)\b/i;
+
+/**
+ * 29z9j — the player asked who / want / refuse and a person here answered in the committed beat:
+ * keep that sentence on their record so a later visit carries the same answer.
+ */
+export function recordSpokenTopics(
+  memories: NpcMemory[],
+  presentNames: string[],
+  topics: string[],
+  gmText: string,
+  turn: number
+): NpcMemory[] {
+  const asked = topics.filter((t) => SAID_TOPICS.has(t));
+  if (!asked.length || !gmText.trim()) return memories;
+  const here = new Set(presentNames.map(normalizeName));
+  const sentences = gmText.replace(/\s+/g, ' ').split(/(?<=[.!?]["”]?)\s+/);
+  return memories.map((m) => {
+    if (!here.has(normalizeName(m.npcName))) return m;
+    const line = sentences.find((s) => s.includes(m.npcName) && SPEECH_CUE.test(s));
+    if (!line) return m;
+    const said = [...(m.said ?? [])];
+    for (const topic of asked) {
+      if (!said.some((s) => s.topic === topic)) said.push({ topic, turn, line: line.trim().slice(0, 180) });
+    }
+    return { ...m, said, completedTopics: uniqueTopics([...(m.completedTopics ?? []), ...asked]) };
+  });
+}
+
 export function applySocialLedgerTurn(args: {
   state: GameState;
   playerAction: string;
@@ -634,6 +664,10 @@ export function applySocialLedgerTurn(args: {
   questsBefore?: Quest[];
   questsAfter?: Quest[];
   turn: number;
+  /** Hall-talk topics on the player line (caller computes; avoids an import cycle). */
+  talkTopics?: string[];
+  /** The committed GM beat. */
+  gmText?: string;
 }): GameState {
   const { playerAction, turn } = args;
   let state = args.state;
@@ -641,6 +675,9 @@ export function applySocialLedgerTurn(args: {
   if ((state.turn ?? 0) < 2 && turn < 2) return state;
 
   let memories = state.npcMemories ?? [];
+  if (args.talkTopics?.length && args.gmText) {
+    memories = recordSpokenTopics(memories, state.sceneFacts?.present ?? [], args.talkTopics, args.gmText, turn);
+  }
   if (isBuyPlayerAction(playerAction)) {
     const merchant = findPresentMerchant(state);
     const items = uniquePurchases(args.gainedItemNames ?? []);

@@ -65,6 +65,9 @@ export interface SummonEntity {
   duration?: string;
   status?: string;
   active: boolean;
+  /** Hidden XP total and level (engine-only; never shown to the writer or in STATUS). */
+  xp?: number;
+  level?: number;
 }
 
 export type RelationshipStatus = 'Friendly' | 'Hostile' | 'Neutral' | 'Rival' | 'Loyal';
@@ -128,6 +131,11 @@ export interface Companion {
   maintenanceCost: string;
   assignment: string;
   notes: string;
+  /** A summoned creature: like a pet, it takes no party share and keeps its own XP total. */
+  summon?: boolean;
+  /** Hidden XP total and level (engine-only; never shown to the writer or in STATUS). */
+  xp?: number;
+  level?: number;
 }
 
 export interface Container {
@@ -873,6 +881,8 @@ export type StatFrequency = 'every-turn' | 'every-5-turns' | 'end-of-combat';
 export type NarrativePerspective = 'first-person' | 'second-person' | 'third-person' | 'hybrid';
 export type ViolenceLevel = 'none' | 'mild' | 'graphic';
 export type CursingLevel = 'none' | 'mild' | 'strong';
+/** 29z9k — plain (about age 9–11), standard (adult voice), child (Kid Mode content rules). */
+export type ReadingLevel = 'plain' | 'standard' | 'child';
 
 export type MapTriggerMode = 'tactical' | 'immersive';
 export type FogRevealThreshold = 'adjacent' | 'current' | 'full';
@@ -1229,6 +1239,8 @@ export interface PlaceRecord {
   exits?: string[];
   /** 27g place card — turn the card was built; set means reuse, never rebuild. */
   cardBuiltTurn?: number;
+  /** 29z9j — objects seen at this place (the HERE props it had when the player last left it). */
+  props?: string[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
   /** 29q — settlement quest cards (two seeded once at creation, plus talk-opened). */
@@ -1502,6 +1514,8 @@ export interface Settings {
   gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;
   cursingLevel: CursingLevel;
+  /** 29z9k — writer reading level. `child` only while Kid Mode is on (Kid Mode owns it). */
+  readingLevel?: ReadingLevel;
   romanceSubplots: boolean;
   haremContent: boolean;
   statScreensEnabled: boolean;

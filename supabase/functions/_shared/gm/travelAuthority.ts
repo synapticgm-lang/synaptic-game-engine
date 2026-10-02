@@ -6,7 +6,7 @@
  */
 
 import type { GameState, SceneFacts } from './types.ts';
-import { isExplorableDungeon, isInteriorMap } from './placeAuthority.ts';
+import { isExplorableDungeon, isInteriorMap, placeScale } from './placeAuthority.ts';
 
 export type CameraScale = 'outdoor' | 'indoor';
 
@@ -52,8 +52,14 @@ export function detectCameraScale(text: string): CameraScale | null {
   return null;
 }
 
-export function resolveCameraLock(state: Pick<GameState, 'sceneFacts'>): CameraLock | undefined {
-  return state.sceneFacts?.cameraLock;
+/** The committed place decides indoor/outdoor; a stored lock only fills in when the name does not say. */
+export function resolveCameraLock(
+  state: Pick<GameState, 'sceneFacts'> & { currentLocation?: string }
+): CameraLock | undefined {
+  const lock = state.sceneFacts?.cameraLock;
+  const scale = placeScale(state.currentLocation);
+  if (!lock || !scale || lock.scale === scale) return lock;
+  return { ...lock, scale, label: (state.currentLocation ?? '').trim() || lock.label };
 }
 
 export function formatCameraBindingLine(state: GameState): string | null {
@@ -66,7 +72,7 @@ export function formatCameraBindingLine(state: GameState): string | null {
 
 export function harvestCameraIntoSceneFacts(
   prev: SceneFacts | undefined,
-  narrative: string,
+  _narrative: string,
   turn: number,
   playerInput?: string,
   locationLabel?: string
@@ -83,38 +89,27 @@ export function harvestCameraIntoSceneFacts(
       };
 
   const traveled = playerCommittedTravel(playerInput);
-  if (base.cameraLock && !traveled) {
-    return {
-      ...base,
-      indoor: base.cameraLock.scale === 'indoor',
-    };
+  const label = (locationLabel ?? '').trim();
+  const scale = placeScale(label);
+  const lock = base.cameraLock;
+  if (!scale) {
+    if (lock && traveled) {
+      const { cameraLock: _left, ...rest } = base;
+      return rest;
+    }
+    return lock ? { ...base, indoor: lock.scale === 'indoor' } : base;
   }
-
-  const detected = detectCameraScale(narrative);
-  if (traveled && detected) {
-    return {
-      ...base,
-      indoor: detected === 'indoor',
-      cameraLock: {
-        scale: detected,
-        label: (locationLabel || base.cameraLock?.label || '').trim() || (detected === 'indoor' ? 'inside' : 'outside'),
-        roomId: base.cameraLock?.roomId,
-        lockedTurn: turn,
-      },
-    };
+  if (lock && lock.scale === scale && !traveled) {
+    return { ...base, indoor: scale === 'indoor' };
   }
-
-  if (base.cameraLock) return base;
-  if (!detected) return base;
-
-  const label = (locationLabel || '').trim() || (detected === 'indoor' ? 'inside' : 'outside');
   return {
     ...base,
-    indoor: detected === 'indoor',
+    indoor: scale === 'indoor',
     cameraLock: {
-      scale: detected,
+      scale,
       label,
-      lockedTurn: turn,
+      roomId: traveled ? undefined : lock?.roomId,
+      lockedTurn: lock && lock.scale === scale ? lock.lockedTurn : turn,
     },
   };
 }

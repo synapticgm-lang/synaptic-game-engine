@@ -5,11 +5,12 @@
  * Classifier-only validation — no Continuity-Warden LLM, no novel-token deny-lists.
  */
 
-import type { GameState, LogEntry, NarrativePerspective } from './types.ts';
+import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types.ts';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName.ts';
-import { realPresentPeople } from './chromeAuthority.ts';
+import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
+import { formatInfoSheet } from './infoSheet.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs.ts';
 import { nearbyPlaceNames } from './placeNames.ts';
@@ -114,7 +115,7 @@ export interface CompletedEventPacket {
   talkAsked?: number;
   /** Code checks only (collage, talk repeat). The writer reads `infoSheet` instead. */
   recentBeats: string[];
-  /** 29z9i — the diary the writer reads in place of raw recent turns (built client-side by `infoSheet.ts`). */
+  /** 29z9i — the diary the writer reads in place of raw recent turns (`infoSheet.ts`). */
   infoSheet?: string;
   /** 29z9k — reading level + swearing / violence-detail switches (Kid Mode forces child, both off). */
   reader?: ReaderFlags;
@@ -147,7 +148,8 @@ export interface CompletedEventPacket {
   movement?: string;
 }
 
-export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion';
+/** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
+export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion' | 'window';
 
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
 
@@ -156,6 +158,8 @@ export interface LedgerRef {
   id: string;
   display: string;
   klass: LedgerRefClass;
+  /** How the writer may use this ref, printed on its REF ENUM line. */
+  note?: string;
 }
 
 export interface TokenUseRef {
@@ -296,10 +300,21 @@ function extractTarget(input: string, state: GameState): string | undefined {
   return undefined;
 }
 
-/** 29z9k — reading level and the two content switches (built client-side from Kid Mode / cursing / violence settings). */
-export type ReaderFlags = { level: 'plain' | 'standard' | 'child'; swearing: boolean; violenceDetail: boolean };
+/** 29z9k — reading level and the two content switches, read from Kid Mode / cursing / violence settings. */
+export type ReaderFlags = { level: ReadingLevel; swearing: boolean; violenceDetail: boolean };
 
-const READER_LEVEL_NOTE: Record<ReaderFlags['level'], string> = {
+export function readerFlags(
+  settings: Pick<Settings, 'contentMode' | 'cursingLevel' | 'violenceLevel' | 'readingLevel'>
+): ReaderFlags {
+  if (settings.contentMode === 'kid') return { level: 'child', swearing: false, violenceDetail: false };
+  return {
+    level: settings.readingLevel === 'plain' ? 'plain' : 'standard',
+    swearing: settings.cursingLevel !== 'none',
+    violenceDetail: settings.violenceLevel === 'graphic',
+  };
+}
+
+const READER_LEVEL_NOTE: Record<ReadingLevel, string> = {
   plain: 'plain — write for a reader aged about 9 to 11: short whole sentences, name the place and the object, no metaphor that needs explaining, no sentence fragments',
   standard: 'standard — the usual adult voice',
   child: 'child — Kid Mode content rules apply; short whole sentences that name the place and the object',
@@ -317,6 +332,8 @@ export function formatReaderLine(r: ReaderFlags): string {
 
 export type PacketBuildExtras = {
   xp?: number;
+  /** 29z9k — reading level + content switches for the writer. */
+  reader?: ReaderFlags;
   /** 28g — engine receipts for this action; the writer must state them. */
   engineResult?: string;
   damage?: number;
@@ -484,6 +501,7 @@ const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   corpse: ['corpse'],
   prop: ['prop_used'],
   kit: ['worn', 'prop_used'],
+  window: ['prop_used'],
 };
 
 /** `use` must match the ledger class — Lene cannot be `prop_used`. */
@@ -504,7 +522,7 @@ export function compileRefEnum(
   const seenId = new Set<string>();
   const seenDisplay = new Set<string>();
   let n = 1;
-  const add = (id: string, display: string, klass: LedgerRefClass) => {
+  const add = (id: string, display: string, klass: LedgerRefClass, note?: string) => {
     const label = (display ?? '').replace(/\s+/g, ' ').trim();
     if (!label || label.length < 2) return;
     if (id !== 'here' && (klass === 'person' || klass === 'place' || klass === 'companion') && !isPaintableRefLabel(label)) return;
@@ -513,8 +531,11 @@ export function compileRefEnum(
     if (seenId.has(key) || seenDisplay.has(dkey)) return;
     seenId.add(key);
     seenDisplay.add(dkey);
-    out.push({ tok: `t${n++}`, id, display: label, klass });
+    out.push({ tok: `t${n++}`, id, display: label, klass, ...(note ? { note } : {}) });
   };
+  const pcName = (state.character?.name ?? '').trim() || 'the player character';
+  const windowNote =
+    `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
 
   add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
@@ -544,7 +565,11 @@ export function compileRefEnum(
   }
 
   for (const prop of state.sceneFacts?.props ?? []) {
-    add(`prop:${slugRefId(prop)}`, prop, 'prop');
+    if (state.engineMode === 'litrpg' && isSystemWindowLabel(prop)) {
+      add(`window:${slugRefId(prop)}`, prop, 'window', windowNote);
+    } else {
+      add(`prop:${slugRefId(prop)}`, prop, 'prop');
+    }
   }
   for (const extra of extras) {
     if (!extra || isNeverCastTitle(extra, state)) continue;
@@ -557,7 +582,7 @@ export function formatRefEnumForWriter(refs: LedgerRef[]): string {
   if (!refs.length) return 'REF ENUM: (none this turn)';
   return [
     'REF ENUM (id must be one of these; names in lines.text only as @tN — code paints the display):',
-    ...refs.map((r) => `${r.tok}  ${r.id}  ${r.klass}  "${r.display}"`),
+    ...refs.map((r) => `${r.tok}  ${r.id}  ${r.klass}  "${r.display}"${r.note ? `  (${r.note})` : ''}`),
   ].join('\n');
 }
 
@@ -755,6 +780,8 @@ export function buildCompletedEventPacket(
     talkTopic: hallTalkTopic(action) ?? undefined,
     talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
+    infoSheet: formatInfoSheet(state),
+    reader: extras?.reader,
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
@@ -1921,6 +1948,12 @@ function topicAdvancePool(
     `You say yes at ${here}. ${spokenWant} The offered kit is in reach.`,
   ];
   let pool = look;
+  const fightVerb = packet?.verb === 'attacked' || packet?.verb === 'fled' || packet?.verb === 'parleyed';
+  if (packet && fightVerb && state.activeEncounter) {
+    // A move inside a live fight is answered inside the fight, never by a look-around or hall talk.
+    const fight = assemblePacketStitch(packet, recent);
+    if (fight && !isDroughtStubProse(fight)) return [fight.replace(/\s+/g, ' ').trim()];
+  }
   if (lineNamesOtherNpc(state, act) && !wantsMove) {
     // 27i — a line naming another known NPC is answered by that NPC, never the opener's card.
     const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();

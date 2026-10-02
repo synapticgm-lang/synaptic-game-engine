@@ -9,6 +9,7 @@ import { buildInteriorFloorPlan, dungeonHereLabel } from './mapEngine.ts';
 import { seedDungeonState } from './dungeonSeed.ts';
 import { findSettlement } from './worldMapAuthority.ts';
 import { placeIdFromName } from './places.ts';
+import { isUndergroundPlace } from './placeAuthority.ts';
 
 export function placeAllowsDungeon(state: GameState, placeName?: string | null): boolean {
   if (!placeName?.trim()) return !!state.activeDungeon;
@@ -20,6 +21,7 @@ export function placeAllowsDungeon(state: GameState, placeName?: string | null):
       p.aliases?.some((a) => a.toLowerCase() === placeName.toLowerCase())
   );
   if (place?.allowsDungeon || place?.dungeonRef) return true;
+  if (isUndergroundPlace(placeName)) return true;
   // Bible hubs / ruin cues
   return /\b(dungeon|ruin|crypt|undercroft|mine|delve|keep|store|warehouse|factory)\b/i.test(
     placeName

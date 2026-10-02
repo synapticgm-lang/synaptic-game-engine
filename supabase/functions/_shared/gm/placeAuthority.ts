@@ -6,14 +6,33 @@ export const INTERIOR_MAP_BLUEPRINT = 'interior-plan';
 
 /** Named interiors: cathedral, circle, vault, hall, court, building/ruin/husk — not outdoor streets. */
 const INTERIOR_PLACE_CUES =
-  /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|house|cottage|shop|barn|stable|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
+  /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|[a-z]*house|waystation|cottage|shop|barn|stable|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
 
 const OUTDOOR_OVERRIDE =
   /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?)\b/i;
 
 /** Interior cues that win even when the label also names roads/streets nearby (alone ruin dumps). */
 const OUTDOOR_STILL_INSIDE =
-  /\b(?:circle|nave|vault|vestry|chapel|undercroft|crypt|hall|court|chamber|aisle|sanctum|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|interior|inside)\b/i;
+  /\b(?:circle|nave|vault|vestry|chapel|undercroft|crypt|hall|court|chamber|aisle|sanctum|building|[a-z]*house|waystation|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|interior|inside)\b/i;
+
+/** Caves, mines, sewers, tombs: drawn from the dungeon samples, not a building or a street. */
+const UNDERGROUND_PLACE =
+  /\b(?:caves?|caverns?|grotto|mines?|mineshaft|shafts?|tunnels?|sewers?|culvert|cistern|catacombs?|crypts?|barrows?|tombs?|ossuary|dungeons?|delve|burrow|warren|lair)\b/i;
+
+export function isUndergroundPlace(name: string | undefined): boolean {
+  return UNDERGROUND_PLACE.test((name ?? '').replace(/\s+/g, ' ').trim());
+}
+
+const OUTDOOR_PLACE =
+  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?|quay|ford|crossroads|camp|field|fields|meadow|forest|woods|shore|beach|hill|riverbank)\b/i;
+
+/** Indoor or outdoor from the place name alone; null when the name does not say. */
+export function placeScale(name: string | undefined): 'indoor' | 'outdoor' | null {
+  const n = (name ?? '').replace(/\s+/g, ' ').trim();
+  if (!n) return null;
+  if (isInteriorPlace(n)) return 'indoor';
+  return OUTDOOR_PLACE.test(n) ? 'outdoor' : null;
+}
 
 export function isStreetMap(dungeon: { blueprintId?: string } | null | undefined): boolean {
   return dungeon?.blueprintId === STREET_MAP_BLUEPRINT;
@@ -34,6 +53,7 @@ export function isExplorableDungeon<T extends { blueprintId?: string }>(
 export function isInteriorPlace(name: string | undefined): boolean {
   const n = (name ?? '').replace(/\s+/g, ' ').trim();
   if (!n) return false;
+  if (isUndergroundPlace(n)) return true;
   // Building / ruin / chamber beats outdoor "roads" in the same string (alone Summoned Pact dumps).
   if (OUTDOOR_STILL_INSIDE.test(n) && INTERIOR_PLACE_CUES.test(n)) return true;
   if (OUTDOOR_OVERRIDE.test(n) && !OUTDOOR_STILL_INSIDE.test(n)) return false;
