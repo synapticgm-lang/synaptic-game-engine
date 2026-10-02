@@ -1035,7 +1035,8 @@ export function compileChoices(
   }
 
   // Batch E/G — after inspect/wait/scout treadmill, force world-moving pads (not Scout/Wait).
-  // 02w — interrupt never births Travel/Leave. Talk/inspect/legal non-travel edges only.
+  // 02w — once travel is starved (`excluded`) the interrupt never births Travel/Leave; before
+  // that, a legal exit edge is the way out. Never invent an exit the room does not have.
   if (stallInterrupt && !engaged) {
     const interruptPads: string[] = [];
     if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
@@ -1043,7 +1044,6 @@ export function compileChoices(
     }
     for (const label of edgeLabels) {
       if (isExcludedPadLabel(label, excluded)) continue;
-      if (isTravelPad(label) || isLeaveFamilyPad(label)) continue;
       if (stripsFamily(classifyChoiceFamily(label))) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
       if (!interruptPads.some((p) => p.toLowerCase() === label.toLowerCase())) {
@@ -1059,7 +1059,6 @@ export function compileChoices(
       );
     }
     for (const pad of interruptPads) {
-      if (isTravelPad(pad) || isLeaveFamilyPad(pad)) continue;
       if (isExcludedPadLabel(pad, excluded)) continue;
       if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, pad)) continue;
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {

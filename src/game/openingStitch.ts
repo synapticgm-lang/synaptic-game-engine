@@ -318,9 +318,10 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     return `The blue panel is yours — a System window at eye level ${here}. It is not a person. A blank line waits.`;
   }
 
+  const aloneRoom = 'Broken stone, a dark doorway, dust.';
   if (searches) {
     const found = alone
-      ? `You search ${here}. Broken stone, a dark doorway, dust. Nothing useful has been left for you.`
+      ? `You search ${here}. ${aloneRoom} Nothing useful has been left for you.`
       : `You look again ${here}. Nothing new has been left in reach.`;
     if (state.engineMode === 'litrpg') {
       return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
@@ -381,6 +382,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   }
 
   if (!act) {
+    if (name && alone) return finalizeContinue(state, `You are ${here}. ${aloneRoom} ${want}`);
     return finalizeContinue(state, name ? openingNameLockSpokenBeat(state) : `You are ${here}.`);
   }
 

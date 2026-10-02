@@ -79,7 +79,7 @@ describe('playtest18c — pads refill and CAST glue', () => {
     );
   });
 
-  it('name-lock want beat does not starve Who are you or first Ask what they want', () => {
+  it('name-lock want beat starves Ask what they want but not Who are you', () => {
     const lock = openingNameLockSpokenBeat(namedWatchtower());
     const state = namedWatchtower({
       log: [
@@ -88,13 +88,13 @@ describe('playtest18c — pads refill and CAST glue', () => {
         { id: 'g1', turn: 1, role: 'gm', content: lock, timestamp: 2 },
       ],
     });
-    // Name-lock may speak the card want; page-1 / lock GM must not mark want answered.
-    expect(hallTopicAlreadyAnswered(state, 'want')).toBe(false);
+    // The name-lock beat speaks the card want, so the Want chip would repeat it; who is not spoken.
+    expect(hallTopicAlreadyAnswered(state, 'want')).toBe(true);
     expect(hallTopicAlreadyAnswered(state, 'who')).toBe(false);
     expect(shouldStarveHallTopicPad(state, 'Who are you')).toBe(false);
-    expect(shouldStarveHallTopicPad(state, 'Ask what they want')).toBe(false);
+    expect(shouldStarveHallTopicPad(state, 'Ask what they want')).toBe(true);
     const pads = coverContinuePads(state);
-    expect(pads).toContain('Ask what they want');
+    expect(pads).not.toContain('Ask what they want');
     expect(pads.filter((c) => /inspect the panel/i.test(c)).length).toBeLessThan(2);
     expect(pads.length).toBeGreaterThan(0);
   });

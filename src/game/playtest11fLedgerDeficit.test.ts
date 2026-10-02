@@ -133,7 +133,8 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     // 18a: name-lock answers with HERE + spoken CAST, not a name telegram.
     expect(text).not.toMatch(/They have the name|What name|give (?:us|me) a name/i);
     expect(text).toMatch(/Salt Road tavern/i);
-    expect(text).toMatch(/answers you/i);
+    // This tavern has no authored want of its own; the honest line, never another card's want.
+    expect(text).toMatch(/answers you|have not said what they want/i);
   });
 
   it('does not overwrite a locked name', async () => {

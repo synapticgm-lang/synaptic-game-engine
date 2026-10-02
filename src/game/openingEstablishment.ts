@@ -608,6 +608,24 @@ export function resolveOpeningHookPick(
   return name && name !== pick.location ? { ...pick, location: name, locationDescription: pick.location } : pick;
 }
 
+/**
+ * The seed-picked card for a save that never stored its card — only when that card is the place the
+ * player is in. A seed that lands on another card must not lend this room its want / cost / offer.
+ */
+function seedCardForThisPlace(state: GameState): ReturnType<typeof resolveOpeningHookPick> {
+  const picked = resolveOpeningHookPick(resolveActiveCampaignBible(state), state.seed);
+  if (!picked) return undefined;
+  const place = (state.openingEstablishment?.answers?.where || state.currentLocation || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+  const cardPlace = [picked.location, (picked as { locationDescription?: string }).locationDescription]
+    .filter(Boolean)
+    .map((p) => p!.replace(/\s+/g, ' ').trim().toLowerCase());
+  if (!place || !cardPlace.length) return picked;
+  return cardPlace.some((p) => p.includes(place) || place.includes(p)) ? picked : undefined;
+}
+
 export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {
   return resolveOpeningHookPick(bible, seed)?.text;
 }
@@ -1584,16 +1602,14 @@ function clipCardClause(raw: string, max = 220): string {
 export function shortCardWant(state: GameState): string {
   const fromSave = wantFromPickedHookBlob(state.openingEstablishment?.pickedHook);
   if (fromSave) return clipCardClause(fromSave);
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
+  const picked = seedCardForThisPlace(state);
   return clipCardClause((picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim());
 }
 
 /** Authored walk-away cost from this card — never invent one. */
 export function shortCardCost(state: GameState): string {
   const fromSave = costFromPickedHookBlob(state.openingEstablishment?.pickedHook);
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
+  const picked = seedCardForThisPlace(state);
   const raw =
     fromSave
     || (picked?.openingCost ?? '').replace(/\s+/g, ' ').trim();
@@ -1603,8 +1619,7 @@ export function shortCardCost(state: GameState): string {
 
 function rawCardOffer(state: GameState): string {
   const fromSave = offerFromPickedHookBlob(state.openingEstablishment?.pickedHook);
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
+  const picked = seedCardForThisPlace(state);
   return fromSave || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim();
 }
 
@@ -2225,8 +2240,23 @@ export function gmBodiesAfterFirstHallAsk(state: GameState, topic: HallTalkTopic
     .filter((t) => t.length >= 8);
 }
 
+/** The name-lock beat already spoke the card want (an empty-want fallback is not an answer). */
+function nameLockBeatSpokeWant(state: GameState): boolean {
+  const want = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
+  if (want.length < 20 || /have not said what they want/i.test(want)) return false;
+  const clip = (s: string) => s.slice(0, Math.min(48, s.length));
+  const lock = clip(openingNameLockSpokenBeat(state).replace(/\s+/g, ' ').trim());
+  const wantClip = clip(want);
+  return (state.log ?? []).some((e) => {
+    if (e.role !== 'gm') return false;
+    const body = (e.content ?? '').replace(/\s+/g, ' ').trim();
+    return body.includes(lock) && body.includes(wantClip);
+  });
+}
+
 /** GM already spoke this hall topic after the player asked it — never page-1 overlap. */
 export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolean {
+  if (topic === 'want' && nameLockBeatSpokeWant(state)) return true;
   const gms = gmBodiesAfterFirstHallAsk(state, topic);
   if (!gms.length) return false;
   const has = (needle: string, min = 16) => {

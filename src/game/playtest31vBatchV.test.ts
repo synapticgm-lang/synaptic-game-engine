@@ -187,7 +187,9 @@ describe('playtest31vBatchV', () => {
       const gate = classifyBeatCommit(state, beat, 'Press the attack');
       expect(gate.accept).toBe(false);
       const repaired = repairRejectedBeat(state, beat, ['recycle-without-delta']);
-      expect(repaired.prose).toMatch(/HP|press the attack|parley|skirmish/i);
+      // Repair stays in the fight; HP / pad words belong in STATUS, not the story text.
+      expect(repaired.prose).toMatch(/Void-Touched Scavenger/);
+      expect(repaired.prose).not.toMatch(/\bHP\b|press the attack/i);
       expect(repaired.prose).not.toMatch(/little true effect/i);
     });
   });

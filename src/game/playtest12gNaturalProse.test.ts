@@ -253,7 +253,8 @@ describe('playtest12g — natural prose receipts', () => {
       },
     });
     const hollow = spokenTalkFallback(emptyRoom, 'Hello?');
-    expect(hollow).toMatch(/did not invent a speaker|empty ledger|No living name/i);
+    // 27c sentinel — the plain empty-room line, not writer-voice wording.
+    expect(hollow).toBe('Nobody here answered.');
     expect(hollow).not.toMatch(/Silence held the question|No one listed on the ledger answered/i);
   });
 
