@@ -172,7 +172,10 @@ export function basementEstablished(state: GameState): boolean {
 export function travelChipMoves(state: GameState, chip: string): boolean {
   if (applyGraphExitTravel(state, chip) !== state) return true;
   if (applyNamedHubTravel(state, chip) !== state) return true;
-  return commitTravel(state, chip).handled;
+  const c = commitTravel(state, chip);
+  if (!c.handled) return false;
+  // Mid-journey every input is handled; holding on the same ground is not a move.
+  return c.arrived || c.state.journey !== state.journey || c.state.currentLocation !== state.currentLocation;
 }
 
 function lastStory(state: GameState): string {

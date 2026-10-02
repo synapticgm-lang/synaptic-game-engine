@@ -1042,19 +1042,20 @@ export function formatWriterFacingEvent(
   const pov = pcPov(packet.pc, opts?.perspective);
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
+  const panelRead = !!packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction);
   const lines: string[] = [
     thirdPerson
       ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
       : 'Narrate this completed event in past tense.',
     '',
     'COMPLETED EVENT:',
-    `${who} ${packet.verb}${target}.`,
-    `Outcome: ${packet.outcome}.`,
+    panelRead ? `${who} read the System window.` : `${who} ${packet.verb}${target}.`,
+    `Outcome: ${panelRead ? 'read the ledger lines below' : packet.outcome}.`,
   ];
   if (packet.engineResult) {
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
   }
-  if (packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction)) {
+  if (panelRead) {
     lines.push(`PANEL (game chrome; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));

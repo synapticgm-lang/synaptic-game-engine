@@ -229,6 +229,8 @@ export function checkActionFollowed(
   const intent = parsePlayerIntent(act, before);
   const bodyAction = NON_TALK_ACTION.test(act);
   const talkish = !!addr || (!bodyAction && (intent.kind === 'talk' || intent.kind === 'refuse'));
+  // An offer or plea is followed when someone here answers it; its words are the act, not an object.
+  const socialAct = !talkish && !bodyAction && TALK_NEEDS_EAR.test(act);
 
   if (addr?.kind === 'named' || (talkish && typedNamed)) {
     const who = addr?.kind === 'named' ? addr.who : typedNamed!;
@@ -244,6 +246,8 @@ export function checkActionFollowed(
     if (!cov.ok && !quoted) {
       p0.push({ kind: 'ignored-action', detail: `player said "${act.slice(0, 80)}"; nobody answers in the prose` });
     }
+  } else if (socialAct && !quoted && !peopleHere(before).some((p) => mentionsName(text, p))) {
+    p0.push({ kind: 'ignored-action', detail: `player chose "${act.slice(0, 80)}"; nobody here answers in the prose` });
   }
 
   const travel = act.match(TRAVEL_ACTION);
@@ -264,7 +268,8 @@ export function checkActionFollowed(
     }
   }
 
-  const looking = isLookAroundAction(act) || /^(?:wait|look|listen|rest)\b/i.test(act);
+  const looking = isLookAroundAction(act) || /^(?:wait|look|listen|rest|scout|survey|scan)\b/i.test(act);
+  const blowOwned = ATTACK_ACTION.test(act) && !!before.activeEncounter;
   if (!travel && !looking) {
     const share = restatedShare(text, gmBodies(before));
     if (share >= 0.6) {
@@ -275,7 +280,7 @@ export function checkActionFollowed(
     }
   }
 
-  if (!talkish && !travel && !looking) {
+  if (!talkish && !socialAct && !travel && !looking && !blowOwned) {
     const words = objectWords(act);
     if (words.length && !words.some((w) => stemHit(text, w))) {
       down.push({ kind: 'action-object-missing', detail: `prose never names what the player acted on (${words.join(', ')})` });
@@ -461,9 +466,15 @@ export function checkPlayerTurn(
   }
   return {
     p0,
-    down: [...followed.down, ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, action)],
+    down: [...followed.down, ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, previousPlayerAction(before))],
     presentNames: peopleHere(before),
   };
+}
+
+/** The chips were offered before this turn's pick, so a repeat is measured against the turn before it. */
+function previousPlayerAction(before: GameState): string {
+  const last = [...(before.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content));
+  return norm(last?.content);
 }
 
 const TALK_NEEDS_EAR =
@@ -531,11 +542,12 @@ export function checkSystemWindow(state: GameState, chips: string[], prose: stri
   return out;
 }
 
-/** Down for any offered chip that repeats the action the player just took. */
+/** Down for any offered chip that repeats the player's previous action. No previous action, no repeat. */
 export function checkRepeatChips(chips: string[], action: string): TurnCheckFlag[] {
+  if (!norm(action)) return [];
   return chips
     .filter((c) => chipRepeatsAction(c, action))
-    .map((c) => ({ kind: 'repeat-chip' as const, detail: `"${norm(c)}" repeats the action just taken ("${norm(action).slice(0, 60)}")` }));
+    .map((c) => ({ kind: 'repeat-chip' as const, detail: `"${norm(c)}" repeats the previous action ("${norm(action).slice(0, 60)}")` }));
 }
 
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

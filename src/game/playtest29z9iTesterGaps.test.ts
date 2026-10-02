@@ -158,6 +158,38 @@ describe('29z9i — wired into the row check', () => {
     const k = kinds(r);
     expect(k).toContain('ghost-chip');
     expect(k).toContain('window-touched');
-    expect(k).toContain('repeat-chip');
+    expect(k).not.toContain('repeat-chip');
+  });
+
+  const playerLine = (content: string, turn: number) =>
+    ({ id: `p${turn}`, turn, role: 'player', content, timestamp: turn }) as GameState['log'][number];
+  const quiet = 'Cracked tiles ran to a dry plunge pool. You looked the pool over; the tiles were dry.';
+
+  it('the chip picked from this menu is not a repeat of itself', () => {
+    const before = base({ log: [playerLine('Search the area', 2)] });
+    const r = checkPlayerTurn(before, before, {
+      playerInput: 'Inspect the pool',
+      offeredChoices: ['Inspect the pool', 'Wait'],
+      gmText: quiet,
+    });
+    expect(kinds(r)).not.toContain('repeat-chip');
+  });
+
+  it('no previous player action, no repeat-chip', () => {
+    const before = base({ log: [] });
+    const r = checkPlayerTurn(before, before, { playerInput: 'Inspect the pool', offeredChoices: ['Inspect the pool'], gmText: quiet });
+    expect(kinds(r)).not.toContain('repeat-chip');
+  });
+
+  it('a chip that repeats the previous turn still flags, worded differently', () => {
+    const before = base({ log: [playerLine('Investigate the blue panel and what it says', 2)] });
+    const r = checkPlayerTurn(before, before, {
+      playerInput: 'Inspect the pool',
+      offeredChoices: ['Inspect the panel', 'Inspect the pool'],
+      gmText: quiet,
+    });
+    expect(r.down.filter((f) => f.kind === 'repeat-chip').map((f) => f.detail)).toEqual([
+      '"Inspect the panel" repeats the previous action ("Investigate the blue panel and what it says")',
+    ]);
   });
 });

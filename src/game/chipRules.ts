@@ -10,7 +10,7 @@ const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').tr
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
 const STOP =
-  /^(?:with|from|that|this|have|into|your|their|about|would|could|should|then|will|just|them|they|what|when|where|which|there|here|some|more|look|search|inspect|check|examine|study|take|try|find|carefully|around|toward|towards|again|slowly|quietly|closer|nearby|area|room|scene|place|while|still|move|make|give|open|pick|read|touch|down|over|back|away)$/;
+  /^(?:with|from|that|this|have|into|your|their|about|would|could|should|then|will|just|them|they|what|when|where|which|there|here|some|more|other|another|direction|look|search|inspect|check|examine|study|take|try|find|carefully|around|toward|towards|again|slowly|quietly|closer|nearby|area|room|scene|place|while|still|move|make|give|open|pick|read|touch|down|over|back|away)$/;
 /** Words before the verb of a typed line ("I", "carefully"): skipped so the verb itself can be dropped. */
 const LEAD = /^(?:i|we|you|then|now|so|carefully|slowly|quietly|quickly|just|try|to|and)$/;
 export const MOTION_VERB = /^(?:walk|walks|walking|move|moving|go|going|keep|continue|press|proceed|step|stroll|wander|head|carry)$/;
