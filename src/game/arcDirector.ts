@@ -5,6 +5,7 @@
 
 import type { ActiveEncounter, GameState, Quest } from './types';
 import { settleOathChoice } from './questPlay';
+import { applySiteClearObjectives } from './questHooks';
 import {
   type BeatContract,
   contractById,
@@ -667,6 +668,14 @@ export function runArcDirectorBeforeGm(
     const tick = engineFight ?? tickEncounterTerminal(working, playerInput);
     working = tick.state;
     systemReceipts.push(...tick.receipts);
+    {
+      const victory = tick.receipts.find((r) => /^Encounter cleared: .+ \(victory\)/.test(r));
+      const foe = victory?.match(/^Encounter cleared: (.+) \(victory\)/)?.[1];
+      if (foe) {
+        const quests = applySiteClearObjectives(working.quests ?? [], working.currentLocation ?? '', foe, true);
+        if (quests !== (working.quests ?? [])) working = { ...working, quests };
+      }
+    }
     if (engineFight) mandates.push(engineFight.facts);
     if (!working.activeEncounter && engineFight?.foeAfter) {
       mandates.push(`ENCOUNTER HELD: ${engineFight.foeAfter.name} beat you back and still holds this place. It was not beaten or talked down.`);

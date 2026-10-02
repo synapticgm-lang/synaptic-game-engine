@@ -3,6 +3,7 @@
  */
 
 import type { GameState } from './types';
+import { isSiteBoundClearObjective } from './questHooks';
 import { canonicalizeIntent } from './semanticLoopDetector';
 
 export type NpcTopicFsmState = Record<string, string[]>;
@@ -195,7 +196,7 @@ export function advanceNpcTopicExhaustion(
   );
   if (activeMain?.objectives?.length) {
     const idx = activeMain.objectives.findIndex((o) => !o.completed);
-    if (idx >= 0 && used.length >= 3) {
+    if (idx >= 0 && used.length >= 3 && !isSiteBoundClearObjective(activeMain.objectives[idx]?.description ?? '')) {
       const objectives = [...activeMain.objectives];
       objectives[idx] = { ...objectives[idx], completed: true };
       next = {
