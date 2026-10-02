@@ -209,6 +209,7 @@ export function createDefaultSettings(): Settings {
     gmVoiceProfileId: 'cold-system',
     violenceLevel: 'mild',
     cursingLevel: 'mild',
+    readingLevel: 'standard',
     romanceSubplots: false,
     haremContent: false,
     statScreensEnabled: true,

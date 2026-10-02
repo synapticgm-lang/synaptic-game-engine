@@ -5,7 +5,7 @@
  * Classifier-only validation — no Continuity-Warden LLM, no novel-token deny-lists.
  */
 
-import type { GameState, LogEntry, NarrativePerspective } from './types';
+import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
@@ -117,6 +117,8 @@ export interface CompletedEventPacket {
   recentBeats: string[];
   /** 29z9i — the diary the writer reads in place of raw recent turns (`infoSheet.ts`). */
   infoSheet?: string;
+  /** 29z9k — reading level + swearing / violence-detail switches (Kid Mode forces child, both off). */
+  reader?: ReaderFlags;
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
   inspectStreak: number;
   waitStreak: number;
@@ -298,8 +300,40 @@ function extractTarget(input: string, state: GameState): string | undefined {
   return undefined;
 }
 
+/** 29z9k — reading level and the two content switches, read from Kid Mode / cursing / violence settings. */
+export type ReaderFlags = { level: ReadingLevel; swearing: boolean; violenceDetail: boolean };
+
+export function readerFlags(
+  settings: Pick<Settings, 'contentMode' | 'cursingLevel' | 'violenceLevel' | 'readingLevel'>
+): ReaderFlags {
+  if (settings.contentMode === 'kid') return { level: 'child', swearing: false, violenceDetail: false };
+  return {
+    level: settings.readingLevel === 'plain' ? 'plain' : 'standard',
+    swearing: settings.cursingLevel !== 'none',
+    violenceDetail: settings.violenceLevel === 'graphic',
+  };
+}
+
+const READER_LEVEL_NOTE: Record<ReadingLevel, string> = {
+  plain: 'plain — write for a reader aged about 9 to 11: short whole sentences, name the place and the object, no metaphor that needs explaining, no sentence fragments',
+  standard: 'standard — the usual adult voice',
+  child: 'child — Kid Mode content rules apply; short whole sentences that name the place and the object',
+};
+
+export function formatReaderLine(r: ReaderFlags): string {
+  return [
+    `READER: ${READER_LEVEL_NOTE[r.level]}.`,
+    r.swearing ? 'Swearing: on (adult language allowed, never slurs).' : 'Swearing: off (no swearing at all).',
+    r.violenceDetail
+      ? 'Violence detail: on.'
+      : 'Violence detail: off (fights still happen; show the blow and what it did, never gore or a lingering wound).',
+  ].join(' ');
+}
+
 export type PacketBuildExtras = {
   xp?: number;
+  /** 29z9k — reading level + content switches for the writer. */
+  reader?: ReaderFlags;
   /** 28g — engine receipts for this action; the writer must state them. */
   engineResult?: string;
   damage?: number;
@@ -747,6 +781,7 @@ export function buildCompletedEventPacket(
     talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
     infoSheet: formatInfoSheet(state),
+    reader: extras?.reader,
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
@@ -1022,6 +1057,7 @@ export function formatWriterFacingEvent(
   if (packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction)) {
     lines.push(`PANEL (game chrome; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
+  if (packet.reader) lines.push(formatReaderLine(packet.reader));
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);

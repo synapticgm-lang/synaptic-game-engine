@@ -355,7 +355,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
@@ -2730,6 +2730,7 @@ export function useGame() {
       const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,
         engineResult: engineFact,
+        reader: readerFlags(settingsRef.current),
       });
       liveCurrent = preparedEvent.state;
       stateRef.current = liveCurrent;

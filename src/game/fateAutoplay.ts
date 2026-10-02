@@ -155,7 +155,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
@@ -1168,7 +1168,11 @@ export async function headlessFateTurn(
   ]
     .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
     .join(' ');
-  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, { xp: arcXp, engineResult: engineFact });
+  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
+    xp: arcXp,
+    engineResult: engineFact,
+    reader: readerFlags(settings),
+  });
   arcState = preparedEvent.state;
   const useMud = shouldUseSilentMudTurn({
     subscriptionTier: settings.subscriptionTier,

@@ -116,6 +116,8 @@ export interface CompletedEventPacket {
   recentBeats: string[];
   /** 29z9i — the diary the writer reads in place of raw recent turns (built client-side by `infoSheet.ts`). */
   infoSheet?: string;
+  /** 29z9k — reading level + swearing / violence-detail switches (Kid Mode forces child, both off). */
+  reader?: ReaderFlags;
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
   inspectStreak: number;
   waitStreak: number;
@@ -292,6 +294,25 @@ function extractTarget(input: string, state: GameState): string | undefined {
   if (kill?.name && allowCorpse && verb !== 'spoke') return kill.name;
   if (verb === 'spoke') return livingLedgerPeople(state)[0];
   return undefined;
+}
+
+/** 29z9k — reading level and the two content switches (built client-side from Kid Mode / cursing / violence settings). */
+export type ReaderFlags = { level: 'plain' | 'standard' | 'child'; swearing: boolean; violenceDetail: boolean };
+
+const READER_LEVEL_NOTE: Record<ReaderFlags['level'], string> = {
+  plain: 'plain — write for a reader aged about 9 to 11: short whole sentences, name the place and the object, no metaphor that needs explaining, no sentence fragments',
+  standard: 'standard — the usual adult voice',
+  child: 'child — Kid Mode content rules apply; short whole sentences that name the place and the object',
+};
+
+export function formatReaderLine(r: ReaderFlags): string {
+  return [
+    `READER: ${READER_LEVEL_NOTE[r.level]}.`,
+    r.swearing ? 'Swearing: on (adult language allowed, never slurs).' : 'Swearing: off (no swearing at all).',
+    r.violenceDetail
+      ? 'Violence detail: on.'
+      : 'Violence detail: off (fights still happen; show the blow and what it did, never gore or a lingering wound).',
+  ].join(' ');
 }
 
 export type PacketBuildExtras = {
@@ -1009,6 +1030,7 @@ export function formatWriterFacingEvent(
   if (packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction)) {
     lines.push(`PANEL (game chrome; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
+  if (packet.reader) lines.push(formatReaderLine(packet.reader));
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);

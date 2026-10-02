@@ -1223,6 +1223,44 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 </button>
               ) : (<Lock size={14} className="text-amber-500" />)}
             </div>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400" data-testid="reader-switches">
+              <span>Reading</span>
+              {(['plain', 'standard', 'child'] as const).map((level) => {
+                const current = isKidMode ? 'child' : draft.readingLevel === 'plain' ? 'plain' : 'standard';
+                return (
+                  <button
+                    key={level}
+                    type="button"
+                    disabled={isKidMode ? level !== 'child' : level === 'child' && !canToggleKidMode}
+                    onClick={() => {
+                      if (level === 'child') { if (!isKidMode) handleToggleKidMode(); return; }
+                      update('readingLevel', level);
+                    }}
+                    className={`rounded border px-2 py-0.5 capitalize disabled:opacity-40 ${current === level ? 'border-amber-500 text-amber-300' : 'border-slate-600'}`}
+                  >
+                    {level}
+                  </button>
+                );
+              })}
+              <label className="ml-2 flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  disabled={isKidMode}
+                  checked={!isKidMode && draft.cursingLevel !== 'none'}
+                  onChange={(e) => update('cursingLevel', e.target.checked ? 'strong' : 'none')}
+                />
+                Swearing
+              </label>
+              <label className="flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  disabled={isKidMode}
+                  checked={!isKidMode && draft.violenceLevel === 'graphic'}
+                  onChange={(e) => update('violenceLevel', e.target.checked ? 'graphic' : 'mild')}
+                />
+                Violence detail
+              </label>
+            </div>
           </Section>
 
           <Section icon={<UserRound size={16} />} title="Player profile" visible={activeTab === 'general'}>

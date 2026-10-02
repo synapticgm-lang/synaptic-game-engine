@@ -881,6 +881,8 @@ export type StatFrequency = 'every-turn' | 'every-5-turns' | 'end-of-combat';
 export type NarrativePerspective = 'first-person' | 'second-person' | 'third-person' | 'hybrid';
 export type ViolenceLevel = 'none' | 'mild' | 'graphic';
 export type CursingLevel = 'none' | 'mild' | 'strong';
+/** 29z9k — plain (about age 9–11), standard (adult voice), child (Kid Mode content rules). */
+export type ReadingLevel = 'plain' | 'standard' | 'child';
 
 export type MapTriggerMode = 'tactical' | 'immersive';
 export type FogRevealThreshold = 'adjacent' | 'current' | 'full';
@@ -1512,6 +1514,8 @@ export interface Settings {
   gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;
   cursingLevel: CursingLevel;
+  /** 29z9k — writer reading level. `child` only while Kid Mode is on (Kid Mode owns it). */
+  readingLevel?: ReadingLevel;
   romanceSubplots: boolean;
   haremContent: boolean;
   statScreensEnabled: boolean;
