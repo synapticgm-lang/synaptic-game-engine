@@ -127,14 +127,14 @@ describe('repairEngine', () => {
     expect(detectRepairSituation('tone down the gore', base)).toBe('safety');
   });
 
-  it('detects protest phrasing', () => {
-    expect(detectRepairSituation("that was not what I meant", base)).toBe('protest');
-    expect(detectRepairSituation('wrong roll — unfair', base)).toBe('protest');
+  it('protest phrasing goes to play, not a repair hold (12b: safety only)', () => {
+    expect(detectRepairSituation("that was not what I meant", base)).toBeNull();
+    expect(detectRepairSituation('wrong roll — unfair', base)).toBeNull();
   });
 
-  it('detects ambiguous short or-phrases', () => {
-    expect(detectRepairSituation('the window or the door', base)).toBe('ambiguous_action');
-    expect(detectRepairSituation('aside or through', base)).toBe('ambiguous_action');
+  it('short or-phrases go to play, not a repair hold (12b: safety only)', () => {
+    expect(detectRepairSituation('the window or the door', base)).toBeNull();
+    expect(detectRepairSituation('aside or through', base)).toBeNull();
   });
 
   it('does not treat room-layout door/window asks as ambiguous_action', () => {
@@ -203,19 +203,19 @@ describe('repairCopyBank', () => {
 
   it('maps rpg engine to story_rpg rows', () => {
     const copy = pickRepairCopy({
-      situation: 'ambiguous_action',
+      situation: 'safety',
       engineMode: 'rpg',
       voiceId: 'chilled-gm',
     });
-    expect(copy.message).toMatch(/aside|through|crate/i);
+    expect(copy.message).toMatch(/gentler|call for help/i);
   });
 
   it('maps dnd engine to tabletop rows', () => {
     const copy = pickRepairCopy({
-      situation: 'protest',
+      situation: 'safety',
       engineMode: 'dnd',
       voiceId: 'dry-wit',
     });
-    expect(copy.message).toMatch(/threat|joke|guard/i);
+    expect(copy.message).toMatch(/off-screen|getting safe/i);
   });
 });

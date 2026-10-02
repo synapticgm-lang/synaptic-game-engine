@@ -41,8 +41,8 @@ import type { GameState } from './types';
 describe('playtest31vBatchV', () => {
   it('stamp is 2026-08-31v / 31n and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-31v');
-    expect(BUILD_STAMP).toBe('2026-08-31n');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
   });
 
   describe('P0-A/B — Rasped / They never become cast', () => {
@@ -53,8 +53,9 @@ describe('playtest31vBatchV', () => {
       expect(filterChromeFromPresent(['Rasped', 'They', 'Wall Sergeant'])).toEqual([
         'Wall Sergeant',
       ]);
-      expect(realPresentPeople(['Rasped', 'They', 'One', 'Press', 'Wall Sergeant'])).toEqual([
-        'Wall Sergeant',
+      // Lock B: hub-role compounds reach CAST only through the hub arrival contact.
+      expect(realPresentPeople(['Rasped', 'They', 'One', 'Press', 'Wall Sergeant', 'Wren Holt'])).toEqual([
+        'Wren Holt',
       ]);
     });
 
@@ -246,10 +247,13 @@ describe('playtest31vBatchV', () => {
         undefined,
         'Walk away with consequence'
       );
-      expect(compiled.choices.filter((c) => /^Travel toward/i.test(c)).length).toBe(0);
-      expect(
-        compiled.choices.some((c) => /\b(ask|talk|press|quest|sergeant|stake|listen)\b/i.test(c))
-      ).toBe(true);
+      // 28g: a quiet hub keeps one exit chip under the yo-yo lock, never back along the treadmill.
+      const travel = compiled.choices.filter((c) => /^Travel toward/i.test(c));
+      expect(travel.length).toBeLessThanOrEqual(1);
+      expect(travel.some((c) => /Lowmarket|West Wall/i.test(c))).toBe(false);
+      expect(compiled.choices.some((c) => /^Walk away|^Leave through/i.test(c))).toBe(false);
+      // Lock B: Wall Sergeant is not CAST, so the world-moving pad is an inspect, not a talk.
+      expect(compiled.choices).toContain('Inspect the immediate surroundings');
     });
   });
 

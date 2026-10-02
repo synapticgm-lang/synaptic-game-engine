@@ -47,7 +47,8 @@ describe('playtest31sGeminiT50P0', () => {
       expect(
         filterChromeFromPresent(['Scattered Scale', 'They', 'One', 'Press', 'Wall Sergeant'])
       ).toEqual(['Wall Sergeant']);
-      expect(realPresentPeople(['They', 'One', 'Press', 'Wall Sergeant'])).toEqual(['Wall Sergeant']);
+      // Lock B: hub-role compounds reach CAST only through the hub arrival contact.
+      expect(realPresentPeople(['They', 'One', 'Press', 'Wall Sergeant', 'Wren Holt'])).toEqual(['Wren Holt']);
 
       let state = createInitialState(undefined, 'litrpg');
       state = {

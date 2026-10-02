@@ -76,8 +76,8 @@ function crown(over: Partial<GameState> = {}): GameState {
 
 describe('playtest13b — writer owns the book after page 1', () => {
   it('HUD/BUILD are 13b, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

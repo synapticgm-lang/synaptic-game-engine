@@ -14,6 +14,11 @@ import { injectLoiterDelta, buildLoiterDeltaDirective, needsLoiterDelta } from '
 import { buildPovRails, hasPovViolations, scrubBodyPartPossession } from '../game/povRails';
 import type { GameState } from '../game/types';
 
+/** The NAMED CHARACTERS section of a CAST block (anonymous groups and threats excluded). */
+function namedSection(cast: string): string {
+  return cast.match(/NAMED CHARACTERS[^\n]*\n((?:- [^\n]*\n)*)/)?.[1] ?? '';
+}
+
 // Mock GameState factory
 function mockGameState(overrides: Partial<GameState> = {}): GameState {
   return {
@@ -100,8 +105,7 @@ describe('narrativeTranslator', () => {
     // Should contain natural language descriptions
     expect(narrative).toContain('player is at');
     expect(narrative).toContain('Named individuals present: Vessa');
-    expect(narrative).toContain('Just');
-    expect(narrative).not.toContain('Consul'); // UI label should not appear as entity
+    expect(narrative).not.toMatch(/Named individuals present:[^.]*\b(?:Just|Consul)\b/);
   });
   
   test('identifies UI labels correctly', () => {
@@ -109,7 +113,7 @@ describe('narrativeTranslator', () => {
     expect(isUiLabel('Heat')).toBe(true);
     expect(isUiLabel('Target')).toBe(true);
     expect(isUiLabel('Vessa')).toBe(false);
-    expect(isUiLabel('Just')).toBe(false);
+    expect(isUiLabel('Just')).toBe(true);
   });
   
   test('translates faction tokens to background entities', () => {
@@ -123,7 +127,7 @@ describe('narrativeTranslator', () => {
     
     expect(narrative).toContain('faction guards');
     expect(narrative).toContain('Vessa');
-    expect(narrative).not.toContain('Consul');
+    expect(narrative).not.toMatch(/Named individuals present:[^.]*\b(?:Consul|Heat)\b/);
     expect(narrative).not.toContain('Heat');
   });
   
@@ -162,13 +166,14 @@ describe('narrativeTranslator', () => {
 
 describe('entityCast', () => {
   test('builds CAST block with named and anonymous entities', () => {
-    const state = mockGameState();
+    const base = mockGameState();
+    const state = mockGameState({ sceneFacts: { ...base.sceneFacts, present: ['Vessa', 'Just', 'Consul'] } });
     const cast = buildEntityCast(state);
     
     expect(cast).toContain('<CAST>');
     expect(cast).toContain('NAMED CHARACTERS');
-    expect(cast).toContain('Vessa');
-    expect(cast).toContain('Just');
+    expect(namedSection(cast)).toContain('Vessa');
+    expect(namedSection(cast)).not.toContain('Just');
     expect(cast).toContain('ANONYMOUS ENTITIES');
     expect(cast).toContain('guards');
     expect(cast).not.toContain('CONSTRAINTS');
@@ -244,18 +249,16 @@ describe('entityCast', () => {
     });
     const cast = buildEntityCast(state);
     
-    // Consul and Heat should not appear as named characters
-    expect(cast).not.toMatch(/NAMED CHARACTERS.*Consul/s);
-    expect(cast).not.toMatch(/NAMED CHARACTERS.*Heat/s);
-    expect(cast).toContain('Vessa');
-    expect(cast).toContain('Just');
+    expect(namedSection(cast)).not.toMatch(/Consul|Heat|Just/);
+    expect(namedSection(cast)).toContain('Vessa');
   });
   
   test('getCastSummary returns correct counts', () => {
-    const state = mockGameState();
+    const base = mockGameState();
+    const state = mockGameState({ sceneFacts: { ...base.sceneFacts, present: ['Vessa', 'Just', 'Consul'] } });
     const summary = getCastSummary(state);
     
-    expect(summary.namedCount).toBe(2); // Vessa, Just
+    expect(summary.namedCount).toBe(1); // Vessa ('Just' is a UI label)
     expect(summary.anonymousCount).toBeGreaterThan(0); // guards
     expect(summary.threatsCount).toBe(0); // no encounter
     expect(summary.constraintsCount).toBeGreaterThan(0);
@@ -325,9 +328,9 @@ describe('povRails', () => {
     expect(rails).toContain('{NAME}');
   });
   
-  test('detects POV violations - mixed possession', () => {
+  test('an NPC body part beside the PC is not a POV slip', () => {
     const text = 'Your eyes narrow as his heart pounds.';
-    expect(hasPovViolations(text)).toBe(true);
+    expect(hasPovViolations(text)).toBe(false);
   });
   
   test('detects POV violations - third person camera', () => {
@@ -363,7 +366,7 @@ describe('integration - full pipeline', () => {
       // Basic sanity checks
       expect(narrative).toBeTruthy();
       expect(cast).toContain('<CAST>');
-      expect(povRails).toContain('POV RULES');
+      expect(povRails).toContain('POINT OF VIEW RULES');
       expect(loiterDirective).toContain('TIME JUMP');
     }).not.toThrow();
   });
@@ -381,8 +384,7 @@ describe('integration - full pipeline', () => {
     // Neither module should emit UI labels as entities
     expect(narrative).not.toContain('Consul steps');
     expect(narrative).not.toContain('Heat watches');
-    expect(cast).not.toMatch(/NAMED CHARACTERS.*Consul/s);
-    expect(cast).not.toMatch(/NAMED CHARACTERS.*Heat/s);
+    expect(namedSection(cast)).not.toMatch(/Consul|Heat/);
     
     // But Vessa should appear
     expect(narrative).toContain('Vessa');

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * WS-4 Complete Integration Tests
  * 
  * Tests all waves (A-D+) of the Encounter Bible system:
@@ -10,16 +10,13 @@
 
 import { describe, test, expect } from 'vitest';
 import type { GameState, EngineMode } from '../types';
+import type { EncounterTemplate } from '../encounterBible';
 import {
-  createTemplateRegistry,
-  registerTemplate,
-  getTemplatesForBible,
-  filterTemplatesByBiome,
-  filterTemplatesByTier,
-  filterTemplatesByDensity,
-  pickEncounterTemplate,
-  validateTemplate,
-  type EncounterTemplate,
+  allCatalogEncounters,
+  encountersForMode,
+  findCatalogEncounter,
+  isCatalogFoeName,
+  selectCatalogEncounter,
 } from '../encounterBible';
 import {
   generateLoot,
@@ -46,298 +43,66 @@ import {
 // WAVE A TESTS: Template Foundation
 // ============================================================================
 
-describe('WS-4 Wave A: Template Foundation', () => {
-  test('creates and populates template registry', () => {
-    const registry = createTemplateRegistry();
-    expect(registry.templates).toHaveLength(0);
-    expect(registry.version).toBe('1.0.0');
-    expect(registry.byBible.size).toBe(0);
-    expect(registry.byId.size).toBe(0);
-    expect(registry.byMode.size).toBe(0);
+describe('WS-4 Wave A: Encounter catalog (replaced the template registry in 12b)', () => {
+  const at = (over: Partial<GameState>): GameState =>
+    ({ engineMode: 'litrpg', turn: 5, currentLocation: '', sceneFacts: {}, stateTxLog: [], ...over }) as GameState;
+
+  test('catalog lists authored rows for every mode', () => {
+    for (const mode of ['litrpg', 'dnd', 'rpg', 'pyoa'] as const) {
+      expect(encountersForMode(mode).length).toBeGreaterThan(0);
+    }
   });
 
-  test('registers template and indexes by bible, mode, and ID', () => {
-    const registry = createTemplateRegistry();
-    const template: EncounterTemplate = {
-      id: 'summoned-pact.hub-ambush.ashknife-cell',
-      name: 'Ashknife Cell at the Contract Market',
-      bibleId: 'summoned-pact',
-      mode: 'litrpg' as EngineMode,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn',
-        patterns: [
-          {
-            type: 'scene',
-            text: 'Awnings drop in sequence',
-            probability: 1.0,
-          },
-        ],
-        avoidable: true,
-      },
-      stakes: {
-        win: {
-          description: 'Cell defeated',
-          xpRange: [200, 250],
-        },
-        lose: {
-          description: 'Captured',
-          xpRange: [0, 0],
-        },
-      },
-      resolution: {
-        type: 'combat',
-        combat: {
-          enemyCount: [3, 5],
-          hpRange: [40, 60],
-          fleeDifficulty: 'medium',
-          parleyDifficulty: 'hard',
-          maxEngagementTurns: 6,
-        },
-      },
-      aftermath: {
-        receiptTypes: ['xp_award', 'loot_drop'],
-        mandatoryReceipts: ['xp_award'],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban-hub', 'arcane-market'],
-        excludedBiomes: ['open-ocean'],
-      },
-      tierRange: [3, 5],
-      densityRole: 'ambush',
-      maxSpawns: 1,
-    };
-
-    registerTemplate(registry, template);
-
-    expect(registry.templates).toHaveLength(1);
-    expect(registry.byId.get(template.id)).toBe(template);
-    expect(registry.byBible.get('summoned-pact')).toContain(template);
-    expect(registry.byMode.get('litrpg')).toContain(template);
+  test('rows are found by id and listed under their own mode', () => {
+    for (const seed of allCatalogEncounters()) {
+      expect(findCatalogEncounter(seed.id)).toBe(seed);
+      expect(encountersForMode(seed.mode)).toContain(seed);
+    }
   });
 
-  test('filters templates by biome', () => {
-    const registry = createTemplateRegistry();
-    const urbanTemplate: EncounterTemplate = {
-      id: 'test-urban',
-      name: 'Urban Encounter',
-      bibleId: 'test-bible',
-      mode: 'litrpg' as EngineMode,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn',
-        patterns: [],
-        avoidable: false,
-      },
-      stakes: {
-        win: { description: 'Win', xpRange: [50, 100] },
-        lose: { description: 'Lose', xpRange: [0, 0] },
-      },
-      resolution: { type: 'combat' },
-      aftermath: {
-        receiptTypes: ['xp_award'],
-        mandatoryReceipts: [],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban-hub', 'city'],
-      },
-      tierRange: [1, 5],
-      densityRole: 'trash',
-    };
-
-    const dungeonTemplate: EncounterTemplate = {
-      ...urbanTemplate,
-      id: 'test-dungeon',
-      name: 'Dungeon Encounter',
-      biomeConstraints: {
-        allowedBiomes: ['dungeon', 'crypt'],
-      },
-    };
-
-    registerTemplate(registry, urbanTemplate);
-    registerTemplate(registry, dungeonTemplate);
-
-    const urbanMatches = filterTemplatesByBiome(
-      registry.templates,
-      'Market Hub',
-      'urban-hub'
-    );
-    expect(urbanMatches).toContain(urbanTemplate);
-    expect(urbanMatches).not.toContain(dungeonTemplate);
-
-    const dungeonMatches = filterTemplatesByBiome(
-      registry.templates,
-      'Crypt',
-      'dungeon'
-    );
-    expect(dungeonMatches).toContain(dungeonTemplate);
-    expect(dungeonMatches).not.toContain(urbanTemplate);
+  test('every row is a named foe; fights carry a reward, PYOA crises do not', () => {
+    const ids = new Set<string>();
+    for (const seed of allCatalogEncounters()) {
+      expect(seed.id).toBeTruthy();
+      expect(ids.has(seed.id)).toBe(false);
+      ids.add(seed.id);
+      expect(seed.foeName.trim()).toBeTruthy();
+      expect(seed.title.trim()).toBeTruthy();
+      if (seed.tier === 'crisis') expect(seed.xpReward).toBe(0);
+      else expect(seed.xpReward).toBeGreaterThan(0);
+      expect(seed.cooldown).toBeGreaterThanOrEqual(0);
+    }
   });
 
-  test('filters templates by tier', () => {
-    const registry = createTemplateRegistry();
-    const lowTierTemplate: EncounterTemplate = {
-      id: 'test-low-tier',
-      name: 'Low Tier',
-      bibleId: 'test-bible',
-      mode: 'litrpg' as EngineMode,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn',
-        patterns: [],
-        avoidable: false,
-      },
-      stakes: {
-        win: { description: 'Win', xpRange: [50, 100] },
-        lose: { description: 'Lose', xpRange: [0, 0] },
-      },
-      resolution: { type: 'combat' },
-      aftermath: {
-        receiptTypes: ['xp_award'],
-        mandatoryReceipts: [],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban-hub'],
-      },
-      tierRange: [1, 3],
-      densityRole: 'trash',
-    };
-
-    const highTierTemplate: EncounterTemplate = {
-      ...lowTierTemplate,
-      id: 'test-high-tier',
-      name: 'High Tier',
-      tierRange: [8, 10],
-      densityRole: 'boss',
-    };
-
-    registerTemplate(registry, lowTierTemplate);
-    registerTemplate(registry, highTierTemplate);
-
-    const tier2Matches = filterTemplatesByTier(registry.templates, 2);
-    expect(tier2Matches).toContain(lowTierTemplate);
-    expect(tier2Matches).not.toContain(highTierTemplate);
-
-    const tier9Matches = filterTemplatesByTier(registry.templates, 9);
-    expect(tier9Matches).toContain(highTierTemplate);
-    expect(tier9Matches).not.toContain(lowTierTemplate);
+  test('unknown ids and blank names are not catalog rows', () => {
+    expect(findCatalogEncounter('')).toBeUndefined();
+    expect(isCatalogFoeName('')).toBe(false);
+    expect(isCatalogFoeName('Pact-Hunter Skirmisher', 'litrpg')).toBe(true);
+    expect(isCatalogFoeName('Pact-Hunter Skirmisher', 'dnd')).toBe(false);
   });
 
-  test('filters templates by density role', () => {
-    const registry = createTemplateRegistry();
-    const trashTemplate: EncounterTemplate = {
-      id: 'test-trash',
-      name: 'Trash Encounter',
-      bibleId: 'test-bible',
-      mode: 'litrpg' as EngineMode,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn',
-        patterns: [],
-        avoidable: false,
-      },
-      stakes: {
-        win: { description: 'Win', xpRange: [50, 100] },
-        lose: { description: 'Lose', xpRange: [0, 0] },
-      },
-      resolution: { type: 'combat' },
-      aftermath: {
-        receiptTypes: ['xp_award'],
-        mandatoryReceipts: [],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban-hub'],
-      },
-      tierRange: [1, 5],
-      densityRole: 'trash',
-    };
-
-    const bossTemplate: EncounterTemplate = {
-      ...trashTemplate,
-      id: 'test-boss',
-      name: 'Boss Encounter',
-      densityRole: 'boss',
-    };
-
-    registerTemplate(registry, trashTemplate);
-    registerTemplate(registry, bossTemplate);
-
-    const trashMatches = filterTemplatesByDensity(registry.templates, 'trash');
-    expect(trashMatches).toContain(trashTemplate);
-    expect(trashMatches).not.toContain(bossTemplate);
-
-    const bossMatches = filterTemplatesByDensity(registry.templates, 'boss');
-    expect(bossMatches).toContain(bossTemplate);
-    expect(bossMatches).not.toContain(trashTemplate);
+  test('litrpg catalog holds trash, elite and boss tiers', () => {
+    const tiers = new Set(encountersForMode('litrpg').map((s) => s.tier));
+    expect(tiers.has('trash')).toBe(true);
+    expect(tiers.has('elite')).toBe(true);
+    expect(tiers.has('boss')).toBe(true);
   });
 
-  test('validates template schema', () => {
-    const validTemplate: EncounterTemplate = {
-      id: 'test-valid',
-      name: 'Valid Template',
-      bibleId: 'test-bible',
-      mode: 'litrpg' as EngineMode,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn',
-        patterns: [
-          {
-            type: 'scene',
-            text: 'Telegraph cue',
-            probability: 1.0,
-          },
-        ],
-        avoidable: false,
-      },
-      stakes: {
-        win: { description: 'Win', xpRange: [50, 100] },
-        lose: { description: 'Lose', xpRange: [0, 0] },
-      },
-      resolution: { type: 'combat' },
-      aftermath: {
-        receiptTypes: ['xp_award'],
-        mandatoryReceipts: [],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban-hub'],
-      },
-      tierRange: [1, 5],
-      densityRole: 'trash',
-    };
-
-    const result = validateTemplate(validTemplate);
-    expect(result.valid).toBe(true);
-    expect(result.errors).toHaveLength(0);
+  test('director pick is a catalog row of the mode, early turns pick trash', () => {
+    const picked = selectCatalogEncounter(at({ turn: 5 }));
+    expect(picked).not.toBeNull();
+    expect(encountersForMode('litrpg')).toContain(picked!);
+    expect(picked!.tier).toBe('trash');
+    expect(selectCatalogEncounter(at({ turn: 5 }))).toBe(picked);
   });
 
-  test('validates template catches missing fields', () => {
-    const invalidTemplate = {
-      id: '',
-      name: 'Invalid Template',
-      bibleId: 'test-bible',
-      mode: 'litrpg' as EngineMode,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn',
-        patterns: [],
-        avoidable: false,
-      },
-      stakes: {},
-      resolution: {},
-      aftermath: {},
-      biomeConstraints: {},
-      tierRange: [1, 5],
-      densityRole: 'trash',
-    } as any;
+  test('late turns pick elite and a hub prefers its own row', () => {
+    expect(selectCatalogEncounter(at({ turn: 25 }))?.tier).toBe('elite');
+    expect(selectCatalogEncounter(at({ turn: 5, currentLocation: 'Mireglass reeds' }))?.hubId).toBe('sp-hub-mireglass');
+  });
 
-    const result = validateTemplate(invalidTemplate);
-    expect(result.valid).toBe(false);
-    expect(result.errors.length).toBeGreaterThan(0);
+  test('PYOA drought never picks a catalog foe', () => {
+    expect(selectCatalogEncounter(at({ engineMode: 'pyoa' }))).toBeNull();
   });
 });
 
@@ -554,7 +319,6 @@ describe('WS-4 Wave D+: Density Enforcement', () => {
   });
 
   test('selects encounter respecting density constraints', () => {
-    const registry = createTemplateRegistry();
     const template: EncounterTemplate = {
       id: 'test-trash',
       name: 'Trash Encounter',
@@ -582,8 +346,6 @@ describe('WS-4 Wave D+: Density Enforcement', () => {
       tierRange: [1, 5],
       densityRole: 'trash',
     };
-
-    registerTemplate(registry, template);
 
     const profile = getDensityProfile('litrpg', 'test-location', true);
     const state = {

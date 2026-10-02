@@ -123,8 +123,11 @@ describe('playtest30y — chrome is not a person', () => {
     expect(committed.present).not.toContain('blue panel');
     expect(committed.present).not.toContain('Place');
 
+    // 13c: harvest keeps ledger people only (record + here).
+    const ledgerMira = withPresent(['Mira']);
+    ledgerMira.npcMemories = [{ npcId: 'mira', npcName: 'Mira', disposition: 'neutral', facts: [], lastSeenTurn: 2 }];
     const harvested = harvestNarrativeIntoLedger(
-      withPresent([]),
+      ledgerMira,
       'Place remains at the threshold. Mira says nothing.',
       3
     );

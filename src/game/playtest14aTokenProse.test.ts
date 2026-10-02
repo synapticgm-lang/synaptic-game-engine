@@ -79,8 +79,8 @@ function crown(over: Partial<GameState> = {}): GameState {
 
 describe('playtest14a — token prose', () => {
   it('HUD/BUILD are 14a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

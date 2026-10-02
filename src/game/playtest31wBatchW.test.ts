@@ -41,8 +41,8 @@ import type { GameState } from './types';
 describe('playtest31wBatchW', () => {
   it('stamp is 2026-08-31w / 31o and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-31w');
-    expect(BUILD_STAMP).toBe('2026-08-31o');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
   });
 
   describe('P0-1 — entity / role-label collapse', () => {
@@ -52,7 +52,8 @@ describe('playtest31wBatchW', () => {
       expect(filterChromeFromPresent(['stall contact', 'Scattered Scale', 'Wall Sergeant'])).toEqual([
         'Wall Sergeant',
       ]);
-      expect(realPresentPeople(['stall contact', 'Lowmarket Fence'])).toEqual(['Lowmarket Fence']);
+      // Lock B: hub-role compounds reach CAST only through the hub arrival contact.
+      expect(realPresentPeople(['stall contact', 'Lowmarket Fence', 'Wren Holt'])).toEqual(['Wren Holt']);
     });
 
     it('scrubs tape quotes: Scattered Scale mad-libs + stall contact substitution', () => {
@@ -228,7 +229,9 @@ describe('playtest31wBatchW', () => {
         openingEstablishment: { pending: [], answers: {}, complete: true },
         currentLocation: 'Lowmarket',
         turn: 24,
-        sceneFacts: { ...emptySceneFacts(24), present: ['Lowmarket Fence'] },
+        // Lock B: the starve needs a named person; a hub-role compound is not one.
+        sceneFacts: { ...emptySceneFacts(24), present: ['Wren Holt'] },
+        npcMemories: [{ npcId: 'wren-holt', npcName: 'Wren Holt', disposition: 'neutral', facts: [], lastSeenTurn: 23 }],
         log: [
           { id: 'a', role: 'player', content: 'Press for leverage', timestamp: 1, turn: 23 },
           { id: 'b', role: 'gm', content: 'They offer no quarter.', timestamp: 2, turn: 23 },
@@ -236,12 +239,12 @@ describe('playtest31wBatchW', () => {
       } as GameState;
       const compiled = compileChoices(
         state,
-        ['Press for leverage', 'Ask a direct question', 'Talk to Lowmarket Fence', 'Leave through the nearest exit'],
+        ['Press for leverage', 'Ask a direct question', 'Talk to Wren Holt', 'Leave through the nearest exit'],
         undefined,
         'Press for leverage'
       );
       expect(compiled.choices.some((c) => /^Press for leverage$/i.test(c))).toBe(false);
-      expect(compiled.choices.some((c) => /Talk to Lowmarket Fence/i.test(c))).toBe(true);
+      expect(compiled.choices.some((c) => /Talk to Wren Holt/i.test(c))).toBe(true);
     });
   });
 

@@ -60,7 +60,7 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     expect(tick.cleared).toBeUndefined();
   });
 
-  it('Encounter Terminal FSM clears at max engaged turns', () => {
+  it('Encounter Terminal FSM clears at max engaged turns on a fight intent only', () => {
     const state = createInitialState(undefined, 'dnd');
     state.turn = 20;
     state.activeEncounter = initEncounterTerminal(
@@ -80,7 +80,10 @@ describe('playtest29a — Manus score boost terminal authority', () => {
       },
       state
     );
-    const tick = tickEncounterTerminal(state, 'Wait and watch');
+    const idle = tickEncounterTerminal(state, 'Wait and watch');
+    expect(idle.state.activeEncounter).not.toBeNull();
+    expect(idle.forcedTerminal).toBe(false);
+    const tick = tickEncounterTerminal(state, 'Attack the wraith');
     expect(tick.state.activeEncounter).toBeNull();
     expect(tick.forcedTerminal).toBe(true);
     expect(tick.cleared).toBeTruthy();
@@ -211,9 +214,18 @@ describe('playtest29a — Manus score boost terminal authority', () => {
       ctx,
       { themCount: 0, thisPlaceCount: 0, strangerCount: 0, brokenChoiceCount: 0, references: [], shouldRegenerate: false }
     );
-    expect(mush.toLowerCase()).not.toMatch(/\bthe mark\b/);
-    expect(mush.toLowerCase()).not.toMatch(/nearby building/);
-    expect(mush.toLowerCase()).not.toMatch(/\bthe panel\b/);
+    // Batch V: the mark / the panel are never mapped onto a speaker; nearby building becomes HERE.
+    expect(mush).toMatch(/\bthe mark\b/);
+    expect(mush).toMatch(/\bthe panel\b/);
+    // Batch A–D: a hub / polity place (Harbor Quay) is never pasted into a prose slot.
+    expect(mush).not.toMatch(/Harbor Quay/);
+    const plain = rewriteInvalidReferences(
+      'You face the mark near a nearby building.',
+      { ...ctx, locationName: 'Old Mill' },
+      { themCount: 0, thisPlaceCount: 0, strangerCount: 0, brokenChoiceCount: 0, references: [], shouldRegenerate: false }
+    );
+    expect(plain.toLowerCase()).not.toMatch(/nearby building/);
+    expect(plain).toMatch(/Old Mill/);
   });
 
   it('Sealed fallback prose has no RenderFallbackUsed tag', () => {

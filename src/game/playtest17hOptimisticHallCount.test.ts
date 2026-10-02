@@ -110,6 +110,7 @@ describe('playtest17h — optimistic hall count + last-resort advance', () => {
     expect(resort.prose).not.toMatch(DROUGHT);
     expect(resort.prose).not.toMatch(/What do you enter|The panel waits on a name|What name/i);
     expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(last);
-    expect(resort.prose).toMatch(/Jax/);
+    // 18b: last-resort is a HERE beat, never the name telegram.
+    expect(resort.prose).not.toMatch(/The name Jax already stood|They have the name/i);
   });
 });

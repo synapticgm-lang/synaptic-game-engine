@@ -97,7 +97,7 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
       engineMode: 'litrpg',
       turns: 20,
     });
-    expect(story).toMatch(/Standalone story/);
+    expect(story).toMatch(/Critic lens A — Free MUD/);
     expect(story).toMatch(/Free hook bar/);
     expect(story).toMatch(/8–12/);
     expect(vibe).toMatch(/Game vibe/);

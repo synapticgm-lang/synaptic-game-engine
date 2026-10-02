@@ -201,7 +201,8 @@ describe('playtest31jCriticBatchCD', () => {
       state.sceneFacts = { ...emptySceneFacts(30), present: [] };
       const committed = applyCommittedNarrative(
         state,
-        'A loud argument breaks out — Mara shouts at Kell over a grain sack.',
+        // Batch V: cast scrape needs a speech/role cue next to the name.
+        'A loud argument breaks out over a grain sack. The merchant named Mara says Kell cheated her.',
         30
       );
       expect(committed.openVignette?.kind).toBe('argument');

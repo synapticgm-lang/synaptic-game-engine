@@ -95,16 +95,21 @@ describe('playtest29e — world map overhaul', () => {
     expect(isLegalMapPlace(state, 'Lowgate')).toBe(true);
   });
 
-  it('harvests NPC names into lorebook without inventing cities', () => {
+  it('harvests ledger NPC names into lorebook without inventing people or cities', () => {
     let state = createInitialState(undefined, 'rpg');
     state.worldAtlas = instantiateWorldAtlas(getWorldOutlineById('shatter-coast')!);
+    // 13c: harvest keeps ledger people only (record + here); prose invents stay off.
+    state.npcMemories = [{ npcId: 'mara', npcName: 'Mara', disposition: 'neutral', facts: [], lastSeenTurn: 4 }];
+    state.sceneFacts = { ...(state.sceneFacts ?? {}), present: ['Mara'] } as never;
     state = harvestNarrativeIntoLedger(
       state,
-      'A woman named Mara says hello. The city of Fakeopolis glitters.',
+      'A woman named Mara says hello. Orin Bask nods. The city of Fakeopolis glitters.',
       5
     );
     expect(state.lorebook.some((c) => c.name === 'Mara' && c.type === 'npc')).toBe(true);
-    expect(state.npcMemories?.some((n) => n.npcName === 'Mara')).toBe(true);
+    expect(state.lorebook.some((c) => c.name === 'Orin Bask')).toBe(false);
+    expect(state.npcMemories?.some((n) => n.npcName === 'Orin Bask')).toBe(false);
+    expect(JSON.stringify(state.worldAtlas)).not.toMatch(/Fakeopolis/);
   });
 
   it('scrubInventedGeography rewrites unknown city-of names', () => {

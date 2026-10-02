@@ -84,6 +84,8 @@ describe('playtest31d — force-latest + 30S chrome leftover', () => {
       errorRepairRevision: 0,
       turn: 6,
       log: [{ id: 'g1', turn: 5, role: 'gm' as const, content: story, timestamp: 1 }],
+      // Lock B: a bare name stays on present[] only with a ledger record.
+      npcMemories: [{ npcId: 'mira', npcName: 'Mira', disposition: 'neutral' as const, facts: [], lastSeenTurn: 5 }],
       sceneFacts: {
         crowd: 'present' as const,
         noise: 'voices' as const,

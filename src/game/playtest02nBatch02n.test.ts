@@ -31,6 +31,8 @@ function dietState(): GameState {
     ...(state.sceneFacts ?? { props: [], present: [], crowd: 'present', noise: 'quiet', lastBeat: '', updatedTurn: 8 }),
     present: ['Vessa'],
   };
+  // Lock B: CAST names come from the bible registry or a harvested NPC record.
+  state.npcMemories = [{ npcId: 'vessa', npcName: 'Vessa', disposition: 'neutral', facts: [], lastSeenTurn: 7 }];
   const gm: LogEntry = {
     id: 'gm-7',
     turn: 7,

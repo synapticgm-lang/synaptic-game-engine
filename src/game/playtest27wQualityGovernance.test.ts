@@ -28,7 +28,7 @@ describe('playtest27w — P0+P1 quality governance', () => {
 
   it('rejects Check the stranger when alone', () => {
     const state = createInitialState();
-    state.openingEstablishment = { ...state.openingEstablishment!, aloneArrival: true };
+    state.openingEstablishment = { pending: [], answers: {}, complete: true, aloneArrival: true };
     state.sceneFacts = {
       props: [],
       present: [],

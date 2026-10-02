@@ -115,11 +115,12 @@ describe('playtest30x — site-wide crowd presence authority', () => {
 
     const pair = harvestCrowdIntoSceneFacts(undefined, 'Two figures watch from the wall.', 1);
     expect(pair.crowdCount).toBe(2);
-    expect(countPeople(pair.present)).toBe(2);
+    // Batch T: headcount lives on crowdCount; present[] is never padded with figure-N slots.
+    expect(pair.present.some((p) => /^figure\b/i.test(p))).toBe(false);
 
     const group = harvestCrowdIntoSceneFacts(undefined, 'A scattered group of individuals wait.', 1);
     expect(group.crowdCount).toBe(5);
-    expect(countPeople(group.present)).toBe(5);
+    expect(group.present.some((p) => /^figure\b/i.test(p))).toBe(false);
 
     const noShrink = harvestCrowdIntoSceneFacts(group, 'You look towards the two figures who were present when you arrived.', 2);
     expect(noShrink.crowdCount).toBe(5);
@@ -147,8 +148,13 @@ describe('playtest30x — site-wide crowd presence authority', () => {
     );
     expect(second.crowdCount).toBe(2);
 
+    // 13c: harvest keeps ledger people only (record + here).
     const named = harvestNarrativeIntoLedger(
-      { ...state, sceneFacts: first },
+      {
+        ...state,
+        sceneFacts: { ...first, present: [...(first.present ?? []), 'Mira'] },
+        npcMemories: [{ npcId: 'mira', npcName: 'Mira', disposition: 'neutral', facts: [], lastSeenTurn: 1 }],
+      },
       'Mira says nothing. Two figures wait.',
       2
     );

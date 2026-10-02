@@ -48,6 +48,8 @@ describe('playTranscript', () => {
     ];
     const state = {
       ...base,
+      // 10i: turns 0–2 with no player line keep the page-1 cover pads; this is the later fallback.
+      turn: 5,
       choices: [],
       log: [
         {
@@ -142,6 +144,8 @@ describe('playTranscript', () => {
     ];
     const state = {
       ...base,
+      // 10i: turns 0–2 with no player line keep the page-1 cover pads; this is the later fallback.
+      turn: 5,
       choices: [],
       log: [
         {
@@ -161,7 +165,9 @@ describe('playTranscript', () => {
         sceneWritten: true,
       },
     };
-    expect(resolveOfferedChoices(state).slice(0, 3)).toEqual(offered);
+    // 28j anti-circling rank may reorder the same pad.
+    const out = resolveOfferedChoices(state).slice(0, 3);
+    expect([...out].sort()).toEqual([...offered].sort());
   });
 
   it('formats transcript with options and omits missing offeredChoices', () => {

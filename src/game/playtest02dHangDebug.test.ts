@@ -89,8 +89,9 @@ describe('playtest02d hang debug — CAST / log / choice pad', () => {
     const state = hubCastState();
     const cast = buildEntityCast(state);
     expect(cast).toContain('<CAST>');
-    // Hub-role compounds in present[] must be CAST-named (not only when the arrival beat is social).
-    expect(cast).toContain('Lowmarket Fence');
+    // Lock B: a hub-role compound in present[] is not CAST-named; it enters only as a hub arrival contact.
+    expect(resolveHubArrival(state, 'Lowmarket')?.beat.contactName).toBeUndefined();
+    expect(cast).not.toContain('Lowmarket Fence');
     expect(cast).toContain('</CAST>');
 
     const arrival = resolveHubArrival(state, 'Lowmarket');

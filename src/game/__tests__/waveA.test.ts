@@ -33,11 +33,11 @@ import {
 
 // WS-4 Imports
 import {
-  createTemplateRegistry,
-  registerTemplate,
-  pickEncounterTemplate,
-  validateTemplate,
-  BIOME_TAXONOMY,
+  allCatalogEncounters,
+  encountersForMode,
+  findCatalogEncounter,
+  isCatalogFoeName,
+  selectCatalogEncounter,
 } from '../encounterBible';
 import {
   generateTelegraph,
@@ -298,11 +298,12 @@ describe('WS-2 Wave A: NPC Memory Ledger', () => {
     expect(moments.length).toBe(1); // Should still be 1 (deduplicated)
   });
   
-  it('broadcasts key moment to witnesses', () => {
-    const state = createTestState({ turn: 10 });
+  it('broadcasts key moment to witnesses who are in the scene', () => {
+    const base = createTestState({ turn: 10 });
+    const state = { ...base, sceneFacts: { ...base.sceneFacts, present: ['Aldous', 'Oskar', 'Pellane'] } } as GameState;
     
     const moment = createKeyMoment('Aldous', 'betrayal', { location: 'Dock' }, state);
-    const updated = broadcastKeyMoment(moment, ['Oskar', 'Pellane'], state);
+    const updated = broadcastKeyMoment(moment, ['Oskar', 'Pellane', 'Marla'], state);
     
     const oskarMoments = getKeyMoments('Oskar', updated);
     const pellaneMoments = getKeyMoments('Pellane', updated);
@@ -310,6 +311,7 @@ describe('WS-2 Wave A: NPC Memory Ledger', () => {
     expect(oskarMoments.length).toBe(1);
     expect(pellaneMoments.length).toBe(1);
     expect(oskarMoments[0]?.category).toBe('witness');
+    expect(getKeyMoments('Marla', updated)).toHaveLength(0);
   });
 });
 
@@ -317,113 +319,66 @@ describe('WS-2 Wave A: NPC Memory Ledger', () => {
 // WS-4: ENCOUNTER BIBLE TESTS
 // ============================================================================
 
-describe('WS-4 Wave A: Encounter Bible', () => {
-  it('creates empty registry', () => {
-    const registry = createTemplateRegistry();
-    
-    expect(registry.byBible.size).toBe(0);
-    expect(registry.byId.size).toBe(0);
-    expect(registry.byMode.size).toBe(0);
+describe('WS-4 Wave A: Encounter catalog (replaced the template registry in 12b)', () => {
+  const at = (over: Partial<GameState>): GameState =>
+    ({ engineMode: 'litrpg', turn: 5, currentLocation: '', sceneFacts: {}, stateTxLog: [], ...over }) as GameState;
+
+  it('catalog lists authored rows for every mode', () => {
+    for (const mode of ['litrpg', 'dnd', 'rpg', 'pyoa'] as const) {
+      expect(encountersForMode(mode).length).toBeGreaterThan(0);
+    }
   });
-  
-  it('registers template', () => {
-    const registry = createTemplateRegistry();
-    
-    const template = {
-      id: 'test-encounter',
-      name: 'Test Encounter',
-      bibleId: 'test-bible',
-      mode: 'litrpg' as const,
-      version: '1.0.0',
-      telegraph: {
-        timing: 'same-turn' as const,
-        patterns: [{ type: 'status' as const, text: 'Danger ahead', probability: 1.0 }],
-        avoidable: true,
-      },
-      stakes: {
-        win: { description: 'Victory', xpRange: [20, 30] },
-        lose: { description: 'Defeat', xpRange: [0, 0] },
-      },
-      resolution: {
-        type: 'combat' as const,
-        combat: {
-          enemyCount: [1, 3],
-          hpRange: [10, 20],
-          fleeDifficulty: 'medium' as const,
-          parleyDifficulty: 'hard' as const,
-          maxEngagementTurns: 8,
-        },
-      },
-      aftermath: {
-        receiptTypes: ['xp', 'loot'],
-        mandatoryReceipts: ['xp'],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban', 'urban_ruin'],
-      },
-      tierRange: [1, 3] as [number, number],
-      densityRole: 'trash' as const,
-    };
-    
-    registerTemplate(registry, template);
-    
-    expect(registry.byId.get('test-encounter')).toBe(template);
-    expect(registry.byBible.get('test-bible')?.length).toBe(1);
+
+  it('rows are found by id and listed under their own mode', () => {
+    for (const seed of allCatalogEncounters()) {
+      expect(findCatalogEncounter(seed.id)).toBe(seed);
+      expect(encountersForMode(seed.mode)).toContain(seed);
+    }
   });
-  
-  it('validates template schema', () => {
-    const template = {
-      id: 'test',
-      name: 'Test',
-      bibleId: 'test',
-      mode: 'litrpg' as const,
-      version: '1.0',
-      telegraph: {
-        timing: 'same-turn' as const,
-        patterns: [{ type: 'status' as const, text: 'Test', probability: 1.0 }],
-        avoidable: true,
-      },
-      stakes: {
-        win: { description: 'Win', xpRange: [10, 20] as [number, number] },
-        lose: { description: 'Lose', xpRange: [0, 0] as [number, number] },
-      },
-      resolution: {
-        type: 'combat' as const,
-        combat: {
-          enemyCount: [1, 2] as [number, number],
-          hpRange: [10, 20] as [number, number],
-          fleeDifficulty: 'medium' as const,
-          parleyDifficulty: 'hard' as const,
-          maxEngagementTurns: 8,
-        },
-      },
-      aftermath: {
-        receiptTypes: ['xp' as const],
-        mandatoryReceipts: ['xp'],
-        optionalReceipts: [],
-      },
-      biomeConstraints: {
-        allowedBiomes: ['urban'],
-      },
-      tierRange: [1, 3] as [number, number],
-      densityRole: 'trash' as const,
-    };
-    
-    const result = validateTemplate(template);
-    expect(result.valid).toBe(true);
-    expect(result.errors.length).toBe(0);
+
+  it('every row is a named foe; fights carry a reward, PYOA crises do not', () => {
+    const ids = new Set<string>();
+    for (const seed of allCatalogEncounters()) {
+      expect(seed.id).toBeTruthy();
+      expect(ids.has(seed.id)).toBe(false);
+      ids.add(seed.id);
+      expect(seed.foeName.trim()).toBeTruthy();
+      expect(seed.title.trim()).toBeTruthy();
+      if (seed.tier === 'crisis') expect(seed.xpReward).toBe(0);
+      else expect(seed.xpReward).toBeGreaterThan(0);
+      expect(seed.cooldown).toBeGreaterThanOrEqual(0);
+    }
   });
-  
-  it('detects invalid template', () => {
-    const template = {
-      id: '',
-      name: 'Test',
-    } as any;
-    
-    const result = validateTemplate(template);
-    expect(result.valid).toBe(false);
-    expect(result.errors.length).toBeGreaterThan(0);
+
+  it('unknown ids and blank names are not catalog rows', () => {
+    expect(findCatalogEncounter('')).toBeUndefined();
+    expect(isCatalogFoeName('')).toBe(false);
+    expect(isCatalogFoeName('Pact-Hunter Skirmisher', 'litrpg')).toBe(true);
+    expect(isCatalogFoeName('Pact-Hunter Skirmisher', 'dnd')).toBe(false);
+  });
+
+  it('litrpg catalog holds trash, elite and boss tiers', () => {
+    const tiers = new Set(encountersForMode('litrpg').map((s) => s.tier));
+    expect(tiers.has('trash')).toBe(true);
+    expect(tiers.has('elite')).toBe(true);
+    expect(tiers.has('boss')).toBe(true);
+  });
+
+  it('director pick is a catalog row of the mode, early turns pick trash', () => {
+    const picked = selectCatalogEncounter(at({ turn: 5 }));
+    expect(picked).not.toBeNull();
+    expect(encountersForMode('litrpg')).toContain(picked!);
+    expect(picked!.tier).toBe('trash');
+    expect(selectCatalogEncounter(at({ turn: 5 }))).toBe(picked);
+  });
+
+  it('late turns pick elite and a hub prefers its own row', () => {
+    expect(selectCatalogEncounter(at({ turn: 25 }))?.tier).toBe('elite');
+    expect(selectCatalogEncounter(at({ turn: 5, currentLocation: 'Mireglass reeds' }))?.hubId).toBe('sp-hub-mireglass');
+  });
+
+  it('PYOA drought never picks a catalog foe', () => {
+    expect(selectCatalogEncounter(at({ engineMode: 'pyoa' }))).toBeNull();
   });
 });
 
@@ -480,31 +435,31 @@ describe('WS-5 Wave A: Exclusive Facts', () => {
   
   it('detects fact conflict', () => {
     const write = {
-      factId: 'rebelAlly',
+      factId: 'thornferry-road.allegiance.rebels',
       value: true,
       visibility: 'public' as const,
       retention: 'campaign' as const,
       source: 'ws5' as const,
     };
     
-    const existingFacts = ['lordAlly'];
+    const existingFacts = { 'thornferry-road.allegiance.lord': true };
     
     const conflict = checkFactConflict(write, existingFacts);
     
     expect(conflict.hasConflict).toBe(true);
-    expect(conflict.conflictingFact).toBe('lordAlly');
+    expect(conflict.conflictingFact).toBe('thornferry-road.allegiance.lord');
   });
   
   it('allows non-conflicting facts', () => {
     const write = {
-      factId: 'lordAlly',
+      factId: 'thornferry-road.allegiance.lord',
       value: true,
       visibility: 'public' as const,
       retention: 'campaign' as const,
       source: 'ws5' as const,
     };
     
-    const existingFacts = ['millerTrusted']; // Different group
+    const existingFacts = { 'thornferry-road.trust.miller': true }; // Different group
     
     const conflict = checkFactConflict(write, existingFacts);
     
@@ -514,14 +469,14 @@ describe('WS-5 Wave A: Exclusive Facts', () => {
   it('validates batch of fact writes', () => {
     const writes = [
       {
-        factId: 'lordAlly',
+        factId: 'thornferry-road.allegiance.lord',
         value: true,
         visibility: 'public' as const,
         retention: 'campaign' as const,
         source: 'ws5' as const,
       },
       {
-        factId: 'rebelAlly', // Conflicts with lordAlly
+        factId: 'thornferry-road.allegiance.rebels', // Conflicts with lord
         value: true,
         visibility: 'public' as const,
         retention: 'campaign' as const,
@@ -529,8 +484,7 @@ describe('WS-5 Wave A: Exclusive Facts', () => {
       },
     ];
     
-    const state = createTestState({ engineMode: 'pyoa' });
-    const result = validateFactWrites(writes, state);
+    const result = validateFactWrites(writes, {});
     
     expect(result.valid).toBe(false);
     expect(result.conflicts.length).toBeGreaterThan(0);

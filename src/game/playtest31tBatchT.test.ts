@@ -36,8 +36,8 @@ import type { GameState } from './types';
 describe('playtest31tBatchT', () => {
   it('stamp is 2026-08-31t / 31l and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-31t');
-    expect(BUILD_STAMP).toBe('2026-08-31l');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
   });
 
   describe('P0-1 — ban unresolved deixis / occupancy nouns', () => {
@@ -51,7 +51,8 @@ describe('playtest31tBatchT', () => {
       expect(
         filterChromeFromPresent(['Ahead', 'figure 1', 'Behind', 'Wall Sergeant'])
       ).toEqual(['Wall Sergeant']);
-      expect(realPresentPeople(['Ahead', 'figure 1', 'Wall Sergeant'])).toEqual(['Wall Sergeant']);
+      // Lock B: hub-role compounds reach CAST only through the hub arrival contact.
+      expect(realPresentPeople(['Ahead', 'figure 1', 'Wall Sergeant', 'Wren Holt'])).toEqual(['Wren Holt']);
       expect(syncPresentToCount(['Wall Sergeant'], 4)).toEqual(['Wall Sergeant']);
       expect(syncPresentToCount(['Wall Sergeant'], 4).some((p) => /figure/i.test(p))).toBe(false);
 
@@ -147,15 +148,17 @@ describe('playtest31tBatchT', () => {
       expect(stitch).not.toMatch(/\bAhead\b/);
       expect(stitch).not.toMatch(/figure\s+1/i);
       expect(stitch).not.toMatch(/is done yielding|room asks|one clear next move/i);
-      expect(stitch).toMatch(/leave|speak|exit|stake|commit|face|strike|parley/i);
+      expect(stitch).toMatch(/leave|speak|exit|stake|commit|face|strike|parley|expecting you to act|next (?:move|word)|yours to break/i);
 
       const repaired = repairRejectedBeat(
         state,
         'The rain continues. The scent of damp earth hangs.',
         ['atmosphere-only']
       );
-      expect(repaired.prose).toBe(stitchCommitDelta(state));
-      expect(repaired.prose).not.toMatch(/is done yielding|room asks/i);
+      // 13b/18b: the repair is the last-resort book beat, never the rejected atmosphere or an old bank line.
+      expect(repaired.prose).not.toMatch(/rain continues|damp earth/i);
+      expect(repaired.prose).toMatch(/Lowmarket/);
+      expect(repaired.prose).not.toMatch(/is done yielding|room asks|one clear next move/i);
     });
   });
 

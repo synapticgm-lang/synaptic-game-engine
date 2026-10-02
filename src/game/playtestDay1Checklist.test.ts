@@ -8,7 +8,6 @@ import { buildCompletedEventPacket } from './completedEventPacket';
 import {
   acceptObeyedStoryBody,
   inventedPersonNamesNotOnAllowlist,
-  nounAuthorityHardRejects,
   obeyLedgerNouns,
 } from './ledgerNounObey';
 import { isUmbraCampaign, umbraAllowsLiveAiTurn } from './umbraOffline';
@@ -75,22 +74,17 @@ describe('day-1 — noun-authority hard reject', () => {
     expect(leftover.length).toBe(0);
   });
 
-  it('nounAuthorityHardRejects fires for raw invented prose before accept', () => {
+  it('invented name mid-clause is detected and never reaches the accepted body', () => {
     const state = crown();
     const packet = buildCompletedEventPacket(state, 'what is the ribbon?');
     // Force a residual invent that rewrite cannot fully scrub: stick invent mid-clause without presence verb.
     const sticky =
       'You asked about the ribbon while High Chanter Orel Vane of the Outer Choir waited in the ledger.';
-    const gate = nounAuthorityHardRejects(sticky, state, packet);
-    expect(gate.reject || gate.notes.includes('invented-name') || gate.invented.length > 0).toBe(
-      true
-    );
+    expect(inventedPersonNamesNotOnAllowlist(sticky, packet.allowlist).some((n) => /Orel/i.test(n))).toBe(true);
     const accepted = acceptObeyedStoryBody(sticky, state, packet);
     expect(accepted.prose).not.toMatch(/Orel Vane/i);
     expect(
       accepted.notes.includes('invented-name')
-        || accepted.notes.includes('noun-authority-hard-reject')
-        || accepted.rejected === true
         || accepted.usedLastResort
     ).toBe(true);
   });

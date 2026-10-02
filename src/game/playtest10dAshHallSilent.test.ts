@@ -90,8 +90,8 @@ function namedJax(over: Partial<GameState> = {}): GameState {
 
 describe('playtest10d — ash hall Silent break', () => {
   it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -116,7 +116,8 @@ describe('playtest10d — ash hall Silent break', () => {
 
   it('name + what’s yours names the priest, not only Jax', () => {
     const text = stitchOpeningContinue(namedJax(), 'My name is Jax whats yours then');
-    expect(text).toMatch(/Jax/);
+    // 18a: name-lock answers with HERE + spoken CAST, not a name telegram.
+    expect(text).not.toMatch(/They have the name|What name|give (?:us|me) a name/i);
     expect(text).toMatch(/lead priest|iron mask|priest/i);
     expect(openingCastLabel(namedJax())).toMatch(/lead priest|iron mask/i);
   });

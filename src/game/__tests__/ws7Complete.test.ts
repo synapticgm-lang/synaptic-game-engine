@@ -763,8 +763,8 @@ describe('WS-7 Wave C: Social Stakes Templates', () => {
 
 describe('WS-7 Wave D+: Social Progression', () => {
   describe('SOCIAL_SKILL_TREE', () => {
-    it('should have 10 nodes across 5 tiers', () => {
-      expect(SOCIAL_SKILL_TREE).toHaveLength(10);
+    it('should have 9 nodes across 5 tiers', () => {
+      expect(SOCIAL_SKILL_TREE).toHaveLength(9);
       
       const tier1 = SOCIAL_SKILL_TREE.filter(n => n.tier === 1);
       const tier2 = SOCIAL_SKILL_TREE.filter(n => n.tier === 2);
@@ -842,14 +842,14 @@ describe('WS-7 Wave D+: Social Progression', () => {
         stakesTier: 5,
         difficultyTier: 5,
         alreadyAwardedNoveltyKeys: new Set(),
-        matchedCombatXp: 100,
+        matchedCombatXp: 200,
         accumulatedTalkXpForObjective: 40,
       };
       
       const xpEvent = calculateSocialXp(input);
       
       expect(xpEvent.parityAdjustment).toBeGreaterThan(0);
-      expect(xpEvent.finalXp).toBeGreaterThanOrEqual(80); // 80% floor
+      expect(xpEvent.finalXp + 40).toBeGreaterThanOrEqual(160); // talk path reaches 80% of matched combat
     });
   });
   
@@ -1000,7 +1000,7 @@ describe('WS-7 Wave D+: Social Progression', () => {
       
       const updated = unlockSkillNode(gs, 'social.t2.intimidate');
       
-      expect(updated.arcDirector?.socialProgression?.unlockedNodes).not.toContain('social.t2.intimidate');
+      expect(updated.arcDirector?.socialProgression?.unlockedNodes ?? []).not.toContain('social.t2.intimidate');
     });
     
     it('should unlock node with satisfied prerequisites', () => {

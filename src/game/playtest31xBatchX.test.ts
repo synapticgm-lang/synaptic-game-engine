@@ -47,15 +47,16 @@ import type { GameState } from './types';
 describe('playtest31xBatchX', () => {
   it('stamp is 2026-08-31x / 31p and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-31x');
-    expect(BUILD_STAMP).toBe('2026-08-31p');
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
   });
 
   describe('P0-1 — hub+role entity mad-lib collapse', () => {
-    it('Lowmarket Fence is a valid NPC compound, not a polity slot', () => {
+    it('Lowmarket Fence is a hub-role compound, not a polity slot or a present[] name', () => {
       expect(isHubRoleCompoundToken('Lowmarket Fence')).toBe(true);
       expect(isHubRoleCompoundToken('Wall Sergeant')).toBe(true);
-      expect(realPresentPeople(['Lowmarket Fence', 'stall contact'])).toEqual(['Lowmarket Fence']);
+      // Lock B: hub-role compounds reach CAST only through the hub arrival contact.
+      expect(realPresentPeople(['Lowmarket Fence', 'stall contact', 'Wren Holt'])).toEqual(['Wren Holt']);
     });
 
     it('scrubs tape quotes: lunged/to your/a Lowmarket Fence object', () => {
@@ -230,7 +231,9 @@ describe('playtest31xBatchX', () => {
         openingEstablishment: { pending: [], answers: {}, complete: true },
         currentLocation: 'West Wall',
         turn: 25,
-        sceneFacts: { ...emptySceneFacts(25), present: ['Lowmarket Fence'] },
+        // Lock B: the starve needs a named person; a hub-role compound is not one.
+        sceneFacts: { ...emptySceneFacts(25), present: ['Wren Holt'] },
+        npcMemories: [{ npcId: 'wren-holt', npcName: 'Wren Holt', disposition: 'neutral', facts: [], lastSeenTurn: 23 }],
       } as GameState;
       const compiled = compileChoices(
         state,
@@ -239,7 +242,7 @@ describe('playtest31xBatchX', () => {
           'Ask a direct question',
           'Listen for the real answer',
           'Leave through the nearest exit',
-          'Talk to Lowmarket Fence',
+          'Talk to Wren Holt',
         ],
         undefined,
         'Press for leverage'
@@ -247,7 +250,7 @@ describe('playtest31xBatchX', () => {
       expect(compiled.choices.some((c) => /^Press for leverage$/i.test(c))).toBe(false);
       expect(compiled.choices.some((c) => /^Ask a direct question$/i.test(c))).toBe(false);
       expect(compiled.choices.some((c) => /Leave through the nearest exit/i.test(c))).toBe(false);
-      expect(compiled.choices.some((c) => /Talk to Lowmarket Fence/i.test(c))).toBe(true);
+      expect(compiled.choices.some((c) => /Talk to Wren Holt/i.test(c))).toBe(true);
     });
   });
 

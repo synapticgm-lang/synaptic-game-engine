@@ -65,8 +65,8 @@ function cathedral(over: Partial<GameState> = {}): GameState {
 
 describe('playtest10i — cathedral name+why', () => {
   it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

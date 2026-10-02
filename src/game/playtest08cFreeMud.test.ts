@@ -88,7 +88,9 @@ describe('08c — Free MUD presentation', () => {
     const prompt = formatMicroFlavorPrompt(packet);
     expect(prompt).toMatch(/ONE short/i);
     expect(prompt).toMatch(/YOU MAY ONLY MENTION/i);
-    expect(prompt.length).toBeLessThan(1200);
+    // The allowlist is the ledger's nouns (12b hubs included); the instruction frame stays short.
+    const frame = prompt.split('\n').filter((l) => !/^YOU MAY ONLY MENTION:/.test(l)).join('\n');
+    expect(frame.length).toBeLessThan(1200);
   });
 
   it('gates invent Title-Case and multi junk', () => {

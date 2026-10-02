@@ -208,7 +208,7 @@ describe('snapshot packet uniqueness', () => {
     expect(packet).not.toMatch(/=== SCENE MANIFEST/);
     expect((packet.match(/^- Crowd:/gm) ?? []).length).toBe(1);
     expect((packet.match(/^- Exits:/gm) ?? []).length).toBe(1);
-    expect(packet).toMatch(/narrative flair/);
+    expect(packet).toMatch(/AUTHORITY: SNAPSHOT \+ ledger win on facts/);
   });
 });
 

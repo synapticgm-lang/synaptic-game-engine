@@ -8,13 +8,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import type { GameState, EngineMode } from './types';
 import type { EncounterTemplate } from './encounterBible';
 import {
-  createTemplateRegistry,
-  registerTemplate,
-  getTemplatesForBible,
-  filterTemplatesByBiome,
-  filterTemplatesByTier,
-  pickEncounterTemplate,
-  validateTemplate,
+  allCatalogEncounters,
+  encountersForMode,
+  findCatalogEncounter,
+  isCatalogFoeName,
+  selectCatalogEncounter,
 } from './encounterBible';
 import {
   loadBiomeMatrix,
@@ -212,76 +210,66 @@ function createTestState(): GameState {
 // ENCOUNTER BIBLE TESTS
 // ============================================================================
 
-describe('WS-4 Wave 1 — Encounter Bible', () => {
-  it('B001: Template registry creation and validation', () => {
-    const registry = createTemplateRegistry();
-    expect(registry).toBeDefined();
-    expect(registry.templates).toEqual([]);
-    expect(registry.version).toBe('1.0.0');
+describe('WS-4 Wave 1 — Encounter catalog (replaced the template registry in 12b)', () => {
+  const at = (over: Partial<GameState>): GameState =>
+    ({ engineMode: 'litrpg', turn: 5, currentLocation: '', sceneFacts: {}, stateTxLog: [], ...over }) as GameState;
+
+  it('catalog lists authored rows for every mode', () => {
+    for (const mode of ['litrpg', 'dnd', 'rpg', 'pyoa'] as const) {
+      expect(encountersForMode(mode).length).toBeGreaterThan(0);
+    }
   });
 
-  it('B002: Template registration and retrieval', () => {
-    const registry = createTemplateRegistry();
-    const template = createTestTemplate();
-    
-    registerTemplate(registry, template);
-    
-    expect(registry.templates).toHaveLength(1);
-    expect(registry.templates[0].id).toBe(template.id);
-    
-    const retrieved = getTemplatesForBible(registry, 'test-bible', 'litrpg');
-    expect(retrieved).toHaveLength(1);
-    expect(retrieved[0].id).toBe(template.id);
+  it('rows are found by id and listed under their own mode', () => {
+    for (const seed of allCatalogEncounters()) {
+      expect(findCatalogEncounter(seed.id)).toBe(seed);
+      expect(encountersForMode(seed.mode)).toContain(seed);
+    }
   });
 
-  it('B003: Template validation', () => {
-    const template = createTestTemplate();
-    const validation = validateTemplate(template);
-    
-    expect(validation.valid).toBe(true);
-    expect(validation.errors).toHaveLength(0);
+  it('every row is a named foe; fights carry a reward, PYOA crises do not', () => {
+    const ids = new Set<string>();
+    for (const seed of allCatalogEncounters()) {
+      expect(seed.id).toBeTruthy();
+      expect(ids.has(seed.id)).toBe(false);
+      ids.add(seed.id);
+      expect(seed.foeName.trim()).toBeTruthy();
+      expect(seed.title.trim()).toBeTruthy();
+      if (seed.tier === 'crisis') expect(seed.xpReward).toBe(0);
+      else expect(seed.xpReward).toBeGreaterThan(0);
+      expect(seed.cooldown).toBeGreaterThanOrEqual(0);
+    }
   });
 
-  it('B004: Filter templates by tier range', () => {
-    const registry = createTemplateRegistry();
-    const template = createTestTemplate();
-    registerTemplate(registry, template);
-    
-    // Template is tier 1-5
-    const tier1 = filterTemplatesByTier(registry.templates, 1, 'litrpg');
-    expect(tier1).toHaveLength(1);
-    
-    const tier3 = filterTemplatesByTier(registry.templates, 3, 'litrpg');
-    expect(tier3).toHaveLength(1);
-    
-    const tier8 = filterTemplatesByTier(registry.templates, 8, 'litrpg');
-    expect(tier8).toHaveLength(0);
+  it('unknown ids and blank names are not catalog rows', () => {
+    expect(findCatalogEncounter('')).toBeUndefined();
+    expect(isCatalogFoeName('')).toBe(false);
+    expect(isCatalogFoeName('Pact-Hunter Skirmisher', 'litrpg')).toBe(true);
+    expect(isCatalogFoeName('Pact-Hunter Skirmisher', 'dnd')).toBe(false);
   });
 
-  it('B005: Pick encounter template with seeding', () => {
-    const registry = createTemplateRegistry();
-    const template = createTestTemplate();
-    registerTemplate(registry, template);
-    
-    const state = createTestState();
-    state.campaignBibleId = 'test-bible';
-    state.currentLocation = 'Test Dungeon Floor 1';
-    
-    const picked = pickEncounterTemplate(
-      registry,
-      state,
-      { 
-        bibleId: 'test-bible',
-        location: 'Test Dungeon Floor 1',
-        biome: 'dungeon',
-        tier: 1,
-        densityRole: 'trash',
-        seed: 123
-      }
-    );
-    
-    expect(picked).toBeDefined();
-    expect(picked?.id).toBe(template.id);
+  it('litrpg catalog holds trash, elite and boss tiers', () => {
+    const tiers = new Set(encountersForMode('litrpg').map((s) => s.tier));
+    expect(tiers.has('trash')).toBe(true);
+    expect(tiers.has('elite')).toBe(true);
+    expect(tiers.has('boss')).toBe(true);
+  });
+
+  it('director pick is a catalog row of the mode, early turns pick trash', () => {
+    const picked = selectCatalogEncounter(at({ turn: 5 }));
+    expect(picked).not.toBeNull();
+    expect(encountersForMode('litrpg')).toContain(picked!);
+    expect(picked!.tier).toBe('trash');
+    expect(selectCatalogEncounter(at({ turn: 5 }))).toBe(picked);
+  });
+
+  it('late turns pick elite and a hub prefers its own row', () => {
+    expect(selectCatalogEncounter(at({ turn: 25 }))?.tier).toBe('elite');
+    expect(selectCatalogEncounter(at({ turn: 5, currentLocation: 'Mireglass reeds' }))?.hubId).toBe('sp-hub-mireglass');
+  });
+
+  it('PYOA drought never picks a catalog foe', () => {
+    expect(selectCatalogEncounter(at({ engineMode: 'pyoa' }))).toBeNull();
   });
 });
 
@@ -304,14 +292,10 @@ describe('WS-4 Wave 1 — Biome Matrix', () => {
 
   it('B021: Hard filter prevents wrong-bible spawns', async () => {
     const matrix = await loadBiomeMatrix();
-    const registry = createTemplateRegistry();
-    
-    // Create a Keep Wraith template
     const keepWraithTemplate = createTestTemplate();
     keepWraithTemplate.id = 'cursed-keep.elite.keep-wraith';
     keepWraithTemplate.name = 'Keep Wraith Guardian';
     keepWraithTemplate.bibleId = 'cursed-keep';
-    registerTemplate(registry, keepWraithTemplate);
     
     // Try to use it in Summoned Pact biome
     const legality = isTemplateLegalForBiome(
@@ -339,23 +323,19 @@ describe('WS-4 Wave 1 — Biome Matrix', () => {
 
   it('B023: Filter templates by biome returns legal candidates only', async () => {
     const matrix = await loadBiomeMatrix();
-    const registry = createTemplateRegistry();
-    
     // Add matching template
     const legalTemplate = createTestTemplate();
     legalTemplate.bibleId = 'summoned-pact';
     legalTemplate.mode = 'litrpg';
-    registerTemplate(registry, legalTemplate);
     
     // Add non-matching template
     const illegalTemplate = createTestTemplate();
     illegalTemplate.id = 'cursed-keep.elite.keep-wraith';
     illegalTemplate.bibleId = 'cursed-keep';
     illegalTemplate.mode = 'dnd';
-    registerTemplate(registry, illegalTemplate);
     
     const filtered = filterByBiome(
-      registry.templates,
+      [legalTemplate, illegalTemplate],
       'summoned-pact',
       'crypt-dungeon',
       'litrpg',

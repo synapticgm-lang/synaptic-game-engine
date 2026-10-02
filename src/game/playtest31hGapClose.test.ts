@@ -200,20 +200,22 @@ describe('playtest31h — gap close P0 ledger owners', () => {
     state.sceneFacts = {
       crowd: 'present',
       noise: 'voices',
-      present: ['Pellane'],
+      // Batch I: Pellane is a polity, never a person slot.
+      present: ['Vessa'],
       props: [],
-      lastBeat: 'Pellane folds his arms.',
+      lastBeat: 'Vessa folds her arms.',
       updatedTurn: 6,
     };
+    state.npcMemories = [{ npcId: 'vessa', npcName: 'Vessa', disposition: 'neutral', facts: [], lastSeenTurn: 6 }];
     state.arcDirector = {
-      npcTopics: { pellane: ['talk:general', 'ask:why'] },
-      topicCommits: { pellane: 'refusalFinal' },
+      npcTopics: { vessa: ['talk:general', 'ask:why'] },
+      topicCommits: { vessa: 'refusalFinal' },
     };
     const compiled = compileChoices(
       state,
       ['Ask who they are', 'Ask what is going on', 'Press for leverage', 'Walk away'],
       undefined,
-      'Ask Pellane again'
+      'Ask Vessa again'
     );
     const blob = compiled.choices.join(' | ').toLowerCase();
     expect(blob).not.toMatch(/ask who they are|ask what(?:'s| is) going on/);

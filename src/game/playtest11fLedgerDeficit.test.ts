@@ -106,8 +106,8 @@ function millNamed(): GameState {
 
 describe('playtest11f — ledger deficit + topic inclusion', () => {
   it('HUD/BUILD are 11f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -130,7 +130,10 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     expect(state.character.name).toBe('Jax');
     expect(state.openingEstablishment?.answers.name).toBe('Jax');
     const text = stitchOpeningContinue(state, 'My name is Jax.');
-    expect(text).toMatch(/have the name Jax/i);
+    // 18a: name-lock answers with HERE + spoken CAST, not a name telegram.
+    expect(text).not.toMatch(/They have the name|What name|give (?:us|me) a name/i);
+    expect(text).toMatch(/Salt Road tavern/i);
+    expect(text).toMatch(/answers you/i);
   });
 
   it('does not overwrite a locked name', async () => {
@@ -165,8 +168,9 @@ describe('playtest11f — ledger deficit + topic inclusion', () => {
     );
     expect(state.character.name).toBe('Jax');
     const text = stitchOpeningContinue(state, "My name is Jax. What's your actual deal?");
-    expect(text).toMatch(/have the name Jax/i);
-    expect(text).toMatch(/want|have not said what they want/i);
+    expect(text).not.toMatch(/They have the name|What name|give (?:us|me) a name/i);
+    // The other topic is answered as a spoken CAST line (card want pool varies by seed).
+    expect(text).toMatch(/answers you\. "[^"]+"|have not said what they want/i);
   });
 
   it('kit inspect is a carry receipt, not identity + want reprint', () => {

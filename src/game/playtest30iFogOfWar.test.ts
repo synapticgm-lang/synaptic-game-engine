@@ -39,13 +39,16 @@ describe('Pack 12 Fog-of-War', () => {
       const bible = getCampaignBibleById('summoned-pact');
       const withAtlas = seedWorldAtlas({ ...state, campaignBibleId: 'summoned-pact' }, bible!);
       
-      const narrative = `You are standing in Lowmarket. The Contract Hall is visible to the north, and you can hear the sounds of the West Wall in the distance.`;
+      // 29e: the atlas is a seed-picked world outline; hubs live in outdoorHubs.
+      const [a, b, c, unseen] = withAtlas.worldAtlas!.settlements.map((x) => x.name);
+      const narrative = `You are standing in ${a}. ${b} is visible to the north, and you can hear the sounds of ${c} in the distance.`;
       
       const discovered = detectAndDiscoverLocations(withAtlas, narrative);
       
-      expect(isLocationDiscovered(discovered, 'Lowmarket')).toBe(true);
-      expect(isLocationDiscovered(discovered, 'Contract Hall')).toBe(true);
-      expect(isLocationDiscovered(discovered, 'West Wall')).toBe(true);
+      expect(isLocationDiscovered(discovered, a!)).toBe(true);
+      expect(isLocationDiscovered(discovered, b!)).toBe(true);
+      expect(isLocationDiscovered(discovered, c!)).toBe(true);
+      expect(isLocationDiscovered(discovered, unseen!)).toBe(false);
     });
 
     it('only shows discovered settlements from world atlas', () => {
@@ -58,11 +61,12 @@ describe('Pack 12 Fog-of-War', () => {
       expect(beforeDiscovery.length).toBe(0);
       
       // Discover a settlement
-      const discovered = discoverLocation(withAtlas, 'Lowmarket');
+      const first = withAtlas.worldAtlas!.settlements[0]!.name;
+      const discovered = discoverLocation(withAtlas, first);
       const afterDiscovery = getDiscoveredSettlements(discovered);
       
-      expect(afterDiscovery.length).toBeGreaterThan(0);
-      expect(afterDiscovery.some(s => s.name === 'Lowmarket')).toBe(true);
+      expect(afterDiscovery.length).toBe(1);
+      expect(afterDiscovery.some(s => s.name === first)).toBe(true);
     });
 
     it('discovers location on travel', () => {
@@ -125,6 +129,7 @@ describe('Pack 12 Fog-of-War', () => {
         currentLocation: 'Sevenfold Circle',
         discoveredLocations: ['place_sevenfold-circle'], // Only starting location
         openingEstablishment: { pending: [], answers: {}, complete: true },
+        turn: 20, // past the opening allowance (turn ≤ 5) covered below
       };
       
       const travelOptions = outdoorHubTravelChoices(state);
