@@ -65,7 +65,8 @@ import {
   playerGivesOrRefusesName,
 } from './openingEstablishment';
 import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
-import { selectEligibleCrisis, type SocialCrisis } from './socialCrisis';
+import { selectEligibleCrisis } from './socialCrisis';
+import type { SocialCrisis } from './socialCrisisTypes';
 // WS-4 Wave D+: Encounter Density Governance
 import {
   getDensityProfile,
@@ -87,8 +88,8 @@ import {
   getDueConsequences,
   deliverConsequence,
   enforceT150Deadline,
-  type DelayedConsequence,
 } from './pyoaDelayedConsequences';
+import type { DelayedConsequence } from './types/crossPackageContracts';
 // WS-6 Wave C: Content Density and Exhaustion
 import {
   recordDensityEvent,
@@ -147,7 +148,7 @@ export interface ArcDirectorState {
   
   // WS-5 Wave A: PYOA Delayed Consequences
   /** WS-5 Wave A — Delayed consequences (T50 choice → T150 payoff) */
-  pyoaDelayedConsequences?: import('./pyoaDelayedConsequences').DelayedConsequence[];
+  pyoaDelayedConsequences?: DelayedConsequence[];
   
   // WS-7 Wave 1: Social Crisis + Leverage
   /** WS-7 Wave 1 — Active social crises with committed stakes */

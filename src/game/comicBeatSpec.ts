@@ -3,7 +3,8 @@
  * Director stays disabled — this replaces its planning role with templates.
  */
 
-import type { ComicPanel, ComicTextAnchor, GameState, Settings } from './types';
+import type { ComicPanel, GameState, Settings } from './types';
+import type { ComicTextAnchor } from '../types/comicScript';
 import { COMIC_TEXT_ANCHORS, normalizeTextAnchor } from '../types/comicScript';
 import { resolvePanelBudget } from './panelBudget';
 import { scrubFranchiseStyleLeak } from './comicImagePrompt';

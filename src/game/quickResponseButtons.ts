@@ -5,7 +5,8 @@
  * Enables instant client-side responses without GM wait.
  */
 
-import type { GameState, OpeningPromptKind } from './types';
+import type { GameState } from './types';
+import type { OpeningPromptKind } from '../data/campaigns/types';
 import type { CampaignBible } from '@/data/campaigns/types';
 import { resolveActiveCampaignBible } from './campaignSeed';
 

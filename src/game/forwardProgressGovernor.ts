@@ -8,7 +8,8 @@
  * Must not just change the scene - must change campaign state.
  */
 
-import type { GameState, Quest, NpcMemory, FactionStanding, StateTx } from './types';
+import type { GameState, Quest, NpcMemory, FactionStanding } from './types';
+import type { StateTx } from './stateTx';
 
 export type ProgressDeltaKind =
   | 'quest_progress'      // Quest stage, obstacle resolved, deadline worsened, objective failed/unlocked
