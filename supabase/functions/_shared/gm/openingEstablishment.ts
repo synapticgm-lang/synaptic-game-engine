@@ -290,6 +290,20 @@ export function hallTalkTopic(raw: string): HallTalkTopic | null {
   return null;
 }
 
+/** Every hall topic a line touches. One line can ask about the panel and what is going on. */
+export function hallTalkTopics(raw: string): HallTalkTopic[] {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return [];
+  const out: HallTalkTopic[] = [];
+  if (hallTalkAsksWho(t)) out.push('who');
+  if (hallTalkAsksRefuse(t)) out.push('refuse');
+  if (hallTalkAsksStayLeave(t)) out.push('stayLeave');
+  if (hallTalkAsksWant(t) || playerAskedWhyPulled(t)) out.push('want');
+  if (hallTalkAsksPanel(t)) out.push('panel');
+  if (hallTalkAsksWhere(t)) out.push('where');
+  return out;
+}
+
 export function isAcceptOfferLine(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
