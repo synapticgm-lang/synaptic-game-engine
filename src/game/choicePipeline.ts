@@ -699,6 +699,7 @@ export function sceneSafeFallbacks(
     || /\b(look around|surroundings|scout|circuit)\b/i.test(lastPlayerAction);
   const alone = isAloneOrEmptyScene(state, storyProse);
   const options: string[] = [];
+  let mappedExit = '';
 
   // Path1 Direct / Physical
   if (!justLooked) options.push(fallbackSuggestionForState(state));
@@ -729,13 +730,15 @@ export function sceneSafeFallbacks(
       const graphPads = graphExitPads(dungeon);
       if (graphPads.length) {
         options.push(...graphPads);
+        mappedExit = graphPads[0]!;
         hasDungeonExitChoice = true;
       } else {
         const exits = listInteriorExitsFromHere(dungeon);
         const door = exits.find((e) => e.kind === 'door' || e.kind === 'stairs');
         if (door) {
           if (!isAtmospherePlaceName(door.name)) {
-            options.push(`Approach the ${door.noun} to ${door.name}`);
+            mappedExit = `Approach the ${door.noun} to ${door.name}`;
+            options.push(mappedExit);
           }
           hasDungeonExitChoice = true;
         } else if (exits[0]) {
@@ -818,6 +821,12 @@ export function sceneSafeFallbacks(
       if (inventsPresenceOnEmptyScene(opt, state, storyProse)) continue;
       ordered.push(opt);
     }
+  }
+  // The floor plan's own way out is the move on an alone interior; the spread cap must not drop it.
+  const exitLabel = mappedExit ? sanitizeChoiceLabel(mappedExit) : '';
+  if (exitLabel && !ordered.includes(exitLabel)) {
+    if (ordered.length >= 4) ordered[3] = exitLabel;
+    else ordered.push(exitLabel);
   }
   return ordered.slice(0, 4);
 }

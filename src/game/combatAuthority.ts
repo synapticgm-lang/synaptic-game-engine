@@ -271,11 +271,11 @@ export function scrubCombatSpawnLog(text: string): string {
   if (!text) return text;
   return text
     .replace(
-      /\b[A-Z][\w-]+(?:\s+Skirmisher)?\s+pushes(?:\s+into\s+[^.]+)?\s+from the edge of the room and commits toward you\.?\s*/gi,
+      /\b(?:[A-Z][\w'-]*\s+)*[A-Za-z][\w'-]+\s+pushes(?:\s+into\s+[^.]+)?\s+from the edge of the room and commits toward you\.?\s*/g,
       ''
     )
     .replace(
-      /\b[A-Z][\w-]+(?:\s+Skirmisher)?\s+forces the doorway[^.]*\.?\s*/gi,
+      /\b(?:[A-Z][\w'-]*\s+)*[A-Za-z][\w'-]+\s+forces the doorway[^.]*\.?\s*/g,
       ''
     )
     .replace(/\s{2,}/g, ' ')
@@ -300,7 +300,7 @@ export function scrubDroughtSpawnInvent(
 ): { prose: string; scrubbed: boolean } {
   let next = prose ?? '';
   let scrubbed = false;
-  const replaceWith = 'forces the doorway with a scrape of wrong motion';
+  const replaceWith = 'comes through the doorway';
   const patterns: RegExp[] = [
     /\b(?:breaks?|bursts?|erupts?|claws?(?:\s+(?:its|their)\s+way)?|tears?|rises?|emerges?|lurches?|crawls?|pours?|surges?|explodes?)\s+(?:free\s+)?(?:from|out of|through|up from)\s+(?:the\s+)?(?:debris|rubble|wreckage|ash(?:\s+pile)?|ruin|floorboards?)\b/gi,
     /\b(?:steps?|climbs?|scrambles?)\s+(?:out\s+)?from\s+(?:behind|under|inside)\s+(?:a\s+)?(?:pile of\s+)?(?:debris|rubble|wreckage)\b/gi,

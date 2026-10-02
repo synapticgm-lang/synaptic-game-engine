@@ -28,7 +28,7 @@ import {
   canShopInFsmState,
   getAllowedCombatActions,
 } from './encounterTerminalFsm';
-import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
+import { countPlayerIntentStreak, countLoiterFamilyStreak, loiterFamilyKey } from './beatFingerprint';
 import { isPyoaBranchLocked, eligiblePyoaPadsAfterLock } from './pyoaBranchLedger';
 import {
   ensurePyoaSpine,
@@ -719,6 +719,18 @@ export function compileChoices(
       || (/\b(talk|ask|press|listen)\b/i.test(intentText)
         && (state.arcDirector?.npcTopics?.[npcKey] ?? []).length >= 2));
   const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill || talkRecycle;
+  // Travel / leave are the way out of a wait-inspect or talk treadmill; strip them only when the
+  // stall itself was travel ping-pong or walking away.
+  const stallUsed = new Set<string>([
+    ...((hardLoiter || inspectTreadmill) ? loiter.families ?? [] : []),
+    ...(hardStreak ? [loiterFamilyKey(streak.key) ?? ''] : []),
+  ]);
+  const stripsFamily = (family: ChoiceFingerprintFamily): boolean => {
+    if (!isStallFamily(family)) return false;
+    if (family === 'travel') return stallUsed.has('travel');
+    if (family === 'walk_away') return stallUsed.has('walk_away');
+    return true;
+  };
 
   const coverCombatLock = shouldStarveCombatPadsOnCover(state);
   let filtered = (graphLabels.length ? graphLabels : choices).filter((c) => {
@@ -822,7 +834,7 @@ export function compileChoices(
     }
     const family = classifyChoiceFamily(c);
     // 29b/29c — hard same-action + loiter interrupt: strip stall/travel families
-    if (stallInterrupt && isStallFamily(family)) {
+    if (stallInterrupt && stripsFamily(family)) {
       notes.push(`Streak interrupt drop: ${family}`);
       return false;
     }
@@ -1011,10 +1023,7 @@ export function compileChoices(
       }
     }
     for (const s of supplements) {
-      if (stallInterrupt) {
-        const fam = classifyChoiceFamily(s);
-        if (isStallFamily(fam)) continue;
-      }
+      if (stallInterrupt && stripsFamily(classifyChoiceFamily(s))) continue;
       if (isExcludedPadLabel(s, excluded)) continue;
       if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, s)) continue;
       if (!filtered.some((f) => f.toLowerCase() === s.toLowerCase())) {
@@ -1035,6 +1044,7 @@ export function compileChoices(
     for (const label of edgeLabels) {
       if (isExcludedPadLabel(label, excluded)) continue;
       if (isTravelPad(label) || isLeaveFamilyPad(label)) continue;
+      if (stripsFamily(classifyChoiceFamily(label))) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
       if (!interruptPads.some((p) => p.toLowerCase() === label.toLowerCase())) {
         interruptPads.push(label);
@@ -1042,7 +1052,11 @@ export function compileChoices(
       if (interruptPads.length >= 2) break;
     }
     if (interruptPads.length < 2) {
-      interruptPads.push(...closedUniverseFallbacks(state, excluded).slice(0, 2));
+      interruptPads.push(
+        ...closedUniverseFallbacks(state, excluded)
+          .filter((p) => !stripsFamily(classifyChoiceFamily(p)))
+          .slice(0, 2)
+      );
     }
     for (const pad of interruptPads) {
       if (isTravelPad(pad) || isLeaveFamilyPad(pad)) continue;
@@ -1124,8 +1138,14 @@ export function compileChoices(
       /\b(travel|leave|exit|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i.test(c)
     );
     if (!worldMoving) {
-      const fallback = closedUniverseFallbacks(state, excluded)[0];
-      if (fallback && !isExcludedPadLabel(fallback, excluded) && !filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
+      const movers = [
+        ...closedUniverseFallbacks(state, excluded).filter((p) => !stripsFamily(classifyChoiceFamily(p))),
+        ...(state.activeDungeon && isInteriorMap(state.activeDungeon) ? graphExitPads(state.activeDungeon) : []),
+      ];
+      const fallback = movers.find(
+        (p) => !isExcludedPadLabel(p, excluded) && !stripsFamily(classifyChoiceFamily(p))
+      );
+      if (fallback && !filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
         filtered.unshift(fallback);
         notes.push('Fate world-moving pad forced');
       }

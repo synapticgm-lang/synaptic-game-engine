@@ -297,6 +297,10 @@ export function isAggregatePersonToken(token: string): boolean {
 export function chromeSpeechAnchor(presentPeople: string[] = [], prose = ''): string | null {
   const named = realPresentPeople(presentPeople);
   if (named[0]) return named[0];
+  const role = presentPeople.find(
+    (p) => typeof p === 'string' && isRoleContactLabel(p) && !isChromePersonToken(p) && !isAggregatePersonToken(p)
+  );
+  if (role) return role.trim();
   if (/\bhandlers?\b/i.test(prose)) return 'the handler';
   return null;
 }

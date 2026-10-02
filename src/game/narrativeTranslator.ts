@@ -345,25 +345,17 @@ export function choiceContainsUngroundedReferences(
   const nounMatches = choice.match(/\b(?:the|a|an)\s+([a-z]+(?:\s+[a-z]+){0,2})/gi);
   if (!nounMatches) return false;
   
+  const grounded = (noun: string): boolean =>
+    isGenericTerm(noun)
+    || lastGmStory.toLowerCase().includes(noun)
+    || !!sceneFacts?.props?.some((p: string) => p.toLowerCase().includes(noun))
+    || inventory.some((item: any) => item.name?.toLowerCase().includes(noun))
+    || !!sceneFacts?.location?.toLowerCase().includes(noun);
+
   for (const match of nounMatches) {
-    const noun = match.replace(/^(?:the|a|an)\s+/i, '').toLowerCase();
-    
-    // Skip generic terms
-    if (isGenericTerm(noun)) continue;
-    
-    // Check if grounded in last GM story
-    if (lastGmStory.toLowerCase().includes(noun)) continue;
-    
-    // Check if in scene props
-    if (sceneFacts?.props?.some((p: string) => p.toLowerCase().includes(noun))) continue;
-    
-    // Check if in inventory
-    if (inventory.some((item: any) => item.name?.toLowerCase().includes(noun))) continue;
-    
-    // Check if in location
-    if (sceneFacts?.location?.toLowerCase().includes(noun)) continue;
-    
-    // Ungrounded reference found
+    const words = match.replace(/^(?:the|a|an)\s+/i, '').toLowerCase().split(/\s+/);
+    // The capture runs past the noun ("barrels carefully"); the phrase is grounded when any lead of it is.
+    if (words.some((_, i) => grounded(words.slice(0, words.length - i).join(' ')))) continue;
     return true;
   }
   

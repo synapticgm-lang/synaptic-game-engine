@@ -1423,7 +1423,7 @@ export function openingCastNames(state: GameState): string[] {
   const who = hay.match(/Who is here[^:\n]*:\s*([^\n]+)/i)?.[1] ?? '';
   for (const part of who.split(/\s+and\s+|,\s*/i)) {
     const t = part.replace(/\s+/g, ' ').trim();
-    if (!t || !slotNamesOnePerson(t)) continue;
+    if (!t || slotNamesNobody(t) || !slotNamesOnePerson(t)) continue;
     push(t);
     push(t.replace(/^(a|an|the)\s+/i, '').trim());
   }
@@ -1535,8 +1535,12 @@ function whoFromPickedHookBlob(blob?: string): string {
     .replace(/\s+/g, ' ')
     .trim()
     .replace(/[.!]+$/, '');
-  if (!who || /^(?:no|nobody|none|alone|you alone)\b/i.test(who) || who.split(' ').length > 6) return '';
+  if (!who || slotNamesNobody(who) || who.split(' ').length > 6) return '';
   return slotNamesOnePerson(who) ? who : '';
+}
+
+function slotNamesNobody(part: string): boolean {
+  return /^\(?\s*(?:no|nobody|none|alone|you alone)\b/i.test(part.trim());
 }
 
 /**

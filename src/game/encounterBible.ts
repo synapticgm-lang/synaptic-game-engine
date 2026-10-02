@@ -13,6 +13,7 @@ import {
 } from '@/data/encounters';
 import { matchesLastKillName } from './combatAuthority';
 import { isEncounterOnCooldown } from './encounterTerminalFsm';
+import { isWrongBibleEncounter } from './encounterBiomeMatrix';
 import type { EngineMode, GameState } from './types';
 
 export type { EncounterSeed } from '@/data/encounters';
@@ -93,11 +94,13 @@ export function selectCatalogEncounter(state: GameState): EncounterSeed | null {
 /** Catalog display names the drought table may rotate — never a novel token. */
 export function catalogDroughtNames(state: GameState): string[] {
   const mode = state.engineMode ?? 'litrpg';
+  const bible = state.campaignBibleId ?? '';
+  const fits = (n: string) => !bible || !isWrongBibleEncounter(n, bible);
   const names = catalogFoeNames(mode).filter((n) => {
     const seed = encountersForMode(mode).find((s) => s.foeName === n);
-    return seed && seed.tier !== 'crisis';
+    return seed && seed.tier !== 'crisis' && fits(n);
   });
-  return names.length ? names : catalogFoeNames(mode);
+  return names.length ? names : catalogFoeNames(mode).filter(fits);
 }
 
 /** True when lastKill is a catalog foe — living Talk for that noun is illegal. */

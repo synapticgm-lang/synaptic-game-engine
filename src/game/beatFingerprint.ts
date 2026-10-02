@@ -156,7 +156,7 @@ export function coerceLogContent(content: unknown): string {
   return typeof content === 'string' ? content : '';
 }
 
-export type IntentStreak = { key: string; count: number };
+export type IntentStreak = { key: string; count: number; families?: string[] };
 
 /** Max log entries walked for streak (consecutive-from-end; older rows cannot extend the streak). */
 const STREAK_WALK_CAP = 80;
@@ -172,12 +172,14 @@ export function countLoiterFamilyStreak(state: {
   const start = Math.max(0, log.length - STREAK_WALK_CAP);
   let family = '';
   let count = 0;
+  const families = new Set<string>();
   for (let i = log.length - 1; i >= start; i--) {
     const e = log[i];
     if (e?.role !== 'player') continue;
     const raw = normalizePlayerIntentKey(coerceLogContent(e.content));
     const fam = loiterFamilyKey(raw);
     if (!fam) break;
+    families.add(fam);
     // Any loiter family continues the loiter streak (travel A → travel B still counts)
     if (!family) {
       family = 'loiter';
@@ -186,7 +188,7 @@ export function countLoiterFamilyStreak(state: {
     }
     count += 1;
   }
-  return { key: family || 'empty', count };
+  return { key: family || 'empty', count, families: [...families] };
 }
 
 /** Count consecutive identical intent keys from the end of the player log. */

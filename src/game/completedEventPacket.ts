@@ -1906,6 +1906,12 @@ function topicAdvancePool(
     `You say yes at ${here}. ${spokenWant} The offered kit is in reach.`,
   ];
   let pool = look;
+  const fightVerb = packet?.verb === 'attacked' || packet?.verb === 'fled' || packet?.verb === 'parleyed';
+  if (packet && fightVerb && state.activeEncounter) {
+    // A move inside a live fight is answered inside the fight, never by a look-around or hall talk.
+    const fight = assemblePacketStitch(packet, recent);
+    if (fight && !isDroughtStubProse(fight)) return [fight.replace(/\s+/g, ' ').trim()];
+  }
   if (lineNamesOtherNpc(state, act) && !wantsMove) {
     // 27i — a line naming another known NPC is answered by that NPC, never the opener's card.
     const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();

@@ -14,6 +14,7 @@ import {
   hallTalkAsksWant,
   hallTalkAsksWho,
   openingCastLabel,
+  openingCastNames,
   openingSpokenIdentityQuote,
   openingWhoAskLineFromLabel,
   openingSpokenRefuse,
@@ -38,7 +39,16 @@ function clip(raw: string, max: number): string {
 
 function livingCast(state: GameState): string[] {
   const kill = state.sceneFacts?.lastKill?.name?.toLowerCase();
-  return sealedCastNames(state).filter((n) => {
+  // The card's own person (the innkeep) on the ledger's present list can answer, named or not.
+  const cardCast = openingCastNames(state).map((c) => c.toLowerCase());
+  const here = (state.sceneFacts?.present ?? []).filter(
+    (n) => typeof n === 'string' && cardCast.includes(n.trim().toLowerCase())
+  );
+  const cast = [...sealedCastNames(state)];
+  for (const n of here) {
+    if (!cast.some((c) => c.toLowerCase() === n.toLowerCase())) cast.push(n);
+  }
+  return cast.filter((n) => {
     const low = n.toLowerCase();
     return !kill || (low !== kill && !kill.includes(low));
   });

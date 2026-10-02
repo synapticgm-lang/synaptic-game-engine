@@ -33,7 +33,13 @@ import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
-import { assemblePacketStitch, isDroughtStubProse, lastResortStoryBody, proseViolatesEventPacket } from './completedEventPacket';
+import {
+  assemblePacketStitch,
+  buildCompletedEventPacket,
+  isDroughtStubProse,
+  lastResortStoryBody,
+  proseViolatesEventPacket,
+} from './completedEventPacket';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -483,9 +489,13 @@ export function repairRejectedBeat(
     || _reasons.includes('atmosphere-only')
     || _reasons.includes('same-room-essay');
   if (stillBad) {
-    const resort = lastResortStoryBody(state, state.completedEvent);
-    const stitch = state.completedEvent
-      ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
+    const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
+    const event =
+      state.completedEvent
+      ?? (state.activeEncounter && lastPlayer ? buildCompletedEventPacket(state, String(lastPlayer)) : undefined);
+    const resort = lastResortStoryBody(state, event);
+    const stitch = event
+      ? assemblePacketStitch(event, recentGmBeatTexts(state, 10))
       : codedSceneMove(state);
     const settleStall = (t: string) =>
       /Nothing listed had moved on|The moment at .+ settled|the room(?: at .+)? held its place|You still had the next move|You close with |loot is legal/i.test(
