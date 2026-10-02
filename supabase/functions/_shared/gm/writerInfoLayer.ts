@@ -13,6 +13,19 @@ import { skillRanksOf } from './skillRanks.ts';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
+const WEAPONISH = /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i;
+
+function gearAuthorityLine(state: GameState): string {
+  const inv = state.inventory ?? [];
+  const weapon = (i: { name?: string; itemType?: string }) => i.itemType === "weapon" || WEAPONISH.test(i.name ?? "");
+  const held = inv.filter((i) => i.equipped && weapon(i));
+  const notHeld = inv.filter((i) => !i.equipped && weapon(i));
+  if (!notHeld.length) return "";
+  const hand = held.length ? held.map((i) => i.name).join(", ") : "bare hands";
+  return `In hand: ${hand}. Not in hand (do not strike, draw, or land a blow with these): ${notHeld.map((i) => i.name).join(", ")}.`;
+}
+
+
 export function buildGroundTruthLedger(state: GameState, opts?: { compact?: boolean }): string {
   const compact = opts?.compact === true;
   const c = state.character;
@@ -61,6 +74,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       `Location: ${playerFacingLocation(state)}`,
       `Equipped Gear: ${equippedGear}`,
       `Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)`,
+      ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
       ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
       `Status Effects: ${statusList}`,
       `Active Main Story: ${mainQuestStr}`,
@@ -76,7 +90,7 @@ ${progressLine}
 Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
-Active Companions: ${companions}
+${gearAuthorityLine(state) ? gearAuthorityLine(state) + '\n' : ''}Active Companions: ${companions}
 Containers: ${containerInfo}
 Materials: ${state.materials.map(m => `${m.name} x${m.quantity}`).join(', ') || 'None'}${cap.hasMagicalContainer ? ' (infinite stacking)' : ''}
 Status Effects: ${statusList}

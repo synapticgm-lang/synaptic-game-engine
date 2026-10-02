@@ -18,6 +18,7 @@ import { growWeaponFamiliarity, weaponCategory } from './checkRules';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
+import { fightLootClause, weaponInHand } from './infoSheet';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -176,7 +177,11 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     next = paid.state;
     receipts.push(...paid.receipts);
     if (result.goldGained > 0) receipts.push(`Gold Gained: ${result.goldGained}`);
-    if (result.loot.length) receipts.push(`Loot: ${result.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')}`);
+    if (result.loot.length) {
+      receipts.push(
+        `Loot: ${result.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`
+      );
+    }
     receipts.push(...(result.lootLines ?? []));
     const bits = [
       ...result.loot.map((l) => l.name),

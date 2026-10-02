@@ -4,6 +4,7 @@
  */
 
 import type { ActiveEncounter, GameState, Quest } from './types';
+import { settleOathChoice } from './questPlay';
 import {
   type BeatContract,
   contractById,
@@ -648,7 +649,7 @@ export function runArcDirectorBeforeGm(
   state: GameState,
   playerInput: string
 ): ArcDirectorResult {
-  let working = ensureRunManifest(state);
+  let working = settleOathChoice(ensureRunManifest(state), playerInput);
   working = ensureOpeningNpcPinned(working);
   const xpAwards: Array<{ amount: number; reason: string }> = [];
   const systemReceipts: string[] = [];

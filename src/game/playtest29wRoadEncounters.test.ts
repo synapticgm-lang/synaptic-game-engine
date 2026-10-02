@@ -122,7 +122,11 @@ describe('29w — level follows the area (treasure rule)', () => {
 
 describe('29w — deal with it by chips, then the road continues', () => {
   it('an encounter chip keeps HERE on the ground; Walk on carries on', () => {
-    const hit = tripsTo('Greyhollow Graveyard').find((t) => t.state.journey?.encounter)!;
+    const peaceful = (t: { state: GameState }) => {
+      const k = t.state.journey?.encounter?.kind;
+      return k === 'traveler' || k === 'meeting' || k === 'wildlife' || k === 'camp';
+    };
+    const hit = (tripsTo('Greyhollow Graveyard').find(peaceful) ?? tripsTo('Blackspine Treeline').find(peaceful))!;
     const chip = journeyPads(hit.state).slice(1, -1).find((c) => !/^face\b/i.test(c))!;
     const dealt = commitTravel(hit.state, chip);
     expect(dealt.arrived).toBe(false);

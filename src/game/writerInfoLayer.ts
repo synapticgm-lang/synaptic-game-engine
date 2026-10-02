@@ -10,6 +10,7 @@ import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm';
 import { gateFactLines } from './skillGates';
 import { skillRanksOf } from './skillRanks';
+import { gearAuthorityLine } from './infoSheet';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
@@ -61,6 +62,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       `Location: ${playerFacingLocation(state)}`,
       `Equipped Gear: ${equippedGear}`,
       `Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)`,
+      ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
       ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
       `Status Effects: ${statusList}`,
       `Active Main Story: ${mainQuestStr}`,
@@ -76,7 +78,7 @@ ${progressLine}
 Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
-Active Companions: ${companions}
+${gearAuthorityLine(state) ? gearAuthorityLine(state) + '\n' : ''}Active Companions: ${companions}
 Containers: ${containerInfo}
 Materials: ${state.materials.map(m => `${m.name} x${m.quantity}`).join(', ') || 'None'}${cap.hasMagicalContainer ? ' (infinite stacking)' : ''}
 Status Effects: ${statusList}

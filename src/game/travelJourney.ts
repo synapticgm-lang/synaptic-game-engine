@@ -310,7 +310,8 @@ export function journeyPads(state: Pick<GameState, 'journey'>): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
-  return ['Walk on', ...met, `Turn back toward ${j.from}`];
+  const forward = laneBlocked(j.encounter) ? [] : ['Walk on'];
+  return [...forward, ...met, `Turn back toward ${j.from}`];
 }
 
 export function isJourneyPad(choice: string): boolean {
@@ -331,6 +332,11 @@ const QUIET_STEP = 0.25;
 const MAX_QUIET = 2;
 /** Meetings that can be faced as a fight. */
 const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'villain']);
+
+/** A hostile meeting still standing in the lane. Walk on is not a free pass past it. */
+function laneBlocked(enc: RoadEncounter | null | undefined): boolean {
+  return !!enc && !enc.engaged && FIGHT_KINDS.has(enc.kind);
+}
 /** Share of hostile meetings that are a rare spawn (uncommon, not every meeting). */
 export const RARE_SPAWN_CHANCE = 0.12;
 /** Share of camps that hold a mini-boss. */
@@ -393,15 +399,22 @@ const FOE_NAME: Partial<Record<RoadEncounterKind, string>> = {
   thugs: 'the thugs',
   undead: 'the restless dead',
   monster: 'the creature',
-  villain: 'whoever blocks the way',
   camp: "the camp's champion",
 };
 
 /**
  * The live foe for a faced meeting, at the area level. A rare spawn is a little tougher than the
  * ordinary foe on that ground; a camp mini-boss is a level higher with about twice the HP. The name is
- * a role; the writer names who or what it is.
+ * a concrete short name. A villain is not the chip phrase. The chips may still say face or talk.
  */
+const VILLAIN_NAMES = ['Rook Vale', 'Sarn Holt', 'Mara Quinn', 'Bren Tull'];
+
+function concreteRoadFoeName(enc: RoadEncounter): string {
+  if (enc.kind !== 'villain') return FOE_NAME[enc.kind] ?? 'the foe';
+  const n = Math.abs(enc.stretch * 7 + Math.round(enc.level) * 3) % VILLAIN_NAMES.length;
+  return VILLAIN_NAMES[n]!;
+}
+
 export function roadFoe(enc: RoadEncounter): ActiveEncounter {
   const lvl = Math.max(1, Math.round(enc.level));
   const boss = enc.kind === 'camp' && !!enc.miniBoss;
@@ -414,7 +427,7 @@ export function roadFoe(enc: RoadEncounter): ActiveEncounter {
   const maxHp = Math.round(hp * mult);
   const step = boss ? 3 : enc.rare ? 1 : 0;
   return {
-    name: FOE_NAME[enc.kind] ?? 'the foe',
+    name: concreteRoadFoeName(enc),
     level,
     hp: maxHp,
     maxHp,
@@ -610,6 +623,15 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
     const named = parseTravelDestination(input, state.campaignBibleId);
     const namedTo = named && named.name.toLowerCase() === j.to.toLowerCase();
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();
+    if ((WALK_ON.test(input) || namedTo) && laneBlocked(j.encounter)) {
+      const slot = timeOfDayForHour(currentHour(state));
+      return {
+        state: { ...state, currentLocation: j.ground },
+        handled: true,
+        arrived: false,
+        receipt: `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot}); the way on is blocked`,
+      };
+    }
     if (WALK_ON.test(input) || namedTo) return stepAlong(state, j);
     if (TURN_BACK.test(input) || namedFrom || isLeaveSceneAction(input)) {
       const back: TravelJourney = {
