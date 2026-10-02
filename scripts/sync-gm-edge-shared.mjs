@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Sync GM prompt modules into supabase/functions/_shared/gm for the edge runtime.
  * Run after editing prompt sources: node scripts/sync-gm-edge-shared.mjs
  */
@@ -107,6 +107,8 @@ const FILES = [
   'intentParser.ts',
   'suggestionValidation.ts',
   'searchContinuity.ts',
+  'infoSheet.ts',
+  'checkMath.ts',
 ];
 
 function rewriteImports(source, file) {
