@@ -126,12 +126,15 @@ function peopleLines(state: GameState, here: string[]): string[] {
       const met = turnFromFacts(m);
       const topics = m.completedTopics ?? [];
       const topic = topics[topics.length - 1];
+      const said = (m.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i).slice(0, 2);
       return [
         m.npcName,
         m.roleHint || m.sheet?.job || '',
         hereKeys.has(m.npcName.toLowerCase()) ? 'here' : m.location || '',
         met != null ? `met T${met}` : '',
-        topic ? `last topic ${topic}` : 'no topic yet',
+        said.length
+          ? said.map((s) => `already said (${s.topic}, T${s.turn}): ${s.line}`).join(' · ')
+          : topic ? `last topic ${topic}` : 'no topic yet',
       ]
         .filter(Boolean)
         .join(' · ');

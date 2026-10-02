@@ -44,7 +44,7 @@ export function playerFacingLocation(state: GameState): string {
   const loreHit = (state.lorebook ?? []).find(
     (c) => c.name.toLowerCase() === name.toLowerCase()
   );
-  if (loreHit && loreHit.revealed !== true && (loreHit.lastSeenTurn ?? 0) <= 0) {
+  if (loreHit && loreHit.type !== 'location' && loreHit.revealed !== true && (loreHit.lastSeenTurn ?? 0) <= 0) {
     return 'your surroundings';
   }
   return name;

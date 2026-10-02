@@ -154,6 +154,7 @@ const LOITER = new Set(['inspect', 'wait', 'look']);
 const TRIED_TURNS = 6;
 const TRIED_PER_PLACE = 12;
 const RECENT_PLACES = 4;
+const SHORT_RETURN_TURNS = 2;
 
 function placeKey(state: GameState): string {
   return (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -200,9 +201,13 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
     Object.entries(triedHere).sort((a, b) => b[1] - a[1]).slice(0, TRIED_PER_PLACE)
   );
   const tried = { ...(mem.tried ?? {}), [key]: trimmed };
+  const priorPlaces = mem.recentPlaces ?? [];
+  const turnedBack =
+    moved && priorPlaces.length >= 2 && priorPlaces[priorPlaces.length - 2] === key
+    && (state.turn ?? 0) - (mem.movedTurn ?? -99) <= SHORT_RETURN_TURNS;
   const recentPlaces = moved || !mem.lastLocation
-    ? [...(mem.recentPlaces ?? []).filter((p) => p !== key), key].slice(-RECENT_PLACES)
-    : mem.recentPlaces ?? [];
+    ? [...priorPlaces.filter((p) => p !== key), key].slice(-RECENT_PLACES)
+    : priorPlaces;
   const recentFamilies = [...(mem.recentFamilies ?? []), fam].slice(-3);
   return {
     ...state,
@@ -217,6 +222,7 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       prevPlace: moved ? mem.lastLocation : mem.prevPlace,
       lastLocation: here,
       movedTurn: moved ? state.turn ?? 0 : mem.movedTurn,
+      shortReturnTurn: turnedBack ? state.turn ?? 0 : moved ? undefined : mem.shortReturnTurn,
       openingPlace: mem.openingPlace ?? (state.circling ? undefined : here || undefined),
     },
   };

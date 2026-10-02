@@ -5,8 +5,30 @@
 
 import type { GameState } from './types';
 import { trimAnonymousRolesOnLocationChange } from './closedScenePerson';
+import { isSystemWindowLabel } from './chromeAuthority';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords';
 import { ensurePlaceCard } from './outdoorHubs';
+import { resolvePlace } from './places';
+
+/** 29z9j — objects belong to the place: park the old place's props on its record, load the new place's. */
+function movePropsWithPlace(state: GameState, fromLocation: string, toLocation: string): GameState {
+  const facts = state.sceneFacts;
+  if (!facts) return state;
+  const owner = facts.propsPlace || fromLocation;
+  if (locationsEquivalentForPresence(owner, toLocation)) return state;
+  const props = facts.props ?? [];
+  const carried = props.filter(isSystemWindowLabel);
+  const left = props.filter((p) => !isSystemWindowLabel(p));
+  const from = resolvePlace(state.places, owner);
+  const to = resolvePlace(state.places, toLocation);
+  const places = (state.places ?? []).map((p) => (from && p.id === from.id ? { ...p, props: left } : p));
+  const arrived = to && to.id !== from?.id ? to.props ?? [] : [];
+  return {
+    ...state,
+    places,
+    sceneFacts: { ...facts, props: [...carried, ...arrived], propsPlace: toLocation },
+  };
+}
 
 function thornferryClusterCore(s: string): boolean {
   return /\b(mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');
@@ -47,10 +69,14 @@ export function applyPresentTrimOnTravel(
 ): GameState {
   const state = locationsEquivalentForPresence(fromLocation, toLocation)
     ? input
-    : ensurePlaceCard(
-      ensurePlaceCard(stampNpcLocationsOnMove(input, fromLocation, toLocation), fromLocation),
-      toLocation,
-      fromLocation
+    : movePropsWithPlace(
+      ensurePlaceCard(
+        ensurePlaceCard(stampNpcLocationsOnMove(input, fromLocation, toLocation), fromLocation),
+        toLocation,
+        fromLocation
+      ),
+      fromLocation,
+      toLocation
     );
   const trimmed = trimPresentOnLocationChange(state, fromLocation, toLocation);
   const sameLoc = locationsEquivalentForPresence(fromLocation, toLocation);

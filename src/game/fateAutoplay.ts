@@ -89,6 +89,7 @@ import {
   seedCoverAnswers,
   shouldStitchOpeningContinue,
   openingCastNames,
+  hallTalkTopics,
 } from './openingEstablishment';
 import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
@@ -1825,6 +1826,8 @@ Do NOT print dice notation or CODE ENFORCED.
     questsBefore,
     questsAfter: updatedQuests,
     turn: nextTurn,
+    talkTopics: hallTalkTopics(playerInput),
+    gmText: cleanText,
   });
   working = {
     ...working,

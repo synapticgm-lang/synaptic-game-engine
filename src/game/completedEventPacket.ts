@@ -796,6 +796,9 @@ function movementLine(state: GameState, stay: string): string {
       : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
     return meeting ? `${road} ${meeting}` : road;
   }
+  if (movedNow && c?.prevPlace && c.shortReturnTurn === state.turn) {
+    return `Turned back this turn: from ${c.prevPlace} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival; nothing more happens at ${c.prevPlace}.`;
+  }
   if (movedNow && c?.prevPlace) {
     return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
   }
@@ -1015,6 +1018,9 @@ export function formatWriterFacingEvent(
   ];
   if (packet.engineResult) {
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
+  }
+  if (packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction)) {
+    lines.push(`PANEL (game chrome; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);

@@ -112,7 +112,10 @@ export interface CompletedEventPacket {
   /** 29z8 — who/want/where… asked this turn, and how often the player has asked it (1 = first). */
   talkTopic?: string;
   talkAsked?: number;
+  /** Code checks only (collage, talk repeat). The writer reads `infoSheet` instead. */
   recentBeats: string[];
+  /** 29z9i — the diary the writer reads in place of raw recent turns (built client-side by `infoSheet.ts`). */
+  infoSheet?: string;
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
   inspectStreak: number;
   waitStreak: number;
@@ -780,6 +783,9 @@ function movementLine(state: GameState, stay: string): string {
       : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
     return meeting ? `${road} ${meeting}` : road;
   }
+  if (movedNow && c?.prevPlace && c.shortReturnTurn === state.turn) {
+    return `Turned back this turn: from ${c.prevPlace} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival; nothing more happens at ${c.prevPlace}.`;
+  }
   if (movedNow && c?.prevPlace) {
     return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
   }
@@ -1000,6 +1006,9 @@ export function formatWriterFacingEvent(
   if (packet.engineResult) {
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
   }
+  if (packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction)) {
+    lines.push(`PANEL (game chrome; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
+  }
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);
@@ -1053,7 +1062,9 @@ export function formatWriterFacingEvent(
     ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
     : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
   if (placeGiven) {
-    lines.push('HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
+    lines.push(packet.infoSheet
+      ? 'HERE is already on the page (see INFO SHEET below). Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures from earlier turns are spent — use a new detail or none.'
+      : 'HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
   }
   if (askedBefore) {
     lines.push('The player has asked this before. The answer is a new quoted line said now, in new words — not "they told" or "they said" about an earlier answer.');
@@ -1068,7 +1079,11 @@ export function formatWriterFacingEvent(
     lines.push('TOKEN REPAIR: fill only missing fn slots. Same REF ENUM. Do not invent ids.');
   }
   lines.push('');
-  if (writerBeats.length) {
+  if (packet.infoSheet) {
+    lines.push(packet.infoSheet);
+    const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
+    if (loiter) lines.push(`GM: ${loiter}`);
+  } else if (writerBeats.length) {
     lines.push(writerBeats.map((b) => `GM: ${b}`).join('\n'));
   } else {
     lines.push('GM: (opening)');

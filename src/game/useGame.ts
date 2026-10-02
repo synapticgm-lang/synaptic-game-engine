@@ -139,6 +139,7 @@ import {
   tryHandleQuickResponseButton,
   ensureSealedOpeningBag,
   openingCastNames,
+  hallTalkTopics,
 } from './openingEstablishment';
 import { ensureOpeningNpcPinned, resolveOpeningPinnedNames } from './openingPin';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
@@ -4100,6 +4101,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         questsBefore: liveCurrent.quests ?? [],
         questsAfter: updatedQuests,
         turn: nextTurn,
+        talkTopics: hallTalkTopics(sanitizedInput),
+        gmText: cleanText,
       });
       workingState = {
         ...workingState,

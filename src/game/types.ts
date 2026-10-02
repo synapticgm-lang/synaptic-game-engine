@@ -1019,6 +1019,8 @@ export interface SceneFacts {
    * Not a full JSON bible matrix; thin stub only.
    */
   worldTags?: string[];
+  /** 29z9j — the place the current `props` belong to (props move with the place on travel). */
+  propsPlace?: string;
 }
 
 export interface TimelineFact {
@@ -1093,6 +1095,8 @@ export interface NpcMemory {
   meetCount?: number;
   /** 12a — exhausted dialogue basins (`intro`, later topics). */
   completedTopics?: string[];
+  /** 29z9j — what this person told the player when asked who / want / refuse; first answer per topic stays. */
+  said?: { topic: string; turn: number; line: string }[];
   /** 12a — stranger on first harvest; acquaintance after a later meet. */
   relationshipStatus?: 'stranger' | 'acquaintance' | 'ally' | 'rival' | 'friend' | 'enemy';
   /** 12c — bible / inferred role (merchant stays; quest-patron may exit). */
@@ -1200,6 +1204,8 @@ export interface CirclingMemory {
   recentFamilies?: string[];
   /** 29y — the turn the engine last committed a change of place (the writer is told whether this turn moved). */
   movedTurn?: number;
+  /** 29z9j — the turn the player turned back into the place they left within two turns (same scene, not a new arrival). */
+  shortReturnTurn?: number;
   /** 29y — the place the run started in (the first circling record). */
   openingPlace?: string;
 }
@@ -1231,6 +1237,8 @@ export interface PlaceRecord {
   exits?: string[];
   /** 27g place card — turn the card was built; set means reuse, never rebuild. */
   cardBuiltTurn?: number;
+  /** 29z9j — objects seen at this place (the HERE props it had when the player last left it). */
+  props?: string[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
   /** 29q — settlement quest cards (two seeded once at creation, plus talk-opened). */
