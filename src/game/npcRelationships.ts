@@ -6,6 +6,7 @@
  */
 
 import type { GameState } from './types';
+import { npcPlacedElsewhere } from './npcRecords';
 
 export type Disposition = 'hostile' | 'wary' | 'neutral' | 'friendly' | 'allied' | 'loyal';
 
@@ -360,6 +361,7 @@ export function presentNpcNames(state: GameState): string[] {
     const name = String(n ?? '').trim();
     const key = name.toLowerCase();
     if (!name || key === foe || out.has(key)) return;
+    if (npcPlacedElsewhere(state, name)) return;
     out.set(key, name);
   };
   (state.sceneFacts?.present ?? []).forEach(add);

@@ -66,10 +66,11 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
     ? `Level: ${c.level} | Do not mention Integration, Wave, Salvage, Foundation Core, or First Blood.`
     : `Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}`;
 
+  // Health and mana figures live in the System window and STATUS, never in the writer's facts.
   if (compact) {
     const lines = [
       header,
-      `HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}`,
+      `Gold: ${state.gold ?? 0}`,
       isTabletop ? `Level: ${c.level}` : progressLine,
       `Location: ${playerFacingLocation(state)}`,
       `Equipped Gear: ${equippedGear}`,
@@ -85,7 +86,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   }
 
   return `${header}
-HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}
+Gold: ${state.gold ?? 0}
 ${progressLine}
 Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}

@@ -89,14 +89,14 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   return { heading: 'SYSTEM', lines };
 }
 
-/** Ledger sheet in prose for Inspect the panel / Check Status. */
+/** Ledger sheet in prose for Inspect the panel / Check Status. HP and MP stay on the window, not in the writer's facts. */
 export function ledgerSheetLine(state: GameState): string {
   const sheet = buildLitrpgSystemWindow(state);
   if (!sheet) return '';
   const c = state.character;
   const quest = (state.quests ?? []).find((q) => q.status === 'active');
   const next = quest?.objectives?.find((o) => !o.completed)?.description;
-  const parts = [...sheet.lines, `XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`];
+  const parts = [...sheet.lines.filter((l) => !/^(?:HP|MP)\s/.test(l)), `XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`];
   if (quest?.name) parts.push(next ? `Quest: ${quest.name}, next: ${next}` : `Quest: ${quest.name}`);
   return `The panel read: ${parts.join('; ')}.`;
 }

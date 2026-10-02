@@ -6,9 +6,26 @@ import type { CampaignBible } from './campaignBibleTypes';
 import type { GameState } from './types';
 import { isChromePersonToken, isNonPersonNameToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
-import { npcRecordNames } from './npcRecords';
+import { npcRecordNames, resolveNpcRecord } from './npcRecords';
 
 const OPENING_PIN_TURN_CAP = 20;
+
+const samePlace = (a?: string, b?: string) => (a ?? '').trim().toLowerCase() === (b ?? '').trim().toLowerCase();
+
+/**
+ * A pinned person is here only where they are: their record's place, else the place the pin was set.
+ * A pin never follows the player to a new place.
+ */
+function pinIsHere(state: GameState, name: string, pinnedAt: string | undefined): boolean {
+  const record = resolveNpcRecord(state, name);
+  if (record?.location) return samePlace(record.location, state.currentLocation);
+  return samePlace(pinnedAt, state.currentLocation);
+}
+
+function pinsHere(state: GameState): string[] {
+  const est = state.openingEstablishment;
+  return (est?.pinnedNpcNames ?? []).filter((n) => pinIsHere(state, n, est?.pinnedAt));
+}
 
 /** Extract Title-Case person names from opener prose (light heuristic). */
 export function extractNamesFromHookText(text: string | undefined): string[] {
@@ -83,19 +100,22 @@ export function ensureOpeningNpcPinned(
   const pinned = resolveOpeningPinnedNames(state, bible);
   if (!pinned.length) return state;
 
+  const est = state.openingEstablishment;
+  const pinnedAt = est?.pinnedAt ?? state.currentLocation;
   const present = [...(state.sceneFacts?.present ?? [])];
   let changed = false;
   for (const n of pinned) {
     if (isChromePersonToken(n)) continue;
+    if (!pinIsHere(state, n, pinnedAt)) continue;
     if (!present.some((p) => p.toLowerCase() === n.toLowerCase())) {
       present.push(n);
       changed = true;
     }
   }
 
-  const est = state.openingEstablishment;
   const needStamp =
     !est?.pinnedNpcNames?.length ||
+    (!!pinnedAt && est?.pinnedAt !== pinnedAt) ||
     pinned.some((n) => !(est.pinnedNpcNames ?? []).some((p) => p.toLowerCase() === n.toLowerCase()));
 
   if (!changed && !needStamp) return state;
@@ -107,18 +127,19 @@ export function ensureOpeningNpcPinned(
       present,
     },
     openingEstablishment: est
-      ? { ...est, pinnedNpcNames: pinned }
+      ? { ...est, pinnedNpcNames: pinned, ...(pinnedAt ? { pinnedAt } : {}) }
       : {
           pending: [],
           answers: {},
           complete: true,
           pinnedNpcNames: pinned,
+          ...(pinnedAt ? { pinnedAt } : {}),
         },
   };
 }
 
 export function formatOpeningPinMandate(state: GameState): string | null {
-  const pinned = state.openingEstablishment?.pinnedNpcNames ?? [];
+  const pinned = pinsHere(state);
   if (!pinned.length) return null;
   if ((state.turn ?? 0) > OPENING_PIN_TURN_CAP) return null;
   if (state.openingEstablishment?.aloneArrival) return null;

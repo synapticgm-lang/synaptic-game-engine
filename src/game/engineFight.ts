@@ -167,8 +167,10 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     next,
     used.id === 'ranged' ? weaponCategory(used.source) : weaponCategory(equippedWeaponName(next))
   );
+  // The Fight line is the writer's engine result; health figures go on their own STATUS line.
   receipts.push(
-    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${result.rounds} round${result.rounds === 1 ? '' : 's'} — dealt ${result.damageDealt}, took ${result.damageReceived} (HP ${hpBefore} → ${hpAfter})${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
+    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${result.rounds} round${result.rounds === 1 ? '' : 's'}${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
+    `HP: ${hpBefore} → ${hpAfter} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );
   let found = '';
@@ -191,8 +193,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   }
   const opener = used.id === 'melee' ? '' : `${approachOpener(used, enc.name)} `;
   const what = opener + (result.victory
-    ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}, dealt ${result.damageDealt} damage and took ${result.damageReceived}. ${enc.name} went down and stayed down.${found}`
-    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, alive at ${hpAfter} HP.`);
+    ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}. ${enc.name} went down and stayed down.${found}`
+    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, hurt but alive.`);
   const foeAfter = result.victory
     ? undefined
     : { ...enc, hp: Math.max(1, Math.min(enc.maxHp || enc.hp, result.finalEnemyHp)), phase: 'engaged' as const };
