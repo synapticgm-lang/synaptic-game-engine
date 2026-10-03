@@ -24,6 +24,7 @@ import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 import { shortPlaceName } from './placeNames';
+import { systemStatusChip } from './systemHousing';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1195,6 +1196,7 @@ export function hallTalkAsksPanel(raw: string): boolean {
     || /\bsystem\s+(?:panel|screen|window|interface|display)\b/i.test(t)
     || /\b(?:inspect|examine|read|check|look at|study)\b.{0,48}\b(?:panel|screen|interface|system)\b/i.test(t)
     || /\bwhat(?:'s| is) (?:the |this )?(?:blue )?(?:screen|panel)\b/i.test(t)
+    || /^(?:read the device|look inward|ask the world|reach into the pocket)$/i.test(t.trim())
   );
 }
 
@@ -2334,21 +2336,21 @@ function repeatsLastPlayerAction(state: GameState, pad: string): boolean {
 /** Non-talk cover pads; talk pads go first and drop out when nobody is there to hear them. */
 function coverLookPads(state: GameState): string[] {
   return isLitrpgSystemPanelMode(state)
-    ? ['Inspect the panel', 'Look around', 'Search the area']
+    ? [systemStatusChip(state.systemHousing?.housing), 'Look around', 'Search the area']
     : ['Look around', 'Search the area'];
 }
 
 function liveCoverPads(state: GameState, pads: string[]): string[] {
   const fresh = (c: string) => !shouldStarveHallTopicPad(state, c) && !repeatsLastPlayerAction(state, c);
   const kept = pads.filter(fresh);
-  const onlyPanel = kept.length === 1 && /\binspect the panel\b|\bsystem window\b/i.test(kept[0] ?? '');
+  const onlyPanel = kept.length === 1 && /\binspect the panel\b|\bsystem window\b|\bread the device\b|\blook inward\b|\bask the world\b|\breach into the pocket\b/i.test(kept[0] ?? '');
   if (kept.length && !onlyPanel) return kept.slice(0, 3);
   const refill = ['Look around', 'Search the area', 'Wait'].filter(fresh);
   if (
     isLitrpgSystemPanelMode(state)
     && !hallTopicAlreadyAnswered(state, 'panel')
   ) {
-    return [...refill.slice(0, 2), 'Inspect the panel'];
+    return [...refill.slice(0, 2), systemStatusChip(state.systemHousing?.housing)];
   }
   return refill;
 }

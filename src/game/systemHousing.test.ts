@@ -6,6 +6,7 @@ import {
   clampSystemHousing,
   formatSystemBlock,
   rollSystemHousing,
+  systemStatusChip,
   type SystemHousingConfig,
   type SystemPartId,
 } from './systemHousing';
@@ -77,5 +78,35 @@ describe('system housing', () => {
     expect(pocketLine).toContain('SYSTEM:');
     expect(pocketLine).toMatch(/pocket/);
     expect(pocketLine).not.toMatch(/quest/i);
+  });
+  it('chips name the frozen housing instead of always the panel', () => {
+    expect(systemStatusChip('worn_device')).toBe('Read the device');
+    expect(systemStatusChip('private_window')).toBe('Look inward');
+    expect(systemStatusChip('world_status')).toBe('Ask the world');
+    expect(systemStatusChip('leftover_pocket')).toBe('Reach into the pocket');
+    expect(systemStatusChip(undefined)).toBe('Inspect the panel');
+  });
+
+  it('a worn_device packet is an object on the body, not a floating panel', () => {
+    const state = createInitialState('Story', 'litrpg', undefined, 'worn-packet');
+    state.character = { ...state.character!, name: 'Jax' };
+    state.log = [];
+    state.systemHousing = clampSystemHousing(config('worn_device', ['quest_list', 'radio']));
+    state.sceneFacts = { ...state.sceneFacts!, props: ['blue panel'], present: [], lastBeat: '' };
+    const text = formatWriterFacingEvent(buildCompletedEventPacket(state, 'Read the device'));
+    expect(text.toLowerCase()).not.toMatch(/blue panel|empty air|only they could see/);
+    expect(text).toMatch(/object on the body/);
+    expect(text).toMatch(/Others can see the object/);
+  });
+
+  it('a private_window packet does not call it a worn object', () => {
+    const state = createInitialState('Story', 'litrpg', undefined, 'private-packet');
+    state.character = { ...state.character!, name: 'Jax' };
+    state.log = [];
+    state.systemHousing = clampSystemHousing(config('private_window', []));
+    state.sceneFacts = { ...state.sceneFacts!, props: [], present: [], lastBeat: '' };
+    const text = formatWriterFacingEvent(buildCompletedEventPacket(state, 'Look inward'));
+    expect(text.toLowerCase()).not.toMatch(/worn object|worn device/);
+    expect(text).toMatch(/only in the player's head/);
   });
 });

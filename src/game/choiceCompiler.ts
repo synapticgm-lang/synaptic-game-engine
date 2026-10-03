@@ -17,6 +17,7 @@ import {
   npcShouldExit,
 } from './npcMemory';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { systemStatusChip } from './systemHousing';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { compileGraphChoiceLabels } from './graphChoices';
 import { 
@@ -164,7 +165,7 @@ export function namedPropPadsFromBeat(state: GameState): string[] {
   consider(/\bcrates?\b/i, 'Open the crate');
   consider(/\b(door|doorway)\b/i, 'Try the door');
   if (isLitrpgSystemPanelMode(state)) {
-    consider(/\b(blue )?panel\b/i, 'Inspect the panel');
+    consider(/\b(blue )?panel\b/i, systemStatusChip(state.systemHousing?.housing));
   }
   return pads;
 }

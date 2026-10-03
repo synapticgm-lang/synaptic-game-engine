@@ -8,6 +8,7 @@ import { filterChromeFromPresent, realPresentPeople } from './chromeAuthority';
 import { syncPresentToCount } from './crowdAuthority';
 import { openingCastLabel } from './openingEstablishment';
 import { openingCastRecords } from './npcRecords';
+import { systemHousingWriterClause } from './systemHousing';
 
 export type PointerWhoBand = 0 | 1 | 2 | 4 | 5;
 
@@ -430,7 +431,10 @@ export function compileLitrpgCoreIdentity(state: GameState): string {
     return 'Modern Integration Earth. Blue System panels. Dungeon cores. Wave threats.';
   }
   if (id === 'summoned-pact' || arch === 'isekai' || /summoned pact|isekai|pactborn/i.test(`${id} ${premise}`)) {
-    return 'Other-world summon. You arrived HERE — not Earth Integration. Private blue panel, rite or ruin, honest physics.';
+    const housingBit = state.systemHousing
+      ? systemHousingWriterClause(state.systemHousing.housing)
+      : 'Private blue panel';
+    return `Other-world summon. You arrived HERE — not Earth Integration. ${housingBit} Rite or ruin, honest physics.`;
   }
   if (id === 'hero-awakening' || /wake ledger/i.test(premise)) {
     return 'Wake Ledger. You were already in this world. Not a summon, not Earth Integration.';

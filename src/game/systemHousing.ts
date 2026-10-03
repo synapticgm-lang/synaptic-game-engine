@@ -172,3 +172,30 @@ export function formatSystemBlock(config: SystemHousingConfig): string {
     : `It shows ${joinList(labels)}.`;
   return ['SYSTEM:', spec.name, spec.visibility, shows, clamped.rule ?? ''].filter(Boolean).join(' ');
 }
+
+/** Status chip. Unknown housing keeps the old panel chip. */
+export function systemStatusChip(housing: SystemHousingId | null | undefined): string {
+  switch (housing) {
+    case 'worn_device': return 'Read the device';
+    case 'private_window': return 'Look inward';
+    case 'world_status': return 'Ask the world';
+    case 'leftover_pocket': return 'Reach into the pocket';
+    default: return 'Inspect the panel';
+  }
+}
+
+/** Plain English the writer must follow for this frozen housing. */
+export function systemHousingWriterClause(housing: SystemHousingId | null | undefined): string {
+  switch (housing) {
+    case 'worn_device':
+      return 'a real object on the body. Others can see the object. Only the wearer can read the screen.';
+    case 'private_window':
+      return "only in the player's head. Others cannot see it. Not an object.";
+    case 'world_status':
+      return 'not a gadget. Levels are in the world.';
+    case 'leftover_pocket':
+      return 'reach into empty air to store things. Not a status panel.';
+    default:
+      return 'not a thing in the scene. Nobody holds, opens, points at or looks at it.';
+  }
+}

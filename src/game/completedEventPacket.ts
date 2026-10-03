@@ -26,7 +26,7 @@ import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLi
 import { gateFactLines } from './skillGates';
 import { sealedCastNames } from './beatContract';
 import { ledgerSheetLine } from './litrpgSystemWindow';
-import { formatSystemBlock } from './systemHousing';
+import { formatSystemBlock, systemHousingWriterClause } from './systemHousing';
 import { isNeverCastTitle } from './neverCast';
 import { kitRefDisplay } from './inventory';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
@@ -155,7 +155,16 @@ export interface CompletedEventPacket {
   destinationRef?: LedgerRef;
 }
 
-const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b/i;
+const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b|^(?:read the device|look inward|ask the world|reach into the pocket)$/i;
+
+function writerHousingClause(block?: string): string {
+  const t = block ?? '';
+  if (/\bworn device\b/i.test(t)) return systemHousingWriterClause('worn_device');
+  if (/\bprivate window\b/i.test(t)) return systemHousingWriterClause('private_window');
+  if (/\bnot a private app\b/i.test(t)) return systemHousingWriterClause('world_status');
+  if (/\bleftover pocket\b/i.test(t)) return systemHousingWriterClause('leftover_pocket');
+  return 'not a thing in the scene. Nobody holds, opens, points at or looks at it.';
+}
 
 /** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
 export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion' | 'window';
@@ -463,6 +472,10 @@ export function compileNounAllowlist(
   }
 
   for (const prop of state.sceneFacts?.props ?? []) {
+    if (state.systemHousing?.housing === 'worn_device' && isSystemWindowLabel(prop)) {
+      pushUnique(out, seen, 'worn device');
+      continue;
+    }
     pushUnique(out, seen, prop);
   }
 
@@ -543,8 +556,10 @@ export function compileRefEnum(
     out.push({ tok: `t${n++}`, id, display: label, klass, ...(note ? { note } : {}) });
   };
   const pcName = (state.character?.name ?? '').trim() || 'the player character';
-  const windowNote =
-    `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
+  const housingId = state.systemHousing?.housing;
+  const windowNote = housingId
+    ? systemHousingWriterClause(housingId)
+    : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
 
   add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
@@ -575,7 +590,8 @@ export function compileRefEnum(
 
   for (const prop of state.sceneFacts?.props ?? []) {
     if (state.engineMode === 'litrpg' && isSystemWindowLabel(prop)) {
-      add(`window:${slugRefId(prop)}`, prop, 'window', windowNote);
+      const display = state.systemHousing?.housing === 'worn_device' ? 'worn device' : prop;
+      add(`window:${slugRefId(prop)}`, display, 'window', windowNote);
     } else {
       add(`prop:${slugRefId(prop)}`, prop, 'prop');
     }
@@ -1079,7 +1095,7 @@ export function formatWriterFacingEvent(
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
   }
   if (panelRead) {
-    lines.push(`PANEL (game chrome beside the story, not a thing in the scene — nobody holds, opens, points at or looks at it; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
+    lines.push(`PANEL (game chrome: ${writerHousingClause(packet.systemBlock)} It shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));
   if (packet.systemBlock) lines.push(packet.systemBlock);
@@ -1127,8 +1143,9 @@ export function formatWriterFacingEvent(
   const askedBefore = talkedTo && (packet.talkAsked ?? 0) >= 2;
   // A ledger read has nobody acting on anything: no @t2 actor, no "how @t2 answered" slot for the
   // window to fill. The two lines carry what the ledger told the PC.
+  const housingClause = writerHousingClause(packet.systemBlock);
   const answerLine = panelRead
-    ? `{"fn":"react","text":"<sentence: another ledger line above that mattered now, as plain words — no hand, no gesture, no panel>"}`
+    ? `{"fn":"react","text":"<sentence: another ledger line above that mattered now, as plain words — ${housingClause}>"}`
     : talkedTo
       ? `{"fn":"speech","text":"<@t2 answers in their own quoted words, said now: \\"...\\" — not a report of what they said>"}`
       : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
@@ -1139,7 +1156,7 @@ export function formatWriterFacingEvent(
     ...(dest ? [`{"tok":"${dest.tok}","id":"${dest.id}","use":"place"}`] : []),
   ].join(',');
   const didWhat = panelRead
-    ? `what the ledger lines told ${who} — text only ${who} sees; nobody holds, opens, points at or looks at a panel`
+    ? `what the ledger lines told ${who} — ${housingClause}`
     : dest
       ? `${whatDid}, naming @${dest.tok} as where ${who} was headed`
       : whatDid;

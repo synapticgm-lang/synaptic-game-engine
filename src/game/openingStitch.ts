@@ -8,6 +8,7 @@ import type { GameState } from './types';
 import { authoredStartPage } from './pyoaSpine';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
+import { systemHousingWriterClause } from './systemHousing';
 import {
   extractGivenName,
   hallTalkAsksPanel,
@@ -255,6 +256,14 @@ function inPlacePhrase(place: string): string {
   return /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
 }
 
+function housingContinueLine(state: GameState, here: string): string {
+  const housing = state.systemHousing?.housing;
+  if (!housing) {
+    return `The blue panel is yours — a System window at eye level ${here}. It is not a person.`;
+  }
+  return `The System window ${here}: ${systemHousingWriterClause(housing)}`;
+}
+
 /**
  * After page 1 — continue locally. No network, no pad list, no opener reprint.
  * Answers the typed line: where / why / name given / what they want.
@@ -313,9 +322,9 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     )
   ) {
     if (name) {
-      return `The panel holds the name ${name}. It is a System window at eye level — not a person.`;
+      return `The System window holds the name ${name}. ${housingContinueLine(state, here)}`;
     }
-    return `The blue panel is yours — a System window at eye level ${here}. It is not a person. A blank line waits.`;
+    return `${housingContinueLine(state, here)} A blank line waits.`;
   }
 
   const aloneRoom = 'Broken stone, a dark doorway, dust.';
@@ -333,7 +342,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     const bits = [`You are ${here}.`];
     if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine, 'who') ? alreadyToldWho : whoLine);
     if (asksPanel && isLitrpgSystemPanelMode(state)) {
-      bits.push('The blue panel is a System window at eye level — not a person.');
+      bits.push(housingContinueLine(state, here));
     }
     bits.push(
       clauseAlreadySpoken(state, ledgerWant, 'want') || clauseAlreadySpoken(state, want, 'want')
@@ -355,7 +364,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     if (asksWhere) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(clauseAlreadySpoken(state, whoLine, 'who') ? alreadyToldWho : whoLine);
     if (asksPanel && isLitrpgSystemPanelMode(state)) {
-      bits.push('The blue panel is yours — a System window at eye level, not a person.');
+      bits.push(housingContinueLine(state, here));
     }
     if (asksWhy || asksWant) {
       bits.push(
