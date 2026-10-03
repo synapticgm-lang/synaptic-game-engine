@@ -15,6 +15,7 @@ import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './p
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { downloadPlayDump, withOfferedChoices } from './playTranscript';
+import { dropAbsentListenerChips } from './chipLegality';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
 import {
   authoredPageText,
@@ -4429,16 +4430,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ? pinClockTimeOfDay(applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput), liveCurrent)
           : applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
       }).sceneFacts;
+      const committedTurnState: GameState = {
+        ...workingState,
+        ...updates,
+        character: baseChar,
+        currentLocation: finalLocationName,
+        npcMemories: npcMemoriesSocial,
+        sceneFacts: committedFacts,
+        openingEstablishment: liveCurrent.openingEstablishment,
+        log: [...liveCurrent.log, gmLogEntryBase],
+      };
+      const heardChoices = dropAbsentListenerChips(committedTurnState, committedChoices, cleanText);
       const gmLogEntry = withLitrpgSystemWindow(
-        withOfferedChoices(gmLogEntryBase, {
-          ...workingState,
-          ...updates,
-          character: baseChar,
-          sceneFacts: committedFacts,
-          choices: committedChoices,
-          openingEstablishment: liveCurrent.openingEstablishment,
-          log: [...liveCurrent.log, gmLogEntryBase],
-        }),
+        withOfferedChoices(gmLogEntryBase, { ...committedTurnState, choices: heardChoices }),
         { ...workingState, ...updates, character: baseChar },
         sanitizedInput
       );
@@ -4492,7 +4496,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         lorebook: mergedLorebook,
         turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
-        choices: committedChoices,
+        choices: heardChoices,
         recentChoices: updatedRecentChoices,
         gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
         worldLedger,

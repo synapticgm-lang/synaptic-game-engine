@@ -141,12 +141,18 @@ export interface CompletedEventPacket {
   /** 27a — ledger place facts for stitch banks. */
   placeDescriptor?: string;
   ledgerSheet?: string;
+  /** The player read the System window (Inspect the panel / Check Status): a ledger read, not an act in the room. */
+  ledgerRead?: boolean;
   /** 28g — the engine's resolved result for the player's action (fight / flee / parley / rest). Required fact. */
   engineResult?: string;
   exitNames?: string[];
   /** 29y — did the state move this turn: the story narrates only the move the engine committed. */
   movement?: string;
+  /** The journey leg committed this turn heads here (REF ENUM row): the travel line names it. */
+  destinationRef?: LedgerRef;
 }
+
+const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b/i;
 
 /** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
 export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion' | 'window';
@@ -740,8 +746,19 @@ export function buildCompletedEventPacket(
     const cast = openingCastLabel(state);
     if (cast && (openingCastRecords(state).length || atOpeningPlace(state))) allowExtras.push(cast);
   }
-  const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk });
-  const refEnum = compileRefEnum(state, allowExtras, { hallTalk });
+  const ledgerSheet = ledgerSheetLine(state) || undefined;
+  const ledgerRead = !!ledgerSheet && LEDGER_READ_ACTION.test(action);
+  // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
+  // an actor, a prop or a thing that answers.
+  const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk })
+    .filter((n) => !ledgerRead || !isSystemWindowLabel(n));
+  const refEnum = compileRefEnum(state, allowExtras, { hallTalk })
+    .filter((r) => !ledgerRead || r.klass !== 'window');
+  const movement = movementFact(state, action) || undefined;
+  const leg = state.journey;
+  const destinationRef = leg && /^Moved this turn: on from /.test(movement ?? '')
+    ? refEnum.find((r) => r.klass === 'place' && r.display.toLowerCase() === leg.to.trim().toLowerCase())
+    : undefined;
   const enc = state.activeEncounter;
   const hp = liveEncounterHp(state);
   const xp =
@@ -799,9 +816,11 @@ export function buildCompletedEventPacket(
     engineMode: state.engineMode,
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
-    ledgerSheet: ledgerSheetLine(state) || undefined,
+    ledgerSheet,
+    ledgerRead: ledgerRead || undefined,
     engineResult: extras?.engineResult?.trim() || undefined,
-    movement: movementFact(state, action) || undefined,
+    movement,
+    destinationRef,
   };
 }
 
@@ -1042,7 +1061,7 @@ export function formatWriterFacingEvent(
   const pov = pcPov(packet.pc, opts?.perspective);
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
-  const panelRead = !!packet.ledgerSheet && /\bpanel\b|\bcheck status\b/i.test(packet.playerAction);
+  const panelRead = packet.ledgerRead ?? (!!packet.ledgerSheet && LEDGER_READ_ACTION.test(packet.playerAction));
   const lines: string[] = [
     thirdPerson
       ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
@@ -1056,7 +1075,7 @@ export function formatWriterFacingEvent(
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
   }
   if (panelRead) {
-    lines.push(`PANEL (game chrome; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
+    lines.push(`PANEL (game chrome beside the story, not a thing in the scene — nobody holds, opens, points at or looks at it; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
@@ -1101,13 +1120,27 @@ export function formatWriterFacingEvent(
   const talkedTo = (packet.verb === 'spoke' || !!packet.talkTopic)
     && (packet.refEnum ?? []).some((r) => r.klass === 'person' || r.klass === 'companion');
   const askedBefore = talkedTo && (packet.talkAsked ?? 0) >= 2;
-  const answerLine = talkedTo
-    ? `{"fn":"speech","text":"<@t2 answers in their own quoted words, said now: \\"...\\" — not a report of what they said>"}`
-    : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
-  const refsShape = `{"tok":"t1","id":"<id from REF ENUM>","use":"place"},{"tok":"t2","id":"<id from REF ENUM>","use":"${talkedTo ? 'speaker' : 'actor'}"}`;
+  // A ledger read has nobody acting on anything: no @t2 actor, no "how @t2 answered" slot for the
+  // window to fill. The two lines carry what the ledger told the PC.
+  const answerLine = panelRead
+    ? `{"fn":"react","text":"<sentence: another ledger line above that mattered now, as plain words — no hand, no gesture, no panel>"}`
+    : talkedTo
+      ? `{"fn":"speech","text":"<@t2 answers in their own quoted words, said now: \\"...\\" — not a report of what they said>"}`
+      : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
+  const dest = packet.destinationRef;
+  const refsShape = [
+    `{"tok":"t1","id":"<id from REF ENUM>","use":"place"}`,
+    ...(panelRead ? [] : [`{"tok":"t2","id":"<id from REF ENUM>","use":"${talkedTo ? 'speaker' : 'actor'}"}`]),
+    ...(dest ? [`{"tok":"${dest.tok}","id":"${dest.id}","use":"place"}`] : []),
+  ].join(',');
+  const didWhat = panelRead
+    ? `what the ledger lines told ${who} — text only ${who} sees; nobody holds, opens, points at or looks at a panel`
+    : dest
+      ? `${whatDid}, naming @${dest.tok} as where ${who} was headed`
+      : whatDid;
   const bodyLines = placeGiven
-    ? `{"fn":"action","text":"<sentence: ${whatDid} — the first thing that changed>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`
-    : `{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${whatDid}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
+    ? `{"fn":"action","text":"<sentence: ${didWhat} — the first thing that changed>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`
+    : `{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${didWhat}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
   lines.push(placeGiven
     ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
     : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');

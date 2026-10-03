@@ -260,6 +260,17 @@ export function legalChips(state: GameState, chips: string[], storyProse?: strin
   return chips.filter((c) => !chipProblem(state, c, prose));
 }
 
+/**
+ * The committed menu, judged in the state the next turn starts in: a talk chip for someone this
+ * beat left elsewhere (or for nobody, when nobody is here) is not offered. Pads are built before the
+ * beat commits, so presence is only final here.
+ */
+export function dropAbsentListenerChips(state: GameState, chips: string[], storyProse?: string): string[] {
+  const prose = storyProse ?? lastStory(state);
+  const kept = chips.filter((c) => chipProblem(state, c, prose)?.kind !== 'ghost-chip');
+  return kept.length || !chips.length ? kept : ['Inspect the immediate surroundings'];
+}
+
 function lastPlayerLine(state: GameState): string {
   return [...(state.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content))?.content ?? '';
 }

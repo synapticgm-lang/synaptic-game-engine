@@ -209,6 +209,7 @@ import {
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import { dropAbsentListenerChips } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
   applyProseWarden,
@@ -1939,6 +1940,8 @@ Do NOT print dice notation or CODE ENFORCED.
         }
       : {}),
   };
+  const committedLog = [...state.log, playerEntry, gmBase];
+  finalChoices = dropAbsentListenerChips({ ...working, log: committedLog }, finalChoices, mudBody);
   const mid: GameState = {
     ...working,
     turn: nextTurn,
@@ -1946,7 +1949,7 @@ Do NOT print dice notation or CODE ENFORCED.
     choices: finalChoices,
     recentChoices,
     recentBeatFingerprints: [...(state.recentBeatFingerprints ?? []), fp].slice(-12),
-    log: [...state.log, playerEntry, gmBase],
+    log: committedLog,
   };
   const gm = withLitrpgSystemWindow(withOfferedChoices(gmBase, mid), working, playerInput);
   const next: GameState = {
