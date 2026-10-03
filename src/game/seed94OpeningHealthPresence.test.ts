@@ -120,20 +120,22 @@ describe('seed 94 health is not a writer story fact', () => {
       systemHousing: clampSystemHousing({ housing: 'worn_device', parts: { ...off, quest_list: true, pocket: true } }),
     });
     const onSheet = ledgerSheetLine(worn);
-    expect(onSheet).toBe('The panel read: Name: Jax; Level 2; Effects: Bleeding; Pocket: Token (brass); Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40; Quest: Find the pass, next: Climb.');
+    expect(onSheet).toBe('The device reads: Name: Jax; Level 2; Effects: Bleeding; Pocket: Token (brass); Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40; Quest: Find the pass, next: Climb.');
     expect(onSheet.toLowerCase()).not.toMatch(/blue panel|empty air/);
     const quiet = ledgerSheetLine(pact({
       ...worn,
       systemHousing: clampSystemHousing({ housing: 'worn_device', parts: off }),
     }));
-    expect(quiet).toBe('The panel read: Name: Jax; Level 2; Effects: Bleeding; Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40.');
+    expect(quiet).toBe('The device reads: Name: Jax; Level 2; Effects: Bleeding; Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40.');
     expect(quiet).not.toMatch(/Pocket:|Quest:/);
+    expect(ledgerSheetLine(pact({ ...worn, systemHousing: clampSystemHousing({ housing: 'private_window', parts: off }) }))).toMatch(/^The window reads: /);
+    expect(ledgerSheetLine(pact({ ...worn, systemHousing: clampSystemHousing({ housing: 'world_status', parts: off }) }))).toMatch(/^The world status reads: /);
     expect(quiet.toLowerCase()).not.toMatch(/blue panel|empty air/);
     const pocket = ledgerSheetLine(pact({
       ...worn,
       systemHousing: clampSystemHousing({ housing: 'leftover_pocket', parts: off }),
     }));
-    expect(pocket).toBe('The panel read: Name: Jax; Pocket: Token.');
+    expect(pocket).toBe('Pocket: Token.');
     expect(pocket).not.toMatch(/Level|XP |Quest:|Effects:/);
   });
 

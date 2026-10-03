@@ -111,20 +111,34 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   return { heading: 'SYSTEM', lines };
 }
 
-/** Ledger sheet in prose for Inspect the panel / Check Status. HP and MP stay on the window, not in the writer's facts. */
+function ledgerReadsPrefix(housing: string | undefined): string {
+  switch (housing) {
+    case 'worn_device': return 'The device reads:';
+    case 'private_window': return 'The window reads:';
+    case 'world_status': return 'The world status reads:';
+    default: return 'The panel read:';
+  }
+}
+
+/** Ledger sheet in prose for a status read. The label follows the frozen housing. HP and MP stay off this line. A leftover pocket prints the pocket only. */
 export function ledgerSheetLine(state: GameState): string {
+  const housing = state.systemHousing;
+  if (housing?.housing === 'leftover_pocket') {
+    const items = (state.inventory ?? []).map((i) => i?.name?.trim()).filter((nm): nm is string => !!nm);
+    return `Pocket: ${items.length ? items.join(', ') : 'empty'}.`;
+  }
   const sheet = buildLitrpgSystemWindow(state);
   if (!sheet) return '';
   const c = state.character;
   const quest = (state.quests ?? []).find((q) => q.status === 'active');
   const next = quest?.objectives?.find((o) => !o.completed)?.description;
-  const housing = state.systemHousing;
   const parts = sheet.lines.filter((l) => !/^(?:HP|MP)\s/.test(l));
   if (!housing || isPartOn(housing, 'experience')) parts.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
-  if (quest?.name && (!housing || isPartOn(housing, 'quest_list'))) parts.push(next ? `Quest: ${quest.name}, next: ${next}` : `Quest: ${quest.name}`);
-  return `The panel read: ${parts.join('; ')}.`;
+  if (quest?.name && (!housing || isPartOn(housing, 'quest_list'))) {
+    parts.push(next ? `Quest: ${quest.name}, next: ${next}` : `Quest: ${quest.name}`);
+  }
+  return `${ledgerReadsPrefix(housing?.housing)} ${parts.join('; ')}.`;
 }
-
 export function withLitrpgSystemWindow(
   entry: LogEntry,
   state: GameState,
