@@ -12,6 +12,7 @@ import { hallTalkTopics, type HallTalkTopic } from './openingEstablishment.ts';
 import { placeScale } from './placeAuthority.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerFacingLocation } from './locationName.ts';
+import { systemHousingWriterSentence } from './systemHousing.ts';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -112,7 +113,12 @@ function lastLines(turns: { player: LogEntry; gm: LogEntry }[]): string[] {
 
 function hereLines(state: GameState, people: string[]): string[] {
   const out = [people.length ? people.join(', ') : crowdHere(state) ? 'a crowd, nobody named' : 'nobody'];
-  if (systemWindowSeen(state)) out.push('System window: only the player sees it; nobody can touch it; no surface, heat or weight');
+  const housing = state.systemHousing?.housing;
+  if (systemWindowSeen(state)) {
+    out.push(housing
+      ? `System: ${systemHousingWriterSentence(housing)}`
+      : 'System window: only the player sees it; nobody can touch it; no surface, heat or weight');
+  }
   return out;
 }
 
@@ -208,8 +214,9 @@ function askedLine(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
     .filter((t) => t !== 'panel' || state.engineMode === 'litrpg')
     .map((t) => {
       const m = marks.get(t);
-      if (!m) return `${TOPIC_LABEL[t]} not asked`;
-      return `${TOPIC_LABEL[t]} asked T${m.turn}${m.answered ? ', answered' : ', no answer'}`;
+      const label = t === 'panel' && state.systemHousing ? 'system' : TOPIC_LABEL[t];
+      if (!m) return `${label} not asked`;
+      return `${label} asked T${m.turn}${m.answered ? ', answered' : ', no answer'}`;
     })
     .join(' · ');
 }

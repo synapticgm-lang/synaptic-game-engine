@@ -73,7 +73,7 @@ describe('seed 95 — the travel line names the journey destination', () => {
 });
 
 describe('seed 95 — Check Status is a ledger read, not a panel in the room', () => {
-  const withPanel = () => pact({ sceneFacts: { props: ['blue panel'] } as GameState['sceneFacts'] });
+  const withPanel = () => pact({ systemHousing: undefined, sceneFacts: { props: ['blue panel'] } as GameState['sceneFacts'] });
 
   it('the writer gets no panel ref, no panel noun and no actor slot', () => {
     const packet = buildCompletedEventPacket(withPanel(), 'Check Status');

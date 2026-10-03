@@ -26,7 +26,13 @@ import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLi
 import { gateFactLines } from './skillGates.ts';
 import { sealedCastNames } from './beatContract.ts';
 import { ledgerSheetLine } from './litrpgSystemWindow.ts';
-import { formatSystemBlock, systemHousingWriterClause } from './systemHousing.ts';
+import {
+  applyOpeningHousingLine,
+  formatSystemBlock,
+  housingFromSystemBlock,
+  systemHousingWriterClause,
+  type SystemHousingId,
+} from './systemHousing.ts';
 import { isNeverCastTitle } from './neverCast.ts';
 import { kitRefDisplay } from './inventory.ts';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector.ts';
@@ -158,12 +164,35 @@ export interface CompletedEventPacket {
 const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b|^(?:read the device|look inward|ask the world|reach into the pocket)$/i;
 
 function writerHousingClause(block?: string): string {
-  const t = block ?? '';
-  if (/\bworn device\b/i.test(t)) return systemHousingWriterClause('worn_device');
-  if (/\bprivate window\b/i.test(t)) return systemHousingWriterClause('private_window');
-  if (/\bnot a private app\b/i.test(t)) return systemHousingWriterClause('world_status');
-  if (/\bleftover pocket\b/i.test(t)) return systemHousingWriterClause('leftover_pocket');
-  return 'not a thing in the scene. Nobody holds, opens, points at or looks at it.';
+  return systemHousingWriterClause(housingFromSystemBlock(block));
+}
+
+/** What the player did on a ledger read, named for the frozen housing. */
+function ledgerReadEventLine(who: string, him: string, housing: SystemHousingId | null): string {
+  switch (housing) {
+    case 'worn_device': return `${who} read the worn device.`;
+    case 'private_window': return `${who} looked inward.`;
+    case 'world_status': return `${who} took stock of what the world knows of ${him}.`;
+    case 'leftover_pocket': return `${who} reached into the pocket.`;
+    default: return `${who} read the System window.`;
+  }
+}
+
+function ledgerReadLabel(housing: SystemHousingId | null): string {
+  switch (housing) {
+    case 'worn_device': return 'DEVICE';
+    case 'private_window': return 'WINDOW';
+    case 'world_status': return 'STATUS';
+    case 'leftover_pocket': return 'POCKET';
+    default: return 'PANEL';
+  }
+}
+
+/** The System window as a ref: a housed system that is not a worn device is not a thing in the scene. */
+function housedWindowDisplay(state: GameState, prop: string): string | null {
+  const housing = state.systemHousing?.housing;
+  if (!housing) return prop;
+  return housing === 'worn_device' ? 'worn device' : null;
 }
 
 /** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
@@ -472,8 +501,9 @@ export function compileNounAllowlist(
   }
 
   for (const prop of state.sceneFacts?.props ?? []) {
-    if (state.systemHousing?.housing === 'worn_device' && isSystemWindowLabel(prop)) {
-      pushUnique(out, seen, 'worn device');
+    if (isSystemWindowLabel(prop)) {
+      const display = housedWindowDisplay(state, prop);
+      if (display) pushUnique(out, seen, display);
       continue;
     }
     pushUnique(out, seen, prop);
@@ -590,8 +620,8 @@ export function compileRefEnum(
 
   for (const prop of state.sceneFacts?.props ?? []) {
     if (state.engineMode === 'litrpg' && isSystemWindowLabel(prop)) {
-      const display = state.systemHousing?.housing === 'worn_device' ? 'worn device' : prop;
-      add(`window:${slugRefId(prop)}`, display, 'window', windowNote);
+      const display = housedWindowDisplay(state, prop);
+      if (display) add(`window:${slugRefId(prop)}`, display, 'window', windowNote);
     } else {
       add(`prop:${slugRefId(prop)}`, prop, 'prop');
     }
@@ -1088,14 +1118,18 @@ export function formatWriterFacingEvent(
       : 'Narrate this completed event in past tense.',
     '',
     'COMPLETED EVENT:',
-    panelRead ? `${who} read the System window.` : `${who} ${packet.verb}${target}.`,
+    panelRead ? ledgerReadEventLine(who, pov.him, housingFromSystemBlock(packet.systemBlock)) : `${who} ${packet.verb}${target}.`,
     `Outcome: ${panelRead ? 'read the ledger lines below' : packet.outcome}.`,
   ];
   if (packet.engineResult) {
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
   }
   if (panelRead) {
-    lines.push(`PANEL (game chrome: ${writerHousingClause(packet.systemBlock)} It shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
+    const readHousing = housingFromSystemBlock(packet.systemBlock);
+    const readShows = readHousing === 'world_status'
+      ? 'Nothing shows these facts; they are simply known, never speech or story'
+      : 'It shows only these ledger lines, never speech or story';
+    lines.push(`${ledgerReadLabel(readHousing)} (game chrome: ${writerHousingClause(packet.systemBlock)} ${readShows}): ${packet.ledgerSheet}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));
   if (packet.systemBlock) lines.push(packet.systemBlock);
@@ -1822,7 +1856,9 @@ function cardPageParagraph(state: GameState): string {
   const card = String(state.openingEstablishment?.pickedHookFallback ?? '')
     .replace(/\s+/g, ' ')
     .trim();
-  if (card.length >= 40 && !isDroughtStubProse(card)) return card;
+  if (card.length >= 40 && !isDroughtStubProse(card)) {
+    return applyOpeningHousingLine(card, state.systemHousing?.housing);
+  }
   return '';
 }
 

@@ -66,7 +66,7 @@ describe('seed 94 — a destination chip mid-journey must move', () => {
 });
 
 describe('seed 94 — Inspect the panel is sent as a ledger read', () => {
-  const withPanel = () => pact({ sceneFacts: { props: ['blue panel'] } as GameState['sceneFacts'] });
+  const withPanel = () => pact({ systemHousing: undefined, sceneFacts: { props: ['blue panel'] } as GameState['sceneFacts'] });
 
   it('the writer is told the player read the System window, with the ledger lines', () => {
     const s = withPanel();

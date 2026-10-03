@@ -3,13 +3,18 @@ import { createInitialState } from './defaults';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
 import {
   SYSTEM_PART_IDS,
+  WORLD_STATUS_WRITER_SENTENCE,
   clampSystemHousing,
   formatSystemBlock,
+  housingFromSystemBlock,
   rollSystemHousing,
+  systemHousingWriterClause,
+  systemHousingWriterSentence,
   systemStatusChip,
   type SystemHousingConfig,
   type SystemPartId,
 } from './systemHousing';
+import type { GameState } from './types';
 
 const HOUSINGS = ['private_window', 'worn_device', 'world_status', 'leftover_pocket'];
 
@@ -108,5 +113,59 @@ describe('system housing', () => {
     const text = formatWriterFacingEvent(buildCompletedEventPacket(state, 'Look inward'));
     expect(text.toLowerCase()).not.toMatch(/worn object|worn device/);
     expect(text).toMatch(/only in the player's head/);
+  });
+
+  function worldStatus(): GameState {
+    const state = createInitialState('Story', 'litrpg', undefined, 'world-packet');
+    state.campaignBibleId = 'summoned-pact';
+    state.character = { ...state.character!, name: 'Jax' };
+    state.log = [];
+    state.systemHousing = clampSystemHousing(config('world_status', ['quest_list', 'weapon_copy']));
+    state.quests = [{
+      id: 'q', name: 'Find the vault key', description: 'Search the rubble', status: 'active', type: 'main', revealed: true,
+      objectives: [{ id: 'o', description: 'Search the rubble', completed: false }],
+    }] as GameState['quests'];
+    state.sceneFacts = { ...state.sceneFacts!, props: ['blue panel'], present: [], lastBeat: 'System panel is visible' };
+    return state;
+  }
+
+  it('a world_status packet says there is no panel, device or window, and shows no quest', () => {
+    expect(clampSystemHousing(config('world_status', ['quest_list'])).parts.quest_list).toBe(false);
+    for (const action of ['Ask the world', 'Look around']) {
+      const text = formatWriterFacingEvent(buildCompletedEventPacket(worldStatus(), action));
+      expect(systemLine(text)).toContain(WORLD_STATUS_WRITER_SENTENCE);
+      expect(text, action).not.toMatch(/blue panel|panel in the air|empty air|System window|panel read/i);
+      expect(text, action).not.toMatch(/Quest: /);
+    }
+    const read = formatWriterFacingEvent(buildCompletedEventPacket(worldStatus(), 'Ask the world'));
+    expect(read).toMatch(/Jax took stock of what the world knows of/);
+    const status = read.split('\n').find((l) => l.startsWith('STATUS ('));
+    expect(status).toContain('Known in the world:');
+    expect(status).toContain(WORLD_STATUS_WRITER_SENTENCE);
+    expect(status).not.toMatch(/vault key/);
+  });
+
+  it('a world_status ref enum and allowlist carry no blue panel', () => {
+    const packet = buildCompletedEventPacket(worldStatus(), 'Look around');
+    expect((packet.refEnum ?? []).some((r) => /blue panel/i.test(r.display) || r.klass === 'window')).toBe(false);
+    expect(packet.allowlist.map((n) => n.toLowerCase())).not.toContain('blue panel');
+  });
+
+  it('only housing none keeps the blue panel in the writer packet', () => {
+    const none = worldStatus();
+    none.systemHousing = undefined;
+    const refs = buildCompletedEventPacket(none, 'Look around').refEnum ?? [];
+    expect(refs.some((r) => r.display === 'blue panel' && r.klass === 'window')).toBe(true);
+  });
+
+  it('no housing writer text calls the system a panel in the air or empty air', () => {
+    for (const housing of ['private_window', 'worn_device', 'world_status', 'leftover_pocket'] as const) {
+      const block = formatSystemBlock(config(housing, []));
+      expect(block, housing).not.toMatch(/blue panel|panel in the air|empty air/i);
+      expect(housingFromSystemBlock(block)).toBe(housing);
+      expect(systemHousingWriterClause(housing), housing).not.toMatch(/blue panel|panel in the air|empty air/i);
+      expect(systemHousingWriterSentence(housing), housing).not.toMatch(/blue panel|panel in the air|empty air/i);
+    }
+    expect(formatSystemBlock(config('leftover_pocket', []))).toMatch(/no status panel and no window/);
   });
 });

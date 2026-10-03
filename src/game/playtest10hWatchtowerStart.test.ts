@@ -76,7 +76,7 @@ describe('playtest10h — watchtower start', () => {
       })
     ).toBe(false);
     const text = stitchOpeningContinue(watchtower(), 'Inspect the panel');
-    expect(text).toMatch(/panel|System window/i);
+    expect(text).toMatch(/panel|system/i);
     expect(text).toMatch(/Jax/);
     expect(text).not.toMatch(/looked through this room|looked again at this room/i);
   });

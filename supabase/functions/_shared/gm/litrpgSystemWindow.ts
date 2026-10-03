@@ -79,7 +79,7 @@ function ledgerReadsPrefix(housing: string | undefined): string {
   switch (housing) {
     case 'worn_device': return 'The device reads:';
     case 'private_window': return 'The window reads:';
-    case 'world_status': return 'The world status reads:';
+    case 'world_status': return 'Known in the world:';
     default: return 'The panel read:';
   }
 }

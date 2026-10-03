@@ -8,7 +8,7 @@ import { filterChromeFromPresent, realPresentPeople } from './chromeAuthority';
 import { syncPresentToCount } from './crowdAuthority';
 import { openingCastLabel } from './openingEstablishment';
 import { openingCastRecords } from './npcRecords';
-import { systemHousingWriterClause } from './systemHousing';
+import { systemHousingWriterSentence } from './systemHousing';
 
 export type PointerWhoBand = 0 | 1 | 2 | 4 | 5;
 
@@ -115,7 +115,9 @@ export function compilePointerCardSlots(state: GameState): PointerCardSlots | nu
     'Do not write an ordinary Earth street first unless this card is Earth Integration.',
     'Do not add named people or places beyond this card.',
     state.engineMode === 'litrpg'
-      ? 'Chrome (blue panel, Place, Registration) is not a person.'
+      ? state.systemHousing
+        ? 'Chrome (Place, Registration) is not a person.'
+        : 'Chrome (blue panel, Place, Registration) is not a person.'
       : 'Chrome labels (Place) are not a person.',
   ];
   if (alone) {
@@ -428,13 +430,14 @@ export function compileLitrpgCoreIdentity(state: GameState): string {
   const premise = state.campaignPremise ?? '';
   const arch = String(state.campaignArchetype ?? '');
   if (id === 'system-integration' || /every human on earth|integration protocol/i.test(premise)) {
-    return 'Modern Integration Earth. Blue System panels. Dungeon cores. Wave threats.';
+    return state.systemHousing
+      ? `Modern Integration Earth. ${systemHousingWriterSentence(state.systemHousing.housing)} Dungeon cores. Wave threats.`
+      : 'Modern Integration Earth. Blue System panels. Dungeon cores. Wave threats.';
   }
   if (id === 'summoned-pact' || arch === 'isekai' || /summoned pact|isekai|pactborn/i.test(`${id} ${premise}`)) {
-    const housingBit = state.systemHousing
-      ? systemHousingWriterClause(state.systemHousing.housing)
-      : 'Private blue panel';
-    return `Other-world summon. You arrived HERE — not Earth Integration. ${housingBit} Rite or ruin, honest physics.`;
+    return state.systemHousing
+      ? `Other-world summon. You arrived HERE — not Earth Integration. ${systemHousingWriterSentence(state.systemHousing.housing)} Rite or ruin, honest physics.`
+      : 'Other-world summon. You arrived HERE — not Earth Integration. Private blue panel, rite or ruin, honest physics.';
   }
   if (id === 'hero-awakening' || /wake ledger/i.test(premise)) {
     return 'Wake Ledger. You were already in this world. Not a summon, not Earth Integration.';

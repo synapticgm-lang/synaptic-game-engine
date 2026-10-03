@@ -7,7 +7,8 @@ import { createInitialState } from './defaults';
 import { SUMMONED_PACT_PHASE4_HOOKS } from '../data/campaigns/summonedPactPhase4Hooks';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { ledgerSheetLine } from './litrpgSystemWindow';
-import { stitchOpeningScene } from './openingStitch';
+import { stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
+import { summonedPact } from '../data/campaigns/summonedPact';
 import { SYSTEM_PART_IDS, clampSystemHousing, type SystemHousingConfig, type SystemHousingId } from './systemHousing';
 import { resolveEngineFight } from './engineFight';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
@@ -78,6 +79,74 @@ describe('seed 94 opening card is whole sentences', () => {
     expect(pocket).not.toMatch(/panel hangs in the air/i);
     expect(pocket).toMatch(/leftover pocket/i);
   });
+
+  const HOUSED: SystemHousingId[] = ['private_window', 'worn_device', 'world_status', 'leftover_pocket'];
+  const ALL_CARDS = [...(summonedPact.openingHooks ?? []), ...SUMMONED_PACT_PHASE4_HOOKS]
+    .filter((c): c is Exclude<typeof c, string> => typeof c !== 'string');
+
+  it('no housed opening card hands the writer a blue panel, a panel in the air or empty air', () => {
+    for (const card of ALL_CARDS) {
+      for (const text of [card.page1 ?? '', card.fallback ?? ''].filter(Boolean)) {
+        for (const housing of HOUSED) {
+          const out = belfryOpening(text, housing);
+          expect(out, `${housing} / ${card.location}`).not.toMatch(/blue panel|panel in the air|empty air|\bthe panel\b/i);
+        }
+      }
+    }
+  });
+
+  it('the bathhouse opening under world_status says what the system is and keeps the room', () => {
+    const card = ALL_CARDS.find((c) => /ruined bathhouse/.test(c.page1 ?? ''))!;
+    const out = belfryOpening(card.page1!, 'world_status');
+    expect(out).not.toMatch(/A blue panel hangs in the draft/);
+    expect(out).toMatch(/There is no panel, no device, and no window\./);
+    expect(out).toMatch(/The cedar door bangs its hinges against the stone\./);
+    expect(out).not.toMatch(/What name do you give it\?/);
+  });
+
+  it('housing none keeps the card blue panel', () => {
+    const card = ALL_CARDS.find((c) => /ruined bathhouse/.test(c.page1 ?? ''))!;
+    const s = pact({
+      seed: 'none-housing',
+      systemHousing: undefined,
+      openingEstablishment: { pending: [], answers: {}, complete: false, pickedHookFallback: card.page1 } as GameState['openingEstablishment'],
+    });
+    expect(stitchOpeningScene(s)).toMatch(/A blue panel hangs in the draft/);
+  });
+
+  it('a housed alone name-ask does not ask through the panel', () => {
+    const parts = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as SystemHousingConfig['parts'];
+    for (const housing of HOUSED) {
+      const s = pact({
+        seed: 'alone-ask',
+        systemHousing: clampSystemHousing({ housing, parts }),
+        openingEstablishment: {
+          pending: [{ kind: 'name', question: 'The panel waits on a name. What do you enter?' }],
+          answers: {},
+          complete: false,
+          aloneArrival: true,
+          pickedHookFallback: 'Rain through a cracked dome. You are alone on ceramic tiles in a ruined bathhouse. A blue panel hangs in the draft. Nobody came to greet you.',
+        } as unknown as GameState['openingEstablishment'],
+      });
+      const out = stitchOpeningScene(s);
+      expect(out, housing).not.toMatch(/blue panel|\bthe panel\b|empty air/i);
+      expect(out, housing).toMatch(/What name do you go by\?/);
+    }
+  });
+
+  it('a housed opening search does not put the result on a panel', () => {
+    const parts = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as SystemHousingConfig['parts'];
+    const s = pact({
+      seed: 'search-housed',
+      currentLocation: 'a ruined bathhouse off the Valespire roads',
+      systemHousing: clampSystemHousing({ housing: 'world_status', parts }),
+      openingEstablishment: { pending: [], answers: { name: 'Jax', where: 'a ruined bathhouse off the Valespire roads' }, complete: true, aloneArrival: true } as unknown as GameState['openingEstablishment'],
+    });
+    const out = stitchOpeningContinue(s, 'Search the area');
+    expect(out).not.toMatch(/panel/i);
+    const none = stitchOpeningContinue({ ...s, systemHousing: undefined }, 'Search the area');
+    expect(none).toMatch(/The panel still shows Jax\./);
+  });
 });
 
 describe('seed 94 health is not a writer story fact', () => {
@@ -129,7 +198,7 @@ describe('seed 94 health is not a writer story fact', () => {
     expect(quiet).toBe('The device reads: Name: Jax; Level 2; Effects: Bleeding; Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40.');
     expect(quiet).not.toMatch(/Pocket:|Quest:/);
     expect(ledgerSheetLine(pact({ ...worn, systemHousing: clampSystemHousing({ housing: 'private_window', parts: off }) }))).toMatch(/^The window reads: /);
-    expect(ledgerSheetLine(pact({ ...worn, systemHousing: clampSystemHousing({ housing: 'world_status', parts: off }) }))).toMatch(/^The world status reads: /);
+    expect(ledgerSheetLine(pact({ ...worn, systemHousing: clampSystemHousing({ housing: 'world_status', parts: off }) }))).toMatch(/^Known in the world: /);
     expect(quiet.toLowerCase()).not.toMatch(/blue panel|empty air/);
     const pocket = ledgerSheetLine(pact({
       ...worn,

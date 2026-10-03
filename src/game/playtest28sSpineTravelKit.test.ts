@@ -7,6 +7,7 @@ import { createInitialState } from './defaults';
 import { advancePyoaSpine, ensurePyoaSpine, SPINE_ENDING_CHIP, spineEngineChipLabels } from './pyoaSpine';
 import { filterInventedContextChoices } from './choiceWarden';
 import { seedOpeningSceneFacts } from './sceneFacts';
+import { clampSystemHousing } from './systemHousing';
 import { kitRefDisplay } from './inventory';
 import { collapseEchoedLabel } from './tokenProse';
 import { syncSheetToMovedHere } from './locationMemory';
@@ -43,12 +44,16 @@ describe('playtest28sSpineTravelKit', () => {
     expect(filterInventedContextChoices([SPINE_ENDING_CHIP], s)).toEqual([SPINE_ENDING_CHIP]);
   });
 
-  it('opening scene facts carry the blue panel prop only in LitRPG', () => {
+  it('opening scene facts carry the blue panel prop only in LitRPG with no housing', () => {
     const pyoa = thornferryState();
     expect(seedOpeningSceneFacts(pyoa).props ?? []).not.toContain('blue panel');
     const lit = createInitialState(undefined, 'litrpg');
     lit.engineMode = 'litrpg';
-    expect(seedOpeningSceneFacts(lit).props ?? []).toContain('blue panel');
+    expect(seedOpeningSceneFacts({ ...lit, systemHousing: undefined }).props ?? []).toContain('blue panel');
+    for (const housing of ['private_window', 'worn_device', 'world_status', 'leftover_pocket'] as const) {
+      const housed = { ...lit, systemHousing: clampSystemHousing({ housing, parts: {} as never }) };
+      expect(seedOpeningSceneFacts(housed).props ?? [], housing).not.toContain('blue panel');
+    }
   });
 
   it('kit labels read mid-sentence', () => {

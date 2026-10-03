@@ -204,12 +204,26 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
   };
 }
 
-/** System panel chrome is a LitRPG prop only — other modes never carry it in HERE props. */
-export function stripModeChromeProps(state: Pick<GameState, 'engineMode'>, facts: SceneFacts): SceneFacts {
-  if (state.engineMode === 'litrpg') return facts;
+/**
+ * System panel chrome is a LitRPG prop only, and only with no frozen housing. Other modes and every
+ * housed system never carry it in HERE props or the beat.
+ */
+export function stripModeChromeProps(
+  state: Pick<GameState, 'engineMode' | 'systemHousing'>,
+  facts: SceneFacts
+): SceneFacts {
+  if (state.engineMode === 'litrpg' && !state.systemHousing) return facts;
   const props = facts.props ?? [];
-  if (!props.some((p) => PANEL.test(p))) return facts;
-  return { ...facts, props: props.filter((p) => !PANEL.test(p)) };
+  const beat = facts.lastBeat ?? '';
+  const housedBeat = !!state.systemHousing && /system panel/i.test(beat);
+  if (!props.some((p) => PANEL.test(p)) && !housedBeat) return facts;
+  return {
+    ...facts,
+    props: props.filter((p) => !PANEL.test(p)),
+    ...(housedBeat
+      ? { lastBeat: beat.replace(/\.$/, '').split(';').map((s) => s.trim()).filter((s) => s && !/system panel/i.test(s)).join('; ') }
+      : {}),
+  };
 }
 
 export function seedOpeningSceneFacts(state: GameState): SceneFacts {

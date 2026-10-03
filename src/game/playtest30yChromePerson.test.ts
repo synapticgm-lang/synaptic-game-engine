@@ -30,6 +30,7 @@ function withPresent(present: string[]): GameState {
   const state = createInitialState(undefined, 'litrpg');
   return {
     ...state,
+    systemHousing: undefined,
     openingEstablishment: {
       pending: [],
       answers: {},

@@ -73,18 +73,23 @@ export const SYSTEM_HOUSINGS: Record<SystemHousingId, HousingSpec> = {
   world_status: {
     alwaysOn: ['health', 'power_pool', 'level', 'experience'],
     optional: ['weapon_copy', 'party_view'],
-    name: 'Not a private app: levels exist in the world.',
-    visibility:
-      'Other people can learn a level. A normal party sees name, health, and the power pool; the full sheet is only for someone the player has bound.',
+    name: 'Levels exist in the world.',
+    visibility: '',
   },
   leftover_pocket: {
     alwaysOn: ['pocket'],
     optional: [],
-    name: 'A leftover pocket, a window opened by reaching into empty air.',
+    name: 'A leftover pocket the player reaches into to store things. There is no status panel and no window.',
     visibility: 'People nearby usually cannot see the opening.',
     rule: LEFTOVER_THIEF_RULE,
   },
 };
+
+/** What world_status is, for the writer: nothing shows it, people simply know. */
+export const WORLD_STATUS_WRITER_SENTENCE =
+  'There is no panel, no device, and no window. People can tell a level. A normal group can tell name, health, and one power pool. No quest list shows, and no search result shows on a panel.';
+
+const WORLD_STATUS_BOUND = 'The full sheet is only for someone the player has bound.';
 
 const HOUSING_IDS: readonly SystemHousingId[] = ['private_window', 'worn_device', 'world_status', 'leftover_pocket'];
 
@@ -167,10 +172,20 @@ export function formatSystemBlock(config: SystemHousingConfig): string {
   const clamped = clampSystemHousing(config);
   const spec = SYSTEM_HOUSINGS[clamped.housing];
   const labels = enabledPartLabels(clamped);
+  if (clamped.housing === 'world_status') {
+    return ['SYSTEM:', spec.name, WORLD_STATUS_WRITER_SENTENCE, WORLD_STATUS_BOUND, `Known: ${joinList(labels)}.`].join(' ');
+  }
   const shows = clamped.housing === 'leftover_pocket'
     ? `It holds only ${joinList(labels)}.`
     : `It shows ${joinList(labels)}.`;
   return ['SYSTEM:', spec.name, spec.visibility, shows, clamped.rule ?? ''].filter(Boolean).join(' ');
+}
+
+/** The housing a SYSTEM paragraph was written for. */
+export function housingFromSystemBlock(block: string | null | undefined): SystemHousingId | null {
+  const t = block ?? '';
+  if (!t) return null;
+  return HOUSING_IDS.find((id) => t.includes(SYSTEM_HOUSINGS[id].name)) ?? null;
 }
 
 /** Status chip. Unknown housing keeps the old panel chip. */
@@ -190,39 +205,78 @@ export function systemHousingWriterClause(housing: SystemHousingId | null | unde
     case 'worn_device':
       return 'a real object on the body. Others can see the object. Only the wearer can read the screen.';
     case 'private_window':
-      return "only in the player's head. Others cannot see it. Not an object.";
+      return "only in the player's head. Others cannot see it. Not an object, and it does not float in the room.";
     case 'world_status':
-      return 'not a gadget. Levels are in the world.';
+      return WORLD_STATUS_WRITER_SENTENCE;
     case 'leftover_pocket':
-      return 'reach into empty air to store things. Not a status panel.';
+      return 'a pocket the player reaches into to store things. There is no status panel and no window.';
     default:
       return 'not a thing in the scene. Nobody holds, opens, points at or looks at it.';
   }
 }
 
-const BELFRY_PANEL_LINE = 'A blue panel hangs in the air of the belfry.';
+/** The housing as whole sentences, for writer facts that stand on their own line. */
+export function systemHousingWriterSentence(housing: SystemHousingId): string {
+  switch (housing) {
+    case 'worn_device':
+      return 'The system is a worn device, a real object on the body. Others can see the object. Only the wearer can read the screen.';
+    case 'private_window':
+      return "The system lives only in the player's head. Others cannot see it. It is not an object, and it does not float in the room.";
+    case 'world_status':
+      return `Levels exist in the world. ${WORLD_STATUS_WRITER_SENTENCE}`;
+    case 'leftover_pocket':
+      return 'The system is only a leftover pocket the player reaches into to store things. There is no status panel and no window.';
+  }
+}
 
-/**
- * The belfry card still authors a floating panel. The opening says this instead,
- * from the housing frozen at story start. Other cards are left alone.
- */
-export function belfryHousingLine(housing: SystemHousingId | null | undefined): string {
+/** How the opening page names the frozen housing. Housing none keeps the card's own panel sentence. */
+export function belfryHousingLine(housing: SystemHousingId | null | undefined): string | null {
   switch (housing) {
     case 'worn_device':
       return 'A worn device, a real object on the body, is on you. Others can see the object, but only the wearer reads the screen, and it is hard to remove.';
     case 'private_window':
       return 'A private window lives only in the mind, and it is not a worn object.';
     case 'world_status':
-      return 'Levels exist in the world, and other people can learn a level. This is not a worn object.';
+      return 'Levels exist in the world. There is no panel, no device, and no window. People can tell a level, and a normal group can tell name, health, and one power pool.';
     case 'leftover_pocket':
-      return 'A leftover pocket opens by reaching into empty air, and it is not a panel.';
+      return 'A leftover pocket holds what you put into it. There is no status panel and no window.';
     default:
-      return BELFRY_PANEL_LINE;
+      return null;
   }
 }
 
-/** Replace only the belfry card's floating-panel sentence. Walking openings do not contain it. */
-export function applyBelfryHousingLine(text: string, housing: SystemHousingId | null | undefined): string {
-  if (!text || !text.includes(BELFRY_PANEL_LINE)) return text;
-  return text.split(BELFRY_PANEL_LINE).join(belfryHousingLine(housing));
+/** A card sentence that authors the system as a floating panel. */
+const CARD_PANEL_SENTENCE = /\b(?:(?:blue|system|the|your|a|private) panel|blue (?:screen|window)|system (?:screen|window)|empty air)\b/i;
+
+/**
+ * Opening cards author the system as a floating blue panel. Under a frozen housing, the first such
+ * sentence becomes the housing line and the rest drop, with the question right after that was put
+ * to the panel. Housing none keeps the card as written.
+ */
+export function applyOpeningHousingLine(text: string, housing: SystemHousingId | null | undefined): string {
+  const line = belfryHousingLine(housing);
+  if (!text || !line) return text;
+  let placed = false;
+  let afterPanel = false;
+  return text
+    .replace(/[^.!?\n]*[.!?]+/g, (sentence) => {
+      const lead = sentence.match(/^[\s"”’)]*/)?.[0] ?? '';
+      if (!CARD_PANEL_SENTENCE.test(sentence)) {
+        const pointsBack = afterPanel && /\?$/.test(sentence);
+        afterPanel = false;
+        return pointsBack ? lead.trimEnd() : sentence;
+      }
+      afterPanel = true;
+      if (placed) return lead.trimEnd();
+      placed = true;
+      return `${lead}${line}`;
+    })
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
+/** A name-ask that addresses the panel. Under a frozen housing nobody asks through a panel. */
+export function housedNameAsk(question: string, housing: SystemHousingId | null | undefined): string {
+  if (!housing || !/\bpanel\b/i.test(question)) return question;
+  return 'Nobody else is here to ask. What name do you go by?';
 }

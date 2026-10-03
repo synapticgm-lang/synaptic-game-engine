@@ -1594,6 +1594,18 @@ function costFromPickedHookBlob(blob?: string): string {
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
 
+const HOUSED_PANEL_SENTENCE = /\b(?:blue panel|the panel|panel in the air|empty air)\b/i;
+
+/** Under a frozen housing the card's floating-panel sentences do not exist; drop them, add nothing. */
+function dropHousedPanelSentences(state: GameState, raw: string): string {
+  if (!raw || !state.systemHousing) return raw;
+  return raw
+    .split(/(?<=[.!?])\s+/)
+    .filter((s) => !HOUSED_PANEL_SENTENCE.test(s))
+    .join(' ')
+    .trim();
+}
+
 function clipCardClause(raw: string, max = 220): string {
   const t = raw.replace(/\s+/g, ' ').trim();
   if (!t) return '';
@@ -1603,18 +1615,19 @@ function clipCardClause(raw: string, max = 220): string {
 /** Why they pulled you — full card intent, never the opener paragraph. */
 export function shortCardWant(state: GameState): string {
   const fromSave = wantFromPickedHookBlob(state.openingEstablishment?.pickedHook);
-  if (fromSave) return clipCardClause(fromSave);
+  if (fromSave) return clipCardClause(dropHousedPanelSentences(state, fromSave));
   const picked = seedCardForThisPlace(state);
-  return clipCardClause((picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim());
+  return clipCardClause(dropHousedPanelSentences(state, (picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim()));
 }
 
 /** Authored walk-away cost from this card — never invent one. */
 export function shortCardCost(state: GameState): string {
   const fromSave = costFromPickedHookBlob(state.openingEstablishment?.pickedHook);
   const picked = seedCardForThisPlace(state);
-  const raw =
-    fromSave
-    || (picked?.openingCost ?? '').replace(/\s+/g, ' ').trim();
+  const raw = dropHousedPanelSentences(
+    state,
+    fromSave || (picked?.openingCost ?? '').replace(/\s+/g, ' ').trim()
+  );
   const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
   return clipCardClause(first, 180);
 }
@@ -1622,7 +1635,7 @@ export function shortCardCost(state: GameState): string {
 function rawCardOffer(state: GameState): string {
   const fromSave = offerFromPickedHookBlob(state.openingEstablishment?.pickedHook);
   const picked = seedCardForThisPlace(state);
-  return fromSave || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim();
+  return dropHousedPanelSentences(state, fromSave || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim());
 }
 
 /** Optional kit/banner offer from this card — one clause. */

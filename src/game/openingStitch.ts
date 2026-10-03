@@ -8,7 +8,7 @@ import type { GameState } from './types';
 import { authoredStartPage } from './pyoaSpine';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
-import { applyBelfryHousingLine, systemHousingWriterClause } from './systemHousing';
+import { applyOpeningHousingLine, housedNameAsk, systemHousingWriterSentence } from './systemHousing';
 import {
   extractGivenName,
   hallTalkAsksPanel,
@@ -172,7 +172,8 @@ function baseSceneFromCard(state: GameState): string {
     );
   }
   if (/system integration|every human on earth/i.test(state.campaignPremise ?? '')) {
-    return `You are still in ${where} — same morning, same life — while the sky stays torn and a blue panel hangs at eye level.${folkBit} People nearby are shouting.`;
+    const panelBit = state.systemHousing ? '' : ' and a blue panel hangs at eye level';
+    return `You are still in ${where} — same morning, same life — while the sky stays torn${panelBit}.${folkBit} People nearby are shouting.`;
   }
   return `You are in ${where}.${folkBit} The scene that was already moving is still moving.`;
 }
@@ -228,11 +229,12 @@ export function stitchOpeningScene(state: GameState): string {
       return `${book}\n\n${cover}`;
     }
   }
-  const body = applyBelfryHousingLine(baseSceneFromCard(state).trim(), state.systemHousing?.housing);
+  const housing = state.systemHousing?.housing;
+  const body = applyOpeningHousingLine(baseSceneFromCard(state).trim(), housing);
   if (lockedCoverName(state)) {
     return sanitizeLockedNameBeat(state, dropCoverNameAsk(body));
   }
-  const cover = state.openingEstablishment?.pending[0]?.question?.trim();
+  const cover = housedNameAsk(state.openingEstablishment?.pending[0]?.question?.trim() ?? '', housing);
   if (!cover || bodyAlreadyAsksCover(body, cover)) return body;
   return `${body}\n\n${cover}`;
 }
@@ -261,7 +263,7 @@ function housingContinueLine(state: GameState, here: string): string {
   if (!housing) {
     return `The blue panel is yours — a System window at eye level ${here}. It is not a person.`;
   }
-  return `The System window ${here}: ${systemHousingWriterClause(housing)}`;
+  return systemHousingWriterSentence(housing);
 }
 
 /**
@@ -321,6 +323,9 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
       || (asksPanel && !asksWhere && !asksWho && !asksWant && !asksWhy && !asksRefuse && !gaveName)
     )
   ) {
+    if (state.systemHousing) {
+      return name ? `The name ${name} is yours. ${housingContinueLine(state, here)}` : housingContinueLine(state, here);
+    }
     if (name) {
       return `The System window holds the name ${name}. ${housingContinueLine(state, here)}`;
     }
@@ -332,7 +337,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     const found = alone
       ? `You search ${here}. ${aloneRoom} Nothing useful has been left for you.`
       : `You look again ${here}. Nothing new has been left in reach.`;
-    if (state.engineMode === 'litrpg') {
+    if (state.engineMode === 'litrpg' && !state.systemHousing) {
       return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
     }
     return found;
@@ -370,7 +375,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
       bits.push(
         clauseAlreadySpoken(state, ledgerWant, 'want') || clauseAlreadySpoken(state, want, 'want')
           ? alreadyToldWant
-          : want || (name ? 'They have not said what they want yet.' : 'The panel wants a name to write. It does not say why.')
+          : want || (name || state.systemHousing ? 'They have not said what they want yet.' : 'The panel wants a name to write. It does not say why.')
       );
       if (!asksWhere && !name && !asksRefuse) bits.push(`You are ${here}.`);
       if (!name && !asksRefuse) bits.push('They still want a name before they will say more.');

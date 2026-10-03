@@ -246,6 +246,7 @@ describe('playtest17f — site-wide opening / pad locks', () => {
         mode: 'weave',
         aloneArrival: true,
       },
+      systemHousing: undefined,
       log: [
         { id: 'p1', turn: 1, role: 'player', content: 'Ask what they want', timestamp: 1 },
       ],

@@ -41,6 +41,7 @@ const PROSE_ONLY = 'A silver-eyed stranger named Orrin Vale had promised a vault
 
 const played = () =>
   base({
+    systemHousing: undefined,
     log: [
       entry(1, 'gm', 'Cracked tiles. A blue panel hung in the air.'),
       entry(2, 'player', 'Who are you?'),

@@ -77,7 +77,7 @@ describe('29z9g bathhouse — opening chips look at who is here and what was jus
 
 describe('29z9g bathhouse — the System window is not a prop', () => {
   it('the writer gets the panel as a window only Jax sees', () => {
-    const refs = compileRefEnum(bathhouse());
+    const refs = compileRefEnum(bathhouse({ systemHousing: undefined }));
     const panel = refs.find((r) => r.display === 'blue panel');
     expect(panel?.klass).toBe('window');
     const line = formatRefEnumForWriter(refs);
