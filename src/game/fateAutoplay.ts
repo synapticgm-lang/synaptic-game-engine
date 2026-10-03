@@ -8,6 +8,7 @@
 
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { rollSystemHousing } from './systemHousing';
 import {
   applyAutoPlayerStallRules,
   chipProgressScore,
@@ -652,6 +653,7 @@ export function buildNewGameState(opts: {
     ...base,
     seed: String(opts.seed),
     saveId: `fate-${opts.seed}-${bible.id}-${Date.now()}`,
+    systemHousing: engineMode === 'litrpg' ? rollSystemHousing(String(opts.seed)) : undefined,
   };
   const seeded = seedStateFromCampaignBible(seededBase, bible);
   const namedSeeded = { ...seeded, storyName };

@@ -26,6 +26,7 @@ import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLi
 import { gateFactLines } from './skillGates';
 import { sealedCastNames } from './beatContract';
 import { ledgerSheetLine } from './litrpgSystemWindow';
+import { formatSystemBlock } from './systemHousing';
 import { isNeverCastTitle } from './neverCast';
 import { kitRefDisplay } from './inventory';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
@@ -141,6 +142,8 @@ export interface CompletedEventPacket {
   /** 27a — ledger place facts for stitch banks. */
   placeDescriptor?: string;
   ledgerSheet?: string;
+  /** Frozen LitRPG system housing, as one plain paragraph of the parts that are on. */
+  systemBlock?: string;
   /** The player read the System window (Inspect the panel / Check Status): a ledger read, not an act in the room. */
   ledgerRead?: boolean;
   /** 28g — the engine's resolved result for the player's action (fight / flee / parley / rest). Required fact. */
@@ -817,6 +820,7 @@ export function buildCompletedEventPacket(
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
     ledgerSheet,
+    systemBlock: state.systemHousing ? formatSystemBlock(state.systemHousing) : undefined,
     ledgerRead: ledgerRead || undefined,
     engineResult: extras?.engineResult?.trim() || undefined,
     movement,
@@ -1078,6 +1082,7 @@ export function formatWriterFacingEvent(
     lines.push(`PANEL (game chrome beside the story, not a thing in the scene — nobody holds, opens, points at or looks at it; it shows only these ledger lines, never speech or story): ${packet.ledgerSheet}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));
+  if (packet.systemBlock) lines.push(packet.systemBlock);
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   lines.push(`Location: ${packet.location}.`);

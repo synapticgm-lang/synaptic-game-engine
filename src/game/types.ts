@@ -605,6 +605,11 @@ export interface GameState {
    */
   systemPersonality?: import('./gmVoiceProfile').SystemPersonalityId;
   /**
+   * LitRPG system housing, rolled once from the seed at story start and frozen.
+   * Absent on old saves and non-LitRPG modes.
+   */
+  systemHousing?: import('./systemHousing').SystemHousingConfig;
+  /**
    * Simulationist sandbox power tone. Absent on old saves = balanced (repair hydrates).
    * Prompt only — HP/XP/loot still come from code.
    */

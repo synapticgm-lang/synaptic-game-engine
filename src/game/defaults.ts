@@ -3,6 +3,7 @@ import { getDefaultArchetype, type CampaignArchetype } from './archetypes';
 import { formatCampaignStoryName } from '@/data/campaigns';
 import { emptyWorldLedger } from './worldSim';
 import { syncContainerOccupancy } from './inventory';
+import { rollSystemHousing } from './systemHousing';
 
 /** Bump this to retire every older local/cloud/Drive save after a playtest wipe. */
 export const CURRENT_SAVE_VERSION = 2;
@@ -19,6 +20,7 @@ export function createInitialState(
 ): GameState {
   const now = Date.now();
   const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
+  const seed = openerSeed?.trim() || Math.random().toString(36).slice(2, 10);
   return syncContainerOccupancy({
     version: CURRENT_SAVE_VERSION,
     saveId: crypto.randomUUID(),
@@ -103,7 +105,8 @@ export function createInitialState(
     ],
     rolls: [],
     turn: 0,
-    seed: openerSeed?.trim() || Math.random().toString(36).slice(2, 10),
+    seed,
+    ...(engineMode === 'litrpg' ? { systemHousing: rollSystemHousing(seed) } : {}),
     pendingImagePrompt: null,
     lorebook: [],
     timeline: [],
