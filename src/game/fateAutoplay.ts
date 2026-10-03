@@ -8,7 +8,7 @@
 
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { rollSystemHousing } from './systemHousing';
+import { clampSystemHousing, isSystemHousingId, rollSystemHousing } from './systemHousing';
 import {
   applyAutoPlayerStallRules,
   chipProgressScore,
@@ -648,12 +648,20 @@ export function buildNewGameState(opts: {
   const voices = resolvePersonalities(engineMode, opts.personality);
   const storyName = formatCampaignStoryName(bible.title);
   const base = createInitialState(storyName, engineMode, bible.archetype);
+  let systemHousing: GameState['systemHousing'] = undefined;
+  if (engineMode === 'litrpg') {
+    const rolled = rollSystemHousing(String(opts.seed));
+    const pin = process.env.SGM_AUTOPLAY_HOUSING;
+    systemHousing = isSystemHousingId(pin)
+      ? clampSystemHousing({ housing: pin, parts: rolled.parts })
+      : rolled;
+  }
   // Force deterministic seed string for opening hook pick
   const seededBase: GameState = {
     ...base,
     seed: String(opts.seed),
     saveId: `fate-${opts.seed}-${bible.id}-${Date.now()}`,
-    systemHousing: engineMode === 'litrpg' ? rollSystemHousing(String(opts.seed)) : undefined,
+    systemHousing,
   };
   const seeded = seedStateFromCampaignBible(seededBase, bible);
   const namedSeeded = { ...seeded, storyName };
