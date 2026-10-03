@@ -8,7 +8,7 @@ import type { GameState } from './types';
 import { authoredStartPage } from './pyoaSpine';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
-import { systemHousingWriterClause } from './systemHousing';
+import { applyBelfryHousingLine, systemHousingWriterClause } from './systemHousing';
 import {
   extractGivenName,
   hallTalkAsksPanel,
@@ -228,7 +228,7 @@ export function stitchOpeningScene(state: GameState): string {
       return `${book}\n\n${cover}`;
     }
   }
-  const body = baseSceneFromCard(state).trim();
+  const body = applyBelfryHousingLine(baseSceneFromCard(state).trim(), state.systemHousing?.housing);
   if (lockedCoverName(state)) {
     return sanitizeLockedNameBeat(state, dropCoverNameAsk(body));
   }

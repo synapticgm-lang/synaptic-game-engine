@@ -7,6 +7,8 @@ import { createInitialState } from './defaults';
 import { SUMMONED_PACT_PHASE4_HOOKS } from '../data/campaigns/summonedPactPhase4Hooks';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { ledgerSheetLine } from './litrpgSystemWindow';
+import { stitchOpeningScene } from './openingStitch';
+import { SYSTEM_PART_IDS, clampSystemHousing, type SystemHousingConfig, type SystemHousingId } from './systemHousing';
 import { resolveEngineFight } from './engineFight';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import { presentNpcNames } from './npcRelationships';
@@ -39,12 +41,42 @@ describe('seed 94 opening card is whole sentences', () => {
     }
   });
 
-  it('the bell-tower page 1 names the panel and the pass and where they are', () => {
+  function belfryOpening(page1: string, housing: SystemHousingId): string {
+    const parts = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as SystemHousingConfig['parts'];
+    const s = pact({
+      seed: 'belfry-housing',
+      currentLocation: 'the bell-tower of Valespire Cathedral',
+      systemHousing: clampSystemHousing({ housing, parts }),
+      openingEstablishment: {
+        pending: [],
+        answers: {},
+        complete: false,
+        pickedHookFallback: page1,
+      } as GameState['openingEstablishment'],
+    });
+    return stitchOpeningScene(s);
+  }
+
+  it('the bell-tower opening follows the frozen housing and still names the pass', () => {
     const card = SUMMONED_PACT_PHASE4_HOOKS.find((c) => typeof c !== 'string' && c.location === 'the bell-tower of Valespire Cathedral');
     const page1 = typeof card === 'string' ? '' : card?.page1 ?? '';
     expect(page1).not.toMatch(/^Wind through louver slats\./);
-    expect(page1).toMatch(/A blue panel hangs in the air of the belfry\./);
     expect(page1).toMatch(/A tower-pass hangs on a nail by the ladder/);
+    const worn = belfryOpening(page1, 'worn_device');
+    expect(worn).not.toMatch(/panel hangs in the air/i);
+    expect(worn).toMatch(/A worn device, a real object on the body, is on you\./);
+    expect(worn).toMatch(/Others can see the object, but only the wearer reads the screen, and it is hard to remove\./);
+    expect(worn).toMatch(/A tower-pass hangs on a nail by the ladder/);
+    const mind = belfryOpening(page1, 'private_window');
+    expect(mind).not.toMatch(/panel hangs in the air/i);
+    expect(mind).toMatch(/A private window lives only in the mind, and it is not a worn object\./);
+    expect(mind).not.toMatch(/worn device/);
+    const world = belfryOpening(page1, 'world_status');
+    expect(world).not.toMatch(/panel hangs in the air/i);
+    expect(world).toMatch(/Levels exist in the world/);
+    const pocket = belfryOpening(page1, 'leftover_pocket');
+    expect(pocket).not.toMatch(/panel hangs in the air/i);
+    expect(pocket).toMatch(/leftover pocket/i);
   });
 });
 
@@ -59,7 +91,13 @@ describe('seed 94 health is not a writer story fact', () => {
   });
 
   it('the panel read gives the writer level and XP, not HP or MP', () => {
-    const s = pact({ character: { ...pact().character, hp: 7, maxHp: 26, level: 2 } });
+    const base = pact({ seed: 'seed94-level-sheet' });
+    const parts = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as SystemHousingConfig['parts'];
+    const s = pact({
+      seed: 'seed94-level-sheet',
+      character: { ...base.character, hp: 7, maxHp: 26, level: 2 },
+      systemHousing: clampSystemHousing({ housing: 'private_window', parts }),
+    });
     const sheet = ledgerSheetLine(s);
     expect(sheet).toMatch(/Level 2/);
     expect(sheet).not.toMatch(/\bHP\b|\bMP\b/);

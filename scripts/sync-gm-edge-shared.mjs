@@ -82,6 +82,7 @@ const FILES = [
   'padUniverse.ts',
   'beatContract.ts',
   'completedEventPacket.ts',
+  'systemHousing.ts',
   'semanticLoopDetector.ts',
   'beatFingerprint.ts',
   'ledgerNounObey.ts',
