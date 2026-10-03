@@ -103,6 +103,40 @@ describe('seed 94 health is not a writer story fact', () => {
     expect(sheet).not.toMatch(/\bHP\b|\bMP\b/);
   });
 
+  it('worn-device ledger prints only the parts housing turned on', () => {
+    const base = pact({ seed: 'seed94-worn-sheet' });
+    const off = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as SystemHousingConfig['parts'];
+    const named = {
+      pending: [],
+      answers: { name: 'Jax' },
+      complete: true,
+    } as GameState['openingEstablishment'];
+    const worn = pact({
+      seed: 'seed94-worn-sheet',
+      character: { ...base.character, name: 'Jax', level: 2, xp: 10, xpToNext: 40, hp: 7, maxHp: 26, mp: 3, maxMp: 8, conditions: ['Bleeding'] },
+      openingEstablishment: named,
+      inventory: [{ id: 't', name: 'Token', rarity: 'Common', quantity: 1, description: 'brass' }],
+      quests: [{ id: 'q', name: 'Find the pass', description: 'Climb the tower', status: 'active', type: 'main', objectives: [{ id: 'o', description: 'Climb', completed: false }] }],
+      systemHousing: clampSystemHousing({ housing: 'worn_device', parts: { ...off, quest_list: true, pocket: true } }),
+    });
+    const onSheet = ledgerSheetLine(worn);
+    expect(onSheet).toBe('The panel read: Name: Jax; Level 2; Effects: Bleeding; Pocket: Token (brass); Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40; Quest: Find the pass, next: Climb.');
+    expect(onSheet.toLowerCase()).not.toMatch(/blue panel|empty air/);
+    const quiet = ledgerSheetLine(pact({
+      ...worn,
+      systemHousing: clampSystemHousing({ housing: 'worn_device', parts: off }),
+    }));
+    expect(quiet).toBe('The panel read: Name: Jax; Level 2; Effects: Bleeding; Registration: designation locked; Mark: Pactborn / Calamity Mark — unresolved; XP 10/40.');
+    expect(quiet).not.toMatch(/Pocket:|Quest:/);
+    expect(quiet.toLowerCase()).not.toMatch(/blue panel|empty air/);
+    const pocket = ledgerSheetLine(pact({
+      ...worn,
+      systemHousing: clampSystemHousing({ housing: 'leftover_pocket', parts: off }),
+    }));
+    expect(pocket).toBe('The panel read: Name: Jax; Pocket: Token.');
+    expect(pocket).not.toMatch(/Level|XP |Quest:|Effects:/);
+  });
+
   it('the Fight line the writer reads has no HP; the figures stay on their own STATUS line', () => {
     const foe: ActiveEncounter = {
       name: 'Ash Raider', level: 1, hp: 12, maxHp: 12, armorClass: 12,
