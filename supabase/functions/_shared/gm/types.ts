@@ -15,6 +15,8 @@ export interface Item {
   slot?: string;
   /** Equipped gear still occupies a slot in this container. */
   containerId?: string;
+  /** Stored in the leftover pocket: not worn, not in a bag, not on the body. */
+  storedInPocket?: boolean;
   itemLevel?: number;
   modifiers?: Partial<Record<AttributeKey, number>>;
   containerCapacity?: number;
@@ -417,6 +419,8 @@ export interface OpeningEstablishment {
   aloneArrival?: boolean;
   /** 29c — opening NPC names pinned into scene presence for early turns. */
   pinnedNpcNames?: string[];
+  /** Place where the opening pin was set; a pinned person without a placed record is here only there. */
+  pinnedAt?: string;
   /** 27d — npc ids named on the picked opening card. */
   castNpcIds?: string[];
   /** Locked why-you’re-here from the hook card (first lock; sceneFacts is live authority). */

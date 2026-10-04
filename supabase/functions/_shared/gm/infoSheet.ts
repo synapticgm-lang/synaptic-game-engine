@@ -12,7 +12,7 @@ import { hallTalkTopics, type HallTalkTopic } from './openingEstablishment.ts';
 import { placeScale } from './placeAuthority.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerFacingLocation } from './locationName.ts';
-import { systemHousingWriterSentence } from './systemHousing.ts';
+import { systemHousingWriterSentence, writerFacts } from './systemHousing.ts';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -155,18 +155,48 @@ function placesLine(state: GameState): string {
 
 const FACT_RECEIPT = /\b(?:xp|loot|found|gained|lost|quest|level|fight|flee|parley|check|took|item|gold|killed|defeated|cleared|unlocked|opened)\b/i;
 
+
+const WEAPONISH = /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i;
+
+function isWeaponItem(item: { name?: string; itemType?: string }): boolean {
+  return item.itemType === 'weapon' || WEAPONISH.test(item.name ?? '');
+}
+
+/** Equipped weapon only. An item still in the pack is not in hand. */
+export function weaponInHand(state: GameState): string {
+  const held = (state.inventory ?? []).filter((i) => i.equipped && isWeaponItem(i));
+  return held.length ? held.map((i) => i.name).join(', ') : 'bare hands';
+}
+
+/**
+ * Writer fact: loot and pack weapons are not the blow.
+ * Empty when nothing is carried out of hand.
+ */
+export function gearAuthorityLine(state: GameState): string {
+  const notHeld = (state.inventory ?? []).filter((i) => !i.equipped && isWeaponItem(i));
+  if (!notHeld.length) return '';
+  const names = notHeld.map((i) => i.name).join(', ');
+  return `In hand: ${weaponInHand(state)}. Not in hand (do not strike, draw, or land a blow with these): ${names}.`;
+}
+
+export function fightLootClause(inHandBefore: string): string {
+  return `found after the blow; not in hand before it; not the weapon that won. In hand before the blow: ${inHandBefore}.`;
+}
+
 function factLines(state: GameState, turns: { player: LogEntry; gm: LogEntry }[], shownInLast: Set<string>): string[] {
   const facts: { turn: number; text: string }[] = [];
   const kill = state.sceneFacts?.lastKill;
   if (kill?.name && typeof kill.turn === 'number') {
     facts.push({ turn: kill.turn, text: `${kill.name} ${kill.outcome === 'victory' ? 'killed' : kill.outcome ?? 'ended'}` });
   }
+  const gear = gearAuthorityLine(state);
+  if (gear) facts.push({ turn: state.turn ?? 0, text: gear });
   for (const m of state.npcMemories ?? []) {
     if (m.stance?.cause && typeof m.stance.turn === 'number') {
       facts.push({ turn: m.stance.turn, text: `${m.npcName} ${m.stance.now}: ${m.stance.cause}` });
     }
   }
-  for (const q of state.quests ?? []) {
+  for (const q of writerFacts(state).quests) {
     if (typeof q.completedTurn === 'number') facts.push({ turn: q.completedTurn, text: `quest ${q.status}: ${q.name}` });
     else if (q.revealed && typeof q.revealedTurn === 'number') facts.push({ turn: q.revealedTurn, text: `quest found: ${q.name}` });
   }
@@ -223,9 +253,9 @@ function askedLine(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
 
 function openLines(state: GameState): string[] {
   const out: string[] = [];
-  const quest =
-    (state.quests ?? []).find((q) => q.status === 'active' && q.revealed && q.type === 'main')
-    ?? (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
+  const quests = writerFacts(state).quests;
+  const quest = quests.find((q) => q.status === 'active' && q.revealed && q.type === 'main')
+    ?? quests.find((q) => q.status === 'active' && q.revealed);
   if (quest) {
     const step = (quest.objectives ?? []).find((o) => !o.completed && !o.optional)?.description;
     out.push(`quest ${quest.name}${step ? ` — step: ${clip(norm(step), 80)}` : ''}`);

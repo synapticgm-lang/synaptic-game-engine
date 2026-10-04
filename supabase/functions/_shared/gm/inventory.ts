@@ -1,4 +1,5 @@
 import type { Container, GameState, Item, Rarity } from './types.ts';
+import { pocketOnlyKit, storeInPocket } from './systemHousing.ts';
 
 const RARITY_VALUE: Record<Rarity, number> = {
   Common: 1,
@@ -177,6 +178,7 @@ export function computeInventoryCapacity(state: GameState): InventoryCapacity {
 }
 
 export function canAddItem(state: GameState, item: Item): { ok: boolean; reason?: string } {
+  if (pocketOnlyKit(state.systemHousing)) return { ok: true };
   const cap = computeInventoryCapacity(state);
   if (cap.availableSlots > 0) return { ok: true };
   return {
@@ -215,6 +217,9 @@ export function removeItem(state: GameState, itemId: string): GameState {
 }
 
 export function addItem(state: GameState, item: Item): { state: GameState; ok: boolean; reason?: string } {
+  if (pocketOnlyKit(state.systemHousing)) {
+    return { state: syncContainerOccupancy({ ...state, inventory: [...state.inventory, storeInPocket(item)] }), ok: true };
+  }
   const check = canAddItem(state, item);
   if (!check.ok) return { state, ok: false, reason: check.reason };
   const bag = findContainerWithSpace(state, item);

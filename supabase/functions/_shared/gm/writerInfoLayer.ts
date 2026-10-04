@@ -10,42 +10,38 @@ import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson.ts';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm.ts';
 import { gateFactLines } from './skillGates.ts';
 import { skillRanksOf } from './skillRanks.ts';
+import { gearAuthorityLine } from './infoSheet.ts';
+import { writerFacts } from './systemHousing.ts';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
-
-const WEAPONISH = /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i;
-
-function gearAuthorityLine(state: GameState): string {
-  const inv = state.inventory ?? [];
-  const weapon = (i: { name?: string; itemType?: string }) => i.itemType === "weapon" || WEAPONISH.test(i.name ?? "");
-  const held = inv.filter((i) => i.equipped && weapon(i));
-  const notHeld = inv.filter((i) => !i.equipped && weapon(i));
-  if (!notHeld.length) return "";
-  const hand = held.length ? held.map((i) => i.name).join(", ") : "bare hands";
-  return `In hand: ${hand}. Not in hand (do not strike, draw, or land a blow with these): ${notHeld.map((i) => i.name).join(", ")}.`;
-}
-
 
 export function buildGroundTruthLedger(state: GameState, opts?: { compact?: boolean }): string {
   const compact = opts?.compact === true;
   const c = state.character;
+  const facts = writerFacts(state, kitRefDisplay);
+  const housed = facts.blocks.length > 0;
+  const carried = facts.carried;
+  const pocketed = facts.pocket;
   const invList = compact
     ? (() => {
-        const names = state.inventory.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`);
+        const names = carried.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`);
         const shown = names.slice(0, 12).join('; ');
         const more = names.length > 12 ? `; +${names.length - 12} more` : '';
         return shown ? `${shown}${more}` : 'None';
       })()
-    : state.inventory
+    : carried
     .map((i) => `${kitRefDisplay(i.name)} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
     .join('; ') || 'None';
+  const pocketLine = pocketed.length
+    ? `In the pocket (stored; not worn, not in a bag, not on the body): ${pocketed.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`).join('; ')}`
+    : '';
   const companions = (state.companions ?? [])
     .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
     .join('; ') || 'None';
   const statusList = c.conditions.length > 0 ? c.conditions.join(', ') : 'None';
   
-  const mainQuests = (state.quests ?? []).filter(q => q.type === 'main');
-  const sideQuests = (state.quests ?? []).filter(q => q.type === 'side' && q.status === 'active');
+  const mainQuests = facts.quests.filter(q => q.type === 'main');
+  const sideQuests = facts.quests.filter(q => q.type === 'side' && q.status === 'active');
   
   const mainQuestStr = mainQuests.length > 0 
     ? mainQuests.map(q => `[MAIN] ${q.name} (${q.status})`).join('; ')
@@ -55,8 +51,8 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
     ? sideQuests.map(q => `[SIDE] ${q.name}`).join('; ')
     : 'None active';
 
-  const cap = computeInventoryCapacity(state);
-  const equippedGear = state.inventory.filter(i => i.equipped).map(i => `${kitRefDisplay(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
+  const cap = computeInventoryCapacity({ ...state, inventory: carried, containers: facts.containers });
+  const equippedGear = carried.filter(i => i.equipped).map(i => `${kitRefDisplay(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
   const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
   const isTabletop = state.engineMode === 'dnd';
   const header = isTabletop
@@ -67,6 +63,22 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
     : `Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}`;
 
   // Health and mana figures live in the System window and STATUS, never in the writer's facts.
+  if (housed) {
+    return [
+      header,
+      `Gold: ${state.gold ?? 0}`,
+      `Location: ${playerFacingLocation(state)}`,
+      `Equipped Gear: ${equippedGear}`,
+      `Inventory: ${invList}${facts.containers.length ? ` (${cap.usedSlots}/${cap.totalSlots} slots used)` : ''}`,
+      ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
+      ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
+      ...(!compact && facts.containers.length ? [`Containers: ${containerInfo}`] : []),
+      `Status Effects: ${statusList}`,
+      ...facts.blocks,
+      '===================================',
+    ].join('\n');
+  }
+
   if (compact) {
     const lines = [
       header,
@@ -75,6 +87,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       `Location: ${playerFacingLocation(state)}`,
       `Equipped Gear: ${equippedGear}`,
       `Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)`,
+      ...(pocketLine ? [pocketLine] : []),
       ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
       ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
       `Status Effects: ${statusList}`,
@@ -91,7 +104,7 @@ ${progressLine}
 Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
-${gearAuthorityLine(state) ? gearAuthorityLine(state) + '\n' : ''}Active Companions: ${companions}
+${pocketLine ? pocketLine + '\n' : ''}${gearAuthorityLine(state) ? gearAuthorityLine(state) + '\n' : ''}Active Companions: ${companions}
 Containers: ${containerInfo}
 Materials: ${state.materials.map(m => `${m.name} x${m.quantity}`).join(', ') || 'None'}${cap.hasMagicalContainer ? ' (infinite stacking)' : ''}
 Status Effects: ${statusList}
@@ -113,7 +126,7 @@ function pickLoreCards(state: GameState, activeLoreCards: LoreCard[], currentNam
     }
   }
   if (currentName.trim()) wanted.add(currentName.trim().toLowerCase());
-  for (const q of state.quests ?? []) {
+  for (const q of writerFacts(state).quests) {
     if (q.status === 'active' && q.name?.trim()) wanted.add(q.name.trim().toLowerCase());
   }
   const fromBook = (state.lorebook ?? []).filter((card) =>
