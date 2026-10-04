@@ -42,6 +42,17 @@ import {
   type SystemPersonalityId,
 } from '@/game/gmVoiceProfile';
 import { freshOpenerSeed, previewOpeningHook } from '@/game/openingEstablishment';
+import {
+  clearCustomDraft,
+  deleteCustomDesign,
+  listCustomDesigns,
+  loadCustomDraft,
+  renameCustomDesign,
+  saveCustomDesign,
+  saveCustomDraft,
+  type CustomDesign,
+  type CustomDesignDraft,
+} from '@/game/customDesigns';
 
 interface Props {
   contentMode?: ContentMode;
@@ -138,8 +149,12 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [systemPersonality, setSystemPersonality] = useState<SystemPersonalityId>(DEFAULT_LITRPG_SYSTEM_PERSONALITY);
   const [showMoreNarrators, setShowMoreNarrators] = useState(false);
   const [customArchetype, setCustomArchetype] = useState<CampaignArchetype>(getDefaultArchetype('litrpg'));
-  const [simplePitch, setSimplePitch] = useState('');
-  const [expertDraft, setExpertDraft] = useState<ExpertCustomDraft>(emptyExpertDraft);
+  const [keptDraft] = useState(loadCustomDraft);
+  const [simplePitch, setSimplePitch] = useState(keptDraft?.simplePitch ?? '');
+  const [expertDraft, setExpertDraft] = useState<ExpertCustomDraft>(() => keptDraft?.expertDraft ?? emptyExpertDraft());
+  const [designId, setDesignId] = useState<string | undefined>(keptDraft?.id);
+  const [designs, setDesigns] = useState<CustomDesign[]>(listCustomDesigns);
+  const [designNote, setDesignNote] = useState<string | undefined>();
   const [askNameLater, setAskNameLater] = useState(false);
   const [readyHint, setReadyHint] = useState<string | undefined>();
   const personaReady = hasPersonaPrefs();
@@ -271,6 +286,58 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
     );
   };
 
+  const currentDesign = (): CustomDesignDraft => ({
+    ...(designId ? { id: designId } : {}),
+    mode: engineMode,
+    depth: customDepth,
+    archetype: customArchetype,
+    simplePitch,
+    expertDraft,
+  });
+
+  const hasCustomContent = () =>
+    simplePitch.trim() !== '' || JSON.stringify(expertDraft) !== JSON.stringify(emptyExpertDraft());
+
+  const closeModal = () => {
+    if (hasCustomContent()) saveCustomDraft(currentDesign());
+    else clearCustomDraft();
+    onClose();
+  };
+
+  const saveDesign = () => {
+    const name = (customDepth === 'expert' ? expertDraft.title : storyName).replace(/\s+—.*$/, '').trim() || 'Custom Campaign';
+    const saved = saveCustomDesign({ ...currentDesign(), name });
+    setDesignId(saved.id);
+    setDesigns(listCustomDesigns());
+    setDesignNote(`Saved “${saved.name}” to My custom games.`);
+  };
+
+  const openDesign = (design: CustomDesign) => {
+    selectEngineMode(design.mode);
+    setPath('custom');
+    setCustomArchetype(design.archetype ?? getDefaultArchetype(design.mode));
+    setCustomDepth(design.depth);
+    setSimplePitch(design.simplePitch ?? '');
+    setExpertDraft(design.expertDraft ?? emptyExpertDraft());
+    setDesignId(design.id);
+    setStoryName(formatCampaignStoryName(design.name));
+    setDesignNote(undefined);
+    setStep('system');
+  };
+
+  const renameDesign = (design: CustomDesign) => {
+    const name = window.prompt('Rename this custom game', design.name);
+    if (name == null || !renameCustomDesign(design.id, name)) return;
+    setDesigns(listCustomDesigns());
+  };
+
+  const removeDesign = (design: CustomDesign) => {
+    if (!window.confirm(`Delete “${design.name}”? Saves already started from it are kept.`)) return;
+    deleteCustomDesign(design.id);
+    if (designId === design.id) setDesignId(undefined);
+    setDesigns(listCustomDesigns());
+  };
+
   const beginCustom = (useUsual: boolean) => {
     if (customDepth === 'expert') {
       const check = expertDraftReady(expertDraft, charName, askNameLater);
@@ -296,7 +363,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       archetype: customArchetype,
       draft: draftForBuild,
       simplePitch: customDepth === 'simple' ? simplePitch : undefined,
+      designId,
     });
+    clearCustomDraft();
 
     const name = askNameLater && customDepth === 'expert'
       ? 'Survivor'
@@ -355,7 +424,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const wideModal = path === 'custom' && step === 'character' && customDepth === 'expert';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3" onClick={closeModal}>
       <div
         className={`sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex min-h-0 max-h-[min(92vh,100dvh)] w-full flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl ${
           wideModal ? 'max-w-2xl' : 'max-w-lg'
@@ -368,7 +437,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
             <Sparkles className="text-crimson-400" size={16} />
             <h2 className="sgm-info-heading font-serif text-sm text-slate-100">{STEP_LABELS[step]}</h2>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-200 transition-colors p-1">
+          <button onClick={closeModal} className="text-slate-400 hover:text-slate-200 transition-colors p-1">
             <X size={18} />
           </button>
         </div>
@@ -489,6 +558,49 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                   </p>
                 </div>
               </button>
+
+              <div className="space-y-1.5 pt-1">
+                <h3 className="font-semibold text-slate-200">My custom games</h3>
+                {designs.length === 0 ? (
+                  <p className="text-[11px] italic text-slate-500">No saved designs yet. Use Save design on the last step.</p>
+                ) : (
+                  <ul className="space-y-1.5">
+                    {designs.map((design) => (
+                      <li
+                        key={design.id}
+                        className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-2.5 py-1.5"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => openDesign(design)}
+                          className="min-w-0 flex-1 text-left"
+                        >
+                          <span className="block truncate text-slate-100">{design.name}</span>
+                          <span className="block text-[10px] text-slate-500">
+                            {ENGINE_MODE_CARDS.find((c) => c.value === design.mode)?.label ?? design.mode}
+                            {' · '}
+                            {design.depth === 'expert' ? 'Expert' : 'Simple'}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => renameDesign(design)}
+                          className="rounded px-1.5 py-0.5 text-[10px] text-slate-400 hover:text-slate-200"
+                        >
+                          Rename
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeDesign(design)}
+                          className="rounded px-1.5 py-0.5 text-[10px] text-rose-400 hover:text-rose-300"
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           )}
 
@@ -1111,6 +1223,12 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
             </div>
           )}
 
+          {designNote ? (
+            <p className="rounded-lg border border-sky-700/50 bg-sky-950/30 px-3 py-2 text-[11px] text-sky-200">
+              {designNote}
+            </p>
+          ) : null}
+
           {readyHint ? (
             <p className="rounded-lg border border-rose-700/50 bg-rose-950/30 px-3 py-2 text-[11px] text-rose-200">
               {readyHint}
@@ -1134,11 +1252,20 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={onClose}
+              onClick={closeModal}
               className="rounded-lg px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
             >
               Cancel
             </button>
+            {path === 'custom' && step === 'character' && (
+              <button
+                type="button"
+                onClick={saveDesign}
+                className="rounded-lg border border-sky-600/60 px-3 py-1.5 text-xs font-medium text-sky-300 hover:border-sky-400 hover:text-sky-200 transition-colors"
+              >
+                Save design
+              </button>
+            )}
             {step !== 'path' && step !== 'customDepth' && step !== 'persona' && (
               <button
                 type="button"

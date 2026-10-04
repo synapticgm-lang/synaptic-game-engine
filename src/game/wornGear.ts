@@ -76,9 +76,9 @@ function phraseInChunks(text: string, noun: RegExp): string | null {
   return titleGarment(m[0]);
 }
 
-const BAG_EXTRAS: Array<{ re: RegExp; name: string; description: string }> = [
-  { re: /\bbackpacks?\b/i, name: 'Backpack', description: 'The bag you had on you this morning.' },
-  { re: /\bbags?\b|\beveryday\s+stuff\b/i, name: 'Bag', description: 'A bag with ordinary pocket stuff from Earth.' },
+const BAG_EXTRAS: Array<{ re: RegExp; name: string; description: string; bodyBag?: boolean }> = [
+  { re: /\bbackpacks?\b/i, name: 'Backpack', description: 'The bag you had on you this morning.', bodyBag: true },
+  { re: /\bbags?\b|\beveryday\s+stuff\b/i, name: 'Bag', description: 'A bag with ordinary pocket stuff from Earth.', bodyBag: true },
   { re: /\b(?:mobile\s+)?phones?\b/i, name: 'Phone', description: 'The phone you already had. Reception is dying with the rest of the grid.' },
   { re: /\b(?:wireless\s+)?headphones?\b/i, name: 'Headphones', description: 'The pair you had on you this morning.' },
   { re: /\b(?:leatherman|multi[-\s]?tool)\b/i, name: 'Leatherman', description: 'A pocket multi-tool. Ordinary steel. Not System-issue.' },
@@ -145,7 +145,13 @@ function makeWornItem(piece: WornPiece, containerId?: string, id?: string): Item
  * Put described garments on the sheet as equipped items.
  * Zero stat modifiers — mundane clothes still occupy Chest / Legs / Feet.
  */
-export function materializeWornClothes(inventory: Item[], appearance: string, containerId?: string): Item[] {
+export function materializeWornClothes(
+  inventory: Item[],
+  appearance: string,
+  containerId?: string,
+  opts?: { pocketOnly?: boolean },
+): Item[] {
+  const pocketOnly = opts?.pocketOnly === true;
   const look = appearance.replace(/\s+/g, ' ').trim();
   if (
     !look
@@ -159,7 +165,7 @@ export function materializeWornClothes(inventory: Item[], appearance: string, co
   const pieces = parseWornPieces(look);
   if (!pieces.length && !BAG_EXTRAS.some((e) => e.re.test(look))) return inventory;
 
-  const bag = containerId ?? inventory.find((i) => i.containerId)?.containerId;
+  const bag = pocketOnly ? undefined : containerId ?? inventory.find((i) => i.containerId)?.containerId;
   const placeholders = inventory.filter(isReplaceableOutfit);
   const kept = inventory.filter((i) => !isReplaceableOutfit(i));
 
@@ -173,13 +179,14 @@ export function materializeWornClothes(inventory: Item[], appearance: string, co
     if (existingReal) continue;
     const id = reusedId;
     reusedId = undefined;
-    const worn = makeWornItem(piece, bag ?? placeholders[0]?.containerId, id);
+    const worn = makeWornItem(piece, pocketOnly ? undefined : bag ?? placeholders[0]?.containerId, id);
     next.push(worn);
   }
 
   const have = new Set(next.map((i) => i.name.toLowerCase()));
   for (const extra of BAG_EXTRAS) {
     if (!extra.re.test(look) || have.has(extra.name.toLowerCase())) continue;
+    if (pocketOnly && extra.bodyBag) continue;
     next.push({
       id: `start-${extra.name.toLowerCase()}`,
       name: extra.name,
@@ -188,7 +195,9 @@ export function materializeWornClothes(inventory: Item[], appearance: string, co
       itemType: 'accessory',
       itemLevel: 1,
       equipped: false,
-      containerId: bag ?? placeholders[0]?.containerId,
+      ...(pocketOnly
+        ? { storedInPocket: true }
+        : { containerId: bag ?? placeholders[0]?.containerId }),
       provenance: 'On you this morning',
       description: extra.description,
     });

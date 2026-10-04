@@ -647,7 +647,7 @@ export function buildNewGameState(opts: {
   const engineMode = opts.engineMode ?? bible.engineMode;
   const voices = resolvePersonalities(engineMode, opts.personality);
   const storyName = formatCampaignStoryName(bible.title);
-  const base = createInitialState(storyName, engineMode, bible.archetype);
+  const base = createInitialState(storyName, engineMode, bible.archetype, String(opts.seed));
   let systemHousing: GameState['systemHousing'] = undefined;
   if (engineMode === 'litrpg') {
     const rolled = rollSystemHousing(String(opts.seed));

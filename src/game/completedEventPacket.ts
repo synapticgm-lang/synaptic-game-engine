@@ -31,6 +31,7 @@ import {
   formatSystemBlock,
   housingFromSystemBlock,
   systemHousingWriterClause,
+  writerFacts,
   type SystemHousingId,
 } from './systemHousing';
 import { isNeverCastTitle } from './neverCast';
@@ -1057,7 +1058,7 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   // 28g — last fallback: never a line used in the last 10 GM turns. Rotate the stay line, the exits line
   // and the next quest step (engine facts); if all were used, the least recently used one.
   const stayLine = `You stayed ${stayedPreposition(f.place)} ${f.place} a moment longer. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))} The next move was yours.`;
-  const lead = (state.quests ?? []).find(
+  const lead = writerFacts(state).quests.find(
     (q) => q.revealed && q.status === 'active' && (q.objectives ?? []).some((o) => !o.completed)
   );
   const step = lead?.objectives?.find((o) => !o.completed)?.description.replace(/[.!?]+$/, '').trim();

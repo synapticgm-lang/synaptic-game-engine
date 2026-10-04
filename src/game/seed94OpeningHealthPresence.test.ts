@@ -99,7 +99,7 @@ describe('seed 94 opening card is whole sentences', () => {
     const card = ALL_CARDS.find((c) => /ruined bathhouse/.test(c.page1 ?? ''))!;
     const out = belfryOpening(card.page1!, 'world_status');
     expect(out).not.toMatch(/A blue panel hangs in the draft/);
-    expect(out).toMatch(/There is no panel, no device, and no window\./);
+    expect(out).toMatch(/Levels exist in the world\. People can tell a level/);
     expect(out).toMatch(/The cedar door bangs its hinges against the stone\./);
     expect(out).not.toMatch(/What name do you give it\?/);
   });

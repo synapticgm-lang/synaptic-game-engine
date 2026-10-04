@@ -15,6 +15,8 @@ export interface Item {
   slot?: string;
   /** Equipped gear still occupies a slot in this container. */
   containerId?: string;
+  /** Stored in the leftover pocket: not worn, not in a bag, not on the body. */
+  storedInPocket?: boolean;
   itemLevel?: number;
   modifiers?: Partial<Record<AttributeKey, number>>;
   containerCapacity?: number;

@@ -129,7 +129,7 @@ describe('system housing', () => {
     return state;
   }
 
-  it('a world_status packet says there is no panel, device or window, and shows no quest', () => {
+  it('a world_status packet says what people can tell, and shows no quest', () => {
     expect(clampSystemHousing(config('world_status', ['quest_list'])).parts.quest_list).toBe(false);
     for (const action of ['Ask the world', 'Look around']) {
       const text = formatWriterFacingEvent(buildCompletedEventPacket(worldStatus(), action));
@@ -166,6 +166,17 @@ describe('system housing', () => {
       expect(systemHousingWriterClause(housing), housing).not.toMatch(/blue panel|panel in the air|empty air/i);
       expect(systemHousingWriterSentence(housing), housing).not.toMatch(/blue panel|panel in the air|empty air/i);
     }
-    expect(formatSystemBlock(config('leftover_pocket', []))).toMatch(/no status panel and no window/);
+    const NAMES_UI = /panel|device|window|quest list|shop/i;
+    expect(WORLD_STATUS_WRITER_SENTENCE).not.toMatch(NAMES_UI);
+    expect(WORLD_STATUS_WRITER_SENTENCE).toMatch(/People can tell a level\. A normal group can tell name, health, and one power pool\./);
+    expect(systemHousingWriterSentence('world_status')).not.toMatch(NAMES_UI);
+    for (const housing of ['world_status', 'leftover_pocket'] as const) {
+      expect(formatSystemBlock(config(housing, [])), housing).not.toMatch(NAMES_UI);
+    }
+    expect(systemHousingWriterClause('leftover_pocket')).not.toMatch(NAMES_UI);
+    expect(systemHousingWriterSentence('leftover_pocket')).not.toMatch(NAMES_UI);
+    expect(housingFromSystemBlock(
+      'SYSTEM: A leftover pocket the player reaches into to store things. There is no status panel and no window. It holds only the pocket.'
+    )).toBe('leftover_pocket');
   });
 });

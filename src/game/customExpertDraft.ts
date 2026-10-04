@@ -355,11 +355,14 @@ export function buildPlayerCampaignBible(opts: {
   archetype: CampaignArchetype;
   draft: ExpertCustomDraft;
   simplePitch?: string;
+  /** Saved design id; each design gets its own bible id. */
+  designId?: string;
 }): CampaignBible {
   const blank = resolveCustomBlankBible(opts.engineMode);
   const d = opts.draft;
   const title = d.title.trim() || 'Custom Campaign';
-  const pitch = opts.simplePitch?.trim();
+  const rawPitch = opts.simplePitch?.trim();
+  const pitch = rawPitch && rawPitch !== d.premise.trim() ? rawPitch : '';
   const premiseParts = [
     d.premise.trim() || blank.premise,
     d.worldNotes.trim() ? `WORLD NOTES: ${d.worldNotes.trim()}` : '',
@@ -420,7 +423,7 @@ export function buildPlayerCampaignBible(opts: {
 
   return {
     ...blank,
-    id: `player-custom-${opts.engineMode}`,
+    id: opts.designId ? `player-custom-${opts.engineMode}-${opts.designId}` : `player-custom-${opts.engineMode}`,
     title,
     archetype: opts.archetype,
     engineMode: opts.engineMode,

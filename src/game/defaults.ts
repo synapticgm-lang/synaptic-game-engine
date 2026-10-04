@@ -1,9 +1,9 @@
-import type { GameState, EngineMode, Settings } from './types';
+import type { Container, GameState, EngineMode, Item, Settings } from './types';
 import { getDefaultArchetype, type CampaignArchetype } from './archetypes';
 import { formatCampaignStoryName } from '@/data/campaigns';
 import { emptyWorldLedger } from './worldSim';
 import { syncContainerOccupancy } from './inventory';
-import { rollSystemHousing } from './systemHousing';
+import { fitKitToPocket, pocketOnlyKit, rollSystemHousing } from './systemHousing';
 
 /** Bump this to retire every older local/cloud/Drive save after a playtest wipe. */
 export const CURRENT_SAVE_VERSION = 2;
@@ -12,42 +12,20 @@ export function isPlayableSave(state: GameState | null | undefined): state is Ga
   return !!state && typeof state.saveId === 'string' && (state.version ?? 0) >= CURRENT_SAVE_VERSION;
 }
 
-export function createInitialState(
-  storyName?: string,
-  engineMode: EngineMode = 'litrpg',
-  archetype?: CampaignArchetype,
-  openerSeed?: string,
-): GameState {
-  const now = Date.now();
-  const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
-  const seed = openerSeed?.trim() || Math.random().toString(36).slice(2, 10);
-  return syncContainerOccupancy({
-    version: CURRENT_SAVE_VERSION,
-    saveId: crypto.randomUUID(),
-    storyName: storyName || defaultStory,
-    engineMode,
-    campaignArchetype: archetype ?? getDefaultArchetype(engineMode),
-    lastUpdated: now,
-    ledgerRevision: 0,
-    character: {
-      name: 'Unknown Survivor',
-      level: 1,
-      xp: 0,
-      xpToNext: engineMode === 'dnd' ? 300 : 150, // 28a — 5e level 2 at 300 XP (SRD 5.1)
-      hp: 24,
-      maxHp: 24,
-      mp: 12,
-      maxMp: 12,
-      sp: 20,
-      maxSp: 20,
-      attributes: { STR: 14, DEX: 12, CON: 14, INT: 12, WIS: 10, CHA: 10 },
-      conditions: [],
-      bio: 'Someone already living in this world when the story begins.',
-      // Do not assume a human body or generic adventurer clothing. Character creation or a
-      // later <visual-update> supplies the canonical physical description; image prompts
-      // safely fall back to bio/name while it is empty.
-      appearance: '',
-    },
+/** Old leftover-pocket saves that still carry a body bag: same pocket rule the kit builders use. */
+export function fitKitToHousing(state: GameState): GameState {
+  if (!pocketOnlyKit(state.systemHousing)) return state;
+  const fitted = fitKitToPocket(state.inventory ?? [], state.containers ?? []);
+  const same =
+    fitted.containers.length === (state.containers ?? []).length
+    && fitted.inventory.length === (state.inventory ?? []).length
+    && fitted.inventory.every((i, n) => i === state.inventory[n]);
+  if (same) return state;
+  return syncContainerOccupancy({ ...state, ...fitted });
+}
+
+function starterKit(): { inventory: Item[]; containers: Container[] } {
+  return {
     inventory: [
       {
         id: 'starter-weapon',
@@ -88,6 +66,50 @@ export function createInitialState(
     containers: [
       { id: 'starter-satchel', name: 'Worn Satchel', capacity: 20, used: 3, modifier: 'none', itemIds: ['starter-weapon', 'starter-armor', 'starter-potion'], storageType: 'General', kind: 'physical', equipped: true, slot: 'Container' },
     ],
+  };
+}
+
+export function createInitialState(
+  storyName?: string,
+  engineMode: EngineMode = 'litrpg',
+  archetype?: CampaignArchetype,
+  openerSeed?: string,
+): GameState {
+  const now = Date.now();
+  const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
+  const seed = openerSeed?.trim() || Math.random().toString(36).slice(2, 10);
+  const systemHousing = engineMode === 'litrpg' ? rollSystemHousing(seed) : undefined;
+  const base = starterKit();
+  const kit = pocketOnlyKit(systemHousing) ? fitKitToPocket(base.inventory, base.containers) : base;
+  return syncContainerOccupancy({
+    version: CURRENT_SAVE_VERSION,
+    saveId: crypto.randomUUID(),
+    storyName: storyName || defaultStory,
+    engineMode,
+    campaignArchetype: archetype ?? getDefaultArchetype(engineMode),
+    lastUpdated: now,
+    ledgerRevision: 0,
+    character: {
+      name: 'Unknown Survivor',
+      level: 1,
+      xp: 0,
+      xpToNext: engineMode === 'dnd' ? 300 : 150, // 28a — 5e level 2 at 300 XP (SRD 5.1)
+      hp: 24,
+      maxHp: 24,
+      mp: 12,
+      maxMp: 12,
+      sp: 20,
+      maxSp: 20,
+      attributes: { STR: 14, DEX: 12, CON: 14, INT: 12, WIS: 10, CHA: 10 },
+      conditions: [],
+      bio: 'Someone already living in this world when the story begins.',
+      // Do not assume a human body or generic adventurer clothing. Character creation or a
+      // later <visual-update> supplies the canonical physical description; image prompts
+      // safely fall back to bio/name while it is empty.
+      appearance: '',
+    },
+    inventory: kit.inventory,
+    containers: kit.containers,
     materials: [],
     companions: [],
     quests: [],
@@ -106,7 +128,7 @@ export function createInitialState(
     rolls: [],
     turn: 0,
     seed,
-    ...(engineMode === 'litrpg' ? { systemHousing: rollSystemHousing(seed) } : {}),
+    ...(systemHousing ? { systemHousing } : {}),
     pendingImagePrompt: null,
     lorebook: [],
     timeline: [],

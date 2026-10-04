@@ -24,7 +24,7 @@ import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 import { shortPlaceName } from './placeNames';
-import { systemStatusChip } from './systemHousing';
+import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -967,6 +967,7 @@ const SEALED_BAG: Item = {
 
 /** Grant a sealed Earth bag (undeclared contents) when the campaign would have asked a kit cover. */
 export function ensureSealedOpeningBag(state: GameState, prompts?: OpeningPrompt[]): GameState {
+  if (pocketOnlyKit(state.systemHousing)) return state;
   const hadKitPrompt =
     (prompts ?? state.openingEstablishment?.pending ?? []).some((p) => p.kind === 'kit')
     || (resolveActiveCampaignBible(state)?.openingPrompts ?? []).some((p) => p.kind === 'kit')
@@ -2723,7 +2724,7 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
     return {
       ...state,
       character: { ...state.character, appearance: look },
-      inventory: materializeWornClothes(state.inventory, look),
+      inventory: materializeWornClothes(state.inventory, look, undefined, { pocketOnly: pocketOnlyKit(state.systemHousing) }),
     };
   }
   if (prompt.kind === 'species' || prompt.kind === 'identity') {

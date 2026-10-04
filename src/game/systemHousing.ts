@@ -3,6 +3,8 @@
  * Code-owned. Parts a housing forbids are never on; the writer and the window only see parts that are on.
  */
 
+import type { Character, Container, Item, Quest } from './types';
+
 export type SystemHousingId = 'private_window' | 'worn_device' | 'world_status' | 'leftover_pocket';
 
 export type SystemPartId =
@@ -79,15 +81,20 @@ export const SYSTEM_HOUSINGS: Record<SystemHousingId, HousingSpec> = {
   leftover_pocket: {
     alwaysOn: ['pocket'],
     optional: [],
-    name: 'A leftover pocket the player reaches into to store things. There is no status panel and no window.',
+    name: 'A leftover pocket the player reaches into to store things.',
     visibility: 'People nearby usually cannot see the opening.',
     rule: LEFTOVER_THIEF_RULE,
   },
 };
 
-/** What world_status is, for the writer: nothing shows it, people simply know. */
+/** Names older saves wrote into their SYSTEM paragraph. */
+const LEGACY_HOUSING_NAMES: Partial<Record<SystemHousingId, string[]>> = {
+  leftover_pocket: ['A leftover pocket the player reaches into to store things. There is no status panel and no window.'],
+};
+
+/** What world_status is, for the writer: people simply know. */
 export const WORLD_STATUS_WRITER_SENTENCE =
-  'There is no panel, no device, and no window. People can tell a level. A normal group can tell name, health, and one power pool. No quest list shows, and no search result shows on a panel.';
+  'People can tell a level. A normal group can tell name, health, and one power pool.';
 
 const WORLD_STATUS_BOUND = 'The full sheet is only for someone the player has bound.';
 
@@ -132,6 +139,111 @@ export function rollSystemHousing(seed: string): SystemHousingConfig {
 export function isPartOn(config: SystemHousingConfig | null | undefined, part: SystemPartId): boolean {
   if (!config || !isSystemHousingId(config.housing)) return false;
   return clampSystemHousing(config).parts[part];
+}
+
+/** A housing with no quest list: the writer gets no quest names or steps. A save with no housing keeps them. */
+export function questListHidden(config: SystemHousingConfig | null | undefined): boolean {
+  return !!config && isSystemHousingId(config.housing) && !isPartOn(config, 'quest_list');
+}
+
+/** A housing whose only storage is the pocket: no bag on the body, everything not worn is stored. */
+export function pocketOnlyKit(config: SystemHousingConfig | null | undefined): boolean {
+  return config?.housing === 'leftover_pocket';
+}
+
+const BODY_BAG_ITEM = /^(?:bag|backpack|satchel|rucksack|knapsack|pack)$/i;
+
+/** Pocket-only kit: body bags go, worn gear stays worn, everything else is stored in the pocket. */
+export function fitKitToPocket(inventory: Item[], containers: Container[]): { inventory: Item[]; containers: Container[] } {
+  const kept = containers.filter((c) => c.kind === 'magical');
+  const keptIds = new Set(kept.map((c) => c.id));
+  const items = inventory
+    .filter((i) => !BODY_BAG_ITEM.test(i.name.trim()))
+    .map((i): Item => {
+      if (i.containerId && keptIds.has(i.containerId)) return i;
+      if (i.equipped) return i.containerId ? { ...i, containerId: undefined } : i;
+      return { ...i, containerId: undefined, storedInPocket: true };
+    });
+  return { inventory: items, containers: kept.map((c) => ({ ...c, itemIds: c.itemIds.filter((id) => items.some((i) => i.id === id)) })) };
+}
+
+/** A new item under the pocket-only kit is stored, not worn. */
+export function storeInPocket(item: Item): Item {
+  return { ...item, equipped: false, containerId: undefined, storedInPocket: true };
+}
+
+export interface WriterFacts {
+  /** Revealed quests the writer may name. Empty when the housing has no quest list. */
+  quests: Quest[];
+  /** Worn and carried items (never pocketed ones when the housing has a pocket). */
+  carried: Item[];
+  /** Items stored in the pocket. Empty when the housing has no pocket. */
+  pocket: Item[];
+  containers: Container[];
+  /** One block per part the frozen housing allows. Empty for a save with no housing. */
+  blocks: string[];
+}
+
+interface WriterFactsSource {
+  systemHousing?: SystemHousingConfig | null;
+  quests?: Quest[];
+  inventory?: Item[];
+  containers?: Container[];
+  character?: Pick<Character, 'level' | 'xp' | 'xpToNext'>;
+  engineMode?: string;
+}
+
+function partBlock(housing: SystemHousingId, part: SystemPartId, facts: Omit<WriterFacts, 'blocks'>, src: WriterFactsSource, nameOf: (name: string) => string): string {
+  const c = src.character;
+  switch (part) {
+    case 'level':
+      return `Level: ${c?.level ?? 1}`;
+    case 'experience':
+      return `XP: ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`;
+    case 'quest_list': {
+      const main = facts.quests.filter((q) => q.type === 'main').map((q) => `[MAIN] ${q.name} (${q.status})`);
+      const side = facts.quests.filter((q) => q.type === 'side' && q.status === 'active').map((q) => `[SIDE] ${q.name}`);
+      return `Quest list: ${[...main, ...side].join('; ') || 'none active'}`;
+    }
+    case 'pocket':
+      return facts.pocket.length
+        ? `In the pocket (stored; not worn, not in a bag, not on the body): ${facts.pocket.map((i) => `${nameOf(i.name)} x${i.quantity}`).join('; ')}`
+        : 'In the pocket: nothing stored yet.';
+    default:
+      return `System part: ${partLabel(housing, part)}.`;
+  }
+}
+
+/**
+ * The only author of the writer's quest, item, container and system-part facts.
+ * Housed saves read the frozen allow list; a part that is off gets no block. Saves with no housing
+ * (tabletop, story, old LitRPG) keep every quest and item, and no blocks. Only a LitRPG save reads its housing.
+ */
+export function writerFacts(src: WriterFactsSource, nameOf: (name: string) => string = (n) => n): WriterFacts {
+  const inventory = src.inventory ?? [];
+  const containers = src.containers ?? [];
+  const config = src.engineMode && src.engineMode !== 'litrpg' ? null : src.systemHousing;
+  if (!config || !isSystemHousingId(config.housing)) {
+    return {
+      quests: src.quests ?? [],
+      carried: inventory.filter((i) => !i.storedInPocket),
+      pocket: inventory.filter((i) => i.storedInPocket),
+      containers,
+      blocks: [],
+    };
+  }
+  const clamped = clampSystemHousing(config);
+  const hasPocket = clamped.parts.pocket;
+  const facts = {
+    quests: clamped.parts.quest_list ? src.quests ?? [] : [],
+    carried: hasPocket ? inventory.filter((i) => !i.storedInPocket) : inventory,
+    pocket: hasPocket ? inventory.filter((i) => i.storedInPocket) : [],
+    containers,
+  };
+  const blocks = SYSTEM_PART_IDS
+    .filter((p) => clamped.parts[p])
+    .map((p) => partBlock(clamped.housing, p, facts, src, nameOf));
+  return { ...facts, blocks };
 }
 
 function partLabel(housing: SystemHousingId, part: SystemPartId): string {
@@ -185,7 +297,9 @@ export function formatSystemBlock(config: SystemHousingConfig): string {
 export function housingFromSystemBlock(block: string | null | undefined): SystemHousingId | null {
   const t = block ?? '';
   if (!t) return null;
-  return HOUSING_IDS.find((id) => t.includes(SYSTEM_HOUSINGS[id].name)) ?? null;
+  return HOUSING_IDS.find((id) =>
+    [SYSTEM_HOUSINGS[id].name, ...(LEGACY_HOUSING_NAMES[id] ?? [])].some((name) => t.includes(name))
+  ) ?? null;
 }
 
 /** Status chip. Unknown housing keeps the old panel chip. */
@@ -209,7 +323,7 @@ export function systemHousingWriterClause(housing: SystemHousingId | null | unde
     case 'world_status':
       return WORLD_STATUS_WRITER_SENTENCE;
     case 'leftover_pocket':
-      return 'a pocket the player reaches into to store things. There is no status panel and no window.';
+      return 'a pocket the player reaches into to store things.';
     default:
       return 'not a thing in the scene. Nobody holds, opens, points at or looks at it.';
   }
@@ -225,7 +339,7 @@ export function systemHousingWriterSentence(housing: SystemHousingId): string {
     case 'world_status':
       return `Levels exist in the world. ${WORLD_STATUS_WRITER_SENTENCE}`;
     case 'leftover_pocket':
-      return 'The system is only a leftover pocket the player reaches into to store things. There is no status panel and no window.';
+      return 'The system is only a leftover pocket the player reaches into to store things.';
   }
 }
 
@@ -237,9 +351,9 @@ export function belfryHousingLine(housing: SystemHousingId | null | undefined): 
     case 'private_window':
       return 'A private window lives only in the mind, and it is not a worn object.';
     case 'world_status':
-      return 'Levels exist in the world. There is no panel, no device, and no window. People can tell a level, and a normal group can tell name, health, and one power pool.';
+      return 'Levels exist in the world. People can tell a level, and a normal group can tell name, health, and one power pool.';
     case 'leftover_pocket':
-      return 'A leftover pocket holds what you put into it. There is no status panel and no window.';
+      return 'A leftover pocket holds what you put into it.';
     default:
       return null;
   }

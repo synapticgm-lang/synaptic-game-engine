@@ -12,7 +12,7 @@ import { hallTalkTopics, type HallTalkTopic } from './openingEstablishment';
 import { placeScale } from './placeAuthority';
 import { exitPlaceNames } from './placeNames';
 import { playerFacingLocation } from './locationName';
-import { systemHousingWriterSentence } from './systemHousing';
+import { systemHousingWriterSentence, writerFacts } from './systemHousing';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -196,7 +196,7 @@ function factLines(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
       facts.push({ turn: m.stance.turn, text: `${m.npcName} ${m.stance.now}: ${m.stance.cause}` });
     }
   }
-  for (const q of state.quests ?? []) {
+  for (const q of writerFacts(state).quests) {
     if (typeof q.completedTurn === 'number') facts.push({ turn: q.completedTurn, text: `quest ${q.status}: ${q.name}` });
     else if (q.revealed && typeof q.revealedTurn === 'number') facts.push({ turn: q.revealedTurn, text: `quest found: ${q.name}` });
   }
@@ -253,9 +253,9 @@ function askedLine(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
 
 function openLines(state: GameState): string[] {
   const out: string[] = [];
-  const quest =
-    (state.quests ?? []).find((q) => q.status === 'active' && q.revealed && q.type === 'main')
-    ?? (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
+  const quests = writerFacts(state).quests;
+  const quest = quests.find((q) => q.status === 'active' && q.revealed && q.type === 'main')
+    ?? quests.find((q) => q.status === 'active' && q.revealed);
   if (quest) {
     const step = (quest.objectives ?? []).find((o) => !o.completed && !o.optional)?.description;
     out.push(`quest ${quest.name}${step ? ` — step: ${clip(norm(step), 80)}` : ''}`);

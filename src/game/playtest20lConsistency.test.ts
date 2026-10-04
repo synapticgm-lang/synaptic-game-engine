@@ -18,6 +18,19 @@ import { dedupeQuestStatusEcho } from './systemLog';
 import { scrubPrematureSecrets } from './proseWarden';
 import { applyErrorRepairs } from './errorRepairWarden';
 import { isGenericQuestProvenance, enrichQuestJournalFields } from './questJournalEnrich';
+import { clampSystemHousing, SYSTEM_PART_IDS } from './systemHousing';
+
+/** Seed that rolls private_window: a body bag stays on the kit (the leftover pocket would drop it). */
+const PRIVATE_WINDOW_SEED = 'pin-pw-4';
+
+function pactState() {
+  const state = createInitialState('The Summoned Pact', 'litrpg', undefined, PRIVATE_WINDOW_SEED);
+  state.systemHousing = clampSystemHousing({
+    housing: 'private_window',
+    parts: { ...Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])), quest_list: true } as never,
+  });
+  return state;
+}
 
 const ALONE_RUIN =
   'a damaged building off the Valespire roads — Second Chamber of a half-collapsed ruin';
@@ -43,7 +56,7 @@ What do you do?`;
   });
 
   it('alone empty scene rejects crowd/voices/speaker pads', () => {
-    const state = createInitialState('The Summoned Pact', 'litrpg');
+    const state = pactState();
     state.openingEstablishment = {
       pending: [],
       answers: { name: 'Jax' },
@@ -91,7 +104,7 @@ What do you do?`;
   });
 
   it('continue stitch grounds the room without meta lock / anti-sword', () => {
-    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const base = pactState();
     const state = {
       ...base,
       seed: 'cont-alone-20l',
@@ -138,7 +151,7 @@ What do you do?`;
   it('Summoned Pact New Game has no Circle Blessing until grant', () => {
     expect(summonedPact.starterItems.some((i) => /circle blessing/i.test(i.name))).toBe(false);
 
-    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const base = pactState();
     const seeded = ensureSealedOpeningBag(
       seedStateFromCampaignBible(base, summonedPact),
       summonedPact.openingPrompts
@@ -151,7 +164,7 @@ What do you do?`;
   });
 
   it('strips orphan Circle Blessing on opening-incomplete saves; keeps mid-campaign', () => {
-    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const base = pactState();
     const blessing = {
       id: 'sp-blessing',
       name: 'Circle Blessing [???]',
@@ -195,7 +208,7 @@ What do you do?`;
   });
 
   it('Circle Blessing mid-campaign is unequipped inventory, not Shoulders', () => {
-    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const base = pactState();
     const bad = {
       ...base,
       campaignBibleId: 'summoned-pact',

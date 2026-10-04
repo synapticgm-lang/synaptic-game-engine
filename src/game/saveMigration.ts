@@ -10,6 +10,7 @@ import { isMetNpc, resolveNpcRecord, splitCompoundCastEntry } from './npcRecords
 import { seedBibleNpcRoster } from './npcMemory';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { resolveOpeningHookPick } from './openingEstablishment';
+import { fitKitToHousing } from './defaults';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -195,6 +196,15 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
       state: opening.state,
       dirty: true,
       notes: [...result.notes, 'opening play gate normalized'],
+    };
+  }
+  const pocketKit = fitKitToHousing(result.state);
+  if (pocketKit !== result.state) {
+    result = {
+      ...result,
+      state: pocketKit,
+      dirty: true,
+      notes: [...result.notes, 'leftover pocket: body bag removed, satchel items stored in the pocket'],
     };
   }
   const errors = applyErrorRepairs(result.state);

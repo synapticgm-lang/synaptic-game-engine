@@ -10,6 +10,7 @@ import { archetypePrefersBlankCanvas, blankBibleIdForMode } from './customBlank'
 import { discoverLocation } from './locationDiscovery';
 import { seedBibleNpcRoster } from './npcMemory';
 import { sanitizeBibleForPlay } from './storyDataBoundary';
+import { fitKitToPocket, pocketOnlyKit } from './systemHousing';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -221,12 +222,24 @@ function buildCampaignLoadout(
   bible: CampaignBible,
   playerLevel: number
 ): { inventory: Item[]; containers: Container[] } {
+  const kit = buildBibleKit(state, bible, playerLevel);
+  return pocketOnlyKit(state.systemHousing) ? fitKitToPocket(kit.inventory, kit.containers) : kit;
+}
+
+function buildBibleKit(
+  state: GameState,
+  bible: CampaignBible,
+  playerLevel: number
+): { inventory: Item[]; containers: Container[] } {
+  const pocketOnly = pocketOnlyKit(state.systemHousing);
   const replace = bible.replaceDefaultLoadout === true || isFictionEngine(bible.engineMode);
   const containerSpec = bible.startingContainer;
   const campaignReady = bible.starterItems.filter((si) => (si.itemLevel ?? 1) <= playerLevel);
 
   if (replace) {
-    const pack: Container | undefined = containerSpec
+    const pack: Container | undefined = pocketOnly
+      ? undefined
+      : containerSpec
       ? {
           id: containerSpec.id,
           name: containerSpec.name,
