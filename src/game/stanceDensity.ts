@@ -58,6 +58,15 @@ export function classifyStance(choice: string): StanceBucket {
   return 'other';
 }
 
+const DECLINE_RE =
+  /\b(refuse|decline|turn\s+\w+\s+down|keep (?:your|my) (?:own )?counsel|walk out on|stand down|back down)\b/i;
+
+/** A walk-away or a refusal: the player turned the moment down. Threats and insults are not declines. */
+export function isDeclineStance(choice: string): boolean {
+  const stance = classifyStance(choice);
+  return stance === 'walkaway' || (stance === 'hard' && DECLINE_RE.test(stripDecorators(choice)));
+}
+
 export function classifyPath(choice: string): PathBucket {
   const cleaned = stripDecorators(choice);
   if (!cleaned) return 'other';

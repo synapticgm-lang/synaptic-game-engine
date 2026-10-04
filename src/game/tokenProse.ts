@@ -20,6 +20,7 @@ import { acceptObeyedStoryBody } from './ledgerNounObey';
 import { pcPov } from './narrativePov';
 import { splitProseSentences } from './proseSentences';
 import { presentNpcRecords } from './npcRecords';
+import { weaponsNotInHand } from './infoSheet';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -517,14 +518,18 @@ function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: stri
   return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames).ok);
 }
 
-/** 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry. */
+/**
+ * 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry.
+ * A weapon still in the pack is not in hand, so the writer may not name it (same as the REF ENUM).
+ */
 export function knownProperNames(state: GameState): string[] {
+  const unheld = new Set(weaponsNotInHand(state));
   const names = [
     state.currentLocation,
     state.character?.name,
     ...(state.places ?? []).flatMap((p) => [p.name, ...(p.exits ?? [])]),
     ...presentNpcRecords(state).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
-    ...(state.inventory ?? []).map((item) => item.name),
+    ...(state.inventory ?? []).map((item) => item.name).filter((n) => !unheld.has(n)),
   ];
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1).map((n) => n.trim()))];
 }

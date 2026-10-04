@@ -446,7 +446,14 @@ export type NounAllowlistOpts = {
  * Hall talk strips novel present[] so a leftover invent cannot re-license itself.
  */
 function castMentionNames(state: GameState): string[] {
-  if (state.openingEstablishment?.castNpcIds?.length) return openingCastRecords(state).map((r) => r.npcName);
+  if (state.openingEstablishment?.castNpcIds?.length) {
+    // Card cast is a ref only at the card's place or while present; on the road they are not in the scene.
+    const atCard = atOpeningPlace(state);
+    const here = new Set(presentNpcRecords(state).map((r) => r.npcName));
+    return openingCastRecords(state)
+      .filter((r) => atCard || here.has(r.npcName))
+      .map((r) => r.npcName);
+  }
   // 29y — a card role label with no NPC record ("the innkeep") belongs to the opening place only;
   // offered elsewhere it stood in for a priest, a weapon or a trap.
   return atOpeningPlace(state) ? openingCastNames(state) : [];

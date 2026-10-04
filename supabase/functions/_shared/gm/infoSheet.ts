@@ -172,10 +172,14 @@ export function weaponInHand(state: GameState): string {
  * Writer fact: loot and pack weapons are not the blow.
  * Empty when nothing is carried out of hand.
  */
+export function weaponsNotInHand(state: GameState): string[] {
+  return (state.inventory ?? []).filter((i) => !i.equipped && isWeaponItem(i)).map((i) => i.name);
+}
+
 export function gearAuthorityLine(state: GameState): string {
-  const notHeld = (state.inventory ?? []).filter((i) => !i.equipped && isWeaponItem(i));
+  const notHeld = weaponsNotInHand(state);
   if (!notHeld.length) return '';
-  const names = notHeld.map((i) => i.name).join(', ');
+  const names = notHeld.join(', ');
   return `In hand: ${weaponInHand(state)}. Not in hand (do not strike, draw, or land a blow with these): ${names}.`;
 }
 

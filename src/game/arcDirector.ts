@@ -60,6 +60,7 @@ import { resolveEngineFight } from './engineFight';
 import { parkedThreatHere, syncPlaceThreat } from './placeThreats';
 import { applyRestHeal } from './recoveryRules';
 import { isLookAroundAction } from './sandboxXp';
+import { isDeclineStance } from './stanceDensity';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import {
   isHallTalkPlayerLine,
@@ -246,8 +247,13 @@ function playerIsTravelingAway(input: string | undefined): boolean {
   );
 }
 
+/** Travel away, walk away or refuse: no new fight starts on a turn the player turned down. */
+function playerTurnsMomentDown(input: string | undefined): boolean {
+  return playerIsTravelingAway(input) || isDeclineStance(input ?? '');
+}
+
 export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
-  if (playerIsTravelingAway(playerInput)) return false;
+  if (playerTurnsMomentDown(playerInput)) return false;
   if (!state.openingEstablishment?.complete) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
   if (parkedThreatHere(state)) return false;
@@ -476,7 +482,7 @@ function shouldCommitBeat(
       )
     );
   }
-  if (playerIsTravelingAway(playerInput) && (contract.kind === 'encounter' || contract.spawnEncounter)) {
+  if (playerTurnsMomentDown(playerInput) && (contract.kind === 'encounter' || contract.spawnEncounter)) {
     return false;
   }
   if (contract.kind === 'encounter') {
