@@ -7,7 +7,34 @@ import type { CampaignBible } from '@/data/campaigns/types';
 import { seedStateFromCampaignBible } from './campaignSeed';
 import { createInitialState } from './defaults';
 import { resolveOpeningHookPick } from './openingEstablishment';
+import {
+  clampSystemHousing,
+  rollSystemHousing,
+  SYSTEM_PART_IDS,
+  type SystemHousingId,
+  type SystemPartId,
+} from './systemHousing';
 import type { GameState, NpcMemory } from './types';
+
+/**
+ * A LitRPG save whose housing is pinned: the seed rolls `housing`, so the starter kit is built for it,
+ * then systemHousing is set to that housing with exactly `parts` on (plus the housing's always-on parts).
+ */
+export function housedLitrpgState(
+  housing: SystemHousingId,
+  parts: Partial<Record<SystemPartId, boolean>> = {},
+  storyName?: string
+): GameState {
+  let seed = '';
+  for (let i = 0; i < 200 && !seed; i++) {
+    const s = `pin-${housing}-${i}`;
+    if (rollSystemHousing(s).housing === housing) seed = s;
+  }
+  if (!seed) throw new Error(`no seed rolls ${housing}`);
+  const state = createInitialState(storyName, 'litrpg', undefined, seed);
+  const off = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as Record<SystemPartId, boolean>;
+  return { ...state, systemHousing: clampSystemHousing({ housing, parts: { ...off, ...parts } }) };
+}
 
 /** First seed whose New Game card pick names `npcId`, the same picker useGame / fateAutoplay use. */
 export function seedPickingCast(bible: CampaignBible, npcId: string) {

@@ -45,7 +45,7 @@ import {
   normalizeStoryCorpus,
 } from './choicePipeline';
 import { postFilterGmOutput } from './contentPostFilter';
-import { createDefaultSettings, createInitialState } from './defaults';
+import { createDefaultSettings, createInitialState, fitKitToHousing } from './defaults';
 
 /** AI agent goal modes for guided autoplay. */
 export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
@@ -663,7 +663,7 @@ export function buildNewGameState(opts: {
     saveId: `fate-${opts.seed}-${bible.id}-${Date.now()}`,
     systemHousing,
   };
-  const seeded = seedStateFromCampaignBible(seededBase, bible);
+  const seeded = fitKitToHousing(seedStateFromCampaignBible(seededBase, bible));
   const namedSeeded = { ...seeded, storyName };
   const mergedCharacter = ensureStarterLookCharacter(
     applyCampaignCharacter(

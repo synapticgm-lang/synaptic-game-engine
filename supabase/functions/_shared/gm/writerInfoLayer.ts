@@ -32,24 +32,10 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
     : carried
     .map((i) => `${kitRefDisplay(i.name)} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
     .join('; ') || 'None';
-  const pocketLine = pocketed.length
-    ? `In the pocket (stored; not worn, not in a bag, not on the body): ${pocketed.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`).join('; ')}`
-    : '';
   const companions = (state.companions ?? [])
     .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
     .join('; ') || 'None';
   const statusList = c.conditions.length > 0 ? c.conditions.join(', ') : 'None';
-  
-  const mainQuests = facts.quests.filter(q => q.type === 'main');
-  const sideQuests = facts.quests.filter(q => q.type === 'side' && q.status === 'active');
-  
-  const mainQuestStr = mainQuests.length > 0 
-    ? mainQuests.map(q => `[MAIN] ${q.name} (${q.status})`).join('; ')
-    : 'None active';
-    
-  const sideQuestStr = sideQuests.length > 0
-    ? sideQuests.map(q => `[SIDE] ${q.name}`).join('; ')
-    : 'None active';
 
   const cap = computeInventoryCapacity({ ...state, inventory: carried, containers: facts.containers });
   const equippedGear = carried.filter(i => i.equipped).map(i => `${kitRefDisplay(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
@@ -78,6 +64,18 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       '===================================',
     ].join('\n');
   }
+
+  const pocketLine = pocketed.length
+    ? `In the pocket (stored; not worn, not in a bag, not on the body): ${pocketed.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`).join('; ')}`
+    : '';
+  const mainQuests = facts.quests.filter(q => q.type === 'main');
+  const sideQuests = facts.quests.filter(q => q.type === 'side' && q.status === 'active');
+  const mainQuestStr = mainQuests.length > 0
+    ? mainQuests.map(q => `[MAIN] ${q.name} (${q.status})`).join('; ')
+    : 'None active';
+  const sideQuestStr = sideQuests.length > 0
+    ? sideQuests.map(q => `[SIDE] ${q.name}`).join('; ')
+    : 'None active';
 
   if (compact) {
     const lines = [

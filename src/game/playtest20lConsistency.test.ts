@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { createInitialState } from './defaults';
 import {
   filterChoicesToTurnFacts,
   inventsPresenceOnEmptyScene,
@@ -18,18 +17,11 @@ import { dedupeQuestStatusEcho } from './systemLog';
 import { scrubPrematureSecrets } from './proseWarden';
 import { applyErrorRepairs } from './errorRepairWarden';
 import { isGenericQuestProvenance, enrichQuestJournalFields } from './questJournalEnrich';
-import { clampSystemHousing, SYSTEM_PART_IDS } from './systemHousing';
+import { housedLitrpgState } from './newGameTestState';
 
-/** Seed that rolls private_window: a body bag stays on the kit (the leftover pocket would drop it). */
-const PRIVATE_WINDOW_SEED = 'pin-pw-4';
-
+/** private_window keeps a body bag on the kit (the leftover pocket would drop it). */
 function pactState() {
-  const state = createInitialState('The Summoned Pact', 'litrpg', undefined, PRIVATE_WINDOW_SEED);
-  state.systemHousing = clampSystemHousing({
-    housing: 'private_window',
-    parts: { ...Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])), quest_list: true } as never,
-  });
-  return state;
+  return housedLitrpgState('private_window', { quest_list: true }, 'The Summoned Pact');
 }
 
 const ALONE_RUIN =

@@ -331,7 +331,13 @@ export function storyChip(state: GameState): string | null {
   const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
   if (!site && linked) return `Travel toward ${linked.name}`;
   const obj = quest.objectives?.find((o) => !o.completed && !o.optional);
-  return obj ? objectiveChip(obj.description) : null;
+  const chip = obj ? objectiveChip(obj.description) : null;
+  if (!chip) return null;
+  const said = chip.toLowerCase();
+  const played = (state.log ?? []).some(
+    (e) => e.role === 'player' && String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === said
+  );
+  return played ? null : chip;
 }
 
 const OBJECTIVE_TAIL =

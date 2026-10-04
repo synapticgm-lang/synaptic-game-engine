@@ -1,6 +1,8 @@
 /**
  * Sync GM prompt modules into supabase/functions/_shared/gm for the edge runtime.
  * Run after editing prompt sources: node scripts/sync-gm-edge-shared.mjs
+ *   node scripts/sync-gm-edge-shared.mjs situationPacket.ts writerInfoLayer.ts   (copy only those)
+ *   node scripts/sync-gm-edge-shared.mjs --check [files…]   (list edge copies that differ; exit 1 on drift)
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -133,10 +135,7 @@ function rewriteImports(source, file) {
   });
 }
 
-fs.mkdirSync(destDir, { recursive: true });
-
-for (const file of FILES) {
-  const srcPath = path.join(root, 'src', 'game', file);
+function edgeSource(file, srcPath) {
   const raw = fs.readFileSync(srcPath, 'utf8');
   let next = raw;
   if (file === 'systemPrompt.ts') {
@@ -160,36 +159,47 @@ for (const file of FILES) {
         "lastPlayer && /\\b(look around|examine the (?:area|room|surroundings)|wait)\\b/i.test(lastPlayer)"
       );
   }
-  fs.writeFileSync(path.join(destDir, file), rewriteImports(next, file), 'utf8');
-  console.log('synced', file);
+  return rewriteImports(next, file);
 }
 
-{
-  const srcPath = path.join(root, 'src', 'types', 'comicScript.ts');
-  const raw = fs.readFileSync(srcPath, 'utf8');
-  fs.writeFileSync(path.join(destDir, 'comicScript.ts'), rewriteImports(raw, 'comicScript.ts'), 'utf8');
-  console.log('synced comicScript.ts');
+/** Every edge copy: dest name → src path. */
+const ENTRIES = [
+  ...FILES.map((file) => ({ dest: file, src: path.join(root, 'src', 'game', file) })),
+  { dest: 'comicScript.ts', src: path.join(root, 'src', 'types', 'comicScript.ts') },
+  { dest: 'campaignBibleTypes.ts', src: path.join(root, 'src', 'data', 'campaigns', 'types.ts') },
+  { dest: 'filterLogic.ts', src: path.join(root, 'src', 'utils', 'filterLogic.ts') },
+  { dest: 'worldOutlines.ts', src: path.join(root, 'src', 'data', 'worldOutlines.ts') },
+];
+
+const args = process.argv.slice(2);
+const check = args.includes('--check');
+const named = args.filter((a) => a !== '--check').map((a) => path.basename(a));
+const unknown = named.filter((n) => !ENTRIES.some((e) => e.dest === n));
+if (unknown.length) {
+  console.error('Not on the edge list:', unknown.join(', '));
+  process.exit(2);
+}
+const picked = named.length ? ENTRIES.filter((e) => named.includes(e.dest)) : ENTRIES;
+
+if (check) {
+  const drift = picked.filter((e) => {
+    const destPath = path.join(destDir, e.dest);
+    if (!fs.existsSync(destPath)) return true;
+    return fs.readFileSync(destPath, 'utf8') !== edgeSource(e.dest, e.src);
+  });
+  for (const e of drift) console.log('differs', e.dest);
+  console.log(drift.length ? `${drift.length} edge cop${drift.length === 1 ? 'y differs' : 'ies differ'}` : 'edge copies match');
+  process.exit(drift.length ? 1 : 0);
 }
 
-{
-  const srcPath = path.join(root, 'src', 'data', 'campaigns', 'types.ts');
-  const raw = fs.readFileSync(srcPath, 'utf8');
-  fs.writeFileSync(path.join(destDir, 'campaignBibleTypes.ts'), rewriteImports(raw, 'campaignBibleTypes.ts'), 'utf8');
-  console.log('synced campaignBibleTypes.ts');
+fs.mkdirSync(destDir, { recursive: true });
+for (const e of picked) {
+  fs.writeFileSync(path.join(destDir, e.dest), edgeSource(e.dest, e.src), 'utf8');
+  console.log('synced', e.dest);
 }
-
-{
-  const srcPath = path.join(root, 'src', 'utils', 'filterLogic.ts');
-  const raw = fs.readFileSync(srcPath, 'utf8');
-  fs.writeFileSync(path.join(destDir, 'filterLogic.ts'), rewriteImports(raw, 'filterLogic.ts'), 'utf8');
-  console.log('synced filterLogic.ts');
-}
-
-{
-  const srcPath = path.join(root, 'src', 'data', 'worldOutlines.ts');
-  const raw = fs.readFileSync(srcPath, 'utf8');
-  fs.writeFileSync(path.join(destDir, 'worldOutlines.ts'), rewriteImports(raw, 'worldOutlines.ts'), 'utf8');
-  console.log('synced worldOutlines.ts');
+if (named.length) {
+  console.log('Done →', destDir);
+  process.exit(0);
 }
 
 fs.writeFileSync(

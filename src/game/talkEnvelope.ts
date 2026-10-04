@@ -127,18 +127,27 @@ export function buildTalkEnvelope(
   playerInput: string,
   packet: CompletedEventPacket
 ): string {
-  const who = addressedCastName(state, playerInput);
-  const fact = legalAddresseeFact(state, playerInput);
+  // A parley is spoken to the foe the engine resolved, not to whoever is first on the cast list.
+  const foe = packet.verb === 'parleyed' ? (packet.target ?? '').trim() : '';
+  const who = foe || addressedCastName(state, playerInput);
+  const met = !foe && !!who && hasMetBefore(state, who);
+  const fact = foe ? '' : legalAddresseeFact(state, playerInput);
+  const askedAgain = /\b(?:again|repeat|remind me|one more time)\b/i.test(playerInput ?? '');
+  const told = !!fact && !askedAgain && priorGmHay(state).includes(fact.slice(0, 40).toLowerCase());
+  const pc = packet.pc?.name?.trim() || 'the player character';
   const beats = packet.infoSheet ? [] : (packet.recentBeats ?? []).slice(-2).map((b) => `- ${clip(b, 220)}`);
   return [
     'TALK:',
     `PLAYER SAID: ${clip(playerInput, 240) || '(empty)'}`,
     `ADDRESSEE: ${who || 'no named speaker on the ledger'}`,
-    fact
-      ? `ALREADY SAID (reuse if they asked this; do not invent a different deal): ${fact}`
-      : 'ALREADY SAID: (none on the card — do not invent a want or name)',
+    ...(met ? [`MET: ${who} already met ${pc} and gave their name. They do not introduce themselves again.`] : []),
+    told
+      ? `ALREADY TOLD (${pc} has heard this; do not say it again — answer with what is new, or a short plain reply): ${fact}`
+      : fact
+        ? `ALREADY SAID (reuse if they asked this; do not invent a different deal): ${fact}`
+        : 'ALREADY SAID: (none on the card — do not invent a want or name)',
     ...(packet.infoSheet ? [] : ['LAST BEATS:', ...(beats.length ? beats : ['- (none)'])]),
-    'Answer PLAYER SAID. Only ADDRESSEE may speak. Stay inside YOU MAY ONLY MENTION below.',
+    `Answer PLAYER SAID. Only ADDRESSEE may speak. ${pc} says only the words in PLAYER SAID; if PLAYER SAID is an action, give ${pc} no spoken line. Stay inside YOU MAY ONLY MENTION below.`,
   ].join('\n');
 }
 
@@ -155,6 +164,10 @@ function priorGmBodies(state: GameState): Set<string> {
       .filter((e) => e.role === 'gm')
       .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase())
   );
+}
+
+function priorGmHay(state: GameState): string {
+  return [...priorGmBodies(state)].join(' ');
 }
 
 /** E talk: addressee header + existing packet. Other verbs keep the packet only. */

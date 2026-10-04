@@ -70,6 +70,7 @@ import { buildEntityCast } from './entityCast';
 import { injectLoiterDelta } from './loiterDeltaDirective';
 import { formatPovRailsForPrompt } from './povRails';
 import { formatWriterFacingPacket } from './beatContract';
+import { writerFacts } from './systemHousing';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -141,7 +142,7 @@ export function buildSituationPacket(state: GameState): SituationPacket {
   }
 
   // Revealed + active names only. Unrevealed quests stay out of the scene packet.
-  const activeQuests = (state.quests ?? [])
+  const activeQuests = writerFacts(state).quests
     .filter((q) => q.status === 'active' && q.revealed === true)
     .map((q) => `${q.type.toUpperCase()}: ${q.name}`);
   // Hidden / unrevealed quests are intentionally omitted from the packet (Pack 5).
@@ -251,7 +252,8 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
     ...(state.sceneFacts?.props ?? []),
     ...(state.locationSheet?.interactables ?? []).map((i) => i.name).filter(Boolean),
   ])).slice(0, 10);
-  const inventory = (state.inventory ?? []).map((i) => i.name).filter(Boolean);
+  const facts = writerFacts(state);
+  const inventory = facts.carried.map((i) => i.name).filter(Boolean);
   const openAsks = (state.campaignMemory?.consequences ?? [])
     .filter((t) => t.unresolved && t.text?.trim())
     .slice(0, 4)
@@ -291,9 +293,9 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
     `- Power Scaling: ${effectivePowerScaling(state)}`,
     `- Map: ${scale}${danger ? ` | ${danger}` : ''}`,
   ];
-  const mainQuest = (state.quests ?? []).find(
+  const mainQuest = facts.quests.find(
     (q) => (q.status === 'active' || q.status === 'available') && q.type === 'main'
-  ) ?? (state.quests ?? []).find((q) => q.status === 'active' || q.status === 'available');
+  ) ?? facts.quests.find((q) => q.status === 'active' || q.status === 'available');
   if (mainQuest?.name) {
     const nextObj =
       (mainQuest.objectives ?? []).find((o) => !o.completed)?.description

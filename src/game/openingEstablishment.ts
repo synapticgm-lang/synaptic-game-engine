@@ -2273,6 +2273,10 @@ function nameLockBeatSpokeWant(state: GameState): boolean {
 /** GM already spoke this hall topic after the player asked it — never page-1 overlap. */
 export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolean {
   if (topic === 'want' && nameLockBeatSpokeWant(state)) return true;
+  if (topic === 'who') {
+    const speaker = openingWhoSpeaker(state);
+    if (speaker && hasMetBefore(state, speaker)) return true;
+  }
   const gms = gmBodiesAfterFirstHallAsk(state, topic);
   if (!gms.length) return false;
   const has = (needle: string, min = 16) => {

@@ -56,8 +56,9 @@ function hereHubId(state: GameState): string | undefined {
   return undefined;
 }
 
-function seedLegal(state: GameState, seed: EncounterSeed): boolean {
+function seedLegal(state: GameState, seed: EncounterSeed, hubId?: string): boolean {
   if (seed.tier === 'crisis') return false;
+  if (seed.hubId && seed.hubId !== hubId) return false;
   if (isEncounterOnCooldown(state, seed.foeName)) return false;
   if (matchesLastKillName(seed.foeName, state.sceneFacts?.lastKill)) return false;
   return true;
@@ -79,13 +80,13 @@ function scoreSeed(state: GameState, seed: EncounterSeed, want: EncounterSeed['t
 export function selectCatalogEncounter(state: GameState): EncounterSeed | null {
   const mode: EngineMode = state.engineMode ?? 'litrpg';
   if (mode === 'pyoa') return null;
-  const pool = encountersForMode(mode).filter((s) => seedLegal(state, s));
-  const want = inferCatalogTier(state);
   const hubId = hereHubId(state);
+  const pool = encountersForMode(mode).filter((s) => seedLegal(state, s, hubId));
+  const want = inferCatalogTier(state);
   const ranked = [...pool].sort((a, b) => scoreSeed(state, b, want, hubId) - scoreSeed(state, a, want, hubId));
   const top = ranked.filter((s) => scoreSeed(state, s, want, hubId) === scoreSeed(state, ranked[0]!, want, hubId));
   if (!top.length) {
-    return encountersForMode(mode).find((s) => s.tier === 'trash') ?? null;
+    return encountersForMode(mode).find((s) => s.tier === 'trash' && !s.hubId) ?? null;
   }
   const clearCount = (state.stateTxLog ?? []).filter((t) => /Encounter cleared|Encounter:/i.test(t.summary)).length;
   return top[(clearCount + state.turn) % top.length] ?? top[0]!;
@@ -96,9 +97,10 @@ export function catalogDroughtNames(state: GameState): string[] {
   const mode = state.engineMode ?? 'litrpg';
   const bible = state.campaignBibleId ?? '';
   const fits = (n: string) => !bible || !isWrongBibleEncounter(n, bible);
+  const hubId = hereHubId(state);
   const names = catalogFoeNames(mode).filter((n) => {
     const seed = encountersForMode(mode).find((s) => s.foeName === n);
-    return seed && seed.tier !== 'crisis' && fits(n);
+    return seed && seed.tier !== 'crisis' && (!seed.hubId || seed.hubId === hubId) && fits(n);
   });
   return names.length ? names : catalogFoeNames(mode).filter(fits);
 }

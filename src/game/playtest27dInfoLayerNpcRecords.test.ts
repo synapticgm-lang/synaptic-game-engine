@@ -14,22 +14,14 @@ import { sealedCastNames } from './beatContract';
 import { namedPeopleForTest } from './stanceDensity';
 import { repairSaveSchema } from './saveMigration';
 import { summonedPact } from '@/data/campaigns/summonedPact';
-import { clampSystemHousing, SYSTEM_PART_IDS } from './systemHousing';
+import { housedLitrpgState } from './newGameTestState';
 import type { ActiveDungeonState } from './mapEngine';
 import type { GameState, NpcMemory } from './types';
 
-/** Seed that rolls private_window, so the starter kit is built for that housing. */
-const PRIVATE_WINDOW_SEED = 'pin-pw-4';
-const PRIVATE_WINDOW_WITH_QUESTS = clampSystemHousing({
-  housing: 'private_window',
-  parts: { ...Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])), quest_list: true } as never,
-});
-
 function spState(partial: Partial<GameState> = {}): GameState {
-  const base = createInitialState(undefined, 'litrpg', undefined, PRIVATE_WINDOW_SEED) as GameState;
+  const base = housedLitrpgState('private_window', { quest_list: true });
   const state: GameState = {
     ...base,
-    systemHousing: PRIVATE_WINDOW_WITH_QUESTS,
     campaignBibleId: 'summoned-pact',
     openingEstablishment: {
       pending: [],
