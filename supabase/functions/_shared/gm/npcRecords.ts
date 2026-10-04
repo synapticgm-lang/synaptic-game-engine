@@ -112,6 +112,12 @@ function samePlace(a: string | undefined, b: string | undefined): boolean {
   return !!x && x === y;
 }
 
+/** The person's record puts them at a place that is not the player's place. */
+export function npcPlacedElsewhere(state: GameState, name: string): boolean {
+  const m = resolveNpcRecord(state, name);
+  return !!m?.location && !samePlace(m.location, state.currentLocation);
+}
+
 function companionRecords(state: GameState): NpcMemory[] {
   const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter(
     (n): n is string => !!n

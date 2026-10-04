@@ -806,6 +806,40 @@ export function mainSpineQuest(state: GameState): Quest | null {
   );
 }
 
+
+const OATH_STEP = /^choose:\s*swear,\s*refuse,\s*or\s*delay$/i;
+
+/** The player has sworn, refused, or delayed that oath, including the combined chip. */
+export function isOathChoiceLine(raw: string): boolean {
+  const text = (raw ?? "").replace(/\s+/g, " ").trim();
+  if (!text) return false;
+  if (OATH_STEP.test(text)) return true;
+  if (/^(?:swear|refuse|delay)(?:\s+(?:the\s+)?(?:pact|oath))?[.!?]*$/i.test(text)) return true;
+  if (/\b(?:swear the pact|refuse the (?:pact|oath)|delay the (?:pact|oath))\b/i.test(text)) return true;
+  return false;
+}
+
+/** Once that choice is made, the open step is no longer "Choose: swear, refuse, or delay". */
+export function settleOathChoice(state: GameState, playerInput?: string): GameState {
+  const said = [
+    ...(state.log ?? []).filter((e) => e.role === "player").map((e) => e.content ?? ""),
+    playerInput ?? "",
+  ].some(isOathChoiceLine);
+  if (!said) return state;
+  let changed = false;
+  const quests = (state.quests ?? []).map((q) => {
+    let questChanged = false;
+    const objectives = (q.objectives ?? []).map((o) => {
+      if (o.completed || !OATH_STEP.test((o.description ?? "").trim())) return o;
+      questChanged = true;
+      changed = true;
+      return { ...o, completed: true };
+    });
+    return questChanged ? { ...q, objectives } : q;
+  });
+  return changed ? { ...state, quests } : state;
+}
+
 export function nextMainObjective(quest: Quest | null | undefined): string | null {
   if (!quest) return null;
   const next = (quest.objectives ?? []).find((o) => !o.completed);
