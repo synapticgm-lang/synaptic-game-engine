@@ -56,7 +56,7 @@ export function mergeNpcMemoriesFromTurn(
   }
 
   for (const fact of timelineFacts) {
-    if (fact.kind !== 'npc' && !/\b(met|spoke|told|asked)\b/i.test(fact.text)) continue;
+    if (fact.kind !== 'npc') continue;
     const nameMatch = fact.text.match(/(?:met|spoke with|told|asked)\s+([A-Z][\w'-]+(?:\s+[A-Z][\w'-]+)?)/);
     if (!nameMatch) continue;
     const name = nameMatch[1];
@@ -628,11 +628,70 @@ export function dispositionBlocksPad(state: GameState, choice: string): boolean 
  * Does not touch opening stitch / hooks. No new GM prompt rails.
  */
 const SAID_TOPICS = new Set(['who', 'want', 'refuse']);
-const SPEECH_CUE = /["“”]|\b(?:said|says|saying|spoke|told|tells|answered|answers|replied|replies)\b/i;
+const SPEECH_CUE = /["“”]|\b(?:said|says|saying|spoke|speaks|told|tells|answered|answers|replied|replies|asked|asks)\b/i;
+const QUOTE_SPAN = /["“]([^"“”]{2,400})["”]/g;
+const MAX_SAID_PER_NPC = 12;
+
+type QuoteSpan = { start: number; words: string };
+type SentenceSpan = { start: number; end: number; text: string };
+
+/** Sentences of the beat with their offsets; quoted speech is masked so a stop inside a quote does not split. */
+function sentenceSpans(text: string): SentenceSpan[] {
+  const masked = text.replace(QUOTE_SPAN, (all, inner: string) => {
+    const stop = inner.match(/[.!?]+$/)?.[0] ?? '';
+    return all[0] + 'x'.repeat(inner.length - stop.length) + stop + all[all.length - 1];
+  });
+  const out: SentenceSpan[] = [];
+  const re = /[^.!?]+(?:[.!?]+["”]?|$)/g;
+  let hit: RegExpExecArray | null;
+  while ((hit = re.exec(masked))) {
+    if (!hit[0].trim()) {
+      if (re.lastIndex === hit.index) re.lastIndex++;
+      continue;
+    }
+    out.push({ start: hit.index, end: hit.index + hit[0].length, text: text.slice(hit.index, hit.index + hit[0].length) });
+  }
+  return out;
+}
+
+function quoteSpans(text: string): QuoteSpan[] {
+  return [...text.matchAll(QUOTE_SPAN)]
+    .map((q) => ({ start: q.index ?? 0, words: q[1]!.replace(/\s+/g, ' ').trim() }))
+    .filter((q) => q.words.length >= 2);
+}
+
+function nameIndex(sentence: string, m: NpcMemory): number {
+  const hits = [m.npcName, ...(m.aliases ?? [])]
+    .filter((n) => n.trim().length > 1)
+    .map((n) => sentence.search(new RegExp(`\\b${escapeRe(n.trim())}\\b`, 'i')))
+    .filter((i) => i >= 0);
+  return hits.length ? Math.min(...hits) : -1;
+}
+
+function namesSentence(sentence: string, m: NpcMemory): boolean {
+  return nameIndex(sentence, m) >= 0;
+}
+
+const SPOKEN_OBJECT = String.raw`(?:(?:him|her|them|me|us|you|[A-Z][\w'-]+(?:\s[A-Z][\w'-]+)?)\s+)`;
+const REPORTED_SPEECH = new RegExp(
+  String.raw`\b(?:(?:said|says|saying|answered|answers|replied|replies)(?:\s+to\s+${SPOKEN_OBJECT})?|(?:told|tells|telling|warned|warns)\s+${SPOKEN_OBJECT}?)\s*(?:that\s+)?([^"“”]+)$`
+);
+const NOT_A_CLAUSE =
+  /^(?:\w+ly|nothing|without|with|in|at|to|from|after|before|as|while|for|by|through|into|over|under|again|once|no|not)\b/i;
+
+/** The words of reported speech after said / told / answered (that) in a sentence; never a stage direction. */
+function reportedClause(sentence: string, after: number): string | null {
+  const hit = sentence.slice(after).match(REPORTED_SPEECH);
+  if (!hit) return null;
+  const words = hit[1]!.replace(/\s+/g, ' ').replace(/[\s.!?,;:]+$/, '').trim();
+  if (NOT_A_CLAUSE.test(words) || words.split(' ').length < 4) return null;
+  return words;
+}
 
 /**
- * 29z9j — the player asked who / want / refuse and a person here answered in the committed beat:
- * keep that sentence on their record so a later visit carries the same answer.
+ * Gap 1 — the verbatim record of what each person here said this turn: the quote in the sentence
+ * that names them with a speech cue, else the reported clause after said / told / answered (that),
+ * else the quote in the next sentence. Keyed by the words; never a stage direction with no speech.
  */
 export function recordSpokenTopics(
   memories: NpcMemory[],
@@ -641,19 +700,47 @@ export function recordSpokenTopics(
   gmText: string,
   turn: number
 ): NpcMemory[] {
+  const text = gmText.replace(/\s+/g, ' ').trim();
+  if (!text) return memories;
+  const quotes = quoteSpans(text);
   const asked = topics.filter((t) => SAID_TOPICS.has(t));
-  if (!asked.length || !gmText.trim()) return memories;
+  const topic = asked[0] ?? topics.find(Boolean) ?? 'other';
   const here = new Set(presentNames.map(normalizeName));
-  const sentences = gmText.replace(/\s+/g, ' ').split(/(?<=[.!?]["”]?)\s+/);
+  const sentences = sentenceSpans(text);
+  const taken = new Set<number>();
+  const reported = new Set<number>();
+  const inSentence = (s: SentenceSpan | undefined) =>
+    s ? quotes.filter((q) => q.start >= s.start && q.start < s.end && !taken.has(q.start)) : [];
+
   return memories.map((m) => {
     if (!here.has(normalizeName(m.npcName))) return m;
-    const line = sentences.find((s) => s.includes(m.npcName) && SPEECH_CUE.test(s));
-    if (!line) return m;
+    const spoken: QuoteSpan[] = [];
+    sentences.forEach((s, i) => {
+      if (!namesSentence(s.text, m) || !SPEECH_CUE.test(s.text)) return;
+      const own = inSentence(s);
+      const clause = own.length || reported.has(s.start) ? null : reportedClause(s.text, nameIndex(s.text, m));
+      if (clause) {
+        reported.add(s.start);
+        spoken.push({ start: s.start, words: clause });
+        return;
+      }
+      const lines = own.length ? own : inSentence(sentences[i + 1]);
+      for (const q of lines) {
+        taken.add(q.start);
+        spoken.push(q);
+      }
+    });
+    if (!spoken.length) return m;
     const said = [...(m.said ?? [])];
-    for (const topic of asked) {
-      if (!said.some((s) => s.topic === topic)) said.push({ topic, turn, line: line.trim().slice(0, 180) });
+    for (const q of spoken) {
+      const line = q.words.slice(0, 180);
+      if (!said.some((s) => s.line === line)) said.push({ topic, turn, line });
     }
-    return { ...m, said, completedTopics: uniqueTopics([...(m.completedTopics ?? []), ...asked]) };
+    return {
+      ...m,
+      said: said.slice(-MAX_SAID_PER_NPC),
+      completedTopics: asked.length ? uniqueTopics([...(m.completedTopics ?? []), ...asked]) : m.completedTopics,
+    };
   });
 }
 
@@ -675,8 +762,8 @@ export function applySocialLedgerTurn(args: {
   if ((state.turn ?? 0) < 2 && turn < 2) return state;
 
   let memories = state.npcMemories ?? [];
-  if (args.talkTopics?.length && args.gmText) {
-    memories = recordSpokenTopics(memories, state.sceneFacts?.present ?? [], args.talkTopics, args.gmText, turn);
+  if (args.gmText) {
+    memories = recordSpokenTopics(memories, state.sceneFacts?.present ?? [], args.talkTopics ?? [], args.gmText, turn);
   }
   if (isBuyPlayerAction(playerAction)) {
     const merchant = findPresentMerchant(state);

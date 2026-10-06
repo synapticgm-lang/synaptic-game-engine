@@ -1,6 +1,8 @@
 import type { GameState, NpcMemory } from './types.ts';
+import { isOutOfTalkingRange } from './hereSpot.ts';
 
-const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line)\b/i;
+const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line|Speech:)/i;
+const VOICE_NOTE = /^Speech:/i;
 
 /**
  * 29z3 — what this person's info sheet says about the main character, for the writer:
@@ -27,7 +29,8 @@ export function formatNpcMemoriesForPrompt(
   if (!list.length) return '(none)';
   return list
     .map((m) => {
-      const line = `${m.npcName} [${m.disposition}] — ${(m.facts.slice(-3).join('; ') || 'no notes')}${
+      const notes = m.facts.filter((f) => !VOICE_NOTE.test(f)).slice(-3);
+      const line = `${m.npcName} [${m.disposition}] — ${(notes.join('; ') || 'no notes')}${
         m.relationshipSummary ? ` | ${m.relationshipSummary}` : ''
       }`;
       const sheet = sheetMemoryLine(m, pcName);
@@ -146,7 +149,7 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
     if (!m.location) push(m);
   }
   for (const m of companionRecords(state)) push(m);
-  return out;
+  return out.filter((m) => !isOutOfTalkingRange(state, m.npcName));
 }
 
 /** 27f — names of NPC records located at a place. */

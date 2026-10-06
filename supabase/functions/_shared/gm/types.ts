@@ -941,6 +941,15 @@ export type TimeOfDay = 'dawn' | 'morning' | 'midday' | 'afternoon' | 'dusk' | '
 export type Weather = 'clear' | 'rain' | 'storm' | 'snow' | 'fog' | 'cloudy' | 'unknown';
 export type TensionLevel = 'combat' | 'danger' | 'tense' | 'calm' | 'unknown';
 
+/** A position inside one place: the spot, and who is or is not within talking range of it. */
+export interface HereSpot {
+  place: string;
+  spot: string;
+  turn: number;
+  nearby: string[];
+  awayFrom: string[];
+}
+
 /** Bound last-beat facts. Prose cannot empty a present crowd without time passing. */
 export interface SceneFacts {
   crowd: CrowdPresence;
@@ -953,6 +962,8 @@ export interface SceneFacts {
   anonymousRoles?: string[];
   /** People trimmed on the last committed leave/travel — not CAST/HERE until a legal return. */
   leftBehind?: string[];
+  /** Where the player stands inside the current place after a move that did not leave it. */
+  hereSpot?: HereSpot;
   props: string[];
   lastBeat: string;
   updatedTurn: number;
@@ -1106,7 +1117,7 @@ export interface NpcMemory {
   meetCount?: number;
   /** 12a — exhausted dialogue basins (`intro`, later topics). */
   completedTopics?: string[];
-  /** 29z9j — what this person told the player when asked who / want / refuse; first answer per topic stays. */
+  /** Gap 1 — the quoted words this person spoke, keyed by the quote, with the turn and the player's topic (or "other"). */
   said?: { topic: string; turn: number; line: string }[];
   /** 12a — stranger on first harvest; acquaintance after a later meet. */
   relationshipStatus?: 'stranger' | 'acquaintance' | 'ally' | 'rival' | 'friend' | 'enemy';

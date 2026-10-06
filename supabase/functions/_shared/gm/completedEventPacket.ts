@@ -23,6 +23,7 @@ import {
   type LastKill,
 } from './combatAuthority.ts';
 import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLine } from './npcRecords.ts';
+import { hereSpotFact } from './hereSpot.ts';
 import { gateFactLines } from './skillGates.ts';
 import { sealedCastNames } from './beatContract.ts';
 import { ledgerSheetLine } from './litrpgSystemWindow.ts';
@@ -908,6 +909,8 @@ function movementLine(state: GameState, stay: string): string {
       : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
     return meeting ? `${road} ${meeting}` : road;
   }
+  const spot = hereSpotFact(state);
+  if (spot && !movedNow) return spot;
   if (movedNow && c?.prevPlace && c.shortReturnTurn === state.turn) {
     return `Turned back this turn: from ${c.prevPlace} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival; nothing more happens at ${c.prevPlace}.`;
   }

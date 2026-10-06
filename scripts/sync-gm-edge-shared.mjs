@@ -93,6 +93,7 @@ const FILES = [
   'hubEncounters.ts',
   'pyoaSpine.ts',
   'npcRecords.ts',
+  'hereSpot.ts',
   'npcRoleRegistry.ts',
   'npcLifecycleFsm.ts',
   'writerInfoLayer.ts',
