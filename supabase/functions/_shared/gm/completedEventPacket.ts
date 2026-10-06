@@ -89,6 +89,11 @@ export type EventOutcome =
   | 'waited'
   | 'used'
   | 'spawned'
+  | 'defeated'
+  | 'fight opened'
+  | 'blocked'
+  | 'slipped away'
+  | 'unchanged'
   | 'resolved';
 
 export interface CompletedEventPacket {
@@ -386,8 +391,12 @@ export type PacketBuildExtras = {
   reader?: ReaderFlags;
   /** 28g — engine receipts for this action; the writer must state them. */
   engineResult?: string;
-  /** The travel engine's commit this turn: the only source of 'arrived' / 'set out'. */
-  travel?: { arrived: boolean; underway: boolean };
+  /** The travel engine's commit this turn: the only source of 'arrived' / 'set out' and the other travel results. */
+  travel?: {
+    arrived: boolean;
+    underway: boolean;
+    outcome?: 'set out' | 'arrived' | 'fight opened' | 'blocked' | 'unchanged' | 'slipped away';
+  };
   damage?: number;
   loot?: string[];
 };
@@ -666,8 +675,10 @@ function resolveOutcome(
   playerInput: string,
   travel?: PacketBuildExtras['travel']
 ): EventOutcome {
-  if (travel?.arrived) return 'arrived';
-  if (travel?.underway) return 'set out';
+  const leg = travel?.outcome;
+  if (travel?.arrived || leg === 'arrived') return 'arrived';
+  if (travel?.underway || leg === 'set out') return 'set out';
+  if (leg === 'slipped away' || leg === 'fight opened' || leg === 'blocked') return leg;
   const kill = state.sceneFacts?.lastKill;
   const justKilled =
     !!kill?.name
@@ -689,6 +700,16 @@ function resolveOutcome(
     }
     if (verb === 'parleyed') return 'spoke';
   }
+  // The fight engine settled an encounter this turn: its result, whatever words the player used.
+  const settled = !enc
+    ? [...(state.arcDirector?.encounterClearedReceipts ?? [])].reverse().find((r) => r.turn === state.turn)
+    : undefined;
+  if (settled) {
+    if (settled.outcome === 'victory') return 'killed';
+    if (settled.outcome === 'escape') return 'fled';
+    if (settled.outcome === 'parleyResolved') return 'spoke';
+    return 'defeated';
+  }
   if (verb === 'fled') return 'fled';
   if (verb === 'spoke' || verb === 'parleyed') {
     if (justKilled && livingLedgerPeople(state).length === 0) return 'resolved';
@@ -702,7 +723,7 @@ function resolveOutcome(
   if (state.sceneFacts?.pendingEncounter || (state.arcDirector?.activeBeatId && /skirmish|combat|hostility/i.test(state.arcDirector.activeBeatId))) {
     if (!enc && !justKilled) return 'spawned';
   }
-  return 'resolved';
+  return 'unchanged';
 }
 
 function rhythmBeats(state: GameState): string[] {

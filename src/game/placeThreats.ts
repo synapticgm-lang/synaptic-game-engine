@@ -1,7 +1,7 @@
 /**
  * 29y — remembered danger at a place.
  * A hostile threat that entered the scene (a live or pending encounter) is kept on that place until it is
- * beaten or fled. Leaving and coming back still finds it: the card offers the existing fight chip and the
+ * beaten or talked down; fleeing it does not end it. Leaving and coming back still finds it: the card offers the existing fight chip and the
  * existing engine fight (resolveEngineFight) settles it. A threat never wakes on its own, so a quiet
  * stretch stays quiet. Road meetings are owned by the journey (29w/29x) and are not stored here.
  */
@@ -9,8 +9,8 @@ import type { ActiveEncounter, GameState, PlaceThreat } from './types';
 
 export const REMEMBERED_FIGHT_CHIP = 'Press the attack';
 
-/** Outcomes that end the threat. A loss (defeat / capture) leaves it where it was. */
-const GONE_OUTCOMES = new Set(['victory', 'escape', 'parleyresolved']);
+/** Outcomes that end the threat. A loss (defeat / capture) or a flee leaves it where it was. */
+const GONE_OUTCOMES = new Set(['victory', 'parleyresolved']);
 
 const CLEARED_RECEIPT = /^Encounter cleared:\s*(.+?)\s*\((victory|escape|defeat|capture|parleyResolved)\)\s*$/i;
 const PARLEY_REFUSED_RECEIPT = /^Parley (?:check:.*\bfailure\b|refused)/i;
@@ -103,12 +103,13 @@ export function syncPlaceThreat(
     if (GONE_OUTCOMES.has(cleared[2]!.toLowerCase())) {
       return withEntry(after, key, null);
     }
+    const fled = cleared[2]!.toLowerCase() === 'escape';
     return withEntry(after, key, {
       place: prior?.place ?? place,
-      encounter: foeAfter ?? had,
+      encounter: fled ? had : foeAfter ?? had,
       storedTurn: prior?.storedTurn ?? before.turn,
       parleyRefused: (prior?.parleyRefused ?? 0) + (refusedNow ? 1 : 0),
-      lastOutcome: 'defeat',
+      lastOutcome: fled ? 'escaped' : 'defeat',
     });
   }
 

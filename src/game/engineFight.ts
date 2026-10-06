@@ -19,6 +19,8 @@ import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { fightLootClause, weaponInHand } from './infoSheet';
+import { isRoadFoe, roadFoeForEngine, settleRoadMeeting } from './travelJourney';
+import { pushCombatStateTx } from './stateTx';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -86,11 +88,14 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const pending = state.activeEncounter ? null : state.sceneFacts?.pendingEncounter ?? null;
   // 29y — a threat remembered at this place is the same foe, fought through the same path.
   const parked = state.activeEncounter || pending ? null : parkedThreatHere(state);
-  const raw = state.activeEncounter ?? pending ?? (parked ? wakeParkedThreat(parked) : null);
+  // A road meeting the player faces (or flees) is handed to this engine the same turn.
+  const road = state.activeEncounter || pending || parked ? null : roadFoeForEngine(state, input);
+  const raw = state.activeEncounter ?? pending ?? (parked ? wakeParkedThreat(parked) : road);
   if (!raw || !input) return null;
   const flee = FLEE_RE.test(input);
   const parley = !flee && PARLEY_RE.test(input);
-  const attack = !flee && !parley && ATTACK_RE.test(input);
+  const attack = !flee && !parley && (ATTACK_RE.test(input) || !!road);
+  const onRoad = isRoadFoe(state, raw);
   if (!flee && !parley && !attack) return null;
   if (parked && (flee || /\b(talk|ask|speak|conversation)\b/i.test(input))) return null;
   // 28r — gear/skill approach, read before the foe is engaged (a strike from hiding needs an unaware foe).
@@ -118,6 +123,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       const tick = tickEncounterTerminal(working, input, flee ? { fleeSucceeded: true } : { parleySucceeded: true });
       let next = tick.state;
       receipts.push(...tick.receipts);
+      if (onRoad) next = settleRoadMeeting(next, flee ? 'escape' : 'parleyResolved');
       if (parley) {
         const paid = payEncounterXp(next, raw, `resolved ${enc.name}`);
         next = paid.state;
@@ -168,11 +174,19 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     used.id === 'ranged' ? weaponCategory(used.source) : weaponCategory(equippedWeaponName(next))
   );
   // The Fight line is the writer's engine result; health figures go on their own STATUS line.
+  const rounds = `${result.rounds} round${result.rounds === 1 ? '' : 's'}`;
   receipts.push(
-    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${result.rounds} round${result.rounds === 1 ? '' : 's'}${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
+    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${rounds}${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
     `HP: ${hpBefore} → ${hpAfter} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );
+  next = pushCombatStateTx(
+    next,
+    `Fight vs ${enc.name}: ${result.victory ? 'victory' : 'defeat'} in ${rounds} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
+    enc.name,
+    'Engine fight'
+  );
+  if (onRoad) next = settleRoadMeeting(next, result.victory ? 'victory' : 'defeat');
   let found = '';
   if (result.victory) {
     const paid = payEncounterXp(next, raw, `defeated ${enc.name}`);

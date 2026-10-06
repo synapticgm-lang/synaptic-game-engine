@@ -625,7 +625,7 @@ export function checkReceiptLivenessGates(state: GameState): ReceiptLivenessGate
   // Import dynamically to avoid circular deps
   const freeT12DurableDelta = state.turn >= 12
     ? (state.character?.level ?? 1) >= 2 ||
-      (state.arcDirector?.encounterClearedReceipts ?? []).length >= 1 ||
+      (state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.outcome !== 'escape') ||
       !!(state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed) ||
       Object.keys(state.arcDirector?.topicCommits ?? {}).length > 0 ||
       (state.quests ?? []).some(q => 
@@ -671,11 +671,8 @@ export function validateEvalRun(
     (arcDirector.encounterResolutionLog && arcDirector.encounterResolutionLog.length > 0) ||
     (arcDirector.beatStateTx && arcDirector.beatStateTx.some((tx: any) => tx.kind === 'combat')) ||
     (state?.stateTxLog && state.stateTxLog.some((tx: any) => tx.kind === 'combat')) ||
-    state?.activeEncounter || 
-    (state?.log || []).some((entry: any) => 
-      entry.gmRole === 'narrator' && 
-      /combat|fight|attack|enemy|foe/i.test(entry.content || '')
-    )
+    (arcDirector.encounterClearedReceipts || []).some((r: any) => r.outcome !== 'escape') ||
+    state?.activeEncounter
   );
   const combatByT8 = turn >= 8 ? hasHadCombat : true;
   

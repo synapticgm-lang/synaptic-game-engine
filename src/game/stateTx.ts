@@ -299,6 +299,19 @@ export function pushBeatStateTx(
   return { ...state, stateTxLog: log };
 }
 
+/** A fight round the engine rolled before GM prose (lands on the GM response turn, like a beat commit). */
+export function pushCombatStateTx(state: GameState, summary: string, entity: string, why: string): GameState {
+  const log = pushTx([...(state.stateTxLog ?? [])], {
+    rev: Math.max(0, state.ledgerRevision ?? 0),
+    turn: state.turn + 1,
+    kind: 'combat',
+    summary: summary.slice(0, 160),
+    entity,
+    why,
+  });
+  return { ...state, stateTxLog: log };
+}
+
 /** Latest few player-facing receipts (for HUD / TurnConfirmBar). */
 export function recentStateTxReceipts(state: GameState, limit = 4): string[] {
   return (state.stateTxLog ?? [])

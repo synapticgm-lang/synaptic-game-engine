@@ -384,8 +384,8 @@ export interface PlaceThreat {
   storedTurn: number;
   /** Parleys this threat has refused (engine check failed / refused on the ledger). */
   parleyRefused?: number;
-  /** How the last try ended while it stayed: still live, the player lost, or nothing settled it. */
-  lastOutcome?: 'live' | 'defeat' | 'unsettled';
+  /** How the last try ended while it stayed: still live, the player lost, the player fled, or nothing settled it. */
+  lastOutcome?: 'live' | 'defeat' | 'unsettled' | 'escaped';
 }
 
 export interface OpeningEstablishment {
@@ -744,6 +744,10 @@ export interface RoadEncounter {
   miniBoss?: boolean;
   /** 29x — the fight on this stretch was opened; once it is over the meeting is dealt with. */
   engaged?: boolean;
+  /** The player fled past this meeting: not beaten, no longer in the lane. */
+  escaped?: boolean;
+  /** Turn the escape happened on. */
+  escapedTurn?: number;
 }
 
 /** Premade settlement on the world map (29e). */

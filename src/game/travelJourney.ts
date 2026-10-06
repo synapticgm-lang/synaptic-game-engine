@@ -335,7 +335,7 @@ function fightPad(enc: RoadEncounter): string | null {
 }
 
 function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
-  if (enc.engaged) return [];
+  if (enc.engaged || enc.escaped) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
   if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'];
@@ -371,9 +371,9 @@ const MAX_QUIET = 2;
 /** Meetings that can be faced as a fight. */
 const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'villain']);
 
-/** A hostile meeting still standing in the lane. Walk on is not a free pass past it. */
+/** A hostile meeting still standing in the lane. Walk on is not a free pass past it; a flee that got clear is. */
 function laneBlocked(enc: RoadEncounter | null | undefined): boolean {
-  return !!enc && !enc.engaged && FIGHT_KINDS.has(enc.kind);
+  return !!enc && !enc.engaged && !enc.escaped && FIGHT_KINDS.has(enc.kind);
 }
 /** Share of hostile meetings that are a rare spawn (uncommon, not every meeting). */
 export const RARE_SPAWN_CHANCE = 0.12;
@@ -548,7 +548,7 @@ const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
 /** Writer fact: the meeting on this stretch is on the page before any chip meets it. */
 export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const e = j?.encounter;
-  if (!e || e.engaged) return '';
+  if (!e || e.engaged || e.escaped) return '';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
   return `On this stretch: ${base}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
 }
@@ -558,6 +558,7 @@ function encounterNote(j: TravelJourney): string {
   const e = j.encounter;
   if (!e) return '; quiet stretch';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
+  if (e.escaped) return `; got away from ${base}, not beaten`;
   if (e.engaged) return `; ${base} dealt with`;
   const label = e.kind === 'camp' && e.miniBoss
     ? 'a camp with a mini-boss'
@@ -572,9 +573,58 @@ const FIGHT_WORDS = /^(?:face|fight|attack|charge|challenge)\b/i;
 /** The player faces a meeting that can be fought and has not been fought yet. */
 function facesFight(input: string, enc: RoadEncounter): boolean {
   const pad = fightPad(enc);
-  if (!pad || enc.engaged) return false;
+  if (!pad || enc.engaged || enc.escaped) return false;
   return input.toLowerCase() === pad.toLowerCase() || FIGHT_WORDS.test(input);
 }
+
+const ROAD_FOE_SOURCES = new Set(['road-encounter', 'road-rare-spawn', 'road-camp-elite']);
+const FLEE_WORDS = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
+
+function liveRoadFoe(state: GameState, enc: RoadEncounter): ActiveEncounter {
+  return initEncounterTerminal(roadFoe(enc), state, { forcedSpawnKey: `road-${enc.kind}` });
+}
+
+/**
+ * Before the fight engine: the road meeting this input takes on, as the foe the engine settles this turn.
+ * Facing a fightable meeting, or fleeing one that blocks the lane. Null otherwise.
+ */
+export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter | null {
+  const j = state.journey;
+  const enc = j?.encounter;
+  if (!enc || state.activeEncounter || !isJourneyUnderway(state) || !engineAllowsCombat(state)) return null;
+  const input = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (facesFight(input, enc)) return liveRoadFoe(state, enc);
+  if (FLEE_WORDS.test(input) && laneBlocked(enc)) return liveRoadFoe(state, enc);
+  return null;
+}
+
+/** The foe is this trip's road meeting (not a place threat or a director spawn). */
+export function isRoadFoe(state: Pick<GameState, 'journey'>, foe: ActiveEncounter | null | undefined): boolean {
+  return !!foe && !!state.journey?.encounter && ROAD_FOE_SOURCES.has(foe.source ?? '');
+}
+
+/**
+ * After the fight engine settled a road foe: a win or a talk-down deals with the meeting, a flee that got
+ * clear slips past it (escaped, not beaten), a loss leaves it in the lane.
+ */
+export function settleRoadMeeting(
+  state: GameState,
+  outcome: 'victory' | 'escape' | 'parleyResolved' | 'defeat' | 'capture'
+): GameState {
+  const j = state.journey;
+  if (!j?.encounter) return state;
+  const enc = j.encounter;
+  const next: RoadEncounter =
+    outcome === 'escape'
+      ? { ...enc, escaped: true, escapedTurn: state.turn }
+      : outcome === 'victory' || outcome === 'parleyResolved'
+        ? { ...enc, engaged: true }
+        : enc;
+  return next === enc ? state : { ...state, journey: { ...j, encounter: next } };
+}
+
+/** What the travel engine did this turn (the packet's Outcome, never read from the player's words). */
+export type TravelEngineOutcome = 'set out' | 'arrived' | 'fight opened' | 'blocked' | 'unchanged' | 'slipped away';
 
 export interface TravelCommit {
   state: GameState;
@@ -586,6 +636,8 @@ export interface TravelCommit {
   underway?: boolean;
   /** STATUS + ENGINE RESULT line (chrome, not prose). */
   receipt?: string;
+  /** The typed engine result for this turn (every branch sets it). */
+  outcome: TravelEngineOutcome;
 }
 
 /** What the travel engine did this turn, for the writer's Outcome (never decided by the player's words). */
@@ -593,16 +645,21 @@ export function travelOutcome(
   commit: TravelCommit | null | undefined,
   hereBefore: string,
   after: GameState
-): { arrived: boolean; underway: boolean } {
-  if (commit?.arrived) return { arrived: true, underway: false };
-  if (commit?.underway) return { arrived: false, underway: true };
+): { arrived: boolean; underway: boolean; outcome: TravelEngineOutcome } {
+  if (commit?.arrived) return { arrived: true, underway: false, outcome: 'arrived' };
+  if (commit?.underway) return { arrived: false, underway: true, outcome: 'set out' };
+  if (commit && commit.outcome !== 'unchanged') return { arrived: false, underway: false, outcome: commit.outcome };
   const here = tidy(after.currentLocation);
   const moved =
     !!here
     && here.toLowerCase() !== tidy(hereBefore).toLowerCase()
     && !isRoadLabel(here)
     && !isJourneyUnderway(after);
-  return { arrived: moved, underway: false };
+  return { arrived: moved, underway: false, outcome: moved ? 'arrived' : 'unchanged' };
+}
+
+function unchanged(state: GameState): TravelCommit {
+  return { state, handled: false, arrived: false, outcome: 'unchanged' };
 }
 
 function arrive(state: GameState, dest: string, hours: number, from: string): TravelCommit {
@@ -611,6 +668,7 @@ function arrive(state: GameState, dest: string, hours: number, from: string): Tr
     state: clock.state,
     handled: true,
     arrived: true,
+    outcome: 'arrived',
     receipt: `Travel: ${from} to ${dest} â€” ${clock.note}`,
   };
 }
@@ -635,13 +693,14 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap): 
     handled: true,
     arrived: false,
     underway: true,
+    outcome: 'set out',
     receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
 function goTo(state: GameState, from: string, dest: string): TravelCommit {
   const gap = mapGapBetween(state, from, dest);
-  if (gap.steps <= 0) return { state, handled: false, arrived: false };
+  if (gap.steps <= 0) return unchanged(state);
   if (gap.steps === 1) return arrive(state, dest, gap.hoursPerLeg, from);
   return startJourney(state, from, dest, gap);
 }
@@ -656,6 +715,7 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     handled: true,
     arrived: false,
     underway: true,
+    outcome: 'set out',
     receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} â€” leg ${legsDone} of ${j.legsTotal} â€” ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
@@ -676,7 +736,7 @@ function leaveDestination(state: GameState, here: string): string | null {
  */
 export function commitTravel(state: GameState, raw: string): TravelCommit {
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
-  if (!input || state.activeEncounter) return { state, handled: false, arrived: false };
+  if (!input || state.activeEncounter) return unchanged(state);
   if (state.journey && isJourneyUnderway(state)) {
     const origin = journeyOrigin(state) || state.journey.from;
     const j: TravelJourney = origin === state.journey.from ? state.journey : { ...state.journey, from: origin };
@@ -690,6 +750,7 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
         state: { ...state, currentLocation: UNDERWAY_HERE },
         handled: true,
         arrived: false,
+        outcome: 'blocked',
         receipt: `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot}); the way on is blocked`,
       };
     }
@@ -706,21 +767,26 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
     if (named) return goTo({ ...state, journey: null }, j.from, named.name);
     const slot = timeOfDayForHour(currentHour(state));
     const where = `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot})`;
-    if (j.encounter && facesFight(input, j.encounter) && engineAllowsCombat(state)) {
-      const foe = initEncounterTerminal(roadFoe(j.encounter), state, { forcedSpawnKey: `road-${j.encounter.kind}` });
+    // The fight engine already settled a fight this turn (a faced meeting rolls before travel): no second fight.
+    const settledThisTurn = state.arcDirector?.lastEncounterClearedTurn === state.turn;
+    if (j.encounter && !settledThisTurn && facesFight(input, j.encounter) && engineAllowsCombat(state)) {
+      const foe = liveRoadFoe(state, j.encounter);
       const journey: TravelJourney = { ...j, encounter: { ...j.encounter, engaged: true } };
       const what = j.encounter.kind === 'camp' ? 'mini-boss' : j.encounter.rare ? 'rare spawn' : 'foe';
       return {
         state: { ...state, currentLocation: UNDERWAY_HERE, journey, activeEncounter: foe },
         handled: true,
         arrived: false,
+        outcome: 'fight opened',
         receipt: `${where}; fight: ${foe.name}, ${what} (level ${foe.level}, ${foe.maxHp} HP)`,
       };
     }
+    const slipped = !!j.encounter?.escaped && j.encounter.escapedTurn === state.turn;
     return {
       state: { ...state, currentLocation: UNDERWAY_HERE },
       handled: true,
       arrived: false,
+      outcome: slipped ? 'slipped away' : 'unchanged',
       receipt: `${where}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
     };
   }
@@ -734,7 +800,7 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
     return arrive(state, dest, STEP_HOURS, here);
   }
   if (!dest || dest.toLowerCase() === here.toLowerCase()) {
-    return { state: state.journey ? { ...state, journey: null } : state, handled: false, arrived: false };
+    return unchanged(state.journey ? { ...state, journey: null } : state);
   }
   const moved = goTo({ ...state, journey: null }, here, dest);
   const facts = moved.state.sceneFacts;
@@ -769,6 +835,7 @@ function moveWithinPlace(state: GameState, input: string, spot: string): TravelC
     state: { ...state, journey: null, sceneFacts },
     handled: true,
     arrived: false,
+    outcome: 'unchanged',
     receipt: `Moved within ${here}: now on ${spot}${out}`,
   };
 }

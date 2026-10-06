@@ -656,35 +656,82 @@ function sentenceSpans(text: string): SentenceSpan[] {
 
 function quoteSpans(text: string): QuoteSpan[] {
   return [...text.matchAll(QUOTE_SPAN)]
-    .map((q) => ({ start: q.index ?? 0, words: q[1]!.replace(/\s+/g, ' ').trim() }))
+    .map((q) => ({ start: q.index ?? 0, words: q[1]!.replace(/\s+/g, ' ').trim().replace(/,$/, '') }))
     .filter((q) => q.words.length >= 2);
 }
 
-function nameIndex(sentence: string, m: NpcMemory): number {
-  const hits = [m.npcName, ...(m.aliases ?? [])]
+/** Full name, aliases, and the person's own first name when no one else present shares it. */
+function speakerNames(m: NpcMemory, presentNames: string[]): string[] {
+  const names = [m.npcName, ...(m.aliases ?? [])];
+  const first = m.npcName.trim().split(/\s+/);
+  if (first.length > 1 && first[0]!.length > 1) {
+    const key = first[0]!.toLowerCase();
+    const sharing = presentNames.filter((n) => n.trim().split(/\s+/)[0]?.toLowerCase() === key);
+    if (sharing.length <= 1) names.push(first[0]!);
+  }
+  return names;
+}
+
+function nameIndex(sentence: string, names: string[]): number {
+  const hits = names
     .filter((n) => n.trim().length > 1)
     .map((n) => sentence.search(new RegExp(`\\b${escapeRe(n.trim())}\\b`, 'i')))
     .filter((i) => i >= 0);
   return hits.length ? Math.min(...hits) : -1;
 }
 
-function namesSentence(sentence: string, m: NpcMemory): boolean {
-  return nameIndex(sentence, m) >= 0;
-}
-
 const SPOKEN_OBJECT = String.raw`(?:(?:him|her|them|me|us|you|[A-Z][\w'-]+(?:\s[A-Z][\w'-]+)?)\s+)`;
 const REPORTED_SPEECH = new RegExp(
-  String.raw`\b(?:(?:said|says|saying|answered|answers|replied|replies)(?:\s+to\s+${SPOKEN_OBJECT})?|(?:told|tells|telling|warned|warns)\s+${SPOKEN_OBJECT}?)\s*(?:that\s+)?([^"“”]+)$`
+  String.raw`\b(?:(?:said|says|saying|answered|answers|replied|replies)(?:\s+to\s+${SPOKEN_OBJECT}|\s+${SPOKEN_OBJECT}(?=that\b))?|(?:told|tells|telling|warned|warns)\s+${SPOKEN_OBJECT}?)\s*(that\s+)?([^"“”]+)$`
 );
 const NOT_A_CLAUSE =
   /^(?:\w+ly|nothing|without|with|in|at|to|from|after|before|as|while|for|by|through|into|over|under|again|once|no|not)\b/i;
 
-/** The words of reported speech after said / told / answered (that) in a sentence; never a stage direction. */
+const CLAUSE_PRONOUN = /^(?:he|she|they|it|we|i|you|there|someone|nobody|everyone)$/i;
+const CLAUSE_DETERMINER =
+  /^(?:the|a|an|this|these|those|his|her|their|its|our|my|your|every|each|some|no|one|two|three|all|both)$|'s$/i;
+const CLAUSE_BREAK =
+  /^(?:like|for|of|to|in|on|at|with|without|from|by|as|into|onto|over|under|through|toward|towards|and|but|or|while|when|if|because)$/i;
+const CLAUSE_QUANTIFIER = /^(?:few|many|several|some|two|three|four|five|all|both)$/i;
+const FINITE_VERB =
+  /^(?:was|were|is|are|am|had|has|have|did|does|do|would|could|should|will|can|must|might|may|shall|came|went|took|gave|kept|left|lost|knew|saw|stood|sat|ran|fell|broke|held|sent|made|got|found|paid|meant|owed)$/i;
+const CLAUSE_ADVERB = /^(?:\w+ly|only|never|still|always|already|just|not|once)$/i;
+
+function looksFinite(word: string, prev: string | undefined): boolean {
+  if (FINITE_VERB.test(word)) return true;
+  if (/^[a-z]+ed$/.test(word)) return true;
+  if (/^[a-z]+[^su']s$/.test(word)) return !prev || !CLAUSE_QUANTIFIER.test(prev);
+  return false;
+}
+
+/** A clause with its own subject and a finite verb ("the seventh ring was taken"), not a noun phrase ("Jax's name like…"). */
+function hasSubjectAndVerb(words: string): boolean {
+  const tokens = words.split(' ').map((t) => t.replace(/[^\w'-]/g, ''));
+  const head = tokens[0] ?? '';
+  if (CLAUSE_PRONOUN.test(head)) {
+    const next = CLAUSE_ADVERB.test(tokens[1] ?? '') ? tokens[2] : tokens[1];
+    return !!next && looksFinite(next.toLowerCase(), undefined);
+  }
+  if (!CLAUSE_DETERMINER.test(head) && !/^[A-Z]/.test(head)) return false;
+  for (let i = 1; i < Math.min(tokens.length, 6); i++) {
+    const t = tokens[i]!;
+    if (CLAUSE_BREAK.test(t)) return false;
+    if (CLAUSE_ADVERB.test(t)) continue;
+    if (!CLAUSE_DETERMINER.test(tokens[i - 1]!) && looksFinite(t.toLowerCase(), tokens[i - 1])) return true;
+  }
+  return false;
+}
+
+/**
+ * The words of reported speech in a sentence: "said / told <someone> that …", or "said / told <listener> <clause>"
+ * when the clause has its own subject and verb. "Said <noun phrase>" (said Jax's name, said a prayer) is an action.
+ */
 function reportedClause(sentence: string, after: number): string | null {
   const hit = sentence.slice(after).match(REPORTED_SPEECH);
   if (!hit) return null;
-  const words = hit[1]!.replace(/\s+/g, ' ').replace(/[\s.!?,;:]+$/, '').trim();
+  const words = hit[2]!.replace(/\s+/g, ' ').replace(/[\s.!?,;:]+$/, '').trim();
   if (NOT_A_CLAUSE.test(words) || words.split(' ').length < 4) return null;
+  if (!hit[1] && !hasSubjectAndVerb(words)) return null;
   return words;
 }
 
@@ -714,11 +761,13 @@ export function recordSpokenTopics(
 
   return memories.map((m) => {
     if (!here.has(normalizeName(m.npcName))) return m;
+    const names = speakerNames(m, presentNames);
     const spoken: QuoteSpan[] = [];
     sentences.forEach((s, i) => {
-      if (!namesSentence(s.text, m) || !SPEECH_CUE.test(s.text)) return;
+      const at = nameIndex(s.text, names);
+      if (at < 0 || !SPEECH_CUE.test(s.text)) return;
       const own = inSentence(s);
-      const clause = own.length || reported.has(s.start) ? null : reportedClause(s.text, nameIndex(s.text, m));
+      const clause = own.length || reported.has(s.start) ? null : reportedClause(s.text, at);
       if (clause) {
         reported.add(s.start);
         spoken.push({ start: s.start, words: clause });

@@ -7,9 +7,14 @@ import type { BeatContract } from './beatContract';
 import { contractById, resolveBiblePrefix } from './beatContract';
 import type { GameState } from './types';
 
+/** An encounter that actually ended (an escape got away from it; the threat was not cleared). */
+function hasClearedEncounter(state: GameState): boolean {
+  return (state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.outcome !== 'escape');
+}
+
 export function hasDurableDeltaByT12(state: GameState): boolean {
   if ((state.character?.level ?? 1) >= 2) return true;
-  if ((state.arcDirector?.encounterClearedReceipts ?? []).length >= 1) return true;
+  if (hasClearedEncounter(state)) return true;
   if (state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed) return true;
   if (Object.keys(state.arcDirector?.topicCommits ?? {}).length > 0) return true;
   for (const q of state.quests ?? []) {
@@ -21,7 +26,7 @@ export function hasDurableDeltaByT12(state: GameState): boolean {
 
 export function durableDeltaReason(state: GameState): string {
   if ((state.character?.level ?? 1) >= 2) return 'level>=2';
-  if ((state.arcDirector?.encounterClearedReceipts ?? []).length >= 1) return 'encounterCleared';
+  if (hasClearedEncounter(state)) return 'encounterCleared';
   if (state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed) {
     return `branchLocked:${state.pyoaBranchLedger?.branchLocked || 'closed'}`;
   }

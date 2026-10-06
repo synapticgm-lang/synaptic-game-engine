@@ -683,8 +683,13 @@ export function runArcDirectorBeforeGm(
       }
     }
     if (engineFight) mandates.push(engineFight.facts);
+    const escapedFrom = tick.receipts
+      .map((r) => r.match(/^Encounter cleared: (.+) \(escape\)$/)?.[1])
+      .find(Boolean);
     if (!working.activeEncounter && engineFight?.foeAfter) {
       mandates.push(`ENCOUNTER HELD: ${engineFight.foeAfter.name} beat you back and still holds this place. It was not beaten or talked down.`);
+    } else if (!working.activeEncounter && escapedFrom) {
+      mandates.push(`ENCOUNTER ESCAPED: you got away from ${escapedFrom}. It was not beaten, and nothing was won or looted.`);
     } else if (!working.activeEncounter) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
       // 29b — voice line on combat clear
