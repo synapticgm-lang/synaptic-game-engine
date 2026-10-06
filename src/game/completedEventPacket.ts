@@ -7,14 +7,14 @@
 
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
-import { cleanPlaceLabel, playerFacingLocation } from './locationName';
+import { cleanPlaceLabel, playerFacingLocation, underwayHereLabel } from './locationName';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { formatInfoSheet } from './infoSheet';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
-import { roadMeetingFact } from './travelJourney';
+import { isRoadLabel, roadMeetingFact } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { emptySceneFacts } from './sceneFacts';
 import {
@@ -82,6 +82,7 @@ export type EventOutcome =
   | 'caught'
   | 'spoke'
   | 'arrived'
+  | 'set out'
   | 'left'
   | 'inspected'
   | 'looted'
@@ -385,6 +386,8 @@ export type PacketBuildExtras = {
   reader?: ReaderFlags;
   /** 28g — engine receipts for this action; the writer must state them. */
   engineResult?: string;
+  /** The travel engine's commit this turn: the only source of 'arrived' / 'set out'. */
+  travel?: { arrived: boolean; underway: boolean };
   damage?: number;
   loot?: string[];
 };
@@ -402,6 +405,8 @@ function isGenericHereLabel(raw: string): boolean {
 }
 
 function locationLabel(state: GameState): string {
+  const trip = underwayHereLabel(state);
+  if (trip) return trip;
   const fromCover = (state.openingEstablishment?.answers?.where ?? '').trim();
   const live = cleanPlaceLabel(
     playerFacingLocation(state) || String(state.currentLocation ?? '') || ''
@@ -476,7 +481,8 @@ export function compileNounAllowlist(
   const out: string[] = [];
   const seen = new Set<string>();
 
-  pushUnique(out, seen, locationLabel(state));
+  // On a trip HERE is not a name; the trip's two ends come in with nearbyPlaceNames.
+  if (!underwayHereLabel(state)) pushUnique(out, seen, locationLabel(state));
 
   for (const n of castMentionNames(state)) {
     if (isNeverCastTitle(n, state)) continue;
@@ -600,7 +606,7 @@ export function compileRefEnum(
     ? systemHousingWriterClause(housingId)
     : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
 
-  add('here', locationLabel(state), 'place');
+  if (!underwayHereLabel(state)) add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
 
   for (const name of castMentionNames(state)) {
@@ -654,7 +660,14 @@ function isCombatVerb(verb: string): boolean {
   return verb === 'attacked' || verb === 'fled' || verb === 'parleyed';
 }
 
-function resolveOutcome(state: GameState, verb: string, playerInput: string): EventOutcome {
+function resolveOutcome(
+  state: GameState,
+  verb: string,
+  playerInput: string,
+  travel?: PacketBuildExtras['travel']
+): EventOutcome {
+  if (travel?.arrived) return 'arrived';
+  if (travel?.underway) return 'set out';
   const kill = state.sceneFacts?.lastKill;
   const justKilled =
     !!kill?.name
@@ -681,7 +694,6 @@ function resolveOutcome(state: GameState, verb: string, playerInput: string): Ev
     if (justKilled && livingLedgerPeople(state).length === 0) return 'resolved';
     return 'spoke';
   }
-  if (verb === 'traveled') return 'arrived';
   if (verb === 'left') return 'left';
   if (verb === 'looted') return 'looted';
   if (verb === 'inspected') return 'inspected';
@@ -793,7 +805,7 @@ export function buildCompletedEventPacket(
     && !!kill.remains
     && kill.turn === state.turn
     && !state.activeEncounter;
-  const outcome = resolveOutcome(state, verb, action);
+  const outcome = resolveOutcome(state, verb, action, extras?.travel);
   const witnesses = presentNpcRecords(state)
     .map((r) => r.npcName)
     .filter((n) => !matchesLastKillName(n, kill));
@@ -904,18 +916,26 @@ function movementLine(state: GameState, stay: string): string {
   const j = state.journey;
   if (j && j.legsDone < j.legsTotal) {
     const meeting = roadMeetingFact(j);
+    const ground = `the ${j.ground.toLowerCase()}`;
     const road = movedNow
-      ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${j.ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
-      : `No move this turn: still on ${j.ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
+      ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
+      : `No move this turn: still on ${ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
     return meeting ? `${road} ${meeting}` : road;
   }
   const spot = hereSpotFact(state);
   if (spot && !movedNow) return spot;
-  if (movedNow && c?.prevPlace && c.shortReturnTurn === state.turn) {
-    return `Turned back this turn: from ${c.prevPlace} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival; nothing more happens at ${c.prevPlace}.`;
+  const prev = c?.prevPlace?.replace(/\s+/g, ' ').trim() ?? '';
+  const from = prev && !isRoadLabel(prev) && prev.toLowerCase() !== here.toLowerCase() ? prev : '';
+  if (movedNow && c?.shortReturnTurn === state.turn) {
+    const left = from ? ` from ${from}` : '';
+    const nothing = from ? `; nothing more happens at ${from}` : '';
+    return `Turned back this turn:${left} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival${nothing}.`;
   }
-  if (movedNow && c?.prevPlace) {
-    return `Moved this turn: from ${c.prevPlace} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${c.prevPlace}.`;
+  if (movedNow && from) {
+    return `Moved this turn: from ${from} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${from}.`;
+  }
+  if (movedNow && c?.lastLocation) {
+    return `Moved this turn: arrived at ${here}. Narrate one arrival at ${here}.`;
   }
   if (!c?.lastLocation) return '';
   return `No move this turn: at ${here} before and after. Do not narrate leaving, travelling or arriving.${stay}`;
@@ -1339,7 +1359,7 @@ const HERE_CLAIM =
 function wrongHereOnPacket(prose: string, packet: CompletedEventPacket): boolean {
   const here = (packet.location ?? '').replace(/\.$/, '').trim();
   if (!here || here.length < 3) return false;
-  if (packet.outcome === 'arrived' || packet.verb === 'traveled') return false;
+  if (packet.outcome === 'arrived' || packet.outcome === 'set out' || packet.verb === 'traveled') return false;
   const claimed = prose.match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
   if (!claimed || claimed.length < 4) return false;
   const claimCore = claimed.replace(/^(the|a|an)\s+/i, '').trim();
@@ -2262,7 +2282,7 @@ function stitchBankKey(packet: CompletedEventPacket): string {
     if (corpse) return 'talk-corpse';
     return packet.witnesses.length > 0 && packet.outcome === 'spoke' ? 'talk' : 'talk-empty';
   }
-  if (verb === 'traveled' || outcome === 'arrived') return 'travel';
+  if (verb === 'traveled' || outcome === 'arrived' || outcome === 'set out') return 'travel';
   if (verb === 'left' || outcome === 'left') return 'leave';
   if (verb === 'waited') {
     if (corpse) return 'wait-corpse';

@@ -160,7 +160,7 @@ import {
 import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
 import { runWriterTurn, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay } from './travelJourney';
+import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -2731,6 +2731,7 @@ export function useGame() {
       const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,
         engineResult: engineFact,
+        travel: travelOutcome(travelCommit, hereBeforeMove, liveCurrent),
         reader: readerFlags(settingsRef.current),
       });
       liveCurrent = preparedEvent.state;

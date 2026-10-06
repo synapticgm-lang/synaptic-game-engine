@@ -118,7 +118,9 @@ describe('29z9j seed 72 — a short turn-back is the same scene', () => {
     const onStreet = s;
     s = recordCirclingTurn({ ...s, turn: 46, currentLocation: 'Cathedral Close' }, 'Turn back toward Cathedral Close', [], onStreet);
     expect(s.circling?.shortReturnTurn).toBe(46);
-    expect(movementFact(s, 'Turn back toward Cathedral Close')).toMatch(/^Turned back this turn: from Back streets back to Cathedral Close/);
+    const line = movementFact(s, 'Turn back toward Cathedral Close');
+    expect(line).toMatch(/^Turned back this turn: back to Cathedral Close/);
+    expect(line).not.toContain('Back streets');
   });
 
   it('a first arrival still narrates one arrival', () => {

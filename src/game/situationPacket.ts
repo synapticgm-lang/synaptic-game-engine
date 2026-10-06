@@ -1,4 +1,5 @@
 import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types';
+import { isJourneyUnderway } from './travelJourney';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
 import { formatCampaignContractForPrompt } from './campaignContract';
@@ -250,7 +251,7 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
 
   const props = Array.from(new Set([
     ...(state.sceneFacts?.props ?? []),
-    ...(state.locationSheet?.interactables ?? []).map((i) => i.name).filter(Boolean),
+    ...(isJourneyUnderway(state) ? [] : state.locationSheet?.interactables ?? []).map((i) => i.name).filter(Boolean),
   ])).slice(0, 10);
   const facts = writerFacts(state);
   const inventory = facts.carried.map((i) => i.name).filter(Boolean);

@@ -222,7 +222,7 @@ import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay } from './travelJourney';
+import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck } from './turnCheck';
 import { grantLevelSkills } from './skillGates';
@@ -1182,6 +1182,7 @@ export async function headlessFateTurn(
   const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
     xp: arcXp,
     engineResult: engineFact,
+    travel: travelOutcome(travelCommit, hereBeforeMove, arcState),
     reader: readerFlags(settings),
   });
   arcState = preparedEvent.state;

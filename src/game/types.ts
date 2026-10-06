@@ -1226,6 +1226,8 @@ export interface CirclingMemory {
   recentFamilies?: string[];
   /** 29y — the turn the engine last committed a change of place (the writer is told whether this turn moved). */
   movedTurn?: number;
+  /** The journey leg at the last record (from>to>startedTurn>legsDone): a reroute or new leg on the road is a move. */
+  lastLeg?: string;
   /** 29z9j — the turn the player turned back into the place they left within two turns (same scene, not a new arrival). */
   shortReturnTurn?: number;
   /** 29y — the place the run started in (the first circling record). */

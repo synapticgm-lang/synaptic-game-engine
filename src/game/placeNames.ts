@@ -7,7 +7,7 @@
  */
 import type { GameState } from './types';
 import { hubsForBibleId, placeCardFor } from './outdoorHubs';
-import { playerFacingLocation } from './locationName';
+import { playerFacingLocation, underwayHereLabel } from './locationName';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
@@ -69,8 +69,9 @@ export function shortPlaceName(
   return best?.name ?? raw;
 }
 
-/** The exits of HERE: the location sheet when it has them, else the place card. */
+/** The exits of HERE: the location sheet when it has them, else the place card. On a trip: its two ends. */
 export function exitPlaceNames(state: GameState): string[] {
+  if (underwayHereLabel(state)) return [state.journey!.from, state.journey!.to];
   const sheet = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
   return sheet.length ? sheet : placeCardFor(state, playerFacingLocation(state))?.exits ?? [];
 }
@@ -91,7 +92,10 @@ export function hookTownName(state: GameState): string {
 export function nearbyPlaceNames(state: GameState): string[] {
   const out: string[] = [];
   const here = playerFacingLocation(state).toLowerCase();
-  for (const name of [...exitPlaceNames(state).slice(0, 5), state.journey?.from, state.journey?.to, hookTownName(state)]) {
+  const names = underwayHereLabel(state)
+    ? exitPlaceNames(state)
+    : [...exitPlaceNames(state).slice(0, 5), state.journey?.from, state.journey?.to, hookTownName(state)];
+  for (const name of names) {
     const n = (name ?? '').replace(/\s+/g, ' ').trim();
     if (n.length >= 3 && n.toLowerCase() !== here && !out.some((o) => o.toLowerCase() === n.toLowerCase())) out.push(n);
   }

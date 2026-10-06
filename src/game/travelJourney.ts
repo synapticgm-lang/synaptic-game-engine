@@ -36,6 +36,7 @@ import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
+import { underwayHereLabel } from './locationName';
 
 interface Endpoint {
   name: string;
@@ -86,6 +87,13 @@ const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').tr
 /** A road label or the underway HERE: journey state, never a place. */
 export function isRoadLabel(name: string | undefined | null): boolean {
   return ROAD_LABELS.has(tidy(name).toLowerCase());
+}
+
+/** A road label, or the trip's own HERE words while underway: never a place card or a place ref. */
+export function isTripHere(state: Pick<GameState, 'journey'>, name: string | undefined | null): boolean {
+  if (isRoadLabel(name)) return true;
+  const trip = underwayHereLabel(state);
+  return !!trip && tidy(name).toLowerCase() === trip.toLowerCase();
 }
 
 /** The last real place on the trip: its origin, else the last visited place card that is not a road. */
@@ -574,8 +582,27 @@ export interface TravelCommit {
   handled: boolean;
   /** Arrived at a destination this turn. */
   arrived: boolean;
+  /** A leg of a trip started or advanced this turn without arriving. */
+  underway?: boolean;
   /** STATUS + ENGINE RESULT line (chrome, not prose). */
   receipt?: string;
+}
+
+/** What the travel engine did this turn, for the writer's Outcome (never decided by the player's words). */
+export function travelOutcome(
+  commit: TravelCommit | null | undefined,
+  hereBefore: string,
+  after: GameState
+): { arrived: boolean; underway: boolean } {
+  if (commit?.arrived) return { arrived: true, underway: false };
+  if (commit?.underway) return { arrived: false, underway: true };
+  const here = tidy(after.currentLocation);
+  const moved =
+    !!here
+    && here.toLowerCase() !== tidy(hereBefore).toLowerCase()
+    && !isRoadLabel(here)
+    && !isJourneyUnderway(after);
+  return { arrived: moved, underway: false };
 }
 
 function arrive(state: GameState, dest: string, hours: number, from: string): TravelCommit {
@@ -607,7 +634,8 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap): 
     state: clock.state,
     handled: true,
     arrived: false,
-    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal - 1} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
+    underway: true,
+    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
@@ -627,7 +655,8 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     state: clock.state,
     handled: true,
     arrived: false,
-    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} â€” leg ${legsDone} of ${j.legsTotal - 1} â€” ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
+    underway: true,
+    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} â€” leg ${legsDone} of ${j.legsTotal} â€” ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
 

@@ -19,6 +19,7 @@ import type { CirclingMemory, GameState } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
+import { isRoadLabel } from './travelJourney';
 
 export type { CirclingMemory } from './types';
 
@@ -180,6 +181,10 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
   const mem: CirclingMemory = state.circling ?? { stale: {}, lastProgressTurn: state.turn ?? 0 };
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
   const moved = !!mem.lastLocation && here !== mem.lastLocation;
+  // HERE stays the road label for a whole trip; a new leg or a reroute is still a move.
+  const j = state.journey;
+  const leg = j && j.legsDone < j.legsTotal ? `${j.from}>${j.to}>${j.startedTurn}>${j.legsDone}` : undefined;
+  const legMoved = !moved && !!leg && !!mem.lastLeg && leg !== mem.lastLeg;
   const start: GameState = before ?? { ...state, currentLocation: mem.lastLocation ?? here, journey: state.journey };
   const progressed = mem.lastLocation
     ? turnProgress({ ...start, circling: mem }, state, receipts).progressed
@@ -209,6 +214,9 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
     ? [...priorPlaces.filter((p) => p !== key), key].slice(-RECENT_PLACES)
     : priorPlaces;
   const recentFamilies = [...(mem.recentFamilies ?? []), fam].slice(-3);
+  const left = moved && isRoadLabel(mem.lastLocation)
+    ? before?.journey?.from || mem.lastLeg?.split('>')[0] || mem.prevPlace
+    : mem.lastLocation;
   return {
     ...state,
     circling: {
@@ -219,9 +227,10 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       recentPlaces,
       recentFamilies,
       lastProgressTurn: progressed ? state.turn ?? 0 : mem.lastProgressTurn,
-      prevPlace: moved ? mem.lastLocation : mem.prevPlace,
+      prevPlace: moved ? left : mem.prevPlace,
       lastLocation: here,
-      movedTurn: moved ? state.turn ?? 0 : mem.movedTurn,
+      movedTurn: moved || legMoved ? state.turn ?? 0 : mem.movedTurn,
+      lastLeg: leg,
       shortReturnTurn: turnedBack ? state.turn ?? 0 : moved ? undefined : mem.shortReturnTurn,
       openingPlace: mem.openingPlace ?? (state.circling ? undefined : here || undefined),
     },

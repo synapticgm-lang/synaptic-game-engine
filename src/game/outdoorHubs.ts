@@ -11,6 +11,7 @@ import type { CampaignBible } from '@/data/campaigns/types';
 import type { GameState, PlaceRecord } from './types';
 import { excludedPadFamilies } from './padUniverse';
 import { placeIdFromName, resolvePlace } from './places';
+import { isTripHere } from './travelJourney';
 
 export interface OutdoorHub {
   id: string;
@@ -531,16 +532,18 @@ export function resolveLeaveSceneDestination(
   return alt?.name ?? null;
 }
 
-/** 27g — place card: plain description + exits, no engine tags. Built from the hub bank and the way you came. */
-export function buildPlaceCard(state: GameState, placeName: string, fromLocation?: string): PlaceRecord {
+/** 27g — place card: plain description + exits, no engine tags. Built from the hub bank and the way you came. A road is not a place: null. */
+export function buildPlaceCard(state: GameState, placeName: string, fromLocation?: string): PlaceRecord | null {
   const raw = (placeName ?? '').replace(/\s+/g, ' ').trim();
+  if (isTripHere(state, raw)) return null;
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), raw);
   const name = hub?.name ?? raw;
   const existing = resolvePlace(state.places, name) ?? resolvePlace(state.places, raw);
   const description = (existing?.description || hub?.blurb || '').replace(/\s+/g, ' ').trim();
   // Card exits are facts, not chips: canonical hub names, no chip cooldown/encounter gates.
   const hubs = hubsForBibleId(state.campaignBibleId);
-  const backRaw = (fromLocation ?? '').replace(/\s+/g, ' ').trim();
+  const fromRaw = (fromLocation ?? '').replace(/\s+/g, ' ').trim();
+  const backRaw = isTripHere(state, fromRaw) ? '' : fromRaw;
   const back = matchHub(hubs, backRaw)?.name ?? backRaw;
   const discovered = state.discoveredLocations ?? [];
   const early = (state.turn ?? 0) <= 5 && discovered.length <= 1;
@@ -589,6 +592,7 @@ export function ensurePlaceCard(state: GameState, placeName: string, fromLocatio
   const existing = resolvePlace(places, hubName) ?? resolvePlace(places, raw);
   if (existing?.cardBuiltTurn != null) return state;
   const card = buildPlaceCard(state, raw, fromLocation);
+  if (!card) return state;
   const next = existing
     ? places.map((p) =>
       p.id === existing.id
@@ -602,7 +606,7 @@ export function ensurePlaceCard(state: GameState, placeName: string, fromLocatio
 /** 27g — the card for a place: the stored card when built, else the same card built on the fly (not stored). */
 export function placeCardFor(state: GameState, placeName: string | undefined): PlaceRecord | null {
   const raw = (placeName ?? '').replace(/\s+/g, ' ').trim();
-  if (!raw) return null;
+  if (!raw || isTripHere(state, raw)) return null;
   const hubName = matchHub(hubsForBibleId(state.campaignBibleId), raw)?.name ?? raw;
   const stored = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
   if (stored?.cardBuiltTurn != null) return stored;

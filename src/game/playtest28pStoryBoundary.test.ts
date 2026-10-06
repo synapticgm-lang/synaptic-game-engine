@@ -53,7 +53,7 @@ describe('28p story data boundary', () => {
     expect(places.length).toBeGreaterThanOrEqual(4);
     expect(places.some((p) => p.name === 'the mill loft')).toBe(true);
     const state = { ...newGameState('thornferry-road'), places: seedStoryPlaces([], bible, false), turn: 1 };
-    const card = buildPlaceCard(state, 'the ferry inn at Thornferry', 'the mill landing at Thornferry');
+    const card = buildPlaceCard(state, 'the ferry inn at Thornferry', 'the mill landing at Thornferry')!;
     expect(card.description).toMatch(/inn/i);
     expect(card.exits?.length ?? 0).toBeGreaterThanOrEqual(2);
     expect(seedStoryPlaces([], getCampaignBibleById('summoned-pact'), true)).toEqual([]);

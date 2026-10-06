@@ -5,6 +5,7 @@
  */
 
 import type { GameState, Item } from './types';
+import { isJourneyUnderway } from './travelJourney';
 import { playerFacingLocation } from './locationName';
 import { resolveDangerTier, resolveMapScale, dangerTierLabel, mapScaleLabel, isInteriorMap } from './placeAuthority';
 import { introductionPermitForName } from './introductionPermit';
@@ -79,7 +80,7 @@ export function compileSceneManifest(state: GameState): SceneManifest {
   }
   const props = [
     ...(state.sceneFacts?.props ?? []),
-    ...(state.locationSheet?.interactables ?? [])
+    ...(isJourneyUnderway(state) ? [] : state.locationSheet?.interactables ?? [])
       .filter((i) => i.state !== 'gone' && i.state !== 'taken')
       .map((i) => i.name),
   ];
