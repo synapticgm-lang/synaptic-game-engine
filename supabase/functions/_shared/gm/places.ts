@@ -1,6 +1,7 @@
 import type { GameState, LocationSheet, MapScale, PlaceRecord } from './types.ts';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority.ts';
 import { placeIdFromName } from './placeUtils.ts';
+import { isRoadLabel } from './travelJourney.ts';
 
 // Re-export for backward compatibility
 export { placeIdFromName };
@@ -25,7 +26,7 @@ export function upsertPlaceFromSheet(
   }
 ): PlaceRecord[] {
   const name = sheet?.name?.trim();
-  if (!name) return places;
+  if (!name || isRoadLabel(name)) return places;
   const state = opts?.state;
   if (
     state?.worldAtlas?.settlements?.length &&
@@ -69,7 +70,7 @@ export function touchPlaceVisit(
   turn: number,
   state?: GameState
 ): PlaceRecord[] {
-  if (!placeName?.trim()) return places;
+  if (!placeName?.trim() || isRoadLabel(placeName)) return places;
   if (
     state?.worldAtlas?.settlements?.length &&
     looksLikeGeographyInvent(placeName) &&

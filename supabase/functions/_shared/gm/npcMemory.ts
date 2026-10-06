@@ -213,8 +213,9 @@ export function getCompletedTopics(state: GameState, npcName: string): string[] 
   return findNpcMemory(state.npcMemories, npcName)?.completedTopics ?? [];
 }
 
-const SELF_INTRO =
-  /\b(?:i am|i'm|i’m|my name is|i am called|allow me to introduce|let me introduce(?:\s+myself)?)\b/i;
+/** Ordinary first-person speech ("I'm off to market") is not an intro; the speaker's name must follow. */
+const SELF_INTRO_HEAD =
+  String.raw`\b(?:i am called|i am|i['’]m|my name is|call me|(?:allow|let) me (?:to )?introduce(?:\s+myself)?)`;
 
 function escapeRe(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -223,8 +224,7 @@ function escapeRe(value: string): string {
 export function sentenceLooksLikeSelfIntro(sentence: string, npcName: string): boolean {
   const n = npcName.trim();
   if (n.length < 2) return false;
-  const nameRe = new RegExp(`\\b${escapeRe(n)}\\b`, 'i');
-  if (nameRe.test(sentence) && SELF_INTRO.test(sentence)) return true;
+  if (new RegExp(`${SELF_INTRO_HEAD}[,:]?\\s+${escapeRe(n)}\\b`, 'i').test(sentence)) return true;
   return new RegExp(
     `\\b${escapeRe(n)}\\s+introduces\\s+(?:him|her|them)self\\b`,
     'i'
