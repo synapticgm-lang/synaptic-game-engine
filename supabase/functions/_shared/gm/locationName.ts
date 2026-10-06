@@ -23,7 +23,17 @@ function sheetIsHere(sheet: string, here: string): boolean {
   return !!a && !!b && (a === b || a.includes(b) || b.includes(a));
 }
 
+/** While a trip is underway HERE is the trip in plain words from the journey, never a place. '' when not underway. */
+export function underwayHereLabel(state: Pick<GameState, 'journey'>): string {
+  const j = state.journey;
+  if (!j || j.legsDone >= j.legsTotal) return '';
+  const ground = (j.ground || 'road').replace(/\s+/g, ' ').trim().toLowerCase();
+  return `the ${ground} from ${j.from} toward ${j.to}`;
+}
+
 export function playerFacingLocation(state: GameState): string {
+  const trip = underwayHereLabel(state);
+  if (trip) return trip;
   const sheet = state.locationSheet?.name?.trim() ?? '';
   const here = state.currentLocation?.trim() ?? '';
   // 29z4 — after a move the sheet can still hold the place left; the place just entered wins.

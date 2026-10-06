@@ -5,6 +5,7 @@ import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
 import { placeCardFor } from './outdoorHubs.ts';
 import { exitPlaceNames } from './placeNames.ts';
+import { isJourneyUnderway } from './travelJourney.ts';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords.ts';
 import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson.ts';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm.ts';
@@ -149,7 +150,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   // 27g — the place card is the fact authority: plain description and exits, no engine tags.
   const card = placeCardFor(state, currentName);
   if (card?.description) here.push(`What it is: ${card.description}`);
-  const things = state.locationSheet?.interactables ?? [];
+  const things = isJourneyUnderway(state) ? [] : state.locationSheet?.interactables ?? [];
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);
   }
