@@ -16,6 +16,7 @@ import {
   mapGapBetween,
   roadEncounterLevel,
   rollRoadEncounter,
+  UNDERWAY_HERE,
   type StretchContext,
 } from './travelJourney';
 import type { GameState } from './types';
@@ -44,9 +45,9 @@ function tripsTo(dest: string, n = 200) {
 }
 
 describe('29w stamps', () => {
-  it('HUD and BUILD are 2026-10-06a and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-06a');
-    expect(BUILD_STAMP).toBe('2026-10-06a');
+  it('HUD and BUILD are 2026-10-06b and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-06b');
+    expect(BUILD_STAMP).toBe('2026-10-06b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -130,7 +131,7 @@ describe('29w — deal with it by chips, then the road continues', () => {
     const chip = journeyPads(hit.state).slice(1, -1).find((c) => !/^face\b/i.test(c))!;
     const dealt = commitTravel(hit.state, chip);
     expect(dealt.arrived).toBe(false);
-    expect(dealt.state.currentLocation).toBe(hit.state.journey!.ground);
+    expect(dealt.state.currentLocation).toBe(UNDERWAY_HERE);
     expect(dealt.receipt).toMatch(/chance meeting/);
     const on = commitTravel(dealt.state, 'Walk on');
     expect(on.arrived).toBe(true);

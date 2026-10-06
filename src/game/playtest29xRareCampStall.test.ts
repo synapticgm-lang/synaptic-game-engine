@@ -18,6 +18,7 @@ import {
   roadEncounterLevel,
   roadFoe,
   rollRoadEncounter,
+  UNDERWAY_HERE,
   type StretchContext,
 } from './travelJourney';
 import type { EngineMode, GameState, RoadEncounter } from './types';
@@ -64,9 +65,9 @@ afterEach(() => {
 });
 
 describe('29x stamps', () => {
-  it('HUD and BUILD are 2026-10-06a and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-06a');
-    expect(BUILD_STAMP).toBe('2026-10-06a');
+  it('HUD and BUILD are 2026-10-06b and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-06b');
+    expect(BUILD_STAMP).toBe('2026-10-06b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -104,7 +105,7 @@ describe('29x — rare spawn', () => {
     expect(foe.maxHp).toBeGreaterThan(roadFoe({ ...enc, rare: false }).maxHp);
     expect(profileForEncounter(foe)).toBe('rareSpawn');
     expect(faced.receipt).toMatch(/fight: the thugs, rare spawn \(level \d+, \d+ HP\)/);
-    expect(faced.state.currentLocation).toBe(s.journey!.ground);
+    expect(faced.state.currentLocation).toBe(UNDERWAY_HERE);
   });
 
   it('loot is slightly better than a normal drop and a low path never drops endgame loot', () => {

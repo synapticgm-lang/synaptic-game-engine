@@ -1,13 +1,13 @@
 /**
- * 29u — Travel between places reads as a journey.
+ * 29u â€” Travel between places reads as a journey.
  * Distance comes from the map that already exists: atlas region hops, then
  * whether a place sits outside a settlement (road / march / treeline / fort).
  * More than a step puts the player on the ground between, moves the clock by
  * the distance, and gives that ground its own chips. The code writes no story
- * sentences — the writer narrates every leg from the ENGINE RESULT line.
- * 29w — each stretch rolls once for a chance meeting that fits the ground and the
+ * sentences â€” the writer narrates every leg from the ENGINE RESULT line.
+ * 29w â€” each stretch rolls once for a chance meeting that fits the ground and the
  * area level. The roll picks a kind and level only; the writer names who or what.
- * 29x — a hostile meeting can be a rare spawn (a little tougher, slightly better loot),
+ * 29x â€” a hostile meeting can be a rare spawn (a little tougher, slightly better loot),
  * a camp can hold a mini-boss, and facing either opens a live fight on activeEncounter
  * that the combat engine resolves. Everything stays at the area level.
  */
@@ -72,6 +72,33 @@ const GROUND_LABEL: Record<JourneyTerrain, string> = {
   streets: 'Back streets',
   road: 'Open road',
 };
+
+/**
+ * HERE while underway. The road label stays on the journey; this names no place, so no hub matches it
+ * and the trip's ends stay on the journey (from / to) where the writer already reads them.
+ */
+export const UNDERWAY_HERE = 'On the road between places';
+
+const ROAD_LABELS = new Set([...Object.values(GROUND_LABEL), UNDERWAY_HERE].map((l) => l.toLowerCase()));
+
+const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
+
+/** A road label or the underway HERE: journey state, never a place. */
+export function isRoadLabel(name: string | undefined | null): boolean {
+  return ROAD_LABELS.has(tidy(name).toLowerCase());
+}
+
+/** The last real place on the trip: its origin, else the last visited place card that is not a road. */
+function journeyOrigin(state: Pick<GameState, 'journey' | 'places' | 'currentLocation'>): string {
+  const from = tidy(state.journey?.from);
+  if (from && !isRoadLabel(from)) return from;
+  const visited = (state.places ?? [])
+    .filter((p) => tidy(p.name) && !isRoadLabel(p.name) && typeof p.lastVisitedTurn === 'number')
+    .sort((a, b) => (b.lastVisitedTurn ?? 0) - (a.lastVisitedTurn ?? 0));
+  if (visited[0]) return tidy(visited[0].name);
+  const here = tidy(state.currentLocation);
+  return isRoadLabel(here) ? '' : here;
+}
 
 /** Hours per leg on each kind of ground. A short step inside a place is STEP_HOURS. */
 const LEG_HOURS: Record<JourneyTerrain, number> = {
@@ -167,7 +194,7 @@ export interface MapGap {
   steps: number;
   terrain: JourneyTerrain;
   hoursPerLeg: number;
-  /** Threat tier (1–4) of the country between: the wilder end, else the zone. */
+  /** Threat tier (1â€“4) of the country between: the wilder end, else the zone. */
   areaTier: number;
   haunted: boolean;
 }
@@ -308,12 +335,13 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
 }
 
 /** Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back. */
-export function journeyPads(state: Pick<GameState, 'journey'>): string[] {
+export function journeyPads(state: Pick<GameState, 'journey' | 'places' | 'currentLocation'>): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
   const forward = laneBlocked(j.encounter) ? [] : ['Walk on'];
-  return [...forward, ...met, `Turn back toward ${j.from}`];
+  const origin = journeyOrigin(state);
+  return [...forward, ...met, ...(origin ? [`Turn back toward ${origin}`] : [])];
 }
 
 export function isJourneyPad(choice: string): boolean {
@@ -443,7 +471,7 @@ export function roadFoe(enc: RoadEncounter): ActiveEncounter {
   };
 }
 
-/** Encounter level from the area tier by the treasure rule (tier → level, clamped to party ±3). */
+/** Encounter level from the area tier by the treasure rule (tier â†’ level, clamped to party Â±3). */
 export function roadEncounterLevel(state: GameState, areaTier: number): number {
   return resolveLocalAreaLevel({
     ...state,
@@ -556,7 +584,7 @@ function arrive(state: GameState, dest: string, hours: number, from: string): Tr
     state: clock.state,
     handled: true,
     arrived: true,
-    receipt: `Travel: ${from} to ${dest} — ${clock.note}`,
+    receipt: `Travel: ${from} to ${dest} â€” ${clock.note}`,
   };
 }
 
@@ -574,12 +602,12 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap): 
     haunted: gap.haunted,
     quietStretches: 0,
   });
-  const clock = advanceClock({ ...state, currentLocation: journey.ground, journey }, gap.hoursPerLeg);
+  const clock = advanceClock({ ...state, currentLocation: UNDERWAY_HERE, journey }, gap.hoursPerLeg);
   return {
     state: clock.state,
     handled: true,
     arrived: false,
-    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} — leg 1 of ${journey.legsTotal - 1} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
+    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal - 1} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
@@ -594,12 +622,12 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const legsDone = j.legsDone + 1;
   if (legsDone >= j.legsTotal) return arrive(state, j.to, j.hoursPerLeg, j.ground.toLowerCase());
   const journey = rollStretch(state, { ...j, legsDone });
-  const clock = advanceClock({ ...state, currentLocation: j.ground, journey }, j.hoursPerLeg);
+  const clock = advanceClock({ ...state, currentLocation: UNDERWAY_HERE, journey }, j.hoursPerLeg);
   return {
     state: clock.state,
     handled: true,
     arrived: false,
-    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} — leg ${legsDone} of ${j.legsTotal - 1} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
+    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} â€” leg ${legsDone} of ${j.legsTotal - 1} â€” ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
 
@@ -620,15 +648,17 @@ function leaveDestination(state: GameState, here: string): string | null {
 export function commitTravel(state: GameState, raw: string): TravelCommit {
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!input || state.activeEncounter) return { state, handled: false, arrived: false };
-  const j = state.journey;
-  if (j && isJourneyUnderway(state)) {
+  if (state.journey && isJourneyUnderway(state)) {
+    const origin = journeyOrigin(state) || state.journey.from;
+    const j: TravelJourney = origin === state.journey.from ? state.journey : { ...state.journey, from: origin };
+    state = j === state.journey ? state : { ...state, journey: j };
     const named = parseTravelDestination(input, state.campaignBibleId);
     const namedTo = named && named.name.toLowerCase() === j.to.toLowerCase();
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();
     if ((WALK_ON.test(input) || namedTo) && laneBlocked(j.encounter)) {
       const slot = timeOfDayForHour(currentHour(state));
       return {
-        state: { ...state, currentLocation: j.ground },
+        state: { ...state, currentLocation: UNDERWAY_HERE },
         handled: true,
         arrived: false,
         receipt: `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot}); the way on is blocked`,
@@ -644,7 +674,7 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
       };
       return stepAlong({ ...state, journey: back }, back);
     }
-    if (named) return goTo({ ...state, journey: null }, j.ground, named.name);
+    if (named) return goTo({ ...state, journey: null }, j.from, named.name);
     const slot = timeOfDayForHour(currentHour(state));
     const where = `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot})`;
     if (j.encounter && facesFight(input, j.encounter) && engineAllowsCombat(state)) {
@@ -652,24 +682,28 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
       const journey: TravelJourney = { ...j, encounter: { ...j.encounter, engaged: true } };
       const what = j.encounter.kind === 'camp' ? 'mini-boss' : j.encounter.rare ? 'rare spawn' : 'foe';
       return {
-        state: { ...state, currentLocation: j.ground, journey, activeEncounter: foe },
+        state: { ...state, currentLocation: UNDERWAY_HERE, journey, activeEncounter: foe },
         handled: true,
         arrived: false,
         receipt: `${where}; fight: ${foe.name}, ${what} (level ${foe.level}, ${foe.maxHp} HP)`,
       };
     }
     return {
-      state: { ...state, currentLocation: j.ground },
+      state: { ...state, currentLocation: UNDERWAY_HERE },
       handled: true,
       arrived: false,
       receipt: `${where}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
     };
   }
-  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const parkedOnRoad = isRoadLabel(state.currentLocation);
+  const here = parkedOnRoad ? journeyOrigin(state) : tidy(state.currentLocation);
   const hub = parseTravelDestination(input, state.campaignBibleId);
-  const spot = !hub && here ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '') : null;
+  const spot = !hub && here && !parkedOnRoad ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '') : null;
   if (spot) return moveWithinPlace(state, input, spot);
   const dest = hub?.name ?? (isLeaveSceneAction(input) ? leaveDestination(state, here) : null);
+  if (parkedOnRoad && dest && here && dest.toLowerCase() === here.toLowerCase()) {
+    return arrive(state, dest, STEP_HOURS, here);
+  }
   if (!dest || dest.toLowerCase() === here.toLowerCase()) {
     return { state: state.journey ? { ...state, journey: null } : state, handled: false, arrived: false };
   }

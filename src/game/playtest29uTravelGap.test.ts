@@ -11,7 +11,7 @@ import { getWorldOutlineById } from '@/data/worldOutlines';
 import { instantiateWorldAtlas } from './worldAtlas';
 import { compileChoices } from './choiceCompiler';
 import { enforceCameraOnProse } from './travelAuthority';
-import { commitTravel, journeyPads, mapGapBetween } from './travelJourney';
+import { commitTravel, journeyPads, mapGapBetween, UNDERWAY_HERE } from './travelJourney';
 import type { GameState } from './types';
 
 function coastState(): GameState {
@@ -40,9 +40,9 @@ function keepState(): GameState {
 }
 
 describe('29u stamps', () => {
-  it('HUD and BUILD are 2026-10-06a and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-06a');
-    expect(BUILD_STAMP).toBe('2026-10-06a');
+  it('HUD and BUILD are 2026-10-06b and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-06b');
+    expect(BUILD_STAMP).toBe('2026-10-06b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -55,7 +55,8 @@ describe('29u — mapped gap is not one stitch', () => {
     expect(t.handled).toBe(true);
     expect(t.arrived).toBe(false);
     expect(t.state.currentLocation).not.toBe('Brinewatch');
-    expect(t.state.currentLocation).toBe(t.state.journey?.ground);
+    expect(t.state.currentLocation).not.toBe(t.state.journey?.ground);
+    expect(t.state.currentLocation).toBe(UNDERWAY_HERE);
     expect(t.state.journey?.to).toBe('Brinewatch');
     const body = 'Salt wind. Gulls over the track.';
     const prose = enforceCameraOnProse(body, t.state, 'Travel toward Brinewatch', 'Saltmar');
