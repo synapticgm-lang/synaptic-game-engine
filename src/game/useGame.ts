@@ -358,7 +358,7 @@ import {
 } from './arcDirector';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
-import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson } from './tokenProse';
+import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, type SpokenLine } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
 import {
   composeFreeMudTurn,
@@ -2898,6 +2898,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let result: GmResult;
       let writerRemaining: string[] = [];
       let writerProse: string | null = null;
+      let writerSpeech: SpokenLine[] | undefined;
       drainWriterRawIssues();
       drainWriterUsage();
       try {
@@ -2973,6 +2974,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
         result = { ...result, text: writerTurn.prose };
         writerProse = writerTurn.prose;
+        writerSpeech = writerTurn.speech;
         if (
           (writerTurn.path === 'json' || writerTurn.path === 'json-partial')
           && writerTurn.refs?.length
@@ -4106,6 +4108,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         turn: nextTurn,
         talkTopics: hallTalkTopics(sanitizedInput),
         gmText: cleanText,
+        speechLines: writerSpeech,
       });
       workingState = {
         ...workingState,

@@ -12,12 +12,16 @@ const VOICE_NOTE = /^Speech:/i;
 export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
   if (!isMetNpc(m)) return '';
   const pc = (m.knownPlayerName || pcName || '').trim() || 'the player';
-  const times = Math.max(1, m.meetCount ?? 1);
-  const bits = [`${m.npcName} has met ${pc} before (${times === 1 ? 'once' : `${times} times`})`];
+  const times = m.meetCount ?? 0;
+  const bits: string[] = [];
+  if (times > 0) bits.push(`has met ${pc} before (${times === 1 ? 'once' : `${times} times`})`);
   if (m.knownPlayerName) bits.push(`knows them as ${m.knownPlayerName}`);
   const history = m.facts.filter((f) => !SHEET_BOOKKEEPING.test(f)).slice(-2);
   if (history.length) bits.push(`remembers: ${history.join('; ')}`);
-  return `${bits.join(', ')}. They greet ${pc} as someone they know: no introducing themselves again, no asking the name again.`;
+  if (!bits.length) return '';
+  const head = `${m.npcName} ${bits.join(', ')}.`;
+  if (times > 0) return `${head} They greet ${pc} as someone they know: no introducing themselves again, no asking the name again.`;
+  return m.knownPlayerName ? `${head} No asking the name again.` : head;
 }
 
 export function formatNpcMemoriesForPrompt(

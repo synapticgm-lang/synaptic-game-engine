@@ -1117,8 +1117,10 @@ export interface NpcMemory {
   introSpoken?: boolean;
   /** 12a — locked PC name this NPC has heard. */
   knownPlayerName?: string;
-  /** 12a — distinct meet beats (same-turn harvest does not increment). */
+  /** Meetings on later visits (0 on the first visit; mentions on the same visit never add one). */
   meetCount?: number;
+  /** The place visit (currentVisitKey) this person was last seen on. */
+  seenVisit?: string;
   /** 12a — exhausted dialogue basins (`intro`, later topics). */
   completedTopics?: string[];
   /** Gap 1 — the quoted words this person spoke, keyed by the quote, with the turn and the player's topic (or "other"). */

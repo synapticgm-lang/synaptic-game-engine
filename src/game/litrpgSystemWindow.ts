@@ -2,6 +2,7 @@
  * Diegetic LitRPG System window — ledger chrome when the blue panel is in play.
  * Code-owned. Not a GM prompt. Not STATUS "Turn results".
  */
+import { isLedgerReadAction } from './completedEventPacket';
 import { characterNameIsGeneric, hallTalkAsksPanel } from './openingEstablishment';
 import { UNNAMED_ADVENTURER, sanitizePcName } from './pcNameAuthority';
 import { isPartOn, type SystemPartId } from './systemHousing';
@@ -72,6 +73,7 @@ export function shouldAttachLitrpgSystemWindow(args: {
   if (args.state.engineMode !== 'litrpg') return false;
   if (priorGmCount(args.state) === 0) return true;
   if (playerAskedAboutSystemPanel(args.playerInput ?? '')) return true;
+  if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
   if ((args.systemLog ?? []).some((l) => /level\s*up/i.test(l))) return true;
   return false;
@@ -108,7 +110,25 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   } else {
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
+  if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
   return { heading: 'SYSTEM', lines };
+}
+
+/**
+ * The field labels and values this save's window actually prints (Level, XP, Pocket, Mark, Registration…).
+ * Prose quoting the window may name them; a housing without a part has no label for it.
+ */
+export function systemWindowFieldNames(state: GameState): string[] {
+  const sheet = buildLitrpgSystemWindow(state);
+  if (!sheet) return [];
+  const out: string[] = [];
+  for (const line of sheet.lines) {
+    const label = line.match(/^([A-Z][A-Za-z]*)(?=[:\s])/)?.[1];
+    if (label) out.push(label);
+    const value = line.includes(':') ? line.slice(line.indexOf(':') + 1).trim() : '';
+    if (value && /[A-Z]/.test(value)) out.push(value);
+  }
+  return [...new Set(out)];
 }
 
 function ledgerReadsPrefix(housing: string | undefined): string {
@@ -129,11 +149,9 @@ export function ledgerSheetLine(state: GameState): string {
   }
   const sheet = buildLitrpgSystemWindow(state);
   if (!sheet) return '';
-  const c = state.character;
   const quest = (state.quests ?? []).find((q) => q.status === 'active');
   const next = quest?.objectives?.find((o) => !o.completed)?.description;
   const parts = sheet.lines.filter((l) => !/^(?:HP|MP)\s/.test(l));
-  if (!housing || isPartOn(housing, 'experience')) parts.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
   if (quest?.name && (!housing || isPartOn(housing, 'quest_list'))) {
     parts.push(next ? `Quest: ${quest.name}, next: ${next}` : `Quest: ${quest.name}`);
   }

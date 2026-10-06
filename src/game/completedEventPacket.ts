@@ -171,6 +171,11 @@ export interface CompletedEventPacket {
 
 const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b|^(?:read the device|look inward|ask the world|reach into the pocket)$/i;
 
+/** The one test for "the player read the ledger": the packet and the System window both ask it. */
+export function isLedgerReadAction(action: string): boolean {
+  return LEDGER_READ_ACTION.test((action ?? '').trim());
+}
+
 function writerHousingClause(block?: string): string {
   return systemHousingWriterClause(housingFromSystemBlock(block));
 }
@@ -838,7 +843,7 @@ export function buildCompletedEventPacket(
     if (cast && (openingCastRecords(state).length || atOpeningPlace(state))) allowExtras.push(cast);
   }
   const ledgerSheet = ledgerSheetLine(state) || undefined;
-  const ledgerRead = !!ledgerSheet && LEDGER_READ_ACTION.test(action);
+  const ledgerRead = !!ledgerSheet && isLedgerReadAction(action);
   // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
   // an actor, a prop or a thing that answers.
   const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk })
@@ -1163,7 +1168,7 @@ export function formatWriterFacingEvent(
   const pov = pcPov(packet.pc, opts?.perspective);
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
-  const panelRead = packet.ledgerRead ?? (!!packet.ledgerSheet && LEDGER_READ_ACTION.test(packet.playerAction));
+  const panelRead = packet.ledgerRead ?? (!!packet.ledgerSheet && isLedgerReadAction(packet.playerAction));
   const lines: string[] = [
     thirdPerson
       ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
@@ -1233,7 +1238,7 @@ export function formatWriterFacingEvent(
   const answerLine = panelRead
     ? `{"fn":"react","text":"<sentence: another ledger line above that mattered now, as plain words — ${housingClause}>"}`
     : talkedTo
-      ? `{"fn":"speech","text":"<@t2 answers in their own quoted words, said now: \\"...\\" — not a report of what they said>"}`
+      ? `{"fn":"speech","speaker_tok":"t2","text":"<only the words @t2 says now, no quote marks and no said-tag (code adds both) — not a report of what they said>"}`
       : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
   const dest = packet.destinationRef;
   const refsShape = [

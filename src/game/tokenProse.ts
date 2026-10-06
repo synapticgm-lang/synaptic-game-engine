@@ -21,6 +21,7 @@ import { pcPov } from './narrativePov';
 import { splitProseSentences } from './proseSentences';
 import { presentNpcRecords } from './npcRecords';
 import { weaponsNotInHand } from './infoSheet';
+import { systemWindowFieldNames } from './litrpgSystemWindow';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -28,6 +29,15 @@ export interface TokenLine {
   fn: LineFn;
   text: string;
   speaker_tok?: string;
+  /** Speech line read as speaker ref + spoken words: `text` is the words; code paints the tag and quote marks. */
+  spoken?: boolean;
+}
+
+/** One accepted writer speech line: who said it (ledger ref) and the words, as code painted them. */
+export interface SpokenLine {
+  speakerId: string;
+  speaker: string;
+  words: string;
 }
 
 export interface TokenBeat {
@@ -211,13 +221,45 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       // 28g/28h — skip echoed prompt placeholders (... @t1 ... or <placeholder>).
       if (!LINE_FNS.has(fn) || !text || /^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text) || /<[^<>]{2,40}>/.test(text)) continue;
       const speaker = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';
-      lines.push(speaker ? { fn, text, speaker_tok: speaker } : { fn, text });
+      const line: TokenLine = speaker ? { fn, text, speaker_tok: speaker } : { fn, text };
+      lines.push(fn === 'speech' ? readSpeechLine(line) : line);
     }
     if (!lines.length) return null;
     return { refs, lines };
   } catch {
     return null;
   }
+}
+
+const OPEN_Q = `"\u201c`;
+const CLOSE_Q = `"\u201d`;
+const QUOTED_RE = new RegExp(`[${OPEN_Q}]([^${OPEN_Q}${CLOSE_Q}]+)[${CLOSE_Q}]`, 'g');
+
+/**
+ * A speech line is a speaker ref and the spoken words. The writer may send the words wrapped in quotes,
+ * with escaped quotes, or with its own `@t2 said,` tag (even the whole line wrapped again): read that
+ * shape into plain words + speaker_tok. Indirect speech with no quoted words and a token in it stays as written.
+ */
+function readSpeechLine(line: TokenLine): TokenLine {
+  let text = line.text.replace(/\\+(["'\u201c\u201d\u2018\u2019])/g, '$1').trim();
+  const wrapped = text.match(new RegExp(`^[${OPEN_Q}]\\s*(@t\\d+\\b[\\s\\S]*[${CLOSE_Q}])\\s*[${CLOSE_Q}]$`));
+  if (wrapped) text = wrapped[1]!.trim();
+  const quoted = [...text.matchAll(QUOTED_RE)].map((m) => m[1]!.trim()).filter(Boolean);
+  const outside = text.replace(QUOTED_RE, ' ');
+  const tagTok = outside.match(/@(t\d+)\b/)?.[1];
+  const speaker = line.speaker_tok || tagTok || '';
+  let words: string;
+  if (quoted.length) {
+    words = quoted.map((q, i) => (i < quoted.length - 1 ? q.replace(/,$/, '.') : q)).join(' ');
+  } else if (line.speaker_tok && !/@t\d+\b/.test(text)) {
+    words = text.replace(new RegExp(`^[${OPEN_Q}]|[${CLOSE_Q}]$`, 'g'), '');
+  } else {
+    return { ...line, text };
+  }
+  if (!speaker) return { ...line, text };
+  words = tidy(words).replace(/,$/, '');
+  if (!/[.!?\u2026]$/.test(words)) words += '.';
+  return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true };
 }
 
 export function extractTokenCandidates(raw: string): string[] {
@@ -326,6 +368,7 @@ export function classifyTokenLine(
   enumRefs: LedgerRef[],
   knownNames: string[] = []
 ): LineVerdict {
+  if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
   // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
   let capText = line.text;
   const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n));
@@ -427,8 +470,11 @@ function paintDisplay(row: { display: string; klass?: string }, text: string, of
 }
 
 /** The PC possessive this beat already uses: "your" when the lines address the PC as you, else the PC pronoun. */
-export function beatPcPossessive(lines: { text: string }[], state?: GameState): string {
-  const outsideQuotes = lines.map((l) => l.text.replace(/["“][^"”]*["”]/g, ' ')).join(' ');
+export function beatPcPossessive(lines: { text: string; spoken?: boolean }[], state?: GameState): string {
+  const outsideQuotes = lines
+    .filter((l) => !l.spoken)
+    .map((l) => l.text.replace(/["“][^"”]*["”]/g, ' '))
+    .join(' ');
   if (/\byour?\b/i.test(outsideQuotes)) return 'your';
   return pcPov(state?.character).his;
 }
@@ -449,7 +495,8 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
     return !used.some((t) => unbound.has(t) || !byTok.get(t)?.display);
   });
   const sentences = lines.map((line) => {
-    const once = dropTypedNameAfterToken(line.text, (tok) => byTok.get(tok)?.display);
+    const said = line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text;
+    const once = dropTypedNameAfterToken(said, (tok) => byTok.get(tok)?.display);
     let next = once.replace(/@t(\d+)\b/g, (_m, n: string, offset: number, src: string) => {
       const row = byTok.get(`t${n}`);
       if (!row?.display) return '';
@@ -519,7 +566,8 @@ function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: stri
 }
 
 /**
- * 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry.
+ * 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry,
+ * and the field labels the System window prints for this housing.
  * A weapon still in the pack is not in hand, so the writer may not name it (same as the REF ENUM).
  */
 export function knownProperNames(state: GameState): string[] {
@@ -530,6 +578,7 @@ export function knownProperNames(state: GameState): string[] {
     ...(state.places ?? []).flatMap((p) => [p.name, ...(p.exits ?? [])]),
     ...presentNpcRecords(state).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
     ...(state.inventory ?? []).map((item) => item.name).filter((n) => !unheld.has(n)),
+    ...systemWindowFieldNames(state),
   ];
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1).map((n) => n.trim()))];
 }
@@ -573,7 +622,7 @@ export function normalizeBeatRefs(
   });
   const declared = new Set(refs.map((r) => r.tok.replace(/^@/, '').toLowerCase()));
   for (const line of beat.lines) {
-    for (const tok of toksInText(line.text)) {
+    for (const tok of [...toksInText(line.text), ...(line.speaker_tok ? [line.speaker_tok] : [])]) {
       if (declared.has(tok.toLowerCase())) continue;
       const row = findEnum(enumRefs, tok);
       if (!row || !retype(row)) continue;
@@ -624,6 +673,24 @@ export function paintTokensOrDrop(text: string, display: (tok: string) => string
   return tidy(kept.map((s) => s.replace(/@t(\d+)\b/gi, (_m, n: string) => display(`t${n}`.toLowerCase()) ?? '')).join(' '));
 }
 
+/** The accepted speech lines of a beat: the declared speaker's ledger row and the words, tokens painted. */
+export function spokenLinesOf(beat: TokenBeat, enumRefs: LedgerRef[]): SpokenLine[] {
+  const rowOf = (tok: string) => {
+    const t = tok.replace(/^@/, '').toLowerCase();
+    const ref = beat.refs.find((r) => r.tok.replace(/^@/, '').toLowerCase() === t);
+    return ref ? findEnum(enumRefs, ref.tok, ref.id) : findEnum(enumRefs, t);
+  };
+  const out: SpokenLine[] = [];
+  for (const line of beat.lines) {
+    if (!line.spoken || !line.speaker_tok) continue;
+    const row = rowOf(line.speaker_tok);
+    if (!row?.display) continue;
+    const words = tidy(line.text.replace(/@t(\d+)\b/gi, (_m, n: string) => rowOf(`t${n}`)?.display ?? ''));
+    if (words) out.push({ speakerId: row.id, speaker: row.display, words });
+  }
+  return out;
+}
+
 function storySentences(prose: string): number {
   return (prose.match(/[^.!?]+[.!?]+["')\]]*/g) ?? []).filter((s) => s.trim().split(/\s+/).length >= 3).length;
 }
@@ -645,6 +712,8 @@ export function acceptTokenOrLedgerStory(
   path: TokenAcceptPath;
   notes: string[];
   refs?: TokenUseRef[];
+  /** Token JSON paths only: the accepted speech lines (empty when nobody spoke). */
+  speech?: SpokenLine[];
   needsRepair?: { missingFns: LineFn[] };
   usedLastResort: boolean;
 } {
@@ -669,6 +738,7 @@ export function acceptTokenOrLedgerStory(
           path: 'json',
           notes: ['token-json'],
           refs: beat.refs,
+          speech: spokenLinesOf(beat, enumRefs),
           usedLastResort: false,
         };
       }
@@ -704,6 +774,7 @@ export function acceptTokenOrLedgerStory(
         path: 'json-partial',
         notes: ['token-partial'],
         refs: bestPartial.beat.refs,
+        speech: spokenLinesOf(bestPartial.beat, enumRefs),
         usedLastResort: false,
       };
     }

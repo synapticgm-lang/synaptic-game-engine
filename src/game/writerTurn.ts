@@ -8,7 +8,7 @@ import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, type LedgerRef } from './completedEventPacket';
-import { acceptTokenOrLedgerStory, refEnumOf, type TokenAcceptPath } from './tokenProse';
+import { acceptTokenOrLedgerStory, refEnumOf, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit } from './beatCommitGate';
@@ -32,6 +32,8 @@ export type WriterDraft = {
   prose: string;
   path: TokenAcceptPath | 'plain';
   refs?: TokenUseRef[];
+  /** Token JSON drafts only: the accepted speech lines. */
+  speech?: SpokenLine[];
 };
 
 export type WriterTurnOutcome = 'accepted' | 'empty';
@@ -69,7 +71,7 @@ export function renderWriterDraft(raw: string, state: GameState, packet?: Comple
   });
   const prose = (accepted.prose ?? '').trim();
   if (!stripChoiceList(stripActionTags(prose)).trim()) return { prose: '', path: accepted.path };
-  return { prose, path: accepted.path, refs: accepted.refs };
+  return { prose, path: accepted.path, refs: accepted.refs, ...(accepted.speech ? { speech: accepted.speech } : {}) };
 }
 
 function unresolvedProblem(why: string, playerInput: string, engineFact: string): string {

@@ -31,7 +31,7 @@ import {
 import { isPlannerUiPersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
-import { upsertHarvestedNpcMemory } from './npcMemory';
+import { currentVisitKey, upsertHarvestedNpcMemory } from './npcMemory';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -95,8 +95,7 @@ function extractProperNamesFromProse(prose: string, bibleId: string | null | und
 }
 
 function ensureNpcMemory(state: GameState, name: string, turn: number): NpcMemory[] {
-  const locked = state.character?.name?.trim();
-  return upsertHarvestedNpcMemory(state.npcMemories ?? [], name, turn, locked);
+  return upsertHarvestedNpcMemory(state.npcMemories ?? [], name, turn, currentVisitKey(state));
 }
 
 function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number, hasRecord = true): LoreCard[] {
@@ -184,7 +183,24 @@ export function harvestNarrativeIntoLedger(
   }
 
   const ledgerNouns = compileNounAllowlist(state, openingCastNames(state));
-  for (const name of registeredNpcs) {
+  const pc = state.character?.name?.trim().toLowerCase() ?? '';
+  const isPc = (n: string) => {
+    const l = n.trim().toLowerCase();
+    return !!pc && (l === pc || (!/\s/.test(l) && l === pc.split(/\s+/)[0]));
+  };
+  // A bare first name is the full-name person already known by it; two with that first name: neither.
+  const fullNames = () => [...new Set([...present, ...registeredNpcs, ...npcMemories.map((m) => m.npcName)])]
+    .filter((n) => /\s/.test(n.trim()) && !isPc(n));
+  const foldFirstName = (n: string): string | null => {
+    if (/\s/.test(n.trim())) return n;
+    const key = n.trim().toLowerCase();
+    const hits = fullNames().filter((f) => f.trim().split(/\s+/)[0]!.toLowerCase() === key);
+    return hits.length === 0 ? n : hits.length === 1 ? hits[0]! : null;
+  };
+  for (const raw of registeredNpcs) {
+    if (isPc(raw)) continue;
+    const name = foldFirstName(raw);
+    if (!name) continue;
     if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId, npcRecordNames(state))) {
       console.warn(`[narrativeHarvest 02j] Rejected role/anonymous NPC: ${name}`);
       continue;
@@ -232,6 +248,9 @@ export function harvestNarrativeIntoLedger(
     presentList = presentList.filter((p) => !matchesLastKillName(p, lastKill));
   }
   presentList = presentList.filter((p) => !isPlannerUiPersonToken(p) && !isNeverCastTitle(p, state));
+  presentList = [...new Set(
+    presentList.filter((p) => !isPc(p)).map(foldFirstName).filter((p): p is string => !!p)
+  )];
   const withNames = {
     ...next,
     lorebook,

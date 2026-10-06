@@ -2,6 +2,7 @@ import type { CampaignBible, KeyNPC } from './campaignBibleTypes.ts';
 import type { GameState, NpcMemory, Quest, TimelineFact } from './types.ts';
 import type { GameEvent } from './parser.ts';
 import type { NpcRole } from './npcRoleRegistry.ts';
+import type { SpokenLine } from './tokenProse.ts';
 import { canHarvestAsNamedPerson } from './entityRegistry.ts';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks.ts';
 import { isMetNpc, syncNpcPresence } from './npcRecords.ts';
@@ -278,15 +279,24 @@ export function rememberPlayerName(state: GameState, playerName: string): GameSt
   return dirty ? { ...state, npcMemories: next } : state;
 }
 
+/** The player's current stay at this place: the place plus its visit number (circling.visits), counting an arrival not yet recorded. */
+export function currentVisitKey(state: Pick<GameState, 'currentLocation' | 'circling'>): string {
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const key = here.toLowerCase();
+  const recorded = state.circling?.visits?.[key] ?? 0;
+  const pending = state.circling?.lastLocation === here ? 0 : 1;
+  return `${key}#${recorded + pending}`;
+}
+
 /**
- * First harvest creates stranger + intro; a later turn upgrades to acquaintance
- * and never reprints a second "Introduced in play" fact.
+ * First harvest creates stranger + intro (met on this visit, not met before); a mention on a later
+ * visit counts one meeting and upgrades to acquaintance. Mentions on the same visit never count.
  */
 export function upsertHarvestedNpcMemory(
   memories: NpcMemory[],
   name: string,
   turn: number,
-  playerName?: string
+  visit?: string
 ): NpcMemory[] {
   const key = name.toLowerCase();
   const existing = memories.find(
@@ -294,7 +304,6 @@ export function upsertHarvestedNpcMemory(
       n.npcName.toLowerCase() === key
       || (n.aliases ?? []).some((a) => a.toLowerCase() === key)
   );
-  const known = playerName?.trim() || undefined;
   if (existing) {
     const rosterOnly =
       !existing.introSpoken
@@ -306,11 +315,11 @@ export function upsertHarvestedNpcMemory(
           ? {
               ...n,
               met: true,
-              meetCount: 1,
+              meetCount: 0,
+              seenVisit: visit,
               lastSeenTurn: turn,
               introSpoken: true,
               completedTopics: uniqueTopics([...(n.completedTopics ?? []), 'intro']),
-              knownPlayerName: n.knownPlayerName || known,
               relationshipStatus: 'stranger',
               facts: n.facts.some((f) => /Introduced in play/i.test(f))
                 ? n.facts
@@ -319,10 +328,8 @@ export function upsertHarvestedNpcMemory(
           : n
       );
     }
-    const sameTurn = existing.lastSeenTurn === turn;
-    const meetCount = sameTurn
-      ? Math.max(existing.meetCount ?? 1, 1)
-      : Math.max(existing.meetCount ?? 1, 1) + 1;
+    const newVisit = !!visit && !!existing.seenVisit && visit !== existing.seenVisit;
+    const meetCount = (existing.meetCount ?? 0) + (newVisit ? 1 : 0);
     const seen = `Seen in play T${turn}`;
     return memories.map((n) =>
       n === existing
@@ -330,15 +337,15 @@ export function upsertHarvestedNpcMemory(
             ...n,
             met: true,
             meetCount,
+            seenVisit: visit ?? n.seenVisit,
             lastSeenTurn: turn,
             introSpoken: true,
             completedTopics: uniqueTopics([...(n.completedTopics ?? []), 'intro']),
-            knownPlayerName: n.knownPlayerName || known,
             relationshipStatus:
               n.relationshipStatus === 'stranger' || !n.relationshipStatus
-                ? sameTurn
-                  ? (n.relationshipStatus ?? 'stranger')
-                  : 'acquaintance'
+                ? newVisit
+                  ? 'acquaintance'
+                  : (n.relationshipStatus ?? 'stranger')
                 : n.relationshipStatus,
             facts: n.facts.some((f) => f.startsWith('Seen in play'))
               ? n.facts
@@ -745,14 +752,17 @@ export function recordSpokenTopics(
   presentNames: string[],
   topics: string[],
   gmText: string,
-  turn: number
+  turn: number,
+  /** Token JSON turns: the accepted writer speech lines. Prose quote-parsing is only for non-JSON turns. */
+  speech?: SpokenLine[]
 ): NpcMemory[] {
   const text = gmText.replace(/\s+/g, ' ').trim();
   if (!text) return memories;
-  const quotes = quoteSpans(text);
   const asked = topics.filter((t) => SAID_TOPICS.has(t));
   const topic = asked[0] ?? topics.find(Boolean) ?? 'other';
   const here = new Set(presentNames.map(normalizeName));
+  if (speech) return recordSpeechLines(memories, here, presentNames, asked, topic, speech, text, turn);
+  const quotes = quoteSpans(text);
   const sentences = sentenceSpans(text);
   const taken = new Set<number>();
   const reported = new Set<number>();
@@ -793,6 +803,82 @@ export function recordSpokenTopics(
   });
 }
 
+/** Each speech line goes to the person its declared speaker names, when that person is here and the words made the page. */
+function recordSpeechLines(
+  memories: NpcMemory[],
+  here: Set<string>,
+  presentNames: string[],
+  asked: string[],
+  topic: string,
+  speech: SpokenLine[],
+  committed: string,
+  turn: number
+): NpcMemory[] {
+  const page = committed.toLowerCase();
+  const owner = (speaker: string): NpcMemory | undefined => {
+    const key = normalizeName(speaker);
+    const live = memories.filter((m) => here.has(normalizeName(m.npcName)));
+    return live.find((m) => [m.npcName, ...(m.aliases ?? [])].some((n) => normalizeName(n) === key))
+      ?? live.find((m) => speakerNames(m, presentNames).some((n) => normalizeName(n) === key));
+  };
+  const byName = new Map<string, string[]>();
+  for (const line of speech) {
+    const words = line.words.replace(/\s+/g, ' ').trim();
+    if (words.length < 2 || !page.includes(words.toLowerCase())) continue;
+    const m = owner(line.speaker);
+    if (!m) continue;
+    byName.set(m.npcName, [...(byName.get(m.npcName) ?? []), words.slice(0, 180)]);
+  }
+  if (!byName.size) return memories;
+  return memories.map((m) => {
+    const lines = byName.get(m.npcName);
+    if (!lines) return m;
+    const said = [...(m.said ?? [])];
+    for (const line of lines) {
+      if (!said.some((s) => s.line === line)) said.push({ topic, turn, line });
+    }
+    return {
+      ...m,
+      said: said.slice(-MAX_SAID_PER_NPC),
+      completedTopics: asked.length ? uniqueTopics([...(m.completedTopics ?? []), ...asked]) : m.completedTopics,
+    };
+  });
+}
+
+/**
+ * The people here learn the player's name only when it is said aloud this turn: on the player's
+ * own line, or inside spoken words on the committed page (speech lines on token turns, quotes otherwise).
+ */
+export function recordPlayerNameHeard(
+  memories: NpcMemory[],
+  presentNames: string[],
+  playerName: string | undefined,
+  playerLine: string,
+  gmText: string,
+  speech?: SpokenLine[]
+): NpcMemory[] {
+  const name = playerName?.trim();
+  if (!name || !presentNames.length) return memories;
+  const forms = [...new Set([name, name.split(/\s+/)[0]!])].filter((f) => f.length >= 2);
+  const says = (text: string) => forms.some((f) => new RegExp(`\\b${escapeRe(f)}\\b`, 'i').test(text));
+  const spoken = speech ? speech.map((l) => l.words) : quoteSpans(gmText.replace(/\s+/g, ' ')).map((q) => q.words);
+  if (!says(playerLine) && !spoken.some(says)) return memories;
+  const here = new Set(presentNames.map(normalizeName));
+  const fact = `Knows the player as ${name}`;
+  let dirty = false;
+  const next = memories.map((m) => {
+    if (m.knownPlayerName === name) return m;
+    if (![m.npcName, ...(m.aliases ?? [])].some((n) => here.has(normalizeName(n)))) return m;
+    dirty = true;
+    return {
+      ...m,
+      knownPlayerName: name,
+      facts: m.facts.includes(fact) ? m.facts : [...m.facts, fact].slice(-MAX_FACTS_PER_NPC),
+    };
+  });
+  return dirty ? next : memories;
+}
+
 export function applySocialLedgerTurn(args: {
   state: GameState;
   playerAction: string;
@@ -804,6 +890,8 @@ export function applySocialLedgerTurn(args: {
   talkTopics?: string[];
   /** The committed GM beat. */
   gmText?: string;
+  /** Token JSON turns: the accepted writer speech lines (see recordSpokenTopics). */
+  speechLines?: SpokenLine[];
 }): GameState {
   const { playerAction, turn } = args;
   let state = args.state;
@@ -812,8 +900,23 @@ export function applySocialLedgerTurn(args: {
 
   let memories = state.npcMemories ?? [];
   if (args.gmText) {
-    memories = recordSpokenTopics(memories, state.sceneFacts?.present ?? [], args.talkTopics ?? [], args.gmText, turn);
+    memories = recordSpokenTopics(
+      memories,
+      state.sceneFacts?.present ?? [],
+      args.talkTopics ?? [],
+      args.gmText,
+      turn,
+      args.speechLines
+    );
   }
+  memories = recordPlayerNameHeard(
+    memories,
+    state.sceneFacts?.present ?? [],
+    state.character?.name,
+    playerAction,
+    args.gmText ?? '',
+    args.speechLines
+  );
   if (isBuyPlayerAction(playerAction)) {
     const merchant = findPresentMerchant(state);
     const items = uniquePurchases(args.gainedItemNames ?? []);

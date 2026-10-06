@@ -1844,6 +1844,7 @@ Do NOT print dice notation or CODE ENFORCED.
     turn: nextTurn,
     talkTopics: hallTalkTopics(playerInput),
     gmText: cleanText,
+    speechLines: writerTurn?.speech,
   });
   working = {
     ...working,
