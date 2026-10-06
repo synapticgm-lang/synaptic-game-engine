@@ -34,6 +34,8 @@ import { resolvePlace } from './places';
 import { findSettlement } from './worldMapAuthority';
 import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
+import { buildHereSpot, withinPlaceSpot } from './hereSpot';
+import { presentNpcRecords } from './npcRecords';
 
 interface Endpoint {
   name: string;
@@ -665,11 +667,47 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
   }
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
   const hub = parseTravelDestination(input, state.campaignBibleId);
+  const spot = !hub && here ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '') : null;
+  if (spot) return moveWithinPlace(state, input, spot);
   const dest = hub?.name ?? (isLeaveSceneAction(input) ? leaveDestination(state, here) : null);
   if (!dest || dest.toLowerCase() === here.toLowerCase()) {
     return { state: state.journey ? { ...state, journey: null } : state, handled: false, arrived: false };
   }
-  return goTo({ ...state, journey: null }, here, dest);
+  const moved = goTo({ ...state, journey: null }, here, dest);
+  const facts = moved.state.sceneFacts;
+  return moved.handled && facts?.hereSpot
+    ? { ...moved, state: { ...moved.state, sceneFacts: { ...facts, hereSpot: undefined } } }
+    : moved;
+}
+
+/** A move that stays in this place: a new spot on sceneFacts, people walked away from leave the player's side, HERE unchanged. */
+function moveWithinPlace(state: GameState, input: string, spot: string): TravelCommit {
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const people = presentNpcRecords(
+    state.sceneFacts ? { ...state, sceneFacts: { ...state.sceneFacts, hereSpot: undefined } } : state
+  ).map((r) => r.npcName);
+  const hereSpot = buildHereSpot(state, input, spot, people);
+  const away = new Set(hereSpot.awayFrom.map((n) => n.toLowerCase()));
+  const base = state.sceneFacts ?? {
+    crowd: 'unknown' as const,
+    noise: 'unknown' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn ?? 0,
+  };
+  const sceneFacts = {
+    ...base,
+    present: (base.present ?? []).filter((p) => !away.has(p.toLowerCase())),
+    hereSpot,
+  };
+  const out = hereSpot.awayFrom.length ? `; out of talking range: ${hereSpot.awayFrom.join(', ')}` : '';
+  return {
+    state: { ...state, journey: null, sceneFacts },
+    handled: true,
+    arrived: false,
+    receipt: `Moved within ${here}: now on ${spot}${out}`,
+  };
 }
 
 /** After the writer: the clock owns time of day on a travel turn (prose cannot rewind it). */

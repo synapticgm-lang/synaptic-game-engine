@@ -11,6 +11,7 @@ import {
 } from './vignetteLock';
 import { matchHub, hubsForBibleId } from './outdoorHubs';
 import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard';
+import { applyFollowersToHereSpot, hereSpotAt } from './hereSpot';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -140,6 +141,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     hookLock: prev?.hookLock,
     cameraLock: prev?.cameraLock,
     lastPlayerIntent: prev?.lastPlayerIntent,
+    hereSpot: prev?.hereSpot,
     inspectStreak: prev?.inspectStreak,
     waitStreak: prev?.waitStreak,
     loiterHere: prev?.loiterHere,
@@ -181,6 +183,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     hookLock: next.hookLock ?? prev.hookLock,
     cameraLock: next.cameraLock ?? prev.cameraLock,
     lastPlayerIntent: next.lastPlayerIntent ?? prev.lastPlayerIntent,
+    hereSpot: next.hereSpot ?? prev.hereSpot,
     inspectStreak: next.inspectStreak !== undefined ? next.inspectStreak : prev.inspectStreak,
     waitStreak: next.waitStreak !== undefined ? next.waitStreak : prev.waitStreak,
     loiterHere: next.loiterHere !== undefined ? next.loiterHere : prev.loiterHere,
@@ -378,6 +381,7 @@ export function applyCommittedNarrative(
         const t = playerInput.replace(/\s+/g, ' ').trim();
         const family: NonNullable<SceneFacts['lastPlayerIntent']>['family'] =
           /\b(send me (?:back|home)|get me (?:out|back)|i refuse|i protest|i demand|back to (?:my )?(?:world|earth))\b/i.test(t)
+          || /\b(?:(?:ever|i|we)\s+get\s+(?:back|home)|go\s+(?:back\s+)?home|return\s+(?:home|to\s+(?:my\s+)?(?:world|earth))|way\s+(?:back|home))\b/i.test(t)
             ? 'demand'
             : /\b(run away|flee|escape|retreat)\b/i.test(t)
               ? 'flee'
@@ -393,7 +397,19 @@ export function applyCommittedNarrative(
           lastPlayerIntent: { family, text: t.slice(0, 160), turn },
         };
       })();
-  const moded = stripModeChromeProps(state, withIntent);
+  const spotHere = hereSpotAt(withIntent.hereSpot, state.currentLocation);
+  const followed = applyFollowersToHereSpot(spotHere, narrative);
+  const rejoined = (spotHere?.awayFrom ?? []).filter((n) => !(followed?.awayFrom ?? []).includes(n));
+  const moded = stripModeChromeProps(
+    state,
+    followed === withIntent.hereSpot
+      ? withIntent
+      : {
+          ...withIntent,
+          hereSpot: followed,
+          present: Array.from(new Set([...(withIntent.present ?? []), ...rejoined])),
+        }
+  );
   return {
     ...moded,
     lastSnapshotGist: buildSnapshotGist({

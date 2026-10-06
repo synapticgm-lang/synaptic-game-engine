@@ -86,13 +86,13 @@ describe('29z9j seed 72 — said motives stay on the person', () => {
     expect(writer).toContain('owed her people bread');
   });
 
-  it('a non-talk line records nothing', () => {
+  it('a stage direction with no speech records nothing', () => {
     const s = applySocialLedgerTurn({
       state: base({ npcMemories: [person('Nell Rudd')], sceneFacts: { present: ['Nell Rudd'] } as GameState['sceneFacts'] }),
       playerAction: 'Search the area',
       turn: 11,
       talkTopics: hallTalkTopics('Search the area'),
-      gmText: T11,
+      gmText: 'Nell Rudd unfolded her arms and spoke without turning her head.',
     });
     expect(s.npcMemories![0]!.said).toBeUndefined();
   });

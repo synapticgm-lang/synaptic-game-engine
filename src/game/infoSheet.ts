@@ -13,6 +13,7 @@ import { placeScale } from './placeAuthority';
 import { exitPlaceNames } from './placeNames';
 import { playerFacingLocation } from './locationName';
 import { systemHousingWriterSentence, writerFacts } from './systemHousing';
+import { activeHereSpot, isOutOfTalkingRange } from './hereSpot';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -113,6 +114,11 @@ function lastLines(turns: { player: LogEntry; gm: LogEntry }[]): string[] {
 
 function hereLines(state: GameState, people: string[]): string[] {
   const out = [people.length ? people.join(', ') : crowdHere(state) ? 'a crowd, nobody named' : 'nobody'];
+  const spot = activeHereSpot(state);
+  if (spot) {
+    const away = spot.awayFrom.length ? `; out of talking range: ${spot.awayFrom.join(', ')}` : '';
+    out.push(`player stands on ${spot.spot} (moved T${spot.turn})${away}`);
+  }
   const housing = state.systemHousing?.housing;
   if (systemWindowSeen(state)) {
     out.push(housing
@@ -132,14 +138,18 @@ function peopleLines(state: GameState, here: string[]): string[] {
       const met = turnFromFacts(m);
       const topics = m.completedTopics ?? [];
       const topic = topics[topics.length - 1];
-      const said = (m.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i).slice(0, 2);
+      const said = (m.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i).slice(-3);
       return [
         m.npcName,
         m.roleHint || m.sheet?.job || '',
-        hereKeys.has(m.npcName.toLowerCase()) ? 'here' : m.location || '',
+        hereKeys.has(m.npcName.toLowerCase())
+          ? 'here'
+          : isOutOfTalkingRange(state, m.npcName)
+            ? `${m.location || 'this place'}, out of talking range`
+            : m.location || '',
         met != null ? `met T${met}` : '',
         said.length
-          ? said.map((s) => `already said (${s.topic}, T${s.turn}): ${s.line}`).join(' · ')
+          ? said.map((s) => `already said (${s.topic}, T${s.turn}): "${s.line}"`).join(' · ')
           : topic ? `last topic ${topic}` : 'no topic yet',
       ]
         .filter(Boolean)

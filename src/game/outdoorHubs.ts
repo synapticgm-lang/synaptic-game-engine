@@ -485,13 +485,19 @@ export function applyNamedHubTravel<T extends {
   return { ...state, currentLocation: hub.name };
 }
 
-/** Leave / Walk away / Leave the scene — not a named hub, but must still move HERE. */
+const LEAVE_MOVE =
+  /\b(?:leave(?:\s+(?:the\s+(?:scene|area|room|place)|this\s+place|here|now|them|him|her)\b|\s*(?:[.!?,]|$))|walk(?:ing)?\s+away\b|move\s+away\b|go\s+another\s+direction\b|(?<!\b(?:the|an|no|any)\s)exit(?:\s+the\s+(?:room|scene|area))?\b)/i;
+const LEAVE_QUESTION =
+  /^(?:can|could|should|would|may|might|do|does|did|is|are|am|will|shall|what|why|how|where|when|who)\b[^.!]*\?$/i;
+
+/** Leave / Walk away / Leave the scene anywhere in the line — not a named hub, but must still move HERE. A question about leaving is not a move. */
 export function isLeaveSceneAction(action: string | undefined): boolean {
   const a = (action ?? '').replace(/\s+/g, ' ').trim();
   if (!a) return false;
-  return /^(?:leave(?:\s+the\s+scene)?|walk\s+away|go\s+another\s+direction|exit(?:\s+the\s+(?:room|scene|area))?)\b/i.test(
-    a
-  );
+  return a
+    .split(/(?<=[.!?])\s*/)
+    .map((s) => s.trim())
+    .some((s) => s && LEAVE_MOVE.test(s) && !LEAVE_QUESTION.test(s) && !/\b(?:before|if|when)\s+(?:i|you|we)\s+leave\b/i.test(s));
 }
 
 /**
