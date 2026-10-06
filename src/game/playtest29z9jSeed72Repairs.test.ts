@@ -12,6 +12,7 @@ import { applySocialLedgerTurn } from './npcMemory';
 import { hallTalkTopics } from './openingEstablishment';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { recordCirclingTurn } from './choiceRanking';
+import { clampSystemHousing, SYSTEM_PART_IDS, type SystemPartId } from './systemHousing';
 import type { GameState, LogEntry, NpcMemory } from './types';
 
 let id = 0;
@@ -135,10 +136,14 @@ describe('29z9j seed 72 — a short turn-back is the same scene', () => {
 
 describe('29z9j seed 72 — the panel shows ledger lines', () => {
   it('Check Status hands the writer what the panel reads', () => {
-    const s = base({ character: { ...base().character!, name: 'Jax' } });
+    const allParts = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, true])) as Record<SystemPartId, boolean>;
+    const s = base({
+      character: { ...base().character!, name: 'Jax' },
+      systemHousing: clampSystemHousing({ housing: 'private_window', parts: allParts }),
+    });
     const writer = formatWriterFacingEvent(buildCompletedEventPacket(s, 'Check Status'));
-    expect(writer).toMatch(/PANEL \(game chrome[^)]*\): The panel read: Name: Jax; Level/);
-    expect(formatWriterFacingEvent(buildCompletedEventPacket(s, 'Look around'))).not.toContain('PANEL (');
+    expect(writer).toMatch(/WINDOW \(game chrome[^)]*\): The window reads: Name: Jax; Level/);
+    expect(formatWriterFacingEvent(buildCompletedEventPacket(s, 'Look around'))).not.toContain('WINDOW (');
   });
 });
 

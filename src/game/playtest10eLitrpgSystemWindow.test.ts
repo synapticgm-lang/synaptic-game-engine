@@ -16,6 +16,7 @@ import {
 } from './litrpgSystemWindow';
 import { BUILD_STAMP } from './runManifest';
 import { emptySceneFacts } from './sceneFacts';
+import { clampSystemHousing, SYSTEM_PART_IDS, type SystemPartId } from './systemHousing';
 import type { GameState, LogEntry } from './types';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 
@@ -38,6 +39,10 @@ function summoned(over: Partial<GameState> = {}): GameState {
       mode: 'weave',
       aloneArrival: false,
     },
+    systemHousing: clampSystemHousing({
+      housing: 'private_window',
+      parts: Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as Record<SystemPartId, boolean>,
+    }),
     sceneFacts: emptySceneFacts(0),
     log: [],
     ...over,

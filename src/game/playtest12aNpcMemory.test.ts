@@ -10,7 +10,9 @@ import { emptySceneFacts } from './sceneFacts';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { compileChoices } from './choiceCompiler';
 import { applyProseWarden } from './proseWarden';
+import { recordCirclingTurn } from './choiceRanking';
 import {
+  applySocialLedgerTurn,
   hasMetBefore,
   rememberPlayerName,
   scrubNpcIntroRepeat,
@@ -56,30 +58,60 @@ describe('playtest12a — NPC memory first-meet', () => {
   });
 
   it('first harvest marks stranger + intro; later meet becomes acquaintance', () => {
+    const turnAt = (state: GameState, turn: number, input: string, place = state.currentLocation, present?: string[]) =>
+      recordCirclingTurn(
+        {
+          ...state,
+          turn,
+          currentLocation: place,
+          sceneFacts: present ? { ...state.sceneFacts!, present } : state.sceneFacts,
+        },
+        input,
+        []
+      );
+    const aldousOf = (s: GameState) => s.npcMemories?.find((n) => /aldous/i.test(n.npcName));
+
     const first = harvestNarrativeIntoLedger(
-      greyhollow({ turn: 2 }),
+      turnAt(greyhollow({ turn: 2 }), 2, 'Look around'),
       'Father Aldous waits by the font. I am Father Aldous, keeper of this church.',
       2
     );
-    const memory = first.npcMemories?.find((n) => /aldous/i.test(n.npcName));
+    const memory = aldousOf(first);
     expect(memory).toBeTruthy();
     expect(hasMetBefore(first, 'Aldous')).toBe(true);
+    expect(memory?.met).toBe(true);
     expect(memory?.introSpoken).toBe(true);
-    expect(memory?.meetCount).toBe(1);
+    expect(memory?.meetCount ?? 0).toBe(0);
     expect(memory?.relationshipStatus).toBe('stranger');
     expect(memory?.completedTopics).toContain('intro');
-    expect(memory?.knownPlayerName).toBe('Jax');
+    expect(memory?.knownPlayerName).toBeUndefined();
     expect(memory?.facts.filter((f) => /Introduced in play/i.test(f))).toHaveLength(1);
 
-    const second = harvestNarrativeIntoLedger(
-      { ...first, turn: 8 },
+    const sameVisit = harvestNarrativeIntoLedger(
+      turnAt(first, 3, 'Wait'),
       'Father Aldous nods toward the nave.',
-      8
+      3
     );
-    const again = second.npcMemories?.find((n) => /aldous/i.test(n.npcName));
-    expect(again?.meetCount).toBe(2);
+    expect(aldousOf(sameVisit)?.meetCount ?? 0).toBe(0);
+    expect(aldousOf(sameVisit)?.relationshipStatus).toBe('stranger');
+
+    let back = turnAt(sameVisit, 4, 'Travel toward Greyhollow Square', 'Greyhollow Square', []);
+    back = turnAt(back, 5, 'Travel toward Greyhollow Church', 'Greyhollow Church', ['Father Aldous']);
+    const second = harvestNarrativeIntoLedger(back, 'Father Aldous nods toward the nave.', 5);
+    const again = aldousOf(second);
+    expect(again?.meetCount).toBe(1);
     expect(again?.relationshipStatus).toBe('acquaintance');
+    expect(again?.knownPlayerName).toBeUndefined();
     expect(again?.facts.filter((f) => /Introduced in play/i.test(f))).toHaveLength(1);
+
+    const named = applySocialLedgerTurn({
+      state: second,
+      playerAction: 'I tell him, "My name is Jax."',
+      turn: 5,
+      talkTopics: [],
+      gmText: 'Father Aldous listened and nodded once.',
+    });
+    expect(aldousOf(named)?.knownPlayerName).toBe('Jax');
   });
 
   it('rememberPlayerName writes the locked name onto harvested CAST', () => {

@@ -25,7 +25,9 @@ import { hubsForBibleId, SUMMONED_PACT_HUBS } from './outdoorHubs';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { npcRecordNames } from './npcRecords';
 import { newGameState, rosterRecord } from './newGameTestState';
+import { recordCirclingTurn } from './choiceRanking';
 import {
+  applySocialLedgerTurn,
   hasMetBefore,
   seedBibleNpcRoster,
   upsertHarvestedNpcMemory,
@@ -182,27 +184,56 @@ describe('12a first-meet still holds on roster seed', () => {
       summonedPact
     );
     expect(hasMetBefore(seeded, 'Ilyra Fen')).toBe(false);
+    const turnAt = (state: GameState, turn: number, input: string, place = state.currentLocation, present?: string[]) =>
+      recordCirclingTurn(
+        {
+          ...state,
+          turn,
+          currentLocation: place,
+          sceneFacts: present ? { ...state.sceneFacts!, present } : state.sceneFacts,
+        },
+        input,
+        []
+      );
+    const ilyraOf = (s: GameState) => s.npcMemories?.find((n) => n.npcName === 'Ilyra Fen');
+
     const first = harvestNarrativeIntoLedger(
-      { ...seeded, turn: 2 },
+      turnAt(seeded, 2, 'Look around'),
       'Ilyra Fen waits in the reeds. I am Ilyra Fen, and the water remembers.',
       2
     );
-    const memory = first.npcMemories?.find((n) => n.npcName === 'Ilyra Fen');
+    const memory = ilyraOf(first);
     expect(hasMetBefore(first, 'Ilyra Fen')).toBe(true);
+    expect(memory?.met).toBe(true);
     expect(memory?.introSpoken).toBe(true);
-    expect(memory?.meetCount).toBe(1);
+    expect(memory?.meetCount ?? 0).toBe(0);
     expect(memory?.relationshipStatus).toBe('stranger');
-    const second = harvestNarrativeIntoLedger(
-      { ...first, turn: 8 },
-      'Ilyra Fen nods toward the March.',
-      8
-    );
-    const again = second.npcMemories?.find((n) => n.npcName === 'Ilyra Fen');
-    expect(again?.meetCount).toBe(2);
+    expect(memory?.knownPlayerName).toBeUndefined();
+
+    const sameVisit = harvestNarrativeIntoLedger(turnAt(first, 3, 'Wait'), 'Ilyra Fen nods toward the March.', 3);
+    expect(ilyraOf(sameVisit)?.meetCount ?? 0).toBe(0);
+    expect(ilyraOf(sameVisit)?.relationshipStatus).toBe('stranger');
+
+    let back = turnAt(sameVisit, 4, 'Travel toward Lowmarket', 'Lowmarket', []);
+    back = turnAt(back, 5, 'Travel toward West Wall', 'West Wall', ['Ilyra Fen']);
+    const second = harvestNarrativeIntoLedger(back, 'Ilyra Fen nods toward the March.', 5);
+    const again = ilyraOf(second);
+    expect(again?.meetCount).toBe(1);
     expect(again?.relationshipStatus).toBe('acquaintance');
+    expect(again?.knownPlayerName).toBeUndefined();
+
+    const named = applySocialLedgerTurn({
+      state: second,
+      playerAction: 'I tell her, "My name is Jax."',
+      turn: 5,
+      talkTopics: [],
+      gmText: 'Ilyra Fen listened and nodded once.',
+    });
+    expect(ilyraOf(named)?.knownPlayerName).toBe('Jax');
+
     const aldous = rosterRecord(newGameState('cursed-keep'), 'Father Aldous');
     const emptyFirst = upsertHarvestedNpcMemory([aldous], 'Father Aldous', 2);
     expect(emptyFirst[0]?.relationshipStatus).toBe('stranger');
-    expect(emptyFirst[0]?.meetCount).toBe(1);
+    expect(emptyFirst[0]?.meetCount ?? 0).toBe(0);
   });
 });

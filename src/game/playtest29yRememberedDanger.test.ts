@@ -83,9 +83,9 @@ afterEach(() => {
 });
 
 describe('29y stamps', () => {
-  it('HUD and BUILD are 2026-10-06d and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-06d');
-    expect(BUILD_STAMP).toBe('2026-10-06d');
+  it('HUD and BUILD are 2026-10-06e and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-06e');
+    expect(BUILD_STAMP).toBe('2026-10-06e');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -111,13 +111,18 @@ describe('29y — remembered danger', () => {
     expect(kept?.parleyRefused).toBe(1);
   });
 
-  it('beaten or fled ends it; a loss keeps it', () => {
+  it('beaten ends it; a flee keeps it parked; a loss keeps it', () => {
     const before = { ...base(), activeEncounter: foe() };
     const cleared = { ...before, activeEncounter: null };
-    for (const outcome of ['victory', 'escape', 'parleyResolved']) {
+    for (const outcome of ['victory', 'parleyResolved']) {
       const s = syncPlaceThreat(before, cleared, [`Encounter cleared: Sleepless Bell-Warden (${outcome})`]);
       expect(s.placeThreats?.[placeThreatKey(CHURCH)]).toBeUndefined();
     }
+    const fled = syncPlaceThreat(before, cleared, ['Encounter cleared: Sleepless Bell-Warden (escape)']);
+    const parked = fled.placeThreats?.[placeThreatKey(CHURCH)];
+    expect(parked?.lastOutcome).toBe('escaped');
+    expect(parked?.encounter.name).toBe('Sleepless Bell-Warden');
+    expect(parked?.encounter.hp).toBe(30);
     const lost = syncPlaceThreat(before, cleared, ['Encounter cleared: Sleepless Bell-Warden (defeat)'], foe({ hp: 9 }));
     expect(lost.placeThreats?.[placeThreatKey(CHURCH)]?.encounter.hp).toBe(9);
   });
