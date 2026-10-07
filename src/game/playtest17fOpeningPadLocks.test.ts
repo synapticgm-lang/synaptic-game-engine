@@ -116,8 +116,8 @@ function nameCover(mode: GameState['engineMode'], bibleId: string, over: Partial
 
 describe('playtest17f — site-wide opening / pad locks', () => {
   it('HUD/BUILD are 17f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-07b');
-    expect(BUILD_STAMP).toBe('2026-10-07b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-07c');
+    expect(BUILD_STAMP).toBe('2026-10-07c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
