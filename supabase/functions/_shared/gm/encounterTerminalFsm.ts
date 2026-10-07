@@ -5,7 +5,7 @@
 
 import type { ActiveEncounter, EngineMode, GameState } from './types.ts';
 
-export type EncounterPhase = 'engaged' | 'resolving' | 'terminal';
+export type EncounterPhase = 'pending' | 'engaged' | 'resolving' | 'terminal';
 export type TerminalOutcome =
   | 'escape'
   | 'victory'
@@ -61,6 +61,31 @@ export function initEncounterTerminal(
     source: enc.source ?? opts?.source ?? 'arcDirector',
     forcedSpawnKey: enc.forcedSpawnKey ?? opts?.forcedSpawnKey,
   };
+}
+
+/** Telegraph turn, then arrival: a parked foe goes live this many turns after it was parked. */
+export const PENDING_ARRIVAL_TURNS = 2;
+
+/** A foe the engine parked off the page: telegraphed first, taken live by the arrival clock. */
+export function parkPendingEncounter(enc: ActiveEncounter, turn: number): ActiveEncounter {
+  return {
+    ...enc,
+    phase: 'pending',
+    parkedTurn: turn,
+    arrivalTurn: turn + PENDING_ARRIVAL_TURNS,
+  };
+}
+
+export function pendingArrivalDue(enc: ActiveEncounter | null | undefined, turn: number): boolean {
+  if (!enc) return false;
+  const due = enc.arrivalTurn ?? (enc.parkedTurn ?? turn) + PENDING_ARRIVAL_TURNS;
+  return turn >= due;
+}
+
+/** The arrival clock ran out: the parked foe is now the live encounter. */
+export function arrivePendingEncounter(enc: ActiveEncounter, turn: number): ActiveEncounter {
+  const { parkedTurn: _p, arrivalTurn: _a, ...rest } = enc;
+  return { ...rest, phase: 'engaged', startedTurn: turn };
 }
 
 function isFleeIntent(input: string): boolean {
@@ -384,7 +409,7 @@ export function isEncounterEngaged(state: GameState): boolean {
 
 /** Batch W — live encounter blocks travel snap / soft clear. */
 export function encounterBlocksTravel(state: GameState): boolean {
-  return isEncounterEngaged(state) || !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter;
+  return isEncounterEngaged(state) || !!state.activeEncounter;
 }
 
 // ============================================================================

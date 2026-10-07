@@ -104,7 +104,7 @@ const FAMILY_PATTERNS: Record<OpeningFamilyTag, RegExp> = {
   warCamp:
     /\b(war[- ]?camp|garrison|banner-smoke|enlist|quartermaster|brigandine|mercenary|mud-torn|iron hounds)\b/i,
   transitWagon:
-    /\b(wagon|caravan|highwaym[ae]n|grain-ship|harbor circle|merchant'?s road|moving (?:caravan )?wagon)\b/i,
+    /\b(wagon|caravan|highwaym[ae]n|merchant'?s road|moving (?:caravan )?wagon)\b/i,
   rural:
     /\b(village|elder'?s hearth|razor-boars?|family owes|generation-old|rural|winter meat)\b/i,
   academy:

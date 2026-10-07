@@ -361,7 +361,10 @@ export interface ActiveEncounter {
   goldReward: number;
   /** 29a Encounter Terminal FSM */
   encounterId?: string;
-  phase?: 'engaged' | 'resolving' | 'terminal';
+  phase?: 'pending' | 'engaged' | 'resolving' | 'terminal';
+  /** Pending only: the turn the engine parked the foe and the turn its arrival clock runs out. */
+  parkedTurn?: number;
+  arrivalTurn?: number;
   startedTurn?: number;
   engagedTurnCount?: number;
   failedFleeCount?: number;
@@ -385,7 +388,7 @@ export interface PlaceThreat {
   /** Parleys this threat has refused (engine check failed / refused on the ledger). */
   parleyRefused?: number;
   /** How the last try ended while it stayed: still live, the player lost, the player fled, or nothing settled it. */
-  lastOutcome?: 'live' | 'defeat' | 'unsettled' | 'escaped';
+  lastOutcome?: 'pending' | 'live' | 'defeat' | 'unsettled' | 'escaped';
 }
 
 export interface OpeningEstablishment {

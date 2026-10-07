@@ -74,6 +74,15 @@ import { tagTriggerPads } from './tagTrigger';
 import { rankChoices } from './choiceRanking';
 import { withRememberedThreatChip } from './placeThreats';
 import { isJourneyUnderway, withJourneyPads } from './travelJourney';
+import { ENGINE_COMBAT_CHIP } from './chipLegality';
+
+/** A fight move only the engine's live encounter can answer (same test as `chipProblem`). */
+function isFightMoveChip(label: string): boolean {
+  const t = label.trim();
+  return ENGINE_COMBAT_CHIP.test(t) || /^(?:attack from hiding|engage the threat|change position)\b/i.test(t);
+}
+
+const WORLD_MOVING_PAD = /\b(travel|leave|exits?|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i;
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -244,7 +253,6 @@ function hasLiveStakes(state: GameState): boolean {
   return (
     isEncounterEngaged(state)
     || !!state.activeEncounter
-    || !!state.sceneFacts?.pendingEncounter
   );
 }
 
@@ -669,7 +677,7 @@ export function compileChoices(
   playerInput?: string
 ): CompileChoicesResult {
   const notes: string[] = [];
-  if (isJourneyUnderway(state) && !state.activeEncounter && !state.sceneFacts?.pendingEncounter) {
+  if (isJourneyUnderway(state) && !state.activeEncounter) {
     return { choices: withJourneyPads(state, choices), notes: ['Journey pads: ground between places'] };
   }
   const turn = state.turn;
@@ -682,18 +690,16 @@ export function compileChoices(
   if (craftPolicy.note) notes.push(craftPolicy.note);
   const legalEdges = enumerateLegalEdges(state);
   const edgeLabels = edgesToChoiceLabels(legalEdges);
-  const sealedBeat =
-    !!state.arcDirector?.activeBeatId || !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter;
+  const sealedBeat = !!state.arcDirector?.activeBeatId || !!state.activeEncounter;
   const graphLabels = sealedBeat ? compileGraphChoiceLabels(state) : [];
   if (graphLabels.length) {
     notes.push(`Sealed-beat graph pads: ${graphLabels.length}`);
-    if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
+    if (state.activeEncounter) {
       notes.push('Encounter lock: graph pads only');
     }
   }
 
-  // Batch Z — check BOTH active and pending encounters for engaged state
-  const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
+  const engaged = isEncounterEngaged(state);
   const liveStakes = hasLiveStakes(state);
   const travelStarve = excluded.has('travel') || shouldStarveTravelPads(state);
   const streak = countPlayerIntentStreak(state);
@@ -821,8 +827,8 @@ export function compileChoices(
         notes.push('Parley exhausted');
         return false;
       }
-    } else if (/^engage the threat$/i.test(c.trim()) || /^change position$/i.test(c.trim())) {
-      // 31i — meta combat pads without a live encounter feed sealed stubs
+    } else if (!state.activeEncounter && isFightMoveChip(c)) {
+      // 31i — fight moves without a live encounter feed sealed stubs (a parked foe is not live)
       notes.push(`No-threat combat drop: ${c.slice(0, 32)}`);
       return false;
     }
@@ -1099,6 +1105,11 @@ export function compileChoices(
       if (isExcludedPadLabel(pad, excluded)) continue;
       if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, pad)) continue;
       if (inspectTargetExhausted(state, pad)) continue;
+      // The stall interrupt's stripped families stay stripped this turn; a pad toward a way out still moves the world.
+      if (stallInterrupt && !engaged && stripsFamily(classifyChoiceFamily(pad)) && !WORLD_MOVING_PAD.test(pad)) {
+        notes.push(`Intent pad stall drop: ${pad.slice(0, 32)}`);
+        continue;
+      }
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
         filtered.unshift(pad);
       }
@@ -1134,9 +1145,7 @@ export function compileChoices(
 
   // Batch G — Fate soft-lock guard: after loiter exhaust, always keep ≥1 world-moving option
   if (!engaged && stallInterrupt) {
-    const worldMoving = filtered.some((c) =>
-      /\b(travel|leave|exit|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i.test(c)
-    );
+    const worldMoving = filtered.some((c) => WORLD_MOVING_PAD.test(c));
     if (!worldMoving) {
       const movers = [
         ...closedUniverseFallbacks(state, excluded).filter((p) => !stripsFamily(classifyChoiceFamily(p))),
@@ -1268,6 +1277,14 @@ export function compileChoices(
   }
   if (coverCombatLock) {
     finalChoices = finalChoices.filter((c) => !isCombatFamilyPad(c));
+  }
+  if (!state.activeEncounter) {
+    const before = finalChoices.length;
+    finalChoices = finalChoices.filter((c) => !isFightMoveChip(c));
+    if (finalChoices.length < before) notes.push('No live foe: fight moves dropped');
+    if (!finalChoices.length) {
+      finalChoices = closedUniverseFallbacks(state, excluded).filter((c) => !isFightMoveChip(c));
+    }
   }
   // 08d — after CLEAR / topic exhaust, force Leave/Loot/Travel if social was culled empty of progress
   if (

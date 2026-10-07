@@ -354,6 +354,7 @@ import {
   formatArcDirectorMandateBlock,
   formatArcStatusReceipts,
   preserveArcQuestProgress,
+  xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
@@ -4416,6 +4417,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             mergedSystemLog = [...mergedSystemLog, ...leveled.notes];
           }
         }
+        const xpVoice = xpGainVoiceAside(workingState, gained);
+        workingState = xpVoice.state;
+        if (xpVoice.line) mergedSystemLog = [...mergedSystemLog, xpVoice.line];
         const granted = grantLevelSkills({ ...workingState, character: baseChar }, liveCurrent.character?.level ?? 1);
         Object.assign(baseChar, granted.state.character);
         if (granted.receipts.length) mergedSystemLog = [...mergedSystemLog, ...granted.receipts];

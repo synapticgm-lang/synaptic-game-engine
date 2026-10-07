@@ -25,6 +25,7 @@ import { getSpineNode } from './pyoaSpine';
 import { LITRPG_MILESTONE_XP, deedXp, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
+import { objectiveChip } from './choiceRanking';
 
 /** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
 export const SANDBOX_XP = {
@@ -311,7 +312,8 @@ export function applySandboxXpAwards(
       if (!obj.completed || beforeDone.has(obj.id)) continue;
       // Bearings / look-around ticks are orientation, not a milestone.
       if (lookAround || isBearingsStyleObjective(obj.description)) continue;
-      pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${obj.description.slice(0, 48)}`);
+      const label = objectiveChip(obj.description) ?? obj.description.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
+      pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${label}`);
     }
     if (after.status === 'completed' && before.status !== 'completed') {
       pay(`quest-complete:${after.id}`, 'questComplete', `quest complete: ${after.name}`);

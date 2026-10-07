@@ -512,8 +512,7 @@ export function compileNounAllowlist(
       pushUnique(out, seen, p);
     }
 
-    const encName = state.activeEncounter?.name?.trim() || state.sceneFacts?.pendingEncounter?.name?.trim();
-    pushUnique(out, seen, encName);
+    pushUnique(out, seen, state.activeEncounter?.name?.trim());
 
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name) {
@@ -633,7 +632,7 @@ export function compileRefEnum(
       if (isNeverCastTitle(p, state)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
-    const encName = state.activeEncounter?.name?.trim() || state.sceneFacts?.pendingEncounter?.name?.trim();
+    const encName = state.activeEncounter?.name?.trim();
     if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name && kill.remains && kill.outcome === 'victory') {

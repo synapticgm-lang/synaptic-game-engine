@@ -71,7 +71,6 @@ export function peopleHere(state: GameState): string[] {
   presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
-  add(state.sceneFacts?.pendingEncounter?.name);
   if (openingCastStillHere(state)) openingCastNames(state).forEach(add);
   (state.sceneFacts?.anonymousRoles ?? []).forEach(add);
   add(roadMeetingPeople(state));
@@ -126,7 +125,7 @@ const SOCIAL_CHIP =
 /** A question put to someone ("Who are you", "What do they want"). */
 const ADDRESSED_QUESTION = /^(?:who|what|why|where|how)\b.*\b(?:you|your|they|them|their)\b/i;
 
-const ENGINE_COMBAT_CHIP = /^(?:press the attack|try to flee|parley|flee)\b/i;
+export const ENGINE_COMBAT_CHIP = /^(?:press the attack|try to flee|parley|flee)\b/i;
 
 const PATH_CHIP = /^(?:force|clear|break|smash|shove|batter)\b.*\b(?:path|way|door|gate|passage|through)\b/i;
 /** Something in the way — a state/prose shape, not a story word. */
@@ -219,7 +218,7 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     return { kind: 'ghost-chip', detail: `"${label}" needs${who || ' someone'} to hear it but nobody is here` };
   }
 
-  const fight = !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter;
+  const fight = !!state.activeEncounter;
   if (ENGINE_COMBAT_CHIP.test(label) && !fight) {
     return { kind: 'impossible-chip', detail: `"${label}" offers a fight move with no fight` };
   }

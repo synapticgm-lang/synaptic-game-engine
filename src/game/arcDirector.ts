@@ -41,12 +41,15 @@ import {
 } from './socialMilestoneLedger';
 import { awardSocialXp, calculateSocialXp } from './socialProgression';
 import { telegraphForPendingSpawn } from './encounterTelegraph';
-import { pushBeatStateTx, type BeatStateTxExtras } from './stateTx';
+import { pushBeatStateTx, pushCombatStateTx, type BeatStateTxExtras } from './stateTx';
 import {
   initEncounterTerminal,
   tickEncounterTerminal,
   forceClearIfStale,
   isEncounterOnCooldown,
+  arrivePendingEncounter,
+  parkPendingEncounter,
+  pendingArrivalDue,
 } from './encounterTerminalFsm';
 import { catalogDroughtNames, selectCatalogEncounter } from './encounterBible';
 import {
@@ -56,9 +59,9 @@ import {
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
-import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
+import { markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
-import { parkedThreatHere, syncPlaceThreat } from './placeThreats';
+import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
 import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
@@ -263,9 +266,61 @@ function playerTurnsMomentDown(state: GameState, input: string | undefined): boo
 /** A live or parked foe, a remembered place threat, or this trip's road meeting: never stack a second foe. */
 function threatAlreadyHere(state: GameState): boolean {
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return true;
-  if (parkedThreatHere(state)) return true;
+  if (parkedThreatHere(state) || pendingThreatHere(state)) return true;
   const meeting = state.journey?.encounter;
   return isJourneyUnderway(state) && !!meeting && !meeting.engaged && !meeting.escaped;
+}
+
+function parkForArrival(state: GameState, foe: ActiveEncounter): GameState {
+  const base = state.sceneFacts ?? {
+    crowd: 'unknown' as const,
+    noise: 'unknown' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn,
+  };
+  return markPendingSpawnPreface(
+    { ...state, sceneFacts: { ...base, pendingEncounter: parkPendingEncounter(foe, state.turn) } },
+    foe.name
+  );
+}
+
+/**
+ * The engine owns arrival. A parked foe is telegraphed, then taken live once its arrival clock runs out,
+ * never on a move turn. A foe left pending at this place starts its clock again when the player is back.
+ */
+function advancePendingArrival(
+  state: GameState,
+  playerInput: string
+): { state: GameState; receipts: string[]; mandates: string[] } {
+  const none = { state, receipts: [] as string[], mandates: [] as string[] };
+  if (state.activeEncounter || turnMovesPlayer(state, playerInput)) return none;
+  const pending = state.sceneFacts?.pendingEncounter;
+  if (!pending) {
+    const waiting = pendingThreatHere(state);
+    if (!waiting) return none;
+    const next = parkForArrival(state, waiting.encounter);
+    const telegraph = telegraphForPendingSpawn((waiting.encounter as { threatTier?: string }).threatTier, next);
+    return {
+      state: telegraph ? { ...next, arcDirector: { ...next.arcDirector, pendingTelegraph: telegraph } } : next,
+      receipts: [`Threat building: ${waiting.encounter.name}`],
+      mandates: telegraph ? [telegraph] : [],
+    };
+  }
+  if (pending.parkedTurn == null) {
+    return { ...none, state: parkForArrival(state, pending) };
+  }
+  if (!pendingArrivalDue(pending, state.turn)) return none;
+  const live = arrivePendingEncounter(pending, state.turn);
+  let next: GameState = {
+    ...state,
+    activeEncounter: live,
+    sceneFacts: { ...state.sceneFacts!, pendingEncounter: undefined },
+    arcDirector: { ...state.arcDirector, pendingTelegraph: undefined },
+  };
+  next = pushCombatStateTx(next, `Encounter started: ${live.name}`, live.name, 'Arrival clock ran out');
+  return { state: next, receipts: [`Encounter: ${live.name}`], mandates: [`Encounter: ${live.name}`] };
 }
 
 export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
@@ -581,31 +636,11 @@ function applyBeatEffects(
     } else if (!opts?.forceSpawn && !shouldSpawn && !droughtCheck.isDrought) {
       receipts.push(`Encounter density: spawn rate limit — deferred`);
     } else {
-      // 31m — no live fight until present[] has the foe; a parked foe goes live in ensureEncounterSpawnPreface.
-      if (foeVisibleInScene(next, preview.name)) {
-        next = { ...next, activeEncounter: preview };
-        extras.encounterName = preview.name;
-        receipts.push(`Encounter: ${preview.name}`);
-      } else {
-        const base = next.sceneFacts ?? {
-          crowd: 'unknown',
-          noise: 'unknown',
-          present: [],
-          props: [],
-          lastBeat: '',
-          updatedTurn: next.turn,
-        };
-        next = markPendingSpawnPreface({
-          ...next,
-          sceneFacts: {
-            ...base,
-            pendingEncounter: preview,
-          },
-        }, preview.name);
-        extras.threatName = preview.name;
-        receipts.push(`Threat building: ${preview.name}`);
-        telegraph = telegraphForPendingSpawn((preview as { threatTier?: string }).threatTier, next) ?? undefined;
-      }
+      // The foe is parked off the page; advancePendingArrival takes it live on the arrival clock.
+      next = parkForArrival(next, preview);
+      extras.threatName = preview.name;
+      receipts.push(`Threat building: ${preview.name}`);
+      telegraph = telegraphForPendingSpawn((preview as { threatTier?: string }).threatTier, next) ?? undefined;
 
       // Update density state after spawn
       const role = preview.threatTier === 'boss' ? 'boss' : preview.threatTier === 'elite' ? 'elite' : 'trash';
@@ -628,6 +663,24 @@ function applyBeatEffects(
 }
 
 /** Player-visible STATUS lines for arc commits (T12 hook — quest stage + XP receipt). */
+function markVoiceUsed(state: GameState, trigger: string): GameState {
+  return {
+    ...state,
+    arcDirector: {
+      ...state.arcDirector,
+      voiceAsideLastUsed: { ...(state.arcDirector?.voiceAsideLastUsed ?? {}), [trigger]: state.turn },
+    },
+  };
+}
+
+/** The xp_gain STATUS voice line, picked from character XP actually paid this turn. */
+export function xpGainVoiceAside(state: GameState, paidXp: number): { state: GameState; line?: string } {
+  if (!(paidXp > 0)) return { state };
+  const voice = pickStatusVoiceLine(state, 'xp_gain');
+  if (!voice) return { state };
+  return { state: markVoiceUsed(state, voice.trigger), line: voice.line };
+}
+
 export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const lines: string[] = [];
   for (const r of result.systemReceipts) {
@@ -699,21 +752,6 @@ export function runArcDirectorBeforeGm(
       mandates.push(`ENCOUNTER ESCAPED: you got away from ${escapedFrom}. It was not beaten, and nothing was won or looted.`);
     } else if (!working.activeEncounter) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
-      // 29b — voice line on combat clear
-      const voice = pickStatusVoiceLine(working, 'xp_gain');
-      if (voice) {
-        systemReceipts.push(`Voice: ${voice.line}`);
-        working = {
-          ...working,
-          arcDirector: {
-            ...working.arcDirector,
-            voiceAsideLastUsed: {
-              ...(working.arcDirector?.voiceAsideLastUsed ?? {}),
-              [voice.trigger]: working.turn,
-            },
-          },
-        };
-      }
     }
   } else {
     const stale = forceClearIfStale(working, 50);
@@ -721,6 +759,13 @@ export function runArcDirectorBeforeGm(
       working = stale.state;
       systemReceipts.push(...stale.receipts);
     }
+  }
+
+  {
+    const arrival = advancePendingArrival(working, playerInput);
+    working = arrival.state;
+    systemReceipts.push(...arrival.receipts);
+    mandates.push(...arrival.mandates);
   }
 
   // 28g — rest / wait at a safe hub restores HP (recoveryRules).
@@ -1026,21 +1071,12 @@ export function runArcDirectorBeforeGm(
       };
     }
 
-    // 29b — voice STATUS on quest/xp commits
-    if (applied.xp > 0 || contract.kind === 'quest_stage' || contract.kind === 'leverage') {
-      const voice = pickStatusVoiceLine(working, applied.xp > 0 ? 'xp_gain' : 'hub_change');
+    // 29b — voice STATUS on quest commits; the xp_gain line follows paid XP (xpGainVoiceAside).
+    if (applied.xp <= 0 && (contract.kind === 'quest_stage' || contract.kind === 'leverage')) {
+      const voice = pickStatusVoiceLine(working, 'hub_change');
       if (voice) {
         systemReceipts.push(`Voice: ${voice.line}`);
-        working = {
-          ...working,
-          arcDirector: {
-            ...working.arcDirector,
-            voiceAsideLastUsed: {
-              ...(working.arcDirector?.voiceAsideLastUsed ?? {}),
-              [voice.trigger]: working.turn,
-            },
-          },
-        };
+        working = markVoiceUsed(working, voice.trigger);
       }
     }
   } else if (contract && (!contract.once || !committed.has(contract.id))) {

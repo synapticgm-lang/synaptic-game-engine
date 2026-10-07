@@ -71,7 +71,6 @@ export function peopleOnSheet(state: GameState): string[] {
   realPresentPeople(presentNpcNames(state)).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
-  add(state.sceneFacts?.pendingEncounter?.name);
   return [...out.values()];
 }
 

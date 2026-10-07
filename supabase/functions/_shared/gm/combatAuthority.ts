@@ -364,23 +364,17 @@ export function markPendingSpawnPreface(state: GameState, enemyName: string): Ga
 }
 
 /**
- * After the writer: a foe the ArcDirector parked goes live only once the committed story shows it
- * (this draft, present[], or the last GM beat); until then it stays parked. Going live writes the
- * combat state log entry and returns the `Encounter:` STATUS line in `receipts`.
+ * After the writer: paint the spawn line for a foe the engine already made live (the arcDirector arrival
+ * clock owns arrival). A parked foe stays parked whatever the prose says.
  */
 export function ensureEncounterSpawnPreface(
   state: GameState,
   prose: string
 ): { prose: string; state: GameState; prepended: boolean; spawnReceipt?: string; receipts: string[] } {
-  const parked = state.sceneFacts?.pendingEncounter;
-  const pending = state.sceneFacts?.pendingSpawnPreface?.trim() || parked?.name?.trim() || '';
-  const unseenLive =
-    !pending && state.activeEncounter?.name?.trim() && !foeVisibleInScene(state, state.activeEncounter.name, prose)
-      ? state.activeEncounter.name.trim()
-      : '';
-  const name = pending || unseenLive;
   let nextProse = scrubCombatSpawnLog(prose ?? '');
-  if (!name || (pending && !foeVisibleInScene(state, name, nextProse))) {
+  const name = state.activeEncounter?.name?.trim() || '';
+  const shown = !!name && foeVisibleInScene(state, name, nextProse);
+  if (!name || (shown && !state.sceneFacts?.pendingSpawnPreface)) {
     return { prose: nextProse, state, prepended: false, receipts: [] };
   }
 
@@ -416,7 +410,7 @@ export function ensureEncounterSpawnPreface(
     present.push(name);
   }
 
-  let nextState: GameState = {
+  const nextState: GameState = {
     ...state,
     sceneFacts: {
       ...base,
@@ -428,11 +422,6 @@ export function ensureEncounterSpawnPreface(
   };
 
   const receipts: string[] = [];
-  if (parked && !nextState.activeEncounter) {
-    nextState = { ...nextState, activeEncounter: parked };
-    receipts.push(`Encounter: ${parked.name}`);
-    nextState = pushCombatStateTx(nextState, `Encounter started: ${parked.name}`, parked.name, 'Foe shown in the story');
-  }
   if (spawnReceipt) receipts.push(spawnReceipt);
 
   return {

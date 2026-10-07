@@ -8,7 +8,7 @@
 import type { ActiveEncounter, GameState } from './types';
 import { simulateCombat, type EnemyStats } from './combat';
 import { commitAutoFightLedger } from './combatAuthority';
-import { initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
+import { arrivePendingEncounter, initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
 import { profileForEncounter } from './lootTableRegistry';
 import { milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare, type MilestoneKind } from './xpRules';
 import { milestoneAreaOpts } from './placeAuthority';
@@ -90,7 +90,10 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const parked = state.activeEncounter || pending ? null : parkedThreatHere(state);
   // A road meeting the player faces (or flees) is handed to this engine the same turn.
   const road = state.activeEncounter || pending || parked ? null : roadFoeForEngine(state, input);
-  const raw = state.activeEncounter ?? pending ?? (parked ? wakeParkedThreat(parked) : road);
+  const raw =
+    state.activeEncounter
+    ?? (pending ? arrivePendingEncounter(pending, state.turn) : null)
+    ?? (parked ? wakeParkedThreat(parked) : road);
   if (!raw || !input) return null;
   const flee = FLEE_RE.test(input);
   const parley = !flee && PARLEY_RE.test(input);

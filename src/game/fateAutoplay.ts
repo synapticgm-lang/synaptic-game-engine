@@ -155,6 +155,7 @@ import {
   formatArcDirectorMandateBlock,
   formatArcStatusReceipts,
   preserveArcQuestProgress,
+  xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
@@ -1871,6 +1872,11 @@ Do NOT print dice notation or CODE ENFORCED.
       : arcState.arcDirector,
     runManifest: arcState.runManifest,
   };
+  {
+    const xpVoice = xpGainVoiceAside(working, sandboxXp.xp + (dailyMilestone?.xp ?? 0));
+    working = xpVoice.state;
+    if (xpVoice.line) sandboxNotes.push(xpVoice.line);
+  }
   {
     const talkCard = openTalkQuestCard(working, spokenLines(cleanText), nextTurn);
     if (talkCard.card) working = { ...working, places: talkCard.places };

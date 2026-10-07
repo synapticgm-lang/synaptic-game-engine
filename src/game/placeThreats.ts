@@ -2,8 +2,9 @@
  * 29y — remembered danger at a place.
  * A hostile threat that entered the scene (a live or pending encounter) is kept on that place until it is
  * beaten or talked down; fleeing it does not end it. Leaving and coming back still finds it: the card offers the existing fight chip and the
- * existing engine fight (resolveEngineFight) settles it. A threat never wakes on its own, so a quiet
- * stretch stays quiet. Road meetings are owned by the journey (29w/29x) and are not stored here.
+ * existing engine fight (resolveEngineFight) settles it. A live threat never wakes on its own, so a quiet
+ * stretch stays quiet. A foe still pending when the player left is stored as pending and its arrival clock
+ * starts again on return (arcDirector). Road meetings are owned by the journey (29w/29x) and are not stored here.
  */
 import type { ActiveEncounter, GameState, PlaceThreat } from './types';
 
@@ -36,10 +37,22 @@ export function rememberedThreatHere(state: GameState): PlaceThreat | null {
   return state.placeThreats?.[key] ?? null;
 }
 
-/** A remembered threat is here and no fight is live: the card owes the fight chip. */
+function isPendingEntry(entry: PlaceThreat | null): boolean {
+  return entry?.lastOutcome === 'pending' || entry?.encounter?.phase === 'pending';
+}
+
+/** A remembered threat is here and no fight is live: the card owes the fight chip. A threat that never arrived is not one. */
 export function parkedThreatHere(state: GameState): PlaceThreat | null {
   if (liveThreat(state)) return null;
-  return rememberedThreatHere(state);
+  const entry = rememberedThreatHere(state);
+  return isPendingEntry(entry) ? null : entry;
+}
+
+/** A threat that was still on its way when the player left: it waits here, off the page, for the arrival clock. */
+export function pendingThreatHere(state: GameState): PlaceThreat | null {
+  if (liveThreat(state)) return null;
+  const entry = rememberedThreatHere(state);
+  return isPendingEntry(entry) ? entry : null;
 }
 
 function withEntry(state: GameState, key: string, entry: PlaceThreat | null): GameState {
@@ -85,7 +98,7 @@ export function syncPlaceThreat(
       encounter: live,
       storedTurn: prior?.storedTurn ?? after.turn,
       parleyRefused: (prior?.parleyRefused ?? 0) + (refusedNow ? 1 : 0),
-      lastOutcome: 'live',
+      lastOutcome: after.activeEncounter ? 'live' : 'pending',
     });
   }
 
@@ -120,7 +133,7 @@ export function syncPlaceThreat(
       encounter: had,
       storedTurn: prior?.storedTurn ?? before.turn,
       parleyRefused: (prior?.parleyRefused ?? 0) + (refusedNow ? 1 : 0),
-      lastOutcome: 'unsettled',
+      lastOutcome: had.phase === 'pending' ? 'pending' : 'unsettled',
     });
   }
   return after;
@@ -152,7 +165,7 @@ export function applyRememberedThreatPick(
   pick: string
 ): { pick: string; rule: 'remembered-threat' | null } {
   const threat = rememberedThreatHere(state);
-  if (!threat) return { pick, rule: null };
+  if (!threat || isPendingEntry(threat)) return { pick, rule: null };
   const fight =
     offered.find((c) => c.trim().toLowerCase() === REMEMBERED_FIGHT_CHIP.toLowerCase())
     ?? offered.find(isFightChip);

@@ -958,19 +958,18 @@ export function mapAnchorName(currentLocation: string | undefined, landmarks: st
 }
 
 /**
- * 29e — Move quest location to a biome-sane settlement when farming/fishing/etc. mismatch.
+ * 29e — Move a quest sited at an atlas settlement in the wrong biome to one that fits. A pin that is
+ * not a settlement keeps its place.
  */
 export function applyBiomeSaneQuestSites(state: GameState, quests: Quest[]): Quest[] {
   const atlas = state.worldAtlas;
   if (!atlas?.settlements?.length) return quests;
   return quests.map((q) => {
-    const tags = inferQuestTagsFromText(`${q.name} ${q.description} ${q.location ?? ''}`);
-    if (!tags.length) return q;
     const loc = q.location?.trim();
-    if (loc) {
-      const site = findSettlement(atlas, loc);
-      if (site && tags.every((t) => questFitsSettlement(t, site))) return q;
-    }
+    const site = loc ? findSettlement(atlas, loc) : null;
+    if (!site) return q;
+    const tags = inferQuestTagsFromText(`${q.name} ${q.description} ${q.location ?? ''}`);
+    if (!tags.length || tags.every((t) => questFitsSettlement(t, site))) return q;
     const pick = pickQuestSiteForTags(atlas, tags, atlas.currentRegionId);
     if (!pick) return q;
     return { ...q, location: pick.name };

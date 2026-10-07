@@ -269,10 +269,12 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
       return unmet ? `Nudge: ${unmet.npcName} comes over to you.` : '';
     },
     () => {
-      const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
-      const obj = quest?.objectives?.find((o) => !o.completed && !o.optional);
-      if (quest && obj) return `Nudge: word reaches you about ${quest.name}: ${obj.description.replace(/[.!?]+$/, '')}.`;
-      return quest?.location ? `Nudge: word reaches you that ${quest.name} leads to ${quest.location}.` : '';
+      for (const quest of state.quests ?? []) {
+        if (quest.status !== 'active' || !quest.revealed) continue;
+        const obj = quest.objectives?.find((o) => !o.completed && !o.optional);
+        if (obj) return `Nudge: word reaches you about ${quest.name}: ${obj.description.replace(/[.!?]+$/, '')}.`;
+      }
+      return '';
     },
     () => {
       const hubs = hubsForBibleId(state.campaignBibleId);

@@ -3,8 +3,9 @@
  */
 
 import type { GameState } from './types';
-import { isSiteBoundClearObjective } from './questHooks';
 import { canonicalizeIntent } from './semanticLoopDetector';
+import { classifyVerb } from './completedEventPacket';
+import { isGiverName, talkStageGiver } from './questGiver';
 
 export type NpcTopicFsmState = Record<string, string[]>;
 
@@ -116,6 +117,8 @@ export function recordNpcTopic(
   state: GameState,
   input: string
 ): { state: GameState; exhausted: boolean; npc?: string; topic?: string } {
+  const verb = classifyVerb(input);
+  if (verb !== 'spoke' && verb !== 'parleyed') return { state, exhausted: false };
   const npc = extractNpcFromInput(input, state);
   if (!npc) return { state, exhausted: false };
 
@@ -196,7 +199,8 @@ export function advanceNpcTopicExhaustion(
   );
   if (activeMain?.objectives?.length) {
     const idx = activeMain.objectives.findIndex((o) => !o.completed);
-    if (idx >= 0 && used.length >= 3 && !isSiteBoundClearObjective(activeMain.objectives[idx]?.description ?? '')) {
+    const giver = idx >= 0 ? talkStageGiver(next, activeMain.id, idx) : null;
+    if (giver && isGiverName(npc, giver) && used.length >= 3) {
       const objectives = [...activeMain.objectives];
       objectives[idx] = { ...objectives[idx], completed: true };
       next = {
