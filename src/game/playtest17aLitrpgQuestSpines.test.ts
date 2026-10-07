@@ -55,8 +55,8 @@ function revealFor(
 
 describe('playtest17a — LitRPG quest spines', () => {
   it('HUD/BUILD are 17a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-06e');
-    expect(BUILD_STAMP).toBe('2026-10-06e');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-07a');
+    expect(BUILD_STAMP).toBe('2026-10-07a');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -125,7 +125,8 @@ describe('playtest17a — LitRPG quest spines', () => {
     const sp = revealFor('summoned-pact', summonedPact.starterQuests, UNKNOWN_HOOK, 'a quiet plaza');
     const spVisible = sp.filter((q) => q.revealed && q.status === 'active');
     expect(spVisible[0]?.id).toBe('sp-quest-1');
-    expect(spVisible[0]?.name).toMatch(/Circle.?s Price/i);
+    // s74 M — a plaza card has no circle, so the default starter drops the circle title.
+    expect(spVisible[0]?.name).not.toMatch(/Circle.?s Price/i);
 
     expect(matchLitRpgMainSpine('hero-awakening', UNKNOWN_HOOK, 'a quiet plaza')).toBeNull();
     const ha = revealFor('hero-awakening', heroAwakening.starterQuests, UNKNOWN_HOOK, 'a quiet plaza');

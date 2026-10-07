@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import {
+  commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
   formatArcStatusReceipts,
 } from './arcDirector';
@@ -33,15 +34,23 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
       },
     ];
     state.arcDirector = { committedBeatIds: ['sp-beat-orient'] };
+    state.openingEstablishment = { ...state.openingEstablishment!, pickedHook: 'A handler steps in with a shaking ledger.' };
+    state.sceneFacts = { ...state.sceneFacts!, present: ['the handler'] };
     const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me and why');
-    expect(arc.beatCommitted).toBe(true);
-    expect(arc.beatId).toBe('sp-beat-hear-reason');
-    const status = formatArcStatusReceipts(arc);
+    // s74 M — pending before the writer; it commits after the turn on the handler's own line.
+    expect(arc.state.arcDirector?.committedBeatIds ?? []).not.toContain('sp-beat-hear-reason');
+    expect(arc.state.quests?.[0]?.objectives?.[1]?.completed).toBe(false);
+    const nextTurn = state.turn + 1;
+    const heard = commitTalkStageAfterTurn(
+      arc.state,
+      [{ speakerId: 'role:handler', speaker: 'the handler', words: 'We needed a savior and caught you.' }],
+      nextTurn
+    );
+    const status = [...formatArcStatusReceipts(arc), ...heard.receipts];
     expect(status.some((l) => /Circle's Price/i.test(l))).toBe(true);
     // 28a — no pre-writer XP receipt; milestone XP is paid after the text commits.
     expect(status.some((l) => /XP Gained: 45/i.test(l))).toBe(false);
-    const nextTurn = state.turn + 1;
-    const receipts = countTurnReceipts(arc.state, nextTurn);
+    const receipts = countTurnReceipts(heard.state, nextTurn);
     expect(receipts.questStage).toBeGreaterThanOrEqual(1);
     expect(receipts.beatCommit).toBeGreaterThanOrEqual(1);
   });

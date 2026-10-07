@@ -110,7 +110,12 @@ describe('playtest31xBatchX', () => {
         },
       } as GameState;
       const gm = 'The drizzle continued its cold, persistent descent.';
-      const ensured = ensureEncounterSpawnPreface(state, gm);
+      expect(ensureEncounterSpawnPreface(state, gm).spawnReceipt).toBeUndefined();
+      const shown = {
+        ...state,
+        sceneFacts: { ...state.sceneFacts!, present: ['Pact-Hunter Skirmisher'] },
+      } as GameState;
+      const ensured = ensureEncounterSpawnPreface(shown, gm);
       expect(ensured.spawnReceipt).toMatch(/Pact-Hunter Skirmisher pushes/i);
       expect(ensured.prose).not.toMatch(/pushes into Lowmarket from the edge/i);
       expect(hasCombatSpawnLogInBody(ensured.prose)).toBe(false);

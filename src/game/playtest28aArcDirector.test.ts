@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { applyCharacterXpGain } from './characterXp';
-import { runArcDirectorBeforeGm } from './arcDirector';
+import { commitTalkStageAfterTurn, runArcDirectorBeforeGm } from './arcDirector';
 import { compileChoices, updateChoiceFingerprints } from './choiceCompiler';
 import { calculateDiscoveryXp, discoveryXpAmount } from './discoveryXpLedger';
 import { contractsForState } from './beatContract';
@@ -36,13 +36,22 @@ describe('playtest28a — ArcDirector + pacing', () => {
       },
     ];
     state.arcDirector = { committedBeatIds: ['sp-beat-orient'] };
+    state.openingEstablishment = { ...state.openingEstablishment!, pickedHook: 'A handler steps in with a shaking ledger.' };
+    state.sceneFacts = { ...state.sceneFacts!, present: ['the handler'] };
     const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me and why');
-    expect(arc.beatCommitted).toBe(true);
+    // s74 M — the player's line alone commits nothing; the stage commits after the turn on the giver's speech.
+    expect(arc.beatCommitted).toBe(false);
     // 28a — the Arc Director no longer pays XP; the quest step pays post-text in sandboxXp.
     expect(arc.xpAwards.length).toBe(0);
-    const q = arc.state.quests?.find((x) => x.id === 'sp-quest-1');
-    expect(q?.objectives?.some((o) => o.completed)).toBe(true);
-    expect(arc.state.stateTxLog?.some((t) => t.kind === 'beat_commit')).toBe(true);
+    expect(arc.state.quests?.find((x) => x.id === 'sp-quest-1')?.objectives?.some((o) => o.completed)).toBe(false);
+    const heard = commitTalkStageAfterTurn(
+      arc.state,
+      [{ speakerId: 'role:handler', speaker: 'the handler', words: 'The rite was meant for someone else.' }],
+      7
+    );
+    const q = heard.state.quests?.find((x) => x.id === 'sp-quest-1');
+    expect(q?.objectives?.[1]?.completed).toBe(true);
+    expect(heard.state.stateTxLog?.some((t) => t.kind === 'beat_commit')).toBe(true);
   });
 
   it('inspect awards XP once per evidence-id only', () => {

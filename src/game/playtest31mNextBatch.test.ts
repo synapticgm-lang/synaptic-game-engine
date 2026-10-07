@@ -158,8 +158,10 @@ describe('playtest31mNextBatch', () => {
       expect(arc.state.sceneFacts?.pendingSpawnPreface).toBe(parked.name);
       expect(canAttachLiveFight(arc.state, parked.name)).toBe(false);
 
-      const ensured = ensureEncounterSpawnPreface(arc.state, 'Steel rings in the dark.');
-      expect(ensured.prepended).toBe(true);
+      const unseen = ensureEncounterSpawnPreface(arc.state, 'Steel rings in the dark.');
+      expect(unseen.state.activeEncounter).toBeFalsy();
+      expect(unseen.state.sceneFacts?.pendingEncounter?.name).toBe(parked.name);
+      const ensured = ensureEncounterSpawnPreface(arc.state, `${parked.name} lunges out of the dark.`);
       expect(ensured.state.activeEncounter?.name).toBe(parked.name);
       expect(ensured.state.sceneFacts?.pendingEncounter).toBeUndefined();
       expect(ensured.state.sceneFacts?.present.some((p) => p.includes(parked.name))).toBe(true);
@@ -181,9 +183,9 @@ describe('playtest31mNextBatch', () => {
         name
       );
       expect(canAttachLiveFight(marked, name)).toBe(false);
-      const ensured = ensureEncounterSpawnPreface(marked, 'Dust hangs.');
+      expect(ensureEncounterSpawnPreface(marked, 'Dust hangs.').state.activeEncounter).toBeFalsy();
+      const ensured = ensureEncounterSpawnPreface(marked, `${name} lunges out of the dust.`);
       expect(ensured.state.activeEncounter?.name).toBe(name);
-      expect(ensured.prepended).toBe(true);
     }
   });
 

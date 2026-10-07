@@ -59,7 +59,7 @@ describe('playtest31h — gap close P0 ledger owners', () => {
       const name = arc.state.activeEncounter.name;
       expect(foeVisibleInScene(arc.state, name)).toBe(false);
       expect(arc.state.sceneFacts?.pendingSpawnPreface).toBe(name);
-      expect(arc.systemReceipts.some((r) => /preface pending/i.test(r))).toBe(true);
+      expect(arc.systemReceipts.some((r) => /Threat building/i.test(r))).toBe(true);
 
       const fightProse = 'Steel rings. You duck a blade and strike back hard.';
       const ensured = ensureEncounterSpawnPreface(arc.state, fightProse);
@@ -71,10 +71,13 @@ describe('playtest31h — gap close P0 ledger owners', () => {
     } else {
       // Density/cooldown may defer — still verify helpers
       const marked = markPendingSpawnPreface(state, 'Pact-Hunter Skirmisher');
-      const ensured = ensureEncounterSpawnPreface(
+      const unseen = ensureEncounterSpawnPreface(
         marked,
         'Dust motes hang in the gloom. The air smells of decay and ozone.'
       );
+      expect(unseen.prepended).toBe(false);
+      expect(unseen.state.sceneFacts?.pendingSpawnPreface).toBe('Pact-Hunter Skirmisher');
+      const ensured = ensureEncounterSpawnPreface(marked, 'The Pact-Hunter Skirmisher is already on you.');
       expect(ensured.prepended).toBe(true);
       expect(ensured.spawnReceipt).toMatch(/Pact-Hunter/i);
       expect(ensured.prose).not.toMatch(/pushes into|from the edge of the room/i);

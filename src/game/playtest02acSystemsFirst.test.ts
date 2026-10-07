@@ -123,15 +123,17 @@ describe('Phase 1: ArcDirector + combat receipts', () => {
     expect(selectCombatBeat(systemsState({ turn: 8 }))).toBe('sp-beat-skirmish');
   });
 
-  it('runArcDirectorBeforeGm commits combat at T8 and emits Encounter + XP', () => {
+  it('runArcDirectorBeforeGm commits combat at T8: an off-page foe is threat building, not an Encounter', () => {
     const result = runArcDirectorBeforeGm(systemsState(), 'Look around');
     expect(result.beatCommitted).toBe(true);
-    expect(result.systemReceipts.some((r) => /Encounter:/i.test(r))).toBe(true);
+    const parked = !!result.state.sceneFacts?.pendingEncounter;
+    expect(result.systemReceipts.some((r) => (parked ? /^Threat building:/ : /^Encounter:/).test(r))).toBe(true);
     // 28a — the Arc Director no longer pays XP; milestone XP is paid after the text commits (sandboxXp).
     expect(result.xpAwards.length).toBe(0);
     expect(FAST_XP_AWARDS.combatTrash).toBeGreaterThan(0);
     const receipts = formatArcStatusReceipts(result).join('\n');
-    expect(receipts).toMatch(/Encounter:/i);
+    if (parked) expect(receipts).not.toMatch(/Encounter:/i);
+    else expect(receipts).toMatch(/Encounter:/i);
     expect(receipts).not.toMatch(/XP Gained/);
   });
 });

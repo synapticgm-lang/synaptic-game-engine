@@ -52,8 +52,8 @@ describe('Z-1 FSM Pad Filtering', () => {
     );
     expect(travelFilterNotes.length).toBeGreaterThan(0);
     
-    // Combat pads should remain
-    expect(choices.some(c => /press the attack|flee|ask/i.test(c))).toBe(true);
+    // A parked foe is not on the page yet: no fight pads until it goes live
+    expect(choices.some(c => /press the attack|try to flee|parley/i.test(c))).toBe(false);
   });
 
   it('blocks travel pads when activeEncounter exists', () => {
