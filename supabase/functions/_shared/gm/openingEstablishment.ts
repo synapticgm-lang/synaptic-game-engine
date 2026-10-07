@@ -356,3 +356,31 @@ export function countSameHallTopicRepeats(_state?: unknown, _playerInput?: strin
 export function lineNamesOtherNpc(_state?: unknown, _line?: string): boolean {
   return false;
 }
+
+const ALONE_ARRIVAL_MARK =
+  /\balone\b|nobody here|no summoners|no handlers|no priests|no welcome|outline of a building|foundation stones|burnt husk|wall-shell|half-collapsed ruin/i;
+
+function openingHayHasOccupancy(raw: string): boolean {
+  const cleaned = (raw ?? '')
+    .replace(/\bno\s+(?:priests?|handlers?|summoners?)\b/gi, ' ')
+    .replace(/\bnobody\s+(?:here|came|stayed)\b/gi, ' ');
+  return /\b(?:militia|scavengers?|handlers?|chanter|envoys?|robed figures)\b/i.test(cleaned);
+}
+
+function isAloneArrivalPick(picked?: { text?: string; location?: string; fallback?: string } | null): boolean {
+  if (!picked) return false;
+  const hay = [picked.location, picked.text, picked.fallback].filter(Boolean).join('\n');
+  if (openingHayHasOccupancy(hay)) return false;
+  return ALONE_ARRIVAL_MARK.test(hay);
+}
+
+export function isAloneArrivalOpening(state: GameState): boolean {
+  if (state.openingEstablishment?.complete) return false;
+  if (state.openingEstablishment?.aloneArrival === true) return true;
+  if (state.openingEstablishment?.aloneArrival === false) return false;
+  return isAloneArrivalPick({
+    text: state.openingEstablishment?.pickedHook,
+    location: state.currentLocation,
+    fallback: state.openingEstablishment?.pickedHookFallback,
+  });
+}

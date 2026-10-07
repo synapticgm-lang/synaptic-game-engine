@@ -9,6 +9,7 @@ import { applySiteClearObjectives } from './questHooks';
 import {
   type BeatContract,
   contractById,
+  contractsForState,
   engineAllowsCombat,
   forcedEncounterBeat,
   resolveBiblePrefix,
@@ -58,6 +59,8 @@ import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } 
 import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
 import { parkedThreatHere, syncPlaceThreat } from './placeThreats';
+import { commitTravel, isJourneyUnderway } from './travelJourney';
+import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
 import { isLookAroundAction } from './sandboxXp';
 import { isDeclineStance } from './stanceDensity';
@@ -68,6 +71,8 @@ import {
   playerGivesOrRefusesName,
 } from './openingEstablishment';
 import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
+import { giverIsHere, giverSpoke, talkStageGiver } from './questGiver';
+import type { SpokenLine } from './tokenProse';
 import { selectEligibleCrisis } from './socialCrisis';
 import type { SocialCrisis } from './socialCrisisTypes';
 // WS-4 Wave D+: Encounter Density Governance
@@ -241,22 +246,32 @@ export function droughtSkirmishTable(state: GameState): string[] {
  * Combat drought gate (02ac). Honors live/pending encounter, lastKill cooldown,
  * and existing engineAllowsCombat — never double-spawns.
  */
-function playerIsTravelingAway(input: string | undefined): boolean {
-  return /(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:toward|to|for)|go\s+to|i(?:'m| am) going\s+to|walk\s+away|leave the scene|go through)/i.test(
-    input ?? ''
-  );
+/** The same travel result the turn commits after the director: a graph exit, a trip leg, or an arrival. */
+function turnMovesPlayer(state: GameState, input: string | undefined): boolean {
+  const raw = input ?? '';
+  if (!raw.trim()) return false;
+  if (applyGraphExitTravel(state, raw) !== state) return true;
+  const move = commitTravel(state, raw);
+  return move.arrived || !!move.underway;
 }
 
-/** Travel away, walk away or refuse: no new fight starts on a turn the player turned down. */
-function playerTurnsMomentDown(input: string | undefined): boolean {
-  return playerIsTravelingAway(input) || isDeclineStance(input ?? '');
+/** A move or a refusal: no new fight starts on a turn the player turned down. */
+function playerTurnsMomentDown(state: GameState, input: string | undefined): boolean {
+  return turnMovesPlayer(state, input) || isDeclineStance(input ?? '');
+}
+
+/** A live or parked foe, a remembered place threat, or this trip's road meeting: never stack a second foe. */
+function threatAlreadyHere(state: GameState): boolean {
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return true;
+  if (parkedThreatHere(state)) return true;
+  const meeting = state.journey?.encounter;
+  return isJourneyUnderway(state) && !!meeting && !meeting.engaged && !meeting.escaped;
 }
 
 export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
-  if (playerTurnsMomentDown(playerInput)) return false;
+  if (playerTurnsMomentDown(state, playerInput)) return false;
   if (!state.openingEstablishment?.complete) return false;
-  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
-  if (parkedThreatHere(state)) return false;
+  if (threatAlreadyHere(state)) return false;
   if (!engineAllowsCombat(state)) return false;
   if (state.arcDirector?.lastEncounterClearedTurn === state.turn) return false;
   if (isEncounterOnCooldown(state, state.sceneFacts?.lastKill?.name ?? '')) return false;
@@ -464,15 +479,8 @@ function shouldCommitBeat(
   const lower = playerInput.toLowerCase();
   const talkish = /\b(ask|talk|speak|listen|overhear|negotiate|tell|who|why|what|where)\b/i.test(lower);
 
-  if (contract.id === 'sp-beat-hear-reason') {
-    if (talkContradictsLockedWhy(playerInput, resolveHookLock(state))) return false;
-    // Scout / look-around must not pay hear-reason (31e/31h residual).
-    if (isLookAroundAction(playerInput) || /\b(scout|get bearings|explore (?:the )?(?:cell|room|ruin))\b/i.test(playerInput)) {
-      return false;
-    }
-    // Receipt-only / “what’s yours” is not hearing the reason.
-    return playerAskedWhyPulled(playerInput);
-  }
+  // A talk stage commits after the turn, from the giver's speech (commitTalkStageAfterTurn).
+  if (contract.talkStage) return false;
   if (contract.id === 'sp-beat-orient') {
     if (playerGivesOrRefusesName(playerInput) || isHallTalkPlayerLine(playerInput)) return false;
     return (
@@ -482,7 +490,7 @@ function shouldCommitBeat(
       )
     );
   }
-  if (playerTurnsMomentDown(playerInput) && (contract.kind === 'encounter' || contract.spawnEncounter)) {
+  if (playerTurnsMomentDown(state, playerInput) && (contract.kind === 'encounter' || contract.spawnEncounter)) {
     return false;
   }
   if (contract.kind === 'encounter') {
@@ -553,9 +561,8 @@ function applyBeatEffects(
   // 28f — never spawn a new fight on the turn one cleared.
   if (
     contract.spawnEncounter
-    && !next.activeEncounter
+    && !threatAlreadyHere(next)
     && next.arcDirector?.lastEncounterClearedTurn !== next.turn
-    && !parkedThreatHere(next)
   ) {
     // WS-4 Wave D+: Check density before spawning
     const locationId = next.currentLocation?.name ?? 'unknown';
@@ -574,10 +581,10 @@ function applyBeatEffects(
     } else if (!opts?.forceSpawn && !shouldSpawn && !droughtCheck.isDrought) {
       receipts.push(`Encounter density: spawn rate limit — deferred`);
     } else {
-      extras.encounterName = preview.name;
-      // 31m — no live fight until present[] has the foe or preface commits this turn.
+      // 31m — no live fight until present[] has the foe; a parked foe goes live in ensureEncounterSpawnPreface.
       if (foeVisibleInScene(next, preview.name)) {
         next = { ...next, activeEncounter: preview };
+        extras.encounterName = preview.name;
         receipts.push(`Encounter: ${preview.name}`);
       } else {
         const base = next.sceneFacts ?? {
@@ -595,8 +602,8 @@ function applyBeatEffects(
             pendingEncounter: preview,
           },
         }, preview.name);
-        receipts.push(`Encounter: ${preview.name}`);
-        receipts.push(`Encounter preface pending: ${preview.name}`);
+        extras.threatName = preview.name;
+        receipts.push(`Threat building: ${preview.name}`);
         telegraph = telegraphForPendingSpawn((preview as { threatTier?: string }).threatTier, next) ?? undefined;
       }
 
@@ -1144,6 +1151,45 @@ export function buildArcDirectorSnapshotLines(state: GameState): string[] {
     );
   }
   return lines;
+}
+
+/**
+ * s74 M — after the writer: a talk stage completes once, only when its giver is here and one of the turn's
+ * committed speech lines is the giver's. Quest XP then pays on the objective diff (sandboxXp), as for any step.
+ */
+export function commitTalkStageAfterTurn(
+  state: GameState,
+  speech: readonly SpokenLine[] | undefined,
+  turn: number
+): { state: GameState; receipts: string[] } {
+  const committed = committedSet(state);
+  for (const contract of contractsForState(state)) {
+    if (!contract.talkStage || committed.has(contract.id) || state.turn < contract.minTurn) continue;
+    const idx = contract.questObjectiveIndex;
+    const quest = (state.quests ?? []).find((q) => q.id === contract.questId);
+    if (!quest || idx == null || quest.objectives?.[idx]?.completed !== false) continue;
+    const giver = talkStageGiver(state, quest.id, idx);
+    if (!giver || !giverIsHere(state, giver) || !giverSpoke(speech, giver)) continue;
+    const summary = `${quest.name}: ${contract.summary}`;
+    const { seq, state: seqState } = nextEventSeq(state);
+    let next: GameState = {
+      ...seqState,
+      quests: completeQuestObjective(seqState.quests ?? [], quest.id, idx),
+      arcDirector: {
+        ...seqState.arcDirector,
+        committedBeatIds: [...(seqState.arcDirector?.committedBeatIds ?? []), contract.id],
+        activeBeatId: contract.id,
+      },
+    };
+    next = pushBeatStateTx(
+      next,
+      summary,
+      { beatId: contract.id, eventSeq: seq, why: `Talk stage heard from ${giver}`, questStage: summary },
+      turn
+    );
+    return { state: next, receipts: [`Quest: ${summary}`] };
+  }
+  return { state, receipts: [] };
 }
 
 /** Post-commit: bump combat receipt counter, record choice fingerprints. */

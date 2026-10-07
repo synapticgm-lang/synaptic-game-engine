@@ -30,7 +30,10 @@ export interface BeatStateTxExtras {
   eventSeq: number;
   why: string;
   questStage?: string;
+  /** A foe that went live this commit. */
   encounterName?: string;
+  /** A foe parked off-page: not a fight until the story shows it. */
+  threatName?: string;
 }
 
 export interface StateTx {
@@ -293,6 +296,16 @@ export function pushBeatStateTx(
       kind: 'combat',
       summary: `Encounter started: ${extras.encounterName}`,
       entity: extras.encounterName,
+      why: extras.why,
+    });
+  }
+  if (extras.threatName) {
+    log = pushTx(log, {
+      rev,
+      turn,
+      kind: 'other',
+      summary: `Threat building: ${extras.threatName}`,
+      entity: extras.threatName,
       why: extras.why,
     });
   }

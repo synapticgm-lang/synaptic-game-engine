@@ -1077,10 +1077,30 @@ export function withMatchedLitRpgSpine(
   const spine = matchLitRpgMainSpineFromCtx(ctx);
   if (spine) {
     const extra = spineToStarterQuest(spine);
-    if (seeds.some((s) => s.id === extra.id)) return seeds;
-    return [extra, ...seeds];
+    if (seeds.some((s) => s.id === extra.id)) return fitCircleStarterToCard(seeds, ctx);
+    return [extra, ...fitCircleStarterToCard(seeds, ctx)];
   }
-  return withMatchedTabletopSpine(withMatchedStoryRpgSpine(seeds, ctx), ctx);
+  return withMatchedTabletopSpine(withMatchedStoryRpgSpine(fitCircleStarterToCard(seeds, ctx), ctx), ctx);
+}
+
+/**
+ * The Summoned Pact default starter is written for a circle summoning. A card with no circle (festival
+ * square, treaty tent, …) keeps the same steps under a title and text that do not claim one.
+ */
+function fitCircleStarterToCard(seeds: StarterQuestSeed[], ctx: SpineMatchCtx): StarterQuestSeed[] {
+  if (ctx.bibleId !== 'summoned-pact') return seeds;
+  const card = (ctx.hookBlob ?? '').split(ctx.location?.trim() || '\u0000').join(' ').trim();
+  if (!card || /\bcircles?\b/i.test(card)) return seeds;
+  return seeds.map((s) =>
+    s.id === 'sp-quest-1'
+      ? {
+          ...s,
+          title: 'The Summons’ Price',
+          description:
+            'You have just been summoned. Hear why they pulled you here. Swear the Pact, refuse it, or walk away before anyone owns your name.',
+        }
+      : s
+  );
 }
 
 function hashSeed(raw: string): number {

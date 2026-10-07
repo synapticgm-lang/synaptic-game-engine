@@ -426,7 +426,7 @@ export function adaptStarterQuestsForArrival(
   alone: boolean
 ): StarterQuestSeed[] {
   if (!alone) return seeds;
-  return seeds.map((s) => (s.id === 'sp-quest-1' ? { ...ALONE_CIRCLE_PRICE } : s));
+  return seeds.map((s) => (s.id === 'sp-quest-1' ? { ...ALONE_CIRCLE_PRICE, title: s.title } : s));
 }
 
 function slug(raw: string): string {

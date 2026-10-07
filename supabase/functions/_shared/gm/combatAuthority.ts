@@ -5,6 +5,8 @@
 
 import type { ActiveEncounter, GameState, SceneFacts } from './types.ts';
 import { tickEncounterTerminal } from './encounterTerminalFsm.ts';
+import { pushCombatStateTx } from './stateTx.ts';
+import { isJourneyUnderway, isRoadLabel, UNDERWAY_HERE } from './travelJourney.ts';
 
 function sceneFactsBase(state: GameState): SceneFacts {
   return state.sceneFacts ?? {
@@ -255,9 +257,17 @@ export function foeVisibleInScene(
   return false;
 }
 
-export function autoFightSpawnPreface(enemyName: string, location?: string): string {
+export function autoFightSpawnPreface(enemyName: string, location?: string, road?: string): string {
   const name = (enemyName ?? '').trim() || 'A threat';
   const loc = (location ?? '').trim();
+  const ground =
+    (road ?? '').trim().toLowerCase()
+    || (isRoadLabel(loc) ? (loc.toLowerCase() === UNDERWAY_HERE.toLowerCase() ? 'road' : loc.toLowerCase()) : '');
+  if (ground) {
+    return isHumanoidEnemyName(name)
+      ? `${name} steps out onto the ${ground} ahead and commits toward you.`
+      : `${name} lurches onto the ${ground} ahead with a scrape of wrong motion.`;
+  }
   const where = loc ? ` into ${loc}` : '';
   // Batch G — diegetic only (no "no prior cast" / "telegraph first" director chrome).
   if (isHumanoidEnemyName(name)) {
@@ -354,26 +364,26 @@ export function markPendingSpawnPreface(state: GameState, enemyName: string): Ga
 }
 
 /**
- * If ArcDirector parked a drought spawn, force a visible spawn line then attach
- * the live fight. Clears pendingSpawnPreface / pendingEncounter once shown.
+ * After the writer: a foe the ArcDirector parked goes live only once the committed story shows it
+ * (this draft, present[], or the last GM beat); until then it stays parked. Going live writes the
+ * combat state log entry and returns the `Encounter:` STATUS line in `receipts`.
  */
 export function ensureEncounterSpawnPreface(
   state: GameState,
   prose: string
-): { prose: string; state: GameState; prepended: boolean; spawnReceipt?: string } {
+): { prose: string; state: GameState; prepended: boolean; spawnReceipt?: string; receipts: string[] } {
   const parked = state.sceneFacts?.pendingEncounter;
-  const pending =
-    state.sceneFacts?.pendingSpawnPreface?.trim()
-    || parked?.name?.trim()
-    || (state.activeEncounter?.name?.trim() && !foeVisibleInScene(state, state.activeEncounter.name, prose)
+  const pending = state.sceneFacts?.pendingSpawnPreface?.trim() || parked?.name?.trim() || '';
+  const unseenLive =
+    !pending && state.activeEncounter?.name?.trim() && !foeVisibleInScene(state, state.activeEncounter.name, prose)
       ? state.activeEncounter.name.trim()
-      : '');
-  if (!pending && !parked) {
-    return { prose: scrubCombatSpawnLog(prose ?? ''), state, prepended: false };
+      : '';
+  const name = pending || unseenLive;
+  let nextProse = scrubCombatSpawnLog(prose ?? '');
+  if (!name || (pending && !foeVisibleInScene(state, name, nextProse))) {
+    return { prose: nextProse, state, prepended: false, receipts: [] };
   }
 
-  const name = pending || parked?.name?.trim() || '';
-  let nextProse = scrubCombatSpawnLog(prose ?? '');
   let spawnReceipt: string | undefined;
   // Never leave bare "already on you" combat without a setup line.
   const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -382,7 +392,11 @@ export function ensureEncounterSpawnPreface(
     && new RegExp(`${esc}\\s+is already on you`, 'i').test(nextProse)
     && !/\b(doorway|pushes|forces|commits|edge of the room|scrape)\b/i.test(nextProse);
   if (name && (!proseMentionsEnemy(nextProse, name) || bareAlready)) {
-    spawnReceipt = autoFightSpawnPreface(name, state.currentLocation);
+    spawnReceipt = autoFightSpawnPreface(
+      name,
+      state.currentLocation,
+      isJourneyUnderway(state) ? state.journey?.ground : undefined
+    );
     if (bareAlready) {
       nextProse = nextProse.replace(new RegExp(`${esc}\\s+is already on you\\.?`, 'gi'), '').trim();
     }
@@ -409,19 +423,24 @@ export function ensureEncounterSpawnPreface(
       present,
       pendingSpawnPreface: undefined,
       pendingEncounter: undefined,
-      tension: name || parked ? 'combat' : base.tension,
+      tension: 'combat',
     },
   };
 
+  const receipts: string[] = [];
   if (parked && !nextState.activeEncounter) {
     nextState = { ...nextState, activeEncounter: parked };
+    receipts.push(`Encounter: ${parked.name}`);
+    nextState = pushCombatStateTx(nextState, `Encounter started: ${parked.name}`, parked.name, 'Foe shown in the story');
   }
+  if (spawnReceipt) receipts.push(spawnReceipt);
 
   return {
     prose: scrubCombatSpawnLog(nextProse),
     state: nextState,
     prepended: !!spawnReceipt,
     spawnReceipt,
+    receipts,
   };
 }
 

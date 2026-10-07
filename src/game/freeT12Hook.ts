@@ -4,7 +4,7 @@
  */
 
 import type { BeatContract } from './beatContract';
-import { contractById, resolveBiblePrefix } from './beatContract';
+import { contractById, contractForState, resolveBiblePrefix } from './beatContract';
 import type { GameState } from './types';
 
 /** An encounter that actually ended (an escape got away from it; the threat was not cleared). */
@@ -115,7 +115,7 @@ export function forceFreeT12DurableDelta(
           ? 'ck-beat-check'
           : null;
     if (stageId) {
-      const stage = contractById(stageId);
+      const stage = contractForState(state, stageId);
       if (stage && !committed.has(stage.id)) return stage;
     }
     const skirmishId =

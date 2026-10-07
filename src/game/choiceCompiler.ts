@@ -1040,7 +1040,7 @@ export function compileChoices(
   // that, a legal exit edge is the way out. Never invent an exit the room does not have.
   if (stallInterrupt && !engaged) {
     const interruptPads: string[] = [];
-    if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
+    if (state.activeEncounter) {
       interruptPads.unshift('Press the attack');
     }
     for (const label of edgeLabels) {
@@ -1159,8 +1159,8 @@ export function compileChoices(
     notes.push(`Vignette cast lock dropped ${beforeVig - filtered.length}`);
   }
 
-  // Engaged: ensure combat options exist for Fate — never on a name/cover beat
-  if (engaged && !coverCombatLock) {
+  // Engaged: ensure combat options exist for Fate — never on a name/cover beat, never for a parked foe off-page
+  if (engaged && state.activeEncounter && !coverCombatLock) {
     if (!filtered.some((c) => /\b(attack|fight|press the attack|engage)\b/i.test(c))) {
       filtered.unshift('Press the attack');
     }

@@ -1422,7 +1422,7 @@ export function openingCastNames(state: GameState): string[] {
   const push = (raw?: string) => {
     const name = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
     if (!name || name.length < 3) return;
-    if (/^(the panel|the people who pulled you|the people here)$/i.test(name)) return;
+    if (/^(?:the )?(panel|people who pulled you|people here)$/i.test(name)) return;
     const key = name.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);

@@ -150,6 +150,7 @@ import {
 } from './qualityGovernance';
 import { writerWordsGuard } from './writerWords';
 import {
+  commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
   formatArcStatusReceipts,
@@ -1547,12 +1548,7 @@ Do NOT print dice notation or CODE ENFORCED.
     cleanText = words.step('ensureEncounterSpawnPreface', cleanText, prefaced.prose);
     traceStage('ensureEncounterSpawnPreface', cleanText);
     working = prefaced.state;
-    if (prefaced.spawnReceipt) {
-      working = {
-        ...working,
-        systemLog: [...(working.systemLog ?? []), prefaced.spawnReceipt],
-      };
-    }
+    arcStatusReceipts = [...arcStatusReceipts, ...prefaced.receipts];
   }
   let blockedPaint = isBlockedPaint(warden.notes, state, cleanText);
   {
@@ -1702,6 +1698,19 @@ Do NOT print dice notation or CODE ENFORCED.
       { locked: questsLockedDuringOpening(state) }
     )
   );
+  {
+    const heard = commitTalkStageAfterTurn(
+      { ...working, quests: updatedQuests, arcDirector: arcState.arcDirector, runManifest: arcState.runManifest },
+      writerTurn?.speech,
+      nextTurn
+    );
+    if (heard.receipts.length) {
+      updatedQuests = heard.state.quests ?? updatedQuests;
+      arcState = { ...arcState, arcDirector: heard.state.arcDirector, runManifest: heard.state.runManifest };
+      working = { ...working, stateTxLog: heard.state.stateTxLog };
+      arcStatusReceipts = [...arcStatusReceipts, ...heard.receipts];
+    }
+  }
 
   // 29e — hub linkedQuestIds reveal on travel / location change (parity with useGame)
   {

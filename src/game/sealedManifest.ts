@@ -10,7 +10,7 @@ import { scrubProseControlTags, applyStatusFirewall } from './statusFirewall';
 import { getDiegeticFallback } from './diegeticFallbacks';
 import type { GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
-import { contractById } from './beatContract';
+import { contractForState } from './beatContract';
 import { detectHookContradiction, hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { shortRoomLabel } from './mapEngine';
@@ -68,7 +68,7 @@ export function buildSealedManifest(
   arc?: ArcDirectorResult
 ): SceneManifest {
   const beatId = arc?.beatId;
-  const contract = beatId ? contractById(beatId.replace(/-repeat$/, '')) : undefined;
+  const contract = beatId ? contractForState(state, beatId.replace(/-repeat$/, '')) : undefined;
   const requiredFacts: string[] = [
     `Location: ${state.currentLocation ?? 'unknown'}`,
     `PC: ${state.character.name} L${state.character.level}`,

@@ -45,7 +45,6 @@ import {
   autoFightSpawnPreface,
   commitAutoFightLedger,
   ensureEncounterSpawnPreface,
-  lastGmMentionsEnemy,
   narrateAutoFightTemplate,
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
@@ -350,6 +349,7 @@ import {
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
 import {
+  commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
   formatArcStatusReceipts,
@@ -3707,10 +3707,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           const prefaced = ensureEncounterSpawnPreface(workingState, cleanText);
           cleanText = words.step('ensureEncounterSpawnPreface', cleanText, prefaced.prose);
           workingState = prefaced.state;
-          if (prefaced.spawnReceipt) {
+          if (prefaced.receipts.length) {
             workingState = {
               ...workingState,
-              systemLog: [...(workingState.systemLog ?? []), prefaced.spawnReceipt],
+              systemLog: [...(workingState.systemLog ?? []), ...prefaced.receipts],
             };
           }
         }
@@ -3841,6 +3841,24 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         nextTurn,
         { combat: ledgerRound }
       );
+      {
+        const heard = commitTalkStageAfterTurn(
+          {
+            ...workingState,
+            quests: updatedQuests,
+            arcDirector: liveCurrent.arcDirector ?? workingState.arcDirector,
+            runManifest: liveCurrent.runManifest ?? workingState.runManifest,
+          },
+          writerSpeech,
+          nextTurn
+        );
+        if (heard.receipts.length) {
+          updatedQuests = heard.state.quests ?? updatedQuests;
+          liveCurrent = { ...liveCurrent, arcDirector: heard.state.arcDirector, runManifest: heard.state.runManifest };
+          workingState = { ...workingState, stateTxLog: heard.state.stateTxLog };
+          pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...heard.receipts];
+        }
+      }
       if (mode === 'kid') {
         updatedQuests = updatedQuests.map((q) => ({
           ...q,
@@ -5518,17 +5536,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         liveCurrent.character?.name
       );
       narrativeText = scrubBeastifiedHumanoid(narrativeText, enemy.name);
-      if (!lastGmMentionsEnemy(liveCurrent, enemy.name)) {
-        // Spawn receipt goes to STATUS via ensureEncounterSpawnPreface (Batch X).
-      }
       {
         const prefaced = ensureEncounterSpawnPreface(liveCurrent, narrativeText);
         narrativeText = prefaced.prose;
         liveCurrent = prefaced.state;
-        if (prefaced.spawnReceipt) {
+        if (prefaced.receipts.length) {
           liveCurrent = {
             ...liveCurrent,
-            systemLog: [...(liveCurrent.systemLog ?? []), prefaced.spawnReceipt],
+            systemLog: [...(liveCurrent.systemLog ?? []), ...prefaced.receipts],
           };
         }
       }

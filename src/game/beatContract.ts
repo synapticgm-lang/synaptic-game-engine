@@ -26,6 +26,7 @@ import {
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { hubsForBibleId } from './outdoorHubs';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
+import { isAloneArrivalOpening, openingCastNames } from './openingEstablishment';
 
 export type BeatKind =
   | 'quest_stage'
@@ -51,6 +52,11 @@ export interface BeatContract {
   questId?: string;
   xpChunk?: number;
   spawnEncounter?: boolean;
+  /**
+   * The objective is heard from a giver (the opening card's lead cast), so it commits after the turn,
+   * only from that giver's own committed speech — never from the player's line (commitTalkStageAfterTurn).
+   */
+  talkStage?: boolean;
   /** 02ac registry — optional versioned template fields. */
   version?: string;
   proseHints?: string[];
@@ -65,8 +71,8 @@ const CONTRACTS: BeatContract[] = [
     kind: 'quest_stage',
     minTurn: 2,
     once: true,
-    summary: 'Circle\'s Price: bearings established',
-    mandate: 'ARC BEAT (orient): Player has their bearings. Advance Circle\'s Price stage — name the ruin/room, one exit, one panel cue. Do not re-ask for name if locked.',
+    summary: '{quest}: bearings established',
+    mandate: 'ARC BEAT (orient): Player has their bearings. Advance {quest} stage — name the ruin/room, one exit, one panel cue. Do not re-ask for name if locked.',
     questId: 'sp-quest-1',
     questObjectiveIndex: 0,
     xpChunk: 0,
@@ -77,11 +83,12 @@ const CONTRACTS: BeatContract[] = [
     kind: 'quest_stage',
     minTurn: 4,
     once: true,
-    summary: 'Circle\'s Price: reason heard (stage 2)',
-    mandate: 'ARC BEAT (hear-reason): Someone names why Pellane/the Circle wanted you. Complete stage-2 receipt — faction tilt or System ping. No inspect stall.',
+    summary: 'reason heard (stage 2)',
+    mandate: 'ARC BEAT (hear-reason): {quest} — {step}. Complete stage-2 receipt — faction tilt or System ping. No inspect stall.',
     questId: 'sp-quest-1',
     questObjectiveIndex: 1,
     xpChunk: 45,
+    talkStage: true,
   },
   {
     id: 'sp-beat-hub-pressure',
@@ -236,11 +243,48 @@ export function resolveBiblePrefix(state: GameState): string {
 export function contractsForState(state: GameState): BeatContract[] {
   const prefix = resolveBiblePrefix(state);
   if (!prefix) return [];
-  return CONTRACTS.filter((c) => c.biblePrefix === prefix);
+  return CONTRACTS.filter((c) => c.biblePrefix === prefix)
+    .map((c) => fitContractToQuest(state, c))
+    .filter((c): c is BeatContract => !!c);
 }
 
 export function contractById(id: string): BeatContract | undefined {
   return CONTRACTS.find((c) => c.id === id);
+}
+
+/** The contract as this save sees it (quest name/step filled in), by its registry or fitted id. */
+export function contractForState(state: GameState, id: string): BeatContract | undefined {
+  const fitted = contractsForState(state).find((c) => c.id === id);
+  if (fitted) return fitted;
+  const raw = contractById(id);
+  return raw ? fitContractToQuest(state, raw) ?? undefined : undefined;
+}
+
+/**
+ * A quest-step contract takes the live quest's own name and step text. On an alone start the card names
+ * no giver, so a talk stage is just that quest's own step under the plain quest_stage rule (null when the
+ * quest is missing, so it never blocks later beats).
+ */
+export function fitContractToQuest(state: GameState, c: BeatContract): BeatContract | null {
+  if (!c.questId || c.questObjectiveIndex == null) return c;
+  const idx = c.questObjectiveIndex;
+  const quest = (state.quests ?? []).find((q) => q.id === c.questId);
+  const step = quest?.objectives?.[idx]?.description?.trim() ?? '';
+  const aloneStart =
+    state.openingEstablishment?.aloneArrival === true || isAloneArrivalOpening(state);
+  if (c.talkStage && aloneStart && !openingCastNames(state)[0]) {
+    if (!quest || !step) return null;
+    return {
+      ...c,
+      id: `${c.questId}-step-${idx + 1}`,
+      talkStage: false,
+      summary: `${quest.name}: ${step}`,
+      mandate: `ARC BEAT (quest step): ${quest.name} — ${step}.`,
+    };
+  }
+  const fill = (s: string) =>
+    s.replace(/\{quest\}/g, quest?.name?.trim() || 'the main quest').replace(/\{step\}/g, step || 'the next step');
+  return { ...c, summary: fill(c.summary), mandate: fill(c.mandate) };
 }
 
 /**
@@ -267,7 +311,7 @@ export function resolveTurnJob(state: GameState, playerInput?: string): string {
   }
   const ad = state.arcDirector;
   if (ad?.activeBeatId) {
-    const c = contractById(ad.activeBeatId.replace(/-repeat$/, ''));
+    const c = contractForState(state, ad.activeBeatId.replace(/-repeat$/, ''));
     if (c?.summary) return `Progress: ${c.summary}.`;
   }
   const empty = state.sceneFacts?.emptyContainers ?? [];

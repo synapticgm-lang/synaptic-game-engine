@@ -4,6 +4,8 @@ import { underwayHereLabel } from './locationName.ts';
 
 export function roadMeetingFact(_j: unknown): string { return ''; }
 
+export const UNDERWAY_HERE = 'On the road between places';
+
 const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 
 const ROAD_LABELS = new Set(

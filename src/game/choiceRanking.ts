@@ -20,6 +20,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
 import { isRoadLabel } from './travelJourney';
+import { giverIsHere, isTalkStageObjective, talkStageGiver } from './questGiver';
 
 export type { CirclingMemory } from './types';
 
@@ -339,7 +340,12 @@ export function storyChip(state: GameState): string | null {
   if (site && !here.includes(site.name.toLowerCase())) return `Travel toward ${site.name}`;
   const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
   if (!site && linked) return `Travel toward ${linked.name}`;
-  const obj = quest.objectives?.find((o) => !o.completed && !o.optional);
+  const objIdx = quest.objectives?.findIndex((o) => !o.completed && !o.optional) ?? -1;
+  const obj = objIdx >= 0 ? quest.objectives![objIdx] : undefined;
+  if (obj && isTalkStageObjective(state, quest.id, objIdx)) {
+    const giver = talkStageGiver(state, quest.id, objIdx);
+    if (!giver || !giverIsHere(state, giver)) return null;
+  }
   const chip = obj ? objectiveChip(obj.description) : null;
   if (!chip) return null;
   const said = chip.toLowerCase();
