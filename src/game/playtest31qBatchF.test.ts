@@ -7,6 +7,7 @@ import { BUILD_STAMP } from './runManifest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
+import type { ActiveEncounter } from './types';
 import {
   classifyBeatCommit,
   repairRejectedBeat,
@@ -89,6 +90,7 @@ describe('playtest31qBatchF', () => {
       let state = createInitialState(undefined, 'litrpg');
       state.currentLocation = 'cathedral infirmary';
       state = markPendingSpawnPreface(state, name);
+      state = { ...state, activeEncounter: { name, hp: 12, maxHp: 12, level: 1, phase: 'engaged' } as ActiveEncounter };
       const ensured = ensureEncounterSpawnPreface(
         state,
         `${name} erupts from the rubble with a snarl.`

@@ -141,6 +141,7 @@ describe('playtest31pBatchE', () => {
       let state = createInitialState(undefined, 'litrpg');
       state.currentLocation = 'cathedral infirmary';
       state = markPendingSpawnPreface(state, name);
+      state = { ...state, activeEncounter: { name, hp: 12, maxHp: 12, level: 1, phase: 'engaged' } as ActiveEncounter };
       const ensured = ensureEncounterSpawnPreface(state, `${name} is already on you. Steel rings.`);
       expect(ensured.prepended).toBe(true);
       expect(ensured.spawnReceipt).toMatch(/Calamity Remnant/i);

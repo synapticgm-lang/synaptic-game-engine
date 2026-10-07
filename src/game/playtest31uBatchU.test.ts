@@ -137,7 +137,8 @@ describe('playtest31uBatchU', () => {
   });
 
   describe('P0-4 — travel pad starvation under live stakes', () => {
-    it('drops travel after 2 travel picks in 5 turns with pending encounter', () => {
+    // s75 O — a parked foe is off the page and no longer counts as live stakes; the fixture uses a live foe.
+    it('drops travel after 2 travel picks in 5 turns with a live encounter', () => {
       let state = createInitialState(undefined, 'litrpg');
       state = {
         ...state,
@@ -158,14 +159,14 @@ describe('playtest31uBatchU', () => {
           props: [],
           lastBeat: '',
           updatedTurn: 20,
-          pendingEncounter: {
-            name: 'Pact-Hunter Skirmisher',
-            phase: 'engaged',
-            encounterId: 'enc-park',
-            engagedTurnCount: 0,
-            failedFleeCount: 0,
-            failedParleyCount: 0,
-          },
+        },
+        activeEncounter: {
+          name: 'Pact-Hunter Skirmisher',
+          phase: 'engaged',
+          encounterId: 'enc-park',
+          engagedTurnCount: 0,
+          failedFleeCount: 0,
+          failedParleyCount: 0,
         },
       } as GameState;
       const compiled = compileChoices(

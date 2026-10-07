@@ -113,7 +113,7 @@ describe('playtest31xBatchX', () => {
       expect(ensureEncounterSpawnPreface(state, gm).spawnReceipt).toBeUndefined();
       const shown = {
         ...state,
-        sceneFacts: { ...state.sceneFacts!, present: ['Pact-Hunter Skirmisher'] },
+        activeEncounter: { name: 'Pact-Hunter Skirmisher', hp: 12, maxHp: 12, level: 1, phase: 'engaged' },
       } as GameState;
       const ensured = ensureEncounterSpawnPreface(shown, gm);
       expect(ensured.spawnReceipt).toMatch(/Pact-Hunter Skirmisher pushes/i);

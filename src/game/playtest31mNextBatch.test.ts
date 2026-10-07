@@ -145,7 +145,7 @@ describe('playtest31mNextBatch', () => {
     expect(gov.notes.some((n) => /Commit gate/i.test(n))).toBe(true);
   });
 
-  it('drought does not attach a live fight until foe is present or preface commits', () => {
+  it('drought does not attach a live fight until the engine arrival clock takes it live', () => {
     const state = summoned(16);
     state.arcDirector = {
       committedBeatIds: ['sp-beat-orient', 'sp-beat-hear-reason'],
@@ -161,9 +161,13 @@ describe('playtest31mNextBatch', () => {
       const unseen = ensureEncounterSpawnPreface(arc.state, 'Steel rings in the dark.');
       expect(unseen.state.activeEncounter).toBeFalsy();
       expect(unseen.state.sceneFacts?.pendingEncounter?.name).toBe(parked.name);
-      const ensured = ensureEncounterSpawnPreface(arc.state, `${parked.name} lunges out of the dark.`);
-      expect(ensured.state.activeEncounter?.name).toBe(parked.name);
-      expect(ensured.state.sceneFacts?.pendingEncounter).toBeUndefined();
+      const named = ensureEncounterSpawnPreface(arc.state, `${parked.name} lunges out of the dark.`);
+      expect(named.state.activeEncounter).toBeFalsy();
+      const due = { ...arc.state, turn: parked.arrivalTurn! } as GameState;
+      const arrived = runArcDirectorBeforeGm(due, 'Wait and watch');
+      expect(arrived.state.activeEncounter?.name).toBe(parked.name);
+      expect(arrived.state.sceneFacts?.pendingEncounter).toBeUndefined();
+      const ensured = ensureEncounterSpawnPreface(arrived.state, 'Steel rings in the dark.');
       expect(ensured.state.sceneFacts?.present.some((p) => p.includes(parked.name))).toBe(true);
     } else {
       const name = 'Pact-Hunter Skirmisher';
@@ -185,7 +189,7 @@ describe('playtest31mNextBatch', () => {
       expect(canAttachLiveFight(marked, name)).toBe(false);
       expect(ensureEncounterSpawnPreface(marked, 'Dust hangs.').state.activeEncounter).toBeFalsy();
       const ensured = ensureEncounterSpawnPreface(marked, `${name} lunges out of the dust.`);
-      expect(ensured.state.activeEncounter?.name).toBe(name);
+      expect(ensured.state.activeEncounter).toBeFalsy();
     }
   });
 

@@ -239,7 +239,7 @@ describe('playtest31tBatchT', () => {
       expect(compiled.notes.some((n) => /Travel yo-yo lock|Encounter lock/i.test(n))).toBe(true);
       expect(compiled.choices.some((c) => /press the attack|flee|parley/i.test(c))).toBe(true);
 
-      // pending drought park also locks travel
+      // s75 O — a parked foe is not on the page: no encounter lock, the player may still leave
       const parked = {
         ...state,
         activeEncounter: undefined,
@@ -261,7 +261,8 @@ describe('playtest31tBatchT', () => {
         undefined,
         'Wait and watch'
       );
-      expect(parkedCompiled.choices.every((c) => !/\btravel\b/i.test(c))).toBe(true);
+      expect(parkedCompiled.notes.some((n) => /Encounter lock/i.test(n))).toBe(false);
+      expect(parkedCompiled.choices.some((c) => /press the attack|flee|parley/i.test(c))).toBe(false);
     });
   });
 });

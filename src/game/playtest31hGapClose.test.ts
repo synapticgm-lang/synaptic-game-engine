@@ -25,7 +25,7 @@ import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildPlayTranscript } from './playTranscript';
 import { talkContradictsLockedWhy } from './hookLock';
-import type { GameState } from './types';
+import type { ActiveEncounter, GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 
 function summoned(turn = 10): GameState {
@@ -77,7 +77,14 @@ describe('playtest31h — gap close P0 ledger owners', () => {
       );
       expect(unseen.prepended).toBe(false);
       expect(unseen.state.sceneFacts?.pendingSpawnPreface).toBe('Pact-Hunter Skirmisher');
-      const ensured = ensureEncounterSpawnPreface(marked, 'The Pact-Hunter Skirmisher is already on you.');
+      const live = {
+        ...marked,
+        activeEncounter: initEncounterTerminal(
+          { name: 'Pact-Hunter Skirmisher', hp: 12, maxHp: 12, level: 1 } as ActiveEncounter,
+          marked
+        ),
+      } as GameState;
+      const ensured = ensureEncounterSpawnPreface(live, 'The Pact-Hunter Skirmisher is already on you.');
       expect(ensured.prepended).toBe(true);
       expect(ensured.spawnReceipt).toMatch(/Pact-Hunter/i);
       expect(ensured.prose).not.toMatch(/pushes into|from the edge of the room/i);

@@ -1,6 +1,6 @@
 /**
  * Batch Z Milestone 2 — Z-1 FSM Pad Filtering Debug Test
- * Validates that travel pads are blocked when pendingEncounter exists.
+ * Validates pad filtering by encounter state (a pending foe is off the page; a live one locks pads).
  */
 
 import { describe, it, expect } from 'vitest';
@@ -9,7 +9,8 @@ import { createInitialState } from './defaults';
 import type { GameState } from './types';
 
 describe('Z-1 FSM Pad Filtering', () => {
-  it('blocks travel pads when pendingEncounter exists', () => {
+  // s75 O — a parked foe is off the page: the player may still leave before it arrives.
+  it('does not lock travel or offer fight pads while a foe is only pending', () => {
     const state: GameState = {
       ...createInitialState('litrpg'),
       turn: 19,
@@ -39,19 +40,8 @@ describe('Z-1 FSM Pad Filtering', () => {
 
     const { choices, notes } = compileChoices(state, rawChoices, undefined, 'talk to fence');
 
-    // Travel pads should be filtered out
-    expect(choices).not.toContain('Travel toward West Wall');
-    expect(choices).not.toContain('Travel toward Sevenfold Circle');
-    
-    // Should have travel filter notes (either FSM or yo-yo lock)
-    const travelFilterNotes = notes.filter(n => 
-      n.includes('FSM') || 
-      n.includes('pending-enc') || 
-      n.includes('Travel yo-yo lock') ||
-      n.includes('Encounter lock')
-    );
-    expect(travelFilterNotes.length).toBeGreaterThan(0);
-    
+    expect(notes.some(n => n.includes('Encounter lock') || n.includes('pending-enc'))).toBe(false);
+
     // A parked foe is not on the page yet: no fight pads until it goes live
     expect(choices.some(c => /press the attack|try to flee|parley/i.test(c))).toBe(false);
   });

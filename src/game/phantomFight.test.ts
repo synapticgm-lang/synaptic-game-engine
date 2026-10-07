@@ -119,16 +119,18 @@ describe('phantom fight (s74 L)', () => {
     expect(pads.some((c) => /press the attack|try to flee|parley/i.test(c))).toBe(false);
   });
 
-  it('a parked foe the prose shows goes live with one Encounter receipt', () => {
-    const state = parkedFoe(atTheMarket(), 'Void-Touched Scavenger');
-    const post = ensureEncounterSpawnPreface(
-      state,
-      'The Void-Touched Scavenger dropped from the awning and came at Jax.'
-    );
-    expect(post.state.activeEncounter?.name).toBe('Void-Touched Scavenger');
-    expect(post.state.sceneFacts?.pendingEncounter).toBeUndefined();
-    expect(post.receipts.filter((l) => /^Encounter:/.test(l))).toHaveLength(1);
-    expect((post.state.stateTxLog ?? []).filter((t) => t.kind === 'combat')).toHaveLength(1);
+  it('a parked foe goes live on the engine arrival clock with one Encounter receipt', () => {
+    const parked = parkedFoe(atTheMarket(), 'Void-Touched Scavenger');
+    const foe = parked.sceneFacts!.pendingEncounter!;
+    const state = {
+      ...parked,
+      sceneFacts: { ...parked.sceneFacts!, pendingEncounter: { ...foe, phase: 'pending', parkedTurn: 19, arrivalTurn: 21 } },
+    } as GameState;
+    const turn = preWriterTurn(state, 'Wait');
+    expect(turn.state.activeEncounter?.name).toBe('Void-Touched Scavenger');
+    expect(turn.state.sceneFacts?.pendingEncounter).toBeUndefined();
+    expect(turn.status.filter((l) => /^Encounter:/.test(l))).toHaveLength(1);
+    expect((turn.state.stateTxLog ?? []).filter((t) => t.kind === 'combat')).toHaveLength(1);
   });
 
   it('spawn lines on a road never use the road label or "room"', () => {
@@ -140,7 +142,11 @@ describe('phantom fight (s74 L)', () => {
     ];
     const onRoad = parkedFoe({ ...jaxOnTheRoad(), journey: { ...jaxOnTheRoad().journey!, encounter: null } }, 'Pact-Hunter Skirmisher');
     const shown = ensureEncounterSpawnPreface(
-      { ...onRoad, sceneFacts: { ...onRoad.sceneFacts!, present: ['Pact-Hunter Skirmisher'] } },
+      {
+        ...onRoad,
+        activeEncounter: { ...onRoad.sceneFacts!.pendingEncounter!, phase: 'engaged' },
+        sceneFacts: { ...onRoad.sceneFacts!, pendingEncounter: undefined },
+      },
       'Steel rang on the open road.'
     );
     if (shown.spawnReceipt) lines.push(shown.spawnReceipt);

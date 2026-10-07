@@ -91,6 +91,6 @@ describe('seed 94 — infestation step is not a street fight', () => {
       events: [],
       turn: 21,
     });
-    expect(paid.notes).toContain(`XP Gained: 50 (quest step: ${STEP.slice(0, 48)})`);
+    expect(paid.notes).toContain('XP Gained: 50 (quest step: Clear the infestation)');
   });
 });
