@@ -5144,6 +5144,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         aloneArrival,
         hookLock: seededHookLock,
         castNpcIds: picked?.castNpcIds ?? [],
+        ...(picked?.card ? { card: picked.card } : {}),
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,

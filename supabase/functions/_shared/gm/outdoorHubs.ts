@@ -335,16 +335,10 @@ export function matchHub(
   hubs: OutdoorHub[],
   placeName: string | undefined
 ): OutdoorHub | null {
-  const key = (placeName ?? '').trim().toLowerCase();
+  const bare = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/[.,;:!?]+$/, '');
+  const key = bare(placeName ?? '');
   if (!key) return null;
-  return (
-    hubs.find(
-      (h) =>
-        h.name.toLowerCase() === key
-        || h.aliases?.some((a) => a.toLowerCase() === key)
-        || key.includes(h.name.toLowerCase())
-    ) ?? null
-  );
+  return hubs.find((h) => [h.name, ...(h.aliases ?? [])].some((n) => bare(n) === key)) ?? null;
 }
 
 /** 29q — authored linked quests on the hub that is this settlement (count toward its two cards). */

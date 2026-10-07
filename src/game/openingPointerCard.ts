@@ -390,9 +390,13 @@ export function formatLastSnapshotGistLine(state: GameState): string | null {
   return `LAST SNAPSHOT (T${g.turn}): Location=${g.location}; Crowd=${g.crowd}; Presence=${g.presence}${g.hookWhy ? `; Why=${g.hookWhy}` : ''}`;
 }
 
-export function applyCardCrowdToFacts(state: GameState, facts: SceneFacts): SceneFacts {
+export function applyCardCrowdToFacts(state: GameState, withoutProps: SceneFacts): SceneFacts {
   const slots = compilePointerCardSlots(state);
-  if (!slots) return facts;
+  if (!slots) return withoutProps;
+  const cardProps = (state.openingEstablishment?.card?.props ?? []).filter(
+    (p) => !(withoutProps.props ?? []).some((q) => q.toLowerCase() === p.toLowerCase())
+  );
+  const facts = cardProps.length ? { ...withoutProps, props: [...(withoutProps.props ?? []), ...cardProps] } : withoutProps;
   const pins = state.openingEstablishment?.pinnedNpcNames ?? [];
   const pinned = filterChromeFromPresent([
     ...(pins.length || slots.whoCount === 0

@@ -231,14 +231,14 @@ export function applySandboxXpAwards(
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), loc);
   const action = (opts.playerAction ?? '').trim();
 
-  // Significant place: first time at a named hub (the start hub counts).
+  // Significant place: first real arrival at a named hub. The opening place is never "reached".
   if (hub) {
-    pay(`discover-hub:${hub.id}`, 'significantPlace', `reached ${hub.name}`);
+    const arrived = locationChanged || /^(?:travel\s+toward|return\s+to)\b/i.test(action);
+    if (arrived) pay(`discover-hub:${hub.id}`, 'significantPlace', `reached ${hub.name}`);
     const placeId = placeIdFromName(hub.name);
     const existing = places.find(
       (p) => p.id === placeId || p.name.toLowerCase() === hub.name.toLowerCase()
     );
-    const arrived = locationChanged || /^(?:travel\s+toward|return\s+to)\b/i.test(action);
     if (!lookAround) {
       if (existing) {
         places = places.map((p) =>

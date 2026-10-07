@@ -428,6 +428,22 @@ export interface OpeningEstablishment {
   castNpcIds?: string[];
   /** Locked why-you’re-here from the hook card (first lock; sceneFacts is live authority). */
   hookLock?: import('./hookLock').HookLock;
+  /** The picked card compiled once at New Game: place, cast and props read from its own slots. */
+  card?: OpeningCardRecord;
+}
+
+export interface OpeningCardRecord {
+  /** HERE for the opening: the card's own head noun, with the hub as parent when it sits in one. */
+  place?: string;
+  parentHub?: string;
+  /** Cast label from the card's "Who is here" line; empty when the slot names nobody. */
+  cast: string;
+  /** Single people named in that slot, as the writer may mention them. */
+  castNames: string[];
+  /** Things the card's page places in the scene ("wrapped relic"). */
+  props: string[];
+  /** Proper names printed mid-sentence on the card (Crown, Valespire) — never sentence-start words. */
+  names: string[];
 }
 
 export interface GameState {

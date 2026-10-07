@@ -6,14 +6,14 @@
  * the card text for the writer. A description the engine does not know keeps its own words.
  */
 import type { GameState } from './types';
-import { hubsForBibleId, placeCardFor } from './outdoorHubs';
+import { hubsForBibleId, placeCardFor, type OutdoorHub } from './outdoorHubs';
 import { playerFacingLocation, underwayHereLabel } from './locationName';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
 
 const LEAD = /^(?:(?:alone|just|standing|kneeling|waking)\s+)?(?:(?:in|inside|at|on|by|near|under)\s+)?(?:the|a|an)\s+/i;
-const CLAUSE = /\s+(?:after|beyond|at|on|in|under|near|with|by|where|while|from|behind|outside|during|before|over|above|below|past|of|off|for|to|as)\b.*$/i;
+const CLAUSE = /\s+(?:after|beyond|at|on|in|under|beneath|inside|beside|within|near|with|by|where|while|from|behind|outside|during|before|over|above|below|past|of|off|for|to|as)\b.*$/i;
 const FILLER = new Set(['the', 'and', 'with', 'from', 'into', 'over', 'under', 'beyond', 'after', 'near']);
 
 function words(s: string): string[] {
@@ -38,10 +38,33 @@ function knownPlaceNames(bibleId: string | null | undefined, hookBlob: string, d
   return out;
 }
 
+/** The description without its lead-in and trailing clause ("a Lowmarket cellar shrine under X" → "Lowmarket cellar shrine"). */
+function placeCore(description: string): string {
+  return description.replace(/\s+/g, ' ').trim().replace(LEAD, '').replace(CLAUSE, '').trim();
+}
+
+function hubNames(h: OutdoorHub): string[] {
+  return [h.name, ...(h.aliases ?? [])]
+    .map((n) => n.trim().replace(/^(?:the|a|an)\s+/i, ''))
+    .filter((n) => n.length >= 5);
+}
+
+function wordRe(name: string, suffix = '\\b'): RegExp {
+  return new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${suffix}`, 'i');
+}
+
+/** The longest hub of this bible whose name or alias sits anywhere in the description. */
+function mentionedHub(hubs: OutdoorHub[], description: string): OutdoorHub | undefined {
+  return hubs
+    .filter((h) => hubNames(h).some((n) => wordRe(n).test(description)))
+    .sort((a, b) => b.name.length - a.name.length)[0];
+}
+
 /**
- * The name HERE uses for an opening place. A hub whose whole name sits in the description wins;
- * else a known place that shares the description's head noun and the most other words; else the
- * description itself.
+ * The name HERE uses for an opening place. A hub wins only when it is the description's head
+ * ("the Lowmarket at dusk"), never when it is merely mentioned ("a Lowmarket cellar shrine", "the ford
+ * on the Cinderflow"); else a known place that shares the description's head noun and the most other
+ * words; else the description itself.
  */
 export function shortPlaceName(
   bibleId: string | null | undefined,
@@ -50,23 +73,56 @@ export function shortPlaceName(
 ): string | undefined {
   const raw = (description ?? '').replace(/\s+/g, ' ').trim();
   if (!raw) return description;
-  const low = raw.toLowerCase();
-  const hubs = hubsForBibleId(bibleId);
-  const contained = hubs
-    .filter((h) => [h.name, ...(h.aliases ?? [])].some((n) => n.trim().length >= 5 && new RegExp(`\\b${n.trim().toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(low)))
+  const core = placeCore(raw);
+  const headHub = hubsForBibleId(bibleId)
+    .filter((h) => hubNames(h).some((n) => wordRe(n, '$').test(core)))
     .sort((a, b) => b.name.length - a.name.length)[0];
-  if (contained) return contained.name;
+  if (headHub) return headHub.name;
   const head = placeHeadNoun(raw);
   if (!head) return raw;
   const mine = new Set(words(raw));
   let best: { name: string; score: number } | null = null;
   for (const name of knownPlaceNames(bibleId, hookBlob, raw)) {
     const theirs = words(name);
-    if (!theirs.includes(head)) continue;
+    if (theirs[theirs.length - 1] !== head) continue;
     const score = theirs.filter((w) => mine.has(w)).length;
     if (!best || score > best.score) best = { name, score };
   }
   return best?.name ?? raw;
+}
+
+const SPATIAL_PREP = /^(?:under|beneath|below|behind|beside|within|near|outside|above|inside|in|at|by|off|on)$/i;
+
+/**
+ * The opening place as one record: its own name and the hub it sits in. A hub that only modifies
+ * the head noun becomes the parent ("a Lowmarket cellar shrine under Valespire" → "the cellar shrine
+ * under Lowmarket", parent Lowmarket); a hub in the trailing clause stays in the description's own words.
+ */
+export function openingPlaceRecord(
+  bibleId: string | null | undefined,
+  description: string,
+  hookBlob = ''
+): { place: string; parentHub?: string } {
+  const raw = description.replace(/\s+/g, ' ').trim();
+  const hubs = hubsForBibleId(bibleId);
+  const short = shortPlaceName(bibleId, raw, hookBlob) ?? raw;
+  const mentioned = mentionedHub(hubs, raw);
+  if (short !== raw) {
+    const isHub = hubs.some((h) => h.name === short);
+    return { place: short, ...(!isHub && mentioned ? { parentHub: mentioned.name } : {}) };
+  }
+  if (!mentioned) return { place: raw };
+  const core = placeCore(raw);
+  const inCore = hubNames(mentioned).find((n) => wordRe(n).test(core));
+  if (!inCore) return { place: raw, parentHub: mentioned.name };
+  const rest = core
+    .replace(new RegExp(`${wordRe(inCore).source}(?:['’]s)?`, 'i'), ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!rest) return { place: mentioned.name };
+  const clausePrep = raw.replace(LEAD, '').match(CLAUSE)?.[0]?.trim().split(' ')[0] ?? '';
+  const prep = SPATIAL_PREP.test(clausePrep) ? clausePrep.toLowerCase() : 'in';
+  return { place: `the ${rest} ${prep} ${mentioned.name}`, parentHub: mentioned.name };
 }
 
 /** The exits of HERE: the location sheet when it has them, else the place card. On a trip: its two ends. */

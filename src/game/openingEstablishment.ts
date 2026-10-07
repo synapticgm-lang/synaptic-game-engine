@@ -2,7 +2,7 @@ import type { CampaignBible, OpeningHookCard, OpeningMode, OpeningPrompt, Openin
 import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
-import type { EngineMode, GameState, Item, LogEntry, OpeningEstablishment, Settings } from './types';
+import type { EngineMode, GameState, Item, LogEntry, OpeningCardRecord, OpeningEstablishment, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
@@ -23,7 +23,7 @@ import { sanitizeHookCardForPlay } from './storyDataBoundary';
 import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
-import { shortPlaceName } from './placeNames';
+import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -536,6 +536,8 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   openingCost?: string;
   faction?: string;
   castNpcIds?: string[];
+  /** The card compiled once (set by resolveOpeningHookPick). */
+  card?: OpeningCardRecord;
 } {
   card = sanitizeHookCardForPlay(card);
   if (typeof card === 'string') {
@@ -603,9 +605,11 @@ export function resolveOpeningHookPick(
 ): ReturnType<typeof normalizeOpeningHookCard> | undefined {
   const card = resolveOpeningHookCard(bible, seed);
   if (!card) return undefined;
-  const pick = normalizeOpeningHookCard(card);
+  const norm = normalizeOpeningHookCard(card);
+  const compiled = compileOpeningCard(bible?.id, norm.text, norm.page1 || norm.fallback);
+  const pick = compiled ? { ...norm, card: compiled } : norm;
   if (!pick.location) return pick;
-  const name = shortPlaceName(bible?.id, pick.location, pick.text);
+  const name = compiled?.place;
   return name && name !== pick.location ? { ...pick, location: name, locationDescription: pick.location } : pick;
 }
 
@@ -1440,6 +1444,11 @@ export function openingCastNames(state: GameState): string[] {
     if (last.length >= 5) push(last);
   }
 
+  const card = openingCardRecord(state);
+  if (card) {
+    card.castNames.forEach(push);
+    return out;
+  }
   const hay = openingSceneHay(state);
   const who = hay.match(/Who is here[^:\n]*:\s*([^\n]+)/i)?.[1] ?? '';
   for (const part of who.split(/\s+and\s+|,\s*/i)) {
@@ -1468,6 +1477,8 @@ const CARD_GRAMMAR = new Set([
 
 /** Title-Case tokens already printed on the card (Earth, Scale, Crown) — not novel names. */
 export function cardSceneMentionTokens(state: GameState): string[] {
+  const card = openingCardRecord(state);
+  if (card) return [...card.names];
   const hay = openingSceneHay(state);
   const out: string[] = [];
   const seen = new Set<string>();
@@ -1507,6 +1518,12 @@ export function cardRoleStandIn(state: GameState): string {
 export function openingCastLabel(state: GameState): string {
   const lead = openingCastRecords(state)[0];
   if (lead) return lead.npcName;
+  const card = openingCardRecord(state);
+  if (card?.cast) return card.cast;
+  if (card && /Who is here/i.test(state.openingEstablishment?.pickedHook ?? '')) {
+    if (state.openingEstablishment?.aloneArrival === true) return 'the panel';
+    return state.engineMode === 'litrpg' ? 'the people who pulled you' : 'the people here';
+  }
   const hay = openingSceneHay(state);
   const loc = `${state.currentLocation ?? ''} ${state.campaignBibleId ?? ''} ${state.engineMode ?? ''}`;
   const blob = `${hay} ${loc}`;
@@ -1558,6 +1575,101 @@ function whoFromPickedHookBlob(blob?: string): string {
     .replace(/[.!]+$/, '');
   if (!who || slotNamesNobody(who) || who.split(' ').length > 6) return '';
   return slotNamesOnePerson(who) ? who : '';
+}
+
+const SLOT_CUT = /^(?:the|a|an|who|whom|whose|that|which|on|at|in|of|with|from|behind|beside|by|near|around|under|already|plus|for|to|will|would|is|are|was|were|has|have)$/i;
+
+/** Proper names printed mid-sentence on the card. A word after a line start, a full stop or a colon is not a name. */
+function cardProperNames(hay: string): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const re = /(^|[\s(“"'])([A-Z][A-Za-z'’-]+)\b/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(hay))) {
+    const w = m[2] ?? '';
+    const before = hay.slice(0, m.index + (m[1] ?? '').length).replace(/[ \t(“"']+$/, '');
+    if (!before || /(?:[.!?:;—–]|\n-?)$/.test(before)) continue;
+    if (w.length < 3 || CARD_GRAMMAR.has(w.toLowerCase())) continue;
+    const key = w.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(w);
+  }
+  return out;
+}
+
+/** The group a "Who is here" part names, as a cast label ("A denied-god cult the Crown…" → "the denied-god cult"). */
+function slotGroupLabel(part: string, names: string[]): string {
+  const words = part.replace(/\s+/g, ' ').trim().replace(/^(?:the|a|an)\s+/i, '').split(' ').filter(Boolean);
+  const stop = words.findIndex((w, i) => i > 0 && SLOT_CUT.test(w));
+  const kept = (stop > 0 ? words.slice(0, stop) : words).slice(0, 4);
+  if (!kept.length) return '';
+  const lead = kept[0]!;
+  const startedSlot = part.trim().startsWith(lead);
+  if (startedSlot && !names.some((n) => n === lead)) kept[0] = lead.charAt(0).toLowerCase() + lead.slice(1);
+  return `the ${kept.join(' ')}`;
+}
+
+/** Things the page sets in the scene: the subject of a placing verb ("A wrapped relic sits on the altar"). */
+function cardPlacedProps(page: string): string[] {
+  const out: string[] = [];
+  const re = /\b(?:a|an)\s+((?:[a-z][a-z'’-]+\s+){0,2}?[a-z][a-z'’-]+(?:\s+of\s+[a-z][a-z'’-]+)?)\s+(?:sits|hangs|lies|rests|waits|stands|leans)\b/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(page))) {
+    const p = (m[1] ?? '').toLowerCase().trim();
+    if (p && !out.includes(p)) out.push(p);
+  }
+  return out;
+}
+
+/**
+ * Compile a picked card once: HERE from its own head noun (hub as parent), cast from its "Who is here"
+ * line, its placed props and its printed proper names. A card with neither slot compiles to nothing.
+ */
+export function compileOpeningCard(
+  bibleId: string | null | undefined,
+  text: string | undefined,
+  page?: string
+): OpeningCardRecord | undefined {
+  const blob = text ?? '';
+  const location = blob.match(/^Location:[ \t]*(.+)$/im)?.[1]?.trim() ?? '';
+  const slot = blob.match(/Who is here[^:\n]*:[ \t]*([^\n]+)/i)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
+  if (!location && !slot) return undefined;
+  const names = cardProperNames([blob, page ?? ''].join('\n'));
+  const live = slot
+    .split(/[;,()]|\s[—–-]\s|\s(?:and|with|plus)\s/i)
+    .map((p) => p.trim().replace(/[.!]+$/, ''))
+    .filter((p) => p && !slotNamesNobody(p));
+  const castNames: string[] = [];
+  for (const t of live) {
+    if (t.split(' ').length > 6 || !slotNamesOnePerson(t)) continue;
+    castNames.push(t, t.replace(/^(?:a|an|the)\s+/i, '').trim());
+  }
+  if (live.length) castNames.push(...(slot.match(/\b[A-Z][a-z'-]+[ \t]+[A-Z][a-z'-]+(?:[ \t]+[A-Z][a-z'-]+)?\b/g) ?? []));
+  const lead = live[0] ?? '';
+  const leadWords = lead.replace(/^(?:the|a|an)\s+/i, '').split(' ').filter(Boolean);
+  const capWords = leadWords.filter((w) => /^[A-Z]/.test(w)).length;
+  const properOne =
+    slotNamesOnePerson(lead)
+    && leadWords.length <= 4
+    && (capWords >= 2 || (leadWords.length === 1 && capWords === 1) || names.includes(leadWords[0] ?? ''));
+  const cast = !lead ? '' : properOne ? lead : slotGroupLabel(lead, names);
+  const place = location ? openingPlaceRecord(bibleId, location, blob) : undefined;
+  return {
+    ...(place ? { place: place.place, ...(place.parentHub ? { parentHub: place.parentHub } : {}) } : {}),
+    cast,
+    castNames: [...new Set(castNames.filter((n) => n.length >= 3))],
+    props: cardPlacedProps(page ?? ''),
+    names,
+  };
+}
+
+/** The compiled card for this save: the New Game record, else compiled from the stored card text. */
+export function openingCardRecord(state: GameState): OpeningCardRecord | undefined {
+  const est = state.openingEstablishment;
+  if (est?.card) return est.card;
+  if (!est?.pickedHook) return undefined;
+  return compileOpeningCard(state.campaignBibleId, est.pickedHook, est.pickedHookFallback);
 }
 
 function slotNamesNobody(part: string): boolean {

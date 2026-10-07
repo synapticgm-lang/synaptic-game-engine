@@ -67,6 +67,7 @@ export function newGameState(
       pickedHook: picked?.text,
       pickedHookFallback: picked?.page1 || picked?.fallback,
       castNpcIds: picked?.castNpcIds ?? [],
+      ...(picked?.card ? { card: picked.card } : {}),
     },
   };
 }
