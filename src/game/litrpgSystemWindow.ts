@@ -5,7 +5,7 @@
 import { isLedgerReadAction } from './completedEventPacket';
 import { characterNameIsGeneric, hallTalkAsksPanel } from './openingEstablishment';
 import { UNNAMED_ADVENTURER, sanitizePcName } from './pcNameAuthority';
-import { isPartOn, type SystemPartId } from './systemHousing';
+import { isPartOn, writerFacts, type SystemPartId } from './systemHousing';
 import type { GameState, LogEntry } from './types';
 
 export interface LitrpgSystemWindow {
@@ -49,7 +49,7 @@ function lockedSystemName(state: GameState): string | null {
 }
 
 function pocketLine(state: GameState, withNotes: boolean): string {
-  const items = (state.inventory ?? [])
+  const items = writerFacts(state).pocket
     .map((i) => {
       const nm = i?.name?.trim();
       if (!nm) return '';
@@ -143,10 +143,7 @@ function ledgerReadsPrefix(housing: string | undefined): string {
 /** Ledger sheet in prose for a status read. The label follows the frozen housing. HP and MP stay off this line. A leftover pocket prints the pocket only. */
 export function ledgerSheetLine(state: GameState): string {
   const housing = state.systemHousing;
-  if (housing?.housing === 'leftover_pocket') {
-    const items = (state.inventory ?? []).map((i) => i?.name?.trim()).filter((nm): nm is string => !!nm);
-    return `Pocket: ${items.length ? items.join(', ') : 'empty'}.`;
-  }
+  if (housing?.housing === 'leftover_pocket') return `${pocketLine(state, false)}.`;
   const sheet = buildLitrpgSystemWindow(state);
   if (!sheet) return '';
   const quest = (state.quests ?? []).find((q) => q.status === 'active');

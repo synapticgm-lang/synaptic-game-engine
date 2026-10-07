@@ -141,7 +141,7 @@ export function isPartOn(config: SystemHousingConfig | null | undefined, part: S
   return clampSystemHousing(config).parts[part];
 }
 
-/** A housing with no quest list: the writer gets no quest names or steps. A save with no housing keeps them. */
+/** A housing with no quest list: the System prints no quest list. The quests still exist. */
 export function questListHidden(config: SystemHousingConfig | null | undefined): boolean {
   return !!config && isSystemHousingId(config.housing) && !isPartOn(config, 'quest_list');
 }
@@ -173,7 +173,7 @@ export function storeInPocket(item: Item): Item {
 }
 
 export interface WriterFacts {
-  /** Revealed quests the writer may name. Empty when the housing has no quest list. */
+  /** Quests in the world. The quest_list part only decides whether the System prints a list of them. */
   quests: Quest[];
   /** Worn and carried items (never pocketed ones when the housing has a pocket). */
   carried: Item[];
@@ -235,7 +235,7 @@ export function writerFacts(src: WriterFactsSource, nameOf: (name: string) => st
   const clamped = clampSystemHousing(config);
   const hasPocket = clamped.parts.pocket;
   const facts = {
-    quests: clamped.parts.quest_list ? src.quests ?? [] : [],
+    quests: src.quests ?? [],
     carried: hasPocket ? inventory.filter((i) => !i.storedInPocket) : inventory,
     pocket: hasPocket ? inventory.filter((i) => i.storedInPocket) : [],
     containers,

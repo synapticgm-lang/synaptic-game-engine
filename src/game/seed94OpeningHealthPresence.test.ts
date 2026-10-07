@@ -184,7 +184,7 @@ describe('seed 94 health is not a writer story fact', () => {
       seed: 'seed94-worn-sheet',
       character: { ...base.character, name: 'Jax', level: 2, xp: 10, xpToNext: 40, hp: 7, maxHp: 26, mp: 3, maxMp: 8, conditions: ['Bleeding'] },
       openingEstablishment: named,
-      inventory: [{ id: 't', name: 'Token', rarity: 'Common', quantity: 1, description: 'brass' }],
+      inventory: [{ id: 't', name: 'Token', rarity: 'Common', quantity: 1, description: 'brass', storedInPocket: true }],
       quests: [{ id: 'q', name: 'Find the pass', description: 'Climb the tower', status: 'active', type: 'main', objectives: [{ id: 'o', description: 'Climb', completed: false }] }],
       systemHousing: clampSystemHousing({ housing: 'worn_device', parts: { ...off, quest_list: true, pocket: true } }),
     });
