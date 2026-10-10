@@ -62,9 +62,10 @@ describe('s73 K — Check Status paints the System window', () => {
     expect(entry.systemWindow?.lines.some((l) => /^XP 25\/225$/.test(l))).toBe(true);
   });
 
-  it('the writer packet still carries the WINDOW line', () => {
+  it('the writer packet carries the WINDOW line with only what changed, never the sheet', () => {
     const writer = formatWriterFacingEvent(buildCompletedEventPacket(summoned('private_window'), 'Check Status'));
-    expect(writer).toMatch(/WINDOW \(game chrome[^)]*\): The window reads: Name: Jax; Level 2;[^\n]*XP 25\/225/);
+    expect(writer).toMatch(/WINDOW \(game chrome[^)]*\): First read/);
+    expect(writer).not.toMatch(/Name: Jax; Level 2;/);
   });
 
   it('a react line quoting Pocket and Mark is not dropped as capital', () => {

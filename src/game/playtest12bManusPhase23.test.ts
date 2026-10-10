@@ -29,13 +29,20 @@ import { recordCirclingTurn } from './choiceRanking';
 import {
   applySocialLedgerTurn,
   hasMetBefore,
+  recordMeetings,
   seedBibleNpcRoster,
   upsertHarvestedNpcMemory,
 } from './npcMemory';
-import { harvestNarrativeIntoLedger } from './narrativeHarvest';
+import { harvestNarrativePeople } from './narrativeHarvest';
 import { revealQuestsFromHubLinks, seedLocalStarterQuest, visibleJournalQuests } from './questPlay';
 import { seedStateFromCampaignBible } from './campaignSeed';
 import type { GameState } from './types';
+
+/** A committed turn: harvest decides who the beat showed, then the social ledger writes the meeting. */
+function harvestTurn(state: GameState, prose: string, turn: number): GameState {
+  const h = harvestNarrativePeople(state, prose, turn);
+  return recordMeetings(h.state, h.people, turn);
+}
 
 const PHASE23_HUBS = [
   'Mireglass March',
@@ -197,7 +204,7 @@ describe('12a first-meet still holds on roster seed', () => {
       );
     const ilyraOf = (s: GameState) => s.npcMemories?.find((n) => n.npcName === 'Ilyra Fen');
 
-    const first = harvestNarrativeIntoLedger(
+    const first = harvestTurn(
       turnAt(seeded, 2, 'Look around'),
       'Ilyra Fen waits in the reeds. I am Ilyra Fen, and the water remembers.',
       2
@@ -210,13 +217,13 @@ describe('12a first-meet still holds on roster seed', () => {
     expect(memory?.relationshipStatus).toBe('stranger');
     expect(memory?.knownPlayerName).toBeUndefined();
 
-    const sameVisit = harvestNarrativeIntoLedger(turnAt(first, 3, 'Wait'), 'Ilyra Fen nods toward the March.', 3);
+    const sameVisit = harvestTurn(turnAt(first, 3, 'Wait'), 'Ilyra Fen nods toward the March.', 3);
     expect(ilyraOf(sameVisit)?.meetCount ?? 0).toBe(0);
     expect(ilyraOf(sameVisit)?.relationshipStatus).toBe('stranger');
 
     let back = turnAt(sameVisit, 4, 'Travel toward Lowmarket', 'Lowmarket', []);
     back = turnAt(back, 5, 'Travel toward West Wall', 'West Wall', ['Ilyra Fen']);
-    const second = harvestNarrativeIntoLedger(back, 'Ilyra Fen nods toward the March.', 5);
+    const second = harvestTurn(back, 'Ilyra Fen nods toward the March.', 5);
     const again = ilyraOf(second);
     expect(again?.meetCount).toBe(1);
     expect(again?.relationshipStatus).toBe('acquaintance');

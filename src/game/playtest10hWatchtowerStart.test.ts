@@ -27,6 +27,8 @@ function watchtower(over: Partial<GameState> = {}): GameState {
   const base = createInitialState('The Summoned Pact', 'litrpg');
   return {
     ...base,
+    // The blue panel is the System with no housing.
+    systemHousing: undefined,
     campaignBibleId: 'summoned-pact',
     currentLocation: 'alone in a half-collapsed watchtower on the edge of wild country',
     character: { ...base.character, name: 'Jax' },
@@ -77,7 +79,8 @@ describe('playtest10h — watchtower start', () => {
     ).toBe(false);
     const text = stitchOpeningContinue(watchtower(), 'Inspect the panel');
     expect(text).toMatch(/panel|system/i);
-    expect(text).toMatch(/Jax/);
+    // The painted plate carries the sheet; the stitch never pastes it.
+    expect(text).not.toMatch(/Name: Jax;/);
     expect(text).not.toMatch(/looked through this room|looked again at this room/i);
   });
 

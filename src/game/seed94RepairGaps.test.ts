@@ -68,11 +68,12 @@ describe('seed 94 — a destination chip mid-journey must move', () => {
 describe('seed 94 — Inspect the panel is sent as a ledger read', () => {
   const withPanel = () => pact({ systemHousing: undefined, sceneFacts: { props: ['blue panel'] } as GameState['sceneFacts'] });
 
-  it('the writer is told the player read the System window, with the ledger lines', () => {
+  it('the writer is told the player read the System window, with only what changed', () => {
     const s = withPanel();
     const text = formatWriterFacingEvent(buildCompletedEventPacket(s, 'Inspect the panel'));
-    expect(text).toContain('Jax read the System window.');
-    expect(text).toMatch(/PANEL \(game chrome[^\n]*The panel read:/);
+    expect(text).toContain('Jax read the System window; the game shows the window.');
+    expect(text).toMatch(/PANEL \(game chrome[^\n]*(?:First read|Changed since the last read|Nothing changed)/);
+    expect(text).not.toContain('The panel read:');
     expect(text).not.toMatch(/Jax inspected/);
   });
 

@@ -6,6 +6,7 @@ import { formatHiddenRoomLedger } from './dungeonSeed.ts';
 import { placeCardFor } from './outdoorHubs.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
+import { pendingFoeSign } from './combatAuthority.ts';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords.ts';
 import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson.ts';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm.ts';
@@ -171,9 +172,8 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
     ? buildLifecycleSituationSection(state, people.map((p) => p.npcName))
     : '';
 
-  const threatSection = state.sceneFacts?.pendingEncounter && state.arcDirector?.pendingTelegraph?.trim()
-    ? `Threat building (show a sign before the foe appears):\n${state.arcDirector.pendingTelegraph.trim()}`
-    : '';
+  const threatSign = pendingFoeSign(state.sceneFacts?.pendingEncounter, state);
+  const threatSection = threatSign ? `Threat building (show a sign before the foe appears):\n${threatSign}` : '';
 
   const gates = gateFactLines(state);
   const roomSection = [

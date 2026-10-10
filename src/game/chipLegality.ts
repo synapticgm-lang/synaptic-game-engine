@@ -11,7 +11,7 @@ import { isChromePersonToken } from './chromeAuthority';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { encounterBlocksTravel } from './encounterTerminalFsm';
 import { classifyEdgeType } from './graphChoices';
-import { openingCastNames } from './openingEstablishment';
+import { openingCastNames, openOpeningOffer } from './openingEstablishment';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
@@ -167,6 +167,28 @@ export function basementEstablished(state: GameState): boolean {
   return BASEMENT.test(hay);
 }
 
+/** A stance that answers an offer or a need: someone has to have put one to the player. */
+const OFFER_ANSWER_CHIP = /^(?:refuse|accept|decline|agree|offer\s+(?:[\w'’-]+\s+)?(?:honest\s+)?help)\b/i;
+
+const WALK_AWAY_CHIP = /^(?:walk away|go another direction)\b/i;
+
+/** Where the travel engine would take the player on this chip, or null when it would not move them. */
+function moveDestination(state: GameState, chip: string): string | null {
+  const graph = applyGraphExitTravel(state, chip);
+  if (graph !== state) return graph.currentLocation ?? null;
+  const hub = applyNamedHubTravel(state, chip);
+  if (hub !== state) return hub.currentLocation ?? null;
+  const c = commitTravel(state, chip);
+  if (!c.handled) return null;
+  if (c.state.journey && c.state.journey !== state.journey) return c.state.journey.to;
+  return c.state.currentLocation !== state.currentLocation ? c.state.currentLocation ?? null : null;
+}
+
+/** The place the player just came from: the journey's start on the road, else the previous place. */
+function cameFrom(state: GameState): string {
+  return isJourneyUnderway(state) ? state.journey?.from ?? '' : state.circling?.prevPlace ?? '';
+}
+
 /** Would the travel engine actually move the player on this chip? */
 export function travelChipMoves(state: GameState, chip: string): boolean {
   if (applyGraphExitTravel(state, chip) !== state) return true;
@@ -218,7 +240,21 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     return { kind: 'ghost-chip', detail: `"${label}" needs${who || ' someone'} to hear it but nobody is here` };
   }
 
+  if (OFFER_ANSWER_CHIP.test(label) && !openOpeningOffer(state)) {
+    const unnamed = new Set((state.sceneFacts?.anonymousRoles ?? []).map(low));
+    if (!here.some((p) => !unnamed.has(low(p)))) {
+      return { kind: 'unrelated-chip', detail: `"${label}" answers an offer or a need nobody here has put to the player` };
+    }
+  }
+
   const fight = !!state.activeEncounter;
+  if (WALK_AWAY_CHIP.test(label) && !fight) {
+    const dest = moveDestination(state, label);
+    if (!dest) return { kind: 'impossible-chip', detail: `"${label}" leads to no other exit from here` };
+    if (low(dest) === low(cameFrom(state))) {
+      return { kind: 'impossible-chip', detail: `"${label}" only turns back toward ${dest}` };
+    }
+  }
   if (ENGINE_COMBAT_CHIP.test(label) && !fight) {
     return { kind: 'impossible-chip', detail: `"${label}" offers a fight move with no fight` };
   }

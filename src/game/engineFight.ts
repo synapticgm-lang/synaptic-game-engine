@@ -21,6 +21,7 @@ import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { fightLootClause, weaponInHand } from './infoSheet';
 import { isRoadFoe, roadFoeForEngine, settleRoadMeeting } from './travelJourney';
 import { pushCombatStateTx } from './stateTx';
+import { hidesPart } from './systemHousing';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -70,13 +71,14 @@ export function payEncounterXp(
     ...milestoneAreaOpts(state),
   });
   if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
-  const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode);
+  const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode, state.systemHousing);
   const dnd = state.engineMode === 'dnd';
   const companions = dnd ? payCompanionsFightXp(state.companions, r.amount) : state.companions;
   const character = dnd ? { ...leveled.character, summons: paySummonsFightXp(leveled.character.summons, r.amount) } : leveled.character;
+  const xpLine = hidesPart(state.systemHousing, 'experience') ? [] : [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`];
   return {
     state: { ...state, character, companions, sandboxAwardKeys: awardKeys },
-    receipts: [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`, ...leveled.notes],
+    receipts: [...xpLine, ...leveled.notes],
   };
 }
 

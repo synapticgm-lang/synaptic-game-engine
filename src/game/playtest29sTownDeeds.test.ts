@@ -8,6 +8,7 @@ import { seedWorldMapPlaces } from './worldMapAuthority';
 import { storedRelationshipFor } from './npcRelationships';
 import { storedDisposition } from './checkRules';
 import { LITRPG_MILESTONE_XP } from './xpRules';
+import { clampSystemHousing, type SystemPartId } from './systemHousing';
 import { HUD_BUILD_STAMP } from '@/components/Hud';
 import { BUILD_STAMP } from './runManifest';
 
@@ -26,6 +27,8 @@ function base(): GameState {
   return {
     ...s,
     engineMode: 'litrpg',
+    // A housing that shows experience, so the paid notes print (experience off pays hidden).
+    systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }),
     gmStrictness: 'standard',
     currentLocation: 'Oakfield',
     places: seedWorldMapPlaces([], atlas([village('oakfield', 'Oakfield'), village('millbrook', 'Millbrook')]), { seed: 'seed-29s' }),
@@ -143,8 +146,8 @@ describe('29s respect lives on the NPC', () => {
     expect(storedRelationshipFor(stole, 'Tom')!.trust).toBe(-2);
   });
 
-  it('stamp is 2026-10-10a', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-10a');
-    expect(BUILD_STAMP).toBe('2026-10-10a');
+  it('stamp is 2026-10-10b', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-10b');
+    expect(BUILD_STAMP).toBe('2026-10-10b');
   });
 });

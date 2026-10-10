@@ -41,13 +41,15 @@ const WEATHER_FOG = /\b(fog(?:gy)?|mist(?:y)?|haze)\b/i;
 const WEATHER_CLOUDY = /\b(cloud(?:y|s)?|overcast|grey sky)\b/i;
 const WEATHER_CLEAR = /\b(clear|sunny|bright|blue sky)\b/i;
 
-const INDOOR_CUES = /\b(inside|indoors?|room|chamber|hall|building|ceiling|walls?\b(?! street)|floor|corridor)\b/i;
-const OUTDOOR_CUES = /\b(outside|outdoors?|street|road|sky|stars|sun|rain (?:on|soaks)|wind|field|open air)\b/i;
-
-const TENSION_COMBAT = /\b(attack(?:ing|s)?|combat|fighting|strike(?:s)?|dodge(?:s)?|parry)\b/i;
-const TENSION_DANGER = /\b(danger(?:ous)?|threat(?:en)?|hostile|menac(?:ing|e)|growl(?:s|ing)?)\b/i;
-const TENSION_TENSE = /\b(tense|wary|cautious|alert|ready|on guard)\b/i;
-const TENSION_CALM = /\b(calm|peaceful|quiet|safe|relax(?:ed|ing)?|at ease)\b/i;
+/** Combat while an encounter is live; a won or left fight clears it. Prose words never set the mood. */
+export function engineTension(
+  state: Pick<GameState, 'activeEncounter'>,
+  current: SceneFacts['tension']
+): SceneFacts['tension'] {
+  const enc = state.activeEncounter;
+  if (enc && !(typeof enc.hp === 'number' && enc.hp <= 0)) return 'combat';
+  return current === 'combat' ? 'unknown' : current;
+}
 
 export function emptySceneFacts(turn = 0): SceneFacts {
   return {
@@ -68,17 +70,14 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   const text = narrative.replace(/<system>[\s\S]*?<\/system>/gi, ' ');
   const emptied = EMPTY_STREET.test(text) && !CROWD.test(text);
   const crowdPresent = CROWD.test(text) && !emptied;
-  const shouting = SHOUTING.test(text);
-  const quiet = QUIET.test(text) && !shouting;
 
   let crowd: SceneFacts['crowd'] = prev?.crowd ?? 'unknown';
   if (emptied) crowd = 'none';
   else if (crowdPresent) crowd = 'present';
 
+  // Noise, indoor and tension are the engine's (opening card, move, place, encounter); prose only copies them.
   let noise: SceneFacts['noise'] = prev?.noise ?? 'unknown';
-  if (shouting) noise = 'shouting';
-  else if (quiet && crowd !== 'present') noise = 'quiet';
-  else if (crowd === 'present' && noise === 'unknown') noise = 'voices';
+  if (crowd === 'present' && noise === 'unknown') noise = 'voices';
 
   const present = new Set(prev?.present ?? []);
   if (crowd === 'present') present.add('bystanders');
@@ -108,15 +107,8 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   else if (WEATHER_CLOUDY.test(text)) weather = 'cloudy';
   else if (WEATHER_CLEAR.test(text)) weather = 'clear';
 
-  let indoor: boolean | undefined = prev?.indoor;
-  if (INDOOR_CUES.test(text)) indoor = true;
-  else if (OUTDOOR_CUES.test(text)) indoor = false;
-
-  let tension: SceneFacts['tension'] = prev?.tension ?? 'unknown';
-  if (TENSION_COMBAT.test(text)) tension = 'combat';
-  else if (TENSION_DANGER.test(text)) tension = 'danger';
-  else if (TENSION_TENSE.test(text)) tension = 'tense';
-  else if (TENSION_CALM.test(text) && tension !== 'combat') tension = 'calm';
+  const indoor: boolean | undefined = prev?.indoor;
+  const tension: SceneFacts['tension'] = prev?.tension ?? 'unknown';
 
   const lastBeat = [
     crowd === 'present' ? 'people are present' : crowd === 'none' ? 'street empty' : '',
@@ -357,7 +349,8 @@ export function applyCommittedNarrative(
     narrative,
     turn,
     playerInput,
-    state.currentLocation ?? state.locationSheet?.name
+    state.currentLocation ?? state.locationSheet?.name,
+    state
   );
   const loc = state.currentLocation ?? state.locationSheet?.name;
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), loc);
@@ -410,12 +403,13 @@ export function applyCommittedNarrative(
           present: Array.from(new Set([...(withIntent.present ?? []), ...rejoined])),
         }
   );
+  const engineMood = { ...moded, tension: engineTension(state, moded.tension) };
   return {
-    ...moded,
+    ...engineMood,
     lastSnapshotGist: buildSnapshotGist({
       ...state,
       turn,
-      sceneFacts: moded,
+      sceneFacts: engineMood,
     }),
   };
 }

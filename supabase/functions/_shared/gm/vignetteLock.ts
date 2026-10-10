@@ -115,6 +115,13 @@ export function formatVignetteSnapshotLine(state: GameState): string | null {
   return `Open vignette (${v.kind}): ${v.cast.join(', ')}${v.props.length ? ` · ${v.props.join(', ')}` : ''}${v.stakes ? ` — ${v.stakes.slice(0, 80)}` : ''}`;
 }
 
+/** A hub beat's contact is cast only when the engine already has them here; a beat never adds a person. */
+export function hubBeatContactIfPresent(present: string[], contactName?: string): string | undefined {
+  if (!contactName) return undefined;
+  const key = contactName.trim().toLowerCase();
+  return present.some((p) => String(p).trim().toLowerCase() === key) ? contactName : undefined;
+}
+
 /** Open from hub social/vendor arrival beat. */
 export function openVignetteFromHubBeat(opts: {
   hubId: string;

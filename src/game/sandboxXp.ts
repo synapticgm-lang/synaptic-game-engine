@@ -26,6 +26,7 @@ import { LITRPG_MILESTONE_XP, deedXp, milestoneXp, type DeedStep, type Milestone
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
 import { objectiveChip } from './choiceRanking';
+import { hidesPart } from './systemHousing';
 
 /** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
 export const SANDBOX_XP = {
@@ -205,7 +206,9 @@ export function applySandboxXpAwards(
     checkSucceeded?: boolean;
   }
 ): SandboxXpResult {
-  const notes: string[] = [];
+  // A housing with experience off still pays and records every award, hidden: no XP line.
+  const xpHidden = hidesPart(state.systemHousing, 'experience');
+  const xpNotes: string[] = [];
   const awardKeys = [...(state.sandboxAwardKeys ?? [])];
   let xp = 0;
   let places = [...(state.places ?? [])];
@@ -220,7 +223,7 @@ export function applySandboxXpAwards(
     const r = milestoneXp(mode, kind, { level, partySize, cr, strictness: state.gmStrictness, ...areaOpts });
     if (r.amount <= 0) return;
     xp += r.amount;
-    notes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
+    xpNotes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
   };
 
   const loc = opts.locationName ?? state.currentLocation;
@@ -338,7 +341,7 @@ export function applySandboxXpAwards(
       places = fin.places;
       awardKeys.push(fin.awardKey);
       xp += fin.xp;
-      notes.push(...fin.notes);
+      xpNotes.push(...fin.notes);
       lootNotes.push(...fin.lootNotes);
       if (fin.item) items.push(fin.item);
       npcRelationships =
@@ -392,7 +395,7 @@ export function applySandboxXpAwards(
       const r = deedXp(mode, step, { level, strictness: state.gmStrictness, ...areaOpts });
       if (r.amount > 0) {
         xp += r.amount;
-        notes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
+        xpNotes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
       }
       return true;
     };
@@ -413,5 +416,5 @@ export function applySandboxXpAwards(
   }
 
   void opts.events;
-  return { xp, notes, awardKeys, places, items, lootNotes, npcRelationships };
+  return { xp, notes: xpHidden ? [] : xpNotes, awardKeys, places, items, lootNotes, npcRelationships };
 }

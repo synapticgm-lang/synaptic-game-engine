@@ -5,12 +5,18 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
-import { harvestNarrativeIntoLedger } from './narrativeHarvest';
-import { applySocialLedgerTurn } from './npcMemory';
+import { harvestNarrativePeople } from './narrativeHarvest';
+import { applySocialLedgerTurn, recordMeetings } from './npcMemory';
 import { recordCirclingTurn } from './choiceRanking';
 import type { GameState, NpcMemory } from './types';
 
 const WAGON = 'Ash Wagon';
+
+/** A committed turn: harvest decides who the beat showed, then the social ledger writes the meeting. */
+function harvestTurn(state: GameState, prose: string, turn: number): GameState {
+  const h = harvestNarrativePeople(state, prose, turn);
+  return recordMeetings(h.state, h.people, turn);
+}
 
 function base(): GameState {
   const s = createInitialState(undefined, 'litrpg') as GameState;
@@ -55,13 +61,13 @@ const packet = (s: GameState, input = 'Look around') => formatWriterFacingEvent(
 describe('s73 I — meeting count follows visits', () => {
   it('mentions on the same visit never make Yara a returning acquaintance; leaving and coming back counts once; the spoken name is known', () => {
     let s = turnAt(base(), 2, 'Look around');
-    s = harvestNarrativeIntoLedger(s, 'Yara Quill checked the wagon straps without looking up.', 2);
+    s = harvestTurn(s, 'Yara Quill checked the wagon straps without looking up.', 2);
     expect(yaraOf(s).met).toBe(true);
     expect(yaraOf(s).meetCount ?? 0).toBe(0);
 
     for (const t of [3, 4]) {
       s = turnAt(s, t, 'Wait');
-      s = harvestNarrativeIntoLedger(s, 'Yara Quill tied off a rope and kept her eyes on the road.', t);
+      s = harvestTurn(s, 'Yara Quill tied off a rope and kept her eyes on the road.', t);
       const writer = packet(s);
       expect(writer).not.toMatch(/has met Jax before/);
       expect(writer).not.toMatch(/knows them as Jax/);
@@ -71,14 +77,14 @@ describe('s73 I — meeting count follows visits', () => {
     s = turnAt({ ...s, sceneFacts: { ...s.sceneFacts!, present: [] } }, 5, 'Travel toward Lowmarket', 'Lowmarket');
     s = turnAt(s, 6, 'Travel toward Ash Wagon', WAGON);
     s = { ...s, sceneFacts: { ...s.sceneFacts!, present: ['Yara Quill'] } };
-    s = harvestNarrativeIntoLedger(s, 'Yara Quill glanced up from the wagon as you came back.', 6);
+    s = harvestTurn(s, 'Yara Quill glanced up from the wagon as you came back.', 6);
     expect(yaraOf(s).meetCount).toBe(1);
     const back = packet(s);
     expect(back).toMatch(/Yara Quill has met Jax before \(once\)/);
     expect(back).not.toMatch(/knows them as Jax/);
 
     s = turnAt(s, 7, 'Talk to Yara');
-    s = harvestNarrativeIntoLedger(s, 'Yara Quill listened.', 7);
+    s = harvestTurn(s, 'Yara Quill listened.', 7);
     expect(yaraOf(s).meetCount).toBe(1);
 
     s = applySocialLedgerTurn({

@@ -22,7 +22,14 @@ import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedE
 import { formatWriterInfoLayer } from './writerInfoLayer';
 import { sheetMemoryLine } from './npcRecords';
 import { checkLevelUpChanges, checkPlayerTurn, checkSheetMemory } from './turnCheck';
+import { clampSystemHousing, SYSTEM_PART_IDS, type SystemPartId } from './systemHousing';
 import type { GameState, NpcMemory } from './types';
+
+/** A housing that shows skills, so rank receipts print (a housing with skills off grants them hidden). */
+const SHOWS_SKILLS = clampSystemHousing({
+  housing: 'private_window',
+  parts: Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, true])) as Record<SystemPartId, boolean>,
+});
 
 function dungeon(): ActiveDungeonState {
   const hidden = (over: Record<string, unknown> = {}) => ({ traps: [], lootables: [], secrets: [], mobs: [], ...over });
@@ -65,6 +72,7 @@ function base(over: Partial<GameState> = {}): GameState {
     ...s,
     seed: 'z3g',
     engineMode: 'litrpg',
+    systemHousing: SHOWS_SKILLS,
     currentLocation: 'Test Cellar',
     activeEncounter: null,
     activeDungeon: dungeon(),

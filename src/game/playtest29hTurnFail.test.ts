@@ -48,7 +48,7 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
   });
 
   it('sendAction declares nextTurn before prose-warden harvest (no TDZ)', () => {
-    const harvestNeedle = 'harvestNarrativeIntoLedger(workingState, cleanText, nextTurn)';
+    const harvestNeedle = 'harvestNarrativePeople(workingState, cleanText, nextTurn';
     const perspectiveNeedle = 'enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name)';
     const harvestIdx = useGame.indexOf(harvestNeedle);
     const perspectiveIdx = useGame.indexOf(perspectiveNeedle);

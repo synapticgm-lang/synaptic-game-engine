@@ -154,6 +154,73 @@ export function ledgerSheetLine(state: GameState): string {
   }
   return `${ledgerReadsPrefix(housing?.housing)} ${parts.join('; ')}.`;
 }
+
+function windowField(line: string): [string, string] {
+  const colon = line.indexOf(':');
+  if (colon > 0) return [line.slice(0, colon).trim(), line.slice(colon + 1).trim()];
+  const m = line.match(/^(\S+)\s+(.*)$/);
+  return m ? [m[1]!, m[2]!.trim()] : [line.trim(), ''];
+}
+
+function shortChange(was: string, now: string): [string, string] {
+  const a = was.match(/^(\d+)\s*\/\s*(\d+)$/);
+  const b = now.match(/^(\d+)\s*\/\s*(\d+)$/);
+  return a && b && a[2] === b[2] ? [a[1]!, b[1]!] : [was, now];
+}
+
+/** The window the player last saw: the newest GM entry that carries the painted plate. */
+function lastPaintedWindow(state: GameState): LitrpgSystemWindow | null {
+  const hit = [...(state.log ?? [])].reverse().find((e) => e?.role === 'gm' && e.systemWindow?.lines?.length);
+  return hit?.systemWindow ?? null;
+}
+
+/**
+ * What changed on the window since the last painted plate, field by field ("XP 0 → 75").
+ * Null when there is no window or no earlier plate to compare with. The plate itself is the window.
+ */
+export function ledgerReadChanges(state: GameState): string[] | null {
+  const now = buildLitrpgSystemWindow(state);
+  const before = now ? lastPaintedWindow(state) : null;
+  if (!now || !before) return null;
+  const was = new Map(before.lines.map(windowField));
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const line of now.lines) {
+    const [k, v] = windowField(line);
+    seen.add(k);
+    const old = was.get(k);
+    if (old === undefined) out.push(line);
+    else if (old !== v) {
+      const [a, b] = shortChange(old, v);
+      out.push(`${k} ${a} → ${b}`);
+    }
+  }
+  for (const k of was.keys()) if (!seen.has(k)) out.push(`${k} gone`);
+  return out;
+}
+
+/** The writer's fact for a ledger read: only the change, never the sheet. */
+export function ledgerChangeFact(changes: string[] | null | undefined): string {
+  if (!changes) return 'First read: the game shows the whole window; there is nothing earlier to compare.';
+  return changes.length ? `Changed since the last read: ${changes.join('; ')}.` : 'Nothing changed since the last read.';
+}
+
+/** A code-written ledger-read line for a stitch: what the player did, then only what changed. */
+export function ledgerReadStitch(housing: string | null | undefined, changes: string[] | null | undefined): string {
+  const did =
+    housing === 'worn_device' ? 'You read the worn device.'
+    : housing === 'private_window' ? 'You looked inward.'
+    : housing === 'world_status' ? 'You took stock of what the world knew of you.'
+    : housing === 'leftover_pocket' ? 'You reached into the pocket.'
+    : 'You read the System window.';
+  const what = !changes
+    ? 'It showed what it always showed.'
+    : changes.length
+      ? `Since the last read: ${changes.join('; ')}.`
+      : 'Nothing on it had changed since the last read.';
+  return `${did} ${what}`;
+}
+
 export function withLitrpgSystemWindow(
   entry: LogEntry,
   state: GameState,

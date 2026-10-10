@@ -140,7 +140,8 @@ describe('system housing', () => {
     const read = formatWriterFacingEvent(buildCompletedEventPacket(worldStatus(), 'Ask the world'));
     expect(read).toMatch(/Jax took stock of what the world knows of/);
     const status = read.split('\n').find((l) => l.startsWith('STATUS ('));
-    expect(status).toContain('Known in the world:');
+    expect(status).toMatch(/First read|Changed since the last read|Nothing changed/);
+    expect(status).not.toContain('Known in the world:');
     expect(status).toContain(WORLD_STATUS_WRITER_SENTENCE);
     expect(status).not.toMatch(/vault key/);
   });

@@ -61,13 +61,15 @@ describe('seed 76 lowmarket card compiles once', () => {
   it('a first non-move turn pays no "reached"; walking out to Lowmarket pays it once', () => {
     const s = seed76();
     const here = s.currentLocation!;
+    // The award key is the pay record under any housing (a housing with experience off prints no note).
+    const reached = (keys: string[]) => keys.filter((k) => k.startsWith('discover-hub:'));
     const first = xpTurn(s, 'Inspect the wrapped relic', here, here, 1);
-    expect(first.notes.join('\n')).not.toMatch(/reached/i);
+    expect(reached(first.awardKeys)).toEqual([]);
     const walked = xpTurn({ ...s, sandboxAwardKeys: first.awardKeys, places: first.places }, 'Travel toward Lowmarket', here, 'Lowmarket', 2);
-    expect(walked.notes.filter((n) => /reached Lowmarket/.test(n))).toHaveLength(1);
+    expect(reached(walked.awardKeys)).toHaveLength(1);
     const after = { ...s, currentLocation: 'Lowmarket', sandboxAwardKeys: walked.awardKeys, places: walked.places };
     const again = xpTurn(after, 'Return to Lowmarket', here, 'Lowmarket', 5);
-    expect(again.notes.join('\n')).not.toMatch(/reached/i);
+    expect(reached(again.awardKeys)).toHaveLength(1);
   });
 });
 

@@ -8,6 +8,7 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
+import { clampSystemHousing, type SystemPartId } from './systemHousing';
 import { LITRPG_MILESTONE_XP, deedXp, milestoneXp } from './xpRules';
 import {
   DEED_FIGHTS_CAPSTONE,
@@ -32,6 +33,10 @@ function base(mode: EngineMode, over: Partial<GameState> = {}): GameState {
   return {
     ...s,
     seed: 'z1',
+    // A LitRPG housing that shows experience, so the paid notes print (experience off pays hidden).
+    ...(mode === 'litrpg'
+      ? { systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }) }
+      : {}),
     engineMode: mode,
     campaignBibleId: 'cursed-keep',
     currentLocation: 'Greyhollow Inn',
@@ -74,9 +79,9 @@ function award(s: GameState) {
 }
 
 describe('29z1 — stamp', () => {
-  it('HUD/BUILD are 2026-10-10a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-10a');
-    expect(BUILD_STAMP).toBe('2026-10-10a');
+  it('HUD/BUILD are 2026-10-10b, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-10b');
+    expect(BUILD_STAMP).toBe('2026-10-10b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

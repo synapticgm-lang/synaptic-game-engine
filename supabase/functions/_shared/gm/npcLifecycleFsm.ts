@@ -600,43 +600,34 @@ export function buildLifecycleSituationSection(state: GameState, presentNames?: 
   
   const lines: string[] = ['NPC roles here:'];
   
+  // Deadlines and the exit window are engine timers; the engine moves the person, the writer never counts it down.
   for (const lc of active) {
     const obligation = ROLE_OBLIGATIONS[lc.role];
-    const deadlineStr = lc.obligationDeadline
-      ? ` (deadline: T${lc.obligationDeadline})`
-      : '';
-    
     let status = '';
     switch (lc.state) {
       case 'entering':
-        status = 'Entering scene';
-        break;
       case 'functioning':
-        status = lc.debtSatisfied ? 'Debt satisfied' : 'Active';
+        status = lc.debtSatisfied ? 'Done' : 'Active';
         break;
-      case 'debt_satisfied': {
-        const windowTurns = EXIT_WINDOW_TURNS - (state.turn - (lc.satisfiedAtTurn ?? state.turn));
-        status = `Exit window (${windowTurns} turns remaining)`;
+      case 'debt_satisfied':
+        status = 'Done';
         break;
-      }
       case 'exiting':
-        status = 'Exiting scene';
+        status = 'Leaving';
         break;
       case 'transformed':
         status = `Transformed from ${lc.previousRole}`;
         break;
       default:
-        status = 'Unknown';
+        status = 'Active';
     }
     
-    lines.push(`- ${lc.npcId} (${lc.role}${deadlineStr}): ${status}`);
+    lines.push(`- ${lc.npcId} (${lc.role}): ${status}`);
     lines.push(`  Function: ${obligation.description}`);
     
     const doneWhen = obligation.obligations.successCriteria[0];
     if (lc.state === 'functioning' && !lc.debtSatisfied && doneWhen) {
       lines.push(`  Done when: ${doneWhen}`);
-    } else if (lc.state === 'debt_satisfied' || lc.state === 'exiting') {
-      lines.push(`  Must leave this scene soon.`);
     }
   }
   

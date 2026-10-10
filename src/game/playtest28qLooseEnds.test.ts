@@ -85,12 +85,13 @@ describe('28q loose ends wired back in', () => {
     expect(lines).toContain('Social track: +6 (negotiate)');
   });
 
-  it('telegraph: boss preface gets more channels than trash', () => {
+  it('telegraph: one engine sign from the foe, the tier reads in the sign, no catalog text', () => {
     const state = base({ turn: 3 });
-    const trash = telegraphForPendingSpawn('trash', state);
-    const boss = telegraphForPendingSpawn('boss', state);
-    expect(trash === null || typeof trash === 'string').toBe(true);
-    if (trash && boss) expect(boss.length).toBeGreaterThanOrEqual(trash.length);
+    const trash = telegraphForPendingSpawn({ name: 'Pact-Hunter Skirmisher', threatTier: 'trash' }, state);
+    const boss = telegraphForPendingSpawn({ name: 'Pact-Hunter Skirmisher', threatTier: 'boss' }, state);
+    expect(trash).toMatch(/^Pact-Hunter Skirmisher, a person, is closing/);
+    expect(boss).toMatch(/a deadly person/);
+    expect(`${trash} ${boss}`).not.toMatch(/\[SCENE\]|TELEGRAPH/);
   });
 
   it('NPC lifecycle: present NPCs are seeded and shown to the writer', () => {

@@ -276,6 +276,27 @@ export function autoFightSpawnPreface(enemyName: string, location?: string, road
   return `${name} forces the doorway${where} with a scrape of wrong motion.`;
 }
 
+const TIER_WORD: Record<string, string> = { trash: '', elite: 'strong ', boss: 'deadly ' };
+
+/**
+ * The one engine sign for a foe that is building but not here yet: who, what kind, and where it is
+ * closing, from the foe record and this place.
+ */
+export function pendingFoeSign(
+  foe: (Pick<ActiveEncounter, 'name'> & { threatTier?: string | number }) | null | undefined,
+  state: GameState
+): string | null {
+  const name = (foe?.name ?? '').trim();
+  if (!name) return null;
+  const kind = `${TIER_WORD[String(foe?.threatTier ?? '')] ?? ''}${isHumanoidEnemyName(name) ? 'person' : 'creature'}`;
+  const ground = isJourneyUnderway(state) ? (state.journey?.ground ?? '').trim().toLowerCase() : '';
+  const place = (state.currentLocation ?? '').trim();
+  const where = ground
+    ? ` on the ${ground.replace(/^the\s+/, '')}`
+    : place && !isRoadLabel(place) ? ` near ${place}` : '';
+  return `${name}, a ${kind}, is closing${where} and is not in sight yet.`;
+}
+
 /** Batch X — combat spawn engine lines belong in STATUS, not GM story body. */
 export function scrubCombatSpawnLog(text: string): string {
   if (!text) return text;

@@ -134,7 +134,9 @@ describe('playtest10c — loiter stitch + writer strip', () => {
     expect(second.packet.inspectStreak).toBe(2);
     const facing = formatWriterFacingEvent(second.packet);
     expect(facing).toMatch(/HERE unchanged; inspect ×2/);
-    expect(facing).not.toMatch(/wet plaster/);
+    // s77 Root D — the essay's opening sentence is recorded fact; the essay body is not.
+    expect(facing).toMatch(/^- The loft walls were timber and wet plaster\.$/m);
+    expect(facing).not.toMatch(/Dust hung in the light/);
     expect(facing).not.toMatch(/AUTHORITY:/);
     expect(collapseLoiterWriterBeats(second.packet)[0]).toMatch(/inspect ×2/);
     expect(formatCraftSnapshotLines(second.state)).toEqual([]);

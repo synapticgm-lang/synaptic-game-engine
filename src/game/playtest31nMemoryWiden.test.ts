@@ -48,13 +48,14 @@ describe('playtest31nMemoryWiden', () => {
   });
 
   // 29z9i — the live writer reads the info sheet in place of raw GM beats.
-  it('live packet carries the info sheet and no raw GM beat text', () => {
+  // s77 Root D — plus the opening sentence of each of the last two GM beats, as recorded fact.
+  it('live packet carries the info sheet and only the opening sentence of the last two GM beats', () => {
     const log: LogEntry[] = [
       line('g1', 1, 'gm', 'MARKER_OLD_GM_ONE ozone and a blue panel.'),
       line('p1', 2, 'player', 'MARKER_OLD_PLAYER_ONE look around'),
-      line('g2', 3, 'gm', 'MARKER_KEEP_GM_TWO stone under your palms.'),
+      line('g2', 3, 'gm', 'MARKER_KEEP_GM_TWO stone under your palms. MARKER_REST_TWO the floor is cold.'),
       line('p2', 4, 'player', 'MARKER_KEEP_PLAYER_TWO I stand up'),
-      line('g3', 5, 'gm', 'MARKER_KEEP_GM_THREE Orel waits at the ring.'),
+      line('g3', 5, 'gm', 'MARKER_KEEP_GM_THREE Orel waits at the ring. MARKER_REST_THREE he does not move.'),
       line('p3', 6, 'player', 'MARKER_KEEP_PLAYER_THREE who are you'),
     ];
     const kept = log.slice(-RECENT_LOG_WINDOW);
@@ -67,8 +68,10 @@ describe('playtest31nMemoryWiden', () => {
     expect(text).toMatch(/- T4 MARKER_KEEP_PLAYER_TWO I stand up → /);
     expect(text).toMatch(/- T2 MARKER_OLD_PLAYER_ONE look around → /);
     expect(text).not.toMatch(/T6 MARKER_KEEP_PLAYER_THREE/);
-    expect(text).not.toMatch(/MARKER_KEEP_GM_TWO/);
-    expect(text).not.toMatch(/MARKER_KEEP_GM_THREE/);
+    expect(text).toMatch(/ALREADY ON THE PAGE/);
+    expect(text).toMatch(/^- MARKER_KEEP_GM_TWO stone under your palms\.$/m);
+    expect(text).toMatch(/^- MARKER_KEEP_GM_THREE Orel waits at the ring\.$/m);
+    expect(text).not.toMatch(/MARKER_REST_TWO|MARKER_REST_THREE/);
     expect(text).not.toMatch(/MARKER_OLD_GM_ONE/);
     expect(text).toMatch(/PLAYER: ask the chanter/);
   });
@@ -102,7 +105,8 @@ describe('playtest31nMemoryWiden', () => {
     expect(text).not.toMatch(/last 15, full detail/);
     expect(text).not.toMatch(/MARKER_T15_DUMP_/);
     expect(text).not.toMatch(/T1: Beat number 1/);
-    expect(text).not.toMatch(/MARKER_LONG/);
+    expect(text.match(/MARKER_LONG/g) ?? []).toHaveLength(1);
+    expect(text).toMatch(/^- MARKER_LONG Y+/m);
     expect(text).not.toMatch(longTail);
     expect(text).toMatch(/INFO SHEET/);
 

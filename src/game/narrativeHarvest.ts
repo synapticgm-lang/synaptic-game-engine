@@ -11,7 +11,8 @@
  * Does NOT harvest new cities/towns/shores — those stay on the premade world map.
  */
 
-import type { GameState, LoreCard, NpcMemory } from './types';
+import type { GameState, LoreCard } from './types';
+import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
@@ -31,7 +32,6 @@ import {
 import { isPlannerUiPersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
-import { currentVisitKey, upsertHarvestedNpcMemory } from './npcMemory';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -94,10 +94,6 @@ function extractProperNamesFromProse(prose: string, bibleId: string | null | und
   return [...found];
 }
 
-function ensureNpcMemory(state: GameState, name: string, turn: number): NpcMemory[] {
-  return upsertHarvestedNpcMemory(state.npcMemories ?? [], name, turn, currentVisitKey(state));
-}
-
 function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number, hasRecord = true): LoreCard[] {
   if (lorebook.some((c) => c.name.toLowerCase() === name.toLowerCase() && c.type === 'npc')) {
     return lorebook.map((c) =>
@@ -129,15 +125,30 @@ function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number, hasReco
 export function harvestNarrativeIntoLedger(
   state: GameState,
   prose: string,
-  turn: number
+  turn: number,
+  bound?: { refs?: TokenUseRef[]; refEnum?: LedgerRef[] }
 ): GameState {
-  if (!prose?.trim()) return state;
+  return harvestNarrativePeople(state, prose, turn, bound).state;
+}
 
-  const fromTokenRefs = (state.completedEvent?.tokenRefs ?? [])
+/**
+ * Same harvest, plus the named people the committed beat showed. Meetings are written from
+ * these names by `npcMemory.applySocialLedgerTurn`, not here.
+ */
+export function harvestNarrativePeople(
+  state: GameState,
+  prose: string,
+  turn: number,
+  bound?: { refs?: TokenUseRef[]; refEnum?: LedgerRef[] }
+): { state: GameState; people: string[] } {
+  if (!prose?.trim()) return { state, people: [] };
+
+  const refEnum = bound?.refEnum ?? state.completedEvent?.refEnum ?? [];
+  const fromTokenRefs = (bound?.refs ?? state.completedEvent?.tokenRefs ?? [])
     .filter((r) => r.use === 'speaker' || r.use === 'actor' || r.use === 'addressed')
     .map((r) => {
-      const row = (state.completedEvent?.refEnum ?? []).find(
-        (e) => e.tok === r.tok || e.id.toLowerCase() === r.id.toLowerCase()
+      const row = refEnum.find(
+        (e) => e.tok === r.tok || (!!r.id && e.id.toLowerCase() === r.id.toLowerCase())
       );
       return row?.display ?? '';
     })
@@ -162,15 +173,19 @@ export function harvestNarrativeIntoLedger(
         turn
       ),
     };
-    return applyClosedFactHarvest(
-      applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
-      prose
-    );
+    return {
+      state: applyClosedFactHarvest(
+        applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
+        prose
+      ),
+      people: [],
+    };
   }
 
   const next = state;
   let lorebook = [...(next.lorebook ?? [])];
-  let npcMemories = [...(next.npcMemories ?? [])];
+  const npcMemories = next.npcMemories ?? [];
+  const people: string[] = [];
   const present = new Set([...(next.sceneFacts?.present ?? [])]);
 
   const traveled = locationChangedRecently(state);
@@ -238,7 +253,7 @@ export function harvestNarrativeIntoLedger(
     if (isLegalMapPlace(next, name) && looksLikeGeographyInvent(name)) continue;
     
     lorebook = ensureNpcLore(lorebook, name, turn, !!resolveNpcRecord({ ...next, npcMemories }, name));
-    npcMemories = ensureNpcMemory({ ...next, npcMemories }, name, turn);
+    if (!people.some((p) => p.toLowerCase() === name.toLowerCase())) people.push(name);
     present.add(name);
   }
 
@@ -254,7 +269,6 @@ export function harvestNarrativeIntoLedger(
   const withNames = {
     ...next,
     lorebook,
-    npcMemories,
     sceneFacts: {
       ...(next.sceneFacts ?? {}),
       present: presentList.slice(0, 12),
@@ -268,10 +282,13 @@ export function harvestNarrativeIntoLedger(
       turn
     ),
   };
-  return applyClosedFactHarvest(
-    applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
-    prose
-  );
+  return {
+    state: applyClosedFactHarvest(
+      applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
+      prose
+    ),
+    people,
+  };
 }
 
 /** Strip / rewrite invented city/town names that are not on the world map. */

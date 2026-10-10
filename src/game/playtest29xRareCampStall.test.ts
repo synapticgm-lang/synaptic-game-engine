@@ -65,9 +65,9 @@ afterEach(() => {
 });
 
 describe('29x stamps', () => {
-  it('HUD and BUILD are 2026-10-10a and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-10a');
-    expect(BUILD_STAMP).toBe('2026-10-10a');
+  it('HUD and BUILD are 2026-10-10b and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-10b');
+    expect(BUILD_STAMP).toBe('2026-10-10b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -248,13 +248,16 @@ describe('29x — auto-player stall rules', () => {
           id: 'q1',
           name: 'Road Warden',
           description: 'Clear the road.',
+          location: 'Greyhollow Church',
           status: 'active',
           revealed: true,
           objectives: [{ description: 'Find the missing wagon', completed: false }],
         },
       ],
     } as unknown as GameState;
-    const withStep = ['Inspect the hearth', EXIT, 'Find the missing wagon'];
-    expect(applyAutoPlayerStallRules(quest, withStep, 'Inspect the hearth').pick).toBe('Find the missing wagon');
+    // Root C: the quest step is offered only when an engine action carries it out, here the move to its site.
+    const step = 'Travel toward Greyhollow Church';
+    const withStep = ['Inspect the hearth', EXIT, step];
+    expect(applyAutoPlayerStallRules(quest, withStep, 'Inspect the hearth').pick).toBe(step);
   });
 });

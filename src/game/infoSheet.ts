@@ -14,6 +14,7 @@ import { exitPlaceNames } from './placeNames';
 import { playerFacingLocation } from './locationName';
 import { systemHousingWriterSentence, writerFacts } from './systemHousing';
 import { activeHereSpot, isOutOfTalkingRange } from './hereSpot';
+import { isChromeReceipt } from './engineResult';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -57,9 +58,20 @@ function completedTurns(state: GameState): { player: LogEntry; gm: LogEntry }[] 
   return out;
 }
 
-/** Engine receipts on a GM entry (code-written STATUS / fight / check lines), never the prose. */
+/** Warden, commit-gate and pad-cooldown notes are telemetry (`wardenNotes`); older saves still carry them on systemLog. */
+const TELEMETRY_NOTE = /^(?:Warden|Commit gate|Cooldown removed|Writer words kept|Paint blocked|Collage (?:strip|reject))\b/i;
+
+/** Engine receipts on a GM entry (code-written STATUS / fight / check lines), never the prose or telemetry. */
 function receipts(e: LogEntry): string[] {
-  return (e.systemLog ?? []).map(norm).filter((r) => r.length > 2 && !/^status:?$/i.test(r));
+  return (e.systemLog ?? [])
+    .map(norm)
+    .filter((r) => r.length > 2 && !/^status:?$/i.test(r) && !TELEMETRY_NOTE.test(r));
+}
+
+/** The receipt LAST shows: the turn's world change first, ledger figures only when nothing changed. */
+function lastReceipt(e: LogEntry): string | undefined {
+  const all = receipts(e);
+  return all.find((r) => !isChromeReceipt(r)) ?? all[0];
 }
 
 export function peopleOnSheet(state: GameState): string[] {
@@ -95,7 +107,9 @@ function turnFromFacts(m: NpcMemory): number | null {
 
 function nowLine(state: GameState, people: string[]): string {
   const place = playerFacingLocation(state) || norm(state.currentLocation) || 'unknown place';
-  const scale = placeScale(state.currentLocation) ?? state.sceneFacts?.cameraLock?.scale ?? 'scale unknown';
+  const lock = state.sceneFacts?.cameraLock;
+  const lockHere = lock && norm(lock.label).toLowerCase() === norm(state.currentLocation).toLowerCase() ? lock.scale : null;
+  const scale = placeScale(state) ?? lockHere ?? 'scale unknown';
   const company = people.length ? `with ${people.length} here` : crowdHere(state) ? 'crowd here' : 'alone';
   const mode = MODE_LABEL[state.engineMode ?? ''] ?? state.engineMode ?? 'mode unknown';
   return `T${state.turn} · ${place} · ${scale} · ${company} · ${mode}`;
@@ -106,7 +120,7 @@ function lastLines(turns: { player: LogEntry; gm: LogEntry }[]): string[] {
     .slice(-LAST_CAP)
     .reverse()
     .map(({ player, gm }) => {
-      const r = receipts(gm)[0];
+      const r = lastReceipt(gm);
       return `T${player.turn} ${clip(norm(player.content), 60)} → ${r ? clip(r, 70) : 'no engine result'}`;
     });
 }
@@ -285,7 +299,7 @@ export function buildInfoSheet(state: GameState): InfoSheet {
   const turns = completedTurns(state);
   const people = peopleOnSheet(state);
   const last = lastLines(turns);
-  const shownInLast = new Set(turns.slice(-LAST_CAP).map(({ gm }) => receipts(gm)[0]).filter(Boolean) as string[]);
+  const shownInLast = new Set(turns.slice(-LAST_CAP).map(({ gm }) => lastReceipt(gm)).filter(Boolean) as string[]);
   return {
     now: nowLine(state, people),
     last,

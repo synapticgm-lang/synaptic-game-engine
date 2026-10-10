@@ -21,6 +21,8 @@ import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
 import { isRoadLabel } from './travelJourney';
 import { giverIsHere, isTalkStageObjective, talkStageGiver } from './questGiver';
+import { travelChipMoves } from './chipLegality';
+import { objectiveOpensInterior } from './enterInterior';
 
 export type { CirclingMemory } from './types';
 
@@ -344,12 +346,15 @@ export function storyChip(state: GameState): string | null {
   if (!site && linked) return `Travel toward ${linked.name}`;
   const objIdx = quest.objectives?.findIndex((o) => !o.completed && !o.optional) ?? -1;
   const obj = objIdx >= 0 ? quest.objectives![objIdx] : undefined;
-  if (obj && isTalkStageObjective(state, quest.id, objIdx)) {
+  const talkStage = !!obj && isTalkStageObjective(state, quest.id, objIdx);
+  if (talkStage) {
     const giver = talkStageGiver(state, quest.id, objIdx);
     if (!giver || !giverIsHere(state, giver)) return null;
   }
   const chip = obj ? objectiveChip(obj.description) : null;
   if (!chip) return null;
+  // Offered only when an engine action carries it out: a talk to its giver here, a move, or opening the site here.
+  if (!talkStage && !travelChipMoves(state, chip) && !objectiveOpensInterior(state, chip)) return null;
   const said = chip.toLowerCase();
   const played = (state.log ?? []).some(
     (e) => e.role === 'player' && String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === said

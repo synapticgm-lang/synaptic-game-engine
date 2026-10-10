@@ -1,5 +1,5 @@
 import type { GameState } from './types';
-import { isAloneArrivalOpening } from './openingEstablishment';
+import { isAloneArrivalOpening, openOpeningOffer } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { excludedPadFamilies } from './padUniverse';
@@ -159,12 +159,14 @@ function canWalkAway(state: GameState, storyProse: string): boolean {
   return !state.activeDungeon;
 }
 
+/** With nobody named here and nothing on offer, there is nobody to help or refuse: those stances return ''. */
 function stanceFallbacks(state: GameState): Record<Exclude<StanceBucket, 'lookaround' | 'combat' | 'other'>, string> {
   const person = namedPeople(state)[0];
+  const offered = !!openOpeningOffer(state);
   const exit = state.locationSheet?.exits?.[0]?.label;
   return {
-    kind: person ? `Offer ${person} honest help` : 'Offer help, honestly',
-    hard: person ? `Refuse ${person} and keep your own counsel` : 'Refuse and keep your own counsel',
+    kind: person ? `Offer ${person} honest help` : offered ? 'Offer help, honestly' : '',
+    hard: person ? `Refuse ${person} and keep your own counsel` : offered ? 'Refuse and keep your own counsel' : '',
     curious: person ? `Talk with ${person}` : 'Ask what is going on',
     walkaway: exit ? `Leave toward ${exit}` : 'Walk away / go another direction',
   };
@@ -367,7 +369,7 @@ export function applyStanceDensity(
     // Alone invent gate: do not pad social kind/curious/hard that invents people.
     if (alone && (key === 'kind' || key === 'curious' || key === 'hard')) continue;
     const extra = fallbacks[key];
-    if (!kept.some((c) => c.toLowerCase() === extra.toLowerCase())) {
+    if (extra && !kept.some((c) => c.toLowerCase() === extra.toLowerCase())) {
       kept.push(extra);
       buckets.add(key);
     }

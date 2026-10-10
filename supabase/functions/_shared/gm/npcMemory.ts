@@ -879,6 +879,15 @@ export function recordPlayerNameHeard(
   return dirty ? next : memories;
 }
 
+/** The one meeting write: each named person the committed beat showed is met on this visit. */
+export function recordMeetings(state: GameState, names: string[], turn: number): GameState {
+  if (!names.length) return state;
+  const visit = currentVisitKey(state);
+  let memories = state.npcMemories ?? [];
+  for (const name of names) memories = upsertHarvestedNpcMemory(memories, name, turn, visit);
+  return memories === state.npcMemories ? state : { ...state, npcMemories: memories };
+}
+
 export function applySocialLedgerTurn(args: {
   state: GameState;
   playerAction: string;
@@ -892,9 +901,11 @@ export function applySocialLedgerTurn(args: {
   gmText?: string;
   /** Token JSON turns: the accepted writer speech lines (see recordSpokenTopics). */
   speechLines?: SpokenLine[];
+  /** Named people the committed beat showed (`narrativeHarvest.harvestNarrativePeople`). */
+  metNames?: string[];
 }): GameState {
   const { playerAction, turn } = args;
-  let state = args.state;
+  let state = recordMeetings(args.state, args.metNames ?? [], turn);
   if (!state.openingEstablishment?.complete) return state;
   if ((state.turn ?? 0) < 2 && turn < 2) return state;
 

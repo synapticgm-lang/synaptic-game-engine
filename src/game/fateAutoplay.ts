@@ -117,14 +117,15 @@ import {
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { placeQuestGivers, seedOpeningCastLocations } from './npcRecords';
+import { placeQuestGivers, presentNpcRecords, seedOpeningCastLocations } from './npcRecords';
 import {
   clearVignetteOnHubLeave,
+  hubBeatContactIfPresent,
   openVignetteFromHubBeat,
 } from './vignetteLock';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { maybeRevealFromLocation } from './worldAtlas';
-import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
+import { harvestNarrativePeople, scrubInventedGeography } from './narrativeHarvest';
 import { applySocialLedgerTurn } from './npcMemory';
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import {
@@ -222,8 +223,9 @@ import {
   scrubFalseArrivalWhenHere,
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
+import { engineResultFact } from './engineResult';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
-import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
+import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
@@ -386,6 +388,7 @@ export type TurnTelemetry = {
   stitchedLine?: boolean;
   /** 28l — raw writer issues on the committed beat (training signal; see `writerTurnIssues`). */
   writerIssues?: string[];
+  wardenNotes?: string[];
   /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
   writerUsage?: import('./openRouterChat').TurnWriterUsage;
 };
@@ -1178,15 +1181,13 @@ export async function headlessFateTurn(
     arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
   }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-  const engineFact = [
+  const engineFact = engineResultFact([
     ...(arcResult?.systemReceipts ?? []),
     ...offerTurn.receipts,
     ...dungeonTurn.receipts,
     ...nudge.receipts,
     ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
-  ]
-    .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
-    .join(' ');
+  ]);
   const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
     xp: arcXp,
     engineResult: engineFact,
@@ -1583,7 +1584,11 @@ Do NOT print dice notation or CODE ENFORCED.
   traceStage('scrubOfficialPlaceholder', cleanText);
   cleanText = words.step('scrubInventedGeography', cleanText, scrubInventedGeography(cleanText, working));
   traceStage('scrubInventedGeography', cleanText);
-  working = harvestNarrativeIntoLedger(working, cleanText, state.turn + 1);
+  const harvested = harvestNarrativePeople(working, cleanText, state.turn + 1, {
+    refs: writerTurn && (writerTurn.path === 'json' || writerTurn.path === 'json-partial') ? writerTurn.refs : undefined,
+    refEnum: writerPacket?.refEnum,
+  });
+  working = harvested.state;
   working = {
     ...working,
     sceneFacts: applyCommittedNarrative(working, cleanText, state.turn + 1),
@@ -1597,7 +1602,7 @@ Do NOT print dice notation or CODE ENFORCED.
     const govProse = applyGovernanceToProse(working, cleanText, playerInput);
     cleanText = words.step('applyGovernanceToProse', cleanText, govProse.prose);
     traceStage('applyGovernanceToProse', cleanText);
-    if (govProse.notes.length) warden.notes.push(...govProse.notes);
+    if (govProse.notes.length) warden.notes.push(...notesForCommittedBody(govProse.notes, cleanText === govProse.prose));
   }
   // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
   if (blockedPaint || isBlockedPaint(warden.notes, state, cleanText)) {
@@ -1757,33 +1762,16 @@ Do NOT print dice notation or CODE ENFORCED.
           );
           updatedQuests = applyBiomeSaneQuestSites(working, updatedQuests);
           let sceneFacts = working.sceneFacts;
-          if (arrival.beat.contactName && sceneFacts) {
-            const present = [...(sceneFacts.present ?? [])];
-            if (!present.some((p) => p.toLowerCase() === arrival.beat.contactName!.toLowerCase())) {
-              present.push(arrival.beat.contactName);
-            }
+          if (/^(social|vendor)$/i.test(arrival.beat.kind) && sceneFacts) {
             const openVignette = openVignetteFromHubBeat({
               hubId: arrival.hub.id,
               hubName: arrival.hub.name,
               beatId: arrival.beat.id,
               kind: arrival.beat.kind,
-              contactName: arrival.beat.contactName,
-              pressure: arrival.beat.pressure,
-              turn: nextTurn,
-              prev: sceneFacts.openVignette,
-            });
-            sceneFacts = {
-              ...sceneFacts,
-              present,
-              crowd: sceneFacts.crowd === 'none' ? 'present' : (sceneFacts.crowd ?? 'present'),
-              ...(openVignette ? { openVignette } : {}),
-            };
-          } else if (/^(social|vendor)$/i.test(arrival.beat.kind) && sceneFacts) {
-            const openVignette = openVignetteFromHubBeat({
-              hubId: arrival.hub.id,
-              hubName: arrival.hub.name,
-              beatId: arrival.beat.id,
-              kind: arrival.beat.kind,
+              contactName: hubBeatContactIfPresent(
+                [...(sceneFacts.present ?? []), ...presentNpcRecords(working).map((m) => m.npcName)],
+                arrival.beat.contactName
+              ),
               pressure: arrival.beat.pressure,
               turn: nextTurn,
               prev: sceneFacts.openVignette,
@@ -1830,7 +1818,7 @@ Do NOT print dice notation or CODE ENFORCED.
   if (sandboxXp.items.length) working = { ...working, inventory: [...(working.inventory ?? []), ...sandboxXp.items] };
   let sandboxKeys = sandboxXp.awardKeys;
   if (sandboxXp.xp > 0) {
-    const leveled = applyCharacterXpGain(character, sandboxXp.xp, working.engineMode);
+    const leveled = applyCharacterXpGain(character, sandboxXp.xp, working.engineMode, working.systemHousing);
     character = leveled.character;
     levelNotes = leveled.notes;
   }
@@ -1841,7 +1829,7 @@ Do NOT print dice notation or CODE ENFORCED.
   if (dailyMilestone) {
     sandboxNotes.push(dailyMilestone.note);
     sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
-    const leveled = applyCharacterXpGain(character, dailyMilestone.xp);
+    const leveled = applyCharacterXpGain(character, dailyMilestone.xp, undefined, working.systemHousing);
     character = leveled.character;
     levelNotes = [...levelNotes, ...leveled.notes];
   }
@@ -1861,6 +1849,7 @@ Do NOT print dice notation or CODE ENFORCED.
     talkTopics: hallTalkTopics(playerInput),
     gmText: cleanText,
     speechLines: writerTurn?.speech,
+    metNames: harvested.people,
   });
   working = {
     ...working,
@@ -1914,7 +1903,7 @@ Do NOT print dice notation or CODE ENFORCED.
   let filteredSystemLog = filterSystemLogForEngine(
     useMud && mudTurn
       ? [...mudTurn.receiptLines, ...arcStatusReceipts, ...sandboxNotes, ...levelNotes]
-      : [...gmSystemLog, ...(warden.notes.length ? [`Warden: ${[...warden.notes.slice(0, 3), ...warden.notes.slice(3).filter((n) => /^Paint blocked/i.test(n))].join('; ')}`] : [])],
+      : [...gmSystemLog, ...arcStatusReceipts],
     state.engineMode
   );
   if (!useMud) {
@@ -1963,8 +1952,9 @@ Do NOT print dice notation or CODE ENFORCED.
     content: mudBody,
     timestamp: Date.now(),
     systemLog: filteredSystemLog,
-    snapshotGist: compactTrafficGist(arcState),
+    snapshotGist: compactTrafficGist({ ...working, turn: nextTurn }),
     ...(writerIssues.length ? { writerIssues } : {}),
+    ...(warden.notes.length ? { wardenNotes: [...warden.notes] } : {}),
     ...(writerUsage ? { writerUsage } : {}),
     ...(useMud && mudTurn
       ? {
@@ -2045,7 +2035,7 @@ Do NOT print dice notation or CODE ENFORCED.
       offeredChoiceIds: offered.map((_, i) => `choice-${nextTurn}-${i}`),
       playerInput,
       gmText: mudBody,
-      snapshotGist: compactTrafficGist(arcState),
+      snapshotGist: compactTrafficGist(governed),
       systemLog: filteredSystemLog,
       questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
@@ -2093,6 +2083,7 @@ Do NOT print dice notation or CODE ENFORCED.
           : undefined,
       stitchedLine: renderFallbackUsed || usedPacketStitch,
       writerIssues: writerIssues.length ? writerIssues : undefined,
+      wardenNotes: warden.notes.length ? [...warden.notes] : undefined,
       writerUsage: writerUsage ?? undefined,
     },
   };

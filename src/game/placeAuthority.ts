@@ -1,5 +1,8 @@
 import type { ActiveDungeonState } from './mapEngine';
 import type { GameState, LocationSheet, MapScale, MapTier } from './types';
+import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { resolvePlace } from './places';
+import { isTripHere } from './travelJourney';
 
 export const STREET_MAP_BLUEPRINT = 'local-area';
 export const INTERIOR_MAP_BLUEPRINT = 'interior-plan';
@@ -24,14 +27,46 @@ export function isUndergroundPlace(name: string | undefined): boolean {
 }
 
 const OUTDOOR_PLACE =
-  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?|quay|ford|crossroads|camp|field|fields|meadow|forest|woods|shore|beach|hill|riverbank)\b/i;
+  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?|quay|ford|crossroads|camp|field|fields|meadow|forest|woods|shore|beach|hill|riverbank|stalls?|battlements)\b/i;
 
-/** Indoor or outdoor from the place name alone; null when the name does not say. */
-export function placeScale(name: string | undefined): 'indoor' | 'outdoor' | null {
+/** A description's head phrase: the words before where it says what the place is next to. */
+const DESCRIPTION_TAIL =
+  /\s+(?:near|around|under|beneath|below|above|behind|beyond|toward|towards|outside|by|before|past|east|west|north|south|where|that|for|with)\b|\s+—|[.;:(]/i;
+
+export type PlaceScaleSource = Partial<
+  Pick<GameState, 'currentLocation' | 'campaignBibleId' | 'places' | 'journey' | 'locationSheet'>
+>;
+
+function nameScale(name: string | undefined): 'indoor' | 'outdoor' | null {
   const n = (name ?? '').replace(/\s+/g, ' ').trim();
   if (!n) return null;
   if (isInteriorPlace(n)) return 'indoor';
   return OUTDOOR_PLACE.test(n) ? 'outdoor' : null;
+}
+
+function descriptionScale(text: string | undefined): 'indoor' | 'outdoor' | null {
+  const t = (text ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return null;
+  return nameScale(t.split(DESCRIPTION_TAIL)[0]);
+}
+
+/**
+ * Indoor or outdoor from the committed place: its name, then its hub or place record (kind or the
+ * description's head noun), then the journey (a trip's HERE is outdoor). Null when none of them says.
+ */
+export function placeScale(place: string | PlaceScaleSource | undefined | null): 'indoor' | 'outdoor' | null {
+  if (!place || typeof place === 'string') return nameScale(place ?? undefined);
+  const name = (place.currentLocation ?? place.locationSheet?.name ?? '').replace(/\s+/g, ' ').trim();
+  if (!name) return null;
+  const byName = nameScale(name);
+  if (byName) return byName;
+  const hub = matchHub(hubsForBibleId(place.campaignBibleId), name);
+  const byHub = hub ? nameScale(hub.name) ?? descriptionScale(hub.blurb) : null;
+  if (byHub) return byHub;
+  const record = resolvePlace(place.places, name);
+  const byRecord = record ? nameScale(record.settlementKind) ?? descriptionScale(record.description) : null;
+  if (byRecord) return byRecord;
+  return isTripHere({ journey: place.journey ?? null }, name) ? 'outdoor' : null;
 }
 
 export function isStreetMap(dungeon: { blueprintId?: string } | null | undefined): boolean {

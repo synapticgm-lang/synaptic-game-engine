@@ -7,13 +7,14 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { emptySceneFacts } from './sceneFacts';
-import { harvestNarrativeIntoLedger } from './narrativeHarvest';
+import { harvestNarrativePeople } from './narrativeHarvest';
 import { compileChoices } from './choiceCompiler';
 import { applyProseWarden } from './proseWarden';
 import { recordCirclingTurn } from './choiceRanking';
 import {
   applySocialLedgerTurn,
   hasMetBefore,
+  recordMeetings,
   rememberPlayerName,
   scrubNpcIntroRepeat,
   upsertHarvestedNpcMemory,
@@ -21,6 +22,12 @@ import {
 import { applyLedgerDeficit } from './openingEstablishment';
 import { newGameState, rosterRecord } from './newGameTestState';
 import type { GameState, NpcMemory } from './types';
+
+/** A committed turn: harvest decides who the beat showed, then the social ledger writes the meeting. */
+function harvestTurn(state: GameState, prose: string, turn: number): GameState {
+  const h = harvestNarrativePeople(state, prose, turn);
+  return recordMeetings(h.state, h.people, turn);
+}
 
 function greyhollow(partial: Partial<GameState> = {}): GameState {
   const state = newGameState('cursed-keep', { npcId: 'ck-npc-1', engineMode: 'dnd' });
@@ -71,7 +78,7 @@ describe('playtest12a — NPC memory first-meet', () => {
       );
     const aldousOf = (s: GameState) => s.npcMemories?.find((n) => /aldous/i.test(n.npcName));
 
-    const first = harvestNarrativeIntoLedger(
+    const first = harvestTurn(
       turnAt(greyhollow({ turn: 2 }), 2, 'Look around'),
       'Father Aldous waits by the font. I am Father Aldous, keeper of this church.',
       2
@@ -87,7 +94,7 @@ describe('playtest12a — NPC memory first-meet', () => {
     expect(memory?.knownPlayerName).toBeUndefined();
     expect(memory?.facts.filter((f) => /Introduced in play/i.test(f))).toHaveLength(1);
 
-    const sameVisit = harvestNarrativeIntoLedger(
+    const sameVisit = harvestTurn(
       turnAt(first, 3, 'Wait'),
       'Father Aldous nods toward the nave.',
       3
@@ -97,7 +104,7 @@ describe('playtest12a — NPC memory first-meet', () => {
 
     let back = turnAt(sameVisit, 4, 'Travel toward Greyhollow Square', 'Greyhollow Square', []);
     back = turnAt(back, 5, 'Travel toward Greyhollow Church', 'Greyhollow Church', ['Father Aldous']);
-    const second = harvestNarrativeIntoLedger(back, 'Father Aldous nods toward the nave.', 5);
+    const second = harvestTurn(back, 'Father Aldous nods toward the nave.', 5);
     const again = aldousOf(second);
     expect(again?.meetCount).toBe(1);
     expect(again?.relationshipStatus).toBe('acquaintance');
@@ -154,7 +161,7 @@ describe('playtest12a — NPC memory first-meet', () => {
   });
 
   it('starves who/name pads after opening complete + hasMetBefore', () => {
-    const state = harvestNarrativeIntoLedger(
+    const state = harvestTurn(
       greyhollow(),
       'Father Aldous stands at the altar.',
       8

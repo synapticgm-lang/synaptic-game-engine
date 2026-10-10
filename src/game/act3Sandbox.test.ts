@@ -23,6 +23,7 @@ import {
   resumeMainQuestFocus,
 } from './questPlay';
 import { createInitialState } from './defaults';
+import { clampSystemHousing, type SystemPartId } from './systemHousing';
 import { emptyWorldLedger } from './worldSim';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import { heroAwakening } from '@/data/campaigns/heroAwakening';
@@ -193,6 +194,8 @@ describe('Act-3 off-spine XP', () => {
     const base = {
       ...createInitialState('Act3', 'litrpg'),
       campaignBibleId: 'summoned-pact',
+      // A housing that shows experience, so the paid notes print (experience off pays hidden).
+      systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }),
       places: seedOutdoorHubPlaces([], summonedPact),
       sandboxAwardKeys: [] as string[],
       worldLedger: emptyWorldLedger(),

@@ -6,7 +6,7 @@
  */
 
 import type { GameState, SceneFacts } from './types.ts';
-import { isExplorableDungeon, isInteriorMap, placeScale } from './placeAuthority.ts';
+import { isExplorableDungeon, isInteriorMap, placeScale, type PlaceScaleSource } from './placeAuthority.ts';
 
 export type CameraScale = 'outdoor' | 'indoor';
 
@@ -52,14 +52,20 @@ export function detectCameraScale(text: string): CameraScale | null {
   return null;
 }
 
-/** The committed place decides indoor/outdoor; a stored lock only fills in when the name does not say. */
+const samePlace = (a: string | undefined, b: string | undefined) =>
+  (a ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === (b ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/** The committed place decides indoor/outdoor; a stored lock only fills in when the place does not say. */
 export function resolveCameraLock(
-  state: Pick<GameState, 'sceneFacts'> & { currentLocation?: string }
+  state: Pick<GameState, 'sceneFacts'> & PlaceScaleSource
 ): CameraLock | undefined {
   const lock = state.sceneFacts?.cameraLock;
-  const scale = placeScale(state.currentLocation);
-  if (!lock || !scale || lock.scale === scale) return lock;
-  return { ...lock, scale, label: (state.currentLocation ?? '').trim() || lock.label };
+  const scale = placeScale(state);
+  if (!lock || !scale) return lock;
+  const here = (state.currentLocation ?? '').trim();
+  const moved = !!here && !samePlace(here, lock.label);
+  if (lock.scale === scale && !moved) return lock;
+  return { ...lock, scale, label: here || lock.label, roomId: moved ? undefined : lock.roomId };
 }
 
 export function formatCameraBindingLine(state: GameState): string | null {
@@ -75,7 +81,8 @@ export function harvestCameraIntoSceneFacts(
   _narrative: string,
   turn: number,
   playerInput?: string,
-  locationLabel?: string
+  locationLabel?: string,
+  place?: PlaceScaleSource
 ): SceneFacts {
   const base: SceneFacts = prev
     ? { ...prev, updatedTurn: turn }
@@ -88,18 +95,19 @@ export function harvestCameraIntoSceneFacts(
         updatedTurn: turn,
       };
 
-  const traveled = playerCommittedTravel(playerInput);
   const label = (locationLabel ?? '').trim();
-  const scale = placeScale(label);
+  const scale = placeScale(place ? { ...place, currentLocation: label || place.currentLocation } : label);
   const lock = base.cameraLock;
+  // A new place rewrites the lock however the player got there ("Walk on", "Turn back"); a road lock never outlives an arrival.
+  const moved = playerCommittedTravel(playerInput) || (!!lock && !!label && !samePlace(label, lock.label));
   if (!scale) {
-    if (lock && traveled) {
-      const { cameraLock: _left, ...rest } = base;
+    if (lock && moved) {
+      const { cameraLock: _left, indoor: _indoor, ...rest } = base;
       return rest;
     }
     return lock ? { ...base, indoor: lock.scale === 'indoor' } : base;
   }
-  if (lock && lock.scale === scale && !traveled) {
+  if (lock && lock.scale === scale && !moved) {
     return { ...base, indoor: scale === 'indoor' };
   }
   return {
@@ -108,8 +116,8 @@ export function harvestCameraIntoSceneFacts(
     cameraLock: {
       scale,
       label,
-      roomId: traveled ? undefined : lock?.roomId,
-      lockedTurn: lock && lock.scale === scale ? lock.lockedTurn : turn,
+      roomId: moved ? undefined : lock?.roomId,
+      lockedTurn: lock && lock.scale === scale && !moved ? lock.lockedTurn : turn,
     },
   };
 }

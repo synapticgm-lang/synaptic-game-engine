@@ -5,6 +5,7 @@
  */
 
 import type { GameState, EngineMode } from './types';
+import { pendingFoeSign } from './combatAuthority';
 import telegraphCatalogData from './data/encounters/D6_telegraph_catalog.json';
 
 // ============================================================================
@@ -151,25 +152,10 @@ export function isSurpriseEligible(
   return true;
 }
 
-const TIER_CHANNELS: Record<string, TelegraphChannel[]> = {
-  trash: ['scene'],
-  elite: ['scene', 'npc'],
-  boss: ['scene', 'npc', 'status'],
-};
-
-/** Drought spawn preface — cue lines for a pending encounter of this threat tier. */
+/** The pending foe's engine sign (see `pendingFoeSign`). Catalog cue text is a designer note and never goes out. */
 export function telegraphForPendingSpawn(
-  threatTier: string | undefined,
+  foe: Parameters<typeof pendingFoeSign>[0],
   state: GameState
 ): string | null {
-  const role = threatTier === 'boss' ? 'boss' : threatTier === 'elite' ? 'elite' : 'trash';
-  const channels = TIER_CHANNELS[role]!;
-  const template: TelegraphTemplate = {
-    densityRole: role,
-    tierRange: [1, 1],
-    telegraph: { timing: '1-turn-before', patterns: [], channels, avoidable: true },
-  };
-  const cues = selectTelegraphCues(template, state.engineMode, getTelegraphCatalog(), state.turn ?? 0);
-  if (!cues.length) return null;
-  return buildTelegraphContext({ ...template, telegraph: { ...template.telegraph, patterns: cues } }, state);
+  return pendingFoeSign(foe, state);
 }

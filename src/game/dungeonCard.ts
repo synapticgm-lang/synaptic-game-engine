@@ -24,6 +24,7 @@ import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { openSeededLootable } from './looseItems';
 import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
+import { hidesPart } from './systemHousing';
 import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
 
@@ -492,10 +493,11 @@ function payDungeonXp(state: GameState, kind: MilestoneKind, key: string, label:
   const r = milestoneXp(state.engineMode, kind, { level: state.character.level, strictness: state.gmStrictness, ...milestoneAreaOpts(state) });
   const keys = [...(state.sandboxAwardKeys ?? []), key];
   if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: keys }, receipts: [] };
-  const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode);
+  const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode, state.systemHousing);
+  const xpLine = hidesPart(state.systemHousing, 'experience') ? [] : [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`];
   return {
     state: { ...state, character: leveled.character, sandboxAwardKeys: keys },
-    receipts: [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`, ...leveled.notes],
+    receipts: [...xpLine, ...leveled.notes],
   };
 }
 

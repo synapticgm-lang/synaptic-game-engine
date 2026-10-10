@@ -895,6 +895,8 @@ export interface LogEntry {
    * unresolved prose). Training signal sent with thumbs; never a reason to fail the turn.
    */
   writerIssues?: string[];
+  /** s77 — warden, commit-gate and pad-cooldown notes for this beat. Telemetry only; never STATUS or the writer's record. */
+  wardenNotes?: string[];
   /** 28w — provider-reported token use summed over this beat's model calls (null fields = not reported). */
   writerUsage?: {
     tokensIn: number | null;

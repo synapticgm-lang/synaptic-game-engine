@@ -16,6 +16,7 @@ import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { downloadPlayDump, withOfferedChoices } from './playTranscript';
 import { dropAbsentListenerChips } from './chipLegality';
+import { engineResultFact } from './engineResult';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
 import {
   authoredPageText,
@@ -156,7 +157,7 @@ import {
   formatOpeningCardChrome,
   openingInventBudgetZero,
 } from './openingPointerCard';
-import { classifyBeatCommit, isBlockedPaint, repairRejectedBeat } from './beatCommitGate';
+import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat } from './beatCommitGate';
 import { runWriterTurn, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
@@ -320,16 +321,17 @@ import {
 } from './outdoorHubs';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
-import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
+import { harvestNarrativePeople, scrubInventedGeography } from './narrativeHarvest';
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { placeQuestGivers, seedOpeningCastLocations } from './npcRecords';
+import { placeQuestGivers, presentNpcRecords, seedOpeningCastLocations } from './npcRecords';
 import {
   clearVignetteOnHubLeave,
+  hubBeatContactIfPresent,
   openVignetteFromHubBeat,
 } from './vignetteLock';
 import { applySandboxXpAwards } from './sandboxXp';
@@ -358,6 +360,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
+import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, type SpokenLine } from './tokenProse';
 import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
@@ -2725,15 +2728,13 @@ export function useGame() {
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...nudge.receipts];
       stateRef.current = liveCurrent;
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
-      const engineFact = [
+      const engineFact = engineResultFact([
         ...(systemsArc?.systemReceipts ?? []),
         ...offerTurn.receipts,
         ...dungeonTurn.receipts,
         ...nudge.receipts,
         ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
-      ]
-        .filter((r) => /^(?:Fight|Flee check|Parley check|Rest|Dungeon|Loot|Gold Gained|Nudge|Travel)\b/.test(r))
-        .join(' ');
+      ]);
       const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,
         engineResult: engineFact,
@@ -2905,6 +2906,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let writerRemaining: string[] = [];
       let writerProse: string | null = null;
       let writerSpeech: SpokenLine[] | undefined;
+      let writerBound: { refs?: TokenUseRef[]; refEnum?: LedgerRef[] } | undefined;
+      let harvestedPeople: string[] = [];
       drainWriterRawIssues();
       drainWriterUsage();
       try {
@@ -2981,6 +2984,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         result = { ...result, text: writerTurn.prose };
         writerProse = writerTurn.prose;
         writerSpeech = writerTurn.speech;
+        writerBound = {
+          refs: writerTurn.path === 'json' || writerTurn.path === 'json-partial' ? writerTurn.refs : undefined,
+          refEnum: writerPacket?.refEnum,
+        };
         if (
           (writerTurn.path === 'json' || writerTurn.path === 'json-partial')
           && writerTurn.refs?.length
@@ -3144,7 +3151,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       {
         const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput);
         cleanText = words.step('applyGovernanceToProse', cleanText, govProse.prose);
-        if (govProse.notes.length) warden.notes.push(...govProse.notes);
+        if (govProse.notes.length) warden.notes.push(...notesForCommittedBody(govProse.notes, cleanText === govProse.prose));
       }
       // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
       const blockedPaint = isBlockedPaint(warden.notes, liveCurrent, cleanText);
@@ -3744,7 +3751,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
         cleanText = words.step('scrubOfficialPlaceholder', cleanText, scrubOfficialPlaceholder(cleanText, workingState));
         cleanText = words.step('scrubInventedGeography', cleanText, scrubInventedGeography(cleanText, workingState));
-        workingState = harvestNarrativeIntoLedger(workingState, cleanText, nextTurn);
+        const harvested = harvestNarrativePeople(workingState, cleanText, nextTurn, writerBound);
+        workingState = harvested.state;
+        harvestedPeople = harvested.people;
         workingState = maybeRevealFromLocation(workingState, workingState.currentLocation);
         workingState = maybeAutoCloseDungeon(workingState);
       }
@@ -4133,6 +4142,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         talkTopics: hallTalkTopics(sanitizedInput),
         gmText: cleanText,
         speechLines: writerSpeech,
+        metNames: harvestedPeople,
       });
       workingState = {
         ...workingState,
@@ -4283,51 +4293,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                 arrival.hub.name
               );
               updatedQuests = applyBiomeSaneQuestSites(workingState, updatedQuests);
-              if (arrival.beat.contactName) {
-                const present = [...(workingState.sceneFacts?.present ?? [])];
-                if (!present.some((p) => p.toLowerCase() === arrival.beat.contactName!.toLowerCase())) {
-                  present.push(arrival.beat.contactName);
-                }
-                const baseFacts = workingState.sceneFacts ?? {
-                  props: [],
-                  present: [],
-                  crowd: 'unknown' as const,
-                  noise: 'unknown' as const,
-                  lastBeat: '',
-                  updatedTurn: nextTurn,
-                };
-                const openVignette = openVignetteFromHubBeat({
-                  hubId: arrival.hub.id,
-                  hubName: arrival.hub.name,
-                  beatId: arrival.beat.id,
-                  kind: arrival.beat.kind,
-                  contactName: arrival.beat.contactName,
-                  pressure: arrival.beat.pressure,
-                  turn: nextTurn,
-                  prev: baseFacts.openVignette,
-                });
-                workingState = {
-                  ...workingState,
-                  sceneFacts: {
-                    ...baseFacts,
-                    present,
-                    crowd: baseFacts.crowd === 'none' ? 'present' : (baseFacts.crowd ?? 'present'),
-                    ...(openVignette ? { openVignette } : {}),
-                  },
-                };
-                const presentNames2 = [
-                  ...present,
-                  ...(workingState.companions ?? []).map((c) => c.name).filter((n): n is string => Boolean(n)),
-                ];
-                factions = mutateFactionOnStance(factions, sanitizedInput, presentNames2);
-                worldLedger = { ...worldLedger, factionStandings: factions };
-              } else if (/^(social|vendor)$/i.test(arrival.beat.kind)) {
+              if (/^(social|vendor)$/i.test(arrival.beat.kind)) {
                 const baseFacts = workingState.sceneFacts;
                 const openVignette = openVignetteFromHubBeat({
                   hubId: arrival.hub.id,
                   hubName: arrival.hub.name,
                   beatId: arrival.beat.id,
                   kind: arrival.beat.kind,
+                  contactName: hubBeatContactIfPresent(
+                    [...(baseFacts?.present ?? []), ...presentNpcRecords(workingState).map((m) => m.npcName)],
+                    arrival.beat.contactName
+                  ),
                   pressure: arrival.beat.pressure,
                   turn: nextTurn,
                   prev: baseFacts?.openVignette,
@@ -4416,7 +4392,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const xpBefore = liveCurrent.character?.xp ?? 0;
         const gained = Math.max(0, (baseChar.xp ?? 0) - xpBefore);
         if (gained > 0) {
-          const leveled = applyCharacterXpGain({ ...baseChar, xp: xpBefore }, gained, liveCurrent.engineMode);
+          const leveled = applyCharacterXpGain({ ...baseChar, xp: xpBefore }, gained, liveCurrent.engineMode, liveCurrent.systemHousing);
           Object.assign(baseChar, leveled.character);
           if (leveled.notes.length) {
             mergedSystemLog = [...mergedSystemLog, ...leveled.notes];
@@ -4597,7 +4573,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       {
         const govCommit = applyGovernanceCommit(liveCurrent, mergedState, sanitizedInput);
         if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint) {
-          const leveled = applyCharacterXpGain(mergedState.character, govCommit.xpAward.amount);
+          const leveled = applyCharacterXpGain(mergedState.character, govCommit.xpAward.amount, undefined, mergedState.systemHousing);
           mergedState = {
             ...mergedState,
             ...govCommit.patches,

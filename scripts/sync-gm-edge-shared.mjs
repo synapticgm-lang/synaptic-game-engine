@@ -112,6 +112,7 @@ const FILES = [
   'suggestionValidation.ts',
   'searchContinuity.ts',
   'infoSheet.ts',
+  'engineResult.ts',
   'checkMath.ts',
 ];
 

@@ -5,7 +5,7 @@
  * A worn device prints only the sheet fields its housing turned on.
  */
 import { isDeniedPcName, isLockablePcName, sanitizePcName, UNNAMED_ADVENTURER } from './pcNameAuthority.ts';
-import { isPartOn, type SystemPartId } from './systemHousing.ts';
+import { isPartOn, writerFacts, type SystemPartId } from './systemHousing.ts';
 import type { GameState } from './types.ts';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -30,7 +30,7 @@ function lockedSystemName(state: GameState): string | null {
 }
 
 function pocketLine(state: GameState, withNotes: boolean): string {
-  const items = (state.inventory ?? [])
+  const items = writerFacts(state).pocket
     .map((i) => {
       const nm = i?.name?.trim();
       if (!nm) return '';
@@ -72,6 +72,7 @@ function buildLitrpgSystemWindow(state: GameState): { heading: string; lines: st
   } else {
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
+  if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
   return { heading: 'SYSTEM', lines };
 }
 
@@ -87,19 +88,77 @@ function ledgerReadsPrefix(housing: string | undefined): string {
 /** Ledger sheet in prose for a status read. The label follows the frozen housing. HP and MP stay off this line. A leftover pocket prints the pocket only. */
 export function ledgerSheetLine(state: GameState): string {
   const housing = state.systemHousing;
-  if (housing?.housing === 'leftover_pocket') {
-    const items = (state.inventory ?? []).map((i) => i?.name?.trim()).filter((nm): nm is string => !!nm);
-    return `Pocket: ${items.length ? items.join(', ') : 'empty'}.`;
-  }
+  if (housing?.housing === 'leftover_pocket') return `${pocketLine(state, false)}.`;
   const sheet = buildLitrpgSystemWindow(state);
   if (!sheet) return '';
-  const c = state.character;
   const quest = (state.quests ?? []).find((q) => q.status === 'active');
   const next = quest?.objectives?.find((o) => !o.completed)?.description;
   const parts = sheet.lines.filter((l) => !/^(?:HP|MP)\s/.test(l));
-  if (!housing || isPartOn(housing, 'experience')) parts.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
   if (quest?.name && (!housing || isPartOn(housing, 'quest_list'))) {
     parts.push(next ? `Quest: ${quest.name}, next: ${next}` : `Quest: ${quest.name}`);
   }
   return `${ledgerReadsPrefix(housing?.housing)} ${parts.join('; ')}.`;
+}
+
+function windowField(line: string): [string, string] {
+  const colon = line.indexOf(':');
+  if (colon > 0) return [line.slice(0, colon).trim(), line.slice(colon + 1).trim()];
+  const m = line.match(/^(\S+)\s+(.*)$/);
+  return m ? [m[1]!, m[2]!.trim()] : [line.trim(), ''];
+}
+
+function shortChange(was: string, now: string): [string, string] {
+  const a = was.match(/^(\d+)\s*\/\s*(\d+)$/);
+  const b = now.match(/^(\d+)\s*\/\s*(\d+)$/);
+  return a && b && a[2] === b[2] ? [a[1]!, b[1]!] : [was, now];
+}
+
+/** The window the player last saw: the newest GM entry that carries the painted plate. */
+function lastPaintedWindow(state: GameState): { heading: string; lines: string[] } | null {
+  const hit = [...(state.log ?? [])].reverse().find((e) => e?.role === 'gm' && e.systemWindow?.lines?.length);
+  return hit?.systemWindow ?? null;
+}
+
+/** What changed on the window since the last painted plate ("XP 0 → 75"). Null when there is no earlier plate. */
+export function ledgerReadChanges(state: GameState): string[] | null {
+  const now = buildLitrpgSystemWindow(state);
+  const before = now ? lastPaintedWindow(state) : null;
+  if (!now || !before) return null;
+  const was = new Map(before.lines.map(windowField));
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const line of now.lines) {
+    const [k, v] = windowField(line);
+    seen.add(k);
+    const old = was.get(k);
+    if (old === undefined) out.push(line);
+    else if (old !== v) {
+      const [a, b] = shortChange(old, v);
+      out.push(`${k} ${a} → ${b}`);
+    }
+  }
+  for (const k of was.keys()) if (!seen.has(k)) out.push(`${k} gone`);
+  return out;
+}
+
+/** The writer's fact for a ledger read: only the change, never the sheet. */
+export function ledgerChangeFact(changes: string[] | null | undefined): string {
+  if (!changes) return 'First read: the game shows the whole window; there is nothing earlier to compare.';
+  return changes.length ? `Changed since the last read: ${changes.join('; ')}.` : 'Nothing changed since the last read.';
+}
+
+/** A code-written ledger-read line for a stitch: what the player did, then only what changed. */
+export function ledgerReadStitch(housing: string | null | undefined, changes: string[] | null | undefined): string {
+  const did =
+    housing === 'worn_device' ? 'You read the worn device.'
+    : housing === 'private_window' ? 'You looked inward.'
+    : housing === 'world_status' ? 'You took stock of what the world knew of you.'
+    : housing === 'leftover_pocket' ? 'You reached into the pocket.'
+    : 'You read the System window.';
+  const what = !changes
+    ? 'It showed what it always showed.'
+    : changes.length
+      ? `Since the last read: ${changes.join('; ')}.`
+      : 'Nothing on it had changed since the last read.';
+  return `${did} ${what}`;
 }

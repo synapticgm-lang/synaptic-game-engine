@@ -28,6 +28,14 @@ function takesObjectiveHere(state: GameState, action: string): boolean {
   return clean(chip) === clean(action);
 }
 
+/** Would taking the quest objective here (the chip `chip`) open this place's interior? */
+export function objectiveOpensInterior(state: GameState, chip: string): boolean {
+  if (isDungeonCard(state.activeDungeon) || alreadyInSeededDungeon(state)) return false;
+  const place = state.locationSheet?.name || state.currentLocation || '';
+  if (INTERIOR_CUE.test(chip) || INTERIOR_CUE.test(place)) return true;
+  return !!place && placeAllowsDungeon(state, place);
+}
+
 export function alreadyInSeededDungeon(state: GameState): boolean {
   return isExplorableDungeon(state.activeDungeon);
 }

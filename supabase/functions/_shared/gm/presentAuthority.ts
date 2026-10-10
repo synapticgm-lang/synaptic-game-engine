@@ -9,6 +9,8 @@ import { isSystemWindowLabel } from './chromeAuthority.ts';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords.ts';
 import { ensurePlaceCard } from './outdoorHubs.ts';
 import { resolvePlace } from './places.ts';
+import { placeScale } from './placeAuthority.ts';
+import { engineTension } from './sceneFacts.ts';
 
 /** 29z9j — objects belong to the place: park the old place's props on its record, load the new place's. */
 function movePropsWithPlace(state: GameState, fromLocation: string, toLocation: string): GameState {
@@ -95,7 +97,25 @@ export function applyPresentTrimOnTravel(
     && dropped.every((p, i) => p === (state.sceneFacts?.leftBehind ?? [])[i]);
   const killSame = !clearCorpse || !state.sceneFacts?.lastKill;
   const pendingSame = !clearCorpse || !state.sceneFacts?.pendingEncounter;
-  if (presentSame && rolesSame && behindSame && killSame && pendingSame) {
+  // A move leaves the old place's noise, mood and beat behind; the new place's scale comes from the place.
+  const moodReset = sameLoc
+    ? null
+    : (() => {
+        const scale = placeScale({ ...state, currentLocation: toLocation });
+        return {
+          noise: 'unknown' as const,
+          tension: engineTension(state, 'unknown'),
+          lastBeat: '',
+          indoor: scale ? scale === 'indoor' : undefined,
+        };
+      })();
+  const moodSame =
+    !moodReset
+    || (state.sceneFacts?.noise === moodReset.noise
+      && state.sceneFacts?.tension === moodReset.tension
+      && !state.sceneFacts?.lastBeat
+      && state.sceneFacts?.indoor === moodReset.indoor);
+  if (presentSame && rolesSame && behindSame && killSame && pendingSame && moodSame) {
     return state;
   }
   const base = state.sceneFacts ?? {
@@ -113,6 +133,7 @@ export function applyPresentTrimOnTravel(
       present: trimmed,
       anonymousRoles: nextRoles,
       leftBehind: dropped,
+      ...(moodReset ?? {}),
       ...(clearCorpse
         ? {
             lastKill: undefined,

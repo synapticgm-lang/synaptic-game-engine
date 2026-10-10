@@ -81,7 +81,7 @@ describe('seed 95 — Check Status is a ledger read, not a panel in the room', (
     expect((packet.refEnum ?? []).some((r) => r.klass === 'window')).toBe(false);
     expect(packet.allowlist.map((n) => n.toLowerCase())).not.toContain('blue panel');
     const text = formatWriterFacingEvent(packet);
-    expect(text).toContain('Jax read the System window.');
+    expect(text).toContain('Jax read the System window; the game shows the window.');
     expect(shapeLine(text)).not.toMatch(/"use":"actor"|@t2/);
   });
 

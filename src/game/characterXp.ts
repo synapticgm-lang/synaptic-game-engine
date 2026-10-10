@@ -5,6 +5,7 @@
 
 import type { Character, EngineMode } from './types';
 import { dndXpToNext } from './xpRules';
+import { hidesPart, type SystemHousingConfig } from './systemHousing';
 
 export interface CharacterXpApplyResult {
   character: Character;
@@ -17,7 +18,9 @@ export function applyCharacterXpGain(
   character: Character,
   xpGain: number,
   /** 28a — 'dnd' uses the 5e thresholds (SRD 5.1); other modes keep the ×1.5 curve. */
-  mode?: EngineMode
+  mode?: EngineMode,
+  /** A housing with level off still levels the character, hidden: no level note. */
+  housing?: SystemHousingConfig | null
 ): CharacterXpApplyResult {
   if (!xpGain || xpGain <= 0) {
     return { character, levelsGained: 0, notes: [] };
@@ -50,6 +53,6 @@ export function applyCharacterXpGain(
       hp,
     },
     levelsGained,
-    notes,
+    notes: hidesPart(housing, 'level') ? [] : notes,
   };
 }

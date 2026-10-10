@@ -99,6 +99,9 @@ export function resolveOfferedChoices(state: GameState): string[] {
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
 
   const contextFiltered = filterInventedContextChoices(gmChoices, state);
+  const kept = new Set(contextFiltered.map((c) => c.trim().toLowerCase()));
+  const removed = new Set(gmChoices.map((c) => c.trim().toLowerCase()).filter((c) => !kept.has(c)));
+  const final = (chips: string[]) => liveChips(state, chips, storyProse).filter((c) => !removed.has(c.trim().toLowerCase()));
   const compiled = compileChoices(
     state,
     contextFiltered,
@@ -107,15 +110,13 @@ export function resolveOfferedChoices(state: GameState): string[] {
   );
   const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
-  const legal = liveChips(state, deduped, storyProse);
+  const legal = final(deduped);
   if (legal.length >= 3) return legal.slice(0, 4);
-  const padded = liveChips(
-    state,
-    padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c)),
-    storyProse
+  const padded = final(
+    padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
   );
   if (padded.length) return padded;
-  return liveChips(state, ['Look around', 'Wait and listen'], storyProse);
+  return final(['Look around', 'Wait and listen']);
 }
 
 /** Attach post-pipeline labels the player will see after this GM beat. */

@@ -59,7 +59,7 @@ import {
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
-import { markPendingSpawnPreface } from './combatAuthority';
+import { autoFightSpawnPreface, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
 import { commitTravel, isJourneyUnderway } from './travelJourney';
@@ -301,7 +301,7 @@ function advancePendingArrival(
     const waiting = pendingThreatHere(state);
     if (!waiting) return none;
     const next = parkForArrival(state, waiting.encounter);
-    const telegraph = telegraphForPendingSpawn((waiting.encounter as { threatTier?: string }).threatTier, next);
+    const telegraph = telegraphForPendingSpawn(waiting.encounter, next);
     return {
       state: telegraph ? { ...next, arcDirector: { ...next.arcDirector, pendingTelegraph: telegraph } } : next,
       receipts: [`Threat building: ${waiting.encounter.name}`],
@@ -320,7 +320,12 @@ function advancePendingArrival(
     arcDirector: { ...state.arcDirector, pendingTelegraph: undefined },
   };
   next = pushCombatStateTx(next, `Encounter started: ${live.name}`, live.name, 'Arrival clock ran out');
-  return { state: next, receipts: [`Encounter: ${live.name}`], mandates: [`Encounter: ${live.name}`] };
+  const arrival = autoFightSpawnPreface(
+    live.name,
+    next.currentLocation,
+    isJourneyUnderway(next) ? next.journey?.ground : undefined
+  );
+  return { state: next, receipts: [`Encounter: ${live.name}`, arrival], mandates: [`Encounter: ${live.name}`] };
 }
 
 export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
@@ -640,7 +645,7 @@ function applyBeatEffects(
       next = parkForArrival(next, preview);
       extras.threatName = preview.name;
       receipts.push(`Threat building: ${preview.name}`);
-      telegraph = telegraphForPendingSpawn((preview as { threatTier?: string }).threatTier, next) ?? undefined;
+      telegraph = telegraphForPendingSpawn(preview, next) ?? undefined;
 
       // Update density state after spawn
       const role = preview.threatTier === 'boss' ? 'boss' : preview.threatTier === 'elite' ? 'elite' : 'trash';

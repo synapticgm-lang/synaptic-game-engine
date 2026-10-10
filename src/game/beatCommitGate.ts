@@ -461,6 +461,17 @@ export function scrubDirectorChrome(text: string): { prose: string; scrubbed: bo
   return { prose, scrubbed: prose !== text.trim() };
 }
 
+const BODY_SWAP_NOTE =
+  /^(?:Commit gate: (?:last-resort body|packet stitch|replaced stall\/stitch-bank stub|stripped recycled prefix)|Director\/stitch chrome — coded scene move)$/;
+
+/**
+ * Governance notes that describe replacing the beat's body. When the writer-words guard keeps the
+ * writer's draft, no swap happened and these notes are dropped; the reject reason stays.
+ */
+export function notesForCommittedBody(notes: readonly string[], bodySwapped: boolean): string[] {
+  return bodySwapped ? [...notes] : notes.filter((n) => !BODY_SWAP_NOTE.test(n));
+}
+
 export function repairRejectedBeat(
   state: GameState,
   prose: string,

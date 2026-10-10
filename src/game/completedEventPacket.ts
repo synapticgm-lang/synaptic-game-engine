@@ -11,6 +11,7 @@ import { cleanPlaceLabel, playerFacingLocation, underwayHereLabel } from './loca
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { formatInfoSheet } from './infoSheet';
+import { splitProseSentences } from './proseSentences';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
@@ -26,11 +27,12 @@ import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLi
 import { hereSpotFact } from './hereSpot';
 import { gateFactLines } from './skillGates';
 import { sealedCastNames } from './beatContract';
-import { ledgerSheetLine } from './litrpgSystemWindow';
+import { ledgerChangeFact, ledgerReadChanges, ledgerReadStitch, ledgerSheetLine } from './litrpgSystemWindow';
 import {
   applyOpeningHousingLine,
   formatSystemBlock,
   housingFromSystemBlock,
+  hidesPart,
   systemHousingWriterClause,
   writerFacts,
   type SystemHousingId,
@@ -161,7 +163,11 @@ export interface CompletedEventPacket {
   tokenRefs?: TokenUseRef[];
   /** 27a — ledger place facts for stitch banks. */
   placeDescriptor?: string;
-  ledgerSheet?: string;
+  /**
+   * On a ledger read: what changed on the window since the last painted plate (null when there is no
+   * earlier plate). The code-painted plate is the window; the writer never gets the sheet.
+   */
+  ledgerChanges?: string[] | null;
   /** Frozen LitRPG system housing, as one plain paragraph of the parts that are on. */
   systemBlock?: string;
   /** The player read the System window (Inspect the panel / Check Status): a ledger read, not an act in the room. */
@@ -186,14 +192,14 @@ function writerHousingClause(block?: string): string {
   return systemHousingWriterClause(housingFromSystemBlock(block));
 }
 
-/** What the player did on a ledger read, named for the frozen housing. */
+/** What the player did on a ledger read, named for the frozen housing. The game paints the window itself. */
 function ledgerReadEventLine(who: string, him: string, housing: SystemHousingId | null): string {
   switch (housing) {
-    case 'worn_device': return `${who} read the worn device.`;
-    case 'private_window': return `${who} looked inward.`;
-    case 'world_status': return `${who} took stock of what the world knows of ${him}.`;
-    case 'leftover_pocket': return `${who} reached into the pocket.`;
-    default: return `${who} read the System window.`;
+    case 'worn_device': return `${who} read the worn device; the game shows the device.`;
+    case 'private_window': return `${who} looked inward; the game shows the window.`;
+    case 'world_status': return `${who} took stock of what the world knows of ${him}; the game shows what is known.`;
+    case 'leftover_pocket': return `${who} reached into the pocket; the game shows the pocket.`;
+    default: return `${who} read the System window; the game shows the window.`;
   }
 }
 
@@ -696,9 +702,8 @@ function resolveOutcome(
   if (verb === 'inspected') return 'inspected';
   if (verb === 'used') return 'used';
   if (verb === 'waited') return 'waited';
-  if (state.sceneFacts?.pendingEncounter || (state.arcDirector?.activeBeatId && /skirmish|combat|hostility/i.test(state.arcDirector.activeBeatId))) {
-    if (!enc && !justKilled) return 'spawned';
-  }
+  // A foe is 'spawned' only on the turn it goes live; a pending foe is still building and the outcome is the player's own.
+  if (enc && !justKilled && enc.startedTurn === state.turn) return 'spawned';
   return 'unchanged';
 }
 
@@ -708,6 +713,13 @@ function rhythmBeats(state: GameState): string[] {
     .filter((e: LogEntry) => e.role === 'gm')
     .slice(-WRITER_RHYTHM_WINDOW)
     .map((e) => String(e.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP));
+}
+
+/** The first sentence of each committed beat, as recorded fact for the writer. */
+export function recordedBeatOpeners(beats: readonly string[]): string[] {
+  return beats
+    .map((b) => (splitProseSentences(String(b ?? '').replace(/\s+/g, ' ').trim())[0] ?? '').trim())
+    .filter(Boolean);
 }
 
 export type LoiterStreakFamily = 'inspect' | 'wait' | null;
@@ -813,8 +825,7 @@ export function buildCompletedEventPacket(
     const cast = openingCastLabel(state);
     if (cast) allowExtras.push(cast);
   }
-  const ledgerSheet = ledgerSheetLine(state) || undefined;
-  const ledgerRead = !!ledgerSheet && isLedgerReadAction(action);
+  const ledgerRead = !!ledgerSheetLine(state) && isLedgerReadAction(action);
   // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
   // an actor, a prop or a thing that answers.
   const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk })
@@ -828,9 +839,10 @@ export function buildCompletedEventPacket(
     : undefined;
   const enc = state.activeEncounter;
   const hp = liveEncounterHp(state);
-  const xp =
-    extras?.xp
-    ?? (justKilled || outcome === 'killed' ? 25 : 0);
+  // A housing with experience off grows XP hidden: the writer gets no XP fact.
+  const xp = hidesPart(state.systemHousing, 'experience')
+    ? 0
+    : extras?.xp ?? (justKilled || outcome === 'killed' ? 25 : 0);
   const streaks = nextLoiterStreaks(state, playerInput);
   const focusNoun = ledgerFocusNoun(state);
   const placeFacts = ledgerPlaceFacts(state);
@@ -857,7 +869,7 @@ export function buildCompletedEventPacket(
     lastKill: justKilled || (kill?.remains && kill.outcome === 'victory') ? kill : undefined,
     justKilled,
     combatLive: !!enc && !justKilled,
-    mood: state.sceneFacts?.tension,
+    mood: state.sceneFacts?.tension && state.sceneFacts.tension !== 'unknown' ? state.sceneFacts.tension : undefined,
     phase: justKilled ? 'cleared' : enc?.phase ? enc.phase : state.sceneFacts?.pendingEncounter ? 'pending' : 'idle',
     allowlist,
     refEnum,
@@ -886,7 +898,7 @@ export function buildCompletedEventPacket(
     engineMode: state.engineMode,
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
-    ledgerSheet,
+    ledgerChanges: ledgerRead ? ledgerReadChanges(state) : undefined,
     systemBlock: state.systemHousing ? formatSystemBlock(state.systemHousing) : undefined,
     ledgerRead: ledgerRead || undefined,
     engineResult: extras?.engineResult?.trim() || undefined,
@@ -1064,8 +1076,9 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
             : `${cleared.name} went down and stayed down. The fight was over.`;
     if (fresh(fightLine)) return fightLine;
   }
-  const sheet = /\bpanel\b|\bcheck status\b/i.test(act) ? ledgerSheetLine(state) : '';
-  if (sheet) return sheet;
+  if (isLedgerReadAction(act) && ledgerSheetLine(state)) {
+    return ledgerReadStitch(state.systemHousing?.housing, ledgerReadChanges(state));
+  }
   if (/\b(?:talk|speak|ask|press|offer|refuse|tell|persuade)\b/i.test(act)) {
     const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
     if (fresh(talk) && !/^Nobody here answered/i.test(talk)) return talk;
@@ -1142,7 +1155,7 @@ export function formatWriterFacingEvent(
   const pov = pcPov(packet.pc, opts?.perspective);
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
-  const panelRead = packet.ledgerRead ?? (!!packet.ledgerSheet && isLedgerReadAction(packet.playerAction));
+  const panelRead = !!packet.ledgerRead;
   const lines: string[] = [
     thirdPerson
       ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
@@ -1150,7 +1163,7 @@ export function formatWriterFacingEvent(
     '',
     'COMPLETED EVENT:',
     panelRead ? ledgerReadEventLine(who, pov.him, housingFromSystemBlock(packet.systemBlock)) : `${who} ${packet.verb}${target}.`,
-    `Outcome: ${panelRead ? 'read the ledger lines below' : packet.outcome}.`,
+    `Outcome: ${panelRead ? 'read the change below' : packet.outcome}.`,
   ];
   if (packet.engineResult) {
     lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
@@ -1158,9 +1171,9 @@ export function formatWriterFacingEvent(
   if (panelRead) {
     const readHousing = housingFromSystemBlock(packet.systemBlock);
     const readShows = readHousing === 'world_status'
-      ? 'Nothing shows these facts; they are simply known, never speech or story'
-      : 'It shows only these ledger lines, never speech or story';
-    lines.push(`${ledgerReadLabel(readHousing)} (game chrome: ${writerHousingClause(packet.systemBlock)} ${readShows}): ${packet.ledgerSheet}`);
+      ? 'Nothing shows these facts; they are simply known. Only the change is given, never the sheet, speech or story'
+      : 'The game paints it; only the change is given, never the sheet, speech or story';
+    lines.push(`${ledgerReadLabel(readHousing)} (game chrome: ${writerHousingClause(packet.systemBlock)} ${readShows}): ${ledgerChangeFact(packet.ledgerChanges)}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));
   if (packet.systemBlock) lines.push(packet.systemBlock);
@@ -1218,7 +1231,7 @@ export function formatWriterFacingEvent(
   const actorTok = panelRead ? undefined : personRef?.tok;
   const housingClause = writerHousingClause(packet.systemBlock);
   const answerLine = panelRead
-    ? `{"fn":"react","text":"<sentence: another ledger line above that mattered now, as plain words — ${housingClause}>"}`
+    ? `{"fn":"react","text":"<sentence: what that change meant to ${who} now, as plain words — ${housingClause}>"}`
     : talkedTo && actorTok
       ? `{"fn":"speech","speaker_tok":"${actorTok}","text":"<only the words @${actorTok} says now, no quote marks and no said-tag (code adds both) — not a report of what they said>"}`
       : `{"fn":"react","text":"<sentence: how ${actorTok ? `@${actorTok} or ` : ''}the room answered>"}`;
@@ -1228,7 +1241,7 @@ export function formatWriterFacingEvent(
     ...(dest && dest.tok !== placeTok ? [`{"tok":"${dest.tok}","use":"place"}`] : []),
   ].join(',');
   const didWhat = panelRead
-    ? `what the ledger lines told ${who} — ${housingClause}`
+    ? `what changed since ${who} last looked — ${housingClause}`
     : dest
       ? `${whatDid}, naming @${dest.tok} as where ${who} was headed`
       : whatDid;
@@ -1258,6 +1271,11 @@ export function formatWriterFacingEvent(
   lines.push('');
   if (packet.infoSheet) {
     lines.push(packet.infoSheet);
+    const openers = recordedBeatOpeners(packet.recentBeats ?? []);
+    if (openers.length) {
+      lines.push('ALREADY ON THE PAGE (opening sentence of each of the last two GM beats):');
+      lines.push(...openers.map((s) => `- ${s}`));
+    }
     const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
     if (loiter) lines.push(`GM: ${loiter}`);
   } else if (writerBeats.length) {
@@ -2378,7 +2396,9 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
       })
     );
   }
-  if (asksPanel && packet.ledgerSheet) bits.push(packet.ledgerSheet);
+  if (asksPanel && packet.ledgerRead) {
+    bits.push(ledgerReadStitch(housingFromSystemBlock(packet.systemBlock), packet.ledgerChanges));
+  }
   if (asksWant) {
     bits.push(
       want

@@ -141,6 +141,14 @@ export function isPartOn(config: SystemHousingConfig | null | undefined, part: S
   return clampSystemHousing(config).parts[part];
 }
 
+/**
+ * A housing with this part off: the engine still grows it, hidden, and prints nothing for it.
+ * No housing (tabletop, story RPG, older saves) hides nothing.
+ */
+export function hidesPart(config: SystemHousingConfig | null | undefined, part: SystemPartId): boolean {
+  return !!config && isSystemHousingId(config.housing) && !isPartOn(config, part);
+}
+
 /** A housing with no quest list: the System prints no quest list. The quests still exist. */
 export function questListHidden(config: SystemHousingConfig | null | undefined): boolean {
   return !!config && isSystemHousingId(config.housing) && !isPartOn(config, 'quest_list');

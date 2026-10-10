@@ -9,6 +9,7 @@ import type { ActiveDungeonState, MapNode, SkillGate } from './mapEngine';
 import { isDoorLockedFor } from './mapEngine';
 import { currentDungeonNode, lootableLockedFor } from './dungeonSeed';
 import { CHECK_SKILLS, skillRankOf, skillRanksOf, type CheckSkillName } from './skillRanks';
+import { hidesPart } from './systemHousing';
 
 const SKILL_LABEL: Record<CheckSkillName, string> = {
   athletics: 'Athletics',
@@ -175,7 +176,8 @@ export function grantLevelSkills(state: GameState, levelBefore: number): { state
     if (opened.length) receipts.push(`Now within reach: the ${opened.map((g) => g.label).join(', the ')}.`);
   }
   next = { ...next, character: { ...next.character, skillsGrantedThrough: level } };
-  return { state: next, receipts };
+  // A housing with skills off still grants the ranks, hidden: no rank receipt.
+  return { state: next, receipts: hidesPart(state.systemHousing, 'skills') ? [] : receipts };
 }
 
 /** What the player can do: every skill rank plus every lock in reach that would open. */

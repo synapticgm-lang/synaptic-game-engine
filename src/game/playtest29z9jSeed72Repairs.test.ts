@@ -135,14 +135,15 @@ describe('29z9j seed 72 — a short turn-back is the same scene', () => {
 });
 
 describe('29z9j seed 72 — the panel shows ledger lines', () => {
-  it('Check Status hands the writer what the panel reads', () => {
+  it('Check Status hands the writer the window read, not the sheet', () => {
     const allParts = Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, true])) as Record<SystemPartId, boolean>;
     const s = base({
       character: { ...base().character!, name: 'Jax' },
       systemHousing: clampSystemHousing({ housing: 'private_window', parts: allParts }),
     });
     const writer = formatWriterFacingEvent(buildCompletedEventPacket(s, 'Check Status'));
-    expect(writer).toMatch(/WINDOW \(game chrome[^)]*\): The window reads: Name: Jax; Level/);
+    expect(writer).toMatch(/WINDOW \(game chrome[^)]*\): (?:First read|Changed since the last read|Nothing changed)/);
+    expect(writer).not.toMatch(/Name: Jax; Level/);
     expect(formatWriterFacingEvent(buildCompletedEventPacket(s, 'Look around'))).not.toContain('WINDOW (');
   });
 });
