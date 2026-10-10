@@ -160,7 +160,7 @@ function canWalkAway(state: GameState, storyProse: string): boolean {
 }
 
 /** With nobody named here and nothing on offer, there is nobody to help or refuse: those stances return ''. */
-function stanceFallbacks(state: GameState): Record<Exclude<StanceBucket, 'lookaround' | 'combat' | 'other'>, string> {
+export function stanceFallbacks(state: GameState): Record<Exclude<StanceBucket, 'lookaround' | 'combat' | 'other'>, string> {
   const person = namedPeople(state)[0];
   const offered = !!openOpeningOffer(state);
   const exit = state.locationSheet?.exits?.[0]?.label;

@@ -9,7 +9,7 @@ import {
 import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
 import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';
-import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn } from './stanceDensity';
+import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn, stanceFallbacks } from './stanceDensity';
 import { outdoorHubTravelChoices } from './outdoorHubs';
 import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
 import { settlementQuestCardChoices } from './settlementQuestCards';
@@ -791,7 +791,8 @@ export function sceneSafeFallbacks(
         || (state.npcMemories ?? []).some((m) => (state.turn - (m.lastSeenTurn ?? 0)) <= 4))
     ) {
       options.push('Ask what is going on');
-      options.push('Refuse and keep your own counsel');
+      const refuse = stanceFallbacks(state).hard;
+      if (refuse) options.push(refuse);
     }
     if ((state.locationSheet?.exits ?? []).length > 0 || !state.activeDungeon) {
       options.push(alone ? 'Find a way out' : 'Walk away / go another direction');

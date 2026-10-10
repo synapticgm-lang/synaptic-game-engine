@@ -6,7 +6,7 @@
 import type { GameState } from './types';
 import type { SpokenLine } from './tokenProse';
 import { contractsForState } from './beatContract';
-import { openingCastNames } from './openingEstablishment';
+import { hallTalkAsksWant, openingCastNames, playerAskedWhyPulled } from './openingEstablishment';
 import { peopleHere } from './chipLegality';
 
 /** True when a beat contract marks this quest objective as heard from a giver. */
@@ -39,4 +39,14 @@ export function giverIsHere(state: GameState, giver: string): boolean {
 
 export function giverSpoke(speech: readonly SpokenLine[] | undefined, giver: string): boolean {
   return (speech ?? []).some((l) => !!l.words?.trim() && isGiverName(l.speaker, giver));
+}
+
+const said = (s: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/** The player's line is about the stage: it asks for or demands the reason, or it is the step's own chip. */
+export function playerAsksForTalkStage(playerInput: string, stepChip?: string | null): boolean {
+  const line = said(playerInput);
+  if (!line) return false;
+  if (stepChip && line === said(stepChip)) return true;
+  return playerAskedWhyPulled(playerInput) || hallTalkAsksWant(playerInput);
 }

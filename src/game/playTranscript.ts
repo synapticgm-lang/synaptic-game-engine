@@ -68,8 +68,19 @@ function lastPlayerActionFromLog(state: GameState): string {
   return '';
 }
 
+/** The pad stored at commit for this turn, verbatim; null when this turn has none (opening, old save). */
+function storedTurnPad(state: GameState): string[] | null {
+  const pad = state.offeredPad;
+  if (!pad || pad.turn !== (state.turn ?? 0) || !Array.isArray(pad.choices) || !pad.choices.length) return null;
+  return [...pad.choices];
+}
+
 export function resolveOfferedChoices(state: GameState): string[] {
   if (state.playPhase === 'ended') return [];
+  return storedTurnPad(state) ?? compileOfferedChoices(state);
+}
+
+function compileOfferedChoices(state: GameState): string[] {
   const lastPlayer = lastPlayerActionFromLog(state);
   const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
   const autoNamedOpeningPad =
@@ -124,6 +135,21 @@ export function withOfferedChoices(entry: LogEntry, stateForPad: GameState): Log
   const offered = resolveOfferedChoices(stateForPad);
   if (!offered.length) return entry;
   return { ...entry, offeredChoices: offered };
+}
+
+/**
+ * Compile this turn's chips once, on the final committed state (after governance and every patch).
+ * The turn's GM entry, `choices` and `offeredPad` all carry that one list.
+ */
+export function commitOfferedPad(state: GameState, gmEntryId?: string): GameState {
+  const offered = state.playPhase === 'ended' ? [] : compileOfferedChoices(state);
+  if (!offered.length) return { ...state, offeredPad: null };
+  const log = [...(state.log ?? [])];
+  const byId = gmEntryId ? log.findIndex((e) => e?.role === 'gm' && e.id === gmEntryId) : -1;
+  let at = byId;
+  for (let i = log.length - 1; at < 0 && i >= 0; i--) if (log[i]?.role === 'gm') at = i;
+  if (at >= 0) log[at] = { ...log[at]!, offeredChoices: offered };
+  return { ...state, log, choices: offered, offeredPad: { turn: state.turn ?? 0, choices: offered } };
 }
 
 function slugFilenamePart(raw: string): string {

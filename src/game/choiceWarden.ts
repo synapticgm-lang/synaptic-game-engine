@@ -12,6 +12,7 @@ import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } f
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
 import { spineEngineChipLabels } from './pyoaSpine';
+import { journeyPads } from './travelJourney';
 
 /**
  * References that require story context to exist.
@@ -156,16 +157,20 @@ export function filterInventedContextChoices(
   const scenePropsCorpus = [
     ...(state.sceneFacts?.props ?? []),
     ...(state.locationSheet?.interactables ?? []).map((i) => i.name),
+    state.activeEncounter?.name ?? '',
+    ...(state.sceneFacts?.present ?? []),
   ]
     .filter(Boolean)
     .join(' ');
 
   const pcName = state.character?.name;
   const lastPlayer = lastPlayerAction(state);
-  const spineChips = new Set(spineEngineChipLabels(state).map((l) => l.toLowerCase()));
+  const engineChips = new Set(
+    [...spineEngineChipLabels(state), ...journeyPads(state)].map((l) => l.trim().toLowerCase())
+  );
 
   return choices.filter((choice) => {
-    if (spineChips.has(choice.trim().toLowerCase())) return true;
+    if (engineChips.has(choice.trim().toLowerCase())) return true;
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
       return false;

@@ -492,6 +492,8 @@ export interface GameState {
   seed: string;
   pendingImagePrompt?: string[] | null;
   choices?: string[];
+  /** The chips compiled once at commit for `turn`; the log, the ActionBar and Fate read this one list. */
+  offeredPad?: { turn: number; choices: string[] } | null;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];

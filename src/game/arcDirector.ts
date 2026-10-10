@@ -19,7 +19,7 @@ import {
 import { buildBeatContractFromTemplate, getBeatTemplate } from './beatRegistry';
 import { FAST_XP_AWARDS } from './xpPolicy';
 import { updateChoiceFingerprints } from './choiceCompiler';
-import { isSeekFightChip } from './choiceRanking';
+import { isSeekFightChip, objectiveChip } from './choiceRanking';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
 import { tickPressureClock, type PressureClockState } from './pressureClock';
 import {
@@ -74,7 +74,7 @@ import {
   playerGivesOrRefusesName,
 } from './openingEstablishment';
 import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
-import { giverIsHere, giverSpoke, talkStageGiver } from './questGiver';
+import { giverIsHere, giverSpoke, playerAsksForTalkStage, talkStageGiver } from './questGiver';
 import type { SpokenLine } from './tokenProse';
 import { selectEligibleCrisis } from './socialCrisis';
 import type { SocialCrisis } from './socialCrisisTypes';
@@ -1195,13 +1195,15 @@ export function buildArcDirectorSnapshotLines(state: GameState): string[] {
 }
 
 /**
- * s74 M — after the writer: a talk stage completes once, only when its giver is here and one of the turn's
- * committed speech lines is the giver's. Quest XP then pays on the objective diff (sandboxXp), as for any step.
+ * s74 M — after the writer: a talk stage completes once, only when the player's line was about the stage,
+ * its giver is here, and one of the turn's committed speech lines is the giver's. Quest XP then pays on the
+ * objective diff (sandboxXp), as for any step.
  */
 export function commitTalkStageAfterTurn(
   state: GameState,
   speech: readonly SpokenLine[] | undefined,
-  turn: number
+  turn: number,
+  playerInput: string
 ): { state: GameState; receipts: string[] } {
   const committed = committedSet(state);
   for (const contract of contractsForState(state)) {
@@ -1209,6 +1211,7 @@ export function commitTalkStageAfterTurn(
     const idx = contract.questObjectiveIndex;
     const quest = (state.quests ?? []).find((q) => q.id === contract.questId);
     if (!quest || idx == null || quest.objectives?.[idx]?.completed !== false) continue;
+    if (!playerAsksForTalkStage(playerInput, objectiveChip(quest.objectives[idx]!.description))) continue;
     const giver = talkStageGiver(state, quest.id, idx);
     if (!giver || !giverIsHere(state, giver) || !giverSpoke(speech, giver)) continue;
     const summary = `${quest.name}: ${contract.summary}`;

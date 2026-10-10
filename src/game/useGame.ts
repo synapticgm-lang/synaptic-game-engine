@@ -14,7 +14,7 @@ import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
-import { downloadPlayDump, withOfferedChoices } from './playTranscript';
+import { commitOfferedPad, downloadPlayDump, withOfferedChoices } from './playTranscript';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
@@ -3865,7 +3865,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             runManifest: liveCurrent.runManifest ?? workingState.runManifest,
           },
           writerSpeech,
-          nextTurn
+          nextTurn,
+          sanitizedInput
         );
         if (heard.receipts.length) {
           updatedQuests = heard.state.quests ?? updatedQuests;
@@ -4631,6 +4632,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
       if (circlingRecorded) mergedState = creditCommittedProgress(circlingRecorded, mergedState, sanitizedInput);
+      mergedState = commitOfferedPad({ ...mergedState, choices: heardChoices }, gmEntry.id);
       mergedState = recordReplayHash(mergedState);
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();

@@ -47,7 +47,8 @@ describe('playtest28a — ArcDirector + pacing', () => {
     const heard = commitTalkStageAfterTurn(
       arc.state,
       [{ speakerId: 'role:handler', speaker: 'the handler', words: 'The rite was meant for someone else.' }],
-      7
+      7,
+      'Ask who summoned me and why'
     );
     const q = heard.state.quests?.find((x) => x.id === 'sp-quest-1');
     expect(q?.objectives?.[1]?.completed).toBe(true);

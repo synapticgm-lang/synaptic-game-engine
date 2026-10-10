@@ -213,7 +213,7 @@ import {
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
-import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedPad, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import { dropAbsentListenerChips } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
@@ -1714,7 +1714,8 @@ Do NOT print dice notation or CODE ENFORCED.
     const heard = commitTalkStageAfterTurn(
       { ...working, quests: updatedQuests, arcDirector: arcState.arcDirector, runManifest: arcState.runManifest },
       writerTurn?.speech,
-      nextTurn
+      nextTurn,
+      playerInput
     );
     if (heard.receipts.length) {
       updatedQuests = heard.state.quests ?? updatedQuests;
@@ -2003,6 +2004,7 @@ Do NOT print dice notation or CODE ENFORCED.
       governed = { ...governed, log };
     }
   }
+  governed = commitOfferedPad({ ...governed, choices: finalChoices }, gm.id);
   governed = recordReplayHash(governed);
 
   const responsePath = classifyResponsePath({

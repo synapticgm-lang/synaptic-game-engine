@@ -13,6 +13,9 @@ import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMa
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import type { SpokenLine } from './tokenProse';
 import type { GameState, NpcMemory, Quest } from './types';
+import { buildNewGameState, stampOpening } from './fateAutoplay';
+import { isReasonedXpLine, reconcileXpStatusLines } from './systemLog';
+import { clampSystemHousing, type SystemPartId } from './systemHousing';
 
 const PICK = 'Hear their reason (or demand it)';
 const FESTIVAL = 'Valespire peace-festival square';
@@ -77,6 +80,7 @@ function jax(at: string, present: string[]): GameState {
       answers: { ...(s.openingEstablishment?.answers ?? {}), name: 'Jax', where: FESTIVAL },
     } as GameState['openingEstablishment'],
     sceneFacts: { ...s.sceneFacts!, crowd: 'present', present },
+    systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }),
   } as GameState;
 }
 
@@ -104,7 +108,7 @@ describe('s74 M — talk stage needs its giver', () => {
     const nellSpoke: SpokenLine[] = [
       { speakerId: 'extra:nell-rudd', speaker: 'Nell Rudd', words: 'The church stopped paying our bread. That is my reason.' },
     ];
-    const after = commitTalkStageAfterTurn(arc.state, nellSpoke, 19);
+    const after = commitTalkStageAfterTurn(arc.state, nellSpoke, 19, PICK);
 
     expect(after.receipts).toEqual([]);
     expect(after.state.quests![0]!.objectives![1]!.completed).toBe(false);
@@ -124,7 +128,7 @@ describe('s74 M — talk stage needs its giver', () => {
     const handlerSpoke: SpokenLine[] = [
       { speakerId: 'role:handler', speaker: 'the handler', words: 'We called for a named savior and the rite caught you instead.' },
     ];
-    const heard = commitTalkStageAfterTurn(arc.state, handlerSpoke, 19);
+    const heard = commitTalkStageAfterTurn(arc.state, handlerSpoke, 19, PICK);
     expect(heard.receipts).toEqual(['Quest: The Summons’ Price: reason heard (stage 2)']);
     expect(heard.state.quests![0]!.objectives![1]!.completed).toBe(true);
     expect(stageTx(heard.state)).toHaveLength(1);
@@ -134,7 +138,7 @@ describe('s74 M — talk stage needs its giver', () => {
     expect(questStepNotes(xp.notes)).toHaveLength(1);
     expect(questStepNotes(xp.notes)[0]).toMatch(/^XP Gained: 50 \(quest step: Hear their reason/);
 
-    const again = commitTalkStageAfterTurn({ ...heard.state, turn: 19 }, handlerSpoke, 20);
+    const again = commitTalkStageAfterTurn({ ...heard.state, turn: 19 }, handlerSpoke, 20, PICK);
     expect(again.receipts).toEqual([]);
     expect(stageTx(again.state)).toHaveLength(1);
   });
@@ -142,13 +146,119 @@ describe('s74 M — talk stage needs its giver', () => {
   it('player words alone never complete it, even with the handler here', () => {
     const state = jax(FESTIVAL, []);
     const arc = runArcDirectorBeforeGm(state, PICK);
-    const after = commitTalkStageAfterTurn(arc.state, [], 19);
+    const after = commitTalkStageAfterTurn(arc.state, [], 19, PICK);
     expect(after.state.quests![0]!.objectives![1]!.completed).toBe(false);
     expect(stageTx(after.state)).toEqual([]);
   });
 
   it('the hear-reason chip shows once the handler is here', () => {
     expect(storyChip(jax('Cathedral Close', ['Nell Rudd', 'the handler']))).toBe(PICK);
+  });
+});
+
+describe('s79 Root B — a talk stage pays only when the turn is about it', () => {
+  const housed = (s: GameState): GameState => ({
+    ...s,
+    systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }),
+  });
+  /** Seed 79 at T5: bearings done at the ledger stair, Ila Pellane here, the reason not yet heard. */
+  function seed79Stage(): { state: GameState; questId: string; idx: number } {
+    const { state: built } = buildNewGameState({ bibleId: 'summoned-pact', characterName: 'Jax', seed: 79, personality: 'cold-system' });
+    const s = housed(stampOpening(built));
+    const q = (s.quests ?? []).find((x) => (x.objectives ?? []).some((o) => /Hear their reason/.test(o.description)))!;
+    const idx = q.objectives!.findIndex((o) => /Hear their reason/.test(o.description));
+    const quests = (s.quests ?? []).map((x) =>
+      x.id !== q.id
+        ? x
+        : { ...x, revealed: true, status: 'active' as const, objectives: x.objectives!.map((o, i) => (i < idx ? { ...o, completed: true } : o)) }
+    );
+    return {
+      state: { ...s, turn: 5, quests, arcDirector: { ...(s.arcDirector ?? {}), committedBeatIds: ['sp-beat-orient'] } },
+      questId: q.id,
+      idx,
+    };
+  }
+  const ila = (words: string): SpokenLine[] => [{ speakerId: 'cast:ila-pellane', speaker: 'Ila Pellane', words }];
+  const done = (s: GameState, id: string, idx: number) => s.quests!.find((x) => x.id === id)!.objectives![idx]!.completed;
+
+  it('"Turn back toward the ledger stair" with Ila saying "You came back." completes nothing, no receipt, no XP', () => {
+    const { state, questId, idx } = seed79Stage();
+    const input = 'Turn back toward the ledger stair';
+    const arc = runArcDirectorBeforeGm(state, input);
+    const after = commitTalkStageAfterTurn(arc.state, ila('You came back.'), 6, input);
+    expect(after.receipts).toEqual([]);
+    expect(done(after.state, questId, idx)).toBe(false);
+    expect(stageTx(after.state)).toEqual([]);
+    const xp = applySandboxXpAwards(after.state, {
+      playerAction: input,
+      locationName: after.state.currentLocation,
+      previousLocationName: state.currentLocation,
+      questsBefore: state.quests ?? [],
+      questsAfter: after.state.quests ?? [],
+      events: [],
+      turn: 6,
+    });
+    expect(questStepNotes(xp.notes)).toEqual([]);
+  });
+
+  it('"Ask what they want" with Ila giving the card\'s want completes the stage once, and its XP line prints', () => {
+    const { state, questId, idx } = seed79Stage();
+    const input = 'Ask what they want';
+    const arc = runArcDirectorBeforeGm(state, input);
+    const want = ila('The pikes need a name on the blank before they let a stranger through the Palace gate.');
+    const heard = commitTalkStageAfterTurn(arc.state, want, 6, input);
+    expect(heard.receipts).toHaveLength(1);
+    expect(done(heard.state, questId, idx)).toBe(true);
+    expect(commitTalkStageAfterTurn({ ...heard.state, turn: 6 }, want, 7, input).receipts).toEqual([]);
+    const xp = applySandboxXpAwards(heard.state, {
+      playerAction: input,
+      locationName: heard.state.currentLocation,
+      previousLocationName: state.currentLocation,
+      questsBefore: state.quests ?? [],
+      questsAfter: heard.state.quests ?? [],
+      events: [],
+      turn: 6,
+    });
+    const step = questStepNotes(xp.notes);
+    expect(step).toHaveLength(1);
+    expect(reconcileXpStatusLines([], step)).toEqual(step);
+  });
+
+  it('an XP line whose reason holds brackets is kept', () => {
+    const line = 'XP Gained: 50 (quest step: Hear their reason (or demand it))';
+    expect(isReasonedXpLine(line)).toBe(true);
+    expect(reconcileXpStatusLines([], [line])).toEqual([line]);
+    expect(isReasonedXpLine('XP Gained: 50')).toBe(false);
+    expect(isReasonedXpLine('XP Gained: 50 ()')).toBe(false);
+  });
+
+  it('every XP note sandboxXp pays for a Summoned Pact starter step passes isReasonedXpLine', () => {
+    const { state } = seed79Stage();
+    const quests = state.quests ?? [];
+    let checked = 0;
+    for (const q of quests) {
+      (q.objectives ?? []).forEach((_, i) => {
+        const after = quests.map((x) =>
+          x.id !== q.id ? x : { ...x, objectives: x.objectives!.map((o, j) => (j === i ? { ...o, completed: true } : o)) }
+        );
+        const xp = applySandboxXpAwards({ ...state, quests: after }, {
+          playerAction: 'Ask what they want',
+          locationName: state.currentLocation,
+          previousLocationName: state.currentLocation,
+          questsBefore: quests.map((x) =>
+            x.id !== q.id ? x : { ...x, objectives: x.objectives!.map((o, j) => (j === i ? { ...o, completed: false } : o)) }
+          ),
+          questsAfter: after,
+          events: [],
+          turn: 6,
+        });
+        for (const note of xp.notes.filter((n) => /^XP Gained/i.test(n))) {
+          checked += 1;
+          expect(isReasonedXpLine(note), note).toBe(true);
+        }
+      });
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 });
 

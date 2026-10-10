@@ -44,7 +44,8 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
     const heard = commitTalkStageAfterTurn(
       arc.state,
       [{ speakerId: 'role:handler', speaker: 'the handler', words: 'We needed a savior and caught you.' }],
-      nextTurn
+      nextTurn,
+      'Ask who summoned me and why'
     );
     const status = [...formatArcStatusReceipts(arc), ...heard.receipts];
     expect(status.some((l) => /Circle's Price/i.test(l))).toBe(true);

@@ -157,7 +157,7 @@ export function isXpGainedLine(line: string): boolean {
 
 /** Code awards always include a parenthetical reason. */
 export function isReasonedXpLine(line: string): boolean {
-  return isXpGainedLine(line) && /\(\s*[^)]+\s*\)\s*$/.test(line.trim());
+  return isXpGainedLine(line) && /\(\s*[^()\s].*\)\s*$/.test(line.trim());
 }
 
 /**
