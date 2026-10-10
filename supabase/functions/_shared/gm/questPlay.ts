@@ -14,6 +14,8 @@ export type StarterQuestSeed = {
   objectives: string[];
   rewards?: string;
   location?: string;
+  /** Who gives it; a named giver becomes an NPC record at `location` (`placeQuestGivers`). */
+  giver?: string;
   type?: 'main' | 'side' | 'faction';
 };
 
@@ -770,6 +772,7 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
     type,
     recommendedLevel: q.recommendedLevel,
     location: q.location ?? QUEST_SEED_LOCATIONS[q.id],
+    ...(q.giver ? { giver: q.giver } : {}),
     objectives: q.objectives.map((desc, i) => ({
       id: `${q.id}-obj-${i + 1}`,
       description: desc,
@@ -944,6 +947,7 @@ export function revealLocalStarterQuest(
             completed: q.objectives?.[i]?.completed ?? false,
           })),
           rewards: { items: seed.rewards ? [seed.rewards] : undefined },
+          ...(seed.giver ? { giver: seed.giver } : {}),
         }
       : {};
     return { ...q, ...fromSeed, status: 'active' as const, revealed: true };

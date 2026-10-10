@@ -191,6 +191,10 @@ export function shortCardOffer(_state?: unknown): string {
   return '';
 }
 
+export function openOpeningOffer(_state?: unknown): undefined {
+  return undefined;
+}
+
 export function lockedOpeningPcName(state?: {
   openingEstablishment?: { answers?: { name?: string } };
   character?: { name?: string };

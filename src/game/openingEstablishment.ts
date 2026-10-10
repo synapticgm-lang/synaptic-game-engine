@@ -2,7 +2,7 @@ import type { CampaignBible, OpeningHookCard, OpeningMode, OpeningPrompt, Openin
 import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
-import type { EngineMode, GameState, Item, LogEntry, OpeningCardRecord, OpeningEstablishment, Settings } from './types';
+import type { EngineMode, GameState, Item, LogEntry, OpeningCardRecord, OpeningEstablishment, OpeningOfferRecord, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
@@ -1636,8 +1636,7 @@ export function compileOpeningCard(
   const slot = blob.match(/Who is here[^:\n]*:[ \t]*([^\n]+)/i)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
   if (!location && !slot) return undefined;
   const names = cardProperNames([blob, page ?? ''].join('\n'));
-  const live = slot
-    .split(/[;,()]|\s[—–-]\s|\s(?:and|with|plus)\s/i)
+  const live = slotParts(slot)
     .map((p) => p.trim().replace(/[.!]+$/, ''))
     .filter((p) => p && !slotNamesNobody(p));
   const castNames: string[] = [];
@@ -1655,13 +1654,91 @@ export function compileOpeningCard(
     && (capWords >= 2 || (leadWords.length === 1 && capWords === 1) || names.includes(leadWords[0] ?? ''));
   const cast = !lead ? '' : properOne ? lead : slotGroupLabel(lead, names);
   const place = location ? openingPlaceRecord(bibleId, location, blob) : undefined;
+  const offer = compileOpeningOffer(blob);
   return {
     ...(place ? { place: place.place, ...(place.parentHub ? { parentHub: place.parentHub } : {}) } : {}),
     cast,
     castNames: [...new Set(castNames.filter((n) => n.length >= 3))],
     props: cardPlacedProps(page ?? ''),
     names,
+    ...(offer ? { offer } : {}),
   };
+}
+
+/** A comma clause that negates or describes the player belongs to the phrase before it, not a new person. */
+const CLAUSE_OF_PREVIOUS = /^(?:not|never|nor|rather than|instead of|but not)\b|\b(?:you|your|yours|yourself)\b/i;
+
+/** The "Who is here" slot cut into people: list separators split; a comma splits unless its clause belongs to the phrase before. */
+function slotParts(slot: string): string[] {
+  const out: string[] = [];
+  for (const piece of slot.split(/[;()]|\s[—–-]\s|\s(?:and|with|plus)\s/i)) {
+    let first = true;
+    for (const clause of piece.split(',')) {
+      const c = clause.trim();
+      if (!c) continue;
+      if (!first && out.length && CLAUSE_OF_PREVIOUS.test(c)) out[out.length - 1] = `${out[out.length - 1]}, ${c}`;
+      else out.push(c);
+      first = false;
+    }
+  }
+  return out;
+}
+
+const OFFER_GIVE = /\b(?:issue|give|hand|grant|offer|lend|provide)s?\b/i;
+
+/** The things an offer sentence hands over: its bracketed list, else the object of its giving verb. */
+function offerItems(sentence: string): string[] {
+  const list =
+    sentence.match(/\(([^)]+)\)/)?.[1]
+    ?? sentence.match(/\b(?:issue|give|hand|grant|offer|lend|provide)s?\s+(?:you\s+)?(.+?)(?:\s+(?:if|when|once|after|for|in exchange)\b|[.!?]|$)/i)?.[1]
+    ?? '';
+  return list
+    .split(/,|\s+and\s+|\s+or\s+/i)
+    .map((p) => p.trim().replace(/^(?:and|or)\s+/i, '').replace(/^(?:a|an|the|some|your|their)\s+/i, '').trim())
+    .filter((p) => p && p.split(/\s+/).length <= 4 && !/\b(?:whatever|anything|nothing|junk)\b/i.test(p));
+}
+
+/** The card's opening offer compiled once: the items handed over, the accept line and the refuse line. */
+export function compileOpeningOffer(blob: string | undefined): OpeningOfferRecord | undefined {
+  const raw = offerFromPickedHookBlob(blob);
+  if (!raw) return undefined;
+  const sentences = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const accept = sentences.find(
+    (s) => OFFER_GIVE.test(s) && !/^(?:no one|nobody|none|no)\b/i.test(s) && !/^refuse\b/i.test(s)
+  );
+  if (!accept) return undefined;
+  const items = offerItems(accept);
+  if (!items.length) return undefined;
+  const refuse = sentences.find(
+    (s) => s !== accept && /\b(?:refuse|decline|turn (?:it|them) down|say no)\b/i.test(s)
+  ) ?? '';
+  const noun = /\b(?:work|job|cots|serve|duty|labou?r|shift)\b/i.test(accept) ? 'work' : 'offer';
+  return { items, accept, refuse, noun };
+}
+
+/** This save's opening offer: the compiled record, else compiled from the stored card text. */
+export function openingOfferRecord(state: GameState): OpeningOfferRecord | undefined {
+  const est = state.openingEstablishment;
+  return est?.card?.offer ?? compileOpeningOffer(est?.pickedHook);
+}
+
+/** The offer is open while nobody has taken or refused it and the player is still at the card's place. */
+export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefined {
+  const est = state.openingEstablishment;
+  if (!est || est.offerTaken) return undefined;
+  const offer = openingOfferRecord(state);
+  if (!offer) return undefined;
+  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const place = key(est.card?.place);
+  if (place && key(state.currentLocation) !== place) return undefined;
+  return offer;
+}
+
+/** "Accept the work" / "Refuse the work" while the card's offer is open. */
+export function openingOfferPads(state: GameState): string[] {
+  const offer = openOpeningOffer(state);
+  if (!offer) return [];
+  return [`Accept the ${offer.noun}`, `Refuse the ${offer.noun}`];
 }
 
 /** The compiled card for this save: the New Game record, else compiled from the stored card text. */
@@ -2062,7 +2139,7 @@ export function coverContinuePads(state: GameState): string[] {
     if (chips.length) return chips.slice(0, 2);
     const locked = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
     if (locked && isLockablePcName(locked) && !/unknown survivor/i.test(locked)) {
-      return liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]);
+      return withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]));
     }
     return ['Give your name', 'Refuse to give a name'];
   }
@@ -2070,13 +2147,20 @@ export function coverContinuePads(state: GameState): string[] {
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
     const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
     if (hallTalkAsksWho(lastPlayer)) {
-      return liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]);
+      return withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]));
     }
-    return hallTopicAlreadyAnswered(state, 'want')
+    return withOfferPads(state, hallTopicAlreadyAnswered(state, 'want')
       ? liveCoverPads(state, ['Who are you', ...coverLookPads(state)])
-      : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]);
+      : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]));
   }
   return ['Give your name', 'Refuse to give a name'];
+}
+
+/** The open card offer's accept / refuse chips lead; the cover pads fill the rest, three in all. */
+function withOfferPads(state: GameState, pads: string[]): string[] {
+  const offer = openingOfferPads(state);
+  if (!offer.length) return pads;
+  return [...offer, ...pads.filter((p) => !offer.includes(p))].slice(0, 3);
 }
 
 export function formatPlayerCanon(state: GameState): string {

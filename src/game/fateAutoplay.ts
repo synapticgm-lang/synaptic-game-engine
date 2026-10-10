@@ -117,7 +117,7 @@ import {
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { seedOpeningCastLocations } from './npcRecords';
+import { placeQuestGivers, seedOpeningCastLocations } from './npcRecords';
 import {
   clearVignetteOnHubLeave,
   openVignetteFromHubBeat,
@@ -186,6 +186,7 @@ import {
   applyCombatClearTag,
   consumeTagTriggerOnInput,
 } from './tagTrigger';
+import { applyOpeningOfferChoice } from './openingOffer';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -769,7 +770,7 @@ export function buildNewGameState(opts: {
       bible
     )
   );
-  return { state: seedOpeningCastLocations(state), bible, personalityId: voices.personalityId };
+  return { state: placeQuestGivers(seedOpeningCastLocations(state)), bible, personalityId: voices.personalityId };
 }
 
 export function stampOpening(state: GameState): GameState {
@@ -1149,6 +1150,9 @@ export async function headlessFateTurn(
       arcStatusReceipts = [...arcStatusReceipts, claimed.receipt];
     }
   }
+  const offerTurn = applyOpeningOfferChoice(arcState, playerInput);
+  arcState = offerTurn.state;
+  arcStatusReceipts = [...arcStatusReceipts, ...offerTurn.receipts];
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const hereBeforeMove = arcState.currentLocation ?? '';
@@ -1176,6 +1180,7 @@ export async function headlessFateTurn(
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
   const engineFact = [
     ...(arcResult?.systemReceipts ?? []),
+    ...offerTurn.receipts,
     ...dungeonTurn.receipts,
     ...nudge.receipts,
     ...(travelCommit?.receipt ? [travelCommit.receipt] : []),

@@ -207,7 +207,7 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const rec = row as { tok?: unknown; id?: unknown; use?: unknown };
       const tok = String(rec.tok ?? '').replace(/^@/, '').trim();
       const id = String(rec.id ?? '').trim();
-      if (!tok || !id) return null;
+      if (!tok) return null;
       const use = readTokenUse(String(rec.use ?? '')) ?? 'actor';
       if (id.includes('<')) continue;
       refs.push({ tok, id, use });
@@ -318,24 +318,36 @@ export function refEnumOf(state: GameState, packet?: CompletedEventPacket): Ledg
   return compileRefEnum(state, [], { hallTalk });
 }
 
+function refSlug(s: string): string {
+  return (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+/** A typed id agrees with a row when it is the row's id, its token, the id without its class prefix, or the display slug. */
+function idAgreesWithRow(row: LedgerRef, id: string): boolean {
+  const want = id.trim().replace(/^@/, '').toLowerCase();
+  const rid = row.id.toLowerCase();
+  return want === rid || want === row.tok.toLowerCase() || want === rid.slice(rid.indexOf(':') + 1) || want === refSlug(row.display);
+}
+
 /**
- * 29y — a declared ref binds by its id. The writer's own numbering can differ from the REF ENUM
- * ({"tok":"t3","id":"kit:shortsword"} while t3 is a person), so the tok only decides when no id is given
- * or the id is itself a token ("t6"). An id the ledger does not hold binds to nothing.
+ * s77 Root A — a declared ref binds by its REF ENUM token: `tok` is the enum row's own token and code
+ * looks up the id. A typed id that names something else contradicts the tok, so the ref binds to nothing.
+ * A typed id only binds on its own when the tok is not an enum token at all.
  */
 function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | undefined {
   const byTokOf = (s: string) => {
     const t = s.replace(/^@/, '').toLowerCase();
     return enumRefs.find((r) => r.tok.toLowerCase() === t);
   };
+  const byTok = byTokOf(tok);
+  if (byTok) return !id?.trim() || idAgreesWithRow(byTok, id) ? byTok : undefined;
   if (id?.trim()) {
     const want = id.trim().toLowerCase();
     const byId = enumRefs.find((r) => r.id.toLowerCase() === want);
     if (byId) return byId;
     if (/^@?t\d+$/.test(want)) return byTokOf(want);
-    return undefined;
   }
-  return byTokOf(tok);
+  return undefined;
 }
 
 /** Toks the reply declared with an id the ledger does not hold: their lines cannot be painted honestly. */
@@ -417,14 +429,11 @@ export function bindCheckFails(beat: TokenBeat, enumRefs: LedgerRef[]): string[]
   for (const ref of beat.refs) {
     const row = findEnum(enumRefs, ref.tok, ref.id);
     if (!row) {
-      notes.push(`unknown:${ref.id}`);
+      notes.push(`unknown:${ref.id || ref.tok}`);
       continue;
     }
-    if (ref.id && row.id.toLowerCase() !== ref.id.toLowerCase() && row.tok.toLowerCase() !== ref.tok.toLowerCase()) {
-      notes.push(`mismatch:${ref.id}`);
-    }
     if (!tokenUseMatchesClass(ref.use, row.klass)) {
-      notes.push(`use-class:${ref.id}:${ref.use}`);
+      notes.push(`use-class:${row.id}:${ref.use}`);
     }
   }
   return notes;
@@ -618,7 +627,8 @@ export function normalizeBeatRefs(
   const refs: TokenUseRef[] = beat.refs.map((ref) => {
     const row = findEnum(enumRefs, ref.tok, ref.id);
     if (!row) return ref;
-    return tokenUseMatchesClass(ref.use, row.klass) || !retype(row) ? ref : { ...ref, use: firstUse(row) };
+    const bound = { ...ref, id: row.id };
+    return tokenUseMatchesClass(ref.use, row.klass) || !retype(row) ? bound : { ...bound, use: firstUse(row) };
   });
   const declared = new Set(refs.map((r) => r.tok.replace(/^@/, '').toLowerCase()));
   for (const line of beat.lines) {

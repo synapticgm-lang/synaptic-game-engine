@@ -124,7 +124,9 @@ describe('playtest10i — cathedral name+why', () => {
 
   it('auto-named page 1 does not pad Check Status / Wait', () => {
     const pads = resolveOfferedChoices(cathedral({ turn: 1, choices: ['Ask what they want'] }));
-    expect(pads[0]).toBe('Ask what they want');
+    // rootB — the card's open offer leads the pad until it is taken.
+    expect(pads.slice(0, 2)).toEqual(['Accept the offer', 'Refuse the offer']);
+    expect(pads).toContain('Ask what they want');
     expect(pads.length).toBeLessThanOrEqual(3);
     expect(pads.join(' ')).not.toMatch(/Check Status|Wait and watch/i);
   });

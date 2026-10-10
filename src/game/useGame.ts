@@ -327,7 +327,7 @@ import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { seedOpeningCastLocations } from './npcRecords';
+import { placeQuestGivers, seedOpeningCastLocations } from './npcRecords';
 import {
   clearVignetteOnHubLeave,
   openVignetteFromHubBeat,
@@ -373,6 +373,7 @@ import {
   applyCombatClearTag,
   consumeTagTriggerOnInput,
 } from './tagTrigger';
+import { applyOpeningOfferChoice } from './openingOffer';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -2404,7 +2405,7 @@ export function useGame() {
           cleanOpening,
           openingTurn
         );
-        const committed: GameState = {
+        const committed: GameState = placeQuestGivers({
           ...openingState,
           turn: openingTurn,
           sceneFacts,
@@ -2414,7 +2415,7 @@ export function useGame() {
           openingEstablishment: openingEstForPad,
           memorableMoments: openingMemorable.nextState,
           lastUpdated: Date.now(),
-        };
+        });
         stateRef.current = committed;
         setState(committed);
         if (settingsRef.current.ttsEnabled) {
@@ -2693,6 +2694,9 @@ export function useGame() {
           stateRef.current = liveCurrent;
         }
       }
+      const offerTurn = applyOpeningOfferChoice(liveCurrent, sanitizedInput);
+      liveCurrent = offerTurn.state;
+      pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...offerTurn.receipts];
       const hereBeforeMove = liveCurrent.currentLocation ?? '';
       const graphMoved = applyGraphExitTravel(liveCurrent, sanitizedInput);
       const travelCommit = graphMoved === liveCurrent ? commitTravel(liveCurrent, sanitizedInput) : null;
@@ -2723,6 +2727,7 @@ export function useGame() {
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
       const engineFact = [
         ...(systemsArc?.systemReceipts ?? []),
+        ...offerTurn.receipts,
         ...dungeonTurn.receipts,
         ...nudge.receipts,
         ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
@@ -5376,7 +5381,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         cleanOpening,
         openingTurn
       );
-      const committed: GameState = {
+      const committed: GameState = placeQuestGivers({
         ...newState,
         turn: openingTurn,
         sceneFacts,
@@ -5387,7 +5392,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         openingEstablishment: openingEstForPad,
         memorableMoments: openingMemorable.nextState,
         lastUpdated: Date.now(),
-      };
+      });
       stateRef.current = committed;
       setState(committed);
       if (settingsRef.current.ttsEnabled) {

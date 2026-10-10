@@ -184,7 +184,9 @@ describe('playtest10f — treaty tent one-line lock', () => {
       ],
     });
     const pads = coverContinuePads(asked);
-    expect(pads[0]).toBe('Who are you');
+    // rootB — the card's open offer leads the pad until it is taken.
+    expect(pads.slice(0, 2)).toEqual(['Accept the offer', 'Refuse the offer']);
+    expect(pads).toContain('Who are you');
     expect(pads).not.toContain('Ask what they want');
     expect(pads.length).toBeLessThanOrEqual(3);
     expect(coverContinuePads(asked).join(' ')).not.toMatch(/Lowmarket|Walk away|Press for leverage/i);

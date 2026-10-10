@@ -63,7 +63,7 @@ describe('seed 95 — the travel line names the journey destination', () => {
     const packet = buildCompletedEventPacket(onTheWay(20), 'Travel toward West Wall');
     expect(packet.destinationRef?.display).toBe('West Wall');
     const shape = shapeLine(formatWriterFacingEvent(packet));
-    expect(shape).toContain(`"id":"${packet.destinationRef!.id}"`);
+    expect(shape).toContain(`"tok":"${packet.destinationRef!.tok}","use":"place"`);
     expect(shape).toContain(`@${packet.destinationRef!.tok}`);
   });
 

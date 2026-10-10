@@ -171,7 +171,8 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
     }
   }
   const kill = state.sceneFacts?.lastKill;
-  if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter) {
+  // The kill turn is the engine's settled fight being told, not a dead foe acting.
+  if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter && kill.turn !== state.turn) {
     if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
     if (isClosedKillRecycle(body, kill, false)) return true;
   }

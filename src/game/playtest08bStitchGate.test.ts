@@ -81,7 +81,9 @@ describe('08b stamps + Free writer + Mid OFF', () => {
 describe('08b — gate shrink', () => {
   it('living lastKill is still rejected', () => {
     const after = runArcDirectorBeforeGm(liveSkirmish(3), 'Attack the Pact-Hunter Skirmisher');
-    const packet = buildCompletedEventPacket(after.state, 'Attack the Pact-Hunter Skirmisher');
+    // s77 Root A — the kill turn tells the engine's settled fight; a dead foe acting is rejected on the turns after.
+    const next = { ...after.state, turn: after.state.turn + 1 } as GameState;
+    const packet = buildCompletedEventPacket(next, 'Look around');
     expect(
       proseViolatesEventPacket(
         'The Pact-Hunter Skirmisher looks up and nods in greeting.',
@@ -90,9 +92,9 @@ describe('08b — gate shrink', () => {
     ).toBe(true);
     expect(
       classifyBeatCommit(
-        { ...after.state, completedEvent: packet },
+        { ...next, completedEvent: packet },
         'The Pact-Hunter Skirmisher looks up and nods in greeting.',
-        'Attack the Pact-Hunter Skirmisher'
+        'Look around'
       ).reasons
     ).toContain('event-packet');
   });

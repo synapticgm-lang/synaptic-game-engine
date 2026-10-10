@@ -9,6 +9,7 @@ import {
   pickTabletopStampAlt,
   withMatchedTabletopSpine,
 } from '@/data/quests/tabletopMainSpines';
+import { hubsForBibleId } from '@/game/outdoorHubs';
 
 /**
  * LitRPG main-quest spines (2026-09-17a). One spine per New Game, matched to
@@ -1032,6 +1033,40 @@ export function hookCtxFromState(state: {
   };
 }
 
+const GIVER_VERB = /\s(?:wants?|informs?|demands?|needs?|asks?|orders?|offers?|begs?|insists?|says?|hands?|tells?|requires?|commands?|declares?|warns?)\b/i;
+
+/** Who gives the spine: the subject of its who-wants-what sentence ("High Priest Arus", "the recorded magical echo"). */
+export function spineGiver(spine: LitRpgMainSpine): string {
+  const who = spine.whoWantsWhat.replace(/\s+/g, ' ').trim();
+  const at = who.search(GIVER_VERB);
+  if (at <= 0) return '';
+  const head = who
+    .slice(0, at)
+    .replace(/\s+(?:of|who|that|which|from|in|at|on)\b.*$/i, '')
+    .trim();
+  if (!head || head.split(' ').length > 6) return '';
+  return head.replace(/^(?:a|an)\s+/i, 'the ');
+}
+
+/** A giver with a proper name ("High Priest Arus") is a person record; a role ("the recorded magical echo") is not. */
+export function isNamedSpineGiver(giver: string): boolean {
+  const words = giver.trim().split(/\s+/);
+  return !!giver && !/^the$/i.test(words[0] ?? '') && /^[A-Z]/.test(words[words.length - 1] ?? '');
+}
+
+/**
+ * Where the spine's quest sits in this opening: a hub of the bible named by the map pin, else the
+ * opening place when that place is of the spine's own family. Null when neither: the spine cannot be placed.
+ */
+export function placeSpine(spine: LitRpgMainSpine, hookBlob?: string, location?: string): string | null {
+  const key = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase().replace(/^the\s+/, '');
+  const pin = key(spine.mapPin);
+  const hub = hubsForBibleId(spine.bibleId).find((h) => [h.name, ...(h.aliases ?? [])].some((n) => key(n) === pin));
+  if (hub) return hub.name;
+  const here = (location || hookBlob?.match(/^Location:[ \t]*(.+)$/im)?.[1] || '').replace(/\s+/g, ' ').trim();
+  return here && familyScore(here, spine.familyTags) > 0 ? here : null;
+}
+
 export function matchLitRpgMainSpine(
   bibleId: string | null | undefined,
   hookBlob?: string,
@@ -1045,10 +1080,10 @@ export function matchLitRpgMainSpine(
   let bestScore = 0;
   for (const spine of pool) {
     const score = familyScore(hay, spine.familyTags);
-    if (score > bestScore) {
-      best = spine;
-      bestScore = score;
-    }
+    if (score <= bestScore) continue;
+    if (!spineGiver(spine) || !placeSpine(spine, hookBlob, location)) continue;
+    best = spine;
+    bestScore = score;
   }
   return bestScore > 0 ? best : null;
 }
@@ -1057,14 +1092,17 @@ export function matchLitRpgMainSpineFromCtx(ctx: SpineMatchCtx): LitRpgMainSpine
   return matchLitRpgMainSpine(ctx.bibleId, ctx.hookBlob, ctx.location);
 }
 
-export function spineToStarterQuest(spine: LitRpgMainSpine): StarterQuestSeed {
+/** The spine as a quest seed, compiled once: its giver, and its place in this opening (the map pin when no opening is given). */
+export function spineToStarterQuest(spine: LitRpgMainSpine, ctx?: SpineMatchCtx): StarterQuestSeed {
+  const giver = spineGiver(spine);
   return {
     id: spineQuestId(spine),
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
     objectives: [spine.firstObjective],
-    location: spine.mapPin,
+    location: (ctx ? placeSpine(spine, ctx.hookBlob, ctx.location) : null) ?? spine.mapPin,
+    ...(giver ? { giver } : {}),
     type: 'main',
   };
 }
@@ -1076,7 +1114,7 @@ export function withMatchedLitRpgSpine(
 ): StarterQuestSeed[] {
   const spine = matchLitRpgMainSpineFromCtx(ctx);
   if (spine) {
-    const extra = spineToStarterQuest(spine);
+    const extra = spineToStarterQuest(spine, ctx);
     if (seeds.some((s) => s.id === extra.id)) return fitCircleStarterToCard(seeds, ctx);
     return [extra, ...fitCircleStarterToCard(seeds, ctx)];
   }

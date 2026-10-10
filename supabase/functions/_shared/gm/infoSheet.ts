@@ -271,7 +271,8 @@ function openLines(state: GameState): string[] {
     ?? quests.find((q) => q.status === 'active' && q.revealed);
   if (quest) {
     const step = (quest.objectives ?? []).find((o) => !o.completed && !o.optional)?.description;
-    out.push(`quest ${quest.name}${step ? ` — step: ${clip(norm(step), 80)}` : ''}`);
+    const giver = norm(quest.giver ?? '');
+    out.push(`quest ${quest.name}${giver ? `, given by ${giver}` : ''}${step ? ` — step: ${clip(norm(step), 80)}` : ''}`);
   }
   const enc = state.activeEncounter;
   if (enc?.name) out.push(`threat ${enc.name}${typeof enc.hp === 'number' && typeof enc.maxHp === 'number' ? ` (${enc.hp}/${enc.maxHp} HP)` : ''}`);

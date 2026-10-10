@@ -64,6 +64,8 @@ import {
   openingWhoAskLine,
   proseAsksForPcName,
   shortCardOffer,
+  shortCardWant,
+  openOpeningOffer,
   openingSpokenRefuse,
   openingStayLeaveLine,
   openingWantLine,
@@ -147,6 +149,10 @@ export interface CompletedEventPacket {
   answerStayLeave?: string;
   /** 13a — offered page / ribbon line so card acts never settle-stub. */
   answerOffer?: string;
+  /** The card's own want, handed to the writer as a fact when the player asks what they want at the card. */
+  cardWant?: string;
+  /** The card's offer while it is still open, with the same trigger as `cardWant`. */
+  cardOffer?: string;
   /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
   engineMode?: string;
   /** 14a — this-turn ledger ids for token prose. Single source with compileRefEnum. */
@@ -487,6 +493,12 @@ function atOpeningPlace(state: GameState): boolean {
   return !c.prevPlace;
 }
 
+/** Opening hall talk: at the card's place and nobody has moved yet. Only then does talk narrow the turn's names. */
+function beforeFirstMove(state: GameState): boolean {
+  return atOpeningPlace(state) && !state.circling?.prevPlace;
+}
+
+/** The mention list is the REF ENUM's displays, plus the card's scene words, the player and the bible's hubs. */
 export function compileNounAllowlist(
   state: GameState,
   extras: string[] = [],
@@ -495,53 +507,13 @@ export function compileNounAllowlist(
   const out: string[] = [];
   const seen = new Set<string>();
 
-  // On a trip HERE is not a name; the trip's two ends come in with nearbyPlaceNames.
-  if (!underwayHereLabel(state)) pushUnique(out, seen, locationLabel(state));
-
-  for (const n of castMentionNames(state)) {
-    if (isNeverCastTitle(n, state)) continue;
-    pushUnique(out, seen, n);
-  }
+  for (const ref of compileRefEnum(state, extras, opts)) pushUnique(out, seen, ref.display);
   for (const tok of cardSceneMentionTokens(state)) {
     pushUnique(out, seen, tok);
   }
 
-  if (!opts?.hallTalk) {
-    for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
-      if (isNeverCastTitle(p, state)) continue;
-      pushUnique(out, seen, p);
-    }
-
-    pushUnique(out, seen, state.activeEncounter?.name?.trim());
-
-    const kill = state.sceneFacts?.lastKill;
-    if (kill?.name) {
-      pushUnique(out, seen, kill.name);
-    }
-
-    for (const item of state.inventory ?? []) {
-      if (item.equipped && item.name) pushUnique(out, seen, kitRefDisplay(item.name));
-    }
-
-    for (const c of state.companions ?? []) {
-      pushUnique(out, seen, c.name);
-    }
-  }
-
-  for (const prop of state.sceneFacts?.props ?? []) {
-    if (isSystemWindowLabel(prop)) {
-      const display = housedWindowDisplay(state, prop);
-      if (display) pushUnique(out, seen, display);
-      continue;
-    }
-    pushUnique(out, seen, prop);
-  }
-
   const pc = (state.character?.name ?? '').trim();
   if (pc && !/^(you|adventurer|player)$/i.test(pc)) pushUnique(out, seen, pc);
-
-  for (const extra of extras) pushUnique(out, seen, extra);
-  for (const place of nearbyPlaceNames(state)) pushUnique(out, seen, place);
 
   for (const h of hubsForBibleId(state.campaignBibleId)) {
     pushUnique(out, seen, h.name);
@@ -836,10 +808,10 @@ export function buildCompletedEventPacket(
     .filter((n) => !matchesLastKillName(n, kill));
   const allowExtras: string[] = [];
   if (target && !isIntentRemainderNoun(target)) allowExtras.push(target);
-  const hallTalk = verb === 'spoke' || isHallTalkPlayerLine(action);
+  const hallTalk = (verb === 'spoke' || isHallTalkPlayerLine(action)) && beforeFirstMove(state);
   if (hallTalk) {
     const cast = openingCastLabel(state);
-    if (cast && (openingCastRecords(state).length || atOpeningPlace(state))) allowExtras.push(cast);
+    if (cast) allowExtras.push(cast);
   }
   const ledgerSheet = ledgerSheetLine(state) || undefined;
   const ledgerRead = !!ledgerSheet && isLedgerReadAction(action);
@@ -862,6 +834,7 @@ export function buildCompletedEventPacket(
   const streaks = nextLoiterStreaks(state, playerInput);
   const focusNoun = ledgerFocusNoun(state);
   const placeFacts = ledgerPlaceFacts(state);
+  const askedWantAtCard = hallTalkTopic(action) === 'want' && atOpeningPlace(state);
 
   return {
     turn: state.turn,
@@ -908,6 +881,8 @@ export function buildCompletedEventPacket(
     answerWant: openingWantLine(state) || undefined,
     answerStayLeave: openingStayLeaveLine(state) || undefined,
     answerOffer: shortCardOffer(state) || undefined,
+    cardWant: askedWantAtCard ? shortCardWant(state) || undefined : undefined,
+    cardOffer: askedWantAtCard && openOpeningOffer(state) ? shortCardOffer(state) || undefined : undefined,
     engineMode: state.engineMode,
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
@@ -1205,6 +1180,8 @@ export function formatWriterFacingEvent(
   if (packet.townsfolk?.length) lines.push(`PEOPLE HERE (their sheets — play them this way; each one is only the @tN at the start of their line):\n${packet.townsfolk.join('\n')}`);
   if (packet.stances?.length) lines.push(`HOW THEY ARE NOW (set by what happened; play it, do not change it):\n${packet.stances.join('\n')}`);
   if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
+  if (packet.cardWant) lines.push(`What they want (their own reason; the answer says it in their words): ${packet.cardWant}`);
+  if (packet.cardOffer) lines.push(`What they offer (still open; the player has not taken it): ${packet.cardOffer}`);
   if (packet.mood) lines.push(`Mood: ${packet.mood}.`);
   if (opts?.stricter) {
     lines.push('STRICT: Use only the nouns listed. Outcome is immutable.');
@@ -1228,22 +1205,27 @@ export function formatWriterFacingEvent(
   const placeGiven = writerBeats.length > 0 && !/^Moved this turn/.test(packet.movement ?? '') && packet.verb !== 'arrived';
   // A talk turn with someone here carries the answer as their own quoted words, said now: a shape with
   // no speech line came back as "he answered", and a repeated question came back as a report.
-  const talkedTo = (packet.verb === 'spoke' || !!packet.talkTopic)
-    && (packet.refEnum ?? []).some((r) => r.klass === 'person' || r.klass === 'companion');
+  const enumRefs = packet.refEnum ?? [];
+  const personRef = enumRefs.find((r) => r.klass === 'person' || r.klass === 'companion');
+  const talkedTo = (packet.verb === 'spoke' || !!packet.talkTopic) && !!personRef;
   const askedBefore = talkedTo && (packet.talkAsked ?? 0) >= 2;
-  // A ledger read has nobody acting on anything: no @t2 actor, no "how @t2 answered" slot for the
+  // The shape names real REF ENUM rows by their own tokens: the writer binds by tok and code looks up the id.
+  const dest = packet.destinationRef;
+  const placeRef = enumRefs.find((r) => r.id === 'here') ?? enumRefs.find((r) => r.klass === 'place' && r.tok !== dest?.tok) ?? enumRefs.find((r) => r.klass === 'place');
+  const placeTok = placeRef?.tok;
+  // A ledger read has nobody acting on anything: no actor, no "how they answered" slot for the
   // window to fill. The two lines carry what the ledger told the PC.
+  const actorTok = panelRead ? undefined : personRef?.tok;
   const housingClause = writerHousingClause(packet.systemBlock);
   const answerLine = panelRead
     ? `{"fn":"react","text":"<sentence: another ledger line above that mattered now, as plain words — ${housingClause}>"}`
-    : talkedTo
-      ? `{"fn":"speech","speaker_tok":"t2","text":"<only the words @t2 says now, no quote marks and no said-tag (code adds both) — not a report of what they said>"}`
-      : `{"fn":"react","text":"<sentence: how @t2 or the room answered>"}`;
-  const dest = packet.destinationRef;
+    : talkedTo && actorTok
+      ? `{"fn":"speech","speaker_tok":"${actorTok}","text":"<only the words @${actorTok} says now, no quote marks and no said-tag (code adds both) — not a report of what they said>"}`
+      : `{"fn":"react","text":"<sentence: how ${actorTok ? `@${actorTok} or ` : ''}the room answered>"}`;
   const refsShape = [
-    `{"tok":"t1","id":"<id from REF ENUM>","use":"place"}`,
-    ...(panelRead ? [] : [`{"tok":"t2","id":"<id from REF ENUM>","use":"${talkedTo ? 'speaker' : 'actor'}"}`]),
-    ...(dest ? [`{"tok":"${dest.tok}","id":"${dest.id}","use":"place"}`] : []),
+    ...(placeTok ? [`{"tok":"${placeTok}","use":"place"}`] : []),
+    ...(actorTok ? [`{"tok":"${actorTok}","use":"${talkedTo ? 'speaker' : 'actor'}"}`] : []),
+    ...(dest && dest.tok !== placeTok ? [`{"tok":"${dest.tok}","use":"place"}`] : []),
   ].join(',');
   const didWhat = panelRead
     ? `what the ledger lines told ${who} — ${housingClause}`
@@ -1252,7 +1234,7 @@ export function formatWriterFacingEvent(
       : whatDid;
   const bodyLines = placeGiven
     ? `{"fn":"action","text":"<sentence: ${didWhat} — the first thing that changed>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`
-    : `{"fn":"place","text":"<sentence: ${whereWas}, using @t1>"},{"fn":"action","text":"<sentence: ${didWhat}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
+    : `{"fn":"place","text":"<sentence: ${whereWas}${placeTok ? `, using @${placeTok}` : ''}>"},{"fn":"action","text":"<sentence: ${didWhat}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
   lines.push(placeGiven
     ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
     : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
@@ -1267,7 +1249,7 @@ export function formatWriterFacingEvent(
   lines.push('Shape (replace every <...> with your own words):');
   lines.push(`{"refs":[${refsShape}],"lines":[${bodyLines}]}`);
   lines.push('refs.use: speaker|actor|addressed|corpse|prop_used|worn|place. lines.fn: place|action|speech|react|hook.');
-  lines.push('Name entities as @tN tokens from the REF ENUM; use no other names.');
+  lines.push('Name entities as @tN tokens from the REF ENUM; use no other names. refs.tok is the REF ENUM token itself (t5 means the t5 row); code looks up the id.');
   if (thirdPerson) lines.push(`The player character is ${who}: write that name plainly (no token) and ${pov.he}/${pov.him}/${pov.his} for them.`);
   lines.push(formatRefEnumForWriter(packet.refEnum ?? []));
   if (opts?.stricter) {
@@ -1367,9 +1349,9 @@ function prematureLoot(prose: string, packet: CompletedEventPacket): boolean {
 }
 
 function aliveVsDeadContradiction(prose: string, packet: CompletedEventPacket): boolean {
-  if (packet.justKilled || packet.outcome === 'killed') {
-    return isDeadFoeReopenedAsLiving(prose, packet.lastKill, false);
-  }
+  // The kill turn: the engine settled the fight before the writer, and the writer is telling those blows.
+  if (packet.justKilled || packet.outcome === 'killed') return false;
+  if (packet.lastKill && !packet.combatLive && isDeadFoeReopenedAsLiving(prose, packet.lastKill, false)) return true;
   if (packet.combatLive && (packet.outcome === 'hit' || packet.outcome === 'bloodied' || packet.outcome === 'missed')) {
     return /\b(?:crumpled to the stones|kicked the corpse|the (?:skirmisher|foe|hunter) was done|search(?:ed)? the body)\b/i.test(
       prose

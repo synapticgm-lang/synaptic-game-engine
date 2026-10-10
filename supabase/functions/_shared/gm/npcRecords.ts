@@ -174,6 +174,51 @@ export function seedOpeningCastLocations(state: GameState): GameState {
   };
 }
 
+/** A giver with a proper name ("High Priest Arus") is a person; a role ("the recorded magical echo") is not. */
+function isNamedGiver(giver: string): boolean {
+  const words = giver.trim().split(/\s+/);
+  return !/^the$/i.test(words[0] ?? '') && /^[A-Z]/.test(words[words.length - 1] ?? '');
+}
+
+/**
+ * A revealed quest's named giver is a person record at the quest's place: an existing record with no
+ * place is put there; a missing one is made. Hidden quests place nobody.
+ */
+export function placeQuestGivers(state: GameState): GameState {
+  let memories = state.npcMemories ?? [];
+  let changed = false;
+  for (const q of state.quests ?? []) {
+    const giver = (q.giver ?? '').replace(/\s+/g, ' ').trim();
+    const place = (q.location ?? '').trim();
+    if (!q.revealed || !giver || !place || !isNamedGiver(giver)) continue;
+    const hit = resolveNpcRecord({ ...state, npcMemories: memories }, giver);
+    if (hit) {
+      if (!hit.location) {
+        memories = memories.map((m) => (m.npcId === hit.npcId ? { ...m, location: place } : m));
+        changed = true;
+      }
+      continue;
+    }
+    memories = [
+      {
+        npcId: `giver-${giver.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 32)}`,
+        npcName: giver,
+        disposition: 'neutral',
+        facts: [`Quest giver: ${q.name}`],
+        lastSeenTurn: 0,
+        roleHint: 'quest-patron',
+        aliases: [],
+        met: false,
+        present: false,
+        location: place,
+      },
+      ...memories,
+    ];
+    changed = true;
+  }
+  return changed ? { ...state, npcMemories: memories } : state;
+}
+
 /** 27f — a move: companions go with the player; everyone else present stays where they were. */
 export function stampNpcLocationsOnMove(state: GameState, fromLocation: string, toLocation: string): GameState {
   const companions = new Set(companionRecords(state).map((m) => m.npcId));

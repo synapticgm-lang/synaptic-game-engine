@@ -134,10 +134,12 @@ describe('08a — proseViolatesEventPacket', () => {
   it('flags living lastKill and My instruction says', () => {
     const after = runArcDirectorBeforeGm(liveSkirmish(3), 'Attack the Pact-Hunter Skirmisher');
     const packet = buildCompletedEventPacket(after.state, 'Attack the Pact-Hunter Skirmisher');
+    // s77 Root A — the kill turn tells the engine's settled fight; a dead foe acting is a contradiction on the turns after.
+    const nextTurn = buildCompletedEventPacket({ ...after.state, turn: after.state.turn + 1 } as GameState, 'Look around');
     expect(
       proseViolatesEventPacket(
         'The Pact-Hunter Skirmisher looks up and nods in greeting.',
-        packet
+        nextTurn
       )
     ).toBe(true);
     expect(proseViolatesEventPacket('My instruction says narrate the kill.', packet)).toBe(true);

@@ -83,9 +83,9 @@ afterEach(() => {
 });
 
 describe('29y stamps', () => {
-  it('HUD and BUILD are 2026-10-07c and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-07c');
-    expect(BUILD_STAMP).toBe('2026-10-07c');
+  it('HUD and BUILD are 2026-10-10a and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-10a');
+    expect(BUILD_STAMP).toBe('2026-10-10a');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -176,7 +176,8 @@ describe('29y — playback reads as one visit', () => {
     { tok: 't3', id: 'kit:worn-iron-shortsword', display: 'worn iron shortsword', klass: 'kit' },
   ];
 
-  it('a declared ref binds by its id, not by the writer’s own numbering', () => {
+  // s77 Root A — refs bind by the REF ENUM token; a typed id naming a different row contradicts it and paints nothing.
+  it('a declared ref whose id contradicts its enum token paints neither label', () => {
     const text = renderTokenBeat(
       {
         refs: [{ tok: 't2', id: 'kit:worn-iron-shortsword', use: 'worn' }],
@@ -184,7 +185,7 @@ describe('29y — playback reads as one visit', () => {
       },
       ENUM
     );
-    expect(text).toContain('worn iron shortsword');
+    expect(text).not.toContain('worn iron shortsword');
     expect(text).not.toContain('innkeep');
   });
 

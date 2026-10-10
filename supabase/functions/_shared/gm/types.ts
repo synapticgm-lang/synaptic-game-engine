@@ -175,6 +175,8 @@ export interface Quest {
   recommendedLevel?: number;
   /** Place name or id reference — prefer resolving tier from Place / locationSheet. */
   location?: string;
+  /** The person who gives this quest; an NPC record at `location` when it is a named person. */
+  giver?: string;
   /** Danger tier for the quest site — prefer reading from Place when locationRef exists. */
   dangerTier?: MapTier;
   locationRef?: string;
@@ -430,6 +432,17 @@ export interface OpeningEstablishment {
   hookLock?: import('./hookLock').HookLock;
   /** The picked card compiled once at New Game: place, cast and props read from its own slots. */
   card?: OpeningCardRecord;
+  /** The card's opening offer once the player has taken or turned it down; open while unset. */
+  offerTaken?: 'accepted' | 'refused';
+}
+
+/** The card's opening offer compiled once: what is handed over, and the accept and refuse lines. */
+export interface OpeningOfferRecord {
+  items: string[];
+  accept: string;
+  refuse: string;
+  /** What the chips call it: "the work" when the offer is a job, else "the offer". */
+  noun: 'work' | 'offer';
 }
 
 export interface OpeningCardRecord {
@@ -444,6 +457,8 @@ export interface OpeningCardRecord {
   props: string[];
   /** Proper names printed mid-sentence on the card (Crown, Valespire) — never sentence-start words. */
   names: string[];
+  /** The card's opening offer, when someone here hands over kit for an answer. */
+  offer?: OpeningOfferRecord;
 }
 
 export interface GameState {

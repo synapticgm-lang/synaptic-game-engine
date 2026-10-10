@@ -40,7 +40,8 @@ export function isOneCameraFightViolation(state: GameState, text: string): boole
   if (!body) return false;
   if (isLeaveReachFightBleed(body)) return true;
   const kill = state.sceneFacts?.lastKill;
-  if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter) {
+  // The kill turn is the engine's settled fight being told, not a closed foe coming back.
+  if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter && kill.turn !== state.turn) {
     if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
     const tokens = body.match(/\b[A-Za-z][A-Za-z'-]{3,}\b/g) ?? [];
     if (

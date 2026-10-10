@@ -11,6 +11,7 @@ import { resolveDangerTier, resolveMapScale, dangerTierLabel, mapScaleLabel, isI
 import { introductionPermitForName } from './introductionPermit';
 import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine';
 import { isChromePersonToken } from './chromeAuthority';
+import { compileNounAllowlist } from './completedEventPacket';
 
 function isAloneScene(state: GameState): boolean {
   return state.openingEstablishment?.aloneArrival === true;
@@ -171,6 +172,9 @@ export function findManifestInventions(
   for (const x of m.exits) add(x);
   for (const x of m.props) add(x);
   for (const x of m.threats) add(x.split(/\s+HP\b/i)[0] ?? x);
+  // The turn's one name list: what the writer was allowed to mention is not an invention.
+  const packet = state.completedEvent;
+  for (const x of packet && packet.turn === state.turn ? packet.allowlist : compileNounAllowlist(state)) add(x);
   add(m.place);
   add(state.character?.name ?? '');
   add(state.storyName ?? '');

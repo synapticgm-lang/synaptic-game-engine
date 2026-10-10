@@ -55,8 +55,8 @@ function revealFor(
 
 describe('playtest17a — LitRPG quest spines', () => {
   it('HUD/BUILD are 17a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-07c');
-    expect(BUILD_STAMP).toBe('2026-10-07c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-10a');
+    expect(BUILD_STAMP).toBe('2026-10-10a');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -73,7 +73,8 @@ describe('playtest17a — LitRPG quest spines', () => {
     const visible = quests.filter((q) => q.revealed && q.status === 'active');
     expect(visible[0]?.id).toBe('sp-spine-cathedral-royal-vanguard');
     expect(visible[0]?.name).toMatch(/Crown.?s Meat Shield/i);
-    expect(visible[0]?.location).toBe('Consecrated Sanctuary');
+    // rootB — the spine pin resolves to a hub or the opening place, never an unplaced pin.
+    expect(visible[0]?.location).toBe('The Sevenfold Circle under Valespire Cathedral');
     expect(visible[0]?.description).not.toMatch(/Pellane|Circle.?s Price/i);
     expect(quests.some((q) => q.id === 'sp-quest-1')).toBe(false);
     const seeded = withMatchedLitRpgSpine(summonedPact.starterQuests, {
@@ -101,7 +102,7 @@ describe('playtest17a — LitRPG quest spines', () => {
     const visible = quests.filter((q) => q.revealed && q.status === 'active');
     expect(visible[0]?.id).toBe('sp-spine-alone-ruin-tether');
     expect(visible[0]?.name).toMatch(/Echoes of a Dead Summoner/i);
-    expect(visible[0]?.location).toBe('Collapsed Mage Tower');
+    expect(visible[0]?.location).toBe('alone in a collapsed mage tower');
     expect(visible[0]?.description).not.toMatch(/Pellane|Circle.?s Price/i);
   });
 
@@ -117,7 +118,7 @@ describe('playtest17a — LitRPG quest spines', () => {
     const visible = quests.filter((q) => q.revealed && q.status === 'active');
     expect(visible[0]?.id).toBe('ha-spine-academy-flunk-out');
     expect(visible[0]?.name).toBe('Prove Your Class');
-    expect(visible[0]?.location).toBe('Training Yard Beta');
+    expect(visible[0]?.location).toBe('Academy training yard');
   });
 
   it('unknown family falls back to the current starter', () => {
@@ -184,7 +185,7 @@ describe('playtest17a — LitRPG quest spines', () => {
     const visible = quests.filter((q) => q.revealed && q.status === 'active');
     expect(visible[0]?.id).toBe('gw-spine-quarantine-zone-smuggler');
     expect(visible[0]?.name).toBe('The Black Market Ward');
-    expect(visible[0]?.location).toBe('Quarantined Tenement Block');
+    expect(visible[0]?.location).toBe('a Ward 9 rooftop lookout');
   });
 
   it('AS climber-camp hook reveals Breaking the Bronze Toll', () => {
