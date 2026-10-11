@@ -25,7 +25,12 @@ import {
 } from './sceneContextTail';
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { hubsForBibleId } from './outdoorHubs';
-import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
+import {
+  buildCompletedEventPacket,
+  claimedHerePlace,
+  claimNamesHere,
+  formatWriterFacingEvent,
+} from './completedEventPacket';
 import { isAloneArrivalOpening, openingCastNames } from './openingEstablishment';
 
 export type BeatKind =
@@ -557,8 +562,12 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
   const body = (prose ?? '').trim();
   if (!body) return [];
   const bibleId = state.campaignBibleId ?? state.bibleId;
+  // "Cathedral Undercroft — Stair Descent" (a dungeon room inside its place) also allows each part by itself.
   const cast = new Set(
-    [...sealedCastNames(state), ...(state.completedEvent?.allowlist ?? [])].map((n) => n.toLowerCase())
+    [...sealedCastNames(state), ...(state.completedEvent?.allowlist ?? [])]
+      .flatMap((n) => [n, ...n.split(/\s+[—–]\s+/)])
+      .map((n) => n.trim().toLowerCase())
+      .filter(Boolean)
   );
   const self = pcName(state);
   const found: string[] = [];
@@ -589,9 +598,6 @@ export function isInventedCastViolation(state: GameState, prose: string): boolea
   return inventedCastNamesInProse(state, prose).length > 0;
 }
 
-const HERE_CLAIM =
-  /\b(?:you (?:are|stand|wait|remain) (?:in|at|inside)|here in|back (?:in|at)|still (?:in|at))\s+(?:the\s+)?([^.,!?]{2,48})/i;
-
 export function isWrongHereViolation(
   state: GameState,
   prose: string,
@@ -602,11 +608,11 @@ export function isWrongHereViolation(
   const verb = classifySealedVerb(playerInput ?? lastPlayerAction(state));
   const here = hereLocation(state);
   const bibleId = state.campaignBibleId ?? state.bibleId;
-  const claimed = body.match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
+  const claimed = claimedHerePlace(body);
   if (!claimed) return false;
   const claimCore = claimed.replace(/^(the|a|an)\s+/i, '').trim();
   if (!claimCore || claimCore.length < 4) return false;
-  if (here && !placesDiffer(here, claimCore) && !placesDiffer(here, claimed)) return false;
+  if (here && claimNamesHere(claimCore, here)) return false;
   if (here && claimed.toLowerCase().includes(here.toLowerCase())) return false;
   const travelOk = verb === 'travel' || verb === 'leave';
   if (travelOk && isLegalTravelDestination(state, claimCore)) return false;

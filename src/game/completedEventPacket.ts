@@ -1398,16 +1398,34 @@ function aliveVsDeadContradiction(prose: string, packet: CompletedEventPacket): 
 }
 
 const HERE_CLAIM =
-  /\b(?:you (?:are|stand|wait|remain) (?:in|at|inside)|here in|back (?:in|at)|still (?:in|at))\s+(?:the\s+)?([^.,!?]{2,48})/i;
+  /\b(?:you (?:are|stand|wait|remain) (?:in|at|inside)|here in|back (?:in|at)|still (?:in|at))\s+(?:the\s+)?([^.,!?;:]{2,48})/i;
+
+/** The place phrase ends where the clause goes on ("here in the Close and questions waited"). */
+const CLAUSE_GOES_ON = /\s+(?:and|but|or|as|while|where|when|with|before|after|until|so|then|because|though)\b.*$/i;
+
+/** The place a sentence says the camera is in ("still in the close" → "close"), or '' when it claims none. */
+export function claimedHerePlace(prose: string): string {
+  return (prose ?? '').match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').replace(CLAUSE_GOES_ON, '').trim() ?? '';
+}
+
+/** The claim is HERE by HERE's own words: "the Close" or "close" for Cathedral Close. */
+export function claimNamesHere(claim: string, here: string): boolean {
+  const words = (s: string) =>
+    (s ?? '').toLowerCase().replace(/[^a-z0-9\s'-]/g, ' ').split(/\s+/).filter((w) => w && !/^(?:the|a|an|of)$/.test(w));
+  const c = words(claim);
+  const h = new Set(words(here));
+  return c.length > 0 && h.size > 0 && c.every((w) => h.has(w));
+}
 
 function wrongHereOnPacket(prose: string, packet: CompletedEventPacket): boolean {
   const here = (packet.location ?? '').replace(/\.$/, '').trim();
   if (!here || here.length < 3) return false;
   if (packet.outcome === 'arrived' || packet.outcome === 'set out' || packet.verb === 'traveled') return false;
-  const claimed = prose.match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
+  const claimed = claimedHerePlace(prose);
   if (!claimed || claimed.length < 4) return false;
   const claimCore = claimed.replace(/^(the|a|an)\s+/i, '').trim();
   if (!claimCore || !/[A-Z]/.test(claimCore)) return false;
+  if (claimNamesHere(claimCore, here)) return false;
   // "looked back at Jax's face" points at a person, not a place.
   const people = [packet.pc?.name, ...(packet.refEnum ?? []).filter((r) => r.klass === 'person').map((r) => r.display)]
     .map((n) => (n ?? '').replace(/^(the|a|an)\s+/i, '').trim().toLowerCase())

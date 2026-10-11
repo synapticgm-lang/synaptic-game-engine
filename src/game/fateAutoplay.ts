@@ -396,7 +396,7 @@ export type TurnTelemetry = {
   writerIssues?: string[];
   wardenNotes?: string[];
   /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
-  writerUsage?: import('./openRouterChat').TurnWriterUsage;
+  writerUsage?: import('./gmProxy').TurnWriterUsageWithCost;
 };
 
 export type RunSummary = {
@@ -1324,7 +1324,15 @@ Do NOT print dice notation or CODE ENFORCED.
         transportRetries += again.transportRetries;
         return again.text;
       },
-      repair: (request) => callGmRepair(arcState, request, settings),
+      repair: async (request) => {
+        const started = Date.now();
+        writerCallMeter.calls += 1;
+        try {
+          return await callGmRepair(arcState, request, settings);
+        } finally {
+          writerCallMeter.ms += Date.now() - started;
+        }
+      },
     });
     for (const r of writerTurn.repairs ?? []) {
       if (r.bug) console.warn(`[writer] sentence repair bug — ${r.bug}: "${r.sentence.slice(0, 120)}"`);

@@ -585,6 +585,12 @@ function hasDeterminerBefore(text: string, offset: number): boolean {
 function paintDisplay(row: { display: string; klass?: string }, text: string, offset: number, possessive: string): string {
   const display = row.display;
   if (!display) return display;
+  // "the Stair Descent inside @t1" with display "Cathedral Undercroft — Stair Descent": the room is already written.
+  const [place, room] = display.split(/\s+[—–]\s+/);
+  if (place && room) {
+    const roomRe = new RegExp(`\\b${room.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+    if (roomRe.test(text.slice(0, offset))) return place;
+  }
   // "onto the @t2" with display "a ruined bathhouse": the writer's determiner already starts the phrase.
   if (ARTICLE_RE.test(display) && hasDeterminerBefore(text, offset)) return display.replace(ARTICLE_RE, '');
   const thing = row.klass === 'kit' || row.klass === 'carried' || row.klass === 'prop' || row.klass === 'window';

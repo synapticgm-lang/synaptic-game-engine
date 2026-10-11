@@ -15,6 +15,24 @@ const OUT = join(OUT_DIR, 'turns.jsonl');
 /** Lap 13 — one line per commit-gate rejection: the sentence, the flag, the fact, the repair. */
 const REJECTIONS = join(OUT_DIR, 'rejections.jsonl');
 const perWriter = {};
+/** Lap 14 — per-writer reply ms / tokens / cost sums for this invocation. */
+const perWriterCost = {};
+const PRICES = JSON.parse(readFileSync(resolve('scripts', 'fate-autoplay', 'model-prices.json'), 'utf8'));
+
+/**
+ * Turn cost in USD: the provider-billed `costUsd` when the writer reported one (OpenRouter), else an
+ * estimate from model-prices.json (hosted DeepSeek reports tokens only), else null.
+ */
+function turnCost(u) {
+  if (!u) return { costUsd: null, costSource: null };
+  if (typeof u.costUsd === 'number') return { costUsd: u.costUsd, costSource: 'provider' };
+  const key = Object.keys(PRICES).find((k) => k !== '_note' && String(u.modelId ?? '').endsWith(k));
+  if (!key || u.tokensIn == null || u.tokensOut == null) return { costUsd: null, costSource: null };
+  const p = PRICES[key];
+  const cached = u.tokensCached ?? 0;
+  const usd = ((u.tokensIn - cached) * p.in + cached * p.cached + u.tokensOut * p.out) / 1e6;
+  return { costUsd: usd, costSource: 'estimate' };
+}
 
 const argv = process.argv.slice(2);
 let lap = null;
@@ -70,6 +88,8 @@ for (const dir of dirs) {
     const fcFlags = f?.flags ?? [];
     const p0 = t.turnCheck?.p0 ?? [];
     const isGood = fcFlags.length === 0 && p0.length === 0;
+    const u = t.writerUsage ?? null;
+    const { costUsd, costSource } = turnCost(u);
     const row = {
       pairKey: `${meta.bibleId}:s${meta.seed}:t${t.turn}`,
       lap,
@@ -89,10 +109,27 @@ for (const dir of dirs) {
       factCheck: { flags: fcFlags, turnScore: fcFlags.length ? 0 : 100, runScore: fc.score },
       localGate: { p0, down: t.turnCheck?.down ?? [] },
       good: isGood,
+      replyMs: typeof t.writerMs === 'number' ? t.writerMs : null,
+      writerCalls: typeof t.writerCalls === 'number' ? t.writerCalls : null,
+      inputTokens: u?.tokensIn ?? null,
+      outputTokens: u?.tokensOut ?? null,
+      cachedTokens: u?.tokensCached ?? null,
+      costUsd,
+      costSource,
     };
     appendFileSync(OUT, JSON.stringify(row) + '\n');
     added += 1;
     if (isGood) good += 1;
+    const ck = writerModel ?? writerId;
+    const c = (perWriterCost[ck] ??= { turns: 0, ms: [], tin: [], tout: [], cost: [], costSources: new Set() });
+    c.turns += 1;
+    if (row.replyMs != null) c.ms.push(row.replyMs);
+    if (row.inputTokens != null) c.tin.push(row.inputTokens);
+    if (row.outputTokens != null) c.tout.push(row.outputTokens);
+    if (costUsd != null) {
+      c.cost.push(costUsd);
+      c.costSources.add(costSource);
+    }
     for (const r of t.sentenceRepairs ?? []) {
       const rej = {
         pairKey: row.pairKey,
@@ -117,4 +154,21 @@ for (const dir of dirs) {
     }
   }
 }
-console.log(JSON.stringify({ out: OUT, added, good, rejections: REJECTIONS, perWriter }));
+const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+const costByWriter = {};
+let lapCostUsd = 0;
+for (const [k, c] of Object.entries(perWriterCost)) {
+  const total = c.cost.reduce((x, y) => x + y, 0);
+  lapCostUsd += total;
+  costByWriter[k] = {
+    turns: c.turns,
+    meanReplyMs: mean(c.ms),
+    meanInputTokens: mean(c.tin),
+    meanOutputTokens: mean(c.tout),
+    meanCostUsd: mean(c.cost),
+    totalCostUsd: total,
+    turnsWithCost: c.cost.length,
+    costSources: [...c.costSources],
+  };
+}
+console.log(JSON.stringify({ out: OUT, added, good, rejections: REJECTIONS, perWriter, costByWriter, lapCostUsd }, null, 1));

@@ -168,9 +168,31 @@ function mentionsHereOrTrip(state: GameState, body: string): boolean {
   return own.length > 0 && own.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(body));
 }
 
+/** On a leg, the place the trip set out from is part of the road ("the back streets from X toward Y"). */
+function isTripStart(state: GameState, place: string): boolean {
+  const j = state.journey;
+  if (!j || j.legsDone >= j.legsTotal) return false;
+  return !placesDiffer(j.from, place);
+}
+
+const MOVE_VERB =
+  /\b(?:walk|head|turn|go|goes|went|gone|move|step|return|march|hurr(?:y|ied|ies)|travel|made|make|start|set)\w*\b/i;
+
+/** The sentence puts the camera in or at the place, or moves the PC back toward it (not near it or past it). */
+function putsCameraAt(sentence: string, place: string): boolean {
+  const named = (lead: string, w: string) =>
+    new RegExp(`\\b${lead}\\s+(?:the\\s+)?(?:[\\w'-]+\\s+){0,2}${escapeRe(w)}\\b`, 'i');
+  return placeWords(place).some((w) => {
+    if (named('(?:in|inside|at|within)', w).test(sentence)) return true;
+    const toward = sentence.match(named('(?:toward|towards|back to|back into)', w));
+    return !!toward && MOVE_VERB.test(sentence.slice(0, toward.index));
+  });
+}
+
 /**
  * A sentence names the place already left as the camera: it names that place with no HERE, no trip
  * destination and no departure in the same sentence (another sentence naming HERE does not excuse it).
+ * Underway, the trip's start is a landmark of the road itself: only putting the camera in or at it is stale.
  */
 export function isStaleLocationBleed(state: GameState, text: string): boolean {
   if (!(text ?? '').trim() || !locationChangedRecently(state)) return false;
@@ -179,10 +201,12 @@ export function isStaleLocationBleed(state: GameState, text: string): boolean {
   if (!placesDiffer(here, prev)) return false;
   // The road label while underway names no place, so no sentence can bleed it.
   if (prev.toLowerCase() === UNDERWAY_HERE.toLowerCase()) return false;
+  const tripStart = isTripStart(state, prev);
   return splitProseSentences(text).some((sentence) => {
     // A place named inside someone's words is talk about it, not the camera.
     const s = sentence.replace(/"[^"]*"|“[^”]*”/g, ' ').trim();
-    return !!s && mentionsPlace(s, prev) && !mentionsHereOrTrip(state, s) && !isLeaveBehindMention(s, prev);
+    if (!s || !mentionsPlace(s, prev) || mentionsHereOrTrip(state, s) || isLeaveBehindMention(s, prev)) return false;
+    return !tripStart || putsCameraAt(s, prev);
   });
 }
 

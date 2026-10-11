@@ -79,7 +79,10 @@ export function drainWriterRawIssues(): WriterRawIssue[] {
 }
 
 /** 28w — token use of every gm-turn reply since the last drain (one turn, re-asks included). */
-const writerUsageCalls: Array<Partial<TurnWriterUsage>> = [];
+const writerUsageCalls: Array<Partial<TurnWriterUsage> & { costUsd?: number | null }> = [];
+
+/** Lap 14 — `costUsd` is the provider-billed cost (OpenRouter `usage.cost`); absent when not reported. */
+export type TurnWriterUsageWithCost = TurnWriterUsage & { costUsd?: number };
 
 /** A gm-turn reply without a usage block is unknown usage: the turn's sums become null. */
 export function noteWriterUsage(usage: unknown): void {
@@ -91,11 +94,18 @@ export function noteWriterUsage(usage: unknown): void {
     tokensCached: num(u.tokensCached),
     modelCalls: num(u.modelCalls),
     modelId: typeof u.modelId === 'string' ? u.modelId : null,
+    costUsd: num(u.costUsd),
   });
 }
 
-export function drainWriterUsage(): TurnWriterUsage | null {
-  return sumWriterUsage(writerUsageCalls.splice(0, writerUsageCalls.length));
+/** Cost is summed only when every call of the turn reported one (a partial sum would under-count). */
+export function drainWriterUsage(): TurnWriterUsageWithCost | null {
+  const calls = writerUsageCalls.splice(0, writerUsageCalls.length);
+  const sum = sumWriterUsage(calls);
+  if (!sum) return null;
+  const costs = calls.map((c) => c.costUsd);
+  if (!costs.every((c): c is number => typeof c === 'number')) return sum;
+  return { ...sum, costUsd: costs.reduce((a, b) => a + b, 0) };
 }
 
 function pickClientApiKey(settings: Settings): string | undefined {

@@ -19,9 +19,10 @@ import {
   openRouterChatBody,
   openRouterChatHeaders,
   packGmCandidateTexts,
+  readChatUsage,
   stripReasoningBlocks,
 } from './openRouterChat';
-import { noteWriterRawIssue } from './gmProxy';
+import { noteWriterRawIssue, noteWriterUsage } from './gmProxy';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -153,15 +154,16 @@ async function callOpenRouter(
       {
         method: 'POST',
         headers: openRouterChatHeaders(apiKey),
-        body: JSON.stringify(
-          openRouterChatBody(
+        body: JSON.stringify({
+          ...openRouterChatBody(
             modelName,
             systemPrompt,
             prompt,
             AI_MAX_OUTPUT_TOKENS,
             withSchema ? { tokenProse: true, n: 2 } : undefined
-          )
-        ),
+          ),
+          usage: { include: true },
+        }),
       },
       'OpenRouter'
     );
@@ -186,6 +188,13 @@ async function callOpenRouter(
     throw new Error(errBody?.error?.message ?? `OpenRouter error ${res.status}`);
   }
   const data = await res.json();
+  const cost = (data as { usage?: { cost?: unknown } })?.usage?.cost;
+  noteWriterUsage({
+    ...readChatUsage(data),
+    modelCalls: 1,
+    modelId: typeof data?.model === 'string' ? data.model : modelName,
+    costUsd: typeof cost === 'number' ? cost : null,
+  });
   return packGmCandidateTexts(extractChatCompletionTexts(data)) || extractChatCompletionText(data);
 }
 
