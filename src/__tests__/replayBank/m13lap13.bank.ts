@@ -45,7 +45,9 @@ describe('replay bank multi lap 13', () => {
       [18, 'Footsteps scuffed the gravel behind the row of stalls, and something small and quick darted between two crates.'],
     ];
     for (const [n, s] of lines) expect(sentenceGateProblem(gateState(R, n), s, R.input(n)), `T${n}`).toBeNull();
-    expect(R.turns().filter((n) => repairsOf(R, n).length), 'only T9 walking back toward the Close is rejected').toEqual([9]);
+    // Lap 15: T15's "the only way out was back up the stairs" at Cathedral Undercroft (4 ways out) is s78 #22's real miscount.
+    expect(R.turns().filter((n) => repairsOf(R, n).length), 'only T9 walking back toward the Close and T15 miscounting the ways out are rejected').toEqual([9, 15]);
+    expect(repairsOf(R, 15).map((r) => r.flag)).toEqual([expect.stringMatching(/^Gives the wrong number of ways out/)]);
     expect(repairsOf(R, 9).map((r) => r.sentence)).toEqual(['Jax walked the back streets toward Cathedral Close and spoke to a traveler going the other way.']);
   });
 

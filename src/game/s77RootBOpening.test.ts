@@ -10,6 +10,7 @@ import {
   compileOpeningCard,
   coverContinuePads,
   normalizeOpeningHookCard,
+  openingCastNames,
 } from './openingEstablishment';
 import { applyOpeningOfferChoice } from './openingOffer';
 import { buildInfoSheet } from './infoSheet';
@@ -59,7 +60,7 @@ describe('seed 77 infirmary card compiles its cast, offer and spine', () => {
     const taken = applyOpeningOfferChoice(s, 'Accept the work');
     const names = taken.state.inventory.map((i) => i.name);
     expect(names).toEqual(expect.arrayContaining(['wraps', 'knife', 'tabard']));
-    expect(taken.receipts[0]).toBe('Offer accepted: the work');
+    expect(taken.receipts[0]).toBe(`Offer accepted: the work from ${openingCastNames(s)[0]}`);
     expect(taken.receipts.filter((r) => /^Loot granted:/.test(r))).toHaveLength(3);
     expect(taken.state.openingEstablishment?.offerTaken).toBe('accepted');
     expect(coverContinuePads(taken.state)).not.toContain('Accept the work');

@@ -173,9 +173,14 @@ function peopleLines(state: GameState, here: string[]): string[] {
     });
 }
 
+/** The ways out the writer is handed on the PLACES line (the commit gate counts against this same list). */
+export function sheetExitNames(state: GameState): string[] {
+  return exitPlaceNames(state).map(norm).filter(Boolean).slice(0, 4);
+}
+
 function placesLine(state: GameState): string {
   const here = playerFacingLocation(state) || norm(state.currentLocation) || 'unknown place';
-  const exits = exitPlaceNames(state).map(norm).filter(Boolean).slice(0, 4);
+  const exits = sheetExitNames(state);
   return exits.length ? `${here} · exits: ${exits.join(', ')}` : `${here} · no named exits`;
 }
 

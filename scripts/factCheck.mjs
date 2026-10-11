@@ -290,6 +290,10 @@ export function checkTurn(row, packet, page = '') {
       if (kind === 'person') {
         if (!/^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i.test(after)) continue;
         if (foeHanded && /^(?:men|man|women|woman|strangers?)$/.test(w)) continue;
+        // "neither man" / "the two men" points back at a handed person here; "a man" is a new one.
+        const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
+        if (personHere && /^(?:men|man|women|woman)$/.test(w)
+          && /\b(?:the|neither|either|each|both|other|those|these|one|two|three|four)\s+(?:of the\s+)?$/i.test(before)) continue;
         if (/\bcrowd\b/.test(facts.handedText) && /\b(?:a|an|one|some|someone|another)\s+(?:\w+\s+)?$/i.test(before)) continue;
       }
       add(kind, s, `"${w}" is not in the inventory, refs, people, receipts or engine result`);

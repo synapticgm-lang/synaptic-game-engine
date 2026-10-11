@@ -4,7 +4,7 @@
  */
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
-import { isAcceptOfferLine, openOpeningOffer } from './openingEstablishment';
+import { isAcceptOfferLine, openingCastNames, openOpeningOffer } from './openingEstablishment';
 import { applyStructuralEvents } from './structuralEvents';
 
 const OFFER_NOUN = /\b(?:work|job|offer|kit|deal|cots|terms)\b/i;
@@ -35,9 +35,12 @@ export function applyOpeningOfferChoice(
       lootSource: 'story',
     }));
     const granted = applyStructuralEvents(state, events, { playerInput });
+    // Who made the offer is the card's cast; the card's terms ("they will unbar the door") are not settled here.
+    const who = openingCastNames(state)[0];
+    const from = who ? ` from ${who}` : '';
     return {
       state: { ...granted.state, openingEstablishment: { ...est, offerTaken: 'accepted' } },
-      receipts: [`Offer accepted: the ${offer.noun}`, ...granted.notes.filter((n) => /^Loot granted:/.test(n))],
+      receipts: [`Offer accepted: the ${offer.noun}${from}`, ...granted.notes.filter((n) => /^Loot granted:/.test(n))],
     };
   }
   return { state, receipts: [] };
