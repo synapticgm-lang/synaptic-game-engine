@@ -1636,11 +1636,13 @@ export function compileOpeningCard(
   const slot = blob.match(/Who is here[^:\n]*:[ \t]*([^\n]+)/i)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
   if (!location && !slot) return undefined;
   const names = cardProperNames([blob, page ?? ''].join('\n'));
-  const live = slotParts(slot)
-    .map((p) => p.trim().replace(/[.!]+$/, ''))
-    .filter((p) => p && !slotNamesNobody(p));
+  const parts = slotParts(slot).map((p) => p.trim().replace(/[.!]+$/, ''));
+  // "Nobody here — the circle worked…": what follows a whole-slot nobody describes the place, not people.
+  const live = slotNamesNoOneAtAll(parts[0] ?? '') ? [] : parts.filter((p) => p && !slotNamesNobody(p));
   const castNames: string[] = [];
-  for (const t of live) {
+  for (const part of live) {
+    // A comma clause kept with its phrase describes the person; the name is the phrase before it.
+    const t = part.replace(/,.*$/, '').trim();
     if (t.split(' ').length > 6 || !slotNamesOnePerson(t)) continue;
     castNames.push(t, t.replace(/^(?:a|an|the)\s+/i, '').trim());
   }
@@ -1666,12 +1668,24 @@ export function compileOpeningCard(
 }
 
 /** A comma clause that negates or describes the player belongs to the phrase before it, not a new person. */
-const CLAUSE_OF_PREVIOUS = /^(?:not|never|nor|rather than|instead of|but not)\b|\b(?:you|your|yours|yourself)\b/i;
+const CLAUSE_OF_PREVIOUS = /^(?:not|never|nor|or|already|still|rather than|instead of|but not)\b|\b(?:you|your|yours|yourself)\b/i;
+/** A phrase with an open relative clause ("Smugglers who stole a Scale rite"): an "and" after it continues that clause. */
+const OPEN_RELATIVE = /\b(?:who|whom|which|that)\s+\S/i;
 
-/** The "Who is here" slot cut into people: list separators split; a comma splits unless its clause belongs to the phrase before. */
+/**
+ * The "Who is here" slot cut into people: list separators split; an "and / with / plus" that continues
+ * the phrase before's relative clause does not, and a comma splits unless its clause belongs to the phrase before.
+ */
 function slotParts(slot: string): string[] {
   const out: string[] = [];
-  for (const piece of slot.split(/[;()]|\s[—–-]\s|\s(?:and|with|plus)\s/i)) {
+  const pieces = slot.split(/([;()]|\s[—–-]\s|\s(?:and|with|plus)\s)/i);
+  for (let i = 0; i < pieces.length; i += 2) {
+    const piece = pieces[i] ?? '';
+    const sep = pieces[i - 1] ?? '';
+    if (out.length && /^\s(?:and|with|plus)\s$/i.test(sep) && OPEN_RELATIVE.test(out[out.length - 1]!)) {
+      out[out.length - 1] = `${out[out.length - 1]}${sep}${piece.trim()}`;
+      continue;
+    }
     let first = true;
     for (const clause of piece.split(',')) {
       const c = clause.trim();
@@ -1684,34 +1698,56 @@ function slotParts(slot: string): string[] {
   return out;
 }
 
-const OFFER_GIVE = /\b(?:issue|give|hand|grant|offer|lend|provide)s?\b/i;
+/** "… and they will kit you …" — where the consequence starts: "and" before its subject (a pronoun, "that side" or a name). */
+const OFFER_CONSEQUENCE = /\band\s+((?:they|he|she|it|that side|[A-Z][\w'’-]*)\s.+)$/;
+const OFFER_SUBJECT = /^(?:that side|they|he|she|it|[A-Z][\w'’-]*)\s+(?:will\s+|shall\s+|may\s+|can\s+)?/i;
+/** "The patrol will issue …" / "gets issued kit" — the word after the modal is the verb. */
+const OFFER_MODAL = /\b(?:will|shall|may|gets?)\s+[a-z][\w'’-]*\s+(.+)$/i;
+const OFFER_OBJECT_END = /\s+(?:if|when|once|after|unless|while|in exchange|into|from|for|at|as|they|he|she)\b|[.!?;:—–]/i;
 
-/** The things an offer sentence hands over: its bracketed list, else the object of its giving verb. */
-function offerItems(sentence: string): string[] {
-  const list =
-    sentence.match(/\(([^)]+)\)/)?.[1]
-    ?? sentence.match(/\b(?:issue|give|hand|grant|offer|lend|provide)s?\s+(?:you\s+)?(.+?)(?:\s+(?:if|when|once|after|for|in exchange)\b|[.!?]|$)/i)?.[1]
-    ?? '';
-  return list
-    .split(/,|\s+and\s+|\s+or\s+/i)
-    .map((p) => p.trim().replace(/^(?:and|or)\s+/i, '').replace(/^(?:a|an|the|some|your|their)\s+/i, '').trim())
-    .filter((p) => p && p.split(/\s+/).length <= 4 && !/\b(?:whatever|anything|nothing|junk)\b/i.test(p));
+/** The object of an offer sentence: after its consequence's verb, else after its modal verb, else after its leading imperative. */
+function offerObject(sentence: string): string {
+  const consequence = sentence.match(OFFER_CONSEQUENCE)?.[1];
+  const afterVerb = consequence
+    ? consequence.replace(OFFER_SUBJECT, '').replace(/^[a-z][\w'’-]*\s+/i, '')
+    : sentence.match(OFFER_MODAL)?.[1] ?? sentence.replace(/^\s*[\w'’-]+\s+/, '');
+  const object = afterVerb.replace(/^(?:you\s+)?(?:with\s+)?/i, '');
+  const end = object.search(OFFER_OBJECT_END);
+  return end >= 0 ? object.slice(0, end) : object;
 }
 
-/** The card's opening offer compiled once: the items handed over, the accept line and the refuse line. */
+/** The things an offer sentence hands over: its bracketed list, else the object of the sentence. */
+function offerItems(sentence: string): string[] {
+  const bracket = sentence.match(/\(([^)]+)\)/)?.[1];
+  return (bracket ?? offerObject(sentence))
+    .split(/,|\s+and\s+|\s+or\s+/i)
+    .map((p) => p.trim().replace(/^(?:and|or)\s+/i, ''))
+    // A part that leads with a verb before its article ("issue a traveler's kit") is the article's phrase.
+    .map((p) => (/^(?:a|an|the|some|your|their)\s/i.test(p) ? p : p.replace(/^.*?\s(?=(?:a|an|some)\s)/i, '')))
+    // A definite thing outside a bracket list ("unbar the door") is already in the scene, not handed over.
+    .filter((p) => bracket != null || !/^the\s/i.test(p))
+    .map((p) => p.replace(/^(?:a|an|the|some|your|their)\s+/i, '').trim())
+    .filter((p) => p && p.split(/\s+/).length <= 4 && !/\b(?:whatever|anything|nothing|junk)\b(?!-)/i.test(p));
+}
+
+/** A line of the offer slot that says nothing is offered. */
+const NO_OFFER_LINE = /^(?:no one|nobody|none|nothing|no)\b/i;
+
+/**
+ * The card's opening offer compiled once from its "Opening offer" slot: the slot's first line that is
+ * not a refusal is the accept line; the items handed over, the accept line and the refuse line.
+ */
 export function compileOpeningOffer(blob: string | undefined): OpeningOfferRecord | undefined {
   const raw = offerFromPickedHookBlob(blob);
-  if (!raw) return undefined;
+  if (!raw || NO_OFFER_LINE.test(raw)) return undefined;
   const sentences = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
-  const accept = sentences.find(
-    (s) => OFFER_GIVE.test(s) && !/^(?:no one|nobody|none|no)\b/i.test(s) && !/^refuse\b/i.test(s)
-  );
+  const accept = sentences.find((s) => !NO_OFFER_LINE.test(s) && !/^(?:refuse|decline)\b/i.test(s));
   if (!accept) return undefined;
   const items = offerItems(accept);
   if (!items.length) return undefined;
   const refuse = sentences.find(
     (s) => s !== accept && /\b(?:refuse|decline|turn (?:it|them) down|say no)\b/i.test(s)
-  ) ?? '';
+  ) ?? sentences[sentences.indexOf(accept) + 1] ?? '';
   const noun = /\b(?:work|job|cots|serve|duty|labou?r|shift)\b/i.test(accept) ? 'work' : 'offer';
   return { items, accept, refuse, noun };
 }
@@ -1751,6 +1787,11 @@ export function openingCardRecord(state: GameState): OpeningCardRecord | undefin
 
 function slotNamesNobody(part: string): boolean {
   return /^\(?\s*(?:no|nobody|none|alone|you alone)\b/i.test(part.trim());
+}
+
+/** "Nobody here" / "No one" — nobody at all, unlike "No priests", which names who is absent. */
+function slotNamesNoOneAtAll(part: string): boolean {
+  return /^\(?\s*(?:nobody|no one|none|alone|you alone)\b/i.test(part.trim());
 }
 
 /**

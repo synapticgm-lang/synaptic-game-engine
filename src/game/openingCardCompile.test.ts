@@ -10,6 +10,7 @@ import { compileOpeningCard, normalizeOpeningHookCard, openingCastLabel } from '
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeHeadNoun } from './placeNames';
 import { applySandboxXpAwards } from './sandboxXp';
+import { resolveOfferedChoices } from './playTranscript';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import type { GameState } from './types';
 
@@ -70,6 +71,55 @@ describe('seed 76 lowmarket card compiles once', () => {
     const after = { ...s, currentLocation: 'Lowmarket', sandboxAwardKeys: walked.awardKeys, places: walked.places };
     const again = xpTurn(after, 'Return to Lowmarket', here, 'Lowmarket', 5);
     expect(reached(again.awardKeys)).toHaveLength(1);
+  });
+});
+
+describe('s80 Root B — the card offer and cast compile from the card slots', () => {
+  function seed80(): GameState {
+    const { state } = buildNewGameState({ bibleId: 'summoned-pact', characterName: 'Jax', seed: 80, personality: 'cold-system' });
+    return stampOpening(state);
+  }
+  const slot = (text: string, name: string) => text.match(new RegExp(`${name}[^:\\n]*:[ \\t]*([^\\n]+)`, 'i'))?.[1]?.trim() ?? '';
+
+  it('the seed-80 card compiles its crew offer, and T1 offers Accept and Refuse', () => {
+    const s = seed80();
+    expect(s.openingEstablishment?.pickedHook).toMatch(/kit you as crew \(knife, oilskin, a bunk\)/);
+    const offer = s.openingEstablishment?.card?.offer;
+    expect(offer?.items).toEqual(['knife', 'oilskin', 'bunk']);
+    expect(offer?.accept).toMatch(/^Keep their secret/);
+    expect(resolveOfferedChoices(s)).toEqual(expect.arrayContaining(['Accept the offer', 'Refuse the offer']));
+  });
+
+  it('every card whose offer slot does not open with no / nothing compiles an offer; the no-offer cards compile none', () => {
+    let offered = 0;
+    let none = 0;
+    for (const raw of summonedPact.openingHooks ?? []) {
+      const card = normalizeOpeningHookCard(raw);
+      const offerSlot = slot(card.text, 'Opening offer');
+      if (!offerSlot) continue;
+      const compiled = compileOpeningCard('summoned-pact', card.text, card.page1);
+      if (/^(?:no|nothing|no one|nobody|none)\b/i.test(offerSlot)) {
+        none++;
+        expect(compiled?.offer, offerSlot).toBeUndefined();
+      } else {
+        offered++;
+        expect(compiled?.offer?.items.length, offerSlot).toBeGreaterThan(0);
+      }
+    }
+    expect(none).toBe(6);
+    expect(offered).toBeGreaterThanOrEqual(38);
+  });
+
+  it('no cast name is a clause that continues the phrase before it', () => {
+    expect(seed80().openingEstablishment?.card?.castNames ?? []).not.toContain('panicked when it worked');
+    for (const raw of summonedPact.openingHooks ?? []) {
+      const card = normalizeOpeningHookCard(raw);
+      const compiled = compileOpeningCard('summoned-pact', card.text, card.page1);
+      for (const name of compiled?.castNames ?? []) {
+        expect(name, slot(card.text, 'Who is here')).not.toMatch(/^(?:panicked when|already|or|still|delayed)\b|,|\b(?:did not|are gone|worked)\b/i);
+      }
+      if (/^nobody\b/i.test(slot(card.text, 'Who is here'))) expect(compiled?.castNames ?? []).toEqual([]);
+    }
   });
 });
 

@@ -261,12 +261,37 @@ export function checkDiversityContract(
   return violations;
 }
 
+const TRAVEL_CHIP = /^(?:travel|head|go|walk|move|return|journey)\s+(?:back\s+)?(?:to|toward|towards|into)\s+(.+)$/i;
+const ENTER_CHIP = /^enter\s+(.+)$/i;
+const TALK_CHIP = /^(?:talk|speak)\s+(?:to|with)\s+(.+)$/i;
+/** "Ask Col Thatch what they want" — the addressee is the Title-Case run straight after the verb. */
+const ASK_NAMED_CHIP = /^[Aa]sk\s+((?:[A-Z][\w'’-]*)(?:\s+[A-Z][\w'’-]*)*)/;
+
+function targetKey(phrase: string): string {
+  return phrase
+    .toLowerCase()
+    .replace(/[.!?,;:]+$/g, '')
+    .replace(/^(?:the|a|an)\s+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /**
- * Canonicalize option for cooldown tracking.
+ * Canonicalize option for cooldown tracking. A chip's target is its named target when it has one —
+ * the person addressed, the place travelled to or entered — so offering one person or place never
+ * cools another. A chip with no recognised action or target keys by its own label.
  */
 export function canonicalizeOption(choice: string): string {
-  const intent = canonicalizeIntent(choice, 0);
-  return `${intent.action}:${intent.target}:${intent.purpose}`;
+  const label = choice.trim();
+  const travel = label.match(TRAVEL_CHIP) ?? label.match(ENTER_CHIP);
+  if (travel) return `travel:${targetKey(travel[1])}:explore`;
+  const talk = label.match(TALK_CHIP);
+  if (talk) return `ask:${targetKey(talk[1])}:gather_info`;
+  const askNamed = label.match(ASK_NAMED_CHIP);
+  if (askNamed) return `ask:${targetKey(askNamed[1])}:gather_info`;
+  const intent = canonicalizeIntent(label, 0);
+  const target = intent.action === 'generic' && intent.target === 'environment' ? targetKey(label) : intent.target;
+  return `${intent.action}:${target}:${intent.purpose}`;
 }
 
 /**
