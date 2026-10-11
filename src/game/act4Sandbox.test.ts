@@ -135,7 +135,7 @@ describe('Act-4 hub encounter banks', () => {
 });
 
 describe('Act-4 stronger resume-main', () => {
-  it('exposes resumeCopy, distanceHint, and Return-to pad when off-spine', () => {
+  it('exposes resumeCopy, distanceHint, and a travel pad to a pin never visited when off-spine', () => {
     const quests = seedLocalStarterQuest([], summonedPact.starterQuests).map((q) =>
       q.id === 'sp-quest-1'
         ? { ...q, revealed: true, status: 'active' as const }
@@ -155,7 +155,7 @@ describe('Act-4 stronger resume-main', () => {
     expect(focus.offSpine).toBe(true);
     expect(focus.distanceHint).toBe('elsewhere');
     expect(focus.resumeCopy).toMatch(/Next:/);
-    expect(resumeMainTravelChoice(state)).toBe('Return to Cathedral Close');
+    expect(resumeMainTravelChoice(state)).toBe('Travel toward Cathedral Close');
   });
 
   it('marks distance here when at the pin', () => {

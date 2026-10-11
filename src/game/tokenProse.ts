@@ -421,6 +421,16 @@ export function classifyTokenLine(
       return { ok: false, reason: 'article-person' };
     }
   }
+  // A speaker is a person or companion here, and says something other than their own name.
+  if (line.spoken && line.speaker_tok) {
+    const tok = line.speaker_tok.replace(/^@/, '').toLowerCase();
+    const declared = beat.refs.find((r) => r.tok.replace(/^@/, '').toLowerCase() === tok);
+    const row = declared ? findEnum(enumRefs, declared.tok, declared.id) : findEnum(enumRefs, tok);
+    if (!row || (row.klass !== 'person' && row.klass !== 'companion')) return { ok: false, reason: 'speaker-class' };
+    const bare = (s: string) => s.toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/[^a-z0-9' -]+/g, '').trim();
+    const first = splitProseSentences(line.text.replace(/@t(\d+)\b/gi, (_m, n: string) => findEnum(enumRefs, `t${n}`)?.display ?? ''))[0] ?? '';
+    if (bare(first) && bare(first) === bare(row.display)) return { ok: false, reason: 'speaker-echo' };
+  }
   return { ok: true };
 }
 

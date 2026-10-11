@@ -3,6 +3,7 @@ import type { GameState } from './types.ts';
 import { underwayHereLabel } from './locationName.ts';
 
 export function roadMeetingFact(_j: unknown): string { return ''; }
+export function roadMeetingPerson(_j: unknown): string { return ''; }
 
 export const UNDERWAY_HERE = 'On the road between places';
 

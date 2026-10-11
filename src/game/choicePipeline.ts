@@ -13,7 +13,7 @@ import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn, s
 import { outdoorHubTravelChoices } from './outdoorHubs';
 import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
 import { settlementQuestCardChoices } from './settlementQuestCards';
-import { isAtmospherePlaceName, resumeMainTravelChoice } from './questPlay';
+import { isAtmospherePlaceName, resumeMainTravelChoice, travelChipTarget } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad, listInteriorExitsFromHere } from './mapEngine';
@@ -900,7 +900,7 @@ export function padChoicesToCount(
     merged = merged.filter((c) => !isCameraRelativePad(c));
   }
   // Act-4: resume main when off-spine — 02i: not if travel is excluded
-  const resumeChoice = resumeMainTravelChoice(state);
+  const resumeChoice = resumeMainTravelChoice(state, merged);
   if (resumeChoice && merged.length < 4 && !isExcludedPadLabel(resumeChoice, excluded)) {
     if (!inventsPresenceOnEmptyScene(resumeChoice, state, storyProse)) {
       if (!merged.some((c) => c.toLowerCase() === resumeChoice.toLowerCase())) merged.push(resumeChoice);
@@ -923,7 +923,11 @@ export function padChoicesToCount(
       if (merged.length >= 4) break;
       if (isExcludedPadLabel(hubChoice, excluded)) continue;
       if (inventsPresenceOnEmptyScene(hubChoice, state, storyProse)) continue;
-      if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase())) merged.push(hubChoice);
+      const target = travelChipTarget(hubChoice)?.toLowerCase();
+      if (target && state.journey?.to?.trim().toLowerCase() === target) continue;
+      if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase() || (!!target && travelChipTarget(c)?.toLowerCase() === target))) {
+        merged.push(hubChoice);
+      }
     }
   }
   if (merged.length >= min) {

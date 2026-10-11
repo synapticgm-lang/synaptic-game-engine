@@ -15,7 +15,7 @@ import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs.ts';
 import { nearbyPlaceNames } from './placeNames.ts';
-import { isRoadLabel, roadMeetingFact } from './travelJourney.ts';
+import { isRoadLabel, roadMeetingFact, roadMeetingPerson } from './travelJourney.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
 import { emptySceneFacts } from './sceneFacts.ts';
 import {
@@ -613,6 +613,8 @@ export function compileRefEnum(
     }
     const encName = state.activeEncounter?.name?.trim();
     if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
+    const roadPerson = roadMeetingPerson(state.journey);
+    if (roadPerson) add(`road:${slugRefId(roadPerson)}`, roadPerson, 'person');
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name && kill.remains && kill.outcome === 'victory') {
       add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');

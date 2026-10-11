@@ -897,13 +897,30 @@ export function resumeMainQuestFocus(state: GameState): {
   };
 }
 
-/** Choice pad when the player is off the main-spine pin. */
-export function resumeMainTravelChoice(state: GameState): string | null {
+function samePlaceName(a: string | null | undefined, b: string | null | undefined): boolean {
+  const bare = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/[.,;:!?]+$/, '');
+  return !!a && !!b && bare(a) === bare(b);
+}
+
+/** The place a travel chip goes to ("Travel toward X", "Return to X", "Go back to X"), else null. */
+export function travelChipTarget(label: string): string | null {
+  return label.trim().match(/^(?:travel toward|return to|go back to)\s+(.+)$/i)?.[1]?.trim() ?? null;
+}
+
+/**
+ * Choice pad when the player is off the main-spine pin. "Return to" only for a pin already visited.
+ * None while the trip is already headed there or another chip in `offered` already goes there.
+ */
+export function resumeMainTravelChoice(state: GameState, offered: string[] = []): string | null {
   if (state.openingEstablishment?.complete === false) return null;
   if (state.activeDungeon || state.activeEncounter) return null;
   const focus = resumeMainQuestFocus(state);
-  if (!focus.quest || !focus.placePin || !focus.offSpine) return null;
-  return `Return to ${focus.placePin}`;
+  const pin = focus.placePin;
+  if (!focus.quest || !pin || !focus.offSpine) return null;
+  if (state.journey && samePlaceName(state.journey.to, pin)) return null;
+  if (offered.some((c) => samePlaceName(travelChipTarget(c), pin))) return null;
+  const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && samePlaceName(p.name, pin));
+  return visited ? `Return to ${pin}` : `Travel toward ${pin}`;
 }
 
 /** After they finish name+place, seed the local starter hidden — never Wave/Riverside. */

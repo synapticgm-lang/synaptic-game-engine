@@ -568,6 +568,16 @@ export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   return `On this stretch: ${base}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
 }
 
+/** Meetings with someone who can speak. */
+const SPEAKING_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'thugs', 'villain']);
+
+/** The person this stretch's open meeting puts on the road (its ledger label), if one can speak. */
+export function roadMeetingPerson(j: TravelJourney | null | undefined): string {
+  const e = j?.encounter;
+  if (!e || roadMeetingOver(e) || !SPEAKING_KINDS.has(e.kind) || j!.legsDone >= j!.legsTotal) return '';
+  return ENCOUNTER_LABEL[e.kind];
+}
+
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
   const e = j.encounter;
@@ -895,9 +905,9 @@ export function pinClockTimeOfDay<F extends { timeOfDay?: TimeOfDay } | undefine
   return { ...facts, timeOfDay: timeOfDayForHour(state.worldHour) };
 }
 
-/** Ground chips replace the pad while underway (a live fight keeps its own pads). */
+/** Ground chips replace the pad while underway (a live fight keeps its own pads; a parked one does not). */
 export function withJourneyPads(state: GameState, choices: string[]): string[] {
   if (!isJourneyUnderway(state)) return choices;
-  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return choices;
+  if (state.activeEncounter) return choices;
   return journeyPads(state);
 }
