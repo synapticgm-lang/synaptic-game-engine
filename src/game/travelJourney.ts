@@ -586,6 +586,24 @@ function facesFight(input: string, enc: RoadEncounter): boolean {
 const ROAD_FOE_SOURCES = new Set(['road-encounter', 'road-rare-spawn', 'road-camp-elite']);
 const FLEE_WORDS = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 
+/** The meeting's own non-fight chips and the existing check each one runs (talk = parley, slip past = flee). */
+const MEETING_MOVE = new Map<string, 'parley' | 'flee'>([
+  ['talk your way past the thugs', 'parley'],
+  ['talk to whoever blocks the way', 'parley'],
+  ['slip past the dead', 'flee'],
+  ['skirt around the camp', 'flee'],
+  ['hide from the creature', 'flee'],
+]);
+
+/** The check this meeting's own talk / slip chip runs, when the meeting can still be fought. Null otherwise. */
+export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string): 'parley' | 'flee' | null {
+  const enc = state.journey?.encounter;
+  if (!enc || !fightPad(enc) || roadMeetingOver(enc)) return null;
+  const chip = (raw ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!encounterPads(enc, state.journey!.terrain).some((p) => p.toLowerCase() === chip)) return null;
+  return MEETING_MOVE.get(chip) ?? null;
+}
+
 function liveRoadFoe(state: GameState, enc: RoadEncounter): ActiveEncounter {
   return initEncounterTerminal(roadFoe(enc), state, { forcedSpawnKey: `road-${enc.kind}` });
 }
@@ -601,6 +619,7 @@ export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (facesFight(input, enc)) return liveRoadFoe(state, enc);
   if (FLEE_WORDS.test(input) && laneBlocked(enc)) return liveRoadFoe(state, enc);
+  if (roadMeetingMove(state, input)) return liveRoadFoe(state, enc);
   return null;
 }
 

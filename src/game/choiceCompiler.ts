@@ -19,7 +19,7 @@ import {
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { systemStatusChip } from './systemHousing';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
-import { compileGraphChoiceLabels } from './graphChoices';
+import { compileGraphChoiceLabels, enumerateLegalEdges as enumerateGraphEdges } from './graphChoices';
 import { 
   isEncounterEngaged, 
   fleeAvailable, 
@@ -1380,6 +1380,13 @@ export function compileChoices(
     notes.push(...ranked.notes);
   }
 
+  // s83 Root C — a named person here keeps one talk chip; a role chip never stands in for them.
+  if (!engaged) {
+    const named = keepNamedTalkChip(state, finalChoices, (c) => filterCooldownChoices([c], turn, cooldownMap).filtered.length > 0);
+    if (named !== finalChoices) notes.push('Named person talk chip');
+    finalChoices = named;
+  }
+
   // 29y — a threat remembered at this place keeps the fight chip on the card.
   if (!engaged && !coverCombatLock) {
     const withThreat = withRememberedThreatChip(state, finalChoices);
@@ -1395,6 +1402,28 @@ export function compileChoices(
     notes,
     intentEnums,
   };
+}
+
+const ROLE_TALK_CHIP =
+  /^(?:talk to|speak (?:to|with)|chat with|greet|call out to|ask|offer\b.*?\bto)\s+(?:the|a|an)\s+[a-z]/i;
+const TALK_CHIP = /^(?:talk to|speak (?:to|with)|chat with|greet|ask)\b/i;
+
+/**
+ * A met named person here whose own topics are not spent keeps one talk chip (from the legal talk
+ * edges), and talk chips aimed at a role ("the fence", "a bystander") drop while that person is here.
+ */
+function keepNamedTalkChip(state: GameState, choices: string[], offerable: (chip: string) => boolean): string[] {
+  const people = enumerateGraphEdges(state)
+    .filter((e) => e.type === 'talk' && !!e.target && !shouldForceNpcStageAdvance(state, e.target))
+    .map((e) => ({ name: e.target!, label: e.label }));
+  if (!people.length) return choices;
+  const kept = choices.filter((c) => !ROLE_TALK_CHIP.test(c.trim()));
+  const hasNamed = kept.some(
+    (c) => TALK_CHIP.test(c.trim()) && people.some((p) => c.toLowerCase().includes(p.name.toLowerCase()))
+  );
+  const next = people.find((p) => offerable(p.label));
+  if (hasNamed || !next) return kept.length === choices.length ? choices : kept;
+  return [...kept.slice(0, 1), next.label, ...kept.slice(1)].slice(0, 6);
 }
 
 export function playerInputGateBlock(

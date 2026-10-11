@@ -19,7 +19,7 @@ import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { fightLootClause, weaponInHand } from './infoSheet';
-import { isRoadFoe, roadFoeForEngine, settleRoadMeeting } from './travelJourney';
+import { isRoadFoe, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
 
@@ -97,8 +97,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ?? (pending ? arrivePendingEncounter(pending, state.turn) : null)
     ?? (parked ? wakeParkedThreat(parked) : road);
   if (!raw || !input) return null;
-  const flee = FLEE_RE.test(input);
-  const parley = !flee && PARLEY_RE.test(input);
+  const meetingMove = road ? roadMeetingMove(state, input) : null;
+  const flee = meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(input));
+  const parley = meetingMove === 'parley' || (!flee && PARLEY_RE.test(input));
   const attack = !flee && !parley && (ATTACK_RE.test(input) || !!road);
   const onRoad = isRoadFoe(state, raw);
   if (!flee && !parley && !attack) return null;

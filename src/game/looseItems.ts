@@ -7,6 +7,7 @@ import type { LooseNodeItem } from './dungeonMobLedger';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { isOpenContainerAction, isSearchTargetEmpty, normalizeSearchTarget, recordEmptySearch } from './searchContinuity';
 import { matchesLastKillName } from './combatAuthority';
+import { hubTravelTargets } from './outdoorHubs';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -186,6 +187,22 @@ function lootLastKillBody(
 
 const SEARCH_VERB = /\b(search|searches|searching|rummage|rummaging|scavenge|scavenging|sift|sifting|dig|digging)\b/i;
 const CONTAINER_KEY = /^(crate|chest|barrel|box)$/;
+const EXITS_LOOK = /^(?:check|scout|look for|find)\s+(?:the\s+)?(?:exits?|ways? out)\b/i;
+
+/** Outside a dungeon: checking the exits commits this place's mapped ways out (the travel chips' targets). */
+function checkExits(state: GameState, text: string): { state: GameState; receipts: string[] } | null {
+  if (!EXITS_LOOK.test(text)) return null;
+  const here = state.currentLocation?.trim() || 'here';
+  const ways = hubTravelTargets(state);
+  return {
+    state,
+    receipts: [
+      ways.length
+        ? `Exits: the ways out of ${here} lead to ${ways.join(', ')}.`
+        : `Exits: no way out of ${here} leads to a mapped place.`,
+    ],
+  };
+}
 
 /**
  * Outside a dungeon: the engine decides a search or an opened container before the writer, as the
@@ -197,6 +214,8 @@ function searchOutsideDungeon(
   playerInput: string
 ): { state: GameState; receipts: string[] } {
   const text = (playerInput ?? '').trim();
+  const exits = state.activeEncounter ? null : checkExits(state, text);
+  if (exits) return exits;
   const opensContainer = isOpenContainerAction(text);
   if (state.activeEncounter || (!opensContainer && !SEARCH_VERB.test(text))) {
     return { state, receipts: [] };

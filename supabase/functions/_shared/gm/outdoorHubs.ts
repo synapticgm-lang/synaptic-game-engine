@@ -383,6 +383,11 @@ export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
   if (state.openingEstablishment?.complete === false) return [];
   if (state.activeDungeon) return [];
   if (state.activeEncounter) return [];
+  return hubTravelTargets(state).slice(0, max).map((name) => `Travel toward ${name}`);
+}
+
+/** The mapped places a player can travel to from here, best first (the travel chips take the head of this list). */
+export function hubTravelTargets(state: GameState): string[] {
   const hubs = hubsForBibleId(state.campaignBibleId);
   if (!hubs.length) return [];
   const here = (state.currentLocation ?? '').toLowerCase();
@@ -425,7 +430,7 @@ export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
       : 0;
     return aVis - bVis;
   });
-  return scored.slice(0, max).map((h) => `Travel toward ${h.name}`);
+  return scored.map((h) => h.name);
 }
 
 /** Thornferry mill / ford / landing / quay are one already-here cluster (02f / 02g). */
