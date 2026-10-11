@@ -13,6 +13,7 @@ const PERSON_VERB =
   '(?:looks?|stands?|says?|asks?|nods?|watches?|sits?|steps?|waits?|calls?|shifts?|answers?|speaks?|holds?|glances?|reads?)';
 
 const OBJECT_TAKE = '(?:take|grab|push|pull|open)';
+const OBJECT_TAKE_ANY_CASE = '(?:[Tt]ake|[Gg]rab|[Pp]ush|[Pp]ull|[Oo]pen)';
 
 const PLACE_TITLE_STOP = new Set([
   'the', 'and', 'under', 'from', 'into', 'near', 'with', 'this', 'that',
@@ -156,14 +157,15 @@ export function isPlaceTitleObjectGlue(text: string, placeTitles: string[] = [])
   for (const title of placeTitles) {
     if (isAtmospherePlaceName(title)) continue;
     if (!isProperPersonName(title)) continue;
+    // Case-sensitive on the title: "the kitchen hand" is a person, not the title Kitchen glued to a hand.
     const esc = escapeRe(title);
-    if (new RegExp(`\\b${OBJECT_TAKE}\\s+(?:your\\s+)?(?:the\\s+)?${esc}\\s+${BODY_OR_KIT}\\b`, 'i').test(t)) {
+    if (new RegExp(`\\b${OBJECT_TAKE_ANY_CASE}\\s+(?:[Yy]our\\s+)?(?:[Tt]he\\s+)?${esc}\\s+${BODY_OR_KIT}\\b`).test(t)) {
       return true;
     }
-    if (new RegExp(`\\b(?:open|take|grab)\\s+your\\s+(?:the\\s+)?${esc}\\b`, 'i').test(t)) {
+    if (new RegExp(`\\b(?:[Oo]pen|[Tt]ake|[Gg]rab)\\s+[Yy]our\\s+(?:[Tt]he\\s+)?${esc}\\b`).test(t)) {
       return true;
     }
-    const adj = t.match(new RegExp(`\\b(?:the|your)\\s+${esc}\\s+([a-z]{3,})\\b`, 'i'));
+    const adj = t.match(new RegExp(`\\b(?:[Tt]he|[Yy]our)\\s+${esc}\\s+([a-z]{3,})\\b`));
     if (adj?.[1] && new RegExp(`^${BODY_OR_KIT}$`, 'i').test(adj[1])) return true;
   }
   return false;

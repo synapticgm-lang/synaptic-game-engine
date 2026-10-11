@@ -12,6 +12,7 @@ import { parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
+import { getRegisteredLocations } from './entityRegistry';
 import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
 import { resolvePlayAreaMap, type ActiveDungeonState } from './mapEngine';
@@ -613,12 +614,21 @@ export function checkPlayCrimes(
 
   // Someone here when the beat began may speak in it, even if they leave by its end.
   const here = [...peopleHere(before), ...peopleHere(after)].map(low);
+  const placeNames = [
+    before.currentLocation,
+    after.currentLocation,
+    ...(after.places ?? []).flatMap((p) => [p.name, p.loreName, ...(p.aliases ?? [])]),
+    ...getRegisteredLocations(after.campaignBibleId),
+  ].map(norm).filter((p) => p.length >= 4);
   for (const m of after.npcMemories ?? []) {
     const names = [m.npcName, ...(m.aliases ?? [])].map(norm).filter((n) => n.length >= 3);
     if (names.some((n) => here.some((h) => h === low(n) || h.includes(low(n)) || low(n).includes(h)))) continue;
-    const spoke = names.find((n) =>
-      new RegExp(`\\b${esc(n)}\\b[^.!?]{0,30}\\b${SPEECH_VERB}\\b|\\b${esc(n)}\\b[^.!?"“]{0,20}["“]`, 'i').test(text)
-    );
+    const spoke = names.find((n) => {
+      // "Pellane" inside "Pellane War Camp" is the place, not King Pellane.
+      const inPlace = placeNames.filter((p) => p.length > n.length && new RegExp(`\\b${esc(n)}\\b`, 'i').test(p));
+      const t = inPlace.reduce((acc, p) => acc.replace(new RegExp(`\\b${esc(p)}\\b`, 'gi'), (x) => '~'.repeat(x.length)), text);
+      return new RegExp(`\\b${esc(n)}\\b[^.!?]{0,30}\\b${SPEECH_VERB}\\b|\\b${esc(n)}\\b[^.!?"“]{0,20}["“]`, 'i').test(t);
+    });
     if (spoke) p0.push({ kind: 'absent-speaker', detail: `${m.npcName} speaks but is not here at ${after.currentLocation || 'this place'}` });
   }
 
