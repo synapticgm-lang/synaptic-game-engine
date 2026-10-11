@@ -24,6 +24,7 @@ import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
 import { liveChips } from './chipLegality';
+import { updateCooldowns } from './optionDiversityContract';
 import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
@@ -144,12 +145,19 @@ export function withOfferedChoices(entry: LogEntry, stateForPad: GameState): Log
 export function commitOfferedPad(state: GameState, gmEntryId?: string): GameState {
   const offered = state.playPhase === 'ended' ? [] : compileOfferedChoices(state);
   if (!offered.length) return { ...state, offeredPad: null };
+  const cooldowns = updateCooldowns(offered, state.turn ?? 0, new Map(Object.entries(state.qualityGovernance?.optionCooldowns ?? {})));
   const log = [...(state.log ?? [])];
   const byId = gmEntryId ? log.findIndex((e) => e?.role === 'gm' && e.id === gmEntryId) : -1;
   let at = byId;
   for (let i = log.length - 1; at < 0 && i >= 0; i--) if (log[i]?.role === 'gm') at = i;
   if (at >= 0) log[at] = { ...log[at]!, offeredChoices: offered };
-  return { ...state, log, choices: offered, offeredPad: { turn: state.turn ?? 0, choices: offered } };
+  return {
+    ...state,
+    log,
+    choices: offered,
+    offeredPad: { turn: state.turn ?? 0, choices: offered },
+    qualityGovernance: { ...(state.qualityGovernance ?? {}), optionCooldowns: Object.fromEntries(cooldowns) },
+  };
 }
 
 function slugFilenamePart(raw: string): string {

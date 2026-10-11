@@ -334,8 +334,13 @@ function fightPad(enc: RoadEncounter): string | null {
   return FIGHT_KINDS.has(enc.kind) ? FIXED_ENCOUNTER_PADS[enc.kind]![0]! : null;
 }
 
+/** The meeting is over: fought and won or talked down, fled past, or the fight against it was lost. */
+export function roadMeetingOver(enc: RoadEncounter): boolean {
+  return !!enc.engaged || !!enc.escaped || !!enc.lost;
+}
+
 function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
-  if (enc.engaged || enc.escaped) return [];
+  if (roadMeetingOver(enc)) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
   if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'];
@@ -373,7 +378,7 @@ const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'v
 
 /** A hostile meeting still standing in the lane. Walk on is not a free pass past it; a flee that got clear is. */
 function laneBlocked(enc: RoadEncounter | null | undefined): boolean {
-  return !!enc && !enc.engaged && !enc.escaped && FIGHT_KINDS.has(enc.kind);
+  return !!enc && !roadMeetingOver(enc) && FIGHT_KINDS.has(enc.kind);
 }
 /** Share of hostile meetings that are a rare spawn (uncommon, not every meeting). */
 export const RARE_SPAWN_CHANCE = 0.12;
@@ -548,7 +553,7 @@ const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
 /** Writer fact: the meeting on this stretch is on the page before any chip meets it. */
 export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const e = j?.encounter;
-  if (!e || e.engaged || e.escaped) return '';
+  if (!e || roadMeetingOver(e)) return '';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
   return `On this stretch: ${base}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
 }
@@ -559,6 +564,7 @@ function encounterNote(j: TravelJourney): string {
   if (!e) return '; quiet stretch';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
   if (e.escaped) return `; got away from ${base}, not beaten`;
+  if (e.lost) return `; lost the fight to ${base}, not beaten`;
   if (e.engaged) return `; ${base} dealt with`;
   const label = e.kind === 'camp' && e.miniBoss
     ? 'a camp with a mini-boss'
@@ -573,7 +579,7 @@ const FIGHT_WORDS = /^(?:face|fight|attack|charge|challenge)\b/i;
 /** The player faces a meeting that can be fought and has not been fought yet. */
 function facesFight(input: string, enc: RoadEncounter): boolean {
   const pad = fightPad(enc);
-  if (!pad || enc.engaged || enc.escaped) return false;
+  if (!pad || roadMeetingOver(enc)) return false;
   return input.toLowerCase() === pad.toLowerCase() || FIGHT_WORDS.test(input);
 }
 
@@ -605,7 +611,7 @@ export function isRoadFoe(state: Pick<GameState, 'journey'>, foe: ActiveEncounte
 
 /**
  * After the fight engine settled a road foe: a win or a talk-down deals with the meeting, a flee that got
- * clear slips past it (escaped, not beaten), a loss leaves it in the lane.
+ * clear slips past it (escaped, not beaten), a loss ends it (lost, not beaten). Each one closes the meeting.
  */
 export function settleRoadMeeting(
   state: GameState,
@@ -619,7 +625,7 @@ export function settleRoadMeeting(
       ? { ...enc, escaped: true, escapedTurn: state.turn }
       : outcome === 'victory' || outcome === 'parleyResolved'
         ? { ...enc, engaged: true }
-        : enc;
+        : { ...enc, lost: true };
   return next === enc ? state : { ...state, journey: { ...j, encounter: next } };
 }
 

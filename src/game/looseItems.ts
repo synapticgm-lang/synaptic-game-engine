@@ -5,6 +5,7 @@ import { recordGateTry, skillGateBlockedLine, skillLabel } from './skillGates';
 import { isExplorableDungeon } from './placeAuthority';
 import type { LooseNodeItem } from './dungeonMobLedger';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
+import { isOpenContainerAction, isSearchTargetEmpty, normalizeSearchTarget, recordEmptySearch } from './searchContinuity';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -99,7 +100,7 @@ export function openSeededLootable(
 ): { state: GameState; receipts: string[] } {
   const receipts: string[] = [];
   const dungeon = state.activeDungeon;
-  if (!isExplorableDungeon(dungeon)) return { state, receipts };
+  if (!isExplorableDungeon(dungeon)) return searchOutsideDungeon(state, playerInput);
   const text = (playerInput ?? '').trim();
 
   const pickup = parseLooseItemPickup(text);
@@ -154,5 +155,58 @@ export function openSeededLootable(
   }
   if (gold > 0) receipts.push(`Gold Gained: ${gold}`);
   if (!loot.items.length && gold <= 0) receipts.push(`Dungeon: the ${opened.label ?? target.label} was empty.`);
+  return { state: next, receipts };
+}
+
+const SEARCH_VERB = /\b(search|searches|searching|rummage|rummaging|scavenge|scavenging|sift|sifting|dig|digging)\b/i;
+const CONTAINER_KEY = /^(crate|chest|barrel|box)$/;
+
+/**
+ * Outside a dungeon: the engine decides a search or an opened container before the writer, as the
+ * dungeon search does. A first search rolls loot it grants (a container always holds a roll; ground
+ * may hold nothing). A searched target stays empty. The receipt is the ENGINE RESULT.
+ */
+function searchOutsideDungeon(
+  state: GameState,
+  playerInput: string
+): { state: GameState; receipts: string[] } {
+  const text = (playerInput ?? '').trim();
+  const opensContainer = isOpenContainerAction(text);
+  if (state.activeEncounter || (!opensContainer && !SEARCH_VERB.test(text))) {
+    return { state, receipts: [] };
+  }
+  const target = normalizeSearchTarget(text, state.currentLocation);
+  if (target === 'bag') return { state, receipts: [] };
+  const container = CONTAINER_KEY.test(target);
+  const what = container
+    ? `the ${target}`
+    : target === 'here' || target.startsWith('loc:')
+      ? state.currentLocation?.trim() || 'the area'
+      : `the ${target}`;
+  const facts = recordEmptySearch(state.sceneFacts, target, state.turn ?? 0);
+  if (isSearchTargetEmpty(state.sceneFacts, target)) {
+    return { state: { ...state, sceneFacts: facts }, receipts: [`Search: you searched ${what} again and found nothing new.`] };
+  }
+  const loot = rollLoot({
+    profile: container ? 'chestBronze' : 'mob',
+    state,
+    seed: `${state.seed ?? 'seed'}:search:${(state.currentLocation ?? '').toLowerCase()}:${target}`,
+  });
+  const next: GameState = {
+    ...state,
+    sceneFacts: facts,
+    inventory: [...(state.inventory ?? []), ...loot.items],
+    gold: (state.gold ?? 0) + loot.gold,
+    lootPity: loot.nextPity != null
+      ? { byTier: { ...(state.lootPity?.byTier ?? {}), [loot.pityTier]: loot.nextPity } }
+      : state.lootPity,
+  };
+  const names = loot.items.map((i) => i.name);
+  const found = [...names, ...(loot.gold > 0 ? [`${loot.gold} gold`] : [])];
+  const verb = container ? `opened ${what}` : `searched ${what}`;
+  const receipts = [`Search: you ${verb} and found ${found.length ? found.join(', ') : 'nothing'}.`];
+  if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
+  if (loot.gold > 0) receipts.push(`Gold Gained: ${loot.gold}`);
+  if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
   return { state: next, receipts };
 }

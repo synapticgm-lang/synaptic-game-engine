@@ -65,9 +65,9 @@ afterEach(() => {
 });
 
 describe('29x stamps', () => {
-  it('HUD and BUILD are 2026-10-11b and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-11b');
-    expect(BUILD_STAMP).toBe('2026-10-11b');
+  it('HUD and BUILD are 2026-10-11c and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-11c');
+    expect(BUILD_STAMP).toBe('2026-10-11c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -190,7 +190,8 @@ describe('29x — camp mini-boss', () => {
     const after = bossFight.state;
     expect(after.activeEncounter).toBeFalsy();
     expect(journeyPads(after)).toEqual(['Walk on', 'Turn back toward Greyhollow Inn']);
-    expect(commitTravel(after, 'Look around').receipt).toMatch(/a camp dealt with/);
+    const won = bossFight.receipts.some((r) => /^Fight: VICTORY/.test(r));
+    expect(commitTravel(after, 'Look around').receipt).toMatch(won ? /a camp dealt with/ : /lost the fight to a camp, not beaten/);
   });
 
   it('a mode without combat keeps the meeting in prose', () => {

@@ -16,7 +16,7 @@ import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
 import { playerCommittedTravel } from './travelAuthority';
-import { commitTravel, isJourneyPad, isJourneyUnderway } from './travelJourney';
+import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -56,7 +56,7 @@ const ROAD_PEOPLE: Record<string, string> = {
 /** The person or group a live, un-fought road meeting puts on this stretch. */
 export function roadMeetingPeople(state: GameState): string | null {
   const enc = state.journey?.encounter;
-  if (!enc || enc.engaged || !isJourneyUnderway(state)) return null;
+  if (!enc || roadMeetingOver(enc) || !isJourneyUnderway(state)) return null;
   return ROAD_PEOPLE[enc.kind] ?? null;
 }
 

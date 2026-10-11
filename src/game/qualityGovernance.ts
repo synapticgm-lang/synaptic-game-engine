@@ -44,7 +44,6 @@ import {
 } from './typedEntityValidator';
 import {
   filterCooldownChoices,
-  updateCooldowns,
   checkDiversityContract,
   getDiversityContract,
   buildChoiceProfiles,
@@ -618,10 +617,6 @@ export function applyGovernanceCommit(
     nextWithNpc,
     previous.progressGovernor ?? initProgressGovernor()
   );
-
-  const offered = nextWithNpc.choices ?? [];
-  const cooldowns = updateCooldowns(offered, nextWithNpc.turn, cooldownMap(previous));
-  qualityGovernance.optionCooldowns = Object.fromEntries(cooldowns);
 
   const gmProseForNovelty = gmProse;
   const novelty = updateNoveltyBudget(gmProseForNovelty, nextWithNpc.turn, noveltyFromState(previous));

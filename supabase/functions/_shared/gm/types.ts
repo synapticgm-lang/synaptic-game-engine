@@ -784,6 +784,8 @@ export interface RoadEncounter {
   escaped?: boolean;
   /** Turn the escape happened on. */
   escapedTurn?: number;
+  /** The player lost the fight against this meeting: it is over and no longer in the lane, not beaten. */
+  lost?: boolean;
 }
 
 /** Premade settlement on the world map (29e). */
