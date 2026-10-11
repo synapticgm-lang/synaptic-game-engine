@@ -603,7 +603,13 @@ export function checkPlayCrimes(
   const pc = norm(after.character?.name).split(/\s+/)[0] ?? '';
   const who = pc.length >= 2 ? `(?:${esc(pc)}|you)` : 'you';
   // A quote closed by a full stop ends its sentence: a following "Jax said…" is new indirect speech, not its tag.
-  const pcLine = text.match(new RegExp(`["“]([^"”]{2,}[^."”])["”]\\s*,?\\s*${who}\\s+${SPEECH_VERB}\\b|\\b${who}\\s+${SPEECH_VERB}\\b[^.!?"“]{0,40}["“]([^"”]{3,})["”]`, 'i'));
+  // A quote tagged before it ('Col said, "…?"') is that speaker's; a "Jax said" after it is not its tag.
+  const taggedBefore = (head: string) => {
+    const tag = head.match(new RegExp(`\\b([\\w'’-]+)\\s+${SPEECH_VERB}\\s*[,:]?\\s*$`, 'i'));
+    return !!tag && !new RegExp(`^${who}$`, 'i').test(tag[1]);
+  };
+  const pcLine = [...text.matchAll(new RegExp(`["“]([^"”]{2,}[^."”])["”]\\s*,?\\s*${who}\\s+${SPEECH_VERB}\\b|\\b${who}\\s+${SPEECH_VERB}\\b[^.!?"“]{0,40}["“]([^"”]{3,})["”]`, 'gi'))]
+    .find((m) => m[1] == null || !taggedBefore(text.slice(0, m.index ?? 0)));
   if (pcLine) {
     const said = low(pcLine[1] ?? pcLine[2]);
     const typed = new Set(low(action).match(/[a-z]{3,}/g) ?? []);

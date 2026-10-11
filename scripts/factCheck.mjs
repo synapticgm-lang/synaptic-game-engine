@@ -289,6 +289,8 @@ export function checkTurn(row, packet, page = '') {
         if (/^\s+of\b/i.test(after)) continue;
         if (GARMENTS.has(w) && /\bclothes\b/.test(facts.handedText)) continue;
         if (BAG_WORDS.has(w) && /\bbag\b/.test(facts.allowText)) continue;
+        // A gold receipt ("Gold Gained: 16") hands the coins.
+        if (/^coins?$/.test(w) && /\bgold gained:?\s*\d+/.test(facts.handedText)) continue;
         const ownerNoun = before.match(/\b(\w+)[’']s\s+(?:\w+\s+){0,2}$/i)?.[1];
         if (ownerNoun && lower(ownerNoun) !== 'jax') continue;
         const owned = /\b(?:their|his|her)\s+(?:\w+\s+){0,2}$/i.test(before);

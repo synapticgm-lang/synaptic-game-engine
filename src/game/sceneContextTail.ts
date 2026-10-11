@@ -189,6 +189,20 @@ function putsCameraAt(sentence: string, place: string): boolean {
   });
 }
 
+/** "about" after one of these is around a place ("looked about the yard"), not a topic. */
+const AROUND_VERB = /\b(?:look|looked|looks|looking|glanced|peered|gazed|wandered|walked|milled|moved|turned|stood|paced|strolled)\s*$/i;
+
+/**
+ * Words that only name a place as the matter of talk or thought are not the camera: quoted words, and a
+ * topic after about / regarding / concerning ("asked about the Ledger", "a decision about the wagon desk").
+ */
+function withoutTalkAbout(text: string): string {
+  return text
+    .replace(/"[^"]*"|“[^”]*”/g, ' ')
+    .replace(/\b(?:about|regarding|concerning)\b(?:\s+[\w'’-]+){1,8}/gi, (m, at: number, all: string) =>
+      AROUND_VERB.test(all.slice(0, at)) ? m : ' ');
+}
+
 /**
  * A sentence names the place already left as the camera: it names that place with no HERE, no trip
  * destination and no departure in the same sentence (another sentence naming HERE does not excuse it).
@@ -203,8 +217,7 @@ export function isStaleLocationBleed(state: GameState, text: string): boolean {
   if (prev.toLowerCase() === UNDERWAY_HERE.toLowerCase()) return false;
   const tripStart = isTripStart(state, prev);
   return splitProseSentences(text).some((sentence) => {
-    // A place named inside someone's words is talk about it, not the camera.
-    const s = sentence.replace(/"[^"]*"|“[^”]*”/g, ' ').trim();
+    const s = withoutTalkAbout(sentence).trim();
     if (!s || !mentionsPlace(s, prev) || mentionsHereOrTrip(state, s) || isLeaveBehindMention(s, prev)) return false;
     return !tripStart || putsCameraAt(s, prev);
   });
@@ -292,7 +305,7 @@ export function isOpeningOccupancyReset(state: GameState, text: string): boolean
   const here = hereLocation(state);
   const openingWhere = (state.openingEstablishment?.answers?.where ?? '').trim();
   if (!openingWhere || !placesDiffer(here, openingWhere)) return false;
-  if (mentionsPlace(body, openingWhere) && !mentionsHereOrTrip(state, body) && !LEAVE_BEHIND.test(body)) return true;
+  if (mentionsPlace(withoutTalkAbout(body), openingWhere) && !mentionsHereOrTrip(state, body) && !LEAVE_BEHIND.test(body)) return true;
   if (openingPinActsHere(body, state)) return true;
   return false;
 }

@@ -196,7 +196,8 @@ export function isSlotGlueViolation(
 
 /** Ledger title used as a person subject / possessor — not a place adverbial. */
 export function isPlaceTitleAsPersonSubject(text: string, placeTitles: string[] = []): boolean {
-  const t = text ?? '';
+  // A speaker may say a place or body wants or holds something ("The Ledger holds what we need"); only narration claims it.
+  const t = (text ?? '').replace(/"[^"]*"|“[^”]*”/g, ' ');
   if (!t.trim() || !placeTitles.length) return false;
   for (const title of placeTitles) {
     if (isAtmospherePlaceName(title)) continue;
