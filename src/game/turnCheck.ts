@@ -491,13 +491,15 @@ const WHO_ASK = /\bwho are you\b/i;
 
 /**
  * Talk on empty-room text. A talk chip is illegal when the beat or the place card says nobody is here
- * and no listener is left once the opening cast is dropped. A "who are you" in the prose is flagged on
- * empty-room text whoever the people list holds (unless the player typed it).
+ * and no listener is left once the opening cast is dropped. Someone here whom the beat's own narration
+ * names is still a listener. A "who are you" in the prose is flagged on empty-room text whoever the
+ * people list holds (unless the player typed it).
  */
 export function checkEmptyRoomTalk(state: GameState, chips: string[], prose: string, action = ''): TurnCheckFlag[] {
   if (!placeSaysEmpty(state, prose)) return [];
   const out: TurnCheckFlag[] = [];
-  const ears = listenersOnEmptyText(state);
+  const narration = prose.replace(/["“][^"”]*["”]/g, ' ');
+  const ears = [...new Set([...listenersOnEmptyText(state), ...peopleHere(state).filter((p) => mentionsName(narration, p))])];
   for (const chip of chips) {
     const label = norm(chip);
     const addr = chipAddressee(label);

@@ -213,15 +213,21 @@ export function checkTurn(row, packet, page = '') {
       // Places named as a way out that are not this turn's exits.
       if (EXIT_CLAIM.test(s) && !/\b(?:counting|watching|eyeing|checking) the exits\b/i.test(s)) {
         const hereWords = lower(facts.here).split(/\s+/);
-        const clauseText = lower(exitClauses.join(' | '));
+        const clauseText = exitClauses.join(' | ');
         const taken = [];
         for (const p of facts.placeNames) {
           const lp = lower(p);
           if (p.length < 4 || lp === lower(facts.here) || lower(facts.here).includes(lp)) continue;
           if (lp.replace(/^the\s+/, '').split(/\s+/).every((w) => hereWords.includes(w))) continue;
-          const at = clauseText.search(new RegExp(`\\b${lp.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`));
-          if (at < 0 || taken.some(([a, b]) => at < b && at + lp.length > a)) continue;
-          taken.push([at, at + lp.length]);
+          // A capitalised name is the place only when written capitalised ("Close", not "kept their clothes close").
+          const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const nameRe = /[A-Z]/.test(p)
+            ? new RegExp(`\\b(?:[Tt]he\\s+)?${esc(p.replace(/^the\s+/i, ''))}\\b`)
+            : new RegExp(`\\b${esc(lp)}\\b`, 'i');
+          const hit = clauseText.match(nameRe);
+          const at = hit?.index ?? -1;
+          if (at < 0 || taken.some(([a, b]) => at < b && at + hit[0].length > a)) continue;
+          taken.push([at, at + hit[0].length]);
           if (exitFact.some((e) => lower(e).includes(lp.replace(/^the\s+/, '')) || lp.includes(lower(e)))) continue;
           add('exit-place', s, `"${p}" named as a way out; handed exits: ${exitFact.length ? exitFact.join(', ') : 'none mapped'}`);
         }

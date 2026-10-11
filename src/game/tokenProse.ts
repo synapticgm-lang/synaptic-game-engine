@@ -406,7 +406,10 @@ function refSlug(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-/** A typed id agrees with a row when it is the row's id, its token, the id without its class prefix, or the display slug. */
+/**
+ * A typed id agrees with a row when it is the row's id, its token, the id without its class prefix, the display
+ * slug, or the row's own class column ("person" for a person row).
+ */
 function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   const want = id.trim().replace(/^@/, '').toLowerCase();
   const rid = row.id.toLowerCase();
@@ -414,6 +417,7 @@ function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   return (
     want === rid ||
     want === row.tok.toLowerCase() ||
+    want === row.klass ||
     want === rid.slice(rid.indexOf(':') + 1) ||
     (!!slug && (slug === refSlug(row.display) || slug === rid.slice(rid.indexOf(':') + 1)))
   );
@@ -521,7 +525,8 @@ export function classifyTokenLine(
       return { ok: false, reason: 'article-person' };
     }
   }
-  // A speaker is a person or companion here, and says something other than their own name.
+  // A speaker is a person or companion here. A named person here may open with their own name; a role or
+  // catalog display ("a traveler", a foe's title) said as the line is an echo.
   if (line.spoken && line.speaker_tok) {
     const tok = line.speaker_tok.replace(/^@/, '').toLowerCase();
     const declared = beat.refs.find((r) => r.tok.replace(/^@/, '').toLowerCase() === tok);
@@ -529,7 +534,9 @@ export function classifyTokenLine(
     if (!row || (row.klass !== 'person' && row.klass !== 'companion')) return { ok: false, reason: 'speaker-class' };
     const bare = (s: string) => s.toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/[^a-z0-9' -]+/g, '').trim();
     const first = splitProseSentences(line.text.replace(/@t(\d+)\b/gi, (_m, n: string) => findEnum(enumRefs, `t${n}`)?.display ?? ''))[0] ?? '';
-    if (bare(first) && bare(first) === bare(row.display)) return { ok: false, reason: 'speaker-echo' };
+    if (bare(first) && bare(first) === bare(row.display) && !row.id.startsWith('present:')) {
+      return { ok: false, reason: 'speaker-echo' };
+    }
   }
   return { ok: true };
 }
