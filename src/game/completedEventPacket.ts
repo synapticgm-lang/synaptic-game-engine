@@ -38,6 +38,7 @@ import {
   type SystemHousingId,
 } from './systemHousing';
 import { isNeverCastTitle } from './neverCast';
+import { terminalFightBeat, terminalFightOutcome } from './engineResult';
 import { kitRefDisplay } from './inventory';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 import {
@@ -2205,6 +2206,13 @@ export function lastResortStoryBody(
   packet?: CompletedEventPacket,
   playerInput?: string
 ): { prose: string; status: string } {
+  const fight = terminalFightOutcome(packet?.engineResult ?? state.completedEvent?.engineResult);
+  if (fight) {
+    return {
+      prose: terminalFightBeat(fight, playerFacingLocation(state)),
+      status: 'Writer left the settled fight out — painted from the engine result',
+    };
+  }
   const named = !!lockedOpeningPcName(state);
   const lastGm = lastCommittedGmBody(state);
   const recent = (state.log ?? [])

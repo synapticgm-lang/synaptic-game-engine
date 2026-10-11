@@ -7,11 +7,11 @@
 import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
-import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, type LedgerRef } from './completedEventPacket';
+import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, refEnumOf, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
-import { classifyBeatCommit } from './beatCommitGate';
+import { classifyBeatCommit, ignoresTerminalFight, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
 import { isNearClone, isSameBeat } from './beatFingerprint';
 import {
   detectAtmosphereReprint,
@@ -161,6 +161,36 @@ export function runWriterTurn(opts: {
     remaining: writerDraftProblems(prose, check),
     firstDraft: first.prose,
     spoken: spoken.answer,
+  };
+}
+
+/**
+ * s82 Root A — the engine settled a fight this turn and the beat left it out: one rewrite with that
+ * problem, then the last-resort paint from the engine result. Any other problem stays logged only (29z8).
+ */
+export async function runWriterTurnWithFightRetry(opts: {
+  firstRaw: string;
+  packet: CompletedEventPacket;
+  check: DraftCheck;
+  rewrite: (problem: string) => Promise<string>;
+}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+  const first = runWriterTurn(opts);
+  if (first.outcome !== 'accepted' || !ignoresTerminalFight(opts.check.state, first.prose)) return first;
+  const problem = `${TERMINAL_FIGHT_PROBLEM} ${opts.check.engineFact}`.trim();
+  const raw = await opts.rewrite(problem).catch(() => '');
+  const second = runWriterTurn({ ...opts, firstRaw: raw });
+  if (second.outcome === 'accepted' && !ignoresTerminalFight(opts.check.state, second.prose)) {
+    return { ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried' };
+  }
+  const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+  return {
+    ...first,
+    prose: painted.prose,
+    path: 'last-resort',
+    refs: undefined,
+    speech: undefined,
+    remaining: writerDraftProblems(painted.prose, opts.check),
+    fightRetry: 'painted',
   };
 }
 

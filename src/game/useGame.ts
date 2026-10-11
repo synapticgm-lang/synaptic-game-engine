@@ -158,7 +158,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat } from './beatCommitGate';
-import { runWriterTurn, writerTurnIssues } from './writerTurn';
+import { runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
@@ -2955,7 +2955,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const writerPacket = liveCurrent.completedEvent ?? preparedEvent.packet;
         const previousGm =
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
-        const writerTurn = runWriterTurn({
+        const writerTurn = await runWriterTurnWithFightRetry({
           firstRaw: result.text,
           packet: writerPacket,
           check: {
@@ -2965,7 +2965,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             engineFact,
             previousGm,
           },
+          rewrite: async (problem) => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
         });
+        if (writerTurn.fightRetry) {
+          debugLogger.record('WARN', 'Writer left the settled fight out', {
+            turn: liveCurrent.turn,
+            fightRetry: writerTurn.fightRetry,
+          });
+        }
         writerRemaining = writerTurn.remaining;
         if (writerTurn.problems.length) {
           debugLogger.record('WARN', 'Writer draft problems', {

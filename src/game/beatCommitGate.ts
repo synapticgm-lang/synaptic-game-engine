@@ -33,6 +33,7 @@ import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
+import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 import {
   assemblePacketStitch,
   buildCompletedEventPacket,
@@ -153,8 +154,20 @@ export function classifyBeatCommit(
     flag('event-packet', d);
     recycle(d);
   }
+  // s82 Root A — the engine settled the fight this turn: the beat must carry that outcome.
+  if (ignoresTerminalFight(state, text)) {
+    flag('event-packet', `${TERMINAL_FIGHT_PROBLEM} ${state.completedEvent?.engineResult ?? ''}`.trim());
+  }
 
   return { accept: reasons.length === 0, reasons, details };
+}
+
+export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: state that outcome as finished.';
+
+/** s82 Root A — a committed terminal fight result the beat never states (the foe left active). */
+export function ignoresTerminalFight(state: GameState, prose: string): boolean {
+  const fight = terminalFightOutcome(state.completedEvent?.engineResult);
+  return !!fight && !beatCarriesTerminalFight(prose, fight);
 }
 
 /** Lock C — prose that reopens a ledger-closed fact. */

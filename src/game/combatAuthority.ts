@@ -36,6 +36,8 @@ export type LastKill = {
   outcome: 'victory' | 'defeat' | 'escape';
   turn: number;
   remains: boolean;
+  /** s82 Root B — the body was searched; the fight already paid its drop. */
+  looted?: boolean;
 };
 
 const BEAST_NAME =

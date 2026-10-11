@@ -148,7 +148,10 @@ function isIdentityIntroPad(choice: string): boolean {
   );
 }
 
-function intentSupplements(family: PlayerIntentFamily, engaged: boolean): string[] {
+function intentSupplements(family: PlayerIntentFamily, engaged: boolean, state: GameState): string[] {
+  // s82 Root A — the fight the player tried to flee is already settled: nothing left to run from.
+  const kill = state.sceneFacts?.lastKill;
+  if (family === 'flee' && !engaged && kill && kill.turn >= (state.turn ?? 0) - 1) return [];
   if (engaged) {
     if (family === 'flee') return ['Keep running', 'Try to flee', 'Find cover'];
     if (family === 'demand') return ['Demand they stand down', 'Press the attack'];
@@ -1099,7 +1102,7 @@ export function compileChoices(
     }
   }
 
-  const intentPads = talkRecycle ? [] : intentSupplements(intent, engaged);
+  const intentPads = talkRecycle ? [] : intentSupplements(intent, engaged, state);
   if (intentPads.length) {
     for (const pad of intentPads) {
       if (isExcludedPadLabel(pad, excluded)) continue;
@@ -1300,7 +1303,7 @@ export function compileChoices(
     );
     if (!hasProgress) {
       const forcePads = [
-        `Loot the body of ${lastKill.name}`,
+        ...(lastKill.looted ? [] : [`Loot the body of ${lastKill.name}`]),
         'Leave the scene',
         'Inspect the immediate surroundings',
       ].filter((p) => !isExcludedPadLabel(p, excluded));

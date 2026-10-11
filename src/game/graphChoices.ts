@@ -161,13 +161,15 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
   }
 
   if (lastKill?.name && lastKill.outcome === 'victory' && lastKill.remains && !state.activeEncounter) {
-    edges.push({
-      type: 'loot',
-      label: `Loot the body of ${lastKill.name}`,
-      intent: PlayerIntent.INTENT_SEARCH,
-      target: lastKill.name,
-      cooldown: 1,
-    });
+    if (!lastKill.looted) {
+      edges.push({
+        type: 'loot',
+        label: `Loot the body of ${lastKill.name}`,
+        intent: PlayerIntent.INTENT_SEARCH,
+        target: lastKill.name,
+        cooldown: 1,
+      });
+    }
     if (!excluded.has('travel') && !excluded.has('leave')) {
       edges.push({
         type: 'travel',

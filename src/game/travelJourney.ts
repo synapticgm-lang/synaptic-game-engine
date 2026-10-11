@@ -705,6 +705,7 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap): 
 }
 
 function goTo(state: GameState, from: string, dest: string): TravelCommit {
+  if (isTripHere(state, dest)) return unchanged(state);
   const gap = mapGapBetween(state, from, dest);
   if (gap.steps <= 0) return unchanged(state);
   if (gap.steps === 1) return arrive(state, dest, gap.hoursPerLeg, from);
@@ -728,7 +729,11 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
 
 /** Leaving a mapped place heads to another mapped place, never back into the room you came out of. */
 function leaveDestination(state: GameState, here: string): string | null {
-  const dest = resolveLeaveSceneDestination(state);
+  // s82 Root C — the road (or this trip's HERE words) is never a place to leave for.
+  const sheet = resolveLeaveSceneDestination(state);
+  const dest = sheet && !isTripHere(state, sheet)
+    ? sheet
+    : resolveLeaveSceneDestination({ ...state, previousLocationSheet: null });
   if (!dest || !endpointFor(state, here).mapped || endpointFor(state, dest).mapped) return dest;
   const hubs = hubsForBibleId(state.campaignBibleId);
   const key = here.toLowerCase();

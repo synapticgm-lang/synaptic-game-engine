@@ -165,7 +165,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { runWriterTurn, writerTurnIssues, type WriterTurnResult } from './writerTurn';
+import { runWriterTurnWithFightRetry, writerTurnIssues, type WriterTurnResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -1302,18 +1302,24 @@ Do NOT print dice notation or CODE ENFORCED.
     : undefined;
 
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
-  let writerTurn: WriterTurnResult | null = null;
+  let writerTurn: (WriterTurnResult & { fightRetry?: 'retried' | 'painted' }) | null = null;
   const stageTrace: { stage: string; text: string }[] = [];
   const traceStage = (stage: string, text: string) => {
     if (stageTrace[stageTrace.length - 1]?.text !== text) stageTrace.push({ stage, text });
   };
   const writerPacket = arcState.completedEvent ?? preparedEvent.packet;
   if (!useMud && !authoredBook && writerPacket) {
-    writerTurn = runWriterTurn({
+    writerTurn = await runWriterTurnWithFightRetry({
       firstRaw: gmResult.text,
       packet: writerPacket,
       check: { state: arcState, playerInput, intent, engineFact, previousGm: '' },
+      rewrite: async (problem) => {
+        const again = await callGmWithRetries(arcState, `${payload}\n\n${problem}`, settings);
+        transportRetries += again.transportRetries;
+        return again.text;
+      },
     });
+    if (writerTurn.fightRetry) console.info(`[writer] settled fight left out — ${writerTurn.fightRetry}`);
     traceStage('render', writerTurn.firstDraft);
     traceStage('finishCommittedProse+spoken', writerTurn.prose);
     gmText = writerTurn.prose;

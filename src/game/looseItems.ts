@@ -6,6 +6,7 @@ import { isExplorableDungeon } from './placeAuthority';
 import type { LooseNodeItem } from './dungeonMobLedger';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { isOpenContainerAction, isSearchTargetEmpty, normalizeSearchTarget, recordEmptySearch } from './searchContinuity';
+import { matchesLastKillName } from './combatAuthority';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -98,6 +99,8 @@ export function openSeededLootable(
   state: GameState,
   playerInput: string
 ): { state: GameState; receipts: string[] } {
+  const corpse = lootLastKillBody(state, playerInput);
+  if (corpse) return corpse;
   const receipts: string[] = [];
   const dungeon = state.activeDungeon;
   if (!isExplorableDungeon(dungeon)) return searchOutsideDungeon(state, playerInput);
@@ -156,6 +159,29 @@ export function openSeededLootable(
   if (gold > 0) receipts.push(`Gold Gained: ${gold}`);
   if (!loot.items.length && gold <= 0) receipts.push(`Dungeon: the ${opened.label ?? target.label} was empty.`);
   return { state: next, receipts };
+}
+
+const BODY_LOOT_VERB = /\b(loot|search|rummage|strip|pat down|go through|check)\b/i;
+const BODY_NOUN = /\b(body|corpse|remains)\b/i;
+
+/**
+ * s82 Root B — looting the body of this scene's kill. The fight already paid its drop
+ * (`simulateCombat`), so the engine commits "nothing more" and marks the body looted.
+ */
+function lootLastKillBody(
+  state: GameState,
+  playerInput: string
+): { state: GameState; receipts: string[] } | null {
+  const kill = state.sceneFacts?.lastKill;
+  const text = (playerInput ?? '').trim();
+  if (!kill?.name || kill.outcome !== 'victory' || !kill.remains || state.activeEncounter) return null;
+  if (!BODY_LOOT_VERB.test(text)) return null;
+  const target = text.replace(BODY_LOOT_VERB, '').replace(/\b(?:the|body|corpse|remains|of)\b/gi, ' ');
+  if (!BODY_NOUN.test(text) && !matchesLastKillName(target, kill)) return null;
+  return {
+    state: { ...state, sceneFacts: { ...state.sceneFacts!, lastKill: { ...kill, looted: true } } },
+    receipts: [`Search: you searched the body of ${kill.name} and found nothing more; what it carried came off it after the fight.`],
+  };
 }
 
 const SEARCH_VERB = /\b(search|searches|searching|rummage|rummaging|scavenge|scavenging|sift|sifting|dig|digging)\b/i;
