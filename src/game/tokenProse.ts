@@ -22,6 +22,7 @@ import { splitProseSentences } from './proseSentences';
 import { presentNpcRecords } from './npcRecords';
 import { weaponsNotInHand } from './infoSheet';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
+import { writerFacts } from './systemHousing';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -374,7 +375,7 @@ export function tokenLineVerdicts(raw: string, state: GameState, packet?: Comple
   if (!beat) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
   const out = bindCheckFails(beat, enumRefs).map((n) => `ref ${n}`);
   for (const line of beat.lines) {
-    const v = classifyTokenLine(line, beat, enumRefs, knownProperNames(state));
+    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet));
     out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
   }
   return out;
@@ -388,8 +389,10 @@ export function classifyTokenLine(
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
   // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
-  let capText = line.text;
-  const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n));
+  // A handed name typed with the other apostrophe ("Summons' Price" for "Summons’ Price") is the same name.
+  const apos = (s: string) => s.replace(/[\u2018\u2019]/g, "'");
+  let capText = apos(line.text);
+  const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n)).map(apos);
   // 29z3 — a short form of a held name ("the Scout" for Integration Scar Scout) is not an invention.
   const parts = whole.flatMap((n) => {
     const words = n.split(/[\s—–-]+/).filter((w) => /^[A-Z][a-z'’]{3,}$/.test(w));
@@ -608,6 +611,21 @@ export function knownProperNames(state: GameState): string[] {
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1).map((n) => n.trim()))];
 }
 
+/**
+ * Names the writer was handed this turn: the ledger's own names, the packet's mention list and the
+ * writer's quest titles. A capital the packet gave the writer is not an invention. A weapon not in
+ * hand stays out, however it is listed.
+ */
+export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
+  const unheld = new Set(weaponsNotInHand(state));
+  const names = [
+    ...knownProperNames(state),
+    ...(packet?.allowlist ?? []),
+    ...writerFacts(state).quests.map((q) => q.name),
+  ];
+  return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1 && !unheld.has(n.trim())).map((n) => n.trim()))];
+}
+
 function missingFns(lines: TokenLine[]): LineFn[] {
   const have = new Set(lines.map((l) => l.fn));
   return (['place', 'action', 'speech', 'react', 'hook'] as LineFn[]).filter((fn) => !have.has(fn));
@@ -744,7 +762,7 @@ export function acceptTokenOrLedgerStory(
   usedLastResort: boolean;
 } {
   const enumRefs = refEnumOf(state, packet);
-  const known = knownProperNames(state);
+  const known = handedProperNames(state, packet);
   const candidates = [
     ...extractTokenCandidates(raw),
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),

@@ -11,13 +11,20 @@
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const RUNS = resolve('scripts/fate-autoplay/runs');
 
 const NUM_WORDS = {
   one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
-  eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, twenty: 20, both: 2, single: 1, only: 1,
+  eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19,
+  twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90, both: 2, single: 1, only: 1,
 };
+/** A count in prose starts on one of these; "one" alone is not a count, but it can end one ("twenty-one"). */
+const COUNT_START = '\\d+|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety';
+const COUNT_PART = `one|${COUNT_START.replace('\\d+|', '')}|hundred|thousand`;
+/** One whole number phrase ("twenty-five", "two hundred twenty-five") is one number, not one per word. */
+const COUNT_RE = new RegExp(`\\b((?:${COUNT_START})(?:(?:-|\\s+)(?:${COUNT_PART}))*)\\b`, 'gi');
 const WORD_FOR = Object.fromEntries(Object.entries(NUM_WORDS).filter(([w]) => !['both', 'single', 'only'].includes(w)).map(([w, n]) => [n, w]));
 
 const EXIT_NOUN = '(?:roads?|exits?|ways? out|ways?|paths?|doors?|doorways?|lanes?|streets?|routes?|gates?|tracks?|trails?|passages?|stairs?)';
@@ -77,7 +84,20 @@ function sentences(text) {
   }
   return out;
 }
-const toNum = (tok) => (/^\d+$/.test(tok) ? Number(tok) : NUM_WORDS[lower(tok)] ?? NaN);
+const toNum = (tok) => {
+  if (/^\d+$/.test(tok)) return Number(tok);
+  const words = lower(tok).split(/[\s-]+/).filter(Boolean);
+  if (words.length === 1) return NUM_WORDS[words[0]] ?? NaN;
+  let total = 0;
+  let cur = 0;
+  for (const w of words) {
+    if (w === 'hundred') cur = (cur || 1) * 100;
+    else if (w === 'thousand') { total += (cur || 1) * 1000; cur = 0; }
+    else if (NUM_WORDS[w] != null) cur += NUM_WORDS[w];
+    else return NaN;
+  }
+  return total + cur;
+};
 
 function line(packet, label) {
   const m = packet.match(new RegExp(`^${label}\\s*(.*)$`, 'm'));
@@ -144,7 +164,7 @@ const inHanded = (facts, word) => {
 };
 const negated = (sentence, idx) => /\b(?:no|not|without|never|nor|any)\s+(?:\w+\s+){0,2}$/i.test(sentence.slice(Math.max(0, idx - 30), idx));
 
-function checkTurn(row, packet) {
+export function checkTurn(row, packet) {
   const facts = factsFor(row, packet);
   const prose = String(row.gmText ?? '');
   const flags = [];
@@ -233,13 +253,13 @@ function checkTurn(row, packet) {
     }
 
     // Numbers the engine never handed ("the three", "6 rounds", "level 3", "40 XP").
-    for (const m of s.matchAll(/\b(\d+|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty)\b/gi)) {
+    for (const m of s.matchAll(COUNT_RE)) {
       const n = toNum(m[1]);
       const after = s.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 24);
       if (new RegExp(`^\\s+(?:\\w+\\s+){0,2}?${EXIT_NOUN}\\b`, 'i').test(after)) continue;
       if (/^\s*(?:o'clock|times?|steps?|paces?|breaths?|heartbeats?|fingers?|hands|eyes|arms|feet)\b/i.test(after)) continue;
       if (/^\s+of (?:them|us|you)\b/i.test(after)) continue;
-      const handed = new RegExp(`\\b(?:${n}|${WORD_FOR[n] ?? '_'})\\b`).test(facts.handedText);
+      const handed = new RegExp(`\\b(?:${n}|${WORD_FOR[n] ?? '_'})\\b`).test(facts.handedText) || lower(facts.handedText).includes(lower(m[1]));
       if (!handed) add('number', s, `${m[1]} appears in no handed fact`);
     }
 
@@ -301,4 +321,4 @@ function main() {
   console.log(`${report.run}: score ${score}, ${flagged}/${turns.length} turns flagged, ${report.flags} flags → ${out}`);
 }
 
-main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

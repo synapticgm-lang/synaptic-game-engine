@@ -534,7 +534,20 @@ function rollStretch(state: GameState, j: TravelJourney): TravelJourney {
     hashUnit(`${key}|kind`),
     engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1
   );
+  if (encounter && GROUP_KINDS.has(encounter.kind)) {
+    encounter.count = 2 + Math.floor(hashUnit(`${key}|count`) * 3);
+  }
   return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1 };
+}
+
+/** Meetings that stand as a group: the engine rolls how many. */
+const GROUP_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead']);
+const COUNT_WORD = ['', 'one', 'two', 'three', 'four'];
+
+/** The rolled headcount, as the receipt and the writer fact both print it. */
+function meetingCount(e: RoadEncounter): string {
+  const n = e.count && COUNT_WORD[e.count];
+  return n ? `, ${n} of them` : '';
 }
 
 const ENCOUNTER_LABEL: Record<RoadEncounterKind, string> = {
@@ -565,7 +578,7 @@ export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const e = j?.encounter;
   if (!e || roadMeetingOver(e)) return '';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
-  return `On this stretch: ${base}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
+  return `On this stretch: ${base}${meetingCount(e)}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
 }
 
 /** Meetings with someone who can speak. */
@@ -591,7 +604,7 @@ function encounterNote(j: TravelJourney): string {
     : e.rare
       ? `rare spawn, ${base}`
       : base;
-  return `; chance meeting: ${label} (level ${e.level}), ${ENCOUNTER_LIFE[e.kind]}`;
+  return `; chance meeting: ${label} (level ${e.level})${meetingCount(e)}, ${ENCOUNTER_LIFE[e.kind]}`;
 }
 
 const FIGHT_WORDS = /^(?:face|fight|attack|charge|challenge)\b/i;

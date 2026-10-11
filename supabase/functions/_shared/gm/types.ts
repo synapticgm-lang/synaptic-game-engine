@@ -778,6 +778,8 @@ export interface RoadEncounter {
   rare?: boolean;
   /** 29x — a camp that holds a mini-boss (a real fight through the combat engine). */
   miniBoss?: boolean;
+  /** How many stand in a group meeting (thugs, the restless dead). The engine rolls it; the writer never picks it. */
+  count?: number;
   /** 29x — the fight on this stretch was opened; once it is over the meeting is dealt with. */
   engaged?: boolean;
   /** The player fled past this meeting: not beaten, no longer in the lane. */
