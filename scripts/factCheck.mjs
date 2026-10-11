@@ -191,7 +191,10 @@ export function checkTurn(row, packet, page = '') {
     const exitClauses = s.split(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/i).filter((c) => EXIT_CLAIM.test(c) || EXIT_NOUN_RE.test(c) || /\b(?:another|the other)\b/i.test(c));
     if (exitFact) {
       const re = new RegExp(`\\b(\\d+|one|two|three|four|five|six|seven|eight|nine|ten|both|single|only)\\s+(?:\\w+\\s+){0,2}?(${EXIT_NOUN})\\b`, 'gi');
-      for (const m of s.matchAll(re)) {
+      // "Exits: no way out of X leads to a mapped place" says where no way leads, not how many doors X has:
+      // it hands no count (the commit gate's exitCount.handedExits reads it the same way).
+      const counted = !(facts.engineExits && !facts.engineExits.length);
+      for (const m of counted ? s.matchAll(re) : []) {
         if (!EXIT_CLAIM.test(s) && !/\b(?:left|led|leads|lead|ran|out)\b/i.test(s)) continue;
         // "the only way out" is one; "the only ways out are the four doors" leaves the count to the number,
         // and "only the exits of Lowmarket and the West Wall" counts the places it lists.

@@ -54,8 +54,10 @@ function statedExitCount(clause: string, exits: string[], sentence: string): num
     if (n === 1) {
       // "the only road to Lowmarket" is the one way to a named exit, not the total.
       const rest = after.replace(/^\s+out\b/i, '').toLowerCase();
-      const named = exits.some((e) => e.length >= 4 && rest.split(/[,;]/)[0]!.includes(e.toLowerCase().replace(/^the\s+/, '')));
-      if (/^\s*(?:to|toward|towards|into)\s/.test(rest) && named) continue;
+      const names = (t: string) => exits.some((e) => e.length >= 4 && t.includes(e.toLowerCase().replace(/^the\s+/, '')));
+      if (/^\s*(?:to|toward|towards|into)\s/.test(rest) && names(rest.split(/[,;]/)[0]!)) continue;
+      // "Cathedral Close waited, but the only way there ran…": the one way to the exit the sentence names.
+      if (/^\s*(?:\w+\s+){0,4}?(?:to\s+(?:get|go|reach)\s+)?there\b/.test(rest) && names(sentence.toLowerCase())) continue;
     }
     if (Number.isFinite(n)) return n!;
   }

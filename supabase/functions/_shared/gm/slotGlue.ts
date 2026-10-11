@@ -198,6 +198,8 @@ export function isPlaceTitleAsPersonSubject(text: string, placeTitles: string[] 
   if (!t.trim() || !placeTitles.length) return false;
   for (const title of placeTitles) {
     if (isAtmospherePlaceName(title)) continue;
+    // A lowercase needle ("shrine", "grain-ship") is plain English: "the shrine step by step", "the grain-ship hold".
+    if (!isProperPersonName(title)) continue;
     const esc = escapeRe(title);
     if (new RegExp(`\\b${esc}['’]s\\s+(?:${PERSON_VERB}|eyes?|fingers?|voice|jaw|hand|hands|gaze)\\b`, 'i').test(t)) {
       return true;

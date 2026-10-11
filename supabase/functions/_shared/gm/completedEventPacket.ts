@@ -1397,8 +1397,13 @@ function aliveVsDeadContradiction(prose: string, packet: CompletedEventPacket): 
   return false;
 }
 
-const HERE_CLAIM =
-  /\b(?:you (?:are|stand|wait|remain) (?:in|at|inside)|here in|back (?:in|at)|still (?:in|at))\s+(?:the\s+)?([^.,!?;:]{2,48})/i;
+/** "lay still in the alley": after a body-position verb, "still" is motionless, not "yet in". */
+const POSTURE_STILL = '(?<!\\b(?:lay|lie|lies|lying|stood|stands|standing|sat|sits|sitting|kept|keeps|held|holds|froze|hung|went)\\s)';
+
+const HERE_CLAIM = new RegExp(
+  `\\b(?:you (?:are|stand|wait|remain) (?:in|at|inside)|here in|back (?:in|at)|${POSTURE_STILL}still (?:in|at))\\s+(?:the\\s+)?([^.,!?;:]{2,48})`,
+  'i'
+);
 
 /** The place phrase ends where the clause goes on ("here in the Close and questions waited"). */
 const CLAUSE_GOES_ON = /\s+(?:and|but|or|as|while|where|when|with|before|after|until|so|then|because|though)\b.*$/i;

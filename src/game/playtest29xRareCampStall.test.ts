@@ -65,9 +65,9 @@ afterEach(() => {
 });
 
 describe('29x stamps', () => {
-  it('HUD and BUILD are 2026-10-11u and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-11u');
-    expect(BUILD_STAMP).toBe('2026-10-11u');
+  it('HUD and BUILD are 2026-10-11v and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-11v');
+    expect(BUILD_STAMP).toBe('2026-10-11v');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
