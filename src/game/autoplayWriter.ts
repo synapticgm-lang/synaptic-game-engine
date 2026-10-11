@@ -17,7 +17,7 @@ export type AutoplayWriterOverride = {
   baseUrl: string;
   apiKey: string;
   /** Where credentials came from (for meta / logs — never the key). */
-  route: 'openrouter-paid' | 'ai-gateway' | 'custom';
+  route: 'openrouter-paid' | 'custom';
   note: string;
 };
 
@@ -36,9 +36,6 @@ let override: AutoplayWriterOverride | null = null;
 export const FLASH_LITE_OPENROUTER_MODEL = 'google/gemini-2.5-flash-lite';
 
 export const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
-
-/** Vercel AI Gateway (OpenAI-compatible). Harness only — model from `--writer-model`. */
-export const AI_GATEWAY_BASE = 'https://ai-gateway.vercel.sh/v1';
 
 /** Curriculum / auto-improve CLI default when `--writer` omitted. */
 export const AUTOPLAY_HARNESS_DEFAULT_WRITER: AutoplayWriterKind = 'flash-lite';
@@ -106,49 +103,29 @@ export function resolveOpenRouterApiKey(): string {
 }
 
 /**
- * Resolve Flash Lite for autoplay / dual-review / patcher.
+ * Resolve the OpenRouter harness writer for autoplay / dual-review / patcher.
+ * `model` is any OpenRouter model id (`--writer-model`); default Flash Lite.
  * Requires OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY / AUTOPLAY_OPENROUTER_API_KEY).
  */
-export function resolveFlashLiteAutoplayWriter(): AutoplayWriterOverride {
+export function resolveFlashLiteAutoplayWriter(model?: string | null): AutoplayWriterOverride {
+  const id = (model ?? '').trim() || FLASH_LITE_OPENROUTER_MODEL;
+  if (!id.includes('/')) {
+    throw new Error(`--writer-model needs an OpenRouter model id <provider/model>, got "${id}".`);
+  }
   const openRouterKey = resolveOpenRouterApiKey();
   if (!openRouterKey) {
     throw new Error(
-      'Flash Lite harness requires OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY) in .env. ' +
-        `Model: ${FLASH_LITE_OPENROUTER_MODEL} via ${OPENROUTER_BASE}.`
+      'OpenRouter harness requires OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY) in .env. ' +
+        `Model: ${id} via ${OPENROUTER_BASE}.`
     );
   }
   return {
     kind: 'flash-lite',
-    model: FLASH_LITE_OPENROUTER_MODEL,
+    model: id,
     baseUrl: OPENROUTER_BASE,
     apiKey: openRouterKey,
     route: 'openrouter-paid',
-    note:
-      `OpenRouter ${FLASH_LITE_OPENROUTER_MODEL} — Fate/curriculum repair default ` +
-      '(~$0.10/$0.40 per MTok; Mid writer OFF).',
-  };
-}
-
-/**
- * Vercel AI Gateway writer. Same override → same client GM packet and reply parse as Flash Lite;
- * only base URL, key, and model differ.
- */
-export function resolveGatewayAutoplayWriter(model: string | undefined | null): AutoplayWriterOverride {
-  const id = (model ?? '').trim();
-  if (!id || !id.includes('/')) {
-    throw new Error('--writer gateway needs --writer-model <provider/model> (e.g. anthropic/claude-haiku-5.5).');
-  }
-  const apiKey = env('AI_GATEWAY_API_KEY');
-  if (!apiKey) {
-    throw new Error(`Gateway harness requires AI_GATEWAY_API_KEY in .env. Model: ${id} via ${AI_GATEWAY_BASE}.`);
-  }
-  return {
-    kind: 'gateway',
-    model: id,
-    baseUrl: AI_GATEWAY_BASE,
-    apiKey,
-    route: 'ai-gateway',
-    note: `Vercel AI Gateway ${id} — harness only (Mid writer OFF).`,
+    note: `OpenRouter ${id} — harness writer (Mid writer OFF).`,
   };
 }
 
@@ -157,8 +134,7 @@ export function resolveAutoplayWriter(
   model?: string | null
 ): AutoplayWriterOverride | null {
   if (kind === 'default') return null;
-  if (kind === 'gateway') return resolveGatewayAutoplayWriter(model);
-  return resolveFlashLiteAutoplayWriter();
+  return { ...resolveFlashLiteAutoplayWriter(model), kind };
 }
 
 export function enableAutoplayWriter(
@@ -177,8 +153,7 @@ export function enableAutoplayWriter(
 /** Flash Lite critic / patcher (same model as harness writer — research-approved). */
 export function resolveFlashLiteCritic(): AutoplayCriticConfig {
   const w =
-    override?.kind === 'flash-lite' ||
-    (override?.route === 'openrouter-paid' && override.model === FLASH_LITE_OPENROUTER_MODEL)
+    override?.route === 'openrouter-paid' && override.model === FLASH_LITE_OPENROUTER_MODEL
       ? override
       : resolveFlashLiteAutoplayWriter();
   return {

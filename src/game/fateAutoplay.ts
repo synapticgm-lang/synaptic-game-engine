@@ -302,9 +302,9 @@ export type FateAutoplayCliOpts = {
   batchDir?: string;
   outRoot: string;
   characterName: string;
-  /** GM writer: default (hosted Free via edge), flash-lite / openrouter (OpenRouter), or gateway (Vercel AI Gateway). */
+  /** GM writer: default (hosted Free via edge), or flash-lite / openrouter / gateway (all OpenRouter). */
   writer?: AutoplayWriterKind;
-  /** `--writer-model <provider/model>` — required with `--writer gateway`. */
+  /** `--writer-model <provider/model>` — OpenRouter model id; default Flash Lite. */
   writerModel?: string;
 };
 
@@ -2136,7 +2136,7 @@ export async function runFateAutoplay(opts: {
   characterName: string;
   /** When set, forces Flash Lite (or default hosted) for this run via client GM path. */
   writer?: AutoplayWriterKind;
-  /** Model id for `writer: 'gateway'`. */
+  /** OpenRouter model id for the client writer; default Flash Lite. */
   writerModel?: string;
   /** 28b — scripted player lines per turn (harness only); a blank entry = normal pick. */
   inputs?: string[];

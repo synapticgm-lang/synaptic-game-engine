@@ -1,6 +1,6 @@
 /**
  * Load .env / .env.local into process.env without overwriting existing vars.
- * Used by fate-autoplay Node scripts (AI_GATEWAY_API_KEY is not a VITE_ key).
+ * Used by fate-autoplay Node scripts (OpenRouter key may live in .env.local).
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';

@@ -84,10 +84,9 @@ Options:
                        PYOA is never tested.
   --ai-tier free|mid|high
   --writer default|flash-lite|openrouter|gateway
-                       flash-lite/openrouter = OpenRouter google/gemini-2.5-flash-lite (needs OPENROUTER_API_KEY)
-                       gateway = Vercel AI Gateway (needs AI_GATEWAY_API_KEY + --writer-model)
+                       flash-lite/openrouter/gateway = OpenRouter (needs OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY)
                        default = hosted Free via edge gm-turn
-  --writer-model ID    provider/model for --writer gateway (e.g. anthropic/claude-haiku-5.5)
+  --writer-model ID    OpenRouter model id (default google/gemini-2.5-flash-lite)
   --pick-mode fate|first-pad
   --route <place>           from turn 2, travel toward <place> until arrived, then normal picks
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)

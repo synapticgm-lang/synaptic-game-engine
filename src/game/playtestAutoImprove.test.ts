@@ -72,6 +72,13 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
       expect(c.model).toBe(FLASH_LITE_OPENROUTER_MODEL);
       expect(c.reviewer).toBe('flash-lite');
       expect(c.alternateModels).toEqual([]);
+      enableAutoplayWriter('flash-lite', 'anthropic/claude-haiku-4.5');
+      expect(getAutoplayWriterOverride()?.model).toBe('anthropic/claude-haiku-4.5');
+      expect(resolveAutoplayCritic('flash-lite').model).toBe(FLASH_LITE_OPENROUTER_MODEL);
+      const gw = enableAutoplayWriter('gateway', 'openai/gpt-5-mini');
+      expect(gw?.baseUrl).toContain('openrouter.ai');
+      expect(gw?.route).toBe('openrouter-paid');
+      expect(gw?.model).toBe('openai/gpt-5-mini');
     } finally {
       if (prevGw === undefined) delete process.env.AI_GATEWAY_API_KEY;
       else process.env.AI_GATEWAY_API_KEY = prevGw;
