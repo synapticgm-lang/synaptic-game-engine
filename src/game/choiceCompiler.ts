@@ -16,7 +16,7 @@ import {
   isRepeatPurchasePad,
   npcShouldExit,
 } from './npcMemory';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubTravelTargets, hubsForBibleId, matchHub } from './outdoorHubs';
 import { systemStatusChip } from './systemHousing';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { compileGraphChoiceLabels, enumerateLegalEdges as enumerateGraphEdges } from './graphChoices';
@@ -1351,8 +1351,9 @@ export function compileChoices(
       );
       const rank = (h: { name: string; blurb?: string }) =>
         (isOpenDungeonHub(h) ? 0 : 2) + (visited.has(h.name.toLowerCase()) ? 1 : 0);
+      const targets = new Set(hubTravelTargets(state).map((n) => n.toLowerCase()));
       const candidates = hubs
-        .filter((h) => h.id !== hereHub.id)
+        .filter((h) => h.id !== hereHub.id && targets.has(h.name.toLowerCase()))
         .sort((a, b) => rank(a) - rank(b));
       const exit = candidates[0] ? `Travel toward ${candidates[0].name}` : undefined;
       if (exit) {

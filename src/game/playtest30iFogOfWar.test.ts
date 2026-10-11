@@ -14,7 +14,7 @@ import {
   detectAndDiscoverLocations,
   getDiscoveredSettlements,
 } from './locationDiscovery';
-import { outdoorHubTravelChoices, SUMMONED_PACT_HUBS } from './outdoorHubs';
+import { hubTravelTargets, outdoorHubTravelChoices, SUMMONED_PACT_HUBS } from './outdoorHubs';
 import { seedStateFromCampaignBible } from './campaignSeed';
 import { getCampaignBibleById } from '@/data/campaigns';
 import { seedWorldAtlas } from './worldAtlas';
@@ -106,44 +106,42 @@ describe('Pack 12 Fog-of-War', () => {
   });
 
   describe('Travel Options Filtering', () => {
-    it('only offers travel to discovered locations', () => {
-      const state: GameState = {
+    // s84 Root A (John, 11 Oct): travel pads read the graph's travel targets (`hubTravelTargets`),
+    // the same list the exits receipt reads, not discoveredLocations.
+    it('travel pads are the head of the graph travel targets, whatever was discovered', () => {
+      const base: GameState = {
         ...createInitialState('Test', 'litrpg'),
         campaignBibleId: 'summoned-pact',
-        currentLocation: 'Sevenfold Circle',
-        discoveredLocations: ['place_sevenfold-circle', 'place_lowmarket'],
+        currentLocation: 'Cathedral Close',
         openingEstablishment: { pending: [], answers: {}, complete: true },
+        turn: 20,
       };
-      
-      const travelOptions = outdoorHubTravelChoices(state, 4);
-      
-      // Should only include Lowmarket (discovered) not other hubs
-      expect(travelOptions.some(opt => opt.includes('Lowmarket'))).toBe(true);
-      expect(travelOptions.length).toBeLessThanOrEqual(2);
+      const few = { ...base, discoveredLocations: ['place_sevenfold-circle'] };
+      const more = { ...base, discoveredLocations: ['place_sevenfold-circle', 'place_lowmarket'] };
+      const head = hubTravelTargets(base).slice(0, 4).map((n) => `Travel toward ${n}`);
+      expect(head.length).toBeGreaterThan(0);
+      expect(outdoorHubTravelChoices(few, 4)).toEqual(head);
+      expect(outdoorHubTravelChoices(more, 4)).toEqual(head);
     });
 
-    it('does not offer travel to undiscovered locations', () => {
+    it('never offers travel to the place you are in', () => {
       const state: GameState = {
         ...createInitialState('Test', 'litrpg'),
         campaignBibleId: 'summoned-pact',
-        currentLocation: 'Sevenfold Circle',
-        discoveredLocations: ['place_sevenfold-circle'], // Only starting location
+        currentLocation: 'Lowmarket',
         openingEstablishment: { pending: [], answers: {}, complete: true },
-        turn: 20, // past the opening allowance (turn ≤ 5) covered below
+        turn: 20,
       };
-      
-      const travelOptions = outdoorHubTravelChoices(state);
-      
-      // Should not include undiscovered hubs
-      expect(travelOptions.some(opt => opt.includes('Contract Hall'))).toBe(false);
-      expect(travelOptions.some(opt => opt.includes('West Wall'))).toBe(false);
+      const options = outdoorHubTravelChoices(state, 4);
+      expect(options.length).toBeGreaterThan(0);
+      expect(options.some((opt) => opt.includes('Lowmarket'))).toBe(false);
     });
 
     it('allows exploration from starting location during opening', () => {
       const state: GameState = {
         ...createInitialState('Test', 'litrpg'),
         campaignBibleId: 'summoned-pact',
-        currentLocation: 'Sevenfold Circle',
+        currentLocation: 'Cathedral Close',
         discoveredLocations: ['place_sevenfold-circle'],
         turn: 3, // Early game
         openingEstablishment: { pending: [], answers: {}, complete: true },

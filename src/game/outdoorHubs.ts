@@ -383,54 +383,59 @@ export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
   if (state.openingEstablishment?.complete === false) return [];
   if (state.activeDungeon) return [];
   if (state.activeEncounter) return [];
+  if (!isOutdoorHubScene(state)) return [];
   return hubTravelTargets(state).slice(0, max).map((name) => `Travel toward ${name}`);
 }
 
-/** The mapped places a player can travel to from here, best first (the travel chips take the head of this list). */
+/** Outdoors for travel chips: the scene says so, else HERE is a mapped hub. The graph travel edges use the same gate. */
+export function isOutdoorHubScene(state: GameState): boolean {
+  const facts = state.sceneFacts as { outdoor?: boolean; indoor?: boolean } | undefined;
+  if (facts?.outdoor === true) return true;
+  if (facts?.indoor === false) return true;
+  if (facts?.indoor === true) return false;
+  return !!matchHub(hubsForBibleId(state.campaignBibleId ?? (state as { bibleId?: string }).bibleId), state.currentLocation);
+}
+
+/** 28g — a hub whose name or blurb marks a dungeon (e.g. Cathedral Undercroft). */
+const DUNGEON_HUB_RE = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
+
+/**
+ * The mapped places the travel chips offer from here, best first (at most four, one dungeon hub kept).
+ * The graph travel edges, the hub travel pads and the exits receipt all read this one list.
+ */
 export function hubTravelTargets(state: GameState): string[] {
-  const hubs = hubsForBibleId(state.campaignBibleId);
-  if (!hubs.length) return [];
   const here = (state.currentLocation ?? '').toLowerCase();
-  const discovered = state.discoveredLocations ?? [];
-  
-  // Pack 12 fog-of-war: only offer travel to discovered locations
-  const candidates = hubs.filter((h) => {
-    if (here.includes(h.name.toLowerCase())) return false;
-    
-    // Check if discovered
-    const hubKey = h.id;
-    const nameKey = placeIdFromName(h.name);
-    if (discovered.includes(hubKey) || discovered.includes(nameKey)) return true;
-    
-    // Check aliases
-    if (h.aliases?.some((a) => discovered.includes(placeIdFromName(a)))) return true;
-    
-    // Allow first few locations from starting point during opening
-    if (state.turn <= 5 && discovered.length === 1) return true;
-    
-    return false;
-  });
-  
-  const activeIds = new Set(
-    (state.quests ?? []).filter((q) => q.status === 'active' && q.revealed).map((q) => q.id)
+  const fromBible = hubsForBibleId(state.campaignBibleId);
+  const active = (state.quests ?? []).filter((q) => q.revealed && q.status === 'active');
+  const activeIds = new Set(active.map((q) => q.id));
+  // The active quest's site comes first, as the story chip (choiceRanking.storyChip) names it.
+  const sites = new Set(
+    active.map((q) => (q.location ? matchHub(fromBible, q.location)?.id : undefined)).filter(Boolean)
   );
-  const scored = [...candidates].sort((a, b) => {
-    const aLink = a.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
-    const bLink = b.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
-    if (aLink !== bLink) return aLink - bLink;
-    const aVis = (state.places ?? []).some(
-      (p) => p.name.toLowerCase() === a.name.toLowerCase() && p.lastVisitedTurn != null
-    )
-      ? 1
-      : 0;
-    const bVis = (state.places ?? []).some(
-      (p) => p.name.toLowerCase() === b.name.toLowerCase() && p.lastVisitedTurn != null
-    )
-      ? 1
-      : 0;
-    return aVis - bVis;
-  });
-  return scored.map((h) => h.name);
+  const visited = new Set(
+    (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
+  );
+  const extra = (state as GameState & { hubs?: Array<{ name: string }> }).hubs;
+  const questRank = (h: OutdoorHub) => (sites.has(h.id) ? 0 : h.linkedQuestIds?.some((id) => activeIds.has(id)) ? 1 : 2);
+  const listed = fromBible.length
+    ? [...fromBible]
+        .sort((a, b) => {
+          const aLink = questRank(a);
+          const bLink = questRank(b);
+          if (aLink !== bLink) return aLink - bLink;
+          // 28g — unvisited hubs before visited ones
+          return Number(visited.has(a.name.toLowerCase())) - Number(visited.has(b.name.toLowerCase()));
+        })
+        .map((h) => ({ name: h.name, dungeon: DUNGEON_HUB_RE.test(`${h.name} ${h.blurb ?? ''}`) }))
+    : (Array.isArray(extra) ? extra : []).map((h) => ({ name: h.name, dungeon: false }));
+  const open = listed.filter((h) => !!h.name && h.name.toLowerCase() !== here);
+  const picks = open.slice(0, 4);
+  // 28g — always keep one travel slot for a reachable dungeon hub.
+  const dungeonHub = open.find((h) => h.dungeon);
+  if (dungeonHub && !picks.includes(dungeonHub)) {
+    picks.splice(picks.length >= 4 ? 3 : picks.length, 1, dungeonHub);
+  }
+  return picks.map((h) => h.name);
 }
 
 /** Thornferry mill / ford / landing / quay are one already-here cluster (02f / 02g). */

@@ -189,11 +189,14 @@ const SEARCH_VERB = /\b(search|searches|searching|rummage|rummaging|scavenge|sca
 const CONTAINER_KEY = /^(crate|chest|barrel|box)$/;
 const EXITS_LOOK = /^(?:check|scout|look for|find)\s+(?:the\s+)?(?:exits?|ways? out)\b/i;
 
-/** Outside a dungeon: checking the exits commits this place's mapped ways out (the travel chips' targets). */
+/** Outside a dungeon: checking the exits commits the travel chips' targets, plus both ends of the trip while underway. */
 function checkExits(state: GameState, text: string): { state: GameState; receipts: string[] } | null {
   if (!EXITS_LOOK.test(text)) return null;
   const here = state.currentLocation?.trim() || 'here';
+  const j = state.journey;
+  const ends = j && j.legsDone < j.legsTotal ? [j.to?.trim(), j.from?.trim()] : [];
   const ways = hubTravelTargets(state);
+  for (const end of ends) if (end && !ways.some((w) => w.toLowerCase() === end.toLowerCase())) ways.push(end);
   return {
     state,
     receipts: [

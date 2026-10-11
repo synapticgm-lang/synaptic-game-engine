@@ -1,13 +1,12 @@
 /**
  * Root B (seed 83) — "Check the exits" commits this place's mapped ways out before the writer:
- * the same targets the travel chips use, and no other place.
+ * the same targets the travel chips use (s84 Root A: `outdoorHubs.hubTravelTargets`, not the discovery list).
  */
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { advanceDungeonCard } from './dungeonCard';
 import { engineResultFact } from './engineResult';
-import { hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
-import { placeIdFromName } from './places';
+import { hubTravelTargets, hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
 import type { GameState } from './types';
 
 function atTheClose(turn: number): GameState {
@@ -20,21 +19,21 @@ function atTheClose(turn: number): GameState {
     journey: undefined,
     activeEncounter: undefined,
     activeDungeon: undefined,
-    discoveredLocations: ['Cathedral Close', 'Contract Hall', 'Cathedral Undercroft'].map(placeIdFromName),
   };
 }
 
 describe('s83 Root B — "Check the exits" commits the mapped ways out', () => {
-  it('T14 at Cathedral Close names Contract Hall and the Undercroft, and no other place', () => {
+  it('T14 at Cathedral Close names the travel targets, never Cathedral Close itself', () => {
     const before = atTheClose(14);
     const t = advanceDungeonCard(before, 'Check the exits');
     const fact = engineResultFact(t.receipts);
     expect(fact).toMatch(/^Exits: the ways out of Cathedral Close lead to /);
-    expect(fact).toContain('Contract Hall');
-    expect(fact).toContain('Cathedral Undercroft');
+    const targets = hubTravelTargets(before);
+    expect(targets.length).toBeGreaterThan(0);
+    for (const n of targets) expect(fact).toContain(n);
     const others = hubsForBibleId('summoned-pact')
       .map((h) => h.name)
-      .filter((n) => !['Contract Hall', 'Cathedral Undercroft', 'Cathedral Close'].includes(n));
+      .filter((n) => !targets.includes(n) && n !== 'Cathedral Close');
     for (const n of others) expect(fact).not.toContain(n);
   });
 

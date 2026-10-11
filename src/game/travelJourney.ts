@@ -347,14 +347,24 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   return FIXED_ENCOUNTER_PADS[enc.kind] ?? [];
 }
 
-/** Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back. */
-export function journeyPads(state: Pick<GameState, 'journey' | 'places' | 'currentLocation'>): string[] {
+const TURN_BACK_REST_TURNS = 4;
+
+/**
+ * Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back.
+ * Turn back rests for a few turns after a bounce between the same places (the circling memory's
+ * short return), unless the way on is blocked.
+ */
+export function journeyPads(
+  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> & Partial<Pick<GameState, 'circling' | 'turn'>>
+): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
   const forward = laneBlocked(j.encounter) ? [] : ['Walk on'];
   const origin = journeyOrigin(state);
-  return [...forward, ...met, ...(origin ? [`Turn back toward ${origin}`] : [])];
+  const bounced = state.circling?.shortReturnTurn;
+  const rested = forward.length > 0 && bounced != null && (state.turn ?? 0) - bounced < TURN_BACK_REST_TURNS;
+  return [...forward, ...met, ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
 }
 
 export function isJourneyPad(choice: string): boolean {
@@ -698,7 +708,8 @@ function arrive(state: GameState, dest: string, hours: number, from: string): Tr
   };
 }
 
-function startJourney(state: GameState, from: string, to: string, gap: MapGap): TravelCommit {
+/** `via` is the road the player is already on (a redirect mid-trip); the receipt sets out from it, not from `from`. */
+function startJourney(state: GameState, from: string, to: string, gap: MapGap, via?: string): TravelCommit {
   const journey = rollStretch(state, {
     from,
     to,
@@ -719,16 +730,18 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap): 
     arrived: false,
     underway: true,
     outcome: 'set out',
-    receipt: `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
+    receipt: via
+      ? `Travel: off ${via}, now toward ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`
+      : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
-function goTo(state: GameState, from: string, dest: string): TravelCommit {
+function goTo(state: GameState, from: string, dest: string, via?: string): TravelCommit {
   if (isTripHere(state, dest)) return unchanged(state);
   const gap = mapGapBetween(state, from, dest);
   if (gap.steps <= 0) return unchanged(state);
-  if (gap.steps === 1) return arrive(state, dest, gap.hoursPerLeg, from);
-  return startJourney(state, from, dest, gap);
+  if (gap.steps === 1) return arrive(state, dest, gap.hoursPerLeg, via ?? from);
+  return startJourney(state, from, dest, gap, via);
 }
 
 function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
@@ -794,7 +807,10 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
       };
       return stepAlong({ ...state, journey: back }, back);
     }
-    if (named) return goTo({ ...state, journey: null }, j.from, named.name);
+    if (named) {
+      const road = `the ${j.ground.toLowerCase()} between ${j.from} and ${j.to}`;
+      return goTo({ ...state, journey: null }, j.from, named.name, road);
+    }
     const slot = timeOfDayForHour(currentHour(state));
     const where = `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${slot})`;
     // The fight engine already settled a fight this turn (a faced meeting rolls before travel): no second fight.

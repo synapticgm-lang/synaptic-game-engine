@@ -10,7 +10,7 @@ import {
   edgesToChoiceLabels as beatEdgesToLabels,
 } from './choiceEdge';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubTravelTargets, isOutdoorHubScene } from './outdoorHubs';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
@@ -39,22 +39,6 @@ export interface StateEdge {
 }
 
 export type ChoiceHistoryEntry = { turn: number; choiceType: EdgeType };
-
-function isOutdoorScene(state: GameState): boolean {
-  const facts = state.sceneFacts as { outdoor?: boolean; indoor?: boolean } | undefined;
-  if (facts?.outdoor === true) return true;
-  if (facts?.indoor === false) return true;
-  if (facts?.indoor === true) return false;
-  return !!matchHub(hubsForBibleId(state.campaignBibleId ?? state.bibleId), state.currentLocation);
-}
-
-/** 28g — a hub whose name or blurb marks a dungeon (e.g. Cathedral Undercroft). */
-const DUNGEON_HUB_RE = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
-
-function extraHubs(state: GameState): Array<{ name: string }> {
-  const extra = (state as GameState & { hubs?: Array<{ name: string }> }).hubs;
-  return Array.isArray(extra) ? extra : [];
-}
 
 export function classifyEdgeType(label: string): EdgeType {
   const lower = (label ?? '').toLowerCase();
@@ -105,42 +89,15 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     return edges.filter((e) => !isExcludedPadLabel(e.label, excluded));
   }
 
-  if (state.openingEstablishment?.complete && isOutdoorScene(state) && !excluded.has('travel')) {
-    const here = (state.currentLocation ?? '').toLowerCase();
-    const fromBible = hubsForBibleId(state.campaignBibleId);
-    const activeIds = new Set(
-      (state.quests ?? []).filter((q) => q.revealed && q.status === 'active').map((q) => q.id)
-    );
-    const visited = new Set(
-      (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
-    );
-    const listed = fromBible.length
-      ? [...fromBible]
-          .sort((a, b) => {
-            const aLink = a.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
-            const bLink = b.linkedQuestIds?.some((id) => activeIds.has(id)) ? 0 : 1;
-            if (aLink !== bLink) return aLink - bLink;
-            // 28g — unvisited hubs before visited ones
-            return Number(visited.has(a.name.toLowerCase())) - Number(visited.has(b.name.toLowerCase()));
-          })
-          .map((h) => ({ name: h.name, dungeon: DUNGEON_HUB_RE.test(`${h.name} ${h.blurb ?? ''}`) }))
-      : extraHubs(state).map((h) => ({ name: h.name, dungeon: false }));
-    const open = listed.filter((h) => !!h.name && h.name.toLowerCase() !== here);
-    const picks = open.slice(0, 4);
-    // 28g — always keep one travel slot for a reachable dungeon hub.
-    const dungeonHub = open.find((h) => h.dungeon);
-    if (dungeonHub && !picks.includes(dungeonHub)) {
-      picks.splice(picks.length >= 4 ? 3 : picks.length, 1, dungeonHub);
-    }
-    for (const hub of picks) {
+  if (state.openingEstablishment?.complete && isOutdoorHubScene(state) && !excluded.has('travel')) {
+    for (const name of hubTravelTargets(state)) {
       edges.push({
         type: 'travel',
-        label: `Travel toward ${hub.name}`,
+        label: `Travel toward ${name}`,
         intent: PlayerIntent.INTENT_TRAVEL_HUB,
-        target: hub.name,
+        target: name,
         cooldown: 2,
       });
-      if (edges.filter((e) => e.type === 'travel').length >= 4) break;
     }
   }
 
