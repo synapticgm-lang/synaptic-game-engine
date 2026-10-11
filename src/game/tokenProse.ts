@@ -49,6 +49,8 @@ export interface TokenBeat {
 export type TokenAcceptPath = 'json' | 'json-partial' | '13c' | 'last-resort';
 
 const LINE_FNS = new Set<LineFn>(['place', 'action', 'speech', 'react', 'hook']);
+/** A line whose plain (untokened) subject speaks: the PC, the one name the writer types without a token. */
+const PC_SPEAKS = /^[A-Z][\w'’-]*\s+(?:spoke|said|asked|called|shouted|told|answered|replied|whispered|demanded)\b/;
 const TOKEN_USES = new Set<TokenUse>([
   'speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place',
 ]);
@@ -213,6 +215,13 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       if (id.includes('<')) continue;
       refs.push({ tok, id, use });
     }
+    // A speech line with no speaker_tok belongs to the beat's one declared speaker; with none declared, to its one
+    // actor or addressee, unless the line before has the PC (written plainly, never a token) speaking: those are
+    // the PC's own words, which keep no speaker and fail the line.
+    const speakers = refs.filter((r) => r.use === 'speaker');
+    const others = refs.filter((r) => r.use !== 'speaker' && PERSON_USES.has(r.use));
+    const soleSpeaker = speakers.length === 1 ? speakers[0]!.tok : '';
+    const soleOther = !speakers.length && others.length === 1 ? others[0]!.tok : '';
     const lines: TokenLine[] = [];
     for (const row of parsed.lines) {
       if (!row || typeof row !== 'object') continue;
@@ -221,9 +230,13 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const text = String(rec.text ?? '').trim();
       // 28g/28h — skip echoed prompt placeholders (... @t1 ... or <placeholder>).
       if (!LINE_FNS.has(fn) || !text || /^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text) || /<[^<>]{2,40}>/.test(text)) continue;
-      const speaker = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';
+      const typed = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';
+      const prev = lines[lines.length - 1];
+      const pcSpoke = !!prev && prev.fn !== 'speech' && PC_SPEAKS.test(prev.text);
+      const untagged = fn === 'speech' && !namesDeclaredPerson(text, refs);
+      const speaker = typed || (untagged ? soleSpeaker || (pcSpoke ? '' : soleOther) : '');
       const line: TokenLine = speaker ? { fn, text, speaker_tok: speaker } : { fn, text };
-      lines.push(fn === 'speech' ? readSpeechLine(line) : line);
+      lines.push(fn === 'speech' ? readSpeechLine(line, refs) : line);
     }
     if (!lines.length) return null;
     return { refs, lines };
@@ -241,7 +254,7 @@ const QUOTED_RE = new RegExp(`[${OPEN_Q}]([^${OPEN_Q}${CLOSE_Q}]+)[${CLOSE_Q}]`,
  * with escaped quotes, or with its own `@t2 said,` tag (even the whole line wrapped again): read that
  * shape into plain words + speaker_tok. Indirect speech with no quoted words and a token in it stays as written.
  */
-function readSpeechLine(line: TokenLine): TokenLine {
+function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   let text = line.text.replace(/\\+(["'\u201c\u201d\u2018\u2019])/g, '$1').trim();
   const wrapped = text.match(new RegExp(`^[${OPEN_Q}]\\s*(@t\\d+\\b[\\s\\S]*[${CLOSE_Q}])\\s*[${CLOSE_Q}]$`));
   if (wrapped) text = wrapped[1]!.trim();
@@ -252,7 +265,7 @@ function readSpeechLine(line: TokenLine): TokenLine {
   let words: string;
   if (quoted.length) {
     words = quoted.map((q, i) => (i < quoted.length - 1 ? q.replace(/,$/, '.') : q)).join(' ');
-  } else if (line.speaker_tok && !/@t\d+\b/.test(text)) {
+  } else if (line.speaker_tok && !namesDeclaredPerson(text, refs)) {
     words = text.replace(new RegExp(`^[${OPEN_Q}]|[${CLOSE_Q}]$`, 'g'), '');
   } else {
     return { ...line, text };
@@ -311,6 +324,13 @@ function toksInText(text: string): string[] {
     found.push(`t${m[1]}`);
   }
   return found;
+}
+
+const PERSON_USES = new Set<TokenUse>(['speaker', 'actor', 'addressed']);
+
+/** The line names a declared person by token: indirect speech ("@t2 told Jax…") carries its own speaker. */
+function namesDeclaredPerson(text: string, refs: TokenUseRef[]): boolean {
+  return toksInText(text).some((t) => refs.some((r) => r.tok === t && PERSON_USES.has(r.use)));
 }
 
 export function refEnumOf(state: GameState, packet?: CompletedEventPacket): LedgerRef[] {
@@ -388,6 +408,10 @@ export function classifyTokenLine(
   knownNames: string[] = []
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  // Spoken words with no speaker would paint as narration.
+  if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
+    return { ok: false, reason: 'speech-no-speaker' };
+  }
   // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
   // A handed name typed with the other apostrophe ("Summons' Price" for "Summons’ Price") is the same name.
   const apos = (s: string) => s.replace(/[\u2018\u2019]/g, "'");

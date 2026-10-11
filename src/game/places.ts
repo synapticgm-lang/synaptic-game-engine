@@ -6,6 +6,33 @@ import { isRoadLabel } from './travelJourney';
 // Re-export for backward compatibility
 export { placeIdFromName };
 
+const ROOM_DASH = /\s+[—–]\s+/;
+
+/** A dungeon's place name: its title before any " — room" part. */
+export function dungeonTitle(dungeonName: string | undefined | null): string {
+  return (dungeonName ?? '').split(ROOM_DASH)[0]?.replace(/\s+/g, ' ').trim() ?? '';
+}
+
+/**
+ * A room is not a place: HERE "Cathedral Undercroft — Stair Descent" stands in the place "Cathedral Undercroft".
+ * Returns that place when the label's head is the active dungeon or a known place (the dungeon may already be
+ * left when the room is read back as the travel origin), else null.
+ */
+export function dungeonRoomPlace(
+  state: { activeDungeon?: { dungeonName?: string } | null; places?: PlaceRecord[] | null },
+  name: string | undefined | null
+): string | null {
+  const parts = (name ?? '').replace(/\s+/g, ' ').trim().split(ROOM_DASH);
+  const head = parts[0]?.trim().toLowerCase() ?? '';
+  if (parts.length < 2 || !head || !parts[1]?.trim()) return null;
+  const title = dungeonTitle(state.activeDungeon?.dungeonName);
+  if (title && title.toLowerCase() === head) return title;
+  const known = (state.places ?? []).find(
+    (p) => p.name.toLowerCase() === head || p.aliases?.some((a) => a.toLowerCase() === head)
+  );
+  return known?.name ?? null;
+}
+
 export function ensurePlaces(state: GameState): PlaceRecord[] {
   return state.places ?? [];
 }
@@ -25,9 +52,9 @@ export function upsertPlaceFromSheet(
     allowInvent?: boolean;
   }
 ): PlaceRecord[] {
-  const name = sheet?.name?.trim();
-  if (!name || isRoadLabel(name)) return places;
   const state = opts?.state;
+  const name = (state && dungeonRoomPlace(state, sheet?.name)) || sheet?.name?.trim();
+  if (!name || isRoadLabel(name)) return places;
   if (
     state?.worldAtlas?.settlements?.length &&
     !opts?.allowInvent &&
@@ -70,6 +97,7 @@ export function touchPlaceVisit(
   turn: number,
   state?: GameState
 ): PlaceRecord[] {
+  if (state) placeName = dungeonRoomPlace(state, placeName) ?? placeName;
   if (!placeName?.trim() || isRoadLabel(placeName)) return places;
   if (
     state?.worldAtlas?.settlements?.length &&

@@ -36,6 +36,8 @@ const ITEMS = [
   'potion', 'rope', 'torch', 'lantern', 'backpack', 'pack', 'satchel', 'bread', 'waterskin', 'flask', 'badge', 'token', 'charter',
   'spear', 'club', 'mace', 'hammer', 'crossbow', 'armor', 'armour', 'jerkin', 'tunic', 'hat', 'hood', 'belt', 'phone',
 ];
+/** Worn pieces a handed "clothes" kit row already covers. */
+const GARMENTS = new Set(['boots', 'boot', 'belt', 'coat', 'cloak', 'hat', 'hood', 'gloves', 'tunic', 'jerkin']);
 const PEOPLE = [
   'guard', 'guards', 'priest', 'priests', 'merchant', 'merchants', 'vendor', 'vendors', 'soldier', 'soldiers', 'traveler',
   'travelers', 'stranger', 'strangers', 'woman', 'women', 'man', 'men', 'boy', 'girl', 'child', 'children', 'clerk', 'monk',
@@ -132,10 +134,14 @@ function factsFor(row, packet) {
   ].filter(Boolean))].sort((a, b) => b.length - a.length);
   let engineExits = null;
   if (exitsReceipt != null) {
-    engineExits = /no way out/i.test(exitsReceipt)
-      ? []
-      : placeNames.filter((p) => p.length > 3 && lower(p) !== lower(here) && lower(exitsReceipt).includes(lower(p)));
-    engineExits = [...new Set(engineExits)].filter((p, _, all) => !all.some((q) => q !== p && lower(q).includes(lower(p))));
+    // The receipt names the place it stands in before "lead to"; only the list after it is the ways out.
+    const listed = exitsReceipt.match(/\blead(?:s)? to\s+(.+)$/i)?.[1];
+    if (/no way out/i.test(exitsReceipt)) engineExits = [];
+    else if (listed) engineExits = [...new Set(listed.split(/,\s*/).map((s) => s.trim()).filter(Boolean))];
+    else {
+      engineExits = placeNames.filter((p) => p.length > 3 && lower(p) !== lower(here) && lower(exitsReceipt).includes(lower(p)));
+      engineExits = [...new Set(engineExits)].filter((p, _, all) => !all.some((q) => q !== p && lower(q).includes(lower(p))));
+    }
   }
   const cardNames = (row.placeCards ?? []).flatMap((c) => [c.name, ...(c.exits ?? [])]).join(', ');
   const handedText = lower([factSections(packet), engineResult, receipts.join('\n'), row.location, cardNames].join('\n'));
@@ -237,6 +243,7 @@ export function checkTurn(row, packet) {
       if (!kind || inHanded(facts, w) || negated(narration, idx)) continue;
       if (kind === 'item') {
         if (/^\s+of\b/i.test(after)) continue;
+        if (GARMENTS.has(w) && /\bclothes\b/.test(facts.handedText)) continue;
         const ownerNoun = before.match(/\b(\w+)[’']s\s+(?:\w+\s+){0,2}$/i)?.[1];
         if (ownerNoun && lower(ownerNoun) !== 'jax') continue;
         const owned = /\b(?:their|his|her)\s+(?:\w+\s+){0,2}$/i.test(before);

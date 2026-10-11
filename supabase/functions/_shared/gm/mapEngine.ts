@@ -11,6 +11,7 @@ import {
 } from './placeAuthority.ts';
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay.ts';
 import { createHashRng } from './seededRng.ts';
+import { dungeonTitle } from './places.ts';
 import { insideTemplateFor } from './placeTemplates.ts';
 import { attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan.ts';
 
@@ -1299,7 +1300,7 @@ export function matchGraphExitPad(
 /** HERE label: dungeon title once, then the room — never “Infirmary — Infirmary”. */
 export function dungeonHereLabel(dungeonName: string | undefined, nodeName: string | undefined): string {
   const room = (nodeName ?? '').replace(/\s+/g, ' ').trim();
-  const title = (dungeonName ?? '').split(/\s+[—–]\s+/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
+  const title = dungeonTitle(dungeonName);
   if (!room) return title;
   if (!title || title.toLowerCase() === room.toLowerCase()) return room;
   return `${title} — ${room}`;

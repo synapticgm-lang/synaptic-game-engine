@@ -2212,8 +2212,13 @@ export function lastResortStoryBody(
 ): { prose: string; status: string } {
   const fight = terminalFightOutcome(packet?.engineResult ?? state.completedEvent?.engineResult);
   if (fight) {
+    const pov = pcPov(packet?.pc ?? state.character);
+    const third = narratesPcInThirdPerson(pov);
     return {
-      prose: terminalFightBeat(fight, playerFacingLocation(state)),
+      prose: terminalFightBeat(fight, playerFacingLocation(state), {
+        who: pcStorySubject(pov),
+        him: third ? pov.him : 'you',
+      }),
       status: 'Writer left the settled fight out — painted from the engine result',
     };
   }

@@ -33,6 +33,8 @@ export type TerminalFight = {
   foe: string;
   rounds: string;
   forced: boolean;
+  /** The failed check that let the foe force the fight (a parley or a flee), when the result names one. */
+  forcedBy?: 'parley' | 'flee';
 };
 
 /** s82 Root A — the fight the engine settled this turn, read from the ENGINE RESULT (null when none). */
@@ -40,11 +42,14 @@ export function terminalFightOutcome(engineFact: string | undefined): TerminalFi
   const fact = engineFact ?? '';
   const fight = fact.match(/Fight: (VICTORY|DEFEAT) vs (.+?) in (\d+ rounds?)/);
   if (fight) {
+    const forced = new RegExp(`Fight: ${fight[2].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} forces the fight`).test(fact);
+    const forcedBy = /Parley check: [^.]*— failure/.test(fact) ? 'parley' : /Flee check: [^.]*— failure/.test(fact) ? 'flee' : undefined;
     return {
       outcome: fight[1] === 'VICTORY' ? 'victory' : 'defeat',
       foe: fight[2].trim(),
       rounds: fight[3],
-      forced: new RegExp(`Fight: ${fight[2].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} forces the fight`).test(fact),
+      forced,
+      ...(forced && forcedBy ? { forcedBy } : {}),
     };
   }
   if (/Flee check: [^.]*— success/.test(fact)) return { outcome: 'escaped', foe: '', rounds: '', forced: false };
@@ -64,14 +69,22 @@ export function beatCarriesTerminalFight(prose: string, fight: TerminalFight): b
   return TERMINAL_WORDS[fight.outcome].test(prose ?? '');
 }
 
+/** Who the painted beat follows: the PC's name and object pronoun ("Jax" / "them"), or "you" / "you". */
+export type FightPov = { who: string; him: string };
+
+const capFirst = (s: string) => (s ? s[0]!.toUpperCase() + s.slice(1) : s);
+
 /** The settled fight as a plain past-tense beat, painted only when the writer will not state it. */
-export function terminalFightBeat(fight: TerminalFight, where: string): string {
+export function terminalFightBeat(fight: TerminalFight, where: string, pov: FightPov = { who: 'you', him: 'you' }): string {
   const at = where ? ` at ${where}` : '';
-  if (fight.outcome === 'escaped') return `You broke away${at} and got clear. Nothing followed you out.`;
-  const opener = fight.forced
-    ? `You tried to break away${at}, but ${fight.foe} would not let you go and forced the fight.`
-    : `You closed with ${fight.foe}${at}.`;
+  const who = capFirst(pov.who);
+  if (fight.outcome === 'escaped') return `${who} broke away${at} and got clear. Nothing followed ${pov.him} out.`;
+  const opener = !fight.forced
+    ? `${who} closed with ${fight.foe}${at}.`
+    : fight.forcedBy === 'parley'
+      ? `${who} tried to talk ${fight.foe} down${at}, but ${fight.foe} would not listen and forced the fight.`
+      : `${who} tried to break away${at}, but ${fight.foe} would not let ${pov.him} go and forced the fight.`;
   return fight.outcome === 'victory'
-    ? `${opener} It lasted ${fight.rounds}. ${fight.foe} went down and did not get up, and the fight was over.`
-    : `${opener} It lasted ${fight.rounds}. You went down, and the fight was lost.`;
+    ? `${opener} It lasted ${fight.rounds}. ${capFirst(fight.foe)} went down and did not get up, and the fight was over.`
+    : `${opener} It lasted ${fight.rounds}. ${who} went down, and the fight was lost.`;
 }

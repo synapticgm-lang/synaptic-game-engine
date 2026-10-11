@@ -1654,7 +1654,7 @@ Do NOT print dice notation or CODE ENFORCED.
       worldHour: travelCommit.state.worldHour,
       sceneFacts: pinClockTimeOfDay(working.sceneFacts, travelCommit.state),
       places: travelCommit.arrived
-        ? touchPlaceVisit(working.places ?? state.places ?? [], here, state.turn + 1)
+        ? touchPlaceVisit(working.places ?? state.places ?? [], here, state.turn + 1, working)
         : working.places,
     };
     if (hereBefore !== here) working = applyPresentTrimOnTravel(working, hereBefore, here);

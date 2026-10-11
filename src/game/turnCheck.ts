@@ -594,7 +594,8 @@ export function checkPlayCrimes(
 
   const pc = norm(after.character?.name).split(/\s+/)[0] ?? '';
   const who = pc.length >= 2 ? `(?:${esc(pc)}|you)` : 'you';
-  const pcLine = text.match(new RegExp(`["“]([^"”]{3,})["”]\\s*,?\\s*${who}\\s+${SPEECH_VERB}\\b|\\b${who}\\s+${SPEECH_VERB}\\b[^.!?"“]{0,40}["“]([^"”]{3,})["”]`, 'i'));
+  // A quote closed by a full stop ends its sentence: a following "Jax said…" is new indirect speech, not its tag.
+  const pcLine = text.match(new RegExp(`["“]([^"”]{2,}[^."”])["”]\\s*,?\\s*${who}\\s+${SPEECH_VERB}\\b|\\b${who}\\s+${SPEECH_VERB}\\b[^.!?"“]{0,40}["“]([^"”]{3,})["”]`, 'i'));
   if (pcLine) {
     const said = low(pcLine[1] ?? pcLine[2]);
     const typed = new Set(low(action).match(/[a-z]{3,}/g) ?? []);

@@ -30,7 +30,7 @@ import {
   parseTravelDestination,
   resolveLeaveSceneDestination,
 } from './outdoorHubs';
-import { resolvePlace } from './places';
+import { dungeonRoomPlace, resolvePlace } from './places';
 import { findSettlement } from './worldMapAuthority';
 import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
@@ -875,7 +875,9 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
     };
   }
   const parkedOnRoad = isRoadLabel(state.currentLocation);
-  const here = parkedOnRoad ? journeyOrigin(state) : tidy(state.currentLocation);
+  const here = parkedOnRoad
+    ? journeyOrigin(state)
+    : dungeonRoomPlace(state, state.currentLocation) ?? tidy(state.currentLocation);
   const hub = parseTravelDestination(input, state.campaignBibleId);
   const spot = !hub && here && !parkedOnRoad ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '') : null;
   if (spot) return moveWithinPlace(state, input, spot);

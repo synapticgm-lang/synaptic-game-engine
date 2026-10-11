@@ -93,9 +93,9 @@ function symLinks(layout: InteriorRoomSpec[]): InteriorRoomSpec[] {
 }
 
 describe('29z3 — stamp', () => {
-  it('HUD/BUILD are 2026-10-11k, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-11k');
-    expect(BUILD_STAMP).toBe('2026-10-11k');
+  it('HUD/BUILD are 2026-10-11l, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-11l');
+    expect(BUILD_STAMP).toBe('2026-10-11l');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
