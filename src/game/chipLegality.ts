@@ -11,11 +11,10 @@ import { isChromePersonToken } from './chromeAuthority';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { encounterBlocksTravel } from './encounterTerminalFsm';
 import { classifyEdgeType } from './graphChoices';
-import { openingCastNames, openOpeningOffer } from './openingEstablishment';
+import { openingCastNames, openingCastStillHere, openOpeningOffer } from './openingEstablishment';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
-import { playerCommittedTravel } from './travelAuthority';
 import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
@@ -83,14 +82,6 @@ export function peopleHere(state: GameState): string[] {
 export function listenersOnEmptyText(state: GameState): string[] {
   const cast = openingCastNames(state);
   return peopleHere(state).filter((n) => !cast.some((c) => mentionsName(n, c) || mentionsName(c, n)));
-}
-
-/** The opening card's cast stays while the player is still in the card's place and has not travelled. */
-function openingCastStillHere(state: GameState): boolean {
-  if (state.openingEstablishment?.complete !== true) return true;
-  const where = low(state.openingEstablishment?.answers?.where);
-  if (!where || where !== low(state.currentLocation)) return false;
-  return !(state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
 }
 
 export { crowdHere };

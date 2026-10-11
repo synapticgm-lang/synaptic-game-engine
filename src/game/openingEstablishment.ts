@@ -25,6 +25,7 @@ import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRe
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
+import { playerCommittedTravel } from './travelAuthority';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1419,6 +1420,15 @@ function openingSceneHay(state: GameState): string {
   return [picked?.page1, picked?.faction].filter(Boolean).join(' ');
 }
 
+/** The opening card's cast stays while the player is still in the card's place and has not travelled. */
+export function openingCastStillHere(state: GameState): boolean {
+  if (state.openingEstablishment?.complete !== true) return true;
+  const key = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const where = key(state.openingEstablishment?.answers?.where);
+  if (!where || where !== key(state.currentLocation)) return false;
+  return !(state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
+}
+
 /** Named CAST on this card — Lene Quill, Wren Holt — never a novel First Last. */
 export function openingCastNames(state: GameState): string[] {
   const out: string[] = [];
@@ -1600,6 +1610,8 @@ function cardProperNames(hay: string): string[] {
 
 /** The group a "Who is here" part names, as a cast label ("A denied-god cult the Crown…" → "the denied-god cult"). */
 function slotGroupLabel(part: string, names: string[]): string {
+  const shared = part.trim().match(SHARED_HEAD);
+  if (shared) return `the ${shared[1]}${shared[2]}`;
   const words = part.replace(/\s+/g, ' ').trim().replace(/^(?:the|a|an)\s+/i, '').split(' ').filter(Boolean);
   const stop = words.findIndex((w, i) => i > 0 && SLOT_CUT.test(w));
   const kept = (stop > 0 ? words.slice(0, stop) : words).slice(0, 4);
@@ -1646,7 +1658,12 @@ export function compileOpeningCard(
     if (t.split(' ').length > 6 || !slotNamesOnePerson(t)) continue;
     castNames.push(t, t.replace(/^(?:a|an|the)\s+/i, '').trim());
   }
-  if (live.length) castNames.push(...(slot.match(/\b[A-Z][a-z'-]+[ \t]+[A-Z][a-z'-]+(?:[ \t]+[A-Z][a-z'-]+)?\b/g) ?? []));
+  const groupNames = live.map((p) => p.match(SHARED_HEAD)?.[1] ?? '').join(' ');
+  if (live.length) {
+    castNames.push(
+      ...(slot.match(/\b[A-Z][a-z'-]+[ \t]+[A-Z][a-z'-]+(?:[ \t]+[A-Z][a-z'-]+)?\b/g) ?? []).filter((n) => !groupNames.includes(n))
+    );
+  }
   const lead = live[0] ?? '';
   const leadWords = lead.replace(/^(?:the|a|an)\s+/i, '').split(' ').filter(Boolean);
   const capWords = leadWords.filter((w) => /^[A-Z]/.test(w)).length;
@@ -1671,6 +1688,12 @@ export function compileOpeningCard(
 const CLAUSE_OF_PREVIOUS = /^(?:not|never|nor|or|already|still|rather than|instead of|but not)\b|\b(?:you|your|yours|yourself)\b/i;
 /** A phrase with an open relative clause ("Smugglers who stole a Scale rite"): an "and" after it continues that clause. */
 const OPEN_RELATIVE = /\b(?:who|whom|which|that)\s+\S/i;
+/**
+ * Proper names joined by "and" ahead of one plural noun they share ("Pellane and Ash Court envoys"): one group.
+ * A verb after two people is plural and takes no -s ("Brother Tam and Sister Ilse wait"), so a lowercase -s word there is the noun.
+ */
+const SHARED_HEAD = /^((?:[A-Z][\w'’-]*\s+)+and\s+(?:[A-Z][\w'’-]*\s+)+)([a-z][\w'’-]*[^su\s]s)\b/;
+const NAMES_ONLY = /^(?:[A-Z][\w'’-]*\s*)+$/;
 
 /**
  * The "Who is here" slot cut into people: list separators split; an "and / with / plus" that continues
@@ -1684,6 +1707,11 @@ function slotParts(slot: string): string[] {
     const sep = pieces[i - 1] ?? '';
     if (out.length && /^\s(?:and|with|plus)\s$/i.test(sep) && OPEN_RELATIVE.test(out[out.length - 1]!)) {
       out[out.length - 1] = `${out[out.length - 1]}${sep}${piece.trim()}`;
+      continue;
+    }
+    const prev = out[out.length - 1] ?? '';
+    if (/^\sand\s$/i.test(sep) && NAMES_ONLY.test(prev.trim()) && SHARED_HEAD.test(`${prev.trim()} and ${piece.trim()}`)) {
+      out[out.length - 1] = `${prev.trim()} and ${piece.trim()}`;
       continue;
     }
     let first = true;

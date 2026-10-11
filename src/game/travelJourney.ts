@@ -584,11 +584,26 @@ export function roadMeetingFact(j: TravelJourney | null | undefined): string {
 /** Meetings with someone who can speak. */
 const SPEAKING_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'thugs', 'villain']);
 
-/** The person this stretch's open meeting puts on the road (its ledger label), if one can speak. */
-export function roadMeetingPerson(j: TravelJourney | null | undefined): string {
+/** The meeting in this beat: open on this stretch, or closed by this turn's own talk, fight or flight. */
+function meetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): RoadEncounter | null {
+  const j = state.journey;
   const e = j?.encounter;
-  if (!e || roadMeetingOver(e) || !SPEAKING_KINDS.has(e.kind) || j!.legsDone >= j!.legsTotal) return '';
-  return ENCOUNTER_LABEL[e.kind];
+  if (!e || j!.legsDone >= j!.legsTotal) return null;
+  if (!roadMeetingOver(e)) return e;
+  return e.closedTurn != null && e.closedTurn === state.turn ? e : null;
+}
+
+/** Who or what the road meeting puts in this beat, with the engine's count ("thugs, four of them"). */
+export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): { label: string; count: number } | null {
+  const e = meetingOnBeat(state);
+  if (!e) return null;
+  return { label: `${ENCOUNTER_LABEL[e.kind]}${meetingCount(e)}`, count: Math.max(1, e.count ?? 1) };
+}
+
+/** The person this beat's road meeting puts on the road (its ledger label), if one can speak. */
+export function roadMeetingPerson(state: Pick<GameState, 'journey' | 'turn'>): string {
+  const e = meetingOnBeat(state);
+  return e && SPEAKING_KINDS.has(e.kind) ? ENCOUNTER_LABEL[e.kind] : '';
 }
 
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
@@ -674,10 +689,10 @@ export function settleRoadMeeting(
   const enc = j.encounter;
   const next: RoadEncounter =
     outcome === 'escape'
-      ? { ...enc, escaped: true, escapedTurn: state.turn }
+      ? { ...enc, escaped: true, escapedTurn: state.turn, closedTurn: state.turn }
       : outcome === 'victory' || outcome === 'parleyResolved'
-        ? { ...enc, engaged: true }
-        : { ...enc, lost: true };
+        ? { ...enc, engaged: true, closedTurn: state.turn }
+        : { ...enc, lost: true, closedTurn: state.turn };
   return next === enc ? state : { ...state, journey: { ...j, encounter: next } };
 }
 

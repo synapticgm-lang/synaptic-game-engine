@@ -613,7 +613,7 @@ export function compileRefEnum(
     }
     const encName = state.activeEncounter?.name?.trim();
     if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
-    const roadPerson = roadMeetingPerson(state.journey);
+    const roadPerson = roadMeetingPerson(state);
     if (roadPerson) add(`road:${slugRefId(roadPerson)}`, roadPerson, 'person');
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name && kill.remains && kill.outcome === 'victory') {

@@ -177,6 +177,10 @@ export function openingCastNames(state?: {
   return who?.[1] ? [who[1].replace(/\s+and\s+.*$/, '').trim()] : [];
 }
 
+export function openingCastStillHere(_state?: unknown): boolean {
+  return false;
+}
+
 export function cardSceneMentionTokens(state?: { openingEstablishment?: { pickedHook?: string } }): string[] {
   const hook = state?.openingEstablishment?.pickedHook ?? '';
   const offer = hook.match(/Opening offer[^:\n]*:\s*([^\n]+)/i);

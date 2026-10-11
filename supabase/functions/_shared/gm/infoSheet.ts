@@ -8,7 +8,7 @@
 import type { GameState, LogEntry, NpcMemory } from './types.ts';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { presentNpcNames } from './npcRelationships.ts';
-import { hallTalkTopics, type HallTalkTopic } from './openingEstablishment.ts';
+import { hallTalkTopics, openingCastNames, openingCastStillHere, type HallTalkTopic } from './openingEstablishment.ts';
 import { placeScale } from './placeAuthority.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerFacingLocation } from './locationName.ts';
@@ -16,6 +16,7 @@ import { writerFacts } from './systemHousing.ts';
 import { activeHereSpot, isOutOfTalkingRange } from './hereSpot.ts';
 import { isChromeReceipt } from './engineResult.ts';
 import { crowdHere } from './sceneFacts.ts';
+import { roadMeetingOnBeat } from './travelJourney.ts';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -84,7 +85,15 @@ export function peopleOnSheet(state: GameState): string[] {
   realPresentPeople(presentNpcNames(state)).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
+  if (!out.size && openingCastStillHere(state)) add(openingCastNames(state)[0]);
+  add(roadMeetingOnBeat(state)?.label);
   return [...out.values()];
+}
+
+/** Heads on the sheet: one per name, a road meeting counts its whole group. */
+function headCount(state: GameState, people: string[]): number {
+  const meeting = roadMeetingOnBeat(state);
+  return people.length + (meeting && people.includes(meeting.label) ? meeting.count - 1 : 0);
 }
 
 function systemWindowSeen(state: GameState): boolean {
@@ -106,7 +115,7 @@ function nowLine(state: GameState, people: string[]): string {
   const lock = state.sceneFacts?.cameraLock;
   const lockHere = lock && norm(lock.label).toLowerCase() === norm(state.currentLocation).toLowerCase() ? lock.scale : null;
   const scale = placeScale(state) ?? lockHere ?? 'scale unknown';
-  const company = people.length ? `with ${people.length} here` : crowdHere(state) ? 'crowd here' : 'alone';
+  const company = people.length ? `with ${headCount(state, people)} here` : crowdHere(state) ? 'crowd here' : 'alone';
   const mode = MODE_LABEL[state.engineMode ?? ''] ?? state.engineMode ?? 'mode unknown';
   return `T${state.turn} · ${place} · ${scale} · ${company} · ${mode}`;
 }

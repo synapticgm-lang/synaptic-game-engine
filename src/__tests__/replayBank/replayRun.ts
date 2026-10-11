@@ -123,6 +123,8 @@ export async function replayRun(runFolder: string, uptoTurn: number): Promise<Re
       if (row.error) throw new Error(`replay bank: recorded turn ${row.turn} crashed; cannot replay past it`);
       writerQueue.text = row.writerRaw ?? '';
       writerQueue.payloads = [];
+      const promptFile = join(run.dir, 'writer-prompts', `turn-${String(row.turn - 1).padStart(2, '0')}.txt`);
+      writerQueue.recordedPacket = existsSync(promptFile) ? readFileSync(promptFile, 'utf8') : undefined;
       const before = state;
       const out = await headlessFateTurn(state, settings, rng, {
         bibleId: run.meta.bibleId,

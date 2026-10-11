@@ -547,7 +547,10 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
   // Card exits are facts, not chips: canonical hub names, no chip cooldown/encounter gates.
   const hubs = hubsForBibleId(state.campaignBibleId);
   const fromRaw = (fromLocation ?? '').replace(/\s+/g, ' ').trim();
-  const backRaw = isTripHere(state, fromRaw) ? '' : fromRaw;
+  const lastVisited = [...(state.places ?? [])]
+    .filter((p) => p.lastVisitedTurn != null && p.name.toLowerCase() !== name.toLowerCase())
+    .sort((a, b) => (b.lastVisitedTurn ?? 0) - (a.lastVisitedTurn ?? 0))[0]?.name ?? '';
+  const backRaw = isTripHere(state, fromRaw) ? (state.journey?.from ?? lastVisited).replace(/\s+/g, ' ').trim() : fromRaw;
   const back = matchHub(hubs, backRaw)?.name ?? backRaw;
   const discovered = state.discoveredLocations ?? [];
   const early = (state.turn ?? 0) <= 5 && discovered.length <= 1;
@@ -563,10 +566,10 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     : (state.places ?? [])
       .filter((p) => p.settlementKind === 'story-place')
       .map((p) => ({ id: p.id, name: p.name, blurb: p.description ?? '', threatTier: 1, aliases: p.aliases }));
-  const hubExits = exitPool
-    .filter((h) => h.name.toLowerCase() !== name.toLowerCase() && !raw.toLowerCase().includes(h.name.toLowerCase()) && known(h))
-    .map((h) => h.name)
-    .slice(0, 3);
+  const notHere = (h: string) => h.toLowerCase() !== name.toLowerCase() && !raw.toLowerCase().includes(h.toLowerCase());
+  const hubExits = hubs.length
+    ? hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
+    : exitPool.filter((h) => notHere(h.name) && known(h)).map((h) => h.name).slice(0, 3);
   const seen = new Set<string>();
   const exits: string[] = [];
   for (const e of [back, ...hubExits]) {
@@ -582,7 +585,7 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     mapScale: existing?.mapScale ?? 'street',
     arcStatus: existing?.arcStatus ?? 'open',
     description: description || undefined,
-    exits: exits.slice(0, 4),
+    exits: exits.slice(0, 5),
     cardBuiltTurn: state.turn ?? 0,
   };
 }
