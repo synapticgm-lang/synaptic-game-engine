@@ -6,6 +6,7 @@ import {
   referencesAbsentCompanion,
   fallbackSuggestionForState,
 } from './suggestionValidation.ts';
+import { isSystemStatusChip } from './systemHousing.ts';
 
 /**
  * Deleted injection (2026-08-30W). Was `groundPlayerAction` for attack/flee
@@ -225,7 +226,9 @@ export function parsePlayerIntent(input: string, _state?: GameState): PlayerInte
     }
     return { kind: 'talk', label: 'Talk / protest', targets: [] };
   }
+  const statusChip = isSystemStatusChip(input);
   for (const rule of RULES) {
+    if (statusChip && rule.kind === 'talk') continue;
     if (rule.re.test(text)) {
       const targets =
         text.match(/\b(?:the|a|an)\s+([a-z][\w'-]+(?:\s+[a-z][\w'-]+){0,2})/gi)?.map((t) =>

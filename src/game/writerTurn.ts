@@ -202,24 +202,34 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
   let next = prose;
   const refs = refEnumOf(check.state, packet);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
-    const move = moveSentenceCheck(check.playerInput, refs);
+    const move = moveSentenceCheck(check.playerInput, refs, check.state.journey?.to ?? check.state.currentLocation);
     next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, move).text;
   }
   return polishMentions(next, refs, check.state);
 }
 
-/** On a turn the player traveled or left, a sentence naming the place left and the place reached is that move. */
-export function moveSentenceCheck(playerInput: string, refs: LedgerRef[]): (sentence: string) => boolean {
+/**
+ * On a turn the player traveled or left, a sentence naming the place left and the place reached is that
+ * move, and so is a sentence naming where the move is going (the trip's destination, else the place reached).
+ */
+export function moveSentenceCheck(
+  playerInput: string,
+  refs: LedgerRef[],
+  destination?: string | null
+): (sentence: string) => boolean {
   const verb = classifyVerb(playerInput);
   if (verb !== 'traveled' && verb !== 'left') return () => false;
+  const bare = (p: string) => p.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
   const places = [...new Set(
     refs
       .filter((r) => r.klass === 'place')
-      .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase())
+      .map((r) => bare(r.display))
       .filter((p) => p.length > 2)
   )];
+  const dest = bare(destination ?? '');
+  const goingTo = dest.length > 2 && places.includes(dest) ? dest : '';
   return (sentence) => {
     const s = sentence.toLowerCase();
-    return places.filter((p) => s.includes(p)).length >= 2;
+    return (!!goingTo && s.includes(goingTo)) || places.filter((p) => s.includes(p)).length >= 2;
   };
 }

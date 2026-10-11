@@ -3,6 +3,7 @@ import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import { chipProblem, liveChips } from './chipLegality';
 import { resolveOfferedChoices } from './playTranscript';
+import { systemStatusChip } from './systemHousing';
 import type { GameState, LogEntry } from './types';
 
 vi.mock('./openingEstablishment', async (orig) => ({
@@ -97,7 +98,8 @@ describe('29z9j live chips — alone start', () => {
     });
     const chips = resolveOfferedChoices(s);
     expect(chips.length).toBeGreaterThan(0);
-    expect(chips.some((c) => /^(?:talk|ask|who|greet|speak)\b/i.test(c))).toBe(false);
-    expect(chips.every((c) => /\b(?:search|look around|panel)\b/i.test(c))).toBe(true);
+    const status = systemStatusChip(s.systemHousing?.housing);
+    expect(chips.some((c) => c !== status && /^(?:talk|ask|who|greet|speak)\b/i.test(c))).toBe(false);
+    expect(chips.every((c) => c === status || /\b(?:search|look around|panel)\b/i.test(c))).toBe(true);
   });
 });

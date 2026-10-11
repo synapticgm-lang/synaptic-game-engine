@@ -15,6 +15,7 @@ import { playerFacingLocation } from './locationName.ts';
 import { writerFacts } from './systemHousing.ts';
 import { activeHereSpot, isOutOfTalkingRange } from './hereSpot.ts';
 import { isChromeReceipt } from './engineResult.ts';
+import { crowdHere } from './sceneFacts.ts';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -84,11 +85,6 @@ export function peopleOnSheet(state: GameState): string[] {
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   return [...out.values()];
-}
-
-function crowdHere(state: GameState): boolean {
-  const f = state.sceneFacts;
-  return f?.crowd === 'present' || f?.crowd === 'sparse' || (f?.crowdCount ?? 0) > 0;
 }
 
 function systemWindowSeen(state: GameState): boolean {

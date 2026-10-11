@@ -20,6 +20,8 @@ import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingOver } from '
 import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
+import { crowdHere } from './sceneFacts';
+import { isSystemStatusChip } from './systemHousing';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -91,10 +93,7 @@ function openingCastStillHere(state: GameState): boolean {
   return !(state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
 }
 
-export function crowdHere(state: GameState): boolean {
-  const f = state.sceneFacts;
-  return f?.crowd === 'present' || f?.crowd === 'sparse' || (f?.crowdCount ?? 0) > 0;
-}
+export { crowdHere };
 
 const TALK_CHIP =
   /^(?:talk (?:to|with)|speak (?:to|with)|ask|tell|greet|question|thank|introduce yourself to|parley with)\s+(?!about\b|for\b|around\b|what\b|who\b|why\b|how\b|where\b|if\b|whether\b)(?:the\s+)?(.+)$/i;
@@ -102,6 +101,7 @@ const TALK_CHIP =
 /** Named person or role the chip addresses; '' for an unnamed ask ("Ask what they want"). */
 export function chipAddressee(label: string): { kind: 'named' | 'role' | 'none'; who: string } | null {
   const t = norm(label).replace(/[.!?]+$/, '');
+  if (isSystemStatusChip(t)) return null;
   const m = t.match(TALK_CHIP);
   if (!m) {
     if (/^(?:ask|talk|speak|greet|tell)\b/i.test(t)) return { kind: 'none', who: '' };

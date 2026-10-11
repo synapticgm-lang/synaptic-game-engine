@@ -12,6 +12,7 @@ import {
 import { matchHub, hubsForBibleId } from './outdoorHubs.ts';
 import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard.ts';
 import { applyFollowersToHereSpot, hereSpotAt } from './hereSpot.ts';
+import { isJourneyUnderway } from './travelJourney.ts';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -49,6 +50,27 @@ export function engineTension(
   const enc = state.activeEncounter;
   if (enc && !(typeof enc.hp === 'number' && enc.hp <= 0)) return 'combat';
   return current === 'combat' ? 'unknown' : current;
+}
+
+/**
+ * Is there a crowd around the player? On the road the journey owns who is there: the stretch's own
+ * meeting is a person, never a crowd, so a place's crowd does not follow the player onto the road.
+ */
+export function crowdHere(state: Pick<GameState, 'sceneFacts' | 'journey'>): boolean {
+  if (isJourneyUnderway(state)) return false;
+  const f = state.sceneFacts;
+  return f?.crowd === 'present' || f?.crowd === 'sparse' || (f?.crowdCount ?? 0) > 0;
+}
+
+/** Prose on the road never seats a crowd; the next place locks its own headcount. */
+function roadCrowd(state: Pick<GameState, 'journey'>, facts: SceneFacts): SceneFacts {
+  if (!isJourneyUnderway(state)) return facts;
+  return {
+    ...facts,
+    crowd: 'none',
+    crowdCount: undefined,
+    present: (facts.present ?? []).filter((p) => !/^bystanders?$/i.test(p)),
+  };
 }
 
 export function emptySceneFacts(turn = 0): SceneFacts {
@@ -403,7 +425,7 @@ export function applyCommittedNarrative(
           present: Array.from(new Set([...(withIntent.present ?? []), ...rejoined])),
         }
   );
-  const engineMood = { ...moded, tension: engineTension(state, moded.tension) };
+  const engineMood = roadCrowd(state, { ...moded, tension: engineTension(state, moded.tension) });
   return {
     ...engineMood,
     lastSnapshotGist: buildSnapshotGist({

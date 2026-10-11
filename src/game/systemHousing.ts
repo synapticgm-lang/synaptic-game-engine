@@ -321,6 +321,15 @@ export function systemStatusChip(housing: SystemHousingId | null | undefined): s
   }
 }
 
+const STATUS_CHIPS = new Set(
+  ([...HOUSING_IDS, null] as const).map((h) => systemStatusChip(h).toLowerCase())
+);
+
+/** A System status chip reads the player's own status: it addresses nobody and is not talk. */
+export function isSystemStatusChip(label: string | null | undefined): boolean {
+  return STATUS_CHIPS.has((label ?? '').replace(/\s+/g, ' ').trim().replace(/[.!?]+$/, '').toLowerCase());
+}
+
 /** Plain English the writer must follow for this frozen housing. */
 export function systemHousingWriterClause(housing: SystemHousingId | null | undefined): string {
   switch (housing) {

@@ -4,6 +4,7 @@
 
 import type { GameState } from './types';
 import { matchesLastKillName } from './combatAuthority';
+import { isSystemStatusChip } from './systemHousing';
 
 export type SocialMilestoneKind = 'overhear' | 'talk' | 'negotiate' | 'listen';
 
@@ -27,6 +28,7 @@ export function detectSocialMilestone(
   input: string,
   state: GameState
 ): SocialMilestoneAward | null {
+  if (isSystemStatusChip(input)) return null;
   const lower = input.toLowerCase();
   const loc = state.currentLocation ?? 'unknown';
   const awarded = new Set(state.arcDirector?.socialMilestones ?? []);
