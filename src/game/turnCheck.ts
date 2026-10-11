@@ -42,6 +42,7 @@ import { isSystemWindowLabel } from './chromeAuthority';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
+import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -224,6 +225,9 @@ export function checkActionFollowed(
   const text = norm(prose);
   if (!act || !text || /^\(crash/.test(act)) return { p0, down };
   const quoted = /["“][^"”]{2,}["”]/.test(text);
+  // The engine settled a fight this turn and the prose tells it: that is the blow, and the answer to a parley it forced.
+  const fight = terminalFightOutcome(after.completedEvent?.engineResult);
+  const fightTold = !!fight && fight.outcome !== 'escaped' && beatCarriesTerminalFight(text, fight);
 
   const addr = chipAddressee(act);
   const typedNamed = !addr ? peopleHere(before).find((p) => mentionsName(act, p)) : undefined;
@@ -244,7 +248,7 @@ export function checkActionFollowed(
       { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
       text
     );
-    if (!cov.ok && !quoted) {
+    if (!cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
       p0.push({ kind: 'ignored-action', detail: `player said "${act.slice(0, 80)}"; nobody answers in the prose` });
     }
   } else if (socialAct && !quoted && !peopleHere(before).some((p) => mentionsName(text, p))) {
@@ -257,7 +261,7 @@ export function checkActionFollowed(
   if (travel && !moved && !fighting) {
     p0.push({ kind: 'ignored-action', detail: `player chose to travel toward ${travel[1]}; they never left ${before.currentLocation || 'here'}` });
   }
-  if (ATTACK_ACTION.test(act) && before.activeEncounter && !BLOW.test(text)) {
+  if (ATTACK_ACTION.test(act) && before.activeEncounter && !BLOW.test(text) && !fightTold) {
     p0.push({ kind: 'ignored-action', detail: `player attacked ${before.activeEncounter.name}; the prose shows no blow` });
   }
   if (travel && moved) {

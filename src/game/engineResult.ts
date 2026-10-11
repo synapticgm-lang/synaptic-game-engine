@@ -56,11 +56,18 @@ export function terminalFightOutcome(engineFact: string | undefined): TerminalFi
   return null;
 }
 
+/** A fight told as over, whoever won ("the fight ended", "the battle was over"). */
+const FIGHT_OVER = '(?:fight|battle|combat|struggle|brawl|skirmish) (?:was|is|had|has)? ?(?:over|ended|done|finished)|(?:fight|battle|combat|struggle|brawl|skirmish) ended';
+
 const TERMINAL_WORDS: Record<TerminalFight['outcome'], RegExp> = {
-  victory:
-    /\b(?:went down|goes down|go down|was down|is down|stayed down|dead|died|dies|killed|slain|fell|fallen|falls|collapsed|crumpled|lay still|lies still|stopped moving|did not (?:get|rise)|lifeless|limp|corpse|finished (?:it|him|her|them)|beaten)\b/i,
-  defeat:
-    /\b(?:lost|beaten|went down|was down|knocked (?:down|out|flat)|fell|blacked out|overpowered|pinned|could not get up|on the ground)\b/i,
+  victory: new RegExp(
+    `\\b(?:went down|goes down|go down|was down|is down|stayed down|dead|died|dies|killed|slain|fell|fallen|falls|collapsed|crumpled|lay still|lies still|stopped moving|did not (?:get|rise)|lifeless|limp|corpse|finished (?:it|him|her|them)|beaten|defeated|victorious|victory|won(?![’'])|${FIGHT_OVER})\\b`,
+    'i'
+  ),
+  defeat: new RegExp(
+    `\\b(?:lost|beaten|defeated|went down|was down|knocked (?:down|out|flat)|fell|blacked out|overpowered|pinned|could not get up|on the ground|${FIGHT_OVER})\\b`,
+    'i'
+  ),
   escaped: /\b(?:escaped|got away|broke away|broke free|got clear|fled|outran|shook (?:it|him|her|them) off|lost (?:it|him|her|them))\b/i,
 };
 

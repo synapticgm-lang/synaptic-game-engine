@@ -28,6 +28,7 @@ const COUNT_RE = new RegExp(`\\b((?:${COUNT_START})(?:(?:-|\\s+)(?:${COUNT_PART}
 const WORD_FOR = Object.fromEntries(Object.entries(NUM_WORDS).filter(([w]) => !['both', 'single', 'only'].includes(w)).map(([w, n]) => [n, w]));
 
 const EXIT_NOUN = '(?:roads?|exits?|ways? out|ways?|paths?|doors?|doorways?|lanes?|streets?|routes?|gates?|tracks?|trails?|passages?|stairs?)';
+const EXIT_NOUN_RE = new RegExp(`\\b${EXIT_NOUN}\\b`, 'i');
 const EXIT_CLAIM = new RegExp(`\\b(?:ways? out|exits?|${EXIT_NOUN}\\s+(?:left|led|leads|lead|ran|runs|went|go|goes)\\b|led (?:back )?to|leads (?:back )?to|out of (?:the|this) [a-z]+ led)`, 'i');
 
 const ITEMS = [
@@ -160,7 +161,8 @@ function factsFor(row, packet) {
     xp: line(packet, 'XP:') || null,
     inventory: line(packet, 'Inventory:'),
     handedText,
-    allowText: lower([...mention, ...refs.map((r) => r.display), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
+    // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels.
+    allowText: lower([...mention, ...refs.map((r) => r.display), ...[...packet.matchAll(/^([A-Z][A-Za-z]{1,12}):\s*\d/gm)].map((m) => m[1]), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
   };
 }
 
@@ -181,11 +183,23 @@ export function checkTurn(row, packet) {
   for (const { s, narration } of sentences(prose)) {
     // Exit counts: "Three roads left the shrine", "the only way out".
     const exitFact = facts.engineExits ?? (facts.placesExits.length ? facts.placesExits : null);
+    // An exit claim covers its own clause, not the rest of the sentence ("…stood open, and they wanted an answer about the Crown").
+    const exitClauses = s.split(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/i).filter((c) => EXIT_CLAIM.test(c) || EXIT_NOUN_RE.test(c) || /\b(?:another|the other)\b/i.test(c));
     if (exitFact) {
-      const re = new RegExp(`\\b(\\d+|one|two|three|four|five|six|seven|eight|nine|ten|both|single|only)\\s+(?:\\w+\\s+){0,2}?${EXIT_NOUN}\\b`, 'gi');
+      const re = new RegExp(`\\b(\\d+|one|two|three|four|five|six|seven|eight|nine|ten|both|single|only)\\s+(?:\\w+\\s+){0,2}?(${EXIT_NOUN})\\b`, 'gi');
       for (const m of s.matchAll(re)) {
         if (!EXIT_CLAIM.test(s) && !/\b(?:left|led|leads|lead|ran|out)\b/i.test(s)) continue;
-        const n = toNum(m[1]);
+        // "the only way out" is one; "the only ways out are the four doors" leaves the count to the number,
+        // and "only the exits of Lowmarket and the West Wall" counts the places it lists.
+        let n = toNum(m[1]);
+        if (lower(m[1]) === 'only' && /s$|^ways out$/i.test(m[2])) {
+          const rest = s.slice((m.index ?? 0) + m[0].length);
+          if (new RegExp(`\\b(?:${COUNT_START}|one)\\b`, 'i').test(rest)) continue;
+          n = facts.placeNames.filter((p, _, all) => lower(rest).includes(lower(p)) && !all.some((q) => q !== p && lower(q).includes(lower(p)) && lower(rest).includes(lower(q)))).length;
+          if (!n) continue;
+        }
+        // "One passage led…, another…" lists the ways one by one; it is not a total of one.
+        if (lower(m[1]) === 'one' && /\b(?:another|the other|a second|a third)\b/i.test(s)) continue;
         if (Number.isFinite(n) && n !== exitFact.length) {
           const src = facts.engineExits ? `engine result "Exits: ${facts.exitsReceipt}" = ${exitFact.length} mapped way(s) out` : `PLACES exits = ${exitFact.length} (${exitFact.join(', ')})`;
           const conflict = facts.engineExits && facts.placesExits.length !== facts.engineExits.length ? `; packet PLACES line lists ${facts.placesExits.length}` : '';
@@ -195,19 +209,22 @@ export function checkTurn(row, packet) {
       // Places named as a way out that are not this turn's exits.
       if (EXIT_CLAIM.test(s) && !/\b(?:counting|watching|eyeing|checking) the exits\b/i.test(s)) {
         const hereWords = lower(facts.here).split(/\s+/);
+        const clauseText = lower(exitClauses.join(' | '));
         const taken = [];
         for (const p of facts.placeNames) {
           const lp = lower(p);
           if (p.length < 4 || lp === lower(facts.here) || lower(facts.here).includes(lp)) continue;
           if (lp.replace(/^the\s+/, '').split(/\s+/).every((w) => hereWords.includes(w))) continue;
-          const at = lower(s).search(new RegExp(`\\b${lp.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`));
+          const at = clauseText.search(new RegExp(`\\b${lp.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`));
           if (at < 0 || taken.some(([a, b]) => at < b && at + lp.length > a)) continue;
           taken.push([at, at + lp.length]);
           if (exitFact.some((e) => lower(e).includes(lp.replace(/^the\s+/, '')) || lp.includes(lower(e)))) continue;
           add('exit-place', s, `"${p}" named as a way out; handed exits: ${exitFact.length ? exitFact.join(', ') : 'none mapped'}`);
         }
-        for (const m of s.matchAll(/\b(?:the|an?)\s+([a-z]+)\s+(road|trail|path|lane|gate)\b/gi)) {
+        for (const m of exitClauses.join(' | ').matchAll(/\b(?:the|an?)\s+([a-z]+)\s+(road|trail|path|lane|gate)\b/gi)) {
           const phrase = `${m[1]} ${m[2]}`;
+          // An order word ("a third path") counts the ways; it does not name one.
+          if (/^(?:first|second|third|fourth|fifth|sixth|final|\w+th)$/i.test(m[1])) continue;
           if (/^(?:only|same|narrow|old|back|main|other|one|first|next|last|open|long|short|wide|far|near|whole|full)$/i.test(m[1])) continue;
           if (facts.allowText.includes(lower(phrase))) continue;
           add('exit-place', s, `"${phrase}" is no handed place or exit`);
@@ -221,7 +238,8 @@ export function checkTurn(row, packet) {
       const phrase = m[1].replace(/[’']s$/, '');
       const start = (m.index ?? 0) + m[0].indexOf(m[1]);
       const atStart = start === 0 || /["“(]$/.test(s.slice(0, start).trim().slice(-1));
-      const words = phrase.split(/\s+/).map((w) => w.replace(/[’']s$/, '')).filter((w) => !/^(?:of|the|de|in)$/i.test(w));
+      // A contraction is its stem word ("I'll" is "I").
+      const words = phrase.split(/\s+/).map((w) => w.replace(/[’'](?:s|ll|d|m|ve|re)$/, '')).filter((w) => !/^(?:of|the|de|in)$/i.test(w));
       let test = words.filter((w) => !STOP_CAPS.has(lower(w)));
       if (atStart && test[0] === words[0]) test = test.slice(1);
       if (!test.length) continue;
