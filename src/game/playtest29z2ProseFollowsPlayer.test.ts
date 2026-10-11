@@ -54,9 +54,9 @@ function base(over: Partial<GameState> = {}): GameState {
 const gm = (turn: number, content: string): LogEntry => ({ id: `g${turn}`, turn, role: 'gm', content, timestamp: turn });
 
 describe('29z2 — stamp', () => {
-  it('HUD/BUILD are 2026-10-11f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-11f');
-    expect(BUILD_STAMP).toBe('2026-10-11f');
+  it('HUD/BUILD are 2026-10-11g, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-11g');
+    expect(BUILD_STAMP).toBe('2026-10-11g');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
