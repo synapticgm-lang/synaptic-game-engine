@@ -578,12 +578,21 @@ export function dungeonRoomFacts(state: GameState): string {
   }
   for (const t of h?.traps ?? []) if (t.revealed) bits.push(`A trap here is ${t.disarmed ? 'sprung' : 'spotted'}.`);
   for (const s of h?.secrets ?? []) if (s.revealed) bits.push(`Found: ${s.clue}.`);
-  const ways = node.connections
-    .map((id) => d.nodes.find((n) => n.id === id))
-    .filter((n): n is MapNode => !!n)
-    .map((n) => `${n.name}${d.visitedNodeIds.includes(n.id) ? '' : ' (unexplored)'}`);
+  const ways = roomWays(d, node).map((n) => `${n.name}${d.visitedNodeIds.includes(n.id) ? '' : ' (unexplored)'}`);
   if (ways.length) bits.push(`Ways on: ${ways.join(', ')}.`);
   return bits.join(' ');
+}
+
+function roomWays(d: ActiveDungeonState, node: MapNode): MapNode[] {
+  return node.connections.map((id) => d.nodes.find((n) => n.id === id)).filter((n): n is MapNode => !!n);
+}
+
+/** The current room's ways on, as the room facts name them; null when the player is in no card room. */
+export function dungeonRoomWays(state: GameState): string[] | null {
+  const d = state.activeDungeon;
+  if (!isDungeonCard(d)) return null;
+  const node = currentNode(d);
+  return node ? roomWays(d, node).map((n) => n.name) : null;
 }
 
 /** Chips for the room: its own actions, the next unexplored room, and the way out. */

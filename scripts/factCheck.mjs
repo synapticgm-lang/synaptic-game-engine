@@ -39,6 +39,8 @@ const ITEMS = [
 ];
 /** Worn pieces a handed "clothes" kit row already covers. */
 const GARMENTS = new Set(['boots', 'boot', 'belt', 'coat', 'cloak', 'hat', 'hood', 'gloves', 'tunic', 'jerkin']);
+/** Other words for a carried bag; a handed "Bag" inventory row covers them. */
+const BAG_WORDS = new Set(['pack', 'backpack', 'satchel']);
 const PEOPLE = [
   'guard', 'guards', 'priest', 'priests', 'merchant', 'merchants', 'vendor', 'vendors', 'soldier', 'soldiers', 'traveler',
   'travelers', 'stranger', 'strangers', 'woman', 'women', 'man', 'men', 'boy', 'girl', 'child', 'children', 'clerk', 'monk',
@@ -262,6 +264,7 @@ export function checkTurn(row, packet) {
       if (kind === 'item') {
         if (/^\s+of\b/i.test(after)) continue;
         if (GARMENTS.has(w) && /\bclothes\b/.test(facts.handedText)) continue;
+        if (BAG_WORDS.has(w) && /\bbag\b/.test(facts.allowText)) continue;
         const ownerNoun = before.match(/\b(\w+)[’']s\s+(?:\w+\s+){0,2}$/i)?.[1];
         if (ownerNoun && lower(ownerNoun) !== 'jax') continue;
         const owned = /\b(?:their|his|her)\s+(?:\w+\s+){0,2}$/i.test(before);

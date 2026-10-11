@@ -153,7 +153,7 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
     if (!m.location) push(m);
   }
   for (const m of companionRecords(state)) push(m);
-  return out.filter((m) => !isOutOfTalkingRange(state, m.npcName));
+  return out.filter((m) => !m.shouldExit && !isOutOfTalkingRange(state, m.npcName));
 }
 
 /** 27f — names of NPC records located at a place. */

@@ -7,7 +7,7 @@ import type { LooseNodeItem } from './dungeonMobLedger';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { isOpenContainerAction, isSearchTargetEmpty, normalizeSearchTarget, recordEmptySearch } from './searchContinuity';
 import { matchesLastKillName } from './combatAuthority';
-import { hubTravelTargets } from './outdoorHubs';
+import { exitPlaceNames } from './placeNames';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -189,14 +189,11 @@ const SEARCH_VERB = /\b(search|searches|searching|rummage|rummaging|scavenge|sca
 const CONTAINER_KEY = /^(crate|chest|barrel|box)$/;
 const EXITS_LOOK = /^(?:check|scout|look for|find)\s+(?:the\s+)?(?:exits?|ways? out)\b/i;
 
-/** Outside a dungeon: checking the exits commits the travel chips' targets, plus both ends of the trip while underway. */
+/** Outside a dungeon: checking the exits commits HERE's exits, the same ones the writer's PLACES line names. */
 function checkExits(state: GameState, text: string): { state: GameState; receipts: string[] } | null {
   if (!EXITS_LOOK.test(text)) return null;
   const here = state.currentLocation?.trim() || 'here';
-  const j = state.journey;
-  const ends = j && j.legsDone < j.legsTotal ? [j.to?.trim(), j.from?.trim()] : [];
-  const ways = hubTravelTargets(state);
-  for (const end of ends) if (end && !ways.some((w) => w.toLowerCase() === end.toLowerCase())) ways.push(end);
+  const ways = exitPlaceNames(state).map((w) => w.replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 4);
   return {
     state,
     receipts: [

@@ -6,7 +6,7 @@
  */
 
 import type { GameState } from './types';
-import { npcPlacedElsewhere } from './npcRecords';
+import { npcPlacedElsewhere, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { isOutOfTalkingRange } from './hereSpot';
 
 export type Disposition = 'hostile' | 'wary' | 'neutral' | 'friendly' | 'allied' | 'loyal';
@@ -354,7 +354,10 @@ function hydrateStored(rec: StoredNpcRelationship, turn: number): NpcRelationshi
   };
 }
 
-/** Names of the NPCs present here (scene presence plus present memories), minus the live foe. */
+/**
+ * Names of the NPCs present here (scene presence, present memories, and the records placed here, the
+ * same list the writer's witnesses come from), minus the live foe and anyone who has left the scene.
+ */
 export function presentNpcNames(state: GameState): string[] {
   const foe = (state.activeEncounter?.name ?? '').trim().toLowerCase();
   const out = new Map<string, string>();
@@ -363,11 +366,13 @@ export function presentNpcNames(state: GameState): string[] {
     const key = name.toLowerCase();
     if (!name || key === foe || out.has(key)) return;
     if (npcPlacedElsewhere(state, name)) return;
+    if (resolveNpcRecord(state, name)?.shouldExit) return;
     if (isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };
   (state.sceneFacts?.present ?? []).forEach(add);
   (state.npcMemories ?? []).filter((m) => m.present === true).forEach((m) => add(m.npcName));
+  presentNpcRecords(state).forEach((m) => add(m.npcName));
   return [...out.values()];
 }
 

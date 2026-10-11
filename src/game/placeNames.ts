@@ -8,6 +8,8 @@
 import type { GameState } from './types';
 import { hubsForBibleId, placeCardFor, type OutdoorHub } from './outdoorHubs';
 import { playerFacingLocation, underwayHereLabel } from './locationName';
+import { dungeonRoomPlace } from './places';
+import { dungeonRoomWays } from './dungeonCard';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
@@ -125,9 +127,16 @@ export function openingPlaceRecord(
   return { place: `the ${rest} ${prep} ${mentioned.name}`, parentHub: mentioned.name };
 }
 
-/** The exits of HERE: the location sheet when it has them, else the place card. On a trip: its two ends. */
+/**
+ * The exits of HERE: the location sheet when it has them, else the place card. On a trip: its two ends.
+ * In a dungeon room: the room's own ways on, not the exits of the place the dungeon sits under.
+ */
 export function exitPlaceNames(state: GameState): string[] {
   if (underwayHereLabel(state)) return [state.journey!.from, state.journey!.to];
+  if (dungeonRoomPlace(state, playerFacingLocation(state))) {
+    const ways = dungeonRoomWays(state);
+    if (ways) return ways;
+  }
   const sheet = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
   return sheet.length ? sheet : placeCardFor(state, playerFacingLocation(state))?.exits ?? [];
 }

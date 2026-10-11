@@ -608,7 +608,8 @@ export function checkPlayCrimes(
     if (!echoes) p0.push({ kind: 'plays-player', detail: `the prose writes the player's own words: "${pcLine[0].slice(0, 100)}"` });
   }
 
-  const here = peopleHere(after).map(low);
+  // Someone here when the beat began may speak in it, even if they leave by its end.
+  const here = [...peopleHere(before), ...peopleHere(after)].map(low);
   for (const m of after.npcMemories ?? []) {
     const names = [m.npcName, ...(m.aliases ?? [])].map(norm).filter((n) => n.length >= 3);
     if (names.some((n) => here.some((h) => h === low(n) || h.includes(low(n)) || low(n).includes(h)))) continue;

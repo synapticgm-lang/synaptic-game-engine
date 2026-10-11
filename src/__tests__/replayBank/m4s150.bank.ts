@@ -33,7 +33,9 @@ describe('replay bank multi lap 4 s150', () => {
   it('[m4 s150 T5 | lap 4 Root 3] the exits receipt names the same ways out as the writer\'s PLACES line', () => {
     expect(D.input(5)).toBe('Check the exits');
     const receipt = D.receiptText(5).match(/^Exits: .* lead to (.*)\.$/m)?.[1]?.split(', ') ?? [];
-    expect(receipt.length, 'exits receipt').toBeGreaterThan(0);
-    expect(receipt).toEqual(exitsLine(D.packet(5)));
+    const places = exitsLine(D.packet(5));
+    expect(receipt).toEqual(places);
+    // lap 8 Root A: the hold of a moving ship has no named exits; the receipt then says so.
+    if (!places.length) expect(D.receiptText(5)).toMatch(/^Exits: no way out of .* leads to a mapped place\.$/m);
   });
 });

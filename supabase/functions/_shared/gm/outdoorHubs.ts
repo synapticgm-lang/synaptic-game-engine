@@ -12,6 +12,7 @@ import type { GameState, PlaceRecord } from './types.ts';
 import { excludedPadFamilies } from './padUniverse.ts';
 import { dungeonRoomPlace, placeIdFromName, resolvePlace } from './places.ts';
 import { isTripHere } from './travelJourney.ts';
+import { placeScale } from './placeAuthority.ts';
 
 export interface OutdoorHub {
   id: string;
@@ -572,8 +573,13 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
       .filter((p) => p.settlementKind === 'story-place')
       .map((p) => ({ id: p.id, name: p.name, blurb: p.description ?? '', threatTier: 1, aliases: p.aliases }));
   const notHere = (h: string) => h.toLowerCase() !== name.toLowerCase() && !raw.toLowerCase().includes(h.toLowerCase());
+  // An indoor place that is not a hub (a ship's hold) opens only onto the way back and the hub it sits in, not onto the other hubs.
+  const card = state.openingEstablishment?.card;
+  const parentHub = card?.place && card.place.toLowerCase() === raw.toLowerCase() ? card.parentHub ?? '' : '';
   const hubExits = hubs.length
-    ? hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
+    ? !hub && placeScale(raw) === 'indoor'
+      ? [parentHub].filter((h) => !!h && notHere(h))
+      : hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
     : exitPool.filter((h) => notHere(h.name) && known(h)).map((h) => h.name).slice(0, 3);
   const seen = new Set<string>();
   const exits: string[] = [];
