@@ -112,6 +112,40 @@ export async function callGm(
   );
 }
 
+/**
+ * Lap 13 — one sentence repair: the request alone, no story packet and no JSON schema
+ * (gm-turn `repair` mode, or the same system prompt on the direct path).
+ */
+export async function callGmRepair(
+  state: GameState,
+  request: string,
+  settings: Settings,
+  signal?: AbortSignal,
+  timeoutMs?: number
+): Promise<string> {
+  assertNoLiveAiTurnForUmbra(state, 'callGmRepair');
+  const autoplayWriter = getAutoplayWriterOverride();
+  const direct = async (s: Settings) => (await import('./aiService.direct')).callRepairDirect(state, request, s);
+  if (autoplayWriter) {
+    return direct({
+      ...settings,
+      aiProvider: 'openrouter',
+      customModelId: autoplayWriter.model,
+      baseUrl: autoplayWriter.baseUrl,
+      openrouterApiKey: autoplayWriter.apiKey,
+    });
+  }
+  if (isGmProxyAvailable()) {
+    try {
+      return await invokeGmProxy({ mode: 'repair', state, playerInput: request, settings, signal, timeoutMs });
+    } catch (err) {
+      if (isGmProxyRequired() || !isClientGmAllowed()) throw err;
+    }
+  }
+  if (import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true') return direct(settings);
+  throw new Error('GM proxy required for a sentence repair.');
+}
+
 /** Opening page / cover-continue — real `callGm` args (never a phantom 5th callback). */
 export async function callOpeningGm(
   state: GameState,

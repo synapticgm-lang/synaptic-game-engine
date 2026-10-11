@@ -95,8 +95,8 @@ describe('29q settlement quest cards', () => {
     expect(out.card).toBeNull();
   });
 
-  it('stamp is 2026-10-11r', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-11r');
-    expect(BUILD_STAMP).toBe('2026-10-11r');
+  it('stamp is 2026-10-11s', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-11s');
+    expect(BUILD_STAMP).toBe('2026-10-11s');
   });
 });

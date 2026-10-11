@@ -1,6 +1,6 @@
 import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
-import { formatPerspectiveRule, pcPov, resolvePerspective } from '../_shared/gm/narrativePov.ts';
+import { formatPerspectiveRule, pcPov, resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
 import {
   FIREWORKS_INFERENCE_BASE,
   fireworksChatBody,
@@ -29,7 +29,7 @@ const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-type GmMode = 'turn' | 'auto-fight';
+type GmMode = 'turn' | 'auto-fight' | 'repair';
 
 interface GmRequestBody {
   mode?: GmMode;
@@ -319,7 +319,7 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const mode: GmMode = body.mode === 'auto-fight' ? 'auto-fight' : 'turn';
+  const mode: GmMode = body.mode === 'auto-fight' || body.mode === 'repair' ? body.mode : 'turn';
   // Opening page / cover-continue may send '' or '(opening)'. Blank used to 400
   // ("playerInput is required") and force the stitch fallback.
   const playerInput = (typeof body.playerInput === 'string' ? body.playerInput : '').trim()
@@ -357,6 +357,10 @@ Deno.serve(async (req) => {
     const pov = pcPov((body.state as any).character, settings.perspective);
     systemPrompt =
       `You are a LitRPG Game Master. Write visceral, fast-paced combat narration. Output only the narrative paragraph — no tags, no headers, no meta commentary.\n\n${formatPerspectiveRule(pov)}`;
+    userPrompt = playerInput;
+  } else if (mode === 'repair') {
+    // deno-lint-ignore no-explicit-any
+    systemPrompt = sentenceRepairSystemPrompt((body.state as any).character, settings.perspective);
     userPrompt = playerInput;
   } else {
     systemPrompt = assembleSystemPrompt(body.state, settings, loreCards);

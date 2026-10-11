@@ -34,8 +34,10 @@ async function factFlags(run: string, turn: number, gmText?: string): Promise<Fl
 }
 
 let R: Replay;
-const problems = (n: number) =>
-  ((R.at(n).telemetry as { draftProblems?: string[] }).draftProblems ?? []).join('\n');
+const problems = (n: number) => {
+  const t = R.at(n).telemetry as { draftProblems?: string[]; sentenceRepairs?: { flag: string }[] };
+  return [...(t.draftProblems ?? []), ...(t.sentenceRepairs ?? []).map((r) => r.flag)].join('\n');
+};
 beforeAll(async () => {
   R = new Replay(await replayWhole(S78));
 }, 1_800_000);

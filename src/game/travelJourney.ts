@@ -36,7 +36,7 @@ import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
-import { underwayHereLabel } from './locationName';
+import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 
 interface Endpoint {
   name: string;
@@ -74,11 +74,7 @@ const GROUND_LABEL: Record<JourneyTerrain, string> = {
   road: 'Open road',
 };
 
-/**
- * HERE while underway. The road label stays on the journey; this names no place, so no hub matches it
- * and the trip's ends stay on the journey (from / to) where the writer already reads them.
- */
-export const UNDERWAY_HERE = 'On the road between places';
+export { UNDERWAY_HERE };
 
 const ROAD_LABELS = new Set([...Object.values(GROUND_LABEL), UNDERWAY_HERE].map((l) => l.toLowerCase()));
 

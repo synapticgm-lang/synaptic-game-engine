@@ -5,6 +5,8 @@
  */
 
 import type { GameState, LogEntry } from './types';
+import { UNDERWAY_HERE } from './locationName';
+import { splitProseSentences } from './proseSentences';
 import { matchesLastKillName } from './combatAuthority';
 
 export const SCENE_CONTEXT_TAIL_WINDOW = 4;
@@ -18,8 +20,9 @@ const PLACE_STOP = new Set([
 const TRAVEL_LINE =
   /\b(travel(?:\s+toward)?|return to|enter|go (?:inside|in|through|into)|head (?:inside|through|into|to)|leave|exit|walk away)\b/i;
 
+/** The move away from (or onto) a place: naming the old place here is the departure, not the camera. */
 const LEAVE_BEHIND =
-  /\b(?:leave|left|leaving)\b[\w\s,'-]{0,48}\bbehind\b|\bbehind and reach\b|\breach(?:ed|es)?\s+(?:the\s+)?|\barrive(?:d|s)? at\b/i;
+  /\b(?:leave|left|leaving|depart(?:s|ed|ing)?|set (?:out|off) from|travell?(?:ed|ing)? from|away from|(?:stepped|walked|came|come|climbed)(?: up| back)? (?:out of|from))\b|\b(?:fell|falls|fall|fallen)(?: away)? behind\b|\breach(?:ed|es)?\s+(?:the\s+)?|\barrive(?:d|s)? at\b/i;
 
 const DEPARTURE_FAREWELL =
   /\b(?:watching you go|until the (?:fog|dark|rain|dust|night) swallows|left behind|stays? behind|does not follow|as you (?:leave|go|walk away))\b/i;
@@ -152,16 +155,35 @@ export function selectRecentLogForContext(
   return log.filter((e) => keepLogLine(e, state)).slice(-window);
 }
 
+/**
+ * Text naming HERE; on a trip, naming where the trip is going is the move itself. The destination counts
+ * only by its own words ("Cathedral" alone is also the Close being left).
+ */
+function mentionsHereOrTrip(state: GameState, body: string): boolean {
+  if (mentionsPlace(body, hereLocation(state))) return true;
+  const to = state.journey?.to;
+  if (!to) return false;
+  const left = new Set(placeWords(priorLocation(state)));
+  const own = placeWords(to).filter((w) => !left.has(w));
+  return own.length > 0 && own.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(body));
+}
+
+/**
+ * A sentence names the place already left as the camera: it names that place with no HERE, no trip
+ * destination and no departure in the same sentence (another sentence naming HERE does not excuse it).
+ */
 export function isStaleLocationBleed(state: GameState, text: string): boolean {
-  const body = (text ?? '').trim();
-  if (!body || !locationChangedRecently(state)) return false;
+  if (!(text ?? '').trim() || !locationChangedRecently(state)) return false;
   const here = hereLocation(state);
   const prev = priorLocation(state);
   if (!placesDiffer(here, prev)) return false;
-  if (!mentionsPlace(body, prev)) return false;
-  if (mentionsPlace(body, here)) return false;
-  if (isLeaveBehindMention(body, prev)) return false;
-  return true;
+  // The road label while underway names no place, so no sentence can bleed it.
+  if (prev.toLowerCase() === UNDERWAY_HERE.toLowerCase()) return false;
+  return splitProseSentences(text).some((sentence) => {
+    // A place named inside someone's words is talk about it, not the camera.
+    const s = sentence.replace(/"[^"]*"|“[^”]*”/g, ' ').trim();
+    return !!s && mentionsPlace(s, prev) && !mentionsHereOrTrip(state, s) && !isLeaveBehindMention(s, prev);
+  });
 }
 
 export function isStaleFightBleed(state: GameState, text: string): boolean {
@@ -191,7 +213,7 @@ export function isLeftBehindActingHere(state: GameState, text: string): boolean 
   const body = (text ?? '').trim();
   if (!body || !locationChangedRecently(state)) return false;
   if (isLeaveBehindFarewell(body)) return false;
-  if (mentionsPlace(body, hereLocation(state))) return false;
+  if (mentionsHereOrTrip(state, body)) return false;
   return leftBehindNames(state).some((name) => {
     if (name.length < 3) return false;
     return new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(body) && HERE_ACTOR.test(body);
@@ -246,7 +268,7 @@ export function isOpeningOccupancyReset(state: GameState, text: string): boolean
   const here = hereLocation(state);
   const openingWhere = (state.openingEstablishment?.answers?.where ?? '').trim();
   if (!openingWhere || !placesDiffer(here, openingWhere)) return false;
-  if (mentionsPlace(body, openingWhere) && !mentionsPlace(body, here)) return true;
+  if (mentionsPlace(body, openingWhere) && !mentionsHereOrTrip(state, body) && !LEAVE_BEHIND.test(body)) return true;
   if (openingPinActsHere(body, state)) return true;
   return false;
 }

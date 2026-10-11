@@ -1408,6 +1408,11 @@ function wrongHereOnPacket(prose: string, packet: CompletedEventPacket): boolean
   if (!claimed || claimed.length < 4) return false;
   const claimCore = claimed.replace(/^(the|a|an)\s+/i, '').trim();
   if (!claimCore || !/[A-Z]/.test(claimCore)) return false;
+  // "looked back at Jax's face" points at a person, not a place.
+  const people = [packet.pc?.name, ...(packet.refEnum ?? []).filter((r) => r.klass === 'person').map((r) => r.display)]
+    .map((n) => (n ?? '').replace(/^(the|a|an)\s+/i, '').trim().toLowerCase())
+    .filter((n) => n.length > 1);
+  if (people.some((p) => claimCore.toLowerCase().startsWith(p))) return false;
   const h = here.toLowerCase();
   const c = claimCore.toLowerCase();
   if (h === c || h.includes(c) || c.includes(h)) return false;

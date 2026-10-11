@@ -24,6 +24,12 @@ function sheetIsHere(sheet: string, here: string): boolean {
 }
 
 /** While a trip is underway HERE is the trip in plain words from the journey, never a place. '' when not underway. */
+/**
+ * HERE while underway. The road label stays on the journey; this names no place, so no hub matches it
+ * and the trip's ends stay on the journey (from / to) where the writer already reads them.
+ */
+export const UNDERWAY_HERE = 'On the road between places';
+
 export function underwayHereLabel(state: Pick<GameState, 'journey'>): string {
   const j = state.journey;
   if (!j || j.legsDone >= j.legsTotal) return '';

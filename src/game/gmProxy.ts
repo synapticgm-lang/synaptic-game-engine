@@ -22,7 +22,7 @@ import {
 } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 
-export type GmProxyMode = 'turn' | 'auto-fight';
+export type GmProxyMode = 'turn' | 'auto-fight' | 'repair';
 
 /** Production should set VITE_REQUIRE_GM_PROXY=true so prompts never assemble in the browser. */
 export function isGmProxyRequired(): boolean {

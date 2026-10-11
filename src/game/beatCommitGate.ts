@@ -147,13 +147,12 @@ export function classifyBeatCommit(
   if (closedFact) recycle(closedFact);
   // 02z — sealed card: invented CAST, wrong HERE, excluded-pad-only progress.
   if (isSealedCardViolation(state, text, playerInput) || isExcludedPadProgress(state, text, playerInput)) {
-    recycle('Invents a person or place not in the facts, or moves somewhere the player did not go.');
+    recycle(INVENTS_FACT);
   }
   // 08b — packet: ledger contradictions only (living lastKill, instruction, lists, loot-too-early, wrong HERE).
   if (state.completedEvent && proseViolatesEventPacket(text, state.completedEvent)) {
-    const d = 'Contradicts the completed event (dead foe acting, lists, early loot, or wrong place).';
-    flag('event-packet', d);
-    recycle(d);
+    flag('event-packet', CONTRADICTS_EVENT);
+    recycle(CONTRADICTS_EVENT);
   }
   // s82 Root A — the engine settled the fight this turn: the beat must carry that outcome.
   if (ignoresTerminalFight(state, text)) {
@@ -161,6 +160,33 @@ export function classifyBeatCommit(
   }
 
   return { accept: reasons.length === 0, reasons, details };
+}
+
+const INVENTS_FACT = 'Invents a person or place not in the facts, or moves somewhere the player did not go.';
+const CONTRADICTS_EVENT = 'Contradicts the completed event (dead foe acting, lists, early loot, or wrong place).';
+
+/**
+ * The commit-gate checks a single sentence can fail on its own, as the reason line. Whole-beat checks
+ * (thin, recycle, mood only, missing slot, settled fight left out) are not here: no one sentence owns them.
+ */
+export function sentenceGateProblem(state: GameState, sentence: string, playerInput?: string): string | null {
+  const s = (sentence ?? '').trim();
+  if (!s || playerAsksRepeat(playerInput ?? '')) return null;
+  if (/@t\d+\b/.test(s)) return 'Leftover @t tokens: write the names as words.';
+  if (isWriterMonologueLeak(s) || isDirectorChromeLeak(s)) return 'Planning notes or instructions in the story: write only the story.';
+  if (isTokenSaladLeak(s)) return 'Garbled words: write plain sentences.';
+  if (isHudCombatChromeLeak(s)) return 'Game UI text in the story: write the scene instead.';
+  const closedFact = factClosedViolationReason(state, s);
+  if (closedFact) return closedFact;
+  if (isSealedCardViolation(state, s, playerInput)) return INVENTS_FACT;
+  if (state.completedEvent && proseViolatesEventPacket(s, state.completedEvent)) return CONTRADICTS_EVENT;
+  return null;
+}
+
+/** The sentence fails the gate for the same reason its whole draft does (out of context alone is not enough). */
+export function sentenceRejectedInDraft(state: GameState, sentence: string, draft: string, playerInput?: string): boolean {
+  const whole = sentenceGateProblem(state, draft, playerInput);
+  return !!whole && sentenceGateProblem(state, sentence, playerInput) === whole;
 }
 
 export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: state that outcome as finished.';

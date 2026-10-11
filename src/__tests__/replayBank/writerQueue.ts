@@ -45,5 +45,9 @@ export function mockAiService(actual: unknown) {
       writerQueue.payloads.push(String(payload ?? ''));
       return { text: remapTokens(writerQueue.text, writerQueue.recordedPacket, String(payload ?? '')), systemLog: [] };
     },
+    callGmRepair: async (_state: unknown, request: string) => {
+      writerQueue.payloads.push(String(request ?? ''));
+      return writerQueue.text;
+    },
   };
 }

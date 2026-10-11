@@ -334,7 +334,7 @@ export function isSystemStatusChip(label: string | null | undefined): boolean {
 export function systemHousingWriterClause(housing: SystemHousingId | null | undefined): string {
   switch (housing) {
     case 'worn_device':
-      return 'a real object on the body. Others can see the object. Only the wearer can read the screen.';
+      return 'a real object on the body. Others can see the object. Only the wearer can read the screen. Show this in the scene, not as a rule: someone beside the player sees the device but cannot read its words.';
     case 'private_window':
       return "only in the player's head. Others cannot see it. Not an object, and it does not float in the room.";
     case 'world_status':
@@ -360,20 +360,12 @@ export function systemHousingWriterSentence(housing: SystemHousingId): string {
   }
 }
 
-/** How the opening page names the frozen housing. Housing none keeps the card's own panel sentence. */
+/**
+ * What the opening page shows of the frozen housing: a thing in the scene, never its rules.
+ * The rules live in the writer facts. Housings with nothing to see show nothing.
+ */
 export function belfryHousingLine(housing: SystemHousingId | null | undefined): string | null {
-  switch (housing) {
-    case 'worn_device':
-      return 'A worn device, a real object on the body, is on you. Others can see the object, but only the wearer reads the screen, and it is hard to remove.';
-    case 'private_window':
-      return 'A private window lives only in the mind, and it is not a worn object.';
-    case 'world_status':
-      return 'Levels exist in the world. People can tell a level, and a normal group can tell name, health, and one power pool.';
-    case 'leftover_pocket':
-      return 'A leftover pocket holds what you put into it.';
-    default:
-      return null;
-  }
+  return housing === 'worn_device' ? 'Something is fastened on you that you never put on.' : null;
 }
 
 /** A card sentence that authors the system as a floating panel. */
@@ -381,12 +373,12 @@ const CARD_PANEL_SENTENCE = /\b(?:(?:blue|system|the|your|a|private) panel|blue 
 
 /**
  * Opening cards author the system as a floating blue panel. Under a frozen housing, the first such
- * sentence becomes the housing line and the rest drop, with the question right after that was put
- * to the panel. Housing none keeps the card as written.
+ * sentence becomes the housing's scene line (or drops when it has none) and the rest drop, with the
+ * question right after that was put to the panel. Housing none keeps the card as written.
  */
 export function applyOpeningHousingLine(text: string, housing: SystemHousingId | null | undefined): string {
+  if (!text || !housing) return text;
   const line = belfryHousingLine(housing);
-  if (!text || !line) return text;
   let placed = false;
   let afterPanel = false;
   return text
@@ -398,7 +390,7 @@ export function applyOpeningHousingLine(text: string, housing: SystemHousingId |
         return pointsBack ? lead.trimEnd() : sentence;
       }
       afterPanel = true;
-      if (placed) return lead.trimEnd();
+      if (placed || !line) return lead.trimEnd();
       placed = true;
       return `${lead}${line}`;
     })

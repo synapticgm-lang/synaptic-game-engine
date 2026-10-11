@@ -103,3 +103,19 @@ export function formatPerspectiveRule(pov: PcPov): string {
     `  • Quoted NPC speech may still say "you" to ${n}.`,
   ].join('\n') + unnamed;
 }
+
+/**
+ * Lap 13 — the system prompt for a sentence repair: no story packet and no JSON schema, so the reply
+ * is the rewritten sentence(s) only (client direct path and gm-turn `repair` mode).
+ */
+export function sentenceRepairSystemPrompt(
+  pc: { name?: string | null; gender?: string | null } | null | undefined,
+  perspective?: unknown
+): string {
+  return [
+    'You fix sentences in a story you wrote. Rewrite only the sentence(s) the request gives so they agree with the engine fact; they go back in the same place in the story.',
+    'Output only the rewritten sentence(s) as plain prose. No JSON, no tags, no headers, no notes, no other sentences.',
+    '',
+    formatPerspectiveRule(pcPov(pc, perspective)),
+  ].join('\n');
+}

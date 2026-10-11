@@ -11,7 +11,8 @@ import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBod
 import { acceptTokenOrLedgerStory, refEnumOf, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
-import { classifyBeatCommit, ignoresTerminalFight, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
+import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
+import { splitProseSentences } from './proseSentences';
 import { isNearClone, isSameBeat } from './beatFingerprint';
 import {
   detectAtmosphereReprint,
@@ -47,6 +48,22 @@ export type WriterTurnResult = WriterDraft & {
   /** Problems left on the committed draft after code trims. */
   remaining: string[];
   firstDraft: string;
+  /** Sentences the commit gate rejected and what the one repair request did with each. */
+  repairs?: SentenceRepair[];
+};
+
+/**
+ * One sentence the commit gate rejected. `repaired` is the writer's rewrite when it passed the gate;
+ * otherwise the sentence left the page and `bug` says why, for diagnosis.
+ */
+export type SentenceRepair = {
+  sentence: string;
+  flag: string;
+  fact: string;
+  repaired?: string;
+  bug?: string;
+  /** The writer's reply when it could not be read as the rewrite. */
+  reply?: string;
 };
 
 export type DraftCheck = {
@@ -169,6 +186,101 @@ export function runWriterTurn(opts: {
  * problem, then the last-resort paint from the engine result. Any other problem stays logged only (29z8).
  */
 export async function runWriterTurnWithFightRetry(opts: {
+  firstRaw: string;
+  packet: CompletedEventPacket;
+  check: DraftCheck;
+  rewrite: (problem: string) => Promise<string>;
+  /** Lap 13 — sends only the repair request (no packet); the reply is the rewritten sentence(s). */
+  repair?: (request: string) => Promise<string>;
+}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+  const turn = await runWriterTurnFightOnly(opts);
+  if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
+  return repairRejectedSentences(turn, opts);
+}
+
+function sentencePattern(sentence: string): RegExp {
+  return new RegExp(sentence.trim().split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+'));
+}
+
+/** The draft with one sentence swapped for `replacement` ('' drops it), whitespace-tolerant. */
+export function replaceDraftSentence(prose: string, sentence: string, replacement: string): string {
+  const next = prose.replace(sentencePattern(sentence), () => replacement.trim());
+  return next.replace(/[ \t]{2,}/g, ' ').replace(/ +([.,!?])/g, '$1').replace(/^\s+|\s+$/g, '');
+}
+
+/** One request: only the flagged sentence(s), why each failed, and the engine fact. */
+export function sentenceRepairRequest(flagged: { sentence: string; flag: string }[], engineFact: string): string {
+  const many = flagged.length > 1;
+  return [
+    many
+      ? `Rewrite these ${flagged.length} sentences of your story. Reply with one rewritten sentence per line, in order, as plain prose. No JSON, no numbers, no other text.`
+      : 'Rewrite this one sentence of your story. Reply with only the rewritten sentence as plain prose. No JSON, no other text.',
+    ...flagged.map((f, i) => `${many ? `${i + 1}. ` : ''}Sentence: "${f.sentence}"\n${many ? '   ' : ''}Problem: ${f.flag}`),
+    `Engine fact: ${engineFact.trim() || 'Keep only what the scene already established.'}`,
+  ].join('\n');
+}
+
+function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEventPacket, count: number): string[] | null {
+  const rendered = renderWriterDraft(raw, check.state, packet).prose
+    || (/^\s*[[{]/.test(raw) ? '' : stripChoiceList(stripActionTags(raw)).trim());
+  if (!rendered) return null;
+  const clean = (s: string) => s.replace(/^\s*(?:\d+[.)]\s*|[-*]\s*)/, '').replace(/^"(.*)"$/, '$1').trim();
+  const lines = rendered.split(/\n+/).map(clean).filter(Boolean);
+  if (count > 1) return lines.length === count ? lines : null;
+  const sentences = splitProseSentences(lines.join(' '));
+  return sentences.length >= 1 && sentences.length <= 2 ? [sentences.join(' ')] : null;
+}
+
+/**
+ * Lap 13 — a sentence the commit gate rejects never reaches the page. The writer gets ONE request with
+ * only the flagged sentence(s) and the engine fact; a rewrite that passes the gate takes its place and the
+ * rest of the draft stays. A rewrite that fails leaves the sentence off the page and is logged as a bug.
+ */
+export async function repairRejectedSentences(
+  turn: WriterTurnResult & { fightRetry?: 'retried' | 'painted' },
+  opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
+): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+  const { check, packet } = opts;
+  // The draft as a whole is what the gate rejects; a sentence that only reads wrong out of context is not.
+  const whole = sentenceGateProblem(check.state, turn.prose, check.playerInput);
+  if (!whole) return turn;
+  const flagged = splitProseSentences(turn.prose)
+    .map((sentence) => ({ sentence, flag: sentenceGateProblem(check.state, sentence, check.playerInput) }))
+    .filter((f): f is { sentence: string; flag: string } => f.flag === whole);
+  if (!flagged.length) {
+    return {
+      ...turn,
+      repairs: [{ sentence: turn.prose.slice(0, 200), flag: whole, fact: check.engineFact, bug: 'unlocated: no single sentence fails the gate' }],
+    };
+  }
+  const fact = check.engineFact;
+  let lines: string[] | null = null;
+  let bug = 'no repair path';
+  let raw = '';
+  if (opts.repair) {
+    raw = await opts.repair(sentenceRepairRequest(flagged, fact)).catch(() => '');
+    lines = raw.trim() ? repairReplyLines(raw, check, packet, flagged.length) : null;
+    bug = raw.trim() ? 'repair reply was not a rewrite of the flagged sentence' : 'repair reply empty';
+  }
+  let prose = turn.prose;
+  const repairs: SentenceRepair[] = flagged.map((f, i) => {
+    const line = lines?.[i];
+    const still = line ? sentenceGateProblem(check.state, line, check.playerInput) : null;
+    const ok = !!line && !still && line.trim() !== f.sentence.trim();
+    prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
+    return ok
+      ? { sentence: f.sentence, flag: f.flag, fact, repaired: line }
+      : {
+          sentence: f.sentence, flag: f.flag, fact,
+          ...(line ? { repaired: line } : {}),
+          bug: still ? `repair failed the gate: ${still}` : bug,
+          ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}),
+        };
+  });
+  return { ...turn, prose, repairs, remaining: writerDraftProblems(prose, check) };
+}
+
+async function runWriterTurnFightOnly(opts: {
   firstRaw: string;
   packet: CompletedEventPacket;
   check: DraftCheck;

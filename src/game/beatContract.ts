@@ -557,7 +557,9 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
   const body = (prose ?? '').trim();
   if (!body) return [];
   const bibleId = state.campaignBibleId ?? state.bibleId;
-  const cast = new Set(sealedCastNames(state).map((n) => n.toLowerCase()));
+  const cast = new Set(
+    [...sealedCastNames(state), ...(state.completedEvent?.allowlist ?? [])].map((n) => n.toLowerCase())
+  );
   const self = pcName(state);
   const found: string[] = [];
   const seen = new Set<string>();

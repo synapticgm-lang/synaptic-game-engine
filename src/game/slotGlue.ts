@@ -202,7 +202,8 @@ export function isPlaceTitleAsPersonSubject(text: string, placeTitles: string[] 
     if (new RegExp(`\\b${esc}['’]s\\s+(?:${PERSON_VERB}|eyes?|fingers?|voice|jaw|hand|hands|gaze)\\b`, 'i').test(t)) {
       return true;
     }
-    if (new RegExp(`\\b${esc}\\s+${PERSON_VERB}\\b`, 'i').test(t)) return true;
+    // Case-sensitive: "the cathedral steps" / "the grain-ship hold" are common nouns, not the title acting.
+    if (new RegExp(`\\b${esc}\\s+${PERSON_VERB}\\b`).test(t)) return true;
   }
   return false;
 }

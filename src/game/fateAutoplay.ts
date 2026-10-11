@@ -28,7 +28,7 @@ import {
   isNsfwCampaign,
   type CampaignBible,
 } from '@/data/campaigns';
-import { callGm } from './aiService';
+import { callGm, callGmRepair } from './aiService';
 import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
@@ -225,7 +225,7 @@ import {
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
-import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat } from './beatCommitGate';
+import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
@@ -367,9 +367,13 @@ export type TurnTelemetry = {
   responsePath?: ResponsePath;
   /** 12f — E only: first accept, quality retry, or stitch/render fallback */
   writerOutcome?: WriterOutcome;
-  /** 28g — writer text the action check rejected (first 200 chars), the reason, and the engine fact. */
+  /** Lap 13 — the sentences the commit gate rejected, their reasons, and the engine fact. */
   rejectedWriterText?: string;
   rejectedReason?: string;
+  /** Lap 13 — each rejected sentence and its one repair (a `bug` means the repair failed). */
+  sentenceRepairs?: import('./writerTurn').SentenceRepair[];
+  /** A whole-beat warden block (unresolved / collage): logged, the draft stays. */
+  blockedPaintReason?: string;
   engineFact?: string;
   /** 28g — diagnostics: raw writer reply (first 600 chars), token line verdicts, accept path. */
   writerRawHead?: string;
@@ -1320,7 +1324,11 @@ Do NOT print dice notation or CODE ENFORCED.
         transportRetries += again.transportRetries;
         return again.text;
       },
+      repair: (request) => callGmRepair(arcState, request, settings),
     });
+    for (const r of writerTurn.repairs ?? []) {
+      if (r.bug) console.warn(`[writer] sentence repair bug — ${r.bug}: "${r.sentence.slice(0, 120)}"`);
+    }
     if (writerTurn.fightRetry) console.info(`[writer] settled fight left out — ${writerTurn.fightRetry}`);
     traceStage('render', writerTurn.firstDraft);
     traceStage('finishCommittedProse+spoken', writerTurn.prose);
@@ -1472,12 +1480,16 @@ Do NOT print dice notation or CODE ENFORCED.
   const retryTokenVerdicts: string[] | undefined = undefined;
   let rejectedWriterText: string | undefined;
   let rejectedReason: string | undefined;
-  if (writerTurn?.problems.length) {
-    rejectedWriterText = writerTurn.firstDraft.replace(/\s+/g, ' ').trim().slice(0, 200) || undefined;
-    rejectedReason = writerTurn.problems.join(' | ').slice(0, 300);
+  if (writerTurn?.repairs?.length) {
+    rejectedWriterText = writerTurn.repairs.map((r) => r.sentence).join(' ').replace(/\s+/g, ' ').trim().slice(0, 300) || undefined;
+    rejectedReason = [...new Set(writerTurn.repairs.map((r) => r.flag))].join(' | ').slice(0, 300);
   }
+  let blockedPaintReason: string | undefined;
 
-  const words = writerWordsGuard(!!writerTurn && !renderFallbackUsed && gmText === writerTurn.prose);
+  const words = writerWordsGuard(
+    !!writerTurn && !renderFallbackUsed && gmText === writerTurn.prose,
+    (s, draft) => sentenceRejectedInDraft(arcState, s, draft, playerInput)
+  );
   const rawEvents = parseActionTags(gmText);
   const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
   const events = warden.events;
@@ -1614,10 +1626,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   // 28l — a flagged beat stays the writer's prose (the one revision already ran); the flag only withholds XP.
   if (blockedPaint || isBlockedPaint(warden.notes, state, cleanText)) {
-    if (!rejectedWriterText) {
-      rejectedWriterText = gmText.replace(/\s+/g, ' ').trim().slice(0, 200);
-      rejectedReason = warden.notes.find((n) => /Narrative does not resolve|Collage reject|Commit gate/i.test(n)) ?? 'blocked paint';
-    }
+    blockedPaintReason = warden.notes.find((n) => /Narrative does not resolve|Collage reject|Commit gate/i.test(n)) ?? 'blocked paint';
     if (!cleanText.trim()) {
       cleanText = ledgerActionStitch(working, playerInput);
       usedPacketStitch = true;
@@ -2077,6 +2086,8 @@ Do NOT print dice notation or CODE ENFORCED.
       writerOutcome,
       rejectedWriterText,
       rejectedReason,
+      sentenceRepairs: writerTurn?.repairs?.length ? writerTurn.repairs : undefined,
+      blockedPaintReason,
       engineFact: engineFact || undefined,
       writerRawHead,
       writerRaw: gmResult.text || undefined,

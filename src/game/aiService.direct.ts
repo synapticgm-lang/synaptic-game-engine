@@ -4,6 +4,7 @@
  */
 // Master Prompt v2.0 - Hierarchical architecture (docs/MASTER-PROMPT-ARCHITECTURE.md)
 import { buildSystemPrompt, buildContextPrompt } from './masterPrompt';
+import { sentenceRepairSystemPrompt } from './narrativePov';
 import type { GameState, Settings, LoreCard } from './types';
 import { logger } from './logger';
 import type { GmResult } from './aiServiceShared';
@@ -336,6 +337,12 @@ function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCa
     systemPrompt += `\n\n[IMAGE GENERATION RULE]\nWhen creating a [CINEMATIC SCENE PROMPT], if any of the following entities are in the scene, you MUST append their exact visual description to the prompt:\n${activeAnchors.join('\n')}`;
   }
   return systemPrompt;
+}
+
+/** Lap 13 — sentence repair on the direct path: plain prose, no Token Prose schema. */
+export async function callRepairDirect(state: GameState, request: string, settings: Settings): Promise<string> {
+  const system = sentenceRepairSystemPrompt(state.character, settings.perspective);
+  return stripReasoningBlocks(await dispatchLlm(request, system, settings, undefined, false));
 }
 
 export async function callGmDirect(

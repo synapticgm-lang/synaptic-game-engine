@@ -154,7 +154,7 @@ describe('replay bank s77', () => {
   });
 
   it('[s77 T6 | s77 Root 5 (19)] a turn whose writer words were kept is not labelled a last-resort body', () => {
-    expect(R.noteText(6), 'T6 hits the recycle gate').toMatch(/recycle-without-delta/);
+    expect(R.noteText(6), 'T6 leaving the infirmary toward Lowmarket is the move, not a gate rejection (lap 13)').not.toMatch(/recycle-without-delta/);
     for (const t of R.turns()) {
       if (!/Writer words kept/.test(R.noteText(t))) continue;
       expect(R.noteText(t), `T${t}`).not.toMatch(/Commit gate: last-resort body/);

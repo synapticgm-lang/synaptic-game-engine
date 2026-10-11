@@ -9,7 +9,7 @@ import { buildGroundTruthLedger } from './writerInfoLayer';
 import { ledgerSheetLine } from './litrpgSystemWindow';
 import { stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
 import { summonedPact } from '../data/campaigns/summonedPact';
-import { SYSTEM_PART_IDS, clampSystemHousing, type SystemHousingConfig, type SystemHousingId } from './systemHousing';
+import { SYSTEM_PART_IDS, clampSystemHousing, systemHousingWriterClause, type SystemHousingConfig, type SystemHousingId } from './systemHousing';
 import { resolveEngineFight } from './engineFight';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import { presentNpcNames } from './npcRelationships';
@@ -63,21 +63,23 @@ describe('seed 94 opening card is whole sentences', () => {
     const page1 = typeof card === 'string' ? '' : card?.page1 ?? '';
     expect(page1).not.toMatch(/^Wind through louver slats\./);
     expect(page1).toMatch(/A tower-pass hangs on a nail by the ladder/);
+    const RULES = /Others can see|only the wearer|lives only in the mind|Levels exist in the world|holds what you put into it/i;
     const worn = belfryOpening(page1, 'worn_device');
     expect(worn).not.toMatch(/panel hangs in the air/i);
-    expect(worn).toMatch(/A worn device, a real object on the body, is on you\./);
-    expect(worn).toMatch(/Others can see the object, but only the wearer reads the screen, and it is hard to remove\./);
+    expect(worn).toMatch(/Something is fastened on you that you never put on\./);
+    expect(worn).not.toMatch(RULES);
     expect(worn).toMatch(/A tower-pass hangs on a nail by the ladder/);
-    const mind = belfryOpening(page1, 'private_window');
-    expect(mind).not.toMatch(/panel hangs in the air/i);
-    expect(mind).toMatch(/A private window lives only in the mind, and it is not a worn object\./);
-    expect(mind).not.toMatch(/worn device/);
-    const world = belfryOpening(page1, 'world_status');
-    expect(world).not.toMatch(/panel hangs in the air/i);
-    expect(world).toMatch(/Levels exist in the world/);
-    const pocket = belfryOpening(page1, 'leftover_pocket');
-    expect(pocket).not.toMatch(/panel hangs in the air/i);
-    expect(pocket).toMatch(/leftover pocket/i);
+    for (const housing of ['private_window', 'world_status', 'leftover_pocket'] as const) {
+      const out = belfryOpening(page1, housing);
+      expect(out, housing).not.toMatch(/panel hangs in the air/i);
+      expect(out, housing).not.toMatch(RULES);
+      expect(out, housing).not.toMatch(/fastened on you/);
+      expect(out, housing).toMatch(/A tower-pass hangs on a nail by the ladder/);
+    }
+  });
+
+  it('the worn-device writer facts show the device through a companion, not a rules line', () => {
+    expect(systemHousingWriterClause('worn_device')).toMatch(/someone beside the player sees the device but cannot read its words/);
   });
 
   const HOUSED: SystemHousingId[] = ['private_window', 'worn_device', 'world_status', 'leftover_pocket'];
@@ -95,11 +97,11 @@ describe('seed 94 opening card is whole sentences', () => {
     }
   });
 
-  it('the bathhouse opening under world_status says what the system is and keeps the room', () => {
+  it('the bathhouse opening under world_status drops the panel, states no rules and keeps the room', () => {
     const card = ALL_CARDS.find((c) => /ruined bathhouse/.test(c.page1 ?? ''))!;
     const out = belfryOpening(card.page1!, 'world_status');
     expect(out).not.toMatch(/A blue panel hangs in the draft/);
-    expect(out).toMatch(/Levels exist in the world\. People can tell a level/);
+    expect(out).not.toMatch(/Levels exist in the world/);
     expect(out).toMatch(/The cedar door bangs its hinges against the stone\./);
     expect(out).not.toMatch(/What name do you give it\?/);
   });

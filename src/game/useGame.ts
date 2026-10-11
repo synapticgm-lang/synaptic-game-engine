@@ -36,7 +36,7 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
-import { callGm, type GmResult } from './aiService';
+import { callGm, callGmRepair, type GmResult } from './aiService';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
@@ -157,7 +157,7 @@ import {
   formatOpeningCardChrome,
   openingInventBudgetZero,
 } from './openingPointerCard';
-import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat } from './beatCommitGate';
+import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
@@ -2966,7 +2966,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             previousGm,
           },
           rewrite: async (problem) => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
+          repair: (request) => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
         });
+        for (const r of writerTurn.repairs ?? []) {
+          debugLogger.record(r.bug ? 'ERROR' : 'INFO', r.bug ? 'Sentence repair failed' : 'Sentence repaired', {
+            turn: liveCurrent.turn,
+            ...r,
+          });
+        }
         if (writerTurn.fightRetry) {
           debugLogger.record('WARN', 'Writer left the settled fight out', {
             turn: liveCurrent.turn,
@@ -3089,7 +3096,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         engineFact
       );
       const events = warden.events;
-      const words = writerWordsGuard(!!writerProse?.trim() && result.text === writerProse);
+      const words = writerWordsGuard(
+        !!writerProse?.trim() && result.text === writerProse,
+        (s, draft) => sentenceRejectedInDraft(liveCurrent, s, draft, sanitizedInput)
+      );
       // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).
       const narrativeSource = words.step('runWarden', result.text, warden.scrubbedNarrative ?? result.text);
       const appliedWorld = applyWorldEvents(worldLedger, events, worldLedger.clock.week);

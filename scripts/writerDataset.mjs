@@ -3,6 +3,7 @@
  * Append every turn of fate-autoplay runs to data/writer-dataset/turns.jsonl (gitignored).
  * One line per writer per turn. `pairKey` (bible:seed:turn) groups the same turn across writers.
  * Run `npm run fact-check -- <run>` first; a run without factcheck.json is refused.
+ * Each commit-gate rejection (`sentenceRepairs` on a turn) also goes to rejections.jsonl.
  *
  *   node scripts/writerDataset.mjs [--lap N] <run dir> [<run dir> ...]
  */
@@ -11,6 +12,9 @@ import { join, basename, resolve } from 'node:path';
 
 const OUT_DIR = resolve('data', 'writer-dataset');
 const OUT = join(OUT_DIR, 'turns.jsonl');
+/** Lap 13 — one line per commit-gate rejection: the sentence, the flag, the fact, the repair. */
+const REJECTIONS = join(OUT_DIR, 'rejections.jsonl');
+const perWriter = {};
 
 const argv = process.argv.slice(2);
 let lap = null;
@@ -89,6 +93,28 @@ for (const dir of dirs) {
     appendFileSync(OUT, JSON.stringify(row) + '\n');
     added += 1;
     if (isGood) good += 1;
+    for (const r of t.sentenceRepairs ?? []) {
+      const rej = {
+        pairKey: row.pairKey,
+        lap,
+        runId,
+        seed: meta.seed,
+        turn: t.turn,
+        writerId,
+        writerModel,
+        original: r.sentence,
+        flag: r.flag,
+        correctFact: r.fact ?? t.engineFact ?? null,
+        repaired: r.repaired ?? null,
+        repairOk: !r.bug,
+        bug: r.bug ?? null,
+      };
+      appendFileSync(REJECTIONS, JSON.stringify(rej) + '\n');
+      const k = writerModel ?? writerId;
+      const w = (perWriter[k] ??= { rejections: 0, repaired: 0 });
+      w.rejections += 1;
+      if (!r.bug) w.repaired += 1;
+    }
   }
 }
-console.log(JSON.stringify({ out: OUT, added, good }));
+console.log(JSON.stringify({ out: OUT, added, good, rejections: REJECTIONS, perWriter }));
