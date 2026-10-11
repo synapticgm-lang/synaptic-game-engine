@@ -12,7 +12,7 @@ import { hallTalkTopics, type HallTalkTopic } from './openingEstablishment.ts';
 import { placeScale } from './placeAuthority.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerFacingLocation } from './locationName.ts';
-import { systemHousingWriterSentence, writerFacts } from './systemHousing.ts';
+import { writerFacts } from './systemHousing.ts';
 import { activeHereSpot, isOutOfTalkingRange } from './hereSpot.ts';
 import { isChromeReceipt } from './engineResult.ts';
 
@@ -132,11 +132,9 @@ function hereLines(state: GameState, people: string[]): string[] {
     const away = spot.awayFrom.length ? `; out of talking range: ${spot.awayFrom.join(', ')}` : '';
     out.push(`player stands on ${spot.spot} (moved T${spot.turn})${away}`);
   }
-  const housing = state.systemHousing?.housing;
-  if (systemWindowSeen(state)) {
-    out.push(housing
-      ? `System: ${systemHousingWriterSentence(housing)}`
-      : 'System window: only the player sees it; nobody can touch it; no surface, heat or weight');
+  // A housing's rules live on the packet's SYSTEM line; HERE lists things and people.
+  if (systemWindowSeen(state) && !state.systemHousing?.housing) {
+    out.push('System window: only the player sees it; nobody can touch it; no surface, heat or weight');
   }
   return out;
 }

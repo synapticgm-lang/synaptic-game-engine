@@ -10,6 +10,7 @@ import type { GameState } from './types';
 import { checkObligationCoverage, buildIntentContract } from './intentContract';
 import { parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
+import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
 import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
@@ -450,9 +451,11 @@ export function checkPlayerTurn(
     ...locksOpenedWithoutSkill(before, after).map((detail) => ({ kind: 'lock-without-skill' as const, detail })),
   ];
   const chips = row.offeredChoices ?? [];
+  // This turn's text sits above the list the player picks from next, not the list they just picked from.
+  const nextChips = resolveOfferedChoices(after);
   p0.push(
-    ...checkEmptyRoomTalk(after, chips.filter((c) => !chipProblem(before, c)), prose, action),
-    ...checkSystemWindow(after, chips, prose)
+    ...checkEmptyRoomTalk(after, nextChips.filter((c) => !chipProblem(after, c)), prose, action),
+    ...checkSystemWindow(after, nextChips, prose)
   );
   const crimes = checkPlayCrimes(before, after, action, prose);
   p0.push(...crimes.p0);

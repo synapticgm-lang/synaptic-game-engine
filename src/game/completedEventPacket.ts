@@ -627,17 +627,19 @@ export function compileRefEnum(
     }
   }
 
+  const addWindow = (label: string) => {
+    if (state.engineMode !== 'litrpg') return;
+    const display = housedWindowDisplay(state, label);
+    if (display) add(`window:${slugRefId(label)}`, display, 'window', windowNote);
+  };
   for (const prop of state.sceneFacts?.props ?? []) {
-    if (state.engineMode === 'litrpg' && isSystemWindowLabel(prop)) {
-      const display = housedWindowDisplay(state, prop);
-      if (display) add(`window:${slugRefId(prop)}`, display, 'window', windowNote);
-    } else {
-      add(`prop:${slugRefId(prop)}`, prop, 'prop');
-    }
+    if (isSystemWindowLabel(prop) && state.engineMode === 'litrpg') addWindow(prop);
+    else add(`prop:${slugRefId(prop)}`, prop, 'prop');
   }
   for (const extra of extras) {
     if (!extra || isNeverCastTitle(extra, state)) continue;
-    add(`extra:${slugRefId(extra)}`, extra, 'person');
+    if (isSystemWindowLabel(extra)) addWindow(extra);
+    else add(`extra:${slugRefId(extra)}`, extra, 'person');
   }
   return out;
 }

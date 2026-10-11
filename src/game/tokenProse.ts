@@ -326,7 +326,13 @@ function refSlug(s: string): string {
 function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   const want = id.trim().replace(/^@/, '').toLowerCase();
   const rid = row.id.toLowerCase();
-  return want === rid || want === row.tok.toLowerCase() || want === rid.slice(rid.indexOf(':') + 1) || want === refSlug(row.display);
+  const slug = refSlug(want);
+  return (
+    want === rid ||
+    want === row.tok.toLowerCase() ||
+    want === rid.slice(rid.indexOf(':') + 1) ||
+    (!!slug && (slug === refSlug(row.display) || slug === rid.slice(rid.indexOf(':') + 1)))
+  );
 }
 
 /**
