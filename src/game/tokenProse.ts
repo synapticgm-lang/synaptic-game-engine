@@ -23,6 +23,7 @@ import { presentNpcRecords } from './npcRecords';
 import { weaponsNotInHand } from './infoSheet';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
+import { buildGroundTruthLedger } from './writerInfoLayer';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -262,9 +263,15 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   const outside = text.replace(QUOTED_RE, ' ');
   const tagTok = outside.match(/@(t\d+)\b/)?.[1];
   const speaker = line.speaker_tok || tagTok || '';
+  // The speaker's own token heading capitalised words ("@t2 I require…", "@t2: Come here") is the tag, not indirect speech.
+  const tagged = line.speaker_tok
+    ? text.match(new RegExp(`^@${line.speaker_tok.replace(/^@/, '')}\\b\\s*(?:[:,\u2014\u2013-]\\s*|said\\s*,?\\s*)?(?=[A-Z])([\\s\\S]+)$`))
+    : null;
   let words: string;
   if (quoted.length) {
     words = quoted.map((q, i) => (i < quoted.length - 1 ? q.replace(/,$/, '.') : q)).join(' ');
+  } else if (tagged) {
+    words = tagged[1]!;
   } else if (line.speaker_tok && !namesDeclaredPerson(text, refs)) {
     words = text.replace(new RegExp(`^[${OPEN_Q}]|[${CLOSE_Q}]$`, 'g'), '');
   } else {
@@ -308,6 +315,62 @@ export function lineHasMidSentenceCapital(text: string): boolean {
       return true;
     }
     sentenceStart = /[.!?]["')\]]*$/.test(part);
+  }
+  return false;
+}
+
+const NUM_WORDS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19,
+  twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90,
+};
+const WORD_FOR_NUM = Object.fromEntries(Object.entries(NUM_WORDS).map(([w, n]) => [n, w])) as Record<number, string>;
+const COUNT_START = `\\d+|${Object.keys(NUM_WORDS).filter((w) => w !== 'one').join('|')}`;
+/** One whole number phrase ("twenty-five", "two hundred twenty-five"); "one" alone is not a count. */
+const COUNT_RE = new RegExp(`\\b((?:${COUNT_START})(?:(?:-|\\s+)(?:one|${COUNT_START.replace('\\d+|', '')}|hundred|thousand))*)\\b`, 'gi');
+/** A count of ways out is the PLACES exit count's to judge, and body parts / paces / "of them" are not world facts. */
+const COUNT_NOT_A_FACT =
+  /^\s+(?:\w+\s+){0,2}?(?:roads?|exits?|ways?|paths?|doors?|doorways?|lanes?|streets?|routes?|gates?|tracks?|trails?|passages?|stairs?)\b|^\s*(?:o'clock|times?|steps?|paces?|breaths?|heartbeats?|fingers?|hands|eyes|arms|feet)\b|^\s+of (?:them|us|you)\b/i;
+
+function countValue(phrase: string): number {
+  let total = 0;
+  let cur = 0;
+  for (const w of phrase.toLowerCase().split(/[-\s]+/)) {
+    if (/^\d+$/.test(w)) cur += Number(w);
+    else if (w === 'hundred') cur *= 100;
+    else if (w === 'thousand') { total += cur * 1000; cur = 0; }
+    else cur += NUM_WORDS[w] ?? 0;
+  }
+  return total + cur;
+}
+
+/**
+ * Everything a count may come from this turn: the sheet, the info sheet, the engine result, the REF ENUM and
+ * mention list, and the page so far. Lowercased.
+ */
+export function handedCountText(state: GameState, packet?: CompletedEventPacket): string {
+  const page = (state.log ?? []).filter((e) => e.role === 'gm').map((e) => String(e.content ?? ''));
+  const hasSheet = Array.isArray(state.inventory) && Array.isArray(state.character?.conditions);
+  return [
+    hasSheet ? buildGroundTruthLedger(state, { compact: true }) : '',
+    packet?.infoSheet ?? '',
+    packet?.engineResult ?? '',
+    ...(packet?.allowlist ?? []),
+    ...refEnumOf(state, packet).map((r) => r.display),
+    ...page,
+  ].join('\n').toLowerCase();
+}
+
+/** A count in the line that no handed fact and no earlier page holds ("for six years", "fifteen more points"). */
+export function lineHasUnhandedCount(text: string, handed: string): boolean {
+  const src = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ');
+  for (const m of src.matchAll(COUNT_RE)) {
+    const after = src.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 24);
+    if (COUNT_NOT_A_FACT.test(after)) continue;
+    const n = countValue(m[1]!);
+    const word = WORD_FOR_NUM[n];
+    const said = new RegExp(`\\b(?:${n}${word ? `|${word}` : ''})\\b`);
+    if (!said.test(handed) && !handed.includes(m[1]!.toLowerCase())) return true;
   }
   return false;
 }
@@ -394,8 +457,9 @@ export function tokenLineVerdicts(raw: string, state: GameState, packet?: Comple
   const beat = extractTokenCandidates(raw ?? '').map(parseTokenBeat).find((b): b is TokenBeat => !!b);
   if (!beat) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
   const out = bindCheckFails(beat, enumRefs).map((n) => `ref ${n}`);
+  const counts = handedCountText(state, packet);
   for (const line of beat.lines) {
-    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet));
+    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts);
     out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
   }
   return out;
@@ -405,9 +469,12 @@ export function classifyTokenLine(
   line: TokenLine,
   beat: TokenBeat,
   enumRefs: LedgerRef[],
-  knownNames: string[] = []
+  knownNames: string[] = [],
+  /** Lowercased handed facts and page so far (`handedCountText`); a count none of them holds fails the line. */
+  handedCounts?: string
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
   // Spoken words with no speaker would paint as narration.
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
     return { ok: false, reason: 'speech-no-speaker' };
@@ -549,12 +616,20 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
   const sentences = lines.map((line) => {
     const said = line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text;
     const once = dropTypedNameAfterToken(said, (tok) => byTok.get(tok)?.display);
-    let next = once.replace(/@t(\d+)\b/g, (_m, n: string, offset: number, src: string) => {
-      const row = byTok.get(`t${n}`);
-      if (!row?.display) return '';
-      painted.add(row.display);
-      return paintDisplay(row, src, offset, possessive);
-    });
+    let next = once.replace(
+      /(\b(?:the|a|an)\s+)?@t(\d+)\b(['’]s\b)?/gi,
+      (_m, art: string | undefined, n: string, poss: string | undefined, offset: number, src: string) => {
+        const row = byTok.get(`t${n}`);
+        if (!row?.display) return art ?? '';
+        painted.add(row.display);
+        const paint = paintDisplay(row, src, offset + (art?.length ?? 0), possessive);
+        // A display that brings its own determiner ("one frightened priest") takes no second article.
+        const lead = art && isDeterminerWord(paint.split(/\s+/)[0] ?? '') ? '' : (art ?? '');
+        // A plural common noun takes the bare apostrophe ("the smugglers' silence").
+        const plural = /(?:^|\s)[a-z][a-z'-]*[^s']s$/.test(paint);
+        return `${lead}${paint}${poss ? (plural ? poss[0] : poss) : ''}`;
+      }
+    );
     for (const display of painted) next = collapseEchoedLabel(next, display);
     return capitalizeSentenceStarts(tidy(next));
   }).filter((s) => s.length > 0);
@@ -604,17 +679,18 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
   return out + text.slice(at);
 }
 
+/** Sentence starts, and the first spoken word after a said-tag's opening quote (`said, "the tabard…`). */
 function capitalizeSentenceStarts(text: string): string {
-  return text.replace(/(^|[.!?]["”’)]?\s+)([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
+  return text.replace(/(^|[.!?]["”’)]?\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
-function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = []): boolean {
+function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts).ok);
 }
 
-function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = []): TokenLine[] {
-  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames).ok);
+function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string): TokenLine[] {
+  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts).ok);
 }
 
 /**
@@ -787,6 +863,7 @@ export function acceptTokenOrLedgerStory(
 } {
   const enumRefs = refEnumOf(state, packet);
   const known = handedProperNames(state, packet);
+  const counts = handedCountText(state, packet);
   const candidates = [
     ...extractTokenCandidates(raw),
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),
@@ -798,7 +875,7 @@ export function acceptTokenOrLedgerStory(
     const parsed = parseTokenBeat(cand);
     if (!parsed) continue;
     const beat = normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient });
-    if (isFullyClean(beat, enumRefs, known)) {
+    if (isFullyClean(beat, enumRefs, known, counts)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
@@ -811,7 +888,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = keepCleanLines(beat, enumRefs, known);
+    const clean = keepCleanLines(beat, enumRefs, known, counts);
     const fns = new Set(clean.map((l) => l.fn));
     const partialOk = opts?.lenient
       ? clean.length >= 1
@@ -853,7 +930,7 @@ export function acceptTokenOrLedgerStory(
   const parsedRaw = candidates.map(parseTokenBeat).find(Boolean);
   const parsedAny = parsedRaw ? normalizeBeatRefs(parsedRaw, enumRefs, { thingsOnly: !opts?.lenient }) : parsedRaw;
   if (parsedAny && !opts?.alreadyRepaired) {
-    const clean = keepCleanLines(parsedAny, enumRefs, known);
+    const clean = keepCleanLines(parsedAny, enumRefs, known, counts);
     const miss = missingFns(clean.length ? clean : parsedAny.lines);
     if (miss.includes('place') || miss.includes('action') || clean.length < 3) {
       needsRepair = { missingFns: miss.length ? miss : ['place', 'action'] };

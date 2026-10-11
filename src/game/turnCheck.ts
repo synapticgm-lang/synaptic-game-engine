@@ -230,7 +230,8 @@ export function checkActionFollowed(
   const fightTold = !!fight && fight.outcome !== 'escaped' && beatCarriesTerminalFight(text, fight);
 
   const addr = chipAddressee(act);
-  const typedNamed = !addr ? peopleHere(before).find((p) => mentionsName(act, p)) : undefined;
+  // A talk shape with no addressee ("Talk your way past the thugs") still names who here it is to.
+  const typedNamed = !addr || addr.kind === 'none' ? peopleHere(before).find((p) => mentionsName(act, p)) : undefined;
   const intent = parsePlayerIntent(act, before);
   const bodyAction = NON_TALK_ACTION.test(act);
   const talkish = !!addr || (!bodyAction && (intent.kind === 'talk' || intent.kind === 'refuse'));

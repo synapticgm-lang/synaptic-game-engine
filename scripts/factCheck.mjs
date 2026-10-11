@@ -174,8 +174,10 @@ const inHanded = (facts, word) => {
 };
 const negated = (sentence, idx) => /\b(?:no|not|without|never|nor|any)\s+(?:\w+\s+){0,2}$/i.test(sentence.slice(Math.max(0, idx - 30), idx));
 
-export function checkTurn(row, packet) {
+/** `page`: the story already on the page before this turn (page 1 and earlier beats); a count it told is established. */
+export function checkTurn(row, packet, page = '') {
   const facts = factsFor(row, packet);
+  const pageText = lower(page);
   const prose = String(row.gmText ?? '');
   const flags = [];
   const add = (kind, quote, missing) => {
@@ -287,7 +289,8 @@ export function checkTurn(row, packet) {
       if (new RegExp(`^\\s+(?:\\w+\\s+){0,2}?${EXIT_NOUN}\\b`, 'i').test(after)) continue;
       if (/^\s*(?:o'clock|times?|steps?|paces?|breaths?|heartbeats?|fingers?|hands|eyes|arms|feet)\b/i.test(after)) continue;
       if (/^\s+of (?:them|us|you)\b/i.test(after)) continue;
-      const handed = new RegExp(`\\b(?:${n}|${WORD_FOR[n] ?? '_'})\\b`).test(facts.handedText) || lower(facts.handedText).includes(lower(m[1]));
+      const said = new RegExp(`\\b(?:${n}|${WORD_FOR[n] ?? '_'})\\b`);
+      const handed = said.test(facts.handedText) || lower(facts.handedText).includes(lower(m[1])) || said.test(pageText);
       if (!handed) add('number', s, `${m[1]} appears in no handed fact`);
     }
 
@@ -306,6 +309,13 @@ export function checkTurn(row, packet) {
   return flags;
 }
 
+/** The opening page the run's transcript prints as Turn 0 (turns.jsonl starts after it). */
+export function pageOne(dir) {
+  const tf = join(dir, 'transcript.md');
+  if (!existsSync(tf)) return '';
+  return readFileSync(tf, 'utf8').match(/^## Turn 0\b[^\n]*\n+([\s\S]*?)\n#/m)?.[1]?.trim() ?? '';
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (!args.run) {
@@ -315,12 +325,15 @@ function main() {
   const dir = runDir(args.run);
   const rows = readFileSync(join(dir, 'turns.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
   const turns = [];
+  let page = pageOne(dir);
   for (const row of rows) {
+    const before = page;
+    page += `\n${row.gmText ?? ''}`;
     if (args.turn && row.turn !== args.turn) continue;
     if (!row.gmText) continue;
     const pf = join(dir, 'writer-prompts', `turn-${String(row.turn - 1).padStart(2, '0')}.txt`);
     const packet = existsSync(pf) ? readFileSync(pf, 'utf8') : '';
-    const flags = checkTurn(row, packet);
+    const flags = checkTurn(row, packet, before);
     turns.push({ turn: row.turn, input: row.playerInput, location: row.location, packet: existsSync(pf) ? basename(pf) : null, flags });
   }
   const flagged = turns.filter((t) => t.flags.length).length;
