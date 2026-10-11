@@ -204,6 +204,13 @@ export function checkTurn(row, packet, page = '') {
         }
         // "One passage led…, another…" lists the ways one by one; it is not a total of one.
         if (lower(m[1]) === 'one' && /\b(?:another|the other|a second|a third)\b/i.test(s)) continue;
+        // "the only path there" / "the only road to Lowmarket" is the one way to a named exit, not the total.
+        if (n === 1) {
+          const rest = lower(s.slice((m.index ?? 0) + m[0].length));
+          const exitNamed = (t) => exitFact.some((p) => p.length >= 4 && t.includes(lower(p)));
+          if (/^\s*(?:\w+\s+){0,4}?(?:to\s+(?:get|go|reach)\s+)?there\b/.test(rest) && exitNamed(lower(s))) continue;
+          if (/^\s*(?:to|toward|towards|into)\s/.test(rest) && exitNamed(rest.split(/[,;]/)[0])) continue;
+        }
         if (Number.isFinite(n) && n !== exitFact.length) {
           const src = facts.engineExits ? `engine result "Exits: ${facts.exitsReceipt}" = ${exitFact.length} mapped way(s) out` : `PLACES exits = ${exitFact.length} (${exitFact.join(', ')})`;
           const conflict = facts.engineExits && facts.placesExits.length !== facts.engineExits.length ? `; packet PLACES line lists ${facts.placesExits.length}` : '';

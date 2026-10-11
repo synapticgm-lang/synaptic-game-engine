@@ -143,7 +143,8 @@ export function classifyBeatCommit(
   // 02x Lock C — exact prior GM body recycle (player-asked repeat already returned).
   if (isExactPriorGmBody(state, text)) recycle('Same text as the last beat: write a new one.');
   // 02j Lock C — destroyed charter / dead foe cannot reopen as live facts.
-  if (isFactClosedViolation(state, text)) recycle('Reopens a closed fact (a destroyed item or a dead foe acting).');
+  const closedFact = factClosedViolationReason(state, text);
+  if (closedFact) recycle(closedFact);
   // 02z — sealed card: invented CAST, wrong HERE, excluded-pad-only progress.
   if (isSealedCardViolation(state, text, playerInput) || isExcludedPadProgress(state, text, playerInput)) {
     recycle('Invents a person or place not in the facts, or moves somewhere the player did not go.');
@@ -172,33 +173,42 @@ export function ignoresTerminalFight(state: GameState, prose: string): boolean {
 
 /** Lock C — prose that reopens a ledger-closed fact. */
 export function isFactClosedViolation(state: GameState, text: string): boolean {
+  return factClosedViolationReason(state, text) !== null;
+}
+
+const REOPENED_FACT = 'Reopens a closed fact (a destroyed item or a dead foe acting).';
+
+/** Which closed-fact check the prose fails, as the writer's revision line (null when none). */
+export function factClosedViolationReason(state: GameState, text: string): string | null {
   const body = (text ?? '').trim();
-  if (!body) return false;
+  if (!body) return null;
   if (isPyoaCharterClosed(state)) {
     if (
       /\b(?:millstone\s+)?charter\b/i.test(body)
       && /\b(?:clutch|hold|forge|burn|unused|fate|leave it to|will you (?:forge|burn)|takes? the charter|from your (?:hands|pack|pocket)|sell(?:s|ing)?|sold|hand(?:s|ed)? over|in your (?:pack|hand|hands|pocket|coat|kit|bag)|re-offers?|offers? you|weight|chest|tucked|against your|item-gain)\b/i.test(body)
       && !/\b(?:burned|destroyed|gone|ashes|already sold|empty pocket|nothing left|space where the charter)\b/i.test(body)
     ) {
-      return true;
+      return REOPENED_FACT;
     }
   }
   const kill = state.sceneFacts?.lastKill;
   // The kill turn is the engine's settled fight being told, not a dead foe acting.
   if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter && kill.turn !== state.turn) {
-    if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
-    if (isClosedKillRecycle(body, kill, false)) return true;
+    if (isDeadFoeReopenedAsLiving(body, kill, false)) return REOPENED_FACT;
+    if (isClosedKillRecycle(body, kill, false)) return REOPENED_FACT;
   }
   // 02p — role person who is not in this scene.
-  if (isInventedClosedScenePerson(state, body)) return true;
+  if (isInventedClosedScenePerson(state, body)) return 'Puts a person in this scene who is not here.';
   // 02q — one camera / one fight (leave-reach + steel, or closed foe blade-rez).
-  if (isOneCameraFightViolation(state, body)) return true;
+  if (isOneCameraFightViolation(state, body)) return 'Mixes two scenes in one beat (a move and a fight, or a finished fight).';
   // 02r — old-room camera or post-clear steel after a recent scene change.
-  if (isStaleContextBleed(state, body)) return true;
+  if (isStaleContextBleed(state, body)) return 'Writes a place or fight the player already left as if it were here.';
   // 02t / 02v — deixis / kit object / companion name used as a slot.
-  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerNeverCastTitles(state))) return true;
-  if (isClosedLedgerViolation(state, body)) return true;
-  return false;
+  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerNeverCastTitles(state))) {
+    return 'Uses a name or place title as an object or as a person.';
+  }
+  if (isClosedLedgerViolation(state, body)) return REOPENED_FACT;
+  return null;
 }
 
 /**

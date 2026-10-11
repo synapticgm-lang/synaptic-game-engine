@@ -145,12 +145,17 @@ export function ledgerPlaceTitles(state?: {
   return out;
 }
 
-/** `take The Sevenfold hands` / `open your The Sevenfold` — place title stuffed into an object slot. */
+/**
+ * `take The Sevenfold hands` / `open your The Sevenfold` — place title stuffed into an object slot.
+ * Only a proper title glues: a lowercase needle (from a scene prop such as "wooden chest") is the
+ * object's own plain-English name, and "the wooden chest" is not a title in a slot.
+ */
 export function isPlaceTitleObjectGlue(text: string, placeTitles: string[] = []): boolean {
   const t = text ?? '';
   if (!t.trim() || !placeTitles.length) return false;
   for (const title of placeTitles) {
     if (isAtmospherePlaceName(title)) continue;
+    if (!isProperPersonName(title)) continue;
     const esc = escapeRe(title);
     if (new RegExp(`\\b${OBJECT_TAKE}\\s+(?:your\\s+)?(?:the\\s+)?${esc}\\s+${BODY_OR_KIT}\\b`, 'i').test(t)) {
       return true;
