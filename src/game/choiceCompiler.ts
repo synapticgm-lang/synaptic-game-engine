@@ -1341,7 +1341,8 @@ export function compileChoices(
       dungeonHubRe.test(`${h.name} ${h.blurb ?? ''}`) && !cleared.has(h.name.toLowerCase());
     if (hereHub && !state.activeDungeon && isOpenDungeonHub(hereHub)
       && !finalChoices.some((c) => /^enter\b/i.test(c))) {
-      const enter = `Enter ${hereHub.name}`;
+      // The arrival already stands Jax in the hub, and a card room is not a place a chip names.
+      const enter = 'Go inside';
       finalChoices = [...finalChoices.slice(0, 5), enter];
       notes.push(`Dungeon entry chip: ${enter.slice(0, 32)}`);
     }

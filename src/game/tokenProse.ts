@@ -587,7 +587,7 @@ function paintDisplay(row: { display: string; klass?: string }, text: string, of
   if (!display) return display;
   // "onto the @t2" with display "a ruined bathhouse": the writer's determiner already starts the phrase.
   if (ARTICLE_RE.test(display) && hasDeterminerBefore(text, offset)) return display.replace(ARTICLE_RE, '');
-  const thing = row.klass === 'kit' || row.klass === 'prop' || row.klass === 'window';
+  const thing = row.klass === 'kit' || row.klass === 'carried' || row.klass === 'prop' || row.klass === 'window';
   if (!thing || /^[A-Z]/.test(display) || ARTICLE_RE.test(display) || /^(?:their|his|her|your|my|its)\s/i.test(display)) {
     return display;
   }
@@ -764,7 +764,7 @@ export function normalizeBeatRefs(
   const firstUse = (row: LedgerRef): TokenUse =>
     [...TOKEN_USES].find((u) => tokenUseMatchesClass(u, row.klass)) ?? 'actor';
   // 29z3 — a place or thing declared with the wrong use is a label slip; a person used as a thing stays a bind fail.
-  const retype = (row: LedgerRef) => !opts?.thingsOnly || row.klass === 'place' || row.klass === 'prop' || row.klass === 'kit' || row.klass === 'window';
+  const retype = (row: LedgerRef) => !opts?.thingsOnly || row.klass === 'place' || row.klass === 'prop' || row.klass === 'kit' || row.klass === 'carried' || row.klass === 'window';
   const refs: TokenUseRef[] = beat.refs.map((ref) => {
     const row = findEnum(enumRefs, ref.tok, ref.id);
     if (!row) return ref;

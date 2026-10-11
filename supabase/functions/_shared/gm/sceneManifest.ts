@@ -175,6 +175,8 @@ export function findManifestInventions(
   // The turn's one name list: what the writer was allowed to mention is not an invention.
   const packet = state.completedEvent;
   for (const x of packet && packet.turn === state.turn ? packet.allowlist : compileNounAllowlist(state)) add(x);
+  // What the ledger holds (a just-won loot drop, a bagged gift) is no invention, handed or not.
+  for (const item of state.inventory ?? []) add(item.name ?? '');
   add(m.place);
   add(state.character?.name ?? '');
   add(state.storyName ?? '');

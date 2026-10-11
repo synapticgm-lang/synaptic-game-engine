@@ -222,7 +222,7 @@ function housedWindowDisplay(state: GameState, prop: string): string | null {
 }
 
 /** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
-export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'companion' | 'window';
+export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window';
 
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
 
@@ -560,6 +560,7 @@ const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   corpse: ['corpse'],
   prop: ['prop_used'],
   kit: ['worn', 'prop_used'],
+  carried: ['prop_used'],
   window: ['prop_used'],
 };
 
@@ -632,8 +633,21 @@ export function compileRefEnum(
     const display = housedWindowDisplay(state, label);
     if (display) add(`window:${slugRefId(label)}`, display, 'window', windowNote);
   };
+  // A card prop the player now owns ("tabard" after the offer granted the visitor's tabard) is carried, not scenery.
+  // Inventory never on screen stays unhanded.
+  const owned = (state.inventory ?? []).map((i) => ({
+    name: kitRefDisplay(i.name ?? '').toLowerCase().replace(/[\u2018\u2019]/g, "'"),
+    worn: !!i.equipped,
+  }));
+  const ownedProp = (prop: string) => {
+    const p = prop.toLowerCase().replace(/[\u2018\u2019]/g, "'").replace(/^(?:the|a|an)\s+/, '').trim();
+    return p ? owned.find((o) => o.name === p || o.name.endsWith(` ${p}`)) : undefined;
+  };
   for (const prop of state.sceneFacts?.props ?? []) {
-    if (isSystemWindowLabel(prop) && state.engineMode === 'litrpg') addWindow(prop);
+    const own = ownedProp(prop);
+    if (own?.worn) continue;
+    if (own) add(`kit:${slugRefId(prop)}`, prop, 'carried', 'carried, not worn');
+    else if (isSystemWindowLabel(prop) && state.engineMode === 'litrpg') addWindow(prop);
     else add(`prop:${slugRefId(prop)}`, prop, 'prop');
   }
   for (const extra of extras) {

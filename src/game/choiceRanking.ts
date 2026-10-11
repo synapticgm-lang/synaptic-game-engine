@@ -538,6 +538,10 @@ export function applyAutoPlayerStallRules(
   return { pick, rule: null };
 }
 
+const SHOWN_CHIPS = 4;
+/** Only a dungeon card offers this chip, so its presence means the player is inside one. */
+const CARD_EXIT = /^head back to the exit$/i;
+
 /** Final chip order: move-the-story-on and new things first, stale loiter and tried repeats rested, "Go back" last. */
 export function rankChoices(state: GameState, choices: string[]): { choices: string[]; notes: string[] } {
   const notes: string[] = [];
@@ -548,7 +552,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   const story = storyChip(state);
 
   let list = [...choices];
-  if (story && !list.some((c) => c.toLowerCase() === story.toLowerCase())) {
+  // Inside a dungeon card the way out is the card's own exit chip; a travel story chip would skip it.
+  const cardOwnsExit = choices.some((c) => CARD_EXIT.test(c)) && !!travelDest(story ?? '');
+  if (story && !cardOwnsExit && !list.some((c) => c.toLowerCase() === story.toLowerCase())) {
     list = [story, ...list];
     notes.push(`Story chip: ${story.slice(0, 40)}`);
   }
@@ -595,6 +601,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       const dest = travelDest(c);
       return dest && samePlace(dest.toLowerCase(), prev) && !/^go back to\b/i.test(c) ? `Go back to ${dest}` : c;
     });
+  // The offered list shows four chips; inside a dungeon card its way out is always one of them (ranked last of the four).
+  const exitAt = ranked.findIndex((c) => CARD_EXIT.test(c));
+  if (exitAt > SHOWN_CHIPS - 1) ranked.splice(SHOWN_CHIPS - 1, 0, ...ranked.splice(exitAt, 1));
   if (ranked.join('|') !== choices.join('|')) notes.push('Anti-circling rank');
   return { choices: ranked, notes };
 }
