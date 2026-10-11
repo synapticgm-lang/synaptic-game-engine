@@ -26,6 +26,7 @@ import {
 import { runModesAgentsBatch } from './modesAgents300';
 import { regenerateModeGeminiPacks } from './splitModesGemini';
 import { loadDotEnv } from './loadDotEnv';
+import { isClientAutoplayWriter } from '../../src/game/autoplayWriter';
 
 /** Minimal localStorage for Node (Test Lab / capacity / settings never touch John's browser). */
 function installNodeShims(): void {
@@ -82,9 +83,11 @@ Options:
                        without --bible picks summoned-pact / cursed-keep / salt-road-heist.
                        PYOA is never tested.
   --ai-tier free|mid|high
-  --writer default|flash-lite|openrouter
+  --writer default|flash-lite|openrouter|gateway
                        flash-lite/openrouter = OpenRouter google/gemini-2.5-flash-lite (needs OPENROUTER_API_KEY)
+                       gateway = Vercel AI Gateway (needs AI_GATEWAY_API_KEY + --writer-model)
                        default = hosted Free via edge gm-turn
+  --writer-model ID    provider/model for --writer gateway (e.g. anthropic/claude-haiku-5.5)
   --pick-mode fate|first-pad
   --route <place>           from turn 2, travel toward <place> until arrived, then normal picks
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
@@ -273,7 +276,7 @@ async function main(): Promise<void> {
   const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim();
   const supabaseKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim();
   const hasEnv = Boolean(supabaseUrl && supabaseKey);
-  const usesClientWriter = opts.writer === 'flash-lite';
+  const usesClientWriter = isClientAutoplayWriter(opts.writer);
 
   if (!opts.dryRun && !hasEnv && !usesClientWriter) {
     console.error(
@@ -372,6 +375,7 @@ async function main(): Promise<void> {
           outRoot: opts.outRoot,
           characterName: opts.characterName,
           writer: opts.writer,
+          writerModel: opts.writerModel,
         });
         scoreRunThumbs(summary.outDir, log);
         summaries.push(summary);
@@ -412,6 +416,7 @@ async function main(): Promise<void> {
         outRoot: opts.outRoot,
         characterName: opts.characterName,
         writer: opts.writer,
+        writerModel: opts.writerModel,
         inputs: opts.inputs,
         routeTo: opts.routeTo,
         resumeFrom: opts.resumeFrom,

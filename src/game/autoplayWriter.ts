@@ -7,7 +7,7 @@
  * Mid writer stays OFF (writerPolicy). Live Free player path is unchanged.
  */
 
-export type AutoplayWriterKind = 'default' | 'flash-lite';
+export type AutoplayWriterKind = 'default' | 'flash-lite' | 'gateway';
 
 export type AutoplayWriterOverride = {
   kind: AutoplayWriterKind;
@@ -17,7 +17,7 @@ export type AutoplayWriterOverride = {
   baseUrl: string;
   apiKey: string;
   /** Where credentials came from (for meta / logs — never the key). */
-  route: 'openrouter-paid' | 'custom';
+  route: 'openrouter-paid' | 'ai-gateway' | 'custom';
   note: string;
 };
 
@@ -36,6 +36,9 @@ let override: AutoplayWriterOverride | null = null;
 export const FLASH_LITE_OPENROUTER_MODEL = 'google/gemini-2.5-flash-lite';
 
 export const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
+
+/** Vercel AI Gateway (OpenAI-compatible). Harness only — model from `--writer-model`. */
+export const AI_GATEWAY_BASE = 'https://ai-gateway.vercel.sh/v1';
 
 /** Curriculum / auto-improve CLI default when `--writer` omitted. */
 export const AUTOPLAY_HARNESS_DEFAULT_WRITER: AutoplayWriterKind = 'flash-lite';
@@ -80,7 +83,7 @@ export function setAutoplayWriterOverride(next: AutoplayWriterOverride | null): 
 
 /** True when Fate uses client-direct GM (not edge gm-turn). */
 export function isClientAutoplayWriter(kind?: AutoplayWriterKind | null): boolean {
-  return kind === 'flash-lite';
+  return kind === 'flash-lite' || kind === 'gateway';
 }
 
 /**
@@ -93,6 +96,7 @@ export function parseAutoplayWriterKind(raw: string | undefined | null): Autopla
     return 'flash-lite';
   }
   if (w === 'default' || w === 'hosted' || w === 'edge') return 'default';
+  if (w === 'gateway' || w === 'ai-gateway') return 'gateway';
   return 'flash-lite';
 }
 
@@ -125,17 +129,47 @@ export function resolveFlashLiteAutoplayWriter(): AutoplayWriterOverride {
   };
 }
 
-export function resolveAutoplayWriter(kind: AutoplayWriterKind): AutoplayWriterOverride | null {
+/**
+ * Vercel AI Gateway writer. Same override → same client GM packet and reply parse as Flash Lite;
+ * only base URL, key, and model differ.
+ */
+export function resolveGatewayAutoplayWriter(model: string | undefined | null): AutoplayWriterOverride {
+  const id = (model ?? '').trim();
+  if (!id || !id.includes('/')) {
+    throw new Error('--writer gateway needs --writer-model <provider/model> (e.g. anthropic/claude-haiku-5.5).');
+  }
+  const apiKey = env('AI_GATEWAY_API_KEY');
+  if (!apiKey) {
+    throw new Error(`Gateway harness requires AI_GATEWAY_API_KEY in .env. Model: ${id} via ${AI_GATEWAY_BASE}.`);
+  }
+  return {
+    kind: 'gateway',
+    model: id,
+    baseUrl: AI_GATEWAY_BASE,
+    apiKey,
+    route: 'ai-gateway',
+    note: `Vercel AI Gateway ${id} — harness only (Mid writer OFF).`,
+  };
+}
+
+export function resolveAutoplayWriter(
+  kind: AutoplayWriterKind,
+  model?: string | null
+): AutoplayWriterOverride | null {
   if (kind === 'default') return null;
+  if (kind === 'gateway') return resolveGatewayAutoplayWriter(model);
   return resolveFlashLiteAutoplayWriter();
 }
 
-export function enableAutoplayWriter(kind: AutoplayWriterKind): AutoplayWriterOverride | null {
+export function enableAutoplayWriter(
+  kind: AutoplayWriterKind,
+  model?: string | null
+): AutoplayWriterOverride | null {
   if (kind === 'default') {
     clearAutoplayWriterOverride();
     return null;
   }
-  const next = resolveAutoplayWriter(kind);
+  const next = resolveAutoplayWriter(kind, model);
   setAutoplayWriterOverride(next);
   return next;
 }

@@ -302,8 +302,10 @@ export type FateAutoplayCliOpts = {
   batchDir?: string;
   outRoot: string;
   characterName: string;
-  /** GM writer: default (hosted Free via edge) or flash-lite / openrouter (OpenRouter). */
+  /** GM writer: default (hosted Free via edge), flash-lite / openrouter (OpenRouter), or gateway (Vercel AI Gateway). */
   writer?: AutoplayWriterKind;
+  /** `--writer-model <provider/model>` — required with `--writer gateway`. */
+  writerModel?: string;
 };
 
 export type MatrixCombo = {
@@ -2134,6 +2136,8 @@ export async function runFateAutoplay(opts: {
   characterName: string;
   /** When set, forces Flash Lite (or default hosted) for this run via client GM path. */
   writer?: AutoplayWriterKind;
+  /** Model id for `writer: 'gateway'`. */
+  writerModel?: string;
   /** 28b — scripted player lines per turn (harness only); a blank entry = normal pick. */
   inputs?: string[];
   /** `--route <place>` — from turn 2, travel toward this place until arrived, then normal picks. */
@@ -2146,7 +2150,7 @@ export async function runFateAutoplay(opts: {
   enableAutoplayTestLab(opts.aiTier);
   setActiveSubscriptionTier(opts.aiTier);
   const writerKind = opts.writer ?? 'default';
-  const writerOverride = enableAutoplayWriter(writerKind);
+  const writerOverride = enableAutoplayWriter(writerKind, opts.writerModel);
   if (writerOverride) {
      
     console.log(
@@ -2501,7 +2505,8 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
         : 'default';
     } else if (a === '--writer') {
       out.writer = parseAutoplayWriterKind(next());
-    } else if (a === '--dry-run') out.dryRun = true;
+    } else if (a === '--writer-model') out.writerModel = next().trim();
+    else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;
     else if (a === '--matrix-limit') out.matrixLimit = Math.max(0, Number(next()) || 0);
