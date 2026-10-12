@@ -355,6 +355,7 @@ export function handedCountText(state: GameState, packet?: CompletedEventPacket)
     hasSheet ? buildGroundTruthLedger(state, { compact: true }) : '',
     packet?.infoSheet ?? '',
     packet?.engineResult ?? '',
+    ...(packet?.ledgerChanges ?? []),
     ...(packet?.allowlist ?? []),
     ...refEnumOf(state, packet).map((r) => r.display),
     ...page,
@@ -489,9 +490,14 @@ export function classifyTokenLine(
   let capText = apos(line.text);
   const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n)).map(apos);
   // 29z3 — a short form of a held name ("the Scout" for Integration Scar Scout) is not an invention.
+  // A possessive word of a held name stands bare too ("the Circle" for The Circle's Price).
   const parts = whole.flatMap((n) => {
     const words = n.split(/[\s—–-]+/).filter((w) => /^[A-Z][a-z'’]{3,}$/.test(w));
-    return words.length > 1 || n.split(/\s+/).length > 1 ? words : [];
+    if (!(words.length > 1 || n.split(/\s+/).length > 1)) return [];
+    return words.flatMap((w) => {
+      const bare = w.replace(/'s?$/, '');
+      return bare !== w && bare.length >= 4 ? [w, bare] : [w];
+    });
   });
   for (const name of [...new Set([...whole, ...parts])].sort((a, b) => b.length - a.length)) {
     capText = capText.split(name).join('·');

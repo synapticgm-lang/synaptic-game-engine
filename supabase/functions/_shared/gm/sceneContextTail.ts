@@ -62,19 +62,31 @@ export function placesDiffer(a: string | undefined | null, b: string | undefined
   return left !== right;
 }
 
-/** Distinctive place mention — strong token (≥6) or every short token (West Wall). */
+/**
+ * Distinctive place mention — strong token (≥6) or every short token (West Wall).
+ * A word the place's own label writes in lower case is a description word ("a harbor circle"): the same word
+ * capitalised mid-sentence is another proper name ("The Circle's Price"), not this place.
+ */
 export function mentionsPlace(text: string, name: string | undefined | null): boolean {
   const raw = normalizePlace(name);
   if (!raw || !text) return false;
-  const hay = text.toLowerCase();
   const words = placeWords(raw);
   if (!words.length) {
-    return raw.length >= 5 && hay.includes(raw.toLowerCase());
+    return raw.length >= 5 && text.toLowerCase().includes(raw.toLowerCase());
   }
   const strong = words.filter((w) => w.length >= 6);
   const needles = strong.length ? strong : words;
   const needAll = strong.length === 0;
-  const hit = (w: string) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(hay);
+  const hit = (w: string) => {
+    const re = new RegExp(`\\b${escapeRe(w)}\\b`, 'gi');
+    const describes = !new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(raw.replace(/\b[a-z][\w'-]*/g, ' '));
+    for (const m of text.matchAll(re)) {
+      const at = m.index ?? 0;
+      const sentenceStart = /(?:^|[.!?]["'”’)\]]*\s+)$/.test(text.slice(0, at));
+      if (!describes || !/^[A-Z]/.test(m[0]) || sentenceStart) return true;
+    }
+    return false;
+  };
   return needAll ? needles.every(hit) : needles.some(hit);
 }
 
