@@ -56,3 +56,22 @@ export function applyCharacterXpGain(
     notes: hidesPart(housing, 'level') ? [] : notes,
   };
 }
+
+/** All XP the sheet gained between two states, counting the bars filled by any level-ups (same curve). */
+export function characterXpGainBetween(
+  before: Character | undefined,
+  after: Character | undefined,
+  mode?: EngineMode
+): number {
+  if (!before || !after) return 0;
+  const fromLevel = before.level ?? 1;
+  const toLevel = after.level ?? fromLevel;
+  if (toLevel <= fromLevel) return Math.max(0, (after.xp ?? 0) - (before.xp ?? 0));
+  let xpToNext = mode === 'dnd' ? dndXpToNext(fromLevel) : Math.max(1, before.xpToNext ?? 150);
+  let gain = xpToNext - (before.xp ?? 0);
+  for (let level = fromLevel + 1; level < toLevel; level++) {
+    xpToNext = mode === 'dnd' ? dndXpToNext(level) : Math.floor(xpToNext * 1.5);
+    gain += xpToNext;
+  }
+  return Math.max(0, gain + (after.xp ?? 0));
+}

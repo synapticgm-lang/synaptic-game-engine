@@ -143,7 +143,7 @@ import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './recei
 import type { RunManifest } from './runManifest';
 import { BUILD_STAMP } from './runManifest';
 import { applySandboxXpAwards } from './sandboxXp';
-import { applyCharacterXpGain } from './characterXp';
+import { applyCharacterXpGain, characterXpGainBetween } from './characterXp';
 import {
   applyGovernanceCommit,
   applyGovernanceToProse,
@@ -2070,8 +2070,7 @@ Do NOT print dice notation or CODE ENFORCED.
       questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
       itemsUsed: extractUsedItems(state, next),
-      // 28a — milestone XP is the only source; the old sum double-counted it.
-      xpGained: sandboxXp.xp,
+      xpGained: characterXpGainBetween(state.character, governed.character, state.engineMode),
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,

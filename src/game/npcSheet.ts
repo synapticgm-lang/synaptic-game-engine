@@ -106,8 +106,9 @@ function placeFit(place: SheetPlace, job: NpcRole): { drop: (p: Part) => boolean
     // The one holding the keys is not the victim.
     return { drop: (p) => p.moods.has('afraid') };
   }
-  if (place === 'road' && (job === 'bounty-target' || job === 'antagonist')) {
-    return { drop: () => false, speechNeeds: ['bored', 'threat'] };
+  if (job === 'bounty-target' || job === 'antagonist') {
+    // The one working against the player reads as a threat anywhere, not cheerful or trusting.
+    return { drop: (p) => p.moods.has('cheer'), speechNeeds: ['bored', 'threat'] };
   }
   return { drop: () => false };
 }

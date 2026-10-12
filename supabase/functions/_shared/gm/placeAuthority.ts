@@ -12,7 +12,7 @@ const INTERIOR_PLACE_CUES =
   /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|[a-z]*house|waystation|cottage|shop|barn|stable|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
 
 const OUTDOOR_OVERRIDE =
-  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?)\b/i;
+  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|approach|harbour|harbor|docks?)\b/i;
 
 /** Interior cues that win even when the label also names roads/streets nearby (alone ruin dumps). */
 const OUTDOOR_STILL_INSIDE =
@@ -27,7 +27,7 @@ export function isUndergroundPlace(name: string | undefined): boolean {
 }
 
 const OUTDOOR_PLACE =
-  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?|quay|ford|crossroads|camp|field|fields|meadow|forest|woods|shore|beach|hill|riverbank|stalls?|battlements)\b/i;
+  /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|approach|harbour|harbor|docks?|quay|ford|crossroads|camp|field|fields|meadow|forest|woods|shore|beach|hill|riverbank|stalls?|battlements)\b/i;
 
 /** A description's head phrase: the words before where it says what the place is next to. */
 const DESCRIPTION_TAIL =
