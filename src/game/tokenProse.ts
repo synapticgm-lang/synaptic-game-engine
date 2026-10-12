@@ -87,8 +87,9 @@ function readTokenUse(raw: string): TokenUse | null {
  * Fixed lexicon of job roles a ledger cast slot fills. Do not grow this list per incident.
  * An unnamed passer-by ("the stranger", "a figure") claims no slot and is not on it.
  */
+/** Up to two describing words may stand between the article and the role ("the close-eyed clerk", "a tall guard"). */
 const UNBOUND_ANIMATE =
-  /\b(?:a|an|the)\s+(?:chanter|vendor|guard|merchant|priest|innkeep|handler|clerk|official|registrar|witness|archivist)\b/i;
+  /\b(?:a|an|the)\s+(?:(?!(?:and|or|of|to|in|at|on|by|for|from|with|where|who|that|which|was|were|is|had|has)\b)[a-z][a-z'-]*\s+){0,2}(?:chanter|vendor|guard|merchant|priest|innkeep|handler|clerk|official|registrar|witness|archivist)\b/i;
 
 const TOK_RE = /@t(\d+)\b/g;
 
@@ -517,7 +518,8 @@ export function classifyTokenLine(
   }
   let animateText = line.text;
   for (const name of [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean).sort((a, b) => b.length - a.length)) {
-    animateText = animateText.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '·');
+    // Whole words only: a held "Close" is not the "close" in "close-eyed".
+    animateText = animateText.replace(new RegExp(`(?<![\\w'-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w'-])`, 'gi'), '·');
   }
   if (lineHasUnboundAnimate(animateText)) {
     return { ok: false, reason: 'unbound-animate' };

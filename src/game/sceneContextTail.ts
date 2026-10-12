@@ -17,6 +17,10 @@ const PLACE_STOP = new Set([
   'your', 'over', 'road', 'street', 'place',
 ]);
 
+/** A preposition in a described place ("a stack behind iron mesh") is grammar, never the place's own word. */
+const PREPOSITION =
+  /^(?:above|across|after|against|along|among|around|before|behind|below|beneath|beside|besides|between|beyond|down|inside|onto|outside|past|through|throughout|toward|towards|underneath|upon|within|without)$/;
+
 const TRAVEL_LINE =
   /\b(travel(?:\s+toward)?|return to|enter|go (?:inside|in|through|into)|head (?:inside|through|into|to)|leave|exit|walk away)\b/i;
 
@@ -52,7 +56,7 @@ function placeWords(name: string): string[] {
     .toLowerCase()
     .replace(/[^a-z0-9\s'-]/g, ' ')
     .split(/\s+/)
-    .filter((w) => w.length >= 4 && !PLACE_STOP.has(w));
+    .filter((w) => w.length >= 4 && !PLACE_STOP.has(w) && !PREPOSITION.test(w));
 }
 
 export function placesDiffer(a: string | undefined | null, b: string | undefined | null): boolean {
@@ -316,7 +320,8 @@ function openingPinActsHere(body: string, state: GameState): boolean {
     return false;
   }
   const pins = openingPinNames(state).filter((pin) => pin.length >= 3);
-  return splitProseSentences(body).some((sentence) => {
+  // Quoted words are talk: a speaker recalling "the priests" or "the Close steps" puts no pin in this room.
+  return splitProseSentences(withoutTalkAbout(body)).some((sentence) => {
     const pinHit =
       OPENING_PIN_ROLE.test(sentence)
       || pins.some((pin) => new RegExp(`\\b${escapeRe(pin)}\\b`, 'i').test(sentence));

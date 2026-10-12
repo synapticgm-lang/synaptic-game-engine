@@ -30,6 +30,9 @@ const PLACE_TITLE_STOP = new Set([
 const BODY_OR_KIT =
   '(?:hands?|hand|coat|chest|seal|lid|pocket|bag|pack|shoulders?|sleeve|collar|wrist)';
 
+/** What only a person wears or has: a title may own a seal, a lid, a bag or a pack ("the Crown seal"). */
+const BODY_OR_WORN = '(?:hands?|coat|chest|pocket|shoulders?|sleeve|collar|wrist)';
+
 /** After `the <Name>`, legal person/prep grammar — not a slot noun. */
 const AFTER_NAME_OK =
   /^(?:looks?|stands?|says?|asks?|nods?|watches?|sits?|steps?|waits?|calls?|shifts?|answers?|speaks?|holds?|glances?|from|with|and|who|that|then|still|here|there|beside|near|behind|after|before|into|onto|across|at|in|on|to|of|for|as|by|is|has|had|was|were)$/i;
@@ -173,7 +176,7 @@ export function isPlaceTitleObjectGlue(text: string, placeTitles: string[] = [])
       return true;
     }
     const adj = t.match(new RegExp(`\\b(?:[Tt]he|[Yy]our)\\s+${esc}\\s+([a-z]{3,})\\b`));
-    if (adj?.[1] && new RegExp(`^${BODY_OR_KIT}$`, 'i').test(adj[1])) return true;
+    if (adj?.[1] && new RegExp(`^${BODY_OR_WORN}$`, 'i').test(adj[1])) return true;
   }
   return false;
 }
