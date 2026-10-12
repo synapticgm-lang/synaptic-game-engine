@@ -1744,12 +1744,21 @@ function offerObject(sentence: string): string {
   return end >= 0 ? object.slice(0, end) : object;
 }
 
+/** "a seat at the table" / "a bunk in the barracks": a thing fixed to a place is a standing offered, not a thing handed over. */
+function isPlaceBoundPart(sentence: string, part: string): boolean {
+  const p = part.trim();
+  if (!p) return false;
+  const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\b${esc}\\s+(?:at|in|on|among)\\s+(?:the|a|an|your|their|its)\\b`, 'i').test(sentence);
+}
+
 /** The things an offer sentence hands over: its bracketed list, else the object of the sentence. */
 function offerItems(sentence: string): string[] {
   const bracket = sentence.match(/\(([^)]+)\)/)?.[1];
   return (bracket ?? offerObject(sentence))
     .split(/,|\s+and\s+|\s+or\s+/i)
     .map((p) => p.trim().replace(/^(?:and|or)\s+/i, ''))
+    .filter((p) => !isPlaceBoundPart(sentence, p))
     // A part that leads with a verb before its article ("issue a traveler's kit") is the article's phrase.
     .map((p) => (/^(?:a|an|the|some|your|their)\s/i.test(p) ? p : p.replace(/^.*?\s(?=(?:a|an|some)\s)/i, '')))
     // A definite thing outside a bracket list ("unbar the door") is already in the scene, not handed over.

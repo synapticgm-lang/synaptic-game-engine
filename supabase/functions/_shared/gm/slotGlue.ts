@@ -206,6 +206,15 @@ export function isSlotGlueViolation(
   return false;
 }
 
+/**
+ * "The way toward Cathedral Close waits" / "the door to the Undercroft waits": a title right after a preposition is
+ * that preposition's object, so the verb after it belongs to the noun before the preposition.
+ */
+function titleIsPrepositionObject(src: string, offset: number): boolean {
+  return /\b(?:to|toward|towards|of|into|onto|from|past|beyond|through|for|across|over|under|near|behind|beside|at|in|on)\s+(?:the\s+)?$/i
+    .test(src.slice(Math.max(0, offset - 24), offset));
+}
+
 /** Ledger title used as a person subject / possessor — not a place adverbial. */
 export function isPlaceTitleAsPersonSubject(text: string, placeTitles: string[] = []): boolean {
   // A speaker may say a place or body wants or holds something ("The Ledger holds what we need"); only narration claims it.
@@ -220,7 +229,9 @@ export function isPlaceTitleAsPersonSubject(text: string, placeTitles: string[] 
       return true;
     }
     // Case-sensitive: "the cathedral steps" / "the grain-ship hold" are common nouns, not the title acting.
-    if (new RegExp(`\\b${esc}\\s+${PLACE_ACTS_VERB}\\b`).test(t)) return true;
+    for (const m of t.matchAll(new RegExp(`\\b${esc}\\s+${PLACE_ACTS_VERB}\\b`, 'g'))) {
+      if (!titleIsPrepositionObject(t, m.index ?? 0)) return true;
+    }
   }
   return false;
 }
@@ -298,7 +309,11 @@ export function scrubSlotGlue(
       new RegExp(`\\b${esc}['’]s\\s+(${PERSON_VERB}|eyes?|fingers?|voice|jaw|hand|hands|gaze)\\b`, 'gi'),
       'Someone nearby $1'
     );
-    next = next.replace(new RegExp(`\\b${esc}\\s+(${PERSON_VERB})\\b`, 'gi'), 'Someone nearby $1');
+    next = next.replace(
+      new RegExp(`\\b${esc}\\s+(${PERSON_VERB})\\b`, 'gi'),
+      (full, verb: string, offset: number, src: string) =>
+        titleIsPrepositionObject(src, offset) ? full : `Someone nearby ${verb}`
+    );
     next = next.replace(
       new RegExp(`\\b(${OBJECT_TAKE}\\s+)(?:your\\s+)?(?:the\\s+)?${esc}\\s+(${BODY_OR_KIT})\\b`, 'gi'),
       '$1the $2'
