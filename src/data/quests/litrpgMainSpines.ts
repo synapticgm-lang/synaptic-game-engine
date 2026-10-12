@@ -104,8 +104,9 @@ const FAMILY_PATTERNS: Record<OpeningFamilyTag, RegExp> = {
     /\b(?:collapsed mage tower|mage'?s? tower|wizard'?s? tower|sorcer(?:er|ess)'?s? tower|destroyed sanctum|mage'?s sanctum)\b/i,
   warCamp:
     /\b(war[- ]?camp|garrison|banner-smoke|enlist|quartermaster|brigandine|mercenary|mud-torn|iron hounds)\b/i,
+  // A wagon under way, not any wagon: a parked license wagon ("the wagon desk of the Argent Ledger") is a desk.
   transitWagon:
-    /\b(wagon|caravan|highwaym[ae]n|merchant'?s road|moving (?:caravan )?wagon)\b/i,
+    /\b(caravan|highwaym[ae]n|merchant'?s road|moving (?:caravan )?wagon)\b/i,
   rural:
     /\b(village|elder'?s hearth|razor-boars?|family owes|generation-old|rural|winter meat)\b/i,
   academy:

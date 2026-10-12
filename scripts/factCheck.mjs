@@ -215,6 +215,9 @@ export function checkTurn(row, packet, page = '') {
       // "Exits: no way out of X leads to a mapped place" says where no way leads, not how many doors X has:
       // it hands no count (the commit gate's exitCount.handedExits reads it the same way).
       const counted = !(facts.engineExits && !facts.engineExits.length);
+      // "Two doors stood open…, while two more ways out…": an added count ("more", "further") makes the counts a sum
+      // (same reading as the commit gate's exitCount.wrongExitCountProblem).
+      const parts = [];
       for (const m of counted ? s.matchAll(re) : []) {
         if (!EXIT_CLAIM.test(s) && !/\b(?:left|led|leads|lead|ran|out)\b/i.test(s)) continue;
         // "without a single door opening" counts nothing; in "the taller one said the road ahead cost a fee"
@@ -247,11 +250,14 @@ export function checkTurn(row, packet, page = '') {
           if (/^\s*(?:\w+\s+){0,4}?(?:to\s+(?:get|go|reach)\s+)?there\b/.test(rest) && exitNamed(lower(s))) continue;
           if (/^\s*(?:to|toward|towards|into)\s/.test(rest) && exitNamed(rest.split(/[,;]/)[0])) continue;
         }
-        if (Number.isFinite(n) && n !== exitFact.length) {
-          const src = facts.engineExits ? `engine result "Exits: ${facts.exitsReceipt}" = ${exitFact.length} mapped way(s) out` : `PLACES exits = ${exitFact.length} (${exitFact.join(', ')})`;
-          const conflict = facts.engineExits && facts.placesExits.length !== facts.engineExits.length ? `; packet PLACES line lists ${facts.placesExits.length}` : '';
-          add('exit-count', s, `${src}${conflict}`);
-        }
+        if (Number.isFinite(n)) parts.push({ n, more: /\b(?:more|further|additional)\b/i.test(between) });
+      }
+      const summed = parts.some((p) => p.more);
+      const wrong = summed ? parts.reduce((sum, p) => sum + p.n, 0) !== exitFact.length : parts.some((p) => p.n !== exitFact.length);
+      if (wrong) {
+        const src = facts.engineExits ? `engine result "Exits: ${facts.exitsReceipt}" = ${exitFact.length} mapped way(s) out` : `PLACES exits = ${exitFact.length} (${exitFact.join(', ')})`;
+        const conflict = facts.engineExits && facts.placesExits.length !== facts.engineExits.length ? `; packet PLACES line lists ${facts.placesExits.length}` : '';
+        add('exit-count', s, `${src}${conflict}`);
       }
       // Places named as a way out that are not this turn's exits.
       if (EXIT_CLAIM.test(s) && !/\b(?:counting|watching|eyeing|checking) the exits\b/i.test(s)) {

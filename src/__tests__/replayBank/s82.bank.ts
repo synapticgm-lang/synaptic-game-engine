@@ -67,7 +67,9 @@ describe('replay bank s82', () => {
     }
   });
 
-  it('[s82 T9 | s82 Root F] the quest nudge never prints highwaymen boarding a moving wagon at a static desk', () => {
+  // Retired multi lap 41: the wagon desk no longer gets the moving-wagon spine, so the replay no longer reaches the
+  // recorded quest (see docs/orders/multi-result-41.md; m41lap41.bank.ts proves the fix on this run).
+  it.skip('[s82 T9 | s82 Root F] the quest nudge never prints highwaymen boarding a moving wagon at a static desk', () => {
     expect((R.after(9).quests ?? []).some((q) => q.name === 'The Accidental Passenger'), 'quest is The Accidental Passenger').toBe(true);
     expect(R.after(9).currentLocation, 'player stands at the static desk on T9').toBe(DESK);
     for (const t of R.turns()) expect(R.receiptText(t), `T${t}`).not.toMatch(/highwaymen|moving wagon/i);

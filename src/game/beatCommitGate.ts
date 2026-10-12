@@ -34,7 +34,7 @@ import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
 import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
-import { wrongExitCountProblem } from './exitCount';
+import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
 import {
   assemblePacketStitch,
   buildCompletedEventPacket,
@@ -181,7 +181,7 @@ export function sentenceGateProblem(state: GameState, sentence: string, playerIn
   if (closedFact) return closedFact;
   if (isSealedCardViolation(state, s, playerInput)) return INVENTS_FACT;
   if (state.completedEvent && proseViolatesEventPacket(s, state.completedEvent)) return CONTRADICTS_EVENT;
-  return wrongExitCountProblem(state, s);
+  return wrongExitCountProblem(state, s) ?? wrongExitPlaceProblem(state, s);
 }
 
 /** The sentence fails the gate for the same reason its whole draft does (out of context alone is not enough). */
