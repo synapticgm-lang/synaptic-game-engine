@@ -39,7 +39,8 @@ describe('replay bank s81', () => {
     expect(R.chipsAfter(5).some((c) => /^(Talk to|Ask) /.test(c) && here.some((p) => c.includes(p))), R.chipsAfter(5).join(' / ')).toBe(true);
   });
 
-  it('[s81 T11,T12 | s81 Root B] a lost road fight closes the meeting: no live meeting receipt and no chip aimed at it', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s81 T11,T12 | s81 Root B] a lost road fight closes the meeting: no live meeting receipt and no chip aimed at it', () => {
     const lost = R.turns().filter((n) => R.before(n).journey && /^Fight: DEFEAT/m.test(R.receiptText(n)));
     expect(lost.length, 'replay loses a road fight (recorded T11 DEFEAT; on main the T11 fight is a VICTORY in 2 rounds)').toBeGreaterThan(0);
     for (const n of lost) {

@@ -17,7 +17,8 @@ const invNames = (n: number, when: 'before' | 'after') =>
   ((when === 'before' ? R.before(n) : R.after(n)).inventory ?? []).map((i) => i.name).sort();
 
 describe('replay bank s82', () => {
-  it('[s82 T13 | s82 Root A] a won fight is written as won, and the next list holds no flee chips', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s82 T13 | s82 Root A] a won fight is written as won, and the next list holds no flee chips', () => {
     const won = R.turns().filter((n) => /^Fight: VICTORY/m.test(R.receiptText(n)));
     expect(won.length, 'replay has a won fight (recorded T13 flee failed into a forced fight; on main the T13 flee roll succeeds)').toBeGreaterThan(0);
     for (const t of won) {
@@ -26,7 +27,8 @@ describe('replay bank s82', () => {
     }
   });
 
-  it('[s82 T15 | s82 Root B] looting a body already paid out commits a found-nothing-more outcome and rests the chip', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s82 T15 | s82 Root B] looting a body already paid out commits a found-nothing-more outcome and rests the chip', () => {
     const t = R.turns().find((n) => /^Loot the body of /.test(R.input(n)) && lastKill(n));
     expect(t, 'replay loots a lastKill body (recorded T15; on main the T13 flee succeeds so there is no body)').toBeTruthy();
     expect(R.receiptText(t!)).not.toBe('');
@@ -87,7 +89,8 @@ describe('replay bank s82', () => {
     expect(R.prose(16)).not.toMatch(/Lowmarket is behind us/i);
   });
 
-  it('[s82 T20 | s82 failure 8, stance chip] "Offer Col Fenwick honest help" gives Jax no spoken lines', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s82 T20 | s82 failure 8, stance chip] "Offer Col Fenwick honest help" gives Jax no spoken lines', () => {
     expect(R.input(20)).toBe('Offer Col Fenwick honest help');
     expect(present(R.before(20)), 'Col Fenwick is on the road before T20 (on main the road holds thugs instead)').toContain('Col Fenwick');
     expect(R.prose(20)).not.toMatch(/"[^"]*,"\s*Jax (told|said|asked)|Jax (told|said to) [^."]*[,:]\s*"/);

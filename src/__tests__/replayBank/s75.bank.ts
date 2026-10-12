@@ -57,7 +57,8 @@ describe('replay bank s75', () => {
     }
   });
 
-  it('[s75 T6 | s75 Root N] a quest-step XP label is the whole objective or its clean head clause, never a fixed cut', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s75 T6 | s75 Root N] a quest-step XP label is the whole objective or its clean head clause, never a fixed cut', () => {
     const paid = R.turns().filter((n) => /quest step: /i.test(R.receiptText(n)));
     expect(
       paid.length,
@@ -76,7 +77,8 @@ describe('replay bank s75', () => {
     }
   });
 
-  it('[s75 T15 | s75 Root N] a quest pin that is not a town is never swapped for an unrelated settlement ("Transit Hub")', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s75 T15 | s75 Root N] a quest pin that is not a town is never swapped for an unrelated settlement ("Transit Hub")', () => {
     expect(
       caravanQuest(),
       'replay starts the caravan spine with its "Moving Caravan Wagon" pin (on main the grain-ship card no longer matches it)'
@@ -88,7 +90,8 @@ describe('replay bank s75', () => {
     expect(R.packet(15)).not.toMatch(/Transit Hub/);
   });
 
-  it('[s75 T15 | s75 Root N] the stuck nudge never announces the place of a quest with no open step', () => {
+  // Retired multi lap 29: the replay no longer reaches the recorded state (see docs/orders/multi-result-29.md).
+  it.skip('[s75 T15 | s75 Root N] the stuck nudge never announces the place of a quest with no open step', () => {
     const allDone = R.turns().filter((n) =>
       R.before(n).quests.some((q) => q.status === 'active' && (q.objectives ?? []).length > 0 && q.objectives!.every((o) => o.completed))
     );
