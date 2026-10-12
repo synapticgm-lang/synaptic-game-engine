@@ -52,6 +52,14 @@ const FOES = [
   'goblin', 'goblins', 'skeleton', 'skeletons', 'zombie', 'zombies', 'ghoul', 'ghouls', 'spider', 'spiders', 'raider', 'raiders',
   'brigand', 'brigands', 'cultist', 'cultists', 'beast', 'beasts', 'hound', 'hounds', 'wraith', 'cutter', 'cutters', 'thief', 'thieves',
 ];
+/** A handed place description that names its work ("Crowded stalls…") hands the people who do that work. */
+const PLACE_WORKERS = [
+  [/\b(?:stalls?|market|shops?|buyers?|sellers?|traders?)\b/, /^(?:vendors?|merchants?)$/],
+  [/\b(?:inn|tavern|taproom)\b/, /^(?:innkeeper|barkeep)$/],
+  [/\b(?:cathedral|church|chapel|shrine|temple)\b/, /^(?:priests?|acolytes?|monk|pilgrims?)$/],
+  [/\b(?:quays?|harbou?r|docks?|wharf)\b/, /^(?:sailors?|porter)$/],
+  [/\b(?:gates?|barracks|watch(?:tower)?)\b/, /^(?:guards?|watch(?:man|men)|soldiers?)$/],
+];
 const STOP_CAPS = new Set(['i', 'jax', 'system', 'he', 'she', 'they', 'them', 'their', 'it', 'its', 'you', 'your', 'a', 'an', 'the', 'and', 'but', 'then', 'when', 'while', 'as', 'if', 'so', 'no', 'not', 'yes']);
 
 function parseArgs(argv) {
@@ -170,6 +178,7 @@ function factsFor(row, packet) {
     xp: line(packet, 'XP:') || null,
     inventory: line(packet, 'Inventory:'),
     handedText,
+    placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels.
     allowText: lower([...mention, ...refs.map((r) => r.display), ...[...packet.matchAll(/^([A-Z][A-Za-z]{1,12}):\s*\d/gm)].map((m) => m[1]), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
   };
@@ -311,6 +320,7 @@ export function checkTurn(row, packet, page = '') {
         if (personHere && /^(?:men|man|women|woman)$/.test(w)
           && /\b(?:the|neither|either|each|both|other|those|these|one|two|three|four)\s+(?:of the\s+)?$/i.test(before)) continue;
         if (/\bcrowd\b/.test(facts.handedText) && /\b(?:a|an|one|some|someone|another)\s+(?:\w+\s+)?$/i.test(before)) continue;
+        if (PLACE_WORKERS.some(([work, who]) => who.test(w) && work.test(facts.placeWork))) continue;
       }
       add(kind, s, `"${w}" is not in the inventory, refs, people, receipts or engine result`);
     }

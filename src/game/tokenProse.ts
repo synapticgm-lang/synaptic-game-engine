@@ -516,6 +516,10 @@ export function classifyTokenLine(
     if (!tokenUseMatchesClass(declared.use, row.klass)) {
       return { ok: false, reason: 'use-class' };
     }
+    // "a @t11-old mace" pastes "crates" into a word; only a proper name may lead a hyphen word ("Lowmarket-bound").
+    if (!/^[A-Z]/.test(row.display ?? '') && new RegExp(`@${tok.replace(/^@/, '')}-[a-z]`, 'i').test(line.text)) {
+      return { ok: false, reason: 'glued-tok' };
+    }
     // A named person takes no article; "the @t2 run of streets" uses the person as a place or thing.
     if (
       row.klass === 'person' &&

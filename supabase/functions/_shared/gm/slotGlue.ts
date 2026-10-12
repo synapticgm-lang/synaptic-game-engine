@@ -12,9 +12,12 @@ import { getRegisteredLocations } from './entityRegistry.ts';
 const PERSON_VERB =
   '(?:looks?|stands?|says?|asks?|nods?|watches?|sits?|steps?|waits?|calls?|shifts?|answers?|speaks?|holds?|glances?|reads?)';
 
-/** A place may hold, stand or sit where it is ("Cathedral Close holds questions"); only the person verbs are a place acting. */
+/**
+ * A place may hold, stand or sit where it is ("Cathedral Close holds questions"); only the person verbs are a place acting.
+ * "the Undercroft steps" are the place's stairs: a place cannot step, so "steps" after a place title is the noun.
+ */
 const PLACE_ACTS_VERB =
-  '(?:looks?|says?|asks?|nods?|watches?|steps?|waits?|calls?|shifts?|answers?|speaks?|holds?\\s+(?:out|up)|glances?|reads?)';
+  '(?:looks?|says?|asks?|nods?|watches?|waits?|calls?|shifts?|answers?|speaks?|holds?\\s+(?:out|up)|glances?|reads?)';
 
 const OBJECT_TAKE = '(?:take|grab|push|pull|open)';
 const OBJECT_TAKE_ANY_CASE = '(?:[Tt]ake|[Gg]rab|[Pp]ush|[Pp]ull|[Oo]pen)';
