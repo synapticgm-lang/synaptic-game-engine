@@ -8,7 +8,7 @@
 import type { GameState } from './types';
 import { choiceNamesUnnarratedObject, isBrokenChoiceLabel, isLegalEnginePad } from './choicePipeline';
 import { coerceLogContent } from './beatFingerprint';
-import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
+import { isNameOriginKitCoverChoice, isPlayDemand, openingOfferPads, playerEngagesOpeningCover } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
 import { spineEngineChipLabels } from './pyoaSpine';
@@ -167,7 +167,7 @@ export function filterInventedContextChoices(
   const pcName = state.character?.name;
   const lastPlayer = lastPlayerAction(state);
   const engineChips = new Set(
-    [...spineEngineChipLabels(state), ...journeyPads(state), ...dungeonCardChoices(state)].map((l) => l.trim().toLowerCase())
+    [...spineEngineChipLabels(state), ...journeyPads(state), ...dungeonCardChoices(state), ...openingOfferPads(state)].map((l) => l.trim().toLowerCase())
   );
 
   return choices.filter((choice) => {

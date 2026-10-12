@@ -142,6 +142,8 @@ function factsFor(row, packet) {
   const refs = [...packet.matchAll(/^t\d+\s+(\S+)\s+(\w+)\s+"([^"]+)"/gm)].map((m) => ({ id: m[1], kind: m[2], display: m[3] }));
   const placesLine = line(packet, 'PLACES:');
   const here = (placesLine.split('·')[0] || line(packet, 'Here:') || String(row.location ?? '')).trim();
+  // The REF ENUM's here row is the label the writer paints for HERE ("Entry" for the stone outline).
+  const hereNames = [...new Set([here, ...refs.filter((r) => r.id === 'here').map((r) => r.display)].filter(Boolean))];
   const placesExits = (placesLine.match(/exits:\s*(.+)$/)?.[1] ?? '').split(/,\s*/).map((s) => s.trim()).filter(Boolean);
   const exitsReceipt = [engineResult, ...receipts].join('\n').match(/Exits:\s*([^\n]*?)\.(?=\s|$)/)?.[1] ?? null;
   const notPlace = refs.filter((r) => r.kind !== 'place').map((r) => lower(r.display));
@@ -166,6 +168,7 @@ function factsFor(row, packet) {
   const handedText = lower([factSections(packet), engineResult, receipts.join('\n'), row.location, cardNames].join('\n'));
   return {
     here,
+    hereNames,
     noMove: /^No move this turn/m.test(packet),
     movedFrom: packet.match(/^Moved this turn: (?:on )?from (.+?) (?:to|toward) /m)?.[1]?.trim() ?? '',
     mention,
@@ -250,7 +253,7 @@ export function checkTurn(row, packet, page = '') {
         const taken = [];
         for (const p of facts.placeNames) {
           const lp = lower(p);
-          if (p.length < 4 || namesHere(p, facts.here)) continue;
+          if (p.length < 4 || facts.hereNames.some((h) => namesHere(p, h))) continue;
           // A capitalised name is the place only when written capitalised ("Close", not "kept their clothes close").
           const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           const nameRe = /[A-Z]/.test(p)
@@ -363,7 +366,7 @@ export function checkTurn(row, packet, page = '') {
     // "… find Jax before they reached Cathedral Close": a move in a "before" clause had not happened yet.
     const moveNotYet = moveM && /\bbefore\s+(?:\w+\s+){0,2}$/i.test(s.slice(0, (moveM.index ?? 0) + moveM[0].length - moveM[1].length));
     if (facts.noMove && moveM && !moveNotYet) {
-      const named = facts.placeNames.find((p) => p.length > 3 && lower(s).includes(lower(p)) && !namesHere(p, facts.here));
+      const named = facts.placeNames.find((p) => p.length > 3 && lower(s).includes(lower(p)) && !facts.hereNames.some((h) => namesHere(p, h)));
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }
   }

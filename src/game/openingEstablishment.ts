@@ -1393,6 +1393,9 @@ export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): b
   if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
   const line = (playerInput ?? lastPlayerLine(state)).replace(/\s+/g, ' ').trim();
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
+  // Hall Q&A is with the card's cast: once the player has left the card's place, a "refuse" or "who" line is
+  // ordinary play with whoever is here now.
+  if (!openingCastStillHere(state)) return false;
   if (!isHallTalkPlayerLine(line)) return false;
   if (hallTalkAsksPanel(line) && !isLitrpgSystemPanelMode(state)) {
     const onlyPanel =

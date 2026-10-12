@@ -92,10 +92,11 @@ function compileOfferedChoices(state: GameState): string[] {
     && !state.activeEncounter
     && !isOpeningEstablishmentPending(state)
     && !isOpeningCoverTurn(state);
-  if (coverBeat || autoNamedOpeningPad) {
-    const skipCoverChips =
-      isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
-    if (skipCoverChips) return [];
+  // A look-around on a hall-talk beat after the covers is ordinary play: it gets the normal list, never an empty one.
+  const skipCoverChips =
+    (coverBeat || autoNamedOpeningPad) && isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
+  if (skipCoverChips && (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state))) return [];
+  if ((coverBeat || autoNamedOpeningPad) && !skipCoverChips) {
     const coverProse = lastGmStoryProse(state);
     const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
     const live = new Set(liveChips(state, pads, coverProse));

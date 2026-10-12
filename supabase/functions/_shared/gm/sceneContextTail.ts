@@ -347,7 +347,12 @@ export function isOpeningOccupancyReset(state: GameState, text: string): boolean
   const here = hereLocation(state);
   const openingWhere = (state.openingEstablishment?.answers?.where ?? '').trim();
   if (!openingWhere || !placesDiffer(here, openingWhere)) return false;
-  if (mentionsPlace(withoutTalkAbout(body), openingWhere) && !mentionsHereOrTrip(state, body) && !LEAVE_BEHIND.test(body)) return true;
+  if (mentionsPlace(withoutTalkAbout(body), openingWhere) && !mentionsHereOrTrip(state, body) && !LEAVE_BEHIND.test(body)) {
+    // Underway from the opening place, it is a landmark of the road: only putting the camera in or at it resets.
+    if (!isTripStart(state, openingWhere)) return true;
+    const talkless = withoutTalkAbout(body);
+    if (splitProseSentences(talkless).some((s) => mentionsPlace(s, openingWhere) && putsCameraAt(s, openingWhere))) return true;
+  }
   if (openingPinActsHere(body, state)) return true;
   return false;
 }
