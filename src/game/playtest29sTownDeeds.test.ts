@@ -146,8 +146,8 @@ describe('29s respect lives on the NPC', () => {
     expect(storedRelationshipFor(stole, 'Tom')!.trust).toBe(-2);
   });
 
-  it('stamp is 2026-10-12j', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-12j');
-    expect(BUILD_STAMP).toBe('2026-10-12j');
+  it('stamp is 2026-10-12k', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-12k');
+    expect(BUILD_STAMP).toBe('2026-10-12k');
   });
 });
