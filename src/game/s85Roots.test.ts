@@ -11,7 +11,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { applyOpeningOfferChoice } from './openingOffer';
-import { commitTravel } from './travelJourney';
+import { commitTravel, isJourneyPad } from './travelJourney';
 import { recordCirclingTurn } from './choiceRanking';
 import { applyArcDirectorCommit, runArcDirectorBeforeGm } from './arcDirector';
 import { advanceDungeonCard } from './dungeonCard';
@@ -69,7 +69,7 @@ const T2_T16 = [...T2_T10, 'Call out to a bystander', 'Greet whoever is coming',
 const ROAD_PROPOSED = ['Force a path forward', 'Wait and listen carefully', 'Call out to a bystander'];
 
 describe('s85 Root A — a foe parked on the road keeps the road chips', () => {
-  it('replayed T17–T18 toward Lowmarket: the drought parks, and the list keeps Walk on and two more chips', () => {
+  it('replayed T17–T18 toward Lowmarket: the drought parks, and the list keeps the road chips', () => {
     let s = replay(T2_T16);
     expect(s.journey?.to).toBe('Lowmarket');
     expect(s.journey?.encounter ?? null).toBeNull();
@@ -79,7 +79,7 @@ describe('s85 Root A — a foe parked on the road keeps the road chips', () => {
     for (const turn of [17, 18]) {
       const list = offered(s, ROAD_PROPOSED);
       expect(list[0]).toBe('Walk on');
-      expect(list.length).toBeGreaterThanOrEqual(3);
+      expect(list.filter((c) => !isJourneyPad(c))).toEqual([]);
       expect(list).not.toContain('Force a path forward');
       expect(list).not.toContain('Call out to a bystander');
       if (turn === 17) s = step(s, 'Call out to a bystander');

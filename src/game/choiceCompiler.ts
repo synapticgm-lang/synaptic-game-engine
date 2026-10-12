@@ -7,6 +7,7 @@ import { canonicalizeIntent, isTalkUltimatumExhausted } from './semanticLoopDete
 import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
 import {
   isTopicExhausted,
+  talkChipAddressee,
   shouldForceNpcStageAdvance,
   presentNpcForPads,
 } from './npcTopicFsm';
@@ -909,8 +910,9 @@ export function compileChoices(
     if (npc) {
       const canon = canonicalizeIntent(c, turn);
       const topic = `${canon.action}:${canon.target || 'general'}`.slice(0, 48);
+      const addressee = talkChipAddressee(state, c, npc) ?? npc;
       if (
-        isTopicExhausted(npc, topic, state.arcDirector?.npcTopics)
+        isTopicExhausted(addressee, topic, state.arcDirector?.npcTopics)
         && /\b(ask|talk|speak|listen|press)\b/i.test(c)
       ) {
         notes.push(`Topic exhausted pad: ${c.slice(0, 32)}`);

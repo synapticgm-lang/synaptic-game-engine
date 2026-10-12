@@ -104,6 +104,16 @@ function topicKey(input: string): string {
   return `${intent.action}:${intent.target || 'general'}`.slice(0, 48);
 }
 
+/** The present person a talk chip names; a chip that names nobody here falls back to the pad's person. */
+export function talkChipAddressee(state: GameState, chip: string, fallback: string | null): string | null {
+  const lower = (chip ?? '').toLowerCase();
+  const named = (state.sceneFacts?.present ?? []).find((p) => {
+    const name = (p ?? '').trim().toLowerCase();
+    return name.length > 1 && new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(lower);
+  });
+  return named ?? fallback;
+}
+
 export function isTopicExhausted(
   npc: string,
   topic: string,

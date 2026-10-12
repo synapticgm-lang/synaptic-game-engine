@@ -23,6 +23,7 @@ import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
+import { isJourneyUnderway } from './travelJourney';
 import { liveChips } from './chipLegality';
 import { updateCooldowns } from './optionDiversityContract';
 import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
@@ -124,6 +125,7 @@ function compileOfferedChoices(state: GameState): string[] {
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
   const legal = final(deduped);
   if (legal.length >= 3) return legal.slice(0, 4);
+  if (legal.length && isJourneyUnderway(state) && !state.activeEncounter) return legal;
   const padded = final(
     padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
   );
