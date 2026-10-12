@@ -1621,7 +1621,9 @@ function slotGroupLabel(part: string, names: string[]): string {
   if (!kept.length) return '';
   const lead = kept[0]!;
   const startedSlot = part.trim().startsWith(lead);
-  if (startedSlot && !names.some((n) => n === lead)) kept[0] = lead.charAt(0).toLowerCase() + lead.slice(1);
+  // A capital right after the lead makes the lead the head of a proper name ("Ash Court priests").
+  const nameHead = /^[A-Z]/.test(kept[1] ?? '');
+  if (startedSlot && !nameHead && !names.some((n) => n === lead)) kept[0] = lead.charAt(0).toLowerCase() + lead.slice(1);
   return `the ${kept.join(' ')}`;
 }
 

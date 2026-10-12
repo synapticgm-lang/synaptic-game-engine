@@ -727,9 +727,25 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
       }
     );
     for (const display of painted) next = collapseEchoedLabel(next, display);
-    return capitalizeSentenceStarts(tidy(next));
+    return capitalizeSentenceStarts(tidy(restoreNameCase(next, enumRefs)));
   }).filter((s) => s.length > 0);
   return tidy(sentences.join(' '));
+}
+
+/**
+ * A multi-word name the REF ENUM holds ("Ash Court"), typed by the writer with part of it in the wrong
+ * case ("the ash Court priests"), takes the ledger's case. A fully lowercase phrase is left alone.
+ */
+export function restoreNameCase(text: string, enumRefs: { display: string }[]): string {
+  const runs = new Set<string>();
+  for (const r of enumRefs) for (const m of (r.display ?? '').matchAll(/\b[A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)+/g)) runs.add(m[0]);
+  let out = text;
+  for (const run of runs) {
+    out = out.replace(new RegExp(`(?<![\\w'’-])${escRe(run).replace(/\s+/g, '\\s+')}(?![\\w'’-])`, 'gi'), (m) =>
+      m !== run && /[A-Z]/.test(m) ? run : m
+    );
+  }
+  return out;
 }
 
 const ARTICLE_RE = /^(?:the|a|an)\s+/i;

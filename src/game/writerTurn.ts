@@ -205,21 +205,42 @@ export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted 
 
 /** People in this beat's REF ENUM who could answer (named people, roles, companions, a live foe). */
 function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[] {
+  const bareName = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  // A foe the engine put down cannot answer, unless a live fight with that name is on again.
+  const kill = check.state.sceneFacts?.lastKill;
+  const live = bareName(check.state.activeEncounter?.name ?? '');
+  const downed = kill?.outcome === 'victory' && bareName(kill.name) !== live ? bareName(kill.name) : '';
   return refEnumOf(check.state, packet)
     .filter((r) => (r.klass === 'person' || r.klass === 'companion') && !!r.display)
     .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim())
-    .filter((d) => d.length > 1);
+    .filter((d) => d.length > 1 && (!downed || d.toLowerCase() !== downed));
 }
 
 const hasQuote = (prose: string) => /["“][^"“”]{3,}["”]/.test(prose);
 
-/** The words outside the quotes name a person here: their full display, or one word of a held proper name ("Nell" for Nell Rudd). */
+/** "thugs" → "thug", "thieves" → "thief", "witches" → "witch": one member of a group held here. */
+function oneOfGroup(plural: string): string | null {
+  const w = plural.toLowerCase();
+  if (!/s$/.test(w) || /ss$/.test(w)) return null;
+  if (/ies$/.test(w)) return w.replace(/ies$/, 'y');
+  if (/ves$/.test(w)) return w.replace(/ves$/, 'f');
+  if (/(?:ch|sh|x|z)es$/.test(w)) return w.replace(/es$/, '');
+  return w.replace(/s$/, '');
+}
+
+/**
+ * The words outside the quotes name a person here: their full display, one word of a held proper name
+ * ("Nell" for Nell Rudd), or one member of a group held here ("a thug" when the thugs are here).
+ */
 function speakerHere(bare: string, here: string[]): boolean {
   const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return here.some((p) => {
     if (new RegExp(`\\b${esc(p)}\\b`, 'i').test(bare)) return true;
     const words = p.split(/\s+/).filter((w) => /^[A-Z][a-z'’-]{2,}$/.test(w));
-    return words.length > 1 && words.some((w) => new RegExp(`\\b${esc(w)}\\b`).test(bare));
+    if (words.length > 1 && words.some((w) => new RegExp(`\\b${esc(w)}\\b`).test(bare))) return true;
+    const last = p.split(/\s+/).pop() ?? '';
+    const one = /^[a-z]/.test(last) ? oneOfGroup(last) : null;
+    return !!one && new RegExp(`\\b(?:a|an|one|another|the)\\s+(?:[\\w'’-]+\\s+){0,3}?${esc(one)}\\b`, 'i').test(bare);
   });
 }
 

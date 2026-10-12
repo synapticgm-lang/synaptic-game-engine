@@ -225,6 +225,10 @@ export function checkTurn(row, packet, page = '') {
         if (/\b(?:past|through|beyond|along|between|under|over|by)\s+$/i.test(s.slice(0, m.index ?? 0))) continue;
         const between = m[0].slice(m[1].length, m[0].length - m[2].length);
         if (lower(m[1]) !== 'only' && /\b(?:the|a|an|his|her|their|its|this|that|my|your)\b/i.test(between)) continue;
+        // Same reading as the commit gate (exitCount.statedExitCount): "the only other way out" leaves out the way in,
+        // and "the only way forward / ahead / back" is one direction, not every way out.
+        if (/\b(?:other|remaining|of)\b/i.test(between)) continue;
+        if (/^\s+(?:on(?!\s+(?:the|a|an|its|their|his|her)\b)|onwards?|ahead|forwards?|back)\b/i.test(s.slice((m.index ?? 0) + m[0].length))) continue;
         // "the only way out" is one; "the only ways out are the four doors" leaves the count to the number,
         // and "only the exits of Lowmarket and the West Wall" counts the places it lists.
         let n = toNum(m[1]);

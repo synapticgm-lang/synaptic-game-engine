@@ -49,6 +49,8 @@ function statedExitCount(clause: string, exits: string[], sentence: string): num
     const after = clause.slice(end);
     if (!/^exits?$/.test(noun) && !LEADS_OUT.test(after)) continue;
     if (PART_OF.test(clause.slice(0, at)) || ONE_DIRECTION.test(after) || /^\s+of\s+the\b/i.test(after)) continue;
+    // "the only other way out" leaves out the way in; "one of the ways out" picks one of several.
+    if (/\b(?:other|remaining|of)\b/i.test(m[0].slice(m[1]!.length, m[0].length - m[2]!.length))) continue;
     if (word === 'only' && /s$/.test(noun)) continue;
     // "One passage led…, another…" lists the ways one by one.
     if (word === 'one' && /\b(?:another|the other|a second|a third)\b/i.test(sentence)) continue;
