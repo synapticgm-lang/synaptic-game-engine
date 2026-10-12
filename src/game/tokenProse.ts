@@ -238,7 +238,9 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       const prev = lines[lines.length - 1];
       const pcSpoke = !!prev && prev.fn !== 'speech' && PC_SPEAKS.test(prev.text);
       const untagged = fn === 'speech' && !namesDeclaredPerson(text, refs);
-      const speaker = typed || (untagged ? soleSpeaker || (pcSpoke ? '' : soleOther) : '');
+      const inferred = untagged ? soleSpeaker || (pcSpoke ? '' : soleOther) : '';
+      // Words that name that person ("that Nell", "Rudd") are about them or to them, not theirs.
+      const speaker = typed || (inferred && !namesRefPlainly(text, refs, inferred) ? inferred : '');
       const line: TokenLine = speaker ? { fn, text, speaker_tok: speaker } : { fn, text };
       lines.push(fn === 'speech' ? readSpeechLine(line, refs) : line);
     }
@@ -405,6 +407,14 @@ const PERSON_USES = new Set<TokenUse>(['speaker', 'actor', 'addressed']);
 /** The line names a declared person by token: indirect speech ("@t2 told Jax…") carries its own speaker. */
 function namesDeclaredPerson(text: string, refs: TokenUseRef[]): boolean {
   return toksInText(text).some((t) => refs.some((r) => r.tok === t && PERSON_USES.has(r.use)));
+}
+
+/** The text names the named person `tok` in plain words: one word of their proper name ("Nell", "Rudd"). */
+function namesRefPlainly(text: string, refs: TokenUseRef[], tok: string): boolean {
+  const words = (refs.find((r) => r.tok === tok)?.id ?? '').trim().split(/\s+/);
+  // A role ("the Ash Court priests") is not a proper name; its place words are not the person.
+  if (!words.every((w) => /^[A-Z][A-Za-z'’-]+$/.test(w))) return false;
+  return words.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text));
 }
 
 export function refEnumOf(state: GameState, packet?: CompletedEventPacket): LedgerRef[] {
@@ -791,9 +801,12 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
   return out + text.slice(at);
 }
 
-/** Sentence starts, and the first spoken word after a said-tag's opening quote (`said, "the tabard…`). */
+/**
+ * Sentence starts, and the first spoken word after a said-tag's opening quote (`said, "the tabard…`).
+ * A quote closing on "?" or "!" may run on in lowercase (`"Back already?" while…`); that sentence goes on.
+ */
 function capitalizeSentenceStarts(text: string): string {
-  return text.replace(/(^|[.!?]["”’)]?\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
+  return text.replace(/(^|(?:[.!?]\)?|\.["”’])\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
 function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string): boolean {

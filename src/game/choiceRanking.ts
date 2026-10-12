@@ -16,7 +16,7 @@
  * - a nudge line already fired this save never fires again unchanged.
  */
 import type { CirclingMemory, GameState } from './types';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubsForBibleId, matchHub, questTravelSite } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
 import { isRoadLabel } from './travelJourney';
@@ -348,7 +348,8 @@ export function storyChip(state: GameState): string | null {
   // A talk stage whose giver stands here is done here, before any trip to the quest's site.
   if (!giverHere) {
     const hubs = hubsForBibleId(state.campaignBibleId);
-    const site = quest.location ? matchHub(hubs, quest.location) : null;
+    const leads = questTravelSite(quest);
+    const site = leads ? matchHub(hubs, leads) : null;
     if (site && !here.includes(site.name.toLowerCase())) return `Travel toward ${site.name}`;
     const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
     if (!site && linked) return `Travel toward ${linked.name}`;

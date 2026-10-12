@@ -175,6 +175,8 @@ export interface Quest {
   recommendedLevel?: number;
   /** Place name or id reference — prefer resolving tier from Place / locationSheet. */
   location?: string;
+  /** Where the quest sends the player when that is not `location` (a starter given at the card place). */
+  leadsTo?: string;
   /** The person who gives this quest; an NPC record at `location` when it is a named person. */
   giver?: string;
   /** Danger tier for the quest site — prefer reading from Place when locationRef exists. */

@@ -7,6 +7,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { sentenceGateProblem, sentenceGateProblems } from '../../game/beatCommitGate';
 import { storyChip } from '../../game/choiceRanking';
+import { questTravelSite } from '../../game/outdoorHubs';
 import { repairRejectedSentences, type DraftCheck, type SentenceRepair, type WriterTurnResult } from '../../game/writerTurn';
 import type { CompletedEventPacket } from '../../game/completedEventPacket';
 import { parsePlayerIntent } from '../../game/intentParser';
@@ -39,7 +40,7 @@ describe('replay bank m43 lap 43', () => {
       const s = S.after(n - 1);
       expect(s.currentLocation, `T${n}`).toBe(HOLD);
       expect(s.sceneFacts?.present ?? [], `T${n} the smugglers are here`).toContain('the smugglers');
-      expect(s.quests.find((q) => q.id === 'sp-quest-1')?.location, 'the quest site is still Cathedral Close').toBe('Cathedral Close');
+      expect(questTravelSite(s.quests.find((q) => q.id === 'sp-quest-1')!), 'the quest still leads to Cathedral Close').toBe('Cathedral Close');
       expect(storyChip(s), `T${n}`).toBe('Ask what they want');
       expect(S.chips(n), `T${n}`).toContain('Ask what they want');
     }

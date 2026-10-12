@@ -427,6 +427,8 @@ const ALONE_CIRCLE_PRICE: StarterQuestSeed = {
 export type StarterArrival = {
   alone: boolean;
   housing?: SystemHousingId | null;
+  /** The opening card's place, where its cast (the starter's talk-stage giver) stands. */
+  giverPlace?: string;
 };
 
 function asArrival(arrival: boolean | StarterArrival | undefined): StarterArrival {
@@ -881,7 +883,7 @@ export function nextMainObjective(quest: Quest | null | undefined): string | nul
 /** Last-known place pin for map / resume — from quest.location or seed bank. */
 export function mainQuestPlacePin(quest: Quest | null | undefined): string | null {
   if (!quest) return null;
-  const loc = (quest.location ?? QUEST_SEED_LOCATIONS[quest.id] ?? '').trim();
+  const loc = (quest.leadsTo ?? quest.location ?? QUEST_SEED_LOCATIONS[quest.id] ?? '').trim();
   return loc || null;
 }
 
@@ -979,8 +981,14 @@ export function revealLocalStarterQuest(
   if (!first) return quests;
   const seed = adapted.find((s) => s.id === first.id);
   const withFirst = quests.some((q) => q.id === first.id) ? quests : [...quests, first];
-  return withFirst.map((q) => {
-    if (q.id !== first.id) return q;
+  const giverPlace = asArrival(arrival).giverPlace;
+  return withFirst.map((quest) => {
+    if (quest.id !== first.id) return quest;
+    // The seed table's place is where the quest leads; the local starter is given where the card's cast stands.
+    const q =
+      giverPlace && !seed?.location && (!quest.location || quest.location === QUEST_SEED_LOCATIONS[quest.id])
+        ? { ...quest, location: giverPlace, leadsTo: quest.location ?? QUEST_SEED_LOCATIONS[quest.id] }
+        : quest;
     const fromSeed = seed
       ? {
           name: seed.title,

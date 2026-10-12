@@ -415,7 +415,7 @@ function establishedPlace(state: GameState, name: string, prose: string[]): bool
 
 function questPlaceNames(q: NonNullable<GameState['quests']>[number]): string[] {
   const visible = [q.name, q.whatNext, ...(q.objectives ?? []).map((o) => o.description)].filter(Boolean).join('. ');
-  return [q.location, ...extractNamedPlaces(visible)].map((n) => norm(n)).filter((n) => n.length >= 3);
+  return [q.location, q.leadsTo, ...extractNamedPlaces(visible)].map((n) => norm(n)).filter((n) => n.length >= 3);
 }
 
 /** P0 when a quest revealed or moved this turn names a place the world and the prose never set up. */

@@ -12,7 +12,10 @@ import type { StarterArrival } from './questPlay';
 
 /** The New Game arrival the starter quests fit: alone or met, and the frozen housing. */
 export function starterArrival(state: GameState): StarterArrival {
-  return { alone: isAloneArrivalOpening(state), housing: state.systemHousing?.housing ?? null };
+  const alone = isAloneArrivalOpening(state);
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const giverPlace = !alone && here && openingCastNames(state).length ? here : undefined;
+  return { alone, housing: state.systemHousing?.housing ?? null, ...(giverPlace ? { giverPlace } : {}) };
 }
 
 /** True when a beat contract marks this quest objective as heard from a giver. */

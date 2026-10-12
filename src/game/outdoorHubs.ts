@@ -8,7 +8,7 @@
  */
 
 import type { CampaignBible } from '@/data/campaigns/types';
-import type { GameState, PlaceRecord } from './types';
+import type { GameState, PlaceRecord, Quest } from './types';
 import { excludedPadFamilies } from './padUniverse';
 import { dungeonRoomPlace, placeIdFromName, resolvePlace } from './places';
 import { isTripHere } from './travelJourney';
@@ -404,6 +404,11 @@ const DUNGEON_HUB_RE = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
  * The mapped places the travel chips offer from here, best first (at most four, one dungeon hub kept).
  * The graph travel edges, the hub travel pads and the exits receipt all read this one list.
  */
+/** The place a quest sends the player: where it leads, else its own site. */
+export function questTravelSite(quest: Pick<Quest, 'location' | 'leadsTo'>): string | undefined {
+  return quest.leadsTo ?? quest.location;
+}
+
 export function hubTravelTargets(state: GameState): string[] {
   const here = (state.currentLocation ?? '').toLowerCase();
   const fromBible = hubsForBibleId(state.campaignBibleId);
@@ -411,7 +416,10 @@ export function hubTravelTargets(state: GameState): string[] {
   const activeIds = new Set(active.map((q) => q.id));
   // The active quest's site comes first, as the story chip (choiceRanking.storyChip) names it.
   const sites = new Set(
-    active.map((q) => (q.location ? matchHub(fromBible, q.location)?.id : undefined)).filter(Boolean)
+    active.map((q) => {
+      const site = questTravelSite(q);
+      return site ? matchHub(fromBible, site)?.id : undefined;
+    }).filter(Boolean)
   );
   const visited = new Set(
     (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase())
