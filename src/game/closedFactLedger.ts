@@ -10,10 +10,8 @@ function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-const GIVE_CLAUSE =
-  /\b(?:you\s+)?(?:set|hand(?:ed)?|give|gave|deliver(?:ed)?|pass(?:ed)?)\s+(?:the\s+)?([a-z]{3,24})\b[\s\S]{0,96}\b(?:down|over|to)\b/i;
-const OTHER_TAKES =
-  /\b(?:they|he|she)\b[\s\S]{0,80}\b(?:pick(?:s|ed)?\s+it\s+up|tuck(?:s|ed)?\s+it|take(?:s|n)?\s+it)\b/i;
+const TAKES_IT =
+  /\b([A-Z][a-z]+|[Tt]hey|[Hh]e|[Ss]he)\s+(?:\w+\s+){0,3}?(?:pick(?:s|ed)?\s+it\s+up|tuck(?:s|ed)?\s+it|take[sn]?\s+it|took\s+it)\b/g;
 const PC_POSSESSION =
   /\b(?:in\s+your\s+(?:palm|hand|hands|coat|pocket|chest|pack|bag)|sits\s+warm\s+in\s+your|warm\s+in\s+your\s+palm)\b/i;
 
@@ -36,30 +34,49 @@ function knownItemNeedles(state: GameState): string[] {
   return out;
 }
 
-function mentionedItems(text: string, needles: string[]): string[] {
-  const hit: string[] = [];
-  for (const item of needles) {
-    if (new RegExp(`\\b${escapeRe(item)}\\b`, 'i').test(text) && !hit.includes(item)) {
-      hit.push(item);
-    }
+const GIVE_VERB = /\b(?:set|hand(?:s|ed)?|give[sn]?|gave|deliver(?:s|ed)?|pass(?:es|ed)?)\s+/gi;
+const NOT_A_GIVE_VERB_BEFORE = /\b(?:a|an|one|the|his|her|their|your|my|its|each|other|free|left|right)\s*$/i;
+const OWN_OBJECT = /^(?:their|his|her|its|someone's|somebody's)\b/i;
+const OBJECT_DETERMINER = /^(?:(?:the|a|an|your|my)\s+)?/i;
+const HANDOVER_AFTER = /^[^.!?]{0,96}?\b(?:to|over|across)\b/i;
+const SET_DOWN_AFTER = /^[^.!?]{0,96}?\bdown\b/i;
+
+function someoneElseTakesIt(body: string, pcName: string): boolean {
+  const pc = pcName.trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+  for (const m of body.matchAll(TAKES_IT)) {
+    const who = m[1].toLowerCase();
+    if (who !== 'you' && who !== pc) return true;
   }
-  const give = text.match(GIVE_CLAUSE);
-  if (give?.[1] && !hit.includes(give[1].toLowerCase())) hit.push(give[1].toLowerCase());
-  return hit;
+  return false;
+}
+
+/** The carried item each give verb hands over, read from the verb's own object. */
+function itemsHandedOver(body: string, needles: string[], pcName: string): string[] {
+  const out: string[] = [];
+  const others = someoneElseTakesIt(body, pcName);
+  for (const m of body.matchAll(GIVE_VERB)) {
+    const at = m.index ?? 0;
+    if (NOT_A_GIVE_VERB_BEFORE.test(body.slice(Math.max(0, at - 12), at))) continue;
+    const rest = body.slice(at + m[0].length);
+    if (OWN_OBJECT.test(rest)) continue;
+    const obj = rest.replace(OBJECT_DETERMINER, '');
+    const item = needles
+      .filter((n) => new RegExp(`^${escapeRe(n)}\\b`, 'i').test(obj))
+      .sort((a, b) => b.length - a.length)[0];
+    if (!item) continue;
+    const after = obj.slice(item.length);
+    const setVerb = /^set\b/i.test(m[0]);
+    const handed = setVerb ? SET_DOWN_AFTER.test(after) && others : HANDOVER_AFTER.test(after) || others;
+    if (handed && !out.includes(item)) out.push(item);
+  }
+  return out;
 }
 
 export function harvestGivenAwayFromProse(state: GameState, prose: string): string[] {
   const body = (prose ?? '').trim();
   const locked = new Set((state.sceneFacts?.givenAway ?? []).map((n) => n.toLowerCase()));
   if (!body) return [...locked];
-  const pcGives = GIVE_CLAUSE.test(body) || (/\b(?:you\s+)?(?:set|hand|give|deliver)\b/i.test(body) && OTHER_TAKES.test(body));
-  if (!pcGives && !OTHER_TAKES.test(body)) return [...locked];
-  const needles = knownItemNeedles(state);
-  if (!needles.length && GIVE_CLAUSE.test(body)) {
-    const m = body.match(GIVE_CLAUSE);
-    if (m?.[1]) locked.add(m[1].toLowerCase());
-  }
-  for (const item of mentionedItems(body, needles.length ? needles : [...locked])) {
+  for (const item of itemsHandedOver(body, knownItemNeedles(state), state.character?.name ?? '')) {
     locked.add(item);
   }
   return [...locked];

@@ -13,6 +13,7 @@ import { polishMentions } from './mentionVariety';
 import { unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
 import { splitProseSentences } from './proseSentences';
+import { staleLocationRepairNote } from './sceneContextTail';
 import { isNearClone, isSameBeat } from './beatFingerprint';
 import {
   detectAtmosphereReprint,
@@ -209,13 +210,19 @@ export function replaceDraftSentence(prose: string, sentence: string, replacemen
 }
 
 /** One request: only the flagged sentence(s), why each failed, and the engine fact. */
-export function sentenceRepairRequest(flagged: { sentence: string; flag: string }[], engineFact: string): string {
+export function sentenceRepairRequest(
+  flagged: { sentence: string; flag: string; note?: string }[],
+  engineFact: string
+): string {
   const many = flagged.length > 1;
   return [
     many
       ? `Rewrite these ${flagged.length} sentences of your story. Reply with one rewritten sentence per line, in order, as plain prose. No JSON, no numbers, no other text.`
       : 'Rewrite this one sentence of your story. Reply with only the rewritten sentence as plain prose. No JSON, no other text.',
-    ...flagged.map((f, i) => `${many ? `${i + 1}. ` : ''}Sentence: "${f.sentence}"\n${many ? '   ' : ''}Problem: ${f.flag}`),
+    ...flagged.map(
+      (f, i) =>
+        `${many ? `${i + 1}. ` : ''}Sentence: "${f.sentence}"\n${many ? '   ' : ''}Problem: ${f.flag}${f.note ? ` ${f.note}` : ''}`
+    ),
     `Engine fact: ${engineFact.trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
@@ -258,7 +265,8 @@ export async function repairRejectedSentences(
   let bug = 'no repair path';
   let raw = '';
   if (opts.repair) {
-    raw = await opts.repair(sentenceRepairRequest(flagged, fact)).catch(() => '');
+    const asked = flagged.map((f) => ({ ...f, note: staleLocationRepairNote(check.state, f.sentence) }));
+    raw = await opts.repair(sentenceRepairRequest(asked, fact)).catch(() => '');
     lines = raw.trim() ? repairReplyLines(raw, check, packet, flagged.length) : null;
     bug = raw.trim() ? 'repair reply was not a rewrite of the flagged sentence' : 'repair reply empty';
   }

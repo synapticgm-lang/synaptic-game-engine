@@ -5,7 +5,7 @@
  */
 
 import type { GameState, LogEntry } from './types.ts';
-import { UNDERWAY_HERE } from './locationName.ts';
+import { UNDERWAY_HERE, underwayHereLabel } from './locationName.ts';
 import { splitProseSentences } from './proseSentences.ts';
 import { matchesLastKillName } from './combatAuthority.ts';
 
@@ -295,6 +295,19 @@ export function isLeftBehindActingHere(state: GameState, text: string): boolean 
   return splitProseSentences(withoutTalkAbout(body)).some((sentence) =>
     HERE_ACTOR.test(sentence) && names.some((name) => new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(sentence))
   );
+}
+
+/** For a sentence that puts the scene back in a place already left: where the scene is now and which place is behind. */
+export function staleLocationRepairNote(state: GameState, sentence: string): string {
+  const left = isStaleLocationBleed(state, sentence)
+    ? priorLocation(state)
+    : isOpeningOccupancyReset(state, sentence) && mentionsPlace(sentence, state.openingEstablishment?.answers?.where)
+      ? (state.openingEstablishment?.answers?.where ?? '').trim()
+      : '';
+  if (!left) return '';
+  const trip = underwayHereLabel(state);
+  const where = trip ? `on ${trip}` : `at ${hereLocation(state)}`;
+  return `This happens ${where}; ${left} is behind, so nothing in this sentence is in or at ${left}.`;
 }
 
 export function isStaleContextBleed(state: GameState, text: string): boolean {
