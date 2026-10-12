@@ -44,15 +44,18 @@ export function handedExits(state: GameState): string[] | null {
  * The ways out a clause counts. `more` marks a count added to one already given ("two more ways out",
  * "a further two roads"): it is part of the sentence's total, not the total.
  */
-function statedExitCounts(clause: string, exits: string[], sentence: string): Array<{ n: number; more: boolean }> {
-  const out: Array<{ n: number; more: boolean }> = [];
+function statedExitCounts(clause: string, exits: string[], sentence: string): Array<{ n: number; more: boolean; bare?: boolean }> {
+  const out: Array<{ n: number; more: boolean; bare?: boolean }> = [];
   for (const m of clause.matchAll(COUNTED_EXIT)) {
     const at = m.index ?? 0;
     const end = at + m[0].length;
     const word = m[1]!.toLowerCase();
     const noun = m[2]!.toLowerCase();
     const after = clause.slice(end);
-    if (!/^exits?$/.test(noun) && !LEADS_OUT.test(after)) continue;
+    const more = /\b(?:more|further|additional)\b/i.test(m[0]);
+    // "…; two more routes—Cathedral Close and the Undercroft—lay beyond": an added count needs no verb of its own.
+    const bare = !/^exits?$/.test(noun) && !LEADS_OUT.test(after);
+    if (bare && !more) continue;
     if (PART_OF.test(clause.slice(0, at)) || ONE_DIRECTION.test(after) || /^\s+of\s+the\b/i.test(after)) continue;
     // "the only other way out" leaves out the way in; "one of the ways out" picks one of several.
     if (/\b(?:other|remaining|of)\b/i.test(m[0].slice(m[1]!.length, m[0].length - m[2]!.length))) continue;
@@ -68,7 +71,7 @@ function statedExitCounts(clause: string, exits: string[], sentence: string): Ar
       // "Cathedral Close waited, but the only way there ran…": the one way to the exit the sentence names.
       if (/^\s*(?:\w+\s+){0,4}?(?:to\s+(?:get|go|reach)\s+)?there\b/.test(rest) && names(sentence.toLowerCase())) continue;
     }
-    if (Number.isFinite(n)) out.push({ n: n!, more: /\b(?:more|further|additional)\b/i.test(m[0]) });
+    if (Number.isFinite(n)) out.push({ n: n!, more, ...(bare ? { bare } : {}) });
   }
   return out;
 }
@@ -80,9 +83,11 @@ export function wrongExitCountProblem(state: GameState, sentence: string): strin
   const here = playerFacingLocation(state) || norm(state.currentLocation ?? '') || 'here';
   const wrong = `Gives the wrong number of ways out: ${here} has ${exits.length} (${exits.join(', ')}).`;
   for (const one of (sentence ?? '').split(/(?<=[.!?])\s+/)) {
-    const counts = one
+    const read = one
       .split(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/i)
       .flatMap((clause) => statedExitCounts(clause, exits, one));
+    // "Jax passed two more streets": an added count with no count of ways out before it is not about the exits.
+    const counts = read.some((c) => !c.bare) ? read : [];
     if (!counts.length) continue;
     // "Two doors stood open…, while two more ways out…": the counts add up to the sentence's total.
     if (counts.some((c) => c.more)) {

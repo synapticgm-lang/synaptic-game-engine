@@ -570,6 +570,12 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
       .filter(Boolean)
   );
   const self = pcName(state);
+  // "Garth" is how a cast person "Garth Barrow" is painted on a later mention.
+  const castParts = new Set(
+    sealedCastNames(state)
+      .flatMap((n) => n.toLowerCase().split(/\s+/))
+      .filter((w) => w.length >= 3)
+  );
   const found: string[] = [];
   const seen = new Set<string>();
   const re = new RegExp(TITLE_NAME.source, 'g');
@@ -578,9 +584,10 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
     const name = (m[1] ?? '').trim();
     if (!name || seen.has(name.toLowerCase())) continue;
     if (self && name.toLowerCase() === self) continue;
-    // "Now Jax waits": a capitalised sentence-start word in front of a known name is that name, not a new one.
+    // "Now Jax waits", "Whatever Garth wanted": a capitalised sentence-start word in front of a known name is that name, not a new one.
     const words = name.toLowerCase().split(/\s+/);
-    if (words.some((_, i) => i > 0 && ((t) => t === self || cast.has(t))(words.slice(i).join(' ')))) continue;
+    const known = (t: string) => t === self || cast.has(t) || (!t.includes(' ') && castParts.has(t));
+    if (words.some((_, i) => i > 0 && known(words.slice(i).join(' ')))) continue;
     if (isPlannerUiPersonToken(name)) continue;
     if (isRegisteredLocation(name, bibleId)) continue;
     if (!canHarvestAsNamedPerson(name, bibleId, npcRecordNames(state))) continue;

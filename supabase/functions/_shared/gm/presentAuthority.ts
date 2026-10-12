@@ -97,12 +97,14 @@ export function applyPresentTrimOnTravel(
     && dropped.every((p, i) => p === (state.sceneFacts?.leftBehind ?? [])[i]);
   const killSame = !clearCorpse || !state.sceneFacts?.lastKill;
   const pendingSame = !clearCorpse || !state.sceneFacts?.pendingEncounter;
-  // A move leaves the old place's noise, mood and beat behind; the new place's scale comes from the place.
+  // A move leaves the old place's crowd, noise, mood and beat behind; the new place's scale comes from the place.
   const moodReset = sameLoc
     ? null
     : (() => {
         const scale = placeScale({ ...state, currentLocation: toLocation });
         return {
+          crowd: 'unknown' as const,
+          crowdCount: undefined,
           noise: 'unknown' as const,
           tension: engineTension(state, 'unknown'),
           lastBeat: '',
@@ -111,7 +113,9 @@ export function applyPresentTrimOnTravel(
       })();
   const moodSame =
     !moodReset
-    || (state.sceneFacts?.noise === moodReset.noise
+    || (state.sceneFacts?.crowd === moodReset.crowd
+      && state.sceneFacts?.crowdCount === undefined
+      && state.sceneFacts?.noise === moodReset.noise
       && state.sceneFacts?.tension === moodReset.tension
       && !state.sceneFacts?.lastBeat
       && state.sceneFacts?.indoor === moodReset.indoor);
