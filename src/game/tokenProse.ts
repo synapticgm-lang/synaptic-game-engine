@@ -19,7 +19,7 @@ import {
 import { acceptObeyedStoryBody } from './ledgerNounObey';
 import { pcPov } from './narrativePov';
 import { splitProseSentences } from './proseSentences';
-import { presentNpcRecords } from './npcRecords';
+import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 import { weaponsNotInHand } from './infoSheet';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
@@ -409,18 +409,20 @@ function refSlug(s: string): string {
 
 /**
  * A typed id agrees with a row when it is the row's id, its token, the id without its class prefix, the display
- * slug, or the row's own class column ("person" for a person row).
+ * slug, or the row's own class column ("person" for a person row). A class prefix on the typed id is not part
+ * of the name: "present:Nell Rudd" is the Nell Rudd row.
  */
 function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   const want = id.trim().replace(/^@/, '').toLowerCase();
   const rid = row.id.toLowerCase();
-  const slug = refSlug(want);
+  const ridName = rid.slice(rid.indexOf(':') + 1);
+  const slugs = [refSlug(want), refSlug(want.slice(want.indexOf(':') + 1))].filter(Boolean);
   return (
     want === rid ||
     want === row.tok.toLowerCase() ||
     want === row.klass ||
-    want === rid.slice(rid.indexOf(':') + 1) ||
-    (!!slug && (slug === refSlug(row.display) || slug === rid.slice(rid.indexOf(':') + 1)))
+    want === ridName ||
+    slugs.some((slug) => slug === refSlug(row.display) || slug === ridName)
   );
 }
 
@@ -734,15 +736,24 @@ export function knownProperNames(state: GameState): string[] {
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1).map((n) => n.trim()))];
 }
 
+/** Multi-word names in the People here notes the writer is handed ("Sells: Health Tonic; Iron Nail"). */
+function peopleHereNoteNames(state: GameState): string[] {
+  const people = presentNpcRecords(state);
+  if (!people.length) return [];
+  const notes = formatNpcMemoriesForPrompt(people, 4, state.character?.name);
+  return notes.match(/\b[A-Z][a-z'’]+(?:[ -][A-Z][a-z'’]+)+\b/g) ?? [];
+}
+
 /**
- * Names the writer was handed this turn: the ledger's own names, the packet's mention list and the
- * writer's quest titles. A capital the packet gave the writer is not an invention. A weapon not in
- * hand stays out, however it is listed.
+ * Names the writer was handed this turn: the ledger's own names, the People here notes, the packet's
+ * mention list and the writer's quest titles. A capital the packet gave the writer is not an invention.
+ * A weapon not in hand stays out, however it is listed.
  */
 export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
   const unheld = new Set(weaponsNotInHand(state));
   const names = [
     ...knownProperNames(state),
+    ...peopleHereNoteNames(state),
     ...(packet?.allowlist ?? []),
     ...writerFacts(state).quests.map((q) => q.name),
   ];

@@ -216,6 +216,19 @@ function withoutTalkAbout(text: string): string {
 }
 
 /**
+ * Past perfect ("Jax had finished their business in Lowmarket", "had been in the Undercroft") tells the time
+ * before the move, not where the camera is now. Going back there ("had returned to") is still a move.
+ */
+const PAST_PERFECT =
+  /\bhad\s+(?:(?:just|already|recently|once|earlier|only|first|long)\s+)*(?:been|spent|done|left|seen|kept|held|stood|sat|met|heard|said|told|paid|bought|slept|eaten|fought|won|lost|found|known|[a-z]+ed)\b/i;
+const PAST_PERFECT_RETURN =
+  /\bhad\s+(?:\w+\s+)?(?:returned|come\s+back|gone\s+back|walked\s+back|stepped\s+back|headed\s+back|turned\s+back)\b/i;
+
+function tellsEarlierTime(sentence: string): boolean {
+  return PAST_PERFECT.test(sentence) && !PAST_PERFECT_RETURN.test(sentence);
+}
+
+/**
  * A sentence names the place already left as the camera: it names that place with no HERE, no trip
  * destination and no departure in the same sentence (another sentence naming HERE does not excuse it).
  * Underway, the trip's start is a landmark of the road itself: only putting the camera in or at it is stale.
@@ -231,6 +244,7 @@ export function isStaleLocationBleed(state: GameState, text: string): boolean {
   return splitProseSentences(text).some((sentence) => {
     const s = withoutTalkAbout(sentence).trim();
     if (!s || !mentionsPlace(s, prev) || mentionsHereOrTrip(state, s) || isLeaveBehindMention(s, prev)) return false;
+    if (tellsEarlierTime(s)) return false;
     return !tripStart || putsCameraAt(s, prev);
   });
 }
