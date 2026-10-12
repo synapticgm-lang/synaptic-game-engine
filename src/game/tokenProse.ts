@@ -502,10 +502,20 @@ export function tokenLineVerdicts(raw: string, state: GameState, packet?: Comple
   const counts = handedCountText(state, packet);
   const said = alreadySaidLines(state, packet);
   for (const line of beat.lines) {
-    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said);
+    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said, state.character?.name);
     out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
   }
   return out;
+}
+
+const narrationOf = (line: TokenLine) =>
+  line.spoken || line.fn === 'speech' ? '' : line.text.replace(/["“][^"”]*["”]/g, ' ');
+
+function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boolean {
+  const first = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
+  if (first.length < 2 || !/\byou(?:r|rs|rself)?\b/i.test(narrationOf(line))) return false;
+  const named = new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+  return beat.lines.some((l) => named.test(narrationOf(l)));
 }
 
 export function classifyTokenLine(
@@ -516,9 +526,12 @@ export function classifyTokenLine(
   /** Lowercased handed facts and page so far (`handedCountText`); a count none of them holds fails the line. */
   handedCounts?: string,
   /** What each person already said (`alreadySaidLines`); their speech line saying it again fails. */
-  alreadySaid?: AlreadySaid
+  alreadySaid?: AlreadySaid,
+  /** The PC's name: a beat whose narration tells the PC by name is third person, so "you"/"your" there fails. */
+  pcName?: string
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
   // Spoken words with no speaker would paint as narration.
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
@@ -753,16 +766,16 @@ function capitalizeSentenceStarts(text: string): string {
   return text.replace(/(^|[.!?]["”’)]?\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
-function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid): boolean {
+function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName).ok);
 }
 
 /** Line-gate reasons about how a token was declared, not about what the line says. */
 const BINDING_ONLY_REASONS = new Set(['unbound-tok', 'unknown-id', 'use-class']);
 
-function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid): TokenLine[] {
-  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said).ok);
+function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string): TokenLine[] {
+  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName).ok);
 }
 
 /**
@@ -946,6 +959,7 @@ export function acceptTokenOrLedgerStory(
   const known = handedProperNames(state, packet);
   const counts = handedCountText(state, packet);
   const said = alreadySaidLines(state, packet);
+  const pcName = state.character?.name;
   const candidates = [
     ...extractTokenCandidates(raw),
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),
@@ -957,7 +971,7 @@ export function acceptTokenOrLedgerStory(
     const parsed = parseTokenBeat(cand);
     if (!parsed) continue;
     const beat = normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient });
-    if (isFullyClean(beat, enumRefs, known, counts, said)) {
+    if (isFullyClean(beat, enumRefs, known, counts, said, pcName)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
@@ -970,7 +984,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = keepCleanLines(beat, enumRefs, known, counts, said);
+    const clean = keepCleanLines(beat, enumRefs, known, counts, said, pcName);
     const fns = new Set(clean.map((l) => l.fn));
     const partialOk = opts?.lenient
       ? clean.length >= 1
@@ -992,7 +1006,7 @@ export function acceptTokenOrLedgerStory(
     if (opts?.lenient && prose && storySentences(prose) < 2) {
       const full = bestPartial.full;
       const readable = full.lines.filter((line) => {
-        const v = classifyTokenLine(line, full, enumRefs, known, counts, said);
+        const v = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName);
         return v.ok || BINDING_ONLY_REASONS.has(v.reason ?? '');
       });
       const wholeBody = renderTokenBeat({ ...full, lines: readable }, enumRefs, {

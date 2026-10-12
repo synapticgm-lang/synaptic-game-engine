@@ -191,16 +191,20 @@ export function findManifestInventions(
 
   const text = narrative
     .replace(/<[^>]+>/g, ' ')
-    .replace(/"[^"]*"/g, ' ');
-  const hits = text.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}\b/g) ?? [];
+    .replace(/"[^"]*?([.!?])?"/g, (_m, stop?: string) => (stop ? ` ${stop} ` : ' '));
+  const found = [...text.matchAll(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}\b/g)];
   const invents: string[] = [];
   const stop = /^(The|A|An|This|That|Your|His|Her|Their|And|But|With|From|Into|After|Before|When|While|Then|System|Guide|Book)$/;
-  for (const hit of hits) {
+  for (const match of found) {
+    const hit = match[0];
     if (stop.test(hit.split(/\s+/)[0] ?? '')) continue;
     const lower = hit.toLowerCase();
     if (allowed.has(lower)) continue;
     const parts = lower.split(/\s+/);
     if (parts.every((p) => allowed.has(p))) continue;
+    // A sentence's first word is capitalised by position; in front of a known name it is not part of a new name.
+    const sentenceStart = /(^|[.!?:;]\s*|\n\s*)$/.test(text.slice(0, match.index ?? 0));
+    if (sentenceStart && parts.slice(1).every((p) => allowed.has(p))) continue;
     // Single common role phrases are ok if not proper-looking enough — require 2+ tokens
     if (parts.length < 2) continue;
     const permit = introductionPermitForName(hit, {

@@ -568,8 +568,9 @@ const SPEECH_VERB =
 const SYSTEM_TERMS =
   /\blevel (?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b|\bXP\b|\bHP\b|\bhit points\b|\bexperience points\b|\bstat (?:sheet|block)\b/i;
 const ASKS_ROLL = /\b(?:roll (?:a|an|for|your)\b|make an? [a-z]+ (?:check|save|saving throw)\b)/i;
+/** A question to the player ends in "?" ("What now waited was a traveler." asks nothing); a hand-over line may end either way. */
 const PROMPT_ENDING =
-  /\b(?:what (?:do|will|would|should) you do|what now|your move|the choice is yours|what happens next is up to you)\b[^.!?]*[.!?]?["”']?\s*$/i;
+  /(?:\b(?:what (?:do|will|would|should) you do|what now)\b[^.!?]*\?|\b(?:your move|the choice is yours|what happens next is up to you)\b[^.!?]*[.!?]?)["”']?\s*$/i;
 
 function fiveGrams(text: string): string[] {
   const w = low(text).match(/[a-z'’~]+/g) ?? [];
