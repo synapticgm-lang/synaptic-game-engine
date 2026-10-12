@@ -3,6 +3,7 @@ import type { GameState } from './types';
 import {
   inventoryHasItem,
   findUnsupportedItemClaims,
+  findUnsupportedNarrativeItemClaims,
   findUngroundedNamedClaims,
 } from './suggestionValidation';
 import type { PlayerIntent } from './intentParser';
@@ -207,7 +208,7 @@ export async function runWarden(
     kept.push(e);
   }
 
-  const narrativeClaims = findUnsupportedItemClaims(narrativeText, state);
+  const narrativeClaims = findUnsupportedNarrativeItemClaims(narrativeText, state);
   for (const claim of narrativeClaims) {
     notes.push(`Narrative referenced missing item: ${claim}`);
   }

@@ -364,8 +364,11 @@ export function checkTurn(row, packet, page = '') {
     // A move narrated on a no-move turn.
     const moveM = s.match(/\bJax\b[^.]{0,40}?\b(left|arrived|reached|set out|came (?:in)?to|walked (?:back )?(?:in)?to)\b/);
     // "… find Jax before they reached Cathedral Close": a move in a "before" clause had not happened yet.
-    const moveNotYet = moveM && /\bbefore\s+(?:\w+\s+){0,2}$/i.test(s.slice(0, (moveM.index ?? 0) + moveM[0].length - moveM[1].length));
-    if (facts.noMove && moveM && !moveNotYet) {
+    const moveLead = moveM ? s.slice(0, (moveM.index ?? 0) + moveM[0].length - moveM[1].length) : '';
+    const moveNotYet = moveM && /\bbefore\s+(?:\w+\s+){0,2}$/i.test(moveLead);
+    // "Jax faced being left alone at the quay": a passive verb says what happens to Jax, not that Jax moved.
+    const movePassive = moveM && /\b(?:be|being|been|is|was|were|are|get|gets|got|getting)\s+$/i.test(moveLead);
+    if (facts.noMove && moveM && !moveNotYet && !movePassive) {
       const named = facts.placeNames.find((p) => p.length > 3 && lower(s).includes(lower(p)) && !facts.hereNames.some((h) => namesHere(p, h)));
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }

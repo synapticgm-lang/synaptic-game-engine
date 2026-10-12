@@ -3,7 +3,7 @@
  * Append every turn of fate-autoplay runs to data/writer-dataset/turns.jsonl (gitignored).
  * One line per writer per turn. `pairKey` (bible:seed:turn) groups the same turn across writers.
  * Run `npm run fact-check -- <run>` first; a run without factcheck.json is refused.
- * Each commit-gate rejection (`sentenceRepairs` on a turn) also goes to rejections.jsonl.
+ * Each commit-gate rejection (`sentenceRepairs` on a turn) and each missing talk answer (`answerRepair`) also goes to rejections.jsonl.
  *
  *   node scripts/writerDataset.mjs [--lap N] <run dir> [<run dir> ...]
  */
@@ -130,7 +130,7 @@ for (const dir of dirs) {
       c.cost.push(costUsd);
       c.costSources.add(costSource);
     }
-    for (const r of t.sentenceRepairs ?? []) {
+    for (const r of [...(t.sentenceRepairs ?? []), ...(t.answerRepair ? [t.answerRepair] : [])]) {
       const rej = {
         pairKey: row.pairKey,
         lap,

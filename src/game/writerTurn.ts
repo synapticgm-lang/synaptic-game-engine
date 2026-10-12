@@ -8,9 +8,9 @@ import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, type LedgerRef } from './completedEventPacket';
-import { acceptTokenOrLedgerStory, refEnumOf, type SpokenLine, type TokenAcceptPath } from './tokenProse';
+import { acceptTokenOrLedgerStory, alreadySaidLines, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
-import { unresolvedActionReason } from './actionResolution';
+import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
@@ -51,6 +51,8 @@ export type WriterTurnResult = WriterDraft & {
   firstDraft: string;
   /** Sentences the commit gate rejected and what the one repair request did with each. */
   repairs?: SentenceRepair[];
+  /** A talk turn's missing quoted answer and what the one repair request did with it (`repairMissingAnswer`). */
+  answerRepair?: SentenceRepair;
 };
 
 /**
@@ -196,7 +198,81 @@ export async function runWriterTurnWithFightRetry(opts: {
 }): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
   const turn = await runWriterTurnFightOnly(opts);
   if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
-  return repairRejectedSentences(turn, opts);
+  return repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
+}
+
+export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted speech.';
+
+/** People in this beat's REF ENUM who could answer (named people, roles, companions, a live foe). */
+function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[] {
+  return refEnumOf(check.state, packet)
+    .filter((r) => (r.klass === 'person' || r.klass === 'companion') && !!r.display)
+    .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim())
+    .filter((d) => d.length > 1);
+}
+
+const hasQuote = (prose: string) => /["“][^"“”]{3,}["”]/.test(prose);
+
+/**
+ * Lap 37 — the player spoke to someone here and the committed beat has no quoted reply (the speech line
+ * was dropped by the line gate, trimmed, or never written). ONE repair request asks for that answer as
+ * one sentence; it lands after the beat's first sentence only when it quotes a person here, says
+ * something new and passes the commit gate. Otherwise nothing is added and the miss is logged as a bug.
+ */
+export async function repairMissingAnswer(
+  turn: WriterTurnResult & { fightRetry?: 'retried' | 'painted' },
+  opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
+): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+  const { check, packet } = opts;
+  if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput) || hasQuote(turn.prose)) return turn;
+  const here = answerersHere(check, packet);
+  if (!here.length) return turn;
+  const fact = check.engineFact;
+  const said = [...alreadySaidLines(check.state, packet).values()].flat();
+  const request = [
+    'Your story left out the answer. Write ONE sentence in which a person here answers the player in quoted speech. Reply with only that sentence as plain prose. No JSON, no other text.',
+    `Player said: "${check.playerInput.slice(0, 200)}"`,
+    `People here: ${here.join('; ')}`,
+    ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
+    `Your story so far: ${turn.prose.slice(0, 600)}`,
+    `Engine fact: ${fact.trim() || 'Keep only what the scene already established.'}`,
+  ].join('\n');
+  const missing = { sentence: '(no answer on the page)', flag: MISSING_ANSWER_PROBLEM, fact };
+  if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };
+  const raw = await opts.repair(request).catch(() => '');
+  const line = raw.trim() ? repairReplyLines(raw, check, packet, 1)?.[0] : undefined;
+  const quoted = line?.match(/["“]([^"“”]{3,})["”]/)?.[1] ?? '';
+  const bare = line?.replace(/["“][^"“”]*["”]/g, ' ') ?? '';
+  const pc = (check.state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
+  const pcSpeaks = new RegExp(`^\\W*(?:you${pc.length > 1 ? `|${pc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}` : ''})\\b`, 'i').test(bare);
+  const bug = !raw.trim()
+    ? 'repair reply empty'
+    : !line
+      ? 'repair reply was not one sentence'
+      : !quoted
+        ? 'repair reply has no quoted answer'
+        : pcSpeaks || !here.some((p) => new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(bare))
+          ? 'repair reply names nobody here as the speaker'
+          : repeatsSaid(quoted, said)
+            ? 'repair reply says an earlier line again'
+            : (() => {
+                const still = sentenceGateProblem(check.state, line, check.playerInput);
+                return still ? `repair failed the gate: ${still}` : '';
+              })();
+  if (bug) {
+    return {
+      ...turn,
+      answerRepair: { ...missing, ...(line ? { repaired: line } : {}), bug, ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}) },
+    };
+  }
+  const sentences = splitProseSentences(turn.prose);
+  const prose = sentences.length > 1 ? [sentences[0], line, ...sentences.slice(1)].join(' ') : `${turn.prose.trim()} ${line}`;
+  return {
+    ...turn,
+    prose,
+    answerRepair: { ...missing, repaired: line },
+    remaining: writerDraftProblems(prose, check),
+  };
 }
 
 function sentencePattern(sentence: string): RegExp {

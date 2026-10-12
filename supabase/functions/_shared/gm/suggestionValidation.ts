@@ -199,6 +199,33 @@ export function findUnsupportedItemClaims(input: string, state: GameState): stri
   return Array.from(new Set(claims.map(normalize)));
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Item claims in GM narrative: only gear the prose puts on the PC counts as missing.
+ * A weapon in someone else's hands or lying in the scene is not the player's kit.
+ * PC ties: a "your/my/{PC}'s" possessor on the item, or the PC as the subject of a use verb.
+ */
+export function findUnsupportedNarrativeItemClaims(narrative: string, state: GameState): string[] {
+  const pc = (state.character?.name ?? '').trim();
+  const pcAlt = pc ? `|${escapeRegExp(pc)}'s` : '';
+  const pcSubject = pc ? `|${escapeRegExp(pc)}` : '';
+  const claims: string[] = [];
+  for (const sentence of narrative.split(/(?<=[.!?])\s+/)) {
+    const pcIsSubject = new RegExp(`^\\W*(?:you|i${pcSubject})\\b`, 'i').test(sentence);
+    const verbClaims = pcIsSubject
+      ? collectUnsupportedClaims(sentence, state, [ITEM_USE_CLAIM, WEAPON_USE_CLAIM, ITEM_POSSESSION_CLAIM])
+      : [];
+    const owned = collectNamedWeaponClaims(sentence, state).filter((claimed) =>
+      new RegExp(`\\b(?:your|my${pcAlt})\\s+(?:[\\w'-]+\\s+){0,2}${escapeRegExp(claimed)}\\b`, 'i').test(sentence)
+    );
+    claims.push(...verbClaims, ...owned);
+  }
+  return Array.from(new Set(claims.map(normalize)));
+}
+
 /**
  * Conservative item-use claims for the pre-GM hard gate.
  * Omits scatter named-weapon mentions ("look at the sword on the wall") that are exploratory.

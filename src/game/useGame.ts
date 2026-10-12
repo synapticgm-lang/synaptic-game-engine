@@ -2969,7 +2969,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           rewrite: async (problem) => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
           repair: (request) => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
         });
-        for (const r of writerTurn.repairs ?? []) {
+        for (const r of [...(writerTurn.repairs ?? []), ...(writerTurn.answerRepair ? [writerTurn.answerRepair] : [])]) {
           debugLogger.record(r.bug ? 'ERROR' : 'INFO', r.bug ? 'Sentence repair failed' : 'Sentence repaired', {
             turn: liveCurrent.turn,
             ...r,

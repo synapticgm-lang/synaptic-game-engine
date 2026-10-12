@@ -372,6 +372,8 @@ export type TurnTelemetry = {
   rejectedReason?: string;
   /** Lap 13 — each rejected sentence and its one repair (a `bug` means the repair failed). */
   sentenceRepairs?: import('./writerTurn').SentenceRepair[];
+  /** Lap 37 — a talk turn's missing quoted answer and its one repair request. */
+  answerRepair?: import('./writerTurn').SentenceRepair;
   /** A whole-beat warden block (unresolved / collage): logged, the draft stays. */
   blockedPaintReason?: string;
   engineFact?: string;
@@ -1337,6 +1339,7 @@ Do NOT print dice notation or CODE ENFORCED.
     for (const r of writerTurn.repairs ?? []) {
       if (r.bug) console.warn(`[writer] sentence repair bug — ${r.bug}: "${r.sentence.slice(0, 120)}"`);
     }
+    if (writerTurn.answerRepair?.bug) console.warn(`[writer] answer repair bug — ${writerTurn.answerRepair.bug}`);
     if (writerTurn.fightRetry) console.info(`[writer] settled fight left out — ${writerTurn.fightRetry}`);
     traceStage('render', writerTurn.firstDraft);
     traceStage('finishCommittedProse+spoken', writerTurn.prose);
@@ -2095,6 +2098,7 @@ Do NOT print dice notation or CODE ENFORCED.
       rejectedWriterText,
       rejectedReason,
       sentenceRepairs: writerTurn?.repairs?.length ? writerTurn.repairs : undefined,
+      answerRepair: writerTurn?.answerRepair,
       blockedPaintReason,
       engineFact: engineFact || undefined,
       writerRawHead,

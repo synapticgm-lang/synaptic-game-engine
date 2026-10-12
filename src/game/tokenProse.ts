@@ -485,7 +485,7 @@ export function alreadySaidLines(state: GameState, packet?: CompletedEventPacket
 const sayWords = (s: string) => (s.toLowerCase().match(/[a-z0-9']+/g) ?? []);
 
 /** Most of these words were already said in one earlier line (a cut or re-ordered copy is still the same line). */
-function repeatsSaid(words: string, said: readonly string[]): boolean {
+export function repeatsSaid(words: string, said: readonly string[]): boolean {
   const now = sayWords(words);
   if (now.length < 4) return false;
   return said.some((line) => {

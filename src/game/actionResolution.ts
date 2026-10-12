@@ -52,6 +52,14 @@ export function isGenericBridgeNarrative(narrative: string): boolean {
   return false;
 }
 
+/** The player spoke to someone: an ask of a nearby person, a talk intent, or a spoken protest. */
+export function isTalkTurn(playerAction: string, intent: PlayerIntent): boolean {
+  if (isAskNearbyPerson(playerAction)) return true;
+  // 28g — "Wait" / "Ready yourself and watch" are not speech even when the parser tags them as talk.
+  const quietAction = /^(?:wait|hold|rest|pause|stay|ready|watch|keep watch)\b/i.test(primaryActionClause(playerAction).trim());
+  return !quietAction && (intent.kind === 'talk' || isSpeechOrProtest(playerAction));
+}
+
 /**
  * 28g — why the narrative fails to resolve the player's action, or null when it resolves it.
  * When the engine already resolved the action (fight / flee / parley / rest), the check is that the
@@ -84,10 +92,7 @@ export function unresolvedActionReason(
     return proseResolvesTalk(prose) ? null : 'asked person, no reply';
   }
 
-  // 28g — "Wait" / "Ready yourself and watch" are not speech even when the parser tags them as talk.
-  const quietAction = /^(?:wait|hold|rest|pause|stay|ready|watch|keep watch)\b/i.test(job.trim());
-  const speech = !quietAction && (intent.kind === 'talk' || isSpeechOrProtest(playerAction));
-  if (speech) {
+  if (isTalkTurn(playerAction, intent)) {
     if (!proseResolvesSpeech(prose)) return 'speech, no reply';
     if (isRecycledTalkBeat(prose, previousNarrative)) return 'recycled talk';
     // Atmosphere / premise keywords alone must not count as answering dialogue.
