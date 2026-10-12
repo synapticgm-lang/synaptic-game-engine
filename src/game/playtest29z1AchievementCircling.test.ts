@@ -79,9 +79,9 @@ function award(s: GameState) {
 }
 
 describe('29z1 — stamp', () => {
-  it('HUD/BUILD are 2026-10-12f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-12f');
-    expect(BUILD_STAMP).toBe('2026-10-12f');
+  it('HUD/BUILD are 2026-10-12g, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-12g');
+    expect(BUILD_STAMP).toBe('2026-10-12g');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
