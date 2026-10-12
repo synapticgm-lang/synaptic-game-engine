@@ -11,7 +11,7 @@ import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBod
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
-import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
+import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, sentenceGateProblems, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
 import { isNearClone, isSameBeat } from './beatFingerprint';
@@ -363,8 +363,8 @@ export async function repairRejectedSentences(
   const whole = sentenceGateProblem(check.state, turn.prose, check.playerInput);
   if (!whole) return turn;
   const flagged = splitProseSentences(turn.prose)
-    .map((sentence) => ({ sentence, flag: sentenceGateProblem(check.state, sentence, check.playerInput) }))
-    .filter((f): f is { sentence: string; flag: string } => f.flag === whole);
+    .filter((sentence) => sentenceGateProblems(check.state, sentence, check.playerInput).includes(whole))
+    .map((sentence) => ({ sentence, flag: whole }));
   if (!flagged.length) {
     return {
       ...turn,
@@ -384,7 +384,9 @@ export async function repairRejectedSentences(
   let prose = turn.prose;
   const repairs: SentenceRepair[] = flagged.map((f, i) => {
     const line = lines?.[i];
-    const still = line ? sentenceGateProblem(check.state, line, check.playerInput) : null;
+    // The rewrite fails only for a reason it fails in its draft too (out of context alone is not enough).
+    const inDraft = line ? sentenceGateProblems(check.state, replaceDraftSentence(prose, f.sentence, line), check.playerInput) : [];
+    const still = line ? sentenceGateProblems(check.state, line, check.playerInput).find((p) => inDraft.includes(p)) ?? null : null;
     const ok = !!line && !still && line.trim() !== f.sentence.trim();
     prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
     return ok

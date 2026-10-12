@@ -171,23 +171,32 @@ const CONTRADICTS_EVENT = 'Contradicts the completed event (dead foe acting, lis
  * (thin, recycle, mood only, missing slot, settled fight left out) are not here: no one sentence owns them.
  */
 export function sentenceGateProblem(state: GameState, sentence: string, playerInput?: string): string | null {
-  const s = (sentence ?? '').trim();
-  if (!s || playerAsksRepeat(playerInput ?? '')) return null;
-  if (/@t\d+\b/.test(s)) return 'Leftover @t tokens: write the names as words.';
-  if (isWriterMonologueLeak(s) || isDirectorChromeLeak(s)) return 'Planning notes or instructions in the story: write only the story.';
-  if (isTokenSaladLeak(s)) return 'Garbled words: write plain sentences.';
-  if (isHudCombatChromeLeak(s)) return 'Game UI text in the story: write the scene instead.';
-  const closedFact = factClosedViolationReason(state, s);
-  if (closedFact) return closedFact;
-  if (isSealedCardViolation(state, s, playerInput)) return INVENTS_FACT;
-  if (state.completedEvent && proseViolatesEventPacket(s, state.completedEvent)) return CONTRADICTS_EVENT;
-  return wrongExitCountProblem(state, s) ?? wrongExitPlaceProblem(state, s);
+  return sentenceGateProblems(state, sentence, playerInput)[0] ?? null;
 }
 
-/** The sentence fails the gate for the same reason its whole draft does (out of context alone is not enough). */
+/** Every reason the text fails those checks, in the gate's order (the first is `sentenceGateProblem`). */
+export function sentenceGateProblems(state: GameState, sentence: string, playerInput?: string): string[] {
+  const s = (sentence ?? '').trim();
+  if (!s || playerAsksRepeat(playerInput ?? '')) return [];
+  const out: (string | null)[] = [];
+  if (/@t\d+\b/.test(s)) out.push('Leftover @t tokens: write the names as words.');
+  if (isWriterMonologueLeak(s) || isDirectorChromeLeak(s)) out.push('Planning notes or instructions in the story: write only the story.');
+  if (isTokenSaladLeak(s)) out.push('Garbled words: write plain sentences.');
+  if (isHudCombatChromeLeak(s)) out.push('Game UI text in the story: write the scene instead.');
+  out.push(factClosedViolationReason(state, s));
+  if (isSealedCardViolation(state, s, playerInput)) out.push(INVENTS_FACT);
+  if (state.completedEvent && proseViolatesEventPacket(s, state.completedEvent)) out.push(CONTRADICTS_EVENT);
+  out.push(wrongExitCountProblem(state, s), wrongExitPlaceProblem(state, s));
+  return [...new Set(out.filter((p): p is string => !!p))];
+}
+
+/**
+ * The sentence fails the gate for the same reason its whole draft does (out of context alone is not enough).
+ * A sentence that also fails a check only out of context still owns the draft's reason.
+ */
 export function sentenceRejectedInDraft(state: GameState, sentence: string, draft: string, playerInput?: string): boolean {
   const whole = sentenceGateProblem(state, draft, playerInput);
-  return !!whole && sentenceGateProblem(state, sentence, playerInput) === whole;
+  return !!whole && sentenceGateProblems(state, sentence, playerInput).includes(whole);
 }
 
 export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: state that outcome as finished.';

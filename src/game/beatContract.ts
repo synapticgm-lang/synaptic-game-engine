@@ -570,9 +570,9 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
       .filter(Boolean)
   );
   const self = pcName(state);
-  // "Garth" is how a cast person "Garth Barrow" is painted on a later mention.
+  // "Garth" is how a cast person "Garth Barrow" is painted on a later mention (a person here with no record yet too).
   const castParts = new Set(
-    sealedCastNames(state)
+    [...sealedCastNames(state), ...(state.sceneFacts?.present ?? []).filter((n) => /^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+$/.test(n))]
       .flatMap((n) => n.toLowerCase().split(/\s+/))
       .filter((w) => w.length >= 3)
   );
@@ -584,10 +584,11 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
     const name = (m[1] ?? '').trim();
     if (!name || seen.has(name.toLowerCase())) continue;
     if (self && name.toLowerCase() === self) continue;
-    // "Now Jax waits", "Whatever Garth wanted": a capitalised sentence-start word in front of a known name is that name, not a new one.
+    // "Ilyra said", "Now Jax waits", "Whatever Garth wanted": a cast person's painted given name, alone or after a
+    // capitalised sentence-start word, is that person, not a new one.
     const words = name.toLowerCase().split(/\s+/);
     const known = (t: string) => t === self || cast.has(t) || (!t.includes(' ') && castParts.has(t));
-    if (words.some((_, i) => i > 0 && known(words.slice(i).join(' ')))) continue;
+    if (words.some((_, i) => known(words.slice(i).join(' ')))) continue;
     if (isPlannerUiPersonToken(name)) continue;
     if (isRegisteredLocation(name, bibleId)) continue;
     if (!canHarvestAsNamedPerson(name, bibleId, npcRecordNames(state))) continue;

@@ -21,6 +21,7 @@ import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
 import { isRoadLabel } from './travelJourney';
 import { giverIsHere, isTalkStageObjective, talkStageGiver } from './questGiver';
+import { hallTopicAlreadyAnswered } from './openingEstablishment';
 import { travelChipMoves } from './chipLegality';
 import { objectiveOpensInterior } from './enterInterior';
 
@@ -338,20 +339,25 @@ export function storyChip(state: GameState): string | null {
   if (state.activeEncounter) return null;
   const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
   if (!quest) return null;
-  const hubs = hubsForBibleId(state.campaignBibleId);
   const here = (state.currentLocation ?? '').toLowerCase();
-  const site = quest.location ? matchHub(hubs, quest.location) : null;
-  if (site && !here.includes(site.name.toLowerCase())) return `Travel toward ${site.name}`;
-  const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
-  if (!site && linked) return `Travel toward ${linked.name}`;
   const objIdx = quest.objectives?.findIndex((o) => !o.completed && !o.optional) ?? -1;
   const obj = objIdx >= 0 ? quest.objectives![objIdx] : undefined;
   const talkStage = !!obj && isTalkStageObjective(state, quest.id, objIdx);
-  if (talkStage) {
-    const giver = talkStageGiver(state, quest.id, objIdx);
-    if (!giver || !giverIsHere(state, giver)) return null;
+  const giver = talkStage ? talkStageGiver(state, quest.id, objIdx) : null;
+  const giverHere = !!giver && giverIsHere(state, giver);
+  // A talk stage whose giver stands here is done here, before any trip to the quest's site.
+  if (!giverHere) {
+    const hubs = hubsForBibleId(state.campaignBibleId);
+    const site = quest.location ? matchHub(hubs, quest.location) : null;
+    if (site && !here.includes(site.name.toLowerCase())) return `Travel toward ${site.name}`;
+    const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
+    if (!site && linked) return `Travel toward ${linked.name}`;
+    if (talkStage) return null;
   }
-  const chip = obj ? objectiveChip(obj.description) : null;
+  // At the opening card's place the card's talk chip carries the stage: one label for one topic.
+  const cardPlace = (state.openingEstablishment?.answers?.where ?? '').trim().toLowerCase();
+  const atCard = giverHere && samePlace(here, cardPlace) && !hallTopicAlreadyAnswered(state, 'want');
+  const chip = obj ? (atCard ? 'Ask what they want' : objectiveChip(obj.description)) : null;
   if (!chip) return null;
   // Offered only when an engine action carries it out: a talk to its giver here, a move, or opening the site here.
   if (!talkStage && !travelChipMoves(state, chip) && !objectiveOpensInterior(state, chip)) return null;
