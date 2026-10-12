@@ -16,8 +16,10 @@ const COUNTED_EXIT = new RegExp(
   `\\b(\\d+|one|two|three|four|five|six|seven|eight|nine|ten|both|single|only)\\s+(?:[a-z-]+\\s+){0,2}?(${EXIT_NOUN})\\b`,
   'gi'
 );
-/** Right after the noun: "ways out", or a leading verb ("doors led off", "the only way left to go"). */
-const LEADS_OUT = /^\s+(?:out\b|(?:[a-z-]+\s+)?(?:left|led|lead|leads|ran|run|runs|went|go|goes|opened|open)\b)/i;
+/** Right after the noun: "ways out", "the only way in and out", or a leading verb ("doors led off", "the only way left to go"). */
+const LEADS_OUT = /^\s+(?:(?:in and )?out\b|(?:[a-z-]+\s+)?(?:left|led|lead|leads|ran|run|runs|went|go|goes|opened|open)\b)/i;
+/** Later in the sentence, the counted ways lead on: "Two doors waited…, and both of them led somewhere". */
+const LED_LATER = /\b(?:both|all|each|they|which)\b(?:\s+[a-z]+){0,2}?\s+(?:led|lead|leads|ran|run|runs|went|go|goes|opened)\b/i;
 /** "the other two doors", "the first two roads" count part of the ways, not all of them. */
 const PART_OF = /\b(?:other|remaining|first|last|next|those|these)\s+$/i;
 /** "the only way on ran past the traveler", "the way back": the ways in one direction, not every way out. */
@@ -54,7 +56,8 @@ function statedExitCounts(clause: string, exits: string[], sentence: string): Ar
     const after = clause.slice(end);
     const more = /\b(?:more|further|additional)\b/i.test(m[0]);
     // "…; two more routes—Cathedral Close and the Undercroft—lay beyond": an added count needs no verb of its own.
-    const bare = !/^exits?$/.test(noun) && !LEADS_OUT.test(after);
+    const tail = sentence.slice(Math.max(0, sentence.indexOf(clause)) + end);
+    const bare = !/^exits?$/.test(noun) && !LEADS_OUT.test(after) && !LED_LATER.test(tail);
     if (bare && !more) continue;
     if (PART_OF.test(clause.slice(0, at)) || ONE_DIRECTION.test(after) || /^\s+of\s+the\b/i.test(after)) continue;
     // "the only other way out" leaves out the way in; "one of the ways out" picks one of several.

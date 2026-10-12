@@ -126,7 +126,7 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
     || detectAtmosphereReprint(text, recent)
     || detectSameRoomEssayHard(text, recent, check.playerInput)
   ) {
-    const reused = recycledSentencesIn(text, recent).slice(0, 3);
+    const reused = recycledSentencesIn(text, recent, undefined, check.state.character?.name).slice(0, 3);
     out.push(
       reused.length
         ? `Repeats an earlier beat: write what is new this turn. Do not reuse these lines: ${reused.map((s) => `"${s.slice(0, 110)}"`).join(' ')}`
@@ -436,7 +436,7 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
   const refs = refEnumOf(check.state, packet);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
     const move = moveSentenceCheck(check.playerInput, refs, check.state.journey?.to ?? check.state.currentLocation);
-    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, move).text;
+    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, move, check.state.character?.name).text;
   }
   return polishMentions(next, refs, check.state);
 }

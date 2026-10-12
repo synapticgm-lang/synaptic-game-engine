@@ -381,9 +381,18 @@ export function lineHasUnhandedCount(text: string, handed: string): boolean {
   return false;
 }
 
-export function lineHasUnboundAnimate(text: string): boolean {
+const roleNounOf = (match: string) => match.toLowerCase().split(/\s+/).pop() ?? '';
+
+/** Role nouns this turn's own engine result names ("Go with the handler…"): the writer was handed them. */
+export function handedRoleNouns(packet?: CompletedEventPacket): string[] {
+  const found = [...(packet?.engineResult ?? '').matchAll(new RegExp(UNBOUND_ANIMATE.source, 'gi'))];
+  return [...new Set(found.map((m) => roleNounOf(m[0])))];
+}
+
+export function lineHasUnboundAnimate(text: string, handedRoles: readonly string[] = []): boolean {
   const s = text ?? '';
   for (const m of s.matchAll(new RegExp(UNBOUND_ANIMATE.source, 'gi'))) {
+    if (handedRoles.includes(roleNounOf(m[0]))) continue;
     // "the official stamp": the role word describes a thing; no person stands in the line.
     const rest = s.slice((m.index ?? 0) + m[0].length).match(/^ ([a-z]+)(?:\s+([A-Za-z'-]+))?/);
     if (rest && isNounAdjunctBefore(rest[1]!, rest[2])) continue;
@@ -554,7 +563,7 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
     // Whole words only: a held "Close" is not the "close" in "close-eyed".
     animateText = animateText.replace(new RegExp(`(?<![\\w'-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w'-])`, 'gi'), '·');
   }
-  return lineHasUnboundAnimate(animateText) ? 'unbound-animate' : null;
+  return lineHasUnboundAnimate(animateText, knownNames.map((n) => n.toLowerCase())) ? 'unbound-animate' : null;
 }
 
 /**
@@ -849,8 +858,8 @@ function peopleHereNoteNames(state: GameState): string[] {
 
 /**
  * Names the writer was handed this turn: the ledger's own names, the People here notes, the packet's
- * mention list and the writer's quest titles. A capital the packet gave the writer is not an invention.
- * A weapon not in hand stays out, however it is listed.
+ * mention list, the writer's quest titles and the role nouns of this turn's engine result. A capital the
+ * packet gave the writer is not an invention, nor is a role it named. A weapon not in hand stays out, however it is listed.
  */
 export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
   const unheld = new Set(weaponsNotInHand(state));
@@ -859,6 +868,7 @@ export function handedProperNames(state: GameState, packet?: CompletedEventPacke
     ...peopleHereNoteNames(state),
     ...(packet?.allowlist ?? []),
     ...writerFacts(state).quests.map((q) => q.name),
+    ...handedRoleNouns(packet),
   ];
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1 && !unheld.has(n.trim())).map((n) => n.trim()))];
 }

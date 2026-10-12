@@ -725,8 +725,36 @@ function quoteOpenAfter(sentence: string, openQuote: boolean): boolean {
   return marks % 2 === 1 ? !openQuote : openQuote;
 }
 
-/** Sentences of `draft` already told in a recent GM beat — anywhere in the beat, or a spoken line said again. */
-export function recycledSentencesIn(draft: string, recentBeats: string[], lastK = COLLAGE_LOOKBACK): string[] {
+const OPENING_CLAUSE_WORDS = 6;
+
+const openingClause = (s: string) =>
+  (s.toLowerCase().replace(/[“”"]/g, ' ').match(/[a-z0-9']+/g) ?? []).slice(0, OPENING_CLAUSE_WORDS).join(' ');
+
+/**
+ * "Nell Rudd looked up from a crate by the kitchen door…" then "Nell Rudd looked up from a crate of turnips…":
+ * the same person doing the same thing again, however the tail reads. The player's own lines are left out:
+ * the player choosing the same move again is told again.
+ */
+function repeatsOpeningClause(sentence: string, prior: string[], actor?: string): boolean {
+  if (!isSubstantialSentence(sentence)) return false;
+  const open = openingClause(sentence);
+  if (open.split(' ').length < OPENING_CLAUSE_WORDS) return false;
+  const pc = (actor ?? '').trim().split(/\s+/)[0]?.toLowerCase();
+  if (pc && open.split(' ')[0] === pc) return false;
+  return prior.some((p) => isSubstantialSentence(p) && openingClause(p) === open);
+}
+
+/**
+ * Sentences of `draft` already told in a recent GM beat — anywhere in the beat, the same opening clause
+ * by someone other than `actor`, or a spoken line said again.
+ */
+export function recycledSentencesIn(
+  draft: string,
+  recentBeats: string[],
+  lastK = COLLAGE_LOOKBACK,
+  actor?: string,
+  openingClauses = true
+): string[] {
   const beats = (recentBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-lastK);
   if (!beats.length) return [];
   const prior = beats.flatMap((b) => splitStorySentences(b));
@@ -741,6 +769,7 @@ export function recycledSentencesIn(draft: string, recentBeats: string[], lastK 
     // A line the person has not said before is new, however the look before it reads.
     if (spoken.split(' ').filter(Boolean).length >= 2 && !priorSpoken.includes(spoken)) return false;
     if (prior.some((p) => sentenceMatches(s, p))) return true;
+    if (openingClauses && repeatsOpeningClause(s, prior, actor)) return true;
     for (const m of s.matchAll(QUOTE_SPAN_RE)) {
       if (quotes.has(quoteKey(m[1] ?? ''))) return true;
     }
@@ -749,7 +778,8 @@ export function recycledSentencesIn(draft: string, recentBeats: string[], lastK 
 }
 
 /**
- * Drop recycled sentences from a committed beat when at least `minKeep` sentences are left.
+ * Drop recycled sentences from a committed beat when at least `minKeep` sentences are left. When dropping the
+ * repeated opening clauses too would leave fewer, only the near-copies go.
  * A beat that is all reprint stays as written (the caller already asked the writer once).
  */
 export function trimRecycledSentences(
@@ -757,14 +787,20 @@ export function trimRecycledSentences(
   recentBeats: string[],
   minKeep = 2,
   /** This turn's own event (the move the player made) is told again on purpose. */
-  isThisTurnsEvent: (sentence: string) => boolean = () => false
+  isThisTurnsEvent: (sentence: string) => boolean = () => false,
+  /** The player character's name: their own lines are not dropped for a repeated opening clause. */
+  actor?: string
 ): { text: string; dropped: string[] } {
-  const recycled = new Set(recycledSentencesIn(draft, recentBeats).filter((s) => !isThisTurnsEvent(s)));
-  if (!recycled.size) return { text: draft, dropped: [] };
   const sentences = splitStorySentences(draft);
-  const kept = sentences.filter((s) => !recycled.has(s));
-  if (kept.length < minKeep) return { text: draft, dropped: [] };
-  return { text: kept.join(' ').replace(/\s+/g, ' ').trim(), dropped: [...recycled] };
+  for (const openingClauses of [true, false]) {
+    const recycled = new Set(
+      recycledSentencesIn(draft, recentBeats, COLLAGE_LOOKBACK, actor, openingClauses).filter((s) => !isThisTurnsEvent(s))
+    );
+    if (!recycled.size) return { text: draft, dropped: [] };
+    const kept = sentences.filter((s) => !recycled.has(s));
+    if (kept.length >= minKeep) return { text: kept.join(' ').replace(/\s+/g, ' ').trim(), dropped: [...recycled] };
+  }
+  return { text: draft, dropped: [] };
 }
 
 export function stripRecycledPrefix(draft: string, hit: LeadingCollageHit): string {
