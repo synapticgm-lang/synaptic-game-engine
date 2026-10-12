@@ -18,6 +18,7 @@ import {
 } from './beatContract';
 import { buildBeatContractFromTemplate, getBeatTemplate } from './beatRegistry';
 import { FAST_XP_AWARDS } from './xpPolicy';
+import { questListHidden } from './systemHousing';
 import { updateChoiceFingerprints } from './choiceCompiler';
 import { isSeekFightChip, objectiveChip } from './choiceRanking';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
@@ -688,9 +689,10 @@ export function xpGainVoiceAside(state: GameState, paidXp: number): { state: Gam
 
 export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const lines: string[] = [];
+  const questsHidden = questListHidden(result.state?.systemHousing);
   for (const r of result.systemReceipts) {
     if (r.startsWith('Quest stage:')) {
-      lines.push(`Quest: ${r.replace(/^Quest stage:\s*/, '')}`);
+      if (!questsHidden) lines.push(`Quest: ${r.replace(/^Quest stage:\s*/, '')}`);
     } else if (r.startsWith('Arc XP:')) {
       const m = r.match(/Arc XP: \+(\d+) \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (arc: ${m[2]})`);
@@ -1231,7 +1233,7 @@ export function commitTalkStageAfterTurn(
       { beatId: contract.id, eventSeq: seq, why: `Talk stage heard from ${giver}`, questStage: summary },
       turn
     );
-    return { state: next, receipts: [`Quest: ${summary}`] };
+    return { state: next, receipts: questListHidden(next.systemHousing) ? [] : [`Quest: ${summary}`] };
   }
   return { state, receipts: [] };
 }

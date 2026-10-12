@@ -11,6 +11,7 @@ import { STAGNATION_MID_WRITER_ENABLED, resolveWriterTierForTurn } from './write
 import { isDiscoveryExhausted } from './discoveryXpLedger';
 import { compileChoices } from './choiceCompiler';
 import { countTurnReceipts } from './receiptTelemetry';
+import { clampSystemHousing, type SystemPartId } from './systemHousing';
 
 describe('playtest28b — Manus slice + T12 hook wiring', () => {
   it('T12 talk path: stage-2 commits with STATUS receipts by T10', () => {
@@ -36,6 +37,7 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
     state.arcDirector = { committedBeatIds: ['sp-beat-orient'] };
     state.openingEstablishment = { ...state.openingEstablishment!, pickedHook: 'A handler steps in with a shaking ledger.' };
     state.sceneFacts = { ...state.sceneFacts!, present: ['the handler'] };
+    state.systemHousing = clampSystemHousing({ housing: 'private_window', parts: { quest_list: true } as Record<SystemPartId, boolean> });
     const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me and why');
     // s74 M — pending before the writer; it commits after the turn on the handler's own line.
     expect(arc.state.arcDirector?.committedBeatIds ?? []).not.toContain('sp-beat-hear-reason');

@@ -103,7 +103,7 @@ export function chipAddressee(label: string): { kind: 'named' | 'role' | 'none';
   if (named && !/['’]s$/.test(named[1]!)) return { kind: 'named', who: named[1]! };
   if (named) return { kind: 'role', who: rest.slice(named[1]!.length).trim().split(/\s+/)[0] || named[1]! };
   const role = rest.match(/^([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)/);
-  if (role && !/^(?:them|him|her|someone|anyone|everyone|people|nearby|around)\b/.test(role[1]!)) {
+  if (role && !/^(?:them|him|her|someone|anyone|everyone|somebody|anybody|everybody|whoever|whomever|people|nearby|around)\b/.test(role[1]!)) {
     return { kind: 'role', who: role[1]!.split(/\s+(?:about|for|what|who|why|how|where|if)\b/)[0]! };
   }
   return { kind: 'none', who: '' };

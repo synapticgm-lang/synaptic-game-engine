@@ -82,7 +82,7 @@ function runDir(arg) {
   return join(RUNS, m[m.length - 1]);
 }
 
-const lower = (s) => String(s ?? '').toLowerCase();
+const lower = (s) => String(s ?? '').toLowerCase().replace(/[‘’]/g, "'");
 
 /** A name of the place the player stands in: the full name, part of it, or only its words ("the close"). */
 function namesHere(place, here) {
@@ -279,8 +279,11 @@ export function checkTurn(row, packet, page = '') {
       const phrase = m[1].replace(/[’']s$/, '');
       const start = (m.index ?? 0) + m[0].indexOf(m[1]);
       const atStart = start === 0 || /["“(]$/.test(s.slice(0, start).trim().slice(-1));
-      // A contraction is its stem word ("I'll" is "I").
-      const words = phrase.split(/\s+/).map((w) => w.replace(/[’'](?:s|ll|d|m|ve|re)$/, '')).filter((w) => !/^(?:of|the|de|in)$/i.test(w));
+      // A contraction is its stem word ("I'll" is "I"); a lowercase hyphen tail is not part of the name ("Earth-born" names Earth).
+      const words = phrase
+        .split(/\s+/)
+        .map((w) => w.replace(/[’'](?:s|ll|d|m|ve|re)$/, '').replace(/(?:-[a-z]+)+$/, ''))
+        .filter((w) => !/^(?:of|the|de|in)$/i.test(w));
       let test = words.filter((w) => !STOP_CAPS.has(lower(w)));
       if (atStart && test[0] === words[0]) test = test.slice(1);
       if (!test.length) continue;

@@ -80,7 +80,7 @@ function jax(at: string, present: string[]): GameState {
       answers: { ...(s.openingEstablishment?.answers ?? {}), name: 'Jax', where: FESTIVAL },
     } as GameState['openingEstablishment'],
     sceneFacts: { ...s.sceneFacts!, crowd: 'present', present },
-    systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }),
+    systemHousing: clampSystemHousing({ housing: 'private_window', parts: { quest_list: true } as Record<SystemPartId, boolean> }),
   } as GameState;
 }
 
@@ -159,7 +159,7 @@ describe('s74 M — talk stage needs its giver', () => {
 describe('s79 Root B — a talk stage pays only when the turn is about it', () => {
   const housed = (s: GameState): GameState => ({
     ...s,
-    systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as Record<SystemPartId, boolean> }),
+    systemHousing: clampSystemHousing({ housing: 'private_window', parts: { quest_list: true } as Record<SystemPartId, boolean> }),
   });
   /** Seed 79 at T5: bearings done at the ledger stair, Ila Pellane here, the reason not yet heard. */
   function seed79Stage(): { state: GameState; questId: string; idx: number } {
