@@ -635,7 +635,7 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
         'Hear their reason (or demand it)',
         'Choose: swear, refuse, or delay',
       ],
-      rewards: 'Circle Blessing remains; reputation with Pellane or the street tilts',
+      rewards: 'Circle Blessing',
     },
     {
       id: 'sp-quest-side-junk',

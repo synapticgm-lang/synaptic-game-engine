@@ -21,7 +21,7 @@ describe('replay bank multi-1 s138 (deepseek)', () => {
   });
 
   it('[m1 s138ds T2 | multi-1 Root 3] the panel is never a person on the REF ENUM (whole run)', () => {
-    expect(R.packet(2), 'the panel is mentionable on T2').toMatch(/the panel/);
+    expect(R.packet(2), 'a world_status save has no panel to mention on T2').not.toMatch(/the panel/);
     for (const n of R.turns()) {
       expect(R.packet(n), `T${n}`).not.toMatch(/^t\d+\s+\S+\s+person\s+"the panel"/m);
     }

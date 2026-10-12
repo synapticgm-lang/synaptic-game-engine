@@ -6,8 +6,14 @@
 import type { GameState } from './types';
 import type { SpokenLine } from './tokenProse';
 import { contractsForState } from './beatContract';
-import { hallTalkAsksWant, openingCastNames, playerAskedWhyPulled } from './openingEstablishment';
+import { hallTalkAsksWant, isAloneArrivalOpening, openingCastNames, playerAskedWhyPulled } from './openingEstablishment';
 import { peopleHere } from './chipLegality';
+import type { StarterArrival } from './questPlay';
+
+/** The New Game arrival the starter quests fit: alone or met, and the frozen housing. */
+export function starterArrival(state: GameState): StarterArrival {
+  return { alone: isAloneArrivalOpening(state), housing: state.systemHousing?.housing ?? null };
+}
 
 /** True when a beat contract marks this quest objective as heard from a giver. */
 export function isTalkStageObjective(state: GameState, questId: string, objectiveIndex: number): boolean {

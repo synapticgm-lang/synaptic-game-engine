@@ -321,6 +321,17 @@ export function systemStatusChip(housing: SystemHousingId | null | undefined): s
   }
 }
 
+/** What authored text calls the System under this housing. Unknown housing keeps the old panel. */
+export function systemHousingThing(housing: SystemHousingId | null | undefined): string {
+  switch (housing) {
+    case 'worn_device': return 'the device';
+    case 'private_window': return 'the window in your head';
+    case 'world_status': return 'your level';
+    case 'leftover_pocket': return 'the pocket';
+    default: return 'the panel';
+  }
+}
+
 const STATUS_CHIPS = new Set(
   ([...HOUSING_IDS, null] as const).map((h) => systemStatusChip(h).toLowerCase())
 );

@@ -22,6 +22,7 @@ import { splitProseSentences } from './proseSentences';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 import { isNounAdjunctBefore } from './npcMemory';
 import { weaponsNotInHand } from './infoSheet';
+import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
 import { buildGroundTruthLedger } from './writerInfoLayer';
@@ -468,14 +469,40 @@ function unboundDeclaredToks(beat: TokenBeat, enumRefs: LedgerRef[]): Set<string
 export type LineVerdict = { ok: boolean; reason?: string };
 
 /** 28g — diagnostics only: why each writer JSON line was kept or dropped (run telemetry). */
+/** Each person's lines already on the record, keyed by lowercased name. Empty when the player asked to hear it again. */
+export type AlreadySaid = Map<string, string[]>;
+
+export function alreadySaidLines(state: GameState, packet?: CompletedEventPacket): AlreadySaid {
+  const out: AlreadySaid = new Map();
+  if (playerAsksRepeat(packet?.playerAction ?? '')) return out;
+  for (const m of state.npcMemories ?? []) {
+    const lines = (m.said ?? []).map((s) => s.line).filter(Boolean);
+    if (lines.length) out.set(m.npcName.toLowerCase(), lines);
+  }
+  return out;
+}
+
+const sayWords = (s: string) => (s.toLowerCase().match(/[a-z0-9']+/g) ?? []);
+
+/** Most of these words were already said in one earlier line (a cut or re-ordered copy is still the same line). */
+function repeatsSaid(words: string, said: readonly string[]): boolean {
+  const now = sayWords(words);
+  if (now.length < 4) return false;
+  return said.some((line) => {
+    const before = new Set(sayWords(line));
+    return now.filter((w) => before.has(w)).length / now.length >= 0.8;
+  });
+}
+
 export function tokenLineVerdicts(raw: string, state: GameState, packet?: CompletedEventPacket): string[] {
   const enumRefs = refEnumOf(state, packet);
   const beat = extractTokenCandidates(raw ?? '').map(parseTokenBeat).find((b): b is TokenBeat => !!b);
   if (!beat) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
   const out = bindCheckFails(beat, enumRefs).map((n) => `ref ${n}`);
   const counts = handedCountText(state, packet);
+  const said = alreadySaidLines(state, packet);
   for (const line of beat.lines) {
-    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts);
+    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said);
     out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
   }
   return out;
@@ -487,7 +514,9 @@ export function classifyTokenLine(
   enumRefs: LedgerRef[],
   knownNames: string[] = [],
   /** Lowercased handed facts and page so far (`handedCountText`); a count none of them holds fails the line. */
-  handedCounts?: string
+  handedCounts?: string,
+  /** What each person already said (`alreadySaidLines`); their speech line saying it again fails. */
+  alreadySaid?: AlreadySaid
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
@@ -560,6 +589,9 @@ export function classifyTokenLine(
     const first = splitProseSentences(line.text.replace(/@t(\d+)\b/gi, (_m, n: string) => findEnum(enumRefs, `t${n}`)?.display ?? ''))[0] ?? '';
     if (bare(first) && bare(first) === bare(row.display) && !row.id.startsWith('present:')) {
       return { ok: false, reason: 'speaker-echo' };
+    }
+    if (repeatsSaid(line.text, alreadySaid?.get((row.display ?? '').toLowerCase()) ?? [])) {
+      return { ok: false, reason: 'said-again' };
     }
   }
   return { ok: true };
@@ -721,16 +753,16 @@ function capitalizeSentenceStarts(text: string): string {
   return text.replace(/(^|[.!?]["”’)]?\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
-function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string): boolean {
+function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said).ok);
 }
 
 /** Line-gate reasons about how a token was declared, not about what the line says. */
 const BINDING_ONLY_REASONS = new Set(['unbound-tok', 'unknown-id', 'use-class']);
 
-function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string): TokenLine[] {
-  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts).ok);
+function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid): TokenLine[] {
+  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said).ok);
 }
 
 /**
@@ -913,6 +945,7 @@ export function acceptTokenOrLedgerStory(
   const enumRefs = refEnumOf(state, packet);
   const known = handedProperNames(state, packet);
   const counts = handedCountText(state, packet);
+  const said = alreadySaidLines(state, packet);
   const candidates = [
     ...extractTokenCandidates(raw),
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),
@@ -924,7 +957,7 @@ export function acceptTokenOrLedgerStory(
     const parsed = parseTokenBeat(cand);
     if (!parsed) continue;
     const beat = normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient });
-    if (isFullyClean(beat, enumRefs, known, counts)) {
+    if (isFullyClean(beat, enumRefs, known, counts, said)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
@@ -937,7 +970,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = keepCleanLines(beat, enumRefs, known, counts);
+    const clean = keepCleanLines(beat, enumRefs, known, counts, said);
     const fns = new Set(clean.map((l) => l.fn));
     const partialOk = opts?.lenient
       ? clean.length >= 1
@@ -959,7 +992,7 @@ export function acceptTokenOrLedgerStory(
     if (opts?.lenient && prose && storySentences(prose) < 2) {
       const full = bestPartial.full;
       const readable = full.lines.filter((line) => {
-        const v = classifyTokenLine(line, full, enumRefs, known, counts);
+        const v = classifyTokenLine(line, full, enumRefs, known, counts, said);
         return v.ok || BINDING_ONLY_REASONS.has(v.reason ?? '');
       });
       const wholeBody = renderTokenBeat({ ...full, lines: readable }, enumRefs, {
@@ -988,7 +1021,7 @@ export function acceptTokenOrLedgerStory(
   const parsedRaw = candidates.map(parseTokenBeat).find(Boolean);
   const parsedAny = parsedRaw ? normalizeBeatRefs(parsedRaw, enumRefs, { thingsOnly: !opts?.lenient }) : parsedRaw;
   if (parsedAny && !opts?.alreadyRepaired) {
-    const clean = keepCleanLines(parsedAny, enumRefs, known, counts);
+    const clean = keepCleanLines(parsedAny, enumRefs, known, counts, said);
     const miss = missingFns(clean.length ? clean : parsedAny.lines);
     if (miss.includes('place') || miss.includes('action') || clean.length < 3) {
       needsRepair = { missingFns: miss.length ? miss : ['place', 'action'] };

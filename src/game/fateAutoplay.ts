@@ -118,6 +118,7 @@ import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { placeQuestGivers, presentNpcRecords, seedOpeningCastLocations } from './npcRecords';
+import { starterArrival } from './questGiver';
 import {
   clearVignetteOnHubLeave,
   hubBeatContactIfPresent,
@@ -770,7 +771,7 @@ export function buildNewGameState(opts: {
             ...sealed,
             campaignBibleId: bible.id,
           })),
-          aloneArrival
+          { ...starterArrival({ ...sealed, campaignBibleId: bible.id }), alone: aloneArrival }
         ),
         recentBeatFingerprints: [],
         stateTxLog: [],

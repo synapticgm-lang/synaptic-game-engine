@@ -329,6 +329,7 @@ import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { placeQuestGivers, presentNpcRecords, seedOpeningCastLocations } from './npcRecords';
+import { starterArrival } from './questGiver';
 import {
   clearVignetteOnHubLeave,
   hubBeatContactIfPresent,
@@ -2341,7 +2342,7 @@ export function useGame() {
                 openingBible?.starterQuests ?? [],
                 hookCtxFromState(openingState)
               ),
-              isAloneArrivalOpening(openingState)
+              starterArrival(openingState)
             )
           : openingState.quests ?? [];
         const openingUnlocks = journalReady
@@ -5288,7 +5289,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               openingBible?.starterQuests ?? [],
               hookCtxFromState(newState)
             ),
-            isAloneArrivalOpening(newState)
+            starterArrival(newState)
           )
         : newState.quests ?? [];
       const openingUnlocks = journalReady

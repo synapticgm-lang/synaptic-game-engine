@@ -278,15 +278,23 @@ export function leftBehindNames(state: GameState): string[] {
   return out;
 }
 
+/**
+ * A person left behind acts here when one sentence names them and gives them a here-verb. Someone the
+ * presence ledger has here now was not left behind, and quoted words are talk, not an act.
+ */
 export function isLeftBehindActingHere(state: GameState, text: string): boolean {
   const body = (text ?? '').trim();
   if (!body || !locationChangedRecently(state)) return false;
   if (isLeaveBehindFarewell(body)) return false;
   if (mentionsHereOrTrip(state, body)) return false;
-  return leftBehindNames(state).some((name) => {
-    if (name.length < 3) return false;
-    return new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(body) && HERE_ACTOR.test(body);
-  });
+  const present = (state.sceneFacts?.present ?? []).map((p) => ` ${p.toLowerCase()} `);
+  const names = leftBehindNames(state).filter(
+    (name) => name.length >= 3 && !present.some((p) => p.includes(` ${name.toLowerCase()} `))
+  );
+  if (!names.length) return false;
+  return splitProseSentences(withoutTalkAbout(body)).some((sentence) =>
+    HERE_ACTOR.test(sentence) && names.some((name) => new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(sentence))
+  );
 }
 
 export function isStaleContextBleed(state: GameState, text: string): boolean {

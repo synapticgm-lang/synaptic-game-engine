@@ -56,10 +56,10 @@ describe('replay bank multi lap 31', () => {
     const s = { ...F.after(5), log } as unknown as GameState;
     const same = pageOpeners(s, 'Travel toward Lowmarket');
     expect(same, 'earlier beat for the same line comes too').toContain('Jax left the hall behind.');
-    expect(same.at(-1), 'the last beat is always on the page').toBe('Jax looked at the hall.');
+    expect(same[same.length - 1], 'the last beat is always on the page').toBe('Jax looked at the hall.');
     const other = pageOpeners(s, 'Wait');
     expect(other, 'another line does not reach back').not.toContain('Jax left the hall behind.');
-    expect(other.at(-1)).toBe('Jax looked at the hall.');
+    expect(other[other.length - 1]).toBe('Jax looked at the hall.');
   });
 
   it('[m31 fl150 T6,T7 | lap 31 outage on a travel turn] the empty writer reply paints the travel beat, not "Nobody here answered."', () => {

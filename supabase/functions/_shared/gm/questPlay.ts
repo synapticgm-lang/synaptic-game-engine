@@ -1,4 +1,5 @@
 import type { GameState, LogEntry, Quest } from './types.ts';
+import { isSystemHousingId, systemHousingThing, type SystemHousingId } from './systemHousing.ts';
 import {
   findSettlement,
   inferQuestTagsFromText,
@@ -419,16 +420,42 @@ const ALONE_CIRCLE_PRICE: StarterQuestSeed = {
     'Find a living trail — road, smoke, tracks — or wait for someone to find you',
     'When you meet their world: hear why you were summoned, then swear, refuse, or delay',
   ],
-  rewards: 'Circle Blessing remains; reputation tilts when you finally meet Pellane or the street',
+  rewards: 'Circle Blessing',
 };
 
-/** Rewrite starter seeds so journal matches the arrival (alone vs summoned crowd). */
+/** How this New Game arrived: alone or met, and the frozen System housing. */
+export type StarterArrival = {
+  alone: boolean;
+  housing?: SystemHousingId | null;
+};
+
+function asArrival(arrival: boolean | StarterArrival | undefined): StarterArrival {
+  return typeof arrival === 'object' && arrival ? arrival : { alone: !!arrival };
+}
+
+/** Authored starter text names the System as a panel; under a frozen housing it names that housing's thing. */
+function fitSeedToHousing(seed: StarterQuestSeed, housing: SystemHousingId | null | undefined): StarterQuestSeed {
+  if (!isSystemHousingId(housing)) return seed;
+  const thing = systemHousingThing(housing);
+  const fit = (s: string) => s.replace(/\b(?:the|your|a)\s+(?:blue\s+)?panel\b/gi, thing);
+  return { ...seed, description: fit(seed.description), objectives: seed.objectives.map(fit) };
+}
+
+/** Rewrite starter seeds so journal matches the arrival (alone vs summoned crowd, frozen housing). */
 export function adaptStarterQuestsForArrival(
   seeds: StarterQuestSeed[],
-  alone: boolean
+  arrival: boolean | StarterArrival
 ): StarterQuestSeed[] {
-  if (!alone) return seeds;
-  return seeds.map((s) => (s.id === 'sp-quest-1' ? { ...ALONE_CIRCLE_PRICE, title: s.title } : s));
+  const a = asArrival(arrival);
+  return seeds.map((s) =>
+    fitSeedToHousing(a.alone && s.id === 'sp-quest-1' ? { ...ALONE_CIRCLE_PRICE, title: s.title } : s, a.housing)
+  );
+}
+
+/** One journal reward per listed reward ("A, B; C"), never the whole line as one item. */
+function rewardItems(raw: string | undefined): string[] | undefined {
+  const items = (raw ?? '').split(/[;,]/).map((s) => s.trim()).filter(Boolean);
+  return items.length ? items : undefined;
 }
 
 function slug(raw: string): string {
@@ -778,7 +805,7 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
       description: desc,
       completed: false,
     })),
-    rewards: { items: q.rewards ? [q.rewards] : undefined },
+    rewards: { items: rewardItems(q.rewards) },
   };
 }
 
@@ -927,9 +954,9 @@ export function resumeMainTravelChoice(state: GameState, offered: string[] = [])
 export function seedLocalStarterQuest(
   quests: Quest[],
   seeds: StarterQuestSeed[] = [],
-  alone = false
+  arrival: boolean | StarterArrival = false
 ): Quest[] {
-  const adapted = adaptStarterQuestsForArrival(seeds, alone);
+  const adapted = adaptStarterQuestsForArrival(seeds, arrival);
   const extra = adapted.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   if (!extra.length) return quests;
   return [...quests, ...extra];
@@ -939,9 +966,9 @@ export function seedLocalStarterQuest(
 export function revealLocalStarterQuest(
   quests: Quest[],
   seeds: StarterQuestSeed[] = [],
-  alone = false
+  arrival: boolean | StarterArrival = false
 ): Quest[] {
-  const adapted = adaptStarterQuestsForArrival(seeds, alone);
+  const adapted = adaptStarterQuestsForArrival(seeds, arrival);
   const extra = adapted.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   const pool = [...quests, ...extra];
   const first =
@@ -963,7 +990,7 @@ export function revealLocalStarterQuest(
             description: desc,
             completed: q.objectives?.[i]?.completed ?? false,
           })),
-          rewards: { items: seed.rewards ? [seed.rewards] : undefined },
+          rewards: { items: rewardItems(seed.rewards) },
           ...(seed.giver ? { giver: seed.giver } : {}),
         }
       : {};
