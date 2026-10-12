@@ -159,7 +159,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
@@ -170,7 +170,6 @@ import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
   formatTalkWriterFacing,
-  spokenTalkFallback,
   tallyResponsePaths,
   type ResponsePath,
   type WriterOutcome,
@@ -1366,8 +1365,8 @@ Do NOT print dice notation or CODE ENFORCED.
     arcState = clearEngineRecoveryStreak(arcState);
   } else if (!gmText.trim()) {
     // Outage only (every writer call came back empty): the spoken card line keeps the turn alive.
-    const spoken = spokenTalkFallback(arcState, playerInput);
-    if (spoken && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)) {
+    const spoken = outageSpokenLine(arcState, preparedEvent.packet?.verb, playerInput);
+    if (spoken) {
       gmText = spoken;
       renderFallbackUsed = true;
     }

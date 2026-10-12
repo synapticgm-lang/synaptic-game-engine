@@ -167,6 +167,7 @@ function factsFor(row, packet) {
   return {
     here,
     noMove: /^No move this turn/m.test(packet),
+    movedFrom: packet.match(/^Moved this turn: (?:on )?from (.+?) (?:to|toward) /m)?.[1]?.trim() ?? '',
     mention,
     refs,
     placeNames,
@@ -260,6 +261,10 @@ export function checkTurn(row, packet, page = '') {
           if (at < 0 || taken.some(([a, b]) => at < b && at + hit[0].length > a)) continue;
           taken.push([at, at + hit[0].length]);
           if (exitFact.some((e) => lower(e).includes(lp.replace(/^the\s+/, '')) || lp.includes(lower(e)))) continue;
+          // "The back streets led them from the Weighing Cup": the handed start of this turn's move, not a way out.
+          const bare = lp.replace(/^the\s+/, '');
+          if (facts.movedFrom && lower(facts.movedFrom).includes(bare)
+            && /\bfrom\s+(?:the\s+)?(?:\w+\s+){0,2}$/i.test(clauseText.slice(Math.max(0, at - 30), at))) continue;
           add('exit-place', s, `"${p}" named as a way out; handed exits: ${exitFact.length ? exitFact.join(', ') : 'none mapped'}`);
         }
         for (const m of exitClauses.join(' | ').matchAll(/\b(?:the|an?)\s+([a-z]+)\s+(road|trail|path|lane|gate)\b/gi)) {

@@ -359,11 +359,11 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, type SpokenLine } from './tokenProse';
-import { formatTalkWriterFacing, spokenTalkFallback } from './talkEnvelope';
+import { formatTalkWriterFacing } from './talkEnvelope';
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
@@ -3529,19 +3529,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (!storyHasBody(cleanText) && mudTurnLive) {
         cleanText = mudDisplayBody(mudTurnLive);
       }
-      if (
-        !storyHasBody(cleanText)
-        && !useMud
-        && (preparedEvent.packet.verb === 'spoke' || preparedEvent.packet.verb === 'parleyed')
-      ) {
-        const spoken = spokenTalkFallback(liveCurrent, sanitizedInput);
-        if (
-          spoken
-          && !isDroughtStubProse(spoken)
-          && !/Silence held the question|No one listed on the ledger answered/i.test(spoken)
-        ) {
-          cleanText = spoken;
-        }
+      if (!storyHasBody(cleanText) && !useMud) {
+        const spoken = outageSpokenLine(liveCurrent, preparedEvent.packet.verb, sanitizedInput);
+        if (spoken) cleanText = spoken;
       }
       {
         const lastGmRow = [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';

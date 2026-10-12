@@ -136,6 +136,11 @@ export interface CompletedEventPacket {
   talkAsked?: number;
   /** Code checks only (collage, talk repeat). The writer reads `infoSheet` instead. */
   recentBeats: string[];
+  /**
+   * The opening sentence of the last two committed beats and of earlier beats that answered this same
+   * player line: already on the page wherever the camera now stands (`pageOpeners`).
+   */
+  pageOpeners?: string[];
   /** 29z9i — the diary the writer reads in place of raw recent turns (`infoSheet.ts`). */
   infoSheet?: string;
   /** 29z9k — reading level + swearing / violence-detail switches (Kid Mode forces child, both off). */
@@ -743,6 +748,32 @@ export function recordedBeatOpeners(beats: readonly string[]): string[] {
     .filter(Boolean);
 }
 
+const PAGE_SAME_ACTION_CAP = 2;
+
+/**
+ * Openers already printed. The last beat is always one: it is the line the new beat follows, even when it
+ * was set at the place this turn's move leaves. Older beats count only while the scene tail keeps them (a
+ * room left on an earlier move stays out). Earlier beats that answered the same player line come too, so a
+ * repeated move ("Travel toward Lowmarket") is not opened the same way again.
+ */
+export function pageOpeners(state: GameState, action: string): string[] {
+  const log = state.log ?? [];
+  const norm = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+  const gmAt = log.map((e, i) => (e.role === 'gm' && String(e.content ?? '').trim() ? i : -1)).filter((i) => i >= 0);
+  const tail = new Set(selectRecentLogForContext(state, Math.max(WRITER_RHYTHM_WINDOW * 4, 8)));
+  const picked = new Set(gmAt.slice(-WRITER_RHYTHM_WINDOW).filter((i, k, recent) => k === recent.length - 1 || tail.has(log[i])));
+  const act = norm(action);
+  if (act) {
+    const same = gmAt.filter((i) => {
+      const asked = [...log.slice(0, i)].reverse().find((e) => e.role === 'player');
+      return !!asked && norm(String(asked.content ?? '')) === act && !picked.has(i);
+    });
+    for (const i of same.slice(-PAGE_SAME_ACTION_CAP)) picked.add(i);
+  }
+  const beats = [...picked].sort((a, b) => a - b).map((i) => String(log[i]?.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP));
+  return [...new Set(recordedBeatOpeners(beats))];
+}
+
 export type LoiterStreakFamily = 'inspect' | 'wait' | null;
 
 export function classifyLoiterFamily(input: string): LoiterStreakFamily {
@@ -898,6 +929,7 @@ export function buildCompletedEventPacket(
     talkTopic: hallTalkTopic(action) ?? undefined,
     talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
+    pageOpeners: pageOpeners(state, action),
     infoSheet: formatInfoSheet(state),
     reader: extras?.reader,
     inspectStreak: streaks.inspectStreak,
@@ -1292,9 +1324,9 @@ export function formatWriterFacingEvent(
   lines.push('');
   if (packet.infoSheet) {
     lines.push(packet.infoSheet);
-    const openers = recordedBeatOpeners(packet.recentBeats ?? []);
+    const openers = packet.pageOpeners ?? recordedBeatOpeners(packet.recentBeats ?? []);
     if (openers.length) {
-      lines.push('ALREADY ON THE PAGE (opening sentence of each of the last two GM beats):');
+      lines.push('ALREADY ON THE PAGE (opening sentence of the last two GM beats, and of earlier beats for this same action):');
       lines.push(...openers.map((s) => `- ${s}`));
     }
     const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
@@ -2308,6 +2340,18 @@ export function lastResortStoryBody(
       ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
       : 'Writer empty after retries — last good beat held (not a drought stub)',
   };
+}
+
+/**
+ * Writer outage on a talk or parley turn: the addressee's own card line, else '' so the caller paints
+ * `bookBodyAfterWriterMiss`. Any other verb, or no one here to answer, is not a spoken turn.
+ */
+export function outageSpokenLine(state: GameState, verb: CompletedEventPacket['verb'] | undefined, playerInput: string): string {
+  if (verb !== 'spoke' && verb !== 'parleyed') return '';
+  const spoken = spokenTalkFallback(state, playerInput).replace(/\s+/g, ' ').trim();
+  if (!spoken || isDroughtStubProse(spoken)) return '';
+  if (/^Nobody here answered|Silence held the question|No one listed on the ledger answered/i.test(spoken)) return '';
+  return spoken;
 }
 
 /**
