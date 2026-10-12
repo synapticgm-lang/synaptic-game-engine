@@ -74,6 +74,13 @@ function runDir(arg) {
 }
 
 const lower = (s) => String(s ?? '').toLowerCase();
+
+/** A name of the place the player stands in: the full name, part of it, or only its words ("the close"). */
+function namesHere(place, here) {
+  const lp = lower(place);
+  const words = lower(here).split(/\s+/);
+  return lp === lower(here) || lower(here).includes(lp) || lp.replace(/^the\s+/, '').split(/\s+/).every((w) => words.includes(w));
+}
 /** Sentences with their quoted speech blanked out, so a speaker's words are not read as narration. */
 function sentences(text) {
   const src = String(text ?? '');
@@ -228,13 +235,11 @@ export function checkTurn(row, packet, page = '') {
       }
       // Places named as a way out that are not this turn's exits.
       if (EXIT_CLAIM.test(s) && !/\b(?:counting|watching|eyeing|checking) the exits\b/i.test(s)) {
-        const hereWords = lower(facts.here).split(/\s+/);
         const clauseText = exitClauses.join(' | ');
         const taken = [];
         for (const p of facts.placeNames) {
           const lp = lower(p);
-          if (p.length < 4 || lp === lower(facts.here) || lower(facts.here).includes(lp)) continue;
-          if (lp.replace(/^the\s+/, '').split(/\s+/).every((w) => hereWords.includes(w))) continue;
+          if (p.length < 4 || namesHere(p, facts.here)) continue;
           // A capitalised name is the place only when written capitalised ("Close", not "kept their clothes close").
           const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           const nameRe = /[A-Z]/.test(p)
@@ -330,7 +335,7 @@ export function checkTurn(row, packet, page = '') {
 
     // A move narrated on a no-move turn.
     if (facts.noMove && /\bJax\b[^.]{0,40}\b(?:left|arrived|reached|set out|came (?:in)?to|walked (?:back )?(?:in)?to)\b/.test(s)) {
-      const named = facts.placeNames.find((p) => p.length > 3 && lower(s).includes(lower(p)) && lower(p) !== lower(facts.here) && !lower(facts.here).includes(lower(p)));
+      const named = facts.placeNames.find((p) => p.length > 3 && lower(s).includes(lower(p)) && !namesHere(p, facts.here));
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }
   }

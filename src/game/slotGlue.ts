@@ -171,10 +171,15 @@ export function isPlaceTitleObjectGlue(text: string, placeTitles: string[] = [])
   return false;
 }
 
+/**
+ * `personTitles` are the titles that cannot act as a person (places). A body such as a crown, a faction or a god
+ * may know, want or watch ("the Crown does not know", "the Scale watches"); it still cannot fill an object slot.
+ */
 export function isSlotGlueViolation(
   text: string,
   namedPeople: string[] = [],
-  placeTitles: string[] = []
+  placeTitles: string[] = [],
+  personTitles: string[] = placeTitles
 ): boolean {
   const t = text ?? '';
   if (!t.trim()) return false;
@@ -190,7 +195,7 @@ export function isSlotGlueViolation(
   }
   if (isCompanionObjectGlue(t, namedPeople)) return true;
   if (isPlaceTitleObjectGlue(t, placeTitles)) return true;
-  if (isPlaceTitleAsPersonSubject(t, placeTitles)) return true;
+  if (isPlaceTitleAsPersonSubject(t, personTitles)) return true;
   return false;
 }
 

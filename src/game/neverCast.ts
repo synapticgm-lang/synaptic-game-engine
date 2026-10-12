@@ -1,7 +1,8 @@
 /**
  * 02aa — Never-CAST lock.
  * Ledger place / concept titles are never people: not present[], not CAST,
- * not Talk/Ask targets, not person-subjects in prose.
+ * not Talk/Ask targets. In prose only a place title cannot act as a person;
+ * a body (crown, faction, god) may know or watch.
  * Titles come from HERE / hubs / atlas / pins / hooks / quests / lore — not a
  * novel Gemini token list.
  */

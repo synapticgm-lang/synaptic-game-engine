@@ -28,7 +28,7 @@ import { isClosedKillRecycle, isDeadFoeReopenedAsLiving } from './combatAuthorit
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
-import { isSlotGlueViolation, ledgerSlotPeople } from './slotGlue';
+import { isSlotGlueViolation, ledgerPlaceTitles, ledgerSlotPeople } from './slotGlue';
 import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
@@ -231,7 +231,7 @@ export function factClosedViolationReason(state: GameState, text: string): strin
   // 02r — old-room camera or post-clear steel after a recent scene change.
   if (isStaleContextBleed(state, body)) return 'Writes a place or fight the player already left as if it were here.';
   // 02t / 02v — deixis / kit object / companion name used as a slot.
-  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerNeverCastTitles(state))) {
+  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerNeverCastTitles(state), ledgerPlaceTitles(state))) {
     return 'Uses a name or place title as an object or as a person.';
   }
   if (isClosedLedgerViolation(state, body)) return REOPENED_FACT;

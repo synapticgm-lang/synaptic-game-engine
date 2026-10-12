@@ -230,6 +230,8 @@ export function isStaleFightBleed(state: GameState, text: string): boolean {
   if (CORPSE_OK.test(body)) return false;
   const kill = state.sceneFacts?.lastKill;
   if (!kill?.name) return false;
+  // The kill turn is the engine's settled fight being told: its blows are this beat, not a fight left behind.
+  if (kill.turn === state.turn) return false;
   const tokens = body.match(/\b[A-Za-z][A-Za-z'-]{3,}\b/g) ?? [];
   return (
     mentionsPlace(body, kill.name)
