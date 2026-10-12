@@ -578,6 +578,9 @@ export function inventedCastNamesInProse(state: GameState, prose: string): strin
     const name = (m[1] ?? '').trim();
     if (!name || seen.has(name.toLowerCase())) continue;
     if (self && name.toLowerCase() === self) continue;
+    // "Now Jax waits": a capitalised sentence-start word in front of a known name is that name, not a new one.
+    const words = name.toLowerCase().split(/\s+/);
+    if (words.some((_, i) => i > 0 && ((t) => t === self || cast.has(t))(words.slice(i).join(' ')))) continue;
     if (isPlannerUiPersonToken(name)) continue;
     if (isRegisteredLocation(name, bibleId)) continue;
     if (!canHarvestAsNamedPerson(name, bibleId, npcRecordNames(state))) continue;

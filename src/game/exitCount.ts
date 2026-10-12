@@ -19,6 +19,8 @@ const COUNTED_EXIT = new RegExp(
 const LEADS_OUT = /^\s+(?:out\b|(?:[a-z-]+\s+)?(?:left|led|lead|leads|ran|run|runs|went|go|goes|opened|open)\b)/i;
 /** "the other two doors", "the first two roads" count part of the ways, not all of them. */
 const PART_OF = /\b(?:other|remaining|first|last|next|those|these)\s+$/i;
+/** "the only way on ran past the traveler", "the way back": the ways in one direction, not every way out. */
+const ONE_DIRECTION = /^\s+(?:on(?!\s+(?:the|a|an|its|their|his|her)\b)|onwards?|ahead|forwards?|back)\b/i;
 
 const norm = (s: string) => (s ?? '').replace(/\s+/g, ' ').trim();
 
@@ -46,7 +48,7 @@ function statedExitCount(clause: string, exits: string[], sentence: string): num
     const noun = m[2]!.toLowerCase();
     const after = clause.slice(end);
     if (!/^exits?$/.test(noun) && !LEADS_OUT.test(after)) continue;
-    if (PART_OF.test(clause.slice(0, at)) || /^\s+of\s+the\b/i.test(after)) continue;
+    if (PART_OF.test(clause.slice(0, at)) || ONE_DIRECTION.test(after) || /^\s+of\s+the\b/i.test(after)) continue;
     if (word === 'only' && /s$/.test(noun)) continue;
     // "One passage led…, another…" lists the ways one by one.
     if (word === 'one' && /\b(?:another|the other|a second|a third)\b/i.test(sentence)) continue;
