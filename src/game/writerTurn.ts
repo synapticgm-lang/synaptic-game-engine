@@ -8,7 +8,7 @@ import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, type LedgerRef } from './completedEventPacket';
-import { acceptTokenOrLedgerStory, alreadySaidLines, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
+import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
@@ -213,6 +213,16 @@ function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[
 
 const hasQuote = (prose: string) => /["“][^"“”]{3,}["”]/.test(prose);
 
+/** The words outside the quotes name a person here: their full display, or one word of a held proper name ("Nell" for Nell Rudd). */
+function speakerHere(bare: string, here: string[]): boolean {
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return here.some((p) => {
+    if (new RegExp(`\\b${esc(p)}\\b`, 'i').test(bare)) return true;
+    const words = p.split(/\s+/).filter((w) => /^[A-Z][a-z'’-]{2,}$/.test(w));
+    return words.length > 1 && words.some((w) => new RegExp(`\\b${esc(w)}\\b`).test(bare));
+  });
+}
+
 /**
  * Lap 37 — the player spoke to someone here and the committed beat has no quoted reply (the speech line
  * was dropped by the line gate, trimmed, or never written). ONE repair request asks for that answer as
@@ -230,7 +240,9 @@ export async function repairMissingAnswer(
   const fact = check.engineFact;
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
   const request = [
-    'Your story left out the answer. Write ONE sentence in which a person here answers the player in quoted speech. Reply with only that sentence as plain prose. No JSON, no other text.',
+    'Your story left out the answer. Write ONE sentence in which a person here answers the player.',
+    'Format: the spoken words inside quote marks, plus who said it outside the quotes, e.g. "Words they say," Name said. Use a name from People here as the speaker. Use only names and facts from your story and the engine fact.',
+    'Reply with only that sentence as plain prose. No JSON, no other text.',
     `Player said: "${check.playerInput.slice(0, 200)}"`,
     `People here: ${here.join('; ')}`,
     ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
@@ -251,12 +263,13 @@ export async function repairMissingAnswer(
       ? 'repair reply was not one sentence'
       : !quoted
         ? 'repair reply has no quoted answer'
-        : pcSpeaks || !here.some((p) => new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(bare))
+        : pcSpeaks || !speakerHere(bare, here)
           ? 'repair reply names nobody here as the speaker'
           : repeatsSaid(quoted, said)
             ? 'repair reply says an earlier line again'
             : (() => {
-                const still = sentenceGateProblem(check.state, line, check.playerInput);
+                const still = sentenceGateProblem(check.state, line, check.playerInput)
+                  ?? plainLineFactProblem(line, check.state, packet);
                 return still ? `repair failed the gate: ${still}` : '';
               })();
   if (bug) {
@@ -307,7 +320,8 @@ function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEvent
   const rendered = renderWriterDraft(raw, check.state, packet).prose
     || (/^\s*[[{]/.test(raw) ? '' : stripChoiceList(stripActionTags(raw)).trim());
   if (!rendered) return null;
-  const clean = (s: string) => s.replace(/^\s*(?:\d+[.)]\s*|[-*]\s*)/, '').replace(/^"(.*)"$/, '$1').trim();
+  // A line wrapped whole in quotes loses them; an attributed reply that opens and closes on a quote keeps them.
+  const clean = (s: string) => s.replace(/^\s*(?:\d+[.)]\s*|[-*]\s*)/, '').replace(/^"([^"]*)"$/, '$1').trim();
   const lines = rendered.split(/\n+/).map(clean).filter(Boolean);
   if (count > 1) return lines.length === count ? lines : null;
   const sentences = splitProseSentences(lines.join(' '));

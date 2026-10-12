@@ -518,6 +518,47 @@ function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boole
   return beat.lines.some((l) => named.test(narrationOf(l)));
 }
 
+/** A capital the writer was never handed, or a role person bound to nobody ('capital' / 'unbound-animate'). */
+function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[]): 'capital' | 'unbound-animate' | null {
+  // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
+  // A handed name typed with the other apostrophe ("Summons' Price" for "Summons’ Price") is the same name.
+  const apos = (s: string) => s.replace(/[\u2018\u2019]/g, "'");
+  let capText = apos(text);
+  const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n)).map(apos);
+  // 29z3 — a short form of a held name ("the Scout" for Integration Scar Scout) is not an invention.
+  // A possessive word of a held name stands bare too ("the Circle" for The Circle's Price).
+  const parts = whole.flatMap((n) => {
+    const words = n.split(/[\s—–-]+/).filter((w) => /^[A-Z][a-z'’]{3,}$/.test(w));
+    if (!(words.length > 1 || n.split(/\s+/).length > 1)) return [];
+    return words.flatMap((w) => {
+      const bare = w.replace(/'s?$/, '');
+      return bare !== w && bare.length >= 4 ? [w, bare] : [w];
+    });
+  });
+  for (const name of [...new Set([...whole, ...parts])].sort((a, b) => b.length - a.length)) {
+    capText = capText.split(name).join('·');
+  }
+  if (lineHasMidSentenceCapital(capText)) return 'capital';
+  let animateText = text;
+  for (const name of [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean).sort((a, b) => b.length - a.length)) {
+    // Whole words only: a held "Close" is not the "close" in "close-eyed".
+    animateText = animateText.replace(new RegExp(`(?<![\\w'-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w'-])`, 'gi'), '·');
+  }
+  return lineHasUnboundAnimate(animateText) ? 'unbound-animate' : null;
+}
+
+/**
+ * Lap 38 — the fact / name gate a writer line passes, run on one plain sentence (a repair reply): a count no
+ * handed fact holds, a capital the writer was never handed, or a role person bound to nobody.
+ */
+export function plainLineFactProblem(text: string, state: GameState, packet?: CompletedEventPacket): string | null {
+  if (lineHasUnhandedCount(text, handedCountText(state, packet))) return 'a count the scene never handed';
+  const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
+  if (named === 'capital') return 'a name the scene never handed';
+  if (named === 'unbound-animate') return 'a person who is not here';
+  return null;
+}
+
 export function classifyTokenLine(
   line: TokenLine,
   beat: TokenBeat,
@@ -537,35 +578,8 @@ export function classifyTokenLine(
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
     return { ok: false, reason: 'speech-no-speaker' };
   }
-  // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
-  // A handed name typed with the other apostrophe ("Summons' Price" for "Summons’ Price") is the same name.
-  const apos = (s: string) => s.replace(/[\u2018\u2019]/g, "'");
-  let capText = apos(line.text);
-  const whole = [...enumRefs.map((r) => r.display), ...knownNames].filter((n) => !!n && /[A-Z]/.test(n)).map(apos);
-  // 29z3 — a short form of a held name ("the Scout" for Integration Scar Scout) is not an invention.
-  // A possessive word of a held name stands bare too ("the Circle" for The Circle's Price).
-  const parts = whole.flatMap((n) => {
-    const words = n.split(/[\s—–-]+/).filter((w) => /^[A-Z][a-z'’]{3,}$/.test(w));
-    if (!(words.length > 1 || n.split(/\s+/).length > 1)) return [];
-    return words.flatMap((w) => {
-      const bare = w.replace(/'s?$/, '');
-      return bare !== w && bare.length >= 4 ? [w, bare] : [w];
-    });
-  });
-  for (const name of [...new Set([...whole, ...parts])].sort((a, b) => b.length - a.length)) {
-    capText = capText.split(name).join('·');
-  }
-  if (lineHasMidSentenceCapital(capText)) {
-    return { ok: false, reason: 'capital' };
-  }
-  let animateText = line.text;
-  for (const name of [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean).sort((a, b) => b.length - a.length)) {
-    // Whole words only: a held "Close" is not the "close" in "close-eyed".
-    animateText = animateText.replace(new RegExp(`(?<![\\w'-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w'-])`, 'gi'), '·');
-  }
-  if (lineHasUnboundAnimate(animateText)) {
-    return { ok: false, reason: 'unbound-animate' };
-  }
+  const named = lineNameReason(line.text, enumRefs, knownNames);
+  if (named) return { ok: false, reason: named };
   const used = toksInText(line.text);
   if (line.speaker_tok) used.push(line.speaker_tok.replace(/^@/, ''));
   for (const tok of used) {

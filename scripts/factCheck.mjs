@@ -221,6 +221,8 @@ export function checkTurn(row, packet, page = '') {
         // a new noun phrase starts between the number and the way, so the number does not count it
         // ("only the exits of Lowmarket and the West Wall" is still a count: "only" leads its own noun phrase).
         if (negated(s, m.index ?? 0)) continue;
+        // "The stair went down past three locked iron gates": gates passed along the way, not this place's ways onward.
+        if (/\b(?:past|through|beyond|along|between|under|over|by)\s+$/i.test(s.slice(0, m.index ?? 0))) continue;
         const between = m[0].slice(m[1].length, m[0].length - m[2].length);
         if (lower(m[1]) !== 'only' && /\b(?:the|a|an|his|her|their|its|this|that|my|your)\b/i.test(between)) continue;
         // "the only way out" is one; "the only ways out are the four doors" leaves the count to the number,
