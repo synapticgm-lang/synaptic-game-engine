@@ -56,7 +56,8 @@ export function knownPersonNames(refs: LedgerRef[], state?: Pick<GameState, 'npc
     if (!name.includes(' ') && HONORIFIC_RE.test(name)) return;
     if (!out.has(name.toLowerCase())) out.set(name.toLowerCase(), name);
   };
-  for (const ref of refs) if (ref.klass === 'person' || ref.klass === 'companion') add(ref.display);
+  // The live foe's row is its kind ("the Grave-risen Carrion Crow Flock"), not a name.
+  for (const ref of refs) if ((ref.klass === 'person' && !ref.id.startsWith('encounter:')) || ref.klass === 'companion') add(ref.display);
   for (const m of state?.npcMemories ?? []) add(m.npcName);
   for (const c of state?.companions ?? []) add(c.name);
   for (const a of state?.worldLedger?.actors ?? []) add(a.name);

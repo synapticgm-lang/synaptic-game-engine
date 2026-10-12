@@ -9,9 +9,15 @@ import { hubsForBibleId, matchHub, type OutdoorHub } from './outdoorHubs.ts';
 import {
   filterPadsAgainstOpenVignette,
   formatVignetteBindingLine,
+  hubBeatContactIfPresent,
   isOpenVignette,
 } from './vignetteLock.ts';
 import { isMetNpc, presentNpcRecords } from './npcRecords.ts';
+
+function hubContactHere(state: GameState, contactName: string): boolean {
+  const present = [...(state.sceneFacts?.present ?? []), ...presentNpcRecords(state).map((m) => m.npcName)];
+  return !!hubBeatContactIfPresent(present, contactName);
+}
 
 export type HubBeatKind = 'explore' | 'social' | 'threat' | 'hook';
 
@@ -556,7 +562,7 @@ export function formatHubArrivalForPrompt(state: GameState): string {
   if (!resolved) return '';
   const { hub, beat } = resolved;
   // 2026-09-02c fix: Reference CAST instead of injecting raw contact name
-  const contact = beat.contactName ? ' Hub contact is present (see CAST for identity).' : '';
+  const contact = beat.contactName && hubContactHere(state, beat.contactName) ? ' Hub contact is present (see CAST for identity).' : '';
   const quest = beat.revealQuestId ? (' Soft-hook=' + beat.revealQuestId + '.') : '';
   return (
     '[HUB ARRIVAL — ' +
@@ -591,10 +597,14 @@ export function hubArrivalChoicePads(state: GameState, max = 2): string[] {
   const aloneOpening =
     state.openingEstablishment?.complete === false
     || (state.openingEstablishment?.aloneArrival === true && !atMappedHubAfterOpening(state));
+  const socialHint = (h: string) => /\b(talk|ask|help|thank|offer|refuse|invite)\b/i.test(h);
+  // The beat's social hints are aimed at its contact ("Hard refuse a Pact reminder"); with the contact away nobody made them.
+  const contactAway = !!beat.contactName && !hubContactHere(state, beat.contactName);
   const hints = beat.choiceHints.filter((h) => {
     if (beat.contactName && h.includes(beat.contactName) && !metHere.includes(beat.contactName.toLowerCase())) return false;
+    if (contactAway && beat.kind !== 'explore' && socialHint(h)) return false;
     if (!aloneOpening) return true;
-    return beat.kind === 'explore' || !/\b(talk|ask|help|thank|offer|refuse|invite)\b/i.test(h);
+    return beat.kind === 'explore' || !socialHint(h);
   });
   return hints.slice(0, max);
 }

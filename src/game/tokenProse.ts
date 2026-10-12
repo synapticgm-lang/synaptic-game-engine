@@ -537,8 +537,10 @@ export function classifyTokenLine(
       return { ok: false, reason: 'glued-tok' };
     }
     // A named person takes no article; "the @t2 run of streets" uses the person as a place or thing.
+    // The live foe's row is its kind ("the Grave-risen Carrion Crow Flock"), which does take one.
     if (
       row.klass === 'person' &&
+      !row.id.startsWith('encounter:') &&
       /^[A-Z]/.test(row.display ?? '') &&
       new RegExp(`\\b(?:the|a|an)\\s+@${tok.replace(/^@/, '')}\\b`, 'i').test(line.text)
     ) {
@@ -721,6 +723,9 @@ function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string
   if (bindCheckFails(beat, enumRefs).length) return false;
   return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts).ok);
 }
+
+/** Line-gate reasons about how a token was declared, not about what the line says. */
+const BINDING_ONLY_REASONS = new Set(['unbound-tok', 'unknown-id', 'use-class']);
 
 function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string): TokenLine[] {
   return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts).ok);
@@ -911,7 +916,7 @@ export function acceptTokenOrLedgerStory(
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),
   ].filter((s, i, arr) => arr.findIndex((x) => x === s) === i);
 
-  let bestPartial: { lines: TokenLine[]; beat: TokenBeat } | null = null;
+  let bestPartial: { lines: TokenLine[]; beat: TokenBeat; full: TokenBeat } | null = null;
 
   for (const cand of candidates) {
     const parsed = parseTokenBeat(cand);
@@ -937,7 +942,7 @@ export function acceptTokenOrLedgerStory(
       : clean.length >= 3 && fns.has('place') && fns.has('action');
     if (partialOk) {
       if (!bestPartial || clean.length > bestPartial.lines.length) {
-        bestPartial = { lines: clean, beat: { ...beat, lines: clean } };
+        bestPartial = { lines: clean, beat: { ...beat, lines: clean }, full: beat };
       }
     }
   }
@@ -947,9 +952,18 @@ export function acceptTokenOrLedgerStory(
       possessive: beatPcPossessive(bestPartial.beat.lines, state),
     });
     // Lenient: a partial that kept only a line or two (e.g. just a place name) loses to the whole
-    // reply read as prose, which the ledger-noun obey pass still polices.
+    // reply read as prose, which the ledger-noun obey pass still polices. The reply parsed, so a line the
+    // gate failed on what it says stays out and a speech line keeps its speaker; only a binding slip is read.
     if (opts?.lenient && prose && storySentences(prose) < 2) {
-      const whole = acceptObeyedStoryBody(salvageTokenJsonProse(raw, enumRefs), state, packet);
+      const full = bestPartial.full;
+      const readable = full.lines.filter((line) => {
+        const v = classifyTokenLine(line, full, enumRefs, known, counts);
+        return v.ok || BINDING_ONLY_REASONS.has(v.reason ?? '');
+      });
+      const wholeBody = renderTokenBeat({ ...full, lines: readable }, enumRefs, {
+        possessive: beatPcPossessive(readable, state),
+      });
+      const whole = acceptObeyedStoryBody(wholeBody, state, packet);
       if (!whole.usedLastResort && whole.prose && !isDroughtStubProse(whole.prose)
         && storySentences(whole.prose) > storySentences(prose)) {
         return { prose: whole.prose, path: '13c', notes: [...whole.notes, 'token-salvage'], usedLastResort: false };
