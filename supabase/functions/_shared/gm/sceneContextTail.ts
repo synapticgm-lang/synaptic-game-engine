@@ -310,17 +310,18 @@ export function isLeaveBehindFarewell(text: string): boolean {
   return DEPARTURE_FAREWELL.test(text ?? '');
 }
 
+/** A pin acts here when one sentence names the pin and gives it a here-verb (another sentence's verb is someone else's). */
 function openingPinActsHere(body: string, state: GameState): boolean {
   if (isLeaveBehindFarewell(body) && !mentionsPlace(body, state.openingEstablishment?.answers?.where)) {
     return false;
   }
-  const pinHit =
-    OPENING_PIN_ROLE.test(body)
-    || openingPinNames(state).some((pin) => {
-      if (pin.length < 3) return false;
-      return new RegExp(`\\b${escapeRe(pin)}\\b`, 'i').test(body);
-    });
-  return pinHit && HERE_ACTOR.test(body);
+  const pins = openingPinNames(state).filter((pin) => pin.length >= 3);
+  return splitProseSentences(body).some((sentence) => {
+    const pinHit =
+      OPENING_PIN_ROLE.test(sentence)
+      || pins.some((pin) => new RegExp(`\\b${escapeRe(pin)}\\b`, 'i').test(sentence));
+    return pinHit && HERE_ACTOR.test(sentence);
+  });
 }
 
 /**

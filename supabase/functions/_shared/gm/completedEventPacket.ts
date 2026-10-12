@@ -17,6 +17,7 @@ import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestinati
 import { nearbyPlaceNames } from './placeNames.ts';
 import { isRoadLabel, roadMeetingFact, roadMeetingPerson } from './travelJourney.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
+import { TALK_VERB } from './intentParser.ts';
 import { emptySceneFacts } from './sceneFacts.ts';
 import {
   isDeadFoeReopenedAsLiving,
@@ -287,6 +288,7 @@ export function classifyVerb(input: string): string {
     || hallTalkAsksStayLeave(t)
     || isOpeningCardActLine(t)
     || /\b(ask|talk|speak|tell|say|press for|listen|you summoned me|get back home|to earth|cargo run)\b/i.test(t)
+    || TALK_VERB.test(t)
   ) {
     return 'spoke';
   }

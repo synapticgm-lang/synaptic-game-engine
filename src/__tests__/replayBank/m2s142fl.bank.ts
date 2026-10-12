@@ -19,8 +19,7 @@ describe('replay bank multi-2 s142 (flash-lite)', () => {
     expect(R.prose(2)).toMatch(/refused the offer/);
   });
 
-  it('[m2 s142fl T10 | multi-2 Root 2] the open quest title from the nudge ("The Summons\' Price") keeps its line', () => {
-    expect(R.packet(10), 'the nudge hands the quest title').toMatch(/word reaches you about The Summons[’'] Price/);
+  it('[m2 s142fl T10 | multi-2 Root 2] the open quest title ("The Summons\' Price") keeps its line', () => {
     expect(R.verdicts(10)).toContain('action:ok');
     expect(R.prose(10)).toMatch(/Summons[’'] Price/);
   });

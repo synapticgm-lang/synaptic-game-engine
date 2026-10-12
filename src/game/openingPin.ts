@@ -7,6 +7,7 @@ import type { GameState } from './types';
 import { isChromePersonToken, isNonPersonNameToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { npcRecordNames, resolveNpcRecord } from './npcRecords';
+import { ledgerPlaceTitles } from './slotGlue';
 
 const OPENING_PIN_TURN_CAP = 20;
 
@@ -20,6 +21,17 @@ function pinIsHere(state: GameState, name: string, pinnedAt: string | undefined)
   const record = resolveNpcRecord(state, name);
   if (record?.location) return samePlace(record.location, state.currentLocation);
   return samePlace(pinnedAt, state.currentLocation);
+}
+
+/** "Ledger Row" out of "a Scale counting-house on Ledger Row" is the opening place's own name, not a person. */
+function isOpeningPlaceName(state: GameState, name: string): boolean {
+  const n = name.trim().toLowerCase();
+  if (!n) return false;
+  const esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const words = new RegExp(`\\b${esc}\\b`, 'i');
+  const est = state.openingEstablishment;
+  const where = [est?.answers?.where, est?.pinnedAt ?? state.currentLocation];
+  return where.some((p) => !!p && words.test(p)) || ledgerPlaceTitles(state).some((t) => t.toLowerCase() === n);
 }
 
 function pinsHere(state: GameState): string[] {
@@ -71,7 +83,7 @@ export function resolveOpeningPinnedNames(
   bible?: CampaignBible | null
 ): string[] {
   const existing = state.openingEstablishment?.pinnedNpcNames ?? [];
-  if (existing.length) return existing;
+  if (existing.length) return existing.filter((n) => !isOpeningPlaceName(state, n));
   if (state.openingEstablishment?.aloneArrival) return [];
   const fromHook = extractNamesFromHookText(
     state.openingEstablishment?.pickedHook ?? state.openingEstablishment?.pickedHookFallback
@@ -81,7 +93,7 @@ export function resolveOpeningPinnedNames(
   const out: string[] = [];
   const bibleId = state.campaignBibleId ?? bible?.id;
   for (const n of merged) {
-    if (isChromePersonToken(n) || isNonPersonNameToken(n)) continue;
+    if (isChromePersonToken(n) || isNonPersonNameToken(n) || isOpeningPlaceName(state, n)) continue;
     if (!canHarvestAsNamedPerson(n, bibleId, npcRecordNames(state))) continue;
     if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
     if (out.length >= 2) break;
@@ -98,12 +110,15 @@ export function ensureOpeningNpcPinned(
   if ((state.turn ?? 0) > OPENING_PIN_TURN_CAP) return state;
 
   const pinned = resolveOpeningPinnedNames(state, bible);
-  if (!pinned.length) return state;
-
   const est = state.openingEstablishment;
+  const dropped = (est?.pinnedNpcNames ?? []).filter((n) => !pinned.some((p) => p.toLowerCase() === n.toLowerCase()));
+  if (!pinned.length && !dropped.length) return state;
+
   const pinnedAt = est?.pinnedAt ?? state.currentLocation;
-  const present = [...(state.sceneFacts?.present ?? [])];
-  let changed = false;
+  const present = (state.sceneFacts?.present ?? []).filter(
+    (p) => !dropped.some((d) => d.toLowerCase() === p.toLowerCase())
+  );
+  let changed = present.length !== (state.sceneFacts?.present ?? []).length;
   for (const n of pinned) {
     if (isChromePersonToken(n)) continue;
     if (!pinIsHere(state, n, pinnedAt)) continue;
@@ -114,6 +129,7 @@ export function ensureOpeningNpcPinned(
   }
 
   const needStamp =
+    dropped.length > 0 ||
     !est?.pinnedNpcNames?.length ||
     (!!pinnedAt && est?.pinnedAt !== pinnedAt) ||
     pinned.some((n) => !(est.pinnedNpcNames ?? []).some((p) => p.toLowerCase() === n.toLowerCase()));

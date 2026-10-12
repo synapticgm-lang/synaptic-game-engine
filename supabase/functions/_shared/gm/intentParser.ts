@@ -106,6 +106,9 @@ export function playerTypedDialogue(action: string): boolean {
   return isSpeechOrProtest(t);
 }
 
+/** Words that make a line talk: one family for the intent parse and the event packet's verb. */
+export const TALK_VERB = /\b(ask|tell|speak|talk|shout|yell|call out|persuade|intimidate|negotiate|greet)\b/i;
+
 const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'flee', re: /\b(flee|run away|retreat|escape|back away)\b/i, label: 'Flee / disengage' },
   {
@@ -118,7 +121,7 @@ const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'attack', re: /\b(attack|strike|slash|stab|shoot|fight|hit|melee|cast fireball|swing\s+(?:at|toward|towards))\b/i, label: 'Attack' },
   { kind: 'cast', re: /\b(cast|channel|invoke|spell)\b/i, label: 'Cast / magic' },
   { kind: 'use_item', re: /\b(use|drink|eat|equip|wield|draw|throw|deploy)\b/i, label: 'Use item' },
-  { kind: 'talk', re: /\b(ask|tell|speak|talk|shout|yell|call out|persuade|intimidate|negotiate|greet)\b/i, label: 'Talk' },
+  { kind: 'talk', re: TALK_VERB, label: 'Talk' },
   { kind: 'search', re: /\b(search|loot|rummage|open chest|pick lock)\b/i, label: 'Search / interact' },
   { kind: 'observe', re: /\b(observ|scan|listen|look|study|inspect|watch|assess|examin)\b/i, label: 'Observe' },
   { kind: 'move', re: /\b(go|move|walk|sneak|climb|enter|leave|head|approach|edge toward)\b/i, label: 'Move' },
