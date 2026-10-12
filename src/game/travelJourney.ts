@@ -1,13 +1,13 @@
 /**
- * 29u â€” Travel between places reads as a journey.
+ * 29u — Travel between places reads as a journey.
  * Distance comes from the map that already exists: atlas region hops, then
  * whether a place sits outside a settlement (road / march / treeline / fort).
  * More than a step puts the player on the ground between, moves the clock by
  * the distance, and gives that ground its own chips. The code writes no story
- * sentences â€” the writer narrates every leg from the ENGINE RESULT line.
- * 29w â€” each stretch rolls once for a chance meeting that fits the ground and the
+ * sentences — the writer narrates every leg from the ENGINE RESULT line.
+ * 29w — each stretch rolls once for a chance meeting that fits the ground and the
  * area level. The roll picks a kind and level only; the writer names who or what.
- * 29x â€” a hostile meeting can be a rare spawn (a little tougher, slightly better loot),
+ * 29x — a hostile meeting can be a rare spawn (a little tougher, slightly better loot),
  * a camp can hold a mini-boss, and facing either opens a live fight on activeEncounter
  * that the combat engine resolves. Everything stays at the area level.
  */
@@ -198,7 +198,7 @@ export interface MapGap {
   steps: number;
   terrain: JourneyTerrain;
   hoursPerLeg: number;
-  /** Threat tier (1â€“4) of the country between: the wilder end, else the zone. */
+  /** Threat tier (1–4) of the country between: the wilder end, else the zone. */
   areaTier: number;
   haunted: boolean;
 }
@@ -487,6 +487,7 @@ export function roadFoe(enc: RoadEncounter): ActiveEncounter {
     xpReward: Math.round(xp * (boss ? 2 : enc.rare ? 1.25 : 1)),
     goldReward: Math.round(gold * (boss ? 2 : enc.rare ? 1.5 : 1)),
     source: boss ? 'road-camp-elite' : enc.rare ? 'road-rare-spawn' : 'road-encounter',
+    ...(enc.count && enc.count > 1 ? { count: enc.count } : {}),
   };
 }
 
@@ -738,7 +739,7 @@ function arrive(state: GameState, dest: string, hours: number, from: string): Tr
     handled: true,
     arrived: true,
     outcome: 'arrived',
-    receipt: `Travel: ${from} to ${dest} â€” ${clock.note}`,
+    receipt: `Travel: ${from} to ${dest} — ${clock.note}`,
   };
 }
 
@@ -765,8 +766,8 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
     underway: true,
     outcome: 'set out',
     receipt: via
-      ? `Travel: off ${via}, now toward ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`
-      : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} â€” leg 1 of ${journey.legsTotal} â€” ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
+      ? `Travel: off ${via}, now toward ${to} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`
+      : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
@@ -789,7 +790,7 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     arrived: false,
     underway: true,
     outcome: 'set out',
-    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} â€” leg ${legsDone} of ${j.legsTotal} â€” ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
+    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} — leg ${legsDone} of ${j.legsTotal} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
 

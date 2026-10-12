@@ -181,8 +181,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   );
   // The Fight line is the writer's engine result; health figures go on their own STATUS line.
   const rounds = `${result.rounds} round${result.rounds === 1 ? '' : 's'}`;
+  const down = (enc.count ?? 1) > 1 ? 'are down' : 'is down';
   receipts.push(
-    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${rounds}${result.victory ? `. The fight is over: ${enc.name} is down and cannot fight on.` : '. The fight is over: you lost it.'}`,
+    `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${rounds}${result.victory ? `. The fight is over: ${enc.name} ${down} and cannot fight on.` : '. The fight is over: you lost it.'}`,
     `HP: ${hpBefore} → ${hpAfter} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );

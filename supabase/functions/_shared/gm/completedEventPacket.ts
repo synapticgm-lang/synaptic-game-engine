@@ -2030,14 +2030,17 @@ export function isLastGmReprint(prose: string, lastGm: string): boolean {
   return false;
 }
 
-function destFromAct(act: string): string {
-  const names = (act.match(/\b[A-Z][a-z]{2,20}\b/g) ?? []).filter(
-    (n) =>
-      !/^(Okay|Where|What|Who|Why|The|This|That|Lets|Let|You|Your|Jax|Good|Fine|Whats|Are|Which|Lets|Going|Still|Travel|Toward|Can|Done|Ask|So|Please|They|We|North|South|East|West|Doorway)\b/.test(
-        n
-      )
-  );
-  return names[0] || 'the next way out';
+/** A known place the line names (map, journey or hub list); never a capitalised word of the line itself. */
+function destFromAct(act: string, state: GameState): string {
+  const line = act.toLowerCase();
+  const known = [
+    ...(state.places ?? []).map((p) => p.name),
+    state.journey?.to ?? '',
+    ...hubsForBibleId(state.campaignBibleId).map((h) => h.name),
+  ]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n) => n.length > 2);
+  return known.find((n) => line.includes(n.toLowerCase())) || 'the next way out';
 }
 
 function herePhrase(where: string): string {
@@ -2114,7 +2117,12 @@ function topicAdvancePool(
   ];
   const graphHit = matchGraphExitPad(state.activeDungeon, act);
   const hubHit = parseTravelDestination(act, state.campaignBibleId);
-  const dest = graphHit?.name || hubHit?.name || destFromAct(act);
+  // The travel engine's commit this turn decides arrived vs set out, whatever words the player used.
+  const committedArrival = packet?.outcome === 'arrived';
+  const committedSetOut = packet?.outcome === 'set out';
+  const journeyTo = committedSetOut ? (state.journey?.to ?? '').replace(/\s+/g, ' ').trim() : '';
+  const dest = graphHit?.name || hubHit?.name || journeyTo || destFromAct(act, state);
+  const setOutFrom = committedSetOut && state.journey?.from ? herePhrase(state.journey.from) : here;
   const padDest = (
     graphHit?.name
     || hubHit?.name
@@ -2124,19 +2132,23 @@ function topicAdvancePool(
     .replace(/\s+/g, ' ')
     .trim();
   const arrived =
-    !!graphHit
-    || !!hubHit
-    || /go through|take the stairs|walk toward.+\bdoorway\b|\b(?:north|south|east|west)\s+doorway\b/i.test(act)
-    || (!!dest && dest !== 'the next way out' && here.toLowerCase().includes(dest.toLowerCase()));
+    committedArrival
+    || (!committedSetOut
+      && (!!graphHit
+        || !!hubHit
+        || /go through|take the stairs|walk toward.+\bdoorway\b|\b(?:north|south|east|west)\s+doorway\b/i.test(act)
+        || (!!dest && dest !== 'the next way out' && here.toLowerCase().includes(dest.toLowerCase()))));
   const wantsMove =
     arrived
+    || committedSetOut
     || !!hubHit
     || /\b(?:let'?s go|walk with|are we going\b(?!\s+to\s+stand)|said we were (?:walk|go)|still here|travel toward|go through|take the stairs|head(?:ing)? (?:to|toward))\b/i.test(
       act
     )
     || (/\bi(?:'m| am) going to\b/i.test(act) && !/\bgoing to (?:stand|wait|make|sit|stay|talk|ask)\b/i.test(act));
   const shortDest = (
-    graphHit?.name
+    (committedArrival ? where : '')
+    || graphHit?.name
     || hubHit?.name
     || (padDest && !/\bdoorway\b/i.test(padDest) && padDest !== 'the next way out'
       ? padDest.split(/\s+[—–]\s+/).pop()
@@ -2161,9 +2173,9 @@ function topicAdvancePool(
       `The way gave onto ${arriveHere}. ${arriveDesc} ${behindLine}`,
     ]
     : [
-      `You set out with ${dest} from ${here}. The trail is open under you.`,
-      `You start toward ${dest} from ${here}. The road remembers the next step.`,
-      `You take ${dest} at their word and move from ${here}.`,
+      `You set out for ${dest} from ${setOutFrom}. The trail is open under you.`,
+      `You start toward ${dest} from ${setOutFrom}. The road remembers the next step.`,
+      `You leave ${setOutFrom} and keep on toward ${dest}.`,
     ];
   const spokenWant = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
   const spokenWho = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();

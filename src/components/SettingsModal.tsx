@@ -844,7 +844,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
           <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics'}>
             <p className="mb-2 text-xs text-slate-500">
-              Auto Fight resolves most encounters in about 1â€“2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
+              Auto Fight resolves most encounters in about 1–2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <ChoiceCard
@@ -857,7 +857,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ChoiceCard
                 icon={<Zap size={15} />}
                 label="Auto Fight"
-                sublabel="~1â€“2 turns per fight"
+                sublabel="~1–2 turns per fight"
                 selected={draft.combatResolveMode === 'auto'}
                 onClick={() => update('combatResolveMode', 'auto')}
               />

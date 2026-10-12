@@ -379,6 +379,8 @@ export interface ActiveEncounter {
   forcedSpawnKey?: string;
   /** Batch W — flee fail caught on the ledger; no casual travel clear. */
   caught?: boolean;
+  /** How many stand in this fight (a group road meeting's rolled headcount). Unset is one foe. */
+  count?: number;
 }
 
 /** 29y — a threat remembered at one place (the existing encounter, parked while no fight is live). */
