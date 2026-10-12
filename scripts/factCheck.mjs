@@ -60,6 +60,7 @@ const PLACE_WORKERS = [
   [/\b(?:quays?|harbou?r|docks?|wharf)\b/, /^(?:sailors?|porter)$/],
   [/\b(?:gates?|barracks|watch(?:tower)?)\b/, /^(?:guards?|watch(?:man|men)|soldiers?)$/],
 ];
+const LINK_WORD = /^(?:with|from|into|onto|over|under|upon|that|this|then|than|they|them|their|there|where|when|while|which|were|have|been|still|just|only|once|near|past|along|across|behind|beside|between|inside|outside|against|toward|towards|about|after|before|around|through|without|lay|sat)$/;
 const STOP_CAPS = new Set(['i', 'jax', 'system', 'he', 'she', 'they', 'them', 'their', 'it', 'its', 'you', 'your', 'a', 'an', 'the', 'and', 'but', 'then', 'when', 'while', 'as', 'if', 'so', 'no', 'not', 'yes']);
 
 function parseArgs(argv) {
@@ -307,8 +308,14 @@ export function checkTurn(row, packet, page = '') {
         if (/^coins?$/.test(w) && /\bgold gained:?\s*\d+/.test(facts.handedText)) continue;
         const ownerNoun = before.match(/\b(\w+)[’']s\s+(?:\w+\s+){0,2}$/i)?.[1];
         if (ownerNoun && lower(ownerNoun) !== 'jax') continue;
+        // "the peeling paper notices": the word only says what a handed thing is made of.
+        const head = after.match(/^ ([a-z]+)\b/)?.[1];
+        if (head && head.length > 3 && !LINK_WORD.test(head) && !/(?:ed|ly|ing)$/.test(head) && inHanded(facts, head)) continue;
         const owned = /\b(?:their|his|her)\s+(?:\w+\s+){0,2}$/i.test(before);
-        const found = /\b(?:found|finds?|picked up|took|takes?|handed|hand over|gave|gives?|pulled out|drew|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before)
+        const foundBefore = /\b(?:found|finds?|picked up|took|takes?|handed|hand over|gave|gives?|pulled out|drew|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
+        // "the Contract Hall and its papers": a thing's own contents, unless Jax finds or takes them.
+        if (/\bits\s+(?:\w+\s+){0,2}$/i.test(before) && !foundBefore) continue;
+        const found = foundBefore
           || /^\s+(?:\w+\s+){0,3}?(?:lay|lying|rested|resting|sat|hidden|tucked|waited)\b/i.test(after);
         if (owned ? !jaxClause : !found) continue;
       }

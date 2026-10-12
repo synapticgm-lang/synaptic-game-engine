@@ -711,6 +711,18 @@ function looksFinite(word: string, prev: string | undefined): boolean {
   return false;
 }
 
+/**
+ * The word before `next` only describes the noun `next` ("the official stamp in…"): `next` is a plain
+ * lower-case noun, not a verb, link word, determiner or pronoun, and no verb follows it as its own.
+ */
+export function isNounAdjunctBefore(next: string, after: string | undefined): boolean {
+  if (!/^[a-z]+$/.test(next)) return false;
+  if (looksFinite(next, undefined) || CLAUSE_BREAK.test(next) || CLAUSE_ADVERB.test(next)) return false;
+  if (CLAUSE_DETERMINER.test(next) || CLAUSE_PRONOUN.test(next) || /^(?:who|whom|whose|which|that|then|himself|herself|themselves)$/.test(next)) return false;
+  const a = (after ?? '').toLowerCase().replace(/[^a-z'-]/g, '');
+  return !a || !looksFinite(a, next);
+}
+
 /** A clause with its own subject and a finite verb ("the seventh ring was taken"), not a noun phrase ("Jax's name like…"). */
 function hasSubjectAndVerb(words: string): boolean {
   const tokens = words.split(' ').map((t) => t.replace(/[^\w'-]/g, ''));

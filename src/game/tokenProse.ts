@@ -20,6 +20,7 @@ import { acceptObeyedStoryBody } from './ledgerNounObey';
 import { pcPov } from './narrativePov';
 import { splitProseSentences } from './proseSentences';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
+import { isNounAdjunctBefore } from './npcMemory';
 import { weaponsNotInHand } from './infoSheet';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
@@ -377,7 +378,14 @@ export function lineHasUnhandedCount(text: string, handed: string): boolean {
 }
 
 export function lineHasUnboundAnimate(text: string): boolean {
-  return UNBOUND_ANIMATE.test(text ?? '');
+  const s = text ?? '';
+  for (const m of s.matchAll(new RegExp(UNBOUND_ANIMATE.source, 'gi'))) {
+    // "the official stamp": the role word describes a thing; no person stands in the line.
+    const rest = s.slice((m.index ?? 0) + m[0].length).match(/^ ([a-z]+)(?:\s+([A-Za-z'-]+))?/);
+    if (rest && isNounAdjunctBefore(rest[1]!, rest[2])) continue;
+    return true;
+  }
+  return false;
 }
 
 function toksInText(text: string): string[] {
