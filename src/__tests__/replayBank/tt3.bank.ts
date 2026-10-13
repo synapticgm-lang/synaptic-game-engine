@@ -14,7 +14,7 @@ import { runArcDirectorBeforeGm, formatArcStatusReceipts } from '../../game/arcD
 import { commitOfferedPad, resolveOfferedChoices } from '../../game/playTranscript';
 import { engineResultFact } from '../../game/engineResult';
 import { applyCharacterXpGain } from '../../game/characterXp';
-import { applyRestHeal, tabletopRestChip } from '../../game/recoveryRules';
+import { applyRestHeal, restChip } from '../../game/recoveryRules';
 import { dndXpToNext } from '../../game/xpRules';
 import { abilityMod, deriveTabletopSheet, formatTabletopSheet } from '../../game/tabletop/characterBuild';
 import { beginTabletopCreation, creationChips, stepTabletopCreation } from '../../game/tabletop/creationFlow';
@@ -177,12 +177,12 @@ describe('replay bank tt-build-3 (tabletop level-up and spells)', () => {
     const spent = { ...s0, character: { ...s0.character, casting: { slotsUsed: [2] } } };
     expect(deriveTabletopSheet(spent)!.spellcasting!.slots[0]!.left).toBe(0);
     // Full HP, but out of slots: the rest chip is offered (short first: Arcane Recovery is due).
-    expect(tabletopRestChip(spent)).toBe('Take a short rest');
+    expect(restChip(spent)).toBe('Take a short rest');
     const short = applyRestHeal(spent, 'Take a short rest');
     expect(short.receipt).toMatch(/^Rest: short rest, 1 hour — HP stays \d+ \(\+1h, now \w+\)$/);
     expect(short.after).toEqual(['Arcane Recovery: level 1 slot back', 'Spell slots: level 1 1/2 left']);
     expect(short.state.character.casting?.arcaneRecoveryUsed).toBe(true);
-    expect(tabletopRestChip(short.state)).toBe('Rest for the night');
+    expect(restChip(short.state)).toBe('Rest for the night');
     expect(applyRestHeal(short.state, 'Take a short rest').receipt).toBeNull();
     const long = applyRestHeal(short.state, 'Rest for the night');
     expect(long.receipt).toMatch(/^Rest: long rest, 8 hours — HP stays \d+ \(\+8h, now \w+\)$/);
@@ -222,18 +222,19 @@ describe('replay bank tt-build-3 (tabletop level-up and spells)', () => {
     expect(miss.state.character.casting ?? { slotsUsed: [] }).toEqual({ slotsUsed: [] });
   });
 
-  it('[tt-build-3 guard] LitRPG and story RPG level-ups keep their ×1.1 HP and the one STATUS line; a fighter casts nothing', () => {
+  it('[tt-build-3 guard] LitRPG and story RPG level-ups gain the shared Hit Die HP and keep the one STATUS line; a fighter casts nothing', () => {
     for (const bibleId of ['summoned-pact', 'salt-road-heist']) {
       const st = buildNewGameState({ bibleId, characterName: 'Jax', seed: 150, personality: 'chilled-gm' }).state;
       const c = { ...st.character, hp: 1 };
       const up = applyCharacterXpGain(c, 100_000, st.engineMode);
       expect(up.character.level).toBeGreaterThan(1);
       expect(up.notes.every((n) => /^Level Up! Now level \d+$/.test(n))).toBe(true);
-      expect(up.character.hp).toBe(up.character.maxHp);
       expect(up.character.srd).toBeUndefined();
-      let max = st.character.maxHp;
-      for (let l = 1; l < up.character.level; l++) max = Math.floor(max * 1.1);
-      expect(up.character.maxHp).toBe(max);
+      // tt-build-7: d8 at its fixed value (5) + CON modifier per level, added to max and current HP (no full heal).
+      const perLevel = Math.max(1, 5 + Math.floor(((st.character.attributes?.CON ?? 10) - 10) / 2));
+      const levels = up.character.level - 1;
+      expect(up.character.maxHp).toBe(st.character.maxHp + perLevel * levels);
+      expect(up.character.hp).toBe(1 + perLevel * levels);
     }
     const f = pregen(13, 'Human Fighter (Soldier)');
     expect(deriveTabletopSheet(f)!.spellcasting).toBeUndefined();

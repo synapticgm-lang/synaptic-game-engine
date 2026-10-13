@@ -7,8 +7,8 @@
  * (subclass at level 3, Ability Score Improvement at 4), the new Proficiency Bonus, and more spell slots and
  * spells for a caster. Raising CON raises max HP for every level.
  *
- * A character with a SRD sheet (tabletop) levels this way. Every other character keeps its mode's current rule
- * (max HP × 1.1 and a full heal) — a mode maths difference listed for unification.
+ * Every character levels by this HP rule. A character with no SRD sheet (LitRPG, story RPG, an old tabletop save)
+ * has no class, so it takes the d8 Hit Die at its fixed value and gains no class features, ASI or spells.
  */
 import type { Attributes, AttributeKey, Character, EngineMode } from '../types';
 import { proficiencyBonus } from '../checkRules';
@@ -22,8 +22,10 @@ import {
   fixedHitDieValue,
   fmtMod,
   speciesDef,
+  tabletopHitDie,
   tabletopMaxHp,
 } from '../tabletop/characterBuild';
+import { modeProfile } from './modeProfile';
 
 export interface SrdLevelUpInfo {
   level: number;
@@ -117,10 +119,44 @@ export function srdLevelUp(character: Character, toLevel: number, rng: Rng = Mat
   };
 }
 
-/** Level-up STATUS lines per mode. Tabletop shows every number; other modes keep the one line they have today. */
+/**
+ * One level-up of a character with no SRD sheet: the d8 Hit Die at its fixed value (5) + CON modifier, at least 1,
+ * added to max and current HP. Proficiency Bonus rises with level as for every character.
+ */
+export function sharedLevelUp(character: Character, toLevel: number): { character: Character; info: SrdLevelUpInfo } {
+  const die = tabletopHitDie(character);
+  const taken = fixedHitDieValue(die);
+  const conMod = abilityMod(character.attributes?.CON ?? 10);
+  const gain = Math.max(1, taken + conMod);
+  const maxBefore = character.maxHp ?? character.hp ?? 20;
+  const hpBefore = character.hp ?? maxBefore;
+  const maxAfter = maxBefore + gain;
+  const hpAfter = Math.max(0, Math.min(maxAfter, hpBefore + gain));
+  return {
+    character: { ...character, level: toLevel, maxHp: maxAfter, hp: hpAfter },
+    info: {
+      level: toLevel,
+      hitDie: die,
+      roll: null,
+      taken,
+      conMod,
+      dwarf: 0,
+      maxBefore,
+      maxAfter,
+      hpBefore,
+      hpAfter,
+      features: [],
+      pbBefore: proficiencyBonus(toLevel - 1),
+      pbAfter: proficiencyBonus(toLevel),
+      newSpells: [],
+    },
+  };
+}
+
+/** Level-up STATUS lines per mode profile. Tabletop shows every number; LitRPG and story RPG show the one level line. */
 export function presentLevelUp(mode: EngineMode | undefined, info: SrdLevelUpInfo): string[] {
   const head = `Level Up! Now level ${info.level}`;
-  if (mode !== 'dnd') return [head];
+  if (!modeProfile(mode).levelUpDetail) return [head];
   const how = info.roll != null ? `rolled ${info.roll}` : `fixed ${info.taken}`;
   const dwarf = info.dwarf ? ` + ${info.dwarf} Dwarven Toughness` : '';
   const retro = info.asi?.bonus.CON ? ' (CON raised: every level counts)' : '';

@@ -17,7 +17,7 @@ import { resolveCheckContext, runPlayerCheck } from '../../game/checkMath';
 import { parsePlayerIntent } from '../../game/intentParser';
 import { advanceClock, commitTravel } from '../../game/travelJourney';
 import { withHouseRules, tableRulesLine } from '../../game/rules/houseRules';
-import { sceneLight } from '../../game/rules/exploration';
+import { ladderDc, sceneLight } from '../../game/rules/exploration';
 import { hoursAtPace, travelPaceOf } from '../../game/rules/travelPace';
 import { createDefaultSettings } from '../../game/defaults';
 import type { GameState, Settings } from '../../game/types';
@@ -72,9 +72,8 @@ describe('replay bank tt-build-6a (exploration rules)', () => {
     // The rung is on the roll the player sees.
     dice(0.5);
     expect(check(s, T.input(4)).displayLine).toMatch(/^Investigation \(medium\) d20 \(11\) .* vs DC 15 — (success|failure)$/);
-    // A tabletop save with no sheet keeps the old fixed DCs.
-    expect(ctx(T.before(4), T.input(4))).toMatchObject({ dc: 13 });
-    expect(ctx(T.before(4), T.input(4)).rung).toBeUndefined();
+    // tt-build-7: a tabletop save with no sheet sits on the same ladder.
+    expect(ctx(T.before(4), T.input(4))).toMatchObject({ dc: 15, rung: 'medium' });
   });
 
   it('[tabletop ds151 T13 | tt-build-6a] dangerous ground makes a physical task one rung harder', () => {
@@ -181,7 +180,7 @@ describe('replay bank tt-build-6a (exploration rules)', () => {
     expect(check(ruled(shop, { ttTravelPace: 'fast' }), 'Sneak past them').displayLine).toMatch(/^Stealth \(medium\) d20 \(11\) /);
   });
 
-  it('[tt-build-6a guard] LitRPG and story RPG keep their fixed DCs, no light or pace notes, and map travel times', () => {
+  it('[tt-build-6a guard] LitRPG and story RPG use the shared DC ladder with no rung, light or pace notes, and map travel times', () => {
     const loud = settings({ ttTravelPace: 'fast' });
     for (const bibleId of ['summoned-pact', 'salt-road-heist']) {
       const st = buildNewGameState({ bibleId, characterName: 'Jax', seed: 150, personality: 'chilled-gm' }).state;
@@ -190,9 +189,9 @@ describe('replay bank tt-build-6a (exploration rules)', () => {
       expect(travelPaceOf(stamped)).toBe('normal');
       expect(hoursAtPace({ ...stamped, houseRules: { ...(stamped.houseRules ?? {}), travelPace: 'fast' } as never }, 2)).toBe(2);
       const atNight = advanceClock(stamped, 14).state;
-      expect(ctx(atNight, 'Search the area')).toMatchObject({ dc: 13 });
-      expect(ctx(atNight, 'Look around')).toMatchObject({ dc: 12 });
-      expect(ctx(atNight, 'Look around').rung).toBeUndefined();
+      // tt-build-7: the same ladder as tabletop (Strictness shift included); the rung stays off the roll line.
+      expect(ctx(atNight, 'Search the area')).toMatchObject({ dc: ladderDc('medium', atNight.gmStrictness), rung: 'medium' });
+      expect(ctx(atNight, 'Look around')).toMatchObject({ dc: ladderDc('easy', atNight.gmStrictness), rung: 'easy' });
       dice(0.5);
       const line = check(atNight, 'Look around').displayLine ?? '';
       expect(line).not.toMatch(/darkness|dim light|pace|easy|medium/);

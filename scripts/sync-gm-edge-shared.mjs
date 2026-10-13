@@ -163,14 +163,15 @@ function edgeSource(file, srcPath) {
   }
   if (file === 'checkMath.ts') {
     // Edge only needs the PlayerCheckResult type. The tabletop exploration rules (DC ladder, light, pace) pull the
-    // SRD sheet builder, so on the edge every check stays off the ladder.
+    // SRD sheet builder and the mode profile, so on the edge they throw if a check ever runs there.
     next = next
       .replace(
         /^import \{ ladderDc[^\n]*'\.\/rules\/exploration';\r?\n/m,
-        "type TaskKind = string;\ntype TaskRung = string;\nconst edgeOnly = (): never => { throw new Error('tabletop exploration rules run on the client'); };\nconst ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;\n"
+        "type TaskKind = string;\ntype TaskRung = string;\nconst edgeOnly = (..._args: unknown[]): never => { throw new Error('tabletop exploration rules run on the client'); };\nconst ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;\n"
       )
       .replace(/^import \{ paceCheckAdv[^\n]*'\.\/rules\/travelPace';\r?\n/m, 'const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;\n')
-      .replace(/function onLadder\(state: GameState\): boolean \{\r?\n\s*return [^\n]*\r?\n\}/, 'function onLadder(_state: GameState): boolean {\n  return false;\n}');
+      .replace(/^import \{ modeProfile \} from '\.\/rules\/modeProfile';\r?\n/m, 'const modeProfile = edgeOnly;\n')
+      .replace(/function sheetExtras\(state: GameState\): boolean \{\r?\n\s*return [^\n]*\r?\n\}/, 'function sheetExtras(_state: GameState): boolean {\n  return false;\n}');
   }
   return rewriteImports(next, file);
 }

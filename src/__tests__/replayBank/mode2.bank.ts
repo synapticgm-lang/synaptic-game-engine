@@ -114,12 +114,13 @@ describe('replay bank mode2 (mode lap 2)', () => {
     expect(up.receipts.join(' ')).not.toMatch(/\brank\b|Level 2:/);
   });
 
-  it('[mode2 guard] LitRPG keeps its STATUS, XP table, recovery and level line', () => {
+  it('[mode2 guard] LitRPG keeps its STATUS, XP table and level line; recovery is the shared row (tt-build-7)', () => {
     const lit = ['Flee check: d20 3 + 1 vs DC 12 — failure', 'Loot: [Epic] Masterwork Jerkin'];
     expect(filterSystemLogForEngine(lit, 'litrpg')).toEqual(['Loot: [Epic] Masterwork Jerkin']);
     expect(milestoneXp('litrpg', 'significantPlace').amount).toBe(25);
     expect(milestoneXp('litrpg', 'dungeonEntry').amount).toBe(25);
-    expect(recoveryRow('litrpg').victoryFraction).toBe(0.25);
+    expect(recoveryRow('litrpg')).toEqual(recoveryRow('dnd'));
+    expect(recoveryRow('litrpg').victoryFraction).toBe(0);
     const litState = { ...S.after(3), engineMode: 'litrpg' } as GameState;
     expect(
       formatArcStatusReceipts({ state: litState, systemReceipts: ['HP: 24 → 20 (dealt 9, took 4)', 'Fight: VICTORY vs X in 2 rounds'] } as never)

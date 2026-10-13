@@ -117,14 +117,15 @@ describe('shared rules engine — level-up (SRD 5.2.1)', () => {
     expect(feats).not.toMatch(/Sneak Attack 1d6/);
   });
 
-  it('a tabletop level-up adds the gain to current HP (no free heal); other characters keep ×1.1 and a full heal', () => {
+  it('a level-up adds the gain to current HP (no free heal); a character with no sheet takes the d8 at its fixed 5 + CON', () => {
     const f = built('Human Fighter (Soldier)').character;
     const hurt = { ...f, hp: 3 };
     const up = applyCharacterXpGain(hurt, dndXpToNext(1), 'dnd');
     expect(up.character.hp).toBe(3 + 6 + abilityMod(f.attributes.CON));
     const plain = { ...hurt, srd: undefined, maxHp: 20, hp: 3, xpToNext: 150 } as Character;
+    const gain = Math.max(1, 5 + abilityMod(f.attributes.CON));
     const lit = applyCharacterXpGain(plain, 150, 'litrpg');
-    expect(lit).toMatchObject({ notes: ['Level Up! Now level 2'], character: { maxHp: 22, hp: 22 } });
+    expect(lit).toMatchObject({ notes: ['Level Up! Now level 2'], character: { maxHp: 20 + gain, hp: 3 + gain } });
   });
 });
 

@@ -20,7 +20,7 @@ import {
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { fightApproachChips } from './fightApproach';
 import { countLoiterFamilyStreak } from './beatFingerprint';
-import { tabletopRestChip } from './recoveryRules';
+import { restChip } from './recoveryRules';
 import { tabletopCastChip } from './tabletop/spellCasting';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 
@@ -187,6 +187,9 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     }
   }
 
+  const rest = state.activeEncounter ? null : restChip(state);
+  const restEdge: ChoiceEdge | null = rest ? { id: 'rest', label: rest, kind: 'wait', risk: 'low' } : null;
+
   if (state.engineMode === 'litrpg') {
     // 31i — Status at most once per 4 turns; never under drought/recovery pad spam
     const mandate = state.arcDirector?.lastMandate ?? '';
@@ -202,10 +205,11 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   }
   if (state.engineMode === 'dnd' && engineAllowsCombat(state) && !state.activeEncounter) {
     edges.push({ id: 'dnd-investigate', label: 'Investigate the keep', kind: 'inspect' });
-    const rest = tabletopRestChip(state);
-    if (rest) edges.push({ id: 'dnd-rest', label: rest, kind: 'wait', risk: 'low' });
+    if (restEdge) edges.push(restEdge);
     const cast = tabletopCastChip(state);
     if (cast) edges.push({ id: 'dnd-cast', label: cast, kind: 'inspect', risk: 'low' });
+  } else if (restEdge) {
+    edges.push(restEdge);
   }
   if (state.engineMode === 'pyoa') {
     if (isPyoaCharterClosed(state) || isPyoaItemDestroyed(state, 'charter')) {

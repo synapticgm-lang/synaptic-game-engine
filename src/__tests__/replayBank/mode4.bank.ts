@@ -14,7 +14,7 @@ import { Replay } from './bank';
 import { replayWhole } from './replayRun';
 import { engineResultFact } from '../../game/engineResult';
 import { applyStoryRpgTurn, storyRpgDecisionChip } from '../../game/storyRpgProgress';
-import { applyRestHeal, tabletopRestChip } from '../../game/recoveryRules';
+import { applyRestHeal, restChip } from '../../game/recoveryRules';
 import { roadFoeForEngine } from '../../game/travelJourney';
 import { storyChip } from '../../game/choiceRanking';
 import type { GameState } from '../../game/types';
@@ -114,7 +114,7 @@ describe('replay bank mode4 (mode lap 4)', () => {
   it('[tabletop ds151 T18 | mode4 fix 3] a short rest is 1 hour and one shown Hit Die; a long rest is 8 hours and full HP', () => {
     const s = hurtAt18();
     const max = s.character.maxHp;
-    expect(tabletopRestChip(s)).toMatch(/^(Take a short rest|Rest for the night)$/);
+    expect(restChip(s)).toMatch(/^(Take a short rest|Rest for the night)$/);
     const short = applyRestHeal(s, 'Take a short rest');
     expect(short.dieLine).toMatch(/^Hit Die: d8 \d [+−] \d+ = \d+$/);
     expect(short.receipt).toMatch(/^Rest: short rest, 1 hour — HP \d+ → \d+ \(\+1h, now \w+\)$/);
@@ -123,7 +123,7 @@ describe('replay bank mode4 (mode lap 4)', () => {
     expect(short.state.hitDiceSpent).toBe(1);
     expect(engineResultFact([short.dieLine!, short.receipt!], 'dnd')).not.toMatch(/Hit Die|d8/);
     const hurtAgain = { ...short.state, character: { ...short.state.character, hp: 5 } };
-    expect(tabletopRestChip(hurtAgain)).toBe('Rest for the night');
+    expect(restChip(hurtAgain)).toBe('Rest for the night');
     const spent = applyRestHeal(hurtAgain, 'Take a short rest');
     expect(spent.receipt).toMatch(/no Hit Dice left, HP stays 5/);
     const long = applyRestHeal(hurtAgain, 'Rest for the night');
@@ -132,13 +132,20 @@ describe('replay bank mode4 (mode lap 4)', () => {
     expect(long.state.hitDiceSpent).toBe(0);
   });
 
-  it('[mode4 guard] LitRPG keeps its rest, rarity tags, quest and road meetings as before', () => {
+  it('[mode4 guard] LitRPG keeps its short rest line, rarity tags, quest and road meetings; rests use the shared rules (tt-build-7)', () => {
     const s = hurtAt18();
     const lit = { ...s, engineMode: 'litrpg' } as GameState;
-    const heal = applyRestHeal(lit, 'Ready yourself and watch');
+    // Waiting is not a rest in any mode; the rest chip is the same one tabletop offers.
+    expect(applyRestHeal(lit, 'Ready yourself and watch').receipt).toBeNull();
+    expect(restChip(lit)).toBe(restChip(s));
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const heal = applyRestHeal(lit, 'Take a short rest');
+    const table = applyRestHeal(s, 'Take a short rest');
+    vi.restoreAllMocks();
+    expect(heal.state.character.hp).toBe(table.state.character.hp);
+    expect(heal.state.character.hp).toBeGreaterThan(s.character.hp);
     expect(heal.receipt).toMatch(/^Rest: HP \d+ → \d+$/);
     expect(heal.dieLine).toBeUndefined();
-    expect(tabletopRestChip(lit)).toBeNull();
     expect(engineResultFact(['Loot: [Common] Worn Hand Axe'], 'litrpg')).toBe('Loot: [Common] Worn Hand Axe.');
     expect(engineResultFact(['Loot: [Common] Worn Hand Axe'], 'dnd')).toBe('Loot: [Common] Worn Hand Axe.');
     expect(storyRpgDecisionChip({ ...B.after(2), engineMode: 'litrpg' } as GameState)).toBeNull();

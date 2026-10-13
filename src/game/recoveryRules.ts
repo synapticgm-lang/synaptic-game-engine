@@ -1,7 +1,8 @@
 /**
  * 28g — shared recovery and early-fight rules (every mode).
- * HP comes back on rest at a safe hub and partly after a won fight; a defeat never leaves the
- * character stuck at 1 HP. Early enemies (player level 1–3) hit softer, scaled by the difficulty table.
+ * Every mode rests by the SRD 5.2.1 rest rules at a safe hub (short rest: Hit Dice; long rest: all HP), and a won
+ * fight gives no HP back; the mode profile decides how a rest is shown. A defeat never leaves the character stuck
+ * at 1 HP. Early enemies (player level 1–3) hit softer, scaled by the difficulty table.
  */
 import type { EngineMode, GameState } from './types';
 import { difficultyFromStrictness } from './difficultyRules';
@@ -12,22 +13,23 @@ import { arcaneRecovery, isPactCaster } from './rules/spells';
 import { restoreFeatures } from './rules/classFeatures';
 import { houseRulesOf, REST_HOURS } from './rules/houseRules';
 import { sidekickOf } from './rules/sidekick';
+import { modeProfile } from './rules/modeProfile';
 
 export interface RecoveryRow {
-  /** Share of max HP restored by rest / wait at a safe hub. */
-  restFraction: number;
   /** Share of max HP recovered after a won fight. */
   victoryFraction: number;
   /** A defeat leaves at least this share of max HP (you come to). */
   defeatFraction: number;
 }
 
+/** A won fight gives no HP back; damage stays until a rest (SRD 5.2.1). One row for every mode. */
+const SHARED_RECOVERY: RecoveryRow = { victoryFraction: 0, defeatFraction: 0.25 };
+
 export const RECOVERY_TABLE: Readonly<Record<EngineMode, RecoveryRow>> = {
-  litrpg: { restFraction: 0.5, victoryFraction: 0.25, defeatFraction: 0.25 },
-  // Tabletop: a won fight gives no HP back; damage stays until a rest (5e).
-  dnd: { restFraction: 0.5, victoryFraction: 0, defeatFraction: 0.25 },
-  rpg: { restFraction: 0.5, victoryFraction: 0.2, defeatFraction: 0.25 },
-  pyoa: { restFraction: 0.5, victoryFraction: 0.25, defeatFraction: 0.25 },
+  litrpg: SHARED_RECOVERY,
+  dnd: SHARED_RECOVERY,
+  rpg: SHARED_RECOVERY,
+  pyoa: SHARED_RECOVERY,
 };
 
 export function recoveryRow(mode: EngineMode | undefined): RecoveryRow {
@@ -44,7 +46,7 @@ export function isSafeHubRest(state: GameState, input: string): boolean {
 }
 
 /**
- * Tabletop rests follow the 5e rest rules. Waiting, watching or readying is not a rest.
+ * Rests follow the SRD 5.2.1 rest rules in every mode. Waiting, watching or readying is not a rest.
  * Short rest: 1 hour, spend one Hit Die (the class die, d8 with no sheet, + CON modifier). Long rest:
  * 8 hours, all HP back and half the spent Hit Dice (at least 1). A character holds as many Hit Dice as their level.
  */
@@ -98,11 +100,14 @@ function shortRestRecovery(s: GameState): { state: GameState; after: string[] } 
   return { state: { ...s, character }, after };
 }
 
-/** Tabletop: the rest chip at a safe hub when hurt or out of spell slots (null when nothing to recover or not safe). */
-export function tabletopRestChip(state: GameState): string | null {
+/**
+ * The rest chip at a safe hub when hurt or out of spell slots (null when nothing to recover or not safe).
+ * Tabletop, LitRPG and story RPG rest by the same rules; Pick Your Own Adventure plays its spine chips.
+ */
+export function restChip(state: GameState): string | null {
   const ch = state.character;
+  if (!ch || state.engineMode === 'pyoa' || !isSafeHubRest(state, TABLETOP_LONG_REST_CHIP)) return null;
   const max = ch.maxHp || ch.hp;
-  if (state.engineMode !== 'dnd' || !isSafeHubRest(state, TABLETOP_LONG_REST_CHIP)) return null;
   if (ch.hp >= max) {
     if (!slotsSpent(state) && !featuresSpent(state)) return null;
     return arcaneRecoveryDue(state) ? TABLETOP_SHORT_REST_CHIP : TABLETOP_LONG_REST_CHIP;
@@ -132,7 +137,7 @@ function restSpan(hours: number): { status: string; prose: string } {
   return { status: `${hours} hour${hours === 1 ? '' : 's'}`, prose: `about ${words[hours] ?? `${hours} hours`}` };
 }
 
-function applyTabletopRest(state: GameState, input: string): RestHeal {
+function applySrdRest(state: GameState, input: string): RestHeal {
   const kind = tabletopRestKind(input);
   const ch = state.character;
   const max = ch.maxHp || ch.hp;
@@ -211,15 +216,20 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
   };
 }
 
-/** Heal on a safe-hub rest. Receipt for STATUS, or null when nothing changed. */
+/**
+ * Heal on a safe-hub rest, by the SRD rest rules in every mode. Receipt for STATUS, or null when nothing changed.
+ * Tabletop shows the rest kind, hours, clock and Hit Die; LitRPG and story RPG show the short HP line.
+ */
 export function applyRestHeal(state: GameState, input: string): RestHeal {
-  if (state.engineMode === 'dnd') return applyTabletopRest(state, input);
-  const ch = state.character;
-  const max = ch.maxHp || ch.hp;
-  if (!isSafeHubRest(state, input) || ch.hp >= max) return { state, receipt: null };
-  const gain = Math.max(1, Math.ceil(max * recoveryRow(state.engineMode).restFraction));
-  const hp = Math.min(max, ch.hp + gain);
-  return { state: { ...state, character: { ...ch, hp } }, receipt: `Rest: HP ${ch.hp} → ${hp}` };
+  const rest = applySrdRest(state, input);
+  if (!rest.receipt || modeProfile(state.engineMode).restDetail) return rest;
+  const before = state.character.hp;
+  const after = rest.state.character.hp;
+  return {
+    state: rest.state,
+    receipt: after !== before ? `Rest: HP ${before} → ${after}` : `Rest: HP stays ${after}`,
+    ...(rest.fact ? { fact: rest.fact } : {}),
+  };
 }
 
 /** HP after an engine-resolved fight: some recovery on a win, a floor on a defeat. */

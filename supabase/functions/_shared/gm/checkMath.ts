@@ -1,4 +1,4 @@
-import type { AttributeKey, GameState, GmStrictness, ProfessionSkill } from './types.ts';
+import type { AttributeKey, GameState, ProfessionSkill } from './types.ts';
 import type { PlayerIntent } from './intentParser.ts';
 import { evaluateRoll, type RollOutcome } from './gameEngine.ts';
 import { currentDungeonNode } from './dungeonSeed.ts';
@@ -29,9 +29,10 @@ import { leverageCue, socialLeverageMods, type LeverageMod } from './socialLever
 import { skillRankOf, type CheckSkillName } from './skillRanks.ts';
 type TaskKind = string;
 type TaskRung = string;
-const edgeOnly = (): never => { throw new Error('tabletop exploration rules run on the client'); };
+const edgeOnly = (..._args: unknown[]): never => { throw new Error('tabletop exploration rules run on the client'); };
 const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
+const modeProfile = edgeOnly;
 
 export type CheckSkill = CheckSkillName;
 
@@ -120,11 +121,18 @@ export function sheetSkillBonus(character: GameState['character'], skill: string
   return s.expertise.includes(skill) ? pb * 2 : pb;
 }
 
+/**
+ * Skill proficiency on a check, the same maths in every mode (SRD 5.2.1): +PB when proficient, ×2 with expertise.
+ * A tabletop sheet lists its proficiencies. A LitRPG / story RPG skill rank is how that mode shows proficiency:
+ * rank 1 = proficient, rank 2 or more = expertise.
+ */
 function skillBonus(state: GameState, skill?: CheckSkill): number {
   if (!skill) return 0;
-  // A tabletop sheet replaces ranks with SRD proficiency.
   if (state.character.srd) return SRD_CHECK_SKILL[skill] ? sheetSkillBonus(state.character, SRD_CHECK_SKILL[skill]) : 0;
-  return skillRankOf(state.character, skill);
+  const rank = skillRankOf(state.character, skill);
+  if (rank <= 0) return 0;
+  const pb = proficiencyBonus(state.character.level);
+  return rank >= 2 ? pb * 2 : pb;
 }
 
 function professionBonus(state: GameState, professionName?: string): number {
@@ -139,19 +147,16 @@ function professionBonus(state: GameState, professionName?: string): number {
   return Math.floor((hit.level ?? 1) / 2);
 }
 
-function dcForStrictness(base: number, strictness: GmStrictness | undefined): number {
-  // 28c — the shared difficulty table (difficultyRules) owns the DC shift (Easy −2, min 8; Hard +2).
-  const shift = difficultyRow(strictness).checkDcShift;
-  return shift < 0 ? Math.max(8, base + shift) : base + shift;
-}
-
-/** A tabletop sheet sets each task's DC on the SRD ladder; other modes keep their fixed DCs. */
-function onLadder(_state: GameState): boolean {
+/**
+ * The tabletop sheet's table extras on a check: heavy load / untrained armour, travel pace and light.
+ * LitRPG and story RPG track no light sources, senses or carried weight, so they skip them.
+ */
+function sheetExtras(_state: GameState): boolean {
   return false;
 }
 
-function taskDc(state: GameState, kind: TaskKind, fixed: number): { dc: number; rung?: TaskRung } {
-  if (!onLadder(state)) return { dc: dcForStrictness(fixed, state.gmStrictness) };
+/** Every mode sets each task's DC on the SRD ladder (with the Strictness shift and dangerous ground). */
+function taskDc(state: GameState, kind: TaskKind): { dc: number; rung: TaskRung } {
   const rung = taskRung(state, kind);
   return { dc: ladderDc(rung, state.gmStrictness), rung };
 }
@@ -169,7 +174,7 @@ export function resolveCheckContext(
   const node = currentDungeonNode(state.activeDungeon);
   const trap = node?.hidden?.traps.find((tr) => !tr.disarmed);
   if (/\b(pick\s+lock|lockpick|disarm|disable\s+trap|jimmy)\b/i.test(t) || intent.kind === 'search' && /\block|trap|chest|cache\b/i.test(t)) {
-    const lock = trap?.dc != null ? { dc: trap.dc } : taskDc(state, 'lock', 13);
+    const lock = trap?.dc != null ? { dc: trap.dc } : taskDc(state, 'lock');
     return {
       label: 'Thievery / lock',
       attr: 'DEX',
@@ -196,8 +201,8 @@ export function resolveCheckContext(
       attr: 'CHA',
       skill: 'persuasion',
       ...(intent.kind === 'refuse'
-        ? taskDc(state, 'refuse', 10)
-        : taskDc(state, requestSize(actionText) === 'risky' ? 'social-risky' : 'social-minor', 12)),
+        ? taskDc(state, 'refuse')
+        : taskDc(state, requestSize(actionText) === 'risky' ? 'social-risky' : 'social-minor')),
       critFailHpRisk: 0,
     };
   }
@@ -207,7 +212,7 @@ export function resolveCheckContext(
       label: 'Arcana',
       attr: 'INT',
       skill: 'arcana',
-      ...taskDc(state, 'arcana', 13),
+      ...taskDc(state, 'arcana'),
       critFailHpRisk: 0,
     };
   }
@@ -217,7 +222,7 @@ export function resolveCheckContext(
       label: 'Stealth',
       attr: 'DEX',
       skill: 'stealth',
-      ...taskDc(state, 'stealth', 12),
+      ...taskDc(state, 'stealth'),
       critFailHpRisk: 0,
     };
   }
@@ -227,7 +232,7 @@ export function resolveCheckContext(
       label: 'Athletics / strike',
       attr: 'STR',
       skill: 'athletics',
-      ...taskDc(state, 'strike', 12),
+      ...taskDc(state, 'strike'),
       critFailHpRisk: state.activeEncounter ? 2 : 0,
     };
   }
@@ -238,7 +243,7 @@ export function resolveCheckContext(
       label: lookHard ? 'Investigation' : 'Perception',
       attr: lookHard ? 'INT' : 'WIS',
       skill: lookHard ? 'investigation' : 'perception',
-      ...taskDc(state, lookHard ? 'search' : 'notice', lookHard ? 13 : 12),
+      ...taskDc(state, lookHard ? 'search' : 'notice'),
       critFailHpRisk: trap && !trap.revealed ? Math.min(trap.damage ?? 0, 2) : 0,
     };
   }
@@ -248,7 +253,7 @@ export function resolveCheckContext(
       label: 'Athletics',
       attr: 'STR',
       skill: 'athletics',
-      ...taskDc(state, 'athletics', 12),
+      ...taskDc(state, 'athletics'),
       critFailHpRisk: 0,
     };
   }
@@ -258,7 +263,7 @@ export function resolveCheckContext(
       label: 'Survival',
       attr: 'CON',
       skill: 'survival',
-      ...taskDc(state, 'survival', 10),
+      ...taskDc(state, 'survival'),
       critFailHpRisk: 0,
     };
   }
@@ -267,7 +272,7 @@ export function resolveCheckContext(
     label: 'General check',
     attr: 'STR',
     skill: 'athletics',
-    ...taskDc(state, 'general', 12),
+    ...taskDc(state, 'general'),
     critFailHpRisk: 0,
   };
 }
@@ -335,10 +340,11 @@ export function runPlayerCheck(
     if (auto === 'unwilling' && leverageSum >= 3) auto = undefined;
     else if (auto === 'willing' && leverageSum <= -3) auto = undefined;
   }
-  if (state.character.srd) adv = combineAdv(adv, conditionCheckAdv(state.character.conditions));
-  // Tabletop: the task's rung, plus what light and the travel pace did to the roll.
-  const notes: string[] = ctx.rung ? [ctx.rung] : [];
-  if (onLadder(state)) {
+  // Conditions change checks in every mode (SRD 5.2.1 condition table).
+  adv = combineAdv(adv, conditionCheckAdv(state.character.conditions));
+  // The task's rung, plus (tabletop sheet) what light, load and the travel pace did to the roll.
+  const notes: string[] = ctx.rung && modeProfile(state.engineMode).numbers === 'open' ? [ctx.rung] : [];
+  if (sheetExtras(state)) {
     const burden = sheetBurden(state, ctx.attr);
     if (burden) {
       adv = combineAdv(adv, 'disadvantage');

@@ -6,7 +6,7 @@
 import type { Character, EngineMode } from './types';
 import { dndXpToNext } from './xpRules';
 import { hidesPart, type SystemHousingConfig } from './systemHousing';
-import { presentLevelUp, srdLevelUp } from './rules/advancement';
+import { presentLevelUp, sharedLevelUp, srdLevelUp } from './rules/advancement';
 import type { Rng } from './rules/dice';
 
 export interface CharacterXpApplyResult {
@@ -15,15 +15,22 @@ export interface CharacterXpApplyResult {
   notes: string[];
 }
 
+/** A tabletop character (or one with a SRD sheet) levels on the SRD 5.2.1 thresholds. */
+function onSrdThresholds(character: Character, mode?: EngineMode): boolean {
+  return mode === 'dnd' || !!character.srd;
+}
+
 /**
- * Apply XP and cascade level-ups (same curve as auto-fight).
- * A character with a SRD sheet (tabletop) levels by the SRD rules (rules/advancement) on the 5e thresholds,
- * whatever mode the caller passes. Every other character keeps max HP × 1.1 and a full heal.
+ * Apply XP and cascade level-ups. Every character gains HP per level by the SRD rule (rules/advancement): a SRD
+ * sheet also gains its class's features, ASI and spells; a character with no sheet takes the d8 Hit Die at its
+ * fixed value + CON. The mode profile decides what the level-up lines show.
+ * The XP bar is still per mode: tabletop on the SRD thresholds, LitRPG and story RPG on the ×1.5 curve from 150
+ * (a mode maths difference held for John — tt-build-7).
  */
 export function applyCharacterXpGain(
   character: Character,
   xpGain: number,
-  /** 28a — 'dnd' uses the 5e thresholds (SRD 5.1); other modes keep the ×1.5 curve. */
+  /** 'dnd' uses the SRD thresholds; other modes keep the ×1.5 curve. */
   mode?: EngineMode,
   /** A housing with level off still levels the character, hidden: no level note. */
   housing?: SystemHousingConfig | null,
@@ -32,50 +39,19 @@ export function applyCharacterXpGain(
   if (!xpGain || xpGain <= 0) {
     return { character, levelsGained: 0, notes: [] };
   }
-  if (character.srd) return applySrdXpGain(character, xpGain, housing, rng);
-  let xp = (character.xp ?? 0) + xpGain;
-  let level = character.level ?? 1;
-  let xpToNext = mode === 'dnd' ? dndXpToNext(level) : Math.max(1, character.xpToNext ?? 150);
-  let maxHp = character.maxHp ?? character.hp ?? 20;
-  let hp = character.hp ?? maxHp;
-  let levelsGained = 0;
-  const notes: string[] = [];
-
-  while (xp >= xpToNext) {
-    xp -= xpToNext;
-    level += 1;
-    levelsGained += 1;
-    xpToNext = mode === 'dnd' ? dndXpToNext(level) : Math.floor(xpToNext * 1.5);
-    maxHp = Math.floor(maxHp * 1.1);
-    hp = maxHp;
-    notes.push(`Level Up! Now level ${level}`);
-  }
-
-  return {
-    character: {
-      ...character,
-      xp,
-      level,
-      xpToNext,
-      maxHp,
-      hp,
-    },
-    levelsGained,
-    notes: hidesPart(housing, 'level') ? [] : notes,
-  };
-}
-
-function applySrdXpGain(character: Character, xpGain: number, housing?: SystemHousingConfig | null, rng?: Rng): CharacterXpApplyResult {
+  const srdBar = onSrdThresholds(character, mode);
   let next: Character = { ...character, xp: (character.xp ?? 0) + xpGain };
-  let xpToNext = dndXpToNext(next.level ?? 1);
+  let xpToNext = srdBar ? dndXpToNext(next.level ?? 1) : Math.max(1, character.xpToNext ?? 150);
   let levelsGained = 0;
   const notes: string[] = [];
   while ((next.xp ?? 0) >= xpToNext) {
-    const up = srdLevelUp({ ...next, xp: (next.xp ?? 0) - xpToNext }, (next.level ?? 1) + 1, rng);
+    const base = { ...next, xp: (next.xp ?? 0) - xpToNext };
+    const toLevel = (next.level ?? 1) + 1;
+    const up = next.srd ? srdLevelUp(base, toLevel, rng) : sharedLevelUp(base, toLevel);
     next = up.character;
     levelsGained += 1;
-    notes.push(...presentLevelUp('dnd', up.info));
-    xpToNext = dndXpToNext(next.level);
+    notes.push(...presentLevelUp(next.srd ? 'dnd' : mode, up.info));
+    xpToNext = srdBar ? dndXpToNext(next.level) : Math.floor(xpToNext * 1.5);
   }
   return {
     character: { ...next, xpToNext },
@@ -91,14 +67,14 @@ export function characterXpGainBetween(
   mode?: EngineMode
 ): number {
   if (!before || !after) return 0;
-  const dnd = mode === 'dnd' || !!before.srd;
+  const srdBar = onSrdThresholds(before, mode);
   const fromLevel = before.level ?? 1;
   const toLevel = after.level ?? fromLevel;
   if (toLevel <= fromLevel) return Math.max(0, (after.xp ?? 0) - (before.xp ?? 0));
-  let xpToNext = dnd ? dndXpToNext(fromLevel) : Math.max(1, before.xpToNext ?? 150);
+  let xpToNext = srdBar ? dndXpToNext(fromLevel) : Math.max(1, before.xpToNext ?? 150);
   let gain = xpToNext - (before.xp ?? 0);
   for (let level = fromLevel + 1; level < toLevel; level++) {
-    xpToNext = dnd ? dndXpToNext(level) : Math.floor(xpToNext * 1.5);
+    xpToNext = srdBar ? dndXpToNext(level) : Math.floor(xpToNext * 1.5);
     gain += xpToNext;
   }
   return Math.max(0, gain + (after.xp ?? 0));
