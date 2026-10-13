@@ -5,6 +5,8 @@
  * reminder" with Captain Sera Quill elsewhere) and the writer is not told the contact is present; the live
  * foe's row is its kind and takes an article ("the Grave-risen Carrion Crow Flock").
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildCompletedEventPacket } from '../../game/completedEventPacket';
 import { formatHubArrivalForPrompt, hubArrivalChoicePads, resolveHubArrival } from '../../game/hubEncounters';
@@ -71,8 +73,17 @@ describe('replay bank multi lap 27', () => {
 
   it('[m27 g5-151 T20 | lap 27 foe kind takes an article] "the @t5" for the crow flock is a clean line', () => {
     expect(G.before(20).activeEncounter?.name).toBe('Grave-risen Carrion Crow Flock');
-    expect(G.verdicts(20)).toEqual(['action:ok', 'react:ok', 'hook:ok']);    expect(G.prose(20)).toMatch(/counted the shapes of the Grave-risen Carrion Crow Flock in the corridor/);
-    expect(G.prose(20)).toMatch(/Now the Grave-risen Carrion Crow Flock circled close/);
+    // Lap 51: the replayed T20 now carries out "Attack from hiding" (no longer rewritten), so the recorded reply
+    // is read against the recorded action's packet on the pre-turn state, where the flock is still the live foe.
+    const rec = readFileSync(join('scripts/fate-autoplay/runs', G151, 'turns.jsonl'), 'utf8').trim().split('\n')
+      .map((l) => JSON.parse(l) as { turn: number; playerInput: string; writerRaw: string })
+      .find((r) => r.turn === 20)!;
+    const live = G.before(20);
+    const livePacket = buildCompletedEventPacket(live, rec.playerInput);
+    expect(tokenLineVerdicts(rec.writerRaw, live, livePacket)).toEqual(['action:ok', 'react:ok', 'hook:ok']);
+    const liveProse = acceptTokenOrLedgerStory(rec.writerRaw, live, livePacket).prose;
+    expect(liveProse).toMatch(/counted the shapes of the Grave-risen Carrion Crow Flock in the corridor/);
+    expect(liveProse).toMatch(/Now the Grave-risen Carrion Crow Flock circled close/);
 
     const s = G.before(20);
     const packet = buildCompletedEventPacket(s, G.input(20));

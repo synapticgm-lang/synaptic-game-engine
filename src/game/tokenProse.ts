@@ -35,6 +35,8 @@ export interface TokenLine {
   speaker_tok?: string;
   /** Speech line read as speaker ref + spoken words: `text` is the words; code paints the tag and quote marks. */
   spoken?: boolean;
+  /** The words came with no quote marks and no said-tag: they may be narration written into the speech slot. */
+  bare?: boolean;
 }
 
 /** One accepted writer speech line: who said it (ledger ref) and the words, as code painted them. */
@@ -280,19 +282,65 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
     ? text.match(new RegExp(`^@${line.speaker_tok.replace(/^@/, '')}\\b\\s*(?:[:,\u2014\u2013-]\\s*|said\\s*,?\\s*)?(?=[A-Z])([\\s\\S]+)$`))
     : null;
   let words: string;
+  let bare = false;
   if (quoted.length) {
     words = quoted.map((q, i) => (i < quoted.length - 1 ? q.replace(/,$/, '.') : q)).join(' ');
   } else if (tagged) {
     words = tagged[1]!;
   } else if (line.speaker_tok && !namesDeclaredPerson(text, refs)) {
     words = text.replace(new RegExp(`^[${OPEN_Q}]|[${CLOSE_Q}]$`, 'g'), '');
+    bare = true;
   } else {
     return { ...line, text };
   }
   if (!speaker) return { ...line, text };
   words = tidy(words).replace(/,$/, '');
   if (!/[.!?\u2026]$/.test(words)) words += '.';
-  return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true };
+  return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true, ...(bare ? { bare } : {}) };
+}
+
+/**
+ * Bare words in a speech slot are the speaker's own unless they tell the scene from outside: they name the player
+ * character other than to address them ("smiled at Jax", not "Well met, Jax!"), or open on the speaker's own name
+ * or label ("The traveler paused…", "The outlaw's words hung…"). Those lines are narration and paint as written.
+ */
+export function tellsSpeechFromOutside(beat: TokenBeat, enumRefs: LedgerRef[], state: GameState): TokenBeat {
+  const pc = (state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const namesPc = (words: string) => {
+    if (pc.length < 2) return false;
+    for (const m of words.matchAll(new RegExp(`\\b${esc(pc)}\\b`, 'g'))) {
+      const before = words.slice(0, m.index).trimEnd();
+      const after = words.slice(m.index! + pc.length);
+      const addressed = (!before || /[,;:\u2014\u2013!?.]$/.test(before)) && /^(?:[,!?.;:]|\s*$)/.test(after);
+      if (!addressed) return true;
+    }
+    return false;
+  };
+  const selfWords = (tok: string): string[] => {
+    const ref = beat.refs.find((r) => r.tok.replace(/^@/, '').toLowerCase() === tok.replace(/^@/, '').toLowerCase());
+    const row = ref ? findEnum(enumRefs, ref.tok, ref.id) : findEnum(enumRefs, tok);
+    const display = (row?.display ?? '').replace(/^(?:the|a|an)\s+/i, '').trim();
+    if (!display) return [];
+    const mem = (state.npcMemories ?? []).find((m) => m.npcName?.toLowerCase() === display.toLowerCase());
+    const labels = [display, ...display.split(/\s+/), mem?.sheet?.job, mem?.roleHint];
+    return [...new Set(labels.map((l) => String(l ?? '').trim().toLowerCase()).filter((l) => l.length >= 3))];
+  };
+  // The label as the subject of what follows ("The traveler paused"); "Garth. I keep…" is the speaker naming themselves.
+  const opensOnSelf = (words: string, tok: string) =>
+    !/\b(?:I|I'm|I've|I'll|I'd|me|my|mine|we|us|our|you|your)\b/i.test(words)
+    && selfWords(tok).some((w) => {
+      const next = words.match(new RegExp(`^(?:(?:the|a|an)\\s+)?${esc(w)}(?:['\u2019]s)?(\\s+\\S)`, 'i'))?.[1];
+      return !!next && /\s[a-z]/.test(next);
+    });
+  let changed = false;
+  const lines = beat.lines.map((line) => {
+    if (!line.spoken || !line.bare || !line.speaker_tok) return line;
+    if (!namesPc(line.text) && !opensOnSelf(line.text, line.speaker_tok)) return line;
+    changed = true;
+    return { fn: 'react' as LineFn, text: line.text };
+  });
+  return changed ? { ...beat, lines } : beat;
 }
 
 export function extractTokenCandidates(raw: string): string[] {
@@ -598,8 +646,9 @@ export function repeatsSaid(words: string, said: readonly string[]): boolean {
 
 export function tokenLineVerdicts(raw: string, state: GameState, packet?: CompletedEventPacket): string[] {
   const enumRefs = refEnumOf(state, packet);
-  const beat = extractTokenCandidates(raw ?? '').map(parseTokenBeat).find((b): b is TokenBeat => !!b);
-  if (!beat) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
+  const parsed = extractTokenCandidates(raw ?? '').map(parseTokenBeat).find((b): b is TokenBeat => !!b);
+  if (!parsed) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
+  const beat = tellsSpeechFromOutside(parsed, enumRefs, state);
   const out = bindCheckFails(beat, enumRefs).map((n) => `ref ${n}`);
   const counts = handedCountText(state, packet);
   const said = alreadySaidLines(state, packet);
@@ -1137,7 +1186,7 @@ export function acceptTokenOrLedgerStory(
   for (const cand of candidates) {
     const parsed = parseTokenBeat(cand);
     if (!parsed) continue;
-    const beat = normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient });
+    const beat = tellsSpeechFromOutside(normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state);
     if (isFullyClean(beat, enumRefs, known, counts, said, pcName)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
@@ -1200,7 +1249,9 @@ export function acceptTokenOrLedgerStory(
   // 27h — a repair request still returns engine fallback prose below, so raw JSON never reaches the player.
   let needsRepair: { missingFns: LineFn[] } | undefined;
   const parsedRaw = candidates.map(parseTokenBeat).find(Boolean);
-  const parsedAny = parsedRaw ? normalizeBeatRefs(parsedRaw, enumRefs, { thingsOnly: !opts?.lenient }) : parsedRaw;
+  const parsedAny = parsedRaw
+    ? tellsSpeechFromOutside(normalizeBeatRefs(parsedRaw, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state)
+    : parsedRaw;
   if (parsedAny && !opts?.alreadyRepaired) {
     const clean = keepCleanLines(parsedAny, enumRefs, known, counts, said);
     const miss = missingFns(clean.length ? clean : parsedAny.lines);

@@ -43,6 +43,7 @@ export function ledgerConceptTitles(state?: {
   quests?: Array<{ name?: string }>;
   openingEstablishment?: { pickedHook?: string; answers?: { where?: string } } | null;
   sceneFacts?: { props?: string[]; hookLock?: { summary?: string } } | null;
+  npcMemories?: Array<{ npcName?: string; aliases?: string[] }>;
 } | null): string[] {
   const out: string[] = [];
   const add = (raw?: string | null) => {
@@ -60,10 +61,26 @@ export function ledgerConceptTitles(state?: {
     add(card.name);
   }
   for (const q of state?.quests ?? []) add(q.name);
-  // The card is sentences: only its proper names are titles. Its "Who is here" slot names people.
-  for (const line of (state?.openingEstablishment?.pickedHook ?? '').split('\n')) {
+  // The card is sentences: only its proper names are titles. Its "Who is here" slot names people, and a person
+  // it names ("Ostler Joss") is still a person when another card line calls them by name ("Stay with Joss").
+  const lines = (state?.openingEstablishment?.pickedHook ?? '').split('\n');
+  const people = new Set<string>();
+  for (const m of state?.npcMemories ?? []) {
+    for (const n of [m.npcName, ...(m.aliases ?? [])]) if (n?.trim()) people.add(n.trim().toLowerCase());
+  }
+  for (const line of lines.filter((l) => /^\s*who\b/i.test(l))) {
+    for (const name of cardProperNames(line.replace(/^[^:\n]{1,40}:\s*/, ''))) {
+      const words = name.split(/\s+/);
+      if (words.length < 2) continue;
+      people.add(name.toLowerCase());
+      people.add(words[words.length - 1]!.toLowerCase());
+    }
+  }
+  for (const line of lines) {
     if (/^\s*who\b/i.test(line)) continue;
-    for (const name of cardProperNames(line.replace(/^[^:\n]{1,40}:\s*/, ''))) add(name);
+    for (const name of cardProperNames(line.replace(/^[^:\n]{1,40}:\s*/, ''))) {
+      if (!people.has(name.toLowerCase())) add(name);
+    }
   }
   add(state?.sceneFacts?.hookLock?.summary);
   for (const p of state?.sceneFacts?.props ?? []) add(p);

@@ -299,7 +299,11 @@ export function groundPlayerAction(
     );
   }
 
-  const ungrounded = findUngroundedNamedClaims(trimmed, state, storyProse);
+  // A chip from this turn's committed pad was already judged against the scene by chip legality.
+  const pad = state.offeredPad;
+  const offeredChip =
+    pad?.turn === (state.turn ?? 0) && (pad.choices ?? []).some((c) => c.trim().toLowerCase() === trimmed.toLowerCase());
+  const ungrounded = offeredChip ? [] : findUngroundedNamedClaims(trimmed, state, storyProse);
   if (ungrounded.length && intent.kind !== 'other') {
     // Soft-rewrite when the claim is central (attack/search/use/talk), not every Proper noun.
     if (intent.kind === 'attack' || intent.kind === 'search' || intent.kind === 'use_item') {
