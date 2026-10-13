@@ -98,8 +98,23 @@ function gearMod(state: GameState, key: AttributeKey): number {
   return bonus;
 }
 
+const SRD_CHECK_SKILL: Record<string, string> = {
+  athletics: 'Athletics', perception: 'Perception', investigation: 'Investigation', stealth: 'Stealth',
+  thievery: 'Sleight of Hand', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
+};
+
+/** Tabletop sheet skill proficiency: +PB when proficient, doubled by expertise (SRD 5.2.1). */
+export function sheetSkillBonus(character: GameState['character'], skill: string): number {
+  const s = character.srd;
+  if (!s || !s.skillProfs.includes(skill)) return 0;
+  const pb = proficiencyBonus(character.level);
+  return s.expertise.includes(skill) ? pb * 2 : pb;
+}
+
 function skillBonus(state: GameState, skill?: CheckSkill): number {
   if (!skill) return 0;
+  // A tabletop sheet replaces ranks with SRD proficiency.
+  if (state.character.srd) return SRD_CHECK_SKILL[skill] ? sheetSkillBonus(state.character, SRD_CHECK_SKILL[skill]) : 0;
   return skillRankOf(state.character, skill);
 }
 

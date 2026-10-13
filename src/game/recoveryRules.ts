@@ -7,6 +7,7 @@ import type { EngineMode, GameState } from './types';
 import { difficultyFromStrictness } from './difficultyRules';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { advanceClock } from './travelJourney';
+import { tabletopHitDie } from './tabletop/characterBuild';
 
 export interface RecoveryRow {
   /** Share of max HP restored by rest / wait at a safe hub. */
@@ -40,12 +41,11 @@ export function isSafeHubRest(state: GameState, input: string): boolean {
 
 /**
  * Tabletop rests follow the 5e rest rules. Waiting, watching or readying is not a rest.
- * Short rest: 1 hour, spend one Hit Die (d8 + CON modifier). Long rest: 8 hours, all HP back and
- * half the spent Hit Dice (at least 1). A character holds as many Hit Dice as their level.
+ * Short rest: 1 hour, spend one Hit Die (the class die, d8 with no sheet, + CON modifier). Long rest:
+ * 8 hours, all HP back and half the spent Hit Dice (at least 1). A character holds as many Hit Dice as their level.
  */
 const TABLETOP_LONG_REST = /\b(?:sleep|long rest|bed down|make camp|overnight|for the night|take a room|turn in)\b/i;
 const TABLETOP_SHORT_REST = /^rest\b|\b(?:short rest|take a rest|rest (?:a while|an hour|up)|catch (?:your|my) breath|take a breather|bind (?:your|my) wounds)\b/i;
-const TABLETOP_HIT_DIE = 8;
 
 export const TABLETOP_SHORT_REST_CHIP = 'Take a short rest';
 export const TABLETOP_LONG_REST_CHIP = 'Rest for the night';
@@ -95,14 +95,15 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
       fact: 'You rested for about an hour, but it did not ease your hurts; you need a night’s sleep.',
     };
   }
-  const roll = Math.floor(Math.random() * TABLETOP_HIT_DIE) + 1;
+  const die = tabletopHitDie(ch);
+  const roll = Math.floor(Math.random() * die) + 1;
   const con = Math.floor(((ch.attributes?.CON ?? 10) - 10) / 2);
   const gain = Math.max(1, roll + con);
   const hp = Math.min(max, ch.hp + gain);
   return {
     state: { ...clock.state, hitDiceSpent: (state.hitDiceSpent ?? 0) + 1, character: { ...ch, hp } },
     receipt: `Rest: short rest, 1 hour — HP ${ch.hp} → ${hp} (${clock.note})`,
-    dieLine: `Hit Die: d${TABLETOP_HIT_DIE} ${roll} ${con >= 0 ? '+' : '−'} ${Math.abs(con)} = ${gain}`,
+    dieLine: `Hit Die: d${die} ${roll} ${con >= 0 ? '+' : '−'} ${Math.abs(con)} = ${gain}`,
     fact: `You took a short rest of about an hour and bound your hurts${hp < max ? '; you are not fully healed' : ''}.`,
   };
 }

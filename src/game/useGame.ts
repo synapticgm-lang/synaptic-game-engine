@@ -15,6 +15,7 @@ import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './p
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { commitOfferedPad, downloadPlayDump, withOfferedChoices } from './playTranscript';
+import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending } from './tabletop/creationFlow';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn } from './storyRpgProgress';
@@ -1870,6 +1871,14 @@ export function useGame() {
     // Unlock TTS in this tap so the later async GM speak is allowed on Android Chrome.
     if (settingsRef.current.ttsEnabled) {
       voice.primeTts();
+    }
+
+    if (tabletopCreationPending(current)) {
+      const built = stepTabletopCreation(current, input);
+      stateRef.current = built;
+      setState(built);
+      void persist(built);
+      return;
     }
 
     if (
@@ -5372,7 +5381,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         cleanOpening,
         openingTurn
       );
-      const committed: GameState = placeQuestGivers({
+      const committed: GameState = beginTabletopCreation(placeQuestGivers({
         ...newState,
         turn: openingTurn,
         sceneFacts,
@@ -5383,7 +5392,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         openingEstablishment: openingEstForPad,
         memorableMoments: openingMemorable.nextState,
         lastUpdated: Date.now(),
-      });
+      }));
       stateRef.current = committed;
       setState(committed);
       if (settingsRef.current.ttsEnabled) {
@@ -5436,7 +5445,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }),
           newState
         );
-        const fallback: GameState = {
+        const fallback: GameState = beginTabletopCreation({
           ...newState,
           turn: newState.turn + 1,
           log: [fallbackGm],
@@ -5444,7 +5453,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           pendingGeneratedOpening: false,
           openingEstablishment: fallbackEst,
           lastUpdated: Date.now(),
-        };
+        });
         stateRef.current = fallback;
         setState(fallback);
         void persist(fallback);

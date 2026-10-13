@@ -60,6 +60,8 @@ import {
 } from './errorRepairWarden';
 import { applyFactLocks } from './factLocks';
 import { mulberry32, pickWeightedChoice, type Rng } from './fatePick';
+import { formatTabletopSheet, seedNumber } from './tabletop/characterBuild';
+import { autoTabletopCreation, creationRecord } from './tabletop/creationFlow';
 import { seedWorldLedgerFactions } from './factionStandings';
 import {
   LAUNCH_GM_PERSONALITY_IDS,
@@ -653,6 +655,8 @@ export function buildNewGameState(opts: {
   seed: number;
   personality: string;
   engineMode?: EngineMode;
+  /** Tabletop: walk the inn-book creation pages with seeded picks. Off for runs recorded before creation. */
+  tabletopCreation?: boolean;
 }): { state: GameState; bible: CampaignBible; personalityId: string } {
   const bible = getCampaignBibleById(opts.bibleId);
   if (!bible) throw new Error(`Unknown bible id: ${opts.bibleId}`);
@@ -782,7 +786,11 @@ export function buildNewGameState(opts: {
       bible
     )
   );
-  return { state: placeQuestGivers(seedOpeningCastLocations(state)), bible, personalityId: voices.personalityId };
+  const placed = placeQuestGivers(seedOpeningCastLocations(state));
+  const built = engineMode === 'dnd' && opts.tabletopCreation
+    ? autoTabletopCreation(placed, mulberry32(seedNumber(`tt-fate:${opts.seed}`)))
+    : placed;
+  return { state: built, bible, personalityId: voices.personalityId };
 }
 
 export function stampOpening(state: GameState): GameState {
@@ -795,7 +803,7 @@ export function stampOpening(state: GameState): GameState {
     role: 'gm',
     content: text,
     timestamp: Date.now(),
-    systemLog: [],
+    systemLog: state.engineMode === 'dnd' ? formatTabletopSheet(state) : [],
   };
   const withChoices = {
     ...state,
@@ -2193,14 +2201,17 @@ export async function runFateAutoplay(opts: {
     gmVoiceProfileId: isGmVoiceProfileId(opts.personality) ? opts.personality : 'cold-system',
   };
 
+  const tabletopCreationRun = process.env.SGM_AUTOPLAY_TT_CREATION !== 'off';
   const { state: raw, bible, personalityId } = buildNewGameState({
     bibleId: opts.bibleId,
     characterName: opts.characterName,
     seed: opts.seed,
     personality: opts.personality,
     engineMode: opts.engineMode,
+    tabletopCreation: tabletopCreationRun,
   });
   let state = stampOpening(raw);
+  if (raw.character.srd) console.log(`[fate-autoplay] tabletop creation: ${creationRecord(raw)}`);
   let startIndex = 0;
   if (opts.resumeFrom) {
     const snapPath = join(opts.resumeFrom, 'snapshot.json');
@@ -2452,6 +2463,7 @@ export async function runFateAutoplay(opts: {
       {
         ...summary,
         fatal,
+        ...(raw.character.srd ? { tabletopCreation: true, tabletopBuild: creationRecord(raw) } : {}),
         capacity: 'autoplay Test Lab override (unlimited text/memorable for this process only)',
         note: 'For review + optional StoryForge/SFT ingest. Not auto-trained into live GM.',
         writer: writerOverride

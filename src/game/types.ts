@@ -53,6 +53,53 @@ export interface Attributes {
   CHA: number;
 }
 
+export type TabletopClassId = 'fighter' | 'rogue' | 'cleric' | 'wizard';
+export type TabletopSpeciesId =
+  | 'human' | 'elf' | 'dwarf' | 'halfling' | 'gnome' | 'orc' | 'dragonborn' | 'tiefling' | 'goliath';
+export type TabletopBackgroundId = 'acolyte' | 'criminal' | 'sage' | 'soldier';
+export type AbilityMethod = 'point-buy' | 'standard-array' | '4d6';
+export type KitId = 'A' | 'B' | 'coin';
+
+/** Tabletop (dnd) sheet made in inn-book creation. SRD 5.2.1 (CC-BY-4.0) skill names. */
+export interface TabletopSheet {
+  classId: TabletopClassId;
+  speciesId: TabletopSpeciesId;
+  backgroundId: TabletopBackgroundId;
+  method: AbilityMethod;
+  /** Scores before the background increase. */
+  baseScores: Attributes;
+  /** Background increase (+2 and +1). */
+  bonus: Partial<Attributes>;
+  /** 4d6 drop-lowest rolls in the order they were rolled (four dice each). */
+  rolls?: number[][];
+  skillProfs: string[];
+  expertise: string[];
+  languages: string[];
+  originFeats: string[];
+  kitId: KitId;
+  source: 'build' | 'pregen' | 'quick';
+}
+
+export interface TabletopPicks {
+  classId?: TabletopClassId;
+  speciesId?: TabletopSpeciesId;
+  backgroundId?: TabletopBackgroundId;
+  method?: AbilityMethod;
+  baseScores?: Attributes;
+  rolls?: number[][];
+  kitId?: KitId;
+  source?: TabletopSheet['source'];
+}
+
+export type TabletopCreationStage = 'start' | 'class' | 'species' | 'background' | 'method' | 'scores' | 'kit' | 'confirm' | 'done';
+
+export interface TabletopCreationState {
+  stage: TabletopCreationStage;
+  picks: TabletopPicks;
+  /** The opening pad to give back once the sheet is done. */
+  restorePad?: { turn: number; choices: string[] } | null;
+}
+
 export type EntityKind = 'pet' | 'demon' | 'minion' | 'familiar' | 'mount';
 
 export interface SummonEntity {
@@ -119,6 +166,8 @@ export interface Character {
   skills?: Partial<Record<'athletics' | 'perception' | 'investigation' | 'stealth' | 'thievery' | 'persuasion' | 'arcana' | 'survival', number>>;
   /** 29z3 — highest level whose skill rank has been granted. */
   skillsGrantedThrough?: number;
+  /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */
+  srd?: TabletopSheet;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
@@ -498,6 +547,8 @@ export interface GameState {
   choices?: string[];
   /** The chips compiled once at commit for `turn`; the log, the ActionBar and Fate read this one list. */
   offeredPad?: { turn: number; choices: string[] } | null;
+  /** Tabletop inn-book character creation in progress (engine-only pages, no writer). */
+  tabletopCreation?: TabletopCreationState;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];

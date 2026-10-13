@@ -661,6 +661,13 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
     );
   }
   if (entry.role === 'system') {
+    if (entry.content.includes('\n')) {
+      return (
+        <div className="mx-auto max-w-2xl whitespace-pre-line rounded-md border border-slate-700/70 bg-slate-900/50 px-3 py-2 text-left text-xs leading-relaxed text-slate-300">
+          {entry.content}
+        </div>
+      );
+    }
     return (
       <div className="text-center text-xs text-slate-500">{entry.content}</div>
     );

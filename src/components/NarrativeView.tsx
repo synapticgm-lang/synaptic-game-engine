@@ -396,6 +396,13 @@ function ThoughtBlock({ text }: { text: string }) {
 
 function SystemMessage({ entry }: { entry: LogEntry }) {
   const text = entry.content;
+  if (text.includes('\n')) {
+    return (
+      <div className="my-3 mx-auto max-w-2xl whitespace-pre-line rounded-lg border border-slate-700/70 bg-slate-950/80 px-4 py-2.5 text-left text-xs leading-relaxed text-slate-200">
+        {text}
+      </div>
+    );
+  }
   const isLevelUp = /level\s*up|leveled?\s*up/i.test(text);
   const isStatChange = /stat|attribute|str|dex|con|int|wis|cha|hp|mp|sp/i.test(text);
   const isLoot = /loot|item|reward|gold|xp/i.test(text);

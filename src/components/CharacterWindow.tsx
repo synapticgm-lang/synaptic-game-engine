@@ -15,6 +15,7 @@ import { getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { stockItemIconSrc, stockPortraitSrc } from '@/game/stockInventoryArt';
 import { equippedSetLabel } from '@/game/uiTheme';
+import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
 
 type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -296,6 +297,7 @@ function StoryPlatesTab({ state }: { state: GameState }) {
 
 function DndSheet({ state }: { state: GameState }) {
   const c = state.character;
+  const sheet = deriveTabletopSheet(state);
   const attrs = c.attributes ?? ({} as Record<AttributeKey, number>);
   const attrRows: [AttributeKey, number][] = (['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as AttributeKey[]).map((k) => [k, attrs[k] ?? 0]);
 
@@ -318,12 +320,54 @@ function DndSheet({ state }: { state: GameState }) {
           );
         })}
       </div>
+      {sheet && <p className="text-xs text-amber-200/90">{sheet.title}</p>}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-        <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">AC</span><span className="font-mono font-bold">{c.armorClass ?? 10}</span></div>
+        <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between" title={sheet?.acFrom}><span className="text-slate-400">AC</span><span className="font-mono font-bold">{sheet ? sheet.ac : c.armorClass ?? 10}</span></div>
         <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">HP</span><span className="font-mono font-bold">{c.hp}/{c.maxHp}</span></div>
-        <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Speed</span><span className="font-mono font-bold">30 ft</span></div>
+        {sheet && <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Speed</span><span className="font-mono font-bold">{sheet.speed} ft</span></div>}
         <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Level</span><span className="font-mono font-bold">{c.level}</span></div>
+        {sheet && (
+          <>
+            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Proficiency</span><span className="font-mono font-bold">{fmtMod(sheet.pb)}</span></div>
+            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Initiative</span><span className="font-mono font-bold">{fmtMod(sheet.initiative)}</span></div>
+            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Passive Perc.</span><span className="font-mono font-bold">{sheet.passivePerception}</span></div>
+            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Hit Die</span><span className="font-mono font-bold">d{sheet.hitDie}</span></div>
+          </>
+        )}
       </div>
+      {sheet && (
+        <div className="grid gap-3 sm:grid-cols-2 text-xs">
+          <div>
+            <h4 className="text-xs text-slate-500 mb-1">Saving throws</h4>
+            <ul className="space-y-0.5">
+              {sheet.saves.map((s) => (
+                <li key={s.key} className="flex justify-between">
+                  <span className={s.proficient ? 'text-slate-100' : 'text-slate-400'}>{s.proficient ? '● ' : '○ '}{s.key}</span>
+                  <span className="font-mono">{fmtMod(s.total)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-xs text-slate-500 mb-1">Skills</h4>
+            <ul className="space-y-0.5">
+              {sheet.skills.map((s) => (
+                <li key={s.skill} className="flex justify-between">
+                  <span className={s.proficient ? 'text-slate-100' : 'text-slate-400'}>{s.expertise ? '◆ ' : s.proficient ? '● ' : '○ '}{s.skill}</span>
+                  <span className="font-mono">{fmtMod(s.total)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="sm:col-span-2 space-y-1 text-slate-300">
+            {sheet.features.length > 0 && <p><span className="text-slate-500">Features: </span>{sheet.features.join(', ')}</p>}
+            {sheet.originFeats.length > 0 && <p><span className="text-slate-500">Origin feats: </span>{sheet.originFeats.join(', ')}</p>}
+            {sheet.traits.length > 0 && <p><span className="text-slate-500">Traits: </span>{sheet.traits.join('; ')}</p>}
+            {sheet.languages.length > 0 && <p><span className="text-slate-500">Languages: </span>{sheet.languages.join(', ')}</p>}
+            <p className="text-[10px] text-slate-500">Rules from the System Reference Document 5.2.1, CC-BY-4.0.</p>
+          </div>
+        </div>
+      )}
       {c.conditions.length > 0 && (
         <div>
           <h4 className="text-xs text-slate-500 mb-1">Conditions</h4>
@@ -490,17 +534,19 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
   if (!isOpen) return null;
 
   const c = state.character;
+  // Tabletop has no scan import and no separate combat board: those tabs showed nothing real there.
+  const tabletop = state.engineMode === 'dnd';
   const tabs: { key: BottomTab; label: string; icon: React.ReactNode }[] = [
     { key: 'character', label: 'Character', icon: <UserRound size={14} /> },
     { key: 'inventory', label: 'Bags', icon: <Backpack size={14} /> },
     { key: 'sheet', label: 'Sheet', icon: <ScrollText size={14} /> },
     { key: 'progression', label: 'Progress', icon: <TrendingUp size={14} /> },
-    { key: 'combat', label: 'Combat', icon: <Sword size={14} /> },
+    ...(tabletop ? [] : [{ key: 'combat' as const, label: 'Combat', icon: <Sword size={14} /> }]),
     { key: 'spells', label: 'Spells', icon: <Sparkles size={14} /> },
     { key: 'professions', label: 'Professions', icon: <Hammer size={14} /> },
     { key: 'pets', label: 'Pets', icon: <Cat size={14} /> },
     { key: 'titles', label: 'Titles', icon: <Trophy size={14} /> },
-    { key: 'portrait', label: 'Portrait', icon: <Camera size={14} /> },
+    ...(tabletop ? [] : [{ key: 'portrait' as const, label: 'Portrait', icon: <Camera size={14} /> }]),
   ];
 
   if (settings.dndMode || state.engineMode === 'dnd') {
@@ -587,9 +633,9 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
               {activeTab === 'titles' && <StoryPlatesTab state={state} />}
               {activeTab === 'dnd' && <DndSheet state={state} />}
               {activeTab === 'sheet' && <CharacterSheetView state={state} uiThemeId={settings.uiThemeId} />}
-              {activeTab === 'portrait' && <UploadImport />}
+              {activeTab === 'portrait' && !tabletop && <UploadImport />}
               {activeTab === 'progression' && <CharacterProgression state={state} />}
-              {activeTab === 'combat' && <CombatEncounter activeDungeon={state.activeDungeon} currentCoordinates={state.currentCoordinates} />}
+              {activeTab === 'combat' && !tabletop && <CombatEncounter activeDungeon={state.activeDungeon} currentCoordinates={state.currentCoordinates} />}
             </div>
           )}
 

@@ -29,7 +29,7 @@ export type RunRow = TurnTelemetry & { turn: number; writerRaw?: string; fatePic
 
 export interface SavedRun {
   dir: string;
-  meta: { bibleId: string; engineMode: GameState['engineMode']; personalityId: string; seed: number; aiTier?: string };
+  meta: { bibleId: string; engineMode: GameState['engineMode']; personalityId: string; seed: number; aiTier?: string; tabletopCreation?: boolean };
   rows: RunRow[];
 }
 
@@ -114,6 +114,7 @@ export async function replayRun(runFolder: string, uptoTurn: number): Promise<Re
       seed: run.meta.seed,
       personality: run.meta.personalityId,
       engineMode: run.meta.engineMode,
+      tabletopCreation: run.meta.tabletopCreation === true,
     });
     let state = stampOpening(raw);
     const rng = mulberry32(run.meta.seed);

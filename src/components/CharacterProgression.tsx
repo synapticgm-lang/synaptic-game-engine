@@ -66,8 +66,8 @@ function DndMode({ state }: { state: GameState }) {
 
   return (
     <div className="space-y-5">
-      {/* Spell Slots */}
-      <section>
+      {/* Spell Slots: sample numbers, not the save's; a tabletop sheet must not show them. */}
+      {state.engineMode !== 'dnd' && <section>
         <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Sparkles size={13} />
           Spell Slots
@@ -95,7 +95,7 @@ function DndMode({ state }: { state: GameState }) {
             );
           })}
         </div>
-      </section>
+      </section>}
 
       {/* Attunement */}
       <section>
