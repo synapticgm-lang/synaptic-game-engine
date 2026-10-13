@@ -182,14 +182,24 @@ export function reconcileXpStatusLines(lines: string[], codeXpNotes: string[] = 
   return out;
 }
 
+/** An engine-rolled check receipt ("Flee check: d20 10 + 1 vs DC 12 — failure"). Tabletop shows these. */
+export function isEngineCheckLine(line: string): boolean {
+  return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(line.trim());
+}
+
+/** LitRPG item rarity tag ("[Epic] Masterwork Jerkin"); Story RPG loot reads as plain things. */
+const RARITY_TAG = /\[(?:Common|Uncommon|Rare|Epic|Legendary|Mythic|Unique)\]\s*/g;
+
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
+  const showsChecks = engineMode === 'dnd';
   const cleaned = lines
     .map((l) => l.replace(/^[ \t]*_>\s*/, '').trim())
     .map((l) => l.replace(/\s*\(CODE\s*ENFORCED\)\s*/gi, ' ').replace(/\s{2,}/g, ' ').trim())
     .map(scrubLocationDangerTier)
+    .map((l) => (engineMode === 'rpg' ? l.replace(RARITY_TAG, '') : l))
     .filter(Boolean)
     .filter((l) => !isInventedStreetDangerLine(l))
-    .filter((l) => !isNoisySystemLogLine(l))
+    .filter((l) => (showsChecks && isEngineCheckLine(l)) || !isNoisySystemLogLine(l))
     .filter((l) => !isEmptyStatusNoiseLine(l))
     .filter((l) => !/^no xp gained\.?$/i.test(l))
     .filter((l) => !/^xp gained:\s*0\b/i.test(l))

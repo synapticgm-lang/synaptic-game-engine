@@ -217,10 +217,10 @@ export function applySandboxXpAwards(
   const partySize = 1 + (state.companions ?? []).filter((c) => c.type === 'party').length;
   const areaOpts = milestoneAreaOpts(state);
 
-  const pay = (key: string, kind: MilestoneKind, label: string, cr?: string | number | null) => {
+  const pay = (key: string, kind: MilestoneKind, label: string, cr?: string | number | null, count?: number) => {
     if (hasAward(awardKeys, key)) return;
     awardKeys.push(key);
-    const r = milestoneXp(mode, kind, { level, partySize, cr, strictness: state.gmStrictness, ...areaOpts });
+    const r = milestoneXp(mode, kind, { level, partySize, cr, count, strictness: state.gmStrictness, ...areaOpts });
     if (r.amount <= 0) return;
     xp += r.amount;
     xpNotes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
@@ -276,7 +276,8 @@ export function applySandboxXpAwards(
         `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
         encounterKind(ended),
         `${outcome === 'victory' ? 'defeated' : 'resolved'} ${ended.name}`,
-        ended.cr
+        ended.cr,
+        ended.count
       );
     }
   }

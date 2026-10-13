@@ -22,6 +22,7 @@ import { difficultyRow } from './difficultyRules';
 import { createHashRng } from './seededRng';
 import { weaponCategory, type WeaponCategory } from './checkRules';
 import { resolveLocalAreaLevel, type AreaLevelSource } from './placeAuthority';
+import { DND_DEFAULT_CR } from './xpRules';
 import lootTablesData from './data/encounters/D9_loot_tables.json';
 
 export interface LootEntry {
@@ -485,15 +486,17 @@ function rollDice(n: number, sides: number, rng: () => number): { rolls: number[
   return { rolls, sum: rolls.reduce((s, r) => s + r, 0) };
 }
 
-function crNumber(cr: string | number | null | undefined, fallbackLevel: number): number {
-  if (typeof cr === 'number' && Number.isFinite(cr)) return cr;
-  if (typeof cr === 'string' && cr.trim()) {
-    const m = cr.trim().match(/^(\d+)\s*\/\s*(\d+)$/);
+/** A CR as a number; no CR on the card means the same default CR the XP rules pay (xpRules). */
+function crNumber(cr: string | number | null | undefined): number {
+  const parse = (v: string | number): number | null => {
+    if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+    const s = v.trim();
+    const m = s.match(/^(\d+)\s*\/\s*(\d+)$/);
     if (m) return Number(m[1]) / Math.max(1, Number(m[2]));
-    const n = Number(cr);
-    if (Number.isFinite(n)) return n;
-  }
-  return Math.max(0, fallbackLevel);
+    const n = s ? Number(s) : NaN;
+    return Number.isFinite(n) ? n : null;
+  };
+  return (cr != null ? parse(cr) : null) ?? parse(DND_DEFAULT_CR)!;
 }
 
 /** SynapticGM treasure tables (original): CR bands 0–3 / 4–9 / 10–15 / 16+. */
@@ -657,7 +660,7 @@ export function rollLoot(input: {
   };
 
   if (dnd) {
-    const cr = crNumber(input.cr, level);
+    const cr = crNumber(input.cr);
     const band = crBand(cr);
     const signed = (m: number) => (m > 0 ? `+${m}` : m < 0 ? `−${-m}` : '');
     if (row.dndTable === 'purse') {

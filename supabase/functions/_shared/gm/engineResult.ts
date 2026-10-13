@@ -5,7 +5,7 @@
  */
 
 const CHROME_RECEIPT =
-  /^(?:XP Gained|Arc XP|Level Up|HP:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = )/i;
+  /^(?:XP Gained|Arc XP|Level Up|HP:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —)/i;
 
 /** A foe's health figure ("Wardline Bandit HP: 9/16 (−4)"). */
 const FOE_HP_FIGURE = /^[^:]{1,60} HP: \d+\/\d+/;
@@ -74,6 +74,17 @@ const TERMINAL_WORDS: Record<TerminalFight['outcome'], RegExp> = {
 /** The beat states the settled fight outcome (foe down / player down / escaped). */
 export function beatCarriesTerminalFight(prose: string, fight: TerminalFight): boolean {
   return TERMINAL_WORDS[fight.outcome].test(prose ?? '');
+}
+
+const FORCED_ATTEMPT_WORDS: Record<'parley' | 'flee', RegExp> = {
+  parley: /\b(?:talk(?:ed|ing)?|words?|spoke|speak|reason(?:ed)?|parley(?:ed)?|bargain(?:ed)?|negotiat\w*|plead(?:ed)?|persuad\w*|convinc\w*|terms|truce|would not listen|wouldn['’]t listen)\b/i,
+  flee: /\b(?:flee|fled|run|ran|break away|broke away|bolt(?:ed)?|escape|retreat(?:ed)?|backed away|slip(?:ped)? (?:away|past)|get away|got away|cut off|blocked)\b/i,
+};
+
+/** A fight forced by a failed parley or flee: the beat tells that attempt (no forced attempt is always told). */
+export function beatCarriesForcedAttempt(prose: string, fight: TerminalFight): boolean {
+  if (!fight.forced || !fight.forcedBy) return true;
+  return FORCED_ATTEMPT_WORDS[fight.forcedBy].test(prose ?? '');
 }
 
 /** Who the painted beat follows: the PC's name and object pronoun ("Jax" / "them"), or "you" / "you". */

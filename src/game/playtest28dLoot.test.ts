@@ -122,7 +122,7 @@ describe('28d loot engine', () => {
     const base = LITRPG_MILESTONE_XP.significantPlace;
     expect(milestoneXp('litrpg', 'significantPlace', { strictness: 'hardcore' }).amount).toBe(Math.round(base * 1.25));
     expect(milestoneXp('litrpg', 'significantPlace', { strictness: 'forgiving' }).amount).toBe(base);
-    const dnd = milestoneXp('dnd', 'significantPlace', { level: 1, strictness: 'hardcore' });
+    const dnd = milestoneXp('dnd', 'significantPerson', { level: 1, strictness: 'hardcore' });
     expect(dnd.detail).toMatch(/× 1\.25 \(Hard\) = \d+/);
   });
 

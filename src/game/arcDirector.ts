@@ -690,7 +690,12 @@ export function xpGainVoiceAside(state: GameState, paidXp: number): { state: Gam
 export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const lines: string[] = [];
   const questsHidden = questListHidden(result.state?.systemHousing);
+  const tabletop = result.state?.engineMode === 'dnd';
   for (const r of result.systemReceipts) {
+    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —)/.test(r)) {
+      lines.push(r);
+      continue;
+    }
     if (r.startsWith('Quest stage:')) {
       if (!questsHidden) lines.push(`Quest: ${r.replace(/^Quest stage:\s*/, '')}`);
     } else if (r.startsWith('Arc XP:')) {

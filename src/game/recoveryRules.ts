@@ -18,7 +18,8 @@ export interface RecoveryRow {
 
 export const RECOVERY_TABLE: Readonly<Record<EngineMode, RecoveryRow>> = {
   litrpg: { restFraction: 0.5, victoryFraction: 0.25, defeatFraction: 0.25 },
-  dnd: { restFraction: 0.5, victoryFraction: 0.1, defeatFraction: 0.25 },
+  // Tabletop: a won fight gives no HP back; damage stays until a rest (5e).
+  dnd: { restFraction: 0.5, victoryFraction: 0, defeatFraction: 0.25 },
   rpg: { restFraction: 0.5, victoryFraction: 0.2, defeatFraction: 0.25 },
   pyoa: { restFraction: 0.5, victoryFraction: 0.25, defeatFraction: 0.25 },
 };

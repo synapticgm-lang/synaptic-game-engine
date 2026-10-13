@@ -150,7 +150,7 @@ describe('29r XP in every mode', () => {
   });
 
   it('six levels above the area pays 5 percent in all three modes', () => {
-    const cut = (n: number) => Math.max(1, Math.round(n * 0.05));
+    const cut = (n: number) => (n < 1 ? 0 : Math.max(1, Math.round(n * 0.05)));
     const lit = finishSettlementQuestCard(st('litrpg', 10, 1), cardOf(st('litrpg', 10, 1)).id);
     expect(lit.xp).toBe(cut(100));
     const rpg = finishSettlementQuestCard(st('rpg', 10, 1), cardOf(st('rpg', 10, 1)).id);
@@ -184,8 +184,8 @@ describe('29r XP in every mode', () => {
     expect(finishSettlementQuestCard(s, cardOf(s).id).xp).toBe(0);
   });
 
-  it('stamp is 2026-10-13l', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13l');
-    expect(BUILD_STAMP).toBe('2026-10-13l');
+  it('stamp is 2026-10-13m', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13m');
+    expect(BUILD_STAMP).toBe('2026-10-13m');
   });
 });

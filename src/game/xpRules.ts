@@ -69,6 +69,17 @@ export const LITRPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
   deed: 0,
 };
 
+/**
+ * Story RPG: progress comes from people and deeds (meetings, quest steps, resolved fights), not from
+ * reaching a place, so arrivals and walking into a site pay nothing.
+ */
+export const STORY_RPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
+  ...LITRPG_MILESTONE_XP,
+  significantPlace: 0,
+  dungeonEntry: 0,
+  achievement: 0,
+};
+
 /** 29z1 — a deed the engine already counts: the first one, a count step, the top count step. */
 export type DeedStep = 'first' | 'count' | 'capstone';
 
@@ -197,6 +208,8 @@ export interface MilestoneXpOpts {
   level?: number;
   partySize?: number;
   cr?: string | number | null;
+  /** D&D encounter: how many foes of that CR were beaten (each pays its CR XP). */
+  count?: number;
   strictness?: GmStrictness | null;
   /** 29r — player level and unclamped area level for the over-level cut. */
   playerLevel?: number;
@@ -236,19 +249,23 @@ function milestoneXpBase(
   kind: MilestoneKind,
   opts: MilestoneXpOpts = {}
 ): MilestoneXpResult {
+  if (mode === 'rpg') return { amount: STORY_RPG_MILESTONE_XP[kind] ?? 0, detail: '' };
   if (mode !== 'dnd') return { amount: LITRPG_MILESTONE_XP[kind] ?? 0, detail: '' };
   if (kind === 'encounter' || kind === 'miniBoss' || kind === 'boss') {
     const party = Math.max(1, Math.floor(opts.partySize ?? 1));
+    const foes = Math.max(1, Math.floor(opts.count ?? 1));
     const given = normalizeCr(opts.cr);
     const cr = given ?? DND_DEFAULT_CR;
-    const base = crToXp(cr);
+    const each = crToXp(cr);
+    const base = each * foes;
     const amount = Math.floor(base / party);
     return {
       amount,
-      detail: `CR ${cr}${given ? '' : ' (no CR on card, default)'} = ${base} XP ÷ ${party} = ${amount}`,
+      detail: `CR ${cr}${given ? '' : ' (no CR on card, default)'} = ${foes > 1 ? `${each} XP × ${foes} = ` : ''}${base} XP ÷ ${party} = ${amount}`,
     };
   }
-  if (kind === 'achievement') return { amount: 0, detail: '' };
+  // 5e pays for what the party overcame, not for walking in: arriving somewhere is never XP.
+  if (kind === 'achievement' || kind === 'significantPlace' || kind === 'dungeonEntry') return { amount: 0, detail: '' };
   const lvl = Math.max(1, Math.min(20, Math.floor(opts.level ?? 1)));
   const [low, moderate, high] = DND_XP_BUDGET_PER_CHARACTER[lvl - 1]!;
   if (kind === 'deed') {
@@ -256,7 +273,7 @@ function milestoneXpBase(
     return { amount, detail: `level ${lvl} Low milestone ${low} ÷ 2 = ${amount} XP` };
   }
   const band: [string, number] =
-    kind === 'significantPerson' || kind === 'significantPlace' || kind === 'dungeonEntry' || kind === 'roomCleared'
+    kind === 'significantPerson' || kind === 'roomCleared'
       ? ['Low', low]
       : kind === 'questStep'
         ? ['Moderate', moderate]

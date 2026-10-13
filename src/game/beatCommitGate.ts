@@ -33,7 +33,7 @@ import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
-import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
+import { beatCarriesForcedAttempt, beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
 import {
   assemblePacketStitch,
@@ -204,7 +204,10 @@ export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: s
 /** s82 Root A — a committed terminal fight result the beat never states (the foe left active). */
 export function ignoresTerminalFight(state: GameState, prose: string): boolean {
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
-  return !!fight && !beatCarriesTerminalFight(prose, fight);
+  if (!fight) return false;
+  if (!beatCarriesTerminalFight(prose, fight)) return true;
+  // Tabletop: the failed flee/parley roll that forced the fight is part of the outcome.
+  return state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight);
 }
 
 /** Lock C — prose that reopens a ledger-closed fact. */

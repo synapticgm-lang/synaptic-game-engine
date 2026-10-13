@@ -171,7 +171,11 @@ export function grantLevelSkills(state: GameState, levelBefore: number): { state
       ...next,
       character: { ...next.character, skills: { ...(next.character.skills ?? {}), [skill]: rank } },
     };
-    receipts.push(`Level ${through}: ${skillLabel(skill)} rank ${rank} — you can now ${SKILL_USE[skill]} (rank ${rank}).`);
+    receipts.push(
+      state.engineMode === 'rpg'
+        ? `You have grown: you can now ${SKILL_USE[skill]}.`
+        : `Level ${through}: ${skillLabel(skill)} rank ${rank} — you can now ${SKILL_USE[skill]} (rank ${rank}).`
+    );
     const opened = allGates(next).filter((g) => gateOpenFor(next, g) && !openBefore.has(g.id));
     if (opened.length) receipts.push(`Now within reach: the ${opened.map((g) => g.label).join(', the ')}.`);
   }

@@ -51,6 +51,8 @@ export interface CombatResult {
   lootPity?: { tier: 1 | 2 | 3 | 4; next: number };
   /** 28r — the approach the engine used. */
   approach?: FightApproach;
+  /** To-hit modifiers and armour classes the rolls in `roundsLog` were made against. */
+  attackMath?: { playerMod: number; playerAc: number; foeMod: number; foeAc: number };
 }
 
 function rollD20(rng: () => number = Math.random): number {
@@ -219,6 +221,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
     lootLines,
     lootPity,
     approach,
+    attackMath: { playerMod: playerAttackMod, playerAc: playerAC, foeMod: enemyAttackMod, foeAc: enemy.armorClass },
   };
 }
 

@@ -6,7 +6,7 @@
  * fight and the same resolver settles it. Never a round-by-round loop. The writer only describes the facts.
  */
 import type { ActiveEncounter, GameState } from './types';
-import { simulateCombat, type EnemyStats } from './combat';
+import { simulateCombat, type CombatResult, type CombatRound, type EnemyStats } from './combat';
 import { commitAutoFightLedger } from './combatAuthority';
 import { arrivePendingEncounter, initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
 import { profileForEncounter } from './lootTableRegistry';
@@ -67,6 +67,7 @@ export function payEncounterXp(
     level: state.character.level,
     partySize,
     cr: raw.cr,
+    count: raw.count,
     strictness: state.gmStrictness,
     ...milestoneAreaOpts(state),
   });
@@ -83,6 +84,54 @@ export function payEncounterXp(
 }
 
 const FACTS_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once, add no new rounds, the fight is over):';
+
+/** Tabletop shows this many fight rounds roll by roll; the rest are summed on one line. */
+const SHOWN_ROUNDS = 6;
+
+/**
+ * Tabletop: every attack roll of the settled fight, die + modifier against the armour class, for STATUS.
+ * Chrome only (engineResult keeps "Round" lines out of the writer's facts).
+ */
+export function tabletopRoundLines(result: CombatResult, foe: string): string[] {
+  const math = result.attackMath;
+  if (!math) return [];
+  const signed = (m: number) => `${m >= 0 ? '+' : '−'} ${Math.abs(m)}`;
+  const swing = (r: CombatRound): string => {
+    const player = r.attacker === 'player';
+    const mod = player ? math.playerMod : math.foeMod;
+    const ac = player ? math.foeAc : math.playerAc;
+    const verdict = r.roll === 20 && r.hit
+      ? `critical hit, ${r.damage} damage`
+      : r.hit
+        ? `hit, ${r.damage} damage`
+        : r.roll === 1
+          ? 'miss (natural 1)'
+          : 'miss';
+    return `${player ? 'you' : foe} d20 ${r.roll} ${signed(mod)} = ${r.roll + mod} vs AC ${ac}: ${verdict}`;
+  };
+  const byRound = new Map<number, CombatRound[]>();
+  for (const r of result.roundsLog) byRound.set(r.round, [...(byRound.get(r.round) ?? []), r]);
+  const lines: string[] = [];
+  const rounds = [...byRound.keys()].sort((a, b) => a - b);
+  for (const n of rounds.slice(0, SHOWN_ROUNDS + (byRound.has(0) ? 1 : 0))) {
+    lines.push(`${n === 0 ? 'Opening strike' : `Round ${n}`} — ${byRound.get(n)!.map(swing).join('; ')}`);
+  }
+  const rest = rounds.filter((n) => n > SHOWN_ROUNDS);
+  if (rest.length) {
+    const swings = rest.flatMap((n) => byRound.get(n)!);
+    const dealt = swings.filter((r) => r.attacker === 'player').reduce((s, r) => s + r.damage, 0);
+    const took = swings.filter((r) => r.attacker === 'enemy').reduce((s, r) => s + r.damage, 0);
+    lines.push(`Rounds ${rest[0]}–${rest[rest.length - 1]} — you dealt ${dealt}, took ${took}`);
+  }
+  return lines;
+}
+
+/** Tabletop: a forced fight's failed flee/parley is part of the outcome the story tells. */
+function forcedFightOpener(flee: boolean, foe: string): string {
+  return flee
+    ? `You tried to break away from ${foe} and failed; ${foe} forced the fight. `
+    : `You tried to talk ${foe} down and failed; ${foe} forced the fight. `;
+}
 
 /** Resolve fight / flee / parley on a live (or pending) encounter. Null when the input is not a fight action. */
 export function resolveEngineFight(state: GameState, playerInput: string): EngineFightResult | null {
@@ -182,8 +231,10 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   // The Fight line is the writer's engine result; health figures go on their own STATUS line.
   const rounds = `${result.rounds} round${result.rounds === 1 ? '' : 's'}`;
   const down = (enc.count ?? 1) > 1 ? 'are down' : 'is down';
+  const tabletop = state.engineMode === 'dnd';
   receipts.push(
     `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${rounds}${result.victory ? `. The fight is over: ${enc.name} ${down} and cannot fight on.` : '. The fight is over: you lost it.'}`,
+    ...(tabletop ? tabletopRoundLines(result, enc.name) : []),
     `HP: ${hpBefore} → ${hpAfter} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );
@@ -212,7 +263,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ];
     if (bits.length) found = ` On the body: ${bits.join(', ')}.`;
   }
-  const opener = used.id === 'melee' ? '' : `${approachOpener(used, enc.name)} `;
+  const opener =
+    (tabletop && (flee || parley) ? forcedFightOpener(flee, enc.name) : '')
+    + (used.id === 'melee' ? '' : `${approachOpener(used, enc.name)} `);
   const what = opener + (result.victory
     ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}. ${enc.name} went down and stayed down.${found}`
     : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, hurt but alive.`);
