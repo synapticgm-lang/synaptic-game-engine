@@ -28,6 +28,7 @@ import { proficiencyBonus } from '../checkRules';
 import { sheetSkillBonus } from '../checkMath';
 import { mulberry32, type Rng } from '../fatePick';
 import { syncContainerOccupancy } from '../inventory';
+import { casterProgression, isCaster, knownSpells, slotsLeft, spellcastingAbility, spellNumbers } from '../rules/spells';
 
 export type { AbilityMethod, KitId, TabletopBackgroundId, TabletopClassId, TabletopPicks, TabletopSheet, TabletopSpeciesId };
 export { sheetSkillBonus };
@@ -403,14 +404,18 @@ function avgDice(dice: string): number {
   return m ? Number(m[1]) * (Number(m[2]) + 1) / 2 : 0;
 }
 
-/** AC from equipped SRD armor and shield; 10 + DEX with none. */
-export function tabletopArmorClass(dex: number, inventory: Item[]): { ac: number; from: string } {
+/** AC from equipped SRD armor and shield; 10 + DEX with none, or 13 + DEX under Mage Armor. */
+export function tabletopArmorClass(dex: number, inventory: Item[], mageArmor = false): { ac: number; from: string } {
   const worn = inventory.filter((i) => i.equipped);
   const armor = worn.find((i) => ARMOR_TABLE[i.name]);
   const shield = worn.some((i) => i.name === 'Shield');
   const mod = abilityMod(dex);
   let ac = 10 + mod;
   let from = 'no armor';
+  if (!armor && mageArmor) {
+    ac = 13 + mod;
+    from = 'Mage Armor';
+  }
   if (armor) {
     const row = ARMOR_TABLE[armor.name];
     const dexPart = row.dexCap === 0 ? 0 : row.dexCap == null ? mod : Math.min(mod, row.dexCap);
@@ -424,10 +429,69 @@ export function tabletopArmorClass(dex: number, inventory: Item[]): { ac: number
   return { ac, from };
 }
 
+/** The SRD fixed level-up value for a Hit Die (d6 4, d8 5, d10 6, d12 7). */
+export function fixedHitDieValue(die: number): number {
+  return die / 2 + 1;
+}
+
+/** The Hit Die result counted for each level after the first: what was taken, else the fixed value. */
+export function levelHpGains(sheet: Pick<TabletopSheet, 'classId' | 'hpGains'>, level: number): number[] {
+  const die = classDef(sheet.classId).hitDie;
+  return Array.from({ length: Math.max(0, level - 1) }, (_, i) => sheet.hpGains?.[i] ?? fixedHitDieValue(die));
+}
+
+/**
+ * Max HP: Hit Die max + CON at level 1, then each later level's Hit Die result + CON (at least 1 a level),
+ * + 1 a level for Dwarven Toughness. CON is applied to every level, so raising CON raises HP retroactively.
+ */
 export function tabletopMaxHp(sheet: TabletopSheet, con: number, level = 1): number {
   const die = classDef(sheet.classId).hitDie;
+  const m = abilityMod(con);
   const extra = (speciesDef(sheet.speciesId).hpPerLevel ?? 0) * level;
-  return Math.max(1, die + abilityMod(con) + extra);
+  const later = levelHpGains(sheet, level).reduce((s, g) => s + Math.max(1, g + m), 0);
+  return Math.max(1, die + m) + later + extra;
+}
+
+/** Class features gained at each level, SRD 5.2.1 (SRD subclass at level 3; Ability Score Improvement at 4). */
+export const CLASS_LEVEL_FEATURES: Record<TabletopClassId, Record<number, string[]>> = {
+  fighter: {
+    2: ['Action Surge', 'Tactical Mind'],
+    3: ['Champion subclass: Improved Critical (19–20)', 'Remarkable Athlete'],
+    4: ['Ability Score Improvement'],
+  },
+  rogue: {
+    2: ['Cunning Action'],
+    3: ['Thief subclass: Fast Hands, Second-Story Work', 'Steady Aim', 'Sneak Attack 2d6'],
+    4: ['Ability Score Improvement'],
+  },
+  cleric: {
+    2: ['Channel Divinity (Divine Spark, Turn Undead)'],
+    3: ['Life Domain subclass: Disciple of Life', 'Preserve Life'],
+    4: ['Ability Score Improvement'],
+  },
+  wizard: {
+    2: ['Scholar'],
+    3: ['Evoker subclass: Evocation Savant', 'Potent Cantrip'],
+    4: ['Ability Score Improvement'],
+  },
+};
+
+/** Rogue Sneak Attack: 1d6 at level 1, +1d6 every odd level. */
+export function sneakAttackDice(level: number): string {
+  return `${Math.ceil(Math.max(1, level) / 2)}d6`;
+}
+
+/** Every class feature up to `level`; a feature that grows (Sneak Attack) shows its current dice once. */
+export function classFeaturesAt(classId: TabletopClassId, level: number): string[] {
+  const out = [...classDef(classId).features];
+  for (let l = 2; l <= level; l++) out.push(...(CLASS_LEVEL_FEATURES[classId][l] ?? []));
+  const sneak = `Sneak Attack ${sneakAttackDice(level)}`;
+  return [...new Set(out.map((f) => (/^Sneak Attack /.test(f) ? sneak : f)))];
+}
+
+/** Has the character reached the level-3 subclass feature that names `feature`? */
+export function hasClassFeature(c: Pick<Character, 'srd' | 'level'>, feature: RegExp): boolean {
+  return !!c.srd && classFeaturesAt(c.srd.classId, c.level ?? 1).some((f) => feature.test(f));
 }
 
 export function tabletopHitDie(character: Pick<Character, 'srd'>): number {
@@ -454,6 +518,35 @@ export interface DerivedSheet {
   originFeats: string[];
   languages: string[];
   hitDie: number;
+  /** Cleric / Wizard: spell DC and attack, spells, and slots left (rules/spells). */
+  spellcasting?: {
+    ability: AttributeKey;
+    dc: number;
+    attack: number;
+    cantrips: string[];
+    prepared: string[];
+    spellbook: string[];
+    slots: Array<{ level: number; total: number; left: number }>;
+  };
+}
+
+/** The caster block of the sheet, from the class, level and spent slots. */
+export function sheetSpellcasting(c: Pick<Character, 'srd' | 'level' | 'attributes' | 'casting'>): DerivedSheet['spellcasting'] {
+  const s = c.srd;
+  if (!s || !isCaster(s.classId)) return undefined;
+  const known = knownSpells(s, c.level ?? 1);
+  const prog = casterProgression(s.classId, c.level ?? 1);
+  if (!known || !prog) return undefined;
+  const ability = spellcastingAbility(s.classId);
+  const { dc, attack } = spellNumbers(abilityMod(c.attributes[ability]), proficiencyBonus(c.level));
+  const left = slotsLeft(s.classId, c.level ?? 1, c.casting);
+  return {
+    ability,
+    dc,
+    attack,
+    ...known,
+    slots: prog.slots.map((total, i) => ({ level: i + 1, total, left: left[i] ?? 0 })),
+  };
 }
 
 /** Every number on the tabletop sheet, from the character and what is equipped. */
@@ -465,7 +558,7 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
   const sp = speciesDef(s.speciesId);
   const scores = c.attributes;
   const pb = proficiencyBonus(c.level);
-  const { ac, from } = tabletopArmorClass(scores.DEX, state.inventory ?? []);
+  const { ac, from } = tabletopArmorClass(scores.DEX, state.inventory ?? [], !!c.casting?.mageArmor);
   const skills = SRD_SKILLS.map((skill) => ({
     skill,
     proficient: s.skillProfs.includes(skill),
@@ -475,12 +568,14 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
   const perception = skills.find((k) => k.skill === 'Perception')!.total;
   const con = abilityMod(scores.CON);
   const dwarf = (sp.hpPerLevel ?? 0) * c.level;
+  const gains = levelHpGains(s, c.level);
+  const conPart = gains.length ? `${fmtMod(con)} CON ×${c.level}` : `${fmtMod(con)} CON`;
   return {
     title: `${sp.name} ${cls.name} ${c.level} (${backgroundDef(s.backgroundId).name})`,
     scores,
     pb,
     maxHp: c.maxHp,
-    hpLine: `d${cls.hitDie} ${cls.hitDie} ${fmtMod(con)} CON${dwarf ? ` +${dwarf} Dwarven Toughness` : ''}`,
+    hpLine: `d${cls.hitDie} ${[cls.hitDie, ...gains].join(' + ')} ${conPart}${dwarf ? ` +${dwarf} Dwarven Toughness` : ''}`,
     ac,
     acFrom: from,
     initiative: abilityMod(scores.DEX) + (s.originFeats.includes('Alert') ? pb : 0),
@@ -494,10 +589,11 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
     }),
     skills,
     traits: sp.traits,
-    features: cls.features,
+    features: classFeaturesAt(s.classId, c.level),
     originFeats: s.originFeats,
     languages: s.languages,
     hitDie: cls.hitDie,
+    spellcasting: sheetSpellcasting(c),
   };
 }
 
@@ -519,6 +615,17 @@ export function rollLines(rolls: number[][]): string[] {
   });
 }
 
+/** The caster lines of the sheet summary. */
+export function spellSummaryLines(sc: DerivedSheet['spellcasting']): string[] {
+  if (!sc) return [];
+  const slots = sc.slots.map((s) => `level ${s.level} ${s.left}/${s.total}`).join(', ');
+  return [
+    `Spellcasting (${sc.ability}): spell save DC ${sc.dc} · spell attack ${fmtMod(sc.attack)} · slots ${slots}`,
+    `Cantrips: ${sc.cantrips.join(', ')} · Prepared: ${sc.prepared.join(', ')}`,
+    ...(sc.spellbook.length ? [`Spellbook: ${sc.spellbook.join(', ')}`] : []),
+  ];
+}
+
 /** The sheet summary shown before play (and on the sheet tab). */
 export function formatTabletopSheet(state: Pick<GameState, 'character' | 'inventory' | 'gold'>): string[] {
   const d = deriveTabletopSheet(state);
@@ -538,6 +645,7 @@ export function formatTabletopSheet(state: Pick<GameState, 'character' | 'invent
     `Saves: ${d.saves.map((v) => `${v.key} ${fmtMod(v.total)}${v.proficient ? '*' : ''}`).join(', ')}`,
     `Skills: ${skills.join(', ')}`,
     `Class features: ${d.features.join(', ')} · Origin feat: ${d.originFeats.join(', ')}`,
+    ...spellSummaryLines(d.spellcasting),
     `${speciesDef(s.speciesId).name} traits: ${d.traits.join('; ')}`,
     `Languages: ${d.languages.join(', ')}`,
     `Kit: ${gear.join(', ') || 'none'} · ${state.gold ?? 0} GP`,

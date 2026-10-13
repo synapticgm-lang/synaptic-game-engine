@@ -8,6 +8,7 @@ import type { EngineMode } from '../types';
 import type { AdvState } from '../checkRules';
 import { formatDice, signed } from './dice';
 import type { CombatEvent, DeathSaveResult, RoundOutcome } from './roundCombat';
+import { SPELLS } from './spells';
 
 type Ev = CombatEvent & { round: number };
 
@@ -17,15 +18,24 @@ function d20Text(d20s: number[], kept: number, adv: AdvState): string {
 
 const who = (name: string, pc: boolean) => (pc ? 'you' : name);
 
+/** Bless and Bane dice inside a d20 line: "+ Bless 1d4 (3)", "− Bane 1d4 (2)". */
+function dieMods(e: { bless?: number; bane?: number }): string {
+  return `${e.bless ? ` + Bless 1d4 (${e.bless})` : ''}${e.bane ? ` − Bane 1d4 (${e.bane})` : ''}`;
+}
+
 function tabletopLine(e: Ev, pcName: string): string | null {
   switch (e.k) {
     case 'initiative':
       return null;
     case 'attack': {
+      const halfTxt = e.half ? `, halved = ${e.dealt}` : '';
       if (!e.d20s.length) {
-        return `${who(e.attacker, e.pc)} ${e.with}: ${e.damage ? formatDice(e.damage) : 0} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
+        return `${who(e.attacker, e.pc)} ${e.with}: ${e.damage ? formatDice(e.damage) : 0}${halfTxt} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
       }
-      const head = `${who(e.attacker, e.pc)}${e.opportunity ? ' opportunity attack,' : ''} ${e.with} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)} = ${e.total} vs AC ${e.ac}`;
+      const head = `${who(e.attacker, e.pc)}${e.opportunity ? ' opportunity attack,' : ''} ${e.with} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs AC ${e.ac}`;
+      if (!e.hit && e.half && e.damage) {
+        return `${head}: miss; Potent Cantrip ${formatDice(e.damage)} halved = ${e.dealt}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`;
+      }
       if (!e.hit) return `${head}: ${e.nat1 ? 'miss (natural 1)' : 'miss'}`;
       const parts = [e.damage ? formatDice(e.damage) : '', e.sneak ? `Sneak Attack ${formatDice(e.sneak)}` : '', e.extra ? `${formatDice(e.extra)} poison` : '']
         .filter(Boolean)
@@ -35,7 +45,13 @@ function tabletopLine(e: Ev, pcName: string): string | null {
     }
     case 'save':
       if (e.autoFail) return `${who(e.who, e.pc)} ${e.ability} save ${e.why}: automatic failure`;
-      return `${who(e.who, e.pc)} ${e.ability} save ${e.why} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)} = ${e.total} vs DC ${e.dc}: ${e.ok ? 'success' : 'failure'}`;
+      return `${who(e.who, e.pc)} ${e.ability} save ${e.why} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs DC ${e.dc}: ${e.ok ? 'success' : 'failure'}`;
+    case 'cast': {
+      const tags = [e.slot ? `level ${e.slot} slot` : '', e.concentration ? 'concentration' : ''].filter(Boolean).join(', ');
+      return `${who(e.who, true)} cast ${e.spell}${tags ? ` (${tags})` : ''}`;
+    }
+    case 'concentration':
+      return `you lose concentration on ${e.spell} (${e.why})`;
     case 'check':
       return `${who(e.who, e.who === pcName)} ${e.label} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)} = ${e.total} vs ${e.label === 'Perception' ? 'your Stealth' : 'DC'} ${e.dc}: ${e.ok ? 'success' : 'failure'} (${e.why})`;
     case 'condition':
@@ -43,6 +59,7 @@ function tabletopLine(e: Ev, pcName: string): string | null {
     case 'act':
       return e.action === 'other' ? null : `${who(e.who, e.pc)}: ${e.action === 'stand' ? 'stand' : e.action === 'skip' ? 'turn lost' : e.action} — ${e.detail}`;
     case 'heal':
+      if (e.spell) return `you cast ${e.item}${e.slot ? ` (level ${e.slot} slot)` : ''}: ${formatDice(e.roll)}; HP ${e.hpBefore} → ${e.hpAfter}`;
       return `you drink ${e.item}: ${formatDice(e.roll)}; HP ${e.hpBefore} → ${e.hpAfter}`;
     case 'down':
       return e.pc ? (e.massive ? 'you are killed outright (massive damage)' : 'you drop to 0 HP: Unconscious, making death saves') : `${e.who} drops to 0 HP`;
@@ -85,6 +102,13 @@ export function presentCombatStatus(mode: EngineMode | undefined, events: Ev[], 
 
 const NATURAL = /^(?:bite|claws?|slam|talons?|tentacles?|horns?|tail|life drain|fist)$/i;
 
+/** Spell marks on a foe, in words. */
+const FOE_MARK: Record<string, string> = {
+  Bane: 'is cursed by your Bane',
+  'Guiding Bolt': 'glows with the light of your Guiding Bolt',
+  Prone: 'falls prone',
+};
+
 /** "its slam", "a scimitar", "your greatsword" */
 function weaponWords(name: string, owner: 'its' | 'your' | 'a'): string {
   const w = name.toLowerCase();
@@ -108,9 +132,10 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         break;
       case 'attack': {
         if (e.pc) {
-          const spell = !e.d20s.length || /^(?:fire bolt|sacred flame)$/i.test(e.with);
+          const spell = !e.d20s.length || !!e.spell || /^(?:fire bolt|sacred flame)$/i.test(e.with);
           const by = spell ? e.with : weaponWords(e.with, 'your');
-          if (!e.hit) out.push(`You attack ${e.target} with ${by} and miss.`);
+          if (e.half) out.push(`${e.target} only partly escapes ${by}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
+          else if (!e.hit) out.push(`You attack ${e.target} with ${by} and miss.`);
           else out.push(`You ${e.crit ? 'land a critical blow on' : 'hit'} ${e.target} with ${by}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
         } else if (e.target === pcName) {
           const how = e.opportunity ? ' as you break away' : '';
@@ -122,8 +147,16 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         }
         break;
       }
+      case 'cast': {
+        const def = SPELLS[e.spell];
+        out.push(`You cast ${e.spell}${def ? `: ${def.fact}` : ''}.`);
+        break;
+      }
+      case 'concentration':
+        out.push(`Your concentration breaks, and ${e.spell} fades.`);
+        break;
       case 'save':
-        if (e.why === 'Undead Fortitude') break;
+        if (e.why === 'Undead Fortitude' || /^to hold /.test(e.why)) break;
         out.push(e.pc ? `You ${e.ok ? 'resist' : 'fail to resist'} ${e.why.replace(/^against /, '')}.` : `${e.who} ${e.ok ? 'avoids' : 'is caught by'} ${e.why.replace(/^against /, '')}.`);
         break;
       case 'check':
@@ -131,18 +164,18 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         else if (e.ok) out.push(`${e.who} finds you.`);
         break;
       case 'condition':
-        if (e.on) out.push(e.pc ? `You are ${e.name.toLowerCase()}.` : `${e.who} is ${e.name.toLowerCase()}.`);
+        if (e.on) out.push(e.pc ? `You are ${e.name.toLowerCase()}.` : `${e.who} ${FOE_MARK[e.name] ?? `is ${e.name.toLowerCase()}`}.`);
         break;
       case 'act':
         if (e.action === 'dodge') out.push('You fight defensively, dodging.');
-        else if (e.action === 'stand') out.push('You get back to your feet.');
+        else if (e.action === 'stand') out.push(e.pc ? 'You get back to your feet.' : `${e.who} gets back to its feet.`);
         else if (e.action === 'skip') out.push(e.pc ? 'You cannot move or act this round.' : `${e.who} cannot act this round.`);
         else if (e.action === 'disengage') out.push(/get clear/.test(e.detail) ? 'You disengage and get clear.' : 'You step back carefully, but the foe keeps pace.');
         else if (e.action === 'flee') out.push(/cannot/.test(e.detail) ? 'You try to run but cannot move.' : 'You turn and run.');
         else if (e.action === 'help') out.push(/no ally/.test(e.detail) ? 'You look for an ally to help, but none is beside you.' : 'You distract the foe for your ally.');
         break;
       case 'heal':
-        out.push(`You drink ${e.item} and feel stronger.`);
+        out.push(e.spell ? `You cast ${e.item}: ${SPELLS[e.item]?.fact ?? 'your wounds ease'}.` : `You drink ${e.item} and feel stronger.`);
         break;
       case 'down':
         if (e.pc) out.push(e.massive ? 'The blow kills you outright.' : 'You fall unconscious.');

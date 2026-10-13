@@ -15,6 +15,7 @@ import { combineAdv, conditionEffect, rollD20WithAdv, type AdvState } from '../c
 import { rollDice, rollDie, type DiceRoll, type Rng } from './dice';
 import type { StatBlock } from './srdMonsters';
 import { abilityModOf } from './srdMonsters';
+import { concentrationDc, spellDice, type SpellDef } from './spells';
 
 export type RoundAction = 'attack' | 'cast' | 'dodge' | 'disengage' | 'help' | 'hide' | 'item' | 'flee' | 'other';
 
@@ -41,9 +42,30 @@ export interface PcCantrip {
   type: string;
 }
 
+/** A spell the PC can cast this fight, with the numbers from the sheet. */
+export interface PcSpell {
+  name: string;
+  def: SpellDef;
+  toHit: number;
+  dc: number;
+  /** Spellcasting ability modifier (added to healing). */
+  mod: number;
+}
+
 export interface PcProfile {
   name: string;
   ac: number;
+  /** AC under Mage Armor (13 + DEX, + shield); absent when armor is worn. */
+  mageArmorAc?: number;
+  /** Levelled spells and extra cantrips, plus the slots left per spell level (index 0 = level 1). */
+  spells?: PcSpell[];
+  slots?: number[];
+  /** Champion Improved Critical: weapon attacks crit on 19–20. */
+  improvedCritical?: boolean;
+  /** Evoker Potent Cantrip: a missed or saved cantrip still deals half damage. */
+  potentCantrip?: boolean;
+  /** Life Domain Disciple of Life: healing spells add 2 + the slot level. */
+  discipleOfLife?: boolean;
   hp: number;
   maxHp: number;
   speed: number;
@@ -62,12 +84,14 @@ export interface PcProfile {
 
 export type CombatEvent =
   | { k: 'initiative'; who: string; d20s: number[]; kept: number; mod: number; total: number; adv: AdvState }
-  | { k: 'attack'; attacker: string; target: string; with: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; ac: number; hit: boolean; crit: boolean; nat1: boolean; damage?: DiceRoll; extra?: DiceRoll; sneak?: DiceRoll; type?: string; dealt: number; hpBefore: number; hpAfter: number; maxHp: number; opportunity?: boolean; vulnerable?: boolean; pc: boolean }
-  | { k: 'save'; who: string; ability: AttributeKey; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; dc: number; ok: boolean; autoFail?: boolean; why: string; pc: boolean }
+  | { k: 'attack'; attacker: string; target: string; with: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; ac: number; hit: boolean; crit: boolean; nat1: boolean; damage?: DiceRoll; extra?: DiceRoll; sneak?: DiceRoll; type?: string; dealt: number; hpBefore: number; hpAfter: number; maxHp: number; opportunity?: boolean; vulnerable?: boolean; pc: boolean; bless?: number; bane?: number; half?: boolean; spell?: boolean }
+  | { k: 'save'; who: string; ability: AttributeKey; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; dc: number; ok: boolean; autoFail?: boolean; why: string; pc: boolean; bless?: number; bane?: number }
+  | { k: 'cast'; who: string; spell: string; slot?: number; concentration?: boolean; detail?: string }
+  | { k: 'concentration'; who: string; spell: string; on: false; why: string }
   | { k: 'check'; who: string; label: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; dc: number; ok: boolean; why: string }
   | { k: 'condition'; who: string; name: string; on: boolean; why: string; pc: boolean }
   | { k: 'act'; who: string; action: RoundAction | 'stand' | 'skip' | 'close'; detail: string; pc: boolean }
-  | { k: 'heal'; who: string; item: string; roll: DiceRoll; hpBefore: number; hpAfter: number }
+  | { k: 'heal'; who: string; item: string; roll: DiceRoll; hpBefore: number; hpAfter: number; spell?: boolean; slot?: number }
   | { k: 'down'; who: string; pc: boolean; massive?: boolean }
   | { k: 'fortitude'; who: string };
 
@@ -82,6 +106,10 @@ export interface RoundResult {
   potionUsed?: boolean;
   /** Round number this result played. */
   round: number;
+  /** The spell slot level spent this round. */
+  slotSpent?: number;
+  /** Mage Armor was cast this round. */
+  mageArmor?: boolean;
 }
 
 const has = (list: CombatCondition[], name: string) => list.some((c) => c.name.toLowerCase() === name.toLowerCase());
@@ -149,10 +177,59 @@ interface Ctx {
   events: Array<CombatEvent & { round: number }>;
   outcome: RoundOutcome;
   potionUsed?: boolean;
+  /** AC before Shield of Faith (Mage Armor cast mid-fight changes it). */
+  acBase: number;
+  spell?: string;
+  slotLevel?: number;
+  slotSpent?: number;
+  mageArmor?: boolean;
 }
 
 function push(ctx: Ctx, e: CombatEvent) {
   ctx.events.push({ ...e, round: ctx.round });
+}
+
+function pcAc(ctx: Ctx): number {
+  return ctx.acBase + (ctx.combat.concentration === 'Shield of Faith' ? 2 : 0);
+}
+
+/** Bless: +1d4 on the PC's attack rolls and saving throws while held. */
+function blessRoll(ctx: Ctx): number | undefined {
+  return ctx.combat.concentration === 'Bless' ? rollDie(4, ctx.rng) : undefined;
+}
+
+/** Bane: a cursed foe subtracts 1d4 from its attack rolls and saving throws. */
+function baneRoll(ctx: Ctx, foe: RoundFoeState): number | undefined {
+  return has(foe.conditions, 'Bane') ? rollDie(4, ctx.rng) : undefined;
+}
+
+function endConcentration(ctx: Ctx, why: string) {
+  const spell = ctx.combat.concentration;
+  if (!spell) return;
+  ctx.combat = {
+    ...ctx.combat,
+    concentration: null,
+    foes: spell === 'Bane' ? ctx.combat.foes.map((f) => ({ ...f, conditions: f.conditions.filter((c) => c.name !== 'Bane') })) : ctx.combat.foes,
+  };
+  push(ctx, { k: 'concentration', who: ctx.pc.name, spell, on: false, why });
+}
+
+/** Damage taken while holding Concentration: CON save, DC 10 or half the damage, or the spell ends. */
+function concentrationCheck(ctx: Ctx, damage: number) {
+  const spell = ctx.combat.concentration;
+  if (!spell || damage <= 0) return;
+  if (ctx.pcHp <= 0) {
+    endConcentration(ctx, 'you dropped to 0 HP');
+    return;
+  }
+  const dc = concentrationDc(damage);
+  const mod = ctx.pc.saves.CON ?? 0;
+  const sv = saveRoll(mod, dc, ctx.combat.pcConditions, 'CON', ctx.rng, ctx.pc.conditions);
+  const bless = blessRoll(ctx);
+  const total = sv.total + (bless ?? 0);
+  const ok = !sv.autoFail && total >= dc;
+  push(ctx, { k: 'save', who: ctx.pc.name, ability: 'CON', d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod, total, dc, ok, autoFail: sv.autoFail, why: `to hold ${spell}`, pc: true, bless });
+  if (!ok) endConcentration(ctx, 'failed the CON save');
 }
 
 function liveFoes(ctx: Ctx): RoundFoeState[] {
@@ -161,10 +238,11 @@ function liveFoes(ctx: Ctx): RoundFoeState[] {
 
 function endTurnOf(ctx: Ctx, id: string) {
   const drop = (list: CombatCondition[], who: string, pc: boolean) =>
-    list.filter((c) => {
-      if (c.endsAfterTurnOf !== id) return true;
+    list.flatMap((c) => {
+      if (c.endsAfterTurnOf !== id) return [c];
+      if (c.fresh) return [{ ...c, fresh: false }];
       push(ctx, { k: 'condition', who, name: c.name, on: false, why: 'it wears off', pc });
-      return false;
+      return [];
     });
   ctx.combat = {
     ...ctx.combat,
@@ -181,6 +259,7 @@ function damagePc(ctx: Ctx, amount: number) {
     push(ctx, { k: 'down', who: ctx.pc.name, pc: true, massive });
     ctx.outcome = massive ? 'dead' : 'down';
   }
+  concentrationCheck(ctx, amount);
 }
 
 function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
@@ -198,15 +277,22 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
       push(ctx, { k: 'check', who: foe.name, label: 'Perception', d20s: r.d20s, kept: r.kept, adv: 'normal', mod: m, total: r.kept + m, dc: ctx.combat.hiddenStealth, ok: found, why: found ? 'finds you' : 'cannot find you' });
       if (found) unhide(ctx, `${foe.name} found you`);
     }
+    if (has(foe.conditions, 'Prone')) {
+      foe = { ...foe, conditions: foe.conditions.filter((c) => c.name !== 'Prone') };
+      ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === foe.id ? foe : f)) };
+      push(ctx, { k: 'act', who: foe.name, action: 'stand', detail: 'stands up (half its Speed)', pc: false });
+    }
   }
   const atk = block.attack;
   const pcConds = ctx.combat.pcConditions;
   const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, ctx.combat.dodging ? ['disadvantage'] : [], [], ctx.pc.conditions);
   const r = rollD20WithAdv(adv, ctx.rng);
-  const total = r.kept + atk.toHit;
+  const bane = baneRoll(ctx, foe);
+  const total = r.kept + atk.toHit - (bane ?? 0);
   const nat1 = r.kept === 1;
   const nat20 = r.kept === 20;
-  const hit = nat20 || (!nat1 && total >= ctx.pc.ac);
+  const ac = pcAc(ctx);
+  const hit = nat20 || (!nat1 && total >= ac);
   const critAgainst = effects(pcConds).some((e) => e.meleeCritAgainst) && !atk.ranged;
   const crit = hit && (nat20 || critAgainst);
   let dealt = 0;
@@ -219,7 +305,7 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
     dealt = damage.total + (extra?.total ?? 0);
   }
   const hpAfter = Math.max(0, hpBefore - dealt);
-  push(ctx, { k: 'attack', attacker: foe.name, target: ctx.pc.name, with: atk.name, d20s: r.d20s, kept: r.kept, adv, mod: atk.toHit, total, ac: ctx.pc.ac, hit, crit, nat1, damage, extra, type: atk.type, dealt, hpBefore, hpAfter, maxHp: ctx.pc.maxHp, opportunity, pc: false });
+  push(ctx, { k: 'attack', attacker: foe.name, target: ctx.pc.name, with: atk.name, d20s: r.d20s, kept: r.kept, adv, mod: atk.toHit, total, ac, hit, crit, nat1, damage, extra, type: atk.type, dealt, hpBefore, hpAfter, maxHp: ctx.pc.maxHp, opportunity, pc: false, bane });
   if (hit) {
     damagePc(ctx, dealt);
     if (ctx.pcHp > 0 && atk.inflicts && !has(ctx.combat.pcConditions, atk.inflicts)) {
@@ -231,8 +317,10 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
       if (rider.immuneSpecies?.includes(ctx.pc.species)) {
         push(ctx, { k: 'condition', who: ctx.pc.name, name: rider.condition, on: false, why: `${ctx.pc.species} immune`, pc: true });
       } else {
-        const sv = saveRoll(ctx.pc.saves[rider.save] ?? 0, rider.dc, ctx.combat.pcConditions, rider.save, ctx.rng, ctx.pc.conditions);
-        push(ctx, { k: 'save', who: ctx.pc.name, ability: rider.save, d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod: ctx.pc.saves[rider.save] ?? 0, total: sv.total, dc: rider.dc, ok: sv.ok, autoFail: sv.autoFail, why: `against ${rider.condition}`, pc: true });
+        const raw = saveRoll(ctx.pc.saves[rider.save] ?? 0, rider.dc, ctx.combat.pcConditions, rider.save, ctx.rng, ctx.pc.conditions);
+        const bless = raw.autoFail ? undefined : blessRoll(ctx);
+        const sv = bless ? { ...raw, total: raw.total + bless, ok: raw.total + bless >= rider.dc } : raw;
+        push(ctx, { k: 'save', who: ctx.pc.name, ability: rider.save, d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod: ctx.pc.saves[rider.save] ?? 0, total: sv.total, dc: rider.dc, ok: sv.ok, autoFail: sv.autoFail, why: `against ${rider.condition}`, pc: true, bless });
         if (!sv.ok) {
           ctx.combat = { ...ctx.combat, pcConditions: [...ctx.combat.pcConditions.filter((c) => c.name !== rider.condition), { name: rider.condition, endsAfterTurnOf: 'pc', source: foe.name }] };
           push(ctx, { k: 'condition', who: ctx.pc.name, name: rider.condition, on: true, why: `${foe.name}'s ${atk.name}`, pc: true });
@@ -271,53 +359,202 @@ function damageFoe(ctx: Ctx, foe: RoundFoeState, raw: number, type: string, crit
   return { dealt, vulnerable, hpAfter, after };
 }
 
-function pcAttack(ctx: Ctx, target: RoundFoeState, spell: boolean) {
-  const w = ctx.pc.weapon;
-  const cantrip = ctx.pc.cantrip;
+/** A PC attack roll: a weapon, a cantrip or a spell attack. */
+interface Strike {
+  name: string;
+  toHit: number;
+  dice: string;
+  /** Ability modifier added to weapon damage (not to spell damage). */
+  mod?: number;
+  type: string;
+  ranged: boolean;
+  spell: boolean;
+  cantrip: boolean;
+  finesse?: boolean;
+  sneakAttack?: string;
+  /** A condition a hit leaves on the target until the end of your next turn. */
+  rider?: string;
+}
+
+/** A marked target (Guiding Bolt) gives the next attack roll against it Advantage, then the mark is used up. */
+function useMark(ctx: Ctx, target: RoundFoeState): boolean {
+  if (!has(target.conditions, 'Guiding Bolt')) return false;
+  ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === target.id ? { ...f, conditions: f.conditions.filter((c) => c.name !== 'Guiding Bolt') } : f)) };
+  return true;
+}
+
+function putRider(ctx: Ctx, target: RoundFoeState, name: string, why: string) {
+  const lasting = name === 'Prone' ? {} : { endsAfterTurnOf: 'pc', fresh: true };
+  ctx.combat = {
+    ...ctx.combat,
+    foes: ctx.combat.foes.map((f) => (f.id === target.id ? { ...f, conditions: [...f.conditions.filter((c) => c.name !== name), { name, source: why, ...lasting }] } : f)),
+  };
+  push(ctx, { k: 'condition', who: target.name, name, on: true, why, pc: false });
+}
+
+function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
   const hidden = ctx.combat.hiddenStealth != null;
-  if (spell && cantrip?.kind === 'save') {
-    unhide(ctx, `you cast ${cantrip.name}`);
-    const block = ctx.blocks[target.id]!;
-    const ability = cantrip.save ?? 'DEX';
-    const m = abilityModOf(block.scores[ability]);
-    const sv = saveRoll(m, cantrip.dc, target.conditions, ability, ctx.rng);
-    push(ctx, { k: 'save', who: target.name, ability, d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod: m, total: sv.total, dc: cantrip.dc, ok: sv.ok, autoFail: sv.autoFail, why: `against ${cantrip.name}`, pc: false });
-    const hpBefore = target.hp;
-    if (!sv.ok) {
-      const dmg = rollDice(cantrip.dice, ctx.rng);
-      const res = damageFoe(ctx, target, dmg.total, cantrip.type, false);
-      push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: cantrip.name, d20s: [], kept: 0, adv: 'normal', mod: 0, total: 0, ac: 0, hit: true, crit: false, nat1: false, damage: dmg, type: cantrip.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true });
-      for (const e of res.after) push(ctx, e);
-      if (res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
-    }
-    return;
-  }
-  const ranged = spell ? true : w.ranged;
   const extraAdv: AdvState[] = [];
   if (hidden) extraAdv.push('advantage');
-  const adv = attackAdv(ctx.combat.pcConditions, target.conditions, ranged, extraAdv, ctx.pc.conditions);
-  const toHit = spell && cantrip ? cantrip.toHit : w.toHit;
+  if (useMark(ctx, target)) extraAdv.push('advantage');
+  const adv = attackAdv(ctx.combat.pcConditions, target.conditions, s.ranged, extraAdv, ctx.pc.conditions);
   const r = rollD20WithAdv(adv, ctx.rng);
-  const total = r.kept + toHit;
+  const bless = blessRoll(ctx);
+  const total = r.kept + s.toHit + (bless ?? 0);
   const block = ctx.blocks[target.id]!;
   const nat1 = r.kept === 1;
-  const nat20 = r.kept === 20;
-  const hit = nat20 || (!nat1 && total >= block.ac);
-  const crit = hit && (nat20 || (!ranged && effects(target.conditions).some((e) => e.meleeCritAgainst)));
-  if (hidden) unhide(ctx, spell ? `you cast ${cantrip?.name ?? 'a spell'}` : 'you attacked');
+  const critRoll = r.kept >= (ctx.pc.improvedCritical && !s.spell ? 19 : 20);
+  const hit = critRoll || (!nat1 && total >= block.ac);
+  const crit = hit && (critRoll || (!s.ranged && effects(target.conditions).some((e) => e.meleeCritAgainst)));
+  if (hidden) unhide(ctx, s.spell ? `you cast ${s.name}` : 'you attacked');
   const hpBefore = target.hp;
   let damage: DiceRoll | undefined;
   let sneak: DiceRoll | undefined;
+  let half = false;
   let res: ReturnType<typeof damageFoe> = { dealt: 0, vulnerable: false, hpAfter: hpBefore, after: [] };
-  const type = spell && cantrip ? cantrip.type : w.type;
   if (hit) {
-    damage = spell && cantrip ? rollDice(cantrip.dice, ctx.rng, { crit }) : rollDice(w.dice, ctx.rng, { crit, extraBonus: w.mod });
-    if (!spell && w.sneakAttack && adv === 'advantage' && (w.finesse || w.ranged)) sneak = rollDice(w.sneakAttack, ctx.rng, { crit });
-    res = damageFoe(ctx, target, damage.total + (sneak?.total ?? 0), type, crit);
+    damage = rollDice(s.dice, ctx.rng, { crit, extraBonus: s.spell ? 0 : s.mod ?? 0 });
+    if (!s.spell && s.sneakAttack && adv === 'advantage' && (s.finesse || s.ranged)) sneak = rollDice(s.sneakAttack, ctx.rng, { crit });
+    res = damageFoe(ctx, target, damage.total + (sneak?.total ?? 0), s.type, crit);
+  } else if (s.cantrip && ctx.pc.potentCantrip) {
+    damage = rollDice(s.dice, ctx.rng);
+    half = true;
+    res = damageFoe(ctx, target, Math.floor(damage.total / 2), s.type, false);
   }
-  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: spell && cantrip ? cantrip.name : w.name, d20s: r.d20s, kept: r.kept, adv, mod: toHit, total, ac: block.ac, hit, crit, nat1, damage, sneak, type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true });
+  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: s.name, d20s: r.d20s, kept: r.kept, adv, mod: s.toHit, total, ac: block.ac, hit, crit, nat1, damage, sneak, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true, bless, ...(half ? { half } : {}), ...(s.spell ? { spell: true } : {}) });
   for (const e of res.after) push(ctx, e);
-  if (hit && res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
+  if ((hit || half) && res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
+  if (hit && s.rider && res.hpAfter > 0) putRider(ctx, target, s.rider, s.name);
+}
+
+/** A saving-throw spell on one or more foes. Damage is rolled once, on the first foe it touches (SRD). */
+function saveSpell(
+  ctx: Ctx,
+  targets: RoundFoeState[],
+  s: { name: string; dc: number; save: AttributeKey; dice?: string; type?: string; halfOnSave?: boolean; cantrip: boolean; rider?: string }
+) {
+  let dmg: DiceRoll | undefined;
+  for (const t of targets) {
+    const target = ctx.combat.foes.find((f) => f.id === t.id)!;
+    if (target.hp <= 0) continue;
+    const block = ctx.blocks[target.id]!;
+    const m = abilityModOf(block.scores[s.save]);
+    const raw = saveRoll(m, s.dc, target.conditions, s.save, ctx.rng);
+    const bane = raw.autoFail ? undefined : baneRoll(ctx, target);
+    const sv = bane ? { ...raw, total: raw.total - bane, ok: raw.total - bane >= s.dc } : raw;
+    push(ctx, { k: 'save', who: target.name, ability: s.save, d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod: m, total: sv.total, dc: s.dc, ok: sv.ok, autoFail: sv.autoFail, why: `against ${s.name}`, pc: false, bane });
+    const half = sv.ok && !!s.dice && (s.halfOnSave || (s.cantrip && !!ctx.pc.potentCantrip));
+    if (s.dice && (!sv.ok || half)) {
+      dmg = dmg ?? rollDice(s.dice, ctx.rng);
+      const hpBefore = target.hp;
+      const res = damageFoe(ctx, target, half ? Math.floor(dmg.total / 2) : dmg.total, s.type ?? 'force', false);
+      push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: s.name, d20s: [], kept: 0, adv: 'normal', mod: 0, total: 0, ac: 0, hit: true, crit: false, nat1: false, damage: dmg, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true, spell: true, ...(half ? { half } : {}) });
+      for (const e of res.after) push(ctx, e);
+      if (res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
+    }
+    const now = ctx.combat.foes.find((f) => f.id === target.id)!;
+    if (!sv.ok && s.rider && now.hp > 0) putRider(ctx, now, s.rider, s.name);
+  }
+}
+
+function pcAttack(ctx: Ctx, target: RoundFoeState, spell: boolean) {
+  const w = ctx.pc.weapon;
+  const cantrip = ctx.pc.cantrip;
+  if (spell && cantrip?.kind === 'save') {
+    unhide(ctx, `you cast ${cantrip.name}`);
+    saveSpell(ctx, [target], { name: cantrip.name, dc: cantrip.dc, save: cantrip.save ?? 'DEX', dice: cantrip.dice, type: cantrip.type, cantrip: true });
+    return;
+  }
+  if (spell && cantrip) {
+    strike(ctx, target, { name: cantrip.name, toHit: cantrip.toHit, dice: cantrip.dice, type: cantrip.type, ranged: true, spell: true, cantrip: true });
+    return;
+  }
+  strike(ctx, target, { name: w.name, toHit: w.toHit, dice: w.dice, mod: w.mod, type: w.type, ranged: w.ranged, spell: false, cantrip: false, finesse: w.finesse, sneakAttack: w.sneakAttack });
+}
+
+/** Cast a spell from the PC's list. `slot` is the slot level spent (null for a cantrip). */
+function pcCast(ctx: Ctx, sp: PcSpell, slot: number | null, target: RoundFoeState | undefined) {
+  const def = sp.def;
+  const level = slot ?? 0;
+  if (def.concentration && ctx.combat.concentration) endConcentration(ctx, `you cast ${def.name}`);
+  if (slot) ctx.slotSpent = slot;
+  unhide(ctx, `you cast ${def.name}`);
+  const castEv = { k: 'cast' as const, who: ctx.pc.name, spell: def.name, ...(slot ? { slot } : {}), ...(def.concentration ? { concentration: true } : {}) };
+  switch (def.effect) {
+    case 'attack':
+      if (!target) break;
+      if (slot) push(ctx, castEv);
+      strike(ctx, target, { name: def.name, toHit: sp.toHit, dice: spellDice(def, Math.max(1, level)), type: def.type ?? 'force', ranged: true, spell: true, cantrip: def.level === 0, rider: def.rider });
+      break;
+    case 'save': {
+      const targets = def.area ? liveFoes(ctx) : target ? [target] : [];
+      if (slot) push(ctx, castEv);
+      saveSpell(ctx, targets, { name: def.name, dc: sp.dc, save: def.save ?? 'DEX', dice: def.dice ? spellDice(def, Math.max(1, level)) : undefined, type: def.type, halfOnSave: def.halfOnSave, cantrip: def.level === 0, rider: def.rider });
+      break;
+    }
+    case 'missile': {
+      push(ctx, castEv);
+      let darts = (def.darts ?? 3) + Math.max(0, level - 1);
+      const p = /^(\d+)d(\d+)(?:\+(\d+))?$/.exec(def.dice ?? '1d4+1')!;
+      const perDart = Number(p[3] ?? 0);
+      while (darts > 0) {
+        const t = liveFoes(ctx)[0];
+        if (!t) break;
+        const rolls: number[] = [];
+        let sum = 0;
+        while (darts > 0 && sum < t.hp) {
+          const d = rollDie(Number(p[2]), ctx.rng);
+          rolls.push(d);
+          sum += d + perDart;
+          darts -= 1;
+        }
+        const roll: DiceRoll = { notation: `${rolls.length}d${p[2]}`, dice: rolls, bonus: perDart * rolls.length, total: sum, crit: false };
+        const hpBefore = t.hp;
+        const res = damageFoe(ctx, t, sum, def.type ?? 'force', false);
+        push(ctx, { k: 'attack', attacker: ctx.pc.name, target: t.name, with: def.name, d20s: [], kept: 0, adv: 'normal', mod: 0, total: 0, ac: 0, hit: true, crit: false, nat1: false, damage: roll, type: def.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: t.maxHp, vulnerable: res.vulnerable, pc: true, spell: true });
+        for (const e of res.after) push(ctx, e);
+        if (res.hpAfter === 0) push(ctx, { k: 'down', who: t.name, pc: false });
+      }
+      break;
+    }
+    case 'heal': {
+      const bonus = sp.mod + (ctx.pc.discipleOfLife ? 2 + Math.max(1, level) : 0);
+      const roll = rollDice(spellDice(def, Math.max(1, level)), ctx.rng, { extraBonus: bonus });
+      const before = ctx.pcHp;
+      ctx.pcHp = Math.min(ctx.pc.maxHp, before + roll.total);
+      push(ctx, { k: 'heal', who: ctx.pc.name, item: def.name, roll, hpBefore: before, hpAfter: ctx.pcHp, spell: true, ...(slot ? { slot } : {}) });
+      break;
+    }
+    case 'bless':
+    case 'shieldOfFaith':
+      push(ctx, castEv);
+      ctx.combat = { ...ctx.combat, concentration: def.name };
+      break;
+    case 'bane': {
+      push(ctx, castEv);
+      ctx.combat = { ...ctx.combat, concentration: def.name };
+      for (const t of liveFoes(ctx).slice(0, 3)) {
+        const block = ctx.blocks[t.id]!;
+        const m = abilityModOf(block.scores.CHA);
+        const sv = saveRoll(m, sp.dc, t.conditions, 'CHA', ctx.rng);
+        push(ctx, { k: 'save', who: t.name, ability: 'CHA', d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod: m, total: sv.total, dc: sp.dc, ok: sv.ok, autoFail: sv.autoFail, why: 'against Bane', pc: false });
+        if (!sv.ok) {
+          ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === t.id ? { ...f, conditions: [...f.conditions, { name: 'Bane', source: 'Bane' }] } : f)) };
+          push(ctx, { k: 'condition', who: t.name, name: 'Bane', on: true, why: 'your Bane', pc: false });
+        }
+      }
+      break;
+    }
+    case 'mageArmor':
+      push(ctx, castEv);
+      if (ctx.pc.mageArmorAc != null) {
+        ctx.acBase = ctx.pc.mageArmorAc;
+        ctx.mageArmor = true;
+      }
+      break;
+    default:
+      push(ctx, castEv);
+  }
 }
 
 function allyAttack(ctx: Ctx, target: RoundFoeState) {
@@ -358,10 +595,13 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
     case 'attack':
       if (target) pcAttack(ctx, target, false);
       break;
-    case 'cast':
-      if (target && pc.cantrip) pcAttack(ctx, target, true);
+    case 'cast': {
+      const sp = ctx.spell && ctx.spell !== pc.cantrip?.name ? pc.spells?.find((s) => s.name === ctx.spell) : undefined;
+      if (sp) pcCast(ctx, sp, sp.def.level > 0 ? ctx.slotLevel ?? 1 : null, target);
+      else if (target && pc.cantrip) pcAttack(ctx, target, true);
       else if (target) pcAttack(ctx, target, false);
       break;
+    }
     case 'dodge':
       ctx.combat = { ...ctx.combat, dodging: true };
       push(ctx, { k: 'act', who: pc.name, action: 'dodge', detail: 'attacks against you have Disadvantage until your next turn', pc: true });
@@ -440,6 +680,9 @@ export function playRound(input: {
   rng: Rng;
   /** Events already rolled this turn (initiative) to keep in order. */
   lead?: CombatEvent[];
+  /** Cast: the spell (from pc.spells or the default cantrip) and the slot level to spend. */
+  spell?: string;
+  slotLevel?: number;
 }): RoundResult {
   const ctx: Ctx = {
     pc: input.pc,
@@ -450,6 +693,9 @@ export function playRound(input: {
     pcHp: input.pc.hp,
     events: (input.lead ?? []).map((e) => ({ ...e, round: input.combat.round })),
     outcome: 'ongoing',
+    acBase: input.pc.ac,
+    spell: input.spell,
+    slotLevel: input.slotLevel,
   };
   const order = [
     { id: 'pc', init: input.combat.pcInitiative, pcFirst: 1 },
@@ -472,6 +718,8 @@ export function playRound(input: {
     events: ctx.events,
     potionUsed: ctx.potionUsed,
     round: input.combat.round,
+    ...(ctx.slotSpent ? { slotSpent: ctx.slotSpent } : {}),
+    ...(ctx.mageArmor ? { mageArmor: true } : {}),
   };
 }
 

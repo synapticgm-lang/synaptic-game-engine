@@ -4,6 +4,7 @@ import type {
 } from '@/types';
 import { RARITY_COLORS } from '@/game/types';
 import { mockSkills, mockLoot } from '@/data/mockGameData';
+import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
 import {
   Sword, Flame, Leaf, Hammer, Sparkles, Lock, ChevronRight,
   ScrollText, Shield, Zap, Star, Backpack,
@@ -63,9 +64,40 @@ function DndMode({ state }: { state: GameState }) {
     () => state.inventory.filter((it) => it.equipped && (it.rarity === 'Rare' || it.rarity === 'Epic' || it.rarity === 'Legendary')).slice(0, 3),
     [state.inventory],
   );
+  const sheet = state.engineMode === 'dnd' ? deriveTabletopSheet(state) : null;
+  const casting = sheet?.spellcasting;
 
   return (
     <div className="space-y-5">
+      {/* Tabletop: the save's own slots, one source with the sheet and the fight engine. */}
+      {casting && <section>
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+          <Sparkles size={13} />
+          Spell Slots
+        </h3>
+        <div className="space-y-1.5">
+          {casting.slots.map((slot) => (
+            <div key={slot.level} className="flex items-center gap-3 rounded-md border border-slate-700 bg-slate-800/40 px-3 py-2">
+              <span className="font-serif text-sm font-bold text-slate-200">L{slot.level}</span>
+              <div className="flex gap-1">
+                {Array.from({ length: slot.total }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-4 w-4 rounded-full border transition-all ${
+                      i < slot.left
+                        ? 'border-cyan-400 bg-cyan-500/30 shadow-sm shadow-cyan-500/30'
+                        : 'border-slate-600 bg-slate-900'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="ml-auto font-mono text-xs text-slate-400">{slot.left}/{slot.total}</span>
+            </div>
+          ))}
+          <p className="text-[11px] text-slate-400">Spell save DC {casting.dc} · spell attack {casting.attack >= 0 ? '+' : ''}{casting.attack} · a long rest restores every slot</p>
+        </div>
+      </section>}
+
       {/* Spell Slots: sample numbers, not the save's; a tabletop sheet must not show them. */}
       {state.engineMode !== 'dnd' && <section>
         <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
@@ -129,7 +161,7 @@ function DndMode({ state }: { state: GameState }) {
         <div className="rounded-md border border-slate-700 bg-slate-800/40 p-3 text-xs text-slate-300">
           <div className="mb-1 flex justify-between">
             <span className="text-slate-500">Class</span>
-            <span className="font-medium text-slate-200">{state.campaignArchetype ?? 'Adventurer'}</span>
+            <span className="font-medium text-slate-200">{sheet ? sheet.title : state.campaignArchetype ?? 'Adventurer'}</span>
           </div>
           <div className="mb-1 flex justify-between">
             <span className="text-slate-500">Level</span>
@@ -137,7 +169,7 @@ function DndMode({ state }: { state: GameState }) {
           </div>
           <div className="mb-1 flex justify-between">
             <span className="text-slate-500">Armor Class</span>
-            <span className="font-mono text-slate-200">{c.armorClass ?? 10}</span>
+            <span className="font-mono text-slate-200">{sheet ? sheet.ac : c.armorClass ?? 10}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-slate-500">Conditions</span>

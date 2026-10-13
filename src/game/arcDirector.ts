@@ -66,6 +66,7 @@ import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThr
 import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
+import { resolveOutOfCombatCast } from './tabletop/spellCasting';
 import { isLookAroundAction } from './sandboxXp';
 import { isDeclineStance } from './stanceDensity';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
@@ -692,7 +693,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const questsHidden = questListHidden(result.state?.systemHousing);
   const tabletop = result.state?.engineMode === 'dnd';
   for (const r of result.systemReceipts) {
-    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:)/.test(r)) {
+    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Level Up! Now level \d+$|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:)/.test(r)) {
       lines.push(r);
       continue;
     }
@@ -786,12 +787,22 @@ export function runArcDirectorBeforeGm(
     if (rest.receipt) {
       working = rest.state;
       if (rest.dieLine) systemReceipts.push(rest.dieLine);
-      systemReceipts.push(rest.receipt);
+      systemReceipts.push(rest.receipt, ...(rest.after ?? []));
       mandates.push(
         rest.fact
           ? `ENGINE RESULT (required fact — state it plainly): ${rest.fact}`
           : `ENGINE RESULT (required fact — state it plainly): ${rest.receipt}. The player rested and recovered.`
       );
+    }
+  }
+
+  // Tabletop: a spell cast outside a fight (healing, Mage Armor, a utility cantrip). Fights cast in rounds.
+  if (!engineFight) {
+    const cast = resolveOutOfCombatCast(working, playerInput);
+    if (cast) {
+      working = cast.state;
+      systemReceipts.push(...cast.receipts);
+      mandates.push(`ENGINE RESULT (required fact — state it plainly): ${cast.fact}`);
     }
   }
 

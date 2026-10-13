@@ -21,6 +21,7 @@ import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { fightApproachChips } from './fightApproach';
 import { countLoiterFamilyStreak } from './beatFingerprint';
 import { tabletopRestChip } from './recoveryRules';
+import { tabletopCastChip } from './tabletop/spellCasting';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 
 export type ChoiceEdgeKind =
@@ -203,6 +204,8 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     edges.push({ id: 'dnd-investigate', label: 'Investigate the keep', kind: 'inspect' });
     const rest = tabletopRestChip(state);
     if (rest) edges.push({ id: 'dnd-rest', label: rest, kind: 'wait', risk: 'low' });
+    const cast = tabletopCastChip(state);
+    if (cast) edges.push({ id: 'dnd-cast', label: cast, kind: 'inspect', risk: 'low' });
   }
   if (state.engineMode === 'pyoa') {
     if (isPyoaCharterClosed(state) || isPyoaItemDestroyed(state, 'charter')) {

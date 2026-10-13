@@ -13,10 +13,12 @@ import { pushCombatStateTx } from '../stateTx';
 import { fightLootClause, weaponInHand } from '../infoSheet';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
 import { isRoadFoe, settleRoadMeeting } from '../travelJourney';
-import { abilityMod, deriveTabletopSheet, WEAPON_DICE, weaponProficient } from './characterBuild';
+import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sneakAttackDice, tabletopArmorClass, WEAPON_DICE, weaponProficient } from './characterBuild';
 import type { Rng } from '../rules/dice';
 import { statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
-import { playRound, rollDeathSave, rollInitiative, type PcProfile, type RoundAction, type RoundResult } from '../rules/roundCombat';
+import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundResult } from '../rules/roundCombat';
+import { spellInInput, spendSlot, SPELLS } from '../rules/spells';
+import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName } from './combatChips';
@@ -56,7 +58,7 @@ export function classifyRoundAction(input: string): RoundAction {
   if (/\bdodge\b|\bfight defensively\b|\bdefensive\b/.test(s)) return 'dodge';
   if (/\bhide\b|\bslip out of sight\b|\bstealth\b/.test(s)) return 'hide';
   if (/\bhelp\b|\bdistract\b|\bassist\b/.test(s)) return 'help';
-  if (/\bcast\b|\bfire bolt\b|\bsacred flame\b|\bspell\b/.test(s)) return 'cast';
+  if (/\bcast\b|\bfire bolt\b|\bsacred flame\b|\bspell\b/.test(s) || /\s/.test(spellInInput(s) ?? '')) return 'cast';
   if (FLEE.test(s)) return 'flee';
   if (ATTACK.test(s)) return 'attack';
   return 'other';
@@ -76,7 +78,15 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
   const atkMod = !w ? str : w.ranged ? dex : w.finesse ? Math.max(str, dex) : str;
   const prof = !w || weaponProficient(srd.classId, weaponName);
   const cantrip = pcCantripName(state);
-  const castMod = srd.classId === 'wizard' ? abilityMod(sc.INT) : abilityMod(sc.WIS);
+  const kit = casterKit(state);
+  const castMod = kit?.mod ?? (srd.classId === 'wizard' ? abilityMod(sc.INT) : abilityMod(sc.WIS));
+  const spells: PcSpell[] = kit
+    ? [...kit.cantrips.filter((n) => n !== cantrip), ...kit.prepared]
+        .map((n) => SPELLS[n]!)
+        .filter((d) => d.combat)
+        .map((def) => ({ name: def.name, def, toHit: kit.attack, dc: kit.dc, mod: kit.mod }))
+    : [];
+  const armored = (state.inventory ?? []).some((i) => i.equipped && ARMOR_TABLE[i.name]);
   const ally = fightAlly(state);
   const potion = healingPotion(state);
   const saves = Object.fromEntries(sheet.saves.map((s) => [s.key, s.total])) as PcProfile['saves'];
@@ -98,8 +108,13 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
       type: w?.type ?? 'bludgeoning',
       ranged: !!w?.ranged,
       finesse: !!w?.finesse,
-      ...(srd.classId === 'rogue' ? { sneakAttack: '1d6' } : {}),
+      ...(srd.classId === 'rogue' ? { sneakAttack: sneakAttackDice(state.character.level || 1) } : {}),
     },
+    ...(kit ? { spells, slots: kit.left } : {}),
+    ...(kit && !armored ? { mageArmorAc: tabletopArmorClass(sc.DEX, state.inventory ?? [], true).ac } : {}),
+    ...(hasClassFeature(state.character, /Improved Critical/) ? { improvedCritical: true } : {}),
+    ...(hasClassFeature(state.character, /Potent Cantrip/) ? { potentCantrip: true } : {}),
+    ...(hasClassFeature(state.character, /Disciple of Life/) ? { discipleOfLife: true } : {}),
     ...(cantrip
       ? {
           cantrip:
@@ -211,13 +226,28 @@ export function resolveRoundFight(
   const setup = live ? resumeCombat(enc, live) : startCombat(enc, pc, rng, opts.surprised ?? null);
   const asked = classifyRoundAction(input);
   // Facing a foe ("Face the thugs", a road meeting's fight chip) opens the fight with an attack.
-  const action: RoundAction = opts.pre ? 'other' : asked === 'other' && !live ? 'attack' : asked;
-  const res: RoundResult = playRound({ pc, combat: setup.combat, blocks: setup.blocks, action, rng, lead: setup.lead });
+  let action: RoundAction = opts.pre ? 'other' : asked === 'other' && !live ? 'attack' : asked;
   const receipts: string[] = [];
-  if (opts.pre) receipts.push(`Fight: ${enc.name} forces the fight`);
+  const lead: string[] = [];
+  let spell: string | undefined;
+  let slotLevel: number | undefined;
+  if (action === 'cast') {
+    const req = resolveCastRequest(working, input, 'fight');
+    if (req?.ok) {
+      spell = req.def.name;
+      slotLevel = req.slot ?? undefined;
+    } else if (req) {
+      // A spell the engine cannot cast spends nothing; the round goes to a weapon attack instead.
+      receipts.push(`Spell: ${req.def.name} — not cast (${req.problem}); no slot spent`);
+      lead.push(`You reach for ${req.def.name}, but ${req.problem}, so you attack instead.`);
+      action = 'attack';
+    }
+  }
+  const res: RoundResult = playRound({ pc, combat: setup.combat, blocks: setup.blocks, action, rng, lead: setup.lead, spell, slotLevel });
+  if (opts.pre) receipts.unshift(`Fight: ${enc.name} forces the fight`);
   receipts.push(...presentCombatStatus('dnd', res.events, pc.name));
   if (res.pcHp !== pc.hp) receipts.push(hpLine(pc.hp, res.pcHp));
-  const facts = relabel(combatFacts(res.events, pc.name), setup.labels);
+  const facts = [...lead, ...relabel(combatFacts(res.events, pc.name), setup.labels)];
   if (opts.pre === 'flee') facts.unshift(`You tried to break away from ${enc.name} and failed; ${enc.name} forced the fight.`);
   if (opts.pre === 'parley') facts.unshift(`You tried to talk ${enc.name} down and failed; ${enc.name} forced the fight.`);
 
@@ -245,6 +275,13 @@ export function resolveRoundFight(
       conditions: withFightConditions(baseConditions, res.combat.pcConditions),
     },
   };
+  if (res.slotSpent || res.mageArmor) {
+    let casting = res.slotSpent ? spendSlot(next.character.casting, res.slotSpent) : next.character.casting ?? { slotsUsed: [] };
+    if (res.mageArmor) casting = { ...casting, mageArmor: true };
+    next = { ...next, character: { ...next.character, casting } };
+    if (res.mageArmor) next = { ...next, character: { ...next.character, armorClass: deriveTabletopSheet(next)?.ac ?? next.character.armorClass } };
+    if (res.slotSpent) receipts.push(slotsLine(next)!);
+  }
   const onRoad = isRoadFoe(state, raw);
   const roundsSoFar = res.round;
   const roundsText = `${roundsSoFar} round${roundsSoFar === 1 ? '' : 's'}`;
@@ -276,7 +313,8 @@ export function resolveRoundFight(
     if (won.goldGained > 0) receipts.push(`Gold Gained: ${won.goldGained}`);
     if (won.loot.length) receipts.push(`Loot: ${won.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`);
     receipts.push(...(won.lootLines ?? []));
-    const bits = [...won.loot.map((l) => l.name), ...(won.goldGained > 0 ? [`${won.goldGained} gold`] : [])];
+    // The amount is on STATUS (Gold Gained); the writer only hears that there was coin.
+    const bits = [...won.loot.map((l) => l.name), ...(won.goldGained > 0 ? ['some coin'] : [])];
     facts.push(`${cap(enc.name)} ${(raw.count ?? 1) > 1 ? 'are all down' : 'went down and stayed down'}.${bits.length ? ` On the body: ${bits.join(', ')}.` : ''}`);
     return { state: next, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}` };
   }

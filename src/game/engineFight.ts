@@ -24,6 +24,7 @@ import { isRoadFoe, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from 
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
+import { isFightCast } from './tabletop/spellCasting';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -155,7 +156,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const meetingMove = road ? roadMeetingMove(state, input) : null;
   // Tabletop: once the rounds have begun every input is this round's action; a live foe also takes Dodge / Hide / …
   const inRounds = roundMode && !!state.activeEncounter && state.roundCombat?.encounterName === state.activeEncounter.name;
-  const roundMove = roundMode && !!state.activeEncounter && classifyRoundAction(input) !== 'other';
+  const roundMove = roundMode && (!!state.activeEncounter ? classifyRoundAction(input) !== 'other' : isFightCast(state, input));
   const flee = !inRounds && (meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(input)));
   const parley = meetingMove === 'parley' || (!flee && PARLEY_RE.test(input));
   const attack = !flee && !parley && (ATTACK_RE.test(input) || !!road || inRounds || roundMove);

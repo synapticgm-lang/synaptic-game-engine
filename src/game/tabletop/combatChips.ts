@@ -5,6 +5,7 @@
  */
 import type { GameState } from '../types';
 import { WEAPON_DICE } from './characterBuild';
+import { spellRoundChips } from './spellCasting';
 
 const POTION = /\bpotion\b.*\bheal|\bheal\w*\b.*\bpotion\b/i;
 
@@ -21,7 +22,7 @@ export function pcWeaponName(state: Pick<GameState, 'inventory'>): string {
   return inv.find((i) => WEAPON_DICE[i.name] && !WEAPON_DICE[i.name].ranged)?.name ?? inv.find((i) => WEAPON_DICE[i.name])?.name ?? 'Unarmed Strike';
 }
 
-/** A Wizard knows Fire Bolt, a Cleric Sacred Flame (SRD cantrips). Others cast nothing. */
+/** The default attack cantrip: a Wizard's Fire Bolt, a Cleric's Sacred Flame (SRD). Others cast nothing. */
 export function pcCantripName(state: Pick<GameState, 'character'>): string | null {
   const cls = state.character?.srd?.classId;
   return cls === 'wizard' ? 'Fire Bolt' : cls === 'cleric' ? 'Sacred Flame' : null;
@@ -48,6 +49,7 @@ export function roundCombatChips(state: GameState): string[] | null {
   return [
     weapon === 'Unarmed Strike' ? 'Attack with an Unarmed Strike' : `Attack with the ${weapon}`,
     ...(cantrip ? [`Cast ${cantrip}`] : []),
+    ...spellRoundChips(state),
     'Dodge',
     'Disengage',
     ...(ally ? [`Help ${ally.name}`] : []),

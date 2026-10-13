@@ -19,6 +19,7 @@ import {
   backgroundDef,
   classDef,
   creationRng,
+  fixedHitDieValue,
   formatTabletopSheet,
   kitDef,
   pointBuyCost,
@@ -38,6 +39,8 @@ const READY = 'Ready-made: ';
 const KEEP = 'Keep these scores';
 const BEGIN = 'Begin play';
 const AGAIN = 'Start over';
+const HP_ROLL = 'Roll for HP at each level';
+const HP_FIXED = 'Take the fixed HP at each level';
 const METHOD_CHIPS: Record<AbilityMethod, string> = {
   'point-buy': 'Point buy (27 points)',
   'standard-array': 'Standard array',
@@ -68,7 +71,7 @@ export function creationChips(state: GameState): string[] {
     case 'method': return Object.values(METHOD_CHIPS);
     case 'scores': return [KEEP];
     case 'kit': return CLASS_KITS[c.picks.classId!].map((k) => kitChip(c.picks.classId!, k.id));
-    case 'confirm': return [BEGIN, AGAIN];
+    case 'confirm': return [BEGIN, state.character.srd?.hpMethod === 'roll' ? HP_FIXED : HP_ROLL, AGAIN];
     default: return [];
   }
 }
@@ -107,8 +110,13 @@ function creationPrompt(state: GameState, note?: string): string[] {
     }
     case 'kit':
       return [...lead, `${book} asks what you carry.`, ...CLASS_KITS[c.picks.classId!].map((k) => `${kitChip(c.picks.classId!, k.id)}: ${k.gear.length ? `${k.gear.map((g) => (g.qty ? `${g.name} ×${g.qty}` : g.name)).join(', ')}, ${k.gp} GP` : `${k.gp} GP`}.`), `Your ${backgroundDef(c.picks.backgroundId!).name.toLowerCase()} past adds: ${backgroundDef(c.picks.backgroundId!).gear.map((g) => (g.qty ? `${g.name} ×${g.qty}` : g.name)).join(', ')}, ${backgroundDef(c.picks.backgroundId!).gp} GP.`];
-    case 'confirm':
-      return [...lead, `${book} reads your entry back.`, ...formatTabletopSheet(state)];
+    case 'confirm': {
+      const die = state.character.srd ? classDef(state.character.srd.classId).hitDie : 8;
+      const hp = state.character.srd?.hpMethod === 'roll'
+        ? `HP at each new level: roll the Hit Die (d${die}) + CON.`
+        : `HP at each new level: the fixed ${fixedHitDieValue(die)} (d${die}) + CON.`;
+      return [...lead, `${book} reads your entry back.`, ...formatTabletopSheet(state), hp];
+    }
     default:
       return lead;
   }
@@ -251,6 +259,12 @@ export function stepTabletopCreation(state: GameState, input: string): GameState
     }
     case 'confirm': {
       if (n === norm(BEGIN) || /\b(begin|play|confirm|done)\b/.test(n)) return finish(said);
+      const hpMethod: 'roll' | 'fixed' | null = n === norm(HP_ROLL) || /\broll\b.*\b(hp|hit)/.test(n) ? 'roll'
+        : n === norm(HP_FIXED) || /\b(fixed|average)\b.*\b(hp|hit)/.test(n) ? 'fixed' : null;
+      if (hpMethod && said.character.srd) {
+        const next = { ...said, character: { ...said.character, srd: { ...said.character.srd, hpMethod } } };
+        return withPrompt(next, hpMethod === 'roll' ? 'You will roll for HP at each new level.' : 'You will take the fixed HP at each new level.');
+      }
       if (n === norm(AGAIN) || /\b(over|again|restart)\b/.test(n)) return at('start', {});
       return again('Begin play, or start over.');
     }

@@ -361,6 +361,20 @@ function DndSheet({ state }: { state: GameState }) {
           </div>
           <div className="sm:col-span-2 space-y-1 text-slate-300">
             {sheet.features.length > 0 && <p><span className="text-slate-500">Features: </span>{sheet.features.join(', ')}</p>}
+            <p><span className="text-slate-500">HP: </span>{sheet.hpLine} · {c.srd?.hpMethod === 'roll' ? 'rolled' : 'fixed'} HP at each new level</p>
+            {sheet.spellcasting && (
+              <div className="rounded-md border border-slate-700 bg-slate-800/40 px-3 py-2 space-y-1">
+                <p><span className="text-slate-500">Spellcasting ({sheet.spellcasting.ability}): </span>spell save DC {sheet.spellcasting.dc} · spell attack {fmtMod(sheet.spellcasting.attack)}</p>
+                <p>
+                  <span className="text-slate-500">Slots: </span>
+                  {sheet.spellcasting.slots.map((s) => `level ${s.level} ${s.left}/${s.total}`).join(' · ')}
+                </p>
+                <p><span className="text-slate-500">Cantrips: </span>{sheet.spellcasting.cantrips.join(', ')}</p>
+                <p><span className="text-slate-500">Prepared: </span>{sheet.spellcasting.prepared.join(', ')}</p>
+                {sheet.spellcasting.spellbook.length > 0 && <p><span className="text-slate-500">Spellbook: </span>{sheet.spellcasting.spellbook.join(', ')}</p>}
+                {state.roundCombat?.concentration && <p><span className="text-slate-500">Concentrating on: </span>{state.roundCombat.concentration}</p>}
+              </div>
+            )}
             {sheet.originFeats.length > 0 && <p><span className="text-slate-500">Origin feats: </span>{sheet.originFeats.join(', ')}</p>}
             {sheet.traits.length > 0 && <p><span className="text-slate-500">Traits: </span>{sheet.traits.join('; ')}</p>}
             {sheet.languages.length > 0 && <p><span className="text-slate-500">Languages: </span>{sheet.languages.join(', ')}</p>}

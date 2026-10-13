@@ -78,6 +78,24 @@ export interface TabletopSheet {
   originFeats: string[];
   kitId: KitId;
   source: 'build' | 'pregen' | 'quick';
+  /** Level-up HP: the fixed value (half the die + 1) or a roll of the Hit Die. Default fixed. */
+  hpMethod?: 'fixed' | 'roll';
+  /** Hit Die result taken at each level after the first (index 0 = level 2), before CON. */
+  hpGains?: number[];
+  /** Ability Score Improvements taken (level 4 …). */
+  asi?: Array<{ level: number; bonus: Partial<Attributes> }>;
+  /** Spells chosen; empty lists fall back to the class's default picks (rules/spells knownSpells). */
+  spells?: { cantrips?: string[]; prepared?: string[]; spellbook?: string[] };
+}
+
+/** Runtime spell state of a tabletop caster (rules/spells). */
+export interface CastingState {
+  /** Slots spent per spell level (index 0 = level 1). */
+  slotsUsed: number[];
+  /** Mage Armor is on until the next Long Rest. */
+  mageArmor?: boolean;
+  /** Wizard Arcane Recovery used since the last Long Rest. */
+  arcaneRecoveryUsed?: boolean;
 }
 
 export interface TabletopPicks {
@@ -105,6 +123,8 @@ export interface CombatCondition {
   name: string;
   /** Ends at the end of this combatant's next turn ('pc' or a foe id). */
   endsAfterTurnOf?: string;
+  /** Put on during that combatant's own turn: it survives the end of this turn and ends after the next. */
+  fresh?: boolean;
   source?: string;
 }
 
@@ -130,6 +150,8 @@ export interface RoundCombatState {
   dodging?: boolean;
   /** Hide: the Stealth total a foe's Perception must meet to find the PC. */
   hiddenStealth?: number | null;
+  /** The Concentration spell the PC holds (Bless, Bane, Shield of Faith); it ends with the fight. */
+  concentration?: string | null;
 }
 
 export interface DeathSaveState {
@@ -207,6 +229,8 @@ export interface Character {
   skillsGrantedThrough?: number;
   /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */
   srd?: TabletopSheet;
+  /** Tabletop caster's spent slots and lasting spells (rules/spells). */
+  casting?: CastingState;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
