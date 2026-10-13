@@ -31,6 +31,7 @@ import {
   type TabletopPicks,
 } from './characterBuild';
 import { houseRulesOf } from '../rules/houseRules';
+import { defaultSheetId, findSheet, importSheetText, listSheets, sheetLabel, type SavedSheet } from './sheetLibrary';
 import { srdLevelUp } from '../rules/advancement';
 import { makeSidekick, sidekickOf, SIDEKICKS } from '../rules/sidekick';
 import { dndXpToNext } from '../xpRules';
@@ -40,6 +41,7 @@ type CreationStage = TabletopCreationStage;
 const QUICK = 'Quick start';
 const BUILD = 'Build my own';
 const READY = 'Ready-made: ';
+const SAVED = 'Saved: ';
 const KEEP = 'Keep these scores';
 const BEGIN = 'Begin play';
 const AGAIN = 'Start over';
@@ -74,7 +76,7 @@ export function creationChips(state: GameState): string[] {
   const c = state.tabletopCreation;
   if (!c) return [];
   switch (c.stage) {
-    case 'start': return [QUICK, ...PREGENS.map((p) => READY + p.label), BUILD];
+    case 'start': return [QUICK, ...listSheets().slice(0, 3).map((s) => SAVED + sheetLabel(s)), ...PREGENS.map((p) => READY + p.label), BUILD];
     case 'class': return CLASSES.map((k) => k.name);
     case 'species': return SPECIES.map((s) => s.name);
     case 'background': return BACKGROUNDS.map((b) => b.name);
@@ -154,10 +156,21 @@ function withPrompt(state: GameState, note?: string): GameState {
   };
 }
 
-/** Opens the creation page on a new tabletop save (after page 1). */
+/**
+ * Opens the creation page on a new tabletop save (after page 1). A sheet picked at session zero, else the
+ * player's default saved sheet, goes straight to the confirm page (Start over still reaches every option).
+ */
 export function beginTabletopCreation(state: GameState): GameState {
   if (state.engineMode !== 'dnd' || state.character.srd) return state;
-  return withPrompt({ ...state, tabletopCreation: { stage: 'start', picks: {}, restorePad: state.offeredPad ?? null } });
+  const opened: GameState = { ...state, tabletopCreation: { stage: 'start', picks: {}, restorePad: state.offeredPad ?? null } };
+  const chosen = findSheet(state.sessionZero?.sheetId ?? defaultSheetId());
+  return chosen ? fromLibrary(opened, chosen) : withPrompt(opened);
+}
+
+/** A pasted sheet rather than a chip: JSON, or at least a class line and some ability scores. */
+function looksLikePastedSheet(input: string): boolean {
+  const t = input.trim();
+  return /^\{[\s\S]*\}$/.test(t) || (/\bclass\s*[:=-]/i.test(t) && /\b(STR|DEX|CON|INT|WIS|CHA)\b\s*[:=]?\s*\d/i.test(t));
 }
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -202,11 +215,19 @@ function atStartingLevel(state: GameState): GameState {
   return { ...state, character };
 }
 
-function toConfirm(state: GameState, picks: TabletopPicks): GameState {
+function toConfirm(state: GameState, picks: TabletopPicks, note?: string, hpMethod?: 'fixed' | 'roll'): GameState {
   const sheet = resolveSheet(picks as Parameters<typeof resolveSheet>[0]);
   const fromOne = houseRulesOf(state).startingLevel > 1 ? { ...state, character: { ...state.character, level: 1 } } : state;
-  const applied = atStartingLevel(applyTabletopSheet(fromOne, sheet));
-  return withPrompt({ ...applied, tabletopCreation: { ...state.tabletopCreation!, stage: 'confirm', picks } });
+  const applied = atStartingLevel(applyTabletopSheet(fromOne, hpMethod ? { ...sheet, hpMethod } : sheet));
+  return withPrompt({ ...applied, tabletopCreation: { ...state.tabletopCreation!, stage: 'confirm', picks } }, note);
+}
+
+/** A library or pasted sheet goes to the confirm page, re-derived from its SRD picks like any other build. */
+function fromLibrary(state: GameState, sheet: SavedSheet, note?: string): GameState {
+  const named = state.character.name && !/^(adventurer|survivor)$/i.test(state.character.name)
+    ? state
+    : { ...state, character: { ...state.character, name: sheet.name } };
+  return toConfirm(named, { ...sheet.picks, source: 'library' }, note ?? `${sheetLabel(sheet)}, from your saved sheets.`, sheet.hpMethod);
 }
 
 function quickPicks(state: GameState, rng: Rng): TabletopPicks {
@@ -258,6 +279,14 @@ export function stepTabletopCreation(state: GameState, input: string): GameState
   const n = norm(input);
   switch (c.stage) {
     case 'start': {
+      const saved = listSheets().find((s) => n === norm(SAVED + sheetLabel(s)));
+      if (saved) return fromLibrary(said, saved);
+      if (looksLikePastedSheet(input)) {
+        const check = importSheetText(input);
+        if (!check.ok) return again(`That sheet cannot be used yet: ${check.problems.join(' ')}`);
+        const fixes = check.corrections.length ? ` Changes to fit the rules: ${check.corrections.join(' ')}` : '';
+        return fromLibrary(said, check.sheet, `Your sheet checks out.${fixes}`);
+      }
       if (n === norm(QUICK) || /\bquick\b/.test(n)) return toConfirm(said, quickPicks(said, creationRng(said)));
       const pre = PREGENS.find((p) => n === norm(READY + p.label) || n === norm(p.label));
       if (pre) {

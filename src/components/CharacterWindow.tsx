@@ -18,6 +18,9 @@ import { equippedSetLabel } from '@/game/uiTheme';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
 import { houseRulesOf, tableRulesLine } from '@/game/rules/houseRules';
 import { carryLine } from '@/game/rules/encumbrance';
+import { carriedCoinLb, usesPurse, wealthLine } from '@/game/rules/coins';
+import { listSheets, setDefaultSheet, sheetFromState } from '@/game/tabletop/sheetLibrary';
+import { keepSheet } from '@/game/tabletop/sheetLibrarySync';
 
 type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -240,8 +243,8 @@ function SidePanel({ state }: { state: GameState }) {
           )}
           {reveal === 'full' && c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
           <div className="flex justify-between items-center gap-2">
-            <span>Gold</span>
-            <span className="sgm-coin-chip sgm-coin font-mono font-bold">{state.gold ?? 0}</span>
+            <span>{usesPurse(state) ? 'Coins' : 'Gold'}</span>
+            <span className="sgm-coin-chip sgm-coin font-mono font-bold" data-testid="wealth-line">{usesPurse(state) ? wealthLine(state) : state.gold ?? 0}</span>
           </div>
         </div>
       </div>
@@ -297,6 +300,27 @@ function StoryPlatesTab({ state }: { state: GameState }) {
   );
 }
 
+/** Keep this tabletop character's build in the saved-sheet library, optionally as the default for new games. */
+function SaveSheetButtons({ state }: { state: GameState }) {
+  const [note, setNote] = useState<string | null>(null);
+  const save = (asDefault: boolean) => {
+    const sheet = sheetFromState(state);
+    if (!sheet) return;
+    const existing = listSheets().find((s) => s.name === sheet.name && JSON.stringify(s.picks) === JSON.stringify(sheet.picks));
+    const kept = existing ?? sheet;
+    if (!existing) keepSheet(kept);
+    if (asDefault) setDefaultSheet(kept.id);
+    setNote(asDefault ? `${kept.name} is your default sheet for new tabletop games.` : `${kept.name} saved to your sheets.`);
+  };
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs" data-testid="tabletop-save-sheet">
+      <button type="button" onClick={() => save(false)} className="rounded bg-slate-700 px-2 py-1 text-slate-100 hover:bg-slate-600">Save to my sheets</button>
+      <button type="button" onClick={() => save(true)} className="rounded bg-slate-700 px-2 py-1 text-slate-100 hover:bg-slate-600">Make default</button>
+      {note && <span className="text-emerald-300">{note}</span>}
+    </div>
+  );
+}
+
 function DndSheet({ state }: { state: GameState }) {
   const c = state.character;
   const sheet = deriveTabletopSheet(state);
@@ -338,9 +362,15 @@ function DndSheet({ state }: { state: GameState }) {
         )}
       </div>
       {sheet && houseRulesOf(state).strictEncumbrance && (
-        <p className="text-xs text-slate-400" data-testid="tabletop-carry">{carryLine(state.inventory, sheet.scores.STR, houseRulesOf(state).encumbrance)}</p>
+        <p className="text-xs text-slate-400" data-testid="tabletop-carry">{carryLine(state.inventory, sheet.scores.STR, houseRulesOf(state).encumbrance, carriedCoinLb(state))}</p>
+      )}
+      {sheet?.untrainedArmor && (
+        <p className="text-xs text-amber-300" data-testid="tabletop-untrained-armor">
+          Not trained in {sheet.untrainedArmor}: Disadvantage on Strength and Dexterity rolls, and no spellcasting.
+        </p>
       )}
       {sheet && <p className="text-xs text-slate-400" data-testid="tabletop-table-rules">{tableRulesLine(state)}</p>}
+      {sheet && <SaveSheetButtons state={state} />}
       {sheet && (
         <div className="grid gap-3 sm:grid-cols-2 text-xs">
           <div>

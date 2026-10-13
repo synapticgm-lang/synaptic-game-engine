@@ -261,6 +261,19 @@ const TABLE_RULES: TableRule[] = [
   { key: 'ttCritRule', label: 'Critical hits', description: 'Double the damage dice (SRD), max the dice and roll them again, or double the whole total', options: [['double-dice', 'Double dice (SRD)'], ['max-plus-roll', 'Max dice + roll'], ['double-total', 'Double the total']], fallback: 'double-dice', parse: asText },
 ];
 
+/** The table rules settled at session zero (start level, abilities, levelling, danger, death, rests). Same rows as House Rules. */
+const SESSION_ZERO_KEYS: Array<keyof Settings> = ['ttStartingLevel', 'ttStatMethod', 'ttProgression', 'ttEncounterDifficulty', 'ttDeathRule', 'ttRestVariant'];
+
+export function SessionZeroRules({ settings, onChange }: Pick<Props, 'settings' | 'onChange'>) {
+  return (
+    <div className="space-y-2">
+      {TABLE_RULES.filter((r) => SESSION_ZERO_KEYS.includes(r.key)).map((r) => (
+        <TableRuleSelect key={r.key} rule={r} value={tableRuleValue(settings, r)} onChange={(v) => onChange(r.key, r.parse(v) as never)} />
+      ))}
+    </div>
+  );
+}
+
 function tableRuleValue(settings: Settings, r: TableRule): string {
   const v = settings[r.key];
   if (r.key === 'ttEncumbrance' && v === undefined) return settings.strictEncumbrance ? 'capacity' : 'off';

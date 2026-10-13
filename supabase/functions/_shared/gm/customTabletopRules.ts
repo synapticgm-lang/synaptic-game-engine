@@ -56,3 +56,37 @@ ${truncatedNote}
 ${text}
 --- end player rules ---`;
 }
+
+const LIMIT_MAX = 12;
+const LIMIT_CHARS = 80;
+
+/** Session-zero lines or veils typed one per line (or comma-separated): trimmed, de-duplicated, capped. */
+export function cleanSessionZeroList(raw: string | string[] | null | undefined): string[] {
+  const parts = Array.isArray(raw) ? raw : (raw ?? '').split(/[\n,;]+/);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of parts) {
+    const t = p.replace(/\s+/g, ' ').trim().slice(0, LIMIT_CHARS);
+    const key = t.toLowerCase();
+    if (!t || seen.has(key)) continue;
+    seen.add(key);
+    out.push(t);
+    if (out.length >= LIMIT_MAX) break;
+  }
+  return out;
+}
+
+/**
+ * The session-zero limits for the writer. Lines never appear; veils happen off-screen and are summarised in one
+ * plain sentence. These shape content only; they never change a number the engine owns.
+ */
+export function formatSessionZeroForPrompt(sz: { lines?: string[]; veils?: string[] } | null | undefined): string {
+  const lines = cleanSessionZeroList(sz?.lines);
+  const veils = cleanSessionZeroList(sz?.veils);
+  if (!lines.length && !veils.length) return '';
+  return [
+    'TABLE LIMITS (set by the player at session zero — always honor them):',
+    ...(lines.length ? [`Lines (never include, not even off-screen or implied): ${lines.join('; ')}.`] : []),
+    ...(veils.length ? [`Veils (may happen, but off-screen: one plain sentence, no detail): ${veils.join('; ')}.`] : []),
+  ].join('\n');
+}

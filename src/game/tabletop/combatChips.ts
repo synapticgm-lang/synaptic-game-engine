@@ -4,7 +4,7 @@
  * cantrip, potion and ally helpers, so a chip never offers what the engine cannot do.
  */
 import type { GameState } from '../types';
-import { WEAPON_DICE } from './characterBuild';
+import { untrainedArmor, WEAPON_DICE } from './characterBuild';
 import { spellRoundChips } from './spellCasting';
 import { houseRulesOf } from '../rules/houseRules';
 import { ammoFor, ammoLeft } from '../rules/encumbrance';
@@ -34,8 +34,9 @@ export function pcWeaponName(state: Pick<GameState, 'inventory' | 'houseRules'>)
   );
 }
 
-/** The default attack cantrip: a Wizard's Fire Bolt, a Cleric's Sacred Flame (SRD). Others cast nothing. */
-export function pcCantripName(state: Pick<GameState, 'character'>): string | null {
+/** The default attack cantrip: a Wizard's Fire Bolt, a Cleric's Sacred Flame (SRD). Others, or untrained armor, cast nothing. */
+export function pcCantripName(state: Pick<GameState, 'character'> & Partial<Pick<GameState, 'inventory'>>): string | null {
+  if (state.character && untrainedArmor(state.character, state.inventory ?? [])) return null;
   const cls = state.character?.srd?.classId;
   return cls === 'wizard' ? 'Fire Bolt' : cls === 'cleric' ? 'Sacred Flame' : null;
 }

@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import type { GameState, Item, CraftingMaterial } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
-import { getSellPrice, getMaterialSellPrice, sellItem, sellMaterial } from '@/game/merchant';
+import { getMaterialSellPrice, sellItem, sellMaterial, sellPriceLabel } from '@/game/merchant';
+import { usesPurse, wealthLine } from '@/game/rules/coins';
 import { salvageItem, checkSalvageRequirement, getSalvageRequirement } from '@/game/salvage';
 import { computeInventoryCapacity } from '@/game/inventory';
 import { X, Coins, Recycle, AlertTriangle, Package, Layers } from 'lucide-react';
@@ -32,9 +33,9 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
 
   const handleSell = (item: Item) => {
     const result = sellItem(state, item.id);
-    if (result.ok && result.newState && result.goldGained) {
+    if (result.ok && result.newState) {
       onStateChange(result.newState);
-      onToast(`Sold ${item.name} for ${result.goldGained} gold.`, 'success');
+      onToast(`Sold ${item.name} for ${result.soldFor ?? `${result.goldGained ?? 0} gold`}.`, 'success');
       setConfirmSellId(null);
     } else if (result.reason) {
       onToast(result.reason, 'error');
@@ -79,7 +80,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
             </div>
             <span className="sgm-coin-chip text-sm text-slate-400 ml-2 shrink-0">
               <Coins size={14} className="sgm-coin-icon" />
-              <span className="sgm-coin font-mono font-bold">{state.gold ?? 0}</span>
+              <span className="sgm-coin font-mono font-bold">{usesPurse(state) ? wealthLine(state) : state.gold ?? 0}</span>
             </span>
           </div>
           <button onClick={onClose} className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Close">
@@ -117,7 +118,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {sellableItems.map((item) => {
-                      const price = getSellPrice(item);
+                      const price = sellPriceLabel(state, item);
                       const isConfirming = confirmSellId === item.id;
                       return (
                         <div key={item.id} className="sgm-sheet-inset flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-2.5">
@@ -126,7 +127,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
                             <div className="text-xs text-slate-500">{item.rarity}{item.itemLevel ? ` · iLvl ${item.itemLevel}` : ''}</div>
                           </div>
                           <div className="flex items-center gap-2 ml-2">
-                            <span className="sgm-coin text-sm font-mono font-bold">{price}g</span>
+                            <span className="sgm-coin text-sm font-mono font-bold">{price}</span>
                             {isConfirming ? (
                               <div className="flex gap-1">
                                 <button onClick={() => handleSell(item)} className="px-2 py-1 text-xs rounded bg-amber-600 hover:bg-amber-500 text-white transition-colors">Confirm</button>

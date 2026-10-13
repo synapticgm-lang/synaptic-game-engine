@@ -27,7 +27,7 @@ import { calculateSocialModifiers, getOutcomeDescription, socialOutcomeBand } fr
 import type { OutcomeBand } from './socialCrisisTypes';
 import { leverageCue, socialLeverageMods, type LeverageMod } from './socialLeverage';
 import { skillRankOf, type CheckSkillName } from './skillRanks';
-import { ladderDc, lightNote, sceneLight, sightCheck, taskRung, type TaskKind, type TaskRung } from './rules/exploration';
+import { ladderDc, lightNote, sceneLight, sheetBurden, sightCheck, taskRung, type TaskKind, type TaskRung } from './rules/exploration';
 import { paceCheckAdv, travelPaceOf } from './rules/travelPace';
 
 export type CheckSkill = CheckSkillName;
@@ -336,6 +336,11 @@ export function runPlayerCheck(
   // Tabletop: the task's rung, plus what light and the travel pace did to the roll.
   const notes: string[] = ctx.rung ? [ctx.rung] : [];
   if (onLadder(state)) {
+    const burden = sheetBurden(state, ctx.attr);
+    if (burden) {
+      adv = combineAdv(adv, 'disadvantage');
+      notes.push(burden);
+    }
     const pace = paceCheckAdv(state, ctx.skill);
     if (pace !== 'normal') {
       adv = combineAdv(adv, pace);

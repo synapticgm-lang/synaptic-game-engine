@@ -5,6 +5,7 @@
  */
 import type { GameState, HouseRules, Settings } from '../types';
 import { levelSidekick } from './sidekick';
+import { settlePurse } from './coins';
 
 export const DEFAULT_HOUSE_RULES: HouseRules = {
   secretDeathSaves: false,
@@ -89,7 +90,7 @@ export function grantEarnedInspiration<T extends GameState>(state: T): T {
 export function withHouseRules<T extends GameState>(state: T, settings: Partial<Settings> | null | undefined): T {
   if (state.engineMode !== 'dnd') return state;
   const companions = levelSidekick(state.companions, state.character?.level || 1);
-  return grantEarnedInspiration({ ...state, houseRules: houseRulesFromSettings(settings), ...(companions !== state.companions ? { companions } : {}) });
+  return settlePurse(grantEarnedInspiration({ ...state, houseRules: houseRulesFromSettings(settings), ...(companions !== state.companions ? { companions } : {}) }));
 }
 
 /**

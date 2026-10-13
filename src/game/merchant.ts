@@ -1,5 +1,6 @@
 import type { GameState, Item, Rarity } from './types';
 import { getItemValue, removeItem } from './inventory';
+import { changeFor, formatPurse, gainCoins, srdSaleCp, usesPurse } from './rules/coins';
 
 const RARITY_SELL_MULTIPLIER: Record<Rarity, number> = {
   Common: 0.25,
@@ -30,7 +31,21 @@ export interface SellResult {
   ok: boolean;
   reason?: string;
   goldGained?: number;
+  /** What the player got, in words ("7 GP 5 SP"); the toast reads this. */
+  soldFor?: string;
   newState?: GameState;
+}
+
+/** A tabletop sheet sells SRD gear for half its cost in exact coins; null where the salvage price applies. */
+function srdSaleCoins(state: GameState, item: Item) {
+  const cp = usesPurse(state) ? srdSaleCp(item.name, item.quantity ?? 1) : null;
+  return cp == null ? null : changeFor(cp);
+}
+
+/** The price the Sell list shows; the same source sellItem pays from. */
+export function sellPriceLabel(state: GameState, item: Item): string {
+  const coins = srdSaleCoins(state, item);
+  return coins ? formatPurse(coins) : `${getSellPrice(item)}g`;
 }
 
 export function sellItem(state: GameState, itemId: string): SellResult {
@@ -38,12 +53,19 @@ export function sellItem(state: GameState, itemId: string): SellResult {
   if (!item) return { ok: false, reason: 'Item not found.' };
   if (item.equipped) return { ok: false, reason: 'Cannot sell equipped items. Unequip first.' };
 
+  const coins = srdSaleCoins(state, item);
+  if (coins) {
+    const next = gainCoins(removeItem(state, itemId), coins);
+    return { ok: true, goldGained: (next.gold ?? 0) - (state.gold ?? 0), soldFor: formatPurse(coins), newState: next };
+  }
+
   const price = getSellPrice(item);
 
   const next = removeItem(state, itemId);
   return {
     ok: true,
     goldGained: price,
+    soldFor: `${price} gold`,
     newState: {
       ...next,
       gold: (next.gold ?? 0) + price,

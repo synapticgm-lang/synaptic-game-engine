@@ -179,6 +179,49 @@ export async function deleteCloudSavesExcept(
   return { ok: true, deleted: deletedIds.length };
 }
 
+/** Library sheets live in `characters` under their own name so the run snapshot below never overwrites one. */
+const LIBRARY_ROW = 'sheet:';
+
+/** Save one library sheet to the signed-in player's account (best effort; the device copy is the fallback). */
+export async function saveLibrarySheetToCloud(sheet: { id: string; name: string }): Promise<boolean> {
+  if (!isSupabaseConfigured || !supabase) return false;
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData?.user) return false;
+  const { error } = await supabase.from('characters').upsert(
+    {
+      user_id: authData.user.id,
+      name: `${LIBRARY_ROW}${sheet.id}`,
+      class_title: sheet.name,
+      sheet: { library: sheet },
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,name' },
+  );
+  return !error;
+}
+
+export async function deleteLibrarySheetFromCloud(id: string): Promise<boolean> {
+  if (!isSupabaseConfigured || !supabase) return false;
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData?.user) return false;
+  const { error } = await supabase.from('characters').delete().eq('user_id', authData.user.id).eq('name', `${LIBRARY_ROW}${id}`);
+  return !error;
+}
+
+/** The player's library sheets from the account, unchecked (the library validates each one). */
+export async function fetchLibrarySheetsFromCloud(): Promise<unknown[]> {
+  if (!isSupabaseConfigured || !supabase) return [];
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData?.user) return [];
+  const { data, error } = await supabase
+    .from('characters')
+    .select('sheet')
+    .eq('user_id', authData.user.id)
+    .like('name', `${LIBRARY_ROW}%`);
+  if (error || !data) return [];
+  return data.map((row) => (row.sheet as { library?: unknown } | null)?.library).filter(Boolean);
+}
+
 /**
  * Upsert the current campaign to Supabase game_saves (+ characters sheet snapshot)
  * and mirror a row into game_sessions for Admin GameOps.

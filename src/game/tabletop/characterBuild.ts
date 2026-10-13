@@ -30,6 +30,7 @@ import { mulberry32, type Rng } from '../fatePick';
 import { syncContainerOccupancy } from '../inventory';
 import { casterProgression, isCaster, knownSpells, slotsLeft, spellcastingAbility, spellNumbers } from '../rules/spells';
 import { variantLoad } from '../rules/encumbrance';
+import { carriedCoinLb, wealthLine } from '../rules/coins';
 
 export type { AbilityMethod, KitId, TabletopBackgroundId, TabletopClassId, TabletopPicks, TabletopSheet, TabletopSpeciesId };
 export { sheetSkillBonus };
@@ -229,6 +230,27 @@ export const ARMOR_TABLE: Record<string, { base: number; dexCap: number | null; 
   'Chain Mail': { base: 16, dexCap: 0, category: 'Heavy' },
 };
 export const SHIELD_AC = 2;
+
+/** SRD 5.2.1 armor training by class (Fighter all armor and Shields; Rogue Light; Cleric Light, Medium, Shields; Wizard none). */
+const ARMOR_TRAINED: Record<TabletopClassId, Array<'Light' | 'Medium' | 'Heavy' | 'Shield'>> = {
+  fighter: ['Light', 'Medium', 'Heavy', 'Shield'],
+  rogue: ['Light'],
+  cleric: ['Light', 'Medium', 'Shield'],
+  wizard: [],
+};
+
+/**
+ * Worn armor or a shield beyond the class's training (null when all is trained). SRD 5.2.1: untrained armor gives
+ * Disadvantage on any D20 Test that uses Strength or Dexterity, and you can't cast spells.
+ */
+export function untrainedArmor(c: Pick<Character, 'srd'>, inventory: Item[] | null | undefined): string | null {
+  if (!c.srd) return null;
+  const trained = ARMOR_TRAINED[c.srd.classId];
+  const bad = (inventory ?? []).filter((i) => i.equipped && (
+    (ARMOR_TABLE[i.name] && !trained.includes(ARMOR_TABLE[i.name].category)) || (i.name === 'Shield' && !trained.includes('Shield'))
+  ));
+  return bad.length ? bad.map((i) => i.name).join(' and ') : null;
+}
 
 export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
 export const POINT_BUY_BUDGET = 27;
@@ -511,6 +533,8 @@ export interface DerivedSheet {
   speed: number;
   /** Variant Encumbrance: over STR × 10 lb. */
   heavilyEncumbered?: boolean;
+  /** Worn armor the class is not trained in (Disadvantage on STR and DEX D20 Tests, no spellcasting). */
+  untrainedArmor?: string;
   size: string;
   darkvision: number;
   passivePerception: number;
@@ -553,7 +577,7 @@ export function sheetSpellcasting(c: Pick<Character, 'srd' | 'level' | 'attribut
 }
 
 /** Every number on the tabletop sheet, from the character and what is equipped. */
-export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'inventory'> & Partial<Pick<GameState, 'houseRules'>>): DerivedSheet | null {
+export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'inventory'> & Partial<Pick<GameState, 'houseRules' | 'gold' | 'purse'>>): DerivedSheet | null {
   const c = state.character;
   const s = c.srd;
   if (!s) return null;
@@ -573,7 +597,10 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
   const dwarf = (sp.hpPerLevel ?? 0) * c.level;
   const gains = levelHpGains(s, c.level);
   const conPart = gains.length ? `${fmtMod(con)} CON ×${c.level}` : `${fmtMod(con)} CON`;
-  const load = state.houseRules?.encumbrance === 'variant' ? variantLoad(state.inventory, scores.STR) : null;
+  const load = state.houseRules?.encumbrance === 'variant'
+    ? variantLoad(state.inventory, scores.STR, carriedCoinLb({ engineMode: 'dnd', character: c, gold: state.gold, purse: state.purse }))
+    : null;
+  const untrained = untrainedArmor(c, state.inventory);
   return {
     title: `${sp.name} ${cls.name} ${c.level} (${backgroundDef(s.backgroundId).name})`,
     scores,
@@ -585,6 +612,7 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
     initiative: abilityMod(scores.DEX) + (s.originFeats.includes('Alert') ? pb : 0),
     speed: Math.max(0, sp.speed - (load?.speedPenalty ?? 0)),
     ...(load?.heavy ? { heavilyEncumbered: true } : {}),
+    ...(untrained ? { untrainedArmor: untrained } : {}),
     size: sp.size,
     darkvision: sp.darkvision,
     passivePerception: 10 + perception,
@@ -600,6 +628,18 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
     hitDie: cls.hitDie,
     spellcasting: sheetSpellcasting(c),
   };
+}
+
+/**
+ * What the sheet does to a D20 Test of this ability: untrained armor (STR, DEX) or heavy variant encumbrance
+ * (STR, DEX, CON) gives Disadvantage. The words for the roll line, or null.
+ */
+export function sheetBurden(state: Pick<GameState, 'character' | 'inventory'> & Partial<Pick<GameState, 'houseRules' | 'gold' | 'purse'>>, ability: AttributeKey | string | undefined): string | null {
+  const d = deriveTabletopSheet(state);
+  if (!d || !ability) return null;
+  if (d.untrainedArmor && (ability === 'STR' || ability === 'DEX')) return `untrained in ${d.untrainedArmor}`;
+  if (d.heavilyEncumbered && (ability === 'STR' || ability === 'DEX' || ability === 'CON')) return 'heavily encumbered';
+  return null;
 }
 
 const METHOD_LABEL: Record<AbilityMethod, string> = {
@@ -632,7 +672,7 @@ export function spellSummaryLines(sc: DerivedSheet['spellcasting']): string[] {
 }
 
 /** The sheet summary shown before play (and on the sheet tab). */
-export function formatTabletopSheet(state: Pick<GameState, 'character' | 'inventory' | 'gold'>): string[] {
+export function formatTabletopSheet(state: Pick<GameState, 'character' | 'inventory' | 'gold'> & Partial<Pick<GameState, 'purse' | 'houseRules'>>): string[] {
   const d = deriveTabletopSheet(state);
   const s = state.character.srd;
   if (!d || !s) return [];
@@ -653,7 +693,8 @@ export function formatTabletopSheet(state: Pick<GameState, 'character' | 'invent
     ...spellSummaryLines(d.spellcasting),
     `${speciesDef(s.speciesId).name} traits: ${d.traits.join('; ')}`,
     `Languages: ${d.languages.join(', ')}`,
-    `Kit: ${gear.join(', ') || 'none'} · ${state.gold ?? 0} GP`,
+    ...(d.untrainedArmor ? [`Armor training: not trained in ${d.untrainedArmor} — Disadvantage on Strength and Dexterity rolls, and no spellcasting`] : []),
+    `Kit: ${gear.join(', ') || 'none'} · ${wealthLine({ engineMode: 'dnd', character: state.character, gold: state.gold ?? 0, purse: state.purse })}`,
   ];
 }
 
@@ -693,6 +734,7 @@ export function applyTabletopSheet(state: GameState, sheet: TabletopSheet): Game
     inventory,
     containers,
     gold: gp,
+    purse: null,
     ...(state.openingEstablishment && answers
       ? {
           openingEstablishment: {

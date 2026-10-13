@@ -167,7 +167,7 @@ function edgeSource(file, srcPath) {
     next = next
       .replace(
         /^import \{ ladderDc[^\n]*'\.\/rules\/exploration';\r?\n/m,
-        "type TaskKind = string;\ntype TaskRung = string;\nconst edgeOnly = (): never => { throw new Error('tabletop exploration rules run on the client'); };\nconst ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;\n"
+        "type TaskKind = string;\ntype TaskRung = string;\nconst edgeOnly = (): never => { throw new Error('tabletop exploration rules run on the client'); };\nconst ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;\n"
       )
       .replace(/^import \{ paceCheckAdv[^\n]*'\.\/rules\/travelPace';\r?\n/m, 'const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;\n')
       .replace(/function onLadder\(state: GameState\): boolean \{\r?\n\s*return [^\n]*\r?\n\}/, 'function onLadder(_state: GameState): boolean {\n  return false;\n}');

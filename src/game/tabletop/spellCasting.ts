@@ -7,7 +7,7 @@
 import type { GameState } from '../types';
 import { rollDice, formatDice, type Rng } from '../rules/dice';
 import { pickSlot, slotLevelInInput, spellDice, spellInInput, SPELLS, spendSlot, type SpellDef } from '../rules/spells';
-import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sheetSpellcasting, tabletopArmorClass } from './characterBuild';
+import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sheetSpellcasting, tabletopArmorClass, untrainedArmor } from './characterBuild';
 
 export interface CasterKit {
   cantrips: string[];
@@ -18,9 +18,13 @@ export interface CasterKit {
   attack: number;
 }
 
-/** The caster's spells, slots left and numbers; null for a non-caster or a sheetless character. */
-export function casterKit(state: Pick<GameState, 'engineMode' | 'character'>): CasterKit | null {
+/**
+ * The caster's spells, slots left and numbers; null for a non-caster, a sheetless character, or one wearing
+ * armor they are not trained in (SRD: no spellcasting in untrained armor).
+ */
+export function casterKit(state: Pick<GameState, 'engineMode' | 'character'> & Partial<Pick<GameState, 'inventory'>>): CasterKit | null {
   if (state.engineMode !== 'dnd') return null;
+  if (untrainedArmor(state.character, state.inventory ?? [])) return null;
   const sc = sheetSpellcasting(state.character);
   if (!sc) return null;
   return {

@@ -1,6 +1,6 @@
 import { useCallbackRef } from './useCallbackRef';
 import { useEffect, useRef, useState, useCallback, startTransition } from 'react';
-import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit, Quest } from './types';
+import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit, Quest, SessionZero } from './types';
 import { createInitialState } from './defaults';
 import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
@@ -217,7 +217,7 @@ import {
 import { resolveWriterTierForTurn } from './writerPolicy';
 import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { canOfferRewardedMemorable } from './rewardedAds';
-import { clipCustomTabletopRules } from './customTabletopRules';
+import { cleanSessionZeroList, clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
 import { isExplorableDungeon, isInteriorMap, isInteriorPlace, milestoneAreaOpts, normalizeSheetAuthority } from './placeAuthority';
 import {
@@ -355,6 +355,7 @@ import {
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
 import { milestoneLevelling, withHouseRules } from './rules/houseRules';
+import { applyAwayRest } from './rules/awayRest';
 import {
   commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
@@ -448,6 +449,23 @@ const HABIT_STORAGE_KEY = 'tactical-litrpg-player-habits';
 
 function uid(): string {
   return Math.random().toString(36).slice(2, 11);
+}
+
+/** Session-zero limits as saved on the campaign (null when nothing was set). */
+function sessionZeroOf(sz: SessionZero | null | undefined): SessionZero | null {
+  const lines = cleanSessionZeroList(sz?.lines);
+  const veils = cleanSessionZeroList(sz?.veils);
+  const sheetId = sz?.sheetId || null;
+  return lines.length || veils.length || sheetId ? { lines, veils, sheetId } : null;
+}
+
+/** Real time away at a safe stop becomes a rest, with a recap row of engine facts (tabletop only). */
+function withAwayRest(state: GameState, awayMs: number): GameState {
+  const away = applyAwayRest(state, awayMs);
+  if (!away) return state;
+  const now = Date.now();
+  const recap: LogEntry = { id: uid(), turn: away.state.turn, role: 'system', content: away.recap.join('\n'), timestamp: now };
+  return { ...away.state, log: [...away.state.log, recap], lastUpdated: now };
 }
 
 interface ActionHabit {
@@ -924,6 +942,26 @@ export function useGame() {
     });
     void pullPlayerProfileFromCloud();
   });
+
+  useEffect(() => {
+    // Coming back to the tab after real time away: the same away rest Continue runs, counted from when the tab hid.
+    let hiddenAt = 0;
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        hiddenAt = Date.now();
+        return;
+      }
+      const live = stateRef.current;
+      if (!hiddenAt || !live || !isHydratedRef.current || turnInFlightRef.current) return;
+      const next = withAwayRest(live, Date.now() - Math.max(hiddenAt, live.lastUpdated || 0));
+      hiddenAt = 0;
+      if (next === live) return;
+      stateRef.current = next;
+      setState(next);
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
 
   useEffect(() => {
     // Always surface the IndexedDB save on the hub; cloud slot fills in after auth.
@@ -4977,6 +5015,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     systemPersonality?: SystemPersonalityId,
     useUsualSelf?: boolean,
     openerSeed?: string,
+    sessionZero?: SessionZero | null,
   ) => {
     debugLogger.beginPlaySession('new-game');
     if (settingsRef.current.ttsEnabled) {
@@ -5158,6 +5197,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
+      sessionZero: engineMode === 'dnd' ? sessionZeroOf(sessionZero) : null,
       gmPersonality:
         engineMode === 'dnd' || engineMode === 'rpg' || engineMode === 'pyoa'
           ? engineMode === 'pyoa'
@@ -6276,6 +6316,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           recovered = profileMerged.state;
           addToast(`Using your saved name (${profileMerged.state.character.name}).`, 'info');
         }
+
+        const lastActive = saved.lastUpdated || (useCloud ? cloudTs : 0);
+        recovered = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.

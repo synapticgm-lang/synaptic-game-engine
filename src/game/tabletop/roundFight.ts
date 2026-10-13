@@ -24,6 +24,7 @@ import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
 import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
+import { carriedCoinLb } from '../rules/coins';
 import { sceneLight, type SceneLight } from '../rules/exploration';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName } from './combatChips';
 
@@ -104,6 +105,7 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
     maxHp: sheet.maxHp,
     speed: sheet.speed,
     ...(sheet.heavilyEncumbered ? { heavilyEncumbered: true } : {}),
+    ...(sheet.untrainedArmor ? { untrainedArmor: sheet.untrainedArmor } : {}),
     initiativeMod: sheet.initiative,
     saves,
     stealth: sheet.skills.find((k) => k.skill === 'Stealth')?.total ?? dex,
@@ -379,7 +381,7 @@ export function resolveRoundFight(
     const down = res.combat.foes.length > 1 ? 'are down' : 'is down';
     next = commitAutoFightLedger(next, { victory: true, finalPlayerHp: res.pcHp });
     const rolled = rollVictoryLoot(working, { name: enc.name, goldReward: enc.goldReward, lootProfile: profileForEncounter(enc), cr: encNow.cr });
-    const carry = house.strictEncumbrance ? fitCarry(next.inventory ?? [], rolled.loot, deriveTabletopSheet(next)?.scores.STR ?? 10) : { kept: rolled.loot, left: [] };
+    const carry = house.strictEncumbrance ? fitCarry(next.inventory ?? [], rolled.loot, deriveTabletopSheet(next)?.scores.STR ?? 10, carriedCoinLb(next)) : { kept: rolled.loot, left: [] };
     const won = { ...rolled, loot: carry.kept };
     if (carry.left.length) receipts.push(`Left behind (too heavy to carry): ${carry.left.map((l) => l.name).join(', ')}`);
     next = {

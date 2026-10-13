@@ -53,8 +53,9 @@ export function itemWeightLb(name: string): number {
   return ITEM_WEIGHT_LB[name] ?? UNLISTED_ITEM_LB;
 }
 
-export function carriedWeightLb(inventory: Item[] | null | undefined): number {
-  const total = (inventory ?? []).reduce((sum, i) => sum + itemWeightLb(i.name) * Math.max(1, i.quantity ?? 1), 0);
+/** Items plus `extraLb` (the coins carried: rules/coins coinWeightLb). */
+export function carriedWeightLb(inventory: Item[] | null | undefined, extraLb = 0): number {
+  const total = (inventory ?? []).reduce((sum, i) => sum + itemWeightLb(i.name) * Math.max(1, i.quantity ?? 1), 0) + extraLb;
   return Math.round(total * 10) / 10;
 }
 
@@ -88,9 +89,9 @@ export function spendAmmo(inventory: Item[], ammo: string, n: number): Item[] {
 }
 
 /** Under Strict Encumbrance: which new items still fit under Strength × 15 lb, in order; the rest stay behind. */
-export function fitCarry<T extends Item>(inventory: Item[], incoming: T[], strength: number): { kept: T[]; left: T[] } {
+export function fitCarry<T extends Item>(inventory: Item[], incoming: T[], strength: number, extraLb = 0): { kept: T[]; left: T[] } {
   const cap = carryingCapacityLb(strength);
-  let load = carriedWeightLb(inventory);
+  let load = carriedWeightLb(inventory, extraLb);
   const kept: T[] = [];
   const left: T[] = [];
   for (const it of incoming) {
@@ -103,10 +104,11 @@ export function fitCarry<T extends Item>(inventory: Item[], incoming: T[], stren
   return { kept, left };
 }
 
-export function carryLine(inventory: Item[] | null | undefined, strength: number, rule: 'off' | 'capacity' | 'variant' = 'capacity'): string {
-  const base = `Carrying ${carriedWeightLb(inventory)} lb of ${carryingCapacityLb(strength)} lb`;
+export function carryLine(inventory: Item[] | null | undefined, strength: number, rule: 'off' | 'capacity' | 'variant' = 'capacity', coinLb = 0): string {
+  const coins = coinLb > 0 ? ` (coins ${coinLb} lb)` : '';
+  const base = `Carrying ${carriedWeightLb(inventory, coinLb)} lb of ${carryingCapacityLb(strength)} lb${coins}`;
   if (rule !== 'variant') return base;
-  const load = variantLoad(inventory, strength);
+  const load = variantLoad(inventory, strength, coinLb);
   return load.state === 'unburdened' ? base : `${base} — ${load.state} (Speed −${load.speedPenalty} ft${load.heavy ? ', Disadvantage on STR/DEX/CON attacks, checks and saves' : ''})`;
 }
 
@@ -115,8 +117,8 @@ export function carryLine(inventory: Item[] | null | undefined, strength: number
  * Strength × 10 lb you are heavily encumbered (Speed −20 ft, Disadvantage on ability checks, attack rolls and
  * saving throws that use Strength, Dexterity or Constitution).
  */
-export function variantLoad(inventory: Item[] | null | undefined, strength: number): { state: 'unburdened' | 'encumbered' | 'heavily encumbered'; speedPenalty: number; heavy: boolean } {
-  const lb = carriedWeightLb(inventory);
+export function variantLoad(inventory: Item[] | null | undefined, strength: number, extraLb = 0): { state: 'unburdened' | 'encumbered' | 'heavily encumbered'; speedPenalty: number; heavy: boolean } {
+  const lb = carriedWeightLb(inventory, extraLb);
   const s = Math.max(0, strength);
   if (lb > s * 10) return { state: 'heavily encumbered', speedPenalty: 20, heavy: true };
   if (lb > s * 5) return { state: 'encumbered', speedPenalty: 10, heavy: false };

@@ -2,6 +2,7 @@ import type { GameEvent } from './parser';
 import type { GameState, Item, Rarity } from './types';
 import { addItem, canAddItem } from './inventory';
 import { carryLine, fitCarry } from './rules/encumbrance';
+import { carriedCoinLb } from './rules/coins';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
 import { initializeDungeon, isDoorLockedFor, moveToNode, exitDungeon } from './mapEngine';
 import { skillRanksOf } from './skillRanks';
@@ -130,8 +131,9 @@ export function applyStructuralEvents(
           continue;
         }
         const str = next.character.srd ? deriveTabletopSheet(next)?.scores.STR : undefined;
-        if (str != null && !fitCarry(next.inventory ?? [], [item], str).kept.length) {
-          notes.push(`Too heavy to carry: ${item.name} (${carryLine(next.inventory, str)})`);
+        const coinLb = carriedCoinLb(next);
+        if (str != null && !fitCarry(next.inventory ?? [], [item], str, coinLb).kept.length) {
+          notes.push(`Too heavy to carry: ${item.name} (${carryLine(next.inventory, str, 'capacity', coinLb)})`);
           continue;
         }
       }

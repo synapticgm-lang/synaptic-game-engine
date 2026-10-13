@@ -77,7 +77,7 @@ export interface TabletopSheet {
   languages: string[];
   originFeats: string[];
   kitId: KitId;
-  source: 'build' | 'pregen' | 'quick';
+  source: 'build' | 'pregen' | 'quick' | 'library';
   /** Level-up HP: the fixed value (half the die + 1) or a roll of the Hit Die. Default fixed. */
   hpMethod?: 'fixed' | 'roll';
   /** Hit Die result taken at each level after the first (index 0 = level 2), before CON. */
@@ -207,6 +207,23 @@ export interface HouseRules {
   heroicInspiration: boolean;
   /** SRD Travel Pace: Fast 4 mph (Disadvantage on Perception, Survival, Stealth), Normal 3 (Stealth), Slow 2 (Advantage on Perception, Survival). */
   travelPace: 'fast' | 'normal' | 'slow';
+}
+
+/** Coins by denomination (rules/coins). */
+export interface CoinPurse {
+  pp: number;
+  gp: number;
+  ep: number;
+  sp: number;
+  cp: number;
+}
+
+/** Session zero agreed before a tabletop game (SessionZeroPanel). Lines never appear; veils happen off-screen. */
+export interface SessionZero {
+  lines: string[];
+  veils: string[];
+  /** The saved sheet picked to play (sheet library id), or null to build at the inn book. */
+  sheetId?: string | null;
 }
 
 export type TabletopRulesVersion = 'srd-5.2.1' | 'srd-5.1';
@@ -780,6 +797,10 @@ export interface GameState {
   /** AI turn awaiting player accept / edit / reroll. */
   pendingTurn?: PendingTurnProposal | null;
   gold: number;
+  /** Tabletop sheet characters: the coins carried, and the `gold` value they were last settled at (rules/coins). */
+  purse?: { coins: CoinPurse; gold: number } | null;
+  /** Tabletop session zero (limits and the sheet picked). Absent on old saves. */
+  sessionZero?: SessionZero | null;
   gmStrictness: GmStrictness;
   statDisplayMode: StatDisplayMode;
   turnFrameTheme: TurnFrameTheme;

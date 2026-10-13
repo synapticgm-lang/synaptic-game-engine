@@ -30,7 +30,7 @@ import { skillRankOf, type CheckSkillName } from './skillRanks.ts';
 type TaskKind = string;
 type TaskRung = string;
 const edgeOnly = (): never => { throw new Error('tabletop exploration rules run on the client'); };
-const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;
+const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
 
 export type CheckSkill = CheckSkillName;
@@ -339,6 +339,11 @@ export function runPlayerCheck(
   // Tabletop: the task's rung, plus what light and the travel pace did to the roll.
   const notes: string[] = ctx.rung ? [ctx.rung] : [];
   if (onLadder(state)) {
+    const burden = sheetBurden(state, ctx.attr);
+    if (burden) {
+      adv = combineAdv(adv, 'disadvantage');
+      notes.push(burden);
+    }
     const pace = paceCheckAdv(state, ctx.skill);
     if (pace !== 'normal') {
       adv = combineAdv(adv, pace);

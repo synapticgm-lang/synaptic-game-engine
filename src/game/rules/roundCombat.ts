@@ -82,6 +82,8 @@ export interface PcProfile {
   sidekick?: SidekickProfile;
   /** Variant encumbrance past STR × 10: Disadvantage on attack rolls and STR / DEX / CON saves. */
   heavilyEncumbered?: boolean;
+  /** Worn armor the PC is not trained in: Disadvantage on STR / DEX attacks and saves; the presenter drops spells. */
+  untrainedArmor?: string;
   /** Conditions the PC carries outside the fight (e.g. Poisoned). */
   conditions: string[];
 }
@@ -279,7 +281,9 @@ const canReroll = (ctx: Ctx) => ctx.rules.inspiration === 'reroll' && !ctx.inspi
  */
 function pcSave(ctx: Ctx, ability: AttributeKey, dc: number, why: string): boolean {
   const mod = ctx.pc.saves[ability] ?? 0;
-  const heavy = !!ctx.pc.heavilyEncumbered && (ability === 'STR' || ability === 'DEX' || ability === 'CON');
+  const heavy =
+    (!!ctx.pc.heavilyEncumbered && (ability === 'STR' || ability === 'DEX' || ability === 'CON')) ||
+    (!!ctx.pc.untrainedArmor && (ability === 'STR' || ability === 'DEX'));
   const roll = () => {
     const raw = saveRoll(mod, dc, ctx.combat.pcConditions, ability, ctx.rng, ctx.pc.conditions, heavy ? ['disadvantage'] : []);
     const bless = raw.autoFail ? undefined : blessRoll(ctx);
@@ -538,7 +542,7 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
     extraAdv.push('advantage');
     ctx.combat = { ...ctx.combat, helped: false };
   }
-  if (ctx.pc.heavilyEncumbered) extraAdv.push('disadvantage');
+  if (ctx.pc.heavilyEncumbered || ctx.pc.untrainedArmor) extraAdv.push('disadvantage');
   let inspiration: InspirationUse | undefined;
   if (ctx.rules.inspiration === 'advantage' && !ctx.inspirationSpent) {
     extraAdv.push('advantage');

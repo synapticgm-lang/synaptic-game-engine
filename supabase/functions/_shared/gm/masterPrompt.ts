@@ -16,7 +16,7 @@ import { formatGmVoiceForPrompt, resolveVoiceIdForState } from './gmVoiceProfile
 import { formatMaturityRules } from './maturity.ts';
 import { KID_MODE_RULES, ADULT_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
 import { campaignIsNsfw } from './campaignNsfw.ts';
-import { formatCustomTabletopRulesForPrompt } from './customTabletopRules.ts';
+import { formatCustomTabletopRulesForPrompt, formatSessionZeroForPrompt } from './customTabletopRules.ts';
 import { compileLitrpgCoreIdentity } from './openingPointerCard.ts';
 import { formatGoldShapeForPrompt } from './fluidProseRails.ts';
 import { formatLikedKeeperForPrompt } from './craftKeepers.ts';
@@ -519,7 +519,7 @@ export function buildMasterPrompt(
 
   const choiceDna = formatChoiceTierModeDna(state.engineMode);
   const playerRules = state.engineMode === 'dnd'
-    ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode)
+    ? [formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode), formatSessionZeroForPrompt(state.sessionZero)].filter(Boolean).join('\n\n')
     : '';
 
   return `

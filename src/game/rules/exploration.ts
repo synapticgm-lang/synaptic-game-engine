@@ -15,6 +15,9 @@ import { difficultyRow } from '../difficultyRules';
 import { isInteriorPlace, isUndergroundPlace, resolveThreatTier } from '../placeAuthority';
 import { sheetSpellcasting, speciesDef } from '../tabletop/characterBuild';
 
+/** The sheet's own Disadvantage on a check (untrained armor, heavy load); checkMath reads it with light and pace. */
+export { sheetBurden } from '../tabletop/characterBuild';
+
 export const DC_LADDER = {
   'very easy': 5,
   easy: 10,

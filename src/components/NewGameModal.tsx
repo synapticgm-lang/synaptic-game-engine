@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu, GitFork, UserRound } from 'lucide-react';
-import type { ContentMode, EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
+import type { ContentMode, EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection, SessionZero, Settings } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
+import { SessionZeroPanel, type SessionZeroDraft } from './SessionZeroPanel';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
 import {
   campaignAgeChip,
@@ -74,8 +75,12 @@ interface Props {
     systemPersonality?: SystemPersonalityId,
     useUsualSelf?: boolean,
     openerSeed?: string,
+    sessionZero?: SessionZero | null,
   ) => void;
   onClose: () => void;
+  /** Tabletop session zero edits the table rules in Settings. */
+  settings?: Settings;
+  onSettingsChange?: (next: Settings) => void;
 }
 
 type PathKind = 'premade' | 'custom';
@@ -123,7 +128,12 @@ const STEP_LABELS: Record<WizardStep, string> = {
   persona: 'Use usual self?',
 };
 
-export function NewGameModal({ contentMode, onStart, onClose }: Props) {
+export function NewGameModal({ contentMode, onStart, onClose, settings, onSettingsChange }: Props) {
+  const [sessionZeroDraft, setSessionZeroDraft] = useState<SessionZeroDraft>({ lines: '', veils: '', sheetId: null });
+  const sessionZero = (): SessionZero | null =>
+    engineMode === 'dnd'
+      ? { lines: sessionZeroDraft.lines.split('\n'), veils: sessionZeroDraft.veils.split('\n'), sheetId: sessionZeroDraft.sheetId }
+      : null;
   const [path, setPath] = useState<PathKind | null>(null);
   const [customDepth, setCustomDepth] = useState<CustomDepth>('simple');
   const [step, setStep] = useState<WizardStep>('path');
@@ -283,6 +293,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       engineMode === 'litrpg' ? systemPersonality : undefined,
       useUsual,
       openerSeed,
+      sessionZero(),
     );
   };
 
@@ -402,6 +413,8 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       resolveNarratorPersonality(),
       engineMode === 'litrpg' ? systemPersonality : undefined,
       useUsual,
+      undefined,
+      sessionZero(),
     );
   };
 
@@ -778,6 +791,14 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                         compact
                       />
                     </div>
+                  )}
+                  {engineMode === 'dnd' && settings && onSettingsChange && (
+                    <SessionZeroPanel
+                      settings={settings}
+                      onSettingsChange={(key, value) => onSettingsChange({ ...settings, [key]: value })}
+                      value={sessionZeroDraft}
+                      onChange={setSessionZeroDraft}
+                    />
                   )}
                   <div>
                     <label className="mb-1 block font-medium text-slate-300">

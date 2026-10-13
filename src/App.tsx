@@ -187,6 +187,8 @@ export default function App() {
           <Suspense fallback={null}>
             <NewGameModal
               contentMode={game.settings.contentMode}
+              settings={game.settings}
+              onSettingsChange={game.updateSettings}
               onStart={(...args) => {
                 setUserInGame(true);
                 game.startNewGame(...args);
@@ -276,6 +278,8 @@ export default function App() {
           <Suspense fallback={null}>
             <NewGameModal
               contentMode={game.settings.contentMode}
+              settings={game.settings}
+              onSettingsChange={game.updateSettings}
               onStart={(...args) => {
                 setUserInGame(true);
                 game.startNewGame(...args);
@@ -488,6 +492,8 @@ export default function App() {
         <Suspense fallback={null}>
             <NewGameModal
             contentMode={game.settings.contentMode}
+            settings={game.settings}
+            onSettingsChange={game.updateSettings}
             onStart={game.startNewGame}
             onClose={() => game.setShowNewGame(false)}
           />

@@ -40,9 +40,9 @@ function keepState(): GameState {
 }
 
 describe('29u stamps', () => {
-  it('HUD and BUILD are 2026-10-13u and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13u');
-    expect(BUILD_STAMP).toBe('2026-10-13u');
+  it('HUD and BUILD are 2026-10-13v and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13v');
+    expect(BUILD_STAMP).toBe('2026-10-13v');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
