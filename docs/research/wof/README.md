@@ -32,6 +32,8 @@ WOF is a later-release authored faction world: original races/places, quest line
 | [pasted/WOF_RemainingHoles_Dump.md](./pasted/WOF_RemainingHoles_Dump.md) | Turns, two apps, raid phone, death, family, ops, push |
 | [pack-22-remaining-holes-ingested-2026-08-15.md](./pack-22-remaining-holes-ingested-2026-08-15.md) | Working reference — remaining-holes v1 picks |
 | [pack-23-starting-zones-quest-lines-2026-08-15.md](./pack-23-starting-zones-quest-lines-2026-08-15.md) | Four race starts + 36 quests + 4 solo 5-mans (prep catalog) |
+| [pack-31-gemini-isolated-rd-ingest-2026-08-19.md](./pack-31-gemini-isolated-rd-ingest-2026-08-19.md) | Isolated R&D / Tidelock kernel — reject lore; keep isolation-grep idea |
+| [pack-32-manus-backup-scan-2026-09-17.md](./pack-32-manus-backup-scan-2026-09-17.md) | Manus backup audit — no missed WOF dumps; 41/56/57/60 already ingested |
 | [RESEARCH-PROMPT-gap-fill-bolt.md](./RESEARCH-PROMPT-gap-fill-bolt.md) | Bolt prompt → WOF_Gap_Fill_Dump.md (already ingested) |
 | [RESEARCH-PROMPT-golive-systems-bolt.md](./RESEARCH-PROMPT-golive-systems-bolt.md) | Bolt prompt → WOF_GoLive_Systems_Dump.md (already ingested) |
 | [RESEARCH-PROMPT-first-hour-bolt.md](./RESEARCH-PROMPT-first-hour-bolt.md) | Bolt → WOF_FirstHour_Dump.md |
