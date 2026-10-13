@@ -52,6 +52,8 @@ const FOES = [
   'goblin', 'goblins', 'skeleton', 'skeletons', 'zombie', 'zombies', 'ghoul', 'ghouls', 'spider', 'spiders', 'raider', 'raiders',
   'brigand', 'brigands', 'cultist', 'cultists', 'beast', 'beasts', 'hound', 'hounds', 'wraith', 'cutter', 'cutters', 'thief', 'thieves',
 ];
+/** A handed foe that is an animal; "beast" may name it. */
+const ANIMAL_FOE = /\b(?:dogs?|wolf|wolves|rats?|hounds?|spiders?|boars?|bears?|bats?|beetles?|crawlers?|serpents?|snakes?|vermin|beasts?)\b/i;
 /** A handed place description that names its work ("Crowded stalls…") hands the people who do that work. */
 const PLACE_WORKERS = [
   [/\b(?:stalls?|market|shops?|buyers?|sellers?|traders?)\b/, /^(?:vendors?|merchants?)$/],
@@ -360,7 +362,12 @@ export function checkTurn(row, packet, page = '') {
           || /^\s+(?:\w+\s+){0,3}?(?:lay|lying|rested|resting|sat|hidden|tucked|waited)\b/i.test(after);
         if (owned ? !jaxClause : !found) continue;
       }
+      // "the fallen beasts" after a handed Rotting Feral Dog Pack is the handed animal foe, not a new one.
+      if (kind === 'foe' && /^beasts?$/.test(w) && ANIMAL_FOE.test(facts.handedText)) continue;
       if (kind === 'person') {
+        // "a man called Col Thatch": the role word introduces a handed name; "called" is not an action here.
+        const named = after.match(/^\s+(?:called|named|known as)\s+([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*)/)?.[1];
+        if (named && facts.allowText.includes(lower(named))) continue;
         if (!/^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i.test(after)) continue;
         if (foeHanded && /^(?:men|man|women|woman|strangers?)$/.test(w)) continue;
         // "neither man" / "the two men" points back at a handed person here; "a man" is a new one.

@@ -1265,6 +1265,8 @@ export interface CirclingMemory {
   lastProgressTurn: number;
   lastLocation?: string;
   prevPlace?: string;
+  /** Turn of the last arrival that ended a road trip (prevPlace was left on an earlier turn). */
+  tripArrivalTurn?: number;
   nudgedTurn?: number;
   /** 28l — last nudge line and the next source to try (sources rotate). */
   lastNudge?: string;

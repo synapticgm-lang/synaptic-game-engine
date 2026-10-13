@@ -1026,7 +1026,10 @@ function movementLine(state: GameState, stay: string): string {
     return `Turned back this turn:${left} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival${nothing}.`;
   }
   if (movedNow && from) {
-    return `Moved this turn: from ${from} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${from}.`;
+    const walk = c?.tripArrivalTurn === state.turn
+      ? ` Jax set out from ${from} earlier and has been on the way since: write the end of that walk, never a step straight out of ${from}.`
+      : '';
+    return `Moved this turn: from ${from} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${from}.${walk}`;
   }
   if (movedNow && c?.lastLocation) {
     return `Moved this turn: arrived at ${here}. Narrate one arrival at ${here}.`;

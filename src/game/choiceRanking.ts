@@ -218,7 +218,8 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
     ? [...priorPlaces.filter((p) => p !== key), key].slice(-RECENT_PLACES)
     : priorPlaces;
   const recentFamilies = [...(mem.recentFamilies ?? []), fam].slice(-3);
-  const left = moved && isRoadLabel(mem.lastLocation)
+  const offRoad = moved && isRoadLabel(mem.lastLocation);
+  const left = offRoad
     ? before?.journey?.from || mem.lastLeg?.split('>')[0] || mem.prevPlace
     : mem.lastLocation;
   return {
@@ -232,6 +233,7 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       recentFamilies,
       lastProgressTurn: progressed ? state.turn ?? 0 : mem.lastProgressTurn,
       prevPlace: moved ? left : mem.prevPlace,
+      tripArrivalTurn: offRoad ? state.turn ?? 0 : moved ? undefined : mem.tripArrivalTurn,
       lastLocation: here,
       movedTurn: moved || legMoved ? state.turn ?? 0 : mem.movedTurn,
       lastLeg: leg,
