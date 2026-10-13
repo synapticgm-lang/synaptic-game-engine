@@ -3,6 +3,7 @@
  * in the world (a fight, a flee, an arrival, a move, loot, an offer taken), minus chrome: ledger
  * figures and bookkeeping that belong on STATUS, not in the story.
  */
+import type { EngineMode } from './types';
 
 const CHROME_RECEIPT =
   /^(?:XP Gained|Arc XP|Level Up|HP:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —)/i;
@@ -15,12 +16,20 @@ export function isChromeReceipt(receipt: string): boolean {
   return !r || CHROME_RECEIPT.test(r) || FOE_HP_FIGURE.test(r);
 }
 
+/** An engine level figure on a foe or meeting ("(level 2)", "(level 3, 18 HP)", "— level 1"). */
+const ENGINE_LEVEL_FIGURE = /\s*\(level \d+(?:, \d+ HP)?\)|\s+[—-] level \d+\b/gi;
+
+/** Outside LitRPG an encounter's level is bookkeeping: the writer never sees it, so prose cannot paste it. */
+function withoutEngineLevel(receipt: string, mode: EngineMode | undefined): string {
+  return !mode || mode === 'litrpg' ? receipt : receipt.replace(ENGINE_LEVEL_FIGURE, '');
+}
+
 /** This turn's world-change receipts as one plain fact line (empty when nothing changed). */
-export function engineResultFact(receipts: readonly string[]): string {
+export function engineResultFact(receipts: readonly string[], mode?: EngineMode): string {
   const seen = new Set<string>();
   const kept: string[] = [];
   for (const raw of receipts) {
-    const r = (raw ?? '').replace(/\s+/g, ' ').trim();
+    const r = withoutEngineLevel((raw ?? '').replace(/\s+/g, ' ').trim(), mode);
     if (isChromeReceipt(r) || seen.has(r.toLowerCase())) continue;
     seen.add(r.toLowerCase());
     kept.push(/[.!?]$/.test(r) ? r : `${r}.`);

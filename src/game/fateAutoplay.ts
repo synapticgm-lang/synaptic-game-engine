@@ -224,6 +224,7 @@ import {
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
+import { applyStoryRpgTurn } from './storyRpgProgress';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
@@ -1178,6 +1179,11 @@ export async function headlessFateTurn(
   const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
+  const storyTurn = applyStoryRpgTurn(arcState, playerInput, {
+    committedBeatsBefore: govInputState.arcDirector?.committedBeatIds ?? [],
+  });
+  arcState = storyTurn.state;
+  arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
   arcState = recordCirclingTurn(arcState, playerInput, [...(arcResult?.systemReceipts ?? []), ...arcStatusReceipts], state);
   const nudge = nudgeIfStuck(arcState);
@@ -1193,9 +1199,10 @@ export async function headlessFateTurn(
     ...(arcResult?.systemReceipts ?? []),
     ...offerTurn.receipts,
     ...dungeonTurn.receipts,
+    ...storyTurn.receipts,
     ...nudge.receipts,
     ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
-  ]);
+  ], arcState.engineMode);
   const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
     xp: arcXp,
     engineResult: engineFact,

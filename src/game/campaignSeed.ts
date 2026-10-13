@@ -226,6 +226,11 @@ function buildCampaignLoadout(
   return pocketOnlyKit(state.systemHousing) ? fitKitToPocket(kit.inventory, kit.containers) : kit;
 }
 
+/** The clothes the character stands in: worn on the body, never one of the three packed starter items. */
+function isWornClothesRow(si: StarterItem): boolean {
+  return si.equipped === true && /\bclothes\b/i.test(si.name);
+}
+
 function buildBibleKit(
   state: GameState,
   bible: CampaignBible,
@@ -273,13 +278,15 @@ function buildBibleKit(
       || i.slot === 'Main Hand'
       || /sword|knife|blade|axe|bow|staff|mace|spear|dagger/i.test(i.name)
   );
-  const starterItems = campaignReady
-    .filter((si) => !invNames.has(si.name.toLowerCase()))
+  const fresh = campaignReady.filter((si) => !invNames.has(si.name.toLowerCase()));
+  const worn = fresh.filter(isWornClothesRow).map((si) => starterToItem(si, bible));
+  const starterItems = fresh
+    .filter((si) => !isWornClothesRow(si))
     .filter((si) => !(si.itemType === 'weapon' && alreadyHasWeapon))
     .slice(0, 3)
     .map((si) => starterToItem(si, bible, existingContainerId));
   return {
-    inventory: [...state.inventory, ...starterItems],
+    inventory: [...state.inventory, ...worn, ...starterItems],
     containers: state.containers,
   };
 }

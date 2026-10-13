@@ -684,6 +684,15 @@ export const saltRoadHeist = withManusHonestRoster(makeBible({
   ],
   items: [
     {
+      id: 'salt-road-heist-clothes',
+      name: 'Road clothes',
+      itemType: 'armor',
+      equipped: true,
+      slot: 'Legs',
+      provenance: 'Worn on the Salt Road',
+      description: 'Scuffed boots, a belt with a knife loop, plain breeches and a dark wool coat with a hood. Not armor.',
+    },
+    {
       name: 'Crew Token',
       rarity: 'Common',
       itemType: 'accessory',

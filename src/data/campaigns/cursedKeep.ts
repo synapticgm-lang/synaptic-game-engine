@@ -257,6 +257,17 @@ const cursedKeepBase: CampaignBible = {
 
   starterItems: [
     {
+      id: 'ck-clothes',
+      name: 'Travelling clothes',
+      rarity: 'Common',
+      itemType: 'armor',
+      itemLevel: 1,
+      equipped: true,
+      slot: 'Legs',
+      provenance: 'Worn on the road to Greyhollow',
+      description: 'Road-worn boots, a leather belt, wool breeches and a hooded travelling cloak over the rest. Not armor.',
+    },
+    {
       id: 'ck-item-1',
       name: 'Silvered Dagger',
       rarity: 'Uncommon',
