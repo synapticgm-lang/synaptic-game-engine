@@ -27,6 +27,8 @@ import { calculateSocialModifiers, getOutcomeDescription, socialOutcomeBand } fr
 import type { OutcomeBand } from './socialCrisisTypes';
 import { leverageCue, socialLeverageMods, type LeverageMod } from './socialLeverage';
 import { skillRankOf, type CheckSkillName } from './skillRanks';
+import { ladderDc, lightNote, sceneLight, sightCheck, taskRung, type TaskKind, type TaskRung } from './rules/exploration';
+import { paceCheckAdv, travelPaceOf } from './rules/travelPace';
 
 export type CheckSkill = CheckSkillName;
 
@@ -36,6 +38,8 @@ export interface CheckContext {
   skill?: CheckSkill;
   profession?: string;
   dc: number;
+  /** Tabletop: the task's rung on the SRD DC ladder. */
+  rung?: TaskRung;
   /** Optional sticky cost on crit fail when fiction warrants (trap room, combat). */
   critFailHpRisk: number;
   /** Informational dialogue — no contested stake; do not roll. */
@@ -138,6 +142,17 @@ function dcForStrictness(base: number, strictness: GmStrictness | undefined): nu
   return shift < 0 ? Math.max(8, base + shift) : base + shift;
 }
 
+/** A tabletop sheet sets each task's DC on the SRD ladder; other modes keep their fixed DCs. */
+function onLadder(state: GameState): boolean {
+  return state.engineMode === 'dnd' && !!state.character.srd;
+}
+
+function taskDc(state: GameState, kind: TaskKind, fixed: number): { dc: number; rung?: TaskRung } {
+  if (!onLadder(state)) return { dc: dcForStrictness(fixed, state.gmStrictness) };
+  const rung = taskRung(state, kind);
+  return { dc: ladderDc(rung, state.gmStrictness), rung };
+}
+
 /**
  * Map intent + action text → attribute / skill / profession / DC.
  * Trap DCs from the current room hidden ledger override defaults when relevant.
@@ -150,16 +165,14 @@ export function resolveCheckContext(
   const t = actionText.toLowerCase();
   const node = currentDungeonNode(state.activeDungeon);
   const trap = node?.hidden?.traps.find((tr) => !tr.disarmed);
-  const strict = state.gmStrictness;
-
   if (/\b(pick\s+lock|lockpick|disarm|disable\s+trap|jimmy)\b/i.test(t) || intent.kind === 'search' && /\block|trap|chest|cache\b/i.test(t)) {
-    const dc = trap?.dc ?? dcForStrictness(13, strict);
+    const lock = trap?.dc != null ? { dc: trap.dc } : taskDc(state, 'lock', 13);
     return {
       label: 'Thievery / lock',
       attr: 'DEX',
       skill: 'thievery',
       profession: 'Engineering',
-      dc,
+      ...lock,
       critFailHpRisk: trap?.damage ?? 0,
     };
   }
@@ -179,7 +192,9 @@ export function resolveCheckContext(
       label: intent.kind === 'refuse' ? 'Refuse / protest' : 'Social',
       attr: 'CHA',
       skill: 'persuasion',
-      dc: dcForStrictness(intent.kind === 'refuse' ? 10 : 12, strict),
+      ...(intent.kind === 'refuse'
+        ? taskDc(state, 'refuse', 10)
+        : taskDc(state, requestSize(actionText) === 'risky' ? 'social-risky' : 'social-minor', 12)),
       critFailHpRisk: 0,
     };
   }
@@ -189,7 +204,7 @@ export function resolveCheckContext(
       label: 'Arcana',
       attr: 'INT',
       skill: 'arcana',
-      dc: dcForStrictness(13, strict),
+      ...taskDc(state, 'arcana', 13),
       critFailHpRisk: 0,
     };
   }
@@ -199,7 +214,7 @@ export function resolveCheckContext(
       label: 'Stealth',
       attr: 'DEX',
       skill: 'stealth',
-      dc: dcForStrictness(12, strict),
+      ...taskDc(state, 'stealth', 12),
       critFailHpRisk: 0,
     };
   }
@@ -209,7 +224,7 @@ export function resolveCheckContext(
       label: 'Athletics / strike',
       attr: 'STR',
       skill: 'athletics',
-      dc: dcForStrictness(12, strict),
+      ...taskDc(state, 'strike', 12),
       critFailHpRisk: state.activeEncounter ? 2 : 0,
     };
   }
@@ -220,7 +235,7 @@ export function resolveCheckContext(
       label: lookHard ? 'Investigation' : 'Perception',
       attr: lookHard ? 'INT' : 'WIS',
       skill: lookHard ? 'investigation' : 'perception',
-      dc: dcForStrictness(lookHard ? 13 : 12, strict),
+      ...taskDc(state, lookHard ? 'search' : 'notice', lookHard ? 13 : 12),
       critFailHpRisk: trap && !trap.revealed ? Math.min(trap.damage ?? 0, 2) : 0,
     };
   }
@@ -230,7 +245,7 @@ export function resolveCheckContext(
       label: 'Athletics',
       attr: 'STR',
       skill: 'athletics',
-      dc: dcForStrictness(12, strict),
+      ...taskDc(state, 'athletics', 12),
       critFailHpRisk: 0,
     };
   }
@@ -240,7 +255,7 @@ export function resolveCheckContext(
       label: 'Survival',
       attr: 'CON',
       skill: 'survival',
-      dc: dcForStrictness(10, strict),
+      ...taskDc(state, 'survival', 10),
       critFailHpRisk: 0,
     };
   }
@@ -249,7 +264,7 @@ export function resolveCheckContext(
     label: 'General check',
     attr: 'STR',
     skill: 'athletics',
-    dc: dcForStrictness(12, strict),
+    ...taskDc(state, 'general', 12),
     critFailHpRisk: 0,
   };
 }
@@ -318,6 +333,41 @@ export function runPlayerCheck(
     else if (auto === 'willing' && leverageSum <= -3) auto = undefined;
   }
   if (state.character.srd) adv = combineAdv(adv, conditionCheckAdv(state.character.conditions));
+  // Tabletop: the task's rung, plus what light and the travel pace did to the roll.
+  const notes: string[] = ctx.rung ? [ctx.rung] : [];
+  if (onLadder(state)) {
+    const pace = paceCheckAdv(state, ctx.skill);
+    if (pace !== 'normal') {
+      adv = combineAdv(adv, pace);
+      notes.push(`${travelPaceOf(state)} pace`);
+    }
+    if (ctx.skill === 'perception') {
+      const light = sceneLight(state);
+      const sight = sightCheck(light);
+      if (sight !== 'normal') notes.push(lightNote(light));
+      if (sight === 'disadvantage') adv = combineAdv(adv, 'disadvantage');
+      if (sight === 'blind') {
+        const label = `${ctx.label} (${notes.join('; ')})`;
+        return {
+          totalScore: 0,
+          margin: 0,
+          isSuccess: false,
+          isCriticalSuccess: false,
+          isCriticalFailure: false,
+          d20: 0,
+          modifier: 0,
+          dc: ctx.dc,
+          label: ctx.label,
+          attr: ctx.attr,
+          skill: ctx.skill,
+          codeResolutionText: `FAILURE (${ctx.label}: no roll, the PC cannot see)`,
+          narrativeOutcomeLabel: 'FAILURE',
+          skippedRoll: false,
+          displayLine: `${label}: no roll — failure`,
+        };
+      }
+    }
+  }
   if (intent.kind === 'attack' && state.activeEncounter) {
     const cat = weaponCategory(equippedWeaponName(state));
     const score = weaponFamiliarityScore(state, cat);
@@ -327,7 +377,7 @@ export function runPlayerCheck(
     cue = familiarityCue(tier);
   }
   const record = resolveCheckRecord({
-    label: ctx.label,
+    label: notes.length ? `${ctx.label} (${notes.join('; ')})` : ctx.label,
     mods,
     dc: ctx.dc,
     adv,

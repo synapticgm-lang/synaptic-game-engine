@@ -25,6 +25,7 @@ import type {
 } from './types';
 import { resolveLocalAreaLevel, resolveThreatTier } from './placeAuthority';
 import { DEFAULT_HOUSE_RULES, houseRulesOf, pillarCopies } from './rules/houseRules';
+import { hoursAtPace, paceTag } from './rules/travelPace';
 import {
   hubsForBibleId,
   isLeaveSceneAction,
@@ -770,7 +771,7 @@ function arrive(state: GameState, dest: string, hours: number, from: string): Tr
     handled: true,
     arrived: true,
     outcome: 'arrived',
-    receipt: `Travel: ${from} to ${dest} — ${clock.note}`,
+    receipt: `Travel: ${from} to ${dest}${paceTag(state)} — ${clock.note}`,
   };
 }
 
@@ -797,15 +798,16 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
     underway: true,
     outcome: 'set out',
     receipt: via
-      ? `Travel: off ${via}, now toward ${to} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`
-      : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
+      ? `Travel: off ${via}, now toward ${to}${paceTag(state)} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`
+      : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to}${paceTag(state)} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
 
 function goTo(state: GameState, from: string, dest: string, via?: string): TravelCommit {
   if (isTripHere(state, dest)) return unchanged(state);
-  const gap = mapGapBetween(state, from, dest);
-  if (gap.steps <= 0) return unchanged(state);
+  const mapped = mapGapBetween(state, from, dest);
+  if (mapped.steps <= 0) return unchanged(state);
+  const gap: MapGap = { ...mapped, hoursPerLeg: hoursAtPace(state, mapped.hoursPerLeg) };
   if (gap.steps === 1) return arrive(state, dest, gap.hoursPerLeg, via ?? from);
   return startJourney(state, from, dest, gap, via);
 }
@@ -821,7 +823,7 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     arrived: false,
     underway: true,
     outcome: 'set out',
-    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to} — leg ${legsDone} of ${j.legsTotal} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
+    receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to}${paceTag(state)} — leg ${legsDone} of ${j.legsTotal} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
 

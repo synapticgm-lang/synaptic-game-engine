@@ -262,6 +262,7 @@ export function createDefaultSettings(): Settings {
     ttRestVariant: 'standard',
     ttCritRule: 'double-dice',
     ttHeroicInspiration: true,
+    ttTravelPace: 'normal',
     preferFullResponse: false,
     fastSetupChips: false,
   };

@@ -28,6 +28,7 @@ export const DEFAULT_HOUSE_RULES: HouseRules = {
   critRule: 'double-dice',
   // A save with no Settings stamp holds none; Settings turn it on by default.
   heroicInspiration: false,
+  travelPace: 'normal',
 };
 
 const slider = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? Math.max(0, Math.min(100, Math.round(v))) : 50);
@@ -56,6 +57,7 @@ export function houseRulesFromSettings(s: Partial<Settings> | null | undefined):
     encumbrance,
     critRule: oneOf(s?.ttCritRule, ['double-dice', 'max-plus-roll', 'double-total'] as const, 'double-dice'),
     heroicInspiration: s?.ttHeroicInspiration !== false,
+    travelPace: oneOf(s?.ttTravelPace, ['fast', 'normal', 'slow'] as const, 'normal'),
   };
 }
 
@@ -120,6 +122,7 @@ export function tableRulesLine(state: Pick<GameState, 'houseRules' | 'character'
   const h = houseRulesOf(state);
   const parts = [`Rules: ${RULES_LABEL[h.rulesVersion]}`, h.progression === 'milestone' ? 'Levelling: milestone' : 'Levelling: XP'];
   if (h.heroicInspiration) parts.push(`Heroic Inspiration: ${state.character?.heroicInspiration ? 'yes' : 'no'}`);
+  parts.push(`Travel pace: ${h.travelPace}`);
   return parts.join(' · ');
 }
 

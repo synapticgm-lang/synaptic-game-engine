@@ -205,6 +205,8 @@ export interface HouseRules {
   /** Critical hit damage: dice twice (SRD), one set at maximum plus a roll, or the dice total doubled. */
   critRule: CritRule;
   heroicInspiration: boolean;
+  /** SRD Travel Pace: Fast 4 mph (Disadvantage on Perception, Survival, Stealth), Normal 3 (Stealth), Slow 2 (Advantage on Perception, Survival). */
+  travelPace: 'fast' | 'normal' | 'slow';
 }
 
 export type TabletopRulesVersion = 'srd-5.2.1' | 'srd-5.1';
@@ -1814,6 +1816,7 @@ export interface Settings {
   ttEncumbrance?: HouseRules['encumbrance'];
   ttCritRule?: CritRule;
   ttHeroicInspiration?: boolean;
+  ttTravelPace?: HouseRules['travelPace'];
   /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
   preferFullResponse?: boolean;
   /**

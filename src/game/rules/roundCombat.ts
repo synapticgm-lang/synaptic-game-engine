@@ -223,7 +223,13 @@ export interface RoundRules {
   noRiders?: boolean;
   /** The PC holds Heroic Inspiration: reroll the first failed attack roll or save (5.2.1), or Advantage on the first attack (5.1). */
   inspiration?: 'reroll' | 'advantage';
+  /** Darkness and no light carried (SRD Vision and Light): a foe without Darkvision, and the PC's sidekick or ally, have the Blinded condition. The PC's own Blinded comes in on its conditions. */
+  darkness?: boolean;
 }
+
+/** Blinded in the fight's darkness: a foe with no Darkvision, or the PC's sidekick / ally. */
+const foeBlind = (ctx: Ctx, block: StatBlock | undefined): string[] => (ctx.rules.darkness && !block?.darkvision ? ['Blinded'] : []);
+const allyBlind = (ctx: Ctx): string[] => (ctx.rules.darkness ? ['Blinded'] : []);
 
 function push(ctx: Ctx, e: CombatEvent) {
   ctx.events.push({ ...e, round: ctx.round });
@@ -352,7 +358,7 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
   const pcConds = ctx.combat.pcConditions;
   const flank = !!ctx.rules.flanking && !atk.ranged && liveFoes(ctx).length >= 2;
   const foeExtra: AdvState[] = [...(ctx.combat.dodging ? ['disadvantage' as const] : []), ...(flank ? ['advantage' as const] : [])];
-  const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, foeExtra, [], ctx.pc.conditions);
+  const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, foeExtra, foeBlind(ctx, block), ctx.pc.conditions);
   const r = rollD20WithAdv(adv, ctx.rng);
   const bane = baneRoll(ctx, foe);
   const total = r.kept + atk.toHit - (bane ?? 0);
@@ -403,7 +409,7 @@ const sidekickUp = (ctx: Ctx) => !!ctx.pc.sidekick && (ctx.combat.sidekickHp ?? 
 function foeAttackSidekick(ctx: Ctx, foe: RoundFoeState, block: StatBlock) {
   const sk = ctx.pc.sidekick!;
   const atk = block.attack;
-  const adv = attackAdv(foe.conditions, [], !!atk.ranged);
+  const adv = attackAdv(foe.conditions, [], !!atk.ranged, [], foeBlind(ctx, block), allyBlind(ctx));
   const r = rollD20WithAdv(adv, ctx.rng);
   const bane = baneRoll(ctx, foe);
   const total = r.kept + atk.toHit - (bane ?? 0);
@@ -443,7 +449,7 @@ function sidekickTurn(ctx: Ctx) {
   }
   const block = ctx.blocks[target.id]!;
   const ranged = sk.kind === 'spellcaster';
-  const adv = attackAdv([], target.conditions, ranged);
+  const adv = attackAdv([], target.conditions, ranged, [], allyBlind(ctx), foeBlind(ctx, block));
   const r = rollD20WithAdv(adv, ctx.rng);
   const total = r.kept + sk.toHit;
   const hit = r.kept === 20 || (r.kept !== 1 && total >= block.ac);
@@ -539,8 +545,8 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
     ctx.inspirationSpent = true;
     inspiration = { mode: 'advantage' };
   }
-  const adv = attackAdv(ctx.combat.pcConditions, target.conditions, s.ranged, extraAdv, ctx.pc.conditions);
   const block = ctx.blocks[target.id]!;
+  const adv = attackAdv(ctx.combat.pcConditions, target.conditions, s.ranged, extraAdv, ctx.pc.conditions, foeBlind(ctx, block));
   const critAt = ctx.pc.improvedCritical && !s.spell ? 19 : 20;
   let r = rollD20WithAdv(adv, ctx.rng);
   let bless = blessRoll(ctx);
@@ -726,7 +732,7 @@ function pcCast(ctx: Ctx, sp: PcSpell, slot: number | null, target: RoundFoeStat
 function allyAttack(ctx: Ctx, target: RoundFoeState) {
   const ally = ctx.pc.ally!;
   const block = ctx.blocks[target.id]!;
-  const adv = attackAdv([], target.conditions, false, ['advantage']);
+  const adv = attackAdv([], target.conditions, false, ['advantage'], allyBlind(ctx), foeBlind(ctx, block));
   const r = rollD20WithAdv(adv, ctx.rng);
   const total = r.kept + ally.toHit;
   const hit = r.kept === 20 || (r.kept !== 1 && total >= block.ac);

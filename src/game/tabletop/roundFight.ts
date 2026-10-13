@@ -24,6 +24,7 @@ import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
 import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
+import { sceneLight, type SceneLight } from '../rules/exploration';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName } from './combatChips';
 
 export interface RoundFightResult {
@@ -210,6 +211,18 @@ function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: '
   return { combat, blocks, labels, lead: init.events, notes: scaled.notes };
 }
 
+/** The fight's light on STATUS when the place is dark: whose light, and who is Blinded (SRD Vision and Light). */
+function fightLightNote(light: SceneLight, enc: ActiveEncounter, blocks: Record<string, StatBlock>): string {
+  const head = `Light: darkness ${light.why}`;
+  if (light.lit) return `${head} — your ${light.lit} lights the fight`;
+  const block = Object.values(blocks)[0];
+  const foeSees = !!block?.darkvision;
+  const you = light.seen === 'dark' ? 'you are Blinded (your attacks Disadvantage, attacks on you Advantage)' : 'you see by Darkvision';
+  const many = (enc.count ?? 1) > 1;
+  const them = foeSees ? `${enc.name} ${many ? 'see' : 'sees'} by Darkvision` : `${enc.name} ${many ? 'are' : 'is'} Blinded`;
+  return `${head} — ${you}; ${them}`;
+}
+
 function resumeCombat(enc: ActiveEncounter, combat: RoundCombatState): FoeSetup {
   const block = shiftedBlock(statBlockForEncounter(enc), combat.foeToHitShift ?? 0);
   const blocks = Object.fromEntries(combat.foes.map((f) => [f.id, block.id === f.blockId ? block : { ...block, id: f.blockId }]));
@@ -263,10 +276,12 @@ export function resolveRoundFight(
   const enc = working.activeEncounter ?? raw;
   const live = working.roundCombat && working.roundCombat.encounterName === enc.name ? working.roundCombat : null;
   const baseConditions = (working.character.conditions ?? []).filter((c) => !roundConditionNames(live).has(c));
-  const pc = pcCombatProfile({ ...working, character: { ...working.character, conditions: baseConditions } });
+  const light = sceneLight(working);
+  const pc = pcCombatProfile({ ...working, character: { ...working.character, conditions: baseConditions } }, light.seen === 'dark' ? ['Blinded'] : []);
   if (!pc) return null;
   const house = houseRulesOf(working);
   const started = live ? null : startCombat(enc, pc, rng, opts.surprised ?? null, house, working.character.level || 1);
+  if (started && light.ambient === 'dark') started.notes.push(fightLightNote(light, enc, started.blocks));
   const setup = live ? resumeCombat(enc, live) : started!;
   const asked = classifyRoundAction(input);
   // Facing a foe ("Face the thugs", a road meeting's fight chip) opens the fight with an attack.
@@ -297,6 +312,7 @@ export function resolveRoundFight(
       ...(house.critRule !== 'double-dice' ? { critRule: house.critRule } : {}),
       ...(solo ? { foeDamageScale: 0.75, noRiders: true } : {}),
       ...(inspiration ? { inspiration } : {}),
+      ...(light.darkness ? { darkness: true } : {}),
     },
   });
   if (opts.pre) receipts.unshift(`Fight: ${enc.name} forces the fight`);
