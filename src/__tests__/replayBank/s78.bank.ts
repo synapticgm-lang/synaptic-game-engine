@@ -150,8 +150,8 @@ describe('replay bank s78', () => {
     expect(R.prose(9)).not.toMatch(/Jax said/);
   });
 
-  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
-  it.skip('[s78 T9 | s78 #19] on leg 1 toward the Undercroft Jax does not walk toward Cathedral Close or reach the doorway', () => {
+  // Writer-quality set (John 13 Oct): checks recorded writer prose; kept out of the bank pass score (npm run writer-quality).
+  it('[writer-quality] [s78 T9 | s78 #19] on leg 1 toward the Undercroft Jax does not walk toward Cathedral Close or reach the doorway', () => {
     const j = R.before(9).journey;
     expect(j?.to, 'replay is on the road to the Undercroft').toBe('Cathedral Undercroft');
     expect(j?.from).toBe('Cathedral Close');
@@ -168,10 +168,15 @@ describe('replay bank s78', () => {
     expect((R.turnCheck(17)?.down ?? []).filter((f) => f.kind === 'action-object-missing')).toEqual([]);
   });
 
-  it('[s78 T10,T15,T20 | s78 #21] every arrival packet carries a "Moved this turn" line', () => {
+  // John 13 Oct: leaving and coming back in the same turn reads "Turned back this turn: back to <place>".
+  it('[s78 T10,T15,T20 | s78 #21] every turn-back arrival packet carries "Turned back this turn: back to <place>"', () => {
     const arr = arrivals();
     expect(arr, 'replay has the turn-back arrivals T10, T15, T20').toEqual(expect.arrayContaining([10, 15, 20]));
-    for (const n of arr) expect(R.packet(n), `T${n} arrival at ${R.after(n).currentLocation}`).toMatch(/Moved this turn/);
+    for (const n of arr) {
+      const place = R.after(n).currentLocation ?? '';
+      const line = [10, 15, 20].includes(n) ? `Turned back this turn: back to ${place}` : 'Moved this turn';
+      expect(R.packet(n), `T${n} arrival at ${place}`).toContain(line);
+    }
   });
 
   it('[s78 T15 | s78 #22] standing in the Undercroft, the way out is not "up the stairs to Cathedral Undercroft"', () => {

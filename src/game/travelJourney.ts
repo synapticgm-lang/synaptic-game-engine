@@ -401,9 +401,12 @@ export interface StretchContext {
   quietStretches: number;
 }
 
+/** The area tier from which the ground is dangerous. */
+const DANGEROUS_TIER = 3;
+
 /** Kinds that fit the ground. Monsters and villains only where the area is dangerous (tier 3+). */
 export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
-  const high = ctx.areaTier >= 3;
+  const high = ctx.areaTier >= DANGEROUS_TIER;
   const edgeOfWilds = ctx.stretch <= 1 || ctx.stretch >= ctx.legsTotal - 1;
   const pool: RoadEncounterKind[] = [];
   if (ctx.haunted) pool.push('undead', 'undead', 'undead');
@@ -438,7 +441,7 @@ export function rollRoadEncounter(
   const pool = encounterPool(ctx);
   if (!pool.length) return null;
   const kind = pool[Math.min(pool.length - 1, Math.floor(kindRoll * pool.length))];
-  const enc: RoadEncounter = { kind, level, stretch: ctx.stretch, dangerous: ctx.areaTier >= 3 };
+  const enc: RoadEncounter = { kind, level, stretch: ctx.stretch, dangerous: ctx.areaTier >= DANGEROUS_TIER };
   if (FIGHT_KINDS.has(kind) && spawnRoll < RARE_SPAWN_CHANCE) enc.rare = true;
   if (kind === 'camp' && spawnRoll < CAMP_MINI_BOSS_CHANCE) enc.miniBoss = true;
   return enc;
@@ -491,16 +494,20 @@ export function roadFoe(enc: RoadEncounter): ActiveEncounter {
   };
 }
 
-/** Encounter level from the area tier by the treasure rule (tier â†’ level, clamped to party Â±3). */
+/**
+ * Encounter level from the area tier by the treasure rule (tier â†’ level, clamped to party Â±3).
+ * Ordinary ground (below the dangerous tier) meets the player at most one level above them.
+ */
 export function roadEncounterLevel(state: GameState, areaTier: number): number {
-  return resolveLocalAreaLevel({
+  const area = resolveLocalAreaLevel({
     ...state,
     activeDungeon: null,
     locationSheet: null,
     places: [],
     journey: null,
     threatTier: areaTier,
-  }).level;
+  });
+  return areaTier >= DANGEROUS_TIER ? area.level : Math.min(area.level, area.partyLevel + 1);
 }
 
 function hashUnit(key: string): number {

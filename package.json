@@ -14,6 +14,7 @@
     "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
     "fate-autoplay": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/run.ts --",
     "replay-bank": "vitest run --config vitest.replayBank.config.ts",
+    "writer-quality": "vitest run --config vitest.writerQuality.config.ts",
     "fact-check": "node scripts/factCheck.mjs",
     "fate-autoplay:detach": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fate-autoplay/start-detached.ps1",
     "fate-dual-review": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/dualReview.ts --",

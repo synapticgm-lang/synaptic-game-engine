@@ -1,4 +1,4 @@
-﻿import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { filterInventedContextChoices } from '../../game/choiceWarden';
 import { reconcileXpStatusLines } from '../../game/systemLog';
 import { MOJIBAKE, Replay } from './bank';
@@ -99,8 +99,8 @@ describe('replay bank s79', () => {
     expect(R.noteText(15)).not.toMatch(/Scene Manifest invent: Fine Longsword/);
   });
 
-  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
-  it.skip('[s79 T8,T17 | s79 Root D #10] carried items are not narrated as worn', () => {
+  // Writer-quality set (John 13 Oct): checks recorded writer prose; kept out of the bank pass score (npm run writer-quality).
+  it('[writer-quality] [s79 T8,T17 | s79 Root D #10] carried items are not narrated as worn', () => {
     const worn = (n: number) => (R.before(n).inventory ?? []).filter((i) => i.equipped).map((i) => i.name);
     expect(worn(8), 'tabard is carried, not worn, on T8').not.toContain('visitor’s tabard');
     expect(worn(17), 'longsword is carried, not worn, on T17').not.toContain('Fine Longsword');
@@ -196,8 +196,8 @@ describe('replay bank s79', () => {
     }
   });
 
-  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
-  it.skip('[s79 T19 | s79 #10 writerInfoLayer #23] voice notes do not become looks on a beat with no speech', () => {
+  // Writer-quality set (John 13 Oct): checks recorded writer prose; kept out of the bank pass score (npm run writer-quality).
+  it('[writer-quality] [s79 T19 | s79 #10 writerInfoLayer #23] voice notes do not become looks on a beat with no speech', () => {
     expect(R.packet(19), 'T19 packet prints the voice notes').toMatch(/speaks: grave, restrained, unexpectedly gentle/);
     expect(R.prose(19), 'no speech on T19').not.toMatch(/"/);
     expect(R.prose(19)).not.toMatch(/grave, gentle stare/);

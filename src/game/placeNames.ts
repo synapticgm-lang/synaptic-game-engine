@@ -15,6 +15,8 @@ import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
 
 const LEAD = /^(?:(?:alone|just|standing|kneeling|waking)\s+)?(?:(?:in|inside|at|on|by|near|under)\s+)?(?:the|a|an)\s+/i;
+/** How the player is in the place ("alone in", "kneeling at"): the card's words, not part of the place's name. */
+const POSTURE = /^(?:alone|just|standing|kneeling|waking)\s+(?:in|inside|at|on|by|near|under)\s+(?=(?:the|a|an)\s+)/i;
 const CLAUSE = /\s+(?:after|beyond|at|on|in|under|beneath|inside|beside|within|near|with|by|where|while|from|behind|outside|during|before|over|above|below|past|of|off|for|to|as)\b.*$/i;
 const FILLER = new Set(['the', 'and', 'with', 'from', 'into', 'over', 'under', 'beyond', 'after', 'near']);
 
@@ -105,7 +107,7 @@ export function openingPlaceRecord(
   description: string,
   hookBlob = ''
 ): { place: string; parentHub?: string } {
-  const raw = description.replace(/\s+/g, ' ').trim();
+  const raw = description.replace(/\s+/g, ' ').trim().replace(POSTURE, '');
   const hubs = hubsForBibleId(bibleId);
   const short = shortPlaceName(bibleId, raw, hookBlob) ?? raw;
   const mentioned = mentionedHub(hubs, raw);

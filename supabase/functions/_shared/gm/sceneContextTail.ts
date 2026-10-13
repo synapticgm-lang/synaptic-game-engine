@@ -34,8 +34,15 @@ const DEPARTURE_FAREWELL =
 const HERE_ACTOR =
   /\b(?:waits?|stands?|looks? up|nods?|asks?|says?|greets?|watches? you(?!\s+go)|steps?|holds?)\b/i;
 
-const OPENING_PIN_ROLE =
-  /\b(?:handler|priests?|scale priests?)\b/i;
+const OPENING_PIN_ROLE = 'handler|priests?|scale priests?';
+
+/** A word that makes the name after it its object ("the job from Harn"), not the one acting. */
+const OBJECT_OF = '(?<!\\b(?:from|to|for|with|of|by|about|toward|towards|at|in|on|after|behind|past)\\s+(?:the\\s+)?)';
+
+/** The name is the subject of a here-verb: not the object of a preposition, and the verb follows within three words. */
+function actsHereAsSubject(sentence: string, name: string): boolean {
+  return new RegExp(`${OBJECT_OF}\\b(?:${name})\\b(?:[\\s,]+[\\w'’-]+){0,2}?[\\s,]+${HERE_ACTOR.source}`, 'i').test(sentence);
+}
 
 const FIGHT_BLEED =
   /\b(blade|throat|handspan|skirmisher|mid-arc|press(?:es)? the attack|parry|lunges?)\b/i;
@@ -293,7 +300,7 @@ export function isLeftBehindActingHere(state: GameState, text: string): boolean 
   );
   if (!names.length) return false;
   return splitProseSentences(withoutTalkAbout(body)).some((sentence) =>
-    HERE_ACTOR.test(sentence) && names.some((name) => new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(sentence))
+    names.some((name) => actsHereAsSubject(sentence, escapeRe(name)))
   );
 }
 
@@ -342,12 +349,10 @@ function openingPinActsHere(body: string, state: GameState): boolean {
   }
   const pins = openingPinNames(state).filter((pin) => pin.length >= 3);
   // Quoted words are talk: a speaker recalling "the priests" or "the Close steps" puts no pin in this room.
-  return splitProseSentences(withoutTalkAbout(body)).some((sentence) => {
-    const pinHit =
-      OPENING_PIN_ROLE.test(sentence)
-      || pins.some((pin) => new RegExp(`\\b${escapeRe(pin)}\\b`, 'i').test(sentence));
-    return pinHit && HERE_ACTOR.test(sentence);
-  });
+  const names = [OPENING_PIN_ROLE, ...pins.map(escapeRe)];
+  return splitProseSentences(withoutTalkAbout(body)).some((sentence) =>
+    names.some((name) => actsHereAsSubject(sentence, name))
+  );
 }
 
 /**

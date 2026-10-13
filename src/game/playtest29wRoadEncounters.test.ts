@@ -45,9 +45,9 @@ function tripsTo(dest: string, n = 200) {
 }
 
 describe('29w stamps', () => {
-  it('HUD and BUILD are 2026-10-13e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13e');
-    expect(BUILD_STAMP).toBe('2026-10-13e');
+  it('HUD and BUILD are 2026-10-13f and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13f');
+    expect(BUILD_STAMP).toBe('2026-10-13f');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -114,8 +114,10 @@ describe('29w — level follows the area (treasure rule)', () => {
   it('a higher-tier area gives a higher encounter level, same as treasure', () => {
     const s = keepState('lvl', 1);
     expect(roadEncounterLevel(s, 1)).toBeLessThan(roadEncounterLevel(s, 2));
-    const treasure = resolveLocalAreaLevel({ ...s, locationSheet: null, places: [], threatTier: 2 }).level;
-    expect(roadEncounterLevel(s, 2)).toBe(treasure);
+    const treasure = (tier: number) => resolveLocalAreaLevel({ ...s, locationSheet: null, places: [], threatTier: tier }).level;
+    // Lap 53: ordinary ground meets the player at most one level above them; dangerous ground (tier 3+) is the treasure level.
+    expect(roadEncounterLevel(s, 2)).toBe(Math.min(treasure(2), 2));
+    expect(roadEncounterLevel(s, 3)).toBe(treasure(3));
     const hit = tripsTo('Blackspine Treeline').find((t) => t.state.journey?.encounter);
     expect(hit!.state.journey!.encounter!.level).toBe(roadEncounterLevel(hit!.state, 2));
   });
