@@ -6,6 +6,7 @@ import { skillLabel } from './skillGates';
 import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
 import { hidesPart } from './systemHousing';
 import { classDisplayName } from './rules/characterClass';
+import { unspentStatPoints } from './rules/abilityPoints';
 import type { AttributeKey, GameState, Rarity } from './types';
 
 const ATTRIBUTE_KEYS: AttributeKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
@@ -18,6 +19,8 @@ export interface ProgressPanel {
   xp: { xp: number; toNext: number } | null;
   /** The class as the mode names it; null with no class or when the housing hides the level. */
   className: string | null;
+  /** Free stat points waiting (rules/abilityPoints); 0 when the housing hides the level. */
+  statPointsToSpend: number;
   items: { id: string; name: string; rarity: Rarity; quantity: number; equipped: boolean }[];
 }
 
@@ -37,5 +40,6 @@ export function progressPanel(state: GameState): ProgressPanel {
   const items = (state.inventory ?? [])
     .map((it) => ({ id: it.id, name: it.name, rarity: it.rarity, quantity: it.quantity, equipped: !!it.equipped }))
     .sort((a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity));
-  return { attributes, skills, level, xp, className, items };
+  const statPointsToSpend = hidesPart(housing, 'level') ? 0 : unspentStatPoints(state);
+  return { attributes, skills, level, xp, className, statPointsToSpend, items };
 }

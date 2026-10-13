@@ -26,6 +26,7 @@ import {
   tabletopMaxHp,
 } from '../tabletop/characterBuild';
 import { modeProfile } from './modeProfile';
+import { raiseAbilities } from './abilityPoints';
 
 export interface SrdLevelUpInfo {
   level: number;
@@ -74,16 +75,10 @@ export function srdLevelUp(character: Character, toLevel: number, rng: Rng = Mat
   const asiList = [...(sheet.asi ?? [])];
   if ((CLASS_LEVEL_FEATURES[sheet.classId][toLevel] ?? []).includes('Ability Score Improvement')) {
     const bonus = autoAsi(attributes, cls.priority);
-    const after = { ...attributes };
-    for (const k of ABILITY_KEYS) if (bonus[k]) after[k] = Math.min(20, after[k] + bonus[k]!);
-    const keys = ABILITY_KEYS.filter((k) => bonus[k]);
-    asi = {
-      bonus,
-      before: Object.fromEntries(keys.map((k) => [k, attributes[k]])) as Partial<Attributes>,
-      after: Object.fromEntries(keys.map((k) => [k, after[k]])) as Partial<Attributes>,
-    };
+    const raise = raiseAbilities(attributes, bonus);
+    asi = { bonus, before: raise.before, after: raise.after };
     asiList.push({ level: toLevel, bonus });
-    attributes = after;
+    attributes = raise.attributes;
   }
   const nextSheet = { ...sheet, hpGains: gains, ...(asiList.length ? { asi: asiList } : {}) };
   const maxBefore = character.maxHp ?? tabletopMaxHp(sheet, character.attributes.CON, fromLevel);

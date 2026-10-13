@@ -13,7 +13,8 @@ import { buildLifecycleSituationSection } from './npcLifecycleFsm.ts';
 import { gateFactLines } from './skillGates.ts';
 import { skillRanksOf } from './skillRanks.ts';
 import { gearAuthorityLine } from './infoSheet.ts';
-import { writerFacts } from './systemHousing.ts';
+import { hidesPart, writerFacts } from './systemHousing.ts';
+import { litrpgClassName } from './litrpgClassNames.ts';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
@@ -49,6 +50,8 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   const progressLine = isTabletop
     ? `Level: ${c.level} | Do not mention Integration, Wave, Salvage, Foundation Core, or First Blood.`
     : `Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}`;
+  const className = state.engineMode === 'litrpg' && !hidesPart(state.systemHousing, 'level') ? litrpgClassName(c) : null;
+  const classLines = className ? [`Class: ${className}`] : [];
 
   // Health and mana figures live in the System window and STATUS, never in the writer's facts.
   if (housed) {
@@ -63,6 +66,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       ...(!compact && facts.containers.length ? [`Containers: ${containerInfo}`] : []),
       `Status Effects: ${statusList}`,
       ...facts.blocks,
+      ...classLines,
       '===================================',
     ].join('\n');
   }
@@ -84,6 +88,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       header,
       `Gold: ${state.gold ?? 0}`,
       isTabletop ? `Level: ${c.level}` : progressLine,
+      ...classLines,
       `Location: ${playerFacingLocation(state)}`,
       `Equipped Gear: ${equippedGear}`,
       `Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)`,
@@ -101,7 +106,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   return `${header}
 Gold: ${state.gold ?? 0}
 ${progressLine}
-Location: ${playerFacingLocation(state)}
+${classLines.map((l) => `${l}\n`).join('')}Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
 ${pocketLine ? pocketLine + '\n' : ''}${gearAuthorityLine(state) ? gearAuthorityLine(state) + '\n' : ''}Active Companions: ${companions}

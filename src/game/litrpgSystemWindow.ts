@@ -6,6 +6,11 @@ import { isLedgerReadAction } from './completedEventPacket';
 import { characterNameIsGeneric, hallTalkAsksPanel } from './openingEstablishment';
 import { UNNAMED_ADVENTURER, sanitizePcName } from './pcNameAuthority';
 import { isPartOn, writerFacts, type SystemPartId } from './systemHousing';
+import { classDisplayName } from './rules/characterClass';
+import { unspentStatPoints } from './rules/abilityPoints';
+import { ABILITY_KEYS } from './tabletop/characterBuild';
+import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
+import { skillLabel } from './skillGates';
 import type { GameState, LogEntry } from './types';
 
 export interface LitrpgSystemWindow {
@@ -75,7 +80,7 @@ export function shouldAttachLitrpgSystemWindow(args: {
   if (playerAskedAboutSystemPanel(args.playerInput ?? '')) return true;
   if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
-  if ((args.systemLog ?? []).some((l) => /level\s*up/i.test(l))) return true;
+  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:/i.test(l))) return true;
   return false;
 }
 
@@ -91,6 +96,8 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   const on = (part: SystemPartId) => !housing || isPartOn(housing, part);
   const lines: string[] = [`Name: ${name ?? '—'}`];
   if (on('level')) lines.push(`Level ${c?.level ?? 1}`);
+  const className = on('level') ? classDisplayName(state) : null;
+  if (className) lines.push(`Class: ${className}`);
   if (on('health')) lines.push(`HP ${c?.hp ?? 0} / ${c?.maxHp ?? 0}`);
   if (on('power_pool') && typeof c?.mp === 'number' && (c.maxMp ?? 0) > 0) {
     lines.push(`MP ${c.mp} / ${c.maxMp}`);
@@ -101,6 +108,16 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   if (housing && isPartOn(housing, 'pocket')) {
     lines.push(pocketLine(state, housing.housing === 'worn_device'));
   }
+  if (on('level')) {
+    const stats = statsLine(state);
+    if (stats) lines.push(stats);
+  }
+  if (on('skills')) {
+    const skills = topSkillsLine(state);
+    if (skills) lines.push(skills);
+  }
+  const title = c?.activeTitle?.trim();
+  if (title) lines.push(`Title: ${title}`);
   if (state.campaignBibleId === 'summoned-pact') {
     lines.push(registered ? 'Registration: designation locked' : 'Registration: incomplete');
     lines.push('Mark: Pactborn / Calamity Mark — unresolved');
@@ -112,6 +129,30 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   }
   if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
   return { heading: 'SYSTEM', lines };
+}
+
+/** The window never runs past this many lines (it prints at most 14). */
+export const SYSTEM_WINDOW_MAX_LINES = 15;
+const TOP_SKILLS = 3;
+
+/** Core stats from the engine's ability scores, with any free stat points still waiting. */
+function statsLine(state: GameState): string | null {
+  const a = state.character?.attributes;
+  if (!a) return null;
+  const scores = ABILITY_KEYS.filter((k) => typeof a[k] === 'number').map((k) => `${k} ${a[k]}`);
+  if (!scores.length) return null;
+  const waiting = unspentStatPoints(state);
+  const tail = waiting ? ` (${waiting} point${waiting > 1 ? 's' : ''} to spend)` : '';
+  return `Stats: ${scores.join(', ')}${tail}`;
+}
+
+/** The highest engine skill ranks (rank above 0), most first. */
+function topSkillsLine(state: GameState): string | null {
+  const ranks = skillRanksOf(state.character);
+  const top = CHECK_SKILLS.filter((s) => ranks[s] > 0)
+    .sort((x, y) => ranks[y] - ranks[x])
+    .slice(0, TOP_SKILLS);
+  return top.length ? `Skills: ${top.map((s) => `${skillLabel(s)} ${ranks[s]}`).join(', ')}` : null;
 }
 
 /**
@@ -162,6 +203,17 @@ function windowField(line: string): [string, string] {
   return m ? [m[1]!, m[2]!.trim()] : [line.trim(), ''];
 }
 
+/** "STR 12, DEX 14 (1 point to spend)" → only the scores that moved ("STR 12 → 13"), and the waiting points. */
+function statsChange(was: string, now: string): string {
+  const scores = (v: string) => new Map([...v.matchAll(/\b([A-Z]{3}) (\d+)/g)].map((m) => [m[1]!, m[2]!]));
+  const a = scores(was);
+  const out: string[] = [];
+  for (const [k, v] of scores(now)) if (a.get(k) !== v) out.push(`${k} ${a.get(k) ?? '—'} → ${v}`);
+  const points = (v: string) => v.match(/\((\d+) points? to spend\)/)?.[1] ?? '0';
+  if (points(was) !== points(now)) out.push(`points to spend ${points(was)} → ${points(now)}`);
+  return `Stats ${out.join(', ')}`;
+}
+
 function shortChange(was: string, now: string): [string, string] {
   const a = was.match(/^(\d+)\s*\/\s*(\d+)$/);
   const b = now.match(/^(\d+)\s*\/\s*(\d+)$/);
@@ -190,6 +242,7 @@ export function ledgerReadChanges(state: GameState): string[] | null {
     seen.add(k);
     const old = was.get(k);
     if (old === undefined) out.push(line);
+    else if (old !== v && k === 'Stats') out.push(statsChange(old, v));
     else if (old !== v) {
       const [a, b] = shortChange(old, v);
       out.push(`${k} ${a} → ${b}`);

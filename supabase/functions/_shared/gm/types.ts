@@ -324,6 +324,10 @@ export interface Character {
   skillsGrantedThrough?: number;
   /** Class with no tabletop sheet (LitRPG): the same SRD class data; a sheet's `srd.classId` wins. */
   classId?: TabletopClassId;
+  /** LitRPG free stat points spent (rules/abilityPoints), like a sheet's ASI list; unspent = earned − these. */
+  statAllocations?: { level: number; bonus: Partial<Attributes> }[];
+  /** The title the System shows on the window; unset until a title is earned. */
+  activeTitle?: string;
   /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */
   srd?: TabletopSheet;
   /** Tabletop caster's spent slots and lasting spells (rules/spells). */

@@ -12,29 +12,11 @@ import { mulberry32 } from '../fatePick';
 import { hidesPart } from '../systemHousing';
 import { skillRankOf, type CheckSkillName } from '../skillRanks';
 import { skillLabel } from '../skillGates';
+import { LITRPG_CLASS, type LitrpgClassEntry } from '../litrpgClassNames';
 
-export interface LitrpgClassView {
+export interface LitrpgClassView extends LitrpgClassEntry {
   id: TabletopClassId;
-  name: string;
-  role: string;
-  /** One check skill from the class's SRD skill list; the class grants one rank in it. */
-  startingSkill: CheckSkillName;
 }
-
-const LITRPG_CLASS: Record<TabletopClassId, Omit<LitrpgClassView, 'id'>> = {
-  fighter: { name: 'Warrior', role: 'front-line fighter', startingSkill: 'athletics' },
-  rogue: { name: 'Rogue', role: 'scout and lock-breaker', startingSkill: 'thievery' },
-  cleric: { name: 'Cleric', role: 'healer', startingSkill: 'persuasion' },
-  wizard: { name: 'Mage', role: 'arcane caster', startingSkill: 'arcana' },
-  barbarian: { name: 'Berserker', role: 'bruiser', startingSkill: 'athletics' },
-  bard: { name: 'Bard', role: 'support and talker', startingSkill: 'persuasion' },
-  druid: { name: 'Druid', role: 'nature caster', startingSkill: 'survival' },
-  monk: { name: 'Monk', role: 'unarmed striker', startingSkill: 'stealth' },
-  paladin: { name: 'Paladin', role: 'holy guardian', startingSkill: 'persuasion' },
-  ranger: { name: 'Hunter', role: 'tracker and archer', startingSkill: 'survival' },
-  sorcerer: { name: 'Sorcerer', role: 'innate caster', startingSkill: 'arcana' },
-  warlock: { name: 'Warlock', role: 'pact caster', startingSkill: 'investigation' },
-};
 
 /** The SRD skill each check skill stands for (thievery is Sleight of Hand). */
 export const CHECK_SKILL_SRD: Record<CheckSkillName, string> = {

@@ -129,6 +129,11 @@ function StatusMode({ state }: { state: GameState }) {
           <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
             <Zap size={13} />
             Attributes
+            {p.statPointsToSpend > 0 && (
+              <span className="ml-auto text-[10px] normal-case text-sky-300" data-testid="progress-stat-points">
+                {p.statPointsToSpend} point{p.statPointsToSpend > 1 ? 's' : ''} to spend
+              </span>
+            )}
           </h3>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {p.attributes.map((s) => (

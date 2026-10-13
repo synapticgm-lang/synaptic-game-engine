@@ -97,6 +97,7 @@ const FILES = [
   'npcRoleRegistry.ts',
   'npcLifecycleFsm.ts',
   'writerInfoLayer.ts',
+  'litrpgClassNames.ts',
   'openRouterChat.ts',
   'proseSentences.ts',
   'skillRanks.ts',

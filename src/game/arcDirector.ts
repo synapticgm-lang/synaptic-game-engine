@@ -68,6 +68,7 @@ import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
 import { settleClassChoice } from './rules/characterClass';
+import { settleStatPoints } from './rules/abilityPoints';
 import { resolveOutOfCombatCast } from './tabletop/spellCasting';
 import { resolveDowntimeTurn } from './tabletop/downtimeTurn';
 import { isLookAroundAction } from './sandboxXp';
@@ -713,7 +714,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class):/.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats):/.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
@@ -808,6 +809,13 @@ export function runArcDirectorBeforeGm(
     systemReceipts.push(...cls.receipts);
     if (cls.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${cls.fact}`);
     downtimeSettled = cls.settled;
+    if (!downtimeSettled) {
+      const stats = settleStatPoints(working, playerInput);
+      working = stats.state;
+      systemReceipts.push(...stats.receipts);
+      if (stats.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${stats.fact}`);
+      downtimeSettled = stats.settled;
+    }
   }
 
   // Tabletop: a spell cast outside a fight (healing, Mage Armor, a utility cantrip). Fights cast in rounds.
