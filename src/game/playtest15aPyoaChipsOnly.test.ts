@@ -23,8 +23,8 @@ function pyoaState(over: Partial<GameState> = {}): GameState {
 
 describe('playtest15a — PYOA chips only', () => {
   it('HUD/BUILD are 15a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13r');
-    expect(BUILD_STAMP).toBe('2026-10-13r');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13s');
+    expect(BUILD_STAMP).toBe('2026-10-13s');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

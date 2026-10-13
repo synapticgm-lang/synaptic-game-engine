@@ -15,6 +15,7 @@
 import type {
   ActiveEncounter,
   GameState,
+  HouseRules,
   JourneyTerrain,
   RoadEncounter,
   RoadEncounterKind,
@@ -23,6 +24,7 @@ import type {
   WorldAtlasState,
 } from './types';
 import { resolveLocalAreaLevel, resolveThreatTier } from './placeAuthority';
+import { DEFAULT_HOUSE_RULES, houseRulesOf, pillarCopies } from './rules/houseRules';
 import {
   hubsForBibleId,
   isLeaveSceneAction,
@@ -424,6 +426,19 @@ export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
   return pool;
 }
 
+const SOCIAL_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting']);
+
+/**
+ * The pool with each kind repeated by its pillar slider (Combat for fights, Social for people who talk,
+ * Exploration for wildlife and camps), in the same order. At 50/50/50 the pick is the unweighted pool's.
+ */
+export function weightedEncounterPool(pool: RoadEncounterKind[], rules: Pick<HouseRules, 'combatFrequency' | 'socialRoleplay' | 'worldBuilding'>): RoadEncounterKind[] {
+  const copies = (k: RoadEncounterKind) =>
+    pillarCopies(FIGHT_KINDS.has(k) ? rules.combatFrequency : SOCIAL_KINDS.has(k) ? rules.socialRoleplay : rules.worldBuilding);
+  const out = pool.flatMap((k) => Array<RoadEncounterKind>(copies(k)).fill(k));
+  return out.length ? out : pool;
+}
+
 /**
  * One roll per stretch. `chanceRoll`, `kindRoll` and `spawnRoll` are in [0, 1).
  * `spawnRoll` decides a rare spawn (hostile kinds) or a camp mini-boss; 1 = neither.
@@ -434,11 +449,12 @@ export function rollRoadEncounter(
   level: number,
   chanceRoll: number,
   kindRoll: number,
-  spawnRoll = 1
+  spawnRoll = 1,
+  rules: Pick<HouseRules, 'combatFrequency' | 'socialRoleplay' | 'worldBuilding'> = DEFAULT_HOUSE_RULES
 ): RoadEncounter | null {
   const chance = ctx.quietStretches >= MAX_QUIET ? 1 : ENCOUNTER_CHANCE + QUIET_STEP * ctx.quietStretches;
   if (chanceRoll >= chance) return null;
-  const pool = encounterPool(ctx);
+  const pool = weightedEncounterPool(encounterPool(ctx), rules);
   if (!pool.length) return null;
   const kind = pool[Math.min(pool.length - 1, Math.floor(kindRoll * pool.length))];
   const enc: RoadEncounter = { kind, level, stretch: ctx.stretch, dangerous: ctx.areaTier >= DANGEROUS_TIER };
@@ -536,7 +552,8 @@ function rollStretch(state: GameState, j: TravelJourney): TravelJourney {
     roadEncounterLevel(state, areaTier),
     hashUnit(`${key}|chance`),
     hashUnit(`${key}|kind`),
-    engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1
+    engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1,
+    houseRulesOf(state)
   );
   if (encounter && GROUP_KINDS.has(encounter.kind)) {
     encounter.count = 2 + Math.floor(hashUnit(`${key}|count`) * 3);

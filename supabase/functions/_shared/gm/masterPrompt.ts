@@ -185,18 +185,27 @@ Configured GM VOICE PROFILE personality (chilled, theatrical, army, etc.)
   • OSR telegraphed danger: warn in fiction before traps bite
   • Fail forward: misses cost/complicate but advance scene
 
-【 MECHANICS DISPLAY 】
+【 THE ENGINE ROLLS — RULES IT RUNS 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TRANSPARENT DICE (this mode shows math):
-  ✓ Strength Check: d20(14) + Mod(2) = 16 vs DC 12 — Success
-  ✓ Attack Roll: d20(8) + 5 = 13 vs AC 15 — Miss
-  ✓ Display in <system-log> after narrative
+The roll is already made. The game shows every roll to the player on its own STATUS panel.
+You only narrate the ENGINE RESULT / ENGINE OUTCOME you are given. What the engine runs:
+  • Fights go round by round in initiative order; the player picks one action a round:
+    Attack, Cast a spell, Dodge, Disengage, Help, Hide, drink a potion, or Flee.
+  • Attacks hit or miss against Armor Class; a natural 20 is a critical hit, a natural 1 always misses.
+  • Foes are the engine's own creatures with fixed stats; conditions (prone, poisoned, frightened…) come from it.
+  • Running without Disengage lets foes strike as you go.
+  • At 0 HP you fall unconscious and make death saves each turn: three successes stabilise you,
+    three failures kill you, a natural 20 brings you back with 1 HP.
+  • Spells use spell slots; concentration ends when a new concentration spell starts or a save breaks it.
+  • Short rest (1 hour) spends Hit Dice; long rest (8 hours) restores HP and spell slots.
+  • Skill checks are rolled by the engine when an action calls for one, with advantage or disadvantage as it decides.
 
-CODE OWNS THE DICE. YOU WRITE THE CAMERA:
-  • Do NOT invent hit/miss/damage totals
-  • Do NOT invent extra NPCs, enemies, items
-  • Narrate the outcome token engine already resolved
-  • Failures stick (don't retcon a miss)
+DO NOT:
+  ✗ Write dice, totals, DCs, AC, HP numbers, XP, gold amounts or a <system-log> / roll line
+  ✗ Ask the player to roll or call for a check
+  ✗ Decide hit, miss, damage, death or loot yourself; failures stick (don't retcon a miss)
+  ✗ Add bonus actions, reactions, movement squares or a grid the engine did not report
+  ✗ Invent extra NPCs, enemies or items
 
 【 TURN STRUCTURE TEMPLATE 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -208,13 +217,7 @@ CODE OWNS THE DICE. YOU WRITE THE CAMERA:
    You approach the table. The lead figure — scarred face, guild badge 
    — gestures to an empty chair. "We've been expecting you."
 
-3. MECHANICS LOG (transparent check math + results)
-   <system-log>
-   Insight Check: d20(15) + Mod(3) = 18 vs DC 14 — Success
-   You sense they're testing your nerve.
-   </system-log>
-
-4. CHOICES (3-4 grounded options)
+3. CHOICES (3-4 grounded options)
    1. Sit and hear them out
    2. Demand answers first
    3. Walk away from the table
@@ -226,6 +229,16 @@ CODE OWNS THE DICE. YOU WRITE THE CAMERA:
   ✗ Modern items (phones, cars, streetlights) in prompts
   ✗ Invent stat blocks or extra rolls code didn't request
 `;
+
+/** Tabletop: the engine shows every roll on STATUS, so the shared turn structure loses its mechanics log. */
+function turnStructureFor(mode: GameState['engineMode']): string {
+  if (mode !== 'dnd') return TURN_STRUCTURE;
+  return TURN_STRUCTURE.replace('   • D&D: none here (use <system-log> for checks)', '   • Tabletop: none (the engine shows every roll on STATUS)')
+    .replace(
+      /3\. MECHANICS LOG \(after prose, mode-specific format\)(\r?\n) {3}<system-log>\r?\n {3}\[Mode-appropriate mechanics here\]\r?\n {3}<\/system-log>\r?\n/,
+      '3. MECHANICS LOG: none in tabletop — never write a <system-log>.$1'
+    );
+}
 
 const MODE_RPG = `
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -529,7 +542,7 @@ ${modeBlock}
 ${formatGoldShapeForPrompt(state.engineMode)}
 ${formatLikedKeeperForPrompt(state.engineMode, state.craftKeepers)}
 
-${TURN_STRUCTURE}
+${turnStructureFor(state.engineMode)}
 
 ${storyExamplesInPov(OUTPUT_FORMATTING, pov)}
 

@@ -162,6 +162,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
+import { withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
@@ -1144,7 +1145,7 @@ export async function headlessFateTurn(
 
   const govInputState = processMetaInput(state, playerInput).state;
 
-  let arcState = govInputState;
+  let arcState = withHouseRules(govInputState, settings);
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
   let arcBlock = '';

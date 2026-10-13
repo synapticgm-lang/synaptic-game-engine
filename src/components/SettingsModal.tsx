@@ -78,7 +78,10 @@ const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
 ];
 
 export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onDownloadTranscript, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false, accountEmail = null }: Props) {
-  const [draft, setDraft] = useState<Settings>(settings);
+  // The running game's strictness is the one the engine reads; the card edits that.
+  const [draft, setDraft] = useState<Settings>(() =>
+    gameState?.gmStrictness ? { ...settings, gmStrictness: gameState.gmStrictness } : settings
+  );
   const [customRulesDraft, setCustomRulesDraft] = useState(gameState?.customTabletopRules ?? '');
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [storyNameDraft, setStoryNameDraft] = useState(storyName);
@@ -822,7 +825,10 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           )}
 
           {/* GM Strictness */}
-          <Section icon={<Gauge size={16} />} title="GM Strictness" visible={activeTab === 'mechanics'}>
+          <Section icon={<Gauge size={16} />} title="GM Strictness" visible={activeTab === 'mechanics' && isDnd && !!gameState}>
+            <p className="mb-2 text-xs text-slate-500">
+              Sets this campaign&apos;s difficulty: check DCs, loot, XP and recovery. Same setting you picked at New Game.
+            </p>
             <div className="grid grid-cols-3 gap-2">
               <ChoiceCard label="Forgiving" sublabel="Story-first" selected={draft.gmStrictness === 'forgiving'} onClick={() => update('gmStrictness', 'forgiving' as GmStrictness)} />
               <ChoiceCard label="Standard" sublabel="Balanced" selected={draft.gmStrictness === 'standard'} onClick={() => update('gmStrictness', 'standard' as GmStrictness)} />
@@ -865,41 +871,13 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           </Section>
 
           {/* Stat Block Verbosity */}
-          <Section icon={<BarChart3 size={16} />} title="Stat Block Verbosity" visible={activeTab === 'mechanics'}>
-            <ToggleRow
-              icon={<BarChart3 size={15} />}
-              label="Reading Stat Screens"
-              description="Allow the GM to render LitRPG character-stat readouts"
-              checked={draft.statScreensEnabled}
-              onChange={(value) => update('statScreensEnabled', value)}
-            />
-            <div className="text-xs text-slate-500 mb-2">Controls how much detail is shown when the AI prints your character stats.</div>
+          <Section icon={<BarChart3 size={16} />} title="Status Panel Detail" visible={activeTab === 'mechanics'}>
+            <div className="text-xs text-slate-500 mb-2">How much of the STATUS panel shows under each turn.</div>
             <div className="grid grid-cols-3 gap-2">
-              <ChoiceCard label="Detailed" sublabel="Full stat block" selected={draft.statVerbosity === 'detailed'} onClick={() => update('statVerbosity', 'detailed' as StatVerbosity)} disabled={!draft.statScreensEnabled} />
-              <ChoiceCard label="Core Only" sublabel="HP/MP/Level" selected={draft.statVerbosity === 'core'} onClick={() => update('statVerbosity', 'core' as StatVerbosity)} disabled={!draft.statScreensEnabled} />
-              <ChoiceCard label="Minimal" sublabel="HP/MP inline" selected={draft.statVerbosity === 'minimal'} onClick={() => update('statVerbosity', 'minimal' as StatVerbosity)} disabled={!draft.statScreensEnabled} />
+              <ChoiceCard label="Detailed" sublabel="Every line" selected={draft.statVerbosity === 'detailed'} onClick={() => update('statVerbosity', 'detailed' as StatVerbosity)} />
+              <ChoiceCard label="Core Only" sublabel="Key lines" selected={draft.statVerbosity === 'core'} onClick={() => update('statVerbosity', 'core' as StatVerbosity)} />
+              <ChoiceCard label="Minimal" sublabel="Hidden" selected={draft.statVerbosity === 'minimal'} onClick={() => update('statVerbosity', 'minimal' as StatVerbosity)} />
             </div>
-          </Section>
-
-          {/* Stat Block Frequency */}
-          <Section icon={<Clock size={16} />} title="Stat Block Frequency" visible={activeTab === 'mechanics'}>
-            <div className="text-xs text-slate-500 mb-2">Controls how often the AI appends a stat block to the chat.</div>
-            <div className="grid grid-cols-3 gap-2">
-              <ChoiceCard label="Every Turn" sublabel="Always shown" selected={draft.statFrequency === 'every-turn'} onClick={() => update('statFrequency', 'every-turn' as StatFrequency)} disabled={!draft.statScreensEnabled} />
-              <ChoiceCard label="Every 5 Turns" sublabel="Periodic" selected={draft.statFrequency === 'every-5-turns'} onClick={() => update('statFrequency', 'every-5-turns' as StatFrequency)} disabled={!draft.statScreensEnabled} />
-              <ChoiceCard label="End of Combat" sublabel="Encounter end" selected={draft.statFrequency === 'end-of-combat'} onClick={() => update('statFrequency', 'end-of-combat' as StatFrequency)} disabled={!draft.statScreensEnabled} />
-            </div>
-          </Section>
-
-          {/* Tabletop chat formatting */}
-          <Section icon={<ScrollText size={16} />} title="Tabletop Formatting" visible={activeTab === 'mechanics'}>
-            <ToggleRow
-              icon={<BookOpen size={16} />}
-              label="Tabletop Chat Formatting"
-              description="Formats the chat log in classic tabletop style — boxed read-aloud text, inline dice notation, and immersive narration."
-              checked={draft.dndMode}
-              onChange={(v) => update('dndMode', v)}
-            />
           </Section>
 
           {/* Player AI keys — Admin (BYOK) website tier only */}

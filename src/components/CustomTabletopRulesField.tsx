@@ -48,7 +48,7 @@ export function CustomTabletopRulesField({ value, onChange, kidMode, compact }: 
           </div>
           <p className={`mt-0.5 leading-snug text-slate-500 ${compact ? 'text-[10px]' : 'text-xs'}`}>
             Custom tabletop rules for this campaign. Paste (or attach as text) rules you already own.
-            Leave empty to use SynapticGM Tabletop Fantasy. Player rules win on conflict.
+            Leave empty to use SynapticGM Tabletop Fantasy. The GM follows your rules as guidance; the game&apos;s dice and rules still decide every roll.
           </p>
         </div>
         <button

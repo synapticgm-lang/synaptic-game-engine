@@ -84,7 +84,7 @@ export interface PcProfile {
 
 export type CombatEvent =
   | { k: 'initiative'; who: string; d20s: number[]; kept: number; mod: number; total: number; adv: AdvState }
-  | { k: 'attack'; attacker: string; target: string; with: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; ac: number; hit: boolean; crit: boolean; nat1: boolean; damage?: DiceRoll; extra?: DiceRoll; sneak?: DiceRoll; type?: string; dealt: number; hpBefore: number; hpAfter: number; maxHp: number; opportunity?: boolean; vulnerable?: boolean; pc: boolean; bless?: number; bane?: number; half?: boolean; spell?: boolean }
+  | { k: 'attack'; attacker: string; target: string; with: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; ac: number; hit: boolean; crit: boolean; nat1: boolean; damage?: DiceRoll; extra?: DiceRoll; sneak?: DiceRoll; type?: string; dealt: number; hpBefore: number; hpAfter: number; maxHp: number; opportunity?: boolean; vulnerable?: boolean; pc: boolean; bless?: number; bane?: number; half?: boolean; spell?: boolean; flank?: boolean; cleave?: boolean }
   | { k: 'save'; who: string; ability: AttributeKey; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; dc: number; ok: boolean; autoFail?: boolean; why: string; pc: boolean; bless?: number; bane?: number }
   | { k: 'cast'; who: string; spell: string; slot?: number; concentration?: boolean; detail?: string }
   | { k: 'concentration'; who: string; spell: string; on: false; why: string }
@@ -183,6 +183,15 @@ interface Ctx {
   slotLevel?: number;
   slotSpent?: number;
   mageArmor?: boolean;
+  rules: RoundRules;
+}
+
+/** Optional table rules the round obeys (from the player's house rules). */
+export interface RoundRules {
+  /** A melee weapon blow that drops a foe carries its leftover damage into the next foe it would also have hit. */
+  cleave?: boolean;
+  /** Melee attacks have Advantage when an ally also presses the target (the PC's ally, or a second foe on the PC). */
+  flanking?: boolean;
 }
 
 function push(ctx: Ctx, e: CombatEvent) {
@@ -285,7 +294,9 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
   }
   const atk = block.attack;
   const pcConds = ctx.combat.pcConditions;
-  const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, ctx.combat.dodging ? ['disadvantage'] : [], [], ctx.pc.conditions);
+  const flank = !!ctx.rules.flanking && !atk.ranged && liveFoes(ctx).length >= 2;
+  const foeExtra: AdvState[] = [...(ctx.combat.dodging ? ['disadvantage' as const] : []), ...(flank ? ['advantage' as const] : [])];
+  const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, foeExtra, [], ctx.pc.conditions);
   const r = rollD20WithAdv(adv, ctx.rng);
   const bane = baneRoll(ctx, foe);
   const total = r.kept + atk.toHit - (bane ?? 0);
@@ -305,7 +316,7 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
     dealt = damage.total + (extra?.total ?? 0);
   }
   const hpAfter = Math.max(0, hpBefore - dealt);
-  push(ctx, { k: 'attack', attacker: foe.name, target: ctx.pc.name, with: atk.name, d20s: r.d20s, kept: r.kept, adv, mod: atk.toHit, total, ac, hit, crit, nat1, damage, extra, type: atk.type, dealt, hpBefore, hpAfter, maxHp: ctx.pc.maxHp, opportunity, pc: false, bane });
+  push(ctx, { k: 'attack', attacker: foe.name, target: ctx.pc.name, with: atk.name, d20s: r.d20s, kept: r.kept, adv, mod: atk.toHit, total, ac, hit, crit, nat1, damage, extra, type: atk.type, dealt, hpBefore, hpAfter, maxHp: ctx.pc.maxHp, opportunity, pc: false, bane, ...(flank ? { flank } : {}) });
   if (hit) {
     damagePc(ctx, dealt);
     if (ctx.pcHp > 0 && atk.inflicts && !has(ctx.combat.pcConditions, atk.inflicts)) {
@@ -397,6 +408,8 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
   const extraAdv: AdvState[] = [];
   if (hidden) extraAdv.push('advantage');
   if (useMark(ctx, target)) extraAdv.push('advantage');
+  const flank = !!ctx.rules.flanking && !s.spell && !s.ranged && !!ctx.pc.ally;
+  if (flank) extraAdv.push('advantage');
   const adv = attackAdv(ctx.combat.pcConditions, target.conditions, s.ranged, extraAdv, ctx.pc.conditions);
   const r = rollD20WithAdv(adv, ctx.rng);
   const bless = blessRoll(ctx);
@@ -421,10 +434,26 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
     half = true;
     res = damageFoe(ctx, target, Math.floor(damage.total / 2), s.type, false);
   }
-  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: s.name, d20s: r.d20s, kept: r.kept, adv, mod: s.toHit, total, ac: block.ac, hit, crit, nat1, damage, sneak, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true, bless, ...(half ? { half } : {}), ...(s.spell ? { spell: true } : {}) });
+  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: s.name, d20s: r.d20s, kept: r.kept, adv, mod: s.toHit, total, ac: block.ac, hit, crit, nat1, damage, sneak, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true, bless, ...(half ? { half } : {}), ...(s.spell ? { spell: true } : {}), ...(flank ? { flank } : {}) });
   for (const e of res.after) push(ctx, e);
   if ((hit || half) && res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
   if (hit && s.rider && res.hpAfter > 0) putRider(ctx, target, s.rider, s.name);
+  if (hit && damage && ctx.rules.cleave && !s.spell && !s.ranged && res.hpAfter === 0) {
+    const raw = damage.total + (sneak?.total ?? 0);
+    cleaveInto(ctx, s, total, crit, raw - (res.vulnerable ? Math.ceil(hpBefore / 2) : hpBefore));
+  }
+}
+
+/** Cleave: the leftover damage of a melee blow that dropped its target goes into the next foe the same roll would hit. */
+function cleaveInto(ctx: Ctx, s: Strike, total: number, crit: boolean, leftover: number) {
+  if (leftover <= 0) return;
+  const next = liveFoes(ctx).find((f) => crit || total >= ctx.blocks[f.id]!.ac);
+  if (!next) return;
+  const hpBefore = next.hp;
+  const res = damageFoe(ctx, next, leftover, s.type, false);
+  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: next.name, with: s.name, d20s: [], kept: 0, adv: 'normal', mod: 0, total, ac: ctx.blocks[next.id]!.ac, hit: true, crit: false, nat1: false, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: next.maxHp, vulnerable: res.vulnerable, pc: true, cleave: true });
+  for (const e of res.after) push(ctx, e);
+  if (res.hpAfter === 0) push(ctx, { k: 'down', who: next.name, pc: false });
 }
 
 /** A saving-throw spell on one or more foes. Damage is rolled once, on the first foe it touches (SRD). */
@@ -683,6 +712,8 @@ export function playRound(input: {
   /** Cast: the spell (from pc.spells or the default cantrip) and the slot level to spend. */
   spell?: string;
   slotLevel?: number;
+  /** Optional table rules (cleave, flanking). Off when absent. */
+  rules?: RoundRules;
 }): RoundResult {
   const ctx: Ctx = {
     pc: input.pc,
@@ -696,6 +727,7 @@ export function playRound(input: {
     acBase: input.pc.ac,
     spell: input.spell,
     slotLevel: input.slotLevel,
+    rules: input.rules ?? {},
   };
   const order = [
     { id: 'pc', init: input.combat.pcInitiative, pcFirst: 1 },

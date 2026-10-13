@@ -1,6 +1,8 @@
 import type { GameEvent } from './parser';
 import type { GameState, Item, Rarity } from './types';
 import { addItem, canAddItem } from './inventory';
+import { carryLine, fitCarry } from './rules/encumbrance';
+import { deriveTabletopSheet } from './tabletop/characterBuild';
 import { initializeDungeon, isDoorLockedFor, moveToNode, exitDungeon } from './mapEngine';
 import { skillRanksOf } from './skillRanks';
 import { lockedContainerBlocksGain } from './skillGates';
@@ -125,6 +127,11 @@ export function applyStructuralEvents(
         const check = canAddItem(next, item);
         if (!check.ok) {
           notes.push(check.reason ?? 'Inventory full — item-gain blocked');
+          continue;
+        }
+        const str = next.character.srd ? deriveTabletopSheet(next)?.scores.STR : undefined;
+        if (str != null && !fitCarry(next.inventory ?? [], [item], str).kept.length) {
+          notes.push(`Too heavy to carry: ${item.name} (${carryLine(next.inventory, str)})`);
           continue;
         }
       }

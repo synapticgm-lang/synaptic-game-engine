@@ -21,6 +21,8 @@ import { spellInInput, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
+import { houseRulesOf } from '../rules/houseRules';
+import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName } from './combatChips';
 
 export interface RoundFightResult {
@@ -243,7 +245,11 @@ export function resolveRoundFight(
       action = 'attack';
     }
   }
-  const res: RoundResult = playRound({ pc, combat: setup.combat, blocks: setup.blocks, action, rng, lead: setup.lead, spell, slotLevel });
+  const house = houseRulesOf(working);
+  const res: RoundResult = playRound({
+    pc, combat: setup.combat, blocks: setup.blocks, action, rng, lead: setup.lead, spell, slotLevel,
+    rules: { cleave: house.cleave, flanking: house.flanking },
+  });
   if (opts.pre) receipts.unshift(`Fight: ${enc.name} forces the fight`);
   receipts.push(...presentCombatStatus('dnd', res.events, pc.name));
   if (res.pcHp !== pc.hp) receipts.push(hpLine(pc.hp, res.pcHp));
@@ -263,6 +269,14 @@ export function resolveRoundFight(
     potionInv = potionInv
       .map((i) => (i.id === p?.id ? { ...i, quantity: (i.quantity ?? 1) - 1 } : i))
       .filter((i) => (i.quantity ?? 1) > 0);
+  }
+  const ammo = house.strictEncumbrance && pc.weapon.ranged ? ammoFor(pc.weapon.name) : null;
+  if (ammo) {
+    const shots = res.events.filter((e) => e.k === 'attack' && e.pc && !e.spell && !e.cleave && e.d20s.length > 0 && e.with === pc.weapon.name).length;
+    if (shots > 0) {
+      potionInv = spendAmmo(potionInv, ammo, shots);
+      receipts.push(`${ammo}: ${shots} used, ${ammoLeft(potionInv, ammo)} left`);
+    }
   }
   let next: GameState = {
     ...working,
@@ -296,7 +310,10 @@ export function resolveRoundFight(
   if (res.outcome === 'victory') {
     const down = res.combat.foes.length > 1 ? 'are down' : 'is down';
     next = commitAutoFightLedger(next, { victory: true, finalPlayerHp: res.pcHp });
-    const won = rollVictoryLoot(working, { name: enc.name, goldReward: enc.goldReward, lootProfile: profileForEncounter(enc), cr: encNow.cr });
+    const rolled = rollVictoryLoot(working, { name: enc.name, goldReward: enc.goldReward, lootProfile: profileForEncounter(enc), cr: encNow.cr });
+    const carry = house.strictEncumbrance ? fitCarry(next.inventory ?? [], rolled.loot, deriveTabletopSheet(next)?.scores.STR ?? 10) : { kept: rolled.loot, left: [] };
+    const won = { ...rolled, loot: carry.kept };
+    if (carry.left.length) receipts.push(`Left behind (too heavy to carry): ${carry.left.map((l) => l.name).join(', ')}`);
     next = {
       ...next,
       inventory: [...(next.inventory ?? []), ...won.loot],
@@ -353,7 +370,8 @@ const HOURS_LATER: Record<number, string> = { 1: 'An hour', 2: 'Two hours', 3: '
 export function resolveDeathSaveTurn(state: GameState, rng: Rng = Math.random): RoundFightResult | null {
   if (!isDying(state)) return null;
   const r = rollDeathSave(state.deathSaves!, rng);
-  const receipts = [deathSaveLine(r)];
+  const secret = houseRulesOf(state).secretDeathSaves;
+  const receipts = [deathSaveLine(r, secret)];
   let next: GameState = { ...state, deathSaves: r.state };
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
   let fact: string;
@@ -368,7 +386,9 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = Math.random): 
     receipts.push(hpLine(0, 1));
     fact = `Your breathing steadies; you are stable. ${HOURS_LATER[r.hoursToWake ?? 0] ?? 'Hours'} later you wake, weak but alive.`;
   } else {
-    fact = r.result === 'success' ? 'You cling to life; your breathing holds.' : 'You slip further; your breath falters.';
+    fact = secret
+      ? 'You lie at the edge, neither waking nor slipping away yet.'
+      : r.result === 'success' ? 'You cling to life; your breathing holds.' : 'You slip further; your breath falters.';
   }
   return { state: next, receipts, facts: `${DYING_HEAD} ${fact}`, noTerminal: true };
 }

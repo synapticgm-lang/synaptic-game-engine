@@ -6,6 +6,8 @@
 import type { GameState } from '../types';
 import { WEAPON_DICE } from './characterBuild';
 import { spellRoundChips } from './spellCasting';
+import { houseRulesOf } from '../rules/houseRules';
+import { ammoFor, ammoLeft } from '../rules/encumbrance';
 
 const POTION = /\bpotion\b.*\bheal|\bheal\w*\b.*\bpotion\b/i;
 
@@ -15,11 +17,21 @@ export function healingPotion(state: Pick<GameState, 'inventory'>): { id: string
 }
 
 /** The weapon a tabletop PC fights with: the one in hand, else the best SRD weapon carried, else an Unarmed Strike. */
-export function pcWeaponName(state: Pick<GameState, 'inventory'>): string {
+export function pcWeaponName(state: Pick<GameState, 'inventory' | 'houseRules'>): string {
   const inv = state.inventory ?? [];
-  const held = inv.find((i) => i.equipped && WEAPON_DICE[i.name] && /main|hand/i.test(i.slot ?? ''));
+  // Under Strict Encumbrance a bow or crossbow with no ammunition left cannot be the weapon.
+  const usable = (name: string) => {
+    if (!houseRulesOf(state).strictEncumbrance) return true;
+    const ammo = ammoFor(name);
+    return !ammo || ammoLeft(inv, ammo) > 0;
+  };
+  const held = inv.find((i) => i.equipped && WEAPON_DICE[i.name] && /main|hand/i.test(i.slot ?? '') && usable(i.name));
   if (held) return held.name;
-  return inv.find((i) => WEAPON_DICE[i.name] && !WEAPON_DICE[i.name].ranged)?.name ?? inv.find((i) => WEAPON_DICE[i.name])?.name ?? 'Unarmed Strike';
+  return (
+    inv.find((i) => WEAPON_DICE[i.name] && !WEAPON_DICE[i.name].ranged)?.name ??
+    inv.find((i) => WEAPON_DICE[i.name] && usable(i.name))?.name ??
+    'Unarmed Strike'
+  );
 }
 
 /** The default attack cantrip: a Wizard's Fire Bolt, a Cleric's Sacred Flame (SRD). Others cast nothing. */

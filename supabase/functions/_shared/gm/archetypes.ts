@@ -159,7 +159,7 @@ Generate a custom opening scene tailored to the player's chosen class and backgr
 - Starter gear is mundane; gold is scarce. Emphasize roleplay and investigation.`,
   prisoner_shipwrecked: `TABLETOP OPENING: PRISONER / SHIPWRECKED
 - The party starts stripped of gear; focus on escape and scavenging.
-- Survival mechanics (food, water, shelter) matter immediately.
+- Food, water and shelter matter in the story from the first scene.
 - Recover equipment gradually. The environment is the first enemy.
 - No starting gold; improvised weapons only.`,
   patrons_quest: `TABLETOP OPENING: PATRON'S QUEST
@@ -169,35 +169,35 @@ Generate a custom opening scene tailored to the player's chosen class and backgr
 - The patron may have ulterior motives; loyalty has a price.`,
   under_siege: `TABLETOP OPENING: UNDER SIEGE
 - Immediate action start: the party is defending a village or outpost from invaders.
-- Begin in media res with combat already underway. Initiative matters from turn one.
+- Begin in media res with the attack already underway.
 - Civilians, resources, and structural integrity are at stake.
 - Victory conditions: repel the assault or evacuate survivors.`,
   cursed_manor: `TABLETOP OPENING: CURSED MANOR / DUNGEON CRAWL
 - Exploration, traps, and ancient secrets dominate.
 - The manor or dungeon is the primary setpiece; rooms gate progression.
-- Emphasize Investigation, Perception, and trap disarm checks.
+- Emphasize searching, noticing danger, and careful handling of traps.
 - Treasure is hidden behind puzzles and hazards.`,
   wilderness_expedition: `TABLETOP OPENING: WILDERNESS EXPEDITION
 - Survival, tracking, and hazard navigation in untamed lands.
 - Weather, terrain, and wildlife are constant threats.
-- Navigation checks (Survival, Nature) determine progress and avoid getting lost.
-- Resources deplete over travel days; long rests carry risk.`,
+- Finding the way and reading the land shape the journey.
+- Travel days wear on supplies; camps in the wild are never fully safe.`,
 };
 
 const TABLETOP_CORE_RULES = `=== TABLETOP FANTASY MODE — CORE RULES ===
-Original SynapticGM tabletop play. Use generic TTRPG language only:
-- d20 Resolution: Resolve actions using d20 + ability modifier + proficiency against difficulty (Easy 10, Medium 15, Hard 20, Very Hard 25).
-- Combat turns: Movement, Action (Attack, Cast Spell, Dash, Disengage, Hide, Use Object), Bonus Action, and Reaction. Show armor class, hit points, and initiative order.
-- Spell slots: Cantrips are unlimited. Leveled spells consume slots, restored on a short rest (1 hr) or long rest (8 hrs).
-- Advantage / Disadvantage: Roll 2d20 and take highest/lowest based on situation.
-- Downed: Reaching 0 HP triggers downed saves (3 successes to stabilize, 3 failures for character death).
-- Dice logging: Format action logs with explicit rolls (e.g., "[Check: Perception] Roll: 14 + 3 = 17 vs DC 15 -> Success!").
+Original SynapticGM tabletop play. Use generic TTRPG language only. The engine rolls; you narrate its result.
+- Checks: the engine rolls d20 + ability modifier + proficiency against a DC, with advantage or disadvantage when it decides.
+- Combat: round by round in initiative order. One action a round: Attack, Cast a spell, Dodge, Disengage, Help, Hide, drink a potion, or Flee.
+- Spell slots: cantrips are unlimited; leveled spells spend slots, restored on a long rest (8 hrs).
+- Short rest (1 hr) spends Hit Dice; long rest restores HP.
+- At 0 HP: death saves each turn (3 successes stabilise, 3 failures kill, a natural 20 restores 1 HP).
+- The game shows every roll on STATUS. Never write dice, totals or DCs; never ask the player to roll.
 
 ORIGINAL CONTENT RAIL (MANDATORY):
 - You are the GM (Game Master / narrator).
 - Do not name other companies' tabletop RPG brands, their published settings, unique published monsters, or named spell brands.
 - Use original SynapticGM names and public-domain folklore only.
-- Invent original creatures. Do not paste published stat blocks.`;
+- Foes are the engine's own creatures with fixed stats. Do not invent stat blocks.`;
 
 export function buildArchetypeRules(
   engineMode: EngineMode,

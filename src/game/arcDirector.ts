@@ -62,6 +62,7 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { autoFightSpawnPreface, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
+import { houseRulesOf, scaledCadence } from './rules/houseRules';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
 import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
@@ -342,13 +343,14 @@ export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
   if (isSeekFightChip(playerInput)) return true;
   const turnsSinceLast = state.arcDirector?.turnsSinceCombatReceipt ?? state.turn;
   const mode = state.engineMode;
-  if (mode === 'rpg') return turnsSinceLast >= (state.turn < 25 ? 15 : 20);
+  const freq = houseRulesOf(state).combatFrequency;
+  if (mode === 'rpg') return turnsSinceLast >= scaledCadence(state.turn < 25 ? 15 : 20, freq);
   if (mode === 'pyoa') return false;
   if (state.turn < 25) {
     const cadence = mode === 'dnd' ? 12 : 8;
-    return turnsSinceLast >= cadence;
+    return turnsSinceLast >= scaledCadence(cadence, freq);
   }
-  return turnsSinceLast >= (mode === 'dnd' ? 15 : 12);
+  return turnsSinceLast >= scaledCadence(mode === 'dnd' ? 15 : 12, freq);
 }
 
 export function selectCombatBeat(state: GameState): string | null {
@@ -693,7 +695,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const questsHidden = questListHidden(result.state?.systemHousing);
   const tabletop = result.state?.engineMode === 'dnd';
   for (const r of result.systemReceipts) {
-    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Level Up! Now level \d+$|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:)/.test(r)) {
+    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Level Up! Now level \d+$|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:|Arrows:|Bolts:|Left behind \(too heavy)/.test(r)) {
       lines.push(r);
       continue;
     }

@@ -403,7 +403,11 @@ export function formatGmVoiceForPrompt(
   if (p.neverLines?.length) {
     extra.push(`NEVER-LINES: ${p.neverLines.join(' ')}`);
   }
-  if (narratorMode) {
+  if (tabletop) {
+    extra.push(
+      'You are a person at this table, not a bland referee. Prose and asides must sound like this GM. The engine already rolled every check; never call for a roll.'
+    );
+  } else if (narratorMode) {
     extra.push(
       'You are a person at this table (or the gamebook narrator), not a bland referee. Prose, asides, and how you call checks must sound like this GM.'
     );

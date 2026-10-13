@@ -29,10 +29,13 @@ function tabletopLine(e: Ev, pcName: string): string | null {
       return null;
     case 'attack': {
       const halfTxt = e.half ? `, halved = ${e.dealt}` : '';
+      if (e.cleave) {
+        return `cleave: ${e.total} also beats ${e.target} AC ${e.ac}, ${e.dealt} leftover ${e.type ?? ''} damage; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
+      }
       if (!e.d20s.length) {
         return `${who(e.attacker, e.pc)} ${e.with}: ${e.damage ? formatDice(e.damage) : 0}${halfTxt} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
       }
-      const head = `${who(e.attacker, e.pc)}${e.opportunity ? ' opportunity attack,' : ''} ${e.with} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs AC ${e.ac}`;
+      const head = `${who(e.attacker, e.pc)}${e.opportunity ? ' opportunity attack,' : ''} ${e.with}${e.flank ? ' (flanking)' : ''} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs AC ${e.ac}`;
       if (!e.hit && e.half && e.damage) {
         return `${head}: miss; Potent Cantrip ${formatDice(e.damage)} halved = ${e.dealt}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`;
       }
@@ -131,7 +134,9 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
       case 'initiative':
         break;
       case 'attack': {
-        if (e.pc) {
+        if (e.cleave) {
+          out.push(`Your blow carries on into ${e.target}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
+        } else if (e.pc) {
           const spell = !e.d20s.length || !!e.spell || /^(?:fire bolt|sacred flame)$/i.test(e.with);
           const by = spell ? e.with : weaponWords(e.with, 'your');
           if (e.half) out.push(`${e.target} only partly escapes ${by}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
@@ -190,7 +195,12 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
 
 export function deathSaveLine(r: DeathSaveResult, secret = false): string {
   const tally = `${r.state.successes} success${r.state.successes === 1 ? '' : 'es'}, ${r.state.failures} failure${r.state.failures === 1 ? '' : 's'}`;
-  if (secret) return 'Death save: rolled in secret';
+  if (secret) {
+    if (r.result === 'revived') return 'Death save: you regain 1 HP';
+    if (r.state.dead) return 'Death save: dead';
+    if (r.state.stable) return `Death save: stable; you wake with 1 HP after ${r.hoursToWake} hours`;
+    return 'Death save: rolled in secret';
+  }
   if (r.result === 'revived') return `Death save: d20 20 — natural 20, you regain 1 HP`;
   const tail = r.state.dead ? ' — dead' : r.state.stable ? ` — stable; you wake with 1 HP after 1d4 (${r.hoursToWake}) hours` : '';
   return `Death save: d20 ${r.d20} — ${r.result} (${tally})${tail}`;

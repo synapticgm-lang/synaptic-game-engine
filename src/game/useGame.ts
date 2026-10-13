@@ -354,6 +354,7 @@ import {
   recentGmBeatTexts,
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
+import { withHouseRules } from './rules/houseRules';
 import {
   commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
@@ -2272,6 +2273,7 @@ export function useGame() {
 
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
+      liveCurrent = withHouseRules(liveCurrent, settingsRef.current);
       const questsAtTurnStart = liveCurrent.quests ?? [];
       const hereAtTurnStart = liveCurrent.currentLocation ?? '';
       const stateAtTurnStart = liveCurrent;
@@ -6107,7 +6109,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       addToast(`Main quest pinned: ${pin}.${next}${dist}`, 'info');
       return pin;
     },
-    startNewGame, updateSettings: (s: Settings) => { setSettings(s); settingsRef.current = s; saveSettings(s); },
+    startNewGame, updateSettings: (s: Settings) => {
+      setSettings(s);
+      settingsRef.current = s;
+      saveSettings(s);
+      // GM Strictness and house rules on the Settings page edit the running tabletop campaign (the values the engine reads).
+      const live = stateRef.current;
+      if (live && live.engineMode === 'dnd') {
+        const updated = withHouseRules({ ...live, gmStrictness: s.gmStrictness ?? live.gmStrictness }, s);
+        stateRef.current = updated;
+        setState(updated);
+        void persist(updated);
+      }
+    },
     updateCustomTabletopRules: async (text: string) => {
       const s = stateRef.current;
       if (!s) return;

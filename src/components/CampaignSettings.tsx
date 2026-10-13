@@ -38,8 +38,8 @@ export function CampaignSettings({
           </div>
         </section>
       )}
-      <PillarsSection settings={settings} onChange={onChange} />
-      <HouseRulesSection settings={settings} onChange={onChange} />
+      {engineMode === 'dnd' && <PillarsSection settings={settings} onChange={onChange} />}
+      <HouseRulesSection settings={settings} onChange={onChange} engineMode={engineMode} />
     </div>
   );
 }
@@ -53,6 +53,10 @@ function PillarsSection({ settings, onChange }: Props) {
         </div>
         <h3 className="font-serif text-sm uppercase tracking-wider text-slate-200">The Three Pillars</h3>
       </div>
+      <p className="mb-3 text-[11px] text-slate-500">
+        Combat sets how often a quiet stretch turns into a fight and how often road meetings are hostile. Social and Exploration
+        weight road meetings toward people to talk to or places and wildlife to find. 50% is the default mix.
+      </p>
       <div className="space-y-5">
         <PillarSlider
           icon={<Swords size={16} />}
@@ -163,7 +167,8 @@ function PillarSlider({
   );
 }
 
-function HouseRulesSection({ settings, onChange }: Props) {
+function HouseRulesSection({ settings, onChange, engineMode }: Props) {
+  const tabletop = engineMode === 'dnd';
   return (
     <section>
       <div className="mb-4 flex items-center gap-2">
@@ -176,31 +181,39 @@ function HouseRulesSection({ settings, onChange }: Props) {
         <HouseRuleToggle
           icon={<Package size={16} />}
           label="Strict Encumbrance & Ammo Tracking"
-          description="Track weight, inventory slots, and ammunition"
+          description={
+            tabletop
+              ? 'Inventory slots, a Strength × 15 lb carry limit, and bows and crossbows spend one arrow or bolt per shot'
+              : 'Inventory slots are a hard limit: a full pack blocks new items'
+          }
           checked={settings.strictEncumbrance}
           onChange={(v) => onChange('strictEncumbrance', v)}
         />
-        <HouseRuleToggle
-          icon={<EyeOff size={16} />}
-          label="Secret Death Saves"
-          description="AI rolls death saves hidden from the player"
-          checked={settings.secretDeathSaves}
-          onChange={(v) => onChange('secretDeathSaves', v)}
-        />
-        <HouseRuleToggle
-          icon={<Zap size={16} />}
-          label="Cleave Mechanics"
-          description="Excess damage spills to adjacent enemies"
-          checked={settings.cleaveMechanics}
-          onChange={(v) => onChange('cleaveMechanics', v)}
-        />
-        <HouseRuleToggle
-          icon={<Users size={16} />}
-          label="Flanking Advantage"
-          description="Allies on opposite sides grant advantage"
-          checked={settings.flankingAdvantage}
-          onChange={(v) => onChange('flankingAdvantage', v)}
-        />
+        {tabletop && (
+          <>
+            <HouseRuleToggle
+              icon={<EyeOff size={16} />}
+              label="Secret Death Saves"
+              description="Death save rolls stay hidden; you only see when you wake, stabilise or die"
+              checked={settings.secretDeathSaves}
+              onChange={(v) => onChange('secretDeathSaves', v)}
+            />
+            <HouseRuleToggle
+              icon={<Zap size={16} />}
+              label="Cleave Mechanics"
+              description="A melee blow that drops a foe carries its leftover damage into the next foe the same roll would hit"
+              checked={settings.cleaveMechanics}
+              onChange={(v) => onChange('cleaveMechanics', v)}
+            />
+            <HouseRuleToggle
+              icon={<Users size={16} />}
+              label="Flanking Advantage"
+              description="Melee attacks have advantage with an ally beside you; two or more foes get it against you"
+              checked={settings.flankingAdvantage}
+              onChange={(v) => onChange('flankingAdvantage', v)}
+            />
+          </>
+        )}
       </div>
     </section>
   );

@@ -161,6 +161,17 @@ export interface DeathSaveState {
   dead?: boolean;
 }
 
+/** Settings the shared rules engine obeys. Sliders are 0–100; 50 leaves the engine's base pacing alone. */
+export interface HouseRules {
+  secretDeathSaves: boolean;
+  cleave: boolean;
+  flanking: boolean;
+  strictEncumbrance: boolean;
+  combatFrequency: number;
+  socialRoleplay: number;
+  worldBuilding: number;
+}
+
 export type EntityKind = 'pet' | 'demon' | 'minion' | 'familiar' | 'mount';
 
 export interface SummonEntity {
@@ -616,6 +627,8 @@ export interface GameState {
   roundCombat?: RoundCombatState | null;
   /** Shared rules engine: the PC is at 0 HP and making death saves. */
   deathSaves?: DeathSaveState | null;
+  /** House rules and pillar sliders the engine reads, copied from Settings at the start of each turn. */
+  houseRules?: HouseRules;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
