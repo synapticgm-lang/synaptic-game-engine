@@ -349,6 +349,10 @@ export function checkTurn(row, packet, page = '') {
         const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
         if (personHere && /^(?:men|man|women|woman)$/.test(w)
           && /\b(?:the|neither|either|each|both|other|those|these|one|two|three|four)\s+(?:of the\s+)?$/i.test(before)) continue;
+        // "Two strangers stood…" with exactly two people handed here counts the people here, not new ones.
+        const hereCount = facts.refs.filter((r) => r.kind === 'person' && !/^encounter:/.test(r.id)).length;
+        const counted = before.match(/\b(two|three|four|both)\s+$/i)?.[1]?.toLowerCase();
+        if (counted && ({ two: 2, both: 2, three: 3, four: 4 })[counted] === hereCount) continue;
         if (/\bcrowd\b/.test(facts.handedText) && /\b(?:a|an|one|some|someone|another)\s+(?:\w+\s+)?$/i.test(before)) continue;
         if (PLACE_WORKERS.some(([work, who]) => who.test(w) && work.test(facts.placeWork))) continue;
       }

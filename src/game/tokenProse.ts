@@ -441,6 +441,17 @@ export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   return false;
 }
 
+/**
+ * Lap 49 — a line that opens on a label this turn's own handed facts use ("Dungeon: Jax moved into the hall",
+ * "Travel: back streets between …") pastes the engine record into the story instead of telling it.
+ */
+export function lineOpensOnFactLabel(text: string, handedText: string): boolean {
+  const label = (text ?? '').match(/^\s*([A-Za-z]+(?: [a-z]+)?):\s/)?.[1]?.toLowerCase();
+  if (!label) return false;
+  const facts = handedText.split(PAGE_MARK)[0]!;
+  return new RegExp(`(?:^|[\\n.;(]\\s*)${label}:`, 'm').test(facts);
+}
+
 const roleNounOf = (match: string) => {
   const word = match.toLowerCase().split(/\s+/).pop() ?? '';
   return ROLE_NOUNS.find((r) => word === r || word === `${r}s` || word === `${r}es`) ?? word;
@@ -647,6 +658,7 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
   if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
   if (lineHasUnhandedFind(text, handed)) return 'a thing found that the scene never handed';
+  if (lineOpensOnFactLabel(text, handed)) return 'an engine label pasted as story';
   const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
   if (named === 'capital') return 'a name the scene never handed';
   if (named === 'unbound-animate') return 'a person who is not here';
@@ -670,6 +682,7 @@ export function classifyTokenLine(
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
   if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };
   if (handedCounts != null && lineHasUnhandedFind(line.text, handedCounts)) return { ok: false, reason: 'found' };
+  if (handedCounts != null && lineOpensOnFactLabel(line.text, handedCounts)) return { ok: false, reason: 'label' };
   // Spoken words with no speaker would paint as narration.
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
     return { ok: false, reason: 'speech-no-speaker' };

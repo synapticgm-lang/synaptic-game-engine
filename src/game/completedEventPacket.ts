@@ -7,7 +7,7 @@
 
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
-import { cleanPlaceLabel, playerFacingLocation, underwayHereLabel } from './locationName';
+import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { formatInfoSheet } from './infoSheet';
@@ -442,8 +442,9 @@ function locationLabel(state: GameState): string {
   const trip = underwayHereLabel(state);
   if (trip) return trip;
   const fromCover = (state.openingEstablishment?.answers?.where ?? '').trim();
-  const live = cleanPlaceLabel(
-    playerFacingLocation(state) || String(state.currentLocation ?? '') || ''
+  const live = proseRoomPlace(
+    cleanPlaceLabel(playerFacingLocation(state) || String(state.currentLocation ?? '') || ''),
+    state.activeDungeon?.dungeonName
   );
   const raw = !isGenericHereLabel(live) ? live : fromCover || live;
   if (raw && raw.length <= 48 && !/^alone\b/i.test(raw) && !/,/.test(raw) && !isGenericHereLabel(raw)) {
@@ -524,6 +525,12 @@ export function compileNounAllowlist(
   const seen = new Set<string>();
 
   for (const ref of compileRefEnum(state, extras, opts)) pushUnique(out, seen, ref.display);
+  // HERE paints a dungeon room in prose words; its map key and the dungeon stay nameable in plain prose.
+  const key = String(state.currentLocation ?? '').trim();
+  if (proseRoomPlace(key, state.activeDungeon?.dungeonName) !== key) {
+    pushUnique(out, seen, key);
+    pushUnique(out, seen, key.split(/\s+[—–-]\s+/)[0]);
+  }
   for (const tok of cardSceneMentionTokens(state)) {
     pushUnique(out, seen, tok);
   }

@@ -66,6 +66,18 @@ export function playerFacingLocation(state: GameState): string {
   return name;
 }
 
+/**
+ * Lap 49 — a dungeon room's HERE key ("Cathedral Undercroft — Corridor") in prose words: "the Corridor in
+ * Cathedral Undercroft". Painted as written, the key reads "Jax stood in Cathedral Undercroft — Corridor".
+ */
+export function proseRoomPlace(name: string, dungeonName: string | undefined): string {
+  const m = (name ?? '').match(/^(.+?)\s+[—–-]\s+(.+)$/);
+  if (!m || !dungeonName) return name;
+  const title = m[1]!.trim();
+  if (!sheetIsHere(title, dungeonName)) return name;
+  return `the ${m[2]!.trim().replace(/^the\s+/i, '')} in ${title}`;
+}
+
 const LOCAL_SCENE_PLACE =
   /\b(?:tesco(?:\s+extra)?|aisle|shelves?|counter|till|checkout|fridge|shop floor|convenience store|micro[- ]?dungeon|doorway|threshold|interior|entrance|freezer|trolley)\b/i;
 
