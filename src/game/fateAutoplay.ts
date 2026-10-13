@@ -162,7 +162,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { withHouseRules } from './rules/houseRules';
+import { milestoneLevelling, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
@@ -1607,7 +1607,7 @@ Do NOT print dice notation or CODE ENFORCED.
   {
     const settled = settleParleyAfterProse(working, cleanText, playerInput);
     working = settled.state;
-    if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint) {
+    if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint && !milestoneLevelling(working)) {
       const leveled = applyCharacterXpGain(working.character, settled.xpAward.amount);
       working = {
         ...working,
@@ -2029,7 +2029,7 @@ Do NOT print dice notation or CODE ENFORCED.
   {
     const govCommit = applyGovernanceCommit(state, next, playerInput);
     governed = { ...next, ...govCommit.patches };
-    if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint) {
+    if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint && !milestoneLevelling(governed)) {
       const leveled = applyCharacterXpGain(governed.character, govCommit.xpAward.amount);
       governed = { ...governed, character: leveled.character };
     }

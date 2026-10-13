@@ -29,6 +29,7 @@ import { sheetSkillBonus } from '../checkMath';
 import { mulberry32, type Rng } from '../fatePick';
 import { syncContainerOccupancy } from '../inventory';
 import { casterProgression, isCaster, knownSpells, slotsLeft, spellcastingAbility, spellNumbers } from '../rules/spells';
+import { variantLoad } from '../rules/encumbrance';
 
 export type { AbilityMethod, KitId, TabletopBackgroundId, TabletopClassId, TabletopPicks, TabletopSheet, TabletopSpeciesId };
 export { sheetSkillBonus };
@@ -508,6 +509,8 @@ export interface DerivedSheet {
   acFrom: string;
   initiative: number;
   speed: number;
+  /** Variant Encumbrance: over STR × 10 lb. */
+  heavilyEncumbered?: boolean;
   size: string;
   darkvision: number;
   passivePerception: number;
@@ -550,7 +553,7 @@ export function sheetSpellcasting(c: Pick<Character, 'srd' | 'level' | 'attribut
 }
 
 /** Every number on the tabletop sheet, from the character and what is equipped. */
-export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'inventory'>): DerivedSheet | null {
+export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'inventory'> & Partial<Pick<GameState, 'houseRules'>>): DerivedSheet | null {
   const c = state.character;
   const s = c.srd;
   if (!s) return null;
@@ -570,6 +573,7 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
   const dwarf = (sp.hpPerLevel ?? 0) * c.level;
   const gains = levelHpGains(s, c.level);
   const conPart = gains.length ? `${fmtMod(con)} CON ×${c.level}` : `${fmtMod(con)} CON`;
+  const load = state.houseRules?.encumbrance === 'variant' ? variantLoad(state.inventory, scores.STR) : null;
   return {
     title: `${sp.name} ${cls.name} ${c.level} (${backgroundDef(s.backgroundId).name})`,
     scores,
@@ -579,7 +583,8 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
     ac,
     acFrom: from,
     initiative: abilityMod(scores.DEX) + (s.originFeats.includes('Alert') ? pb : 0),
-    speed: sp.speed,
+    speed: Math.max(0, sp.speed - (load?.speedPenalty ?? 0)),
+    ...(load?.heavy ? { heavilyEncumbered: true } : {}),
     size: sp.size,
     darkvision: sp.darkvision,
     passivePerception: 10 + perception,

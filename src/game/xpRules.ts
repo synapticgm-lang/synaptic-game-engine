@@ -128,7 +128,8 @@ export function dndLevelForXp(xp: number): number {
 
 /** A party member splits fight XP with the player. Pets, mounts and summons do not. */
 export function takesPartyShare(c: Companion): boolean {
-  return c.type === 'party' && !c.summon;
+  // A house-rule sidekick levels with the PC and takes no share.
+  return c.type === 'party' && !c.summon && !c.sidekick;
 }
 
 /** Pets, mounts and summons: a separate XP total and level, outside the party split. */

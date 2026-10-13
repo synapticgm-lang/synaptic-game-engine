@@ -14,6 +14,7 @@ import { profileForEncounter } from './lootTableRegistry';
 import { milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare, type MilestoneKind } from './xpRules';
 import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
+import { milestoneLevelling } from './rules/houseRules';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, weaponCategory } from './checkRules';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
@@ -76,7 +77,8 @@ export function payEncounterXp(
     strictness: state.gmStrictness,
     ...milestoneAreaOpts(state),
   });
-  if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
+  // Milestone levelling pays no fight XP (the key is still marked so it never pays later).
+  if (r.amount <= 0 || milestoneLevelling(state)) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode, state.systemHousing);
   const dnd = state.engineMode === 'dnd';
   const companions = dnd ? payCompanionsFightXp(state.companions, r.amount) : state.companions;

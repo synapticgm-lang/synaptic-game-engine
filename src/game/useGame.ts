@@ -354,7 +354,7 @@ import {
   recentGmBeatTexts,
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
-import { withHouseRules } from './rules/houseRules';
+import { milestoneLevelling, withHouseRules } from './rules/houseRules';
 import {
   commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
@@ -1876,7 +1876,8 @@ export function useGame() {
     }
 
     if (tabletopCreationPending(current)) {
-      const built = stepTabletopCreation(current, input);
+      // The table rules (stat method, starting level, sidekick) apply while the sheet is built.
+      const built = stepTabletopCreation(withHouseRules(current, settingsRef.current), input);
       stateRef.current = built;
       setState(built);
       void persist(built);
@@ -3756,7 +3757,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           // Batch F — parley success must ledger-resolve from diegetic cues (not free-clear).
           const settled = settleParleyAfterProse(workingState, cleanText, sanitizedInput);
           workingState = settled.state;
-          if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint) {
+          if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint && !milestoneLevelling(workingState)) {
             const leveled = applyCharacterXpGain(workingState.character, settled.xpAward.amount);
             workingState = {
               ...workingState,
@@ -4599,7 +4600,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       {
         const govCommit = applyGovernanceCommit(liveCurrent, mergedState, sanitizedInput);
-        if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint) {
+        if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint && !milestoneLevelling(mergedState)) {
           const leveled = applyCharacterXpGain(mergedState.character, govCommit.xpAward.amount, undefined, mergedState.systemHousing);
           mergedState = {
             ...mergedState,
@@ -5577,7 +5578,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
       const newTurn = liveCurrent.turn + 1;
       // 28a2 — auto-fight pays the same encounter milestone as every other path (xpRules).
-      const autoXp = result.victory
+      const autoXp = result.victory && !milestoneLevelling(liveCurrent)
         ? milestoneXp(liveCurrent.engineMode, 'encounter', {
             level: liveCurrent.character.level,
             partySize: 1 + (liveCurrent.companions ?? []).filter((c) => c.type === 'party').length,

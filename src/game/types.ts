@@ -152,6 +152,16 @@ export interface RoundCombatState {
   hiddenStealth?: number | null;
   /** The Concentration spell the PC holds (Bless, Bane, Shield of Faith); it ends with the fight. */
   concentration?: string | null;
+  /** The sidekick's HP in this fight (it is down at 0 until the fight ends). */
+  sidekickHp?: number;
+  /** An Expert sidekick's Help: the PC's next attack roll has Advantage. */
+  helped?: boolean;
+  /** The spellcaster sidekick's one heal this fight is used. */
+  sidekickHealUsed?: boolean;
+  /** Encounter difficulty's shift to every foe attack roll, fixed when the fight starts. */
+  foeToHitShift?: number;
+  /** Solo scaling was on when the fight started (no ally): foe damage ×0.75 and no save riders. */
+  solo?: boolean;
 }
 
 export interface DeathSaveState {
@@ -170,7 +180,37 @@ export interface HouseRules {
   combatFrequency: number;
   socialRoleplay: number;
   worldBuilding: number;
+  /** SRD 5.2.1 (default) or SRD 5.1: Heroic Inspiration rerolls (5.2.1) or gives Advantage (5.1); Human Resourceful is 5.2.1 only. */
+  rulesVersion: TabletopRulesVersion;
+  /** Ability score method the inn book offers ('choose' offers all three). */
+  statMethod: 'choose' | AbilityMethod;
+  /** Level a new tabletop character begins at (1–5). */
+  startingLevel: number;
+  /** XP thresholds, or one level per milestone (quest complete, dungeon cleared, an ending). */
+  progression: 'xp' | 'milestone';
+  /** Foes' rolls shown openly, or hidden (results only). The PC's own rolls stay open. */
+  diceVisibility: 'open' | 'hidden';
+  /** Foe HP, to-hit and numbers, separate from GM Strictness. */
+  encounterDifficulty: EncounterDifficulty;
+  /** One PC with no ally: fewer foes (one at level 1, at most four), foe HP and damage ×¾, no save-or-condition riders. */
+  soloScaling: boolean;
+  /** A sidekick who fights beside the PC. */
+  sidekick: 'none' | SidekickKind;
+  /** What a third failed death save means. */
+  deathRule: 'srd' | 'revive' | 'mercy';
+  /** Rest lengths: standard (1 h / 8 h), gritty (8 h / 7 days), heroic (5 min / 1 h). */
+  restVariant: 'standard' | 'gritty' | 'heroic';
+  /** Weight rule: off, carry limit (STR × 15), or variant (Speed and Disadvantage past STR × 5 / × 10). */
+  encumbrance: 'off' | 'capacity' | 'variant';
+  /** Critical hit damage: dice twice (SRD), one set at maximum plus a roll, or the dice total doubled. */
+  critRule: CritRule;
+  heroicInspiration: boolean;
 }
+
+export type TabletopRulesVersion = 'srd-5.2.1' | 'srd-5.1';
+export type EncounterDifficulty = 'easy' | 'normal' | 'hard' | 'deadly';
+export type SidekickKind = 'warrior' | 'expert' | 'spellcaster';
+export type CritRule = 'double-dice' | 'max-plus-roll' | 'double-total';
 
 export type EntityKind = 'pet' | 'demon' | 'minion' | 'familiar' | 'mount';
 
@@ -242,6 +282,8 @@ export interface Character {
   srd?: TabletopSheet;
   /** Tabletop caster's spent slots and lasting spells (rules/spells). */
   casting?: CastingState;
+  /** Tabletop Heroic Inspiration held (one at a time). */
+  heroicInspiration?: boolean;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
@@ -261,6 +303,9 @@ export interface Companion {
   /** Hidden XP total and level (engine-only; never shown to the writer or in STATUS). */
   xp?: number;
   level?: number;
+  /** A tabletop sidekick who fights (house rule), with its armour class. */
+  sidekick?: SidekickKind;
+  ac?: number;
 }
 
 export interface Container {
@@ -629,6 +674,8 @@ export interface GameState {
   deathSaves?: DeathSaveState | null;
   /** House rules and pillar sliders the engine reads, copied from Settings at the start of each turn. */
   houseRules?: HouseRules;
+  /** Milestone keys (quest complete, ending) that already earned Heroic Inspiration. */
+  inspirationKeys?: string[];
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
@@ -1752,6 +1799,21 @@ export interface Settings {
   secretDeathSaves: boolean;
   cleaveMechanics: boolean;
   flankingAdvantage: boolean;
+  /** Tabletop table rules (Campaign settings); read through houseRulesFromSettings. */
+  ttRulesVersion?: TabletopRulesVersion;
+  ttStatMethod?: HouseRules['statMethod'];
+  ttStartingLevel?: number;
+  ttProgression?: HouseRules['progression'];
+  ttDiceVisibility?: HouseRules['diceVisibility'];
+  ttEncounterDifficulty?: EncounterDifficulty;
+  ttSoloScaling?: boolean;
+  ttSidekick?: HouseRules['sidekick'];
+  ttDeathRule?: HouseRules['deathRule'];
+  ttRestVariant?: HouseRules['restVariant'];
+  /** Tabletop weight rule; when absent, Strict Encumbrance on means 'capacity'. */
+  ttEncumbrance?: HouseRules['encumbrance'];
+  ttCritRule?: CritRule;
+  ttHeroicInspiration?: boolean;
   /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
   preferFullResponse?: boolean;
   /**

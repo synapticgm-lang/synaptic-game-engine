@@ -3,7 +3,7 @@
  * question and the player's pick are system rows, so the writer never reads the menu. Chips come from
  * one place (the stored turn pad) so the action bar, Fate's Pick and the transcript all show the same.
  */
-import type { Attributes, GameState, LogEntry, TabletopCreationStage } from '../types';
+import type { Attributes, Character, GameState, LogEntry, TabletopCreationStage } from '../types';
 import type { Rng } from '../fatePick';
 import {
   ABILITY_KEYS,
@@ -30,6 +30,10 @@ import {
   type AbilityMethod,
   type TabletopPicks,
 } from './characterBuild';
+import { houseRulesOf } from '../rules/houseRules';
+import { srdLevelUp } from '../rules/advancement';
+import { makeSidekick, sidekickOf, SIDEKICKS } from '../rules/sidekick';
+import { dndXpToNext } from '../xpRules';
 
 type CreationStage = TabletopCreationStage;
 
@@ -55,6 +59,12 @@ function bookName(state: GameState): string {
   return state.campaignBibleId === 'cursed-keep' ? 'The inn book' : 'The register';
 }
 
+/** The table's ability method, or null when the player chooses (Settings → Table rules). */
+function tableMethod(state: GameState): AbilityMethod | null {
+  const m = houseRulesOf(state).statMethod;
+  return m === 'choose' ? null : m;
+}
+
 function kitChip(cls: NonNullable<TabletopPicks['classId']>, id: 'A' | 'B' | 'coin'): string {
   const k = kitDef(cls, id);
   return k.id === 'coin' ? `${k.label} (${k.gp} GP)` : k.label;
@@ -68,7 +78,10 @@ export function creationChips(state: GameState): string[] {
     case 'class': return CLASSES.map((k) => k.name);
     case 'species': return SPECIES.map((s) => s.name);
     case 'background': return BACKGROUNDS.map((b) => b.name);
-    case 'method': return Object.values(METHOD_CHIPS);
+    case 'method': {
+      const fixed = tableMethod(state);
+      return fixed ? [METHOD_CHIPS[fixed]] : Object.values(METHOD_CHIPS);
+    }
     case 'scores': return [KEEP];
     case 'kit': return CLASS_KITS[c.picks.classId!].map((k) => kitChip(c.picks.classId!, k.id));
     case 'confirm': return [BEGIN, state.character.srd?.hpMethod === 'roll' ? HP_FIXED : HP_ROLL, AGAIN];
@@ -175,21 +188,37 @@ function typedScoresProblem(method: AbilityMethod, scores: Attributes, picks: Ta
   return same ? null : `Use exactly these numbers: ${[...pool].sort((a, b) => b - a).join(', ')}.`;
 }
 
+/**
+ * The table's starting level: the level-1 sheet climbs level by level through the same SRD level-up the game
+ * uses later, taking the fixed Hit Die value each time (no HP dice before play).
+ */
+function atStartingLevel(state: GameState): GameState {
+  const start = houseRulesOf(state).startingLevel;
+  if (start <= 1 || !state.character.srd) return state;
+  const hpMethod = state.character.srd.hpMethod;
+  let character: Character = { ...state.character, srd: { ...state.character.srd, hpMethod: 'fixed' } };
+  for (let lvl = 2; lvl <= start; lvl++) character = srdLevelUp(character, lvl).character;
+  character = { ...character, hp: character.maxHp, xp: 0, xpToNext: dndXpToNext(start), srd: { ...character.srd!, hpMethod } };
+  return { ...state, character };
+}
+
 function toConfirm(state: GameState, picks: TabletopPicks): GameState {
   const sheet = resolveSheet(picks as Parameters<typeof resolveSheet>[0]);
-  const applied = applyTabletopSheet(state, sheet);
+  const fromOne = houseRulesOf(state).startingLevel > 1 ? { ...state, character: { ...state.character, level: 1 } } : state;
+  const applied = atStartingLevel(applyTabletopSheet(fromOne, sheet));
   return withPrompt({ ...applied, tabletopCreation: { ...state.tabletopCreation!, stage: 'confirm', picks } });
 }
 
 function quickPicks(state: GameState, rng: Rng): TabletopPicks {
   const pick = <T>(xs: T[]) => xs[Math.floor(rng() * xs.length)];
   const classId = pick(CLASSES).id;
+  const method = tableMethod(state) ?? 'standard-array';
   return {
     classId,
     speciesId: pick(SPECIES).id,
     backgroundId: pick(BACKGROUNDS).id,
-    method: 'standard-array',
-    ...scoresForMethod('standard-array', classId, rng),
+    method,
+    ...scoresForMethod(method, classId, rng),
     kitId: 'A',
     source: 'quick',
   };
@@ -197,10 +226,23 @@ function quickPicks(state: GameState, rng: Rng): TabletopPicks {
 
 function finish(state: GameState): GameState {
   const restore = state.tabletopCreation?.restorePad;
+  const house = houseRulesOf(state);
+  const lines = [`${bookName(state)} closes on your entry. Play begins.`];
+  let next: GameState = state;
+  if (house.sidekick !== 'none' && !sidekickOf(state)) {
+    const sk = makeSidekick(house.sidekick, state.character.level || 1, creationRng(state));
+    next = { ...next, companions: [...(next.companions ?? []), sk] };
+    lines.push(`${sk.name} joins you as your sidekick (${SIDEKICKS[house.sidekick].role.toLowerCase()}): ${SIDEKICKS[house.sidekick].does}.`);
+  }
+  // Human Resourceful (SRD 5.2.1): Heroic Inspiration after each Long Rest; play begins rested.
+  if (house.heroicInspiration && house.rulesVersion === 'srd-5.2.1' && state.character.srd?.speciesId === 'human') {
+    next = { ...next, character: { ...next.character, heroicInspiration: true } };
+    lines.push('Heroic Inspiration: yours (Human, Resourceful).');
+  }
   return {
-    ...state,
-    log: [...state.log, systemRow(state, [`${bookName(state)} closes on your entry. Play begins.`])],
-    tabletopCreation: { ...state.tabletopCreation!, stage: 'done' },
+    ...next,
+    log: [...next.log, systemRow(next, lines)],
+    tabletopCreation: { ...next.tabletopCreation!, stage: 'done' },
     offeredPad: restore ?? null,
   };
 }
@@ -219,7 +261,8 @@ export function stepTabletopCreation(state: GameState, input: string): GameState
       if (n === norm(QUICK) || /\bquick\b/.test(n)) return toConfirm(said, quickPicks(said, creationRng(said)));
       const pre = PREGENS.find((p) => n === norm(READY + p.label) || n === norm(p.label));
       if (pre) {
-        const picks: TabletopPicks = { ...pre.picks, method: 'standard-array', ...scoresForMethod('standard-array', pre.picks.classId!, creationRng(said)), kitId: 'A', source: 'pregen' };
+        const method = tableMethod(said) ?? 'standard-array';
+        const picks: TabletopPicks = { ...pre.picks, method, ...scoresForMethod(method, pre.picks.classId!, creationRng(said)), kitId: 'A', source: 'pregen' };
         return toConfirm(said, picks);
       }
       if (n === norm(BUILD) || /\b(build|own|custom)\b/.test(n)) return at('class', { source: 'build' });
@@ -235,11 +278,17 @@ export function stepTabletopCreation(state: GameState, input: string): GameState
     }
     case 'background': {
       const b = matchName(input, BACKGROUNDS);
-      return b ? at('method', { ...c.picks, backgroundId: b.id }) : again('Choose Acolyte, Criminal, Sage or Soldier.');
+      if (!b) return again('Choose Acolyte, Criminal, Sage or Soldier.');
+      const fixed = tableMethod(said);
+      // The table sets the method: skip the question and roll or lay out the scores now.
+      if (fixed) return at('scores', { ...c.picks, backgroundId: b.id, method: fixed, ...scoresForMethod(fixed, c.picks.classId!, creationRng(said)) }, `This table sets abilities by ${METHOD_CHIPS[fixed].toLowerCase()}.`);
+      return at('method', { ...c.picks, backgroundId: b.id });
     }
     case 'method': {
-      const method = (Object.keys(METHOD_CHIPS) as AbilityMethod[]).find((m) => n === norm(METHOD_CHIPS[m]))
+      const fixed = tableMethod(said);
+      const asked = (Object.keys(METHOD_CHIPS) as AbilityMethod[]).find((m) => n === norm(METHOD_CHIPS[m]))
         ?? (/\bpoint/.test(n) ? 'point-buy' : /\barray\b/.test(n) ? 'standard-array' : /\b(roll|4d6|dice)\b/.test(n) ? '4d6' : undefined);
+      const method = fixed ?? asked;
       if (!method) return again('Choose point buy, the standard array, or 4d6.');
       return at('scores', { ...c.picks, method, ...scoresForMethod(method, c.picks.classId!, creationRng(said)) });
     }

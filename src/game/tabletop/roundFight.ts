@@ -4,7 +4,7 @@
  * Only for a built tabletop character (engineMode 'dnd' with a SRD sheet); every other mode keeps the
  * one-turn auto-resolve in engineFight.
  */
-import type { ActiveEncounter, CombatCondition, GameState, RoundCombatState } from '../types';
+import type { ActiveEncounter, CombatCondition, GameState, HouseRules, RoundCombatState } from '../types';
 import { commitAutoFightLedger } from '../combatAuthority';
 import { rollVictoryLoot } from '../combat';
 import { profileForEncounter } from '../lootTableRegistry';
@@ -12,7 +12,7 @@ import { growWeaponFamiliarity, weaponCategory } from '../checkRules';
 import { pushCombatStateTx } from '../stateTx';
 import { fightLootClause, weaponInHand } from '../infoSheet';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
-import { isRoadFoe, settleRoadMeeting } from '../travelJourney';
+import { advanceClock, isRoadFoe, settleRoadMeeting } from '../travelJourney';
 import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sneakAttackDice, tabletopArmorClass, WEAPON_DICE, weaponProficient } from './characterBuild';
 import type { Rng } from '../rules/dice';
 import { statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
@@ -21,7 +21,8 @@ import { spellInInput, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
-import { houseRulesOf } from '../rules/houseRules';
+import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
+import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName } from './combatChips';
 
@@ -89,7 +90,10 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
         .map((def) => ({ name: def.name, def, toHit: kit.attack, dc: kit.dc, mod: kit.mod }))
     : [];
   const armored = (state.inventory ?? []).some((i) => i.equipped && ARMOR_TABLE[i.name]);
-  const ally = fightAlly(state);
+  const sideCompanion = sidekickOf(state);
+  const sidekick = sideCompanion ? sidekickProfile(sideCompanion, state.character.level || 1) : null;
+  const sidekickHpNow = state.roundCombat?.sidekickHp ?? sidekick?.hp ?? 0;
+  const ally = sidekick ? (sidekickHpNow > 0 ? { name: sidekick.name } : null) : fightAlly(state);
   const potion = healingPotion(state);
   const saves = Object.fromEntries(sheet.saves.map((s) => [s.key, s.total])) as PcProfile['saves'];
   return {
@@ -98,6 +102,7 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
     hp: state.character.hp,
     maxHp: sheet.maxHp,
     speed: sheet.speed,
+    ...(sheet.heavilyEncumbered ? { heavilyEncumbered: true } : {}),
     initiativeMod: sheet.initiative,
     saves,
     stealth: sheet.skills.find((k) => k.skill === 'Stealth')?.total ?? dex,
@@ -126,8 +131,10 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
         }
       : {}),
     ...(potion ? { potion: { name: potion.name, heal: '2d4+2' } } : {}),
-    // Provisional ally numbers until companions get stat blocks: +PB+2 to hit, 1d6+2.
-    ...(ally ? { ally: { name: ally.name, toHit: pb + 2, dice: '1d6+2', type: 'slashing' } } : {}),
+    // A sidekick fights with its own numbers; any other companion keeps the provisional +PB+2 to hit, 1d6+2.
+    ...(sidekick ? { sidekick } : {}),
+    ...(ally && sidekick ? { ally: { name: sidekick.name, toHit: sidekick.toHit, dice: sidekick.dice, type: sidekick.type } } : {}),
+    ...(ally && !sidekick ? { ally: { name: ally.name, toHit: pb + 2, dice: '1d6+2', type: 'slashing' } } : {}),
     conditions: [...(state.character.conditions ?? []), ...extraConditions].filter((c) => !/^unconscious$/i.test(c)),
   };
 }
@@ -150,9 +157,36 @@ function foeIdentity(enc: ActiveEncounter, block: StatBlock, count: number) {
   return { ids, statusName, writerName };
 }
 
-function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: 'foes' | 'pc' | null): FoeSetup {
-  const block = statBlockForEncounter(enc);
-  const count = Math.max(1, Math.min(8, enc.count ?? 1));
+/** Encounter difficulty's to-hit shift on a copy of the block (the stat-block table stays SRD). */
+function shiftedBlock(block: StatBlock, shift: number): StatBlock {
+  return shift ? { ...block, attack: { ...block.attack, toHit: block.attack.toHit + shift } } : block;
+}
+
+/**
+ * Foe count and HP under the table's encounter rules: difficulty scales HP and adds a foe to a group on Deadly;
+ * solo scaling (no ally beside the PC) sends one foe at level 1, at most four later, at ¾ HP.
+ */
+export function scaledEncounter(baseCount: number, baseHp: number, house: Pick<HouseRules, 'encounterDifficulty' | 'soloScaling'>, level: number, alone: boolean): { count: number; hp: number; solo: boolean; notes: string[] } {
+  const d = ENCOUNTER_DIFFICULTY[house.encounterDifficulty];
+  const solo = house.soloScaling && alone;
+  let count = baseCount + (baseCount > 1 ? d.extraFoe : 0);
+  if (solo) count = level <= 1 ? 1 : Math.min(4, count);
+  count = Math.max(1, Math.min(8, count));
+  const hp = Math.max(1, Math.round(baseHp * d.hp * (solo ? 0.75 : 1)));
+  const notes: string[] = [];
+  if (house.encounterDifficulty !== 'normal') {
+    notes.push(`Encounter difficulty: ${house.encounterDifficulty} — foe HP ×${d.hp}, foe attacks ${d.toHit >= 0 ? '+' : ''}${d.toHit}${d.extraFoe && baseCount > 1 ? ', one more foe' : ''}`);
+  }
+  if (solo) notes.push(`Solo scaling: ${count === baseCount ? '' : `${count} of ${baseCount} foes, `}foe HP and damage ×0.75, no save riders`);
+  return { count, hp, solo, notes };
+}
+
+function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: 'foes' | 'pc' | null, house: HouseRules, level: number): FoeSetup & { notes: string[] } {
+  const base = statBlockForEncounter(enc);
+  const shift = ENCOUNTER_DIFFICULTY[house.encounterDifficulty].toHit;
+  const block = shiftedBlock(base, shift);
+  const scaled = scaledEncounter(Math.max(1, Math.min(8, enc.count ?? 1)), base.hp, house, level, !pc.ally && !pc.sidekick);
+  const count = scaled.count;
   const { ids, statusName, writerName } = foeIdentity(enc, block, count);
   // A parked foe comes back as hurt as it was left.
   const share = enc.maxHp > 0 && enc.hp < enc.maxHp ? Math.max(0, enc.hp) / enc.maxHp : 1;
@@ -165,16 +199,19 @@ function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: '
     round: 1,
     pcInitiative: init.pcInitiative,
     foes: foes.map((f) => {
-      const hp = Math.max(1, Math.round(block.hp * share));
-      return { id: f.id, name: f.name, blockId: block.id, hp, maxHp: block.hp, initiative: init.foeInitiative[f.id]!, conditions: [] };
+      const hp = Math.max(1, Math.round(scaled.hp * share));
+      return { id: f.id, name: f.name, blockId: block.id, hp, maxHp: scaled.hp, initiative: init.foeInitiative[f.id]!, conditions: [] };
     }),
     pcConditions: [],
+    ...(shift ? { foeToHitShift: shift } : {}),
+    ...(scaled.solo ? { solo: true } : {}),
+    ...(pc.sidekick ? { sidekickHp: pc.sidekick.hp } : {}),
   };
-  return { combat, blocks, labels, lead: init.events };
+  return { combat, blocks, labels, lead: init.events, notes: scaled.notes };
 }
 
 function resumeCombat(enc: ActiveEncounter, combat: RoundCombatState): FoeSetup {
-  const block = statBlockForEncounter(enc);
+  const block = shiftedBlock(statBlockForEncounter(enc), combat.foeToHitShift ?? 0);
   const blocks = Object.fromEntries(combat.foes.map((f) => [f.id, block.id === f.blockId ? block : { ...block, id: f.blockId }]));
   const count = combat.foes.length;
   const { writerName } = foeIdentity(enc, block, count);
@@ -201,7 +238,10 @@ function withFightConditions(base: string[], fight: CombatCondition[]): string[]
 function finishFight(state: GameState): GameState {
   const strip = roundConditionNames(state.roundCombat);
   const conditions = (state.character.conditions ?? []).filter((c) => !strip.has(c));
-  return { ...state, roundCombat: null, character: { ...state.character, conditions } };
+  const skHp = state.roundCombat?.sidekickHp;
+  // A knocked-out sidekick gets up at 1 HP when the fight ends.
+  const companions = skHp === undefined ? state.companions : (state.companions ?? []).map((c) => (c.sidekick ? { ...c, hp: Math.max(1, Math.min(c.maxHp, skHp)) } : c));
+  return { ...state, companions, roundCombat: null, character: { ...state.character, conditions } };
 }
 
 function hpLine(before: number, after: number): string {
@@ -225,7 +265,9 @@ export function resolveRoundFight(
   const baseConditions = (working.character.conditions ?? []).filter((c) => !roundConditionNames(live).has(c));
   const pc = pcCombatProfile({ ...working, character: { ...working.character, conditions: baseConditions } });
   if (!pc) return null;
-  const setup = live ? resumeCombat(enc, live) : startCombat(enc, pc, rng, opts.surprised ?? null);
+  const house = houseRulesOf(working);
+  const started = live ? null : startCombat(enc, pc, rng, opts.surprised ?? null, house, working.character.level || 1);
+  const setup = live ? resumeCombat(enc, live) : started!;
   const asked = classifyRoundAction(input);
   // Facing a foe ("Face the thugs", a road meeting's fight chip) opens the fight with an attack.
   let action: RoundAction = opts.pre ? 'other' : asked === 'other' && !live ? 'attack' : asked;
@@ -245,13 +287,22 @@ export function resolveRoundFight(
       action = 'attack';
     }
   }
-  const house = houseRulesOf(working);
+  const solo = !!setup.combat.solo;
+  const inspiration = working.character.heroicInspiration ? (house.rulesVersion === 'srd-5.1' ? 'advantage' as const : 'reroll' as const) : undefined;
   const res: RoundResult = playRound({
     pc, combat: setup.combat, blocks: setup.blocks, action, rng, lead: setup.lead, spell, slotLevel,
-    rules: { cleave: house.cleave, flanking: house.flanking },
+    rules: {
+      cleave: house.cleave,
+      flanking: house.flanking,
+      ...(house.critRule !== 'double-dice' ? { critRule: house.critRule } : {}),
+      ...(solo ? { foeDamageScale: 0.75, noRiders: true } : {}),
+      ...(inspiration ? { inspiration } : {}),
+    },
   });
   if (opts.pre) receipts.unshift(`Fight: ${enc.name} forces the fight`);
-  receipts.push(...presentCombatStatus('dnd', res.events, pc.name));
+  receipts.push(...(started?.notes ?? []));
+  receipts.push(...presentCombatStatus('dnd', res.events, pc.name, { hiddenFoeRolls: house.diceVisibility === 'hidden' }));
+  if (res.inspirationSpent) receipts.push('Heroic Inspiration: spent');
   if (res.pcHp !== pc.hp) receipts.push(hpLine(pc.hp, res.pcHp));
   const facts = [...lead, ...relabel(combatFacts(res.events, pc.name), setup.labels)];
   if (opts.pre === 'flee') facts.unshift(`You tried to break away from ${enc.name} and failed; ${enc.name} forced the fight.`);
@@ -287,6 +338,7 @@ export function resolveRoundFight(
       ...working.character,
       hp: res.pcHp,
       conditions: withFightConditions(baseConditions, res.combat.pcConditions),
+      ...(res.inspirationSpent ? { heroicInspiration: false } : {}),
     },
   };
   if (res.slotSpent || res.mageArmor) {
@@ -360,8 +412,46 @@ export function resolveRoundFight(
   receipts.push(`Fight: DEFEAT vs ${enc.name} in ${roundsText}. The fight is over: you lost it.`, ...lost.receipts);
   next = pushCombatStateTx(next, `Fight vs ${enc.name}: defeat in ${roundsText}`, enc.name, 'Engine fight');
   if (onRoad) next = settleRoadMeeting(next, 'defeat');
+  const back = dead ? cheatDeath(next, rng) : null;
+  if (back) {
+    receipts.push(...back.receipts);
+    facts.push(back.fact);
+    return { state: back.state, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}`, foeAfter: { ...encNow, phase: 'engaged' } };
+  }
   facts.push(dead ? 'You are dead.' : `${cap(enc.name)} left you where you fell. You are dying and must fight for breath.`);
   return { state: next, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}`, foeAfter: { ...encNow, phase: 'engaged' } };
+}
+
+/** Revivify's diamond (SRD): 300 GP. */
+const REVIVIFY_GP = 300;
+
+/**
+ * The table's death rule when the PC would die. SRD: dead. Revive: Revivify brings you back at 1 HP and the
+ * diamond's 300 GP comes out of your coin (what you have, up to 300). Mercy: the foes leave you for dead;
+ * you wake 1d4 hours later at 1 HP, robbed of half your coin.
+ */
+function cheatDeath(state: GameState, rng: Rng): { state: GameState; receipts: string[]; fact: string } | null {
+  const rule = houseRulesOf(state).deathRule;
+  if (rule === 'srd') return null;
+  const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
+  const gold = Math.max(0, state.gold ?? 0);
+  const up: GameState = { ...state, deathSaves: null, character: { ...state.character, hp: 1, conditions } };
+  if (rule === 'revive') {
+    const paid = Math.min(gold, REVIVIFY_GP);
+    return {
+      state: { ...up, gold: gold - paid },
+      receipts: [`Death rule (revive): Revivify — back at 1 HP; ${paid} GP of your coin pays for the diamond`, hpLine(0, 1), ...(paid ? [`Gold Spent: ${paid}`] : [])],
+      fact: 'You died, and someone pulled you back with a Revivify spell; part of your coin paid for the diamond it consumed. You are alive, barely on your feet.',
+    };
+  }
+  const hours = 1 + Math.floor(rng() * 4);
+  const lost = Math.floor(gold / 2);
+  const woke = advanceClock({ ...up, gold: gold - lost }, hours);
+  return {
+    state: woke.state,
+    receipts: [`Death rule (mercy): left for dead — you wake 1d4 (${hours}) hours later at 1 HP`, hpLine(0, 1), ...(lost ? [`Gold Lost: ${lost} (taken while you lay senseless)`] : [])],
+    fact: `You were left for dead. ${HOURS_LATER[hours] ?? 'Hours'} later you wake, alive but weak${lost ? ', and your coin purse is lighter' : ''}.`,
+  };
 }
 
 const HOURS_LATER: Record<number, string> = { 1: 'An hour', 2: 'Two hours', 3: 'Three hours', 4: 'Four hours' };
@@ -369,10 +459,21 @@ const HOURS_LATER: Record<number, string> = { 1: 'An hour', 2: 'Two hours', 3: '
 /** At 0 HP every turn is one death save until three successes, three failures, or a natural 20. */
 export function resolveDeathSaveTurn(state: GameState, rng: Rng = Math.random): RoundFightResult | null {
   if (!isDying(state)) return null;
-  const r = rollDeathSave(state.deathSaves!, rng);
-  const secret = houseRulesOf(state).secretDeathSaves;
+  const house = houseRulesOf(state);
+  // 5.2.1 Heroic Inspiration rerolls a failed death save; under 5.1 it is kept for the next attack or save in a fight.
+  const reroll = !!state.character.heroicInspiration && house.rulesVersion === 'srd-5.2.1';
+  const r = rollDeathSave(state.deathSaves!, rng, { reroll });
+  const secret = house.secretDeathSaves;
   const receipts = [deathSaveLine(r, secret)];
   let next: GameState = { ...state, deathSaves: r.state };
+  if (r.rerolled !== undefined) {
+    next = { ...next, character: { ...next.character, heroicInspiration: false } };
+    receipts.push('Heroic Inspiration: spent');
+  }
+  if (r.state.dead) {
+    const back = cheatDeath(next, rng);
+    if (back) return { state: back.state, receipts: [...receipts, ...back.receipts], facts: `${DYING_HEAD} ${back.fact}`, noTerminal: true };
+  }
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
   let fact: string;
   if (r.result === 'revived') {

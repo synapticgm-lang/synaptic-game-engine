@@ -16,7 +16,7 @@ import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { stockItemIconSrc, stockPortraitSrc } from '@/game/stockInventoryArt';
 import { equippedSetLabel } from '@/game/uiTheme';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
-import { houseRulesOf } from '@/game/rules/houseRules';
+import { houseRulesOf, tableRulesLine } from '@/game/rules/houseRules';
 import { carryLine } from '@/game/rules/encumbrance';
 
 type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
@@ -338,8 +338,9 @@ function DndSheet({ state }: { state: GameState }) {
         )}
       </div>
       {sheet && houseRulesOf(state).strictEncumbrance && (
-        <p className="text-xs text-slate-400" data-testid="tabletop-carry">{carryLine(state.inventory, sheet.scores.STR)}</p>
+        <p className="text-xs text-slate-400" data-testid="tabletop-carry">{carryLine(state.inventory, sheet.scores.STR, houseRulesOf(state).encumbrance)}</p>
       )}
+      {sheet && <p className="text-xs text-slate-400" data-testid="tabletop-table-rules">{tableRulesLine(state)}</p>}
       {sheet && (
         <div className="grid gap-3 sm:grid-cols-2 text-xs">
           <div>

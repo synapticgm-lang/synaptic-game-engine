@@ -136,7 +136,9 @@ describe('replay bank tt-build-2 (tabletop turn-based combat)', () => {
     vi.restoreAllMocks();
     dice(0);
     const a = turn(down.state, 'Fight for breath');
-    expect(a.status).toContain('Death save: d20 1 — two failures (0 successes, 2 failures)');
+    // tt-build-5: a Human starts with Heroic Inspiration (SRD 5.2.1 Resourceful); it rerolls the first failed save.
+    expect(a.status).toContain('Death save: d20 1 (Heroic Inspiration: rerolled 1) — two failures (0 successes, 2 failures)');
+    expect(a.status).toContain('Heroic Inspiration: spent');
     expect(applyPlayPhaseAfterHp(a.state, 0, a.state.turn).playPhase).not.toBe('ended');
     const b = turn(a.state, 'Fight for breath');
     expect(b.status.find((l) => l.startsWith('Death save:'))).toMatch(/dead/i);

@@ -9,6 +9,8 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { advanceClock } from './travelJourney';
 import { deriveTabletopSheet, sheetSpellcasting, tabletopHitDie } from './tabletop/characterBuild';
 import { arcaneRecovery } from './rules/spells';
+import { houseRulesOf, REST_HOURS } from './rules/houseRules';
+import { sidekickOf } from './rules/sidekick';
 
 export interface RecoveryRow {
   /** Share of max HP restored by rest / wait at a safe hub. */
@@ -89,35 +91,64 @@ function slotsLeftLine(state: GameState): string | null {
   return sc ? `Spell slots: ${sc.slots.map((s) => `level ${s.level} ${s.left}/${s.total}`).join(', ')} left` : null;
 }
 
+/** A rest length for STATUS ("8 hours") and for the writer ("about eight hours"). */
+function restSpan(hours: number): { status: string; prose: string } {
+  if (hours < 1) {
+    const m = Math.round(hours * 60);
+    return { status: `${m} minutes`, prose: m === 5 ? 'about five minutes' : `about ${m} minutes` };
+  }
+  if (hours >= 24) {
+    const d = Math.round(hours / 24);
+    return { status: `${d} days`, prose: d === 7 ? 'about a week' : `about ${d} days` };
+  }
+  const words: Record<number, string> = { 1: 'an hour', 8: 'eight hours' };
+  return { status: `${hours} hour${hours === 1 ? '' : 's'}`, prose: `about ${words[hours] ?? `${hours} hours`}` };
+}
+
 function applyTabletopRest(state: GameState, input: string): RestHeal {
   const kind = tabletopRestKind(input);
   const ch = state.character;
   const max = ch.maxHp || ch.hp;
   const hurt = ch.hp < max;
-  const recovers = kind === 'long' ? hurt || slotsSpent(state) || !!ch.casting?.mageArmor : hurt || arcaneRecoveryDue(state);
+  const sidekick = sidekickOf(state);
+  const sidekickHurt = !!sidekick && sidekick.hp < sidekick.maxHp;
+  const recovers = kind === 'long' ? hurt || sidekickHurt || slotsSpent(state) || !!ch.casting?.mageArmor : hurt || arcaneRecoveryDue(state);
   if (!kind || !recovers || !isSafeHubRest(state, kind === 'long' ? TABLETOP_LONG_REST_CHIP : 'rest')) {
     return { state, receipt: null };
   }
+  const house = houseRulesOf(state);
+  const hours = REST_HOURS[house.restVariant];
+  const variant = house.restVariant === 'standard' ? '' : ` (${house.restVariant} rest)`;
   if (kind === 'long') {
-    const clock = advanceClock(state, 8);
+    const span = restSpan(hours.long);
+    const clock = advanceClock(state, hours.long);
     const spent = Math.max(0, (state.hitDiceSpent ?? 0) - Math.max(1, Math.floor((ch.level ?? 1) / 2)));
     const caster = !!sheetSpellcasting(ch);
+    // Human Resourceful (SRD 5.2.1): Heroic Inspiration after each Long Rest.
+    const inspired = house.heroicInspiration && house.rulesVersion === 'srd-5.2.1' && ch.srd?.speciesId === 'human' && !ch.heroicInspiration;
     // A long rest restores every spell slot, resets Arcane Recovery and ends Mage Armor (it lasts 8 hours).
-    let character = { ...ch, hp: max, ...(caster ? { casting: { slotsUsed: [] } } : {}) };
+    let character = { ...ch, hp: max, ...(caster ? { casting: { slotsUsed: [] } } : {}), ...(inspired ? { heroicInspiration: true } : {}) };
     if (ch.casting?.mageArmor) {
       const ac = deriveTabletopSheet({ character, inventory: state.inventory ?? [] })?.ac;
       if (ac != null) character = { ...character, armorClass: ac };
     }
-    const next = { ...clock.state, hitDiceSpent: spent, character };
+    const companions = sidekickHurt ? (clock.state.companions ?? []).map((c) => (c.sidekick ? { ...c, hp: c.maxHp } : c)) : clock.state.companions;
+    const next = { ...clock.state, companions, hitDiceSpent: spent, character };
     const slotLine = caster ? slotsLeftLine(next) : null;
+    const after = [
+      ...(slotLine ? [slotLine] : []),
+      ...(sidekickHurt ? [`${sidekick!.name}: HP ${sidekick!.hp} → ${sidekick!.maxHp}`] : []),
+      ...(inspired ? ['Heroic Inspiration: yours (Human, Resourceful)'] : []),
+    ];
     return {
       state: next,
-      receipt: `Rest: long rest, 8 hours — ${hurt ? `HP ${ch.hp} → ${max}` : `HP stays ${max}`} (${clock.note})`,
-      ...(slotLine ? { after: [slotLine] } : {}),
-      fact: `You slept through a long rest of about eight hours and woke with your strength back${caster ? ' and your spells ready again' : ''}.`,
+      receipt: `Rest: long rest${variant}, ${span.status} — ${hurt ? `HP ${ch.hp} → ${max}` : `HP stays ${max}`} (${clock.note})`,
+      ...(after.length ? { after } : {}),
+      fact: `You ${hours.long >= 24 ? 'rested' : 'slept'} through a long rest of ${span.prose} and woke with your strength back${caster ? ' and your spells ready again' : ''}.`,
     };
   }
-  const clock = advanceClock(state, 1);
+  const shortSpan = restSpan(hours.short);
+  const clock = advanceClock(state, hours.short);
   const recovery = state.character.srd?.classId === 'wizard' ? arcaneRecovery(ch.level || 1, ch.casting) : null;
   const withRecovery = (s: GameState): { state: GameState; after?: string[] } => {
     if (!recovery) return { state: s };
@@ -129,11 +160,11 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
     const r = withRecovery(clock.state);
     return {
       state: r.state,
-      receipt: `Rest: short rest, 1 hour — ${hurt ? 'no Hit Dice left, ' : ''}HP stays ${ch.hp} (${clock.note})`,
+      receipt: `Rest: short rest${variant}, ${shortSpan.status} — ${hurt ? 'no Hit Dice left, ' : ''}HP stays ${ch.hp} (${clock.note})`,
       ...(r.after ? { after: r.after } : {}),
       fact: hurt
-        ? `You rested for about an hour, but it did not ease your hurts; you need a night’s sleep.${recoveryFact}`
-        : `You took a short rest of about an hour.${recoveryFact}`,
+        ? `You rested for ${shortSpan.prose}, but it did not ease your hurts; you need ${hours.long >= 24 ? 'a long rest' : 'a night’s sleep'}.${recoveryFact}`
+        : `You took a short rest of ${shortSpan.prose}.${recoveryFact}`,
     };
   }
   const die = tabletopHitDie(ch);
@@ -144,10 +175,10 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
   const r = withRecovery({ ...clock.state, hitDiceSpent: (state.hitDiceSpent ?? 0) + 1, character: { ...ch, hp } });
   return {
     state: r.state,
-    receipt: `Rest: short rest, 1 hour — HP ${ch.hp} → ${hp} (${clock.note})`,
+    receipt: `Rest: short rest${variant}, ${shortSpan.status} — HP ${ch.hp} → ${hp} (${clock.note})`,
     dieLine: `Hit Die: d${die} ${roll} ${con >= 0 ? '+' : '−'} ${Math.abs(con)} = ${gain}`,
     ...(r.after ? { after: r.after } : {}),
-    fact: `You took a short rest of about an hour and bound your hurts${hp < max ? '; you are not fully healed' : ''}.${recoveryFact}`,
+    fact: `You took a short rest of ${shortSpan.prose} and bound your hurts${hp < max ? '; you are not fully healed' : ''}.${recoveryFact}`,
   };
 }
 

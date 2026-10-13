@@ -178,19 +178,34 @@ function HouseRulesSection({ settings, onChange, engineMode }: Props) {
         <h3 className="font-serif text-sm uppercase tracking-wider text-slate-200">House Rules</h3>
       </div>
       <div className="space-y-3">
-        <HouseRuleToggle
-          icon={<Package size={16} />}
-          label="Strict Encumbrance & Ammo Tracking"
-          description={
-            tabletop
-              ? 'Inventory slots, a Strength × 15 lb carry limit, and bows and crossbows spend one arrow or bolt per shot'
-              : 'Inventory slots are a hard limit: a full pack blocks new items'
-          }
-          checked={settings.strictEncumbrance}
-          onChange={(v) => onChange('strictEncumbrance', v)}
-        />
+        {!tabletop && (
+          <HouseRuleToggle
+            icon={<Package size={16} />}
+            label="Strict Encumbrance & Ammo Tracking"
+            description="Inventory slots are a hard limit: a full pack blocks new items"
+            checked={settings.strictEncumbrance}
+            onChange={(v) => onChange('strictEncumbrance', v)}
+          />
+        )}
         {tabletop && (
           <>
+            {TABLE_RULES.map((r) => (
+              <TableRuleSelect key={r.key} rule={r} value={tableRuleValue(settings, r)} onChange={(v) => onChange(r.key, r.parse(v) as never)} />
+            ))}
+            <HouseRuleToggle
+              icon={<Zap size={16} />}
+              label="Heroic Inspiration"
+              description="Earned by Humans after a Long Rest and by finishing a quest; spend it to reroll a missed attack, a failed save or a failed death save (5.1: Advantage on your next attack or save)"
+              checked={settings.ttHeroicInspiration !== false}
+              onChange={(v) => onChange('ttHeroicInspiration', v)}
+            />
+            <HouseRuleToggle
+              icon={<Users size={16} />}
+              label="Solo Scaling"
+              description="Fighting alone (no sidekick or ally): one foe at level 1, at most four later, foe HP and damage ×0.75 and no knock-down or poison riders"
+              checked={settings.ttSoloScaling === true}
+              onChange={(v) => onChange('ttSoloScaling', v)}
+            />
             <HouseRuleToggle
               icon={<EyeOff size={16} />}
               label="Secret Death Saves"
@@ -216,6 +231,57 @@ function HouseRulesSection({ settings, onChange, engineMode }: Props) {
         )}
       </div>
     </section>
+  );
+}
+
+interface TableRule {
+  key: keyof Settings;
+  label: string;
+  description: string;
+  options: Array<[string, string]>;
+  fallback: string;
+  parse: (v: string) => Settings[keyof Settings];
+}
+
+const asText = (v: string) => v as Settings[keyof Settings];
+
+/** Tabletop table rules (Settings → House Rules). The engine reads them through rules/houseRules. */
+const TABLE_RULES: TableRule[] = [
+  { key: 'ttRulesVersion', label: 'Rules version', description: 'Which SRD the table plays (Heroic Inspiration and Human differ)', options: [['srd-5.2.1', 'SRD 5.2.1'], ['srd-5.1', 'SRD 5.1']], fallback: 'srd-5.2.1', parse: asText },
+  { key: 'ttStatMethod', label: 'Ability scores', description: 'How a new character sets abilities (also used by quick start and ready-made characters)', options: [['choose', 'Player chooses'], ['point-buy', 'Point buy'], ['standard-array', 'Standard array'], ['4d6', 'Roll 4d6, drop the lowest']], fallback: 'choose', parse: asText },
+  { key: 'ttStartingLevel', label: 'Starting level', description: 'A new character starts at this level (fixed HP per level)', options: [['1', 'Level 1'], ['2', 'Level 2'], ['3', 'Level 3'], ['4', 'Level 4'], ['5', 'Level 5']], fallback: '1', parse: (v) => Number(v) as Settings[keyof Settings] },
+  { key: 'ttProgression', label: 'Levelling', description: 'XP from fights and deeds, or a level for each finished quest, cleared dungeon or ending', options: [['xp', 'Experience points'], ['milestone', 'Milestones']], fallback: 'xp', parse: asText },
+  { key: 'ttDiceVisibility', label: 'Dice', description: 'Open: every roll on STATUS. Hidden: foe rolls stay behind the screen; you see hits and damage', options: [['open', 'All rolls open'], ['hidden', 'GM rolls hidden']], fallback: 'open', parse: asText },
+  { key: 'ttEncounterDifficulty', label: 'Encounter difficulty', description: 'Foe HP and attack bonus; Deadly adds a foe to any group', options: [['easy', 'Easy'], ['normal', 'Normal'], ['hard', 'Hard'], ['deadly', 'Deadly']], fallback: 'normal', parse: asText },
+  { key: 'ttSidekick', label: 'Sidekick', description: 'A companion who fights beside you, levels with you and takes no XP share (joins when your character is made)', options: [['none', 'None'], ['warrior', 'Warrior'], ['expert', 'Expert'], ['spellcaster', 'Spellcaster']], fallback: 'none', parse: asText },
+  { key: 'ttDeathRule', label: 'Death', description: 'SRD: three failed death saves and you die. Revive: Revivify for up to 300 GP of your coin. Mercy: you wake hours later, robbed', options: [['srd', 'SRD (death is final)'], ['revive', 'Revivify for coin'], ['mercy', 'Left for dead']], fallback: 'srd', parse: asText },
+  { key: 'ttRestVariant', label: 'Rests', description: 'Standard: 1 hour short, 8 hours long. Gritty: 8 hours and 7 days. Heroic: 5 minutes and 1 hour', options: [['standard', 'Standard'], ['gritty', 'Gritty realism'], ['heroic', 'Epic heroism']], fallback: 'standard', parse: asText },
+  { key: 'ttEncumbrance', label: 'Encumbrance', description: 'Capacity: Strength × 15 lb and ammo spent per shot. Variant: also slower over Strength × 5 lb, Disadvantage over × 10', options: [['off', 'Off'], ['capacity', 'Carrying capacity'], ['variant', 'Variant encumbrance']], fallback: 'off', parse: asText },
+  { key: 'ttCritRule', label: 'Critical hits', description: 'Double the damage dice (SRD), max the dice and roll them again, or double the whole total', options: [['double-dice', 'Double dice (SRD)'], ['max-plus-roll', 'Max dice + roll'], ['double-total', 'Double the total']], fallback: 'double-dice', parse: asText },
+];
+
+function tableRuleValue(settings: Settings, r: TableRule): string {
+  const v = settings[r.key];
+  if (r.key === 'ttEncumbrance' && v === undefined) return settings.strictEncumbrance ? 'capacity' : 'off';
+  return v === undefined || v === null ? r.fallback : String(v);
+}
+
+function TableRuleSelect({ rule, value, onChange }: { rule: TableRule; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="flex w-full items-center gap-3 rounded-lg border border-slate-700/60 bg-slate-800/40 p-3 text-left">
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-medium text-slate-200">{rule.label}</div>
+        <div className="text-[11px] text-slate-500">{rule.description}</div>
+      </div>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="shrink-0 rounded-md border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-200"
+        data-testid={`table-rule-${rule.key}`}
+      >
+        {rule.options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+      </select>
+    </label>
   );
 }
 

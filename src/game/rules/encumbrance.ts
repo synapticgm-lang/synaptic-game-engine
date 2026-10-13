@@ -103,6 +103,22 @@ export function fitCarry<T extends Item>(inventory: Item[], incoming: T[], stren
   return { kept, left };
 }
 
-export function carryLine(inventory: Item[] | null | undefined, strength: number): string {
-  return `Carrying ${carriedWeightLb(inventory)} lb of ${carryingCapacityLb(strength)} lb`;
+export function carryLine(inventory: Item[] | null | undefined, strength: number, rule: 'off' | 'capacity' | 'variant' = 'capacity'): string {
+  const base = `Carrying ${carriedWeightLb(inventory)} lb of ${carryingCapacityLb(strength)} lb`;
+  if (rule !== 'variant') return base;
+  const load = variantLoad(inventory, strength);
+  return load.state === 'unburdened' ? base : `${base} — ${load.state} (Speed −${load.speedPenalty} ft${load.heavy ? ', Disadvantage on STR/DEX/CON attacks, checks and saves' : ''})`;
+}
+
+/**
+ * Variant Encumbrance (SRD 5.1, CC-BY-4.0): over Strength × 5 lb you are encumbered (Speed −10 ft); over
+ * Strength × 10 lb you are heavily encumbered (Speed −20 ft, Disadvantage on ability checks, attack rolls and
+ * saving throws that use Strength, Dexterity or Constitution).
+ */
+export function variantLoad(inventory: Item[] | null | undefined, strength: number): { state: 'unburdened' | 'encumbered' | 'heavily encumbered'; speedPenalty: number; heavy: boolean } {
+  const lb = carriedWeightLb(inventory);
+  const s = Math.max(0, strength);
+  if (lb > s * 10) return { state: 'heavily encumbered', speedPenalty: 20, heavy: true };
+  if (lb > s * 5) return { state: 'encumbered', speedPenalty: 10, heavy: false };
+  return { state: 'unburdened', speedPenalty: 0, heavy: false };
 }
