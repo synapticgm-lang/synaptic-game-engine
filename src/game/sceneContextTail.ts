@@ -215,15 +215,23 @@ function putsCameraAt(sentence: string, place: string): boolean {
 /** "about" after one of these is around a place ("looked about the yard"), not a topic. */
 const AROUND_VERB = /\b(?:look|looked|looks|looking|glanced|peered|gazed|wandered|walked|milled|moved|turned|stood|paced|strolled)\s*$/i;
 
+/** An asked or wondered question in reported speech: the ask, up to three words of whom, then the question word. */
+const REPORTED_QUESTION =
+  /\b(?:ask(?:s|ed|ing)?|wonder(?:s|ed|ing)?|demand(?:s|ed|ing)?|inquir(?:e|es|ed|ing)|enquir(?:e|es|ed|ing))(?:\s+(?!(?:what|where|why|how|who|whom|whether|if|which)\b)[\w'’-]+){0,3}?\s+(?:what|where|why|how|who|whom|whether|if|which)\b[^.;!?]*/gi;
+
 /**
- * Words that only name a place as the matter of talk or thought are not the camera: quoted words, and a
- * topic after about / regarding / concerning ("asked about the Ledger", "a decision about the wagon desk").
+ * Words that only name a place as the matter of talk or thought are not the camera: quoted words, a
+ * topic after about / regarding / concerning / the question of ("asked about the Ledger", "a decision about
+ * the wagon desk", "the question of the circle"), and a reported question ("asked her what the circle was for").
  */
 function withoutTalkAbout(text: string): string {
   return text
     .replace(/"[^"]*"|“[^”]*”/g, ' ')
-    .replace(/\b(?:about|regarding|concerning)\b(?:\s+[\w'’-]+){1,8}/gi, (m, at: number, all: string) =>
-      AROUND_VERB.test(all.slice(0, at)) ? m : ' ');
+    .replace(REPORTED_QUESTION, ' ')
+    .replace(
+      /\b(?:about|regarding|concerning|(?:question|matter|talk|word|news|rumou?r)s?\s+of)\b(?:\s+[\w'’-]+){1,8}/gi,
+      (m, at: number, all: string) => (AROUND_VERB.test(all.slice(0, at)) ? m : ' ')
+    );
 }
 
 /**

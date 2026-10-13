@@ -287,7 +287,7 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
     words = quoted.map((q, i) => (i < quoted.length - 1 ? q.replace(/,$/, '.') : q)).join(' ');
   } else if (tagged) {
     words = tagged[1]!;
-  } else if (line.speaker_tok && !namesDeclaredPerson(text, refs)) {
+  } else if (line.speaker_tok && (!namesDeclaredPerson(text, refs) || onlyAddressesOthers(text, line.speaker_tok))) {
     words = text.replace(new RegExp(`^[${OPEN_Q}]|[${CLOSE_Q}]$`, 'g'), '');
     bare = true;
   } else {
@@ -484,6 +484,17 @@ const CARRIED_THING =
   /\b(?:the|a|an|her|his|their)\s+((?:[a-z][a-z'-]*\s+){0,2}?)([a-z][a-z'-]*)\s+(?:(?:hung|slung|tucked|strapped|hooked|knotted|thrust)\s+)?(?:at|on|across|over|from|in|through)\s+(?:her|his|their|one|each)\s+(?:belt|hips?|waist|wrists?|neck|shoulders?|sash|girdle)\b/gi;
 /** Parts of the body rest at a hip or a shoulder; they are no new object. */
 const BODY_PART = /^(?:hands?|arms?|fingers?|thumbs?|fists?|palms?|elbows?|knuckles?|head|chin|hair|cheek|skin)$/i;
+/**
+ * Someone handles a thing as their own ("set down their pack", "unslung his bow", "reached into her satchel"):
+ * the possessor, up to two words, then the thing, which stops where the clause moves on.
+ */
+const HANDLED_OWN =
+  /\b(?:set|sets|setting|put|puts|putting|laid|lays|laying|lowered|dropped|drops|slung|unslung|unslings|shouldered|hefted|hefts|opened|opens|unbuckled|unstrapped|emptied|empties|rummaged|rummages|reached|reaches|shrugged|shrugs)\s+(?:(?:down|off|up|in|into|through)\s+)?(their|his|her|your|[A-Z][a-z'-]+['’]s)\s+((?:[a-z][a-z'-]*\s+){0,2}?)([a-z][a-z'-]*)(?=\s*(?:[,.;:!?]|$|\s(?:and|on|onto|in|into|to|at|by|beside|against|with|from|off|down|up|aside|away|open|for|before|while|as|then|so)\b))/g;
+/** What anyone wears or is: a garment or a part of the body is no new object to hand. */
+const WORN_OR_BODY =
+  /^(?:clothes|coat|cloak|hood|collar|sleeves?|cuffs?|shirt|tunic|jerkin|jacket|boots?|belt|hat|gloves?|pockets?|trousers|breeches|skirt|apron|scarf|shawl|eyes?|face|breath|voice|feet|foot|legs?|shoulders?|back|jaw|lips?|mouth|brow|neck|gaze|weight|heels?|hands?|arms?|fingers?|fists?|palms?|head|hair)$/;
+/** A handed bag covers its other names. */
+const BAG_WORD = /^(?:pack|packs|backpack|satchel|knapsack|rucksack)$/;
 
 /** In `handedCountText`, the earlier page follows this line. */
 const PAGE_MARK = '\u0000page\u0000';
@@ -502,6 +513,36 @@ export function lineHasUnhandedCarriedThing(text: string, handedText: string): b
     const modifier = m[1]!.trim().split(/\s+/).pop()?.toLowerCase() ?? '';
     const said = (w: string) => w.length >= 3 && new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(handed);
     if (said(head) || said(modifier)) continue;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Lap 58 — the player character handles a thing as their own ("Jax set down their pack") that their kit does not
+ * hold. The PC's kit is the sealed ledger: the thing, a word it compounds with, or (for a pack) a handed bag must be
+ * on this turn's facts. Clothes and the body are always there. Other people's own tools are scene colour, not kit.
+ */
+export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName?: string): boolean {
+  const pc = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
+  if (pc.length < 2) return false;
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // A ledger note in brackets ("(stored; not in a bag)") describes a row; it hands no thing.
+  const held = handedText.split(PAGE_MARK)[0]!.replace(/\([^)]*\)/g, ' ');
+  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  const subject = new RegExp(`^\\s*(?:${esc(pc)}|You)\\b[^,;:]*$`);
+  for (const m of narration.matchAll(HANDLED_OWN)) {
+    const owner = m[1]!;
+    const at = m.index ?? 0;
+    const start = Math.max(narration.lastIndexOf('.', at), narration.lastIndexOf('!', at), narration.lastIndexOf('?', at)) + 1;
+    const pcOwns = owner.replace(/['’]s$/, '') === pc || (/^(?:their|his|her|your)$/.test(owner) && subject.test(narration.slice(start, at)));
+    if (!pcOwns) continue;
+    const head = m[3]!.toLowerCase();
+    if (WORN_OR_BODY.test(head)) continue;
+    if (BAG_WORD.test(head) && /\bbag\b/.test(held)) continue;
+    const modifier = m[2]!.trim().split(/\s+/).pop()?.toLowerCase() ?? '';
+    const said = (w: string) => w.length >= 3 && new RegExp(`\\b${esc(w)}`).test(held);
+    if (said(head) || said(head.replace(/e?s$/, '')) || said(modifier)) continue;
     return true;
   }
   return false;
@@ -580,6 +621,17 @@ const PERSON_USES = new Set<TokenUse>(['speaker', 'actor', 'addressed']);
 /** The line names a declared person by token: indirect speech ("@t2 told Jax…") carries its own speaker. */
 function namesDeclaredPerson(text: string, refs: TokenUseRef[]): boolean {
   return toksInText(text).some((t) => refs.some((r) => r.tok === t && PERSON_USES.has(r.use)));
+}
+
+/**
+ * Every token in the text is a person spoken to, set off by commas ("…come out quiet, @t8?", "@t8, listen"), and
+ * none is the speaker: words said to someone are the speaker's own, not indirect speech about them.
+ */
+function onlyAddressesOthers(text: string, speakerTok: string): boolean {
+  const spk = speakerTok.replace(/^@/, '').toLowerCase();
+  const toks = toksInText(text);
+  return toks.length > 0 && toks.every((t) =>
+    t.toLowerCase() !== spk && new RegExp(`(?:^|,\\s*)@${t}\\s*[,.!?\u2026]`, 'i').test(text));
 }
 
 /** The text names the named person `tok` in plain words: one word of their proper name ("Nell", "Rudd"). */
@@ -748,6 +800,7 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   const handed = handedCountText(state, packet);
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
   if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
+  if (lineHasUnhandedOwnThing(text, handed, state.character?.name)) return 'a thing carried that the scene never handed';
   if (lineHasUnhandedFind(text, handed)) return 'a thing found that the scene never handed';
   if (lineOpensOnFactLabel(text, handed)) return 'an engine label pasted as story';
   if (lineHasWrongTimeOfDay(text, handed)) return 'a time of day the clock does not show';
@@ -773,6 +826,9 @@ export function classifyTokenLine(
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
   if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };
+  if (handedCounts != null && !line.spoken && lineHasUnhandedOwnThing(line.text, handedCounts, pcName)) {
+    return { ok: false, reason: 'carried' };
+  }
   if (handedCounts != null && lineHasUnhandedFind(line.text, handedCounts)) return { ok: false, reason: 'found' };
   if (handedCounts != null && lineOpensOnFactLabel(line.text, handedCounts)) return { ok: false, reason: 'label' };
   if (handedCounts != null && line.fn !== 'speech' && lineHasWrongTimeOfDay(line.text, handedCounts)) {
