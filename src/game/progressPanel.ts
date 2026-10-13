@@ -7,6 +7,7 @@ import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
 import { hidesPart } from './systemHousing';
 import { classDisplayName } from './rules/characterClass';
 import { unspentStatPoints } from './rules/abilityPoints';
+import { namedSkillViews, type NamedSkillView } from './rules/librarySkills';
 import type { AttributeKey, GameState, Rarity } from './types';
 
 const ATTRIBUTE_KEYS: AttributeKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
@@ -15,6 +16,8 @@ const RARITY_ORDER: Rarity[] = ['Legendary', 'Epic', 'Rare', 'Uncommon', 'Common
 export interface ProgressPanel {
   attributes: { key: AttributeKey; value: number }[];
   skills: { key: string; label: string; rank: number }[];
+  /** LitRPG named skills from the skill library (the same views the System window reads). */
+  namedSkills: NamedSkillView[];
   level: number | null;
   xp: { xp: number; toNext: number } | null;
   /** The class as the mode names it; null with no class or when the housing hides the level. */
@@ -41,5 +44,5 @@ export function progressPanel(state: GameState): ProgressPanel {
     .map((it) => ({ id: it.id, name: it.name, rarity: it.rarity, quantity: it.quantity, equipped: !!it.equipped }))
     .sort((a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity));
   const statPointsToSpend = hidesPart(housing, 'level') ? 0 : unspentStatPoints(state);
-  return { attributes, skills, level, xp, className, statPointsToSpend, items };
+  return { attributes, skills, namedSkills: namedSkillViews(state), level, xp, className, statPointsToSpend, items };
 }

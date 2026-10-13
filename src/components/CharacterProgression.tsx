@@ -146,13 +146,22 @@ function StatusMode({ state }: { state: GameState }) {
         </section>
       )}
 
-      {p.skills.length > 0 && (
+      {(p.skills.length > 0 || p.namedSkills.length > 0) && (
         <section>
           <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
             <Sparkles size={13} />
             Skills
           </h3>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {p.namedSkills.map((s) => (
+              <div key={s.key} className="rounded-md border border-sky-800/60 bg-slate-800/40 p-2.5" data-testid="progress-named-skill">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[11px] text-slate-300">{s.label}</span>
+                  {s.rank != null && <span className="font-mono text-sm font-bold text-slate-100">+{s.rank}</span>}
+                </div>
+                {s.note && <div className="mt-0.5 text-[10px] text-slate-500">{s.note}</div>}
+              </div>
+            ))}
             {p.skills.map((s) => (
               <div key={s.key} className="flex items-baseline justify-between rounded-md border border-slate-700 bg-slate-800/40 p-2.5">
                 <span className="text-[11px] text-slate-400">{s.label}</span>

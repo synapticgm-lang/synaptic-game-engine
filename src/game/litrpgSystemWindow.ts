@@ -11,6 +11,7 @@ import { unspentStatPoints } from './rules/abilityPoints';
 import { ABILITY_KEYS } from './tabletop/characterBuild';
 import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
 import { skillLabel } from './skillGates';
+import { namedSkillViews } from './rules/librarySkills';
 import type { GameState, LogEntry } from './types';
 
 export interface LitrpgSystemWindow {
@@ -80,7 +81,7 @@ export function shouldAttachLitrpgSystemWindow(args: {
   if (playerAskedAboutSystemPanel(args.playerInput ?? '')) return true;
   if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
-  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:/i.test(l))) return true;
+  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:|^(?:Skill rank up|Technique learned|Perk gained):/i.test(l))) return true;
   return false;
 }
 
@@ -146,13 +147,15 @@ function statsLine(state: GameState): string | null {
   return `Stats: ${scores.join(', ')}${tail}`;
 }
 
-/** The highest engine skill ranks (rank above 0), most first. */
+/** Named library skills first (evolved, then highest rank), then the highest engine check ranks above 0. */
 function topSkillsLine(state: GameState): string | null {
+  const named = namedSkillViews(state).map((v) => (v.rank != null ? `${v.label} ${v.rank}` : v.label));
   const ranks = skillRanksOf(state.character);
-  const top = CHECK_SKILLS.filter((s) => ranks[s] > 0)
+  const checks = CHECK_SKILLS.filter((s) => ranks[s] > 0)
     .sort((x, y) => ranks[y] - ranks[x])
-    .slice(0, TOP_SKILLS);
-  return top.length ? `Skills: ${top.map((s) => `${skillLabel(s)} ${ranks[s]}`).join(', ')}` : null;
+    .map((s) => `${skillLabel(s)} ${ranks[s]}`);
+  const top = [...named, ...checks].slice(0, TOP_SKILLS);
+  return top.length ? `Skills: ${top.join(', ')}` : null;
 }
 
 /**

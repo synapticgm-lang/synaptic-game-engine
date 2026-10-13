@@ -298,6 +298,12 @@ export function isJourneyUnderway(state: Pick<GameState, 'journey'>): boolean {
 const WALK_ON = /^(?:walk on|keep (?:walking|going)|press on|carry on|continue (?:on|along|walking|the journey))\b/i;
 const TURN_BACK = /^(?:turn back|go back|head back)\b/i;
 
+/** A step of the ground between places (walk on / turn back), not a task in the scene. */
+export function isJourneyStepLine(input: string): boolean {
+  const t = (input ?? '').trim();
+  return WALK_ON.test(t) || TURN_BACK.test(t);
+}
+
 const TALK_PAD: Record<JourneyTerrain, string> = {
   forest: 'Talk to whoever is on the path',
   marsh: 'Talk to whoever is on the track',

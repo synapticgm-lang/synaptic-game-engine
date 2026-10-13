@@ -289,6 +289,18 @@ export interface Relationship {
   lastInteraction: string;
 }
 
+/** One LitRPG named skill: a skill-library base skill id, its use-grown rank, and the technique it evolved into. */
+export interface NamedSkillState {
+  id: string;
+  rank: number;
+  uses: number;
+  evolvedTo?: string;
+  /** The last counted use (a repeat of the same line in the same scene is not counted again). */
+  lastUse?: { line: string; scene: string };
+  /** When the evolved technique was last used, for its library cooldown. */
+  usedAt?: { scene: string; day: number; turn: number };
+}
+
 export interface Character {
   name: string;
   level: number;
@@ -328,6 +340,8 @@ export interface Character {
   statAllocations?: { level: number; bonus: Partial<Attributes> }[];
   /** The title the System shows on the window; unset until a title is earned. */
   activeTitle?: string;
+  /** LitRPG named skills from the skill library (rules/librarySkills), grown by real use. */
+  namedSkills?: NamedSkillState[];
   /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */
   srd?: TabletopSheet;
   /** Tabletop caster's spent slots and lasting spells (rules/spells). */

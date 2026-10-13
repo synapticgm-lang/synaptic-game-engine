@@ -33,6 +33,7 @@ const edgeOnly = (..._args: unknown[]): never => { throw new Error('tabletop exp
 const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
 const modeProfile = edgeOnly;
+const namedSkillCheckMod = (..._args: unknown[]): null => null;
 
 export type CheckSkill = CheckSkillName;
 
@@ -311,6 +312,11 @@ export function runPlayerCheck(
   ];
   const row = difficultyRow(state.gmStrictness);
   let adv: AdvState = 'normal';
+  const named = namedSkillCheckMod(state, actionText, intent.kind);
+  if (named) {
+    mods.push({ label: named.label, value: named.value });
+    if (named.advantage) adv = 'advantage';
+  }
   let auto: 'willing' | 'unwilling' | undefined;
   let cue: string | undefined;
   const social = ctx.attr === 'CHA' && ctx.skill === 'persuasion';
@@ -320,7 +326,7 @@ export function runPlayerCheck(
     if (target) {
       const s = DISPOSITION_SOCIAL[target.disposition];
       const size = requestSize(actionText);
-      adv = s.adv;
+      adv = combineAdv(adv, s.adv);
       const flat = s.flat < 0 && row.socialRemoveHostilePenalty ? 0 : s.flat;
       mods.push({ label: `${target.disposition} (${target.name})`, value: flat });
       // Skill + relationship already come from skillBonus + disposition.

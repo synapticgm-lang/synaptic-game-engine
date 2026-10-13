@@ -69,6 +69,8 @@ import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
 import { settleClassChoice } from './rules/characterClass';
 import { settleStatPoints } from './rules/abilityPoints';
+import { settleSkillUse } from './rules/skillGrowth';
+import { SKILL_NOTICE } from './rules/librarySkills';
 import { resolveOutOfCombatCast } from './tabletop/spellCasting';
 import { resolveDowntimeTurn } from './tabletop/downtimeTurn';
 import { isLookAroundAction } from './sandboxXp';
@@ -714,7 +716,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats):/.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats):/.test(r) || SKILL_NOTICE.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
@@ -787,9 +789,11 @@ export function runArcDirectorBeforeGm(
   }
 
   // 28g — rest / wait at a safe hub restores HP (recoveryRules).
+  let rested = false;
   {
     const rest = applyRestHeal(working, playerInput);
     if (rest.receipt) {
+      rested = true;
       working = rest.state;
       if (rest.dieLine) systemReceipts.push(rest.dieLine);
       systemReceipts.push(rest.receipt, ...(rest.after ?? []));
@@ -835,6 +839,14 @@ export function runArcDirectorBeforeGm(
         mandates.push(`ENGINE RESULT (required fact — state it plainly): ${downtime.fact}`);
       }
     }
+  }
+
+  // LitRPG named skills (skill library): real use grows them; an evolved technique pays its cost and cooldown.
+  if (!downtimeSettled) {
+    const skill = settleSkillUse(working, playerInput, { rested });
+    working = skill.state;
+    systemReceipts.push(...skill.receipts);
+    if (skill.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${skill.fact}`);
   }
 
   // 29b — spatial: flee/exit intent marks outdoor authority so prose can't snap back inside
