@@ -6,7 +6,7 @@
 import type { EngineMode } from './types.ts';
 
 const CHROME_RECEIPT =
-  /^(?:XP Gained|Arc XP|Level Up|HP:|Hit Die:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —)/i;
+  /^(?:XP Gained|Arc XP|Level Up|HP:|Hit Die:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:)/i;
 
 /** A foe's health figure ("Wardline Bandit HP: 9/16 (−4)"). */
 const FOE_HP_FIGURE = /^[^:]{1,60} HP: \d+\/\d+/;
@@ -70,6 +70,8 @@ export function terminalFightOutcome(engineFact: string | undefined): TerminalFi
     };
   }
   if (/Flee check: [^.]*— success/.test(fact)) return { outcome: 'escaped', foe: '', rounds: '', forced: false };
+  const escaped = fact.match(/Fight: ESCAPED from (.+?) after (\d+ rounds?)/);
+  if (escaped) return { outcome: 'escaped', foe: escaped[1]!.trim(), rounds: escaped[2]!, forced: false };
   return null;
 }
 

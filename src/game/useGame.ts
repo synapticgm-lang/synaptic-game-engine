@@ -12,6 +12,7 @@ import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './cho
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
+import { isDying } from './tabletop/roundFight';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { commitOfferedPad, downloadPlayDump, withOfferedChoices } from './playTranscript';
@@ -4192,7 +4193,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           writerTag: writerMilestone,
           events,
           lootVideo: lootVideoReq,
-          characterHp: baseChar.hp ?? liveCurrent.character.hp,
+          // Dying (death saves still running) is not death: the death plate waits for the last failure.
+          characterHp: isDying(workingState) ? 1 : baseChar.hp ?? liveCurrent.character.hp,
           characterConditions: baseChar.conditions ?? liveCurrent.character.conditions ?? [],
           gainedItems: [
             ...structural.gainedItems,

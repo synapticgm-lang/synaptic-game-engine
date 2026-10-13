@@ -25,6 +25,7 @@ import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
 import { isJourneyUnderway } from './travelJourney';
 import { liveChips } from './chipLegality';
+import { roundCombatChips } from './tabletop/combatChips';
 import { updateCooldowns } from './optionDiversityContract';
 import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 
@@ -83,6 +84,8 @@ export function resolveOfferedChoices(state: GameState): string[] {
 }
 
 function compileOfferedChoices(state: GameState): string[] {
+  const roundChips = roundCombatChips(state);
+  if (roundChips) return roundChips;
   const lastPlayer = lastPlayerActionFromLog(state);
   const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
   const autoNamedOpeningPad =

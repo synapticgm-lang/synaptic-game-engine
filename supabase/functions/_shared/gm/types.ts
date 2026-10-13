@@ -100,6 +100,45 @@ export interface TabletopCreationState {
   restorePad?: { turn: number; choices: string[] } | null;
 }
 
+/** A condition on a combatant during a round fight (SRD 5.2.1 names). */
+export interface CombatCondition {
+  name: string;
+  /** Ends at the end of this combatant's next turn ('pc' or a foe id). */
+  endsAfterTurnOf?: string;
+  source?: string;
+}
+
+export interface RoundFoeState {
+  id: string;
+  name: string;
+  /** srdMonsters block id ('engine' = built from the encounter's own numbers). */
+  blockId: string;
+  hp: number;
+  maxHp: number;
+  initiative: number;
+  conditions: CombatCondition[];
+}
+
+export interface RoundCombatState {
+  encounterName: string;
+  /** The round about to be played (1 before the first choice). */
+  round: number;
+  pcInitiative: number;
+  foes: RoundFoeState[];
+  pcConditions: CombatCondition[];
+  /** Dodge: attacks against the PC have Disadvantage until its next turn. */
+  dodging?: boolean;
+  /** Hide: the Stealth total a foe's Perception must meet to find the PC. */
+  hiddenStealth?: number | null;
+}
+
+export interface DeathSaveState {
+  successes: number;
+  failures: number;
+  stable?: boolean;
+  dead?: boolean;
+}
+
 export type EntityKind = 'pet' | 'demon' | 'minion' | 'familiar' | 'mount';
 
 export interface SummonEntity {
@@ -549,6 +588,10 @@ export interface GameState {
   offeredPad?: { turn: number; choices: string[] } | null;
   /** Tabletop inn-book character creation in progress (engine-only pages, no writer). */
   tabletopCreation?: TabletopCreationState;
+  /** Shared rules engine: a turn-based fight in progress (one player choice per round). */
+  roundCombat?: RoundCombatState | null;
+  /** Shared rules engine: the PC is at 0 HP and making death saves. */
+  deathSaves?: DeathSaveState | null;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];

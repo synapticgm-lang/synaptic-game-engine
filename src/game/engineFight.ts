@@ -3,7 +3,8 @@
  * Attack: the auto-fight resolver (simulateCombat) settles the whole fight this turn. The engine rolls,
  * applies damage, ends the encounter, pays XP (xpRules) and loot (loot profiles, difficulty applied).
  * Flee / parley: one engine d20 check. Success ends the encounter; failure means the foe forces the
- * fight and the same resolver settles it. Never a round-by-round loop. The writer only describes the facts.
+ * fight and the same resolver settles it. The writer only describes the facts.
+ * A built tabletop character (SRD sheet) fights round by round instead: tabletop/roundFight plays one round per turn.
  */
 import type { ActiveEncounter, GameState } from './types';
 import { simulateCombat, type CombatResult, type CombatRound, type EnemyStats } from './combat';
@@ -22,6 +23,7 @@ import { fightLootClause, weaponInHand } from './infoSheet';
 import { isRoadFoe, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
+import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -35,6 +37,8 @@ export interface EngineFightResult {
   facts: string;
   /** 29y — the foe as the fight left it when the player lost (it stays at the place). */
   foeAfter?: ActiveEncounter;
+  /** Tabletop rounds: the fight goes on (or the PC lies dying) — no encounter-terminal mandate this turn. */
+  noTerminal?: boolean;
 }
 
 function nameKey(name: string): string {
@@ -136,6 +140,8 @@ function forcedFightOpener(flee: boolean, foe: string): string {
 /** Resolve fight / flee / parley on a live (or pending) encounter. Null when the input is not a fight action. */
 export function resolveEngineFight(state: GameState, playerInput: string): EngineFightResult | null {
   const input = (playerInput ?? '').trim();
+  const roundMode = usesRoundCombat(state);
+  if (roundMode && isDying(state)) return resolveDeathSaveTurn(state);
   const pending = state.activeEncounter ? null : state.sceneFacts?.pendingEncounter ?? null;
   // 29y — a threat remembered at this place is the same foe, fought through the same path.
   const parked = state.activeEncounter || pending ? null : parkedThreatHere(state);
@@ -147,9 +153,12 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ?? (parked ? wakeParkedThreat(parked) : road);
   if (!raw || !input) return null;
   const meetingMove = road ? roadMeetingMove(state, input) : null;
-  const flee = meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(input));
+  // Tabletop: once the rounds have begun every input is this round's action; a live foe also takes Dodge / Hide / …
+  const inRounds = roundMode && !!state.activeEncounter && state.roundCombat?.encounterName === state.activeEncounter.name;
+  const roundMove = roundMode && !!state.activeEncounter && classifyRoundAction(input) !== 'other';
+  const flee = !inRounds && (meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(input)));
   const parley = meetingMove === 'parley' || (!flee && PARLEY_RE.test(input));
-  const attack = !flee && !parley && (ATTACK_RE.test(input) || !!road);
+  const attack = !flee && !parley && (ATTACK_RE.test(input) || !!road || inRounds || roundMove);
   const onRoad = isRoadFoe(state, raw);
   if (!flee && !parley && !attack) return null;
   if (parked && (flee || /\b(talk|ask|speak|conversation)\b/i.test(input))) return null;
@@ -189,7 +198,15 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
         : `${enc.name} accepted terms and stood down.`;
       return { state: next, receipts, facts: `${FACTS_HEAD} ${what}` };
     }
-    receipts.push(`Fight: ${enc.name} forces the fight`);
+    if (!roundMode) receipts.push(`Fight: ${enc.name} forces the fight`);
+  }
+
+  if (roundMode) {
+    const r = resolveRoundFight(state, working, raw, input, {
+      pre: flee ? 'flee' : parley ? 'parley' : undefined,
+      surprised: !flee && !parley && !state.roundCombat && approach.id === 'ambush' ? 'foes' : null,
+    });
+    if (r) return { ...r, receipts: [...receipts, ...r.receipts] };
   }
 
   const enemy: EnemyStats = {

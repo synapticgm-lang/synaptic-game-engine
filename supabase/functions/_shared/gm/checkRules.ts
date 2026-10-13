@@ -248,6 +248,48 @@ export function formatCheckRecord(rec: CheckResultRecord, mode: EngineMode | und
   return `${rec.label} ${dice}${mods ? ` ${mods}` : ''} = ${rec.total} vs DC ${rec.dc} — ${word}`;
 }
 
+/**
+ * SRD 5.2.1 condition effects the engine runs (Rules Glossary, CC-BY-4.0). One table for checks, saves and
+ * attacks. `attacks`: the creature's own attack rolls. `attacked`: attack rolls against it.
+ * `autoFailSaves`: Strength/Dexterity saves fail with no roll. `noActions`: it loses its turn.
+ * `meleeCritAgainst`: a hit from within 5 feet is a Critical Hit. `speedZero`: it cannot move away.
+ */
+export interface ConditionEffect {
+  attacks?: AdvState;
+  attacked?: AdvState;
+  checks?: AdvState;
+  dexSaves?: AdvState;
+  autoFailSaves?: boolean;
+  noActions?: boolean;
+  meleeCritAgainst?: boolean;
+  speedZero?: boolean;
+  /** Prone only: melee attacks against it have Advantage, ranged ones Disadvantage. */
+  prone?: boolean;
+}
+
+export const CONDITION_EFFECTS: Readonly<Record<string, ConditionEffect>> = {
+  blinded: { attacks: 'disadvantage', attacked: 'advantage' },
+  frightened: { attacks: 'disadvantage', checks: 'disadvantage' },
+  grappled: { speedZero: true },
+  incapacitated: { noActions: true },
+  invisible: { attacks: 'advantage', attacked: 'disadvantage' },
+  paralyzed: { noActions: true, speedZero: true, autoFailSaves: true, attacked: 'advantage', meleeCritAgainst: true },
+  poisoned: { attacks: 'disadvantage', checks: 'disadvantage' },
+  prone: { attacks: 'disadvantage', prone: true },
+  restrained: { speedZero: true, attacks: 'disadvantage', attacked: 'advantage', dexSaves: 'disadvantage' },
+  stunned: { noActions: true, speedZero: true, autoFailSaves: true, attacked: 'advantage' },
+  unconscious: { noActions: true, speedZero: true, autoFailSaves: true, attacked: 'advantage', meleeCritAgainst: true, prone: true },
+};
+
+export function conditionEffect(name: string): ConditionEffect | undefined {
+  return CONDITION_EFFECTS[(name ?? '').trim().toLowerCase()];
+}
+
+/** Advantage state an ability check gets from the checker's own conditions. */
+export function conditionCheckAdv(conditions: readonly string[] | undefined): AdvState {
+  return combineAdv(...(conditions ?? []).map((c) => conditionEffect(c)?.checks ?? 'normal'));
+}
+
 /** LitRPG cue for a disposition (never numbers). */
 export function dispositionCue(name: string, d: Disposition): string | undefined {
   if (d === 'hostile' || d === 'wary') return `${name} seems set against you.`;

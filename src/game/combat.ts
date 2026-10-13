@@ -93,6 +93,27 @@ function rollLoot(enemy: EnemyStats): Item[] {
   return loot;
 }
 
+/** 28d — the engine loot roll on a win (lootTableRegistry.rollLoot): seeded, never the AI. */
+export function rollVictoryLoot(
+  state: GameState,
+  enemy: Pick<EnemyStats, 'name' | 'goldReward' | 'lootTable' | 'lootProfile' | 'cr'>
+): Pick<CombatResult, 'goldGained' | 'loot' | 'lootLines' | 'lootPity'> {
+  const firstKill = !(state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.name === enemy.name);
+  const engineLoot = rollEngineLoot({
+    profile: enemy.lootProfile ?? 'mob',
+    state,
+    seed: `${state.seed || 'seed'}:${state.turn}:${enemy.name}`,
+    cr: enemy.cr ?? null,
+    firstKill,
+  });
+  return {
+    goldGained: state.engineMode === 'dnd' && engineLoot ? engineLoot.gold : scaleTreasureGold(state, enemy.goldReward),
+    loot: [...rollLoot(enemy as EnemyStats), ...(engineLoot?.items ?? [])],
+    lootLines: engineLoot && state.engineMode === 'dnd' ? engineLoot.dice : [],
+    lootPity: engineLoot && engineLoot.nextPity != null ? { tier: engineLoot.pityTier, next: engineLoot.nextPity } : undefined,
+  };
+}
+
 export function simulateCombat(state: GameState, enemy: EnemyStats, opts: SimulateCombatOptions = {}): CombatResult {
   const player = state.character;
   const approach = opts.approach ?? meleeApproach();
@@ -180,26 +201,11 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
 
   const victory = enemyHp <= 0 && playerHp > 0;
   const xpGained = victory ? enemy.xpReward : Math.floor(enemy.xpReward * 0.1);
-  // 28d — the engine loot roll (lootTableRegistry.rollLoot): seeded, never the AI.
-  const firstKill = !(state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.name === enemy.name);
-  const engineLoot = victory
-    ? rollEngineLoot({
-        profile: enemy.lootProfile ?? 'mob',
-        state,
-        seed: `${state.seed || 'seed'}:${state.turn}:${enemy.name}`,
-        cr: enemy.cr ?? null,
-        firstKill,
-      })
-    : null;
-  const goldGained = victory
-    ? state.engineMode === 'dnd' && engineLoot
-      ? engineLoot.gold
-      : scaleTreasureGold(state, enemy.goldReward)
-    : 0;
-  const loot = victory ? [...rollLoot(enemy), ...(engineLoot?.items ?? [])] : [];
-  const lootLines = engineLoot && state.engineMode === 'dnd' ? engineLoot.dice : [];
-  const lootPity =
-    engineLoot && engineLoot.nextPity != null ? { tier: engineLoot.pityTier, next: engineLoot.nextPity } : undefined;
+  const won = victory ? rollVictoryLoot(state, enemy) : null;
+  const goldGained = won?.goldGained ?? 0;
+  const loot = won?.loot ?? [];
+  const lootLines = won?.lootLines ?? [];
+  const lootPity = won?.lootPity;
 
   const summary = victory
     ? `Player defeated ${enemy.name} in ${rounds} rounds. Dealt ${damageDealt} damage, took ${damageReceived} damage. Gained ${xpGained} XP and ${goldGained} gold.`

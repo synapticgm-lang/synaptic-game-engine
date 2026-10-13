@@ -197,19 +197,27 @@ export const CLASS_KITS: Record<TabletopClassId, KitDef[]> = {
 };
 
 /** SRD weapon damage dice. */
-export const WEAPON_DICE: Record<string, { dice: string; type: string; ranged?: boolean; finesse?: boolean }> = {
-  Dagger: { dice: '1d4', type: 'piercing', finesse: true },
-  Shortsword: { dice: '1d6', type: 'piercing', finesse: true },
-  Scimitar: { dice: '1d6', type: 'slashing', finesse: true },
-  Greatsword: { dice: '2d6', type: 'slashing' },
-  Flail: { dice: '1d8', type: 'bludgeoning' },
+export const WEAPON_DICE: Record<string, { dice: string; type: string; ranged?: boolean; finesse?: boolean; martial?: boolean; light?: boolean }> = {
+  Dagger: { dice: '1d4', type: 'piercing', finesse: true, light: true },
+  Shortsword: { dice: '1d6', type: 'piercing', finesse: true, light: true, martial: true },
+  Scimitar: { dice: '1d6', type: 'slashing', finesse: true, light: true, martial: true },
+  Greatsword: { dice: '2d6', type: 'slashing', martial: true },
+  Flail: { dice: '1d8', type: 'bludgeoning', martial: true },
   Javelin: { dice: '1d6', type: 'piercing' },
   Mace: { dice: '1d6', type: 'bludgeoning' },
   Quarterstaff: { dice: '1d6', type: 'bludgeoning' },
   Spear: { dice: '1d6', type: 'piercing' },
   Shortbow: { dice: '1d6', type: 'piercing', ranged: true },
-  Longbow: { dice: '1d8', type: 'piercing', ranged: true },
+  Longbow: { dice: '1d8', type: 'piercing', ranged: true, martial: true },
 };
+
+/** SRD 5.2.1 weapon training: every class has Simple; Fighter all Martial; Rogue Martial with Finesse or Light. */
+export function weaponProficient(classId: TabletopClassId, weapon: string): boolean {
+  const w = WEAPON_DICE[weapon];
+  if (!w) return false;
+  if (!w.martial || classId === 'fighter') return true;
+  return classId === 'rogue' && !!(w.finesse || w.light);
+}
 
 /** SRD armor: base AC and the Dexterity cap (null = full DEX, 0 = none). */
 export const ARMOR_TABLE: Record<string, { base: number; dexCap: number | null; category: 'Light' | 'Medium' | 'Heavy' }> = {

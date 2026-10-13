@@ -20,6 +20,11 @@ export function applyPlayPhaseAfterHp(
     return state;
   }
 
+  // Tabletop at 0 HP makes death saves; the run ends on the third failure (or a killing blow).
+  if (state.engineMode === 'dnd' && state.deathSaves && !state.deathSaves.dead) {
+    return state;
+  }
+
   if (state.engineMode === 'litrpg' && state.playPhase !== 'ended' && !opts?.deathTurn) {
     return { ...state, playPhase: 'down' as PlayPhase };
   }

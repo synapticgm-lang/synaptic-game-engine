@@ -5,6 +5,8 @@ import { currentDungeonNode } from './dungeonSeed.ts';
 import { difficultyRow } from './difficultyRules.ts';
 import { equippedWeaponName } from './ledgerCombat.ts';
 import {
+  combineAdv,
+  conditionCheckAdv,
   DISPOSITION_SOCIAL,
   dispositionCue,
   familiarityCue,
@@ -315,6 +317,7 @@ export function runPlayerCheck(
     if (auto === 'unwilling' && leverageSum >= 3) auto = undefined;
     else if (auto === 'willing' && leverageSum <= -3) auto = undefined;
   }
+  if (state.character.srd) adv = combineAdv(adv, conditionCheckAdv(state.character.conditions));
   if (intent.kind === 'attack' && state.activeEncounter) {
     const cat = weaponCategory(equippedWeaponName(state));
     const score = weaponFamiliarityScore(state, cat);

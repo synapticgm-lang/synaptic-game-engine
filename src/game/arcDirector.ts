@@ -692,7 +692,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const questsHidden = questListHidden(result.state?.systemHousing);
   const tabletop = result.state?.engineMode === 'dnd';
   for (const r of result.systemReceipts) {
-    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —)/.test(r)) {
+    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:)/.test(r)) {
       lines.push(r);
       continue;
     }
@@ -762,7 +762,7 @@ export function runArcDirectorBeforeGm(
       mandates.push(`ENCOUNTER HELD: ${engineFight.foeAfter.name} beat you back and still holds this place. It was not beaten or talked down.`);
     } else if (!working.activeEncounter && escapedFrom) {
       mandates.push(`ENCOUNTER ESCAPED: you got away from ${escapedFrom}. It was not beaten, and nothing was won or looted.`);
-    } else if (!working.activeEncounter) {
+    } else if (!working.activeEncounter && !engineFight?.noTerminal) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
     }
   } else {
