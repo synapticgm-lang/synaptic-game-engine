@@ -43,7 +43,7 @@ function pinsHere(state: GameState): string[] {
 export function extractNamesFromHookText(text: string | undefined): string[] {
   if (!text) return [];
   const names: string[] = [];
-  const re = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/g;
+  const re = /\b([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)?)\b/g;
   let m: RegExpExecArray | null;
   const stop = new Set([
     'The', 'You', 'Your', 'A', 'An', 'And', 'Or', 'But', 'When', 'Where', 'What',
@@ -83,7 +83,7 @@ export function resolveOpeningPinnedNames(
   bible?: CampaignBible | null
 ): string[] {
   const existing = state.openingEstablishment?.pinnedNpcNames ?? [];
-  if (existing.length) return existing.filter((n) => !isOpeningPlaceName(state, n));
+  if (existing.length) return existing.filter((n) => !/[\r\n]/.test(n) && !isOpeningPlaceName(state, n));
   if (state.openingEstablishment?.aloneArrival) return [];
   const fromHook = extractNamesFromHookText(
     state.openingEstablishment?.pickedHook ?? state.openingEstablishment?.pickedHookFallback

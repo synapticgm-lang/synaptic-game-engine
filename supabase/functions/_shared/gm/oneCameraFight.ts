@@ -6,7 +6,7 @@
 
 import type { GameState } from './types.ts';
 import { isEncounterEngaged } from './encounterTerminalFsm.ts';
-import { isDeadFoeCorpseOk, isDeadFoeReopenedAsLiving, matchesLastKillName } from './combatAuthority.ts';
+import { isDeadFoeCorpseOk, isDeadFoeReopenedAsLiving, matchesLastKillName, withoutLastKillName } from './combatAuthority.ts';
 const LEAVE_REACH =
   /\bYou leave\s+.+?\s+behind and reach\s+.+?\./i;
 
@@ -45,7 +45,7 @@ export function isOneCameraFightViolation(state: GameState, text: string): boole
     if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
     const tokens = body.match(/\b[A-Za-z][A-Za-z'-]{3,}\b/g) ?? [];
     if (
-      FIGHT_BLEED.test(body)
+      FIGHT_BLEED.test(withoutLastKillName(body, kill))
       && !isDeadFoeCorpseOk(body)
       && tokens.some((t) => matchesLastKillName(t.replace(/['’]s$/i, ''), kill))
     ) {

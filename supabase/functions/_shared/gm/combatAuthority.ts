@@ -150,6 +150,15 @@ export function matchesLastKillName(token: string, lastKill?: LastKill | null): 
   return false;
 }
 
+/**
+ * The text with the dead foe's own name words blanked, for a steel-word test: "the Ashknife Cell-Blade lay on the
+ * floor" names the body, and the "Blade" in its name is no blade drawn.
+ */
+export function withoutLastKillName(text: string, lastKill?: LastKill | null): string {
+  const words = (lastKill?.name ?? '').split(/\s+/).filter((w) => w.length >= 4).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return words.length ? (text ?? '').replace(new RegExp(`(?<![\\w-])(?:${words.join('|')})(?![\\w-])`, 'gi'), ' ') : (text ?? '');
+}
+
 const DEAD_FOE_CORPSE_OK =
   /\b(?:fallen(?!\s+(?:blade|sword|knife|weapon|axe|spear))|corpse|body|(?:the\s+)?remains\b(?!\s+fixed)|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|already\s+down|lashed|lies where)\b/i;
 const DEAD_FOE_COMBAT_REENGAGE =

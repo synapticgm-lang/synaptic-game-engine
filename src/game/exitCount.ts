@@ -20,6 +20,8 @@ const COUNTED_EXIT = new RegExp(
 const LEADS_OUT = /^\s+(?:(?:in and )?out\b|(?:[a-z-]+\s+)?(?:left|led|lead|leads|ran|run|runs|went|go|goes|opened|open)\b)/i;
 /** Later in the sentence, the counted ways lead on: "Two doors waited…, and both of them led somewhere". */
 const LED_LATER = /\b(?:both|all|each|they|which)\b(?:\s+[a-z]+){0,2}?\s+(?:led|lead|leads|ran|run|runs|went|go|goes|opened)\b/i;
+/** Right before the count, the place parts into its ways: "the undercroft split into three dark ways". */
+const SPLITS_INTO = /\b(?:split|splits|splitting|branched|branches|branching|forked|forks|forking|divided|divides|dividing)\s+(?:off\s+|out\s+)?into\s+$/i;
 /** "the other two doors", "the first two roads" count part of the ways, not all of them. */
 const PART_OF = /\b(?:other|remaining|first|last|next|those|these)\s+$/i;
 /** "the only way on ran past the traveler", "the way back": the ways in one direction, not every way out. */
@@ -57,7 +59,7 @@ function statedExitCounts(clause: string, exits: string[], sentence: string): Ar
     const more = /\b(?:more|further|additional)\b/i.test(m[0]);
     // "…; two more routes—Cathedral Close and the Undercroft—lay beyond": an added count needs no verb of its own.
     const tail = sentence.slice(Math.max(0, sentence.indexOf(clause)) + end);
-    const bare = !/^exits?$/.test(noun) && !LEADS_OUT.test(after) && !LED_LATER.test(tail);
+    const bare = !/^exits?$/.test(noun) && !LEADS_OUT.test(after) && !LED_LATER.test(tail) && !SPLITS_INTO.test(clause.slice(0, at));
     if (bare && !more) continue;
     if (PART_OF.test(clause.slice(0, at)) || ONE_DIRECTION.test(after) || /^\s+of\s+the\b/i.test(after)) continue;
     // "the only other way out" leaves out the way in; "one of the ways out" picks one of several.

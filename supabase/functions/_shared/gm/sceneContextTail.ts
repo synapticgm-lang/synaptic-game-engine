@@ -7,7 +7,7 @@
 import type { GameState, LogEntry } from './types.ts';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName.ts';
 import { splitProseSentences } from './proseSentences.ts';
-import { matchesLastKillName } from './combatAuthority.ts';
+import { matchesLastKillName, withoutLastKillName } from './combatAuthority.ts';
 
 export const SCENE_CONTEXT_TAIL_WINDOW = 4;
 export const SCENE_CONTEXT_RECENT_TURNS = 2;
@@ -256,10 +256,10 @@ export function isStaleLocationBleed(state: GameState, text: string): boolean {
 export function isStaleFightBleed(state: GameState, text: string): boolean {
   const body = (text ?? '').trim();
   if (!body || !encounterClearedRecently(state)) return false;
-  if (!FIGHT_BLEED.test(body)) return false;
-  if (CORPSE_OK.test(body)) return false;
   const kill = state.sceneFacts?.lastKill;
   if (!kill?.name) return false;
+  if (!FIGHT_BLEED.test(withoutLastKillName(body, kill))) return false;
+  if (CORPSE_OK.test(body)) return false;
   // The kill turn is the engine's settled fight being told: its blows are this beat, not a fight left behind.
   if (kill.turn === state.turn) return false;
   const tokens = body.match(/\b[A-Za-z][A-Za-z'-]{3,}\b/g) ?? [];

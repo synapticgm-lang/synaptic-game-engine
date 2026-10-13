@@ -88,9 +88,16 @@ function readTokenUse(raw: string): TokenUse | null {
  * Fixed lexicon of job roles a ledger cast slot fills. Do not grow this list per incident.
  * An unnamed passer-by ("the stranger", "a figure") claims no slot and is not on it.
  */
-/** Up to two describing words may stand between the article and the role ("the close-eyed clerk", "a tall guard"). */
-const UNBOUND_ANIMATE =
-  /\b(?:a|an|the)\s+(?:(?!(?:and|or|of|to|in|at|on|by|for|from|with|where|who|that|which|was|were|is|had|has)\b)[a-z][a-z'-]*\s+){0,2}(?:chanter|vendor|guard|merchant|priest|innkeep|handler|clerk|official|registrar|witness|archivist)\b/i;
+const ROLE_NOUNS = ['chanter', 'vendor', 'guard', 'merchant', 'priest', 'innkeep', 'handler', 'clerk', 'official', 'registrar', 'witness', 'archivist'];
+const ROLE_DESC = '(?:(?!(?:and|or|of|to|in|at|on|by|for|from|with|where|who|that|which|was|were|is|had|has)\\b)[a-z][a-z\'-]*\\s+){0,2}';
+/**
+ * Up to two describing words may stand between the article and the role ("the close-eyed clerk", "a tall guard").
+ * A counted group of a role ("Two church guards", "both clerks") is the same claim about people here.
+ */
+const UNBOUND_ANIMATE = new RegExp(
+  `\\b(?:(?:a|an|the)\\s+${ROLE_DESC}(?:${ROLE_NOUNS.join('|')})|(?:two|three|four|five|six|both|several)\\s+${ROLE_DESC}(?:${ROLE_NOUNS.join('|')})(?:e?s)?)\\b`,
+  'i'
+);
 
 const TOK_RE = /@t(\d+)\b/g;
 
@@ -363,6 +370,7 @@ export function handedCountText(state: GameState, packet?: CompletedEventPacket)
     ...(packet?.ledgerChanges ?? []),
     ...(packet?.allowlist ?? []),
     ...refEnumOf(state, packet).map((r) => r.display),
+    PAGE_MARK,
     ...page,
   ].join('\n').toLowerCase();
 }
@@ -381,7 +389,38 @@ export function lineHasUnhandedCount(text: string, handed: string): boolean {
   return false;
 }
 
-const roleNounOf = (match: string) => match.toLowerCase().split(/\s+/).pop() ?? '';
+/** A thing worn or carried on someone ("the rope at her belt", "her satchel strap across one shoulder"). */
+const CARRIED_THING =
+  /\b(?:the|a|an|her|his|their)\s+((?:[a-z][a-z'-]*\s+){0,2}?)([a-z][a-z'-]*)\s+(?:(?:hung|slung|tucked|strapped|hooked|knotted|thrust)\s+)?(?:at|on|across|over|from|in|through)\s+(?:her|his|their|one|each)\s+(?:belt|hips?|waist|wrists?|neck|shoulders?|sash|girdle)\b/gi;
+/** Parts of the body rest at a hip or a shoulder; they are no new object. */
+const BODY_PART = /^(?:hands?|arms?|fingers?|thumbs?|fists?|palms?|elbows?|knuckles?|head|chin|hair|cheek|skin)$/i;
+
+/** In `handedCountText`, the earlier page follows this line. */
+const PAGE_MARK = '\u0000page\u0000';
+
+/**
+ * Lap 47 — a thing worn or carried on a person that no fact handed this turn holds (the writer gave a present
+ * person kit the scene never set up). Its own name or the word it compounds with must be handed. The earlier
+ * page does not count: a rope handle on a ship's hatch hands nobody a rope at the belt.
+ */
+export function lineHasUnhandedCarriedThing(text: string, handedText: string): boolean {
+  const handed = handedText.split(PAGE_MARK)[0]!;
+  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  for (const m of narration.matchAll(CARRIED_THING)) {
+    const head = m[2]!.toLowerCase();
+    if (BODY_PART.test(head)) continue;
+    const modifier = m[1]!.trim().split(/\s+/).pop()?.toLowerCase() ?? '';
+    const said = (w: string) => w.length >= 3 && new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(handed);
+    if (said(head) || said(modifier)) continue;
+    return true;
+  }
+  return false;
+}
+
+const roleNounOf = (match: string) => {
+  const word = match.toLowerCase().split(/\s+/).pop() ?? '';
+  return ROLE_NOUNS.find((r) => word === r || word === `${r}s` || word === `${r}es`) ?? word;
+};
 
 /** Role nouns this turn's own engine result names ("Go with the handler…"): the writer was handed them. */
 export function handedRoleNouns(packet?: CompletedEventPacket): string[] {
@@ -571,7 +610,9 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
  * handed fact holds, a capital the writer was never handed, or a role person bound to nobody.
  */
 export function plainLineFactProblem(text: string, state: GameState, packet?: CompletedEventPacket): string | null {
-  if (lineHasUnhandedCount(text, handedCountText(state, packet))) return 'a count the scene never handed';
+  const handed = handedCountText(state, packet);
+  if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
+  if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
   const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
   if (named === 'capital') return 'a name the scene never handed';
   if (named === 'unbound-animate') return 'a person who is not here';
@@ -593,6 +634,7 @@ export function classifyTokenLine(
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
+  if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };
   // Spoken words with no speaker would paint as narration.
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
     return { ok: false, reason: 'speech-no-speaker' };
@@ -856,10 +898,17 @@ function peopleHereNoteNames(state: GameState): string[] {
   return notes.match(/\b[A-Z][a-z'’]+(?:[ -][A-Z][a-z'’]+)+\b/g) ?? [];
 }
 
+/** Role nouns that are part of the name of a person here ("Clerk Brin Holt"): "the clerk" is that person. */
+function presentRoleTitles(state: GameState): string[] {
+  const names = [...presentNpcRecords(state).map((m) => m.npcName), ...(state.sceneFacts?.present ?? [])];
+  return [...new Set(names.flatMap((n) => String(n ?? '').toLowerCase().split(/\s+/)).filter((w) => ROLE_NOUNS.includes(w)))];
+}
+
 /**
  * Names the writer was handed this turn: the ledger's own names, the People here notes, the packet's
- * mention list, the writer's quest titles and the role nouns of this turn's engine result. A capital the
- * packet gave the writer is not an invention, nor is a role it named. A weapon not in hand stays out, however it is listed.
+ * mention list, the writer's quest titles, the role nouns of this turn's engine result and the role titles
+ * of people here. A capital the packet gave the writer is not an invention, nor is a role it named.
+ * A weapon not in hand stays out, however it is listed.
  */
 export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
   const unheld = new Set(weaponsNotInHand(state));
@@ -869,6 +918,7 @@ export function handedProperNames(state: GameState, packet?: CompletedEventPacke
     ...(packet?.allowlist ?? []),
     ...writerFacts(state).quests.map((q) => q.name),
     ...handedRoleNouns(packet),
+    ...presentRoleTitles(state),
   ];
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1 && !unheld.has(n.trim())).map((n) => n.trim()))];
 }
