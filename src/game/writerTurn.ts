@@ -14,6 +14,7 @@ import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, sentenceGateProblems, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
+import { exitRepairFact } from './exitCount';
 import { isNearClone, isSameBeat } from './beatFingerprint';
 import {
   detectAtmosphereReprint,
@@ -383,12 +384,20 @@ export async function repairRejectedSentences(
       repairs: [{ sentence: turn.prose.slice(0, 200), flag: whole, fact: check.engineFact, bug: 'unlocated: no single sentence fails the gate' }],
     };
   }
-  const fact = check.engineFact;
+  // A way-out flag is fixed against this place's ways out, whatever else the turn's fact says.
+  const exitFact = /\bways? out\b/i.test(whole) && !/\bExits:/.test(check.engineFact) ? exitRepairFact(check.state) : '';
+  const fact = [exitFact, check.engineFact.trim()].filter(Boolean).join(' ');
+  const countNote = /^Gives the wrong number of ways out/.test(whole)
+    ? 'Name every one of those ways out, or give no number of ways at all.'
+    : '';
   let lines: string[] | null = null;
   let bug = 'no repair path';
   let raw = '';
   if (opts.repair) {
-    const asked = flagged.map((f) => ({ ...f, note: staleLocationRepairNote(check.state, f.sentence) }));
+    const asked = flagged.map((f) => ({
+      ...f,
+      note: [staleLocationRepairNote(check.state, f.sentence), countNote].filter(Boolean).join(' '),
+    }));
     raw = await opts.repair(sentenceRepairRequest(asked, fact)).catch(() => '');
     lines = raw.trim() ? repairReplyLines(raw, check, packet, flagged.length) : null;
     bug = raw.trim() ? 'repair reply was not a rewrite of the flagged sentence' : 'repair reply empty';

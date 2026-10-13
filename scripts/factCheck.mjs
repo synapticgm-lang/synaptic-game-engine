@@ -376,8 +376,9 @@ export function checkTurn(row, packet, page = '') {
         // "the paper on the boards" at a notice-board hall: a fitting the place's own line names holds it.
         const fitting = after.match(/^\s+(?:on|in|across|along)\s+(?:the|its)\s+([a-z-]{4,})/i)?.[1]?.replace(/s$/, '');
         if (fitting && !foundBefore && new RegExp(`\\b${fitting}\\b`).test(facts.placeWork)) continue;
+        // "set the papers down flat and waited": a verb past "and" is the holder's, not the thing's.
         const found = foundBefore
-          || /^\s+(?:\w+\s+){0,3}?(?:lay|lying|rested|resting|sat|hidden|tucked|waited)\b/i.test(after);
+          || /^\s+(?:(?!(?:and|then|but|while|as|before|after)\b)\w+\s+){0,3}?(?:lay|lying|rested|resting|sat|hidden|tucked|waited)\b/i.test(after);
         if (owned ? !jaxClause : !found) continue;
       }
       // "the fallen beasts" after a handed Rotting Feral Dog Pack is the handed animal foe, not a new one.

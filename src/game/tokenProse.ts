@@ -1119,16 +1119,26 @@ function presentRoleTitles(state: GameState): string[] {
   return [...new Set(names.flatMap((n) => String(n ?? '').toLowerCase().split(/\s+/)).filter((w) => ROLE_NOUNS.includes(w)))];
 }
 
+/** The given name of each person here ("Oda" for Oda Dunmore): a short given name is the person, however short. */
+function presentGivenNames(state: GameState): string[] {
+  return presentNpcRecords(state).flatMap((m) => {
+    const words = String(m.npcName ?? '').trim().split(/\s+/);
+    const first = words[0] ?? '';
+    return words.length > 1 && /^[A-Z][a-z'’]{2,}$/.test(first) && !ROLE_NOUNS.includes(first.toLowerCase()) ? [first] : [];
+  });
+}
+
 /**
- * Names the writer was handed this turn: the ledger's own names, the People here notes, the packet's
- * mention list, the writer's quest titles, the role nouns of this turn's engine result and the role titles
- * of people here. A capital the packet gave the writer is not an invention, nor is a role it named.
- * A weapon not in hand stays out, however it is listed.
+ * Names the writer was handed this turn: the ledger's own names, the given names of people here, the People
+ * here notes, the packet's mention list, the writer's quest titles, the role nouns of this turn's engine result
+ * and the role titles of people here. A capital the packet gave the writer is not an invention, nor is a role
+ * it named. A weapon not in hand stays out, however it is listed.
  */
 export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
   const unheld = new Set(weaponsNotInHand(state));
   const names = [
     ...knownProperNames(state),
+    ...presentGivenNames(state),
     ...peopleHereNoteNames(state),
     ...(packet?.allowlist ?? []),
     ...writerFacts(state).quests.map((q) => q.name),

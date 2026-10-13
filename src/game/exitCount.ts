@@ -81,6 +81,17 @@ function statedExitCounts(clause: string, exits: string[], sentence: string): Ar
   return out;
 }
 
+/**
+ * The engine fact a way-out repair needs: this place's mapped ways out, in the receipt's own words, or ''
+ * when nothing is mapped. A rewrite handed only the travel line has nothing to count against.
+ */
+export function exitRepairFact(state: GameState): string {
+  const exits = handedExits(state);
+  if (!exits) return '';
+  const here = playerFacingLocation(state) || norm(state.currentLocation ?? '') || 'here';
+  return `Exits: the ways out of ${here} lead to ${exits.join(', ')}.`;
+}
+
 /** The repair line for a sentence that miscounts the ways out, or null when the count is right or absent. */
 export function wrongExitCountProblem(state: GameState, sentence: string): string | null {
   const exits = handedExits(state);
