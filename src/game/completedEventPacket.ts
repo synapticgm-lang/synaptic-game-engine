@@ -1474,9 +1474,13 @@ const HERE_CLAIM = new RegExp(
 /** The place phrase ends where the clause goes on ("here in the Close and questions waited"). */
 const CLAUSE_GOES_ON = /\s+(?:and|but|or|as|while|where|when|with|before|after|until|so|then|because|though)\b.*$/i;
 
+/** A quoted line is what a person said ("We'll take it back at Contract Hall"), not where the camera is. */
+const QUOTED_SPEECH = /["“][^"“”]*["”]/g;
+
 /** The place a sentence says the camera is in ("still in the close" → "close"), or '' when it claims none. */
 export function claimedHerePlace(prose: string): string {
-  return (prose ?? '').match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').replace(CLAUSE_GOES_ON, '').trim() ?? '';
+  const narration = (prose ?? '').replace(QUOTED_SPEECH, ' ');
+  return narration.match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').replace(CLAUSE_GOES_ON, '').trim() ?? '';
 }
 
 /** The claim is HERE by HERE's own words: "the Close" or "close" for Cathedral Close. */

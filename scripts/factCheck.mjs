@@ -337,6 +337,9 @@ export function checkTurn(row, packet, page = '') {
       const p = test.join(' ');
       if (facts.allowText.includes(lower(p))) continue;
       if (test.every((w) => facts.allowText.includes(lower(w)))) continue;
+      // "Two Worn Hand Axes" after a handed Worn Hand Axe is more of that handed thing.
+      const handedWhole = (o) => new RegExp(`(?<![a-z])${lower(o).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z])`).test(facts.allowText);
+      if (/s$/.test(p) && [p.replace(/s$/, ''), p.replace(/es$/, '')].some(handedWhole)) continue;
       add('name', s, `"${p}" is not in the mention list, refs, receipts or open quests`);
     }
 
@@ -370,6 +373,9 @@ export function checkTurn(row, packet, page = '') {
           || /\b(?:found|finds?|picked up|took|takes?|hand over|pulled out|drew(?!\s+(?:closer|nearer|near|back|away|level|up|in|around|round|alongside)\b)|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
         // "the Contract Hall and its papers": a thing's own contents, unless Jax finds or takes them.
         if (/\bits\s+(?:\w+\s+){0,2}$/i.test(before) && !foundBefore) continue;
+        // "the paper on the boards" at a notice-board hall: a fitting the place's own line names holds it.
+        const fitting = after.match(/^\s+(?:on|in|across|along)\s+(?:the|its)\s+([a-z-]{4,})/i)?.[1]?.replace(/s$/, '');
+        if (fitting && !foundBefore && new RegExp(`\\b${fitting}\\b`).test(facts.placeWork)) continue;
         const found = foundBefore
           || /^\s+(?:\w+\s+){0,3}?(?:lay|lying|rested|resting|sat|hidden|tucked|waited)\b/i.test(after);
         if (owned ? !jaxClause : !found) continue;

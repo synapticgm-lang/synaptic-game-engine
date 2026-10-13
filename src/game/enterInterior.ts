@@ -7,6 +7,7 @@ import { isExplorableDungeon } from './placeAuthority';
 import { placeAllowsDungeon } from './dungeonLifecycle';
 import { isDungeonCard, openDungeonCard } from './dungeonCard';
 import { storyChip } from './choiceRanking';
+import { classifyVerb } from './completedEventPacket';
 
 const ENTER_ACTION =
   /\b(enter|go in|step in|head in|inside|forward|sneak(?:ing)? in|move (?:in|forward)|scout(?:ing)?(?:\s+the)?\s+entrance|through the (?:door|doors))\b/i;
@@ -25,12 +26,15 @@ function takesObjectiveHere(state: GameState, action: string): boolean {
   const chip = storyChip(state);
   if (!chip || /^travel\b/i.test(chip)) return false;
   const clean = (s: string) => s.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
-  return clean(chip) === clean(action);
+  return clean(chip) === clean(action) && objectiveOpensInterior(state, chip);
 }
 
 /** Would taking the quest objective here (the chip `chip`) open this place's interior? */
 export function objectiveOpensInterior(state: GameState, chip: string): boolean {
   if (isDungeonCard(state.activeDungeon) || alreadyInSeededDungeon(state)) return false;
+  // A talk stage ("Ask what they want") is carried out by speaking to whoever is here, never by going inside.
+  const verb = classifyVerb(chip);
+  if (verb === 'spoke' || verb === 'parleyed') return false;
   const place = state.locationSheet?.name || state.currentLocation || '';
   if (INTERIOR_CUE.test(chip) || INTERIOR_CUE.test(place)) return true;
   return !!place && placeAllowsDungeon(state, place);
