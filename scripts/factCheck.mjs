@@ -193,6 +193,17 @@ const inHanded = (facts, word) => {
   const w = lower(word).replace(/s$/, '');
   return new RegExp(`\\b${w}(?:s|es)?\\b`).test(facts.handedText);
 };
+/** The clauses of `sentence` with offsets, cut where the exit-clause split cuts (";", ":", ", and …"). */
+const clausesOf = (sentence) => {
+  const out = [];
+  let from = 0;
+  for (const m of sentence.matchAll(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/gi)) {
+    out.push({ from, to: m.index ?? 0, text: sentence.slice(from, m.index ?? 0) });
+    from = (m.index ?? 0) + m[0].length;
+  }
+  out.push({ from, to: sentence.length, text: sentence.slice(from) });
+  return out;
+};
 const negated = (sentence, idx) => /\b(?:no|not|without|never|nor|any)\s+(?:\w+\s+){0,2}$/i.test(sentence.slice(Math.max(0, idx - 30), idx));
 
 /** `page`: the story already on the page before this turn (page 1 and earlier beats); a count it told is established. */
@@ -219,7 +230,12 @@ export function checkTurn(row, packet, page = '') {
       // (same reading as the commit gate's exitCount.wrongExitCountProblem).
       const parts = [];
       for (const m of counted ? s.matchAll(re) : []) {
-        if (!EXIT_CLAIM.test(s) && !/\b(?:left|led|leads|lead|ran|out)\b/i.test(s)) continue;
+        // A claim word belongs to the exit noun in its own clause: in "stalls stretched on both ways, and … no clear way
+        // out" the "out" is that other way's; "Three doors stood…, and each one led somewhere" lends its "led" to the doors.
+        const claims = (c) => EXIT_CLAIM.test(c) || /\b(?:left|led|leads|lead|ran|out)\b/i.test(c);
+        const clauses = clausesOf(s);
+        const own = clauses.find((c) => (m.index ?? 0) >= c.from && (m.index ?? 0) < c.to);
+        if (!clauses.some((c) => claims(c.text) && (c === own || !EXIT_NOUN_RE.test(c.text)))) continue;
         // "without a single door opening" counts nothing; in "the taller one said the road ahead cost a fee"
         // a new noun phrase starts between the number and the way, so the number does not count it
         // ("only the exits of Lowmarket and the West Wall" is still a count: "only" leads its own noun phrase).
@@ -249,6 +265,8 @@ export function checkTurn(row, packet, page = '') {
           const exitNamed = (t) => exitFact.some((p) => p.length >= 4 && t.includes(lower(p)));
           if (/^\s*(?:\w+\s+){0,4}?(?:to\s+(?:get|go|reach)\s+)?there\b/.test(rest) && exitNamed(lower(s))) continue;
           if (/^\s*(?:to|toward|towards|into)\s/.test(rest) && exitNamed(rest.split(/[,;]/)[0])) continue;
+          // "Cathedral Close still waited…, and the only road to it…": "it" is the exit the sentence already named.
+          if (/^\s*(?:to|toward|towards|into)\s+it\b/.test(rest) && exitNamed(lower(s))) continue;
         }
         if (Number.isFinite(n)) parts.push({ n, more: /\b(?:more|further|additional)\b/i.test(between) });
       }

@@ -142,10 +142,11 @@ export function matchesLastKillName(token: string, lastKill?: LastKill | null): 
   const parts = needleBare.split(/\s+/).filter(Boolean);
   const last = parts[parts.length - 1] ?? '';
   if (last.length >= 5 && (t === last || t.endsWith(` ${last}`) || t.includes(last))) return true;
-  // "Hunter Skirmisher" ↔ "Pact-Hunter Skirmisher"
+  // "Hunter Skirmisher" ↔ "Pact-Hunter Skirmisher"; "rat" ↔ "Giant Rat" — whole name words only, never "a" or "I".
   if (parts.length >= 2) {
     const tail = parts.slice(-2).join(' ');
-    if (tail.length >= 8 && (t === tail || t.includes(tail) || tail.includes(t))) return true;
+    const wholeWords = t.length >= 3 && new RegExp(`(?:^|[\\s-])${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:$|[\\s-])`).test(tail);
+    if (tail.length >= 8 && (t === tail || t.includes(tail) || wholeWords)) return true;
   }
   return false;
 }

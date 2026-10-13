@@ -894,10 +894,26 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
     at = end;
     const core = (display(`t${m[1]}`.toLowerCase()) ?? '').replace(ARTICLE_RE, '').trim();
     if (!core) continue;
-    const echo = text.slice(end).match(new RegExp(`^\\s+(?:(?:the|a|an)\\s+)?${escRe(core)}(?![\\w'-])`, 'i'));
+    const echo = text.slice(end).match(new RegExp(`^\\s+(?:(?:the|a|an)\\s+)?${escRe(core)}(?![\\w'-])`, 'i'))
+      ?? typedNameHead(text.slice(end), core);
     if (echo) at = end + echo[0].length;
   }
   return out + text.slice(at);
+}
+
+/**
+ * "@t1 Ruined hall" with @t1 = "the Ruined hall in Cathedral Undercroft": the typed words are the display's own
+ * leading name, so the same mention. Only a display that opens on a name, typed with its capital.
+ */
+function typedNameHead(after: string, core: string): RegExpMatchArray | null {
+  const words = core.split(/\s+/);
+  if (words.length < 2 || !/^[A-Z]/.test(words[0]!)) return null;
+  for (let k = words.length - 1; k >= 1; k--) {
+    const head = words.slice(0, k).join(' ');
+    const m = after.match(new RegExp(`^\\s+${escRe(head).replace(/\s+/g, '\\s+')}(?![\\w'-])`, 'i'));
+    if (m && /^\s+[A-Z]/.test(m[0])) return m;
+  }
+  return null;
 }
 
 /**
