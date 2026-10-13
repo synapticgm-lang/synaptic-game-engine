@@ -381,17 +381,28 @@ function extractTarget(input: string, state: GameState): string | undefined {
 }
 
 /** 29z9k — reading level and the two content switches, read from Kid Mode / cursing / violence settings. */
-export type ReaderFlags = { level: ReadingLevel; swearing: boolean; violenceDetail: boolean };
+export type ReaderFlags = {
+  level: ReadingLevel;
+  swearing: boolean;
+  violenceDetail: boolean;
+  /** Cursing 'mild': swearing is on, but only now and then and never strong. */
+  swearingMild?: true;
+  /** Violence 'none': no blow, blood or wound on the page. */
+  violenceNone?: true;
+};
 
 export function readerFlags(
   settings: Pick<Settings, 'contentMode' | 'cursingLevel' | 'violenceLevel' | 'readingLevel'>
 ): ReaderFlags {
   if (settings.contentMode === 'kid') return { level: 'child', swearing: false, violenceDetail: false };
-  return {
+  const flags: ReaderFlags = {
     level: settings.readingLevel === 'plain' ? 'plain' : 'standard',
     swearing: settings.cursingLevel !== 'none',
     violenceDetail: settings.violenceLevel === 'graphic',
   };
+  if (settings.cursingLevel === 'mild') flags.swearingMild = true;
+  if (settings.violenceLevel === 'none') flags.violenceNone = true;
+  return flags;
 }
 
 const READER_LEVEL_NOTE: Record<ReadingLevel, string> = {
@@ -403,10 +414,16 @@ const READER_LEVEL_NOTE: Record<ReadingLevel, string> = {
 export function formatReaderLine(r: ReaderFlags): string {
   return [
     `READER: ${READER_LEVEL_NOTE[r.level]}.`,
-    r.swearing ? 'Swearing: on (adult language allowed, never slurs).' : 'Swearing: off (no swearing at all).',
+    !r.swearing
+      ? 'Swearing: off (no swearing at all).'
+      : r.swearingMild
+        ? 'Swearing: mild (a mild word now and then, never strong swearing or slurs).'
+        : 'Swearing: on (adult language allowed, never slurs).',
     r.violenceDetail
       ? 'Violence detail: on.'
-      : 'Violence detail: off (fights still happen; show the blow and what it did, never gore or a lingering wound).',
+      : r.violenceNone
+        ? 'Violence detail: none (fights still happen; say who won and what it cost, never the blow, blood or a wound).'
+        : 'Violence detail: off (fights still happen; show the blow and what it did, never gore or a lingering wound).',
   ].join(' ');
 }
 

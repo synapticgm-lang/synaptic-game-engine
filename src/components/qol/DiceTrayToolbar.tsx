@@ -49,23 +49,16 @@ function revealFor(mode: DiceAnimationMode, die: DieType, raw: number): { ms: nu
   return { ms: rollAnimationMs(mode, onD20), scale: rollAnimationScale(mode, onD20) };
 }
 
-function computeOutcome(die: DieType, raw: number, mod: Modifier): { total: number; outcome: RollEntry['outcome'] } {
-  let total = raw;
-  if (mod === '+1') total += 1;
-  if (mod === '+2') total += 2;
+/** The tray has no DC, so it never calls a roll a success or failure; only a natural 20 or 1 on the kept d20 is named. */
+function computeOutcome(die: DieType, raw: number, mod: Modifier): { total: number; kept: number; outcome: RollEntry['outcome'] } {
+  let kept = raw;
   if (mod === 'adv' || mod === 'dis') {
     const second = rollDie(die);
-    total = mod === 'adv' ? Math.max(raw, second) : Math.min(raw, second);
+    kept = mod === 'adv' ? Math.max(raw, second) : Math.min(raw, second);
   }
-  let outcome: RollEntry['outcome'] = '—';
-  if (die === 20) {
-    if (raw === 20) outcome = 'Crit!';
-    else if (raw === 1) outcome = 'Fumble';
-    else outcome = total >= 10 ? 'Success' : 'Failure';
-  } else {
-    outcome = total >= Math.ceil(die * 0.7) ? 'Success' : 'Failure';
-  }
-  return { total, outcome };
+  const total = kept + (mod === '+1' ? 1 : mod === '+2' ? 2 : 0);
+  const outcome: RollEntry['outcome'] = die === 20 && kept === 20 ? 'Crit!' : die === 20 && kept === 1 ? 'Fumble' : '—';
+  return { total, kept, outcome };
 }
 
 function activeDiceMaterial(): DiceMaterial | undefined {
@@ -96,20 +89,20 @@ export function DiceTrayToolbar({
 
   const handleRoll = useCallback((die: DieType) => {
     const raw = rollDie(die);
-    const { total, outcome } = computeOutcome(die, raw, modifier);
+    const { total, kept, outcome } = computeOutcome(die, raw, modifier);
     const entry: RollEntry = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      die, raw, modifier, total, outcome,
+      die, raw: kept, modifier, total, outcome,
       timestamp: Date.now(),
     };
     const land = () => {
       setRolls((prev) => [entry, ...prev].slice(0, 30));
       setRolling(null);
       if (die === 20) {
-        emitDiceRoll({ kept: raw, crit: raw === 20, fumble: raw === 1, mode: diceAnimation, material: material ?? null, source: 'tray' });
+        emitDiceRoll({ kept, crit: kept === 20, fumble: kept === 1, mode: diceAnimation, material: material ?? null, source: 'tray' });
       }
     };
-    const { ms, scale } = revealFor(diceAnimation, die, raw);
+    const { ms, scale } = revealFor(diceAnimation, die, kept);
     if (ms <= 0) {
       land();
       return;
@@ -128,7 +121,7 @@ export function DiceTrayToolbar({
       raw: result.total,
       modifier: result.advantage ? 'adv' : result.disadvantage ? 'dis' : 'none',
       total: result.total,
-      outcome: result.total >= 10 ? 'Success' : 'Failure',
+      outcome: '—',
       timestamp: Date.now(),
     };
     setRolls((prev) => [entry, ...prev].slice(0, 30));

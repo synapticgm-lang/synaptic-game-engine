@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { LogEntry } from '@/types';
-import type { EngineMode } from '@/game/types';
-import { filterSystemLogForEngine } from '@/game/systemLog';
+import type { EngineMode, StatVerbosity } from '@/game/types';
+import { filterSystemLogForEngine, statusLinesForVerbosity } from '@/game/systemLog';
 import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
 import {
   isTurnUiBlocked,
@@ -26,6 +26,8 @@ interface Props {
   turnPhase?: TurnPhase;
   streamingReveal?: StreamingRevealState | null;
   engineMode?: EngineMode;
+  /** Status Panel Detail from Settings. */
+  statVerbosity?: StatVerbosity;
   contentMode?: string | null;
   onAcceptBeautyOffer?: (entryId: string) => void;
   onDismissBeautyOffer?: (entryId: string) => void;
@@ -87,7 +89,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: Props) {
+export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', statVerbosity = 'core', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
   const turnUiBlocked = isTurnUiBlocked(!!busy, turnPhase, streamingReveal);
@@ -104,6 +106,7 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
                 key={entry.id}
                 entry={entry}
                 engineMode={engineMode}
+                statVerbosity={statVerbosity}
                 showTurnAsk={shouldShowTurnAsk(log, index, turnUiBlocked)}
                 streamingReveal={streamingReveal}
                 onAcceptBeautyOffer={onAcceptBeautyOffer}
@@ -147,7 +150,7 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, log, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; log: LogEntry[]; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
+function NarrativeEntry({ entry, engineMode, statVerbosity, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, log, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; engineMode: EngineMode; statVerbosity: StatVerbosity; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; log: LogEntry[]; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
   if (entry.role === 'player') {
     return (
       <PlayerBubble
@@ -173,6 +176,7 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcc
     <DmNarration
       entry={entry}
       engineMode={engineMode}
+      statVerbosity={statVerbosity}
       showTurnAsk={showTurnAsk}
       streamingReveal={streamingReveal}
       onAcceptBeautyOffer={onAcceptBeautyOffer}
@@ -192,12 +196,12 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcc
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, playerAction, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; playerAction?: string; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
+function DmNarration({ entry, engineMode, statVerbosity, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, playerAction, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; engineMode: EngineMode; statVerbosity: StatVerbosity; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; playerAction?: string; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
   const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   const segments = useMemo(() => parseSegments(stripTurnCloser(displayContent)), [displayContent]);
   const systemLines = useMemo(
-    () => filterSystemLogForEngine(entry.systemLog ?? [], engineMode),
-    [entry.systemLog, engineMode],
+    () => statusLinesForVerbosity(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), statVerbosity),
+    [entry.systemLog, engineMode, statVerbosity],
   );
   const hasSystemLog = systemLines.length > 0;
 

@@ -17,13 +17,18 @@ export interface ModeProfile {
   restDetail: boolean;
   /** How a proficient skill is named: SRD proficiency, a System rank, or growth. */
   skillWord: 'proficiency' | 'rank' | 'growth';
+  /**
+   * Auto Fight (one-shot resolve) is offered. Tabletop fights run round by round through the round engine,
+   * which applies the table rules and death saves; Pick Your Own Adventure has no fights.
+   */
+  autoFight: boolean;
 }
 
 const PROFILES: Readonly<Record<EngineMode, ModeProfile>> = {
-  dnd: { mode: 'dnd', numbers: 'open', levelUpDetail: true, restDetail: true, skillWord: 'proficiency' },
-  litrpg: { mode: 'litrpg', numbers: 'system', levelUpDetail: false, restDetail: false, skillWord: 'rank' },
-  rpg: { mode: 'rpg', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth' },
-  pyoa: { mode: 'pyoa', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth' },
+  dnd: { mode: 'dnd', numbers: 'open', levelUpDetail: true, restDetail: true, skillWord: 'proficiency', autoFight: false },
+  litrpg: { mode: 'litrpg', numbers: 'system', levelUpDetail: false, restDetail: false, skillWord: 'rank', autoFight: true },
+  rpg: { mode: 'rpg', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth', autoFight: true },
+  pyoa: { mode: 'pyoa', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth', autoFight: false },
 };
 
 export function modeProfile(mode: EngineMode | undefined): ModeProfile {

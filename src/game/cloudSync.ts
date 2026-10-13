@@ -147,6 +147,7 @@ export async function deleteCloudSave(saveId: string): Promise<{ ok: boolean; er
   }
 
   await supabase.from('game_sessions').delete().eq('save_id', trimmed);
+  await supabase.from('characters').delete().eq('user_id', authData.user.id).eq('name', runRowName(trimmed));
   return { ok: true };
 }
 
@@ -174,6 +175,7 @@ export async function deleteCloudSavesExcept(
   const deletedIds = (data ?? []).map((row) => String(row.save_id)).filter(Boolean);
   if (deletedIds.length) {
     await supabase.from('game_sessions').delete().in('save_id', deletedIds);
+    await supabase.from('characters').delete().eq('user_id', authData.user.id).in('name', deletedIds.map(runRowName));
   }
 
   return { ok: true, deleted: deletedIds.length };
@@ -181,6 +183,12 @@ export async function deleteCloudSavesExcept(
 
 /** Library sheets live in `characters` under their own name so the run snapshot below never overwrites one. */
 const LIBRARY_ROW = 'sheet:';
+
+/** One run snapshot per save: two campaigns whose heroes share a name must not overwrite each other. */
+const RUN_ROW = 'run:';
+export function runRowName(saveId: string): string {
+  return `${RUN_ROW}${saveId}`;
+}
 
 /** Save one library sheet to the signed-in player's account (best effort; the device copy is the fallback). */
 export async function saveLibrarySheetToCloud(sheet: { id: string; name: string }): Promise<boolean> {
@@ -254,7 +262,7 @@ export async function syncGameToCloud(
     .upsert(
       {
         user_id: userId,
-        name: charName,
+        name: runRowName(saveId),
         class_title: character.classTitle ?? character.class ?? null,
         appearance: character.appearance ?? null,
         bio: character.bio ?? null,

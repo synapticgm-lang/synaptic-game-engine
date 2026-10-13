@@ -181,7 +181,7 @@ function HouseRulesSection({ settings, onChange, engineMode }: Props) {
         {!tabletop && (
           <HouseRuleToggle
             icon={<Package size={16} />}
-            label="Strict Encumbrance & Ammo Tracking"
+            label="Strict Encumbrance"
             description="Inventory slots are a hard limit: a full pack blocks new items"
             checked={settings.strictEncumbrance}
             onChange={(v) => onChange('strictEncumbrance', v)}

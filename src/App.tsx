@@ -22,6 +22,7 @@ import { AutoSaveIndicator } from '@/components/AutoSaveIndicator';
 import { AutoFightWarningModal } from '@/components/AutoFightWarningModal';
 import { AutoFightTipModal, isAutoFightTipDismissed } from '@/components/AutoFightTipModal';
 import { DiceTrayToolbar } from '@/components/qol/DiceTrayToolbar';
+import { modeProfile } from '@/game/rules/modeProfile';
 import { EpitaphBar } from '@/components/qol/EpitaphBar';
 import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
 import { LazyChunkBoundary, isChunkLoadError, safeLazy } from '@/utils/safeLazy';
@@ -44,7 +45,6 @@ export default function App() {
   const game = useGame();
   const bgImage = useBgImage(game.state, game.settings);
   const [elapsed, setElapsed] = useState(0);
-  const [forceApiSetup, setForceApiSetup] = useState(false);
   const [userInGame, setUserInGame] = useState(false);
   const [showQuestLog, setShowQuestLog] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
@@ -71,6 +71,7 @@ export default function App() {
   useEffect(() => {
     if (!userInGame || !game.state) return;
     if (isAutoFightTipDismissed()) return;
+    if (!modeProfile(game.state.engineMode).autoFight) return;
     if (game.state.openingEstablishment && !game.state.openingEstablishment.complete) return;
     const t = window.setTimeout(() => setShowAutoFightTip(true), 600);
     return () => window.clearTimeout(t);
@@ -129,7 +130,6 @@ export default function App() {
       <>
         <SetupScreen
           initialContentMode={game.settings.contentMode}
-          initialApiKey={game.settings.geminiApiKey || localStorage.getItem('user_gemini_api_key') || ''}
           onComplete={game.handleSetupComplete}
         />
         <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
@@ -339,13 +339,9 @@ export default function App() {
           state={state}
           open={game.leftOpen}
           onClose={() => game.setLeftOpen(false)}
-          engineMode={state.engineMode}
           onResumeMain={() => {
-            const pin = game.resumeMainQuest?.();
+            game.resumeMainQuest?.();
             setShowMapModal(true);
-            if (pin) {
-              /* mapFocusPlace already set on state */
-            }
           }}
         />
 
@@ -389,7 +385,7 @@ export default function App() {
             onStopListening={game.voice.stopListening}
             onStopSpeaking={game.voice.stopSpeaking}
             onRetry={game.retryAction}
-            onOpenApiSettings={() => { game.clearError(); setForceApiSetup(true); }}
+            onOpenApiSettings={() => { game.clearError(); game.setShowSettings(true); }}
             onRewind={game.rewindOneTurn}
             onAcceptPendingTurn={game.acceptPendingTurn}
             onDiscardPendingTurn={game.discardPendingTurn}
@@ -460,6 +456,7 @@ export default function App() {
             engineMode={state.engineMode}
             gameState={state}
             onSave={game.updateSettings}
+            onCampaignStrictness={game.setCampaignStrictness}
             onSaveCustomTabletopRules={game.updateCustomTabletopRules}
             onMemorableEnabledMidCampaign={() => {
               game.addToast(
@@ -558,21 +555,10 @@ export default function App() {
         errorKind={game.errorKind}
         errorMessage={game.error ?? ''}
         onRetry={game.retryAction}
-        onOpenApiSettings={() => { game.clearError(); setForceApiSetup(true); }}
+        onOpenApiSettings={() => { game.clearError(); game.setShowSettings(true); }}
         onDismiss={game.clearError}
         theme={state.turnFrameTheme}
       />
-      {forceApiSetup && (
-        <Suspense fallback={null}>
-          <ApiSetupModal
-            settings={game.settings}
-            onSave={(s) => { game.updateSettings(s); setForceApiSetup(false); }}
-            onSetContentMode={game.setContentMode}
-            onClose={() => setForceApiSetup(false)}
-          />
-        </Suspense>
-      )}
-
       {showDebug && (
         <LazyChunkBoundary
           onFail={(err) => {

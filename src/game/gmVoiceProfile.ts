@@ -371,6 +371,18 @@ export function resolveVoiceIdForState(
   return isGmVoiceProfileId(settingsVoiceId) ? settingsVoiceId : 'cold-system';
 }
 
+/** True when the save's own New Game voice wins, so the Settings voice list has no effect on it. */
+export function voiceIsStamped(state: {
+  engineMode?: string;
+  gmPersonality?: string | null;
+  systemPersonality?: string | null;
+}): boolean {
+  if (state.engineMode === 'dnd') return true;
+  if (state.engineMode === 'litrpg') return isSystemPersonalityId(state.systemPersonality);
+  if (state.engineMode === 'rpg' || state.engineMode === 'pyoa') return isGmPersonalityId(state.gmPersonality);
+  return false;
+}
+
 export function formatGmVoiceForPrompt(
   id?: string | null,
   opts?: { engineMode?: string; kidMode?: boolean }

@@ -8,7 +8,6 @@ import { TERMS_DOC, PRIVACY_DOC } from '@/legal/legalDocs';
 interface Props {
   initialContentMode: ContentMode;
   /** Kept for call-site compatibility; keys are not collected here anymore. */
-  initialApiKey?: string;
   onComplete: (contentMode: ContentMode, apiKey: string, provider: AiProvider, model: string, baseUrl: string) => void;
 }
 

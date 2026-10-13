@@ -1,5 +1,5 @@
 import { X, ScrollText, Landmark, Users, Globe2 } from 'lucide-react';
-import type { GameState, EngineMode } from '@/game/types';
+import type { GameState } from '@/game/types';
 import { visibleJournalQuests, activeDrawerQuests, resumeMainQuestFocus } from '@/game/questPlay';
 import { clockLabel, normalizeWorldLedger } from '@/game/worldSim';
 
@@ -7,7 +7,6 @@ interface Props {
   state: GameState;
   open: boolean;
   onClose: () => void;
-  engineMode: EngineMode;
   onResumeMain?: () => void;
 }
 

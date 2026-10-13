@@ -4,7 +4,6 @@ import {
   type TurnPackDefinition,
   type TurnPackArtId,
   textShopPacks,
-  illustratedShopPacks,
   memorableShopPacks,
 } from '@/game/subscriptionTiers';
 import { grantTurnPack, loadCapacityLedger, type CapacityLedger } from '@/game/capacityLedger';
@@ -218,20 +217,6 @@ export function CapacityPackShop({
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
           {memorableShopPacks().map((pack) => (
-            <CapacityPackCard key={pack.id} pack={pack} onBuy={() => buy(pack)} />
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-          Illustrated packs
-        </h2>
-        <p className="mb-3 text-[11px] leading-snug text-slate-500">
-          Graphic-novel turns (multi-panel art). Coming soon — shelf preview only.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {illustratedShopPacks().map((pack) => (
             <CapacityPackCard key={pack.id} pack={pack} onBuy={() => buy(pack)} />
           ))}
         </div>

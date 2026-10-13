@@ -202,7 +202,7 @@ export function ErrorModal({ visible, errorKind, errorMessage, onRetry, onOpenAp
               className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/60 px-4 py-2.5 text-sm font-medium text-slate-200 hover:bg-slate-800 transition-colors"
             >
               <SettingsIcon size={16} />
-              API Settings
+              Settings
             </button>
           </div>
 

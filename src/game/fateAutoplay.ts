@@ -162,7 +162,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { milestoneLevelling, withHouseRules } from './rules/houseRules';
+import { carryLimitOn, milestoneLevelling, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
@@ -1521,7 +1521,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const narrativeSource = useMud ? gmText : words.step('runWarden', gmText, warden.scrubbedNarrative ?? gmText);
   traceStage('runWarden', narrativeSource);
   const structural = applyStructuralEvents(arcState, events, {
-    strictEncumbrance: settings.strictEncumbrance === true,
+    strictEncumbrance: carryLimitOn(arcState, settings),
     playerInput,
   });
   let working = structural.state;

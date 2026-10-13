@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import {
   X,
   Search,
   ChevronLeft,
   ChevronRight,
   BookOpen,
-  Map as MapIcon,
   Layers,
   Users,
   ScrollText,
@@ -38,7 +37,6 @@ interface GMLibraryProps {
   contentMode?: ContentMode;
   onClose: () => void;
   onSelectCampaign?: (archetype: CampaignArchetype, engineMode: EngineMode, bibleId?: string) => void;
-  onSelectMap?: (mapId: string) => void;
 }
 
 type Difficulty = 'Easy' | 'Standard' | 'Hardcore';
@@ -57,14 +55,6 @@ interface CampaignStarter {
   nsfw?: boolean;
   ageRating?: 12 | 16 | 18;
   genreTag?: string;
-}
-
-interface MapTemplate {
-  id: string;
-  name: string;
-  description: string;
-  icon: LucideIcon;
-  tier: number;
 }
 
 interface InfoCard {
@@ -189,19 +179,20 @@ function bibleToInfoCards(bible: CampaignBible): InfoCard[] {
     campaignId: bible.id,
   }));
 
-  return [...loreCards, ...npcCards, ...itemCards];
+  const locationCards: InfoCard[] = bible.startingLocation
+    ? [{
+        id: `${bible.id}-location-start`,
+        category: 'locations',
+        title: bible.startingLocation,
+        summary: `Where ${bible.title} begins.`,
+        tags: ['start'],
+        icon: Compass,
+        campaignId: bible.id,
+      }]
+    : [];
+
+  return [...loreCards, ...npcCards, ...itemCards, ...locationCards];
 }
-
-const MAP_TEMPLATES: MapTemplate[] = [
-  { id: 'dungeon-classic', name: 'Classic Dungeon', description: 'Stone corridors, torchlit rooms, secret doors', icon: Mountain, tier: 1 },
-  { id: 'forest-trail', name: 'Forest Trail', description: 'Dense woodland paths, hidden clearings, wildlife', icon: Trees, tier: 1 },
-  { id: 'coastal-town', name: 'Coastal Town', description: 'Harbor district, docks, merchant quarter', icon: Waves, tier: 1 },
-  { id: 'mountain-pass', name: 'Mountain Pass', description: 'High altitude switchbacks, snow, avalanches', icon: Mountain, tier: 2 },
-  { id: 'castle-keep', name: 'Castle Keep', description: 'Fortified halls, battlements, throne room', icon: Castle, tier: 2 },
-  { id: 'volcanic-cavern', name: 'Volcanic Cavern', description: 'Magma rivers, heat hazards, obsidian bridges', icon: Flame, tier: 3 },
-  { id: 'void-rift', name: 'Void Rift', description: 'Fractured reality, floating debris, cosmic entities', icon: Layers, tier: 4 },
-];
-
 const CATEGORY_META: Record<InfoCategory, { label: string; icon: LucideIcon }> = {
   lore: { label: 'Lore', icon: BookOpen },
   npcs: { label: 'NPCs', icon: Users },
@@ -249,12 +240,11 @@ const ACCENT_GRADIENT: Record<string, string> = {
   orange: 'from-orange-950/50 to-slate-900',
 };
 
-type Tab = 'campaigns' | 'maps' | 'info';
+type Tab = 'campaigns' | 'info';
 
-export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSelectMap }: GMLibraryProps) {
+export function GMLibrary({ open, contentMode, onClose, onSelectCampaign }: GMLibraryProps) {
   const [tab, setTab] = useState<Tab>('campaigns');
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<InfoCategory | 'all'>('all');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -281,7 +271,7 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
       return (
         c.title.toLowerCase().includes(q) ||
         c.summary.toLowerCase().includes(q) ||
-        c.tags.some((t) => t.includes(q))
+        c.tags.some((t) => String(t).toLowerCase().includes(q))
       );
     });
   }, [search, activeCategory, infoCards]);
@@ -306,7 +296,7 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
                 GM Library
               </h2>
               <p className="hidden text-[11px] text-slate-500 sm:block">
-                Campaign starters, map templates, and world reference cards
+                Campaign starters and world reference cards
               </p>
             </div>
           </div>
@@ -322,7 +312,6 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
         {/* Tab bar */}
         <div className="flex shrink-0 gap-1 border-b border-slate-800 bg-slate-900/60 px-3 py-2 sm:px-6">
           <TabButton active={tab === 'campaigns'} onClick={() => setTab('campaigns')} icon={<Swords size={15} />} label="Campaign Starters" />
-          <TabButton active={tab === 'maps'} onClick={() => setTab('maps')} icon={<MapIcon size={15} />} label="Map Templates" />
           <TabButton active={tab === 'info'} onClick={() => setTab('info')} icon={<Layers size={15} />} label="Info Cards" />
         </div>
 
@@ -336,17 +325,6 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
               onPrev={() => setCarouselIndex((i) => Math.max(0, i - 1))}
               onNext={() => setCarouselIndex((i) => Math.min(maxCarouselPage, i + 1))}
               onSelect={(c) => onSelectCampaign?.(c.archetype, c.engineMode, c.id)}
-            />
-          )}
-
-          {tab === 'maps' && (
-            <MapGallery
-              templates={MAP_TEMPLATES}
-              selected={selectedMap}
-              onSelect={(id) => {
-                setSelectedMap(id);
-                onSelectMap?.(id);
-              }}
             />
           )}
 
@@ -367,7 +345,6 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
         <div className="flex shrink-0 items-center justify-between border-t border-slate-800 bg-slate-950 px-4 py-3 sm:px-6">
           <span className="text-[11px] text-slate-600">
             {tab === 'campaigns' && `${starters.length} campaign starters available`}
-            {tab === 'maps' && `${MAP_TEMPLATES.length} map templates`}
             {tab === 'info' && `${filteredCards.length} info cards`}
           </span>
           <button
@@ -447,7 +424,7 @@ function CampaignCarousel({
           const Icon = c.icon;
           return (
             <button
-              key={`${c.archetype}-${c.engineMode}`}
+              key={c.id}
               onClick={() => onSelect(c)}
               className={`group flex flex-col overflow-hidden rounded-xl border border-slate-700 bg-gradient-to-b ${ACCENT_GRADIENT[c.accent]} text-left transition-all duration-200 ${ACCENT_RING[c.accent]} hover:shadow-lg`}
             >
@@ -505,58 +482,6 @@ function CampaignCarousel({
                   </span>
                 </div>
               </div>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function MapGallery({
-  templates,
-  selected,
-  onSelect,
-}: {
-  templates: MapTemplate[];
-  selected: string | null;
-  onSelect: (id: string) => void;
-}) {
-  return (
-    <div>
-      <div className="mb-4">
-        <h3 className="font-serif text-sm font-semibold text-slate-200">Starting Map Templates</h3>
-        <p className="text-[11px] text-slate-500">Pick a terrain template for your adventure's opening region</p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {templates.map((m) => {
-          const Icon = m.icon;
-          const isSelected = selected === m.id;
-          return (
-            <button
-              key={m.id}
-              onClick={() => onSelect(m.id)}
-              className={`group flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-200 ${
-                isSelected
-                  ? 'sgm-info-slot-on bg-black/20 shadow-lg'
-                  : 'border-slate-700 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/60'
-              }`}
-            >
-              <div
-                className={`flex h-16 w-16 items-center justify-center rounded-lg border ${
-                  isSelected ? 'sgm-info-tab-on border' : 'border-slate-700 bg-slate-800/60 text-slate-400 group-hover:text-slate-300'
-                }`}
-              >
-                <Icon size={28} strokeWidth={1.3} />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate font-serif text-xs font-semibold text-slate-200">{m.name}</div>
-                <div className="mt-0.5 line-clamp-2 text-[10px] leading-tight text-slate-500">{m.description}</div>
-              </div>
-              <span className="rounded-full border border-slate-700 bg-slate-800/60 px-2 py-0.5 text-[9px] text-slate-400">
-                Tier {m.tier}
-              </span>
             </button>
           );
         })}
@@ -695,9 +620,9 @@ function InfoViewer({
                   </div>
                   <p className="text-[11px] leading-relaxed text-slate-400">{card.summary}</p>
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {card.tags.map((tag) => (
+                    {card.tags.map((tag, i) => (
                       <span
-                        key={tag}
+                        key={`${tag}-${i}`}
                         className="rounded-full border border-slate-700 bg-slate-800/40 px-2 py-0.5 text-[9px] text-slate-500"
                       >
                         {tag}

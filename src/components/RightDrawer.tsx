@@ -14,7 +14,7 @@ interface Props {
   uiThemeId?: string;
 }
 
-const EQUIP_SLOTS: DisplayEquipSlot[] = ['Head', 'Chest', 'Main Hand', 'Off Hand', 'Legs', 'Feet'];
+const EQUIP_SLOTS: DisplayEquipSlot[] = ['Head', 'Shoulders', 'Chest', 'Main Hand', 'Off Hand', 'Legs', 'Feet'];
 
 export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId }: Props) {
   const [tab, setTab] = useState<'gear' | 'materials' | 'containers' | 'companions' | 'codex'>('gear');
@@ -55,12 +55,14 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
 
             <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
               <span className="flex items-center gap-1"><Heart size={12} className="text-rose-500" /> {c.hp}/{c.maxHp}</span>
-              <span className="flex items-center gap-1"><Zap size={12} className="text-sky-400" /> {c.mp}/{c.maxMp}</span>
-              <span>SP {c.sp}/{c.maxSp}</span>
+              {typeof c.mp === 'number' && (c.maxMp ?? 0) > 0 && (
+                <span className="flex items-center gap-1"><Zap size={12} className="text-sky-400" /> {c.mp}/{c.maxMp}</span>
+              )}
+              {typeof c.sp === 'number' && (c.maxSp ?? 0) > 0 && <span>SP {c.sp}/{c.maxSp}</span>}
               <span>Lv {c.level}</span>
             </div>
             <div className="mt-2 grid grid-cols-3 gap-1 text-[10px] text-slate-500 border-t border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_22%,#44403c)] pt-2">
-              {Object.entries(c.attributes).map(([k, v]) => (
+              {Object.entries(c.attributes ?? {}).map(([k, v]) => (
                 <span key={k}>{k} {v}</span>
               ))}
             </div>
@@ -276,9 +278,11 @@ function MaterialsTab({ state }: { state: GameState }) {
           <span className="flex items-center gap-1"><Layers size={11} /> Materials</span>
           <span>{cap.materialsUsed} / {cap.materialsSlots === 0 && cap.hasMagicalContainer ? '∞' : cap.materialsSlots || '—'}</span>
         </div>
-        <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-          <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: cap.hasMagicalContainer ? '15%' : `${matPct}%` }} />
-        </div>
+        {!cap.hasMagicalContainer && (
+          <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+            <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${matPct}%` }} />
+          </div>
+        )}
         <div className="mt-1.5">
           {cap.hasMagicalContainer ? (
             <p className="text-[9px] text-purple-300/70 flex items-center gap-1"><Layers size={9} /> Magical container active — materials stack infinitely.</p>
@@ -426,6 +430,24 @@ function LoreCardEditor({ card, onSave, onCancel, onDelete }: any) {
         />
       </div>
       <div>
+        <label className="mb-1 block text-[11px] text-slate-500">Type</label>
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value as LoreCardType)}
+          className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-[color:var(--sgm-accent,#ef4444)] focus:outline-none"
+        >
+          {LORE_TYPES.map((t) => <option key={t} value={t}>{LORE_TYPE_ICONS[t]} {t}</option>)}
+        </select>
+      </div>
+      <div>
+        <label className="mb-1 block text-[11px] text-slate-500">Keywords (comma-separated; the GM recalls this card when one comes up)</label>
+        <input
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-[color:var(--sgm-accent,#ef4444)] focus:outline-none"
+        />
+      </div>
+      <div>
         <label className="mb-1 block text-[11px] text-slate-500">Summary</label>
         <textarea
           value={summary}
@@ -435,6 +457,11 @@ function LoreCardEditor({ card, onSave, onCancel, onDelete }: any) {
         />
       </div>
       <div className="flex justify-end gap-2">
+        {onDelete && (
+          <button onClick={onDelete} className="mr-auto flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-rose-400 hover:bg-rose-950/40">
+            <Trash2 size={12} /> Delete
+          </button>
+        )}
         <button onClick={onCancel} className="rounded-lg px-3 py-1.5 text-xs text-slate-400">Cancel</button>
         <button onClick={handleSave} className="sgm-info-fill rounded-lg px-3 py-1.5 text-xs font-medium text-white">Save</button>
       </div>

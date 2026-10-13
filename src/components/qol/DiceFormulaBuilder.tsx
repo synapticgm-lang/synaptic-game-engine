@@ -30,6 +30,8 @@ interface RollComponent {
   token: FormulaToken;
   rolls: number[];
   subtotal: number;
+  /** The d20 kept under Advantage / Disadvantage. */
+  kept?: number;
 }
 
 interface RollResult {
@@ -140,12 +142,13 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete, diceAnimatio
       const components: RollComponent[] = tokens.map((token) => {
         if (token.type === 'dice') {
           let rolls: number[] = [];
-          if (token.die === 20 && (advantage || disadvantage)) {
+          // SRD: Advantage / Disadvantage is two d20s on one d20 Test, keep one.
+          if (token.die === 20 && token.count === 1 && (advantage || disadvantage)) {
             const r1 = rollDie(20);
             const r2 = rollDie(20);
             const chosen = advantage ? Math.max(r1, r2) : Math.min(r1, r2);
             rolls = [r1, r2];
-            return { token, rolls, subtotal: (token.sign === '-' ? -1 : 1) * chosen * token.count };
+            return { token, rolls, kept: chosen, subtotal: (token.sign === '-' ? -1 : 1) * chosen };
           }
           rolls = Array.from({ length: token.count }, () => rollDie(token.die));
           const sum = rolls.reduce((a, b) => a + b, 0);
@@ -165,7 +168,7 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete, diceAnimatio
 
       const res: RollResult = { total, components, advantage, disadvantage, breakdown };
       const d20 = components.find((c) => c.token.type === 'dice' && c.token.die === 20);
-      const kept = d20 ? (advantage ? Math.max(...d20.rolls) : disadvantage ? Math.min(...d20.rolls) : d20.rolls[0]) : 10;
+      const kept = d20 ? (d20.kept ?? d20.rolls[0]) : 10;
       const ms = rollAnimationMs(diceAnimation, kept);
       const land = () => {
         setResult(res);
@@ -349,8 +352,11 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete, diceAnimatio
 /* ============ RESULT PANEL ============ */
 
 function ResultPanel({ result }: { result: RollResult }) {
-  const isCrit = result.components.some((c) => c.token.type === 'dice' && c.token.die === 20 && c.rolls.includes(20));
-  const isFumble = result.components.some((c) => c.token.type === 'dice' && c.token.die === 20 && c.rolls.includes(1));
+  const d20s = result.components
+    .filter((c) => c.token.type === 'dice' && c.token.die === 20)
+    .flatMap((c) => (c.kept != null ? [c.kept] : c.rolls));
+  const isCrit = d20s.includes(20);
+  const isFumble = d20s.includes(1);
 
   return (
     <div className="sgm-dice-outcome mb-3 overflow-hidden rounded-xl border border-slate-700/50 bg-slate-900/60 backdrop-blur-md">

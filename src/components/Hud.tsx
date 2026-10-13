@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
-import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack } from 'lucide-react';
+import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack, Globe2, UserRound } from 'lucide-react';
 import { loadCapacityLedger } from '../game/capacityLedger';
 import { getTierDefinition, type SubscriptionTierId } from '../game/subscriptionTiers';
 import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-10-13y';
+export const HUD_BUILD_STAMP = '2026-10-13z';
 const HUD_BUILD_TITLE =
-  'Cover pads refill; CAST glue is plural-safe';
+  'Every setting and panel reads the save; phone drawers open from the HUD';
 
 interface Props {
   state: GameState;
@@ -32,7 +32,7 @@ interface Props {
   lastSavedTurn?: number | null;
 }
 
-export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
+export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [setNameOpen, setSetNameOpen] = useState(false);
 
@@ -65,9 +65,10 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
 
 
   // Adaptive Secondary Resource Check (Supports MP, SP, Power, Rage, etc.)
-  const secondaryCurrent = c?.mp ?? c?.sp ?? 12;
-  const secondaryMax = c?.maxMp ?? c?.maxSp ?? 12;
-  const secondaryLabel = c?.mp !== undefined ? 'MP' : c?.sp !== undefined ? 'SP' : 'NRG';
+  const hasSecondary = c?.mp !== undefined || c?.sp !== undefined;
+  const secondaryCurrent = c?.mp ?? c?.sp ?? 0;
+  const secondaryMax = c?.maxMp ?? c?.maxSp ?? 0;
+  const secondaryLabel = c?.mp !== undefined ? 'MP' : 'SP';
   const secondaryPercent = secondaryMax > 0 ? Math.round((secondaryCurrent / secondaryMax) * 100) : 100;
 
   const handleBugClick = () => {
@@ -177,13 +178,14 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
       )}
 
       {/* HP / MP — full-width second row on phone so bars are not squeezed */}
+      {c && (
       <div className="mx-auto flex min-w-0 w-full items-center justify-center gap-2 sm:max-w-lg sm:flex-1 sm:gap-6">
         {/* HP Bar — value above bar on narrow so numbers never collide */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between gap-1 sm:hidden">
             <span className="text-[9px] font-bold text-rose-400 font-mono shrink-0">HP</span>
             <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
-              {c ? `${c.hp}/${c.maxHp}` : '24/24'}
+              {c.hp}/{c.maxHp}
             </span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
@@ -191,16 +193,17 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             <div className="flex-1 min-w-0 h-2.5 sm:h-6 bg-slate-900 rounded-full overflow-hidden border border-rose-900/70 shadow-inner">
               <div className="bg-gradient-to-r from-rose-700 to-rose-500 h-full rounded-full transition-all duration-300" style={{ width: `${hpPercent}%` }} />
             </div>
-            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c ? `${c.hp}/${c.maxHp}` : '24/24'}</span>
+            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c.hp}/{c.maxHp}</span>
           </div>
         </div>
 
-        {/* Adaptive Resource Bar (MP / SP / Energy) */}
+        {/* Adaptive Resource Bar (MP / SP), only when the character has one */}
+        {hasSecondary && (
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between gap-1 sm:hidden">
             <span className="text-[9px] font-bold text-sky-400 font-mono shrink-0">{secondaryLabel}</span>
             <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
-              {c ? `${secondaryCurrent}/${secondaryMax}` : '12/12'}
+              {secondaryCurrent}/{secondaryMax}
             </span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
@@ -208,10 +211,12 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             <div className="flex-1 min-w-0 h-2.5 sm:h-6 bg-slate-900 rounded-full overflow-hidden border border-sky-900/70 shadow-inner">
               <div className="bg-gradient-to-r from-sky-600 to-sky-400 h-full rounded-full transition-all duration-300" style={{ width: `${secondaryPercent}%` }} />
             </div>
-            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c ? `${secondaryCurrent}/${secondaryMax}` : '12/12'}</span>
+            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{secondaryCurrent}/{secondaryMax}</span>
           </div>
         </div>
+        )}
       </div>
+      )}
 
       {/* Desktop icon tray */}
       <div className="hidden w-auto shrink-0 items-center justify-end gap-2 sm:w-1/4 md:flex">
@@ -222,6 +227,13 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px] font-mono"
           >
             <Bug size={14} /> Debug {HUD_BUILD_STAMP}
+          </button>
+          {/* The side drawers are pinned open from lg up; below that these open them. */}
+          <button onClick={onToggleLeft} title="World, squad and quests" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors lg:hidden">
+            <Globe2 size={15} />
+          </button>
+          <button onClick={onToggleRight} title="Adventurer panel" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors lg:hidden">
+            <UserRound size={15} />
           </button>
           <button onClick={onOpenMap} title="Map Engine" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Map size={15} />
@@ -247,6 +259,14 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
       {/* Collapsible Mobile Menu Tray */}
       {mobileMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-slate-950 border-b border-slate-800 flex md:hidden items-center justify-around py-3 z-50 shadow-xl animate-fadeIn">
+          <button onClick={() => { setMobileMenuOpen(false); onToggleLeft(); }} className="flex flex-col items-center gap-1 text-slate-300 p-2">
+            <Globe2 size={16} className="sgm-info-accent" />
+            <span className="text-[10px]">World</span>
+          </button>
+          <button onClick={() => { setMobileMenuOpen(false); onToggleRight(); }} className="flex flex-col items-center gap-1 text-slate-300 p-2">
+            <UserRound size={16} className="sgm-info-accent" />
+            <span className="text-[10px]">Adventurer</span>
+          </button>
           <button onClick={onOpenMap} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Map size={16} className="sgm-info-accent" />
             <span className="text-[10px]">Map</span>

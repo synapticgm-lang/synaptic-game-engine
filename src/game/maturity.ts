@@ -63,6 +63,11 @@ export function formatMaturityRules(settings: Settings, opts?: { nsfw?: boolean 
     `SEXUAL CONTENT: ${m.sexualContent ? 'allowed with fade-to-black' : 'none — fade or omit'}`,
     `SUBSTANCE USE: ${m.substanceUse ? 'allowed in fiction' : 'omit / off-screen'}`,
     `DARK THEMES: ${m.darkThemes}`,
+    settings.romanceSubplots
+      ? `ROMANCE: allowed only when the player steers there; never force attraction. ${
+          settings.haremContent ? 'Several love interests may exist, each set up on its own.' : 'One love interest at a time.'
+        }`
+      : 'ROMANCE: off — no flirting, attraction or romantic arcs.',
   ];
   if (!allowsExplicitIntimateProse()) {
     lines.push(

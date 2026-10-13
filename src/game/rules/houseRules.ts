@@ -94,6 +94,15 @@ export function withHouseRules<T extends GameState>(state: T, settings: Partial<
 }
 
 /**
+ * Whether a carry limit blocks new items. Tabletop reads its stamped Encumbrance rule (the one the fight loot reads);
+ * the other modes read the Strict Encumbrance toggle.
+ */
+export function carryLimitOn(state: Pick<GameState, 'engineMode' | 'houseRules'>, settings: Partial<Settings> | null | undefined): boolean {
+  if (state.engineMode === 'dnd') return houseRulesOf(state).strictEncumbrance;
+  return settings?.strictEncumbrance === true;
+}
+
+/**
  * Turns between drought encounters at this Combat Frequency: 50 keeps the base, 100 halves it, 0 doubles it.
  */
 export function scaledCadence(base: number, combatFrequency: number): number {

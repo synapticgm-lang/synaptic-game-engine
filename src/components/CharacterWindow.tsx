@@ -2,13 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import type { GameState, Item, Rarity, Settings, AttributeKey } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
 import { CharacterSheetView } from './CharacterSheetView';
-import { UploadImport } from './UploadImport';
 import { CharacterProgression } from './CharacterProgression';
-import { CombatEncounter } from './CombatEncounter';
 import {
   X, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
   HardHat, Shield, Shirt, Sword, Footprints,
-  Sparkles, Hammer, Cat, Trophy, ScrollText, Camera, TrendingUp,
+  Trophy, ScrollText, TrendingUp,
   Heart, Droplet, Zap, Backpack, UserRound,
 } from 'lucide-react';
 import { getItemsInContainer } from '@/game/inventory';
@@ -23,7 +21,7 @@ import { listSheets, setDefaultSheet, sheetFromState } from '@/game/tabletop/she
 import { keepSheet } from '@/game/tabletop/sheetLibrarySync';
 import { TabletopSheetLayout } from './TabletopSheetLayout';
 
-type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
+type BottomTab = 'character' | 'inventory' | 'titles' | 'dnd' | 'sheet' | 'progression';
 
 interface Props {
   isOpen: boolean;
@@ -546,19 +544,14 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
   if (!isOpen) return null;
 
   const c = state.character;
-  // Tabletop has no scan import and no separate combat board: those tabs showed nothing real there.
+  // Every tab reads the save; spells, slots and attunement live on Progress, fights on the play screen.
   const tabletop = state.engineMode === 'dnd';
   const tabs: { key: BottomTab; label: string; icon: React.ReactNode }[] = [
     { key: 'character', label: 'Character', icon: <UserRound size={14} /> },
     { key: 'inventory', label: 'Bags', icon: <Backpack size={14} /> },
-    { key: 'sheet', label: 'Sheet', icon: <ScrollText size={14} /> },
+    { key: 'sheet', label: tabletop ? 'Ready-made' : 'Status', icon: <ScrollText size={14} /> },
     { key: 'progression', label: 'Progress', icon: <TrendingUp size={14} /> },
-    ...(tabletop ? [] : [{ key: 'combat' as const, label: 'Combat', icon: <Sword size={14} /> }]),
-    { key: 'spells', label: 'Spells', icon: <Sparkles size={14} /> },
-    { key: 'professions', label: 'Professions', icon: <Hammer size={14} /> },
-    { key: 'pets', label: 'Pets', icon: <Cat size={14} /> },
     { key: 'titles', label: 'Titles', icon: <Trophy size={14} /> },
-    ...(tabletop ? [] : [{ key: 'portrait' as const, label: 'Portrait', icon: <Camera size={14} /> }]),
   ];
 
   if (state.engineMode === 'dnd') {
@@ -639,15 +632,10 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
           ) : (
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               {activeTab === 'inventory' && <InventoryPanel state={state} />}
-              {activeTab === 'spells' && <EmptyTabContent message="No spells learned yet." />}
-              {activeTab === 'professions' && <EmptyTabContent message="No professions acquired." />}
-              {activeTab === 'pets' && <EmptyTabContent message="No pets or summons bonded." />}
               {activeTab === 'titles' && <StoryPlatesTab state={state} />}
               {activeTab === 'dnd' && <DndSheet state={state} />}
               {activeTab === 'sheet' && <CharacterSheetView state={state} uiThemeId={settings.uiThemeId} />}
-              {activeTab === 'portrait' && !tabletop && <UploadImport />}
               {activeTab === 'progression' && <CharacterProgression state={state} />}
-              {activeTab === 'combat' && !tabletop && <CombatEncounter activeDungeon={state.activeDungeon} currentCoordinates={state.currentCoordinates} />}
             </div>
           )}
 

@@ -22,7 +22,8 @@ import { FeedbackPanel } from './FeedbackPanel';
 import { SupportAccountPanel } from './SupportAccountPanel';
 import { PlayerProfilePanel } from './PlayerProfilePanel';
 import { memorableToggleEnabled, memorableWeeklyCapLabel } from '@/game/capacityLedger';
-import { GM_VOICE_PROFILES } from '@/game/gmVoiceProfile';
+import { GM_VOICE_PROFILES, voiceIsStamped } from '@/game/gmVoiceProfile';
+import { modeProfile } from '@/game/rules/modeProfile';
 import {
   canShowTestLabUi,
   getTestLabAiTier,
@@ -34,7 +35,7 @@ import {
   setTestLabEnabled,
   type HostedAiTier,
 } from '@/game/testLab';
-import { isAdminSubscriptionTier, setActiveSubscriptionTier } from '@/game/subscriptionTiers';
+import { isAdminSubscriptionTier, setActiveSubscriptionTier, SUBSCRIPTION_TIERS } from '@/game/subscriptionTiers';
 import { GmFeedbackReview } from './admin/GmFeedbackReview';
 import { pickSpeechVoice, primeTts, sortSpeechVoices, speakTtsNow, stopAllSpeech } from '@/game/useVoice';
 import { displayAdventurerName } from '@/game/pcNameAuthority';
@@ -45,6 +46,8 @@ interface Props {
   engineMode: EngineMode;
   gameState?: GameState | null; // Added to check if story has started
   onSave: (s: Settings) => void;
+  /** GM Strictness lives on the running save (the value the engine reads). */
+  onCampaignStrictness?: (strictness: GmStrictness) => void;
   onSaveCustomTabletopRules?: (text: string) => void;
   onMemorableEnabledMidCampaign?: () => void;
   onStoryNameChange: (name: string) => void;
@@ -77,7 +80,7 @@ const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'visuals', label: 'Visuals' },
 ];
 
-export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onDownloadTranscript, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false, accountEmail = null }: Props) {
+export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onCampaignStrictness, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onDownloadTranscript, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false, accountEmail = null }: Props) {
   // The running game's strictness is the one the engine reads; the card edits that.
   const [draft, setDraft] = useState<Settings>(() =>
     gameState?.gmStrictness ? { ...settings, gmStrictness: gameState.gmStrictness } : settings
@@ -189,6 +192,9 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
       toSave.imageProvider = 'flux';
     }
     onSave(toSave);
+    if (gameState && draft.gmStrictness && draft.gmStrictness !== gameState.gmStrictness) {
+      onCampaignStrictness?.(draft.gmStrictness);
+    }
     if (engineMode === 'dnd') {
       onSaveCustomTabletopRules?.(customRulesDraft);
     }
@@ -357,6 +363,11 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               Tabletop / Story RPG / PYOA use the narrator personality from New Game when stamped.
               This list is the fallback for older saves. Theatrical stays available here for legacy preference.
             </p>
+            {gameState && voiceIsStamped(gameState) ? (
+              <p className="mb-2 text-[11px] text-slate-400">
+                This story uses the narrator you picked at New Game. Start a New Game to choose a different voice.
+              </p>
+            ) : (
             <div className="grid grid-cols-2 gap-2">
               {GM_VOICE_PROFILES.map((p) => (
                 <ChoiceCard
@@ -368,6 +379,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 />
               ))}
             </div>
+            )}
             <div className="mt-3">
               <ToggleRow
                 icon={<MessageSquareMore size={15} />}
@@ -397,7 +409,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             <p className="rounded-lg border border-slate-700/60 bg-slate-900/50 p-2 text-[11px] text-slate-400">
               Active filter:{' '}
               <span className="text-slate-200">{resolveContentFilterProfile(draft).label}</span>
-              {' Â· '}
+              {' · '}
               {distributionLabel()}
               <span className="mt-1 block text-slate-500">{resolveContentFilterProfile(draft).summary}</span>
             </p>
@@ -551,19 +563,19 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               </div>
             </div>
             <div>
-              <label className="mb-2 block text-xs font-medium text-slate-400">Fog of War Reveal Radius</label>
+              <label className="mb-2 block text-xs font-medium text-slate-400">Fog of War Reveal Radius (dungeon maps)</label>
               <div className="grid grid-cols-3 gap-2">
                 <ChoiceCard
                   icon={<EyeIcon size={14} />}
                   label="Adjacent"
-                  sublabel="Surrounding hexes"
+                  sublabel="Linked rooms"
                   selected={draft.fogRevealThreshold === 'adjacent'}
                   onClick={() => update('fogRevealThreshold', 'adjacent' as FogRevealThreshold)}
                 />
                 <ChoiceCard
                   icon={<Dot size={14} />}
                   label="Current"
-                  sublabel="Occupied node"
+                  sublabel="Your room only"
                   selected={draft.fogRevealThreshold === 'current'}
                   onClick={() => update('fogRevealThreshold', 'current' as FogRevealThreshold)}
                 />
@@ -657,7 +669,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                     onChange={(e) => update('comicReadingDirection', e.target.value as ComicReadingDirection)}
                     className="w-full rounded-lg border border-slate-600 bg-slate-800 px-2 py-2 text-xs text-slate-100 disabled:opacity-60"
                   >
-                    <option value="ltr">LTR (left â†’ right)</option>
+                    <option value="ltr">LTR (left → right)</option>
                     <option value="rtl">RTL (manga)</option>
                   </select>
                 </div>
@@ -721,6 +733,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 Overrides only the generated artwork palette; UI text remains readable.
               </p>
             </div>
+            {draft.visualMode === 'comic' && (
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">Inline Panel Frequency</label>
               <div className="grid grid-cols-3 gap-2">
@@ -729,6 +742,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 <ChoiceCard icon={<Layers size={14} />} label="High" sublabel="More often (still not every turn)" selected={draft.panelFrequency === 'high'} onClick={() => update('panelFrequency', 'high' as PanelFrequency)} />
               </div>
             </div>
+            )}
           </Section>
 
           {/* Background Settings */}
@@ -754,13 +768,13 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 onChange={(e) => update('bgOpacity', parseInt(e.target.value, 10))}
                 className="w-full accent-crimson-500"
               />
-              <p className="mt-1 text-[10px] text-slate-500">Default 25% for text legibility.</p>
+              <p className="mt-1 text-[10px] text-slate-500">Default 40% for text legibility.</p>
             </div>
             <BackgroundsSection currentBgUrl={currentBgUrl} />
           </Section>
 
-          {/* Comic Engine UI Overlays */}
-          <Section icon={<Dot size={16} />} title="Comic Engine Overlays" visible={activeTab === 'visuals'}>
+          {/* Comic Engine UI Overlays: nothing reads these four yet, so the section stays hidden. */}
+          <Section icon={<Dot size={16} />} title="Comic Engine Overlays" visible={false}>
             <ToggleRow icon={<Grid3x3 size={15} />} label="Halftone Dot Overlay" description="CSS halftone texture layer" checked={draft.halftoneOverlay} onChange={(v) => update('halftoneOverlay', v)} />
             <ToggleRow icon={<Zap size={15} />} label="Dynamic SFX Popups" description="BAM!, CRITICAL!, SPLAT! on events" checked={draft.sfxPopups} onChange={(v) => update('sfxPopups', v)} />
             <ToggleRow icon={<MessageCircle size={15} />} label="Speech Bubble Extraction" description="Formats dialogue into comic tails" checked={draft.speechBubbles} onChange={(v) => update('speechBubbles', v)} />
@@ -807,7 +821,6 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 }
               }}
             />
-            <ToggleRow icon={<Mic size={15} />} label="Voice Input (STT)" description="Speak your actions" checked={draft.sttEnabled} onChange={(v) => update('sttEnabled', v)} />
           </Section>
 
           {/* Dice display (tabletop fantasy only — LitRPG / story RPG don't use the dice tray) */}
@@ -825,7 +838,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           )}
 
           {/* GM Strictness */}
-          <Section icon={<Gauge size={16} />} title="GM Strictness" visible={activeTab === 'mechanics' && isDnd && !!gameState}>
+          <Section icon={<Gauge size={16} />} title="GM Strictness" visible={activeTab === 'mechanics' && !!gameState && engineMode !== 'pyoa'}>
             <p className="mb-2 text-xs text-slate-500">
               Sets this campaign&apos;s difficulty: check DCs, loot, XP and recovery. Same setting you picked at New Game.
             </p>
@@ -848,7 +861,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             />
           </Section>
 
-          <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics'}>
+          <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics' && modeProfile(engineMode).autoFight}>
             <p className="mb-2 text-xs text-slate-500">
               Auto Fight resolves most encounters in about 1–2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
             </p>
@@ -1137,13 +1150,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                       <ChoiceCard
                         key={tier}
                         label={tier === 'free' ? 'Free' : tier === 'mid' ? 'Mid' : 'High'}
-                        sublabel={
-                          tier === 'free'
-                            ? 'Gemini 2.5 Flash Lite'
-                            : tier === 'mid'
-                              ? 'Claude Haiku 4.5'
-                              : 'Claude Sonnet 4.6'
-                        }
+                        sublabel={SUBSCRIPTION_TIERS[tier].writerOpenRouterId.split('/').pop()}
                         selected={testLabAi === tier}
                         onClick={() => {
                           setTestLabAiTier(tier);
@@ -1220,24 +1227,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                   </button>
                 );
               })}
-              <label className="ml-2 flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  disabled={isKidMode}
-                  checked={!isKidMode && draft.cursingLevel !== 'none'}
-                  onChange={(e) => update('cursingLevel', e.target.checked ? 'strong' : 'none')}
-                />
-                Swearing
-              </label>
-              <label className="flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  disabled={isKidMode}
-                  checked={!isKidMode && draft.violenceLevel === 'graphic'}
-                  onChange={(e) => update('violenceLevel', e.target.checked ? 'graphic' : 'mild')}
-                />
-                Violence detail
-              </label>
+              <span className="ml-2 text-slate-500">Swearing and violence: Narrative &amp; Tone tab.</span>
             </div>
           </Section>
 
@@ -1390,7 +1380,7 @@ function SaveSlotsManager({
                   {isCurrent && <span className="ml-1.5 text-[10px] font-normal uppercase tracking-wide text-emerald-400">current</span>}
                 </div>
                 <div className="text-[11px] text-slate-500">
-                  {slot.characterName} Â· Lv.{slot.level} Â· Turn {slot.turn}
+                  {slot.characterName} · Lv.{slot.level} · Turn {slot.turn}
                 </div>
                 <div className="mt-0.5 flex flex-wrap gap-1">
                   {slot.sources.map((source) => (

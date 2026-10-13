@@ -55,8 +55,8 @@ function revealFor(
 
 describe('playtest17a — LitRPG quest spines', () => {
   it('HUD/BUILD are 17a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13y');
-    expect(BUILD_STAMP).toBe('2026-10-13y');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13z');
+    expect(BUILD_STAMP).toBe('2026-10-13z');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

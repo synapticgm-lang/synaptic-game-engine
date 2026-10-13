@@ -3,7 +3,7 @@ import { Send, Dice5, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIc
 import { EnemyTargetFrame } from './EnemyTargetFrame';
 
 import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
-import { filterSystemLogForEngine } from '@/game/systemLog';
+import { filterSystemLogForEngine, statusLinesForVerbosity } from '@/game/systemLog';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
 import type { VoiceState } from '@/game/useVoice';
 import { FormattedText } from './FormattedText';
@@ -31,6 +31,7 @@ import { stripRepairMarkdown } from '@/game/repairEngine';
 import type { PendingRepair } from '@/game/types';
 import { tabletopCreationPending } from '@/game/tabletop/creationFlow';
 import { houseRulesOf } from '@/game/rules/houseRules';
+import { modeProfile } from '@/game/rules/modeProfile';
 import { creationRng } from '@/game/tabletop/characterBuild';
 import type { SavedSheet } from '@/game/tabletop/sheetLibrary';
 import { CharacterBuilderPanel } from './CharacterBuilderPanel';
@@ -136,6 +137,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   const lastGmId = useMemo(() => [...state.log].reverse().find((e) => e.role === 'gm')?.id ?? null, [state.log]);
   const rollDisplay = useMemo(() => ({ mode: diceAnimation, newestEntryId: lastGmId }), [diceAnimation, lastGmId]);
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
+  const [dismissedImage, setDismissedImage] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
   const [hideText, setHideText] = useState(() => readBoolPref(HIDE_TEXT_KEY));
   const userSetHideRef = useRef(false);
@@ -218,9 +220,8 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
 
   useEffect(() => {
     if (!isDnd || diceAnimation === 'static' || !busy) return;
-    const rolls = ['d20', 'd12', 'd10', 'd8', 'd6', 'd4'];
-    const pick = rolls[Math.floor(Math.random() * rolls.length)];
-    setDiceRoll(pick);
+    // A waiting animation, not a result: the engine's check die.
+    setDiceRoll('d20');
     const t = setTimeout(() => setDiceRoll(null), 900);
     return () => clearTimeout(t);
   }, [busy, isDnd, diceAnimation]);
@@ -278,6 +279,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               turnPhase={turnPhase}
               streamingReveal={streamingReveal}
               engineMode={engineMode}
+              statVerbosity={statVerbosity}
               onAcceptBeautyOffer={onAcceptBeautyOffer}
               onDismissBeautyOffer={onDismissBeautyOffer}
               contentMode={contentMode}
@@ -361,11 +363,11 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         </div>
       )}
 
-      {currentImage && !comicMode && (
+      {currentImage && !comicMode && currentImage !== dismissedImage && (
         <div className="border-t border-slate-800 px-3 py-2 sm:px-6">
           <div className="relative mx-auto max-w-2xl">
             <img src={currentImage} alt="Cinematic scene" className="max-h-48 w-full rounded-lg object-cover" />
-            <button onClick={() => {}} className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-slate-300 hover:text-white">
+            <button onClick={() => setDismissedImage(currentImage)} aria-label="Hide picture" className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-slate-300 hover:text-white">
               <X size={14} />
             </button>
           </div>
@@ -553,7 +555,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               {narrativeMode ? <BookOpen size={15} /> : comicMode ? <LayoutGrid size={15} /> : <MessageSquare size={15} />}
             </button>
             <RewindBar canRewind={canRewind} onRewind={onRewind} />
-            {state.activeEncounter && (
+            {state.activeEncounter && modeProfile(engineMode).autoFight && (
               <button onClick={onAutoFight} disabled={busy} title="Auto-resolve combat" className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${busy ? 'bg-slate-800 text-slate-500' : 'border border-crimson-700/40 bg-crimson-950/30 text-crimson-400 hover:bg-crimson-900/40'}`}>
                 <Swords size={13} />
                 <span className="hidden xs:inline">Auto-Fight</span>
@@ -819,13 +821,7 @@ function RepairBanner({
 }
 
 function SystemLogPanel({ lines, verbosity, entryId }: { lines: string[]; verbosity: StatVerbosity; entryId: string }) {
-  const filtered = useMemo(() => {
-    if (verbosity === 'detailed') return lines;
-    if (verbosity === 'core') {
-      return lines.filter((l) => /success|fail|damage|heal|defeated|xp|loot|level|quest|dungeon|objective|registered|location/i.test(l));
-    }
-    return lines.slice(0, 2);
-  }, [lines, verbosity]);
+  const filtered = useMemo(() => statusLinesForVerbosity(lines, verbosity), [lines, verbosity]);
 
   if (filtered.length === 0) return null;
 

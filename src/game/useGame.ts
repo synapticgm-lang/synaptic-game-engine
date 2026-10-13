@@ -354,7 +354,8 @@ import {
   recentGmBeatTexts,
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
-import { milestoneLevelling, withHouseRules } from './rules/houseRules';
+import { carryLimitOn, milestoneLevelling, withHouseRules } from './rules/houseRules';
+import { modeProfile } from './rules/modeProfile';
 import { applyAwayRest } from './rules/awayRest';
 import {
   commitTalkStageAfterTurn,
@@ -643,8 +644,6 @@ export function extractChoicesFromText(text: string, state?: GameState, storyPro
   }
   return validatedChoices;
 }
-
-const LOCAL_UPDATED_KEY = 'tactical-litrpg-local-updated';
 
 export type SyncPhase = 'idle' | 'syncing';
 export type BootPhase = 'welcome' | 'auth' | 'setup' | 'hub' | 'syncing' | 'ready';
@@ -1073,7 +1072,6 @@ export function useGame() {
     await saveGame(s);
     ingestCampaignPlates(s);
     setLastSavedTurn(s.turn);
-    localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now()));
     // Best-effort cloud SSOT for signed-in players (IndexedDB stays primary offline cache).
     void syncGameToCloud(s, settingsRef.current).then((result) => {
       if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
@@ -3253,7 +3251,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
       const structural = applyStructuralEvents(liveCurrent, events, {
-        strictEncumbrance: settingsRef.current.strictEncumbrance === true,
+        strictEncumbrance: carryLimitOn(liveCurrent, settingsRef.current),
         playerInput: sanitizedInput,
       });
       let workingState = structural.state;
@@ -5540,6 +5538,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
   const autoFight = useCallbackRef(async () => {
     const liveCurrent = stateRef.current;
     if (!liveCurrent || !liveCurrent.activeEncounter) return;
+    if (!modeProfile(liveCurrent.engineMode).autoFight) return;
 
     const enemy: EnemyStats = {
       name: liveCurrent.activeEncounter.name,
@@ -6033,7 +6032,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
     if (isLocal || isActive) {
       await deleteGame();
-      localStorage.removeItem(LOCAL_UPDATED_KEY);
     }
 
     const cloudResult = await deleteCloudSave(trimmed);
@@ -6079,7 +6077,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
     unloadActiveCampaign();
     await deleteGame();
-    localStorage.removeItem(LOCAL_UPDATED_KEY);
 
     const result = await deleteCloudSavesExcept(null);
     if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
@@ -6165,14 +6162,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setSettings(s);
       settingsRef.current = s;
       saveSettings(s);
-      // GM Strictness and house rules on the Settings page edit the running tabletop campaign (the values the engine reads).
+      // House rules on the Settings page are stamped on the running tabletop campaign (the values the engine reads).
+      // GM Strictness lives only on the save; `setCampaignStrictness` edits it.
       const live = stateRef.current;
       if (live && live.engineMode === 'dnd') {
-        const updated = withHouseRules({ ...live, gmStrictness: s.gmStrictness ?? live.gmStrictness }, s);
+        const updated = withHouseRules(live, s);
         stateRef.current = updated;
         setState(updated);
         void persist(updated);
       }
+    },
+    setCampaignStrictness: (strictness: GmStrictness) => {
+      const live = stateRef.current;
+      if (!live || live.gmStrictness === strictness) return;
+      const updated = { ...live, gmStrictness: strictness };
+      stateRef.current = updated;
+      setState(updated);
+      void persist(updated);
     },
     updateCustomTabletopRules: async (text: string) => {
       const s = stateRef.current;
