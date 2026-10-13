@@ -478,6 +478,8 @@ function pushUnique(list: string[], seen: Set<string>, raw: string | undefined):
 export type NounAllowlistOpts = {
   /** Hall talk: addressee + card CAST names only (plus HERE / card tokens). */
   hallTalk?: boolean;
+  /** This turn's ENGINE RESULT: a pack item it names ("found Fine Longsword") is a ref the writer can name. */
+  engineResult?: string;
 };
 
 /**
@@ -633,6 +635,11 @@ export function compileRefEnum(
     for (const c of state.companions ?? []) {
       if (c.name) add(`companion:${slugRefId(c.name)}`, c.name, 'companion');
     }
+  }
+  const engineResult = (opts?.engineResult ?? '').toLowerCase();
+  for (const item of engineResult ? state.inventory ?? [] : []) {
+    if (item.equipped || !item.name || !engineResult.includes(item.name.toLowerCase())) continue;
+    add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name), 'carried', 'the engine result hands it over this turn; carried, not worn');
   }
 
   const addWindow = (label: string) => {
@@ -880,9 +887,10 @@ export function buildCompletedEventPacket(
   const ledgerRead = !!ledgerSheetLine(state) && isLedgerReadAction(action);
   // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
   // an actor, a prop or a thing that answers.
-  const allowlist = compileNounAllowlist(state, allowExtras, { hallTalk })
+  const refOpts = { hallTalk, engineResult: extras?.engineResult };
+  const allowlist = compileNounAllowlist(state, allowExtras, refOpts)
     .filter((n) => !ledgerRead || !isSystemWindowLabel(n));
-  const refEnum = compileRefEnum(state, allowExtras, { hallTalk })
+  const refEnum = compileRefEnum(state, allowExtras, refOpts)
     .filter((r) => !ledgerRead || r.klass !== 'window');
   const movement = movementFact(state, action) || undefined;
   const leg = state.journey;

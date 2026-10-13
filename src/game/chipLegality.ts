@@ -15,7 +15,7 @@ import { openingCastNames, openingCastStillHere, openOpeningOffer } from './open
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
-import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingOver } from './travelJourney';
+import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
 import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -46,19 +46,13 @@ export function mentionsName(text: string, name: string): boolean {
   return nameTokens(name).some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay));
 }
 
-const ROAD_PEOPLE: Record<string, string> = {
-  traveler: 'a traveler',
-  meeting: 'someone coming the other way',
-  thugs: 'thugs',
-  camp: 'a camp',
-  villain: 'someone blocking the way',
-};
+const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);
 
-/** The person or group a live, un-fought road meeting puts on this stretch. */
+/** The person or group a live, un-fought road meeting puts on this stretch, by the journey's own label. */
 export function roadMeetingPeople(state: GameState): string | null {
   const enc = state.journey?.encounter;
   if (!enc || roadMeetingOver(enc) || !isJourneyUnderway(state)) return null;
-  return ROAD_PEOPLE[enc.kind] ?? null;
+  return ROAD_PEOPLE_KINDS.has(enc.kind) ? roadMeetingLabel(enc.kind) : null;
 }
 
 /** Everyone who could answer at turn start: scene presence, companions, the live foe, the opening cast, a road meeting. */

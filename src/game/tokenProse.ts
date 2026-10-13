@@ -417,6 +417,30 @@ export function lineHasUnhandedCarriedThing(text: string, handedText: string): b
   return false;
 }
 
+/** Someone finds a thing ("found a small iron ring set into the stone"): the words after the article, up to where the thing stops. */
+const FOUND_THING =
+  /\b(?:found|finds|discovered|discovers|uncovered|uncovers|turned up|came across|comes across)\s+(?:a|an|the|some)\s+((?:[a-z][a-z'-]*\s+){0,3}?[a-z][a-z'-]*)(?=\s*(?:[,.;:!?]|$|\s(?:set|sunk|fixed|built|cut|carved|hidden|tucked|lying|lay|resting|at|in|into|on|under|beneath|behind|beside|near|by|against|inside|within|among|between|of|that|which|where|and|with|from)\b))/gi;
+
+/**
+ * Lap 48 — a thing someone finds that no handed fact and no earlier page holds (the writer invented a
+ * discovery: "Jax found a small iron ring set into the stone" on a turn with no search result). The
+ * thing's own last word must be handed. The earlier page counts only where it names the thing after an
+ * article ("a small iron ring"), since a thing seen before can be found; "the bell will ring" is no ring.
+ */
+export function lineHasUnhandedFind(text: string, handedText: string): boolean {
+  const [facts, page = ''] = handedText.split(PAGE_MARK);
+  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  for (const m of narration.matchAll(FOUND_THING)) {
+    const head = m[1]!.trim().split(/\s+/).pop()!.toLowerCase().replace(/'s$/, '');
+    if (head.length < 3) continue;
+    const word = `${head.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:s|es)?\\b`;
+    if (new RegExp(`\\b${word}`).test(facts!)) continue;
+    if (new RegExp(`\\b(?:a|an|the|some|its|his|her|their)\\s+(?:[a-z'-]+\\s+){0,2}${word}`).test(page)) continue;
+    return true;
+  }
+  return false;
+}
+
 const roleNounOf = (match: string) => {
   const word = match.toLowerCase().split(/\s+/).pop() ?? '';
   return ROLE_NOUNS.find((r) => word === r || word === `${r}s` || word === `${r}es`) ?? word;
@@ -497,7 +521,8 @@ function idAgreesWithRow(row: LedgerRef, id: string): boolean {
 /**
  * s77 Root A — a declared ref binds by its REF ENUM token: `tok` is the enum row's own token and code
  * looks up the id. A typed id that names something else contradicts the tok, so the ref binds to nothing.
- * A typed id only binds on its own when the tok is not an enum token at all.
+ * A typed id only binds on its own when the tok is not an enum token at all: by the row's id, or by its name
+ * or display when exactly one row has it ("Worn Mace" with an invented tok "t-worn-mace").
  */
 function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | undefined {
   const byTokOf = (s: string) => {
@@ -511,6 +536,14 @@ function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | 
     const byId = enumRefs.find((r) => r.id.toLowerCase() === want);
     if (byId) return byId;
     if (/^@?t\d+$/.test(want)) return byTokOf(want);
+    const slug = refSlug(want.slice(want.indexOf(':') + 1));
+    const byName = slug
+      ? enumRefs.filter((r) => {
+          const rid = r.id.toLowerCase();
+          return slug === rid.slice(rid.indexOf(':') + 1) || slug === refSlug(r.display);
+        })
+      : [];
+    if (byName.length === 1) return byName[0];
   }
   return undefined;
 }
@@ -613,6 +646,7 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   const handed = handedCountText(state, packet);
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
   if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
+  if (lineHasUnhandedFind(text, handed)) return 'a thing found that the scene never handed';
   const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
   if (named === 'capital') return 'a name the scene never handed';
   if (named === 'unbound-animate') return 'a person who is not here';
@@ -635,6 +669,7 @@ export function classifyTokenLine(
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
   if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };
+  if (handedCounts != null && lineHasUnhandedFind(line.text, handedCounts)) return { ok: false, reason: 'found' };
   // Spoken words with no speaker would paint as narration.
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
     return { ok: false, reason: 'speech-no-speaker' };

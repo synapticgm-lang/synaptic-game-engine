@@ -550,13 +550,18 @@ function meetingCount(e: RoadEncounter): string {
 const ENCOUNTER_LABEL: Record<RoadEncounterKind, string> = {
   wildlife: 'wildlife',
   traveler: 'a traveler',
-  meeting: 'someone on the way',
+  meeting: 'a stranger',
   thugs: 'thugs',
   camp: 'a camp',
   undead: 'the restless dead',
   monster: 'a monster',
   villain: 'a villain',
 };
+
+/** The ledger label of a road meeting: the writer's ref, the speaker it may name and the turn check all read this one. */
+export function roadMeetingLabel(kind: RoadEncounterKind): string {
+  return ENCOUNTER_LABEL[kind];
+}
 
 /** The stretch already has a life: what the meeting is doing there before the player arrives. */
 const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {

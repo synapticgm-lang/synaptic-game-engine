@@ -381,7 +381,9 @@ export function checkTurn(row, packet, page = '') {
     // "Jax faced being left alone at the quay": a passive verb says what happens to Jax, not that Jax moved.
     const movePassive = moveM && /\b(?:be|being|been|is|was|were|are|get|gets|got|getting)\s+$/i.test(moveLead);
     if (facts.noMove && moveM && !moveNotYet && !movePassive) {
-      const named = facts.placeNames.find((p) => p.length > 3 && lower(s).includes(lower(p)) && !facts.hereNames.some((h) => namesHere(p, h)));
+      // Whole words only: "the courtyard stones" does not name a place called Court.
+      const namesPlace = (p) => new RegExp(`(?<![\\w'-])${lower(p).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`).test(lower(s));
+      const named = facts.placeNames.find((p) => p.length > 3 && namesPlace(p) && !facts.hereNames.some((h) => namesHere(p, h)));
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }
   }
