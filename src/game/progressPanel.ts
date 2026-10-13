@@ -1,0 +1,37 @@
+/**
+ * LitRPG / story RPG Progress tab: only the save's own numbers, from the same owners the engine reads.
+ * A part with no data is empty, and a part the System housing hides is empty (the engine still grows it, hidden).
+ */
+import { skillLabel } from './skillGates';
+import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
+import { hidesPart } from './systemHousing';
+import type { AttributeKey, GameState, Rarity } from './types';
+
+const ATTRIBUTE_KEYS: AttributeKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+const RARITY_ORDER: Rarity[] = ['Legendary', 'Epic', 'Rare', 'Uncommon', 'Common'];
+
+export interface ProgressPanel {
+  attributes: { key: AttributeKey; value: number }[];
+  skills: { key: string; label: string; rank: number }[];
+  level: number | null;
+  xp: { xp: number; toNext: number } | null;
+  items: { id: string; name: string; rarity: Rarity; quantity: number; equipped: boolean }[];
+}
+
+export function progressPanel(state: GameState): ProgressPanel {
+  const c = state.character;
+  const housing = state.systemHousing;
+  const attributes = ATTRIBUTE_KEYS
+    .map((key) => ({ key, value: c?.attributes?.[key] }))
+    .filter((a): a is { key: AttributeKey; value: number } => typeof a.value === 'number');
+  const ranks = skillRanksOf(c);
+  const skills = hidesPart(housing, 'skills')
+    ? []
+    : CHECK_SKILLS.filter((s) => ranks[s] > 0).map((s) => ({ key: s, label: skillLabel(s), rank: ranks[s] }));
+  const level = c && !hidesPart(housing, 'level') ? c.level : null;
+  const xp = c && !hidesPart(housing, 'experience') ? { xp: c.xp, toNext: c.xpToNext } : null;
+  const items = (state.inventory ?? [])
+    .map((it) => ({ id: it.id, name: it.name, rarity: it.rarity, quantity: it.quantity, equipped: !!it.equipped }))
+    .sort((a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity));
+  return { attributes, skills, level, xp, items };
+}

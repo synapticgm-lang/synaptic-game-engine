@@ -1,9 +1,10 @@
 ﻿import { useMemo } from 'react';
-import type { GameState, AttributeKey } from '@/game/types';
+import type { GameState } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
 import { attunedItems as attunedFromLedger } from '@/game/rules/magicItems';
-import { Sparkles, ScrollText, Shield, Zap, Star } from 'lucide-react';
+import { progressPanel } from '@/game/progressPanel';
+import { Sparkles, ScrollText, Shield, Zap, Star, Package } from 'lucide-react';
 
 interface Props {
   state: GameState;
@@ -118,66 +119,76 @@ function DndMode({ state }: { state: GameState }) {
 
 /* ============ LITRPG / STORY RPG ============ */
 
-const SKILL_LABELS: Record<string, string> = {
-  athletics: 'Athletics', perception: 'Perception', investigation: 'Investigation', stealth: 'Stealth',
-  thievery: 'Thievery', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
-};
-
 function StatusMode({ state }: { state: GameState }) {
-  const c = state.character;
-  const attrs = (['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as AttributeKey[])
-    .map((k) => ({ label: k, value: c.attributes?.[k] }))
-    .filter((s): s is { label: AttributeKey; value: number } => typeof s.value === 'number');
-  const skills = Object.entries(c.skills ?? {}).filter(([, v]) => typeof v === 'number') as [string, number][];
+  const p = useMemo(() => progressPanel(state), [state]);
 
   return (
     <div className="space-y-5">
-      <section>
-        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
-          <Zap size={13} />
-          Attributes
-        </h3>
-        {attrs.length === 0 ? (
-          <div className="rounded-md border border-slate-700 bg-slate-800/30 py-3 text-center text-xs italic text-slate-500">No attributes on this save yet.</div>
-        ) : (
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {attrs.map((s) => (
-              <div key={s.label} className="flex items-baseline justify-between rounded-md border border-slate-700 bg-slate-800/40 p-2.5">
-                <span className="text-[10px] uppercase text-slate-500">{s.label}</span>
-                <span className="font-mono text-sm font-bold text-slate-100">{s.value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {skills.length > 0 && (
+      {p.attributes.length > 0 && (
         <section>
           <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
-            <Sparkles size={13} />
-            Skills
+            <Zap size={13} />
+            Attributes
           </h3>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {skills.map(([key, value]) => (
-              <div key={key} className="flex items-baseline justify-between rounded-md border border-slate-700 bg-slate-800/40 p-2.5">
-                <span className="text-[11px] text-slate-400">{SKILL_LABELS[key] ?? key}</span>
-                <span className="font-mono text-sm font-bold text-slate-100">{value >= 0 ? '+' : ''}{value}</span>
+            {p.attributes.map((s) => (
+              <div key={s.key} className="flex items-baseline justify-between rounded-md border border-slate-700 bg-slate-800/40 p-2.5">
+                <span className="text-[10px] uppercase text-slate-500">{s.key}</span>
+                <span className="font-mono text-sm font-bold text-slate-100">{s.value}</span>
               </div>
             ))}
           </div>
         </section>
       )}
 
-      <section>
-        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
-          <ScrollText size={13} />
-          Level
-        </h3>
-        <div className="rounded-md border border-slate-700 bg-slate-800/40 p-3 text-xs text-slate-300">
-          <div className="mb-1 flex justify-between"><span className="text-slate-500">Level</span><span className="font-mono text-slate-200">{c.level}</span></div>
-          <div className="flex justify-between"><span className="text-slate-500">XP</span><span className="font-mono text-slate-200">{c.xp} / {c.xpToNext}</span></div>
-        </div>
-      </section>
+      {p.skills.length > 0 && (
+        <section>
+          <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+            <Sparkles size={13} />
+            Skills
+          </h3>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {p.skills.map((s) => (
+              <div key={s.key} className="flex items-baseline justify-between rounded-md border border-slate-700 bg-slate-800/40 p-2.5">
+                <span className="text-[11px] text-slate-400">{s.label}</span>
+                <span className="font-mono text-sm font-bold text-slate-100">+{s.rank}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {(p.level != null || p.xp) && (
+        <section>
+          <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+            <ScrollText size={13} />
+            Level
+          </h3>
+          <div className="rounded-md border border-slate-700 bg-slate-800/40 p-3 text-xs text-slate-300">
+            {p.level != null && <div className="mb-1 flex justify-between"><span className="text-slate-500">Level</span><span className="font-mono text-slate-200">{p.level}</span></div>}
+            {p.xp && <div className="flex justify-between"><span className="text-slate-500">XP</span><span className="font-mono text-slate-200">{p.xp.xp} / {p.xp.toNext}</span></div>}
+          </div>
+        </section>
+      )}
+
+      {p.items.length > 0 && (
+        <section>
+          <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+            <Package size={13} />
+            Inventory
+          </h3>
+          <div className="space-y-1.5">
+            {p.items.map((item) => (
+              <div key={item.id} className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800/40 px-3 py-2">
+                <Star size={13} style={{ color: RARITY_COLORS[item.rarity] }} />
+                <span className="text-sm text-slate-200">{item.name}{item.quantity > 1 ? ` ×${item.quantity}` : ''}</span>
+                {item.equipped && <span className="text-[10px] uppercase text-slate-500">worn</span>}
+                <span className="ml-auto text-[10px] uppercase" style={{ color: RARITY_COLORS[item.rarity] }}>{item.rarity}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
