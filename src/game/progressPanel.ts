@@ -5,6 +5,7 @@
 import { skillLabel } from './skillGates';
 import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
 import { hidesPart } from './systemHousing';
+import { classDisplayName } from './rules/characterClass';
 import type { AttributeKey, GameState, Rarity } from './types';
 
 const ATTRIBUTE_KEYS: AttributeKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
@@ -15,6 +16,8 @@ export interface ProgressPanel {
   skills: { key: string; label: string; rank: number }[];
   level: number | null;
   xp: { xp: number; toNext: number } | null;
+  /** The class as the mode names it; null with no class or when the housing hides the level. */
+  className: string | null;
   items: { id: string; name: string; rarity: Rarity; quantity: number; equipped: boolean }[];
 }
 
@@ -30,8 +33,9 @@ export function progressPanel(state: GameState): ProgressPanel {
     : CHECK_SKILLS.filter((s) => ranks[s] > 0).map((s) => ({ key: s, label: skillLabel(s), rank: ranks[s] }));
   const level = c && !hidesPart(housing, 'level') ? c.level : null;
   const xp = c && !hidesPart(housing, 'experience') ? { xp: c.xp, toNext: c.xpToNext } : null;
+  const className = c && !hidesPart(housing, 'level') ? classDisplayName(state) : null;
   const items = (state.inventory ?? [])
     .map((it) => ({ id: it.id, name: it.name, rarity: it.rarity, quantity: it.quantity, equipped: !!it.equipped }))
     .sort((a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity));
-  return { attributes, skills, level, xp, items };
+  return { attributes, skills, level, xp, className, items };
 }

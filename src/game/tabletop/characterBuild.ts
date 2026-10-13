@@ -742,8 +742,9 @@ export function hasClassFeature(c: Pick<Character, 'srd' | 'level'>, feature: Re
   return !!c.srd && classFeaturesAt(c.srd.classId, c.level ?? 1).some((f) => feature.test(f));
 }
 
-export function tabletopHitDie(character: Pick<Character, 'srd'>): number {
-  return character.srd ? classDef(character.srd.classId).hitDie : 8;
+export function tabletopHitDie(character: Pick<Character, 'srd' | 'classId'>): number {
+  const id = character.srd?.classId ?? character.classId;
+  return id ? classDef(id).hitDie : 8;
 }
 
 export interface DerivedSheet {

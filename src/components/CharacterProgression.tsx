@@ -165,6 +165,7 @@ function StatusMode({ state }: { state: GameState }) {
             Level
           </h3>
           <div className="rounded-md border border-slate-700 bg-slate-800/40 p-3 text-xs text-slate-300">
+            {p.className && <div className="mb-1 flex justify-between"><span className="text-slate-500">Class</span><span className="text-slate-200" data-testid="progress-class">{p.className}</span></div>}
             {p.level != null && <div className="mb-1 flex justify-between"><span className="text-slate-500">Level</span><span className="font-mono text-slate-200">{p.level}</span></div>}
             {p.xp && <div className="flex justify-between"><span className="text-slate-500">XP</span><span className="font-mono text-slate-200">{p.xp.xp} / {p.xp.toNext}</span></div>}
           </div>

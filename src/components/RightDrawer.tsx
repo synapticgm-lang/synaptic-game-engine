@@ -5,6 +5,7 @@ import { RARITY_COLORS } from '@/game/types';
 import { computeInventoryCapacity, getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { equippedSetLabel } from '@/game/uiTheme';
+import { progressPanel } from '@/game/progressPanel';
 
 interface Props {
   state: GameState;
@@ -23,6 +24,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
   const [expandedBagId, setExpandedBagId] = useState<string | null>(null);
 
   const c = state.character;
+  const shown = progressPanel(state);
   const setLabel = equippedSetLabel(uiThemeId);
 
   return (
@@ -59,7 +61,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
                 <span className="flex items-center gap-1"><Zap size={12} className="text-sky-400" /> {c.mp}/{c.maxMp}</span>
               )}
               {typeof c.sp === 'number' && (c.maxSp ?? 0) > 0 && <span>SP {c.sp}/{c.maxSp}</span>}
-              <span>Lv {c.level}</span>
+              {shown.level != null && <span>Lv {shown.level}</span>}
             </div>
             <div className="mt-2 grid grid-cols-3 gap-1 text-[10px] text-slate-500 border-t border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_22%,#44403c)] pt-2">
               {Object.entries(c.attributes ?? {}).map(([k, v]) => (
@@ -75,7 +77,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
                     <span className="text-2xl">🛡️</span>
                   </div>
                   <div className="text-xs font-semibold text-slate-200">{c.name}</div>
-                  <div className="text-[10px] text-slate-400">Class: {c.classTitle || 'Wanderer'}</div>
+                  {shown.className && <div className="text-[10px] text-slate-400">Class: {shown.className}</div>}
                 </div>
 
                 <div>

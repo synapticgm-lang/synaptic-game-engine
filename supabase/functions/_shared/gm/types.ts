@@ -322,6 +322,8 @@ export interface Character {
   skills?: Partial<Record<'athletics' | 'perception' | 'investigation' | 'stealth' | 'thievery' | 'persuasion' | 'arcana' | 'survival', number>>;
   /** 29z3 — highest level whose skill rank has been granted. */
   skillsGrantedThrough?: number;
+  /** Class with no tabletop sheet (LitRPG): the same SRD class data; a sheet's `srd.classId` wins. */
+  classId?: TabletopClassId;
   /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */
   srd?: TabletopSheet;
   /** Tabletop caster's spent slots and lasting spells (rules/spells). */
@@ -808,6 +810,8 @@ export interface GameState {
   lootPity?: LootPityState;
   /** Pack 3 first-session beat sheet. */
   tutorialProgress?: TutorialProgress;
+  /** LitRPG class choice the System opened at the end of the tutorial; cleared once a class is taken. */
+  classOffer?: { turn: number; choices: TabletopClassId[] } | null;
   /** Pack 4/5 Place registry — name/tier/arc authority. */
   places?: PlaceRecord[];
   /** Pack 6 long-campaign compressed memory. */

@@ -67,6 +67,7 @@ import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThr
 import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
+import { settleClassChoice } from './rules/characterClass';
 import { resolveOutOfCombatCast } from './tabletop/spellCasting';
 import { resolveDowntimeTurn } from './tabletop/downtimeTurn';
 import { isLookAroundAction } from './sandboxXp';
@@ -712,7 +713,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die):/.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class):/.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
@@ -799,10 +800,19 @@ export function runArcDirectorBeforeGm(
     }
   }
 
-  // Tabletop: a spell cast outside a fight (healing, Mage Armor, a utility cantrip). Fights cast in rounds.
-  // Oracle / crafting / attunement / Lay On Hands lines are settled here and are not talk to anyone in the scene.
+  // LitRPG class: the System's offer at the end of the tutorial, and the pick. A pick is not talk to anyone.
   let downtimeSettled = false;
   if (!engineFight) {
+    const cls = settleClassChoice(working, playerInput);
+    working = cls.state;
+    systemReceipts.push(...cls.receipts);
+    if (cls.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${cls.fact}`);
+    downtimeSettled = cls.settled;
+  }
+
+  // Tabletop: a spell cast outside a fight (healing, Mage Armor, a utility cantrip). Fights cast in rounds.
+  // Oracle / crafting / attunement / Lay On Hands lines are settled here and are not talk to anyone in the scene.
+  if (!engineFight && !downtimeSettled) {
     const cast = resolveOutOfCombatCast(working, playerInput);
     if (cast) {
       working = cast.state;

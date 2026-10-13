@@ -13,6 +13,7 @@ import { getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { stockItemIconSrc, stockPortraitSrc } from '@/game/stockInventoryArt';
 import { equippedSetLabel } from '@/game/uiTheme';
+import { progressPanel } from '@/game/progressPanel';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
 import { houseRulesOf, tableRulesLine } from '@/game/rules/houseRules';
 import { carryLine } from '@/game/rules/encumbrance';
@@ -214,6 +215,7 @@ function AttributeGrid({ state }: { state: GameState }) {
 
 function SidePanel({ state }: { state: GameState }) {
   const c = state.character;
+  const shown = progressPanel(state);
   const reveal = state.statusReveal ?? (state.tutorialProgress?.fullStatusUnlocked ? 'full' : 'minimal');
   return (
     <div className="sgm-sheet-inset h-full w-64 space-y-4 overflow-y-auto border-l border-slate-800/60 bg-slate-950/95 p-3 sm:w-56">
@@ -236,9 +238,10 @@ function SidePanel({ state }: { state: GameState }) {
       <div>
         <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Progress</h3>
         <div className="space-y-1 text-xs text-slate-300">
-          <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{c.level}</span></div>
-          {reveal !== 'minimal' && (
-            <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
+          {shown.className && state.engineMode !== 'dnd' && <div className="flex justify-between"><span>Class</span><span className="font-bold">{shown.className}</span></div>}
+          {shown.level != null && <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{shown.level}</span></div>}
+          {reveal !== 'minimal' && shown.xp && (
+            <div className="flex justify-between"><span>XP</span><span className="font-mono">{shown.xp.xp}/{shown.xp.toNext}</span></div>
           )}
           {reveal === 'full' && c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
           <div className="flex justify-between items-center gap-2">
@@ -585,7 +588,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
                 {equippedSetLabel(settings.uiThemeId)}
               </span>
             </div>
-            <span className="shrink-0 text-xs text-slate-500">Level {c.level}</span>
+            {progressPanel(state).level != null && <span className="shrink-0 text-xs text-slate-500">Level {c.level}</span>}
           </div>
           <div className="flex items-center gap-2">
             {onCharacter && (

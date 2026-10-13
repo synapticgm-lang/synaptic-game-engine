@@ -1,6 +1,7 @@
 ﻿import { useMemo, useState } from 'react';
 import type { GameState } from '@/game/types';
 import { equippedSetLabel } from '@/game/uiTheme';
+import { progressPanel } from '@/game/progressPanel';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
 import { listSheets, sheetLabel } from '@/game/tabletop/sheetLibrary';
 import { pregenSheets, previewSavedSheet } from '@/game/tabletop/sheetPreview';
@@ -23,9 +24,10 @@ export function CharacterSheetView({ state, uiThemeId }: Props) {
 
 function LitRpgStatus({ state, uiThemeId }: { state: GameState; uiThemeId?: string }) {
   const c = state.character;
+  const shown = progressPanel(state);
   const hpPct = c.maxHp > 0 ? Math.min(100, (c.hp / c.maxHp) * 100) : 0;
   const mpPct = c.maxMp > 0 ? Math.min(100, (c.mp / c.maxMp) * 100) : 0;
-  const xpPct = c.xpToNext > 0 ? Math.min(100, (c.xp / c.xpToNext) * 100) : 0;
+  const xpPct = shown.xp && shown.xp.toNext > 0 ? Math.min(100, (shown.xp.xp / shown.xp.toNext) * 100) : 0;
 
   const buffs = c.conditions.filter((cond) => /buff|bless|inspire|haste|shield|protect/i.test(cond));
   const displayBuffs = buffs.length > 0 ? buffs : ['No Active Buffs'];
@@ -42,24 +44,30 @@ function LitRpgStatus({ state, uiThemeId }: { state: GameState; uiThemeId?: stri
         <div className="sgm-info-accent relative z-[3] mb-1 text-[10px] uppercase tracking-[0.2em] opacity-80">Adventurer</div>
         <div className="relative z-[3] font-serif text-2xl font-bold">{c.name}</div>
         <div className="sgm-equipped-set relative z-[3] mt-1 truncate">{equippedSetLabel(uiThemeId)}</div>
-        <div className="my-2 flex items-center justify-center gap-2">
-          <span className="sgm-info-tab-on rounded-full border px-3 py-0.5 text-xs font-bold">
-            LV {c.level}
-          </span>
-        </div>
-        {/* XP Bar */}
-        <div className="mt-3">
-          <div className="mb-1 flex justify-between text-[10px] opacity-80">
-            <span className="sgm-info-accent">EXP</span>
-            <span className="font-mono">{c.xp} / {c.xpToNext}</span>
+        {(shown.level != null || shown.className) && (
+          <div className="my-2 flex items-center justify-center gap-2">
+            {shown.level != null && (
+              <span className="sgm-info-tab-on rounded-full border px-3 py-0.5 text-xs font-bold">
+                LV {shown.level}
+              </span>
+            )}
+            {shown.className && <span className="text-xs font-semibold" data-testid="status-class">{shown.className}</span>}
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full border border-slate-700 bg-slate-950">
-            <div
-              className="sgm-info-fill h-full rounded-full transition-all duration-500"
-              style={{ width: `${xpPct}%` }}
-            />
+        )}
+        {shown.xp && (
+          <div className="mt-3">
+            <div className="mb-1 flex justify-between text-[10px] opacity-80">
+              <span className="sgm-info-accent">EXP</span>
+              <span className="font-mono">{shown.xp.xp} / {shown.xp.toNext}</span>
+            </div>
+            <div className="h-2.5 overflow-hidden rounded-full border border-slate-700 bg-slate-950">
+              <div
+                className="sgm-info-fill h-full rounded-full transition-all duration-500"
+                style={{ width: `${xpPct}%` }}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Health / Mana Bars */}
