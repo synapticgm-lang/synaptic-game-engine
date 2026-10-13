@@ -45,9 +45,9 @@ function tripsTo(dest: string, n = 200) {
 }
 
 describe('29w stamps', () => {
-  it('HUD and BUILD are 2026-10-13d and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13d');
-    expect(BUILD_STAMP).toBe('2026-10-13d');
+  it('HUD and BUILD are 2026-10-13e and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13e');
+    expect(BUILD_STAMP).toBe('2026-10-13e');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
