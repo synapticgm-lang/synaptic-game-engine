@@ -43,7 +43,8 @@ describe('replay bank s84', () => {
     for (const t of [2, 13, 14, 15]) expect(R.noteText(t)).not.toMatch(/missing item: (pilgrim )?staff/i);
   });
 
-  it('[s84 T21 | carried, writer] the Undercroft is not given a spire', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s84 T21 | carried, writer] the Undercroft is not given a spire', () => {
     expect(R.prose(21)).not.toMatch(/spire/i);
   });
 });

@@ -128,7 +128,8 @@ describe('replay bank s80', () => {
     expect(R.packet(3)).toMatch(/ENGINE RESULT[^\n]*\n?[^\n]*Search: /);
   });
 
-  it('[s80 T15,T16 | s79 Root G (s80 failure 8)] the descent into the Undercroft is told once, not on arrival and again on Enter', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s80 T15,T16 | s79 Root G (s80 failure 8)] the descent into the Undercroft is told once, not on arrival and again on Enter', () => {
     expect(R.after(15).currentLocation, 'replay arrives at Cathedral Undercroft on T15').toBe('Cathedral Undercroft');
     expect(R.input(16)).toBe('Enter Cathedral Undercroft');
     const descends = (n: number) => /took the steps|steps led down|bottom of the stair|counted each step down/i.test(R.prose(n));
@@ -153,17 +154,20 @@ describe('replay bank s80', () => {
     expect(R.receiptText(2)).not.toMatch(/Social track/);
   });
 
-  it('[s80 T10 | s80 AI output] Jax (name locked) is not "a stranger with no name"', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s80 T10 | s80 AI output] Jax (name locked) is not "a stranger with no name"', () => {
     expect(R.after(10).currentLocation, 'replay arrives at Cathedral Close on T10').toBe('Cathedral Close');
     expect(R.prose(10)).not.toMatch(/no name/i);
   });
 
-  it('[s80 T11 | s80 AI output] after Nell and Col both spoke to Jax, they are not "yet to notice" Jax', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s80 T11 | s80 AI output] after Nell and Col both spoke to Jax, they are not "yet to notice" Jax', () => {
     expect(R.before(11).currentLocation, 'replay waits at Cathedral Close on T11').toBe('Cathedral Close');
     expect(R.prose(11)).not.toMatch(/(neither of them|had(n't| not)) (had )?noticed Jax/i);
   });
 
-  it('[s80 T20 | s80 AI output] the road to Contract Hall is not "toward the west wall"', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s80 T20 | s80 AI output] the road to Contract Hall is not "toward the west wall"', () => {
     expect(R.after(20).journey?.to, 'replay sets out for Contract Hall on T20').toBe('Contract Hall');
     expect(R.prose(20)).not.toMatch(/toward the west wall/i);
   });

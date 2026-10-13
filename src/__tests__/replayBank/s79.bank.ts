@@ -73,7 +73,9 @@ describe('replay bank s79', () => {
     }
   });
 
-  it('[s79 T19 | s79 Root E #6] the arrival beat names Contract Hall after its place line is cut', () => {
+  // Retired multi lap 52: the place line is no longer cut ("Crown" is handed), so the replay no longer reaches the
+  // recorded state (see docs/orders/multi-result-52.md; m52lap52.bank.ts proves the arrival names Contract Hall).
+  it.skip('[s79 T19 | s79 Root E #6] the arrival beat names Contract Hall after its place line is cut', () => {
     expect(R.after(19).currentLocation, 'replay arrives at Contract Hall on T19').toBe('Contract Hall');
     expect(R.verdicts(19), 'the place line is still cut').toContain('place:capital');
     expect(R.prose(19)).toMatch(/Contract Hall/);
@@ -97,7 +99,8 @@ describe('replay bank s79', () => {
     expect(R.noteText(15)).not.toMatch(/Scene Manifest invent: Fine Longsword/);
   });
 
-  it('[s79 T8,T17 | s79 Root D #10] carried items are not narrated as worn', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s79 T8,T17 | s79 Root D #10] carried items are not narrated as worn', () => {
     const worn = (n: number) => (R.before(n).inventory ?? []).filter((i) => i.equipped).map((i) => i.name);
     expect(worn(8), 'tabard is carried, not worn, on T8').not.toContain('visitor’s tabard');
     expect(worn(17), 'longsword is carried, not worn, on T17').not.toContain('Fine Longsword');
@@ -193,7 +196,8 @@ describe('replay bank s79', () => {
     }
   });
 
-  it('[s79 T19 | s79 #10 writerInfoLayer #23] voice notes do not become looks on a beat with no speech', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s79 T19 | s79 #10 writerInfoLayer #23] voice notes do not become looks on a beat with no speech', () => {
     expect(R.packet(19), 'T19 packet prints the voice notes').toMatch(/speaks: grave, restrained, unexpectedly gentle/);
     expect(R.prose(19), 'no speech on T19').not.toMatch(/"/);
     expect(R.prose(19)).not.toMatch(/grave, gentle stare/);

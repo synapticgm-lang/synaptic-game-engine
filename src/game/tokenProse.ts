@@ -418,9 +418,51 @@ export function handedCountText(state: GameState, packet?: CompletedEventPacket)
     ...(packet?.ledgerChanges ?? []),
     ...(packet?.allowlist ?? []),
     ...refEnumOf(state, packet).map((r) => r.display),
+    clockMark(state),
     PAGE_MARK,
     ...page,
   ].join('\n').toLowerCase();
+}
+
+const CLOCK_MARK = '\u0000clock\u0000';
+
+/** The clock's time of day as a handed fact, only when the clock owns it (`travelJourney.advanceClock` sets both). */
+function clockMark(state: GameState): string {
+  const slot = state.sceneFacts?.timeOfDay;
+  return typeof state.worldHour === 'number' && slot && slot !== 'unknown' ? `${CLOCK_MARK}${slot}` : '';
+}
+
+/** Time-of-day words by clock slot; dusk and evening share their words. */
+const DAY_PART_WORDS: [slot: string, re: RegExp][] = [
+  ['dawn', /\b(?:dawn|daybreak)\b/gi],
+  ['morning', /\bmorning\b/gi],
+  ['midday', /\b(?:midday|mid-day|noon)\b/gi],
+  ['afternoon', /\bafternoon\b/gi],
+  ['dusk evening', /\b(?:dusk|twilight|evening|sundown|sunset)\b/gi],
+  ['night', /\b(?:night|nightfall|midnight)\b/gi],
+];
+
+/**
+ * A narrated time of day the clock contradicts ("the morning light sat pale" when the clock says midday). The clock
+ * owns time of day; a time named for another moment ("this morning", "the night the light took them") is not now.
+ */
+export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean {
+  const facts = handedText.split(PAGE_MARK)[0]!;
+  const at = facts.indexOf(CLOCK_MARK);
+  if (at < 0) return false;
+  const slot = facts.slice(at + CLOCK_MARK.length).split(/\s/)[0]!;
+  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  for (const [slots, re] of DAY_PART_WORDS) {
+    if (slots.split(' ').includes(slot)) continue;
+    for (const m of narration.matchAll(re)) {
+      const before = narration.slice(0, m.index).split(/\s+/).filter(Boolean).slice(-2).join(' ').toLowerCase();
+      const after = narration.slice((m.index ?? 0) + m[0].length).trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+      if (/\b(?:this|that|last|yesterday|tomorrow|since|every|each|earlier|one|all|before|until|by)\b/.test(before)) continue;
+      if (/^(?:the|when|that|before|after|they|he|she|we|i|you|it|jax|of|'s|’s)$/.test(after)) continue;
+      return true;
+    }
+  }
+  return false;
 }
 
 /** A count in the line that no handed fact and no earlier page holds ("for six years", "fifteen more points"). */
@@ -708,6 +750,7 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
   if (lineHasUnhandedFind(text, handed)) return 'a thing found that the scene never handed';
   if (lineOpensOnFactLabel(text, handed)) return 'an engine label pasted as story';
+  if (lineHasWrongTimeOfDay(text, handed)) return 'a time of day the clock does not show';
   const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
   if (named === 'capital') return 'a name the scene never handed';
   if (named === 'unbound-animate') return 'a person who is not here';
@@ -732,6 +775,9 @@ export function classifyTokenLine(
   if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };
   if (handedCounts != null && lineHasUnhandedFind(line.text, handedCounts)) return { ok: false, reason: 'found' };
   if (handedCounts != null && lineOpensOnFactLabel(line.text, handedCounts)) return { ok: false, reason: 'label' };
+  if (handedCounts != null && line.fn !== 'speech' && lineHasWrongTimeOfDay(line.text, handedCounts)) {
+    return { ok: false, reason: 'time' };
+  }
   // Spoken words with no speaker would paint as narration.
   if (line.fn === 'speech' && !line.spoken && !namesDeclaredPerson(line.text, beat.refs)) {
     return { ok: false, reason: 'speech-no-speaker' };
@@ -1056,8 +1102,23 @@ export function formatTokenRepairFacing(
 }
 
 /**
+ * An @tN the writer never declared is read as its REF ENUM row when the row is a name, or when the writer typed a
+ * determiner right before every use of a common thing ("the @t11 he was wiping down"). A common thing with no
+ * determiner of its own ("a crate of @t11") is a guessed number: the painter would have to supply the grammar.
+ */
+function undeclaredTokFits(row: LedgerRef, lines: TokenLine[], tok: string): boolean {
+  const display = row.display ?? '';
+  if (!display) return false;
+  if (/^[A-Z]/.test(display)) return true;
+  const t = tok.replace(/^@/, '');
+  const uses = lines.flatMap((l) => [...l.text.matchAll(new RegExp(`(\\S+)?\\s*@${escRe(t)}(?!\\d)`, 'gi'))]);
+  return uses.length > 0 && uses.every((m) => !!m[1] && isDeterminerWord(m[1]));
+}
+
+/**
  * 28l — code fixes what code knows: a declared ref whose `use` does not fit its ledger class takes the
- * first use that does, and an @tN written in a line but not declared binds to that REF ENUM row.
+ * first use that does, and an @tN written in a line but not declared binds to that REF ENUM row when it fits
+ * (`undeclaredTokFits`).
  */
 export function normalizeBeatRefs(
   beat: TokenBeat,
@@ -1079,7 +1140,7 @@ export function normalizeBeatRefs(
     for (const tok of [...toksInText(line.text), ...(line.speaker_tok ? [line.speaker_tok] : [])]) {
       if (declared.has(tok.toLowerCase())) continue;
       const row = findEnum(enumRefs, tok);
-      if (!row || !retype(row)) continue;
+      if (!row || !retype(row) || !undeclaredTokFits(row, beat.lines, tok)) continue;
       refs.push({ tok, id: row.id, use: firstUse(row) });
       declared.add(tok.toLowerCase());
     }

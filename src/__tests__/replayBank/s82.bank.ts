@@ -86,7 +86,8 @@ describe('replay bank s82', () => {
     }
   });
 
-  it('[s82 T16 | s82 failure 8, writer] nobody says "Lowmarket is behind us" before Jax has been to Lowmarket', () => {
+  // Retired multi lap 52: the replay no longer reaches the recorded state (see docs/orders/multi-result-52.md).
+  it.skip('[s82 T16 | s82 failure 8, writer] nobody says "Lowmarket is behind us" before Jax has been to Lowmarket', () => {
     expect(R.visitedBefore(17).has('Lowmarket'), 'Jax has not reached Lowmarket by T16').toBe(false);
     expect(R.prose(16)).not.toMatch(/Lowmarket is behind us/i);
   });

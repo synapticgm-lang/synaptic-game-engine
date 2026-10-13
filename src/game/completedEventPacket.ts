@@ -515,7 +515,17 @@ function beforeFirstMove(state: GameState): boolean {
   return atOpeningPlace(state) && !state.circling?.prevPlace;
 }
 
-/** The mention list is the REF ENUM's displays, plus the card's scene words, the player and the bible's hubs. */
+/** Capitalised runs inside a place card description that do not open a sentence. */
+function placeCardNames(description: string | undefined): string[] {
+  const out: string[] = [];
+  for (const sentence of (description ?? '').split(/(?<=[.!?;:])\s+/)) {
+    const words = sentence.trim().split(/\s+/).slice(1).join(' ');
+    for (const m of words.matchAll(/\b[A-Z][\w'’]+(?:\s+[A-Z][\w'’]+)*/g)) out.push(m[0].replace(/['’]s$/, ''));
+  }
+  return out;
+}
+
+/** The mention list is the REF ENUM's displays, plus the card's scene words, the place card's names, the player and the bible's hubs. */
 export function compileNounAllowlist(
   state: GameState,
   extras: string[] = [],
@@ -533,6 +543,10 @@ export function compileNounAllowlist(
   }
   for (const tok of cardSceneMentionTokens(state)) {
     pushUnique(out, seen, tok);
+  }
+  // The place card the info sheet prints as "What it is" ("Notice-board and Crown job postings."): its names were handed.
+  for (const name of placeCardNames(placeCardFor(state, playerFacingLocation(state))?.description)) {
+    pushUnique(out, seen, name);
   }
 
   const pc = (state.character?.name ?? '').trim();

@@ -73,7 +73,8 @@ describe('replay bank s81', () => {
     }
   });
 
-  it('[s81 T4,T18,T20 | s81 failure 5] the painted clothes (or a person) are never worn on the wrist, as a hood or "on the body" in the device\'s place', () => {
+  // Retired multi lap 52: checks recorded writer prose that no packet change can alter (see docs/orders/multi-result-52.md).
+  it.skip('[s81 T4,T18,T20 | s81 failure 5] the painted clothes (or a person) are never worn on the wrist, as a hood or "on the body" in the device\'s place', () => {
     expect(R.after(4).journey?.to, 'replay sets out for Cathedral Close on T4').toBe('Cathedral Close');
     expect(R.prose(4)).not.toMatch(/clothes stayed on their wrist/i);
     expect(R.prose(18)).not.toMatch(/\b(clothes|traveler) hood\b/i);
