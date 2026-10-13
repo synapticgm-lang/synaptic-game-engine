@@ -245,8 +245,12 @@ function speakerHere(bare: string, here: string[]): boolean {
 }
 
 /** The one request for a missing answer. The player's character is never the speaker: the player speaks for them. */
-export function answerRepairRequest(check: DraftCheck, here: string[], said: string[], prose: string): string {
+export function answerRepairRequest(check: DraftCheck, here: string[], said: string[], prose: string, sheets: string[] = []): string {
   const pc = (check.state.character?.name ?? '').trim();
+  const lower = here.map((p) => p.toLowerCase());
+  const theirs = sheets
+    .map((s) => s.replace(/^@t\d+\s+/, '').trim())
+    .filter((s) => lower.some((p) => s.toLowerCase().startsWith(p)));
   return [
     'Your story left out the answer. Write ONE sentence in which a person here answers the player.',
     'Format: the spoken words inside quote marks, plus who said it outside the quotes, e.g. "Words they say," Name said. Use a name from People here as the speaker. Use only names and facts from your story and the engine fact.',
@@ -254,6 +258,7 @@ export function answerRepairRequest(check: DraftCheck, here: string[], said: str
     'Reply with only that sentence as plain prose. No JSON, no other text.',
     `Player said: "${check.playerInput.slice(0, 200)}"`,
     `People here: ${here.join('; ')}`,
+    ...(theirs.length ? [`Who they are (answer from this, in their own voice): ${theirs.join(' | ')}`] : []),
     ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
     `Your story so far: ${prose.slice(0, 600)}`,
     `Engine fact: ${check.engineFact.trim() || 'Keep only what the scene already established.'}`,
@@ -276,7 +281,7 @@ export async function repairMissingAnswer(
   if (!here.length) return turn;
   const fact = check.engineFact;
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
-  const request = answerRepairRequest(check, here, said, turn.prose);
+  const request = answerRepairRequest(check, here, said, turn.prose, packet.townsfolk ?? []);
   const missing = { sentence: '(no answer on the page)', flag: MISSING_ANSWER_PROBLEM, fact };
   if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };
   const raw = await opts.repair(request).catch(() => '');

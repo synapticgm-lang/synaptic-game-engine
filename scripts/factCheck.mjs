@@ -311,6 +311,10 @@ export function checkTurn(row, packet, page = '') {
           if (/^(?:first|second|third|fourth|fifth|sixth|final|\w+th)$/i.test(m[1])) continue;
           if (/^(?:only|same|narrow|old|back|main|other|one|first|next|last|open|long|short|wide|far|near|whole|full)$/i.test(m[1])) continue;
           if (facts.allowText.includes(lower(phrase))) continue;
+          // "the gate road ran on toward Contract Hall": the road to a handed exit is that way out, not a new one.
+          const ahead = lower(clauseText.slice((m.index ?? 0) + m[0].length).split(/[,;|]/)[0]);
+          const headsTo = ahead.match(/^\s+(?:\w+\s+){0,3}?(?:to|toward|towards|into)\s+(?:the\s+)?(.+)$/)?.[1] ?? '';
+          if (headsTo && exitFact.some((e) => lower(e).replace(/^the\s+/, '').length >= 4 && headsTo.startsWith(lower(e).replace(/^the\s+/, '')))) continue;
           add('exit-place', s, `"${phrase}" is no handed place or exit`);
         }
       }
@@ -363,7 +367,7 @@ export function checkTurn(row, packet, page = '') {
         const gaveTo = gaveTail !== undefined
           && (/^(?:jax|him|her|them|me|you|us|over)\s/i.test(gaveTail) || /^(?!(?:A|An|The)\s)[A-Z]/.test(gaveTail) || /^\s+to\b/i.test(after));
         const foundBefore = gaveTo
-          || /\b(?:found|finds?|picked up|took|takes?|hand over|pulled out|drew|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
+          || /\b(?:found|finds?|picked up|took|takes?|hand over|pulled out|drew(?!\s+(?:closer|nearer|near|back|away|level|up|in|around|round|alongside)\b)|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
         // "the Contract Hall and its papers": a thing's own contents, unless Jax finds or takes them.
         if (/\bits\s+(?:\w+\s+){0,2}$/i.test(before) && !foundBefore) continue;
         const found = foundBefore

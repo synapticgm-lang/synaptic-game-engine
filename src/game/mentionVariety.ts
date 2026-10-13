@@ -7,7 +7,8 @@
 import type { LedgerRef } from './completedEventPacket';
 import type { GameState } from './types';
 
-const LINK_RE = /\s+(?:at|of|on|in|near|outside|toward|towards|by|beside|past|off|under|over|behind|below|above)\s+|,\s*/i;
+const LINK_WORDS = '\\s+(?:at|of|on|in|near|outside|toward|towards|by|beside|past|off|under|over|behind|below|above)\\s+';
+const LINK_RE = new RegExp(`${LINK_WORDS}|,\\s*`, 'i');
 const DIRECTION_RE = /^(?:east|west|north|south|eastward|westward|northward|southward|up|down|ahead)$/i;
 const HONORIFIC_RE =
   /^(?:mr|mrs|ms|miss|sir|dame|lord|lady|king|queen|prince|princess|duke|duchess|count|countess|baron|captain|commander|sergeant|general|magistrate|brother|sister|father|mother|elder|master|mistress|archivist|doctor|dr|professor|saint|st|old|young)\.?$/i;
@@ -118,6 +119,11 @@ export function varyRepeatMentions(prose: string, refs: LedgerRef[]): string {
       if (seen === 1) return m;
       return atSentenceStart(source, offset) ? capitalize(short) : short;
     });
+    // "the circle at @t1" painted then shortened reads "the circle at the circle": the place is named once.
+    if (isPlace) {
+      const noun = short.replace(/^the\s+/i, '');
+      next = next.replace(new RegExp(`\\b(${escRe(noun)})${LINK_WORDS}${escRe(short)}\\b`, 'gi'), '$1');
+    }
   }
   return next;
 }
