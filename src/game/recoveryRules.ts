@@ -8,7 +8,8 @@ import { difficultyFromStrictness } from './difficultyRules';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { advanceClock } from './travelJourney';
 import { deriveTabletopSheet, sheetSpellcasting, tabletopHitDie } from './tabletop/characterBuild';
-import { arcaneRecovery } from './rules/spells';
+import { arcaneRecovery, isPactCaster } from './rules/spells';
+import { restoreFeatures } from './rules/classFeatures';
 import { houseRulesOf, REST_HOURS } from './rules/houseRules';
 import { sidekickOf } from './rules/sidekick';
 
@@ -66,9 +67,35 @@ function tabletopRestKind(input: string): 'long' | 'short' | null {
 
 const slotsSpent = (state: GameState) => (state.character.casting?.slotsUsed ?? []).some((n) => n > 0);
 
-/** A Wizard's Arcane Recovery would bring a slot back on this short rest. */
+/** A Wizard's Arcane Recovery, a Warlock's Pact Magic slots or a spent Rage would come back on this short rest. */
 function arcaneRecoveryDue(state: GameState): boolean {
-  return state.character.srd?.classId === 'wizard' && !!arcaneRecovery(state.character.level || 1, state.character.casting);
+  const ch = state.character;
+  if (ch.srd?.classId === 'wizard') return !!arcaneRecovery(ch.level || 1, ch.casting);
+  if (ch.srd && isPactCaster(ch.srd.classId) && slotsSpent(state)) return true;
+  return (ch.featureUses?.rage ?? 0) > 0;
+}
+
+/** A limited-use class feature has been spent (a long rest brings it back). */
+const featuresSpent = (state: GameState) => Object.values(state.character.featureUses ?? {}).some((n) => n > 0);
+
+/** Short-rest recovery beyond Hit Dice: Arcane Recovery, Pact Magic slots, one Rage. */
+function shortRestRecovery(s: GameState): { state: GameState; after: string[] } {
+  const ch = s.character;
+  const after: string[] = [];
+  let character = ch;
+  const recovery = ch.srd?.classId === 'wizard' ? arcaneRecovery(ch.level || 1, ch.casting) : null;
+  if (recovery) {
+    character = { ...character, casting: recovery.casting };
+    after.push(`Arcane Recovery: ${recovery.recovered.map((l) => `level ${l}`).join(', ')} slot back`);
+  }
+  // SRD 5.2.1 Pact Magic: a Warlock regains all expended Pact Magic slots on a Short or Long Rest.
+  const pact = !!ch.srd && isPactCaster(ch.srd.classId) && (ch.casting?.slotsUsed ?? []).some((n) => n > 0);
+  if (pact) character = { ...character, casting: { ...(character.casting ?? {}), slotsUsed: [] } };
+  const back = restoreFeatures(character, 'short');
+  character = back.character;
+  if (recovery || pact) after.push(slotsLeftLine({ ...s, character })!);
+  if (back.regained.length) after.push(`Class feature: ${back.regained.join(', ')} back`);
+  return { state: { ...s, character }, after };
 }
 
 /** Tabletop: the rest chip at a safe hub when hurt or out of spell slots (null when nothing to recover or not safe). */
@@ -77,7 +104,7 @@ export function tabletopRestChip(state: GameState): string | null {
   const max = ch.maxHp || ch.hp;
   if (state.engineMode !== 'dnd' || !isSafeHubRest(state, TABLETOP_LONG_REST_CHIP)) return null;
   if (ch.hp >= max) {
-    if (!slotsSpent(state)) return null;
+    if (!slotsSpent(state) && !featuresSpent(state)) return null;
     return arcaneRecoveryDue(state) ? TABLETOP_SHORT_REST_CHIP : TABLETOP_LONG_REST_CHIP;
   }
   return hitDiceLeft(state) > 0 && ch.hp * 2 > max ? TABLETOP_SHORT_REST_CHIP : TABLETOP_LONG_REST_CHIP;
@@ -112,7 +139,7 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
   const hurt = ch.hp < max;
   const sidekick = sidekickOf(state);
   const sidekickHurt = !!sidekick && sidekick.hp < sidekick.maxHp;
-  const recovers = kind === 'long' ? hurt || sidekickHurt || slotsSpent(state) || !!ch.casting?.mageArmor : hurt || arcaneRecoveryDue(state);
+  const recovers = kind === 'long' ? hurt || sidekickHurt || slotsSpent(state) || !!ch.casting?.mageArmor || featuresSpent(state) : hurt || arcaneRecoveryDue(state);
   if (!kind || !recovers || !isSafeHubRest(state, kind === 'long' ? TABLETOP_LONG_REST_CHIP : 'rest')) {
     return { state, receipt: null };
   }
@@ -127,7 +154,8 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
     // Human Resourceful (SRD 5.2.1): Heroic Inspiration after each Long Rest.
     const inspired = house.heroicInspiration && house.rulesVersion === 'srd-5.2.1' && ch.srd?.speciesId === 'human' && !ch.heroicInspiration;
     // A long rest restores every spell slot, resets Arcane Recovery and ends Mage Armor (it lasts 8 hours).
-    let character = { ...ch, hp: max, ...(caster ? { casting: { slotsUsed: [] } } : {}), ...(inspired ? { heroicInspiration: true } : {}) };
+    const features = restoreFeatures(ch, 'long');
+    let character = { ...features.character, hp: max, ...(caster ? { casting: { slotsUsed: [] } } : {}), ...(inspired ? { heroicInspiration: true } : {}) };
     if (ch.casting?.mageArmor) {
       const ac = deriveTabletopSheet({ character, inventory: state.inventory ?? [] })?.ac;
       if (ac != null) character = { ...character, armorClass: ac };
@@ -139,6 +167,7 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
       ...(slotLine ? [slotLine] : []),
       ...(sidekickHurt ? [`${sidekick!.name}: HP ${sidekick!.hp} → ${sidekick!.maxHp}`] : []),
       ...(inspired ? ['Heroic Inspiration: yours (Human, Resourceful)'] : []),
+      ...(features.regained.length ? [`Class feature: ${features.regained.join(', ')} back`] : []),
     ];
     return {
       state: next,
@@ -151,11 +180,11 @@ function applyTabletopRest(state: GameState, input: string): RestHeal {
   const clock = advanceClock(state, hours.short);
   const recovery = state.character.srd?.classId === 'wizard' ? arcaneRecovery(ch.level || 1, ch.casting) : null;
   const withRecovery = (s: GameState): { state: GameState; after?: string[] } => {
-    if (!recovery) return { state: s };
-    const next = { ...s, character: { ...s.character, casting: recovery.casting } };
-    return { state: next, after: [`Arcane Recovery: ${recovery.recovered.map((l) => `level ${l}`).join(', ')} slot back`, slotsLeftLine(next)!] };
+    const r = shortRestRecovery(s);
+    return r.after.length ? r : { state: r.state };
   };
-  const recoveryFact = recovery ? ' You also recovered some spell power through study.' : '';
+  const pactBack = !!ch.srd && isPactCaster(ch.srd.classId) && slotsSpent(state);
+  const recoveryFact = recovery ? ' You also recovered some spell power through study.' : pactBack ? ' Your pact magic stirs back to full.' : '';
   if (!hurt || hitDiceLeft(state) <= 0) {
     const r = withRecovery(clock.state);
     return {

@@ -7,6 +7,7 @@
  * arrives as GP, a cost is paid making change), so the sheet, the carry weight and the HUD all read the same coins.
  */
 import type { CoinPurse, GameState } from '../types';
+import { srdGearCostCp } from './srdGear';
 
 export type Coin = keyof CoinPurse;
 export const COIN_ORDER: Coin[] = ['pp', 'gp', 'ep', 'sp', 'cp'];
@@ -142,23 +143,7 @@ export function wealthLine(state: Pick<GameState, 'engineMode' | 'character' | '
  * Tools tables). An item with no listed cost has none here and sells by the shared salvage price.
  */
 export const ITEM_COST_CP: Record<string, number> = {
-  'Chain Mail': 7500,
-  'Chain Shirt': 5000,
-  'Leather Armor': 1000,
-  'Studded Leather Armor': 4500,
-  Shield: 1000,
-  Greatsword: 5000,
-  Flail: 1000,
-  Javelin: 50,
-  Scimitar: 2500,
-  Shortsword: 1000,
-  Longbow: 5000,
-  Shortbow: 2500,
-  Dagger: 200,
-  Mace: 500,
-  Quarterstaff: 20,
-  Spear: 100,
-  'Light Crossbow': 2500,
+  ...srdGearCostCp(),
   Arrows: 5,
   Bolts: 5,
   Quiver: 100,
@@ -183,6 +168,17 @@ export const ITEM_COST_CP: Record<string, number> = {
   Torch: 1,
   Lantern: 500,
   Lamp: 50,
+  "Explorer's Pack": 1000,
+  "Entertainer's Pack": 4000,
+  Lute: 3500,
+  'Herbalism Kit': 500,
+  "Woodcarver's Tools": 100,
+  'Druidic Focus': 100,
+  'Arcane Focus': 1000,
+  'Book (occult lore)': 2500,
+  Antitoxin: 5000,
+  Candle: 1,
+  Ink: 1000,
 };
 
 /** What a buyer pays a tabletop seller: half the SRD cost, per piece × quantity (null when the cost is not listed). */

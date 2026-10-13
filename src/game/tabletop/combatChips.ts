@@ -4,8 +4,10 @@
  * cantrip, potion and ally helpers, so a chip never offers what the engine cannot do.
  */
 import type { GameState } from '../types';
-import { untrainedArmor, WEAPON_DICE } from './characterBuild';
+import { ARMOR_TABLE, hasClassFeature, sheetSpellcasting, untrainedArmor, WEAPON_DICE } from './characterBuild';
 import { spellRoundChips } from './spellCasting';
+import { SPELLS } from '../rules/spells';
+import { featureLeft } from '../rules/classFeatures';
 import { houseRulesOf } from '../rules/houseRules';
 import { ammoFor, ammoLeft } from '../rules/encumbrance';
 
@@ -34,11 +36,32 @@ export function pcWeaponName(state: Pick<GameState, 'inventory' | 'houseRules'>)
   );
 }
 
-/** The default attack cantrip: a Wizard's Fire Bolt, a Cleric's Sacred Flame (SRD). Others, or untrained armor, cast nothing. */
-export function pcCantripName(state: Pick<GameState, 'character'> & Partial<Pick<GameState, 'inventory'>>): string | null {
-  if (state.character && untrainedArmor(state.character, state.inventory ?? [])) return null;
-  const cls = state.character?.srd?.classId;
-  return cls === 'wizard' ? 'Fire Bolt' : cls === 'cleric' ? 'Sacred Flame' : null;
+/**
+ * The default attack cantrip: the first fighting cantrip the caster knows (a Wizard's Fire Bolt, a Cleric's
+ * Sacred Flame, a Warlock's Eldritch Blast). Non-casters, untrained armor or a raging Barbarian cast nothing.
+ */
+export function pcCantripName(state: Pick<GameState, 'character'> & Partial<Pick<GameState, 'inventory' | 'roundCombat'>>): string | null {
+  if (!state.character?.srd || untrainedArmor(state.character, state.inventory ?? [])) return null;
+  if (state.roundCombat?.raging) return null;
+  return sheetSpellcasting(state.character)?.cantrips.find((n) => SPELLS[n]?.combat) ?? null;
+}
+
+/** Class-feature chips for a fight round (Rage, Reckless Attack, Lay On Hands, Innate Sorcery). */
+export function featureRoundChips(state: GameState, weaponChip: string, cantrip: string | null): string[] {
+  const c = state.character;
+  const rc = state.roundCombat;
+  const out: string[] = [];
+  const attack = weaponChip.replace(/^Attack/, 'attack');
+  if (featureLeft(c, 'rage') > 0 && !rc?.raging && !wearsHeavyArmor(state)) out.push(`Rage and ${attack}`);
+  if (hasClassFeature(c, /^Reckless Attack/)) out.push(`Reckless ${attack}`);
+  if (featureLeft(c, 'layOnHands') > 0 && c.hp < c.maxHp) out.push('Lay On Hands');
+  if (cantrip && featureLeft(c, 'innateSorcery') > 0 && !rc?.innateSorcery) out.push(`Use Innate Sorcery and cast ${cantrip}`);
+  return out;
+}
+
+/** SRD: a Barbarian gains no Rage benefits in Heavy armor. */
+export function wearsHeavyArmor(state: Pick<GameState, 'inventory'>): boolean {
+  return (state.inventory ?? []).some((i) => i.equipped && ARMOR_TABLE[i.name]?.category === 'Heavy');
 }
 
 export function fightAlly(state: Pick<GameState, 'companions'>): { name: string } | null {
@@ -59,10 +82,12 @@ export function roundCombatChips(state: GameState): string[] | null {
   const cantrip = pcCantripName(state);
   const ally = fightAlly(state);
   const potion = healingPotion(state);
+  const weaponChip = weapon === 'Unarmed Strike' ? 'Attack with an Unarmed Strike' : `Attack with the ${weapon}`;
   return [
-    weapon === 'Unarmed Strike' ? 'Attack with an Unarmed Strike' : `Attack with the ${weapon}`,
+    weaponChip,
     ...(cantrip ? [`Cast ${cantrip}`] : []),
     ...spellRoundChips(state),
+    ...featureRoundChips(state, weaponChip, cantrip),
     'Dodge',
     'Disengage',
     ...(ally ? [`Help ${ally.name}`] : []),

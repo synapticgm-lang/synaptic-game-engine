@@ -299,7 +299,7 @@ export function stepTabletopCreation(state: GameState, input: string): GameState
     }
     case 'class': {
       const k = matchName(input, CLASSES);
-      return k ? at('species', { ...c.picks, classId: k.id }) : again('Choose Fighter, Rogue, Cleric or Wizard.');
+      return k ? at('species', { ...c.picks, classId: k.id }) : again(`Choose one of: ${CLASSES.map((x) => x.name).join(', ')}.`);
     }
     case 'species': {
       const s = matchName(input, SPECIES);

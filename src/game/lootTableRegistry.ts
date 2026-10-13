@@ -24,6 +24,7 @@ import { weaponCategory, type WeaponCategory } from './checkRules';
 import { resolveLocalAreaLevel, type AreaLevelSource } from './placeAuthority';
 import { DND_DEFAULT_CR } from './xpRules';
 import lootTablesData from './data/encounters/D9_loot_tables.json';
+import { magicItem, magicItemsAtRarity } from './rules/magicItems';
 
 export interface LootEntry {
   id: string;
@@ -578,8 +579,11 @@ function makeItem(
       finalRarity = 'Epic';
     }
   }
+  if (!name && dnd && state.character?.srd) {
+    const srd = magicItemsAtRarity(finalRarity);
+    if (srd.length) return { item: magicItem(pickFrom(srd, rng), id, `Engine loot (${LOOT_PROFILES[profile].label})`), category };
+  }
   if (!name) name = `${RARITY_PREFIX[finalRarity as Exclude<Rarity, 'Legendary'>]} ${BASE_NAMES[category]}`;
-  void state;
   return {
     item: { id, name, rarity: finalRarity, quantity: 1, provenance: `Engine loot (${LOOT_PROFILES[profile].label})` },
     category,

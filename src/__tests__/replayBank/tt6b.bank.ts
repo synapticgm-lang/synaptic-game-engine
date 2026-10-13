@@ -235,15 +235,15 @@ describe('replay bank tt-build-6b (coins, carrying, armor training, away rest, s
     expect(json.ok).toBe(true);
     if (json.ok) expect(json.corrections).toContain('The engine works out hp, ac from the SRD rules; the sheet\'s own numbers are not used.');
     // Problems block the sheet and the inn book asks again.
-    const bad = importSheetText('Class: Bard\nSpecies: Elf\nBackground: Sage\nMethod: point buy\nSTR 15 DEX 15 CON 15 INT 15 WIS 8 CHA 8');
+    const bad = importSheetText('Class: Artificer\nSpecies: Elf\nBackground: Sage\nMethod: point buy\nSTR 15 DEX 15 CON 15 INT 15 WIS 8 CHA 8');
     expect(bad.ok).toBe(false);
     if (!bad.ok) {
-      expect(bad.problems[0]).toMatch(/^Class Bard is not one this game has/);
+      expect(bad.problems[0]).toMatch(/^Class Artificer is not one this game has/);
       expect(bad.problems).toContain('Those scores cost 36 points; point buy allows 27.');
     }
-    const refused = stepTabletopCreation(beginTabletopCreation(ruled(T.before(4))), 'Class: Bard\nSpecies: Elf\nBackground: Sage\nSTR 15 DEX 14 CON 13 INT 12 WIS 10 CHA 8');
+    const refused = stepTabletopCreation(beginTabletopCreation(ruled(T.before(4))), 'Class: Artificer\nSpecies: Elf\nBackground: Sage\nSTR 15 DEX 14 CON 13 INT 12 WIS 10 CHA 8');
     expect(refused.tabletopCreation!.stage).toBe('start');
-    expect(refused.log[refused.log.length - 1]!.content).toMatch(/^That sheet cannot be used yet: Class Bard/);
+    expect(refused.log[refused.log.length - 1]!.content).toMatch(/^That sheet cannot be used yet: Class Artificer/);
   });
 
   it('[tt-build-6b guard] LitRPG and story RPG keep plain gold, salvage prices, no away rest and no armor training', () => {

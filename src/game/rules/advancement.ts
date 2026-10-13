@@ -138,7 +138,7 @@ export function presentLevelUp(mode: EngineMode | undefined, info: SrdLevelUpInf
   }
   if (info.pbAfter !== info.pbBefore) lines.push(`Level ${info.level} — Proficiency Bonus ${fmtMod(info.pbBefore)} → ${fmtMod(info.pbAfter)}`);
   if (info.slots && info.slots.join() !== (info.slotsBefore ?? []).join()) {
-    lines.push(`Spell slots: ${info.slots.map((n, i) => `level ${i + 1} ×${n}`).join(', ')}`);
+    lines.push(`Spell slots: ${info.slots.flatMap((n, i) => (n ? [`level ${i + 1} ×${n}`] : [])).join(', ')}`);
   }
   if (info.newSpells.length) lines.push(`New spell${info.newSpells.length > 1 ? 's' : ''}: ${info.newSpells.join(', ')}`);
   return lines;

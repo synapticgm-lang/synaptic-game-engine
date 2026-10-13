@@ -72,17 +72,26 @@ function tabletopLine(e: Ev, pcName: string, view: TabletopView = {}): string | 
         return `${head}: miss; Potent Cantrip ${formatDice(e.damage)} halved = ${e.dealt}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`;
       }
       if (!e.hit) return `${head}: ${e.nat1 ? 'miss (natural 1)' : 'miss'}`;
-      const parts = [e.damage ? formatDice(e.damage) : '', e.sneak ? `Sneak Attack ${formatDice(e.sneak)}` : '', e.extra ? `${formatDice(e.extra)} poison` : '']
+      const parts = [
+        e.damage ? formatDice(e.damage) : '',
+        e.sneak ? `Sneak Attack ${formatDice(e.sneak)}` : '',
+        e.extra ? `${formatDice(e.extra)} poison` : '',
+        ...(e.bonus ?? []).map((b) => `${b.label} ${b.roll ? formatDice(b.roll) : b.flat}`),
+      ]
         .filter(Boolean)
         .join(' + ');
       const hpOf = e.target === pcName ? 'your HP' : `${e.target} HP`;
-      return `${head}: ${e.crit ? 'critical hit' : 'hit'}, ${parts} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''} = ${e.dealt}; ${hpOf} ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
+      const cut = e.reduced ? `, −${e.reduced.amount} ${e.reduced.label}${e.reduced.roll ? ` ${formatDice(e.reduced.roll)}` : ''}` : '';
+      const tag = e.mastery ? ` (${e.mastery})` : '';
+      return `${head}${tag}: ${e.crit ? 'critical hit' : 'hit'}, ${parts} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''}${cut} = ${e.dealt}; ${hpOf} ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
     }
+    case 'extra':
+      return `${e.label}: ${e.amount} ${e.type}; ${e.who === pcName ? 'your HP' : `${e.who} HP`} ${e.hpBefore} → ${e.hpAfter}`;
     case 'save':
       if (e.autoFail) return `${who(e.who, e.pc)} ${e.ability} save ${e.why}: automatic failure`;
       return `${who(e.who, e.pc)} ${e.ability} save ${e.why} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs DC ${e.dc}: ${e.ok ? 'success' : 'failure'}${inspirationTag(e)}`;
     case 'cast': {
-      const tags = [e.slot ? `level ${e.slot} slot` : '', e.concentration ? 'concentration' : ''].filter(Boolean).join(', ');
+      const tags = [e.slot ? `level ${e.slot} slot` : '', e.detail ?? '', e.concentration ? 'concentration' : ''].filter(Boolean).join(', ');
       return `${who(e.who, true)} cast ${e.spell}${tags ? ` (${tags})` : ''}`;
     }
     case 'concentration':
@@ -90,11 +99,13 @@ function tabletopLine(e: Ev, pcName: string, view: TabletopView = {}): string | 
     case 'check':
       return `${who(e.who, e.who === pcName)} ${e.label} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)} = ${e.total} vs ${e.label === 'Perception' ? 'your Stealth' : 'DC'} ${e.dc}: ${e.ok ? 'success' : 'failure'} (${e.why})`;
     case 'condition':
-      return `${who(e.who, e.pc)} ${e.on ? 'gain' : 'lose'}${e.pc ? '' : 's'} ${e.name} (${e.why})`;
+      return `${who(e.who, e.pc)} ${e.on ? 'gain' : 'lose'}${e.pc ? '' : 's'} ${e.name}${e.why && e.why !== e.name ? ` (${e.why})` : ''}`;
     case 'act':
+      if (e.action === 'feature') return e.detail;
       return e.action === 'other' ? null : `${who(e.who, e.pc)}: ${e.action === 'stand' ? 'stand' : e.action === 'skip' ? 'turn lost' : e.action} — ${e.detail}`;
     case 'heal':
       if (e.who !== pcName) return `${e.who} casts ${e.item} on you: ${formatDice(e.roll)}; HP ${e.hpBefore} → ${e.hpAfter}`;
+      if (e.pool != null) return `you use Lay On Hands: ${e.pool} HP from the pool; HP ${e.hpBefore} → ${e.hpAfter}`;
       if (e.spell) return `you cast ${e.item}${e.slot ? ` (level ${e.slot} slot)` : ''}: ${formatDice(e.roll)}; HP ${e.hpBefore} → ${e.hpAfter}`;
       return `you drink ${e.item}: ${formatDice(e.roll)}; HP ${e.hpBefore} → ${e.hpAfter}`;
     case 'down':
@@ -146,6 +157,23 @@ const FOE_MARK: Record<string, string> = {
   Bane: 'is cursed by your Bane',
   'Guiding Bolt': 'glows with the light of your Guiding Bolt',
   Prone: 'falls prone',
+  'Faerie Fire': 'is outlined in pale light',
+  Restrained: 'is held fast',
+  'Vicious Mockery': 'reels from your mockery',
+  "Hunter's Mark": 'is marked as your quarry',
+  Hex: 'is cursed by your Hex',
+  'Searing Smite': 'catches fire',
+  Vex: 'is left open to your next attack',
+  Sap: 'is knocked off balance',
+  Slowed: 'is slowed',
+};
+
+/** Class features in words (keyed by the feature name the engine's event detail starts with). */
+const FEATURE_FACT: Record<string, string> = {
+  Rage: 'You fly into a rage.',
+  'Rage ends': 'Your rage fades.',
+  'Innate Sorcery': 'Raw magic wells up in you.',
+  'Reckless Attack': 'You throw caution aside and attack recklessly.',
 };
 
 /** "its slam", "a scimitar", "your greatsword" */
@@ -202,7 +230,11 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         break;
       case 'check':
         if (e.label === 'Stealth') out.push(e.ok ? 'You slip out of sight.' : 'You try to hide but stay in plain view.');
+        else if (e.label === 'Athletics') out.push(e.ok ? `${e.who} tears free.` : `${e.who} strains against what holds it.`);
         else if (e.ok) out.push(`${e.who} finds you.`);
+        break;
+      case 'extra':
+        out.push(e.pc ? `Even your miss clips ${e.who}; it ${hurtWord(e.hpAfter, e.maxHp)}.` : `The flames burn ${e.who}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
         break;
       case 'condition':
         if (e.on) out.push(e.pc ? `You are ${e.name.toLowerCase()}.` : `${e.who} ${FOE_MARK[e.name] ?? `is ${e.name.toLowerCase()}`}.`);
@@ -215,9 +247,11 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         else if (e.action === 'flee') out.push(/cannot/.test(e.detail) ? 'You try to run but cannot move.' : 'You turn and run.');
         else if (e.action === 'help' && !e.pc) out.push(`${e.who} distracts the foe and gives you an opening.`);
         else if (e.action === 'help') out.push(/no ally/.test(e.detail) ? 'You look for an ally to help, but none is beside you.' : 'You distract the foe for your ally.');
+        else if (e.action === 'feature' && FEATURE_FACT[e.detail.split(':')[0]!]) out.push(FEATURE_FACT[e.detail.split(':')[0]!]!);
         break;
       case 'heal':
         if (e.who !== pcName) out.push(`${e.who} heals your wounds with a spell.`);
+        else if (e.pool != null) out.push('You lay a hand on your own wound and holy power knits it closed.');
         else out.push(e.spell ? `You cast ${e.item}: ${SPELLS[e.item]?.fact ?? 'your wounds ease'}.` : `You drink ${e.item} and feel stronger.`);
         break;
       case 'down':

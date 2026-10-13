@@ -68,6 +68,7 @@ import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
 import { applyRestHeal } from './recoveryRules';
 import { resolveOutOfCombatCast } from './tabletop/spellCasting';
+import { resolveDowntimeTurn } from './tabletop/downtimeTurn';
 import { isLookAroundAction } from './sandboxXp';
 import { isDeclineStance } from './stanceDensity';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
@@ -695,7 +696,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const questsHidden = questListHidden(result.state?.systemHousing);
   const tabletop = result.state?.engineMode === 'dnd';
   for (const r of result.systemReceipts) {
-    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Level Up! Now level \d+$|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:|Arrows:|Bolts:|Left behind \(too heavy|Heroic Inspiration:|Encounter difficulty:|Solo scaling:|Light: |Death rule \(|Gold Spent:|Gold Lost:|Milestone:)/.test(r)) {
+    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Level Up! Now level \d+$|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:|Arrows:|Bolts:|Left behind \(too heavy|Heroic Inspiration:|Encounter difficulty:|Solo scaling:|Light: |Death rule \(|Gold Spent:|Gold Lost:|Milestone:|Class feature:|Oracle:|Crafting:|Attunement:)/.test(r)) {
       lines.push(r);
       continue;
     }
@@ -799,12 +800,22 @@ export function runArcDirectorBeforeGm(
   }
 
   // Tabletop: a spell cast outside a fight (healing, Mage Armor, a utility cantrip). Fights cast in rounds.
+  // Oracle / crafting / attunement / Lay On Hands lines are settled here and are not talk to anyone in the scene.
+  let downtimeSettled = false;
   if (!engineFight) {
     const cast = resolveOutOfCombatCast(working, playerInput);
     if (cast) {
       working = cast.state;
       systemReceipts.push(...cast.receipts);
       mandates.push(`ENGINE RESULT (required fact — state it plainly): ${cast.fact}`);
+    } else {
+      const downtime = resolveDowntimeTurn(working, playerInput);
+      if (downtime) {
+        downtimeSettled = true;
+        working = downtime.state;
+        systemReceipts.push(...downtime.receipts);
+        mandates.push(`ENGINE RESULT (required fact — state it plainly): ${downtime.fact}`);
+      }
     }
   }
 
@@ -822,7 +833,7 @@ export function runArcDirectorBeforeGm(
   const pyoaMandate = formatPyoaBranchMandate(working);
   if (pyoaMandate) mandates.push(pyoaMandate);
 
-  const topicResult = recordNpcTopic(working, playerInput);
+  const topicResult = downtimeSettled ? { state: working, exhausted: false } as ReturnType<typeof recordNpcTopic> : recordNpcTopic(working, playerInput);
   working = topicResult.state;
   const topicMandate = topicResult.npc
     ? formatNpcTopicMandate(topicResult.npc, topicResult.topic ?? '', topicResult.exhausted)
@@ -839,7 +850,7 @@ export function runArcDirectorBeforeGm(
     );
   }
 
-  const social = detectSocialMilestone(playerInput, working);
+  const social = downtimeSettled ? null : detectSocialMilestone(playerInput, working);
   const scoutish =
     isLookAroundAction(playerInput)
     || /\b(scout|get bearings|explore (?:the )?(?:cell|room|ruin))\b/i.test(playerInput);

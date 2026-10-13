@@ -5,6 +5,7 @@ import type {
 import { RARITY_COLORS } from '@/game/types';
 import { mockSkills, mockLoot } from '@/data/mockGameData';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
+import { attunedItems as attunedFromLedger } from '@/game/rules/magicItems';
 import {
   Sword, Flame, Leaf, Hammer, Sparkles, Lock, ChevronRight,
   ScrollText, Shield, Zap, Star, Backpack,
@@ -61,8 +62,10 @@ function DndMode({ state }: { state: GameState }) {
   ]);
 
   const attunedItems = useMemo(
-    () => state.inventory.filter((it) => it.equipped && (it.rarity === 'Rare' || it.rarity === 'Epic' || it.rarity === 'Legendary')).slice(0, 3),
-    [state.inventory],
+    () => (c.srd
+      ? attunedFromLedger(state.inventory)
+      : state.inventory.filter((it) => it.equipped && (it.rarity === 'Rare' || it.rarity === 'Epic' || it.rarity === 'Legendary')).slice(0, 3)),
+    [state.inventory, c.srd],
   );
   const sheet = state.engineMode === 'dnd' ? deriveTabletopSheet(state) : null;
   const casting = sheet?.spellcasting;
@@ -138,7 +141,7 @@ function DndMode({ state }: { state: GameState }) {
         <div className="space-y-1.5">
           {attunedItems.length === 0 ? (
             <div className="rounded-md border border-slate-700 bg-slate-800/30 py-3 text-center text-xs italic text-slate-600">
-              No items attuned. Rare or higher items require attunement.
+              {c.srd ? 'No items attuned. Type "attune to" an item that requires attunement.' : 'No items attuned. Rare or higher items require attunement.'}
             </div>
           ) : (
             attunedItems.map((item) => (

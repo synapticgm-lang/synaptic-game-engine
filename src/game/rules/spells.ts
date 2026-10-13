@@ -1,5 +1,6 @@
 /**
- * Shared rules engine — spellcasting for the starter casters (Cleric, Wizard).
+ * Shared rules engine — spellcasting for every SRD caster (Bard, Cleric, Druid, Paladin, Ranger, Sorcerer,
+ * Warlock, Wizard): full casters, half casters (Paladin, Ranger) and Pact Magic (Warlock).
  * Spells, spell slots, prepared and known counts, spell save DC and spell attack, and Concentration come from
  * the System Reference Document 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC,
  * available at https://www.dndbeyond.com/srd, licensed under CC-BY-4.0
@@ -21,6 +22,9 @@ export type SpellEffect =
   | 'bane' // targets that fail a CHA save subtract 1d4 from attack rolls and saving throws
   | 'shieldOfFaith' // +2 AC
   | 'mageArmor' // AC 13 + DEX with no armor
+  | 'mark' // Hunter's Mark / Hex: your attack hits on the marked foe deal extra dice while you concentrate
+  | 'smite' // Divine / Searing Smite: a weapon attack; on a hit the extra dice land and the slot is spent
+  | 'divineFavor' // your weapon hits deal extra radiant dice for the rest of the fight
   | 'utility'; // a sensory or utility effect with no engine numbers
 
 export interface SpellDef {
@@ -41,8 +45,18 @@ export interface SpellDef {
   concentration?: boolean;
   /** The SRD casting time is a Bonus Action; this engine has no Bonus Actions yet, so it uses the round's action. */
   bonusAction?: boolean;
-  /** A condition a hit or failed save leaves until the end of your next turn. */
+  /** A condition a hit or failed save leaves until the end of your next turn (while you concentrate, for a Concentration spell). */
   rider?: string;
+  /** A melee spell attack (Chill Touch, Shocking Grasp). */
+  melee?: boolean;
+  /** Mark / smite / Divine Favor: the extra damage on a hit. */
+  onHit?: { dice: string; type: string };
+  /** Divine Smite: one more die against a Fiend or an Undead. */
+  vsUndead?: string;
+  /** Searing Smite: the burning foe takes this at the start of each of its turns until it saves (CON). */
+  burn?: string;
+  /** The name is an everyday word (Command, Entangle): the line must say "cast". */
+  needsCast?: boolean;
   /** Usable in a fight / outside one. */
   combat: boolean;
   outside: boolean;
@@ -53,54 +67,132 @@ export interface SpellDef {
 export const SPELLS: Record<string, SpellDef> = {
   // Cantrips
   'Sacred Flame': { name: 'Sacred Flame', level: 0, classes: ['cleric'], effect: 'save', save: 'DEX', dice: '1d8', type: 'radiant', combat: true, outside: false, fact: 'radiant flame falls on the target' },
-  'Fire Bolt': { name: 'Fire Bolt', level: 0, classes: ['wizard'], effect: 'attack', dice: '1d10', type: 'fire', combat: true, outside: false, fact: 'a mote of fire streaks at the target' },
-  'Ray of Frost': { name: 'Ray of Frost', level: 0, classes: ['wizard'], effect: 'attack', dice: '1d8', type: 'cold', combat: true, outside: false, fact: 'a frigid beam streaks at the target' },
-  Light: { name: 'Light', level: 0, classes: ['cleric', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'an object you touch sheds bright light around you for an hour' },
+  'Fire Bolt': { name: 'Fire Bolt', level: 0, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '1d10', type: 'fire', combat: true, outside: false, fact: 'a mote of fire streaks at the target' },
+  'Ray of Frost': { name: 'Ray of Frost', level: 0, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '1d8', type: 'cold', combat: true, outside: false, fact: 'a frigid beam streaks at the target' },
+  'Vicious Mockery': { name: 'Vicious Mockery', level: 0, classes: ['bard'], effect: 'save', save: 'WIS', dice: '1d6', type: 'psychic', rider: 'Vicious Mockery', combat: true, outside: false, fact: 'a string of insults laced with subtle enchantment stings the target' },
+  'Starry Wisp': { name: 'Starry Wisp', level: 0, classes: ['bard', 'druid'], effect: 'attack', dice: '1d8', type: 'radiant', combat: true, outside: false, fact: 'a mote of starlight flies at the target' },
+  'Produce Flame': { name: 'Produce Flame', level: 0, classes: ['druid'], effect: 'attack', dice: '1d8', type: 'fire', combat: true, outside: false, fact: 'a flickering flame leaps from your hand and you hurl it at the target' },
+  'Poison Spray': { name: 'Poison Spray', level: 0, classes: ['druid', 'sorcerer', 'warlock', 'wizard'], effect: 'attack', dice: '1d12', type: 'poison', combat: true, outside: false, fact: 'a spray of toxic mist lashes at the target' },
+  'Chill Touch': { name: 'Chill Touch', level: 0, classes: ['sorcerer', 'warlock', 'wizard'], effect: 'attack', melee: true, dice: '1d10', type: 'necrotic', combat: true, outside: false, fact: 'your hand, wreathed in the chill of the grave, reaches for the target' },
+  'Shocking Grasp': { name: 'Shocking Grasp', level: 0, classes: ['sorcerer', 'wizard'], effect: 'attack', melee: true, dice: '1d8', type: 'lightning', combat: true, outside: false, fact: 'lightning springs from your hand at a touch' },
+  'Eldritch Blast': { name: 'Eldritch Blast', level: 0, classes: ['warlock'], effect: 'attack', dice: '1d10', type: 'force', combat: true, outside: false, fact: 'a beam of crackling energy streaks at the target' },
+  Light: { name: 'Light', level: 0, classes: ['bard', 'cleric', 'sorcerer', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'an object you touch sheds bright light around you for an hour' },
+  'Dancing Lights': { name: 'Dancing Lights', level: 0, classes: ['bard', 'sorcerer', 'wizard'], effect: 'utility', concentration: true, combat: false, outside: true, fact: 'small floating lights bob around you, lighting the way' },
   Thaumaturgy: { name: 'Thaumaturgy', level: 0, classes: ['cleric'], effect: 'utility', combat: false, outside: true, fact: 'a minor wonder answers you: your voice booms, flames flicker or the ground trembles harmlessly for a moment' },
-  Mending: { name: 'Mending', level: 0, classes: ['cleric'], effect: 'utility', combat: false, outside: true, fact: 'a single break or tear in an object you touch knits closed' },
-  'Mage Hand': { name: 'Mage Hand', level: 0, classes: ['wizard'], effect: 'utility', combat: false, outside: true, fact: 'a spectral hand appears to lift or move a light object for you' },
-  // Level 1 — Cleric
-  'Cure Wounds': { name: 'Cure Wounds', level: 1, classes: ['cleric'], effect: 'heal', dice: '2d8', upcast: '2d8', combat: true, outside: true, fact: 'healing warmth closes your wounds' },
-  'Healing Word': { name: 'Healing Word', level: 1, classes: ['cleric'], effect: 'heal', dice: '2d4', upcast: '2d4', bonusAction: true, combat: true, outside: true, fact: 'a spoken word of healing eases your hurts' },
+  Druidcraft: { name: 'Druidcraft', level: 0, classes: ['druid'], effect: 'utility', combat: false, outside: true, fact: 'a small nature effect answers you: a bud blooms, a breeze stirs leaves, or a sensory sign of tomorrow\'s weather appears' },
+  Prestidigitation: { name: 'Prestidigitation', level: 0, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a harmless magical trick answers you: a spark, a clean cloth, a warm cup or a small mark' },
+  'Minor Illusion': { name: 'Minor Illusion', level: 0, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a small sound or image of your making appears nearby' },
+  Mending: { name: 'Mending', level: 0, classes: ['bard', 'cleric', 'druid', 'sorcerer', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a single break or tear in an object you touch knits closed' },
+  'Mage Hand': { name: 'Mage Hand', level: 0, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a spectral hand appears to lift or move a light object for you' },
+  // Level 1
+  'Cure Wounds': { name: 'Cure Wounds', level: 1, classes: ['bard', 'cleric', 'druid', 'paladin', 'ranger'], effect: 'heal', dice: '2d8', upcast: '2d8', combat: true, outside: true, fact: 'healing warmth closes your wounds' },
+  'Healing Word': { name: 'Healing Word', level: 1, classes: ['bard', 'cleric', 'druid'], effect: 'heal', dice: '2d4', upcast: '2d4', bonusAction: true, combat: true, outside: true, fact: 'a spoken word of healing eases your hurts' },
   'Guiding Bolt': { name: 'Guiding Bolt', level: 1, classes: ['cleric'], effect: 'attack', dice: '4d6', upcast: '1d6', type: 'radiant', rider: 'Guiding Bolt', combat: true, outside: false, fact: 'a flash of light streaks at the target and leaves it glowing' },
-  Bless: { name: 'Bless', level: 1, classes: ['cleric'], effect: 'bless', concentration: true, combat: true, outside: false, fact: 'a blessing settles on you and steadies your aim' },
-  'Shield of Faith': { name: 'Shield of Faith', level: 1, classes: ['cleric'], effect: 'shieldOfFaith', concentration: true, bonusAction: true, combat: true, outside: false, fact: 'a shimmering field surrounds and protects you' },
-  Bane: { name: 'Bane', level: 1, classes: ['cleric'], effect: 'bane', save: 'CHA', concentration: true, area: true, combat: true, outside: false, fact: 'a curse reaches for your foes' },
+  Bless: { name: 'Bless', level: 1, classes: ['cleric', 'paladin'], effect: 'bless', concentration: true, combat: true, outside: false, fact: 'a blessing settles on you and steadies your aim' },
+  'Shield of Faith': { name: 'Shield of Faith', level: 1, classes: ['cleric', 'paladin'], effect: 'shieldOfFaith', concentration: true, bonusAction: true, combat: true, outside: false, fact: 'a shimmering field surrounds and protects you' },
+  Bane: { name: 'Bane', level: 1, classes: ['bard', 'cleric', 'warlock'], effect: 'bane', save: 'CHA', concentration: true, area: true, combat: true, outside: false, fact: 'a curse reaches for your foes' },
   'Inflict Wounds': { name: 'Inflict Wounds', level: 1, classes: ['cleric'], effect: 'save', save: 'CON', halfOnSave: true, dice: '2d10', upcast: '1d10', type: 'necrotic', combat: true, outside: false, fact: 'necrotic energy floods the target' },
-  // Level 1 — Wizard
-  'Magic Missile': { name: 'Magic Missile', level: 1, classes: ['wizard'], effect: 'missile', dice: '1d4+1', darts: 3, type: 'force', combat: true, outside: false, fact: 'glowing darts of force strike unerringly' },
-  'Burning Hands': { name: 'Burning Hands', level: 1, classes: ['wizard'], effect: 'save', save: 'DEX', halfOnSave: true, area: true, dice: '3d6', upcast: '1d6', type: 'fire', combat: true, outside: false, fact: 'a thin sheet of flame shoots from your hands' },
-  Thunderwave: { name: 'Thunderwave', level: 1, classes: ['wizard'], effect: 'save', save: 'CON', halfOnSave: true, area: true, dice: '2d8', upcast: '1d8', type: 'thunder', combat: true, outside: false, fact: 'a wave of thunderous force sweeps out from you' },
-  'Mage Armor': { name: 'Mage Armor', level: 1, classes: ['wizard'], effect: 'mageArmor', combat: true, outside: true, fact: 'a protective magical force settles over you' },
-  'Chromatic Orb': { name: 'Chromatic Orb', level: 1, classes: ['wizard'], effect: 'attack', dice: '3d8', upcast: '1d8', type: 'acid', combat: true, outside: false, fact: 'an orb of acid hurtles at the target' },
-  'Ray of Sickness': { name: 'Ray of Sickness', level: 1, classes: ['wizard'], effect: 'attack', dice: '2d8', upcast: '1d8', type: 'poison', rider: 'Poisoned', combat: true, outside: false, fact: 'a ray of sickening green energy lashes at the target' },
-  Grease: { name: 'Grease', level: 1, classes: ['wizard'], effect: 'save', save: 'DEX', area: true, rider: 'Prone', combat: true, outside: false, fact: 'slick grease covers the ground under your foes' },
-  'Color Spray': { name: 'Color Spray', level: 1, classes: ['wizard'], effect: 'save', save: 'CON', area: true, rider: 'Blinded', combat: true, outside: false, fact: 'a dazzling array of flashing colored light springs from your hand' },
+  'Magic Missile': { name: 'Magic Missile', level: 1, classes: ['sorcerer', 'wizard'], effect: 'missile', dice: '1d4+1', darts: 3, type: 'force', combat: true, outside: false, fact: 'glowing darts of force strike unerringly' },
+  'Burning Hands': { name: 'Burning Hands', level: 1, classes: ['sorcerer', 'wizard'], effect: 'save', save: 'DEX', halfOnSave: true, area: true, dice: '3d6', upcast: '1d6', type: 'fire', combat: true, outside: false, fact: 'a thin sheet of flame shoots from your hands' },
+  Thunderwave: { name: 'Thunderwave', level: 1, classes: ['bard', 'druid', 'sorcerer', 'wizard'], effect: 'save', save: 'CON', halfOnSave: true, area: true, dice: '2d8', upcast: '1d8', type: 'thunder', combat: true, outside: false, fact: 'a wave of thunderous force sweeps out from you' },
+  'Mage Armor': { name: 'Mage Armor', level: 1, classes: ['sorcerer', 'wizard'], effect: 'mageArmor', combat: true, outside: true, fact: 'a protective magical force settles over you' },
+  'Chromatic Orb': { name: 'Chromatic Orb', level: 1, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '3d8', upcast: '1d8', type: 'acid', combat: true, outside: false, fact: 'an orb of acid hurtles at the target' },
+  'Ray of Sickness': { name: 'Ray of Sickness', level: 1, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '2d8', upcast: '1d8', type: 'poison', rider: 'Poisoned', combat: true, outside: false, fact: 'a ray of sickening green energy lashes at the target' },
+  Grease: { name: 'Grease', level: 1, classes: ['sorcerer', 'wizard'], effect: 'save', save: 'DEX', area: true, rider: 'Prone', combat: true, outside: false, fact: 'slick grease covers the ground under your foes' },
+  'Color Spray': { name: 'Color Spray', level: 1, classes: ['bard', 'sorcerer', 'wizard'], effect: 'save', save: 'CON', area: true, rider: 'Blinded', combat: true, outside: false, fact: 'a dazzling array of flashing colored light springs from your hand' },
+  'Dissonant Whispers': { name: 'Dissonant Whispers', level: 1, classes: ['bard'], effect: 'save', save: 'WIS', halfOnSave: true, dice: '3d6', upcast: '1d6', type: 'psychic', combat: true, outside: false, fact: 'a discordant melody only the target can hear wracks it with pain' },
+  'Faerie Fire': { name: 'Faerie Fire', level: 1, classes: ['bard', 'druid'], effect: 'save', save: 'DEX', area: true, rider: 'Faerie Fire', concentration: true, combat: true, outside: false, fact: 'your foes are outlined in pale light that shows every move' },
+  Entangle: { name: 'Entangle', level: 1, classes: ['druid', 'ranger'], effect: 'save', save: 'STR', area: true, rider: 'Restrained', concentration: true, needsCast: true, combat: true, outside: false, fact: 'grasping weeds and vines sprout from the ground around your foes' },
+  Command: { name: 'Command', level: 1, classes: ['bard', 'cleric', 'paladin'], effect: 'save', save: 'WIS', rider: 'Prone', needsCast: true, combat: true, outside: false, fact: 'you speak one word of command — "Grovel" — and the target obeys if its will breaks' },
+  "Hunter's Mark": { name: "Hunter's Mark", level: 1, classes: ['ranger'], effect: 'mark', onHit: { dice: '1d6', type: 'force' }, concentration: true, bonusAction: true, combat: true, outside: false, fact: 'you mark the target as your quarry' },
+  Hex: { name: 'Hex', level: 1, classes: ['warlock'], effect: 'mark', onHit: { dice: '1d6', type: 'necrotic' }, concentration: true, bonusAction: true, combat: true, outside: false, fact: 'you lay a curse on the target' },
+  'Divine Smite': { name: 'Divine Smite', level: 1, classes: ['paladin'], effect: 'smite', onHit: { dice: '2d8', type: 'radiant' }, upcast: '1d8', vsUndead: '1d8', bonusAction: true, combat: true, outside: false, fact: 'radiant power floods through your weapon into the target' },
+  'Searing Smite': { name: 'Searing Smite', level: 1, classes: ['paladin'], effect: 'smite', onHit: { dice: '1d6', type: 'fire' }, upcast: '1d6', burn: '1d6', bonusAction: true, combat: true, outside: false, fact: 'your weapon flares with white-hot fire and sets the target burning' },
+  'Divine Favor': { name: 'Divine Favor', level: 1, classes: ['paladin'], effect: 'divineFavor', onHit: { dice: '1d4', type: 'radiant' }, bonusAction: true, combat: true, outside: false, fact: 'divine radiance runs along your weapon' },
+  'Charm Person': { name: 'Charm Person', level: 1, classes: ['bard', 'druid', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'you weave a charm that makes a humanoid regard you as a friendly acquaintance for a while' },
+  'Detect Magic': { name: 'Detect Magic', level: 1, classes: ['bard', 'cleric', 'druid', 'paladin', 'ranger', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', concentration: true, combat: false, outside: true, fact: 'you sense the presence of magic nearby' },
+  'Speak with Animals': { name: 'Speak with Animals', level: 1, classes: ['bard', 'druid', 'ranger', 'warlock'], effect: 'utility', combat: false, outside: true, fact: 'you can understand and speak with beasts for a while' },
+  'Comprehend Languages': { name: 'Comprehend Languages', level: 1, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'you understand the literal meaning of any language you hear or see written for a while' },
+  'Animal Friendship': { name: 'Animal Friendship', level: 1, classes: ['bard', 'druid', 'ranger'], effect: 'utility', combat: false, outside: true, fact: 'you convince a beast that you mean it no harm' },
 };
 
-/** Cantrips a class knows, in the order it learns them (3 at levels 1–3, 4 from level 4). */
+/** Cantrips a class knows, in the order it learns them. */
 const CANTRIP_ORDER: Partial<Record<TabletopClassId, string[]>> = {
+  bard: ['Vicious Mockery', 'Starry Wisp', 'Light', 'Mage Hand', 'Minor Illusion', 'Prestidigitation'],
   cleric: ['Sacred Flame', 'Light', 'Thaumaturgy', 'Mending'],
+  druid: ['Produce Flame', 'Starry Wisp', 'Druidcraft', 'Poison Spray', 'Mending'],
+  sorcerer: ['Fire Bolt', 'Shocking Grasp', 'Light', 'Prestidigitation', 'Ray of Frost', 'Mage Hand'],
+  warlock: ['Eldritch Blast', 'Chill Touch', 'Minor Illusion', 'Prestidigitation'],
   wizard: ['Fire Bolt', 'Ray of Frost', 'Light', 'Mage Hand'],
 };
 
-/** Level 1 spells a class prepares (Cleric) or writes in the spellbook (Wizard), in pick order. */
+/** Level 1 spells a class prepares (or writes in the spellbook, Wizard), in pick order. */
 const SPELL_ORDER: Partial<Record<TabletopClassId, string[]>> = {
+  bard: ['Healing Word', 'Dissonant Whispers', 'Faerie Fire', 'Cure Wounds', 'Thunderwave', 'Command', 'Bane', 'Charm Person', 'Color Spray', 'Detect Magic', 'Comprehend Languages', 'Speak with Animals', 'Animal Friendship'],
   cleric: ['Cure Wounds', 'Guiding Bolt', 'Bless', 'Healing Word', 'Shield of Faith', 'Bane', 'Inflict Wounds'],
+  druid: ['Cure Wounds', 'Entangle', 'Faerie Fire', 'Thunderwave', 'Healing Word', 'Charm Person', 'Detect Magic', 'Speak with Animals', 'Animal Friendship'],
+  paladin: ['Bless', 'Cure Wounds', 'Divine Favor', 'Searing Smite', 'Shield of Faith', 'Command', 'Detect Magic'],
+  ranger: ['Cure Wounds', 'Entangle', 'Animal Friendship', 'Speak with Animals', 'Detect Magic'],
+  sorcerer: ['Magic Missile', 'Burning Hands', 'Mage Armor', 'Thunderwave', 'Chromatic Orb', 'Ray of Sickness', 'Color Spray', 'Grease', 'Charm Person', 'Detect Magic', 'Comprehend Languages'],
+  warlock: ['Hex', 'Charm Person', 'Bane', 'Comprehend Languages', 'Detect Magic', 'Speak with Animals'],
   wizard: ['Magic Missile', 'Burning Hands', 'Mage Armor', 'Thunderwave', 'Chromatic Orb', 'Ray of Sickness', 'Grease', 'Color Spray'],
 };
 
-/** Full-caster slots by character level (index 0 = level 1 slots). SRD 5.2.1 Cleric / Wizard tables. */
-const FULL_CASTER_SLOTS: number[][] = [[2], [3], [4, 2], [4, 3], [4, 3, 2]];
-/** Prepared spells by level, SRD 5.2.1 Cleric / Wizard tables. */
-const PREPARED = [4, 5, 6, 7, 9];
+type CasterType = 'full' | 'half' | 'pact';
+
+/** SRD 5.2.1 class tables: the caster type, cantrips and prepared spells by level (index 0 = level 1). */
+const CASTER_TABLE: Partial<Record<TabletopClassId, { type: CasterType; ability: AttributeKey; cantrips: number[]; prepared: number[] }>> = {
+  bard: { type: 'full', ability: 'CHA', cantrips: [2, 2, 2, 3, 3], prepared: [4, 5, 6, 7, 9] },
+  cleric: { type: 'full', ability: 'WIS', cantrips: [3, 3, 3, 4, 4], prepared: [4, 5, 6, 7, 9] },
+  // Druid cantrips include the extra one from Primal Order (Magician).
+  druid: { type: 'full', ability: 'WIS', cantrips: [3, 3, 3, 4, 4], prepared: [4, 5, 6, 7, 9] },
+  paladin: { type: 'half', ability: 'CHA', cantrips: [0, 0, 0, 0, 0], prepared: [2, 3, 4, 5, 6] },
+  ranger: { type: 'half', ability: 'WIS', cantrips: [0, 0, 0, 0, 0], prepared: [2, 3, 4, 5, 6] },
+  sorcerer: { type: 'full', ability: 'CHA', cantrips: [4, 4, 4, 5, 5], prepared: [2, 4, 6, 7, 9] },
+  warlock: { type: 'pact', ability: 'CHA', cantrips: [2, 2, 2, 3, 3], prepared: [2, 3, 4, 5, 6] },
+  wizard: { type: 'full', ability: 'INT', cantrips: [3, 3, 3, 4, 4], prepared: [4, 5, 6, 7, 9] },
+};
+
+/** Spell slots by character level (index 0 = level 1 slots). */
+const SLOTS: Record<CasterType, number[][]> = {
+  full: [[2], [3], [4, 2], [4, 3], [4, 3, 2]],
+  half: [[2], [2], [3], [3], [4, 2]],
+  // Pact Magic: every slot is the Warlock's slot level (1st at levels 1–2, 2nd at 3–4, 3rd at 5).
+  pact: [[1], [2], [0, 2], [0, 2], [0, 0, 2]],
+};
+
+/**
+ * Spells a class always has prepared (not counted against the prepared number), SRD 5.2.1: Ranger Favored
+ * Enemy (Hunter's Mark); Paladin's Smite (Divine Smite, level 2); the level-3 subclass lists (Life Domain,
+ * Oath of Devotion, Draconic Sorcery, Fiend Patron) — only their level-1 spells exist in this engine.
+ */
+export function alwaysPrepared(classId: TabletopClassId, level: number): string[] {
+  const l = Math.max(1, level || 1);
+  switch (classId) {
+    case 'ranger': return ["Hunter's Mark"];
+    case 'paladin': return [...(l >= 2 ? ['Divine Smite'] : []), ...(l >= 3 ? ['Shield of Faith'] : [])];
+    case 'cleric': return l >= 3 ? ['Bless', 'Cure Wounds'] : [];
+    case 'sorcerer': return l >= 3 ? ['Chromatic Orb', 'Command'] : [];
+    case 'warlock': return l >= 3 ? ['Burning Hands', 'Command'] : [];
+    default: return [];
+  }
+}
+
+/** Spells cast at will with no slot (Warlock Armor of Shadows: Mage Armor on yourself). */
+export function atWillSpells(classId: TabletopClassId): string[] {
+  return classId === 'warlock' ? ['Mage Armor'] : [];
+}
 
 export function isCaster(classId: TabletopClassId | undefined): boolean {
-  return classId === 'cleric' || classId === 'wizard';
+  return !!classId && !!CASTER_TABLE[classId];
 }
 
 export function spellcastingAbility(classId: TabletopClassId): AttributeKey {
-  return classId === 'wizard' ? 'INT' : 'WIS';
+  return CASTER_TABLE[classId]?.ability ?? 'WIS';
+}
+
+export function isPactCaster(classId: TabletopClassId | undefined): boolean {
+  return !!classId && CASTER_TABLE[classId]?.type === 'pact';
 }
 
 export interface CasterProgression {
@@ -113,13 +205,14 @@ export interface CasterProgression {
 }
 
 export function casterProgression(classId: TabletopClassId, level: number): CasterProgression | null {
-  if (!isCaster(classId)) return null;
+  const row = CASTER_TABLE[classId];
+  if (!row) return null;
   const l = Math.max(1, Math.min(5, Math.floor(level || 1)));
   return {
-    cantrips: l >= 4 ? 4 : 3,
-    prepared: PREPARED[l - 1]!,
+    cantrips: row.cantrips[l - 1]!,
+    prepared: row.prepared[l - 1]!,
     spellbook: classId === 'wizard' ? 6 + 2 * (l - 1) : 0,
-    slots: FULL_CASTER_SLOTS[l - 1]!,
+    slots: SLOTS[row.type][l - 1]!,
   };
 }
 
@@ -142,7 +235,8 @@ export function knownSpells(sheet: Pick<TabletopSheet, 'classId' | 'spells'>, le
   const cantrips = (chosen?.cantrips?.length ? chosen.cantrips : cantripPool).slice(0, prog.cantrips);
   const spellbook = sheet.classId === 'wizard' ? (chosen?.spellbook?.length ? chosen.spellbook : pool).slice(0, prog.spellbook) : [];
   const from = sheet.classId === 'wizard' ? spellbook : pool;
-  const prepared = (chosen?.prepared?.length ? chosen.prepared.filter((s) => from.includes(s)) : from).slice(0, prog.prepared);
+  const picked = (chosen?.prepared?.length ? chosen.prepared.filter((s) => from.includes(s)) : from).slice(0, prog.prepared);
+  const prepared = [...picked, ...alwaysPrepared(sheet.classId, level).filter((s) => !picked.includes(s))];
   return { cantrips, prepared, spellbook };
 }
 
@@ -198,7 +292,7 @@ const SPELL_RES = SPELL_NAMES.map((n) => [n, new RegExp(`\\b${n.toLowerCase().re
 export function spellInInput(input: string): string | null {
   const s = (input ?? '').toLowerCase();
   const cast = /\bcast\b/.test(s);
-  return SPELL_RES.find(([n, re]) => re.test(s) && (cast || SPELLS[n]!.effect !== 'utility'))?.[0] ?? null;
+  return SPELL_RES.find(([n, re]) => re.test(s) && (cast || (SPELLS[n]!.effect !== 'utility' && !SPELLS[n]!.needsCast)))?.[0] ?? null;
 }
 
 /** "at level 2", "with a 2nd-level slot", "level 2 slot". */

@@ -31,6 +31,9 @@ import { syncContainerOccupancy } from '../inventory';
 import { casterProgression, isCaster, knownSpells, slotsLeft, spellcastingAbility, spellNumbers } from '../rules/spells';
 import { variantLoad } from '../rules/encumbrance';
 import { carriedCoinLb, wealthLine } from '../rules/coins';
+import { SHIELD_AC, SRD_ARMOR, SRD_WEAPONS, type SrdArmor, type SrdWeapon, type WeaponMastery } from '../rules/srdGear';
+import { magicAcBonus, magicSaveBonus } from '../rules/magicItems';
+import { masteryCount } from '../rules/classFeatures';
 
 export type { AbilityMethod, KitId, TabletopBackgroundId, TabletopClassId, TabletopPicks, TabletopSheet, TabletopSpeciesId };
 export { sheetSkillBonus };
@@ -102,27 +105,80 @@ interface ClassDef {
   priority: AttributeKey[];
   features: string[];
   blurb: string;
+  /** Tool proficiencies the class grants (crafting reads them). */
+  tools?: string[];
 }
 
-export const CLASSES: ClassDef[] = [
-  { id: 'fighter', name: 'Fighter', hitDie: 10, primary: 'Strength or Dexterity', saves: ['STR', 'CON'],
-    armorTraining: 'Light, Medium and Heavy armor; Shields',
-    skillChoices: ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Persuasion', 'Perception', 'Survival'],
+/** The four 6a classes keep their place at the head of every menu; the other eight follow alphabetically. */
+const CLASS_ORDER: TabletopClassId[] = ['fighter', 'rogue', 'cleric', 'wizard', 'barbarian', 'bard', 'druid', 'monk', 'paladin', 'ranger', 'sorcerer', 'warlock'];
+
+const CLASS_DEFS: ClassDef[] = [
+  { id: 'barbarian', name: 'Barbarian', hitDie: 12, primary: 'Strength', saves: ['STR', 'CON'],
+    armorTraining: 'Light and Medium armor; Shields',
+    skillChoices: ['Animal Handling', 'Athletics', 'Intimidation', 'Nature', 'Perception', 'Survival'],
     skillCount: 2, priority: ['STR', 'CON', 'DEX', 'WIS', 'CHA', 'INT'],
-    features: ['Fighting Style', 'Second Wind', 'Weapon Mastery'],
-    blurb: 'd10 Hit Die, all armor, weapon master' },
-  { id: 'rogue', name: 'Rogue', hitDie: 8, primary: 'Dexterity', saves: ['DEX', 'INT'],
+    features: ['Rage', 'Unarmored Defense', 'Weapon Mastery'],
+    blurb: 'd12 Hit Die, Rage, Unarmored Defense' },
+  { id: 'bard', name: 'Bard', hitDie: 8, primary: 'Charisma', saves: ['DEX', 'CHA'],
     armorTraining: 'Light armor',
-    skillChoices: ['Acrobatics', 'Athletics', 'Deception', 'Insight', 'Intimidation', 'Investigation', 'Perception', 'Persuasion', 'Sleight of Hand', 'Stealth'],
-    skillCount: 4, priority: ['DEX', 'CON', 'INT', 'WIS', 'CHA', 'STR'],
-    features: ['Expertise', 'Sneak Attack 1d6', "Thieves' Cant", 'Weapon Mastery'],
-    blurb: 'd8 Hit Die, light armor, skills and Sneak Attack' },
+    skillChoices: [...SRD_SKILLS],
+    skillCount: 3, priority: ['CHA', 'DEX', 'CON', 'WIS', 'INT', 'STR'],
+    features: ['Bardic Inspiration', 'Spellcasting'],
+    blurb: 'd8 Hit Die, light armor, songs and arcane magic', tools: ['Lute'] },
   { id: 'cleric', name: 'Cleric', hitDie: 8, primary: 'Wisdom', saves: ['WIS', 'CHA'],
     armorTraining: 'Light and Medium armor; Shields',
     skillChoices: ['History', 'Insight', 'Medicine', 'Persuasion', 'Religion'],
     skillCount: 2, priority: ['WIS', 'CON', 'STR', 'DEX', 'CHA', 'INT'],
     features: ['Spellcasting', 'Divine Order'],
     blurb: 'd8 Hit Die, medium armor and shield, divine magic' },
+  { id: 'druid', name: 'Druid', hitDie: 8, primary: 'Wisdom', saves: ['INT', 'WIS'],
+    armorTraining: 'Light armor; Shields',
+    skillChoices: ['Animal Handling', 'Arcana', 'Insight', 'Medicine', 'Nature', 'Perception', 'Religion', 'Survival'],
+    skillCount: 2, priority: ['WIS', 'CON', 'DEX', 'INT', 'CHA', 'STR'],
+    features: ['Spellcasting', 'Druidic', 'Primal Order (Magician)'],
+    blurb: 'd8 Hit Die, light armor and shield, primal magic', tools: ['Herbalism Kit'] },
+  { id: 'fighter', name: 'Fighter', hitDie: 10, primary: 'Strength or Dexterity', saves: ['STR', 'CON'],
+    armorTraining: 'Light, Medium and Heavy armor; Shields',
+    skillChoices: ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Persuasion', 'Perception', 'Survival'],
+    skillCount: 2, priority: ['STR', 'CON', 'DEX', 'WIS', 'CHA', 'INT'],
+    features: ['Fighting Style', 'Second Wind', 'Weapon Mastery'],
+    blurb: 'd10 Hit Die, all armor, weapon master' },
+  { id: 'monk', name: 'Monk', hitDie: 8, primary: 'Dexterity and Wisdom', saves: ['STR', 'DEX'],
+    armorTraining: 'None',
+    skillChoices: ['Acrobatics', 'Athletics', 'History', 'Insight', 'Religion', 'Stealth'],
+    skillCount: 2, priority: ['DEX', 'WIS', 'CON', 'STR', 'INT', 'CHA'],
+    features: ['Martial Arts', 'Unarmored Defense'],
+    blurb: 'd8 Hit Die, no armor, Martial Arts', tools: ["Woodcarver's Tools"] },
+  { id: 'paladin', name: 'Paladin', hitDie: 10, primary: 'Strength and Charisma', saves: ['WIS', 'CHA'],
+    armorTraining: 'Light, Medium and Heavy armor; Shields',
+    skillChoices: ['Athletics', 'Insight', 'Intimidation', 'Medicine', 'Persuasion', 'Religion'],
+    skillCount: 2, priority: ['STR', 'CHA', 'CON', 'WIS', 'DEX', 'INT'],
+    features: ['Lay On Hands', 'Spellcasting', 'Weapon Mastery'],
+    blurb: 'd10 Hit Die, all armor, Lay On Hands and divine magic' },
+  { id: 'ranger', name: 'Ranger', hitDie: 10, primary: 'Dexterity and Wisdom', saves: ['STR', 'DEX'],
+    armorTraining: 'Light and Medium armor; Shields',
+    skillChoices: ['Animal Handling', 'Athletics', 'Insight', 'Investigation', 'Nature', 'Perception', 'Stealth', 'Survival'],
+    skillCount: 3, priority: ['DEX', 'WIS', 'CON', 'STR', 'INT', 'CHA'],
+    features: ['Spellcasting', 'Favored Enemy', 'Weapon Mastery'],
+    blurb: "d10 Hit Die, medium armor, Hunter's Mark" },
+  { id: 'rogue', name: 'Rogue', hitDie: 8, primary: 'Dexterity', saves: ['DEX', 'INT'],
+    armorTraining: 'Light armor',
+    skillChoices: ['Acrobatics', 'Athletics', 'Deception', 'Insight', 'Intimidation', 'Investigation', 'Perception', 'Persuasion', 'Sleight of Hand', 'Stealth'],
+    skillCount: 4, priority: ['DEX', 'CON', 'INT', 'WIS', 'CHA', 'STR'],
+    features: ['Expertise', 'Sneak Attack 1d6', "Thieves' Cant", 'Weapon Mastery'],
+    blurb: 'd8 Hit Die, light armor, skills and Sneak Attack', tools: ["Thieves' Tools"] },
+  { id: 'sorcerer', name: 'Sorcerer', hitDie: 6, primary: 'Charisma', saves: ['CON', 'CHA'],
+    armorTraining: 'None',
+    skillChoices: ['Arcana', 'Deception', 'Insight', 'Intimidation', 'Persuasion', 'Religion'],
+    skillCount: 2, priority: ['CHA', 'CON', 'DEX', 'WIS', 'INT', 'STR'],
+    features: ['Spellcasting', 'Innate Sorcery'],
+    blurb: 'd6 Hit Die, no armor, innate arcane magic' },
+  { id: 'warlock', name: 'Warlock', hitDie: 8, primary: 'Charisma', saves: ['WIS', 'CHA'],
+    armorTraining: 'Light armor',
+    skillChoices: ['Arcana', 'Deception', 'History', 'Intimidation', 'Investigation', 'Nature', 'Religion'],
+    skillCount: 2, priority: ['CHA', 'CON', 'DEX', 'WIS', 'INT', 'STR'],
+    features: ['Eldritch Invocations (Armor of Shadows)', 'Pact Magic'],
+    blurb: 'd8 Hit Die, light armor, Pact Magic' },
   { id: 'wizard', name: 'Wizard', hitDie: 6, primary: 'Intelligence', saves: ['INT', 'WIS'],
     armorTraining: 'None',
     skillChoices: ['Arcana', 'History', 'Insight', 'Investigation', 'Medicine', 'Nature', 'Religion'],
@@ -130,6 +186,8 @@ export const CLASSES: ClassDef[] = [
     features: ['Spellcasting', 'Ritual Adept', 'Arcane Recovery'],
     blurb: 'd6 Hit Die, no armor, arcane magic' },
 ];
+
+export const CLASSES: ClassDef[] = CLASS_ORDER.map((id) => CLASS_DEFS.find((c) => c.id === id)!);
 
 interface GearDef {
   name: string;
@@ -197,47 +255,86 @@ export const CLASS_KITS: Record<TabletopClassId, KitDef[]> = {
       gear: [{ name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Quarterstaff', kind: 'weapon' }, { name: 'Robe', kind: 'gear' }, { name: 'Spellbook', kind: 'gear' }, { name: "Scholar's Pack", kind: 'gear' }] },
     { id: 'coin', label: 'Coin instead', gp: 55, gear: [] },
   ],
+  barbarian: [
+    { id: 'A', label: 'Greataxe and handaxes', gp: 15,
+      gear: [{ name: 'Greataxe', kind: 'weapon' }, { name: 'Handaxe', qty: 4, kind: 'weapon' }, { name: "Explorer's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 75, gear: [] },
+  ],
+  bard: [
+    { id: 'A', label: 'Leather Armor, daggers and a lute', gp: 19,
+      gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Lute', kind: 'gear' }, { name: "Entertainer's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 90, gear: [] },
+  ],
+  druid: [
+    { id: 'A', label: 'Leather Armor, Shield and Quarterstaff', gp: 9,
+      gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Shield', kind: 'shield' }, { name: 'Sickle', kind: 'weapon' }, { name: 'Quarterstaff', kind: 'weapon' }, { name: 'Druidic Focus', kind: 'gear' }, { name: "Explorer's Pack", kind: 'gear' }, { name: 'Herbalism Kit', kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 50, gear: [] },
+  ],
+  monk: [
+    { id: 'A', label: 'Spear, daggers and woodcarver\'s tools', gp: 11,
+      gear: [{ name: 'Spear', kind: 'weapon' }, { name: 'Dagger', qty: 5, kind: 'weapon' }, { name: "Woodcarver's Tools", kind: 'gear' }, { name: "Explorer's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 50, gear: [] },
+  ],
+  paladin: [
+    { id: 'A', label: 'Chain Mail, Shield and Longsword', gp: 9,
+      gear: [{ name: 'Chain Mail', kind: 'armor' }, { name: 'Shield', kind: 'shield' }, { name: 'Longsword', kind: 'weapon' }, { name: 'Javelin', qty: 6, kind: 'weapon' }, { name: 'Holy Symbol', kind: 'gear' }, { name: "Priest's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 150, gear: [] },
+  ],
+  ranger: [
+    { id: 'A', label: 'Studded Leather, swords and Longbow', gp: 7,
+      gear: [{ name: 'Studded Leather Armor', kind: 'armor' }, { name: 'Scimitar', kind: 'weapon' }, { name: 'Shortsword', kind: 'weapon' }, { name: 'Longbow', kind: 'weapon' }, { name: 'Arrows', qty: 20, kind: 'gear' }, { name: 'Quiver', kind: 'gear' }, { name: 'Druidic Focus', kind: 'gear' }, { name: "Explorer's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 150, gear: [] },
+  ],
+  sorcerer: [
+    { id: 'A', label: 'Spear, daggers and an arcane focus', gp: 28,
+      gear: [{ name: 'Spear', kind: 'weapon' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Arcane Focus', kind: 'gear' }, { name: "Dungeoneer's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 50, gear: [] },
+  ],
+  warlock: [
+    { id: 'A', label: 'Leather Armor, Sickle and an arcane focus', gp: 15,
+      gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Sickle', kind: 'weapon' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Arcane Focus', kind: 'gear' }, { name: 'Book (occult lore)', kind: 'gear' }, { name: "Scholar's Pack", kind: 'gear' }] },
+    { id: 'coin', label: 'Coin instead', gp: 100, gear: [] },
+  ],
 };
 
-/** SRD weapon damage dice. */
-export const WEAPON_DICE: Record<string, { dice: string; type: string; ranged?: boolean; finesse?: boolean; martial?: boolean; light?: boolean }> = {
-  Dagger: { dice: '1d4', type: 'piercing', finesse: true, light: true },
-  Shortsword: { dice: '1d6', type: 'piercing', finesse: true, light: true, martial: true },
-  Scimitar: { dice: '1d6', type: 'slashing', finesse: true, light: true, martial: true },
-  Greatsword: { dice: '2d6', type: 'slashing', martial: true },
-  Flail: { dice: '1d8', type: 'bludgeoning', martial: true },
-  Javelin: { dice: '1d6', type: 'piercing' },
-  Mace: { dice: '1d6', type: 'bludgeoning' },
-  Quarterstaff: { dice: '1d6', type: 'bludgeoning' },
-  Spear: { dice: '1d6', type: 'piercing' },
-  Shortbow: { dice: '1d6', type: 'piercing', ranged: true },
-  Longbow: { dice: '1d8', type: 'piercing', ranged: true, martial: true },
-};
+/** SRD weapon numbers (the shared rules table). */
+export const WEAPON_DICE: Readonly<Record<string, SrdWeapon>> = SRD_WEAPONS;
 
-/** SRD 5.2.1 weapon training: every class has Simple; Fighter all Martial; Rogue Martial with Finesse or Light. */
+/**
+ * SRD 5.2.1 weapon training: every class has Simple. Barbarian, Fighter, Paladin and Ranger all Martial;
+ * Rogue Martial with Finesse or Light; Monk Martial with Light.
+ */
 export function weaponProficient(classId: TabletopClassId, weapon: string): boolean {
   const w = WEAPON_DICE[weapon];
   if (!w) return false;
-  if (!w.martial || classId === 'fighter') return true;
-  return classId === 'rogue' && !!(w.finesse || w.light);
+  if (!w.martial || ['barbarian', 'fighter', 'paladin', 'ranger'].includes(classId)) return true;
+  if (classId === 'rogue') return !!(w.finesse || w.light);
+  return classId === 'monk' && !!w.light;
 }
 
-/** SRD armor: base AC and the Dexterity cap (null = full DEX, 0 = none). */
-export const ARMOR_TABLE: Record<string, { base: number; dexCap: number | null; category: 'Light' | 'Medium' | 'Heavy' }> = {
-  'Leather Armor': { base: 11, dexCap: null, category: 'Light' },
-  'Studded Leather Armor': { base: 12, dexCap: null, category: 'Light' },
-  'Chain Shirt': { base: 13, dexCap: 2, category: 'Medium' },
-  'Chain Mail': { base: 16, dexCap: 0, category: 'Heavy' },
-};
-export const SHIELD_AC = 2;
+/** SRD armor: base AC and the Dexterity cap (null = full DEX, 0 = none). The shared rules table. */
+export const ARMOR_TABLE: Readonly<Record<string, SrdArmor>> = SRD_ARMOR;
+export { SHIELD_AC };
 
-/** SRD 5.2.1 armor training by class (Fighter all armor and Shields; Rogue Light; Cleric Light, Medium, Shields; Wizard none). */
+/** SRD 5.2.1 armor training by class. */
 const ARMOR_TRAINED: Record<TabletopClassId, Array<'Light' | 'Medium' | 'Heavy' | 'Shield'>> = {
-  fighter: ['Light', 'Medium', 'Heavy', 'Shield'],
-  rogue: ['Light'],
+  barbarian: ['Light', 'Medium', 'Shield'],
+  bard: ['Light'],
   cleric: ['Light', 'Medium', 'Shield'],
+  druid: ['Light', 'Shield'],
+  fighter: ['Light', 'Medium', 'Heavy', 'Shield'],
+  monk: [],
+  paladin: ['Light', 'Medium', 'Heavy', 'Shield'],
+  ranger: ['Light', 'Medium', 'Shield'],
+  rogue: ['Light'],
+  sorcerer: [],
+  warlock: ['Light'],
   wizard: [],
 };
+
+export function armorTrained(classId: TabletopClassId): ReadonlyArray<'Light' | 'Medium' | 'Heavy' | 'Shield'> {
+  return ARMOR_TRAINED[classId];
+}
 
 /**
  * Worn armor or a shield beyond the class's training (null when all is trained). SRD 5.2.1: untrained armor gives
@@ -266,6 +363,13 @@ export const kitDef = (cls: TabletopClassId, id: KitId) => CLASS_KITS[cls].find(
 
 export function abilityMod(score: number): number {
   return Math.floor((score - 10) / 2);
+}
+
+/** Tool proficiencies: the background's tool plus the class's (crafting reads them). */
+export function toolProficiencies(c: Pick<Character, 'srd'>): string[] {
+  const s = c.srd;
+  if (!s) return [];
+  return [...new Set([backgroundDef(s.backgroundId).tool, ...(classDef(s.classId).tools ?? [])])];
 }
 
 export function fmtMod(n: number): string {
@@ -379,6 +483,12 @@ export function resolveSheet(picks: Required<Pick<TabletopPicks, 'classId' | 'sp
   };
 }
 
+/** An SRD gear row (weapon dice, armor AC text) under any provenance — crafting and loot share it. */
+export function srdGearRow(name: string, qty: number, id: string, provenance: string): Item {
+  const kind: GearDef['kind'] = WEAPON_DICE[name] ? 'weapon' : ARMOR_TABLE[name] ? 'armor' : name === 'Shield' ? 'shield' : 'gear';
+  return { ...gearItem({ name, qty, kind }, 'kit', 0), id, provenance };
+}
+
 function gearItem(g: GearDef, from: string, n: number): Item {
   const weapon = WEAPON_DICE[g.name];
   const armor = ARMOR_TABLE[g.name];
@@ -415,9 +525,9 @@ function sheetGear(sheet: TabletopSheet): { items: Item[]; gp: number } {
   const melee = merged
     .filter((i) => WEAPON_DICE[i.name] && !WEAPON_DICE[i.name].ranged)
     .sort((a, b) => avgDice(WEAPON_DICE[b.name].dice) - avgDice(WEAPON_DICE[a.name].dice))[0];
-  const wearsArmor = sheet.classId !== 'wizard';
-  if (armor && wearsArmor) Object.assign(armor, { equipped: true, slot: 'Body' });
-  if (shield) Object.assign(shield, { equipped: true, slot: 'Off Hand' });
+  const trained = ARMOR_TRAINED[sheet.classId];
+  if (armor && trained.includes(ARMOR_TABLE[armor.name].category)) Object.assign(armor, { equipped: true, slot: 'Body' });
+  if (shield && trained.includes('Shield')) Object.assign(shield, { equipped: true, slot: 'Off Hand' });
   if (melee) Object.assign(melee, { equipped: true, slot: 'Main Hand' });
   return { items: merged, gp: kit.gp + bg.gp };
 }
@@ -427,17 +537,34 @@ function avgDice(dice: string): number {
   return m ? Number(m[1]) * (Number(m[2]) + 1) / 2 : 0;
 }
 
-/** AC from equipped SRD armor and shield; 10 + DEX with none, or 13 + DEX under Mage Armor. */
-export function tabletopArmorClass(dex: number, inventory: Item[], mageArmor = false): { ac: number; from: string } {
+/**
+ * AC from equipped SRD armor and shield; 10 + DEX with none, or 13 + DEX under Mage Armor. With the wearer,
+ * the class's armorless base (Barbarian and Monk Unarmored Defense, Draconic Resilience) and attuned magic
+ * items count too. The best armorless base wins.
+ */
+export function tabletopArmorClass(
+  dex: number,
+  inventory: Item[],
+  mageArmor = false,
+  who?: Pick<Character, 'srd' | 'attributes' | 'level'>,
+): { ac: number; from: string } {
   const worn = inventory.filter((i) => i.equipped);
   const armor = worn.find((i) => ARMOR_TABLE[i.name]);
   const shield = worn.some((i) => i.name === 'Shield');
   const mod = abilityMod(dex);
   let ac = 10 + mod;
   let from = 'no armor';
-  if (!armor && mageArmor) {
-    ac = 13 + mod;
-    from = 'Mage Armor';
+  if (!armor) {
+    const bases: Array<[number, string]> = [];
+    if (mageArmor) bases.push([13 + mod, 'Mage Armor']);
+    if (who?.srd) {
+      const m = (k: AttributeKey) => abilityMod(who.attributes[k]);
+      const cls = who.srd.classId;
+      if (cls === 'barbarian') bases.push([10 + mod + m('CON'), 'Unarmored Defense']);
+      if (cls === 'monk' && !shield) bases.push([10 + mod + m('WIS'), 'Unarmored Defense']);
+      if (hasClassFeature(who, /Draconic Resilience/)) bases.push([10 + mod + m('CHA'), 'Draconic Resilience']);
+    }
+    for (const [v, label] of bases) if (v > ac) { ac = v; from = label; }
   }
   if (armor) {
     const row = ARMOR_TABLE[armor.name];
@@ -449,7 +576,60 @@ export function tabletopArmorClass(dex: number, inventory: Item[], mageArmor = f
     ac += SHIELD_AC;
     from += ' + Shield';
   }
+  if (who?.srd) {
+    const magic = magicAcBonus(inventory, !!armor || shield);
+    if (magic.bonus) {
+      ac += magic.bonus;
+      from += ` + ${magic.from.join(' + ')}`;
+    }
+  }
   return { ac, from };
+}
+
+/**
+ * Weapon Mastery picks: equipped weapons first, then the class kit's, then any other carried weapon the class is
+ * trained with, up to the class's count. Derived each time (the SRD lets you change them on a Long Rest).
+ */
+export function weaponMasteries(c: Pick<Character, 'srd' | 'level'>, inventory: Item[] | null | undefined): Array<{ weapon: string; mastery: WeaponMastery }> {
+  const s = c.srd;
+  if (!s) return [];
+  const count = masteryCount(s.classId, c.level ?? 1);
+  if (!count) return [];
+  const inv = inventory ?? [];
+  const kit = CLASS_KITS[s.classId].find((k) => k.id === 'A')?.gear.map((g) => g.name) ?? [];
+  const names = [
+    ...inv.filter((i) => i.equipped).map((i) => i.name),
+    ...kit,
+    ...inv.map((i) => i.name),
+  ];
+  const out: Array<{ weapon: string; mastery: WeaponMastery }> = [];
+  for (const n of names) {
+    if (out.length >= count) break;
+    if (!WEAPON_DICE[n] || !weaponProficient(s.classId, n) || out.some((o) => o.weapon === n)) continue;
+    out.push({ weapon: n, mastery: WEAPON_DICE[n].mastery });
+  }
+  return out;
+}
+
+/** The mastery property `weapon` uses for this character, if it is one of their picks. */
+export function masteryFor(c: Pick<Character, 'srd' | 'level'>, inventory: Item[] | null | undefined, weapon: string): WeaponMastery | undefined {
+  return weaponMasteries(c, inventory).find((m) => m.weapon === weapon)?.mastery;
+}
+
+/**
+ * Speed changes from the sheet: Unarmored Movement (Monk 2+, no armor or Shield) +10 ft; heavy armor whose
+ * Strength need the wearer does not meet −10 ft.
+ */
+export function speedAdjust(c: Pick<Character, 'srd' | 'level' | 'attributes'>, inventory: Item[]): number {
+  if (!c.srd) return 0;
+  const worn = inventory.filter((i) => i.equipped);
+  const armor = worn.find((i) => ARMOR_TABLE[i.name]);
+  const shield = worn.some((i) => i.name === 'Shield');
+  let adj = 0;
+  if (!armor && !shield && hasClassFeature(c, /^Unarmored Movement/)) adj += 10;
+  const need = armor ? ARMOR_TABLE[armor.name].strength : undefined;
+  if (need && c.attributes.STR < need) adj -= 10;
+  return adj;
 }
 
 /** The SRD fixed level-up value for a Hit Die (d6 4, d8 5, d10 6, d12 7). */
@@ -470,13 +650,58 @@ export function levelHpGains(sheet: Pick<TabletopSheet, 'classId' | 'hpGains'>, 
 export function tabletopMaxHp(sheet: TabletopSheet, con: number, level = 1): number {
   const die = classDef(sheet.classId).hitDie;
   const m = abilityMod(con);
-  const extra = (speciesDef(sheet.speciesId).hpPerLevel ?? 0) * level;
+  const extra = (speciesDef(sheet.speciesId).hpPerLevel ?? 0) * level + draconicHp(sheet.classId, level);
   const later = levelHpGains(sheet, level).reduce((s, g) => s + Math.max(1, g + m), 0);
   return Math.max(1, die + m) + later + extra;
 }
 
+/** Draconic Resilience (Draconic Sorcery, level 3): +3 HP, then +1 for each later Sorcerer level. */
+export function draconicHp(classId: TabletopClassId, level: number): number {
+  return classId === 'sorcerer' && level >= 3 ? level : 0;
+}
+
 /** Class features gained at each level, SRD 5.2.1 (SRD subclass at level 3; Ability Score Improvement at 4). */
 export const CLASS_LEVEL_FEATURES: Record<TabletopClassId, Record<number, string[]>> = {
+  barbarian: {
+    2: ['Danger Sense', 'Reckless Attack'],
+    3: ['Path of the Berserker subclass: Frenzy', 'Primal Knowledge'],
+    4: ['Ability Score Improvement'],
+  },
+  bard: {
+    2: ['Expertise', 'Jack of All Trades'],
+    3: ['College of Lore subclass: Bonus Proficiencies, Cutting Words'],
+    4: ['Ability Score Improvement'],
+  },
+  druid: {
+    2: ['Wild Shape', 'Wild Companion'],
+    3: ["Circle of the Land subclass: Circle of the Land Spells, Land's Aid"],
+    4: ['Ability Score Improvement'],
+  },
+  monk: {
+    2: ["Monk's Focus", 'Unarmored Movement', 'Uncanny Metabolism'],
+    3: ['Deflect Attacks', 'Warrior of the Open Hand subclass: Open Hand Technique'],
+    4: ['Ability Score Improvement', 'Slow Fall'],
+  },
+  paladin: {
+    2: ['Fighting Style', "Paladin's Smite"],
+    3: ['Channel Divinity', 'Oath of Devotion subclass: Oath of Devotion Spells, Sacred Weapon'],
+    4: ['Ability Score Improvement'],
+  },
+  ranger: {
+    2: ['Deft Explorer', 'Fighting Style'],
+    3: ["Hunter subclass: Hunter's Lore, Hunter's Prey (Colossus Slayer)"],
+    4: ['Ability Score Improvement'],
+  },
+  sorcerer: {
+    2: ['Font of Magic', 'Metamagic'],
+    3: ['Draconic Sorcery subclass: Draconic Resilience, Draconic Spells'],
+    4: ['Ability Score Improvement'],
+  },
+  warlock: {
+    2: ['Magical Cunning', 'Eldritch Invocations (Agonizing Blast, Eldritch Mind)'],
+    3: ["Fiend Patron subclass: Dark One's Blessing, Fiend Spells"],
+    4: ['Ability Score Improvement'],
+  },
   fighter: {
     2: ['Action Surge', 'Tactical Mind'],
     3: ['Champion subclass: Improved Critical (19–20)', 'Remarkable Athlete'],
@@ -542,6 +767,8 @@ export interface DerivedSheet {
   skills: Array<{ skill: SrdSkill; total: number; proficient: boolean; expertise: boolean }>;
   traits: string[];
   features: string[];
+  /** Weapon Mastery: the weapons whose mastery property the character uses. */
+  masteries?: Array<{ weapon: string; mastery: WeaponMastery }>;
   originFeats: string[];
   languages: string[];
   hitDie: number;
@@ -572,7 +799,7 @@ export function sheetSpellcasting(c: Pick<Character, 'srd' | 'level' | 'attribut
     dc,
     attack,
     ...known,
-    slots: prog.slots.map((total, i) => ({ level: i + 1, total, left: left[i] ?? 0 })),
+    slots: prog.slots.map((total, i) => ({ level: i + 1, total, left: left[i] ?? 0 })).filter((s) => s.total > 0),
   };
 }
 
@@ -585,7 +812,10 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
   const sp = speciesDef(s.speciesId);
   const scores = c.attributes;
   const pb = proficiencyBonus(c.level);
-  const { ac, from } = tabletopArmorClass(scores.DEX, state.inventory ?? [], !!c.casting?.mageArmor);
+  const { ac, from } = tabletopArmorClass(scores.DEX, state.inventory ?? [], !!c.casting?.mageArmor, c);
+  const magicSaves = magicSaveBonus(state.inventory);
+  const draconic = draconicHp(s.classId, c.level);
+  const masteries = weaponMasteries(c, state.inventory);
   const skills = SRD_SKILLS.map((skill) => ({
     skill,
     proficient: s.skillProfs.includes(skill),
@@ -606,11 +836,11 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
     scores,
     pb,
     maxHp: c.maxHp,
-    hpLine: `d${cls.hitDie} ${[cls.hitDie, ...gains].join(' + ')} ${conPart}${dwarf ? ` +${dwarf} Dwarven Toughness` : ''}`,
+    hpLine: `d${cls.hitDie} ${[cls.hitDie, ...gains].join(' + ')} ${conPart}${dwarf ? ` +${dwarf} Dwarven Toughness` : ''}${draconic ? ` +${draconic} Draconic Resilience` : ''}`,
     ac,
     acFrom: from,
     initiative: abilityMod(scores.DEX) + (s.originFeats.includes('Alert') ? pb : 0),
-    speed: Math.max(0, sp.speed - (load?.speedPenalty ?? 0)),
+    speed: Math.max(0, sp.speed - (load?.speedPenalty ?? 0) + speedAdjust(c, state.inventory ?? [])),
     ...(load?.heavy ? { heavilyEncumbered: true } : {}),
     ...(untrained ? { untrainedArmor: untrained } : {}),
     size: sp.size,
@@ -618,11 +848,12 @@ export function deriveTabletopSheet(state: Pick<GameState, 'character' | 'invent
     passivePerception: 10 + perception,
     saves: ABILITY_KEYS.map((key) => {
       const proficient = cls.saves.includes(key);
-      return { key, proficient, total: abilityMod(scores[key]) + (proficient ? pb : 0) };
+      return { key, proficient, total: abilityMod(scores[key]) + (proficient ? pb : 0) + magicSaves };
     }),
     skills,
     traits: sp.traits,
     features: classFeaturesAt(s.classId, c.level),
+    ...(masteries.length ? { masteries } : {}),
     originFeats: s.originFeats,
     languages: s.languages,
     hitDie: cls.hitDie,
@@ -690,6 +921,7 @@ export function formatTabletopSheet(state: Pick<GameState, 'character' | 'invent
     `Saves: ${d.saves.map((v) => `${v.key} ${fmtMod(v.total)}${v.proficient ? '*' : ''}`).join(', ')}`,
     `Skills: ${skills.join(', ')}`,
     `Class features: ${d.features.join(', ')} · Origin feat: ${d.originFeats.join(', ')}`,
+    ...(d.masteries ? [`Weapon Mastery: ${d.masteries.map((m) => `${m.weapon} (${m.mastery})`).join(', ')}`] : []),
     ...spellSummaryLines(d.spellcasting),
     `${speciesDef(s.speciesId).name} traits: ${d.traits.join('; ')}`,
     `Languages: ${d.languages.join(', ')}`,
@@ -720,7 +952,7 @@ export function applyTabletopSheet(state: GameState, sheet: TabletopSheet): Game
     attributes: scores,
     maxHp,
     hp: maxHp,
-    armorClass: tabletopArmorClass(scores.DEX, inventory).ac,
+    armorClass: tabletopArmorClass(scores.DEX, inventory, false, { srd: sheet, attributes: scores, level: state.character.level }).ac,
     bio: `A ${sp.name.toLowerCase()} ${cls.name.toLowerCase()} with a ${bg.name.toLowerCase()}'s past.`,
     srd: sheet,
   };

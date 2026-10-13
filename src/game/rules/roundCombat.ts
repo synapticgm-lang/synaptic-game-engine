@@ -15,7 +15,8 @@ import { combineAdv, conditionEffect, rollD20WithAdv, type AdvState } from '../c
 import { rollDice, rollDie, type CritRule, type DiceRoll, type Rng } from './dice';
 import type { StatBlock } from './srdMonsters';
 import { abilityModOf } from './srdMonsters';
-import { concentrationDc, spellDice, type SpellDef } from './spells';
+import { concentrationDc, SPELLS, spellDice, type SpellDef } from './spells';
+import type { WeaponMastery } from './srdGear';
 
 export type RoundAction = 'attack' | 'cast' | 'dodge' | 'disengage' | 'help' | 'hide' | 'item' | 'flee' | 'other';
 
@@ -30,6 +31,11 @@ export interface PcWeapon {
   /** Rogue Sneak Attack dice, used once a turn with Advantage and a Finesse or ranged weapon. */
   sneakAttack?: string;
   finesse?: boolean;
+  /** A Strength attack (melee, not finesse-with-DEX): Rage damage, Reckless Attack and Frenzy apply. */
+  strBased?: boolean;
+  /** SRD 5.2.1 Weapon Mastery property the PC can use with this weapon, and its save DC (8 + mod + PB). */
+  mastery?: WeaponMastery;
+  masteryDc?: number;
 }
 
 export interface PcCantrip {
@@ -40,6 +46,12 @@ export interface PcCantrip {
   save?: AttributeKey;
   dice: string;
   type: string;
+  /** A melee spell attack (Chill Touch, Shocking Grasp). */
+  melee?: boolean;
+  /** A condition a hit or failed save leaves (Vicious Mockery). */
+  rider?: string;
+  /** Flat damage added to each hit (Warlock Agonizing Blast). */
+  damageMod?: number;
 }
 
 /** A spell the PC can cast this fight, with the numbers from the sheet. */
@@ -50,6 +62,8 @@ export interface PcSpell {
   dc: number;
   /** Spellcasting ability modifier (added to healing). */
   mod: number;
+  /** Flat damage added to a cantrip hit (Agonizing Blast). */
+  damageMod?: number;
 }
 
 export interface PcProfile {
@@ -86,6 +100,29 @@ export interface PcProfile {
   untrainedArmor?: string;
   /** Conditions the PC carries outside the fight (e.g. Poisoned). */
   conditions: string[];
+  /** Barbarian Rage damage on Strength attacks while raging. */
+  rageDamage?: number;
+  /** Barbarian Danger Sense: Advantage on DEX saves. */
+  dangerSense?: boolean;
+  /** Path of the Berserker Frenzy: the first Reckless Strength hit while raging adds 2d6. */
+  frenzy?: boolean;
+  /** Hunter's Prey (Colossus Slayer): once a turn, +1d8 on a weapon hit against a wounded foe. */
+  colossusSlayer?: boolean;
+  /** Monk Deflect Attacks: once a round, a melee or ranged hit is reduced by 1d10 + DEX + Monk level. */
+  deflect?: { dexMod: number; level: number };
+  /** Monk Martial Arts: a bonus Unarmed Strike after the Attack action. */
+  bonusStrike?: { name: string; toHit: number; dice: string; mod: number; type: string };
+  /** Warlock Eldritch Mind: Advantage on Concentration saves. */
+  eldritchMind?: boolean;
+}
+
+/** Bonus-action class features the PC uses this round (resolved before the action). */
+export interface RoundFeatures {
+  rage?: boolean;
+  reckless?: boolean;
+  innateSorcery?: boolean;
+  /** Lay On Hands: HP to restore from the pool. */
+  layOnHands?: number;
 }
 
 export interface SidekickProfile {
@@ -103,16 +140,24 @@ export interface SidekickProfile {
 
 export type CombatEvent =
   | { k: 'initiative'; who: string; d20s: number[]; kept: number; mod: number; total: number; adv: AdvState }
-  | { k: 'attack'; attacker: string; target: string; with: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; ac: number; hit: boolean; crit: boolean; nat1: boolean; damage?: DiceRoll; extra?: DiceRoll; sneak?: DiceRoll; type?: string; dealt: number; hpBefore: number; hpAfter: number; maxHp: number; opportunity?: boolean; vulnerable?: boolean; pc: boolean; bless?: number; bane?: number; half?: boolean; spell?: boolean; flank?: boolean; cleave?: boolean; inspiration?: InspirationUse; sidekick?: boolean }
+  | { k: 'attack'; attacker: string; target: string; with: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; ac: number; hit: boolean; crit: boolean; nat1: boolean; damage?: DiceRoll; extra?: DiceRoll; sneak?: DiceRoll; type?: string; dealt: number; hpBefore: number; hpAfter: number; maxHp: number; opportunity?: boolean; vulnerable?: boolean; pc: boolean; bless?: number; bane?: number; half?: boolean; spell?: boolean; flank?: boolean; cleave?: boolean; inspiration?: InspirationUse; sidekick?: boolean; bonus?: StrikeBonus[]; reduced?: { label: string; roll?: DiceRoll; amount: number }; mastery?: WeaponMastery }
   | { k: 'save'; who: string; ability: AttributeKey; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; dc: number; ok: boolean; autoFail?: boolean; why: string; pc: boolean; bless?: number; bane?: number; inspiration?: InspirationUse }
   | { k: 'cast'; who: string; spell: string; slot?: number; concentration?: boolean; detail?: string }
   | { k: 'concentration'; who: string; spell: string; on: false; why: string }
   | { k: 'check'; who: string; label: string; d20s: number[]; kept: number; adv: AdvState; mod: number; total: number; dc: number; ok: boolean; why: string }
   | { k: 'condition'; who: string; name: string; on: boolean; why: string; pc: boolean }
-  | { k: 'act'; who: string; action: RoundAction | 'stand' | 'skip' | 'close'; detail: string; pc: boolean }
-  | { k: 'heal'; who: string; item: string; roll: DiceRoll; hpBefore: number; hpAfter: number; spell?: boolean; slot?: number }
+  | { k: 'act'; who: string; action: RoundAction | 'stand' | 'skip' | 'close' | 'feature'; detail: string; pc: boolean }
+  | { k: 'heal'; who: string; item: string; roll: DiceRoll; hpBefore: number; hpAfter: number; spell?: boolean; slot?: number; pool?: number }
+  | { k: 'extra'; who: string; label: string; amount: number; type: string; hpBefore: number; hpAfter: number; maxHp: number; pc: boolean }
   | { k: 'down'; who: string; pc: boolean; massive?: boolean; sidekick?: boolean }
   | { k: 'fortitude'; who: string };
+
+/** Extra damage a hit carries beyond the weapon or spell dice (Rage, Divine Smite, Hunter's Mark…). */
+export interface StrikeBonus {
+  label: string;
+  roll?: DiceRoll;
+  flat?: number;
+}
 
 /** Heroic Inspiration spent on this roll: a reroll of a failed d20 (SRD 5.2.1) or Advantage (SRD 5.1). */
 export type InspirationUse = { mode: 'reroll'; first: number } | { mode: 'advantage' };
@@ -134,6 +179,10 @@ export interface RoundResult {
   mageArmor?: boolean;
   /** Heroic Inspiration was spent this round. */
   inspirationSpent?: boolean;
+  /** A class feature cast the spell with no slot (Favored Enemy, Paladin's Smite). */
+  freeCastUsed?: boolean;
+  /** Class features started this round (Rage, Innate Sorcery) and Lay On Hands HP spent. */
+  featuresUsed?: { rage?: boolean; innateSorcery?: boolean; layOnHands?: number };
 }
 
 const has = (list: CombatCondition[], name: string) => list.some((c) => c.name.toLowerCase() === name.toLowerCase());
@@ -209,6 +258,13 @@ interface Ctx {
   mageArmor?: boolean;
   inspirationSpent?: boolean;
   rules: RoundRules;
+  features: RoundFeatures;
+  /** The cast spends no slot (a class feature pays for it). */
+  freeCast?: boolean;
+  freeCastUsed?: boolean;
+  featuresUsed: { rage?: boolean; innateSorcery?: boolean; layOnHands?: number };
+  /** Once-a-turn flags for the PC's current turn. */
+  turn: { attacked?: boolean; frenzy?: boolean; colossus?: boolean; cleave?: boolean; rageStarted?: boolean };
 }
 
 /** Optional table rules the round obeys (from the player's house rules). */
@@ -227,6 +283,8 @@ export interface RoundRules {
   inspiration?: 'reroll' | 'advantage';
   /** Darkness and no light carried (SRD Vision and Light): a foe without Darkvision, and the PC's sidekick or ally, have the Blinded condition. The PC's own Blinded comes in on its conditions. */
   darkness?: boolean;
+  /** SRD 5.2.1 Weapon Mastery properties apply (off under SRD 5.1). */
+  mastery?: boolean;
 }
 
 /** Blinded in the fight's darkness: a foe with no Darkvision, or the PC's sidekick / ally. */
@@ -251,13 +309,14 @@ function baneRoll(ctx: Ctx, foe: RoundFoeState): number | undefined {
   return has(foe.conditions, 'Bane') ? rollDie(4, ctx.rng) : undefined;
 }
 
+/** Concentration ends: every condition the spell left on a foe (Bane, Faerie Fire, Entangle, a Hex mark) ends with it. */
 function endConcentration(ctx: Ctx, why: string) {
   const spell = ctx.combat.concentration;
   if (!spell) return;
   ctx.combat = {
     ...ctx.combat,
     concentration: null,
-    foes: spell === 'Bane' ? ctx.combat.foes.map((f) => ({ ...f, conditions: f.conditions.filter((c) => c.name !== 'Bane') })) : ctx.combat.foes,
+    foes: ctx.combat.foes.map((f) => ({ ...f, conditions: f.conditions.filter((c) => c.source !== spell) })),
   };
   push(ctx, { k: 'concentration', who: ctx.pc.name, spell, on: false, why });
 }
@@ -270,7 +329,7 @@ function concentrationCheck(ctx: Ctx, damage: number) {
     endConcentration(ctx, 'you dropped to 0 HP');
     return;
   }
-  if (!pcSave(ctx, 'CON', concentrationDc(damage), `to hold ${spell}`)) endConcentration(ctx, 'failed the CON save');
+  if (!pcSave(ctx, 'CON', concentrationDc(damage), `to hold ${spell}`, ctx.pc.eldritchMind ? ['advantage'] : [])) endConcentration(ctx, 'failed the CON save');
 }
 
 const canReroll = (ctx: Ctx) => ctx.rules.inspiration === 'reroll' && !ctx.inspirationSpent;
@@ -279,13 +338,18 @@ const canReroll = (ctx: Ctx) => ctx.rules.inspiration === 'reroll' && !ctx.inspi
  * A PC saving throw: Bless adds 1d4, heavy encumbrance gives STR / DEX / CON Disadvantage, and Heroic Inspiration
  * (SRD 5.2.1) rerolls the first failure.
  */
-function pcSave(ctx: Ctx, ability: AttributeKey, dc: number, why: string): boolean {
+function pcSave(ctx: Ctx, ability: AttributeKey, dc: number, why: string, adv: AdvState[] = []): boolean {
   const mod = ctx.pc.saves[ability] ?? 0;
   const heavy =
     (!!ctx.pc.heavilyEncumbered && (ability === 'STR' || ability === 'DEX' || ability === 'CON')) ||
     (!!ctx.pc.untrainedArmor && (ability === 'STR' || ability === 'DEX'));
+  // Danger Sense: Advantage on DEX saves. Rage: Advantage on STR saves.
+  const feature: AdvState[] = [
+    ...(ability === 'DEX' && ctx.pc.dangerSense ? ['advantage' as const] : []),
+    ...(ability === 'STR' && ctx.combat.raging ? ['advantage' as const] : []),
+  ];
   const roll = () => {
-    const raw = saveRoll(mod, dc, ctx.combat.pcConditions, ability, ctx.rng, ctx.pc.conditions, heavy ? ['disadvantage'] : []);
+    const raw = saveRoll(mod, dc, ctx.combat.pcConditions, ability, ctx.rng, ctx.pc.conditions, [...(heavy ? ['disadvantage' as const] : []), ...feature, ...adv]);
     const bless = raw.autoFail ? undefined : blessRoll(ctx);
     const total = raw.total + (bless ?? 0);
     return { ...raw, bless, total, ok: !raw.autoFail && total >= dc };
@@ -327,6 +391,7 @@ function damagePc(ctx: Ctx, amount: number) {
     const massive = amount - before >= ctx.pc.maxHp;
     push(ctx, { k: 'down', who: ctx.pc.name, pc: true, massive });
     ctx.outcome = massive ? 'dead' : 'down';
+    if (ctx.combat.raging) ctx.combat = { ...ctx.combat, raging: false };
   }
   concentrationCheck(ctx, amount);
 }
@@ -351,6 +416,26 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
       ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === foe.id ? foe : f)) };
       push(ctx, { k: 'act', who: foe.name, action: 'stand', detail: 'stands up (half its Speed)', pc: false });
     }
+    const burning = foe.conditions.find((c) => c.name === 'Searing Smite');
+    if (burning) {
+      foeBurn(ctx, foe, burning);
+      foe = ctx.combat.foes.find((f) => f.id === foe.id)!;
+      if (foe.hp <= 0) return;
+    }
+    const held = foe.conditions.find((c) => c.name === 'Restrained' && c.dc != null);
+    if (held) {
+      // A foe held by a spell spends its action on a Strength (Athletics) check to break free.
+      const m = abilityModOf(block.scores.STR);
+      const r = rollD20WithAdv('normal', ctx.rng);
+      const ok = r.kept + m >= held.dc!;
+      push(ctx, { k: 'check', who: foe.name, label: 'Athletics', d20s: r.d20s, kept: r.kept, adv: 'normal', mod: m, total: r.kept + m, dc: held.dc!, ok, why: ok ? 'breaks free' : 'stays caught' });
+      if (ok) {
+        ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === foe.id ? { ...f, conditions: f.conditions.filter((c) => c !== held) } : f)) };
+        push(ctx, { k: 'condition', who: foe.name, name: 'Restrained', on: false, why: 'broke free', pc: false });
+      }
+      endTurnOf(ctx, foe.id);
+      return;
+    }
   }
   const atk = block.attack;
   // A sidekick still standing draws every second foe's attack (never an opportunity attack on the fleeing PC).
@@ -361,7 +446,15 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
   }
   const pcConds = ctx.combat.pcConditions;
   const flank = !!ctx.rules.flanking && !atk.ranged && liveFoes(ctx).length >= 2;
-  const foeExtra: AdvState[] = [...(ctx.combat.dodging ? ['disadvantage' as const] : []), ...(flank ? ['advantage' as const] : [])];
+  // Sap and Vicious Mockery: Disadvantage on the foe's next attack roll, then they are used up.
+  const spent = foe.conditions.filter((c) => c.name === 'Sap' || c.name === 'Vicious Mockery');
+  const foeExtra: AdvState[] = [
+    ...(ctx.combat.dodging ? ['disadvantage' as const] : []),
+    ...(flank ? ['advantage' as const] : []),
+    ...(ctx.combat.reckless ? ['advantage' as const] : []),
+    ...(spent.length ? ['disadvantage' as const] : []),
+  ];
+  if (spent.length) ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === foe.id ? { ...f, conditions: f.conditions.filter((c) => !spent.includes(c)) } : f)) };
   const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, foeExtra, foeBlind(ctx, block), ctx.pc.conditions);
   const r = rollD20WithAdv(adv, ctx.rng);
   const bane = baneRoll(ctx, foe);
@@ -376,13 +469,27 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
   let damage: DiceRoll | undefined;
   let extra: DiceRoll | undefined;
   const hpBefore = ctx.pcHp;
+  let reduced: { label: string; roll?: DiceRoll; amount: number } | undefined;
   if (hit) {
     damage = rollDice(atk.damage, ctx.rng, { crit, critRule: ctx.rules.critRule });
     extra = atk.extra ? rollDice(atk.extra.dice, ctx.rng, { crit, critRule: ctx.rules.critRule }) : undefined;
     dealt = scaleFoeDamage(ctx, damage.total + (extra?.total ?? 0));
+    // Monk Deflect Attacks (once a round), then Rage resistance to bludgeoning, piercing and slashing.
+    if (ctx.pc.deflect && !ctx.combat.deflectUsed && dealt > 0 && canAct(ctx.combat.pcConditions, ctx.pc.conditions)) {
+      const roll = rollDice('1d10', ctx.rng, { extraBonus: ctx.pc.deflect.dexMod + ctx.pc.deflect.level });
+      const amount = Math.min(dealt, roll.total);
+      dealt -= amount;
+      ctx.combat = { ...ctx.combat, deflectUsed: true };
+      reduced = { label: 'Deflect Attacks', roll, amount };
+    }
+    if (ctx.combat.raging && /^(bludgeoning|piercing|slashing)$/i.test(atk.type) && dealt > 0) {
+      const amount = dealt - Math.floor(dealt / 2);
+      dealt -= amount;
+      reduced = reduced ? { ...reduced, label: `${reduced.label} and Rage resistance`, amount: reduced.amount + amount } : { label: 'Rage resistance', amount };
+    }
   }
   const hpAfter = Math.max(0, hpBefore - dealt);
-  push(ctx, { k: 'attack', attacker: foe.name, target: ctx.pc.name, with: atk.name, d20s: r.d20s, kept: r.kept, adv, mod: atk.toHit, total, ac, hit, crit, nat1, damage, extra, type: atk.type, dealt, hpBefore, hpAfter, maxHp: ctx.pc.maxHp, opportunity, pc: false, bane, ...(flank ? { flank } : {}) });
+  push(ctx, { k: 'attack', attacker: foe.name, target: ctx.pc.name, with: atk.name, d20s: r.d20s, kept: r.kept, adv, mod: atk.toHit, total, ac, hit, crit, nat1, damage, extra, type: atk.type, dealt, hpBefore, hpAfter, maxHp: ctx.pc.maxHp, opportunity, pc: false, bane, ...(flank ? { flank } : {}), ...(reduced ? { reduced } : {}) });
   if (hit) {
     damagePc(ctx, dealt);
     if (ctx.pcHp > 0 && atk.inflicts && !has(ctx.combat.pcConditions, atk.inflicts)) {
@@ -400,6 +507,29 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
     }
   }
   if (!opportunity) endTurnOf(ctx, foe.id);
+}
+
+/** Searing Smite: at the start of its turn the burning foe takes the burn dice, then a CON save ends the fire. */
+function foeBurn(ctx: Ctx, foe: RoundFoeState, burning: CombatCondition) {
+  const def = SPELLS[burning.source ?? ''] ?? SPELLS['Searing Smite']!;
+  const roll = rollDice(def.burn ?? '1d6', ctx.rng);
+  const hpBefore = foe.hp;
+  const res = damageFoe(ctx, foe, roll.total, def.onHit?.type ?? 'fire', false);
+  push(ctx, { k: 'extra', who: foe.name, label: `${def.name} burn ${roll.notation} (${roll.dice.join(', ')})`, amount: res.dealt, type: def.onHit?.type ?? 'fire', hpBefore, hpAfter: res.hpAfter, maxHp: foe.maxHp, pc: false });
+  for (const e of res.after) push(ctx, e);
+  if (res.hpAfter === 0) {
+    push(ctx, { k: 'down', who: foe.name, pc: false });
+    return;
+  }
+  const block = ctx.blocks[foe.id]!;
+  const m = abilityModOf(block.scores.CON);
+  const dc = burning.dc ?? 10;
+  const sv = saveRoll(m, dc, foe.conditions, 'CON', ctx.rng);
+  push(ctx, { k: 'save', who: foe.name, ability: 'CON', d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod: m, total: sv.total, dc, ok: sv.ok, autoFail: sv.autoFail, why: `against ${def.name}`, pc: false });
+  if (sv.ok) {
+    ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === foe.id ? { ...f, conditions: f.conditions.filter((c) => c.name !== 'Searing Smite') } : f)) };
+    push(ctx, { k: 'condition', who: foe.name, name: 'Searing Smite', on: false, why: 'the flames go out', pc: false });
+  }
 }
 
 /** Solo scaling: foe damage × the scale, at least 1 on a hit. */
@@ -513,6 +643,15 @@ interface Strike {
   sneakAttack?: string;
   /** A condition a hit leaves on the target until the end of your next turn. */
   rider?: string;
+  strBased?: boolean;
+  mastery?: WeaponMastery;
+  masteryDc?: number;
+  /** Flat damage added to a spell hit (Agonizing Blast). */
+  damageMod?: number;
+  /** Divine / Searing Smite riding this weapon attack, and the slot level it spends on a hit (null = a free use). */
+  smite?: { def: SpellDef; slot: number | null; dc: number };
+  /** Cleave's second attack: no ability modifier to damage, no further mastery. */
+  cleaveMastery?: boolean;
 }
 
 /** A marked target (Guiding Bolt) gives the next attack roll against it Advantage, then the mark is used up. */
@@ -522,13 +661,22 @@ function useMark(ctx: Ctx, target: RoundFoeState): boolean {
   return true;
 }
 
-function putRider(ctx: Ctx, target: RoundFoeState, name: string, why: string) {
-  const lasting = name === 'Prone' ? {} : { endsAfterTurnOf: 'pc', fresh: true };
+/**
+ * Leave a condition on a foe. Prone lasts until it stands; a Concentration spell's condition lasts while you
+ * concentrate (`held`); anything else ends after your next turn. `dc` is the escape DC (Entangle) or save DC (Searing Smite).
+ */
+function putRider(ctx: Ctx, target: RoundFoeState, name: string, why: string, opts: { held?: boolean; dc?: number } = {}) {
+  const lasting = name === 'Prone' || opts.held ? {} : { endsAfterTurnOf: 'pc', fresh: true };
   ctx.combat = {
     ...ctx.combat,
-    foes: ctx.combat.foes.map((f) => (f.id === target.id ? { ...f, conditions: [...f.conditions.filter((c) => c.name !== name), { name, source: why, ...lasting }] } : f)),
+    foes: ctx.combat.foes.map((f) => (f.id === target.id ? { ...f, conditions: [...f.conditions.filter((c) => c.name !== name), { name, source: why, ...lasting, ...(opts.dc != null ? { dc: opts.dc } : {}) }] } : f)),
   };
   push(ctx, { k: 'condition', who: target.name, name, on: true, why, pc: false });
+}
+
+/** Take a condition off a foe (a used-up Vex or Guiding Bolt mark). */
+function dropCondition(ctx: Ctx, target: RoundFoeState, name: string) {
+  ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === target.id ? { ...f, conditions: f.conditions.filter((c) => c.name !== name) } : f)) };
 }
 
 function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
@@ -543,6 +691,15 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
     ctx.combat = { ...ctx.combat, helped: false };
   }
   if (ctx.pc.heavilyEncumbered || ctx.pc.untrainedArmor) extraAdv.push('disadvantage');
+  // Reckless Attack (Strength attacks), Vex (next attack on that foe), Faerie Fire (attacks on a lit foe), Innate Sorcery (spell attacks).
+  if (ctx.combat.reckless && s.strBased && !s.spell) extraAdv.push('advantage');
+  if (has(target.conditions, 'Vex')) {
+    extraAdv.push('advantage');
+    dropCondition(ctx, target, 'Vex');
+  }
+  if (has(target.conditions, 'Faerie Fire')) extraAdv.push('advantage');
+  if (ctx.combat.innateSorcery && s.spell) extraAdv.push('advantage');
+  ctx.turn.attacked = true;
   let inspiration: InspirationUse | undefined;
   if (ctx.rules.inspiration === 'advantage' && !ctx.inspirationSpent) {
     extraAdv.push('advantage');
@@ -572,22 +729,96 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
   let sneak: DiceRoll | undefined;
   let half = false;
   let res: ReturnType<typeof damageFoe> = { dealt: 0, vulnerable: false, hpAfter: hpBefore, after: [] };
+  let bonus: StrikeBonus[] = [];
   if (hit) {
-    damage = rollDice(s.dice, ctx.rng, { crit, extraBonus: s.spell ? 0 : s.mod ?? 0, critRule: ctx.rules.critRule });
+    damage = rollDice(s.dice, ctx.rng, { crit, extraBonus: s.spell ? s.damageMod ?? 0 : s.mod ?? 0, critRule: ctx.rules.critRule });
     if (!s.spell && s.sneakAttack && adv === 'advantage' && (s.finesse || s.ranged)) sneak = rollDice(s.sneakAttack, ctx.rng, { crit, critRule: ctx.rules.critRule });
-    res = damageFoe(ctx, target, damage.total + (sneak?.total ?? 0), s.type, crit);
+    bonus = strikeBonuses(ctx, target, s, crit, block);
+    const extra = bonus.reduce((sum, b) => sum + (b.roll?.total ?? 0) + (b.flat ?? 0), 0);
+    res = damageFoe(ctx, target, damage.total + (sneak?.total ?? 0) + extra, s.type, crit);
   } else if (s.cantrip && ctx.pc.potentCantrip) {
     damage = rollDice(s.dice, ctx.rng);
     half = true;
     res = damageFoe(ctx, target, Math.floor(damage.total / 2), s.type, false);
   }
-  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: s.name, d20s: r.d20s, kept: r.kept, adv, mod: s.toHit, total, ac: block.ac, hit, crit, nat1, damage, sneak, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true, bless, ...(half ? { half } : {}), ...(s.spell ? { spell: true } : {}), ...(flank ? { flank } : {}), ...(inspiration ? { inspiration } : {}) });
+  push(ctx, { k: 'attack', attacker: ctx.pc.name, target: target.name, with: s.name, d20s: r.d20s, kept: r.kept, adv, mod: s.toHit, total, ac: block.ac, hit, crit, nat1, damage, sneak, type: s.type, dealt: res.dealt, hpBefore, hpAfter: res.hpAfter, maxHp: target.maxHp, vulnerable: res.vulnerable, pc: true, bless, ...(half ? { half } : {}), ...(s.spell ? { spell: true } : {}), ...(flank ? { flank } : {}), ...(inspiration ? { inspiration } : {}), ...(bonus.length ? { bonus } : {}), ...(s.cleaveMastery ? { mastery: 'Cleave' as const } : {}) });
   for (const e of res.after) push(ctx, e);
   if ((hit || half) && res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
   if (hit && s.rider && res.hpAfter > 0) putRider(ctx, target, s.rider, s.name);
+  if (hit && s.smite) smiteLanded(ctx, target, s.smite);
+  if (!s.spell && ctx.rules.mastery && s.mastery && !s.cleaveMastery) weaponMastery(ctx, target, s, hit, res.hpAfter);
   if (hit && damage && ctx.rules.cleave && !s.spell && !s.ranged && res.hpAfter === 0) {
     const raw = damage.total + (sneak?.total ?? 0);
     cleaveInto(ctx, s, total, crit, raw - (res.vulnerable ? Math.ceil(hpBefore / 2) : hpBefore));
+  }
+}
+
+/** Extra damage on a PC hit: Rage, Divine Favor, a Hunter's Mark / Hex mark, a smite, Frenzy, Colossus Slayer. Crits double the dice. */
+function strikeBonuses(ctx: Ctx, target: RoundFoeState, s: Strike, crit: boolean, block: StatBlock): StrikeBonus[] {
+  const out: StrikeBonus[] = [];
+  const roll = (dice: string) => rollDice(dice, ctx.rng, { crit, critRule: ctx.rules.critRule });
+  const weapon = !s.spell;
+  if (weapon && s.strBased && ctx.combat.raging && ctx.pc.rageDamage) out.push({ label: 'Rage', flat: ctx.pc.rageDamage });
+  if (weapon && ctx.combat.divineFavor) out.push({ label: 'Divine Favor', roll: roll(SPELLS['Divine Favor']!.onHit!.dice) });
+  const held = ctx.combat.concentration ? SPELLS[ctx.combat.concentration] : undefined;
+  if (held?.effect === 'mark' && held.onHit && target.conditions.some((c) => c.name === held.name)) out.push({ label: held.name, roll: roll(held.onHit.dice) });
+  if (s.smite) {
+    const def = s.smite.def;
+    out.push({ label: def.name, roll: roll(spellDice({ ...def, dice: def.onHit!.dice }, Math.max(1, s.smite.slot ?? 1))) });
+    if (def.vsUndead && block.kind === 'undead') out.push({ label: `${def.name} (Undead)`, roll: roll(def.vsUndead) });
+  }
+  if (weapon && s.strBased && ctx.pc.frenzy && ctx.combat.raging && ctx.combat.reckless && !ctx.turn.frenzy) {
+    ctx.turn.frenzy = true;
+    out.push({ label: 'Frenzy', roll: roll(`${ctx.pc.rageDamage ?? 2}d6`) });
+  }
+  if (weapon && ctx.pc.colossusSlayer && !ctx.turn.colossus && target.hp < target.maxHp) {
+    ctx.turn.colossus = true;
+    out.push({ label: 'Colossus Slayer', roll: roll('1d8') });
+  }
+  return out;
+}
+
+/** A smite landed: the slot (or the free use) is spent, and Searing Smite sets the foe burning. */
+function smiteLanded(ctx: Ctx, target: RoundFoeState, smite: NonNullable<Strike['smite']>) {
+  if (smite.slot) ctx.slotSpent = smite.slot;
+  else ctx.freeCastUsed = true;
+  push(ctx, { k: 'cast', who: ctx.pc.name, spell: smite.def.name, ...(smite.slot ? { slot: smite.slot } : {}), detail: smite.slot ? undefined : 'no slot' });
+  const now = ctx.combat.foes.find((f) => f.id === target.id)!;
+  if (smite.def.burn && now.hp > 0) putRider(ctx, now, 'Searing Smite', smite.def.name, { held: true, dc: smite.dc });
+}
+
+/**
+ * SRD 5.2.1 Weapon Mastery after a weapon attack: Graze (miss → ability modifier damage), Vex (Advantage on your next
+ * attack), Sap (the foe's next attack has Disadvantage), Slow (Speed −10), Topple (CON save or Prone), Cleave (a second
+ * attack roll on another foe, once a turn). Push and Nick have no effect in this engine.
+ */
+function weaponMastery(ctx: Ctx, target: RoundFoeState, s: Strike, hit: boolean, hpAfter: number) {
+  const m = s.mastery!;
+  const now = ctx.combat.foes.find((f) => f.id === target.id)!;
+  if (!hit) {
+    if (m !== 'Graze' || (s.mod ?? 0) <= 0) return;
+    const hpBefore = now.hp;
+    const res = damageFoe(ctx, now, s.mod!, s.type, false);
+    push(ctx, { k: 'extra', who: now.name, label: `Graze (${s.name})`, amount: res.dealt, type: s.type, hpBefore, hpAfter: res.hpAfter, maxHp: now.maxHp, pc: true });
+    for (const e of res.after) push(ctx, e);
+    if (res.hpAfter === 0) push(ctx, { k: 'down', who: now.name, pc: false });
+    return;
+  }
+  if (hpAfter <= 0 && m !== 'Cleave') return;
+  if (m === 'Vex' || m === 'Sap' || m === 'Slow') {
+    putRider(ctx, now, m === 'Slow' ? 'Slowed' : m, `${s.name} mastery`);
+  } else if (m === 'Topple') {
+    const block = ctx.blocks[now.id]!;
+    const mod = abilityModOf(block.scores.CON);
+    const dc = s.masteryDc ?? 10;
+    const sv = saveRoll(mod, dc, now.conditions, 'CON', ctx.rng);
+    push(ctx, { k: 'save', who: now.name, ability: 'CON', d20s: sv.d20s, kept: sv.kept, adv: sv.adv, mod, total: sv.total, dc, ok: sv.ok, autoFail: sv.autoFail, why: `against Topple (${s.name})`, pc: false });
+    if (!sv.ok) putRider(ctx, now, 'Prone', `Topple (${s.name})`);
+  } else if (m === 'Cleave' && !s.ranged && !ctx.turn.cleave) {
+    const next = liveFoes(ctx).find((f) => f.id !== target.id);
+    if (!next) return;
+    ctx.turn.cleave = true;
+    strike(ctx, next, { ...s, mod: Math.min(0, s.mod ?? 0), sneakAttack: undefined, smite: undefined, cleaveMastery: true });
   }
 }
 
@@ -607,9 +838,12 @@ function cleaveInto(ctx: Ctx, s: Strike, total: number, crit: boolean, leftover:
 function saveSpell(
   ctx: Ctx,
   targets: RoundFoeState[],
-  s: { name: string; dc: number; save: AttributeKey; dice?: string; type?: string; halfOnSave?: boolean; cantrip: boolean; rider?: string }
+  s: { name: string; dc: number; save: AttributeKey; dice?: string; type?: string; halfOnSave?: boolean; cantrip: boolean; rider?: string; held?: boolean }
 ) {
   let dmg: DiceRoll | undefined;
+  ctx.turn.attacked = true;
+  // Innate Sorcery: +1 to your spell save DC while it lasts.
+  if (ctx.combat.innateSorcery) s = { ...s, dc: s.dc + 1 };
   for (const t of targets) {
     const target = ctx.combat.foes.find((f) => f.id === t.id)!;
     if (target.hp <= 0) continue;
@@ -629,7 +863,7 @@ function saveSpell(
       if (res.hpAfter === 0) push(ctx, { k: 'down', who: target.name, pc: false });
     }
     const now = ctx.combat.foes.find((f) => f.id === target.id)!;
-    if (!sv.ok && s.rider && now.hp > 0) putRider(ctx, now, s.rider, s.name);
+    if (!sv.ok && s.rider && now.hp > 0) putRider(ctx, now, s.rider, s.name, s.held ? { held: true, ...(s.rider === 'Restrained' ? { dc: s.dc } : {}) } : {});
   }
 }
 
@@ -638,14 +872,27 @@ function pcAttack(ctx: Ctx, target: RoundFoeState, spell: boolean) {
   const cantrip = ctx.pc.cantrip;
   if (spell && cantrip?.kind === 'save') {
     unhide(ctx, `you cast ${cantrip.name}`);
-    saveSpell(ctx, [target], { name: cantrip.name, dc: cantrip.dc, save: cantrip.save ?? 'DEX', dice: cantrip.dice, type: cantrip.type, cantrip: true });
+    saveSpell(ctx, [target], { name: cantrip.name, dc: cantrip.dc, save: cantrip.save ?? 'DEX', dice: cantrip.dice, type: cantrip.type, cantrip: true, rider: cantrip.rider });
     return;
   }
   if (spell && cantrip) {
-    strike(ctx, target, { name: cantrip.name, toHit: cantrip.toHit, dice: cantrip.dice, type: cantrip.type, ranged: true, spell: true, cantrip: true });
+    strike(ctx, target, { name: cantrip.name, toHit: cantrip.toHit, dice: cantrip.dice, type: cantrip.type, ranged: !cantrip.melee, spell: true, cantrip: true, rider: cantrip.rider, damageMod: cantrip.damageMod });
     return;
   }
-  strike(ctx, target, { name: w.name, toHit: w.toHit, dice: w.dice, mod: w.mod, type: w.type, ranged: w.ranged, spell: false, cantrip: false, finesse: w.finesse, sneakAttack: w.sneakAttack });
+  strike(ctx, target, weaponStrike(w));
+}
+
+const weaponStrike = (w: PcWeapon, smite?: Strike['smite']): Strike => ({
+  name: w.name, toHit: w.toHit, dice: w.dice, mod: w.mod, type: w.type, ranged: w.ranged, spell: false, cantrip: false,
+  finesse: w.finesse, sneakAttack: w.sneakAttack, strBased: w.strBased, mastery: w.mastery, masteryDc: w.masteryDc, ...(smite ? { smite } : {}),
+});
+
+/** Monk Martial Arts: a bonus Unarmed Strike after the Attack action. */
+function bonusStrike(ctx: Ctx) {
+  const b = ctx.pc.bonusStrike;
+  const target = liveFoes(ctx)[0];
+  if (!b || !target || ctx.outcome !== 'ongoing') return;
+  strike(ctx, target, { name: b.name, toHit: b.toHit, dice: b.dice, mod: b.mod, type: b.type, ranged: false, spell: false, cantrip: false });
 }
 
 /** Cast a spell from the PC's list. `slot` is the slot level spent (null for a cantrip). */
@@ -660,12 +907,34 @@ function pcCast(ctx: Ctx, sp: PcSpell, slot: number | null, target: RoundFoeStat
     case 'attack':
       if (!target) break;
       if (slot) push(ctx, castEv);
-      strike(ctx, target, { name: def.name, toHit: sp.toHit, dice: spellDice(def, Math.max(1, level)), type: def.type ?? 'force', ranged: true, spell: true, cantrip: def.level === 0, rider: def.rider });
+      strike(ctx, target, { name: def.name, toHit: sp.toHit, dice: spellDice(def, Math.max(1, level)), type: def.type ?? 'force', ranged: !def.melee, spell: true, cantrip: def.level === 0, rider: def.rider, ...(def.level === 0 && sp.damageMod ? { damageMod: sp.damageMod } : {}) });
       break;
     case 'save': {
       const targets = def.area ? liveFoes(ctx) : target ? [target] : [];
       if (slot) push(ctx, castEv);
-      saveSpell(ctx, targets, { name: def.name, dc: sp.dc, save: def.save ?? 'DEX', dice: def.dice ? spellDice(def, Math.max(1, level)) : undefined, type: def.type, halfOnSave: def.halfOnSave, cantrip: def.level === 0, rider: def.rider });
+      if (def.concentration) ctx.combat = { ...ctx.combat, concentration: def.name };
+      saveSpell(ctx, targets, { name: def.name, dc: sp.dc, save: def.save ?? 'DEX', dice: def.dice ? spellDice(def, Math.max(1, level)) : undefined, type: def.type, halfOnSave: def.halfOnSave, cantrip: def.level === 0, rider: def.rider, held: def.concentration });
+      break;
+    }
+    case 'smite': {
+      // The smite rides a weapon attack: the slot (or free use) is spent only if the blow lands.
+      ctx.slotSpent = undefined;
+      if (target) strike(ctx, target, weaponStrike(ctx.pc.weapon, { def, slot: ctx.freeCast ? null : slot, dc: sp.dc }));
+      break;
+    }
+    case 'mark':
+    case 'divineFavor': {
+      // A Bonus Action spell, then the round's attack: a cantrip if you have one (Hex), else the weapon.
+      if (ctx.freeCast) ctx.freeCastUsed = true;
+      push(ctx, ctx.freeCast ? { ...castEv, detail: 'no slot' } : castEv);
+      if (def.effect === 'mark') {
+        ctx.combat = { ...ctx.combat, concentration: def.name };
+        if (target) putRider(ctx, target, def.name, def.name, { held: true });
+      } else {
+        ctx.combat = { ...ctx.combat, divineFavor: true };
+      }
+      const t = liveFoes(ctx)[0];
+      if (t) pcAttack(ctx, t, def.effect === 'mark' && !!ctx.pc.cantrip);
       break;
     }
     case 'missile': {
@@ -759,21 +1028,25 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
     ctx.combat = { ...ctx.combat, pcConditions: ctx.combat.pcConditions.filter((c) => c.name !== 'Prone') };
     push(ctx, { k: 'act', who: pc.name, action: 'stand', detail: 'stands up (half your Speed)', pc: true });
   }
-  ctx.combat = { ...ctx.combat, dodging: false };
+  ctx.combat = { ...ctx.combat, dodging: false, ...(ctx.combat.reckless ? { reckless: false } : {}), ...(ctx.combat.deflectUsed ? { deflectUsed: false } : {}) };
+  ctx.turn = {};
   if (!canAct(ctx.combat.pcConditions, pc.conditions)) {
     push(ctx, { k: 'act', who: pc.name, action: 'skip', detail: `cannot act (${ctx.combat.pcConditions.map((c) => c.name).join(', ')})`, pc: true });
+    endRageIfIdle(ctx);
     endTurnOf(ctx, 'pc');
     return;
   }
+  useFeatures(ctx, action);
   const target = liveFoes(ctx)[0];
-  const foesFastest = Math.max(0, ...liveFoes(ctx).filter((f) => !speedZero(f.conditions)).map((f) => ctx.blocks[f.id]!.speed));
+  const foesFastest = Math.max(0, ...liveFoes(ctx).filter((f) => !speedZero(f.conditions)).map((f) => ctx.blocks[f.id]!.speed - (has(f.conditions, 'Slowed') ? 10 : 0)));
   switch (action) {
     case 'attack':
       if (target) pcAttack(ctx, target, false);
+      if (target) bonusStrike(ctx);
       break;
     case 'cast': {
       const sp = ctx.spell && ctx.spell !== pc.cantrip?.name ? pc.spells?.find((s) => s.name === ctx.spell) : undefined;
-      if (sp) pcCast(ctx, sp, sp.def.level > 0 ? ctx.slotLevel ?? 1 : null, target);
+      if (sp) pcCast(ctx, sp, sp.def.level > 0 && !ctx.freeCast ? ctx.slotLevel ?? 1 : null, target);
       else if (target && pc.cantrip) pcAttack(ctx, target, true);
       else if (target) pcAttack(ctx, target, false);
       break;
@@ -839,9 +1112,47 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       break;
     }
     default:
-      push(ctx, { k: 'act', who: pc.name, action: 'other', detail: 'no attack this round', pc: true });
+      push(ctx, { k: 'act', who: pc.name, action: 'other', detail: ctx.featuresUsed.layOnHands ? 'no attack this round (Lay On Hands)' : 'no attack this round', pc: true });
   }
+  endRageIfIdle(ctx);
   endTurnOf(ctx, 'pc');
+}
+
+/** Bonus-action features before the action: Rage, Innate Sorcery, Lay On Hands, Reckless Attack (with an attack). */
+function useFeatures(ctx: Ctx, action: RoundAction) {
+  const f = ctx.features;
+  const pc = ctx.pc;
+  if (f.rage && pc.rageDamage && !ctx.combat.raging) {
+    if (ctx.combat.concentration) endConcentration(ctx, 'you fly into a rage');
+    ctx.combat = { ...ctx.combat, raging: true };
+    ctx.featuresUsed.rage = true;
+    ctx.turn.rageStarted = true;
+    push(ctx, { k: 'act', who: pc.name, action: 'feature', detail: `Rage: +${pc.rageDamage} damage on Strength attacks, Resistance to bludgeoning, piercing and slashing, Advantage on Strength saves`, pc: true });
+  }
+  if (f.innateSorcery && !ctx.combat.innateSorcery) {
+    ctx.combat = { ...ctx.combat, innateSorcery: true };
+    ctx.featuresUsed.innateSorcery = true;
+    push(ctx, { k: 'act', who: pc.name, action: 'feature', detail: 'Innate Sorcery: spell save DC +1 and Advantage on spell attack rolls for the fight', pc: true });
+  }
+  if (f.layOnHands && f.layOnHands > 0 && ctx.pcHp < pc.maxHp) {
+    const before = ctx.pcHp;
+    const amount = Math.min(f.layOnHands, pc.maxHp - before);
+    ctx.pcHp = before + amount;
+    ctx.featuresUsed.layOnHands = amount;
+    const roll: DiceRoll = { notation: `${amount}`, dice: [], bonus: amount, total: amount, crit: false };
+    push(ctx, { k: 'heal', who: pc.name, item: 'Lay On Hands', roll, hpBefore: before, hpAfter: ctx.pcHp, pool: amount });
+  }
+  if (f.reckless && action === 'attack' && pc.weapon.strBased) {
+    ctx.combat = { ...ctx.combat, reckless: true };
+    push(ctx, { k: 'act', who: pc.name, action: 'feature', detail: 'Reckless Attack: Advantage on Strength attacks this turn; attacks against you have Advantage until your next turn', pc: true });
+  }
+}
+
+/** Rage ends early on a turn you neither attacked nor forced a save (SRD 5.2.1; it also ends at 0 HP). */
+function endRageIfIdle(ctx: Ctx) {
+  if (!ctx.combat.raging || ctx.turn.rageStarted || ctx.turn.attacked) return;
+  ctx.combat = { ...ctx.combat, raging: false };
+  push(ctx, { k: 'act', who: ctx.pc.name, action: 'feature', detail: 'Rage ends: no attack this turn', pc: true });
 }
 
 /**
@@ -861,6 +1172,10 @@ export function playRound(input: {
   slotLevel?: number;
   /** Optional table rules (cleave, flanking). Off when absent. */
   rules?: RoundRules;
+  /** Bonus-action class features used this round. */
+  features?: RoundFeatures;
+  /** A class feature pays for the cast (no slot). */
+  freeCast?: boolean;
 }): RoundResult {
   const ctx: Ctx = {
     pc: input.pc,
@@ -875,6 +1190,10 @@ export function playRound(input: {
     spell: input.spell,
     slotLevel: input.slotLevel,
     rules: input.rules ?? {},
+    features: input.features ?? {},
+    freeCast: input.freeCast,
+    featuresUsed: {},
+    turn: {},
   };
   const order = [
     { id: 'pc', init: input.combat.pcInitiative, pcFirst: 1 },
@@ -901,6 +1220,8 @@ export function playRound(input: {
     ...(ctx.slotSpent ? { slotSpent: ctx.slotSpent } : {}),
     ...(ctx.mageArmor ? { mageArmor: true } : {}),
     ...(ctx.inspirationSpent ? { inspirationSpent: true } : {}),
+    ...(ctx.freeCastUsed ? { freeCastUsed: true } : {}),
+    ...(Object.keys(ctx.featuresUsed).length ? { featuresUsed: ctx.featuresUsed } : {}),
   };
 }
 

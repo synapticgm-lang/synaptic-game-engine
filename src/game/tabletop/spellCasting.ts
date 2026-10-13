@@ -6,7 +6,8 @@
  */
 import type { GameState } from '../types';
 import { rollDice, formatDice, type Rng } from '../rules/dice';
-import { pickSlot, slotLevelInInput, spellDice, spellInInput, SPELLS, spendSlot, type SpellDef } from '../rules/spells';
+import { atWillSpells, pickSlot, slotLevelInInput, slotsLeft, spellDice, spellInInput, SPELLS, spendSlot, type SpellDef } from '../rules/spells';
+import { featureLeft, type FeatureUse } from '../rules/classFeatures';
 import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sheetSpellcasting, tabletopArmorClass, untrainedArmor } from './characterBuild';
 
 export interface CasterKit {
@@ -30,7 +31,7 @@ export function casterKit(state: Pick<GameState, 'engineMode' | 'character'> & P
   return {
     cantrips: sc.cantrips,
     prepared: sc.prepared,
-    left: sc.slots.map((s) => s.left),
+    left: slotsLeft(state.character.srd!.classId, state.character.level ?? 1, state.character.casting),
     mod: abilityMod(state.character.attributes[sc.ability]),
     dc: sc.dc,
     attack: sc.attack,
@@ -44,12 +45,15 @@ function armorBlocksCasting(state: Pick<GameState, 'character' | 'inventory'>): 
 }
 
 export type CastRequest =
-  | { ok: true; def: SpellDef; slot: number | null }
+  | { ok: true; def: SpellDef; slot: number | null; free?: FeatureUse }
   | { ok: false; def: SpellDef; problem: string };
+
+/** A class feature that casts this spell with no slot (Favored Enemy, Paladin's Smite). */
+const FREE_CAST: Record<string, FeatureUse> = { "Hunter's Mark": 'favoredEnemy', 'Divine Smite': 'paladinSmite' };
 
 /** The spell a line asks for and the slot it spends, or why it cannot be cast. Null when no spell is named. */
 export function resolveCastRequest(
-  state: Pick<GameState, 'engineMode' | 'character' | 'inventory'>,
+  state: Pick<GameState, 'engineMode' | 'character' | 'inventory'> & Partial<Pick<GameState, 'roundCombat'>>,
   input: string,
   where: 'fight' | 'outside'
 ): CastRequest | null {
@@ -57,9 +61,12 @@ export function resolveCastRequest(
   const name = spellInInput(input);
   if (!kit || !name) return null;
   const def = SPELLS[name]!;
-  if (!kit.cantrips.includes(name) && !kit.prepared.includes(name)) {
+  const classId = state.character.srd!.classId;
+  const atWill = atWillSpells(classId).includes(name);
+  if (!kit.cantrips.includes(name) && !kit.prepared.includes(name) && !atWill) {
     return { ok: false, def, problem: `${name} is not one of your ${def.level ? 'prepared spells' : 'cantrips'}` };
   }
+  if (state.roundCombat?.raging) return { ok: false, def, problem: 'you cannot cast spells while you rage' };
   if (armorBlocksCasting(state)) return { ok: false, def, problem: 'you cannot cast while wearing armor you are not trained with' };
   if (where === 'fight' && !def.combat) return { ok: false, def, problem: `${name} is no use in a fight` };
   if (where === 'outside' && !def.outside) return { ok: false, def, problem: `${name} needs a foe to aim at` };
@@ -67,8 +74,10 @@ export function resolveCastRequest(
   if (def.effect === 'mageArmor' && (state.inventory ?? []).some((i) => i.equipped && ARMOR_TABLE[i.name])) {
     return { ok: false, def, problem: 'Mage Armor needs you to wear no armor' };
   }
-  if (def.level === 0) return { ok: true, def, slot: null };
+  if (def.level === 0 || atWill) return { ok: true, def, slot: null };
   const want = slotLevelInInput(input);
+  const free = FREE_CAST[name];
+  if (free && !want && featureLeft(state.character, free) > 0) return { ok: true, def, slot: null, free };
   const slot = pickSlot(kit.left, def.level, want);
   if (slot == null) return { ok: false, def, problem: want ? `no level ${want} spell slot left` : `no spell slot left for ${name}` };
   return { ok: true, def, slot };
@@ -103,8 +112,8 @@ export function spellRoundChips(state: GameState): string[] {
   const heal = prepared.find((d) => d.effect === 'heal');
   if (heal && isHurt(state)) picks.push(heal.name);
   const area = prepared.find((d) => d.area && d.dice && (d.effect === 'save'));
-  const single = prepared.find((d) => d.effect === 'attack' || d.effect === 'missile' || (d.effect === 'save' && !d.area));
-  const buff = prepared.find((d) => d.concentration && !concentrating);
+  const single = prepared.find((d) => d.effect === 'attack' || d.effect === 'missile' || d.effect === 'smite' || (d.effect === 'save' && !d.area));
+  const buff = prepared.find((d) => (d.concentration && !concentrating) || (d.effect === 'divineFavor' && !state.roundCombat?.divineFavor));
   for (const d of [foes > 1 ? area : undefined, buff, single, area]) {
     if (d && !picks.includes(d.name)) picks.push(d.name);
   }
@@ -120,7 +129,8 @@ export function tabletopCastChip(state: GameState): string | null {
     if (def.effect === 'heal' && state.character.hp < (state.character.maxHp || state.character.hp) && isHurt(state)
       && resolveCastRequest(state, `Cast ${name}`, 'outside')?.ok) return `Cast ${name}`;
   }
-  if (kit.prepared.includes('Mage Armor') && resolveCastRequest(state, 'Cast Mage Armor', 'outside')?.ok) return 'Cast Mage Armor';
+  const mageArmor = kit.prepared.includes('Mage Armor') || atWillSpells(state.character.srd!.classId).includes('Mage Armor');
+  if (mageArmor && resolveCastRequest(state, 'Cast Mage Armor', 'outside')?.ok) return 'Cast Mage Armor';
   return null;
 }
 
@@ -145,7 +155,7 @@ export function resolveOutOfCombatCast(state: GameState, input: string, rng: Rng
     };
   }
   const ch = state.character;
-  const slotTag = req.slot ? ` (level ${req.slot} slot)` : ' (cantrip)';
+  const slotTag = req.slot ? ` (level ${req.slot} slot)` : def.level === 0 ? ' (cantrip)' : ' (no slot)';
   let next: GameState = req.slot ? { ...state, character: { ...ch, casting: spendSlot(ch.casting, req.slot) } } : state;
   const receipts: string[] = [];
   if (def.effect === 'heal') {
@@ -159,7 +169,7 @@ export function resolveOutOfCombatCast(state: GameState, input: string, rng: Rng
   } else if (def.effect === 'mageArmor') {
     const before = deriveTabletopSheet(state)!.ac;
     next = { ...next, character: { ...next.character, casting: { ...(next.character.casting ?? { slotsUsed: [] }), mageArmor: true } } };
-    const after = tabletopArmorClass(ch.attributes.DEX, next.inventory ?? [], true).ac;
+    const after = tabletopArmorClass(ch.attributes.DEX, next.inventory ?? [], true, ch).ac;
     next = { ...next, character: { ...next.character, armorClass: after } };
     receipts.push(`Spell: ${def.name}${slotTag} — AC ${before} → ${after} until your next long rest`);
   } else {

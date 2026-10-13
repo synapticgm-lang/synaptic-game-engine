@@ -13,11 +13,13 @@ import { pushCombatStateTx } from '../stateTx';
 import { fightLootClause, weaponInHand } from '../infoSheet';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
 import { advanceClock, isRoadFoe, settleRoadMeeting } from '../travelJourney';
-import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sneakAttackDice, tabletopArmorClass, WEAPON_DICE, weaponProficient } from './characterBuild';
+import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, masteryFor, sneakAttackDice, tabletopArmorClass, WEAPON_DICE, weaponProficient } from './characterBuild';
+import { potionHealDice } from '../rules/magicItems';
+import { FEATURE_LABEL, featureLeft, featureMax, RAGE_DAMAGE, spendFeature, type FeatureUse } from '../rules/classFeatures';
 import type { Rng } from '../rules/dice';
 import { statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
-import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundResult } from '../rules/roundCombat';
-import { spellInInput, spendSlot, SPELLS } from '../rules/spells';
+import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
+import { atWillSpells, spellInInput, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
@@ -26,7 +28,7 @@ import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { carriedCoinLb } from '../rules/coins';
 import { sceneLight, type SceneLight } from '../rules/exploration';
-import { fightAlly, healingPotion, pcCantripName, pcWeaponName } from './combatChips';
+import { fightAlly, healingPotion, pcCantripName, pcWeaponName, wearsHeavyArmor } from './combatChips';
 
 export interface RoundFightResult {
   state: GameState;
@@ -80,17 +82,26 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
   const w = WEAPON_DICE[weaponName];
   const str = abilityMod(sc.STR);
   const dex = abilityMod(sc.DEX);
-  const atkMod = !w ? str : w.ranged ? dex : w.finesse ? Math.max(str, dex) : str;
+  const level = state.character.level || 1;
+  // Monk Martial Arts: DEX may replace STR for Unarmed Strikes and melee weapons, and the Unarmed Strike uses the Martial Arts die.
+  const martialArts = hasClassFeature(state.character, /^Martial Arts/);
+  const atkMod = !w ? (martialArts ? Math.max(str, dex) : str) : w.ranged ? dex : w.finesse || martialArts ? Math.max(str, dex) : str;
+  const strBased = !w?.ranged && atkMod === str && (!w || !w.finesse || str >= dex);
   const prof = !w || weaponProficient(srd.classId, weaponName);
+  const mastery = houseRulesOf(state).rulesVersion === 'srd-5.2.1' ? masteryFor(state.character, state.inventory, weaponName) : undefined;
   const cantrip = pcCantripName(state);
   const kit = casterKit(state);
   const castMod = kit?.mod ?? (srd.classId === 'wizard' ? abilityMod(sc.INT) : abilityMod(sc.WIS));
+  // Warlock Agonizing Blast: the spellcasting modifier on each damaging cantrip hit.
+  const agonizing = hasClassFeature(state.character, /Agonizing Blast/) ? castMod : 0;
   const spells: PcSpell[] = kit
-    ? [...kit.cantrips.filter((n) => n !== cantrip), ...kit.prepared]
+    ? [...kit.cantrips.filter((n) => n !== cantrip), ...kit.prepared, ...atWillSpells(srd.classId).filter((n) => !kit.prepared.includes(n))]
         .map((n) => SPELLS[n]!)
         .filter((d) => d.combat)
-        .map((def) => ({ name: def.name, def, toHit: kit.attack, dc: kit.dc, mod: kit.mod }))
+        .map((def) => ({ name: def.name, def, toHit: kit.attack, dc: kit.dc, mod: kit.mod, ...(agonizing && def.level === 0 && def.dice ? { damageMod: agonizing } : {}) }))
     : [];
+  const cantripDef = cantrip ? SPELLS[cantrip] : undefined;
+  const rageDamage = hasClassFeature(state.character, /^Rage$/) ? RAGE_DAMAGE : undefined;
   const armored = (state.inventory ?? []).some((i) => i.equipped && ARMOR_TABLE[i.name]);
   const sideCompanion = sidekickOf(state);
   const sidekick = sideCompanion ? sidekickProfile(sideCompanion, state.character.level || 1) : null;
@@ -113,27 +124,44 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
     weapon: {
       name: weaponName,
       toHit: atkMod + (prof ? pb : 0),
-      dice: w?.dice ?? '1d1',
+      dice: w?.dice ?? (martialArts ? '1d6' : '1d1'),
       mod: atkMod,
       type: w?.type ?? 'bludgeoning',
       ranged: !!w?.ranged,
       finesse: !!w?.finesse,
-      ...(srd.classId === 'rogue' ? { sneakAttack: sneakAttackDice(state.character.level || 1) } : {}),
+      ...(srd.classId === 'rogue' ? { sneakAttack: sneakAttackDice(level) } : {}),
+      ...(strBased ? { strBased: true } : {}),
+      ...(mastery ? { mastery, masteryDc: 8 + atkMod + pb } : {}),
     },
     ...(kit ? { spells, slots: kit.left } : {}),
-    ...(kit && !armored ? { mageArmorAc: tabletopArmorClass(sc.DEX, state.inventory ?? [], true).ac } : {}),
+    ...(kit && !armored ? { mageArmorAc: tabletopArmorClass(sc.DEX, state.inventory ?? [], true, state.character).ac } : {}),
     ...(hasClassFeature(state.character, /Improved Critical/) ? { improvedCritical: true } : {}),
     ...(hasClassFeature(state.character, /Potent Cantrip/) ? { potentCantrip: true } : {}),
     ...(hasClassFeature(state.character, /Disciple of Life/) ? { discipleOfLife: true } : {}),
-    ...(cantrip
+    ...(cantrip && cantripDef
       ? {
-          cantrip:
-            cantrip === 'Fire Bolt'
-              ? { name: cantrip, kind: 'attack' as const, toHit: castMod + pb, dc: 8 + castMod + pb, dice: '1d10', type: 'fire' }
-              : { name: cantrip, kind: 'save' as const, toHit: castMod + pb, dc: 8 + castMod + pb, save: 'DEX' as const, dice: '1d8', type: 'radiant' },
+          cantrip: {
+            name: cantrip,
+            kind: cantripDef.effect === 'save' ? ('save' as const) : ('attack' as const),
+            toHit: castMod + pb,
+            dc: 8 + castMod + pb,
+            ...(cantripDef.save ? { save: cantripDef.save } : {}),
+            dice: cantripDef.dice ?? '1d8',
+            type: cantripDef.type ?? 'force',
+            ...(cantripDef.melee ? { melee: true } : {}),
+            ...(cantripDef.rider ? { rider: cantripDef.rider } : {}),
+            ...(agonizing && cantripDef.effect === 'attack' ? { damageMod: agonizing } : {}),
+          },
         }
       : {}),
-    ...(potion ? { potion: { name: potion.name, heal: '2d4+2' } } : {}),
+    ...(potion ? { potion: { name: potion.name, heal: potionHealDice(potion.name) } } : {}),
+    ...(rageDamage ? { rageDamage } : {}),
+    ...(hasClassFeature(state.character, /^Danger Sense/) ? { dangerSense: true } : {}),
+    ...(hasClassFeature(state.character, /Frenzy/) ? { frenzy: true } : {}),
+    ...(hasClassFeature(state.character, /Colossus Slayer/) ? { colossusSlayer: true } : {}),
+    ...(hasClassFeature(state.character, /^Deflect Attacks/) ? { deflect: { dexMod: dex, level } } : {}),
+    ...(martialArts && !armored ? { bonusStrike: { name: 'Unarmed Strike', toHit: Math.max(str, dex) + pb, dice: '1d6', mod: Math.max(str, dex), type: 'bludgeoning' } } : {}),
+    ...(hasClassFeature(state.character, /Eldritch Mind/) ? { eldritchMind: true } : {}),
     // A sidekick fights with its own numbers; any other companion keeps the provisional +PB+2 to hit, 1d6+2.
     ...(sidekick ? { sidekick } : {}),
     ...(ally && sidekick ? { ally: { name: sidekick.name, toHit: sidekick.toHit, dice: sidekick.dice, type: sidekick.type } } : {}),
@@ -292,11 +320,16 @@ export function resolveRoundFight(
   const lead: string[] = [];
   let spell: string | undefined;
   let slotLevel: number | undefined;
+  let freeUse: FeatureUse | undefined;
+  const feat = roundFeatures(working, live, input, action);
+  receipts.push(...feat.notes);
+  lead.push(...feat.facts);
   if (action === 'cast') {
-    const req = resolveCastRequest(working, input, 'fight');
+    const req = resolveCastRequest({ ...working, roundCombat: live }, input, 'fight');
     if (req?.ok) {
       spell = req.def.name;
       slotLevel = req.slot ?? undefined;
+      freeUse = req.free;
     } else if (req) {
       // A spell the engine cannot cast spends nothing; the round goes to a weapon attack instead.
       receipts.push(`Spell: ${req.def.name} — not cast (${req.problem}); no slot spent`);
@@ -315,7 +348,10 @@ export function resolveRoundFight(
       ...(solo ? { foeDamageScale: 0.75, noRiders: true } : {}),
       ...(inspiration ? { inspiration } : {}),
       ...(light.darkness ? { darkness: true } : {}),
+      ...(house.rulesVersion === 'srd-5.2.1' ? { mastery: true } : {}),
     },
+    ...(Object.keys(feat.features).length ? { features: feat.features } : {}),
+    ...(freeUse ? { freeCast: true } : {}),
   });
   if (opts.pre) receipts.unshift(`Fight: ${enc.name} forces the fight`);
   receipts.push(...(started?.notes ?? []));
@@ -365,6 +401,16 @@ export function resolveRoundFight(
     next = { ...next, character: { ...next.character, casting } };
     if (res.mageArmor) next = { ...next, character: { ...next.character, armorClass: deriveTabletopSheet(next)?.ac ?? next.character.armorClass } };
     if (res.slotSpent) receipts.push(slotsLine(next)!);
+  }
+  const spent: Array<[FeatureUse, number]> = [
+    ...(res.featuresUsed?.rage ? [['rage', 1] as [FeatureUse, number]] : []),
+    ...(res.featuresUsed?.innateSorcery ? [['innateSorcery', 1] as [FeatureUse, number]] : []),
+    ...(res.featuresUsed?.layOnHands ? [['layOnHands', res.featuresUsed.layOnHands] as [FeatureUse, number]] : []),
+    ...(res.freeCastUsed && freeUse ? [[freeUse, 1] as [FeatureUse, number]] : []),
+  ];
+  for (const [use, n] of spent) {
+    next = { ...next, character: spendFeature(next.character, use, n) };
+    receipts.push(featureLine(next.character, use));
   }
   const onRoad = isRoadFoe(state, raw);
   const roundsSoFar = res.round;
@@ -437,7 +483,50 @@ export function resolveRoundFight(
     return { state: back.state, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}`, foeAfter: { ...encNow, phase: 'engaged' } };
   }
   facts.push(dead ? 'You are dead.' : `${cap(enc.name)} left you where you fell. You are dying and must fight for breath.`);
+  if (dead) next = endAttunementOnDeath(next);
   return { state: next, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}`, foeAfter: { ...encNow, phase: 'engaged' } };
+}
+
+/** "Class feature: Rage — 1 of 2 uses left" / "Class feature: Lay On Hands — 3 of 5 HP left in the pool". */
+export function featureLine(c: Pick<GameState['character'], 'srd' | 'level' | 'featureUses'>, use: FeatureUse): string {
+  const max = featureMax(c.srd!.classId, c.level ?? 1, use);
+  const left = featureLeft(c, use);
+  return use === 'layOnHands'
+    ? `Class feature: ${FEATURE_LABEL[use]} — ${left} of ${max} HP left in the pool`
+    : `Class feature: ${FEATURE_LABEL[use]} — ${left} of ${max} use${max === 1 ? '' : 's'} left`;
+}
+
+/** Bonus-action features a line asks for this round: Rage, Reckless Attack, Innate Sorcery, Lay On Hands. */
+function roundFeatures(
+  state: GameState,
+  live: RoundCombatState | null,
+  input: string,
+  action: RoundAction
+): { features: RoundFeatures; notes: string[]; facts: string[] } {
+  const s = (input ?? '').toLowerCase();
+  const c = state.character;
+  const features: RoundFeatures = {};
+  const notes: string[] = [];
+  const facts: string[] = [];
+  if (/\brage\b/.test(s) && featureMax(c.srd!.classId, c.level ?? 1, 'rage') > 0 && !live?.raging) {
+    const why = featureLeft(c, 'rage') <= 0 ? 'no uses left until you rest' : wearsHeavyArmor(state) ? 'no Rage in Heavy armor' : action === 'cast' ? 'you cannot cast while raging' : null;
+    if (why) {
+      notes.push(`Class feature: Rage — not used (${why})`);
+      facts.push(`You reach for your rage, but ${why}.`);
+    } else features.rage = true;
+  }
+  if (/\breckless\b/.test(s) && hasClassFeature(c, /^Reckless Attack/)) features.reckless = true;
+  if (/\binnate sorcery\b/.test(s) && featureLeft(c, 'innateSorcery') > 0 && !live?.innateSorcery) features.innateSorcery = true;
+  if (/\blay on hands\b/.test(s) && featureLeft(c, 'layOnHands') > 0 && c.hp < c.maxHp) {
+    features.layOnHands = Math.min(featureLeft(c, 'layOnHands'), c.maxHp - c.hp);
+  }
+  return { features, notes, facts };
+}
+
+/** SRD: attunement to an item ends when you die. */
+function endAttunementOnDeath(state: GameState): GameState {
+  if (!(state.inventory ?? []).some((i) => i.attuned)) return state;
+  return { ...state, inventory: (state.inventory ?? []).map((i) => (i.attuned ? { ...i, attuned: false } : i)) };
 }
 
 /** Revivify's diamond (SRD): 300 GP. */
@@ -499,6 +588,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = Math.random): 
     receipts.push(hpLine(0, 1));
     fact = 'You surge back to consciousness with a gasp and get up, barely on your feet.';
   } else if (r.state.dead) {
+    next = endAttunementOnDeath(next);
     fact = 'Your breath stops. You are dead.';
   } else if (r.state.stable) {
     next = { ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } };

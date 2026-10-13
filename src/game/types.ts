@@ -27,6 +27,8 @@ export interface Item {
   iconUrl?: string | null;
   /** Hosted icon gen failed for this item — compact fail on the slot, do not retry-spam. */
   iconFailed?: boolean;
+  /** Tabletop: the wearer is attuned to this magic item (rules/magicItems). */
+  attuned?: boolean;
 }
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'material' | 'container' | 'accessory' | 'quest';
@@ -53,7 +55,8 @@ export interface Attributes {
   CHA: number;
 }
 
-export type TabletopClassId = 'fighter' | 'rogue' | 'cleric' | 'wizard';
+export type TabletopClassId =
+  | 'barbarian' | 'bard' | 'cleric' | 'druid' | 'fighter' | 'monk' | 'paladin' | 'ranger' | 'rogue' | 'sorcerer' | 'warlock' | 'wizard';
 export type TabletopSpeciesId =
   | 'human' | 'elf' | 'dwarf' | 'halfling' | 'gnome' | 'orc' | 'dragonborn' | 'tiefling' | 'goliath';
 export type TabletopBackgroundId = 'acolyte' | 'criminal' | 'sage' | 'soldier';
@@ -126,6 +129,8 @@ export interface CombatCondition {
   /** Put on during that combatant's own turn: it survives the end of this turn and ends after the next. */
   fresh?: boolean;
   source?: string;
+  /** The save or check DC that ends it (Entangle's Restrained, Searing Smite's burning). */
+  dc?: number;
 }
 
 export interface RoundFoeState {
@@ -162,6 +167,26 @@ export interface RoundCombatState {
   foeToHitShift?: number;
   /** Solo scaling was on when the fight started (no ally): foe damage ×0.75 and no save riders. */
   solo?: boolean;
+  /** Barbarian Rage is on (it ends with the fight, or on a turn with no attack). */
+  raging?: boolean;
+  /** Barbarian Reckless Attack this round: attacks against the PC have Advantage until its next turn. */
+  reckless?: boolean;
+  /** Sorcerer Innate Sorcery is on for the rest of the fight. */
+  innateSorcery?: boolean;
+  /** Paladin Divine Favor is on for the rest of the fight. */
+  divineFavor?: boolean;
+  /** Monk Deflect Attacks used this round. */
+  deflectUsed?: boolean;
+}
+
+/** One logged oracle roll: an uncertain world fact settled by a d100 (rules/oracle). */
+export interface OracleEntry {
+  turn: number;
+  question: string;
+  odds: string;
+  chance: number;
+  roll: number;
+  answer: 'Yes, and' | 'Yes' | 'No' | 'No, and';
 }
 
 export interface DeathSaveState {
@@ -303,6 +328,8 @@ export interface Character {
   casting?: CastingState;
   /** Tabletop Heroic Inspiration held (one at a time). */
   heroicInspiration?: boolean;
+  /** Tabletop class feature uses spent since they last came back (rules/classFeatures). */
+  featureUses?: Record<string, number>;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
@@ -830,6 +857,8 @@ export interface GameState {
   worldHour?: number;
   /** Tabletop: Hit Dice spent on short rests since the last long rest (the character holds one per level). */
   hitDiceSpent?: number;
+  /** Tabletop: every oracle question asked and the d100 that answered it (rules/oracle). */
+  oracleLog?: OracleEntry[];
   /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
   memorableMoments?: MemorableMomentState;
   /**
