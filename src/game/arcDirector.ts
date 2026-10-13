@@ -708,7 +708,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest):/.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die):/.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
@@ -785,8 +785,13 @@ export function runArcDirectorBeforeGm(
     const rest = applyRestHeal(working, playerInput);
     if (rest.receipt) {
       working = rest.state;
+      if (rest.dieLine) systemReceipts.push(rest.dieLine);
       systemReceipts.push(rest.receipt);
-      mandates.push(`ENGINE RESULT (required fact — state it plainly): ${rest.receipt}. The player rested and recovered.`);
+      mandates.push(
+        rest.fact
+          ? `ENGINE RESULT (required fact — state it plainly): ${rest.fact}`
+          : `ENGINE RESULT (required fact — state it plainly): ${rest.receipt}. The player rested and recovered.`
+      );
     }
   }
 

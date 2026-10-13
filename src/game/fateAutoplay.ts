@@ -1179,9 +1179,7 @@ export async function headlessFateTurn(
   const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
-  const storyTurn = applyStoryRpgTurn(arcState, playerInput, {
-    committedBeatsBefore: govInputState.arcDirector?.committedBeatIds ?? [],
-  });
+  const storyTurn = applyStoryRpgTurn(arcState, playerInput);
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.

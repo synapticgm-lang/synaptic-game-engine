@@ -77,8 +77,9 @@ describe('replay bank mode3 (mode lap 3)', () => {
     expect(n).toBeDefined();
     expect(R.after(n!).currentLocation).toBe('Consul Caravan Camp');
     expect(status(R, n!)).toMatch(/XP Gained: 50 \(quest step: /);
+    // Mode lap 4: the decision steps tick only when the player takes them; this run never does.
     const steps = R.after(lastTurn(R)).quests?.find((q) => q.id === 'salt-road-heist-quest-1')?.objectives ?? [];
-    expect(steps.filter((o) => o.completed).length).toBeGreaterThanOrEqual(2);
+    expect(steps.filter((o) => o.completed).map((o) => o.description)).toEqual(['Scout the caravan']);
   });
 
   it('[mode3 guard] LitRPG keeps the encounter level in the writer facts and gets no Story RPG turn', () => {

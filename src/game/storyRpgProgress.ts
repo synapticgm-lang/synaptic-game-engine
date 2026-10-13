@@ -5,8 +5,9 @@
  * - Standing: helping or refusing a named person here moves how they stand with the player
  *   (npcMemories disposition), and the change is a world fact the writer must carry.
  * - Quest step: the main quest's next open step ticks when the player is at the place that step
- *   names ("Scout the caravan" at Consul Caravan Camp), or, for a step that names no place, when the
- *   player makes a decision (a stance toward a named person) or a Story RPG arc decision beat commits.
+ *   names ("Scout the caravan" at Consul Caravan Camp). A step that names no place is a decision
+ *   ("Pick an approach"): it is offered as its own chip and ticks only when the player takes it.
+ *   Beat timing, travel and talk never tick it.
  * Other modes are untouched.
  */
 import type { GameState, NpcMemory, Quest } from './types';
@@ -14,7 +15,7 @@ import { detectStanceTreatment } from './factionStandings';
 import { recordNpcTreatmentFromAction } from './npcMemory';
 import { presentNpcNames } from './npcRelationships';
 import { mainSpineQuest } from './questPlay';
-import { contractById } from './beatContract';
+import { objectiveChip } from './choiceRanking';
 
 export type StoryRpgTurn = { state: GameState; receipts: string[] };
 
@@ -71,11 +72,18 @@ function stanceTarget(state: GameState, action: string): string | null {
   return present.find((n) => low.includes(n.toLowerCase())) ?? (present.length === 1 ? present[0] : null);
 }
 
-export function applyStoryRpgTurn(
-  state: GameState,
-  playerInput: string,
-  opts: { committedBeatsBefore?: readonly string[] } = {}
-): StoryRpgTurn {
+const chipKey = (s: string) => s.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
+
+/** Story RPG: the main quest's open decision step (one that names no place) as the chip that takes it. */
+export function storyRpgDecisionChip(state: GameState): string | null {
+  if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter) return null;
+  const quest = mainSpineQuest(state);
+  const open = quest?.objectives?.find((o) => !o.completed)?.description ?? '';
+  if (!open || placeForStep(state, open)) return null;
+  return objectiveChip(open);
+}
+
+export function applyStoryRpgTurn(state: GameState, playerInput: string): StoryRpgTurn {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete) return { state, receipts: [] };
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const receipts: string[] = [];
@@ -101,11 +109,8 @@ export function applyStoryRpgTurn(
   const open = quest?.objectives?.find((o) => !o.completed)?.description ?? '';
   if (quest && open) {
     const place = placeForStep(next, open);
-    const beforeBeats = new Set(opts.committedBeatsBefore ?? []);
-    const decisionBeat = (next.arcDirector?.committedBeatIds ?? []).some(
-      (id) => !beforeBeats.has(id) && contractById(id)?.biblePrefix === 'cape-district-vigil' && contractById(id)?.kind === 'quest_stage'
-    );
-    const done = place ? atPlace(next, place) : !!target || decisionBeat;
+    const decision = place ? null : storyRpgDecisionChip(state);
+    const done = place ? atPlace(next, place) : !!decision && chipKey(action) === chipKey(decision);
     const ticked = done ? tickNextStep(next.quests ?? [], quest.id) : null;
     if (ticked) {
       next = { ...next, quests: ticked.quests };

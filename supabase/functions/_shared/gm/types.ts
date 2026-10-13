@@ -627,6 +627,8 @@ export interface GameState {
   journey?: TravelJourney | null;
   /** 29u — hour of day (0–24) moved by travel time; sceneFacts.timeOfDay follows it. */
   worldHour?: number;
+  /** Tabletop: Hit Dice spent on short rests since the last long rest (the character holds one per level). */
+  hitDiceSpent?: number;
   /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
   memorableMoments?: MemorableMomentState;
   /**

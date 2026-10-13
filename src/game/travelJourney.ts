@@ -668,11 +668,13 @@ function liveRoadFoe(state: GameState, enc: RoadEncounter): ActiveEncounter {
 /**
  * Before the fight engine: the road meeting this input takes on, as the foe the engine settles this turn.
  * Facing a fightable meeting, or fleeing one that blocks the lane. Null otherwise.
+ * Story RPG spawns no fights of its own, but a meeting it already offers chips for is settled the same way.
  */
 export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter | null {
   const j = state.journey;
   const enc = j?.encounter;
-  if (!enc || state.activeEncounter || !isJourneyUnderway(state) || !engineAllowsCombat(state)) return null;
+  const settles = engineAllowsCombat(state) || state.engineMode === 'rpg';
+  if (!enc || state.activeEncounter || !isJourneyUnderway(state) || !settles) return null;
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (facesFight(input, enc)) return liveRoadFoe(state, enc);
   if (FLEE_WORDS.test(input) && laneBlocked(enc)) return liveRoadFoe(state, enc);

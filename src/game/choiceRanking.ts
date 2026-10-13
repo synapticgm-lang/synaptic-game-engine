@@ -24,6 +24,7 @@ import { giverIsHere, isTalkStageObjective, talkStageGiver } from './questGiver'
 import { hallTopicAlreadyAnswered } from './openingEstablishment';
 import { travelChipMoves } from './chipLegality';
 import { objectiveOpensInterior } from './enterInterior';
+import { storyRpgDecisionChip } from './storyRpgProgress';
 
 export type { CirclingMemory } from './types';
 
@@ -339,6 +340,9 @@ function travelDest(chip: string): string | null {
 /** The quest's next step as one chip, when the engine knows one. */
 export function storyChip(state: GameState): string | null {
   if (state.activeEncounter) return null;
+  // Story RPG: a decision step is taken by its own chip (storyRpgProgress ticks it), wherever the player is.
+  const decision = storyRpgDecisionChip(state);
+  if (decision) return decision;
   const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
   if (!quest) return null;
   const here = (state.currentLocation ?? '').toLowerCase();

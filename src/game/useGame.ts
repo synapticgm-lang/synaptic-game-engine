@@ -2717,9 +2717,7 @@ export function useGame() {
       const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
       liveCurrent = dungeonTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...dungeonTurn.receipts];
-      const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput, {
-        committedBeatsBefore: stateAtTurnStart.arcDirector?.committedBeatIds ?? [],
-      });
+      const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput);
       liveCurrent = storyTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...storyTurn.receipts];
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.

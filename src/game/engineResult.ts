@@ -6,7 +6,7 @@
 import type { EngineMode } from './types';
 
 const CHROME_RECEIPT =
-  /^(?:XP Gained|Arc XP|Level Up|HP:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —)/i;
+  /^(?:XP Gained|Arc XP|Level Up|HP:|Hit Die:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —)/i;
 
 /** A foe's health figure ("Wardline Bandit HP: 9/16 (−4)"). */
 const FOE_HP_FIGURE = /^[^:]{1,60} HP: \d+\/\d+/;
@@ -19,9 +19,17 @@ export function isChromeReceipt(receipt: string): boolean {
 /** An engine level figure on a foe or meeting ("(level 2)", "(level 3, 18 HP)", "— level 1"). */
 const ENGINE_LEVEL_FIGURE = /\s*\(level \d+(?:, \d+ HP)?\)|\s+[—-] level \d+\b/gi;
 
-/** Outside LitRPG an encounter's level is bookkeeping: the writer never sees it, so prose cannot paste it. */
+/** An item's rarity tag ("[Common] Worn Hand Axe"). */
+const RARITY_TAG = /\[(?:Common|Uncommon|Rare|Epic|Legendary|Mythic)\]\s*/gi;
+
+/**
+ * Outside LitRPG an encounter's level is bookkeeping: the writer never sees it, so prose cannot paste it.
+ * Story RPG has no rarity tiers, so loot reaches the writer by name alone.
+ */
 function withoutEngineLevel(receipt: string, mode: EngineMode | undefined): string {
-  return !mode || mode === 'litrpg' ? receipt : receipt.replace(ENGINE_LEVEL_FIGURE, '');
+  if (!mode || mode === 'litrpg') return receipt;
+  const plain = receipt.replace(ENGINE_LEVEL_FIGURE, '');
+  return mode === 'rpg' ? plain.replace(RARITY_TAG, '') : plain;
 }
 
 /** This turn's world-change receipts as one plain fact line (empty when nothing changed). */

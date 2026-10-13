@@ -13,6 +13,7 @@ import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
 import { spineEngineChipLabels } from './pyoaSpine';
 import { journeyPads } from './travelJourney';
+import { storyRpgDecisionChip } from './storyRpgProgress';
 import { dungeonCardChoices } from './dungeonCard';
 
 /**
@@ -167,7 +168,13 @@ export function filterInventedContextChoices(
   const pcName = state.character?.name;
   const lastPlayer = lastPlayerAction(state);
   const engineChips = new Set(
-    [...spineEngineChipLabels(state), ...journeyPads(state), ...dungeonCardChoices(state), ...openingOfferPads(state)].map((l) => l.trim().toLowerCase())
+    [
+      ...spineEngineChipLabels(state),
+      ...journeyPads(state),
+      ...dungeonCardChoices(state),
+      ...openingOfferPads(state),
+      storyRpgDecisionChip(state) ?? '',
+    ].filter(Boolean).map((l) => l.trim().toLowerCase())
   );
 
   return choices.filter((choice) => {
