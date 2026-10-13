@@ -184,8 +184,8 @@ describe('29r XP in every mode', () => {
     expect(finishSettlementQuestCard(s, cardOf(s).id).xp).toBe(0);
   });
 
-  it('stamp is 2026-10-13a', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13a');
-    expect(BUILD_STAMP).toBe('2026-10-13a');
+  it('stamp is 2026-10-13b', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13b');
+    expect(BUILD_STAMP).toBe('2026-10-13b');
   });
 });
