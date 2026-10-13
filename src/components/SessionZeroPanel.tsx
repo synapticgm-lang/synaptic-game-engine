@@ -3,6 +3,7 @@ import type { Settings } from '@/game/types';
 import { SessionZeroRules } from './CampaignSettings';
 import { defaultSheetId, importSheetText, listSheets, setDefaultSheet, sheetLabel, type SavedSheet } from '@/game/tabletop/sheetLibrary';
 import { keepSheet, syncSheetLibrary } from '@/game/tabletop/sheetLibrarySync';
+import { CharacterBuilderPanel } from './CharacterBuilderPanel';
 
 export interface SessionZeroDraft {
   lines: string;
@@ -26,6 +27,8 @@ export function SessionZeroPanel({ settings, onSettingsChange, value, onChange }
   const [sheets, setSheets] = useState<SavedSheet[]>(listSheets);
   const [paste, setPaste] = useState('');
   const [check, setCheck] = useState<{ ok: boolean; lines: string[] } | null>(null);
+  const [builder, setBuilder] = useState<{ sheet: SavedSheet | null } | null>(null);
+  const selected = sheets.find((s) => s.id === value.sheetId) ?? null;
 
   useEffect(() => {
     let live = true;
@@ -52,7 +55,7 @@ export function SessionZeroPanel({ settings, onSettingsChange, value, onChange }
   const def = defaultSheetId();
 
   return (
-    <div className="space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3" data-testid="session-zero">
+    <div className="sgm-sheet-box space-y-3 p-3" data-testid="session-zero">
       <div>
         <div className="font-medium text-slate-200">Session zero</div>
         <p className="text-[10px] leading-snug text-slate-500">
@@ -87,7 +90,7 @@ export function SessionZeroPanel({ settings, onSettingsChange, value, onChange }
         <select
           value={value.sheetId ?? ''}
           onChange={(e) => onChange({ ...value, sheetId: e.target.value || null })}
-          className="w-full rounded-md border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-200"
+          className="sgm-sheet-input w-full px-2 py-1 text-xs"
           data-testid="session-zero-sheet"
         >
           <option value="">{def ? 'My default sheet (or build in the inn book)' : 'Build in the inn book'}</option>
@@ -96,17 +99,38 @@ export function SessionZeroPanel({ settings, onSettingsChange, value, onChange }
           ))}
         </select>
       </label>
-      {value.sheetId && (
-        <button
-          type="button"
-          onClick={() => {
-            setDefaultSheet(value.sheetId === def ? null : value.sheetId);
-            setSheets(listSheets());
-          }}
-          className="text-[11px] text-sky-300 underline"
-        >
-          {value.sheetId === def ? 'Stop using as my default' : 'Make this my default sheet'}
+      <div className="flex flex-wrap gap-2 text-[11px]">
+        <button type="button" onClick={() => setBuilder({ sheet: null })} className="sgm-sheet-btn px-2 py-1" data-testid="session-zero-build">
+          Open the character builder
         </button>
+        {selected && (
+          <button type="button" onClick={() => setBuilder({ sheet: selected })} className="sgm-sheet-btn px-2 py-1">
+            View or edit this sheet
+          </button>
+        )}
+        {value.sheetId && (
+          <button
+            type="button"
+            onClick={() => {
+              setDefaultSheet(value.sheetId === def ? null : value.sheetId);
+              setSheets(listSheets());
+            }}
+            className="sgm-info-accent underline"
+          >
+            {value.sheetId === def ? 'Stop using as my default' : 'Make this my default sheet'}
+          </button>
+        )}
+      </div>
+      {builder && (
+        <CharacterBuilderPanel
+          initial={builder.sheet}
+          fixedMethod={settings.ttStatMethod && settings.ttStatMethod !== 'choose' ? settings.ttStatMethod : null}
+          onSaved={(list, sheet) => {
+            setSheets(list);
+            onChange({ ...value, sheetId: sheet.id });
+          }}
+          onClose={() => setBuilder(null)}
+        />
       )}
 
       <details className="text-xs text-slate-300">

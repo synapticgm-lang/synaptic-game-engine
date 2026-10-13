@@ -29,6 +29,13 @@ import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments
 import { MemorablePlateChrome } from './comic/MemorablePlateChrome';
 import { stripRepairMarkdown } from '@/game/repairEngine';
 import type { PendingRepair } from '@/game/types';
+import { tabletopCreationPending } from '@/game/tabletop/creationFlow';
+import { houseRulesOf } from '@/game/rules/houseRules';
+import { creationRng } from '@/game/tabletop/characterBuild';
+import type { SavedSheet } from '@/game/tabletop/sheetLibrary';
+import { CharacterBuilderPanel } from './CharacterBuilderPanel';
+import { DicePreview, liveDiceItem } from './DicePreview';
+import { RollLine, RollDisplayContext } from './RollDie';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -117,10 +124,17 @@ interface Props {
   onAcceptBeautyOffer?: (entryId: string) => void;
   onDismissBeautyOffer?: (entryId: string) => void;
   contentMode?: string | null;
+  /** Tabletop inn-book creation: a sheet from the builder page goes to the same confirm page as the chips. */
+  onUseBuiltSheet?: (sheet: SavedSheet) => void;
 }
 
-export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, onUseBuiltSheet }: Props) {
   const [input, setInput] = useState('');
+  const [builderOpen, setBuilderOpen] = useState(false);
+  const creating = tabletopCreationPending(state);
+  const statMethod = houseRulesOf(state).statMethod;
+  const lastGmId = useMemo(() => [...state.log].reverse().find((e) => e.role === 'gm')?.id ?? null, [state.log]);
+  const rollDisplay = useMemo(() => ({ mode: diceAnimation, newestEntryId: lastGmId }), [diceAnimation, lastGmId]);
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
   const [hideText, setHideText] = useState(() => readBoolPref(HIDE_TEXT_KEY));
@@ -223,6 +237,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   };
 
   return (
+    <RollDisplayContext.Provider value={rollDisplay}>
     <div className="sgm-play-center relative flex min-h-0 flex-1 flex-col">
       {bgImage && (
         <div
@@ -322,7 +337,9 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
             {diceRoll && (
               <div className="flex items-center justify-center py-4">
                 <div className="sgm-dice-outcome flex h-16 w-16 items-center justify-center rounded-lg border border-crimson-700/40 bg-crimson-950/30 shadow-[0_0_24px_rgba(220,38,38,0.2)]">
-                  <Dice5 size={36} className="animate-spin text-crimson-400" style={{ animationDuration: '0.6s', color: 'var(--sgm-dice-accent, #f87171)' }} />
+                  <span className={diceAnimation === 'excited' ? `sgm-dice-roll-excited sgm-dice-fx-${liveDiceItem().diceSkin?.material ?? 'default'}` : 'sgm-dice-roll-normal'} style={{ display: 'inline-flex' }}>
+                    <DicePreview die={20} size={40} />
+                  </span>
                 </div>
               </div>
             )}
@@ -413,6 +430,26 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onDiscard={onDiscardPendingTurn}
               onReroll={onRerollPendingTurn}
               onEditNarrative={onEditPendingNarrative}
+            />
+          )}
+
+          {creating && onUseBuiltSheet && (
+            <div className="mb-2 flex items-center gap-2 text-xs">
+              <button type="button" onClick={() => setBuilderOpen(true)} disabled={busy} className="sgm-sheet-btn px-3 py-1.5" data-testid="open-character-builder">
+                Open the character builder
+              </button>
+              <span className="text-slate-500">or pick from the inn book below.</span>
+            </div>
+          )}
+          {builderOpen && creating && onUseBuiltSheet && (
+            <CharacterBuilderPanel
+              fixedMethod={statMethod === 'choose' ? null : statMethod}
+              saveDice={creationRng(state)}
+              onUse={(sheet) => {
+                setBuilderOpen(false);
+                onUseBuiltSheet(sheet);
+              }}
+              onClose={() => setBuilderOpen(false)}
             />
           )}
 
@@ -582,6 +619,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         </div>
       </div>
     </div>
+    </RollDisplayContext.Provider>
   );
 }
 
@@ -700,7 +738,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       {hasRealGmStory(entry) && showSystemLog && (() => {
         const lines = filterSystemLogForEngine(entry.systemLog ?? [], engineMode);
         return lines.length > 0 ? (
-          <SystemLogPanel lines={lines} verbosity={statVerbosity} />
+          <SystemLogPanel lines={lines} verbosity={statVerbosity} entryId={entry.id} />
         ) : null;
       })()}
       {saveId && hasRealGmStory(entry) && !isRevealing && (
@@ -780,7 +818,7 @@ function RepairBanner({
   );
 }
 
-function SystemLogPanel({ lines, verbosity }: { lines: string[]; verbosity: StatVerbosity }) {
+function SystemLogPanel({ lines, verbosity, entryId }: { lines: string[]; verbosity: StatVerbosity; entryId: string }) {
   const filtered = useMemo(() => {
     if (verbosity === 'detailed') return lines;
     if (verbosity === 'core') {
@@ -792,14 +830,16 @@ function SystemLogPanel({ lines, verbosity }: { lines: string[]; verbosity: Stat
   if (filtered.length === 0) return null;
 
   return (
-    <div className="ml-4 mt-2 max-w-lg rounded-lg border border-blue-500/50 border-l-4 border-l-sky-400 bg-blue-950/50 px-3 py-2 shadow-inner shadow-blue-900/40">
-      <div className="mb-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
+    <div className="sgm-status-panel ml-4 mt-2 max-w-lg rounded-lg border border-l-4 px-3 py-2 shadow-inner">
+      <div className="sgm-status-head mb-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em]">
         <Terminal size={10} /> Status
-        <span className="font-sans normal-case tracking-normal text-[9px] text-blue-300/70">Turn results</span>
+        <span className="font-sans normal-case tracking-normal text-[9px] opacity-70">Turn results</span>
       </div>
       <div className="space-y-0.5">
         {filtered.map((line, i) => (
-          <div key={i} className="font-mono text-[11px] text-blue-100/90">{line}</div>
+          <div key={i} className="sgm-status-line font-mono text-[11px]">
+            <RollLine line={line} entryId={entryId} />
+          </div>
         ))}
       </div>
     </div>

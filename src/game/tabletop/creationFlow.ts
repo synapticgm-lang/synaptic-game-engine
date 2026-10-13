@@ -31,7 +31,7 @@ import {
   type TabletopPicks,
 } from './characterBuild';
 import { houseRulesOf } from '../rules/houseRules';
-import { defaultSheetId, findSheet, importSheetText, listSheets, sheetLabel, type SavedSheet } from './sheetLibrary';
+import { defaultSheetId, findSheet, importSheetText, listSheets, sheetLabel, validateSheet, type SavedSheet } from './sheetLibrary';
 import { srdLevelUp } from '../rules/advancement';
 import { makeSidekick, sidekickOf, SIDEKICKS } from '../rules/sidekick';
 import { dndXpToNext } from '../xpRules';
@@ -228,6 +228,20 @@ function fromLibrary(state: GameState, sheet: SavedSheet, note?: string): GameSt
     ? state
     : { ...state, character: { ...state.character, name: sheet.name } };
   return toConfirm(named, { ...sheet.picks, source: 'library' }, note ?? `${sheetLabel(sheet)}, from your saved sheets.`, sheet.hpMethod);
+}
+
+/**
+ * A sheet made on the character builder page: checked by the same validator as a pasted or library sheet, then the
+ * same confirm page as the chips (Begin play, the HP choice and Start over stay on the pad). The builder's name wins.
+ */
+export function takeBuiltSheet(state: GameState, raw: unknown): GameState {
+  if (!tabletopCreationPending(state)) return state;
+  const check = validateSheet(raw);
+  const said: GameState = { ...state, log: [...state.log, systemRow(state, [`› ${check.ok ? sheetLabel(check.sheet) : 'A sheet from the character builder'}`])] };
+  if (!check.ok) return withPrompt(said, `That sheet cannot be used yet: ${check.problems.join(' ')}`);
+  const named: GameState = { ...said, character: { ...said.character, name: check.sheet.name } };
+  const fixes = check.corrections.length ? ` Changes to fit the rules: ${check.corrections.join(' ')}` : '';
+  return toConfirm(named, { ...check.sheet.picks, source: 'build' }, `Built on the character page.${fixes}`, check.sheet.hpMethod);
 }
 
 function quickPicks(state: GameState, rng: Rng): TabletopPicks {

@@ -14,6 +14,7 @@ import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import { BubbleSpeakControl } from './BubbleSpeakControl';
 import { GmResponseFeedback } from './GmResponseFeedback';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
+import { RollLine } from './RollDie';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -264,11 +265,11 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
         </div>
 
         {hasSystemLog && (hasRealGmStory(entry) || entry.presentation === 'mud-receipt') && (
-          <div className={`border-t px-4 py-2 ${entry.presentation === 'mud-receipt' ? 'border-emerald-500/40 bg-emerald-950/30' : 'border-blue-500/40 bg-blue-950/40'}`}>
-            <div className={`mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] ${entry.presentation === 'mud-receipt' ? 'text-emerald-300' : 'text-blue-300'}`}>
+          <div className={`border-t px-4 py-2 ${entry.presentation === 'mud-receipt' ? 'border-emerald-500/40 bg-emerald-950/30' : 'sgm-status-panel'}`}>
+            <div className={`mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] ${entry.presentation === 'mud-receipt' ? 'text-emerald-300' : 'sgm-status-head'}`}>
               <Terminal size={10} />
               {entry.presentation === 'mud-receipt' ? 'Receipt' : 'Status'}
-              <span className={`font-sans normal-case tracking-normal text-[9px] ${entry.presentation === 'mud-receipt' ? 'text-emerald-300/70' : 'text-blue-300/70'}`}>
+              <span className={`font-sans normal-case tracking-normal text-[9px] ${entry.presentation === 'mud-receipt' ? 'text-emerald-300/70' : 'opacity-70'}`}>
                 {entry.presentation === 'mud-receipt' ? 'Turn facts (code)' : 'Turn results'}
               </span>
             </div>
@@ -276,9 +277,9 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
               {systemLines.map((line, i) => (
                 <div
                   key={i}
-                  className={`font-mono text-[11px] ${entry.presentation === 'mud-receipt' ? 'text-emerald-100/90' : 'text-blue-100/90'}`}
+                  className={`font-mono text-[11px] ${entry.presentation === 'mud-receipt' ? 'text-emerald-100/90' : 'sgm-status-line'}`}
                 >
-                  {line}
+                  <RollLine line={line} entryId={entry.id} />
                 </div>
               ))}
             </div>

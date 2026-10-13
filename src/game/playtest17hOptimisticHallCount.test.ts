@@ -48,8 +48,8 @@ function namedAfterPage1(over: Partial<GameState> = {}): GameState {
 
 describe('playtest17h — optimistic hall count + last-resort advance', () => {
   it('HUD/BUILD are 17h, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-13x');
-    expect(BUILD_STAMP).toBe('2026-10-13x');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-13y');
+    expect(BUILD_STAMP).toBe('2026-10-13y');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

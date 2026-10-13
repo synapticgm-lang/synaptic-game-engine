@@ -16,7 +16,7 @@ import { isDying } from './tabletop/roundFight';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import { commitOfferedPad, downloadPlayDump, withOfferedChoices } from './playTranscript';
-import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending } from './tabletop/creationFlow';
+import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending, takeBuiltSheet } from './tabletop/creationFlow';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn } from './storyRpgProgress';
@@ -1881,6 +1881,16 @@ export function useGame() {
     void persist(updated);
     setShowMapModal(false);
     addToast('Exited active map zone', 'info');
+  });
+
+  /** A sheet from the character builder page: the same confirm page as the inn-book chips. */
+  const applyBuiltSheet = useCallbackRef((sheet: unknown) => {
+    const current = stateRef.current;
+    if (!current || busy || turnInFlightRef.current || !tabletopCreationPending(current)) return;
+    const built = takeBuiltSheet(withHouseRules(current, settingsRef.current), sheet);
+    stateRef.current = built;
+    setState(built);
+    void persist(built);
   });
 
   const sendAction = useCallbackRef(async (input: string) => {
@@ -6098,6 +6108,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     outOfMemorableAdOffer,
     dismissOutOfMemorableAdOffer: () => setOutOfMemorableAdOffer(false),
     sendAction,
+    applyBuiltSheet,
     cancelTurn: () => {
       turnAbortRef.current?.abort();
       resetTurnUi();

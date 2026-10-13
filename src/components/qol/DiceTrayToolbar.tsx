@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type CSSProperties } from 'react';
+import { rollDie as rollRuleDie } from '@/game/rules/dice';
+import { emitDiceRoll, rollAnimationMs, rollAnimationScale } from '@/game/rules/rollView';
 import {
   ChevronUp, ChevronDown, Trash2, Sparkles, Dices, Zap,
 } from 'lucide-react';
@@ -37,14 +39,14 @@ const MOD_LABELS: Record<Modifier, string> = {
   dis: 'Dis',
 };
 
-const ROLL_MS: Record<DiceAnimationMode, number> = {
-  static: 0,
-  normal: 450,
-  excited: 1100,
-};
-
 function rollDie(sides: DieType): number {
-  return Math.floor(Math.random() * sides) + 1;
+  return rollRuleDie(sides, Math.random);
+}
+
+/** The animation reveals a number already rolled; Excited grows with how high it landed on its own die. */
+function revealFor(mode: DiceAnimationMode, die: DieType, raw: number): { ms: number; scale: number } {
+  const onD20 = Math.max(1, Math.round((raw / die) * 20));
+  return { ms: rollAnimationMs(mode, onD20), scale: rollAnimationScale(mode, onD20) };
 }
 
 function computeOutcome(die: DieType, raw: number, mod: Modifier): { total: number; outcome: RollEntry['outcome'] } {
@@ -89,33 +91,33 @@ export function DiceTrayToolbar({
   const [logOpen, setLogOpen] = useState(false);
   const [rolling, setRolling] = useState<DieType | null>(null);
   const [formulaOpen, setFormulaOpen] = useState(false);
+  const [reveal, setReveal] = useState({ ms: 450, scale: 1 });
   const material = activeDiceMaterial();
 
   const handleRoll = useCallback((die: DieType) => {
-    const delay = ROLL_MS[diceAnimation] ?? 450;
-    if (delay <= 0) {
-      const raw = rollDie(die);
-      const { total, outcome } = computeOutcome(die, raw, modifier);
-      setRolls((prev) => [{
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        die, raw, modifier, total, outcome,
-        timestamp: Date.now(),
-      }, ...prev].slice(0, 30));
-      return;
-    }
-    setRolling(die);
-    setTimeout(() => {
-      const raw = rollDie(die);
-      const { total, outcome } = computeOutcome(die, raw, modifier);
-      const entry: RollEntry = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        die, raw, modifier, total, outcome,
-        timestamp: Date.now(),
-      };
+    const raw = rollDie(die);
+    const { total, outcome } = computeOutcome(die, raw, modifier);
+    const entry: RollEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      die, raw, modifier, total, outcome,
+      timestamp: Date.now(),
+    };
+    const land = () => {
       setRolls((prev) => [entry, ...prev].slice(0, 30));
       setRolling(null);
-    }, delay);
-  }, [modifier, diceAnimation]);
+      if (die === 20) {
+        emitDiceRoll({ kept: raw, crit: raw === 20, fumble: raw === 1, mode: diceAnimation, material: material ?? null, source: 'tray' });
+      }
+    };
+    const { ms, scale } = revealFor(diceAnimation, die, raw);
+    if (ms <= 0) {
+      land();
+      return;
+    }
+    setReveal({ ms, scale });
+    setRolling(die);
+    setTimeout(land, ms);
+  }, [modifier, diceAnimation, material]);
 
   const clearLog = useCallback(() => setRolls([]), []);
 
@@ -291,9 +293,10 @@ export function DiceTrayToolbar({
                     rolling === d.die
                       ? diceAnimation === 'excited'
                         ? `sgm-dice-roll-excited ${excitedFxClass(material)}`
-                        : 'animate-spin'
+                        : 'sgm-dice-roll-normal'
                       : ''
                   }`}
+                  style={{ '--sgm-roll-ms': `${reveal.ms}ms`, '--sgm-roll-scale': reveal.scale } as CSSProperties}
                 >
                   <DicePreview die={d.die} size={26} />
                 </span>
@@ -309,6 +312,7 @@ export function DiceTrayToolbar({
         open={formulaOpen}
         onClose={() => setFormulaOpen(false)}
         onRollComplete={handleFormulaComplete}
+        diceAnimation={diceAnimation}
       />
     </div>
   );

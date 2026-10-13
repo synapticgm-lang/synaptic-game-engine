@@ -1652,11 +1652,31 @@ html[data-sgm-material='1'] .sgm-play-input-footer {
 /* ===== EXCITED DICE THEME FX ===== */
 @keyframes sgm-dice-spin-xl {
   0% { transform: rotate(0deg) scale(1); }
-  40% { transform: rotate(280deg) scale(1.18); }
+  40% { transform: rotate(280deg) scale(var(--sgm-roll-scale, 1.18)); }
   100% { transform: rotate(720deg) scale(1); }
 }
 .sgm-dice-roll-excited {
-  animation: sgm-dice-spin-xl 1.05s cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: sgm-dice-spin-xl var(--sgm-roll-ms, 1.05s) cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes sgm-dice-spin-short {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.sgm-dice-roll-normal {
+  animation: sgm-dice-spin-short var(--sgm-roll-ms, 450ms) ease-out;
+}
+/* Engine roll shown in STATUS: the player's dice skin; crit / fumble glow after it lands. */
+.sgm-roll-crit {
+  filter: drop-shadow(0 0 5px #34d399) drop-shadow(0 0 9px var(--sgm-dice-accent, #34d399));
+}
+.sgm-roll-fumble {
+  filter: drop-shadow(0 0 5px #f43f5e) grayscale(0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sgm-dice-roll-excited,
+  .sgm-dice-roll-normal {
+    animation: none;
+  }
 }
 .sgm-dice-fx-circuit {
   filter: drop-shadow(0 0 6px #38bdf8) drop-shadow(0 0 10px #fbbf2488);
@@ -1742,6 +1762,91 @@ html[data-sgm-material='1'] .sgm-play-input-footer {
 }
 .sgm-info-fill {
   background-color: var(--sgm-accent, #ef4444);
+}
+
+/* ===== CHARACTER SHEET (builder, saved sheets, in-game sheet) — every box follows the equipped theme ===== */
+.sgm-sheet-box {
+  border: 1px solid color-mix(in srgb, var(--sgm-accent, #64748b) 38%, #334155);
+  background-color: color-mix(in srgb, var(--sgm-panel, #0f172a) 82%, var(--sgm-bg, #020617));
+  color: var(--sgm-text, #e2e8f0);
+  border-radius: 0.375rem;
+}
+.sgm-sheet-box-strong {
+  border: 2px solid color-mix(in srgb, var(--sgm-accent, #64748b) 60%, #334155);
+  background-color: color-mix(in srgb, var(--sgm-panel, #0f172a) 70%, var(--sgm-accent, #64748b) 8%);
+  color: var(--sgm-text, #e2e8f0);
+  border-radius: 0.5rem;
+}
+html[data-sgm-material='1'] .sgm-sheet-box,
+html[data-sgm-material='1'] .sgm-sheet-box-strong {
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgm-panel, #0f172a) 80%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 86%, transparent)),
+    var(--sgm-panel-texture, none);
+  background-size: auto, cover;
+  background-blend-mode: normal, soft-light;
+}
+.sgm-sheet-label {
+  color: var(--sgm-muted, #94a3b8);
+  font-family: var(--sgm-font-ui, 'Inter', system-ui, sans-serif);
+}
+.sgm-sheet-value {
+  color: var(--sgm-text, #f1f5f9);
+}
+.sgm-sheet-mod {
+  color: var(--sgm-accent, #34d399);
+}
+.sgm-sheet-prof {
+  color: var(--sgm-accent, #f1f5f9);
+}
+.sgm-sheet-input {
+  border: 1px solid color-mix(in srgb, var(--sgm-accent, #64748b) 40%, #334155);
+  background-color: color-mix(in srgb, var(--sgm-bg, #020617) 85%, var(--sgm-panel, #0f172a));
+  color: var(--sgm-text, #f1f5f9);
+  border-radius: 0.375rem;
+}
+.sgm-sheet-btn {
+  border: 1px solid color-mix(in srgb, var(--sgm-accent, #64748b) 55%, transparent);
+  background-color: color-mix(in srgb, var(--sgm-accent, #475569) 22%, var(--sgm-panel, #0f172a));
+  color: var(--sgm-text, #f1f5f9);
+  border-radius: 0.375rem;
+}
+.sgm-sheet-btn:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--sgm-accent, #475569) 36%, var(--sgm-panel, #0f172a));
+}
+.sgm-sheet-btn:disabled {
+  opacity: 0.45;
+}
+
+/* LitRPG System window: the equipped theme's accent (System blue when no theme is equipped). */
+.sgm-system-window {
+  --sgm-system-accent: var(--sgm-accent, #38bdf8);
+  border: 2px solid color-mix(in srgb, var(--sgm-system-accent) 72%, transparent);
+  background-color: color-mix(in srgb, var(--sgm-system-accent) 14%, var(--sgm-bg, #082f49) 80%);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--sgm-system-accent) 20%, transparent);
+}
+.sgm-system-window-glow {
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--sgm-system-accent) 12%, transparent), transparent 50%, color-mix(in srgb, var(--sgm-bg, #082f49) 40%, transparent));
+}
+.sgm-system-window-corner {
+  border-color: color-mix(in srgb, var(--sgm-system-accent) 85%, #fff 10%);
+}
+.sgm-system-window-head {
+  color: color-mix(in srgb, var(--sgm-system-accent) 85%, #fff 15%);
+}
+.sgm-system-window-line {
+  color: color-mix(in srgb, var(--sgm-text, #f0f9ff) 88%, var(--sgm-system-accent));
+}
+/* STATUS block under a GM beat: theme accent, still the ledger look. */
+.sgm-status-panel {
+  border-color: color-mix(in srgb, var(--sgm-accent, #3b82f6) 50%, transparent);
+  border-left-color: var(--sgm-accent, #38bdf8);
+  background-color: color-mix(in srgb, var(--sgm-accent, #1e3a8a) 14%, var(--sgm-bg, #020617) 80%);
+}
+.sgm-status-head {
+  color: color-mix(in srgb, var(--sgm-accent, #93c5fd) 80%, #fff 20%);
+}
+.sgm-status-line {
+  color: color-mix(in srgb, var(--sgm-text, #dbeafe) 90%, var(--sgm-accent, #93c5fd));
 }
 
 /* ===== ADVENTURE MAP (original fantasy chrome — not licensed MMO UI) ===== */

@@ -21,6 +21,7 @@ import { carryLine } from '@/game/rules/encumbrance';
 import { carriedCoinLb, usesPurse, wealthLine } from '@/game/rules/coins';
 import { listSheets, setDefaultSheet, sheetFromState } from '@/game/tabletop/sheetLibrary';
 import { keepSheet } from '@/game/tabletop/sheetLibrarySync';
+import { TabletopSheetLayout } from './TabletopSheetLayout';
 
 type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -314,8 +315,8 @@ function SaveSheetButtons({ state }: { state: GameState }) {
   };
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs" data-testid="tabletop-save-sheet">
-      <button type="button" onClick={() => save(false)} className="rounded bg-slate-700 px-2 py-1 text-slate-100 hover:bg-slate-600">Save to my sheets</button>
-      <button type="button" onClick={() => save(true)} className="rounded bg-slate-700 px-2 py-1 text-slate-100 hover:bg-slate-600">Make default</button>
+      <button type="button" onClick={() => save(false)} className="sgm-sheet-btn px-2 py-1">Save to my sheets</button>
+      <button type="button" onClick={() => save(true)} className="sgm-sheet-btn px-2 py-1">Make default</button>
       {note && <span className="text-emerald-300">{note}</span>}
     </div>
   );
@@ -329,6 +330,43 @@ function DndSheet({ state }: { state: GameState }) {
 
   const modifier = (val: number) => Math.floor((val - 10) / 2);
   const fmtMod = (m: number) => (m >= 0 ? `+${m}` : `${m}`);
+  const conditions = c.conditions.length > 0 && (
+    <div>
+      <h4 className="sgm-sheet-label text-xs mb-1">Conditions</h4>
+      <div className="flex flex-wrap gap-1">
+        {c.conditions.map((cond) => (
+          <span key={cond} className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">{cond}</span>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (sheet) {
+    return (
+      <TabletopSheetLayout
+        name={c.name}
+        sheet={sheet}
+        hp={c.hp}
+        hpMethod={c.srd?.hpMethod === 'roll' ? 'roll' : 'fixed'}
+        concentration={state.roundCombat?.concentration ?? null}
+        footer={
+          <div className="space-y-2 text-xs">
+            {houseRulesOf(state).strictEncumbrance && (
+              <p className="sgm-sheet-label" data-testid="tabletop-carry">{carryLine(state.inventory, sheet.scores.STR, houseRulesOf(state).encumbrance, carriedCoinLb(state))}</p>
+            )}
+            {sheet.untrainedArmor && (
+              <p className="text-amber-300" data-testid="tabletop-untrained-armor">
+                Not trained in {sheet.untrainedArmor}: Disadvantage on Strength and Dexterity rolls, and no spellcasting.
+              </p>
+            )}
+            <p className="sgm-sheet-label" data-testid="tabletop-table-rules">{tableRulesLine(state)}</p>
+            <SaveSheetButtons state={state} />
+            {conditions}
+          </div>
+        }
+      />
+    );
+  }
 
   return (
     <div className="space-y-3 text-slate-200">
@@ -346,88 +384,12 @@ function DndSheet({ state }: { state: GameState }) {
           );
         })}
       </div>
-      {sheet && <p className="text-xs text-amber-200/90">{sheet.title}</p>}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-        <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between" title={sheet?.acFrom}><span className="text-slate-400">AC</span><span className="font-mono font-bold">{sheet ? sheet.ac : c.armorClass ?? 10}</span></div>
+        <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">AC</span><span className="font-mono font-bold">{c.armorClass ?? 10}</span></div>
         <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">HP</span><span className="font-mono font-bold">{c.hp}/{c.maxHp}</span></div>
-        {sheet && <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Speed</span><span className="font-mono font-bold">{sheet.speed} ft</span></div>}
         <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Level</span><span className="font-mono font-bold">{c.level}</span></div>
-        {sheet && (
-          <>
-            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Proficiency</span><span className="font-mono font-bold">{fmtMod(sheet.pb)}</span></div>
-            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Initiative</span><span className="font-mono font-bold">{fmtMod(sheet.initiative)}</span></div>
-            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Passive Perc.</span><span className="font-mono font-bold">{sheet.passivePerception}</span></div>
-            <div className="rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 flex justify-between"><span className="text-slate-400">Hit Die</span><span className="font-mono font-bold">d{sheet.hitDie}</span></div>
-          </>
-        )}
       </div>
-      {sheet && houseRulesOf(state).strictEncumbrance && (
-        <p className="text-xs text-slate-400" data-testid="tabletop-carry">{carryLine(state.inventory, sheet.scores.STR, houseRulesOf(state).encumbrance, carriedCoinLb(state))}</p>
-      )}
-      {sheet?.untrainedArmor && (
-        <p className="text-xs text-amber-300" data-testid="tabletop-untrained-armor">
-          Not trained in {sheet.untrainedArmor}: Disadvantage on Strength and Dexterity rolls, and no spellcasting.
-        </p>
-      )}
-      {sheet && <p className="text-xs text-slate-400" data-testid="tabletop-table-rules">{tableRulesLine(state)}</p>}
-      {sheet && <SaveSheetButtons state={state} />}
-      {sheet && (
-        <div className="grid gap-3 sm:grid-cols-2 text-xs">
-          <div>
-            <h4 className="text-xs text-slate-500 mb-1">Saving throws</h4>
-            <ul className="space-y-0.5">
-              {sheet.saves.map((s) => (
-                <li key={s.key} className="flex justify-between">
-                  <span className={s.proficient ? 'text-slate-100' : 'text-slate-400'}>{s.proficient ? '● ' : '○ '}{s.key}</span>
-                  <span className="font-mono">{fmtMod(s.total)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-xs text-slate-500 mb-1">Skills</h4>
-            <ul className="space-y-0.5">
-              {sheet.skills.map((s) => (
-                <li key={s.skill} className="flex justify-between">
-                  <span className={s.proficient ? 'text-slate-100' : 'text-slate-400'}>{s.expertise ? '◆ ' : s.proficient ? '● ' : '○ '}{s.skill}</span>
-                  <span className="font-mono">{fmtMod(s.total)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="sm:col-span-2 space-y-1 text-slate-300">
-            {sheet.features.length > 0 && <p><span className="text-slate-500">Features: </span>{sheet.features.join(', ')}</p>}
-            <p><span className="text-slate-500">HP: </span>{sheet.hpLine} · {c.srd?.hpMethod === 'roll' ? 'rolled' : 'fixed'} HP at each new level</p>
-            {sheet.spellcasting && (
-              <div className="rounded-md border border-slate-700 bg-slate-800/40 px-3 py-2 space-y-1">
-                <p><span className="text-slate-500">Spellcasting ({sheet.spellcasting.ability}): </span>spell save DC {sheet.spellcasting.dc} · spell attack {fmtMod(sheet.spellcasting.attack)}</p>
-                <p>
-                  <span className="text-slate-500">Slots: </span>
-                  {sheet.spellcasting.slots.map((s) => `level ${s.level} ${s.left}/${s.total}`).join(' · ')}
-                </p>
-                <p><span className="text-slate-500">Cantrips: </span>{sheet.spellcasting.cantrips.join(', ')}</p>
-                <p><span className="text-slate-500">Prepared: </span>{sheet.spellcasting.prepared.join(', ')}</p>
-                {sheet.spellcasting.spellbook.length > 0 && <p><span className="text-slate-500">Spellbook: </span>{sheet.spellcasting.spellbook.join(', ')}</p>}
-                {state.roundCombat?.concentration && <p><span className="text-slate-500">Concentrating on: </span>{state.roundCombat.concentration}</p>}
-              </div>
-            )}
-            {sheet.originFeats.length > 0 && <p><span className="text-slate-500">Origin feats: </span>{sheet.originFeats.join(', ')}</p>}
-            {sheet.traits.length > 0 && <p><span className="text-slate-500">Traits: </span>{sheet.traits.join('; ')}</p>}
-            {sheet.languages.length > 0 && <p><span className="text-slate-500">Languages: </span>{sheet.languages.join(', ')}</p>}
-            <p className="text-[10px] text-slate-500">Rules from the System Reference Document 5.2.1, CC-BY-4.0.</p>
-          </div>
-        </div>
-      )}
-      {c.conditions.length > 0 && (
-        <div>
-          <h4 className="text-xs text-slate-500 mb-1">Conditions</h4>
-          <div className="flex flex-wrap gap-1">
-            {c.conditions.map((cond) => (
-              <span key={cond} className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">{cond}</span>
-            ))}
-          </div>
-        </div>
-      )}
+      {conditions}
     </div>
   );
 }

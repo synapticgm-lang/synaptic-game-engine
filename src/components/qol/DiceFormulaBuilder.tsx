@@ -1,4 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type CSSProperties } from 'react';
+import type { DiceAnimationMode } from '@/game/types';
+import { rollDie as rollRuleDie } from '@/game/rules/dice';
+import { emitDiceRoll, rollAnimationMs } from '@/game/rules/rollView';
+import { DicePreview, liveDiceItem } from '../DicePreview';
 import {
   X, Plus, Minus, Dices, Trash2, Sparkles, ChevronRight, Zap,
 } from 'lucide-react';
@@ -45,19 +49,8 @@ const DICE: { die: DieType; label: string; color: string; glow: string }[] = [
   { die: 20, label: 'd20', color: 'text-crimson-300',  glow: 'hover:shadow-crimson-500/40' },
 ];
 
-function dieShape(die: DieType): string {
-  switch (die) {
-    case 4:  return 'M12 3 L21 19 L3 19 Z';
-    case 6:  return 'M5 5 H19 V19 H5 Z';
-    case 8:  return 'M12 3 L21 12 L12 21 L3 12 Z';
-    case 10: return 'M12 3 L20 9 L17 19 L7 19 L4 9 Z';
-    case 12: return 'M12 3 L19 7 L19 17 L12 21 L5 17 L5 7 Z';
-    case 20: return 'M12 2 L21 8 L18 19 L6 19 L3 8 Z';
-  }
-}
-
 function rollDie(sides: DieType): number {
-  return Math.floor(Math.random() * sides) + 1;
+  return rollRuleDie(sides, Math.random);
 }
 
 function uid(): string {
@@ -68,11 +61,16 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onRollComplete?: (result: RollResult) => void;
+  diceAnimation?: DiceAnimationMode;
 }
 
 export type { RollResult };
 
-export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
+export function DiceFormulaBuilder({ open, onClose, onRollComplete, diceAnimation = 'normal' }: Props) {
+  const [revealMs, setRevealMs] = useState(450);
+  const rollClass = diceAnimation === 'excited'
+    ? `sgm-dice-roll-excited sgm-dice-fx-${liveDiceItem().diceSkin?.material ?? 'default'}`
+    : 'sgm-dice-roll-normal';
   const [tokens, setTokens] = useState<FormulaToken[]>([]);
   const [pendingSign, setPendingSign] = useState<'+' | '-'>('+');
   const [advantage, setAdvantage] = useState(false);
@@ -138,8 +136,7 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
 
   const executeRoll = useCallback(() => {
     if (!hasDice || rolling) return;
-    setRolling(true);
-    setTimeout(() => {
+    {
       const components: RollComponent[] = tokens.map((token) => {
         if (token.type === 'dice') {
           let rolls: number[] = [];
@@ -167,11 +164,26 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
       }).join(' | ');
 
       const res: RollResult = { total, components, advantage, disadvantage, breakdown };
-      setResult(res);
-      setRolling(false);
-      onRollComplete?.(res);
-    }, 500);
-  }, [hasDice, rolling, tokens, advantage, disadvantage, onRollComplete]);
+      const d20 = components.find((c) => c.token.type === 'dice' && c.token.die === 20);
+      const kept = d20 ? (advantage ? Math.max(...d20.rolls) : disadvantage ? Math.min(...d20.rolls) : d20.rolls[0]) : 10;
+      const ms = rollAnimationMs(diceAnimation, kept);
+      const land = () => {
+        setResult(res);
+        setRolling(false);
+        onRollComplete?.(res);
+        if (d20) {
+          emitDiceRoll({ kept, crit: kept === 20, fumble: kept === 1, mode: diceAnimation, material: liveDiceItem().diceSkin?.material ?? null, source: 'tray' });
+        }
+      };
+      if (ms <= 0) {
+        land();
+        return;
+      }
+      setRevealMs(ms);
+      setRolling(true);
+      setTimeout(land, ms);
+    }
+  }, [hasDice, rolling, tokens, advantage, disadvantage, onRollComplete, diceAnimation]);
 
   if (!open) return null;
 
@@ -217,16 +229,12 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
                   disabled={rolling}
                   className={`sgm-dice-die-btn group flex flex-col items-center gap-0.5 rounded-lg border border-slate-700/50 bg-slate-800/40 py-2 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-500 hover:bg-slate-700/40 hover:shadow-lg ${d.glow} disabled:opacity-50`}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className={`h-6 w-6 transition-transform group-hover:scale-110 ${d.color} ${rolling ? 'animate-spin' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    strokeLinejoin="round"
+                  <span
+                    className={`inline-flex transition-transform group-hover:scale-110 ${rolling ? rollClass : ''}`}
+                    style={{ '--sgm-roll-ms': `${revealMs}ms` } as CSSProperties}
                   >
-                    <path d={dieShape(d.die)} />
-                  </svg>
+                    <DicePreview die={d.die} size={24} />
+                  </span>
                   <span className={`text-[10px] font-bold ${d.color}`}>{d.label}</span>
                 </button>
               ))}
@@ -319,7 +327,9 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
             >
               {rolling ? (
                 <>
-                  <Dices size={16} className="animate-spin" />
+                  <span className={`inline-flex ${rollClass}`} style={{ '--sgm-roll-ms': `${revealMs}ms` } as CSSProperties}>
+                    <DicePreview die={20} size={16} />
+                  </span>
                   Rolling...
                 </>
               ) : (

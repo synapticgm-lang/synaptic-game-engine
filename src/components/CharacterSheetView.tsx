@@ -2,6 +2,10 @@ import { useMemo, useState } from 'react';
 import type { GameState, AttributeKey, Item } from '@/game/types';
 import { equippedSetLabel } from '@/game/uiTheme';
 import { RARITY_COLORS } from '@/game/types';
+import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';
+import { listSheets, sheetLabel } from '@/game/tabletop/sheetLibrary';
+import { pregenSheets, previewSavedSheet } from '@/game/tabletop/sheetPreview';
+import { TabletopSheetLayout } from './TabletopSheetLayout';
 import {
   Dices, Heart, Droplet, Zap, Star, Shield, Sword,
   Backpack, Sparkles, ChevronLeft, ChevronRight, Users,
@@ -70,6 +74,22 @@ function LayoutToggle({ layout, onChange }: { layout: LayoutMode; onChange: (m: 
 /* ============ LAYOUT 1: TABLETOP DASHBOARD ============ */
 
 function DndDashboard({ state, uiThemeId }: { state: GameState; uiThemeId?: string }) {
+  const built = deriveTabletopSheet(state);
+  if (built) {
+    return (
+      <TabletopSheetLayout
+        name={state.character.name}
+        sheet={built}
+        hp={state.character.hp}
+        hpMethod={state.character.srd?.hpMethod === 'roll' ? 'roll' : 'fixed'}
+        concentration={state.roundCombat?.concentration ?? null}
+      />
+    );
+  }
+  return <PlainDashboard state={state} uiThemeId={uiThemeId} />;
+}
+
+function PlainDashboard({ state }: { state: GameState; uiThemeId?: string }) {
   const c = state.character;
   const attrs = c.attributes ?? ({} as Record<AttributeKey, number>);
   const attrRows: [AttributeKey, number][] = (['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as AttributeKey[]).map((k) => [k, attrs[k] ?? 10]);
@@ -314,7 +334,41 @@ function buildCards(state: GameState): CardData[] {
   return [...base, ...presets];
 }
 
+/** Tabletop: your character, the inn book's ready-made characters and your saved sheets, each opening its real sheet. */
+function TabletopCards({ state }: { state: GameState }) {
+  const sheets = useMemo(() => [...pregenSheets(), ...listSheets()], []);
+  const [open, setOpen] = useState<string | null>(null);
+  const yours = deriveTabletopSheet(state);
+  const shown = open === 'current' || !open ? null : sheets.find((s) => s.id === open) ?? null;
+  const preview = useMemo(() => (shown ? previewSavedSheet(shown) : null), [shown]);
+  const card = (id: string, name: string, line: string, tag: string) => (
+    <div key={id} className={`sgm-sheet-box flex w-48 shrink-0 flex-col gap-1 px-3 py-2 ${open === id ? 'sgm-info-slot-on' : ''}`}>
+      <span className="sgm-sheet-label text-[10px] uppercase tracking-wider">{tag}</span>
+      <span className="sgm-info-heading text-sm font-bold">{name}</span>
+      <span className="sgm-sheet-label text-xs">{line}</span>
+      <button type="button" onClick={() => setOpen(open === id ? null : id)} className="sgm-sheet-btn mt-1 py-1 text-xs" data-testid={`card-view-${id}`}>
+        {open === id ? 'Hide sheet' : 'View sheet'}
+      </button>
+    </div>
+  );
+  return (
+    <div className="space-y-3" data-testid="tabletop-cards">
+      <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'thin' }}>
+        {card('current', state.character.name || 'Hero', yours?.title ?? `Level ${state.character.level}`, 'You')}
+        {sheets.map((s) => card(s.id, s.name, sheetLabel(s).split(' — ')[1] ?? '', s.id.startsWith('pregen-') ? 'Ready-made' : 'Saved sheet'))}
+      </div>
+      {open === 'current' && yours && <TabletopSheetLayout name={state.character.name} sheet={yours} hp={state.character.hp} />}
+      {preview && shown && <TabletopSheetLayout name={shown.name} sheet={preview.sheet} hpMethod={shown.hpMethod ?? 'fixed'} />}
+    </div>
+  );
+}
+
 function PreMadeCards({ state }: { state: GameState }) {
+  if (state.engineMode === 'dnd') return <TabletopCards state={state} />;
+  return <PlainCards state={state} />;
+}
+
+function PlainCards({ state }: { state: GameState }) {
   const cards = useMemo(() => buildCards(state), [state]);
   const [selected, setSelected] = useState<string | null>(null);
   const [scrollRef, setScrollRef] = useState<HTMLDivElement | null>(null);
