@@ -63,9 +63,9 @@ function namedWatchtower(over: Partial<GameState> = {}): GameState {
 }
 
 describe('playtest18c — pads refill and CAST glue', () => {
-  it('HUD/BUILD are 2026-10-12y, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-12y');
-    expect(BUILD_STAMP).toBe('2026-10-12y');
+  it('HUD/BUILD are 2026-10-12z, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-12z');
+    expect(BUILD_STAMP).toBe('2026-10-12z');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
