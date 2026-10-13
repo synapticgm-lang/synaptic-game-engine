@@ -300,6 +300,9 @@ export function checkTurn(row, packet, page = '') {
           const bare = lp.replace(/^the\s+/, '');
           if (facts.movedFrom && lower(facts.movedFrom).includes(bare)
             && /\bfrom\s+(?:the\s+)?(?:\w+\s+){0,2}$/i.test(clauseText.slice(Math.max(0, at - 30), at))) continue;
+          // "the roofs of Valespire": the city the handed places sit in is the view, unless the line heads toward it.
+          const settlement = facts.placeNames.filter((o) => o !== p && lower(o).startsWith(`${bare} `)).length >= 2;
+          if (settlement && !/\b(?:to|toward|towards|into|out to)\s+(?:the\s+)?$/i.test(clauseText.slice(Math.max(0, at - 20), at))) continue;
           add('exit-place', s, `"${p}" named as a way out; handed exits: ${exitFact.length ? exitFact.join(', ') : 'none mapped'}`);
         }
         for (const m of exitClauses.join(' | ').matchAll(/\b(?:the|an?)\s+([a-z]+)\s+(road|trail|path|lane|gate)\b/gi)) {
@@ -355,7 +358,12 @@ export function checkTurn(row, packet, page = '') {
         const head = after.match(/^ ([a-z]+)\b/)?.[1];
         if (head && head.length > 3 && !LINK_WORD.test(head) && !/(?:ed|ly|ing)$/.test(head) && inHanded(facts, head)) continue;
         const owned = /\b(?:their|his|her)\s+(?:\w+\s+){0,2}$/i.test(before);
-        const foundBefore = /\b(?:found|finds?|picked up|took|takes?|handed|hand over|gave|gives?|pulled out|drew|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
+        // "gave Jax a ring" / "gave a ring to Col" hands a thing; "the bell gave one short ring" is a sound.
+        const gaveTail = before.match(/\b(?:handed|gave|gives?)\s+((?:\S+\s+){0,4})$/i)?.[1];
+        const gaveTo = gaveTail !== undefined
+          && (/^(?:jax|him|her|them|me|you|us|over)\s/i.test(gaveTail) || /^(?!(?:A|An|The)\s)[A-Z]/.test(gaveTail) || /^\s+to\b/i.test(after));
+        const foundBefore = gaveTo
+          || /\b(?:found|finds?|picked up|took|takes?|hand over|pulled out|drew|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
         // "the Contract Hall and its papers": a thing's own contents, unless Jax finds or takes them.
         if (/\bits\s+(?:\w+\s+){0,2}$/i.test(before) && !foundBefore) continue;
         const found = foundBefore
@@ -370,10 +378,10 @@ export function checkTurn(row, packet, page = '') {
         if (named && facts.allowText.includes(lower(named))) continue;
         if (!/^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i.test(after)) continue;
         if (foeHanded && /^(?:men|man|women|woman|strangers?)$/.test(w)) continue;
-        // "neither man" / "the two men" points back at a handed person here; "a man" is a new one.
+        // "neither man" / "the older man" points back at a handed person here; "a man" / "a tall man" is a new one.
         const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
         if (personHere && /^(?:men|man|women|woman)$/.test(w)
-          && /\b(?:the|neither|either|each|both|other|those|these|one|two|three|four)\s+(?:of the\s+)?$/i.test(before)) continue;
+          && /\b(?:the|neither|either|each|both|other|those|these|one|two|three|four)\s+(?:of the\s+)?(?:[a-z]+\s+)?$/i.test(before)) continue;
         // "Two strangers stood…" with exactly two people handed here counts the people here, not new ones.
         const hereCount = facts.refs.filter((r) => r.kind === 'person' && !/^encounter:/.test(r.id)).length;
         const counted = before.match(/\b(two|three|four|both)\s+$/i)?.[1]?.toLowerCase();
