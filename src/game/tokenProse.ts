@@ -454,7 +454,11 @@ export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean
   if (at < 0) return false;
   const slot = facts.slice(at + CLOCK_MARK.length).split(/\s/)[0]!;
   // The engine result states the time it moved the clock to ("(+8h, now dawn)"); that is handed too.
-  const engineSlots = [...facts.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/g)].map((m) => m[1]!);
+  // tt-fix-7 — only this turn's ENGINE RESULT lines; an earlier turn's receipt on the info sheet is history, not the clock.
+  const engineSlots = facts
+    .split('\n')
+    .filter((l) => /^engine result:/i.test(l.trim()))
+    .flatMap((l) => [...l.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)].map((m) => m[1]!.toLowerCase()));
   const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
   for (const [slots, re] of DAY_PART_WORDS) {
     if (slots.split(' ').some((s) => s === slot || engineSlots.includes(s))) continue;

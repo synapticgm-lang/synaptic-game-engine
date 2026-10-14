@@ -60,9 +60,9 @@ export function agencyPatterns(who: string): RegExp[] {
   ];
 }
 
-/** The player's line is speech: quoted words or a talk verb. */
+/** The player's line is speech: quoted words, a talk verb, or a question chip with no mark ("Who are you"). */
 export function playerLineSpeaks(playerInput: string): boolean {
-  return /["“?]|^\s*(?:i|i'm|my|we|hello|hi|greetings|yes|no)\b|\b(?:say|says|said|tell|ask|talk|speak|shout|call|warn|answer|reply|greet|plead|persuade|parley|negotiate|threaten|bargain)\b/i.test(playerInput ?? '');
+  return /["“?]|^\s*(?:i|i'm|my|we|hello|hi|greetings|yes|no|who|what|where|why|how|when|which)\b|\b(?:say|says|said|tell|ask|talk|speak|shout|call|warn|answer|reply|greet|plead|persuade|parley|negotiate|threaten|bargain)\b/i.test(playerInput ?? '');
 }
 
 /** The narrator giving the PC words the player never said. */

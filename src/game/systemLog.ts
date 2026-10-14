@@ -190,6 +190,8 @@ export function isEngineCheckLine(line: string): boolean {
   const t = line.trim();
   return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(t)
     || /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ = -?\d+ vs .+ d20 \d+ [+−-] \d+ = -?\d+ — (?:success|failure)$/.test(t)
+    // tt-fix-7 — `formatCheckRecord` (travel jobs: look-out, navigation, foraging): "Foraging: Wisdom (Survival) d20 (3) + 1 WIS = 4 vs DC 15 — failure".
+    || /^[A-Z][^=]* d20 \((?:\d+|(?:adv|dis): \d+, \d+)\)[^=]* = -?\d+ vs DC \d+ — (?:success|failure)$/.test(t)
     || isEngineRoundLine(t);
 }
 

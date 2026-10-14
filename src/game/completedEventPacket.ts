@@ -1050,6 +1050,9 @@ export function handedWriterText(state: GameState, packet: Partial<CompletedEven
     world,
     packet.infoSheet ?? '',
     ...(packet.engineResult ?? '').split('\n').filter((l) => l.trim()).map((l) => `ENGINE RESULT: ${l.trim()}`),
+    // tt-fix-7 — the travel beat (stops passed, finds) and the engine's named route stops are handed facts too.
+    packet.movement ?? '',
+    ...Object.values(state.routeStops ?? {}).flat().map((s) => `A named stop on the road is ${s.name}.`),
     ...(packet.ledgerChanges ?? []),
     player ? `PLAYER: ${player}` : '',
     ...(packet.allowlist ?? []),
@@ -1081,7 +1084,7 @@ function movementLine(state: GameState, stay: string): string {
     const meeting = roadMeetingFact(j);
     const ground = `the ${j.ground.toLowerCase()}`;
     const road = movedNow
-      ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${ground}. Not arrived at ${j.to} yet; do not narrate arriving.`
+      ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${ground}. Show ${ground} and what is on it; no arrival, and never tell how long the trip has taken or how far is left.`
       : `No move this turn: still on ${ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
     return meeting ? `${road} ${meeting}` : road;
   }
@@ -1095,8 +1098,9 @@ function movementLine(state: GameState, stay: string): string {
     return `Turned back this turn:${left} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival${nothing}.`;
   }
   if (movedNow && from) {
+    const pc = (state.character?.name ?? '').trim() || 'The player character';
     const walk = c?.tripArrivalTurn === state.turn
-      ? ` Jax set out from ${from} earlier and has been on the way since: write the end of that walk, never a step straight out of ${from}.`
+      ? ` ${pc} left ${from} on an earlier turn: the arrival is one sentence, with no account of the walk or how long it took, and never a step out of ${from}.`
       : '';
     return `Moved this turn: from ${from} to ${here}. Narrate one arrival at ${here}; nothing more happens at ${from}.${walk}`;
   }

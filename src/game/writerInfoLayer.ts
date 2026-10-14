@@ -3,7 +3,7 @@ import { computeInventoryCapacity, kitRefDisplay, turnUsesKit } from './inventor
 import { playerFacingLocation } from './locationName';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { formatHiddenRoomLedger } from './dungeonSeed';
-import { placeCardFor } from './outdoorHubs';
+import { placeBlurbForWriter, placeCardFor } from './outdoorHubs';
 import { exitPlaceNames } from './placeNames';
 import { isJourneyUnderway } from './travelJourney';
 import { pendingFoeSign } from './combatAuthority';
@@ -160,7 +160,8 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   const here: string[] = [`Here: ${currentName}`];
   // 27g — the place card is the fact authority: plain description and exits, no engine tags.
   const card = placeCardFor(state, currentName);
-  if (card?.description) here.push(`What it is: ${card.description}`);
+  const blurb = placeBlurbForWriter(state, card?.description);
+  if (blurb) here.push(`What it is: ${blurb}`);
   const things = isJourneyUnderway(state) ? [] : state.locationSheet?.interactables ?? [];
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);

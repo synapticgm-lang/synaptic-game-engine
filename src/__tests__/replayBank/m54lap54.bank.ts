@@ -37,7 +37,8 @@ beforeAll(async () => {
   F = new Replay(await replayWhole(FL150));
 }, 600_000);
 
-const WALK = /Jax set out from (.+?) earlier and has been on the way since/;
+// tt-fix-7 — the walk line no longer asks for "the end of that walk" (writers read it out as "the long walk ended").
+const WALK = /Jax left (.+?) on an earlier turn: the arrival is one sentence/;
 
 describe('replay bank m54 (lap 54)', () => {
   it('[fl150 T11 | m54 fix 3] the arrival that ends a road trip says Jax set out earlier, not a step out of the origin', () => {
@@ -47,7 +48,7 @@ describe('replay bank m54 (lap 54)', () => {
     const packet = F.packet(11);
     expect(packet).toMatch(/Moved this turn: from .+ to Cathedral Close/);
     expect(packet.match(WALK)?.[1]).toMatch(/grain-ship/);
-    expect(packet).toMatch(/never a step straight out of/);
+    expect(packet).toMatch(/never a step out of/);
   });
 
   it('[fl150 | m54 fix 3] only an arrival off the road carries the walk line', () => {

@@ -81,6 +81,7 @@ import {
   isLeaveSceneAction,
   matchHub,
   parseTravelDestination,
+  placeBlurbForWriter,
   resolveLeaveSceneDestination,
 } from './outdoorHubs';
 import { dungeonRoomPlace, resolvePlace } from './places';
@@ -862,16 +863,15 @@ export function writerTravelFact(receipt: string): string | null {
   const r = (receipt ?? '').replace(/\s+/g, ' ').trim().replace(/\.$/, '');
   if (!/^Travel:/i.test(r)) return null;
   const slot = r.match(new RegExp(`\\bnow ${TIME_SLOT}\\b`, 'i'))?.[1] ?? r.match(new RegExp(`\\(${TIME_SLOT}\\)`, 'i'))?.[1];
-  const passed = /\+\s*\d/.test(r);
-  const time = slot
-    ? passed ? ` Some time passed on the way; it is now ${slot}.` : ` It is ${slot}.`
-    : passed ? ' Some time passed on the way.' : '';
+  // tt-fix-7 — a state, not a sentence to copy: writers retold "some time passed", "not there yet", "the long walk ended".
+  const time = slot ? ` It is now ${slot}.` : '';
   const to =
     r.match(/;\s*([^;]+?) still ahead\b/)?.[1]
     ?? r.match(/\bbetween .+? and (.+?)(?: at a \w+ pace)?(?: \(| —|;|$)/)?.[1];
-  if (to && /the way on is blocked/i.test(r)) return `Still on the way to ${to}; the way on is blocked.${time}`;
-  if (to && /^Travel: still on\b/i.test(r)) return `Still on the way to ${to}, not there yet.${time}`;
-  if (to) return `On the way to ${to}, not there yet.${time}`;
+  const ground = r.match(/^Travel: (?:still on )?(?:the )?(.+?) between /i)?.[1];
+  const on = ground ? `On the ${ground} toward ${to}` : `Toward ${to}`;
+  if (to && /the way on is blocked/i.test(r)) return `${on}; the way on is blocked.${time}`;
+  if (to) return `${on}.${time}`;
   const dest = r.match(/^Travel: .* to (.+?)(?: at a \w+ pace)?(?: — |$)/)?.[1];
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
@@ -1071,7 +1071,7 @@ function arrivalFacts(state: GameState, dest: string): string[] {
   const settlement = findSettlement(state.worldAtlas, hub?.name ?? dest);
   const place = resolvePlace(state.places, hub?.name ?? dest);
   const facts: string[] = [];
-  const sight = firstSentence(hub?.blurb || settlement?.blurb || place?.description);
+  const sight = firstSentence(placeBlurbForWriter(state, hub?.blurb || settlement?.blurb || place?.description));
   if (sight && typeof place?.lastVisitedTurn !== 'number') facts.push(`First sight of ${dest}: ${sight}`);
   const hook = arrivalHook(state, dest, hub?.linkedQuestIds ?? []);
   if (hook) facts.push(hook);

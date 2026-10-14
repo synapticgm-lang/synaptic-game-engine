@@ -12,6 +12,7 @@ import { sentenceGateProblem } from '../../game/beatCommitGate';
 import { extractNamesFromHookText } from '../../game/openingPin';
 import { ledgerSlotPeople } from '../../game/slotGlue';
 import { plainLineFactProblem } from '../../game/tokenProse';
+import { answerRepairRequest } from '../../game/writerTurn';
 import type { GameState } from '../../game/types';
 import { Replay } from './bank';
 import { replayWhole } from './replayRun';
@@ -98,9 +99,12 @@ describe('replay bank m47 lap 47', () => {
   });
 
   it('[fl151 T8 | m47 answer repair never voices the player] the request says Jax is the player\'s character', () => {
-    const asks = G.at(8).writerPackets.filter((p) => /^Your story left out the answer/.test(p));
-    expect(asks.length).toBeGreaterThan(0);
-    for (const a of asks) expect(a).toMatch(/Jax is the player's character: never write words, a reply or a decision for Jax\./);
+    // tt-fix-7 — Col Thatch's only "backed line" was the harvest placeholder card, so T8 now asks nothing.
+    expect(G.at(8).writerPackets.filter((p) => /^Your story left out the answer/.test(p))).toEqual([]);
+    const s = G.before(8);
+    const check = { state: s, playerInput: G.input(8), engineFact: '' } as unknown as Parameters<typeof answerRepairRequest>[0];
+    const ask = answerRepairRequest(check, ['Col Thatch'], [], '', new Map([['Col Thatch', ['I keep the gate.']]]));
+    expect(ask).toMatch(/Jax is the player's character: never write words, a reply or a decision for Jax\./);
   });
 
   it('[ds150 T19 | m47 split into ways] "the undercroft split into three dark ways" counts the ways out', () => {

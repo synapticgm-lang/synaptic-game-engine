@@ -41,7 +41,7 @@ import type { WriterRawIssue } from './openRouterChat';
 import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
-import { writerEngineResult } from './travelJourney';
+import { isRoadLabel, writerEngineResult } from './travelJourney';
 import { isGiverName } from './questGiver';
 
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
@@ -214,10 +214,29 @@ export async function runWriterTurnWithFightRetry(opts: {
 }): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
   const turn = await runWriterTurnFightOnly(opts);
   if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
-  const done = await repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
+  const answered = await repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
+  const placed = withMoveDestination(opts.check.state, answered.prose);
+  const done = placed === answered.prose ? answered : { ...answered, prose: placed, remaining: writerDraftProblems(placed, opts.check) };
   if (opts.check.state.engineMode !== 'dnd') return done;
   const prose = capBeatWords(done.prose, TABLETOP_BEAT_WORDS, opts.check.state);
   return prose === done.prose ? done : { ...done, prose, remaining: writerDraftProblems(prose, opts.check) };
+}
+
+/**
+ * tt-fix-7 — the engine moved the player this turn and the kept beat never names where to: a gated line
+ * (a wrong time of day, an unhanded name) took the destination with it. The engine adds one plain sentence.
+ */
+export function withMoveDestination(state: GameState, prose: string): string {
+  const c = state.circling;
+  if (!prose.trim() || c?.movedTurn == null || c.movedTurn !== state.turn) return prose;
+  const j = state.journey;
+  const underway = !!j && j.legsDone < j.legsTotal;
+  const dest = (underway ? j!.to : state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  // A room inside a place ("Cathedral Undercroft — Corridor") is a dungeon step, painted by the room display, not a trip.
+  if (!dest || isRoadLabel(dest) || /\s[—–]\s/.test(dest) || prose.toLowerCase().includes(dest.toLowerCase())) return prose;
+  const pc = (state.character?.name ?? '').trim() || 'They';
+  const line = underway ? `${pc} was on the ${j!.ground.toLowerCase()} toward ${dest}.` : `${pc} reached ${dest}.`;
+  return `${line} ${prose.trim()}`;
 }
 
 const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).length;
@@ -302,6 +321,8 @@ export function backedAnswerFacts(state: GameState, name: string): string[] {
   const names = [name, ...(memory ? [memory.npcName, ...(memory.aliases ?? [])] : [])].filter(Boolean);
   const isThem = (n?: string) => !!n && names.some((x) => isGiverName(x, n));
   for (const card of state.lorebook ?? []) {
+    // tt-fix-7 — a harvest card's summary is a placeholder ("Met in play. Details unfold through conversation."), not a line.
+    if (card.id?.startsWith('harvest-npc-')) continue;
     if (card.type === 'npc' && (isThem(card.name) || (card.keywords ?? []).some(isThem))) {
       facts.push(...splitProseSentences(card.summary ?? '').slice(0, 4));
     }
@@ -330,6 +351,14 @@ export function quoteHeldToFacts(quoted: string, facts: string[]): boolean {
   });
 }
 
+const SELF_TITLE = /^(?:father|mother|brother|sister|sir|lady|lord|old|captain|master|mistress|the)$/i;
+
+/** tt-fix-7 — quoted words naming their own speaker ("Aldous wants to know…", said by Aldous) are a note read out, not speech. */
+export function speaksOfSelf(quoted: string, speaker: string): boolean {
+  const parts = speaker.split(/\s+/).filter((w) => w.length > 2 && /^[A-Z]/.test(w) && !SELF_TITLE.test(w));
+  return parts.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(quoted));
+}
+
 /** The one request for a missing answer. The player's character is never the speaker: the player speaks for them. */
 export function answerRepairRequest(
   check: DraftCheck,
@@ -343,7 +372,7 @@ export function answerRepairRequest(
   return [
     'Your story left out the answer. Write ONE sentence in which a person here answers the player.',
     'Format: the spoken words inside quote marks, plus who said it outside the quotes, e.g. "Words they say," Name said. Use a name from People here as the speaker.',
-    'The spoken words say only what that person is known to say below, in their own voice. Add no new fact, person, place, object or task.',
+    'The spoken words say only what that person is known to say below, in their own voice: first person (I, me, my), never their own name, and never a copy of a note. Add no new fact, person, place, object or task.',
     ...(pc ? [`${pc} is the player's character: never write words, a reply or a decision for ${pc}.`] : []),
     'Reply with only that sentence as plain prose. No JSON, no other text.',
     `Player said: "${check.playerInput.slice(0, 200)}"`,
@@ -401,6 +430,8 @@ export async function repairMissingAnswer(
         ? 'repair reply has no quoted answer'
         : pcSpeaks || !speakerHere(bare, speakers)
           ? 'repair reply names nobody here as the speaker'
+          : speakers.some((p) => speakerHere(bare, [p]) && speaksOfSelf(quoted, p))
+            ? 'repair reply has the speaker talk about themselves by name (a note, not speech)'
           : !quoteHeldToFacts(quoted, speakers.filter((p) => speakerHere(bare, [p])).flatMap((p) => backed.get(p) ?? []))
             ? 'repair reply is not held to a backed line'
             : repeatsSaid(quoted, said)
@@ -518,7 +549,11 @@ export async function repairRejectedSentences(
     const line = lines?.[i];
     // The rewrite fails only for a reason it fails in its draft too (out of context alone is not enough).
     const inDraft = line ? sentenceGateProblems(check.state, replaceDraftSentence(prose, f.sentence, line), check.playerInput) : [];
-    const still = line ? sentenceGateProblems(check.state, line, check.playerInput).find((p) => inDraft.includes(p)) ?? null : null;
+    // tt-fix-7 — a rewrite answers to the same line-fact gate as a writer line (R3: it brought back a wrong time of day).
+    const still = line
+      ? sentenceGateProblems(check.state, line, check.playerInput).find((p) => inDraft.includes(p))
+        ?? plainLineFactProblem(line, check.state, packet)
+      : null;
     const ok = !!line && !still && line.trim() !== f.sentence.trim();
     // A repair that hands the same sentence back found nothing to change: the gate's flag was false, the line stays.
     const unchanged = !!line && line.trim() === f.sentence.trim();

@@ -629,6 +629,31 @@ export function ensurePlaceCard(state: GameState, placeName: string, fromLocatio
   return { ...state, places: next };
 }
 
+const PERSON_TITLE = /^(?:father|mother|brother|sister|sir|lady|lord|old|captain|master|mistress|the)$/i;
+
+/**
+ * tt-fix-7 — a place blurb as the writer is handed it: a part that names a known person who is not here is
+ * about that person, not the place ("Father Aldous and six sleepless nights." while Aldous is at the well).
+ */
+export function placeBlurbForWriter(state: GameState, text: string | undefined | null): string {
+  const blurb = (text ?? '').replace(/\s+/g, ' ').trim();
+  if (!blurb) return '';
+  const known = [
+    ...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
+    ...(state.lorebook ?? []).filter((c) => c.type === 'npc').map((c) => c.name),
+  ].filter((n): n is string => !!n && n.trim().length > 2);
+  const here = (state.sceneFacts?.present ?? []).join(' ').toLowerCase();
+  const parts = (name: string) => name.split(/\s+/).filter((w) => w.length > 3 && /^[A-Z]/.test(w) && !PERSON_TITLE.test(w));
+  const absent = known.filter((n) => !parts(n).some((w) => here.includes(w.toLowerCase())));
+  const namesAbsent = (s: string) => absent.some((n) => parts(n).some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(s)));
+  return blurb
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.split(/\s+[—–]\s+/).filter((p) => !namesAbsent(p)).join(' — '))
+    .filter((s) => s.trim())
+    .map((s) => (/[.!?]$/.test(s.trim()) ? s.trim() : `${s.trim()}.`))
+    .join(' ');
+}
+
 /** 27g — the card for a place: the stored card when built, else the same card built on the fly (not stored). */
 export function placeCardFor(state: GameState, placeName: string | undefined): PlaceRecord | null {
   const raw = placeOfName(state, placeName);

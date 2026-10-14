@@ -95,13 +95,16 @@ export type TabletopStepKind = 'talk' | 'look' | 'move';
 const TALK_STEP_VERB = /^\s*(?:speak|talk|report|ask|tell|warn|question|convince|persuade|meet)\b/i;
 const MOVE_STEP_VERB =
   /^\s*(?:follow|escort|lead|guide|travel|go|head|return|journey|bring|take|track|trail|cross|climb|make your way)\b|\btoward(?:s)?\b/i;
+/** tt-fix-7 — a step whose purpose is a move ("Investigate the sludge to track its trail up the hill") goes somewhere. */
+const MOVE_STEP_PURPOSE =
+  /\bto (?:follow|track|trail|reach|climb|cross)\b|\b(?:up|down|along|across) (?:the|a) (?:[\w-]+,? ){0,2}(?:hill|path|road|trail|slope|ridge|stairs?)\b/i;
 /** A move that takes someone along ("Escort him…", "Lead the survivors…"): the step's person must come too. */
 const WITH_PERSON_VERB = /^\s*(?:escort|lead|guide|bring|take)\b/i;
 
 /** The step's verb decides what ticks it: talking to its person, its own look at its place, or arriving where it goes. */
 export function tabletopStepKind(step: string): TabletopStepKind {
   if (talkStepPerson(step) || TALK_STEP_VERB.test(step ?? '')) return 'talk';
-  if (MOVE_STEP_VERB.test(step ?? '')) return 'move';
+  if (MOVE_STEP_VERB.test(step ?? '') || MOVE_STEP_PURPOSE.test(step ?? '')) return 'move';
   return 'look';
 }
 
