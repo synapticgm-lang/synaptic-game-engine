@@ -738,6 +738,7 @@ export function runArcDirectorBeforeGm(
 ): ArcDirectorResult {
   let working = settleOathChoice(ensureRunManifest(state), playerInput);
   working = ensureOpeningNpcPinned(working);
+  // Stays empty: character XP for fights and quests is paid once, by sandboxXp.
   const xpAwards: Array<{ amount: number; reason: string }> = [];
   const systemReceipts: string[] = [];
   const mandates: string[] = [];

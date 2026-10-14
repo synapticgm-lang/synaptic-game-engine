@@ -215,6 +215,22 @@ export interface MilestoneXpOpts {
   /** 29r — player level and unclamped area level for the over-level cut. */
   playerLevel?: number;
   areaLevel?: number;
+  /** Fight milestones outside D&D: the foe's level for the low-foe cut. */
+  foeLevel?: number;
+}
+
+/** LitRPG / story RPG fight: a foe this many levels below the player pays LOW_FOE_SHARE. */
+export const LOW_FOE_GAP = 3;
+export const LOW_FOE_SHARE = 0.25;
+
+function isFightKind(kind: MilestoneKind): boolean {
+  return kind === 'encounter' || kind === 'miniBoss' || kind === 'boss';
+}
+
+export function isLowFoe(playerLevel: number | undefined, foeLevel: number | undefined): boolean {
+  if (playerLevel == null || foeLevel == null) return false;
+  if (!Number.isFinite(playerLevel) || !Number.isFinite(foeLevel)) return false;
+  return playerLevel - foeLevel >= LOW_FOE_GAP;
 }
 
 /**
@@ -231,6 +247,14 @@ export function milestoneXp(mode: EngineMode | undefined, kind: MilestoneKind, o
       amount,
       detail: mode === 'dnd' ? `${base.detail} × ${row.xpScale} (${row.label}) = ${amount}` : base.detail,
     };
+  }
+  if (
+    mode !== 'dnd'
+    && result.amount > 0
+    && isFightKind(kind)
+    && isLowFoe(opts.level ?? opts.playerLevel, opts.foeLevel)
+  ) {
+    result = { amount: Math.round(result.amount * LOW_FOE_SHARE), detail: result.detail };
   }
   if (result.amount > 0 && isOverLevel(opts.playerLevel, opts.areaLevel)) {
     const amount = overLevelAmount(result.amount);

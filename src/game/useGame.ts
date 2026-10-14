@@ -215,7 +215,6 @@ import {
   setPlayAccountContext,
 } from './testLab';
 import { resolveWriterTierForTurn } from './writerPolicy';
-import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { cleanSessionZeroList, clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
@@ -4432,20 +4431,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             endedEncounter: liveCurrent.activeEncounter ?? null,
             turn: nextTurn,
             checkSucceeded: check.isSuccess,
+            socialCheckSucceeded: check.isSuccess && !check.skippedRoll && check.attr === 'CHA',
+            discoveryCheckSucceeded:
+              check.isSuccess && !check.skippedRoll && (check.attr === 'INT' || check.attr === 'WIS'),
           }
         );
         if (sandboxXp.npcRelationships) deedRelationships = sandboxXp.npcRelationships;
         const sandboxNotes = [...sandboxXp.notes];
-        let sandboxKeys = sandboxXp.awardKeys;
-        const dailyMilestone = applyDailyQuestMilestone(
-          { ...workingState, sandboxAwardKeys: sandboxKeys },
-          { questsBefore: questsAtTurnStart, questsAfter: updatedQuests, playerAction: sanitizedInput }
-        );
-        if (dailyMilestone) {
-          sandboxNotes.push(dailyMilestone.note);
-          sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
-          baseChar.xp = (baseChar.xp ?? 0) + dailyMilestone.xp;
-        }
+        const sandboxKeys = sandboxXp.awardKeys;
         if (sandboxXp.xp > 0) {
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
         }

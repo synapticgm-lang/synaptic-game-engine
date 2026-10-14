@@ -1,8 +1,9 @@
 ﻿/**
  * 28a — Milestone XP only (XP-PLAN.md). One engine function, amounts from xpRules.
  * Pays: encounter end (victory or neutralised), dungeon cleared, quest step, quest complete,
- * first meeting with a story-significant person, first time at a named hub,
- * and the LitRPG "First Steps" achievement. No drip (talk / look / inspect / vendor).
+ * a story-significant person won over by a passed social check, a named place reached by a quest
+ * objective or a passed discovery check, and the LitRPG "First Steps" achievement (first quest step).
+ * No drip (talk / look / inspect / vendor / travel / picking a road / surviving turns).
  * Callers run this once per turn, after the turn's text is chosen.
  */
 
@@ -57,6 +58,11 @@ export interface SandboxXpResult {
 function hasAward(keys: string[] | undefined, key: string): boolean {
   return (keys ?? []).includes(key);
 }
+
+/** Small first-time awards (a person won over, a place earned): at most this many pay per in-game day. */
+export const SMALL_XP_PER_DAY = 3;
+export const SMALL_XP_DAY_KEY = 'small-xp:';
+const SMALL_KINDS: ReadonlySet<MilestoneKind> = new Set<MilestoneKind>(['significantPerson', 'significantPlace']);
 
 /** Room/cell/floor scout nouns — looking at these is bearings, not a named landmark. */
 const GENERIC_SCOUT_TARGET =
@@ -205,6 +211,10 @@ export function applySandboxXpAwards(
     turn: number;
     /** 29s — the turn's code check result; a failed check never resolves a card's stake. */
     checkSucceeded?: boolean;
+    /** A rolled (not skipped) CHA check passed this turn. */
+    socialCheckSucceeded?: boolean;
+    /** A rolled (not skipped) INT/WIS check passed this turn. */
+    discoveryCheckSucceeded?: boolean;
   }
 ): SandboxXpResult {
   // A housing with experience off still pays and records every award, hidden: no XP line.
@@ -219,12 +229,25 @@ export function applySandboxXpAwards(
   const areaOpts = milestoneAreaOpts(state);
 
   const milestones: string[] = [];
-  const pay = (key: string, kind: MilestoneKind, label: string, cr?: string | number | null, count?: number) => {
+  const day = Math.floor(Number(state.worldLedger?.clock?.day ?? 0)) || 0;
+  const smallDayPrefix = `${SMALL_XP_DAY_KEY}${day}:`;
+  const pay = (
+    key: string,
+    kind: MilestoneKind,
+    label: string,
+    cr?: string | number | null,
+    count?: number,
+    foeLevel?: number
+  ) => {
     if (hasAward(awardKeys, key)) return;
     awardKeys.push(key);
     if (LEVEL_MILESTONE.test(key)) milestones.push(label);
-    const r = milestoneXp(mode, kind, { level, partySize, cr, count, strictness: state.gmStrictness, ...areaOpts });
+    const r = milestoneXp(mode, kind, { level, partySize, cr, count, strictness: state.gmStrictness, ...areaOpts, foeLevel });
     if (r.amount <= 0) return;
+    if (SMALL_KINDS.has(kind)) {
+      if (awardKeys.filter((k) => k.startsWith(smallDayPrefix)).length >= SMALL_XP_PER_DAY) return;
+      awardKeys.push(`${smallDayPrefix}${key}`);
+    }
     xp += r.amount;
     xpNotes.push(`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`);
   };
@@ -237,10 +260,20 @@ export function applySandboxXpAwards(
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), loc);
   const action = (opts.playerAction ?? '').trim();
 
+  // A place pays only when a quest objective sends the player there or a rolled discovery check finds it.
+  const openObjectives = opts.questsBefore.flatMap((q) =>
+    (q.objectives ?? []).filter((o) => !o.completed).map((o) => (o.description ?? '').toLowerCase())
+  );
+  const placeEarned = (name: string): boolean => {
+    const n = name.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!n) return false;
+    return opts.discoveryCheckSucceeded === true || openObjectives.some((d) => d.includes(n));
+  };
+
   // Significant place: first real arrival at a named hub. The opening place is never "reached".
   if (hub) {
     const arrived = locationChanged || /^(?:travel\s+toward|return\s+to)\b/i.test(action);
-    if (arrived) pay(`discover-hub:${hub.id}`, 'significantPlace', `reached ${hub.name}`);
+    if (arrived && placeEarned(hub.name)) pay(`discover-hub:${hub.id}`, 'significantPlace', `reached ${hub.name}`);
     const placeId = placeIdFromName(hub.name);
     const existing = places.find(
       (p) => p.id === placeId || p.name.toLowerCase() === hub.name.toLowerCase()
@@ -280,7 +313,8 @@ export function applySandboxXpAwards(
         encounterKind(ended),
         `${outcome === 'victory' ? 'defeated' : 'resolved'} ${ended.name}`,
         ended.cr,
-        ended.count
+        ended.count,
+        ended.level
       );
     }
   }
@@ -290,14 +324,12 @@ export function applySandboxXpAwards(
     if (p.arcStatus === 'cleared') pay(`dungeon-clear:${p.id}`, 'dungeonCleared', `cleared ${p.name}`);
   }
 
-  // Significant person: the opening cast, and anyone on the bible roster the player talks to here.
+  // Significant person: someone on the opening card or bible roster, here, won over by a passed social check.
   const memories = state.npcMemories ?? [];
-  for (const m of memories) {
-    if ((state.openingEstablishment?.castNpcIds ?? []).includes(m.npcId)) {
-      pay(`npc-meet:${normalizeNpcKey(m.npcName)}`, 'significantPerson', `met ${m.npcName}`);
-    }
-  }
-  if (/\b(?:ask|talk|speak|tell|greet|approach|inquire|press|offer)\b/i.test(action)) {
+  if (
+    opts.socialCheckSucceeded === true
+    && /\b(?:ask|talk|speak|tell|greet|approach|inquire|press|offer|persuade|convince|negotiate|bargain|bribe|intimidate|threaten)\b/i.test(action)
+  ) {
     const low = action.toLowerCase();
     const present = new Set((state.sceneFacts?.present ?? []).map((n) => String(n).trim().toLowerCase()));
     for (const m of memories) {
@@ -372,23 +404,17 @@ export function applySandboxXpAwards(
   // Main-path spine: the node walk is the main quest even when no journal objective ticks.
   const spine = state.pyoaSpine;
   if (spine?.visited?.length) {
-    const walked = spine.visited.slice(1);
-    for (const id of walked) {
-      const place = getSpineNode(id)?.place?.replace(/\s+/g, ' ').trim();
-      if (place) pay(`spine-place:${place.toLowerCase()}`, 'significantPlace', `reached ${place}`);
-    }
-    spine.visited.forEach((id, i) => {
-      if (i < spine.visited.length - 1 && getSpineNode(id)?.majorFork) {
-        pay(`spine-fork:${id}`, 'questStep', 'main path: a road chosen');
-      }
-    });
+    // Only the node the player stands on can pay, and only when earned (choosing a road pays nothing).
+    const current = spine.visited.length > 1 ? spine.visited[spine.visited.length - 1] : undefined;
+    const place = current ? getSpineNode(current)?.place?.replace(/\s+/g, ' ').trim() : undefined;
+    if (place && placeEarned(place)) pay(`spine-place:${place.toLowerCase()}`, 'significantPlace', `reached ${place}`);
     if (spine.endingId) pay(`spine-ending:${spine.endingId}`, 'questComplete', 'main path: an ending reached');
   }
 
-  // LitRPG achievement (engine event, no AI): first quest step, or turn 5 reached.
+  // LitRPG achievement (engine event, no AI): the first quest step.
   if (mode === 'litrpg') {
     const firstStep = awardKeys.some((k) => k.startsWith('quest-tick:') || k.startsWith('quest-complete:'));
-    if (firstStep || opts.turn >= 5) pay('achv:first-steps', 'achievement', 'Achievement: First Steps');
+    if (firstStep) pay('achv:first-steps', 'achievement', 'Achievement: First Steps');
   }
 
   // 29z1 — fight deeds the engine already counts (first kill; fights won), paid once each by mode.

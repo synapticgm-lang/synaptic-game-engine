@@ -5,18 +5,20 @@
 
 import type { Character, GameState } from './types';
 import { applyCharacterXpGain } from './characterXp';
+import { LITRPG_MILESTONE_XP } from './xpRules';
 
+/** Old key names over the one LitRPG table (xpRules). Drip keys pay 0. */
 export const FAST_XP_AWARDS = {
-  combatTrash: 25,
-  combatElite: 35,
-  combatBoss: 50,
-  discoverHub: 20,
-  landmarkInspect: 5,
-  npcMeet: 8,
-  questAccept: 15,
-  questTick: 20,
-  questComplete: 50,
-  dailyFirstTick: 20,
+  combatTrash: LITRPG_MILESTONE_XP.encounter,
+  combatElite: LITRPG_MILESTONE_XP.miniBoss,
+  combatBoss: LITRPG_MILESTONE_XP.boss,
+  discoverHub: LITRPG_MILESTONE_XP.significantPlace,
+  landmarkInspect: 0,
+  npcMeet: LITRPG_MILESTONE_XP.significantPerson,
+  questAccept: 0,
+  questTick: LITRPG_MILESTONE_XP.questStep,
+  questComplete: LITRPG_MILESTONE_XP.questComplete,
+  dailyFirstTick: 0,
 } as const;
 
 export const FAST_XP_CURVE = {

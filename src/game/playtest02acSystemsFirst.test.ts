@@ -33,6 +33,7 @@ import {
   xpRequiredForLevel,
   checkLevelUp,
 } from './xpPolicy';
+import { LITRPG_MILESTONE_XP } from './xpRules';
 import { PlayerIntent } from './intentEnums';
 import type { GameState } from './types';
 
@@ -155,8 +156,8 @@ describe('Phase 2: Beat Registry', () => {
     expect(contract.id).toMatch(/sp-beat-skirmish/);
     expect(contract.kind).toBe('encounter');
     expect(contract.spawnEncounter).toBe(true);
-    expect(contract.xpChunk).toBeGreaterThanOrEqual(20);
-    expect(contract.xpChunk).toBeLessThanOrEqual(30);
+    // 2026-10-14a — one table: the skirmish chunk is the LitRPG encounter amount.
+    expect(contract.xpChunk).toBe(LITRPG_MILESTONE_XP.encounter);
     expect(contract.proseHints?.length).toBeGreaterThan(0);
   });
 
@@ -239,10 +240,11 @@ describe('Phase 4: Fast XP loop', () => {
 
   it('combat trash/boss and quest accept/complete use the fast table', () => {
     const state = createInitialState();
-    expect(awardCombatXp(state, 'trash').xp).toBe(25);
-    expect(awardCombatXp(state, 'boss').xp).toBe(50);
-    expect(awardQuestXp(state, 'accept').xp).toBe(15);
-    expect(awardQuestXp(state, 'complete').xp).toBe(50);
+    // 2026-10-14a — one table (LITRPG_MILESTONE_XP); accepting a quest is not effort.
+    expect(awardCombatXp(state, 'trash').xp).toBe(LITRPG_MILESTONE_XP.encounter);
+    expect(awardCombatXp(state, 'boss').xp).toBe(LITRPG_MILESTONE_XP.boss);
+    expect(awardQuestXp(state, 'accept').xp).toBe(0);
+    expect(awardQuestXp(state, 'complete').xp).toBe(LITRPG_MILESTONE_XP.questComplete);
   });
 
   it('checkLevelUp triggers at 150 XP', () => {

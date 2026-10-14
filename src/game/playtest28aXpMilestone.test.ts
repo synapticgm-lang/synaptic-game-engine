@@ -113,11 +113,16 @@ describe('28a milestone XP — no drip', () => {
       quests: [],
     };
     let character = state.character;
+    // 2026-10-14a — a place pays only when a quest objective sends the player there.
+    const errand: Quest[] = [
+      { id: 'sp-errand', name: 'Errand', status: 'active', type: 'side', revealed: true,
+        objectives: [{ id: 'r', description: `Reach ${hubs[1]!.name}`, completed: false }] } as Quest,
+    ];
     const turns: Array<[string, string, string, Quest[], Quest[]]> = [
       ['Look around', hubs[0]!.name, hubs[0]!.name, [], []],
       ['Look around', hubs[0]!.name, hubs[0]!.name, [], []],
       ['Talk to the fence', hubs[0]!.name, hubs[0]!.name, quest(false), quest(true)],
-      [`Travel toward ${hubs[1]!.name}`, hubs[1]!.name, hubs[0]!.name, [], []],
+      [`Travel toward ${hubs[1]!.name}`, hubs[1]!.name, hubs[0]!.name, errand, errand],
       ['Look around', hubs[1]!.name, hubs[1]!.name, [], []],
     ];
     const gained: number[] = [];

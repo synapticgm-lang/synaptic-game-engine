@@ -140,7 +140,6 @@ import {
 } from './parser';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
-import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './receiptTelemetry';
 import type { RunManifest } from './runManifest';
 import { BUILD_STAMP } from './runManifest';
@@ -1864,22 +1863,11 @@ Do NOT print dice notation or CODE ENFORCED.
   let levelNotes: string[] = [];
   const sandboxNotes = [...sandboxXp.notes, ...sandboxXp.lootNotes];
   if (sandboxXp.items.length) working = { ...working, inventory: [...(working.inventory ?? []), ...sandboxXp.items] };
-  let sandboxKeys = sandboxXp.awardKeys;
+  const sandboxKeys = sandboxXp.awardKeys;
   if (sandboxXp.xp > 0) {
     const leveled = applyCharacterXpGain(character, sandboxXp.xp, working.engineMode, working.systemHousing);
     character = leveled.character;
     levelNotes = leveled.notes;
-  }
-  const dailyMilestone = applyDailyQuestMilestone(
-    { ...working, sandboxAwardKeys: sandboxKeys },
-    { questsBefore, questsAfter: updatedQuests, playerAction: playerInput }
-  );
-  if (dailyMilestone) {
-    sandboxNotes.push(dailyMilestone.note);
-    sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
-    const leveled = applyCharacterXpGain(character, dailyMilestone.xp, undefined, working.systemHousing);
-    character = leveled.character;
-    levelNotes = [...levelNotes, ...leveled.notes];
   }
   working = applySocialLedgerTurn({
     state: {
@@ -1916,7 +1904,7 @@ Do NOT print dice notation or CODE ENFORCED.
     runManifest: arcState.runManifest,
   };
   {
-    const xpVoice = xpGainVoiceAside(working, sandboxXp.xp + (dailyMilestone?.xp ?? 0));
+    const xpVoice = xpGainVoiceAside(working, sandboxXp.xp);
     working = xpVoice.state;
     if (xpVoice.line) sandboxNotes.push(xpVoice.line);
   }

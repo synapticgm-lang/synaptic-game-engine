@@ -106,7 +106,8 @@ const bandit = (id: string): ActiveEncounter => ({ name: 'Wardline Bandit', enco
 
 /** Five quiet turns, then a won fight and its level-up: the engine path, receipts collected. */
 function playFiveTurnsAndAFight(housing: SystemHousingId) {
-  let s = pact(housing, { character: { ...pact(housing).character!, xp: 50 } });
+  // 2026-10-14a — quiet turns pay nothing (no turn-5 First Steps), so the fight alone carries the level.
+  let s = pact(housing, { character: { ...pact(housing).character!, xp: 125 } });
   const shown: string[] = [];
   const levelBefore = s.character.level ?? 1;
   for (let turn = 1; turn <= 5; turn++) {
@@ -144,7 +145,8 @@ describe('s77 Root G — R: hidden growth under housing', () => {
   it('leftover_pocket: awards recorded and the character grows, but nothing prints', () => {
     const { state, shown } = playFiveTurnsAndAFight('leftover_pocket');
     expect(shown.filter((l) => GROWTH_LINE.test(l))).toEqual([]);
-    expect(state.sandboxAwardKeys).toEqual(expect.arrayContaining(['achv:first-steps', 'encounter:enc-t6:6']));
+    expect(state.sandboxAwardKeys).toEqual(expect.arrayContaining(['achv:first-kill', 'encounter:enc-t6:6']));
+    expect(state.sandboxAwardKeys).not.toContain('achv:first-steps');
     expect(state.character.level).toBe(2);
     expect(state.character.skillsGrantedThrough).toBe(2);
     expect(Object.values(state.character.skills ?? {}).some((r) => (r ?? 0) >= 1)).toBe(true);
@@ -190,7 +192,7 @@ describe('s77 Root G — R: hidden growth under housing', () => {
 
   it('private_window keeps today\'s receipts', () => {
     const { state, shown } = playFiveTurnsAndAFight('private_window');
-    expect(shown.some((l) => /^XP Gained: \d+ \(Achievement: First Steps/.test(l))).toBe(true);
+    expect(shown.some((l) => /^XP Gained: \d+ \(Achievement: First Kill/.test(l))).toBe(true);
     expect(shown.some((l) => /^XP Gained: \d+ \(defeated Wardline Bandit/.test(l))).toBe(true);
     expect(shown).toContain('Level Up! Now level 2');
     expect(shown.some((l) => /rank 1/.test(l))).toBe(true);

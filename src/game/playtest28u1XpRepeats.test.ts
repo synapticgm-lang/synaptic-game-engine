@@ -20,7 +20,7 @@ function thornferryState() {
   return ensurePyoaSpine(state);
 }
 
-function xpFor(state: ReturnType<typeof thornferryState>, action: string) {
+function xpFor(state: ReturnType<typeof thornferryState>, action: string, discoveryCheckSucceeded?: boolean) {
   return applySandboxXpAwards(state, {
     playerAction: action,
     locationName: state.currentLocation,
@@ -29,6 +29,7 @@ function xpFor(state: ReturnType<typeof thornferryState>, action: string) {
     questsAfter: [],
     events: [],
     turn: state.turn,
+    discoveryCheckSucceeded,
   });
 }
 
@@ -39,16 +40,18 @@ const refs: LedgerRef[] = [
 ];
 
 describe('playtest28u1XpRepeats', () => {
-  it('spine steps pay once: new place, then the fork, idempotent on repeat', () => {
+  // 2026-10-14a — a spine place pays only when earned; choosing a road pays nothing.
+  it('spine steps pay once when earned; the fork pays nothing, idempotent on repeat', () => {
     let s = advancePyoaSpine(thornferryState(), 'Walk the road together');
-    const first = xpFor(s, 'Walk the road together');
+    expect(xpFor(s, 'Walk the road together').xp).toBe(0);
+    const first = xpFor(s, 'Walk the road together', true);
     expect(first.xp).toBeGreaterThan(0);
     expect(first.notes.join(' ')).toMatch(/reached Thornferry streets/);
     s = { ...s, sandboxAwardKeys: first.awardKeys };
-    expect(xpFor(s, 'Look around').xp).toBe(0);
+    expect(xpFor(s, 'Look around', true).xp).toBe(0);
     s = advancePyoaSpine(s, 'Keep the charter with the mill');
     const fork = xpFor(s, 'Keep the charter with the mill');
-    expect(fork.awardKeys.some((k) => k.startsWith('spine-'))).toBe(true);
+    expect(fork.awardKeys.some((k) => k.startsWith('spine-fork:'))).toBe(false);
   });
 
   it('an ending pays quest complete once', () => {

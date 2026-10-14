@@ -6,7 +6,8 @@
 import type { GameState, Quest } from './types';
 import { isBearingsStyleObjective, isLookAroundAction } from './sandboxXp';
 
-export const DAILY_QUEST_MILESTONE_XP = 20;
+/** Retired: a daily login bonus is not effort. No caller pays it. */
+export const DAILY_QUEST_MILESTONE_XP = 0;
 
 function utcDayKey(d = new Date()): string {
   return d.toISOString().slice(0, 10);

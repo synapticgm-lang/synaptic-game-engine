@@ -208,6 +208,8 @@ describe('Act-3 off-spine XP', () => {
       questsAfter: [],
       events: [],
       turn: 3,
+      // 2026-10-14a — a place pays only when earned (discovery check or quest objective).
+      discoveryCheckSucceeded: true,
     });
     expect(first.xp).toBe(SANDBOX_XP.discoverHub);
     expect(first.notes.some((n) => new RegExp(`XP Gained: ${SANDBOX_XP.discoverHub}`).test(n))).toBe(true);
