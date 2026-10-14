@@ -607,6 +607,26 @@ export function dungeonRoomFacts(state: GameState): string {
   return bits.join(' ');
 }
 
+/**
+ * Back the way the player came: the most recently first-visited room joined to this one, else out of the
+ * dungeon to its site. The room's foe is not moved.
+ */
+function retreatFromRoom(state: GameState): { state: GameState; receipt: string } {
+  const d = state.activeDungeon!;
+  const node = currentNode(d)!;
+  const ranks = skillRanksOf(state.character);
+  const back = [...d.visitedNodeIds]
+    .reverse()
+    .find((id) => id !== node.id && node.connections.includes(id) && !isDoorLockedFor(d, id, ranks));
+  const moved = back ? moveToNode(d, back, ranks) : d;
+  if (!back || moved.currentNodeId === node.id) {
+    return { state: parkDungeonCard(state, { toSite: true }), receipt: `Dungeon: you got out of ${d.dungeonName}; ${liveFoe(node)?.name ?? 'the foe'} stayed in ${node.name}.` };
+  }
+  let next: GameState = { ...state, activeDungeon: moved, currentLocation: hereLabel(moved) };
+  if (next.locationSheet) next = { ...next, locationSheet: { ...next.locationSheet, name: hereLabel(moved) } };
+  return { state: next, receipt: `Dungeon: you fell back into ${currentNode(moved)!.name}; ${liveFoe(node)?.name ?? 'the foe'} stayed in ${node.name}.` };
+}
+
 function roomWays(d: ActiveDungeonState, node: MapNode): MapNode[] {
   return node.connections.map((id) => d.nodes.find((n) => n.id === id)).filter((n): n is MapNode => !!n);
 }
@@ -712,6 +732,20 @@ export function advanceDungeonCard(
         next = all.state;
         receipts.push(...all.receipts);
       }
+    }
+  }
+
+  // Got away this turn from the room's foe → the player is out of its room; the foe stays behind.
+  {
+    const node = currentNode(next.activeDungeon!)!;
+    const foe = liveFoe(node);
+    const escaped = !!foe && !next.activeEncounter
+      && arcReceipts.some((r) => r.startsWith(`Encounter cleared: ${foe.name}`) && /\bescape/i.test(r));
+    if (escaped) {
+      const out = retreatFromRoom(next);
+      next = out.state;
+      receipts.push(out.receipt);
+      if (!next.activeDungeon) return { state: next, receipts };
     }
   }
 

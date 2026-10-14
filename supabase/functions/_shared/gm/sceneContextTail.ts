@@ -266,8 +266,25 @@ export function isStaleLocationBleed(state: GameState, text: string): boolean {
     const s = withoutTalkAbout(sentence).trim();
     if (!s || !mentionsPlace(s, prev) || mentionsHereOrTrip(state, s) || isLeaveBehindMention(s, prev)) return false;
     if (tellsEarlierTime(s)) return false;
+    // "One path runs to Greyhollow Inn", "a lantern along the road to the church": a way out or a destination, seen from here.
+    if (namesAsWayTo(s, prev)) return false;
     return !tripStart || putsCameraAt(s, prev);
   });
+}
+
+/** The sentence names the place only as where a way from here goes ("to", "toward", "back toward", "the road for"). */
+function namesAsWayTo(sentence: string, place: string): boolean {
+  const bare = place.replace(/\s+/g, ' ').trim().replace(/^the\s+/i, '');
+  if (!bare) return false;
+  const re = new RegExp(`\\b(?:to|toward|towards|for)\\s+(?:the\\s+)?${escapeRe(bare)}\\b`, 'i');
+  const every = new RegExp(`\\b${escapeRe(bare)}\\b`, 'gi');
+  const way = new RegExp(`\\b(?:to|toward|towards|for)\\s+(?:the\\s+)?$`, 'i');
+  if (!re.test(sentence)) return false;
+  // Every mention is a way's end; a second mention as a scene ("…to the inn. The inn's fire…") is not.
+  for (const m of sentence.matchAll(every)) {
+    if (!way.test(sentence.slice(0, m.index ?? 0))) return false;
+  }
+  return true;
 }
 
 export function isStaleFightBleed(state: GameState, text: string): boolean {

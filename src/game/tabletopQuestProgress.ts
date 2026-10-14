@@ -47,10 +47,16 @@ export function placeTabletopStepPeople(state: GameState): GameState {
   if (!quest) return state;
   let memories = state.npcMemories ?? [];
   let changed = false;
+  // Anyone a step is taken with (a talk step's person, a step's own people) and the quest's giver live at its place.
+  const wanted: Array<[string, string | null]> = [];
   for (const o of quest.objectives ?? []) {
     if (o.completed) continue;
-    const person = talkStepPerson(o.description);
-    const place = person ? o.place ?? tabletopStepPlace(state, o.description) : null;
+    const talk = talkStepPerson(o.description);
+    if (talk) wanted.push([talk, o.place ?? tabletopStepPlace(state, o.description)]);
+    if (o.place) for (const p of o.people ?? []) wanted.push([p, o.place]);
+  }
+  if (quest.giver) wanted.push([quest.giver, quest.location ?? null]);
+  for (const [person, place] of wanted) {
     if (!person || !place) continue;
     const hit = resolveNpcRecord({ ...state, npcMemories: memories }, person);
     if (hit) {
@@ -85,14 +91,14 @@ export function tabletopStepAnchor(
   state: GameState,
   quest: Quest,
   idx: number
-): { place: string | null; people: string[] } {
+): { place: string | null; people: string[]; room?: string } {
   const o = quest.objectives?.[idx];
   if (!o) return { place: null, people: [] };
   const person = talkStepPerson(o.description);
   const people = o.people?.length ? o.people : person ? [person] : [];
   if (people.length) return { place: null, people };
   const single = (quest.objectives ?? []).length === 1 ? quest.location ?? null : null;
-  return { place: o.place ?? tabletopStepPlace(state, o.description) ?? single, people: [] };
+  return { place: o.place ?? tabletopStepPlace(state, o.description) ?? single, people: [], ...(o.room ? { room: o.room } : {}) };
 }
 
 function atPlace(state: GameState, place: string): boolean {
@@ -101,6 +107,17 @@ function atPlace(state: GameState, place: string): boolean {
   const here = name(state.currentLocation ?? '');
   const p = name(place);
   return !!here && !!p && (here === p || here.includes(p));
+}
+
+/**
+ * At the step's place. A step inside it ("the keep's ground floor", "the great hall floor") is taken in a room
+ * of that place ("Keep Gate — Ruined hall"), never outside its door, and in the room its anchor names.
+ */
+function atStepPlace(state: GameState, place: string, room?: string): boolean {
+  if (!room) return atPlace(state, place);
+  const [outer, inner] = (state.currentLocation ?? '').split(/\s+[—–]\s+/);
+  if (!inner || !outer || !atPlace({ ...state, currentLocation: outer }, place)) return false;
+  return room === 'inside' || ` ${bare(inner)} `.includes(` ${room.toLowerCase()} `);
 }
 
 function playOpen(state: GameState): Quest | null {
@@ -124,7 +141,7 @@ function takeableSteps(state: GameState): Array<{ idx: number; chip: string; per
       if (person) out.push({ idx, chip, person });
       return;
     }
-    if (anchor.place && atPlace(state, anchor.place)) out.push({ idx, chip, person: null });
+    if (anchor.place && atStepPlace(state, anchor.place, anchor.room)) out.push({ idx, chip, person: null });
   });
   return out;
 }

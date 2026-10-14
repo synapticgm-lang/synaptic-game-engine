@@ -65,8 +65,8 @@ function statedExitCounts(clause: string, exits: string[], sentence: string): Ar
     // "the only other way out" leaves out the way in; "one of the ways out" picks one of several.
     if (/\b(?:other|remaining|of)\b/i.test(m[0].slice(m[1]!.length, m[0].length - m[2]!.length))) continue;
     if (word === 'only' && /s$/.test(noun)) continue;
-    // "One passage led…, another…" lists the ways one by one.
-    if (word === 'one' && /\b(?:another|the other|a second|a third)\b/i.test(sentence)) continue;
+    // "One passage led…, another…" / "One path runs to X, one to Y, and one to Z" lists the ways one by one.
+    if (word === 'one' && /\b(?:another|the other|a second|a third)\b|\bone\b[^.!?]*?,\s*(?:and\s+)?one\b/i.test(sentence)) continue;
     const n = /^\d+$/.test(word) ? Number(word) : NUM[word];
     if (n === 1) {
       // "the only road to Lowmarket" is the one way to a named exit, not the total.

@@ -32,6 +32,7 @@ import {
 import { isPlannerUiPersonToken } from './chromeAuthority.ts';
 import { isNeverCastTitle } from './neverCast.ts';
 import { applyClosedFactHarvest } from './closedFactLedger.ts';
+import { hubsForBibleId } from './outdoorHubs.ts';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -70,6 +71,23 @@ function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined
   }
   
   return [...found].slice(0, 8);
+}
+
+/** The prose with every known place name (hubs, their aliases, the save's places) blanked out. */
+export function maskPlaceNames(state: GameState, prose: string): string {
+  const names = [
+    ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...(h.aliases ?? [])]),
+    ...(state.places ?? []).map((p) => p.name),
+  ]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n) => n.split(' ').length >= 2 || /['’]s\b/.test(n))
+    .sort((a, b) => b.length - a.length);
+  let out = prose;
+  for (const n of names) {
+    const esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/['’]/g, "['’]");
+    out = out.replace(new RegExp(`\\b${esc}\\b`, 'gi'), ' ');
+  }
+  return out;
 }
 
 /** Lock B — harvest multi-word proper names / hub contacts from prose (not COMMON_NPCS). */
@@ -155,12 +173,14 @@ export function harvestNarrativePeople(
     .filter(Boolean);
 
   // 14a — when JSON bind succeeded, occupancy comes from refs ids, not prose invent.
+  // A person's name inside a place's name ("Mira's Apothecary") is the place, not her.
+  const peopleProse = maskPlaceNames(state, prose);
   const registeredNpcs = (
     fromTokenRefs.length
       ? fromTokenRefs
       : [
-          ...extractRegisteredNpcs(prose, state.bibleId ?? state.campaignBibleId, state),
-          ...extractProperNamesFromProse(prose, state.bibleId ?? state.campaignBibleId, state),
+          ...extractRegisteredNpcs(peopleProse, state.bibleId ?? state.campaignBibleId, state),
+          ...extractProperNamesFromProse(peopleProse, state.bibleId ?? state.campaignBibleId, state),
         ]
   ).filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
   

@@ -106,8 +106,9 @@ describe('shared rules engine — rounds', () => {
     expect(r.events.some((e) => e.k === 'act' && e.action === 'stand')).toBe(true);
   });
 
-  it('Disengage gets clear only when you are as fast as the foe; Flee draws opportunity attacks then escapes', () => {
-    expect(play('disengage', pc(), fight(block('bandit')), d20(10)).outcome).toBe('escaped');
+  it('Disengage gets clear only when you are faster than the foe; Flee draws opportunity attacks then escapes', () => {
+    expect(play('disengage', pc({ speed: 35 }), fight(block('bandit')), d20(10)).outcome).toBe('escaped');
+    expect(play('disengage', pc(), fight(block('bandit')), d20(10)).outcome).toBe('ongoing');
     expect(play('disengage', pc(), fight(block('wolf')), d20(10)).outcome).toBe('ongoing');
     const flee = play('flee', pc({ hp: 40, maxHp: 40 }), fight(block('bandit'), 2), d20(15));
     expect(flee.outcome).toBe('escaped');

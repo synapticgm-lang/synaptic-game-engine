@@ -502,7 +502,7 @@ export function buildContextPrompt(
   activeLoreCards: LoreCard[] = [],
   perspective?: Settings['perspective']
 ): string {
-  const facts = formatWriterInfoLayer(state, activeLoreCards);
+  const facts = formatWriterInfoLayer(state, activeLoreCards, playerInput);
   const packet = formatWriterFacingPacket(state, playerInput, perspective);
   return facts ? `${facts}\n\n${packet}` : packet;
 }

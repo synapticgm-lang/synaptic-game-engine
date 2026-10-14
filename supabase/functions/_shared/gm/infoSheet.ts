@@ -8,7 +8,7 @@
 import type { GameState, LogEntry, NpcMemory } from './types.ts';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { presentNpcNames } from './npcRelationships.ts';
-import { hallTalkTopics, openingCastNames, openingCastStillHere, type HallTalkTopic } from './openingEstablishment.ts';
+import { hallTalkTopics, openingCastNames, openingCastNote, openingCastStillHere, type HallTalkTopic } from './openingEstablishment.ts';
 import { placeScale } from './placeAuthority.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerFacingLocation } from './locationName.ts';
@@ -142,6 +142,9 @@ function lastLines(turns: { player: LogEntry; gm: LogEntry }[], hideRecord: bool
 
 function hereLines(state: GameState, people: string[]): string[] {
   const out = [people.length ? people.join(', ') : crowdHere(state) ? 'a crowd, nobody named' : 'nobody'];
+  const cast = openingCastStillHere(state) ? openingCastNames(state)[0] : undefined;
+  const castNote = cast && people.includes(cast) ? openingCastNote(state) : undefined;
+  if (castNote) out.push(`${cast}: ${castNote}`);
   const spot = activeHereSpot(state);
   if (spot) {
     const away = spot.awayFrom.length ? `; out of talking range: ${spot.awayFrom.join(', ')}` : '';

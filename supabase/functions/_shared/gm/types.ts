@@ -410,6 +410,8 @@ export interface QuestObjective {
   place?: string;
   /** Who this step is taken with, when its wording names no "Speak with" person. */
   people?: string[];
+  /** A step inside `place`: the room word its room label must carry ("hall"), or "inside" for any room in it. */
+  room?: string;
 }
 
 export interface ChoiceJournalEntry {

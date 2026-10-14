@@ -29,6 +29,14 @@ export interface InventoryCapacity {
  * never the catalog label ("Chain Mail", "Holy Water (Flask)"), so prose cannot paste a label. A possessive
  * name ("Edda's") and a name after "of" ("Ring of Aldous") keep their capitals.
  */
+/** The turn's own words (player line, engine result) name this item: a word of four letters or more is in them. */
+export function turnUsesKit(itemName: string, turnText: string): boolean {
+  const text = (turnText ?? '').toLowerCase();
+  if (!text.trim()) return false;
+  const words = kitRefDisplay(itemName, true).toLowerCase().split(/[^a-z']+/).filter((w) => w.length >= 4);
+  return words.some((w) => new RegExp(`\\b${w}`).test(text));
+}
+
 export function kitRefDisplay(name: string, plain = false): string {
   const clean = (plain
     ? (name ?? '').replace(/\[[^\]]*\]\s*/g, '').replace(/\s*\([^)]*\)/g, '')

@@ -209,8 +209,8 @@ const cursedKeepBase: CampaignBible = {
       objectiveAnchors: [
         undefined,
         undefined,
-        { place: 'Keep Gate' },
-        { place: 'Keep Gate' },
+        { place: 'Keep Gate', room: 'inside' },
+        { place: 'Keep Gate', room: 'hall' },
         { people: ['Father Aldous', 'Mayor Helga Brask'] },
       ],
       rewards: '50 gp, [Greyhollow Tavern lodging], Oskar\'s trust, [Keep Ground Floor Map] (partial), [Broken Chain Link] (evidence)',

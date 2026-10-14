@@ -60,6 +60,18 @@ export function agencyPatterns(who: string): RegExp[] {
   ];
 }
 
+/** The player's line is speech: quoted words or a talk verb. */
+export function playerLineSpeaks(playerInput: string): boolean {
+  return /["“?]|^\s*(?:i|i'm|my|we|hello|hi|greetings|yes|no)\b|\b(?:say|says|said|tell|ask|talk|speak|shout|call|warn|answer|reply|greet|plead|persuade|parley|negotiate|threaten|bargain)\b/i.test(playerInput ?? '');
+}
+
+/** The narrator giving the PC words the player never said. */
+export function pcSpeechPatterns(who: string): RegExp[] {
+  return [
+    new RegExp(`\\b${who}\\s+(?:\\w+\\s+)?(?:said|says|spoke|speaks|asked|asks|shouted|shouts|called|calls|warned|warns|answered|answers|replied|replies|told|tells|whispered|whispers|muttered|mutters)\\b`, 'i'),
+  ];
+}
+
 /** What the fight fact says the PC and the foes did this turn. */
 export function fightRolls(engineResult: string | undefined | null) {
   const f = engineResult ?? '';

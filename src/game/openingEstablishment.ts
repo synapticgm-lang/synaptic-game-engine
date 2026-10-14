@@ -1659,7 +1659,8 @@ export function compileOpeningCard(
   const castNames: string[] = [];
   for (const part of live) {
     // A comma clause kept with its phrase describes the person; the name is the phrase before it.
-    const t = part.replace(/,.*$/, '').trim();
+    // "a steward behind the oak" is the steward; where he stands is not part of his name.
+    const t = part.replace(/,.*$/, '').split(/\s+(?:behind|beyond)\s+/i)[0]!.trim();
     if (t.split(' ').length > 6 || !slotNamesOnePerson(t)) continue;
     castNames.push(t, t.replace(/^(?:a|an|the)\s+/i, '').trim());
   }
@@ -1817,6 +1818,40 @@ export function openingOfferPads(state: GameState): string[] {
   const offer = openOpeningOffer(state);
   if (!offer) return [];
   return [`Accept the ${offer.noun}`, `Refuse the ${offer.noun}`];
+}
+
+/** The first person or group of the card's "Who is here" slot, as printed. */
+function openingLeadSlot(state: GameState): string {
+  const blob = state.openingEstablishment?.pickedHook ?? '';
+  const slot = blob.match(/Who is here[^:\n]*:[ \t]*([^\n]+)/i)?.[1]?.replace(/\s+/g, ' ').trim() ?? '';
+  const lead = (slotParts(slot)[0] ?? '').trim().replace(/[.!]+$/, '');
+  return lead && !slotNamesNobody(lead) ? lead : '';
+}
+
+const BEYOND_BARRIER = /\b(?:behind|beyond)\s+(?:(?:the|a|an)\s+)?[a-z][\w'’-]*(?:\s+[a-z][\w'’-]*)?/i;
+
+/**
+ * How the card's cast stands in the scene. A lead "behind the oak" / "beyond the grate" is a voice through
+ * a shut way, not a body in the scene; a plural lead ("exhausted faces on the porch") is several people.
+ */
+export function openingCastStanding(state: GameState): { beyond?: string; group?: boolean } {
+  const lead = openingLeadSlot(state);
+  if (!lead) return {};
+  const beyond = lead.match(BEYOND_BARRIER)?.[0];
+  if (beyond) return { beyond };
+  return slotNamesOnePerson(lead) ? {} : { group: true };
+}
+
+/** The writer note for the card's cast: what the scene lets them do. */
+export function openingCastNote(state: GameState): string | undefined {
+  const standing = openingCastStanding(state);
+  if (standing.beyond) {
+    return `${standing.beyond}: heard, not seen — nobody sees, watches or steps near them, and they hand nothing over, until that way opens`;
+  }
+  if (standing.group) {
+    return 'several people, not one: one of them may speak ("one of them said"), never the group as one voice';
+  }
+  return undefined;
 }
 
 /** The compiled card for this save: the New Game record, else compiled from the stored card text. */

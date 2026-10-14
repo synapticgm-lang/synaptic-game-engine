@@ -14,6 +14,8 @@ import {
   fightRolls as readFightRolls,
   HIT_WORDS,
   narrationOf,
+  pcSpeechPatterns,
+  playerLineSpeaks,
   questStepLeak,
   questTitleNamed,
   rollContradiction,
@@ -60,9 +62,12 @@ export function posesChoiceProblem(state: GameState, sentence: string): string |
 }
 
 /** A sentence in which the narrator decides what the PC feels, is sure of, or likes. */
-export function agencyProblem(state: GameState, sentence: string): string | null {
+export function agencyProblem(state: GameState, sentence: string, playerInput?: string): string | null {
   const s = narrationOf(sentence);
-  return agencyPatterns(pcSubject(state)).some((re) => re.test(s)) ? PC_AGENCY : null;
+  if (agencyPatterns(pcSubject(state)).some((re) => re.test(s))) return PC_AGENCY;
+  // The PC speaks only when the player's line is speech; a Dodge or a Wait gives them no words.
+  const silent = state.engineMode === 'dnd' && !!playerInput?.trim() && !playerLineSpeaks(playerInput);
+  return silent && pcSpeechPatterns(pcSubject(state)).some((re) => re.test(s)) ? PC_AGENCY : null;
 }
 
 /** What the fight fact says the PC and the foes did this turn. */
@@ -85,7 +90,7 @@ export function engineFactProblems(state: GameState, sentence: string, playerInp
   return [
     recordReadoutProblem(state, sentence, playerInput),
     posesChoiceProblem(state, sentence),
-    agencyProblem(state, sentence),
+    agencyProblem(state, sentence, playerInput),
     rollContradictionProblem(state, sentence),
   ].filter((p): p is string => !!p);
 }

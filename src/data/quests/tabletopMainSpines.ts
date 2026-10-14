@@ -596,8 +596,30 @@ export function matchTabletopMainSpineFromCtx(ctx: TabletopMatchCtx): TabletopMa
   return matchTabletopMainSpine(ctx.bibleId, ctx.hookBlob, ctx.location);
 }
 
+/** The person who wants the job: the name the first beat opens on, in full as `whoWantsWhat` prints it ("Silas Thorne"). */
+export function tabletopSpineGiver(spine: TabletopMainSpine): string | undefined {
+  const first = spine.threeBeats[0]?.match(/^([A-Z][\w'’-]+)\s/)?.[1];
+  if (!first || !spine.whoWantsWhat.includes(first)) return undefined;
+  const run = spine.whoWantsWhat.match(new RegExp(`(?:\\b[A-Z][\\w'’-]+ )*${first}(?: [A-Z][\\w'’-]+)*`))?.[0];
+  return (run ?? first).replace(/^(?:A|An|The) /, '');
+}
+
+/** A step taken with the giver: it names them, or points at them as "him" / "her". */
+function stepWithGiver(step: string, giver: string | undefined): boolean {
+  if (!giver) return false;
+  const first = giver.split(' ').find((w) => !/^(?:Mayor|Old|Innkeep|Merchant|Baroness|Father|Captain)$/.test(w)) ?? giver;
+  return new RegExp(`\\b(?:${first}|him|her)\\b`).test(step);
+}
+
 export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQuestSeed {
   const followOn = spine.threeBeats[1]?.trim();
+  const giver = tabletopSpineGiver(spine);
+  // Both steps start at the quest's own pin; their wording often names only a prop there. A step done with
+  // the giver ("Escort him…", "the map Silas spreads") is taken with them, not with nobody there.
+  const anchor = (step: string) => ({
+    place: spine.mapPin,
+    ...(giver && stepWithGiver(step, giver) ? { people: [giver] } : {}),
+  });
   return {
     id: spine.spineId,
     title: spine.title,
@@ -605,9 +627,9 @@ export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQu
     recommendedLevel: 1,
     // A main quest is more than one look: the follow-on beat is its second step.
     objectives: followOn ? [spine.firstObjective, followOn] : [spine.firstObjective],
-    // Both steps start at the quest's own pin; their wording often names only a prop there.
-    objectiveAnchors: followOn ? [{ place: spine.mapPin }, { place: spine.mapPin }] : [{ place: spine.mapPin }],
+    objectiveAnchors: followOn ? [anchor(spine.firstObjective), anchor(followOn)] : [anchor(spine.firstObjective)],
     location: spine.mapPin,
+    ...(giver ? { giver } : {}),
     type: 'main',
   };
 }

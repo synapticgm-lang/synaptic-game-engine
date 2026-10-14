@@ -11,6 +11,7 @@ import { presentNpcRecords } from './npcRecords';
 import { npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from './npcSheet';
 import { createHashRng } from './seededRng';
 import { recordStanceFromAction, stanceWriterLine } from './npcStance';
+import { resolveActiveCampaignBible } from './campaignSeed';
 
 const GIVEN = [
   'Wat', 'Hobb', 'Edda', 'Maud', 'Piers', 'Tilde', 'Osric', 'Nell', 'Bertil', 'Agna', 'Col', 'Ysolde',
@@ -21,7 +22,7 @@ const FAMILY = [
   'Rudd', 'Brack', 'Hollin', 'Tew', 'Aske', 'Merrow', 'Coyne',
 ];
 
-const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 1, road: 1, camp: 2, inn: 2, town: 2 };
+const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 0, road: 1, camp: 2, inn: 2, town: 2 };
 
 function placeKey(place: string): string {
   return place.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -35,6 +36,10 @@ function takenNames(state: GameState): Set<string> {
       for (const w of words) out.add(w);
       out.add(n.toLowerCase());
     }
+  }
+  // The bible's own cast keeps its names: no townsperson shares a word of them.
+  for (const npc of resolveActiveCampaignBible(state)?.keyNPCs ?? []) {
+    for (const w of (npc.name ?? '').toLowerCase().split(/\s+/)) if (w.length >= 3) out.add(w);
   }
   const pc = state.character?.name?.trim().toLowerCase();
   if (pc) out.add(pc);
@@ -58,6 +63,8 @@ export function seedTownsfolkHere(state: GameState): GameState {
   if (j && j.legsDone < j.legsTotal) return state;
 
   const place = sheetPlaceFor(here);
+  // A dungeon's rooms hold its foes and loot, not townsfolk.
+  if (state.activeDungeon || PEOPLE_PER_PLACE[place] === 0) return { ...state, townsfolkPlaces: [...done, key] };
   const rng = createHashRng('townsfolk', state.campaignBibleId ?? '', key);
   const taken = takenNames(state);
   const people: NpcMemory[] = [];

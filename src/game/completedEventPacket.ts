@@ -40,7 +40,7 @@ import {
 } from './systemHousing';
 import { isNeverCastTitle } from './neverCast';
 import { terminalFightBeat, terminalFightOutcome } from './engineResult';
-import { kitRefDisplay } from './inventory';
+import { kitRefDisplay, turnUsesKit } from './inventory';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 import {
   hallTalkAsksPanel,
@@ -77,6 +77,7 @@ import {
   playerAskedWhyPulled,
   sanitizeLockedNameBeat,
   countSameHallTopicRepeats,
+  openingCastNote,
 } from './openingEstablishment';
 
 export type EventOutcome =
@@ -309,6 +310,8 @@ export function classifyVerb(input: string): string {
   }
   if (/\b(loot|search the (?:body|corpse)|take from)\b/i.test(t)) return 'looted';
   if (/\b(use|drink|eat|equip|wield|draw)\b/i.test(t)) return 'used';
+  // The line's first verb is the act: "Wait and watch" is a wait, not an inspection.
+  if (/^(?:wait|rest|stay|hold still|hold position)\b/i.test(t)) return 'waited';
   if (/\b(inspect|examine|look around|search|scout|check|study|watch)\b/i.test(t)) return 'inspected';
   if (/\b(wait|rest|stay|hold)\b/i.test(t)) return 'waited';
   return 'acted';
@@ -501,6 +504,8 @@ export type NounAllowlistOpts = {
   hallTalk?: boolean;
   /** This turn's ENGINE RESULT: a pack item it names ("found Fine Longsword") is a ref the writer can name. */
   engineResult?: string;
+  /** This turn's player line: tabletop worn kit it names is a ref. */
+  action?: string;
 };
 
 /**
@@ -580,6 +585,14 @@ export function compileNounAllowlist(
   return out;
 }
 
+/** Two cast labels name one person when one's words run whole inside the other's ("faces" / "the exhausted faces"). */
+function sameCastPerson(a: string, b: string): boolean {
+  const words = (s: string) => ` ${s.toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/\s+/g, ' ').trim()} `;
+  const x = words(a);
+  const y = words(b);
+  return x.includes(y) || y.includes(x);
+}
+
 function slugRefId(raw: string): string {
   return (raw ?? '')
     .toLowerCase()
@@ -652,9 +665,14 @@ export function compileRefEnum(
   if (!underwayHereLabel(state)) add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
 
+  const castNote = openingCastNote(state);
+  const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
-    add(`cast:${slugRefId(name)}`, name, 'person');
+    // "faces" and "a steward behind the oak" are the same people as "the exhausted faces" / "the steward": one row each.
+    if (castRows.some((prev) => sameCastPerson(prev, name))) continue;
+    castRows.push(name);
+    add(`cast:${slugRefId(name)}`, name, 'person', castNote);
   }
 
   if (!opts?.hallTalk) {
@@ -670,8 +688,12 @@ export function compileRefEnum(
     if (kill?.name && kill.remains && kill.outcome === 'victory') {
       add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');
     }
+    // Tabletop: worn kit is a ref only on a turn that uses it, so the writer has no kit list to paste.
+    const kitTurn = `${opts?.action ?? ''}\n${opts?.engineResult ?? ''}`;
     for (const item of state.inventory ?? []) {
-      if (item.equipped && item.name) add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name, state.engineMode === 'dnd'), 'kit');
+      if (!item.equipped || !item.name) continue;
+      if (state.engineMode === 'dnd' && !turnUsesKit(item.name, kitTurn)) continue;
+      add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name, state.engineMode === 'dnd'), 'kit');
     }
     for (const c of state.companions ?? []) {
       if (c.name) add(`companion:${slugRefId(c.name)}`, c.name, 'companion');
@@ -928,7 +950,7 @@ export function buildCompletedEventPacket(
   const ledgerRead = !!ledgerSheetLine(state) && isLedgerReadAction(action);
   // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
   // an actor, a prop or a thing that answers.
-  const refOpts = { hallTalk, engineResult: extras?.engineResult };
+  const refOpts = { hallTalk, engineResult: extras?.engineResult, action };
   const allowlist = compileNounAllowlist(state, allowExtras, refOpts)
     .filter((n) => !ledgerRead || !isSystemWindowLabel(n));
   const refEnum = compileRefEnum(state, allowExtras, refOpts)
@@ -1313,9 +1335,9 @@ export function formatWriterFacingEvent(
   // example's shape, and a one-line example came back as one place-name line.
   const whereWas = povExample(pov, { second: 'where you were', third: 'where {N} was', first: 'where I was' });
   const whatDid = povExample(pov, {
-    second: 'what you did and what came of it',
-    third: 'what {N} did and what came of it, told close on {him}',
-    first: 'what I did and what came of it',
+    second: 'what you did (only the act the player chose) and what came of it',
+    third: 'what {N} did (only the act the player chose) and what came of it, told close on {him}',
+    first: 'what I did (only the act the player chose) and what came of it',
   });
   // 29z8 — writers copy the shape. A place line on every turn came back as the same room described
   // again each turn, so once HERE is on the page and nobody moved, the shape opens on what changed.

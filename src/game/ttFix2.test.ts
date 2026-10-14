@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import type { GameState, Quest } from './types';
 import { revealLocalStarterQuest } from './questPlay';
-import { tabletopStepAnchor, tabletopStepChip, applyTabletopQuestTurn } from './tabletopQuestProgress';
+import { tabletopStepAnchor, tabletopStepChip, applyTabletopQuestTurn, placeTabletopStepPeople } from './tabletopQuestProgress';
 import { storyChip, turnProgress } from './choiceRanking';
 import { applyPlayPhaseAfterHp } from './playPhase';
 import { encounterXpBudget, foesWithinBudget, crToXp } from './xpRules';
@@ -48,7 +48,8 @@ describe('item 1 — quest steps a reader can place', () => {
     for (const spine of TABLETOP_MAIN_SPINES.filter((s) => s.spineId.startsWith('ck-spine-'))) {
       const [q] = revealLocalStarterQuest([], [tabletopSpineToStarterQuest(spine)]);
       expect(q!.objectives![0]!.place).toBe(spine.mapPin);
-      expect(tabletopStepChip(ck({ quests: [q!], currentLocation: spine.mapPin }))).toBeTruthy();
+      // tt-fix-5: a step taken with the giver needs the giver here; play places them at the pin first.
+      expect(tabletopStepChip(placeTabletopStepPeople(ck({ quests: [q!], currentLocation: spine.mapPin })))).toBeTruthy();
     }
   });
 

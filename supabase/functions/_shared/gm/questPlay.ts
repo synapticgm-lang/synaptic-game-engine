@@ -14,7 +14,7 @@ export type StarterQuestSeed = {
   recommendedLevel?: number;
   objectives: string[];
   /** Per objective: where (or with whom) it is taken, for steps whose wording names neither. */
-  objectiveAnchors?: Array<{ place?: string; people?: string[] } | undefined>;
+  objectiveAnchors?: Array<{ place?: string; people?: string[]; room?: string } | undefined>;
   rewards?: string;
   location?: string;
   /** Who gives it; a named giver becomes an NPC record at `location` (`placeQuestGivers`). */
@@ -812,6 +812,7 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
         completed: false,
         ...(anchor?.place ? { place: anchor.place } : {}),
         ...(anchor?.people?.length ? { people: [...anchor.people] } : {}),
+        ...(anchor?.room ? { room: anchor.room } : {}),
       };
     }),
     rewards: { items: rewardItems(q.rewards) },
@@ -1006,6 +1007,7 @@ export function revealLocalStarterQuest(
             completed: q.objectives?.[i]?.completed ?? false,
             ...(seed.objectiveAnchors?.[i]?.place ? { place: seed.objectiveAnchors[i]!.place } : {}),
             ...(seed.objectiveAnchors?.[i]?.people?.length ? { people: [...seed.objectiveAnchors[i]!.people!] } : {}),
+            ...(seed.objectiveAnchors?.[i]?.room ? { room: seed.objectiveAnchors[i]!.room } : {}),
           })),
           rewards: { items: rewardItems(seed.rewards) },
           ...(seed.giver ? { giver: seed.giver } : {}),

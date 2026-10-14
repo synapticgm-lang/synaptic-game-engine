@@ -1089,11 +1089,13 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
     case 'disengage': {
       if (speedZero(ctx.combat.pcConditions, pc.conditions)) {
         push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: 'your Speed is 0; you cannot move away', pc: true });
-      } else if (pc.speed >= foesFastest) {
+      } else if (pc.speed > foesFastest) {
+        // Disengage only stops opportunity attacks; a foe as fast as you follows on its turn.
         push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: `you step out of reach (Speed ${pc.speed} vs ${foesFastest}) and get clear with no opportunity attack`, pc: true });
         ctx.outcome = 'escaped';
       } else {
-        push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: `you step back with no opportunity attack, but the foe is faster (Speed ${foesFastest} vs ${pc.speed}) and closes`, pc: true });
+        const closes = pc.speed === foesFastest ? `the foe is as fast (Speed ${foesFastest} vs ${pc.speed}) and keeps pace` : `the foe is faster (Speed ${foesFastest} vs ${pc.speed}) and closes`;
+        push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: `you step back with no opportunity attack, but ${closes}`, pc: true });
       }
       break;
     }

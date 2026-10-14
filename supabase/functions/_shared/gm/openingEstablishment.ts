@@ -181,6 +181,10 @@ export function openingCastStillHere(_state?: unknown): boolean {
   return false;
 }
 
+export function openingCastNote(_state?: unknown): string | undefined {
+  return undefined;
+}
+
 export function cardSceneMentionTokens(state?: { openingEstablishment?: { pickedHook?: string } }): string[] {
   const hook = state?.openingEstablishment?.pickedHook ?? '';
   const offer = hook.match(/Opening offer[^:\n]*:\s*([^\n]+)/i);

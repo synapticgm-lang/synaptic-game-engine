@@ -42,6 +42,9 @@ function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** What follows a verb, never a noun used as an adjective: its object's determiner, a pronoun or a particle. */
+const VERB_FOLLOWER = /^\s+(?:a|an|the|his|her|their|its|my|your|him|them|it|back|away)\b/i;
+
 /** `the Woodcutter tracked` / `the Warden slowly` — the name is the subject, not a slot adjective. */
 function wordAfterNameOk(word: string): boolean {
   return AFTER_NAME_OK.test(word) || /^[a-z]{3,}(?:ed|ly)$/.test(word);
@@ -96,7 +99,9 @@ export function isCompanionObjectGlue(text: string, names: string[] = []): boole
     const esc = escapeRe(name);
     if (new RegExp(`\\b${OBJECT_TAKE}\\s+the\\s+${esc}\\b`, 'i').test(t)) return true;
     const adj = new RegExp(`\\bthe\\s+${esc}\\s+([a-z]{3,})\\b`).exec(t);
-    if (adj?.[1] && !wordAfterNameOk(adj[1]) && !insideLongerName(t, adj.index, name, names)) {
+    // "the Road Bandit swung a scimitar": a word that takes an object or a particle after it is the name's verb.
+    const takesObject = !!adj && VERB_FOLLOWER.test(t.slice(adj.index + adj[0].length));
+    if (adj?.[1] && !takesObject && !wordAfterNameOk(adj[1]) && !insideLongerName(t, adj.index, name, names)) {
       return true;
     }
   }

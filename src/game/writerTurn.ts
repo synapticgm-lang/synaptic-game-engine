@@ -497,14 +497,16 @@ export async function repairRejectedSentences(
     const inDraft = line ? sentenceGateProblems(check.state, replaceDraftSentence(prose, f.sentence, line), check.playerInput) : [];
     const still = line ? sentenceGateProblems(check.state, line, check.playerInput).find((p) => inDraft.includes(p)) ?? null : null;
     const ok = !!line && !still && line.trim() !== f.sentence.trim();
-    const keep = !ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose);
+    // A repair that hands the same sentence back found nothing to change: the gate's flag was false, the line stays.
+    const unchanged = !!line && line.trim() === f.sentence.trim();
+    const keep = unchanged || (!ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose));
     if (!keep) prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
     return ok
       ? { sentence: f.sentence, flag: f.flag, fact, repaired: line }
       : {
           sentence: f.sentence, flag: f.flag, fact,
           ...(line ? { repaired: line } : {}),
-          bug: still ? `repair failed the gate: ${still}` : bug,
+          bug: unchanged ? 'kept: repair returned the sentence unchanged' : still ? `repair failed the gate: ${still}` : bug,
           ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}),
         };
   });

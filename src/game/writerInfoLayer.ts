@@ -1,5 +1,5 @@
 import type { GameState, LoreCard } from './types';
-import { computeInventoryCapacity, kitRefDisplay } from './inventory';
+import { computeInventoryCapacity, kitRefDisplay, turnUsesKit } from './inventory';
 import { playerFacingLocation } from './locationName';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { formatHiddenRoomLedger } from './dungeonSeed';
@@ -18,13 +18,15 @@ import { litrpgClassName } from './litrpgClassNames';
 
 export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 
-export function buildGroundTruthLedger(state: GameState, opts?: { compact?: boolean }): string {
+export function buildGroundTruthLedger(state: GameState, opts?: { compact?: boolean; kitTurn?: string }): string {
   const compact = opts?.compact === true;
   const c = state.character;
   const kit = (name: string) => kitRefDisplay(name, state.engineMode === 'dnd');
   const facts = writerFacts(state, kit);
   const housed = facts.blocks.length > 0;
-  const carried = facts.carried;
+  // Tabletop writer facts: only the kit this turn's line uses, so there is no gear list to paste into prose.
+  const kitTurn = state.engineMode === 'dnd' ? opts?.kitTurn : undefined;
+  const carried = kitTurn === undefined ? facts.carried : facts.carried.filter((i) => turnUsesKit(i.name, kitTurn));
   const pocketed = facts.pocket;
   const invList = compact
     ? (() => {
@@ -41,7 +43,9 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
     .join('; ') || 'None';
   const statusList = c.conditions.length > 0 ? c.conditions.join(', ') : 'None';
 
-  const cap = computeInventoryCapacity({ ...state, inventory: carried, containers: facts.containers });
+  const cap = computeInventoryCapacity({ ...state, inventory: facts.carried, containers: facts.containers });
+  const kitLines = (gear: string, inv: string): string[] =>
+    kitTurn !== undefined && !carried.length ? [] : [gear, inv];
   const equippedGear = carried.filter(i => i.equipped).map(i => `${kit(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
   const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
   const isTabletop = state.engineMode === 'dnd';
@@ -60,8 +64,10 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       header,
       `Gold: ${state.gold ?? 0}`,
       `Location: ${playerFacingLocation(state)}`,
-      `Equipped Gear: ${equippedGear}`,
-      `Inventory: ${invList}${facts.containers.length ? ` (${cap.usedSlots}/${cap.totalSlots} slots used)` : ''}`,
+      ...kitLines(
+        `Equipped Gear: ${equippedGear}`,
+        `Inventory: ${invList}${facts.containers.length ? ` (${cap.usedSlots}/${cap.totalSlots} slots used)` : ''}`,
+      ),
       ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
       ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
       ...(!compact && facts.containers.length ? [`Containers: ${containerInfo}`] : []),
@@ -93,8 +99,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       isTabletop ? `Level: ${c.level}` : progressLine,
       ...classLines,
       `Location: ${playerFacingLocation(state)}`,
-      `Equipped Gear: ${equippedGear}`,
-      `Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)`,
+      ...kitLines(`Equipped Gear: ${equippedGear}`, `Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)`),
       ...(pocketLine ? [pocketLine] : []),
       ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
       ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
@@ -149,7 +154,7 @@ function pickLoreCards(state: GameState, activeLoreCards: LoreCard[], currentNam
   return picked;
 }
 
-export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCard[] = []): string {
+export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCard[] = [], playerInput?: string): string {
   const currentName = playerFacingLocation(state);
 
   const here: string[] = [`Here: ${currentName}`];
@@ -188,7 +193,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
     gates.length ? `Locks:\n${gates.join('\n')}` : '',
   ].filter(Boolean).join('\n');
 
-  const ledgerSection = buildGroundTruthLedger(state, { compact: true });
+  const ledgerSection = buildGroundTruthLedger(state, { compact: true, kitTurn: playerInput });
 
   const lore = pickLoreCards(state, activeLoreCards, currentName);
   const loreSection = lore.length ? buildLoreContext(lore) : '';
