@@ -14,7 +14,8 @@ import { basename, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The game gate reads the same file (src/game/engineFactGate.ts), so play, autoplay and this checker agree.
 import {
-  agencyPatterns, choicePosePatterns, fightRolls, HIT_WORDS, questStepLeak, questTitleNamed, rollContradiction, travelRecordRead,
+  agencyPatterns, BAG_WORD, choicePosePatterns, fightRolls, HIT_WORDS, questStepLeak, questTitleNamed, rollContradiction, travelRecordRead,
+  WORN_OR_BODY,
 } from '../src/game/engineFactPatterns.ts';
 
 const RUNS = resolve('scripts/fate-autoplay/runs');
@@ -36,15 +37,11 @@ const EXIT_NOUN_RE = new RegExp(`\\b${EXIT_NOUN}\\b`, 'i');
 const EXIT_CLAIM = new RegExp(`\\b(?:ways? out|exits?|${EXIT_NOUN}\\s+(?:left|led|leads|lead|ran|runs|went|go|goes)\\b|led (?:back )?to|leads (?:back )?to|out of (?:the|this) [a-z]+ led)`, 'i');
 
 const ITEMS = [
-  'boots', 'boot', 'papers', 'paper', 'coin', 'coins', 'purse', 'pouch', 'sword', 'blade', 'dagger', 'knife', 'axe', 'bow',
-  'arrows', 'shield', 'helmet', 'helm', 'cloak', 'coat', 'gloves', 'ring', 'amulet', 'key', 'keys', 'map', 'letter', 'scroll',
+  'papers', 'paper', 'coin', 'coins', 'purse', 'pouch', 'sword', 'blade', 'dagger', 'knife', 'axe', 'bow',
+  'arrows', 'shield', 'helmet', 'helm', 'ring', 'amulet', 'key', 'keys', 'map', 'letter', 'scroll',
   'potion', 'rope', 'torch', 'lantern', 'backpack', 'pack', 'satchel', 'bread', 'waterskin', 'flask', 'badge', 'token', 'charter',
-  'spear', 'club', 'mace', 'hammer', 'crossbow', 'armor', 'armour', 'jerkin', 'tunic', 'hat', 'hood', 'belt', 'phone',
+  'spear', 'club', 'mace', 'hammer', 'crossbow', 'armor', 'armour', 'phone',
 ];
-/** Worn pieces a handed "clothes" kit row already covers. */
-const GARMENTS = new Set(['boots', 'boot', 'belt', 'coat', 'cloak', 'hat', 'hood', 'gloves', 'tunic', 'jerkin']);
-/** Other words for a carried bag; a handed "Bag" inventory row covers them. */
-const BAG_WORDS = new Set(['pack', 'backpack', 'satchel']);
 /** A person word is a person in the beat only when it acts: "a fence stood by the cart", not "a fence" of rails. */
 const PERSON_ACTS =
   /^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i;
@@ -250,7 +247,8 @@ export function checkTurn(row, packet, page = '') {
     // Exit counts: "Three roads left the shrine", "the only way out".
     const exitFact = facts.engineExits ?? (facts.placesExits.length ? facts.placesExits : null);
     // An exit claim covers its own clause, not the rest of the sentence ("…stood open, and they wanted an answer about the Crown").
-    const exitClauses = s.split(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/i).filter((c) => EXIT_CLAIM.test(c) || EXIT_NOUN_RE.test(c) || /\b(?:another|the other)\b/i.test(c));
+    // Quoted speech is the speaker's, not a claimed way out (the same reading as the item check).
+    const exitClauses = narration.split(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/i).filter((c) => EXIT_CLAIM.test(c) || EXIT_NOUN_RE.test(c) || /\b(?:another|the other)\b/i.test(c));
     if (exitFact) {
       const re = new RegExp(`\\b(\\d+|one|two|three|four|five|six|seven|eight|nine|ten|both|single|only)\\s+(?:\\w+\\s+){0,2}?(${EXIT_NOUN})\\b`, 'gi');
       // "Exits: no way out of X leads to a mapped place" says where no way leads, not how many doors X has:
@@ -308,7 +306,7 @@ export function checkTurn(row, packet, page = '') {
         add('exit-count', s, `${src}${conflict}`);
       }
       // Places named as a way out that are not this turn's exits.
-      if (EXIT_CLAIM.test(s) && !/\b(?:counting|watching|eyeing|checking) the exits\b/i.test(s)) {
+      if (EXIT_CLAIM.test(narration) && !/\b(?:counting|watching|eyeing|checking) the exits\b/i.test(narration)) {
         const clauseText = exitClauses.join(' | ');
         const taken = [];
         for (const p of facts.placeNames) {
@@ -383,8 +381,9 @@ export function checkTurn(row, packet, page = '') {
       if (!kind || inHanded(facts, w) || negated(narration, idx)) continue;
       if (kind === 'item') {
         if (/^\s+of\b/i.test(after)) continue;
-        if (GARMENTS.has(w) && /\bclothes\b/.test(facts.handedText)) continue;
-        if (BAG_WORDS.has(w) && /\bbag\b/.test(facts.allowText)) continue;
+        // The game gate's reading (engineFactPatterns): what anyone wears is held, and a handed bag covers its other names.
+        if (WORN_OR_BODY.test(w)) continue;
+        if (BAG_WORD.test(w) && /\bbag\b/.test(facts.allowText)) continue;
         // A gold receipt ("Gold Gained: 16") hands the coins.
         if (/^coins?$/.test(w) && /\bgold gained:?\s*\d+/.test(facts.handedText)) continue;
         // "Edda's paper", or "Edda rested a hand on a folded paper": a thing a handed person owns or handles is theirs.

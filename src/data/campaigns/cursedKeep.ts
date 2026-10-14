@@ -200,7 +200,7 @@ const cursedKeepBase: CampaignBible = {
         'You arrived in Greyhollow on the last coach before the rains. The tavern is warm, the ale is passable, and the townspeople are polite but distant. Then a broad, frantic man sits across from you and says: "My daughter is missing. The town won\'t help. You\'re not from here. Will you?" His name is Oskar. His daughter is Lina. Her footprints lead to the keep on the hill.',
       recommendedLevel: 1,
       objectives: [
-        'Speak with Oskar at the Greyhollow Tavern',
+        'Speak with Oskar at the Greyhollow Inn',
         'Examine the keep gate (the chain has been broken by Oskar already)',
         'Search the keep\'s ground floor for signs of Lina (Perception/Investigation checks)',
         'Discover the sealed crack in the great hall floor (the sealed fireplace)',

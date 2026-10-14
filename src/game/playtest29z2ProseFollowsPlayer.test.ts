@@ -55,8 +55,8 @@ const gm = (turn: number, content: string): LogEntry => ({ id: `g${turn}`, turn,
 
 describe('29z2 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14q');
-    expect(BUILD_STAMP).toBe('2026-10-14q');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14r');
+    expect(BUILD_STAMP).toBe('2026-10-14r');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

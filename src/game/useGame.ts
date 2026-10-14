@@ -163,7 +163,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
-import { runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
+import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
@@ -3814,6 +3814,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ].filter((n) => n && !isChromePersonToken(n)),
           namedCast: openingCastNames(workingState),
           ledgerState: workingState,
+          isThisTurnsEvent: thisTurnsEventCheck({ state: workingState, playerInput: sanitizedInput }),
           hookLock: hookLockForWarden(workingState, cleanText),
           npcMemories: workingState.npcMemories ?? liveCurrent.npcMemories,
           lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,

@@ -115,6 +115,8 @@ export type ProseWardenContext = {
   npcMemories?: NpcMemory[];
   /** 13c — ledger for noun rewrite (invented First Last / CAST-as-permit). */
   ledgerState?: GameState;
+  /** The sentences telling this turn's own event (writerTurn.thisTurnsEventCheck); the noun rewrite keeps them. */
+  isThisTurnsEvent?: (sentence: string) => boolean;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -1654,7 +1656,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubPronounSubjectSlips(next);
   next = scrubPossessiveDeterminerSlips(next);
   if (ctx?.ledgerState) {
-    next = obeyLedgerNouns(next, ctx.ledgerState).prose;
+    next = obeyLedgerNouns(next, ctx.ledgerState, undefined, ctx.isThisTurnsEvent).prose;
   }
   return next;
 }

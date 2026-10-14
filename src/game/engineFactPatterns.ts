@@ -10,6 +10,12 @@ const QUOTED = /["“][^"”]*["”]/g;
 export const narrationOf = (s: string): string => (s ?? '').replace(QUOTED, ' ');
 export const escRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/** What anyone wears or is: a garment or a part of the body is no new object to hand. */
+export const WORN_OR_BODY =
+  /^(?:clothes|coat|cloak|hood|collar|sleeves?|cuffs?|shirt|tunic|jerkin|jacket|boots?|belt|hat|gloves?|pockets?|trousers|breeches|skirt|apron|scarf|shawl|eyes?|face|breath|voice|feet|foot|legs?|shoulders?|back|jaw|lips?|mouth|brow|neck|gaze|weight|heels?|hands?|arms?|fingers?|fists?|palms?|head|hair)$/;
+/** A handed bag covers its other names. */
+export const BAG_WORD = /^(?:pack|packs|backpack|satchel|knapsack|rucksack)$/;
+
 const NUM = '(?:\\d+|an?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|forty-five|fifty|sixty|ninety|several|a few|half an?|a quarter of an?|another)';
 /** A clock span the engine's travel record holds ("two hours", "half an hour", "thirty minutes"). */
 const DURATION = new RegExp(`\\b${NUM}\\s+(?:more\\s+)?(?:minutes?|hours?)\\b`, 'i');

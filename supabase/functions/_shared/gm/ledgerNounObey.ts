@@ -98,22 +98,32 @@ function scrubCastAsPermit(text: string, castNames: string[]): string {
   return next;
 }
 
-function dropOrRewriteInvented(sent: string, invented: string[]): string {
-  for (const name of invented) {
-    if (!name) continue;
-    if (new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(sent)) return '';
+function dropOrRewriteInvented(sent: string, invented: string[], isEvent?: (sentence: string) => boolean): string {
+  const has = (text: string) => invented.some((name) => !!name && text.toLowerCase().includes(name.toLowerCase()));
+  if (!has(sent)) return sent;
+  if (!isEvent?.(sent)) return '';
+  // This turn's own event stays: only the clause carrying the name is cut, and the whole line stays if none can be.
+  for (const sep of ['; ', ', ']) {
+    const parts = sent.split(sep);
+    const kept = parts.filter((p) => !has(p));
+    if (kept.length && kept.length < parts.length && isEvent(kept.join(sep))) {
+      const text = kept.join(sep).trim();
+      return '.!?'.includes(text.slice(-1)) ? text : `${text}.`;
+    }
   }
   return sent;
 }
 
 /**
  * Keep the AI sentences. Rewrite novel people / CAST-as-object / living lastKill talk.
- * Never swap the paragraph for a drought bank.
+ * Never swap the paragraph for a drought bank. `isThisTurnsEvent` (writerTurn.thisTurnsEventCheck) marks the
+ * sentences telling this turn's own event: a name off the list cuts its clause from them, never the sentence.
  */
 export function obeyLedgerNouns(
   prose: string,
   state: GameState,
-  packet?: CompletedEventPacket
+  packet?: CompletedEventPacket,
+  isThisTurnsEvent?: (sentence: string) => boolean
 ): { prose: string; notes: string[] } {
   const notes: string[] = [];
   let next = (prose ?? '').trim();
@@ -133,7 +143,7 @@ export function obeyLedgerNouns(
   const invented = inventedPersonNamesNotOnAllowlist(next, allowlist);
   if (invented.length) {
     const kept = splitSentences(next)
-      .map((s) => dropOrRewriteInvented(s, invented))
+      .map((s) => dropOrRewriteInvented(s, invented, isThisTurnsEvent))
       .filter((s) => s.trim().length > 8);
     next = tidy(kept.join(' '));
     notes.push('invented-name');

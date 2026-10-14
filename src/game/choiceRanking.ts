@@ -16,7 +16,7 @@
  * - a nudge line already fired this save never fires again unchanged.
  */
 import type { CirclingMemory, GameState } from './types';
-import { hubsForBibleId, matchHub, questTravelSite } from './outdoorHubs';
+import { hubsForBibleId, matchHub, placeFirstSight, questTravelSite } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
 import { isRoadLabel } from './travelJourney';
@@ -305,7 +305,9 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
       const visited = new Set((state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase()));
       const fresh = hubs.filter((h) => h.id !== here?.id && !visited.has(h.name.toLowerCase()));
       const pick = fresh.find((h) => ![...fired].some((f) => f.includes(h.name))) ?? fresh[0];
-      return pick ? `Nudge: someone nearby mentions ${pick.name}: ${pick.blurb.replace(/[.!?]+$/, '')}.` : '';
+      // A place mentioned from afar is its name; its card text is a sight, handed only by the first-sight rule.
+      const sight = pick ? placeFirstSight(state, pick.name) : '';
+      return pick ? `Nudge: someone nearby mentions ${pick.name}${sight ? `: ${sight.replace(/[.!?]+$/, '')}` : ''}.` : '';
     },
     () => GENERIC_NUDGES.find((g) => !fired.has(g)) ?? '',
   ];

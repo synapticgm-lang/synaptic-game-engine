@@ -644,7 +644,10 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
  * the action the player chose ("Jax asked Dain Holt…" on "Ask Dain Holt what they want"). Told again on purpose
  * when the player repeats an action, so no trim drops them.
  */
-export function thisTurnsEventCheck(check: DraftCheck, refs: LedgerRef[]): (sentence: string) => boolean {
+export function thisTurnsEventCheck(
+  check: Pick<DraftCheck, 'state' | 'playerInput'>,
+  refs: LedgerRef[] = refEnumOf(check.state)
+): (sentence: string) => boolean {
   const move = moveSentenceCheck(check.playerInput, refs, check.state.journey?.to ?? check.state.currentLocation);
   const action = playerActionSentenceCheck(check.playerInput, check.state.character?.name);
   return (s) => move(s) || action(s);

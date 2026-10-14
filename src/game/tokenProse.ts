@@ -28,6 +28,7 @@ import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
 import { buildGroundTruthLedger } from './writerInfoLayer';
+import { BAG_WORD, WORN_OR_BODY } from './engineFactPatterns';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -499,11 +500,6 @@ const BODY_PART = /^(?:hands?|arms?|fingers?|thumbs?|fists?|palms?|elbows?|knuck
  */
 const HANDLED_OWN =
   /\b(?:set|sets|setting|put|puts|putting|laid|lays|laying|lowered|dropped|drops|slung|unslung|unslings|shouldered|hefted|hefts|opened|opens|unbuckled|unstrapped|emptied|empties|rummaged|rummages|reached|reaches|shrugged|shrugs)\s+(?:(?:down|off|up|in|into|through)\s+)?(their|his|her|your|[A-Z][a-z'-]+['’]s)\s+((?:[a-z][a-z'-]*\s+){0,2}?)([a-z][a-z'-]*)(?=\s*(?:[,.;:!?]|$|\s(?:and|on|onto|in|into|to|at|by|beside|against|with|from|off|down|up|aside|away|open|for|before|while|as|then|so)\b))/g;
-/** What anyone wears or is: a garment or a part of the body is no new object to hand. */
-const WORN_OR_BODY =
-  /^(?:clothes|coat|cloak|hood|collar|sleeves?|cuffs?|shirt|tunic|jerkin|jacket|boots?|belt|hat|gloves?|pockets?|trousers|breeches|skirt|apron|scarf|shawl|eyes?|face|breath|voice|feet|foot|legs?|shoulders?|back|jaw|lips?|mouth|brow|neck|gaze|weight|heels?|hands?|arms?|fingers?|fists?|palms?|head|hair)$/;
-/** A handed bag covers its other names. */
-const BAG_WORD = /^(?:pack|packs|backpack|satchel|knapsack|rucksack)$/;
 
 /** In `handedCountText`, the earlier page follows this line. */
 const PAGE_MARK = '\u0000page\u0000';

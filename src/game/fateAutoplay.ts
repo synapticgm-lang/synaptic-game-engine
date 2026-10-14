@@ -169,7 +169,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { runWriterTurnWithFightRetry, writerTurnIssues, type WriterTurnResult } from './writerTurn';
+import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues, type WriterTurnResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -1606,6 +1606,7 @@ Do NOT print dice notation or CODE ENFORCED.
     ].filter((n) => n && !isChromePersonToken(n)),
     namedCast: openingCastNames(working),
     ledgerState: working,
+    isThisTurnsEvent: thisTurnsEventCheck({ state: working, playerInput }),
     lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
     currentTurn: state.turn,
     hookLock: hookLockForWarden(working, cleanText),

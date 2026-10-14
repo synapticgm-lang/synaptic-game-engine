@@ -47,6 +47,7 @@ import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 import { fightRolls } from './engineFactPatterns';
+import { handedExits } from './exitCount';
 import { roundCombatChips } from './tabletop/combatChips';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
@@ -295,7 +296,10 @@ export function checkActionFollowed(
 
   if (!talkish && !socialAct && !travel && !looking && !blowOwned) {
     const words = actedOnWords(act);
-    if (words.length && !words.some((w) => stemHit(text, w))) {
+    // "Check the exits" acts on this place's ways out: naming them is showing what was acted on.
+    const exits = handedExits(after) ?? handedExits(before) ?? [];
+    const shown = (w: string) => stemHit(text, w) || (stemHit(w, 'exits') && exits.some((e) => placeNamed(text, e)));
+    if (words.length && !words.some(shown)) {
       down.push({ kind: 'action-object-missing', detail: `prose never names what the player acted on (${words.join(', ')})` });
     } else if (words.length) {
       const verb = actionVerb(act);
