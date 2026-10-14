@@ -216,12 +216,24 @@ export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: s
  * tt-fix-2 — tabletop: a round whose foe hits on the PC the beat never shows is the same miss.
  */
 export function ignoresTerminalFight(state: GameState, prose: string): boolean {
-  if (dropsFightRoll(state, prose)) return true;
+  return missingFightFacts(state, prose) > 0;
+}
+
+type FightFacts = { forced: boolean; hit: boolean; outcome: boolean };
+
+/** Which settled fight facts the beat leaves out: the failed roll that forced it (tabletop), a foe hit, the outcome. */
+function fightFactsLeftOut(state: GameState, prose: string): FightFacts {
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
-  if (!fight) return false;
-  if (!beatCarriesTerminalFight(prose, fight)) return true;
-  // Tabletop: the failed flee/parley roll that forced the fight is part of the outcome.
-  return state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight);
+  return {
+    forced: !!fight && state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight),
+    hit: dropsFightRoll(state, prose),
+    outcome: !!fight && !beatCarriesTerminalFight(prose, fight),
+  };
+}
+
+/** How many settled fight facts the beat leaves out (0 when it tells the whole fight). */
+export function missingFightFacts(state: GameState, prose: string): number {
+  return Object.values(fightFactsLeftOut(state, prose)).filter(Boolean).length;
 }
 
 /**
@@ -231,12 +243,10 @@ export function ignoresTerminalFight(state: GameState, prose: string): boolean {
 export function withMissingFightFacts(state: GameState, prose: string, pov: FightPov): string {
   const fact = state.completedEvent?.engineResult;
   const fight = terminalFightOutcome(fact);
+  const out = fightFactsLeftOut(state, prose);
   // The attempt that forced the fight came first; the hit and the outcome close the beat.
-  const before = fight && state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight) ? forcedAttemptSentence(fight, pov) : '';
-  const after = [
-    dropsFightRoll(state, prose) ? foeHitSentence(fact, pov) : '',
-    fight && !beatCarriesTerminalFight(prose, fight) ? terminalOutcomeSentence(fight, pov) : '',
-  ];
+  const before = fight && out.forced ? forcedAttemptSentence(fight, pov) : '';
+  const after = [out.hit ? foeHitSentence(fact, pov) : '', fight && out.outcome ? terminalOutcomeSentence(fight, pov) : ''];
   return [before, prose.trim(), ...after].filter(Boolean).join(' ');
 }
 

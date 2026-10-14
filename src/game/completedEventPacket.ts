@@ -14,7 +14,14 @@ import { formatInfoSheet } from './infoSheet';
 import { formatWriterInfoLayer } from './writerInfoLayer';
 import { splitProseSentences } from './proseSentences';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
-import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
+import {
+  hubsForBibleId,
+  matchHub,
+  outdoorHubTravelChoices,
+  parseTravelDestination,
+  placeCardFor,
+  placeFirstSight,
+} from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
 import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, travelBeatFact, writerEngineResult } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
@@ -582,6 +589,8 @@ export function compileNounAllowlist(
     pushUnique(out, seen, h.name);
     for (const alias of h.aliases ?? []) pushUnique(out, seen, alias);
   }
+  // The engine's named stops on the roads ("The way passes the Old Well").
+  for (const stop of Object.values(state.routeStops ?? {}).flat()) pushUnique(out, seen, stop.name);
 
   return out;
 }
@@ -1050,9 +1059,8 @@ export function handedWriterText(state: GameState, packet: Partial<CompletedEven
     world,
     packet.infoSheet ?? '',
     ...(packet.engineResult ?? '').split('\n').filter((l) => l.trim()).map((l) => `ENGINE RESULT: ${l.trim()}`),
-    // tt-fix-7 — the travel beat (stops passed, finds) and the engine's named route stops are handed facts too.
+    // The travel beat (stops passed, finds) is a handed fact; the named route stops come in with the allowlist.
     packet.movement ?? '',
-    ...Object.values(state.routeStops ?? {}).flat().map((s) => `A named stop on the road is ${s.name}.`),
     ...(packet.ledgerChanges ?? []),
     player ? `PLAYER: ${player}` : '',
     ...(packet.allowlist ?? []),
@@ -1120,16 +1128,6 @@ type LedgerPlaceFacts = {
   leftFrom: string;
 };
 
-function hubDescriptor(state: GameState, place: string): string {
-  const hub = matchHub(hubsForBibleId(state.campaignBibleId), place);
-  if (hub?.blurb) return hub.blurb;
-  const low = place.toLowerCase();
-  const pin = (state.places ?? []).find((p) => (p.name ?? '').toLowerCase() === low) as
-    | { description?: string }
-    | undefined;
-  return (pin?.description ?? '').replace(/\s+/g, ' ').trim();
-}
-
 function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
   const place = (state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), place);
@@ -1144,7 +1142,7 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
       : outdoorHubTravelChoices(state, 3).map((c) => c.replace(/^Travel\s+(?:to|toward)\s+/i, '').trim());
   return {
     place: hub?.name ?? place,
-    descriptor: card?.description || hubDescriptor(state, place),
+    descriptor: inDungeonRoom ? '' : placeFirstSight(state, place),
     exits: exits.filter((e) => e.length > 1),
     present: sealedCastNames(state),
     leftBehind: recordsForEntries(state, state.sceneFacts?.leftBehind ?? []).map((r) => r.npcName),
@@ -1247,7 +1245,8 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
   }
   if (isLookAroundAct(act) && !/\btravel\b/i.test(act)) {
-    const line = `You looked over ${f.place}. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))}`;
+    const sight = f.descriptor || placeFirstSight(state, state.currentLocation, true);
+    const line = `You looked over ${f.place}. ${onceSaid(state, descriptorSentence(sight))} ${onceSaid(state, peopleHereSentence(f.present))}`;
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
   }
   const recent = (state.log ?? [])
@@ -2285,7 +2284,7 @@ function topicAdvancePool(
     .trim();
   const arriveHub = arrived && shortDest ? matchHub(hubsForBibleId(state.campaignBibleId), shortDest) : null;
   const arriveHere = arriveHub?.name ?? (arrived && shortDest ? herePhrase(shortDest) : here);
-  const arriveDesc = descriptorSentence(arriveHub?.blurb ?? (arrived && shortDest ? hubDescriptor(state, shortDest) : ''));
+  const arriveDesc = descriptorSentence(arrived && shortDest ? placeFirstSight(state, arriveHub?.name ?? shortDest) : '');
   const stillAtOrigin = !!arriveHub && !placeName.toLowerCase().includes(arriveHub.name.toLowerCase());
   const behindPeople = facts.leftBehind.length ? facts.leftBehind : stillAtOrigin ? facts.present : [];
   const behindFrom = facts.leftBehind.length ? facts.leftFrom || 'the last place' : placeName;

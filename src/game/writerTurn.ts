@@ -14,6 +14,7 @@ import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import {
   classifyBeatCommit,
   ignoresTerminalFight,
+  missingFightFacts,
   sentenceGateProblem,
   sentenceGateProblems,
   TERMINAL_FIGHT_PROBLEM,
@@ -43,6 +44,7 @@ import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isRoadLabel, writerEngineResult } from './travelJourney';
 import { isGiverName } from './questGiver';
+import { actionVerb, objectWords, stemHit } from './chipRules';
 
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 
@@ -527,11 +529,15 @@ export async function repairRejectedSentences(
   const countNote = flagged.some((f) => /^Gives the wrong number of ways out/.test(f.flag))
     ? 'Name every one of those ways out, or give no number of ways at all.'
     : '';
-  // A record read-out that cannot be rewritten stays when it is the only sentence naming where the player went.
+  // A sentence that cannot be rewritten stays when it is the only one telling this turn's event (the player's
+  // action or move), and a record read-out stays when it is the only one naming where the player went.
   const destination = [check.state.journey?.to, check.state.currentLocation].filter((p): p is string => !!p && p.length > 2);
   const namesDestination = (s: string) => destination.some((p) => s.toLowerCase().includes(p.toLowerCase()));
-  const onlyDestination = (s: string, draft: string) =>
-    namesDestination(s) && !splitProseSentences(draft).some((o) => o !== s && namesDestination(o));
+  const event = thisTurnsEventCheck(check, refEnumOf(check.state, packet));
+  const only = (has: (s: string) => boolean) => (s: string, draft: string) =>
+    has(s) && !splitProseSentences(draft).some((o) => o !== s && has(o));
+  const onlyDestination = only(namesDestination);
+  const onlyEvent = only(event);
   let lines: string[] | null = null;
   let bug = 'no repair path';
   let raw = '';
@@ -557,7 +563,10 @@ export async function repairRejectedSentences(
     const ok = !!line && !still && line.trim() !== f.sentence.trim();
     // A repair that hands the same sentence back found nothing to change: the gate's flag was false, the line stays.
     const unchanged = !!line && line.trim() === f.sentence.trim();
-    const keep = unchanged || (!ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose));
+    const keep =
+      unchanged
+      || (!ok && !/@t\d+\b/.test(f.sentence) && onlyEvent(f.sentence, prose))
+      || (!ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose));
     if (!keep) prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
     return ok
       ? { sentence: f.sentence, flag: f.flag, fact, repaired: line }
@@ -587,8 +596,14 @@ async function runWriterTurnFightOnly(opts: {
   if (second.outcome === 'accepted' && !ignoresTerminalFight(opts.check.state, second.prose)) {
     return { ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried', fightDraft };
   }
-  // The writer's lines stay; the engine adds a plain sentence for each settled fight fact still missing.
-  const base = second.outcome === 'accepted' && second.prose.trim() ? second : first;
+  // The writer's lines stay; the engine adds a plain sentence for each settled fight fact still missing. A rewrite
+  // is kept only when it leaves out fewer of those facts than the first draft: one that still misses them may
+  // contradict the roll the added sentences then state.
+  const rewriteBetter =
+    second.outcome === 'accepted'
+    && !!second.prose.trim()
+    && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
+  const base = rewriteBetter ? second : first;
   if (base.prose.trim()) {
     const state = opts.check.state;
     const pov = pcPov(opts.packet.pc ?? state.character);
@@ -619,10 +634,30 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
   let next = prose;
   const refs = refEnumOf(check.state, packet);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
-    const move = moveSentenceCheck(check.playerInput, refs, check.state.journey?.to ?? check.state.currentLocation);
-    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, move, check.state.character?.name).text;
+    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, thisTurnsEventCheck(check, refs), check.state.character?.name).text;
   }
   return polishMentions(next, refs, check.state);
+}
+
+/**
+ * The sentences that tell this turn's own event: the move (`moveSentenceCheck`) or the player character doing
+ * the action the player chose ("Jax asked Dain Holt…" on "Ask Dain Holt what they want"). Told again on purpose
+ * when the player repeats an action, so no trim drops them.
+ */
+export function thisTurnsEventCheck(check: DraftCheck, refs: LedgerRef[]): (sentence: string) => boolean {
+  const move = moveSentenceCheck(check.playerInput, refs, check.state.journey?.to ?? check.state.currentLocation);
+  const action = playerActionSentenceCheck(check.playerInput, check.state.character?.name);
+  return (s) => move(s) || action(s);
+}
+
+/** A sentence with the player character as its subject that does the chosen action: its verb or what it acts on. */
+export function playerActionSentenceCheck(playerInput: string, pcName?: string | null): (sentence: string) => boolean {
+  const verb = actionVerb(playerInput);
+  const words = [verb, ...objectWords(playerInput)].filter((w) => w.length >= 3);
+  const first = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
+  if (!words.length) return () => false;
+  const subject = new RegExp(`^\\W*(?:${first.length >= 2 ? `${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}|` : ''}you)\\b`, 'i');
+  return (s) => subject.test(s) && words.some((w) => stemHit(s.replace(/["“][^"”]*["”]/g, ' '), w));
 }
 
 /**

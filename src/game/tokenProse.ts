@@ -7,6 +7,7 @@
 import type { GameState } from './types';
 import {
   compileRefEnum,
+  compileNounAllowlist,
   formatRefEnumForWriter,
   handedWriterText,
   isDroughtStubProse,
@@ -546,7 +547,9 @@ export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName
     const pcOwns = owner.replace(/['’]s$/, '') === pc || (/^(?:their|his|her|your)$/.test(owner) && subject.test(narration.slice(start, at)));
     if (!pcOwns) continue;
     const head = m[3]!.toLowerCase();
-    if (WORN_OR_BODY.test(head)) continue;
+    // The thing owned starts right after the owner: "set their feet apart" is the body, and "apart" no object.
+    const owned = [...m[2]!.trim().split(/\s+/).filter(Boolean), head][0]!.toLowerCase();
+    if (WORN_OR_BODY.test(head) || WORN_OR_BODY.test(owned)) continue;
     if (BAG_WORD.test(head) && /\bbag\b/.test(held)) continue;
     const modifier = m[2]!.trim().split(/\s+/).pop()?.toLowerCase() ?? '';
     const said = (w: string) => w.length >= 3 && new RegExp(`\\b${esc(w)}`).test(held);
@@ -1165,7 +1168,7 @@ export function handedProperNames(state: GameState, packet?: CompletedEventPacke
     ...knownProperNames(state),
     ...presentGivenNames(state),
     ...peopleHereNoteNames(state),
-    ...(packet?.allowlist ?? []),
+    ...(packet?.allowlist ?? compileNounAllowlist(state)),
     ...writerFacts(state).quests.map((q) => q.name),
     ...handedRoleNouns(packet),
     ...presentRoleTitles(state),

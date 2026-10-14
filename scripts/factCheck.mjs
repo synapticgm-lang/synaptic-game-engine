@@ -45,6 +45,9 @@ const ITEMS = [
 const GARMENTS = new Set(['boots', 'boot', 'belt', 'coat', 'cloak', 'hat', 'hood', 'gloves', 'tunic', 'jerkin']);
 /** Other words for a carried bag; a handed "Bag" inventory row covers them. */
 const BAG_WORDS = new Set(['pack', 'backpack', 'satchel']);
+/** A person word is a person in the beat only when it acts: "a fence stood by the cart", not "a fence" of rails. */
+const PERSON_ACTS =
+  /^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i;
 const PEOPLE = [
   'guard', 'guards', 'priest', 'priests', 'merchant', 'merchants', 'vendor', 'vendors', 'soldier', 'soldiers', 'traveler',
   'travelers', 'stranger', 'strangers', 'woman', 'women', 'man', 'men', 'boy', 'girl', 'child', 'children', 'clerk', 'monk',
@@ -194,7 +197,8 @@ function factsFor(row, packet) {
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
     // count whole, so a short form of a present person's name ("Mayor Brask" for Mayor Helga Brask) is handed.
-    allowText: lower([...mention, ...refs.map((r) => r.display), ...(row.turnCheck?.presentNames ?? []), ...[...packet.matchAll(/^([A-Z][A-Za-z]{1,12}):\s*\d/gm)].map((m) => m[1]), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
+    // A name is handed when the writer was handed it anywhere: any fact section, an open quest's title or step.
+    allowText: lower([handedText, ...(row.openQuests ?? []).flatMap((q) => [q.title, q.step]), ...mention, ...refs.map((r) => r.display), ...(row.turnCheck?.presentNames ?? []), ...[...packet.matchAll(/^([A-Z][A-Za-z]{1,12}):\s*\d/gm)].map((m) => m[1]), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
   };
 }
 
@@ -383,8 +387,13 @@ export function checkTurn(row, packet, page = '') {
         if (BAG_WORDS.has(w) && /\bbag\b/.test(facts.allowText)) continue;
         // A gold receipt ("Gold Gained: 16") hands the coins.
         if (/^coins?$/.test(w) && /\bgold gained:?\s*\d+/.test(facts.handedText)) continue;
+        // "Edda's paper", or "Edda rested a hand on a folded paper": a thing a handed person owns or handles is theirs.
+        const subject = before.slice(Math.max(before.lastIndexOf('.'), before.lastIndexOf('!'), before.lastIndexOf('?')) + 1)
+          .match(/^\s*([A-Z][\w'’-]*)/)?.[1];
         const ownerNoun = before.match(/\b(\w+)[’']s\s+(?:\w+\s+){0,2}$/i)?.[1];
-        if (ownerNoun && lower(ownerNoun) !== 'jax') continue;
+        if (ownerNoun && lower(ownerNoun) !== lower(pc)) continue;
+        const subjectOwns = !!subject && !STOP_CAPS.has(lower(subject)) && lower(subject) !== lower(pc)
+          && new RegExp(`\\b${lower(subject).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(facts.allowText);
         // "the peeling paper notices": the word only says what a handed thing is made of.
         const head = after.match(/^ ([a-z]+)\b/)?.[1];
         if (head && head.length > 3 && !LINK_WORD.test(head) && !/(?:ed|ly|ing)$/.test(head) && inHanded(facts, head)) continue;
@@ -393,6 +402,7 @@ export function checkTurn(row, packet, page = '') {
         const gaveTail = before.match(/\b(?:handed|gave|gives?)\s+((?:\S+\s+){0,4})$/i)?.[1];
         const gaveTo = gaveTail !== undefined
           && (/^(?:jax|him|her|them|me|you|us|over)\s/i.test(gaveTail) || /^(?!(?:A|An|The)\s)[A-Z]/.test(gaveTail) || /^\s+to\b/i.test(after));
+        if (subjectOwns && !gaveTo) continue;
         const foundBefore = gaveTo
           || /\b(?:found|finds?|picked up|took|takes?|hand over|pulled out|drew(?!\s+(?:closer|nearer|near|back|away|level|up|in|around|round|alongside)\b)|held out|carried|wore|wearing)\s+(?:\w+\s+){0,4}$/i.test(before);
         // "the Contract Hall and its papers": a thing's own contents, unless Jax finds or takes them.
@@ -411,7 +421,7 @@ export function checkTurn(row, packet, page = '') {
         // "a man called Col Thatch": the role word introduces a handed name; "called" is not an action here.
         const named = after.match(/^\s+(?:called|named|known as)\s+([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*)/)?.[1];
         if (named && facts.allowText.includes(lower(named))) continue;
-        if (!/^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i.test(after)) continue;
+        if (!PERSON_ACTS.test(after)) continue;
         if (foeHanded && /^(?:men|man|women|woman|strangers?)$/.test(w)) continue;
         // "neither man" / "the older man" points back at a handed person here; "a man" / "a tall man" is a new one.
         const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
@@ -469,7 +479,9 @@ export function checkTurn(row, packet, page = '') {
     if (choicePose.some((re) => re.test(narration))) add('player-choice', s, "poses the player's next choice");
     if (rollContradiction(s, who, facts.engineResult)) add('roll', s, `a fight roll the engine did not make: ${facts.engineResult.slice(0, 160)}`);
     if (/\bquiet stretch\b/i.test(facts.engineResult)) {
-      const met = narration.match(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'patrol'].join('|')})\\b`, 'i'));
+      // A meeting is someone acting on the road ("a man stood by the ditch"), not a thing named for its kind ("a fence").
+      const met = [...narration.matchAll(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'patrol'].join('|')})\\b`, 'gi'))]
+        .find((m) => PERSON_ACTS.test(narration.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 30)));
       if (met && !negated(narration, met.index ?? 0)) add('meeting', s, `"${met[0]}" on a quiet stretch (nobody met)`);
     }
     for (const q of s.matchAll(/["“]([^"”]+)["”]/g)) {

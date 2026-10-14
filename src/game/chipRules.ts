@@ -27,6 +27,23 @@ export function objectWords(action: string): string[] {
     .slice(0, 4);
 }
 
+const DETERMINER = /^(?:the|a|an|my|your|his|her|their|its|our|this|that|these|those|each|every)$/;
+
+/**
+ * The thing an action is done to, as the prose must show it: the noun phrase after its first determiner
+ * ("Inspect the crate" → crate). A line with no determined object ("Fight for breath", "Ready yourself and
+ * watch", "Cast Mage Armor") is a manner, a stance or a spell, not a thing for the prose to name.
+ */
+export function actedOnWords(action: string): string[] {
+  const words = low(action).match(/[a-z]+/g) ?? [];
+  const at = words.findIndex((w) => DETERMINER.test(w));
+  if (at < 0) return [];
+  return words
+    .slice(at + 1)
+    .filter((w) => w.length >= 4 && !STOP.test(w) && !DETERMINER.test(w))
+    .slice(0, 4);
+}
+
 export function actionVerb(action: string): string {
   const words = low(action).match(/[a-z]+/g) ?? [];
   return words.find((w) => !LEAD.test(w)) ?? '';

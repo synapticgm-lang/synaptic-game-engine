@@ -29,7 +29,8 @@ const bare = (s: string) => chipKey(s).replace(/^the\s+/, '');
  * "at the Greyhollow Tavern" → Greyhollow Inn), if any.
  */
 export function tabletopStepPlace(state: GameState, step: string): string | null {
-  const text = ` ${chipKey(step).replace(/[^a-z0-9' ]+/g, ' ')} `;
+  // A possessive names its place: "the inn's cellar" is at the inn.
+  const text = ` ${chipKey(step).replace(/['’]s\b/g, '').replace(/[^a-z0-9' ]+/g, ' ')} `;
   const names: Array<[string, string]> = [
     ...hubsForBibleId(state.campaignBibleId).flatMap((h) =>
       [h.name, ...(h.aliases ?? [])].map((n): [string, string] => [n, h.name])
@@ -111,24 +112,26 @@ export function tabletopStepKind(step: string): TabletopStepKind {
 /**
  * Where a step is taken. A talk step is taken with its person, wherever they are. A look step is taken at its
  * own anchor (else a place its wording names, else a one-step quest's own place), with its people there. A move
- * step is taken where it goes: the place its wording names, never the pin it starts from.
+ * step is taken where it goes: the known place its wording names. A move to no known place ("toward the keep's
+ * lower bailey") has nowhere to arrive, so it is taken as a look step at its own pin, else the quest's place.
  */
 export function tabletopStepAnchor(
   state: GameState,
   quest: Quest,
   idx: number
-): { kind: TabletopStepKind; place: string | null; people: string[]; room?: string; from?: string | null } {
+): { kind: TabletopStepKind; place: string | null; people: string[]; room?: string } {
   const o = quest.objectives?.[idx];
   if (!o) return { kind: 'look', place: null, people: [] };
   const kind = tabletopStepKind(o.description);
   const person = talkStepPerson(o.description);
   const people = o.people?.length ? o.people : person ? [person] : [];
   if (kind === 'talk' && people.length) return { kind, place: null, people };
-  if (kind === 'move') return { kind, place: tabletopStepPlace(state, o.description), people, from: o.place ?? null };
-  const single = (quest.objectives ?? []).length === 1 ? quest.location ?? null : null;
+  const named = tabletopStepPlace(state, o.description);
+  if (kind === 'move' && named) return { kind, place: named, people };
+  const single = (quest.objectives ?? []).length === 1 || kind === 'move' ? quest.location ?? null : null;
   return {
     kind: 'look',
-    place: o.place ?? tabletopStepPlace(state, o.description) ?? single,
+    place: o.place ?? named ?? single,
     people,
     ...(o.room ? { room: o.room } : {}),
   };
@@ -190,8 +193,7 @@ function arrivedMoveStep(state: GameState, quest: Quest, hereBefore: string | un
   return (quest.objectives ?? []).findIndex((o, idx) => {
     if (o.completed) return false;
     const anchor = tabletopStepAnchor(state, quest, idx);
-    if (anchor.kind !== 'move') return false;
-    if (anchor.place ? !atPlace(state, anchor.place) : !!anchor.from && atPlace(state, anchor.from)) return false;
+    if (anchor.kind !== 'move' || !anchor.place || !atPlace(state, anchor.place)) return false;
     if (WITH_PERSON_VERB.test(o.description) && anchor.people.length) {
       return anchor.people.some((p) => people.some((n) => isGiverName(n, p)));
     }

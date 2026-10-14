@@ -663,3 +663,19 @@ export function placeCardFor(state: GameState, placeName: string | undefined): P
   if (stored?.cardBuiltTurn != null) return stored;
   return buildPlaceCard(state, raw);
 }
+
+/**
+ * A place's card text, handed only as a sight of it: on the turn the player first comes in (its card was made
+ * this turn), or when the player looks the place over. On any other turn the place is its name, its things,
+ * its ways out and its people; a card text handed every turn is read out again and again.
+ */
+export function placeFirstSight(state: GameState, placeName: string | undefined | null, looking = false): string {
+  const raw = placeOfName(state, placeName);
+  if (!raw || isTripHere(state, raw)) return '';
+  const hubName = matchHub(hubsForBibleId(state.campaignBibleId), raw)?.name ?? raw;
+  const stored = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
+  const card = looking ? placeCardFor(state, raw) : stored?.cardBuiltTurn === (state.turn ?? 0) ? stored : null;
+  if (!card) return '';
+  const text = placeBlurbForWriter(state, card.description);
+  return text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text;
+}

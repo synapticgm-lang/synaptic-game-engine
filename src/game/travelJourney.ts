@@ -81,7 +81,6 @@ import {
   isLeaveSceneAction,
   matchHub,
   parseTravelDestination,
-  placeBlurbForWriter,
   resolveLeaveSceneDestination,
 } from './outdoorHubs';
 import { dungeonRoomPlace, resolvePlace } from './places';
@@ -1059,23 +1058,14 @@ function arrive(state: GameState, dest: string, hours: number, from: string, ter
   };
 }
 
-const firstSentence = (s: string | undefined | null): string => {
-  const t = tidy(s);
-  const m = t.match(/^.+?[.!?](?=\s|$)/);
-  return m ? m[0] : t ? `${t}.` : '';
-};
-
-/** Arrival after a trip: the first sight of the place (its map blurb, once) and one hook waiting there. */
+/**
+ * Arrival after a trip: one hook waiting there. The first sight of the place is its card text, handed once by
+ * the writer's HERE block (placeFirstSight), not a second time here.
+ */
 function arrivalFacts(state: GameState, dest: string): string[] {
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), dest);
-  const settlement = findSettlement(state.worldAtlas, hub?.name ?? dest);
-  const place = resolvePlace(state.places, hub?.name ?? dest);
-  const facts: string[] = [];
-  const sight = firstSentence(placeBlurbForWriter(state, hub?.blurb || settlement?.blurb || place?.description));
-  if (sight && typeof place?.lastVisitedTurn !== 'number') facts.push(`First sight of ${dest}: ${sight}`);
   const hook = arrivalHook(state, dest, hub?.linkedQuestIds ?? []);
-  if (hook) facts.push(hook);
-  return facts;
+  return hook ? [hook] : [];
 }
 
 function arrivalHook(state: GameState, dest: string, linked: string[]): string | null {

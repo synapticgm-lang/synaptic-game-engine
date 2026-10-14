@@ -34,7 +34,7 @@ import {
   actionVerb,
   chipRepeatsAction,
   MOTION_VERB,
-  objectWords,
+  actedOnWords,
   PHYSICAL_CHIP,
   placeSaysEmpty,
   stemHit,
@@ -294,7 +294,7 @@ export function checkActionFollowed(
   }
 
   if (!talkish && !socialAct && !travel && !looking && !blowOwned) {
-    const words = objectWords(act);
+    const words = actedOnWords(act);
     if (words.length && !words.some((w) => stemHit(text, w))) {
       down.push({ kind: 'action-object-missing', detail: `prose never names what the player acted on (${words.join(', ')})` });
     } else if (words.length) {
@@ -353,8 +353,9 @@ export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
     const m = narration.match(re);
     if (m) out.push({ kind: 'broken-prose', detail: `${why}: "${m[0].trim()}"` });
   };
+  // A past-tense verb is a stem of three letters or more plus -ed, not -eed: "bed", "shed", "steed" are nouns.
   hit(
-    /\b(?:the|a|an)\s+[a-z]+ed\s+(?:the|a|an|his|her|their|its|from|into|onto|toward|towards|across|through|past|off|out of|between|on|at)\s/i,
+    /\b(?:the|a|an)\s+[a-z]{2,}[a-df-z]ed\s+(?:the|a|an|his|her|their|its|from|into|onto|toward|towards|across|through|past|off|out of|between|on|at)\s/i,
     'a name is missing before its verb'
   );
   hit(/\b(?:the|a|an|their|his|her|its|my|our)\s+(?:your|their|his|her|my|the)\s+[a-z]/i, 'stacked determiners');

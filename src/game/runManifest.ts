@@ -4,7 +4,7 @@
 
 import type { EngineMode, GameState } from './types';
 
-export const BUILD_STAMP = '2026-10-14o';
+export const BUILD_STAMP = '2026-10-14p';
 
 export interface RunManifest {
   buildStamp: string;

@@ -3,7 +3,7 @@ import { computeInventoryCapacity, kitRefDisplay, turnUsesKit } from './inventor
 import { playerFacingLocation } from './locationName.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
-import { placeBlurbForWriter, placeCardFor } from './outdoorHubs.ts';
+import { placeFirstSight } from './outdoorHubs.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
 import { pendingFoeSign } from './combatAuthority.ts';
@@ -158,10 +158,9 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   const currentName = playerFacingLocation(state);
 
   const here: string[] = [`Here: ${currentName}`];
-  // 27g — the place card is the fact authority: plain description and exits, no engine tags.
-  const card = placeCardFor(state, currentName);
-  const blurb = placeBlurbForWriter(state, card?.description);
-  if (blurb) here.push(`What it is: ${blurb}`);
+  // 27g — the place card is the fact authority; its text is a first sight, handed only the turn the player comes in.
+  const sight = placeFirstSight(state, currentName);
+  if (sight) here.push(`What it is: ${sight}`);
   const things = isJourneyUnderway(state) ? [] : state.locationSheet?.interactables ?? [];
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);

@@ -382,6 +382,8 @@ export type TurnTelemetry = {
   sentenceRepairs?: import('./writerTurn').SentenceRepair[];
   /** Lap 37 — a talk turn's missing quoted answer and its one repair request. */
   answerRepair?: import('./writerTurn').SentenceRepair;
+  /** The engine settled a fight the first draft left out: how the beat was made whole. */
+  fightRetry?: 'retried' | 'added' | 'painted';
   /** A whole-beat warden block (unresolved / collage): logged, the draft stays. */
   blockedPaintReason?: string;
   engineFact?: string;
@@ -2129,6 +2131,7 @@ Do NOT print dice notation or CODE ENFORCED.
       rejectedReason,
       sentenceRepairs: writerTurn?.repairs?.length ? writerTurn.repairs : undefined,
       answerRepair: writerTurn?.answerRepair,
+      fightRetry: writerTurn?.fightRetry,
       blockedPaintReason,
       engineFact: engineFact || undefined,
       openQuests: (arcState.quests ?? [])
