@@ -77,13 +77,13 @@ describe('s81 Root B — a lost road fight closes the meeting', () => {
   it('the list has no chip aimed at the meeting, and nobody from it is here', () => {
     const lost = lostFight();
     const pads = journeyPads(lost.state);
-    expect(pads).not.toContain('Talk your way past the thugs');
+    expect(pads).not.toContain('Talk your way past the thugs, but fail and they attack');
     expect(pads).not.toContain('Face the thugs');
     expect(pads).toContain('Walk on');
     expect(peopleHere(lost.state)).not.toContain('thugs');
   });
 
   it('a live meeting before any fight still offers its chips', () => {
-    expect(journeyPads(thugsOnStretch())).toEqual(expect.arrayContaining(['Face the thugs', 'Talk your way past the thugs']));
+    expect(journeyPads(thugsOnStretch())).toEqual(expect.arrayContaining(['Face the thugs', 'Talk your way past the thugs, but fail and they attack']));
   });
 });

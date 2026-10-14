@@ -21,19 +21,20 @@ export const WRITER_INFO_LAYER_CHAR_CAP = 2400;
 export function buildGroundTruthLedger(state: GameState, opts?: { compact?: boolean }): string {
   const compact = opts?.compact === true;
   const c = state.character;
-  const facts = writerFacts(state, kitRefDisplay);
+  const kit = (name: string) => kitRefDisplay(name, state.engineMode === 'dnd');
+  const facts = writerFacts(state, kit);
   const housed = facts.blocks.length > 0;
   const carried = facts.carried;
   const pocketed = facts.pocket;
   const invList = compact
     ? (() => {
-        const names = carried.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`);
+        const names = carried.map((i) => `${kit(i.name)} x${i.quantity}`);
         const shown = names.slice(0, 12).join('; ');
         const more = names.length > 12 ? `; +${names.length - 12} more` : '';
         return shown ? `${shown}${more}` : 'None';
       })()
     : carried
-    .map((i) => `${kitRefDisplay(i.name)} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
+    .map((i) => `${kit(i.name)} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
     .join('; ') || 'None';
   const companions = (state.companions ?? [])
     .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
@@ -41,7 +42,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   const statusList = c.conditions.length > 0 ? c.conditions.join(', ') : 'None';
 
   const cap = computeInventoryCapacity({ ...state, inventory: carried, containers: facts.containers });
-  const equippedGear = carried.filter(i => i.equipped).map(i => `${kitRefDisplay(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
+  const equippedGear = carried.filter(i => i.equipped).map(i => `${kit(i.name)}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
   const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
   const isTabletop = state.engineMode === 'dnd';
   const header = isTabletop
@@ -72,7 +73,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   }
 
   const pocketLine = pocketed.length
-    ? `In the pocket (stored; not worn, not in a bag, not on the body): ${pocketed.map((i) => `${kitRefDisplay(i.name)} x${i.quantity}`).join('; ')}`
+    ? `In the pocket (stored; not worn, not in a bag, not on the body): ${pocketed.map((i) => `${kit(i.name)} x${i.quantity}`).join('; ')}`
     : '';
   const mainQuests = facts.quests.filter(q => q.type === 'main');
   const sideQuests = facts.quests.filter(q => q.type === 'side' && q.status === 'active');
@@ -82,6 +83,8 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
   const sideQuestStr = sideQuests.length > 0
     ? sideQuests.map(q => `[SIDE] ${q.name}`).join('; ')
     : 'None active';
+  // Tabletop quests move by the step chips, never by the writer: no quest record on its sheet (infoSheet).
+  const questLines = isTabletop ? [] : [`Active Main Story: ${mainQuestStr}`, `Active Side Quests: ${sideQuestStr}`];
 
   if (compact) {
     const lines = [
@@ -96,8 +99,7 @@ export function buildGroundTruthLedger(state: GameState, opts?: { compact?: bool
       ...(gearAuthorityLine(state) ? [gearAuthorityLine(state)] : []),
       ...((state.companions ?? []).length ? [`Active Companions: ${companions}`] : []),
       `Status Effects: ${statusList}`,
-      `Active Main Story: ${mainQuestStr}`,
-      `Active Side Quests: ${sideQuestStr}`,
+      ...questLines,
       '===================================',
     ];
     return lines.join('\n');
@@ -113,9 +115,7 @@ ${pocketLine ? pocketLine + '\n' : ''}${gearAuthorityLine(state) ? gearAuthority
 Containers: ${containerInfo}
 Materials: ${state.materials.map(m => `${m.name} x${m.quantity}`).join(', ') || 'None'}${cap.hasMagicalContainer ? ' (infinite stacking)' : ''}
 Status Effects: ${statusList}
-Active Main Story: ${mainQuestStr}
-Active Side Quests: ${sideQuestStr}
-===================================`;
+${questLines.map((l) => `${l}\n`).join('')}===================================`;
 }
 
 export function buildLoreContext(cards: LoreCard[]): string {

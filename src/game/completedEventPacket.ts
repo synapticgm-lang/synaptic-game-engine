@@ -15,7 +15,7 @@ import { splitProseSentences } from './proseSentences';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
-import { isRoadLabel, roadMeetingFact, roadMeetingPerson } from './travelJourney';
+import { isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, writerEngineResult } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { TALK_VERB } from './intentParser';
 import { emptySceneFacts } from './sceneFacts';
@@ -671,7 +671,7 @@ export function compileRefEnum(
       add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');
     }
     for (const item of state.inventory ?? []) {
-      if (item.equipped && item.name) add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name), 'kit');
+      if (item.equipped && item.name) add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name, state.engineMode === 'dnd'), 'kit');
     }
     for (const c of state.companions ?? []) {
       if (c.name) add(`companion:${slugRefId(c.name)}`, c.name, 'companion');
@@ -680,7 +680,7 @@ export function compileRefEnum(
   const engineResult = (opts?.engineResult ?? '').toLowerCase();
   for (const item of engineResult ? state.inventory ?? [] : []) {
     if (item.equipped || !item.name || !engineResult.includes(item.name.toLowerCase())) continue;
-    add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name), 'carried', 'the engine result hands it over this turn; carried, not worn');
+    add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name, state.engineMode === 'dnd'), 'carried', 'the engine result hands it over this turn; carried, not worn');
   }
 
   const addWindow = (label: string) => {
@@ -974,7 +974,8 @@ export function buildCompletedEventPacket(
     phase: justKilled ? 'cleared' : enc?.phase ? enc.phase : state.sceneFacts?.pendingEncounter ? 'pending' : 'idle',
     allowlist,
     refEnum,
-    playerAction: action || '(opening)',
+    // A check chip's failure cost is menu text, not what the player did.
+    playerAction: meetingMoveBase(action) || '(opening)',
     talkTopic: hallTalkTopic(action) ?? undefined,
     talkAsked: hallTalkTopic(action) ? countSameHallTopicRepeats(state, playerInput) : undefined,
     recentBeats: rhythmBeats(state),
@@ -1271,7 +1272,7 @@ export function formatWriterFacingEvent(
     `Outcome: ${panelRead ? 'read the change below' : packet.outcome}.`,
   ];
   if (packet.engineResult) {
-    lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${packet.engineResult}`);
+    lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${writerEngineResult(packet.engineResult)}`);
   }
   if (panelRead) {
     const readHousing = housingFromSystemBlock(packet.systemBlock);

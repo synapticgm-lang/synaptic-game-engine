@@ -16,7 +16,16 @@ import { writerFacts } from './systemHousing';
 import { activeHereSpot, isOutOfTalkingRange } from './hereSpot';
 import { isChromeReceipt } from './engineResult';
 import { crowdHere } from './sceneFacts';
-import { roadMeetingOnBeat } from './travelJourney';
+import { roadMeetingOnBeat, writerTravelFact } from './travelJourney';
+
+/** A receipt as the writer reads it: a travel receipt keeps only where to and a plain time fact. */
+const writerReceipt = (r: string) => writerTravelFact(r) ?? r;
+
+/**
+ * Tabletop moves its quest by the step chips (tabletopQuestProgress), never by the writer, so the quest
+ * record (title, step text, quest and XP receipts) stays off the writer's sheet there.
+ */
+const questRecordHidden = (state: GameState) => state.engineMode === 'dnd';
 
 /** About 40 lines, ~350 tokens. */
 export const INFO_SHEET_LINE_CAP = 40;
@@ -120,12 +129,13 @@ function nowLine(state: GameState, people: string[]): string {
   return `T${state.turn} · ${place} · ${scale} · ${company} · ${mode}`;
 }
 
-function lastLines(turns: { player: LogEntry; gm: LogEntry }[]): string[] {
+function lastLines(turns: { player: LogEntry; gm: LogEntry }[], hideRecord: boolean): string[] {
   return turns
     .slice(-LAST_CAP)
     .reverse()
     .map(({ player, gm }) => {
-      const r = lastReceipt(gm);
+      const raw = lastReceipt(gm);
+      const r = raw && !(hideRecord && isChromeReceipt(raw)) ? writerReceipt(raw) : undefined;
       return `T${player.turn} ${clip(norm(player.content), 60)} → ${r ? clip(r, 70) : 'no engine result'}`;
     });
 }
@@ -231,13 +241,15 @@ function factLines(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
       facts.push({ turn: m.stance.turn, text: `${m.npcName} ${m.stance.now}: ${m.stance.cause}` });
     }
   }
-  for (const q of writerFacts(state).quests) {
+  const hideRecord = questRecordHidden(state);
+  for (const q of hideRecord ? [] : writerFacts(state).quests) {
     if (typeof q.completedTurn === 'number') facts.push({ turn: q.completedTurn, text: `quest ${q.status}: ${q.name}` });
     else if (q.revealed && typeof q.revealedTurn === 'number') facts.push({ turn: q.revealedTurn, text: `quest found: ${q.name}` });
   }
   for (const { gm } of turns.slice(-10)) {
     for (const r of receipts(gm)) {
-      if (FACT_RECEIPT.test(r) && !shownInLast.has(r)) facts.push({ turn: gm.turn, text: clip(r, 80) });
+      if (hideRecord && isChromeReceipt(r)) continue;
+      if (FACT_RECEIPT.test(r) && !shownInLast.has(r)) facts.push({ turn: gm.turn, text: clip(writerReceipt(r), 80) });
     }
   }
   const seen = new Set<string>();
@@ -289,8 +301,10 @@ function askedLine(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
 function openLines(state: GameState): string[] {
   const out: string[] = [];
   const quests = writerFacts(state).quests;
-  const quest = quests.find((q) => q.status === 'active' && q.revealed && q.type === 'main')
-    ?? quests.find((q) => q.status === 'active' && q.revealed);
+  const quest = questRecordHidden(state)
+    ? undefined
+    : quests.find((q) => q.status === 'active' && q.revealed && q.type === 'main')
+      ?? quests.find((q) => q.status === 'active' && q.revealed);
   if (quest) {
     const step = (quest.objectives ?? []).find((o) => !o.completed && !o.optional)?.description;
     const giver = norm(quest.giver ?? '');
@@ -299,14 +313,14 @@ function openLines(state: GameState): string[] {
   const enc = state.activeEncounter;
   if (enc?.name) out.push(`threat ${enc.name}${typeof enc.hp === 'number' && typeof enc.maxHp === 'number' ? ` (${enc.hp}/${enc.maxHp} HP)` : ''}`);
   else if (state.sceneFacts?.pendingEncounter?.name) out.push(`threat building: ${state.sceneFacts.pendingEncounter.name}`);
-  if (!out.length) out.push('no live quest step, no live threat');
+  if (!out.length) out.push(questRecordHidden(state) ? 'no live threat' : 'no live quest step, no live threat');
   return out;
 }
 
 export function buildInfoSheet(state: GameState): InfoSheet {
   const turns = completedTurns(state);
   const people = peopleOnSheet(state);
-  const last = lastLines(turns);
+  const last = lastLines(turns, questRecordHidden(state));
   const shownInLast = new Set(turns.slice(-LAST_CAP).map(({ gm }) => lastReceipt(gm)).filter(Boolean) as string[]);
   return {
     now: nowLine(state, people),

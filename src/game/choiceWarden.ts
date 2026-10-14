@@ -14,6 +14,7 @@ import { isChromeTalkChoice } from './chromeAuthority';
 import { spineEngineChipLabels } from './pyoaSpine';
 import { journeyPads } from './travelJourney';
 import { storyRpgDecisionChip } from './storyRpgProgress';
+import { tabletopStepChip } from './tabletopQuestProgress';
 import { dungeonCardChoices } from './dungeonCard';
 
 /**
@@ -174,6 +175,7 @@ export function filterInventedContextChoices(
       ...dungeonCardChoices(state),
       ...openingOfferPads(state),
       storyRpgDecisionChip(state) ?? '',
+      tabletopStepChip(state) ?? '',
     ].filter(Boolean).map((l) => l.trim().toLowerCase())
   );
 

@@ -61,7 +61,7 @@ describe("seed 93 writer facts", () => {
     const s = onGround({ kind: "villain", level: 3, stretch: 2 });
     const pads = journeyPads(s);
     expect(pads).toContain("Face whoever blocks the way");
-    expect(pads).toContain("Talk to whoever blocks the way");
+    expect(pads).toContain("Talk to whoever blocks the way, but fail and they attack");
     expect(pads).not.toContain("Walk on");
     expect(roadFoe({ kind: "thugs", level: 1, stretch: 1, dangerous: false }).name).toBe("the thugs");
   });
@@ -130,7 +130,7 @@ describe("seed 93 writer facts", () => {
     const pads = journeyPads(blocked);
     expect(pads).not.toContain("Walk on");
     expect(pads).toContain("Face the thugs");
-    expect(pads).toContain("Talk your way past the thugs");
+    expect(pads).toContain("Talk your way past the thugs, but fail and they attack");
     expect(pads.some((p) => p.startsWith("Turn back toward "))).toBe(true);
     const walked = commitTravel(blocked, "Walk on");
     expect(walked.arrived).toBe(false);

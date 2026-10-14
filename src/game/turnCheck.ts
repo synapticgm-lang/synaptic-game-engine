@@ -12,6 +12,7 @@ import { parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
+import { routeNames } from './travelJourney';
 import { getRegisteredLocations } from './entityRegistry';
 import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
@@ -657,6 +658,8 @@ export function checkPlayCrimes(
     after.character?.name,
     ...(after.npcMemories ?? []).map((m) => m.npcName),
     ...hubsForBibleId(after.campaignBibleId).map((h) => h.name),
+    ...routeNames(before),
+    ...routeNames(after),
   ]
     .map(norm)
     .filter((n) => n.length >= 3)

@@ -95,10 +95,10 @@ describe('28a milestone XP — no drip', () => {
       endedEncounter: { name: 'Goblin', cr: '1/4', hp: 0, maxHp: 7 } as unknown as ActiveEncounter,
       turn: 4,
     });
-    // 29z1 — the first kill is also a deed: half the level 1 Low budget (25) on top of the CR 1/4 pay.
-    expect(r.xp).toBe(75);
+    // tt-fix-4 — tabletop pays the CR only: no First Kill deed on top.
+    expect(r.xp).toBe(50);
     expect(r.notes.some((n) => /CR 1\/4 = 50 XP/.test(n))).toBe(true);
-    expect(r.notes.some((n) => /^XP Gained: 25 \(Achievement: First Kill — level 1 Low milestone 50 ÷ 2 = 25 XP\)$/.test(n))).toBe(true);
+    expect(r.notes.some((n) => /Achievement: First Kill/.test(n))).toBe(false);
   });
 
   it('LitRPG opening reaches level 2 within 5 turns', () => {

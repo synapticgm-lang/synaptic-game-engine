@@ -25,14 +25,26 @@ export interface InventoryCapacity {
  * Writer-facing labels must read mid-sentence: clause labels shrink to the bare head noun (the painter
  * adds the PC's possessive, so third-person prose never reads "your clothes"), a leading article drops
  * to lowercase.
+ * tt-fix-4 — `plain` (tabletop): the writer gets a plain lowercase description ("chain mail", "holy water"),
+ * never the catalog label ("Chain Mail", "Holy Water (Flask)"), so prose cannot paste a label. A possessive
+ * name ("Edda's") and a name after "of" ("Ring of Aldous") keep their capitals.
  */
-export function kitRefDisplay(name: string): string {
-  const clean = (name ?? '').replace(/\s+/g, ' ').trim();
+export function kitRefDisplay(name: string, plain = false): string {
+  const clean = (plain
+    ? (name ?? '').replace(/\[[^\]]*\]\s*/g, '').replace(/\s*\([^)]*\)/g, '')
+    : (name ?? '')
+  ).replace(/\s+/g, ' ').trim();
   const clause = clean.match(
     /^(?:(?:the|a|an|your)\s+)?(.+?)\s+(?:you|that|which|who|when|where|from|brought|carried|worn)\b/i
   );
   if (clause && clause[1] && clause[1].split(' ').length <= 3) {
     return clause[1].toLowerCase();
+  }
+  if (plain) {
+    const words = clean.split(' ');
+    return words
+      .map((w, i) => (/['’]s$/.test(w) || (i > 0 && /^of$/i.test(words[i - 1]!) && /^[A-Z]/.test(w)) ? w : w.toLowerCase()))
+      .join(' ');
   }
   // "Travelling clothes" is a sentence-case description, not a name: it reads "travelling clothes" in prose.
   // Title Case names ("Chain Mail", "Silvered Dagger") keep their capitals.

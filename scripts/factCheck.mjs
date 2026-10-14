@@ -143,7 +143,9 @@ function factSections(packet) {
 /** Facts the engine handed the writer for one turn. */
 function factsFor(row, packet) {
   const receipts = [...new Set([...(row.arcStatusReceipts ?? []), ...(row.systemLog ?? [])].map(String))];
-  const engineResult = (packet.match(/ENGINE RESULT[^:]*\):\s*([\s\S]*?)\n(?:READER|SYSTEM|Location|YOU MAY|No move|TOKEN)/) ?? [])[1]?.trim() ?? String(row.engineFact ?? '');
+  // The raw engine record (the game gate reads the same); the packet shows the writer's plainer form.
+  const engineResult = String(row.engineFact ?? '').trim()
+    || ((packet.match(/ENGINE RESULT[^:]*\):\s*([\s\S]*?)\n(?:READER|SYSTEM|Location|YOU MAY|No move|TOKEN)/) ?? [])[1]?.trim() ?? '');
   const mention = line(packet, 'YOU MAY ONLY MENTION:').split(/,\s*/).map((s) => s.replace(/\.$/, '').trim()).filter(Boolean);
   const refs = [...packet.matchAll(/^t\d+\s+(\S+)\s+(\w+)\s+"([^"]+)"/gm)].map((m) => ({ id: m[1], kind: m[2], display: m[3] }));
   const placesLine = line(packet, 'PLACES:');
@@ -230,6 +232,11 @@ export function checkTurn(row, packet, page = '') {
     ...[...packet.matchAll(/^- quest (.+?) [-—–] step: /gm)].map((m) => m[1]),
     ...[...packet.matchAll(/^Active Main Story: (?:\[[^\]]*\]\s*)?(.+?)\s*\((?:active|in progress)\)/gim)].map((m) => m[1]),
   ];
+  // Tabletop no longer hands the writer its quest record: the turn row carries the open quests instead.
+  for (const q of row.openQuests ?? []) {
+    if (q.step && !openSteps.includes(q.step)) openSteps.push(q.step);
+    if (q.title && !questTitles.includes(q.title)) questTitles.push(q.title);
+  }
   const known = [page, facts.engineResult, row.playerInput ?? ''].join(' ');
   const choicePose = choicePosePatterns(who);
   const agency = agencyPatterns(who);

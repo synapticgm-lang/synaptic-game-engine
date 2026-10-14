@@ -13,19 +13,71 @@ import { objectiveStepChip } from './choiceRanking';
 import { peopleHere } from './chipLegality';
 import { isGiverName, talkStepPerson } from './questGiver';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { resolveNpcRecord } from './npcRecords';
 
 export type TabletopQuestTurn = { state: GameState; receipts: string[] };
 
 const chipKey = (s: string) => (s ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 const bare = (s: string) => chipKey(s).replace(/^the\s+/, '');
 
-/** The known place a step names by its whole name ("Examine the keep gate" → Keep Gate), if any. */
+/**
+ * The known place a step names by its whole name or a hub's own alias ("Examine the keep gate" → Keep Gate,
+ * "at the Greyhollow Tavern" → Greyhollow Inn), if any.
+ */
 export function tabletopStepPlace(state: GameState, step: string): string | null {
   const text = ` ${chipKey(step).replace(/[^a-z0-9' ]+/g, ' ')} `;
-  const names = [...hubsForBibleId(state.campaignBibleId).map((h) => h.name), ...(state.places ?? []).map((p) => p.name)]
-    .filter((n) => bare(n ?? '').length >= 4)
-    .sort((a, b) => b.length - a.length);
-  return names.find((n) => text.includes(` ${bare(n)} `)) ?? null;
+  const names: Array<[string, string]> = [
+    ...hubsForBibleId(state.campaignBibleId).flatMap((h) =>
+      [h.name, ...(h.aliases ?? [])].map((n): [string, string] => [n, h.name])
+    ),
+    ...(state.places ?? []).map((p): [string, string] => [p.name, p.name]),
+  ]
+    .filter(([n]) => bare(n ?? '').length >= 4)
+    .sort((a, b) => b[0].length - a[0].length);
+  return names.find(([n]) => text.includes(` ${bare(n)} `))?.[1] ?? null;
+}
+
+/**
+ * Tabletop: the person a main-quest talk step is heard from lives at the place the step names
+ * ("Speak with Oskar at the Greyhollow Tavern"). Their record is put there, so arriving there finds them.
+ */
+export function placeTabletopStepPeople(state: GameState): GameState {
+  if (state.engineMode !== 'dnd') return state;
+  const quest = mainSpineQuest(state);
+  if (!quest) return state;
+  let memories = state.npcMemories ?? [];
+  let changed = false;
+  for (const o of quest.objectives ?? []) {
+    if (o.completed) continue;
+    const person = talkStepPerson(o.description);
+    const place = person ? o.place ?? tabletopStepPlace(state, o.description) : null;
+    if (!person || !place) continue;
+    const hit = resolveNpcRecord({ ...state, npcMemories: memories }, person);
+    if (hit) {
+      if (!hit.location) {
+        memories = memories.map((m) => (m.npcId === hit.npcId ? { ...m, location: place } : m));
+        changed = true;
+      }
+      continue;
+    }
+    memories = [
+      {
+        npcId: `step-${person.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 32)}`,
+        npcName: person,
+        disposition: 'neutral',
+        facts: [`Quest step: ${quest.name}`],
+        lastSeenTurn: 0,
+        roleHint: 'quest-patron',
+        aliases: [],
+        met: false,
+        present: false,
+        location: place,
+      },
+      ...memories,
+    ];
+    changed = true;
+  }
+  return changed ? { ...state, npcMemories: memories } : state;
 }
 
 /** Where a step is taken: its own anchor, else a place its wording names, else a one-step quest's own place. */
@@ -84,7 +136,8 @@ export function tabletopStepChip(state: GameState): string | null {
 
 const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;
 
-export function applyTabletopQuestTurn(state: GameState, playerInput: string): TabletopQuestTurn {
+export function applyTabletopQuestTurn(input: GameState, playerInput: string): TabletopQuestTurn {
+  const state = placeTabletopStepPeople(input);
   const quest = playOpen(state);
   if (!quest) return { state, receipts: [] };
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();

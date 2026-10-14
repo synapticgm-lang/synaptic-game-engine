@@ -123,8 +123,9 @@ describe('root 3 — repairs that drop or miss the right line', () => {
     expect(wrongExitCountProblem(s, 'The only way out was the road to the inn.')).not.toBeNull();
   });
 
-  async function repairFor(prose: string) {
-    const state = ck();
+  async function repairFor(prose: string, backed = true) {
+    const tilde = { npcId: 'tilde', npcName: 'Tilde', disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], sheet: { motive: 'Keep the inn quiet tonight' } };
+    const state = ck(backed ? { npcMemories: [tilde] as unknown as GameState['npcMemories'] } : {});
     const packet = { refEnum: [{ id: 't1', klass: 'person', display: 'Tilde' }, { id: 't2', klass: 'person', display: 'Edda' }] } as unknown as CompletedEventPacket;
     const playerInput = 'Talk to Tilde';
     const asked: string[] = [];
@@ -145,6 +146,11 @@ describe('root 3 — repairs that drop or miss the right line', () => {
     expect(asked).toHaveLength(1);
     expect(asked[0]).toContain('People here: Tilde');
     expect(asked[0]).not.toContain('Edda;');
+    expect(asked[0]).toContain('Known to say: Tilde: wants keep the inn quiet tonight');
+  });
+
+  it('tt-fix-4: with no backed line for Tilde, nothing is asked (the skip path)', async () => {
+    expect(await repairFor('Edda looked up from the bar. "We close at midnight," Edda said.', false)).toEqual([]);
   });
 
   it('leaves the beat alone when Tilde answered', async () => {

@@ -31,6 +31,9 @@ import {
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
 import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
+import { authoredTopicsFor } from './manusTopicBanks';
+import { openingCastNames, shortCardWant } from './openingEstablishment';
+import { writerEngineResult } from './travelJourney';
 
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 
@@ -271,24 +274,61 @@ function speakerHere(bare: string, here: string[]): boolean {
   });
 }
 
+const sameName = (a: string, b: string) => {
+  const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  return !!bare(a) && bare(a) === bare(b);
+};
+
+/**
+ * tt-fix-4 — what a person here can be quoted saying without inventing anything: their authored topic lines,
+ * the opening card's want when they are the card's cast, and the motive on their engine sheet.
+ */
+export function backedAnswerFacts(state: GameState, name: string): string[] {
+  const facts = authoredTopicsFor(name).map((t) => t.line);
+  if (openingCastNames(state).some((n) => sameName(n, name))) facts.push(shortCardWant(state));
+  const memory = (state.npcMemories ?? []).find(
+    (m) => sameName(m.npcName, name) || (m.aliases ?? []).some((a) => sameName(a, name))
+  );
+  if (memory?.sheet?.motive) facts.push(`wants ${memory.sheet.motive.toLowerCase()}`);
+  return facts.map((f) => f.replace(/\s+/g, ' ').trim()).filter((f) => f.length > 3);
+}
+
+const FACT_STOP = new Set(['that', 'this', 'with', 'from', 'they', 'them', 'their', 'what', 'want', 'wants', 'have', 'here', 'there', 'were', 'will', 'your', 'about', 'into', 'just']);
+const factWords = (s: string) =>
+  new Set((s.toLowerCase().match(/[a-z][a-z'’-]{3,}/g) ?? []).map((w) => w.replace(/(?:ing|ed|es|s)$/, '')).filter((w) => !FACT_STOP.has(w)));
+
+/** The quoted words carry a backed fact: two of its content words, or all of a short one's. */
+export function quoteHeldToFacts(quoted: string, facts: string[]): boolean {
+  const said = factWords(quoted);
+  return facts.some((f) => {
+    const words = [...factWords(f)];
+    const shared = words.filter((w) => said.has(w)).length;
+    return shared >= Math.min(2, words.length) && shared > 0;
+  });
+}
+
 /** The one request for a missing answer. The player's character is never the speaker: the player speaks for them. */
-export function answerRepairRequest(check: DraftCheck, here: string[], said: string[], prose: string, sheets: string[] = []): string {
+export function answerRepairRequest(
+  check: DraftCheck,
+  here: string[],
+  said: string[],
+  prose: string,
+  backed: Map<string, string[]> = new Map()
+): string {
   const pc = (check.state.character?.name ?? '').trim();
-  const lower = here.map((p) => p.toLowerCase());
-  const theirs = sheets
-    .map((s) => s.replace(/^@t\d+\s+/, '').trim())
-    .filter((s) => lower.some((p) => s.toLowerCase().startsWith(p)));
+  const known = here.flatMap((p) => (backed.get(p) ?? []).map((f) => `${p}: ${f}`));
   return [
     'Your story left out the answer. Write ONE sentence in which a person here answers the player.',
-    'Format: the spoken words inside quote marks, plus who said it outside the quotes, e.g. "Words they say," Name said. Use a name from People here as the speaker. Use only names and facts from your story and the engine fact.',
+    'Format: the spoken words inside quote marks, plus who said it outside the quotes, e.g. "Words they say," Name said. Use a name from People here as the speaker.',
+    'The spoken words say only what that person is known to say below, in their own voice. Add no new fact, person, place, object or task.',
     ...(pc ? [`${pc} is the player's character: never write words, a reply or a decision for ${pc}.`] : []),
     'Reply with only that sentence as plain prose. No JSON, no other text.',
     `Player said: "${check.playerInput.slice(0, 200)}"`,
     `People here: ${here.join('; ')}`,
-    ...(theirs.length ? [`Who they are (answer from this, in their own voice): ${theirs.join(' | ')}`] : []),
+    `Known to say: ${known.join(' | ')}`,
     ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
     `Your story so far: ${prose.slice(0, 600)}`,
-    `Engine fact: ${check.engineFact.trim() || 'Keep only what the scene already established.'}`,
+    `Engine fact: ${writerEngineResult(check.engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
 
@@ -316,9 +356,13 @@ export async function repairMissingAnswer(
     if (!addressee || all.some((s, i) => hasQuote(s) && speakerHere(`${unquoted(all[i - 1])} ${unquoted(s)}`, here))) return turn;
   }
   const fact = check.engineFact;
-  const said = [...alreadySaidLines(check.state, packet).values()].flat();
-  const request = answerRepairRequest(check, here, said, turn.prose, packet.townsfolk ?? []);
   const missing = { sentence: '(no answer on the page)', flag: MISSING_ANSWER_PROBLEM, fact };
+  // Only a backed line may be quoted: with nothing on record for anyone here, the turn keeps its own lines.
+  const backed = new Map(here.map((p) => [p, backedAnswerFacts(check.state, p)] as const).filter(([, f]) => f.length));
+  if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: 'skipped: no backed line for anyone here' } };
+  const speakers = [...backed.keys()];
+  const said = [...alreadySaidLines(check.state, packet).values()].flat();
+  const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
   if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };
   const raw = await opts.repair(request).catch(() => '');
   const line = raw.trim() ? repairReplyLines(raw, check, packet, 1)?.[0] : undefined;
@@ -332,9 +376,11 @@ export async function repairMissingAnswer(
       ? 'repair reply was not one sentence'
       : !quoted
         ? 'repair reply has no quoted answer'
-        : pcSpeaks || !speakerHere(bare, here)
+        : pcSpeaks || !speakerHere(bare, speakers)
           ? 'repair reply names nobody here as the speaker'
-          : repeatsSaid(quoted, said)
+          : !quoteHeldToFacts(quoted, speakers.filter((p) => speakerHere(bare, [p])).flatMap((p) => backed.get(p) ?? []))
+            ? 'repair reply is not held to a backed line'
+            : repeatsSaid(quoted, said)
             ? 'repair reply says an earlier line again'
             : (() => {
                 const still = sentenceGateProblem(check.state, line, check.playerInput)
@@ -381,7 +427,7 @@ export function sentenceRepairRequest(
       (f, i) =>
         `${many ? `${i + 1}. ` : ''}Sentence: "${f.sentence}"\n${many ? '   ' : ''}Problem: ${f.flag}${f.note ? ` ${f.note}` : ''}`
     ),
-    `Engine fact: ${engineFact.trim() || 'Keep only what the scene already established.'}`,
+    `Engine fact: ${writerEngineResult(engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
 

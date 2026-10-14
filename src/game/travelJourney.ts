@@ -83,6 +83,18 @@ export { UNDERWAY_HERE };
 
 const ROAD_LABELS = new Set([...Object.values(GROUND_LABEL), UNDERWAY_HERE].map((l) => l.toLowerCase()));
 
+/** Every route name the engine hands the writer: the ground labels, this trip's HERE words, its two ends. */
+export function routeNames(state: Pick<GameState, 'journey'>): string[] {
+  return [
+    ...Object.values(GROUND_LABEL),
+    UNDERWAY_HERE,
+    underwayHereLabel(state) ?? '',
+    state.journey?.ground ?? '',
+    state.journey?.from ?? '',
+    state.journey?.to ?? '',
+  ].filter((n) => !!n.trim());
+}
+
 const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 
 /** A road label or the underway HERE: journey state, never a place. */
@@ -350,8 +362,25 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (roadMeetingOver(enc)) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
-  if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'];
-  return FIXED_ENCOUNTER_PADS[enc.kind] ?? [];
+  if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'].map(withFailCost);
+  return (FIXED_ENCOUNTER_PADS[enc.kind] ?? []).map(withFailCost);
+}
+
+/** TT32 — a chip that runs a check says what a failure costs: the meeting forces the fight. */
+const FAIL_COST: Record<string, string> = {
+  'hide from the creature': ', but fail and it attacks',
+};
+const FAIL_COST_TAIL = /,\s*but fail and (?:they|it) attacks?$/i;
+
+function withFailCost(pad: string): string {
+  const key = pad.toLowerCase();
+  if (!MEETING_MOVE.has(key)) return pad;
+  return `${pad}${FAIL_COST[key] ?? ', but fail and they attack'}`;
+}
+
+/** A meeting chip without its failure-cost tail ("Talk your way past the thugs"). */
+export function meetingMoveBase(chip: string): string {
+  return (chip ?? '').replace(/\s+/g, ' ').trim().replace(FAIL_COST_TAIL, '');
 }
 
 const TURN_BACK_REST_TURNS = 4;
@@ -375,7 +404,7 @@ export function journeyPads(
 }
 
 export function isJourneyPad(choice: string): boolean {
-  const t = (choice ?? '').trim().toLowerCase();
+  const t = meetingMoveBase(choice).toLowerCase();
   const known = [
     ...Object.values(TALK_PAD),
     ...Object.values(LIVES_PAD),
@@ -617,12 +646,45 @@ const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
   villain: 'here on their own business',
 };
 
-/** Writer fact: the meeting on this stretch is on the page before any chip meets it. */
+/**
+ * Writer fact: the meeting on this stretch is on the page before any chip meets it.
+ * Who or what only: the meeting's reason for being here is STATUS chrome, so no one recites it.
+ */
 export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const e = j?.encounter;
   if (!e || roadMeetingOver(e)) return '';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
-  return `On this stretch: ${base}${meetingCount(e)}, ${ENCOUNTER_LIFE[e.kind]}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
+  return `On this stretch: ${base}${meetingCount(e)}. Show it plainly in the story (seen or heard, not named as a list), so the next choice can meet it.`;
+}
+
+const TIME_SLOT = '(dawn|morning|midday|afternoon|dusk|evening|night)';
+
+/**
+ * tt-fix-4 — a travel receipt as the writer is handed it: the destination and a plain time fact.
+ * Legs, spans, "still ahead" and the chance-meeting note stay on STATUS (the meeting reaches the writer
+ * through `roadMeetingFact`). Null when the receipt is not a travel receipt.
+ */
+export function writerTravelFact(receipt: string): string | null {
+  const r = (receipt ?? '').replace(/\s+/g, ' ').trim().replace(/\.$/, '');
+  if (!/^Travel:/i.test(r)) return null;
+  const slot = r.match(new RegExp(`\\bnow ${TIME_SLOT}\\b`, 'i'))?.[1] ?? r.match(new RegExp(`\\(${TIME_SLOT}\\)`, 'i'))?.[1];
+  const passed = /\+\s*\d/.test(r);
+  const time = slot
+    ? passed ? ` Some time passed on the way; it is now ${slot}.` : ` It is ${slot}.`
+    : passed ? ' Some time passed on the way.' : '';
+  const to =
+    r.match(/;\s*([^;]+?) still ahead\b/)?.[1]
+    ?? r.match(/\bbetween .+? and (.+?)(?: at a \w+ pace)?(?: \(| —|;|$)/)?.[1];
+  if (to && /the way on is blocked/i.test(r)) return `Still on the way to ${to}; the way on is blocked.${time}`;
+  if (to && /^Travel: still on\b/i.test(r)) return `Still on the way to ${to}, not there yet.${time}`;
+  if (to) return `On the way to ${to}, not there yet.${time}`;
+  const dest = r.match(/^Travel: .* to (.+?)(?: at a \w+ pace)?(?: — |$)/)?.[1];
+  return dest ? `Arrived at ${dest}.${time}` : null;
+}
+
+/** The engine fact with every travel receipt in it swapped for its writer form (`writerTravelFact`). */
+export function writerEngineResult(fact: string): string {
+  return (fact ?? '').replace(/Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
 }
 
 /** Meetings with someone who can speak. */
@@ -691,8 +753,8 @@ const MEETING_MOVE = new Map<string, 'parley' | 'flee'>([
 export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string): 'parley' | 'flee' | null {
   const enc = state.journey?.encounter;
   if (!enc || !fightPad(enc) || roadMeetingOver(enc)) return null;
-  const chip = (raw ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  if (!encounterPads(enc, state.journey!.terrain).some((p) => p.toLowerCase() === chip)) return null;
+  const chip = meetingMoveBase(raw).toLowerCase();
+  if (!encounterPads(enc, state.journey!.terrain).some((p) => meetingMoveBase(p).toLowerCase() === chip)) return null;
   return MEETING_MOVE.get(chip) ?? null;
 }
 

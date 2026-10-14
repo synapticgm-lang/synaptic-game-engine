@@ -21,6 +21,7 @@ import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
 import { crowdHere } from './sceneFacts';
 import { isSystemStatusChip } from './systemHousing';
+import { tabletopStepChip } from './tabletopQuestProgress';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -267,7 +268,9 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   }
   const gate = gateChipProblem(state, label);
   if (gate) return { kind: 'impossible-chip', detail: gate };
+  // The quest step taken at its own place is an engine fact, even when the beat never named its object.
   if (/^(?:inspect|examine|check|search|study|read|open|investigate|take|pick up)\b/i.test(label)
+    && low(label) !== low(tabletopStepChip(state))
     && choiceNamesUnnarratedObject(label, storyProse, state)) {
     return { kind: 'unrelated-chip', detail: `"${label}" acts on something the scene never set up` };
   }

@@ -426,7 +426,8 @@ export function applySandboxXpAwards(
   }
 
   // 29z1 — fight deeds the engine already counts (first kill; fights won), paid once each by mode.
-  if (mode === 'litrpg' || mode === 'dnd' || mode === 'rpg') {
+  // Tabletop pays a fight by challenge rating only: no deed XP there.
+  if (mode === 'litrpg' || mode === 'rpg') {
     const payDeed = (key: string, step: DeedStep, label: string): boolean => {
       if (hasAward(awardKeys, key)) return false;
       awardKeys.push(key);

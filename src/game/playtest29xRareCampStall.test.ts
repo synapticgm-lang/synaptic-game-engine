@@ -66,8 +66,8 @@ afterEach(() => {
 
 describe('29x stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14h');
-    expect(BUILD_STAMP).toBe('2026-10-14h');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14i');
+    expect(BUILD_STAMP).toBe('2026-10-14i');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -141,7 +141,7 @@ describe('29x — camp mini-boss', () => {
       'Walk on',
       'Approach the camp',
       "Face the camp's champion",
-      'Skirt around the camp',
+      'Skirt around the camp, but fail and they attack',
       'Turn back toward Greyhollow Inn',
     ]);
     const quietCamp = onGround({ kind: 'camp' });

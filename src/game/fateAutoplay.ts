@@ -385,6 +385,8 @@ export type TurnTelemetry = {
   /** A whole-beat warden block (unresolved / collage): logged, the draft stays. */
   blockedPaintReason?: string;
   engineFact?: string;
+  /** Open quests the writer must not read out (the fact checker's step-leak list when the packet hides them). */
+  openQuests?: Array<{ title: string; step: string }>;
   /** 28g — diagnostics: raw writer reply (first 600 chars), token line verdicts, accept path. */
   writerRawHead?: string;
   /** Full raw writer reply, so a draft-vs-final check can see every line. */
@@ -2128,6 +2130,9 @@ Do NOT print dice notation or CODE ENFORCED.
       answerRepair: writerTurn?.answerRepair,
       blockedPaintReason,
       engineFact: engineFact || undefined,
+      openQuests: (arcState.quests ?? [])
+        .filter((q) => q.status === 'active' && q.revealed)
+        .map((q) => ({ title: q.name, step: (q.objectives ?? []).find((o) => !o.completed && !o.optional)?.description ?? '' })),
       writerRawHead,
       writerRaw: gmResult.text || undefined,
       stageTrace: stageTrace.length ? stageTrace : undefined,

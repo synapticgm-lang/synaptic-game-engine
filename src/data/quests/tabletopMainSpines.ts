@@ -597,14 +597,16 @@ export function matchTabletopMainSpineFromCtx(ctx: TabletopMatchCtx): TabletopMa
 }
 
 export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQuestSeed {
+  const followOn = spine.threeBeats[1]?.trim();
   return {
     id: spine.spineId,
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
-    objectives: [spine.firstObjective],
-    // The first step is taken at the quest's own pin; its wording often names only a prop there.
-    objectiveAnchors: [{ place: spine.mapPin }],
+    // A main quest is more than one look: the follow-on beat is its second step.
+    objectives: followOn ? [spine.firstObjective, followOn] : [spine.firstObjective],
+    // Both steps start at the quest's own pin; their wording often names only a prop there.
+    objectiveAnchors: followOn ? [{ place: spine.mapPin }, { place: spine.mapPin }] : [{ place: spine.mapPin }],
     location: spine.mapPin,
     type: 'main',
   };

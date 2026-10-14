@@ -80,8 +80,8 @@ function award(s: GameState) {
 
 describe('29z1 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14h');
-    expect(BUILD_STAMP).toBe('2026-10-14h');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14i');
+    expect(BUILD_STAMP).toBe('2026-10-14i');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -144,9 +144,9 @@ describe('29z1 — deed pay by mode', () => {
     expect(items.every((i) => /Reward Box$/.test(i.name))).toBe(true);
   });
 
-  it('tabletop pays 25 per deed at level 1 and never an item', () => {
+  it('tabletop pays no deed XP (challenge rating only) and never an item', () => {
     const r = award(killed('dnd', { sandboxAwardKeys: winKeys(10) }));
-    expect(r.xp).toBe(75);
+    expect(r.xp).toBe(0);
     expect(r.items).toHaveLength(0);
   });
 

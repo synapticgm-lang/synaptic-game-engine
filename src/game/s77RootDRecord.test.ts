@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
 import { buildInfoSheet } from './infoSheet';
-import { commitTravel } from './travelJourney';
+import { commitTravel, writerTravelFact } from './travelJourney';
 import { notesForCommittedBody, repairRejectedBeat } from './beatCommitGate';
 import { writerWordsGuard } from './writerWords';
 import type { GameState, LogEntry } from './types';
@@ -62,7 +62,8 @@ describe('s77 Root D: the record is the story, not warden chrome', () => {
 
     const sheet = buildInfoSheet(state);
     const last13 = sheet.last.find((l) => l.startsWith('T12 Travel toward Lowmarket'));
-    expect(last13).toContain(`→ ${receipt.slice(0, 40)}`);
+    expect(last13).toContain(`→ ${writerTravelFact(receipt)!.slice(0, 40)}`);
+    expect(last13).not.toMatch(/Travel:|leg \d of \d|\+\d+ min/);
     const last14 = sheet.last.find((l) => l.startsWith('T13 Inspect'));
     expect(last14).toMatch(/no engine result$/);
     for (const row of [...sheet.last, ...sheet.facts]) {
