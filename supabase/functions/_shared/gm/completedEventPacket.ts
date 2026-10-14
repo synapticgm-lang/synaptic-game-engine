@@ -270,6 +270,9 @@ function lastPlayerAction(state: GameState, playerInput?: string): string {
   return '';
 }
 
+/** TT31 — a tabletop beat is a short table description: at most this many words (asked in the packet, cut on commit). */
+export const TABLETOP_BEAT_WORDS = 100;
+
 export function classifyVerb(input: string): string {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
   if (/\b(attack|fight|strike|engage|press the attack|slash|stab|punch)\b/i.test(t)) return 'attacked';
@@ -1347,12 +1350,14 @@ export function formatWriterFacingEvent(
     : dest
       ? `${whatDid}, naming @${dest.tok} as where ${who} was headed`
       : whatDid;
+  const hookLine = `{"fn":"hook","text":"<sentence: one thing ${who} can see or hear in front of them now — never a choice, a decision, a task still to do, or time passing>"}`;
   const bodyLines = placeGiven
-    ? `{"fn":"action","text":"<sentence: ${didWhat} — the first thing that changed>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`
-    : `{"fn":"place","text":"<sentence: ${whereWas}${placeTok ? `, using @${placeTok}` : ''}>"},{"fn":"action","text":"<sentence: ${didWhat}>"},${answerLine},{"fn":"hook","text":"<sentence: what now waits or threatens>"}`;
+    ? `{"fn":"action","text":"<sentence: ${didWhat} — the first thing that changed>"},${answerLine},${hookLine}`
+    : `{"fn":"place","text":"<sentence: ${whereWas}${placeTok ? `, using @${placeTok}` : ''}>"},{"fn":"action","text":"<sentence: ${didWhat}>"},${answerLine},${hookLine}`;
   lines.push(placeGiven
     ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
     : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
+  if (packet.engineMode === 'dnd') lines.push(`The whole beat is at most ${TABLETOP_BEAT_WORDS} words.`);
   if (placeGiven) {
     lines.push(packet.infoSheet
       ? 'HERE is already on the page (see INFO SHEET below). Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures from earlier turns are spent — use a new detail or none.'

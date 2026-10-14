@@ -34,6 +34,12 @@ export function kitRefDisplay(name: string): string {
   if (clause && clause[1] && clause[1].split(' ').length <= 3) {
     return clause[1].toLowerCase();
   }
+  // "Travelling clothes" is a sentence-case description, not a name: it reads "travelling clothes" in prose.
+  // Title Case names ("Chain Mail", "Silvered Dagger") keep their capitals.
+  const words = clean.replace(/^(?:the|a|an)\s+/i, '').split(' ');
+  if (words.length >= 2 && /^[A-Z][a-z'’-]+$/.test(words[0]!) && words.slice(1).every((w) => /^[a-z]/.test(w))) {
+    return clean.toLowerCase();
+  }
   return clean.replace(/^(The|A|An)\s+/, (a) => a.toLowerCase());
 }
 
