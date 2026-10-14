@@ -51,9 +51,9 @@ function base(over: Partial<GameState> = {}): GameState {
 const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r.p0, ...r.down].map((f) => f.kind);
 
 describe('29z8 — stamp', () => {
-  it('HUD/BUILD are 2026-10-14d', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14d');
-    expect(BUILD_STAMP).toBe('2026-10-14d');
+  it('HUD/BUILD are 2026-10-14e', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14e');
+    expect(BUILD_STAMP).toBe('2026-10-14e');
   });
 });
 

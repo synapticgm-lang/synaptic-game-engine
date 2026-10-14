@@ -336,6 +336,8 @@ export interface Character {
   skillsGrantedThrough?: number;
   /** Class with no tabletop sheet (LitRPG): the same SRD class data; a sheet's `srd.classId` wins. */
   classId?: TabletopClassId;
+  /** Story RPG origin: one of the SRD backgrounds, shown as where the character comes from (rules/rpgOrigin). */
+  origin?: TabletopBackgroundId;
   /** LitRPG free stat points spent (rules/abilityPoints), like a sheet's ASI list; unspent = earned − these. */
   statAllocations?: { level: number; bonus: Partial<Attributes> }[];
   /** The title the System shows on the window; unset until a title is earned. */
@@ -402,6 +404,21 @@ export interface QuestObjective {
   description: string;
   completed: boolean;
   optional?: boolean;
+}
+
+export interface ChoiceJournalEntry {
+  turn: number;
+  kind: 'deed' | 'decision' | 'origin' | 'romance' | 'ending';
+  /** Who the choice was about, when it was a person. */
+  npc?: string;
+  text: string;
+}
+
+export interface LitrpgFloorLadder {
+  /** Highest floor cleared (0 before the first boss falls). */
+  cleared: number;
+  /** One rung per cleared floor: the dungeon and the boss that fell there. */
+  bosses: { floor: number; dungeon: string; boss: string; turn: number }[];
 }
 
 export interface Quest {
@@ -834,6 +851,12 @@ export interface GameState {
   tutorialProgress?: TutorialProgress;
   /** LitRPG class choice the System opened at the end of the tutorial; cleared once a class is taken. */
   classOffer?: { turn: number; choices: TabletopClassId[] } | null;
+  /** Story RPG journal of choices the engine committed (deeds, decisions, origin, romance, ending). */
+  choiceJournal?: ChoiceJournalEntry[];
+  /** Main quests whose "You have completed the main quest" popup the player already answered. */
+  mainQuestEndSeen?: string[];
+  /** LitRPG floor ladder: each dungeon whose boss falls is a floor; the next floor's stair unlocks. */
+  litrpgFloors?: LitrpgFloorLadder;
   /** Pack 4/5 Place registry — name/tier/arc authority. */
   places?: PlaceRecord[];
   /** Pack 6 long-campaign compressed memory. */

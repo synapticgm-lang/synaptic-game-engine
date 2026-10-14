@@ -6,7 +6,34 @@ import { pickFateChoice } from '@/game/fatePick';
 import { classOfferPad } from '@/game/rules/characterClass';
 import { systemPromptPad } from '@/game/rules/abilityPoints';
 import { partyHeading, recruitPad } from '@/game/rules/companions';
-import { rpgEndingChip } from '@/game/storyRpgProgress';
+import { romanceAllowed, romancePad, rpgEndingChip, storyRpgContactPad } from '@/game/storyRpgProgress';
+import { originPad } from '@/game/rules/rpgOrigin';
+import { loadSettings } from '@/game/db';
+
+const ROW_CHIP =
+  'sgm-choice-btn flex min-h-[40px] w-full items-center rounded-lg border bg-slate-900/90 px-3 py-1.5 text-left text-xs font-medium transition-all hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-[32px] sm:w-auto sm:rounded-full sm:px-2.5';
+
+function ChipRow({ testId, heading, chips, tone, busy, onAction }: {
+  testId: string;
+  heading: string;
+  chips: string[];
+  tone: string;
+  busy: boolean;
+  onAction: (action: string) => void;
+}) {
+  return (
+    <div className={`sgm-info-panel rounded-lg border bg-slate-950/90 px-3 py-2 ${tone}`} data-testid={testId}>
+      <div className="mb-1.5 text-[11px] font-medium">{heading}</div>
+      <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
+        {chips.map((label) => (
+          <button key={label} disabled={busy} onClick={() => onAction(label)} className={`${ROW_CHIP} ${tone}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 interface ActionBarProps {
   state: GameState;
@@ -23,6 +50,9 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const party = partyHeading(state);
   const recruits = recruitPad(state) ?? [];
   const endingChip = rpgEndingChip(state);
+  const origins = originPad(state);
+  const contacts = storyRpgContactPad(state);
+  const romance = romancePad(state, romanceAllowed(loadSettings()));
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
 
@@ -30,10 +60,19 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
     onAction(pickFateChoice(actions));
   };
 
-  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length)) return null;
+  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !contacts && !romance)) return null;
 
   return (
     <div className="flex flex-col gap-1.5 pb-2">
+      {origins && (
+        <ChipRow testId="origin-row" heading="Where do you come from?" chips={origins} tone="border-violet-500/40 text-violet-100" busy={busy} onAction={onAction} />
+      )}
+      {contacts && (
+        <ChipRow testId="contact-row" heading="Another way through — someone here could see to it (it costs their goodwill)" chips={contacts} tone="border-teal-500/40 text-teal-100" busy={busy} onAction={onAction} />
+      )}
+      {romance && (
+        <ChipRow testId="romance-row" heading="Someone close to you" chips={romance} tone="border-rose-500/40 text-rose-100" busy={busy} onAction={onAction} />
+      )}
       {(party || recruits.length > 0) && (
         <div className="sgm-info-panel rounded-lg border border-emerald-500/40 bg-slate-950/90 px-3 py-2" data-testid="party-row">
           <div className="text-[11px] font-medium text-emerald-200">{party ?? (state.engineMode === 'litrpg' ? 'System — party' : 'Companions')}</div>

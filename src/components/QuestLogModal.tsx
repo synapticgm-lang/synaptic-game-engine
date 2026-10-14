@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import type { Quest, QuestStatus } from '@/game/types';
+import type { ChoiceJournalEntry, Quest, QuestStatus } from '@/game/types';
 import { isJournalQuest } from '@/game/questPlay';
 import { isGenericQuestProvenance } from '@/game/questJournalEnrich';
+import { choiceJournalLine } from '@/game/choiceJournal';
 
 interface QuestLogModalProps {
   isOpen: boolean;
   onClose: () => void;
   quests: Quest[];
+  /** Story RPG journal of choices; the Choices tab shows only when it has entries. */
+  choices?: ChoiceJournalEntry[];
 }
 
 function isKnownQuest(q: Quest): boolean {
@@ -17,8 +20,9 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
   isOpen,
   onClose,
   quests = [],
+  choices = [],
 }) => {
-  const [filter, setFilter] = useState<QuestStatus | 'all'>('active');
+  const [filter, setFilter] = useState<QuestStatus | 'all' | 'choices'>('active');
   const knownQuests = quests.filter(isKnownQuest);
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(
     knownQuests[0]?.id ?? null
@@ -94,8 +98,28 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
               {tab} ({tabCount(tab)})
             </button>
           ))}
+          {choices.length > 0 && (
+            <button
+              onClick={() => setFilter('choices')}
+              data-testid="choice-journal-tab"
+              className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
+                filter === 'choices' ? 'sgm-info-tab-on' : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Choices ({choices.length})
+            </button>
+          )}
         </div>
 
+        {filter === 'choices' ? (
+          <div className="sgm-modal-body flex-1 space-y-2 p-6" data-testid="choice-journal">
+            {[...choices].reverse().map((c, i) => (
+              <p key={`${c.turn}-${i}`} className="rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-sm text-slate-200">
+                {choiceJournalLine(c)}
+              </p>
+            ))}
+          </div>
+        ) : (
         <div className="flex-1 flex overflow-hidden">
           <div className="sgm-modal-body w-1/3 space-y-2 border-r border-slate-800/60 p-4">
             {filteredQuests.length === 0 ? (
@@ -217,6 +241,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

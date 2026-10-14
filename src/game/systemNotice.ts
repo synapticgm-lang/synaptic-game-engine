@@ -29,6 +29,7 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^Achievement:\s*(.+)$/i, (m) => `Achievement — ${end(m[1]!)}.`],
   [/^Loot:\s*(.+)$/i, (m) => `Loot — ${lootBody(m[1]!)}.`],
   [/^Companion:\s*(.+)$/i, (m) => `Party — ${end(m[1]!)}.`],
+  [/^Floor:\s*(.+)$/i, (m) => `Floor — ${end(m[1]!)}.`],
 ];
 
 export function systemNotice(line: string): string {

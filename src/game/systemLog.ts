@@ -201,7 +201,7 @@ export function rememberCueText(line: string): string | null {
 export function statusLinesForVerbosity(lines: string[], verbosity: StatVerbosity | undefined): string[] {
   if (verbosity === 'minimal') return [];
   if (verbosity === 'core') {
-    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|^ending:/i.test(l));
+    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|^ending:|^origin:|^romance:|^floor:/i.test(l));
   }
   return lines;
 }

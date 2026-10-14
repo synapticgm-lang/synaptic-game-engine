@@ -217,6 +217,7 @@ import {
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedPad, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import { classOfferPad } from './rules/characterClass';
+import { originPad } from './rules/rpgOrigin';
 import { systemPromptPad } from './rules/abilityPoints';
 import { dropAbsentListenerChips } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
@@ -228,7 +229,7 @@ import {
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
-import { applyStoryRpgTurn } from './storyRpgProgress';
+import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
@@ -1070,7 +1071,7 @@ export async function headlessFateTurn(
   drainWriterRawIssues();
   drainWriterUsage();
   const offered = resolveOfferedChoices(state);
-  const systemPad = systemPromptPad(state, classOfferPad(state))?.chips ?? null;
+  const systemPad = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state);
   const fatePick =
     meta.playerInputOverride?.trim()
       ? meta.playerInputOverride.trim()
@@ -1192,7 +1193,7 @@ export async function headlessFateTurn(
   const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
-  const storyTurn = applyStoryRpgTurn(arcState, playerInput);
+  const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.

@@ -113,7 +113,7 @@ describe('28a milestone XP — no drip', () => {
       quests: [],
     };
     let character = state.character;
-    // 2026-10-14d — a place pays only when a quest objective sends the player there.
+    // 2026-10-14e — a place pays only when a quest objective sends the player there.
     const errand: Quest[] = [
       { id: 'sp-errand', name: 'Errand', status: 'active', type: 'side', revealed: true,
         objectives: [{ id: 'r', description: `Reach ${hubs[1]!.name}`, completed: false }] } as Quest,

@@ -13,9 +13,17 @@
  *   on their relationship record and a "Remembered" beat. The choice itself gets a "will remember that" cue.
  * - Ending: once a main quest is finished the shared ending gates (pyoaEndingGates + rpgEndings) offer
  *   RPG_ENDING_CHIP; taking it commits the best eligible ending and the run ends.
+ * - Two ways through each main step: the step itself (be at its place, or take its decision), or call on a person
+ *   here who stands with you to see to it. Calling on them spends goodwill (a hidden trust cost on their record).
+ * - Origin (rules/rpgOrigin) and romance (a Loyal companion, only when romance subplots are on).
+ * - Every committed choice goes into the journal of choices (choiceJournal).
  * Other modes are untouched.
  */
-import type { GameState, NpcMemory, Quest } from './types';
+import type { GameState, NpcMemory, Quest, Settings } from './types';
+import { recordChoice } from './choiceJournal';
+import { settleOrigin } from './rules/rpgOrigin';
+import { approvalBand, recruitedCompanions } from './rules/companions';
+import { shiftStoredRelationship } from './npcRelationships';
 import { detectStanceTreatment } from './factionStandings';
 import { recordNpcTreatmentFromAction } from './npcMemory';
 import { presentNpcNames } from './npcRelationships';
@@ -127,22 +135,117 @@ function scheduleRemembered(state: GameState, npc: string, helped: boolean): Gam
   });
 }
 
+const STANDS_WITH_YOU: ReadonlySet<NpcMemory['disposition']> = new Set(['friendly', 'allied', 'romanced']);
+
+/** Hidden trust a contact spends when the player calls on them to see to a step. */
+export const CONTACT_FAVOUR_TRUST = -4;
+
+function openMainStep(state: GameState): { quest: Quest; step: string } | null {
+  const quest = mainSpineQuest(state);
+  const step = quest?.objectives?.find((o) => !o.completed)?.description ?? '';
+  return quest && step ? { quest, step } : null;
+}
+
+/** People here who would see to a step for the player: a companion, or someone Friendly or closer. */
+function contactsHere(state: GameState): string[] {
+  const companions = new Set(recruitedCompanions(state).map((c) => c.name.toLowerCase()));
+  const memory = new Map((state.npcMemories ?? []).map((m) => [m.npcName.toLowerCase(), m.disposition]));
+  return presentNpcNames(state).filter((n) => {
+    const k = n.toLowerCase();
+    return /^[A-Z]/.test(n) && (companions.has(k) || STANDS_WITH_YOU.has(memory.get(k) ?? 'unknown'));
+  });
+}
+
+export function contactChip(name: string, step: string): string {
+  return `Call on ${name}: ${objectiveChip(step)}`;
+}
+
+/** Story RPG: the second way through the main quest's open step — one chip per contact here. */
+export function storyRpgContactPad(state: GameState): string[] | null {
+  if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter || isPlayInputLocked(state)) return null;
+  const open = openMainStep(state);
+  if (!open) return null;
+  const chips = contactsHere(state).map((n) => contactChip(n, open.step));
+  return chips.length ? chips : null;
+}
+
+function contactFromInput(state: GameState, action: string): string | null {
+  const open = openMainStep(state);
+  if (!open) return null;
+  const k = chipKey(action);
+  return contactsHere(state).find((n) => chipKey(contactChip(n, open.step)) === k) ?? null;
+}
+
+/** Romance needs the romance subplots setting and never runs in Kid Mode. */
+export function romanceAllowed(settings: Pick<Settings, 'romanceSubplots' | 'contentMode'> | null | undefined): boolean {
+  return !!settings?.romanceSubplots && settings.contentMode !== 'kid';
+}
+
+export function romanceChip(name: string): string {
+  return `Tell ${name} how you feel`;
+}
+
+/** Story RPG romance: only with romance subplots on, only for a companion whose approval is Loyal. */
+export function romancePad(state: GameState, romanceOn: boolean): string[] | null {
+  if (!romanceOn || state.engineMode !== 'rpg' || state.activeEncounter || isPlayInputLocked(state)) return null;
+  const close = new Set((state.npcMemories ?? []).filter((m) => m.disposition === 'romanced').map((m) => m.npcName.toLowerCase()));
+  const names = recruitedCompanions(state)
+    .map((c) => c.name)
+    .filter((n) => !close.has(n.toLowerCase()) && approvalBand(state, n) === 'loyal');
+  return names.length ? names.map(romanceChip) : null;
+}
+
 /** Story RPG: the ending chip, offered once the shared ending gates have an eligible ending. */
 export function rpgEndingChip(state: GameState): string | null {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter || isPlayInputLocked(state)) return null;
   return selectBestEnding((state.campaignBibleId ?? '') as BibleId, state) ? RPG_ENDING_CHIP : null;
 }
 
-export function applyStoryRpgTurn(state: GameState, playerInput: string): StoryRpgTurn {
+/** Commit the best eligible ending and write it in the journal (the ending chip and "Finish" both come here). */
+export function commitRpgEnding(state: GameState): StoryRpgTurn | null {
+  const ending = selectBestEnding((state.campaignBibleId ?? '') as BibleId, state);
+  if (!ending) return null;
+  const done = commitEnding(ending, state);
+  return {
+    state: recordChoice(done.state, { kind: 'ending', text: `Ended the story: ${ending.name}.` }),
+    receipts: [`Ending: ${ending.name} — ${ending.terminalText}`],
+  };
+}
+
+export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: { romance?: boolean } = {}): StoryRpgTurn {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete) return { state, receipts: [] };
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const receipts: string[] = [];
   let next = state;
 
-  if (chipKey(action) === chipKey(RPG_ENDING_CHIP) && rpgEndingChip(state)) {
-    const ending = selectBestEnding((state.campaignBibleId ?? '') as BibleId, state)!;
-    const done = commitEnding(ending, state);
-    return { state: done.state, receipts: [`Ending: ${ending.name} — ${ending.terminalText}`] };
+  if (chipKey(action) === chipKey(RPG_ENDING_CHIP) && rpgEndingChip(state)) return commitRpgEnding(state)!;
+
+  const origin = settleOrigin(state, action);
+  if (origin.receipts.length) {
+    return { state: recordChoice(origin.state, { kind: 'origin', text: origin.text! }), receipts: origin.receipts };
+  }
+
+  const beloved = romancePad(state, !!opts.romance)?.find((c) => chipKey(c) === chipKey(action));
+  if (beloved) {
+    const name = beloved.replace(/^Tell /, '').replace(/ how you feel$/, '');
+    const k = name.toLowerCase();
+    const npcMemories = (state.npcMemories ?? []).some((m) => m.npcName.toLowerCase() === k)
+      ? (state.npcMemories ?? []).map((m) => (m.npcName.toLowerCase() === k ? { ...m, disposition: 'romanced' as const, lastSeenTurn: state.turn } : m))
+      : [...(state.npcMemories ?? []), { npcId: k, npcName: name, disposition: 'romanced' as const, facts: [], lastSeenTurn: state.turn }];
+    return {
+      state: recordChoice({ ...state, npcMemories }, { kind: 'romance', npc: name, text: `You told ${name} how you feel, and ${name} feels the same.` }),
+      receipts: [`Romance: ${name} returns your feelings.`],
+    };
+  }
+
+  const contact = contactFromInput(state, action);
+  if (contact) {
+    const open = openMainStep(state)!;
+    const ticked = tickNextStep(state.quests ?? [], open.quest.id)!;
+    const r = shiftStoredRelationship(state.arcDirector?.npcRelationships, contact, { trust: CONTACT_FAVOUR_TRUST, familiarity: 1 }, state.turn ?? 0, 'favor');
+    next = { ...state, quests: ticked.quests, arcDirector: { ...(state.arcDirector ?? {}), npcRelationships: r.list } } as GameState;
+    next = recordChoice(next, { kind: 'decision', npc: contact, text: `${open.quest.name}: ${ticked.step} — you called on ${contact}.` });
+    return { state: next, receipts: [`Quest stage: ${open.quest.name} — ${ticked.step} (through ${contact})`] };
   }
 
   const stance = detectStanceTreatment(action);
@@ -159,6 +262,7 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string): StoryR
     if (after !== before) {
       receipts.push(`Standing: ${target} turned ${DISPOSITION_WORD[after]} (was ${DISPOSITION_WORD[before]}) after you ${stance === 'hard' ? 'refused' : 'helped'}`);
       next = scheduleRemembered(next, target, stance === 'kind');
+      next = recordChoice(next, { kind: 'deed', npc: target, text: `You ${stance === 'hard' ? 'refused' : 'helped'} ${target}.` });
       receipts.push(`Remember: ${target} will remember that.`);
     }
   }
@@ -172,6 +276,7 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string): StoryR
     const ticked = done ? tickNextStep(next.quests ?? [], quest.id) : null;
     if (ticked) {
       next = { ...next, quests: ticked.quests };
+      if (!place) next = recordChoice(next, { kind: 'decision', text: `${quest.name}: ${ticked.step}.` });
       receipts.push(`Quest stage: ${quest.name} — ${ticked.step}${place ? ` (at ${place})` : ''}`);
     }
   }

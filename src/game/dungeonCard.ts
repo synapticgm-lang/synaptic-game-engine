@@ -27,6 +27,7 @@ import { applyCharacterXpGain } from './characterXp';
 import { milestoneLevelling } from './rules/houseRules';
 import { hidesPart } from './systemHousing';
 import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
+import { climbFloor } from './rules/litrpgFloors';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
 
 export const DUNGEON_CARD_BLUEPRINT = 'dungeon-card';
@@ -670,7 +671,12 @@ export function advanceDungeonCard(
           mobs: h.mobs.map((m) => (m.id === foe.id ? { ...m, spawned: true, defeated: true, hpRemaining: null } : m)),
         })),
       };
-      if (foe.role === 'miniBoss') receipts.push(`Dungeon: the mini-boss ${foe.name} is down.`);
+      if (foe.role === 'miniBoss') {
+        receipts.push(`Dungeon: the mini-boss ${foe.name} is down.`);
+        const climbed = climbFloor(next, d.dungeonName, foe.name);
+        next = climbed.state;
+        receipts.push(...climbed.receipts);
+      }
       const after = currentNode(next.activeDungeon!);
       if (!liveFoe(after)) {
         next = {

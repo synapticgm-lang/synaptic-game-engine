@@ -19,7 +19,7 @@ import { commitOfferedPad, downloadPlayDump, withOfferedChoices } from './playTr
 import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending, takeBuiltSheet } from './tabletop/creationFlow';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
-import { applyStoryRpgTurn } from './storyRpgProgress';
+import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
 import {
   authoredPageText,
@@ -356,6 +356,8 @@ import {
 import { carryLimitOn, milestoneLevelling, withHouseRules } from './rules/houseRules';
 import { modeProfile } from './rules/modeProfile';
 import { applyAwayRest } from './rules/awayRest';
+import { buildAwayRecap } from './awayRecap';
+import { finishMainQuest, keepPlayingAfterMainQuest } from './mainQuestEnd';
 import {
   commitTalkStageAfterTurn,
   runArcDirectorBeforeGm,
@@ -459,10 +461,19 @@ function sessionZeroOf(sz: SessionZero | null | undefined): SessionZero | null {
   return lines.length || veils.length || sheetId ? { lines, veils, sheetId } : null;
 }
 
-/** Real time away at a safe stop becomes a rest, with a recap row of engine facts (tabletop only). */
+/**
+ * Real time away: tabletop at a safe stop takes a rest; story RPG and LitRPG get a recap. Either way the row is
+ * engine facts only.
+ */
 function withAwayRest(state: GameState, awayMs: number): GameState {
   const away = applyAwayRest(state, awayMs);
-  if (!away) return state;
+  if (!away) {
+    const recap = buildAwayRecap(state, awayMs);
+    if (!recap) return state;
+    const at = Date.now();
+    const row: LogEntry = { id: uid(), turn: state.turn, role: 'system', content: recap.join('\n'), timestamp: at };
+    return { ...state, log: [...state.log, row], lastUpdated: at };
+  }
   const now = Date.now();
   const recap: LogEntry = { id: uid(), turn: away.state.turn, role: 'system', content: away.recap.join('\n'), timestamp: now };
   return { ...away.state, log: [...away.state.log, recap], lastUpdated: now };
@@ -1890,6 +1901,25 @@ export function useGame() {
     void persist(built);
   });
 
+  /** The main-quest popup: carry on in the open world, or end the run (story RPG takes its ending) and open New Game. */
+  const answerMainQuestEnd = useCallbackRef((choice: 'continue' | 'finish') => {
+    const current = stateRef.current;
+    if (!current || busy || turnInFlightRef.current) return;
+    let next = keepPlayingAfterMainQuest(current);
+    if (choice === 'finish') {
+      const done = finishMainQuest(current);
+      const at = Date.now();
+      const rows: LogEntry[] = done.receipts.length
+        ? [{ id: uid(), turn: done.state.turn, role: 'system', content: done.receipts.join('\n'), timestamp: at }]
+        : [];
+      next = { ...done.state, log: [...done.state.log, ...rows], lastUpdated: at };
+    }
+    stateRef.current = next;
+    setState(next);
+    void persist(next);
+    if (choice === 'finish') setShowNewGame(true);
+  });
+
   const sendAction = useCallbackRef(async (input: string) => {
     if (!input.trim() || busy || turnInFlightRef.current) return;
     if (
@@ -2775,7 +2805,7 @@ export function useGame() {
       const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
       liveCurrent = dungeonTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...dungeonTurn.receipts];
-      const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput);
+      const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput, { romance: romanceAllowed(settingsRef.current) });
       liveCurrent = storyTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...storyTurn.receipts];
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
@@ -6099,6 +6129,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     dismissOutOfMemorableAdOffer: () => setOutOfMemorableAdOffer(false),
     sendAction,
     applyBuiltSheet,
+    answerMainQuestEnd,
     cancelTurn: () => {
       turnAbortRef.current?.abort();
       resetTurnUi();

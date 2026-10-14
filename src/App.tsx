@@ -24,6 +24,8 @@ import { AutoFightTipModal, isAutoFightTipDismissed } from '@/components/AutoFig
 import { DiceTrayToolbar } from '@/components/qol/DiceTrayToolbar';
 import { modeProfile } from '@/game/rules/modeProfile';
 import { EpitaphBar } from '@/components/qol/EpitaphBar';
+import { MainQuestCompleteModal } from '@/components/qol/MainQuestCompleteModal';
+import { mainQuestEndPrompt } from '@/game/mainQuestEnd';
 import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
 import { LazyChunkBoundary, isChunkLoadError, safeLazy } from '@/utils/safeLazy';
 
@@ -414,6 +416,18 @@ export default function App() {
             onOpenCharacter={() => game.setShowCharacterWindow(true)}
           />
           </div>
+          {(() => {
+            const prompt = mainQuestEndPrompt(state);
+            return prompt && !game.busy ? (
+              <MainQuestCompleteModal
+                prompt={prompt}
+                litrpg={state.engineMode === 'litrpg'}
+                busy={game.busy}
+                onContinue={() => game.answerMainQuestEnd('continue')}
+                onFinish={() => game.answerMainQuestEnd('finish')}
+              />
+            ) : null;
+          })()}
           {state.playPhase === 'ended' && (
             <EpitaphBar
               storyName={state.storyName}
@@ -510,6 +524,7 @@ export default function App() {
           isOpen={showQuestLog}
           onClose={() => setShowQuestLog(false)}
           quests={state ? visibleJournalQuests(state) : []}
+          choices={state?.choiceJournal ?? []}
         />
       </Suspense>
 

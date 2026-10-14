@@ -208,7 +208,7 @@ describe('Act-3 off-spine XP', () => {
       questsAfter: [],
       events: [],
       turn: 3,
-      // 2026-10-14d — a place pays only when earned (discovery check or quest objective).
+      // 2026-10-14e — a place pays only when earned (discovery check or quest objective).
       discoveryCheckSucceeded: true,
     });
     expect(first.xp).toBe(SANDBOX_XP.discoverHub);

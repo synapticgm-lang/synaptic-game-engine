@@ -14,6 +14,7 @@ import { skillLabel } from './skillGates';
 import { namedSkillViews } from './rules/librarySkills';
 import { activeTitleOf, titlePerkText } from './rules/titles';
 import { partyWindowLine } from './rules/companions';
+import { floorWindowLine } from './rules/litrpgFloors';
 import type { GameState, LogEntry } from './types';
 
 export interface LitrpgSystemWindow {
@@ -124,6 +125,8 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   if (title) lines.push(`Title: ${title.name}${title.def ? ` (${titlePerkText(title.def)})` : ''}`);
   const party = partyWindowLine(state);
   if (party) lines.push(party);
+  const floor = on('level') ? floorWindowLine(state) : null;
+  if (floor) lines.push(floor);
   if (state.campaignBibleId === 'summoned-pact') {
     lines.push(registered ? 'Registration: designation locked' : 'Registration: incomplete');
     lines.push('Mark: Pactborn / Calamity Mark — unresolved');
@@ -134,7 +137,8 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
   if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
-  return { heading: 'SYSTEM', lines };
+  // The floor line is the first to go when the window would run past its limit.
+  return { heading: 'SYSTEM', lines: lines.length > SYSTEM_WINDOW_MAX_LINES ? lines.filter((l) => l !== floor) : lines };
 }
 
 /** The window never runs past this many lines (it prints at most 15). */

@@ -106,7 +106,7 @@ const bandit = (id: string): ActiveEncounter => ({ name: 'Wardline Bandit', enco
 
 /** Five quiet turns, then a won fight and its level-up: the engine path, receipts collected. */
 function playFiveTurnsAndAFight(housing: SystemHousingId) {
-  // 2026-10-14d — quiet turns pay nothing (no turn-5 First Steps), so the fight alone carries the level.
+  // 2026-10-14e — quiet turns pay nothing (no turn-5 First Steps), so the fight alone carries the level.
   let s = pact(housing, { character: { ...pact(housing).character!, xp: 125 } });
   const shown: string[] = [];
   const levelBefore = s.character.level ?? 1;

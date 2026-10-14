@@ -30,7 +30,7 @@ function xpTurn(state: GameState, action: string, from: string, to: string, turn
     questsAfter: state.quests ?? [],
     events: [],
     turn,
-    // 2026-10-14d — a place pays only when earned; this test pins the arrival rule.
+    // 2026-10-14e — a place pays only when earned; this test pins the arrival rule.
     discoveryCheckSucceeded: true,
   });
 }
