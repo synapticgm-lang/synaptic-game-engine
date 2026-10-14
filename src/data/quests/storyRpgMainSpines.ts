@@ -1,5 +1,6 @@
 import type { StarterQuestSeed } from '@/game/questPlay';
 
+import { hashSeed } from '@/game/seededRng';
 export interface StoryRpgMatchCtx {
   bibleId?: string | null;
   hookBlob?: string;
@@ -712,14 +713,6 @@ export function withMatchedStoryRpgSpine(
   return [extra, ...seeds];
 }
 
-function hashSeed(raw: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < raw.length; i += 1) {
-    h ^= raw.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 export function pickStoryRpgStampAlt(spine: StoryRpgMainSpine, seed?: string): string {
   const alts = spine.stampAlts.filter((s) => s.trim());

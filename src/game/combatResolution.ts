@@ -8,6 +8,7 @@
  */
 
 import type { GameState, ActiveEncounter } from './types';
+import { turnRng, type Rng } from './seededRng';
 
 export interface CombatOutcome {
   action: 'attack' | 'flee' | 'parley' | 'struggle' | 'plead';
@@ -26,19 +27,19 @@ export interface CombatOutcome {
 /**
  * Roll a D20 with advantage/disadvantage simulation.
  */
-function rollD20(advantage = 0): number {
+function rollD20(rng: Rng, advantage = 0): number {
   if (advantage > 0) {
     // Advantage: roll twice, take higher
-    const roll1 = Math.floor(Math.random() * 20) + 1;
-    const roll2 = Math.floor(Math.random() * 20) + 1;
+    const roll1 = Math.floor(rng() * 20) + 1;
+    const roll2 = Math.floor(rng() * 20) + 1;
     return Math.max(roll1, roll2);
   } else if (advantage < 0) {
     // Disadvantage: roll twice, take lower
-    const roll1 = Math.floor(Math.random() * 20) + 1;
-    const roll2 = Math.floor(Math.random() * 20) + 1;
+    const roll1 = Math.floor(rng() * 20) + 1;
+    const roll2 = Math.floor(rng() * 20) + 1;
     return Math.min(roll1, roll2);
   }
-  return Math.floor(Math.random() * 20) + 1;
+  return Math.floor(rng() * 20) + 1;
 }
 
 /**
@@ -109,10 +110,11 @@ export function rollCombatOutcome(
   
   const enemyHpBefore = enemy.hp ?? enemy.maxHp ?? 16;
   const enemyMaxHp = enemy.maxHp ?? 16;
+  const rng = turnRng(state, 'combat-outcome', action);
   
   // Attack action
   if (action === 'attack') {
-    const roll = rollD20();
+    const roll = rollD20(rng);
     const damage = calculateDamage(roll, playerAttack, enemyDefense);
     const enemyHpAfter = Math.max(0, enemyHpBefore - damage);
     const enemyDied = enemyHpAfter === 0;
@@ -139,7 +141,7 @@ export function rollCombatOutcome(
   
   // Flee action
   if (action === 'flee') {
-    const roll = rollD20();
+    const roll = rollD20(rng);
     const fleeSucceeded = roll >= 12; // DC 12 flee check
     const caught = !fleeSucceeded;
     
@@ -167,7 +169,7 @@ export function rollCombatOutcome(
   
   // Parley action
   if (action === 'parley') {
-    const roll = rollD20();
+    const roll = rollD20(rng);
     const parleySucceeded = roll + player.attributes.CHA >= 15; // DC 15 parley check
     
     return {
@@ -185,7 +187,7 @@ export function rollCombatOutcome(
   
   // Desperate actions (struggle, plead) when caught
   if (action === 'struggle' || action === 'plead') {
-    const roll = rollD20(action === 'struggle' ? 0 : -1); // Plead at disadvantage
+    const roll = rollD20(rng, action === 'struggle' ? 0 : -1); // Plead at disadvantage
     const escapeSucceeded = roll >= 16; // Hard DC
     
     // Failed escape: enemy gets a hit

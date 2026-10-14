@@ -10,6 +10,7 @@ import { hallTalkTopic } from './openingEstablishment';
 import { openingCastRecords, presentNpcRecords } from './npcRecords';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { realPresentPeople } from './chromeAuthority';
+import { fuzzyTypedName } from './typedNameMatch';
 
 export type SpokenTopic = 'who' | 'want' | 'where';
 
@@ -64,7 +65,9 @@ function addressee(state: GameState, playerInput: string): { speaker: Speaker; a
   const here = speakersHere(state);
   if (!here.length) return null;
   const said = playerInput.toLowerCase();
-  const named = here.find((s) => s.names.some((n) => new RegExp(`\\b${esc(n.toLowerCase())}\\b`).test(said)));
+  const named =
+    here.find((s) => s.names.some((n) => new RegExp(`\\b${esc(n.toLowerCase())}\\b`).test(said))) ??
+    here.find((s) => s.label === fuzzyTypedName(playerInput, here.map((h) => h.label)));
   const leadIds = new Set(openingCastRecords(state).map((r) => r.npcId));
   const lead = here.find((s) => s.record && leadIds.has(s.record.npcId));
   return { speaker: named ?? lead ?? here[0]!, alone: here.length === 1 };

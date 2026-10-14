@@ -1,4 +1,5 @@
 import type { GameState, TradeCaravan } from './types';
+import { hashUnit } from './seededRng';
 
 /**
  * 3. DEGREE OF SUCCESS CALCULATOR (Dice & Margin Math)
@@ -32,14 +33,17 @@ export function evaluateRoll(d20Roll: number, modifier: number, dc: number): Rol
  * 5. BACKGROUND TRADE ROUTE & RISK/REWARD SIMULATION
  * Evaluates off-screen merchant caravans choosing safe vs. dangerous high-risk paths.
  */
-export function simulateMerchantTurn(caravans: TradeCaravan[]): { updatedCaravans: TradeCaravan[]; newEvents: string[] } {
+export function simulateMerchantTurn(
+  caravans: TradeCaravan[],
+  turn = 0,
+): { updatedCaravans: TradeCaravan[]; newEvents: string[] } {
   const newEvents: string[] = [];
   const updatedCaravans = caravans.map((caravan) => {
     if (caravan.status !== 'active') return caravan;
 
     // Dangerous routes have higher rewards but face a 35% chance of bandit/monster attack
     if (caravan.routeRisk === 'dangerous') {
-      const ambushed = Math.random() < 0.35;
+      const ambushed = hashUnit(`caravan|${caravan.id}|${turn}`) < 0.35;
       if (ambushed) {
         newEvents.push(`Trader caravan bound for ${caravan.destination} was ambushed on the high-pass route! Cargo lost, but guards survived.`);
         return { ...caravan, status: 'ambushed' as const };

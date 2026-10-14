@@ -194,6 +194,21 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         url: 'https://www.npmjs.com/package/languagetool-api',
       },
       {
+        work: 'Fuse.js',
+        source: 'Kirollos Risk and contributors',
+        license: 'Apache-2.0',
+        usedFor: 'Matching names the player types to the people, items and places in the game',
+        url: 'https://github.com/krisk/Fuse',
+        notice: 'Fuse.js, Copyright 2017 Kirollos Risk. Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).',
+      },
+      {
+        work: 'Zod',
+        source: 'Colin McDonnell and contributors',
+        license: 'MIT',
+        usedFor: 'Checking data at the edges (writer replies, save files, the skills library)',
+        url: 'https://github.com/colinhacks/zod',
+      },
+      {
         work: 'Google Identity (react-oauth)',
         source: '@react-oauth/google',
         license: 'MIT',

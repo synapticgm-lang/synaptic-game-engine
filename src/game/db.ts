@@ -3,6 +3,7 @@ import { createDefaultSettings, isPlayableSave } from './defaults';
 import { syncContainerOccupancy } from './inventory';
 import { applySaveRepair } from './saveMigration';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
+import { saveFileProblem } from './schemas';
 
 const DB_NAME = 'tactical-litrpg';
 const DB_VERSION = 1;
@@ -33,7 +34,7 @@ export async function loadGame(): Promise<GameState | null> {
       void (async () => {
         try {
           const raw = req.result ?? null;
-          if (!raw) {
+          if (!raw || saveFileProblem(raw)) {
             resolve(null);
             return;
           }
@@ -181,16 +182,9 @@ export function importSave(file: File): Promise<GameState> {
     reader.onload = () => {
       try {
         const parsed = JSON.parse(reader.result as string);
-        if (!parsed || typeof parsed !== 'object') {
-          reject(new Error('Invalid save file: not an object'));
-          return;
-        }
-        if (!parsed.character || typeof parsed.character !== 'object') {
-          reject(new Error('Invalid save file: missing character data'));
-          return;
-        }
-        if (!Array.isArray(parsed.log)) {
-          reject(new Error('Invalid save file: missing narrative log'));
+        const problem = saveFileProblem(parsed);
+        if (problem) {
+          reject(new Error(problem));
           return;
         }
         const imported = syncContainerOccupancy(parsed as GameState);

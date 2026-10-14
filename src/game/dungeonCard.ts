@@ -15,7 +15,7 @@ import { skillRanksOf } from './skillRanks';
 import { recordGateTry, skillGateBlockedLine, skillLabel } from './skillGates';
 import { MULTI_FLOOR_WORDS, generateInterior, type GeneratedRoom } from './interiorGenerator';
 import { detectBiome } from './encounterBiomeMatrix';
-import { createHashRng } from './seededRng';
+import { createHashRng, turnRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
@@ -778,7 +778,7 @@ export function advanceDungeonCard(
         receipts.push(`Dungeon: you moved into ${room.name}.`);
         const trap = (room.hidden?.traps ?? []).find((t) => !t.revealed);
         if (trap) {
-          const roll = Math.floor(Math.random() * 20) + 1;
+          const roll = Math.floor(turnRng(state, 'trap', room.id)() * 20) + 1;
           const m = mod(attrs?.WIS);
           const ok = roll + m >= trap.dc;
           const dmg = ok ? 0 : trap.damage ?? 2;
@@ -834,7 +834,7 @@ export function advanceDungeonCard(
     const secret = (node.hidden?.secrets ?? []).find((s) => !s.revealed);
     next = { ...next, sandboxAwardKeys: Array.from(new Set([...(next.sandboxAwardKeys ?? []), key])) };
     if (secret) {
-      const roll = Math.floor(Math.random() * 20) + 1;
+      const roll = Math.floor(turnRng(state, 'secret', node.id)() * 20) + 1;
       const m = mod(attrs?.INT);
       const dc = 10 + (d.dangerTier ?? 2);
       const ok = roll + m >= dc;

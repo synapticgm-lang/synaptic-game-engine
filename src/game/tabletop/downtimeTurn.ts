@@ -13,6 +13,7 @@ import { ORACLE_MEANING, oddsInInput, oracleLine, rollOracle } from '../rules/or
 import { featureLeft, spendFeature } from '../rules/classFeatures';
 import { SPELLS } from '../rules/spells';
 import type { Rng } from '../rules/dice';
+import { turnRng } from '../seededRng';
 import { advanceClock } from '../travelJourney';
 import { sheetSpellcasting, srdGearRow, tabletopArmorClass, toolProficiencies } from './characterBuild';
 import { featureLine } from './roundFight';
@@ -29,7 +30,7 @@ const ATTUNE = /\battune\s+(?:myself\s+)?(?:to|with)?\s*(?:my\s+|the\s+|this\s+|
 const END_ATTUNE = /\b(?:end|break|drop)\s+(?:my\s+)?attunement\s+(?:to|with)\s+(?:my\s+|the\s+)?(.+?)\s*[.!]?$/i;
 
 /** Resolve an oracle question, a craft, an attunement or an out-of-fight Lay On Hands (null = not one of these). */
-export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = Math.random): DowntimeResult | null {
+export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = turnRng(state, 'downtime')): DowntimeResult | null {
   if (state.engineMode !== 'dnd') return null;
   const line = (input ?? '').trim();
   const oracle = ORACLE.exec(line);

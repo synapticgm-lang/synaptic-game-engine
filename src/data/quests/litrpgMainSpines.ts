@@ -11,6 +11,7 @@ import {
 } from '@/data/quests/tabletopMainSpines';
 import { hubsForBibleId } from '@/game/outdoorHubs';
 
+import { hashSeed } from '@/game/seededRng';
 /**
  * LitRPG main-quest spines (2026-09-17a). One spine per New Game, matched to
  * the picked opening-hook family. Journal / spoken copy only — no new FSM,
@@ -1142,14 +1143,6 @@ function fitCircleStarterToCard(seeds: StarterQuestSeed[], ctx: SpineMatchCtx): 
   );
 }
 
-function hashSeed(raw: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < raw.length; i += 1) {
-    h ^= raw.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 /** One stamp from the chosen spine, seed-stable. Never dumps the whole list. */
 export function pickSpineStampAlt(spine: LitRpgMainSpine, seed?: string): string {

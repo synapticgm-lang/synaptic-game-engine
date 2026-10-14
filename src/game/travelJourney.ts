@@ -84,6 +84,7 @@ import {
   resolveLeaveSceneDestination,
 } from './outdoorHubs';
 import { dungeonRoomPlace, resolvePlace } from './places';
+import { fuzzyTypedPhrase } from './typedNameMatch';
 import { findSettlement } from './worldMapAuthority';
 import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
@@ -91,6 +92,7 @@ import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 
+import { hashUnit, keyedRng } from './seededRng';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -700,19 +702,6 @@ export function roadEncounterLevel(state: GameState, areaTier: number): number {
   return areaTier >= DANGEROUS_TIER ? area.level : Math.min(area.level, area.partyLevel + 1);
 }
 
-function hashUnit(key: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < key.length; i++) {
-    h ^= key.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return (h >>> 0) / 0x100000000;
-}
-
-function seededRng(key: string): () => number {
-  let i = 0;
-  return () => hashUnit(`${key}|r${i++}`);
-}
 
 /** Seed for this trip (the save, both ends, the turn it set out). */
 function tripKey(state: GameState, j: TravelJourney): string {
@@ -745,7 +734,7 @@ function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched
   sizeMeeting(state, encounter, key);
   const want = MEETING_WANT[encounter.kind]?.[at(MEETING_WANT[encounter.kind]!.length, hashUnit(`${key}|want`))];
   if (want) encounter.want = want;
-  encounter.distanceFt = unwatched ? minEncounterDistanceFt(j.terrain) : encounterDistanceFt(j.terrain, seededRng(`${key}|distance`));
+  encounter.distanceFt = unwatched ? minEncounterDistanceFt(j.terrain) : encounterDistanceFt(j.terrain, keyedRng(`${key}|distance`));
   if (unwatched && FIGHT_KINDS.has(encounter.kind)) encounter.surprisesParty = true;
   return encounter;
 }
@@ -1258,7 +1247,7 @@ function jobRoll(state: GameState, j: TravelJourney, job: TravelJob, who: string
     : [{ label: `${who}`, value: proficiencyBonus(state.character?.level) + 1 }];
   const adv = combineAdv(paceCheckAdv(onRoad, rule.skill), rule.skill === 'perception' ? weatherRuleOf(j.weather).perception ?? 'normal' : 'normal');
   const label = who === 'you' ? rule.label : `${rule.label} (${who})`;
-  return resolveCheckRecord({ label, mods, dc: rule.dc(terrainRow(j.terrain)), adv, rng: seededRng(key) });
+  return resolveCheckRecord({ label, mods, dc: rule.dc(terrainRow(j.terrain)), adv, rng: keyedRng(key) });
 }
 
 interface JobSettle {
@@ -1393,7 +1382,7 @@ function marchHours(state: GameState, j: TravelJourney, hours: number): { state:
       label: 'Extended Travel: Constitution save',
       mods: conSaveMods(s),
       dc: extendedTravelDc(h - TRAVEL_DAY_HOURS),
-      rng: seededRng(`${tripKey(state, j)}|march|${j.day ?? 1}|${h}`),
+      rng: keyedRng(`${tripKey(state, j)}|march|${j.day ?? 1}|${h}`),
     });
     status.push(formatCheckRecord(rec, s.engineMode));
     if (rec.outcome === 'failure') {
@@ -1620,6 +1609,20 @@ export function commitTravel(state: GameState, raw: string): TravelCommit {
   return withBeat(commitTravelStep(state, raw));
 }
 
+const TYPED_DESTINATION =
+  /\b(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move|return)\s+(?:back\s+)?(?:to|toward|towards|into|for)\s+(?:the\s+)?(.+)$/i;
+
+/** A named hub, forgiving a typo in a typed destination ("travel to Lowmarkt"). */
+function typedHub(input: string, bibleId: string | undefined | null) {
+  const hub = parseTravelDestination(input, bibleId);
+  if (hub) return hub;
+  const name = input.match(TYPED_DESTINATION)?.[1]?.replace(/[.!?]+$/, '').trim();
+  if (!name) return null;
+  const hubs = hubsForBibleId(bibleId);
+  const hit = fuzzyTypedPhrase(name, hubs.map((h) => h.name));
+  return hit ? hubs.find((h) => h.name === hit) ?? null : null;
+}
+
 function commitTravelStep(state: GameState, raw: string): TravelCommit {
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!input || state.activeEncounter) return unchanged(state);
@@ -1627,7 +1630,7 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     const origin = journeyOrigin(state) || state.journey.from;
     const j: TravelJourney = origin === state.journey.from ? state.journey : { ...state.journey, from: origin };
     state = j === state.journey ? state : { ...state, journey: j };
-    const named = parseTravelDestination(input, state.campaignBibleId);
+    const named = typedHub(input, state.campaignBibleId);
     const namedTo = named && named.name.toLowerCase() === j.to.toLowerCase();
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();
     const chip = travelEngineChip(input);
@@ -1688,7 +1691,7 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
   const here = parkedOnRoad
     ? journeyOrigin(state)
     : dungeonRoomPlace(state, state.currentLocation) ?? tidy(state.currentLocation);
-  const hub = parseTravelDestination(input, state.campaignBibleId);
+  const hub = typedHub(input, state.campaignBibleId);
   const spot = !hub && here && !parkedOnRoad ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '') : null;
   if (spot) return moveWithinPlace(state, input, spot);
   const dest = hub?.name ?? (isLeaveSceneAction(input) ? leaveDestination(state, here) : null);

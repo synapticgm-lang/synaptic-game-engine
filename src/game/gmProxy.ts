@@ -21,6 +21,7 @@ import {
   type WriterRawIssue,
 } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
+import { parseGmTurnResponse } from './schemas';
 
 export type GmProxyMode = 'turn' | 'auto-fight' | 'repair';
 
@@ -237,7 +238,7 @@ export async function invokeGmProxy(params: {
       throw new RateLimitError('Rate limit exceeded (429).', retryAfterSec > 0 ? retryAfterSec * 1000 : 60000);
     }
 
-    const payload = await res.json().catch(() => ({}));
+    const payload = parseGmTurnResponse(await res.json().catch(() => ({})));
     noteWriterRawIssue(payload?.rawIssue);
     if (res.ok || payload?.rawIssue) noteWriterUsage(payload?.usage);
     if (!res.ok) {
@@ -246,11 +247,7 @@ export async function invokeGmProxy(params: {
         logger.warn('ai-proxy', 'Writer reply empty after the edge re-ask', { rawIssue: payload.rawIssue });
         return '';
       }
-      const msg =
-        typeof payload?.error === 'string'
-          ? payload.error
-          : `GM proxy error ${res.status}`;
-      throw new Error(msg);
+      throw new Error(payload.error ?? `GM proxy error ${res.status}`);
     }
 
     // Never accept prompt/diagnostics fields even if a buggy deploy returns them.
@@ -258,7 +255,7 @@ export async function invokeGmProxy(params: {
       logger.warn('ai-proxy', 'Scrubbed unexpected internal fields from GM proxy response');
     }
 
-    const text = typeof payload?.text === 'string' ? payload.text : '';
+    const text = payload.text ?? '';
     // P0-4 Batch 02f: Han in committed story is an empty reply.
     if (!text || hasHanScript(text)) {
       noteWriterRawIssue('empty');

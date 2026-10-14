@@ -6,6 +6,7 @@ import { enemyBodyAuthorityLine } from './combatAuthority';
 import { rollLoot as rollEngineLoot, scaleTreasureGold, type LootProfile } from './lootTableRegistry';
 import { rollDice } from './rules/dice';
 import type { SidekickProfile } from './rules/roundCombat';
+import { diceRng, turnRng } from './seededRng';
 
 export interface EnemyStats {
   name: string;
@@ -61,11 +62,11 @@ export interface CombatResult {
   ally?: { name: string; damageDealt: number; damageTaken: number; hpBefore: number; hpAfter: number };
 }
 
-function rollD20(rng: () => number = Math.random): number {
+function rollD20(rng: () => number): number {
   return Math.floor(rng() * 20) + 1;
 }
 
-function rollDamage(base: number, modifier: number, rng: () => number = Math.random): number {
+function rollDamage(base: number, modifier: number, rng: () => number): number {
   return Math.max(1, base + Math.floor(rng() * 4) + modifier);
 }
 
@@ -85,11 +86,12 @@ export interface SimulateCombatOptions {
   ally?: SidekickProfile;
 }
 
-function rollLoot(enemy: EnemyStats): Item[] {
+function rollLoot(enemy: EnemyStats, seed: string): Item[] {
   if (!enemy.lootTable || enemy.lootTable.length === 0) return [];
   const loot: Item[] = [];
+  const rng = diceRng(seed);
   for (const entry of enemy.lootTable) {
-    if (Math.random() < entry.chance) {
+    if (rng() < entry.chance) {
       loot.push({
         id: Math.random().toString(36).slice(2, 11),
         name: entry.name,
@@ -118,7 +120,7 @@ export function rollVictoryLoot(
   return {
     goldGained: state.engineMode === 'dnd' && engineLoot ? engineLoot.gold : scaleTreasureGold(state, enemy.goldReward),
     ...(state.engineMode === 'dnd' && engineLoot?.coins ? { coinsGained: engineLoot.coins } : {}),
-    loot: [...rollLoot(enemy as EnemyStats), ...(engineLoot?.items ?? [])],
+    loot: [...rollLoot(enemy as EnemyStats, `${state.seed || 'seed'}:${state.turn}:${enemy.name}:drops`), ...(engineLoot?.items ?? [])],
     lootLines: engineLoot && state.engineMode === 'dnd' ? engineLoot.dice : [],
     lootPity: engineLoot && engineLoot.nextPity != null ? { tier: engineLoot.pityTier, next: engineLoot.nextPity } : undefined,
   };
@@ -127,7 +129,7 @@ export function rollVictoryLoot(
 export function simulateCombat(state: GameState, enemy: EnemyStats, opts: SimulateCombatOptions = {}): CombatResult {
   const player = state.character;
   const approach = opts.approach ?? meleeApproach();
-  const rng = opts.rng ?? Math.random;
+  const rng = opts.rng ?? turnRng(state, 'fight', enemy.name);
   const dexMod = Math.floor(((player.attributes?.DEX ?? 12) - 10) / 2);
   const atkAttrMod = attrMod(state, approach.attr);
   const playerAC = (player.armorClass ?? 12 + dexMod) + approach.ac;

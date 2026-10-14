@@ -17,6 +17,7 @@ import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, masteryF
 import { potionHealDice } from '../rules/magicItems';
 import { FEATURE_LABEL, featureLeft, featureMax, RAGE_DAMAGE, spendFeature, type FeatureUse } from '../rules/classFeatures';
 import type { Rng } from '../rules/dice';
+import { turnRng } from '../seededRng';
 import { blockWithinXp, statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
 import { encounterXpBudget, foesWithinBudget } from '../xpRules';
 import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
@@ -337,7 +338,7 @@ export function resolveRoundFight(
   input: string,
   opts: { pre?: 'flee' | 'parley'; surprised?: 'foes' | 'pc' | null; rng?: Rng } = {}
 ): RoundFightResult | null {
-  const rng = opts.rng ?? Math.random;
+  const rng = opts.rng ?? turnRng(state, 'round');
   const enc = working.activeEncounter ?? raw;
   const live = working.roundCombat && working.roundCombat.encounterName === enc.name ? working.roundCombat : null;
   const baseConditions = (working.character.conditions ?? []).filter((c) => !roundConditionNames(live).has(c));
@@ -603,7 +604,7 @@ function cheatDeath(state: GameState, rng: Rng): { state: GameState; receipts: s
 const HOURS_LATER: Record<number, string> = { 1: 'An hour', 2: 'Two hours', 3: 'Three hours', 4: 'Four hours' };
 
 /** At 0 HP every turn is one death save until three successes, three failures, or a natural 20. */
-export function resolveDeathSaveTurn(state: GameState, rng: Rng = Math.random): RoundFightResult | null {
+export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state, 'death-save')): RoundFightResult | null {
   if (!isDying(state)) return null;
   const house = houseRulesOf(state);
   // 5.2.1 Heroic Inspiration rerolls a failed death save; under 5.1 it is kept for the next attack or save in a fight.

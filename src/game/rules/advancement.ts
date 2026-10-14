@@ -13,6 +13,7 @@
 import type { Attributes, AttributeKey, Character, EngineMode } from '../types';
 import { proficiencyBonus } from '../checkRules';
 import { rollDie, signed, type Rng } from './dice';
+import { diceRng } from '../seededRng';
 import { casterProgression, knownSpells } from './spells';
 import {
   abilityMod,
@@ -60,7 +61,7 @@ export function autoAsi(scores: Attributes, priority: AttributeKey[]): Partial<A
 }
 
 /** One SRD level-up of a sheet character to `toLevel` (one level above its current). */
-export function srdLevelUp(character: Character, toLevel: number, rng: Rng = Math.random): { character: Character; info: SrdLevelUpInfo } {
+export function srdLevelUp(character: Character, toLevel: number, rng: Rng = diceRng('level-up', character.name ?? '', toLevel)): { character: Character; info: SrdLevelUpInfo } {
   const sheet = character.srd!;
   const cls = classDef(sheet.classId);
   const die = cls.hitDie;

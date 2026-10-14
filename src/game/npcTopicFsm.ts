@@ -6,6 +6,7 @@ import type { GameState } from './types';
 import { canonicalizeIntent } from './semanticLoopDetector';
 import { classifyVerb } from './completedEventPacket';
 import { isGiverName, talkStageGiver } from './questGiver';
+import { exactTypedName, fuzzyTypedPhrase } from './typedNameMatch';
 
 export type NpcTopicFsmState = Record<string, string[]>;
 
@@ -50,7 +51,11 @@ function extractNpcFromInput(input: string, state: GameState): string | null {
   const m = input.match(
     /(?:talk(?:\s+to)?|speak(?:\s+with)?|ask|greet|listen(?:\s+to)?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i
   );
-  if (m?.[1]) return m[1].trim();
+  if (m?.[1]) {
+    const typed = m[1].trim();
+    const here = state.sceneFacts?.present ?? [];
+    return exactTypedName(typed, here) ? typed : fuzzyTypedPhrase(typed, here) ?? typed;
+  }
   // Explicit role titles in pads ("Talk to Wall Sergeant")
   const role = input.match(/\b(?:wall\s+sergeant|sergeant|fence|priest|handler|registrar)\b/i);
   if (role) {

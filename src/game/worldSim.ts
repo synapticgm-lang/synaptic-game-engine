@@ -13,6 +13,7 @@ import type {
   WorldLedger,
 } from './types';
 
+import { createHashRng } from './seededRng';
 const DAYS_PER_WEEK = 7;
 
 export function emptyWorldLedger(): WorldLedger {
@@ -91,14 +92,7 @@ function slugId(prefix: string, name: string): string {
 
 /** Deterministic 0–1 roll from save seed + week + entity. */
 function weekRng(seed: string, week: number, id: string): () => number {
-  let h = 2166136261;
-  const src = `${seed}|w${week}|${id}`;
-  for (let i = 0; i < src.length; i++) h = Math.imul(h ^ src.charCodeAt(i), 16777619);
-  return () => {
-    h = Math.imul(h ^ (h >>> 15), 2246822507);
-    h = Math.imul(h ^ (h >>> 13), 3266489909);
-    return ((h >>> 0) % 10_000) / 10_000;
-  };
+  return createHashRng(seed, `w${week}`, id);
 }
 
 /**

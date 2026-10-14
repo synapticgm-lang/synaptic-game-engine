@@ -15,6 +15,7 @@ import {
   referencesAbsentCompanion,
 } from './suggestionValidation';
 import { isHallTalkPlayerLine, playerAskedWhyPulled } from './openingEstablishment';
+import { fuzzyTypedPhrase } from './typedNameMatch';
 
 export interface ValidationResult {
   valid: boolean;
@@ -75,6 +76,16 @@ function knownNameSet(state: GameState, storyProse: string): Set<string> {
     names.add(token);
   }
   return names;
+}
+
+function knownPeopleNames(state: GameState): string[] {
+  return [
+    ...(state.sceneFacts?.present ?? []),
+    ...(state.companions ?? []).map((c) => c.name),
+    ...(state.npcMemories ?? []).map((m) => m.npcName),
+    ...(state.lorebook ?? []).map((c) => c.name),
+    state.activeEncounter?.name ?? '',
+  ].filter(Boolean);
 }
 
 function knownObjectNames(state: GameState): string[] {
@@ -147,7 +158,8 @@ export function validateActionHard(
     }
   }
 
-  const missingItems = findHardItemUseClaims(trimmed, state);
+  const carried = knownObjectNames(state);
+  const missingItems = findHardItemUseClaims(trimmed, state).filter((claim) => !fuzzyTypedPhrase(claim, carried));
   if (missingItems.length > 0) {
     violations.push({
       code: 'MISSING_ITEM',
@@ -166,7 +178,11 @@ export function validateActionHard(
   const talkName = trimmed.match(TALK_PROPER_NAME)?.[1];
   if (talkName && !GENERIC_TALK_ROLES.has(talkName.toLowerCase())) {
     const known = knownNameSet(state, storyProse);
-    if (!known.has(talkName.toLowerCase()) && !nameAppearedInLastStory(talkName, storyProse)) {
+    if (
+      !known.has(talkName.toLowerCase()) &&
+      !nameAppearedInLastStory(talkName, storyProse) &&
+      !fuzzyTypedPhrase(talkName, knownPeopleNames(state))
+    ) {
       violations.push({
         code: 'UNGROUNDED_ENTITY',
         message: `"${talkName}" isn't present or established yet. Try looking around or describing what you mean.`,

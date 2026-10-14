@@ -29,6 +29,7 @@ import { isFightCast } from './tabletop/spellCasting';
 import { afterFightCompanion, combatCompanion } from './rules/companions';
 import { abilityModOf, realEncounterCr, statBlockForEncounter } from './rules/srdMonsters';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
+import { turnRng } from './seededRng';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -154,7 +155,7 @@ export function srdBreakAwayCheck(
   state: GameState,
   enc: ActiveEncounter,
   flee: boolean,
-  rng: () => number = Math.random
+  rng: () => number = turnRng(state, flee ? 'flee' : 'parley')
 ): { ok: boolean; line: string } {
   const d20 = () => Math.floor(rng() * 20) + 1;
   const block = statBlockForEncounter(enc);
@@ -230,7 +231,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       const score = flee ? attrs?.DEX ?? 12 : attrs?.CHA ?? 10;
       const mod = Math.floor((score - 10) / 2);
       const dc = flee ? 12 : 13;
-      const roll = Math.floor(Math.random() * 20) + 1;
+      const roll = Math.floor(turnRng(working, flee ? 'flee' : 'parley')() * 20) + 1;
       ok = roll + mod >= dc;
       receipts.push(
         `${flee ? 'Flee' : 'Parley'} check: d20 ${roll} ${mod >= 0 ? '+' : '−'} ${Math.abs(mod)} vs DC ${dc} — ${ok ? 'success' : 'failure'}`

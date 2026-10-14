@@ -35,6 +35,7 @@ import { SHIELD_AC, SRD_ARMOR, SRD_WEAPONS, type SrdArmor, type SrdWeapon, type 
 import { magicAcBonus, magicSaveBonus } from '../rules/magicItems';
 import { masteryCount } from '../rules/classFeatures';
 
+import { hashSeed } from '../seededRng';
 export type { AbilityMethod, KitId, TabletopBackgroundId, TabletopClassId, TabletopPicks, TabletopSheet, TabletopSpeciesId };
 export { sheetSkillBonus };
 
@@ -993,9 +994,7 @@ export const PREGENS: Array<{ label: string; picks: Pick<TabletopPicks, 'classId
 ];
 
 export function seedNumber(seed: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
-  return h >>> 0;
+  return hashSeed(seed);
 }
 
 /** The save's own creation dice: the same save always rolls the same 4d6. */

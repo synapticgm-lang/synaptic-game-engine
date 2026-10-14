@@ -27,6 +27,7 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 
+import { hashSeed } from './seededRng';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
 /**
@@ -508,14 +509,6 @@ export function resolveOpeningMode(
   return 'weave';
 }
 
-function hashOpenerSeed(input: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 const WRITER_NOTE_BEAT =
   /^(ruin level:|do not |writer (picks|does)|the camera stays|starting kit is earth)/i;
@@ -596,7 +589,7 @@ export function resolveOpeningHookCard(
 ): OpeningHookCard | undefined {
   const deck = openingHookDeck(bible).filter((card) => normalizeOpeningHookCard(card).text);
   if (deck.length === 0) return undefined;
-  const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
+  const idx = hashSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
   return deck[idx];
 }
 

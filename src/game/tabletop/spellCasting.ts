@@ -6,6 +6,7 @@
  */
 import type { GameState } from '../types';
 import { rollDice, formatDice, type Rng } from '../rules/dice';
+import { turnRng } from '../seededRng';
 import { atWillSpells, pickSlot, slotLevelInInput, slotsLeft, spellDice, spellInInput, SPELLS, spendSlot, type SpellDef } from '../rules/spells';
 import { featureLeft, type FeatureUse } from '../rules/classFeatures';
 import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, sheetSpellcasting, tabletopArmorClass, untrainedArmor } from './characterBuild';
@@ -141,7 +142,7 @@ export interface OutsideCastResult {
 }
 
 /** Cast a spell outside a fight. Null when the line casts nothing (or a fight is on: rounds own casting then). */
-export function resolveOutOfCombatCast(state: GameState, input: string, rng: Rng = Math.random): OutsideCastResult | null {
+export function resolveOutOfCombatCast(state: GameState, input: string, rng: Rng = turnRng(state, 'cast')): OutsideCastResult | null {
   if (state.engineMode !== 'dnd' || state.activeEncounter || state.deathSaves && !state.deathSaves.stable && !state.deathSaves.dead) return null;
   if (!/\bcast\b/i.test(input ?? '') && !/^\s*(?:use )?(?:cure wounds|healing word|mage armor)\b/i.test(input ?? '')) return null;
   const req = resolveCastRequest(state, input, 'outside');

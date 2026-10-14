@@ -1,5 +1,6 @@
 import type { StarterQuestSeed } from '@/game/questPlay';
 
+import { hashSeed } from '@/game/seededRng';
 export interface TabletopMatchCtx {
   bibleId?: string | null;
   hookBlob?: string;
@@ -645,14 +646,6 @@ export function withMatchedTabletopSpine(
   return [extra, ...seeds];
 }
 
-function hashSeed(raw: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < raw.length; i += 1) {
-    h ^= raw.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 export function pickTabletopStampAlt(spine: TabletopMainSpine, seed?: string): string {
   const alts = spine.stampAlts.filter((s) => s.trim());

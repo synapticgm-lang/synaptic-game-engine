@@ -34,6 +34,7 @@ import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { resolveLocalAreaLevel } from './placeAuthority';
 import { milestoneXp } from './xpRules';
 
+import { hashSeed } from './seededRng';
 export type SettlementPlaceType = 'harbour' | 'forest' | 'desert' | 'city' | 'farm';
 
 export interface SettlementQuestTemplate {
@@ -72,14 +73,6 @@ export const SETTLEMENT_QUEST_LIBRARY: SettlementQuestTemplate[] = [
 export const SETTLEMENT_SEED_CARD_COUNT = 2;
 export const MAX_OPEN_TALK_CARDS = 3;
 
-function hashString(s: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 /** Village / town / harbour / city only; other kinds get no cards. */
 export function settlementPlaceType(s: Pick<WorldOutlineSettlement, 'kind' | 'biome'>): SettlementPlaceType | null {
@@ -141,7 +134,7 @@ export function seedSettlementQuestCards(
   const fitting = SETTLEMENT_QUEST_LIBRARY.filter(
     (t) => t.placeType === type && questFitsSettlement(t.tag, settlement)
   );
-  const start = hashString(`${opts.seed ?? ''}:${place.id}`) % Math.max(1, fitting.length);
+  const start = hashSeed(`${opts.seed ?? ''}:${place.id}`) % Math.max(1, fitting.length);
   const picked: SettlementQuestTemplate[] = [];
   for (let i = 0; i < fitting.length && picked.length < gap; i++) {
     picked.push(fitting[(start + i) % fitting.length]);

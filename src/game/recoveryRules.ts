@@ -14,6 +14,7 @@ import { restoreFeatures } from './rules/classFeatures';
 import { houseRulesOf, REST_HOURS } from './rules/houseRules';
 import { sidekickOf } from './rules/sidekick';
 import { modeProfile } from './rules/modeProfile';
+import { turnRng } from './seededRng';
 
 export interface RecoveryRow {
   /** Share of max HP recovered after a won fight. */
@@ -232,7 +233,7 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
     };
   }
   const die = tabletopHitDie(ch);
-  const roll = Math.floor(Math.random() * die) + 1;
+  const roll = Math.floor(turnRng(state, 'hit-die')() * die) + 1;
   const con = Math.floor(((ch.attributes?.CON ?? 10) - 10) / 2);
   const gain = Math.max(1, roll + con);
   const hp = Math.min(max, ch.hp + gain);

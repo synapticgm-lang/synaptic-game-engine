@@ -21,7 +21,7 @@ import { HOARD_COINS, INDIVIDUAL_COINS, crNumber, rollCoinTable } from './rules/
 import { purseCp } from './rules/coins';
 import { rollLootRarityWithPity } from './dungeonSeed';
 import { difficultyRow } from './difficultyRules';
-import { createHashRng } from './seededRng';
+import { createHashRng, sinHashUnit } from './seededRng';
 import { weaponCategory, type WeaponCategory } from './checkRules';
 import { resolveLocalAreaLevel, type AreaLevelSource } from './placeAuthority';
 import lootTablesData from './data/encounters/D9_loot_tables.json';
@@ -93,16 +93,6 @@ interface PityCounters {
 /**
  * Seeded random number generator for deterministic loot
  */
-function seededRandom(seed: string): number {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    const char = seed.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  const x = Math.sin(Math.abs(hash)) * 10000;
-  return x - Math.floor(x);
-}
 
 /**
  * Parse quantity string (e.g. "8-18") into random value using seed
@@ -114,7 +104,7 @@ function parseQuantity(quantityStr: string, seed: string): number {
   
   const [min, max] = quantityStr.split('-').map(s => parseInt(s, 10));
   const range = max - min;
-  return min + Math.floor(seededRandom(seed + '-qty') * (range + 1));
+  return min + Math.floor(sinHashUnit(seed + '-qty') * (range + 1));
 }
 
 /**
@@ -132,7 +122,7 @@ function selectLootEntries(
   
   for (let roll = 0; roll < table.rolls; roll++) {
     const rollSeed = `${seed}-roll${roll}`;
-    const rand = seededRandom(rollSeed);
+    const rand = sinHashUnit(rollSeed);
     let accumulated = 0;
     
     for (const entry of table.entries) {

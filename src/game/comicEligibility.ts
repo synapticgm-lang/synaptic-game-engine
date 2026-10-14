@@ -14,6 +14,7 @@ import {
 import { getActiveSubscriptionTier } from './subscriptionTiers';
 import { isUnsalvageableKidImagePrompt } from './visualCanon';
 
+import { hashSeed } from './seededRng';
 export type ComicSkipReason =
   | 'not_comic'
   | 'images_killed'
@@ -74,12 +75,7 @@ export function comicLiteTargetRate(
 
 /** Stable 0..1 from a string — for frequency sampling without Math.random in tests. */
 export function hashUnitInterval(seed: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (h >>> 0) / 0xffffffff;
+  return hashSeed(seed) / 0xffffffff;
 }
 
 export function buildComicBeatDedupeKey(state: ComicEligibilityInput['state']): string {

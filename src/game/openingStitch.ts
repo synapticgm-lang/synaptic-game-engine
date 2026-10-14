@@ -45,16 +45,9 @@ import {
   resolveOpeningHookPick,
 } from './openingEstablishment';
 
+import { hashSeed } from './seededRng';
 export { cleanPlaceLabel };
 
-function hashSeed(raw: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < raw.length; i++) {
-    h ^= raw.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 function pickBank<T>(bank: readonly T[], seed: string, salt: string): T {
   const idx = hashSeed(`${seed}|${salt}`) % bank.length;
