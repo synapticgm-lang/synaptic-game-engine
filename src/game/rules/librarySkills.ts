@@ -9,6 +9,7 @@ import batch3 from '../../../docs/library/skills/data/batch3-entries.json';
 import batch4 from '../../../docs/library/skills/data/batch4-entries.json';
 import batch5 from '../../../docs/library/skills/data/batch5-entries.json';
 import { hidesPart } from '../systemHousing';
+import { parseSkillEntries } from '../schemas';
 import type { GameState, NamedSkillState } from '../types';
 
 export interface LibraryEntry {
@@ -24,7 +25,7 @@ export interface LibraryEntry {
   bookkeeping: { allowed_modes: string[] };
 }
 
-export const LIBRARY_ENTRIES: LibraryEntry[] = [batch2, batch3, batch4, batch5].flat() as unknown as LibraryEntry[];
+export const LIBRARY_ENTRIES: LibraryEntry[] = parseSkillEntries([batch2, batch3, batch4, batch5].flat()) as unknown as LibraryEntry[];
 
 const BY_ID = new Map(LIBRARY_ENTRIES.map((e) => [e.identity.id, e]));
 

@@ -27,7 +27,7 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 
-import { hashSeed } from './seededRng';
+import { hashSeed, hashUnit } from './seededRng';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
 /**
@@ -124,8 +124,9 @@ const RANDOM_PLACES = [
   'Sheffield',
 ];
 
-function pickRandom(list: string[]): string {
-  return list[Math.floor(Math.random() * list.length)] ?? list[0];
+function pickRandom(list: string[], state: Pick<GameState, 'seed' | 'saveId' | 'turn'> | undefined, salt: string): string {
+  const u = hashUnit(['opening', state?.seed ?? state?.saveId ?? '0', state?.turn ?? 0, salt].join('|'));
+  return list[Math.floor(u * list.length)] ?? list[0];
 }
 
 const RANDOM_PLACE_REQUEST =
@@ -235,8 +236,8 @@ export function isLocationishOpeningUtterance(raw: string): boolean {
   return false;
 }
 
-export function pickEarthPlace(): string {
-  return pickRandom(RANDOM_PLACES);
+export function pickEarthPlace(state?: Pick<GameState, 'seed' | 'saveId' | 'turn'>): string {
+  return pickRandom(RANDOM_PLACES, state, 'place');
 }
 
 function originCoverIsEarth(state: GameState): boolean {
@@ -253,12 +254,12 @@ function originCoverIsEarth(state: GameState): boolean {
 
 export function pickPlaceForCampaign(state: GameState): string {
   const bible = resolveActiveCampaignBible(state);
-  if (originCoverIsEarth(state)) return pickEarthPlace();
+  if (originCoverIsEarth(state)) return pickEarthPlace(state);
   if (bible?.startingLocation?.trim()) return bible.startingLocation.trim();
   if (bible?.engineMode === 'rpg' || bible?.engineMode === 'pyoa' || bible?.engineMode === 'dnd') {
     return 'where this tale opens';
   }
-  return pickRandom(RANDOM_PLACES);
+  return pickEarthPlace(state);
 }
 
 function isUnusablePlace(place: string, state: GameState): boolean {
@@ -2913,7 +2914,7 @@ function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: Ga
   if (kind === 'name') return extractGivenName(cleaned);
   if (kind === 'location') {
     if (isRandomPlaceRequest(raw) || isRandomPlaceRequest(cleaned)) {
-      return state ? pickPlaceForCampaign(state) : pickRandom(RANDOM_PLACES);
+      return state ? pickPlaceForCampaign(state) : pickEarthPlace();
     }
     const extracted = extractLocation(raw);
     if (extracted && (!state || !isUnusablePlace(extracted, state))) return extracted;
@@ -3226,7 +3227,7 @@ export async function applyOpeningAnswer(
     }
   }
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
-    harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES);
+    harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES, state, 'name');
   }
   const currentKind = est.pending[0]?.kind;
   const locationTalkOnName =
