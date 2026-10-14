@@ -160,7 +160,7 @@ export const CURSED_KEEP_HUBS: OutdoorHub[] = [
   { id: 'ck-hub-inn', name: 'Greyhollow Inn', blurb: 'Last coach stop — warm ale, cold silence.', threatTier: 1, linkedQuestIds: ['ck-quest-1', 'ck-quest-elara-inn'], aliases: ['the inn', 'Greyhollow Tavern', 'the tavern'] },
   { id: 'ck-hub-church', name: 'Greyhollow Church', blurb: 'Father Aldous and six sleepless nights.', threatTier: 1, linkedQuestIds: ['ck-quest-2'], aliases: ['the church', 'the chapel'] },
   { id: 'ck-hub-gate', name: 'Keep Gate', blurb: 'Chained gate on the granite hill — footprints stop here.', threatTier: 2, linkedQuestIds: ['ck-quest-1', 'ck-quest-dain-watch'], aliases: ['the keep gate', 'Greymark gate'] },
-  { id: 'ck-hub-graveyard', name: 'Greyhollow Graveyard', blurb: 'Fresh graves opened from the inside.', threatTier: 2, linkedQuestIds: ['ck-quest-2'], aliases: ['the graveyard'] },
+  { id: 'ck-hub-graveyard', name: 'Greyhollow Graveyard', blurb: 'Fresh graves opened from the inside.', threatTier: 2, linkedQuestIds: ['ck-quest-2'], aliases: ['the graveyard', 'the churchyard', 'Greyhollow churchyard'] },
   { id: 'ck-hub-apothecary', name: 'Mira\'s Apothecary', blurb: 'Remedies and a decade of hidden journals.', threatTier: 1, linkedQuestIds: ['ck-quest-3'], aliases: ['the apothecary', 'apothecary shop'] },
   { id: 'ck-hub-treeline', name: 'Blackspine Treeline', blurb: 'Forest edge where kindling baskets tip over.', threatTier: 2, aliases: ['the treeline', 'Blackspine edge'] },
 ];

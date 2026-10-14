@@ -165,6 +165,8 @@ export interface RoundCombatState {
   sidekickHealUsed?: boolean;
   /** Encounter difficulty's shift to every foe attack roll, fixed when the fight starts. */
   foeToHitShift?: number;
+  /** The SRD 5.2.1 XP budget the foes were fitted to when the fight started (a foe over it fights at a lower CR). */
+  budgetXp?: number;
   /** Solo scaling was on when the fight started (no ally): foe damage ×0.75 and no save riders. */
   solo?: boolean;
   /** Barbarian Rage is on (it ends with the fight, or on a turn with no attack). */
@@ -404,6 +406,10 @@ export interface QuestObjective {
   description: string;
   completed: boolean;
   optional?: boolean;
+  /** The place this step is taken at, when its wording names no known place. */
+  place?: string;
+  /** Who this step is taken with, when its wording names no "Speak with" person. */
+  people?: string[];
 }
 
 export interface ChoiceJournalEntry {

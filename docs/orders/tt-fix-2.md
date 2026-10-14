@@ -82,3 +82,29 @@ Order: `docs/orders/tt-fix-2b-order.md`. **Result: stopped before ship.** The fu
 - Full vitest output: `.tmp-ttfix2b-vitest.json` / `.tmp-ttfix2b-vitest.txt`.
 
 TT_STOP
+
+## Finish 2 (9:42)
+
+Order: `docs/orders/tt-fix-2c-order.md`. **Result: shipped as `2026-10-14g`.**
+
+### Contract Hall notice board
+- Decision applied: "the Contract Hall notice board" opens as place `Contract Hall`, with the notice board kept as the position inside the place. In `openingCardCompile.test.ts`, the pin now expects `Contract Hall` for that card (`SPOT_IN_HUB`). Every other mention-only card still must not collapse to its hub.
+- New test: "the Contract Hall notice board opens at Contract Hall and the board survives as the position or in the opening". It runs a real New Game on seed 19, which picks this card, then `stampOpening`. It checks that HERE is `Contract Hall`, and that the board survives either as the `hereSpot` or in the opening GM prose. It passes: the card's page 1 ("You sit up with your back against the hall's notice board…") prints as the opening. No code change was needed, so the gap-2 position code was not touched.
+- `openingCardCompile`: 8/8.
+
+### openingEstablishment "seals kit cover"
+- Run on its own 3 times: passed 3/3. It is marked as a known flake with a note above the test (`openingEstablishment.test.ts:221`). In the full run below it failed again, which matches the flake.
+
+### Tests, tsc, build (one run, no fix run needed)
+- Full vitest: **76 failed of 2557**. Against the tt-fix-2b run, there are no new failures. The 76 are the 75 baseline plus the marked `openingEstablishment` flake. `openingCardCompile`, `playtest27aRepair1` and `playtest30iFogOfWar` passed this time. Output: `.tmp-ttfix2c-vitest.json` / `.txt`.
+- tsc (`tsconfig.app.json`): **570** (bar 570).
+- Build: green (exit 0).
+
+### Ship
+- Stamp `2026-10-14f` → `2026-10-14g` in `Hud.tsx`, `runManifest.ts`, `index.html`, `public/version.json` and the 24 stamp-pin tests (two pin tests re-run: 20/20).
+- Commit `8dd292e9` (57 files: tt-fix-2 code and tests, the fixes above, the stamp, the tt-fix-2 orders and this report). Left out on purpose: `humanJudge.mjs`, `playtest-notes.mdc`, `.gitignore`, the other doc edits and the receipt files. Pushed to `main`.
+- Edge sync: `node scripts/sync-gm-edge-shared.mjs` changed `campaignBibleTypes.ts`, `outdoorHubs.ts`, `questPlay.ts` and `types.ts` under `supabase/functions/_shared/gm/`. Then `npx supabase functions deploy gm-turn`: deployed.
+- https://www.synapticgm.com/version.json shows `{"hud":"2026-10-14g","build":"2026-10-14g"}`.
+- The edge-sync files and this report are in a follow-up commit.
+
+TT_DONE
