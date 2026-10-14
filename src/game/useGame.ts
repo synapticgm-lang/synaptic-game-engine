@@ -46,6 +46,7 @@ import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
 import type { EnemyStats } from './combat';
 import { profileForEncounter } from './lootTableRegistry';
+import { gainLootMoney, lootMoneyText } from './rules/coins';
 import {
   autoFightSpawnPreface,
   commitAutoFightLedger,
@@ -5704,7 +5705,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           `Damage Received: ${result.damageReceived}`,
           `Player HP: ${liveCurrent.character.hp} -> ${result.finalPlayerHp}`,
           ...(autoXp.amount > 0 ? [`XP Gained: ${autoXp.amount} (defeated ${enemy.name}${autoXp.detail ? ` — ${autoXp.detail}` : ''})`] : []),
-          `Gold Gained: ${result.goldGained}`,
+          `Gold Gained: ${lootMoneyText(result.goldGained, result.coinsGained) ?? 0}`,
           ...(result.loot.length > 0 ? [`Loot: ${result.loot.map(l => `[${l.rarity}] ${l.name}`).join(', ')}`] : []),
           ...(result.lootLines ?? []),
         ],
@@ -5723,11 +5724,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         { ...liveCurrent, turn: newTurn },
         { victory: result.victory, finalPlayerHp: result.finalPlayerHp }
       );
-      const updated: GameState = {
+      const updated: GameState = gainLootMoney({
         ...ledger,
         character: updatedCharacter,
         inventory: updatedInventory,
-        gold: liveCurrent.gold + result.goldGained,
+        gold: liveCurrent.gold,
         lootPity: result.lootPity
           ? { byTier: { ...(liveCurrent.lootPity?.byTier ?? {}), [result.lootPity.tier]: result.lootPity.next } }
           : liveCurrent.lootPity,
@@ -5740,7 +5741,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           updatedTurn: newTurn,
         },
         lastUpdated: Date.now(),
-      };
+      }, result.goldGained, result.coinsGained);
 
       snapshotRef.current = liveCurrent;
       setCanRewind(true);

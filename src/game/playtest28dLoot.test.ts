@@ -95,19 +95,21 @@ describe('28d loot engine', () => {
     expect(share).toBeLessThan(0.9);
   });
 
-  it('D&D: SRD 5.2.1 loot — a foe drops its stat-block Gear, a cache holds a Common magic item, no house coin formula', () => {
+  it('D&D: a foe drops its SRD stat-block Gear plus in-house CR coins, a cache holds a Common magic item plus a hoard', () => {
     const mob = rollLoot({ profile: 'mob', state: st('dnd'), seed: 'x', cr: '1/4', foeName: 'Bandit' });
-    expect(mob.gold).toBe(0);
     expect(mob.items.length).toBeGreaterThan(0);
     expect(mob.displayLines[0]).toMatch(/^Gear \(SRD stat block\): /);
-    expect(mob.displayLines.join(' ')).not.toMatch(/Coin purse|\d+d\d+/);
+    expect(mob.displayLines.join(' ')).toMatch(/Coins \(SynapticGM individual table, CR 0.4\): d8 = \d/);
+    expect(mob.coins).toBeDefined();
     const nobody = rollLoot({ profile: 'miniBoss', state: st('dnd'), seed: 'x', cr: 7 });
     expect(nobody.gold).toBe(0);
+    expect(nobody.coins).toBeUndefined();
     expect(nobody.items).toEqual([]);
     for (const r of many('boss', st('dnd'), 10, {})) {
-      expect(r.gold).toBe(0);
       expect(r.items.map((i) => i.name)).toEqual(['Potion of Healing']);
       expect(r.displayLines[0]).toMatch(/Potion of Healing \(SRD Common magic item, 50 GP as a consumable\)/);
+      expect(r.displayLines.join(' ')).toMatch(/Coins \(SynapticGM hoard table/);
+      expect(r.gold).toBeGreaterThan(0);
     }
   });
 
@@ -124,7 +126,7 @@ describe('28d loot engine', () => {
     expect(milestoneXp('dnd', 'significantPerson', { level: 1, strictness: 'hardcore' }).amount).toBe(0);
   });
 
-  it('auto-fight victory rolls engine loot: D&D SRD (no coin formula), LitRPG keeps goldReward', () => {
+  it('auto-fight victory rolls engine loot: D&D SRD (a beast carries no coin), LitRPG keeps goldReward', () => {
     const enemy = { name: 'Rat', level: 1, hp: 1, maxHp: 1, attack: 1, defense: 0, armorClass: 1, xpReward: 10, goldReward: 7, cr: '1/8' };
     const d = simulateCombat(st('dnd'), enemy);
     if (d.victory) {

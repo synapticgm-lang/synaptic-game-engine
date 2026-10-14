@@ -13,7 +13,9 @@ import {
   ChevronDown,
   ChevronUp,
   Volume2,
+  ScrollText,
 } from 'lucide-react';
+import { CREDITS_PATH } from '@/legal/credits';
 import type { SaveSlotInfo, Settings } from '@/game/types';
 import {
   SHOP_CATALOG,
@@ -211,6 +213,11 @@ function PlayTab({
       {onOpenLibrary && (
         <MenuButton icon={<Library size={18} />} label="GM Library" onClick={onOpenLibrary} />
       )}
+      <MenuButton
+        icon={<ScrollText size={18} />}
+        label="Credits"
+        onClick={() => window.location.assign(CREDITS_PATH)}
+      />
 
       {hasSave && (localSlot || cloudSlot) && (
         <div className="sgm-home-active-save w-full rounded-lg border border-slate-800 bg-slate-900/40 px-4 py-3">

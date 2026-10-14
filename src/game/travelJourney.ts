@@ -69,6 +69,7 @@ import { applyCampRest } from './recoveryRules';
 import { sidekickOf } from './rules/sidekick';
 import { recruitedCompanions, settleCampTalk } from './rules/companions';
 import { rollLoot } from './lootTableRegistry';
+import { gainLootMoney, lootMoneyText } from './rules/coins';
 import { discoveryXpAmount } from './discoveryXpLedger';
 import { applyCharacterXpGain } from './characterXp';
 import { hidesPart } from './systemHousing';
@@ -1461,9 +1462,10 @@ function passStop(state: GameState, j: TravelJourney): { state: GameState; statu
   facts.push(`The look-out spotted ${FIND_FACT[stop.find]} at ${stop.name}.`);
   if (stop.find === 'cache') {
     const loot = rollLoot({ profile: 'chestBronze', state: next, seed: `${state.seed ?? 'seed'}:road:${key}:${stop.name}` });
-    next = { ...next, inventory: [...(next.inventory ?? []), ...loot.items], gold: (next.gold ?? 0) + loot.gold };
+    next = gainLootMoney({ ...next, inventory: [...(next.inventory ?? []), ...loot.items] }, loot.gold, loot.coins);
     if (loot.items.length) status.push(`Loot: ${loot.items.map((it) => `[${it.rarity}] ${it.name}`).join(', ')}`);
-    if (loot.gold > 0) status.push(`Gold Gained: ${loot.gold}`);
+    const money = lootMoneyText(loot.gold, loot.coins);
+    if (money) status.push(`Gold Gained: ${money}`);
   }
   if (modeProfile(state.engineMode).numbers !== 'hidden') status.unshift(`Find: ${stop.find} at ${stop.name}`);
   const xp = payFindXp(next, `road-find:${key}:${stop.name}`, stop.find);

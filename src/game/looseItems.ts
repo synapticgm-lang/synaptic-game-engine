@@ -8,6 +8,7 @@ import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { isOpenContainerAction, isSearchTargetEmpty, normalizeSearchTarget, recordEmptySearch } from './searchContinuity';
 import { matchesLastKillName } from './combatAuthority';
 import { exitPlaceNames } from './placeNames';
+import { addCoins, gainLootMoney, lootMoneyFound, lootMoneyText } from './rules/coins';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -140,15 +141,17 @@ export function openSeededLootable(
     state,
     seed: `${state.seed ?? 'seed'}:${dungeon.dungeonName ?? node.id}:${target.id}`,
   });
-  const gold = loot.gold + Math.max(0, opened.loot.gold ?? 0);
-  let next: GameState = {
+  const cardGold = Math.max(0, opened.loot.gold ?? 0);
+  const gold = loot.gold + cardGold;
+  const coins = loot.coins ? addCoins(loot.coins, { gp: cardGold }) : undefined;
+  let next: GameState = gainLootMoney({
     ...state,
     activeDungeon: opened.dungeon,
-    gold: (state.gold ?? 0) + gold,
     lootPity: loot.nextPity != null
       ? { byTier: { ...(state.lootPity?.byTier ?? {}), [loot.pityTier]: loot.nextPity } }
       : state.lootPity,
-  };
+  }, gold, coins);
+  const money = lootMoneyText(gold, coins);
   next = updateNodeLooseItems(next, (items) => [
     ...items,
     ...loot.items.map((item) => ({ id: newId(), label: item.name, item })),
@@ -157,8 +160,9 @@ export function openSeededLootable(
   if (loot.items.length) {
     receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')} (on the floor; pick up to take)`);
   }
-  if (gold > 0) receipts.push(`Gold Gained: ${gold}`);
-  if (!loot.items.length && gold <= 0) receipts.push(`Dungeon: the ${opened.label ?? target.label} was empty.`);
+  if (money) receipts.push(`Gold Gained: ${money}`);
+  if (state.engineMode === 'dnd') receipts.push(...loot.displayLines);
+  if (!loot.items.length && !money) receipts.push(`Dungeon: the ${opened.label ?? target.label} was empty.`);
   return { state: next, receipts };
 }
 
@@ -237,21 +241,21 @@ function searchOutsideDungeon(
     state,
     seed: `${state.seed ?? 'seed'}:search:${(state.currentLocation ?? '').toLowerCase()}:${target}`,
   });
-  const next: GameState = {
+  const next: GameState = gainLootMoney({
     ...state,
     sceneFacts: facts,
     inventory: [...(state.inventory ?? []), ...loot.items],
-    gold: (state.gold ?? 0) + loot.gold,
     lootPity: loot.nextPity != null
       ? { byTier: { ...(state.lootPity?.byTier ?? {}), [loot.pityTier]: loot.nextPity } }
       : state.lootPity,
-  };
+  }, loot.gold, loot.coins);
   const names = loot.items.map((i) => i.name);
-  const found = [...names, ...(loot.gold > 0 ? [`${loot.gold} gold`] : [])];
+  const money = lootMoneyText(loot.gold, loot.coins);
+  const found = [...names, ...(money ? [lootMoneyFound(loot.gold, loot.coins)!] : [])];
   const verb = container ? `opened ${what}` : `searched ${what}`;
   const receipts = [`Search: you ${verb} and found ${found.length ? found.join(', ') : 'nothing'}.`];
   if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
-  if (loot.gold > 0) receipts.push(`Gold Gained: ${loot.gold}`);
+  if (money) receipts.push(`Gold Gained: ${money}`);
   if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
   return { state: next, receipts };
 }

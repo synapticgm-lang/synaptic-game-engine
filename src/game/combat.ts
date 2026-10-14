@@ -1,4 +1,4 @@
-import type { AttributeKey, GameState, Item, Rarity } from './types';
+import type { AttributeKey, CoinPurse, GameState, Item, Rarity } from './types';
 import { attrMod, meleeApproach, type FightApproach } from './fightApproach';
 import { equippedWeaponName } from './ledgerCombat';
 import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
@@ -44,6 +44,8 @@ export interface CombatResult {
   finalEnemyHp: number;
   xpGained: number;
   goldGained: number;
+  /** Tabletop: the exact coins the in-house coin table rolled (worth `goldGained`). */
+  coinsGained?: CoinPurse;
   loot: Item[];
   roundsLog: CombatRound[];
   summary: string;
@@ -103,7 +105,7 @@ function rollLoot(enemy: EnemyStats): Item[] {
 export function rollVictoryLoot(
   state: GameState,
   enemy: Pick<EnemyStats, 'name' | 'goldReward' | 'lootTable' | 'lootProfile' | 'cr'>
-): Pick<CombatResult, 'goldGained' | 'loot' | 'lootLines' | 'lootPity'> {
+): Pick<CombatResult, 'goldGained' | 'coinsGained' | 'loot' | 'lootLines' | 'lootPity'> {
   const firstKill = !(state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.name === enemy.name);
   const engineLoot = rollEngineLoot({
     profile: enemy.lootProfile ?? 'mob',
@@ -115,6 +117,7 @@ export function rollVictoryLoot(
   });
   return {
     goldGained: state.engineMode === 'dnd' && engineLoot ? engineLoot.gold : scaleTreasureGold(state, enemy.goldReward),
+    ...(state.engineMode === 'dnd' && engineLoot?.coins ? { coinsGained: engineLoot.coins } : {}),
     loot: [...rollLoot(enemy as EnemyStats), ...(engineLoot?.items ?? [])],
     lootLines: engineLoot && state.engineMode === 'dnd' ? engineLoot.dice : [],
     lootPity: engineLoot && engineLoot.nextPity != null ? { tier: engineLoot.pityTier, next: engineLoot.nextPity } : undefined,
@@ -233,6 +236,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
   const xpGained = victory ? enemy.xpReward : Math.floor(enemy.xpReward * 0.1);
   const won = victory ? rollVictoryLoot(state, enemy) : null;
   const goldGained = won?.goldGained ?? 0;
+  const coinsGained = won?.coinsGained;
   const loot = won?.loot ?? [];
   const lootLines = won?.lootLines ?? [];
   const lootPity = won?.lootPity;
@@ -251,6 +255,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
     finalEnemyHp: enemyHp,
     xpGained,
     goldGained,
+    ...(coinsGained ? { coinsGained } : {}),
     loot,
     roundsLog,
     summary,

@@ -35,8 +35,9 @@ export function CreditsPage() {
         <p className="mt-2 text-sm text-slate-500">Last updated: {CREDITS_LAST_UPDATED}</p>
         <p className="mt-4 text-sm leading-relaxed text-slate-400">
           Free typefaces, icons, and other third-party materials the live game uses — who made them,
-          where they come from, and what we use them for. Original SynapticGM stories and rules are
-          listed too. This is not a claim that every file in the repo is public domain.
+          where they come from, and what we use them for. The tabletop rules come from the SRD 5.2.1
+          under CC BY 4.0; original SynapticGM stories and tables are listed too. This is not a claim
+          that every file in the repo is public domain.
         </p>
 
         <div className="mt-10 space-y-10">
@@ -66,6 +67,11 @@ export function CreditsPage() {
                     </div>
                     <p className="mt-0.5 text-xs text-slate-400">{row.source}</p>
                     <p className="mt-1 text-sm leading-relaxed text-slate-500">{row.usedFor}</p>
+                    {row.notice ? (
+                      <p className="mt-2 rounded border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs leading-relaxed text-slate-300">
+                        {row.notice}
+                      </p>
+                    ) : null}
                   </li>
                 ))}
               </ul>

@@ -27,7 +27,7 @@ import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
 import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
-import { carriedCoinLb } from '../rules/coins';
+import { carriedCoinLb, gainLootMoney, lootMoneyText } from '../rules/coins';
 import { sceneLight, type SceneLight } from '../rules/exploration';
 import { exhaustionD20, exhaustionSpeed, weatherRuleOf } from '../rules/travelDay';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName, wearsHeavyArmor } from './combatChips';
@@ -471,9 +471,10 @@ export function resolveRoundFight(
     next = {
       ...next,
       inventory: [...(next.inventory ?? []), ...won.loot],
-      gold: (next.gold ?? 0) + won.goldGained,
       lootPity: won.lootPity ? { byTier: { ...(next.lootPity?.byTier ?? {}), [won.lootPity.tier]: won.lootPity.next } } : next.lootPity,
     };
+    next = gainLootMoney(next, won.goldGained, won.coinsGained);
+    const money = lootMoneyText(won.goldGained, won.coinsGained);
     receipts.push(`Fight: VICTORY vs ${enc.name} in ${roundsText}. The fight is over: ${enc.name} ${down} and cannot fight on.`, `Encounter cleared: ${enc.name} (victory)`);
     next = pushCombatStateTx(next, `Fight vs ${enc.name}: victory in ${roundsText}`, enc.name, 'Engine fight');
     if (onRoad) next = settleRoadMeeting(next, 'victory');
@@ -481,11 +482,11 @@ export function resolveRoundFight(
     const paid = payEncounterXp(next, xpRaw, `defeated ${enc.name}`);
     next = paid.state;
     receipts.push(...paid.receipts);
-    if (won.goldGained > 0) receipts.push(`Gold Gained: ${won.goldGained}`);
+    if (money) receipts.push(`Gold Gained: ${money}`);
     if (won.loot.length) receipts.push(`Loot: ${won.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`);
     receipts.push(...(won.lootLines ?? []));
     // The amount is on STATUS (Gold Gained); the writer only hears that there was coin.
-    const bits = [...won.loot.map((l) => l.name), ...(won.goldGained > 0 ? ['some coin'] : [])];
+    const bits = [...won.loot.map((l) => l.name), ...(money ? ['some coin'] : [])];
     facts.push(`${cap(enc.name)} ${setup.combat.foes.length > 1 ? 'are all down' : 'went down and stayed down'}.${bits.length ? ` On the body: ${bits.join(', ')}.` : ''}`);
     return { state: next, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}` };
   }

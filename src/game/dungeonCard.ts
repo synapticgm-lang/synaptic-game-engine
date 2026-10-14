@@ -21,6 +21,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
 import { INTERIOR_MAP_BLUEPRINT, milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
+import { gainLootMoney, lootMoneyText } from './rules/coins';
 import { openSeededLootable } from './looseItems';
 import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
@@ -808,10 +809,9 @@ export function advanceDungeonCard(
     } else if (chest) {
       const grade = chest.loot.grade ?? 1;
       const loot = rollLoot({ profile: chestProfileForGrade(grade), state: next, seed: `${next.seed ?? 'seed'}:${d.dungeonName}:${chest.id}` });
-      next = {
+      next = gainLootMoney({
         ...next,
         inventory: [...(next.inventory ?? []), ...loot.items],
-        gold: (next.gold ?? 0) + loot.gold,
         lootPity: loot.nextPity != null
           ? { byTier: { ...(next.lootPity?.byTier ?? {}), [loot.pityTier]: loot.nextPity } }
           : next.lootPity,
@@ -819,12 +819,13 @@ export function advanceDungeonCard(
           ...h,
           lootables: h.lootables.map((l) => (l.id === chest.id ? { ...l, opened: true } : l)),
         })),
-      };
+      }, loot.gold, loot.coins);
+      const money = lootMoneyText(loot.gold, loot.coins);
       receipts.push(`Dungeon: you opened the ${chest.label}.`);
       if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
-      if (loot.gold > 0) receipts.push(`Gold Gained: ${loot.gold}`);
+      if (money) receipts.push(`Gold Gained: ${money}`);
       if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
-      if (!loot.items.length && loot.gold <= 0) receipts.push(`Dungeon: the ${chest.label} was empty.`);
+      if (!loot.items.length && !money) receipts.push(`Dungeon: the ${chest.label} was empty.`);
     } else {
       receipts.push(`Dungeon: there is no closed chest in ${node.name}.`);
     }
@@ -839,15 +840,14 @@ export function advanceDungeonCard(
       const ok = roll + m >= dc;
       if (ok) {
         const loot = rollLoot({ profile: 'chestBronze', state: next, seed: `${next.seed ?? 'seed'}:${d.dungeonName}:${secret.id}` });
-        next = {
+        next = gainLootMoney({
           ...next,
           inventory: [...(next.inventory ?? []), ...loot.items],
-          gold: (next.gold ?? 0) + loot.gold,
           activeDungeon: withNode(next.activeDungeon!, node.id, (h) => ({
             ...h,
             secrets: h.secrets.map((s) => (s.id === secret.id ? { ...s, revealed: true } : s)),
           })),
-        };
+        }, loot.gold, loot.coins);
         const hiddenRoom = secret.unlocksNodeId ? next.activeDungeon!.nodes.find((n) => n.id === secret.unlocksNodeId) : undefined;
         if (hiddenRoom) {
           // 28j — a found secret opens its hidden room onto the door graph (both ways).
@@ -867,7 +867,9 @@ export function advanceDungeonCard(
         }
         receipts.push(...rollLines(next, 'Search', `search of ${node.name}`, roll, m, dc, true, `you found ${secret.clue}${hiddenRoom ? ` — a way into ${hiddenRoom.name}` : ''}.`));
         if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
-        if (loot.gold > 0) receipts.push(`Gold Gained: ${loot.gold}`);
+        const money = lootMoneyText(loot.gold, loot.coins);
+        if (money) receipts.push(`Gold Gained: ${money}`);
+        if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
       } else {
         receipts.push(...rollLines(next, 'Search', `search of ${node.name}`, roll, m, dc, false, 'you found nothing.'));
       }

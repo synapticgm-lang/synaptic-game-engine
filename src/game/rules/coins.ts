@@ -127,6 +127,23 @@ export function gainCoins<T extends GameState>(state: T, coins: Partial<CoinPurs
   return { ...state, gold, purse: { coins: next, gold } };
 }
 
+/** Loot money into the ledger: rolled coins go in as those coins, otherwise the whole GP the roll paid. */
+export function gainLootMoney<T extends GameState>(state: T, gold: number, coins?: Partial<CoinPurse>): T {
+  return coins && purseCp(coins) > 0 ? gainCoins(state, coins) : { ...state, gold: whole(state.gold) + whole(gold) };
+}
+
+/** Loot money as receipt text ("3 GP, 7 SP" for rolled coins, "12" for plain gold); null when there is none. */
+export function lootMoneyText(gold: number, coins?: Partial<CoinPurse>): string | null {
+  if (coins && purseCp(coins) > 0) return formatPurse(coins);
+  return whole(gold) > 0 ? String(whole(gold)) : null;
+}
+
+/** Loot money as a found-list entry ("3 GP, 7 SP" or "12 gold"); null when there is none. */
+export function lootMoneyFound(gold: number, coins?: Partial<CoinPurse>): string | null {
+  const text = lootMoneyText(gold, coins);
+  return text && !(coins && purseCp(coins) > 0) ? `${text} gold` : text;
+}
+
 /** Pounds of coin a sheet character carries (0 without a purse). */
 export function carriedCoinLb(state: Pick<GameState, 'engineMode' | 'character'> & Partial<Pick<GameState, 'gold' | 'purse'>>): number {
   return coinWeightLb(purseOf({ ...state, gold: state.gold ?? 0 }));

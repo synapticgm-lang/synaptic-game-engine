@@ -11,6 +11,7 @@ import { simulateCombat, type CombatResult, type CombatRound, type EnemyStats } 
 import { commitAutoFightLedger } from './combatAuthority';
 import { arrivePendingEncounter, initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
 import { profileForEncounter } from './lootTableRegistry';
+import { gainLootMoney, lootMoneyFound, lootMoneyText } from './rules/coins';
 import { milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare, type MilestoneKind } from './xpRules';
 import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
@@ -295,11 +296,11 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ...next,
     character: { ...next.character, hp: hpAfter, mp: result.finalPlayerMp },
     inventory: [...(next.inventory ?? []), ...result.loot],
-    gold: (next.gold ?? 0) + result.goldGained,
     lootPity: result.lootPity
       ? { byTier: { ...(next.lootPity?.byTier ?? {}), [result.lootPity.tier]: result.lootPity.next } }
       : next.lootPity,
   };
+  next = gainLootMoney(next, result.goldGained, result.coinsGained);
   next = growWeaponFamiliarity(
     next,
     used.id === 'ranged' ? weaponCategory(used.source) : weaponCategory(equippedWeaponName(next))
@@ -330,7 +331,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     const paid = payEncounterXp(next, raw, `defeated ${enc.name}`);
     next = paid.state;
     receipts.push(...paid.receipts);
-    if (result.goldGained > 0) receipts.push(`Gold Gained: ${result.goldGained}`);
+    const money = lootMoneyText(result.goldGained, result.coinsGained);
+    if (money) receipts.push(`Gold Gained: ${money}`);
     if (result.loot.length) {
       receipts.push(
         `Loot: ${result.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`
@@ -339,7 +341,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     receipts.push(...(result.lootLines ?? []));
     const bits = [
       ...result.loot.map((l) => l.name),
-      ...(result.goldGained > 0 ? [`${result.goldGained} gold`] : []),
+      ...(money ? [lootMoneyFound(result.goldGained, result.coinsGained)!] : []),
     ];
     if (bits.length) found = ` On the body: ${bits.join(', ')}.`;
   }

@@ -16,7 +16,9 @@
  * - data/encounters/D9_loot_tables.json - Content catalog
  */
 
-import type { GameState, Item, Rarity } from './types';
+import type { CoinPurse, GameState, Item, Rarity } from './types';
+import { HOARD_COINS, INDIVIDUAL_COINS, crNumber, rollCoinTable } from './rules/coinTables';
+import { purseCp } from './rules/coins';
 import { rollLootRarityWithPity } from './dungeonSeed';
 import { difficultyRow } from './difficultyRules';
 import { createHashRng } from './seededRng';
@@ -489,20 +491,35 @@ function rollDice(n: number, sides: number, rng: () => number): { rolls: number[
 }
 
 /**
- * Tabletop treasure, SRD 5.2.1 as written. The SRD has no treasure-by-CR tables, so nothing is rolled:
- * a creature drops the Gear on its SRD stat block, and a cache holds one Common magic item, priced from the
- * SRD "Magic Item Rarities and Values" table (Common 100 GP, halved for a consumable).
+ * Tabletop treasure. Items follow SRD 5.2.1 as written: a creature drops the Gear on its SRD stat block, and a
+ * cache holds one Common magic item, priced from the SRD "Magic Item Rarities and Values" table (Common 100 GP,
+ * halved for a consumable). The SRD has no treasure-by-CR tables, so coins come from our own in-house tables
+ * (rules/coinTables.ts), scaled by CR.
  */
 export const SRD_CACHE_ITEM = 'Potion of Healing';
 export const SRD_COMMON_VALUE_GP = 100;
+
+/** Which in-house coin table each profile rolls on in tabletop, and how many times. */
+export const DND_COINS: Readonly<Record<LootProfile, { table: 'individual' | 'hoard'; times: number }>> = {
+  mob: { table: 'individual', times: 1 },
+  miniBoss: { table: 'individual', times: 2 },
+  rareSpawn: { table: 'individual', times: 1 },
+  boss: { table: 'hoard', times: 1 },
+  rareEncounter: { table: 'hoard', times: 1 },
+  chestBronze: { table: 'individual', times: 2 },
+  chestSilver: { table: 'individual', times: 4 },
+  chestGold: { table: 'hoard', times: 1 },
+};
 
 export interface LootRollResult {
   profile: LootProfile;
   items: Item[];
   /** Category of each item (same order) — class fit audit. */
   categories: LootItemCategory[];
-  /** Engine gold from the roll (D&D SynapticGM treasure tables; 0 in other modes, where cards carry goldReward). */
+  /** Engine gold from the roll as whole GP (tabletop in-house coin tables; 0 in other modes, where cards carry goldReward). */
   gold: number;
+  /** Tabletop: the exact coins rolled (purse denominations). */
+  coins?: CoinPurse;
   coin: 'gp' | 'pp';
   noDrop: boolean;
   /** D&D: every die shown. Other modes: empty. */
@@ -632,8 +649,21 @@ export function rollLoot(input: {
 
   if (dnd) {
     const provenance = `Engine loot (${LOOT_PROFILES[profile].label})`;
+    const block = input.foeName ? SRD_MONSTERS.find((b) => b.match.test(input.foeName!)) : undefined;
+    const crRead = crNumber(input.cr ?? block?.cr ?? null);
+    const coinPlan = DND_COINS[profile];
+    // A chest or hoard always holds coin, scaled by the area level when no creature owns it. Otherwise only a
+    // creature that carries a purse drops coins; beasts and the dead carry none, and a bare ground search has no
+    // carrier. Unmatched foes are humanoid, as their engine stat block is.
+    const container = profile.startsWith('chest');
+    const carriesPurse = !!input.foeName && (!block || block.kind === 'humanoid');
+    const coinCr = input.foeName ? crRead : level;
+    const coinRoll = coinPlan.table === 'hoard' || container || carriesPurse
+      ? rollCoinTable(coinPlan.table === 'hoard' ? HOARD_COINS : INDIVIDUAL_COINS, coinCr, rng, coinPlan.times)
+      : null;
+    const coins = coinRoll && purseCp(coinRoll.coins) > 0 ? coinRoll.coins : undefined;
+    const gold = coinRoll?.gold ?? 0;
     if (row.dndTable === 'purse') {
-      const block = input.foeName ? SRD_MONSTERS.find((b) => b.match.test(input.foeName!)) : undefined;
       const gear = block?.gear ?? [];
       gear.forEach((name, i) => {
         const row = srdGearRow(name, 1, `loot-${input.seed}-${i}`, provenance);
@@ -641,12 +671,14 @@ export function rollLoot(input: {
         categories.push(row.itemType === 'weapon' ? (/bow|crossbow/i.test(name) ? 'bow' : 'blade') : 'armour');
       });
       if (gear.length) dice.push(`Gear (SRD stat block): ${gear.join(', ')}`);
-      return result({ gold: 0, coin: 'gp', displayLines: [...dice] });
+      if (coinRoll) dice.push(...coinRoll.lines);
+      return result({ gold, coins, coin: 'gp', displayLines: [...dice] });
     }
     items.push(magicItem(SRD_CACHE_ITEM, `loot-${input.seed}-0`, provenance));
     categories.push('trinket');
     dice.push(`Treasure: ${SRD_CACHE_ITEM} (SRD Common magic item, ${SRD_COMMON_VALUE_GP / 2} GP as a consumable)`);
-    return result({ gold: 0, coin: 'gp', displayLines: [...dice] });
+    if (coinRoll) dice.push(...coinRoll.lines);
+    return result({ gold, coins, coin: 'gp', displayLines: [...dice] });
   }
 
   // LitRPG / RPG / PYOA — profile rolls on the existing tier curves with pity.

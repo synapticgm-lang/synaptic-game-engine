@@ -4,7 +4,11 @@
  */
 
 export const CREDITS_PATH = '/credits';
-export const CREDITS_LAST_UPDATED = '9 September 2026';
+export const CREDITS_LAST_UPDATED = '14 October 2026';
+
+/** The attribution CC BY 4.0 requires for SRD 5.2.1, word for word. */
+export const SRD_5_2_1_NOTICE =
+  'This work includes material from the System Reference Document 5.2.1 (SRD 5.2.1) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.';
 
 export type CreditRow = {
   work: string;
@@ -12,6 +16,8 @@ export type CreditRow = {
   license: string;
   usedFor: string;
   url?: string;
+  /** A licence notice shown word for word under the row. */
+  notice?: string;
 };
 
 export type CreditSection = {
@@ -174,6 +180,20 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         url: 'https://supabase.com',
       },
       {
+        work: 'Transformers.js (@xenova/transformers)',
+        source: 'Hugging Face / Xenova and contributors',
+        license: 'Apache-2.0',
+        usedFor: 'In-browser story memory (matching earlier scenes to the current one)',
+        url: 'https://github.com/xenova/transformers.js',
+      },
+      {
+        work: 'languagetool-api',
+        source: 'languagetool-api contributors',
+        license: 'BSD-2-Clause',
+        usedFor: 'Grammar check client on the High tier',
+        url: 'https://www.npmjs.com/package/languagetool-api',
+      },
+      {
         work: 'Google Identity (react-oauth)',
         source: '@react-oauth/google',
         license: 'MIT',
@@ -222,11 +242,26 @@ export const CREDIT_SECTIONS: CreditSection[] = [
     title: 'Rules',
     rows: [
       {
-        work: 'SynapticGM tabletop & LitRPG rules',
+        work: 'System Reference Document 5.2.1 (SRD 5.2.1)',
+        source: 'Wizards of the Coast LLC',
+        license: 'CC BY 4.0',
+        usedFor:
+          'Tabletop rules as written: ability scores, checks, combat, conditions, death saves, species, classes, spells, monsters, equipment, coins, travel, and experience.',
+        url: 'https://www.dndbeyond.com/srd',
+        notice: SRD_5_2_1_NOTICE,
+      },
+      {
+        work: 'SynapticGM coin tables',
         source: 'SynapticGM',
         license: 'Original',
         usedFor:
-          'Checks, combat, loot, and System panels. Inspired by common tabletop practice (d20, GM, turns, armor class, hit points) — not a licensed rulebook.',
+          'Tabletop individual and hoard coin tables scaled by challenge rating. Our own tables, set against SRD 5.2.1 prices; not copied from any published treasure table.',
+      },
+      {
+        work: 'SynapticGM LitRPG and story RPG presentation',
+        source: 'SynapticGM',
+        license: 'Original',
+        usedFor: 'System panels, receipts, standing, and story-RPG framing laid over the shared rules engine.',
       },
       {
         work: 'Custom tabletop rules (player paste)',
