@@ -465,7 +465,7 @@ export function parseTravelDestination(
   if (!a) return null;
   const hubs = hubsForBibleId(bibleId);
   const m = a.match(
-    /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:toward|to|for)|go\s+to|move\s+to|walk\s+to)\s+(.+)$/i
+    /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:back\s+)?(?:toward|to|for)|go\s+(?:back\s+)?to|move\s+to|walk\s+(?:back\s+)?to)\s+(.+)$/i
   );
   if (m) {
     const name = m[1].replace(/[.!?]+$/, '').trim();
@@ -473,7 +473,7 @@ export function parseTravelDestination(
     if (hit) return hit;
   }
   const loose = a.match(
-    /(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move)\s+(?:to|toward|into|for)\s+(.+)$/i
+    /(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move)\s+(?:back\s+)?(?:to|toward|into|for)\s+(.+)$/i
   );
   if (loose) {
     const name = loose[1].replace(/[.!?]+$/, '').trim();
