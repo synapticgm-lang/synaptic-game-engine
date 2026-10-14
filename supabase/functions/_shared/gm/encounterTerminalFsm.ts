@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 29a Encounter Terminal FSM — code owns clear; GM narrates.
  * idle → engaged → resolving → terminal → idle (ledger retained via receipts).
  */
@@ -383,7 +383,7 @@ export function formatEncounterClearedStatus(receipt: EncounterClearedReceipt): 
       : receipt.outcome === 'parleyResolved'
         ? 'parley resolved'
         : receipt.outcome === 'defeat'
-          ? 'defeated'
+          ? 'lost'
           : receipt.outcome === 'capture'
             ? 'captured'
             : 'victory';

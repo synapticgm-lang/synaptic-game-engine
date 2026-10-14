@@ -112,17 +112,50 @@ export type FightPov = { who: string; him: string };
 
 const capFirst = (s: string) => (s ? s[0]!.toUpperCase() + s.slice(1) : s);
 
-/** The settled fight as a plain past-tense beat, painted only when the writer will not state it. */
-export function terminalFightBeat(fight: TerminalFight, where: string, pov: FightPov = { who: 'you', him: 'you' }): string {
-  const at = where ? ` at ${where}` : '';
+/** Where the fight was: "at the inn", or "on the open road …" while a journey is underway. */
+function fightWhere(where: string, onRoad?: boolean): string {
+  return where ? ` ${onRoad ? 'on' : 'at'} ${where}` : '';
+}
+
+/** The settled outcome as one plain sentence (foe down, PC down, or got clear). */
+export function terminalOutcomeSentence(fight: TerminalFight, pov: FightPov = { who: 'you', him: 'you' }): string {
+  const who = capFirst(pov.who);
+  if (fight.outcome === 'escaped') return `${who} broke away and got clear.`;
+  return fight.outcome === 'victory'
+    ? `${capFirst(fight.foe)} went down and did not get up, and the fight was over.`
+    : `${who} went down, and the fight was lost.`;
+}
+
+/** The failed parley or flee that forced the fight, as one plain sentence ('' when none forced it). */
+export function forcedAttemptSentence(fight: TerminalFight, pov: FightPov = { who: 'you', him: 'you' }, where = '', onRoad?: boolean): string {
+  if (!fight.forced || !fight.forcedBy) return '';
+  const who = capFirst(pov.who);
+  const at = fightWhere(where, onRoad);
+  return fight.forcedBy === 'parley'
+    ? `${who} tried to talk ${fight.foe} down${at}, but ${fight.foe} would not listen and forced the fight.`
+    : `${who} tried to break away${at}, but ${fight.foe} would not let ${pov.him} go and forced the fight.`;
+}
+
+/** The foe hits on the PC the engine rolled this turn, as one plain sentence ('' when none). */
+export function foeHitSentence(engineFact: string | undefined, pov: FightPov = { who: 'you', him: 'you' }): string {
+  const hits = [...(engineFact ?? '').matchAll(/(?:^|[.;:\n]\s*)([^.;:\n]*?)\s+(?:hits|lands a critical blow on) you\b([^.;\n]*)/g)];
+  if (!hits.length) return '';
+  const foe = hits[0]![1]!.trim() || 'the foe';
+  // "with a scimitar as you break away" → "with a scimitar".
+  const by = hits[0]![2]!.match(/^\s+with\s+[^,]+?(?=\s+as\s+you\b|$)/)?.[0] ?? '';
+  return hits.length > 1 ? `${capFirst(foe)} hit ${pov.him} ${hits.length} times.` : `${capFirst(foe)} hit ${pov.him}${by}.`;
+}
+
+/** The settled fight as a plain past-tense beat, painted only when the writer returned nothing usable. */
+export function terminalFightBeat(
+  fight: TerminalFight,
+  where: string,
+  pov: FightPov = { who: 'you', him: 'you' },
+  onRoad?: boolean
+): string {
+  const at = fightWhere(where, onRoad);
   const who = capFirst(pov.who);
   if (fight.outcome === 'escaped') return `${who} broke away${at} and got clear. Nothing followed ${pov.him} out.`;
-  const opener = !fight.forced
-    ? `${who} closed with ${fight.foe}${at}.`
-    : fight.forcedBy === 'parley'
-      ? `${who} tried to talk ${fight.foe} down${at}, but ${fight.foe} would not listen and forced the fight.`
-      : `${who} tried to break away${at}, but ${fight.foe} would not let ${pov.him} go and forced the fight.`;
-  return fight.outcome === 'victory'
-    ? `${opener} It lasted ${fight.rounds}. ${capFirst(fight.foe)} went down and did not get up, and the fight was over.`
-    : `${opener} It lasted ${fight.rounds}. ${who} went down, and the fight was lost.`;
+  const opener = forcedAttemptSentence(fight, pov, where, onRoad) || `${who} closed with ${fight.foe}${at}.`;
+  return `${opener} It lasted ${fight.rounds}. ${terminalOutcomeSentence(fight, pov)}`;
 }

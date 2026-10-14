@@ -21,7 +21,6 @@ const CROWD =
 const SHOUTING = /\b(shout(?:ing)?|scream(?:ing)?|yell(?:ing)?|panic|crying out)\b/i;
 const QUIET = /\b(silent|silence|quiet|stillness|hushed)\b/i;
 const PANEL = /\b(blue panel|system panel|blue screen)\b/i;
-const CRACKS = /\b(crack(?:ing|s)?|crystal|concrete)\b/i;
 const DIALOGUE = /"[^"]{3,}"|<\s*dialogue\b/i;
 /** Narrated time that actually clears a crowd — not "hours ago" on turn one. */
 const TIME_PASSED = /\b(after (?:a |the )?crowd (?:left|fled|scattered)|street (?:cleared|emptied)|crowd (?:thins|disperses|moves on)|(?:was|were) not always (?:so|this way|empty)|festival (?:is |has )?(?:over|ended|concluded)|(?:once|earlier) (?:there (?:was|were)|crowded))\b/i;
@@ -105,11 +104,8 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   if (crowd === 'present') present.add('bystanders');
   if (crowd === 'none') present.delete('bystanders');
 
+  // Props come from engine records (the opening card, loot, dungeon rooms), never from prose words.
   const props = new Set(prev?.props ?? []);
-  if (PANEL.test(text)) props.add('blue panel');
-  if (CRACKS.test(text)) props.add('cracked street');
-  if (/\b(?:wooden |iron-bound |sturdy )?(?:chest|coffer|trunk)\b/i.test(text)) props.add('wooden chest');
-  if (/\b(?:silver |tarnished )?locket\b/i.test(text)) props.add('locket');
 
   // Pack 12 Extended Extraction
   let timeOfDay: SceneFacts['timeOfDay'] = prev?.timeOfDay ?? 'unknown';
@@ -338,7 +334,10 @@ export function applyCommittedNarrative(
   turn: number,
   playerInput?: string
 ): SceneFacts {
-  const extracted = extractSceneFacts(narrative, state.sceneFacts, turn);
+  const read = extractSceneFacts(narrative, state.sceneFacts, turn);
+  // When the clock runs (`travelJourney.advanceClock`), it owns time of day; prose words only copy it.
+  const extracted =
+    typeof state.worldHour === 'number' ? { ...read, timeOfDay: state.sceneFacts?.timeOfDay ?? read.timeOfDay } : read;
   let merged: SceneFacts;
   const crowdWasHere =
     state.sceneFacts?.crowd === 'present' || state.sceneFacts?.crowd === 'sparse';
