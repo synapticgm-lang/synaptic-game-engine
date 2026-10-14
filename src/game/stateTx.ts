@@ -4,6 +4,7 @@
  */
 
 import type { GameState, Item, Quest } from './types';
+import { grantEarnedInspiration } from './rules/houseRules';
 
 export type StateTxKind =
   | 'inventory_gain'
@@ -11,6 +12,8 @@ export type StateTxKind =
   | 'inventory_equip'
   | 'hp'
   | 'mp'
+  | 'condition'
+  | 'inspiration'
   | 'presence'
   | 'location'
   | 'quest_reveal'
@@ -115,6 +118,13 @@ export function appendStateTxDiff(
       entity: 'player',
       why: whyBase,
     });
+  }
+
+  // Conditions the character gained.
+  const condPrev = new Set((previous.character?.conditions ?? []).map((c) => c.toLowerCase()));
+  for (const c of next.character?.conditions ?? []) {
+    if (condPrev.has(c.toLowerCase())) continue;
+    log = pushTx(log, { rev, turn, kind: 'condition', summary: `Condition: ${c}`, entity: c, why: extras?.combatSummary || whyBase });
   }
 
   // Inventory
@@ -247,6 +257,24 @@ export function appendStateTxDiff(
     }
   }
 
+  // Heroic Inspiration: the sheet gaining it, or a milestone that earned it while one is already held.
+  const freshKeys = previous.inspirationKeys
+    ? (next.inspirationKeys ?? []).filter((k) => !previous.inspirationKeys!.includes(k))
+    : [];
+  const gainedInspiration = !previous.character?.heroicInspiration && !!next.character?.heroicInspiration;
+  if (next.character?.heroicInspiration && (gainedInspiration || freshKeys.length)) {
+    const held = gainedInspiration ? 'yours' : 'already held';
+    const why = [...new Set(freshKeys.map((k) => INSPIRATION_REASON[k.split(':')[0]!]).filter(Boolean))].join(', ');
+    log = pushTx(log, {
+      rev,
+      turn,
+      kind: 'inspiration',
+      summary: `Heroic Inspiration: ${held}${why ? ` (${why})` : ''}`,
+      entity: `Heroic Inspiration: ${held}`,
+      why: freshKeys.join(', ') || whyBase,
+    });
+  }
+
   if (extras?.combatSummary) {
     log = pushTx(log, {
       rev,
@@ -258,6 +286,45 @@ export function appendStateTxDiff(
   }
 
   return { ...next, stateTxLog: log };
+}
+
+/** What earned a Heroic Inspiration, by milestone key prefix (rules/houseRules INSPIRING). */
+const INSPIRATION_REASON: Record<string, string> = { 'quest-complete': 'quest complete', 'spine-ending': 'ending reached' };
+
+/** Record rows that are something the engine granted or settled for the player. */
+const GRANT_KINDS: ReadonlySet<StateTxKind> = new Set<StateTxKind>([
+  'quest_reveal',
+  'quest_complete',
+  'quest_fail',
+  'inventory_gain',
+  'condition',
+  'inspiration',
+]);
+
+/** A quest row is named by its whole line; an item, condition or inspiration row by what was granted. */
+function grantStatusKey(t: StateTx): string {
+  return (t.kind.startsWith('quest_') ? t.summary : t.entity ?? t.summary).toLowerCase();
+}
+
+/**
+ * tt-fix-9 — the end-of-turn commit both play paths share (live `useGame`, headless `fateAutoplay`). Heroic
+ * Inspiration a milestone earned this turn is granted now (tabletop), the turn is diffed onto the record, and
+ * every grant the record holds for this turn becomes a STATUS line. A grant a line already shown this turn
+ * names is not said twice.
+ */
+export function commitTurnRecord(
+  previous: GameState,
+  next: GameState,
+  shown: string[],
+  extras?: { combatSummary?: string; why?: string }
+): { state: GameState; lines: string[] } {
+  const earned = next.engineMode === 'dnd' ? grantEarnedInspiration(next) : next;
+  const state = appendStateTxDiff(previous, earned, extras);
+  const said = shown.join('\n').toLowerCase();
+  const lines = (state.stateTxLog ?? [])
+    .filter((t) => t.turn === state.turn && GRANT_KINDS.has(t.kind) && !said.includes(grantStatusKey(t)))
+    .map((t) => t.summary);
+  return { state, lines: [...new Set(lines)] };
 }
 
 /** Append authoritative beat commit before GM prose (ArcDirector). */

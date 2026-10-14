@@ -219,8 +219,8 @@ export const HOSTILE_KINDS: ReadonlySet<RoadEncounterKind> = new Set(['thugs', '
 export const MEETING_WANT: Readonly<Record<RoadEncounterKind, readonly string[]>> = {
   wildlife: ['its kill left alone', 'you away from its young', 'food and nothing more', 'to pass by, wary'],
   traveler: ['news of the road ahead', 'company for the next stretch', 'to trade a little', 'directions'],
-  meeting: ['to know your business here', 'word of someone they are looking for', 'a hand with a heavy load', 'to sell what they carry'],
-  thugs: ['a toll for the road', 'your purse and nothing more', 'to know who sent you', 'you gone from their stretch'],
+  meeting: ['to know your business here', 'word of someone gone missing', 'a hand with a heavy load', 'to sell what they carry'],
+  thugs: ['a toll for the road', 'your purse and nothing more', 'to know who sent you', 'you gone from this stretch'],
   camp: ['to be left in peace', 'news from where you came from', 'to trade', 'to know if you are trouble'],
   undead: ['the living off their ground', 'what was taken from their graves', 'nothing but the living'],
   monster: ['to feed', 'its territory back', 'a way out, cornered'],

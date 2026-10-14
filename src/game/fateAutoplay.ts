@@ -205,6 +205,7 @@ import {
   type RenderFallbackReason,
 } from './sealedManifest';
 import { recordReplayHash, hashCanonicalState } from './replayHash';
+import { commitTurnRecord } from './stateTx';
 import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
@@ -2064,6 +2065,17 @@ Do NOT print dice notation or CODE ENFORCED.
       const log = [...(governed.log ?? [])];
       const last = log[log.length - 1];
       if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), receipt] };
+      governed = { ...governed, log };
+    }
+  }
+  {
+    const record = commitTurnRecord(state, governed, filteredSystemLog, { why: `Player: ${playerInput.slice(0, 120)}` });
+    governed = record.state;
+    if (record.lines.length) {
+      filteredSystemLog = [...filteredSystemLog, ...record.lines];
+      const log = [...(governed.log ?? [])];
+      const last = log[log.length - 1];
+      if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), ...record.lines] };
       governed = { ...governed, log };
     }
   }

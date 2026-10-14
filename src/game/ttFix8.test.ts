@@ -51,7 +51,7 @@ describe('1 — step chips come from the step record', () => {
 
 describe('2 — a person with no backed lines still answers', () => {
   it('Rosel Coyne answers from her own sheet, and nothing is asked of the writer', async () => {
-    const rosel = { npcId: 'rosel', npcName: 'Rosel Coyne', disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], location: 'Greyhollow Church', sheet: { job: 'artisan' } };
+    const rosel = { npcId: 'rosel', npcName: 'Rosel Coyne', disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], location: 'Greyhollow Church', sheet: { job: 'artisan', motive: 'Keep loved ones safe' } };
     const state = ck({ currentLocation: 'Greyhollow Church', npcMemories: [rosel] as unknown as GameState['npcMemories'] });
     const packet = { refEnum: [{ id: 'r1', klass: 'person', display: 'Rosel Coyne' }] } as unknown as CompletedEventPacket;
     const playerInput = 'Talk to Rosel Coyne';
@@ -67,7 +67,8 @@ describe('2 — a person with no backed lines still answers', () => {
       },
     });
     expect(asked).toEqual([]);
-    expect(out.prose).toContain(`"I'm the artisan here at Greyhollow Church," Rosel Coyne said.`);
+    // tt-fix-9: a talk is answered with what she wants, never her engine role.
+    expect(out.prose).toContain(`"I want to keep loved ones safe," Rosel Coyne said.`);
   });
 });
 

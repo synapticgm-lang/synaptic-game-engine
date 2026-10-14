@@ -2,11 +2,20 @@
 
 Every item below can be restored with git.
 
+- **tt-fix-9:** deleted in the tt-fix-9 commit (stamp `2026-10-14u`). The old text lives at its parent, **`68d01a47`**. Line numbers in that section are at `68d01a47`.
 - **tt-fix-8:** deleted in commit `8a55f995` (stamp `2026-10-14t`). The old text lives at its parent, **`e8c0e072`**. Line numbers in that section are at `e8c0e072`.
 - **tt-cut 2:** deleted in commit `cd2b8724` (stamp `2026-10-14s`). The old text lives at its parent, **`0e2419cb`**. Restore one file with `git show 0e2419cb:<path> > <path>`, or one item by copying its lines from that output. Line numbers below are the line numbers at `0e2419cb`.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## tt-fix-9 (restore from `68d01a47`)
+
+1. **`src/game/useGame.ts` lines 4639-4649** — `let mergedState: GameState = appendStateTxDiff(liveCurrent, mergedStateDraft, { combatSummary, why: … });` then `const turnReceipts = (mergedState.stateTxLog ?? []).filter((t) => t.turn === nextTurn).map((t) => \`Ledger: ${t.summary}\`);`. What it did: the live path's own record dump; every row this turn (HP, moved to, X is present, equipped, gained, quest complete) became a `Ledger:` STATUS line, and the headless fate path had no such step. Replaced by `stateTx.commitTurnRecord`, shared by live and fate, which reports only the record's grant rows (quest unlocked / complete / failed, item gained, condition, Heroic Inspiration) and skips one a line this turn already names. Line 292 import `appendStateTxDiff` → `commitTurnRecord`.
+2. **`src/game/npcSheet.ts` lines 220-222** — `const job = memory?.sheet?.job; const where = memory?.location; const own = job ? \`I'm the ${job}${where ? \` here at ${where}\` : ''}\` : '';` and the fallback `'I have nothing to tell you'` with the bare `${name} said`. What it did: answered any talk with the sheet's engine role and place ("I'm the quest patron here at Greyhollow Church"), whatever was asked; a speaker with no sheet ("stranger") got an article-less denial. Replaced by an answer to what was asked (want → sheet motive or the road meeting's own want; who → the name), with `the` before an unnamed speaker.
+3. **`src/game/rules/travelDay.ts` line 222 / 223** — `MEETING_WANT` entries `'word of someone they are looking for'` → `'word of someone gone missing'` and `'you gone from their stretch'` → `'you gone from this stretch'` (wording only, so the want reads in first person too).
 
 ---
 

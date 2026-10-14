@@ -840,6 +840,17 @@ function meetingWant(e: RoadEncounter): string {
 }
 
 /**
+ * tt-fix-9 — what the live road meeting a speaker label stands for wants ("word of someone gone missing"), as the
+ * meeting record holds it. '' for signs, a lair or a plea (those wants describe a scene, not what one says).
+ */
+export function roadMeetingWant(j: TravelJourney | null | undefined, speaker: string): string {
+  const e = j?.encounter;
+  if (!e?.want || roadMeetingOver(e) || SCENE_KINDS.has(e.kind) || e.kind === 'plea') return '';
+  const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  return bare(ENCOUNTER_LABEL[e.kind]) === bare(speaker) ? e.want : '';
+}
+
+/**
  * Writer fact: the meeting on this stretch is on the page before any chip meets it.
  * Who or what only: the meeting's reason for being here is STATUS chrome, so no one recites it.
  */

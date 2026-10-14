@@ -15,6 +15,8 @@ import type { GameState, NpcMemory, NpcSheet } from './types';
 import type { NpcRole } from './npcRoleRegistry';
 import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
 import { createHashRng } from './seededRng';
+import { hallTalkTopic } from './openingEstablishment';
+import { roadMeetingWant } from './travelJourney';
 
 type Archetype = {
   id: string;
@@ -208,19 +210,23 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
 }
 
 /**
- * tt-fix-8 — the answer a person gives when nothing else about them is on record: who they are from their saved
- * sheet (job, and where they are found). Said once; after that, or with no sheet, they say they have nothing to tell.
+ * tt-fix-8 / tt-fix-9 — the answer a person gives when nothing else about them is on record, to what was asked.
+ * "Who are you" gets a named person's name. Anything else gets what they want: their sheet's motive, else what the
+ * road meeting they stand for wants. The sheet's job is an engine role ("quest patron") and is never spoken.
+ * Said once; after that they have nothing more to tell. An unnamed person ("stranger") is "the stranger".
  */
-export function sheetAnswerLine(state: GameState, name: string, said: string[]): string {
+export function sheetAnswerLine(state: GameState, name: string, said: string[], playerInput = ''): string {
   const key = name.trim().toLowerCase();
   const memory = (state.npcMemories ?? []).find(
     (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),
   );
-  const job = memory?.sheet?.job;
-  const where = memory?.location;
-  const own = job ? `I'm the ${job}${where ? ` here at ${where}` : ''}` : '';
-  const words = own && !said.some((s) => s.includes(own)) ? own : 'I have nothing to tell you';
-  return `"${words}," ${name} said.`;
+  const named = /^[A-Z]/.test(name.trim());
+  const motive = memory?.sheet?.motive?.trim();
+  const meeting = roadMeetingWant(state.journey, name);
+  const want = motive ? `I want to ${motive.charAt(0).toLowerCase()}${motive.slice(1)}` : meeting ? `I want ${meeting}` : '';
+  const own = hallTalkTopic(playerInput) === 'who' && named ? `I'm ${name.trim()}` : want || "I'd rather not say";
+  const words = !said.some((s) => s.includes(own)) ? own : 'I have nothing more to tell you';
+  return `"${words}," ${named ? name : `the ${name}`} said.`;
 }
 
 /** What the writer may see: name, job, one motive, one fear, one way of speaking. Blank parts are left out. */

@@ -415,7 +415,7 @@ export async function repairMissingAnswer(
   // Only a backed line may be quoted. With nothing on record for anyone here, the engine answers from the sheet.
   const backed = new Map(here.map((p) => [p, backedAnswerFacts(check.state, p)] as const).filter(([, f]) => f.length));
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
-  if (!backed.size) return landAnswer(turn, check, missing, sheetAnswerLine(check.state, here[0]!, said));
+  if (!backed.size) return landAnswer(turn, check, missing, sheetAnswerLine(check.state, here[0]!, said, check.playerInput));
   const speakers = [...backed.keys()];
   const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
   if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };

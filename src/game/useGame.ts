@@ -289,7 +289,7 @@ import {
   nextLedgerRevision,
 } from './ledgerRevision';
 import { imagesKilled, signupsPaused } from './opsKillSwitches';
-import { appendStateTxDiff } from './stateTx';
+import { commitTurnRecord } from './stateTx';
 import {
   buildRevealVisibleText,
   revealDelayMs,
@@ -4636,17 +4636,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const combatSummary = ledgerRound
         ? formatCombatReceipt({ combat: ledgerRound }) ?? undefined
         : undefined;
-      let mergedState: GameState = appendStateTxDiff(liveCurrent, mergedStateDraft, {
+      const arcReceipts = pendingArcStatusReceipts ?? [];
+      const record = commitTurnRecord(liveCurrent, mergedStateDraft, [...mergedSystemLog, ...arcReceipts], {
         combatSummary,
         why: `Player: ${sanitizedInput.slice(0, 120)}`,
       });
-      // Material state receipts — player-visible ledger lines for this turn (vibe P0).
+      let mergedState: GameState = record.state;
+      // Engine grants this turn, read from the record (stateTx.commitTurnRecord), plus the arc receipts.
       {
-        const turnReceipts = (mergedState.stateTxLog ?? [])
-          .filter((t) => t.turn === nextTurn)
-          .map((t) => `Ledger: ${t.summary}`);
-        const arcReceipts = pendingArcStatusReceipts ?? [];
-        const allReceipts = [...arcReceipts, ...turnReceipts];
+        const allReceipts = [...arcReceipts, ...record.lines];
         if (allReceipts.length) {
           mergedState = {
             ...mergedState,
