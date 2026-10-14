@@ -6,6 +6,12 @@ export function roadMeetingFact(_j: unknown): string { return ''; }
 export function roadMeetingPerson(_state: unknown): string { return ''; }
 export function roadMeetingOnBeat(_state: unknown): { label: string; count: number } | null { return null; }
 
+/** This turn's travel beat facts for the writer (empty on any other turn). */
+export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {
+  const b = state.travelBeat;
+  return b && b.turn === (state.turn ?? 0) && b.facts.length ? b.facts.join(' ') : '';
+}
+
 export const UNDERWAY_HERE = 'On the road between places';
 
 const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
