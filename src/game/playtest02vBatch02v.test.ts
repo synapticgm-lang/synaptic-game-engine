@@ -11,7 +11,7 @@ import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import {
   classifyBeatCommit,
-  isFactClosedViolation,
+  factClosedViolationReason,
   isWriterMonologueLeak,
   scrubDirectorChrome,
 } from './beatCommitGate';
@@ -124,8 +124,8 @@ describe('Batch 02v — lastKill living-talk after clear', () => {
   it('rejects skirmisher stir / twitch toward a fallen blade', () => {
     let state = createInitialState(undefined, 'litrpg') as GameState;
     state = { ...attachLastKill(state, KILL), turn: 18 };
-    expect(isFactClosedViolation(state, STIR)).toBe(true);
-    expect(isFactClosedViolation(state, CORPSE)).toBe(false);
+    expect(!!factClosedViolationReason(state, STIR)).toBe(true);
+    expect(!!factClosedViolationReason(state, CORPSE)).toBe(false);
     const out = scrubDeadFoeReengage(STIR, KILL, false);
     expect(out).not.toMatch(/\bstirs\b/i);
     expect(out).toMatch(/fallen Pact-Hunter Skirmisher/i);
@@ -141,7 +141,7 @@ describe('Batch 02v — companion as object slot', () => {
     expect(isCompanionObjectGlue(PUSH_DUSK, names)).toBe(true);
     expect(isCompanionObjectGlue(CHEST, names)).toBe(true);
     expect(isSlotGlueViolation(TAKE_WREN, names)).toBe(true);
-    expect(isFactClosedViolation(roadState(), TAKE_WREN)).toBe(true);
+    expect(!!factClosedViolationReason(roadState(), TAKE_WREN)).toBe(true);
     expect(isObjectPersonPad('Take the Wren Holt', names)).toBe(true);
     expect(isObjectPersonPad('Push the Dusk lane', names)).toBe(true);
     expect(isObjectPersonPad('Talk to Wren Holt', names)).toBe(false);

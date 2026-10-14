@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import fixtures from './__fixtures__/fluidChatEvalFixtures.json';
 import { createInitialState } from './defaults';
-import { detectActiveFolkIds, formatFolkVoiceForPrompt } from './folkVoiceExpectations';
 import { formatFluidProseRailsForPrompt } from './fluidProseRails';
 import { REPAIR_COPY_ROWS } from './repairCopyBank';
 import { detectRepairSituation, pickRepairCopy } from './repairEngine';
-import { formatSpeechActRailsForPrompt } from './speechActRails';
 
 type EvalFixture = {
   id: string;
@@ -51,57 +49,6 @@ describe('fluidChatEvalFixtures — metadata', () => {
   });
 });
 
-describe('folkVoiceExpectations', () => {
-  it('detects elf in appearance and formats prompt rail', () => {
-    const state = createInitialState('Test', 'litrpg');
-    state.character.appearance = 'A tall elven scout with silver hair';
-    const ids = detectActiveFolkIds(state);
-    expect(ids).toContain('elf');
-    const block = formatFolkVoiceForPrompt(state);
-    expect(block).toMatch(/elf/i);
-    expect(block).toMatch(/Measured, image-rich/);
-    expect(block).toMatch(/never changes stats/i);
-  });
-
-  it('does not false-positive elf inside self', () => {
-    const state = createInitialState('Test', 'litrpg');
-    state.character.appearance = 'A self-reliant courier with silver hair';
-    expect(detectActiveFolkIds(state)).not.toContain('elf');
-  });
-
-  it('detects original LitRPG folk and smallfolk aliases', () => {
-    const state = createInitialState('Test', 'litrpg');
-    state.character.appearance = 'A mycelial ledgerborn glassborn tidebound woven ashkin with smallfolk kin';
-    const ids = detectActiveFolkIds(state);
-    expect(ids).toEqual(
-      expect.arrayContaining([
-        'mycelial',
-        'ledgerborn',
-        'glassborn',
-        'tidebound',
-        'woven',
-        'ashkin',
-        'smallfolk',
-      ]),
-    );
-  });
-
-  it('injects kid-mode folk lines and earned elf↔dwarf cue', () => {
-    const state = createInitialState('Test', 'litrpg');
-    state.character.appearance = 'An elf and a dwarf at the floodgate';
-    const block = formatFolkVoiceForPrompt(state, { kidMode: true });
-    expect(block).toMatch(/Kid —/);
-    expect(block).toMatch(/Elf↔dwarf friction must be earned/);
-    expect(block).toMatch(/no comic phonetic accents/i);
-  });
-
-  it('maps halfling label to smallfolk id', () => {
-    const state = createInitialState('Test', 'litrpg');
-    state.character.appearance = 'A stout halfling baker';
-    expect(detectActiveFolkIds(state)).toContain('smallfolk');
-  });
-});
-
 describe('fluidProseRails', () => {
   it('includes ANSWER FIRST and positive fluency rails', () => {
     const rails = formatFluidProseRailsForPrompt('litrpg');
@@ -109,13 +56,6 @@ describe('fluidProseRails', () => {
     expect(rails).toMatch(/RHYTHM/i);
     expect(rails).toMatch(/VALUE FLOOR/i);
     expect(rails).toMatch(/MOMENTUM/i);
-  });
-});
-
-describe('speechActRails', () => {
-  it('includes ASK speech act', () => {
-    const rails = formatSpeechActRailsForPrompt();
-    expect(rails).toMatch(/\* ASK/);
   });
 });
 

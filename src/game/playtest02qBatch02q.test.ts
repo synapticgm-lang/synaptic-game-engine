@@ -9,7 +9,7 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
-import { isFactClosedViolation, classifyBeatCommit } from './beatCommitGate';
+import { factClosedViolationReason, classifyBeatCommit } from './beatCommitGate';
 import {
   isLeaveReachFightBleed,
   isOneCameraFightViolation,
@@ -62,7 +62,7 @@ describe('Batch 02q — one camera / one fight', () => {
     expect(isLeaveReachFightBleed(T17)).toBe(true);
     const state = fightState();
     expect(isOneCameraFightViolation(state, T17)).toBe(true);
-    expect(isFactClosedViolation(state, T17)).toBe(true);
+    expect(!!factClosedViolationReason(state, T17)).toBe(true);
     expect(classifyBeatCommit(state, T17).accept).toBe(false);
   });
 
@@ -93,7 +93,7 @@ describe('Batch 02q — one camera / one fight', () => {
       },
       turn: 20,
     };
-    expect(isFactClosedViolation(closed, T10_BLADE)).toBe(true);
-    expect(isFactClosedViolation(closed, 'Rain drums the awning. The road is open.')).toBe(false);
+    expect(!!factClosedViolationReason(closed, T10_BLADE)).toBe(true);
+    expect(!!factClosedViolationReason(closed, 'Rain drums the awning. The road is open.')).toBe(false);
   });
 });

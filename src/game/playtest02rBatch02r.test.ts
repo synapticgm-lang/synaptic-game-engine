@@ -11,7 +11,7 @@ import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import type { GameState, LogEntry } from './types';
 import { buildContextPrompt } from './systemPrompt';
-import { isFactClosedViolation, classifyBeatCommit } from './beatCommitGate';
+import { factClosedViolationReason, classifyBeatCommit } from './beatCommitGate';
 import {
   selectRecentLogForContext,
   isStaleContextBleed,
@@ -134,12 +134,12 @@ describe('Batch 02r — stale context commit', () => {
     const bleed =
       'Behind you, the Sevenfold Circle has gone still. The handler waits at the ring.';
     expect(isStaleContextBleed(state, bleed)).toBe(true);
-    expect(isFactClosedViolation(state, bleed)).toBe(true);
+    expect(!!factClosedViolationReason(state, bleed)).toBe(true);
     expect(classifyBeatCommit(state, bleed).accept).toBe(false);
     expect(
-      isFactClosedViolation(state, 'You left the Sevenfold Circle behind. Lowmarket rain hits the stalls.')
+      !!factClosedViolationReason(state, 'You left the Sevenfold Circle behind. Lowmarket rain hits the stalls.')
     ).toBe(false);
-    expect(isFactClosedViolation(state, 'A vendor under a patched tarp meets your glance.')).toBe(false);
+    expect(!!factClosedViolationReason(state, 'A vendor under a patched tarp meets your glance.')).toBe(false);
   });
 
   it('rejects post-clear steel in the last 2 turns', () => {
@@ -161,7 +161,7 @@ describe('Batch 02r — stale context commit', () => {
     };
     const steel = "The skirmisher's blade stops mid-arc, a handspan from your throat.";
     expect(isStaleContextBleed(closed, steel)).toBe(true);
-    expect(isFactClosedViolation(closed, steel)).toBe(true);
-    expect(isFactClosedViolation(closed, 'Rain drums the awning. The road is open.')).toBe(false);
+    expect(!!factClosedViolationReason(closed, steel)).toBe(true);
+    expect(!!factClosedViolationReason(closed, 'Rain drums the awning. The road is open.')).toBe(false);
   });
 });

@@ -46,7 +46,7 @@ import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
-import { fightRolls } from './engineFactPatterns';
+import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { handedExits } from './exitCount';
 import { roundCombatChips } from './tabletop/combatChips';
 
@@ -91,25 +91,6 @@ export interface TurnCheck {
   presentNames: string[];
 }
 
-export const TURN_CHECK_P0_KINDS: ReadonlySet<TurnCheckKind> = new Set([
-  'ghost-chip',
-  'impossible-chip',
-  'unrelated-chip',
-  'ignored-action',
-  'open-ground-interior',
-  'bad-floor-plan',
-  'unestablished-quest-place',
-  'broken-prose',
-  'sheet-forgotten',
-  'levelup-no-change',
-  'lock-without-skill',
-  'plays-player',
-  'absent-speaker',
-  'wrong-voice',
-  'lecture-ending',
-  'ghost-talk',
-  'window-touched',
-]);
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
@@ -304,7 +285,7 @@ export function checkActionFollowed(
     } else if (words.length) {
       const verb = actionVerb(act);
       const family = VERB_FAMILY.find((f) => f.verb.test(verb));
-      if (family && !family.told.test(text.replace(/["“][^"”]*["”]/g, ' '))) {
+      if (family && !family.told.test(narrationOf(text))) {
         down.push({
           kind: 'verb-swapped',
           detail: `player chose to ${verb} the ${words.join(' ')}; the prose names it but never ${family.name}s it`,
@@ -352,7 +333,7 @@ export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
   const out: TurnCheckFlag[] = [];
   const text = norm(prose);
   if (!text) return out;
-  const narration = text.replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narrationOf(text);
   const hit = (re: RegExp, why: string) => {
     const m = narration.match(re);
     if (m) out.push({ kind: 'broken-prose', detail: `${why}: "${m[0].trim()}"` });
@@ -368,7 +349,7 @@ export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
   const name = norm(pcName);
   if (name && name.length >= 2) {
     const first = name.split(/\s+/)[0]!;
-    const told = new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(narration);
+    const told = new RegExp(`\\b${escRe(first)}\\b`).test(narration);
     if (told && /\byour\b/i.test(narration) && !/\byou\b/i.test(narration)) {
       const m = narration.match(/\byour\s+[a-z]+/i);
       out.push({ kind: 'broken-prose', detail: `"${m?.[0] ?? 'your'}" in narration that tells ${first} in the third person` });
@@ -520,7 +501,7 @@ const WHO_ASK = /\bwho are you\b/i;
 export function checkEmptyRoomTalk(state: GameState, chips: string[], prose: string, action = ''): TurnCheckFlag[] {
   if (!placeSaysEmpty(state, prose)) return [];
   const out: TurnCheckFlag[] = [];
-  const narration = prose.replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narrationOf(prose);
   const ears = [...new Set([...listenersOnEmptyText(state), ...peopleHere(state).filter((p) => mentionsName(narration, p))])];
   for (const chip of chips) {
     const label = norm(chip);
@@ -555,7 +536,7 @@ function systemWindowInPlay(state: GameState, prose: string): boolean {
 export function checkSystemWindow(state: GameState, chips: string[], prose: string): TurnCheckFlag[] {
   if (!systemWindowInPlay(state, prose)) return [];
   const out: TurnCheckFlag[] = [];
-  const narration = norm(prose).replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narrationOf(norm(prose));
   const lines = narration.split(/(?<=[.!?])\s+/);
   const touched = lines
     .map((s, i) => {
@@ -586,7 +567,6 @@ export function checkRepeatChips(chips: string[], action: string, roundChips: st
     .map((c) => ({ kind: 'repeat-chip' as const, detail: `"${norm(c)}" repeats the previous action ("${norm(action).slice(0, 60)}")` }));
 }
 
-const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const SPEECH_VERB =
   '(?:said|says|answered|answers|asked|asks|added|replied|replies|told|tells|called|calls|whispered|whispers|muttered|mutters|snapped|snaps|let the name)';
 const SYSTEM_TERMS =
@@ -624,10 +604,10 @@ export function checkPlayCrimes(
   const down: TurnCheckFlag[] = [];
   const text = norm(prose);
   if (!text) return { p0, down };
-  const narration = text.replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narrationOf(text);
 
   const pc = norm(after.character?.name).split(/\s+/)[0] ?? '';
-  const who = pc.length >= 2 ? `(?:${esc(pc)}|you)` : 'you';
+  const who = pc.length >= 2 ? `(?:${escRe(pc)}|you)` : 'you';
   // A quote closed by a full stop ends its sentence: a following "Jax said…" is new indirect speech, not its tag.
   // A quote tagged before it ('Col said, "…?"') is that speaker's; a "Jax said" after it is not its tag.
   const taggedBefore = (head: string) => {
@@ -657,9 +637,9 @@ export function checkPlayCrimes(
     if (names.some((n) => here.some((h) => h === low(n) || h.includes(low(n)) || low(n).includes(h)))) continue;
     const spoke = names.find((n) => {
       // "Pellane" inside "Pellane War Camp" is the place, not King Pellane.
-      const inPlace = placeNames.filter((p) => p.length > n.length && new RegExp(`\\b${esc(n)}\\b`, 'i').test(p));
-      const t = inPlace.reduce((acc, p) => acc.replace(new RegExp(`\\b${esc(p)}\\b`, 'gi'), (x) => '~'.repeat(x.length)), text);
-      return new RegExp(`\\b${esc(n)}\\b[^.!?]{0,30}\\b${SPEECH_VERB}\\b|\\b${esc(n)}\\b[^.!?"“]{0,20}["“]`, 'i').test(t);
+      const inPlace = placeNames.filter((p) => p.length > n.length && new RegExp(`\\b${escRe(n)}\\b`, 'i').test(p));
+      const t = inPlace.reduce((acc, p) => acc.replace(new RegExp(`\\b${escRe(p)}\\b`, 'gi'), (x) => '~'.repeat(x.length)), text);
+      return new RegExp(`\\b${escRe(n)}\\b[^.!?]{0,30}\\b${SPEECH_VERB}\\b|\\b${escRe(n)}\\b[^.!?"“]{0,20}["“]`, 'i').test(t);
     });
     if (spoke) p0.push({ kind: 'absent-speaker', detail: `${m.npcName} speaks but is not here at ${after.currentLocation || 'this place'}` });
   }
@@ -684,7 +664,7 @@ export function checkPlayCrimes(
     .map(norm)
     .filter((n) => n.length >= 3)
     .sort((a, b) => b.length - a.length);
-  const mask = (t: string) => masks.reduce((acc, n) => acc.replace(new RegExp(esc(n), 'gi'), ' ~ '), t);
+  const mask = (t: string) => masks.reduce((acc, n) => acc.replace(new RegExp(escRe(n), 'gi'), ' ~ '), t);
   const old = new Set(gmBodies(before).slice(-3).flatMap((b) => fiveGrams(mask(b))));
   const again = fiveGrams(mask(text)).find((g) => old.has(g));
   if (again) down.push({ kind: 'repeated-habit', detail: `"${again}" comes back from an earlier beat` });

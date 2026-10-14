@@ -105,8 +105,8 @@ function saltAfterFirstWant(): GameState {
 
 describe('playtest17g — writer always + Token Prose after page 1', () => {
   it('HUD/BUILD are 17g, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14r');
-    expect(BUILD_STAMP).toBe('2026-10-14r');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14s');
+    expect(BUILD_STAMP).toBe('2026-10-14s');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

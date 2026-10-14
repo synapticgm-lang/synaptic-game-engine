@@ -15,7 +15,7 @@ import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { buildEntityCast } from './entityCast';
 import {
   classifyBeatCommit,
-  isFactClosedViolation,
+  factClosedViolationReason,
   isWriterMonologueLeak,
 } from './beatCommitGate';
 import { isOpeningOccupancyReset } from './sceneContextTail';
@@ -138,8 +138,8 @@ describe('Batch 02y — place-title slot glue', () => {
     expect(ledgerPlaceTitles(state).some((t) => /sevenfold/i.test(t))).toBe(true);
     expect(isSlotGlueViolation(take, [], ledgerPlaceTitles(state))).toBe(true);
     expect(isSlotGlueViolation(open, [], ledgerPlaceTitles(state))).toBe(true);
-    expect(isFactClosedViolation(state, take)).toBe(true);
-    expect(isFactClosedViolation(state, open)).toBe(true);
+    expect(!!factClosedViolationReason(state, take)).toBe(true);
+    expect(!!factClosedViolationReason(state, open)).toBe(true);
     expect(scrubSlotGlue(take, [], ledgerPlaceTitles(state))).not.toMatch(/take The Sevenfold hands/i);
     expect(applyProseWarden(take, { currentLocation: 'Sevenfold Circle', knownPlaces: ['Sevenfold Circle'] })).not.toMatch(
       /take The Sevenfold hands/i
@@ -149,7 +149,7 @@ describe('Batch 02y — place-title slot glue', () => {
   it('keeps legal stranger speech and Wren Holt', () => {
     const stranger = 'The stranger shouts from the stall.';
     expect(isSlotGlueViolation(stranger)).toBe(false);
-    expect(isFactClosedViolation(roadState(), stranger)).toBe(false);
+    expect(!!factClosedViolationReason(roadState(), stranger)).toBe(false);
     expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road')).toBe(true);
   });
 });
@@ -177,7 +177,7 @@ describe('Batch 02y — charter prose burn', () => {
     expect(isPyoaCharterClosed(harvested)).toBe(true);
 
     const intact = "The charter's weight sits against your chest again. The seal is intact.";
-    expect(isFactClosedViolation(state, intact)).toBe(true);
+    expect(!!factClosedViolationReason(state, intact)).toBe(true);
     expect(classifyBeatCommit(state, intact).accept).toBe(false);
   });
 
@@ -205,7 +205,7 @@ describe('Batch 02y — imperative craft + legal no one else', () => {
   it('keeps legal story mentioning no one else', () => {
     const ok = 'Rain drums the awning. There is no one else at the gate.';
     expect(isWriterMonologueLeak(ok)).toBe(false);
-    expect(isFactClosedViolation(litrpgState(), ok)).toBe(false);
+    expect(!!factClosedViolationReason(litrpgState(), ok)).toBe(false);
     expect(classifyBeatCommit(litrpgState(), ok).accept).toBe(true);
   });
 });
@@ -237,7 +237,7 @@ describe('Batch 02y — occupancy after leave-travel', () => {
     const priest = 'Scale priests stand in the Sevenfold Circle and look up.';
     const farewell = 'She stays behind, watching you go until the fog swallows her.';
     expect(isOpeningOccupancyReset(state, handler)).toBe(true);
-    expect(isFactClosedViolation(state, handler)).toBe(true);
+    expect(!!factClosedViolationReason(state, handler)).toBe(true);
     expect(isOpeningOccupancyReset(state, priest)).toBe(true);
     expect(isOpeningOccupancyReset(state, farewell)).toBe(false);
     const here = 'Rain drums the West Wall stones. The road east is open.';

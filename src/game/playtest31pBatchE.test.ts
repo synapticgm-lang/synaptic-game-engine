@@ -11,7 +11,7 @@ import { stripChoiceList } from './parser';
 import {
   isVerbatimStallStub,
   repairRejectedBeat,
-  stitchCommitDelta,
+  codedSceneMove,
 } from './beatCommitGate';
 import { isBannedFallbackStub } from './sealedManifest';
 import {
@@ -72,7 +72,7 @@ describe('playtest31pBatchE', () => {
         lastBeat: '',
         updatedTurn: 2,
       };
-      const stitch = stitchCommitDelta(state);
+      const stitch = codedSceneMove(state);
       expect(isVerbatimStallStub(stitch)).toBe(false);
       expect(stitch).not.toMatch(/moment has not moved on/i);
       expect(stitch).not.toMatch(/figure\s+1\s+is still here/i);

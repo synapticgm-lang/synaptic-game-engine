@@ -24,7 +24,7 @@ import {
 import {
   isDirectorChromeLeak,
   isVerbatimStallStub,
-  stitchCommitDelta,
+  codedSceneMove,
 } from './beatCommitGate';
 import { autoFightSpawnPreface } from './combatAuthority';
 import { stripChoiceList } from './parser';
@@ -160,7 +160,7 @@ describe('playtest31rBatchG', () => {
       const state = createInitialState(undefined, 'litrpg');
       state.currentLocation = 'ruin chamber';
       state.sceneFacts = { present: ['bystanders'], props: ['crate'] };
-      const stitch = stitchCommitDelta(state);
+      const stitch = codedSceneMove(state);
       expect(stitch).not.toMatch(/holds the beat/i);
       expect(stitch).not.toMatch(/a glance,\s*a breath/i);
       expect(stitch).not.toMatch(/\bbystanders\b/i);

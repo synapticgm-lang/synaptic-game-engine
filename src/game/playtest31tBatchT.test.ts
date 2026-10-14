@@ -24,7 +24,7 @@ import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { stripChoiceList } from './parser';
 import { compileChoices } from './choiceCompiler';
 import {
-  stitchCommitDelta,
+  codedSceneMove,
   isVerbatimStallStub,
   repairRejectedBeat,
 } from './beatCommitGate';
@@ -144,7 +144,7 @@ describe('playtest31tBatchT', () => {
           updatedTurn: 17,
         },
       } as GameState;
-      const stitch = stitchCommitDelta(state);
+      const stitch = codedSceneMove(state);
       expect(stitch).not.toMatch(/\bAhead\b/);
       expect(stitch).not.toMatch(/figure\s+1/i);
       expect(stitch).not.toMatch(/is done yielding|room asks|one clear next move/i);

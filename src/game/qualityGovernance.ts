@@ -120,7 +120,6 @@ import {
 
 export interface QualityGovernanceState {
   turnsSinceLastEncounter?: number;
-  lastHubLocation?: string;
   metaRecoveryTurn?: number;
   optionCooldowns?: Record<string, OptionCooldown>;
   discoveryLedger?: Record<string, DiscoveryRecord>;
@@ -130,9 +129,6 @@ export interface QualityGovernanceState {
     bannedTopics: string[];
   };
   recoveryMandate?: string;
-  recentXpAwards?: Array<{ amount: number; reason: string; type: string; turn: number }>;
-  /** Last-turn craft flags (collage / atmosphere / name / pad / hook). */
-  craftSignals?: CraftSignal[];
 }
 
 function qg(state: GameState): QualityGovernanceState {
@@ -638,10 +634,6 @@ export function applyGovernanceCommit(
       // 28a — discovery XP retired (milestone XP only, XP-PLAN.md). Ledger still records the find.
       const updatedLedger = updateDiscoveryLedger([discovery], nextWithNpc.turn, ledger);
       qualityGovernance.discoveryLedger = Object.fromEntries(updatedLedger);
-      qualityGovernance.recentXpAwards = [
-        ...(prevQg.recentXpAwards ?? []).slice(-99),
-        { amount: discovery.amount, reason: discovery.reason, type: discovery.type, turn: nextWithNpc.turn },
-      ];
     }
   }
 
@@ -653,11 +645,6 @@ export function applyGovernanceCommit(
   );
   if (!invCheck.valid && invCheck.violations.length) {
     systemNotes.push(`Inventory: blocked ${invCheck.violations.length} conservation violation(s)`);
-  }
-
-  const hubLoc = nextWithNpc.currentLocation ?? '';
-  if (hubLoc && hubLoc !== prevQg.lastHubLocation) {
-    qualityGovernance.lastHubLocation = hubLoc;
   }
 
   const hadEncounter =
@@ -677,7 +664,6 @@ export function applyGovernanceCommit(
     notes: systemNotes,
     nextChoices: nextWithNpc.choices ?? next.choices,
   });
-  qualityGovernance.craftSignals = signals;
   const craftLedger = applyCraftLearning(
     previous.craftLedger,
     signals,

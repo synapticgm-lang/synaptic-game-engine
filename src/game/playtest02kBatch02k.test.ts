@@ -8,7 +8,7 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { scrubDeadFoeReengage } from './proseWarden';
-import { isFactClosedViolation } from './beatCommitGate';
+import { factClosedViolationReason } from './beatCommitGate';
 import { attachLastKill } from './combatAuthority';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
@@ -45,13 +45,13 @@ describe('Batch 02k — Lock C: dead foe living rez', () => {
     let state = createInitialState(undefined, 'litrpg') as GameState;
     state = attachLastKill(state, KILL);
     expect(
-      isFactClosedViolation(
+      !!factClosedViolationReason(
         state,
         'the Void-Touched Scavenger, a stout man with a bushy beard, looks up from his mug of ale and nods in greeting.'
       )
     ).toBe(true);
     expect(
-      isFactClosedViolation(state, 'The fallen Void-Touched Scavenger lies where you left them.')
+      !!factClosedViolationReason(state, 'The fallen Void-Touched Scavenger lies where you left them.')
     ).toBe(false);
   });
 

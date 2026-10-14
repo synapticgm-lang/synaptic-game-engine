@@ -10,7 +10,7 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
-import { isFactClosedViolation } from './beatCommitGate';
+import { factClosedViolationReason } from './beatCommitGate';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { applyProseWarden } from './proseWarden';
 import {
@@ -54,7 +54,7 @@ describe('Batch 02t stamps', () => {
 describe('Batch 02t — slot / object glue', () => {
   it('rejects and scrubs lid-open-the-stranger glue', () => {
     expect(isSlotGlueViolation(OPEN_STRANGER)).toBe(true);
-    expect(isFactClosedViolation(roadState(), OPEN_STRANGER)).toBe(true);
+    expect(!!factClosedViolationReason(roadState(), OPEN_STRANGER)).toBe(true);
     const scrubbed = scrubSlotGlue(OPEN_STRANGER);
     expect(scrubbed).not.toMatch(/open the stranger/i);
     expect(applyProseWarden(OPEN_STRANGER)).not.toMatch(/open the stranger/i);
@@ -72,7 +72,7 @@ describe('Batch 02t — slot / object glue', () => {
   it('keeps a legal the-stranger speaker', () => {
     const ok = 'The stranger shouts from the stall.';
     expect(isSlotGlueViolation(ok)).toBe(false);
-    expect(isFactClosedViolation(roadState(), ok)).toBe(false);
+    expect(!!factClosedViolationReason(roadState(), ok)).toBe(false);
     expect(applyProseWarden(ok)).toMatch(/the stranger shouts/i);
   });
 
@@ -80,7 +80,7 @@ describe('Batch 02t — slot / object glue', () => {
     expect(isPlotObjectName('Charter')).toBe(true);
     expect(canHarvestAsNamedPerson('Charter', 'thornferry-road')).toBe(false);
     expect(isSlotGlueViolation(CHARTER_PERSON)).toBe(true);
-    expect(isFactClosedViolation(roadState(), CHARTER_PERSON)).toBe(true);
+    expect(!!factClosedViolationReason(roadState(), CHARTER_PERSON)).toBe(true);
     expect(scrubSlotGlue(CHARTER_PERSON)).toMatch(/^Someone looks up/);
     expect(isObjectPersonPad('Ask Charter')).toBe(true);
     expect(isObjectPersonPad('Talk to the charter')).toBe(true);

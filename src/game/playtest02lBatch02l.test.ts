@@ -9,7 +9,7 @@ import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { recordPyoaBranchChoice, isPyoaCharterClosed, initPyoaBranchLedger } from './pyoaBranchLedger';
-import { isFactClosedViolation } from './beatCommitGate';
+import { factClosedViolationReason } from './beatCommitGate';
 import { scrubDestroyedPyoaItems } from './proseWarden';
 import { rewriteChromePersonClauses, isPolityFactionOrPlaceToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
@@ -47,12 +47,12 @@ describe('Batch 02l — Lock C: charter sale closes the topic', () => {
   it('rejects clerk-takes / pack-still-has replay after sale', () => {
     const after = recordPyoaBranchChoice(pyoaState(), 'Sell the charter to Pell');
     expect(
-      isFactClosedViolation(after, 'The rain eases as the clerk takes the charter from your hands.')
+      !!factClosedViolationReason(after, 'The rain eases as the clerk takes the charter from your hands.')
     ).toBe(true);
     expect(
-      isFactClosedViolation(after, 'The charter is in your pack, sealed paper heavier than its weight.')
+      !!factClosedViolationReason(after, 'The charter is in your pack, sealed paper heavier than its weight.')
     ).toBe(true);
-    expect(isFactClosedViolation(after, 'The road east is wet. Wren keeps pace.')).toBe(false);
+    expect(!!factClosedViolationReason(after, 'The road east is wet. Wren keeps pace.')).toBe(false);
   });
 
   it('scrubs sale-replay prose', () => {

@@ -14,7 +14,7 @@ import { npcRecordNames } from './npcRecords';
 import { newGameState, rosterRecord } from './newGameTestState';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { sealedCastNames } from './beatContract';
-import { classifyBeatCommit, isFactClosedViolation, codedSceneMove } from './beatCommitGate';
+import { classifyBeatCommit, factClosedViolationReason, codedSceneMove } from './beatCommitGate';
 import { isSlotGlueViolation } from './slotGlue';
 import { isNeverCastTitle, ledgerNeverCastTitles } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
@@ -139,8 +139,8 @@ describe('Batch 02aa — never-CAST lock', () => {
     expect(isSlotGlueViolation(mark, [], titles)).toBe(true);
     expect(isSlotGlueViolation(salt, [], titles)).toBe(true);
     expect(isSlotGlueViolation(weigh, [], titles)).toBe(true);
-    expect(isFactClosedViolation(litrpgState(), scale)).toBe(true);
-    expect(isFactClosedViolation(litrpgState(), 'Wren Holt watches you from the stall.')).toBe(false);
+    expect(!!factClosedViolationReason(litrpgState(), scale)).toBe(true);
+    expect(!!factClosedViolationReason(litrpgState(), 'Wren Holt watches you from the stall.')).toBe(false);
   });
 });
 
@@ -151,9 +151,9 @@ describe('Batch 02aa — fact-close post-commit', () => {
     const back = 'The copper sits warm in your palm, heavier than it looked — a single stamped piece.';
     let state = applyClosedFactHarvest(roadState(), give);
     expect(state.sceneFacts?.givenAway?.some((n) => /copper/i.test(n))).toBe(true);
-    expect(isFactClosedViolation(state, back)).toBe(true);
+    expect(!!factClosedViolationReason(state, back)).toBe(true);
     expect(classifyBeatCommit(state, back, 'Look at your hand').accept).toBe(false);
-    expect(isFactClosedViolation(roadState(), back)).toBe(false);
+    expect(!!factClosedViolationReason(roadState(), back)).toBe(false);
   });
 
   it('flood saved cannot rewind as a live climbing crisis', () => {
@@ -163,9 +163,9 @@ describe('Batch 02aa — fact-close post-commit', () => {
       'The flood room is worse than the door promised. The millrace is coming through white and fast — the water\'s already breast-high and still climbing.';
     let state = applyClosedFactHarvest(roadState(), saved);
     expect(state.sceneFacts?.resolvedCrises).toContain('flood');
-    expect(isFactClosedViolation(state, rewind)).toBe(true);
+    expect(!!factClosedViolationReason(state, rewind)).toBe(true);
     expect(classifyBeatCommit(state, rewind, 'Open the next door').accept).toBe(false);
-    expect(isFactClosedViolation(roadState(), rewind)).toBe(false);
+    expect(!!factClosedViolationReason(roadState(), rewind)).toBe(false);
   });
 });
 

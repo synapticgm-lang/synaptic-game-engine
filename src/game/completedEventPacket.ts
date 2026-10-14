@@ -259,16 +259,6 @@ export interface TokenUseRef {
 const WRITER_RHYTHM_WINDOW = 2;
 const WRITER_RHYTHM_CHAR_CAP = 500;
 
-const TITLE_NAME =
-  /\b((?:[A-Z][a-z]+(?:-[A-Z][a-z]+)?\s+){0,2}[A-Z][a-z]+(?:-[A-Z][a-z]+)?)\b/g;
-
-/** Sentence-start grammar — not a novel-token list. */
-const SENTENCE_STARTERS = new Set([
-  'the', 'a', 'an', 'your', 'you', 'then', 'after', 'before', 'when', 'while',
-  'but', 'and', 'so', 'now', 'there', 'this', 'that', 'these', 'those', 'its',
-  'his', 'her', 'their', 'our', 'my', 'once', 'still', 'next', 'last', 'first',
-]);
-
 function lastPlayerAction(state: GameState, playerInput?: string): string {
   const typed = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   if (typed) return typed;
@@ -1468,31 +1458,6 @@ export function mentionAllowlistHas(allowlist: string[], token: string): boolean
   });
 }
 
-function allowlistHas(allowlist: string[], token: string): boolean {
-  return mentionAllowlistHas(allowlist, token);
-}
-
-export function inventedTitleCaseNotOnAllowlist(prose: string, allowlist: string[]): string[] {
-  const body = (prose ?? '').trim();
-  if (!body) return [];
-  const found: string[] = [];
-  const seen = new Set<string>();
-  const re = new RegExp(TITLE_NAME.source, 'g');
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(body))) {
-    const name = (m[1] ?? '').trim();
-    if (!name || seen.has(name.toLowerCase())) continue;
-    if (SENTENCE_STARTERS.has(name.toLowerCase())) continue;
-    if (allowlistHas(allowlist, name)) continue;
-    const before = body.slice(Math.max(0, m.index - 1), m.index);
-    const atStart = m.index === 0 || /[\n.!?]\s*$/.test(body.slice(Math.max(0, m.index - 8), m.index)) || before === '';
-    if (atStart && SENTENCE_STARTERS.has(name.split(/\s+/)[0]?.toLowerCase() ?? '')) continue;
-    seen.add(name.toLowerCase());
-    found.push(name);
-  }
-  return found;
-}
-
 function isInstructionVoice(text: string): boolean {
   return (
     /\bMy instruction says\b/i.test(text)
@@ -2389,10 +2354,6 @@ function topicAdvanceStitch(
   const salt = (state.turn ?? 0) + act.length;
   const pool = topicAdvancePool(state, packet, playerInput);
   return pickAdvanceVariant(pool, recent, salt).replace(/\s+/g, ' ').trim();
-}
-
-function ledgerAdvanceBeat(state: GameState, packet?: CompletedEventPacket, playerInput?: string): string {
-  return topicAdvanceStitch(state, packet, playerInput);
 }
 
 function lastResortUsable(state: GameState, prose: string, lastGm: string): string {

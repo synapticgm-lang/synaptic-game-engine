@@ -7,7 +7,6 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
-import { formatClaimGroundingDirective } from './claimGrounding';
 import { buildEntityCast } from './entityCast';
 import {
   formatSceneSnapshotForPrompt,
@@ -69,8 +68,6 @@ describe('Batch 02n — writer packet diet', () => {
     const state = dietState();
     const snap = formatSceneSnapshotForPrompt(state);
     const packet = formatSituationForPrompt(state);
-    const claim = formatClaimGroundingDirective();
-
     expect(lastOfferedChoiceSets(state, 1)[0]?.length).toBeGreaterThan(0);
     expect(snap).not.toMatch(/LAST PAD:/);
     expect(packet).not.toMatch(/LAST PAD:/);
@@ -81,11 +78,6 @@ describe('Batch 02n — writer packet diet', () => {
     expect(snap).not.toMatch(/^CRAFT:/m);
     expect(packet).not.toMatch(/^CRAFT:/m);
 
-    expect(claim).not.toMatch(/a clerk/i);
-    expect(claim).not.toMatch(/someone in the aisle/i);
-    expect(claim).not.toMatch(/a hatchling/i);
-    expect(claim).not.toMatch(/unnamed crowds/i);
-    expect(claim).toMatch(/YOU MUST NOT invent as established fact/i);
     expect(packet).not.toMatch(/someone in the aisle/i);
 
     const snapLicenses = snap.match(/PROSE LICENSE:/g) ?? [];

@@ -250,11 +250,6 @@ export function withMissingFightFacts(state: GameState, prose: string, pov: Figh
   return [before, prose.trim(), ...after].filter(Boolean).join(' ');
 }
 
-/** Lock C — prose that reopens a ledger-closed fact. */
-export function isFactClosedViolation(state: GameState, text: string): boolean {
-  return factClosedViolationReason(state, text) !== null;
-}
-
 const REOPENED_FACT = 'Reopens a closed fact (a destroyed item or a dead foe acting).';
 
 /** Which closed-fact check the prose fails, as the writer's revision line (null when none). */
@@ -333,11 +328,6 @@ export function codedSceneMove(state: GameState): string {
       : `Copper and wet stone smell thick in ${loc}. Someone nearby shifts, expecting you to act.`,
   ].filter(Boolean);
   return bank[turn % bank.length] || bank[bank.length - 1]!;
-}
-
-/** @deprecated alias — use codedSceneMove */
-export function stitchCommitDelta(state: GameState): string {
-  return codedSceneMove(state);
 }
 
 /** Batch U — meta stitch / commit-gate / director bank fingerprints (never commit as story). */

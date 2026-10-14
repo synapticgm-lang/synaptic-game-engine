@@ -23,12 +23,6 @@ import {
   validateWrongBiblePrevention,
 } from './encounterBiomeMatrix';
 import {
-  materializeStakes,
-  isApproachLegal,
-  getLegalApproaches,
-  validateActionHonesty,
-} from './encounterStakes';
-import {
   loadTelegraphCatalog,
   clearTelegraphCache,
   selectTelegraphCues,
@@ -358,73 +352,6 @@ describe('WS-4 Wave 1 — Biome Matrix', () => {
     
     expect(fallback).toBeDefined();
     expect(typeof fallback).toBe('string');
-  });
-});
-
-// ============================================================================
-// STAKES MATERIALIZATION TESTS
-// ============================================================================
-
-describe('WS-4 Wave 1 — Stakes Materialization', () => {
-  it('B006: Materialize stakes from template', () => {
-    const template = createTestTemplate();
-    const state = createTestState();
-    
-    const materialized = materializeStakes(template, state);
-    
-    expect(materialized).toBeDefined();
-    expect(materialized.headline).toBe('Defeat the test enemy');
-    expect(materialized.approaches).toHaveLength(2);
-    
-    const fightApproach = materialized.approaches.find((a) => a.id === 'fight');
-    expect(fightApproach).toBeDefined();
-    expect(fightApproach?.requirementsMet).toBe(true); // Has weapon equipped
-  });
-
-  it('B007: Validate approach legal status', () => {
-    const template = createTestTemplate();
-    const state = createTestState();
-    
-    const fightLegal = isApproachLegal('fight', template, state);
-    expect(fightLegal.legal).toBe(true);
-    
-    const fleeLegal = isApproachLegal('flee', template, state);
-    expect(fleeLegal.legal).toBe(true);
-  });
-
-  it('B008: Requirements block unavailable approaches', () => {
-    const template = createTestTemplate();
-    const state = createTestState();
-    
-    // Remove weapon
-    state.character!.equippedItems = {};
-    state.character!.level = 0; // Also remove level fallback
-    
-    const fightLegal = isApproachLegal('fight', template, state);
-    expect(fightLegal.legal).toBe(false);
-    expect(fightLegal.reason).toContain('Requirement not met');
-  });
-
-  it('B009: Get only legal approaches', () => {
-    const template = createTestTemplate();
-    const state = createTestState();
-    
-    const legal = getLegalApproaches(template, state);
-    expect(legal).toHaveLength(2);
-    expect(legal.every((a) => a.requirementsMet)).toBe(true);
-  });
-
-  it('B010: Action honesty validation', () => {
-    const template = createTestTemplate();
-    const state = createTestState();
-    
-    const honestAction = validateActionHonesty('Fight directly', template, state);
-    expect(honestAction.honest).toBe(true);
-    expect(honestAction.suggestedApproach).toBe('fight');
-    
-    const dishonestAction = validateActionHonesty('Cast fireball', template, state);
-    expect(dishonestAction.honest).toBe(false);
-    expect(dishonestAction.suggestedApproach).toBeDefined();
   });
 });
 

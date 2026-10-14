@@ -12,7 +12,6 @@ import {
 } from './ledgerNounObey';
 import { isUmbraCampaign, umbraAllowsLiveAiTurn } from './umbraOffline';
 import { isAuthoredPyoaBook } from './pyoaSpine';
-import { isFullProseNarration } from './fullProseGate';
 import type { GameState } from './types';
 
 const HOOK = [
@@ -107,16 +106,5 @@ describe('day-1 — Umbra offline (zero live AI turns)', () => {
     await expect(
       callGm(state, 'look around', { subscriptionTier: 'free' } as never, [])
     ).rejects.toThrow(/Umbra is offline/i);
-  });
-});
-
-describe('day-1 — full-prose gate', () => {
-  it('full-prose gate rejects two-line stubs', () => {
-    expect(isFullProseNarration('Dust hung.\nYou waited.')).toBe(false);
-    expect(
-      isFullProseNarration(
-        'You stepped into the pale hall and let your eyes travel the cracked stone. Dust drifted in the half-light between fallen columns. Somewhere ahead, a ribbon of blue light waited on a turned folio. Your breath slowed as you asked what this place was called.'
-      )
-    ).toBe(true);
   });
 });

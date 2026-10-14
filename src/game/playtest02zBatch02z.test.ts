@@ -26,7 +26,7 @@ import { createDefaultSettings } from './defaults';
 import {
   classifyBeatCommit,
   codedSceneMove,
-  isFactClosedViolation,
+  factClosedViolationReason,
 } from './beatCommitGate';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { isOpeningOccupancyReset, isLeftBehindActingHere } from './sceneContextTail';
@@ -225,7 +225,7 @@ describe('Batch 02z — invented CAST fails then stitch stays legal', () => {
         lastKill: { name: 'Pact-Hunter Skirmisher', outcome: 'victory', turn: 14, remains: true },
       },
     });
-    expect(isFactClosedViolation(litrpgState(), ok)).toBe(false);
+    expect(!!factClosedViolationReason(litrpgState(), ok)).toBe(false);
     expect(classifyBeatCommit(litrpgState(), ok).accept).toBe(true);
     expect(classifyBeatCommit(roadState(), talk, 'Talk to Wren Holt').accept).toBe(true);
     expect(classifyBeatCommit(wall, corpse, 'Check the body').accept).toBe(true);

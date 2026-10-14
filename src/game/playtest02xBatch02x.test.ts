@@ -21,7 +21,7 @@ import {
   classifyBeatCommit,
   isEngineChromeOnlyBeat,
   isExactPriorGmBody,
-  isFactClosedViolation,
+  factClosedViolationReason,
   isHudCombatChromeLeak,
   isWriterMonologueLeak,
 } from './beatCommitGate';
@@ -152,7 +152,7 @@ describe('Batch 02x — Lock B: CAST named-only', () => {
   it('rejects invented Brother Tam identity splice without occupancy', () => {
     const empty = litrpgState({ sceneFacts: { ...emptySceneFacts(8), present: [] } });
     expect(isInventedNamedIdentity(empty, 'Brother Tam nods from the stall.')).toBe(true);
-    expect(isFactClosedViolation(empty, 'Brother Tam nods from the stall.')).toBe(true);
+    expect(!!factClosedViolationReason(empty, 'Brother Tam nods from the stall.')).toBe(true);
     const known = litrpgState({
       sceneFacts: { ...emptySceneFacts(8), present: ['Father Karel'] },
     });
@@ -180,7 +180,7 @@ describe('Batch 02x — Lock C: fact-closed scenes', () => {
     expect(gained.state.inventory?.some((i) => /charter/i.test(i.name))).toBe(false);
 
     const chest = 'The charter\'s weight sits against your chest again.';
-    expect(isFactClosedViolation(state, chest)).toBe(true);
+    expect(!!factClosedViolationReason(state, chest)).toBe(true);
     expect(classifyBeatCommit(state, chest).accept).toBe(false);
   });
 
@@ -189,8 +189,8 @@ describe('Batch 02x — Lock C: fact-closed scenes', () => {
     state = { ...state, turn: 16, activeEncounter: undefined };
     const talk = 'The skirmisher talks to you from the wet cobbles, asking about the rain.';
     const corpse = 'The rain hisses across the cobbles; the skirmisher is already down, lashed to the post.';
-    expect(isFactClosedViolation(state, talk)).toBe(true);
-    expect(isFactClosedViolation(state, corpse)).toBe(false);
+    expect(!!factClosedViolationReason(state, talk)).toBe(true);
+    expect(!!factClosedViolationReason(state, corpse)).toBe(false);
     expect(classifyBeatCommit(state, talk).accept).toBe(false);
   });
 
@@ -198,7 +198,7 @@ describe('Batch 02x — Lock C: fact-closed scenes', () => {
     let state = attachLastKill(litrpgState(), KILL);
     state = { ...state, turn: 17, activeEncounter: undefined };
     const recycle = 'The rock connects, and she lands hard in the alley mouth.';
-    expect(isFactClosedViolation(state, recycle)).toBe(true);
+    expect(!!factClosedViolationReason(state, recycle)).toBe(true);
     expect(classifyBeatCommit(state, recycle).accept).toBe(false);
   });
 
@@ -236,7 +236,7 @@ describe('Batch 02x — Lock C: fact-closed scenes', () => {
     });
     const reset = 'The handler waits in the Sevenfold Circle as if you never left.';
     expect(isOpeningOccupancyReset(state, reset)).toBe(true);
-    expect(isFactClosedViolation(state, reset)).toBe(true);
+    expect(!!factClosedViolationReason(state, reset)).toBe(true);
     const here = 'Rain drums the West Wall stones. The road east is open.';
     expect(isOpeningOccupancyReset(state, here)).toBe(false);
   });
@@ -302,8 +302,8 @@ describe('Batch 02x — Lock D: instruction / chrome / salad shape', () => {
     const stranger = 'The stranger shouts from the stall.';
     const state = roadState();
     expect(isWriterMonologueLeak(namesOk)).toBe(false);
-    expect(isFactClosedViolation(state, namesOk)).toBe(false);
-    expect(isFactClosedViolation(state, stranger)).toBe(false);
+    expect(!!factClosedViolationReason(state, namesOk)).toBe(false);
+    expect(!!factClosedViolationReason(state, stranger)).toBe(false);
     expect(isSlotGlueViolation(stranger)).toBe(false);
     expect(classifyBeatCommit(state, namesOk).accept).toBe(true);
     expect(classifyBeatCommit(state, talk).accept).toBe(true);

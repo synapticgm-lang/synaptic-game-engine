@@ -25,7 +25,7 @@ import {
 import {
   classifyBeatCommit,
   isEntropyShapeSalad,
-  isFactClosedViolation,
+  factClosedViolationReason,
   isTokenSaladLeak,
 } from './beatCommitGate';
 import { attachLastKill } from './combatAuthority';
@@ -144,7 +144,7 @@ describe('Batch 02j — Lock C: fact-closed scenes', () => {
       },
     };
     expect(
-      isFactClosedViolation(state, 'You still clutched the charter. Will you leave its fate to the rain?')
+      !!factClosedViolationReason(state, 'You still clutched the charter. Will you leave its fate to the rain?')
     ).toBe(true);
     expect(
       classifyBeatCommit(state, 'You still clutched the charter. Will you leave its fate to the rain?').accept

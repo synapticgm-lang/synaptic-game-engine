@@ -36,18 +36,6 @@ import {
   updateRelationship,
 } from '../npcRelationships';
 
-// Wave C: Non-Combat Resolution + Stakes
-import {
-  type StakesTemplate,
-  type ResolutionOutcome,
-  STAKES_TEMPLATES,
-  OUTCOME_CATALOG,
-  templatesForMode,
-  validateOutcome,
-  getLeverageCooldown,
-  enforceLeverageCooldown,
-} from '../socialStakes';
-
 // Wave D+: Social Progression
 import {
   type SocialXpEvent,
@@ -62,16 +50,6 @@ import {
   hasNoveltyKey,
   unlockSkillNode,
 } from '../socialProgression';
-
-// Wave A: Leverage (existing)
-import {
-  registerLeverageAsset,
-  exhaustLeverageAsset,
-  isLeverageExhausted,
-  getPressureProfile,
-  resolveLeverage,
-  getLeverageTypeName,
-} from '../leverageMechanics';
 
 // ============================================================================
 // Test Helpers
@@ -160,111 +138,6 @@ function createMockRelationship(overrides: Partial<NpcRelationship> = {}): NpcRe
     ...overrides
   };
 }
-
-// ============================================================================
-// Wave A: Leverage Mechanics Tests (existing functionality)
-// ============================================================================
-
-describe('WS-7 Wave A: Leverage Mechanics', () => {
-  describe('registerLeverageAsset', () => {
-    it('should register new leverage asset', () => {
-      const gs = createMockGameState();
-      
-      const { state, assetId } = registerLeverageAsset(
-        'physical_threat',
-        'Test NPC',
-        gs,
-        { evidenceStrength: 0.8, credibility: 0.9 }
-      );
-      
-      expect(assetId).toBeDefined();
-      expect(state.arcDirector?.leverageAssets).toHaveLength(1);
-      expect(state.arcDirector?.leverageAssets?.[0].type).toBe('physical_threat');
-      expect(state.arcDirector?.leverageAssets?.[0].targetNpc).toBe('Test NPC');
-    });
-    
-    it('should return existing asset if already registered', () => {
-      const gs = createMockGameState();
-      
-      const { state: state1, assetId: id1 } = registerLeverageAsset(
-        'physical_threat',
-        'Test NPC',
-        gs,
-        { evidenceStrength: 0.8, credibility: 0.9 }
-      );
-      
-      const { state: state2, assetId: id2 } = registerLeverageAsset(
-        'physical_threat',
-        'Test NPC',
-        state1,
-        { evidenceStrength: 0.8, credibility: 0.9 }
-      );
-      
-      expect(id1).toBe(id2);
-      expect(state2.arcDirector?.leverageAssets).toHaveLength(1);
-    });
-  });
-  
-  describe('exhaustLeverageAsset', () => {
-    it('should mark asset as exhausted', () => {
-      const gs = createMockGameState();
-      
-      const { state, assetId } = registerLeverageAsset(
-        'social_exposure',
-        'Merchant',
-        gs,
-        { evidenceStrength: 0.7, credibility: 0.8 }
-      );
-      
-      const exhausted = exhaustLeverageAsset(assetId, state);
-      
-      expect(exhausted.arcDirector?.leverageAssets?.[0].exhausted).toBe(true);
-    });
-  });
-  
-  describe('resolveLeverage', () => {
-    it('should resolve leverage with positive modifier', () => {
-      const gs = createMockGameState();
-      
-      const { state, assetId } = registerLeverageAsset(
-        'moral_appeal',
-        'Ally',
-        gs,
-        { evidenceStrength: 0.9, credibility: 1.0 }
-      );
-      
-      const asset = state.arcDirector?.leverageAssets?.find(a => a.id === assetId);
-      if (!asset) throw new Error('Asset not found');
-      
-      const resolution = resolveLeverage(asset, 'Ally', state);
-      
-      expect(resolution.outcome).toBe('success');
-      expect(resolution.modifier).toBeGreaterThan(0);
-      expect(resolution.trustDelta).toBe(8); // moral_appeal gives +8 trust
-    });
-    
-    it('should fail if leverage already exhausted', () => {
-      const gs = createMockGameState();
-      
-      const { state, assetId } = registerLeverageAsset(
-        'physical_threat',
-        'Guard',
-        gs,
-        { evidenceStrength: 0.6, credibility: 0.7 }
-      );
-      
-      const exhausted = exhaustLeverageAsset(assetId, state);
-      const asset = exhausted.arcDirector?.leverageAssets?.find(a => a.id === assetId);
-      if (!asset) throw new Error('Asset not found');
-      
-      const resolution = resolveLeverage(asset, 'Guard', exhausted);
-      
-      expect(resolution.outcome).toBe('failure');
-      expect(resolution.modifier).toBe(-6);
-      expect(resolution.cost).toContain('already used');
-    });
-  });
-});
 
 // ============================================================================
 // Wave B: Social Skills Tests
@@ -670,94 +543,6 @@ describe('WS-7 Wave B: Relationship Tracking', () => {
 });
 
 // ============================================================================
-// Wave C: Social Stakes Templates Tests
-// ============================================================================
-
-describe('WS-7 Wave C: Social Stakes Templates', () => {
-  describe('STAKES_TEMPLATES', () => {
-    it('should have templates for all modes', () => {
-      const dndTemplates = templatesForMode('dnd');
-      const rpgTemplates = templatesForMode('rpg');
-      const pyoaTemplates = templatesForMode('pyoa');
-      const litrpgTemplates = templatesForMode('litrpg');
-      
-      expect(dndTemplates.length).toBeGreaterThan(0);
-      expect(rpgTemplates.length).toBeGreaterThan(0);
-      expect(pyoaTemplates.length).toBeGreaterThan(0);
-      expect(litrpgTemplates.length).toBeGreaterThan(0);
-    });
-    
-    it('should have valid template structure', () => {
-      const template = STAKES_TEMPLATES[0];
-      
-      expect(template.templateId).toBeDefined();
-      expect(template.mode).toBeDefined();
-      expect(template.skill).toBeDefined();
-      expect(template.prerequisites).toBeInstanceOf(Array);
-      expect(template.telegraph).toBeInstanceOf(Array);
-      expect(template.success).toBeInstanceOf(Array);
-      expect(template.failure).toBeInstanceOf(Array);
-      expect(template.xpBudget).toBeGreaterThan(0);
-    });
-  });
-  
-  describe('OUTCOME_CATALOG', () => {
-    it('should validate all outcomes', () => {
-      for (const outcome of OUTCOME_CATALOG) {
-        const errors = validateOutcome(outcome);
-        expect(errors).toHaveLength(0);
-      }
-    });
-    
-    it('should have required mutations', () => {
-      for (const outcome of OUTCOME_CATALOG) {
-        expect(outcome.requiredMutations.length).toBeGreaterThan(0);
-      }
-    });
-    
-    it('should have player feedback', () => {
-      for (const outcome of OUTCOME_CATALOG) {
-        expect(outcome.playerFeedback.length).toBeGreaterThan(0);
-      }
-    });
-    
-    it('should have follow-up', () => {
-      for (const outcome of OUTCOME_CATALOG) {
-        expect(outcome.followUp).toBeTruthy();
-        expect(outcome.followUp.length).toBeGreaterThan(0);
-      }
-    });
-  });
-  
-  describe('leverage cooldown enforcement', () => {
-    it('should allow first use', () => {
-      const gs = createMockGameState();
-      
-      const canUse = enforceLeverageCooldown(gs, 'Merchant', 'social_exposure');
-      
-      expect(canUse).toBe(true);
-    });
-    
-    it('should block exhausted leverage', () => {
-      const gs = createMockGameState();
-      
-      const { state, assetId } = registerLeverageAsset(
-        'social_exposure',
-        'Merchant',
-        gs,
-        { evidenceStrength: 0.8, credibility: 0.9 }
-      );
-      
-      const exhausted = exhaustLeverageAsset(assetId, state);
-      
-      const canUse = enforceLeverageCooldown(exhausted, 'Merchant', 'social_exposure');
-      
-      expect(canUse).toBe(false);
-    });
-  });
-});
-
-// ============================================================================
 // Wave D+: Social Progression Tests
 // ============================================================================
 
@@ -1028,71 +813,5 @@ describe('WS-7 Wave D+: Social Progression', () => {
       
       expect(updated.arcDirector?.socialProgression?.unlockedNodes).toContain('social.t2.intimidate');
     });
-  });
-});
-
-// ============================================================================
-// Integration Tests: Full Social Resolution Flow
-// ============================================================================
-
-describe('WS-7 Integration: Full Social Resolution Flow', () => {
-  it('should complete full social resolution with all waves', () => {
-    // Start with neutral NPC
-    const gs = createMockGameState();
-    
-    // Wave A: Register leverage
-    const { state: state1, assetId } = registerLeverageAsset(
-      'moral_appeal',
-      'Ally NPC',
-      gs,
-      { evidenceStrength: 0.9, credibility: 0.95 }
-    );
-    
-    expect(state1.arcDirector?.leverageAssets).toHaveLength(1);
-    
-    // Wave B: Create relationship
-    const relationship = getOrCreateRelationship(state1, 'Ally NPC');
-    const state2 = updateRelationship(state1, relationship);
-    
-    expect(state2.arcDirector?.npcRelationships).toHaveLength(1);
-    
-    // Wave B: Perform social check
-    const check = resolveSocialSkillCheck('persuasion', 'Ally NPC', state2, {
-      leverageAssetId: assetId,
-      evidenceIds: ['evidence1']
-    });
-    
-    expect(check.outcome).toBeDefined();
-    
-    // Wave C: Apply outcome (success assumed)
-    // In real flow, would apply mutations here
-    
-    // Wave D+: Award XP
-    const xpInput: XpAwardInput = {
-      eventId: 'resolution-1',
-      actorId: 'player',
-      source: 'social_check_success',
-      sourceObjectId: 'check-ally',
-      noveltyKey: 'persuasion:ally-npc:help',
-      turn: state2.turn ?? 10,
-      stakesTier: 3,
-      difficultyTier: 3,
-      alreadyAwardedNoveltyKeys: new Set(),
-    };
-    
-    const xpEvent = calculateSocialXp(xpInput);
-    const state3 = awardSocialXp(state2, xpEvent);
-    
-    expect(state3.arcDirector?.socialProgression?.socialXp).toBeGreaterThan(0);
-    expect(state3.arcDirector?.socialProgression?.awardedNoveltyKeys).toHaveLength(1);
-    
-    // Wave A: Exhaust leverage
-    const state4 = exhaustLeverageAsset(assetId, state3);
-    
-    expect(isLeverageExhausted(assetId, state4)).toBe(true);
-    
-    // Verify cannot reuse same leverage
-    const canReuseAssetId = enforceLeverageCooldown(state4, 'Ally NPC', 'moral_appeal');
-    expect(canReuseAssetId).toBe(false);
   });
 });

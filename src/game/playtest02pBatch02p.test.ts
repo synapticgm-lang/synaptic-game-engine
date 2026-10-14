@@ -10,7 +10,7 @@ import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import { initPyoaBranchLedger } from './pyoaBranchLedger';
-import { isFactClosedViolation, classifyBeatCommit } from './beatCommitGate';
+import { factClosedViolationReason, classifyBeatCommit } from './beatCommitGate';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { compileChoices } from './choiceCompiler';
@@ -50,20 +50,20 @@ describe('Batch 02p — invented clerk / closed-scene person', () => {
   it('rejects stranger-clerk glue and falls-into-step after leave (02n PYOA)', () => {
     const road = pyoaAt('rain road east of Thornferry');
     expect(
-      isFactClosedViolation(road, 'The stranger clerk falls into step beside you.')
+      !!factClosedViolationReason(road, 'The stranger clerk falls into step beside you.')
     ).toBe(true);
     expect(
       classifyBeatCommit(road, 'The stranger clerk falls into step beside you.').accept
     ).toBe(false);
     expect(
-      isFactClosedViolation(road, 'A clerk waits at the chapel door.')
+      !!factClosedViolationReason(road, 'A clerk waits at the chapel door.')
     ).toBe(true);
   });
 
   it('allows a first mill-landing clerk, then harvests occupancy not CAST', () => {
     const mill = pyoaAt('mill landing at Thornferry');
     const prose = 'A clerk waits by the dock with a ledger book.';
-    expect(isFactClosedViolation(mill, prose)).toBe(false);
+    expect(!!factClosedViolationReason(mill, prose)).toBe(false);
     const next = harvestNarrativeIntoLedger(mill, prose, 8);
     expect(next.sceneFacts?.anonymousRoles).toContain('clerk');
     expect(next.sceneFacts?.present?.some((p) => /^clerk$/i.test(p))).toBe(false);
@@ -92,7 +92,7 @@ describe('Batch 02p — invented clerk / closed-scene person', () => {
 
   it('keeps named companions and hub Crown Clerk pads', () => {
     const road = pyoaAt('rain road east of Thornferry');
-    expect(isFactClosedViolation(road, 'The road east is wet. Wren keeps pace.')).toBe(false);
+    expect(!!factClosedViolationReason(road, 'The road east is wet. Wren keeps pace.')).toBe(false);
     const hall = createInitialState(undefined, 'litrpg') as GameState;
     const atHall: GameState = {
       ...hall,

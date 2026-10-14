@@ -14,8 +14,8 @@ import { basename, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The game gate reads the same file (src/game/engineFactGate.ts), so play, autoplay and this checker agree.
 import {
-  agencyPatterns, BAG_WORD, choicePosePatterns, fightRolls, HIT_WORDS, questStepLeak, questTitleNamed, rollContradiction, travelRecordRead,
-  WORN_OR_BODY,
+  agencyPatterns, BAG_WORD, choicePosePatterns, escRe, fightRolls, HIT_WORDS, narrationOf, questStepLeak, questTitleNamed, rollContradiction,
+  travelRecordRead, WORN_OR_BODY,
 } from '../src/game/engineFactPatterns.ts';
 
 const RUNS = resolve('scripts/fate-autoplay/runs');
@@ -226,7 +226,7 @@ export function checkTurn(row, packet, page = '') {
     if (!flags.some((f) => f.kind === kind && f.quote === quote && f.missing === missing)) flags.push({ kind, quote, missing });
   };
   const pc = packet.match(/^The player character is ([^:.,(]+)/m)?.[1]?.trim() || 'Jax';
-  const who = `(?:${pc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}|you)`;
+  const who = `(?:${escRe(pc)}|you)`;
   const rolls = fightRolls(facts.engineResult);
   // The packet writes "- quest Title — step: …" (an em dash).
   const openSteps = [...packet.matchAll(/^- quest .+? [-—–] step: (.+)$/gm)].map((m) => m[1]);
@@ -313,10 +313,9 @@ export function checkTurn(row, packet, page = '') {
           const lp = lower(p);
           if (p.length < 4 || facts.hereNames.some((h) => namesHere(p, h))) continue;
           // A capitalised name is the place only when written capitalised ("Close", not "kept their clothes close").
-          const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           const nameRe = /[A-Z]/.test(p)
-            ? new RegExp(`\\b(?:[Tt]he\\s+)?${esc(p.replace(/^the\s+/i, ''))}\\b`)
-            : new RegExp(`\\b${esc(lp)}\\b`, 'i');
+            ? new RegExp(`\\b(?:[Tt]he\\s+)?${escRe(p.replace(/^the\s+/i, ''))}\\b`)
+            : new RegExp(`\\b${escRe(lp)}\\b`, 'i');
           const hit = clauseText.match(nameRe);
           const at = hit?.index ?? -1;
           if (at < 0 || taken.some(([a, b]) => at < b && at + hit[0].length > a)) continue;
@@ -364,7 +363,7 @@ export function checkTurn(row, packet, page = '') {
       if (facts.allowText.includes(lower(p))) continue;
       if (test.every((w) => facts.allowText.includes(lower(w)))) continue;
       // "Two Worn Hand Axes" after a handed Worn Hand Axe is more of that handed thing.
-      const handedWhole = (o) => new RegExp(`(?<![a-z])${lower(o).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z])`).test(facts.allowText);
+      const handedWhole = (o) => new RegExp(`(?<![a-z])${escRe(lower(o))}(?![a-z])`).test(facts.allowText);
       if (/s$/.test(p) && [p.replace(/s$/, ''), p.replace(/es$/, '')].some(handedWhole)) continue;
       add('name', s, `"${p}" is not in the mention list, refs, receipts or open quests`);
     }
@@ -392,7 +391,7 @@ export function checkTurn(row, packet, page = '') {
         const ownerNoun = before.match(/\b(\w+)[’']s\s+(?:\w+\s+){0,2}$/i)?.[1];
         if (ownerNoun && lower(ownerNoun) !== lower(pc)) continue;
         const subjectOwns = !!subject && !STOP_CAPS.has(lower(subject)) && lower(subject) !== lower(pc)
-          && new RegExp(`\\b${lower(subject).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(facts.allowText);
+          && new RegExp(`\\b${escRe(lower(subject))}\\b`).test(facts.allowText);
         // "the peeling paper notices": the word only says what a handed thing is made of.
         const head = after.match(/^ ([a-z]+)\b/)?.[1];
         if (head && head.length > 3 && !LINK_WORD.test(head) && !/(?:ed|ly|ing)$/.test(head) && inHanded(facts, head)) continue;
@@ -463,7 +462,7 @@ export function checkTurn(row, packet, page = '') {
     const movePassive = moveM && /\b(?:be|being|been|is|was|were|are|get|gets|got|getting)\s+$/i.test(moveLead);
     if (facts.noMove && moveM && !moveNotYet && !movePassive) {
       // Whole words only: "the courtyard stones" does not name a place called Court.
-      const namesPlace = (p) => new RegExp(`(?<![\\w'-])${lower(p).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`).test(lower(s));
+      const namesPlace = (p) => new RegExp(`(?<![\\w'-])${escRe(lower(p))}(?![\\w-])`).test(lower(s));
       const named = facts.placeNames.find((p) => p.length > 3 && namesPlace(p) && !facts.hereNames.some((h) => namesHere(p, h)));
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }
@@ -490,7 +489,7 @@ export function checkTurn(row, packet, page = '') {
       add('agency', s, `the narrator decides ${pc}'s mind`);
     }
   }
-  if (rolls.isFight && rolls.foeHits > 0 && !HIT_WORDS.test(prose.replace(/["“][^"”]*["”]/g, ' '))) {
+  if (rolls.isFight && rolls.foeHits > 0 && !HIT_WORDS.test(narrationOf(prose))) {
     add('roll', prose.slice(0, 160), `the engine rolled ${rolls.foeHits} hit(s) on ${pc}; the beat shows none`);
   }
   return flags;

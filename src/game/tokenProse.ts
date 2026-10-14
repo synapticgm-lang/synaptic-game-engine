@@ -28,7 +28,7 @@ import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
 import { buildGroundTruthLedger } from './writerInfoLayer';
-import { BAG_WORD, WORN_OR_BODY } from './engineFactPatterns';
+import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
 
 export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
 
@@ -106,46 +106,6 @@ const UNBOUND_ANIMATE = new RegExp(
 
 const TOK_RE = /@t(\d+)\b/g;
 
-export const TOKEN_PROSE_JSON_SCHEMA = {
-  name: 'token_prose',
-  strict: true,
-  schema: {
-    type: 'object',
-    additionalProperties: false,
-    properties: {
-      refs: {
-        type: 'array',
-        items: {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            tok: { type: 'string' },
-            id: { type: 'string' },
-            use: {
-              type: 'string',
-              enum: ['speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place'],
-            },
-          },
-          required: ['tok', 'id', 'use'],
-        },
-      },
-      lines: {
-        type: 'array',
-        items: {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            fn: { type: 'string', enum: ['place', 'action', 'speech', 'react', 'hook'] },
-            text: { type: 'string' },
-            speaker_tok: { type: 'string' },
-          },
-          required: ['fn', 'text'],
-        },
-      },
-    },
-    required: ['refs', 'lines'],
-  },
-} as const;
 
 function tidy(text: string): string {
   return (text ?? '')
@@ -309,10 +269,9 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
  */
 export function tellsSpeechFromOutside(beat: TokenBeat, enumRefs: LedgerRef[], state: GameState): TokenBeat {
   const pc = (state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
-  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const namesPc = (words: string) => {
     if (pc.length < 2) return false;
-    for (const m of words.matchAll(new RegExp(`\\b${esc(pc)}\\b`, 'g'))) {
+    for (const m of words.matchAll(new RegExp(`\\b${escRe(pc)}\\b`, 'g'))) {
       const before = words.slice(0, m.index).trimEnd();
       const after = words.slice(m.index! + pc.length);
       const addressed = (!before || /[,;:\u2014\u2013!?.]$/.test(before)) && /^(?:[,!?.;:]|\s*$)/.test(after);
@@ -333,7 +292,7 @@ export function tellsSpeechFromOutside(beat: TokenBeat, enumRefs: LedgerRef[], s
   const opensOnSelf = (words: string, tok: string) =>
     !/\b(?:I|I'm|I've|I'll|I'd|me|my|mine|we|us|our|you|your)\b/i.test(words)
     && selfWords(tok).some((w) => {
-      const next = words.match(new RegExp(`^(?:(?:the|a|an)\\s+)?${esc(w)}(?:['\u2019]s)?(\\s+\\S)`, 'i'))?.[1];
+      const next = words.match(new RegExp(`^(?:(?:the|a|an)\\s+)?${escRe(w)}(?:['\u2019]s)?(\\s+\\S)`, 'i'))?.[1];
       return !!next && /\s[a-z]/.test(next);
     });
   let changed = false;
@@ -461,7 +420,7 @@ export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean
     .split('\n')
     .filter((l) => /^engine result:/i.test(l.trim()))
     .flatMap((l) => [...l.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)].map((m) => m[1]!.toLowerCase()));
-  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
   for (const [slots, re] of DAY_PART_WORDS) {
     if (slots.split(' ').some((s) => s === slot || engineSlots.includes(s))) continue;
     for (const m of narration.matchAll(re)) {
@@ -511,7 +470,7 @@ const PAGE_MARK = '\u0000page\u0000';
  */
 export function lineHasUnhandedCarriedThing(text: string, handedText: string): boolean {
   const handed = handedText.split(PAGE_MARK)[0]!;
-  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
   for (const m of narration.matchAll(CARRIED_THING)) {
     const head = m[2]!.toLowerCase();
     if (BODY_PART.test(head)) continue;
@@ -531,11 +490,10 @@ export function lineHasUnhandedCarriedThing(text: string, handedText: string): b
 export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName?: string): boolean {
   const pc = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
   if (pc.length < 2) return false;
-  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   // A ledger note in brackets ("(stored; not in a bag)") describes a row; it hands no thing.
   const held = handedText.split(PAGE_MARK)[0]!.replace(/\([^)]*\)/g, ' ');
-  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
-  const subject = new RegExp(`^\\s*(?:${esc(pc)}|You)\\b[^,;:]*$`);
+  const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
+  const subject = new RegExp(`^\\s*(?:${escRe(pc)}|You)\\b[^,;:]*$`);
   for (const m of narration.matchAll(HANDLED_OWN)) {
     const owner = m[1]!;
     const at = m.index ?? 0;
@@ -548,7 +506,7 @@ export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName
     if (WORN_OR_BODY.test(head) || WORN_OR_BODY.test(owned)) continue;
     if (BAG_WORD.test(head) && /\bbag\b/.test(held)) continue;
     const modifier = m[2]!.trim().split(/\s+/).pop()?.toLowerCase() ?? '';
-    const said = (w: string) => w.length >= 3 && new RegExp(`\\b${esc(w)}`).test(held);
+    const said = (w: string) => w.length >= 3 && new RegExp(`\\b${escRe(w)}`).test(held);
     if (said(head) || said(head.replace(/e?s$/, '')) || said(modifier)) continue;
     return true;
   }
@@ -567,7 +525,7 @@ const FOUND_THING =
  */
 export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   const [facts, page = ''] = handedText.split(PAGE_MARK);
-  const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
   // A line that names what the engine result says was found narrates that find, in whatever holds it.
   const engineResult = facts!.split('\n').filter((l) => l.startsWith('engine result:')).join('\n');
   const engineFinds = [...engineResult.matchAll(/\bfound:?\s+(?:\d+\s+)?(?:an?\s+|the\s+|some\s+)?([a-z][a-z'-]{2,})/g)].map((m) => m[1]!.replace(/e?s$/, ''));
@@ -765,7 +723,7 @@ export function tokenLineVerdicts(raw: string, state: GameState, packet?: Comple
 }
 
 const narrationOf = (line: TokenLine) =>
-  line.spoken || line.fn === 'speech' ? '' : line.text.replace(/["“][^"”]*["”]/g, ' ');
+  line.spoken || line.fn === 'speech' ? '' : narratorWords(line.text);
 
 function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boolean {
   const first = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
@@ -959,7 +917,7 @@ function paintDisplay(row: { display: string; klass?: string }, text: string, of
 export function beatPcPossessive(lines: { text: string; spoken?: boolean }[], state?: GameState): string {
   const outsideQuotes = lines
     .filter((l) => !l.spoken)
-    .map((l) => l.text.replace(/["“][^"”]*["”]/g, ' '))
+    .map((l) => narratorWords(l.text))
     .join(' ');
   if (/\byour?\b/i.test(outsideQuotes)) return 'your';
   return pcPov(state?.character).his;
@@ -1020,10 +978,6 @@ export function restoreNameCase(text: string, enumRefs: { display: string }[]): 
 }
 
 const ARTICLE_RE = /^(?:the|a|an)\s+/i;
-
-function escRe(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 /**
  * Writer typed the head of a ledger label and then the token ("The quarry circle outside @t1",
