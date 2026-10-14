@@ -1,0 +1,1927 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://synapticgm.example/schemas/library-entry-v3.json",
+ "title": "SynapticGM Library Entry",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "identity",
+  "balance",
+  "getting",
+  "using",
+  "checks",
+  "growth",
+  "showing",
+  "who_uses",
+  "paths_and_matching",
+  "bookkeeping"
+ ],
+ "properties": {
+  "identity": {
+   "$ref": "#/$defs/identity"
+  },
+  "balance": {
+   "$ref": "#/$defs/balance"
+  },
+  "getting": {
+   "$ref": "#/$defs/getting"
+  },
+  "using": {
+   "$ref": "#/$defs/using"
+  },
+  "checks": {
+   "$ref": "#/$defs/checks"
+  },
+  "growth": {
+   "$ref": "#/$defs/growth"
+  },
+  "showing": {
+   "$ref": "#/$defs/showing"
+  },
+  "who_uses": {
+   "$ref": "#/$defs/who_uses"
+  },
+  "paths_and_matching": {
+   "$ref": "#/$defs/paths_and_matching"
+  },
+  "bookkeeping": {
+   "$ref": "#/$defs/bookkeeping"
+  }
+ },
+ "allOf": [
+  {
+   "if": {
+    "required": [
+     "identity"
+    ],
+    "properties": {
+     "identity": {
+      "required": [
+       "kind"
+      ],
+      "properties": {
+       "kind": {
+        "enum": [
+         "trait",
+         "perk_or_feat",
+         "title",
+         "class_feature",
+         "flaw",
+         "condition",
+         "resource",
+         "power"
+        ]
+       }
+      }
+     }
+    }
+   },
+   "then": {
+    "properties": {
+     "checks": {
+      "properties": {
+       "untrained": {
+        "not": {
+         "required": [
+          "OPEN"
+         ]
+        }
+       }
+      }
+     },
+     "bookkeeping": {
+      "properties": {
+       "open_decisions": {
+        "not": {
+         "contains": {
+          "const": "untrained_gates"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "$defs": {
+  "text": {
+   "type": "string",
+   "minLength": 1
+  },
+  "writer_text": {
+   "type": "string",
+   "minLength": 1,
+   "pattern": "^[^0-9]*$",
+   "description": "Writer-facing. No digits allowed."
+  },
+  "na": {
+   "const": "not applicable"
+  },
+  "text_list": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/text"
+   }
+  },
+  "text_list_or_na": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/text_list"
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "open_name": {
+   "enum": [
+    "hidden_thievery_rank",
+    "untrained_gates",
+    "growth_by_mode",
+    "failure_cost_retries",
+    "group_stealth",
+    "duplicate_skill",
+    "system_names_world_skill",
+    "save_cross_mode"
+   ]
+  },
+  "open_tag": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "OPEN"
+   ],
+   "properties": {
+    "OPEN": {
+     "$ref": "#/$defs/open_name"
+    },
+    "options": {
+     "$ref": "#/$defs/text_list"
+    }
+   }
+  },
+  "text_or_open": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/text"
+    },
+    {
+     "$ref": "#/$defs/open_tag"
+    }
+   ]
+  },
+  "element_name": {
+   "enum": [
+    "fire",
+    "water",
+    "ice",
+    "earth",
+    "metal",
+    "air",
+    "lightning",
+    "light",
+    "shadow",
+    "nature",
+    "poison",
+    "acid",
+    "sound",
+    "force",
+    "holy",
+    "death",
+    "psychic",
+    "blood",
+    "gravity",
+    "crystal",
+    "magma",
+    "steam",
+    "mud",
+    "sand",
+    "ice-fire"
+   ]
+  },
+  "damage_name": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/element_name"
+    },
+    {
+     "enum": [
+      "slashing",
+      "piercing",
+      "bludgeoning"
+     ]
+    }
+   ]
+  },
+  "approach_name": {
+   "enum": [
+    "careful",
+    "clever",
+    "flashy",
+    "forceful",
+    "quick",
+    "sneaky"
+   ]
+  },
+  "housing_name": {
+   "enum": [
+    "private_window",
+    "worn_device",
+    "world_status",
+    "leftover_pocket"
+   ]
+  },
+  "five_lines": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "bad_failure",
+    "failure",
+    "success_at_cost",
+    "clean_success",
+    "great_success"
+   ],
+   "properties": {
+    "bad_failure": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "failure": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "success_at_cost": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "clean_success": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "great_success": {
+     "$ref": "#/$defs/writer_text"
+    }
+   }
+  },
+  "five_lines_or_na": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/five_lines"
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "engine_five_lines": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "bad_failure",
+    "failure",
+    "success_at_cost",
+    "clean_success",
+    "great_success"
+   ],
+   "properties": {
+    "bad_failure": {
+     "$ref": "#/$defs/text"
+    },
+    "failure": {
+     "$ref": "#/$defs/text"
+    },
+    "success_at_cost": {
+     "$ref": "#/$defs/text"
+    },
+    "clean_success": {
+     "$ref": "#/$defs/text"
+    },
+    "great_success": {
+     "$ref": "#/$defs/text"
+    }
+   }
+  },
+  "price_pair": {
+   "type": "array",
+   "minItems": 2,
+   "maxItems": 2,
+   "prefixItems": [
+    {
+     "$ref": "#/$defs/text"
+    },
+    {
+     "type": "integer"
+    }
+   ],
+   "items": false
+  },
+  "credit_pair": {
+   "oneOf": [
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "resource small"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "resource medium"
+      },
+      {
+       "const": -2
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "resource large"
+      },
+      {
+       "const": -3
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "resource huge"
+      },
+      {
+       "const": -4
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "cooldown scene"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "cooldown day"
+      },
+      {
+       "const": -2
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "cast slow"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "cast long"
+      },
+      {
+       "const": -2
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "cast ritual"
+      },
+      {
+       "const": -3
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "rare component"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "tell"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "backlash mild"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "backlash harsh"
+      },
+      {
+       "const": -2
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    },
+    {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 3,
+     "prefixItems": [
+      {
+       "const": "narrow use"
+      },
+      {
+       "const": -1
+      },
+      {
+       "$ref": "#/$defs/text"
+      }
+     ],
+     "items": false
+    }
+   ]
+  },
+  "price_breakdown": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "blocks",
+    "modifiers",
+    "gross",
+    "credits",
+    "credits_total",
+    "net",
+    "gp_used",
+    "gp_allowed"
+   ],
+   "properties": {
+    "blocks": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/price_pair"
+     }
+    },
+    "modifiers": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/price_pair"
+     }
+    },
+    "gross": {
+     "type": "integer"
+    },
+    "credits": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/credit_pair"
+     }
+    },
+    "credits_total": {
+     "type": "integer",
+     "minimum": -6,
+     "maximum": 0
+    },
+    "net": {
+     "type": "integer"
+    },
+    "gp_used": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "gp_allowed": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 7
+    }
+   }
+  },
+  "range_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "area_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2,
+        3
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "targets_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "type": "integer",
+       "minimum": -1,
+       "maximum": 5
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "duration_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "use_time_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "cooldown_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "resource_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "tell_field": {
+   "anyOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "word",
+      "engine"
+     ],
+     "properties": {
+      "word": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "engine": {
+       "enum": [
+        0,
+        1,
+        2,
+        3
+       ]
+      }
+     }
+    },
+    {
+     "$ref": "#/$defs/na"
+    }
+   ]
+  },
+  "style_value": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/na"
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "gain",
+      "grow"
+     ],
+     "properties": {
+      "gain": {
+       "$ref": "#/$defs/text"
+      },
+      "grow": {
+       "$ref": "#/$defs/text"
+      }
+     }
+    }
+   ]
+  },
+  "growth_styles": {
+   "type": "object",
+   "required": [
+    "creation_choice",
+    "point_buy",
+    "proficiency_ranks",
+    "class_level_up_capstones",
+    "use_with_caps",
+    "perk_trees",
+    "free_stat_points",
+    "granted_rewards",
+    "job_system_cross_equip",
+    "class_evolution_consolidation",
+    "cultivation_realms",
+    "core_stages",
+    "essence_combinations",
+    "aspect_flaw_soul_rank",
+    "dao_comprehension",
+    "monster_race_evolution",
+    "rarity_grades",
+    "fusion_merging",
+    "modular_sockets_supports",
+    "specialisation_branches",
+    "practice_no_screen",
+    "learning_rate_marks",
+    "binding_vows",
+    "sponsor_gifts",
+    "discovery_from_play"
+   ],
+   "propertyNames": {
+    "enum": [
+     "creation_choice",
+     "point_buy",
+     "proficiency_ranks",
+     "class_level_up_capstones",
+     "use_with_caps",
+     "perk_trees",
+     "free_stat_points",
+     "granted_rewards",
+     "job_system_cross_equip",
+     "class_evolution_consolidation",
+     "cultivation_realms",
+     "core_stages",
+     "essence_combinations",
+     "aspect_flaw_soul_rank",
+     "dao_comprehension",
+     "monster_race_evolution",
+     "rarity_grades",
+     "fusion_merging",
+     "modular_sockets_supports",
+     "specialisation_branches",
+     "practice_no_screen",
+     "learning_rate_marks",
+     "binding_vows",
+     "sponsor_gifts",
+     "discovery_from_play"
+    ]
+   },
+   "additionalProperties": {
+    "$ref": "#/$defs/style_value"
+   }
+  },
+  "identity": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "name",
+    "other_names",
+    "kind",
+    "branch",
+    "family",
+    "sub_family",
+    "description_easy",
+    "tags"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "name": {
+     "$ref": "#/$defs/text"
+    },
+    "other_names": {
+     "$ref": "#/$defs/text_list"
+    },
+    "kind": {
+     "enum": [
+      "skill",
+      "spell",
+      "technique",
+      "power",
+      "trait",
+      "perk_or_feat",
+      "title",
+      "class_feature",
+      "system_function",
+      "flaw",
+      "condition",
+      "resource"
+     ]
+    },
+    "branch": {
+     "enum": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H"
+     ]
+    },
+    "family": {
+     "$ref": "#/$defs/text"
+    },
+    "sub_family": {
+     "$ref": "#/$defs/text"
+    },
+    "description_easy": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "tags": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "element",
+      "damage_type",
+      "approach",
+      "school",
+      "tradition"
+     ],
+     "properties": {
+      "element": {
+       "anyOf": [
+        {
+         "type": "array",
+         "minItems": 1,
+         "uniqueItems": true,
+         "items": {
+          "$ref": "#/$defs/element_name"
+         }
+        },
+        {
+         "$ref": "#/$defs/na"
+        }
+       ]
+      },
+      "damage_type": {
+       "anyOf": [
+        {
+         "type": "array",
+         "minItems": 1,
+         "uniqueItems": true,
+         "items": {
+          "$ref": "#/$defs/damage_name"
+         }
+        },
+        {
+         "$ref": "#/$defs/na"
+        }
+       ]
+      },
+      "approach": {
+       "anyOf": [
+        {
+         "type": "array",
+         "minItems": 1,
+         "uniqueItems": true,
+         "items": {
+          "$ref": "#/$defs/approach_name"
+         }
+        },
+        {
+         "$ref": "#/$defs/na"
+        }
+       ]
+      },
+      "school": {
+       "$ref": "#/$defs/text_list_or_na"
+      },
+      "tradition": {
+       "$ref": "#/$defs/text_list_or_na"
+      }
+     }
+    }
+   }
+  },
+  "balance": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "price_class",
+    "tier",
+    "band",
+    "price_breakdown",
+    "strong_against",
+    "weak_against",
+    "stacking_limits"
+   ],
+   "properties": {
+    "price_class": {
+     "enum": [
+      "active",
+      "passive",
+      "title",
+      "flaw",
+      "pool",
+      "condition"
+     ]
+    },
+    "tier": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 7,
+     "description": "Declared by the author. Never read back from the price."
+    },
+    "band": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 2,
+     "items": {
+      "type": "integer"
+     }
+    },
+    "price_breakdown": {
+     "$ref": "#/$defs/price_breakdown"
+    },
+    "strong_against": {
+     "$ref": "#/$defs/text_list_or_na"
+    },
+    "weak_against": {
+     "$ref": "#/$defs/text_list_or_na"
+    },
+    "stacking_limits": {
+     "$ref": "#/$defs/text"
+    }
+   },
+   "allOf": [
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 1
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         3,
+         6
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 3,
+          "maximum": 6
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 2
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         6,
+         9
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 6,
+          "maximum": 9
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 3
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         9,
+         12
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 9,
+          "maximum": 12
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 4
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         12,
+         15
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 12,
+          "maximum": 15
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 5
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         15,
+         18
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 15,
+          "maximum": 18
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 6
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         18,
+         21
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 18,
+          "maximum": 21
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "tier",
+       "price_class"
+      ],
+      "properties": {
+       "tier": {
+        "const": 7
+       },
+       "price_class": {
+        "enum": [
+         "active",
+         "passive",
+         "title",
+         "pool",
+         "condition"
+        ]
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         21,
+         24
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": 21,
+          "maximum": 24
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "required": [
+       "price_class"
+      ],
+      "properties": {
+       "price_class": {
+        "const": "flaw"
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "band": {
+        "const": [
+         -13,
+         -4
+        ]
+       },
+       "price_breakdown": {
+        "properties": {
+         "net": {
+          "minimum": -13,
+          "maximum": -4
+         }
+        }
+       }
+      }
+     }
+    }
+   ]
+  },
+  "getting": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "prerequisites",
+    "teachers",
+    "lost_sealed_taken"
+   ],
+   "properties": {
+    "prerequisites": {
+     "$ref": "#/$defs/text"
+    },
+    "teachers": {
+     "$ref": "#/$defs/text"
+    },
+    "lost_sealed_taken": {
+     "$ref": "#/$defs/text"
+    }
+   }
+  },
+  "using": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "effect",
+    "tools",
+    "resource_cost",
+    "range",
+    "area",
+    "targets",
+    "duration",
+    "use_time",
+    "cooldown",
+    "noise_visibility_tells"
+   ],
+   "properties": {
+    "effect": {
+     "$ref": "#/$defs/text"
+    },
+    "tools": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "needed",
+      "without_them"
+     ],
+     "properties": {
+      "needed": {
+       "$ref": "#/$defs/text"
+      },
+      "without_them": {
+       "$ref": "#/$defs/text"
+      }
+     }
+    },
+    "resource_cost": {
+     "$ref": "#/$defs/resource_field"
+    },
+    "range": {
+     "$ref": "#/$defs/range_field"
+    },
+    "area": {
+     "$ref": "#/$defs/area_field"
+    },
+    "targets": {
+     "$ref": "#/$defs/targets_field"
+    },
+    "duration": {
+     "$ref": "#/$defs/duration_field"
+    },
+    "use_time": {
+     "$ref": "#/$defs/use_time_field"
+    },
+    "cooldown": {
+     "$ref": "#/$defs/cooldown_field"
+    },
+    "noise_visibility_tells": {
+     "$ref": "#/$defs/tell_field"
+    }
+   }
+  },
+  "checks": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "check_type",
+    "stat_or_approach",
+    "fallbacks",
+    "difficulty_tiers",
+    "untrained",
+    "opposed_and_group",
+    "degrees",
+    "failure_costs",
+    "retry",
+    "modifiers"
+   ],
+   "properties": {
+    "check_type": {
+     "$ref": "#/$defs/text"
+    },
+    "stat_or_approach": {
+     "$ref": "#/$defs/text"
+    },
+    "fallbacks": {
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "skill",
+         "step_down"
+        ],
+        "properties": {
+         "skill": {
+          "$ref": "#/$defs/text"
+         },
+         "step_down": {
+          "$ref": "#/$defs/text"
+         }
+        }
+       }
+      },
+      {
+       "$ref": "#/$defs/na"
+      }
+     ]
+    },
+    "difficulty_tiers": {
+     "anyOf": [
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "easy",
+        "standard",
+        "hard",
+        "severe",
+        "extreme"
+       ],
+       "properties": {
+        "easy": {
+         "$ref": "#/$defs/text"
+        },
+        "standard": {
+         "$ref": "#/$defs/text"
+        },
+        "hard": {
+         "$ref": "#/$defs/text"
+        },
+        "severe": {
+         "$ref": "#/$defs/text"
+        },
+        "extreme": {
+         "$ref": "#/$defs/text"
+        }
+       }
+      },
+      {
+       "$ref": "#/$defs/na"
+      }
+     ]
+    },
+    "untrained": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule"
+     ],
+     "properties": {
+      "rule": {
+       "$ref": "#/$defs/text"
+      },
+      "OPEN": {
+       "$ref": "#/$defs/open_name"
+      }
+     }
+    },
+    "opposed_and_group": {
+     "$ref": "#/$defs/text_or_open"
+    },
+    "degrees": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/engine_five_lines"
+      },
+      {
+       "$ref": "#/$defs/na"
+      }
+     ]
+    },
+    "failure_costs": {
+     "$ref": "#/$defs/text_or_open"
+    },
+    "retry": {
+     "$ref": "#/$defs/text_or_open"
+    },
+    "modifiers": {
+     "$ref": "#/$defs/text"
+    }
+   }
+  },
+  "growth": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "styles",
+    "grade_or_tier",
+    "evolution_fusion",
+    "synergies",
+    "restrictions_taboos",
+    "creative_use"
+   ],
+   "properties": {
+    "styles": {
+     "$ref": "#/$defs/growth_styles"
+    },
+    "grade_or_tier": {
+     "$ref": "#/$defs/text"
+    },
+    "evolution_fusion": {
+     "$ref": "#/$defs/text"
+    },
+    "synergies": {
+     "$ref": "#/$defs/text"
+    },
+    "restrictions_taboos": {
+     "$ref": "#/$defs/text"
+    },
+    "creative_use": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "theme",
+      "allowed_off_list",
+      "extra_cost",
+      "hard_limits"
+     ],
+     "properties": {
+      "theme": {
+       "$ref": "#/$defs/text"
+      },
+      "allowed_off_list": {
+       "$ref": "#/$defs/text"
+      },
+      "extra_cost": {
+       "$ref": "#/$defs/text"
+      },
+      "hard_limits": {
+       "$ref": "#/$defs/text"
+      }
+     }
+    }
+   }
+  },
+  "showing": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "tabletop",
+    "story_rpg",
+    "litrpg",
+    "hidden_growth",
+    "writer_phrasing",
+    "chip",
+    "system_message"
+   ],
+   "properties": {
+    "tabletop": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "story_rpg": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "litrpg": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "display",
+      "per_housing",
+      "visible_to"
+     ],
+     "properties": {
+      "display": {
+       "$ref": "#/$defs/writer_text"
+      },
+      "per_housing": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "private_window",
+        "worn_device",
+        "world_status",
+        "leftover_pocket"
+       ],
+       "properties": {
+        "private_window": {
+         "$ref": "#/$defs/writer_text"
+        },
+        "worn_device": {
+         "$ref": "#/$defs/writer_text"
+        },
+        "world_status": {
+         "$ref": "#/$defs/writer_text"
+        },
+        "leftover_pocket": {
+         "$ref": "#/$defs/writer_text"
+        }
+       }
+      },
+      "visible_to": {
+       "enum": [
+        "owner_only",
+        "owner_and_world"
+       ]
+      }
+     }
+    },
+    "hidden_growth": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "writer_phrasing": {
+     "$ref": "#/$defs/five_lines_or_na"
+    },
+    "chip": {
+     "$ref": "#/$defs/writer_text"
+    },
+    "system_message": {
+     "$ref": "#/$defs/text"
+    }
+   }
+  },
+  "who_uses": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "npc",
+    "companion",
+    "pet_or_summon",
+    "enemy"
+   ],
+   "properties": {
+    "npc": {
+     "$ref": "#/$defs/text"
+    },
+    "companion": {
+     "$ref": "#/$defs/text"
+    },
+    "pet_or_summon": {
+     "$ref": "#/$defs/text"
+    },
+    "enemy": {
+     "$ref": "#/$defs/text"
+    }
+   }
+  },
+  "paths_and_matching": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "paths",
+    "untrained_meaning",
+    "keywords",
+    "related_at_penalty",
+    "discovery"
+   ],
+   "properties": {
+    "paths": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "main",
+      "shared",
+      "general"
+     ],
+     "properties": {
+      "main": {
+       "$ref": "#/$defs/text_list"
+      },
+      "shared": {
+       "$ref": "#/$defs/text_list"
+      },
+      "general": {
+       "type": "boolean"
+      }
+     }
+    },
+    "untrained_meaning": {
+     "$ref": "#/$defs/text"
+    },
+    "keywords": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "verbs",
+      "nouns",
+      "phrases"
+     ],
+     "properties": {
+      "verbs": {
+       "$ref": "#/$defs/text_list"
+      },
+      "nouns": {
+       "$ref": "#/$defs/text_list"
+      },
+      "phrases": {
+       "$ref": "#/$defs/text_list"
+      }
+     }
+    },
+    "related_at_penalty": {
+     "$ref": "#/$defs/text_list"
+    },
+    "discovery": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "repeated_play",
+      "single_deed"
+     ],
+     "properties": {
+      "repeated_play": {
+       "$ref": "#/$defs/text"
+      },
+      "single_deed": {
+       "$ref": "#/$defs/text"
+      }
+     }
+    }
+   }
+  },
+  "bookkeeping": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "inspiration",
+    "allowed_modes",
+    "litrpg_housings",
+    "part_switches",
+    "open_decisions",
+    "test_notes"
+   ],
+   "properties": {
+    "inspiration": {
+     "$ref": "#/$defs/text"
+    },
+    "allowed_modes": {
+     "type": "array",
+     "minItems": 1,
+     "uniqueItems": true,
+     "items": {
+      "enum": [
+       "tabletop",
+       "story_rpg",
+       "litrpg"
+      ]
+     }
+    },
+    "litrpg_housings": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "works_in",
+      "shown_in"
+     ],
+     "properties": {
+      "works_in": {
+       "type": "array",
+       "minItems": 4,
+       "maxItems": 4,
+       "uniqueItems": true,
+       "items": {
+        "$ref": "#/$defs/housing_name"
+       }
+      },
+      "shown_in": {
+       "type": "array",
+       "uniqueItems": true,
+       "items": {
+        "$ref": "#/$defs/housing_name"
+       }
+      }
+     }
+    },
+    "part_switches": {
+     "type": "array",
+     "uniqueItems": true,
+     "items": {
+      "enum": [
+       "level",
+       "xp",
+       "skills",
+       "quest_list",
+       "pocket"
+      ]
+     },
+     "description": "Parts that must be ON for the entry to be SHOWN. The entry always works when hidden."
+    },
+    "open_decisions": {
+     "type": "array",
+     "uniqueItems": true,
+     "items": {
+      "$ref": "#/$defs/open_name"
+     }
+    },
+    "test_notes": {
+     "$ref": "#/$defs/text"
+    }
+   }
+  }
+ }
+}
