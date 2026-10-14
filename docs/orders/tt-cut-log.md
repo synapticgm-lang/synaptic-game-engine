@@ -2,12 +2,30 @@
 
 Every item below can be restored with git.
 
+- **tt-fix-10:** deleted in the tt-fix-10 commit (stamp `2026-10-14v`). The old text lives at its parent, **`6869ec1b`**. Line numbers in that section are at `6869ec1b`.
 - **tt-fix-9:** deleted in the tt-fix-9 commit (stamp `2026-10-14u`). The old text lives at its parent, **`68d01a47`**. Line numbers in that section are at `68d01a47`.
 - **tt-fix-8:** deleted in commit `8a55f995` (stamp `2026-10-14t`). The old text lives at its parent, **`e8c0e072`**. Line numbers in that section are at `e8c0e072`.
 - **tt-cut 2:** deleted in commit `cd2b8724` (stamp `2026-10-14s`). The old text lives at its parent, **`0e2419cb`**. Restore one file with `git show 0e2419cb:<path> > <path>`, or one item by copying its lines from that output. Line numbers below are the line numbers at `0e2419cb`.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## tt-fix-10 (restore from `6869ec1b`)
+
+1. **`scripts/factCheck.mjs` lines 46-47** — `const PERSON_ACTS = /^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i;` and its uses at lines 422 (`if (!PERSON_ACTS.test(after)) continue;`) and 482 (quiet-stretch meeting `.find((m) => PERSON_ACTS.test(…))`). What it did: a person word counted only when a listed verb followed it, so "a lone traveller on the road" was never checked. Replaced by reading who is here from the engine's records (`peopleText`: HERE block, person/companion refs, presentNames, engine result, receipts); the meeting check reads an article or count before a person word.
+2. **`scripts/factCheck.mjs` line 52** — `'fence'` in the `PEOPLE` list. What it did: counted a garden fence as a person. Dropped; nothing else covers it (it is not a person).
+3. **`scripts/factCheck.mjs`** — the item check's `x.replace(/s$/, '').endsWith(w)` (written during this step, not at the parent) → `x.endsWith(w) || x.endsWith(\`${w}s\`)`. Same match, one regex fewer.
+4. **`src/game/outdoorHubs.ts` lines 450-453** — `/** Thornferry mill / ford / landing / quay are one already-here cluster (02f / 02g). */ export function isThornferryCluster(s) { return /\b(thornferry|mill\s+landing|the ford|harbor quay)\b/i.test(s ?? ''); }`. Dead: no production caller; its only user was one `it` in `playtest02gBatch02g.test.ts` (removed with its import).
+5. **`src/game/outdoorHubs.ts` lines 361-377** — `export function formatOutdoorHubsForPrompt(state)` (the `[OUTDOOR HUBS — travel targets…]` prompt block). Dead: its only caller was `src/game/situationPacket.ts` line 501 (and the edge copy), and `situationPacket` is imported by nothing in the app, the scripts or `gm-turn`. The call and the line 21 import were removed from `situationPacket.ts`.
+6. **`src/game/completedEventPacket.ts` lines 1273-1292** — `export function attachCompletedEvent(state, playerInput?, extras?)` (built the packet and wrote the loiter streaks onto `sceneFacts`). Dead: no production caller; `s82RootATerminalFight.test.ts` now sets `completedEvent: buildCompletedEventPacket(…)` directly.
+7. **`src/game/tokenProse.ts` lines 1142-1145 and 1147-1159** — `function missingFns(lines)` and `export function formatTokenRepairFacing(packet, missing)` (the `TOKEN REPAIR:` request text). Dead: `formatTokenRepairFacing` was imported by `useGame.ts` line 376 but never called; `missingFns` only fed `needsRepair`.
+8. **`src/game/tokenProse.ts` lines 1289, 1367-1379 and the two `...(needsRepair ? { needsRepair } : {})` spreads** — the `needsRepair` result field, the parse/clean pass that built it, and the `alreadyRepaired` option (line 1275; passed only by `writerTurn.ts` line 107). Dead: nothing reads `needsRepair`. The `formatRefEnumForWriter` import (line 11) went with it.
+9. **`src/game/travelJourney.ts` lines 409-412** — `function answersPlea(enc, input)` (only the plea's Help chip settled a meeting). Replaced by `answersMeeting`, which also settles a no-fight meeting passed by with its own go-by chip.
+10. **`src/game/encounterTerminalFsm.ts`** — `attachLastKillOnVictory` renamed `settleFoePresence`; it now drops the foe from `present` on an escape as well as a victory (lastKill only on victory).
+11. **`src/game/engineFight.ts` lines 202-207** — `meetingMove` was read only on the road path and after a pending spawn; the chip test ran the raw input (with the "but fail and they attack" tail) through `ATTACK_RE`. Now the meeting move is read first and the chip base is tested.
+12. **`src/game/tabletopQuestProgress.ts`** — `tabletopStepChip` lost the travel-chip addition written during this step (the story chip's trip now reads the open step's anchor in `choiceRanking.storyChip`).
 
 ---
 

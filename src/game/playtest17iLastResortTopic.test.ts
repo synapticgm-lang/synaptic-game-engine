@@ -46,8 +46,8 @@ function namedAlone(over: Partial<GameState> = {}): GameState {
 
 describe('playtest17i — last-resort topic advance after lock', () => {
   it('HUD/BUILD are 17i, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14u');
-    expect(BUILD_STAMP).toBe('2026-10-14u');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14v');
+    expect(BUILD_STAMP).toBe('2026-10-14v');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

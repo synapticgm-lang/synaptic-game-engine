@@ -290,13 +290,16 @@ export function settleParleyAfterProse(
   };
 }
 
-/** Same-commit lastKill when HP hits 0 / victory — before GM. Avoids combatAuthority cycle. */
-function attachLastKillOnVictory(
+/**
+ * The foe leaves the scene with the fight: beaten (lastKill, same commit, before GM) or left behind by an
+ * escape. A talked-down or winning foe still stands here.
+ */
+function settleFoePresence(
   state: GameState,
   enc: ActiveEncounter,
   outcome: TerminalOutcome
 ): GameState {
-  if (outcome !== 'victory') return state;
+  if (outcome !== 'victory' && outcome !== 'escape') return state;
   const name = (enc.name ?? '').trim();
   if (!name) return state;
   const base = state.sceneFacts ?? {
@@ -317,8 +320,7 @@ function attachLastKillOnVictory(
     sceneFacts: {
       ...base,
       present,
-      lastKill: { name, outcome: 'victory', turn: state.turn, remains: true },
-      tension: 'tense',
+      ...(outcome === 'victory' ? { lastKill: { name, outcome: 'victory' as const, turn: state.turn, remains: true }, tension: 'tense' as const } : {}),
     },
   };
 }
@@ -350,7 +352,7 @@ function commitClear(
     `Encounter cleared: ${enc.name} (${outcome})`,
     statusLine,
   ];
-  const clearedState = attachLastKillOnVictory(state, enc, outcome);
+  const clearedState = settleFoePresence(state, enc, outcome);
   return {
     state: {
       ...clearedState,

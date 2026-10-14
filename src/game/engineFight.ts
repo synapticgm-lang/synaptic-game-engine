@@ -21,7 +21,7 @@ import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { fightLootClause, weaponInHand } from './infoSheet';
-import { isRoadFoe, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
+import { isRoadFoe, meetingMoveBase, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
@@ -189,9 +189,11 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const input = (playerInput ?? '').trim();
   const roundMode = usesRoundCombat(state);
   if (roundMode && isDying(state)) return resolveDeathSaveTurn(state);
-  const pending = state.activeEncounter ? null : state.sceneFacts?.pendingEncounter ?? null;
+  // A road meeting's own chip ("Skirt around the camp") takes on that meeting, whatever else waits here.
+  const meetingMove = state.activeEncounter ? null : roadMeetingMove(state, input);
+  const pending = state.activeEncounter || meetingMove ? null : state.sceneFacts?.pendingEncounter ?? null;
   // 29y — a threat remembered at this place is the same foe, fought through the same path.
-  const parked = state.activeEncounter || pending ? null : parkedThreatHere(state);
+  const parked = state.activeEncounter || pending || meetingMove ? null : parkedThreatHere(state);
   // A road meeting the player faces (or flees) is handed to this engine the same turn.
   const road = state.activeEncounter || pending || parked ? null : roadFoeForEngine(state, input);
   const raw =
@@ -199,13 +201,14 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ?? (pending ? arrivePendingEncounter(pending, state.turn) : null)
     ?? (parked ? wakeParkedThreat(parked) : road);
   if (!raw || !input) return null;
-  const meetingMove = road ? roadMeetingMove(state, input) : null;
+  // The chip's own failure cost (", but fail and they attack") is what a failed check brings, not the act.
+  const act = meetingMoveBase(input);
   // Tabletop: once the rounds have begun every input is this round's action; a live foe also takes Dodge / Hide / …
   const inRounds = roundMode && !!state.activeEncounter && state.roundCombat?.encounterName === state.activeEncounter.name;
   const roundMove = roundMode && (!!state.activeEncounter ? classifyRoundAction(input) !== 'other' : isFightCast(state, input));
-  const flee = !inRounds && (meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(input)));
-  const parley = meetingMove === 'parley' || (!flee && PARLEY_RE.test(input));
-  const attack = !flee && !parley && (ATTACK_RE.test(input) || !!road || inRounds || roundMove);
+  const flee = !inRounds && (meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(act)));
+  const parley = meetingMove === 'parley' || (!flee && PARLEY_RE.test(act));
+  const attack = !flee && !parley && (ATTACK_RE.test(act) || !!road || inRounds || roundMove);
   const onRoad = isRoadFoe(state, raw);
   if (!flee && !parley && !attack) return null;
   if (parked && (flee || /\b(talk|ask|speak|conversation)\b/i.test(input))) return null;

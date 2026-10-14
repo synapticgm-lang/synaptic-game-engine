@@ -8,7 +8,6 @@ import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { detectHubRoleMadlib, isChoicePadPersonToken } from './chromeAuthority';
-import { isThornferryCluster } from './outdoorHubs';
 import { scrubEntityMadLibs, scrubFalseArrivalWhenHere } from './proseWarden';
 import { enforceCameraOnProse, playerCommittedArrivalTravel } from './travelAuthority';
 import type { GameState } from './types';
@@ -42,12 +41,6 @@ describe('Batch 02g — P0-1: leave/exit is not an arrival', () => {
 });
 
 describe('Batch 02g — P0-2: Thornferry cluster lock', () => {
-  it('treats mill / ford / Thornferry as one cluster', () => {
-    expect(isThornferryCluster('mill landing at Thornferry')).toBe(true);
-    expect(isThornferryCluster('the ford')).toBe(true);
-    expect(isThornferryCluster('West Wall')).toBe(false);
-  });
-
   it('strips mill-landing arrival when prior is a cluster alias', () => {
     const input = 'You reach the mill landing at Thornferry. The rain has thinned to a drizzle.';
     const result = scrubFalseArrivalWhenHere(

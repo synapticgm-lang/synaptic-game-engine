@@ -8,7 +8,6 @@ import type { GameState } from './types';
 import {
   compileRefEnum,
   compileNounAllowlist,
-  formatRefEnumForWriter,
   handedWriterText,
   isDroughtStubProse,
   lastResortStoryBody,
@@ -169,7 +168,8 @@ function balanceJson(s: string): string {
   return out + stack.reverse().join('');
 }
 
-export function parseTokenBeat(raw: string): TokenBeat | null {
+/** `action` is what the player did: the person it names is who a line answers when the writer declared more than one speaker. */
+export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
   const json = extractJsonObject(raw);
   if (!json) return null;
   try {
@@ -191,12 +191,13 @@ export function parseTokenBeat(raw: string): TokenBeat | null {
       if (id.includes('<')) continue;
       refs.push({ tok, id, use });
     }
-    // A speech line with no speaker_tok belongs to the beat's one declared speaker; with none declared, to its one
-    // actor or addressee, unless the line before has the PC (written plainly, never a token) speaking: those are
-    // the PC's own words, which keep no speaker and fail the line.
+    // A speech line with no speaker_tok belongs to the beat's one declared speaker (of several, the one the player
+    // spoke to: ref ids are name slugs); with none declared, to its one actor or addressee, unless the line before
+    // has the PC (written plainly, never a token) speaking: those are the PC's own words, which keep no speaker and fail the line.
     const speakers = refs.filter((r) => r.use === 'speaker');
     const others = refs.filter((r) => r.use !== 'speaker' && PERSON_USES.has(r.use));
-    const soleSpeaker = speakers.length === 1 ? speakers[0]!.tok : '';
+    const asked = speakers.filter((r) => `-${refSlug(action)}-`.includes(`-${r.id.split(':').pop()}-`));
+    const soleSpeaker = speakers.length === 1 ? speakers[0]!.tok : asked.length === 1 ? asked[0]!.tok : '';
     const soleOther = !speakers.length && others.length === 1 ? others[0]!.tok : '';
     const lines: TokenLine[] = [];
     for (const row of parsed.lines) {
@@ -709,7 +710,7 @@ export function repeatsSaid(words: string, said: readonly string[]): boolean {
 
 export function tokenLineVerdicts(raw: string, state: GameState, packet?: CompletedEventPacket): string[] {
   const enumRefs = refEnumOf(state, packet);
-  const parsed = extractTokenCandidates(raw ?? '').map(parseTokenBeat).find((b): b is TokenBeat => !!b);
+  const parsed = extractTokenCandidates(raw ?? '').map((c) => parseTokenBeat(c, packet?.playerAction)).find((b): b is TokenBeat => !!b);
   if (!parsed) return [looksLikeTokenJson(raw ?? '') ? 'json-unparsed' : 'not-json'];
   const beat = tellsSpeechFromOutside(parsed, enumRefs, state);
   const out = bindCheckFails(beat, enumRefs).map((n) => `ref ${n}`);
@@ -1139,25 +1140,6 @@ function handedTextNames(text: string): string[] {
   return out;
 }
 
-function missingFns(lines: TokenLine[]): LineFn[] {
-  const have = new Set(lines.map((l) => l.fn));
-  return (['place', 'action', 'speech', 'react', 'hook'] as LineFn[]).filter((fn) => !have.has(fn));
-}
-
-export function formatTokenRepairFacing(
-  packet: CompletedEventPacket,
-  missing: LineFn[]
-): string {
-  const need = missing.length ? missing.join(', ') : 'place, action';
-  return [
-    `TOKEN REPAIR: return JSON filling only these missing fn slots: ${need}.`,
-    'Same shape: { refs, lines }. Do not invent ids.',
-    formatRefEnumForWriter(packet.refEnum ?? []),
-    '',
-    `PLAYER: ${packet.playerAction || '(opening)'}`,
-  ].join('\n');
-}
-
 /**
  * An @tN the writer never declared is read as its REF ENUM row when the row is a name, or when the writer typed a
  * determiner right before every use of a common thing ("the @t11 he was wiping down"). A common thing with no
@@ -1272,7 +1254,6 @@ export function acceptTokenOrLedgerStory(
   state: GameState,
   packet?: CompletedEventPacket,
   opts?: {
-    alreadyRepaired?: boolean;
     alt?: string;
     /** 28l — fix ref uses in code and keep any clean lines (thinness is judged by the caller). */
     lenient?: boolean;
@@ -1286,7 +1267,6 @@ export function acceptTokenOrLedgerStory(
   refs?: TokenUseRef[];
   /** Token JSON paths only: the accepted speech lines (empty when nobody spoke). */
   speech?: SpokenLine[];
-  needsRepair?: { missingFns: LineFn[] };
   usedLastResort: boolean;
 } {
   const enumRefs = refEnumOf(state, packet);
@@ -1302,7 +1282,7 @@ export function acceptTokenOrLedgerStory(
   let bestPartial: { lines: TokenLine[]; beat: TokenBeat; full: TokenBeat } | null = null;
 
   for (const cand of candidates) {
-    const parsed = parseTokenBeat(cand);
+    const parsed = parseTokenBeat(cand, packet?.playerAction);
     if (!parsed) continue;
     const beat = tellsSpeechFromOutside(normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state);
     if (isFullyClean(beat, enumRefs, known, counts, said, pcName)) {
@@ -1364,20 +1344,6 @@ export function acceptTokenOrLedgerStory(
     }
   }
 
-  // 27h — a repair request still returns engine fallback prose below, so raw JSON never reaches the player.
-  let needsRepair: { missingFns: LineFn[] } | undefined;
-  const parsedRaw = candidates.map(parseTokenBeat).find(Boolean);
-  const parsedAny = parsedRaw
-    ? tellsSpeechFromOutside(normalizeBeatRefs(parsedRaw, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state)
-    : parsedRaw;
-  if (parsedAny && !opts?.alreadyRepaired) {
-    const clean = keepCleanLines(parsedAny, enumRefs, known, counts, said);
-    const miss = missingFns(clean.length ? clean : parsedAny.lines);
-    if (miss.includes('place') || miss.includes('action') || clean.length < 3) {
-      needsRepair = { missingFns: miss.length ? miss : ['place', 'action'] };
-    }
-  }
-
   const freeform =
     candidates.find((c) => !parseTokenBeat(c) && !looksLikeTokenJson(c))
     ?? (looksLikeTokenJson(raw) ? (opts?.lenient ? salvageTokenJsonProse(raw, enumRefs) : '') : raw);
@@ -1396,7 +1362,6 @@ export function acceptTokenOrLedgerStory(
       path: obeyed.usedLastResort ? 'last-resort' : '13c',
       notes: [...obeyed.notes, '13c-fallback'],
       usedLastResort: obeyed.usedLastResort,
-      ...(needsRepair ? { needsRepair } : {}),
     };
   }
   const resort = lastResortStoryBody(state, packet);
@@ -1405,6 +1370,5 @@ export function acceptTokenOrLedgerStory(
     path: 'last-resort',
     notes: ['last-resort'],
     usedLastResort: true,
-    ...(needsRepair ? { needsRepair } : {}),
   };
 }

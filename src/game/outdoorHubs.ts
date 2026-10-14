@@ -358,24 +358,6 @@ export function hubLinkedQuestCount(
   return hub?.linkedQuestIds?.length ?? 0;
 }
 
-export function formatOutdoorHubsForPrompt(state: GameState): string {
-  const hubs = hubsForBibleId(state.campaignBibleId);
-  if (!hubs.length) return '';
-  const here = (state.currentLocation ?? '').toLowerCase();
-  const lines = hubs.map((h) => {
-    const visited = (state.places ?? []).some(
-      (p) =>
-        (p.name.toLowerCase() === h.name.toLowerCase() || p.id === placeIdFromName(h.name))
-        && typeof p.lastVisitedTurn === 'number'
-    );
-    const at = here.includes(h.name.toLowerCase()) ? ' ← HERE' : '';
-    const pin = visited ? 'visited' : 'mapped';
-    const quests = h.linkedQuestIds?.length ? ` quests=${h.linkedQuestIds.join(',')}` : '';
-    return `- ${h.name} [Tier ${h.threatTier}, ${pin}]${at}: ${h.blurb}${quests}`;
-  });
-  return `[OUTDOOR HUBS — travel targets in this starting region. Player may leave the spine. Do not invent licensed place names.]\n${lines.join('\n')}`;
-}
-
 /** Light travel pads when outdoors — never invent crowd; skip during opening covers / alone first beats. */
 export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
   // 02w — starve at emission. Callers also gate, but this function must not
@@ -445,11 +427,6 @@ export function hubTravelTargets(state: GameState): string[] {
     picks.splice(picks.length >= 4 ? 3 : picks.length, 1, dungeonHub);
   }
   return picks.map((h) => h.name);
-}
-
-/** Thornferry mill / ford / landing / quay are one already-here cluster (02f / 02g). */
-export function isThornferryCluster(s: string): boolean {
-  return /\b(thornferry|mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');
 }
 
 /** Parse "Travel toward X" / "Return to X" into a known hub when possible. */

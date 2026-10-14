@@ -42,14 +42,11 @@ const ITEMS = [
   'potion', 'rope', 'torch', 'lantern', 'backpack', 'pack', 'satchel', 'bread', 'waterskin', 'flask', 'badge', 'token', 'charter',
   'spear', 'club', 'mace', 'hammer', 'crossbow', 'armor', 'armour', 'phone',
 ];
-/** A person word is a person in the beat only when it acts: "a fence stood by the cart", not "a fence" of rails. */
-const PERSON_ACTS =
-  /^\s+(?:\w+\s+)?(?:stood|said|says|watched|stepped|looked|called|asked|walked|came|sat|nodded|pointed|laughed|turned|waited|kept|held|ran|spoke|told|shouted|blocked|moved)\b/i;
 const PEOPLE = [
   'guard', 'guards', 'priest', 'priests', 'merchant', 'merchants', 'vendor', 'vendors', 'soldier', 'soldiers', 'traveler',
   'travelers', 'stranger', 'strangers', 'woman', 'women', 'man', 'men', 'boy', 'girl', 'child', 'children', 'clerk', 'monk',
   'beggar', 'beggars', 'innkeeper', 'barkeep', 'sailor', 'sailors', 'farmer', 'pilgrim', 'pilgrims', 'acolyte', 'acolytes',
-  'watchman', 'watchmen', 'captain', 'knight', 'noble', 'servant', 'porter', 'fence', 'smith', 'healer', 'scribe', 'handler',
+  'watchman', 'watchmen', 'captain', 'knight', 'noble', 'servant', 'porter', 'smith', 'healer', 'scribe', 'handler',
 ];
 const FOES = [
   'thug', 'thugs', 'bandit', 'bandits', 'wolf', 'wolves', 'rat', 'rats', 'cutthroat', 'cutthroats', 'highwayman', 'highwaymen',
@@ -191,6 +188,10 @@ function factsFor(row, packet) {
     xp: line(packet, 'XP:') || null,
     inventory: line(packet, 'Inventory:'),
     handedText,
+    // The engine's records: who is here (info-sheet HERE list, person refs, engine result, receipts) and what is
+    // held (inventory, gear, kit and prop refs). Packet prose ("a traveler may be about") is not a record.
+    peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...refs.flatMap((r) => (r.kind === 'person' || r.kind === 'companion' ? [r.display] : [])), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
+    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
     // count whole, so a short form of a present person's name ("Mayor Brask" for Mayor Helga Brask) is handed.
@@ -199,9 +200,11 @@ function factsFor(row, packet) {
   };
 }
 
-const inHanded = (facts, word) => {
+/** A person is handed by the who-is-here records; a thing by the facts or an item record it names ("axe" is the greataxe). */
+const inHanded = (facts, word, kind) => {
   const w = lower(word).replace(/s$/, '');
-  return new RegExp(`\\b${w}(?:s|es)?\\b`).test(facts.handedText);
+  return new RegExp(`\\b${w}(?:s|es)?\\b`).test(kind === 'person' ? facts.peopleText : facts.handedText)
+    || (kind === 'item' && facts.itemWords.some((x) => x.endsWith(w) || x.endsWith(`${w}s`)));
 };
 /** The clauses of `sentence` with offsets, cut where the exit-clause split cuts (";", ":", ", and …"). */
 const clausesOf = (sentence) => {
@@ -377,7 +380,7 @@ export function checkTurn(row, packet, page = '') {
       const before = narration.slice(0, idx);
       const after = narration.slice(idx + w.length, idx + w.length + 30);
       const kind = ITEMS.includes(w) ? 'item' : FOES.includes(w) ? 'foe' : PEOPLE.includes(w) ? 'person' : null;
-      if (!kind || inHanded(facts, w) || negated(narration, idx)) continue;
+      if (!kind || inHanded(facts, w, kind) || negated(narration, idx)) continue;
       if (kind === 'item') {
         if (/^\s+of\b/i.test(after)) continue;
         // The game gate's reading (engineFactPatterns): what anyone wears is held, and a handed bag covers its other names.
@@ -419,12 +422,13 @@ export function checkTurn(row, packet, page = '') {
         // "a man called Col Thatch": the role word introduces a handed name; "called" is not an action here.
         const named = after.match(/^\s+(?:called|named|known as)\s+([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*)/)?.[1];
         if (named && facts.allowText.includes(lower(named))) continue;
-        if (!PERSON_ACTS.test(after)) continue;
         if (foeHanded && /^(?:men|man|women|woman|strangers?)$/.test(w)) continue;
-        // "neither man" / "the older man" points back at a handed person here; "a man" / "a tall man" is a new one.
+        // "neither man" / "the older man" points back at a person the record holds here; "a man", "a lone traveler"
+        // or a bare "Vendors" is a new one, and a "the" with nobody held here points back at no one.
         const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
-        if (personHere && /^(?:men|man|women|woman)$/.test(w)
-          && /\b(?:the|neither|either|each|both|other|those|these|one|two|three|four)\s+(?:of the\s+)?(?:[a-z]+\s+)?$/i.test(before)) continue;
+        if (personHere && /\b(?:the|that|this|his|her|their|your|neither|either|each|both|other|those|these)\s+(?:[a-z]+\s+)?$/i.test(before)) continue;
+        // "the way a man checks a stranger's hands" compares; it brings nobody onto the scene.
+        if (/\b(?:like|the way|as if|as though)\b[^,;]*$/i.test(before)) continue;
         // "Two strangers stood…" with exactly two people handed here counts the people here, not new ones.
         const hereCount = facts.refs.filter((r) => r.kind === 'person' && !/^encounter:/.test(r.id)).length;
         const counted = before.match(/\b(two|three|four|both)\s+$/i)?.[1]?.toLowerCase();
@@ -477,9 +481,8 @@ export function checkTurn(row, packet, page = '') {
     if (choicePose.some((re) => re.test(narration))) add('player-choice', s, "poses the player's next choice");
     if (rollContradiction(s, who, facts.engineResult)) add('roll', s, `a fight roll the engine did not make: ${facts.engineResult.slice(0, 160)}`);
     if (/\bquiet stretch\b/i.test(facts.engineResult)) {
-      // A meeting is someone acting on the road ("a man stood by the ditch"), not a thing named for its kind ("a fence").
-      const met = [...narration.matchAll(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'patrol'].join('|')})\\b`, 'gi'))]
-        .find((m) => PERSON_ACTS.test(narration.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 30)));
+      // The engine recorded nobody met: anyone the narration brings onto the road ("a lone traveler") is a meeting.
+      const met = narration.match(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'patrol'].join('|')})\\b`, 'i'));
       if (met && !negated(narration, met.index ?? 0)) add('meeting', s, `"${met[0]}" on a quiet stretch (nobody met)`);
     }
     for (const q of s.matchAll(/["“]([^"”]+)["”]/g)) {

@@ -373,7 +373,7 @@ import {
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
-import { acceptTokenOrLedgerStory, formatTokenRepairFacing, looksLikeTokenJson, type SpokenLine } from './tokenProse';
+import { acceptTokenOrLedgerStory, looksLikeTokenJson, type SpokenLine } from './tokenProse';
 import { formatTalkWriterFacing } from './talkEnvelope';
 import {
   composeFreeMudTurn,

@@ -575,12 +575,16 @@ const ASKS_ROLL = /\b(?:roll (?:a|an|for|your)\b|make an? [a-z]+ (?:check|save|s
 const PROMPT_ENDING =
   /(?:\b(?:what (?:do|will|would|should) you do|what now)\b[^.!?]*\?|\b(?:your move|the choice is yours|what happens next is up to you)\b[^.!?]*[.!?]?)["”']?\s*$/i;
 
+/**
+ * The narrator's five-word runs that carry content: most of the run (3 of 5) is content-length words, so a
+ * grammar frame ("and stopped in front of") is not a habit. Quoted speech is the person's, not the narrator's.
+ */
 function fiveGrams(text: string): string[] {
-  const w = low(text).match(/[a-z'’~]+/g) ?? [];
+  const w = low(narrationOf(text)).match(/[a-z'’~]+/g) ?? [];
   const out: string[] = [];
   for (let i = 0; i + 5 <= w.length; i++) {
     const g = w.slice(i, i + 5);
-    if (g.includes('~') || g.filter((x) => x.length >= 4).length < 2) continue;
+    if (g.includes('~') || g.filter((x) => x.length >= 4).length < 3) continue;
     out.push(g.join(' '));
   }
   return out;

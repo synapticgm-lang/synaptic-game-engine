@@ -123,11 +123,12 @@ describe('tt-fix-4 (6) the Oskar step is reachable; a spine is more than one loo
     expect(turn.state.quests![0]!.status).toBe('active');
   });
 
-  it('every tabletop spine starts with two steps at its pin', () => {
+  it('every tabletop spine starts with two steps at its pin, or leads from its pin into its site (tt-fix-10)', () => {
     for (const spine of TABLETOP_MAIN_SPINES) {
       const seed = tabletopSpineToStarterQuest(spine);
-      expect(seed.objectives.length).toBe(2);
-      expect(seed.objectiveAnchors?.every((a) => a?.place === spine.mapPin)).toBe(true);
+      expect(seed.objectives.length).toBe(spine.site ? 3 : 2);
+      expect(seed.objectiveAnchors?.[0]?.place).toBe(spine.mapPin);
+      expect(seed.objectiveAnchors?.slice(1).every((a) => a?.place === (spine.site?.place ?? spine.mapPin))).toBe(true);
     }
   });
 });

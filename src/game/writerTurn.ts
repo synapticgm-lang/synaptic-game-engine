@@ -104,7 +104,6 @@ function sentenceCount(prose: string): number {
 export function renderWriterDraft(raw: string, state: GameState, packet?: CompletedEventPacket): WriterDraft {
   if (!raw?.trim()) return { prose: '', path: 'last-resort' };
   const accepted = acceptTokenOrLedgerStory(raw, state, packet, {
-    alreadyRepaired: true,
     lenient: true,
     noLedgerFallback: true,
   });

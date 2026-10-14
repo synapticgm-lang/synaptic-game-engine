@@ -25,7 +25,7 @@ import { hallTopicAlreadyAnswered } from './openingEstablishment';
 import { travelChipMoves } from './chipLegality';
 import { objectiveOpensInterior } from './enterInterior';
 import { storyRpgDecisionChip } from './storyRpgProgress';
-import { tabletopStepChip } from './tabletopQuestProgress';
+import { tabletopStepAnchor, tabletopStepChip } from './tabletopQuestProgress';
 import { mainSpineQuest } from './questPlay';
 
 export type { CirclingMemory } from './types';
@@ -379,7 +379,8 @@ export function storyChip(state: GameState): string | null {
   // A talk stage whose giver stands here is done here, before any trip to the quest's site.
   if (!giverHere) {
     const hubs = hubsForBibleId(state.campaignBibleId);
-    const leads = questTravelSite(quest);
+    // Tabletop: the trip is to where the open step is taken, which may be past the quest's own place.
+    const leads = (state.engineMode === 'dnd' && obj ? tabletopStepAnchor(state, quest, objIdx).place : null) ?? questTravelSite(quest);
     const site = leads ? matchHub(hubs, leads) : null;
     if (site && !here.includes(site.name.toLowerCase())) return `Travel toward ${site.name}`;
     const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));

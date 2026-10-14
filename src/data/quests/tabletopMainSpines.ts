@@ -60,6 +60,8 @@ export interface TabletopMainSpine {
   firstObjective: string;
   /** The first objective and the follow-on beat as actions: each step's chip is its verb and object. */
   steps: [StepAction, StepAction];
+  /** Where the quest leads: the follow-on step goes there and the last step is taken inside it. */
+  site?: { place: string; objective: string; step: StepAction };
   refuseOrWalkAway: string;
   mapPin: string;
   stampAlts: string[];
@@ -105,6 +107,11 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
       "Father Aldous believes the fouled well water is tied to a restless spirit in the keep's ruined cistern, and he needs you to consecrate the source before sickness overtakes the village.",
     firstObjective: 'Haul up the ruined, heavy bucket to examine the black sludge and severed rope.',
     steps: [{ verb: 'Haul up', object: 'the heavy bucket' }, { verb: 'Investigate', object: 'the sludge trail' }],
+    site: {
+      place: 'Keep Gate',
+      objective: "Consecrate the source of the foul water in the keep's ruined cistern.",
+      step: { verb: 'Consecrate', object: "the keep's ruined cistern" },
+    },
     refuseOrWalkAway: "He warns that the village will die of thirst or madness by week's end.",
     mapPin: 'Midnight Well',
     stampAlts: ['villagers', 'clergy', 'afflicted'],
@@ -125,6 +132,11 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
       'Dain Holt needs expendable outsiders to track whatever just battered against the barred oak doors and dragged a shrieking guardsman into the treeline.',
     firstObjective: 'Examine the deep gouge marks on the outside of the oak doors to determine what took the guard.',
     steps: [{ verb: 'Examine', object: 'the deep gouge marks' }, { verb: 'Track', object: 'the heavy blood trail' }],
+    site: {
+      place: 'Keep Gate',
+      objective: 'Search the keep for whatever dragged the guardsman off.',
+      step: { verb: 'Search', object: 'the keep for the taken guardsman' },
+    },
     refuseOrWalkAway: 'Dain promises they will lock you out to face the dark alone.',
     mapPin: 'Barred Oak Gate',
     stampAlts: ['militia', 'guards', 'outsiders'],
@@ -145,6 +157,11 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
       "A visiting scholar named Silas Thorne needs an armed escort up to the cursed keep to recover his mentor's lost survey journals before the terrified locals burn the ruins down.",
     firstObjective: 'Review the crumbling old survey map Silas spreads across the sticky inn table.',
     steps: [{ verb: 'Review', object: 'the crumbling old survey map' }, { verb: 'Escort', object: 'Silas up the hill path' }],
+    site: {
+      place: 'Keep Gate',
+      objective: "Recover the mentor's lost survey journals inside the keep.",
+      step: { verb: 'Recover', object: 'the lost survey journals' },
+    },
     refuseOrWalkAway: 'Silas says he will go alone and likely die, leaving his heavy purse unspent.',
     mapPin: 'Greyhollow Inn',
     stampAlts: ['scholars', 'travelers', 'locals'],
@@ -165,6 +182,11 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
       'Mayor Helga Brask intercepts you at the churchyard and demands you quietly hunt down the graverobbers operating from the keep before panic completely overtakes the town.',
     firstObjective: 'Check the mud around the opened graves for heavy cart tracks leading uphill.',
     steps: [{ verb: 'Check', object: 'the mud around the opened graves' }, { verb: 'Follow', object: 'the cart tracks toward the keep' }],
+    site: {
+      place: 'Keep Gate',
+      objective: 'Hunt down the graverobbers working out of the keep.',
+      step: { verb: 'Hunt down', object: 'the graverobbers in the keep' },
+    },
     refuseOrWalkAway: 'Helga threatens to have the militia run you out of town as suspected accomplices.',
     mapPin: 'Greyhollow Graveyard',
     stampAlts: ['townsfolk', 'mourners', 'gravediggers'],
@@ -645,20 +667,27 @@ export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQu
   const giver = tabletopSpineGiver(spine);
   // Both steps start at the quest's own pin; their wording often names only a prop there. A step done with
   // the giver ("Escort him…", "the map Silas spreads") is taken with them, not with nobody there.
+  // A quest with a site leads there: the follow-on goes to it and the last step is taken inside it.
+  const site = spine.site;
   const anchor = (step: string, i: number) => ({
-    place: spine.mapPin,
+    place: i === 1 && site ? site.place : spine.mapPin,
     ...spine.steps[i],
     ...(giver && stepWithGiver(step, giver) ? { people: [giver] } : {}),
   });
   // A main quest is more than one look: the follow-on beat is its second step.
-  const objectives = followOn ? [spine.firstObjective, followOn] : [spine.firstObjective];
+  const two = followOn ? [spine.firstObjective, followOn] : [spine.firstObjective];
+  const objectives = site ? [...two, site.objective] : two;
+  const anchors = [
+    ...two.map(anchor),
+    ...(site ? [{ place: site.place, room: 'inside', ...site.step }] : []),
+  ];
   return {
     id: spine.spineId,
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
     objectives,
-    objectiveAnchors: objectives.map(anchor),
+    objectiveAnchors: anchors,
     location: spine.mapPin,
     ...(giver ? { giver } : {}),
     type: 'main',

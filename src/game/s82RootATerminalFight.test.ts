@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
-import { attachCompletedEvent } from './completedEventPacket';
+import { buildCompletedEventPacket } from './completedEventPacket';
 import { classifyBeatCommit } from './beatCommitGate';
 import { engineResultFact } from './engineResult';
 import { runWriterTurnWithFightRetry } from './writerTurn';
@@ -46,7 +46,7 @@ function t13(): GameState {
     ...s,
     sceneFacts: { ...s.sceneFacts!, lastKill: { name: FOE, outcome: 'victory', turn: 13, remains: true } },
   };
-  return attachCompletedEvent(killed, 'Try to flee', { engineResult: engineResultFact(T13_RECEIPTS) });
+  return { ...killed, completedEvent: buildCompletedEventPacket(killed, 'Try to flee', { engineResult: engineResultFact(T13_RECEIPTS) }) };
 }
 
 function check(state: GameState) {

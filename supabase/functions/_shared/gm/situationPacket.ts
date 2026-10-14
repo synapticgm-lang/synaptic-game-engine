@@ -18,7 +18,6 @@ import { formatTutorialBeatMandate } from './tutorialBeats.ts';
 import { formatLocalityForPrompt } from './locality.ts';
 import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
 import { formatGraphExitToken, formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine.ts';
-import { formatOutdoorHubsForPrompt } from './outdoorHubs.ts';
 import { formatHubArrivalForPrompt } from './hubEncounters.ts';
 import { emptySearchAuthorityLine, weaponAuthorityLine } from './searchContinuity.ts';
 import { countPlayerIntentStreak } from './beatFingerprint.ts';
@@ -497,7 +496,6 @@ export function formatSituationForPrompt(state: GameState): string {
     previousLine,
     placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
     ...simulationist,
-    formatOutdoorHubsForPrompt(state),
     formatHubArrivalForPrompt(state),
     `Dungeon: ${s.dungeon}`,
     interiorExplore || '',

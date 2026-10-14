@@ -58,7 +58,9 @@ export function placeTabletopStepPeople(state: GameState): GameState {
     if (o.completed) continue;
     const talk = talkStepPerson(o.description);
     if (talk) wanted.push([talk, o.place ?? tabletopStepPlace(state, o.description)]);
-    if (o.place) for (const p of o.people ?? []) wanted.push([p, o.place]);
+    // Someone a move takes along ("Escort Silas…") starts where the quest starts, not where the move goes.
+    const from = WITH_PERSON_VERB.test(o.description) ? quest.location ?? o.place : o.place;
+    if (from) for (const p of o.people ?? []) wanted.push([p, from]);
   }
   if (quest.giver) wanted.push([quest.giver, quest.location ?? null]);
   for (const [person, place] of wanted) {
@@ -112,8 +114,8 @@ export function tabletopStepKind(step: string): TabletopStepKind {
 /**
  * Where a step is taken. A talk step is taken with its person, wherever they are. A look step is taken at its
  * own anchor (else a place its wording names, else a one-step quest's own place), with its people there. A move
- * step is taken where it goes: the known place its wording names. A move to no known place ("toward the keep's
- * lower bailey") has nowhere to arrive, so it is taken as a look step at its own pin, else the quest's place.
+ * step is taken where it goes: the known place its wording names, else its own anchor when that is not where the
+ * quest starts. A move with nowhere else to arrive is taken as a look step at its own pin, else the quest's place.
  */
 export function tabletopStepAnchor(
   state: GameState,
@@ -127,7 +129,8 @@ export function tabletopStepAnchor(
   const people = o.people?.length ? o.people : person ? [person] : [];
   if (kind === 'talk' && people.length) return { kind, place: null, people };
   const named = tabletopStepPlace(state, o.description);
-  if (kind === 'move' && named) return { kind, place: named, people };
+  const goes = named ?? (o.place && o.place !== quest.location ? o.place : null);
+  if (kind === 'move' && goes) return { kind, place: goes, people };
   const single = (quest.objectives ?? []).length === 1 || kind === 'move' ? quest.location ?? null : null;
   return {
     kind: 'look',
@@ -201,6 +204,23 @@ function arrivedMoveStep(state: GameState, quest: Quest, hereBefore: string | un
   });
 }
 
+/** The person the open step takes along ("Escort Silas…") and who stood where the player left goes with the player. */
+function takeAlong(state: GameState, quest: Quest, hereBefore: string | undefined): GameState {
+  const here = state.currentLocation ?? '';
+  const idx = (quest.objectives ?? []).findIndex((o) => !o.completed && !o.optional);
+  const step = quest.objectives?.[idx];
+  if (!hereBefore || !here || here === hereBefore || !step || !WITH_PERSON_VERB.test(step.description)) return state;
+  const people = tabletopStepAnchor(state, quest, idx).people;
+  const before = { ...state, currentLocation: hereBefore };
+  let moved = false;
+  const npcMemories = (state.npcMemories ?? []).map((m) => {
+    if (!m.location || !atPlace(before, m.location) || !people.some((p) => isGiverName(m.npcName, p))) return m;
+    moved = true;
+    return { ...m, location: here, present: true };
+  });
+  return moved ? { ...state, npcMemories } : state;
+}
+
 /** Tabletop: the chip for the quest step the player can take here, or null. */
 export function tabletopStepChip(state: GameState): string | null {
   return takeableSteps(state)[0]?.chip ?? null;
@@ -210,9 +230,10 @@ const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;
 
 /** `hereBefore` is where the player stood before this turn's move, so a move step can tick on arrival. */
 export function applyTabletopQuestTurn(input: GameState, playerInput: string, hereBefore?: string): TabletopQuestTurn {
-  const state = placeTabletopStepPeople(input);
-  const quest = playOpen(state);
-  if (!quest) return { state, receipts: [] };
+  const placed = placeTabletopStepPeople(input);
+  const quest = playOpen(placed);
+  if (!quest) return { state: placed, receipts: [] };
+  const state = takeAlong(placed, quest, hereBefore);
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const said = chipKey(action);
   const moved = arrivedMoveStep(state, quest, hereBefore);

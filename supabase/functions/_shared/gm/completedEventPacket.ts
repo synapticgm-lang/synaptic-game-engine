@@ -1270,26 +1270,6 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   return [...lastLines].sort((a, b) => lastUse(b) - lastUse(a))[0] ?? stayLine;
 }
 
-export function attachCompletedEvent(
-  state: GameState,
-  playerInput?: string,
-  extras?: PacketBuildExtras
-): GameState {
-  const packet = buildCompletedEventPacket(state, playerInput, extras);
-  const streaks = nextLoiterStreaks(state, playerInput);
-  const facts = state.sceneFacts ?? emptySceneFacts(state.turn);
-  return {
-    ...state,
-    completedEvent: packet,
-    sceneFacts: {
-      ...facts,
-      inspectStreak: streaks.inspectStreak,
-      waitStreak: streaks.waitStreak,
-      loiterHere: streaks.loiterHere,
-    },
-  };
-}
-
 /**
  * Short past-tense instruction + packet + allowlist. Facts only.
  * No SNAPSHOT/CRAFT essays. No "don't resurrect" lecture.
