@@ -2797,7 +2797,7 @@ export function useGame() {
       const travelCommit = graphMoved === liveCurrent ? commitTravel(liveCurrent, sanitizedInput) : null;
       liveCurrent = travelCommit?.state ?? graphMoved;
       if (travelCommit?.receipt) {
-        pendingArcStatusReceipts = [...pendingArcStatusReceipts, travelCommit.receipt];
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
       }
       liveCurrent = syncSheetToMovedHere(liveCurrent, hereAtTurnStart);
       if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {

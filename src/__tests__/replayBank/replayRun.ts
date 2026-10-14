@@ -20,6 +20,7 @@ import { setActiveSubscriptionTier } from '../../game/subscriptionTiers';
 import type { GameState, Settings } from '../../game/types';
 import { checkPlayerTurn, type TurnCheck } from '../../game/turnCheck';
 import { turnProgress } from '../../game/choiceRanking';
+import { setReplayRecordedMeetings } from '../../game/travelJourney';
 
 export const RUNS_ROOT = resolve(__dirname, '../../../scripts/fate-autoplay/runs');
 
@@ -107,6 +108,7 @@ export async function replayRun(runFolder: string, uptoTurn: number): Promise<Re
   const seeded = mulberry32(run.meta.seed);
   const realRandom = Math.random;
   Math.random = () => seeded();
+  setReplayRecordedMeetings(true);
   try {
     const { state: raw } = buildNewGameState({
       bibleId: run.meta.bibleId,
@@ -148,6 +150,7 @@ export async function replayRun(runFolder: string, uptoTurn: number): Promise<Re
     return steps;
   } finally {
     Math.random = realRandom;
+    setReplayRecordedMeetings(false);
   }
 }
 

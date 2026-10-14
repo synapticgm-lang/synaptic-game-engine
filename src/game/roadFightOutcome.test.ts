@@ -32,7 +32,9 @@ function keepState(seed: string): GameState {
 /** On the ground between two places with thugs on this stretch. */
 function thugsOnStretch(over: Partial<RoadEncounter> = {}): GameState {
   const trip = commitTravel(keepState('road-fight'), 'Travel toward Blackspine Treeline').state;
-  const j = trip.journey!;
+  // The guide's day roll may lose the way (a stretch longer); these cases are about the meeting, so the way is kept.
+  const set = trip.journey!;
+  const j = { ...set, legsTotal: set.legsTotal - (set.lostLegs ?? 0), lostLegs: 0, lost: false };
   const level = roadEncounterLevel(trip, j.areaTier ?? 1);
   return {
     ...trip,

@@ -46,28 +46,33 @@ function tripsTo(dest: string, n = 200) {
 
 describe('29w stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14k');
-    expect(BUILD_STAMP).toBe('2026-10-14k');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14l');
+    expect(BUILD_STAMP).toBe('2026-10-14l');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
 describe('29w — a stretch is a chance, not a guaranteed meeting', () => {
-  it('one stretch can have no encounter: only Walk on and Turn back', () => {
+  it('one stretch can have no encounter: Walk on, a travel job, Turn back', () => {
     expect(rollRoadEncounter(ctx({}), 1, 0.99, 0)).toBeNull();
     const quiet = tripsTo('Blackspine Treeline').find((t) => t.state.journey && !t.state.journey.encounter);
     expect(quiet).toBeDefined();
     const pads = compileChoices(quiet!.state, ['Look around']).choices;
-    expect(pads).toEqual(['Walk on', 'Turn back toward Greyhollow Inn']);
+    expect(pads[0]).toBe('Walk on');
+    expect(pads[pads.length - 1]).toBe('Turn back toward Greyhollow Inn');
+    expect(pads.every((p) => /^(Walk on|Travel on|Keep lookout|Lead the way|Forage as you go|Turn back toward Greyhollow Inn)$/.test(p))).toBe(true);
     expect(quiet!.receipt).toMatch(/quiet stretch/);
   });
 
   it('not every step, and not so rare a long trip never meets one', () => {
     const trips = tripsTo('Blackspine Treeline');
     const met = trips.filter((t) => t.state.journey?.encounter).length / trips.length;
-    expect(met).toBeGreaterThan(0.2);
-    expect(met).toBeLessThan(0.7);
-    expect(rollRoadEncounter(ctx({ quietStretches: 2 }), 1, 0.99, 0)).not.toBeNull();
+    // tt-travel: a d6 meeting check each watch (1 in 6; 2 in 6 on dangerous or haunted ground).
+    expect(met).toBeGreaterThan(0.08);
+    expect(met).toBeLessThan(0.4);
+    expect(rollRoadEncounter(ctx({}), 1, 0.1, 0)).not.toBeNull();
+    expect(rollRoadEncounter(ctx({}), 1, 0.2, 0)).toBeNull();
+    expect(rollRoadEncounter(ctx({ haunted: true }), 1, 0.3, 0)).not.toBeNull();
   });
 });
 

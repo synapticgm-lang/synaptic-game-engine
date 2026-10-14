@@ -144,10 +144,32 @@ function applySrdRest(state: GameState, input: string): RestHeal {
   const hurt = ch.hp < max;
   const sidekick = sidekickOf(state);
   const sidekickHurt = !!sidekick && sidekick.hp < sidekick.maxHp;
-  const recovers = kind === 'long' ? hurt || sidekickHurt || slotsSpent(state) || !!ch.casting?.mageArmor || featuresSpent(state) : hurt || arcaneRecoveryDue(state);
+  const recovers = kind === 'long'
+    ? hurt || sidekickHurt || slotsSpent(state) || !!ch.casting?.mageArmor || featuresSpent(state) || (ch.exhaustion ?? 0) > 0
+    : hurt || arcaneRecoveryDue(state);
   if (!kind || !recovers || !isSafeHubRest(state, kind === 'long' ? TABLETOP_LONG_REST_CHIP : 'rest')) {
     return { state, receipt: null };
   }
+  return srdRest(state, kind);
+}
+
+/**
+ * SRD 5.2.1 Exhaustion: a Long Rest removes 1 level. Exhaustion from Malnutrition stays until the character eats a
+ * full day's food (a trip's days with nothing eaten).
+ */
+function exhaustionAfterLongRest(state: GameState): { exhaustion: number; line: string | null } {
+  const level = state.character.exhaustion ?? 0;
+  if (level <= 0) return { exhaustion: 0, line: null };
+  if ((state.journey?.daysWithoutFood ?? 0) > 0) return { exhaustion: level, line: `Exhaustion: level ${level} stays (no food today)` };
+  return { exhaustion: level - 1, line: `Exhaustion: level ${level} → ${level - 1}` };
+}
+
+function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
+  const ch = state.character;
+  const max = ch.maxHp || ch.hp;
+  const hurt = ch.hp < max;
+  const sidekick = sidekickOf(state);
+  const sidekickHurt = !!sidekick && sidekick.hp < sidekick.maxHp;
   const house = houseRulesOf(state);
   const hours = REST_HOURS[house.restVariant];
   const variant = house.restVariant === 'standard' ? '' : ` (${house.restVariant} rest)`;
@@ -160,7 +182,14 @@ function applySrdRest(state: GameState, input: string): RestHeal {
     const inspired = house.heroicInspiration && house.rulesVersion === 'srd-5.2.1' && ch.srd?.speciesId === 'human' && !ch.heroicInspiration;
     // A long rest restores every spell slot, resets Arcane Recovery and ends Mage Armor (it lasts 8 hours).
     const features = restoreFeatures(ch, 'long');
-    let character = { ...features.character, hp: max, ...(caster ? { casting: { slotsUsed: [] } } : {}), ...(inspired ? { heroicInspiration: true } : {}) };
+    const tired = exhaustionAfterLongRest(state);
+    let character = {
+      ...features.character,
+      hp: max,
+      ...(caster ? { casting: { slotsUsed: [] } } : {}),
+      ...(inspired ? { heroicInspiration: true } : {}),
+      ...((ch.exhaustion ?? 0) > 0 ? { exhaustion: tired.exhaustion } : {}),
+    };
     if (ch.casting?.mageArmor) {
       const ac = deriveTabletopSheet({ character, inventory: state.inventory ?? [] })?.ac;
       if (ac != null) character = { ...character, armorClass: ac };
@@ -173,6 +202,7 @@ function applySrdRest(state: GameState, input: string): RestHeal {
       ...(sidekickHurt ? [`${sidekick!.name}: HP ${sidekick!.hp} → ${sidekick!.maxHp}`] : []),
       ...(inspired ? ['Heroic Inspiration: yours (Human, Resourceful)'] : []),
       ...(features.regained.length ? [`Class feature: ${features.regained.join(', ')} back`] : []),
+      ...(tired.line ? [tired.line] : []),
     ];
     return {
       state: next,
@@ -221,7 +251,18 @@ function applySrdRest(state: GameState, input: string): RestHeal {
  * Tabletop shows the rest kind, hours, clock and Hit Die; LitRPG and story RPG show the short HP line.
  */
 export function applyRestHeal(state: GameState, input: string): RestHeal {
-  const rest = applySrdRest(state, input);
+  return presentRest(state, applySrdRest(state, input));
+}
+
+/**
+ * The night's sleep at a road camp: the same SRD rest as at a hub, with no safe-hub gate (the engine has already
+ * settled the night's watches). Under the gritty rest variant a night's sleep is a short rest.
+ */
+export function applyCampRest(state: GameState): RestHeal {
+  return presentRest(state, srdRest(state, houseRulesOf(state).restVariant === 'gritty' ? 'short' : 'long'));
+}
+
+function presentRest(state: GameState, rest: RestHeal): RestHeal {
   if (!rest.receipt || modeProfile(state.engineMode).restDetail) return rest;
   const before = state.character.hp;
   const after = rest.state.character.hp;

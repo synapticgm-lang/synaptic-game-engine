@@ -29,6 +29,7 @@ import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { carriedCoinLb } from '../rules/coins';
 import { sceneLight, type SceneLight } from '../rules/exploration';
+import { exhaustionD20, exhaustionSpeed, weatherRuleOf } from '../rules/travelDay';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName, wearsHeavyArmor } from './combatChips';
 
 export interface RoundFightResult {
@@ -110,7 +111,7 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
   const ally = sidekick ? (sidekickHpNow > 0 ? { name: sidekick.name } : null) : fightAlly(state);
   const potion = healingPotion(state);
   const saves = Object.fromEntries(sheet.saves.map((s) => [s.key, s.total])) as PcProfile['saves'];
-  return {
+  const profile: PcProfile = {
     name: state.character.name || 'you',
     ac: sheet.ac,
     hp: state.character.hp,
@@ -168,6 +169,25 @@ export function pcCombatProfile(state: GameState, extraConditions: string[] = []
     ...(ally && sidekick ? { ally: { name: sidekick.name, toHit: sidekick.toHit, dice: sidekick.dice, type: sidekick.type } } : {}),
     ...(ally && !sidekick ? { ally: { name: ally.name, toHit: pb + 2, dice: '1d6+2', type: 'slashing' } } : {}),
     conditions: [...(state.character.conditions ?? []), ...extraConditions].filter((c) => !/^unconscious$/i.test(c)),
+  };
+  return withExhaustion(profile, state.character);
+}
+
+/** SRD 5.2.1 Exhaustion: every D20 Test the PC makes is −2 per level, and Speed −5 feet per level. */
+function withExhaustion(pc: PcProfile, character: GameState['character']): PcProfile {
+  const d20 = exhaustionD20(character);
+  if (!d20) return pc;
+  const saves = Object.fromEntries(Object.entries(pc.saves).map(([k, v]) => [k, v + d20])) as PcProfile['saves'];
+  return {
+    ...pc,
+    speed: Math.max(0, pc.speed - exhaustionSpeed(character)),
+    initiativeMod: pc.initiativeMod + d20,
+    saves,
+    stealth: pc.stealth + d20,
+    weapon: { ...pc.weapon, toHit: pc.weapon.toHit + d20 },
+    ...(pc.cantrip ? { cantrip: { ...pc.cantrip, toHit: pc.cantrip.toHit + d20 } } : {}),
+    ...(pc.spells ? { spells: pc.spells.map((s) => ({ ...s, toHit: s.toHit + d20 })) } : {}),
+    ...(pc.bonusStrike ? { bonusStrike: { ...pc.bonusStrike, toHit: pc.bonusStrike.toHit + d20 } } : {}),
   };
 }
 
@@ -363,6 +383,7 @@ export function resolveRoundFight(
       ...(solo ? { foeDamageScale: 0.75, noRiders: true } : {}),
       ...(inspiration ? { inspiration } : {}),
       ...(light.darkness ? { darkness: true } : {}),
+      ...(weatherRuleOf(state.journey?.weather).rangedWeapons ? { strongWind: true } : {}),
       ...(house.rulesVersion === 'srd-5.2.1' ? { mastery: true } : {}),
     },
     ...(Object.keys(feat.features).length ? { features: feat.features } : {}),

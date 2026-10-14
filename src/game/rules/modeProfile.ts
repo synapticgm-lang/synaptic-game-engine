@@ -22,13 +22,15 @@ export interface ModeProfile {
    * which applies the table rules and death saves; Pick Your Own Adventure has no fights.
    */
   autoFight: boolean;
+  /** Rations, Extended Travel saves and Exhaustion on the road (rules/travelDay); off in the story modes. */
+  travelSurvival: boolean;
 }
 
 const PROFILES: Readonly<Record<EngineMode, ModeProfile>> = {
-  dnd: { mode: 'dnd', numbers: 'open', levelUpDetail: true, restDetail: true, skillWord: 'proficiency', autoFight: false },
-  litrpg: { mode: 'litrpg', numbers: 'system', levelUpDetail: false, restDetail: false, skillWord: 'rank', autoFight: true },
-  rpg: { mode: 'rpg', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth', autoFight: true },
-  pyoa: { mode: 'pyoa', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth', autoFight: false },
+  dnd: { mode: 'dnd', numbers: 'open', levelUpDetail: true, restDetail: true, skillWord: 'proficiency', autoFight: false, travelSurvival: true },
+  litrpg: { mode: 'litrpg', numbers: 'system', levelUpDetail: false, restDetail: false, skillWord: 'rank', autoFight: true, travelSurvival: false },
+  rpg: { mode: 'rpg', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth', autoFight: true, travelSurvival: false },
+  pyoa: { mode: 'pyoa', numbers: 'hidden', levelUpDetail: false, restDetail: false, skillWord: 'growth', autoFight: false, travelSurvival: false },
 };
 
 export function modeProfile(mode: EngineMode | undefined): ModeProfile {

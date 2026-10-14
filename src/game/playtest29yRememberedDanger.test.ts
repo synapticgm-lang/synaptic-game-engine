@@ -84,8 +84,8 @@ afterEach(() => {
 
 describe('29y stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14k');
-    expect(BUILD_STAMP).toBe('2026-10-14k');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14l');
+    expect(BUILD_STAMP).toBe('2026-10-14l');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

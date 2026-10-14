@@ -1189,7 +1189,7 @@ export async function headlessFateTurn(
   const graphMoved = applyGraphExitTravel(arcState, playerInput);
   const travelCommit = graphMoved === arcState ? commitTravel(arcState, playerInput) : null;
   arcState = travelCommit?.state ?? graphMoved;
-  if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt];
+  if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
   arcState = syncSheetToMovedHere(arcState, state.currentLocation);
   // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
   arcState = maybeEnterInteriorDungeon(arcState, playerInput);

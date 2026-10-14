@@ -285,6 +285,8 @@ export interface RoundRules {
   darkness?: boolean;
   /** SRD 5.2.1 Weapon Mastery properties apply (off under SRD 5.1). */
   mastery?: boolean;
+  /** SRD 5.2.1 Strong Wind: Disadvantage on ranged weapon attack rolls (spell attacks are not weapon attacks). */
+  strongWind?: boolean;
 }
 
 /** Blinded in the fight's darkness: a foe with no Darkvision, or the PC's sidekick / ally. */
@@ -453,6 +455,7 @@ function foeTurn(ctx: Ctx, foe: RoundFoeState, opportunity = false) {
     ...(flank ? ['advantage' as const] : []),
     ...(ctx.combat.reckless ? ['advantage' as const] : []),
     ...(spent.length ? ['disadvantage' as const] : []),
+    ...(ctx.rules.strongWind && atk.ranged ? ['disadvantage' as const] : []),
   ];
   if (spent.length) ctx.combat = { ...ctx.combat, foes: ctx.combat.foes.map((f) => (f.id === foe.id ? { ...f, conditions: f.conditions.filter((c) => !spent.includes(c)) } : f)) };
   const adv = attackAdv(foe.conditions, pcConds, !!atk.ranged, foeExtra, foeBlind(ctx, block), ctx.pc.conditions);
@@ -691,6 +694,7 @@ function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
     ctx.combat = { ...ctx.combat, helped: false };
   }
   if (ctx.pc.heavilyEncumbered || ctx.pc.untrainedArmor) extraAdv.push('disadvantage');
+  if (ctx.rules.strongWind && s.ranged && !s.spell) extraAdv.push('disadvantage');
   // Reckless Attack (Strength attacks), Vex (next attack on that foe), Faerie Fire (attacks on a lit foe), Innate Sorcery (spell attacks).
   if (ctx.combat.reckless && s.strBased && !s.spell) extraAdv.push('advantage');
   if (has(target.conditions, 'Vex')) {

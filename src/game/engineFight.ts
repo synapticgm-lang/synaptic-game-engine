@@ -256,7 +256,13 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   if (roundMode) {
     const r = resolveRoundFight(state, working, raw, input, {
       pre: flee ? 'flee' : parley ? 'parley' : undefined,
-      surprised: !flee && !parley && !state.roundCombat && approach.id === 'ambush' ? 'foes' : null,
+      surprised: flee || parley || state.roundCombat
+        ? null
+        : approach.id === 'ambush'
+          ? 'foes'
+          : isRoadFoe(state, enc) && state.journey?.encounter?.surprisesParty
+            ? 'pc'
+            : null,
     });
     if (r) return { ...r, receipts: [...receipts, ...r.receipts] };
   }

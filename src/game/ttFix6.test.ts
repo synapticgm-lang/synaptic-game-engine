@@ -8,7 +8,7 @@ import { houseRulesFromSettings } from './rules/houseRules';
 import { srdBreakAwayCheck } from './engineFight';
 import { formatEncounterClearedStatus, type EncounterClearedReceipt } from './encounterTerminalFsm';
 import { statusLinesForVerbosity } from './systemLog';
-import { handedWriterText } from './completedEventPacket';
+import { handedWriterText, type CompletedEventPacket } from './completedEventPacket';
 import { lineHasUnhandedFind, handedCountText } from './tokenProse';
 import { applyCommittedNarrative } from './sceneFacts';
 import { tabletopStepKind } from './tabletopQuestProgress';
@@ -17,13 +17,13 @@ import { engineResultFact } from './engineResult';
 import { hasOpenAsk } from './questGiver';
 import { checkRepeatChips } from './turnCheck';
 import { backedAnswerFacts } from './writerTurn';
-import type { ActiveEncounter, CompletedEventPacket, GameState, Quest } from './types';
+import type { ActiveEncounter, GameState, Quest } from './types';
 
 const tabletop = (): GameState => newGameState('cursed-keep', { engineMode: 'dnd' });
 
 describe('tt-fix-6 item 1 — tabletop follows SRD 5.2.1', () => {
   it('deeds pay no tabletop XP and progression is always SRD XP', () => {
-    expect(deedXp('dnd', 'complete').amount).toBe(0);
+    expect(deedXp('dnd', 'capstone').amount).toBe(0);
     expect(deedXp('rpg', 'first').amount).toBe(0);
     expect(houseRulesFromSettings({ ttProgression: 'milestone' } as never).progression).toBe('xp');
   });

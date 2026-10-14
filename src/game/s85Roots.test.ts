@@ -113,7 +113,8 @@ describe('s85 Root C — the speaker is a person here', () => {
   it('replayed T11 on the road toward West Wall: the destination as speaker fails, the road meeting as speaker stands', () => {
     const s = step(replay(T2_T10), 'Call out to a bystander');
     expect(s.journey?.to).toBe('West Wall');
-    expect(s.journey?.encounter?.kind).toBe('meeting');
+    // A person on the road who speaks (the meeting kind is drawn from the ground's pool).
+    expect(['meeting', 'traveler', 'plea']).toContain(s.journey?.encounter?.kind);
     const packet = buildCompletedEventPacket(s, 'Call out to a bystander');
     const refs = packet.refEnum ?? [];
     const dest = refs.find((r) => r.display === 'West Wall');

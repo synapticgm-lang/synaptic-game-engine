@@ -66,8 +66,8 @@ afterEach(() => {
 
 describe('29x stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14k');
-    expect(BUILD_STAMP).toBe('2026-10-14k');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14l');
+    expect(BUILD_STAMP).toBe('2026-10-14l');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -75,7 +75,7 @@ describe('29x stamps', () => {
 describe('29x — rare spawn', () => {
   it('is uncommon: only hostile meetings, only under the rare roll', () => {
     const thugs = ctx({ terrain: 'streets' });
-    const kindRoll = 2 / 3 + 0.01; // streets pool: traveler, meeting, thugs
+    const kindRoll = 2 / 3 + 0.01; // hostile share is 1/3 at default sliders: above 2/3 is the hostile group
     expect(rollRoadEncounter(thugs, 2, 0, kindRoll, RARE_SPAWN_CHANCE / 2)?.rare).toBe(true);
     expect(rollRoadEncounter(thugs, 2, 0, kindRoll, 0.5)?.rare).toBeUndefined();
     expect(rollRoadEncounter(thugs, 2, 0, 0, 0)?.kind).toBe('traveler');
@@ -87,7 +87,7 @@ describe('29x — rare spawn', () => {
     );
     const hostile = trips.map((t) => t.state.journey?.encounter).filter((e) => e && e.kind === 'undead');
     const rare = hostile.filter((e) => e!.rare).length;
-    expect(hostile.length).toBeGreaterThan(40);
+    expect(hostile.length).toBeGreaterThan(15);
     expect(rare).toBeGreaterThan(0);
     expect(rare / hostile.length).toBeLessThan(0.3);
     const hit = trips.find((t) => t.state.journey?.encounter?.rare);
@@ -135,8 +135,9 @@ describe('29x — rare spawn', () => {
 
 describe('29x — camp mini-boss', () => {
   it('a camp can hold a mini-boss and offers a chip to face it', () => {
-    expect(rollRoadEncounter(ctx({ terrain: 'road' }), 2, 0, 0.99, 0.1)).toMatchObject({ kind: 'camp', miniBoss: true });
-    expect(rollRoadEncounter(ctx({ terrain: 'road' }), 2, 0, 0.99, 0.9)?.miniBoss).toBeUndefined();
+    // Non-hostile group (kindRoll < 2/3): traveler, meeting, plea, camp, signs; camp is the fourth fifth.
+    expect(rollRoadEncounter(ctx({ terrain: 'road' }), 2, 0, 0.45, 0.1)).toMatchObject({ kind: 'camp', miniBoss: true });
+    expect(rollRoadEncounter(ctx({ terrain: 'road' }), 2, 0, 0.45, 0.9)?.miniBoss).toBeUndefined();
     const s = onGround({ kind: 'camp', miniBoss: true });
     expect(journeyPads(s)).toEqual([
       'Walk on',
@@ -190,7 +191,10 @@ describe('29x — camp mini-boss', () => {
 
     const after = bossFight.state;
     expect(after.activeEncounter).toBeFalsy();
-    expect(journeyPads(after)).toEqual(['Walk on', 'Turn back toward Greyhollow Inn']);
+    const afterPads = journeyPads(after);
+    expect(afterPads[0]).toBe('Walk on');
+    expect(afterPads[afterPads.length - 1]).toBe('Turn back toward Greyhollow Inn');
+    expect(afterPads.some((p) => /camp/i.test(p))).toBe(false);
     const won = bossFight.receipts.some((r) => /^Fight: VICTORY/.test(r));
     expect(commitTravel(after, 'Look around').receipt).toMatch(won ? /a camp dealt with/ : /lost the fight to a camp, not beaten/);
   });

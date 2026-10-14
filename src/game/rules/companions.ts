@@ -26,6 +26,8 @@ export const APPROVAL_SHIFT = {
   kindCompanion: { trust: 6, familiarity: 2 },
   kindOther: { trust: 4, familiarity: 1 },
   foughtTogether: { trust: 2, familiarity: 2 },
+  /** A night's talk at a road camp (travelJourney): they know the player a little better. */
+  campTalk: { trust: 2, familiarity: 3 },
 } as const;
 
 const BAND_LABEL: Record<Disposition, string> = {
@@ -185,7 +187,20 @@ function settleRecruit(state: GameState, input: string): CompanionSettle | null 
   };
 }
 
-type ApprovalEvent = keyof Omit<typeof APPROVAL_SHIFT, 'join'>;
+/** A night's talk at a road camp moves the travelling companion's record a little; the band shows only if it moved. */
+export function settleCampTalk(state: GameState): CompanionSettle | null {
+  const companion = recruitedCompanions(state)[0];
+  if (!companion || !companionsAllowed(state)) return null;
+  const shifted = writeShift(state, companion.name, APPROVAL_SHIFT.campTalk, 'interaction');
+  const moved = shifted.after.disposition !== shifted.before.disposition;
+  return {
+    state: shifted.state,
+    receipts: moved ? [`Companion: ${companion.name} approves (now ${BAND_LABEL[shifted.after.disposition]}).`] : [],
+    facts: [],
+  };
+}
+
+type ApprovalEvent = keyof Omit<typeof APPROVAL_SHIFT, 'join' | 'campTalk'>;
 
 /** What this line (and the fight it settled) means to the companion, read through the shared stance reader. */
 function approvalEvent(state: GameState, companion: Companion, input: string, wonFight: boolean): ApprovalEvent | null {
