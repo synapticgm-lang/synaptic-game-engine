@@ -344,6 +344,8 @@ export interface Character {
   statAllocations?: { level: number; bonus: Partial<Attributes> }[];
   /** The title the System shows on the window; unset until a title is earned. */
   activeTitle?: string;
+  /** SRD 5.2.1 Exhaustion level (1-6); unset or 0 = none. */
+  exhaustion?: number;
   /** LitRPG named skills from the skill library (rules/librarySkills), grown by real use. */
   namedSkills?: NamedSkillState[];
   /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */
@@ -910,6 +912,10 @@ export interface GameState {
   worldAtlas?: WorldAtlasState | null;
   /** 29u — crossing a mapped gap: HERE is the ground between two places until the last leg. */
   journey?: TravelJourney | null;
+  /** Named stops per route (key from the two ends), made once on the first trip and saved. */
+  routeStops?: Record<string, RouteStop[]>;
+  /** What the travel engine settled this turn, as plain facts for the writer. */
+  travelBeat?: TravelBeat | null;
   /** 29u — hour of day (0–24) moved by travel time; sceneFacts.timeOfDay follows it. */
   worldHour?: number;
   /** Tabletop: Hit Dice spent on short rests since the last long rest (the character holds one per level). */
@@ -1047,6 +1053,50 @@ export interface TravelJourney {
   encounter?: RoadEncounter | null;
   /** 29w — quiet stretches in a row on this trip (a long trip is not all quiet). */
   quietStretches?: number;
+  /** Hours travelled since the last camp (SRD 5.2.1 Extended Travel counts past 8). */
+  hoursToday?: number;
+  /** Travel day of this trip, 1-based; a camp starts the next one. */
+  day?: number;
+  /** Hours walked since the last meeting check (one check per watch). */
+  hoursSinceCheck?: number;
+  /** Today's weather, rolled once per day of travel. */
+  weather?: TravelWeather;
+  /** Who does each travel job today ('you' or a companion's name). */
+  jobs?: Partial<Record<TravelJob, string>>;
+  /** The job the player chose to take ('guide' when never chosen). */
+  pcJob?: TravelJob;
+  /** Day the job rolls were last made. */
+  jobsRolledDay?: number;
+  /** Today's job results (true = the roll passed). A job with no roll today is absent. */
+  jobResults?: Partial<Record<TravelJob, boolean>>;
+  /** The guide failed today's navigation roll: this stretch went the wrong way. */
+  lost?: boolean;
+  /** Stretches lost to bad navigation on this trip (each one adds a stretch). */
+  lostLegs?: number;
+  /** The forager found a day's food today. */
+  fedToday?: boolean;
+  /** Days in a row with nothing to eat (SRD 5.2.1 Malnutrition). */
+  daysWithoutFood?: number;
+}
+
+export type TravelWeather = 'clear' | 'overcast' | 'light rain' | 'heavy rain' | 'strong wind' | 'fog';
+export type TravelJob = 'guide' | 'lookout' | 'forager';
+
+/** A named stop on a route between two places: made once, saved, the same on the way back. */
+export interface RouteStop {
+  name: string;
+  /** Leg of the trip, counted from the route's first end, the stop sits on. */
+  leg: number;
+  /** Something to find here, when the lookout spots it. */
+  find?: 'cache' | 'tracks' | 'lore stone' | 'shrine';
+  /** The find was spotted (it is then known and never pays twice). */
+  found?: boolean;
+}
+
+/** The travel engine's plain facts for the writer on the turn they happened. */
+export interface TravelBeat {
+  turn: number;
+  facts: string[];
 }
 
 export type RoadEncounterKind =
@@ -1057,7 +1107,10 @@ export type RoadEncounterKind =
   | 'camp'
   | 'undead'
   | 'monster'
-  | 'villain';
+  | 'villain'
+  | 'signs'
+  | 'plea'
+  | 'lair';
 
 /** 29w — a chance meeting on one stretch. Kind and level only; the writer names it. */
 export interface RoadEncounter {
@@ -1083,6 +1136,12 @@ export interface RoadEncounter {
   lost?: boolean;
   /** Turn the meeting closed on (won, talked down, fled past or lost): it is still in that turn's beat. */
   closedTurn?: number;
+  /** What the other side wants, shown before anyone fights. */
+  want?: string;
+  /** How far off it is first seen (SRD 5.2.1 Travel Terrain encounter distance). */
+  distanceFt?: number;
+  /** The lookout missed it: a hostile meeting surprises the party. */
+  surprisesParty?: boolean;
 }
 
 /** Premade settlement on the world map (29e). */

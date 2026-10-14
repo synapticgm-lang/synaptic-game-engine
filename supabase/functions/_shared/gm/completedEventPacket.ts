@@ -16,7 +16,7 @@ import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs.ts';
 import { nearbyPlaceNames } from './placeNames.ts';
-import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, writerEngineResult } from './travelJourney.ts';
+import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, travelBeatFact, writerEngineResult } from './travelJourney.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
 import { TALK_VERB } from './intentParser.ts';
 import { emptySceneFacts } from './sceneFacts.ts';
@@ -1066,7 +1066,9 @@ const TALK_STAYS = ' A talk, ask or offer with no move is valid play: answer it 
  */
 export function movementFact(state: GameState, playerAction?: string): string {
   const stay = playerAction && TALK_ACTION.test(playerAction) ? TALK_STAYS : '';
-  return movementLine(state, stay);
+  const line = movementLine(state, stay);
+  const beat = travelBeatFact(state);
+  return beat ? (line ? `${line} ${beat}` : beat) : line;
 }
 
 function movementLine(state: GameState, stay: string): string {

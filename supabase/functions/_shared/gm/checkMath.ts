@@ -32,6 +32,7 @@ type TaskRung = string;
 const edgeOnly = (..._args: unknown[]): never => { throw new Error('tabletop exploration rules run on the client'); };
 const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
+import { exhaustionD20, exhaustionLevel, travelEngineChip, weatherRuleOf } from './rules/travelDay.ts';
 const modeProfile = edgeOnly;
 const namedSkillCheckMod = (..._args: unknown[]): null => null;
 const titleCheckMod = (..._args: unknown[]): null => null;
@@ -157,6 +158,21 @@ function sheetExtras(_state: GameState): boolean {
   return false;
 }
 
+/**
+ * The modifiers every check on this attribute and skill starts from: ability, worn gear, skill proficiency and
+ * (SRD 5.2.1) Exhaustion, −2 per level on every D20 Test. The travel engine rolls its jobs with these too.
+ */
+export function skillCheckMods(state: GameState, attr: AttributeKey, skill?: CheckSkill): CheckMod[] {
+  const mods: CheckMod[] = [
+    { label: attr, value: attrMod(attrScore(state, attr)) },
+    { label: 'gear', value: gearMod(state, attr) },
+    { label: skill ?? 'skill', value: skillBonus(state, skill) },
+  ];
+  const tired = exhaustionLevel(state.character);
+  if (tired) mods.push({ label: `exhaustion ${tired}`, value: exhaustionD20(state.character) });
+  return mods;
+}
+
 /** Every mode sets each task's DC on the SRD ladder (with the Strictness shift and dangerous ground). */
 function taskDc(state: GameState, kind: TaskKind): { dc: number; rung: TaskRung } {
   const rung = taskRung(state, kind);
@@ -173,6 +189,11 @@ export function resolveCheckContext(
   actionText: string
 ): CheckContext {
   const t = actionText.toLowerCase();
+  const j = state.journey;
+  if (j && j.legsDone < j.legsTotal && travelEngineChip(actionText)) {
+    // The travel engine rolls its own jobs and saves for this chip (travelJourney); no second check here.
+    return { label: 'Travel', attr: 'WIS', skill: 'survival', dc: 0, critFailHpRisk: 0, autoSucceed: true };
+  }
   const node = currentDungeonNode(state.activeDungeon);
   const trap = node?.hidden?.traps.find((tr) => !tr.disarmed);
   if (/\b(pick\s+lock|lockpick|disarm|disable\s+trap|jimmy)\b/i.test(t) || intent.kind === 'search' && /\block|trap|chest|cache\b/i.test(t)) {
@@ -299,16 +320,14 @@ export function runPlayerCheck(
       label: ctx.label,
       attr: ctx.attr,
       skill: ctx.skill,
-      codeResolutionText: 'SUCCESS (Dialogue — no contested check)',
+      codeResolutionText: `SUCCESS (${ctx.label} — no contested check)`,
       narrativeOutcomeLabel: 'SUCCESS',
       skippedRoll: true,
     };
   }
   // 28c — named modifiers, disposition (social) and weapon familiarity (attack), one result record.
   const mods: CheckMod[] = [
-    { label: ctx.attr, value: attrMod(attrScore(state, ctx.attr)) },
-    { label: 'gear', value: gearMod(state, ctx.attr) },
-    { label: ctx.skill ?? 'skill', value: skillBonus(state, ctx.skill) },
+    ...skillCheckMods(state, ctx.attr, ctx.skill),
     { label: 'profession', value: professionBonus(state, ctx.profession) },
   ];
   const row = difficultyRow(state.gmStrictness);
@@ -353,6 +372,12 @@ export function runPlayerCheck(
   adv = combineAdv(adv, conditionCheckAdv(state.character.conditions));
   // The task's rung, plus (tabletop sheet) what light, load and the travel pace did to the roll.
   const notes: string[] = ctx.rung && modeProfile(state.engineMode).numbers === 'open' ? [ctx.rung] : [];
+  // Weather on the road (SRD 5.2.1 Heavy Precipitation / fog: Lightly Obscured, Disadvantage on Perception).
+  const weather = state.journey && state.journey.legsDone < state.journey.legsTotal ? state.journey.weather : undefined;
+  if (ctx.skill === 'perception' && weatherRuleOf(weather).perception) {
+    adv = combineAdv(adv, weatherRuleOf(weather).perception!);
+    notes.push(weather!);
+  }
   if (sheetExtras(state)) {
     const burden = sheetBurden(state, ctx.attr);
     if (burden) {
@@ -362,7 +387,7 @@ export function runPlayerCheck(
     const pace = paceCheckAdv(state, ctx.skill);
     if (pace !== 'normal') {
       adv = combineAdv(adv, pace);
-      notes.push(`${travelPaceOf(state)} pace`);
+      notes.push(`${travelPaceOf(state, state.journey?.terrain)} pace`);
     }
     if (ctx.skill === 'perception') {
       const light = sceneLight(state);
