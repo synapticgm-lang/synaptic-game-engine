@@ -7,12 +7,12 @@
 import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
-import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, type LedgerRef } from './completedEventPacket';
+import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, sentenceGateProblems, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
-import { dropsFightRoll } from './engineFactGate';
+import { dropsFightRoll, RECORD_READOUT } from './engineFactGate';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
 import { exitRepairFact } from './exitCount';
@@ -202,7 +202,30 @@ export async function runWriterTurnWithFightRetry(opts: {
 }): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
   const turn = await runWriterTurnFightOnly(opts);
   if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
-  return repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
+  const done = await repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
+  if (opts.check.state.engineMode !== 'dnd') return done;
+  const prose = capBeatWords(done.prose, TABLETOP_BEAT_WORDS, opts.check.state);
+  return prose === done.prose ? done : { ...done, prose, remaining: writerDraftProblems(prose, opts.check) };
+}
+
+const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).length;
+
+/**
+ * TT31 — a beat over the word cap loses whole sentences from the end until it fits. A spoken line, the
+ * sentence naming where the player went and the first two sentences stay.
+ */
+export function capBeatWords(prose: string, cap: number, state: GameState): string {
+  if (wordCount(prose) <= cap) return prose;
+  const dest = [state.journey?.to, state.currentLocation].filter((p): p is string => !!p && p.length > 2).map((p) => p.toLowerCase());
+  const sentences = splitProseSentences(prose);
+  const keep = sentences.map((s, i) => i < 2 || /["“]/.test(s) || dest.some((d) => s.toLowerCase().includes(d)));
+  let total = wordCount(prose);
+  for (let i = sentences.length - 1; i >= 0 && total > cap; i--) {
+    if (keep[i]) continue;
+    total -= wordCount(sentences[i]!);
+    sentences[i] = '';
+  }
+  return sentences.filter(Boolean).join(' ');
 }
 
 export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted speech.';
@@ -385,11 +408,13 @@ export async function repairRejectedSentences(
 ): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
   const { check, packet } = opts;
   // The draft as a whole is what the gate rejects; a sentence that only reads wrong out of context is not.
-  const whole = sentenceGateProblem(check.state, turn.prose, check.playerInput);
+  const wholeProblems = sentenceGateProblems(check.state, turn.prose, check.playerInput);
+  const whole = wholeProblems[0];
   if (!whole) return turn;
+  // tt-fix-3 — every sentence the draft fails on is repaired in the one request, not only the first reason's.
   const flagged = splitProseSentences(turn.prose)
-    .filter((sentence) => sentenceGateProblems(check.state, sentence, check.playerInput).includes(whole))
-    .map((sentence) => ({ sentence, flag: whole }));
+    .map((sentence) => ({ sentence, flag: sentenceGateProblems(check.state, sentence, check.playerInput).find((p) => wholeProblems.includes(p)) }))
+    .filter((f): f is { sentence: string; flag: string } => !!f.flag);
   if (!flagged.length) {
     return {
       ...turn,
@@ -397,11 +422,16 @@ export async function repairRejectedSentences(
     };
   }
   // A way-out flag is fixed against this place's ways out, whatever else the turn's fact says.
-  const exitFact = /\bways? out\b/i.test(whole) && !/\bExits:/.test(check.engineFact) ? exitRepairFact(check.state) : '';
+  const exitFact = flagged.some((f) => /\bways? out\b/i.test(f.flag)) && !/\bExits:/.test(check.engineFact) ? exitRepairFact(check.state) : '';
   const fact = [exitFact, check.engineFact.trim()].filter(Boolean).join(' ');
-  const countNote = /^Gives the wrong number of ways out/.test(whole)
+  const countNote = flagged.some((f) => /^Gives the wrong number of ways out/.test(f.flag))
     ? 'Name every one of those ways out, or give no number of ways at all.'
     : '';
+  // A record read-out that cannot be rewritten stays when it is the only sentence naming where the player went.
+  const destination = [check.state.journey?.to, check.state.currentLocation].filter((p): p is string => !!p && p.length > 2);
+  const namesDestination = (s: string) => destination.some((p) => s.toLowerCase().includes(p.toLowerCase()));
+  const onlyDestination = (s: string, draft: string) =>
+    namesDestination(s) && !splitProseSentences(draft).some((o) => o !== s && namesDestination(o));
   let lines: string[] | null = null;
   let bug = 'no repair path';
   let raw = '';
@@ -421,7 +451,8 @@ export async function repairRejectedSentences(
     const inDraft = line ? sentenceGateProblems(check.state, replaceDraftSentence(prose, f.sentence, line), check.playerInput) : [];
     const still = line ? sentenceGateProblems(check.state, line, check.playerInput).find((p) => inDraft.includes(p)) ?? null : null;
     const ok = !!line && !still && line.trim() !== f.sentence.trim();
-    prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
+    const keep = !ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose);
+    if (!keep) prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
     return ok
       ? { sentence: f.sentence, flag: f.flag, fact, repaired: line }
       : {

@@ -938,7 +938,11 @@ export function applyTabletopSheet(state: GameState, sheet: TabletopSheet): Game
   const keep = (state.inventory ?? []).filter((i) =>
     !(i.itemType === 'weapon' || (i.itemType === 'armor' && i.slot !== 'Legs')) && !i.provenance?.endsWith('starting equipment'));
   const bag: Container | undefined = (state.containers ?? []).find((c) => c.equipped) ?? state.containers?.[0];
-  const placed = items.map((i) => (bag ? { ...i, containerId: bag.id } : i));
+  // The campaign already dressed the PC: the kit's clothes are those same clothes, not a second set.
+  const dressed = keep.some((i) => /\bclothes\b/i.test(i.name));
+  const placed = items
+    .filter((i) => !(dressed && /\bclothes\b/i.test(i.name)))
+    .map((i) => (bag ? { ...i, containerId: bag.id } : i));
   const inventory = [...keep, ...placed];
   const containers = (state.containers ?? []).map((c) =>
     c.id === bag?.id

@@ -84,8 +84,9 @@ describe('replay bank mode2 (mode lap 2)', () => {
   });
 
   it('[tabletop ds151 T10/T13 | mode2 fix 2] encounter XP is the CR XP of each foe beaten', () => {
-    expect(status(D, 10)).toMatch(/XP Gained: 100 \(defeated the thugs — CR 1\/4 \(no CR on card, default\) = 50 XP × 2 = 100 XP ÷ 1 = 100\)/);
-    expect(status(D, 13)).toMatch(/XP Gained: 150 \(defeated the restless dead — CR 1\/4 .*50 XP × 3 = 150 XP ÷ 1 = 150\)/);
+    expect(status(D, 10)).toMatch(/XP Gained: 50 \(defeated the thugs — CR 1\/8 = 25 XP × 2 = 50 XP ÷ 1 = 50\)/);
+    expect(status(D, 13)).toMatch(/XP Gained: 150 \(defeated the restless dead — CR 1\/4 = 50 XP × 3 = 150 XP ÷ 1 = 150\)/);
+    expect(allStatus(D)).not.toMatch(/no CR on card, default/);
   });
 
   it('[tabletop ds150 | mode2 fix 2] walking to places pays no XP, so no level comes from arrivals', () => {

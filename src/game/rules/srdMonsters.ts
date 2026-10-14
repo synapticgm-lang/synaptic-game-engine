@@ -145,6 +145,15 @@ export function statBlockForEncounter(enc: ActiveEncounter): StatBlock {
   return engineBlock(enc, normalizeCr(enc.cr) ?? DND_DEFAULT_CR);
 }
 
+/** The real CR a fight pays XP from: the card's, else the name-matched SRD block's; null when neither exists. */
+export function realEncounterCr(enc: Pick<ActiveEncounter, 'name' | 'cr'> | null | undefined): string | null {
+  if (!enc) return null;
+  const given = normalizeCr(enc.cr);
+  if (given) return given;
+  const hit = SRD_MONSTERS.find((b) => b.match.test(enc.name ?? ''));
+  return hit ? normalizeCr(hit.cr) : null;
+}
+
 export function blockById(id: string, enc: ActiveEncounter): StatBlock {
   const hit = SRD_MONSTERS.find((b) => b.id === id);
   if (hit) {

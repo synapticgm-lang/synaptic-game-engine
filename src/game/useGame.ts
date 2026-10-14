@@ -357,6 +357,7 @@ import {
 import { carryLimitOn, milestoneLevelling, withHouseRules } from './rules/houseRules';
 import { modeProfile } from './rules/modeProfile';
 import { applyAwayRest } from './rules/awayRest';
+import { realEncounterCr } from './rules/srdMonsters';
 import { buildAwayRecap } from './awayRecap';
 import { finishMainQuest, keepPlayingAfterMainQuest } from './mainQuestEnd';
 import {
@@ -5659,7 +5660,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ? milestoneXp(liveCurrent.engineMode, 'encounter', {
             level: liveCurrent.character.level,
             partySize: 1 + (liveCurrent.companions ?? []).filter((c) => c.type === 'party').length,
-            cr: liveCurrent.activeEncounter?.cr,
+            cr: liveCurrent.engineMode === 'dnd' ? realEncounterCr(liveCurrent.activeEncounter) : liveCurrent.activeEncounter?.cr,
             strictness: liveCurrent.gmStrictness,
             ...milestoneAreaOpts(liveCurrent),
           })

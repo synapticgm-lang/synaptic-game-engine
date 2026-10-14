@@ -35,6 +35,8 @@ export function objectiveOpensInterior(state: GameState, chip: string): boolean 
   // A talk stage ("Ask what they want") is carried out by speaking to whoever is here, never by going inside.
   const verb = classifyVerb(chip);
   if (verb === 'spoke' || verb === 'parleyed') return false;
+  // A look at the site ("Examine the keep gate") is taken from where the player stands; only going in opens it.
+  if (verb === 'inspected' && !ENTER_ACTION.test(chip)) return false;
   const place = state.locationSheet?.name || state.currentLocation || '';
   if (INTERIOR_CUE.test(chip) || INTERIOR_CUE.test(place)) return true;
   return !!place && placeAllowsDungeon(state, place);

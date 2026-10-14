@@ -23,7 +23,8 @@ import { detectStanceTreatment } from './factionStandings';
 import { parsePlayerIntent } from './intentParser';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
-import { LITRPG_MILESTONE_XP, deedXp, dndXpToNext, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
+import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, dndXpToNext, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
+import { realEncounterCr } from './rules/srdMonsters';
 import { milestoneLevelling } from './rules/houseRules';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
@@ -245,7 +246,10 @@ export function applySandboxXpAwards(
     awardKeys.push(key);
     if (LEVEL_MILESTONE.test(key)) milestones.push(label);
     const r = milestoneXp(mode, kind, { level, partySize, cr, count, strictness: state.gmStrictness, ...areaOpts, foeLevel });
-    if (r.amount <= 0) return;
+    if (r.amount <= 0) {
+      if (r.detail === NO_CR_XP_REASON) xpNotes.push(`XP: none (${label} — ${r.detail})`);
+      return;
+    }
     if (SMALL_KINDS.has(kind)) {
       if (awardKeys.filter((k) => k.startsWith(smallDayPrefix)).length >= SMALL_XP_PER_DAY) return;
       awardKeys.push(`${smallDayPrefix}${key}`);
@@ -316,7 +320,7 @@ export function applySandboxXpAwards(
         `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
         encounterKind(ended),
         `${outcome === 'victory' ? 'defeated' : 'resolved'} ${ended.name}`,
-        ended.cr,
+        mode === 'dnd' ? realEncounterCr(ended) : ended.cr,
         ended.count,
         ended.level
       );

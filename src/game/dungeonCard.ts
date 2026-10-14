@@ -482,12 +482,27 @@ function mod(score: number | undefined): number {
   return Math.floor(((score ?? 10) - 10) / 2);
 }
 
-/** D&D shows the maths; other modes show results only. */
-function rollLine(state: GameState, what: string, roll: number, m: number, dc: number, ok: boolean, result: string): string {
+/**
+ * D&D shows the maths as an engine check line (the shape STATUS keeps) and the result on its own line;
+ * other modes show results only.
+ */
+export function rollLines(
+  state: GameState,
+  check: string,
+  what: string,
+  roll: number,
+  m: number,
+  dc: number,
+  ok: boolean,
+  result: string
+): string[] {
   if (state.engineMode === 'dnd') {
-    return `Dungeon: ${what} — d20 ${roll} ${m >= 0 ? '+' : '−'} ${Math.abs(m)} vs DC ${dc} — ${ok ? 'success' : 'failure'}. ${result}`;
+    return [
+      `${check} check: d20 ${roll} ${m >= 0 ? '+' : '−'} ${Math.abs(m)} vs DC ${dc} — ${ok ? 'success' : 'failure'}`,
+      `Dungeon: ${what} — ${result}`,
+    ];
   }
-  return `Dungeon: ${what} — ${result}`;
+  return [`Dungeon: ${what} — ${result}`];
 }
 
 function payDungeonXp(state: GameState, kind: MilestoneKind, key: string, label: string): { state: GameState; receipts: string[] } {
@@ -740,7 +755,8 @@ export function advanceDungeonCard(
           const m = mod(attrs?.WIS);
           const ok = roll + m >= trap.dc;
           const dmg = ok ? 0 : trap.damage ?? 2;
-          const hp = Math.max(1, next.character.hp - dmg);
+          const hpBefore = next.character.hp;
+          const hp = Math.max(1, hpBefore - dmg);
           next = {
             ...next,
             character: { ...next.character, hp },
@@ -750,8 +766,9 @@ export function advanceDungeonCard(
             })),
           };
           receipts.push(
-            rollLine(next, 'trap check', roll, m, trap.dc, ok, ok ? 'you spotted a trap and stepped around it.' : `a trap went off; you took ${dmg} damage (HP ${hp}).`)
+            ...rollLines(next, 'Trap', 'trap', roll, m, trap.dc, ok, ok ? 'you spotted a trap and stepped around it.' : `a trap went off; you took ${dmg} damage.`)
           );
+          if (dmg > 0) receipts.push(`HP: ${hpBefore} → ${hp}`);
         }
       }
     }
@@ -822,11 +839,11 @@ export function advanceDungeonCard(
             },
           };
         }
-        receipts.push(rollLine(next, `search of ${node.name}`, roll, m, dc, true, `you found ${secret.clue}${hiddenRoom ? ` — a way into ${hiddenRoom.name}` : ''}.`));
+        receipts.push(...rollLines(next, 'Search', `search of ${node.name}`, roll, m, dc, true, `you found ${secret.clue}${hiddenRoom ? ` — a way into ${hiddenRoom.name}` : ''}.`));
         if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
         if (loot.gold > 0) receipts.push(`Gold Gained: ${loot.gold}`);
       } else {
-        receipts.push(rollLine(next, `search of ${node.name}`, roll, m, dc, false, 'you found nothing.'));
+        receipts.push(...rollLines(next, 'Search', `search of ${node.name}`, roll, m, dc, false, 'you found nothing.'));
       }
     } else {
       receipts.push(`Dungeon: you searched ${node.name} and found nothing hidden.`);

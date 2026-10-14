@@ -87,7 +87,8 @@ const TERMINAL_WORDS: Record<TerminalFight['outcome'], RegExp> = {
     `\\b(?:lost|beaten|defeated|went down|was down|knocked (?:down|out|flat)|fell|blacked out|overpowered|pinned|could not get up|on the ground|${FIGHT_OVER})\\b`,
     'i'
   ),
-  escaped: /\b(?:escaped|got away|broke away|broke free|got clear|fled|outran|shook (?:it|him|her|them) off|lost (?:it|him|her|them))\b/i,
+  // The pursuers losing the PC is the escape told from their side ("the dead lost the trail and faded").
+  escaped: /\b(?:escaped|got away|broke away|broke free|got clear|fled|outran|shook (?:it|him|her|them) off|lost (?:it|him|her|them)|lost (?:the|their|its|his|her) (?:trail|track|scent)|lost track of (?:\w+ )?\w+|left (?:them|it|the \w+) behind)\b/i,
 };
 
 /** The beat states the settled fight outcome (foe down / player down / escaped). */

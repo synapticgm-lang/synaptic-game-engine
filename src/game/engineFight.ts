@@ -27,6 +27,7 @@ import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
 import { isFightCast } from './tabletop/spellCasting';
 import { afterFightCompanion, combatCompanion } from './rules/companions';
+import { realEncounterCr } from './rules/srdMonsters';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -73,13 +74,17 @@ export function payEncounterXp(
   const r = milestoneXp(state.engineMode, encounterKind(raw), {
     level: state.character.level,
     partySize,
-    cr: raw.cr,
+    cr: state.engineMode === 'dnd' ? realEncounterCr(raw) : raw.cr,
     count: raw.count,
     strictness: state.gmStrictness,
     ...milestoneAreaOpts(state),
   });
   // Milestone levelling pays no fight XP (the key is still marked so it never pays later).
-  if (r.amount <= 0 || milestoneLevelling(state)) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
+  if (milestoneLevelling(state)) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
+  if (r.amount <= 0) {
+    const why = r.detail && !hidesPart(state.systemHousing, 'experience') ? [`XP: none (${label} — ${r.detail})`] : [];
+    return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: why };
+  }
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode, state.systemHousing);
   const dnd = state.engineMode === 'dnd';
   const companions = dnd ? payCompanionsFightXp(state.companions, r.amount) : state.companions;

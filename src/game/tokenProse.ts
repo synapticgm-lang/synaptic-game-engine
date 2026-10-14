@@ -1067,16 +1067,19 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
 }
 
 /**
- * "@t1 Ruined hall" with @t1 = "the Ruined hall in Cathedral Undercroft": the typed words are the display's own
- * leading name, so the same mention. Only a display that opens on a name, typed with its capital.
+ * "@t1 Ruined hall" / "@t1, the Broken Gate" with @t1 = "the Ruined hall in Cathedral Undercroft" / "the Broken Gate
+ * in Keep Gate", or "@t6 Merrow" with @t6 = "Edda Merrow": the typed words are the display's own leading or trailing
+ * name, so the same mention. Only a part that starts on a name, typed with its capital.
  */
 function typedNameHead(after: string, core: string): RegExpMatchArray | null {
   const words = core.split(/\s+/);
-  if (words.length < 2 || !/^[A-Z]/.test(words[0]!)) return null;
-  for (let k = words.length - 1; k >= 1; k--) {
-    const head = words.slice(0, k).join(' ');
-    const m = after.match(new RegExp(`^,?\\s+${escRe(head).replace(/\s+/g, '\\s+')}(?![\\w'’-])`, 'i'));
-    if (m && /^,?\s+[A-Z]/.test(m[0])) return m;
+  if (words.length < 2) return null;
+  const parts: string[] = [];
+  if (/^[A-Z]/.test(words[0]!)) for (let k = words.length - 1; k >= 1; k--) parts.push(words.slice(0, k).join(' '));
+  for (let j = 1; j < words.length; j++) if (/^[A-Z]/.test(words[j]!)) parts.push(words.slice(j).join(' '));
+  for (const part of parts) {
+    const m = after.match(new RegExp(`^,?\\s+(?:(?:the|a|an)\\s+)?${escRe(part).replace(/\s+/g, '\\s+')}(?![\\w'’-])`, 'i'));
+    if (m && new RegExp(`${escRe(part.split(/\s+/)[0]!)}`).test(m[0])) return m;
   }
   return null;
 }

@@ -45,6 +45,13 @@ function knownPlaceNames(bibleId: string | null | undefined, hookBlob: string, d
   return out;
 }
 
+/** When the card meets the place ("Greyhollow mill lane at dusk"): the hour is the scene, never the place's name. */
+const TIME_OF_DAY = /,?\s+(?:at|in|by|during|before|after|toward|towards|near|around)\s+(?:the\s+)?(?:dawn|dusk|midnight|night|nightfall|noon|midday|morning|evening|afternoon|twilight|sunset|sundown|sunrise|daybreak|first light|last light|small hours|dead of night)\b.*$/i;
+export function dropTimeOfDay(description: string): string {
+  const out = description.replace(TIME_OF_DAY, '').trim();
+  return out.length >= 3 ? out : description;
+}
+
 /** "Greyhollow, at the inn" names one place, Greyhollow's inn: read it as "Greyhollow inn". */
 function foldTownComma(description: string): string {
   return description.replace(/^([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*),\s+(?:at|in|inside)\s+(?:the|a|an)\s+/, '$1 ');
@@ -101,7 +108,7 @@ export function shortPlaceName(
     const score = theirs.filter((w) => mine.has(w)).length;
     if (!best || score > best.score) best = { name, score };
   }
-  return best?.name ?? given;
+  return best?.name ?? dropTimeOfDay(given);
 }
 
 const SPATIAL_PREP = /^(?:under|beneath|below|behind|beside|within|near|outside|above|inside|in|at|by|off|on)$/i;
@@ -116,7 +123,7 @@ export function openingPlaceRecord(
   description: string,
   hookBlob = ''
 ): { place: string; parentHub?: string } {
-  const raw = description.replace(/\s+/g, ' ').trim().replace(POSTURE, '');
+  const raw = dropTimeOfDay(description.replace(/\s+/g, ' ').trim().replace(POSTURE, ''));
   const hubs = hubsForBibleId(bibleId);
   const short = shortPlaceName(bibleId, raw, hookBlob) ?? raw;
   const mentioned = mentionedHub(hubs, raw);

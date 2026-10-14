@@ -44,6 +44,7 @@ import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
+import { fightRolls } from './engineFactPatterns';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -263,7 +264,9 @@ export function checkActionFollowed(
   if (travel && !moved && !fighting) {
     p0.push({ kind: 'ignored-action', detail: `player chose to travel toward ${travel[1]}; they never left ${before.currentLocation || 'here'}` });
   }
-  if (ATTACK_ACTION.test(act) && before.activeEncounter && !BLOW.test(text) && !fightTold) {
+  // A downed or dead PC rolls a death save, not the attack the chip names: no blow is owed.
+  const pcDown = (before.character?.hp ?? 1) <= 0 || fightRolls(after.completedEvent?.engineResult).pcCannotAct;
+  if (ATTACK_ACTION.test(act) && before.activeEncounter && !pcDown && !BLOW.test(text) && !fightTold) {
     p0.push({ kind: 'ignored-action', detail: `player attacked ${before.activeEncounter.name}; the prose shows no blow` });
   }
   if (travel && moved) {

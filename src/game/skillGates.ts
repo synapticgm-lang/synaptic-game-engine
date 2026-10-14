@@ -160,6 +160,10 @@ export function grantLevelSkills(state: GameState, levelBefore: number): { state
       ? { state: { ...state, character: { ...c, skillsGrantedThrough: level } }, receipts: [] }
       : { state, receipts: [] };
   }
+  // Tabletop (5e): a level brings class features and proficiency, never a skill rank; those receipts come from the sheet.
+  if (state.engineMode === 'dnd') {
+    return { state: { ...state, character: { ...c, skillsGrantedThrough: level } }, receipts: [] };
+  }
   let next = state;
   const receipts: string[] = [];
   while (through < level) {

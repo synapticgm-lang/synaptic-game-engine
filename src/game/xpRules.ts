@@ -96,8 +96,11 @@ export function deedXp(mode: EngineMode | undefined, step: DeedStep, opts: Miles
   return { amount: 0, detail: '' };
 }
 
-/** CR used when a D&D monster has no `cr` yet (the note says so). */
+/** Engine stat block CR for a monster with no `cr` (its numbers only — fight XP never uses it). */
 export const DND_DEFAULT_CR = '1/4';
+
+/** D&D fight XP is paid from a real CR (the card's, or the matched SRD block's) — never a guessed one. */
+export const NO_CR_XP_REASON = 'no XP: the foe has no challenge rating on its card or an SRD stat block';
 
 export function normalizeCr(cr: string | number | undefined | null): string | null {
   if (cr == null || cr === '') return null;
@@ -297,14 +300,14 @@ function milestoneXpBase(
   if (kind === 'encounter' || kind === 'miniBoss' || kind === 'boss') {
     const party = Math.max(1, Math.floor(opts.partySize ?? 1));
     const foes = Math.max(1, Math.floor(opts.count ?? 1));
-    const given = normalizeCr(opts.cr);
-    const cr = given ?? DND_DEFAULT_CR;
+    const cr = normalizeCr(opts.cr);
+    if (!cr) return { amount: 0, detail: NO_CR_XP_REASON };
     const each = crToXp(cr);
     const base = each * foes;
     const amount = Math.floor(base / party);
     return {
       amount,
-      detail: `CR ${cr}${given ? '' : ' (no CR on card, default)'} = ${foes > 1 ? `${each} XP × ${foes} = ` : ''}${base} XP ÷ ${party} = ${amount}`,
+      detail: `CR ${cr} = ${foes > 1 ? `${each} XP × ${foes} = ` : ''}${base} XP ÷ ${party} = ${amount}`,
     };
   }
   // 5e pays for what the party overcame, not for walking in: arriving somewhere is never XP.
