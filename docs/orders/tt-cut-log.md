@@ -2,14 +2,14 @@
 
 Every item below can be restored with git.
 
-- **tt-cut 2:** deleted in commit `DELETION_COMMIT` (stamp `2026-10-14s`). The old text lives at its parent, **`0e2419cb`**. Restore one file with `git show 0e2419cb:<path> > <path>`, or one item by copying its lines from that output. Line numbers below are the line numbers at `0e2419cb`.
+- **tt-cut 2:** deleted in commit `cd2b8724` (stamp `2026-10-14s`). The old text lives at its parent, **`0e2419cb`**. Restore one file with `git show 0e2419cb:<path> > <path>`, or one item by copying its lines from that output. Line numbers below are the line numbers at `0e2419cb`.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
 
 ---
 
-## tt-cut 2 (commit `DELETION_COMMIT`, restore from `0e2419cb`)
+## tt-cut 2 (commit `cd2b8724`, restore from `0e2419cb`)
 
 ### A. Dead modules (whole files)
 

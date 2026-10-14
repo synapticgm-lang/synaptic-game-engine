@@ -2,7 +2,7 @@
 
 Order: `docs/orders/tt-cut-2-order.md`. Full restore log (every deleted item, old line, old text, why, commit): `docs/orders/tt-cut-log.md`.
 
-Shipped as stamp `2026-10-14s` (live `2026-10-14r` → `s`), commit `DELETION_COMMIT` on `main`. EDGE_LINE LIVE_LINE
+Shipped as stamp `2026-10-14s` (live `2026-10-14r` → `s`), commit `cd2b8724` on `main`. Edge synced; `gm-turn` deployed and boots (OPTIONS 200, POST `{}` → 400 "state is required"). https://www.synapticgm.com/version.json reads `{"hud":"2026-10-14s","build":"2026-10-14s"}`.
 
 One fix run. No laps. No playtests. `humanJudge.mjs` left out on purpose. No replacement rules were added.
 
@@ -69,7 +69,7 @@ No replay-bank re-pins. Test edits came from two causes, not re-pins of a failin
 
 ## Commit and stamp
 
-- Commit `DELETION_COMMIT`: the deletions above, `scripts/sync-gm-edge-shared.mjs`, the edited files (`completedEventPacket`, `tokenProse`, `turnCheck`, `beatCommitGate`, `qualityGovernance`, `factCheck.mjs`, edge `completedEventPacket`), the test edits, the stamp files (`index.html`, `public/version.json`, `Hud.tsx`, `runManifest.ts`, 24 pins), `tt-cut-log.md` and this report.
+- Commit `cd2b8724`: the deletions above, `scripts/sync-gm-edge-shared.mjs`, the edited files (`completedEventPacket`, `tokenProse`, `turnCheck`, `beatCommitGate`, `qualityGovernance`, `factCheck.mjs`, edge `completedEventPacket`), the test edits, the stamp files (`index.html`, `public/version.json`, `Hud.tsx`, `runManifest.ts`, 24 pins), `tt-cut-log.md` and this report.
 - Stamp `2026-10-14s`.
 
 TT_DONE
