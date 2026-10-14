@@ -1,6 +1,6 @@
 /**
  * LitRPG presenter for STATUS: one System notice format, "<Kind> — <what>.", for quests (accepted, updated,
- * complete), XP, level, skill, title, achievement and loot (each item with its rarity). Display only: the saved
+ * complete), XP, level, skill, title, achievement, loot (each item with its rarity) and party. Display only: the saved
  * engine lines stay as they are, because other code reads them. Other modes keep their lines unchanged.
  */
 import type { EngineMode } from './types';
@@ -28,6 +28,7 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^Title:\s*(.+)$/i, (m) => `Title — ${end(m[1]!)}.`],
   [/^Achievement:\s*(.+)$/i, (m) => `Achievement — ${end(m[1]!)}.`],
   [/^Loot:\s*(.+)$/i, (m) => `Loot — ${lootBody(m[1]!)}.`],
+  [/^Companion:\s*(.+)$/i, (m) => `Party — ${end(m[1]!)}.`],
 ];
 
 export function systemNotice(line: string): string {

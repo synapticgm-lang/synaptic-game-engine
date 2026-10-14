@@ -372,6 +372,10 @@ export interface Companion {
   /** A tabletop sidekick who fights (house rule), with its armour class. */
   sidekick?: SidekickKind;
   ac?: number;
+  /** A named NPC who joined in play (story RPG / LitRPG). Approval is that NPC's relationship record, never a number here. */
+  recruited?: boolean;
+  /** Approval warnings already given (0–2); the companion leaves after the last. */
+  approvalWarnings?: number;
 }
 
 export interface Container {

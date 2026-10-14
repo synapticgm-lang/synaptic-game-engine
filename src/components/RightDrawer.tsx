@@ -6,6 +6,7 @@ import { computeInventoryCapacity, getItemsInContainer } from '@/game/inventory'
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { equippedSetLabel } from '@/game/uiTheme';
 import { progressPanel } from '@/game/progressPanel';
+import { approvalBandLabel } from '@/game/rules/companions';
 
 interface Props {
   state: GameState;
@@ -205,6 +206,9 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
                       <span className="capitalize text-slate-500">{comp.type}</span>
                     </div>
                     <div className="mt-1 text-slate-500">{comp.role}</div>
+                    {comp.recruited && (
+                      <div className="mt-1 text-emerald-300" data-testid="companion-approval">Approval: {approvalBandLabel(state, comp.name)}</div>
+                    )}
                     <div className="mt-1 flex items-center gap-1 text-slate-500"><Swords size={11} /> {comp.hp}/{comp.maxHp} HP</div>
                   </div>
                 ))

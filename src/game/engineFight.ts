@@ -26,6 +26,7 @@ import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
 import { isFightCast } from './tabletop/spellCasting';
+import { afterFightCompanion, combatCompanion } from './rules/companions';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -228,7 +229,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   };
   // A failed flee/parley means the foe forced the fight: no opening strike from hiding.
   const used = (flee || parley) && approach.id === 'ambush' ? meleeApproach() : approach;
-  const result = simulateCombat(working, enemy, { approach: used });
+  const side = combatCompanion(working);
+  const result = simulateCombat(working, enemy, { approach: used, ...(side ? { ally: side.profile } : {}) });
   const approachLine = approachReceipt(used);
   if (approachLine) receipts.push(approachLine);
   const hpBefore = working.character.hp;
@@ -256,8 +258,12 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     `Fight: ${result.victory ? 'VICTORY' : 'DEFEAT'} vs ${enc.name} in ${rounds}${result.victory ? `. The fight is over: ${enc.name} ${down} and cannot fight on.` : '. The fight is over: you lost it.'}`,
     ...(tabletop ? tabletopRoundLines(result, enc.name) : []),
     `HP: ${hpBefore} → ${hpAfter} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
+    ...(side && result.ally
+      ? [`Companion: ${result.ally.name} fought beside you (dealt ${result.ally.damageDealt}, took ${result.ally.damageTaken}).`]
+      : []),
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );
+  if (side && result.ally) next = afterFightCompanion(next, side.companion.id, result.ally.hpAfter);
   next = pushCombatStateTx(
     next,
     `Fight vs ${enc.name}: ${result.victory ? 'victory' : 'defeat'} in ${rounds} (dealt ${result.damageDealt}, took ${result.damageReceived})`,
@@ -286,9 +292,10 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const opener =
     (tabletop && (flee || parley) ? forcedFightOpener(flee, enc.name) : '')
     + (used.id === 'melee' ? '' : `${approachOpener(used, enc.name)} `);
+  const beside = side ? ` ${side.companion.name} fought at your side.` : '';
   const what = opener + (result.victory
-    ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}. ${enc.name} went down and stayed down.${found}`
-    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost. You went down; ${enc.name} left you there, hurt but alive.`);
+    ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}.${beside} ${enc.name} went down and stayed down.${found}`
+    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost.${beside} You went down; ${enc.name} left you there, hurt but alive.`);
   const foeAfter = result.victory
     ? undefined
     : { ...enc, hp: Math.max(1, Math.min(enc.maxHp || enc.hp, result.finalEnemyHp)), phase: 'engaged' as const };

@@ -13,6 +13,7 @@ import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
 import { skillLabel } from './skillGates';
 import { namedSkillViews } from './rules/librarySkills';
 import { activeTitleOf, titlePerkText } from './rules/titles';
+import { partyWindowLine } from './rules/companions';
 import type { GameState, LogEntry } from './types';
 
 export interface LitrpgSystemWindow {
@@ -79,6 +80,7 @@ export function shouldAttachLitrpgSystemWindow(args: {
 }): boolean {
   if (args.state.engineMode !== 'litrpg') return false;
   if (priorGmCount(args.state) === 0) return true;
+  if ((args.systemLog ?? []).some((l) => /^Companion: .+ (?:joined you|left your party)/.test(l))) return true;
   if (playerAskedAboutSystemPanel(args.playerInput ?? '')) return true;
   if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
@@ -120,6 +122,8 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   }
   const title = on('level') ? activeTitleOf(state) : null;
   if (title) lines.push(`Title: ${title.name}${title.def ? ` (${titlePerkText(title.def)})` : ''}`);
+  const party = partyWindowLine(state);
+  if (party) lines.push(party);
   if (state.campaignBibleId === 'summoned-pact') {
     lines.push(registered ? 'Registration: designation locked' : 'Registration: incomplete');
     lines.push('Mark: Pactborn / Calamity Mark — unresolved');
@@ -133,7 +137,7 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   return { heading: 'SYSTEM', lines };
 }
 
-/** The window never runs past this many lines (it prints at most 14). */
+/** The window never runs past this many lines (it prints at most 15). */
 export const SYSTEM_WINDOW_MAX_LINES = 15;
 const TOP_SKILLS = 3;
 

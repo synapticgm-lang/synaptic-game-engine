@@ -4,6 +4,8 @@ import { equippedWeaponName } from './ledgerCombat';
 import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
 import { enemyBodyAuthorityLine } from './combatAuthority';
 import { rollLoot as rollEngineLoot, scaleTreasureGold, type LootProfile } from './lootTableRegistry';
+import { rollDice } from './rules/dice';
+import type { SidekickProfile } from './rules/roundCombat';
 
 export interface EnemyStats {
   name: string;
@@ -53,6 +55,8 @@ export interface CombatResult {
   approach?: FightApproach;
   /** To-hit modifiers and armour classes the rolls in `roundsLog` were made against. */
   attackMath?: { playerMod: number; playerAc: number; foeMod: number; foeAc: number };
+  /** The companion's share of the fight (only when an ally fought). */
+  ally?: { name: string; damageDealt: number; damageTaken: number; hpBefore: number; hpAfter: number };
 }
 
 function rollD20(rng: () => number = Math.random): number {
@@ -75,6 +79,8 @@ export interface SimulateCombatOptions {
   /** 28r — gear/skill approach (fightApproach). Default melee. */
   approach?: FightApproach;
   rng?: () => number;
+  /** A companion fighting beside the PC (sidekick numbers): it swings after the PC each round and can be targeted. */
+  ally?: SidekickProfile;
 }
 
 function rollLoot(enemy: EnemyStats): Item[] {
@@ -134,6 +140,10 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
   let damageDealt = 0;
   let damageReceived = 0;
   const roundsLog: CombatRound[] = [];
+  const ally = opts.ally;
+  let allyHp = ally?.hp ?? 0;
+  let allyDealt = 0;
+  let allyTaken = 0;
 
   // 28r — opening attacks (a shot before the foe closes, a strike from hiding): no reply this round.
   for (let i = 0; i < approach.openingAttacks && enemyHp > 0; i++) {
@@ -177,16 +187,35 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
     });
     if (enemyHp <= 0) break;
 
-    // Enemy attacks
+    // The companion swings right after the PC while it is still up.
+    if (ally && allyHp > 0) {
+      const r = rollD20(rng);
+      if (r === 20 || (r !== 1 && r + ally.toHit >= enemy.armorClass)) {
+        const dmg = Math.min(enemyHp, rollDice(ally.dice, rng, { crit: r === 20 }).total);
+        enemyHp -= dmg;
+        allyDealt += dmg;
+      }
+      if (enemyHp <= 0) break;
+    }
+
+    // Enemy attacks (a third of the time it turns on the companion while the companion is up).
+    const atAlly = !!ally && allyHp > 0 && rng() < 1 / 3;
     const enemyRoll = rollD20(rng);
     const enemyTotal = enemyRoll + enemyAttackMod;
-    const enemyHits = enemyRoll === 20 || (enemyRoll !== 1 && enemyTotal >= playerAC);
+    const enemyHits = enemyRoll === 20 || (enemyRoll !== 1 && enemyTotal >= (atAlly ? ally!.ac : playerAC));
     let dmgToPlayer = 0;
     if (enemyHits) {
-      dmgToPlayer = rollDamage(enemyDamageBase, 0, rng);
-      if (enemyRoll === 20) dmgToPlayer = Math.floor(dmgToPlayer * 1.5);
-      playerHp = Math.max(0, playerHp - dmgToPlayer);
-      damageReceived += dmgToPlayer;
+      let dmg = rollDamage(enemyDamageBase, 0, rng);
+      if (enemyRoll === 20) dmg = Math.floor(dmg * 1.5);
+      if (atAlly) {
+        const taken = Math.min(allyHp, dmg);
+        allyHp -= taken;
+        allyTaken += taken;
+      } else {
+        dmgToPlayer = dmg;
+        playerHp = Math.max(0, playerHp - dmgToPlayer);
+        damageReceived += dmgToPlayer;
+      }
     }
     roundsLog.push({
       round: rounds,
@@ -228,6 +257,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
     lootPity,
     approach,
     attackMath: { playerMod: playerAttackMod, playerAc: playerAC, foeMod: enemyAttackMod, foeAc: enemy.armorClass },
+    ...(ally ? { ally: { name: ally.name, damageDealt: allyDealt, damageTaken: allyTaken, hpBefore: ally.hp, hpAfter: allyHp } } : {}),
   };
 }
 

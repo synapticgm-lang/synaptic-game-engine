@@ -1,5 +1,5 @@
 /**
- * 2026-10-14b — earned XP only (docs/design/litrpg-xp-review.md, items 1–8). LitRPG and story RPG;
+ * 2026-10-14c — earned XP only (docs/design/litrpg-xp-review.md, items 1–8). LitRPG and story RPG;
  * tabletop amounts unchanged. No live GM call.
  */
 import { describe, expect, it } from 'vitest';
@@ -55,7 +55,7 @@ const roster = (name: string, id = name.toLowerCase()): NpcMemory =>
 const quest = (desc: string, done = false): Quest =>
   ({ id: 'q1', name: 'Errand', status: 'active', objectives: [{ id: 'o1', description: desc, completed: done }] }) as unknown as Quest;
 
-describe('xp fix 2026-10-14b', () => {
+describe('xp fix 2026-10-14c', () => {
   it('1) First Steps pays only on the first quest step, never for surviving turns', () => {
     const late = award(base('litrpg', { turn: 20 }), { turn: 21 });
     expect(late.awardKeys).not.toContain('achv:first-steps');

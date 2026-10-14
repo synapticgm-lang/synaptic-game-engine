@@ -5,6 +5,7 @@ import { resolveOfferedChoices } from '@/game/playTranscript';
 import { pickFateChoice } from '@/game/fatePick';
 import { classOfferPad } from '@/game/rules/characterClass';
 import { systemPromptPad } from '@/game/rules/abilityPoints';
+import { partyHeading, recruitPad } from '@/game/rules/companions';
 
 interface ActionBarProps {
   state: GameState;
@@ -18,6 +19,8 @@ interface ActionBarProps {
 export function ActionBar({ state, busy, onAction, engineMode, hidden = false }: ActionBarProps) {
   const actions = resolveOfferedChoices(state);
   const systemPrompt = systemPromptPad(state, classOfferPad(state));
+  const party = partyHeading(state);
+  const recruits = recruitPad(state) ?? [];
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
 
@@ -25,10 +28,29 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
     onAction(pickFateChoice(actions));
   };
 
-  if (hidden || (actions.length === 0 && !systemPrompt)) return null;
+  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length)) return null;
 
   return (
     <div className="flex flex-col gap-1.5 pb-2">
+      {(party || recruits.length > 0) && (
+        <div className="sgm-info-panel rounded-lg border border-emerald-500/40 bg-slate-950/90 px-3 py-2" data-testid="party-row">
+          <div className="text-[11px] font-medium text-emerald-200">{party ?? (state.engineMode === 'litrpg' ? 'System — party' : 'Companions')}</div>
+          {recruits.length > 0 && (
+            <div className="mt-1.5 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
+              {recruits.map((label) => (
+                <button
+                  key={label}
+                  disabled={busy}
+                  onClick={() => onAction(label)}
+                  className="sgm-choice-btn flex min-h-[40px] w-full items-center rounded-lg border border-emerald-500/50 bg-slate-900/90 px-3 py-1.5 text-left text-xs font-medium text-emerald-100 transition-all hover:bg-emerald-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-[32px] sm:w-auto sm:rounded-full sm:px-2.5"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {systemPrompt && (
         <div className="sgm-info-panel rounded-lg border border-sky-500/50 bg-slate-950/90 px-3 py-2" data-testid="system-prompt">
           <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-sky-300">{systemPrompt.heading}</div>

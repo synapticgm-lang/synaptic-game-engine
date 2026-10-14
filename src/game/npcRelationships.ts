@@ -328,8 +328,8 @@ function hydrateStored(rec: StoredNpcRelationship, turn: number): NpcRelationshi
     fear: Number(rec.fear ?? 0),
     intimacy: 0,
     familiarity: Number(rec.familiarity ?? 0),
-    firstMetTurn: turn,
-    lastInteractionTurn: turn,
+    firstMetTurn: rec.lastTurn ?? turn,
+    lastInteractionTurn: rec.lastTurn ?? turn,
     milestones: (rec.milestones ?? []).map((m, i) => ({
       milestoneId: `${npcSlug(rec.npcName)}-${m.type}-${m.turn ?? 0}-${i}`,
       type: m.type as RelationshipMilestoneType,
@@ -429,6 +429,74 @@ export function applyWitnessedDeed(
     changed = true;
   }
   return changed ? list : null;
+}
+
+export interface StoredShift {
+  trust: number;
+  familiarity?: number;
+  respect?: number;
+  fear?: number;
+  milestone?: { type: RelationshipMilestoneType; summary: string };
+}
+
+/**
+ * One relationship event on the stored record for this NPC (created when missing): long absence first
+ * (applyLongAbsence), then applyRelationshipEvent, written back in the slim stored shape with the turn.
+ */
+export function shiftStoredRelationship(
+  stored: StoredNpcRelationship[] | undefined,
+  npcName: string,
+  shift: StoredShift,
+  turn: number,
+  kind: RelationshipEvent['kind'] = 'interaction'
+): { list: StoredNpcRelationship[]; before: NpcRelationship; after: NpcRelationship } {
+  const list = [...(stored ?? [])];
+  const name = npcName.trim();
+  const idx = list.findIndex((r) => (r.npcName ?? '').trim().toLowerCase() === name.toLowerCase());
+  const rec: StoredNpcRelationship = idx >= 0 ? list[idx] : { npcName: name, trust: 0, respect: 0, fear: 0, familiarity: 0 };
+  const before = applyLongAbsence(hydrateStored(rec, turn), turn);
+  const milestone: RelationshipMilestone | undefined = shift.milestone
+    ? {
+        milestoneId: `${before.npcId}-${shift.milestone.type}-${turn}`,
+        type: shift.milestone.type,
+        turn,
+        sourceEventId: `${kind}:${turn}`,
+        summary: shift.milestone.summary,
+        valence: Math.sign(shift.trust) * 50,
+        salience: 60,
+        permanent: true,
+        relatedNpcIds: [],
+        relatedFactionIds: [],
+        tags: [],
+      }
+    : undefined;
+  const after = applyRelationshipEvent(before, {
+    eventId: `${kind}:${before.npcId}:${turn}`,
+    npcId: before.npcId,
+    turn,
+    kind,
+    trustDelta: shift.trust,
+    respectDelta: shift.respect ?? 0,
+    fearDelta: shift.fear ?? 0,
+    intimacyDelta: 0,
+    familiarityDelta: shift.familiarity ?? 0,
+    ...(milestone ? { milestone } : {}),
+    notes: [],
+  });
+  const { disposition: _stale, ...kept } = rec;
+  const updated: StoredNpcRelationship = {
+    ...kept,
+    trust: after.trust,
+    affinity: after.trust,
+    respect: after.respect,
+    fear: after.fear,
+    familiarity: after.familiarity,
+    milestones: [...(rec.milestones ?? []), ...(shift.milestone ? [{ type: shift.milestone.type, turn, summary: shift.milestone.summary }] : [])],
+    lastTurn: turn,
+  };
+  if (idx >= 0) list[idx] = updated;
+  else list.push(updated);
+  return { list, before, after };
 }
 
 /** Stored relationship record for an NPC by name (any place). */
