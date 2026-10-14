@@ -2,7 +2,7 @@
 
 Every item below can be restored with git.
 
-- **tt-fix-8:** deleted in commit `TT_FIX8_COMMIT` (stamp `2026-10-14t`). The old text lives at its parent, **`e8c0e072`**. Line numbers in that section are at `e8c0e072`.
+- **tt-fix-8:** deleted in commit `8a55f995` (stamp `2026-10-14t`). The old text lives at its parent, **`e8c0e072`**. Line numbers in that section are at `e8c0e072`.
 - **tt-cut 2:** deleted in commit `cd2b8724` (stamp `2026-10-14s`). The old text lives at its parent, **`0e2419cb`**. Restore one file with `git show 0e2419cb:<path> > <path>`, or one item by copying its lines from that output. Line numbers below are the line numbers at `0e2419cb`.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
@@ -10,7 +10,7 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
-## tt-fix-8 (commit `TT_FIX8_COMMIT`, restore from `e8c0e072`)
+## tt-fix-8 (commit `8a55f995`, restore from `e8c0e072`)
 
 `src/game/choiceRanking.ts`:
 
