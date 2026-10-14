@@ -17,7 +17,8 @@ import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, masteryF
 import { potionHealDice } from '../rules/magicItems';
 import { FEATURE_LABEL, featureLeft, featureMax, RAGE_DAMAGE, spendFeature, type FeatureUse } from '../rules/classFeatures';
 import type { Rng } from '../rules/dice';
-import { statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
+import { blockWithinXp, statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
+import { encounterXpBudget, foesWithinBudget } from '../xpRules';
 import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
 import { atWillSpells, spellInInput, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
@@ -212,12 +213,24 @@ export function scaledEncounter(baseCount: number, baseHp: number, house: Pick<H
   return { count, hp, solo, notes };
 }
 
+/** SRD 5.2.1 budget band for the table's difficulty: Easy is Low, Normal Moderate, Hard and Deadly High. */
+const BUDGET_BAND: Record<HouseRules['encounterDifficulty'], 0 | 1 | 2> = { easy: 0, normal: 1, hard: 2, deadly: 2 };
+
 function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: 'foes' | 'pc' | null, house: HouseRules, level: number): FoeSetup & { notes: string[] } {
-  const base = statBlockForEncounter(enc);
+  const party = 1 + (pc.ally || pc.sidekick ? 1 : 0);
+  const budgetXp = encounterXpBudget(level, party, BUDGET_BAND[house.encounterDifficulty]);
+  const srdBase = statBlockForEncounter(enc);
+  const base = blockWithinXp(srdBase, budgetXp);
   const shift = ENCOUNTER_DIFFICULTY[house.encounterDifficulty].toHit;
   const block = shiftedBlock(base, shift);
-  const scaled = scaledEncounter(Math.max(1, Math.min(8, enc.count ?? 1)), base.hp, house, level, !pc.ally && !pc.sidekick);
-  const count = scaled.count;
+  const asked = Math.max(1, Math.min(8, enc.count ?? 1));
+  const scaled = scaledEncounter(asked, base.hp, house, level, !pc.ally && !pc.sidekick);
+  const count = foesWithinBudget(base.cr, scaled.count, budgetXp);
+  if (base !== srdBase || count < scaled.count) {
+    scaled.notes.push(
+      `Encounter budget: ${budgetXp} XP for level ${level}${party > 1 ? `, party of ${party}` : ', alone'} — ${count} × CR ${base.cr}${base !== srdBase ? ` (${srdBase.name} weakened from CR ${srdBase.cr})` : ''}`
+    );
+  }
   const { ids, statusName, writerName } = foeIdentity(enc, block, count);
   // A parked foe comes back as hurt as it was left.
   const share = enc.maxHp > 0 && enc.hp < enc.maxHp ? Math.max(0, enc.hp) / enc.maxHp : 1;
@@ -235,6 +248,7 @@ function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: '
     }),
     pcConditions: [],
     ...(shift ? { foeToHitShift: shift } : {}),
+    budgetXp,
     ...(scaled.solo ? { solo: true } : {}),
     ...(pc.sidekick ? { sidekickHp: pc.sidekick.hp } : {}),
   };
@@ -254,7 +268,8 @@ function fightLightNote(light: SceneLight, enc: ActiveEncounter, blocks: Record<
 }
 
 function resumeCombat(enc: ActiveEncounter, combat: RoundCombatState): FoeSetup {
-  const block = shiftedBlock(statBlockForEncounter(enc), combat.foeToHitShift ?? 0);
+  const base = statBlockForEncounter(enc);
+  const block = shiftedBlock(combat.budgetXp ? blockWithinXp(base, combat.budgetXp) : base, combat.foeToHitShift ?? 0);
   const blocks = Object.fromEntries(combat.foes.map((f) => [f.id, block.id === f.blockId ? block : { ...block, id: f.blockId }]));
   const count = combat.foes.length;
   const { writerName } = foeIdentity(enc, block, count);
@@ -367,7 +382,9 @@ export function resolveRoundFight(
   const foeMax = liveFoes.reduce((s, f) => s + f.maxHp, 0);
   const block = setup.blocks[res.combat.foes[0]!.id]!;
   // The whole fight reads one ledger: the encounter's HP is the live foes' HP.
-  const encNow: ActiveEncounter = { ...enc, hp: foeHp, maxHp: Math.max(foeMax, 1), count: Math.max(1, liveFoes.length), cr: block.srd ? block.cr : enc.cr };
+  // An SRD block, or one fitted to the budget, carries the CR the fight is really at.
+  const blockCr = block.srd || block.cr !== statBlockForEncounter(enc).cr ? block.cr : enc.cr;
+  const encNow: ActiveEncounter = { ...enc, hp: foeHp, maxHp: Math.max(foeMax, 1), count: Math.max(1, liveFoes.length), cr: blockCr };
   let potionInv = working.inventory ?? [];
   if (res.potionUsed) {
     const p = healingPotion(working);
@@ -439,7 +456,7 @@ export function resolveRoundFight(
     receipts.push(`Fight: VICTORY vs ${enc.name} in ${roundsText}. The fight is over: ${enc.name} ${down} and cannot fight on.`, `Encounter cleared: ${enc.name} (victory)`);
     next = pushCombatStateTx(next, `Fight vs ${enc.name}: victory in ${roundsText}`, enc.name, 'Engine fight');
     if (onRoad) next = settleRoadMeeting(next, 'victory');
-    const xpRaw: ActiveEncounter = { ...raw, cr: block.srd ? block.cr : raw.cr, count: raw.count ?? setup.combat.foes.length };
+    const xpRaw: ActiveEncounter = { ...raw, cr: blockCr, count: setup.combat.foes.length };
     const paid = payEncounterXp(next, xpRaw, `defeated ${enc.name}`);
     next = paid.state;
     receipts.push(...paid.receipts);
@@ -448,7 +465,7 @@ export function resolveRoundFight(
     receipts.push(...(won.lootLines ?? []));
     // The amount is on STATUS (Gold Gained); the writer only hears that there was coin.
     const bits = [...won.loot.map((l) => l.name), ...(won.goldGained > 0 ? ['some coin'] : [])];
-    facts.push(`${cap(enc.name)} ${(raw.count ?? 1) > 1 ? 'are all down' : 'went down and stayed down'}.${bits.length ? ` On the body: ${bits.join(', ')}.` : ''}`);
+    facts.push(`${cap(enc.name)} ${setup.combat.foes.length > 1 ? 'are all down' : 'went down and stayed down'}.${bits.length ? ` On the body: ${bits.join(', ')}.` : ''}`);
     return { state: next, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}` };
   }
 

@@ -46,6 +46,8 @@ function inTheHold(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'litrpg') as GameState;
   return {
     ...s,
+    // createInitialState rolls the System housing from a random seed; some rolls hide experience (no XP line).
+    systemHousing: undefined,
     seed: 's75',
     engineMode: 'litrpg',
     campaignBibleId: 'summoned-pact',

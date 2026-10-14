@@ -9,10 +9,10 @@
  */
 import type { GameState, Quest } from './types';
 import { mainSpineQuest } from './questPlay';
-import { objectiveChip } from './choiceRanking';
+import { objectiveStepChip } from './choiceRanking';
 import { peopleHere } from './chipLegality';
 import { isGiverName, talkStepPerson } from './questGiver';
-import { hubsForBibleId } from './outdoorHubs';
+import { hubsForBibleId, matchHub } from './outdoorHubs';
 
 export type TabletopQuestTurn = { state: GameState; receipts: string[] };
 
@@ -28,10 +28,27 @@ export function tabletopStepPlace(state: GameState, step: string): string | null
   return names.find((n) => text.includes(` ${bare(n)} `)) ?? null;
 }
 
+/** Where a step is taken: its own anchor, else a place its wording names, else a one-step quest's own place. */
+export function tabletopStepAnchor(
+  state: GameState,
+  quest: Quest,
+  idx: number
+): { place: string | null; people: string[] } {
+  const o = quest.objectives?.[idx];
+  if (!o) return { place: null, people: [] };
+  const person = talkStepPerson(o.description);
+  const people = o.people?.length ? o.people : person ? [person] : [];
+  if (people.length) return { place: null, people };
+  const single = (quest.objectives ?? []).length === 1 ? quest.location ?? null : null;
+  return { place: o.place ?? tabletopStepPlace(state, o.description) ?? single, people: [] };
+}
+
 function atPlace(state: GameState, place: string): boolean {
-  const here = bare(state.currentLocation ?? '');
-  const p = bare(place);
-  return !!here && (here === p || here.includes(p));
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  const name = (s: string) => bare(matchHub(hubs, s)?.name ?? s);
+  const here = name(state.currentLocation ?? '');
+  const p = name(place);
+  return !!here && !!p && (here === p || here.includes(p));
 }
 
 function playOpen(state: GameState): Quest | null {
@@ -47,15 +64,15 @@ function takeableSteps(state: GameState): Array<{ idx: number; chip: string; per
   const out: Array<{ idx: number; chip: string; person: string | null }> = [];
   (quest.objectives ?? []).forEach((o, idx) => {
     if (o.completed) return;
-    const chip = objectiveChip(o.description);
+    const chip = objectiveStepChip(o.description);
     if (!chip) return;
-    const person = talkStepPerson(o.description);
-    if (person) {
-      if (here.some((n) => isGiverName(n, person))) out.push({ idx, chip, person });
+    const anchor = tabletopStepAnchor(state, quest, idx);
+    if (anchor.people.length) {
+      const person = anchor.people.find((p) => here.some((n) => isGiverName(n, p)));
+      if (person) out.push({ idx, chip, person });
       return;
     }
-    const place = tabletopStepPlace(state, o.description);
-    if (place && atPlace(state, place)) out.push({ idx, chip, person: null });
+    if (anchor.place && atPlace(state, anchor.place)) out.push({ idx, chip, person: null });
   });
   return out;
 }
@@ -73,7 +90,11 @@ export function applyTabletopQuestTurn(state: GameState, playerInput: string): T
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const said = chipKey(action);
   const taken = takeableSteps(state).find(
-    (s) => said === chipKey(s.chip) || (!!s.person && TALK_VERB.test(action) && said.includes(bare(s.person)))
+    (s) =>
+      said === chipKey(s.chip)
+      || (!!s.person
+        && TALK_VERB.test(action)
+        && (said.includes(bare(s.person)) || peopleHere(state).some((n) => isGiverName(n, s.person!) && said.includes(bare(n)))))
   );
   if (!taken) return { state, receipts: [] };
   const objectives = (quest.objectives ?? []).map((o, i) => (i === taken.idx ? { ...o, completed: true } : o));

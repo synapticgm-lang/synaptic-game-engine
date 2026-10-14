@@ -157,7 +157,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
       'Mayor Helga Brask intercepts you at the churchyard and demands you quietly hunt down the graverobbers operating from the keep before panic completely overtakes the town.',
     firstObjective: 'Check the mud around the opened graves for heavy cart tracks leading uphill.',
     refuseOrWalkAway: 'Helga threatens to have the militia run you out of town as suspected accomplices.',
-    mapPin: 'Violated Churchyard',
+    mapPin: 'Greyhollow Graveyard',
     stampAlts: ['townsfolk', 'mourners', 'gravediggers'],
     threeBeats: [
       'Helga pulls you aside from the open graves to whisper her offer.',
@@ -603,6 +603,8 @@ export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQu
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
     objectives: [spine.firstObjective],
+    // The first step is taken at the quest's own pin; its wording often names only a prop there.
+    objectiveAnchors: [{ place: spine.mapPin }],
     location: spine.mapPin,
     type: 'main',
   };

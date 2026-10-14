@@ -217,6 +217,18 @@ export function checkTurn(row, packet, page = '') {
   const add = (kind, quote, missing) => {
     if (!flags.some((f) => f.kind === kind && f.quote === quote && f.missing === missing)) flags.push({ kind, quote, missing });
   };
+  const pc = packet.match(/^The player character is ([^:.,(]+)/m)?.[1]?.trim() || 'Jax';
+  const who = `(?:${pc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}|you)`;
+  const rolls = fightRollsOf(facts.engineResult);
+  const openSteps = [...packet.matchAll(/^- quest .+? - step: (.+)$/gm)].map((m) => m[1]);
+  const known = ` ${wordsOf([page, facts.engineResult, row.playerInput ?? ''].join(' ')).join(' ')} `;
+  const choicePose = [
+    new RegExp(`\\b${who} (?:has|had|have|needs?|needed|must|was left) to (?:decide|choose)\\b`, 'i'),
+    new RegExp(`\\bwhether (?:or not )?${who}\\b[^.!?]*\\bor\\b`, 'i'),
+    new RegExp(`\\bwaits? for ${who} to (?:decide|choose|face|act|answer)\\b`, 'i'),
+    /\bthe (?:question|choice|decision) (?:is|was|now|remains|remained) (?:whether|if|which)\b/i,
+    /\b(?:a|the) (?:choice|decision)\b[^.!?]*\b(?:waits?|waited|awaits?|awaited|stood|stands|lay|lies) (?:before|for|ahead)\b/i,
+  ];
 
   for (const { s, narration } of sentences(prose)) {
     // Exit counts: "Three roads left the shrine", "the only way out".
@@ -434,8 +446,68 @@ export function checkTurn(row, packet, page = '') {
       const named = facts.placeNames.find((p) => p.length > 3 && namesPlace(p) && !facts.hereNames.some((h) => namesHere(p, h)));
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }
+
+    // Lap-3 kinds (same reading as the game's engineFactGate): the travel or quest record read out, the player's
+    // choice posed, a fight roll told wrong, a meeting on a quiet stretch, a quote already on the page, the PC's mind decided.
+    if (TRAVEL_RECORD.some((re) => re.test(narration))) add('record-read', s, 'travel record (legs / trip time) read out');
+    const leak = openSteps.flatMap(stepRuns).find((run) => wordsOf(narration).join(' ').includes(run) && !known.includes(` ${run} `));
+    if (leak) add('record-read', s, `open quest step "${leak}" given away; not on the page or in the engine result`);
+    if (choicePose.some((re) => re.test(narration))) add('player-choice', s, "poses the player's next choice");
+    if (rolls.isFight) {
+      const strike = new RegExp(`\\b${who}(?:['’]s|r)?\\s+(?:\\w+\\s+){0,2}?(?:struck|strikes|hit|hits|landed|lands|connected|connects|slashed|slashes|stabbed|stabs|pierced|pierces|wounded|wounds|sliced|slices)\\b${NOT_A_FOE}`, 'i');
+      if ((!rolls.pcLanded || rolls.pcCannotAct) && strike.test(narration)) add('roll', s, `a ${pc} blow the engine never landed: ${facts.engineResult.slice(0, 160)}`);
+      if (rolls.foeHits > 0 && rolls.foeMisses === 0 && new RegExp(`\\b(?:missed|misses|went wide of|glanced off)\\s+${who}\\b`, 'i').test(narration)) {
+        add('roll', s, `a miss on ${pc}; the engine rolled ${rolls.foeHits} hit(s) and no miss`);
+      }
+    }
+    if (/\bquiet stretch\b/i.test(facts.engineResult)) {
+      const met = narration.match(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'wagon', 'cart', 'patrol'].join('|')})\\b`, 'i'));
+      if (met && !negated(narration, met.index ?? 0)) add('meeting', s, `"${met[0]}" on a quiet stretch (nobody met)`);
+    }
+    for (const q of s.matchAll(/["“]([^"”]+)["”]/g)) {
+      if (q[1].trim().split(/\s+/).length >= 6 && pageText.includes(lower(q[1].trim()))) add('echo', s, 'a quote already on the page, spoken again');
+    }
+    if (new RegExp(`\\b${who}\\s+(?:decided|realized|realised|resolved|chose)\\b|\\bmade (?:the|this|that|it) (?:\\w+ )?(?:feel|seem)\\b`, 'i').test(narration)) {
+      add('agency', s, `the narrator decides ${pc}'s mind`);
+    }
+  }
+  if (rolls.isFight && rolls.foeHits > 0 && !HIT_WORDS.test(prose.replace(/["“][^"”]*["”]/g, ' '))) {
+    add('roll', prose.slice(0, 160), `the engine rolled ${rolls.foeHits} hit(s) on ${pc}; the beat shows none`);
   }
   return flags;
+}
+
+const TRAVEL_RECORD = [
+  /\blegs? (?:one|two|three|four|\d+) of (?:one|two|three|four|\d+)\b/i,
+  /\b(?:first|second|third|fourth|final|last|next) leg of the (?:journey|trip|travel|road|route|walk)\b/i,
+  /\btravel (?:leg|record|log)\b/i,
+  /\bthe (?:travel|journey|trip|walk) (?:had )?(?:took|taken|added|cost)\b/i,
+  /\btravel(?:l?ed)? for (?:about |nearly |some |another )?(?:\w+ )?(?:minutes?|hours?)\b/i,
+  /\b(?:half|part) of the travel\b/i,
+];
+const NOT_A_FOE = '(?!\\s+(?:the\\s+|a\\s+)?(?:ground|floor|dirt|mud|earth|stone|stones|wall|road|nothing|air|only))';
+const HIT_WORDS = /\b(?:hit|hits|struck|strikes|bit|bites|bitten|cut|cuts|wound\w*|blood\w*|pain\w*|slash\w*|gash\w*|tore|tears?|sank|sinks|pierc\w*|stab\w*|slam\w*|crack\w*|knock\w*|fell|falls?|collaps\w*|drops?|dropped|reel\w*|stagger\w*|burn\w*|sting\w*|ache\w*|hurt\w*)\b/i;
+const STEP_STOP = new Set(['the', 'and', 'for', 'with', 'from', 'into', 'onto', 'that', 'this', 'your', 'their', 'his', 'her', 'its', 'are', 'was', 'were', 'has', 'have', 'had', 'what', 'who', 'any', 'all', 'out', 'off', 'not']);
+const wordsOf = (s) => (lower(s).match(/[a-z][a-z'’-]+/g) ?? []);
+/** Three content words in a row from a quest step: the step's own clue. */
+function stepRuns(desc) {
+  const w = wordsOf(desc);
+  const out = [];
+  for (let i = 0; i + 3 <= w.length; i += 1) {
+    const run = w.slice(i, i + 3);
+    if (run.every((x) => x.length >= 3 && !STEP_STOP.has(x))) out.push(run.join(' '));
+  }
+  return out;
+}
+/** What the engine result says the PC and the foes did this turn (same reading as engineFactGate.fightRolls). */
+function fightRollsOf(f) {
+  return {
+    isFight: /\bFight:|ENGINE OUTCOME|\battacks you\b|\bhits you\b|\bYou attack\b|\bYou hit\b|\bunconscious\b|\bdeath save\b/i.test(f),
+    pcLanded: /\bYou (?:hit|land a critical blow on|cast)\b|\bYour blow carries\b|\bEven your miss clips\b|\bonly partly escapes\b/.test(f),
+    pcCannotAct: /\bcannot move, speak or act\b|\bYou are dead\b|\bYour breath stops\b|\bYou cannot move or act\b/.test(f),
+    foeHits: (f.match(/\b(?:hits|lands a critical blow on) you\b/g) ?? []).length,
+    foeMisses: (f.match(/\battacks you\b[^.]*\band misses\b/g) ?? []).length,
+  };
 }
 
 /** The opening page the run's transcript prints as Turn 0 (turns.jsonl starts after it). */

@@ -1024,14 +1024,23 @@ function escRe(s: string): string {
  */
 export function collapseEchoedLabel(text: string, display: string): string {
   const core = display.replace(ARTICLE_RE, '').trim();
+  if (!core) return text;
   const words = core.split(/\s+/);
-  if (words.length < 3) return text;
-  let next = text;
-  for (let k = Math.min(words.length - 1, 6); k >= 2; k--) {
+  // The whole label typed right before it ("their chain shirt Chain Shirt", "The woodcutter, the woodcutter"):
+  // one mention, keeping the writer's own determiner.
+  let next = text.replace(
+    new RegExp(`\\b((?:the|a|an|their|his|her|your|my|its)\\s+)?${escRe(core)},?\\s+(?:(?:the|a|an)\\s+)?(?=${escRe(core)}(?![\\w'’-]))`, 'gi'),
+    (_m, det: string | undefined) => det ?? ''
+  );
+  if (words.length < 2) return next;
+  for (let k = Math.min(words.length - 1, 6); k >= 1; k--) {
     const head = words.slice(0, k).join(' ');
+    // A one-word head is a title or given name only as typed with its capital ("Father Father Aldous").
+    if (k === 1 && (words.length < 2 || !/^[A-Z]/.test(head))) continue;
+    if (k >= 2 && words.length < 3) continue;
     const echo = new RegExp(
       `\\b(?:(?:the|a|an)\\s+)?${escRe(head)}\\s+(?=(?:(?:the|a|an)\\s+)?${escRe(core)})`,
-      'gi'
+      k === 1 ? 'g' : 'gi'
     );
     next = next.replace(echo, '');
   }
@@ -1049,7 +1058,8 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
     at = end;
     const core = (display(`t${m[1]}`.toLowerCase()) ?? '').replace(ARTICLE_RE, '').trim();
     if (!core) continue;
-    const echo = text.slice(end).match(new RegExp(`^\\s+(?:(?:the|a|an)\\s+)?${escRe(core)}(?![\\w'-])`, 'i'))
+    // Also as an appositive: "@t5, Tilde" / "@t2, the woodcutter" is the same person named twice.
+    const echo = text.slice(end).match(new RegExp(`^,?\\s+(?:(?:the|a|an)\\s+)?${escRe(core)}(?![\\w'’-])`, 'i'))
       ?? typedNameHead(text.slice(end), core);
     if (echo) at = end + echo[0].length;
   }
@@ -1065,8 +1075,8 @@ function typedNameHead(after: string, core: string): RegExpMatchArray | null {
   if (words.length < 2 || !/^[A-Z]/.test(words[0]!)) return null;
   for (let k = words.length - 1; k >= 1; k--) {
     const head = words.slice(0, k).join(' ');
-    const m = after.match(new RegExp(`^\\s+${escRe(head).replace(/\s+/g, '\\s+')}(?![\\w'-])`, 'i'));
-    if (m && /^\s+[A-Z]/.test(m[0])) return m;
+    const m = after.match(new RegExp(`^,?\\s+${escRe(head).replace(/\s+/g, '\\s+')}(?![\\w'’-])`, 'i'));
+    if (m && /^,?\s+[A-Z]/.test(m[0])) return m;
   }
   return null;
 }

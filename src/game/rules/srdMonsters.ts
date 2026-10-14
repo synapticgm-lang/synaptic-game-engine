@@ -6,7 +6,7 @@
  * A foe with no matching SRD creature gets an engine block built from its own encounter numbers (srd: false).
  */
 import type { ActiveEncounter, Attributes, AttributeKey } from '../types';
-import { DND_DEFAULT_CR, normalizeCr } from '../xpRules';
+import { crToXp, DND_DEFAULT_CR, highestCrWithin, normalizeCr } from '../xpRules';
 
 export interface MonsterAttack {
   name: string;
@@ -108,6 +108,30 @@ function engineBlock(enc: ActiveEncounter, cr: string): StatBlock {
     passivePerception: 10,
     kind: 'humanoid',
     attack: { name: 'Strike', toHit: best + pb, damage: `${die}${best >= 0 ? '+' : ''}${best}`, type: 'bludgeoning' },
+  };
+}
+
+/**
+ * A block no richer than `maxXp` (the SRD 5.2.1 encounter budget): over budget, the same creature at the highest
+ * CR that fits — its own scores and AC, HP scaled, one plain attack with no extra dice or riders (srd: false).
+ */
+export function blockWithinXp(block: StatBlock, maxXp: number): StatBlock {
+  const own = crToXp(block.cr);
+  if (own <= maxXp) return block;
+  const cr = highestCrWithin(maxXp);
+  const ratio = crToXp(cr) / own;
+  const best = Math.max(mod(block.scores.STR), mod(block.scores.DEX));
+  const crNum = cr.includes('/') ? 0 : Number(cr);
+  const die = crNum >= 3 ? '2d6' : crNum >= 1 ? '1d8' : '1d6';
+  const { extra: _e, rider: _r, inflicts: _i, ...attack } = block.attack;
+  return {
+    ...block,
+    id: `${block.id}@${cr}`,
+    srd: false,
+    cr,
+    hp: Math.max(1, Math.round(block.hp * Math.sqrt(ratio))),
+    hpDice: '',
+    attack: { ...attack, toHit: Math.min(attack.toHit, best + 2), damage: `${die}${best >= 0 ? '+' : ''}${best}` },
   };
 }
 

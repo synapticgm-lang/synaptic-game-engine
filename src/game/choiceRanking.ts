@@ -26,6 +26,7 @@ import { travelChipMoves } from './chipLegality';
 import { objectiveOpensInterior } from './enterInterior';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
+import { mainSpineQuest } from './questPlay';
 
 export type { CirclingMemory } from './types';
 
@@ -115,7 +116,20 @@ export function turnProgress(before: GameState, after: GameState, receipts: stri
   if (receipts.some((r) => PROGRESS_RECEIPT.test(r))) reasons.push('receipt');
   if (movedOn(before, after)) reasons.push('moved');
   if (socialChanged(before, after)) reasons.push('social');
+  const inFight = (s: GameState) => !!s.activeEncounter || !!s.deathSaves;
+  if ((inFight(before) || inFight(after)) && fightSignature(before) !== fightSignature(after)) reasons.push('fight');
   return { progressed: reasons.length > 0, reasons };
+}
+
+/** A fight round or a death save moves the game: either side's HP, the foe's presence, or the save tally. */
+function fightSignature(state: GameState): string {
+  const enc = state.activeEncounter;
+  const saves = state.deathSaves;
+  return [
+    state.character?.hp ?? '',
+    enc ? `${enc.name}:${enc.hp ?? ''}:${enc.count ?? ''}` : '-',
+    saves ? `${saves.successes}:${saves.failures}:${saves.stable ? 1 : 0}:${saves.dead ? 1 : 0}` : '-',
+  ].join('|');
 }
 
 /**
@@ -348,7 +362,11 @@ export function storyChip(state: GameState): string | null {
   if (decision) return decision;
   const tabletopStep = tabletopStepChip(state);
   if (tabletopStep) return tabletopStep;
-  const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
+  // Tabletop: the main quest the step tracker follows, so no chip speaks for another quest's step.
+  const quest =
+    state.engineMode === 'dnd'
+      ? mainSpineQuest(state)
+      : (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
   if (!quest) return null;
   const here = (state.currentLocation ?? '').toLowerCase();
   const objIdx = quest.objectives?.findIndex((o) => !o.completed && !o.optional) ?? -1;
@@ -394,6 +412,25 @@ export function objectiveChip(description: string): string | null {
   const head = text.split(OBJECTIVE_TAIL)[0]!.trim();
   return head.split(' ').length >= 2 && head.length <= 60 ? head : null;
 }
+
+/**
+ * A step to take as a chip even with no early clause break ("Check the mud around the opened graves for heavy
+ * cart tracks…"): the whole chip when it fits, else the longest verb-and-object cut at a phrase boundary.
+ */
+export function objectiveStepChip(description: string): string | null {
+  const whole = objectiveChip(description);
+  if (whole) return whole;
+  const text = (description ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').replace(/\s*\([^)]*\)/g, '').trim();
+  let best: string | null = null;
+  for (const m of text.matchAll(OBJECTIVE_PHRASE_BREAK)) {
+    const cut = text.slice(0, m.index).trim();
+    if (cut.length > 60) break;
+    if (cut.split(' ').length >= 2) best = cut;
+  }
+  return best;
+}
+
+const OBJECTIVE_PHRASE_BREAK = new RegExp(`${OBJECTIVE_TAIL.source}|\\s(?:around|for|with|toward|towards|leading|over|into|past|beyond|along|of|to)\\s`, 'gi');
 
 const samePlace = (a: string, b: string) => !!a && !!b && (a === b || a.includes(b) || b.includes(a));
 

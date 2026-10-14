@@ -9,6 +9,7 @@ import type { GameState } from './types';
 import { hubsForBibleId, placeCardFor, type OutdoorHub } from './outdoorHubs';
 import { playerFacingLocation, underwayHereLabel } from './locationName';
 import { dungeonRoomPlace } from './places';
+import { isInteriorPlace } from './placeAuthority';
 import { dungeonRoomWays } from './dungeonCard';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
@@ -31,15 +32,22 @@ export function placeHeadNoun(description: string): string {
   return list[list.length - 1] ?? '';
 }
 
+/** The quest pin matched to this card first (it is the card's own place), then the bible's hubs. */
 function knownPlaceNames(bibleId: string | null | undefined, hookBlob: string, description: string): string[] {
-  const out = hubsForBibleId(bibleId).map((h) => h.name);
+  const out: string[] = [];
   const pins = [
     matchLitRpgMainSpine(bibleId, hookBlob, description)?.mapPin,
     matchTabletopMainSpine(bibleId, hookBlob, description)?.mapPin,
     matchStoryRpgMainSpine(bibleId, hookBlob, description)?.mapPin,
   ];
   for (const pin of pins) if (pin?.trim()) out.push(pin.trim());
+  for (const h of hubsForBibleId(bibleId)) if (!out.includes(h.name)) out.push(h.name);
   return out;
+}
+
+/** "Greyhollow, at the inn" names one place, Greyhollow's inn: read it as "Greyhollow inn". */
+function foldTownComma(description: string): string {
+  return description.replace(/^([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*),\s+(?:at|in|inside)\s+(?:the|a|an)\s+/, '$1 ');
 }
 
 /** The description without its lead-in and trailing clause ("a Lowmarket cellar shrine under X" → "Lowmarket cellar shrine"). */
@@ -75,15 +83,16 @@ export function shortPlaceName(
   description: string | undefined,
   hookBlob = ''
 ): string | undefined {
-  const raw = (description ?? '').replace(/\s+/g, ' ').trim();
-  if (!raw) return description;
+  const given = (description ?? '').replace(/\s+/g, ' ').trim();
+  if (!given) return description;
+  const raw = foldTownComma(given);
   const core = placeCore(raw);
   const headHub = hubsForBibleId(bibleId)
     .filter((h) => hubNames(h).some((n) => wordRe(n, '$').test(core)))
     .sort((a, b) => b.name.length - a.name.length)[0];
   if (headHub) return headHub.name;
   const head = placeHeadNoun(raw);
-  if (!head) return raw;
+  if (!head) return given;
   const mine = new Set(words(raw));
   let best: { name: string; score: number } | null = null;
   for (const name of knownPlaceNames(bibleId, hookBlob, raw)) {
@@ -92,7 +101,7 @@ export function shortPlaceName(
     const score = theirs.filter((w) => mine.has(w)).length;
     if (!best || score > best.score) best = { name, score };
   }
-  return best?.name ?? raw;
+  return best?.name ?? given;
 }
 
 const SPATIAL_PREP = /^(?:under|beneath|below|behind|beside|within|near|outside|above|inside|in|at|by|off|on)$/i;
@@ -123,7 +132,15 @@ export function openingPlaceRecord(
     .replace(new RegExp(`${wordRe(inCore).source}(?:['’]s)?`, 'i'), ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  if (!rest) return { place: mentioned.name };
+  // A room of an indoor hub ("Greyhollow tavern common room") is that hub, not a second map place; a place
+  // only beside or beneath the hub ("a cell beneath Valespire Cathedral") keeps its own words, as does one
+  // whose trailing clause names the hub again ("an undercroft cell beneath Valespire Cathedral").
+  const clause = raw.replace(LEAD, '').match(CLAUSE)?.[0] ?? '';
+  const hubWords = new Set(hubNames(mentioned).flatMap(words));
+  const clauseNamesHub = words(clause).some((w) => hubWords.has(w));
+  const roomOfHub =
+    isInteriorPlace(mentioned.name) && !clauseNamesHub && !rest.split(' ').some((w) => SPATIAL_PREP.test(w));
+  if (!rest || roomOfHub) return { place: mentioned.name };
   const clausePrep = raw.replace(LEAD, '').match(CLAUSE)?.[0]?.trim().split(' ')[0] ?? '';
   const prep = SPATIAL_PREP.test(clausePrep) ? clausePrep.toLowerCase() : 'in';
   return { place: `the ${rest} ${prep} ${mentioned.name}`, parentHub: mentioned.name };

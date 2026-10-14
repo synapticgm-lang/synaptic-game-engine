@@ -35,6 +35,7 @@ import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
 import { beatCarriesForcedAttempt, beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
+import { dropsFightRoll, engineFactProblems } from './engineFactGate';
 import {
   assemblePacketStitch,
   buildCompletedEventPacket,
@@ -187,6 +188,7 @@ export function sentenceGateProblems(state: GameState, sentence: string, playerI
   if (isSealedCardViolation(state, s, playerInput)) out.push(INVENTS_FACT);
   if (state.completedEvent && proseViolatesEventPacket(s, state.completedEvent)) out.push(CONTRADICTS_EVENT);
   out.push(wrongExitCountProblem(state, s), wrongExitPlaceProblem(state, s));
+  out.push(...engineFactProblems(state, s, playerInput));
   return [...new Set(out.filter((p): p is string => !!p))];
 }
 
@@ -201,8 +203,12 @@ export function sentenceRejectedInDraft(state: GameState, sentence: string, draf
 
 export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: state that outcome as finished.';
 
-/** s82 Root A — a committed terminal fight result the beat never states (the foe left active). */
+/**
+ * s82 Root A — a committed terminal fight result the beat never states (the foe left active).
+ * tt-fix-2 — tabletop: a round whose foe hits on the PC the beat never shows is the same miss.
+ */
 export function ignoresTerminalFight(state: GameState, prose: string): boolean {
+  if (dropsFightRoll(state, prose)) return true;
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   if (!fight) return false;
   if (!beatCarriesTerminalFight(prose, fight)) return true;

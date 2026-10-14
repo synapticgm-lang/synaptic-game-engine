@@ -93,19 +93,23 @@ export function repairLabelArticles(
 }
 
 /** Second and later mentions of a full ledger label in one beat take its short form. */
-export function varyRepeatMentions(prose: string, refs: LedgerRef[]): string {
+export function varyRepeatMentions(prose: string, refs: LedgerRef[], foeNames: string[] = []): string {
   let next = prose ?? '';
   if (!next.trim() || !refs.length) return next;
+  const foes = new Set(foeNames.map((n) => n.trim().toLowerCase()).filter(Boolean));
   const givenCounts = new Map<string, number>();
   for (const r of refs) {
-    if (r.klass !== 'person' && r.klass !== 'companion') continue;
+    if ((r.klass !== 'person' || r.id.startsWith('encounter:')) && r.klass !== 'companion') continue;
     const given = r.display.trim().split(/\s+/)[0]?.toLowerCase();
     if (given) givenCounts.set(given, (givenCounts.get(given) ?? 0) + 1);
   }
   const rows = [...refs].sort((a, b) => b.display.length - a.display.length);
   for (const ref of rows) {
     const isPlace = ref.klass === 'place';
-    const isPerson = ref.klass === 'person' || ref.klass === 'companion';
+    // A live foe's row is its kind ("Cave Spider"), not a First Last name: it has no given-name short form.
+    const isPerson =
+      (ref.klass === 'person' && !ref.id.startsWith('encounter:') && !foes.has(ref.display.trim().toLowerCase()))
+      || ref.klass === 'companion';
     if (!isPlace && !isPerson) continue;
     const short = isPlace ? placeShortForm(ref.display) : personShortForm(ref.display, givenCounts);
     if (!short) continue;
@@ -131,7 +135,8 @@ export function varyRepeatMentions(prose: string, refs: LedgerRef[]): string {
 export function polishMentions(
   prose: string,
   refs: LedgerRef[],
-  state?: Pick<GameState, 'npcMemories' | 'companions' | 'worldLedger'>
+  state?: Pick<GameState, 'npcMemories' | 'companions' | 'worldLedger'> & Partial<Pick<GameState, 'activeEncounter' | 'sceneFacts'>>
 ): string {
-  return varyRepeatMentions(repairLabelArticles(prose, refs, state), refs);
+  const foes = [state?.activeEncounter?.name, state?.sceneFacts?.lastKill?.name].filter((n): n is string => !!n);
+  return varyRepeatMentions(repairLabelArticles(prose, refs, state), refs, foes);
 }

@@ -112,6 +112,24 @@ export function crToXp(cr: string | number | undefined | null): number {
   return DND_XP_BY_CR[normalizeCr(cr) ?? DND_DEFAULT_CR] ?? 50;
 }
 
+/** SRD 5.2.1 encounter budget: the XP one fight may hold for this party (band 0 Low, 1 Moderate, 2 High). */
+export function encounterXpBudget(level: number, partySize: number, band: 0 | 1 | 2): number {
+  const lvl = Math.max(1, Math.min(20, Math.floor(level || 1)));
+  return DND_XP_BUDGET_PER_CHARACTER[lvl - 1]![band] * Math.max(1, Math.floor(partySize || 1));
+}
+
+/** The highest CR whose XP fits in `maxXp` (CR 0 when none does). */
+export function highestCrWithin(maxXp: number): string {
+  let best = '0';
+  for (const [cr, xp] of Object.entries(DND_XP_BY_CR)) if (xp <= maxXp && xp > DND_XP_BY_CR[best]!) best = cr;
+  return best;
+}
+
+/** How many foes of `cr` fit in the budget: never more than asked for, never fewer than one. */
+export function foesWithinBudget(cr: string | number | undefined | null, count: number, budget: number): number {
+  return Math.max(1, Math.min(Math.floor(count || 1), Math.floor(budget / crToXp(cr))));
+}
+
 /** XP needed from the start of `level` to the next level on the 5e thresholds. */
 export function dndXpToNext(level: number): number {
   const lvl = Math.max(1, Math.min(20, Math.floor(level || 1)));

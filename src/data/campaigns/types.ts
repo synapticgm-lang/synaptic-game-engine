@@ -36,6 +36,8 @@ export interface StarterQuest {
   description: string;
   recommendedLevel: number;
   objectives: string[];
+  /** Per objective: where (or with whom) it is taken, for steps whose wording names neither. */
+  objectiveAnchors?: Array<{ place?: string; people?: string[] } | undefined>;
   rewards: string;
   type?: 'main' | 'side' | 'faction';
 }

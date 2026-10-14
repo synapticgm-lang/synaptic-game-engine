@@ -19,6 +19,7 @@ import {
   turnProgress,
 } from './choiceRanking';
 import { applyRememberedThreatPick } from './placeThreats';
+import { applyPlayPhaseAfterHp, deathQuestReceipt } from './playPhase';
 import { pathToFileURL } from 'node:url';
 import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
@@ -2047,6 +2048,19 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   governed = commitOfferedPad({ ...governed, choices: finalChoices }, gm.id);
+  if (typeof governed.character?.hp === 'number') {
+    // Same end-of-run rule as live play (useGame): death ends the run, closing run-scoped quests.
+    const hp = governed.character.hp;
+    governed = applyPlayPhaseAfterHp(governed, hp, nextTurn);
+    const receipt = hp <= 0 ? deathQuestReceipt(governed) : null;
+    if (receipt && !filteredSystemLog.includes(receipt)) {
+      filteredSystemLog = [...filteredSystemLog, receipt];
+      const log = [...(governed.log ?? [])];
+      const last = log[log.length - 1];
+      if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), receipt] };
+      governed = { ...governed, log };
+    }
+  }
   governed = recordReplayHash(governed);
 
   const responsePath = classifyResponsePath({

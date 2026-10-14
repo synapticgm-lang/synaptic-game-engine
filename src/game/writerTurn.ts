@@ -12,6 +12,7 @@ import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEn
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, sentenceGateProblems, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
+import { dropsFightRoll } from './engineFactGate';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
 import { exitRepairFact } from './exitCount';
@@ -30,6 +31,8 @@ import {
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
 import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
+
+const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 
 export type WriterDraft = {
   prose: string;
@@ -439,7 +442,8 @@ async function runWriterTurnFightOnly(opts: {
 }): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
   const first = runWriterTurn(opts);
   if (first.outcome !== 'accepted' || !ignoresTerminalFight(opts.check.state, first.prose)) return first;
-  const problem = `${TERMINAL_FIGHT_PROBLEM} ${opts.check.engineFact}`.trim();
+  const head = dropsFightRoll(opts.check.state, first.prose) ? DROPPED_ROLL_PROBLEM : TERMINAL_FIGHT_PROBLEM;
+  const problem = `${head} ${opts.check.engineFact}`.trim();
   const raw = await opts.rewrite(problem).catch(() => '');
   const second = runWriterTurn({ ...opts, firstRaw: raw });
   if (second.outcome === 'accepted' && !ignoresTerminalFight(opts.check.state, second.prose)) {

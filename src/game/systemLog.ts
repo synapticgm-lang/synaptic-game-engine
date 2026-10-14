@@ -212,6 +212,27 @@ export function statusLinesForVerbosity(lines: string[], verbosity: StatVerbosit
   return lines;
 }
 
+/**
+ * One clear line per foe: the engine's machine receipt ("Encounter cleared: X (defeat)") and its STATUS line
+ * ("Encounter cleared: X — defeated") are the same event; STATUS keeps the readable one.
+ */
+function dedupeEncounterCleared(lines: string[]): string[] {
+  const readable = new Set(
+    lines.map((l) => l.match(/^Encounter cleared:\s*(.+?)\s+—\s+\S/)?.[1]?.toLowerCase()).filter((n): n is string => !!n)
+  );
+  const seen = new Set<string>();
+  return lines.filter((l) => {
+    const machine = l.match(/^Encounter cleared:\s*(.+?)\s*\([a-z]+\)\s*$/i)?.[1]?.toLowerCase();
+    if (machine && readable.has(machine)) return false;
+    if (/^Encounter cleared:/i.test(l)) {
+      const key = l.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+    }
+    return true;
+  });
+}
+
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
   const showsChecks = engineMode === 'dnd';
   const cleaned = lines
@@ -228,7 +249,7 @@ export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))
     .filter((l) => !/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?$/i.test(l));
   const firewalled = applyStatusFirewall(cleaned).lines;
-  const deduped = dedupeQuestStatusEcho(firewalled);
+  const deduped = dedupeEncounterCleared(dedupeQuestStatusEcho(firewalled));
   if (engineMode === 'dnd' || engineMode === 'pyoa') {
     return deduped.filter((l) => !isLitrpgChromeLine(l) && (engineMode === 'pyoa' ? !isDiceMechanicsLine(l) : true));
   }

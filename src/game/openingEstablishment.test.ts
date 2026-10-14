@@ -218,6 +218,7 @@ describe('opening player bubbles', () => {
     expect(result.generateOpening).toBe(false);
   });
 
+  // Known flake (tt-fix-2, 14 Oct): fails now and then in the full vitest run; passed 3/3 run alone. Cause not traced.
   it('seals kit cover instead of blocking with a questionnaire', async () => {
     const state = {
       ...summonedNameCover(),

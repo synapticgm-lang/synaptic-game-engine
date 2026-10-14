@@ -125,6 +125,9 @@ describe('s80 Root B — the card offer and cast compile from the card slots', (
   });
 });
 
+/** A spot inside an indoor hub opens as that hub; the spot stays as the position inside it (gap 2). */
+const SPOT_IN_HUB: Record<string, string> = { 'the Contract Hall notice board': 'Contract Hall' };
+
 describe('every Summoned Pact hook card keeps its own place', () => {
   it('no card whose location only mentions a hub collapses to that hub', () => {
     const hubs = hubsForBibleId('summoned-pact');
@@ -140,9 +143,21 @@ describe('every Summoned Pact hook card keeps its own place', () => {
         const heads = names.map((n) => n.split(' ').pop());
         if (heads.includes(placeHeadNoun(card.location))) continue;
         mentionOnly++;
-        expect(compiled.place, card.location).not.toBe(hub.name);
+        if (SPOT_IN_HUB[card.location]) expect(compiled.place, card.location).toBe(SPOT_IN_HUB[card.location]);
+        else expect(compiled.place, card.location).not.toBe(hub.name);
       }
     }
     expect(mentionOnly).toBeGreaterThan(0);
+  });
+
+  it('the Contract Hall notice board opens at Contract Hall and the board survives as the position or in the opening', () => {
+    const { state } = buildNewGameState({ bibleId: 'summoned-pact', characterName: 'Jax', seed: 19, personality: 'cold-system' });
+    const s = stampOpening(state);
+    expect(s.openingEstablishment?.pickedHook).toMatch(/Location: the Contract Hall notice board/);
+    expect(s.currentLocation).toBe('Contract Hall');
+    const spot = s.sceneFacts?.hereSpot;
+    const opening = s.log.find((e) => e.role === 'gm')?.content ?? '';
+    const survives = (spot?.place === 'Contract Hall' && /notice board/i.test(spot.spot)) || /notice board/i.test(opening);
+    expect(survives, opening).toBe(true);
   });
 });

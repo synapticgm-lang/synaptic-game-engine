@@ -26,6 +26,8 @@ import type {
 import { resolveLocalAreaLevel, resolveThreatTier } from './placeAuthority';
 import { DEFAULT_HOUSE_RULES, houseRulesOf, pillarCopies } from './rules/houseRules';
 import { hoursAtPace, paceTag } from './rules/travelPace';
+import { blockWithinXp, statBlockForEncounter } from './rules/srdMonsters';
+import { encounterXpBudget, foesWithinBudget } from './xpRules';
 import {
   hubsForBibleId,
   isLeaveSceneAction,
@@ -564,6 +566,15 @@ function rollStretch(state: GameState, j: TravelJourney): TravelJourney {
   );
   if (encounter && GROUP_KINDS.has(encounter.kind)) {
     encounter.count = 2 + Math.floor(hashUnit(`${key}|count`) * 3);
+    if (state.engineMode === 'dnd') {
+      // Tabletop: the group is no bigger than the SRD 5.2.1 budget for this party (the fight fits the same budget).
+      const band = { easy: 0, normal: 1, hard: 2, deadly: 2 }[houseRulesOf(state).encounterDifficulty] as 0 | 1 | 2;
+      const party = 1 + ((state.companions ?? []).length ? 1 : 0);
+      const budget = encounterXpBudget(state.character?.level || 1, party, band);
+      const block = blockWithinXp(statBlockForEncounter(roadFoe(encounter)), budget);
+      encounter.count = foesWithinBudget(block.cr, encounter.count, budget);
+      if (encounter.count < 2) delete encounter.count;
+    }
   }
   return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1 };
 }
@@ -642,7 +653,7 @@ export function roadMeetingPerson(state: Pick<GameState, 'journey' | 'turn'>): s
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
   const e = j.encounter;
-  if (!e) return '; quiet stretch';
+  if (!e) return '; quiet stretch, nobody met on the road';
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
   if (e.escaped) return `; got away from ${base}, not beaten`;
   if (e.lost) return `; lost the fight to ${base}, not beaten`;

@@ -206,6 +206,13 @@ const cursedKeepBase: CampaignBible = {
         'Discover the sealed crack in the great hall floor (the sealed fireplace)',
         'Choose: report findings to Father Aldous, Mayor Helga, or investigate independently',
       ],
+      objectiveAnchors: [
+        undefined,
+        undefined,
+        { place: 'Keep Gate' },
+        { place: 'Keep Gate' },
+        { people: ['Father Aldous', 'Mayor Helga Brask'] },
+      ],
       rewards: '50 gp, [Greyhollow Tavern lodging], Oskar\'s trust, [Keep Ground Floor Map] (partial), [Broken Chain Link] (evidence)',
     },
     {
