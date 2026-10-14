@@ -44,6 +44,7 @@ import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isRoadLabel, writerEngineResult } from './travelJourney';
 import { isGiverName } from './questGiver';
+import { sheetAnswerLine } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
 
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
@@ -411,11 +412,11 @@ export async function repairMissingAnswer(
   }
   const fact = check.engineFact;
   const missing = { sentence: '(no answer on the page)', flag: MISSING_ANSWER_PROBLEM, fact };
-  // Only a backed line may be quoted: with nothing on record for anyone here, the turn keeps its own lines.
+  // Only a backed line may be quoted. With nothing on record for anyone here, the engine answers from the sheet.
   const backed = new Map(here.map((p) => [p, backedAnswerFacts(check.state, p)] as const).filter(([, f]) => f.length));
-  if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: 'skipped: no backed line for anyone here' } };
-  const speakers = [...backed.keys()];
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
+  if (!backed.size) return landAnswer(turn, check, missing, sheetAnswerLine(check.state, here[0]!, said));
+  const speakers = [...backed.keys()];
   const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
   if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };
   const raw = await opts.repair(request).catch(() => '');
@@ -449,14 +450,14 @@ export async function repairMissingAnswer(
       answerRepair: { ...missing, ...(line ? { repaired: line } : {}), bug, ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}) },
     };
   }
+  return landAnswer(turn, check, missing, line!);
+}
+
+/** The answer line lands after the beat's first sentence. */
+function landAnswer<T extends WriterTurnResult>(turn: T, check: DraftCheck, missing: SentenceRepair, line: string): T {
   const sentences = splitProseSentences(turn.prose);
   const prose = sentences.length > 1 ? [sentences[0], line, ...sentences.slice(1)].join(' ') : `${turn.prose.trim()} ${line}`;
-  return {
-    ...turn,
-    prose,
-    answerRepair: { ...missing, repaired: line },
-    remaining: writerDraftProblems(prose, check),
-  };
+  return { ...turn, prose, answerRepair: { ...missing, repaired: line }, remaining: writerDraftProblems(prose, check) };
 }
 
 function sentencePattern(sentence: string): RegExp {

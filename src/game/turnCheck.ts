@@ -33,7 +33,6 @@ import {
 import {
   actionVerb,
   chipRepeatsAction,
-  MOTION_VERB,
   actedOnWords,
   PHYSICAL_CHIP,
   placeSaysEmpty,
@@ -47,7 +46,6 @@ import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
-import { handedExits } from './exitCount';
 import { roundCombatChips } from './tabletop/combatChips';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
@@ -140,9 +138,13 @@ export function restatedShare(prose: string, earlier: string[]): number {
 }
 
 const TRAVEL_ACTION = /^(?:travel(?:\s+(?:toward|to|into))?|head (?:toward|to|for)|go to|return to|walk to)\s+(?:the\s+)?(.+)$/i;
-/** The prose moves the body: a walk can be told with any travel verb. */
-const MOTION_TOLD =
-  /\b(?:walk|stepp?|cross|pass|strode|stride|went|moved?|moving|continu|head(?:ed|ing)|made (?:their|his|her|your|my) way|kept (?:to|on|going|walking)|carried on|pressed on|wander|stroll|trudg|climb|descend|follow|leav|left|reach|enter|arriv)/i;
+
+/** tt-fix-8 — a chip the engine offered and then committed as this turn's action: the engine resolved it. */
+export function engineResolvedChip(after: GameState, action: string, offered: string[]): boolean {
+  const said = low(norm(action));
+  const done = low(norm(after.completedEvent?.playerAction ?? ''));
+  return !!done && said.startsWith(done) && offered.some((c) => low(norm(c)) === said);
+}
 
 /**
  * The typed verb and the body verbs that tell it. A named object is not enough: "search the crate"
@@ -204,7 +206,8 @@ export function checkActionFollowed(
   before: GameState,
   after: GameState,
   action: string,
-  prose: string
+  prose: string,
+  offered: string[] = []
 ): { p0: TurnCheckFlag[]; down: TurnCheckFlag[] } {
   const p0: TurnCheckFlag[] = [];
   const down: TurnCheckFlag[] = [];
@@ -275,12 +278,10 @@ export function checkActionFollowed(
     }
   }
 
-  if (!talkish && !socialAct && !travel && !looking && !blowOwned) {
+  // Typed words are read for what they act on. An engine chip the engine resolved is trusted by structure.
+  if (!talkish && !socialAct && !travel && !looking && !blowOwned && !engineResolvedChip(after, act, offered)) {
     const words = actedOnWords(act);
-    // "Check the exits" acts on this place's ways out: naming them is showing what was acted on.
-    const exits = handedExits(after) ?? handedExits(before) ?? [];
-    const shown = (w: string) => stemHit(text, w) || (stemHit(w, 'exits') && exits.some((e) => placeNamed(text, e)));
-    if (words.length && !words.some(shown)) {
+    if (words.length && !words.some((w) => stemHit(text, w))) {
       down.push({ kind: 'action-object-missing', detail: `prose never names what the player acted on (${words.join(', ')})` });
     } else if (words.length) {
       const verb = actionVerb(act);
@@ -291,8 +292,6 @@ export function checkActionFollowed(
           detail: `player chose to ${verb} the ${words.join(' ')}; the prose names it but never ${family.name}s it`,
         });
       }
-    } else if (!words.length && MOTION_VERB.test(actionVerb(act)) && !MOTION_TOLD.test(text)) {
-      down.push({ kind: 'action-object-missing', detail: `player chose "${act.slice(0, 60)}"; the prose never moves them` });
     }
   }
   return { p0, down };
@@ -438,7 +437,7 @@ export function checkPlayerTurn(
 ): TurnCheck {
   const prose = row.gmText ?? '';
   const action = row.playerInput || row.fatePick || '';
-  const followed = checkActionFollowed(before, after, action, prose);
+  const followed = checkActionFollowed(before, after, action, prose, row.offeredChoices ?? []);
   const p0 = [
     ...checkChips(before, row.offeredChoices ?? []),
     ...checkChosenChip(before, row.fatePick || action),

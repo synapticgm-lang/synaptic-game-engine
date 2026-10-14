@@ -1,6 +1,7 @@
 import { Swords, MessageSquareHeart, Map as MapIcon, Package, EyeOff, Zap, Users } from 'lucide-react';
 import type { EngineMode, Settings } from '@/game/types';
 import { CustomTabletopRulesField } from './CustomTabletopRulesField';
+import { settingScope } from '@/game/rules/modeProfile';
 
 interface Props {
   settings: Settings;
@@ -19,6 +20,7 @@ export function CampaignSettings({
   onCustomTabletopRulesChange,
   kidMode,
 }: Props) {
+  const tabletop = settingScope(engineMode, (p) => p.mode === 'dnd');
   return (
     <div className="space-y-8">
       {engineMode === 'dnd' && onCustomTabletopRulesChange && (
@@ -38,13 +40,17 @@ export function CampaignSettings({
           </div>
         </section>
       )}
-      {engineMode === 'dnd' && <PillarsSection settings={settings} onChange={onChange} />}
+      {tabletop.show && <PillarsSection settings={settings} onChange={onChange} modes={tabletop.modes} />}
       <HouseRulesSection settings={settings} onChange={onChange} engineMode={engineMode} />
     </div>
   );
 }
 
-function PillarsSection({ settings, onChange }: Props) {
+function ModesNote({ modes }: { modes: string }) {
+  return modes ? <p className="mb-2 text-[11px] text-slate-500">{modes}</p> : null;
+}
+
+function PillarsSection({ settings, onChange, modes }: Props & { modes: string }) {
   return (
     <section>
       <div className="mb-4 flex items-center gap-2">
@@ -53,6 +59,7 @@ function PillarsSection({ settings, onChange }: Props) {
         </div>
         <h3 className="font-serif text-sm uppercase tracking-wider text-slate-200">The Three Pillars</h3>
       </div>
+      <ModesNote modes={modes} />
       <p className="mb-3 text-[11px] text-slate-500">
         Combat sets how often a quiet stretch turns into a fight and how often road meetings are hostile. Social and Exploration
         weight road meetings toward people to talk to or places and wildlife to find. 50% is the default mix.
@@ -168,7 +175,8 @@ function PillarSlider({
 }
 
 function HouseRulesSection({ settings, onChange, engineMode }: Props) {
-  const tabletop = engineMode === 'dnd';
+  const story = settingScope(engineMode, (p) => p.mode !== 'dnd');
+  const table = settingScope(engineMode, (p) => p.mode === 'dnd');
   return (
     <section>
       <div className="mb-4 flex items-center gap-2">
@@ -178,7 +186,9 @@ function HouseRulesSection({ settings, onChange, engineMode }: Props) {
         <h3 className="font-serif text-sm uppercase tracking-wider text-slate-200">House Rules</h3>
       </div>
       <div className="space-y-3">
-        {!tabletop && (
+        {story.show && (
+          <>
+          <ModesNote modes={story.modes} />
           <HouseRuleToggle
             icon={<Package size={16} />}
             label="Strict Encumbrance"
@@ -186,9 +196,11 @@ function HouseRulesSection({ settings, onChange, engineMode }: Props) {
             checked={settings.strictEncumbrance}
             onChange={(v) => onChange('strictEncumbrance', v)}
           />
+          </>
         )}
-        {tabletop && (
+        {table.show && (
           <>
+            <ModesNote modes={table.modes} />
             {TABLE_RULES.map((r) => (
               <TableRuleSelect key={r.key} rule={r} value={tableRuleValue(settings, r)} onChange={(v) => onChange(r.key, r.parse(v) as never)} />
             ))}

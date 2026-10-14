@@ -54,8 +54,8 @@ const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r
 
 describe('29z4 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14s');
-    expect(BUILD_STAMP).toBe('2026-10-14s');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14t');
+    expect(BUILD_STAMP).toBe('2026-10-14t');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -63,16 +63,11 @@ describe('29z4 — stamp', () => {
 describe('29z4 — tester: real actions are not downs', () => {
   const s = base();
 
-  it('a walk told as "crossed" or "watched them pass" is not a down', () => {
-    expect(kinds(checkActionFollowed(s, s, 'Walk on', 'They crossed the Close at an unhurried pace.'))).not.toContain('action-object-missing');
-    expect(kinds(checkActionFollowed(s, s, 'Walk on', 'The guards watched them pass without a word.'))).not.toContain('action-object-missing');
-    expect(kinds(checkActionFollowed(s, s, 'Walk on', 'Jax stepped over the gutter and kept going.'))).not.toContain('action-object-missing');
-  });
-
-  it('a walk the prose never moves is still a down', () => {
-    expect(kinds(checkActionFollowed(s, s, 'Walk on', 'The rain kept falling on the stalls. A dog barked somewhere.'))).toContain(
-      'action-object-missing'
-    );
+  it('tt-fix-8: "Walk on" is the engine\'s journey chip; the engine moves the walk, the words are not re-read', () => {
+    const after = { ...s, completedEvent: { playerAction: 'Walk on' } } as unknown as GameState;
+    for (const prose of ['They crossed the Close at an unhurried pace.', 'Jax was at Greyhollow Graveyard.']) {
+      expect(kinds(checkActionFollowed(s, after, 'Walk on', prose, ['Walk on', 'Turn back']))).not.toContain('action-object-missing');
+    }
   });
 
   it('"Investigate the keep" told as "asking after the keep" is not a down', () => {

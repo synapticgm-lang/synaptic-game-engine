@@ -27,7 +27,7 @@ import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, milestoneXp, type DeedSte
 import { realEncounterCr } from './rules/srdMonsters';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
-import { objectiveChip } from './choiceRanking';
+import { stepChip } from './choiceRanking';
 import { hidesPart } from './systemHousing';
 import { settleDeeds } from './rules/achievements';
 
@@ -356,7 +356,7 @@ export function applySandboxXpAwards(
       if (!obj.completed || beforeDone.has(obj.id)) continue;
       // Bearings / look-around ticks are orientation, not a milestone.
       if (lookAround || isBearingsStyleObjective(obj.description)) continue;
-      const label = objectiveChip(obj.description) ?? obj.description.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
+      const label = stepChip(obj) ?? obj.description.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
       pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${label}`);
     }
     if (after.status === 'completed' && before.status !== 'completed') {

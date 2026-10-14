@@ -99,18 +99,18 @@ describe('(d) "Check the exits" acts on this place’s ways out', () => {
   const s = tabletop({ currentLocation: 'Keep Gate' });
   const after = {
     ...s,
-    completedEvent: { engineResult: 'Exits: the ways out of Keep Gate lead to Greyhollow Inn, Greyhollow Church.' },
+    completedEvent: { playerAction: 'Check the exits', engineResult: 'Exits: the ways out of Keep Gate lead to Greyhollow Inn, Greyhollow Church.' },
   } as unknown as GameState;
-  const kinds = (prose: string) => {
-    const r = checkActionFollowed(s, after, 'Check the exits', prose);
+  const kinds = (prose: string, offered: string[] = []) => {
+    const r = checkActionFollowed(s, after, 'Check the exits', prose, offered);
     return [...r.p0, ...r.down].map((f) => f.kind);
   };
 
-  it('naming the handed ways out shows what was acted on', () => {
-    expect(kinds('Jax looked over the ways out: the road down to Greyhollow Inn and the lane to Greyhollow Church.')).not.toContain('action-object-missing');
+  it('tt-fix-8: the engine chip the engine resolved is trusted, not re-read', () => {
+    expect(kinds('Jax looked over the ways out: the road down to Greyhollow Inn and the lane to Greyhollow Church.', ['Check the exits'])).not.toContain('action-object-missing');
   });
 
-  it('a beat that names none of them still flags', () => {
+  it('typed, a beat that names none of them still flags', () => {
     expect(kinds('The wind picked up. Somewhere a shutter banged.')).toContain('action-object-missing');
   });
 });

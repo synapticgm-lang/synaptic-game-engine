@@ -14,7 +14,9 @@ export type StarterQuestSeed = {
   recommendedLevel?: number;
   objectives: string[];
   /** Per objective: where (or with whom) it is taken, for steps whose wording names neither. */
-  objectiveAnchors?: Array<{ place?: string; people?: string[]; room?: string } | undefined>;
+  objectiveAnchors?: Array<
+    { place?: string; people?: string[]; room?: string; verb?: string; object?: string } | undefined
+  >;
   rewards?: string;
   location?: string;
   /** Who gives it; a named giver becomes an NPC record at `location` (`placeQuestGivers`). */
@@ -804,19 +806,22 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
     recommendedLevel: q.recommendedLevel,
     location: q.location ?? QUEST_SEED_LOCATIONS[q.id],
     ...(q.giver ? { giver: q.giver } : {}),
-    objectives: q.objectives.map((desc, i) => {
-      const anchor = q.objectiveAnchors?.[i];
-      return {
-        id: `${q.id}-obj-${i + 1}`,
-        description: desc,
-        completed: false,
-        ...(anchor?.place ? { place: anchor.place } : {}),
-        ...(anchor?.people?.length ? { people: [...anchor.people] } : {}),
-        ...(anchor?.room ? { room: anchor.room } : {}),
-      };
-    }),
+    objectives: q.objectives.map((desc, i) => ({
+      id: `${q.id}-obj-${i + 1}`,
+      description: desc,
+      completed: false,
+      ...anchorFields(q.objectiveAnchors?.[i]),
+    })),
     rewards: { items: rewardItems(q.rewards) },
   };
+}
+
+/** A seed step's anchor as objective fields: only the ones it sets. */
+function anchorFields(anchor: NonNullable<StarterQuestSeed['objectiveAnchors']>[number]) {
+  if (!anchor) return {};
+  const { people, ...rest } = anchor;
+  const set = Object.fromEntries(Object.entries(rest).filter(([, v]) => !!v));
+  return { ...set, ...(people?.length ? { people: [...people] } : {}) };
 }
 
 /** Active revealed main-spine quest (prefer L1 starter ids). */
@@ -1005,9 +1010,7 @@ export function revealLocalStarterQuest(
             id: q.objectives?.[i]?.id ?? `${seed.id}-obj-${i + 1}`,
             description: desc,
             completed: q.objectives?.[i]?.completed ?? false,
-            ...(seed.objectiveAnchors?.[i]?.place ? { place: seed.objectiveAnchors[i]!.place } : {}),
-            ...(seed.objectiveAnchors?.[i]?.people?.length ? { people: [...seed.objectiveAnchors[i]!.people!] } : {}),
-            ...(seed.objectiveAnchors?.[i]?.room ? { room: seed.objectiveAnchors[i]!.room } : {}),
+            ...anchorFields(seed.objectiveAnchors?.[i]),
           })),
           rewards: { items: rewardItems(seed.rewards) },
           ...(seed.giver ? { giver: seed.giver } : {}),

@@ -414,6 +414,9 @@ export interface QuestObjective {
   people?: string[];
   /** A step inside `place`: the room word its room label must carry ("hall"), or "inside" for any room in it. */
   room?: string;
+  /** The step as an action: its verb ("Haul up") and object ("the heavy bucket"). Its chip is the two joined. */
+  verb?: string;
+  object?: string;
 }
 
 export interface ChoiceJournalEntry {

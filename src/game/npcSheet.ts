@@ -207,6 +207,22 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
   return { ...state, npcMemories: [...list, fresh] };
 }
 
+/**
+ * tt-fix-8 — the answer a person gives when nothing else about them is on record: who they are from their saved
+ * sheet (job, and where they are found). Said once; after that, or with no sheet, they say they have nothing to tell.
+ */
+export function sheetAnswerLine(state: GameState, name: string, said: string[]): string {
+  const key = name.trim().toLowerCase();
+  const memory = (state.npcMemories ?? []).find(
+    (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),
+  );
+  const job = memory?.sheet?.job;
+  const where = memory?.location;
+  const own = job ? `I'm the ${job}${where ? ` here at ${where}` : ''}` : '';
+  const words = own && !said.some((s) => s.includes(own)) ? own : 'I have nothing to tell you';
+  return `"${words}," ${name} said.`;
+}
+
 /** What the writer may see: name, job, one motive, one fear, one way of speaking. Blank parts are left out. */
 export function npcSheetWriterLine(name: string, sheet: NpcSheet | undefined): string {
   if (!sheet) return '';

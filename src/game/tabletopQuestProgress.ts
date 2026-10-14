@@ -12,7 +12,7 @@
  */
 import type { GameState, Quest } from './types';
 import { mainSpineQuest } from './questPlay';
-import { objectiveStepChip } from './choiceRanking';
+import { stepChip } from './choiceRanking';
 import { peopleHere } from './chipLegality';
 import { isGiverName, talkStepPerson } from './questGiver';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
@@ -169,7 +169,7 @@ function takeableSteps(state: GameState): Array<{ idx: number; chip: string; per
   const out: Array<{ idx: number; chip: string; person: string | null }> = [];
   (quest.objectives ?? []).forEach((o, idx) => {
     if (o.completed) return;
-    const chip = objectiveStepChip(o.description);
+    const chip = stepChip(o);
     if (!chip) return;
     const anchor = tabletopStepAnchor(state, quest, idx);
     // A move step has no chip of its own; travel arriving where it goes ticks it.
@@ -218,7 +218,7 @@ export function applyTabletopQuestTurn(input: GameState, playerInput: string, he
   const moved = arrivedMoveStep(state, quest, hereBefore);
   const taken =
     moved >= 0
-      ? { idx: moved, chip: objectiveStepChip(quest.objectives![moved]!.description) ?? quest.objectives![moved]!.description }
+      ? { idx: moved, chip: stepChip(quest.objectives![moved]!) ?? quest.objectives![moved]!.description }
       : takeableSteps(state).find(
           (s) =>
             said === chipKey(s.chip)

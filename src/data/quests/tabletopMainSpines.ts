@@ -48,6 +48,8 @@ export type TabletopFamilyTag =
   | 'greatLift'
   | 'middleMarket';
 
+export type StepAction = { verb: string; object: string };
+
 export interface TabletopMainSpine {
   bibleId: TabletopSpineBibleId;
   spineId: string;
@@ -56,6 +58,8 @@ export interface TabletopMainSpine {
   familyTags: TabletopFamilyTag[];
   whoWantsWhat: string;
   firstObjective: string;
+  /** The first objective and the follow-on beat as actions: each step's chip is its verb and object. */
+  steps: [StepAction, StepAction];
   refuseOrWalkAway: string;
   mapPin: string;
   stampAlts: string[];
@@ -100,6 +104,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       "Father Aldous believes the fouled well water is tied to a restless spirit in the keep's ruined cistern, and he needs you to consecrate the source before sickness overtakes the village.",
     firstObjective: 'Haul up the ruined, heavy bucket to examine the black sludge and severed rope.',
+    steps: [{ verb: 'Haul up', object: 'the heavy bucket' }, { verb: 'Investigate', object: 'the sludge trail' }],
     refuseOrWalkAway: "He warns that the village will die of thirst or madness by week's end.",
     mapPin: 'Midnight Well',
     stampAlts: ['villagers', 'clergy', 'afflicted'],
@@ -119,6 +124,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Dain Holt needs expendable outsiders to track whatever just battered against the barred oak doors and dragged a shrieking guardsman into the treeline.',
     firstObjective: 'Examine the deep gouge marks on the outside of the oak doors to determine what took the guard.',
+    steps: [{ verb: 'Examine', object: 'the deep gouge marks' }, { verb: 'Track', object: 'the heavy blood trail' }],
     refuseOrWalkAway: 'Dain promises they will lock you out to face the dark alone.',
     mapPin: 'Barred Oak Gate',
     stampAlts: ['militia', 'guards', 'outsiders'],
@@ -138,6 +144,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       "A visiting scholar named Silas Thorne needs an armed escort up to the cursed keep to recover his mentor's lost survey journals before the terrified locals burn the ruins down.",
     firstObjective: 'Review the crumbling old survey map Silas spreads across the sticky inn table.',
+    steps: [{ verb: 'Review', object: 'the crumbling old survey map' }, { verb: 'Escort', object: 'Silas up the hill path' }],
     refuseOrWalkAway: 'Silas says he will go alone and likely die, leaving his heavy purse unspent.',
     mapPin: 'Greyhollow Inn',
     stampAlts: ['scholars', 'travelers', 'locals'],
@@ -157,6 +164,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Mayor Helga Brask intercepts you at the churchyard and demands you quietly hunt down the graverobbers operating from the keep before panic completely overtakes the town.',
     firstObjective: 'Check the mud around the opened graves for heavy cart tracks leading uphill.',
+    steps: [{ verb: 'Check', object: 'the mud around the opened graves' }, { verb: 'Follow', object: 'the cart tracks toward the keep' }],
     refuseOrWalkAway: 'Helga threatens to have the militia run you out of town as suspected accomplices.',
     mapPin: 'Greyhollow Graveyard',
     stampAlts: ['townsfolk', 'mourners', 'gravediggers'],
@@ -176,6 +184,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Old Tam refuses to guide the caravan across the ford until someone investigates why the dry mill wheel is turning on its own and silencing the local wildlife.',
     firstObjective: 'Approach the dry mill and look for whatever mechanism or beast is turning the massive wooden wheel.',
+    steps: [{ verb: 'Approach', object: 'the dry mill' }, { verb: 'Breach', object: "the old mill's rotting door" }],
     refuseOrWalkAway: 'Tam will sit at the tavern and drink until the caravan rots in place.',
     mapPin: 'Roadside Tavern',
     stampAlts: ['travelers', 'locals', 'merchants'],
@@ -195,6 +204,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Lessa Quill hired you as high-ground lookouts, and now she frantically flags you to intercept a bandit spotter signaling from the eastern ridge.',
     firstObjective: 'Sneak up the rocky incline toward the ridge camp where the signal fire just flared.',
+    steps: [{ verb: 'Sneak up', object: 'the rocky incline' }, { verb: 'Neutralize', object: 'the spotter' }],
     refuseOrWalkAway: 'Lessa signals that your contract is void and you will be left behind without pay.',
     mapPin: 'Ridge Watch Point',
     stampAlts: ['scouts', 'mercenaries', 'outlaws'],
@@ -214,6 +224,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'A nervous Lessa Quill demands you take a small skiff across the ford to investigate the swinging far-bank lantern before she risks moving the ticking wagons into the water.',
     firstObjective: 'Row the leaky skiff across the dark, fast-moving water toward the swinging light.',
+    steps: [{ verb: 'Row', object: 'the leaky skiff' }, { verb: 'Confront', object: 'the shadowy lantern-bearer' }],
     refuseOrWalkAway: "Lessa says they haven't paid you yet and they absolutely won't until the far bank is secure.",
     mapPin: 'Ford Camp',
     stampAlts: ['guards', 'teamsters', 'ferrymen'],
@@ -233,6 +244,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Merchant Kaelen Cross needs you to find out what happened to his previous guards, whose discarded weapons litter the mud, before he moves his three wagons an inch further.',
     firstObjective: 'Inspect the dropped swords and disturbed mud for signs of a struggle or drag marks.',
+    steps: [{ verb: 'Inspect', object: 'the dropped swords' }, { verb: 'Follow', object: 'the heavy drag marks' }],
     refuseOrWalkAway: 'Kaelen says he will turn the wagons around and you can walk to the ford alone.',
     mapPin: 'Muddy Road',
     stampAlts: ['drivers', 'guards', 'scavengers'],
@@ -252,6 +264,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'A wounded scavenger named Jarek Finn wants you to retrieve his dropped pack from the collapsed armory before the orcs on the lower floors hear him bleeding out.',
     firstObjective: 'Quietly traverse the cracked floorboards to the ruined armory wing without snapping the wood.',
+    steps: [{ verb: 'Traverse', object: 'the cracked floorboards' }, { verb: 'Sneak past', object: 'the troll scout' }],
     refuseOrWalkAway: 'Jarek says he will bleed out and his map to the real vault dies with him.',
     mapPin: 'Ernost Upper Floors',
     stampAlts: ['scavengers', 'looters', 'stragglers'],
@@ -271,6 +284,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Grash the Splitter demands you infiltrate the flooded east tunnels to flush out the rival trolls so his orcs can claim the dwarf hostage uncontested.',
     firstObjective: 'Locate the dry sewer grate hidden in the brush that leads into the flooded eastern section.',
+    steps: [{ verb: 'Locate', object: 'the dry sewer grate' }, { verb: 'Descend into', object: 'the flooded tunnels' }],
     refuseOrWalkAway: 'Grash promises his archers will use you for target practice as you leave the camp.',
     mapPin: 'Clan Tents',
     stampAlts: ['clan warriors', 'outriders', 'mercenaries'],
@@ -290,6 +304,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Durik Stonevow shouts up through the rubble hole, promising you the vault combination if you drop a rope and haul him out before his captors return.',
     firstObjective: 'Find a secure stone pillar in the ruined chapel to tie off a heavy rope.',
+    steps: [{ verb: 'Find', object: 'a secure stone pillar' }, { verb: 'Haul up', object: 'the trapped scavenger' }],
     refuseOrWalkAway: 'Durik curses your cowardice as heavy, clawed footsteps approach him from below.',
     mapPin: 'Collapsed Chapel',
     stampAlts: ['explorers', 'outcasts', 'captives'],
@@ -309,6 +324,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'A rogue named Elara Locke needs you to distract the warbands in the courtyard so she can slip into the undercroft and memorize the vault cipher.',
     firstObjective: 'Barricade the main gate loudly to draw the attention of the nearest orc patrols.',
+    steps: [{ verb: 'Barricade', object: 'the main gate' }, { verb: 'Cause', object: 'a distraction in the courtyard' }],
     refuseOrWalkAway: "Elara shrugs and says she'll go find a louder group of fools.",
     mapPin: 'Gatehouse Steps',
     stampAlts: ['rogues', 'mercenaries', 'lookouts'],
@@ -328,6 +344,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Baroness Mirelle needs you to prove your innocence to the angry mob by venturing into the blight to find the real source of the creeping rot.',
     firstObjective: 'Convince the shouting mob to lower their pitchforks and give you three days to find the truth.',
+    steps: [{ verb: 'Convince', object: 'the shouting mob' }, { verb: 'Follow', object: 'the trail of rot' }],
     refuseOrWalkAway: 'The village moot decides to hang you as blight-callers right now.',
     mapPin: 'Village Moot',
     stampAlts: ['villagers', 'elders', 'outsiders'],
@@ -347,6 +364,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'A returning scout named Kaelen Moss wants you to help him decipher the frantic new map symbols his missing partner left behind before the wood claims the station entirely.',
     firstObjective: "Chop back the aggressive creeping vines sealing the station's heavy timber door.",
+    steps: [{ verb: 'Chop back', object: 'the creeping vines' }, { verb: 'Navigate to', object: 'the first marked anomaly' }],
     refuseOrWalkAway: 'Kaelen says the map will be lost and the blight will take the valley unchecked.',
     mapPin: 'Overgrown Station',
     stampAlts: ['scouts', 'rangers', 'woodsmen'],
@@ -366,6 +384,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       "Sister Cala pleads with you to recover the shrine's silver chalice from the suffocating vines before the corrupted roots taint the holy relic permanently.",
     firstObjective: "Hack through the dense, pulsing briars choking the shrine's stone entrance.",
+    steps: [{ verb: 'Hack through', object: 'the pulsing briars' }, { verb: 'Defeat', object: 'the root-thrall' }],
     refuseOrWalkAway: "Cala weeps that the land's last blessing is lost to the green.",
     mapPin: 'Choked Shrine',
     stampAlts: ['faithful', 'pilgrims', 'corrupted'],
@@ -385,6 +404,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'A desperate farmer named Silas Croft needs you to find his son, who wandered into the new treeline trying to prove the oak trees were moving at night.',
     firstObjective: "Track the boy's small footprints into the unnaturally dense new growth.",
+    steps: [{ verb: 'Track', object: "the boy's small footprints" }, { verb: 'Rescue', object: 'the boy' }],
     refuseOrWalkAway: 'Silas grabs a rusted pitchfork to go die in the woods alone.',
     mapPin: 'Blighted Farm',
     stampAlts: ['farmers', 'children', 'strays'],
@@ -404,6 +424,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Innkeep Mara promises a safe bed and warm meal if you replace her dead watchman and hold the barricaded inn door until dawn.',
     firstObjective: "Haul the heavy wooden bracing beams into place across the inn's main double doors.",
+    steps: [{ verb: 'Brace', object: 'the double doors' }, { verb: 'Repel', object: 'the midnight attack' }],
     refuseOrWalkAway: 'Mara kicks you out into the foggy, hostile night to fend for yourself.',
     mapPin: 'Stillroot Inn',
     stampAlts: ['travelers', 'locals', 'watchers'],
@@ -423,6 +444,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'A terrified foreman named Jorin Black needs you to retrieve his dropped ledger from the bog before the mud-caked thing that just sat up claims the camp.',
     firstObjective: 'Navigate the unsteady wooden planks over the bog to reach the abandoned dig site.',
+    steps: [{ verb: 'Cross', object: 'the planks over the bog' }, { verb: 'Grab', object: 'the sunken ledger' }],
     refuseOrWalkAway: 'Jorin says he can never return to town without the guild ledger.',
     mapPin: "Peat-Cutters' Camp",
     stampAlts: ['laborers', 'foremen', 'bog-dwellers'],
@@ -442,6 +464,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       "Child Fenn begs you to sever the pale roots snaking into his grandfather's open grave before the old man is forced to walk again.",
     firstObjective: 'Leap into the open grave and hack apart the intrusive root-lattice.',
+    steps: [{ verb: 'Leap into', object: 'the open grave' }, { verb: 'Fight', object: 'the writhing roots' }],
     refuseOrWalkAway: 'Fenn sobs as the loose dirt begins to shift and heave from below.',
     mapPin: 'Restless Graveyard',
     stampAlts: ['mourners', 'gravediggers', 'afflicted'],
@@ -461,6 +484,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'The palisade guard, Kaelen, orders you to extinguish the strange blue-flame lanterns left outside the walls, believing they are drawing the restless dead.',
     firstObjective: 'Slip outside the heavy timber gate to smash the nearest blue lantern.',
+    steps: [{ verb: 'Slip outside', object: 'the timber gate' }, { verb: 'Smash', object: 'the blue lanterns' }],
     refuseOrWalkAway: 'Kaelen flatly refuses to let you inside the safety of the palisade.',
     mapPin: 'Village Palisade',
     stampAlts: ['guards', 'sentries', 'outsiders'],
@@ -480,6 +504,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Captain Iren Voss needs discrete muscle to quietly butcher and dispose of a mutated, scaled monstrosity caught in her nets before the Sentinels quarantine her ship.',
     firstObjective: 'Haul the heavy, thrashing tarp onto the secluded cutting deck.',
+    steps: [{ verb: 'Haul', object: 'the thrashing tarp' }, { verb: 'Put down', object: 'the creature' }],
     refuseOrWalkAway: 'Voss warns that if the Sentinels lock down the docks, nobody leaves Saltmar.',
     mapPin: 'Night Docks',
     stampAlts: ['dockworkers', 'sailors', 'smugglers'],
@@ -499,6 +524,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Sable Rook demands you explore a newly collapsed sea-cave tunnel that bypasses the guild checkpoints and secure whatever washed up inside.',
     firstObjective: 'Light a torch and descend the slick, guano-covered rocks into the breach.',
+    steps: [{ verb: 'Light', object: 'a torch' }, { verb: 'Defeat', object: 'the cave-crawlers' }],
     refuseOrWalkAway: 'Sable threatens to alert the surface guard that you are trespassing in the undercity.',
     mapPin: 'Undercity Caves',
     stampAlts: ['smugglers', 'exiles', 'scavengers'],
@@ -518,6 +544,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Nessa Crow refuses to pull the lift levers until you retrieve a stolen manifest from a gang of thugs attempting to flee to the lower wards.',
     firstObjective: 'Chase down the fleeing thugs across the crowded landing platform.',
+    steps: [{ verb: 'Chase down', object: 'the fleeing thugs' }, { verb: 'Subdue', object: 'the gang' }],
     refuseOrWalkAway: 'Nessa locks the lift mechanisms, leaving you stranded on the landing.',
     mapPin: 'Great Lift Landing',
     stampAlts: ['operators', 'travelers', 'thugs'],
@@ -537,6 +564,7 @@ export const TABLETOP_MAIN_SPINES: TabletopMainSpine[] = [
     whoWantsWhat:
       'Merchant Lysander Chant reveals your simple escort job was a lie, and he actually needs you to publicly repossess a cursed artifact from a rival\'s stall to make a brutal point.',
     firstObjective: "March up to the rival stall and present Chant's writ of repossession.",
+    steps: [{ verb: 'March up to', object: 'the rival stall' }, { verb: 'Defend against', object: 'the bodyguards' }],
     refuseOrWalkAway: 'Chant says your reputation in Saltmar will be ruined before dusk.',
     mapPin: 'Middle Ward Market',
     stampAlts: ['merchants', 'mercenaries', 'crowds'],
@@ -617,18 +645,20 @@ export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQu
   const giver = tabletopSpineGiver(spine);
   // Both steps start at the quest's own pin; their wording often names only a prop there. A step done with
   // the giver ("Escort him…", "the map Silas spreads") is taken with them, not with nobody there.
-  const anchor = (step: string) => ({
+  const anchor = (step: string, i: number) => ({
     place: spine.mapPin,
+    ...spine.steps[i],
     ...(giver && stepWithGiver(step, giver) ? { people: [giver] } : {}),
   });
+  // A main quest is more than one look: the follow-on beat is its second step.
+  const objectives = followOn ? [spine.firstObjective, followOn] : [spine.firstObjective];
   return {
     id: spine.spineId,
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
-    // A main quest is more than one look: the follow-on beat is its second step.
-    objectives: followOn ? [spine.firstObjective, followOn] : [spine.firstObjective],
-    objectiveAnchors: followOn ? [anchor(spine.firstObjective), anchor(followOn)] : [anchor(spine.firstObjective)],
+    objectives,
+    objectiveAnchors: objectives.map(anchor),
     location: spine.mapPin,
     ...(giver ? { giver } : {}),
     type: 'main',

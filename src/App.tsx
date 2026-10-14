@@ -165,7 +165,6 @@ export default function App() {
             <SettingsModal
               settings={game.settings}
               storyName={game.localSlot?.storyName ?? ''}
-              engineMode={'litrpg'}
               onSave={game.updateSettings}
             onSaveCustomTabletopRules={game.updateCustomTabletopRules}
             onMemorableEnabledMidCampaign={() => {
@@ -256,7 +255,6 @@ export default function App() {
             <SettingsModal
               settings={game.settings}
               storyName={game.localSlot?.storyName ?? ''}
-              engineMode={'litrpg'}
               onSave={game.updateSettings}
             onSaveCustomTabletopRules={game.updateCustomTabletopRules}
             onMemorableEnabledMidCampaign={() => {

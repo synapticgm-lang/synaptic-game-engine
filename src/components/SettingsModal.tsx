@@ -23,7 +23,7 @@ import { SupportAccountPanel } from './SupportAccountPanel';
 import { PlayerProfilePanel } from './PlayerProfilePanel';
 import { memorableToggleEnabled, memorableWeeklyCapLabel } from '@/game/capacityLedger';
 import { GM_VOICE_PROFILES, voiceIsStamped } from '@/game/gmVoiceProfile';
-import { modeProfile } from '@/game/rules/modeProfile';
+import { settingScope } from '@/game/rules/modeProfile';
 import {
   canShowTestLabUi,
   getTestLabAiTier,
@@ -43,7 +43,8 @@ import { displayAdventurerName } from '@/game/pcNameAuthority';
 interface Props {
   settings: Settings;
   storyName: string;
-  engineMode: EngineMode;
+  /** The loaded story's mode; absent on the main menu with no save loaded. */
+  engineMode?: EngineMode;
   gameState?: GameState | null; // Added to check if story has started
   onSave: (s: Settings) => void;
   /** GM Strictness lives on the running save (the value the engine reads). */
@@ -100,7 +101,8 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const [testLabAi, setTestLabAi] = useState<HostedAiTier>(() => getTestLabAiTier());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isDnd = engineMode === 'dnd';
+  const diceScope = settingScope(engineMode, (p) => p.mode === 'dnd');
+  const autoFightScope = settingScope(engineMode, (p) => p.autoFight);
   const isKidMode = draft.contentMode === 'kid';
   const canToggleKidMode = !draft.kidModeLocked;
   const showTestLab = canShowTestLabUi({
@@ -313,6 +315,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 />
               </div>
             </div>
+            {gameState && (
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-300">
                 <BookText size={16} className="text-crimson-400" />
@@ -325,6 +328,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
               />
             </div>
+            )}
           </Section>
 
           <Section icon={<BookText size={16} />} title="Narrative Perspective" visible={activeTab === 'narrative'}>
@@ -824,8 +828,8 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           </Section>
 
           {/* Dice display (tabletop fantasy only — LitRPG / story RPG don't use the dice tray) */}
-          {isDnd && (
-            <Section icon={<Dice5 size={16} />} title="Dice display" visible={activeTab === 'mechanics'}>
+          {diceScope.show && (
+            <Section icon={<Dice5 size={16} />} title="Dice display" modes={diceScope.modes} visible={activeTab === 'mechanics'}>
               <p className="mb-2 text-xs text-slate-500">
                 Static = instant. Normal = short roll. Excited = longer roll with theme FX from your equipped dice skin.
               </p>
@@ -861,7 +865,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             />
           </Section>
 
-          <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics' && modeProfile(engineMode).autoFight}>
+          <Section icon={<Swords size={16} />} title="Combat pacing" modes={autoFightScope.modes} visible={activeTab === 'mechanics' && autoFightScope.show}>
             <p className="mb-2 text-xs text-slate-500">
               Auto Fight resolves most encounters in about 1–2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
             </p>
@@ -1073,7 +1077,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           )}
 
           {/* Illustrated Book Export (Phase 3 — PDF Exporter Engine) */}
-          <Section icon={<BookOpen size={16} />} title="Illustrated Book Export" visible={activeTab === 'visuals'}>
+          <Section icon={<BookOpen size={16} />} title="Illustrated Book Export" visible={activeTab === 'visuals' && !!gameState}>
             <p className="mb-1 text-xs text-slate-500">
               Compile this session's panels into a print-ready PDF or a CBZ comic archive for readers.
             </p>
@@ -1099,7 +1103,6 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             </div>
             {pdfError && <p className="mt-1.5 text-[11px] text-red-400">{pdfError}</p>}
             {cbzError && <p className="mt-1.5 text-[11px] text-red-400">{cbzError}</p>}
-            {!gameState && <p className="mt-1.5 text-[11px] text-slate-600">Start a story to enable export.</p>}
           </Section>
 
           {/* Test Lab — QA unlock + Free/Mid/High AI switch */}
@@ -1472,13 +1475,14 @@ function SaveSlotsManager({
   );
 }
 
-function Section({ icon, title, children, visible = true }: { icon: React.ReactNode; title: string; children: React.ReactNode; visible?: boolean }) {
+function Section({ icon, title, children, visible = true, modes = '' }: { icon: React.ReactNode; title: string; children: React.ReactNode; visible?: boolean; modes?: string }) {
   if (!visible) return null;
   return (
     <div className="border-t border-slate-700 pt-5 first:border-t-0 first:pt-0">
       <label className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-300">
         <span className="text-crimson-400">{icon}</span>
         {title}
+        {modes && <span className="text-[11px] font-normal text-slate-500">· {modes}</span>}
       </label>
       <div className="space-y-3">{children}</div>
     </div>

@@ -15,7 +15,7 @@
  * - when none is offered, one is added: an unvisited hub, else a fight chip in modes that allow combat;
  * - a nudge line already fired this save never fires again unchanged.
  */
-import type { CirclingMemory, GameState } from './types';
+import type { CirclingMemory, GameState, QuestObjective } from './types';
 import { hubsForBibleId, matchHub, placeFirstSight, questTravelSite } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
@@ -389,7 +389,7 @@ export function storyChip(state: GameState): string | null {
   // At the opening card's place the card's talk chip carries the stage: one label for one topic.
   const cardPlace = (state.openingEstablishment?.answers?.where ?? '').trim().toLowerCase();
   const atCard = giverHere && samePlace(here, cardPlace) && !hallTopicAlreadyAnswered(state, 'want');
-  const chip = obj ? (atCard ? 'Ask what they want' : objectiveChip(obj.description)) : null;
+  const chip = obj ? (atCard ? 'Ask what they want' : stepChip(obj)) : null;
   if (!chip) return null;
   // Offered only when an engine action carries it out: a talk to its giver here, a move, or opening the site here.
   if (!talkStage && !travelChipMoves(state, chip) && !objectiveOpensInterior(state, chip)) return null;
@@ -401,7 +401,7 @@ export function storyChip(state: GameState): string | null {
 }
 
 const OBJECTIVE_TAIL =
-  /,|;|\s(?:amidst|amid|among|in|inside|within|at|from|before|after|while|near|beneath|under|on|across|through|by|and|then|until|without|so)\s/i;
+  /;|\s(?:amidst|amid|among|in|inside|within|at|from|before|after|while|near|beneath|under|on|across|through|by|and|then|until|without|so)\s/i;
 
 /** An objective as a whole chip: the sentence if it fits, else its verb and object. Never a cut-off line. */
 export function objectiveChip(description: string): string | null {
@@ -415,24 +415,11 @@ export function objectiveChip(description: string): string | null {
   return head.split(' ').length >= 2 && head.length <= 60 ? head : null;
 }
 
-/**
- * A step to take as a chip even with no early clause break ("Check the mud around the opened graves for heavy
- * cart tracks…"): the whole chip when it fits, else the longest verb-and-object cut at a phrase boundary.
- */
-export function objectiveStepChip(description: string): string | null {
-  const whole = objectiveChip(description);
-  if (whole) return whole;
-  const text = (description ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').replace(/\s*\([^)]*\)/g, '').trim();
-  let best: string | null = null;
-  for (const m of text.matchAll(OBJECTIVE_PHRASE_BREAK)) {
-    const cut = text.slice(0, m.index).trim();
-    if (cut.length > 60) break;
-    if (cut.split(' ').length >= 2) best = cut;
-  }
-  return best;
+/** A quest step as a chip: its own verb and object when the step record carries them, else the sentence as a whole chip. */
+export function stepChip(step: Pick<QuestObjective, 'description' | 'verb' | 'object'>): string | null {
+  if (step.verb && step.object) return `${step.verb} ${step.object}`;
+  return objectiveChip(step.description);
 }
-
-const OBJECTIVE_PHRASE_BREAK = new RegExp(`${OBJECTIVE_TAIL.source}|\\s(?:around|for|with|toward|towards|leading|over|into|past|beyond|along|of|to)\\s`, 'gi');
 
 const samePlace = (a: string, b: string) => !!a && !!b && (a === b || a.includes(b) || b.includes(a));
 

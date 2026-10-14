@@ -406,7 +406,12 @@ function fightPad(enc: RoadEncounter): string | null {
   return FIGHT_KINDS.has(enc.kind) ? FIXED_ENCOUNTER_PADS[enc.kind]![0]! : null;
 }
 
-/** The meeting is over: fought and won or talked down, fled past, or the fight against it was lost. */
+/** The open plea taken up by its own help chip. */
+function answersPlea(enc: RoadEncounter, input: string): boolean {
+  return enc.kind === 'plea' && !roadMeetingOver(enc) && meetingMoveBase(input).toLowerCase() === FIXED_ENCOUNTER_PADS.plea![0]!.toLowerCase();
+}
+
+/** The meeting is over: fought and won or talked down, helped, fled past, or the fight against it was lost. */
 export function roadMeetingOver(enc: RoadEncounter): boolean {
   return !!enc.engaged || !!enc.escaped || !!enc.lost;
 }
@@ -912,7 +917,7 @@ function encounterNote(j: TravelJourney): string {
   const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
   if (e.escaped) return `; got away from ${base}, not beaten`;
   if (e.lost) return `; lost the fight to ${base}, not beaten`;
-  if (e.engaged) return `; ${base} dealt with`;
+  if (e.engaged) return e.kind === 'plea' ? `; helped ${base}` : `; ${base} dealt with`;
   const label = e.kind === 'camp' && e.miniBoss
     ? 'a camp with a mini-boss'
     : e.rare
@@ -1669,12 +1674,14 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
       };
     }
     const slipped = !!j.encounter?.escaped && j.encounter.escapedTurn === state.turn;
+    // tt-fix-8 — the plea's own "Help them" chip is its resolution: the meeting is dealt with this turn.
+    const helped = j.encounter && answersPlea(j.encounter, input) ? { ...j, encounter: { ...j.encounter, engaged: true, closedTurn: state.turn } } : j;
     return {
-      state: { ...state, currentLocation: UNDERWAY_HERE },
+      state: { ...state, currentLocation: UNDERWAY_HERE, journey: helped },
       handled: true,
       arrived: false,
       outcome: slipped ? 'slipped away' : 'unchanged',
-      receipt: `${where}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
+      receipt: `${where}; ${j.to} still ahead${helped.encounter ? encounterNote(helped) : ''}`,
     };
   }
   const parkedOnRoad = isRoadLabel(state.currentLocation);

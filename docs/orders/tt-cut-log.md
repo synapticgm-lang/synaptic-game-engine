@@ -2,10 +2,48 @@
 
 Every item below can be restored with git.
 
+- **tt-fix-8:** deleted in commit `TT_FIX8_COMMIT` (stamp `2026-10-14t`). The old text lives at its parent, **`e8c0e072`**. Line numbers in that section are at `e8c0e072`.
 - **tt-cut 2:** deleted in commit `cd2b8724` (stamp `2026-10-14s`). The old text lives at its parent, **`0e2419cb`**. Restore one file with `git show 0e2419cb:<path> > <path>`, or one item by copying its lines from that output. Line numbers below are the line numbers at `0e2419cb`.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## tt-fix-8 (commit `TT_FIX8_COMMIT`, restore from `e8c0e072`)
+
+`src/game/choiceRanking.ts`:
+
+1. **Lines 418-432** — `export function objectiveStepChip(description: string): string | null { const whole = objectiveChip(description); if (whole) return whole; … for (const m of text.matchAll(OBJECTIVE_PHRASE_BREAK)) { const cut = text.slice(0, m.index).trim(); if (cut.length > 60) break; if (cut.split(' ').length >= 2) best = cut; } return best; }`. What it did: built a step chip by cutting the step sentence at a phrase word. Replaced by `stepChip`, which joins the step's own `verb` and `object` (now on the step record, from `tabletopMainSpines` `steps`).
+2. **Line 435** — `const OBJECTIVE_PHRASE_BREAK = new RegExp(\`${OBJECTIVE_TAIL.source}|\\s(?:around|for|with|toward|towards|leading|over|into|past|beyond|along|of|to)\\s\`, 'gi');` (one `new RegExp`). Only `objectiveStepChip` read it.
+3. **Line 404** — the leading `,|` in `OBJECTIVE_TAIL` (`/,|;|\s(?:amidst|…`). What it did: cut a chip at the first comma ("Haul up the ruined"). Steps with a verb/object never reach it; a step without one (old saves, other modes) now cuts only at `;` or a clause word.
+4. **Line 392** — `objectiveChip(obj.description)` in `storyChip` → `stepChip(obj)`; line 18 import gained `QuestObjective`.
+
+`src/game/questPlay.ts`:
+
+5. **Lines 807-817** (`asSeededQuest`) and **1008-1010** (`revealLocalStarterQuest`) — the per-field copies `...(anchor?.place ? { place: anchor.place } : {}), ...(anchor?.people?.length ? { people: [...anchor.people] } : {}), ...(anchor?.room ? { room: anchor.room } : {})`. Replaced by one `anchorFields(anchor)` helper that copies every set anchor field (now including `verb` / `object`). Line 17 anchor type gained `verb?` / `object?`.
+
+`src/game/turnCheck.ts`:
+
+6. **Lines 143-145** — `/** The prose moves the body: a walk can be told with any travel verb. */ const MOTION_TOLD = /\b(?:walk|stepp?|cross|pass|strode|stride|went|moved?|moving|continu|head(?:ed|ing)|made (?:their|his|her|your|my) way|kept (?:to|on|going|walking)|carried on|pressed on|wander|stroll|trudg|climb|descend|follow|leav|left|reach|enter|arriv)/i;`. What it did: guessed from prose words whether "Walk on" was told. The engine resolves its own journey chips; an engine chip it resolved is now trusted by `engineResolvedChip`.
+7. **Lines 294-295** — `} else if (!words.length && MOTION_VERB.test(actionVerb(act)) && !MOTION_TOLD.test(text)) { down.push({ kind: 'action-object-missing', detail: \`player chose "${act.slice(0, 60)}"; the prose never moves them\` });`. Same reason. Line 36 `MOTION_VERB` import dropped with it.
+8. **Lines 280-283** — `// "Check the exits" acts on this place's ways out: naming them is showing what was acted on. const exits = handedExits(after) ?? handedExits(before) ?? []; const shown = (w) => stemHit(text, w) || (stemHit(w, 'exits') && exits.some((e) => placeNamed(text, e))); if (words.length && !words.some(shown)) {`. What it did: a special case so the engine's "Check the exits" chip was not flagged. Covered by `engineResolvedChip`; a typed line is read as words again. Line 50 `handedExits` import dropped with it.
+9. **Line 278** — `if (!talkish && !socialAct && !travel && !looking && !blowOwned) {` gained `&& !engineResolvedChip(after, act, offered)`; line 207 `prose: string` gained `offered: string[] = []`; line 441 passes `row.offeredChoices ?? []`.
+
+`src/game/writerTurn.ts`:
+
+10. **Lines 414-417** — `// Only a backed line may be quoted: with nothing on record for anyone here, the turn keeps its own lines.` and `if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: 'skipped: no backed line for anyone here' } };`. What it did: left a talk turn with no answer when the person had no lore or quest lines. Replaced by the engine answering from the person's own sheet (`npcSheet.sheetAnswerLine`, the sheet `backedAnswerFacts` also reads); still no writer request. **Lines 454-459** (the inline return) moved into `landAnswer` (same body).
+
+Tests (assertions replaced by the tt-fix-8 tests):
+
+11. **`src/game/playtest29z4TesterTruth.test.ts` lines 66-75** — "a walk told as crossed / watched them pass is not a down" and "a walk the prose never moves is still a down" (pinned `MOTION_TOLD`). Replaced by the engine-chip test with `offered: ['Walk on', 'Turn back']`.
+12. **`src/game/seed94RepairGaps.test.ts` line 127** — `expect(kinds(checkActionFollowed(s, s, 'Walk away / go another direction', 'Jax stayed by the stairs and thought.'))).toContain('action-object-missing');` (pinned the motion path).
+13. **`src/game/ttCut1.test.ts` lines 102-113** — "naming the handed ways out shows what was acted on" (pinned the exits special case). Replaced by "the engine chip the engine resolved is trusted, not re-read"; the typed case still flags.
+
+`src/App.tsx` / `src/components/SettingsModal.tsx`:
+
+14. **`App.tsx` lines 168 and 259** — `engineMode={'litrpg'}` on the main-menu Settings (no save loaded). What it did: showed LitRPG-only sections as if they applied to every game. `SettingsModal` `engineMode` is now optional; mode-bound sections use `modeProfile.settingScope`.
+15. **`SettingsModal.tsx` line 103** `const isDnd = engineMode === 'dnd';`, **line 864** `modeProfile(engineMode).autoFight`, **line 1102** `{!gameState && <p …>Start a story to enable export.</p>}` (the export section now hides with no save).
 
 ---
 

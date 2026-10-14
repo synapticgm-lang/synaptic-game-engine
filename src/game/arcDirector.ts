@@ -20,7 +20,7 @@ import { buildBeatContractFromTemplate, getBeatTemplate } from './beatRegistry';
 import { FAST_XP_AWARDS } from './xpPolicy';
 import { questListHidden } from './systemHousing';
 import { updateChoiceFingerprints } from './choiceCompiler';
-import { isSeekFightChip, objectiveChip } from './choiceRanking';
+import { isSeekFightChip, stepChip } from './choiceRanking';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
 import { tickPressureClock, type PressureClockState } from './pressureClock';
 import {
@@ -1328,7 +1328,7 @@ export function commitTalkStageAfterTurn(
     const idx = contract.questObjectiveIndex;
     const quest = (state.quests ?? []).find((q) => q.id === contract.questId);
     if (!quest || idx == null || quest.objectives?.[idx]?.completed !== false) continue;
-    if (!playerAsksForTalkStage(playerInput, objectiveChip(quest.objectives[idx]!.description))) continue;
+    if (!playerAsksForTalkStage(playerInput, stepChip(quest.objectives[idx]!))) continue;
     const giver = talkStageGiver(state, quest.id, idx);
     if (!giver || !giverIsHere(state, giver) || !giverSpoke(speech, giver)) continue;
     const summary = `${quest.name}: ${contract.summary}`;
