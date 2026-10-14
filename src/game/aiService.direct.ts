@@ -22,6 +22,7 @@ import {
   readChatUsage,
   stripReasoningBlocks,
 } from './openRouterChat';
+import { tokenBeatSchemaFor } from './tokenBeatSchema';
 import { noteWriterRawIssue, noteWriterUsage } from './gmProxy';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
@@ -141,8 +142,9 @@ async function callOpenRouter(
   apiKey: string,
   model?: string,
   baseUrl?: string,
-  tokenProse = false
+  tokenSchema?: Record<string, unknown>
 ): Promise<string> {
+  const tokenProse = !!tokenSchema;
   const base = baseUrl?.trim() || 'https://openrouter.ai/api/v1';
   const url = `${base}/chat/completions`;
   const modelName = model || 'deepseek/deepseek-chat';
@@ -160,7 +162,7 @@ async function callOpenRouter(
             systemPrompt,
             prompt,
             AI_MAX_OUTPUT_TOKENS,
-            withSchema ? { tokenProse: true, n: 2 } : undefined
+            withSchema ? { tokenProse: true, n: 2, schema: tokenSchema } : undefined
           ),
           usage: { include: true },
         }),
@@ -303,7 +305,7 @@ async function dispatchLlm(
   systemPrompt: string,
   settings: Settings,
   onRetry?: (attempt: number, delayMs: number) => void,
-  tokenProse = false
+  tokenSchema?: Record<string, unknown>
 ): Promise<string> {
   const { provider, apiKey, model } = normalizeProvider(settings);
   logger.info('ai-dispatch', `direct GM — provider: "${provider}", model: "${model ?? 'default'}", hasKey: ${!!apiKey}`);
@@ -319,7 +321,7 @@ async function dispatchLlm(
       const key = autoplay?.apiKey || apiKey;
       const m = autoplay?.model || model;
       const base = autoplay?.baseUrl || settings.baseUrl;
-      return callOpenRouter(prompt, systemPrompt, key, m, base, tokenProse);
+      return callOpenRouter(prompt, systemPrompt, key, m, base, tokenSchema);
     }, onRetry);
   }
   if (provider === 'anthropic') {
@@ -331,7 +333,7 @@ async function dispatchLlm(
       onRetry
     );
   }
-  return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, settings.baseUrl, tokenProse), onRetry);
+  return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, settings.baseUrl, tokenSchema), onRetry);
 }
 
 function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[]): string {
@@ -351,7 +353,7 @@ function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCa
 /** Lap 13 — sentence repair on the direct path: plain prose, no Token Prose schema. */
 export async function callRepairDirect(state: GameState, request: string, settings: Settings): Promise<string> {
   const system = sentenceRepairSystemPrompt(state.character, settings.perspective);
-  return stripReasoningBlocks(await dispatchLlm(request, system, settings, undefined, false));
+  return stripReasoningBlocks(await dispatchLlm(request, system, settings));
 }
 
 export async function callGmDirect(
@@ -363,12 +365,13 @@ export async function callGmDirect(
 ): Promise<GmResult> {
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
   const prompt = buildContextPrompt(state, playerInput, activeLoreCards, settings.perspective);
-  let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, true));
+  const tokenSchema = tokenBeatSchemaFor(state);
+  let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, tokenSchema));
   if (!text) {
     // 28l — same model, one re-ask with a no-reasoning hint (never a model switch).
     noteWriterRawIssue('empty');
     text = stripReasoningBlocks(
-      await dispatchLlm(prompt, `${systemPrompt}\n\n${NO_REASONING_HINT}`, settings, onRetry, true)
+      await dispatchLlm(prompt, `${systemPrompt}\n\n${NO_REASONING_HINT}`, settings, onRetry, tokenSchema)
     );
   }
   if (!text) throw new Error('The AI provider returned no content.');

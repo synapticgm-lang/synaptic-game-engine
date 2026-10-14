@@ -205,8 +205,10 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         work: 'Zod',
         source: 'Colin McDonnell and contributors',
         license: 'MIT',
-        usedFor: 'Checking data at the edges (writer replies, save files, the skills library)',
+        usedFor:
+          'Checking data at the edges (writer replies, save files, the skills library) and the structured-output schema that limits the story writer to the people, items and places on the ledger',
         url: 'https://github.com/colinhacks/zod',
+        notice: 'Zod, Copyright (c) 2025 Colin McDonnell. Licensed under the MIT License.',
       },
       {
         work: 'Google Identity (react-oauth)',
@@ -264,6 +266,15 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Tabletop rules as written: ability scores, checks, combat, conditions, death saves, species, classes, spells, monsters, equipment, coins, travel, and experience.',
         url: 'https://www.dndbeyond.com/srd',
         notice: SRD_5_2_1_NOTICE,
+      },
+      {
+        work: '5e-database (2024 SRD 5.2.1 data)',
+        source: '5e-bits contributors (Adrian Padua, Christopher Ward and others)',
+        license: 'MIT (the database); its SRD 5.2.1 content is CC BY 4.0',
+        usedFor:
+          'The bundled rules data: monster stat blocks, spell levels, class lists and Concentration, and magic item rarity and attunement.',
+        url: 'https://github.com/5e-bits/5e-database',
+        notice: `5e-database, Copyright (c) 2018-2020 Adrian Padua, Christopher Ward. Licensed under the MIT License. ${SRD_5_2_1_NOTICE}`,
       },
       {
         work: 'SynapticGM coin tables',

@@ -28,8 +28,9 @@ import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
+import { readWireBeat, refEnumOf, TOKEN_USES, type WireLineFn } from './tokenBeatSchema';
 
-export type LineFn = 'place' | 'action' | 'speech' | 'react' | 'hook';
+export type LineFn = WireLineFn;
 
 export interface TokenLine {
   fn: LineFn;
@@ -55,38 +56,8 @@ export interface TokenBeat {
 
 export type TokenAcceptPath = 'json' | 'json-partial' | '13c' | 'last-resort';
 
-const LINE_FNS = new Set<LineFn>(['place', 'action', 'speech', 'react', 'hook']);
 /** A line whose plain (untokened) subject speaks: the PC, the one name the writer types without a token. */
 const PC_SPEAKS = /^[A-Z][\w'’-]*\s+(?:spoke|said|asked|called|shouted|told|answered|replied|whispered|demanded)\b/;
-const TOKEN_USES = new Set<TokenUse>([
-  'speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place',
-]);
-
-/** Writers shorten the enum ("prop", "location"); one unknown word must not throw away the whole beat. */
-const TOKEN_USE_ALIAS: Record<string, TokenUse> = {
-  prop: 'prop_used',
-  item: 'prop_used',
-  object: 'prop_used',
-  thing: 'prop_used',
-  kit: 'worn',
-  gear: 'worn',
-  equipped: 'worn',
-  location: 'place',
-  setting: 'place',
-  person: 'actor',
-  npc: 'actor',
-  character: 'actor',
-  subject: 'actor',
-  target: 'addressed',
-  listener: 'addressed',
-  body: 'corpse',
-};
-
-function readTokenUse(raw: string): TokenUse | null {
-  const u = raw.trim().toLowerCase().replace(/[\s-]+/g, '_');
-  if (TOKEN_USES.has(u as TokenUse)) return u as TokenUse;
-  return TOKEN_USE_ALIAS[u] ?? null;
-}
 
 /**
  * Fixed lexicon of job roles a ledger cast slot fills. Do not grow this list per incident.
@@ -173,24 +144,9 @@ export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
   const json = extractJsonObject(raw);
   if (!json) return null;
   try {
-    const parsed = JSON.parse(json) as {
-      candidates?: unknown;
-      refs?: unknown;
-      lines?: unknown;
-    };
-    if (Array.isArray(parsed.candidates)) return null;
-    if (!Array.isArray(parsed.refs) || !Array.isArray(parsed.lines)) return null;
-    const refs: TokenUseRef[] = [];
-    for (const row of parsed.refs) {
-      if (!row || typeof row !== 'object') continue;
-      const rec = row as { tok?: unknown; id?: unknown; use?: unknown };
-      const tok = String(rec.tok ?? '').replace(/^@/, '').trim();
-      const id = String(rec.id ?? '').trim();
-      if (!tok) return null;
-      const use = readTokenUse(String(rec.use ?? '')) ?? 'actor';
-      if (id.includes('<')) continue;
-      refs.push({ tok, id, use });
-    }
+    const wire = readWireBeat(JSON.parse(json));
+    if (!wire) return null;
+    const { refs } = wire;
     // A speech line with no speaker_tok belongs to the beat's one declared speaker (of several, the one the player
     // spoke to: ref ids are name slugs); with none declared, to its one actor or addressee, unless the line before
     // has the PC (written plainly, never a token) speaking: those are the PC's own words, which keep no speaker and fail the line.
@@ -200,14 +156,9 @@ export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
     const soleSpeaker = speakers.length === 1 ? speakers[0]!.tok : asked.length === 1 ? asked[0]!.tok : '';
     const soleOther = !speakers.length && others.length === 1 ? others[0]!.tok : '';
     const lines: TokenLine[] = [];
-    for (const row of parsed.lines) {
-      if (!row || typeof row !== 'object') continue;
-      const rec = row as { fn?: unknown; text?: unknown; speaker_tok?: unknown };
-      const fn = String(rec.fn ?? '').trim() as LineFn;
-      const text = String(rec.text ?? '').trim();
+    for (const { fn, text, speaker_tok: typed } of wire.lines) {
       // 28g/28h — skip echoed prompt placeholders (... @t1 ... or <placeholder>).
-      if (!LINE_FNS.has(fn) || !text || /^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text) || /<[^<>]{2,40}>/.test(text)) continue;
-      const typed = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';
+      if (/^(?:\.{2,}\s*)?@t\d+\s*(?:\.{2,}|\.)?$/.test(text) || /<[^<>]{2,40}>/.test(text)) continue;
       const prev = lines[lines.length - 1];
       const pcSpoke = !!prev && prev.fn !== 'speech' && PC_SPEAKS.test(prev.text);
       const untagged = fn === 'speech' && !namesDeclaredPerson(text, refs);
@@ -612,11 +563,7 @@ function namesRefPlainly(text: string, refs: TokenUseRef[], tok: string): boolea
   return words.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text));
 }
 
-export function refEnumOf(state: GameState, packet?: CompletedEventPacket): LedgerRef[] {
-  if (packet?.refEnum?.length) return packet.refEnum;
-  const hallTalk = packet?.verb === 'spoke' || packet?.outcome === 'spoke';
-  return compileRefEnum(state, [], { hallTalk });
-}
+export { refEnumOf };
 
 function refSlug(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -1165,7 +1112,7 @@ export function normalizeBeatRefs(
   opts?: { thingsOnly?: boolean }
 ): TokenBeat {
   const firstUse = (row: LedgerRef): TokenUse =>
-    [...TOKEN_USES].find((u) => tokenUseMatchesClass(u, row.klass)) ?? 'actor';
+    TOKEN_USES.find((u) => tokenUseMatchesClass(u, row.klass)) ?? 'actor';
   // 29z3 — a place or thing declared with the wrong use is a label slip; a person used as a thing stays a bind fail.
   const retype = (row: LedgerRef) => !opts?.thingsOnly || row.klass === 'place' || row.klass === 'prop' || row.klass === 'kit' || row.klass === 'carried' || row.klass === 'window';
   const refs: TokenUseRef[] = beat.refs.map((ref) => {

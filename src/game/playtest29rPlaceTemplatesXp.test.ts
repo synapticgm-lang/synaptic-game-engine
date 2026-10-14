@@ -184,7 +184,7 @@ describe('29r XP in every mode', () => {
   });
 
   it('stamp is 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14v');
-    expect(BUILD_STAMP).toBe('2026-10-14v');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14w');
+    expect(BUILD_STAMP).toBe('2026-10-14w');
   });
 });

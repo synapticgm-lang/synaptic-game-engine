@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **tt-library-2:** deleted in the tt-library-2 commit (stamp `2026-10-14w`). The old text lives at its parent, **`a76a19d6`**. Line numbers in that section are at `a76a19d6`.
 - **tt-fix-10:** deleted in the tt-fix-10 commit (stamp `2026-10-14v`). The old text lives at its parent, **`6869ec1b`**. Line numbers in that section are at `6869ec1b`.
 - **tt-fix-9:** deleted in the tt-fix-9 commit (stamp `2026-10-14u`). The old text lives at its parent, **`68d01a47`**. Line numbers in that section are at `68d01a47`.
 - **tt-fix-8:** deleted in commit `8a55f995` (stamp `2026-10-14t`). The old text lives at its parent, **`e8c0e072`**. Line numbers in that section are at `e8c0e072`.
@@ -11,6 +12,21 @@ Every item below can be restored with git.
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
 
 ---
+
+## tt-library-2 (restore from `a76a19d6`)
+
+1. **`src/game/tokenProse.ts` line 58** — `const LINE_FNS = new Set<LineFn>(['place', 'action', 'speech', 'react', 'hook']);`. What it did: the line kinds a writer line may have. Replaced by the zod enum `tokenBeatSchema.LINE_FNS` (one list for the request schema and the reply reader).
+2. **`src/game/tokenProse.ts` lines 61-63** — `const TOKEN_USES = new Set<TokenUse>(['speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place']);`. Replaced by the zod enum `tokenBeatSchema.TOKEN_USES`.
+3. **`src/game/tokenProse.ts` lines 65-83** — `const TOKEN_USE_ALIAS: Record<string, TokenUse> = { prop: 'prop_used', item: 'prop_used', object: 'prop_used', thing: 'prop_used', kit: 'worn', gear: 'worn', equipped: 'worn', location: 'place', setting: 'place', person: 'actor', npc: 'actor', character: 'actor', subject: 'actor', target: 'addressed', listener: 'addressed', body: 'corpse' };`. **Moved, not lost**: same 16 entries in `tokenBeatSchema.ts` (`USE_ALIAS`), read by the zod `use` field. Still needed for the no-schema Fireworks writer.
+4. **`src/game/tokenProse.ts` lines 85-89** — `function readTokenUse(raw: string): TokenUse | null { const u = raw.trim().toLowerCase().replace(/[\s-]+/g, '_'); if (TOKEN_USES.has(u as TokenUse)) return u as TokenUse; return TOKEN_USE_ALIAS[u] ?? null; }`. Replaced by the zod `use` transform (same rule, default `actor`).
+5. **`src/game/tokenProse.ts` lines 176-193** — the hand coercion of `parsed.refs`: `const parsed = JSON.parse(json) as { candidates?, refs?, lines? }; if (Array.isArray(parsed.candidates)) return null; if (!Array.isArray(parsed.refs) || !Array.isArray(parsed.lines)) return null; … for (const row of parsed.refs) { if (!row || typeof row !== 'object') continue; const rec = row as {…}; const tok = String(rec.tok ?? '').replace(/^@/, '').trim(); const id = String(rec.id ?? '').trim(); if (!tok) return null; const use = readTokenUse(String(rec.use ?? '')) ?? 'actor'; if (id.includes('<')) continue; refs.push({ tok, id, use }); }`. Replaced by `tokenBeatSchema.readWireBeat` (zod `WireBeat` / `WireRef`), which also collapses a ref declared twice.
+6. **`src/game/tokenProse.ts` lines 203-210** — the hand coercion of `parsed.lines`: `if (!row || typeof row !== 'object') continue; const rec = row as {…}; const fn = String(rec.fn ?? '').trim() as LineFn; const text = String(rec.text ?? '').trim(); if (!LINE_FNS.has(fn) || !text || …) continue; const typed = rec.speaker_tok != null ? String(rec.speaker_tok).replace(/^@/, '').trim() : '';`. Replaced by zod `WireLine` (the two placeholder regexes stay in tokenProse).
+7. **`src/game/tokenProse.ts` lines 615-619** — `export function refEnumOf(state, packet)`. **Moved, not lost** to `tokenBeatSchema.ts` (re-exported from tokenProse) so the request path can build the schema without loading tokenProse.
+8. **`src/game/rules/srdMonsters.ts` line 47** — `const s = (STR, DEX, CON, INT, WIS, CHA): Attributes => ({ … });` (score helper for the hand table). Not needed: scores come from the SRD data.
+9. **`src/game/rules/srdMonsters.ts` lines 49-87** — the hand-typed `SRD_MONSTERS` table: every number of the 10 blocks (cr, ac, hp, hpDice, speed, scores, passivePerception, darkvision, gear, vulnerable, attack name / toHit / damage / type / extra). They were 2014 values in places (Giant Rat DEX 15, Perception 10, +4, 1d4+2; Skeleton AC 13; Shadow 16 HP 3d8+3; Giant Spider poison 2d8). Replaced by `src/data/srd/srd521.json` (SRD 5.2.1). Kept in code as the engine overlay: id, `kind`, the attack's name, `match`, ghoul `rider`, wolf `inflicts`, zombie `undeadFortitude`.
+10. **`src/game/rules/spells.ts` lines 67-117** — the `level: N, classes: [...],` fields of all 47 `SPELLS` entries and `concentration: true` on the Concentration ones. All 47 matched the SRD data exactly (checked before the cut). Replaced by `srd521.json` `spells`.
+11. **`src/game/rules/magicItems.ts` lines 39-44** — `srdRarity: 'Uncommon'|'Rare', attunement: true` on Cloak of Protection, Ring of Protection and Bracers of Defense. Replaced by `srd521.json` `magicItems` (same values). Potions keep theirs: the SRD data lists them as one "Rarity Varies" entry.
+12. **`src/game/openRouterChat.ts` line 348** — not a deletion: `required: ['fn', 'text']` became `['fn', 'text', 'speaker_tok']` with `speaker_tok` nullable. The old schema was invalid in strict mode (gpt-5-mini answered 400 every time and the turn re-posted without the schema).
 
 ## tt-fix-10 (restore from `6869ec1b`)
 

@@ -38,6 +38,15 @@ interface GmRequestBody {
   loreCards?: unknown[];
   settings?: Record<string, unknown>;
   clientApiKey?: string;
+  /** The turn's strict Token Prose schema, built by the client from the REF ENUM. */
+  tokenSchema?: Record<string, unknown>;
+}
+
+/** A client schema is forwarded only when it is a plain object of sane size; otherwise the static schema stands. */
+const TOKEN_SCHEMA_MAX_CHARS = 64_000;
+function readTokenSchema(raw: unknown): Record<string, unknown> | undefined {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  return JSON.stringify(raw).length <= TOKEN_SCHEMA_MAX_CHARS ? (raw as Record<string, unknown>) : undefined;
 }
 
 function jsonResponse(body: Record<string, unknown>, status = 200, extraHeaders?: Record<string, string>) {
@@ -196,7 +205,7 @@ async function callOpenAICompat(
   apiKey: string,
   model: string,
   baseUrl: string,
-  opts: { tokenProse?: boolean; maxTokens: number }
+  opts: { tokenProse?: boolean; tokenSchema?: Record<string, unknown>; maxTokens: number }
 ): Promise<ChatCompletionRead> {
   const maxTokens = opts.maxTokens;
   const fireworks = /fireworks\.ai/i.test(baseUrl);
@@ -222,7 +231,7 @@ async function callOpenAICompat(
                 systemPrompt,
                 prompt,
                 maxTokens,
-                withSchema ? { tokenProse: true, n: 2 } : undefined
+                withSchema ? { tokenProse: true, n: 2, schema: opts.tokenSchema } : undefined
               )
             : {
                 model,
@@ -418,6 +427,7 @@ Deno.serve(async (req) => {
       calledModel = fireworks ? normalizeFireworksWriterModel(modelName) || FREE_WRITER_FIREWORKS_MODEL : modelName;
       return callOpenAICompat(userPrompt, sys, apiKey, modelName, base, {
         tokenProse: mode === 'turn',
+        tokenSchema: mode === 'turn' ? readTokenSchema(body.tokenSchema) : undefined,
         maxTokens,
       });
     };

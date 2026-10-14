@@ -22,6 +22,7 @@ import {
 } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 import { parseGmTurnResponse } from './schemas';
+import { tokenBeatSchemaFor } from './tokenBeatSchema';
 
 export type GmProxyMode = 'turn' | 'auto-fight' | 'repair';
 
@@ -177,6 +178,8 @@ export async function invokeGmProxy(params: {
       },
       // BYOK passthrough — never logged server-side in responses
       clientApiKey: pickClientApiKey(params.settings) || undefined,
+      // The turn's strict Token Prose schema (built with zod here; the edge only forwards the JSON).
+      tokenSchema: params.mode === 'turn' ? tokenBeatSchemaFor(params.state) : undefined,
     };
 
     if (isByokTierWithoutHostedKeys(params.settings) && !body.clientApiKey) {

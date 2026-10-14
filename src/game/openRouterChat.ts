@@ -294,7 +294,7 @@ export function openRouterChatBody(
   systemPrompt: string,
   prompt: string,
   maxTokens: number,
-  opts?: { tokenProse?: boolean; n?: number }
+  opts?: { tokenProse?: boolean; n?: number; schema?: Record<string, unknown> }
 ) {
   const body: Record<string, unknown> = {
     model,
@@ -310,12 +310,17 @@ export function openRouterChatBody(
     provider: { allow_fallbacks: true, sort: 'latency' },
   };
   if (opts?.tokenProse) {
+    // Only providers that honour the schema; one that ignores it would hand back free text as if it were checked.
+    // Every parameter sent must then be supported, and reasoning-only models (gpt-5-mini) take no temperature.
+    body.provider = { allow_fallbacks: true, sort: 'latency', require_parameters: true };
+    delete body.temperature;
     body.response_format = {
       type: 'json_schema',
       json_schema: {
         name: 'token_prose',
         strict: true,
-        schema: {
+        // Strict mode: every property is required (a missing speaker is null), so the schema is the turn's own.
+        schema: opts.schema ?? {
           type: 'object',
           additionalProperties: false,
           properties: {
@@ -343,9 +348,9 @@ export function openRouterChatBody(
                 properties: {
                   fn: { type: 'string', enum: ['place', 'action', 'speech', 'react', 'hook'] },
                   text: { type: 'string' },
-                  speaker_tok: { type: 'string' },
+                  speaker_tok: { type: ['string', 'null'] },
                 },
-                required: ['fn', 'text'],
+                required: ['fn', 'text', 'speaker_tok'],
               },
             },
           },

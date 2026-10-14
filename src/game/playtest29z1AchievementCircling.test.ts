@@ -80,8 +80,8 @@ function award(s: GameState) {
 
 describe('29z1 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14v');
-    expect(BUILD_STAMP).toBe('2026-10-14v');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14w');
+    expect(BUILD_STAMP).toBe('2026-10-14w');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

@@ -5,7 +5,9 @@
  * Reference Document 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd,
  * licensed under CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/legalcode).
  * One table: the sheet's AC and saves, a potion's heal and the attunement list all read it.
+ * Rarity and attunement are the bundled SRD data (src/data/srd/srd521.json) wherever it names the item.
  */
+import SRD from '../../data/srd/srd521.json';
 import type { Item, Rarity } from '../types';
 
 export type SrdRarity = 'Common' | 'Uncommon' | 'Rare' | 'Very Rare';
@@ -27,7 +29,11 @@ export interface MagicItemDef {
   text: string;
 }
 
-export const MAGIC_ITEMS: Readonly<Record<string, MagicItemDef>> = {
+type EngineItem = Omit<MagicItemDef, 'srdRarity' | 'attunement'> & Partial<Pick<MagicItemDef, 'srdRarity' | 'attunement'>>;
+const SRD_ITEMS = SRD.magicItems as Record<string, { rarity: SrdRarity; attunement: boolean }>;
+
+/** The SRD data's rarity and attunement where it names the item (its potions are one "Rarity Varies" entry). */
+const ENGINE_ITEMS: Record<string, EngineItem> = {
   'Potion of Healing': { srdRarity: 'Common', rarity: 'Common', attunement: false, heal: '2d4+2', itemType: 'consumable',
     text: 'Potion, Common. Drink it to regain 2d4 + 2 Hit Points.' },
   'Potion of Greater Healing': { srdRarity: 'Uncommon', rarity: 'Uncommon', attunement: false, heal: '4d4+4', itemType: 'consumable',
@@ -36,13 +42,20 @@ export const MAGIC_ITEMS: Readonly<Record<string, MagicItemDef>> = {
     text: 'Potion, Rare. Drink it to regain 8d4 + 8 Hit Points.' },
   'Potion of Supreme Healing': { srdRarity: 'Very Rare', rarity: 'Epic', attunement: false, heal: '10d4+20', itemType: 'consumable',
     text: 'Potion, Very Rare. Drink it to regain 10d4 + 20 Hit Points.' },
-  'Cloak of Protection': { srdRarity: 'Uncommon', rarity: 'Uncommon', attunement: true, ac: 1, saves: 1, itemType: 'accessory', slot: 'Back',
+  'Cloak of Protection': { rarity: 'Uncommon', ac: 1, saves: 1, itemType: 'accessory', slot: 'Back',
     text: 'Wondrous Item, Uncommon (requires attunement). +1 to AC and saving throws.' },
-  'Ring of Protection': { srdRarity: 'Rare', rarity: 'Rare', attunement: true, ac: 1, saves: 1, itemType: 'accessory', slot: 'Finger',
+  'Ring of Protection': { rarity: 'Rare', ac: 1, saves: 1, itemType: 'accessory', slot: 'Finger',
     text: 'Ring, Rare (requires attunement). +1 to AC and saving throws.' },
-  'Bracers of Defense': { srdRarity: 'Rare', rarity: 'Rare', attunement: true, ac: 2, armorless: true, itemType: 'accessory', slot: 'Wrists',
+  'Bracers of Defense': { rarity: 'Rare', ac: 2, armorless: true, itemType: 'accessory', slot: 'Wrists',
     text: 'Wondrous Item, Rare (requires attunement). +2 to AC while you wear no armor and use no Shield.' },
 };
+
+export const MAGIC_ITEMS: Readonly<Record<string, MagicItemDef>> = Object.fromEntries(
+  Object.entries(ENGINE_ITEMS).map(([name, item]) => {
+    const srd = SRD_ITEMS[name];
+    return [name, { ...item, srdRarity: srd?.rarity ?? item.srdRarity!, attunement: srd?.attunement ?? item.attunement! }];
+  })
+);
 
 /** SRD 5.2.1: a creature can be attuned to no more than three magic items at a time. */
 export const MAX_ATTUNED = 3;

@@ -9,8 +9,10 @@
  * A levelled spell spends a slot of its level or higher; a Long Rest restores every slot.
  * Concentration: taking damage calls a CON save, DC 10 or half the damage (higher), to keep it; casting another
  * Concentration spell or dropping to 0 HP ends it.
+ * Spell levels, class lists and Concentration are the bundled SRD data (src/data/srd/srd521.json).
  * This module knows no mode; the presenters decide what each mode shows.
  */
+import SRD from '../../data/srd/srd521.json';
 import type { AttributeKey, CastingState, TabletopClassId, TabletopSheet } from '../types';
 
 export type SpellEffect =
@@ -64,57 +66,71 @@ export interface SpellDef {
   fact: string;
 }
 
-export const SPELLS: Record<string, SpellDef> = {
+/** A spell as the engine writes it; level, classes and Concentration come from the SRD data. */
+type EngineSpell = Omit<SpellDef, 'level' | 'classes' | 'concentration'>;
+
+const ENGINE_SPELLS: Record<string, EngineSpell> = {
   // Cantrips
-  'Sacred Flame': { name: 'Sacred Flame', level: 0, classes: ['cleric'], effect: 'save', save: 'DEX', dice: '1d8', type: 'radiant', combat: true, outside: false, fact: 'radiant flame falls on the target' },
-  'Fire Bolt': { name: 'Fire Bolt', level: 0, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '1d10', type: 'fire', combat: true, outside: false, fact: 'a mote of fire streaks at the target' },
-  'Ray of Frost': { name: 'Ray of Frost', level: 0, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '1d8', type: 'cold', combat: true, outside: false, fact: 'a frigid beam streaks at the target' },
-  'Vicious Mockery': { name: 'Vicious Mockery', level: 0, classes: ['bard'], effect: 'save', save: 'WIS', dice: '1d6', type: 'psychic', rider: 'Vicious Mockery', combat: true, outside: false, fact: 'a string of insults laced with subtle enchantment stings the target' },
-  'Starry Wisp': { name: 'Starry Wisp', level: 0, classes: ['bard', 'druid'], effect: 'attack', dice: '1d8', type: 'radiant', combat: true, outside: false, fact: 'a mote of starlight flies at the target' },
-  'Produce Flame': { name: 'Produce Flame', level: 0, classes: ['druid'], effect: 'attack', dice: '1d8', type: 'fire', combat: true, outside: false, fact: 'a flickering flame leaps from your hand and you hurl it at the target' },
-  'Poison Spray': { name: 'Poison Spray', level: 0, classes: ['druid', 'sorcerer', 'warlock', 'wizard'], effect: 'attack', dice: '1d12', type: 'poison', combat: true, outside: false, fact: 'a spray of toxic mist lashes at the target' },
-  'Chill Touch': { name: 'Chill Touch', level: 0, classes: ['sorcerer', 'warlock', 'wizard'], effect: 'attack', melee: true, dice: '1d10', type: 'necrotic', combat: true, outside: false, fact: 'your hand, wreathed in the chill of the grave, reaches for the target' },
-  'Shocking Grasp': { name: 'Shocking Grasp', level: 0, classes: ['sorcerer', 'wizard'], effect: 'attack', melee: true, dice: '1d8', type: 'lightning', combat: true, outside: false, fact: 'lightning springs from your hand at a touch' },
-  'Eldritch Blast': { name: 'Eldritch Blast', level: 0, classes: ['warlock'], effect: 'attack', dice: '1d10', type: 'force', combat: true, outside: false, fact: 'a beam of crackling energy streaks at the target' },
-  Light: { name: 'Light', level: 0, classes: ['bard', 'cleric', 'sorcerer', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'an object you touch sheds bright light around you for an hour' },
-  'Dancing Lights': { name: 'Dancing Lights', level: 0, classes: ['bard', 'sorcerer', 'wizard'], effect: 'utility', concentration: true, combat: false, outside: true, fact: 'small floating lights bob around you, lighting the way' },
-  Thaumaturgy: { name: 'Thaumaturgy', level: 0, classes: ['cleric'], effect: 'utility', combat: false, outside: true, fact: 'a minor wonder answers you: your voice booms, flames flicker or the ground trembles harmlessly for a moment' },
-  Druidcraft: { name: 'Druidcraft', level: 0, classes: ['druid'], effect: 'utility', combat: false, outside: true, fact: 'a small nature effect answers you: a bud blooms, a breeze stirs leaves, or a sensory sign of tomorrow\'s weather appears' },
-  Prestidigitation: { name: 'Prestidigitation', level: 0, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a harmless magical trick answers you: a spark, a clean cloth, a warm cup or a small mark' },
-  'Minor Illusion': { name: 'Minor Illusion', level: 0, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a small sound or image of your making appears nearby' },
-  Mending: { name: 'Mending', level: 0, classes: ['bard', 'cleric', 'druid', 'sorcerer', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a single break or tear in an object you touch knits closed' },
-  'Mage Hand': { name: 'Mage Hand', level: 0, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'a spectral hand appears to lift or move a light object for you' },
+  'Sacred Flame': { name: 'Sacred Flame', effect: 'save', save: 'DEX', dice: '1d8', type: 'radiant', combat: true, outside: false, fact: 'radiant flame falls on the target' },
+  'Fire Bolt': { name: 'Fire Bolt', effect: 'attack', dice: '1d10', type: 'fire', combat: true, outside: false, fact: 'a mote of fire streaks at the target' },
+  'Ray of Frost': { name: 'Ray of Frost', effect: 'attack', dice: '1d8', type: 'cold', combat: true, outside: false, fact: 'a frigid beam streaks at the target' },
+  'Vicious Mockery': { name: 'Vicious Mockery', effect: 'save', save: 'WIS', dice: '1d6', type: 'psychic', rider: 'Vicious Mockery', combat: true, outside: false, fact: 'a string of insults laced with subtle enchantment stings the target' },
+  'Starry Wisp': { name: 'Starry Wisp', effect: 'attack', dice: '1d8', type: 'radiant', combat: true, outside: false, fact: 'a mote of starlight flies at the target' },
+  'Produce Flame': { name: 'Produce Flame', effect: 'attack', dice: '1d8', type: 'fire', combat: true, outside: false, fact: 'a flickering flame leaps from your hand and you hurl it at the target' },
+  'Poison Spray': { name: 'Poison Spray', effect: 'attack', dice: '1d12', type: 'poison', combat: true, outside: false, fact: 'a spray of toxic mist lashes at the target' },
+  'Chill Touch': { name: 'Chill Touch', effect: 'attack', melee: true, dice: '1d10', type: 'necrotic', combat: true, outside: false, fact: 'your hand, wreathed in the chill of the grave, reaches for the target' },
+  'Shocking Grasp': { name: 'Shocking Grasp', effect: 'attack', melee: true, dice: '1d8', type: 'lightning', combat: true, outside: false, fact: 'lightning springs from your hand at a touch' },
+  'Eldritch Blast': { name: 'Eldritch Blast', effect: 'attack', dice: '1d10', type: 'force', combat: true, outside: false, fact: 'a beam of crackling energy streaks at the target' },
+  Light: { name: 'Light', effect: 'utility', combat: false, outside: true, fact: 'an object you touch sheds bright light around you for an hour' },
+  'Dancing Lights': { name: 'Dancing Lights', effect: 'utility', combat: false, outside: true, fact: 'small floating lights bob around you, lighting the way' },
+  Thaumaturgy: { name: 'Thaumaturgy', effect: 'utility', combat: false, outside: true, fact: 'a minor wonder answers you: your voice booms, flames flicker or the ground trembles harmlessly for a moment' },
+  Druidcraft: { name: 'Druidcraft', effect: 'utility', combat: false, outside: true, fact: 'a small nature effect answers you: a bud blooms, a breeze stirs leaves, or a sensory sign of tomorrow\'s weather appears' },
+  Prestidigitation: { name: 'Prestidigitation', effect: 'utility', combat: false, outside: true, fact: 'a harmless magical trick answers you: a spark, a clean cloth, a warm cup or a small mark' },
+  'Minor Illusion': { name: 'Minor Illusion', effect: 'utility', combat: false, outside: true, fact: 'a small sound or image of your making appears nearby' },
+  Mending: { name: 'Mending', effect: 'utility', combat: false, outside: true, fact: 'a single break or tear in an object you touch knits closed' },
+  'Mage Hand': { name: 'Mage Hand', effect: 'utility', combat: false, outside: true, fact: 'a spectral hand appears to lift or move a light object for you' },
   // Level 1
-  'Cure Wounds': { name: 'Cure Wounds', level: 1, classes: ['bard', 'cleric', 'druid', 'paladin', 'ranger'], effect: 'heal', dice: '2d8', upcast: '2d8', combat: true, outside: true, fact: 'healing warmth closes your wounds' },
-  'Healing Word': { name: 'Healing Word', level: 1, classes: ['bard', 'cleric', 'druid'], effect: 'heal', dice: '2d4', upcast: '2d4', bonusAction: true, combat: true, outside: true, fact: 'a spoken word of healing eases your hurts' },
-  'Guiding Bolt': { name: 'Guiding Bolt', level: 1, classes: ['cleric'], effect: 'attack', dice: '4d6', upcast: '1d6', type: 'radiant', rider: 'Guiding Bolt', combat: true, outside: false, fact: 'a flash of light streaks at the target and leaves it glowing' },
-  Bless: { name: 'Bless', level: 1, classes: ['cleric', 'paladin'], effect: 'bless', concentration: true, combat: true, outside: false, fact: 'a blessing settles on you and steadies your aim' },
-  'Shield of Faith': { name: 'Shield of Faith', level: 1, classes: ['cleric', 'paladin'], effect: 'shieldOfFaith', concentration: true, bonusAction: true, combat: true, outside: false, fact: 'a shimmering field surrounds and protects you' },
-  Bane: { name: 'Bane', level: 1, classes: ['bard', 'cleric', 'warlock'], effect: 'bane', save: 'CHA', concentration: true, area: true, combat: true, outside: false, fact: 'a curse reaches for your foes' },
-  'Inflict Wounds': { name: 'Inflict Wounds', level: 1, classes: ['cleric'], effect: 'save', save: 'CON', halfOnSave: true, dice: '2d10', upcast: '1d10', type: 'necrotic', combat: true, outside: false, fact: 'necrotic energy floods the target' },
-  'Magic Missile': { name: 'Magic Missile', level: 1, classes: ['sorcerer', 'wizard'], effect: 'missile', dice: '1d4+1', darts: 3, type: 'force', combat: true, outside: false, fact: 'glowing darts of force strike unerringly' },
-  'Burning Hands': { name: 'Burning Hands', level: 1, classes: ['sorcerer', 'wizard'], effect: 'save', save: 'DEX', halfOnSave: true, area: true, dice: '3d6', upcast: '1d6', type: 'fire', combat: true, outside: false, fact: 'a thin sheet of flame shoots from your hands' },
-  Thunderwave: { name: 'Thunderwave', level: 1, classes: ['bard', 'druid', 'sorcerer', 'wizard'], effect: 'save', save: 'CON', halfOnSave: true, area: true, dice: '2d8', upcast: '1d8', type: 'thunder', combat: true, outside: false, fact: 'a wave of thunderous force sweeps out from you' },
-  'Mage Armor': { name: 'Mage Armor', level: 1, classes: ['sorcerer', 'wizard'], effect: 'mageArmor', combat: true, outside: true, fact: 'a protective magical force settles over you' },
-  'Chromatic Orb': { name: 'Chromatic Orb', level: 1, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '3d8', upcast: '1d8', type: 'acid', combat: true, outside: false, fact: 'an orb of acid hurtles at the target' },
-  'Ray of Sickness': { name: 'Ray of Sickness', level: 1, classes: ['sorcerer', 'wizard'], effect: 'attack', dice: '2d8', upcast: '1d8', type: 'poison', rider: 'Poisoned', combat: true, outside: false, fact: 'a ray of sickening green energy lashes at the target' },
-  Grease: { name: 'Grease', level: 1, classes: ['sorcerer', 'wizard'], effect: 'save', save: 'DEX', area: true, rider: 'Prone', combat: true, outside: false, fact: 'slick grease covers the ground under your foes' },
-  'Color Spray': { name: 'Color Spray', level: 1, classes: ['bard', 'sorcerer', 'wizard'], effect: 'save', save: 'CON', area: true, rider: 'Blinded', combat: true, outside: false, fact: 'a dazzling array of flashing colored light springs from your hand' },
-  'Dissonant Whispers': { name: 'Dissonant Whispers', level: 1, classes: ['bard'], effect: 'save', save: 'WIS', halfOnSave: true, dice: '3d6', upcast: '1d6', type: 'psychic', combat: true, outside: false, fact: 'a discordant melody only the target can hear wracks it with pain' },
-  'Faerie Fire': { name: 'Faerie Fire', level: 1, classes: ['bard', 'druid'], effect: 'save', save: 'DEX', area: true, rider: 'Faerie Fire', concentration: true, combat: true, outside: false, fact: 'your foes are outlined in pale light that shows every move' },
-  Entangle: { name: 'Entangle', level: 1, classes: ['druid', 'ranger'], effect: 'save', save: 'STR', area: true, rider: 'Restrained', concentration: true, needsCast: true, combat: true, outside: false, fact: 'grasping weeds and vines sprout from the ground around your foes' },
-  Command: { name: 'Command', level: 1, classes: ['bard', 'cleric', 'paladin'], effect: 'save', save: 'WIS', rider: 'Prone', needsCast: true, combat: true, outside: false, fact: 'you speak one word of command — "Grovel" — and the target obeys if its will breaks' },
-  "Hunter's Mark": { name: "Hunter's Mark", level: 1, classes: ['ranger'], effect: 'mark', onHit: { dice: '1d6', type: 'force' }, concentration: true, bonusAction: true, combat: true, outside: false, fact: 'you mark the target as your quarry' },
-  Hex: { name: 'Hex', level: 1, classes: ['warlock'], effect: 'mark', onHit: { dice: '1d6', type: 'necrotic' }, concentration: true, bonusAction: true, combat: true, outside: false, fact: 'you lay a curse on the target' },
-  'Divine Smite': { name: 'Divine Smite', level: 1, classes: ['paladin'], effect: 'smite', onHit: { dice: '2d8', type: 'radiant' }, upcast: '1d8', vsUndead: '1d8', bonusAction: true, combat: true, outside: false, fact: 'radiant power floods through your weapon into the target' },
-  'Searing Smite': { name: 'Searing Smite', level: 1, classes: ['paladin'], effect: 'smite', onHit: { dice: '1d6', type: 'fire' }, upcast: '1d6', burn: '1d6', bonusAction: true, combat: true, outside: false, fact: 'your weapon flares with white-hot fire and sets the target burning' },
-  'Divine Favor': { name: 'Divine Favor', level: 1, classes: ['paladin'], effect: 'divineFavor', onHit: { dice: '1d4', type: 'radiant' }, bonusAction: true, combat: true, outside: false, fact: 'divine radiance runs along your weapon' },
-  'Charm Person': { name: 'Charm Person', level: 1, classes: ['bard', 'druid', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'you weave a charm that makes a humanoid regard you as a friendly acquaintance for a while' },
-  'Detect Magic': { name: 'Detect Magic', level: 1, classes: ['bard', 'cleric', 'druid', 'paladin', 'ranger', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', concentration: true, combat: false, outside: true, fact: 'you sense the presence of magic nearby' },
-  'Speak with Animals': { name: 'Speak with Animals', level: 1, classes: ['bard', 'druid', 'ranger', 'warlock'], effect: 'utility', combat: false, outside: true, fact: 'you can understand and speak with beasts for a while' },
-  'Comprehend Languages': { name: 'Comprehend Languages', level: 1, classes: ['bard', 'sorcerer', 'warlock', 'wizard'], effect: 'utility', combat: false, outside: true, fact: 'you understand the literal meaning of any language you hear or see written for a while' },
-  'Animal Friendship': { name: 'Animal Friendship', level: 1, classes: ['bard', 'druid', 'ranger'], effect: 'utility', combat: false, outside: true, fact: 'you convince a beast that you mean it no harm' },
+  'Cure Wounds': { name: 'Cure Wounds', effect: 'heal', dice: '2d8', upcast: '2d8', combat: true, outside: true, fact: 'healing warmth closes your wounds' },
+  'Healing Word': { name: 'Healing Word', effect: 'heal', dice: '2d4', upcast: '2d4', bonusAction: true, combat: true, outside: true, fact: 'a spoken word of healing eases your hurts' },
+  'Guiding Bolt': { name: 'Guiding Bolt', effect: 'attack', dice: '4d6', upcast: '1d6', type: 'radiant', rider: 'Guiding Bolt', combat: true, outside: false, fact: 'a flash of light streaks at the target and leaves it glowing' },
+  Bless: { name: 'Bless', effect: 'bless', combat: true, outside: false, fact: 'a blessing settles on you and steadies your aim' },
+  'Shield of Faith': { name: 'Shield of Faith', effect: 'shieldOfFaith', bonusAction: true, combat: true, outside: false, fact: 'a shimmering field surrounds and protects you' },
+  Bane: { name: 'Bane', effect: 'bane', save: 'CHA', area: true, combat: true, outside: false, fact: 'a curse reaches for your foes' },
+  'Inflict Wounds': { name: 'Inflict Wounds', effect: 'save', save: 'CON', halfOnSave: true, dice: '2d10', upcast: '1d10', type: 'necrotic', combat: true, outside: false, fact: 'necrotic energy floods the target' },
+  'Magic Missile': { name: 'Magic Missile', effect: 'missile', dice: '1d4+1', darts: 3, type: 'force', combat: true, outside: false, fact: 'glowing darts of force strike unerringly' },
+  'Burning Hands': { name: 'Burning Hands', effect: 'save', save: 'DEX', halfOnSave: true, area: true, dice: '3d6', upcast: '1d6', type: 'fire', combat: true, outside: false, fact: 'a thin sheet of flame shoots from your hands' },
+  Thunderwave: { name: 'Thunderwave', effect: 'save', save: 'CON', halfOnSave: true, area: true, dice: '2d8', upcast: '1d8', type: 'thunder', combat: true, outside: false, fact: 'a wave of thunderous force sweeps out from you' },
+  'Mage Armor': { name: 'Mage Armor', effect: 'mageArmor', combat: true, outside: true, fact: 'a protective magical force settles over you' },
+  'Chromatic Orb': { name: 'Chromatic Orb', effect: 'attack', dice: '3d8', upcast: '1d8', type: 'acid', combat: true, outside: false, fact: 'an orb of acid hurtles at the target' },
+  'Ray of Sickness': { name: 'Ray of Sickness', effect: 'attack', dice: '2d8', upcast: '1d8', type: 'poison', rider: 'Poisoned', combat: true, outside: false, fact: 'a ray of sickening green energy lashes at the target' },
+  Grease: { name: 'Grease', effect: 'save', save: 'DEX', area: true, rider: 'Prone', combat: true, outside: false, fact: 'slick grease covers the ground under your foes' },
+  'Color Spray': { name: 'Color Spray', effect: 'save', save: 'CON', area: true, rider: 'Blinded', combat: true, outside: false, fact: 'a dazzling array of flashing colored light springs from your hand' },
+  'Dissonant Whispers': { name: 'Dissonant Whispers', effect: 'save', save: 'WIS', halfOnSave: true, dice: '3d6', upcast: '1d6', type: 'psychic', combat: true, outside: false, fact: 'a discordant melody only the target can hear wracks it with pain' },
+  'Faerie Fire': { name: 'Faerie Fire', effect: 'save', save: 'DEX', area: true, rider: 'Faerie Fire', combat: true, outside: false, fact: 'your foes are outlined in pale light that shows every move' },
+  Entangle: { name: 'Entangle', effect: 'save', save: 'STR', area: true, rider: 'Restrained', needsCast: true, combat: true, outside: false, fact: 'grasping weeds and vines sprout from the ground around your foes' },
+  Command: { name: 'Command', effect: 'save', save: 'WIS', rider: 'Prone', needsCast: true, combat: true, outside: false, fact: 'you speak one word of command — "Grovel" — and the target obeys if its will breaks' },
+  "Hunter's Mark": { name: "Hunter's Mark", effect: 'mark', onHit: { dice: '1d6', type: 'force' }, bonusAction: true, combat: true, outside: false, fact: 'you mark the target as your quarry' },
+  Hex: { name: 'Hex', effect: 'mark', onHit: { dice: '1d6', type: 'necrotic' }, bonusAction: true, combat: true, outside: false, fact: 'you lay a curse on the target' },
+  'Divine Smite': { name: 'Divine Smite', effect: 'smite', onHit: { dice: '2d8', type: 'radiant' }, upcast: '1d8', vsUndead: '1d8', bonusAction: true, combat: true, outside: false, fact: 'radiant power floods through your weapon into the target' },
+  'Searing Smite': { name: 'Searing Smite', effect: 'smite', onHit: { dice: '1d6', type: 'fire' }, upcast: '1d6', burn: '1d6', bonusAction: true, combat: true, outside: false, fact: 'your weapon flares with white-hot fire and sets the target burning' },
+  'Divine Favor': { name: 'Divine Favor', effect: 'divineFavor', onHit: { dice: '1d4', type: 'radiant' }, bonusAction: true, combat: true, outside: false, fact: 'divine radiance runs along your weapon' },
+  'Charm Person': { name: 'Charm Person', effect: 'utility', combat: false, outside: true, fact: 'you weave a charm that makes a humanoid regard you as a friendly acquaintance for a while' },
+  'Detect Magic': { name: 'Detect Magic', effect: 'utility', combat: false, outside: true, fact: 'you sense the presence of magic nearby' },
+  'Speak with Animals': { name: 'Speak with Animals', effect: 'utility', combat: false, outside: true, fact: 'you can understand and speak with beasts for a while' },
+  'Comprehend Languages': { name: 'Comprehend Languages', effect: 'utility', combat: false, outside: true, fact: 'you understand the literal meaning of any language you hear or see written for a while' },
+  'Animal Friendship': { name: 'Animal Friendship', effect: 'utility', combat: false, outside: true, fact: 'you convince a beast that you mean it no harm' },
 };
+
+const SRD_SPELLS = SRD.spells as Record<string, { level: 0 | 1; classes: string[]; concentration: boolean }>;
+
+/** Every spell the engine runs: its level, class lists and Concentration from the SRD data, the rest from the engine. */
+export const SPELLS: Record<string, SpellDef> = Object.fromEntries(
+  Object.entries(ENGINE_SPELLS).map(([name, spell]) => {
+    const srd = SRD_SPELLS[name]!;
+    const def: SpellDef = { ...spell, level: srd.level, classes: srd.classes as TabletopClassId[] };
+    return [name, srd.concentration ? { ...def, concentration: true } : def];
+  })
+);
 
 /** Cantrips a class knows, in the order it learns them. */
 const CANTRIP_ORDER: Partial<Record<TabletopClassId, string[]>> = {

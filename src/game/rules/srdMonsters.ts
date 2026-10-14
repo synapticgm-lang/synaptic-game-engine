@@ -2,9 +2,11 @@
  * Shared rules engine — monster stat blocks.
  * Stat blocks from the System Reference Document 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC,
  * available at https://www.dndbeyond.com/srd, licensed under CC-BY-4.0
- * (https://creativecommons.org/licenses/by/4.0/legalcode). Only the parts the engine runs are kept.
+ * (https://creativecommons.org/licenses/by/4.0/legalcode). The numbers are the bundled SRD data
+ * (src/data/srd/srd521.json, built by scripts/srdExtract.mjs from 5e-bits/5e-database at a pinned commit).
  * A foe with no matching SRD creature gets an engine block built from its own encounter numbers (srd: false).
  */
+import SRD from '../../data/srd/srd521.json';
 import type { ActiveEncounter, Attributes, AttributeKey } from '../types';
 import { crToXp, DND_DEFAULT_CR, highestCrWithin, normalizeCr } from '../xpRules';
 
@@ -44,47 +46,42 @@ export interface StatBlock {
   undeadFortitude?: boolean;
 }
 
-const s = (STR: number, DEX: number, CON: number, INT: number, WIS: number, CHA: number): Attributes => ({ STR, DEX, CON, INT, WIS, CHA });
+type SrdCreature = Omit<StatBlock, 'id' | 'srd' | 'kind' | 'attack' | 'undeadFortitude'> & { attacks: MonsterAttack[] };
+const SRD_CREATURES = SRD.monsters as Record<string, SrdCreature>;
 
-export const SRD_MONSTERS: Array<StatBlock & { match: RegExp }> = [
-  { id: 'goblin-warrior', name: 'Goblin Warrior', srd: true, cr: '1/4', ac: 15, hp: 10, hpDice: '3d6', speed: 30,
-    scores: s(8, 15, 10, 10, 8, 8), passivePerception: 9, darkvision: 60, kind: 'humanoid', gear: ['Leather Armor', 'Scimitar', 'Shield', 'Shortbow'],
-    attack: { name: 'Scimitar', toHit: 4, damage: '1d6+2', type: 'slashing' }, match: /\bgoblin/i },
-  { id: 'bandit', name: 'Bandit', srd: true, cr: '1/8', ac: 12, hp: 11, hpDice: '2d8+2', speed: 30,
-    scores: s(11, 12, 12, 10, 10, 10), passivePerception: 10, kind: 'humanoid', gear: ['Leather Armor', 'Light Crossbow', 'Scimitar'],
-    attack: { name: 'Scimitar', toHit: 3, damage: '1d6+1', type: 'slashing' },
+/**
+ * What the engine adds to an SRD creature: the foe names it answers to, how the engine treats it (`kind`), the one
+ * attack it fights with, and the rider effects the SRD writes in words. Every number comes from the SRD data.
+ */
+const ENGINE: Array<{ id: string; kind: StatBlock['kind']; attack: string; match: RegExp } & Pick<MonsterAttack, 'rider' | 'inflicts'> & Pick<StatBlock, 'undeadFortitude'>> = [
+  { id: 'goblin-warrior', kind: 'humanoid', attack: 'Scimitar', match: /\bgoblin/i },
+  { id: 'bandit', kind: 'humanoid', attack: 'Scimitar',
     match: /\b(bandit|thugs?|brigand|cutpurse|cutthroat|blade|bravos?|brawler|robbers?|raiders?|outlaws?|footpads?|cutter|toll|highway)/i },
-  { id: 'cultist', name: 'Cultist', srd: true, cr: '1/8', ac: 12, hp: 9, hpDice: '2d8', speed: 30,
-    scores: s(11, 12, 10, 10, 11, 10), passivePerception: 10, kind: 'humanoid', gear: ['Leather Armor', 'Sickle'],
-    attack: { name: 'Ritual Sickle', toHit: 3, damage: '1d4+1', type: 'slashing' }, match: /\b(cult|zealot)/i },
-  { id: 'wolf', name: 'Wolf', srd: true, cr: '1/4', ac: 12, hp: 11, hpDice: '2d8+2', speed: 40,
-    scores: s(14, 15, 12, 3, 12, 6), passivePerception: 15, darkvision: 60, kind: 'beast',
-    attack: { name: 'Bite', toHit: 4, damage: '1d6+2', type: 'piercing', inflicts: 'Prone' },
-    match: /\b(wol(f|ves)|hounds?|dogs?|jackals?|stalker)/i },
-  { id: 'giant-rat', name: 'Giant Rat', srd: true, cr: '1/8', ac: 13, hp: 7, hpDice: '2d6', speed: 30,
-    scores: s(7, 15, 11, 2, 10, 4), passivePerception: 10, darkvision: 60, kind: 'beast',
-    attack: { name: 'Bite', toHit: 4, damage: '1d4+2', type: 'piercing' }, match: /\brats?\b|vermin/i },
-  { id: 'skeleton', name: 'Skeleton', srd: true, cr: '1/4', ac: 13, hp: 13, hpDice: '2d8+4', speed: 30,
-    scores: s(10, 16, 15, 6, 8, 5), passivePerception: 9, darkvision: 60, kind: 'undead', vulnerable: ['bludgeoning'], gear: ['Shortbow', 'Shortsword'],
-    attack: { name: 'Shortsword', toHit: 5, damage: '1d6+3', type: 'piercing' }, match: /\b(skeletons?|bones?)\b/i },
-  { id: 'zombie', name: 'Zombie', srd: true, cr: '1/4', ac: 8, hp: 15, hpDice: '2d8+6', speed: 20,
-    scores: s(13, 6, 16, 3, 6, 5), passivePerception: 8, darkvision: 60, kind: 'undead', undeadFortitude: true,
-    attack: { name: 'Slam', toHit: 3, damage: '1d8+1', type: 'bludgeoning' },
+  { id: 'cultist', kind: 'humanoid', attack: 'Ritual Sickle', match: /\b(cult|zealot)/i },
+  { id: 'wolf', kind: 'beast', attack: 'Bite', inflicts: 'Prone', match: /\b(wol(f|ves)|hounds?|dogs?|jackals?|stalker)/i },
+  { id: 'giant-rat', kind: 'beast', attack: 'Bite', match: /\brats?\b|vermin/i },
+  { id: 'skeleton', kind: 'undead', attack: 'Shortsword', match: /\b(skeletons?|bones?)\b/i },
+  { id: 'zombie', kind: 'undead', attack: 'Slam', undeadFortitude: true,
     match: /\b(zombies?|restless dead|the dead|walkers?|corpses?|drowned|grave)/i },
-  { id: 'shadow', name: 'Shadow', srd: true, cr: '1/2', ac: 12, hp: 16, hpDice: '3d8+3', speed: 40,
-    scores: s(6, 14, 13, 6, 10, 8), passivePerception: 10, darkvision: 60, kind: 'undead', vulnerable: ['radiant'],
-    attack: { name: 'Draining Swipe', toHit: 4, damage: '1d6+2', type: 'necrotic' },
-    match: /\b(shades?|shadows?|haunts?|wraiths?|specters?|ghosts?)\b/i },
-  { id: 'ghoul', name: 'Ghoul', srd: true, cr: '1', ac: 12, hp: 22, hpDice: '5d8', speed: 30,
-    scores: s(13, 15, 10, 7, 10, 6), passivePerception: 10, darkvision: 60, kind: 'undead',
-    attack: { name: 'Claw', toHit: 4, damage: '1d4+2', type: 'slashing',
-      rider: { save: 'CON', dc: 10, condition: 'Paralyzed', immuneSpecies: ['elf'] } },
+  { id: 'shadow', kind: 'undead', attack: 'Draining Swipe', match: /\b(shades?|shadows?|haunts?|wraiths?|specters?|ghosts?)\b/i },
+  { id: 'ghoul', kind: 'undead', attack: 'Claw', rider: { save: 'CON', dc: 10, condition: 'Paralyzed', immuneSpecies: ['elf'] },
     match: /\b(ghouls?|ghasts?)\b/i },
-  { id: 'giant-spider', name: 'Giant Spider', srd: true, cr: '1', ac: 14, hp: 26, hpDice: '4d10+4', speed: 30,
-    scores: s(14, 16, 12, 2, 11, 4), passivePerception: 14, darkvision: 60, kind: 'beast',
-    attack: { name: 'Bite', toHit: 5, damage: '1d8+3', type: 'piercing', extra: { dice: '2d8', type: 'poison' } },
-    match: /\bspiders?\b/i },
+  { id: 'giant-spider', kind: 'beast', attack: 'Bite', match: /\bspiders?\b/i },
 ];
+
+export const SRD_MONSTERS: Array<StatBlock & { match: RegExp }> = ENGINE.map(({ id, kind, attack, match, rider, inflicts, undeadFortitude }) => {
+  const { attacks, ...creature } = SRD_CREATURES[id]!;
+  const hit = attacks.find((a) => a.name === attack)!;
+  return {
+    id,
+    srd: true,
+    ...creature,
+    kind,
+    ...(undeadFortitude ? { undeadFortitude } : {}),
+    attack: { ...hit, ...(rider ? { rider } : {}), ...(inflicts ? { inflicts } : {}) },
+    match,
+  };
+});
 
 const mod = (n: number) => Math.floor((n - 10) / 2);
 
