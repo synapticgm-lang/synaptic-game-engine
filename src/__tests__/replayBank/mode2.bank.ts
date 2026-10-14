@@ -94,10 +94,12 @@ describe('replay bank mode2 (mode lap 2)', () => {
     expect(S.after(lastTurn(S)).character.level).toBe(1);
   });
 
-  it('[story rpg ds150 | mode2 fix 3] arrivals pay no XP; meeting a person still does', () => {
+  it('[story rpg ds150 | mode2 fix 3 + xp-fix 2] arrivals pay no XP; meeting a person pays only after a passed CHA check', () => {
     const all = allStatus(R);
     expect(all).not.toMatch(/XP Gained: \d+ \(reached /);
-    expect(all).toMatch(/XP Gained: 25 \(met Vessa\)/);
+    expect(R.input(3)).toBe('Talk to Vessa');
+    expect(all, 'the harness rolls no CHA check, so talking to Vessa pays nothing').not.toMatch(/XP Gained: \d+ \(met /);
+    expect(all).toMatch(/XP Gained: 50 \(quest step: Scout the caravan\)/);
     expect(R.after(lastTurn(R)).character.level).toBe(1);
   });
 

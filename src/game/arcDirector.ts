@@ -70,6 +70,7 @@ import { applyRestHeal } from './recoveryRules';
 import { settleClassChoice } from './rules/characterClass';
 import { settleStatPoints } from './rules/abilityPoints';
 import { settleSkillUse } from './rules/skillGrowth';
+import { settleRewardBox, settleTitleChoice } from './rules/achievements';
 import { SKILL_NOTICE } from './rules/librarySkills';
 import { resolveOutOfCombatCast } from './tabletop/spellCasting';
 import { resolveDowntimeTurn } from './tabletop/downtimeTurn';
@@ -716,7 +717,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats):/.test(r) || SKILL_NOTICE.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title):/.test(r) || SKILL_NOTICE.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
@@ -820,6 +821,15 @@ export function runArcDirectorBeforeGm(
       systemReceipts.push(...stats.receipts);
       if (stats.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${stats.fact}`);
       downtimeSettled = stats.settled;
+    }
+    // LitRPG titles and reward boxes: switching the worn title, opening a box. Neither is talk to anyone.
+    for (const settle of [settleTitleChoice, settleRewardBox]) {
+      if (downtimeSettled) break;
+      const done = settle(working, playerInput);
+      working = done.state;
+      systemReceipts.push(...done.receipts);
+      if (done.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${done.fact}`);
+      downtimeSettled = done.settled;
     }
   }
 

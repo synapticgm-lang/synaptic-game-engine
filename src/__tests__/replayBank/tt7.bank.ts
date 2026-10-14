@@ -16,6 +16,7 @@ import { edgesToChoiceLabels, enumerateLegalEdges } from '../../game/choiceEdge'
 import { proficiencyBonus } from '../../game/checkRules';
 import { ladderDc } from '../../game/rules/exploration';
 import { modeProfile } from '../../game/rules/modeProfile';
+import { grantLevelSkills } from '../../game/skillGates';
 import type { GameState } from '../../game/types';
 
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
@@ -45,14 +46,15 @@ function hurtAtHub(T: Replay): GameState {
 }
 
 describe('replay bank tt-build-7 (one engine, three presenters)', () => {
-  it('[litrpg ds150 T11 | tt-build-7] the level-up adds the d8 Hit Die at its fixed 5 + CON; LitRPG shows one line', () => {
-    const b = L.before(11);
-    const a = L.after(11);
-    expect(a.character.level, 'replay levels up on T11').toBe(2);
+  it('[litrpg ds150 T13 | tt-build-7] the level-up adds the d8 Hit Die at its fixed 5 + CON; LitRPG shows one line', () => {
+    // Earned XP (xp-fix): the run stays level 1, so the level-up is applied to the real T13 sheet.
+    const b = L.after(13);
+    expect(b.character.level, 'earned XP: still level 1 after the first kill').toBe(1);
+    expect(L.after(L.turns()[L.turns().length - 1]).character.level).toBe(1);
     const gain = Math.max(1, 5 + conMod(b));
-    expect(a.character.maxHp).toBe(b.character.maxHp + gain);
-    expect(L.receiptText(11)).toMatch(/^Level 2: /m);
-    expect(L.receiptText(11)).not.toMatch(/Hit Die|Proficiency Bonus|max HP/);
+    const up = grantLevelSkills({ ...b, character: { ...b.character, level: 2, skillsGrantedThrough: 1 } }, 1);
+    expect(up.receipts.join('\n')).toMatch(/^Level 2: /m);
+    expect(up.receipts.join('\n')).not.toMatch(/Hit Die|Proficiency Bonus|max HP/);
     // Same maths with the tabletop presenter: same HP, every number shown.
     const xp = b.character.xpToNext - b.character.xp;
     const lit = applyCharacterXpGain(b.character, xp, 'litrpg');

@@ -31,6 +31,7 @@ import { ladderDc, lightNote, sceneLight, sheetBurden, sightCheck, taskRung, typ
 import { paceCheckAdv, travelPaceOf } from './rules/travelPace';
 import { modeProfile } from './rules/modeProfile';
 import { namedSkillCheckMod } from './rules/librarySkills';
+import { titleCheckMod } from './rules/titles';
 
 export type CheckSkill = CheckSkillName;
 
@@ -314,6 +315,8 @@ export function runPlayerCheck(
     mods.push({ label: named.label, value: named.value });
     if (named.advantage) adv = 'advantage';
   }
+  const title = titleCheckMod(state, ctx.skill, named ? named.value : 0, intent.kind);
+  if (title) mods.push(title);
   let auto: 'willing' | 'unwilling' | undefined;
   let cue: string | undefined;
   const social = ctx.attr === 'CHA' && ctx.skill === 'persuasion';

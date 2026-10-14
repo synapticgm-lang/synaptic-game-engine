@@ -76,12 +76,15 @@ describe('replay bank m51 lap 51', () => {
   });
 
   it('[ds151 T20 | m51 offered chip grounded] "Attack from hiding" from the pad is the action the writer gets', () => {
-    expect(S.input(20)).toBe('Attack from hiding');
-    expect(S.packet(20)).toMatch(/^PLAYER: Attack from hiding$/m);
-    expect(S.packet(20)).not.toMatch(/instead of assuming/);
+    // Earned XP (xp-fix): the run no longer levels up before T20, so no Stealth rank and no
+    // "Attack from hiding" chip; the taped line is off the pad and is grounded.
     const s = S.before(20);
-    expect(groundPlayerAction('Attack from hiding', s).rewritten).toBe(false);
-    const off = { ...s, offeredPad: { turn: (s.turn ?? 0) - 1, choices: ['Attack from hiding'] } } as GameState;
+    expect(s.character.level, 'earned XP: still level 1 at T20').toBe(1);
+    expect(S.chips(20)).not.toContain('Attack from hiding');
+    expect(S.packet(20)).toMatch(/^PLAYER: I focus on what is actually here instead of assuming/m);
+    const on = { ...s, offeredPad: { turn: s.offeredPad?.turn ?? (s.turn ?? 0), choices: ['Attack from hiding'] } } as GameState;
+    expect(groundPlayerAction('Attack from hiding', on).rewritten, 'on this turn\'s pad it is not rewritten').toBe(false);
+    const off = { ...s, offeredPad: { turn: (on.offeredPad!.turn ?? 0) - 1, choices: ['Attack from hiding'] } } as GameState;
     expect(groundPlayerAction('Attack from hiding', off).text, 'a stale pad grounds nothing').toMatch(/instead of assuming/);
   });
 });

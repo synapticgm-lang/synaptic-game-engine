@@ -12,6 +12,7 @@ import type { AttributeKey, Attributes, Character, GameState } from '../types';
 import { ABILITY_KEYS, abilityMod, classDef, finalScores } from '../tabletop/characterBuild';
 import { hidesPart } from '../systemHousing';
 import { classIdOf, quickStartClass } from './characterClass';
+import { rewardBoxPad } from './achievements';
 
 export const ABILITY_SCORE_CAP = 20;
 /** Free stat points a LitRPG character with no sheet earns per level-up. */
@@ -204,11 +205,14 @@ export interface SystemPrompt {
   chips: string[];
 }
 
-/** The one System prompt row above the chips: the class offer first, then waiting stat points. */
+/** The one System prompt row above the chips: the class offer first, then waiting stat points, then reward boxes. */
 export function systemPromptPad(state: GameState, classChips: string[] | null): SystemPrompt | null {
   if (classChips) return { heading: 'System — choose a class', chips: classChips };
   const stats = statPointPad(state);
-  if (!stats) return null;
-  const n = unspentStatPoints(state);
-  return { heading: `System — ${n} stat point${n > 1 ? 's' : ''} to spend`, chips: stats };
+  if (stats) {
+    const n = unspentStatPoints(state);
+    return { heading: `System — ${n} stat point${n > 1 ? 's' : ''} to spend`, chips: stats };
+  }
+  const boxes = rewardBoxPad(state);
+  return boxes ? { heading: `System — reward box${boxes.length > 1 ? 'es' : ''} to open`, chips: boxes } : null;
 }

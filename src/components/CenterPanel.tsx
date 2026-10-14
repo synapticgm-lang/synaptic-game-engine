@@ -4,6 +4,7 @@ import { EnemyTargetFrame } from './EnemyTargetFrame';
 
 import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { filterSystemLogForEngine, statusLinesForVerbosity } from '@/game/systemLog';
+import { presentSystemNotices } from '@/game/systemNotice';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
 import type { VoiceState } from '@/game/useVoice';
 import { FormattedText } from './FormattedText';
@@ -738,7 +739,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
         </div>
       )}
       {hasRealGmStory(entry) && showSystemLog && (() => {
-        const lines = filterSystemLogForEngine(entry.systemLog ?? [], engineMode);
+        const lines = presentSystemNotices(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), engineMode);
         return lines.length > 0 ? (
           <SystemLogPanel lines={lines} verbosity={statVerbosity} entryId={entry.id} />
         ) : null;

@@ -156,7 +156,7 @@ describe('Phase 2: Beat Registry', () => {
     expect(contract.id).toMatch(/sp-beat-skirmish/);
     expect(contract.kind).toBe('encounter');
     expect(contract.spawnEncounter).toBe(true);
-    // 2026-10-14a — one table: the skirmish chunk is the LitRPG encounter amount.
+    // 2026-10-14b — one table: the skirmish chunk is the LitRPG encounter amount.
     expect(contract.xpChunk).toBe(LITRPG_MILESTONE_XP.encounter);
     expect(contract.proseHints?.length).toBeGreaterThan(0);
   });
@@ -240,7 +240,7 @@ describe('Phase 4: Fast XP loop', () => {
 
   it('combat trash/boss and quest accept/complete use the fast table', () => {
     const state = createInitialState();
-    // 2026-10-14a — one table (LITRPG_MILESTONE_XP); accepting a quest is not effort.
+    // 2026-10-14b — one table (LITRPG_MILESTONE_XP); accepting a quest is not effort.
     expect(awardCombatXp(state, 'trash').xp).toBe(LITRPG_MILESTONE_XP.encounter);
     expect(awardCombatXp(state, 'boss').xp).toBe(LITRPG_MILESTONE_XP.boss);
     expect(awardQuestXp(state, 'accept').xp).toBe(0);

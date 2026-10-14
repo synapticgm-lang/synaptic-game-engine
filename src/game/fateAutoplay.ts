@@ -1948,6 +1948,7 @@ Do NOT print dice notation or CODE ENFORCED.
       ...sandboxNotes,
       ...levelNotes,
     ]);
+    if (sandboxXp.lootNotes.length) filteredSystemLog = [...filteredSystemLog, ...filterSystemLogForEngine(sandboxXp.lootNotes, state.engineMode)];
   } else {
     // Dedupe receipt lines while keeping order
     const seen = new Set<string>();

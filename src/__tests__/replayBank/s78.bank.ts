@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { grantLevelSkills } from '../../game/skillGates';
 import { Replay } from './bank';
 import { replayWhole } from './replayRun';
 
@@ -140,8 +141,17 @@ describe('replay bank s78', () => {
   it('[s78 T17 | s78 #17] no skill rank prints while skills are off', () => {
     expect(R.before(2).systemHousing?.parts?.skills, 'skills are off in this housing').toBe(false);
     const last = R.turns()[R.turns().length - 1];
-    expect(R.after(last).character.level, 'replay reaches level 2').toBeGreaterThanOrEqual(2);
+    // Earned XP (xp-fix): the run ends level 1 on 125 XP, so the level-up is applied to its last sheet.
+    const end = R.after(last);
+    expect(end.character.level, 'earned XP: the run stays level 1').toBe(1);
+    expect(end.character.xp).toBe(125);
     for (const n of R.turns()) expect(R.receiptText(n), `T${n}`).not.toMatch(/\brank \d/i);
+    const lvl2 = { ...end, character: { ...end.character, level: 2, skillsGrantedThrough: 1 } };
+    const hidden = grantLevelSkills(lvl2, 1);
+    expect(hidden.receipts, 'skills off: the rank is granted, no receipt').toEqual([]);
+    expect(Object.values(hidden.state.character.skills ?? {}).some((r) => (r ?? 0) > 0)).toBe(true);
+    const shown = grantLevelSkills({ ...lvl2, systemHousing: undefined }, 1);
+    expect(shown.receipts.join('\n'), 'the same level-up with skills on prints the rank').toMatch(/\brank \d/i);
   });
 
   it('[s78 T9 | s78 #18] a no-words talk chip gives Jax no spoken line', () => {

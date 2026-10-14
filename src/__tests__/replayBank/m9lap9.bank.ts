@@ -68,18 +68,24 @@ describe('replay bank multi lap 9', () => {
   });
 
   it('[m9 ds150 T21, ds151 T4, ds158 T7 | lap 9 Root B] a count no fact holds and the page never told fails its line', () => {
-    const cases: [Replay, number, RegExp][] = [
-      [H, 21, /six years/],
-      [U, 4, /three sides/],
-      [N, 7, /fifteen more points/],
+    // Earned XP (xp-fix): ds158 holds 0 XP at T7 (no turn-5 First Steps), so its "one hundred and
+    // twenty-five" window line is a count no fact holds too, and only the action line stays.
+    const cases: [Replay, number, RegExp, number][] = [
+      [H, 21, /six years/, 2],
+      [U, 4, /three sides/, 2],
+      [N, 7, /fifteen more points|one hundred and twenty-five/, 1],
     ];
-    for (const [R, n, invented] of cases) {
+    for (const [R, n, invented, beats] of cases) {
       expect(R.verdicts(n), `T${n} drops the counted line`).toContain(R.verdicts(n).find((v) => v.endsWith(':count')));
       expect(R.prose(n), `T${n}`).not.toMatch(invented);
-      expect(R.prose(n).split(/(?<=[.!?]["”]?)\s+/).length, `T${n} keeps a beat`).toBeGreaterThanOrEqual(2);
+      expect(R.prose(n).split(/(?<=[.!?]["”]?)\s+/).length, `T${n} keeps a beat`).toBeGreaterThanOrEqual(beats);
     }
-    // The handed count is fine: the sheet's XP (125) is the number the window line may use.
-    const handed = handedCountText(N.before(7), N.before(7).completedEvent);
+    expect(N.before(7).character.xp).toBe(0);
+    const handed0 = handedCountText(N.before(7), N.before(7).completedEvent);
+    expect(lineHasUnhandedCount('The number had climbed to one hundred and twenty-five.', handed0)).toBe(true);
+    // The handed count is fine: an info sheet holding 125 XP is the number the window line may use.
+    const s7 = N.before(7);
+    const handed = handedCountText(s7, { ...s7.completedEvent!, infoSheet: `${s7.completedEvent?.infoSheet ?? ''}\nXP: 125/150` });
     expect(lineHasUnhandedCount('The number had climbed to one hundred and twenty-five.', handed)).toBe(false);
     expect(lineHasUnhandedCount('The window showed fifteen more points.', handed)).toBe(true);
   });

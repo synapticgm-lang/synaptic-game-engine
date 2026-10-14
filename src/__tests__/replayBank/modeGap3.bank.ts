@@ -167,7 +167,8 @@ describe('replay bank mode-gap 3 (LitRPG stat points + System window)', () => {
     const a = s.character.attributes;
     expect(stats).toContain(`STR ${a.STR}, DEX ${a.DEX}, CON ${a.CON}, INT ${a.INT}, WIS ${a.WIS}, CHA ${a.CHA}`);
     expect(stats).toContain(`(${unspentStatPoints(s)} point`);
-    expect(lines.some((l) => l.startsWith('Title:')), 'no title earned yet').toBe(false);
+    // The tape's own first win earns Blooded (mode-gap 5), so the window shows the earned title with its perk.
+    expect(lines.filter((l) => l.startsWith('Title:'))).toEqual(['Title: Blooded (+1 Athletics)']);
     const titled = { ...s, character: { ...s.character, activeTitle: 'Circle-Breaker' } };
     expect(buildLitrpgSystemWindow(titled)!.lines).toContain('Title: Circle-Breaker');
     const full = {

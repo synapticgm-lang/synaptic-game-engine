@@ -34,6 +34,7 @@ const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBur
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
 const modeProfile = edgeOnly;
 const namedSkillCheckMod = (..._args: unknown[]): null => null;
+const titleCheckMod = (..._args: unknown[]): null => null;
 
 export type CheckSkill = CheckSkillName;
 
@@ -317,6 +318,8 @@ export function runPlayerCheck(
     mods.push({ label: named.label, value: named.value });
     if (named.advantage) adv = 'advantage';
   }
+  const title = titleCheckMod(state, ctx.skill, named ? named.value : 0, intent.kind);
+  if (title) mods.push(title);
   let auto: 'willing' | 'unwilling' | undefined;
   let cue: string | undefined;
   const social = ctx.attr === 'CHA' && ctx.skill === 'persuasion';

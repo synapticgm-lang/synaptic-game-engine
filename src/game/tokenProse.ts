@@ -386,8 +386,12 @@ const NUM_WORDS: Record<string, number> = {
 };
 const WORD_FOR_NUM = Object.fromEntries(Object.entries(NUM_WORDS).map(([w, n]) => [n, w])) as Record<number, string>;
 const COUNT_START = `\\d+|${Object.keys(NUM_WORDS).filter((w) => w !== 'one').join('|')}`;
-/** One whole number phrase ("twenty-five", "two hundred twenty-five"); "one" alone is not a count. */
-const COUNT_RE = new RegExp(`\\b((?:${COUNT_START})(?:(?:-|\\s+)(?:one|${COUNT_START.replace('\\d+|', '')}|hundred|thousand))*)\\b`, 'gi');
+const COUNT_WORD = `one|${COUNT_START.replace('\\d+|', '')}`;
+/** One whole number phrase ("twenty-five", "one hundred and twenty-five"); "one" alone is not a count. */
+const COUNT_RE = new RegExp(
+  `\\b((?:${COUNT_START}|one(?=[-\\s]+(?:hundred|thousand)\\b))(?:(?:-|\\s+)(?:${COUNT_WORD}|hundred|thousand)|(?<=hundred|thousand)\\s+and\\s+(?:${COUNT_WORD}))*)\\b`,
+  'gi',
+);
 /** A count of ways out is the PLACES exit count's to judge, and body parts / paces / "of them" are not world facts. */
 const COUNT_NOT_A_FACT =
   /^\s+(?:\w+\s+){0,2}?(?:roads?|exits?|ways?|paths?|doors?|doorways?|lanes?|streets?|routes?|gates?|tracks?|trails?|passages?|stairs?)\b|^\s*(?:o'clock|times?|steps?|paces?|breaths?|heartbeats?|fingers?|hands|eyes|arms|feet)\b|^\s+of (?:them|us|you)\b/i;

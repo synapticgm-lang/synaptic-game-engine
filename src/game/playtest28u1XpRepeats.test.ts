@@ -40,7 +40,7 @@ const refs: LedgerRef[] = [
 ];
 
 describe('playtest28u1XpRepeats', () => {
-  // 2026-10-14a — a spine place pays only when earned; choosing a road pays nothing.
+  // 2026-10-14b — a spine place pays only when earned; choosing a road pays nothing.
   it('spine steps pay once when earned; the fork pays nothing, idempotent on repeat', () => {
     let s = advancePyoaSpine(thornferryState(), 'Walk the road together');
     expect(xpFor(s, 'Walk the road together').xp).toBe(0);

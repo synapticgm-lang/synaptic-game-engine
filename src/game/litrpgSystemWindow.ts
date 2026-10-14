@@ -12,6 +12,7 @@ import { ABILITY_KEYS } from './tabletop/characterBuild';
 import { CHECK_SKILLS, skillRanksOf } from './skillRanks';
 import { skillLabel } from './skillGates';
 import { namedSkillViews } from './rules/librarySkills';
+import { activeTitleOf, titlePerkText } from './rules/titles';
 import type { GameState, LogEntry } from './types';
 
 export interface LitrpgSystemWindow {
@@ -81,7 +82,7 @@ export function shouldAttachLitrpgSystemWindow(args: {
   if (playerAskedAboutSystemPanel(args.playerInput ?? '')) return true;
   if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
-  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:|^(?:Skill rank up|Technique learned|Perk gained):/i.test(l))) return true;
+  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:|^(?:Skill rank up|Technique learned|Perk gained|Title earned|Title):/i.test(l))) return true;
   return false;
 }
 
@@ -117,8 +118,8 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
     const skills = topSkillsLine(state);
     if (skills) lines.push(skills);
   }
-  const title = c?.activeTitle?.trim();
-  if (title) lines.push(`Title: ${title}`);
+  const title = on('level') ? activeTitleOf(state) : null;
+  if (title) lines.push(`Title: ${title.name}${title.def ? ` (${titlePerkText(title.def)})` : ''}`);
   if (state.campaignBibleId === 'summoned-pact') {
     lines.push(registered ? 'Registration: designation locked' : 'Registration: incomplete');
     lines.push('Mark: Pactborn / Calamity Mark — unresolved');

@@ -79,9 +79,9 @@ function award(s: GameState) {
 }
 
 describe('29z1 — stamp', () => {
-  it('HUD/BUILD are 2026-10-14a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14a');
-    expect(BUILD_STAMP).toBe('2026-10-14a');
+  it('HUD/BUILD are 2026-10-14b, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14b');
+    expect(BUILD_STAMP).toBe('2026-10-14b');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -120,28 +120,28 @@ describe('29z1 — deed pay by mode', () => {
     expect(again.notes.some((n) => /First Kill/.test(n))).toBe(false);
   });
 
-  it('LitRPG 3 then 10 fights won: 50 then 100, and one grade-1 item only on the 100 step', () => {
+  it('LitRPG 3 then 10 fights won: 50 then 100, a Silver box on 3 and a Gold box on 10', () => {
     const three = award(killed('litrpg', { sandboxAwardKeys: [DEED_FIRST_KILL, ...winKeys(3)] }));
     expect(three.awardKeys).toContain(DEED_FIGHTS_COUNT);
     expect(three.xp).toBe(50);
-    expect(three.items).toHaveLength(0);
+    expect(three.items.map((i) => i.name)).toContain('Silver Reward Box');
     const ten = award(killed('litrpg', { sandboxAwardKeys: [...three.awardKeys, ...winKeys(10)] }));
     expect(ten.awardKeys).toContain(DEED_FIGHTS_CAPSTONE);
     expect(ten.xp).toBe(100);
-    expect(ten.items).toHaveLength(1);
+    expect(ten.items.map((i) => i.name)).toEqual(['Gold Reward Box']);
     const later = award(killed('litrpg', { sandboxAwardKeys: [...ten.awardKeys, ...winKeys(12)] }));
     expect(later.xp).toBe(0);
     expect(later.items).toHaveLength(0);
   });
 
-  it('LitRPG capstone item prefers a better weapon of the kind already owned', () => {
+  it('LitRPG capstone is a sealed Gold box, not a direct weapon', () => {
     const s = killed('litrpg', {
       sandboxAwardKeys: [DEED_FIRST_KILL, DEED_FIGHTS_COUNT, ...winKeys(10)],
       inventory: [{ id: 'w', name: 'Worn Longsword', rarity: 'Common', quantity: 1, slot: 'mainHand', equipped: true } as GameState['inventory'][number]],
     });
-    const item = award(s).items[0]!;
-    expect(item).toBeTruthy();
-    expect(item.name).not.toBe('Worn Longsword');
+    const items = award(s).items;
+    expect(items.some((i) => i.name === 'Gold Reward Box')).toBe(true);
+    expect(items.every((i) => /Reward Box$/.test(i.name))).toBe(true);
   });
 
   it('tabletop pays 25 per deed at level 1 and never an item', () => {

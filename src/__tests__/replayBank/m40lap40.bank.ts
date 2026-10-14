@@ -32,7 +32,8 @@ describe('replay bank m40 lap 40', () => {
   it('[ds150 T7,T13 | m40 telemetry] xpGained is the whole XP the turn paid, fights included (whole run)', () => {
     expect(A.input(13), 'replay fights the thugs on T13').toBe('Face the thugs');
     expect(xpGain(A, 13), 'the fight pays more than the sandbox share').toBeGreaterThan(25);
-    expect(A.after(11).character.level, 'replay levels up on T11').toBe(2);
+    expect(A.after(13).character.xp, 'T7 talk-past 40 + T13 fight 40 + First Kill 25 (earned XP)').toBe(105);
+    expect(A.after(A.turns()[A.turns().length - 1]).character.level, 'earned XP: no level-up in 21 turns').toBe(1);
     for (const R of [A, B]) {
       for (const n of R.turns()) expect(R.at(n).telemetry.xpGained ?? 0, `T${n}`).toBe(xpGain(R, n));
     }

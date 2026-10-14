@@ -29,6 +29,7 @@ import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
 import { objectiveChip } from './choiceRanking';
 import { hidesPart } from './systemHousing';
+import { settleDeeds } from './rules/achievements';
 
 /** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
 export const SANDBOX_XP = {
@@ -50,6 +51,7 @@ export interface SandboxXpResult {
   places: GameState['places'];
   /** 29r — items granted this turn (settlement card finish). */
   items: Item[];
+  /** STATUS lines for loot, LitRPG achievements ("Achievement: …") and titles ("Title earned: …"). */
   lootNotes: string[];
   /** 29s — NPC relationships after a witnessed deed this turn; undefined when none changed. */
   npcRelationships?: NonNullable<GameState['arcDirector']>['npcRelationships'];
@@ -302,11 +304,13 @@ export function applySandboxXpAwards(
   // Encounter end: victory or neutralised (parley). Escape / defeat / capture pay nothing.
   const ended = opts.endedEncounter ?? null;
   let wonThisTurn = opts.enemyKilled === true;
+  let bossWon = false;
   if (ended && opts.encounterCleared !== false && !state.activeEncounter) {
     const receipts = state.arcDirector?.encounterClearedReceipts ?? [];
     const rec = [...receipts].reverse().find((r) => r.name === ended.name && r.turn >= opts.turn - 2);
     const outcome = rec?.outcome ?? (opts.enemyKilled ? 'victory' : ended.terminalOutcome);
     if (outcome === 'victory') wonThisTurn = true;
+    if (outcome === 'victory' && encounterKind(ended) === 'boss') bossWon = true;
     if (outcome === 'victory' || outcome === 'parleyResolved') {
       pay(
         `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
@@ -440,9 +444,19 @@ export function applySandboxXpAwards(
     }
     const won = fightsWon(awardKeys);
     if (won >= FIGHTS_COUNT_STEP) payDeed(DEED_FIGHTS_COUNT, 'count', `Achievement: ${FIGHTS_COUNT_STEP} fights won`);
-    if (won >= FIGHTS_CAPSTONE_STEP && payDeed(DEED_FIGHTS_CAPSTONE, 'capstone', `Achievement: ${FIGHTS_CAPSTONE_STEP} fights won`) && mode === 'litrpg') {
-      grant(DEED_FIGHTS_CAPSTONE, `Achievement: ${FIGHTS_CAPSTONE_STEP} fights won`);
-    }
+    if (won >= FIGHTS_CAPSTONE_STEP) payDeed(DEED_FIGHTS_CAPSTONE, 'capstone', `Achievement: ${FIGHTS_CAPSTONE_STEP} fights won`);
+  }
+
+  // LitRPG achievements pay their reward box and any title (rules/achievements); the notices ride with the loot.
+  if (mode === 'litrpg') {
+    const deeds = settleDeeds(state, {
+      awardKeys,
+      bossWon,
+      skillEvolved: (state.character?.namedSkills ?? []).some((r) => !!r.evolvedTo),
+    });
+    awardKeys.splice(0, awardKeys.length, ...deeds.awardKeys);
+    items.push(...deeds.items);
+    lootNotes.push(...deeds.notes);
   }
 
   void opts.events;

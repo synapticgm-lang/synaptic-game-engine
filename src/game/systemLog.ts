@@ -194,7 +194,7 @@ const RARITY_TAG = /\[(?:Common|Uncommon|Rare|Epic|Legendary|Mythic|Unique)\]\s*
 export function statusLinesForVerbosity(lines: string[], verbosity: StatVerbosity | undefined): string[] {
   if (verbosity === 'minimal') return [];
   if (verbosity === 'core') {
-    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location/i.test(l));
+    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement/i.test(l));
   }
   return lines;
 }
