@@ -136,3 +136,71 @@ No case failed on a rules line itself. I did not see a broken travel rule in any
 - **Waterborne:** travel has no waterborne ground. The table row is unused.
 
 TT_STOP
+
+## Finish (2:57)
+
+Order: `docs/orders/tt-travel-finish-order.md`, John's ruling option (b). Shipped.
+
+### The seam
+
+- `travelJourney.setReplayRecordedMeetings(on)` / `replayKeepsRecordedMeetings()` is a module flag, off by default.
+- Only `src/__tests__/replayBank/replayRun.ts` sets it: on before the replay, off in the `finally`.
+- While it is on:
+  - `rollStretch` uses the roll the tapes were recorded with: a 0.4 chance on every stretch, plus 0.25 for each quiet stretch, a sure meeting after 2 quiet stretches, and the old kind pool (no `signs`, `plea` or `lair`). It uses the same hash keys, so each tape gets back its own meeting.
+  - A meeting is not dressed with a want, a distance or surprise.
+  - Camp watches roll no meeting.
+- `useGame` and new `fateAutoplay` runs never touch the flag. They use the SRD d6 per watch.
+
+### The roll tests
+
+There are 4 new tests in `src/game/ttTravel.test.ts`, under "the SRD meeting roll pinned". The file now has 24 tests, all passing.
+- **The d6 per watch:** `WATCH_HOURS` is 4. On ordinary ground a 1 is a meeting and 2–6 are not.
+- **The threshold:** on dangerous or haunted ground, 1–2 is a meeting and 3–6 are not. A long quiet run never forces a meeting.
+- **Seeded:** 40 seeds give the same meetings twice over, and the meetings are not all the same.
+- **Live does not use the seam:** the flag is off by default. `useGame.ts` and `fateAutoplay.ts` never name it. Turning it on changes the meetings, and turning it off gives the live meetings back.
+
+### tsc (`tsconfig.app.json`)
+
+It was 572 and is now **570**. The two extra errors were both in `src/game/ttFix6.test.ts` from tt-fix-6:
+- `CompletedEventPacket` was imported from `./types`. It now comes from `./completedEventPacket`.
+- `deedXp('dnd', 'complete')` used a step name that does not exist. It is now `'capstone'`, the deed's completion step.
+
+### Replay bank
+
+- **64 failing** of 628 (536 passing).
+- All 37 meeting failures are gone.
+- The 64 that are left are a subset of the earlier 101-fail run, so they are HEAD's 64.
+
+### vitest
+
+- **80 failing.** The names match the earlier tt-travel run except for these:
+  - **3 known flakes:**
+    - `playtest27aRepair1` "27b Repair 2 S3" is the known flip.
+    - `seed94OpeningHealthPresence` hit a 7 s timeout under load and passes alone.
+    - `seed94InfestationClear` "pays 50 XP" depends on `createInitialState`, which rolls the LitRPG System housing from a random seed before the test sets `seed`. Some housings hide the XP line. It passed in both earlier runs today, and nothing on its path changed.
+  - **2 now passing:** `roadFightOutcome` s72 G and `s85Roots` Root C.
+- Without the flakes that is 77, against HEAD's 78. There are no new failures.
+
+### Build
+
+Green.
+
+### The ds151 Barred Oak Gate cases (tt4 ×1, tt6a ×4)
+
+These are not the meeting seam, so I left them. The cause: the ds151 tape now opens at Barred Oak Gate, and its clock and fight lines drift from what the cases pin. They fail at clean HEAD too.
+- **tt4 T13 Cleave:** the round line is `you Greatsword d20 20 + 5 =` and the case wants `… = N vs`. The fight-line shape changed.
+- **tt6a T10 + T9 dawn:** the clock reads `night`, not `dawn`.
+- **tt6a T13 dark fight:** there is no `Light: darkness at night` line, because the start place and time changed.
+- **tt6a T10 bandits in the dark:** same cause as the T13 dark fight.
+- **tt6a T7 travel pace:** the receipt is `Travel: back streets between Barred Oak Gate …`, not `open road between Keep Gate …`. It is a street now, not a road.
+
+### Commit, deploy, stamp
+
+- `43156f52`: tt-travel's files and this fix. `humanJudge.mjs`, `.gitignore`, `playtest-notes.mdc` and the other order docs were left out.
+- `eb879a01`: the edge sync (`checkMath`, `completedEventPacket`, `types`).
+- `gm-turn` deployed. The first deploy failed to boot (BOOT_ERROR 503): the hand-written edge stub `_shared/gm/travelJourney.ts` had no `travelBeatFact`, which `completedEventPacket` now imports.
+- `181d0d41`: the stub now has `travelBeatFact`, copied from the client. A scan of every named import in the edge folder found nothing else missing. The `checkMath` gaps were already there at HEAD and are reached only through `import type`. Redeployed, and the preflight answers 200.
+- Live `https://www.synapticgm.com/version.json` reads `{"hud":"2026-10-14l","build":"2026-10-14l"}`.
+- Tabletop coin is still 0.
+
+TT_DONE
