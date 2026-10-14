@@ -7,6 +7,7 @@
 
 import type { GameState } from './types';
 import type { DelayedConsequence, ResourceDelta, RelationshipDelta } from './types/crossPackageContracts';
+import { presentNpcNames, shiftStoredRelationship, type StoredShift } from './npcRelationships';
 
 // ============================================================================
 // CONSEQUENCE SCHEDULING
@@ -54,10 +55,18 @@ export function scheduleDelayedConsequence(
  */
 export function getDueConsequences(state: GameState): DelayedConsequence[] {
   const consequences = state.arcDirector?.pyoaDelayedConsequences ?? [];
-  
-  return consequences.filter(c => 
-    c.status === 'pending' && c.dueAtTurn <= state.turn
-  ).sort((a, b) => a.dueAtTurn - b.dueAtTurn);
+  const due = consequences.filter(c => c.status === 'pending' && c.dueAtTurn <= state.turn);
+  const waiting = due.some((c) => c.payload.awaitsNpc);
+  const here = waiting ? new Set(presentNpcNames(state).map((n) => n.toLowerCase())) : null;
+  return due
+    .filter((c) => !c.payload.awaitsNpc || here!.has(c.payload.awaitsNpc.trim().toLowerCase()))
+    .sort((a, b) => a.dueAtTurn - b.dueAtTurn);
+}
+
+function storedShiftFor(delta: RelationshipDelta): StoredShift {
+  if (delta.aspect === 'respect') return { trust: 0, respect: delta.delta };
+  if (delta.aspect === 'fear') return { trust: 0, fear: delta.delta };
+  return { trust: delta.delta };
 }
 
 /**
@@ -141,11 +150,15 @@ export function deliverConsequence(
     }
   }
   
-  // Apply relationship deltas
-  if (consequence.payload.relationshipDeltas) {
+  // Relationship deltas land on each person's stored record (a hidden score); the player and the
+  // writer get the remembered beat, never the number.
+  if (consequence.payload.relationshipDeltas?.length) {
+    let stored = next.arcDirector?.npcRelationships;
     for (const delta of consequence.payload.relationshipDeltas) {
-      receipts.push(`Relationship: ${delta.npcId} ${delta.aspect} ${delta.delta > 0 ? '+' : ''}${delta.delta}`);
+      stored = shiftStoredRelationship(stored, delta.npcId, storedShiftFor(delta), next.turn).list;
     }
+    next = { ...next, arcDirector: { ...next.arcDirector, npcRelationships: stored } };
+    receipts.push(`Remembered: ${consequence.payload.narrativeBeat}`);
   }
   
   // Unlock crisis

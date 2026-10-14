@@ -720,7 +720,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
       lines.push(r);
-    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title|Companion):/.test(r) || SKILL_NOTICE.test(r)) {
+    } else if (/^(?:Fight|Loot|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title|Companion|Remembered):/.test(r) || SKILL_NOTICE.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {

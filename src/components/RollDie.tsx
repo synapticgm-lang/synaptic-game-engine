@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useRef, useState, type CSSPropert
 import type { DiceAnimationMode } from '@/game/types';
 import { emitDiceRoll, rollAnimationMs, rollAnimationScale, splitRollLine, type ShownD20 } from '@/game/rules/rollView';
 import { DicePreview, liveDiceItem } from './DicePreview';
+import { Bookmark } from 'lucide-react';
+import { rememberCueText } from '@/game/systemLog';
 
 /** The player's roll animation setting and the newest GM entry (only its rolls animate; history does not re-roll). */
 export const RollDisplayContext = createContext<{ mode: DiceAnimationMode; newestEntryId: string | null }>({
@@ -11,6 +13,15 @@ export const RollDisplayContext = createContext<{ mode: DiceAnimationMode; newes
 
 /** One shown STATUS line with the player's die in front of every d20 the engine printed. The text is unchanged. */
 export function RollLine({ line, entryId }: { line: string; entryId: string }) {
+  const remembered = rememberCueText(line);
+  if (remembered !== null) {
+    return (
+      <span className="inline-flex items-center gap-1 italic text-amber-200/90" data-testid="remember-cue">
+        <Bookmark size={10} aria-label="They will remember" className="shrink-0" />
+        {remembered}
+      </span>
+    );
+  }
   const parts = splitRollLine(line);
   if (!parts.some((p) => p.roll)) return <>{line}</>;
   return (

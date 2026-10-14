@@ -304,6 +304,8 @@ export interface DelayedConsequence {
     unlockEndingId?: string;
     narrativeBeat: string;
     journalHint: string;
+    /** Delivered only on a due turn when this named person is present (they remember to your face). */
+    awaitsNpc?: string;
   };
 }
 

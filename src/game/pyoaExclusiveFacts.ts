@@ -10,6 +10,7 @@
 
 import type { GameState } from './types';
 import type { FactWrite, ExclusiveFactGroup, FactPredicate, PredicateGroup } from './pyoaTypes';
+import { rpgEndingFacts } from './rpgEndings';
 
 // ============================================================================
 // EXCLUSIVE FACT GROUPS REGISTRY
@@ -334,7 +335,7 @@ export function evaluatePredicateGroup(
  * Extract facts from game state
  */
 export function extractFactsFromGameState(state: GameState): Record<string, unknown> {
-  const facts: Record<string, unknown> = {};
+  const facts: Record<string, unknown> = { ...rpgEndingFacts(state) };
   
   // Extract from pyoaBranchLedger
   const ledger = state.pyoaBranchLedger;

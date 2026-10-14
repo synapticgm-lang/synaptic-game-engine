@@ -18,6 +18,7 @@ import type {
   BibleId,
 } from './pyoaTypes';
 import { evaluatePredicateGroup, extractFactsFromGameState } from './pyoaExclusiveFacts';
+import { rpgEndingGates } from './rpgEndings';
 
 // ============================================================================
 // ENDING GATE CATALOG
@@ -291,7 +292,7 @@ export function getEligibleEndings(
   bibleId: BibleId,
   state: GameState
 ): EndingGateSpec[] {
-  const endings = getEndingsForBible(bibleId);
+  const endings = getEndingsForBible(bibleId, state);
   const currentTurn = state.turn;
   
   return endings.filter(ending => {
@@ -465,7 +466,8 @@ export function commitEnding(
 /**
  * Get endings for bible
  */
-export function getEndingsForBible(bibleId: BibleId): EndingGateSpec[] {
+export function getEndingsForBible(bibleId: BibleId, state?: GameState): EndingGateSpec[] {
+  if (state?.engineMode === 'rpg') return rpgEndingGates(state);
   if (bibleId === 'thornferry-road') {
     return THORNFERRY_ENDINGS;
   }

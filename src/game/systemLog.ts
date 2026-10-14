@@ -190,11 +190,18 @@ export function isEngineCheckLine(line: string): boolean {
 /** LitRPG item rarity tag ("[Epic] Masterwork Jerkin"); Story RPG loot reads as plain things. */
 const RARITY_TAG = /\[(?:Common|Uncommon|Rare|Epic|Legendary|Mythic|Unique)\]\s*/g;
 
+const REMEMBER_CUE = /^Remember(?:ed)?:\s*/;
+
+/** A story RPG "they'll remember" line: the text to show after the cue mark, or null for any other line. */
+export function rememberCueText(line: string): string | null {
+  return REMEMBER_CUE.test(line) ? line.replace(REMEMBER_CUE, '') : null;
+}
+
 /** The Status Panel Detail setting, for every view that shows STATUS: detailed = all, core = key lines, minimal = none. */
 export function statusLinesForVerbosity(lines: string[], verbosity: StatVerbosity | undefined): string[] {
   if (verbosity === 'minimal') return [];
   if (verbosity === 'core') {
-    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement/i.test(l));
+    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|^ending:/i.test(l));
   }
   return lines;
 }

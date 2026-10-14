@@ -6,6 +6,7 @@ import { pickFateChoice } from '@/game/fatePick';
 import { classOfferPad } from '@/game/rules/characterClass';
 import { systemPromptPad } from '@/game/rules/abilityPoints';
 import { partyHeading, recruitPad } from '@/game/rules/companions';
+import { rpgEndingChip } from '@/game/storyRpgProgress';
 
 interface ActionBarProps {
   state: GameState;
@@ -21,6 +22,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const systemPrompt = systemPromptPad(state, classOfferPad(state));
   const party = partyHeading(state);
   const recruits = recruitPad(state) ?? [];
+  const endingChip = rpgEndingChip(state);
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
 
@@ -49,6 +51,18 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
               ))}
             </div>
           )}
+        </div>
+      )}
+      {endingChip && (
+        <div className="sgm-info-panel rounded-lg border border-amber-500/40 bg-slate-950/90 px-3 py-2" data-testid="ending-row">
+          <div className="mb-1.5 text-[11px] font-medium text-amber-200">Your main quest is done. Keep playing, or end the story.</div>
+          <button
+            disabled={busy}
+            onClick={() => onAction(endingChip)}
+            className="sgm-choice-btn flex min-h-[40px] w-full items-center rounded-lg border border-amber-500/50 bg-slate-900/90 px-3 py-1.5 text-left text-xs font-medium text-amber-100 transition-all hover:bg-amber-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-[32px] sm:w-auto sm:rounded-full sm:px-2.5"
+          >
+            {endingChip}
+          </button>
         </div>
       )}
       {systemPrompt && (

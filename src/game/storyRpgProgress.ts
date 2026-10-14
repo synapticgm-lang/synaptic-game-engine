@@ -8,6 +8,11 @@
  *   names ("Scout the caravan" at Consul Caravan Camp). A step that names no place is a decision
  *   ("Pick an approach"): it is offered as its own chip and ticks only when the player takes it.
  *   Beat timing, travel and talk never tick it.
+ * - They'll remember: a standing change schedules a delayed consequence (scheduleDelayedConsequence). The
+ *   arcDirector delivery pays it off on the first due turn that person is present again: a hidden trust shift
+ *   on their relationship record and a "Remembered" beat. The choice itself gets a "will remember that" cue.
+ * - Ending: once a main quest is finished the shared ending gates (pyoaEndingGates + rpgEndings) offer
+ *   RPG_ENDING_CHIP; taking it commits the best eligible ending and the run ends.
  * Other modes are untouched.
  */
 import type { GameState, NpcMemory, Quest } from './types';
@@ -16,6 +21,11 @@ import { recordNpcTreatmentFromAction } from './npcMemory';
 import { presentNpcNames } from './npcRelationships';
 import { mainSpineQuest } from './questPlay';
 import { objectiveChip } from './choiceRanking';
+import { scheduleDelayedConsequence } from './pyoaDelayedConsequences';
+import { commitEnding, selectBestEnding } from './pyoaEndingGates';
+import { RPG_ENDING_CHIP } from './rpgEndings';
+import { isPlayInputLocked } from './playPhase';
+import type { BibleId } from './pyoaTypes';
 
 export type StoryRpgTurn = { state: GameState; receipts: string[] };
 
@@ -83,11 +93,57 @@ export function storyRpgDecisionChip(state: GameState): string | null {
   return objectiveChip(open);
 }
 
+/** Turns before a remembered choice can come back, and the hidden trust it moves when it does. */
+export const REMEMBER_AFTER_TURNS = 3;
+export const REMEMBER_TRUST = { helped: 8, refused: -8 } as const;
+
+/** The pending "they remember" consequence for this person, if any. */
+export function pendingRemembered(state: GameState, npc: string) {
+  const key = npc.trim().toLowerCase();
+  return (state.arcDirector?.pyoaDelayedConsequences ?? []).find(
+    (c) => c.status === 'pending' && c.payload.awaitsNpc?.trim().toLowerCase() === key,
+  );
+}
+
+/** Schedule the payoff of helping or refusing this person; a newer choice replaces their older pending one. */
+function scheduleRemembered(state: GameState, npc: string, helped: boolean): GameState {
+  const key = npc.trim().toLowerCase();
+  const kept = (state.arcDirector?.pyoaDelayedConsequences ?? []).map((c) =>
+    c.status === 'pending' && c.payload.awaitsNpc?.trim().toLowerCase() === key ? { ...c, status: 'cancelled' as const } : c,
+  );
+  const base: GameState = { ...state, arcDirector: { ...state.arcDirector, pyoaDelayedConsequences: kept } };
+  const deed = helped ? 'helped' : 'refused';
+  return scheduleDelayedConsequence(base, {
+    sourceCrisisId: 'rpg-standing',
+    sourceForkId: `${key.replace(/[^a-z0-9]+/g, '-')}-${deed}`,
+    dueAtTurn: state.turn + REMEMBER_AFTER_TURNS,
+    type: 'relationship_shift',
+    payload: {
+      relationshipDeltas: [{ npcId: npc, aspect: 'trust', delta: REMEMBER_TRUST[deed], reason: `remembers you ${deed}` }],
+      narrativeBeat: `${npc} remembers your ${helped ? 'help' : 'refusal'}.`,
+      journalHint: `${npc} will remember that you ${deed}.`,
+      awaitsNpc: npc,
+    },
+  });
+}
+
+/** Story RPG: the ending chip, offered once the shared ending gates have an eligible ending. */
+export function rpgEndingChip(state: GameState): string | null {
+  if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter || isPlayInputLocked(state)) return null;
+  return selectBestEnding((state.campaignBibleId ?? '') as BibleId, state) ? RPG_ENDING_CHIP : null;
+}
+
 export function applyStoryRpgTurn(state: GameState, playerInput: string): StoryRpgTurn {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete) return { state, receipts: [] };
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const receipts: string[] = [];
   let next = state;
+
+  if (chipKey(action) === chipKey(RPG_ENDING_CHIP) && rpgEndingChip(state)) {
+    const ending = selectBestEnding((state.campaignBibleId ?? '') as BibleId, state)!;
+    const done = commitEnding(ending, state);
+    return { state: done.state, receipts: [`Ending: ${ending.name} — ${ending.terminalText}`] };
+  }
 
   const stance = detectStanceTreatment(action);
   const target = stance === 'kind' || stance === 'hard' ? stanceTarget(state, action) : null;
@@ -102,6 +158,8 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string): StoryR
     next = { ...next, npcMemories };
     if (after !== before) {
       receipts.push(`Standing: ${target} turned ${DISPOSITION_WORD[after]} (was ${DISPOSITION_WORD[before]}) after you ${stance === 'hard' ? 'refused' : 'helped'}`);
+      next = scheduleRemembered(next, target, stance === 'kind');
+      receipts.push(`Remember: ${target} will remember that.`);
     }
   }
 
