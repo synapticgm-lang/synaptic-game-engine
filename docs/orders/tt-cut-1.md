@@ -18,7 +18,7 @@ The two extra vitest failures are flakes, not new failures:
 - `seed94InfestationClear` "pays 50 XP" — the random-seed flake already recorded in `tt-consolidate.md`.
 - `openingEstablishment` "seals kit cover instead of blocking with a questionnaire" — failed 1 of 3 runs on the stashed original tree; 3 of 3 pass with this change.
 
-No re-pins in the bank. The only test edits beyond the new file are the stamp pins (`2026-10-14q` → `r`, 23 playtest files; 255/255 pass).
+No re-pins in the bank. The only test edits beyond the new file are the stamp pins (`2026-10-14q` → `r`, 24 playtest files; 255/255 pass).
 
 ## What changed (each root through an existing mechanism)
 
