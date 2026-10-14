@@ -102,7 +102,7 @@ describe('alone start: no giver, no blocking talk stage', () => {
     const arc = runArcDirectorBeforeGm(state, 'Follow the road toward the smoke');
     expect(arc.beatCommitted).toBe(true);
     expect(arc.state.quests![0]!.objectives![1]!.completed).toBe(true);
-    expect(arc.systemReceipts.some((r) => /^Quest stage: .*Price: Find a living trail/.test(r))).toBe(true);
+    expect(arc.systemReceipts.some((r) => /^Quest stage: .*Price — Find a living trail/.test(r))).toBe(true);
   });
 
   it('sends no hear-reason mandate to the writer', () => {
@@ -123,7 +123,8 @@ describe('orient receipt and pending hear-reason fact use the live quest', () =>
     const orient = runArcDirectorBeforeGm(play({ ...base, turn: 3, committed: [] }), 'Look around');
     expect(orient.beatId).toBe('sp-beat-orient');
     const receipt = orient.systemReceipts.find((r) => r.startsWith('Quest stage:'))!;
-    expect(receipt).toBe('Quest stage: The Summons’ Price: bearings established');
+    expect(receipt).toMatch(/^Quest stage: The Summons’ Price — \S/);
+    expect(receipt).not.toMatch(/bearings established/);
     expect(orient.mandate).not.toMatch(/Pellane|Circle/i);
     const orientFacts = buildSealedManifest(orient.state, 'Look around', orient).requiredFacts.join('\n');
     expect(orientFacts).toContain('Beat: The Summons’ Price: bearings established');
@@ -146,7 +147,7 @@ describe('orient receipt and pending hear-reason fact use the live quest', () =>
       quest,
     };
     const orient = runArcDirectorBeforeGm(play({ ...base, turn: 3, committed: [] }), 'Look around');
-    expect(orient.systemReceipts).toContain('Quest stage: The Circle’s Price: bearings established');
+    expect(orient.systemReceipts.some((r) => r.startsWith('Quest stage: The Circle’s Price — '))).toBe(true);
     const pending = runArcDirectorBeforeGm(play({ ...base, turn: 5, committed: ['sp-beat-orient'] }), 'Wait');
     const line = pending.mandate.split('\n').find((l) => l.startsWith('ARC PENDING (sp-beat-hear-reason)'))!;
     expect(line).toContain('The Circle’s Price');

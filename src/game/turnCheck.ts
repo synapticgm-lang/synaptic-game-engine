@@ -23,6 +23,7 @@ import {
   basementEstablished,
   chipAddressee,
   chipProblem,
+  ENGINE_COMBAT_CHIP,
   isOpenGround,
   listenersOnEmptyText,
   mentionsName,
@@ -46,6 +47,7 @@ import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
 import { fightRolls } from './engineFactPatterns';
+import { roundCombatChips } from './tabletop/combatChips';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -446,7 +448,7 @@ export function checkQuestPlaces(before: GameState, after: GameState): TurnCheck
 export function checkPlayerTurn(
   before: GameState,
   after: GameState,
-  row: { offeredChoices?: string[]; playerInput?: string; fatePick?: string; gmText?: string }
+  row: { offeredChoices?: string[]; playerInput?: string; fatePick?: string; gmText?: string; previousPick?: string }
 ): TurnCheck {
   const prose = row.gmText ?? '';
   const action = row.playerInput || row.fatePick || '';
@@ -480,12 +482,21 @@ export function checkPlayerTurn(
   }
   return {
     p0,
-    down: [...followed.down, ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, previousPlayerAction(before))],
+    down: [...followed.down, ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, row.previousPick ?? previousPlayerAction(before), fightRoundChips(before, chips))],
     presentNames: peopleHere(before),
   };
 }
 
-/** The chips were offered before this turn's pick, so a repeat is measured against the turn before it. */
+/** A live fight's round choices (tabletop round chips, the death save, the engine's fight moves). */
+function fightRoundChips(state: GameState, chips: string[]): string[] {
+  const round = new Set((roundCombatChips(state) ?? []).map((c) => low(norm(c))));
+  return chips.filter((c) => round.has(low(norm(c))) || (!!state.activeEncounter && ENGINE_COMBAT_CHIP.test(norm(c))));
+}
+
+/**
+ * The chips were offered before this turn's pick, so a repeat is measured against the turn before it. The turn
+ * record's own previous pick (ow.previousPick) wins; the log is the fallback.
+ */
 function previousPlayerAction(before: GameState): string {
   const last = [...(before.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content));
   return norm(last?.content);
@@ -558,11 +569,15 @@ export function checkSystemWindow(state: GameState, chips: string[], prose: stri
   return out;
 }
 
-/** Down for any offered chip that repeats the player's previous action. No previous action, no repeat. */
-export function checkRepeatChips(chips: string[], action: string): TurnCheckFlag[] {
+/**
+ * Down for any offered chip that repeats the player's previous action. No previous action, no repeat. A fight's
+ * round choices and the death save are offered again every round by rule, so they are no repeat.
+ */
+export function checkRepeatChips(chips: string[], action: string, roundChips: string[] = []): TurnCheckFlag[] {
   if (!norm(action)) return [];
+  const round = new Set(roundChips.map((c) => low(norm(c))));
   return chips
-    .filter((c) => chipRepeatsAction(c, action))
+    .filter((c) => !round.has(low(norm(c))) && chipRepeatsAction(c, action))
     .map((c) => ({ kind: 'repeat-chip' as const, detail: `"${norm(c)}" repeats the previous action ("${norm(action).slice(0, 60)}")` }));
 }
 

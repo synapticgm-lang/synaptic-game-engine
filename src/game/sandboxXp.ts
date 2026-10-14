@@ -23,9 +23,8 @@ import { detectStanceTreatment } from './factionStandings';
 import { parsePlayerIntent } from './intentParser';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
-import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, dndXpToNext, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
+import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
 import { realEncounterCr } from './rules/srdMonsters';
-import { milestoneLevelling } from './rules/houseRules';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
 import { objectiveChip } from './choiceRanking';
@@ -231,7 +230,6 @@ export function applySandboxXpAwards(
   const partySize = 1 + (state.companions ?? []).filter((c) => c.type === 'party' && !c.sidekick).length;
   const areaOpts = milestoneAreaOpts(state);
 
-  const milestones: string[] = [];
   const day = Math.floor(Number(state.worldLedger?.clock?.day ?? 0)) || 0;
   const smallDayPrefix = `${SMALL_XP_DAY_KEY}${day}:`;
   const pay = (
@@ -244,7 +242,6 @@ export function applySandboxXpAwards(
   ) => {
     if (hasAward(awardKeys, key)) return;
     awardKeys.push(key);
-    if (LEVEL_MILESTONE.test(key)) milestones.push(label);
     const r = milestoneXp(mode, kind, { level, partySize, cr, count, strictness: state.gmStrictness, ...areaOpts, foeLevel });
     if (r.amount <= 0) {
       if (r.detail === NO_CR_XP_REASON) xpNotes.push(`XP: none (${label} — ${r.detail})`);
@@ -465,16 +462,5 @@ export function applySandboxXpAwards(
   }
 
   void opts.events;
-  if (milestoneLevelling(state)) {
-    // Milestone levelling: no XP; a finished quest, a cleared dungeon or a reached ending is one level.
-    const lvl = state.character.level ?? 1;
-    const up = milestones.length > 0 && lvl < 20;
-    const fill = Math.max(1, dndXpToNext(lvl) - (state.character.xp ?? 0));
-    const notes = up && !xpHidden ? [`Milestone: ${milestones.join('; ')} — level up`] : [];
-    return { xp: up ? fill : 0, notes, awardKeys, places, items, lootNotes, npcRelationships };
-  }
   return { xp, notes: xpHidden ? [] : xpNotes, awardKeys, places, items, lootNotes, npcRelationships };
 }
-
-/** Award keys that are a level under milestone levelling. */
-const LEVEL_MILESTONE = /^(?:quest-complete|dungeon-clear|spine-ending):/;

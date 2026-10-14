@@ -84,9 +84,15 @@ describe('s72 G — facing a road meeting', () => {
   });
 });
 
+/** SRD escape is a contest: the PC's d20 comes up 20 and the foe's 1 (a flat 0.99 is a 20–20 tie, which keeps the fight). */
+function pcWinsContest(): () => number {
+  let n = 0;
+  return () => (n++ % 2 === 1 ? 0.99 : 0);
+}
+
 describe('s72 G — a successful flee slips past the meeting', () => {
   it('flee from the thugs in the lane: escaped, no "dealt with", no T12 hook, no victory XP, then Walk on arrives', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    vi.spyOn(Math, 'random').mockImplementation(pcWinsContest());
     const start = { ...thugsOnStretch(), turn: 10 };
     const xpBefore = start.character.xp;
     const fled = playTurn(start, 'Try to flee');
@@ -112,7 +118,7 @@ describe('s72 G — a successful flee slips past the meeting', () => {
   });
 
   it('flee from a live road fight (T11 face, T12 flee) marks the meeting escaped, not dealt with', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    vi.spyOn(Math, 'random').mockImplementation(pcWinsContest());
     const live = commitTravel({ ...thugsOnStretch(), turn: 11 }, 'Face the thugs').state;
     expect(live.activeEncounter?.name).toBe('the thugs');
     const fled = playTurn(live, 'Try to flee');

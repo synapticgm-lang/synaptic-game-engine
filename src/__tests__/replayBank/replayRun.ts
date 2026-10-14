@@ -141,7 +141,8 @@ export async function replayRun(runFolder: string, uptoTurn: number): Promise<Re
       const p = turnProgress(before, state, [...(tel.arcStatusReceipts ?? []), ...(tel.systemLog ?? [])]);
       tel.progress = p.progressed;
       tel.progressReasons = p.reasons;
-      const turnCheck = tel.error ? undefined : checkPlayerTurn(before, state, tel);
+      const prev = steps[steps.length - 1]?.telemetry;
+      const turnCheck = tel.error ? undefined : checkPlayerTurn(before, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
       steps.push({ before, after: state, telemetry: tel, recorded: row, writerPackets: writerQueue.payloads, turnCheck });
     }
     return steps;

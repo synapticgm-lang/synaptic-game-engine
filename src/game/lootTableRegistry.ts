@@ -22,9 +22,10 @@ import { difficultyRow } from './difficultyRules';
 import { createHashRng } from './seededRng';
 import { weaponCategory, type WeaponCategory } from './checkRules';
 import { resolveLocalAreaLevel, type AreaLevelSource } from './placeAuthority';
-import { DND_DEFAULT_CR } from './xpRules';
 import lootTablesData from './data/encounters/D9_loot_tables.json';
 import { magicItem, magicItemsAtRarity } from './rules/magicItems';
+import { SRD_MONSTERS } from './rules/srdMonsters';
+import { srdGearRow } from './tabletop/characterBuild';
 
 export interface LootEntry {
   id: string;
@@ -487,49 +488,13 @@ function rollDice(n: number, sides: number, rng: () => number): { rolls: number[
   return { rolls, sum: rolls.reduce((s, r) => s + r, 0) };
 }
 
-/** A CR as a number; no CR on the card means the same default CR the XP rules pay (xpRules). */
-function crNumber(cr: string | number | null | undefined): number {
-  const parse = (v: string | number): number | null => {
-    if (typeof v === 'number') return Number.isFinite(v) ? v : null;
-    const s = v.trim();
-    const m = s.match(/^(\d+)\s*\/\s*(\d+)$/);
-    if (m) return Number(m[1]) / Math.max(1, Number(m[2]));
-    const n = s ? Number(s) : NaN;
-    return Number.isFinite(n) ? n : null;
-  };
-  return (cr != null ? parse(cr) : null) ?? parse(DND_DEFAULT_CR)!;
-}
-
-/** SynapticGM treasure tables (original): CR bands 0–3 / 4–9 / 10–15 / 16+. */
-function crBand(cr: number): { label: string; band: 0 | 1 | 2 | 3 } {
-  if (cr <= 3) return { label: 'CR 0–3', band: 0 };
-  if (cr <= 9) return { label: 'CR 4–9', band: 1 };
-  if (cr <= 15) return { label: 'CR 10–15', band: 2 };
-  return { label: 'CR 16+', band: 3 };
-}
-
-/** SynapticGM coin purse (original), one roll per creature: [dice, sides, flat bonus, multiplier], gp. */
-export const SGM_COIN_PURSE: ReadonlyArray<readonly [number, number, number, number]> = [
-  [2, 8, 2, 1],
-  [4, 10, 0, 4],
-  [5, 6, 0, 60],
-  [4, 10, 0, 400],
-];
-
-/** SynapticGM treasure cache (original): coins [dice, sides, multiplier] gp + items [dice, sides, signed modifier]. */
-export const SGM_TREASURE_CACHE: ReadonlyArray<{ coins: readonly [number, number, number]; items: readonly [number, number, number] }> = [
-  { coins: [4, 6, 30], items: [1, 3, -1] },
-  { coins: [5, 10, 80], items: [2, 2, -1] },
-  { coins: [6, 8, 700], items: [1, 3, 1] },
-  { coins: [5, 12, 4000], items: [1, 4, 1] },
-];
-
-/** SynapticGM item rarity by character level (original), d20. */
-export function sgmItemRarity(d20: number, level: number): Rarity {
-  if (level <= 4) return d20 <= 10 ? 'Common' : d20 <= 17 ? 'Uncommon' : 'Rare';
-  if (level <= 10) return d20 <= 6 ? 'Common' : d20 <= 14 ? 'Uncommon' : d20 <= 19 ? 'Rare' : 'Epic';
-  return d20 <= 3 ? 'Common' : d20 <= 10 ? 'Uncommon' : d20 <= 17 ? 'Rare' : 'Epic';
-}
+/**
+ * Tabletop treasure, SRD 5.2.1 as written. The SRD has no treasure-by-CR tables, so nothing is rolled:
+ * a creature drops the Gear on its SRD stat block, and a cache holds one Common magic item, priced from the
+ * SRD "Magic Item Rarities and Values" table (Common 100 GP, halved for a consumable).
+ */
+export const SRD_CACHE_ITEM = 'Potion of Healing';
+export const SRD_COMMON_VALUE_GP = 100;
 
 export interface LootRollResult {
   profile: LootProfile;
@@ -624,6 +589,8 @@ export function rollLoot(input: {
   /** Loot tier 1–4 (defaults to the local area level via treasureScale). */
   tier?: number;
   cr?: string | number | null;
+  /** Tabletop: the defeated creature, whose SRD stat block Gear is its drop. */
+  foeName?: string;
   firstKill?: boolean;
   rng?: () => number;
 }): LootRollResult {
@@ -664,47 +631,22 @@ export function rollLoot(input: {
   };
 
   if (dnd) {
-    const cr = crNumber(input.cr);
-    const band = crBand(cr);
-    const signed = (m: number) => (m > 0 ? `+${m}` : m < 0 ? `−${-m}` : '');
+    const provenance = `Engine loot (${LOOT_PROFILES[profile].label})`;
     if (row.dndTable === 'purse') {
-      const [n, sides, bonus, mult] = SGM_COIN_PURSE[band.band]!;
-      const times = profile === 'miniBoss' ? 2 : 1;
-      let gold = 0;
-      for (let t = 0; t < times; t++) {
-        const r = rollDice(n, sides, rng);
-        const amount = (r.sum + bonus) * mult;
-        gold += amount;
-        dice.push(
-          `Coin purse ${band.label}: ${n}d${sides}${signed(bonus)} (${r.rolls.join('+')})${signed(bonus)}${mult > 1 ? `×${mult}` : ''} = ${amount} gp`
-        );
-      }
-      if (row.floor && profile === 'rareSpawn') {
-        const d = rollDie(20, rng);
-        const rolled = sgmItemRarity(d, level);
-        const rarity = rarityIdx(rolled) < rarityIdx(row.floor) ? row.floor : rolled;
-        push(rarity);
-        dice.push(`d20 = ${d} → ${rarity}: ${items[items.length - 1]!.name}`);
-      }
-      return result({ gold, coin: 'gp', displayLines: [...dice] });
+      const block = input.foeName ? SRD_MONSTERS.find((b) => b.match.test(input.foeName!)) : undefined;
+      const gear = block?.gear ?? [];
+      gear.forEach((name, i) => {
+        const row = srdGearRow(name, 1, `loot-${input.seed}-${i}`, provenance);
+        items.push(row);
+        categories.push(row.itemType === 'weapon' ? (/bow|crossbow/i.test(name) ? 'bow' : 'blade') : 'armour');
+      });
+      if (gear.length) dice.push(`Gear (SRD stat block): ${gear.join(', ')}`);
+      return result({ gold: 0, coin: 'gp', displayLines: [...dice] });
     }
-    const h = SGM_TREASURE_CACHE[band.band]!;
-    const c = rollDice(h.coins[0], h.coins[1], rng);
-    const gold = c.sum * h.coins[2];
-    const ir = rollDice(h.items[0], h.items[1], rng);
-    const extra = isBoss ? diff.lootExtraBossRolls : 0;
-    const count = Math.max(0, ir.sum + h.items[2]) + extra;
-    dice.push(`Treasure cache ${band.label}: ${h.coins[0]}d${h.coins[1]} (${c.rolls.join('+')})×${h.coins[2]} = ${gold} gp`);
-    dice.push(
-      `Items: ${h.items[0]}d${h.items[1]}${signed(h.items[2])} (${ir.rolls.join('+')})${signed(h.items[2])}${extra ? ` +${extra} (${diff.label})` : ''} = ${count}`
-    );
-    for (let i = 0; i < count; i++) {
-      const d = rollDie(20, rng);
-      const rarity = sgmItemRarity(d, level);
-      push(rarity);
-      dice.push(`d20 = ${d} → ${rarity}: ${items[items.length - 1]!.name}`);
-    }
-    return result({ gold, coin: 'gp', displayLines: [...dice] });
+    items.push(magicItem(SRD_CACHE_ITEM, `loot-${input.seed}-0`, provenance));
+    categories.push('trinket');
+    dice.push(`Treasure: ${SRD_CACHE_ITEM} (SRD Common magic item, ${SRD_COMMON_VALUE_GP / 2} GP as a consumable)`);
+    return result({ gold: 0, coin: 'gp', displayLines: [...dice] });
   }
 
   // LitRPG / RPG / PYOA — profile rolls on the existing tier curves with pity.

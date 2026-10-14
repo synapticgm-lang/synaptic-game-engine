@@ -8,6 +8,7 @@ import type { GameState } from './types';
 import {
   compileRefEnum,
   formatRefEnumForWriter,
+  handedWriterText,
   isDroughtStubProse,
   lastResortStoryBody,
   tokenUseMatchesClass,
@@ -409,18 +410,15 @@ function countValue(phrase: string): number {
 }
 
 /**
- * Everything a count may come from this turn: the sheet, the info sheet, the engine result, the REF ENUM and
- * mention list, and the page so far. Lowercased.
+ * Everything a count may come from this turn: the sheet, the writer's handed facts
+ * (`completedEventPacket.handedWriterText`), the REF ENUM, and the page so far. Lowercased.
  */
 export function handedCountText(state: GameState, packet?: CompletedEventPacket): string {
   const page = (state.log ?? []).filter((e) => e.role === 'gm').map((e) => String(e.content ?? ''));
   const hasSheet = Array.isArray(state.inventory) && Array.isArray(state.character?.conditions);
   return [
     hasSheet ? buildGroundTruthLedger(state, { compact: true }) : '',
-    packet?.infoSheet ?? '',
-    packet?.engineResult ?? '',
-    ...(packet?.ledgerChanges ?? []),
-    ...(packet?.allowlist ?? []),
+    packet ? handedWriterText(state, packet) : '',
     ...refEnumOf(state, packet).map((r) => r.display),
     clockMark(state),
     PAGE_MARK,
@@ -455,13 +453,15 @@ export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean
   const at = facts.indexOf(CLOCK_MARK);
   if (at < 0) return false;
   const slot = facts.slice(at + CLOCK_MARK.length).split(/\s/)[0]!;
+  // The engine result states the time it moved the clock to ("(+8h, now dawn)"); that is handed too.
+  const engineSlots = [...facts.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/g)].map((m) => m[1]!);
   const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
   for (const [slots, re] of DAY_PART_WORDS) {
-    if (slots.split(' ').includes(slot)) continue;
+    if (slots.split(' ').some((s) => s === slot || engineSlots.includes(s))) continue;
     for (const m of narration.matchAll(re)) {
       const before = narration.slice(0, m.index).split(/\s+/).filter(Boolean).slice(-2).join(' ').toLowerCase();
       const after = narration.slice((m.index ?? 0) + m[0].length).trim().split(/\s+/)[0]?.toLowerCase() ?? '';
-      if (/\b(?:this|that|last|yesterday|tomorrow|since|every|each|earlier|one|all|before|until|by)\b/.test(before)) continue;
+      if (/\b(?:this|that|last|yesterday|tomorrow|since|every|each|earlier|one|all|whole|before|until|by)\b/.test(before)) continue;
       if (/^(?:the|when|that|before|after|they|he|she|we|i|you|it|jax|of|'s|’s)$/.test(after)) continue;
       return true;
     }
@@ -565,6 +565,10 @@ const FOUND_THING =
 export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   const [facts, page = ''] = handedText.split(PAGE_MARK);
   const narration = (text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' ').replace(/["“][^"”]*["”]/g, ' ');
+  // A line that names what the engine result says was found narrates that find, in whatever holds it.
+  const engineResult = facts!.split('\n').filter((l) => l.startsWith('engine result:')).join('\n');
+  const engineFinds = [...engineResult.matchAll(/\bfound:?\s+(?:\d+\s+)?(?:an?\s+|the\s+|some\s+)?([a-z][a-z'-]{2,})/g)].map((m) => m[1]!.replace(/e?s$/, ''));
+  if (engineFinds.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i').test(narration))) return false;
   for (const m of narration.matchAll(FOUND_THING)) {
     const head = m[1]!.trim().split(/\s+/).pop()!.toLowerCase().replace(/'s$/, '');
     if (head.length < 3) continue;
@@ -1161,8 +1165,21 @@ export function handedProperNames(state: GameState, packet?: CompletedEventPacke
     ...writerFacts(state).quests.map((q) => q.name),
     ...handedRoleNouns(packet),
     ...presentRoleTitles(state),
+    ...(packet ? handedTextNames(handedWriterText(state, packet)) : []),
   ];
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1 && !unheld.has(n.trim())).map((n) => n.trim()))];
+}
+
+/**
+ * Capitalised names inside the writer's handed facts ("His daughter Lina is missing", "PLAYER: cast Mage Armor").
+ * Only a capital mid-sentence is a name; a label or a sentence's first word is not.
+ */
+function handedTextNames(text: string): string[] {
+  const out: string[] = [];
+  for (const m of text.matchAll(/(?<=[a-z0-9,'’)]\s+)([A-Z][a-z'’-]+(?:\s+[A-Z][a-z'’-]+){0,2})(?:['’]s)?\b/g)) {
+    out.push(m[1]!.replace(/['’]s$/, ''));
+  }
+  return out;
 }
 
 function missingFns(lines: TokenLine[]): LineFn[] {

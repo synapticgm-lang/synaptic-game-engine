@@ -644,7 +644,9 @@ function applyBeatEffects(
       ...next,
       quests: heardStep ? next.quests ?? [] : completeQuestObjective(next.quests ?? [], contract.questId, contract.questObjectiveIndex),
     };
-    receipts.push(`Quest stage: ${contract.summary}`);
+    // The beat's summary is internal; STATUS names only a step that really ticked, by the quest's own words.
+    const quest = (next.quests ?? []).find((q) => q.id === contract.questId);
+    if (step && !step.completed && !heardStep && quest) receipts.push(`Quest stage: ${quest.name} — ${step.description}`);
     extras.questStage = contract.summary;
   }
 
@@ -945,7 +947,8 @@ export function runArcDirectorBeforeGm(
     });
     if (socialXp.finalXp > 0) {
       working = awardSocialXp(working, socialXp);
-      systemReceipts.push(`Social track: +${socialXp.finalXp} (${social.kind})`);
+      // The social track is not an SRD number: tabletop STATUS never shows it.
+      if (working.engineMode !== 'dnd') systemReceipts.push(`Social track: +${socialXp.finalXp} (${social.kind})`);
     }
   }
 

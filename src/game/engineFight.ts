@@ -14,7 +14,6 @@ import { profileForEncounter } from './lootTableRegistry';
 import { milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare, type MilestoneKind } from './xpRules';
 import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
-import { milestoneLevelling } from './rules/houseRules';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, weaponCategory } from './checkRules';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
@@ -27,7 +26,8 @@ import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
 import { isFightCast } from './tabletop/spellCasting';
 import { afterFightCompanion, combatCompanion } from './rules/companions';
-import { realEncounterCr } from './rules/srdMonsters';
+import { abilityModOf, realEncounterCr, statBlockForEncounter } from './rules/srdMonsters';
+import { deriveTabletopSheet } from './tabletop/characterBuild';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -79,8 +79,6 @@ export function payEncounterXp(
     strictness: state.gmStrictness,
     ...milestoneAreaOpts(state),
   });
-  // Milestone levelling pays no fight XP (the key is still marked so it never pays later).
-  if (milestoneLevelling(state)) return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: [] };
   if (r.amount <= 0) {
     const why = r.detail && !hidesPart(state.systemHousing, 'experience') ? [`XP: none (${label} — ${r.detail})`] : [];
     return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: why };
@@ -139,6 +137,44 @@ export function tabletopRoundLines(result: CombatResult, foe: string): string[] 
   return lines;
 }
 
+function sheetSkillTotal(state: GameState, skill: 'Acrobatics' | 'Persuasion', ability: 'DEX' | 'CHA'): number {
+  const row = deriveTabletopSheet(state)?.skills.find((k) => k.skill === skill);
+  return row ? row.total : abilityModOf(state.character.attributes?.[ability] ?? 10);
+}
+
+const signedMod = (m: number) => `${m >= 0 ? '+' : '−'} ${Math.abs(m)}`;
+
+/**
+ * Tabletop break-away, SRD 5.2.1 as written. Escape: a Dexterity (Acrobatics) contest with the foe's Dexterity
+ * check; a tie leaves things as they were. Parley: the Influence action, a Charisma (Persuasion) check against
+ * DC 15 (Medium) or the foe's Intelligence score, whichever is higher.
+ */
+export function srdBreakAwayCheck(
+  state: GameState,
+  enc: ActiveEncounter,
+  flee: boolean,
+  rng: () => number = Math.random
+): { ok: boolean; line: string } {
+  const d20 = () => Math.floor(rng() * 20) + 1;
+  const block = statBlockForEncounter(enc);
+  if (flee) {
+    const mod = sheetSkillTotal(state, 'Acrobatics', 'DEX');
+    const foeMod = abilityModOf(block.scores.DEX);
+    const roll = d20();
+    const foeRoll = d20();
+    const ok = roll + mod > foeRoll + foeMod;
+    return {
+      ok,
+      line: `Flee check: d20 ${roll} ${signedMod(mod)} = ${roll + mod} vs ${enc.name} d20 ${foeRoll} ${signedMod(foeMod)} = ${foeRoll + foeMod} — ${ok ? 'success' : 'failure'}`,
+    };
+  }
+  const mod = sheetSkillTotal(state, 'Persuasion', 'CHA');
+  const dc = Math.max(15, block.scores.INT);
+  const roll = d20();
+  const ok = roll + mod >= dc;
+  return { ok, line: `Parley check: d20 ${roll} ${signedMod(mod)} vs DC ${dc} — ${ok ? 'success' : 'failure'}` };
+}
+
 /** Tabletop: a forced fight's failed flee/parley is part of the outcome the story tells. */
 function forcedFightOpener(flee: boolean, foe: string): string {
   return flee
@@ -183,15 +219,22 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const receipts: string[] = [];
 
   if (flee || parley) {
-    const attrs = working.character.attributes;
-    const score = flee ? attrs?.DEX ?? 12 : attrs?.CHA ?? 10;
-    const mod = Math.floor((score - 10) / 2);
-    const dc = flee ? 12 : 13;
-    const roll = Math.floor(Math.random() * 20) + 1;
-    const ok = roll + mod >= dc;
-    receipts.push(
-      `${flee ? 'Flee' : 'Parley'} check: d20 ${roll} ${mod >= 0 ? '+' : '−'} ${Math.abs(mod)} vs DC ${dc} — ${ok ? 'success' : 'failure'}`
-    );
+    let ok: boolean;
+    if (state.engineMode === 'dnd') {
+      const check = srdBreakAwayCheck(working, enc, flee);
+      ok = check.ok;
+      receipts.push(check.line);
+    } else {
+      const attrs = working.character.attributes;
+      const score = flee ? attrs?.DEX ?? 12 : attrs?.CHA ?? 10;
+      const mod = Math.floor((score - 10) / 2);
+      const dc = flee ? 12 : 13;
+      const roll = Math.floor(Math.random() * 20) + 1;
+      ok = roll + mod >= dc;
+      receipts.push(
+        `${flee ? 'Flee' : 'Parley'} check: d20 ${roll} ${mod >= 0 ? '+' : '−'} ${Math.abs(mod)} vs DC ${dc} — ${ok ? 'success' : 'failure'}`
+      );
+    }
     if (ok) {
       const tick = tickEncounterTerminal(working, input, flee ? { fleeSucceeded: true } : { parleySucceeded: true });
       let next = tick.state;

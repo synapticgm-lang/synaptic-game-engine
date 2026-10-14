@@ -110,6 +110,7 @@ export function rollVictoryLoot(
     state,
     seed: `${state.seed || 'seed'}:${state.turn}:${enemy.name}`,
     cr: enemy.cr ?? null,
+    foeName: enemy.name,
     firstKill,
   });
   return {

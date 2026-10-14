@@ -11,7 +11,15 @@ import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBod
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
-import { classifyBeatCommit, ignoresTerminalFight, sentenceGateProblem, sentenceGateProblems, TERMINAL_FIGHT_PROBLEM } from './beatCommitGate';
+import {
+  classifyBeatCommit,
+  ignoresTerminalFight,
+  sentenceGateProblem,
+  sentenceGateProblems,
+  TERMINAL_FIGHT_PROBLEM,
+  withMissingFightFacts,
+} from './beatCommitGate';
+import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
 import { dropsFightRoll, RECORD_READOUT } from './engineFactGate';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
@@ -34,6 +42,7 @@ import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { writerEngineResult } from './travelJourney';
+import { isGiverName } from './questGiver';
 
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 
@@ -202,7 +211,7 @@ export async function runWriterTurnWithFightRetry(opts: {
   rewrite: (problem: string) => Promise<string>;
   /** Lap 13 — sends only the repair request (no packet); the reply is the rewritten sentence(s). */
   repair?: (request: string) => Promise<string>;
-}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
   const turn = await runWriterTurnFightOnly(opts);
   if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
   const done = await repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
@@ -281,7 +290,8 @@ const sameName = (a: string, b: string) => {
 
 /**
  * tt-fix-4 — what a person here can be quoted saying without inventing anything: their authored topic lines,
- * the opening card's want when they are the card's cast, and the motive on their engine sheet.
+ * the opening card's want when they are the card's cast, their bible lore card, and the text of the quest they
+ * give or take part in. A sheet's archetype motive is a writer note, never a line to quote.
  */
 export function backedAnswerFacts(state: GameState, name: string): string[] {
   const facts = authoredTopicsFor(name).map((t) => t.line);
@@ -289,8 +299,21 @@ export function backedAnswerFacts(state: GameState, name: string): string[] {
   const memory = (state.npcMemories ?? []).find(
     (m) => sameName(m.npcName, name) || (m.aliases ?? []).some((a) => sameName(a, name))
   );
-  if (memory?.sheet?.motive) facts.push(`wants ${memory.sheet.motive.toLowerCase()}`);
-  return facts.map((f) => f.replace(/\s+/g, ' ').trim()).filter((f) => f.length > 3);
+  const names = [name, ...(memory ? [memory.npcName, ...(memory.aliases ?? [])] : [])].filter(Boolean);
+  const isThem = (n?: string) => !!n && names.some((x) => isGiverName(x, n));
+  for (const card of state.lorebook ?? []) {
+    if (card.type === 'npc' && (isThem(card.name) || (card.keywords ?? []).some(isThem))) {
+      facts.push(...splitProseSentences(card.summary ?? '').slice(0, 4));
+    }
+  }
+  for (const q of state.quests ?? []) {
+    if (q.status !== 'active') continue;
+    const takesPart = isThem(q.giver) || (q.objectives ?? []).some((o) => (o.people ?? []).some(isThem));
+    if (!takesPart) continue;
+    facts.push(...splitProseSentences(q.description ?? '').slice(0, 3));
+    facts.push(...(q.objectives ?? []).filter((o) => !o.completed).map((o) => o.description));
+  }
+  return [...new Set(facts.map((f) => f.replace(/\s+/g, ' ').trim()).filter((f) => f.length > 3))];
 }
 
 const FACT_STOP = new Set(['that', 'this', 'with', 'from', 'they', 'them', 'their', 'what', 'want', 'wants', 'have', 'here', 'there', 'were', 'will', 'your', 'about', 'into', 'just']);
@@ -339,9 +362,9 @@ export function answerRepairRequest(
  * something new and passes the commit gate. Otherwise nothing is added and the miss is logged as a bug.
  */
 export async function repairMissingAnswer(
-  turn: WriterTurnResult & { fightRetry?: 'retried' | 'painted' },
+  turn: WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string },
   opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
-): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
   const { check, packet } = opts;
   if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput)) return turn;
   const everyone = answerersHere(check, packet);
@@ -449,9 +472,9 @@ function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEvent
  * rest of the draft stays. A rewrite that fails leaves the sentence off the page and is logged as a bug.
  */
 export async function repairRejectedSentences(
-  turn: WriterTurnResult & { fightRetry?: 'retried' | 'painted' },
+  turn: WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string },
   opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
-): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
   const { check, packet } = opts;
   // The draft as a whole is what the gate rejects; a sentence that only reads wrong out of context is not.
   const wholeProblems = sentenceGateProblems(check.state, turn.prose, check.playerInput);
@@ -518,15 +541,27 @@ async function runWriterTurnFightOnly(opts: {
   packet: CompletedEventPacket;
   check: DraftCheck;
   rewrite: (problem: string) => Promise<string>;
-}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
+}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
   const first = runWriterTurn(opts);
   if (first.outcome !== 'accepted' || !ignoresTerminalFight(opts.check.state, first.prose)) return first;
   const head = dropsFightRoll(opts.check.state, first.prose) ? DROPPED_ROLL_PROBLEM : TERMINAL_FIGHT_PROBLEM;
   const problem = `${head} ${opts.check.engineFact}`.trim();
   const raw = await opts.rewrite(problem).catch(() => '');
   const second = runWriterTurn({ ...opts, firstRaw: raw });
+  const fightDraft = raw.trim() ? raw.trim().slice(0, 1200) : undefined;
   if (second.outcome === 'accepted' && !ignoresTerminalFight(opts.check.state, second.prose)) {
-    return { ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried' };
+    return { ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried', fightDraft };
+  }
+  // The writer's lines stay; the engine adds a plain sentence for each settled fight fact still missing.
+  const base = second.outcome === 'accepted' && second.prose.trim() ? second : first;
+  if (base.prose.trim()) {
+    const state = opts.check.state;
+    const pov = pcPov(opts.packet.pc ?? state.character);
+    const prose = withMissingFightFacts(state, base.prose, {
+      who: pcStorySubject(pov),
+      him: narratesPcInThirdPerson(pov) ? pov.him : 'you',
+    });
+    return { ...base, prose, remaining: writerDraftProblems(prose, opts.check), fightRetry: 'added', fightDraft };
   }
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
   return {
@@ -537,6 +572,7 @@ async function runWriterTurnFightOnly(opts: {
     speech: undefined,
     remaining: writerDraftProblems(painted.prose, opts.check),
     fightRetry: 'painted',
+    fightDraft,
   };
 }
 

@@ -4,6 +4,7 @@ import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { excludedPadFamilies } from './padUniverse';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
+import { hasOpenAsk } from './questGiver';
 
 /**
  * Opportunity density: non-lethal beats should offer stance, not three look-arounds.
@@ -159,14 +160,16 @@ function canWalkAway(state: GameState, storyProse: string): boolean {
   return !state.activeDungeon;
 }
 
-/** With nobody named here and nothing on offer, there is nobody to help or refuse: those stances return ''. */
+/** Help and refuse answer an open ask (`hasOpenAsk`, or the opening offer); with none, those stances return ''. */
 export function stanceFallbacks(state: GameState): Record<Exclude<StanceBucket, 'lookaround' | 'combat' | 'other'>, string> {
-  const person = namedPeople(state)[0];
+  const named = namedPeople(state);
+  const person = named[0];
+  const asker = named.find((p) => hasOpenAsk(state, p));
   const offered = !!openOpeningOffer(state);
   const exit = state.locationSheet?.exits?.[0]?.label;
   return {
-    kind: person ? `Offer ${person} honest help` : offered ? 'Offer help, honestly' : '',
-    hard: person ? `Refuse ${person} and keep your own counsel` : offered ? 'Refuse and keep your own counsel' : '',
+    kind: asker ? `Offer ${asker} honest help` : offered ? 'Offer help, honestly' : '',
+    hard: asker ? `Refuse ${asker} and keep your own counsel` : offered ? 'Refuse and keep your own counsel' : '',
     curious: person ? `Talk with ${person}` : 'Ask what is going on',
     walkaway: exit ? `Leave toward ${exit}` : 'Walk away / go another direction',
   };

@@ -11,11 +11,12 @@ import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabe
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { formatInfoSheet } from './infoSheet';
+import { formatWriterInfoLayer } from './writerInfoLayer';
 import { splitProseSentences } from './proseSentences';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import { hubsForBibleId, matchHub, outdoorHubTravelChoices, parseTravelDestination, placeCardFor } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
-import { isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, writerEngineResult } from './travelJourney';
+import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, writerEngineResult } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { TALK_VERB } from './intentParser';
 import { emptySceneFacts } from './sceneFacts';
@@ -1030,6 +1031,29 @@ export function buildCompletedEventPacket(
     movement,
     destinationRef,
   };
+}
+
+/**
+ * The facts the writer was handed this turn, as one text: WORLD FACTS (the info layer with its NPC rows), the
+ * INFO SHEET, the ENGINE RESULT, the ledger changes, PLAYER and the mention list. The writer prompt shows these
+ * pieces; the line gate (`tokenProse.handedCountText` / `handedProperNames`) reads this same text.
+ */
+export function handedWriterText(state: GameState, packet: Partial<CompletedEventPacket>): string {
+  const player = packet.playerAction && packet.playerAction !== '(opening)' ? packet.playerAction : '';
+  let world = '';
+  try {
+    world = formatWriterInfoLayer(state, [], player);
+  } catch {
+    world = '';
+  }
+  return [
+    world,
+    packet.infoSheet ?? '',
+    ...(packet.engineResult ?? '').split('\n').filter((l) => l.trim()).map((l) => `ENGINE RESULT: ${l.trim()}`),
+    ...(packet.ledgerChanges ?? []),
+    player ? `PLAYER: ${player}` : '',
+    ...(packet.allowlist ?? []),
+  ].filter(Boolean).join('\n');
 }
 
 /** Same talk family as choiceRanking.actionFamily (inspect / wait / look win there first). */
@@ -2152,6 +2176,20 @@ function pickAdvanceVariant(variants: string[], recent: string[], salt: number):
  * Last-resort / stitch advance: interesting + simple 4–6 short sentences,
  * or a short spoken HERE line. Never the name telegram. Never last GM.
  */
+/** The run's point of view for the last-resort bank, as `terminalFightBeat` takes it: "Jax … them" or "You … you". */
+function lastResortPov(state: GameState, packet?: CompletedEventPacket) {
+  const pov = pcPov(packet?.pc ?? state.character);
+  const S = pcStorySubject(pov);
+  const third = narratesPcInThirdPerson(pov);
+  const first = S === 'I';
+  return {
+    S,
+    s: third ? S : first ? 'I' : 'you',
+    P: third ? pov.his : first ? 'my' : 'your',
+    was: S === 'You' ? 'were' : 'was',
+  };
+}
+
 function topicAdvancePool(
   state: GameState,
   packet?: CompletedEventPacket,
@@ -2161,6 +2199,7 @@ function topicAdvancePool(
   const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const here = herePhrase(where);
   const head = castHead(state, packet);
+  const pv = lastResortPov(state, packet);
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')
     .slice(-10)
@@ -2172,28 +2211,28 @@ function topicAdvancePool(
   const people = facts.present.length ? listNames(facts.present) : (state.turn ?? 0) <= 3 ? head : '';
   const peopleLine = people
     ? `${people} ${facts.present.length > 1 || /\band\b/.test(people) ? 'were' : 'was'} still there.`
-    : 'Nobody you knew by name stood close.';
+    : `Nobody ${pv.s} knew by name stood close.`;
   const groundLine = NO_DESCRIPTION_LOOK_LINE;
   // 28f — the place / presence line is said once per arrival or change, not every stitch.
   const placeOnce = onceSaid(state, desc || groundLine);
   const peopleOnce = onceSaid(state, peopleLine);
   const look = [
-    `You looked over ${placeName}. ${placeOnce} ${peopleOnce}`,
-    `${capFirst(placeName)} held your eye a moment. ${placeOnce} ${peopleOnce}`,
+    `${pv.S} looked over ${placeName}. ${placeOnce} ${peopleOnce}`,
+    `${capFirst(placeName)} held ${pv.P} eye a moment. ${placeOnce} ${peopleOnce}`,
   ];
   const wait = [
-    `You held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${placeOnce}`,
+    `${pv.S} held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${placeOnce}`,
   ];
   const exitsPool = [
-    `You checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleOnce}`,
+    `${pv.S} checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleOnce}`,
   ];
   const wantAgain = [
-    `You are still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They wait on what you do next. The room does not add a second speech.`,
+    `${pv.S} ${pv.was} still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They waited on what ${pv.s} did next. The room did not add a second speech.`,
     `At ${here} the ask was already answered. ${head ? `${head} did not say it twice.` : 'They did not say it twice.'} The room stayed the same.`,
-    `You asked again at ${here}. ${head ? `${head} had already given the want.` : 'The want had already been given.'} They stay in sight. Nothing new was added.`,
+    `${pv.S} asked again at ${here}. ${head ? `${head} had already given the want.` : 'The want had already been given.'} They stayed in sight. Nothing new was added.`,
   ];
   const whoAgain = [
-    `You are still at ${here}. ${head ? `${head} already answered who they are.` : 'They already answered who they are.'} They wait on what you do next. The room does not add a second name.`,
+    `${pv.S} ${pv.was} still at ${here}. ${head ? `${head} already answered who they were.` : 'They already answered who they were.'} They waited on what ${pv.s} did next. The room did not add a second name.`,
     `At ${here} the name-ask was already answered. ${head ? `${head} did not introduce twice.` : 'They did not introduce twice.'}`,
   ];
   const graphHit = matchGraphExitPad(state.activeDungeon, act);
@@ -2249,25 +2288,22 @@ function topicAdvancePool(
     : '';
   const go = arrived
     ? [
-      `You reached ${arriveHere}. ${arriveDesc} ${behindLine}`,
-      `You came into ${arriveHere}. ${arriveDesc} ${behindLine}`,
+      `${pv.S} reached ${arriveHere}. ${arriveDesc} ${behindLine}`,
+      `${pv.S} came into ${arriveHere}. ${arriveDesc} ${behindLine}`,
       `The way gave onto ${arriveHere}. ${arriveDesc} ${behindLine}`,
     ]
     : [
-      `You set out for ${dest} from ${setOutFrom}. The trail is open under you.`,
-      `You start toward ${dest} from ${setOutFrom}. The road remembers the next step.`,
-      `You leave ${setOutFrom} and keep on toward ${dest}.`,
+      `${pv.S} set out for ${dest} from ${setOutFrom}. The trail lay open ahead.`,
+      `${pv.S} started toward ${dest} from ${setOutFrom}.`,
+      `${pv.S} left ${setOutFrom} and kept on toward ${dest}.`,
     ];
   const spokenWant = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
   const spokenWho = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
-  const wantFirst = `You are at ${here}. ${spokenWant} ${head ? `${head} stays where you can see them.` : 'They stay in the room.'}`;
-  const whoFirst = `You are at ${here}. ${spokenWho} They stay in the room.`;
-  const keepVerb = head && (/\band\b/.test(head) || /\b(people|engineers|guards|chirurgeons|priests|handlers)\b/i.test(head))
-    ? 'keep'
-    : 'keeps';
+  const wantFirst = `${pv.S} ${pv.was} at ${here}. ${spokenWant} ${head ? `${head} stayed in sight.` : 'They stayed in the room.'}`;
+  const whoFirst = `${pv.S} ${pv.was} at ${here}. ${spokenWho} They stayed in the room.`;
   const accept = [
-    `You take the work at ${here}. ${head ? `${head} ${keepVerb} the offered kit where you can take it.` : 'The offered kit stays in reach.'} The deal stays in the room.`,
-    `You say yes at ${here}. ${spokenWant} The offered kit is in reach.`,
+    `${pv.S} took the work at ${here}. ${head ? `${head} kept the offered kit within reach.` : 'The offered kit stayed in reach.'} The deal stood.`,
+    `${pv.S} said yes at ${here}. ${spokenWant} The offered kit was in reach.`,
   ];
   let pool = look;
   const fightVerb = packet?.verb === 'attacked' || packet?.verb === 'fled' || packet?.verb === 'parleyed';
@@ -2384,10 +2420,12 @@ export function lastResortStoryBody(
     const pov = pcPov(packet?.pc ?? state.character);
     const third = narratesPcInThirdPerson(pov);
     return {
-      prose: terminalFightBeat(fight, playerFacingLocation(state), {
-        who: pcStorySubject(pov),
-        him: third ? pov.him : 'you',
-      }),
+      prose: terminalFightBeat(
+        fight,
+        playerFacingLocation(state),
+        { who: pcStorySubject(pov), him: third ? pov.him : 'you' },
+        isJourneyUnderway(state)
+      ),
       status: 'Writer left the settled fight out — painted from the engine result',
     };
   }

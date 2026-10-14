@@ -1,11 +1,14 @@
 /**
  * Tabletop fix 1 — the tabletop main quest moves on from play, the way Story RPG's does (storyRpgProgress):
- * - A step heard from a named person ("Speak with Oskar at the Greyhollow Tavern") ticks only when the
- *   player talks to that person while they are here.
- * - A step that names a known place ("Examine the keep gate") is offered as its own chip at that place and
- *   ticks when the player takes it there.
- * Any open step can be taken: doing the gate first does not pay for a talk never had. Quest XP then pays on
- * the objective diff (sandboxXp), as for any step. Other modes are untouched.
+ * - The step's verb decides what ticks it (`tabletopStepKind`).
+ * - A talk step ("Speak with Oskar at the Greyhollow Tavern") ticks only when the player talks to that person
+ *   while they are here.
+ * - A look step ("Examine the keep gate", "Review the map Silas spreads") is offered as its own chip at its
+ *   place, with its people there, and ticks when the player takes it there.
+ * - A move step ("Follow the cart tracks toward the keep", "Escort him up the hill path") ticks only when travel
+ *   arrives where it goes, with the person it takes along travelling with the player.
+ * Any open step can be taken: doing the gate first does not pay for a talk never had. A tabletop step ticks
+ * as story only and pays no XP (SRD XP is monster CR). Other modes are untouched.
  */
 import type { GameState, Quest } from './types';
 import { mainSpineQuest } from './questPlay';
@@ -14,6 +17,7 @@ import { peopleHere } from './chipLegality';
 import { isGiverName, talkStepPerson } from './questGiver';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { resolveNpcRecord } from './npcRecords';
+import { isJourneyUnderway } from './travelJourney';
 
 export type TabletopQuestTurn = { state: GameState; receipts: string[] };
 
@@ -86,19 +90,45 @@ export function placeTabletopStepPeople(state: GameState): GameState {
   return changed ? { ...state, npcMemories: memories } : state;
 }
 
-/** Where a step is taken: its own anchor, else a place its wording names, else a one-step quest's own place. */
+export type TabletopStepKind = 'talk' | 'look' | 'move';
+
+const TALK_STEP_VERB = /^\s*(?:speak|talk|report|ask|tell|warn|question|convince|persuade|meet)\b/i;
+const MOVE_STEP_VERB =
+  /^\s*(?:follow|escort|lead|guide|travel|go|head|return|journey|bring|take|track|trail|cross|climb|make your way)\b|\btoward(?:s)?\b/i;
+/** A move that takes someone along ("Escort him…", "Lead the survivors…"): the step's person must come too. */
+const WITH_PERSON_VERB = /^\s*(?:escort|lead|guide|bring|take)\b/i;
+
+/** The step's verb decides what ticks it: talking to its person, its own look at its place, or arriving where it goes. */
+export function tabletopStepKind(step: string): TabletopStepKind {
+  if (talkStepPerson(step) || TALK_STEP_VERB.test(step ?? '')) return 'talk';
+  if (MOVE_STEP_VERB.test(step ?? '')) return 'move';
+  return 'look';
+}
+
+/**
+ * Where a step is taken. A talk step is taken with its person, wherever they are. A look step is taken at its
+ * own anchor (else a place its wording names, else a one-step quest's own place), with its people there. A move
+ * step is taken where it goes: the place its wording names, never the pin it starts from.
+ */
 export function tabletopStepAnchor(
   state: GameState,
   quest: Quest,
   idx: number
-): { place: string | null; people: string[]; room?: string } {
+): { kind: TabletopStepKind; place: string | null; people: string[]; room?: string; from?: string | null } {
   const o = quest.objectives?.[idx];
-  if (!o) return { place: null, people: [] };
+  if (!o) return { kind: 'look', place: null, people: [] };
+  const kind = tabletopStepKind(o.description);
   const person = talkStepPerson(o.description);
   const people = o.people?.length ? o.people : person ? [person] : [];
-  if (people.length) return { place: null, people };
+  if (kind === 'talk' && people.length) return { kind, place: null, people };
+  if (kind === 'move') return { kind, place: tabletopStepPlace(state, o.description), people, from: o.place ?? null };
   const single = (quest.objectives ?? []).length === 1 ? quest.location ?? null : null;
-  return { place: o.place ?? tabletopStepPlace(state, o.description) ?? single, people: [], ...(o.room ? { room: o.room } : {}) };
+  return {
+    kind: 'look',
+    place: o.place ?? tabletopStepPlace(state, o.description) ?? single,
+    people,
+    ...(o.room ? { room: o.room } : {}),
+  };
 }
 
 function atPlace(state: GameState, place: string): boolean {
@@ -136,14 +166,34 @@ function takeableSteps(state: GameState): Array<{ idx: number; chip: string; per
     const chip = objectiveStepChip(o.description);
     if (!chip) return;
     const anchor = tabletopStepAnchor(state, quest, idx);
-    if (anchor.people.length) {
-      const person = anchor.people.find((p) => here.some((n) => isGiverName(n, p)));
+    // A move step has no chip of its own; travel arriving where it goes ticks it.
+    if (anchor.kind === 'move') return;
+    const person = anchor.people.find((p) => here.some((n) => isGiverName(n, p))) ?? null;
+    if (anchor.kind === 'talk') {
       if (person) out.push({ idx, chip, person });
       return;
     }
-    if (anchor.place && atStepPlace(state, anchor.place, anchor.room)) out.push({ idx, chip, person: null });
+    if (anchor.people.length && !person) return;
+    if (anchor.place ? atStepPlace(state, anchor.place, anchor.room) : !!person) out.push({ idx, chip, person: null });
   });
   return out;
+}
+
+/** The open move step this turn's travel completed: it arrived where the step goes, with the step's person if it takes one along. */
+function arrivedMoveStep(state: GameState, quest: Quest, hereBefore: string | undefined): number {
+  const here = state.currentLocation ?? '';
+  if (hereBefore === undefined || !here || here === hereBefore || isJourneyUnderway(state)) return -1;
+  const people = peopleHere(state);
+  return (quest.objectives ?? []).findIndex((o, idx) => {
+    if (o.completed) return false;
+    const anchor = tabletopStepAnchor(state, quest, idx);
+    if (anchor.kind !== 'move') return false;
+    if (anchor.place ? !atPlace(state, anchor.place) : !!anchor.from && atPlace(state, anchor.from)) return false;
+    if (WITH_PERSON_VERB.test(o.description) && anchor.people.length) {
+      return anchor.people.some((p) => people.some((n) => isGiverName(n, p)));
+    }
+    return true;
+  });
 }
 
 /** Tabletop: the chip for the quest step the player can take here, or null. */
@@ -153,19 +203,24 @@ export function tabletopStepChip(state: GameState): string | null {
 
 const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;
 
-export function applyTabletopQuestTurn(input: GameState, playerInput: string): TabletopQuestTurn {
+/** `hereBefore` is where the player stood before this turn's move, so a move step can tick on arrival. */
+export function applyTabletopQuestTurn(input: GameState, playerInput: string, hereBefore?: string): TabletopQuestTurn {
   const state = placeTabletopStepPeople(input);
   const quest = playOpen(state);
   if (!quest) return { state, receipts: [] };
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const said = chipKey(action);
-  const taken = takeableSteps(state).find(
-    (s) =>
-      said === chipKey(s.chip)
-      || (!!s.person
-        && TALK_VERB.test(action)
-        && (said.includes(bare(s.person)) || peopleHere(state).some((n) => isGiverName(n, s.person!) && said.includes(bare(n)))))
-  );
+  const moved = arrivedMoveStep(state, quest, hereBefore);
+  const taken =
+    moved >= 0
+      ? { idx: moved, chip: objectiveStepChip(quest.objectives![moved]!.description) ?? quest.objectives![moved]!.description }
+      : takeableSteps(state).find(
+          (s) =>
+            said === chipKey(s.chip)
+            || (!!s.person
+              && TALK_VERB.test(action)
+              && (said.includes(bare(s.person)) || peopleHere(state).some((n) => isGiverName(n, s.person!) && said.includes(bare(n)))))
+        );
   if (!taken) return { state, receipts: [] };
   const objectives = (quest.objectives ?? []).map((o, i) => (i === taken.idx ? { ...o, completed: true } : o));
   const done = objectives.every((o) => o.completed || o.optional);

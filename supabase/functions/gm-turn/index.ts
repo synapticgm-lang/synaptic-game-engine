@@ -363,6 +363,12 @@ Deno.serve(async (req) => {
     systemPrompt = sentenceRepairSystemPrompt((body.state as any).character, settings.perspective);
     userPrompt = playerInput;
   } else {
+    // deno-lint-ignore no-explicit-any
+    if (!(body.state as any).completedEvent) {
+      console.warn(
+        `[gm-turn] state.completedEvent missing on a turn call — packet rebuilt on the edge (input: ${playerInput.slice(0, 60)})`
+      );
+    }
     systemPrompt = assembleSystemPrompt(body.state, settings, loreCards);
     userPrompt = buildContextPrompt(
       // deno-lint-ignore no-explicit-any

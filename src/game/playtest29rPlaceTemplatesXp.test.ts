@@ -109,11 +109,10 @@ describe('29r XP in every mode', () => {
     }
   });
 
-  it('dnd pays the High band for the area level, not the player level', () => {
-    const s = st('dnd', 2, 2); // area level 4, player level 2
+  it('dnd pays no XP for a settlement card (SRD 5.2.1: XP from monster CR only)', () => {
+    const s = st('dnd', 2, 2);
     const fin = finishSettlementQuestCard(s, cardOf(s).id);
-    expect(fin.xp).toBe(DND_XP_BUDGET_PER_CHARACTER[3]![2]);
-    expect(fin.xp).not.toBe(DND_XP_BUDGET_PER_CHARACTER[1]![2]);
+    expect(fin.xp).toBe(0);
   });
 
   it('a second completion pays nothing', () => {
@@ -155,9 +154,9 @@ describe('29r XP in every mode', () => {
     expect(lit.xp).toBe(cut(100));
     const rpg = finishSettlementQuestCard(st('rpg', 10, 1), cardOf(st('rpg', 10, 1)).id);
     expect(rpg.xp).toBe(cut(100));
-    // D&D: area level clamps to player − 3 for the band, the raw area level (1) drives the cut.
+    // D&D: a settlement card pays no XP at all (SRD: monster CR only).
     const dnd = finishSettlementQuestCard(st('dnd', 10, 1), cardOf(st('dnd', 10, 1)).id);
-    expect(dnd.xp).toBe(cut(DND_XP_BUDGET_PER_CHARACTER[6]![2]));
+    expect(dnd.xp).toBe(0);
 
     const kinds: MilestoneKind[] = ['questComplete', 'encounter', 'significantPlace', 'significantPerson', 'dungeonCleared', 'roomCleared'];
     for (const mode of ['litrpg', 'rpg', 'dnd'] as const) {
@@ -185,7 +184,7 @@ describe('29r XP in every mode', () => {
   });
 
   it('stamp is 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14j');
-    expect(BUILD_STAMP).toBe('2026-10-14j');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14k');
+    expect(BUILD_STAMP).toBe('2026-10-14k');
   });
 });

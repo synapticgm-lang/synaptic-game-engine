@@ -125,7 +125,12 @@ describe('root 3 — repairs that drop or miss the right line', () => {
 
   async function repairFor(prose: string, backed = true) {
     const tilde = { npcId: 'tilde', npcName: 'Tilde', disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], sheet: { motive: 'Keep the inn quiet tonight' } };
-    const state = ck(backed ? { npcMemories: [tilde] as unknown as GameState['npcMemories'] } : {});
+    const lore = { id: 'lore-tilde', name: 'Tilde', type: 'npc', keywords: ['Tilde'], summary: 'Tilde keeps the inn quiet after dark.' };
+    const state = ck(
+      backed
+        ? { npcMemories: [tilde] as unknown as GameState['npcMemories'], lorebook: [lore] as GameState['lorebook'] }
+        : { npcMemories: [tilde] as unknown as GameState['npcMemories'] }
+    );
     const packet = { refEnum: [{ id: 't1', klass: 'person', display: 'Tilde' }, { id: 't2', klass: 'person', display: 'Edda' }] } as unknown as CompletedEventPacket;
     const playerInput = 'Talk to Tilde';
     const asked: string[] = [];
@@ -146,7 +151,8 @@ describe('root 3 — repairs that drop or miss the right line', () => {
     expect(asked).toHaveLength(1);
     expect(asked[0]).toContain('People here: Tilde');
     expect(asked[0]).not.toContain('Edda;');
-    expect(asked[0]).toContain('Known to say: Tilde: wants keep the inn quiet tonight');
+    expect(asked[0]).toContain('Known to say: Tilde: Tilde keeps the inn quiet after dark.');
+    expect(asked[0]).not.toMatch(/wants keep the inn/);
   });
 
   it('tt-fix-4: with no backed line for Tilde, nothing is asked (the skip path)', async () => {

@@ -85,14 +85,13 @@ export type DeedStep = 'first' | 'count' | 'capstone';
 
 /**
  * 29z1 — pay for an engine-seen deed, by mode. LitRPG: significant-place / quest-step / quest-complete
- * amounts. Tabletop: half the level's Low budget (never a level, never the flat 75). Story RPG: 0 XP
- * (its reward is an item, see sandboxXp). Difficulty scale and the over-level cut apply as for any milestone.
+ * amounts. Tabletop: 0 XP (SRD XP is monster CR only). Story RPG: 0 XP (its reward is an item, see sandboxXp).
+ * Difficulty scale and the over-level cut apply as for any milestone.
  */
 export function deedXp(mode: EngineMode | undefined, step: DeedStep, opts: MilestoneXpOpts = {}): MilestoneXpResult {
   if (mode === 'litrpg') {
     return milestoneXp(mode, step === 'first' ? 'significantPlace' : step === 'count' ? 'questStep' : 'questComplete', opts);
   }
-  if (mode === 'dnd') return milestoneXp(mode, 'deed', opts);
   return { amount: 0, detail: '' };
 }
 
@@ -310,19 +309,6 @@ function milestoneXpBase(
       detail: `CR ${cr} = ${foes > 1 ? `${each} XP × ${foes} = ` : ''}${base} XP ÷ ${party} = ${amount}`,
     };
   }
-  // 5e pays for what the party overcame, not for walking in: arriving somewhere is never XP.
-  if (kind === 'achievement' || kind === 'significantPlace' || kind === 'dungeonEntry') return { amount: 0, detail: '' };
-  const lvl = Math.max(1, Math.min(20, Math.floor(opts.level ?? 1)));
-  const [low, moderate, high] = DND_XP_BUDGET_PER_CHARACTER[lvl - 1]!;
-  if (kind === 'deed') {
-    const amount = Math.floor(low / 2);
-    return { amount, detail: `level ${lvl} Low milestone ${low} ÷ 2 = ${amount} XP` };
-  }
-  const band: [string, number] =
-    kind === 'significantPerson' || kind === 'roomCleared'
-      ? ['Low', low]
-      : kind === 'questStep'
-        ? ['Moderate', moderate]
-        : ['High', high];
-  return { amount: band[1], detail: `level ${lvl} ${band[0]} milestone = ${band[1]} XP` };
+  // SRD 5.2.1 as written: XP comes from the challenge rating of monsters overcome, nothing else.
+  return { amount: 0, detail: '' };
 }

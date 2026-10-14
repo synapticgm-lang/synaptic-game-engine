@@ -86,7 +86,7 @@ describe('s82 Root A — a settled fight must be on the page', () => {
     expect(turn.prose).toMatch(/went down/);
   });
 
-  it('a second miss paints the engine result instead', async () => {
+  it('a second miss keeps the writer beat and adds the engine outcome', async () => {
     const state = t13();
     const turn = await runWriterTurnWithFightRetry({
       firstRaw: T13_PROSE,
@@ -94,9 +94,9 @@ describe('s82 Root A — a settled fight must be on the page', () => {
       check: check(state),
       rewrite: async () => T13_PROSE,
     });
-    expect(turn.fightRetry).toBe('painted');
+    expect(turn.fightRetry).toBe('added');
     expect(turn.prose).toMatch(new RegExp(`${FOE} went down and did not get up`));
-    expect(turn.prose).not.toMatch(/grip on Jax's collar/);
+    expect(turn.prose).toMatch(/wagon desk/);
   });
 
   it('the next list holds no flee chips', () => {

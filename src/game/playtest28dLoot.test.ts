@@ -95,22 +95,20 @@ describe('28d loot engine', () => {
     expect(share).toBeLessThan(0.9);
   });
 
-  it('D&D: SynapticGM coin purse and treasure cache (original tables) with every die shown', () => {
-    const mob = rollLoot({ profile: 'mob', state: st('dnd'), seed: 'x', cr: '1/4' });
-    expect(mob.gold).toBeGreaterThanOrEqual(4);
-    expect(mob.gold).toBeLessThanOrEqual(18);
-    expect(mob.displayLines[0]).toMatch(/^Coin purse CR 0–3: 2d8\+2 \(\d\+\d\)\+2 = \d+ gp$/);
-    const mini = rollLoot({ profile: 'miniBoss', state: st('dnd'), seed: 'x', cr: 7 });
-    expect(mini.dice).toHaveLength(2);
-    expect(mini.dice[0]).toMatch(/^Coin purse CR 4–9: 4d10 \(\d+\+\d+\+\d+\+\d+\)×4 = \d+ gp$/);
-    const boss = many('boss', st('dnd'), 40, {});
-    for (const r of boss) {
-      expect(r.dice[0]).toMatch(/^Treasure cache CR 0–3: 4d6 \(\d\+\d\+\d\+\d\)×30 = \d+ gp$/);
-      expect(r.gold % 30).toBe(0);
-      expect(r.items.length).toBeLessThanOrEqual(2);
-      expect(r.items.every((i) => ['Common', 'Uncommon', 'Rare'].includes(i.rarity))).toBe(true);
+  it('D&D: SRD 5.2.1 loot — a foe drops its stat-block Gear, a cache holds a Common magic item, no house coin formula', () => {
+    const mob = rollLoot({ profile: 'mob', state: st('dnd'), seed: 'x', cr: '1/4', foeName: 'Bandit' });
+    expect(mob.gold).toBe(0);
+    expect(mob.items.length).toBeGreaterThan(0);
+    expect(mob.displayLines[0]).toMatch(/^Gear \(SRD stat block\): /);
+    expect(mob.displayLines.join(' ')).not.toMatch(/Coin purse|\d+d\d+/);
+    const nobody = rollLoot({ profile: 'miniBoss', state: st('dnd'), seed: 'x', cr: 7 });
+    expect(nobody.gold).toBe(0);
+    expect(nobody.items).toEqual([]);
+    for (const r of many('boss', st('dnd'), 10, {})) {
+      expect(r.gold).toBe(0);
+      expect(r.items.map((i) => i.name)).toEqual(['Potion of Healing']);
+      expect(r.displayLines[0]).toMatch(/Potion of Healing \(SRD Common magic item, 50 GP as a consumable\)/);
     }
-    expect(boss.some((r) => r.dice.some((l) => /^d20 = \d+ → (Common|Uncommon|Rare): /.test(l)))).toBe(true);
   });
 
   it('difficulty table: Hard adds a boss roll and ×1.25 XP; Easy pity kicks in at 40 on T1', () => {
@@ -122,16 +120,16 @@ describe('28d loot engine', () => {
     const base = LITRPG_MILESTONE_XP.significantPlace;
     expect(milestoneXp('litrpg', 'significantPlace', { strictness: 'hardcore' }).amount).toBe(Math.round(base * 1.25));
     expect(milestoneXp('litrpg', 'significantPlace', { strictness: 'forgiving' }).amount).toBe(base);
-    const dnd = milestoneXp('dnd', 'significantPerson', { level: 1, strictness: 'hardcore' });
-    expect(dnd.detail).toMatch(/× 1\.25 \(Hard\) = \d+/);
+    // Tabletop XP is monster CR only (SRD 5.2.1): no deed pay to scale.
+    expect(milestoneXp('dnd', 'significantPerson', { level: 1, strictness: 'hardcore' }).amount).toBe(0);
   });
 
-  it('auto-fight victory rolls engine loot: D&D coins with dice, LitRPG keeps goldReward', () => {
+  it('auto-fight victory rolls engine loot: D&D SRD (no coin formula), LitRPG keeps goldReward', () => {
     const enemy = { name: 'Rat', level: 1, hp: 1, maxHp: 1, attack: 1, defense: 0, armorClass: 1, xpReward: 10, goldReward: 7, cr: '1/8' };
     const d = simulateCombat(st('dnd'), enemy);
     if (d.victory) {
-      expect(d.lootLines?.[0]).toMatch(/^Coin purse CR 0–3: 2d8\+2/);
-      expect(d.goldGained).toBeGreaterThanOrEqual(3);
+      expect((d.lootLines ?? []).join(' ')).not.toMatch(/Coin purse/);
+      expect(d.goldGained).toBe(0);
     }
     const l = simulateCombat(st('litrpg'), enemy);
     if (l.victory) {

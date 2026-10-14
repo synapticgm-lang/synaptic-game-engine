@@ -33,7 +33,15 @@ import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
-import { beatCarriesForcedAttempt, beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
+import {
+  beatCarriesForcedAttempt,
+  beatCarriesTerminalFight,
+  foeHitSentence,
+  forcedAttemptSentence,
+  terminalFightOutcome,
+  terminalOutcomeSentence,
+  type FightPov,
+} from './engineResult';
 import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
 import { dropsFightRoll, engineFactProblems } from './engineFactGate';
 import {
@@ -214,6 +222,22 @@ export function ignoresTerminalFight(state: GameState, prose: string): boolean {
   if (!beatCarriesTerminalFight(prose, fight)) return true;
   // Tabletop: the failed flee/parley roll that forced the fight is part of the outcome.
   return state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight);
+}
+
+/**
+ * The writer's beat with the engine's plain sentence for each settled fight fact it leaves out: the failed
+ * parley or flee that forced the fight, a foe hit on the PC, the outcome. Added to the beat, never in place of it.
+ */
+export function withMissingFightFacts(state: GameState, prose: string, pov: FightPov): string {
+  const fact = state.completedEvent?.engineResult;
+  const fight = terminalFightOutcome(fact);
+  // The attempt that forced the fight came first; the hit and the outcome close the beat.
+  const before = fight && state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight) ? forcedAttemptSentence(fight, pov) : '';
+  const after = [
+    dropsFightRoll(state, prose) ? foeHitSentence(fact, pov) : '',
+    fight && !beatCarriesTerminalFight(prose, fight) ? terminalOutcomeSentence(fight, pov) : '',
+  ];
+  return [before, prose.trim(), ...after].filter(Boolean).join(' ');
 }
 
 /** Lock C — prose that reopens a ledger-closed fact. */

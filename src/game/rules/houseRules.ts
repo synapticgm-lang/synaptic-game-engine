@@ -48,7 +48,8 @@ export function houseRulesFromSettings(s: Partial<Settings> | null | undefined):
     rulesVersion: oneOf(s?.ttRulesVersion, ['srd-5.2.1', 'srd-5.1'] as const, 'srd-5.2.1'),
     statMethod: oneOf(s?.ttStatMethod, ['choose', 'point-buy', 'standard-array', '4d6'] as const, 'choose'),
     startingLevel: typeof s?.ttStartingLevel === 'number' ? Math.max(1, Math.min(5, Math.round(s.ttStartingLevel))) : 1,
-    progression: oneOf(s?.ttProgression, ['xp', 'milestone'] as const, 'xp'),
+    // SRD 5.2.1 as written: levels come from CR XP on the advancement table only.
+    progression: 'xp',
     diceVisibility: oneOf(s?.ttDiceVisibility, ['open', 'hidden'] as const, 'open'),
     encounterDifficulty: oneOf(s?.ttEncounterDifficulty, ['easy', 'normal', 'hard', 'deadly'] as const, 'normal'),
     soloScaling: s?.ttSoloScaling === true,
@@ -115,22 +116,12 @@ export function pillarCopies(value: number): number {
   return Math.max(0, Math.min(4, Math.round(value / 25)));
 }
 
-/** Milestone levelling on a sheet character: XP pays nothing; quest-complete, dungeon-clear and endings give a level. */
-export function milestoneLevelling(state: Pick<GameState, 'houseRules' | 'character' | 'engineMode'>): boolean {
-  return state.engineMode === 'dnd' && !!state.character?.srd && houseRulesOf(state).progression === 'milestone';
-}
-
-/** An XP award under the save's rules: 0 under milestone levelling. */
-export function xpUnderRules(state: Pick<GameState, 'houseRules' | 'character' | 'engineMode'>, amount: number): number {
-  return milestoneLevelling(state) ? 0 : amount;
-}
-
 const RULES_LABEL: Record<HouseRules['rulesVersion'], string> = { 'srd-5.2.1': 'SRD 5.2.1', 'srd-5.1': 'SRD 5.1' };
 
 /** The sheet's table-rules line: rules version, levelling, Heroic Inspiration held or not. */
 export function tableRulesLine(state: Pick<GameState, 'houseRules' | 'character'>): string {
   const h = houseRulesOf(state);
-  const parts = [`Rules: ${RULES_LABEL[h.rulesVersion]}`, h.progression === 'milestone' ? 'Levelling: milestone' : 'Levelling: XP'];
+  const parts = [`Rules: ${RULES_LABEL[h.rulesVersion]}`, 'Levelling: XP'];
   if (h.heroicInspiration) parts.push(`Heroic Inspiration: ${state.character?.heroicInspiration ? 'yes' : 'no'}`);
   parts.push(`Travel pace: ${h.travelPace}`);
   return parts.join(' · ');

@@ -182,10 +182,15 @@ export function reconcileXpStatusLines(lines: string[], codeXpNotes: string[] = 
   return out;
 }
 
-/** An engine-rolled check receipt ("Flee check: d20 10 + 1 vs DC 12 — failure"). Tabletop shows these. */
+/**
+ * An engine-rolled check receipt ("Parley check: d20 10 + 1 vs DC 15 — failure", or a contest
+ * "Flee check: d20 10 + 3 = 13 vs Bandit d20 8 + 1 = 9 — success"). Tabletop shows these.
+ */
 export function isEngineCheckLine(line: string): boolean {
   const t = line.trim();
-  return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(t) || isEngineRoundLine(t);
+  return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(t)
+    || /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ = -?\d+ vs .+ d20 \d+ [+−-] \d+ = -?\d+ — (?:success|failure)$/.test(t)
+    || isEngineRoundLine(t);
 }
 
 /** A tabletop fight's engine lines (initiative, each round, death saves): every roll in them is shown. */
@@ -207,14 +212,14 @@ export function rememberCueText(line: string): string | null {
 export function statusLinesForVerbosity(lines: string[], verbosity: StatVerbosity | undefined): string[] {
   if (verbosity === 'minimal') return [];
   if (verbosity === 'core') {
-    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|^ending:|^origin:|^romance:|^floor:/i.test(l));
+    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|^encounter cleared:|^ending:|^origin:|^romance:|^floor:/i.test(l));
   }
   return lines;
 }
 
 /**
  * One clear line per foe: the engine's machine receipt ("Encounter cleared: X (defeat)") and its STATUS line
- * ("Encounter cleared: X — defeated") are the same event; STATUS keeps the readable one.
+ * ("Encounter cleared: X — lost") are the same event; STATUS keeps the readable one.
  */
 function dedupeEncounterCleared(lines: string[]): string[] {
   const readable = new Set(

@@ -6,8 +6,8 @@
  * attack = d20 + ability modifier + proficiency vs AC, natural 20 crit (damage dice twice), natural 1 miss,
  * Dodge / Disengage / Hide (DC 15 Stealth) / Help, opportunity attacks on leaving reach, saving throws,
  * conditions (checkRules CONDITION_EFFECTS) and death saves.
- * SynapticGM solo design: foes leave a downed PC (no attacks at 0 HP); escape by Disengage needs the PC's
- * Speed to match the fastest foe, escape by Flee (Dash) always gets away after the opportunity attacks.
+ * SynapticGM solo design: foes leave a downed PC (no attacks at 0 HP). Disengage only stops opportunity
+ * attacks (the fight goes on); escape by Flee (Dash) gets away after the opportunity attacks.
  * This module knows no mode. combatPresenter decides what each mode shows.
  */
 import type { AttributeKey, CombatCondition, DeathSaveState, RoundCombatState, RoundFoeState } from '../types';
@@ -1089,13 +1089,9 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
     case 'disengage': {
       if (speedZero(ctx.combat.pcConditions, pc.conditions)) {
         push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: 'your Speed is 0; you cannot move away', pc: true });
-      } else if (pc.speed > foesFastest) {
-        // Disengage only stops opportunity attacks; a foe as fast as you follows on its turn.
-        push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: `you step out of reach (Speed ${pc.speed} vs ${foesFastest}) and get clear with no opportunity attack`, pc: true });
-        ctx.outcome = 'escaped';
       } else {
-        const closes = pc.speed === foesFastest ? `the foe is as fast (Speed ${foesFastest} vs ${pc.speed}) and keeps pace` : `the foe is faster (Speed ${foesFastest} vs ${pc.speed}) and closes`;
-        push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: `you step back with no opportunity attack, but ${closes}`, pc: true });
+        // SRD 5.2.1: Disengage only stops opportunity attacks this turn; a foe may follow and attack on its turn.
+        push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: 'you step back with no opportunity attack; the foe may follow and attack on its turn', pc: true });
       }
       break;
     }

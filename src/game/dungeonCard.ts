@@ -22,9 +22,8 @@ import { placeIdFromName } from './places';
 import { INTERIOR_MAP_BLUEPRINT, milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { openSeededLootable } from './looseItems';
-import { dndXpToNext, milestoneXp, type MilestoneKind } from './xpRules';
+import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
-import { milestoneLevelling } from './rules/houseRules';
 import { hidesPart } from './systemHousing';
 import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
 import { climbFloor } from './rules/litrpgFloors';
@@ -509,13 +508,6 @@ function payDungeonXp(state: GameState, kind: MilestoneKind, key: string, label:
   if ((state.sandboxAwardKeys ?? []).includes(key)) return { state, receipts: [] };
   const r = milestoneXp(state.engineMode, kind, { level: state.character.level, strictness: state.gmStrictness, ...milestoneAreaOpts(state) });
   const keys = [...(state.sandboxAwardKeys ?? []), key];
-  if (milestoneLevelling(state)) {
-    // Milestone levelling: rooms and entry pay nothing; clearing the whole dungeon is one level.
-    if (kind !== 'dungeonCleared' || (state.character.level ?? 1) >= 20) return { state: { ...state, sandboxAwardKeys: keys }, receipts: [] };
-    const fill = Math.max(1, dndXpToNext(state.character.level ?? 1) - (state.character.xp ?? 0));
-    const up = applyCharacterXpGain(state.character, fill, state.engineMode, state.systemHousing);
-    return { state: { ...state, character: up.character, sandboxAwardKeys: keys }, receipts: [`Milestone: ${label} — level up`, ...up.notes] };
-  }
   if (r.amount <= 0) return { state: { ...state, sandboxAwardKeys: keys }, receipts: [] };
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode, state.systemHousing);
   const xpLine = hidesPart(state.systemHousing, 'experience') ? [] : [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`];

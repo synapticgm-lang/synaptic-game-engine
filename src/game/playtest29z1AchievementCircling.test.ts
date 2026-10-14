@@ -80,8 +80,8 @@ function award(s: GameState) {
 
 describe('29z1 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14j');
-    expect(BUILD_STAMP).toBe('2026-10-14j');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14k');
+    expect(BUILD_STAMP).toBe('2026-10-14k');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -96,11 +96,9 @@ describe('29z1 — deed pay by mode', () => {
     expect(milestoneXp('dnd', 'achievement').amount).toBe(0);
   });
 
-  it('tabletop: half the level Low budget (level 1 = 25), hardcore and over-level still apply', () => {
-    for (const step of ['first', 'count', 'capstone'] as const) expect(deedXp('dnd', step, { level: 1 }).amount).toBe(25);
-    expect(deedXp('dnd', 'first', { level: 5 }).amount).toBe(250);
-    expect(deedXp('dnd', 'first', { level: 1, strictness: 'hardcore' }).amount).toBeGreaterThan(25);
-    expect(deedXp('dnd', 'first', { level: 1, playerLevel: 8, areaLevel: 1 }).amount).toBe(1);
+  it('tabletop: deeds pay 0 XP (SRD 5.2.1 — XP from monster CR only)', () => {
+    for (const step of ['first', 'count', 'capstone'] as const) expect(deedXp('dnd', step, { level: 1 }).amount).toBe(0);
+    expect(deedXp('dnd', 'first', { level: 5, strictness: 'hardcore' }).amount).toBe(0);
   });
 
   it('story RPG: 0 XP', () => {

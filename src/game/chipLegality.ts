@@ -22,6 +22,7 @@ import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './ch
 import { crowdHere } from './sceneFacts';
 import { isSystemStatusChip } from './systemHousing';
 import { tabletopStepChip } from './tabletopQuestProgress';
+import { hasOpenAsk } from './questGiver';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -227,8 +228,10 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   }
 
   if (OFFER_ANSWER_CHIP.test(label) && !openOpeningOffer(state)) {
-    const unnamed = new Set((state.sceneFacts?.anonymousRoles ?? []).map(low));
-    if (!here.some((p) => !unnamed.has(low(p)))) {
+    // An answer needs an open ask: from the person the chip names, else from anyone here.
+    const named = here.filter((p) => mentionsName(label, p));
+    const askers = (named.length ? named : here).filter((p) => hasOpenAsk(state, p));
+    if (!askers.length) {
       return { kind: 'unrelated-chip', detail: `"${label}" answers an offer or a need nobody here has put to the player` };
     }
   }

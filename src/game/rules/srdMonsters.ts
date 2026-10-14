@@ -33,6 +33,8 @@ export interface StatBlock {
   speed: number;
   scores: Attributes;
   passivePerception: number;
+  /** SRD 5.2.1 stat block Gear: what the creature carries (and drops). */
+  gear?: string[];
   kind: 'humanoid' | 'beast' | 'undead' | 'monstrosity';
   attack: MonsterAttack;
   vulnerable?: string[];
@@ -46,14 +48,14 @@ const s = (STR: number, DEX: number, CON: number, INT: number, WIS: number, CHA:
 
 export const SRD_MONSTERS: Array<StatBlock & { match: RegExp }> = [
   { id: 'goblin-warrior', name: 'Goblin Warrior', srd: true, cr: '1/4', ac: 15, hp: 10, hpDice: '3d6', speed: 30,
-    scores: s(8, 15, 10, 10, 8, 8), passivePerception: 9, darkvision: 60, kind: 'humanoid',
+    scores: s(8, 15, 10, 10, 8, 8), passivePerception: 9, darkvision: 60, kind: 'humanoid', gear: ['Leather Armor', 'Scimitar', 'Shield', 'Shortbow'],
     attack: { name: 'Scimitar', toHit: 4, damage: '1d6+2', type: 'slashing' }, match: /\bgoblin/i },
   { id: 'bandit', name: 'Bandit', srd: true, cr: '1/8', ac: 12, hp: 11, hpDice: '2d8+2', speed: 30,
-    scores: s(11, 12, 12, 10, 10, 10), passivePerception: 10, kind: 'humanoid',
+    scores: s(11, 12, 12, 10, 10, 10), passivePerception: 10, kind: 'humanoid', gear: ['Leather Armor', 'Light Crossbow', 'Scimitar'],
     attack: { name: 'Scimitar', toHit: 3, damage: '1d6+1', type: 'slashing' },
     match: /\b(bandit|thugs?|brigand|cutpurse|cutthroat|blade|bravos?|brawler|robbers?|raiders?|outlaws?|footpads?|cutter|toll|highway)/i },
   { id: 'cultist', name: 'Cultist', srd: true, cr: '1/8', ac: 12, hp: 9, hpDice: '2d8', speed: 30,
-    scores: s(11, 12, 10, 10, 11, 10), passivePerception: 10, kind: 'humanoid',
+    scores: s(11, 12, 10, 10, 11, 10), passivePerception: 10, kind: 'humanoid', gear: ['Leather Armor', 'Sickle'],
     attack: { name: 'Ritual Sickle', toHit: 3, damage: '1d4+1', type: 'slashing' }, match: /\b(cult|zealot)/i },
   { id: 'wolf', name: 'Wolf', srd: true, cr: '1/4', ac: 12, hp: 11, hpDice: '2d8+2', speed: 40,
     scores: s(14, 15, 12, 3, 12, 6), passivePerception: 15, darkvision: 60, kind: 'beast',
@@ -63,7 +65,7 @@ export const SRD_MONSTERS: Array<StatBlock & { match: RegExp }> = [
     scores: s(7, 15, 11, 2, 10, 4), passivePerception: 10, darkvision: 60, kind: 'beast',
     attack: { name: 'Bite', toHit: 4, damage: '1d4+2', type: 'piercing' }, match: /\brats?\b|vermin/i },
   { id: 'skeleton', name: 'Skeleton', srd: true, cr: '1/4', ac: 13, hp: 13, hpDice: '2d8+4', speed: 30,
-    scores: s(10, 16, 15, 6, 8, 5), passivePerception: 9, darkvision: 60, kind: 'undead', vulnerable: ['bludgeoning'],
+    scores: s(10, 16, 15, 6, 8, 5), passivePerception: 9, darkvision: 60, kind: 'undead', vulnerable: ['bludgeoning'], gear: ['Shortbow', 'Shortsword'],
     attack: { name: 'Shortsword', toHit: 5, damage: '1d6+3', type: 'piercing' }, match: /\b(skeletons?|bones?)\b/i },
   { id: 'zombie', name: 'Zombie', srd: true, cr: '1/4', ac: 8, hp: 15, hpDice: '2d8+6', speed: 20,
     scores: s(13, 6, 16, 3, 6, 5), passivePerception: 8, darkvision: 60, kind: 'undead', undeadFortitude: true,

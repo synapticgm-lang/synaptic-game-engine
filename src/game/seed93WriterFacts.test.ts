@@ -89,7 +89,9 @@ describe("seed 93 writer facts", () => {
     const loot = fought!.receipts.find((r) => r.startsWith("Loot:"));
     if (loot) {
       expect(loot).toMatch(/not the weapon that won/);
-      expect(loot).toMatch(/In hand before the blow: bare hands/);
+      const inHand = loot.match(/In hand before the blow: ([^.]+)\./)?.[1] ?? '';
+      expect(inHand).toBe(weaponInHand(live));
+      expect(loot.split(' — ')[0]).not.toContain(`] ${inHand}`);
     }
   });
 

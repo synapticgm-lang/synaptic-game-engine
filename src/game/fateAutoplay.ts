@@ -162,7 +162,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { carryLimitOn, milestoneLevelling, withHouseRules } from './rules/houseRules';
+import { carryLimitOn, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
@@ -1200,7 +1200,7 @@ export async function headlessFateTurn(
   const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
-  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput);
+  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, hereBeforeMove);
   arcState = tabletopTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
@@ -1337,7 +1337,7 @@ Do NOT print dice notation or CODE ENFORCED.
     : undefined;
 
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
-  let writerTurn: (WriterTurnResult & { fightRetry?: 'retried' | 'painted' }) | null = null;
+  let writerTurn: (WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }) | null = null;
   const stageTrace: { stage: string; text: string }[] = [];
   const traceStage = (stage: string, text: string) => {
     if (stageTrace[stageTrace.length - 1]?.text !== text) stageTrace.push({ stage, text });
@@ -1369,6 +1369,7 @@ Do NOT print dice notation or CODE ENFORCED.
     if (writerTurn.answerRepair?.bug) console.warn(`[writer] answer repair bug — ${writerTurn.answerRepair.bug}`);
     if (writerTurn.fightRetry) console.info(`[writer] settled fight left out — ${writerTurn.fightRetry}`);
     traceStage('render', writerTurn.firstDraft);
+    if (writerTurn.fightDraft) traceStage('fight-rewrite', writerTurn.fightDraft);
     traceStage('finishCommittedProse+spoken', writerTurn.prose);
     gmText = writerTurn.prose;
     if ((writerTurn.path === 'json' || writerTurn.path === 'json-partial') && writerTurn.refs?.length && arcState.completedEvent) {
@@ -1620,7 +1621,7 @@ Do NOT print dice notation or CODE ENFORCED.
   {
     const settled = settleParleyAfterProse(working, cleanText, playerInput);
     working = settled.state;
-    if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint && !milestoneLevelling(working)) {
+    if (settled.xpAward && settled.xpAward.amount > 0 && !blockedPaint) {
       const leveled = applyCharacterXpGain(working.character, settled.xpAward.amount);
       working = {
         ...working,
@@ -2032,7 +2033,7 @@ Do NOT print dice notation or CODE ENFORCED.
   {
     const govCommit = applyGovernanceCommit(state, next, playerInput);
     governed = { ...next, ...govCommit.patches };
-    if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint && !milestoneLevelling(governed)) {
+    if (govCommit.xpAward && govCommit.xpAward.amount > 0 && !blockedPaint) {
       const leveled = applyCharacterXpGain(governed.character, govCommit.xpAward.amount);
       governed = { ...governed, character: leveled.character };
     }
@@ -2314,7 +2315,8 @@ export async function runFateAutoplay(opts: {
           const p = turnProgress(turnStart, state, [...(tel.arcStatusReceipts ?? []), ...(tel.systemLog ?? [])]);
           tel.progress = p.progressed;
           tel.progressReasons = p.reasons;
-          if (!tel.error) tel.turnCheck = checkPlayerTurn(turnStart, state, tel);
+          const prev = turns[turns.length - 1];
+          if (!tel.error) tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
         }
         turns.push(result.telemetry);
         appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');

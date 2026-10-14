@@ -66,8 +66,8 @@ afterEach(() => {
 
 describe('29x stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14j');
-    expect(BUILD_STAMP).toBe('2026-10-14j');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14k');
+    expect(BUILD_STAMP).toBe('2026-10-14k');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -125,10 +125,11 @@ describe('29x — rare spawn', () => {
     expect(mobEmpty).toBeGreaterThan(0);
 
     const dnd = { ...keepState('dnd-loot'), threatTier: 1, journey: null };
-    const purse = rollLoot({ profile: 'rareSpawn', state: dnd, seed: 'p1' });
-    expect(purse.gold).toBeGreaterThan(0);
-    expect(purse.items).toHaveLength(1);
-    expect(rank.indexOf(purse.items[0]!.rarity)).toBeGreaterThanOrEqual(1);
+    // Tabletop loot is SRD 5.2.1: the foe's stat-block Gear, no house coin formula.
+    const purse = rollLoot({ profile: 'rareSpawn', state: dnd, seed: 'p1', foeName: 'Bandit' });
+    expect(purse.gold).toBe(0);
+    expect(purse.items.length).toBeGreaterThan(0);
+    expect(purse.displayLines[0]).toMatch(/^Gear \(SRD stat block\): /);
   });
 });
 

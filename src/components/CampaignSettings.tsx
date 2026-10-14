@@ -250,7 +250,6 @@ const TABLE_RULES: TableRule[] = [
   { key: 'ttRulesVersion', label: 'Rules version', description: 'Which SRD the table plays (Heroic Inspiration and Human differ)', options: [['srd-5.2.1', 'SRD 5.2.1'], ['srd-5.1', 'SRD 5.1']], fallback: 'srd-5.2.1', parse: asText },
   { key: 'ttStatMethod', label: 'Ability scores', description: 'How a new character sets abilities (also used by quick start and ready-made characters)', options: [['choose', 'Player chooses'], ['point-buy', 'Point buy'], ['standard-array', 'Standard array'], ['4d6', 'Roll 4d6, drop the lowest']], fallback: 'choose', parse: asText },
   { key: 'ttStartingLevel', label: 'Starting level', description: 'A new character starts at this level (fixed HP per level)', options: [['1', 'Level 1'], ['2', 'Level 2'], ['3', 'Level 3'], ['4', 'Level 4'], ['5', 'Level 5']], fallback: '1', parse: (v) => Number(v) as Settings[keyof Settings] },
-  { key: 'ttProgression', label: 'Levelling', description: 'XP from fights and deeds, or a level for each finished quest, cleared dungeon or ending', options: [['xp', 'Experience points'], ['milestone', 'Milestones']], fallback: 'xp', parse: asText },
   { key: 'ttDiceVisibility', label: 'Dice', description: 'Open: every roll on STATUS. Hidden: foe rolls stay behind the screen; you see hits and damage', options: [['open', 'All rolls open'], ['hidden', 'GM rolls hidden']], fallback: 'open', parse: asText },
   { key: 'ttEncounterDifficulty', label: 'Encounter difficulty', description: 'Foe HP and attack bonus; Deadly adds a foe to any group', options: [['easy', 'Easy'], ['normal', 'Normal'], ['hard', 'Hard'], ['deadly', 'Deadly']], fallback: 'normal', parse: asText },
   { key: 'ttSidekick', label: 'Sidekick', description: 'A companion who fights beside you, levels with you and takes no XP share (joins when your character is made)', options: [['none', 'None'], ['warrior', 'Warrior'], ['expert', 'Expert'], ['spellcaster', 'Spellcaster']], fallback: 'none', parse: asText },
@@ -261,8 +260,8 @@ const TABLE_RULES: TableRule[] = [
   { key: 'ttCritRule', label: 'Critical hits', description: 'Double the damage dice (SRD), max the dice and roll them again, or double the whole total', options: [['double-dice', 'Double dice (SRD)'], ['max-plus-roll', 'Max dice + roll'], ['double-total', 'Double the total']], fallback: 'double-dice', parse: asText },
 ];
 
-/** The table rules settled at session zero (start level, abilities, levelling, danger, death, rests). Same rows as House Rules. */
-const SESSION_ZERO_KEYS: Array<keyof Settings> = ['ttStartingLevel', 'ttStatMethod', 'ttProgression', 'ttEncounterDifficulty', 'ttDeathRule', 'ttRestVariant'];
+/** The table rules settled at session zero (start level, abilities, danger, death, rests). Same rows as House Rules. */
+const SESSION_ZERO_KEYS: Array<keyof Settings> = ['ttStartingLevel', 'ttStatMethod', 'ttEncounterDifficulty', 'ttDeathRule', 'ttRestVariant'];
 
 export function SessionZeroRules({ settings, onChange }: Pick<Props, 'settings' | 'onChange'>) {
   return (

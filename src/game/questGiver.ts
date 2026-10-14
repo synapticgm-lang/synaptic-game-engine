@@ -8,6 +8,7 @@ import type { SpokenLine } from './tokenProse';
 import { contractsForState } from './beatContract';
 import { hallTalkAsksWant, isAloneArrivalOpening, openingCastNames, playerAskedWhyPulled } from './openingEstablishment';
 import { peopleHere } from './chipLegality';
+import { resolveNpcRecord } from './npcRecords';
 import type { StarterArrival } from './questPlay';
 
 /** The New Game arrival the starter quests fit: alone or met, and the frozen housing. */
@@ -40,6 +41,18 @@ export function isGiverName(name: string, giver: string): boolean {
   const b = bare(giver);
   if (!a || !b) return false;
   return a === b || ` ${a} `.includes(` ${b} `) || ` ${b} `.includes(` ${a} `);
+}
+
+/**
+ * The person has put an ask to the player that is still open: a want or offer they spoke (their NPC record),
+ * or a quest they gave that is still live. Refusing, accepting or offering help answers that ask.
+ */
+export function hasOpenAsk(state: GameState, name: string): boolean {
+  if (!name?.trim()) return false;
+  const record = resolveNpcRecord(state, name);
+  if (record?.exitReason) return false;
+  if (record?.said?.some((s) => s.topic === 'want' || s.topic === 'offer')) return true;
+  return (state.quests ?? []).some((q) => q.status === 'active' && !!q.giver && isGiverName(name, q.giver));
 }
 
 export function giverIsHere(state: GameState, giver: string): boolean {

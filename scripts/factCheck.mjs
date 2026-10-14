@@ -192,8 +192,9 @@ function factsFor(row, packet) {
     inventory: line(packet, 'Inventory:'),
     handedText,
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
-    // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels.
-    allowText: lower([...mention, ...refs.map((r) => r.display), ...[...packet.matchAll(/^([A-Z][A-Za-z]{1,12}):\s*\d/gm)].map((m) => m[1]), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
+    // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
+    // count whole, so a short form of a present person's name ("Mayor Brask" for Mayor Helga Brask) is handed.
+    allowText: lower([...mention, ...refs.map((r) => r.display), ...(row.turnCheck?.presentNames ?? []), ...[...packet.matchAll(/^([A-Z][A-Za-z]{1,12}):\s*\d/gm)].map((m) => m[1]), row.location, here, line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...placesExits, engineResult, receipts.join(' '), line(packet, 'OPEN:'), packet.match(/^OPEN:\n((?:- .*\n?)*)/m)?.[1] ?? ''].join(' | ')),
   };
 }
 
@@ -468,7 +469,7 @@ export function checkTurn(row, packet, page = '') {
     if (choicePose.some((re) => re.test(narration))) add('player-choice', s, "poses the player's next choice");
     if (rollContradiction(s, who, facts.engineResult)) add('roll', s, `a fight roll the engine did not make: ${facts.engineResult.slice(0, 160)}`);
     if (/\bquiet stretch\b/i.test(facts.engineResult)) {
-      const met = narration.match(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'wagon', 'cart', 'patrol'].join('|')})\\b`, 'i'));
+      const met = narration.match(new RegExp(`\\b(?:a|an|another|one|two|three|several|some)\\s+(?:[a-z-]+\\s+){0,2}?(${[...PEOPLE, 'figure', 'figures', 'rider', 'riders', 'patrol'].join('|')})\\b`, 'i'));
       if (met && !negated(narration, met.index ?? 0)) add('meeting', s, `"${met[0]}" on a quiet stretch (nobody met)`);
     }
     for (const q of s.matchAll(/["“]([^"”]+)["”]/g)) {
