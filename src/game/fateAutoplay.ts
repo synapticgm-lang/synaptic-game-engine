@@ -230,6 +230,7 @@ import {
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
+import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
@@ -1196,6 +1197,9 @@ export async function headlessFateTurn(
   const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
+  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput);
+  arcState = tabletopTurn.state;
+  arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
   arcState = recordCirclingTurn(arcState, playerInput, [...(arcResult?.systemReceipts ?? []), ...arcStatusReceipts], state);
   const nudge = nudgeIfStuck(arcState);
@@ -1209,6 +1213,7 @@ export async function headlessFateTurn(
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
   const engineFact = engineResultFact([
     ...(arcResult?.systemReceipts ?? []),
+    ...(arcResult?.fightFacts ? [arcResult.fightFacts] : []),
     ...offerTurn.receipts,
     ...dungeonTurn.receipts,
     ...storyTurn.receipts,

@@ -80,7 +80,7 @@ describe('replay bank multi lap 34', () => {
     const fixed = 'The first thugs dropped fast and the second followed, and then both of them lay still in the dust of the back streets.';
     const ok = await repairRejectedSentences(turn, { packet, check, repair: async (req) => ((asked = req), fixed) });
     expect(asked).toContain(stale);
-    expect(asked).toContain('This happens on the back streets from Lowmarket toward The Weighing Cup; Lowmarket is behind, so nothing in this sentence is in or at Lowmarket.');
+    expect(asked).toContain('This happens on the back streets from Lowmarket toward The Weighing Cup; Lowmarket is a place the player already left, away from here: nothing in this sentence is in or at Lowmarket, and nothing from Lowmarket is within sight or reach.');
     expect(ok.prose).toBe(`${before} ${fixed}`);
     const back = 'The first thugs had dropped fast and now both of them lay still back in the dust of Lowmarket.';
     const kept = await repairRejectedSentences(turn, { packet, check, repair: async () => back });

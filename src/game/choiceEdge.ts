@@ -22,6 +22,7 @@ import { fightApproachChips } from './fightApproach';
 import { countLoiterFamilyStreak } from './beatFingerprint';
 import { restChip } from './recoveryRules';
 import { tabletopCastChip } from './tabletop/spellCasting';
+import { tabletopStepChip } from './tabletopQuestProgress';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 
 export type ChoiceEdgeKind =
@@ -204,7 +205,8 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     }
   }
   if (state.engineMode === 'dnd' && engineAllowsCombat(state) && !state.activeEncounter) {
-    edges.push({ id: 'dnd-investigate', label: 'Investigate the keep', kind: 'inspect' });
+    const step = tabletopStepChip(state);
+    if (step) edges.push({ id: 'dnd-investigate', label: step, kind: 'inspect' });
     if (restEdge) edges.push(restEdge);
     const cast = tabletopCastChip(state);
     if (cast) edges.push({ id: 'dnd-cast', label: cast, kind: 'inspect', risk: 'low' });

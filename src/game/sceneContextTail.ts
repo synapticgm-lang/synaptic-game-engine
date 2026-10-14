@@ -188,7 +188,9 @@ function mentionsHereOrTrip(state: GameState, body: string): boolean {
   if (!to) return false;
   const left = new Set(placeWords(priorLocation(state)));
   const own = placeWords(to).filter((w) => !left.has(w));
-  return own.length > 0 && own.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(body));
+  // "Greyhollow Inn" after "Greyhollow Graveyard": its own word is too short to count alone, so its whole name does.
+  if (!own.length) return new RegExp(`\\b${escapeRe(normalizePlace(to).replace(/^the\s+/i, ''))}\\b`, 'i').test(body);
+  return own.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(body));
 }
 
 /** On a leg, the place the trip set out from is part of the road ("the back streets from X toward Y"). */
@@ -322,7 +324,7 @@ export function staleLocationRepairNote(state: GameState, sentence: string): str
   if (!left) return '';
   const trip = underwayHereLabel(state);
   const where = trip ? `on ${trip}` : `at ${hereLocation(state)}`;
-  return `This happens ${where}; ${left} is behind, so nothing in this sentence is in or at ${left}.`;
+  return `This happens ${where}. ${left} is a place the player already left, away from here: nothing in this sentence is in or at ${left}, and nothing from ${left} is within sight or reach.`;
 }
 
 export function isStaleContextBleed(state: GameState, text: string): boolean {

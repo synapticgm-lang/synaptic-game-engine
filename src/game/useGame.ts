@@ -20,6 +20,7 @@ import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending, t
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
+import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
 import {
   authoredPageText,
@@ -2808,6 +2809,9 @@ export function useGame() {
       const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput, { romance: romanceAllowed(settingsRef.current) });
       liveCurrent = storyTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...storyTurn.receipts];
+      const tabletopTurn = applyTabletopQuestTurn(liveCurrent, sanitizedInput);
+      liveCurrent = tabletopTurn.state;
+      pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...tabletopTurn.receipts];
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
       liveCurrent = recordCirclingTurn(
         liveCurrent,
@@ -2823,6 +2827,7 @@ export function useGame() {
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
       const engineFact = engineResultFact([
         ...(systemsArc?.systemReceipts ?? []),
+        ...(systemsArc?.fightFacts ? [systemsArc.fightFacts] : []),
         ...offerTurn.receipts,
         ...dungeonTurn.receipts,
         ...storyTurn.receipts,

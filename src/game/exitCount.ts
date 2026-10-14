@@ -75,6 +75,8 @@ function statedExitCounts(clause: string, exits: string[], sentence: string): Ar
       if (/^\s*(?:to|toward|towards|into)\s/.test(rest) && names(rest.split(/[,;]/)[0]!)) continue;
       // "Cathedral Close waited, but the only way there ran…": the one way to the exit the sentence names.
       if (/^\s*(?:\w+\s+){0,4}?(?:to\s+(?:get|go|reach)\s+)?there\b/.test(rest) && names(sentence.toLowerCase())) continue;
+      // "the only way out now was through it": past the trouble in front of you, not a count of exits.
+      if (/^\s*(?:(?:now|then|left|here)\s+)?(?:is|was|lay|lies|meant|means)\s+(?:straight\s+)?(?:through|past|over)\b/.test(rest)) continue;
     }
     if (Number.isFinite(n)) out.push({ n: n!, more, ...(bare ? { bare } : {}) });
   }

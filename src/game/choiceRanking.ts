@@ -25,6 +25,7 @@ import { hallTopicAlreadyAnswered } from './openingEstablishment';
 import { travelChipMoves } from './chipLegality';
 import { objectiveOpensInterior } from './enterInterior';
 import { storyRpgDecisionChip } from './storyRpgProgress';
+import { tabletopStepChip } from './tabletopQuestProgress';
 
 export type { CirclingMemory } from './types';
 
@@ -255,6 +256,8 @@ export function turnsWithoutProgress(state: GameState): number {
 export function nudgeIfStuck(state: GameState): { state: GameState; receipts: string[]; notes: string[] } {
   const mem = state.circling;
   if (!mem || state.activeEncounter) return { state, receipts: [], notes: [] };
+  // Nobody gets word to a PC lying unconscious at 0 HP.
+  if (state.deathSaves || (state.character?.hp ?? 1) <= 0) return { state, receipts: [], notes: [] };
   const turn = state.turn ?? 0;
   if (turnsWithoutProgress(state) < STUCK_TURNS) return { state, receipts: [], notes: [] };
   if (mem.nudgedTurn != null && turn - mem.nudgedTurn < STUCK_TURNS) return { state, receipts: [], notes: [] };
@@ -343,6 +346,8 @@ export function storyChip(state: GameState): string | null {
   // Story RPG: a decision step is taken by its own chip (storyRpgProgress ticks it), wherever the player is.
   const decision = storyRpgDecisionChip(state);
   if (decision) return decision;
+  const tabletopStep = tabletopStepChip(state);
+  if (tabletopStep) return tabletopStep;
   const quest = (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
   if (!quest) return null;
   const here = (state.currentLocation ?? '').toLowerCase();
@@ -380,8 +385,11 @@ const OBJECTIVE_TAIL =
 
 /** An objective as a whole chip: the sentence if it fits, else its verb and object. Never a cut-off line. */
 export function objectiveChip(description: string): string | null {
-  const text = (description ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
-  if (!text) return null;
+  const whole = (description ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
+  if (!whole) return null;
+  if (whole.length <= 60) return whole;
+  // A long step's aside in brackets is a note, never part of the chip.
+  const text = whole.replace(/\s*\([^)]*\)/g, '').trim();
   if (text.length <= 60) return text;
   const head = text.split(OBJECTIVE_TAIL)[0]!.trim();
   return head.split(' ').length >= 2 && head.length <= 60 ? head : null;

@@ -7,6 +7,7 @@ import type { ActiveEncounter, GameState, SceneFacts } from './types';
 import { tickEncounterTerminal } from './encounterTerminalFsm';
 import { pushCombatStateTx } from './stateTx';
 import { isJourneyUnderway, isRoadLabel, UNDERWAY_HERE } from './travelJourney';
+import { placeScale } from './placeAuthority';
 
 function sceneFactsBase(state: GameState): SceneFacts {
   return state.sceneFacts ?? {
@@ -269,7 +270,13 @@ export function foeVisibleInScene(
   return false;
 }
 
-export function autoFightSpawnPreface(enemyName: string, location?: string, road?: string): string {
+/** `scale` is the committed place's indoor/outdoor (placeScale); a room and a doorway only when indoor. */
+export function autoFightSpawnPreface(
+  enemyName: string,
+  location?: string,
+  road?: string,
+  scale: 'indoor' | 'outdoor' | null = 'indoor'
+): string {
   const name = (enemyName ?? '').trim() || 'A threat';
   const loc = (location ?? '').trim();
   const ground =
@@ -282,10 +289,13 @@ export function autoFightSpawnPreface(enemyName: string, location?: string, road
   }
   const where = loc ? ` into ${loc}` : '';
   // Batch G — diegetic only (no "no prior cast" / "telegraph first" director chrome).
+  const edge = scale === 'indoor' ? ' from the edge of the room' : scale === 'outdoor' ? ' from the edge of the open ground' : '';
   if (isHumanoidEnemyName(name)) {
-    return `${name} pushes${where || ' in'} from the edge of the room and commits toward you.`;
+    return `${name} pushes${where || ' in'}${edge} and commits toward you.`;
   }
-  return `${name} forces the doorway${where} with a scrape of wrong motion.`;
+  return scale === 'indoor'
+    ? `${name} forces the doorway${where} with a scrape of wrong motion.`
+    : `${name} lurches${where || ' in'}${edge} with a scrape of wrong motion.`;
 }
 
 const TIER_WORD: Record<string, string> = { trash: '', elite: 'strong ', boss: 'deadly ' };
@@ -314,11 +324,11 @@ export function scrubCombatSpawnLog(text: string): string {
   if (!text) return text;
   return text
     .replace(
-      /\b(?:[A-Z][\w'-]*\s+)*[A-Za-z][\w'-]+\s+pushes(?:\s+into\s+[^.]+)?\s+from the edge of the room and commits toward you\.?\s*/g,
+      /\b(?:[A-Z][\w'-]*\s+)*[A-Za-z][\w'-]+\s+pushes(?:\s+(?:into|in)\s+[^.]+?)?(?:\s+from the edge of the (?:room|open ground))?\s+and commits toward you\.?\s*/g,
       ''
     )
     .replace(
-      /\b(?:[A-Z][\w'-]*\s+)*[A-Za-z][\w'-]+\s+forces the doorway[^.]*\.?\s*/g,
+      /\b(?:[A-Z][\w'-]*\s+)*[A-Za-z][\w'-]+\s+(?:forces the doorway|lurches(?:\s+(?:into|in)\b[^.]*?)?\s+with a scrape of wrong motion)[^.]*\.?\s*/g,
       ''
     )
     .replace(/\s{2,}/g, ' ')
@@ -328,8 +338,9 @@ export function scrubCombatSpawnLog(text: string): string {
 export function hasCombatSpawnLogInBody(text: string): boolean {
   if (!text?.trim()) return false;
   return (
-    /\bpushes(?:\s+into\s+[^.]+)?\s+from the edge of the room and commits toward you\b/i.test(text)
+    /\bpushes(?:\s+(?:into|in)\s+[^.]+?)?(?:\s+from the edge of the (?:room|open ground))?\s+and commits toward you\b/i.test(text)
     || /\bforces the doorway\b/i.test(text)
+    || /\blurches(?:\s+(?:into|in)\b[^.]*?)?\s+with a scrape of wrong motion\b/i.test(text)
   );
 }
 
@@ -422,7 +433,8 @@ export function ensureEncounterSpawnPreface(
     spawnReceipt = autoFightSpawnPreface(
       name,
       state.currentLocation,
-      isJourneyUnderway(state) ? state.journey?.ground : undefined
+      isJourneyUnderway(state) ? state.journey?.ground : undefined,
+      placeScale(state)
     );
     if (bareAlready) {
       nextProse = nextProse.replace(new RegExp(`${esc}\\s+is already on you\\.?`, 'gi'), '').trim();

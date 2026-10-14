@@ -277,9 +277,18 @@ export async function repairMissingAnswer(
   opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
 ): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'painted' }> {
   const { check, packet } = opts;
-  if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput) || hasQuote(turn.prose)) return turn;
-  const here = answerersHere(check, packet);
+  if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput)) return turn;
+  const everyone = answerersHere(check, packet);
+  // The player named who they spoke to: that person answers, not whoever else stands here.
+  const addressee = everyone.find((p) => speakerHere(check.playerInput, [p]));
+  const here = addressee ? [addressee] : everyone;
   if (!here.length) return turn;
+  if (hasQuote(turn.prose)) {
+    // "Tilde looked up. "Not tonight," she said." names the speaker in the sentence before the quote.
+    const all = splitProseSentences(turn.prose);
+    const unquoted = (s: string | undefined) => (s ?? '').replace(/["“][^"“”]*["”]/g, ' ');
+    if (!addressee || all.some((s, i) => hasQuote(s) && speakerHere(`${unquoted(all[i - 1])} ${unquoted(s)}`, here))) return turn;
+  }
   const fact = check.engineFact;
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
   const request = answerRepairRequest(check, here, said, turn.prose, packet.townsfolk ?? []);

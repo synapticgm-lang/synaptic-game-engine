@@ -50,6 +50,13 @@ export function giverSpoke(speech: readonly SpokenLine[] | undefined, giver: str
   return (speech ?? []).some((l) => !!l.words?.trim() && isGiverName(l.speaker, giver));
 }
 
+const TALK_STEP = /^\s*(?:[Ss]peak|[Tt]alk)\s+(?:with|to)\s+((?:[A-Z][\w'’-]*)(?:\s+(?:the\s+)?[A-Z][\w'’-]*)*)/;
+
+/** The person a quest step is to be heard from ("Speak with Oskar at the Greyhollow Tavern" → Oskar), or null. */
+export function talkStepPerson(step: string): string | null {
+  return (step ?? '').match(TALK_STEP)?.[1]?.trim() || null;
+}
+
 const said = (s: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
 
 /** The player's line is about the stage: it asks for or demands the reason, or it is the step's own chip. */

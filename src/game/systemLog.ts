@@ -184,7 +184,13 @@ export function reconcileXpStatusLines(lines: string[], codeXpNotes: string[] = 
 
 /** An engine-rolled check receipt ("Flee check: d20 10 + 1 vs DC 12 — failure"). Tabletop shows these. */
 export function isEngineCheckLine(line: string): boolean {
-  return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(line.trim());
+  const t = line.trim();
+  return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(t) || isEngineRoundLine(t);
+}
+
+/** A tabletop fight's engine lines (initiative, each round, death saves): every roll in them is shown. */
+function isEngineRoundLine(line: string): boolean {
+  return /^(?:Initiative|Opening strike|Rounds? \d+(?:–\d+)?) — /.test(line) || /^Death save: /.test(line);
 }
 
 /** LitRPG item rarity tag ("[Epic] Masterwork Jerkin"); Story RPG loot reads as plain things. */

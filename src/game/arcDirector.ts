@@ -62,10 +62,13 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { autoFightSpawnPreface, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
+import { usesRoundCombat } from './tabletop/roundFight';
 import { houseRulesOf, scaledCadence } from './rules/houseRules';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
 import { commitTravel, isJourneyUnderway } from './travelJourney';
 import { applyGraphExitTravel } from './mapEngine';
+import { placeScale } from './placeAuthority';
+import { peopleHere } from './chipLegality';
 import { applyRestHeal } from './recoveryRules';
 import { settleClassChoice } from './rules/characterClass';
 import { settleStatPoints } from './rules/abilityPoints';
@@ -84,7 +87,7 @@ import {
   playerGivesOrRefusesName,
 } from './openingEstablishment';
 import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
-import { giverIsHere, giverSpoke, playerAsksForTalkStage, talkStageGiver } from './questGiver';
+import { giverIsHere, giverSpoke, playerAsksForTalkStage, talkStageGiver, talkStepPerson } from './questGiver';
 import type { SpokenLine } from './tokenProse';
 import { selectEligibleCrisis } from './socialCrisis';
 import type { SocialCrisis } from './socialCrisisTypes';
@@ -226,6 +229,8 @@ export interface ArcDirectorResult {
   xpAwards: Array<{ amount: number; reason: string }>;
   systemReceipts: string[];
   beatCommitted: boolean;
+  /** Tabletop round fight / death save this turn in words (who hit, who missed, down, dying), for the writer's fact. */
+  fightFacts?: string;
 }
 
 function committedSet(state: GameState): Set<string> {
@@ -335,9 +340,21 @@ function advancePendingArrival(
   const arrival = autoFightSpawnPreface(
     live.name,
     next.currentLocation,
-    isJourneyUnderway(next) ? next.journey?.ground : undefined
+    isJourneyUnderway(next) ? next.journey?.ground : undefined,
+    placeScale(next)
   );
   return { state: next, receipts: [`Encounter: ${live.name}`, arrival], mandates: [`Encounter: ${live.name}`] };
+}
+
+/** The player is speaking with a person here by name: an overdue fight waits for the next turn. */
+function talkingWithSomeoneHere(state: GameState, playerInput: string): boolean {
+  if (!/\b(?:talk|speak|ask|tell|greet|thank|offer|give|help|chat|introduce|listen)\b/i.test(playerInput)) return false;
+  return peopleHere(state).some((name) =>
+    name
+      .split(/\s+/)
+      .filter((w) => /^[A-Z][a-z'’-]{2,}$/.test(w))
+      .some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(playerInput))
+  );
 }
 
 export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
@@ -350,6 +367,7 @@ export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
   const lastKillTurn = state.sceneFacts?.lastKill?.turn;
   if (typeof lastKillTurn === 'number' && state.turn - lastKillTurn <= 1) return false;
   if (isSeekFightChip(playerInput)) return true;
+  if (talkingWithSomeoneHere(state, playerInput)) return false;
   const turnsSinceLast = state.arcDirector?.turnsSinceCombatReceipt ?? state.turn;
   const mode = state.engineMode;
   const freq = houseRulesOf(state).combatFrequency;
@@ -619,13 +637,12 @@ function applyBeatEffects(
   };
 
   if (contract.questId != null && contract.questObjectiveIndex != null) {
+    const step = (next.quests ?? []).find((q) => q.id === contract.questId)?.objectives?.[contract.questObjectiveIndex];
+    // A step heard from a named person is done only by talking to them (tabletopQuestProgress), never on a beat timer.
+    const heardStep = !!step && !step.completed && !!talkStepPerson(step.description);
     next = {
       ...next,
-      quests: completeQuestObjective(
-        next.quests ?? [],
-        contract.questId,
-        contract.questObjectiveIndex
-      ),
+      quests: heardStep ? next.quests ?? [] : completeQuestObjective(next.quests ?? [], contract.questId, contract.questObjectiveIndex),
     };
     receipts.push(`Quest stage: ${contract.summary}`);
     extras.questStage = contract.summary;
@@ -1051,6 +1068,11 @@ export function runArcDirectorBeforeGm(
     }
   }
 
+  if (contract?.kind === 'encounter' && !isSeekFightChip(playerInput) && talkingWithSomeoneHere(working, playerInput)) {
+    contract = null;
+    forceDroughtSpawn = false;
+  }
+
   if (contract && (!contract.once || !committed.has(contract.id)) && shouldCommitBeat(contract, working, playerInput)) {
     const { seq, state: seqState } = nextEventSeq(working);
     working = seqState;
@@ -1214,6 +1236,8 @@ export function runArcDirectorBeforeGm(
   // 29y — a threat stays on its place until beaten or fled.
   working = syncPlaceThreat(state, working, systemReceipts, engineFight?.foeAfter);
 
+  const fightFacts =
+    engineFight && usesRoundCombat(state) ? engineFight.facts.replace(/^ENGINE OUTCOME \([^)]*\):\s*/, '').trim() : '';
   return {
     state: working,
     mandate: mandates.filter(Boolean).join('\n'),
@@ -1221,6 +1245,7 @@ export function runArcDirectorBeforeGm(
     xpAwards,
     systemReceipts,
     beatCommitted,
+    ...(fightFacts ? { fightFacts } : {}),
   };
 }
 

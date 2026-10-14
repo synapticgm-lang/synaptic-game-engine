@@ -591,13 +591,14 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = Math.random): 
     next = endAttunementOnDeath(next);
     fact = 'Your breath stops. You are dead.';
   } else if (r.state.stable) {
-    next = { ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } };
-    receipts.push(hpLine(0, 1));
+    const woke = advanceClock({ ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } }, r.hoursToWake ?? 1);
+    next = woke.state;
+    receipts.push(hpLine(0, 1), `Time: ${woke.note}`);
     fact = `Your breathing steadies; you are stable. ${HOURS_LATER[r.hoursToWake ?? 0] ?? 'Hours'} later you wake, weak but alive.`;
   } else {
-    fact = secret
+    fact = `You lie unconscious on the ground at 0 HP and cannot move, speak or act. ${secret
       ? 'You lie at the edge, neither waking nor slipping away yet.'
-      : r.result === 'success' ? 'You cling to life; your breathing holds.' : 'You slip further; your breath falters.';
+      : r.result === 'success' ? 'You cling to life; your breathing holds.' : 'You slip further; your breath falters.'}`;
   }
   return { state: next, receipts, facts: `${DYING_HEAD} ${fact}`, noTerminal: true };
 }
