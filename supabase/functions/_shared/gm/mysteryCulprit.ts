@@ -1,15 +1,8 @@
 import type { CampaignBible, MysteryCulprit } from './campaignBibleTypes.ts';
 import type { GameState } from './types.ts';
 
-function hashSeed(input: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
+import { hashSeed } from './seededRng.ts';
 function pickFromPool(pool: string[] | undefined, seed: string, salt: string): string | undefined {
   if (!pool?.length) return undefined;
   return pool[hashSeed(`${seed}|${salt}`) % pool.length];

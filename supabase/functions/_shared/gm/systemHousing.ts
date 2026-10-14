@@ -5,6 +5,7 @@
 
 import type { Character, Container, Item, Quest } from './types.ts';
 
+import { hashSeed } from './seededRng.ts';
 export type SystemHousingId = 'private_window' | 'worn_device' | 'world_status' | 'leftover_pocket';
 
 export type SystemPartId =
@@ -100,14 +101,6 @@ const WORLD_STATUS_BOUND = 'The full sheet is only for someone the player has bo
 
 const HOUSING_IDS: readonly SystemHousingId[] = ['private_window', 'worn_device', 'world_status', 'leftover_pocket'];
 
-function hashSeed(text: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < text.length; i++) {
-    h ^= text.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return h >>> 0;
-}
 
 function allOff(): Record<SystemPartId, boolean> {
   return Object.fromEntries(SYSTEM_PART_IDS.map((p) => [p, false])) as Record<SystemPartId, boolean>;

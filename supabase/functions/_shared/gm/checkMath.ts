@@ -1,4 +1,5 @@
 import type { AttributeKey, GameState, ProfessionSkill } from './types.ts';
+import { turnRng } from './seededRng.ts';
 import type { PlayerIntent } from './intentParser.ts';
 import { evaluateRoll, type RollOutcome } from './gameEngine.ts';
 import { currentDungeonNode } from './dungeonSeed.ts';
@@ -432,6 +433,7 @@ export function runPlayerCheck(
     auto,
     cue,
     d20s: d20Roll != null ? [d20Roll] : undefined,
+    rng: turnRng(state, 'check', ctx.label),
   });
   const displayLine = formatCheckRecord(record, state.engineMode);
   if (record.auto) {
