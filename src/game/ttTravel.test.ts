@@ -31,11 +31,13 @@ import {
   journeyPads,
   pickMeetingKind,
   replayKeepsRecordedMeetings,
+  roadHoursToday,
   roadMeetingFact,
   rollRoadEncounter,
   setReplayRecordedMeetings,
   travelBeatFact,
   UNDERWAY_HERE,
+  worldClock,
   type StretchContext,
 } from './travelJourney';
 import { readFileSync } from 'node:fs';
@@ -62,8 +64,9 @@ function onTrip(seed: string, mode: EngineMode = 'dnd') {
   return commitTravel(keepState(seed, mode), 'Travel toward Blackspine Treeline');
 }
 
-/** A started trip with no meeting live, day nearly spent. */
-function quietEvening(seed: string, over: Partial<TravelJourney> = {}, inventory?: Item[]): GameState {
+/** A started trip with no meeting live, day nearly spent (`roadHours` on the world clock's day, default 8). */
+function quietEvening(seed: string, over: Partial<TravelJourney> & { roadHours?: number } = {}, inventory?: Item[]): GameState {
+  const { roadHours = 8, ...journeyOver } = over;
   for (let i = 0; i < 200; i++) {
     const t = onTrip(`${seed}-${i}`);
     const j = t.state.journey;
@@ -71,7 +74,8 @@ function quietEvening(seed: string, over: Partial<TravelJourney> = {}, inventory
     return {
       ...t.state,
       ...(inventory ? { inventory } : {}),
-      journey: { ...j, hoursToday: 8, ...over },
+      roadDay: { since: worldClock(t.state), hours: roadHours },
+      journey: { ...j, ...journeyOver },
     };
   }
   throw new Error('no quiet trip');
@@ -165,7 +169,7 @@ describe('tt-travel — weather, jobs and getting lost (gaps 3–4)', () => {
   });
 
   it('a job chip is offered and taken by the travel engine, never a second check', () => {
-    const s = quietEvening('chip', { hoursToday: 0 });
+    const s = quietEvening('chip', { roadHours: 0 });
     const pads = journeyPads(s);
     const job = pads.find((p) => /^(Keep lookout|Forage as you go|Lead the way)$/.test(p));
     expect(job).toBeDefined();
@@ -200,8 +204,8 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
   });
 
   it('pushing past 8 hours calls for Constitution saves (Extended Travel)', () => {
-    const s = quietEvening('march', { hoursToday: 8 });
-    expect(dayIsSpent(s.journey!)).toBe(true);
+    const s = quietEvening('march', { roadHours: 8 });
+    expect(dayIsSpent(s, s.journey!)).toBe(true);
     expect(journeyPads(s).slice(0, 2)).toEqual(['Make camp', 'Push on through the night']);
     const pushed = commitTravel(s, 'Push on through the night');
     expect((pushed.extra ?? []).some((l) => /Extended Travel: Constitution save/.test(l))).toBe(true);
@@ -215,7 +219,7 @@ describe('tt-travel — camp, rations and rest (gap 5)', () => {
     expect((camp.extra ?? []).some((l) => /^Rations: 1 day eaten/.test(l))).toBe(true);
     expect((camp.extra ?? []).some((l) => /^Rest: long rest/.test(l))).toBe(true);
     expect(camp.state.journey?.day).toBe(2);
-    expect(camp.state.journey?.hoursToday).toBe(0);
+    expect(roadHoursToday(camp.state)).toBe(0);
   });
 
   it('a long rest removes one Exhaustion level when fed', () => {
@@ -241,12 +245,12 @@ describe('tt-travel — camp, rations and rest (gap 5)', () => {
 
 describe('tt-travel — Travel on, stops and arrival (gaps 1 and 5)', () => {
   it('Travel on walks stretch after stretch and stops on an event, the day spent, or arrival', () => {
-    const s = quietEvening('on', { hoursToday: 0 });
+    const s = quietEvening('on', { roadHours: 0 });
     const on = commitTravel(s, 'Travel on');
     expect(on.handled).toBe(true);
     expect((on.extra ?? [])[0]).toMatch(/^Travel on: \d+ stretch(es)?, \+/);
     const j = on.state.journey;
-    const stopped = on.arrived || !!on.event || !j || !!j.encounter || dayIsSpent(j);
+    const stopped = on.arrived || !!on.event || !j || !!j.encounter || dayIsSpent(on.state, j);
     expect(stopped).toBe(true);
   });
 
@@ -267,7 +271,7 @@ describe('tt-travel — Travel on, stops and arrival (gaps 1 and 5)', () => {
   });
 
   it('chips after a quiet stretch are only engine chips (no question, no list)', () => {
-    const s = quietEvening('pads', { hoursToday: 0 });
+    const s = quietEvening('pads', { roadHours: 0 });
     const pads = compileChoices(s, ['Look around']).choices;
     expect(pads.every((p) => !/\?$/.test(p))).toBe(true);
   });

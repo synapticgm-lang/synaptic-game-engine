@@ -34,18 +34,12 @@ export interface ChipProblem {
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
-function nameTokens(name: string): string[] {
-  return low(name)
-    .replace(/^(?:the|a|an)\s+/, '')
-    .split(/[\s'’-]+/)
-    .filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
-}
-
 export function mentionsName(text: string, name: string): boolean {
   const hay = low(text);
   if (!hay) return false;
   if (hay.includes(low(name))) return true;
-  return nameTokens(name).some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay));
+  const tokens = low(name).replace(/^(?:the|a|an)\s+/, '').split(/[\s'’-]+/).filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
+  return tokens.some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay));
 }
 
 const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);

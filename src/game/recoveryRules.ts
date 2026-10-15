@@ -7,7 +7,7 @@
 import type { EngineMode, GameState } from './types';
 import { difficultyFromStrictness } from './difficultyRules';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
-import { advanceClock } from './travelJourney';
+import { advanceClock, wakeToNewDay, worldClock } from './travelJourney';
 import { deriveTabletopSheet, sheetSpellcasting, tabletopHitDie } from './tabletop/characterBuild';
 import { arcaneRecovery, isPactCaster } from './rules/spells';
 import { restoreFeatures } from './rules/classFeatures';
@@ -176,7 +176,11 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
   const variant = house.restVariant === 'standard' ? '' : ` (${house.restVariant} rest)`;
   if (kind === 'long') {
     const span = restSpan(hours.long);
-    const clock = advanceClock(state, hours.long);
+    // SRD 5.2.1: one Long Rest per 24 hours. Too soon after the last, the hours until it may begin pass awake.
+    const now = worldClock(state);
+    const wait = state.lastLongRestAt == null ? 0 : Math.max(0, Math.round((state.lastLongRestAt + 24 - now) * 10) / 10);
+    const awake = wait ? restSpan(wait) : null;
+    const clock = advanceClock(state, wait + hours.long);
     const spent = Math.max(0, (state.hitDiceSpent ?? 0) - Math.max(1, Math.floor((ch.level ?? 1) / 2)));
     const caster = !!sheetSpellcasting(ch);
     // Human Resourceful (SRD 5.2.1): Heroic Inspiration after each Long Rest.
@@ -196,7 +200,7 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
       if (ac != null) character = { ...character, armorClass: ac };
     }
     const companions = sidekickHurt ? (clock.state.companions ?? []).map((c) => (c.sidekick ? { ...c, hp: c.maxHp } : c)) : clock.state.companions;
-    const next = { ...clock.state, companions, hitDiceSpent: spent, character };
+    const next = wakeToNewDay({ ...clock.state, companions, hitDiceSpent: spent, character, lastLongRestAt: now + wait });
     const slotLine = caster ? slotsLeftLine(next) : null;
     const after = [
       ...(slotLine ? [slotLine] : []),
@@ -207,9 +211,9 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
     ];
     return {
       state: next,
-      receipt: `Rest: long rest${variant}, ${span.status} — ${hurt ? `HP ${ch.hp} → ${max}` : `HP stays ${max}`} (${clock.note})`,
+      receipt: `Rest: long rest${variant}, ${span.status}${awake ? ` after ${awake.status} awake (one long rest per 24 hours)` : ''} — ${hurt ? `HP ${ch.hp} → ${max}` : `HP stays ${max}`} (${clock.note})`,
       ...(after.length ? { after } : {}),
-      fact: `You ${hours.long >= 24 ? 'rested' : 'slept'} through a long rest of ${span.prose} and woke with your strength back${caster ? ' and your spells ready again' : ''}.`,
+      fact: `${awake ? `You stayed awake ${awake.prose} before you could rest, then ` : 'You '}${hours.long >= 24 ? 'rested' : 'slept'} through a long rest of ${span.prose} and woke with your strength back${caster ? ' and your spells ready again' : ''}.`,
     };
   }
   const shortSpan = restSpan(hours.short);

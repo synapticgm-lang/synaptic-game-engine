@@ -8,7 +8,7 @@ import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, type LedgerRef } from './completedEventPacket';
-import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type SpokenLine, type TokenAcceptPath } from './tokenProse';
+import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type DroppedLine, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import {
@@ -21,7 +21,8 @@ import {
   withMissingFightFacts,
 } from './beatCommitGate';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
-import { dropsFightRoll, RECORD_READOUT } from './engineFactGate';
+import { dropsFightRoll } from './engineFactGate';
+import { escRe } from './engineFactPatterns';
 import { splitProseSentences } from './proseSentences';
 import { staleLocationRepairNote } from './sceneContextTail';
 import { exitRepairFact } from './exitCount';
@@ -55,6 +56,8 @@ export type WriterDraft = {
   refs?: TokenUseRef[];
   /** Token JSON drafts only: the accepted speech lines. */
   speech?: SpokenLine[];
+  /** Lines the token line gate dropped; they go into the turn's one repair request. */
+  dropped?: DroppedLine[];
 };
 
 export type WriterTurnOutcome = 'accepted' | 'empty';
@@ -105,7 +108,8 @@ export function renderWriterDraft(raw: string, state: GameState, packet?: Comple
   });
   const prose = (accepted.prose ?? '').trim();
   if (!stripChoiceList(stripActionTags(prose)).trim()) return { prose: '', path: accepted.path };
-  return { prose, path: accepted.path, refs: accepted.refs, ...(accepted.speech ? { speech: accepted.speech } : {}) };
+  const { refs, speech, dropped } = accepted;
+  return { prose, path: accepted.path, refs, ...(speech ? { speech } : {}), ...(dropped ? { dropped } : {}) };
 }
 
 function unresolvedProblem(why: string, playerInput: string, engineFact: string): string {
@@ -289,14 +293,13 @@ function oneOfGroup(plural: string): string | null {
  * ("Nell" for Nell Rudd), or one member of a group held here ("a thug" when the thugs are here).
  */
 function speakerHere(bare: string, here: string[]): boolean {
-  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return here.some((p) => {
-    if (new RegExp(`\\b${esc(p)}\\b`, 'i').test(bare)) return true;
+    if (new RegExp(`\\b${escRe(p)}\\b`, 'i').test(bare)) return true;
     const words = p.split(/\s+/).filter((w) => /^[A-Z][a-z'’-]{2,}$/.test(w));
-    if (words.length > 1 && words.some((w) => new RegExp(`\\b${esc(w)}\\b`).test(bare))) return true;
+    if (words.length > 1 && words.some((w) => new RegExp(`\\b${escRe(w)}\\b`).test(bare))) return true;
     const last = p.split(/\s+/).pop() ?? '';
     const one = /^[a-z]/.test(last) ? oneOfGroup(last) : null;
-    return !!one && new RegExp(`\\b(?:a|an|one|another|the)\\s+(?:[\\w'’-]+\\s+){0,3}?${esc(one)}\\b`, 'i').test(bare);
+    return !!one && new RegExp(`\\b(?:a|an|one|another|the)\\s+(?:[\\w'’-]+\\s+){0,3}?${escRe(one)}\\b`, 'i').test(bare);
   });
 }
 
@@ -354,7 +357,7 @@ const SELF_TITLE = /^(?:father|mother|brother|sister|sir|lady|lord|old|captain|m
 /** tt-fix-7 — quoted words naming their own speaker ("Aldous wants to know…", said by Aldous) are a note read out, not speech. */
 export function speaksOfSelf(quoted: string, speaker: string): boolean {
   const parts = speaker.split(/\s+/).filter((w) => w.length > 2 && /^[A-Z]/.test(w) && !SELF_TITLE.test(w));
-  return parts.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(quoted));
+  return parts.some((w) => new RegExp(`\\b${escRe(w)}\\b`).test(quoted));
 }
 
 /** The one request for a missing answer. The player's character is never the speaker: the player speaks for them. */
@@ -414,12 +417,14 @@ export async function repairMissingAnswer(
   const speakers = [...backed.keys()];
   const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
   if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };
+  // One repair request per turn: the sentence repair already sent it.
+  if (turn.repairs?.some((r) => !r.bug?.startsWith('unlocated'))) return { ...turn, answerRepair: { ...missing, bug: 'one repair per turn: the sentence repair sent it' } };
   const raw = await opts.repair(request).catch(() => '');
   const line = raw.trim() ? repairReplyLines(raw, check, packet, 1)?.[0] : undefined;
   const quoted = line?.match(/["“]([^"“”]{3,})["”]/)?.[1] ?? '';
   const bare = line?.replace(/["“][^"“”]*["”]/g, ' ') ?? '';
   const pc = (check.state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
-  const pcSpeaks = new RegExp(`^\\W*(?:you${pc.length > 1 ? `|${pc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}` : ''})\\b`, 'i').test(bare);
+  const pcSpeaks = new RegExp(`^\\W*(?:you${pc.length > 1 ? `|${escRe(pc)}` : ''})\\b`, 'i').test(bare);
   const bug = !raw.trim()
     ? 'repair reply empty'
     : !line
@@ -455,13 +460,9 @@ function landAnswer<T extends WriterTurnResult>(turn: T, check: DraftCheck, miss
   return { ...turn, prose, answerRepair: { ...missing, repaired: line }, remaining: writerDraftProblems(prose, check) };
 }
 
-function sentencePattern(sentence: string): RegExp {
-  return new RegExp(sentence.trim().split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+'));
-}
-
 /** The draft with one sentence swapped for `replacement` ('' drops it), whitespace-tolerant. */
 export function replaceDraftSentence(prose: string, sentence: string, replacement: string): string {
-  const next = prose.replace(sentencePattern(sentence), () => replacement.trim());
+  const next = prose.replace(new RegExp(sentence.trim().split(/\s+/).map(escRe).join('\\s+')), () => replacement.trim());
   return next.replace(/[ \t]{2,}/g, ' ').replace(/ +([.,!?])/g, '$1').replace(/^\s+|\s+$/g, '');
 }
 
@@ -496,9 +497,10 @@ function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEvent
 }
 
 /**
- * Lap 13 — a sentence the commit gate rejects never reaches the page. The writer gets ONE request with
- * only the flagged sentence(s) and the engine fact; a rewrite that passes the gate takes its place and the
- * rest of the draft stays. A rewrite that fails leaves the sentence off the page and is logged as a bug.
+ * Lap 13 / tt-fix-15 — no flagged line reaches the page. The writer gets ONE request per turn holding every
+ * sentence the commit gate rejects and every line the token line gate dropped, with the engine fact. A rewrite
+ * that passes the gate takes the sentence's place (a dropped line's goes back after the kept line it followed);
+ * whatever still fails is left off the page and logged as a bug. Nothing is kept or painted in its place.
  */
 export async function repairRejectedSentences(
   turn: WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string },
@@ -507,17 +509,22 @@ export async function repairRejectedSentences(
   const { check, packet } = opts;
   // The draft as a whole is what the gate rejects; a sentence that only reads wrong out of context is not.
   const wholeProblems = sentenceGateProblems(check.state, turn.prose, check.playerInput);
-  const whole = wholeProblems[0];
-  if (!whole) return turn;
-  // tt-fix-3 — every sentence the draft fails on is repaired in the one request, not only the first reason's.
-  const flagged = splitProseSentences(turn.prose)
-    .map((sentence) => ({ sentence, flag: sentenceGateProblems(check.state, sentence, check.playerInput).find((p) => wholeProblems.includes(p)) }))
-    .filter((f): f is { sentence: string; flag: string } => !!f.flag);
+  const flagOf = (text: string) => sentenceGateProblems(check.state, text, check.playerInput).find((p) => wholeProblems.includes(p));
+  // tt-fix-3 — every sentence the draft fails on is in the one request; a flag no one sentence carries is on the pair that does.
+  const all = splitProseSentences(turn.prose);
+  const locate = (list: string[]) =>
+    list.map((sentence) => ({ sentence, flag: flagOf(sentence) })).filter((f): f is { sentence: string; flag: string } => !!f.flag);
+  const singles = wholeProblems.length ? locate(all) : [];
+  const flagged: { sentence: string; flag: string; after?: string }[] =
+    singles.length || !wholeProblems.length ? singles : locate(all.slice(1).map((s, i) => `${all[i]} ${s}`)).slice(0, 1);
+  for (const d of turn.dropped ?? []) {
+    const flag = plainLineFactProblem(d.sentence, check.state, packet) ?? sentenceGateProblem(check.state, d.sentence, check.playerInput) ?? `it failed the line check (${d.reason})`;
+    flagged.push({ sentence: d.sentence, flag, after: d.after });
+  }
   if (!flagged.length) {
-    return {
-      ...turn,
-      repairs: [{ sentence: turn.prose.slice(0, 200), flag: whole, fact: check.engineFact, bug: 'unlocated: no single sentence fails the gate' }],
-    };
+    return wholeProblems.length
+      ? { ...turn, repairs: [{ sentence: turn.prose.slice(0, 200), flag: wholeProblems[0]!, fact: check.engineFact, bug: 'unlocated: no sentence or pair fails the gate' }] }
+      : turn;
   }
   // A way-out flag is fixed against this place's ways out, whatever else the turn's fact says.
   const exitFact = flagged.some((f) => /\bways? out\b/i.test(f.flag)) && !/\bExits:/.test(check.engineFact) ? exitRepairFact(check.state) : '';
@@ -525,15 +532,6 @@ export async function repairRejectedSentences(
   const countNote = flagged.some((f) => /^Gives the wrong number of ways out/.test(f.flag))
     ? 'Name every one of those ways out, or give no number of ways at all.'
     : '';
-  // A sentence that cannot be rewritten stays when it is the only one telling this turn's event (the player's
-  // action or move), and a record read-out stays when it is the only one naming where the player went.
-  const destination = [check.state.journey?.to, check.state.currentLocation].filter((p): p is string => !!p && p.length > 2);
-  const namesDestination = (s: string) => destination.some((p) => s.toLowerCase().includes(p.toLowerCase()));
-  const event = thisTurnsEventCheck(check, refEnumOf(check.state, packet));
-  const only = (has: (s: string) => boolean) => (s: string, draft: string) =>
-    has(s) && !splitProseSentences(draft).some((o) => o !== s && has(o));
-  const onlyDestination = only(namesDestination);
-  const onlyEvent = only(event);
   let lines: string[] | null = null;
   let bug = 'no repair path';
   let raw = '';
@@ -549,27 +547,30 @@ export async function repairRejectedSentences(
   let prose = turn.prose;
   const repairs: SentenceRepair[] = flagged.map((f, i) => {
     const line = lines?.[i];
+    // A flagged sentence's rewrite takes its place; a dropped line's goes after the kept line it followed
+    // (first when it opened the beat, last when that line is gone).
+    const place = (text: string) => {
+      if (f.after == null) return replaceDraftSentence(prose, f.sentence, text);
+      const next = f.after ? replaceDraftSentence(prose, f.after, `${f.after} ${text}`) : `${text} ${prose}`;
+      return next !== prose ? next : `${prose} ${text}`;
+    };
     // The rewrite fails only for a reason it fails in its draft too (out of context alone is not enough).
-    const inDraft = line ? sentenceGateProblems(check.state, replaceDraftSentence(prose, f.sentence, line), check.playerInput) : [];
+    const inDraft = line ? sentenceGateProblems(check.state, place(line), check.playerInput) : [];
     // tt-fix-7 — a rewrite answers to the same line-fact gate as a writer line (R3: it brought back a wrong time of day).
     const still = line
       ? sentenceGateProblems(check.state, line, check.playerInput).find((p) => inDraft.includes(p))
         ?? plainLineFactProblem(line, check.state, packet)
       : null;
-    const ok = !!line && !still && line.trim() !== f.sentence.trim();
-    // A repair that hands the same sentence back found nothing to change: the gate's flag was false, the line stays.
     const unchanged = !!line && line.trim() === f.sentence.trim();
-    const keep =
-      unchanged
-      || (!ok && !/@t\d+\b/.test(f.sentence) && onlyEvent(f.sentence, prose))
-      || (!ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose));
-    if (!keep) prose = replaceDraftSentence(prose, f.sentence, ok ? line! : '');
+    const ok = !!line && !still && !unchanged;
+    if (ok) prose = place(line!);
+    else if (f.after == null) prose = place('');
     return ok
       ? { sentence: f.sentence, flag: f.flag, fact, repaired: line }
       : {
           sentence: f.sentence, flag: f.flag, fact,
           ...(line ? { repaired: line } : {}),
-          bug: unchanged ? 'kept: repair returned the sentence unchanged' : still ? `repair failed the gate: ${still}` : bug,
+          bug: unchanged ? 'repair returned the sentence unchanged' : still ? `repair failed the gate: ${still}` : bug,
           ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}),
         };
   });
@@ -655,7 +656,7 @@ export function playerActionSentenceCheck(playerInput: string, pcName?: string |
   const words = [verb, ...objectWords(playerInput)].filter((w) => w.length >= 3);
   const first = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
   if (!words.length) return () => false;
-  const subject = new RegExp(`^\\W*(?:${first.length >= 2 ? `${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}|` : ''}you)\\b`, 'i');
+  const subject = new RegExp(`^\\W*(?:${first.length >= 2 ? `${escRe(first)}|` : ''}you)\\b`, 'i');
   return (s) => subject.test(s) && words.some((w) => stemHit(s.replace(/["“][^"”]*["”]/g, ' '), w));
 }
 

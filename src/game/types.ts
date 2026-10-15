@@ -921,6 +921,12 @@ export interface GameState {
   travelBeat?: TravelBeat | null;
   /** 29u — hour of day (0–24) moved by travel time; sceneFacts.timeOfDay follows it. */
   worldHour?: number;
+  /** Whole days passed on the world clock; with worldHour it is the game's one clock. */
+  worldDay?: number;
+  /** This waking day's road hours (SRD Extended Travel); `since` is the world-clock hour the day began. */
+  roadDay?: { since: number; hours: number };
+  /** World-clock hour the last long rest began (SRD: one long rest per 24 hours). */
+  lastLongRestAt?: number;
   /** Tabletop: Hit Dice spent on short rests since the last long rest (the character holds one per level). */
   hitDiceSpent?: number;
   /** Tabletop: every oracle question asked and the d100 that answered it (rules/oracle). */
@@ -1056,8 +1062,6 @@ export interface TravelJourney {
   encounter?: RoadEncounter | null;
   /** 29w — quiet stretches in a row on this trip (a long trip is not all quiet). */
   quietStretches?: number;
-  /** Hours travelled since the last camp (SRD 5.2.1 Extended Travel counts past 8). */
-  hoursToday?: number;
   /** Travel day of this trip, 1-based; a camp starts the next one. */
   day?: number;
   /** Hours walked since the last meeting check (one check per watch). */

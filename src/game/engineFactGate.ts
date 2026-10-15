@@ -69,11 +69,6 @@ export function agencyProblem(state: GameState, sentence: string, playerInput?: 
 /** What the fight fact says the PC and the foes did this turn. */
 export const fightRolls = readFightRolls;
 
-/** A sentence telling a PC blow or action the engine did not allow, or a foe hit or miss the fact did not roll. */
-export function rollContradictionProblem(state: GameState, sentence: string): string | null {
-  return rollContradiction(sentence, pcSubject(state), engineFact(state)) ? ROLL_CONTRADICTION : null;
-}
-
 /** The fight fact's hits on the PC that the whole beat never shows (a dropped roll). */
 export function dropsFightRoll(state: GameState, prose: string): boolean {
   if (state.engineMode !== 'dnd') return false;
@@ -87,6 +82,7 @@ export function engineFactProblems(state: GameState, sentence: string, playerInp
     recordReadoutProblem(state, sentence, playerInput),
     posesChoiceProblem(state, sentence),
     agencyProblem(state, sentence, playerInput),
-    rollContradictionProblem(state, sentence),
+    // A PC blow or action the engine did not allow, or a foe hit or miss the fact did not roll.
+    rollContradiction(sentence, pcSubject(state), engineFact(state)) ? ROLL_CONTRADICTION : null,
   ].filter((p): p is string => !!p);
 }

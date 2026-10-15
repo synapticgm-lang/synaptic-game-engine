@@ -26,9 +26,10 @@ let B: Replay;
 let G: Replay;
 let C: Replay;
 beforeAll(async () => {
-  [A, B, G, C] = (await Promise.all([replayWhole(F150), replayWhole(F151), replayWhole(G172), replayWhole(F172)])).map(
-    (s) => new Replay(s)
-  );
+  // One replay at a time: they share the mocked writer queue, and a repair reads it after an await.
+  const runs: Replay[] = [];
+  for (const run of [F150, F151, G172, F172]) runs.push(new Replay(await replayWhole(run)));
+  [A, B, G, C] = runs as [Replay, Replay, Replay, Replay];
 }, 1_800_000);
 
 describe('replay bank multi lap 23', () => {

@@ -72,16 +72,8 @@ const SLOT_STOP = new Set([
   'happened', 'summoned', 'location', 'people', 'person', 'someone', 'something',
 ]);
 
-function distinctiveTokens(raw: string): string[] {
-  return (raw ?? '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter((w) => w.length >= 5 && !SLOT_STOP.has(w));
-}
-
 function slotMentioned(prose: string, slot: string): boolean {
-  const tokens = distinctiveTokens(slot);
+  const tokens = (slot ?? '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 5 && !SLOT_STOP.has(w));
   if (!tokens.length) return true;
   const hay = (prose ?? '').toLowerCase();
   return tokens.some((t) => hay.includes(t));

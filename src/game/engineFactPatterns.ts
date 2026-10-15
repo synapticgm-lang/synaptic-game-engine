@@ -30,15 +30,11 @@ export const TRAVEL_RECORD: RegExp[] = [
   /\b(?:half|part) of the travel\b/i,
 ];
 
-/** The engine fact carries a time or travel record this turn ("Travel: … +30 min, now dusk"). */
-export function factHasTimeRecord(engineResult: string): boolean {
-  return /\bTravel:|\+\s*\d+\s*(?:min|h)\b|\bnow (?:dawn|morning|midday|afternoon|dusk|evening|night)\b/i.test(engineResult ?? '');
-}
-
 export function travelRecordRead(sentence: string, engineResult: string): boolean {
   const s = narrationOf(sentence);
   if (TRAVEL_RECORD.some((re) => re.test(s))) return true;
-  return factHasTimeRecord(engineResult) && DURATION.test(s);
+  // A duration reads the record only when the engine fact carries a time or travel record ("Travel: … +30 min, now dusk").
+  return /\bTravel:|\+\s*\d+\s*(?:min|h)\b|\bnow (?:dawn|morning|midday|afternoon|dusk|evening|night)\b/i.test(engineResult ?? '') && DURATION.test(s);
 }
 
 /** The player's decision left hanging in the narration instead of ending on the scene. */

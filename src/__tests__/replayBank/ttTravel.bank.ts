@@ -9,7 +9,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay } from './bank';
 import { replayWhole } from './replayRun';
 import { beginTabletopCreation, stepTabletopCreation } from '../../game/tabletop/creationFlow';
-import { commitTravel, dayIsSpent, journeyPads, travelBeatFact } from '../../game/travelJourney';
+import { commitTravel, dayIsSpent, journeyPads, travelBeatFact, worldClock } from '../../game/travelJourney';
 import { movementFact } from '../../game/completedEventPacket';
 import { withHouseRules } from '../../game/rules/houseRules';
 import { createDefaultSettings } from '../../game/defaults';
@@ -70,8 +70,8 @@ describe('replay bank tt-travel (the travel day)', () => {
       const out = commitTravel({ ...s, seed: `${s.seed ?? ''}-camp-${i}` }, T.input(19));
       const j = out.state.journey;
       if (!j || j.encounter) continue;
-      const evening: GameState = { ...out.state, journey: { ...j, hoursToday: 8 } };
-      expect(dayIsSpent(evening.journey!)).toBe(true);
+      const evening: GameState = { ...out.state, roadDay: { since: worldClock(out.state), hours: 8 } };
+      expect(dayIsSpent(evening, evening.journey!)).toBe(true);
       expect(journeyPads(evening).slice(0, 2)).toEqual(['Make camp', 'Push on through the night']);
       const c = commitTravel(evening, 'Make camp');
       if (c.event === 'camp') camped = c;
@@ -88,7 +88,7 @@ describe('replay bank tt-travel (the travel day)', () => {
   it('[tabletop ds151 T19 | tt-travel] pushing on past 8 hours is SRD Extended Travel: a Constitution save each hour', () => {
     const out = commitTravel(pregen(19, 'Human Fighter (Soldier)'), T.input(19));
     const j = out.state.journey!;
-    const late: GameState = { ...out.state, journey: { ...j, hoursToday: 8, encounter: null } };
+    const late: GameState = { ...out.state, roadDay: { since: worldClock(out.state), hours: 8 }, journey: { ...j, encounter: null } };
     const pushed = commitTravel(late, 'Push on through the night');
     expect((pushed.extra ?? []).some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
   });

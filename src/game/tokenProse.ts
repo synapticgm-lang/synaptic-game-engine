@@ -379,8 +379,13 @@ export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean
   for (const [slots, re] of DAY_PART_WORDS) {
     if (slots.split(' ').some((s) => s === slot || engineSlots.includes(s))) continue;
     for (const m of narration.matchAll(re)) {
-      const before = narration.slice(0, m.index).split(/\s+/).filter(Boolean).slice(-2).join(' ').toLowerCase();
+      const words = narration.slice(0, m.index).split(/\s+/).filter(Boolean);
+      const before = words.slice(-2).join(' ').toLowerCase();
       const after = narration.slice((m.index ?? 0) + m[0].length).trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+      // A word with a verb's -ing ending ("their breath evening out") names a time only where a noun stands:
+      // opening a clause, or straight after a determiner or preposition.
+      const prev = words[words.length - 1]?.toLowerCase() ?? '';
+      if (m[0].toLowerCase().endsWith('ing') && prev && !/[,;:—–]$/.test(prev) && !DETERMINER_RE.test(prev) && !PREPOSITION_RE.test(prev)) continue;
       if (/\b(?:this|that|last|yesterday|tomorrow|since|every|each|earlier|one|all|whole|before|until|by)\b/.test(before)) continue;
       if (/^(?:the|when|that|before|after|they|he|she|we|i|you|it|jax|of|'s|’s)$/.test(after)) continue;
       return true;
@@ -430,7 +435,7 @@ export function lineHasUnhandedCarriedThing(text: string, handedText: string): b
     const head = m[2]!.toLowerCase();
     if (BODY_PART.test(head)) continue;
     const modifier = m[1]!.trim().split(/\s+/).pop()?.toLowerCase() ?? '';
-    const said = (w: string) => w.length >= 3 && new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(handed);
+    const said = (w: string) => w.length >= 3 && new RegExp(`\\b${escRe(w)}`).test(handed);
     if (said(head) || said(modifier)) continue;
     return true;
   }
@@ -484,11 +489,11 @@ export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   // A line that names what the engine result says was found narrates that find, in whatever holds it.
   const engineResult = facts!.split('\n').filter((l) => l.startsWith('engine result:')).join('\n');
   const engineFinds = [...engineResult.matchAll(/\bfound:?\s+(?:\d+\s+)?(?:an?\s+|the\s+|some\s+)?([a-z][a-z'-]{2,})/g)].map((m) => m[1]!.replace(/e?s$/, ''));
-  if (engineFinds.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i').test(narration))) return false;
+  if (engineFinds.some((w) => new RegExp(`\\b${escRe(w)}`, 'i').test(narration))) return false;
   for (const m of narration.matchAll(FOUND_THING)) {
     const head = m[1]!.trim().split(/\s+/).pop()!.toLowerCase().replace(/'s$/, '');
     if (head.length < 3) continue;
-    const word = `${head.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:s|es)?\\b`;
+    const word = `${escRe(head)}(?:s|es)?\\b`;
     if (new RegExp(`\\b${word}`).test(facts!)) continue;
     if (new RegExp(`\\b(?:a|an|the|some|its|his|her|their)\\s+(?:[a-z'-]+\\s+){0,2}${word}`).test(page)) continue;
     return true;
@@ -563,7 +568,7 @@ function namesRefPlainly(text: string, refs: TokenUseRef[], tok: string): boolea
   const words = (refs.find((r) => r.tok === tok)?.id ?? '').trim().split(/\s+/);
   // A role ("the Ash Court priests") is not a proper name; its place words are not the person.
   if (!words.every((w) => /^[A-Z][A-Za-z'’-]+$/.test(w))) return false;
-  return words.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text));
+  return words.some((w) => new RegExp(`\\b${escRe(w)}\\b`).test(text));
 }
 
 export { refEnumOf };
@@ -679,7 +684,7 @@ const narrationOf = (line: TokenLine) =>
 function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boolean {
   const first = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
   if (first.length < 2 || !/\byou(?:r|rs|rself)?\b/i.test(narrationOf(line))) return false;
-  const named = new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+  const named = new RegExp(`\\b${escRe(first)}\\b`);
   return beat.lines.some((l) => named.test(narrationOf(l)));
 }
 
@@ -707,7 +712,7 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
   let animateText = text;
   for (const name of [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean).sort((a, b) => b.length - a.length)) {
     // Whole words only: a held "Close" is not the "close" in "close-eyed".
-    animateText = animateText.replace(new RegExp(`(?<![\\w'-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w'-])`, 'gi'), '·');
+    animateText = animateText.replace(new RegExp(`(?<![\\w'-])${escRe(name)}(?![\\w'-])`, 'gi'), '·');
   }
   return lineHasUnboundAnimate(animateText, knownNames.map((n) => n.toLowerCase())) ? 'unbound-animate' : null;
 }
@@ -851,7 +856,7 @@ function paintDisplay(row: { display: string; klass?: string }, text: string, of
   // "the Stair Descent inside @t1" with display "Cathedral Undercroft — Stair Descent": the room is already written.
   const [place, room] = display.split(/\s+[—–]\s+/);
   if (place && room) {
-    const roomRe = new RegExp(`\\b${room.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+    const roomRe = new RegExp(`\\b${escRe(room)}\\b`, 'i');
     if (roomRe.test(text.slice(0, offset))) return place;
   }
   // "onto the @t2" with display "a ruined bathhouse": the writer's determiner already starts the phrase.
@@ -1191,6 +1196,9 @@ export function spokenLinesOf(beat: TokenBeat, enumRefs: LedgerRef[]): SpokenLin
   return out;
 }
 
+/** A writer line the line gate dropped: painted, why, and the kept sentence it followed ('' at the start). */
+export type DroppedLine = { sentence: string; reason: string; after: string };
+
 export function storySentences(prose: string): number {
   return (prose.match(/[^.!?]+[.!?]+["')\]]*/g) ?? []).filter((s) => s.trim().split(/\s+/).length >= 3).length;
 }
@@ -1213,6 +1221,8 @@ export function acceptTokenOrLedgerStory(
   refs?: TokenUseRef[];
   /** Token JSON paths only: the accepted speech lines (empty when nobody spoke). */
   speech?: SpokenLine[];
+  /** json-partial only: each line the gate dropped, painted, with its reason and the kept line it followed. */
+  dropped?: DroppedLine[];
   usedLastResort: boolean;
 } {
   const enumRefs = refEnumOf(state, packet);
@@ -1280,12 +1290,21 @@ export function acceptTokenOrLedgerStory(
       }
     }
     if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
+      const { full, lines: kept } = bestPartial;
+      const paint = (line?: TokenLine) => (line ? renderTokenBeat({ ...full, lines: [line] }, enumRefs) : '');
+      const dropped = full.lines.flatMap((line, i): DroppedLine[] => {
+        const sentence = kept.includes(line) ? '' : paint(line);
+        if (!sentence) return [];
+        const reason = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName).reason ?? 'bad';
+        return [{ sentence, reason, after: paint(full.lines.slice(0, i).reverse().find((l) => kept.includes(l))) }];
+      });
       return {
         prose,
         path: 'json-partial',
         notes: ['token-partial'],
         refs: bestPartial.beat.refs,
         speech: spokenLinesOf(bestPartial.beat, enumRefs),
+        ...(dropped.length ? { dropped } : {}),
         usedLastResort: false,
       };
     }

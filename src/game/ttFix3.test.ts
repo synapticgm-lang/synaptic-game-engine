@@ -118,7 +118,7 @@ describe('tt-fix-3 checker gap: shared sentence patterns', () => {
     expect(out.prose).not.toContain('decide whether');
   });
 
-  it('a record read-out that cannot be rewritten stays when it is the only sentence naming the destination', async () => {
+  it('a record read-out that cannot be rewritten leaves the page, even as the only sentence naming the destination (tt-fix-15)', async () => {
     const s = tabletop(TRAVEL_FACT, { currentLocation: 'Keep Gate' });
     const only = 'The first leg of the journey to Keep Gate took half an hour.';
     const check: DraftCheck = { state: s, playerInput: 'Walk on', intent: parsePlayerIntent('Walk on', s), engineFact: TRAVEL_FACT, previousGm: '' };
@@ -127,7 +127,7 @@ describe('tt-fix-3 checker gap: shared sentence patterns', () => {
       check,
       repair: async () => '',
     });
-    expect(out.prose).toContain(only);
+    expect(out.prose).not.toContain(only);
   });
 });
 

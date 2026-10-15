@@ -150,7 +150,7 @@ describe('tt-fix-5 N3 the gate keeps correct sentences', () => {
     expect(isSlotGlueViolation('Jax tried to push the Wren Holt.', ['Wren Holt'])).toBe(true);
   });
 
-  it('a repair that hands the sentence back unchanged keeps it', async () => {
+  it('a repair that hands the sentence back unchanged leaves it off the page (tt-fix-15)', async () => {
     const fact = "Exits: the ways out of Keep Gate lead to Greyhollow Inn, Greyhollow Church, Greyhollow Graveyard, Mira's Apothecary.";
     const s0 = tabletop();
     const s = { ...s0, completedEvent: buildCompletedEventPacket(s0, 'Check the exits', { engineResult: fact }) } as GameState;
@@ -162,7 +162,7 @@ describe('tt-fix-5 N3 the gate keeps correct sentences', () => {
       check,
       repair: async () => bad,
     });
-    expect(out.prose).toContain(bad);
+    expect(out.prose).not.toContain(bad);
     expect(out.repairs?.[0]?.bug).toMatch(/unchanged/);
   });
 });

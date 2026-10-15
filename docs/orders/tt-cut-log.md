@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **tt-fix-15:** deleted in the tt-fix-15 commit (stamp `2026-10-15b`). The old text lives at its parent, **`ca67deec`**. Line numbers in that section are at `ca67deec`.
 - **tt-fix-13:** deleted in the tt-fix-13 commit (stamp `2026-10-14z`). The old text lives at its parent, **`16ef28f5`**. Line numbers in that section are at `16ef28f5`.
 - **tt-fix-12:** deleted in the tt-fix-12 commit (stamp `2026-10-14y`). The old text lives at its parent, **`38ce08f0`**. Line numbers in that section are at `38ce08f0`.
 - **tt-fix-11:** deleted in the tt-fix-11 commit (stamp `2026-10-14x`). The old text lives at its parent, **`0339063c`**. Line numbers in that section are at `0339063c`.
@@ -13,6 +14,20 @@ Every item below can be restored with git.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## tt-fix-15 (restore from `ca67deec`)
+
+1. **`src/game/writerTurn.ts` lines 530-536 and 562-566**: `const destination = [...]`, `const namesDestination = (s) => ...`, `const event = thisTurnsEventCheck(check, refEnumOf(check.state, packet))`, `const only = (has) => (s, draft) => ...`, `const onlyDestination = only(namesDestination)`, `const onlyEvent = only(event)` and `const keep = unchanged || (!ok && !/@t\d+\b/.test(f.sentence) && onlyEvent(f.sentence, prose)) || (!ok && f.flag === RECORD_READOUT && onlyDestination(f.sentence, prose));` in `repairRejectedSentences`. What they did: kept a flagged sentence on the page when its repair failed or came back unchanged, if it was the only sentence telling this turn's event or naming the destination. Removed by order item 2 (whatever still fails leaves the page). `withMoveDestination` still adds the plain destination sentence when the beat no longer names it. Line 24's `RECORD_READOUT` import went with it.
+2. **`src/game/writerTurn.ts` lines 458-460**: `function sentencePattern(sentence: string): RegExp { return new RegExp(sentence.trim().split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')); }`. Single use; folded into `replaceDraftSentence` as `new RegExp(sentence.trim().split(/\s+/).map(escRe).join('\\s+'))`.
+3. **`src/game/writerTurn.ts` line 292 (swap)**: `const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');` in `speakerHere`. Swapped to `escRe`. The inline escapes at lines 357, 422 and 658 are swapped the same way. The `escRe` import is new at line 25.
+4. **`src/game/tokenProse.ts` lines 433, 487, 491, 566, 682, 710, 854 (swap)**: seven inline `x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')` copies. Swapped to `escRe(x)`, which the file already imported.
+5. **`src/game/engineFactPatterns.ts` lines 33-36**: `export function factHasTimeRecord(engineResult)`, which returned whether the time/travel record regex matched the engine result. It had one caller (`travelRecordRead`, same file), so the regex now sits inline there with the same text.
+6. **`src/game/engineFactGate.ts` lines 72-75**: `export function rollContradictionProblem(state, sentence) { return rollContradiction(sentence, pcSubject(state), engineFact(state)) ? ROLL_CONTRADICTION : null; }`. It had one caller (`engineFactProblems`), so the expression now sits inline in that list.
+7. **`src/game/beatCommitGate.ts` lines 75-81**: `function distinctiveTokens(raw)`, which lower-cased, stripped punctuation, split and kept words of 5+ letters not in `SLOT_STOP`. It had one caller (`slotMentioned`), so the same chain now sits inline there.
+8. **`src/game/chipLegality.ts` lines 37-42**: `function nameTokens(name)`, which took `low(name)`, dropped a leading article, split on space, apostrophe and hyphen, and kept 3+-letter tokens other than the/of/and. It had one caller (`mentionsName`), so the same chain now sits inline there.
+9. **`src/game/types.ts` line 1060**: `TravelJourney.hoursToday?: number` (it reset with each journey). Replaced by `GameState.roadDay` on the world clock (order item 1). The `travelJourney.ts` uses at 1130, 1207, 1388-1390, 1419 and 1555 now read `roadHoursToday(state)`.
 
 ---
 

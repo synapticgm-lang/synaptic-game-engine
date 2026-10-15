@@ -196,7 +196,8 @@ describe('replay bank s77', () => {
 
   it('[s77 T9 | s77 Root 6 (24)] Check Status sends a change-since-last-look, not the flat registration dump', () => {
     expect(R.input(9)).toBe('Check Status');
-    expect(R.packet(9)).not.toContain('Registration: designation locked');
+    // The packet only: the turn's repair request quotes the writer's own dropped line back to it (tt-fix-15).
+    expect(R.at(9).writerPackets[0]).not.toContain('Registration: designation locked');
     expect((R.lastGm(9) as { systemWindow?: unknown } | undefined)?.systemWindow, 'System window on the beat').toBeTruthy();
   });
 });

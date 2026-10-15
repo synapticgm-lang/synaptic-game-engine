@@ -333,10 +333,34 @@ export function timeOfDayForHour(hour: number): Exclude<TimeOfDay, 'unknown'> {
   return 'night';
 }
 
-function currentHour(state: GameState): number {
+type ClockState = Partial<Pick<GameState, 'worldHour' | 'worldDay' | 'roadDay' | 'sceneFacts'>>;
+
+function currentHour(state: ClockState): number {
   if (typeof state.worldHour === 'number') return state.worldHour;
   const slot = state.sceneFacts?.timeOfDay;
   return slot && slot !== 'unknown' ? SLOT_START[slot] : 9;
+}
+
+/** The one world clock: hours since the save's first day began (worldDay × 24 + worldHour). */
+export function worldClock(state: ClockState): number {
+  return (state.worldDay ?? 0) * 24 + currentHour(state);
+}
+
+/** World-clock hour this waking day began: the last wake, or now when a full day has passed since. */
+function roadDayStart(state: ClockState): number {
+  const d = state.roadDay;
+  return d && worldClock(state) - d.since < 24 ? d.since : worldClock(state);
+}
+
+/** Hours on the road in this waking day, read off the world clock (a night's sleep or 24 hours starts the next). */
+export function roadHoursToday(state: ClockState): number {
+  const d = state.roadDay;
+  return d && d.since === roadDayStart(state) ? d.hours : 0;
+}
+
+/** A night's sleep ends the day: the next one starts on waking. */
+export function wakeToNewDay<T extends ClockState>(state: T): T {
+  return { ...state, roadDay: { since: worldClock(state), hours: 0 } };
 }
 
 function formatSpan(hours: number): string {
@@ -346,11 +370,13 @@ function formatSpan(hours: number): string {
 
 /** Move the clock; timeOfDay follows the hour. Returns the chrome fragment. */
 export function advanceClock(state: GameState, hours: number): { state: GameState; note: string } {
-  const hour = (currentHour(state) + hours) % 24;
+  const total = currentHour(state) + hours;
+  const hour = total % 24;
+  const worldDay = (state.worldDay ?? 0) + Math.floor(total / 24);
   const slot = timeOfDayForHour(hour);
   const sceneFacts = state.sceneFacts ? { ...state.sceneFacts, timeOfDay: slot } : state.sceneFacts;
   return {
-    state: { ...state, worldHour: hour, sceneFacts },
+    state: { ...state, worldHour: hour, ...(worldDay ? { worldDay } : {}), sceneFacts },
     note: `+${formatSpan(hours)}, now ${slot}`,
   };
 }
@@ -458,17 +484,17 @@ const TURN_BACK_REST_TURNS = 4;
  * short return), unless the way on is blocked.
  */
 export function journeyPads(
-  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> & Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode'>>
+  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> & Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode'>> & ClockState
 ): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
-  const spent = dayIsSpent(j);
+  const spent = dayIsSpent(state, j);
   const forward = laneBlocked(j.encounter)
     ? []
     : spent
       ? [CAMP_CHIP, PUSH_ON_CHIP]
-      : ['Walk on', ...(canTravelOn(j) ? [TRAVEL_ON_CHIP] : [])];
+      : ['Walk on', ...(canTravelOn(state, j) ? [TRAVEL_ON_CHIP] : [])];
   const job = spent || (j.encounter && !roadMeetingOver(j.encounter)) ? null : jobChip(state, j);
   const origin = journeyOrigin(state);
   const bounced = state.circling?.shortReturnTurn;
@@ -1114,7 +1140,7 @@ function arrivalHook(state: GameState, dest: string, linked: string[]): string |
 
 /** `via` is the road the player is already on (a redirect mid-trip); the receipt sets out from it, not from `from`. */
 function startJourney(state: GameState, from: string, to: string, gap: MapGap, via?: string): TravelCommit {
-  const day = rollDay(state, {
+  const set: TravelJourney = {
     from,
     to,
     ground: GROUND_LABEL[gap.terrain],
@@ -1127,14 +1153,15 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
     haunted: gap.haunted,
     quietStretches: 0,
     day: 1,
-    hoursToday: gap.hoursPerLeg,
     hoursSinceCheck: 0,
-  });
-  const journey = rollStretch(state, day.journey);
-  const stop = passStop(withRouteStops(state, journey), journey);
+  };
+  const march = marchHours(state, gap.terrain, tripKey(state, set), gap.hoursPerLeg);
+  const day = rollDay(march.state, set);
+  const journey = rollStretch(march.state, day.journey);
+  const stop = passStop(withRouteStops(march.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, gap.hoursPerLeg);
-  const extra = [...day.status, ...stop.status, ...daySpentLines(state, journey)];
-  const facts = [...day.facts, ...stop.facts, ...daySpentFacts(journey)];
+  const extra = [...march.status, ...day.status, ...stop.status, ...daySpentLines(march.state, journey)];
+  const facts = [...march.facts, ...day.facts, ...stop.facts, ...daySpentFacts(march.state, journey)];
   return {
     state: clock.state,
     handled: true,
@@ -1143,7 +1170,7 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
     outcome: 'set out',
     ...(extra.length ? { extra } : {}),
     ...(facts.length ? { facts } : {}),
-    ...stretchEvent(journey, day.lost, stop.found),
+    ...stretchEvent(march.state, journey, day.lost, stop.found),
     receipt: via
       ? `Travel: off ${via}, now toward ${to}${paceTag(state, gap.terrain)} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`
       : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to}${paceTag(state, gap.terrain)} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
@@ -1155,15 +1182,23 @@ function goTo(state: GameState, from: string, dest: string, via?: string): Trave
   const mapped = mapGapBetween(state, from, dest);
   if (mapped.steps <= 0) return unchanged(state);
   const gap: MapGap = { ...mapped, hoursPerLeg: hoursAtPace(state, mapped.hoursPerLeg, mapped.terrain) };
-  if (gap.steps === 1) return arrive(state, dest, gap.hoursPerLeg, via ?? from, gap.terrain);
+  if (gap.steps === 1) {
+    const march = marchHours(state, gap.terrain, `${state.seed ?? ''}|${from}|${dest}|${state.turn ?? 0}`, gap.hoursPerLeg);
+    const a = arrive(march.state, dest, gap.hoursPerLeg, via ?? from, gap.terrain);
+    return {
+      ...a,
+      ...(march.status.length ? { extra: march.status } : {}),
+      ...(march.facts.length ? { facts: [...march.facts, ...(a.facts ?? [])] } : {}),
+    };
+  }
   return startJourney(state, from, dest, gap, via);
 }
 
 function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const legsDone = j.legsDone + 1;
-  const march = marchHours(state, j, j.hoursPerLeg);
+  const march = marchHours(state, j.terrain, tripKey(state, j), j.hoursPerLeg);
   const sinceCheck = (j.hoursSinceCheck ?? 0) + j.hoursPerLeg;
-  const day = rollDay(march.state, { ...march.journey, legsDone, lost: false, hoursSinceCheck: sinceCheck });
+  const day = rollDay(march.state, { ...j, legsDone, lost: false, hoursSinceCheck: sinceCheck });
   const extra = [...march.status, ...day.status];
   const facts = [...march.facts, ...day.facts];
   if (legsDone >= day.journey.legsTotal) {
@@ -1174,8 +1209,8 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const journey = rollStretch(march.state, day.journey, sinceCheck >= WATCH_HOURS);
   const stop = passStop(withRouteStops(march.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, j.hoursPerLeg);
-  extra.push(...stop.status, ...daySpentLines(state, journey));
-  facts.push(...stop.facts, ...daySpentFacts(journey));
+  extra.push(...stop.status, ...daySpentLines(march.state, journey));
+  facts.push(...stop.facts, ...daySpentFacts(march.state, journey));
   return {
     state: clock.state,
     handled: true,
@@ -1184,7 +1219,7 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     outcome: 'set out',
     ...(extra.length ? { extra } : {}),
     ...(facts.length ? { facts } : {}),
-    ...stretchEvent(journey, day.lost, stop.found),
+    ...stretchEvent(march.state, journey, day.lost, stop.found),
     receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to}${paceTag(state, j.terrain)} — leg ${legsDone} of ${journey.legsTotal} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
@@ -1196,20 +1231,20 @@ const survival = (state: Pick<GameState, 'engineMode'>) => modeProfile(state.eng
 /** A walk across town is not a travel day: no weather, jobs, stops or camp on the streets. */
 const travelDay = (j: TravelJourney) => j.terrain !== 'streets';
 
-function stretchEvent(j: TravelJourney, lost: boolean, found: boolean): Pick<TravelCommit, 'event'> {
+function stretchEvent(state: ClockState, j: TravelJourney, lost: boolean, found: boolean): Pick<TravelCommit, 'event'> {
   const event: TravelCommit['event'] =
-    j.encounter && !roadMeetingOver(j.encounter) ? 'meeting' : lost ? 'lost' : found ? 'find' : dayIsSpent(j) ? 'day spent' : undefined;
+    j.encounter && !roadMeetingOver(j.encounter) ? 'meeting' : lost ? 'lost' : found ? 'find' : dayIsSpent(state, j) ? 'day spent' : undefined;
   return event ? { event } : {};
 }
 
-/** The next stretch would take the day past 8 hours on the road (SRD Extended Travel). */
-export function dayIsSpent(j: TravelJourney): boolean {
-  return travelDay(j) && (j.hoursToday ?? 0) + j.hoursPerLeg > TRAVEL_DAY_HOURS;
+/** The next stretch would take today's road hours on the world clock past 8 (SRD Extended Travel). */
+export function dayIsSpent(state: ClockState, j: TravelJourney): boolean {
+  return travelDay(j) && roadHoursToday(state) + j.hoursPerLeg > TRAVEL_DAY_HOURS;
 }
 
-function canTravelOn(j: TravelJourney): boolean {
+function canTravelOn(state: ClockState, j: TravelJourney): boolean {
   return (
-    !dayIsSpent(j)
+    !dayIsSpent(state, j)
     && (j.areaTier ?? 1) < DANGEROUS_TIER
     && !j.haunted
     && (!j.encounter || roadMeetingOver(j.encounter))
@@ -1383,13 +1418,18 @@ function exhaust(state: GameState): { state: GameState; line: string } {
   return { state: { ...state, character }, line: `Exhaustion: level ${before} → ${after}` };
 }
 
-/** SRD Extended Travel (tabletop): a Constitution save for each hour past 8 in the day, DC 10 + the hours past 8. */
-function marchHours(state: GameState, j: TravelJourney, hours: number): { state: GameState; journey: TravelJourney; status: string[]; facts: string[] } {
-  const before = j.hoursToday ?? 0;
+/**
+ * SRD Extended Travel (tabletop): the road hours go on the world clock's day, and each hour past 8 in that day
+ * calls a Constitution save, DC 10 + the hours past 8. `key` is the trip's dice key.
+ */
+function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hours: number): { state: GameState; status: string[]; facts: string[] } {
+  if (terrain === 'streets') return { state, status: [], facts: [] };
+  const since = roadDayStart(state);
+  const before = roadHoursToday(state);
   const after = before + hours;
-  const journey: TravelJourney = { ...j, hoursToday: after };
-  if (!travelDay(j) || !survival(state) || after <= TRAVEL_DAY_HOURS) return { state, journey, status: [], facts: [] };
-  let s = state;
+  const logged: GameState = { ...state, roadDay: { since, hours: after } };
+  if (!survival(state) || after <= TRAVEL_DAY_HOURS) return { state: logged, status: [], facts: [] };
+  let s = logged;
   const status: string[] = [];
   let failed = 0;
   for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after); h++) {
@@ -1397,7 +1437,7 @@ function marchHours(state: GameState, j: TravelJourney, hours: number): { state:
       label: 'Extended Travel: Constitution save',
       mods: conSaveMods(s),
       dc: extendedTravelDc(h - TRAVEL_DAY_HOURS),
-      rng: keyedRng(`${tripKey(state, j)}|march|${j.day ?? 1}|${h}`),
+      rng: keyedRng(`${key}|march|${since}|${h}`),
     });
     status.push(formatCheckRecord(rec, s.engineMode));
     if (rec.outcome === 'failure') {
@@ -1407,21 +1447,21 @@ function marchHours(state: GameState, j: TravelJourney, hours: number): { state:
       failed++;
     }
   }
-  const facts = failed ? ['The forced march past nightfall wore you down; you are more exhausted than before.'] : [];
-  return { state: s, journey, status, facts };
+  const facts = failed ? ['The forced march wore you down; you are more exhausted than before.'] : [];
+  return { state: s, status, facts };
 }
 
 function daySpentLines(state: GameState, j: TravelJourney): string[] {
-  if (!dayIsSpent(j)) return [];
+  if (!dayIsSpent(state, j)) return [];
   const numbers = modeProfile(state.engineMode).numbers;
   if (numbers === 'hidden') return [];
   return numbers === 'open' && survival(state)
-    ? [`Travel day: ${formatSpan(j.hoursToday ?? 0)} on the road — make camp, or push on (CON save each hour past 8)`]
+    ? [`Travel day: ${formatSpan(roadHoursToday(state))} on the road — make camp, or push on (CON save each hour past 8)`]
     : ['Travel day: spent — make camp or push on'];
 }
 
-function daySpentFacts(j: TravelJourney): string[] {
-  return dayIsSpent(j) ? ["The day's travel is nearly spent; night is coming on."] : [];
+function daySpentFacts(state: GameState, j: TravelJourney): string[] {
+  return dayIsSpent(state, j) ? ["The day's travel is nearly spent."] : [];
 }
 
 /** This route's named stops, made once and kept on the save (the same stops either way). */
@@ -1478,7 +1518,7 @@ function passStop(state: GameState, j: TravelJourney): { state: GameState; statu
 
 /**
  * Night camp: the watch order, a meeting check each watch (a hostile one breaks the rest), the day's food
- * (tabletop rations, Malnutrition), the SRD rest, and a companion's talk by the fire. The next day starts at dawn.
+ * (tabletop rations, Malnutrition), the SRD rest, and a companion's talk by the fire. The next day starts on waking.
  */
 function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   const key = `${tripKey(state, j)}|camp|${j.day ?? 1}|${state.turn ?? 0}`;
@@ -1487,7 +1527,7 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   const extra: string[] = numbers === 'hidden' ? [] : [helper ? `Camp: watches — you first, ${helper} second` : 'Camp: you keep the first watch; the second goes unwatched'];
   const facts: string[] = [
     helper
-      ? `You made camp off the ${j.ground.toLowerCase()} and split the night's watches with ${helper}.`
+      ? `You made camp off the ${j.ground.toLowerCase()} and split the watches with ${helper}.`
       : `You made camp off the ${j.ground.toLowerCase()} and kept the first watch alone.`,
   ];
   let journey: TravelJourney = { ...j, encounter: null };
@@ -1527,7 +1567,7 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
         const days = (journey.daysWithoutFood ?? 0) + 1;
         journey = { ...journey, daysWithoutFood: days };
         extra.push(`Rations: none — ${days} day${days === 1 ? '' : 's'} without food`);
-        facts.push('There was nothing to eat tonight.');
+        facts.push('There was nothing to eat.');
         if (days >= STARVE_DAYS) {
           const ex = exhaust(s);
           s = ex.state;
@@ -1548,18 +1588,20 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
       extra.push(...talk.receipts);
     }
   }
+  const span = `from ${slotNow(state)} until ${slotNow(s)}`;
+  facts.push(`The camp lasted ${span}.`);
   if (night) {
     journey = { ...journey, encounter: night };
-    facts.push(`At first light the camp is not alone.`);
+    facts.push(`On waking, the camp is not alone.`);
   }
-  journey = { ...journey, day: (j.day ?? 1) + 1, hoursToday: 0, hoursSinceCheck: WATCH_HOURS, lost: false };
+  journey = { ...journey, day: (j.day ?? 1) + 1, hoursSinceCheck: WATCH_HOURS, lost: false };
   return {
-    state: { ...s, currentLocation: UNDERWAY_HERE, journey },
+    state: wakeToNewDay({ ...s, currentLocation: UNDERWAY_HERE, journey }),
     handled: true,
     arrived: false,
     outcome: 'unchanged',
     event: 'camp',
-    receipt: stillOn(s, journey, `camped the night${night ? encounterNote(journey) : ''}`),
+    receipt: stillOn(s, journey, `camped ${span}${night ? encounterNote(journey) : ''}`),
     extra,
     facts,
   };

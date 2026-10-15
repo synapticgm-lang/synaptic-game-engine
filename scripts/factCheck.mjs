@@ -427,8 +427,9 @@ export function checkTurn(row, packet, page = '') {
         // or a bare "Vendors" is a new one, and a "the" with nobody held here points back at no one.
         const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
         if (personHere && /\b(?:the|that|this|his|her|their|your|neither|either|each|both|other|those|these)\s+(?:[a-z]+\s+)?$/i.test(before)) continue;
-        // "the way a man checks a stranger's hands" compares; it brings nobody onto the scene.
-        if (/\b(?:like|the way|as if|as though)\b[^,;]*$/i.test(before)) continue;
+        // A person word's role, not the word: the standard of a comparison ("the way a man checks", "higher than a
+        // man") or the subject of a might-be ("a man could reach") brings nobody onto the scene.
+        if (/\b(?:like|than|the way|as if|as though)\b[^,;]*$/i.test(before) || /^\s+(?:could|would|might|can|may|must)\b/i.test(after)) continue;
         // "Two strangers stood…" with exactly two people handed here counts the people here, not new ones.
         const hereCount = facts.refs.filter((r) => r.kind === 'person' && !/^encounter:/.test(r.id)).length;
         const counted = before.match(/\b(two|three|four|both)\s+$/i)?.[1]?.toLowerCase();
