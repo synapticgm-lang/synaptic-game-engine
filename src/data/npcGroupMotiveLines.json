@@ -1,0 +1,37 @@
+{
+  "thugs": [
+    [
+      "Your purse, and you walk on with your boots still on",
+      "Nobody needs to bleed today if the coin comes out quick",
+      "We only want what you carry, not you"
+    ],
+    [
+      "This stretch is ours, and everyone who walks it pays the toll",
+      "You are on our road now, so you follow our rules",
+      "Ask anyone, nobody passes here without our say"
+    ],
+    [
+      "Winter is coming and we have nothing put by",
+      "Food or coin, either will do, we are not choosy",
+      "Hungry folk do not haggle, so hand it over"
+    ]
+  ],
+  "camp": [
+    [
+      "Nobody finds this camp and walks away to tell of it",
+      "You saw nothing here, and you will say nothing",
+      "Out here, a fire you can see means trouble"
+    ],
+    [
+      "The captain takes the first cut, and the rest is ours to split",
+      "Bring something worth the captain's time or do not bring yourself",
+      "Every haul goes past the captain's tent first"
+    ],
+    [
+      "You ask a lot of questions for someone passing through",
+      "Who sent you this way, and who knows you came",
+      "Strangers who poke about here tend not to leave"
+    ]
+  ],
+  "undead": []
+}

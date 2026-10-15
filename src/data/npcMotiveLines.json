@@ -1,252 +1,852 @@
 {
   "noble_fallen": [
-    "My family's name meant something once, and I mean to make it mean something again",
-    "Someone arranged my ruin, and I have not forgotten who",
-    "What little my house still owns, I will not let slip away"
+    [
+      "My family's name meant something once, and I mean to make it mean something again",
+      "We were somebody once. We will be again",
+      "I mean to see our crest honoured in the halls that turned their backs on us"
+    ],
+    [
+      "Someone arranged my ruin, and I have not forgotten who",
+      "My ruin was no accident, and the hand behind it will answer for it",
+      "I have a long memory for those who brought my house low"
+    ],
+    [
+      "What little my house still owns, I will not let slip away",
+      "The last of our holdings stays ours. I will see to that personally",
+      "Take what you like from the world, but not what remains of my house"
+    ]
   ],
   "hero_reluctant": [
-    "I just want the people I care about kept out of harm's way",
-    "I would rather nobody noticed me at all, if it is the same to you",
-    "If it comes to it, I will do what is right, but I will not go looking for it"
+    [
+      "I just want the people I care about kept out of harm's way",
+      "Keep my people safe and I've no quarrel with anyone",
+      "I'm not after glory. I just want my folk left alone"
+    ],
+    [
+      "I would rather nobody noticed me at all, if it is the same to you",
+      "Best if nobody makes a fuss about me",
+      "I keep my head down. It's served me well so far"
+    ],
+    [
+      "If it comes to it, I will do what is right, but I will not go looking for it",
+      "I'll not walk away if it's needed. I just won't go hunting trouble",
+      "Somebody has to step up sometimes. I wish it weren't me"
+    ]
   ],
   "merchant_scheming": [
-    "Every trade on these roads ought to pass through my hands, and in time it will",
-    "I deal in knowing things before others do, and I pay well for it",
-    "My rivals are slow, and I intend to keep it that way"
+    [
+      "Every trade on these roads ought to pass through my hands, and in time it will",
+      "Control the road and you control the coin. Simple as that",
+      "Give me a few more seasons and every caravan here will pay my toll"
+    ],
+    [
+      "I deal in knowing things before others do, and I pay well for it",
+      "Tell me something nobody else knows, and we'll talk price",
+      "News is worth more than silver, if you hear it first"
+    ],
+    [
+      "My rivals are slow, and I intend to keep it that way",
+      "Let my rivals squabble. I'll be buying while they do",
+      "Competition is healthy. For me, mostly"
+    ]
   ],
   "soldier_weary": [
-    "All I want is to bring my people home alive",
-    "I have seen enough battles that won nothing, and I would stop the next one if I could",
-    "I keep the names of the ones who fell, because somebody has to"
+    [
+      "All I want is to bring my people home alive",
+      "Get my lot home in one piece. That's the job now",
+      "I've buried enough of my people. The rest are going home"
+    ],
+    [
+      "I have seen enough battles that won nothing, and I would stop the next one if I could",
+      "Another fight over nothing? Not if I can help it",
+      "I've seen what a pointless battle costs. I'll talk them out of the next one"
+    ],
+    [
+      "I keep the names of the ones who fell, because somebody has to",
+      "Somebody's got to remember them. Might as well be me",
+      "They fell. I didn't. So I carry their names"
+    ]
   ],
   "scholar_curious": [
-    "I have a theory, and I need to see with my own eyes whether it holds",
-    "Knowledge is being lost faster than anyone writes it down, and I would save what I can",
-    "There are records locked away that I would give a great deal to read"
+    [
+      "I have a theory, and I need to see with my own eyes whether it holds",
+      "The theory is sound on paper. Now I need proof",
+      "I won't rest until I've tested it myself"
+    ],
+    [
+      "Knowledge is being lost faster than anyone writes it down, and I would save what I can",
+      "Every year another book burns or rots. I'd rather copy it first",
+      "If no one keeps this knowledge, it's simply gone"
+    ],
+    [
+      "There are records locked away that I would give a great deal to read",
+      "Somewhere behind a locked door are the answers I need",
+      "Get me into those archives and I'll owe you a great deal"
+    ]
   ],
   "thief_cynical": [
-    "I answer to nobody, and I like it that way",
-    "I owe somebody an old debt, and I mean to be clear of it",
-    "Somebody around here preaches one thing and does another, and I want everyone to see it"
+    [
+      "I answer to nobody, and I like it that way",
+      "Nobody owns me. Keep it that way",
+      "I work for myself. Always have"
+    ],
+    [
+      "I owe somebody an old debt, and I mean to be clear of it",
+      "There's a debt with my name on it. I'll clear it, then I'm done",
+      "One old score to settle, and then I'm square with the world"
+    ],
+    [
+      "Somebody around here preaches one thing and does another, and I want everyone to see it",
+      "That one preaches clean hands. Let's see how clean they are",
+      "I want the whole street to see what that liar really is"
+    ]
   ],
   "cultist_fanatical": [
-    "I serve a truth you have not been shown yet",
-    "Even the unworthy can be brought to the light, and I gather them",
-    "There is a rite to finish, and I will see it done"
+    [
+      "I serve a truth you have not been shown yet",
+      "The revelation is coming. I only prepare the way",
+      "My life belongs to the truth that was shown to me"
+    ],
+    [
+      "Even the unworthy can be brought to the light, and I gather them",
+      "Even you could be saved, if you listen",
+      "The lost and the broken come to us. We turn none away"
+    ],
+    [
+      "There is a rite to finish, and I will see it done",
+      "The rite must be finished. Nothing else matters",
+      "There is one rite left to complete, and I will see it through"
+    ]
   ],
   "healer_kind": [
-    "I want less pain in the world, and I can only start with whoever is in front of me",
-    "I need more hands that know how to heal, and I mean to teach them",
-    "Keeping these people well is my work, and I will not neglect it"
+    [
+      "I want less pain in the world, and I can only start with whoever is in front of me",
+      "If I can take a little pain away, that's a good day",
+      "Every hurt I can ease is worth the trouble"
+    ],
+    [
+      "I need more hands that know how to heal, and I mean to teach them",
+      "I won't always be here. Others need to learn this",
+      "Teach one more pair of hands and more people live"
+    ],
+    [
+      "Keeping these people well is my work, and I will not neglect it",
+      "These folk are mine to look after, coughs and all",
+      "A healthy village is a happy one. I keep it that way"
+    ]
   ],
   "veteran_haunted": [
-    "I made one choice I have never been able to put right, and I am still trying",
-    "Ordinary folk should not pay for what soldiers do, and I stand between them where I can",
-    "I need to know what really happened that day"
+    [
+      "I made one choice I have never been able to put right, and I am still trying",
+      "One call. Wrong call. Still paying for it",
+      "I keep trying to set right something that can't be undone"
+    ],
+    [
+      "Ordinary folk should not pay for what soldiers do, and I stand between them where I can",
+      "The common folk didn't start this. They shouldn't bleed for it",
+      "I'll stand in front of townsfolk before I see them hurt"
+    ],
+    [
+      "I need to know what really happened that day",
+      "Nobody ever told me the truth of that day. I want it",
+      "I need to know what happened. All of it"
+    ]
   ],
   "apprentice_ambitious": [
-    "One day my teacher will be the one learning from me",
-    "I want a name of my own, not just my master's",
-    "There is a technique I have not mastered yet, and I will not rest until I have"
+    [
+      "One day my teacher will be the one learning from me",
+      "My teacher's good. I'll be better",
+      "Give me time and the master will be asking me for advice"
+    ],
+    [
+      "I want a name of my own, not just my master's",
+      "I want my own mark on my own work",
+      "I'm tired of being somebody's apprentice. I want my own name"
+    ],
+    [
+      "There is a technique I have not mastered yet, and I will not rest until I have",
+      "There's one technique that keeps beating me. Not for long",
+      "I'll get it right if I have to practise till dawn"
+    ]
   ],
   "stranger_mysterious": [
-    "I am here on business of my own, and it stays my own",
-    "Something is hiding in plain sight around here, and I mean to find it",
-    "It would be better for both of us if nobody remembered I passed this way"
+    [
+      "I am here on business of my own, and it stays my own",
+      "My errand is my own. Leave it at that",
+      "I have work here. You needn't know what it is"
+    ],
+    [
+      "Something is hiding in plain sight around here, and I mean to find it",
+      "Something here isn't what it seems. I mean to find out what",
+      "There's a danger hiding among you. I'm looking for it"
+    ],
+    [
+      "It would be better for both of us if nobody remembered I passed this way",
+      "Forget you saw me. It's safer that way",
+      "I was never here. Remember that"
+    ]
   ],
   "parent_protective": [
-    "My family comes first, and I will keep them safe whatever it takes",
-    "I want my children to have something steady to stand on when I am gone",
-    "My child is missing, and I will not stop until I find them"
+    [
+      "My family comes first, and I will keep them safe whatever it takes",
+      "Nobody touches my family. Nobody",
+      "Whatever comes, my children come first"
+    ],
+    [
+      "I want my children to have something steady to stand on when I am gone",
+      "I want my little ones to have more than I had",
+      "I'm building something that will last after me, for them"
+    ],
+    [
+      "My child is missing, and I will not stop until I find them",
+      "My child is out there somewhere. I'll find them",
+      "Have you seen a child? Mine is lost, and I'm not stopping"
+    ]
   ],
   "exile_bitter": [
-    "I will go back one day, but on my terms and nobody else's",
-    "What was done to me was wrong, and I want it known",
-    "If they will not have me there, I will build something here they cannot ignore"
+    [
+      "I will go back one day, but on my terms and nobody else's",
+      "They threw me out. I'll walk back in when I choose",
+      "One day I'll go home, and they'll have to watch me do it"
+    ],
+    [
+      "What was done to me was wrong, and I want it known",
+      "They wronged me, and I'll make sure the world hears how",
+      "Let everyone know what was done to me"
+    ],
+    [
+      "If they will not have me there, I will build something here they cannot ignore",
+      "They wouldn't have me, so I'll make a place of my own",
+      "I'll build something here that they can't ignore"
+    ]
   ],
   "innkeeper_cheerful": [
-    "I want this place full and warm every night of the year",
-    "Anyone under my roof is under my care, staff and guests alike",
-    "I like a quiet town where folk get along, and I work at keeping it that way"
+    [
+      "I want this place full and warm every night of the year",
+      "Full tables and a good fire, that's all I ask",
+      "Nothing makes me happier than a busy common room"
+    ],
+    [
+      "Anyone under my roof is under my care, staff and guests alike",
+      "Under my roof you're safe, friend. I mean that",
+      "Nobody bothers my staff or my guests. Not while I'm here"
+    ],
+    [
+      "I like a quiet town where folk get along, and I work at keeping it that way",
+      "A peaceful town is good for business and good for the soul",
+      "I like folk getting along. I do my bit to keep it so"
+    ]
   ],
   "guardian_stoic": [
-    "What I have been set to guard stays guarded",
-    "I swore an oath, and I keep it",
-    "This line holds while I am standing on it"
+    [
+      "What I have been set to guard stays guarded",
+      "My charge is safe. It will remain so",
+      "None pass to what I guard"
+    ],
+    [
+      "I swore an oath, and I keep it",
+      "My oath binds me. I do not break it",
+      "I gave my word. That is enough"
+    ],
+    [
+      "This line holds while I am standing on it",
+      "This line holds",
+      "While I stand, nothing crosses here"
+    ]
   ],
   "moneylender_greedy": [
-    "Every debt in this town should end up in my book",
-    "When a debt goes unpaid, the property finds its way to me",
-    "A debt that cannot be collected is worthless, and I do not deal in worthless things"
+    [
+      "Every debt in this town should end up in my book",
+      "Every debt finds its way to my ledger, eventually",
+      "More names in the book means more coin in the chest"
+    ],
+    [
+      "When a debt goes unpaid, the property finds its way to me",
+      "Unpaid debts become my property. That is only fair",
+      "When they can't pay, I collect what they own"
+    ],
+    [
+      "A debt that cannot be collected is worthless, and I do not deal in worthless things",
+      "A debt that can't be collected is no debt at all. I make sure mine can",
+      "I put everything in writing. It keeps people honest, and paying"
+    ]
   ],
   "revolutionary_idealistic": [
-    "The way things are run here is unjust, and I mean to see it ended",
-    "The people who do the hard work deserve someone standing up for them, and I mean to be that someone",
-    "Alone we are nothing, but together nobody can ignore us"
+    [
+      "The way things are run here is unjust, and I mean to see it ended",
+      "This system crushes people. It has to end",
+      "Things don't have to be this way, and I mean to change them"
+    ],
+    [
+      "The people who do the hard work deserve someone standing up for them, and I mean to be that someone",
+      "Those who do the work deserve a voice. I'll be it",
+      "Someone has to stand up for the workers. Why not me?"
+    ],
+    [
+      "Alone we are nothing, but together nobody can ignore us",
+      "Together we're stronger than any lord",
+      "One voice is easy to ignore. A hundred aren't"
+    ]
   ],
   "conspiracy_paranoid": [
-    "There is a network behind all of this, and I am going to drag it into the light",
-    "They are watching, so I keep moving and I keep my voice down",
-    "I know something true that they would bury, and I will not let them"
+    [
+      "There is a network behind all of this, and I am going to drag it into the light",
+      "It's all connected, I tell you. All of it",
+      "There's a web behind everything. I'll show you"
+    ],
+    [
+      "They are watching, so I keep moving and I keep my voice down",
+      "Keep your voice down. They listen",
+      "I never sleep in the same place twice. Can't be too careful"
+    ],
+    [
+      "I know something true that they would bury, and I will not let them",
+      "I know the truth, and they want it buried",
+      "They'd kill to keep what I know quiet"
+    ]
   ],
   "bard_flirtatious": [
-    "Give me a crowd and I will give them a night to remember",
-    "I am hunting the perfect story, and you might just be in it",
-    "Nobody tells me what I may sing"
+    [
+      "Give me a crowd and I will give them a night to remember",
+      "Find me an audience and I'll steal their hearts",
+      "There's no better feeling than a room hanging on every word"
+    ],
+    [
+      "I am hunting the perfect story, and you might just be in it",
+      "Every great song starts with a great story. Tell me yours",
+      "I'm looking for a tale worth singing, darling"
+    ],
+    [
+      "Nobody tells me what I may sing",
+      "I sing what I please, and no lord will change that",
+      "Censor my songs? I'd sooner stop breathing"
+    ]
   ],
   "executioner_grim": [
-    "I carry out the sentence as it is given, no more and no less",
-    "The law should be no crueler than it must be, and I see to that where I can",
-    "One day I would like to be more than the hand that ends things"
+    [
+      "I carry out the sentence as it is given, no more and no less",
+      "The sentence is carried out as written. No more",
+      "I do what the law asks. Exactly that"
+    ],
+    [
+      "The law should be no crueler than it must be, and I see to that where I can",
+      "Justice should be swift and without cruelty",
+      "I'll see no one suffers more than the law requires"
+    ],
+    [
+      "One day I would like to be more than the hand that ends things",
+      "I'd like to be more than the axe some day",
+      "Perhaps there's a life for me beyond this work"
+    ]
   ],
   "elder_wise": [
-    "Someone has to remember how things were, and I would spare the young from learning it all again the hard way",
-    "The young ones need a steady hand, and mine is still steady enough",
-    "There is an old debt between people here that I would settle without bloodshed"
+    [
+      "Someone has to remember how things were, and I would spare the young from learning it all again the hard way",
+      "The old stories teach what the young forget",
+      "I keep the memories so the young don't have to relearn every lesson"
+    ],
+    [
+      "The young ones need a steady hand, and mine is still steady enough",
+      "The young ones need guiding, and I'm still here to do it",
+      "My hands shake, but my advice is steady"
+    ],
+    [
+      "There is an old debt between people here that I would settle without bloodshed",
+      "There's an old quarrel here that should end in peace, not blood",
+      "I'd see that old debt settled before I go"
+    ]
   ],
   "adventurer_reckless": [
-    "I am always after the next thing nobody else dares to try",
-    "I want a tale so wild nobody believes it, and I want to have lived it",
-    "Somebody set a record I mean to beat"
+    [
+      "I am always after the next thing nobody else dares to try",
+      "What's the most dangerous thing round here? I'm in",
+      "Danger's the best part!"
+    ],
+    [
+      "I want a tale so wild nobody believes it, and I want to have lived it",
+      "I want a story nobody believes, and I want to be in it",
+      "Give me something worth bragging about"
+    ],
+    [
+      "Somebody set a record I mean to beat",
+      "Somebody set a record. I'm going to smash it",
+      "Fastest, highest, deepest. Whatever it is, I'll beat it"
+    ]
   ],
   "spy_calculating": [
-    "I trade in what people know, and I only want what I can use",
-    "There are people who rely on me staying quiet, and I protect them",
-    "There is something dangerous loose, and I mean to keep it under my control"
+    [
+      "I trade in what people know, and I only want what I can use",
+      "Information is only worth what I can do with it",
+      "I'm interested in facts I can act on, nothing else"
+    ],
+    [
+      "There are people who rely on me staying quiet, and I protect them",
+      "People trust me to keep quiet. I do",
+      "My contacts stay safe. That's not negotiable"
+    ],
+    [
+      "There is something dangerous loose, and I mean to keep it under my control",
+      "There's something dangerous out there. I'll keep it on a short leash",
+      "An uncontrolled asset is a liability. I control mine"
+    ]
   ],
   "priest_devout": [
-    "I serve a higher charge, and it does not let me rest",
-    "My flock looks to me, and I will not fail them",
-    "Troubled souls come to me, and I try to ease what they carry"
+    [
+      "I serve a higher charge, and it does not let me rest",
+      "My god asks much of me, and I give it gladly",
+      "There is holy work to do, and I am called to it"
+    ],
+    [
+      "My flock looks to me, and I will not fail them",
+      "My flock is under my protection",
+      "I will keep my people safe in body and soul"
+    ],
+    [
+      "Troubled souls come to me, and I try to ease what they carry",
+      "Many come to me heavy-hearted. I help them carry it",
+      "I try to bring a little peace to troubled souls"
+    ]
   ],
   "artist_tortured": [
-    "I want to make one thing that will outlast me",
-    "All I ask is that someone understands what I am trying to say",
-    "Whatever used to drive my work has gone quiet, and I need it back"
+    [
+      "I want to make one thing that will outlast me",
+      "Let me make one thing that lives after I'm gone",
+      "I want my work to outlast me"
+    ],
+    [
+      "All I ask is that someone understands what I am trying to say",
+      "Does anyone truly see what I'm trying to say?",
+      "I just want to be understood"
+    ],
+    [
+      "Whatever used to drive my work has gone quiet, and I need it back",
+      "The spark is gone. I must find it again",
+      "My muse has left me, and I'm lost without it"
+    ]
   ],
   "bounty_hunter_ruthless": [
-    "I take the contracts that pay, and I finish them",
-    "I want people to go quiet when they hear I am coming",
-    "There is an old debt hanging over me, and the next good contract clears it"
+    [
+      "I take the contracts that pay, and I finish them",
+      "Good pay, clean finish. That's my work",
+      "I take the jobs that pay, and I deliver"
+    ],
+    [
+      "I want people to go quiet when they hear I am coming",
+      "I want them to fear my name",
+      "When they hear I'm coming, they should run"
+    ],
+    [
+      "There is an old debt hanging over me, and the next good contract clears it",
+      "One more good contract and my old debt's cleared",
+      "There's a debt hanging over me. The next bounty pays it"
+    ]
   ],
   "newcomer_naive": [
-    "I am hoping to make a friend or two out here",
-    "I just want somewhere I belong",
-    "Everything here is new to me, and I want to learn how it all works"
+    [
+      "I am hoping to make a friend or two out here",
+      "Would you like to be friends?",
+      "I don't know anyone here yet. Maybe you?"
+    ],
+    [
+      "I just want somewhere I belong",
+      "I'd like to find somewhere that feels like home",
+      "Do you think there's a place for someone like me here?"
+    ],
+    [
+      "Everything here is new to me, and I want to learn how it all works",
+      "Everything's so new! How does it all work?",
+      "I've so many questions about this place"
+    ]
   ],
   "bureaucrat_jaded": [
-    "Somebody has to keep the paperwork moving, and it seems to be me",
-    "I would prefer that whatever goes wrong next is not on my desk",
-    "There are a few people I look out for, quietly, and that is all I will say"
+    [
+      "Somebody has to keep the paperwork moving, and it seems to be me",
+      "The forms won't file themselves",
+      "Someone has to keep this office running. Apparently that's me"
+    ],
+    [
+      "I would prefer that whatever goes wrong next is not on my desk",
+      "I'd rather the next disaster wasn't my fault",
+      "I keep my records tidy. It keeps me out of trouble"
+    ],
+    [
+      "There are a few people I look out for, quietly, and that is all I will say",
+      "I look out for a few people. Quietly",
+      "Some folk deserve a little help. I won't say who"
+    ]
   ],
   "con_artist_charming": [
-    "I am always looking for the next opportunity, and you look like a promising one",
-    "There are a few people I would rather not run into again, so I keep moving",
-    "I am saving for a clean start somewhere far away"
+    [
+      "I am always looking for the next opportunity, and you look like a promising one",
+      "You look like someone who appreciates an opportunity",
+      "Always on the lookout for a profitable acquaintance"
+    ],
+    [
+      "There are a few people I would rather not run into again, so I keep moving",
+      "There are a few people I'd prefer never to meet again",
+      "I travel light and I travel often. Old friends, you see"
+    ],
+    [
+      "I am saving for a clean start somewhere far away",
+      "One last good score, and I'm gone for good",
+      "I'm putting a little aside for a fresh start"
+    ]
   ],
   "assassin_silent": [
-    "I do the work I am paid for, cleanly",
-    "There is a name I keep hidden, and it stays hidden",
-    "Nobody outside the work should get hurt, not on my watch"
+    [
+      "I do the work I am paid for, cleanly",
+      "The job. Done clean",
+      "Paid work. No mess"
+    ],
+    [
+      "There is a name I keep hidden, and it stays hidden",
+      "My name stays hidden",
+      "Who I am is not your concern"
+    ],
+    [
+      "Nobody outside the work should get hurt, not on my watch",
+      "No one else gets hurt",
+      "Only the target. Never the bystanders"
+    ]
   ],
   "duelist_overconfident": [
-    "There is a famous blade out there I mean to beat",
-    "I have never lost, and I do not intend to start",
-    "I want my name sung in every tavern on the road"
+    [
+      "There is a famous blade out there I mean to beat",
+      "There is a famous blade I intend to humble",
+      "Point me to the best swordsman in the land"
+    ],
+    [
+      "I have never lost, and I do not intend to start",
+      "Undefeated, and so I shall remain",
+      "My record is flawless. Do try to keep up"
+    ],
+    [
+      "I want my name sung in every tavern on the road",
+      "Let the taverns sing of my victories!",
+      "I deserve to be remembered, and I will be"
+    ]
   ],
   "poet_melancholic": [
-    "I have a cycle of poems to finish before the words leave me",
-    "I lost someone, and I am still trying to understand it",
-    "I only want someone who will listen"
+    [
+      "I have a cycle of poems to finish before the words leave me",
+      "My poems are unfinished, and time is short",
+      "The final verses still escape me"
+    ],
+    [
+      "I lost someone, and I am still trying to understand it",
+      "I lost someone, and the why of it still haunts me",
+      "I am still trying to make sense of my grief"
+    ],
+    [
+      "I only want someone who will listen",
+      "Will you listen a while?",
+      "I only want someone to hear me"
+    ]
   ],
   "sailor_superstitious": [
-    "All I want is safe harbor and dry boots",
-    "My family carries a curse, and I mean to be the one who breaks it",
-    "One of my crew went missing, and I will not leave without them"
+    [
+      "All I want is safe harbor and dry boots",
+      "Calm water and a safe port, that's all I ask",
+      "Get me to harbour and I'll light a candle for you"
+    ],
+    [
+      "My family carries a curse, and I mean to be the one who breaks it",
+      "My family's cursed, and I'll be the one to break it",
+      "There's an old curse on my blood. I'm ending it"
+    ],
+    [
+      "One of my crew went missing, and I will not leave without them",
+      "One of my crew's gone. I'll not sail without them",
+      "I'm looking for a shipmate who never came back"
+    ]
   ],
   "engineer_pragmatic": [
-    "I want something built that works every time, not just once",
-    "I need materials, good ones, and enough of them",
-    "Things around here break and people get hurt, and I want to make them safer"
+    [
+      "I want something built that works every time, not just once",
+      "I want a fix that holds, every time",
+      "Build it right once, and you don't have to build it again"
+    ],
+    [
+      "I need materials, good ones, and enough of them",
+      "I need good timber and good iron, and plenty of both",
+      "Bring me decent materials and I'll work wonders"
+    ],
+    [
+      "Things around here break and people get hurt, and I want to make them safer",
+      "Too many people get hurt here. I'll make it safer",
+      "A safe system is a good system"
+    ]
   ],
   "ex_lover_vindictive": [
-    "Someone betrayed me, and everyone is going to know it",
-    "Something was taken from me, and I want it back",
-    "I let myself be made a fool of, and I mean to stand straight again"
+    [
+      "Someone betrayed me, and everyone is going to know it",
+      "They betrayed me, and I'll make sure everyone knows",
+      "Let the whole town hear what they did"
+    ],
+    [
+      "Something was taken from me, and I want it back",
+      "They took what's mine. I want it back",
+      "Something of mine was stolen, and I'll have it returned"
+    ],
+    [
+      "I let myself be made a fool of, and I mean to stand straight again",
+      "I was made a fool. Never again",
+      "I'm done being the one who was wronged. I'll stand tall"
+    ]
   ],
   "retainer_loyal": [
-    "My duty is to the one I serve, and I keep it",
-    "The household runs because I see to it",
-    "I made a promise, and I will keep it"
+    [
+      "My duty is to the one I serve, and I keep it",
+      "My master's safety comes first",
+      "I serve faithfully, and I protect the one I serve"
+    ],
+    [
+      "The household runs because I see to it",
+      "The house runs smoothly because I make sure it does",
+      "Every task in this household is seen to"
+    ],
+    [
+      "I made a promise, and I will keep it",
+      "I gave my word, and I'll keep it",
+      "A promise made is a promise kept"
+    ]
   ],
   "inventor_eccentric": [
-    "I have a theory everyone laughs at, and I am going to prove it",
-    "I am building something they say cannot be built",
-    "I need someone brave enough to try my latest device"
+    [
+      "I have a theory everyone laughs at, and I am going to prove it",
+      "They laugh, but I'll prove my theory right!",
+      "Just wait. My idea will change everything"
+    ],
+    [
+      "I am building something they say cannot be built",
+      "They say it's impossible. I say watch me",
+      "I'm building something extraordinary"
+    ],
+    [
+      "I need someone brave enough to try my latest device",
+      "Care to test my newest invention? It's perfectly safe. Mostly",
+      "I need a brave volunteer for an experiment"
+    ]
   ],
   "witness_fearful": [
-    "I just want to stay alive",
-    "There is someone I love, and I would do anything to keep them safe",
-    "I want to tell the truth, if I can do it without getting hurt"
+    [
+      "I just want to stay alive",
+      "Please, I just want to live",
+      "I don't want any trouble. I want to stay alive"
+    ],
+    [
+      "There is someone I love, and I would do anything to keep them safe",
+      "There's someone I have to protect, whatever it takes",
+      "I'd do anything to keep them safe"
+    ],
+    [
+      "I want to tell the truth, if I can do it without getting hurt",
+      "I'll tell what I saw, if it won't get me killed",
+      "The truth matters, but I'm scared"
+    ]
   ],
   "sorcerer_arrogant": [
-    "I intend to show everyone how far beneath me they stand",
-    "There is deeper magic than what the books teach, and I will find it",
-    "I require rare components, and I expect them to be found"
+    [
+      "I intend to show everyone how far beneath me they stand",
+      "I'll show these fools true power",
+      "Few can match me, and I'll prove it"
+    ],
+    [
+      "There is deeper magic than what the books teach, and I will find it",
+      "The books barely scratch the surface. I'll go deeper",
+      "There are secrets in magic that I alone will uncover"
+    ],
+    [
+      "I require rare components, and I expect them to be found",
+      "Find me rare components. I won't ask twice",
+      "My work demands the finest reagents"
+    ]
   ],
   "farmer_humble": [
-    "This land has fed my family a long time, and I will look after it",
-    "There are mouths at home to feed, and that is all I am after",
-    "If we get through this season, I will count it a good year"
+    [
+      "This land has fed my family a long time, and I will look after it",
+      "This land's been good to us. I'll take care of it",
+      "The soil feeds us, so we look after the soil"
+    ],
+    [
+      "There are mouths at home to feed, and that is all I am after",
+      "There's mouths to feed at home. That's all I want",
+      "Just enough to keep my family fed"
+    ],
+    [
+      "If we get through this season, I will count it a good year",
+      "Get through this season and we'll be all right",
+      "One more harvest. That's all I'm hoping for"
+    ]
   ],
   "betrayer_guilt_ridden": [
-    "I did something wrong, and I want to make it right",
-    "Some people were hurt because of me, and I would protect them now",
-    "What happened once must not happen again, not while I can stop it"
+    [
+      "I did something wrong, and I want to make it right",
+      "I did wrong, and I want to make amends",
+      "I owe a debt I can't easily repay"
+    ],
+    [
+      "Some people were hurt because of me, and I would protect them now",
+      "They were hurt because of me. I'll protect them now",
+      "I can't undo it, but I can keep them safe"
+    ],
+    [
+      "What happened once must not happen again, not while I can stop it",
+      "It won't happen again. Not while I'm here",
+      "I'll stop it before it repeats"
+    ]
   ],
   "trickster_playful": [
-    "Nothing pleases me more than taking a pompous fool down a peg",
-    "Life is dull when you can see what is coming, so I keep it surprising",
-    "Sometimes a little misdirection is the kindest way I know to keep someone safe"
+    [
+      "Nothing pleases me more than taking a pompous fool down a peg",
+      "Watch the pompous ones squirm!",
+      "Nothing's funnier than a puffed-up fool brought low"
+    ],
+    [
+      "Life is dull when you can see what is coming, so I keep it surprising",
+      "Life's too dull. Let's shake things up!",
+      "A little surprise keeps everyone on their toes"
+    ],
+    [
+      "Sometimes a little misdirection is the kindest way I know to keep someone safe",
+      "A bit of mischief can save a life",
+      "I tricked them for your own good, you know"
+    ]
   ],
   "collector_obsessed": [
-    "My collection is missing one piece, and I will have it",
-    "Every piece I own is genuine, and I check every one myself",
-    "Another collector is after the same things, and I will not let them win"
+    [
+      "My collection is missing one piece, and I will have it",
+      "The collection is incomplete. I must have the last piece",
+      "One missing item, and I'll stop at nothing to find it"
+    ],
+    [
+      "Every piece I own is genuine, and I check every one myself",
+      "I verify every piece. No fakes in my collection",
+      "Authenticity is everything"
+    ],
+    [
+      "Another collector is after the same things, and I will not let them win",
+      "My rival will not get there first",
+      "I'll outbid, outwit and outlast that rival collector"
+    ]
   ],
   "martyr_selfless": [
-    "If someone has to hurt, I would rather it was me",
-    "I made a promise, and I will keep it whatever it costs",
-    "If I have to give something up, I want it to count for something"
+    [
+      "If someone has to hurt, I would rather it was me",
+      "Let me take the pain instead",
+      "Better me than them"
+    ],
+    [
+      "I made a promise, and I will keep it whatever it costs",
+      "I promised, and I'll see it through no matter what",
+      "My word means everything, even at a cost"
+    ],
+    [
+      "If I have to give something up, I want it to count for something",
+      "If I give something up, it must matter",
+      "I want my sacrifice to mean something"
+    ]
   ],
   "assassin_cold_hearted": [
-    "Obstacles are removed, and I am the one who removes them",
-    "I keep control of every situation I am in",
-    "Every job leaves me holding something over someone, and I like it that way"
+    [
+      "Obstacles are removed, and I am the one who removes them",
+      "Obstacles are removed. That's my function",
+      "I clear the path. Permanently"
+    ],
+    [
+      "I keep control of every situation I am in",
+      "I am always in control",
+      "Nothing happens around me that I haven't planned"
+    ],
+    [
+      "Every job leaves me holding something over someone, and I like it that way",
+      "Every job leaves me with leverage. I like that",
+      "Knowledge is power. I collect both"
+    ]
   ],
   "rival_friendly": [
-    "I want to win, but only fair and square",
-    "A good rival makes you better, and I am always looking for one",
-    "I want to earn your respect, and to give you mine"
+    [
+      "I want to win, but only fair and square",
+      "I want to win fair and square!",
+      "No tricks. Just the best one wins"
+    ],
+    [
+      "A good rival makes you better, and I am always looking for one",
+      "You make me better. Let's compete!",
+      "A good rival is the best teacher"
+    ],
+    [
+      "I want to earn your respect, and to give you mine",
+      "I respect you. I hope you'll respect me too",
+      "Let's earn each other's respect"
+    ]
   ],
   "debtor_desperate": [
-    "I owe money, and I have to pay it back somehow",
-    "I need to keep the people I owe away from my family",
-    "I just want honest work, anything at all"
+    [
+      "I owe money, and I have to pay it back somehow",
+      "I owe money and I'm running out of time",
+      "I've got to pay them back somehow"
+    ],
+    [
+      "I need to keep the people I owe away from my family",
+      "Please, keep them away from my family",
+      "They can come after me, but not my family"
+    ],
+    [
+      "I just want honest work, anything at all",
+      "Any honest work. Please. I'll do anything",
+      "I just need a job, anything at all"
+    ]
   ],
   "warrior_noble": [
-    "Those who cannot defend themselves deserve someone who will, and I will",
-    "I hold to a code, and I will not break it",
-    "I want to win, but only with honor"
+    [
+      "Those who cannot defend themselves deserve someone who will, and I will",
+      "Those who can't protect themselves will have my sword",
+      "I stand for the defenceless"
+    ],
+    [
+      "I hold to a code, and I will not break it",
+      "My code is my life. I won't betray it",
+      "Honour guides me"
+    ],
+    [
+      "I want to win, but only with honor",
+      "I'll win with honour or not at all",
+      "A victory without honour is no victory"
+    ]
   ],
   "detective_cynical": [
-    "There is a case I mean to close",
-    "Someone innocent is about to take the blame, and I will not let it happen",
-    "Something is rotten in how this place is run, and I am going to expose it"
+    [
+      "There is a case I mean to close",
+      "This case isn't closing itself",
+      "I'll solve it if it's the last thing I do"
+    ],
+    [
+      "Someone innocent is about to take the blame, and I will not let it happen",
+      "They've got the wrong person. I'll prove it",
+      "An innocent won't hang on my watch"
+    ],
+    [
+      "Something is rotten in how this place is run, and I am going to expose it",
+      "The rot goes all the way up. I'll expose it",
+      "Someone's been bending the rules. I'll find out who"
+    ]
   ],
   "dreamer_hopeful": [
-    "I have a big idea, and I am going to make it real",
-    "Folk around here could use a little cheer, and I am happy to bring it",
-    "There is a place I keep imagining, and I mean to find it"
+    [
+      "I have a big idea, and I am going to make it real",
+      "I've a big idea, and it's going to work!",
+      "Just wait. It'll be wonderful!"
+    ],
+    [
+      "Folk around here could use a little cheer, and I am happy to bring it",
+      "Smile! Things will get better",
+      "Everyone needs a little cheer"
+    ],
+    [
+      "There is a place I keep imagining, and I mean to find it",
+      "There's a place I dream of. I know it's out there",
+      "One day I'll find it, I'm sure of it"
+    ]
   ]
 }

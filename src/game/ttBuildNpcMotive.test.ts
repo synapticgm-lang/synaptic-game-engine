@@ -9,11 +9,12 @@
 import { describe, expect, it } from 'vitest';
 import archetypes from '../../docs/research/manus-next-stage/npc-personalities.json';
 import motiveData from '../data/npcMotiveLines.json';
+import groupData from '../data/npcGroupMotiveLines.json';
 import { cursedKeep } from '../data/campaigns/cursedKeep';
 import { createInitialState } from './defaults';
 import type { GameState, NpcMemory } from './types';
 import * as npcSheet from './npcSheet';
-import { ensureNpcSheet, motiveAnswer, motiveLinesFor, withMotiveLines } from './npcSheet';
+import { ensureNpcSheet, motiveAnswer, motiveLinesFor, motiveLinesOf, withMotiveLines } from './npcSheet';
 import { recordSpokenTopics, seedBibleNpcRoster } from './npcMemory';
 import { applySaveRepair } from './saveMigration';
 import { repairMissingAnswer, type WriterTurnResult } from './writerTurn';
@@ -37,21 +38,23 @@ const memory = (name: string, over: Partial<NpcMemory> = {}): NpcMemory =>
   ({ npcId: name.toLowerCase(), npcName: name, disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], ...over }) as NpcMemory;
 
 describe('1 — motive lines are seeded when the record is made', () => {
-  it('every archetype motivation has its own spoken line: first person, no closing stop, no sheet note', () => {
-    const data = motiveData as Record<string, string[]>;
+  // Wire-in H (q31-H): each motivation now has three spoken variants (npc-motive-variants.json); the motive's own
+  // three come first, and only its first (shipped) line is held to first person.
+  it('every archetype motivation has its own three spoken lines first, the shipped first-person line leading', () => {
+    const data = motiveData as Record<string, string[][]>;
     for (const a of archetypes as { id: string; motivations: string[] }[]) {
       expect(data[a.id], a.id).toHaveLength(a.motivations.length);
-      for (const m of a.motivations) {
+      a.motivations.forEach((m, i) => {
         const lines = motiveLinesFor(m);
-        expect(lines.length, m).toBeGreaterThanOrEqual(3);
+        expect(lines.slice(0, 3), m).toEqual(data[a.id]![i]);
         expect(lines.length, m).toBeLessThanOrEqual(5);
         expect(new Set(lines).size).toBe(lines.length);
+        expect(lines[0]).toMatch(/\b(?:I|me|my|mine|we|us|our)\b/i);
         for (const l of lines) {
-          expect(l).toMatch(/\b(?:I|me|my|mine|we|us|our)\b/i);
-          expect(l).not.toMatch(/[.!?]$/);
+          expect(l).not.toMatch(/\.$/);
           expect(l.toLowerCase()).not.toBe(`i want to ${m.toLowerCase()}`);
         }
-      }
+      });
     }
   });
 
@@ -163,6 +166,42 @@ describe('3 — the writer answers first; the engine line only when that fails',
     });
     expect(out.prose).toBe(prose);
     expect(out.prose).not.toMatch(/rather not say/);
+  });
+});
+
+describe('5 — road-meeting groups speak their group lines (Wire-in H)', () => {
+  const groups = groupData as Record<string, string[][]>;
+  const onRoad = (kind: string, name?: string) =>
+    ck({
+      seed: 'q31h',
+      journey: {
+        from: 'Greyhollow', to: 'Millstone Ford', startedTurn: 4,
+        encounter: { kind, level: 1, stretch: 2, dangerous: false, want: 'a toll for the road', distanceFt: 60, name },
+      } as unknown as GameState['journey'],
+    });
+
+  it('a thugs meeting answers from one thugs motive, the same on every replay, by label or by the leader', () => {
+    const lines = motiveLinesOf(onRoad('thugs', 'Garth Rudd'), 'the thugs');
+    expect(groups.thugs).toContainEqual(lines);
+    expect(motiveLinesOf(onRoad('thugs', 'Garth Rudd'), 'thugs')).toEqual(lines);
+    expect(motiveLinesOf(onRoad('thugs', 'Garth Rudd'), 'Garth Rudd')).toEqual(lines);
+    expect(motiveAnswer(onRoad('thugs'), ['thugs'])!.spoken.words).toBe(lines[0]);
+    expect(groups.camp).toContainEqual(motiveLinesOf(onRoad('camp'), 'a camp'));
+  });
+
+  it('the restless dead are never quoted, though the meeting has a want', () => {
+    expect(motiveLinesOf(onRoad('undead'), 'the restless dead')).toEqual([]);
+    expect(motiveAnswer(onRoad('undead'), ['the restless dead'])).toBeNull();
+  });
+
+  it('a question or a shout keeps its own mark in the landed line', () => {
+    const nia = memory('Nia', { motiveLines: ['Would you like to be friends?'] });
+    expect(motiveAnswer(ck({ npcMemories: [nia] }), ['Nia'])!.line).toBe('"Would you like to be friends?" Nia said.');
+  });
+
+  it('an old save with a sheet picks up the new variants on load', () => {
+    const old = ck({ npcMemories: [memory('Rosel Coyne', { sheet: { job: 'artisan', motive: 'Keep loved ones safe', fear: '', speech: '', secret: '', place: 'town' }, motiveLines: ["I just want the people I care about kept out of harm's way"] })] });
+    expect(withMotiveLines(old, cursedKeep).npcMemories![0]!.motiveLines).toEqual(motiveLinesFor('Keep loved ones safe'));
   });
 });
 

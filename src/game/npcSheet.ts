@@ -5,6 +5,7 @@
  */
 import archetypeData from '../../docs/research/manus-next-stage/npc-personalities.json';
 import motiveLineData from '../data/npcMotiveLines.json';
+import groupLineData from '../data/npcGroupMotiveLines.json';
 import type { CampaignBible } from '../data/campaigns/types';
 import {
   MANUS_CK_NPCS,
@@ -16,7 +17,7 @@ import {
 import type { GameState, NpcMemory, NpcSheet } from './types';
 import type { NpcRole } from './npcRoleRegistry';
 import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
-import { createHashRng } from './seededRng';
+import { createHashRng, keyedRng } from './seededRng';
 import { roadMeetingWant } from './travelJourney';
 import type { SpokenLine } from './tokenProse';
 
@@ -213,14 +214,17 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
   return { ...state, npcMemories: [...list, fresh] };
 }
 
-const MOTIVE_LINES = motiveLineData as Record<string, string[]>;
+/** Archetype id → one list of spoken lines per motivation (same order as its motivations), the shipped line first. */
+const MOTIVE_LINES = motiveLineData as Record<string, string[][]>;
+/** Road-meeting kind → one list of lines per group motivation. Undead are mute (SRD 5.2.1: they can't speak). */
+const GROUP_LINES = groupLineData as Record<string, string[][]>;
 
-/** The spoken lines of the archetype the sheet's motive came from, the motive's own line first. */
+/** The spoken lines of the archetype the sheet's motive came from: the motive's own lines first, then the other motives' first lines. */
 export function motiveLinesFor(motive: string): string[] {
   const owner = ARCHETYPES.find((a) => a.motivations.includes(motive));
-  const lines = owner ? MOTIVE_LINES[owner.id] ?? [] : [];
-  const own = lines[owner?.motivations.indexOf(motive) ?? -1];
-  return own ? [own, ...lines.filter((l) => l !== own)] : lines;
+  const lists = owner ? MOTIVE_LINES[owner.id] ?? [] : [];
+  const own = lists[owner?.motivations.indexOf(motive) ?? -1] ?? [];
+  return [...new Set([...own, ...lists.filter((l) => l !== own).map((l) => l[0]!)])];
 }
 
 function memoryOf(state: GameState, name: string): NpcMemory | undefined {
@@ -230,12 +234,20 @@ function memoryOf(state: GameState, name: string): NpcMemory | undefined {
   );
 }
 
-/** What this person may say about what they want: their saved motive lines, else the want of the road meeting they stand for. */
+/**
+ * What this person may say about what they want: their saved motive lines, else what the road meeting they stand
+ * for says. A group (thugs, a camp) speaks its own motive's lines, picked from the trip and stretch so a replay
+ * says the same; the dead say nothing; anyone else says the meeting's want.
+ */
 export function motiveLinesOf(state: GameState, name: string): string[] {
   const saved = memoryOf(state, name)?.motiveLines ?? [];
   if (saved.length) return saved;
-  const meeting = roadMeetingWant(state.journey, name);
-  return meeting ? [`I want ${meeting}`] : [];
+  const j = state.journey;
+  const meeting = roadMeetingWant(j, name);
+  const group = meeting ? GROUP_LINES[j!.encounter!.kind] : undefined;
+  if (!group) return meeting ? [`I want ${meeting}`] : [];
+  const roll = keyedRng(`${state.seed ?? ''}|${j!.from}|${j!.to}|${j!.startedTurn}|${j!.encounter!.stretch}|motive`)();
+  return group[Math.floor(roll * group.length)] ?? [];
 }
 
 /**
@@ -250,20 +262,20 @@ export function motiveAnswer(state: GameState, names: string[]): { line: string;
     const words = lines.find((l) => !used.includes(l)) ?? used.find((l) => lines.includes(l)) ?? lines[0]!;
     const speaker = name.trim();
     const tag = /^(?:[A-Z]|(?:a|an|the)\s)/.test(speaker) ? speaker : `the ${speaker}`;
-    return { line: `"${words}," ${tag} said.`, spoken: { speakerId: memoryOf(state, name)?.npcId ?? '', speaker, words } };
+    return { line: `"${words}${'?!'.includes(words.slice(-1)) ? '' : ','}" ${tag} said.`, spoken: { speakerId: memoryOf(state, name)?.npcId ?? '', speaker, words } };
   }
   return null;
 }
 
-/** Load: a saved person with no motive lines gets them from their sheet, or from their bible roster entry. */
+/** Load: a sheeted person's lines follow their sheet; anyone else with no lines gets their bible roster entry's. */
 export function withMotiveLines(state: GameState, bible: CampaignBible | null | undefined): GameState {
   let changed = false;
   const npcMemories = (state.npcMemories ?? []).map((m) => {
-    if (m.motiveLines?.length) return m;
+    if (m.motiveLines?.length && !m.sheet) return m;
     const names = [m.npcName, ...(m.aliases ?? [])].map((n) => n.trim().toLowerCase());
     const entry = bible?.keyNPCs.find((n) => [n.name, ...(n.aliases ?? [])].some((x) => names.includes(x.trim().toLowerCase())));
     const motiveLines = m.sheet ? motiveLinesFor(m.sheet.motive) : entry?.motiveLines ?? [];
-    if (!motiveLines.length) return m;
+    if (!motiveLines.length || motiveLines.join('\n') === (m.motiveLines ?? []).join('\n')) return m;
     changed = true;
     return { ...m, motiveLines };
   });

@@ -357,3 +357,8 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 4. **`src/game/typedEntityValidator.ts` lines 342-384** - `buildEntityRetryBlock()`. What it did: nothing; no caller anywhere. Cut for the ruleCount budget.
 5. **`src/game/tutorialBeats.ts` lines 120-164 (+ edge mirror)** - `formatTutorialBeatMandate()`. What it did: nothing; no caller anywhere. Cut for the ruleCount budget.
 6. **`src/game/wellbeing.ts` (draft before ship)** - a separate `FRAMED_AS_CHARACTER` regex and a `/[-_]/` locale split, folded into the one reading / a string split, so the new module adds no regex.
+
+## q31-H motive variants and group lines (Wire-in H)
+
+1. **`src/game/npcMemory.ts` lines 213-215 and 454-460 at `95e2e430` (+ edge mirror `supabase/functions/_shared/gm/npcMemory.ts`, same lines)** - `getCompletedTopics()` and `hasPurchasedFrom()`. What they did: nothing; no caller in src, scripts, tests or the edge (purchase pads read `purchases` directly). Cut to keep ruleCount TOTAL from rising.
+2. **`src/data/npcMotiveLines.json` shape** - one line per motivation (`id -> string[]`) replaced by one list per motivation (`id -> string[][]`, the shipped line first). Nothing lost: every old line is the first entry of its list. Trailing full stops on the new variant lines dropped on merge (the engine quote adds its own comma).

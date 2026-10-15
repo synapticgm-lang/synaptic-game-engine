@@ -210,10 +210,6 @@ export function hasMetBefore(state: GameState, npcName: string): boolean {
   );
 }
 
-export function getCompletedTopics(state: GameState, npcName: string): string[] {
-  return findNpcMemory(state.npcMemories, npcName)?.completedTopics ?? [];
-}
-
 /** Ordinary first-person speech ("I'm off to market") is not an intro; the speaker's name must follow. */
 const SELF_INTRO_HEAD =
   String.raw`\b(?:i am called|i am|i['’]m|my name is|call me|(?:allow|let) me (?:to )?introduce(?:\s+myself)?)`;
@@ -449,14 +445,6 @@ export function isQuestGiverMemory(memory: NpcMemory): boolean {
 
 export function npcShouldExit(state: GameState, npcName: string): boolean {
   return findNpcMemory(state.npcMemories, npcName)?.shouldExit === true;
-}
-
-export function hasPurchasedFrom(state: GameState, npcName: string, item: string): boolean {
-  const m = findNpcMemory(state.npcMemories, npcName);
-  if (!m?.purchases?.length) return false;
-  const key = item.trim().toLowerCase();
-  if (key.length < 3) return false;
-  return m.purchases.some((p) => p.toLowerCase() === key || p.toLowerCase().includes(key) || key.includes(p.toLowerCase()));
 }
 
 const BUY_ACT =
