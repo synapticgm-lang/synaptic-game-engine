@@ -8,7 +8,7 @@
  */
 import SRD from '../../data/srd/srd521.json';
 import type { ActiveEncounter, Attributes, AttributeKey } from '../types';
-import { crToXp, DND_DEFAULT_CR, highestCrWithin, normalizeCr } from '../xpRules';
+import { crForFoeLevel, crToXp, encounterKind, highestCrWithin, normalizeCr } from '../xpRules';
 
 export interface MonsterAttack {
   name: string;
@@ -141,16 +141,21 @@ export function statBlockForEncounter(enc: ActiveEncounter): StatBlock {
     const { match: _m, ...block } = hit;
     return block;
   }
-  return engineBlock(enc, normalizeCr(enc.cr) ?? DND_DEFAULT_CR);
+  return engineBlock(enc, realEncounterCr(enc)!);
 }
 
-/** The real CR a fight pays XP from: the card's, else the name-matched SRD block's; null when neither exists. */
-export function realEncounterCr(enc: Pick<ActiveEncounter, 'name' | 'cr'> | null | undefined): string | null {
+/**
+ * E.3 — the one CR a foe fights at and pays XP from: the card's, else the name-matched SRD block's, else the SRD
+ * budget CR for the foe's level and tier. Null only when there is no encounter.
+ */
+export function realEncounterCr(
+  enc: (Pick<ActiveEncounter, 'name' | 'cr' | 'source'> & { level?: number }) | null | undefined
+): string | null {
   if (!enc) return null;
   const given = normalizeCr(enc.cr);
   if (given) return given;
   const hit = SRD_MONSTERS.find((b) => b.match.test(enc.name ?? ''));
-  return hit ? normalizeCr(hit.cr) : null;
+  return hit ? normalizeCr(hit.cr) : crForFoeLevel(enc.level, encounterKind(enc));
 }
 
 export function blockById(id: string, enc: ActiveEncounter): StatBlock {

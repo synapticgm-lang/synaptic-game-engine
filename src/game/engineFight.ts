@@ -12,7 +12,7 @@ import { commitAutoFightLedger } from './combatAuthority';
 import { arrivePendingEncounter, initEncounterTerminal, tickEncounterTerminal } from './encounterTerminalFsm';
 import { profileForEncounter } from './lootTableRegistry';
 import { gainLootMoney, lootMoneyFound, lootMoneyText } from './rules/coins';
-import { milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare, type MilestoneKind } from './xpRules';
+import { encounterKind, milestoneXp, payCompanionsFightXp, paySummonsFightXp, takesPartyShare } from './xpRules';
 import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
@@ -52,13 +52,6 @@ export interface EngineFightResult {
 
 function nameKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
-}
-
-function encounterKind(enc: ActiveEncounter): MilestoneKind {
-  const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
-  if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
-  if (/\bboss\b/i.test(src)) return 'boss';
-  return 'encounter';
 }
 
 /**

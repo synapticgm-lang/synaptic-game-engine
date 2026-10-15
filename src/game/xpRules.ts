@@ -95,11 +95,19 @@ export function deedXp(mode: EngineMode | undefined, step: DeedStep, opts: Miles
   return { amount: 0, detail: '' };
 }
 
-/** Engine stat block CR for a monster with no `cr` (its numbers only — fight XP never uses it). */
+/** CR a bare number falls back to when nothing else gives one (crToXp only). */
 export const DND_DEFAULT_CR = '1/4';
 
-/** D&D fight XP is paid from a real CR (the card's, or the matched SRD block's) — never a guessed one. */
+/** D&D fight XP is paid from a CR; a fight with no encounter behind it has none. */
 export const NO_CR_XP_REASON = 'no XP: the foe has no challenge rating on its card or an SRD stat block';
+
+/** Fight milestone kind from the encounter's source / name (one rule for every payer). */
+export function encounterKind(enc: { source?: string; name?: string }): MilestoneKind {
+  const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
+  if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
+  if (/\bboss\b/i.test(src)) return 'boss';
+  return 'encounter';
+}
 
 export function normalizeCr(cr: string | number | undefined | null): string | null {
   if (cr == null || cr === '') return null;
@@ -118,6 +126,16 @@ export function crToXp(cr: string | number | undefined | null): number {
 export function encounterXpBudget(level: number, partySize: number, band: 0 | 1 | 2): number {
   const lvl = Math.max(1, Math.min(20, Math.floor(level || 1)));
   return DND_XP_BUDGET_PER_CHARACTER[lvl - 1]![band] * Math.max(1, Math.floor(partySize || 1));
+}
+
+/**
+ * E.3 — CR for a foe whose card gives none and whose name matches no SRD block: the highest CR one character of
+ * the foe's level may face (SRD 5.2.1 XP Budget per Character): a common foe on the Low band, a mini-boss or boss
+ * on the High band.
+ */
+export function crForFoeLevel(level: number | undefined, kind: MilestoneKind): string {
+  const lvl = Math.max(1, Math.min(20, Math.floor(level || 1)));
+  return highestCrWithin(DND_XP_BUDGET_PER_CHARACTER[lvl - 1]![kind === 'encounter' ? 0 : 2]);
 }
 
 /** The highest CR whose XP fits in `maxXp` (CR 0 when none does). */
@@ -254,48 +272,37 @@ export function isLowFoe(playerLevel: number | undefined, foeLevel: number | und
 }
 
 /**
- * The one engine rule for every milestone. 28d: scaled by the shared difficulty table (Hard ×1.25).
- * 29r: then the over-level cut when the player is 6+ levels above the area.
+ * Order E — how each mode levels on the one engine. PYOA: no XP, no levels. Tabletop: SRD CR XP, every multiplier 1.
+ * LitRPG / story RPG keep the researched multipliers (LOOT-RESEARCH §A5, litrpg-xp-review, SUMMARY-29r).
  */
+type Table = Readonly<Record<MilestoneKind, number>> | 'srd';
+export const MODE_XP: Readonly<Record<EngineMode, { xp: boolean; difficulty: boolean; overLevel: boolean; lowFoe: boolean; table: Table }>> = {
+  dnd: { xp: true, difficulty: false, overLevel: false, lowFoe: false, table: 'srd' },
+  litrpg: { xp: true, difficulty: true, overLevel: true, lowFoe: true, table: LITRPG_MILESTONE_XP },
+  rpg: { xp: true, difficulty: true, overLevel: true, lowFoe: true, table: STORY_RPG_MILESTONE_XP },
+  pyoa: { xp: false, difficulty: false, overLevel: false, lowFoe: false, table: LITRPG_MILESTONE_XP },
+};
+
+/** The one engine rule for every milestone: the base amount, then the multipliers the mode's row allows. */
 export function milestoneXp(mode: EngineMode | undefined, kind: MilestoneKind, opts: MilestoneXpOpts = {}): MilestoneXpResult {
-  const base = milestoneXpBase(mode, kind, opts);
-  const row = difficultyRow(opts.strictness);
-  let result = base;
-  if (row.xpScale !== 1 && base.amount > 0) {
-    const amount = Math.round(base.amount * row.xpScale);
-    result = {
-      amount,
-      detail: mode === 'dnd' ? `${base.detail} × ${row.xpScale} (${row.label}) = ${amount}` : base.detail,
-    };
+  const rules = MODE_XP[mode ?? 'litrpg'] ?? MODE_XP.litrpg;
+  if (!rules.xp) return { amount: 0, detail: '' };
+  let result = milestoneXpBase(rules, kind, opts);
+  const scale = difficultyRow(opts.strictness).xpScale;
+  if (rules.difficulty && scale !== 1 && result.amount > 0) {
+    result = { amount: Math.round(result.amount * scale), detail: result.detail };
   }
-  if (
-    mode !== 'dnd'
-    && result.amount > 0
-    && isFightKind(kind)
-    && isLowFoe(opts.level ?? opts.playerLevel, opts.foeLevel)
-  ) {
+  if (rules.lowFoe && result.amount > 0 && isFightKind(kind) && isLowFoe(opts.level ?? opts.playerLevel, opts.foeLevel)) {
     result = { amount: Math.round(result.amount * LOW_FOE_SHARE), detail: result.detail };
   }
-  if (result.amount > 0 && isOverLevel(opts.playerLevel, opts.areaLevel)) {
-    const amount = overLevelAmount(result.amount);
-    result = {
-      amount,
-      detail:
-        mode === 'dnd'
-          ? `${result.detail} × 5% (level ${opts.playerLevel} vs area ${opts.areaLevel}) = ${amount}`
-          : result.detail,
-    };
+  if (rules.overLevel && result.amount > 0 && isOverLevel(opts.playerLevel, opts.areaLevel)) {
+    result = { amount: overLevelAmount(result.amount), detail: result.detail };
   }
   return result;
 }
 
-function milestoneXpBase(
-  mode: EngineMode | undefined,
-  kind: MilestoneKind,
-  opts: MilestoneXpOpts = {}
-): MilestoneXpResult {
-  if (mode === 'rpg') return { amount: STORY_RPG_MILESTONE_XP[kind] ?? 0, detail: '' };
-  if (mode !== 'dnd') return { amount: LITRPG_MILESTONE_XP[kind] ?? 0, detail: '' };
+function milestoneXpBase(rules: { table: Table }, kind: MilestoneKind, opts: MilestoneXpOpts): MilestoneXpResult {
+  if (rules.table !== 'srd') return { amount: rules.table[kind] ?? 0, detail: '' };
   if (kind === 'encounter' || kind === 'miniBoss' || kind === 'boss') {
     const party = Math.max(1, Math.floor(opts.partySize ?? 1));
     const foes = Math.max(1, Math.floor(opts.count ?? 1));

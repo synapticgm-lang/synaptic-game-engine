@@ -28,4 +28,15 @@ describe('replay bank mode opening + travel', () => {
       expect(xpTotal(T.after(n))).toBe(xpTotal(T.before(n)));
     }
   });
+
+  it('[R17 tabletop s5002 | Order E.2/E.3] level 1 at the opening; every XP line is the plain SRD CR maths, never a difficulty or over-level multiplier or "XP: none"', () => {
+    expect(T.before(T.turns()[0]!).character.level).toBe(1);
+    for (const n of T.turns()) {
+      const xp = T.receipts(n).filter((l) => /^XP\b/.test(l));
+      for (const line of xp) {
+        expect(line, `T${n}`).not.toMatch(/× 1\.25|× 5%|XP: none/);
+        expect(line, `T${n}`).toMatch(/— CR \S+ = /);
+      }
+    }
+  });
 });

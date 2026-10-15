@@ -4,7 +4,7 @@
  */
 
 import type { Character, EngineMode } from './types';
-import { dndXpToNext } from './xpRules';
+import { MODE_XP, dndXpToNext } from './xpRules';
 import { hidesPart, type SystemHousingConfig } from './systemHousing';
 import { presentLevelUp, sharedLevelUp, srdLevelUp } from './rules/advancement';
 import type { Rng } from './rules/dice';
@@ -36,7 +36,7 @@ export function applyCharacterXpGain(
   housing?: SystemHousingConfig | null,
   rng?: Rng
 ): CharacterXpApplyResult {
-  if (!xpGain || xpGain <= 0) {
+  if (!xpGain || xpGain <= 0 || MODE_XP[mode ?? 'litrpg']?.xp === false) {
     return { character, levelsGained: 0, notes: [] };
   }
   const srdBar = onSrdThresholds(character, mode);

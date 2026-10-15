@@ -195,17 +195,19 @@ describe('tt-fix-3 engine errors', () => {
     expect(r.state.character.skillsGrantedThrough).toBe(2);
   });
 
-  it('fight XP pays from the real CR, never a guessed one, and says why when there is none', () => {
+  // Order E.3 (John: "an SRD block where one fits, a CR otherwise"): a foe with no card CR and no SRD match fights
+  // and pays at the SRD 5.2.1 budget CR for its level and tier, so it never pays "XP: none".
+  it('fight XP pays from the card CR, the SRD block, or the SRD budget CR for the foe level', () => {
     expect(milestoneXp('dnd', 'encounter', { cr: null }).amount).toBe(0);
     expect(milestoneXp('dnd', 'encounter', { cr: null }).detail).toBe(NO_CR_XP_REASON);
     expect(realEncounterCr({ name: 'the thugs' })).toBe('1/8');
-    expect(realEncounterCr({ name: 'a nameless thing' })).toBeNull();
+    expect(realEncounterCr({ name: 'a nameless thing', level: 1 })).toBe('1/4');
+    expect(realEncounterCr({ name: 'a nameless thing', level: 1, source: 'dungeon mini-boss' })).toBe('1/2');
     const s = tabletop('');
     const thugs = payEncounterXp(s, { name: 'the thugs', count: 2 } as ActiveEncounter, 'defeated the thugs');
     expect(thugs.receipts.join('\n')).toMatch(/XP Gained: 50 \(defeated the thugs — CR 1\/8 = 25 XP × 2 = 50 XP/);
-    const odd = payEncounterXp(s, { name: 'a nameless thing' } as ActiveEncounter, 'defeated a nameless thing');
-    expect(odd.receipts.join('\n')).toMatch(/XP: none \(defeated a nameless thing — no XP: the foe has no challenge rating/);
-    expect(odd.state.character.xp ?? 0).toBe(s.character.xp ?? 0);
+    const odd = payEncounterXp(s, { name: 'a nameless thing', level: 1 } as ActiveEncounter, 'defeated a nameless thing');
+    expect(odd.receipts.join('\n')).toMatch(/XP Gained: 50 \(defeated a nameless thing — CR 1\/4 = 50 XP/);
   });
 
   it('a trap roll and its damage reach tabletop STATUS', () => {

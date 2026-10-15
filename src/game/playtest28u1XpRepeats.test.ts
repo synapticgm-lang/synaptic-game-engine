@@ -40,26 +40,23 @@ const refs: LedgerRef[] = [
 ];
 
 describe('playtest28u1XpRepeats', () => {
-  // 2026-10-14e — a spine place pays only when earned; choosing a road pays nothing.
-  it('spine steps pay once when earned; the fork pays nothing, idempotent on repeat', () => {
+  // Order E (John 11:50): PYOA is a pre-written story with no XP and no levels — spine steps, forks and endings pay nothing.
+  it('spine steps, the fork and repeats pay no XP in PYOA', () => {
     let s = advancePyoaSpine(thornferryState(), 'Walk the road together');
     expect(xpFor(s, 'Walk the road together').xp).toBe(0);
     const first = xpFor(s, 'Walk the road together', true);
-    expect(first.xp).toBeGreaterThan(0);
-    expect(first.notes.join(' ')).toMatch(/reached Thornferry streets/);
-    s = { ...s, sandboxAwardKeys: first.awardKeys };
-    expect(xpFor(s, 'Look around', true).xp).toBe(0);
-    s = advancePyoaSpine(s, 'Keep the charter with the mill');
-    const fork = xpFor(s, 'Keep the charter with the mill');
-    expect(fork.awardKeys.some((k) => k.startsWith('spine-fork:'))).toBe(false);
+    expect(first.xp).toBe(0);
+    expect(first.notes.join(' ')).not.toMatch(/XP Gained/);
+    s = advancePyoaSpine({ ...s, sandboxAwardKeys: first.awardKeys }, 'Keep the charter with the mill');
+    expect(xpFor(s, 'Keep the charter with the mill').xp).toBe(0);
   });
 
-  it('an ending pays quest complete once', () => {
+  it('an ending pays no XP in PYOA', () => {
     let s = thornferryState();
     s = { ...s, pyoaSpine: { ...s.pyoaSpine!, endingId: 'thornferry:burned' } };
     const r = xpFor(s, 'Burn it');
-    expect(r.notes.join(' ')).toMatch(/an ending reached/);
-    expect(xpFor({ ...s, sandboxAwardKeys: r.awardKeys }, 'Burn it').xp).toBe(0);
+    expect(r.xp).toBe(0);
+    expect(r.notes.join(' ')).not.toMatch(/XP Gained/);
   });
 
   it('recycled sentences and re-spoken lines drop when two sentences stay', () => {

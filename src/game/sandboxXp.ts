@@ -23,7 +23,7 @@ import { detectStanceTreatment } from './factionStandings';
 import { parsePlayerIntent } from './intentParser';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
-import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
+import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, encounterKind, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
 import { realEncounterCr } from './rules/srdMonsters';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
@@ -184,13 +184,6 @@ export function deedItem(state: GameState, key: string): Item | null {
     sameKind ??= item;
   }
   return sameKind ?? first;
-}
-
-function encounterKind(enc: ActiveEncounter): MilestoneKind {
-  const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
-  if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
-  if (/\bboss\b/i.test(src)) return 'boss';
-  return 'encounter';
 }
 
 /**

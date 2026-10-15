@@ -148,7 +148,8 @@ describe('29r XP in every mode', () => {
     expect(first.places![0].questCards![0].takenTurn).toBe(2);
   });
 
-  it('six levels above the area pays 5 percent in all three modes', () => {
+  // Order E: the over-level cut is LitRPG / Story RPG only; tabletop pays the plain SRD CR XP (multipliers 1).
+  it('six levels above the area pays 5 percent in LitRPG and Story RPG, full CR XP in tabletop', () => {
     const cut = (n: number) => (n < 1 ? 0 : Math.max(1, Math.round(n * 0.05)));
     const lit = finishSettlementQuestCard(st('litrpg', 10, 1), cardOf(st('litrpg', 10, 1)).id);
     expect(lit.xp).toBe(cut(100));
@@ -164,11 +165,11 @@ describe('29r XP in every mode', () => {
         const full = milestoneXp(mode, kind, { level: 10, cr: 1 }).amount;
         const over = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, areaLevel: 4 }).amount;
         const near = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, areaLevel: 5 }).amount;
-        expect(over).toBe(cut(full));
+        expect(over).toBe(mode === 'dnd' ? full : cut(full));
         expect(near).toBe(full);
       }
     }
-    expect(milestoneXp('dnd', 'encounter', { cr: '1/8', playerLevel: 10, areaLevel: 1 }).amount).toBe(1);
+    expect(milestoneXp('dnd', 'encounter', { cr: '1/8', playerLevel: 10, areaLevel: 1 }).amount).toBe(25);
   });
 
   it('discovery XP uses the same mode rule and cut', () => {
@@ -184,7 +185,7 @@ describe('29r XP in every mode', () => {
   });
 
   it('stamp is 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-15y');
-    expect(BUILD_STAMP).toBe('2026-10-15y');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-15z');
+    expect(BUILD_STAMP).toBe('2026-10-15z');
   });
 });

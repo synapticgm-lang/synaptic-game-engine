@@ -1,6 +1,6 @@
 /**
  * tt-fix-12 — one block per item:
- * 1. a kill that pays no XP says why on STATUS (the engine's "XP: none (…)" line reaches the player);
+ * 1. a kill pays from a CR and its XP line reaches STATUS (Order E.3: no "XP: none" for an engine-made foe);
  * 2. on the road the journey's meeting is who is there: no place local is handed to the writer;
  * 3. walking back into the room of a foe the player got away from starts the fight again.
  */
@@ -9,7 +9,6 @@ import { createInitialState } from './defaults';
 import type { ActiveEncounter, GameState, Quest } from './types';
 import { payEncounterXp } from './engineFight';
 import { formatArcStatusReceipts, type ArcDirectorResult } from './arcDirector';
-import { filterSystemLogForEngine } from './systemLog';
 import { storyMinorRoles } from './closedScenePerson';
 import { formatWriterInfoLayer } from './writerInfoLayer';
 import { tabletopStepChip } from './tabletopQuestProgress';
@@ -30,16 +29,14 @@ function ck(over: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
-const status = (state: GameState, systemReceipts: string[]) =>
-  filterSystemLogForEngine(formatArcStatusReceipts({ state, systemReceipts } as unknown as ArcDirectorResult), 'dnd');
-
 describe('1 — no XP is said on STATUS', () => {
-  it('a kill with no real CR shows its reason line (lap 16 F T11, T21)', () => {
+  // Order E.3: an engine-made foe with no card CR and no SRD block pays at the SRD budget CR for its level.
+  it('a kill with no card CR pays the SRD budget CR for its level and STATUS shows it (lap 16 F T11, T21)', () => {
     const s = ck();
     const bats = { name: 'Pale Bat Swarm', hp: 0, maxHp: 13, level: 1, source: 'dungeon room', count: 1 } as unknown as ActiveEncounter;
     const paid = payEncounterXp(s, bats, 'defeated Pale Bat Swarm');
-    expect(paid.receipts).toEqual([expect.stringMatching(/^XP: none \(defeated Pale Bat Swarm/)]);
-    expect(status(s, ['Fight: VICTORY vs Pale Bat Swarm in 2 rounds.', ...paid.receipts])).toContain(paid.receipts[0]);
+    expect(paid.receipts[0]).toMatch(/^XP Gained: 50 \(defeated Pale Bat Swarm — CR 1\/4 = 50 XP/);
+    expect(formatArcStatusReceipts({ state: s, systemReceipts: paid.receipts } as unknown as ArcDirectorResult)).toContain(paid.receipts[0]);
   });
 
   it('a paid kill still shows XP Gained', () => {
