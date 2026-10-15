@@ -1,8 +1,7 @@
-/**
- * Wave 3 (B026–B028) — sealed SceneManifest + deterministic fallback prose.
+﻿/**
+ * Wave 3 (B026â€“B028) â€” sealed SceneManifest + deterministic fallback prose.
  * Committed beat/effects hash is sealed before GM; GM fail uses local templates.
  * B026: Manifest builder and hash
- * B027: Manifest-aware render validator
  * B028: One-repair policy and deterministic fallback
  */
 
@@ -11,7 +10,7 @@ import { getDiegeticFallback } from './diegeticFallbacks';
 import type { GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
 import { contractForState } from './beatContract';
-import { detectHookContradiction, hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
+import { hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
 import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { shortRoomLabel } from './mapEngine';
 
@@ -26,7 +25,7 @@ export interface SceneManifest {
   allowedUncertainty: string[];
   playerAction: string;
   sealedAt: number;
-  /** B028 — track if this was already used for a fallback (max 1 retry) */
+  /** B028 â€” track if this was already used for a fallback (max 1 retry) */
   fallbackUsed?: boolean;
 }
 
@@ -161,124 +160,10 @@ export function formatSealedManifestBlock(manifest: SceneManifest): string {
   return `\n--- SEALED MANIFEST (hash=${manifest.beatEffectsHash}) ---\nGist: ${manifest.gist}\nRequired facts:\n${manifest.requiredFacts.map((f) => `- ${f}`).join('\n')}\nForbidden: ${manifest.forbiddenReversals.join('; ')}\n-------------------------------------------------\n`;
 }
 
-/** B027 — Validation result from checking GM prose against sealed manifest. */
-export interface ManifestValidationResult {
-  valid: boolean;
-  contradictions: string[];
-  omissions: string[];
-  warnings: string[];
-}
-
-/**
- * B027 — Validate GM prose against the sealed manifest.
- * Detects contradictions (prose violates forbidden reversals)
- * and omissions (required facts missing from prose).
- * Does NOT mutate the ledger — returns result only.
- */
-export function validateProseAgainstManifest(
-  prose: string,
-  manifest: SceneManifest,
-  state: GameState
-): ManifestValidationResult {
-  const contradictions: string[] = [];
-  const omissions: string[] = [];
-  const warnings: string[] = [];
-  const lowerProse = prose.toLowerCase();
-  
-  // Check for forbidden reversals
-  for (const forbidden of manifest.forbiddenReversals) {
-    // Check for defeated enemy resurrection
-    if (forbidden.includes('defeated and cannot heal')) {
-      const nameMatch = forbidden.match(/^(.+?) is defeated/);
-      if (nameMatch) {
-        const enemyName = nameMatch[1].toLowerCase();
-        // Look for healing/resurrection language
-        if (
-          lowerProse.includes(`${enemyName} recovers`) ||
-          lowerProse.includes(`${enemyName} stands`) ||
-          lowerProse.includes(`${enemyName} rises`) ||
-          /heals?.*\b${enemyName}\b/i.test(prose)
-        ) {
-          contradictions.push(`Prose resurrects ${nameMatch[1]} despite ledger defeat`);
-        }
-      }
-    }
-    
-    if (forbidden.includes('locked hook why')) {
-      const hookLock = resolveHookLock(state);
-      const hookHit = detectHookContradiction(prose, hookLock);
-      if (hookHit) contradictions.push(hookHit);
-    }
-
-    // Check for quest reversal
-    if (forbidden.includes('Quest') && forbidden.includes('cannot revert')) {
-      const questMatch = forbidden.match(/Quest (.+?) is (completed|failed)/);
-      if (questMatch) {
-        const questTitle = questMatch[1].toLowerCase();
-        const status = questMatch[2];
-        if (lowerProse.includes(questTitle)) {
-          if (
-            (status === 'completed' && lowerProse.includes('incomplete')) ||
-            (status === 'failed' && lowerProse.includes('succeed'))
-          ) {
-            contradictions.push(`Prose reverses ${questMatch[1]} ${status} status`);
-          }
-        }
-      }
-    }
-  }
-  
-  // Check for active encounter without combat language
-  if (state.activeEncounter && state.activeEncounter.hp > 0) {
-    if (
-      !lowerProse.includes('fight') &&
-      !lowerProse.includes('combat') &&
-      !lowerProse.includes('attack') &&
-      !lowerProse.includes('battle') &&
-      !lowerProse.includes('strike') &&
-      !lowerProse.includes('blade') &&
-      !lowerProse.includes('swing')
-    ) {
-      warnings.push('Combat beat mandate but prose lacks fight language');
-    }
-  }
-  
-  // Check for critical required facts presence
-  for (const fact of manifest.requiredFacts) {
-    // Beat mandates must be addressed
-    if (fact.startsWith('Beat:')) {
-      const beatDesc = fact.replace('Beat:', '').trim().toLowerCase();
-      // Very loose check — if it's a combat beat, prose should mention combat
-      if (beatDesc.includes('combat') || beatDesc.includes('encounter') || beatDesc.includes('skirmish')) {
-        if (
-          !lowerProse.includes('fight') &&
-          !lowerProse.includes('combat') &&
-          !lowerProse.includes('attack') &&
-          !lowerProse.includes('battle')
-        ) {
-          warnings.push('Combat beat description but prose avoids combat terms');
-        }
-      }
-    }
-    
-    // XP receipts should be acknowledged if significant
-    if (fact.includes('XP Gained') && fact.includes('+')) {
-      const xpMatch = fact.match(/\+(\d+)/);
-      if (xpMatch && parseInt(xpMatch[1]) >= 20) {
-        if (!lowerProse.includes('xp') && !lowerProse.includes('experience')) {
-          omissions.push(`Major XP award (${xpMatch[1]}) not mentioned in prose`);
-        }
-      }
-    }
-  }
-  
-  const valid = contradictions.length === 0 && omissions.length === 0;
-  return { valid, contradictions, omissions, warnings };
-}
 
 /** Old HUD stubs that must never appear as player-facing GM narration (critic Batch A + E stall). */
 const BANNED_FALLBACK_STUB =
-  /something shifts\s*[—-]\s*a footstep|forcing the moment forward|closes in\s*[—-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent|here is the narrative of the completed event|you can still look,\s*speak,\s*or move|At alone in\b/i;
+  /something shifts\s*[â€”-]\s*a footstep|forcing the moment forward|closes in\s*[â€”-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent|here is the narrative of the completed event|you can still look,\s*speak,\s*or move|At alone in\b/i;
 
 /** HUD fact bleed that used to append into fallback prose. */
 const HUD_FACT_BLEED = /\bPC:\s*\S+.*\bHP:\s*\d|\bXP:\s*\d{1,4}\b(?!\s*(?:Gained|from|for))/i;
@@ -293,10 +178,10 @@ export function isBannedFallbackStub(text: string | undefined): boolean {
 export function isEngineRecoveryProse(text: string | undefined): boolean {
   if (!text?.trim()) return false;
   if (isBannedFallbackStub(text)) return true;
-  return /\bthe beat does not freeze\b|\bis still engaged\s*[—-]/i.test(text);
+  return /\bthe beat does not freeze\b|\bis still engaged\s*[â€”-]/i.test(text);
 }
 
-/** Hard stop after one recovery commit — next empty GM must FAIL (Class A). */
+/** Hard stop after one recovery commit â€” next empty GM must FAIL (Class A). */
 export function consecutiveRecoveryExceeded(state: GameState): boolean {
   return (state.sceneFacts?.engineRecoveryStreak ?? 0) >= 1;
 }
@@ -328,7 +213,7 @@ export function clearEngineRecoveryStreak(state: GameState): GameState {
 }
 
 /**
- * Diegetic local stitch when GM is empty — narrative only, never HUD PC/HP/XP lines.
+ * Diegetic local stitch when GM is empty â€” narrative only, never HUD PC/HP/XP lines.
  * Encounter branch narrates live ledger foe; never the closes-in template.
  */
 function fallbackPlace(state: GameState): string {
@@ -369,11 +254,11 @@ export function renderDeterministicFallback(
   if (enc) {
     const hp = typeof enc.hp === 'number' ? enc.hp : null;
     const max = typeof enc.maxHp === 'number' ? enc.maxHp : null;
-    const hpBit = hp != null && max != null ? ` — ${hp}/${max} HP` : '';
+    const hpBit = hp != null && max != null ? ` â€” ${hp}/${max} HP` : '';
     return `At ${loc}, ${enc.name} is still engaged${hpBit}. Dust and breath hang between you; the next blow, flight, or word is yours.`;
   }
   if (manifest.beatId?.includes('crisis') || manifest.beatId?.includes('branch')) {
-    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you — delay will cost.`;
+    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you â€” delay will cost.`;
   }
   if (inspectish) {
     return getDiegeticFallback(state, 'inspect exhaust');
@@ -389,9 +274,9 @@ export function renderDeterministicFallback(
 }
 
 /** 
- * B028 — One-repair policy terminal: fallback preserves receipts in systemLog only.
+ * B028 â€” One-repair policy terminal: fallback preserves receipts in systemLog only.
  * Max 1 fallback per manifest; subsequent failures must use a new manifest.
- * 31i — never emit banned HUD stubs; prose is diegetic stitch only.
+ * 31i â€” never emit banned HUD stubs; prose is diegetic stitch only.
  */
 export function applyRenderFallback(
   manifest: SceneManifest,
@@ -421,19 +306,19 @@ export function applyRenderFallback(
     fallbackUsed: true,
   };
   
-  // 29c — no player-facing "(beat recovered; fail)" chrome
-  // Ledger receipts stay in systemLog — never append PC/HP/XP into narration
+  // 29c â€” no player-facing "(beat recovered; fail)" chrome
+  // Ledger receipts stay in systemLog â€” never append PC/HP/XP into narration
   return {
     prose,
     systemLog: applyStatusFirewall([
-      `Deterministic fallback applied (${reason}) — ledger preserved`,
+      `Deterministic fallback applied (${reason}) â€” ledger preserved`,
     ]).lines,
     manifestUpdated,
   };
 }
 
 /**
- * B028 — Check if manifest can still be used for fallback (max 1 retry policy).
+ * B028 â€” Check if manifest can still be used for fallback (max 1 retry policy).
  */
 export function canUseFallback(manifest: SceneManifest): boolean {
   return !manifest.fallbackUsed;

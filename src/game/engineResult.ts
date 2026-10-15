@@ -48,6 +48,8 @@ export function engineResultFact(receipts: readonly string[], mode?: EngineMode)
 export type TerminalFight = {
   outcome: 'victory' | 'defeat' | 'escaped';
   foe: string;
+  /** Foe name with its article for player-facing lines ("The Cave Spider", not "Cave Spider"). */
+  foeDisplay: string;
   rounds: string;
   forced: boolean;
   /** The failed check that let the foe force the fight (a parley or a flee), when the result names one. */
@@ -59,19 +61,33 @@ export function terminalFightOutcome(engineFact: string | undefined): TerminalFi
   const fact = engineFact ?? '';
   const fight = fact.match(/Fight: (VICTORY|DEFEAT) vs (.+?) in (\d+ rounds?)/);
   if (fight) {
-    const forced = new RegExp(`Fight: ${fight[2].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} forces the fight`).test(fact);
+    const foe = fight[2]!.trim();
+    const foeDisplay = !foe ? '' : ARTICLE_NAME.test(foe) ? capFirst(foe) : `The ${foe}`;
+    const forced = new RegExp(`Fight: ${foe.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} forces the fight`).test(fact);
     const forcedBy = /Parley check: [^.]*— failure/.test(fact) ? 'parley' : /Flee check: [^.]*— failure/.test(fact) ? 'flee' : undefined;
     return {
       outcome: fight[1] === 'VICTORY' ? 'victory' : 'defeat',
-      foe: fight[2].trim(),
-      rounds: fight[3],
+      foe,
+      foeDisplay,
+      rounds: fight[3]!,
       forced,
       ...(forced && forcedBy ? { forcedBy } : {}),
     };
   }
-  if (/Flee check: [^.]*— success/.test(fact)) return { outcome: 'escaped', foe: '', rounds: '', forced: false };
+  if (/Flee check: [^.]*— success/.test(fact)) {
+    return { outcome: 'escaped', foe: '', foeDisplay: '', rounds: '', forced: false };
+  }
   const escaped = fact.match(/Fight: ESCAPED from (.+?) after (\d+ rounds?)/);
-  if (escaped) return { outcome: 'escaped', foe: escaped[1]!.trim(), rounds: escaped[2]!, forced: false };
+  if (escaped) {
+    const foe = escaped[1]!.trim();
+    return {
+      outcome: 'escaped',
+      foe,
+      foeDisplay: !foe ? '' : ARTICLE_NAME.test(foe) ? capFirst(foe) : `The ${foe}`,
+      rounds: escaped[2]!,
+      forced: false,
+    };
+  }
   return null;
 }
 
@@ -90,18 +106,19 @@ export function beatCarriesForcedAttempt(prose: string, fight: TerminalFight): b
 export type FightPov = { who: string; him: string };
 
 const capFirst = (s: string) => (s ? s[0]!.toUpperCase() + s.slice(1) : s);
+const ARTICLE_NAME = /^(?:the|a|an)\b/i;
 
 /** Where the fight was: "at the inn", or "on the open road …" while a journey is underway. */
 function fightWhere(where: string, onRoad?: boolean): string {
   return where ? ` ${onRoad ? 'on' : 'at'} ${where}` : '';
 }
 
-/** The settled outcome as one plain sentence (foe down, PC down, or got clear). */
+/** The settled outcome as one plain engine combat-log sentence (foe down, PC down, or got clear). */
 export function terminalOutcomeSentence(fight: TerminalFight, pov: FightPov = { who: 'you', him: 'you' }): string {
   const who = capFirst(pov.who);
   if (fight.outcome === 'escaped') return `${who} broke away and got clear.`;
   return fight.outcome === 'victory'
-    ? `${capFirst(fight.foe)} went down and did not get up, and the fight was over.`
+    ? `${fight.foeDisplay} went down and did not get up, and the fight was over.`
     : `${who} went down, and the fight was lost.`;
 }
 

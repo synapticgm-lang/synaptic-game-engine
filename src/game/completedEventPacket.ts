@@ -1293,7 +1293,14 @@ export function formatWriterFacingEvent(
     `Outcome: ${panelRead ? 'read the change below' : packet.outcome}.`,
   ];
   if (packet.engineResult) {
-    lines.push(`ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it): ${writerEngineResult(packet.engineResult)}`);
+    const fightClose = terminalFightOutcome(packet.engineResult);
+    const mark =
+      fightClose && fightClose.outcome !== 'escaped'
+        ? ' Fight-close already on the combat log — narrate the moment and aftermath, do not restate it.'
+        : '';
+    lines.push(
+      `ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it)${mark}: ${writerEngineResult(packet.engineResult)}`
+    );
   }
   if (panelRead) {
     const readHousing = housingFromSystemBlock(packet.systemBlock);

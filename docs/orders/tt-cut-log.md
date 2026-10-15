@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-RCR1 fight-close outside prose (Order RC-R1)
+
+1. **`src/game/beatCommitGate.ts` `withMissingFightFacts` outcome term + `prose.includes(outcome)` (lines ~241-245 at parent)** — appended `terminalOutcomeSentence` into the writer's beat when the prose lacked that exact string. What it did: said the kill twice whenever the writer already told it in other words (RC-1 leftover). Replaced by the same sentence on the engine combat-log / STATUS channel (`WriterTurnResult.combatLog` + `outcomeShown: 'engine'`). Forced-attempt and foe-hit gaps stay.
+2. **`src/game/writerTurn.ts` comment at `runWriterTurnFightOnly` ("closes every settled fight beat")** — claimed the engine outcome sentence closed the prose beat. Replaced by the combat-log path above.
+3. **`src/game/sealedManifest.ts` `ManifestValidationResult` + `validateProseAgainstManifest` (lines 164–277 at parent)** — B027 prose-vs-manifest word scan with no production caller (tests only). Hook contradictions stay on `hookLock.detectHookContradiction`; defeat/quest closed facts stay on the commit gate. Cut so ruleCount TOTAL does not rise with RC-R1. Tests that pinned it: `playtest30bWave3` B027 block deleted; `playtest31aHookLock` uses `detectHookContradiction` directly.
+
+---
+
 ## q31-LK1 locks and alarms
 
 1. **`src/game/combatResolution.ts`** — whole module. Only imported (unused) from `useGame.ts` after 28f moved combat to `engineFight`; no other caller. Restore from parent of the q31-LK1 commit.

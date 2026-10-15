@@ -38,7 +38,6 @@ import {
   foeHitSentence,
   forcedAttemptSentence,
   terminalFightOutcome,
-  terminalOutcomeSentence,
   type FightPov,
 } from './engineResult';
 import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
@@ -214,7 +213,7 @@ type FightFacts = { forced: boolean; hit: boolean };
 
 /**
  * Which settled fight facts the beat leaves out: the failed roll that forced it (tabletop), a foe hit.
- * The outcome is never read from the writer's words: the engine's own sentence carries it (`withMissingFightFacts`).
+ * The outcome lives on the engine combat-log line (`settledFightCombatLog`), never in prose.
  */
 function fightFactsLeftOut(state: GameState, prose: string): FightFacts {
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
@@ -231,18 +230,16 @@ export function missingFightFacts(state: GameState, prose: string): number {
 
 /**
  * The writer's beat with the engine's plain sentence for each settled fight fact it leaves out (the failed
- * parley or flee that forced the fight, a foe hit on the PC) and the engine's outcome sentence, once.
- * Added to the beat, never in place of it.
+ * parley or flee that forced the fight, a foe hit on the PC). The fight outcome is never appended here —
+ * it is an engine combat-log line outside the prose (`terminalOutcomeSentence` on STATUS).
  */
 export function withMissingFightFacts(state: GameState, prose: string, pov: FightPov): string {
   const fact = state.completedEvent?.engineResult;
   const fight = terminalFightOutcome(fact);
   const out = fightFactsLeftOut(state, prose);
-  const outcome = fight ? terminalOutcomeSentence(fight, pov) : '';
-  // The attempt that forced the fight came first; the hit and the outcome close the beat.
   const before = fight && out.forced ? forcedAttemptSentence(fight, pov) : '';
-  const after = [out.hit ? foeHitSentence(fact, pov) : '', prose.includes(outcome) ? '' : outcome];
-  return [before, prose.trim(), ...after].filter(Boolean).join(' ');
+  const after = out.hit ? foeHitSentence(fact, pov) : '';
+  return [before, prose.trim(), after].filter(Boolean).join(' ');
 }
 
 const REOPENED_FACT = 'Reopens a closed fact (a destroyed item or a dead foe acting).';

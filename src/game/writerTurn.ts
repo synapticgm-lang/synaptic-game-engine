@@ -20,7 +20,7 @@ import {
   TERMINAL_FIGHT_PROBLEM,
   withMissingFightFacts,
 } from './beatCommitGate';
-import { terminalFightOutcome } from './engineResult';
+import { terminalFightOutcome, terminalOutcomeSentence } from './engineResult';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
 import { dropsFightRoll } from './engineFactGate';
 import { escRe } from './engineFactPatterns';
@@ -76,6 +76,9 @@ export type WriterTurnResult = WriterDraft & {
   repairs?: SentenceRepair[];
   /** A talk turn's missing quoted answer and what the one repair request did with it (`repairMissingAnswer`). */
   answerRepair?: SentenceRepair;
+  /** RC-R1 — fight outcome on the engine combat-log channel (STATUS), not in prose. */
+  outcomeShown?: 'engine';
+  combatLog?: string;
 };
 
 /**
@@ -587,11 +590,19 @@ async function runWriterTurnFightOnly(opts: {
   const state = opts.check.state;
   const pov = pcPov(opts.packet.pc ?? state.character);
   const fightPov = { who: pcStorySubject(pov), him: narratesPcInThirdPerson(pov) ? pov.him : 'you' };
-  // The engine's outcome sentence closes every settled fight beat; the writer's words are never tested for it.
+  // Forced-attempt / foe-hit gaps still fill into prose; the outcome is an engine combat-log line outside it.
   const withFacts = <T extends WriterTurnResult>(turn: T): T => {
-    if (!terminalFightOutcome(state.completedEvent?.engineResult)) return turn;
+    const fight = terminalFightOutcome(state.completedEvent?.engineResult);
+    if (!fight) return turn;
     const prose = withMissingFightFacts(state, turn.prose, fightPov);
-    return { ...turn, prose, remaining: writerDraftProblems(prose, opts.check) };
+    const combatLog = terminalOutcomeSentence(fight, fightPov);
+    return {
+      ...turn,
+      prose,
+      remaining: writerDraftProblems(prose, opts.check),
+      outcomeShown: 'engine' as const,
+      combatLog,
+    };
   };
   const first = runWriterTurn(opts);
   if (first.outcome !== 'accepted') return first;
@@ -613,10 +624,10 @@ async function runWriterTurnFightOnly(opts: {
     && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
   const base = rewriteBetter ? second : first;
   if (base.prose.trim()) {
-    const prose = withMissingFightFacts(state, base.prose, fightPov);
-    return { ...base, prose, remaining: writerDraftProblems(prose, opts.check), fightRetry: 'added', fightDraft };
+    return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
   }
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+  const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
     ...first,
     prose: painted.prose,
@@ -626,6 +637,9 @@ async function runWriterTurnFightOnly(opts: {
     remaining: writerDraftProblems(painted.prose, opts.check),
     fightRetry: 'painted',
     fightDraft,
+    ...(fight
+      ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) }
+      : {}),
   };
 }
 

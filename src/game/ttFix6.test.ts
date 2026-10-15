@@ -13,7 +13,7 @@ import { lineHasUnhandedFind, handedCountText } from './tokenProse';
 import { applyCommittedNarrative } from './sceneFacts';
 import { tabletopStepKind } from './tabletopQuestProgress';
 import { withMissingFightFacts } from './beatCommitGate';
-import { engineResultFact } from './engineResult';
+import { engineResultFact, terminalFightOutcome, terminalOutcomeSentence } from './engineResult';
 import { hasOpenAsk } from './questGiver';
 import { checkRepeatChips } from './turnCheck';
 import { backedAnswerFacts } from './writerTurn';
@@ -65,13 +65,16 @@ describe('tt-fix-6 item 4 — the step verb decides what ticks it', () => {
 });
 
 describe('tt-fix-6 item 5 — a missed fight fact is added, the beat is kept', () => {
-  it('adds the outcome after the writer prose', () => {
+  it('keeps the writer prose; the outcome is the engine combat-log line (q31-RCR1)', () => {
     const receipts = ['Fight: VICTORY vs Goblin in 2 rounds. The fight is over: Goblin is down and cannot fight on.'];
     const state = { ...tabletop(), completedEvent: { engineResult: engineResultFact(receipts) } } as unknown as GameState;
     const prose = 'Jax swung at the goblin by the gate.';
     const out = withMissingFightFacts(state, prose, { who: 'Jax', him: 'them' });
-    expect(out.startsWith(prose)).toBe(true);
-    expect(out).toMatch(/Goblin went down and did not get up/);
+    expect(out).toBe(prose);
+    expect(out).not.toMatch(/went down and did not get up/);
+    expect(
+      terminalOutcomeSentence(terminalFightOutcome(engineResultFact(receipts))!, { who: 'Jax', him: 'them' })
+    ).toMatch(/^The Goblin went down and did not get up/);
   });
 });
 

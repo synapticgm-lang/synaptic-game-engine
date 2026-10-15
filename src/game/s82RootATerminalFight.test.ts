@@ -68,7 +68,7 @@ describe('s82 Root A — a settled fight must be on the page', () => {
     }
   });
 
-  it('no rewrite: the writer beat is kept and the engine outcome closes it', async () => {
+  it('no rewrite: the writer beat is kept; the engine outcome is the combat-log line (q31-RCR1)', async () => {
     const state = t13();
     const asked: string[] = [];
     const turn = await runWriterTurnWithFightRetry({
@@ -82,10 +82,12 @@ describe('s82 Root A — a settled fight must be on the page', () => {
     });
     expect(asked).toHaveLength(0);
     expect(turn.prose).toMatch(/wagon desk/);
-    expect(turn.prose).toMatch(new RegExp(`${FOE} went down and did not get up`));
+    expect(turn.prose).not.toMatch(/went down and did not get up/);
+    expect(turn.outcomeShown).toBe('engine');
+    expect(turn.combatLog).toMatch(new RegExp(`^The ${FOE} went down and did not get up`));
   });
 
-  it('a beat that already tells the kill gets the engine outcome once', async () => {
+  it('a beat that already tells the kill still gets the engine combat-log once, not a prose append', async () => {
     const state = t13();
     const turn = await runWriterTurnWithFightRetry({
       firstRaw: DOWN_PROSE,
@@ -93,8 +95,10 @@ describe('s82 Root A — a settled fight must be on the page', () => {
       check: check(state),
       rewrite: async () => '',
     });
-    expect(turn.prose).toMatch(/did not get up\. Yara Quill/);
-    expect(turn.prose.match(new RegExp(`${FOE} went down and did not get up`, 'g'))?.length).toBe(1);
+    expect(turn.prose).toBe(DOWN_PROSE);
+    expect(turn.prose).not.toMatch(new RegExp(`${FOE} went down and did not get up`));
+    expect(turn.outcomeShown).toBe('engine');
+    expect(turn.combatLog).toMatch(new RegExp(`^The ${FOE} went down and did not get up`));
   });
 
   it('the next list holds no flee chips', () => {

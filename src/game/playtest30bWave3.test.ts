@@ -10,7 +10,6 @@ import { createInitialState } from './defaults';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import {
   buildSealedManifest,
-  validateProseAgainstManifest,
   applyRenderFallback,
   canUseFallback,
   type SceneManifest,
@@ -117,74 +116,7 @@ describe('playtest30b — Wave 3 sealed manifest', () => {
     });
   });
 
-  describe('B027 — Manifest validation', () => {
-    it('detects defeated enemy resurrection contradiction', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.turn = 10;
-      state.activeEncounter = {
-        id: 'enc1',
-        name: 'Wraith',
-        hp: 0,
-        maxHp: 40,
-        level: 4,
-        status: 'active',
-      };
-      
-      const manifest = buildSealedManifest(state, 'Kill', undefined);
-      const badProse = 'The Wraith stands up, fully recovered and angry.';
-      
-      const result = validateProseAgainstManifest(badProse, manifest, state);
-      
-      expect(result.valid).toBe(false);
-      expect(result.contradictions.length).toBeGreaterThan(0);
-      expect(result.contradictions[0]).toMatch(/resurrects.*Wraith/i);
-    });
-
-    it('allows prose that respects defeated state', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.turn = 10;
-      state.activeEncounter = {
-        id: 'enc1',
-        name: 'Wraith',
-        hp: 0,
-        maxHp: 40,
-        level: 4,
-        status: 'active',
-      };
-      
-      const manifest = buildSealedManifest(state, 'Kill', undefined);
-      const goodProse = 'The Wraith collapses, fading into mist. The threat is ended.';
-      
-      const result = validateProseAgainstManifest(goodProse, manifest, state);
-      
-      expect(result.contradictions.length).toBe(0);
-    });
-
-    it('warns when combat beat lacks fight language', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.turn = 8;
-      state.campaignBibleId = 'summoned-pact';
-      state.openingEstablishment = { complete: true };
-      state.activeEncounter = {
-        id: 'enc1',
-        name: 'Skirmisher',
-        hp: 25,
-        maxHp: 30,
-        level: 3,
-        status: 'active',
-      };
-      
-      // Build manifest with encounter present
-      const manifest = buildSealedManifest(state, 'Attack', undefined);
-      const weakProse = 'You move forward into the area and look around carefully.';
-      
-      const result = validateProseAgainstManifest(weakProse, manifest, state);
-      
-      // Validator should warn when encounter is active but prose lacks combat language
-      expect(result.warnings.length).toBeGreaterThan(0);
-      expect(result.warnings[0]).toMatch(/combat.*fight/i);
-    });
-  });
+  // B027 validateProseAgainstManifest deleted in q31-RCR1 (no production caller; dead vs hookLock / commit gate).
 
   describe('B028 — One-repair policy', () => {
     it('fresh manifest can use fallback', () => {

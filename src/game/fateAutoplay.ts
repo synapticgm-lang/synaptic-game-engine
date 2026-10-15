@@ -387,6 +387,8 @@ export type TurnTelemetry = {
   answerRepair?: import('./writerTurn').SentenceRepair;
   /** The engine settled a fight the first draft left out: how the beat was made whole. */
   fightRetry?: 'retried' | 'added' | 'painted';
+  /** RC-R1 — fight outcome shown once on the engine combat-log channel (not in prose). */
+  outcomeShown?: 'engine';
   /** A whole-beat warden block (unresolved / collage): logged, the draft stays. */
   blockedPaintReason?: string;
   engineFact?: string;
@@ -1378,6 +1380,7 @@ Do NOT print dice notation or CODE ENFORCED.
     if (writerTurn.fightDraft) traceStage('fight-rewrite', writerTurn.fightDraft);
     traceStage('finishCommittedProse+spoken', writerTurn.prose);
     gmText = writerTurn.prose;
+    if (writerTurn.combatLog) gmSystemLog = [...gmSystemLog, writerTurn.combatLog];
     if ((writerTurn.path === 'json' || writerTurn.path === 'json-partial') && writerTurn.refs?.length && arcState.completedEvent) {
       arcState = {
         ...arcState,
@@ -2152,6 +2155,7 @@ Do NOT print dice notation or CODE ENFORCED.
       sentenceRepairs: writerTurn?.repairs?.length ? writerTurn.repairs : undefined,
       answerRepair: writerTurn?.answerRepair,
       fightRetry: writerTurn?.fightRetry,
+      outcomeShown: writerTurn?.outcomeShown,
       blockedPaintReason,
       engineFact: engineFact || undefined,
       openQuests: (arcState.quests ?? [])

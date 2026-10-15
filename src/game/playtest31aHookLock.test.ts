@@ -10,12 +10,13 @@ import {
   harvestHookIntoSceneFacts,
   lockHookFromText,
   playerMayReviseHook,
+  resolveHookLock,
   scrubBoughtHereSlip,
   scrubHookReversals,
   seedHookLockFromPickedHook,
 } from './hookLock';
 import { applyCommittedNarrative } from './sceneFacts';
-import { buildSealedManifest, validateProseAgainstManifest } from './sealedManifest';
+import { buildSealedManifest } from './sealedManifest';
 import { applyErrorRepairs } from './errorRepairWarden';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
@@ -128,8 +129,7 @@ describe('playtest31a — site-wide hook why lock', () => {
     expect(manifest.forbiddenReversals.some((f) => /locked hook why \(accident\)/i.test(f))).toBe(
       true
     );
-    const check = validateProseAgainstManifest(JOSIE_PAWN, manifest, state);
-    expect(check.contradictions.some((c) => /pawn/i.test(c))).toBe(true);
+    expect(detectHookContradiction(JOSIE_PAWN, resolveHookLock(state))).toMatch(/pawn/i);
   });
 
   it('festival-style hook card seeds accident; bought-here slip is optional grammar', () => {

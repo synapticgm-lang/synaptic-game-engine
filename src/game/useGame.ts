@@ -3118,7 +3118,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...writerTurn.spoken,
           });
         }
-        result = { ...result, text: writerTurn.prose };
+        result = {
+          ...result,
+          text: writerTurn.prose,
+          systemLog: [
+            ...(result.systemLog ?? []),
+            ...(writerTurn.combatLog ? [writerTurn.combatLog] : []),
+          ],
+        };
         writerProse = writerTurn.prose;
         writerSpeech = writerTurn.speech;
         writerBound = {

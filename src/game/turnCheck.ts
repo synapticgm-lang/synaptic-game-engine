@@ -207,7 +207,8 @@ export function checkActionFollowed(
   after: GameState,
   action: string,
   prose: string,
-  offered: string[] = []
+  offered: string[] = [],
+  opts?: { outcomeShown?: 'engine' }
 ): { p0: TurnCheckFlag[]; down: TurnCheckFlag[] } {
   const p0: TurnCheckFlag[] = [];
   const down: TurnCheckFlag[] = [];
@@ -215,9 +216,11 @@ export function checkActionFollowed(
   const text = norm(prose);
   if (!act || !text || /^\(crash/.test(act)) return { p0, down };
   const quoted = /["“][^"”]{2,}["”]/.test(text);
-  // The engine settled a fight this turn (its sentence closes the beat): that is the blow, and the answer to a parley it forced.
+  // RC-R1: the engine combat-log line owns the close (`outcomeShown`); the record alone also credits a settled non-escape fight.
   const fight = terminalFightOutcome(after.completedEvent?.engineResult);
-  const fightTold = !!fight && fight.outcome !== 'escaped';
+  const fightTold =
+    opts?.outcomeShown === 'engine'
+    || (!!fight && fight.outcome !== 'escaped');
 
   const addr = chipAddressee(act);
   // A talk shape with no addressee ("Talk your way past the thugs") still names who here it is to.
@@ -433,11 +436,20 @@ export function checkQuestPlaces(before: GameState, after: GameState): TurnCheck
 export function checkPlayerTurn(
   before: GameState,
   after: GameState,
-  row: { offeredChoices?: string[]; playerInput?: string; fatePick?: string; gmText?: string; previousPick?: string }
+  row: {
+    offeredChoices?: string[];
+    playerInput?: string;
+    fatePick?: string;
+    gmText?: string;
+    previousPick?: string;
+    outcomeShown?: 'engine';
+  }
 ): TurnCheck {
   const prose = row.gmText ?? '';
   const action = row.playerInput || row.fatePick || '';
-  const followed = checkActionFollowed(before, after, action, prose, row.offeredChoices ?? []);
+  const followed = checkActionFollowed(before, after, action, prose, row.offeredChoices ?? [], {
+    outcomeShown: row.outcomeShown,
+  });
   const p0 = [
     ...checkChips(before, row.offeredChoices ?? []),
     ...checkChosenChip(before, row.fatePick || action),
