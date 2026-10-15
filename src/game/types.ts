@@ -1151,6 +1151,29 @@ export interface RoadEncounter {
   name?: string;
   /** tt-build-roadmeet — the seeded one-line description the writer is handed with the name (a plea's comes from the plea). */
   about?: string;
+  /** tt-build-camps — the placed camp this meeting is (its place id, headcount and what the player last did there). */
+  camp?: { placeId: string; headcount: number; memory?: RoadCampOutcome };
+}
+
+/** tt-build-camps — what the player did at a placed road camp, remembered on its place record. */
+export type RoadCampOutcome = 'cleared' | 'parleyed' | 'robbed' | 'fled';
+
+/** tt-build-camps — a road camp placed once on a route stretch: who is there and what happened, kept on the save. */
+export interface RoadCampRecord {
+  /** `routeKey` of the road it sits on. */
+  route: string;
+  /** Leg of the route, counted from the route's first end (the same on the way back). */
+  leg: number;
+  leader: string;
+  /** Everyone in the camp, the leader first; the headcount is its length. */
+  people: string[];
+  miniBoss: boolean;
+  level: number;
+  /** The first meeting's look and want, met again on every pass. */
+  about?: string;
+  want?: string;
+  outcome?: RoadCampOutcome;
+  outcomeTurn?: number;
 }
 
 /** Premade settlement on the world map (29e). */
@@ -1682,6 +1705,8 @@ export interface PlaceRecord {
   props?: string[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
+  /** tt-build-camps — a road camp placed on a route stretch (its rooms, people and loot are its `dungeonCard`). */
+  roadCamp?: RoadCampRecord;
   /** 29q — settlement quest cards (two seeded once at creation, plus talk-opened). */
   questCards?: SettlementQuestCard[];
   /** 29q — set once the two seed cards were stamped; never stamp again. */

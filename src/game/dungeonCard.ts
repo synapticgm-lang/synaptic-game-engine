@@ -32,7 +32,7 @@ import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type Threa
 
 export const DUNGEON_CARD_BLUEPRINT = 'dungeon-card';
 
-type Theme = { entry: string; rooms: string[]; miniBossRoom: string; cacheRoom: string; foe: string; boss: string };
+type Theme = { entry: string; rooms: string[]; miniBossRoom: string; cacheRoom: string; foe: string; boss: string; oneFloor?: true };
 
 /** Engine room vocabulary by site kind (not story content). First match on hub name + blurb wins. */
 const THEMES: Array<{ match: RegExp; theme: Theme }> = [
@@ -100,6 +100,19 @@ const THEMES: Array<{ match: RegExp; theme: Theme }> = [
       cacheRoom: 'Hidden Ledge',
       foe: 'Cave Stalker',
       boss: 'Lair Beast',
+    },
+  },
+  {
+    // tt-build-camps — a road camp is a place on open ground: one level, its people in its tents and its leader's tent.
+    match: /\bcamp\b/i,
+    theme: {
+      entry: 'Camp Edge',
+      rooms: ['Fire Ring', 'Tent Row', 'Picket Line', 'Cook Fire', 'Lean-to', 'Wagon Circle'],
+      miniBossRoom: "Leader's Tent",
+      cacheRoom: 'Stash Tent',
+      foe: 'Camp Guard',
+      boss: 'Camp Leader',
+      oneFloor: true,
     },
   },
 ];
@@ -220,10 +233,10 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   const danger = Math.max(1, Math.min(4, Math.floor(hub?.threatTier ?? 2))) as 1 | 2 | 3 | 4;
   const level = Math.max(1, state.character?.level ?? 1);
 
-  const siteTag = ['crypt', 'mine', 'sewer', 'engine', 'keep', 'cave'][THEMES.findIndex((t) => t.theme === siteTheme)] ?? 'any';
+  const siteTag = ['crypt', 'mine', 'sewer', 'engine', 'keep', 'cave', 'any'][THEMES.findIndex((t) => t.theme === siteTheme)] ?? 'any';
   // 28j — layout from the generic interior generator: seeded template pick, optional stacked floors
   // (stairs / ladders), seeded extra doors, optional secret room. Cached on the card / place record.
-  const floors = danger >= 3 || MULTI_FLOOR_WORDS.test(`${name} ${hub?.blurb ?? ''}`) ? 2 : rng() < 0.3 ? 2 : 1;
+  const floors = siteTheme?.oneFloor ? 1 : danger >= 3 || MULTI_FLOOR_WORDS.test(`${name} ${hub?.blurb ?? ''}`) ? 2 : rng() < 0.3 ? 2 : 1;
   const gen = generateInterior({ seed, key: name, kind: 'dungeon', tags: [siteTag], floors, needBoss: true, needCache: true, secretChance: 0.6 });
   const secretOf = new Map(gen.secrets.map((x) => [x.fromId, x.id]));
 

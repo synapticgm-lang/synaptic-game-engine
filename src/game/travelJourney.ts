@@ -21,6 +21,7 @@ import type {
   GameState,
   HouseRules,
   JourneyTerrain,
+  RoadCampOutcome,
   RoadEncounter,
   RoadEncounterKind,
   RouteStop,
@@ -96,6 +97,7 @@ import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 
 import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
+import { campAt, campEncounter, campHeadcount, campMemoryFact, campPeople, placeRoadCamp, recordCampOutcome } from './roadCamps';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -854,7 +856,7 @@ const NAMED_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'plea', '
 function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
   if (!NAMED_KINDS.has(encounter.kind)) return;
   const rng = createHashRng('road-meeting', key);
-  const taken = nameWords([...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]), state.character?.name]);
+  const taken = nameWords([...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]), ...campPeople(state), state.character?.name]);
   const name = pickPersonName(rng, taken);
   if (!name) return;
   encounter.name = name;
@@ -957,7 +959,7 @@ function meetingWho(e: RoadEncounter): string {
   if (!e.name) return `${base}${meetingCount(e)}`;
   if (e.kind === 'plea') return `${e.name}${look}`;
   if (e.kind === 'thugs') return `${base}${meetingCount(e)}, led by ${e.name}${look}`;
-  if (e.kind === 'camp') return `${base} kept by ${e.name}${look}`;
+  if (e.kind === 'camp') return `${base}${campHeadcount(e)} kept by ${e.name}${look}`;
   return `${e.name}, ${base}${e.about ? ` ${e.about}` : ''}`;
 }
 
@@ -975,7 +977,8 @@ export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const near = e.surprisesParty ? ' It was not seen until it was close.' : '';
   const told = e.kind === 'plea' && !!e.about;
   const intent = !want || told ? '' : e.kind === 'plea' ? ` ${want.charAt(0).toUpperCase()}${want.slice(1)}.` : ` What ${e.name ?? 'it'} ${want}.`;
-  return `Event on this stretch: the road brings ${meetingWho(e)}.${intent}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
+  const memory = campMemoryFact(e);
+  return `Event on this stretch: the road brings ${meetingWho(e)}.${intent}${memory ? ` ${memory}` : ''}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
 }
 
 /** The turn's engine result with this stretch's road meeting event after it (tt-build-roadmeet). */
@@ -1047,12 +1050,12 @@ export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { di
 function encounterNote(j: TravelJourney): string {
   const e = j.encounter;
   if (!e) return '; quiet stretch, nobody met on the road';
-  const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
+  const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : `${ENCOUNTER_LABEL[e.kind]}${campHeadcount(e)}`;
   if (e.escaped) return fightPad(e) ? `; got away from ${base}, not beaten` : `; passed by ${base}`;
   if (e.lost) return `; lost the fight to ${base}, not beaten`;
   if (e.engaged) return e.kind === 'plea' ? `; helped ${base}` : `; ${base} dealt with`;
   const label = e.kind === 'camp' && e.miniBoss
-    ? 'a camp with a mini-boss'
+    ? `${base} with a mini-boss`
     : e.rare
       ? `rare spawn, ${base}`
       : base;
@@ -1135,8 +1138,17 @@ export function settleRoadMeeting(
       : outcome === 'victory' || outcome === 'parleyResolved'
         ? { ...enc, engaged: true, closedTurn: state.turn }
         : { ...enc, lost: true, closedTurn: state.turn };
-  return next === enc ? state : { ...state, journey: { ...j, encounter: next } };
+  const memory = CAMP_MEMORY[outcome];
+  const kept = enc.camp && memory ? recordCampOutcome(state, enc.camp.placeId, memory) : state;
+  return { ...kept, journey: { ...j, encounter: next } };
 }
+
+/** What a settled fight at a placed camp leaves the camp remembering (a loss leaves it as it was). */
+const CAMP_MEMORY: Partial<Record<Parameters<typeof settleRoadMeeting>[1], RoadCampOutcome>> = {
+  victory: 'cleared',
+  parleyResolved: 'parleyed',
+  escape: 'fled',
+};
 
 /** What the travel engine did this turn (the packet's Outcome, never read from the player's words). */
 export type TravelEngineOutcome = 'set out' | 'arrived' | 'fight opened' | 'blocked' | 'unchanged' | 'slipped away';
@@ -1245,11 +1257,12 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
   const march = marchHours(state, gap.terrain, tripKey(state, set), gap.hoursPerLeg);
   if (march.dead) return diedOnRoad(march, stillOn(march.state, set, 'you died on the road'), set);
   const day = rollDay(march.state, set);
-  const journey = rollStretch(day.state, day.journey);
-  const stop = passStop(withRouteStops(day.state, journey), journey);
+  const camp = withRoadCamp(day.state, rollStretch(day.state, day.journey));
+  const journey = camp.journey;
+  const stop = passStop(withRouteStops(camp.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, gap.hoursPerLeg);
   const extra = [...march.status, ...day.status, ...stop.status, ...daySpentLines(day.state, journey)];
-  const facts = [...march.facts, ...day.facts, ...stop.facts, ...daySpentFacts(day.state, journey)];
+  const facts = [...march.facts, ...day.facts, ...stop.facts, ...camp.facts, ...daySpentFacts(day.state, journey)];
   return {
     state: clock.state,
     handled: true,
@@ -1296,11 +1309,12 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     const all = [...facts, ...(a.facts ?? [])];
     return { ...a, ...(extra.length ? { extra } : {}), ...(all.length ? { facts: all } : {}) };
   }
-  const journey = rollStretch(day.state, day.journey, sinceCheck >= WATCH_HOURS);
-  const stop = passStop(withRouteStops(day.state, journey), journey);
+  const camp = withRoadCamp(day.state, rollStretch(day.state, day.journey, sinceCheck >= WATCH_HOURS));
+  const journey = camp.journey;
+  const stop = passStop(withRouteStops(camp.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, j.hoursPerLeg);
   extra.push(...stop.status, ...daySpentLines(day.state, journey));
-  facts.push(...stop.facts, ...daySpentFacts(day.state, journey));
+  facts.push(...stop.facts, ...camp.facts, ...daySpentFacts(day.state, journey));
   return {
     state: clock.state,
     handled: true,
@@ -1606,17 +1620,45 @@ function payFindXp(state: GameState, key: string, find: string): { state: GameSt
   return { state: { ...state, character: leveled.character, sandboxAwardKeys: keys }, status: [...line, ...leveled.notes] };
 }
 
-/** The named stop on this stretch, and its find if the look-out spotted it (once). Not while the way is lost. */
-function passStop(state: GameState, j: TravelJourney): { state: GameState; status: string[]; facts: string[]; found: boolean } {
-  const none = { state, status: [] as string[], facts: [] as string[], found: false };
-  if (!travelDay(j) || j.lost) return none;
+/** Where this stretch sits on its route: the route key and the leg counted from the route's first end (null off a travel day or while lost). */
+function routeLeg(j: TravelJourney): { key: string; leg: number } | null {
+  if (!travelDay(j) || j.lost) return null;
   const key = routeKey(j.from, j.to);
-  const stops = state.routeStops?.[key];
-  if (!stops?.length) return none;
   const flipped = key.split(' ~ ')[0] !== tidy(j.from).toLowerCase();
   const base = j.legsTotal - (j.lostLegs ?? 0);
   const progress = j.legsDone - (j.lostLegs ?? 0);
-  const i = stops.findIndex((s) => (flipped ? base - s.leg : s.leg) === progress);
+  return { key, leg: flipped ? base - progress : progress };
+}
+
+/**
+ * tt-build-camps — a camp on this stretch is a placed camp. One already placed here is met on every pass (whatever
+ * the watch rolled), with what it remembers; a cleared one is passed, empty. A freshly rolled camp is placed here once.
+ */
+function withRoadCamp(state: GameState, j: TravelJourney): { state: GameState; journey: TravelJourney; facts: string[] } {
+  const at = routeLeg(j);
+  const enc = j.encounter;
+  const same = { state, journey: j, facts: [] as string[] };
+  if (!at || replayRecordedMeetings) return same;
+  const placed = campAt(state, at.key, at.leg);
+  if (placed) {
+    const met = campEncounter(placed, enc ?? { stretch: j.legsDone, dangerous: (j.areaTier ?? 1) >= DANGEROUS_TIER });
+    if (met) return { state, journey: { ...j, encounter: met, quietStretches: 0 }, facts: [] };
+    const journey = enc?.kind === 'camp' ? { ...j, encounter: null } : j;
+    return { state, journey, facts: [`The way passes ${placed.name}, empty since you cleared it.`] };
+  }
+  if (enc?.kind !== 'camp' || enc.camp) return same;
+  const made = placeRoadCamp(state, at.key, at.leg, enc);
+  return { state: made.state, journey: { ...j, encounter: made.encounter }, facts: [] };
+}
+
+/** The named stop on this stretch, and its find if the look-out spotted it (once). Not while the way is lost. */
+function passStop(state: GameState, j: TravelJourney): { state: GameState; status: string[]; facts: string[]; found: boolean } {
+  const none = { state, status: [] as string[], facts: [] as string[], found: false };
+  const at = routeLeg(j);
+  const key = at?.key ?? '';
+  const stops = state.routeStops?.[key];
+  if (!at || !stops?.length) return none;
+  const i = stops.findIndex((s) => s.leg === at.leg);
   if (i < 0) return none;
   const stop = stops[i]!;
   const facts = [`The way passes ${stop.name}.`];
@@ -1711,8 +1753,11 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   const span = `from ${slotNow(state)} until ${slotNow(s)}`;
   facts.push(`The camp lasted ${span}.`);
   if (night) {
-    journey = { ...journey, encounter: night };
-    facts.push(`On waking, the camp is not alone.`);
+    const placed = withRoadCamp(s, { ...journey, encounter: night });
+    s = placed.state;
+    journey = placed.journey;
+    facts.push(...placed.facts);
+    if (journey.encounter) facts.push(`On waking, the camp is not alone.`);
   }
   journey = { ...journey, day: (j.day ?? 1) + 1, hoursSinceCheck: WATCH_HOURS, lost: false };
   return {
