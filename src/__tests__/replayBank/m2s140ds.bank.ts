@@ -20,7 +20,7 @@ describe('replay bank multi-2 s140 (deepseek)', () => {
     expect(n).toBeGreaterThanOrEqual(2);
     const word = ['', 'one', 'two', 'three', 'four'][n]!;
     expect(R.receiptText(15)).toMatch(new RegExp(`chance meeting: thugs \\(level \\d+\\), ${word} of them`));
-    expect(R.packet(15)).toMatch(new RegExp(`On this stretch: thugs, ${word} of them`));
+    expect(R.packet(15)).toMatch(new RegExp(`Event on this stretch: the road brings thugs, ${word} of them`));
   });
 
   it('[m2 s140ds whole run | multi-2 Root 1] every thugs meeting the engine rolls has a count (whole run)', () => {

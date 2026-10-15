@@ -170,13 +170,16 @@ export function harvestNarrativePeople(
       const row = refEnum.find(
         (e) => e.tok === r.tok || (!!r.id && e.id.toLowerCase() === r.id.toLowerCase())
       );
-      return row?.display ?? '';
+      return row && row.klass !== 'meeting' ? row.display : '';
     })
     .filter(Boolean);
 
   // 14a — when JSON bind succeeded, occupancy comes from refs ids, not prose invent.
   // A person's name inside a place's name ("Mira's Apothecary") is the place, not her.
-  const peopleProse = maskPlaceNames(state, prose);
+  // A road meeting is an event of the trip, never someone present.
+  const roadName = state.journey?.encounter?.name;
+  const placeMasked = maskPlaceNames(state, prose);
+  const peopleProse = roadName ? placeMasked.split(roadName).join(' ') : placeMasked;
   const registeredNpcs = (
     fromTokenRefs.length
       ? fromTokenRefs

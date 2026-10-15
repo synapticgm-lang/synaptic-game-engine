@@ -94,8 +94,8 @@ function symLinks(layout: InteriorRoomSpec[]): InteriorRoomSpec[] {
 
 describe('29z3 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-15e');
-    expect(BUILD_STAMP).toBe('2026-10-15e');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-15f');
+    expect(BUILD_STAMP).toBe('2026-10-15f');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -188,7 +188,7 @@ describe('29z3 — prose glue', () => {
     });
     const text = formatWriterFacingEvent(buildCompletedEventPacket(s, 'Walk on'));
     expect(text).toMatch(/ACTION: this beat carries out the PLAYER line/);
-    expect(text).toMatch(/On this stretch: a traveler/);
+    expect(text).toMatch(/Event on this stretch: the road brings a traveler/);
   });
 });
 

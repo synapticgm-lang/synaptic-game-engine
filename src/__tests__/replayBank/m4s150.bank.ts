@@ -16,18 +16,20 @@ beforeAll(async () => {
 const exitsLine = (packet: string) => packet.match(/^PLACES: .*· exits: (.*)$/m)?.[1]?.split(', ') ?? [];
 
 describe('replay bank multi lap 4 s150', () => {
-  it('[m4 s150 T6 | lap 4 Root 1] the road meeting is on HERE the turn it starts', () => {
+  // tt-build-roadmeet: the meeting is an event of the trip (ENGINE RESULT + NOW), never a head on HERE.
+  it('[m4 s150 T6 | lap 4 Root 1] the road meeting is on the page the turn it starts', () => {
     expect(F.input(6)).toBe('Travel toward Cathedral Close');
     expect(F.receiptText(6)).toMatch(/chance meeting: thugs/);
-    expect(F.packetBlock(6, 'HERE:')).toMatch(/thugs, four of them/);
-    expect(F.packet(6)).toMatch(/^NOW: .* with 4 here /m);
+    expect(F.packet(6)).toMatch(/Event on this stretch: the road brings thugs, four of them/);
+    expect(F.packetBlock(6, 'HERE:')).not.toMatch(/thugs/);
+    expect(F.packet(6)).toMatch(/^NOW: .* · a meeting on the road · /m);
   });
 
   it('[m4 s150 T7 | lap 4 Root 1] the thugs the player talks past are still on the page on the turn that settles them', () => {
     expect(F.input(7)).toBe('Talk your way past the thugs');
     expect(F.receiptText(7)).toMatch(/thugs dealt with/);
-    expect(F.packetBlock(7, 'HERE:')).toMatch(/thugs/);
-    expect(F.packet(7)).toMatch(/^t\d+\s+road:thugs\s+person\s+"thugs"$/m);
+    expect(F.packet(7)).toMatch(/^NOW: .* · a meeting on the road · /m);
+    expect(F.packet(7)).toMatch(/^t\d+\s+road:thugs\s+meeting\s+"thugs"\s+\(thugs, four of them; met on the road/m);
   });
 
   it('[m4 s150 T5 | lap 4 Root 3] the exits receipt names the same ways out as the writer\'s PLACES line', () => {

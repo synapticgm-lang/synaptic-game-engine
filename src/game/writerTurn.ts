@@ -7,7 +7,7 @@
 import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
-import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, type LedgerRef } from './completedEventPacket';
+import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, tokenUseMatchesClass, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type DroppedLine, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
@@ -271,7 +271,7 @@ function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[
   const live = bareName(check.state.activeEncounter?.name ?? '');
   const downed = kill?.outcome === 'victory' && bareName(kill.name) !== live ? bareName(kill.name) : '';
   return refEnumOf(check.state, packet)
-    .filter((r) => (r.klass === 'person' || r.klass === 'companion') && !!r.display)
+    .filter((r) => tokenUseMatchesClass('speaker', r.klass) && !!r.display)
     .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim())
     .filter((d) => d.length > 1 && (!downed || d.toLowerCase() !== downed));
 }

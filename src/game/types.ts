@@ -1147,6 +1147,10 @@ export interface RoadEncounter {
   distanceFt?: number;
   /** The lookout missed it: a hostile meeting surprises the party. */
   surprisesParty?: boolean;
+  /** tt-build-roadmeet — the seeded name of the one who speaks for a people meeting (a group's leader, a camp's keeper). */
+  name?: string;
+  /** tt-build-roadmeet — the seeded one-line description the writer is handed with the name (a plea's comes from the plea). */
+  about?: string;
 }
 
 /** Premade settlement on the world map (29e). */

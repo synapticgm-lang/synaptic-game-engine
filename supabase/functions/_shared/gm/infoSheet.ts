@@ -95,14 +95,7 @@ export function peopleOnSheet(state: GameState): string[] {
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   if (!out.size && openingCastStillHere(state)) add(openingCastNames(state)[0]);
-  add(roadMeetingOnBeat(state)?.label);
   return [...out.values()];
-}
-
-/** Heads on the sheet: one per name, a road meeting counts its whole group. */
-function headCount(state: GameState, people: string[]): number {
-  const meeting = roadMeetingOnBeat(state);
-  return people.length + (meeting && people.includes(meeting.label) ? meeting.count - 1 : 0);
 }
 
 function systemWindowSeen(state: GameState): boolean {
@@ -124,7 +117,9 @@ function nowLine(state: GameState, people: string[]): string {
   const lock = state.sceneFacts?.cameraLock;
   const lockHere = lock && norm(lock.label).toLowerCase() === norm(state.currentLocation).toLowerCase() ? lock.scale : null;
   const scale = placeScale(state) ?? lockHere ?? 'scale unknown';
-  const company = people.length ? `with ${headCount(state, people)} here` : crowdHere(state) ? 'crowd here' : 'alone';
+  // A road meeting is an event of the trip (ENGINE RESULT), not a head here.
+  const meeting = roadMeetingOnBeat(state) ? ' · a meeting on the road' : '';
+  const company = `${people.length ? `with ${people.length} here` : crowdHere(state) ? 'crowd here' : 'alone'}${meeting}`;
   const mode = MODE_LABEL[state.engineMode ?? ''] ?? state.engineMode ?? 'mode unknown';
   return `T${state.turn} · ${place} · ${scale} · ${company} · ${mode}`;
 }

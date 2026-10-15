@@ -72,7 +72,7 @@ for (const dir of dirs) {
   const fc = JSON.parse(readFileSync(fcPath, 'utf8'));
   const fcByTurn = new Map(fc.perTurn.map((t) => [t.turn, t]));
   const writerId = meta.writer?.kind ?? 'default';
-  const writerModel = meta.writer?.model ?? meta.activeOverride?.model ?? null;
+  const runModel = meta.writer?.model ?? meta.activeOverride?.model ?? null;
   const runId = basename(dir);
   const turns = readFileSync(join(dir, 'turns.jsonl'), 'utf8')
     .split(/\r?\n/)
@@ -89,6 +89,7 @@ for (const dir of dirs) {
     const p0 = t.turnCheck?.p0 ?? [];
     const isGood = fcFlags.length === 0 && p0.length === 0;
     const u = t.writerUsage ?? null;
+    const writerModel = u?.modelId ?? runModel;
     const { costUsd, costSource } = turnCost(u);
     const row = {
       pairKey: `${meta.bibleId}:s${meta.seed}:t${t.turn}`,

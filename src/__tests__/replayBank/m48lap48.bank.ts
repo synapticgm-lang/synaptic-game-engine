@@ -11,7 +11,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { roadMeetingPeople } from '../../game/chipLegality';
 import { parsePlayerIntent } from '../../game/intentParser';
 import { plainLineFactProblem } from '../../game/tokenProse';
-import { roadMeetingPerson } from '../../game/travelJourney';
+import { roadMeetingRef } from '../../game/travelJourney';
 import { repairMissingAnswer, type WriterTurnResult } from '../../game/writerTurn';
 import type { GameState } from '../../game/types';
 import { Replay } from './bank';
@@ -70,9 +70,11 @@ describe('replay bank m48 lap 48', () => {
     expect(F.input(10)).toBe('Greet whoever is coming');
     const before = F.before(10);
     expect(roadMeetingPeople(before)).toBe('a stranger');
-    expect(roadMeetingPerson(before)).toBe('a stranger');
+    expect(roadMeetingRef(before)?.display).toBe('a stranger');
     const s = F.after(10);
-    expect((s.completedEvent?.refEnum ?? []).filter((r) => r.klass === 'person').map((r) => r.display)).toContain('a stranger');
+    // tt-build-roadmeet: the road meeting is its own REF ENUM class (an event that can speak), never a person present.
+    expect((s.completedEvent?.refEnum ?? []).filter((r) => r.klass === 'meeting').map((r) => r.display)).toContain('a stranger');
+    expect((s.completedEvent?.refEnum ?? []).filter((r) => r.klass === 'person').map((r) => r.display)).not.toContain('a stranger');
     const ok = await answerRepair(s, F.input(10), '"Just passing through," the stranger replied, not slowing down.');
     expect(ok.answerRepair?.bug).toBeUndefined();
     expect(ok.prose).toMatch(/"Just passing through," the stranger replied/);

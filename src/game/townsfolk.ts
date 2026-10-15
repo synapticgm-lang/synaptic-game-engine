@@ -12,15 +12,7 @@ import { npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from
 import { createHashRng } from './seededRng';
 import { recordStanceFromAction, stanceWriterLine } from './npcStance';
 import { resolveActiveCampaignBible } from './campaignSeed';
-
-const GIVEN = [
-  'Wat', 'Hobb', 'Edda', 'Maud', 'Piers', 'Tilde', 'Osric', 'Nell', 'Bertil', 'Agna', 'Col', 'Ysolde',
-  'Garth', 'Rosel', 'Dunn', 'Idra', 'Hale', 'Merrit', 'Sefa', 'Brannoc', 'Oda', 'Lisle', 'Wenna', 'Cutha',
-];
-const FAMILY = [
-  'Pike', 'Thatch', 'Crane', 'Barrow', 'Dunmore', 'Hask', 'Wyle', 'Fenwick', 'Marl', 'Sallow', 'Cotter',
-  'Rudd', 'Brack', 'Hollin', 'Tew', 'Aske', 'Merrow', 'Coyne',
-];
+import { nameWords, pickPersonName } from './personNames';
 
 const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 0, road: 1, camp: 2, inn: 2, town: 2 };
 
@@ -29,20 +21,14 @@ function placeKey(place: string): string {
 }
 
 function takenNames(state: GameState): Set<string> {
-  const out = new Set<string>();
-  for (const m of state.npcMemories ?? []) {
-    for (const n of [m.npcName, ...(m.aliases ?? [])]) {
-      const words = n.toLowerCase().split(/\s+/);
-      for (const w of words) out.add(w);
-      out.add(n.toLowerCase());
-    }
-  }
+  const out = nameWords([
+    ...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
+    state.character?.name,
+  ]);
   // The bible's own cast keeps its names: no townsperson shares a word of them.
   for (const npc of resolveActiveCampaignBible(state)?.keyNPCs ?? []) {
     for (const w of (npc.name ?? '').toLowerCase().split(/\s+/)) if (w.length >= 3) out.add(w);
   }
-  const pc = state.character?.name?.trim().toLowerCase();
-  if (pc) out.add(pc);
   return out;
 }
 
@@ -69,16 +55,8 @@ export function seedTownsfolkHere(state: GameState): GameState {
   const taken = takenNames(state);
   const people: NpcMemory[] = [];
   for (let i = 0; i < PEOPLE_PER_PLACE[place]; i++) {
-    let name = '';
-    for (let tries = 0; tries < 12 && !name; tries++) {
-      const given = GIVEN[Math.floor(rng() * GIVEN.length)];
-      const family = FAMILY[Math.floor(rng() * FAMILY.length)];
-      if (taken.has(given.toLowerCase()) || taken.has(family.toLowerCase())) continue;
-      name = `${given} ${family}`;
-    }
+    const name = pickPersonName(rng, taken);
     if (!name) continue;
-    taken.add(name.split(' ')[0].toLowerCase());
-    taken.add(name.split(' ')[1].toLowerCase());
     const sheet = pickNpcSheet(name, place, { campaignId: state.campaignBibleId });
     people.push({
       npcId: `town-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,

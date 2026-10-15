@@ -23,7 +23,7 @@ import {
   placeFirstSight,
 } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
-import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingFact, roadMeetingPerson, travelBeatFact, writerEngineResult } from './travelJourney';
+import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { TALK_VERB } from './intentParser';
 import { emptySceneFacts } from './sceneFacts';
@@ -237,7 +237,7 @@ function housedWindowDisplay(state: GameState, prop: string): string | null {
 }
 
 /** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
-export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window';
+export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window' | 'meeting';
 
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
 
@@ -616,10 +616,12 @@ export function isPaintableRefLabel(label: string): boolean {
   return t.split(' ').length <= 8;
 }
 
+const SPEAKS: readonly TokenUse[] = ['speaker', 'actor', 'addressed']; // a person, a companion, or a road meeting (an event, not someone present)
 const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   place: ['place'],
-  person: ['speaker', 'actor', 'addressed'],
-  companion: ['speaker', 'actor', 'addressed'],
+  person: SPEAKS,
+  companion: SPEAKS,
+  meeting: SPEAKS,
   corpse: ['corpse'],
   prop: ['prop_used'],
   kit: ['worn', 'prop_used'],
@@ -682,8 +684,8 @@ export function compileRefEnum(
     }
     const encName = state.activeEncounter?.name?.trim();
     if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
-    const roadPerson = roadMeetingPerson(state);
-    if (roadPerson) add(`road:${slugRefId(roadPerson)}`, roadPerson, 'person');
+    const road = roadMeetingRef(state);
+    if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name && kill.remains && kill.outcome === 'victory') {
       add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');
@@ -1026,7 +1028,7 @@ export function buildCompletedEventPacket(
     ledgerChanges: ledgerRead ? ledgerReadChanges(state) : undefined,
     systemBlock: state.systemHousing ? formatSystemBlock(state.systemHousing) : undefined,
     ledgerRead: ledgerRead || undefined,
-    engineResult: extras?.engineResult?.trim() || undefined,
+    engineResult: withRoadMeetingEvent(state, extras?.engineResult) || undefined,
     movement,
     destinationRef,
   };
@@ -1079,12 +1081,10 @@ function movementLine(state: GameState, stay: string): string {
   const movedNow = c?.movedTurn != null && c.movedTurn === state.turn;
   const j = state.journey;
   if (j && j.legsDone < j.legsTotal) {
-    const meeting = roadMeetingFact(j);
     const ground = `the ${j.ground.toLowerCase()}`;
-    const road = movedNow
+    return movedNow
       ? `Moved this turn: on from ${j.from} toward ${j.to}, now on ${ground}. Show ${ground} and what is on it; no arrival, and never tell how long the trip has taken or how far is left.`
       : `No move this turn: still on ${ground} between ${j.from} and ${j.to}. Do not narrate leaving or arriving.${stay}`;
-    return meeting ? `${road} ${meeting}` : road;
   }
   const spot = hereSpotFact(state);
   if (spot && !movedNow) return spot;
@@ -1346,7 +1346,7 @@ export function formatWriterFacingEvent(
   // A talk turn with someone here carries the answer as their own quoted words, said now: a shape with
   // no speech line came back as "he answered", and a repeated question came back as a report.
   const enumRefs = packet.refEnum ?? [];
-  const personRef = enumRefs.find((r) => r.klass === 'person' || r.klass === 'companion');
+  const personRef = enumRefs.find((r) => tokenUseMatchesClass('speaker', r.klass));
   const talkedTo = (packet.verb === 'spoke' || !!packet.talkTopic) && !!personRef;
   const askedBefore = talkedTo && (packet.talkAsked ?? 0) >= 2;
   // The shape names real REF ENUM rows by their own tokens: the writer binds by tok and code looks up the id.
@@ -1521,7 +1521,7 @@ function wrongHereOnPacket(prose: string, packet: CompletedEventPacket): boolean
   if (!claimCore || !/[A-Z]/.test(claimCore)) return false;
   if (claimNamesHere(claimCore, here)) return false;
   // "looked back at Jax's face" points at a person, not a place.
-  const people = [packet.pc?.name, ...(packet.refEnum ?? []).filter((r) => r.klass === 'person').map((r) => r.display)]
+  const people = [packet.pc?.name, ...(packet.refEnum ?? []).filter((r) => tokenUseMatchesClass('speaker', r.klass)).map((r) => r.display)]
     .map((n) => (n ?? '').replace(/^(the|a|an)\s+/i, '').trim().toLowerCase())
     .filter((n) => n.length > 1);
   if (people.some((p) => claimCore.toLowerCase().startsWith(p))) return false;

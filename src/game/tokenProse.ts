@@ -796,7 +796,7 @@ export function classifyTokenLine(
     const tok = line.speaker_tok.replace(/^@/, '').toLowerCase();
     const declared = beat.refs.find((r) => r.tok.replace(/^@/, '').toLowerCase() === tok);
     const row = declared ? findEnum(enumRefs, declared.tok, declared.id) : findEnum(enumRefs, tok);
-    if (!row || (row.klass !== 'person' && row.klass !== 'companion')) return { ok: false, reason: 'speaker-class' };
+    if (!row || !tokenUseMatchesClass('speaker', row.klass)) return { ok: false, reason: 'speaker-class' };
     const bare = (s: string) => s.toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/[^a-z0-9' -]+/g, '').trim();
     const first = splitProseSentences(line.text.replace(/@t(\d+)\b/gi, (_m, n: string) => findEnum(enumRefs, `t${n}`)?.display ?? ''))[0] ?? '';
     if (bare(first) && bare(first) === bare(row.display) && !row.id.startsWith('present:')) {

@@ -32,7 +32,7 @@ describe('replay bank multi lap 24', () => {
     expect(p).not.toMatch(/COMPLETED EVENT:\s*Jax acted\./);
     expect(p).toMatch(/Outcome: spoke\./);
     expect(p).toMatch(/"fn":"speech","speaker_tok":"t3"/);
-    expect(p).toMatch(/t3\s+road:a-stranger\s+person/);
+    expect(p).toMatch(/t3\s+road:a-stranger\s+meeting/);
     // The hosted DeepSeek replay drifts from T1; its chip is the same talk family.
     expect(classifyVerb('Call out to a bystander')).toBe('spoke');
     expect(classifyVerb('Search the area')).not.toBe('spoke');

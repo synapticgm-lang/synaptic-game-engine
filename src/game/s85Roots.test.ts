@@ -120,7 +120,7 @@ describe('s85 Root C — the speaker is a person here', () => {
     const dest = refs.find((r) => r.display === 'West Wall');
     const person = refs.find((r) => r.id.startsWith('road:'));
     expect(dest?.klass).toBe('place');
-    expect(person?.klass).toBe('person');
+    expect(person?.klass).toBe('meeting');
 
     const beat = (speaker: string, speakerUse: string, words: string) =>
       JSON.stringify({

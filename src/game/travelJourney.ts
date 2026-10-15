@@ -38,6 +38,7 @@ import {
   EXHAUSTION_DEATH,
   FIND_FACT,
   JOB_CHIP,
+  MEETING_LOOK,
   MEETING_WANT,
   PLEA_HELP,
   PUSH_ON_CHIP,
@@ -93,7 +94,8 @@ import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 
-import { hashUnit, keyedRng } from './seededRng';
+import { createHashRng, hashUnit, keyedRng } from './seededRng';
+import { nameWords, pickPersonName } from './personNames';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -808,6 +810,7 @@ function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched
   sizeMeeting(state, encounter, key);
   const want = MEETING_WANT[encounter.kind]?.[at(MEETING_WANT[encounter.kind]!.length, hashUnit(`${key}|want`))];
   if (want) encounter.want = want;
+  nameMeeting(state, encounter, key);
   encounter.distanceFt = unwatched ? minEncounterDistanceFt(j.terrain) : encounterDistanceFt(j.terrain, keyedRng(`${key}|distance`));
   if (unwatched && FIGHT_KINDS.has(encounter.kind)) encounter.surprisesParty = true;
   return encounter;
@@ -838,6 +841,30 @@ function rollStretch(state: GameState, j: TravelJourney, check = true): TravelJo
   const key = `${tripKey(state, j)}|${j.legsDone}`;
   const encounter = meetingCheck(state, j, key, j.jobResults?.lookout === false);
   return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 };
+}
+
+/** People meetings the engine names: the one who speaks for them (a group's leader, a camp's keeper). */
+const NAMED_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'plea', 'villain', 'thugs', 'camp']);
+
+/**
+ * tt-build-roadmeet (John, 15 Oct, 2a) — a rolled people meeting gets a seeded name and a one-line description:
+ * a plea's is drawn from the plea itself ("a farmer, begs help with a stuck cart"), the rest is a seeded look.
+ * The name goes to the writer as the meeting's event, never as someone present.
+ */
+function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
+  if (!NAMED_KINDS.has(encounter.kind)) return;
+  const rng = createHashRng('road-meeting', key);
+  const taken = nameWords([...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]), state.character?.name]);
+  const name = pickPersonName(rng, taken);
+  if (!name) return;
+  encounter.name = name;
+  const who = PLEA_HELP[encounter.want ?? '']?.who;
+  const looks = MEETING_LOOK[encounter.kind] ?? [];
+  if (encounter.kind === 'plea') {
+    if (who && encounter.want?.startsWith(`${who} `)) encounter.about = `${who}, who ${encounter.want.slice(who.length + 1)}`;
+  } else if (looks.length) {
+    encounter.about = looks[at(looks.length, rng())]!;
+  }
 }
 
 /** Meetings that stand as a group: the engine rolls how many (tabletop: no bigger than the SRD 5.2.1 budget). */
@@ -916,24 +943,46 @@ export function roadMeetingWant(j: TravelJourney | null | undefined, speaker: st
   const e = j?.encounter;
   if (!e?.want || roadMeetingOver(e) || SCENE_KINDS.has(e.kind) || e.kind === 'plea') return '';
   const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
-  return bare(ENCOUNTER_LABEL[e.kind]) === bare(speaker) ? e.want : '';
+  return [ENCOUNTER_LABEL[e.kind], e.name ?? ''].some((n) => !!n && bare(n) === bare(speaker)) ? e.want : '';
 }
 
 /**
- * Writer fact: the meeting on this stretch is on the page before any chip meets it.
- * Who or what only: the meeting's reason for being here is STATUS chrome, so no one recites it.
+ * Who a meeting is, as its event names them: "Wat Thatch, a farmer, who begs help with a stuck cart", "Osric Marl,
+ * a traveler leaning on a walking staff", "thugs, three of them, led by Garth Rudd, with a broken nose".
+ * An unnamed meeting (wildlife, the dead, a tape recorded before names) is its label and count.
+ */
+function meetingWho(e: RoadEncounter): string {
+  const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
+  const look = e.about ? `, ${e.about}` : '';
+  if (!e.name) return `${base}${meetingCount(e)}`;
+  if (e.kind === 'plea') return `${e.name}${look}`;
+  if (e.kind === 'thugs') return `${base}${meetingCount(e)}, led by ${e.name}${look}`;
+  if (e.kind === 'camp') return `${base} kept by ${e.name}${look}`;
+  return `${e.name}, ${base}${e.about ? ` ${e.about}` : ''}`;
+}
+
+/**
+ * Writer fact (tt-build-roadmeet: an event in the ENGINE RESULT): the meeting on this stretch is on the page
+ * before any chip meets it. Who or what, and what it wants; the writer tells it in its own words.
  */
 export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const e = j?.encounter;
   if (!e || roadMeetingOver(e)) return '';
-  const base = e.kind === 'wildlife' && e.dangerous ? 'dangerous wildlife' : ENCOUNTER_LABEL[e.kind];
   const want = meetingWant(e);
   if (SCENE_KINDS.has(e.kind)) {
-    return `On this stretch: ${want || base}. Show it plainly in the story, so the next choice can meet it.`;
+    return `Event on this stretch: ${want || ENCOUNTER_LABEL[e.kind]}. Show it plainly in the story, so the next choice can meet it.`;
   }
   const near = e.surprisesParty ? ' It was not seen until it was close.' : '';
-  const intent = !want ? '' : e.kind === 'plea' ? ` ${want.charAt(0).toUpperCase()}${want.slice(1)}.` : ` What it ${want}.`;
-  return `On this stretch: ${base}${meetingCount(e)}.${intent}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
+  const told = e.kind === 'plea' && !!e.about;
+  const intent = !want || told ? '' : e.kind === 'plea' ? ` ${want.charAt(0).toUpperCase()}${want.slice(1)}.` : ` What ${e.name ?? 'it'} ${want}.`;
+  return `Event on this stretch: the road brings ${meetingWho(e)}.${intent}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
+}
+
+/** The turn's engine result with this stretch's road meeting event after it (tt-build-roadmeet). */
+export function withRoadMeetingEvent(state: Pick<GameState, 'journey'>, engineResult?: string): string {
+  const j = state.journey;
+  const event = j && j.legsDone < j.legsTotal ? roadMeetingFact(j) : '';
+  return [engineResult?.trim(), event].filter(Boolean).join('\n');
 }
 
 const TIME_SLOT = '(dawn|morning|midday|afternoon|dusk|evening|night)';
@@ -984,10 +1033,14 @@ export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): {
   return { label: `${ENCOUNTER_LABEL[e.kind]}${meetingCount(e)}`, count: Math.max(1, e.count ?? 1) };
 }
 
-/** The person this beat's road meeting puts on the road (its ledger label), if one can speak. */
-export function roadMeetingPerson(state: Pick<GameState, 'journey' | 'turn'>): string {
+/**
+ * The REF ENUM row of this beat's road meeting, if one can speak (tt-build-roadmeet): its name (else its label)
+ * and its description. The row is the meeting class, never a person present.
+ */
+export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { display: string; note: string } | null {
   const e = meetingOnBeat(state);
-  return e && SPEAKING_KINDS.has(e.kind) ? ENCOUNTER_LABEL[e.kind] : '';
+  if (!e || !SPEAKING_KINDS.has(e.kind)) return null;
+  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here` };
 }
 
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */

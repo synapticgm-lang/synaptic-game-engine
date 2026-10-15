@@ -2423,6 +2423,7 @@ export async function runFateAutoplay(opts: {
   }
 
   const endedAt = new Date().toISOString();
+  const servedModel = servedWriterModel(turns);
   const durations = turns.map((t) => t.durationMs);
   const issueTurns = turns
     .filter((t) => t.error || t.failKind)
@@ -2512,7 +2513,7 @@ export async function runFateAutoplay(opts: {
         writer: writerOverride
           ? {
               kind: writerOverride.kind,
-              model: getAutoplayWriterOverride()?.model ?? writerOverride.model,
+              model: servedModel ?? getAutoplayWriterOverride()?.model ?? writerOverride.model,
               baseUrl: writerOverride.baseUrl,
               route: writerOverride.route,
               note: getAutoplayWriterOverride()?.note ?? writerOverride.note,
@@ -2520,9 +2521,9 @@ export async function runFateAutoplay(opts: {
             }
           : {
               kind: 'default',
-              model: '(hosted Free via gm-turn)',
-              route: 'edge-free',
-              note: 'No --writer override; edge clamps non-privileged to Flash Lite.',
+              model: servedModel,
+              route: 'gm-turn',
+              note: 'No --writer override; model is the id gm-turn reported for the turns it wrote (null when none came back).',
             },
         activeOverride: getAutoplayWriterOverride()
           ? {
@@ -2537,6 +2538,12 @@ export async function runFateAutoplay(opts: {
   );
 
   return summary;
+}
+
+/** The model id(s) the writer server reported for the run's turns, in first-seen order; null when none reported. */
+export function servedWriterModel(turns: ReadonlyArray<Pick<TurnTelemetry, 'writerUsage'>>): string | null {
+  const ids = [...new Set(turns.map((t) => t.writerUsage?.modelId).filter((id): id is string => !!id))];
+  return ids.length ? ids.join(', ') : null;
 }
 
 export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {

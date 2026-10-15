@@ -3,8 +3,10 @@ import type { GameState } from './types.ts';
 import { underwayHereLabel } from './locationName.ts';
 
 export function roadMeetingFact(_j: unknown): string { return ''; }
-export function roadMeetingPerson(_state: unknown): string { return ''; }
+export function roadMeetingRef(_state: unknown): { display: string; note: string } | null { return null; }
 export function roadMeetingOnBeat(_state: unknown): { label: string; count: number } | null { return null; }
+/** The client puts the road meeting event in the engine result; the edge passes the engine result through. */
+export function withRoadMeetingEvent(_state: unknown, engineResult?: string): string { return (engineResult ?? '').trim(); }
 
 /** This turn's travel beat facts for the writer (empty on any other turn). */
 export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {

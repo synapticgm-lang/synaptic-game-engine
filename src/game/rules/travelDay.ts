@@ -235,15 +235,30 @@ export const MEETING_WANT: Readonly<Record<RoadEncounterKind, readonly string[]>
  * What helping each plea is (keyed by its `MEETING_WANT.plea` want): the writer's fact, and a pack cost. A plea that
  * costs a ration with none in the pack cannot be helped; the meeting is passed by and the fact says why.
  */
-export const PLEA_HELP: Readonly<Record<string, { fact: string; ration?: true; cannot?: string }>> = {
-  'a hurt traveler begs for help with a wound': { fact: "You stopped and bound the hurt traveler's wound." },
-  'a child is lost and asks the way home': { fact: 'You showed the lost child the way home.' },
-  'a farmer begs help with a stuck cart': { fact: "You put your shoulder to the farmer's cart and freed it from the mud." },
+export const PLEA_HELP: Readonly<Record<string, { fact: string; who: string; ration?: true; cannot?: string }>> = {
+  'a hurt traveler begs for help with a wound': { fact: "You stopped and bound the hurt traveler's wound.", who: 'a hurt traveler' },
+  'a child is lost and asks the way home': { fact: 'You showed the lost child the way home.', who: 'a child' },
+  'a farmer begs help with a stuck cart': { fact: "You put your shoulder to the farmer's cart and freed it from the mud.", who: 'a farmer' },
   'a pilgrim asks for food': {
     fact: 'You gave the pilgrim a day of your rations.',
+    who: 'a pilgrim',
     ration: true,
     cannot: 'You had no food to give the pilgrim, who went on hungry.',
   },
+};
+
+/**
+ * tt-build-roadmeet — one seeded look for the one who speaks for a people meeting, read after their role
+ * ("a traveler leaning on a walking staff", "thugs led by Garth Rudd, with a broken nose"). No weapon or gear:
+ * a fight's foe is its SRD stat block, and the look must not contradict it. Signs, a lair, wildlife, monsters
+ * and the dead get none (what they are is the stat block or the scene line).
+ */
+export const MEETING_LOOK: Readonly<Partial<Record<RoadEncounterKind, readonly string[]>>> = {
+  traveler: ["bent under a peddler's pack", 'leaning on a walking staff', 'in a mud-splashed riding cloak', 'leading a mule on a rope'],
+  meeting: ['with a hood drawn low', 'carrying a covered basket', "in a soldier's faded coat", 'with ink-stained hands'],
+  villain: ['in a fine coat gone shabby', 'with a cold, patient smile', 'with a ledger of debts in hand', 'with a signet ring on one hand'],
+  thugs: ['with a broken nose', 'with a shaved head', 'with a scar across one cheek', 'with a loud, easy laugh'],
+  camp: ['tending a cookfire', 'mending a torn tent', 'with a kettle on the coals', 'counting out the night watches'],
 };
 
 /** Stop names per ground (original, not from any licensed setting). */
