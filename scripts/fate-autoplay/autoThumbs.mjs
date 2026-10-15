@@ -73,6 +73,7 @@ let noProgressRun = 0;
 let repeatVisits = 0;
 let roomRepeatVisits = 0;
 const recentSent = [];
+const pacing = [];
 const out = [];
 
 for (const r of rows) {
@@ -128,21 +129,22 @@ for (const r of rows) {
   down.push(...p0);
   for (const f of r.turnCheck?.down ?? []) down.push(`${f.kind}: ${f.detail}`);
   if (isFallback(r)) down.push('fallback / stitch');
-  for (const [re, why] of JUNK) if (re.test(t)) down.push(why);
+  for (const [re, why] of JUNK) if (re.test(t)) down.push(`junk: ${why}`);
   const sents = sentences(t);
   const rep = sents.find((s) => recentSent.some((p) => p === s));
   if (rep) down.push(`repeated line: "${rep.slice(0, 60)}"`);
   recentSent.push(...sents);
   while (recentSent.length > 60) recentSent.shift();
-  if (sameLocRun >= 5 && !progress && sameLocRun % 5 === 0) down.push(`same place ${sameLocRun} turns, no progress`);
+  // Run pacing (engine + autoplay), never a turn verdict: it goes to the run's circling block.
+  if (sameLocRun >= 5 && !progress && sameLocRun % 5 === 0) pacing.push({ turn: r.turn, flag: `same place ${sameLocRun} turns, no progress` });
   const stall = r.turn - lastXpTurn;
-  if (stall >= 15 && stall % 15 === 0) down.push(`XP stall ${stall} turns`);
+  if (stall >= 15 && stall % 15 === 0) pacing.push({ turn: r.turn, flag: `XP stall ${stall} turns` });
   if (won && /\b(attack|strike|swing|lunge)\w*\b[^.]{0,60}\b(corpse|body|remains)\b/i.test(t))
-    down.push('prose continues a fight the engine already won');
-  if (won && /\b(?:fight|battle) (?:rages|continues|goes on)\b/i.test(t)) down.push('prose continues a finished fight');
-  if (lost && /\byou (?:win|won|defeat(?:ed)?)\b/i.test(t)) down.push('prose contradicts a defeat');
+    down.push('prose: continues a fight the engine already won');
+  if (won && /\b(?:fight|battle) (?:rages|continues|goes on)\b/i.test(t)) down.push('prose: continues a finished fight');
+  if (lost && /\byou (?:win|won|defeat(?:ed)?)\b/i.test(t)) down.push('prose: contradicts a defeat');
   if (/Flee check:.*success/i.test(recJoin) && /\b(?:cornered|trapped|cannot escape)\b/i.test(t))
-    down.push('prose contradicts a successful flee');
+    down.push('prose: contradicts a successful flee');
 
   if (!down.length) {
     if (r.writerOutcome === 'retry') unclear.push('writer retry');
@@ -275,6 +277,7 @@ const circling = {
     return best;
   })(),
   mostVisited: [...visitsByLoc.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5),
+  pacing,
 };
 const top = (k) =>
   out
@@ -316,6 +319,7 @@ const md = [
   '## Circling',
   `- Distinct places ${circling.distinctPlaces}; repeat visits ${circling.repeatVisits} (rooms ${circling.roomRepeatVisits}); no-progress turns ${circling.noProgressTurns} (${circling.noProgressPct}%); longest same-place run ${circling.longestSamePlaceRun}.`,
   `- Most visited: ${circling.mostVisited.map(([l, n]) => `${l} ×${n}`).join(', ') || 'n/a'}`,
+  `- Pacing: ${pacing.length ? pacing.map((p) => `T${p.turn} ${p.flag}`).join('; ') : 'none'}`,
   '',
   '## Writer',
   `- Outcomes ${JSON.stringify(writer)}; token path ${JSON.stringify(tokenPath)}; fallback/stitch turns ${fallbacks.length}${fallbacks.length ? ` (${fallbacks.join(', ')})` : ''}.`,

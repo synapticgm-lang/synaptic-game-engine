@@ -227,6 +227,26 @@ Old saves still carry these values (`{ ...prevQg }` copies them forward); nothin
 9. **`src/game/choiceRanking.ts` line 308** — `return pick ? \`Nudge: someone nearby mentions ${pick.name}: ${pick.blurb.replace(/[.!?]+$/, '')}.\` : '';` (pasted the hub blurb every time). Replaced by `placeFirstSight`; line 19 import changed with it.
 10. **`src/game/turnCheck.ts` line 299** — `if (words.length && !words.some((w) => stemHit(text, w))) {` (action-object check without exits). Replaced by the check that also reads `handedExits`.
 
+## tt-build-questtargets (commit `d71db37c`, restore from `4157bfd1`)
+
+All in `src/game/tabletopQuestProgress.ts` (old line numbers at `4157bfd1`):
+
+1. **Lines 144-150** - `function atPlace(state, place)`. Moved (not lost) to `src/game/questTargets.ts:27` with the same body, now exported; `tabletopQuestProgress` imports it.
+2. **Lines 152-163** - `function atStepPlace(state, place, room)` (split `currentLocation` on the em dash; `room === 'inside'` or the room word in the inner label; outside the door -> `'door'`). What it did: said the player was at an inside step's spot in ANY room of the place, so the entry room ticked it. Replaced by `questTargets.targetSpot` (`:59`): inside a card the player must stand in the target's own room (`currentNodeId === target.nodeId`); outside at the place it is still `'door'`.
+3. **Lines 197-211** - `function arrivedMoveStep(state, quest, hereBefore)` (a move step ticked when travel arrived at its place, with the step's person along). What it did: the arrival tick. Removed - John's rule: a step never ticks from an arrival alone. A move step now ticks when its person is met / its target is taken at that place (`findQuestTargets`).
+4. **Line 240** - `const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;` (one regex). Moved to `src/game/questTargets.ts:24` (same text), used by `actionTakes`.
+5. **Lines 243-269** - the body of `applyTabletopQuestTurn`: `said === chipKey(s.chip)` chip tick, the `doorBefore` walk-in guard, the `s.person && TALK_VERB` talk tick, and the `moved >= 0` arrival branch, and the single-quest objective rewrite. Replaced by `placeTabletopQuestTargets` + `questTargets.findQuestTargets` (`:85`): the tick happens only when the engine records a find / meet at the target (`target.foundTurn`), for every active quest.
+6. **Line 168 type** - `type TakeableStep = { idx; chip; person: string | null; door?: boolean }` -> `{ idx; chip; door }` (the person rode only for the removed talk tick).
+7. **Imports dropped** - `isJourneyUnderway` (only `arrivedMoveStep` used it), `peopleHere` and `matchHub` / `hubsForBibleId` (moved with `atPlace` / `targetSpot`).
+
+Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
+
 ## q31-A SRD monster names in the combat log
 
 1. **`src/game/tabletop/roundFight.ts` line 208 (at `e2a826a7`)** - `const statusName = (i) => (count === 1 ? enc.name : `${block.srd ? block.name : enc.name} ${i + 1}`);`. What it did: logged a lone SRD foe under the road label (`the restless dead`) while a group got the block name. Replaced by one `logged` name (block name when `block.srd`, else the encounter name) used for one foe and for numbered foes. The writer label (`writerName`) is unchanged.
+
+## q31-P1 run-pacing flags are not writer turns
+
+1. **`scripts/fate-autoplay/autoThumbs.mjs` lines 136-139 (at `3f499a47`)** - `down.push(same place ${sameLocRun} turns, no progress)` and `down.push(XP stall ${stall} turns)`. What they did: put run pacing (engine and autoplay) on a single turn's `down` list, so that turn's verdict became `down` and distill rejected the writer's prose. Moved, same conditions, to the run-level `circling.pacing` list in thumbs.json, and to a `Pacing:` line in report.md under Circling.
+2. **`scripts/distillCollect.mjs` line 88** - `if (th?.verdict === 'down') why.push('local down flag');`. What it did: rejected a turn on any local flag, including pacing, chip and map flags. Replaced by `(th?.down ?? []).some(isWriterFlag)`, which uses the one writer-kind allowlist `WRITER_FLAG_KINDS` in `judgeNotes.mjs`. It reads old thumbs.json too, so no judge rerun is needed.
+3. **autoThumbs JUNK and fight-contradiction strings** - the text is unchanged. They now carry a kind prefix (`junk: `, `prose: `), so `flagKind` reads them. Nothing was dropped.

@@ -149,6 +149,42 @@ export function parseJudge(body) {
 }
 
 /**
+ * Flag kinds that describe the writer's prose (judge, turnCheck prose checks, autoThumbs prose checks).
+ * Chip, map, quest and engine kinds are not here: they never make a writer turn bad.
+ */
+export const WRITER_FLAG_KINDS = new Set([
+  'judge',
+  'stiff-line',
+  'ignored-action',
+  'action-object-missing',
+  'verb-swapped',
+  'broken-line',
+  'broken-prose',
+  'plays-player',
+  'absent-speaker',
+  'wrong-voice',
+  'lecture-ending',
+  'repeated-habit',
+  'sheet-forgotten',
+  'ghost-talk',
+  'window-touched',
+  'fallback',
+  'junk',
+  'repeated line',
+  'prose',
+]);
+
+/** Kind of a thumbs `down` entry ("P0 kind (judge): detail" / "kind: detail" / "kind / detail"). */
+export function flagKind(entry) {
+  return String(entry ?? '')
+    .replace(/^P0 /, '')
+    .split(/:|\s\(|\s\//)[0]
+    .trim();
+}
+
+export const isWriterFlag = (entry) => WRITER_FLAG_KINDS.has(flagKind(entry));
+
+/**
  * Apply judge verdicts to the batch rows (each row: { turn, prose, down, up, p0?, verdict, input }).
  * Sets row.thumb to the model's mark ('up' | 'down' | 'unmarked'); rows the model skipped keep theirs
  * (null = never marked). Returns how many rows the model marked; lessons get the stiff lines.
