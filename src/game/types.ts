@@ -346,6 +346,8 @@ export interface Character {
   activeTitle?: string;
   /** SRD 5.2.1 Exhaustion level (1-6); unset or 0 = none. */
   exhaustion?: number;
+  /** How many of those Exhaustion levels came from Malnutrition; a Long Rest can't remove them until a full day's food. */
+  malnutritionExhaustion?: number;
   /** LitRPG named skills from the skill library (rules/librarySkills), grown by real use. */
   namedSkills?: NamedSkillState[];
   /** Tabletop (dnd) sheet from inn-book creation; every derived number reads tabletop/characterBuild. */

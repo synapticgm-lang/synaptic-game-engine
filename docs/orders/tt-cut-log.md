@@ -390,3 +390,9 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 4. **`src/game/intentEnums.ts` `inferIntent` lines 260-262 at `1ec1f9f9`** - the status rule, unreachable for "Check status" because the generic inspect rule ran first. Moved ahead of the inspect rule (one rule, not two).
 5. Dead code, no caller anywhere: `src/game/choiceWarden.ts` `explainFilteredChoice` (lines 253-268), `src/game/intentEnums.ts` `getIntentLabel` (:293-298) and `isSocialIntent` (:349-362), all at `1ec1f9f9`.
 6. Test pinned to the label reading (rewritten to the RC-3 rule): `playtest02dHangDebug` "legal engine pads are not invented-context". Restore with `git show 1ec1f9f9:<path>`.
+
+## q31-N Malnutrition hold covers only Malnutrition levels (Order N)
+
+1. **`src/game/recoveryRules.ts` `exhaustionAfterLongRest` line 165 at `d882c764`** - the hold `daysWithoutFood >= STARVE_DAYS` kept every Exhaustion level, including Extended Travel ones, while the character was starving. Replaced by the recorded count `character.malnutritionExhaustion` (+ each level the starvation tick adds, `travelJourney.ts` camp; reset to 0 on a full day's food via `fullDayFed`): a Long Rest removes 1 level when `exhaustion > malnutritionExhaustion` (SRD 5.2.1 p.185, p.181).
+2. **`src/game/recoveryRules.ts` line 17 at `d882c764`** - `import { STARVE_DAYS }`, no other user in the file.
+3. Test pinned to the old hold (rewritten to the Order N rule): `ttFix17.test.ts` "Malnutrition (the fifth day) still keeps it" (1 march + 1 starvation level expected both kept). Restore with `git show d882c764:<path>`.

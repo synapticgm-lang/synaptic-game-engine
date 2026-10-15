@@ -76,11 +76,28 @@ describe('2 — a long rest and march exhaustion', () => {
     expect((c.extra ?? []).some((l) => /Exhaustion: level 2 → 1/.test(l))).toBe(true);
   });
 
-  it('Malnutrition (the fifth day) still keeps it', () => {
+  // q31-N (SRD 5.2.1 p.185, p.181): Malnutrition holds only the levels it caused; a march level still comes off.
+  it('1 march level + 1 Malnutrition level (the fifth day): a Long Rest leaves 1', () => {
     const c = campUnbroken('starving', { character: { ...keepState('x').character, exhaustion: 1 }, daysWithoutFood: 4 });
     expect(c.state.daysWithoutFood).toBe(5);
+    expect(c.state.character.malnutritionExhaustion).toBe(1);
+    expect(c.state.character.exhaustion).toBe(1);
+    expect((c.extra ?? []).some((l) => /Exhaustion: level 2 → 1/.test(l))).toBe(true);
+  });
+
+  it('only Malnutrition levels left: the Long Rest keeps them', () => {
+    const c = campUnbroken('starved', { character: { ...keepState('x').character, exhaustion: 1, malnutritionExhaustion: 1 }, daysWithoutFood: 5 });
+    expect(c.state.character.malnutritionExhaustion).toBe(2);
     expect(c.state.character.exhaustion).toBe(2);
     expect((c.extra ?? []).some((l) => /stays \(malnutrition\)/.test(l))).toBe(true);
+  });
+
+  it('after a full day\'s food the next Long Rest removes the Malnutrition level', () => {
+    const rations = [{ id: 'r', name: 'Rations (2 days)', rarity: 'Common' as const, quantity: 1 }];
+    const c = campUnbroken('fed', { character: { ...keepState('x').character, exhaustion: 1, malnutritionExhaustion: 1 }, daysWithoutFood: 5, inventory: rations });
+    expect(c.state.daysWithoutFood).toBe(0);
+    expect(c.state.character.malnutritionExhaustion ?? 0).toBe(0);
+    expect(c.state.character.exhaustion).toBe(0);
   });
 });
 

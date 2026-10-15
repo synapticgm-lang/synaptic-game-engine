@@ -1704,25 +1704,22 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   }
   let s: GameState = state;
   if (survival(s)) {
-    if (roadDayNow(s).fed) {
-      s = { ...s, daysWithoutFood: 0 };
-      extra.push('Rations: none eaten (foraged food)');
+    const eat = roadDayNow(s).fed ? null : eatRation(s.inventory ?? []);
+    if (!eat || eat.ate) {
+      // A full day's food (SRD 5.2.1 Malnutrition) ends the hungry-day count and the Malnutrition hold on Exhaustion.
+      const character = s.character.malnutritionExhaustion ? { ...s.character, malnutritionExhaustion: 0 } : s.character;
+      s = { ...s, ...(eat ? { inventory: eat.inventory } : {}), character, daysWithoutFood: 0 };
+      extra.push(eat ? `Rations: 1 day eaten (${eat.left} left)` : 'Rations: none eaten (foraged food)');
     } else {
-      const eat = eatRation(s.inventory ?? []);
-      if (eat.ate) {
-        s = { ...s, inventory: eat.inventory, daysWithoutFood: 0 };
-        extra.push(`Rations: 1 day eaten (${eat.left} left)`);
-      } else {
-        const days = (s.daysWithoutFood ?? 0) + 1;
-        s = { ...s, daysWithoutFood: days };
-        extra.push(`Rations: none — ${days} day${days === 1 ? '' : 's'} without food`);
-        facts.push('There was nothing to eat.');
-        if (days >= STARVE_DAYS) {
-          const ex = exhaust(s, keyedRng(`starve|${s.turn ?? 0}|${days}`), 'Days without food took the last of your strength. You are dead.');
-          s = ex.state;
-          extra.push(`Malnutrition: ${ex.lines[0]}`, ...ex.lines.slice(1));
-          if (ex.fact) facts.push(ex.fact);
-        }
+      const days = (s.daysWithoutFood ?? 0) + 1;
+      s = { ...s, daysWithoutFood: days };
+      extra.push(`Rations: none — ${days} day${days === 1 ? '' : 's'} without food`);
+      facts.push('There was nothing to eat.');
+      if (days >= STARVE_DAYS) {
+        const ex = exhaust(s, keyedRng(`starve|${s.turn ?? 0}|${days}`), 'Days without food took the last of your strength. You are dead.');
+        s = { ...ex.state, character: { ...ex.state.character, malnutritionExhaustion: (s.character.malnutritionExhaustion ?? 0) + exhaustionLevel(ex.state.character) - exhaustionLevel(s.character) } };
+        extra.push(`Malnutrition: ${ex.lines[0]}`, ...ex.lines.slice(1));
+        if (ex.fact) facts.push(ex.fact);
       }
     }
   }

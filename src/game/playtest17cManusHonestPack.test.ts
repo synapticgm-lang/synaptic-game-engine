@@ -53,8 +53,8 @@ function openedPact(partial: Partial<GameState> = {}): GameState {
 
 describe('playtest17c — Manus honest leftover', () => {
   it('HUD/BUILD are 17c, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-15x');
-    expect(BUILD_STAMP).toBe('2026-10-15x');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-15y');
+    expect(BUILD_STAMP).toBe('2026-10-15y');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
