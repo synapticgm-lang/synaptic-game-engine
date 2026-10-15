@@ -44,6 +44,8 @@ Regex, lists and functions do not rise. Files +1 and lines +8 are the new seam f
 
 Client-only, replay-harness behaviour (the seam is never set in live play). `placeNames.ts` and `travelJourney.ts` on the edge are stubs, so no edge sync and no `gm-turn` deploy. Stamp `2026-10-15m` -> `2026-10-15n`.
 
+Commit `7fe35177`, pushed to main (36 files by explicit path; `humanJudge.mjs`, `.tmp-*` and `needs-john.md` left out). Vercel git build is live: `https://www.synapticgm.com/version.json` reads `2026-10-15n`. Stash `WIP on main: 82cb32b4` dropped (other stashes untouched). Worktree `.tmp-wt-q31-Bfinish` removed (its `node_modules` / tape junctions unlinked first). `docs/orders/b-leftover.patch` kept.
+
 ## NEXT (rest of Order B, not small enough for this session)
 
 - Headcount: `sizeMeeting` still runs inside the replay branch (`travelJourney.ts:826`). Keeping the recorded headcount conflicts with Order A ("set expectations to what the SRD budget now gives"); already `needs-john.md` item 9.
