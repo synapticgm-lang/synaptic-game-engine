@@ -1,5 +1,5 @@
-/**
- * 29z3 — building plans read like a packed house map (shared walls, doors, stairs, a way out, windows);
+﻿/**
+ * 29z3 â€” building plans read like a packed house map (shared walls, doors, stairs, a way out, windows);
  * open ground stays one floor; chips follow the scene; tester P0s catch broken prose and ignored
  * actions; painted names survive the warden. No live GM call.
  */
@@ -92,15 +92,15 @@ function symLinks(layout: InteriorRoomSpec[]): InteriorRoomSpec[] {
   return out;
 }
 
-describe('29z3 — stamp', () => {
+describe('29z3 â€” stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29z3 — house plans', () => {
+describe('29z3 â€” house plans', () => {
   const all: Array<[string, InteriorRoomSpec[]]> = [
     ...SHED_LAYOUTS.map((l, i) => [`shed-${i}`, l] as [string, InteriorRoomSpec[]]),
     ...RUIN_LAYOUTS.map((l, i) => [`ruin-${i}`, l] as [string, InteriorRoomSpec[]]),
@@ -147,7 +147,7 @@ describe('29z3 — house plans', () => {
   });
 });
 
-describe('29z3 — prose glue', () => {
+describe('29z3 â€” prose glue', () => {
   it('a name followed by a plain verb is not turned into "the <verb>"', () => {
     const out = scrubSlotGlue('Oskar tracked the prints to the Oskar tracked line.', ['Oskar']);
     expect(out).not.toMatch(/Oskar the tracked/);
@@ -192,7 +192,7 @@ describe('29z3 — prose glue', () => {
   });
 });
 
-describe('29z3 — chips follow the scene', () => {
+describe('29z3 â€” chips follow the scene', () => {
   it('a talk chip with nobody here is not offered', () => {
     const s = base();
     expect(chipProblem(s, 'Talk to Nell')?.kind).toBe('ghost-chip');
@@ -236,7 +236,7 @@ describe('29z3 — chips follow the scene', () => {
   });
 });
 
-describe('29z3 — tester P0s', () => {
+describe('29z3 â€” tester P0s', () => {
   it('broken prose shapes are P0; plain lines are not', () => {
     expect(brokenProse('The stepped out of the dark.').map((f) => f.kind)).toEqual(['broken-prose']);
     expect(brokenProse('Mara lifted your lantern toward the door.', 'Mara').map((f) => f.kind)).toEqual(['broken-prose']);

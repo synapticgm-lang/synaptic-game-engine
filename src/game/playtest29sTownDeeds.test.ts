@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import type { WorldOutlineSettlement } from '@/data/worldOutlines';
 import { createInitialState } from './defaults';
 import type { GameState, SceneFacts } from './types';
@@ -147,7 +147,7 @@ describe('29s respect lives on the NPC', () => {
   });
 
   it('stamp is 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
   });
 });

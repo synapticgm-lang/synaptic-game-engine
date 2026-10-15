@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Tabletop main-quest spines from Gemini Pro web (2026-09-17).
  * Mid OFF. No SNAPSHOT/CRAFT. No new combat FSM. No invented spines.
  */
@@ -25,10 +25,10 @@ const BIBLES = [
   'shattered-coast',
 ] as const;
 
-describe('playtest17e — Tabletop quest spines', () => {
+describe('playtest17e â€” Tabletop quest spines', () => {
   it('HUD/BUILD are 17e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

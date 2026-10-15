@@ -115,9 +115,10 @@ describe('shared rules engine — rounds', () => {
     expect(flee.events.filter((e) => e.k === 'attack' && e.opportunity)).toHaveLength(2);
   });
 
-  it('Hide (DC 15 Stealth) makes you Invisible and your next attack has Advantage', () => {
+  it('Hide (each sneaker vs each watcher Passive Perception) makes you Invisible and your next attack has Advantage', () => {
     const hidden = play('hide', pc({ stealth: 5 }), fight(block('bandit'), 1, { pcInitiative: 20 }), seq(0.6, 0.0));
-    expect(hidden.events.find((e) => e.k === 'check' && e.label === 'Stealth')).toMatchObject({ dc: 15, ok: true });
+    // Bandit Passive Perception 10; total 18 beats it (SK-3 individual contest, not a flat DC 15).
+    expect(hidden.events.find((e) => e.k === 'check' && e.label === 'Stealth')).toMatchObject({ dc: 10, ok: true });
     expect(hidden.combat.hiddenStealth).toBe(18);
     const next = playRound({ pc: pc(), combat: hidden.combat, blocks: fight(block('bandit')).blocks, action: 'attack', rng: d20(10) });
     expect(next.events.find((e) => e.k === 'attack' && e.pc)).toMatchObject({ adv: 'advantage' });

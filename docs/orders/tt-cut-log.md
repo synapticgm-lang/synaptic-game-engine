@@ -466,3 +466,7 @@ Removed, superseded wording kept here verbatim for the record (original SK-4, or
 1. **`src/game/enterInterior.ts` `takesObjectiveHere` lines 26-31** — required `storyChip` text equality plus `objectiveOpensInterior`. Deleted; quest entry is `actionTakesDoorStep` (`targetSpot === 'door'` + chip/named/`tabletopStepIsDoor`), not story-chip equality.
 2. **`src/game/enterInterior.ts` `objectiveOpensInterior` classifyVerb spoke/parleyed/inspected branches (lines 38-42) and INTERIOR_CUE/placeAllowsDungeon fallback for look/search** — entry was decided from verb class + cue regexes. Deleted those branches; talk is `parsePlayerIntent` `talk`; bare observe/search of the outside never opens; quest open is the door-step record. `classifyVerb` import removed from this file.
 3. **`src/game/enterInterior.ts` `storyChip` import** — only used by deleted `takesObjectiveHere`. Removed.
+
+## q31-SK123 hidden ranks / distinct skill jobs / individual stealth (restore from parent of the q31-SK123 commit)
+
+1. **`src/game/bindingConstraints.ts` `formatBindingConstraintsForPrompt` lines 290-305 at parent** — built the BINDING CONSTRAINTS prompt block from `BindingConstraint[]`. No production caller (`warden` uses `buildBindingConstraints` + detect/repair only). Cut to keep ruleCount TOTAL flat; the shape lives in `actionValidation.test.ts` as `bindingPrompt` for the two assertions that still pin the header.

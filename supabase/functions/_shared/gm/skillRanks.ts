@@ -15,7 +15,10 @@ export type CheckSkillName = (typeof CHECK_SKILLS)[number];
 
 type RankSource = Pick<Character, 'level' | 'skills'> | null | undefined;
 
-/** The check bonus for a skill: a granted rank, else the soft practice bonus from level. */
+/**
+ * Rank used for gates and checks. Always reads the ledger — never consults System housing.
+ * SK-1: with skills off, every skill still counts underneath (not only thievery or crafts).
+ */
 export function skillRankOf(character: RankSource, skill: CheckSkillName): number {
   const granted = character?.skills?.[skill];
   if (granted != null) return Math.floor(Number(granted) || 0);

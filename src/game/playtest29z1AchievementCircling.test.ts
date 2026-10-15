@@ -1,5 +1,5 @@
-/**
- * 29z1 — deed pay by mode (LitRPG flat kinds / tabletop half-Low / story RPG item only), and one progress
+﻿/**
+ * 29z1 â€” deed pay by mode (LitRPG flat kinds / tabletop half-Low / story RPG item only), and one progress
  * meaning for circling (bounce is not movement, a real talk is progress, auto player stays on an
  * unanswered talk). No live GM call. Mid writer OFF.
  */
@@ -78,15 +78,15 @@ function award(s: GameState) {
   });
 }
 
-describe('29z1 — stamp', () => {
+describe('29z1 â€” stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29z1 — deed pay by mode', () => {
+describe('29z1 â€” deed pay by mode', () => {
   it('LitRPG: first 25, count 50, capstone 100; First Steps stays the flat 75', () => {
     expect(deedXp('litrpg', 'first').amount).toBe(LITRPG_MILESTONE_XP.significantPlace);
     expect(deedXp('litrpg', 'count').amount).toBe(LITRPG_MILESTONE_XP.questStep);
@@ -96,7 +96,7 @@ describe('29z1 — deed pay by mode', () => {
     expect(milestoneXp('dnd', 'achievement').amount).toBe(0);
   });
 
-  it('tabletop: deeds pay 0 XP (SRD 5.2.1 — XP from monster CR only)', () => {
+  it('tabletop: deeds pay 0 XP (SRD 5.2.1 â€” XP from monster CR only)', () => {
     for (const step of ['first', 'count', 'capstone'] as const) expect(deedXp('dnd', step, { level: 1 }).amount).toBe(0);
     expect(deedXp('dnd', 'first', { level: 5, strictness: 'hardcore' }).amount).toBe(0);
   });
@@ -158,7 +158,7 @@ describe('29z1 — deed pay by mode', () => {
   });
 });
 
-describe('29z1 — one progress meaning', () => {
+describe('29z1 â€” one progress meaning', () => {
   const at = (loc: string, recent: string[], over: Partial<GameState> = {}) =>
     base('litrpg', {
       currentLocation: loc,
@@ -223,7 +223,7 @@ describe('29z1 — one progress meaning', () => {
   });
 });
 
-describe('29z1 — auto player stays on an unanswered talk', () => {
+describe('29z1 â€” auto player stays on an unanswered talk', () => {
   const EXIT = 'Travel toward Blackspine Treeline';
   const mira = { npcId: 'mira', npcName: 'Mira', disposition: 'neutral' as const, facts: [], lastSeenTurn: 1, met: true, location: 'Greyhollow Inn' };
 
@@ -245,7 +245,7 @@ describe('29z1 — auto player stays on an unanswered talk', () => {
   });
 });
 
-describe('29z1 — writer fact on a talk with no move', () => {
+describe('29z1 â€” writer fact on a talk with no move', () => {
   it('says talking in place is valid play on a talk turn only', () => {
     const s = base('litrpg', { circling: { stale: {}, lastProgressTurn: 0, lastLocation: 'Greyhollow Inn' } });
     expect(movementFact(s, 'Ask Mira about the mill')).toMatch(

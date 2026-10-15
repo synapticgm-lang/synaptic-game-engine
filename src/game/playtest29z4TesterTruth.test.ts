@@ -1,5 +1,5 @@
-/**
- * 29z4 — the tester tells the truth (walks, investigations and plurals are not downs; travel needs the
+﻿/**
+ * 29z4 â€” the tester tells the truth (walks, investigations and plurals are not downs; travel needs the
  * destination named), the notes judge finds the Vite key and reports empty replies as failed, and the
  * seed-66 prose causes are fixed: no canned who-line, no bare "streets" name, no kit glued after "worn",
  * "here" is the place just entered. No live GM or judge call.
@@ -18,7 +18,7 @@ import { compileNounAllowlist, type LedgerRef } from './completedEventPacket';
 import { renderTokenBeat, salvageTokenJsonProse } from './tokenProse';
 import { playerFacingLocation } from './locationName';
 import type { GameState, NpcMemory } from './types';
-// @ts-ignore — plain .mjs script module, no types
+// @ts-ignore â€” plain .mjs script module, no types
 import { applyVerdicts, notesStatus, parseJudge, readOpenRouterKey, replyText } from '../../scripts/fate-autoplay/judgeNotes.mjs';
 
 function base(over: Partial<GameState> = {}): GameState {
@@ -52,15 +52,15 @@ function base(over: Partial<GameState> = {}): GameState {
 
 const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r.p0, ...r.down].map((f) => f.kind);
 
-describe('29z4 — stamp', () => {
+describe('29z4 â€” stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29z4 — tester: real actions are not downs', () => {
+describe('29z4 â€” tester: real actions are not downs', () => {
   const s = base();
 
   it('tt-fix-8: "Walk on" is the engine\'s journey chip; the engine moves the walk, the words are not re-read', () => {
@@ -86,7 +86,7 @@ describe('29z4 — tester: real actions are not downs', () => {
   });
 });
 
-describe('29z4 — tester: travel needs the destination named', () => {
+describe('29z4 â€” tester: travel needs the destination named', () => {
   const onRoad = (to: string) =>
     base({
       currentLocation: 'Back streets',
@@ -133,7 +133,7 @@ describe('29z4 — tester: travel needs the destination named', () => {
   });
 });
 
-describe('29z4 — notes judge', () => {
+describe('29z4 â€” notes judge', () => {
   it('finds VITE_OPENROUTER_API_KEY in an .env file', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'z4-'));
     const f = path.join(dir, '.env');
@@ -181,7 +181,7 @@ describe('29z4 — notes judge', () => {
   });
 });
 
-describe('29z4 — game: who answers is who is here', () => {
+describe('29z4 â€” game: who answers is who is here', () => {
   const record = (over: Partial<NpcMemory>): NpcMemory => ({
     npcId: 'npc-mara',
     npcName: 'Mara Quill',
@@ -208,7 +208,7 @@ describe('29z4 — game: who answers is who is here', () => {
   });
 });
 
-describe('29z4 — game: names, kit and here', () => {
+describe('29z4 â€” game: names, kit and here', () => {
   it('"Back streets" does not put a bare "streets" on the name list; a proper tail still does', () => {
     const s = base({ currentLocation: 'Back streets' });
     const names = compileNounAllowlist(s, ['Cathedral Close']).map((n) => n.toLowerCase());
@@ -244,7 +244,7 @@ describe('29z4 — game: names, kit and here', () => {
     });
     expect(playerFacingLocation(s)).toBe('Cathedral Undercroft');
     const same = base({
-      currentLocation: 'Cathedral Close — West gate',
+      currentLocation: 'Cathedral Close â€” West gate',
       locationSheet: { name: 'Cathedral Close', interactables: [], exits: [], presentNpcIds: [] },
     });
     expect(playerFacingLocation(same)).toBe('Cathedral Close');

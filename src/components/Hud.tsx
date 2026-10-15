@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
 import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack, Globe2, UserRound } from 'lucide-react';
 import { loadCapacityLedger } from '../game/capacityLedger';
@@ -8,7 +8,7 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-10-16b';
+export const HUD_BUILD_STAMP = '2026-10-16c';
 const HUD_BUILD_TITLE =
   'Every setting and panel reads the save; phone drawers open from the HUD';
 
@@ -49,14 +49,14 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
   const dailyCap = getTierDefinition(tier).textTurnsPerDay;
   const storyStartLeft = Math.max(0, state.storyStartTextTurnsRemaining ?? 0);
   const turnsLeft = unlimitedText
-    ? '∞'
+    ? 'âˆž'
     : String(
         Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent)
           + ledger.textPackBalance
           + storyStartLeft
       );
   const turnsTitle = founderLab
-    ? `Test Lab on — unlimited capacity. AI catalog: ${tier.toUpperCase()}.`
+    ? `Test Lab on â€” unlimited capacity. AI catalog: ${tier.toUpperCase()}.`
     : unlimitedText
       ? 'Turns available. Opening setup answers are free.'
       : storyStartLeft > 0
@@ -125,12 +125,12 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
           title={turnsTitle}
         >
           {unlimitedText ? (
-            <>∞ turns</>
+            <>âˆž turns</>
           ) : (
             <>
               {turnsLeft} turn{turnsLeft === '1' ? '' : 's'}
               {storyStartLeft > 0 ? (
-                <span className="hidden text-amber-200/60 sm:inline"> · {storyStartLeft} start</span>
+                <span className="hidden text-amber-200/60 sm:inline"> Â· {storyStartLeft} start</span>
               ) : null}
             </>
           )}
@@ -139,7 +139,7 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
           <button
             type="button"
             className="hidden font-mono text-[10px] text-slate-500 underline-offset-2 hover:text-cyan-300 hover:underline sm:inline"
-            title={recentStateTxReceipts(state, 3).join(' · ') || 'Ledger'}
+            title={recentStateTxReceipts(state, 3).join(' Â· ') || 'Ledger'}
             onClick={() => {
               window.alert(explainWhy(state));
             }}
@@ -150,7 +150,7 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
         <div className="ml-auto flex shrink-0 items-center gap-1 md:hidden">
           <button
             onClick={handleBugClick}
-            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` Â· last saved T${lastSavedTurn}` : ''}`}
             className="flex items-center justify-center rounded border border-rose-800 bg-rose-950/60 p-1.5 text-rose-400 transition-colors hover:bg-rose-900"
             aria-label={`Debug ${HUD_BUILD_STAMP}`}
           >
@@ -177,10 +177,10 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
         </div>
       )}
 
-      {/* HP / MP — full-width second row on phone so bars are not squeezed */}
+      {/* HP / MP â€” full-width second row on phone so bars are not squeezed */}
       {c && (
       <div className="mx-auto flex min-w-0 w-full items-center justify-center gap-2 sm:max-w-lg sm:flex-1 sm:gap-6">
-        {/* HP Bar — value above bar on narrow so numbers never collide */}
+        {/* HP Bar â€” value above bar on narrow so numbers never collide */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between gap-1 sm:hidden">
             <span className="text-[9px] font-bold text-rose-400 font-mono shrink-0">HP</span>
@@ -223,7 +223,7 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
         <div className="flex items-center gap-2">
           <button
             onClick={handleBugClick}
-            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` Â· last saved T${lastSavedTurn}` : ''}`}
             className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px] font-mono"
           >
             <Bug size={14} /> Debug {HUD_BUILD_STAMP}
@@ -245,7 +245,7 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
             <Backpack size={15} />
           </button>
           {showSalvage && (
-          <button onClick={onOpenMerchant} title="Salvage — System sell / salvage" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
+          <button onClick={onOpenMerchant} title="Salvage â€” System sell / salvage" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Recycle size={15} />
           </button>
           )}

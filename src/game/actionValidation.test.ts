@@ -6,9 +6,19 @@ import { applyProseWarden, scrubInventedContainers } from './proseWarden';
 import {
   buildBindingConstraints,
   detectConstraintViolations,
-  formatBindingConstraintsForPrompt,
   repairConstraintViolations,
 } from './bindingConstraints';
+
+/** Prompt shape formerly from formatBindingConstraintsForPrompt (cut in q31-SK123). */
+function bindingPrompt(constraints: ReturnType<typeof buildBindingConstraints>): string {
+  if (!constraints.length) return '';
+  const lines = [
+    '### BINDING CONSTRAINTS (AUTHORITY)',
+    'Engine facts. Narrate richly; do not contradict these. Atmosphere is free. Do not invent extras off this list.',
+  ];
+  for (const item of constraints.slice(0, 10)) lines.push(`**BINDING**: ${item.rule}`);
+  return lines.join('\n');
+}
 import { resolvePlayAreaMap } from './mapEngine';
 import { INTERIOR_MAP_BLUEPRINT } from './placeAuthority';
 import { runWarden } from './warden';
@@ -147,7 +157,7 @@ describe('binding constraints', () => {
         updatedTurn: 1,
       },
     });
-    const crowdText = formatBindingConstraintsForPrompt(buildBindingConstraints(crowdState));
+    const crowdText = bindingPrompt(buildBindingConstraints(crowdState));
     expect(crowdText).toMatch(/People are present in this scene/);
     expect(crowdText).toMatch(/### BINDING CONSTRAINTS \(AUTHORITY\)/);
 
@@ -168,7 +178,7 @@ describe('binding constraints', () => {
         updatedTurn: 1,
       },
     });
-    const interiorText = formatBindingConstraintsForPrompt(buildBindingConstraints(interiorState));
+    const interiorText = bindingPrompt(buildBindingConstraints(interiorState));
     expect(interiorText).toMatch(/EXITS:/);
     expect(interiorText).toMatch(/do not invent extra doors/);
     expect(interiorText).toMatch(/PRESENCE: alone/);

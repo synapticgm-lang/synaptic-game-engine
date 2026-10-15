@@ -4,7 +4,7 @@
  * available at https://www.dndbeyond.com/srd, licensed under CC-BY-4.0
  * (https://creativecommons.org/licenses/by/4.0/legalcode): initiative (DEX check, surprise = Disadvantage),
  * attack = d20 + ability modifier + proficiency vs AC, natural 20 crit (damage dice twice), natural 1 miss,
- * Dodge / Disengage / Hide (DC 15 Stealth) / Help, opportunity attacks on leaving reach, saving throws,
+ * Dodge / Disengage / Hide (each sneaker vs each watcher's Passive Perception; SK-3) / Help, opportunity attacks on leaving reach, saving throws,
  * conditions (checkRules CONDITION_EFFECTS) and death saves.
  * SynapticGM solo design: foes leave a downed PC (no attacks at 0 HP). Disengage only stops opportunity
  * attacks (the fight goes on); escape by Flee (Dash) gets away after the opportunity attacks.
@@ -19,6 +19,25 @@ import { concentrationDc, SPELLS, spellDice, type SpellDef } from './spells';
 import type { WeaponMastery } from './srdGear';
 
 export type RoundAction = 'attack' | 'cast' | 'dodge' | 'disengage' | 'help' | 'hide' | 'item' | 'flee' | 'other';
+
+/** SK-3: each sneaker vs each watcher; one failure is enough to be noticed. */
+export function individualStealth(
+  sneakers: { name: string; stealthTotal: number }[],
+  watchers: { name: string; passivePerception: number }[],
+): { noticed: boolean; rows: { sneaker: string; watcher: string; stealthTotal: number; perception: number; seen: boolean }[] } {
+  const rows: { sneaker: string; watcher: string; stealthTotal: number; perception: number; seen: boolean }[] = [];
+  let noticed = false;
+  for (let si = 0; si < sneakers.length; si++) {
+    const s = sneakers[si]!;
+    for (let wi = 0; wi < watchers.length; wi++) {
+      const w = watchers[wi]!;
+      const seen = w.passivePerception >= s.stealthTotal;
+      if (seen) noticed = true;
+      rows.push({ sneaker: s.name, watcher: w.name, stealthTotal: s.stealthTotal, perception: w.passivePerception, seen });
+    }
+  }
+  return { noticed, rows };
+}
 
 export interface PcWeapon {
   name: string;
@@ -136,6 +155,8 @@ export interface SidekickProfile {
   type: string;
   /** Spellcaster: one heal per fight on the PC at half HP or less. */
   heal?: string;
+  /** Stealth modifier when the sidekick sneaks with the PC (SK-3). */
+  stealth?: number;
 }
 
 export type CombatEvent =
@@ -1068,12 +1089,56 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       }
       break;
     case 'hide': {
+      // SK-3: each sneaker vs each living foe's Passive Perception (SRD has no Group Check). One failure notices.
       const adv = combineAdv(...effects(ctx.combat.pcConditions, pc.conditions).map((e) => e.checks ?? 'normal'));
       const r = rollD20WithAdv(adv, ctx.rng);
-      const ok = r.kept + pc.stealth >= 15;
-      push(ctx, { k: 'check', who: pc.name, label: 'Stealth', d20s: r.d20s, kept: r.kept, adv, mod: pc.stealth, total: r.kept + pc.stealth, dc: 15, ok, why: ok ? 'you are hidden' : 'you are seen' });
-      if (ok) {
-        ctx.combat = { ...ctx.combat, hiddenStealth: r.kept + pc.stealth, pcConditions: [...ctx.combat.pcConditions.filter((c) => c.name !== 'Invisible'), { name: 'Invisible', source: 'Hide' }] };
+      const pcTotal = r.kept + pc.stealth;
+      const watchers: { name: string; passivePerception: number }[] = [];
+      let dc = 15;
+      for (let i = 0; i < ctx.combat.foes.length; i++) {
+        const f = ctx.combat.foes[i]!;
+        if (f.hp <= 0) continue;
+        const pp = ctx.blocks[f.id]?.passivePerception ?? 10;
+        watchers.push({ name: f.name, passivePerception: pp });
+        if (pp > dc || watchers.length === 1) dc = pp;
+      }
+      if (!watchers.length) watchers.push({ name: 'the area', passivePerception: 15 });
+      const sneakers = [{ name: pc.name, stealthTotal: pcTotal }];
+      if (sidekickUp(ctx) && pc.sidekick) {
+        const cr = rollD20WithAdv('normal', ctx.rng);
+        const mod = pc.sidekick.stealth ?? 0;
+        const cTotal = cr.kept + mod;
+        sneakers.push({ name: pc.sidekick.name, stealthTotal: cTotal });
+        let cSeen = false;
+        for (let wi = 0; wi < watchers.length; wi++) {
+          if (watchers[wi]!.passivePerception >= cTotal) cSeen = true;
+        }
+        push(ctx, {
+          k: 'check', who: pc.sidekick.name, label: 'Stealth', d20s: cr.d20s, kept: cr.kept, adv: 'normal', mod,
+          total: cTotal, dc, ok: !cSeen, why: cSeen ? 'seen' : 'hidden',
+        });
+      }
+      const contest = individualStealth(sneakers, watchers);
+      let pcSeen = false;
+      for (let i = 0; i < contest.rows.length; i++) {
+        const row = contest.rows[i]!;
+        if (row.sneaker === pc.name && row.seen) pcSeen = true;
+      }
+      push(ctx, {
+        k: 'check', who: pc.name, label: 'Stealth', d20s: r.d20s, kept: r.kept, adv, mod: pc.stealth,
+        total: pcTotal, dc, ok: !pcSeen, why: contest.noticed ? 'you are seen' : 'you are hidden',
+      });
+      if (!contest.noticed) {
+        let floor = sneakers[0]!.stealthTotal;
+        for (let i = 1; i < sneakers.length; i++) {
+          if (sneakers[i]!.stealthTotal < floor) floor = sneakers[i]!.stealthTotal;
+        }
+        const conds = [];
+        for (let i = 0; i < ctx.combat.pcConditions.length; i++) {
+          if (ctx.combat.pcConditions[i]!.name !== 'Invisible') conds.push(ctx.combat.pcConditions[i]!);
+        }
+        conds.push({ name: 'Invisible' as const, source: 'Hide' });
+        ctx.combat = { ...ctx.combat, hiddenStealth: floor, pcConditions: conds };
         push(ctx, { k: 'condition', who: pc.name, name: 'Invisible', on: true, why: 'hidden', pc: true });
       }
       break;

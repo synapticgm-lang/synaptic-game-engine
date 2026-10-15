@@ -12,6 +12,93 @@ import { hidesPart } from '../systemHousing';
 import { parseSkillEntries } from '../schemas';
 import type { GameState, NamedSkillState } from '../types';
 
+// --- SK-2 distinct dangling-name pairs (jobs; checker picks by job, never by name) ---
+export interface DistinctSkill {
+  id: string;
+  name: string;
+  job: string;
+  cues: string;
+}
+
+export const DISTINCT_PAIRS: readonly (readonly [DistinctSkill, DistinctSkill])[] = [
+  [
+    {
+      id: 'athletics',
+      name: 'Athletics',
+      job: 'climb, swim, jump, or force a stuck door',
+      cues: 'climb|scale|clamber|swim|dive|jump|leap|vault|force the door|force open door|bash the door|lift the gate',
+    },
+    {
+      id: 'brawling',
+      name: 'Brawling',
+      job: 'grapple, punch, shove, or fight unarmed',
+      cues: 'grapple|punch|shove|brawl|fistfight|unarmed|wrestle|boxing',
+    },
+  ],
+  [
+    {
+      id: 'endurance_stride',
+      name: 'Endurance Stride',
+      job: 'hold a travel pace across a long march',
+      cues: 'march all day|keep the pace|day-long march|day long march|day-long trek|day long trek|endure the road|endure the march|trudge all day|trudge the day',
+    },
+    {
+      id: 'long_stride',
+      name: 'Long Stride',
+      job: 'cover ground in one long stride or leap of movement',
+      cues: 'long stride|stride ahead|stride forward|stride across|one long stride|leap the gap|leap a gap|leap the ditch|leap a ditch|leap the chasm|leap a chasm|cover ground',
+    },
+  ],
+];
+
+export const ALL_DISTINCT_SKILLS: DistinctSkill[] = [
+  DISTINCT_PAIRS[0]![0],
+  DISTINCT_PAIRS[0]![1],
+  DISTINCT_PAIRS[1]![0],
+  DISTINCT_PAIRS[1]![1],
+];
+
+/** The distinct skill whose job matches the action; never swaps a pair. */
+export function skillByJob(action: string): DistinctSkill | null {
+  const line = (action ?? '').trim().toLowerCase();
+  if (!line) return null;
+  let best: DistinctSkill | null = null;
+  let bestLen = 0;
+  for (let si = 0; si < ALL_DISTINCT_SKILLS.length; si++) {
+    const skill = ALL_DISTINCT_SKILLS[si]!;
+    let hit = 0;
+    let start = 0;
+    const cues = skill.cues;
+    while (start < cues.length) {
+      let end = cues.indexOf('|', start);
+      if (end < 0) end = cues.length;
+      const cue = cues.slice(start, end);
+      start = end + 1;
+      if (!cue) continue;
+      if (cue.includes(' ')) {
+        if (line.includes(cue) && cue.length > hit) hit = cue.length;
+        continue;
+      }
+      let i = 0;
+      while (i <= line.length - cue.length) {
+        const j = line.indexOf(cue, i);
+        if (j < 0) break;
+        const before = line[j - 1];
+        const after = line[j + cue.length];
+        const beforeOk = !before || !((before >= 'a' && before <= 'z') || (before >= '0' && before <= '9'));
+        const afterOk = !after || !((after >= 'a' && after <= 'z') || (after >= '0' && after <= '9'));
+        if (beforeOk && afterOk && cue.length > hit) hit = cue.length;
+        i = j + 1;
+      }
+    }
+    if (hit > bestLen) {
+      bestLen = hit;
+      best = skill;
+    }
+  }
+  return best;
+}
+
 export interface LibraryEntry {
   identity: { id: string; name: string; other_names: string[]; kind: string };
   balance: { tier: number };
@@ -188,10 +275,37 @@ function hitFor(line: string, base: LibraryEntry, entries: LibraryEntry[], owned
  * phrase, then more matched words; a skill the character has beats one they lack; a specific noun beats a bare
  * verb; then the cheaper skill, then library order. Only a verb or phrase makes a match; a noun alone does not.
  * An evolved skill also answers to its technique's keywords.
+ * SK-2: dangling name pairs (Athletics/Brawling, Endurance Stride/Long Stride) pick by job first, never by
+ * name similarity — so the checker cannot swap the two.
  */
 export function matchBaseSkill(state: GameState, input: string): LibraryEntry | null {
   const line = (input ?? '').toLowerCase();
   if (!line.trim()) return null;
+  const byJob = skillByJob(input);
+  if (byJob) {
+    const named = libraryEntry(byJob.id);
+    if (named) return named;
+    // Distinct pair skill with no library row yet: a thin stand-in so the checker still returns that job.
+    return {
+      identity: {
+        id: byJob.id,
+        name: byJob.name,
+        other_names: [],
+        kind: 'skill',
+        branch: 'A',
+        family: 'distinct-pair',
+        sub_family: byJob.name,
+        description_easy: byJob.job,
+        tags: {},
+      },
+      balance: { tier: 1 },
+      getting: { prerequisites: '' },
+      using: {},
+      showing: {},
+      paths_and_matching: { keywords: { verbs: [], nouns: [], phrases: [] } },
+      bookkeeping: { allowed_modes: ['litrpg'] },
+    } as LibraryEntry;
+  }
   const recs = new Map(namedSkillsOf(state).map((r) => [r.id, r]));
   const hits: Hit[] = [];
   BASE_SKILLS.forEach((base, order) => {

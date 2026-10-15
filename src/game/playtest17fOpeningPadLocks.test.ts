@@ -1,5 +1,5 @@
-/**
- * 2026-09-17f — site-wide opening / pad locks from the 4×T10 AI-player tape.
+﻿/**
+ * 2026-09-17f â€” site-wide opening / pad locks from the 4Ã—T10 AI-player tape.
  * A locked name never reprints the page-1 name-ask.
  * B second who/want is already-told; third+ same pad leaves stitch.
  * C no Attack/Flee/Parley on a name cover.
@@ -114,10 +114,10 @@ function nameCover(mode: GameState['engineMode'], bibleId: string, over: Partial
   };
 }
 
-describe('playtest17f — site-wide opening / pad locks', () => {
+describe('playtest17f â€” site-wide opening / pad locks', () => {
   it('HUD/BUILD are 17f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -159,7 +159,7 @@ describe('playtest17f — site-wide opening / pad locks', () => {
     expect(second).toMatch(/already said it|already answered you/i);
     expect(second).not.toBe(firstWant);
     expect(second).toBe(openingAlreadyToldLine(afterFirst, 'want'));
-    // 29z7 — after page 1 the writer answers every hall line.
+    // 29z7 â€” after page 1 the writer answers every hall line.
     expect(shouldStitchOpeningContinue(afterFirst, 'Ask what they want')).toBe(false);
 
     const third = saltHire({

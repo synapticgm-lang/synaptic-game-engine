@@ -59,6 +59,10 @@ export function skillLabel(skill: string): string {
 }
 
 export function skillGateBlockedLine(what: string, lock: SkillGate, state: GameState): string {
+  // SK-1: ranks still gate the lock when skills are off; the receipt never prints skill numbers.
+  if (hidesPart(state.systemHousing, 'skills')) {
+    return `${what} is locked; it stays shut.`;
+  }
   const have = skillRankOf(state.character, lock.skill);
   return `${what} is locked. It needs ${skillLabel(lock.skill)} ${lock.rank} (you have ${have}); it stays shut.`;
 }
@@ -94,6 +98,10 @@ export function gatesHere(state: GameState): GateRef[] {
   return allGates(state).filter((g) => (g.kind === 'safe' ? g.nodeId === here.id : near.has(g.nodeId)));
 }
 
+/**
+ * SK-1 (John 15 Oct 17:21 option d): every skill's rank applies to gates whether or not the
+ * housing shows skills. `hidesPart(skills)` only hides receipts and UI — never this read.
+ */
 export function gateOpenFor(state: GameState, gate: GateRef): boolean {
   return skillRankOf(state.character, gate.lock.skill) >= gate.lock.rank;
 }

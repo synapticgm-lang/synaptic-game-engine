@@ -1,10 +1,10 @@
-/**
- * Wave 0 — immutable run manifest for eval binding and replay provenance.
+﻿/**
+ * Wave 0 â€” immutable run manifest for eval binding and replay provenance.
  */
 
 import type { EngineMode, GameState } from './types';
 
-export const BUILD_STAMP = '2026-10-16b';
+export const BUILD_STAMP = '2026-10-16c';
 
 export interface RunManifest {
   buildStamp: string;

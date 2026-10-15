@@ -287,23 +287,6 @@ function buildInventoryConstraints(inventory: Item[], state?: GameState): Bindin
 /**
  * Format binding constraints for prompt (compact AUTHORITY / BINDING tone).
  */
-export function formatBindingConstraintsForPrompt(constraints: BindingConstraint[]): string {
-  if (constraints.length === 0) {
-    return '';
-  }
-
-  const lines: string[] = [
-    '### BINDING CONSTRAINTS (AUTHORITY)',
-    'Engine facts. Narrate richly; do not contradict these. Atmosphere is free. Do not invent extras off this list.',
-  ];
-
-  for (const item of constraints.slice(0, 10)) {
-    lines.push(`**BINDING**: ${item.rule}`);
-  }
-
-  return lines.join('\n');
-}
-
 const EMPTY_STREET_CLAIM =
   /\b(empty street|no one (?:is )?(?:here|around)|deserted street)\b/i;
 const CROWD_LEFT =

@@ -1,5 +1,5 @@
-/**
- * 2026-09-18a — Gemini tester verdict + interesting/simple prose floor.
+﻿/**
+ * 2026-09-18a â€” Gemini tester verdict + interesting/simple prose floor.
  * Name-lock is HERE + spoken want. Who/Want starve after answered.
  * Third same hall ask does not reprint the identical already-told line.
  * Telegram / STATUS-only is not a successful story beat.
@@ -91,10 +91,10 @@ function saltFenReed(over: Partial<GameState> = {}): GameState {
   };
 }
 
-describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
+describe('playtest18a â€” Gemini tester verdict + simple prose floor', () => {
   it('HUD/BUILD are 18b, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -191,9 +191,9 @@ describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
 
   it('live sendAction last-resorts when GM transport is exhausted (Fate already did)', () => {
     const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
-    expect(useGame).toContain('GM transport exhausted — last-resort will write the book');
+    expect(useGame).toContain('GM transport exhausted â€” last-resort will write the book');
     expect(useGame).toContain('bookBodyAfterWriterMiss');
-    expect(useGame).toContain('GM transport threw — last-resort will write the book');
+    expect(useGame).toContain('GM transport threw â€” last-resort will write the book');
     expect(useGame).not.toMatch(
       /if \(!shouldAutoRetryTurn\(kind\) \|\| attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES\) \{\s*throw err;/
     );

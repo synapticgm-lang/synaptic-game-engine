@@ -1,5 +1,5 @@
-/**
- * 2026-09-17i — after a lock, writer-empty last-resort is the topic stitch,
+﻿/**
+ * 2026-09-17i â€” after a lock, writer-empty last-resort is the topic stitch,
  * not the same "room waited" telegram. Still never page-1 / Dust-hung.
  * Mid writer OFF. No SNAPSHOT/CRAFT.
  */
@@ -44,10 +44,10 @@ function namedAlone(over: Partial<GameState> = {}): GameState {
   };
 }
 
-describe('playtest17i — last-resort topic advance after lock', () => {
+describe('playtest17i â€” last-resort topic advance after lock', () => {
   it('HUD/BUILD are 17i, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

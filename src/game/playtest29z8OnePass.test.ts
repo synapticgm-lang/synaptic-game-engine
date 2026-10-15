@@ -1,5 +1,5 @@
-/**
- * 29z8 — one writer pass per turn: the first draft is the beat, checks are logged, never re-asked.
+﻿/**
+ * 29z8 â€” one writer pass per turn: the first draft is the beat, checks are logged, never re-asked.
  * The writer gets what it needs up front: nearby places as refs (exits, journey ends, the hook's town),
  * the card's "Who is here" as the cast, a speech line in the talk shape, and tags never leave holes.
  * Seed-68 play crimes stay tester checks. No live GM or judge call.
@@ -50,14 +50,14 @@ function base(over: Partial<GameState> = {}): GameState {
 
 const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r.p0, ...r.down].map((f) => f.kind);
 
-describe('29z8 — stamp', () => {
+describe('29z8 â€” stamp', () => {
   it('HUD/BUILD are 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
   });
 });
 
-describe('29z8 — one writer pass', () => {
+describe('29z8 â€” one writer pass', () => {
   it('the writer turn makes no call of its own; live and Fate pass no callWriter', () => {
     const shared = readFileSync(resolve(__dirname, './writerTurn.ts'), 'utf8');
     const live = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
@@ -68,7 +68,7 @@ describe('29z8 — one writer pass', () => {
   });
 });
 
-describe('29z8 — the writer gets nearby places as refs', () => {
+describe('29z8 â€” the writer gets nearby places as refs', () => {
   it('the hook town is its own place, not HERE', () => {
     const s = base();
     expect(hookTownName(s)).toBe('Greyhollow');
@@ -89,7 +89,7 @@ describe('29z8 — the writer gets nearby places as refs', () => {
   });
 });
 
-describe('29z8 — the card names the cast; talk turns ask for spoken words', () => {
+describe('29z8 â€” the card names the cast; talk turns ask for spoken words', () => {
   it('"Who is here" on the card is the cast before any scene-word guess', () => {
     const s = base({
       engineMode: 'rpg',
@@ -113,7 +113,7 @@ describe('29z8 — the card names the cast; talk turns ask for spoken words', ()
   });
 });
 
-describe('29z8 — open on what changed; a repeated question gets a new spoken line', () => {
+describe('29z8 â€” open on what changed; a repeated question gets a new spoken line', () => {
   const withAldous = (over: Partial<ReturnType<typeof buildCompletedEventPacket>> = {}) => {
     const packet = buildCompletedEventPacket(base(), 'Who are you?');
     return {
@@ -151,7 +151,7 @@ describe('29z8 — open on what changed; a repeated question gets a new spoken l
   });
 });
 
-describe('29z8 — a card role is a person, not a title or an object slot', () => {
+describe('29z8 â€” a card role is a person, not a title or an object slot', () => {
   it('"the muscle blocking the doorway" keeps the muscle; a proper name in an object slot is still glue', () => {
     expect(scrubSlotGlue('They looked up at the muscle blocking the doorway.', ['the muscle', 'muscle'])).toBe(
       'They looked up at the muscle blocking the doorway.'
@@ -169,7 +169,7 @@ describe('29z8 — a card role is a person, not a title or an object slot', () =
   });
 });
 
-describe('29z8 — tags never leave holes', () => {
+describe('29z8 â€” tags never leave holes', () => {
   it('a sentence with a tag nothing can paint is dropped whole', () => {
     const display = (tok: string) => (tok === 't1' ? 'Safehouse Alley' : undefined);
     const out = paintTokensOrDrop('Jax waited in @t1. Past the alley mouth @t5 kept its slow boots coming. The door stayed shut.', display);
@@ -177,7 +177,7 @@ describe('29z8 — tags never leave holes', () => {
   });
 });
 
-describe('29z8 — play crimes stay tester checks', () => {
+describe('29z8 â€” play crimes stay tester checks', () => {
   it('flags the writer speaking for the player, a lecture ending and system words outside LitRPG', () => {
     const s = base();
     expect(kinds(checkPlayCrimes(s, s, 'Look around', '"We should go," Jax says, and the lamp gutters.'))).toContain('plays-player');

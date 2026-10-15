@@ -1,5 +1,5 @@
-/**
- * 2026-09-17h — first who/want after a locked name is callGm, even when
+﻿/**
+ * 2026-09-17h â€” first who/want after a locked name is callGm, even when
  * sendAction already appended the optimistic player bubble. Last-resort
  * after a lock is a ledger advance, not page-1 or the last GM reprint.
  * Mid writer OFF. No SNAPSHOT/CRAFT.
@@ -46,10 +46,10 @@ function namedAfterPage1(over: Partial<GameState> = {}): GameState {
   };
 }
 
-describe('playtest17h — optimistic hall count + last-resort advance', () => {
+describe('playtest17h â€” optimistic hall count + last-resort advance', () => {
   it('HUD/BUILD are 17h, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -80,7 +80,7 @@ describe('playtest17h — optimistic hall count + last-resort advance', () => {
       ],
     });
     expect(countSameHallTopicRepeats(afterFirst, want)).toBe(2);
-    // 29z7 — after page 1 the writer answers every hall line.
+    // 29z7 â€” after page 1 the writer answers every hall line.
     expect(shouldStitchOpeningContinue(afterFirst, want)).toBe(false);
 
     const thirdOptimistic = namedAfterPage1({

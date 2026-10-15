@@ -1,5 +1,5 @@
-/**
- * 29y — remembered danger at a place, and playback that reads as one visit. No live GM call. Mid writer OFF.
+﻿/**
+ * 29y â€” remembered danger at a place, and playback that reads as one visit. No live GM call. Mid writer OFF.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
@@ -84,13 +84,13 @@ afterEach(() => {
 
 describe('29y stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16b');
-    expect(BUILD_STAMP).toBe('2026-10-16b');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
+    expect(BUILD_STAMP).toBe('2026-10-16c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29y — remembered danger', () => {
+describe('29y â€” remembered danger', () => {
   it('a refused parley keeps the threat on the place, even when the forced fight is lost', () => {
     const live = { ...base(), activeEncounter: foe({ hp: 400, maxHp: 400, armorClass: 40, strength: 30 }) };
     vi.spyOn(Math, 'random').mockReturnValue(0);
@@ -169,14 +169,14 @@ describe('29y — remembered danger', () => {
   });
 });
 
-describe('29y — playback reads as one visit', () => {
+describe('29y â€” playback reads as one visit', () => {
   const ENUM: LedgerRef[] = [
     { tok: 't1', id: 'here', display: CHURCH, klass: 'place' },
     { tok: 't2', id: 'cast:innkeep', display: 'innkeep', klass: 'person' },
     { tok: 't3', id: 'kit:worn-iron-shortsword', display: 'worn iron shortsword', klass: 'kit' },
   ];
 
-  // s77 Root A — refs bind by the REF ENUM token; a typed id naming a different row contradicts it and paints nothing.
+  // s77 Root A â€” refs bind by the REF ENUM token; a typed id naming a different row contradicts it and paints nothing.
   it('a declared ref whose id contradicts its enum token paints neither label', () => {
     const text = renderTokenBeat(
       {
