@@ -601,16 +601,17 @@ export function dungeonRoomFacts(state: GameState): string {
 }
 
 /**
- * Back the way the player came: the most recently first-visited room joined to this one, else out of the
- * dungeon to its site. The room's foe is not moved.
+ * Back the way the player came: the most recently first-visited room joined to this one (one with no live foe
+ * first), else out of the dungeon to its site. The room's foe is not moved; a foe in the room fled into meets the player.
  */
 function retreatFromRoom(state: GameState): { state: GameState; receipt: string } {
   const d = state.activeDungeon!;
   const node = currentNode(d)!;
   const ranks = skillRanksOf(state.character);
-  const back = [...d.visitedNodeIds]
+  const ways = [...d.visitedNodeIds]
     .reverse()
-    .find((id) => id !== node.id && node.connections.includes(id) && !isDoorLockedFor(d, id, ranks));
+    .filter((id) => id !== node.id && node.connections.includes(id) && !isDoorLockedFor(d, id, ranks));
+  const back = ways.find((id) => !liveFoe(d.nodes.find((n) => n.id === id))) ?? ways[0];
   const moved = back ? moveToNode(d, back, ranks) : d;
   if (!back || moved.currentNodeId === node.id) {
     return { state: parkDungeonCard(state, { toSite: true }), receipt: `Dungeon: you got out of ${d.dungeonName}; ${liveFoe(node)?.name ?? 'the foe'} stayed in ${node.name}.` };
@@ -728,6 +729,7 @@ export function advanceDungeonCard(
     }
   }
 
+  let walkedIn = false;
   // Got away this turn from the room's foe → the player is out of its room; the foe stays behind.
   {
     const node = currentNode(next.activeDungeon!)!;
@@ -739,6 +741,7 @@ export function advanceDungeonCard(
       next = out.state;
       receipts.push(out.receipt);
       if (!next.activeDungeon) return { state: next, receipts };
+      walkedIn = true;
     }
   }
 
@@ -746,7 +749,6 @@ export function advanceDungeonCard(
   const d = next.activeDungeon!;
   const node = currentNode(d)!;
   const foeHere = liveFoe(node);
-  let walkedIn = false;
 
   if (EXIT_RE.test(input) && !next.activeEncounter) {
     receipts.push(`Dungeon: you climbed back out of ${d.dungeonName}.`);

@@ -72,7 +72,8 @@ describe('replay bank tt-travel (the travel day)', () => {
       if (!j || j.encounter) continue;
       const evening: GameState = { ...out.state, roadDay: { since: worldClock(out.state), hours: 8 } };
       expect(dayIsSpent(evening, evening.journey!)).toBe(true);
-      expect(journeyPads(evening).slice(0, 2)).toEqual(['Make camp', 'Push on through the night']);
+      expect(journeyPads(evening)[0]).toBe('Make camp');
+      expect(journeyPads(evening)[1]).toMatch(/^Push on into the \w+, but each failed save wears you down more$/);
       const c = commitTravel(evening, 'Make camp');
       if (c.event === 'camp') camped = c;
     }

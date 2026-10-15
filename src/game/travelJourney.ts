@@ -39,6 +39,7 @@ import {
   FIND_FACT,
   JOB_CHIP,
   MEETING_WANT,
+  PLEA_HELP,
   PUSH_ON_CHIP,
   STARVE_DAYS,
   TRAVEL_DAY_HOURS,
@@ -444,6 +445,21 @@ function answersMeeting(enc: RoadEncounter, input: string, turn: number): RoadEn
   return at === 0 && enc.kind === 'plea' ? { ...enc, engaged: true, closedTurn: turn } : null;
 }
 
+/**
+ * The help the player gave a plea, as the engine settles it: the writer's fact, and the ration it costs where the
+ * mode counts food. No ration to give: the plea is passed by, and the fact says so.
+ */
+function helpPlea(state: GameState, enc: RoadEncounter): { state: GameState; encounter: RoadEncounter; fact: string; extra: string[] } {
+  const help = PLEA_HELP[enc.want ?? ''];
+  if (!help) return { state, encounter: enc, fact: enc.want ? `You stopped and helped: ${enc.want}.` : 'You stopped and helped them.', extra: [] };
+  if (!help.ration || !survival(state)) return { state, encounter: enc, fact: help.fact, extra: [] };
+  const eat = eatRation(state.inventory ?? []);
+  if (!eat.ate) {
+    return { state, encounter: { ...enc, engaged: false, escaped: true, escapedTurn: state.turn }, fact: help.cannot ?? help.fact, extra: [] };
+  }
+  return { state: { ...state, inventory: eat.inventory }, encounter: enc, fact: help.fact, extra: [`Rations: 1 day given away (${eat.left} left)`] };
+}
+
 /** The meeting is over: fought and won or talked down, helped, fled past, or the fight against it was lost. */
 export function roadMeetingOver(enc: RoadEncounter): boolean {
   return !!enc.engaged || !!enc.escaped || !!enc.lost;
@@ -479,12 +495,24 @@ export function meetingMoveBase(chip: string): string {
 const TURN_BACK_REST_TURNS = 4;
 
 /**
+ * TT32 — push on into the hour the clock is at, and what a failed Extended Travel save costs where the engine rolls it:
+ * one more Exhaustion level, or death when the next level is the last.
+ */
+function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> & ClockState): string {
+  const head = `${PUSH_ON_CHIP} into the ${timeOfDayForHour(currentHour(state))}`;
+  if (!survival({ engineMode: state.engineMode } as GameState)) return head;
+  return exhaustionLevel(state.character) + 1 >= EXHAUSTION_DEATH
+    ? `${head}, but one failed save now kills you`
+    : `${head}, but each failed save wears you down more`;
+}
+
+/**
  * Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back.
  * Turn back rests for a few turns after a bounce between the same places (the circling memory's
  * short return), unless the way on is blocked.
  */
 export function journeyPads(
-  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> & Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode'>> & ClockState
+  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> & Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character'>> & ClockState
 ): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
@@ -493,7 +521,7 @@ export function journeyPads(
   const forward = laneBlocked(j.encounter)
     ? []
     : spent
-      ? [CAMP_CHIP, PUSH_ON_CHIP]
+      ? [CAMP_CHIP, pushOnPad(state)]
       : ['Walk on', ...(canTravelOn(state, j) ? [TRAVEL_ON_CHIP] : [])];
   const job = spent || (j.encounter && !roadMeetingOver(j.encounter)) ? null : jobChip(state, j);
   const origin = journeyOrigin(state);
@@ -1156,6 +1184,7 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
     hoursSinceCheck: 0,
   };
   const march = marchHours(state, gap.terrain, tripKey(state, set), gap.hoursPerLeg);
+  if (march.dead) return diedOnRoad(march, stillOn(march.state, set, 'you died on the road'), set);
   const day = rollDay(march.state, set);
   const journey = rollStretch(march.state, day.journey);
   const stop = passStop(withRouteStops(march.state, journey), journey);
@@ -1184,6 +1213,7 @@ function goTo(state: GameState, from: string, dest: string, via?: string): Trave
   const gap: MapGap = { ...mapped, hoursPerLeg: hoursAtPace(state, mapped.hoursPerLeg, mapped.terrain) };
   if (gap.steps === 1) {
     const march = marchHours(state, gap.terrain, `${state.seed ?? ''}|${from}|${dest}|${state.turn ?? 0}`, gap.hoursPerLeg);
+    if (march.dead) return diedOnRoad(march, `Travel: on the way from ${from} toward ${dest}; you died on the road`, null);
     const a = arrive(march.state, dest, gap.hoursPerLeg, via ?? from, gap.terrain);
     return {
       ...a,
@@ -1197,6 +1227,7 @@ function goTo(state: GameState, from: string, dest: string, via?: string): Trave
 function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const legsDone = j.legsDone + 1;
   const march = marchHours(state, j.terrain, tripKey(state, j), j.hoursPerLeg);
+  if (march.dead) return diedOnRoad(march, stillOn(march.state, j, 'you died on the road'), j);
   const sinceCheck = (j.hoursSinceCheck ?? 0) + j.hoursPerLeg;
   const day = rollDay(march.state, { ...j, legsDone, lost: false, hoursSinceCheck: sinceCheck });
   const extra = [...march.status, ...day.status];
@@ -1422,7 +1453,15 @@ function exhaust(state: GameState): { state: GameState; line: string } {
  * SRD Extended Travel (tabletop): the road hours go on the world clock's day, and each hour past 8 in that day
  * calls a Constitution save, DC 10 + the hours past 8. `key` is the trip's dice key.
  */
-function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hours: number): { state: GameState; status: string[]; facts: string[] } {
+interface March {
+  state: GameState;
+  status: string[];
+  facts: string[];
+  /** The march killed the PC (Exhaustion 6): the trip stops where they fell, and nothing more is rolled. */
+  dead?: boolean;
+}
+
+function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hours: number): March {
   if (terrain === 'streets') return { state, status: [], facts: [] };
   const since = roadDayStart(state);
   const before = roadHoursToday(state);
@@ -1432,7 +1471,7 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
   let s = logged;
   const status: string[] = [];
   let failed = 0;
-  for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after); h++) {
+  for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after) && !s.deathSaves?.dead; h++) {
     const rec = resolveCheckRecord({
       label: 'Extended Travel: Constitution save',
       mods: conSaveMods(s),
@@ -1447,8 +1486,24 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
       failed++;
     }
   }
+  if (s.deathSaves?.dead) {
+    return { state: s, status, facts: ['The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.'], dead: true };
+  }
   const facts = failed ? ['The forced march wore you down; you are more exhausted than before.'] : [];
   return { state: s, status, facts };
+}
+
+/** The trip ends where the march killed the PC: no weather, jobs, stretch or arrival after death. */
+function diedOnRoad(march: March, receipt: string, journey: TravelJourney | null): TravelCommit {
+  return {
+    state: journey ? { ...march.state, currentLocation: UNDERWAY_HERE, journey } : march.state,
+    handled: true,
+    arrived: false,
+    outcome: 'unchanged',
+    extra: march.status,
+    facts: march.facts,
+    receipt,
+  };
 }
 
 function daySpentLines(state: GameState, j: TravelJourney): string[] {
@@ -1736,14 +1791,17 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
       };
     }
     const answered = j.encounter ? answersMeeting(j.encounter, input, state.turn) : null;
-    const helped = answered ? { ...j, encounter: answered } : j;
-    const slipped = !!helped.encounter?.escaped && helped.encounter.escapedTurn === state.turn;
+    const help = answered?.engaged && answered.kind === 'plea' ? helpPlea(state, answered) : null;
+    const helped = answered ? { ...j, encounter: help?.encounter ?? answered } : j;
+    const slipped = !help && !!helped.encounter?.escaped && helped.encounter.escapedTurn === state.turn;
     return {
-      state: { ...state, currentLocation: UNDERWAY_HERE, journey: helped },
+      state: { ...(help?.state ?? state), currentLocation: UNDERWAY_HERE, journey: helped },
       handled: true,
       arrived: false,
       outcome: slipped ? 'slipped away' : 'unchanged',
       receipt: `${where}; ${j.to} still ahead${helped.encounter ? encounterNote(helped) : ''}`,
+      ...(help?.extra.length ? { extra: help.extra } : {}),
+      ...(help ? { facts: [help.fact] } : {}),
     };
   }
   const parkedOnRoad = isRoadLabel(state.currentLocation);

@@ -206,8 +206,10 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
   it('pushing past 8 hours calls for Constitution saves (Extended Travel)', () => {
     const s = quietEvening('march', { roadHours: 8 });
     expect(dayIsSpent(s, s.journey!)).toBe(true);
-    expect(journeyPads(s).slice(0, 2)).toEqual(['Make camp', 'Push on through the night']);
-    const pushed = commitTravel(s, 'Push on through the night');
+    const [camp, push] = journeyPads(s);
+    expect(camp).toBe('Make camp');
+    expect(push).toMatch(/^Push on into the \w+, but each failed save wears you down more$/);
+    const pushed = commitTravel(s, push!);
     expect((pushed.extra ?? []).some((l) => /Extended Travel: Constitution save/.test(l))).toBe(true);
   });
 });

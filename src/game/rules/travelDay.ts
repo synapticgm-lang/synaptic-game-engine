@@ -196,7 +196,8 @@ export const JOB_CHIP: Readonly<Record<TravelJob, string>> = {
 
 export const TRAVEL_ON_CHIP = 'Travel on';
 export const CAMP_CHIP = 'Make camp';
-export const PUSH_ON_CHIP = 'Push on through the night';
+/** The push-on chip's head; the pad adds the hour it walks into and what a failed save costs (`travelJourney`). */
+export const PUSH_ON_CHIP = 'Push on';
 
 export type TravelEngineChip = TravelJob | 'travel on' | 'camp' | 'push on';
 
@@ -228,6 +229,21 @@ export const MEETING_WANT: Readonly<Record<RoadEncounterKind, readonly string[]>
   signs: ['fresh tracks cross the way', 'a campfire still warm beside the path', 'a cart lies broken and looted', 'claw marks scar a tree at head height'],
   plea: ['a hurt traveler begs for help with a wound', 'a child is lost and asks the way home', 'a farmer begs help with a stuck cart', 'a pilgrim asks for food'],
   lair: ['a den mouth with bones at the threshold', 'a nest high in the rocks', 'a burrow with fresh spoil heaped outside', 'a cave that smells of a beast'],
+};
+
+/**
+ * What helping each plea is (keyed by its `MEETING_WANT.plea` want): the writer's fact, and a pack cost. A plea that
+ * costs a ration with none in the pack cannot be helped; the meeting is passed by and the fact says why.
+ */
+export const PLEA_HELP: Readonly<Record<string, { fact: string; ration?: true; cannot?: string }>> = {
+  'a hurt traveler begs for help with a wound': { fact: "You stopped and bound the hurt traveler's wound." },
+  'a child is lost and asks the way home': { fact: 'You showed the lost child the way home.' },
+  'a farmer begs help with a stuck cart': { fact: "You put your shoulder to the farmer's cart and freed it from the mud." },
+  'a pilgrim asks for food': {
+    fact: 'You gave the pilgrim a day of your rations.',
+    ration: true,
+    cannot: 'You had no food to give the pilgrim, who went on hungry.',
+  },
 };
 
 /** Stop names per ground (original, not from any licensed setting). */
