@@ -1009,10 +1009,6 @@ function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string
 /** Line-gate reasons about how a token was declared, not about what the line says. */
 const BINDING_ONLY_REASONS = new Set(['unbound-tok', 'unknown-id', 'use-class']);
 
-function keepCleanLines(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string): TokenLine[] {
-  return beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName).ok);
-}
-
 /**
  * 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry,
  * and the field labels the System window prints for this housing.
@@ -1245,7 +1241,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = keepCleanLines(beat, enumRefs, known, counts, said, pcName);
+    const clean = beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, known, counts, said, pcName).ok);
     const fns = new Set(clean.map((l) => l.fn));
     const partialOk = opts?.lenient
       ? clean.length >= 1

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { compileOpeningCard, openingCastNote } from './openingEstablishment';
 import { buildCompletedEventPacket, classifyVerb, compileRefEnum } from './completedEventPacket';
-import { placeTabletopStepPeople, tabletopStepChip } from './tabletopQuestProgress';
+import { applyTabletopQuestTurn, placeTabletopStepPeople, tabletopStepChip } from './tabletopQuestProgress';
 import { peopleHere } from './chipLegality';
 import { TABLETOP_MAIN_SPINES, tabletopSpineGiver, tabletopSpineToStarterQuest } from '../data/quests/tabletopMainSpines';
 import { openDungeonCard, advanceDungeonCard } from './dungeonCard';
@@ -85,8 +85,10 @@ describe('tt-fix-5 N4 a step inside the keep does not tick from outside the gate
         { id: 'o2', description: 'Discover the sealed crack in the great hall floor', completed: false, place: 'Keep Gate', room: 'hall' },
       ])],
     });
-  it('outside the gate no step chip; inside the keep the ground-floor step', () => {
-    expect(tabletopStepChip(steps('Keep Gate'))).toBeFalsy();
+  it('outside the gate the ground-floor step is the way in and does not tick; inside it ticks (tt-fix-11)', () => {
+    expect(tabletopStepChip(steps('Keep Gate'))).toMatch(/ground floor/);
+    const chip = tabletopStepChip(steps('Keep Gate'))!;
+    expect(applyTabletopQuestTurn(steps('Keep Gate'), chip, 'Keep Gate').state.quests![0]!.objectives![0]!.completed).toBe(false);
     expect(tabletopStepChip(steps('Keep Gate — Broken Gate'))).toMatch(/ground floor/);
   });
 });

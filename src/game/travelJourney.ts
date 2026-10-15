@@ -427,8 +427,10 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (roadMeetingOver(enc)) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
-  if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'].map(withFailCost);
-  return (FIXED_ENCOUNTER_PADS[enc.kind] ?? []).map(withFailCost);
+  // Only a meeting that can force a fight has a check to fail; a peaceful one is simply passed by.
+  const cost = fightPad(enc) ? withFailCost : (p: string) => p;
+  if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'].map(cost);
+  return (FIXED_ENCOUNTER_PADS[enc.kind] ?? []).map(cost);
 }
 
 /** TT32 — a chip that runs a check says what a failure costs: the meeting forces the fight. */

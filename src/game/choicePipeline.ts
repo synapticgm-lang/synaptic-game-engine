@@ -369,7 +369,7 @@ export function isLegalEnginePad(choice: string): boolean {
   const t = (choice ?? '').replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
   if (!t) return false;
   if (
-    /^(wait(?:\s+and\s+(?:watch|listen(?:\s+carefully)?))?|look around|ask a direct question|ask what (?:they want|is going on)|press (?:the attack|for leverage)|try to flee|parley|check status|check the exits?|force a path forward|leave through the nearest exit|call out to a bystander|scout (?:the )?(?:exit|area|room|cell)|inspect the (?:immediate )?surroundings|listen for the real answer|walk away|ready yourself|change position|walk the battlement)$/i.test(
+    /^(wait(?:\s+and\s+(?:watch|listen(?:\s+carefully)?))?|look around|ask a direct question|ask what (?:they want|is going on)|press (?:the attack|for leverage)|try to flee|parley|check status|check the exits?|leave through the nearest exit|call out to a bystander|scout (?:the )?(?:exit|area|room|cell)|inspect the (?:immediate )?surroundings|listen for the real answer|walk away|ready yourself|change position|walk the battlement)$/i.test(
       t
     )
   ) {
@@ -706,10 +706,6 @@ export function sceneSafeFallbacks(
   if (/\b(car|van|vehicle|truck|wreck)\b/i.test(storyProse)) {
     options.push('Search the vehicle more carefully');
   }
-  if (/\b(door|gate|path|corridor|alley|gap|arch|rubble)\b/i.test(storyProse)) {
-    options.push('Force a path forward');
-  }
-
   // Path2 Diplomatic / Trade / Faction — honor alone invent gate + UI context
   const isUIContext = isUIExaminationContext(storyProse);
   if (!alone && !isUIContext && /\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {

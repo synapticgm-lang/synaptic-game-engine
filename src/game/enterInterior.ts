@@ -8,6 +8,7 @@ import { placeAllowsDungeon } from './dungeonLifecycle';
 import { isDungeonCard, openDungeonCard } from './dungeonCard';
 import { storyChip } from './choiceRanking';
 import { classifyVerb } from './completedEventPacket';
+import { tabletopStepIsDoor } from './tabletopQuestProgress';
 
 const ENTER_ACTION =
   /\b(enter|go in|step in|head in|inside|forward|sneak(?:ing)? in|move (?:in|forward)|scout(?:ing)?(?:\s+the)?\s+entrance|through the (?:door|doors))\b/i;
@@ -32,6 +33,8 @@ function takesObjectiveHere(state: GameState, action: string): boolean {
 /** Would taking the quest objective here (the chip `chip`) open this place's interior? */
 export function objectiveOpensInterior(state: GameState, chip: string): boolean {
   if (isDungeonCard(state.activeDungeon) || alreadyInSeededDungeon(state)) return false;
+  // A quest step its record places inside this place is the way in, whatever its verb ("Search the keep…").
+  if (tabletopStepIsDoor(state, chip)) return true;
   // A talk stage ("Ask what they want") is carried out by speaking to whoever is here, never by going inside.
   const verb = classifyVerb(chip);
   if (verb === 'spoke' || verb === 'parleyed') return false;

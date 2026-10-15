@@ -54,8 +54,8 @@ const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r
 
 describe('29z4 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-14w');
-    expect(BUILD_STAMP).toBe('2026-10-14w');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-14x');
+    expect(BUILD_STAMP).toBe('2026-10-14x');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

@@ -7,8 +7,9 @@
  *   place, with its people there, and ticks when the player takes it there.
  * - A move step ("Follow the cart tracks toward the keep", "Escort him up the hill path") ticks only when travel
  *   arrives where it goes, with the person it takes along travelling with the player.
- * Any open step can be taken: doing the gate first does not pay for a talk never had. A tabletop step ticks
- * as story only and pays no XP (SRD XP is monster CR). Other modes are untouched.
+ * Any open talk or look step can be taken: doing the gate first does not pay for a talk never had. A move step
+ * ticks only once every required step before it is done. A tabletop step ticks as story only and pays no XP
+ * (SRD XP is monster CR). Other modes are untouched.
  */
 import type { GameState, Quest } from './types';
 import { mainSpineQuest } from './questPlay';
@@ -150,12 +151,14 @@ function atPlace(state: GameState, place: string): boolean {
 
 /**
  * At the step's place. A step inside it ("the keep's ground floor", "the great hall floor") is taken in a room
- * of that place ("Keep Gate — Ruined hall"), never outside its door, and in the room its anchor names.
+ * of that place ("Keep Gate — Ruined hall"), in the room its anchor names. Outside its door it is 'door': the
+ * same chip is the way in, and taking it opens the place without ticking the step.
  */
-function atStepPlace(state: GameState, place: string, room?: string): boolean {
+function atStepPlace(state: GameState, place: string, room?: string): boolean | 'door' {
   if (!room) return atPlace(state, place);
   const [outer, inner] = (state.currentLocation ?? '').split(/\s+[—–]\s+/);
-  if (!inner || !outer || !atPlace({ ...state, currentLocation: outer }, place)) return false;
+  if (!inner) return atPlace(state, place) && 'door';
+  if (!outer || !atPlace({ ...state, currentLocation: outer }, place)) return false;
   return room === 'inside' || ` ${bare(inner)} `.includes(` ${room.toLowerCase()} `);
 }
 
@@ -164,12 +167,14 @@ function playOpen(state: GameState): Quest | null {
   return mainSpineQuest(state);
 }
 
-/** The open step a person here or this place lets the player take now, with its chip. */
-function takeableSteps(state: GameState): Array<{ idx: number; chip: string; person: string | null }> {
+type TakeableStep = { idx: number; chip: string; person: string | null; door?: boolean };
+
+/** The open step a person here or this place lets the player take now, with its chip (`door`: it opens the place). */
+function takeableSteps(state: GameState): TakeableStep[] {
   const quest = playOpen(state);
   if (!quest) return [];
   const here = peopleHere(state);
-  const out: Array<{ idx: number; chip: string; person: string | null }> = [];
+  const out: TakeableStep[] = [];
   (quest.objectives ?? []).forEach((o, idx) => {
     if (o.completed) return;
     const chip = stepChip(o);
@@ -183,7 +188,8 @@ function takeableSteps(state: GameState): Array<{ idx: number; chip: string; per
       return;
     }
     if (anchor.people.length && !person) return;
-    if (anchor.place ? atStepPlace(state, anchor.place, anchor.room) : !!person) out.push({ idx, chip, person: null });
+    const at = anchor.place ? atStepPlace(state, anchor.place, anchor.room) : !!person;
+    if (at) out.push({ idx, chip, person: null, door: at === 'door' });
   });
   return out;
 }
@@ -194,7 +200,7 @@ function arrivedMoveStep(state: GameState, quest: Quest, hereBefore: string | un
   if (hereBefore === undefined || !here || here === hereBefore || isJourneyUnderway(state)) return -1;
   const people = peopleHere(state);
   return (quest.objectives ?? []).findIndex((o, idx) => {
-    if (o.completed) return false;
+    if (o.completed || quest.objectives!.slice(0, idx).some((p) => !p.completed && !p.optional)) return false;
     const anchor = tabletopStepAnchor(state, quest, idx);
     if (anchor.kind !== 'move' || !anchor.place || !atPlace(state, anchor.place)) return false;
     if (WITH_PERSON_VERB.test(o.description) && anchor.people.length) {
@@ -226,6 +232,11 @@ export function tabletopStepChip(state: GameState): string | null {
   return takeableSteps(state)[0]?.chip ?? null;
 }
 
+/** The chip is a step taken inside this place and the player stands outside its door. */
+export function tabletopStepIsDoor(state: GameState, chip: string): boolean {
+  return takeableSteps(state).some((s) => s.door && chipKey(s.chip) === chipKey(chip));
+}
+
 const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;
 
 /** `hereBefore` is where the player stood before this turn's move, so a move step can tick on arrival. */
@@ -237,12 +248,14 @@ export function applyTabletopQuestTurn(input: GameState, playerInput: string, he
   const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const said = chipKey(action);
   const moved = arrivedMoveStep(state, quest, hereBefore);
+  // A step inside a place is taken from inside it: the turn that walks in through its door does not tick it.
+  const doorBefore = hereBefore === undefined ? [] : takeableSteps({ ...state, currentLocation: hereBefore });
   const taken =
     moved >= 0
       ? { idx: moved, chip: stepChip(quest.objectives![moved]!) ?? quest.objectives![moved]!.description }
       : takeableSteps(state).find(
           (s) =>
-            said === chipKey(s.chip)
+            (!s.door && !doorBefore.some((b) => b.door && b.idx === s.idx) && said === chipKey(s.chip))
             || (!!s.person
               && TALK_VERB.test(action)
               && (said.includes(bare(s.person)) || peopleHere(state).some((n) => isGiverName(n, s.person!) && said.includes(bare(n)))))

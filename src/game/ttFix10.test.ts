@@ -216,7 +216,7 @@ describe('5 — the cursed-keep quests lead into the keep', () => {
     }
   });
 
-  it('at the gate the inside step is offered, taking it opens the keep and ticks the step', () => {
+  it('at the gate the inside step is offered and taking it opens the keep; it ticks when taken inside (tt-fix-11)', () => {
     const s = ck({ quests: [spineQuest('ck-spine-scholars-folly', 2)], currentLocation: 'Keep Gate', npcMemories: [{ ...silas, location: 'Keep Gate' }] } as Partial<GameState>);
     const chip = storyChip(s);
     expect(chip).toBe('Recover the lost survey journals');
@@ -224,7 +224,8 @@ describe('5 — the cursed-keep quests lead into the keep', () => {
     const inside = maybeEnterInteriorDungeon(s, chip!);
     expect(inside.activeDungeon).toBeTruthy();
     expect(inside.currentLocation).toMatch(/^Keep Gate [—–] /);
-    const turn = applyTabletopQuestTurn(inside, chip!, 'Keep Gate');
+    expect(applyTabletopQuestTurn(inside, chip!, 'Keep Gate').state.quests![0]!.status).toBe('active');
+    const turn = applyTabletopQuestTurn(inside, chip!, inside.currentLocation);
     expect(turn.state.quests![0]!.status).toBe('completed');
   });
 });

@@ -39,14 +39,10 @@ function pcSubject(state: GameState): string {
 
 const engineFact = (state: GameState) => state.completedEvent?.engineResult ?? '';
 
-function openQuests(state: GameState) {
-  return (state.quests ?? []).filter((q) => q.revealed && q.status === 'active');
-}
-
 /** A sentence that reads out the trip's legs or time, names a quest's title, or gives away an open quest step. */
 export function recordReadoutProblem(state: GameState, sentence: string, playerInput = ''): string | null {
   if (travelRecordRead(sentence, engineFact(state))) return RECORD_READOUT;
-  const quests = openQuests(state);
+  const quests = (state.quests ?? []).filter((q) => q.revealed && q.status === 'active');
   const titles = quests.map((q) => q.name ?? '');
   if (questTitleNamed(titles, sentence)) return RECORD_READOUT;
   const steps = quests.flatMap((q) => (q.objectives ?? []).filter((o) => !o.completed).map((o) => o.description));

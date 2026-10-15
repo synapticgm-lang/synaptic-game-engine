@@ -2811,7 +2811,7 @@ export function useGame() {
       const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput, { romance: romanceAllowed(settingsRef.current) });
       liveCurrent = storyTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...storyTurn.receipts];
-      const tabletopTurn = applyTabletopQuestTurn(liveCurrent, sanitizedInput, hereBeforeMove);
+      const tabletopTurn = applyTabletopQuestTurn(liveCurrent, sanitizedInput, hereAtTurnStart);
       liveCurrent = tabletopTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...tabletopTurn.receipts];
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.

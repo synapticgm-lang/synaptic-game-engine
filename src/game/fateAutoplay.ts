@@ -1203,7 +1203,7 @@ export async function headlessFateTurn(
   const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
-  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, hereBeforeMove);
+  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
   arcState = tabletopTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.

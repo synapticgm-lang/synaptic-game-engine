@@ -137,10 +137,6 @@ export function isOpenGround(state: GameState): boolean {
 
 const BASEMENT = /\b(?:basements?|cellars?|undercrofts?|crypts?|catacombs?|stairs? down|trapdoor)\b/i;
 
-function gmBodies(state: GameState): string[] {
-  return (state.log ?? []).filter((e) => e.role === 'gm' && norm(e.content)).map((e) => norm(e.content));
-}
-
 export function basementEstablished(state: GameState): boolean {
   const loc = low(state.currentLocation);
   const card = (state.places ?? []).find((p) => low(p.name) === loc);
@@ -149,7 +145,7 @@ export function basementEstablished(state: GameState): boolean {
     state.locationSheet?.name,
     card?.description,
     ...(state.sceneFacts?.props ?? []),
-    ...gmBodies(state).slice(-3),
+    ...(state.log ?? []).filter((e) => e.role === 'gm' && norm(e.content)).map((e) => norm(e.content)).slice(-3),
   ].join(' ');
   return BASEMENT.test(hay);
 }
@@ -169,11 +165,6 @@ function moveDestination(state: GameState, chip: string): string | null {
   if (!c.handled) return null;
   if (c.state.journey && c.state.journey !== state.journey) return c.state.journey.to;
   return c.state.currentLocation !== state.currentLocation ? c.state.currentLocation ?? null : null;
-}
-
-/** The place the player just came from: the journey's start on the road, else the previous place. */
-function cameFrom(state: GameState): string {
-  return isJourneyUnderway(state) ? state.journey?.from ?? '' : state.circling?.prevPlace ?? '';
 }
 
 /** Would the travel engine actually move the player on this chip? */
@@ -240,7 +231,8 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   if (WALK_AWAY_CHIP.test(label) && !fight) {
     const dest = moveDestination(state, label);
     if (!dest) return { kind: 'impossible-chip', detail: `"${label}" leads to no other exit from here` };
-    if (low(dest) === low(cameFrom(state))) {
+    // The place the player just came from: the journey's start on the road, else the previous place.
+    if (low(dest) === low(isJourneyUnderway(state) ? state.journey?.from ?? '' : state.circling?.prevPlace ?? '')) {
       return { kind: 'impossible-chip', detail: `"${label}" only turns back toward ${dest}` };
     }
   }
@@ -297,15 +289,11 @@ export function dropAbsentListenerChips(state: GameState, chips: string[], story
   return kept.length || !chips.length ? kept : ['Inspect the immediate surroundings'];
 }
 
-function lastPlayerLine(state: GameState): string {
-  return [...(state.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content))?.content ?? '';
-}
-
 /**
  * The live chip list after a beat: legal here and not the action the player just took
  * (typed or tapped — an inspect chip after a typed investigate of the same thing is the same move).
  */
 export function liveChips(state: GameState, chips: string[], storyProse?: string): string[] {
-  const action = lastPlayerLine(state);
+  const action = [...(state.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content))?.content ?? '';
   return legalChips(state, chips, storyProse).filter((c) => !chipRepeatsAction(c, action));
 }

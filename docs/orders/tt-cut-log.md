@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **tt-fix-11:** deleted in the tt-fix-11 commit (stamp `2026-10-14x`). The old text lives at its parent, **`0339063c`**. Line numbers in that section are at `0339063c`.
 - **tt-library-2:** deleted in the tt-library-2 commit (stamp `2026-10-14w`). The old text lives at its parent, **`a76a19d6`**. Line numbers in that section are at `a76a19d6`.
 - **tt-fix-10:** deleted in the tt-fix-10 commit (stamp `2026-10-14v`). The old text lives at its parent, **`6869ec1b`**. Line numbers in that section are at `6869ec1b`.
 - **tt-fix-9:** deleted in the tt-fix-9 commit (stamp `2026-10-14u`). The old text lives at its parent, **`68d01a47`**. Line numbers in that section are at `68d01a47`.
@@ -10,6 +11,17 @@ Every item below can be restored with git.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## tt-fix-11 (restore from `0339063c`)
+
+1. **`src/game/choicePipeline.ts` lines 709–711** — `if (/\b(door|gate|path|corridor|alley|gap|arch|rubble)\b/i.test(storyProse)) { options.push('Force a path forward'); }` in `sceneSafeFallbacks`. What it did: offered "Force a path forward" whenever the prose named a door, gate, path or rubble. No engine action stands behind that chip (no roll, no exit, no room), so the writer improvised a dead turn (lap 15 F T4–T6, D T12). Nothing replaces it; the other scene-safe fallbacks stay.
+2. **`src/game/choicePipeline.ts` line 372** — the `force a path forward|` alternative in the `isLegalEnginePad` regex. What it did: trusted that chip as an engine pad, so it skipped the grounding filter. With no engine action it is not an engine pad. The regex stays with that one alternative removed.
+3. **Single-use helpers folded into their one caller** (same body, no behaviour change; restore only if a second caller appears):
+   - `src/game/chipLegality.ts` `gmBodies` (lines 140–142), `cameFrom` (174–177, its doc line kept as a comment at the call), `lastPlayerLine` (300–302).
+   - `src/game/engineFactGate.ts` `openQuests` (lines 42–44).
+   - `src/game/tokenProse.ts` `keepCleanLines` (lines 1012–1014).
 
 ---
 

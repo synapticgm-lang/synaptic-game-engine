@@ -73,11 +73,12 @@ function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined
   return [...found].slice(0, 8);
 }
 
-/** The prose with every known place name (hubs, their aliases, the save's places) blanked out. */
+/** The prose with every known place name (hubs, their aliases, the save's places and route stops) blanked out. */
 export function maskPlaceNames(state: GameState, prose: string): string {
   const names = [
     ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...(h.aliases ?? [])]),
     ...(state.places ?? []).map((p) => p.name),
+    ...Object.values(state.routeStops ?? {}).flat().map((s) => s.name.replace(/^the\s+/i, '')),
   ]
     .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
     .filter((n) => n.split(' ').length >= 2 || /['’]s\b/.test(n))
