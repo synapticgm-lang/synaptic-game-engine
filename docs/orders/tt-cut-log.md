@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-LK1 locks and alarms
+
+1. **`src/game/combatResolution.ts`** — whole module. Only imported (unused) from `useGame.ts` after 28f moved combat to `engineFight`; no other caller. Restore from parent of the q31-LK1 commit.
+2. **`src/game/stripeCheckout.ts`** — whole module. No remaining imports under `src` / `supabase` / `scripts`. Restore from parent of the q31-LK1 commit.
+3. **`src/game/npcLifecycleFsm.ts` (+ edge mirror) `getActiveLifecycles` / `buildLifecycleSituationSection`** — `.filter` / `.map` arrow bodies rewritten as `for` loops (same behaviour) so ruleCount TOTAL fns do not rise with LK-1.
+
+---
+
 ## q31-SK5 skill XP / named tiers
 
 1. **`src/game/rules/librarySkills.ts` `USES_FOR_RANK` and `rankForUses`** — old use-count → rank 1..3 thresholds (`[0,2,5,9]`). Replaced by skill XP + level in `skillGrowth.ts` (`migrateNamedSkill` / `OLD_RANK_TO_LEVEL`). Library prerequisite text still uses `NAMED_SKILL_RANK_CAP = 3`; evolution fires at `NAMED_SKILL_EVOLVE_LEVEL = 50`.

@@ -249,9 +249,30 @@ export function resolveCheckContext(
   const node = currentDungeonNode(state.activeDungeon);
   const trap = node?.hidden?.traps.find((tr) => !tr.disarmed);
   if (/\b(pick\s+lock|lockpick|disarm|disable\s+trap|jimmy)\b/i.test(t) || intent.kind === 'search' && /\block|trap|chest|cache\b/i.test(t)) {
-    const lock = trap?.dc != null
-      ? { dc: trap.dc, rung: 'medium' as TaskRung, ...(state.engineMode !== 'dnd' ? { skillTier: 'Apprentice' as SkillTierName } : {}) }
-      : taskDc(state, 'lock');
+    // LK-1: lootable / door lock stamps dc + tier when present (shared SkillGate fields).
+    const lootables = node?.hidden?.lootables ?? [];
+    const closed: typeof lootables = [];
+    let namedLoot: (typeof lootables)[0] | undefined;
+    for (let i = 0; i < lootables.length; i++) {
+      const l = lootables[i]!;
+      if (l.opened || !l.lock) continue;
+      closed.push(l);
+      if (!namedLoot && t.includes(l.label.toLowerCase())) namedLoot = l;
+    }
+    const gate = namedLoot?.lock ?? closed[0]?.lock ?? node?.hidden?.doorLock;
+    const fromGate = gate
+      ? {
+          dc: gate.dc ?? (state.engineMode === 'dnd' ? 15 : TIER_TARGET[(gate.tier as SkillTierName) || 'Apprentice']),
+          rung: 'medium' as TaskRung,
+          ...(state.engineMode !== 'dnd'
+            ? { skillTier: ((gate.tier as SkillTierName) || 'Apprentice') as SkillTierName }
+            : {}),
+        }
+      : null;
+    const lock = fromGate
+      ?? (trap?.dc != null
+        ? { dc: trap.dc, rung: 'medium' as TaskRung, ...(state.engineMode !== 'dnd' ? { skillTier: 'Apprentice' as SkillTierName } : {}) }
+        : taskDc(state, 'lock'));
     return {
       label: 'Thievery / lock',
       attr: 'DEX',

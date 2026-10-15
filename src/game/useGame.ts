@@ -7,6 +7,7 @@ import { buildArchetypeIntro } from './archetypes';
 import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
+import { resolveLockAttempt } from './lockAttempt';
 import { advanceDungeonCard, isDungeonCard, parkDungeonCard, previewDungeonCard } from './dungeonCard';
 import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
@@ -55,12 +56,6 @@ import {
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
-import { 
-  rollCombatOutcome, 
-  applyCombatOutcome, 
-  formatCombatOutcomeForPrompt,
-  type CombatOutcome,
-} from './combatResolution';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
@@ -2674,17 +2669,25 @@ export function useGame() {
       }
 
       let ledgerTrap: import('./ledgerTrap').LedgerTrapRound | null = null;
+      let lockReceipts: string[] = [];
       if (
         tokenD.kind === 'none'
         && (
-          /\b(disarm|disable\s+trap|pick\s+lock|lockpick|jimmy)\b/i.test(sanitizedInput)
-          || (intentForMandate.kind === 'search' && /\btrap|lock|chest|cache\b/i.test(sanitizedInput))
+          /\b(disarm|disable\s+trap|pick\s+lock|lockpick|jimmy|unlock|spot|alarm)\b/i.test(sanitizedInput)
+          || (intentForMandate.kind === 'search' && /\btrap|lock|chest|cache|alarm|safe\b/i.test(sanitizedInput))
         )
       ) {
-        const trapResolved = resolveLedgerTrap(liveCurrent, check);
-        if (trapResolved) {
-          liveCurrent = trapResolved.state;
-          ledgerTrap = trapResolved.round;
+        // LK-1: one lock/alarm resolve path (key, pick, fail streak, alarm) before trap fall-through.
+        const lockResolved = resolveLockAttempt(liveCurrent, sanitizedInput, { pick: check });
+        if (lockResolved) {
+          liveCurrent = lockResolved.state;
+          lockReceipts = lockResolved.receipts;
+        } else {
+          const trapResolved = resolveLedgerTrap(liveCurrent, check);
+          if (trapResolved) {
+            liveCurrent = trapResolved.state;
+            ledgerTrap = trapResolved.round;
+          }
         }
       }
 
@@ -3604,6 +3607,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               : []),
             ...(ledgerFlee ? [formatFleeReceipt({ flee: ledgerFlee })] : []),
             ...(ledgerTrap ? [formatTrapReceipt(ledgerTrap)] : []),
+            ...lockReceipts,
             ...(isExplorableDungeon(liveCurrent.activeDungeon)
               && remainingDungeonMobs(liveCurrent).alive === 0
               && (ledgerRound?.enemyDead || ledgerFlee?.fled)

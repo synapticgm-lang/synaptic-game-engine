@@ -926,6 +926,8 @@ export interface GameState {
   sandboxAwardKeys?: string[];
   /** 29z3 — locks the player tried without the skill (the next level-up rank prefers these). */
   skillGateTries?: Array<{ id: string; label: string; skill: string; rank: number; turn: number }>;
+  /** LK-1 — pick fail streak + alarm memory per lock id (shared mechanism, not a second checker). */
+  lockAttempts?: Record<string, { failsInRow: number; alarmSpotted?: boolean; alarmDisarmed?: boolean; alarmSounded?: boolean }>;
   /** Journal Resume main pin — map chrome highlights this place name. */
   mapFocusPlace?: string | null;
   activeEncounter?: ActiveEncounter | null;

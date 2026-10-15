@@ -211,11 +211,13 @@ function buildHiddenForNode(
   return { traps, lootables, secrets, mobs, ...(doorLock ? { doorLock } : {}) };
 }
 
-/** 29z3 — safes and better chests need a skill (existing check skills; no new tree). */
+/** 29z3 / LK-1 — safes and better chests need a skill; safe/guarded carry alarm + higher DC by data. */
 function lootLock(tags: string[], grade: 1 | 2 | 3): SkillGate | null {
-  if (tags.includes('control')) return { skill: 'arcana', rank: 1 };
-  if (grade >= 3) return { skill: 'thievery', rank: 2 };
-  if (grade === 2) return { skill: 'thievery', rank: 1 };
+  if (tags.includes('control')) return { skill: 'arcana', rank: 1, kind: 'guarded', dc: 18, tier: 'Journeyman', alarm: { spotDc: 14, disarmDc: 15, sounds: true }, tryHours: 0.2 };
+  if (grade >= 3) {
+    return { skill: 'thievery', rank: 2, kind: 'safe', dc: 20, tier: 'Expert', alarm: { spotDc: 14, disarmDc: 15, sounds: true }, tryHours: 0.25 };
+  }
+  if (grade === 2) return { skill: 'thievery', rank: 1, kind: 'chest', dc: 15, tier: 'Apprentice', tryHours: 0.1 };
   return null;
 }
 

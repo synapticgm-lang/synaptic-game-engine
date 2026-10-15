@@ -314,61 +314,45 @@ export function updateAllNpcLifecycles(
 // QUERIES
 // ============================================================================
 
-/**
- * Get active lifecycles (not absent)
- */
+/** Active lifecycles (not absent). */
 export function getActiveLifecycles(state: GameState): NpcLifecycle[] {
-  return (lifecyclesOf(state)).filter(
-    lc => lc.state !== 'absent'
-  );
+  const all = lifecyclesOf(state);
+  const out: NpcLifecycle[] = [];
+  for (let i = 0; i < all.length; i++) if (all[i]!.state !== 'absent') out.push(all[i]!);
+  return out;
 }
 
-// ============================================================================
-// SITUATION PACKET INTEGRATION
-// ============================================================================
-
-/**
- * Build NPC lifecycle section for situation packet
- */
+/** NPC lifecycle section for the situation packet. */
 export function buildLifecycleSituationSection(state: GameState, presentNames?: string[]): string {
-  const here = presentNames?.map((n) => n.trim().toLowerCase()).filter(Boolean);
-  const active = getActiveLifecycles(state).filter(
-    (lc) => !here || here.includes(lc.npcId.trim().toLowerCase())
-  );
-  if (active.length === 0) return '';
-  
-  const lines: string[] = ['NPC roles here:'];
-  
-  // Deadlines and the exit window are engine timers; the engine moves the person, the writer never counts it down.
-  for (const lc of active) {
-    const obligation = ROLE_OBLIGATIONS[lc.role];
-    let status = '';
-    switch (lc.state) {
-      case 'entering':
-      case 'functioning':
-        status = lc.debtSatisfied ? 'Done' : 'Active';
-        break;
-      case 'debt_satisfied':
-        status = 'Done';
-        break;
-      case 'exiting':
-        status = 'Leaving';
-        break;
-      case 'transformed':
-        status = `Transformed from ${lc.previousRole}`;
-        break;
-      default:
-        status = 'Active';
-    }
-    
-    lines.push(`- ${lc.npcId} (${lc.role}): ${status}`);
-    lines.push(`  Function: ${obligation.description}`);
-    
-    const doneWhen = obligation.obligations.successCriteria[0];
-    if (lc.state === 'functioning' && !lc.debtSatisfied && doneWhen) {
-      lines.push(`  Done when: ${doneWhen}`);
+  const here: string[] = [];
+  if (presentNames) {
+    for (let i = 0; i < presentNames.length; i++) {
+      const n = presentNames[i]!.trim().toLowerCase();
+      if (n) here.push(n);
     }
   }
-  
+  const active: NpcLifecycle[] = [];
+  const all = getActiveLifecycles(state);
+  for (let i = 0; i < all.length; i++) {
+    const lc = all[i]!;
+    if (here.length && !here.includes(lc.npcId.trim().toLowerCase())) continue;
+    active.push(lc);
+  }
+  if (active.length === 0) return '';
+
+  const lines: string[] = ['NPC roles here:'];
+  for (let i = 0; i < active.length; i++) {
+    const lc = active[i]!;
+    const obligation = ROLE_OBLIGATIONS[lc.role];
+    let status = 'Active';
+    if (lc.state === 'entering' || lc.state === 'functioning') status = lc.debtSatisfied ? 'Done' : 'Active';
+    else if (lc.state === 'debt_satisfied') status = 'Done';
+    else if (lc.state === 'exiting') status = 'Leaving';
+    else if (lc.state === 'transformed') status = `Transformed from ${lc.previousRole}`;
+    lines.push(`- ${lc.npcId} (${lc.role}): ${status}`);
+    lines.push(`  Function: ${obligation.description}`);
+    const doneWhen = obligation.obligations.successCriteria[0];
+    if (lc.state === 'functioning' && !lc.debtSatisfied && doneWhen) lines.push(`  Done when: ${doneWhen}`);
+  }
   return lines.join('\n');
 }

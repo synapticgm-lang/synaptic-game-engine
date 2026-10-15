@@ -27,10 +27,34 @@ export interface NodeHiddenLoot {
   grade?: 1 | 2 | 3;
 }
 
-/** 29z3 — a lock that stays shut until the character has this check-skill rank. */
+/** Lock kind for LK-1 pick / alarm data (door | chest | safe | guarded). */
+export type LockKind = 'door' | 'chest' | 'safe' | 'guarded';
+
+/** Alarm on a lock: spot then disarm; a failed pick while unspotted sounds it. */
+export interface LockAlarm {
+  spotDc: number;
+  disarmDc: number;
+  /** True when the alarm makes a noise that alerts earshot watchers. */
+  sounds: boolean;
+}
+
+/**
+ * 29z3 — a lock that stays shut until the character has this check-skill rank.
+ * LK-1 adds optional pick DC / tier, key id, alarm, and try time (shared with SkillGate).
+ */
 export interface SkillGate {
   skill: 'athletics' | 'thievery' | 'arcana';
   rank: number;
+  kind?: LockKind;
+  /** Tabletop pick DC (SRD default 15). */
+  dc?: number;
+  /** LitRPG / Story RPG SK-4 task tier. */
+  tier?: 'Novice' | 'Apprentice' | 'Journeyman' | 'Expert' | 'Master';
+  /** Inventory item name (or id) that opens with no roll. */
+  key?: string;
+  alarm?: LockAlarm;
+  /** Hours the world clock advances on a failed pick (default from kind). */
+  tryHours?: number;
 }
 
 export interface NodeHidden {

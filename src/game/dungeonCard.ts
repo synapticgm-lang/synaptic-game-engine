@@ -27,6 +27,7 @@ import { milestoneXp, type MilestoneKind } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
 import { hidesPart } from './systemHousing';
 import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
+import { resolveLockAttempt } from './lockAttempt';
 import { climbFloor } from './rules/litrpgFloors';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
 
@@ -841,10 +842,42 @@ export function advanceDungeonCard(
     const chest = (node.hidden?.lootables ?? []).find((l) => !l.opened);
     if (foeHere) {
       receipts.push(`Dungeon: ${foeHere.name} stands between you and the chest.`);
-    } else if (chest?.lock && lootableLockedFor(chest, skillRanksOf(next.character))) {
-      receipts.push(`Dungeon: ${skillGateBlockedLine(`The ${chest.label}`, chest.lock, next)}`);
-      next = recordGateTry(next, { id: chest.id, label: chest.label, lock: chest.lock });
-    } else if (chest) {
+    } else if (!chest) {
+      receipts.push(`Dungeon: there is no closed chest in ${node.name}.`);
+    } else if (chest.lock) {
+      // LK-1: key / pick / refuse through the shared lock path; rank gate only if pick never ran.
+      const lockTry = resolveLockAttempt(next, input);
+      if (lockTry) {
+        next = lockTry.state;
+        receipts.push(...lockTry.receipts);
+        if (lockTry.opened) {
+          const opened = (next.activeDungeon?.nodes.find((n) => n.id === node.id)?.hidden?.lootables ?? []).find((l) => l.id === chest.id);
+          if (opened?.opened) {
+            const grade = chest.loot.grade ?? 1;
+            const loot = rollLoot({ profile: chestProfileForGrade(grade), state: next, seed: `${next.seed ?? 'seed'}:${d.dungeonName}:${chest.id}` });
+            next = gainLootMoney({
+              ...next,
+              inventory: [...(next.inventory ?? []), ...loot.items],
+              lootPity: loot.nextPity != null
+                ? { byTier: { ...(next.lootPity?.byTier ?? {}), [loot.pityTier]: loot.nextPity } }
+                : next.lootPity,
+            }, loot.gold, loot.coins);
+            const money = lootMoneyText(loot.gold, loot.coins);
+            receipts.push(`Dungeon: you opened the ${chest.label}.`);
+            if (loot.items.length) receipts.push(`Loot: ${loot.items.map((i) => `[${i.rarity}] ${i.name}`).join(', ')}`);
+            if (money) receipts.push(`Gold Gained: ${money}`);
+            if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
+            if (!loot.items.length && !money) receipts.push(`Dungeon: the ${chest.label} was empty.`);
+          }
+        } else if (!lockTry.refused && lootableLockedFor(chest, skillRanksOf(next.character))) {
+          receipts.push(`Dungeon: ${skillGateBlockedLine(`The ${chest.label}`, chest.lock, next)}`);
+          next = recordGateTry(next, { id: chest.id, label: chest.label, lock: chest.lock });
+        }
+      } else if (lootableLockedFor(chest, skillRanksOf(next.character))) {
+        receipts.push(`Dungeon: ${skillGateBlockedLine(`The ${chest.label}`, chest.lock, next)}`);
+        next = recordGateTry(next, { id: chest.id, label: chest.label, lock: chest.lock });
+      }
+    } else {
       const grade = chest.loot.grade ?? 1;
       const loot = rollLoot({ profile: chestProfileForGrade(grade), state: next, seed: `${next.seed ?? 'seed'}:${d.dungeonName}:${chest.id}` });
       next = gainLootMoney({
@@ -864,8 +897,6 @@ export function advanceDungeonCard(
       if (money) receipts.push(`Gold Gained: ${money}`);
       if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
       if (!loot.items.length && !money) receipts.push(`Dungeon: the ${chest.label} was empty.`);
-    } else {
-      receipts.push(`Dungeon: there is no closed chest in ${node.name}.`);
     }
   } else if (SEARCH_RE.test(input) && !foeHere) {
     const key = `dungeon-search:${d.dungeonName}:${node.id}`;
