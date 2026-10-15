@@ -1,4 +1,4 @@
-import type { GameState } from './types';
+import type { GameState, QuestObjective } from './types';
 import type { ActiveDungeonState, MapNode } from './mapEngine';
 import { initializeDungeon, isDoorLockedFor, moveToNode } from './mapEngine';
 import { skillRanksOf } from './skillRanks';
@@ -6,9 +6,10 @@ import { seedDungeonState } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
 import { placeAllowsDungeon } from './dungeonLifecycle';
 import { isDungeonCard, openDungeonCard } from './dungeonCard';
-import { storyChip } from './choiceRanking';
-import { classifyVerb } from './completedEventPacket';
-import { tabletopStepIsDoor } from './tabletopQuestProgress';
+import { stepChip } from './choiceRanking';
+import { parsePlayerIntent } from './intentParser';
+import { actionMatchesObjective, targetSpot } from './questTargets';
+import { placeTabletopQuestTargets, tabletopStepIsDoor } from './tabletopQuestProgress';
 
 const ENTER_ACTION =
   /\b(enter|go in|step in|head in|inside|forward|sneak(?:ing)? in|move (?:in|forward)|scout(?:ing)?(?:\s+the)?\s+entrance|through the (?:door|doors))\b/i;
@@ -16,30 +17,60 @@ const ENTER_ACTION =
 const INTERIOR_CUE =
   /\b(store|shop|tesco|mart|micro[- ]?dungeon|dungeon|aisle|stockroom|convenience)\b/i;
 
+const chipKey = (s: string) => (s ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
+
 export function playerEntersInterior(action: string, state: GameState): boolean {
   if (!ENTER_ACTION.test(action) && !INTERIOR_CUE.test(action)) return false;
   if (ENTER_ACTION.test(action)) return true;
   return /\b(go|walk|move|head|step|scout)\b/i.test(action) && INTERIOR_CUE.test(action);
 }
 
-/** The player takes the active quest's objective at its own site (the story chip, not a travel step). */
-function takesObjectiveHere(state: GameState, action: string): boolean {
-  const chip = storyChip(state);
-  if (!chip || /^travel\b/i.test(chip)) return false;
-  const clean = (s: string) => s.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
-  return clean(chip) === clean(action) && objectiveOpensInterior(state, chip);
+/** Quests whose open step sits inside this place — player is at the door. Places targets first (G-m57). */
+function doorSteps(state: GameState): QuestObjective[] {
+  const placed = placeTabletopQuestTargets(state);
+  const out: QuestObjective[] = [];
+  for (const q of placed.quests ?? []) {
+    if (q.status !== 'active') continue;
+    for (const o of q.objectives ?? []) {
+      if (o.completed || !o.target) continue;
+      if (targetSpot(placed, o) === 'door') out.push(o);
+    }
+  }
+  return out;
+}
+
+/**
+ * G-m57: the action opens this place because the quest record puts the step inside (targetSpot 'door'),
+ * not because ENTER_ACTION / INTERIOR_CUE matched. Talk never opens. Bare look/search of the outside never opens.
+ */
+function actionTakesDoorStep(state: GameState, action: string): boolean {
+  const intent = parsePlayerIntent(action);
+  if (intent.kind === 'talk') return false;
+  if (tabletopStepIsDoor(state, action)) return true;
+  for (const o of doorSteps(state)) {
+    const chip = stepChip(o);
+    if (chip && chipKey(action) === chipKey(chip)) return true;
+    if (intent.kind === 'move' && (playerEntersInterior(action, state) || actionMatchesObjective(o, action))) {
+      return true;
+    }
+    // Non-look/search intents that name the door step (recover / clear / force…) via the shared matcher.
+    if (intent.kind === 'observe' || intent.kind === 'search') continue;
+    if (actionMatchesObjective(o, action)) return true;
+  }
+  return false;
 }
 
 /** Would taking the quest objective here (the chip `chip`) open this place's interior? */
 export function objectiveOpensInterior(state: GameState, chip: string): boolean {
   if (isDungeonCard(state.activeDungeon) || alreadyInSeededDungeon(state)) return false;
-  // A quest step its record places inside this place is the way in, whatever its verb ("Search the keep…").
-  if (tabletopStepIsDoor(state, chip)) return true;
-  // A talk stage ("Ask what they want") is carried out by speaking to whoever is here, never by going inside.
-  const verb = classifyVerb(chip);
-  if (verb === 'spoke' || verb === 'parleyed') return false;
-  // A look at the site ("Examine the keep gate") is taken from where the player stands; only going in opens it.
-  if (verb === 'inspected' && !ENTER_ACTION.test(chip)) return false;
+  const intent = parsePlayerIntent(chip);
+  // A talk stage is carried out by speaking to whoever is here, never by going inside (m57 fix-1).
+  if (intent.kind === 'talk') return false;
+  // Quest record: a door-step chip (or named door action) opens the place.
+  if (actionTakesDoorStep(state, chip)) return true;
+  // Explicit enter / store cue into a dungeon-capable place — not a look or search of the outside.
+  if (intent.kind === 'observe' || intent.kind === 'search') return false;
+  if (!playerEntersInterior(chip, state) && intent.kind !== 'move') return false;
   const place = state.locationSheet?.name || state.currentLocation || '';
   if (INTERIOR_CUE.test(chip) || INTERIOR_CUE.test(place)) return true;
   return !!place && placeAllowsDungeon(state, place);
@@ -160,36 +191,40 @@ export function maybeAdvanceDungeonRoom(state: GameState, action: string): GameS
 export function maybeEnterInteriorDungeon(state: GameState, action: string): GameState {
   if (isDungeonCard(state.activeDungeon)) return state; // 28i — the dungeon card handles moves inside
   if (alreadyInSeededDungeon(state)) return maybeAdvanceDungeonRoom(state, action);
-  if (!playerEntersInterior(action, state) && !takesObjectiveHere(state, action)) return state;
+  // Place quest targets so targetSpot 'door' is readable before the enter gate (G-m57).
+  const withTargets = placeTabletopQuestTargets(state);
+  const byQuest = actionTakesDoorStep(withTargets, action);
+  const byEnter = playerEntersInterior(action, withTargets);
+  if (!byQuest && !byEnter) return state;
   const place =
-    state.locationSheet?.name
-    || state.currentLocation
+    withTargets.locationSheet?.name
+    || withTargets.currentLocation
     || 'Convenience store';
 
-  // First Blood / store micro-dungeon when store cues present
-  if (INTERIOR_CUE.test(action) || INTERIOR_CUE.test(place)) {
+  // First Blood / store micro-dungeon when store cues present (non-quest enter path).
+  if (!byQuest && (INTERIOR_CUE.test(action) || INTERIOR_CUE.test(place))) {
     const dungeon = buildConvenienceStoreDungeon(
-      state.seed || 'seed',
+      withTargets.seed || 'seed',
       place.replace(/\s+uk$/i, '').trim()
     );
     return {
-      ...state,
+      ...withTargets,
       activeDungeon: { ...dungeon, siteName: place },
       currentLocation: dungeon.nodes?.[0]?.name ?? 'Store entrance',
       locationSheet: {
         name: 'Store entrance',
-        interactables: state.locationSheet?.interactables ?? [],
-        exits: state.locationSheet?.exits ?? [],
-        presentNpcIds: state.locationSheet?.presentNpcIds ?? [],
+        interactables: withTargets.locationSheet?.interactables ?? [],
+        exits: withTargets.locationSheet?.exits ?? [],
+        presentNpcIds: withTargets.locationSheet?.presentNpcIds ?? [],
         mapScale: 'dungeon',
         dangerTier: 1,
       },
     };
   }
 
-  // 29e — procedural dungeon only at allowsDungeon map sites
-  if (!placeAllowsDungeon(state, place)) {
+  // Procedural / card dungeon at allowsDungeon map sites (quest door or explicit enter).
+  if (!placeAllowsDungeon(withTargets, place)) {
     return state;
   }
-  return openDungeonCard(state, place);
+  return openDungeonCard(withTargets, place);
 }

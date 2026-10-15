@@ -460,3 +460,9 @@ Removed, superseded wording kept here verbatim for the record (original SK-4, or
 1. **`src/game/questTargets.ts` `SEARCH_VERB` line 23** — `/\b(?:search|rummage|look around|investigate)\b/i`. Used only by `actionTakes` (:81). Deleted; find/inspect class comes from `parsePlayerIntent` (`search` | `observe`) via `actionMatchesObjective`.
 2. **`src/game/questTargets.ts` `TALK_VERB` line 24** — `/\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i`. Used only by `actionTakes` (:80). Deleted; meet class is `parsePlayerIntent` `talk` (intentParser already exports its own `TALK_VERB` for the packet — kept).
 3. **`src/game/questTargets.ts` `actionTakes` lines 74-82** — private matcher replaced by exported `actionMatchesObjective` (chip / verb+object, intent class, named object). K, G-m57 and QV import this one helper.
+
+## q31-Gm57 site objective opens the interior (restore from parent of the q31-Gm57 commit)
+
+1. **`src/game/enterInterior.ts` `takesObjectiveHere` lines 26-31** — required `storyChip` text equality plus `objectiveOpensInterior`. Deleted; quest entry is `actionTakesDoorStep` (`targetSpot === 'door'` + chip/named/`tabletopStepIsDoor`), not story-chip equality.
+2. **`src/game/enterInterior.ts` `objectiveOpensInterior` classifyVerb spoke/parleyed/inspected branches (lines 38-42) and INTERIOR_CUE/placeAllowsDungeon fallback for look/search** — entry was decided from verb class + cue regexes. Deleted those branches; talk is `parsePlayerIntent` `talk`; bare observe/search of the outside never opens; quest open is the door-step record. `classifyVerb` import removed from this file.
+3. **`src/game/enterInterior.ts` `storyChip` import** — only used by deleted `takesObjectiveHere`. Removed.

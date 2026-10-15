@@ -91,7 +91,14 @@ describe('seed 94 — the quest objective at its own site opens the dungeon', ()
     status: 'active',
     revealed: true,
     location: 'Cathedral Undercroft',
-    objectives: [{ id: 'o1', description: 'Clear the infestation in the cathedral’s lower crypts to prove your baseline stats.', completed: false }],
+    // G-m57: the step sits inside the place — targetSpot is 'door' until the player enters.
+    objectives: [{
+      id: 'o1',
+      description: 'Clear the infestation in the cathedral’s lower crypts to prove your baseline stats.',
+      completed: false,
+      place: 'Cathedral Undercroft',
+      room: 'inside',
+    }],
   } as unknown as Quest;
 
   it('Clear the infestation at Cathedral Undercroft enters a dungeon', () => {

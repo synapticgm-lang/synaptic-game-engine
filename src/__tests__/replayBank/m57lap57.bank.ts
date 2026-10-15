@@ -52,10 +52,11 @@ describe('replay bank m57 (lap 57)', () => {
     expect(F.receiptText(5)).not.toMatch(/entered the rain-cistern|Dungeon room:/);
   });
 
-  it('[m57 fix 1] a site objective still opens the interior; a talk chip never does', () => {
+  it('[m57 fix 1] a talk chip never opens the interior; bare search of the outside neither (G-m57 door record)', () => {
     const s = F.before(5);
     expect(objectiveOpensInterior(s, 'Ask what they want')).toBe(false);
-    expect(objectiveOpensInterior(s, 'Search the cistern')).toBe(true);
+    // G-m57: observe/search of the outside never enters; only a door-step or an enter move does.
+    expect(objectiveOpensInterior(s, 'Search the cistern')).toBe(false);
   });
 
   it('[g5-151 T8 | m57 fix 2] a quoted plan naming Contract Hall is not a HERE claim; the answer repair passes the gate', () => {
