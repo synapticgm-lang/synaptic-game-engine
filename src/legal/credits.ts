@@ -187,13 +187,6 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         url: 'https://github.com/xenova/transformers.js',
       },
       {
-        work: 'languagetool-api',
-        source: 'languagetool-api contributors',
-        license: 'BSD-2-Clause',
-        usedFor: 'Grammar check client on the High tier',
-        url: 'https://www.npmjs.com/package/languagetool-api',
-      },
-      {
         work: 'Fuse.js',
         source: 'Kirollos Risk and contributors',
         license: 'Apache-2.0',

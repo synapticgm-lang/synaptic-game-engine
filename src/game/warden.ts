@@ -13,7 +13,7 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
-import { applyProseWarden, applyProseWardenAsync, crowdSizeForWarden, collectSceneObjectNames } from './proseWarden';
+import { applyProseWarden, crowdSizeForWarden, collectSceneObjectNames } from './proseWarden';
 import { hookLockForWarden } from './hookLock';
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
@@ -63,8 +63,6 @@ function hasCombatContext(
 /**
  * Secondary validation pipeline: intercept structured GM claims against Fact Sheets
  * before they mutate state or reach the player as truth.
- * 
- * Pack 13: Now async to support optional LanguageTool grammar checking for High tier.
  */
 export async function runWarden(
   state: GameState,
@@ -240,9 +238,6 @@ export async function runWarden(
   // Pack 12 Extended Warden Context
   const prevFacts = state.previousSceneFacts;
   
-  // Pack 13: Enable grammar check for High tier (capacityTier === 'high')
-  const enableGrammarCheck = (state.capacityTier ?? 'free') === 'high';
-  
   // DEBUG LOGGING - Phase 2
   const debugEnabled = false; // Set to false after debugging
   const fleeFailed = state.activeEncounter?.caught === true;
@@ -276,7 +271,6 @@ export async function runWarden(
     wasIndoor: prevFacts?.indoor,
     currentTension: state.sceneFacts?.tension,
     previousTension: prevFacts?.tension,
-    enableGrammarCheck,
     inventory: state.inventory,
     sceneProps: collectSceneObjectNames(state),
     lastGmProse:
@@ -305,9 +299,7 @@ export async function runWarden(
     destroyedItems: state.pyoaBranchLedger?.destroyedItems,
   };
   
-  const polishedBase = enableGrammarCheck
-    ? await applyProseWardenAsync(scrub.text, wardenCtx)
-    : applyProseWarden(scrub.text, wardenCtx);
+  const polishedBase = applyProseWarden(scrub.text, wardenCtx);
   const constraints = buildBindingConstraints(state);
   const constraintHits = detectConstraintViolations(polishedBase, constraints);
   const polished = constraintHits.length

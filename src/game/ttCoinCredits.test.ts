@@ -101,7 +101,6 @@ describe('Credits', () => {
 
   it('lists the missing libraries and the in-house coin tables, and never brands with D&D', () => {
     expect(rows.find((r) => /@xenova\/transformers/.test(r.work))?.license).toBe('Apache-2.0');
-    expect(rows.find((r) => r.work === 'languagetool-api')?.license).toBe('BSD-2-Clause');
     expect(rows.find((r) => /coin tables/i.test(r.work))?.license).toBe('Original');
     expect(rows.some((r) => /\bD&D\b|Dungeons & Dragons/.test(`${r.work} ${r.usedFor}`))).toBe(false);
   });

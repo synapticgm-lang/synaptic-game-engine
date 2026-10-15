@@ -64,10 +64,6 @@ export type ProseWardenContext = {
   currentTension?: string;
   previousTension?: string;
   
-  // Pack 13 Grammar Quality
-  /** Enable LanguageTool grammar check (async, adds ~50-100ms). Default: true for High tier, false for Free/Mid. */
-  enableGrammarCheck?: boolean;
-  
   // Phase 1: Deterministic State Architecture
   /** Player inventory for invented container detection. */
   inventory?: Item[];
@@ -777,7 +773,7 @@ const ARTICLE_COLLISION =
   /\b(?:the\s+a|the\s+an|a\s+the|an\s+the|a\s+an|an\s+a|the\s+the|a\s+a)\b/gi;
 
 /**
- * Cheap Free-model English slips (no LanguageTool on Free).
+ * Cheap writer English slips.
  * "half an moments later" → "half a moment later"
  */
 export function scrubFreeEnglishSlips(text: string): string {
@@ -1658,27 +1654,5 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   if (ctx?.ledgerState) {
     next = obeyLedgerNouns(next, ctx.ledgerState, undefined, ctx.isThisTurnsEvent).prose;
   }
-  return next;
-}
-
-/**
- * Async prose warden - includes grammar checking via LanguageTool.
- * Use this for full quality pass (adds ~50-100ms).
- */
-export async function applyProseWardenAsync(text: string, ctx?: ProseWardenContext): Promise<string> {
-  // First apply all fast regex rules
-  let next = applyProseWarden(text, ctx);
-  
-  // Then apply grammar check if enabled
-  if (ctx?.enableGrammarCheck !== false) {
-    try {
-      const { quickGrammarCheck } = await import('./grammarCheck');
-      next = await quickGrammarCheck(next);
-    } catch (error) {
-      console.error('[proseWarden] Grammar check failed:', error);
-      // Silent failure - return regex-fixed version
-    }
-  }
-  
   return next;
 }

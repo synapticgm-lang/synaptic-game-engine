@@ -52,8 +52,8 @@ const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r
 
 describe('29z8 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-15l');
-    expect(BUILD_STAMP).toBe('2026-10-15l');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-15m');
+    expect(BUILD_STAMP).toBe('2026-10-15m');
   });
 });
 

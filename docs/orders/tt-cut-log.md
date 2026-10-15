@@ -254,3 +254,13 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 ## q31-scanner whole-tree rule scanner
 
 1. **`scripts/ruleCount.mjs` lines 5-20 (at `82cb32b4`)** - the fixed `files` list of 14 paths as the only thing TOTAL counted. What it did: limited the "ruleCount TOTAL must not rise" gate to 14 files, so rules added anywhere else in `src/game` or `_shared/gm` went uncounted. Replaced by a walk of every source file under `src/game` and `supabase/functions/_shared/gm` (tests and `.d.ts` excluded). The 14 paths are kept as `old14` and printed as the `OLD14` line, so the old trend line continues. `src/game/fullProseGate.ts` no longer exists, so OLD14 counts 13 files, the same as before.
+
+## q31-LToff LanguageTool removed for good (John 12:47)
+
+1. **`src/game/grammarCheck.ts` (whole file, at `1c4412be`)** - `getLanguageTool()`, `quickGrammarCheck()`, `fullGrammarCheck()` and `GrammarCheckResult`. What it did: sent High-tier prose to the public `api.languagetool.org` and applied its replacements. Deleted, no replacement (John 12:47: LanguageTool off for good).
+2. **`src/game/proseWarden.ts` lines 66-69 and 1664-1684** - `enableGrammarCheck?: boolean` on `ProseWardenContext` and `applyProseWardenAsync()`. What they did: the flag and the async wrapper that ran `applyProseWarden` then `quickGrammarCheck`. The wrapper had no other job, so it is gone; `applyProseWarden` is the only path. The line 780 comment no longer mentions LanguageTool.
+3. **`supabase/functions/_shared/gm/proseWarden.ts` same lines** - the same flag and wrapper. Its `import('./grammarCheck')` pointed at a file that never existed on the edge (a dead import whose failure was caught silently). Deleted the same way.
+4. **`src/game/warden.ts` lines 67, 243-244, 279, 308-310** - the "Pack 13 async for LanguageTool" comment, `const enableGrammarCheck = capacityTier === 'high'`, the ctx field, and the `polishedBase` branch. `runWarden` now always calls `applyProseWarden`. It stays `async` so no caller changes.
+5. **`package.json` line 44** - `"languagetool-api": "^1.1.2"`, and its tree in `package-lock.json` (`npm uninstall languagetool-api`).
+6. **`src/legal/credits.ts` lines 189-195** - the `languagetool-api` (BSD-2-Clause) credits row. The library is no longer shipped.
+7. **`src/game/ttCoinCredits.test.ts` line 104** - `expect(rows.find((r) => r.work === 'languagetool-api')?.license).toBe('BSD-2-Clause')`. Dropped with the row (John 12:47).
