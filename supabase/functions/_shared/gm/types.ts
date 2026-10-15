@@ -1901,6 +1901,8 @@ export interface Settings {
   sttEnabled: boolean;
   diceAnimation: DiceAnimationMode;
   contentMode: ContentMode;
+  /** Wellbeing check-ins for repeated heavy moments (F1 / F5); off only pauses those. Default on. */
+  wellbeingCheckIns?: boolean;
   kidModeLocked: boolean;
   contentPin: string | null;
   /** Pack 7 base rating. Kid Mode forces pg13 behavior. */

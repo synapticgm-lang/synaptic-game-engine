@@ -31,6 +31,7 @@ import { abilityModOf, realEncounterCr, statBlockForEncounter } from './rules/sr
 import { deriveTabletopSheet } from './tabletop/characterBuild';
 import { turnRng } from './seededRng';
 import { parsePlayerIntent } from './intentParser';
+import { spineSelfEnding } from './pyoaSpine';
 import { commitDeath } from './rules/death';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
@@ -190,7 +191,7 @@ function forcedFightOpener(flee: boolean, foe: string): string {
 /** Resolve fight / flee / parley on a live (or pending) encounter. Null when the input is not a fight action. */
 export function resolveEngineFight(state: GameState, playerInput: string): EngineFightResult | null {
   const input = (playerInput ?? '').trim();
-  if (parsePlayerIntent(input, state).targetsSelf) {
+  if (parsePlayerIntent(input, state).targetsSelf || spineSelfEnding(state, input)) {
     const end = commitDeath(state, 'self', turnRng(state, 'self-stop'));
     return { state: end.state, receipts: end.receipts, facts: `${SELF_STOP_HEAD} ${end.fact}`, noTerminal: true };
   }

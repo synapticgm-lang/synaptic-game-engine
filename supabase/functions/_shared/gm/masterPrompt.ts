@@ -518,9 +518,10 @@ export function buildMasterPrompt(
   );
 
   const choiceDna = formatChoiceTierModeDna(state.engineMode);
-  const playerRules = state.engineMode === 'dnd'
-    ? [formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode), formatSessionZeroForPrompt(state.sessionZero)].filter(Boolean).join('\n\n')
-    : '';
+  const playerRules = [
+    state.engineMode === 'dnd' ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode) : '',
+    formatSessionZeroForPrompt(state.sessionZero),
+  ].filter(Boolean).join('\n\n');
 
   return `
 ═══════════════════════════════════════════════════════════════════════════

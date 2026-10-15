@@ -76,14 +76,16 @@ export function cleanSessionZeroList(raw: string | string[] | null | undefined):
   return out;
 }
 
+/** Every save's default Line, in every mode (Order S; Lines and Veils): the moment may fade, the method never shows. */
+export const DEFAULT_SESSION_LINES = ['self-harm method'];
+
 /**
  * The session-zero limits for the writer. Lines never appear; veils happen off-screen and are summarised in one
  * plain sentence. These shape content only; they never change a number the engine owns.
  */
 export function formatSessionZeroForPrompt(sz: { lines?: string[]; veils?: string[] } | null | undefined): string {
-  const lines = cleanSessionZeroList(sz?.lines);
+  const lines = cleanSessionZeroList([...DEFAULT_SESSION_LINES, ...cleanSessionZeroList(sz?.lines)]);
   const veils = cleanSessionZeroList(sz?.veils);
-  if (!lines.length && !veils.length) return '';
   return [
     'TABLE LIMITS (set by the player at session zero — always honor them):',
     ...(lines.length ? [`Lines (never include, not even off-screen or implied): ${lines.join('; ')}.`] : []),

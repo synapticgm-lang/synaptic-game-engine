@@ -341,49 +341,6 @@ export function assertProtectedEntitiesSurvived(
 }
 
 /**
- * Build a retry block for regeneration with typed entity context.
- */
-export function buildEntityRetryBlock(
-  context: TypedEntityContext,
-  report: InvalidReferenceReport
-): string {
-  const issues: string[] = [];
-  
-  if (report.themCount > 0) {
-    const expected = context.presentNpcs[0] || context.lastSpeaker || 'a named person';
-    issues.push(`- Used "them/they/their" ${report.themCount} times without clear antecedent. Use: ${expected}`);
-  }
-  
-  if (report.thisPlaceCount > 0 && context.locationName) {
-    issues.push(`- Used "this place" ${report.thisPlaceCount} times. Use: ${context.locationName}`);
-  }
-  
-  if (report.strangerCount > 0 && context.presentNpcs.length > 0) {
-    issues.push(`- Used "stranger/figure" ${report.strangerCount} times. Use: ${context.presentNpcs[0]}`);
-  }
-  
-  const availableEntities = [
-    `Present NPCs: ${context.presentNpcs.join(', ') || 'none'}`,
-    `Companions: ${context.companions.join(', ') || 'none'}`,
-    `Location: ${context.locationName || 'unspecified'}`,
-    `Last speaker: ${context.lastSpeaker || 'none'}`,
-    context.encounterName ? `Enemy: ${context.encounterName}` : null,
-  ].filter(Boolean);
-  
-  return `=== ENTITY REFERENCE RETRY (BINDING) ===
-Your prior reply used vague pronouns instead of explicit nouns.
-
-Invalid references found:
-${issues.join('\n')}
-
-AUTHORITY - Available typed entities:
-${availableEntities.join('\n')}
-
-REQUIRED: Rewrite with EXPLICIT NOUNS. Never use "them", "they", "this place", or "the stranger" when a specific name is available. When multiple people are present, use "the group" or list names. When location is established, use its name.
-================================================`;
-}
-
-/**
  * Telemetry for tracking validation metrics.
  */
 export interface EntityValidationTelemetry {

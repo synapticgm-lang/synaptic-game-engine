@@ -196,6 +196,7 @@ import {
   scrubInventedWeapons,
 } from './searchContinuity';
 import { mediatePlayerInput } from './inputMediation';
+import { formatCheckInCard, gaugeCheckIn, loadGauge, saveGauge } from './wellbeing';
 import { maybeRatingRewrite } from './maturity';
 import { postFilterGmOutput } from './contentPostFilter';
 import { filterKidModeText } from './kidModeSafety';
@@ -2060,6 +2061,16 @@ export function useGame() {
       setRestoreDraft(input);
       turnInFlightRef.current = false;
       return;
+    }
+    if (mediated.wellbeing?.flags.length) {
+      const reading = { ...mediated.wellbeing, under18: mediated.wellbeing.under18 || mode === 'kid' };
+      const checkIn = gaugeCheckIn(loadGauge(), reading, {
+        now: Date.now(),
+        locale: typeof navigator === 'undefined' ? undefined : navigator.language,
+        checkInsOn: settingsRef.current.wellbeingCheckIns !== false,
+      });
+      saveGauge(checkIn.gauge);
+      if (checkIn.card) addToast(formatCheckInCard(checkIn.card), 'info');
     }
 
     const metaGov = processMetaInput(current, mediated.text);

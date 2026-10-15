@@ -5,6 +5,7 @@
 
 import { getDistributionChannel } from './distributionChannel';
 import { type HardRailContext } from './universalHardRails';
+import { readWellbeing, type WellbeingReading } from './wellbeing';
 export type MediationAction = 'allow' | 'block';
 
 export interface MediationResult {
@@ -12,14 +13,11 @@ export interface MediationResult {
   text: string;
   reason?: string;
   playerMessage?: string;
-  crisisResources?: boolean;
+  wellbeing?: WellbeingReading;
 }
 
 const INJECTION =
   /\b(ignore\s+(all\s+)?previous\s+instructions|ignore\s+your\s+(instructions|rules|prompt)|you\s+are\s+now\s+(a\s+)?(?:regular|helpful)\s+ai|output\s+(your\s+)?system\s+prompt|reveal\s+(your\s+)?system\s+prompt|disregard\s+(all\s+)?(prior|previous|above)\b|jailbreak\b|dan\s+mode\b)/i;
-
-const REAL_SELF_HARM =
-  /\b(i\s+want\s+to\s+die|suicid(?:e|al)|self[- ]?harm|cut\s+myself|end\s+my\s+life|kill\s+myself)\b/i;
 
 const REAL_THREAT =
   /\b(i(?:'m|\s+am)\s+going\s+to\s+(kill|murder|shoot|bomb)\s+(?:my\s+)?(?:boss|teacher|neighbor|wife|husband|ex)\b|doxx?\b|social\s+security\s+number)\b/i;
@@ -106,20 +104,6 @@ export function mediatePlayerInput(
     };
   }
 
-  // Real-person layer only. A character's self-aimed act is the engine's (commitDeath 'self'), never blocked here.
-  const framedAsCharacter =
-    /\b(my\s+character|in[- ]?game|in\s+the\s+story|as\s+a\s+game\s+action)\b/i.test(text);
-  if (REAL_SELF_HARM.test(text) && !framedAsCharacter) {
-    return {
-      action: 'block',
-      text,
-      reason: 'self_harm',
-      crisisResources: true,
-      playerMessage:
-        "If you're going through a tough time, you can reach out: 988 (US) or findahelpline.com. Your character takes a moment to steady themselves.",
-    };
-  }
-
   if (REAL_THREAT.test(text)) {
     return {
       action: 'block',
@@ -146,5 +130,6 @@ export function mediatePlayerInput(
     };
   }
 
-  return { action: 'allow', text };
+  // The real-person layer: the story turn always runs; a check-in card may show beside it (wellbeing.ts).
+  return { action: 'allow', text, wellbeing: readWellbeing(text) };
 }

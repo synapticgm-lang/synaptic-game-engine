@@ -118,51 +118,6 @@ export function advanceTutorialBeats(
   return { progress, systemNotes: notes };
 }
 
-/**
- * GM mandate for the next missing beat. Empty when tutorial complete or late game.
- */
-export function formatTutorialBeatMandate(state: GameState): string {
-  const progress = ensureTutorialProgress(state);
-  const turn = state.turn;
-  if (turn > 40 && progress.completed.firstBoss) return '';
-
-  const lines: string[] = [
-    'TUTORIAL BEAT SHEET (code pacing — do not dump a full status sheet early):',
-  ];
-
-  if (!progress.completed.awakening) {
-    lines.push('- Next focus: Awakening / registration moment (minimal sheet: name, L0/1, HP — not full attrs).');
-  } else if (!progress.completed.lookAround && turn < 6) {
-    lines.push('- Next focus: Establish the location (look-around). Do not spawn a dungeon boss yet.');
-  } else if (!progress.completed.firstThreat && turn >= 3 && turn <= 10) {
-    lines.push('- Next focus: First threat + first code-owned roll when fiction allows.');
-  } else if (!progress.completed.stickyFail && turn >= 5 && turn <= 10) {
-    lines.push(
-      '- Next focus: Allow a fail that sticks (wound/condition) if the player presses a risky action. Do not soft-undo it.'
-    );
-  } else if (!progress.completed.firstLoot && turn >= 5) {
-    lines.push('- Next focus: First loot opportunity when they search/open a grounded cache.');
-  } else if (!progress.completed.firstQuest && turn >= 7 && turn <= 14) {
-    lines.push(
-      '- Next focus: Reveal the starter tutorial quest (reach exit / clear site) via story + <quest-add> if not already active+revealed.'
-    );
-  } else if (!progress.completed.firstRest && turn >= 10) {
-    lines.push('- Optional: first rest / full status unlock when they camp or recover.');
-  } else if (!progress.completed.firstBoss && isExplorableDungeon(state.activeDungeon)) {
-    lines.push('- Tutorial dungeon: boss remains at the seeded boss node — do not invent a second boss.');
-  } else {
-    return '';
-  }
-
-  if (!progress.fullStatusUnlocked) {
-    lines.push(
-      '- PROGRESSIVE STATUS: Do not dump full attribute blocks in System chrome yet. Minimal vitals only until rest/level/boss.'
-    );
-  }
-
-  return lines.join('\n');
-}
-
 /** Ensure a tutorial spine quest exists by turn 8–12. */
 export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
   const quests = [...(state.quests ?? [])];

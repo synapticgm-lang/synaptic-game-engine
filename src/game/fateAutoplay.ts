@@ -78,6 +78,7 @@ import {
 } from './gmVoiceProfile';
 import { withUpdatedHookArc } from './hookArc';
 import { mediatePlayerInput } from './inputMediation';
+import { readWellbeing } from './wellbeing';
 import { parsePlayerIntent } from './intentParser';
 import { scanAndScrubLeaks } from './leakScanner';
 import { ensureTurnProse, stripResidualMechanicTags } from './narrativeSanitize';
@@ -2549,10 +2550,14 @@ export async function runFateAutoplay(opts: {
 
 /** Provenance of one turn row: the id the provider returned for this turn, else the model the run asked for. */
 export function turnProvenance(
-  tel: Pick<TurnTelemetry, 'writerUsage' | 'engineMode'>,
+  tel: Pick<TurnTelemetry, 'writerUsage' | 'engineMode'> & { playerInput?: string },
   requestedModel?: string | null
 ): RowProvenance {
-  return rowProvenance({ teacherModel: tel.writerUsage?.modelId ?? requestedModel ?? null, mode: tel.engineMode ?? null });
+  return rowProvenance({
+    teacherModel: tel.writerUsage?.modelId ?? requestedModel ?? null,
+    mode: tel.engineMode ?? null,
+    wellbeingFlagged: readWellbeing(tel.playerInput ?? '').flags.length > 0,
+  });
 }
 
 /** The model id(s) the writer server reported for the run's turns, in first-seen order; null when none reported. */

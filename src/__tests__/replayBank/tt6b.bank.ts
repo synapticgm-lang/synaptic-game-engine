@@ -188,13 +188,14 @@ describe('replay bank tt-build-6b (coins, carrying, armor training, away rest, s
     const text = formatSessionZeroForPrompt(sz);
     expect(text).toBe([
       'TABLE LIMITS (set by the player at session zero — always honor them):',
-      'Lines (never include, not even off-screen or implied): harm to children.',
+      'Lines (never include, not even off-screen or implied): self-harm method; harm to children.',
       'Veils (may happen, but off-screen: one plain sentence, no detail): torture.',
     ].join('\n'));
     expect(buildMasterPrompt({ ...s, sessionZero: sz }, settings())).toContain(text);
-    expect(buildMasterPrompt(s, settings())).not.toContain('TABLE LIMITS');
+    // q31-S2: every save, in every mode, carries the self-harm-method Line.
+    expect(buildMasterPrompt(s, settings())).toContain('Lines (never include, not even off-screen or implied): self-harm method.');
     const lit = buildNewGameState({ bibleId: 'summoned-pact', characterName: 'Jax', seed: 150, personality: 'chilled-gm' }).state;
-    expect(buildMasterPrompt({ ...lit, sessionZero: sz }, settings())).not.toContain('TABLE LIMITS');
+    expect(buildMasterPrompt({ ...lit, sessionZero: sz }, settings())).toContain(text);
     // The table rules picked at session zero are the same Settings the turn stamp reads.
     const lvl3 = built(4, ['Quick start'], { ttStartingLevel: 3, ttProgression: 'milestone' });
     expect(lvl3.character.level).toBe(3);

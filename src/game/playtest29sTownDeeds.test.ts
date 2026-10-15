@@ -147,7 +147,7 @@ describe('29s respect lives on the NPC', () => {
   });
 
   it('stamp is 2026-10-14e', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-15r');
-    expect(BUILD_STAMP).toBe('2026-10-15r');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-15s');
+    expect(BUILD_STAMP).toBe('2026-10-15s');
   });
 });

@@ -90,6 +90,8 @@ export type RowProvenance = {
   training_note?: string;
 };
 
+export const WELLBEING_NOTE = 'wellbeing-flagged turn';
+
 /** Labels old rows used for the hosted Free writer when no model id came back. */
 const HOSTED_FREE_LABEL = /^(?:default|\(hosted free via gm-turn\))$/i;
 
@@ -133,9 +135,11 @@ export function rowProvenance(input: {
   judgeModel?: string | null;
   mode?: string | null;
   sourceId?: string | null;
+  /** The player's input on this turn raised a wellbeing flag: never trained on, never uploaded (guide §7). */
+  wellbeingFlagged?: boolean;
 }): RowProvenance {
   const teacher = (input.teacherModel ?? '').trim() || null;
-  const excluded = excludedSourceReason(input.sourceId);
+  const excluded = input.wellbeingFlagged ? WELLBEING_NOTE : excludedSourceReason(input.sourceId);
   const { trainable } = modelLicence(teacher);
   return {
     training_ok: excluded ? false : trainable,

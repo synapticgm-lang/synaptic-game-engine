@@ -11,7 +11,7 @@
  */
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
-import { rowProvenance } from '../src/game/modelIds.ts';
+import { rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
 import { isWriterFlag } from './fate-autoplay/judgeNotes.mjs';
 
 const argv = process.argv.slice(2);
@@ -70,6 +70,7 @@ for (const dir of dirs) {
       teacherModel: t.teacher_model ?? t.writerUsage?.modelId ?? meta.writer?.model ?? null,
       mode: meta.engineMode,
       judgeModel: th?.judge_model ?? null,
+      wellbeingFlagged: t.training_note === WELLBEING_NOTE,
     });
     const key = `${prov.teacher_model ?? '?'}|${prov.mode ?? '?'}`;
     const c = (tally[key] ??= { teacher_model: prov.teacher_model, mode: prov.mode, attempted: 0, passing: 0 });

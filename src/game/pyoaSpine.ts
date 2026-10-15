@@ -4,6 +4,7 @@
  */
 
 import type { GameState } from './types';
+import { aimsAtSelf } from './intentParser';
 import umbraBook from '@/data/pyoa/umbraBook.json';
 
 export type PyoaSpineNodeId = string;
@@ -334,6 +335,9 @@ export function advancePyoaSpine(state: GameState, playerInput: string): GameSta
     };
   }
 
+  // The engine settled the act through commitDeath('self'); the story returns to this choice.
+  if (spineSelfEnding(working, playerInput)) return working;
+
   const lower = (playerInput ?? '').toLowerCase().trim();
   const exits = legalSpineExits(working);
 
@@ -349,14 +353,28 @@ export function advancePyoaSpine(state: GameState, playerInput: string): GameSta
     return applyExit(working, exits[0]!);
   }
 
-  const match =
-    exits.find((e) => e.label.toLowerCase() === lower)
+  const match = matchSpineExit(exits, lower);
+  if (!match) return working;
+  return applyExit(working, match);
+}
+
+function matchSpineExit(exits: PyoaSpineExit[], lower: string): PyoaSpineExit | undefined {
+  return exits.find((e) => e.label.toLowerCase() === lower)
     || exits.find((e) => lower.includes(e.label.toLowerCase().slice(0, 18)))
     || exits.find((e) => lower.includes(e.id.replace(/-/g, ' ')))
     || fuzzyExitMatch(exits, lower);
+}
 
-  if (!match) return working;
-  return applyExit(working, match);
+/**
+ * O2: a pre-written PYOA ending where the player character kills themselves is a self cause like any other —
+ * the act aimed at self, or the exit / ending page it takes. It routes through commitDeath('self') and never ends.
+ */
+export function spineSelfEnding(state: GameState, playerInput: string): boolean {
+  if (state.engineMode !== 'pyoa' || !state.pyoaSpine || state.pyoaSpine.endingId) return false;
+  if (aimsAtSelf(playerInput)) return true;
+  const exit = matchSpineExit(legalSpineExits(state), (playerInput ?? '').toLowerCase().trim());
+  const dest = exit ? getSpineNode(resolveEndingLeaf(exit.to, { ...state.pyoaSpine.flags, ...(exit.setFlags ?? {}) })) : undefined;
+  return !!exit && !!dest?.endingId && (aimsAtSelf(exit.label) || aimsAtSelf(dest.page ?? ''));
 }
 
 function fuzzyExitMatch(exits: PyoaSpineExit[], lower: string): PyoaSpineExit | undefined {

@@ -9,7 +9,7 @@
  */
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
-import { excludedSourceReason, rowProvenance } from '../src/game/modelIds.ts';
+import { excludedSourceReason, rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
 
 const OUT_DIR = resolve('data', 'writer-dataset');
 const OUT = join(OUT_DIR, 'turns.jsonl');
@@ -105,6 +105,7 @@ for (const dir of dirs) {
       teacherModel: writerModel,
       mode: meta.engineMode,
       judgeModel: thumbsByTurn.get(t.turn)?.judge_model ?? null,
+      wellbeingFlagged: t.training_note === WELLBEING_NOTE,
     });
     const row = {
       ...prov,
