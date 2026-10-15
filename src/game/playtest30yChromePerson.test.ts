@@ -73,7 +73,7 @@ describe('playtest30y — chrome is not a person', () => {
     expect(isChromeTalkChoice('Talk to Place')).toBe(true);
     expect(isChromeTalkChoice('Ask Place what this room is.')).toBe(true);
     expect(isChromeTalkChoice('Call out to Place, who is still at the threshold.')).toBe(true);
-    expect(isChromeTalkChoice('Examine the blue panel.')).toBe(false);
+    expect(isChromeTalkChoice('Inspect the panel')).toBe(false);
 
     const kept = filterInventedContextChoices(
       [
@@ -97,7 +97,7 @@ describe('playtest30y — chrome is not a person', () => {
       }
     );
     expect(kept.join(' ')).not.toMatch(/\bPlace\b/);
-    expect(kept.some((c) => /examine the blue panel/i.test(c))).toBe(true);
+    expect(kept.some((c) => /talk to place|ask place|call out to place/i.test(c))).toBe(false);
   });
 
   it('present[] does not include Place or blue panel after harvest / seed / commit', () => {

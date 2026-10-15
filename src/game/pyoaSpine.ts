@@ -13,6 +13,11 @@ export interface PyoaSpineExit {
   id: string;
   label: string;
   to: PyoaSpineNodeId;
+  /**
+   * Engine action this chip runs (RC-K1). Required on every authored step;
+   * sealed to `pyoa:<id>` when omitted in the raw table.
+   */
+  action: string;
   /** Soft tags stamped onto spine.flags when taken. */
   setFlags?: Record<string, string | boolean>;
 }
@@ -45,8 +50,11 @@ export interface PyoaSpineState {
 
 const START = 'tf-landing';
 
-/** Curated Thornferry spine: 12 nodes, 3 major forks, 6 ending leaves. */
-export const THORNFERRY_SPINE: PyoaSpineNode[] = [
+type RawSpineExit = Omit<PyoaSpineExit, 'action'> & { action?: string };
+type RawSpineNode = Omit<PyoaSpineNode, 'exits'> & { exits: RawSpineExit[] };
+
+/** Curated Thornferry spine (raw): 12 nodes, 3 major forks, 6 ending leaves. */
+const RAW_THORNFERRY: RawSpineNode[] = [
   {
     id: 'tf-landing',
     stake: 'Mill landing — Wren offers the road; charter is sealed.',
@@ -188,23 +196,45 @@ export const THORNFERRY_SPINE: PyoaSpineNode[] = [
   },
 ];
 
+/** Every spine step must carry an engine action (RC-K1). Missing action is a data bug. */
+export const THORNFERRY_SPINE: PyoaSpineNode[] = [];
+for (const n of RAW_THORNFERRY) {
+  const exits: PyoaSpineExit[] = [];
+  for (const e of n.exits) {
+    const action = (e.action ?? '').trim() || (e.id ? `pyoa:${e.id}` : '');
+    if (!action) throw new Error(`PYOA spine ${n.id}: exit missing action`);
+    exits.push({ ...e, action });
+  }
+  THORNFERRY_SPINE.push({ ...n, exits });
+}
+
 const NODE_BY_ID = new Map(THORNFERRY_SPINE.map((n) => [n.id, n]));
 
 const UMBRA_START = (umbraBook as { startId?: string }).startId || 'up-bell-tower';
-const UMBRA_SPINE: PyoaSpineNode[] = ((umbraBook as { nodes?: PyoaSpineNode[] }).nodes ?? []).map((n) => ({
-  id: n.id,
-  stake: n.stake,
-  majorFork: !!n.majorFork,
-  endingId: n.endingId || undefined,
-  page: typeof n.page === 'string' ? n.page : undefined,
-  place: typeof n.place === 'string' && n.place.trim() ? n.place.trim() : undefined,
-  exits: (n.exits ?? []).map((e) => ({
-    id: e.id,
-    label: e.label,
-    to: e.to,
-    setFlags: e.setFlags,
-  })),
-}));
+const UMBRA_SPINE: PyoaSpineNode[] = [];
+for (const n of (umbraBook as { nodes?: RawSpineNode[] }).nodes ?? []) {
+  const exits: PyoaSpineExit[] = [];
+  for (const e of n.exits ?? []) {
+    const action = (e.action ?? '').trim() || (e.id ? `pyoa:${e.id}` : '');
+    if (!action) throw new Error(`PYOA spine ${n.id}: exit missing action`);
+    exits.push({
+      id: e.id,
+      label: e.label,
+      to: e.to,
+      action,
+      setFlags: e.setFlags,
+    });
+  }
+  UMBRA_SPINE.push({
+    id: n.id,
+    stake: n.stake,
+    majorFork: !!n.majorFork,
+    endingId: n.endingId || undefined,
+    page: typeof n.page === 'string' ? n.page : undefined,
+    place: typeof n.place === 'string' && n.place.trim() ? n.place.trim() : undefined,
+    exits,
+  });
+}
 const UMBRA_BY_ID = new Map(UMBRA_SPINE.map((n) => [n.id, n]));
 
 export function spineBibleSupported(bibleId: string | undefined | null): boolean {
@@ -509,7 +539,7 @@ export const SPINE_ENDING_CHIP = 'Accept the ending that follows';
 
 /**
  * Chips the spine itself offers this turn (legal exits + the ending close).
- * These are engine edges, never invented context.
+ * These are engine edges with actions, never invented context (RC-K1).
  */
 export function spineEngineChipLabels(state: GameState): string[] {
   if (state.engineMode !== 'pyoa' || !spineBibleSupported(state.campaignBibleId)) return [];

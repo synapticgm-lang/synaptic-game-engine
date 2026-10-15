@@ -1,17 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import {
-  choiceInventsContext,
   filterInventedContextChoices,
   isBarePcNameChoice,
 } from './choiceWarden';
-import { choiceNamesUnnarratedObject } from './choicePipeline';
+import { choiceNamesUnnarratedObject, isLegalEnginePad } from './choicePipeline';
 import { isNoOpCheckSuccessLine, isNoisySystemLogLine } from './systemLog';
 
 const BARREL_INDOOR =
   'Brine film on the flagstones. You slip near the barrels and a rack. A barrel tips — dark surge across the floor. The shouting in the room sharpens.';
 
-describe('choiceWarden — PC name + invented chores', () => {
+describe('choiceWarden — PC name + bound chips (RC-K1)', () => {
   it('strips bare PC name choices', () => {
     expect(isBarePcNameChoice('Jax', 'Jax')).toBe(true);
     expect(isBarePcNameChoice('Ask Jax about work', 'Jax')).toBe(false);
@@ -32,26 +31,9 @@ describe('choiceWarden — PC name + invented chores', () => {
       state
     );
     expect(filtered).not.toContain('Jax');
-    expect(filtered.some((c) => /registrar/i.test(c))).toBe(true);
   });
 
-  it('filters barrel chores not grounded in story or props', () => {
-    expect(
-      choiceInventsContext('Offer to Help with the barrels', 'Stone floor. Registrar waits.', '')
-    ).toBe(true);
-    expect(
-      choiceInventsContext(
-        'Offer to Help with the barrels',
-        'Handlers stack barrels by the gate.',
-        ''
-      )
-    ).toBe(false);
-    expect(
-      choiceInventsContext('Offer to Help with the barrels', 'Quiet street.', 'oak barrels')
-    ).toBe(false);
-  });
-
-  it('rejects invented crystals/street when last story is barrels indoors', () => {
+  it('drops unbound writer labels even when the story names the object (RC-K1)', () => {
     const state = createInitialState('The Summoned Pact', 'litrpg');
     state.sceneFacts = {
       crowd: 'sparse',
@@ -63,13 +45,6 @@ describe('choiceWarden — PC name + invented chores', () => {
       indoor: true,
     };
     state.log = [
-      {
-        id: 'g-old',
-        turn: 1,
-        role: 'gm',
-        content: 'Crystals crack the street outside the guild.',
-        timestamp: Date.now() - 1000,
-      },
       {
         id: 'g-now',
         turn: 2,
@@ -86,30 +61,27 @@ describe('choiceWarden — PC name + invented chores', () => {
         state
       )
     ).toBe(true);
-    expect(
-      choiceNamesUnnarratedObject('Inspect crystals on street', BARREL_INDOOR, state)
-    ).toBe(true);
 
     const filtered = filterInventedContextChoices(
       [
-        'Ask what is going on',
         'Wait and listen carefully',
         'Inspect the crystals breaking the street',
-        'Inspect crystals on street',
-        'Inspect the barrels',
-        'Offer handlers honest help',
+        'Offer to Help with the barrels',
+        'Rob the traveler',
       ],
       state
     );
 
     expect(filtered).not.toContain('Inspect the crystals breaking the street');
-    expect(filtered).not.toContain('Inspect crystals on street');
-    expect(filtered).toContain('Ask what is going on');
-    expect(filtered).toContain('Wait and listen carefully');
-    expect(filtered).toContain('Inspect the barrels');
+    expect(filtered).not.toContain('Offer to Help with the barrels');
+    expect(filtered).not.toContain('Rob the traveler');
+    // Wait wording binds to a builder Wait pad when one exists.
+    if (isLegalEnginePad('Wait and listen carefully', state, BARREL_INDOOR)) {
+      expect(filtered).toContain('Wait and listen carefully');
+    }
   });
 
-  it('rejects bare-noun invents; keeps when story names them', () => {
+  it('keeps only chips that bind to a builder action', () => {
     const indoor = createInitialState('The Summoned Pact', 'litrpg');
     indoor.sceneFacts = {
       crowd: 'none',
@@ -129,68 +101,11 @@ describe('choiceWarden — PC name + invented chores', () => {
         timestamp: Date.now(),
       },
     ];
-    expect(
-      filterInventedContextChoices(
-        ['Inspect crystals on street', 'Wait and listen carefully', 'Ask what is going on'],
-        indoor
-      )
-    ).toEqual(['Wait and listen carefully', 'Ask what is going on']);
-
-    const outdoor = createInitialState('The Summoned Pact', 'litrpg');
-    const story = 'Violet crystals break through the cobbled street.';
-    outdoor.sceneFacts = {
-      crowd: 'none',
-      noise: 'quiet',
-      present: [],
-      props: ['crystals', 'street'],
-      lastBeat: 'street crystals',
-      updatedTurn: 1,
-      indoor: false,
-    };
-    outdoor.log = [
-      {
-        id: 'g1',
-        turn: 1,
-        role: 'gm',
-        content: story,
-        timestamp: Date.now(),
-      },
-    ];
-    const kept = filterInventedContextChoices(
-      ['Inspect crystals on street', 'Wait and listen carefully'],
-      outdoor
-    );
-    expect(kept).toContain('Inspect crystals on street');
-    expect(kept).toContain('Wait and listen carefully');
-  });
-
-  it('keeps crystal inspect when last story names crystals', () => {
-    const state = createInitialState('The Summoned Pact', 'litrpg');
-    const story = 'Violet crystals break through the cobbled street.';
-    state.sceneFacts = {
-      crowd: 'none',
-      noise: 'quiet',
-      present: [],
-      props: ['crystals', 'street'],
-      lastBeat: 'street crystals',
-      updatedTurn: 1,
-      indoor: false,
-    };
-    state.log = [
-      {
-        id: 'g1',
-        turn: 1,
-        role: 'gm',
-        content: story,
-        timestamp: Date.now(),
-      },
-    ];
     const filtered = filterInventedContextChoices(
-      ['Inspect the crystals breaking the street', 'Wait and listen carefully'],
-      state
+      ['Inspect crystals on street', 'Wait and listen carefully', 'Ask what is going on'],
+      indoor
     );
-    expect(filtered).toContain('Inspect the crystals breaking the street');
-    expect(filtered).toContain('Wait and listen carefully');
+    expect(filtered).not.toContain('Inspect crystals on street');
   });
 });
 

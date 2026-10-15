@@ -19,6 +19,15 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-RCK1 only bound chips (Order RC-K1)
+
+1. **`src/game/choicePipeline.ts` `isLegalEnginePad` inferIntent fallback + travel/talk regex + `concreteChoiceObjects` length test (lines ~395-400 at parent)** — admitted a chip when a label-word reader said it was not OTHER, or when it named no concrete object. What it did: let unbound writer/spine labels ("Rob the traveler", "Map the first undercroft door") onto the offered list with no engine action. Replaced by builder `EngineChip { label, action }` membership / same-action+target bind only (`engineChips` + `boundEngineChip`).
+2. **`src/game/choiceWarden.ts` `CONTEXT_REQUIREMENTS` + `choiceInventsContext` (lines ~24-128 at parent)** — default-allow invent filter for offered chips. Superseded by binding: offered list = engine chips only.
+3. **`src/game/choiceWarden.ts` empty-research loot invite regex filter (lines ~230-240 at parent)** — word list that dropped "hidden compartment" pads after empty search. Superseded by binding (those labels never bind unless a builder emits them).
+4. **`src/game/choiceWarden.ts` local `engineChips` exact-label Set (spine / dungeon card / opening / story RPG / tabletop)** — duplicate membership list before the invent filter. Folded into `engineChips()` in `choicePipeline` (same sources + system prompt + journey pads).
+
+---
+
 ## q31-RCR1 fight-close outside prose (Order RC-R1)
 
 1. **`src/game/beatCommitGate.ts` `withMissingFightFacts` outcome term + `prose.includes(outcome)` (lines ~241-245 at parent)** — appended `terminalOutcomeSentence` into the writer's beat when the prose lacked that exact string. What it did: said the kill twice whenever the writer already told it in other words (RC-1 leftover). Replaced by the same sentence on the engine combat-log / STATUS channel (`WriterTurnResult.combatLog` + `outcomeShown: 'engine'`). Forced-attempt and foe-hit gaps stay.

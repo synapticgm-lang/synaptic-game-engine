@@ -32,6 +32,13 @@ import { enumerateLegalEdges as enumerateBeatEdges, edgesToChoiceLabels as beatE
 import { enumerateLegalEdges as enumerateGraphEdges, edgesToChoiceLabels as graphEdgeLabels } from './graphChoices';
 import { PlayerIntent, inferIntent } from './intentEnums';
 import { compileChoices } from './choiceCompiler';
+import { dungeonCardChoices } from './dungeonCard';
+import { openingOfferPads } from './openingEstablishment';
+import { storyRpgDecisionChip } from './storyRpgProgress';
+import { tabletopStepChip } from './tabletopQuestProgress';
+import { systemPromptPad } from './rules/abilityPoints';
+import { classOfferPad } from './rules/characterClass';
+import { journeyPads } from './travelJourney';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -362,42 +369,107 @@ export function isChoiceGroundedInTurn(
   return true;
 }
 
-let lastEngineChips: { state: GameState; key: string; labels: Set<string> } | null = null;
+/** One engine chip: the shown label plus the resolved action id + target the router would run. */
+export type EngineChip = { label: string; action: string };
 
-/** The engine's own chips for this state: compiler pads, beat and graph edges, hub pads, the spine, the scene fallbacks. */
-export function engineChipLabels(state: GameState, storyProse = ''): Set<string> {
-  // One chip list asks once per chip; the builders are rerun only when the state or story moves.
-  const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
-  if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.labels;
-  const labels = new Set(
-    [
-      ...compileChoices(state, []).choices,
-      ...beatEdgeLabels(enumerateBeatEdges(state)),
-      ...graphEdgeLabels(enumerateGraphEdges(state)),
-      ...hubArrivalChoicePads(state),
-      ...spineEngineChipLabels(state),
-      ...sceneSafeFallbacks(state, storyProse),
-    ].map((l) => sanitizeChoiceLabel(l).toLowerCase()).filter(Boolean)
-  );
-  lastEngineChips = { state, key, labels };
-  return labels;
+let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
+
+/** Action+target key used to bind a writer/spine label to a builder chip (RC-K1). */
+export function engineChipActionKey(label: string): string {
+  const t = sanitizeChoiceLabel(label ?? '');
+  if (!t) return '';
+  const intent = inferIntent(t);
+  if (intent === PlayerIntent.INTENT_OTHER) return '';
+  const dest =
+    t.match(/^(?:travel|talk|head|go|walk|return|make for|set out)\s+(?:to|toward|towards|for|into)?\s*(.+)$/i)?.[1]
+      ?.toLowerCase()
+      .replace(/^(?:the|a|an)\s+/, '')
+      .trim() ?? '';
+  const targets: string[] = [];
+  for (const p of extractChoiceObjectPhrases(t)) targets.push(p.toLowerCase());
+  targets.sort();
+  const target = dest || targets.join('+');
+  return target ? `${intent}|${target}` : `${intent}|`;
 }
 
 /**
- * Compiler / stance / hub pads are ledger-legal, not invented props. A chip is the engine's when this state's
- * builders made it, or when it resolves to an engine action that names nothing the story must have narrated.
- * "Inspect the crystals…" names an object, so it stays under choiceNamesUnnarratedObject.
+ * The engine's own chips for this state (RC-K1): every builder pad carries its resolved action.
+ * A writer label is offered only when it binds to one of these (same action + target).
+ */
+export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
+  const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
+  if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.chips;
+  const system = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
+  const rawLabels = [
+    ...compileChoices(state, []).choices,
+    ...beatEdgeLabels(enumerateBeatEdges(state)),
+    ...graphEdgeLabels(enumerateGraphEdges(state)),
+    ...hubArrivalChoicePads(state),
+    ...spineEngineChipLabels(state),
+    ...sceneSafeFallbacks(state, storyProse),
+    ...dungeonCardChoices(state),
+    ...openingOfferPads(state),
+    storyRpgDecisionChip(state) ?? '',
+    tabletopStepChip(state) ?? '',
+    ...system,
+    ...journeyPads(state),
+  ];
+  const seen = new Set<string>();
+  const chips: EngineChip[] = [];
+  for (const raw of rawLabels) {
+    const label = sanitizeChoiceLabel(raw);
+    if (!label) continue;
+    const low = label.toLowerCase();
+    if (seen.has(low)) continue;
+    seen.add(low);
+    const action = engineChipActionKey(label) || `label:${low}`;
+    chips.push({ label, action });
+  }
+  lastEngineChips = {
+    state,
+    key,
+    chips,
+    labels: new Set([...seen]),
+  };
+  return chips;
+}
+
+/** Label set for callers that only need membership (derived from engineChips). */
+export function engineChipLabels(state: GameState, storyProse = ''): Set<string> {
+  const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
+  if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.labels;
+  engineChips(state, storyProse);
+  return lastEngineChips!.labels;
+}
+
+/**
+ * Bind a candidate label to a builder chip (exact label, or same action + target).
+ * No inferIntent-alone path: an unbound label is never legal (RC-K1).
+ */
+export function boundEngineChip(choice: string, state: GameState, storyProse = ''): EngineChip | null {
+  const t = sanitizeChoiceLabel(choice ?? '');
+  if (!t) return null;
+  const chips = engineChips(state, storyProse);
+  const low = t.toLowerCase();
+  for (const chip of chips) {
+    if (chip.label.toLowerCase() === low) return chip;
+  }
+  const key = engineChipActionKey(t);
+  if (!key) return null;
+  for (const chip of chips) {
+    if (chip.action === key) return chip;
+  }
+  return null;
+}
+
+/**
+ * A chip is offered only when a builder produced it for this state, or a writer label binds
+ * to that builder's action + target. Pure label inference is not enough (RC-K1).
  */
 export function isLegalEnginePad(choice: string, state?: GameState, storyProse = ''): boolean {
   const t = sanitizeChoiceLabel(choice ?? '');
-  if (!t) return false;
-  if (state && engineChipLabels(state, storyProse).has(t.toLowerCase())) return true;
-  const intent = inferIntent(t);
-  if (intent === PlayerIntent.INTENT_OTHER) return false;
-  // Status reads the player's own sheet, never a thing in the scene.
-  if (intent === PlayerIntent.INTENT_STATUS) return true;
-  if (/^(?:travel|talk)\s+(?:to|toward|towards)\s+\S/i.test(t)) return true;
-  return concreteChoiceObjects(t).length === 0;
+  if (!t || !state) return false;
+  return boundEngineChip(t, state, storyProse) != null;
 }
 
 /** Objects a choice names that the story must have narrated (generic surroundings, gear and wounds excluded). */

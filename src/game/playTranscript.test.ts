@@ -137,14 +137,16 @@ describe('playTranscript', () => {
 
   it('falls back to last GM offeredChoices when opening is complete and state.choices is empty', () => {
     const base = createInitialState('Test Tale', 'litrpg');
+    // RC-K1: planted GM offers must bind to builder actions; unbound writer labels drop.
     const offered = [
-      'Examine the damaged building more closely',
-      'Check the contents of your bag',
-      'Inspect the immediate surroundings',
+      'Wait and watch',
+      'Look around',
+      'Check Status',
+      'Rob the traveler',
     ];
     const state = {
       ...base,
-      // 10i: turns 0–2 with no player line keep the page-1 cover pads; this is the later fallback.
+      // 10i: turns 0-2 with no player line keep the page-1 cover pads; this is the later fallback.
       turn: 5,
       choices: [],
       log: [
@@ -165,9 +167,10 @@ describe('playTranscript', () => {
         sceneWritten: true,
       },
     };
-    // 28j anti-circling rank may reorder the same pad.
-    const out = resolveOfferedChoices(state).slice(0, 3);
-    expect([...out].sort()).toEqual([...offered].sort());
+    const out = resolveOfferedChoices(state);
+    expect(out).not.toContain('Rob the traveler');
+    expect(out.some((c) => /wait|look|status/i.test(c))).toBe(true);
+    expect(out.length).toBeGreaterThanOrEqual(1);
   });
 
   it('formats transcript with options and omits missing offeredChoices', () => {

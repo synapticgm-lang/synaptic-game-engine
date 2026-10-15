@@ -136,26 +136,26 @@ describe('playtest02d hang debug — CAST / log / choice pad', () => {
     expect(Date.now() - t0).toBeLessThan(500);
   });
 
-  it('legal engine pads are not invented-context; crystals still are', () => {
-    // RC-3: a chip is the engine's by the builder that made it for this state, or by its resolved action —
-    // not by its label. "Ask a direct question" is no longer built by any pad builder.
+  it('legal engine pads are bound builder chips; crystals stay unbound (RC-K1)', () => {
+    // RC-K1: a chip is offered only when a builder made it (or a writer label binds to that
+    // action + target). No inferIntent-alone path. "Ask a direct question" is unbound here.
     const state = hubCastState();
     const story = state.log[state.log.length - 1]!.content;
-    expect(isLegalEnginePad('Wait quietly and listen')).toBe(true);
-    expect(isLegalEnginePad('Travel toward The Weighing Cup')).toBe(true);
+    expect(isLegalEnginePad('Inspect the area')).toBe(false);
+    expect(isLegalEnginePad('Wait quietly and listen')).toBe(false);
     expect(isLegalEnginePad('Check Status', state, story)).toBe(true);
     const built = [...engineChipLabels(state, story)];
     expect(built.length).toBeGreaterThan(0);
     for (const chip of built) expect(isLegalEnginePad(chip, state, story)).toBe(true);
+    expect(isLegalEnginePad('Wait quietly', state, story)).toBe(true);
     expect(isLegalEnginePad('Inspect the crystals breaking the street', state, story)).toBe(false);
 
-    expect(choiceNamesUnnarratedObject('Wait quietly and listen', story, state)).toBe(false);
-    expect(choiceNamesUnnarratedObject('Travel toward The Weighing Cup', story, state)).toBe(false);
+    expect(choiceNamesUnnarratedObject('Wait quietly', story, state)).toBe(false);
     expect(choiceNamesUnnarratedObject('Inspect the crystals breaking the street', story, state)).toBe(true);
 
     const filtered = filterInventedContextChoices(state.choices, state);
-    expect(filtered).toContain('Travel toward The Weighing Cup');
     expect(filtered).toContain('Check Status');
     expect(filtered).not.toContain('Inspect the crystals breaking the street');
+    expect(filtered).not.toContain('Ask a direct question');
   });
 });

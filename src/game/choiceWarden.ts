@@ -1,72 +1,17 @@
 /**
  * PACK 12: SMART CHOICE FILTERING
  *
- * Filters out choices that reference non-existent story context.
- * Prevents "respond to their offer" when no offer was made, invented props, etc.
+ * Offered chips come only from engine builders (RC-K1). A writer label is kept
+ * only when it binds to a builder chip's action + target; unbound chips are dropped.
  */
 
 import type { GameState } from './types';
-import { choiceNamesUnnarratedObject, isBrokenChoiceLabel, isLegalEnginePad } from './choicePipeline';
+import { boundEngineChip, isBrokenChoiceLabel } from './choicePipeline';
 import { coerceLogContent } from './beatFingerprint';
-import { isNameOriginKitCoverChoice, isPlayDemand, openingOfferPads, playerEngagesOpeningCover } from './openingEstablishment';
+import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
-import { spineEngineChipLabels } from './pyoaSpine';
 import { isJourneyPad, isJourneyUnderway } from './travelJourney';
-import { storyRpgDecisionChip } from './storyRpgProgress';
-import { tabletopStepChip } from './tabletopQuestProgress';
-import { dungeonCardChoices } from './dungeonCard';
-
-/**
- * References that require story context to exist.
- * Format: choice pattern -> required story keywords
- */
-const CONTEXT_REQUIREMENTS: Array<{
-  pattern: RegExp;
-  requires: RegExp;
-  description: string;
-}> = [
-  {
-    pattern: /\b(?:their|the|an?)\s+offer\b/i,
-    requires: /\b(?:offer|propose|deal|bargain|terms|price|trade|exchange)\b/i,
-    description: 'offer/deal',
-  },
-  {
-    pattern: /\b(?:their|the)\s+(?:question|query)\b/i,
-    requires: /\b(?:\?|ask|question|query|wonder)\b/i,
-    description: 'question',
-  },
-  {
-    pattern: /\b(?:their|the)\s+(?:demand|request)\b/i,
-    requires: /\b(?:demand|request|want|need|require|insist)\b/i,
-    description: 'demand/request',
-  },
-  {
-    pattern: /\b(?:their|the)\s+(?:threat|warning)\b/i,
-    requires: /\b(?:threat|warn|threaten|dangerous|risk)\b/i,
-    description: 'threat/warning',
-  },
-  {
-    pattern: /\backnowledge\s+(?:their|the)\s+/i,
-    requires: /\b(?:say|speak|tell|mention|state|declare)\b/i,
-    description: 'statement to acknowledge',
-  },
-  {
-    pattern: /\b(?:respond|reply|answer)\s+to\b/i,
-    requires: /\b(?:\?|ask|say|speak|tell|question|demand)\b/i,
-    description: 'something to respond to',
-  },
-  {
-    pattern: /\b(?:barrels?|casks?|crates?)\b/i,
-    requires: /\b(?:barrels?|casks?|crates?)\b/i,
-    description: 'barrels/casks/crates',
-  },
-  {
-    pattern: /\b(?:help|haul|carry|load|move)\b.+\b(?:barrels?|casks?|crates?|linens?|cargo)\b|\b(?:barrels?|casks?)\b.+\b(?:help|haul|carry|load)\b/i,
-    requires: /\b(?:barrels?|casks?|crates?|linens?|cargo|handlers?)\b/i,
-    description: 'unpaid chore props',
-  },
-];
 
 /** Choice that is only the PC's name (not a real action). */
 export function isBarePcNameChoice(choice: string, characterName?: string): boolean {
@@ -98,92 +43,45 @@ function lastPlayerAction(state: GameState): string {
   return '';
 }
 
-/**
- * Check if a choice references context that doesn't exist in the story.
- */
-export function choiceInventsContext(
-  choice: string,
-  recentStory: string,
-  scenePropsCorpus = '',
-  state?: GameState
-): boolean {
-  const choiceLower = choice.toLowerCase().trim();
-  const grounded = `${recentStory}\n${scenePropsCorpus}`.toLowerCase();
-
-  for (const rule of CONTEXT_REQUIREMENTS) {
-    if (rule.pattern.test(choiceLower)) {
-      // Choice references this context - check if story/props have it
-      if (!rule.requires.test(grounded)) {
-        return true; // Context required but missing
-      }
-    }
-  }
-
-  // Concrete props (article or bare after inspect verbs) must appear in last story / props / kit / location.
-  if (state && choiceNamesUnnarratedObject(choice, recentStory, state)) {
-    return true;
-  }
-
-  return false;
-}
-
 // Circuit breaker to prevent infinite loops
 let filterCallCount = 0;
 let lastFilterResetTime = Date.now();
 const MAX_FILTER_CALLS_PER_SECOND = 100;
 
 /**
- * Filter out choices that invent non-existent context.
- * Grounds against the last GM story + sceneFacts.props (not older log turns).
+ * Offered list = engine chips only (RC-K1).
+ * Writer wording is kept when it binds to a builder action + target; unbound chips are logged and dropped.
  */
 export function filterInventedContextChoices(
   choices: string[],
   state: GameState
 ): string[] {
-  // Circuit breaker: reset counter every second
   const now = Date.now();
   if (now - lastFilterResetTime > 1000) {
     filterCallCount = 0;
     lastFilterResetTime = now;
   }
-  
+
   filterCallCount++;
-  
-  // If we've exceeded the limit, log error and return all choices to break the loop
+
   if (filterCallCount > MAX_FILTER_CALLS_PER_SECOND) {
     console.error(`[CIRCUIT BREAKER] filterInventedContextChoices called ${filterCallCount} times in 1 second - returning all choices to prevent infinite loop`);
     return choices;
   }
-  
+
   const recentStory = lastGmStory(state);
-
-  const scenePropsCorpus = [
-    ...(state.sceneFacts?.props ?? []),
-    ...(state.locationSheet?.interactables ?? []).map((i) => i.name),
-    state.activeEncounter?.name ?? '',
-    ...(state.sceneFacts?.present ?? []),
-  ]
-    .filter(Boolean)
-    .join(' ');
-
   const pcName = state.character?.name;
   const lastPlayer = lastPlayerAction(state);
-  const engineChips = new Set(
-    [
-      ...spineEngineChipLabels(state),
-      ...dungeonCardChoices(state),
-      ...openingOfferPads(state),
-      storyRpgDecisionChip(state) ?? '',
-      tabletopStepChip(state) ?? '',
-    ].filter(Boolean).map((l) => l.trim().toLowerCase())
-  );
+  const out: string[] = [];
 
-  return choices.filter((choice) => {
-    if (engineChips.has(choice.trim().toLowerCase())) return true;
-    if (isJourneyUnderway(state) && isJourneyPad(state, choice)) return true;
+  for (const choice of choices) {
+    if (isJourneyUnderway(state) && isJourneyPad(state, choice)) {
+      out.push(choice);
+      continue;
+    }
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
-      return false;
+      continue;
     }
     if (
       isLookAroundAction(lastPlayer)
@@ -191,17 +89,16 @@ export function filterInventedContextChoices(
       && isNameOriginKitCoverChoice(choice)
     ) {
       console.log(`[Choice Filter] Removed name/origin/kit cover after inspect: "${choice}"`);
-      return false;
+      continue;
     }
     if (isPlayDemand(lastPlayer) && isNameOriginKitCoverChoice(choice)) {
       console.log(`[Choice Filter] Removed name cover after demand: "${choice}"`);
-      return false;
+      continue;
     }
     if (isBrokenChoiceLabel(choice)) {
       console.log(`[Choice Filter] Removed broken-label choice: "${choice}"`);
-      return false;
+      continue;
     }
-    // Hub pads that invent crowds when scene is alone/empty.
     const alone =
       state.openingEstablishment?.aloneArrival === true
       || state.sceneFacts?.crowd === 'none'
@@ -213,39 +110,25 @@ export function filterInventedContextChoices(
       && /\b(gate queue|watch the gate|walk the battlement|crowd|onlookers?)\b/i.test(choice)
     ) {
       console.log(`[Choice Filter] Removed alone-scene crowd pad: "${choice}"`);
-      return false;
+      continue;
     }
-    // Matrix-40: scrub damage turned NPCs into "the official" and polluted pads.
     if (/\bthe official\b|\ban official\b/i.test(choice)) {
       console.log(`[Choice Filter] Removed official-placeholder choice: "${choice}"`);
-      return false;
+      continue;
     }
     if (isChromeTalkChoice(choice)) {
       console.log(`[Choice Filter] Removed chrome/slot talk pad: "${choice}"`);
-      return false;
+      continue;
     }
     if (/\bthe official of the official\b|\bscan the official\b|\bapproach the official\b/i.test(choice)) {
-      return false;
+      continue;
     }
-    const emptyKeys = [
-      ...(state.sceneFacts?.searchedEmpty ?? []),
-      ...(state.sceneFacts?.emptyContainers ?? []),
-    ];
-    if (
-      emptyKeys.length > 0
-      && /\b(hidden compartment|search(?:ing)? (?:again|the ruin|carefully)|anything missed|for anything)\b/i.test(choice)
-      && !/\b(bag|backpack|light|torch|basement|different room|break|pry)\b/i.test(choice)
-    ) {
-      console.log(`[Choice Filter] Removed empty-research loot invite: "${choice}"`);
-      return false;
+    // RC-K1: default deny — only a bound engine chip reaches the offered list.
+    if (boundEngineChip(choice, state, recentStory)) {
+      out.push(choice);
+      continue;
     }
-    if (!recentStory && !scenePropsCorpus) return true;
-    // Compiler/hub pads are not invented context — filtering them caused Fate pad-empty spam.
-    if (isLegalEnginePad(choice, state, recentStory)) return true;
-    const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus, state);
-    if (invents) {
-      console.log(`[Choice Filter] Removed invented-context choice: "${choice}"`);
-    }
-    return !invents;
-  });
+    console.log(`[Choice Filter] Removed unbound chip: "${choice}"`);
+  }
+  return out;
 }
