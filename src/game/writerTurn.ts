@@ -570,7 +570,7 @@ export async function repairRejectedSentences(
       : {
           sentence: f.sentence, flag: f.flag, fact,
           ...(line ? { repaired: line } : {}),
-          bug: unchanged ? 'repair returned the sentence unchanged' : still ? `repair failed the gate: ${still}` : bug,
+          bug: still ? `repair failed the gate${unchanged ? ' (returned unchanged)' : ''}: ${still}` : unchanged ? 'repair returned the sentence unchanged' : bug,
           ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}),
         };
   });

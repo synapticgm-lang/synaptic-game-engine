@@ -89,7 +89,8 @@ describe('replay bank m59 (lap 59)', () => {
       check,
       repair: async (request) => { asked = request; return HOOK; },
     });
-    expect(asked).toContain(`Engine fact: ${EXITS} ${travel}`);
+    // tt-fix-4 (430fb4c8): the writer is handed the travel receipt's plain form; the record keeps the receipt.
+    expect(asked).toContain(`Engine fact: ${EXITS} Arrived at Cathedral Close. It is now afternoon.`);
     expect(asked).toMatch(/Name every one of those ways out, or give no number/);
     expect(out.repairs?.[0]?.fact).toBe(`${EXITS} ${travel}`);
     expect(out.prose).not.toContain(HOOK);
