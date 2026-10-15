@@ -17,7 +17,6 @@ import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeH
 import { placeAllowsDungeon, openDungeonAtSite, closeDungeon } from './dungeonLifecycle';
 import { applyBiomeSaneQuestSites, revealQuestsFromHubLinks } from './questPlay';
 import { hubsForBibleId } from './outdoorHubs';
-import { formatSituationForPrompt } from './situationPacket';
 import { upsertPlaceFromSheet } from './places';
 import { seedStateFromCampaignBible } from './campaignSeed';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
@@ -132,14 +131,12 @@ describe('playtest29e — world map overhaul', () => {
     expect(state.activeDungeon).toBeNull();
   });
 
-  it('situation packet includes WORLD MAP AUTHORITY', () => {
+  it('world map authority block forbids new cities', () => {
     const state = createInitialState(undefined, 'litrpg');
     state.worldAtlas = instantiateWorldAtlas(getWorldOutlineById('grid-metro')!);
     const block = formatWorldMapAuthorityBlock(state);
     expect(block).toMatch(/WORLD MAP AUTHORITY/);
     expect(block).toMatch(/do NOT invent new cities/i);
-    const prompt = formatSituationForPrompt(state);
-    expect(prompt).toMatch(/WORLD MAP AUTHORITY/);
   });
 
   it('shattered-coast has hub bank and hub links reveal quests', () => {

@@ -9,7 +9,6 @@ import { SMALL_XP_PER_DAY, applySandboxXpAwards } from './sandboxXp';
 import { hubsForBibleId } from './outdoorHubs';
 import { LITRPG_MILESTONE_XP, LOW_FOE_SHARE, milestoneXp } from './xpRules';
 import { FAST_XP_AWARDS } from './xpPolicy';
-import { DAILY_QUEST_MILESTONE_XP, applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import type { ActiveEncounter, EngineMode, GameState, NpcMemory, Quest } from './types';
 
 function base(mode: EngineMode = 'litrpg', over: Partial<GameState> = {}): GameState {
@@ -98,13 +97,7 @@ describe('xp fix 2026-10-14e', () => {
   });
 
   it('5) the daily milestone pays nothing', () => {
-    expect(DAILY_QUEST_MILESTONE_XP).toBe(0);
     expect(FAST_XP_AWARDS.dailyFirstTick).toBe(0);
-    const r = applyDailyQuestMilestone(base('litrpg'), {
-      questsBefore: [quest('Deliver the ledger')],
-      questsAfter: [quest('Deliver the ledger', true)],
-    });
-    expect(r).toBeNull();
   });
 
   it('6) FAST_XP_AWARDS reads the one LitRPG table; drip keys are 0', () => {

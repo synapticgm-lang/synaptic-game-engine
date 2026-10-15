@@ -3,7 +3,6 @@ import { createInitialState, createDefaultSettings } from './defaults';
 import { emptyWorldLedger } from './worldSim';
 import { repairSaveSchema } from './saveMigration';
 import { CURRENT_SAVE_REPAIR_REVISION } from './dungeonMobLedger';
-import { formatSituationForPrompt } from './situationPacket';
 import { padChoicesToCount, inventsPresenceOnEmptyScene } from './choicePipeline';
 import { applyPathDensity, classifyPath } from './stanceDensity';
 import { formatChoiceTierModeDna } from './choiceTierRules';
@@ -45,51 +44,6 @@ describe('Simulationist Sandbox', () => {
     expect(state.powerScaling).toBe('balanced');
     expect(state.worldLedger?.factionStandings).toEqual([]);
     expect(state.saveRepairRevision).toBe(CURRENT_SAVE_REPAIR_REVISION);
-  });
-
-  it('formatSituationForPrompt includes ZONE THREAT / FACTION / POWER SCALING when set', () => {
-    const base = createInitialState('Sim', 'litrpg');
-    const state = baseState({
-      powerScaling: 'gritty',
-      character: { ...base.character, level: 3 },
-      locationSheet: {
-        name: 'Ashwall',
-        threatTier: 5,
-        interactables: [],
-        exits: [],
-        presentNpcIds: [],
-      },
-      worldLedger: {
-        ...emptyWorldLedger(),
-        factionStandings: [
-          {
-            id: 'ember-guild',
-            name: 'Ember Guild',
-            standing: 'friendly',
-            notes: 'owes a favor',
-          },
-          {
-            id: 'ash-court',
-            name: 'Ash Compact',
-            standing: 'hostile',
-          },
-        ],
-      },
-    });
-    const text = formatSituationForPrompt(state);
-    expect(text).toMatch(/### SNAPSHOT/);
-    expect(text).toMatch(/Zone Threat: Tier 5 vs Player Level 3/);
-    expect(text).toMatch(/\[ZONE THREAT: Tier 5 vs Player Level 3\]/);
-    expect(text).toMatch(/\[FACTION MATRIX:.*Ember Guild=friendly/);
-    expect(text).toMatch(/Ash Compact=hostile/);
-    expect(text).toMatch(/\[POWER SCALING: gritty\]/);
-    expect(text).toMatch(/Power Scaling: gritty/);
-  });
-
-  it('formatSituation always includes effective POWER SCALING (default balanced)', () => {
-    const state = baseState({ powerScaling: undefined });
-    const text = formatSituationForPrompt(state);
-    expect(text).toMatch(/\[POWER SCALING: balanced\]/);
   });
 
   it('padChoices alone still blocks invent-crowd diplomatic pads', () => {

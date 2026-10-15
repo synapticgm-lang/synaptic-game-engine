@@ -11,7 +11,6 @@ import { extractNamedPlaces, isAtmospherePlaceName, isGenericMapPlace } from './
 import { resolvePlayAreaMap, shortRoomLabel } from './mapEngine';
 import { INTERIOR_MAP_BLUEPRINT } from './placeAuthority';
 import { compileChoices } from './choiceCompiler';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { applyProseWarden } from './proseWarden';
 import { buildAutoFightPrompt } from './combat';
 import {
@@ -93,7 +92,7 @@ describe('playtest31f — map essay rooms + autofight last-kill', () => {
     expect(compiled.choices.some((c) => /flee|parley|attack/i.test(c))).toBe(true);
   });
 
-  it('auto-fight ledger writes lastKill so SNAPSHOT cannot deny the corpse', () => {
+  it('auto-fight ledger writes lastKill so the corpse cannot be denied', () => {
     let state = createInitialState('The Summoned Pact', 'litrpg');
     state.turn = 10;
     state.currentLocation = ALONE_RUIN;
@@ -118,9 +117,6 @@ describe('playtest31f — map essay rooms + autofight last-kill', () => {
     expect(state.sceneFacts?.lastKill?.name).toMatch(/Pact-Hunter/i);
     expect(state.sceneFacts?.lastKill?.remains).toBe(true);
     expect(state.arcDirector?.encounterClearedReceipts?.length).toBeGreaterThan(0);
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/Last kill: Pact-Hunter/i);
-    expect(snap).toMatch(/Do not deny the kill/i);
   });
 
   it('rewrites beast body and denied-loot when the foe is a hunter', () => {

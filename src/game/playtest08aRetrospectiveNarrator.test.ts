@@ -12,7 +12,6 @@ import { emptySceneFacts } from './sceneFacts';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import { classifyBeatCommit, repairRejectedBeat, codedSceneMove } from './beatCommitGate';
 import { formatWriterFacingPacket } from './beatContract';
-import { formatFullMemoryBlock } from './situationPacket';
 import { buildContextPrompt } from './systemPrompt';
 import { enumerateLegalEdges } from './graphChoices';
 import {
@@ -114,10 +113,9 @@ describe('08a — writer format is past-tense / allowlist', () => {
     const after = runArcDirectorBeforeGm(liveSkirmish(3), 'Attack the Pact-Hunter Skirmisher');
     const packet = buildCompletedEventPacket(after.state, 'Attack the Pact-Hunter Skirmisher');
     const facing = formatWriterFacingEvent(packet);
-    const memory = formatFullMemoryBlock(after.state);
     const context = buildContextPrompt(after.state, 'Attack the Pact-Hunter Skirmisher');
     const live = formatWriterFacingPacket(after.state, 'Attack the Pact-Hunter Skirmisher');
-    for (const text of [facing, memory, context, live]) {
+    for (const text of [facing, context, live]) {
       expect(text).toMatch(/past tense/i);
       expect(text).toMatch(/YOU MAY ONLY MENTION/);
       expect(text).toMatch(/COMPLETED EVENT:/);

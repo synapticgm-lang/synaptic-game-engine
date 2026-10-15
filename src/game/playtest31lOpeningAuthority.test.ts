@@ -22,7 +22,6 @@ import {
 } from './openingPointerCard';
 import { buildOpeningSceneMandate } from './openingEstablishment';
 import { seedOpeningSceneFacts } from './sceneFacts';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { formatCampaignContractForPrompt, freezeCampaignContract } from './campaignContract';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { narrateAutoFightTemplate, commitAutoFightLedger, isHumanoidEnemyName } from './combatAuthority';
@@ -73,11 +72,6 @@ describe('playtest31lOpeningAuthority', () => {
     expect(input).toMatch(/WHO_COUNT:/);
     expect(input).toMatch(/WHY:/);
     expect(input).not.toMatch(/^\(opening\)$/);
-
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/POINTER CARD/);
-    expect(snap).toMatch(/WHO_COUNT:/);
-    expect(snap).toMatch(/OPENING INVENT BUDGET: 0/);
 
     const mandate = buildOpeningSceneMandate(state);
     expect(mandate).toMatch(/WHERE:/);

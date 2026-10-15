@@ -8,7 +8,6 @@ import { applyErrorRepairs, CURRENT_ERROR_REPAIR_REVISION } from './errorRepairW
 import { applyGovernanceToProse } from './qualityGovernance';
 import { displayAdventurerName, isDeniedPcName, isLockablePcName } from './pcNameAuthority';
 import { detectAtmosphereReprint, isAtmosphereOnlyBeat } from './semanticLoopDetector';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { BUILD_STAMP } from './runManifest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
@@ -113,13 +112,5 @@ describe('playtest31e — deny-list names + atmosphere delta', () => {
     const { rejectClone, notes } = applyGovernanceToProse(state, BEAT_T12, 'Examine the room');
     expect(rejectClone).toBe(true);
     expect(notes.some((n) => /atmosphere reprint/i.test(n))).toBe(true);
-  });
-
-  it('SNAPSHOT asks for a beat delta after look-around', () => {
-    const state = createInitialState('Pact', 'litrpg');
-    state.log = [{ id: 'p', turn: 11, role: 'player', content: 'Examine the room', timestamp: 1 }];
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/BEAT DELTA:/);
-    expect(snap).toMatch(/smell\/light essay/i);
   });
 });

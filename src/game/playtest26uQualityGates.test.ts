@@ -14,7 +14,6 @@ import {
   normalizePlayerIntentKey,
 } from './beatFingerprint';
 import { buildStoryReviewExport } from './playTranscript';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { createInitialState } from './defaults';
 import type { LogEntry } from './types';
 
@@ -127,39 +126,6 @@ describe('playtest26u — Gemini P0 quality gates', () => {
     });
     expect(streak.key).toBe('ask_earth_junk');
     expect(streak.count).toBe(3);
-  });
-
-  it('SNAPSHOT includes quest focus + stagnation + dry-wit voice check', () => {
-    const base = createInitialState('Pact', 'litrpg');
-    const state = {
-      ...base,
-      systemPersonality: 'dry-wit' as const,
-      quests: [
-        {
-          id: 'q1',
-          name: "Circle's Price",
-          description: 'Survive the summoning.',
-          status: 'active' as const,
-          type: 'main' as const,
-          revealed: true,
-          objectives: [{ id: 'o1', description: 'Find who summoned you', completed: false }],
-        },
-      ],
-      log: [
-        { id: 'p1', turn: 1, role: 'player' as const, content: 'Ask about Earth junk prices', timestamp: 1 },
-        { id: 'g1', turn: 1, role: 'gm' as const, content: 'Merchant shrugs.', timestamp: 2 },
-        { id: 'p2', turn: 2, role: 'player' as const, content: 'Ask about Earth junk prices', timestamp: 3 },
-        { id: 'g2', turn: 2, role: 'gm' as const, content: 'Merchant shrugs.', timestamp: 4 },
-        { id: 'p3', turn: 3, role: 'player' as const, content: 'Ask about Earth junk prices', timestamp: 5 },
-      ],
-    };
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/Quest focus: Circle's Price/i);
-    expect(snap).toMatch(/Stagnation:.*ask_earth_junk/i);
-    // 29d — dry-wit lives in VOICE cadence (STORY BODY), not a separate VOICE CHECK line
-    expect(snap).toMatch(/VOICE \(dry-wit\).*STORY BODY/i);
-    expect(snap).toMatch(/QUEST PRESSURE/i);
-    expect(snap).toMatch(/PROSE LICENSE:/i);
   });
 
   it('Gemini export includes STATUS XP lines', () => {

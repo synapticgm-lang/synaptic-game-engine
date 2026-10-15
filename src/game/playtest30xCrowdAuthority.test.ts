@@ -15,7 +15,6 @@ import {
 } from './crowdAuthority';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { HUD_BUILD_STAMP } from '../components/Hud';
@@ -160,17 +159,6 @@ describe('playtest30x — site-wide crowd presence authority', () => {
     );
     expect(named.sceneFacts?.crowdCount).toBe(2);
     expect(named.sceneFacts?.present.some((p) => /mira/i.test(p))).toBe(true);
-  });
-
-  it('SNAPSHOT Crowd line is mode-agnostic and uses the locked count', () => {
-    const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
-    for (const mode of modes) {
-      const state = withCrowd(createInitialState(undefined, mode), ['Herald', 'figure 1'], 2);
-      const snap = formatSceneSnapshotForPrompt(state);
-      expect(snap).toMatch(/Crowd: present \/ intimate \(~2\)/);
-      expect(snap).toMatch(/CROWD COUNT \(BINDING\): 2 people/);
-      expect(snap).toMatch(/AUTHORITY:.*crowd count/);
-    }
   });
 
   it('24f hundred-people scrub still fires on a small locked count', () => {

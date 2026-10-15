@@ -16,7 +16,6 @@ import { runArcDirectorBeforeGm } from './arcDirector';
 import { filterInventedContextChoices } from './choiceWarden';
 import { isLegalEnginePad, choiceNamesUnnarratedObject } from './choicePipeline';
 import { resolveOfferedChoices } from './playTranscript';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import type { GameState, LogEntry } from './types';
 
 function findCycles(obj: unknown, path = 'root', stack = new Set<object>()): string[] {
@@ -127,14 +126,11 @@ describe('playtest02d hang debug — CAST / log / choice pad', () => {
     expect(countLoiterFamilyStreak(poisoned).count).toBe(1);
   });
 
-  it('runArcDirectorBeforeGm + snapshot + resolveOfferedChoices finish quickly', () => {
+  it('runArcDirectorBeforeGm + resolveOfferedChoices finish quickly', () => {
     const state = hubCastState();
     const t0 = Date.now();
     const arc = runArcDirectorBeforeGm(state, 'Ask a direct question');
     expect(arc.state).toBeTruthy();
-    const snap = formatSceneSnapshotForPrompt(arc.state);
-    expect(snap).toContain('<CAST>');
-    expect(snap).toContain('Lowmarket Fence');
     const pads = resolveOfferedChoices(arc.state);
     expect(pads.length).toBeGreaterThanOrEqual(1);
     expect(Date.now() - t0).toBeLessThan(500);

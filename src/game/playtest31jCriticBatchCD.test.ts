@@ -25,7 +25,6 @@ import {
 } from './vignetteLock';
 import { formatHubArrivalForPrompt } from './hubEncounters';
 import { compileChoices } from './choiceCompiler';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import {
   collapseEngineFallbackNarration,
   narrationOnlyFromTranscriptMarkdown,
@@ -150,7 +149,7 @@ describe('playtest31jCriticBatchCD', () => {
       expect(closed?.openVignette?.status).toBe('closed');
     });
 
-    it('SNAPSHOT + hub prompt bind open vignette', () => {
+    it('vignette binding + hub prompt bind open vignette', () => {
       const state = createInitialState(undefined, 'litrpg');
       state.campaignBibleId = 'summoned-pact';
       state.currentLocation = 'Lowmarket';
@@ -176,8 +175,6 @@ describe('playtest31jCriticBatchCD', () => {
       const hubLine = formatHubArrivalForPrompt(state);
       expect(hubLine).toMatch(/HUB VIGNETTE LOCK/i);
       expect(hubLine).toMatch(/Lowmarket Fence/);
-      const snap = formatSceneSnapshotForPrompt(state);
-      expect(snap).toMatch(/Open vignette|OPEN VIGNETTE/i);
     });
 
     it('mergeSceneFacts preserves openVignette; argument harvest locks cast', () => {

@@ -9,7 +9,6 @@ import {
   filterRecycledStallChoices,
 } from './semanticLoopDetector';
 import { applyGovernanceToProse, filterGovernanceChoices } from './qualityGovernance';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { formatFluidProseRailsForPrompt } from './fluidProseRails';
 import { buildPlayDump, buildPlayTurnsJsonl } from './playTranscript';
 import { beatFingerprint } from './beatFingerprint';
@@ -85,14 +84,7 @@ describe('playtest30r — anti-repeat + play dump + story do/don’t', () => {
     expect(fresh.rejectClone).toBeFalsy();
   });
 
-  it('SNAPSHOT AUTHORITY forbids recycle unless the player asked', () => {
-    const state = createInitialState(undefined, 'litrpg');
-    state.turn = 8;
-    state.openingEstablishment = { complete: true, aloneArrival: false } as never;
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(
-      /Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate/
-    );
+  it('fluid rails forbid recycle in every mode', () => {
     expect(formatFluidProseRailsForPrompt('pyoa')).toMatch(/NO RECYCLE/);
     expect(formatFluidProseRailsForPrompt('litrpg')).toMatch(/NO RECYCLE/);
     expect(formatFluidProseRailsForPrompt('dnd')).toMatch(/NO RECYCLE/);

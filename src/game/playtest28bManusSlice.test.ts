@@ -6,7 +6,6 @@ import {
   formatArcStatusReceipts,
 } from './arcDirector';
 import { pushBeatStateTx } from './stateTx';
-import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { STAGNATION_MID_WRITER_ENABLED, resolveWriterTierForTurn } from './writerPolicy';
 import { isDiscoveryExhausted } from './discoveryXpLedger';
 import { compileChoices } from './choiceCompiler';
@@ -69,101 +68,6 @@ describe('playtest28b — Manus slice + T12 hook wiring', () => {
     });
     const tx = next.stateTxLog?.filter((t) => t.kind === 'quest_stage') ?? [];
     expect(tx[tx.length - 1]?.turn).toBe(6);
-  });
-
-  // 28a — daily bonus XP retired (XP-PLAN.md); kept as skipped for history.
-  it.skip('B045 daily quest milestone awards once per UTC day', () => {
-    const state = createInitialState(undefined, 'litrpg');
-    const questsBefore = [
-      {
-        id: 'q1',
-        name: 'Test',
-        description: '',
-        status: 'active' as const,
-        type: 'main' as const,
-        revealed: true,
-        objectives: [{ id: 'o1', description: 'step', completed: false }],
-      },
-    ];
-    const questsAfter = [
-      {
-        ...questsBefore[0],
-        objectives: [{ id: 'o1', description: 'step', completed: true }],
-      },
-    ];
-    const first = applyDailyQuestMilestone(state, { questsBefore, questsAfter });
-    expect(first?.xp).toBe(20);
-    const second = applyDailyQuestMilestone(
-      { ...state, sandboxAwardKeys: [first!.awardKey] },
-      { questsBefore, questsAfter }
-    );
-    expect(second).toBeNull();
-  });
-
-  // 28a — daily bonus XP retired (XP-PLAN.md); kept as skipped for history.
-  it.skip('B045 daily milestone skips look-around / bearings ticks', () => {
-    const state = createInitialState(undefined, 'litrpg');
-    const bearingsBefore = [
-      {
-        id: 'sp-quest-1',
-        name: "The Circle's Price",
-        description: '',
-        status: 'active' as const,
-        type: 'main' as const,
-        revealed: true,
-        objectives: [
-          {
-            id: 'o1',
-            description: 'Get your bearings in this arrival (floor, cell, )',
-            completed: false,
-          },
-        ],
-      },
-    ];
-    const bearingsAfter = [
-      {
-        ...bearingsBefore[0],
-        objectives: [{ ...bearingsBefore[0].objectives[0], completed: true }],
-      },
-    ];
-    expect(
-      applyDailyQuestMilestone(state, {
-        questsBefore: bearingsBefore,
-        questsAfter: bearingsAfter,
-        playerAction: 'explore-the-cell',
-      })
-    ).toBeNull();
-    expect(
-      applyDailyQuestMilestone(state, {
-        questsBefore: bearingsBefore,
-        questsAfter: bearingsAfter,
-        playerAction: 'Talk to the registrar',
-      })
-    ).toBeNull();
-
-    const realBefore = [
-      {
-        id: 'sp-quest-side-junk',
-        name: 'Otherworld Junk',
-        description: '',
-        status: 'active' as const,
-        type: 'side' as const,
-        revealed: true,
-        objectives: [{ id: 'a', description: 'Find a fence', completed: false }],
-      },
-    ];
-    const realAfter = [
-      {
-        ...realBefore[0],
-        objectives: [{ id: 'a', description: 'Find a fence', completed: true }],
-      },
-    ];
-    const real = applyDailyQuestMilestone(state, {
-      questsBefore: realBefore,
-      questsAfter: realAfter,
-      playerAction: 'Talk to the fence',
-    });
-    expect(real?.xp).toBe(20);
   });
 
   it('stagnation Mid writer is explicitly disabled', () => {

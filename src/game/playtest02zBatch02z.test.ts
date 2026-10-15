@@ -18,7 +18,6 @@ import {
   sealedCastNames,
   sealedClosedFacts,
 } from './beatContract';
-import { formatFullMemoryBlock } from './situationPacket';
 import { buildContextPrompt } from './systemPrompt';
 import { buildSystemPrompt } from './masterPrompt';
 import { formatCraftSnapshotLines } from './craftBookCompiler';
@@ -144,9 +143,8 @@ describe('Batch 02z — slim writer packet', () => {
       ],
     });
     const packet = formatWriterFacingPacket(state, 'Talk to Wren Holt');
-    const memory = formatFullMemoryBlock(state);
     const context = buildContextPrompt(state, 'Talk to Wren Holt');
-    for (const text of [packet, memory, context]) {
+    for (const text of [packet, context]) {
       expect(text).not.toMatch(/### SNAPSHOT/);
       expect(text).not.toMatch(/SNAPSHOT Location/);
       expect(text).not.toMatch(/^CRAFT:/m);

@@ -11,7 +11,6 @@ import {
 } from './bindingConstraints';
 import { resolvePlayAreaMap } from './mapEngine';
 import { INTERIOR_MAP_BLUEPRINT } from './placeAuthority';
-import { formatSituationForPrompt } from './situationPacket';
 import { runWarden } from './warden';
 import { formatCampaignMemoryForPrompt } from './campaignMemory';
 
@@ -173,42 +172,6 @@ describe('binding constraints', () => {
     expect(interiorText).toMatch(/EXITS:/);
     expect(interiorText).toMatch(/do not invent extra doors/);
     expect(interiorText).toMatch(/PRESENCE: alone/);
-
-    const packet = formatSituationForPrompt(interiorState);
-    expect(packet).toMatch(/### SNAPSHOT/);
-    expect(packet).not.toMatch(/### SCENE STATE/);
-    expect(packet).not.toMatch(/### BINDING CONSTRAINTS/);
-    expect((packet.match(/### SNAPSHOT/g) ?? []).length).toBe(1);
-    expect((packet.match(/^- Crowd:/gm) ?? []).length).toBe(1);
-    expect((packet.match(/^- Exits:/gm) ?? []).length).toBe(1);
-    expect(packet).toMatch(/AUTHORITY:.*SNAPSHOT.*ledger/);
-  });
-});
-
-describe('snapshot packet uniqueness', () => {
-  it('emits one SNAPSHOT truth block instead of repeating crowd/exits', () => {
-    const state = baseState({
-      sceneFacts: {
-        crowd: 'present',
-        noise: 'voices',
-        present: ['Herald'],
-        props: ['circle chalk'],
-        lastBeat: 'the circle holds',
-        updatedTurn: 1,
-        timeOfDay: 'dusk',
-        weather: 'fog',
-        indoor: true,
-        tension: 'tense',
-      },
-    });
-    const packet = formatSituationForPrompt(state);
-    expect(packet).toMatch(/### SNAPSHOT/);
-    expect((packet.match(/### SNAPSHOT/g) ?? []).length).toBe(1);
-    expect(packet).not.toMatch(/SCENE FACTS \(AUTHORITY/);
-    expect(packet).not.toMatch(/=== SCENE MANIFEST/);
-    expect((packet.match(/^- Crowd:/gm) ?? []).length).toBe(1);
-    expect((packet.match(/^- Exits:/gm) ?? []).length).toBe(1);
-    expect(packet).toMatch(/AUTHORITY: SNAPSHOT \+ ledger win on facts/);
   });
 });
 

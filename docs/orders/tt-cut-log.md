@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **q31-DC1:** deleted in the q31-DC1 commit (stamp `2026-10-15o`). The old text lives at its parent, **`eeba53ad`**. Restore one file with `git show eeba53ad:<path> > <path>`. Line numbers in that section are at `eeba53ad`.
 - **tt-fix-15:** deleted in the tt-fix-15 commit (stamp `2026-10-15b`). The old text lives at its parent, **`ca67deec`**. Line numbers in that section are at `ca67deec`.
 - **tt-fix-13:** deleted in the tt-fix-13 commit (stamp `2026-10-14z`). The old text lives at its parent, **`16ef28f5`**. Line numbers in that section are at `16ef28f5`.
 - **tt-fix-12:** deleted in the tt-fix-12 commit (stamp `2026-10-14y`). The old text lives at its parent, **`38ce08f0`**. Line numbers in that section are at `38ce08f0`.
@@ -14,6 +15,66 @@ Every item below can be restored with git.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## q31-DC1 dead-code clean-up (restore from `eeba53ad`)
+
+How each was proven dead: `git grep -w <module>` over `src`, `supabase`, `scripts`, `index.html`, `vite.config.ts`, `vitest.config.ts` and `package.json`; then a search for dynamic `import(` / by-path reads / name lookups. The only by-path read found was `trainingSetup.test.ts:35` (reads `src/services/llmDirectorService.ts`), and that module was kept (comic code). No edge file names any of the edge mirrors below (the edge imports are `'./<name>.ts'`, which `-w` matches), and `node scripts/sync-gm-edge-shared.mjs --check` reports "edge copies match" afterwards.
+
+### A. Dead modules (whole files)
+
+1. **`src/game/situationPacket.ts`** (592 lines). First line: `import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types';`. What it did: the old SNAPSHOT writer packet (`effectivePowerScaling`, `buildSituationPacket`, `formatSceneSnapshotForPrompt`, `formatSituationForPrompt`, `formatCampaignRails`, `formatFullMemoryBlock`). Safe because no app, script or edge code imported it; only 21 test files did. The writer is handed `completedEventPacket` + the info sheet (`formatWriterFacingPacket` / `buildContextPrompt`).
+2. **`supabase/functions/_shared/gm/situationPacket.ts`** (591 lines). Edge copy of 1. Safe because `gm-turn` and every other edge file never imported it (git grep: 0 hits under `supabase/functions`).
+3. **`src/game/dailyMilestoneLedger.ts`** (55 lines). First line: `/** B045 — Daily milestone XP: +20 on first real quest objective tick per UTC day (LitRPG retention).` What it did: `DAILY_QUEST_MILESTONE_XP` (already `0`) and `applyDailyQuestMilestone` (already returned `null`: `DAILY_XP_RETIRED = true`). Safe because only 2 tests imported it; the daily bonus was retired in 28a and `FAST_XP_AWARDS.dailyFirstTick` (0) still pins that.
+
+### B. Edge mirrors no edge code imports (the `src/game` originals are live and stay)
+
+4. **`supabase/functions/_shared/gm/bindingConstraints.ts`** (415 lines). First line: `/** Binding constraints builder for LLM prompt.` Its only reader on the client is `warden.ts`, which does not run on the edge.
+5. **`supabase/functions/_shared/gm/dungeonLifecycle.ts`** (157 lines). First line: `/** 29e — Dungeon generate / close lifecycle.`
+6. **`supabase/functions/_shared/gm/intentEnums.ts`** (362 lines). First line: `/** Batch Y Milestone 1 — Intent Enums`. It was not on the sync list either (a leftover copy).
+7. **`supabase/functions/_shared/gm/presentAuthority.ts`** (150 lines). First line: `/** Lock C — location-bound present[] trim on real travel.`
+8. **`supabase/functions/_shared/gm/proseWarden.ts`** (1658 lines). First line: `/** Cheap post-writer English / UI-leak pass. Not a second model.` (LT-off's edge step for this file ends here.)
+9. **`supabase/functions/_shared/gm/sceneManifest.ts`** (219 lines). First line: `/** Scene Manifest — reserved high-priority authority for the current scene.`
+
+Each was safe because no file under `supabase/functions` imports it; it was only rewritten by the sync script.
+
+10. **`scripts/sync-gm-edge-shared.mjs`** lines 22 `'situationPacket.ts',`, 24 `'bindingConstraints.ts',`, 39 `'sceneManifest.ts',`, 78 `'proseWarden.ts',`, 79 `'dungeonLifecycle.ts',`, 88 `'presentAuthority.ts',`, and lines 154-162, the `if (file === 'situationPacket.ts') { … }` rewrite (it dropped the `sandboxXp` import and inlined a look/wait regex for the edge copy). What they did: copied the files above to the edge. Safe because the edge copies are gone and nothing imports them. Line 4's usage example `situationPacket.ts writerInfoLayer.ts` now reads `completedEventPacket.ts writerInfoLayer.ts`. To restore one mirror, put its name back in `FILES` and re-run the sync.
+
+### C. Stale tests of the dead modules (assertions on the dead packet text only; every live call in the same test stays)
+
+11. `src/game/actionValidation.test.ts` line 14 (import), lines 177-184 (the `formatSituationForPrompt(interiorState)` asserts at the end of "lists interior exits and crowd binding"; the binding-constraint asserts stay), lines 188-213 (`describe('snapshot packet uniqueness')`).
+12. `src/game/playtest02dHangDebug.test.ts` line 19 (import), lines 135-137 (`snap` CAST asserts); title at 130 drops "+ snapshot".
+13. `src/game/playtest02nBatch02n.test.ts` lines 11-14 (import), lines 67-88 ("SNAPSHOT and situation packet drop LAST PAD, CRAFT, clerk license, duplicate PROSE LICENSE"). Replaced by a test that keeps its live checks (`lastOfferedChoiceSets`, `compileCraftRules(...).replacedModeLine`, `formatCraftSnapshotLines(...) == []`).
+14. `src/game/playtest02zBatch02z.test.ts` line 21 (import), line 147 (`const memory = formatFullMemoryBlock(state);`) and `memory` in the line 149 loop list.
+15. `src/game/playtest08aRetrospectiveNarrator.test.ts` line 15 (import), line 117 (`memory`) and `memory` in the line 120 loop list.
+16. `src/game/playtest26uQualityGates.test.ts` line 17 (import), lines 132-163 ("SNAPSHOT includes quest focus + stagnation + dry-wit voice check").
+17. `src/game/playtest27wQualityGovernance.test.ts` line 9 (import), lines 65-66 (`snap` asserts); `buildGovernanceSnapshotLines` asserts stay; title at 59 now says "governance lines".
+18. `src/game/playtest29dGeminiCalibrated.test.ts` line 11 (import), lines 35-44 ("SNAPSHOT includes PROSE LICENSE and single AUTHORITY").
+19. `src/game/playtest29eWorldMapOverhaul.test.ts` line 20 (import), lines 141-142 (`formatSituationForPrompt` asserts); the `formatWorldMapAuthorityBlock` asserts stay; title at 135 renamed.
+20. `src/game/playtest30rAntiRepeat.test.ts` line 12 (import), lines 89-95 (state + SNAPSHOT recycle assert); the four `formatFluidProseRailsForPrompt` NO RECYCLE asserts stay; title at 88 renamed.
+21. `src/game/playtest30sStoryCraft.test.ts` lines 2 and 6 (imports), lines 34-37 and 47-49 (state/`snap` and its MODE AUTHORITY / GOLD SHAPE asserts), lines 58-66 ("does not restack the shared recycle rule", SNAPSHOT only).
+22. `src/game/playtest30xCrowdAuthority.test.ts` line 18 (import), lines 165-174 ("SNAPSHOT Crowd line is mode-agnostic and uses the locked count").
+23. `src/game/playtest30yChromePerson.test.ts` line 16 (import), lines 181-184 (`snap` asserts); the art-lock asserts stay; title at 179 renamed.
+24. `src/game/playtest31aHookLock.test.ts` line 18 (import), lines 127-128 (`snap` HOOK WHY assert); the `applyCommittedNarrative` / sealed-manifest asserts stay; title at 122 renamed.
+25. `src/game/playtest31cJosieAuthority.test.ts` line 10 (import), lines 195-210 (faction state + `formatSituationForPrompt` asserts); the `factionNoteForHook` assert stays; title at 194 renamed.
+26. `src/game/playtest31eNameAtmosphere.test.ts` line 11 (import), lines 118-124 ("SNAPSHOT asks for a beat delta after look-around").
+27. `src/game/playtest31fMapAutofight.test.ts` line 14 (import), lines 121-123 (`snap` Last-kill asserts); the `commitAutoFightLedger` lastKill asserts stay; title at 96 renamed.
+28. `src/game/playtest31gCraftBook.test.ts` lines 9-10 (imports), lines 41-43 (`countCraftLines` helper), the `snap` asserts at 69-72, 84-87, 93-96, 102-104, 109-111 and 127. Every `compileCraftRules` assert stays; `formatCraftSnapshotLines(...) == []` now stands in for the "no CRAFT line" checks.
+29. `src/game/playtest31jCriticBatchCD.test.ts` line 28 (import), lines 179-180 (`snap` vignette assert); the vignette-binding and hub-prompt asserts stay; title at 153 renamed.
+30. `src/game/playtest31lOpeningAuthority.test.ts` line 25 (import), lines 77-80 (`snap` POINTER CARD asserts); `formatPointerCardForSnapshot` keeps its own test at 269.
+31. `src/game/simulationistSandbox.test.ts` line 6 (import), lines 50-93 ("formatSituationForPrompt includes ZONE THREAT / FACTION / POWER SCALING when set" and "formatSituation always includes effective POWER SCALING").
+32. `src/game/playtest28bManusSlice.test.ts` line 9 (import), lines 74-167 (two `it.skip` B045 daily milestone tests, already skipped since 28a).
+33. `src/game/xpFix14a.test.ts` line 12 (import), lines 101 and 103-108 (`DAILY_QUEST_MILESTONE_XP` and `applyDailyQuestMilestone` asserts); `FAST_XP_AWARDS.dailyFirstTick === 0` stays.
+
+### Looked at and kept
+
+- `src/services/llmDirectorService.ts` is the comic "Graphic Novel Director" (`generatePanelScript` → `ComicPanelScript`). John's rule keeps comic code. `trainingSetup.test.ts:35` also reads it by path.
+- `comicPageCompositor.bakeComicPageSnapshot`: comic, kept.
+- `playTranscript.downloadPlayTranscript` (`src/game/playTranscript.ts:547-549`, definition only, 0 callers): not deleted. The new `.cursorignore` pattern `**/*transcript*` (15 Oct 13:05) blocks the agent from that source file. Left for a session where that file is readable.
+- Order C's other exports (`defaultAtlasForMode`, `sheetFromPlace`, `validateEncounterResolution`, `formatEncounterAftermath`, `formatCombatTelegraph`, `itemLooksLikeWeapon`, `formatWorldLedgerForPrompt`, `formatSceneFactsForPrompt`): already gone (`4cf74818`, 28k). Nothing to cut.
+- Order D (move test helpers): not done this session. It is a move, not a deletion; `src/test/pinDice.setup.ts` is already in a test folder.
+- Stripe, ads, parent gate, cosmetic entitlements, comic overlay / compositor / CBZ: parked, kept.
 
 ---
 

@@ -7,7 +7,6 @@ import { applyOpeningAnswer } from './openingEstablishment';
 import { stripChoiceList } from './parser';
 import { compileChoices } from './choiceCompiler';
 import { runArcDirectorBeforeGm } from './arcDirector';
-import { formatSituationForPrompt } from './situationPacket';
 import { applyCommittedNarrative } from './sceneFacts';
 import { enforceCameraOnState, harvestCameraIntoSceneFacts } from './travelAuthority';
 import { factionNoteForHook, talkContradictsLockedWhy } from './hookLock';
@@ -191,23 +190,7 @@ describe('playtest31c — Josie authority owners', () => {
     );
   });
 
-  it('faction matrix follows accident hookLock — no paid-for Pactborn', () => {
-    const state = summonedNameCover();
-    state.worldLedger = {
-      ...state.worldLedger,
-      factionStandings: [
-        {
-          id: 'pellane-crown',
-          name: 'Pellane Crown',
-          standing: 'neutral',
-          influence: 0,
-          notes: 'They paid for a Pactborn. You have not sworn yet.',
-        },
-      ],
-    };
-    const snap = formatSituationForPrompt(state);
-    expect(snap).not.toMatch(/paid for a Pactborn/i);
-    expect(snap).toMatch(/rite misfired/i);
+  it('faction note follows accident hookLock — no paid-for Pactborn', () => {
     expect(factionNoteForHook('They paid for a Pactborn. You have not sworn yet.', 'accident')).toMatch(
       /misfired/i
     );

@@ -15,7 +15,6 @@ import {
   seedHookLockFromPickedHook,
 } from './hookLock';
 import { applyCommittedNarrative } from './sceneFacts';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { buildSealedManifest, validateProseAgainstManifest } from './sealedManifest';
 import { applyErrorRepairs } from './errorRepairWarden';
 import { BUILD_STAMP } from './runManifest';
@@ -119,13 +118,10 @@ describe('playtest31a — site-wide hook why lock', () => {
     expect(revised.hookLock?.source).toBe('player');
   });
 
-  it('applyCommittedNarrative persists hookLock; SNAPSHOT + manifest bind it', () => {
+  it('applyCommittedNarrative persists hookLock; the manifest binds it', () => {
     const state = withLock(createInitialState(undefined, 'litrpg'), 'accident');
     const committed = applyCommittedNarrative(state, JOSIE_PAWN, 2);
     expect(committed.hookLock?.nature).toBe('accident');
-
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/HOOK WHY \(BINDING\).*accident/i);
 
     const manifest = buildSealedManifest(state, 'Ask why I am here');
     expect(manifest.requiredFacts.some((f) => /Hook why: accident/i.test(f))).toBe(true);

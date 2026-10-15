@@ -8,10 +8,6 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { buildEntityCast } from './entityCast';
-import {
-  formatSceneSnapshotForPrompt,
-  formatSituationForPrompt,
-} from './situationPacket';
 import { compileCraftRules, formatCraftSnapshotLines } from './craftBookCompiler';
 import { lastOfferedChoiceSets } from './semanticLoopDetector';
 import type { GameState, LogEntry } from './types';
@@ -64,27 +60,11 @@ describe('Batch 02n stamps', () => {
 });
 
 describe('Batch 02n — writer packet diet', () => {
-  it('SNAPSHOT and situation packet drop LAST PAD, CRAFT, clerk license, duplicate PROSE LICENSE', () => {
+  it('the craft compiler still picks but hands the writer no CRAFT lines', () => {
     const state = dietState();
-    const snap = formatSceneSnapshotForPrompt(state);
-    const packet = formatSituationForPrompt(state);
     expect(lastOfferedChoiceSets(state, 1)[0]?.length).toBeGreaterThan(0);
-    expect(snap).not.toMatch(/LAST PAD:/);
-    expect(packet).not.toMatch(/LAST PAD:/);
-    expect(packet).not.toMatch(/Plunge into the thick of the Lowmarket crowd/);
-
     expect(compileCraftRules(state).replacedModeLine).toBe(true);
     expect(formatCraftSnapshotLines(state)).toEqual([]);
-    expect(snap).not.toMatch(/^CRAFT:/m);
-    expect(packet).not.toMatch(/^CRAFT:/m);
-
-    expect(packet).not.toMatch(/someone in the aisle/i);
-
-    const snapLicenses = snap.match(/PROSE LICENSE:/g) ?? [];
-    const packetLicenses = packet.match(/PROSE LICENSE:/g) ?? [];
-    expect(snapLicenses).toHaveLength(1);
-    expect(packetLicenses).toHaveLength(1);
-    expect(packet).not.toMatch(/^RAILS: SNAPSHOT \+ ledger \+ WORLD MAP/m);
   });
 
   it('CAST keeps the named list and drops the CONSTRAINTS lecture', () => {

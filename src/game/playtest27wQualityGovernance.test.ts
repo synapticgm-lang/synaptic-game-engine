@@ -6,8 +6,6 @@ import {
   processMetaInput,
   buildGovernanceSnapshotLines,
 } from './qualityGovernance';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
-
 describe('playtest27w — P0+P1 quality governance', () => {
   it('keeps them as written when one NPC is present (29c: pronouns are never rewritten)', () => {
     const state = createInitialState();
@@ -56,14 +54,12 @@ describe('playtest27w — P0+P1 quality governance', () => {
     expect(patched.qualityGovernance?.recoveryMandate).toMatch(/META COMPLAINT/i);
   });
 
-  it('includes governance mandates in scene snapshot', () => {
+  it('includes governance mandates in the governance lines', () => {
     const state = createInitialState();
     state.turn = 12;
     state.qualityGovernance = {
       recoveryMandate: 'TEST RECOVERY MANDATE',
     };
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/TEST RECOVERY MANDATE/);
     const lines = buildGovernanceSnapshotLines(state);
     expect(lines.some((l) => l.includes('TEST RECOVERY MANDATE'))).toBe(true);
   });

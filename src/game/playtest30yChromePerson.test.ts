@@ -13,7 +13,6 @@ import {
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { extractNamesFromHookText } from './openingPin';
 import { filterInventedContextChoices } from './choiceWarden';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { formatSceneArtLock } from './sceneArtLock';
 import { isChromeTalkChoice } from './chromeAuthority';
 import { BUILD_STAMP } from './runManifest';
@@ -176,13 +175,8 @@ describe('playtest30y — chrome is not a person', () => {
     expect(withHandlersProse.toLowerCase()).not.toMatch(/blue panel states/);
   });
 
-  it('SNAPSHOT + art lock do not list chrome as presence', () => {
+  it('art lock does not list chrome as presence', () => {
     const state = withPresent(['blue panel', 'Place', 'the Warden']);
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/COVER CHROME \(BINDING\)/);
-    expect(snap).not.toMatch(/Presence:.*\bPlace\b/);
-    expect(snap).not.toMatch(/Presence:.*blue panel/);
-
     const art = formatSceneArtLock({
       storyText: 'You stand on cracked tiles. A blue panel hangs.',
       location: 'The Sevenfold Circle',

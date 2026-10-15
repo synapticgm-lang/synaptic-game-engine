@@ -8,7 +8,6 @@ import {
 } from './writerPolicy';
 import { scrubStrangerArtifact, scrubUnearnedVictory, applyProseWarden } from './proseWarden';
 import { forceLivenessBeat, runArcDirectorBeforeGm } from './arcDirector';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
 import { formatVoiceCadenceDirective, buildVoiceCadence } from './voiceCadenceSystem';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 
@@ -30,17 +29,6 @@ describe('playtest29d — Gemini-calibrated prompt diet + soft stakes', () => {
       FREE_WRITER_FAILOVER_OPENROUTER
     );
     expect(resolveFreeWriterFailover('anthropic/claude-haiku-4.5')).toBeNull();
-  });
-
-  it('SNAPSHOT includes PROSE LICENSE and single AUTHORITY (no duplicate STAGNATION essay)', () => {
-    const state = createInitialState(undefined, 'litrpg');
-    state.turn = 8;
-    state.openingEstablishment = { complete: true, aloneArrival: false } as never;
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/PROSE LICENSE:/);
-    expect(snap).toMatch(/AUTHORITY:/);
-    expect(snap).not.toMatch(/STAGNATION INTERRUPT:/);
-    expect(snap).not.toMatch(/VOICE CHECK \(Sarcastic Patch/);
   });
 
   it('voice directive demands STORY BODY color and honest stakes', () => {

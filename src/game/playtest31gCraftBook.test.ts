@@ -6,8 +6,6 @@ import { createInitialState } from './defaults';
 import { BUILD_STAMP } from './runManifest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
-import { formatSceneSnapshotForPrompt } from './situationPacket';
-import { formatModeStoryAuthorityLine, MODE_STORY_AUTHORITY } from './fluidProseRails';
 import {
   applyCraftLearning,
   assertCraftAuthorityBudget,
@@ -38,10 +36,6 @@ function withPlayer(state: GameState, text: string, turn = 5): GameState {
   return { ...state, log: [...(state.log ?? []), entry] };
 }
 
-function countCraftLines(snap: string): number {
-  return (snap.match(/^CRAFT:/gm) ?? []).length;
-}
-
 describe('playtest31g — craft book compiler', () => {
   it('stamp is 2026-08-31g / 30z and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
@@ -65,11 +59,6 @@ describe('playtest31g — craft book compiler', () => {
     expect(compiled.replacedModeLine).toBe(true);
     expect(compiled.ruleIds).toContain('litrpg-inspect-delta');
     expect(compiled.ruleIds.length).toBeLessThanOrEqual(2);
-
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).not.toMatch(/^CRAFT:/m);
-    expect(snap).not.toContain(formatModeStoryAuthorityLine('litrpg'));
-    expect(countCraftLines(snap)).toBe(0);
     expect(formatCraftSnapshotLines(state)).toEqual([]);
   });
 
@@ -80,35 +69,18 @@ describe('playtest31g — craft book compiler', () => {
     expect(compiled.replacedModeLine).toBe(true);
     expect(compiled.ruleIds).toContain('pyoa-wait-fork');
     expect(compiled.ruleIds.length).toBeLessThanOrEqual(2);
-
-    const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).not.toMatch(/^CRAFT:/m);
-    expect(snap).not.toContain(formatModeStoryAuthorityLine('pyoa'));
-    expect(countCraftLines(snap)).toBe(0);
   });
 
-  it('compiler still picks mode rules internally; SNAPSHOT gets no CRAFT or MODE AUTHORITY', () => {
+  it('compiler still picks mode rules internally; the writer gets no CRAFT lines', () => {
     for (const mode of ['dnd', 'rpg'] as EngineMode[]) {
-      const state = playing(mode);
-      const snap = formatSceneSnapshotForPrompt(state);
-      expect(formatCraftSnapshotLines(state)).toEqual([]);
-      expect(snap).not.toContain(MODE_STORY_AUTHORITY[mode]);
-      expect(countCraftLines(snap)).toBe(0);
+      expect(formatCraftSnapshotLines(playing(mode))).toEqual([]);
     }
 
     const dndTalkState = withPlayer(playing('dnd'), 'Ask the captain what she heard');
-    const dndCompiled = compileCraftRules(dndTalkState);
-    expect(dndCompiled.replacedModeLine).toBe(true);
-    const dndTalk = formatSceneSnapshotForPrompt(dndTalkState);
-    expect(dndTalk).not.toMatch(/^CRAFT:/m);
-    expect(countCraftLines(dndTalk)).toBe(0);
+    expect(compileCraftRules(dndTalkState).replacedModeLine).toBe(true);
 
     const rpgTalkState = withPlayer(playing('rpg'), 'Talk to Mara about the pass');
-    const rpgCompiled = compileCraftRules(rpgTalkState);
-    expect(rpgCompiled.replacedModeLine).toBe(true);
-    const rpgTalk = formatSceneSnapshotForPrompt(rpgTalkState);
-    expect(rpgTalk).not.toMatch(/^CRAFT:/m);
-    expect(countCraftLines(rpgTalk)).toBe(0);
+    expect(compileCraftRules(rpgTalkState).replacedModeLine).toBe(true);
   });
 
   it('never emits more than 2 CRAFT lines even with stacked boosts', () => {
@@ -124,7 +96,7 @@ describe('playtest31g — craft book compiler', () => {
     };
     const compiled = compileCraftRules(state);
     expect(compiled.ruleIds.length).toBeLessThanOrEqual(2);
-    expect(countCraftLines(formatSceneSnapshotForPrompt(state))).toBe(0);
+    expect(formatCraftSnapshotLines(state)).toEqual([]);
   });
 
   it('learns from last-turn atmosphere without a new LLM — inspect rule is boosted next turn', () => {

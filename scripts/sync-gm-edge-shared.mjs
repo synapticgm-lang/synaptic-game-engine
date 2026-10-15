@@ -1,7 +1,7 @@
 /**
  * Sync GM prompt modules into supabase/functions/_shared/gm for the edge runtime.
  * Run after editing prompt sources: node scripts/sync-gm-edge-shared.mjs
- *   node scripts/sync-gm-edge-shared.mjs situationPacket.ts writerInfoLayer.ts   (copy only those)
+ *   node scripts/sync-gm-edge-shared.mjs completedEventPacket.ts writerInfoLayer.ts   (copy only those)
  *   node scripts/sync-gm-edge-shared.mjs --check [files…]   (list edge copies that differ; exit 1 on drift)
  */
 import fs from 'node:fs';
@@ -19,9 +19,7 @@ const FILES = [
   'archetypes.ts',
   'inventory.ts',
   'panelBudget.ts',
-  'situationPacket.ts',
   'craftBookCompiler.ts',
-  'bindingConstraints.ts',
   'sceneFacts.ts',
   'crowdAuthority.ts',
   'hookLock.ts',
@@ -36,7 +34,6 @@ const FILES = [
   'narrativePov.ts',
   'combatAuthority.ts',
   'encounterTerminalFsm.ts',
-  'sceneManifest.ts',
   'introductionPermit.ts',
   'campaignContract.ts',
   'openingPointerCard.ts',
@@ -75,8 +72,6 @@ const FILES = [
   'entityCast.ts',
   'closedScenePerson.ts',
   'pyoaBranchLedger.ts',
-  'proseWarden.ts',
-  'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',
   'padUniverse.ts',
   'beatContract.ts',
@@ -85,7 +80,6 @@ const FILES = [
   'semanticLoopDetector.ts',
   'beatFingerprint.ts',
   'ledgerNounObey.ts',
-  'presentAuthority.ts',
   'outdoorHubs.ts',
   'hubEncounters.ts',
   'pyoaSpine.ts',
@@ -150,15 +144,6 @@ function edgeSource(file, srcPath) {
       /import umbraBook from ['"]@\/data\/pyoa\/umbraBook\.json['"];\r?\n/,
       "const umbraBook = { startId: 'up-bell-tower', nodes: [] };\n"
     );
-  }
-  if (file === 'situationPacket.ts') {
-    // sandboxXp pulls parser/faction graph; edge only needs look/wait for BEAT DELTA.
-    next = next
-      .replace(/import \{ isLookAroundAction \} from '\.\/sandboxXp';\r?\n/, '')
-      .replace(
-        /lastPlayer && \(isLookAroundAction\(lastPlayer\) \|\| \/\\bwait\\b\/i\.test\(lastPlayer\)\)/,
-        "lastPlayer && /\\b(look around|examine the (?:area|room|surroundings)|wait)\\b/i.test(lastPlayer)"
-      );
   }
   if (file === 'checkMath.ts') {
     // Edge only needs the PlayerCheckResult type. The tabletop exploration rules (DC ladder, light, pace) pull the
