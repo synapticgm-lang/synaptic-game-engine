@@ -542,15 +542,15 @@ export function journeyPads(
   return [...forward, ...met, ...(job ? [job] : []), ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
 }
 
-export function isJourneyPad(choice: string): boolean {
+/**
+ * A chip of the ground between: walk on / turn back, a travel engine chip, or the live meeting's own chips by its
+ * class (with or without the failure-cost tail). A meeting chip with no such meeting on the stretch is not one.
+ */
+export function isJourneyPad(state: Pick<GameState, 'journey'>, choice: string): boolean {
   const t = meetingMoveBase(choice).toLowerCase();
-  const known = [
-    ...Object.values(TALK_PAD),
-    ...Object.values(LIVES_PAD),
-    ...Object.values(FIXED_ENCOUNTER_PADS).flat(),
-    CHAMPION_PAD,
-  ];
-  return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || !!travelEngineChip(t) || known.some((p) => p.toLowerCase() === t);
+  const j = state.journey;
+  const met = j?.encounter ? encounterPads(j.encounter, j.terrain) : [];
+  return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || !!travelEngineChip(t) || met.some((p) => meetingMoveBase(p).toLowerCase() === t);
 }
 
 /** Meetings that can be faced as a fight. */
@@ -926,14 +926,14 @@ function meetingWant(e: RoadEncounter): string {
 }
 
 /**
- * tt-fix-9 — what the live road meeting a speaker label stands for wants ("word of someone gone missing"), as the
- * meeting record holds it. '' for signs, a lair or a plea (those wants describe a scene, not what one says).
+ * tt-fix-9 — the live road meeting a speaker label (or the meeting's name) stands for, by its class. Null for signs,
+ * a lair or a plea (their want describes a scene, not what one says). Its `want`, when recorded, is what it wants.
  */
-export function roadMeetingWant(j: TravelJourney | null | undefined, speaker: string): string {
+export function roadMeetingSpeaker(j: TravelJourney | null | undefined, speaker: string): RoadEncounter | null {
   const e = j?.encounter;
-  if (!e?.want || roadMeetingOver(e) || SCENE_KINDS.has(e.kind) || e.kind === 'plea') return '';
+  if (!e || roadMeetingOver(e) || SCENE_KINDS.has(e.kind) || e.kind === 'plea') return null;
   const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
-  return [ENCOUNTER_LABEL[e.kind], e.name ?? ''].some((n) => !!n && bare(n) === bare(speaker)) ? e.want : '';
+  return [ENCOUNTER_LABEL[e.kind], e.name ?? ''].some((n) => !!n && bare(n) === bare(speaker)) ? e : null;
 }
 
 /**

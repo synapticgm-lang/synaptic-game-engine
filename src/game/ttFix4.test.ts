@@ -104,7 +104,9 @@ describe('tt-fix-4 (5) a check chip says what failure costs', () => {
     expect(talk).toBe('Talk your way past the thugs, but fail and they attack');
     expect(pads).toContain('Face the thugs');
     expect(meetingMoveBase(talk!)).toBe('Talk your way past the thugs');
-    expect(isJourneyPad(talk!)).toBe(true);
+    expect(isJourneyPad(s, talk!)).toBe(true);
+    expect(isJourneyPad(s, 'Talk your way past the thugs')).toBe(true);
+    expect(isJourneyPad({ ...s, journey: { ...s.journey!, encounter: null } }, 'Talk your way past the thugs')).toBe(false);
   });
 });
 

@@ -190,7 +190,7 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     return { kind: 'impossible-chip', detail: `"${label}" handles the System window, which only the player sees and nobody can touch` };
   }
 
-  if (isJourneyPad(label)) {
+  if (isJourneyPad(state, label)) {
     return isJourneyUnderway(state) ? null : { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
   }
 

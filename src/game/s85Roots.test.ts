@@ -79,7 +79,7 @@ describe('s85 Root A — a foe parked on the road keeps the road chips', () => {
     for (const turn of [17, 18]) {
       const list = offered(s, ROAD_PROPOSED);
       expect(list[0]).toBe('Walk on');
-      expect(list.filter((c) => !isJourneyPad(c))).toEqual([]);
+      expect(list.filter((c) => !isJourneyPad(s, c))).toEqual([]);
       expect(list).not.toContain('Force a path forward');
       expect(list).not.toContain('Call out to a bystander');
       if (turn === 17) s = step(s, 'Call out to a bystander');

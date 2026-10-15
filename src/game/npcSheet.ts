@@ -18,7 +18,7 @@ import type { GameState, NpcMemory, NpcSheet } from './types';
 import type { NpcRole } from './npcRoleRegistry';
 import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
 import { createHashRng, keyedRng } from './seededRng';
-import { roadMeetingWant } from './travelJourney';
+import { roadMeetingSpeaker } from './travelJourney';
 import type { SpokenLine } from './tokenProse';
 
 type Archetype = {
@@ -243,10 +243,10 @@ export function motiveLinesOf(state: GameState, name: string): string[] {
   const saved = memoryOf(state, name)?.motiveLines ?? [];
   if (saved.length) return saved;
   const j = state.journey;
-  const meeting = roadMeetingWant(j, name);
-  const group = meeting ? GROUP_LINES[j!.encounter!.kind] : undefined;
-  if (!group) return meeting ? [`I want ${meeting}`] : [];
-  const roll = keyedRng(`${state.seed ?? ''}|${j!.from}|${j!.to}|${j!.startedTurn}|${j!.encounter!.stretch}|motive`)();
+  const meeting = roadMeetingSpeaker(j, name);
+  const group = meeting ? GROUP_LINES[meeting.kind] : undefined;
+  if (!group) return meeting?.want ? [`I want ${meeting.want}`] : [];
+  const roll = keyedRng(`${state.seed ?? ''}|${j!.from}|${j!.to}|${j!.startedTurn}|${meeting!.stretch}|motive`)();
   return group[Math.floor(roll * group.length)] ?? [];
 }
 

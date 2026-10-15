@@ -12,7 +12,7 @@ import { isNameOriginKitCoverChoice, isPlayDemand, openingOfferPads, playerEngag
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
 import { spineEngineChipLabels } from './pyoaSpine';
-import { journeyPads } from './travelJourney';
+import { isJourneyPad, isJourneyUnderway } from './travelJourney';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { dungeonCardChoices } from './dungeonCard';
@@ -171,7 +171,6 @@ export function filterInventedContextChoices(
   const engineChips = new Set(
     [
       ...spineEngineChipLabels(state),
-      ...journeyPads(state),
       ...dungeonCardChoices(state),
       ...openingOfferPads(state),
       storyRpgDecisionChip(state) ?? '',
@@ -181,6 +180,7 @@ export function filterInventedContextChoices(
 
   return choices.filter((choice) => {
     if (engineChips.has(choice.trim().toLowerCase())) return true;
+    if (isJourneyUnderway(state) && isJourneyPad(state, choice)) return true;
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
       return false;
