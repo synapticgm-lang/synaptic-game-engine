@@ -30,16 +30,15 @@ import {
   hostileShare,
   journeyPads,
   pickMeetingKind,
-  replayKeepsRecordedMeetings,
   roadHoursToday,
   roadMeetingFact,
   rollRoadEncounter,
-  setReplayRecordedMeetings,
   travelBeatFact,
   UNDERWAY_HERE,
   worldClock,
   type StretchContext,
 } from './travelJourney';
+import { replayPreFeature, setReplayTape } from './replaySeam';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { EngineMode, GameState, Item, RoadEncounter, TravelJourney } from './types';
@@ -319,17 +318,17 @@ describe('tt-travel — the SRD meeting roll pinned (live and new play)', () => 
   });
 
   it('live play does not use the replay seam', () => {
-    expect(replayKeepsRecordedMeetings()).toBe(false);
+    expect(replayPreFeature()).toBe(false);
     const src = (f: string) => readFileSync(join(__dirname, f), 'utf8');
-    for (const f of ['useGame.ts', 'fateAutoplay.ts']) expect(src(f)).not.toMatch(/setReplayRecordedMeetings|replayKeepsRecordedMeetings/);
+    for (const f of ['useGame.ts', 'fateAutoplay.ts']) expect(src(f)).not.toMatch(/setReplayTape|replayPreFeature/);
     const seeds = Array.from({ length: 40 }, (_, i) => `seam-${i}`);
     const live = seeds.map((s) => JSON.stringify(onTrip(s).state.journey?.encounter ?? null));
-    setReplayRecordedMeetings(true);
+    setReplayTape('2026-10-13n');
     let replayed: string[];
     try {
       replayed = seeds.map((s) => JSON.stringify(onTrip(s).state.journey?.encounter ?? null));
     } finally {
-      setReplayRecordedMeetings(false);
+      setReplayTape(null);
     }
     expect(replayed).not.toEqual(live);
     expect(seeds.map((s) => JSON.stringify(onTrip(s).state.journey?.encounter ?? null))).toEqual(live);

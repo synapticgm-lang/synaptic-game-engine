@@ -94,12 +94,12 @@ describe('replay bank tt-travel (the travel day)', () => {
     expect((pushed.extra ?? []).some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
   });
 
-  it('[tabletop ds151 T7 | tt-travel] the back streets are not a travel day: no weather, no jobs, no camp', () => {
+  it('[tabletop ds151 T7 | tt-travel, q31-B] the replay reaches the tape\'s own T7 trip; back streets offer no road jobs and no camp', () => {
     expect(T.input(7)).toBe('Travel toward Greyhollow Inn');
-    expect(T.receipts(7).some((l) => /^Weather: |Wisdom \(Survival\)|Look-out/.test(l))).toBe(false);
+    expect(T.receipts(7).some((l) => /^Travel: open road between Keep Gate and Greyhollow Inn/.test(l))).toBe(true);
     const s = T.after(7);
-    expect(s.journey?.terrain).toBe('streets');
-    const pads = journeyPads({ ...s, journey: { ...s.journey!, encounter: null } });
+    const streets = { ...s.journey!, ground: 'Back streets', terrain: 'streets' as const, hoursPerLeg: 0.5, encounter: null };
+    const pads = journeyPads({ ...s, currentLocation: 'Back streets', journey: streets });
     expect(pads.some((p) => JOB.test(p) || /^Make camp$/.test(p))).toBe(false);
   });
 });

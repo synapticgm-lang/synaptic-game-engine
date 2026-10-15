@@ -14,6 +14,7 @@ import { dungeonRoomWays } from './dungeonCard';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
+import { replayPreFeature } from './replaySeam';
 
 const LEAD = /^(?:(?:alone|just|standing|kneeling|waking)\s+)?(?:(?:in|inside|at|on|by|near|under)\s+)?(?:the|a|an)\s+/i;
 /** How the player is in the place ("alone in", "kneeling at"): the card's words, not part of the place's name. */
@@ -35,7 +36,7 @@ export function placeHeadNoun(description: string): string {
 /** The quest pin matched to this card first (it is the card's own place), then the bible's hubs. */
 function knownPlaceNames(bibleId: string | null | undefined, hookBlob: string, description: string): string[] {
   const out: string[] = [];
-  const pins = [
+  const pins = replayPreFeature('openingPlaceNames') ? [] : [
     matchLitRpgMainSpine(bibleId, hookBlob, description)?.mapPin,
     matchTabletopMainSpine(bibleId, hookBlob, description)?.mapPin,
     matchStoryRpgMainSpine(bibleId, hookBlob, description)?.mapPin,
@@ -146,6 +147,7 @@ export function openingPlaceRecord(
   const hubWords = new Set(hubNames(mentioned).flatMap(words));
   const clauseNamesHub = words(clause).some((w) => hubWords.has(w));
   const roomOfHub =
+    !replayPreFeature('openingPlaceNames') &&
     isInteriorPlace(mentioned.name) && !clauseNamesHub && !rest.split(' ').some((w) => SPATIAL_PREP.test(w));
   if (!rest || roomOfHub) return { place: mentioned.name };
   const clausePrep = raw.replace(LEAD, '').match(CLAUSE)?.[0]?.trim().split(' ')[0] ?? '';

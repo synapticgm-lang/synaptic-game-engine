@@ -97,6 +97,7 @@ import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 
 import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
+import { replayPreFeature } from './replaySeam';
 import { campAt, campEncounter, campHeadcount, campMemoryFact, campPeople, placeRoadCamp, recordCampOutcome } from './roadCamps';
 interface Endpoint {
   name: string;
@@ -660,21 +661,7 @@ export function rollRoadEncounter(
   return enc;
 }
 
-let replayRecordedMeetings = false;
-
-/**
- * Replay bank only (`replayRun`): a saved tape keeps the meetings it recorded under the roll it was made with
- * (a chance on every stretch, sure after 2 quiet stretches, the old kind pool, no camp-watch meetings).
- * Live play (`useGame`) and new fate-autoplay runs never set this; they use the d6 per watch.
- */
-export function setReplayRecordedMeetings(on: boolean): void {
-  replayRecordedMeetings = on;
-}
-
-export function replayKeepsRecordedMeetings(): boolean {
-  return replayRecordedMeetings;
-}
-
+/** A replayed tape's recorded meeting roll (`replaySeam`); live play and new runs use the d6 per watch. */
 const RECORDED_CHANCE = 0.4;
 const RECORDED_QUIET_STEP = 0.25;
 const RECORDED_MAX_QUIET = 2;
@@ -825,7 +812,7 @@ function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched
  */
 function rollStretch(state: GameState, j: TravelJourney, check = true): TravelJourney {
   const quiet = j.quietStretches ?? 0;
-  if (replayRecordedMeetings) {
+  if (replayPreFeature()) {
     const key = `${tripKey(state, j)}|${j.legsDone}`;
     const areaTier = j.areaTier ?? 1;
     const encounter = recordedTapeMeeting(
@@ -1638,7 +1625,7 @@ function withRoadCamp(state: GameState, j: TravelJourney): { state: GameState; j
   const at = routeLeg(j);
   const enc = j.encounter;
   const same = { state, journey: j, facts: [] as string[] };
-  if (!at || replayRecordedMeetings) return same;
+  if (!at || replayPreFeature()) return same;
   const placed = campAt(state, at.key, at.leg);
   if (placed) {
     const met = campEncounter(placed, enc ?? { stretch: j.legsDone, dangerous: (j.areaTier ?? 1) >= DANGEROUS_TIER });
@@ -1696,7 +1683,7 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   let journey: TravelJourney = { ...j, encounter: null };
   let night: RoadEncounter | null = null;
   let watch = 0;
-  for (let w = 1; w <= CAMP_WATCHES && !night && !replayRecordedMeetings; w++) {
+  for (let w = 1; w <= CAMP_WATCHES && !night && !replayPreFeature(); w++) {
     night = meetingCheck(state, journey, `${key}|w${w}`, !helper && w === 2);
     watch = w;
   }
