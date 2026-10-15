@@ -1,4 +1,4 @@
-﻿# Keep Cursor sessions small (cost rules 2026-09-27)
+# Keep Cursor sessions small (cost rules 2026-09-27)
 node_modules/
 dist/
 **/dist/
@@ -7,7 +7,11 @@ scripts/ai-player-browser/runs/
 scripts/tmp-diag/
 **/runs/
 **/transcripts/
-**/*transcript*
+**/*transcript*.log
+**/*transcript*.txt
+**/*transcript*.json
+**/*transcript*.jsonl
+**/*transcript*/
 **/*backup*/
 **/*.bak
 docs/research/
