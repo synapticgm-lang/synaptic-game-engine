@@ -47,7 +47,8 @@ describe('replay bank mode2 (mode lap 2)', () => {
   it('[tabletop fl151 T8 | mode2 fix 1] the flee roll, each attack roll and the HP change are on STATUS', () => {
     expect(F.input(8)).toBe('Try to flee');
     const s = status(F, 8);
-    expect(s).toMatch(/^Flee check: d20 \d+ [+−] \d+ vs DC 12 — failure$/m);
+    // tt-fix-6: flee is the SRD escape contest against the foe's own d20, not a flat DC.
+    expect(s).toMatch(/^Flee check: d20 \d+ [+−] \d+ = \d+ vs .+ d20 \d+ [+−] \d+ = \d+ — failure$/m);
     expect(s).toMatch(/^Round 1 — you d20 \d+ [+−] \d+ = \d+ vs AC \d+: (?:hit|miss|critical)/m);
     expect(s).toMatch(/^HP: \d+ → \d+ \(dealt \d+, took \d+\)$/m);
   });
@@ -85,7 +86,8 @@ describe('replay bank mode2 (mode lap 2)', () => {
 
   it('[tabletop ds151 T10/T13 | mode2 fix 2] encounter XP is the CR XP of each foe beaten', () => {
     expect(status(D, 10)).toMatch(/XP Gained: 50 \(defeated the thugs — CR 1\/8 = 25 XP × 2 = 50 XP ÷ 1 = 50\)/);
-    expect(status(D, 13)).toMatch(/XP Gained: 150 \(defeated the restless dead — CR 1\/4 = 50 XP × 3 = 150 XP ÷ 1 = 150\)/);
+    // tt-fix-2 SRD encounter budget: a level-1 solo character meets one zombie here, not three.
+    expect(status(D, 13)).toMatch(/XP Gained: 50 \(defeated the restless dead — CR 1\/4 = 50 XP ÷ 1 = 50\)/);
     expect(allStatus(D)).not.toMatch(/no CR on card, default/);
   });
 

@@ -118,7 +118,7 @@ describe('replay bank tt-build-3 (tabletop level-up and spells)', () => {
     expect(words(r2.engineLine)).not.toMatch(/\d/);
     // Blessed: the next attack adds 1d4, shown on STATUS.
     const r3 = turn(r2.state, 'Cast Sacred Flame');
-    expect(r3.status.find((l) => l.startsWith('Round 3 — '))).toMatch(/Zombie 1 DEX save against Sacred Flame d20 11 − 2 = 9 vs DC \d+/);
+    expect(r3.status.find((l) => l.startsWith('Round 3 — '))).toMatch(/Zombie DEX save against Sacred Flame d20 11 − 2 = 9 vs DC \d+/);
   });
 
   it('[tabletop ds151 T13 | tt-build-3] taking damage while concentrating calls a CON save (DC 10 or half the damage); a failure ends Bless', () => {
@@ -156,7 +156,7 @@ describe('replay bank tt-build-3 (tabletop level-up and spells)', () => {
     const round = r2.status.find((l) => l.startsWith('Round 2 — '))!;
     expect(round).toContain('you cast Magic Missile (level 1 slot)');
     // Three darts at one target: 3 × (1d4 + 1), rolled as one line, no attack roll.
-    expect(round).toMatch(/you Magic Missile: 3d4 \(\d, \d, \d\) \+ 3 = \d+ force; Zombie 1 HP \d+ → \d+/);
+    expect(round).toMatch(/you Magic Missile: 3d4 \(\d, \d, \d\) \+ 3 = \d+ force; Zombie HP \d+ → \d+/);
     expect(round).not.toMatch(/Magic Missile d20/);
     expect(r2.status).toContain('Spell slots: level 1 1/2 left');
     const r3 = turn(r2.state, 'Cast Magic Missile');

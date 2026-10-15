@@ -226,3 +226,7 @@ Old saves still carry these values (`{ ...prevQg }` copies them forward); nothin
 8. **`src/data/campaigns/cursedKeep.ts` line 203** — `'Speak with Oskar at the Greyhollow Tavern',` → `'Speak with Oskar at the Greyhollow Inn',` (one hub name; the hub's real name).
 9. **`src/game/choiceRanking.ts` line 308** — `return pick ? \`Nudge: someone nearby mentions ${pick.name}: ${pick.blurb.replace(/[.!?]+$/, '')}.\` : '';` (pasted the hub blurb every time). Replaced by `placeFirstSight`; line 19 import changed with it.
 10. **`src/game/turnCheck.ts` line 299** — `if (words.length && !words.some((w) => stemHit(text, w))) {` (action-object check without exits). Replaced by the check that also reads `handedExits`.
+
+## q31-A SRD monster names in the combat log
+
+1. **`src/game/tabletop/roundFight.ts` line 208 (at `e2a826a7`)** - `const statusName = (i) => (count === 1 ? enc.name : `${block.srd ? block.name : enc.name} ${i + 1}`);`. What it did: logged a lone SRD foe under the road label (`the restless dead`) while a group got the block name. Replaced by one `logged` name (block name when `block.srd`, else the encounter name) used for one foe and for numbered foes. The writer label (`writerName`) is unchanged.

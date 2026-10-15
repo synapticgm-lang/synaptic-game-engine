@@ -205,7 +205,8 @@ interface FoeSetup {
 
 function foeIdentity(enc: ActiveEncounter, block: StatBlock, count: number) {
   const ids = Array.from({ length: count }, (_, i) => `f${i + 1}`);
-  const statusName = (i: number) => (count === 1 ? enc.name : `${block.srd ? block.name : enc.name} ${i + 1}`);
+  const logged = block.srd ? block.name : enc.name;
+  const statusName = (i: number) => (count === 1 ? logged : `${logged} ${i + 1}`);
   const writerName = (i: number) => (count === 1 ? enc.name : block.srd ? `the ${ORDINAL[i] ?? `${i + 1}th`} ${block.name.toLowerCase()}` : `one of ${enc.name}`);
   return { ids, statusName, writerName };
 }

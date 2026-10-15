@@ -154,11 +154,11 @@ describe('replay bank tt-build-6c (oracle, crafting, attunement, mastery, class 
     expect(round(barb.status, 1)).toBe('Round 1 — you Greataxe d20 7 + 5 = 12 vs AC 8: hit, 1d12 (4) + 3 = 7 slashing = 7; Zombie 1 HP 15 → 8; you Greataxe d20 7 + 5 = 12 vs AC 8 (Cleave): hit, 1d12 (4) = 4 slashing = 4; Zombie 2 HP 15 → 11; Zombie 1 Slam d20 7 + 3 = 10 vs AC 14: miss; Zombie 2 Slam d20 7 + 3 = 10 vs AC 14: miss; Zombie 3 Slam d20 7 + 3 = 10 vs AC 14: miss');
     vi.restoreAllMocks();
     const pal = opened('Paladin');
-    expect(round(pal.status, 1)).toMatch(/Zombie 1 HP 15 → 9; Zombie 1 gains Sap \(Longsword mastery\); Zombie 1 Slam d20 \(dis: 7, 7\) /);
+    expect(round(pal.status, 1)).toMatch(/Zombie HP 15 → 9; Zombie gains Sap \(Longsword mastery\); Zombie Slam d20 \(dis: 7, 7\) /);
     vi.restoreAllMocks();
     const old = opened('Barbarian', { ttRulesVersion: 'srd-5.1' });
     expect(round(old.status, 1)).not.toMatch(/Cleave/);
-    expect(round(old.status, 1)).toMatch(/^Round 1 — you Greataxe d20 7 \+ 5 = 12 vs AC 8: hit, 1d12 \(4\) \+ 3 = 7 slashing = 7; Zombie 1 HP 15 → 8; Zombie 1 Slam/);
+    expect(round(old.status, 1)).toMatch(/^Round 1 — you Greataxe d20 7 \+ 5 = 12 vs AC 8: hit, 1d12 \(4\) \+ 3 = 7 slashing = 7; Zombie HP 15 → 8; Zombie Slam/);
   });
 
   it('[tabletop ds151 T13 | tt-build-6c] class features: Rage, Hunter\'s Mark, Hex, Innate Sorcery and Martial Arts run in the round engine with use counts', () => {
@@ -172,13 +172,13 @@ describe('replay bank tt-build-6c (oracle, crafting, attunement, mastery, class 
     vi.restoreAllMocks();
     const ranger = opened('Ranger');
     const mark = turn(ranger.state, "Cast Hunter's Mark on the zombie and attack");
-    expect(round(mark.status, 2)).toMatch(/^Round 2 — you cast Hunter's Mark \(no slot, concentration\); Zombie 1 gains Hunter's Mark; you Scimitar .* \+ Hunter's Mark 1d6 \(2\) = 2 slashing = 7;/);
+    expect(round(mark.status, 2)).toMatch(/^Round 2 — you cast Hunter's Mark \(no slot, concentration\); Zombie gains Hunter's Mark; you Scimitar .* \+ Hunter's Mark 1d6 \(2\) = 2 slashing = 7;/);
     expect(mark.status).toContain("Class feature: Favored Enemy (Hunter's Mark) — 1 of 2 uses left");
     expect(mark.state.character.casting?.slotsUsed ?? []).toEqual([]);
     vi.restoreAllMocks();
     const lock = opened('Warlock');
     const hex = turn(lock.state, 'Cast Hex on the zombie');
-    expect(round(hex.status, 2)).toMatch(/^Round 2 — you cast Hex \(level 1 slot, concentration\); Zombie 1 gains Hex; you Eldritch Blast d20 7 \+ 4 = 11 vs AC 8: hit, 1d10 \(4\) = 4 \+ Hex 1d6 \(2\) = 2 force = 6;/);
+    expect(round(hex.status, 2)).toMatch(/^Round 2 — you cast Hex \(level 1 slot, concentration\); Zombie gains Hex; you Eldritch Blast d20 7 \+ 4 = 11 vs AC 8: hit, 1d10 \(4\) = 4 \+ Hex 1d6 \(2\) = 2 force = 6;/);
     expect(hex.status).toContain('Spell slots: level 1 0/1 left');
     vi.restoreAllMocks();
     const sorc = opened('Sorcerer');
@@ -194,11 +194,11 @@ describe('replay bank tt-build-6c (oracle, crafting, attunement, mastery, class 
     const barb = opened('Barbarian', { ttStartingLevel: 2 });
     const reckless = turn(barb.state, 'Reckless attack with the Greataxe');
     expect(round(reckless.status, 2)).toMatch(/you Greataxe d20 \(adv: 7, 7\) 7 \+ 5 = 12 vs AC 8/);
-    expect(round(reckless.status, 2)).toMatch(/Zombie \d Slam d20 \(adv: 7, 7\)/);
+    expect(round(reckless.status, 2)).toMatch(/Zombie Slam d20 \(adv: 7, 7\)/);
     vi.restoreAllMocks();
     const pal = opened('Paladin', { ttStartingLevel: 2 });
     const smite = turn(pal.state, 'Smite the zombie with Divine Smite');
-    expect(round(smite.status, 2)).toMatch(/you Longsword d20 7 \+ 5 = 12 vs AC 8: hit, 1d8 \(3\) \+ 3 = 6 \+ Divine Smite 2d8 \(3, 3\) = 6 \+ Divine Smite \(Undead\) 1d8 \(3\) = 3 slashing = 15; Zombie 1 HP 9 → 0;.*; you cast Divine Smite \(no slot\);/);
+    expect(round(smite.status, 2)).toMatch(/you Longsword d20 7 \+ 5 = 12 vs AC 8: hit, 1d8 \(3\) \+ 3 = 6 \+ Divine Smite 2d8 \(3, 3\) = 6 \+ Divine Smite \(Undead\) 1d8 \(3\) = 3 slashing = 15; Zombie HP 9 → 0;.*; you cast Divine Smite \(no slot\);/);
     expect(smite.status).toContain("Class feature: Paladin's Smite (Divine Smite) — 0 of 1 use left");
     expect(smite.state.character.casting?.slotsUsed ?? []).toEqual([]);
   });

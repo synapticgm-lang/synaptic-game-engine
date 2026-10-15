@@ -165,12 +165,9 @@ describe('replay bank tt-build-2 (tabletop turn-based combat)', () => {
     // d20 7: the zombies' slams miss the wizard's AC.
     dice(0.3);
     const r1 = turn(s, T.input(13));
-    expect(r1.status.find((l) => l.startsWith('Initiative — '))).toMatch(/Zombie ×3 d20 7 − 2 = 5$/);
-    expect(r1.state.roundCombat!.foes.map((f) => [f.name, f.blockId, f.maxHp])).toEqual([
-      ['Zombie 1', 'zombie', 15],
-      ['Zombie 2', 'zombie', 15],
-      ['Zombie 3', 'zombie', 15],
-    ]);
+    // tt-fix-2 SRD encounter budget: a level-1 solo character meets one zombie, logged by its block name (q31 Order A).
+    expect(r1.status.find((l) => l.startsWith('Initiative — '))).toMatch(/Zombie d20 7 − 2 = 5$/);
+    expect(r1.state.roundCombat!.foes.map((f) => [f.name, f.blockId])).toEqual([['Zombie', 'zombie']]);
     expect(r1.chips).toContain('Cast Fire Bolt');
     const r2 = turn(r1.state, 'Cast Fire Bolt');
     const d = deriveTabletopSheet(s)!;
@@ -185,7 +182,7 @@ describe('replay bank tt-build-2 (tabletop turn-based combat)', () => {
     expect(r1.chips).toContain('Cast Sacred Flame');
     const r2 = turn(r1.state, 'Cast Sacred Flame');
     const dc = 8 + abilityMod(s.character.attributes.WIS) + deriveTabletopSheet(s)!.pb;
-    expect(r2.status.find((l) => l.startsWith('Round 2 — '))).toContain(`Zombie 1 DEX save against Sacred Flame d20 11 − 2 = 9 vs DC ${dc}`);
+    expect(r2.status.find((l) => l.startsWith('Round 2 — '))).toContain(`Zombie DEX save against Sacred Flame d20 11 − 2 = 9 vs DC ${dc}`);
   });
 
   it('[tt-build-2 guard] recorded pre-creation runs keep the one-shot fight; LitRPG and story RPG never get rounds', () => {
