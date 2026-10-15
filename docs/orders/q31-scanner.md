@@ -53,3 +53,9 @@ Before: 14-file TOTAL lines 8470 / regex 847 / newRegExp 90 / lists 19 (271) / f
 ## NEXT
 
 - If John wants scripts in TOTAL too (`scripts/factCheck.mjs`, `scripts/fate-autoplay/autoThumbs.mjs`, per the RC-0 brief), add `scripts` as a third root and re-record the baseline.
+
+## Ship
+
+Commit `6e72257e`, pushed to main. Live `https://www.synapticgm.com/version.json` reads `2026-10-15l`. `queued-fix-orders.md` and `tt-overnight-fix-template.md` were untracked before this order, so the commit added them whole, with the baseline edits. The q31-B entry already in the working copy of `tt-cut-log.md` was left unstaged.
+
+TT_DONE
