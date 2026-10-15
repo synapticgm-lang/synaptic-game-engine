@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **tt-fix-13:** deleted in the tt-fix-13 commit (stamp `2026-10-14z`). The old text lives at its parent, **`16ef28f5`**. Line numbers in that section are at `16ef28f5`.
 - **tt-fix-12:** deleted in the tt-fix-12 commit (stamp `2026-10-14y`). The old text lives at its parent, **`38ce08f0`**. Line numbers in that section are at `38ce08f0`.
 - **tt-fix-11:** deleted in the tt-fix-11 commit (stamp `2026-10-14x`). The old text lives at its parent, **`0339063c`**. Line numbers in that section are at `0339063c`.
 - **tt-library-2:** deleted in the tt-library-2 commit (stamp `2026-10-14w`). The old text lives at its parent, **`a76a19d6`**. Line numbers in that section are at `a76a19d6`.
@@ -12,6 +13,12 @@ Every item below can be restored with git.
 - **tt-cut 1:** deleted in commit `1f50ec5c` (stamp `2026-10-14r`). The old text lives at its parent, **`56c53ce5`**. Line numbers in that section are at `56c53ce5`.
 
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
+
+---
+
+## tt-fix-13 (restore from `16ef28f5`)
+
+1. **`src/game/arcDirector.ts` lines 736–739** — `} else if (r.startsWith('Encounter:')) { lines.push(r); } else if (r.startsWith('Encounter cleared:')) { lines.push(r);` in `formatArcStatusReceipts`. What they did: let the encounter lines onto STATUS by their exact prefix, so the new "Encounter ended:" line (a fight lost or fled, lap 17 N5) would have been dropped. Folded into the engine-line prefix regex on line 740 as `Encounter(?: cleared| ended)?`; every encounter line takes the same code path.
 
 ---
 

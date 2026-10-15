@@ -1223,6 +1223,7 @@ export async function headlessFateTurn(
     ...offerTurn.receipts,
     ...dungeonTurn.receipts,
     ...storyTurn.receipts,
+    ...(tabletopTurn.facts ?? []),
     ...nudge.receipts,
     ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
   ], arcState.engineMode);

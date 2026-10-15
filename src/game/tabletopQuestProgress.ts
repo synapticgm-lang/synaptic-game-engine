@@ -20,7 +20,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { resolveNpcRecord } from './npcRecords';
 import { isJourneyUnderway } from './travelJourney';
 
-export type TabletopQuestTurn = { state: GameState; receipts: string[] };
+export type TabletopQuestTurn = { state: GameState; receipts: string[]; /** The step taken, as the writer's world fact. */ facts?: string[] };
 
 const chipKey = (s: string) => (s ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 const bare = (s: string) => chipKey(s).replace(/^the\s+/, '');
@@ -266,5 +266,5 @@ export function applyTabletopQuestTurn(input: GameState, playerInput: string, he
   const quests = (state.quests ?? []).map((q) =>
     q.id === quest.id ? { ...q, objectives, ...(done ? { status: 'completed' as const } : {}) } : q
   );
-  return { state: { ...state, quests }, receipts: [`Quest stage: ${quest.name} — ${taken.chip}`] };
+  return { state: { ...state, quests }, receipts: [`Quest stage: ${quest.name} — ${taken.chip}`], facts: [`You ${objectives[taken.idx]!.description.trim().charAt(0).toLowerCase()}${objectives[taken.idx]!.description.trim().slice(1)}`] };
 }

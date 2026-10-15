@@ -389,7 +389,9 @@ export function formatEncounterClearedStatus(receipt: EncounterClearedReceipt): 
           : receipt.outcome === 'capture'
             ? 'captured'
             : 'victory';
-  return `Encounter cleared: ${receipt.name} — ${label}`;
+  // An escape or a loss leaves the foe where it stood: the fight ended, nothing was cleared.
+  const ended = receipt.outcome === 'escape' || receipt.outcome === 'defeat';
+  return `Encounter ${ended ? 'ended' : 'cleared'}: ${receipt.name} — ${label}`;
 }
 
 /** Force clear if still engaged past hard safety (eval T50 / stuck saves). */

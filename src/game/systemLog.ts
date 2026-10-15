@@ -214,24 +214,24 @@ export function rememberCueText(line: string): string | null {
 export function statusLinesForVerbosity(lines: string[], verbosity: StatVerbosity | undefined): string[] {
   if (verbosity === 'minimal') return [];
   if (verbosity === 'core') {
-    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|condition|inspiration|^encounter cleared:|^ending:|^origin:|^romance:|^floor:/i.test(l));
+    return lines.filter((l) => /success|fail|damage|heal|\bhp\b|defeated|xp|loot|gold|item|level|quest|dungeon|objective|registered|location|skill|technique|title|achievement|remember|condition|inspiration|^encounter (?:cleared|ended):|^ending:|^origin:|^romance:|^floor:/i.test(l));
   }
   return lines;
 }
 
 /**
  * One clear line per foe: the engine's machine receipt ("Encounter cleared: X (defeat)") and its STATUS line
- * ("Encounter cleared: X — lost") are the same event; STATUS keeps the readable one.
+ * ("Encounter ended: X — lost") are the same event; STATUS keeps the readable one.
  */
 function dedupeEncounterCleared(lines: string[]): string[] {
   const readable = new Set(
-    lines.map((l) => l.match(/^Encounter cleared:\s*(.+?)\s+—\s+\S/)?.[1]?.toLowerCase()).filter((n): n is string => !!n)
+    lines.map((l) => l.match(/^Encounter (?:cleared|ended):\s*(.+?)\s+—\s+\S/)?.[1]?.toLowerCase()).filter((n): n is string => !!n)
   );
   const seen = new Set<string>();
   return lines.filter((l) => {
     const machine = l.match(/^Encounter cleared:\s*(.+?)\s*\([a-z]+\)\s*$/i)?.[1]?.toLowerCase();
     if (machine && readable.has(machine)) return false;
-    if (/^Encounter cleared:/i.test(l)) {
+    if (/^Encounter (?:cleared|ended):/i.test(l)) {
       const key = l.toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);

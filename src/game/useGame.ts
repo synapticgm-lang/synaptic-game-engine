@@ -2833,6 +2833,7 @@ export function useGame() {
         ...offerTurn.receipts,
         ...dungeonTurn.receipts,
         ...storyTurn.receipts,
+        ...(tabletopTurn.facts ?? []),
         ...nudge.receipts,
         ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
       ], liveCurrent.engineMode);
