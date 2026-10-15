@@ -9,7 +9,9 @@
  *   meets the person it takes along, where it goes. Arriving there ticks nothing.
  * - A step inside a place is in a room of that place's dungeon card.
  * A step ticks only when the engine records the find or the meeting. A tabletop step ticks as story only and pays
- * no XP (SRD XP is monster CR). Other modes are untouched.
+ * no XP (SRD XP is monster CR).
+ * q31-L1: LitRPG uses the same place + find/meet path (sandboxXp then pays quest-tick). Story RPG keeps its own
+ * progress module. Matching is `actionMatchesObjective` in questTargets (RC-2).
  */
 import type { GameState, Quest, QuestTarget } from './types';
 import { mainSpineQuest } from './questPlay';
@@ -156,9 +158,14 @@ function stepTarget(state: GameState, quest: Quest, idx: number): QuestTarget | 
   return { kind: person ? 'person' : 'item', name: person ?? what, ...(place ? { place } : {}) };
 }
 
+/** Modes whose main spine ticks by placed targets + find/meet (not Story RPG's arrival path). */
+function usesTargetTicks(state: GameState): boolean {
+  return state.engineMode === 'dnd' || state.engineMode === 'litrpg';
+}
+
 /** Put the targets of every open quest's open steps in the world, once, when the quest is first seen. */
 export function placeTabletopQuestTargets(state: GameState): GameState {
-  if (state.engineMode !== 'dnd') return state;
+  if (!usesTargetTicks(state)) return state;
   let next = state;
   let changed = false;
   const quests = (state.quests ?? []).map((q) => {
@@ -176,6 +183,7 @@ export function placeTabletopQuestTargets(state: GameState): GameState {
   return changed ? { ...next, quests } : state;
 }
 
+/** Tabletop only: chip / door pads. LitRPG places and ticks without offering these chips (talk stages keep storyChip). */
 function playOpen(state: GameState): Quest | null {
   if (state.engineMode !== 'dnd' || !state.openingEstablishment?.complete || state.activeEncounter) return null;
   return mainSpineQuest(state);
@@ -228,8 +236,15 @@ export function tabletopStepIsDoor(state: GameState, chip: string): boolean {
 /** `hereBefore` is where the player stood before this turn's move, so the person a move takes along comes too. */
 export function applyTabletopQuestTurn(input: GameState, playerInput: string, hereBefore?: string): TabletopQuestTurn {
   const placed = placeTabletopQuestTargets(placeTabletopStepPeople(input));
-  const quest = playOpen(placed);
-  if (!quest) return { state: placed, receipts: [] };
-  const found = findQuestTargets(takeAlong(placed, quest, hereBefore), playerInput);
+  if (!usesTargetTicks(placed) || !placed.openingEstablishment?.complete || placed.activeEncounter) {
+    return { state: placed, receipts: [] };
+  }
+  let forFind = placed;
+  if (placed.engineMode === 'dnd') {
+    const quest = playOpen(placed);
+    if (!quest) return { state: placed, receipts: [] };
+    forFind = takeAlong(placed, quest, hereBefore);
+  }
+  const found = findQuestTargets(forFind, playerInput);
   return { state: found.state, receipts: found.receipts, ...(found.facts.length ? { facts: found.facts } : {}) };
 }

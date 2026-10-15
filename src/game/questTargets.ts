@@ -7,6 +7,8 @@
  *   own action, a search there, naming it, or talking to the person. A chip or an arrival alone ticks nothing.
  * - The dungeon card lives on its place record: leaving parks it there (rooms cleared, loot taken, targets
  *   found), going back reopens it, and a card is never auto-closed.
+ * - q31-L1 / RC-2: the action class comes from `parsePlayerIntent` (and the step's verb/object chip), not
+ *   local verb word lists. K, G-m57 and QV reuse `actionMatchesObjective`.
  */
 import type { GameState, Quest, QuestObjective, QuestTarget } from './types';
 import { ensureDungeonCard, isDungeonCard } from './dungeonCard';
@@ -15,13 +17,16 @@ import { stepChip } from './choiceRanking';
 import { peopleHere } from './chipLegality';
 import { isGiverName } from './questGiver';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { parsePlayerIntent, type IntentKind } from './intentParser';
 
 const chipKey = (s: string) => (s ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 const bare = (s: string) => chipKey(s).replace(/^(?:the|a|an)\s+/, '');
 const words = (s: string) => ` ${chipKey(s).replace(/[^a-z0-9' ]+/g, ' ')} `;
 
-const SEARCH_VERB = /\b(?:search|rummage|look around|investigate)\b/i;
-const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;
+/** Intent classes that find or inspect a placed thing (search / look / examine / investigate). */
+const FIND_KINDS: ReadonlySet<IntentKind> = new Set(['search', 'observe']);
+/** Intent classes that meet a person. */
+const MEET_KINDS: ReadonlySet<IntentKind> = new Set(['talk']);
 
 /** The player stands at a known place (a hub by any of its names, or a room inside it). */
 export function atPlace(state: GameState, place: string): boolean {
@@ -70,15 +75,33 @@ export function targetSpot(state: GameState, step: QuestObjective): boolean | 'd
   return !withPeople.length || withPeople.some((p) => here.some((n) => isGiverName(n, p)));
 }
 
-/** The action finds or meets the target at its spot: the step's own action, naming it, a search, or talking to the person. */
-function actionTakes(step: QuestObjective, action: string): boolean {
-  const t = step.target!;
-  const said = words(action);
+/**
+ * Shared objective matcher (K, G-m57, QV): the player's action finds or meets this step's target.
+ * Drive from the structured verb/object chip, `parsePlayerIntent` class, and named object — not verb word lists.
+ * Callers still require `targetSpot` (the engine place/person record) before a tick.
+ */
+export function actionMatchesObjective(step: QuestObjective, action: string): boolean {
+  const t = step.target;
+  if (!t || !(action ?? '').trim()) return false;
   const chip = stepChip(step);
   if (chip && chipKey(action) === chipKey(chip)) return true;
-  const named = said.includes(words(bare(t.name))) || (t.kind === 'person' && words(t.name).trim().split(' ').some((w) => w.length >= 4 && said.includes(` ${w} `)));
-  if (t.kind === 'person') return named && (TALK_VERB.test(action) || !!t.place);
-  return named || SEARCH_VERB.test(action);
+  const intent = parsePlayerIntent(action);
+  const said = words(action);
+  const objectBare = bare(step.object ?? t.name);
+  const named =
+    (!!objectBare && said.includes(words(objectBare)))
+    || intent.targets.some((x) => {
+      const b = bare(x);
+      return !!b && (b === objectBare || said.includes(words(b)) || words(objectBare).includes(words(b)));
+    })
+    || (t.kind === 'person'
+      && words(t.name)
+        .trim()
+        .split(' ')
+        .some((w) => w.length >= 4 && said.includes(` ${w} `)));
+  if (t.kind === 'person') return named && (MEET_KINDS.has(intent.kind) || !!t.place);
+  // Item / find: naming the object, or a find/inspect class action at the spot (spot is the caller's gate).
+  return named || FIND_KINDS.has(intent.kind);
 }
 
 /** The engine's find / meet this turn: every active quest's open step whose target the player takes at its spot. */
@@ -94,7 +117,7 @@ export function findQuestTargets(
     if (q.status !== 'active') return q;
     let hit = false;
     const objectives = (q.objectives ?? []).map((o) => {
-      if (o.completed || targetSpot(state, o) !== true || !actionTakes(o, action)) return o;
+      if (o.completed || targetSpot(state, o) !== true || !actionMatchesObjective(o, action)) return o;
       hit = true;
       receipts.push(`Quest stage: ${q.name} — ${stepChip(o) ?? o.description}`);
       const d = o.description.trim();

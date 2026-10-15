@@ -5,16 +5,20 @@
  * 2. a step ticks only on the engine's find / meet at the target, never from a chip or an arrival;
  * 3. a dungeon holding an unfound target is never closed or reset: leaving keeps its state for the return;
  * 4. the quest log has no cap.
+ * q31-L1 / RC-2: find/meet uses parsePlayerIntent + actionMatchesObjective (no SEARCH_VERB/TALK_VERB lists);
+ * LitRPG places and ticks on the same path.
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import type { GameState, Quest } from './types';
 import type { GameEvent } from './parser';
 import { applyTabletopQuestTurn, placeTabletopQuestTargets } from './tabletopQuestProgress';
+import { actionMatchesObjective, findQuestTargets } from './questTargets';
 import { openDungeonCard, parkDungeonCard } from './dungeonCard';
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import { applyStructuralEvents } from './structuralEvents';
 import { TABLETOP_MAIN_SPINES, tabletopSpineToStarterQuest } from '@/data/quests/tabletopMainSpines';
+import { parsePlayerIntent } from './intentParser';
 
 function ck(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'dnd') as GameState;
@@ -97,6 +101,68 @@ describe('2 — a step ticks only on find / meet', () => {
     const found = applyTabletopQuestTurn(there, 'Search the room', there.currentLocation).state.quests![0]!.objectives![1]!;
     expect(found.completed).toBe(true);
     expect(found.target!.foundTurn).toBe(9);
+  });
+
+  it('q31-L1/RC-2: examine the altar ticks via intent class without a verb word list', () => {
+    expect(parsePlayerIntent('Examine the altar').kind).toBe('observe');
+    const step = {
+      id: 'altar',
+      description: 'Examine the altar',
+      completed: false,
+      verb: 'Examine',
+      object: 'the altar',
+      target: { kind: 'item' as const, name: 'the altar', place: 'Keep Gate' },
+    };
+    expect(actionMatchesObjective(step, 'Examine the altar')).toBe(true);
+    expect(actionMatchesObjective(step, 'Look around')).toBe(true);
+    expect(actionMatchesObjective(step, 'Talk to Oskar')).toBe(false);
+    const at = ck({
+      quests: [{ ...plea, objectives: [plea.objectives![0]!, step, plea.objectives![2]!] }],
+      currentLocation: 'Keep Gate',
+    } as Partial<GameState>);
+    const ticked = findQuestTargets(at, 'Examine the altar');
+    expect(ticked.state.quests![0]!.objectives![1]!.completed).toBe(true);
+    expect(ticked.receipts[0]).toMatch(/Examine the altar/);
+  });
+
+  it('q31-L1: LitRPG places a one-step spine target and ticks on find at the pin', () => {
+    const q: Quest = {
+      id: 'sp-spine-alone-ruin-tether',
+      name: 'Echoes of a Dead Summoner',
+      description: 'Retrieve the research.',
+      status: 'active',
+      revealed: true,
+      type: 'main',
+      location: 'Collapsed Mage Tower',
+      objectives: [
+        {
+          id: 'o1',
+          description: "Find the mage's hidden vault key amidst the rubble of their destroyed sanctum.",
+          completed: false,
+        },
+      ],
+    } as Quest;
+    const base = createInitialState(undefined, 'litrpg') as GameState;
+    const s = {
+      ...base,
+      engineMode: 'litrpg' as const,
+      campaignBibleId: 'summoned-pact',
+      turn: 5,
+      openingEstablishment: { ...(base.openingEstablishment ?? {}), complete: true },
+      activeEncounter: null,
+      quests: [q],
+      currentLocation: 'Collapsed Mage Tower',
+    } as GameState;
+    const placed = placeTabletopQuestTargets(s);
+    expect(placed.quests![0]!.objectives![0]!.target).toMatchObject({
+      kind: 'item',
+      place: 'Collapsed Mage Tower',
+    });
+    const miss = applyTabletopQuestTurn(placed, 'Wait', 'Collapsed Mage Tower').state;
+    expect(miss.quests![0]!.objectives![0]!.completed).toBe(false);
+    const found = applyTabletopQuestTurn(placed, 'Search the rubble', 'Collapsed Mage Tower').state;
+    expect(found.quests![0]!.objectives![0]!.completed).toBe(true);
+    expect(found.quests![0]!.objectives![0]!.target!.foundTurn).toBe(5);
   });
 });
 

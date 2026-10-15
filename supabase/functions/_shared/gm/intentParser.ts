@@ -132,8 +132,8 @@ const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'cast', re: /\b(cast|channel|invoke|spell)\b/i, label: 'Cast / magic' },
   { kind: 'use_item', re: /\b(use|drink|eat|equip|wield|draw|throw|deploy)\b/i, label: 'Use item' },
   { kind: 'talk', re: TALK_VERB, label: 'Talk' },
-  { kind: 'search', re: /\b(search|loot|rummage|open chest|pick lock)\b/i, label: 'Search / interact' },
-  { kind: 'observe', re: /\b(observ|scan|listen|look|study|inspect|watch|assess|examin)\b/i, label: 'Observe' },
+  { kind: 'search', re: /\b(search|loot|rummage|investig\w*|open chest|pick lock)\b/i, label: 'Search / interact' },
+  { kind: 'observe', re: /\b(observ\w*|scan|listen|look|study|inspect|watch|assess|examin\w*)\b/i, label: 'Observe' },
   { kind: 'move', re: /\b(go|move|walk|sneak|climb|enter|leave|head|approach|edge toward)\b/i, label: 'Move' },
   { kind: 'rest', re: /\b(rest|sleep|camp|recover|bandage)\b/i, label: 'Rest' },
 ];

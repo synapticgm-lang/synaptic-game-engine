@@ -382,6 +382,56 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 4. **`src/game/turnCheck.ts` line 220 at `022a64b4`** - `beatCarriesTerminalFight(text, fight)` inside `fightTold`. Removed; a settled (non-escape) fight in the engine record is the blow.
 5. Tests that pinned the word reading (rewritten to the RC-1 rule): `ttFix3` "lost the trail tells an escape" (deleted), `ttFix14` block 2, `ttConsolidate` root 5, `s82RootATerminalFight` three cases, `m7lap7.bank` T19 word assertion (deleted). Restore with `git show 022a64b4:<path>`.
 
+
+## 15 Oct 18:52: SK-4 / SK-5 merged into one current spec each (queued-fix-orders.md)
+Removed, superseded wording kept here verbatim for the record (original SK-4, original SK-5, SK-5 amendment 1, SK-4/SK-5 amendment 2):
+
+````
+### Order SK-4: check resolution per mode
+**Acceptance tests:** see docs/orders/acceptance-tests-new-orders.md, section SK-4. Cursor: make these pass. XP numbers are in docs/design/skill-xp-table.md.
+- **Tabletop (SRD 5.2.1):** d20 + ability modifier + proficiency bonus (if proficient) vs DC (Typical DCs p.6); retries are allowed; failure costs are set by the GM (time, noise, a broken tool), never invented by the writer.
+- **LitRPG / Story RPG:** a single d20 against a **target that rises with the tier**. **Untrained** at the top tiers succeeds only on a **natural 20 followed by a long-shot roll**. Long-shot odds, **decided (John 15 Oct 18:14)**: tier T-4 **1 in 10**, T-3 **1 in 100**, T-2 **1 in 1,000**, T-1 **1 in 5,000**, top **1 in 10,000**. The tier count and tier targets come from the existing grade data (mapped to the SK-5 named tiers).
+
+### Order SK-5: skill XP by difficulty *(LitRPG / Story RPG only; tabletop stays SRD 5.2.1 with no skill XP; amended 17:41)*
+**Acceptance tests:** see docs/orders/acceptance-tests-new-orders.md, section SK-5. Cursor: make these pass. XP numbers are in docs/design/skill-xp-table.md.
+**Skill XP only:** it never feeds character-level XP (`characterXp.ts` is untouched).
+**What exists (checked):** `src/game/rules/skillGrowth.ts` `settleSkillUse()`: a named skill gains **+1 use** per stakes-bearing use (no repeat in the same scene, at most one notice per turn), and the rank comes from `librarySkills.rankForUses(uses)` up to `NAMED_SKILL_RANK_CAP`, then evolution. The notice is `Skill rank up: <name> (rank n)` (`systemNotice.ts:23`). Character XP lives in `characterXp.ts` (separate, keep). **Extend, don't add a parallel system:** the per-skill `uses` counter becomes the skill's XP (`uses` gets a weighted increment); `rankForUses` thresholds are unchanged.
+**Rule:**
+- Weight per use = base × difficulty factor, on **success only**.
+- **Difficulty factor**, from the task's tier minus the skill's rank, in bands borrowed from WoW:
+  - **red/orange** (task 3+ above): ×1.5;
+  - **yellow** (±2): ×1.0;
+  - **green** (below, above grey): falls linearly to 0, as WoW's mob XP does;
+  - **grey** (far below): ×0, so no growth.
+  - The grey cutoff scales with rank, as WoW's grey level does.
+- **Failure:** **0 skill XP**. A failed **crafting** attempt also **consumes part of the materials** attempted. **Decided (John 15 Oct): half, rounded down; the rest is returned.** Tabletop is unchanged: crafting failure is not an SRD 5.2.1 concept (SRD crafting has no check, p.103).
+- **Untrained long-shot hit (SK-4, any tier):** a boost that **scales with log10 of the odds**. **Decided (John 15 Oct):** bonus = log10(N) / 4 of the **next level's** XP. So 1 in 10 gives 25% of a level and 1 in 10,000 one full level; overflow carries over; there is no cap.
+- Tier and rank scales come from the existing grade data; the numbers above are proposals to tune in a test table.
+**Sources (credit):**
+- WoW mob/quest con colours: grey gives no XP, green is below, yellow is ±2, orange is +3–4, red is +5–9; lower-level XP falls linearly to zero at the "zero difference". https://warcraft.wiki.gg/wiki/Mob_difficulty_colors and https://warcraft.wiki.gg/wiki/Mob_experience
+- WoW professions: "orange recipes always grant a skill point, yellow about 60% of the time, green rarely, grey never". https://warcraft.wiki.gg/wiki/Profession
+- RuneScape colours combat levels ±10 from green (lower) to yellow (equal) to red (higher), but has **no difficulty band for skill XP** (fixed XP per action). https://runescape.wiki/w/Combat_level
+**Done when:** unit tests show grey = 0, green < yellow < orange, failure = 0 (and half the craft materials lost), the long-shot bonus following the log curve, character XP unchanged, and tabletop untouched.
+### SK-5 amendment: named tiers and levels *(John 15 Oct 18:13; non-tabletop only)*
+**Acceptance tests:** see docs/orders/acceptance-tests-new-orders.md, section SK-5. Cursor: make these pass. XP numbers are in docs/design/skill-xp-table.md.
+- **Tiers:** non-tabletop skills (LitRPG / Story RPG) have five named tiers: **Novice, Apprentice, Journeyman, Expert, Master**, each with **10 levels**, so **50 levels** in all.
+- **XP per level** rises about **10% a level** (geometric): `xpForLevel(L) = base × 1.1^(L-1)`, so level 50 needs about 107× level 1 (target "about 100×"). Guide: the RuneScape and Skyrim curves (exponential growth per level); tune `base` in a test table.
+- **The SK-4 tiers map to these named tiers** (target rising per tier; untrained long-shot at the top tiers).
+- **Grey cutoff** for easy tasks stays: a task far below the skill's level gives 0 XP.
+- **Long-shot boost:** log10(odds) ÷ 4 of the **next level's** XP (1 in 10,000 = one full level); overflow carries.
+- **Failure:** 0 XP; a failed craft loses half the materials, rounded down.
+- **Tabletop:** unchanged; crafting stays SRD 5.2.1 (no failure, p.103) with no skill XP.
+- **Replaces** `librarySkills.ts` `NAMED_SKILL_RANK_CAP = 3` (:37) and `USES_FOR_RANK = [0, 2, 5, 9]` (:39) / `rankForUses` for non-tabletop modes: store the skill's XP and level instead of uses and rank. Library evolution (the technique at the cap) moves to **Master 10** unless John says otherwise; notices become `Skill up: <name>, <Tier> <n>`. Migrate saves with `uses`/`rank` to the matching level.
+
+### SK-4 / SK-5 amendment 2 *(John 15 Oct 18:30–18:50; supersedes the earlier long-shot, per-use XP and untrained-at-low-tier text above)*
+- **Untrained, low tiers:** an untrained skill vs a **Novice or Apprentice** task uses a **normal d20 roll vs the tier target + 5** (proposed raise; "higher DC" decided, the +5 is mine to tune). There is **no long-shot roll**. The long-shot roll applies **only at Journeyman, Expert and Master**: a natural 20, then **1 in 1,000 / 1 in 5,000 / 1 in 10,000**. The Novice 1/10 and Apprentice 1/100 odds are **retired**.
+- **XP per use scales with the task level:** `useXp = 10 × 1.1^(taskLevel − 1) × band`, where band is: yellow (±2) 1.0; orange/red (3+ above) 1.5; green falls linearly to 0 at the grey cutoff; grey 0. The grey cutoff is kept (WoW formula, see `skill-xp-table.md`). An on-level success is worth 1/10 of that level's XP, so **about 10 on-level successes per level, about 500 to Master 10**.
+- **Failure:** 0 XP; a failed craft loses half the materials (unchanged).
+- **Long-shot success XP is based on the task's tier:** `boost = log10(odds) ÷ 4 × xpForLevel(first level of the task's tier)`; overflow carries through as many levels as it covers. Journeyman (L21 = 673 XP) × 0.75 = **505 XP**; Expert (L31 = 1,745) × 0.925 = **1,614 XP**; Master (L41 = 4,526) × 1.0 = **4,526 XP**. An untrained skill (0 XP) jumps to **level 5 / 11 / 18** respectively.
+- **No stacking:** a long-shot win gets **only** the boost. The ×1.5 hard-task band and the normal use XP don't apply on top.
+````
+
+
 ## q31-RC3 engine chips recognised by their builder and resolved action (Order RC-3)
 
 1. **`src/game/choicePipeline.ts` `PURE_GENERIC_PAD` lines 361-363 at `1ec1f9f9`** - label regex for "pure generic" chips (wait / listen / look around / approach cautiously / inspect the surroundings �). What it did: let a chip skip the narrated-object test because of its wording. Replaced by the resolved action: a chip that resolves to an engine action and names no narrated object (`concreteChoiceObjects`, the object reader the grounding test already used) needs no grounding.
@@ -404,3 +454,9 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 3. **`src/game/engineFight.ts` `encounterKind` lines 57-62 and `src/game/sandboxXp.ts` `encounterKind` lines 189-194 at `4be630c5`** - two copies of the same source/name tier rule. One export in `xpRules.ts`, also read by the E.3 CR.
 4. **`src/game/rules/srdMonsters.ts` `statBlockForEncounter` line 144 / `realEncounterCr` line 153 at `4be630c5`** - the fought block used the guessed `DND_DEFAULT_CR` (1/4) while the payout returned null (`XP: none`) for the same foe. Both now read `realEncounterCr`: card CR, else SRD block, else `crForFoeLevel` (SRD 5.2.1 XP Budget per Character for the foe's level: Low for a common foe, High for a mini-boss / boss).
 5. Test pinned to the old rule (rewritten to E.3, John's needs-john "an SRD block where one fits, a CR otherwise"): `ttFix3.test.ts` "fight XP pays from the real CR, never a guessed one" (`a nameless thing` expected null CR and `XP: none`). Restore with `git show 4be630c5:<path>`.
+
+## q31-L1 LitRPG quest steps + RC-2 verb word lists (restore from parent of the q31-L1 commit)
+
+1. **`src/game/questTargets.ts` `SEARCH_VERB` line 23** — `/\b(?:search|rummage|look around|investigate)\b/i`. Used only by `actionTakes` (:81). Deleted; find/inspect class comes from `parsePlayerIntent` (`search` | `observe`) via `actionMatchesObjective`.
+2. **`src/game/questTargets.ts` `TALK_VERB` line 24** — `/\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i`. Used only by `actionTakes` (:80). Deleted; meet class is `parsePlayerIntent` `talk` (intentParser already exports its own `TALK_VERB` for the packet — kept).
+3. **`src/game/questTargets.ts` `actionTakes` lines 74-82** — private matcher replaced by exported `actionMatchesObjective` (chip / verb+object, intent class, named object). K, G-m57 and QV import this one helper.
