@@ -11,6 +11,7 @@ import { resolveHubArrival } from './hubEncounters.ts';
 import { npcRecordNames, presentNpcRecords } from './npcRecords.ts';
 import { isPyoaCharterClosed } from './pyoaBranchLedger.ts';
 import { locationChangedRecently } from './sceneContextTail.ts';
+import { isJourneyUnderway } from './travelJourney.ts';
 
 const ROLE_ACTOR_VERBS =
   /(?:falls?\s+into\s+step|falls?\s+in\s+beside|keeps?\s+pace|takes?|says?|asks?|nods?|watches?|hands?|counts?|offers?|steps?|follows?|arrives?|waits?|bars?|greets?|looks\s+up|walks?)\b/i;
@@ -99,11 +100,12 @@ export function minorRoleForPlace(place: string | undefined): string {
 
 /**
  * 28p — the story names nobody here (no record, no hub contact, no fight): the place's common
- * local may appear, unnamed. Engine-generated minor character; never a CAST name.
+ * local may appear, unnamed. Engine-generated minor character; never a CAST name. On the road the journey's own
+ * meeting is who is there, so the road has no place local.
  */
 export function storyMinorRoles(state: GameState): string[] {
   if (state.openingEstablishment && state.openingEstablishment.complete !== true) return [];
-  if (state.activeEncounter || state.activeDungeon) return [];
+  if (state.activeEncounter || state.activeDungeon || isJourneyUnderway(state)) return [];
   if (presentNpcRecords(state).length) return [];
   if (resolveHubArrival(state, state.currentLocation)?.beat.contactName) return [];
   const role = minorRoleForPlace(state.currentLocation);

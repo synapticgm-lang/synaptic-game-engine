@@ -746,6 +746,7 @@ export function advanceDungeonCard(
   const d = next.activeDungeon!;
   const node = currentNode(d)!;
   const foeHere = liveFoe(node);
+  let walkedIn = false;
 
   if (EXIT_RE.test(input) && !next.activeEncounter) {
     receipts.push(`Dungeon: you climbed back out of ${d.dungeonName}.`);
@@ -775,6 +776,7 @@ export function advanceDungeonCard(
         next = { ...next, activeDungeon: moved, currentLocation: hereLabel(moved) };
         if (next.locationSheet) next = { ...next, locationSheet: { ...next.locationSheet, name: hereLabel(moved) } };
         const room = currentNode(moved)!;
+        walkedIn = true;
         receipts.push(`Dungeon: you moved into ${room.name}.`);
         const trap = (room.hidden?.traps ?? []).find((t) => !t.revealed);
         if (trap) {
@@ -878,11 +880,11 @@ export function advanceDungeonCard(
     }
   }
 
-  // A foe in the current room: spawn it on arrival, or re-engage when the player picks the fight.
+  // A foe in the current room: spawn it on arrival (a foe the player got away from is still there when they walk back in), or re-engage when the player picks the fight.
   if (!next.activeEncounter) {
     const room = currentNode(next.activeDungeon!)!;
     const foe = liveFoe(room);
-    if (foe && (!foe.spawned || FIGHT_RE.test(input))) {
+    if (foe && (!foe.spawned || walkedIn || FIGHT_RE.test(input))) {
       next = spawnFoe(next, foe);
       receipts.push(`Dungeon: ${foe.name} is here in ${room.name}${foe.role === 'miniBoss' ? ' — the mini-boss' : ''}.`);
     }
