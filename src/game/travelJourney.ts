@@ -353,10 +353,15 @@ function roadDayStart(state: ClockState): number {
   return d && worldClock(state) - d.since < 24 ? d.since : worldClock(state);
 }
 
-/** Hours on the road in this waking day, read off the world clock (a night's sleep or 24 hours starts the next). */
-export function roadHoursToday(state: ClockState): number {
+/** This waking day's record (road hours, the day's food), read off the world clock (a night's sleep or 24 hours starts the next). */
+function roadDayNow(state: ClockState): NonNullable<GameState['roadDay']> {
+  const since = roadDayStart(state);
   const d = state.roadDay;
-  return d && d.since === roadDayStart(state) ? d.hours : 0;
+  return d && d.since === since ? d : { since, hours: 0 };
+}
+
+export function roadHoursToday(state: ClockState): number {
+  return roadDayNow(state).hours;
 }
 
 /** A night's sleep ends the day: the next one starts on waking. */
@@ -434,14 +439,15 @@ function fightPad(enc: RoadEncounter): string | null {
 }
 
 /**
- * A meeting with no fight on offer, answered by its own chip: the go-by chip passes it (not beaten), and the plea's
- * help chip helps it. Taking up any other meeting (greet, approach, study) keeps it open to talk.
+ * A meeting with no fight on offer, answered by its own chip: the go-by chip passes it (not beaten), the plea's
+ * help chip helps it, and the wildlife chip lets the animal go its way. Taking up any other meeting (greet,
+ * approach, study, talk) keeps it open to talk.
  */
-function answersMeeting(enc: RoadEncounter, input: string, turn: number): RoadEncounter | null {
+function answersMeeting(enc: RoadEncounter, input: string, turn: number, terrain: JourneyTerrain): RoadEncounter | null {
   if (fightPad(enc) || roadMeetingOver(enc)) return null;
   const said = meetingMoveBase(input).toLowerCase();
-  const at = (FIXED_ENCOUNTER_PADS[enc.kind] ?? []).findIndex((p) => p.toLowerCase() === said);
-  if (at > 0) return { ...enc, escaped: true, escapedTurn: turn, closedTurn: turn };
+  const at = encounterPads(enc, terrain).findIndex((p) => p.toLowerCase() === said);
+  if (at > 0 || (at === 0 && enc.kind === 'wildlife')) return { ...enc, escaped: true, escapedTurn: turn, closedTurn: turn };
   return at === 0 && enc.kind === 'plea' ? { ...enc, engaged: true, closedTurn: turn } : null;
 }
 
@@ -1186,11 +1192,11 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
   const march = marchHours(state, gap.terrain, tripKey(state, set), gap.hoursPerLeg);
   if (march.dead) return diedOnRoad(march, stillOn(march.state, set, 'you died on the road'), set);
   const day = rollDay(march.state, set);
-  const journey = rollStretch(march.state, day.journey);
-  const stop = passStop(withRouteStops(march.state, journey), journey);
+  const journey = rollStretch(day.state, day.journey);
+  const stop = passStop(withRouteStops(day.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, gap.hoursPerLeg);
-  const extra = [...march.status, ...day.status, ...stop.status, ...daySpentLines(march.state, journey)];
-  const facts = [...march.facts, ...day.facts, ...stop.facts, ...daySpentFacts(march.state, journey)];
+  const extra = [...march.status, ...day.status, ...stop.status, ...daySpentLines(day.state, journey)];
+  const facts = [...march.facts, ...day.facts, ...stop.facts, ...daySpentFacts(day.state, journey)];
   return {
     state: clock.state,
     handled: true,
@@ -1233,15 +1239,15 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const extra = [...march.status, ...day.status];
   const facts = [...march.facts, ...day.facts];
   if (legsDone >= day.journey.legsTotal) {
-    const a = arrive(march.state, j.to, j.hoursPerLeg, j.ground.toLowerCase(), j.terrain, true);
+    const a = arrive(day.state, j.to, j.hoursPerLeg, j.ground.toLowerCase(), j.terrain, true);
     const all = [...facts, ...(a.facts ?? [])];
     return { ...a, ...(extra.length ? { extra } : {}), ...(all.length ? { facts: all } : {}) };
   }
-  const journey = rollStretch(march.state, day.journey, sinceCheck >= WATCH_HOURS);
-  const stop = passStop(withRouteStops(march.state, journey), journey);
+  const journey = rollStretch(day.state, day.journey, sinceCheck >= WATCH_HOURS);
+  const stop = passStop(withRouteStops(day.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, j.hoursPerLeg);
-  extra.push(...stop.status, ...daySpentLines(march.state, journey));
-  facts.push(...stop.facts, ...daySpentFacts(march.state, journey));
+  extra.push(...stop.status, ...daySpentLines(day.state, journey));
+  facts.push(...stop.facts, ...daySpentFacts(day.state, journey));
   return {
     state: clock.state,
     handled: true,
@@ -1298,7 +1304,7 @@ function travelHelper(state: GameState): string | null {
 
 function jobOpen(state: GameState, j: TravelJourney, job: TravelJob): boolean {
   if (job === 'guide') return needsNavigation(j.terrain, j.weather);
-  if (job === 'forager') return survival(state);
+  if (job === 'forager') return survival(state) && !roadDayNow(state).fed;
   return true;
 }
 
@@ -1332,15 +1338,16 @@ function jobRoll(state: GameState, j: TravelJourney, job: TravelJob, who: string
 }
 
 interface JobSettle {
+  state: GameState;
   journey: TravelJourney;
   status: string[];
   facts: string[];
   lost: boolean;
 }
 
-/** A failed guide loses the way (the trip runs a stretch longer); a forager who finds food saves the day's ration. */
+/** A failed guide loses the way (the trip runs a stretch longer); a forager who finds food feeds the day (any trip). */
 function settleJob(state: GameState, j: TravelJourney, job: TravelJob, who: string, key: string): JobSettle {
-  if (!jobOpen(state, j, job)) return { journey: j, status: [], facts: [], lost: false };
+  if (!jobOpen(state, j, job)) return { state, journey: j, status: [], facts: [], lost: false };
   const rec = jobRoll(state, j, job, who, key);
   const ok = rec.outcome === 'success';
   const name = who === 'you' ? 'You' : who;
@@ -1353,11 +1360,12 @@ function settleJob(state: GameState, j: TravelJourney, job: TravelJob, who: stri
     if (modeProfile(state.engineMode).numbers !== 'hidden') status.push('Lost: the way goes wrong for a stretch (+1 stretch)');
     facts.push(`${name} lost the way for a while; this stretch went wrong and the trip runs a stretch longer.`);
   }
+  let s = state;
   if (job === 'forager') {
-    journey = { ...journey, fedToday: ok };
+    if (ok) s = { ...state, roadDay: { ...roadDayNow(state), fed: true } };
     facts.push(ok ? `${name} found enough to eat along the way.` : `${name} found nothing to eat along the way.`);
   }
-  return { journey, status, facts, lost };
+  return { state: s, journey, status, facts, lost };
 }
 
 interface DayRoll {
@@ -1374,40 +1382,44 @@ function rollDay(state: GameState, j: TravelJourney): DayRoll {
   if (!travelDay(j) || j.jobsRolledDay === day) return { state, journey: j, status: [], facts: [], lost: false };
   const key = `${tripKey(state, j)}|day${day}`;
   const weather = weatherFor(1 + Math.floor(hashUnit(`${key}|weather`) * 20));
-  let journey: TravelJourney = { ...j, day, weather, jobsRolledDay: day, jobResults: {}, lost: false, fedToday: false };
+  let journey: TravelJourney = { ...j, day, weather, jobsRolledDay: day, jobResults: {}, lost: false };
   journey = { ...journey, jobs: assignJobs(state, journey) };
   const numbers = modeProfile(state.engineMode).numbers;
   const rule = weatherRuleOf(weather);
   const status: string[] = numbers === 'hidden' ? [] : [`Weather: ${weather}${numbers === 'open' && rule.rule ? ` (${rule.rule})` : ''}`];
   const facts: string[] = weather === 'clear' ? [] : [`The weather on the road today: ${weather}.`];
   let lost = false;
+  let s = state;
   for (const job of TRAVEL_JOBS) {
     const who = journey.jobs?.[job];
     if (!who) continue;
-    const r = settleJob(state, journey, job, who, `${key}|${job}`);
+    const r = settleJob(s, journey, job, who, `${key}|${job}`);
+    s = r.state;
     journey = r.journey;
     status.push(...r.status);
     facts.push(...r.facts);
     lost = lost || r.lost;
   }
-  return { state, journey, status, facts, lost };
+  return { state: s, journey, status, facts, lost };
 }
 
 /** The PC takes a travel job for the road (a chip). A job not rolled yet today is rolled now. */
 function takeJob(state: GameState, j: TravelJourney, job: TravelJob): TravelCommit {
   const done = j.jobResults?.[job] !== undefined;
   let journey: TravelJourney = { ...j, pcJob: job, jobs: { ...(j.jobs ?? {}), [job]: 'you' } };
+  let s = state;
   const extra: string[] = [];
   const facts: string[] = [];
   if (!done && jobOpen(state, j, job)) {
     const r = settleJob(state, journey, job, 'you', `${tripKey(state, j)}|day${j.day ?? 1}|pc-${job}`);
+    s = r.state;
     journey = r.journey;
     extra.push(...r.status);
     facts.push(...r.facts);
   }
   const what = { guide: 'you lead the way', lookout: 'you keep lookout', forager: 'you forage as you go' }[job];
   return {
-    state: { ...state, currentLocation: UNDERWAY_HERE, journey },
+    state: { ...s, currentLocation: UNDERWAY_HERE, journey },
     handled: true,
     arrived: false,
     outcome: 'unchanged',
@@ -1418,10 +1430,10 @@ function takeJob(state: GameState, j: TravelJourney, job: TravelJob): TravelComm
 }
 
 /** One job chip the PC has not taken today (story RPG companions take theirs on their own: no chip). */
-function jobChip(state: Partial<Pick<GameState, 'engineMode'>>, j: TravelJourney): string | null {
+function jobChip(state: Partial<Pick<GameState, 'engineMode'>> & ClockState, j: TravelJourney): string | null {
   if (!travelDay(j) || state.engineMode === 'rpg' || state.engineMode === 'pyoa') return null;
   const pick = (['lookout', 'forager', 'guide'] as TravelJob[]).find(
-    (job) => j.jobResults?.[job] === undefined && jobOpen(state as GameState, j, job) && !(job === 'forager' && j.fedToday)
+    (job) => j.jobResults?.[job] === undefined && jobOpen(state as GameState, j, job)
   );
   return pick ? JOB_CHIP[pick] : null;
 }
@@ -1463,10 +1475,11 @@ interface March {
 
 function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hours: number): March {
   if (terrain === 'streets') return { state, status: [], facts: [] };
-  const since = roadDayStart(state);
-  const before = roadHoursToday(state);
+  const today = roadDayNow(state);
+  const since = today.since;
+  const before = today.hours;
   const after = before + hours;
-  const logged: GameState = { ...state, roadDay: { since, hours: after } };
+  const logged: GameState = { ...state, roadDay: { ...today, hours: after } };
   if (!survival(state) || after <= TRAVEL_DAY_HOURS) return { state: logged, status: [], facts: [] };
   let s = logged;
   const status: string[] = [];
@@ -1609,18 +1622,17 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   }
   let s: GameState = state;
   if (survival(s)) {
-    if (journey.fedToday) {
-      journey = { ...journey, daysWithoutFood: 0 };
+    if (roadDayNow(s).fed) {
+      s = { ...s, daysWithoutFood: 0 };
       extra.push('Rations: none eaten (foraged food)');
     } else {
       const eat = eatRation(s.inventory ?? []);
       if (eat.ate) {
-        s = { ...s, inventory: eat.inventory };
-        journey = { ...journey, daysWithoutFood: 0 };
+        s = { ...s, inventory: eat.inventory, daysWithoutFood: 0 };
         extra.push(`Rations: 1 day eaten (${eat.left} left)`);
       } else {
-        const days = (journey.daysWithoutFood ?? 0) + 1;
-        journey = { ...journey, daysWithoutFood: days };
+        const days = (s.daysWithoutFood ?? 0) + 1;
+        s = { ...s, daysWithoutFood: days };
         extra.push(`Rations: none — ${days} day${days === 1 ? '' : 's'} without food`);
         facts.push('There was nothing to eat.');
         if (days >= STARVE_DAYS) {
@@ -1790,10 +1802,11 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
         receipt: `${where}; fight: ${foe.name}, ${what} (level ${foe.level}, ${foe.maxHp} HP)`,
       };
     }
-    const answered = j.encounter ? answersMeeting(j.encounter, input, state.turn) : null;
+    const answered = j.encounter ? answersMeeting(j.encounter, input, state.turn, j.terrain) : null;
     const help = answered?.engaged && answered.kind === 'plea' ? helpPlea(state, answered) : null;
     const helped = answered ? { ...j, encounter: help?.encounter ?? answered } : j;
     const slipped = !help && !!helped.encounter?.escaped && helped.encounter.escapedTurn === state.turn;
+    const fact = help?.fact ?? (slipped && answered?.kind === 'wildlife' ? 'You gave the animal room, and it went its own way.' : null);
     return {
       state: { ...(help?.state ?? state), currentLocation: UNDERWAY_HERE, journey: helped },
       handled: true,
@@ -1801,7 +1814,7 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
       outcome: slipped ? 'slipped away' : 'unchanged',
       receipt: `${where}; ${j.to} still ahead${helped.encounter ? encounterNote(helped) : ''}`,
       ...(help?.extra.length ? { extra: help.extra } : {}),
-      ...(help ? { facts: [help.fact] } : {}),
+      ...(fact ? { facts: [fact] } : {}),
     };
   }
   const parkedOnRoad = isRoadLabel(state.currentLocation);

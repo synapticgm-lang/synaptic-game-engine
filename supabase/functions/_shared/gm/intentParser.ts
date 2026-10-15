@@ -278,7 +278,12 @@ export function groundPlayerAction(
   const notes: string[] = [];
   const parts: string[] = [];
 
-  const missingItems = findUnsupportedItemClaims(trimmed, state);
+  // A chip from this turn's committed pad was built by the engine from the sheet and scene, and already judged by
+  // chip legality: it is never a claim of gear or people the PC lacks ("Cast Fire Bolt" is not "fire a bolt").
+  const pad = state.offeredPad;
+  const offeredChip =
+    pad?.turn === (state.turn ?? 0) && (pad.choices ?? []).some((c) => c.trim().toLowerCase() === trimmed.toLowerCase());
+  const missingItems = offeredChip ? [] : findUnsupportedItemClaims(trimmed, state);
   if (missingItems.length) {
     notes.push(`Missing item(s): ${missingItems.join(', ')}`);
     const carried =
@@ -299,10 +304,6 @@ export function groundPlayerAction(
     );
   }
 
-  // A chip from this turn's committed pad was already judged against the scene by chip legality.
-  const pad = state.offeredPad;
-  const offeredChip =
-    pad?.turn === (state.turn ?? 0) && (pad.choices ?? []).some((c) => c.trim().toLowerCase() === trimmed.toLowerCase());
   const ungrounded = offeredChip ? [] : findUngroundedNamedClaims(trimmed, state, storyProse);
   if (ungrounded.length && intent.kind !== 'other') {
     // Soft-rewrite when the claim is central (attack/search/use/talk), not every Proper noun.

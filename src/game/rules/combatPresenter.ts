@@ -184,8 +184,9 @@ function weaponWords(name: string, owner: 'its' | 'your' | 'a'): string {
   return `${/^[aeiou]/.test(w) ? 'an' : 'a'} ${w}`;
 }
 
-function hurtWord(hpAfter: number, maxHp: number): string {
+function hurtWord({ hpBefore, hpAfter, maxHp }: { hpBefore: number; hpAfter: number; maxHp: number }): string {
   if (hpAfter <= 0) return 'goes down';
+  if (hpAfter >= hpBefore) return 'takes no harm';
   if (hpAfter * 2 <= maxHp) return 'is badly hurt';
   return 'is wounded';
 }
@@ -199,13 +200,13 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         break;
       case 'attack': {
         if (e.cleave) {
-          out.push(`Your blow carries on into ${e.target}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
+          out.push(`Your blow carries on into ${e.target}; it ${hurtWord(e)}.`);
         } else if (e.pc) {
           const spell = !e.d20s.length || !!e.spell || /^(?:fire bolt|sacred flame)$/i.test(e.with);
           const by = spell ? e.with : weaponWords(e.with, 'your');
-          if (e.half) out.push(`${e.target} only partly escapes ${by}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
+          if (e.half) out.push(`${e.target} only partly escapes ${by}; it ${hurtWord(e)}.`);
           else if (!e.hit) out.push(`You attack ${e.target} with ${by} and miss.`);
-          else out.push(`You ${e.crit ? 'land a critical blow on' : 'hit'} ${e.target} with ${by}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
+          else out.push(`You ${e.crit ? 'land a critical blow on' : 'hit'} ${e.target} with ${by}; it ${hurtWord(e)}.`);
         } else if (e.target === pcName) {
           const how = e.opportunity ? ' as you break away' : '';
           const by = weaponWords(e.with, 'a');
@@ -234,7 +235,7 @@ export function combatFacts(events: Ev[], pcName: string): string[] {
         else if (e.ok) out.push(`${e.who} finds you.`);
         break;
       case 'extra':
-        out.push(e.pc ? `Even your miss clips ${e.who}; it ${hurtWord(e.hpAfter, e.maxHp)}.` : `The flames burn ${e.who}; it ${hurtWord(e.hpAfter, e.maxHp)}.`);
+        out.push(e.pc ? `Even your miss clips ${e.who}; it ${hurtWord(e)}.` : `The flames burn ${e.who}; it ${hurtWord(e)}.`);
         break;
       case 'condition':
         if (e.on) out.push(e.pc ? `You are ${e.name.toLowerCase()}.` : `${e.who} ${FOE_MARK[e.name] ?? `is ${e.name.toLowerCase()}`}.`);

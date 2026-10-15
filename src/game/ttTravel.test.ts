@@ -82,9 +82,9 @@ function quietEvening(seed: string, over: Partial<TravelJourney> & { roadHours?:
 }
 
 /** Camp until the night passes unbroken (a hostile watch meeting breaks some camps). */
-function campUnbroken(seed: string, over: Partial<TravelJourney> = {}, inventory?: Item[], character?: Partial<GameState['character']>) {
+function campUnbroken(seed: string, over: Partial<TravelJourney> = {}, inventory?: Item[], character?: Partial<GameState['character']>, extra: Partial<GameState> = {}) {
   for (let i = 0; i < 60; i++) {
-    const s = quietEvening(`${seed}-${i}`, over, inventory);
+    const s = { ...quietEvening(`${seed}-${i}`, over, inventory), ...extra };
     const ready = character ? { ...s, character: { ...s.character, ...character } } : s;
     const c = commitTravel(ready, 'Make camp');
     if (c.event === 'camp') return { before: ready, camp: c };
@@ -230,8 +230,8 @@ describe('tt-travel — camp, rations and rest (gap 5)', () => {
   });
 
   it('the fifth day without food adds a level, and the rest cannot remove it', () => {
-    const { camp } = campUnbroken('starve', { daysWithoutFood: 4 }, [], { exhaustion: 0 });
-    expect(camp.state.journey?.daysWithoutFood).toBe(5);
+    const { camp } = campUnbroken('starve', {}, [], { exhaustion: 0 }, { daysWithoutFood: 4 });
+    expect(camp.state.daysWithoutFood).toBe(5);
     expect((camp.extra ?? []).some((l) => /^Malnutrition: Exhaustion: level 0 → 1/.test(l))).toBe(true);
     expect(camp.state.character.exhaustion).toBe(1);
   });

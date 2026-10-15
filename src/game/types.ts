@@ -923,10 +923,12 @@ export interface GameState {
   worldHour?: number;
   /** Whole days passed on the world clock; with worldHour it is the game's one clock. */
   worldDay?: number;
-  /** This waking day's road hours (SRD Extended Travel); `since` is the world-clock hour the day began. */
-  roadDay?: { since: number; hours: number };
+  /** This waking day's road hours (SRD Extended Travel) and whether a day's food was found; `since` is the world-clock hour the day began. */
+  roadDay?: { since: number; hours: number; fed?: boolean };
   /** World-clock hour the last long rest began (SRD: one long rest per 24 hours). */
   lastLongRestAt?: number;
+  /** Days in a row with nothing to eat (SRD 5.2.1 Malnutrition), across trips. */
+  daysWithoutFood?: number;
   /** Tabletop: Hit Dice spent on short rests since the last long rest (the character holds one per level). */
   hitDiceSpent?: number;
   /** Tabletop: every oracle question asked and the d100 that answered it (rules/oracle). */
@@ -1080,10 +1082,6 @@ export interface TravelJourney {
   lost?: boolean;
   /** Stretches lost to bad navigation on this trip (each one adds a stretch). */
   lostLegs?: number;
-  /** The forager found a day's food today. */
-  fedToday?: boolean;
-  /** Days in a row with nothing to eat (SRD 5.2.1 Malnutrition). */
-  daysWithoutFood?: number;
 }
 
 export type TravelWeather = 'clear' | 'overcast' | 'light rain' | 'heavy rain' | 'strong wind' | 'fog';

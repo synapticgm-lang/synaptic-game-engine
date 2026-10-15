@@ -4577,6 +4577,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         worldDay: liveCurrent.worldDay,
         roadDay: liveCurrent.roadDay,
         lastLongRestAt: liveCurrent.lastLongRestAt,
+        daysWithoutFood: liveCurrent.daysWithoutFood,
         character: baseChar,
         playPhase: phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase,
         quests: enrichQuests(preserveArcQuestProgress(liveCurrent.quests, updatedQuests)),

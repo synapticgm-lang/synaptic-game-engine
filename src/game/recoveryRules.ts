@@ -14,6 +14,7 @@ import { restoreFeatures } from './rules/classFeatures';
 import { houseRulesOf, REST_HOURS } from './rules/houseRules';
 import { sidekickOf } from './rules/sidekick';
 import { modeProfile } from './rules/modeProfile';
+import { STARVE_DAYS } from './rules/travelDay';
 import { turnRng } from './seededRng';
 
 export interface RecoveryRow {
@@ -155,13 +156,13 @@ function applySrdRest(state: GameState, input: string): RestHeal {
 }
 
 /**
- * SRD 5.2.1 Exhaustion: a Long Rest removes 1 level. Exhaustion from Malnutrition stays until the character eats a
- * full day's food (a trip's days with nothing eaten).
+ * SRD 5.2.1 Exhaustion: a Long Rest removes 1 level. Exhaustion stays while Malnutrition is wearing the character
+ * down (STARVE_DAYS or more days without food) until they eat a full day's food.
  */
 function exhaustionAfterLongRest(state: GameState): { exhaustion: number; line: string | null } {
   const level = state.character.exhaustion ?? 0;
   if (level <= 0) return { exhaustion: 0, line: null };
-  if ((state.journey?.daysWithoutFood ?? 0) > 0) return { exhaustion: level, line: `Exhaustion: level ${level} stays (no food today)` };
+  if ((state.daysWithoutFood ?? 0) >= STARVE_DAYS) return { exhaustion: level, line: `Exhaustion: level ${level} stays (malnutrition)` };
   return { exhaustion: level - 1, line: `Exhaustion: level ${level} → ${level - 1}` };
 }
 

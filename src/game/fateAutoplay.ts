@@ -1708,6 +1708,7 @@ Do NOT print dice notation or CODE ENFORCED.
       worldDay: travelCommit.state.worldDay,
       roadDay: travelCommit.state.roadDay,
       lastLongRestAt: travelCommit.state.lastLongRestAt,
+      daysWithoutFood: travelCommit.state.daysWithoutFood,
       sceneFacts: pinClockTimeOfDay(working.sceneFacts, travelCommit.state),
       places: travelCommit.arrived
         ? touchPlaceVisit(working.places ?? state.places ?? [], here, state.turn + 1, working)
