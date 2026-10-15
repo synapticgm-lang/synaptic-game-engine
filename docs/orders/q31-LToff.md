@@ -51,6 +51,10 @@ No lap was run, because this session runs no laps. The removed path ran only on 
 
 `2026-10-15l` -> `2026-10-15m` (`public/version.json`, `index.html`, `Hud.tsx`, `runManifest.BUILD_STAMP`, stamp tests). The edge `proseWarden.ts` changed, so this is synced and `gm-turn` is deployed.
 
+## Ship
+
+Commit `9f445078`, pushed to main. The edge sync touched only `proseWarden.ts`. `gm-turn` is deployed and boots (OPTIONS 200). Vercel git build is live: `https://www.synapticgm.com/version.json` reads `2026-10-15m`. The q31-B entry already in the working copy of `tt-cut-log.md` was left unstaged.
+
 ## NEXT
 
 - Nothing left from LT-off. Next in the queue is B + F (replay seam and clock).
