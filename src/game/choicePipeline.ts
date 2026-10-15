@@ -28,6 +28,10 @@ import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad } from './combatAuthority';
 import { spineEngineChipLabels } from './pyoaSpine';
+import { enumerateLegalEdges as enumerateBeatEdges, edgesToChoiceLabels as beatEdgeLabels } from './choiceEdge';
+import { enumerateLegalEdges as enumerateGraphEdges, edgesToChoiceLabels as graphEdgeLabels } from './graphChoices';
+import { PlayerIntent, inferIntent } from './intentEnums';
+import { compileChoices } from './choiceCompiler';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -358,31 +362,56 @@ export function isChoiceGroundedInTurn(
   return true;
 }
 
-/** Pure generic pads — no concrete "the/a/an <prop>" beyond surroundings/room. */
-const PURE_GENERIC_PAD =
-  /^(wait(?:\s+and\s+listen(?:\s+carefully)?)?|listen(?:\s+carefully)?|ask what is going on|rest|hide|look around|approach cautiously|check (?:your |my )?(?:gear|inventory|wounds)|inspect the immediate surroundings|observe the environment carefully|examine the (?:surroundings|environment|area|scene|room)|inspect the (?:surroundings|environment|area|scene|room))\b/i;
+let lastEngineChips: { state: GameState; key: string; labels: Set<string> } | null = null;
+
+/** The engine's own chips for this state: compiler pads, beat and graph edges, hub pads, the spine, the scene fallbacks. */
+export function engineChipLabels(state: GameState, storyProse = ''): Set<string> {
+  // One chip list asks once per chip; the builders are rerun only when the state or story moves.
+  const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
+  if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.labels;
+  const labels = new Set(
+    [
+      ...compileChoices(state, []).choices,
+      ...beatEdgeLabels(enumerateBeatEdges(state)),
+      ...graphEdgeLabels(enumerateGraphEdges(state)),
+      ...hubArrivalChoicePads(state),
+      ...spineEngineChipLabels(state),
+      ...sceneSafeFallbacks(state, storyProse),
+    ].map((l) => sanitizeChoiceLabel(l).toLowerCase()).filter(Boolean)
+  );
+  lastEngineChips = { state, key, labels };
+  return labels;
+}
 
 /**
- * Compiler / stance / hub pads. These are ledger-legal, not invented props.
- * "Inspect the crystals…" must NOT match — that stays under choiceNamesUnnarratedObject.
+ * Compiler / stance / hub pads are ledger-legal, not invented props. A chip is the engine's when this state's
+ * builders made it, or when it resolves to an engine action that names nothing the story must have narrated.
+ * "Inspect the crystals…" names an object, so it stays under choiceNamesUnnarratedObject.
  */
-export function isLegalEnginePad(choice: string): boolean {
-  const t = (choice ?? '').replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
+export function isLegalEnginePad(choice: string, state?: GameState, storyProse = ''): boolean {
+  const t = sanitizeChoiceLabel(choice ?? '');
   if (!t) return false;
-  if (
-    /^(wait(?:\s+and\s+(?:watch|listen(?:\s+carefully)?))?|look around|ask a direct question|ask what (?:they want|is going on)|press (?:the attack|for leverage)|try to flee|parley|check status|check the exits?|leave through the nearest exit|call out to a bystander|scout (?:the )?(?:exit|area|room|cell)|inspect the (?:immediate )?surroundings|listen for the real answer|walk away|ready yourself|change position|walk the battlement)$/i.test(
-      t
-    )
-  ) {
-    return true;
+  if (state && engineChipLabels(state, storyProse).has(t.toLowerCase())) return true;
+  const intent = inferIntent(t);
+  if (intent === PlayerIntent.INTENT_OTHER) return false;
+  // Status reads the player's own sheet, never a thing in the scene.
+  if (intent === PlayerIntent.INTENT_STATUS) return true;
+  if (/^(?:travel|talk)\s+(?:to|toward|towards)\s+\S/i.test(t)) return true;
+  return concreteChoiceObjects(t).length === 0;
+}
+
+/** Objects a choice names that the story must have narrated (generic surroundings, gear and wounds excluded). */
+function concreteChoiceObjects(choice: string): string[] {
+  const skip = /^(immediate|nearest|nearby|other|another|few|some|your|my|old|new|next|last|same)$/;
+  // Generic place-holders only — not "street" (must be narrated when named).
+  const genericPlace =
+    /^(surroundings|environment|area|room|scene|ground|air|cover|gear|inventory|wounds?)$/;
+  const out: string[] = [];
+  for (const obj of extractChoiceObjectPhrases(choice)) {
+    const core = obj.replace(/^(nearest|nearby|other|another|immediate|overturned|parked|open|ajar|distant)\s+/, '');
+    if (core && !skip.test(core) && !genericPlace.test(core)) out.push(core);
   }
-  if (/^travel (?:to|toward|towards)\s+\S/i.test(t)) return true;
-  if (/^talk to\s+\S/i.test(t)) return true;
-  if (/^walk away from\s+\S/i.test(t)) return true;
-  if (/^(?:walk on|turn back toward\s+\S)/i.test(t)) return true;
-  if (/^offer a kindness(?:\s+to\s+.+)?$/i.test(t)) return true;
-  if (/^press\s+.+\s+on the dispute$/i.test(t)) return true;
-  return false;
+  return out;
 }
 
 /**
@@ -415,12 +444,7 @@ export function choiceNamesUnnarratedObject(
   state: GameState
 ): boolean {
   const trimmed = choice.trim();
-  if (spineEngineChipLabels(state).some((l) => l.toLowerCase() === trimmed.toLowerCase())) return false;
-  // Allow short pure generics (Wait / Ask what… / Inspect the surroundings).
-  // Do NOT early-exit every "Inspect …" — that let "Inspect the crystals breaking the street" through.
-  if (PURE_GENERIC_PAD.test(trimmed) && trimmed.length < 56) return false;
-  // Compiler/hub pads ("Ask a direct question", "Travel toward X") are not invented props.
-  if (isLegalEnginePad(trimmed)) return false;
+  if (isLegalEnginePad(trimmed, state, storyProse)) return false;
 
   const hay = [
     storyProse,
@@ -434,16 +458,7 @@ export function choiceNamesUnnarratedObject(
     state.activeEncounter?.name ?? '',
   ].join(' ').toLowerCase();
 
-  const objects = extractChoiceObjectPhrases(choice);
-
-  const skip = /^(immediate|nearest|nearby|other|another|few|some|your|my|old|new|next|last|same)$/;
-  // Generic place-holders only — not "street" (must be narrated when named).
-  const genericPlace =
-    /^(surroundings|environment|area|room|scene|ground|air|cover|gear|inventory|wounds?)$/;
-  for (const obj of objects) {
-    const core = obj.replace(/^(nearest|nearby|other|another|immediate|overturned|parked|open|ajar|distant)\s+/, '');
-    if (!core || skip.test(core)) continue;
-    if (genericPlace.test(core)) continue;
+  for (const core of concreteChoiceObjects(choice)) {
     if (hay.includes(core) || core.split(/\s+/).some((w) => w.length >= 4 && hay.includes(w))) {
       continue;
     }

@@ -241,28 +241,11 @@ export function filterInventedContextChoices(
     }
     if (!recentStory && !scenePropsCorpus) return true;
     // Compiler/hub pads are not invented context — filtering them caused Fate pad-empty spam.
-    if (isLegalEnginePad(choice)) return true;
+    if (isLegalEnginePad(choice, state, recentStory)) return true;
     const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus, state);
     if (invents) {
       console.log(`[Choice Filter] Removed invented-context choice: "${choice}"`);
     }
     return !invents;
   });
-}
-
-/**
- * Get explanation for why a choice was filtered.
- */
-export function explainFilteredChoice(
-  choice: string,
-  recentStory: string
-): string | null {
-  for (const rule of CONTEXT_REQUIREMENTS) {
-    if (rule.pattern.test(choice.toLowerCase())) {
-      if (!rule.requires.test(recentStory.toLowerCase())) {
-        return `References ${rule.description} not mentioned in story`;
-      }
-    }
-  }
-  return null;
 }

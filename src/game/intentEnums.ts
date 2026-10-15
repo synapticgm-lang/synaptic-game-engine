@@ -220,6 +220,9 @@ export function inferIntent(text: string): PlayerIntent {
   if (/\b(scout|survey)\b/.test(lower)) {
     return PlayerIntent.INTENT_SCOUT;
   }
+  if (/\bstatus\b/.test(lower)) {
+    return PlayerIntent.INTENT_STATUS;
+  }
   if (/\b(inspect|examine|check|search)\b/.test(lower)) {
     return PlayerIntent.INTENT_INSPECT;
   }
@@ -257,10 +260,6 @@ export function inferIntent(text: string): PlayerIntent {
   if (/\b(shop|buy|purchase|trade|merchant)\b/.test(lower)) {
     return PlayerIntent.INTENT_SHOP;
   }
-  if (/\b(status|check status)\b/.test(lower)) {
-    return PlayerIntent.INTENT_STATUS;
-  }
-  
   // Opening
   if (/\b(give|tell|say).*(name|who you are)\b/.test(lower)) {
     return PlayerIntent.INTENT_GIVE_NAME;
@@ -288,13 +287,6 @@ export function inferIntent(text: string): PlayerIntent {
   
   // Default
   return PlayerIntent.INTENT_OTHER;
-}
-
-/**
- * Get display label for an intent enum.
- */
-export function getIntentLabel(intent: PlayerIntent): string {
-  return INTENT_DISPLAY_LABELS[intent] ?? 'Continue';
 }
 
 /**
@@ -343,20 +335,5 @@ export function isInspectIntent(intent: PlayerIntent): boolean {
     PlayerIntent.INTENT_INSPECT_CRATE,
     PlayerIntent.INTENT_INSPECT_DOOR,
     PlayerIntent.INTENT_INSPECT_PANEL,
-  ].includes(intent);
-}
-
-/**
- * Check if an intent is a social action.
- */
-export function isSocialIntent(intent: PlayerIntent): boolean {
-  return [
-    PlayerIntent.INTENT_TALK,
-    PlayerIntent.INTENT_ASK,
-    PlayerIntent.INTENT_LISTEN,
-    PlayerIntent.INTENT_PRESS,
-    PlayerIntent.INTENT_DEMAND,
-    PlayerIntent.INTENT_GREET,
-    PlayerIntent.INTENT_INTRODUCE,
   ].includes(intent);
 }

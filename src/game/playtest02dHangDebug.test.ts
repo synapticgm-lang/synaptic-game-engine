@@ -14,7 +14,7 @@ import { buildEntityCast } from './entityCast';
 import { formatHubArrivalForPrompt, resolveHubArrival } from './hubEncounters';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import { filterInventedContextChoices } from './choiceWarden';
-import { isLegalEnginePad, choiceNamesUnnarratedObject } from './choicePipeline';
+import { engineChipLabels, isLegalEnginePad, choiceNamesUnnarratedObject } from './choicePipeline';
 import { resolveOfferedChoices } from './playTranscript';
 import type { GameState, LogEntry } from './types';
 
@@ -137,19 +137,23 @@ describe('playtest02d hang debug — CAST / log / choice pad', () => {
   });
 
   it('legal engine pads are not invented-context; crystals still are', () => {
+    // RC-3: a chip is the engine's by the builder that made it for this state, or by its resolved action —
+    // not by its label. "Ask a direct question" is no longer built by any pad builder.
     const state = hubCastState();
-    expect(isLegalEnginePad('Ask a direct question')).toBe(true);
-    expect(isLegalEnginePad('Travel toward The Weighing Cup')).toBe(true);
-    expect(isLegalEnginePad('Check Status')).toBe(true);
-    expect(isLegalEnginePad('Inspect the crystals breaking the street')).toBe(false);
-
     const story = state.log[state.log.length - 1]!.content;
-    expect(choiceNamesUnnarratedObject('Ask a direct question', story, state)).toBe(false);
+    expect(isLegalEnginePad('Wait quietly and listen')).toBe(true);
+    expect(isLegalEnginePad('Travel toward The Weighing Cup')).toBe(true);
+    expect(isLegalEnginePad('Check Status', state, story)).toBe(true);
+    const built = [...engineChipLabels(state, story)];
+    expect(built.length).toBeGreaterThan(0);
+    for (const chip of built) expect(isLegalEnginePad(chip, state, story)).toBe(true);
+    expect(isLegalEnginePad('Inspect the crystals breaking the street', state, story)).toBe(false);
+
+    expect(choiceNamesUnnarratedObject('Wait quietly and listen', story, state)).toBe(false);
     expect(choiceNamesUnnarratedObject('Travel toward The Weighing Cup', story, state)).toBe(false);
     expect(choiceNamesUnnarratedObject('Inspect the crystals breaking the street', story, state)).toBe(true);
 
     const filtered = filterInventedContextChoices(state.choices, state);
-    expect(filtered).toContain('Ask a direct question');
     expect(filtered).toContain('Travel toward The Weighing Cup');
     expect(filtered).toContain('Check Status');
     expect(filtered).not.toContain('Inspect the crystals breaking the street');
