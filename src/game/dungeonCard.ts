@@ -435,6 +435,27 @@ export function openDungeonCard(state: GameState, site: string): GameState {
 }
 
 /**
+ * The site's card without going in: the one the player is in, else the stored one, else built once now and
+ * stored on its place, so whoever opens it later (the player, another quest) gets the same rooms.
+ */
+export function ensureDungeonCard(state: GameState, site: string): { state: GameState; card: ActiveDungeonState } {
+  const hubName = siteHub(state, site)?.name ?? site;
+  const active = state.activeDungeon;
+  if (isDungeonCard(active) && (active.siteName ?? active.dungeonName) === hubName) return { state, card: active };
+  const stored = findPlace(state, hubName)?.dungeonCard;
+  if (stored) return { state, card: stored };
+  const card = buildDungeonCard(state, hubName);
+  const place = findPlace(state, hubName);
+  const places = place
+    ? (state.places ?? []).map((p) => (p.id === place.id ? { ...p, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: card } : p))
+    : [
+        ...(state.places ?? []),
+        { id: placeIdFromName(hubName), name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: card, arcStatus: 'open' as const, mapScale: 'street' as const },
+      ];
+  return { state: { ...state, places }, card };
+}
+
+/**
  * The Map at a cave / mine / crypt before the player goes in: the same card `openDungeonCard`
  * would open (stored or built), drawn as a plan with nothing seeded.
  */

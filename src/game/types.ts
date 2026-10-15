@@ -417,6 +417,19 @@ export interface QuestObjective {
   /** The step as an action: its verb ("Haul up") and object ("the heavy bucket"). Its chip is the two joined. */
   verb?: string;
   object?: string;
+  /** The item or person this step is about, put in the world when the quest was made. The step ticks only when it is found or met. */
+  target?: QuestTarget;
+}
+
+export interface QuestTarget {
+  kind: 'item' | 'person';
+  name: string;
+  /** Where it was put. A person with no place is met wherever they are. */
+  place?: string;
+  /** Inside the place's dungeon card: the room it was put in. */
+  nodeId?: string;
+  /** The turn the engine recorded the player finding or meeting it. */
+  foundTurn?: number;
 }
 
 export interface ChoiceJournalEntry {

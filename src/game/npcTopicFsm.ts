@@ -215,7 +215,8 @@ export function advanceNpcTopicExhaustion(
   if (activeMain?.objectives?.length) {
     const idx = activeMain.objectives.findIndex((o) => !o.completed);
     const giver = idx >= 0 ? talkStageGiver(next, activeMain.id, idx) : null;
-    if (giver && isGiverName(npc, giver) && used.length >= 3) {
+    // A step with a placed target ticks only when the engine records its find or meeting (questTargets).
+    if (giver && isGiverName(npc, giver) && used.length >= 3 && !activeMain.objectives[idx]!.target) {
       const objectives = [...activeMain.objectives];
       objectives[idx] = { ...objectives[idx], completed: true };
       next = {

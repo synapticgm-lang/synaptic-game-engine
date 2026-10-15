@@ -638,8 +638,9 @@ function applyBeatEffects(
 
   if (contract.questId != null && contract.questObjectiveIndex != null) {
     const step = (next.quests ?? []).find((q) => q.id === contract.questId)?.objectives?.[contract.questObjectiveIndex];
-    // A step heard from a named person is done only by talking to them (tabletopQuestProgress), never on a beat timer.
-    const heardStep = !!step && !step.completed && !!talkStepPerson(step.description);
+    // A step heard from a named person, or one with a placed target, is done only when the engine records that
+    // meeting or find (tabletopQuestProgress / questTargets), never on a beat timer.
+    const heardStep = !!step && !step.completed && (!!talkStepPerson(step.description) || !!step.target);
     next = {
       ...next,
       quests: heardStep ? next.quests ?? [] : completeQuestObjective(next.quests ?? [], contract.questId, contract.questObjectiveIndex),

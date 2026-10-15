@@ -1,24 +1,23 @@
 /**
- * Tabletop fix 1 — the tabletop main quest moves on from play, the way Story RPG's does (storyRpgProgress):
- * - The step's verb decides what ticks it (`tabletopStepKind`).
- * - A talk step ("Speak with Oskar at the Greyhollow Tavern") ticks only when the player talks to that person
- *   while they are here.
- * - A look step ("Examine the keep gate", "Review the map Silas spreads") is offered as its own chip at its
- *   place, with its people there, and ticks when the player takes it there.
- * - A move step ("Follow the cart tracks toward the keep", "Escort him up the hill path") ticks only when travel
- *   arrives where it goes, with the person it takes along travelling with the player.
- * Any open talk or look step can be taken: doing the gate first does not pay for a talk never had. A move step
- * ticks only once every required step before it is done. A tabletop step ticks as story only and pays no XP
- * (SRD XP is monster CR). Other modes are untouched.
+ * Tabletop fix 1 — the tabletop main quest moves on from play, the way Story RPG's does (storyRpgProgress).
+ * tt-build-questtargets — each step's target (the item or person it is about) is put in the world when the
+ * quest is made (`questTargets`), where its anchor says the step is taken:
+ * - A talk step ("Speak with Oskar at the Greyhollow Tavern") is met by talking to that person while they are here.
+ * - A look step ("Examine the keep gate", "Review the map Silas spreads") finds its thing at its place, with its
+ *   people there.
+ * - A move step ("Follow the cart tracks toward the keep", "Escort him up the hill path") finds its thing, or
+ *   meets the person it takes along, where it goes. Arriving there ticks nothing.
+ * - A step inside a place is in a room of that place's dungeon card.
+ * A step ticks only when the engine records the find or the meeting. A tabletop step ticks as story only and pays
+ * no XP (SRD XP is monster CR). Other modes are untouched.
  */
-import type { GameState, Quest } from './types';
+import type { GameState, Quest, QuestTarget } from './types';
 import { mainSpineQuest } from './questPlay';
 import { stepChip } from './choiceRanking';
-import { peopleHere } from './chipLegality';
 import { isGiverName, talkStepPerson } from './questGiver';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubsForBibleId } from './outdoorHubs';
 import { resolveNpcRecord } from './npcRecords';
-import { isJourneyUnderway } from './travelJourney';
+import { atPlace, findQuestTargets, placeQuestTarget, targetSpot } from './questTargets';
 
 export type TabletopQuestTurn = { state: GameState; receipts: string[]; /** The step taken, as the writer's world fact. */ facts?: string[] };
 
@@ -105,7 +104,7 @@ const MOVE_STEP_PURPOSE =
 /** A move that takes someone along ("Escort him…", "Lead the survivors…"): the step's person must come too. */
 const WITH_PERSON_VERB = /^\s*(?:escort|lead|guide|bring|take)\b/i;
 
-/** The step's verb decides what ticks it: talking to its person, its own look at its place, or arriving where it goes. */
+/** The step's verb decides where it is taken: with its person, at its own place, or where it goes. */
 export function tabletopStepKind(step: string): TabletopStepKind {
   if (talkStepPerson(step) || TALK_STEP_VERB.test(step ?? '')) return 'talk';
   if (MOVE_STEP_VERB.test(step ?? '') || MOVE_STEP_PURPOSE.test(step ?? '')) return 'move';
@@ -141,25 +140,40 @@ export function tabletopStepAnchor(
   };
 }
 
-function atPlace(state: GameState, place: string): boolean {
-  const hubs = hubsForBibleId(state.campaignBibleId);
-  const name = (s: string) => bare(matchHub(hubs, s)?.name ?? s);
-  const here = name(state.currentLocation ?? '');
-  const p = name(place);
-  return !!here && !!p && (here === p || here.includes(p));
+/**
+ * The step's target, where the step is taken: the person a talk step is held with or its object names
+ * ("Escort Silas up the hill path"), else the thing it acts on ("the heavy bucket").
+ */
+function stepTarget(state: GameState, quest: Quest, idx: number): QuestTarget | null {
+  const o = quest.objectives![idx]!;
+  const anchor = tabletopStepAnchor(state, quest, idx);
+  const what = o.object ?? (stepChip(o) ?? o.description).replace(/^\S+\s+/, '');
+  const person = anchor.kind === 'talk'
+    ? anchor.people[0]
+    : anchor.people.find((p) => p.split(' ').some((w) => w.length >= 4 && ` ${chipKey(what)} `.includes(` ${w.toLowerCase()} `)));
+  const place = anchor.kind === 'talk' ? null : anchor.place ?? quest.location ?? null;
+  if (!person && !place) return null;
+  return { kind: person ? 'person' : 'item', name: person ?? what, ...(place ? { place } : {}) };
 }
 
-/**
- * At the step's place. A step inside it ("the keep's ground floor", "the great hall floor") is taken in a room
- * of that place ("Keep Gate — Ruined hall"), in the room its anchor names. Outside its door it is 'door': the
- * same chip is the way in, and taking it opens the place without ticking the step.
- */
-function atStepPlace(state: GameState, place: string, room?: string): boolean | 'door' {
-  if (!room) return atPlace(state, place);
-  const [outer, inner] = (state.currentLocation ?? '').split(/\s+[—–]\s+/);
-  if (!inner) return atPlace(state, place) && 'door';
-  if (!outer || !atPlace({ ...state, currentLocation: outer }, place)) return false;
-  return room === 'inside' || ` ${bare(inner)} `.includes(` ${room.toLowerCase()} `);
+/** Put the targets of every open quest's open steps in the world, once, when the quest is first seen. */
+export function placeTabletopQuestTargets(state: GameState): GameState {
+  if (state.engineMode !== 'dnd') return state;
+  let next = state;
+  let changed = false;
+  const quests = (state.quests ?? []).map((q) => {
+    if (q.status === 'completed' || q.status === 'failed' || !(q.objectives ?? []).some((o) => !o.completed && !o.target)) return q;
+    const objectives = q.objectives!.map((o, idx) => {
+      const target = o.completed || o.target ? null : stepTarget(next, q, idx);
+      if (!target) return o;
+      const placed = placeQuestTarget(next, q, o, target);
+      next = placed.state;
+      changed = true;
+      return { ...o, target: placed.target };
+    });
+    return { ...q, objectives };
+  });
+  return changed ? { ...next, quests } : state;
 }
 
 function playOpen(state: GameState): Quest | null {
@@ -167,46 +181,20 @@ function playOpen(state: GameState): Quest | null {
   return mainSpineQuest(state);
 }
 
-type TakeableStep = { idx: number; chip: string; person: string | null; door?: boolean };
+type TakeableStep = { idx: number; chip: string; door: boolean };
 
-/** The open step a person here or this place lets the player take now, with its chip (`door`: it opens the place). */
+/**
+ * The open steps whose target is here (`door`: it is in a room of this place, and the chip opens the place).
+ * A quest revealed after this turn's placement is read by the target its step will be given.
+ */
 function takeableSteps(state: GameState): TakeableStep[] {
   const quest = playOpen(state);
   if (!quest) return [];
-  const here = peopleHere(state);
-  const out: TakeableStep[] = [];
-  (quest.objectives ?? []).forEach((o, idx) => {
-    if (o.completed) return;
-    const chip = stepChip(o);
-    if (!chip) return;
-    const anchor = tabletopStepAnchor(state, quest, idx);
-    // A move step has no chip of its own; travel arriving where it goes ticks it.
-    if (anchor.kind === 'move') return;
-    const person = anchor.people.find((p) => here.some((n) => isGiverName(n, p))) ?? null;
-    if (anchor.kind === 'talk') {
-      if (person) out.push({ idx, chip, person });
-      return;
-    }
-    if (anchor.people.length && !person) return;
-    const at = anchor.place ? atStepPlace(state, anchor.place, anchor.room) : !!person;
-    if (at) out.push({ idx, chip, person: null, door: at === 'door' });
-  });
-  return out;
-}
-
-/** The open move step this turn's travel completed: it arrived where the step goes, with the step's person if it takes one along. */
-function arrivedMoveStep(state: GameState, quest: Quest, hereBefore: string | undefined): number {
-  const here = state.currentLocation ?? '';
-  if (hereBefore === undefined || !here || here === hereBefore || isJourneyUnderway(state)) return -1;
-  const people = peopleHere(state);
-  return (quest.objectives ?? []).findIndex((o, idx) => {
-    if (o.completed || quest.objectives!.slice(0, idx).some((p) => !p.completed && !p.optional)) return false;
-    const anchor = tabletopStepAnchor(state, quest, idx);
-    if (anchor.kind !== 'move' || !anchor.place || !atPlace(state, anchor.place)) return false;
-    if (WITH_PERSON_VERB.test(o.description) && anchor.people.length) {
-      return anchor.people.some((p) => people.some((n) => isGiverName(n, p)));
-    }
-    return true;
+  return (quest.objectives ?? []).flatMap((o, idx) => {
+    const chip = o.completed ? null : stepChip(o);
+    const target = chip ? o.target ?? stepTarget(state, quest, idx) : null;
+    const at = target ? targetSpot(state, { ...o, target }) : false;
+    return chip && at ? [{ idx, chip, door: at === 'door' }] : [];
   });
 }
 
@@ -237,34 +225,11 @@ export function tabletopStepIsDoor(state: GameState, chip: string): boolean {
   return takeableSteps(state).some((s) => s.door && chipKey(s.chip) === chipKey(chip));
 }
 
-const TALK_VERB = /\b(?:talk|speak|ask|tell|greet|approach|question|listen)\b/i;
-
-/** `hereBefore` is where the player stood before this turn's move, so a move step can tick on arrival. */
+/** `hereBefore` is where the player stood before this turn's move, so the person a move takes along comes too. */
 export function applyTabletopQuestTurn(input: GameState, playerInput: string, hereBefore?: string): TabletopQuestTurn {
-  const placed = placeTabletopStepPeople(input);
+  const placed = placeTabletopQuestTargets(placeTabletopStepPeople(input));
   const quest = playOpen(placed);
   if (!quest) return { state: placed, receipts: [] };
-  const state = takeAlong(placed, quest, hereBefore);
-  const action = (playerInput ?? '').replace(/\s+/g, ' ').trim();
-  const said = chipKey(action);
-  const moved = arrivedMoveStep(state, quest, hereBefore);
-  // A step inside a place is taken from inside it: the turn that walks in through its door does not tick it.
-  const doorBefore = hereBefore === undefined ? [] : takeableSteps({ ...state, currentLocation: hereBefore });
-  const taken =
-    moved >= 0
-      ? { idx: moved, chip: stepChip(quest.objectives![moved]!) ?? quest.objectives![moved]!.description }
-      : takeableSteps(state).find(
-          (s) =>
-            (!s.door && !doorBefore.some((b) => b.door && b.idx === s.idx) && said === chipKey(s.chip))
-            || (!!s.person
-              && TALK_VERB.test(action)
-              && (said.includes(bare(s.person)) || peopleHere(state).some((n) => isGiverName(n, s.person!) && said.includes(bare(n)))))
-        );
-  if (!taken) return { state, receipts: [] };
-  const objectives = (quest.objectives ?? []).map((o, i) => (i === taken.idx ? { ...o, completed: true } : o));
-  const done = objectives.every((o) => o.completed || o.optional);
-  const quests = (state.quests ?? []).map((q) =>
-    q.id === quest.id ? { ...q, objectives, ...(done ? { status: 'completed' as const } : {}) } : q
-  );
-  return { state: { ...state, quests }, receipts: [`Quest stage: ${quest.name} — ${taken.chip}`], facts: [`You ${objectives[taken.idx]!.description.trim().charAt(0).toLowerCase()}${objectives[taken.idx]!.description.trim().slice(1)}`] };
+  const found = findQuestTargets(takeAlong(placed, quest, hereBefore), playerInput);
+  return { state: found.state, receipts: found.receipts, ...(found.facts.length ? { facts: found.facts } : {}) };
 }

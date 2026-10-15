@@ -41,7 +41,8 @@ export function applySiteClearObjectives(
     if (q.status !== 'active') return q;
     let questChanged = false;
     const objectives = (q.objectives ?? []).map((o) => {
-      if (o.completed || !siteClearWonHere(o.description ?? '', location, foeName, true)) return o;
+      // A step with a placed target ticks only when the engine records its find or meeting (questTargets).
+      if (o.completed || o.target || !siteClearWonHere(o.description ?? '', location, foeName, true)) return o;
       questChanged = true;
       changed = true;
       return { ...o, completed: true };
@@ -80,7 +81,7 @@ export function applyQuestHooksFromLedger(
       if (q.status !== 'active') return q;
       const objs = q.objectives ?? [];
       const bossObj = objs.find((o) => /boss|mini-boss|stockboy|final/i.test(o.description));
-      if (!bossObj || bossObj.completed) return q;
+      if (!bossObj || bossObj.completed || bossObj.target) return q;
       return {
         ...q,
         objectives: objs.map((o) =>

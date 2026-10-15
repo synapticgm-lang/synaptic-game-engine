@@ -189,18 +189,19 @@ function spineQuest(spineId: string, done: number): Quest {
 const silas = { npcId: 'silas', npcName: 'Silas Thorne', disposition: 'neutral', facts: [], lastSeenTurn: 3, aliases: [], location: 'Greyhollow Inn' } as unknown as NonNullable<GameState['npcMemories']>[number];
 
 describe('4 — the escorted person goes along', () => {
-  it('the escort goes to the keep, and arriving ticks it only with Silas along (lap 13 E T7)', () => {
+  it('the escort goes to the keep with Silas along; it ticks when he is met there, never on arrival (lap 13 E T7, tt-build-questtargets)', () => {
     const at = (over: Partial<GameState>) =>
       ck({ quests: [spineQuest('ck-spine-scholars-folly', 1)], currentLocation: 'Greyhollow Inn', npcMemories: [silas], ...over } as Partial<GameState>);
     expect(storyChip(at({}))).toBe('Travel toward Keep Gate');
     // Taking the chip at the inn does not tick the escort: nobody has gone anywhere.
     expect(applyTabletopQuestTurn(at({}), 'Escort Silas up the hill path', 'Greyhollow Inn').state.quests![0]!.objectives![1]!.completed).toBe(false);
     const arrived = applyTabletopQuestTurn(at({ currentLocation: 'Keep Gate' }), 'Travel toward Keep Gate', 'Greyhollow Inn').state;
-    expect(arrived.quests![0]!.objectives![1]!.completed).toBe(true);
+    expect(arrived.quests![0]!.objectives![1]!.completed).toBe(false);
     expect(arrived.npcMemories!.find((m) => m.npcId === 'silas')?.location).toBe('Keep Gate');
+    expect(applyTabletopQuestTurn(arrived, 'Escort Silas up the hill path', 'Keep Gate').state.quests![0]!.objectives![1]!.completed).toBe(true);
     const elsewhere = { ...silas, location: 'Midnight Well' };
     const alone = applyTabletopQuestTurn(at({ currentLocation: 'Keep Gate', npcMemories: [elsewhere] }), 'Travel toward Keep Gate', 'Greyhollow Inn').state;
-    expect(alone.quests![0]!.objectives![1]!.completed).toBe(false);
+    expect(applyTabletopQuestTurn(alone, 'Escort Silas up the hill path', 'Keep Gate').state.quests![0]!.objectives![1]!.completed).toBe(false);
   });
 });
 
@@ -224,8 +225,12 @@ describe('5 — the cursed-keep quests lead into the keep', () => {
     const inside = maybeEnterInteriorDungeon(s, chip!);
     expect(inside.activeDungeon).toBeTruthy();
     expect(inside.currentLocation).toMatch(/^Keep Gate [—–] /);
-    expect(applyTabletopQuestTurn(inside, chip!, 'Keep Gate').state.quests![0]!.status).toBe('active');
-    const turn = applyTabletopQuestTurn(inside, chip!, inside.currentLocation);
+    const walkedIn = applyTabletopQuestTurn(inside, chip!, 'Keep Gate').state;
+    expect(walkedIn.quests![0]!.status).toBe('active');
+    // tt-build-questtargets — the journals lie in their own room; taking the step there finds them.
+    const room = walkedIn.quests![0]!.objectives![2]!.target!.nodeId!;
+    const there = { ...walkedIn, activeDungeon: { ...walkedIn.activeDungeon!, currentNodeId: room } };
+    const turn = applyTabletopQuestTurn(there, chip!, there.currentLocation);
     expect(turn.state.quests![0]!.status).toBe('completed');
   });
 });

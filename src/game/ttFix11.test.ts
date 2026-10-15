@@ -52,12 +52,16 @@ function spineQuest(spineId: string, done: number[]): Quest {
 const gm = (content: string) => ({ id: `g${content.length}`, role: 'gm', content, timestamp: 0 }) as GameState['log'][number];
 
 describe('1 — the step ledger', () => {
-  it('a move step does not tick on arrival while the step before it is open (lap 15 A T12)', () => {
+  it('a move step never ticks on arrival; it ticks when taken at its place in order (lap 15 A T12, tt-build-questtargets)', () => {
     const s = ck({ quests: [spineQuest('ck-spine-mayor-problem', [])], currentLocation: 'Keep Gate' } as Partial<GameState>);
     const out = applyTabletopQuestTurn(s, 'Walk on', 'On the road between places').state.quests![0]!;
     expect(out.objectives!.map((o) => o.completed)).toEqual([false, false, false]);
     const done = ck({ quests: [spineQuest('ck-spine-mayor-problem', [0])], currentLocation: 'Keep Gate' } as Partial<GameState>);
-    expect(applyTabletopQuestTurn(done, 'Walk on', 'On the road between places').state.quests![0]!.objectives![1]!.completed).toBe(true);
+    const arrived = applyTabletopQuestTurn(done, 'Walk on', 'On the road between places').state;
+    expect(arrived.quests![0]!.objectives![1]!.completed).toBe(false);
+    const chip = tabletopStepChip(arrived)!;
+    expect(chip).toBeTruthy();
+    expect(applyTabletopQuestTurn(arrived, chip, 'Keep Gate').state.quests![0]!.objectives![1]!.completed).toBe(true);
   });
 
   it('the inside step is the tracker\'s chip at the gate and survives the chip filter (lap 15 B T10, C T11, F T14)', () => {
@@ -77,9 +81,13 @@ describe('1 — the step ledger', () => {
     const chip = tabletopStepChip(s)!;
     const inside = maybeEnterInteriorDungeon(s, chip);
     expect(inside.currentLocation).toMatch(/^Keep Gate [—–] /);
-    expect(applyTabletopQuestTurn(inside, chip, 'Keep Gate').state.quests![0]!.status).toBe('active');
-    expect(tabletopStepChip(inside)).toBe(chip);
-    expect(applyTabletopQuestTurn(inside, chip, inside.currentLocation).state.quests![0]!.status).toBe('completed');
+    const walkedIn = applyTabletopQuestTurn(inside, chip, 'Keep Gate').state;
+    expect(walkedIn.quests![0]!.status).toBe('active');
+    // tt-build-questtargets — the target sits in its own room; the step is offered and ticks there.
+    const room = walkedIn.quests![0]!.objectives![2]!.target!.nodeId!;
+    const there = { ...walkedIn, activeDungeon: { ...walkedIn.activeDungeon!, currentNodeId: room } };
+    expect(tabletopStepChip(there)).toBe(chip);
+    expect(applyTabletopQuestTurn(there, chip, there.currentLocation).state.quests![0]!.status).toBe('completed');
   });
 });
 

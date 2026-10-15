@@ -7,7 +7,7 @@ import { buildArchetypeIntro } from './archetypes';
 import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
-import { advanceDungeonCard, isDungeonCard, previewDungeonCard } from './dungeonCard';
+import { advanceDungeonCard, isDungeonCard, parkDungeonCard, previewDungeonCard } from './dungeonCard';
 import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
@@ -1881,12 +1881,15 @@ export function useGame() {
     }
     const backName = previous.previousLocationSheet?.name || previous.currentLocation || 'Outside';
     const locMem = advanceLocationMemory(previous, backName);
-    const updated = {
-      ...previous,
-      ...locMem,
-      activeDungeon: engineExitDungeon(),
-      lastUpdated: Date.now(),
-    };
+    // A dungeon card is parked on its place (rooms, loot, quest targets kept), not dropped.
+    const updated = isDungeonCard(previous.activeDungeon)
+      ? { ...parkDungeonCard(previous, { toSite: true }), lastUpdated: Date.now() }
+      : {
+          ...previous,
+          ...locMem,
+          activeDungeon: engineExitDungeon(),
+          lastUpdated: Date.now(),
+        };
     stateRef.current = updated;
     setState(updated);
     void persist(updated);

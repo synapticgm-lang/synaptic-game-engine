@@ -21,6 +21,7 @@ import { closePlaceArc, upsertPlaceFromSheet } from './places';
 import { exhaustOpenedContainer, shouldBlockContainerItemGain } from './searchContinuity';
 import { isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { difficultyRow } from './difficultyRules';
+import { isDungeonCard, parkDungeonCard } from './dungeonCard';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -191,6 +192,14 @@ export function applyStructuralEvents(
               i === idx ? { ...it, quantity: remaining } : it
             );
       next = { ...next, inventory };
+    }
+
+    // The engine owns a dungeon card: a writer tag never replaces it, and leaving parks it on its place with its
+    // rooms, loot and quest targets kept for the player's return.
+    if (isDungeonCard(next.activeDungeon) && (e.type === 'dungeon-load' || e.type === 'dungeon-exit')) {
+      if (e.type === 'dungeon-exit') next = parkDungeonCard(next, { toSite: true });
+      notes.push(e.type === 'dungeon-exit' ? 'Dungeon exited' : `Skipped dungeon-load: inside ${next.activeDungeon?.dungeonName}`);
+      continue;
     }
 
     if (e.type === 'dungeon-load' && e.dungeonName) {
