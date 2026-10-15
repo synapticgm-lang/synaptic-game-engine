@@ -18,7 +18,6 @@ import { dropTimeOfDay, openingPlaceRecord } from './placeNames';
 import { objectiveOpensInterior } from './enterInterior';
 import { PREGENS, applyTabletopSheet, resolveSheet, scoresForMethod } from './tabletop/characterBuild';
 import { kitRefDisplay } from './inventory';
-import { beatCarriesTerminalFight } from './engineResult';
 import { grantLevelSkills } from './skillGates';
 import { NO_CR_XP_REASON, milestoneXp } from './xpRules';
 import { realEncounterCr } from './rules/srdMonsters';
@@ -187,12 +186,6 @@ describe('tt-fix-3 repeats', () => {
 });
 
 describe('tt-fix-3 engine errors', () => {
-  it('"lost the trail" tells an escape', () => {
-    const fight = { outcome: 'escaped', foe: 'the restless dead', rounds: '', forced: false } as Parameters<typeof beatCarriesTerminalFight>[1];
-    expect(beatCarriesTerminalFight('Behind Jax, the dead lost the trail and faded into the fog.', fight)).toBe(true);
-    expect(beatCarriesTerminalFight('The dead shuffled closer.', fight)).toBe(false);
-  });
-
   it('a tabletop level grants no LitRPG skill rank or "you can now" line', () => {
     const s0 = tabletop('');
     const s = { ...s0, character: { ...s0.character, level: 2, skillsGrantedThrough: 1 } } as GameState;

@@ -44,7 +44,7 @@ import { isSystemWindowLabel } from './chromeAuthority';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
-import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
+import { terminalFightOutcome } from './engineResult';
 import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { roundCombatChips } from './tabletop/combatChips';
 
@@ -215,9 +215,9 @@ export function checkActionFollowed(
   const text = norm(prose);
   if (!act || !text || /^\(crash/.test(act)) return { p0, down };
   const quoted = /["“][^"”]{2,}["”]/.test(text);
-  // The engine settled a fight this turn and the prose tells it: that is the blow, and the answer to a parley it forced.
+  // The engine settled a fight this turn (its sentence closes the beat): that is the blow, and the answer to a parley it forced.
   const fight = terminalFightOutcome(after.completedEvent?.engineResult);
-  const fightTold = !!fight && fight.outcome !== 'escaped' && beatCarriesTerminalFight(text, fight);
+  const fightTold = !!fight && fight.outcome !== 'escaped';
 
   const addr = chipAddressee(act);
   // A talk shape with no addressee ("Talk your way past the thugs") still names who here it is to.

@@ -1,7 +1,7 @@
 /**
  * tt-fix-14 — one block per item:
  * 1. the hub nudge's speaker is someone here: on an empty stretch nobody mentions anything;
- * 2. a kill told with "killing it" / "lying still" carries the settled outcome, so no fight rewrite replaces it;
+ * 2. a kill told in any words is never rewritten; the engine outcome sentence is added once (q31-RC1);
  * 3. a speech line with its own said-tag and narration paints as written, not cut to the quote.
  */
 import { describe, expect, it } from 'vitest';
@@ -9,8 +9,8 @@ import { createInitialState } from './defaults';
 import type { GameState, NpcMemory } from './types';
 import type { LedgerRef } from './completedEventPacket';
 import { nudgeIfStuck } from './choiceRanking';
-import { beatCarriesTerminalFight, terminalFightOutcome } from './engineResult';
-import { ignoresTerminalFight } from './beatCommitGate';
+import { terminalFightOutcome } from './engineResult';
+import { ignoresTerminalFight, withMissingFightFacts } from './beatCommitGate';
 import { parseTokenBeat, renderTokenBeat } from './tokenProse';
 
 function ck(over: Partial<GameState> = {}): GameState {
@@ -52,17 +52,23 @@ describe('2 — "killing it" tells the kill', () => {
   const draft =
     'Jax swung their shortsword and the blade struck the Cave Rat, killing it. The Corridor in Keep Gate answered with sudden silence after the fight. They could see the Cave Rat lying still near the Broken Gate.';
 
-  it('the first draft of lap 18 A T14 carries the victory', () => {
-    const fight = terminalFightOutcome(fact)!;
-    expect(beatCarriesTerminalFight('the blade struck the Cave Rat, killing it.', fight)).toBe(true);
-    expect(beatCarriesTerminalFight('They could see the Cave Rat lying still.', fight)).toBe(true);
+  // q31-RC1: the outcome comes from the engine record; the writer's words are no longer tested for it.
+  it('the first draft of lap 18 A T14 commits as written, with the engine outcome added once', () => {
+    expect(terminalFightOutcome(fact)?.outcome).toBe('victory');
     const s = ck({ completedEvent: { engineResult: fact } } as unknown as Partial<GameState>);
     expect(ignoresTerminalFight(s, draft)).toBe(false);
+    const out = withMissingFightFacts(s, draft, { who: 'Jax', him: 'them' });
+    expect(out.startsWith(draft)).toBe(true);
+    expect(withMissingFightFacts(s, out, { who: 'Jax', him: 'them' })).toBe(out);
   });
 
-  it('a beat that never tells the outcome still asks for it', () => {
+  it('a kill told in unlisted words ("lay quiet") is not rewritten or doubled', () => {
     const s = ck({ completedEvent: { engineResult: fact } } as unknown as Partial<GameState>);
-    expect(ignoresTerminalFight(s, 'Jax swung their shortsword at the Cave Rat.')).toBe(true);
+    const quiet = 'Jax brought the blade down and the thing lay quiet.';
+    expect(ignoresTerminalFight(s, quiet)).toBe(false);
+    const out = withMissingFightFacts(s, quiet, { who: 'Jax', him: 'them' });
+    expect(out.startsWith(quiet)).toBe(true);
+    expect(out.match(/went down and did not get up/g)?.length).toBe(1);
   });
 });
 

@@ -20,6 +20,7 @@ import {
   TERMINAL_FIGHT_PROBLEM,
   withMissingFightFacts,
 } from './beatCommitGate';
+import { terminalFightOutcome } from './engineResult';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
 import { dropsFightRoll } from './engineFactGate';
 import { escRe } from './engineFactPatterns';
@@ -583,15 +584,25 @@ async function runWriterTurnFightOnly(opts: {
   check: DraftCheck;
   rewrite: (problem: string) => Promise<string>;
 }): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
+  const state = opts.check.state;
+  const pov = pcPov(opts.packet.pc ?? state.character);
+  const fightPov = { who: pcStorySubject(pov), him: narratesPcInThirdPerson(pov) ? pov.him : 'you' };
+  // The engine's outcome sentence closes every settled fight beat; the writer's words are never tested for it.
+  const withFacts = <T extends WriterTurnResult>(turn: T): T => {
+    if (!terminalFightOutcome(state.completedEvent?.engineResult)) return turn;
+    const prose = withMissingFightFacts(state, turn.prose, fightPov);
+    return { ...turn, prose, remaining: writerDraftProblems(prose, opts.check) };
+  };
   const first = runWriterTurn(opts);
-  if (first.outcome !== 'accepted' || !ignoresTerminalFight(opts.check.state, first.prose)) return first;
-  const head = dropsFightRoll(opts.check.state, first.prose) ? DROPPED_ROLL_PROBLEM : TERMINAL_FIGHT_PROBLEM;
+  if (first.outcome !== 'accepted') return first;
+  if (!ignoresTerminalFight(state, first.prose)) return withFacts(first);
+  const head = dropsFightRoll(state, first.prose) ? DROPPED_ROLL_PROBLEM : TERMINAL_FIGHT_PROBLEM;
   const problem = `${head} ${opts.check.engineFact}`.trim();
   const raw = await opts.rewrite(problem).catch(() => '');
   const second = runWriterTurn({ ...opts, firstRaw: raw });
   const fightDraft = raw.trim() ? raw.trim().slice(0, 1200) : undefined;
-  if (second.outcome === 'accepted' && !ignoresTerminalFight(opts.check.state, second.prose)) {
-    return { ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried', fightDraft };
+  if (second.outcome === 'accepted' && !ignoresTerminalFight(state, second.prose)) {
+    return withFacts({ ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried' as const, fightDraft });
   }
   // The writer's lines stay; the engine adds a plain sentence for each settled fight fact still missing. A rewrite
   // is kept only when it leaves out fewer of those facts than the first draft: one that still misses them may
@@ -602,12 +613,7 @@ async function runWriterTurnFightOnly(opts: {
     && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
   const base = rewriteBetter ? second : first;
   if (base.prose.trim()) {
-    const state = opts.check.state;
-    const pov = pcPov(opts.packet.pc ?? state.character);
-    const prose = withMissingFightFacts(state, base.prose, {
-      who: pcStorySubject(pov),
-      him: narratesPcInThirdPerson(pov) ? pov.him : 'you',
-    });
+    const prose = withMissingFightFacts(state, base.prose, fightPov);
     return { ...base, prose, remaining: writerDraftProblems(prose, opts.check), fightRetry: 'added', fightDraft };
   }
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);

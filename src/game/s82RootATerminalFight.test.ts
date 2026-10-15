@@ -59,17 +59,16 @@ function check(state: GameState) {
   };
 }
 
+// q31-RC1: the settled outcome is the engine record; the writer's words are never tested for it.
 describe('s82 Root A — a settled fight must be on the page', () => {
-  it('the gate rejects the T13 beat and accepts one that writes the scavenger down', () => {
+  it('the gate never sends a beat back over how it words the outcome', () => {
     const state = t13();
-    const bad = classifyBeatCommit(state, T13_PROSE, 'Try to flee');
-    expect(bad.accept).toBe(false);
-    expect(bad.details?.join(' ')).toMatch(/settled the fight/);
-    const good = classifyBeatCommit(state, DOWN_PROSE, 'Try to flee');
-    expect(good.details?.join(' ') ?? '').not.toMatch(/settled the fight/);
+    for (const prose of [T13_PROSE, DOWN_PROSE]) {
+      expect(classifyBeatCommit(state, prose, 'Try to flee').details?.join(' ') ?? '').not.toMatch(/settled the fight/);
+    }
   });
 
-  it('one rewrite: a beat that states the outcome commits', async () => {
+  it('no rewrite: the writer beat is kept and the engine outcome closes it', async () => {
     const state = t13();
     const asked: string[] = [];
     const turn = await runWriterTurnWithFightRetry({
@@ -81,22 +80,21 @@ describe('s82 Root A — a settled fight must be on the page', () => {
         return DOWN_PROSE;
       },
     });
-    expect(asked).toHaveLength(1);
-    expect(turn.fightRetry).toBe('retried');
-    expect(turn.prose).toMatch(/went down/);
+    expect(asked).toHaveLength(0);
+    expect(turn.prose).toMatch(/wagon desk/);
+    expect(turn.prose).toMatch(new RegExp(`${FOE} went down and did not get up`));
   });
 
-  it('a second miss keeps the writer beat and adds the engine outcome', async () => {
+  it('a beat that already tells the kill gets the engine outcome once', async () => {
     const state = t13();
     const turn = await runWriterTurnWithFightRetry({
-      firstRaw: T13_PROSE,
+      firstRaw: DOWN_PROSE,
       packet: state.completedEvent!,
       check: check(state),
-      rewrite: async () => T13_PROSE,
+      rewrite: async () => '',
     });
-    expect(turn.fightRetry).toBe('added');
-    expect(turn.prose).toMatch(new RegExp(`${FOE} went down and did not get up`));
-    expect(turn.prose).toMatch(/wagon desk/);
+    expect(turn.prose).toMatch(/did not get up\. Yara Quill/);
+    expect(turn.prose.match(new RegExp(`${FOE} went down and did not get up`, 'g'))?.length).toBe(1);
   });
 
   it('the next list holds no flee chips', () => {

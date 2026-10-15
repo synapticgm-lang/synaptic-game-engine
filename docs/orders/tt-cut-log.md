@@ -373,3 +373,11 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 
 1. **`.cursorignore` line `**/*transcript*` (at `b27afcbf`)** - hid every path containing 'transcript', including source `src/game/playTranscript.ts` and `playTranscript.test.ts`, so Cursor sessions could not read or edit them. Replaced by `**/*transcript*.log`, `.txt`, `.json`, `.jsonl` and `**/*transcript*/` (folders); `**/transcripts/` stays. Safe: only transcript logs and data are ignored; source (.ts) is visible again. Restore with `git show b27afcbf:.cursorignore`.
 
+
+## q31-RC1 fight outcome read from the engine record (Order RC-1)
+
+1. **`src/game/engineResult.ts` lines 78-95 at `022a64b4`** - `FIGHT_OVER`, `WENT_DOWN`, `TERMINAL_WORDS` (victory / defeat / escaped kill-word regexes) and `beatCarriesTerminalFight`. What it did: decided whether the writer's prose *told* the engine's settled fight by matching kill words; any new phrasing ("lay quiet") missed the list and sent a good draft back for a rewrite, so each lap grew the list. Replaced by the engine record: the outcome sentence (`terminalOutcomeSentence`) always closes a settled-fight beat, added once.
+2. **`supabase/functions/_shared/gm/engineResult.ts` same lines at `022a64b4`** - the edge mirror of item 1 (no edge caller).
+3. **`src/game/beatCommitGate.ts` `fightFactsLeftOut` `outcome` field (line 222 at `022a64b4`)** - the word test above as a "fact left out" that triggered the fight rewrite. Removed; `withMissingFightFacts` adds the engine outcome sentence unless the beat already holds that exact sentence.
+4. **`src/game/turnCheck.ts` line 220 at `022a64b4`** - `beatCarriesTerminalFight(text, fight)` inside `fightTold`. Removed; a settled (non-escape) fight in the engine record is the blow.
+5. Tests that pinned the word reading (rewritten to the RC-1 rule): `ttFix3` "lost the trail tells an escape" (deleted), `ttFix14` block 2, `ttConsolidate` root 5, `s82RootATerminalFight` three cases, `m7lap7.bank` T19 word assertion (deleted). Restore with `git show 022a64b4:<path>`.

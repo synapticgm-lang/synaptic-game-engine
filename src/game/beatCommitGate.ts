@@ -35,7 +35,6 @@ import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
 import {
   beatCarriesForcedAttempt,
-  beatCarriesTerminalFight,
   foeHitSentence,
   forcedAttemptSentence,
   terminalFightOutcome,
@@ -211,15 +210,17 @@ export function ignoresTerminalFight(state: GameState, prose: string): boolean {
   return missingFightFacts(state, prose) > 0;
 }
 
-type FightFacts = { forced: boolean; hit: boolean; outcome: boolean };
+type FightFacts = { forced: boolean; hit: boolean };
 
-/** Which settled fight facts the beat leaves out: the failed roll that forced it (tabletop), a foe hit, the outcome. */
+/**
+ * Which settled fight facts the beat leaves out: the failed roll that forced it (tabletop), a foe hit.
+ * The outcome is never read from the writer's words: the engine's own sentence carries it (`withMissingFightFacts`).
+ */
 function fightFactsLeftOut(state: GameState, prose: string): FightFacts {
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
     forced: !!fight && state.engineMode === 'dnd' && !beatCarriesForcedAttempt(prose, fight),
     hit: dropsFightRoll(state, prose),
-    outcome: !!fight && !beatCarriesTerminalFight(prose, fight),
   };
 }
 
@@ -229,16 +230,18 @@ export function missingFightFacts(state: GameState, prose: string): number {
 }
 
 /**
- * The writer's beat with the engine's plain sentence for each settled fight fact it leaves out: the failed
- * parley or flee that forced the fight, a foe hit on the PC, the outcome. Added to the beat, never in place of it.
+ * The writer's beat with the engine's plain sentence for each settled fight fact it leaves out (the failed
+ * parley or flee that forced the fight, a foe hit on the PC) and the engine's outcome sentence, once.
+ * Added to the beat, never in place of it.
  */
 export function withMissingFightFacts(state: GameState, prose: string, pov: FightPov): string {
   const fact = state.completedEvent?.engineResult;
   const fight = terminalFightOutcome(fact);
   const out = fightFactsLeftOut(state, prose);
+  const outcome = fight ? terminalOutcomeSentence(fight, pov) : '';
   // The attempt that forced the fight came first; the hit and the outcome close the beat.
   const before = fight && out.forced ? forcedAttemptSentence(fight, pov) : '';
-  const after = [out.hit ? foeHitSentence(fact, pov) : '', fight && out.outcome ? terminalOutcomeSentence(fight, pov) : ''];
+  const after = [out.hit ? foeHitSentence(fact, pov) : '', prose.includes(outcome) ? '' : outcome];
   return [before, prose.trim(), ...after].filter(Boolean).join(' ');
 }
 

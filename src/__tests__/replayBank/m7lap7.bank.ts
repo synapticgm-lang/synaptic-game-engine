@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { beatCarriesTerminalFight, terminalFightOutcome } from '../../game/engineResult';
+import { terminalFightOutcome } from '../../game/engineResult';
 import { checkActionFollowed } from '../../game/turnCheck';
 import { Replay } from './bank';
 import { replayWhole } from './replayRun';
@@ -47,7 +47,6 @@ describe('replay bank multi lap 7', () => {
     const fight = terminalFightOutcome(F.after(19).completedEvent?.engineResult);
     expect(fight?.outcome).toBe('victory');
     expect(F.prose(19)).toMatch(/flock defeated/);
-    expect(beatCarriesTerminalFight(F.prose(19), fight!)).toBe(true);
     const p0 = checkActionFollowed(F.before(19), F.after(19), F.input(19), F.prose(19)).p0.map((f) => f.kind);
     expect(p0).not.toContain('ignored-action');
   });

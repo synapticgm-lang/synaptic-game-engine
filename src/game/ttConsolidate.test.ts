@@ -121,13 +121,13 @@ describe('root 4 — the fact checker reads every handed fact', () => {
   });
 });
 
-describe('root 5 — a fight told in any words that it ended is told', () => {
+describe('root 5 — the settled outcome is the engine record, not the writer words (q31-RC1)', () => {
   const fight = (prose: string) => {
     const s = tabletop({ completedEvent: { engineResult: 'Fight: VICTORY vs Rotting Feral Dog in 3 rounds.' } } as Partial<GameState>);
     return { gate: ignoresTerminalFight(s, prose), missing: missingFightFacts(s, prose) };
   };
-  it('"knocked them flat … did not get up again" carries the victory', () => {
+  it('no wording of the outcome sends the beat back; the engine sentence carries it', () => {
     expect(fight('Jax knocked the dog flat with the haft, and it did not get up again.')).toEqual({ gate: false, missing: 0 });
-    expect(fight('Jax circled the dog, watching its teeth.').gate).toBe(true);
+    expect(fight('Jax circled the dog, watching its teeth.')).toEqual({ gate: false, missing: 0 });
   });
 });
