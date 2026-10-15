@@ -137,6 +137,17 @@ function factSections(packet) {
     .join('\n');
 }
 
+/**
+ * The people the writer was handed this turn: every REF ENUM person, companion and road-meeting row, each with its
+ * display and its label (the row note's who-they-are clause, before the first ";"). Rows are LedgerRef-shaped
+ * ({ id, kind, display, note }), so the game's shared handed-ref list can replace the packet parse.
+ */
+export function handedPeople(refs) {
+  return refs
+    .filter((r) => r.kind === 'person' || r.kind === 'companion' || r.kind === 'meeting')
+    .map((r) => ({ ...r, label: (r.note ?? '').split(';')[0].trim() }));
+}
+
 /** Facts the engine handed the writer for one turn. */
 function factsFor(row, packet) {
   const receipts = [...new Set([...(row.arcStatusReceipts ?? []), ...(row.systemLog ?? [])].map(String))];
@@ -144,7 +155,8 @@ function factsFor(row, packet) {
   const engineResult = String(row.engineFact ?? '').trim()
     || ((packet.match(/ENGINE RESULT[^:]*\):\s*([\s\S]*?)\n(?:READER|SYSTEM|Location|YOU MAY|No move|TOKEN)/) ?? [])[1]?.trim() ?? '');
   const mention = line(packet, 'YOU MAY ONLY MENTION:').split(/,\s*/).map((s) => s.replace(/\.$/, '').trim()).filter(Boolean);
-  const refs = [...packet.matchAll(/^t\d+\s+(\S+)\s+(\w+)\s+"([^"]+)"/gm)].map((m) => ({ id: m[1], kind: m[2], display: m[3] }));
+  const refs = [...packet.matchAll(/^t\d+\s+(\S+)\s+(\w+)\s+"([^"]+)"(?:\s+\((.*)\))?/gm)].map((m) => ({ id: m[1], kind: m[2], display: m[3], note: m[4] ?? '' }));
+  const people = handedPeople(refs);
   const placesLine = line(packet, 'PLACES:');
   const here = (placesLine.split('·')[0] || line(packet, 'Here:') || String(row.location ?? '')).trim();
   // The REF ENUM's here row is the label the writer paints for HERE ("Entry" for the stone outline).
@@ -178,6 +190,7 @@ function factsFor(row, packet) {
     movedFrom: packet.match(/^Moved this turn: (?:on )?from (.+?) (?:to|toward) /m)?.[1]?.trim() ?? '',
     mention,
     refs,
+    people,
     placeNames,
     placesExits,
     engineExits,
@@ -190,7 +203,7 @@ function factsFor(row, packet) {
     handedText,
     // The engine's records: who is here (info-sheet HERE list, person refs, engine result, receipts) and what is
     // held (inventory, gear, kit and prop refs). Packet prose ("a traveler may be about") is not a record.
-    peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...refs.flatMap((r) => (r.kind === 'person' || r.kind === 'companion' ? [r.display] : [])), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
+    peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...people.flatMap((r) => [r.display, r.label]), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
     itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
@@ -351,7 +364,8 @@ export function checkTurn(row, packet, page = '') {
     // Names: capitalized phrases the writer was not handed.
     const caps = [...s.matchAll(/(?:^|[\s"“(])((?:[A-Z][a-z’'-]+)(?:\s+(?:of|the|de|in)?\s*[A-Z][a-z’'-]+)*)/g)];
     for (const m of caps) {
-      const phrase = m[1].replace(/[’']s$/, '');
+      // A quoted sign ("reads 'Cathedral Undercroft'") names what is inside the quotes, not its closing mark.
+      const phrase = m[1].replace(/[’']s$|[’']+$/, '');
       const start = (m.index ?? 0) + m[0].indexOf(m[1]);
       const atStart = start === 0 || /["“(]$/.test(s.slice(0, start).trim().slice(-1));
       // A contraction is its stem word ("I'll" is "I"); a lowercase hyphen tail is not part of the name ("Earth-born" names Earth).
@@ -419,19 +433,21 @@ export function checkTurn(row, packet, page = '') {
       // "the fallen beasts" after a handed Rotting Feral Dog Pack is the handed animal foe, not a new one.
       if (kind === 'foe' && /^beasts?$/.test(w) && ANIMAL_FOE.test(facts.handedText)) continue;
       if (kind === 'person') {
-        // "a man called Col Thatch": the role word introduces a handed name; "called" is not an action here.
-        const named = after.match(/^\s+(?:called|named|known as)\s+([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*)/)?.[1];
-        if (named && facts.allowText.includes(lower(named))) continue;
+        // "a man called Col Thatch" / "a man in a stained apron, Piers Dunmore,": the role word introduces a handed
+        // name later in the same clause (named, or set beside it in apposition); it is that person, not a new one.
+        const named = narration.slice(idx + w.length).match(/^(?:\s+(?:called|named|known as)|[^,;.!?"“]*,)\s+([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*)/)?.[1];
+        if (named && lower(named) !== lower(pc) && facts.allowText.includes(lower(named))) continue;
         if (foeHanded && /^(?:men|man|women|woman|strangers?)$/.test(w)) continue;
         // "neither man" / "the older man" points back at a person the record holds here; "a man", "a lone traveler"
         // or a bare "Vendors" is a new one, and a "the" with nobody held here points back at no one.
-        const personHere = facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id));
+        const personHere = facts.people.length > 0;
         if (personHere && /\b(?:the|that|this|his|her|their|your|neither|either|each|both|other|those|these)\s+(?:[a-z]+\s+)?$/i.test(before)) continue;
         // A person word's role, not the word: the standard of a comparison ("the way a man checks", "higher than a
-        // man") or the subject of a might-be ("a man could reach") brings nobody onto the scene.
-        if (/\b(?:like|than|the way|as if|as though)\b[^,;]*$/i.test(before) || /^\s+(?:could|would|might|can|may|must)\b/i.test(after)) continue;
+        // man"), the subject of a might-be ("a man could reach") or anyone of a kind ("every stranger who passed")
+        // brings nobody onto the scene.
+        if (/\b(?:like|than|the way|as if|as though)\b[^,;]*$|\b(?:every|any)\s+$/i.test(before) || /^\s+(?:could|would|might|can|may|must)\b/i.test(after)) continue;
         // "Two strangers stood…" with exactly two people handed here counts the people here, not new ones.
-        const hereCount = facts.refs.filter((r) => r.kind === 'person' && !/^encounter:/.test(r.id)).length;
+        const hereCount = facts.people.length;
         const counted = before.match(/\b(two|three|four|both)\s+$/i)?.[1]?.toLowerCase();
         if (counted && ({ two: 2, both: 2, three: 3, four: 4 })[counted] === hereCount) continue;
         if (/\bcrowd\b/.test(facts.handedText) && /\b(?:a|an|one|some|someone|another)\s+(?:\w+\s+)?$/i.test(before)) continue;

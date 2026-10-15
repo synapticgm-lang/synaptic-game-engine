@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **q31-P3:** deleted in the q31-P3 commit (stamp `2026-10-15q`). The old text lives at its parent, **`12726bad`**. Line numbers in that section are at `12726bad`.
 - **q31-DC1:** deleted in the q31-DC1 commit (stamp `2026-10-15o`). The old text lives at its parent, **`eeba53ad`**. Restore one file with `git show eeba53ad:<path> > <path>`. Line numbers in that section are at `eeba53ad`.
 - **tt-fix-15:** deleted in the tt-fix-15 commit (stamp `2026-10-15b`). The old text lives at its parent, **`ca67deec`**. Line numbers in that section are at `ca67deec`.
 - **tt-fix-13:** deleted in the tt-fix-13 commit (stamp `2026-10-14z`). The old text lives at its parent, **`16ef28f5`**. Line numbers in that section are at `16ef28f5`.
@@ -334,3 +335,9 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 ## q31-F clock and light (Order F)
 
 1. **`src/game/engineFactPatterns.ts` lines 19-21 and 36-37 (at `33477431`)** - the `NUM` word alternation, the `DURATION` regex built from it, and the `travelRecordRead` branch that flagged any narrated span ("half an hour", "two hours") whenever the turn's engine fact held a clock or travel record. What it did: read a span the world clock itself recorded ("+30 min" told as "half an hour") as the travel record read aloud, so the sentence repair cut the line (m52, s83 T8). Deleted, no replacement: the record readouts (legs, "the journey took…", "travelled for N hours", "part of the travel") stay owned by `TRAVEL_RECORD`, shared by the game gate and `scripts/factCheck.mjs`. The `engineResult` parameter stays (now unused) so no caller changes.
+
+## q31-P3 factCheck person/name reads (Order P-3)
+
+1. **`scripts/factCheck.mjs` line 193** - the `peopleText` filter `refs.flatMap((r) => (r.kind === 'person' || r.kind === 'companion' ? [r.display] : []))`. What it did: counted only person and companion REF ENUM rows as people, so a road meeting (`road:` row, kind `meeting`) and its label ("Cutha Cotter, a hurt traveler") were never someone here. Replaced by the one `handedPeople(refs)` list (display + label), the swap point for P-2's `handedRefs`.
+2. **`scripts/factCheck.mjs` lines 428 and 434** - `facts.refs.some((r) => r.kind === 'person' && !/^encounter:/.test(r.id))` (`personHere`) and the same filter in `hereCount`. What it did: left encounter and road-meeting people out of "someone is here" and the headcount, so every "the stranger" / "the hurt traveler" after a road meeting flagged. Replaced by `facts.people` (the same `handedPeople` list).
+3. **`scripts/factCheck.mjs` lines 422-424** - the `after`-only (30 chars) `called|named|known as` match. What it did: understood a handed name only after "called/named/known as", so apposition in the same clause ("a man in a stained apron, Piers Dunmore,") flagged. Replaced by one same-clause match on the rest of the narration that covers both forms (the PC's own name never counts as the appositive).
