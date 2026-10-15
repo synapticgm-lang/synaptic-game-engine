@@ -1,6 +1,6 @@
 # q31-RCR1: fight-close once, outside prose (Order RC-R1)
 
-Stamp `2026-10-16g` (from `2026-10-16f`). Play change: settled-fight outcome is an engine combat-log / STATUS line, not a prose append. Client + edge (`engineResult`, `completedEventPacket`); `gm-turn` redeployed.
+Stamp `2026-10-16g` (from `2026-10-16f`). Play change: settled-fight outcome is an engine combat-log / STATUS line, not a prose append. Client + edge (`engineResult`, `completedEventPacket`); `gm-turn` redeployed. Live `version.json` verified `2026-10-16g`. Edge Deno `.ts` import re-sync is commit `b1e65709` after the play commit.
 
 ## Cause
 
