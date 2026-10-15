@@ -3,7 +3,7 @@
  * in the world (a fight, a flee, an arrival, a move, loot, an offer taken), minus chrome: ledger
  * figures and bookkeeping that belong on STATUS, not in the story.
  */
-import type { EngineMode } from './types';
+import type { EngineMode } from './types.ts';
 
 const CHROME_RECEIPT =
   /^(?:XP Gained|Arc XP|Level Up|HP:|Hit Die:|Approach:|Quest(?: stage)?:|Social(?: track)?:|NPC Lifecycle:|Voice:|Threat building:|Threat still live|Encounter (?:cleared|cooldown|density)\b|Caught —|Parley (?:in progress|exhausted)|Warden:|Commit gate:|Cooldown|Treasure cache|d\d+ = |Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:)/i;

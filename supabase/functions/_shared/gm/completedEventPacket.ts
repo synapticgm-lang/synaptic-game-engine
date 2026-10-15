@@ -5,15 +5,15 @@
  * Classifier-only validation — no Continuity-Warden LLM, no novel-token deny-lists.
  */
 
-import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
-import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
-import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName';
-import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
-import { selectRecentLogForContext } from './sceneContextTail';
-import { formatInfoSheet } from './infoSheet';
-import { formatWriterInfoLayer } from './writerInfoLayer';
-import { splitProseSentences } from './proseSentences';
-import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
+import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types.ts';
+import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
+import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName.ts';
+import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
+import { selectRecentLogForContext } from './sceneContextTail.ts';
+import { formatInfoSheet } from './infoSheet.ts';
+import { formatWriterInfoLayer } from './writerInfoLayer.ts';
+import { splitProseSentences } from './proseSentences.ts';
+import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import {
   hubsForBibleId,
   matchHub,
@@ -21,22 +21,22 @@ import {
   parseTravelDestination,
   placeCardFor,
   placeFirstSight,
-} from './outdoorHubs';
-import { nearbyPlaceNames } from './placeNames';
-import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney';
-import { spokenTalkFallback } from './talkEnvelope';
-import { TALK_VERB } from './intentParser';
-import { emptySceneFacts } from './sceneFacts';
+} from './outdoorHubs.ts';
+import { nearbyPlaceNames } from './placeNames.ts';
+import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney.ts';
+import { spokenTalkFallback } from './talkEnvelope.ts';
+import { TALK_VERB } from './intentParser.ts';
+import { emptySceneFacts } from './sceneFacts.ts';
 import {
   isDeadFoeReopenedAsLiving,
   matchesLastKillName,
   type LastKill,
-} from './combatAuthority';
-import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLine } from './npcRecords';
-import { hereSpotFact } from './hereSpot';
-import { gateFactLines } from './skillGates';
-import { sealedCastNames } from './beatContract';
-import { ledgerChangeFact, ledgerReadChanges, ledgerReadStitch, ledgerSheetLine } from './litrpgSystemWindow';
+} from './combatAuthority.ts';
+import { openingCastRecords, presentNpcRecords, recordsForEntries, sheetMemoryLine } from './npcRecords.ts';
+import { hereSpotFact } from './hereSpot.ts';
+import { gateFactLines } from './skillGates.ts';
+import { sealedCastNames } from './beatContract.ts';
+import { ledgerChangeFact, ledgerReadChanges, ledgerReadStitch, ledgerSheetLine } from './litrpgSystemWindow.ts';
 import {
   applyOpeningHousingLine,
   formatSystemBlock,
@@ -45,11 +45,11 @@ import {
   systemHousingWriterClause,
   writerFacts,
   type SystemHousingId,
-} from './systemHousing';
-import { isNeverCastTitle } from './neverCast';
-import { terminalFightBeat, terminalFightOutcome } from './engineResult';
-import { kitRefDisplay, turnUsesKit } from './inventory';
-import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
+} from './systemHousing.ts';
+import { isNeverCastTitle } from './neverCast.ts';
+import { terminalFightBeat, terminalFightOutcome } from './engineResult.ts';
+import { kitRefDisplay, turnUsesKit } from './inventory.ts';
+import { isAtmosphereOnlyBeat } from './semanticLoopDetector.ts';
 import {
   hallTalkAsksPanel,
   hallTalkAsksRefuse,
@@ -86,7 +86,7 @@ import {
   sanitizeLockedNameBeat,
   countSameHallTopicRepeats,
   openingCastNote,
-} from './openingEstablishment';
+} from './openingEstablishment.ts';
 
 export type EventOutcome =
   | 'killed'
