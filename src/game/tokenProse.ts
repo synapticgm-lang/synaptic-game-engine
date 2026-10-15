@@ -40,6 +40,7 @@ export interface TokenLine {
   spoken?: boolean;
   /** The words came with no quote marks and no said-tag: they may be narration written into the speech slot. */
   bare?: boolean;
+  written?: string; // the writer's own sentence around the words (said-tag + narration), painted when it passes the line checks
 }
 
 /** One accepted writer speech line: who said it (ledger ref) and the words, as code painted them. */
@@ -198,6 +199,8 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
     : null;
   let words: string;
   let bare = false;
+  // The writer's own tag with narration past a said-verb and adverb is a whole sentence, kept to paint as written.
+  const written = quoted.length && tagTok === speaker && outside.split(' ').filter((w) => w.length > 2 && !w.includes('@')).length > 2;
   if (quoted.length) {
     words = quoted.map((q, i) => (i < quoted.length - 1 ? q.replace(/,$/, '.') : q)).join(' ');
   } else if (tagged) {
@@ -211,7 +214,7 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   if (!speaker) return { ...line, text };
   words = tidy(words).replace(/,$/, '');
   if (!/[.!?\u2026]$/.test(words)) words += '.';
-  return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true, ...(bare ? { bare } : {}) };
+  return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true, ...(bare ? { bare } : {}), ...(written ? { written: text } : {}) };
 }
 
 /**
@@ -887,7 +890,7 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
     return !used.some((t) => unbound.has(t) || !byTok.get(t)?.display);
   });
   const sentences = lines.map((line) => {
-    const said = line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text;
+    const said = line.written ?? (line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text);
     const once = dropTypedNameAfterToken(said, (tok) => byTok.get(tok)?.display);
     let next = once.replace(
       /(\b(?:the|a|an)\s+)?@t(\d+)\b(['’]s\b)?/gi,
@@ -1188,7 +1191,7 @@ export function spokenLinesOf(beat: TokenBeat, enumRefs: LedgerRef[]): SpokenLin
   return out;
 }
 
-function storySentences(prose: string): number {
+export function storySentences(prose: string): number {
   return (prose.match(/[^.!?]+[.!?]+["')\]]*/g) ?? []).filter((s) => s.trim().split(/\s+/).length >= 3).length;
 }
 
@@ -1228,6 +1231,7 @@ export function acceptTokenOrLedgerStory(
     const parsed = parseTokenBeat(cand, packet?.playerAction);
     if (!parsed) continue;
     const beat = tellsSpeechFromOutside(normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state);
+    beat.lines = beat.lines.map((l) => (l.written && !classifyTokenLine({ ...l, text: l.written }, beat, enumRefs, known, counts, said, pcName).ok ? { ...l, written: undefined } : l));
     if (isFullyClean(beat, enumRefs, known, counts, said, pcName)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {

@@ -307,7 +307,9 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
       const pick = fresh.find((h) => ![...fired].some((f) => f.includes(h.name))) ?? fresh[0];
       // A place mentioned from afar is its name; its card text is a sight, handed only by the first-sight rule.
       const sight = pick ? placeFirstSight(state, pick.name) : '';
-      return pick ? `Nudge: someone nearby mentions ${pick.name}${sight ? `: ${sight.replace(/[.!?]+$/, '')}` : ''}.` : '';
+      // Whoever mentions it is someone here: with nobody here (an empty stretch of road), nobody mentions anything.
+      const speaker = presentNpcRecords(state)[0]?.npcName;
+      return pick && speaker ? `Nudge: ${speaker} mentions ${pick.name}${sight ? `: ${sight.replace(/[.!?]+$/, '')}` : ''}.` : '';
     },
     () => GENERIC_NUDGES.find((g) => !fired.has(g)) ?? '',
   ];

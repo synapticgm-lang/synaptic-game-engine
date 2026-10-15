@@ -8,7 +8,7 @@ import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, type LedgerRef } from './completedEventPacket';
-import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, type SpokenLine, type TokenAcceptPath } from './tokenProse';
+import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
 import {
@@ -96,10 +96,6 @@ export type DraftCheck = {
   previousGm: string;
 };
 
-function sentenceCount(prose: string): number {
-  return (prose.match(/[^.!?]+[.!?]+["')\]]*/g) ?? []).filter((s) => s.trim().split(/\s+/).length >= 3).length;
-}
-
 /** Render a raw writer reply (token JSON or plain text) to player prose; '' when nothing usable. */
 export function renderWriterDraft(raw: string, state: GameState, packet?: CompletedEventPacket): WriterDraft {
   if (!raw?.trim()) return { prose: '', path: 'last-resort' };
@@ -128,7 +124,7 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   if (!text) return ['No usable story came back.'];
   if (playerAsksRepeat(check.playerInput)) return [];
   const out: string[] = [];
-  if (sentenceCount(text) < 2) out.push('Too thin: write 4–6 full sentences.');
+  if (storySentences(text) < 2) out.push('Too thin: write 4–6 full sentences.');
   const why = unresolvedActionReason(check.playerInput, text, check.intent, check.previousGm, check.engineFact);
   if (why) out.push(unresolvedProblem(why, check.playerInput, check.engineFact));
   const gate = classifyBeatCommit(check.state, text, check.playerInput);

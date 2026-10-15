@@ -80,10 +80,10 @@ const FIGHT_OVER = '(?:fight|battle|combat|struggle|brawl|skirmish) (?:was|is|ha
 
 /** Someone in the fight went down, told the same way whichever side it was. */
 const WENT_DOWN =
-  `went down|goes down|go down|was down|is down|stayed down|fell|fallen|falls|collapsed|crumpled|lay still|lies still|stopped moving|(?:did|could) not (?:get|rise)|(?:knocked|struck|thrown|threw|slammed) (?:\\w+ )?(?:down|out|flat)|beaten|defeated|${FIGHT_OVER}`;
+  `went down|goes down|go down|was down|is down|stayed down|fell|fallen|falls|collapsed|crumpled|lay still|lies still|lying still|stopped moving|(?:did|could) not (?:get|rise)|(?:knocked|struck|thrown|threw|slammed) (?:\\w+ )?(?:down|out|flat)|beaten|defeated|${FIGHT_OVER}`;
 
 const TERMINAL_WORDS: Record<TerminalFight['outcome'], RegExp> = {
-  victory: new RegExp(`\\b(?:${WENT_DOWN}|dead|died|dies|killed|slain|lifeless|limp|corpse|finished (?:it|him|her|them)|victorious|victory|won(?![’']))\\b`, 'i'),
+  victory: new RegExp(`\\b(?:${WENT_DOWN}|dead|died|dies|dying|killed|killing|slain|lifeless|limp|corpse|finished (?:it|him|her|them)|victorious|victory|won(?![’']))\\b`, 'i'),
   defeat: new RegExp(`\\b(?:${WENT_DOWN}|lost|blacked out|overpowered|pinned|on the ground)\\b`, 'i'),
   // The pursuers losing the PC is the escape told from their side ("the dead lost the trail and faded").
   escaped: /\b(?:escaped|got away|broke away|broke free|got clear|fled|outran|shook (?:it|him|her|them) off|lost (?:it|him|her|them)|lost (?:the|their|its|his|her) (?:trail|track|scent)|lost track of (?:\w+ )?\w+|left (?:them|it|the \w+) behind)\b/i,

@@ -16,6 +16,12 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## tt-fix-14 (restore from `69e19dce`)
+
+1. **`src/game/writerTurn.ts` lines 99–101 (swap)** — `function sentenceCount(prose: string): number { return (prose.match(/[^.!?]+[.!?]+["')\]]*/g) ?? []).filter((s) => s.trim().split(/\s+/).length >= 3).length; }`. What it did: counted 3+-word sentences for the "Too thin" draft check. Same body as `tokenProse.storySentences` (now exported); line 131 calls `storySentences(text)` and the line 11 import adds it.
+
+---
+
 ## tt-fix-13 (restore from `16ef28f5`)
 
 1. **`src/game/arcDirector.ts` lines 736–739** — `} else if (r.startsWith('Encounter:')) { lines.push(r); } else if (r.startsWith('Encounter cleared:')) { lines.push(r);` in `formatArcStatusReceipts`. What they did: let the encounter lines onto STATUS by their exact prefix, so the new "Encounter ended:" line (a fight lost or fled, lap 17 N5) would have been dropped. Folded into the engine-line prefix regex on line 740 as `Encounter(?: cleared| ended)?`; every encounter line takes the same code path.

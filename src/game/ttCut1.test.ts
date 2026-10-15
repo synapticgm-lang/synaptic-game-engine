@@ -86,10 +86,11 @@ describe('(c) the hub-mention nudge follows the first-sight rule', () => {
       currentLocation: 'Keep Gate',
       places: [],
       quests: [],
+      npcMemories: [{ npcId: 'dain-holt', npcName: 'Dain Holt', location: 'Keep Gate' }],
       circling: { stale: {}, lastProgressTurn: 0, nudgeCursor: 3 },
     } as unknown as Partial<GameState>);
     const line = nudgeIfStuck(s).receipts[0] ?? '';
-    expect(line).toMatch(/^Nudge: someone nearby mentions /);
+    expect(line).toMatch(/^Nudge: Dain Holt mentions /);
     expect(line).not.toContain('Last coach stop');
     expect(line.split(' mentions ')[1]).not.toContain(':');
   });
