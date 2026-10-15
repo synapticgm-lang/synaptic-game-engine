@@ -752,7 +752,8 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
 /** Run before GM — select beat, resolve mechanics stub, commit effects. */
 export function runArcDirectorBeforeGm(
   state: GameState,
-  playerInput: string
+  playerInput: string,
+  skillOpts?: { d20?: number; success?: boolean; longShot?: boolean; longShotRoll?: number },
 ): ArcDirectorResult {
   let working = settleOathChoice(ensureRunManifest(state), playerInput);
   working = ensureOpeningNpcPinned(working);
@@ -869,9 +870,9 @@ export function runArcDirectorBeforeGm(
     }
   }
 
-  // LitRPG named skills (skill library): real use grows them; an evolved technique pays its cost and cooldown.
+  // LitRPG / Story RPG named skills: success grows skill XP (SK-5); an evolved technique pays its cost and cooldown.
   if (!downtimeSettled) {
-    const skill = settleSkillUse(working, playerInput, { rested });
+    const skill = settleSkillUse(working, playerInput, { rested, ...skillOpts });
     working = skill.state;
     systemReceipts.push(...skill.receipts);
     if (skill.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${skill.fact}`);

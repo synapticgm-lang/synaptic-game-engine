@@ -85,7 +85,7 @@ export function shouldAttachLitrpgSystemWindow(args: {
   if (playerAskedAboutSystemPanel(args.playerInput ?? '')) return true;
   if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
-  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:|^(?:Skill rank up|Technique learned|Perk gained|Title earned|Title):/i.test(l))) return true;
+  if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:|^(?:Skill up|Skill rank up|Technique learned|Perk gained|Title earned|Title):/i.test(l))) return true;
   return false;
 }
 

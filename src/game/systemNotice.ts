@@ -20,7 +20,8 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^XP Gained:\s*(\d+)\s*\(quest complete:\s*(.+)\)\s*$/i, (m) => `Quest complete — ${end(m[2]!)}. +${m[1]} XP.`],
   [/^XP Gained:\s*(\d+)\s*\((.+)\)\s*$/i, (m) => `XP — +${m[1]} (${end(m[2]!)}).`],
   [/^Level Up!\s*Now level (\d+)\.?$/i, (m) => `Level up — level ${m[1]}.`],
-  [/^Skill rank up:\s*(.+?)\s*\(rank (\d+)\)\.?$/i, (m) => `Skill up — ${m[1]}, rank ${m[2]}.`],
+  [/^Skill (?:up:\s*(.+?),\s*(Novice|Apprentice|Journeyman|Expert|Master)\s+(\d+)|rank up:\s*(.+?)\s*\(rank (\d+)\))\.?$/i, (m) =>
+    m[1] ? `Skill up — ${m[1]}, ${m[2]} ${m[3]}.` : `Skill up — ${m[4]}, rank ${m[5]}.`],
   [/^Technique learned:\s*(.+?)\s*\((.+?) evolved\)\.?$/i, (m) => `Skill evolved — ${m[2]} into ${m[1]}.`],
   [/^Technique used:\s*(.+?)\s*\((.+)\)\.?$/i, (m) => `Skill used — ${m[1]} (${m[2]}).`],
   [/^(?:Perk gained|Skill learned):\s*(.+)$/i, (m) => `Skill — ${end(m[1]!)}.`],

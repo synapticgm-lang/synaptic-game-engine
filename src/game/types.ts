@@ -291,11 +291,17 @@ export interface Relationship {
   lastInteraction: string;
 }
 
-/** One LitRPG named skill: a skill-library base skill id, its use-grown rank, and the technique it evolved into. */
+/** One LitRPG / Story RPG named skill: library id, skill XP level (SK-5), and the technique it evolved into. */
 export interface NamedSkillState {
   id: string;
+  /** Compat 0–3 (one step per named tier). Prefer `level`. */
   rank: number;
+  /** Legacy use count; kept for old saves / technique bookkeeping. */
   uses: number;
+  /** SK-5 skill level 0–50 (Master 10). */
+  level?: number;
+  /** XP toward the next skill level. */
+  xp?: number;
   evolvedTo?: string;
   /** The last counted use (a repeat of the same line in the same scene is not counted again). */
   lastUse?: { line: string; scene: string };

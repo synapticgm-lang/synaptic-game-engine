@@ -5,8 +5,8 @@
  * Tracks role obligations, deadlines, and turnover logic.
  */
 
-import type { GameState } from './types.ts';
-import type { NpcRole } from './npcRoleRegistry.ts';
+import type { GameState } from './types';
+import type { NpcRole } from './npcRoleRegistry';
 import {
   ROLE_OBLIGATIONS,
   inferNpcRole,
@@ -14,7 +14,7 @@ import {
   isRoleSatisfied,
   formatRoleObligation,
   formatExitMandate,
-} from './npcRoleRegistry.ts';
+} from './npcRoleRegistry';
 
 // ============================================================================
 // LIFECYCLE STATES
@@ -103,23 +103,6 @@ export function initNpcLifecycle(
     obligationDeadline: deadline,
     debtSatisfied: false,
   };
-}
-
-/**
- * Get or create lifecycle for NPC
- */
-export function getOrCreateLifecycle(
-  npcId: string,
-  role: NpcRole,
-  state: GameState
-): NpcLifecycle {
-  const existing = (lifecyclesOf(state)).find(
-    lc => lc.npcId === npcId && !lc.exitedAtTurn
-  );
-  
-  if (existing) return existing;
-  
-  return initNpcLifecycle(npcId, role, state);
 }
 
 /**
@@ -267,43 +250,6 @@ export function updateNpcLifecycle(
   return { lifecycle: next, transition, mandate };
 }
 
-/**
- * Transform NPC to new role
- */
-export function transformNpcRole(
-  lifecycle: NpcLifecycle,
-  newRole: NpcRole,
-  reason: string,
-  state: GameState
-): NpcLifecycle {
-  return {
-    npcId: lifecycle.npcId,
-    state: 'transformed',
-    role: newRole,
-    enteredAtTurn: state.turn,
-    obligationDeadline: calculateRoleDeadline(newRole, state.turn, state),
-    debtSatisfied: false,
-    previousRole: lifecycle.role,
-    transformReason: reason,
-  };
-}
-
-/**
- * Force NPC exit (player choice or story beat)
- */
-export function forceNpcExit(
-  lifecycle: NpcLifecycle,
-  reason: 'player_choice' | 'story_beat',
-  state: GameState
-): NpcLifecycle {
-  return {
-    ...lifecycle,
-    state: 'exiting',
-    exitedAtTurn: state.turn,
-    exitReason: reason,
-  };
-}
-
 // ============================================================================
 // BULK LIFECYCLE UPDATES
 // ============================================================================
@@ -377,62 +323,6 @@ export function getActiveLifecycles(state: GameState): NpcLifecycle[] {
   );
 }
 
-/**
- * Get lifecycles in exit window
- */
-export function getExitWindowLifecycles(state: GameState): NpcLifecycle[] {
-  return getActiveLifecycles(state).filter(
-    lc => lc.state === 'debt_satisfied' || lc.state === 'exiting'
-  );
-}
-
-/**
- * Get lifecycles approaching deadline
- */
-export function getApproachingDeadlines(
-  state: GameState,
-  warningTurns: number = 5
-): Array<{
-  lifecycle: NpcLifecycle;
-  turnsRemaining: number;
-}> {
-  const active = getActiveLifecycles(state);
-  const approaching: Array<{ lifecycle: NpcLifecycle; turnsRemaining: number }> = [];
-  
-  for (const lc of active) {
-    if (lc.obligationDeadline === null) continue;
-    if (lc.debtSatisfied) continue;
-    
-    const turnsRemaining = lc.obligationDeadline - state.turn;
-    if (turnsRemaining > 0 && turnsRemaining <= warningTurns) {
-      approaching.push({ lifecycle: lc, turnsRemaining });
-    }
-  }
-  
-  return approaching.sort((a, b) => a.turnsRemaining - b.turnsRemaining);
-}
-
-/**
- * Check if NPC should exit
- */
-export function shouldNpcExit(npcId: string, state: GameState): boolean {
-  const lc = getActiveLifecycles(state).find(l => l.npcId === npcId);
-  if (!lc) return false;
-  
-  return lc.state === 'exiting' || lc.state === 'absent';
-}
-
-/**
- * Get lifecycle by NPC ID
- */
-export function getLifecycle(npcId: string, state: GameState): NpcLifecycle | null {
-  return (
-    (lifecyclesOf(state)).find(
-      lc => lc.npcId === npcId && lc.state !== 'absent'
-    ) ?? null
-  );
-}
-
 // ============================================================================
 // SITUATION PACKET INTEGRATION
 // ============================================================================
@@ -481,13 +371,4 @@ export function buildLifecycleSituationSection(state: GameState, presentNames?: 
   }
   
   return lines.join('\n');
-}
-
-/**
- * Format lifecycle mandates for situation packet
- */
-export function formatLifecycleMandates(mandates: string[]): string {
-  if (mandates.length === 0) return '';
-  
-  return `### NPC LIFECYCLE MANDATES\n\n${mandates.map(m => `- ${m}`).join('\n')}`;
 }

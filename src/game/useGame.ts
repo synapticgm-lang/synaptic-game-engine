@@ -2781,7 +2781,11 @@ export function useGame() {
       let pendingArcStatusReceipts: string[] = [];
       let systemsArc: ArcDirectorResult | undefined;
       if (!freeOpeningTurn && liveCurrent.openingEstablishment?.complete) {
-        const arc = runArcDirectorBeforeGm(liveCurrent, sanitizedInput);
+        const arc = runArcDirectorBeforeGm(liveCurrent, sanitizedInput, {
+          d20: check.d20,
+          success: check.isSuccess,
+          longShot: (check.codeResolutionText ?? '').includes('long-shot') && (check.codeResolutionText ?? '').includes('success'),
+        });
         systemsArc = arc;
         liveCurrent = arc.state;
         const manifest = buildSealedManifest(liveCurrent, sanitizedInput, arc);

@@ -19,6 +19,13 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-SK5 skill XP / named tiers
+
+1. **`src/game/rules/librarySkills.ts` `USES_FOR_RANK` and `rankForUses`** — old use-count → rank 1..3 thresholds (`[0,2,5,9]`). Replaced by skill XP + level in `skillGrowth.ts` (`migrateNamedSkill` / `OLD_RANK_TO_LEVEL`). Library prerequisite text still uses `NAMED_SKILL_RANK_CAP = 3`; evolution fires at `NAMED_SKILL_EVOLVE_LEVEL = 50`.
+2. **`src/game/npcLifecycleFsm.ts` (+ edge mirror)** — unused exports with no caller: `getOrCreateLifecycle`, `transformNpcRole`, `forceNpcExit`, `getExitWindowLifecycles`, `getApproachingDeadlines`, `shouldNpcExit`, `getLifecycle`, `formatLifecycleMandates`. Cut to keep ruleCount TOTAL from rising. `updateNpcLifecycle` / `seedPresentNpcLifecycles` / `buildLifecycleSituationSection` kept.
+
+---
+
 ## q31-SK4 check resolution per mode
 
 1. **`src/game/checkMath.ts` `codeResolutionText`** — the literal word `mod` in `d20 N + mod M = T vs DC D` (SUCCESS/FAILURE wrappers). Replaced by `d20 N + M = T vs DC D` so the receipt matches SK4-a. Restore by putting `mod ` back after `+ `.

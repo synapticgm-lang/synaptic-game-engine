@@ -120,15 +120,22 @@ export function libraryEntry(id: string | undefined): LibraryEntry | undefined {
   return id ? BY_ID.get(id) : undefined;
 }
 
-/** Use-grown ranks stop here; the skill then evolves (few levels, each adds its rank to the check). */
+/** Library prerequisite text still says "rank three"; SK-5 evolution fires at Master 10 (level 50). */
 export const NAMED_SKILL_RANK_CAP = 3;
-/** Total real uses that reach rank 1, 2 and 3. */
-export const USES_FOR_RANK = [0, 2, 5, 9] as const;
+/** Skill level at which a base skill evolves into its library technique (SK-5). */
+export const NAMED_SKILL_EVOLVE_LEVEL = 50;
 
-export function rankForUses(uses: number): number {
-  let rank = 0;
-  for (let r = 1; r < USES_FOR_RANK.length; r++) if (uses >= USES_FOR_RANK[r]!) rank = r;
-  return Math.min(rank, NAMED_SKILL_RANK_CAP);
+function levelOfRec(rec: NamedSkillState | undefined): number {
+  if (!rec) return 0;
+  if (typeof rec.level === 'number' && rec.level >= 0) return Math.floor(rec.level);
+  const rank = Math.max(0, Math.min(3, Math.floor(rec.rank ?? 0)));
+  return ([0, 1, 11, 21] as const)[rank] ?? 0;
+}
+
+function rankOfRec(rec: NamedSkillState | undefined): number {
+  const L = levelOfRec(rec);
+  if (L <= 0) return 0;
+  return Math.min(3, Math.ceil(L / 10));
 }
 
 const isLitrpg = (e: LibraryEntry) => (e.bookkeeping.allowed_modes ?? []).includes('litrpg');
@@ -311,7 +318,7 @@ export function matchBaseSkill(state: GameState, input: string): LibraryEntry | 
   BASE_SKILLS.forEach((base, order) => {
     const rec = recs.get(base.identity.id);
     const evolved = libraryEntry(rec?.evolvedTo);
-    const owned = evolved ? NAMED_SKILL_RANK_CAP + 1 : rec?.rank ?? 0;
+    const owned = evolved ? NAMED_SKILL_RANK_CAP + 1 : rankOfRec(rec);
     const h = hitFor(line, base, evolved ? [base, evolved] : [base], owned, order);
     if (h) hits.push(h);
   });
@@ -334,19 +341,19 @@ export interface NamedSkillCheckMod {
 }
 
 /**
- * LitRPG: the named skill a check uses adds its rank (1–3) to the d20 roll. An evolved skill keeps the rank-3
- * bonus, and its technique gives advantage when it is ready (off cooldown, cost payable). Attacks use weapon
- * familiarity, not a named skill.
+ * LitRPG: the named skill a check uses adds its tier-rank (1–3) to the d20 roll. An evolved skill keeps the
+ * rank-3 bonus, and its technique gives advantage when ready. Attacks use weapon familiarity, not a named skill.
  */
 export function namedSkillCheckMod(state: GameState, actionText: string, intentKind?: string): NamedSkillCheckMod | null {
   if (state.engineMode !== 'litrpg' || intentKind === 'attack') return null;
   const base = matchBaseSkill(state, actionText);
   const rec = base && namedSkillsOf(state).find((r) => r.id === base.identity.id);
-  if (!base || !rec || rec.rank <= 0) return null;
+  const rank = rankOfRec(rec ?? undefined);
+  if (!base || !rec || rank <= 0) return null;
   const technique = libraryEntry(rec.evolvedTo);
   return {
-    label: technique ? technique.identity.name : `${base.identity.name} ${rec.rank}`,
-    value: rec.rank,
+    label: technique ? technique.identity.name : `${base.identity.name} ${rank}`,
+    value: rank,
     advantage: !!technique && techniqueReady(state, rec),
   };
 }
@@ -374,19 +381,19 @@ export function namedSkillViews(state: GameState): NamedSkillView[] {
   if (state.engineMode !== 'litrpg' || hidesPart(state.systemHousing, 'skills')) return [];
   const plain = state.systemHousing?.housing === 'world_status';
   return namedSkillsOf(state)
-    .filter((r) => r.rank > 0 && libraryEntry(r.id))
-    .map((r) => ({ r, technique: libraryEntry(r.evolvedTo) }))
-    .sort((a, b) => Number(!!b.technique) - Number(!!a.technique) || b.r.rank - a.r.rank || b.r.uses - a.r.uses)
-    .map(({ r, technique }) => {
+    .filter((r) => levelOfRec(r) > 0 && libraryEntry(r.id))
+    .map((r) => ({ r, technique: libraryEntry(r.evolvedTo), level: levelOfRec(r), rank: rankOfRec(r) }))
+    .sort((a, b) => Number(!!b.technique) - Number(!!a.technique) || b.level - a.level || b.rank - a.rank)
+    .map(({ r, technique, level }) => {
       const base = libraryEntry(r.id)!;
       return {
         key: r.id,
         label: technique ? technique.identity.name : base.identity.name,
-        rank: technique || plain ? null : r.rank,
+        rank: technique || plain ? null : level,
         note: technique && !plain ? viewNote(base, technique) : null,
       };
     });
 }
 
 /** Notices the engine prints for named skills (library System message text). */
-export const SKILL_NOTICE = /^(?:Skill rank up|Technique learned|Technique used|Perk gained|Skill learned):/;
+export const SKILL_NOTICE = /^(?:Skill up|Skill rank up|Technique learned|Technique used|Perk gained|Skill learned):/;
