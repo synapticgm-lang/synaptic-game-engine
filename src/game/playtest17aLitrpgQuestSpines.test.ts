@@ -1,5 +1,5 @@
-﻿/**
- * 17a â€” LitRPG main-quest spines match the opening family.
+/**
+ * 17a — LitRPG main-quest spines match the opening family.
  * Extra pack completes 4-per-bible. Mid OFF. No SNAPSHOT/CRAFT. No new combat FSM.
  */
 import { describe, expect, it } from 'vitest';
@@ -35,7 +35,7 @@ const CATHEDRAL_HOOK =
   'Location: The Sevenfold Circle under Valespire Cathedral\nWho is here / who summoned: Robed figures and a chanter\nWhy this happened: They paid for a Pactborn champion.';
 
 const ALONE_RUIN_HOOK =
-  'Location: alone in a ruined bathhouse off the Valespire roads\nWho is here: nobody â€” the circle is dead\nWhy this happened: A recorded echo wants the vault key.';
+  'Location: alone in a ruined bathhouse off the Valespire roads\nWho is here: nobody — the circle is dead\nWhy this happened: A recorded echo wants the vault key.';
 
 const ACADEMY_HOOK =
   'Location: Academy training yard\nInstructor Kael posts a remedial combat exam. Expulsion and the dormitory are on the line.';
@@ -53,14 +53,14 @@ function revealFor(
   return revealLocalStarterQuest([], withMatchedLitRpgSpine(seeds, ctx), alone);
 }
 
-describe('playtest17a â€” LitRPG quest spines', () => {
+describe('playtest17a — LitRPG quest spines', () => {
   it('HUD/BUILD are 17a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('SP cathedral hook reveals Crownâ€™s Meat Shield, not Pellane Circleâ€™s Price', () => {
+  it('SP cathedral hook reveals Crown’s Meat Shield, not Pellane Circle’s Price', () => {
     const spine = matchLitRpgMainSpine('summoned-pact', CATHEDRAL_HOOK, 'The Sevenfold Circle under Valespire Cathedral');
     expect(spine?.spineId).toBe('cathedral-royal-vanguard');
     expect(spine?.title).toMatch(/Crown.?s Meat Shield/i);
@@ -73,7 +73,7 @@ describe('playtest17a â€” LitRPG quest spines', () => {
     const visible = quests.filter((q) => q.revealed && q.status === 'active');
     expect(visible[0]?.id).toBe('sp-spine-cathedral-royal-vanguard');
     expect(visible[0]?.name).toMatch(/Crown.?s Meat Shield/i);
-    // rootB â€” the spine pin resolves to a hub or the opening place, never an unplaced pin.
+    // rootB — the spine pin resolves to a hub or the opening place, never an unplaced pin.
     expect(visible[0]?.location).toBe('The Sevenfold Circle under Valespire Cathedral');
     expect(visible[0]?.description).not.toMatch(/Pellane|Circle.?s Price/i);
     expect(quests.some((q) => q.id === 'sp-quest-1')).toBe(false);
@@ -126,7 +126,7 @@ describe('playtest17a â€” LitRPG quest spines', () => {
     const sp = revealFor('summoned-pact', summonedPact.starterQuests, UNKNOWN_HOOK, 'a quiet plaza');
     const spVisible = sp.filter((q) => q.revealed && q.status === 'active');
     expect(spVisible[0]?.id).toBe('sp-quest-1');
-    // s74 M â€” a plaza card has no circle, so the default starter drops the circle title.
+    // s74 M — a plaza card has no circle, so the default starter drops the circle title.
     expect(spVisible[0]?.name).not.toMatch(/Circle.?s Price/i);
 
     expect(matchLitRpgMainSpine('hero-awakening', UNKNOWN_HOOK, 'a quiet plaza')).toBeNull();

@@ -1,5 +1,5 @@
-﻿/**
- * 29x â€” rare spawns, camp mini-boss, auto-player stall rules. No live GM call. Mid writer OFF.
+/**
+ * 29x — rare spawns, camp mini-boss, auto-player stall rules. No live GM call. Mid writer OFF.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
@@ -66,13 +66,13 @@ afterEach(() => {
 
 describe('29x stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29x â€” rare spawn', () => {
+describe('29x — rare spawn', () => {
   it('is uncommon: only hostile meetings, only under the rare roll', () => {
     const thugs = ctx({ terrain: 'streets' });
     const kindRoll = 2 / 3 + 0.01; // hostile share is 1/3 at default sliders: above 2/3 is the hostile group
@@ -133,7 +133,7 @@ describe('29x â€” rare spawn', () => {
   });
 });
 
-describe('29x â€” camp mini-boss', () => {
+describe('29x — camp mini-boss', () => {
   it('a camp can hold a mini-boss and offers a chip to face it', () => {
     // Non-hostile group (kindRoll < 2/3): traveler, meeting, plea, camp, signs; camp is the fourth fifth.
     expect(rollRoadEncounter(ctx({ terrain: 'road' }), 2, 0, 0.45, 0.1)).toMatchObject({ kind: 'camp', miniBoss: true });
@@ -205,7 +205,7 @@ describe('29x â€” camp mini-boss', () => {
   });
 });
 
-describe('29x â€” auto-player stall rules', () => {
+describe('29x — auto-player stall rules', () => {
   const EXIT = 'Travel toward Blackspine Treeline';
 
   function withMira(extra: Partial<GameState> = {}): GameState {
@@ -218,7 +218,7 @@ describe('29x â€” auto-player stall rules', () => {
     };
   }
 
-  // 29z1 â€” "already heard" is this same ask tried here with nothing new, not "the person is met".
+  // 29z1 — "already heard" is this same ask tried here with nothing new, not "the person is met".
   const heard = (): GameState =>
     withMira({ turn: 6, circling: { stale: {}, lastProgressTurn: 0, tried: { 'greyhollow inn': { 'talk to mira': 5 } } } });
 

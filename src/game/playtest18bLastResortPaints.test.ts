@@ -1,5 +1,5 @@
-﻿/**
- * 2026-09-28j â€” Live timeout paints a NEW GM row. Last-resort is not
+/**
+ * 2026-09-28j — Live timeout paints a NEW GM row. Last-resort is not
  * a reprint of the previous book. Who/Want starve after the handler spoke.
  * Mid writer OFF. No SNAPSHOT/CRAFT.
  */
@@ -71,10 +71,10 @@ function afterNameLock(): { state: GameState; lock: string } {
   return { state, lock };
 }
 
-describe('playtest18b â€” live timeout paints a new book beat', () => {
+describe('playtest18b — live timeout paints a new book beat', () => {
   it('HUD/BUILD are 18b, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -129,8 +129,8 @@ describe('playtest18b â€” live timeout paints a new book beat', () => {
     const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
     const fate = readFileSync(resolve(__dirname, 'fateAutoplay.ts'), 'utf8');
     expect(useGame).toContain('bookBodyAfterWriterMiss');
-    expect(useGame).toContain('GM transport exhausted â€” last-resort will write the book');
-    expect(useGame).toContain('GM transport threw â€” last-resort will write the book');
+    expect(useGame).toContain('GM transport exhausted — last-resort will write the book');
+    expect(useGame).toContain('GM transport threw — last-resort will write the book');
     expect(fate).toContain('bookBodyAfterWriterMiss');
   });
 });

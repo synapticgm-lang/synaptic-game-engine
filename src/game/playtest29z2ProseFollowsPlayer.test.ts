@@ -1,5 +1,5 @@
-﻿/**
- * 29z2 â€” tester turn check: ghost / impossible chips, prose that ignores the action, interior or extra
+/**
+ * 29z2 — tester turn check: ghost / impossible chips, prose that ignores the action, interior or extra
  * floors on open ground, quest places the scene never set up, broken lines. No live GM call.
  */
 import { spawnSync } from 'node:child_process';
@@ -53,15 +53,15 @@ function base(over: Partial<GameState> = {}): GameState {
 
 const gm = (turn: number, content: string): LogEntry => ({ id: `g${turn}`, turn, role: 'gm', content, timestamp: turn });
 
-describe('29z2 â€” stamp', () => {
+describe('29z2 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29z2 â€” chips', () => {
+describe('29z2 — chips', () => {
   it('reads the addressee of a talk chip', () => {
     expect(chipAddressee('Talk to Nell Barrow')).toEqual({ kind: 'named', who: 'Nell Barrow' });
     expect(chipAddressee('Ask what they want')).toEqual({ kind: 'none', who: '' });
@@ -91,7 +91,7 @@ describe('29z2 â€” chips', () => {
   });
 });
 
-describe('29z2 â€” prose follows the player', () => {
+describe('29z2 — prose follows the player', () => {
   it('a named talk the prose never answers is a P0', () => {
     const s = base({ sceneFacts: { present: ['Nell'] } as GameState['sceneFacts'] });
     const miss = checkActionFollowed(s, s, 'Talk to Nell', 'Rain ran down the stalls. Carts rolled past toward the gate.');
@@ -119,7 +119,7 @@ describe('29z2 â€” prose follows the player', () => {
   });
 });
 
-describe('29z2 â€” map and quest places', () => {
+describe('29z2 — map and quest places', () => {
   it('an interior plan drawn on open ground is a P0 once; a basement in the scene allows the cellar floor only', () => {
     const plan = buildInteriorFloorPlan('a half-collapsed ruin', [], undefined, 'z2-plan');
     const before = base();
@@ -147,7 +147,7 @@ describe('29z2 â€” map and quest places', () => {
   });
 });
 
-describe('29z2 â€” lines', () => {
+describe('29z2 — lines', () => {
   it('flags broken shape, not a list of words', () => {
     expect(brokenLines('You walked to the the gate.').map((f) => f.kind)).toEqual(['broken-line']);
     expect(brokenLines('"Stop there, she said.').map((f) => f.kind)).toContain('broken-line');
@@ -157,7 +157,7 @@ describe('29z2 â€” lines', () => {
   });
 });
 
-describe('29z2 â€” autoThumbs reads the row check', () => {
+describe('29z2 — autoThumbs reads the row check', () => {
   it('turns a row P0 into a thumbs-down and a report P0 count', () => {
     const dir = mkdtempSync(join(tmpdir(), 'z2-thumbs-'));
     const row = {

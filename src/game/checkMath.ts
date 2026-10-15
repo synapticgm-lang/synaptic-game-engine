@@ -34,6 +34,26 @@ import { exhaustionD20, exhaustionLevel, travelEngineChip, weatherRuleOf } from 
 import { modeProfile } from './rules/modeProfile';
 import { namedSkillCheckMod } from './rules/librarySkills';
 import { titleCheckMod } from './rules/titles';
+import { toolProficiencies } from './tabletop/characterBuild';
+
+/** SK-4 named tiers. Targets = DC_LADDER easy/medium/hard (Expert/Master capped at hard until SK-5). */
+export type SkillTierName = 'Novice' | 'Apprentice' | 'Journeyman' | 'Expert' | 'Master';
+export const TIER_TARGET: Record<SkillTierName, number> = {
+  Novice: 10,
+  Apprentice: 15,
+  Journeyman: 20,
+  Expert: 20,
+  Master: 20,
+};
+/** Untrained Journeyman+ long-shot odds after a natural 20. Null = no long-shot (use target+5 instead). */
+export const LONG_SHOT_ODDS: Record<SkillTierName, number | null> = {
+  Novice: null,
+  Apprentice: null,
+  Journeyman: 1000,
+  Expert: 5000,
+  Master: 10000,
+};
+const UNTRAINED_RAISE = 5;
 
 export type CheckSkill = CheckSkillName;
 
@@ -42,9 +62,13 @@ export interface CheckContext {
   attr: AttributeKey;
   skill?: CheckSkill;
   profession?: string;
+  /** Tabletop tool name when the check uses a tool proficiency (e.g. Thieves' Tools on a lock). */
+  tool?: string;
   dc: number;
   /** Tabletop: the task's rung on the SRD DC ladder. */
   rung?: TaskRung;
+  /** LitRPG / Story RPG: SK-4 named tier for this task. */
+  skillTier?: SkillTierName;
   /** Optional sticky cost on crit fail when fiction warrants (trap room, combat). */
   critFailHpRisk: number;
   /** Informational dialogue — no contested stake; do not roll. */
@@ -123,11 +147,19 @@ export function sheetSkillBonus(character: GameState['character'], skill: string
 }
 
 /**
- * Skill proficiency on a check, the same maths in every mode (SRD 5.2.1): +PB when proficient, ×2 with expertise.
- * A tabletop sheet lists its proficiencies. A LitRPG / story RPG skill rank is how that mode shows proficiency:
- * rank 1 = proficient, rank 2 or more = expertise.
+ * Skill / tool proficiency on a check (SRD 5.2.1): +PB when proficient, ×2 with expertise.
+ * Tabletop locks use Thieves' Tools when `tool` is set. LitRPG / Story RPG: rank 1 = proficient, rank ≥2 = expertise.
  */
-function skillBonus(state: GameState, skill?: CheckSkill): number {
+function skillBonus(state: GameState, skill?: CheckSkill, tool?: string): number {
+  if (state.character.srd && tool) {
+    const want = tool.toLowerCase();
+    const tools = toolProficiencies(state.character);
+    let have = false;
+    for (let i = 0; i < tools.length; i++) {
+      if (tools[i]!.toLowerCase() === want) { have = true; break; }
+    }
+    return have ? proficiencyBonus(state.character.level) : 0;
+  }
   if (!skill) return 0;
   if (state.character.srd) return SRD_CHECK_SKILL[skill] ? sheetSkillBonus(state.character, SRD_CHECK_SKILL[skill]) : 0;
   const rank = skillRankOf(state.character, skill);
@@ -160,21 +192,40 @@ function sheetExtras(state: GameState): boolean {
  * The modifiers every check on this attribute and skill starts from: ability, worn gear, skill proficiency and
  * (SRD 5.2.1) Exhaustion, −2 per level on every D20 Test. The travel engine rolls its jobs with these too.
  */
-export function skillCheckMods(state: GameState, attr: AttributeKey, skill?: CheckSkill): CheckMod[] {
+export function skillCheckMods(
+  state: GameState,
+  attr: AttributeKey,
+  skill?: CheckSkill,
+  tool?: string,
+): CheckMod[] {
+  const prof = skillBonus(state, skill, tool);
   const mods: CheckMod[] = [
     { label: attr, value: attrMod(attrScore(state, attr)) },
     { label: 'gear', value: gearMod(state, attr) },
-    { label: skill ?? 'skill', value: skillBonus(state, skill) },
+    { label: tool ?? skill ?? 'skill', value: prof },
   ];
   const tired = exhaustionLevel(state.character);
   if (tired) mods.push({ label: `exhaustion ${tired}`, value: exhaustionD20(state.character) });
   return mods;
 }
 
-/** Every mode sets each task's DC on the SRD ladder (with the Strictness shift and dangerous ground). */
-function taskDc(state: GameState, kind: TaskKind): { dc: number; rung: TaskRung } {
+/**
+ * Task DC: tabletop stays on the SRD ladder; LitRPG / Story RPG stamp the SK-4 named tier
+ * (target adjusted in runPlayerCheck once the skill level is known).
+ */
+function taskDc(
+  state: GameState,
+  kind: TaskKind,
+): { dc: number; rung: TaskRung; skillTier?: SkillTierName } {
   const rung = taskRung(state, kind);
-  return { dc: ladderDc(rung, state.gmStrictness), rung };
+  if (state.engineMode === 'dnd') return { dc: ladderDc(rung, state.gmStrictness), rung };
+  const skillTier: SkillTierName =
+    rung === 'nearly impossible' ? 'Master'
+      : rung === 'very hard' ? 'Expert'
+        : rung === 'hard' ? 'Journeyman'
+          : rung === 'medium' ? 'Apprentice'
+            : 'Novice';
+  return { dc: TIER_TARGET[skillTier], rung, skillTier };
 }
 
 /**
@@ -195,11 +246,14 @@ export function resolveCheckContext(
   const node = currentDungeonNode(state.activeDungeon);
   const trap = node?.hidden?.traps.find((tr) => !tr.disarmed);
   if (/\b(pick\s+lock|lockpick|disarm|disable\s+trap|jimmy)\b/i.test(t) || intent.kind === 'search' && /\block|trap|chest|cache\b/i.test(t)) {
-    const lock = trap?.dc != null ? { dc: trap.dc } : taskDc(state, 'lock');
+    const lock = trap?.dc != null
+      ? { dc: trap.dc, rung: 'medium' as TaskRung, ...(state.engineMode !== 'dnd' ? { skillTier: 'Apprentice' as SkillTierName } : {}) }
+      : taskDc(state, 'lock');
     return {
       label: 'Thievery / lock',
       attr: 'DEX',
       skill: 'thievery',
+      tool: state.engineMode === 'dnd' ? "Thieves' Tools" : undefined,
       profession: 'Engineering',
       ...lock,
       critFailHpRisk: trap?.damage ?? 0,
@@ -302,7 +356,9 @@ export function runPlayerCheck(
   state: GameState,
   intent: PlayerIntent,
   actionText: string,
-  d20Roll?: number
+  d20Roll?: number,
+  /** When the SK-4 long-shot fires: a 1-based roll from 1..odds (1 = success). */
+  longShotRoll?: number,
 ): PlayerCheckResult {
   const ctx = resolveCheckContext(state, intent, actionText);
   if (ctx.autoSucceed || ctx.dc <= 0) {
@@ -323,9 +379,23 @@ export function runPlayerCheck(
       skippedRoll: true,
     };
   }
+  // SK-4: LitRPG / Story RPG retarget from skill level (trained / untrained+5 / long-shot).
+  let longShotOdds: number | null = null;
+  if (state.engineMode !== 'dnd' && ctx.skillTier && ctx.skill) {
+    const trained = skillRankOf(state.character, ctx.skill) >= 1;
+    const odds = LONG_SHOT_ODDS[ctx.skillTier];
+    if (trained) {
+      ctx.dc = TIER_TARGET[ctx.skillTier];
+    } else if (odds != null) {
+      ctx.dc = TIER_TARGET[ctx.skillTier];
+      longShotOdds = odds;
+    } else {
+      ctx.dc = TIER_TARGET[ctx.skillTier] + UNTRAINED_RAISE;
+    }
+  }
   // 28c — named modifiers, disposition (social) and weapon familiarity (attack), one result record.
   const mods: CheckMod[] = [
-    ...skillCheckMods(state, ctx.attr, ctx.skill),
+    ...skillCheckMods(state, ctx.attr, ctx.skill, ctx.tool),
     { label: 'profession', value: professionBonus(state, ctx.profession) },
   ];
   const row = difficultyRow(state.gmStrictness);
@@ -456,14 +526,31 @@ export function runPlayerCheck(
   }
   const d20 = record.kept;
   const modifier = record.total - record.kept;
-  const outcome = evaluateRoll(d20, modifier, ctx.dc);
+  let outcome = evaluateRoll(d20, modifier, ctx.dc);
+  let longShotNote = '';
+  // SK-4 untrained Journeyman+: only a natural 20, then 1-in-odds, succeeds (mods do not bypass).
+  if (longShotOdds != null) {
+    if (d20 !== 20) {
+      outcome = { ...outcome, isSuccess: false, isCriticalSuccess: false, isCriticalFailure: d20 === 1, totalScore: d20 + modifier, margin: d20 + modifier - ctx.dc };
+      longShotNote = `; long-shot needs natural 20`;
+    } else {
+      const rng = turnRng(state, 'check', ctx.label, 'long-shot');
+      const roll = longShotRoll != null ? longShotRoll : Math.floor(rng() * longShotOdds) + 1;
+      const ok = roll === 1;
+      outcome = { ...outcome, isSuccess: ok, isCriticalSuccess: ok, isCriticalFailure: false, totalScore: 20 + modifier, margin: ok ? 1 : -1 };
+      longShotNote = ok
+        ? `; long-shot 1 in ${longShotOdds} — success`
+        : `; long-shot 1 in ${longShotOdds} — failure`;
+      record.outcome = ok ? 'success' : 'failure';
+    }
+  }
   const narrativeOutcomeLabel = outcome.isSuccess ? 'SUCCESS' : 'FAILURE';
   const socialBand = social ? socialOutcomeBand(d20, outcome.totalScore - ctx.dc) : undefined;
   const bandTail = socialBand ? ` — ${getOutcomeDescription(socialBand)}` : '';
   const leverageTail = leverage.length ? ` — leverage: ${leverage.map((m) => m.note).join(' ')}` : '';
   const codeResolutionText = outcome.isSuccess
-    ? `SUCCESS (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}${leverageTail}`
-    : `FAILURE (${ctx.label}: d20 ${d20} + mod ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc})${bandTail}${leverageTail}`;
+    ? `SUCCESS (${ctx.label}: d20 ${d20} + ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc}${longShotNote})${bandTail}${leverageTail}`
+    : `FAILURE (${ctx.label}: d20 ${d20} + ${modifier} = ${outcome.totalScore} vs DC ${ctx.dc}${longShotNote})${bandTail}${leverageTail}`;
 
   return {
     ...outcome,
@@ -478,6 +565,6 @@ export function runPlayerCheck(
     narrativeOutcomeLabel,
     skippedRoll: false,
     record,
-    displayLine,
+    displayLine: longShotNote ? `${formatCheckRecord(record, state.engineMode)}${longShotNote}` : displayLine,
   };
 }

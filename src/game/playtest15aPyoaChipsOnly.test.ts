@@ -1,4 +1,4 @@
-﻿import { readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
@@ -21,10 +21,10 @@ function pyoaState(over: Partial<GameState> = {}): GameState {
   };
 }
 
-describe('playtest15a â€” PYOA chips only', () => {
+describe('playtest15a — PYOA chips only', () => {
   it('HUD/BUILD are 15a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

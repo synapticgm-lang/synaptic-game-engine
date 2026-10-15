@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { BUILD_STAMP } from './runManifest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
@@ -44,10 +44,10 @@ function umbraState(over: Partial<GameState> = {}): GameState {
   return ensurePyoaSpine(state);
 }
 
-describe('playtest15a â€” Umbra compiled book', () => {
+describe('playtest15a — Umbra compiled book', () => {
   it('HUD/BUILD are 15a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -73,7 +73,7 @@ describe('playtest15a â€” Umbra compiled book', () => {
     expect(stitchOpeningScene(state)).toBe(authoredStartPage());
   });
 
-  it('compiler and edges are chips only â€” no Wait, no charter pad', () => {
+  it('compiler and edges are chips only — no Wait, no charter pad', () => {
     const state = umbraState();
     const { choices } = compileChoices(state, ['Wait and watch', 'Look around'], undefined, 'look');
     expect(choices).toEqual(spineChoiceLabels(state));

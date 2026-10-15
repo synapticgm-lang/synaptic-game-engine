@@ -1,5 +1,5 @@
-﻿/**
- * 2026-09-18c â€” Cover pads never collapse to Inspect-the-panel alone.
+/**
+ * 2026-09-18c — Cover pads never collapse to Inspect-the-panel alone.
  * Who does not starve from a shared CAST "answers you" prefix on the want beat.
  * Compound CAST uses plural speak-verb. Mid writer OFF. No SNAPSHOT/CRAFT.
  */
@@ -62,10 +62,10 @@ function namedWatchtower(over: Partial<GameState> = {}): GameState {
   };
 }
 
-describe('playtest18c â€” pads refill and CAST glue', () => {
+describe('playtest18c — pads refill and CAST glue', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -109,13 +109,13 @@ describe('playtest18c â€” pads refill and CAST glue', () => {
         { id: 'p2', turn: 2, role: 'player', content: 'Who are you', timestamp: 3 },
         { id: 'g2', turn: 2, role: 'gm', content: 'The handler answers you. "Handler. You came through. Stay where we can see you."', timestamp: 4 },
         { id: 'p3', turn: 3, role: 'player', content: 'Inspect the panel', timestamp: 5 },
-        { id: 'g3', turn: 3, role: 'gm', content: 'The blue panel was yours â€” a System window, not a person.', timestamp: 6 },
+        { id: 'g3', turn: 3, role: 'gm', content: 'The blue panel was yours — a System window, not a person.', timestamp: 6 },
       ],
     });
     expect(shouldStarveHallTopicPad(afterInspect, 'Inspect the panel')).toBe(true);
     const pads = coverContinuePads(afterInspect);
     expect(pads.join(' ')).not.toMatch(/Inspect the panel/i);
-    // Want is not answered by page-1 / name-lock â€” Ask stays until the player asks it.
+    // Want is not answered by page-1 / name-lock — Ask stays until the player asks it.
     expect(pads.join(' ')).toMatch(/Ask what they want|Look around|Wait/);
     expect(compileChoices(afterInspect, ['Inspect the panel', 'Look around', 'Wait']).choices)
       .not.toContain('Inspect the panel');
@@ -219,7 +219,7 @@ describe('playtest18c â€” pads refill and CAST glue', () => {
       ],
     });
     expect(hallTopicAlreadyAnswered(low, 'want')).toBe(false);
-    // 29z7 â€” after page 1 the writer answers hall talk; the stitch still exists as the fallback.
+    // 29z7 — after page 1 the writer answers hall talk; the stitch still exists as the fallback.
     expect(shouldStitchOpeningContinue(low, 'Ask what they want')).toBe(false);
     const stitch = stitchOpeningContinue(low, 'Ask what they want');
     expect(stitch).not.toMatch(/ask was already answered|did not say it twice|already said it/i);
@@ -367,7 +367,7 @@ describe('playtest18c â€” pads refill and CAST glue', () => {
       'Travel toward West Wall'
     );
     expect(resort.prose).toMatch(/West Wall|are at|step onto|opens onto|reach|step into/i);
-    expect(resort.prose).not.toMatch(/junk stall under tarps â€” West Wall/i);
+    expect(resort.prose).not.toMatch(/junk stall under tarps — West Wall/i);
     expect(resort.prose).not.toMatch(/^The last doorway is behind you/i);
   });
 
@@ -444,14 +444,14 @@ describe('playtest18c â€” pads refill and CAST glue', () => {
       state,
       buildCompletedEventPacket(state, 'I walk through the nearest exit.'),
       'I walk through the nearest exit.',
-      'You close with Contract Hall Bravo. Contract Hall Bravo keeps the body type the name already has. The exchange is short. Contract Hall Bravo drops. The body stays on the floor â€” loot is legal.'
+      'You close with Contract Hall Bravo. Contract Hall Bravo keeps the body type the name already has. The exchange is short. Contract Hall Bravo drops. The body stays on the floor — loot is legal.'
     );
     expect(close.prose).not.toMatch(/Contract Hall Bravo|loot is legal/i);
   });
 
   it('graph pads skip this room and last-resort names the dest room once', () => {
     expect(dungeonHereLabel('Cathedral Infirmary', 'Cathedral Infirmary')).toBe('Cathedral Infirmary');
-    expect(dungeonHereLabel('Cathedral Infirmary â€” Sanctum', 'Choir')).toBe('Cathedral Infirmary â€” Choir');
+    expect(dungeonHereLabel('Cathedral Infirmary — Sanctum', 'Choir')).toBe('Cathedral Infirmary — Choir');
     const dungeon: ActiveDungeonState = {
       blueprintId: 'infirmary',
       dungeonName: 'Cathedral Infirmary',
@@ -489,10 +489,10 @@ describe('playtest18c â€” pads refill and CAST glue', () => {
     expect(pads.join(' ')).toMatch(/to Choir/i);
     const line = 'Go through the north doorway to Choir';
     const moved = applyGraphExitTravel(namedWatchtower({ currentLocation: 'Cathedral Infirmary', activeDungeon: dungeon }), line);
-    expect(moved.currentLocation).toBe('Cathedral Infirmary â€” Choir');
-    expect(moved.currentLocation).not.toMatch(/Infirmary â€” Cathedral Infirmary/i);
+    expect(moved.currentLocation).toBe('Cathedral Infirmary — Choir');
+    expect(moved.currentLocation).not.toMatch(/Infirmary — Cathedral Infirmary/i);
     const resort = lastResortStoryBody(moved, buildCompletedEventPacket(moved, line), line);
     expect(resort.prose).toMatch(/Choir/i);
-    expect(resort.prose).not.toMatch(/Infirmary â€” Cathedral Infirmary|Sanctum â€” Sanctum|You leave .+ behind and reach/i);
+    expect(resort.prose).not.toMatch(/Infirmary — Cathedral Infirmary|Sanctum — Sanctum|You leave .+ behind and reach/i);
   });
 });

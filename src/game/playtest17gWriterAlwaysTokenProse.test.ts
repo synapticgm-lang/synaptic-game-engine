@@ -1,5 +1,5 @@
-﻿/**
- * 2026-09-17g â€” after page 1 the success path is callGm + Token Prose.
+/**
+ * 2026-09-17g — after page 1 the success path is callGm + Token Prose.
  * Stitch / Silent / two-line already-told is not the book except the first
  * already-told who/want/refuse (17f second hit). Third+ leaves stitch.
  * Mid writer OFF. No SNAPSHOT/CRAFT.
@@ -103,10 +103,10 @@ function saltAfterFirstWant(): GameState {
   };
 }
 
-describe('playtest17g â€” writer always + Token Prose after page 1', () => {
+describe('playtest17g — writer always + Token Prose after page 1', () => {
   it('HUD/BUILD are 17g, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
@@ -146,7 +146,7 @@ describe('playtest17g â€” writer always + Token Prose after page 1', () => 
 
   it('first already-told who/want/refuse still stitches; third+ leaves', () => {
     const second = saltAfterFirstWant();
-    // 29z7 â€” after page 1 the writer answers every hall line.
+    // 29z7 — after page 1 the writer answers every hall line.
     expect(shouldStitchOpeningContinue(second, 'Ask what they want')).toBe(false);
     expect(storyBeatWriterPath(second, 'Ask what they want')).toBe('callGm');
     const third = saltAfterFirstWant();
@@ -181,7 +181,7 @@ describe('playtest17g â€” writer always + Token Prose after page 1', () => 
     const fate = readFileSync(resolve(__dirname, './fateAutoplay.ts'), 'utf8');
     expect(live).toContain('shouldStitchOpeningContinue');
     expect(live).toContain('shouldUseSilentMudTurn');
-    // 28l â€” both share one writer turn (writerTurn.ts), which owns the token-prose accept path.
+    // 28l — both share one writer turn (writerTurn.ts), which owns the token-prose accept path.
     const shared = readFileSync(resolve(__dirname, './writerTurn.ts'), 'utf8');
     expect(live).toContain('runWriterTurn');
     expect(live).toContain('await callGm(');

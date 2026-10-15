@@ -158,6 +158,7 @@ function edgeSource(file, srcPath) {
       // The skill library JSON lives on the client; edge checks have no named-skill bonus.
       .replace(/^import \{ namedSkillCheckMod \} from '\.\/rules\/librarySkills';\r?\n/m, 'const namedSkillCheckMod = (..._args: unknown[]): null => null;\n')
       .replace(/^import \{ titleCheckMod \} from '\.\/rules\/titles';\r?\n/m, 'const titleCheckMod = (..._args: unknown[]): null => null;\n')
+      .replace(/^import \{ toolProficiencies \} from '\.\/tabletop\/characterBuild';\r?\n/m, 'const toolProficiencies = (..._args: unknown[]): string[] => [];\n')
       .replace(/function sheetExtras\(state: GameState\): boolean \{\r?\n\s*return [^\n]*\r?\n\}/, 'function sheetExtras(_state: GameState): boolean {\n  return false;\n}');
   }
   return rewriteImports(next, file);

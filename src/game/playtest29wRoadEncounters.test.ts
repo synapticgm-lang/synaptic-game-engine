@@ -1,5 +1,5 @@
-﻿/**
- * 29w â€” chance encounters on the road. Each stretch rolls once; the kind fits the
+/**
+ * 29w — chance encounters on the road. Each stretch rolls once; the kind fits the
  * ground and the level follows the area. No live GM call. Mid writer OFF.
  */
 import { describe, expect, it } from 'vitest';
@@ -46,13 +46,13 @@ function tripsTo(dest: string, n = 200) {
 
 describe('29w stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29w â€” a stretch is a chance, not a guaranteed meeting', () => {
+describe('29w — a stretch is a chance, not a guaranteed meeting', () => {
   it('one stretch can have no encounter: Walk on, a travel job, Turn back', () => {
     expect(rollRoadEncounter(ctx({}), 1, 0.99, 0)).toBeNull();
     const quiet = tripsTo('Blackspine Treeline').find((t) => t.state.journey && !t.state.journey.encounter);
@@ -76,7 +76,7 @@ describe('29w â€” a stretch is a chance, not a guaranteed meeting', () => {
   });
 });
 
-describe('29w â€” the kind fits the ground', () => {
+describe('29w — the kind fits the ground', () => {
   it('a forest chance is wildlife, not town thugs', () => {
     const forest = ctx({ terrain: 'forest', areaTier: 2 });
     expect(encounterPool(forest)).not.toContain('thugs');
@@ -115,7 +115,7 @@ describe('29w â€” the kind fits the ground', () => {
   });
 });
 
-describe('29w â€” level follows the area (treasure rule)', () => {
+describe('29w — level follows the area (treasure rule)', () => {
   it('a higher-tier area gives a higher encounter level, same as treasure', () => {
     const s = keepState('lvl', 1);
     expect(roadEncounterLevel(s, 1)).toBeLessThan(roadEncounterLevel(s, 2));
@@ -128,7 +128,7 @@ describe('29w â€” level follows the area (treasure rule)', () => {
   });
 });
 
-describe('29w â€” deal with it by chips, then the road continues', () => {
+describe('29w — deal with it by chips, then the road continues', () => {
   it('an encounter chip keeps HERE on the ground; Walk on carries on', () => {
     const peaceful = (t: { state: GameState }) => {
       const k = t.state.journey?.encounter?.kind;

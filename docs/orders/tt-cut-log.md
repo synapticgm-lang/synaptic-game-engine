@@ -19,6 +19,13 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-SK4 check resolution per mode
+
+1. **`src/game/checkMath.ts` `codeResolutionText`** — the literal word `mod` in `d20 N + mod M = T vs DC D` (SUCCESS/FAILURE wrappers). Replaced by `d20 N + M = T vs DC D` so the receipt matches SK4-a. Restore by putting `mod ` back after `+ `.
+2. No parallel checker added. LitRPG/RPG untrained long-shot and tier retarget live on the existing `runPlayerCheck` path; tabletop lock proficiency reads Thieves' Tools via `toolProficiencies` instead of inventing a second check module.
+
+---
+
 ## q31-DC1 dead-code clean-up (restore from `eeba53ad`)
 
 How each was proven dead: `git grep -w <module>` over `src`, `supabase`, `scripts`, `index.html`, `vite.config.ts`, `vitest.config.ts` and `package.json`; then a search for dynamic `import(` / by-path reads / name lookups. The only by-path read found was `trainingSetup.test.ts:35` (reads `src/services/llmDirectorService.ts`), and that module was kept (comic code). No edge file names any of the edge mirrors below (the edge imports are `'./<name>.ts'`, which `-w` matches), and `node scripts/sync-gm-edge-shared.mjs --check` reports "edge copies match" afterwards.

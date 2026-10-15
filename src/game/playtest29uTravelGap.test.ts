@@ -1,5 +1,5 @@
-﻿/**
- * 29u â€” travel across a mapped gap is a journey, not one leave-and-reach stitch.
+/**
+ * 29u — travel across a mapped gap is a journey, not one leave-and-reach stitch.
  * No live GM call. Mid writer OFF.
  */
 import { describe, expect, it } from 'vitest';
@@ -41,13 +41,13 @@ function keepState(): GameState {
 
 describe('29u stamps', () => {
   it('HUD and BUILD are 2026-10-14e and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-10-16c');
-    expect(BUILD_STAMP).toBe('2026-10-16c');
+    expect(HUD_BUILD_STAMP).toBe('2026-10-16d');
+    expect(BUILD_STAMP).toBe('2026-10-16d');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
 
-describe('29u â€” mapped gap is not one stitch', () => {
+describe('29u — mapped gap is not one stitch', () => {
   it('two towns a region apart do not arrive this turn; HERE is the ground between', () => {
     const s = coastState();
     expect(mapGapBetween(s, 'Saltmar', 'Brinewatch').steps).toBeGreaterThan(1);
@@ -73,7 +73,7 @@ describe('29u â€” mapped gap is not one stitch', () => {
   });
 });
 
-describe('29u â€” time moves with distance', () => {
+describe('29u — time moves with distance', () => {
   it('a leg across the gap moves the clock and shows it', () => {
     const s = coastState();
     const t = commitTravel(s, 'Travel toward Brinewatch');
@@ -91,7 +91,7 @@ describe('29u â€” time moves with distance', () => {
   });
 });
 
-describe('29u â€” the ground has its own chips', () => {
+describe('29u — the ground has its own chips', () => {
   it('in-between place offers chips that are not an arrival', () => {
     const t = commitTravel(coastState(), 'Travel toward Brinewatch');
     const pads = compileChoices(t.state, ['Travel toward Brinewatch', 'Look around']).choices;
