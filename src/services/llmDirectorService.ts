@@ -2,6 +2,7 @@ import { debugLogger } from '../game/debugLogger';
 import { KID_MODE_RULES } from '../game/contentModeRules';
 import { resolveHardRailsPrompt } from '../game/universalHardRails';
 import { filterKidModeText, prepareKidSafeImagePrompt } from '../game/kidModeSafety';
+import { pinnedModel } from '../game/modelIds';
 import {
   CAMERA_ANGLE_EXAMPLES,
   normalizeTextAnchor,
@@ -21,7 +22,7 @@ import {
 
 const OPENROUTER_API_KEY = ''; // Provider keys from Settings / edge secrets only — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
-const DIRECTOR_MODEL_FALLBACK = 'deepseek/deepseek-chat';
+const DIRECTOR_MODEL_FALLBACK = pinnedModel('openrouter');
 const DEFAULT_DIRECTOR_TIMEOUT_MS = 20_000;
 
 /** Thrown when the Director's HTTP call itself fails (network error, non-2xx, no API key). */

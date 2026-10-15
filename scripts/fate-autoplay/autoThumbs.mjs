@@ -13,6 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { applyVerdicts, buildJudgePrompt, notesStatus as judgeStatus, parseJudge, readOpenRouterKey, replyText } from './judgeNotes.mjs';
+import { rowProvenance, TRAINING_JUDGE_MODEL } from '../../src/game/modelIds.ts';
 
 const args = process.argv.slice(2);
 const runDir = args.find((a) => !a.startsWith('--'));
@@ -21,6 +22,7 @@ if (!runDir) {
   process.exit(1);
 }
 const wantNotes = args.includes('--notes');
+const judgeModel = wantNotes ? process.env.SGM_THUMBS_MODEL || TRAINING_JUDGE_MODEL : null;
 const file = path.join(runDir, 'turns.jsonl');
 const rows = fs
   .readFileSync(file, 'utf8')
@@ -162,6 +164,7 @@ for (const r of rows) {
     unclear,
     excerpt: t.replace(/\s+/g, ' ').slice(0, 220),
     prose: t,
+    ...rowProvenance({ teacherModel: r.teacher_model ?? r.writerUsage?.modelId ?? null, mode: r.engineMode ?? null, judgeModel }),
     present: r.turnCheck?.presentNames ?? [],
     chips: r.offeredChoices ?? [],
     // 28l — raw writer issues (empty / reasoning-only / cut-off / recycled / unresolved) for training.
@@ -178,7 +181,7 @@ async function addNotes() {
   if (!key) return 'skipped (no OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY found)';
   const targets = out.filter((o) => o.prose && o.prose.trim().length > 0).slice(0, 300);
   if (!targets.length) return 'skipped (no prose turns)';
-  const model = process.env.SGM_THUMBS_MODEL || 'google/gemini-2.5-pro';
+  const model = judgeModel;
   let judged = 0;
   let failed = 0;
   let batches = 0;

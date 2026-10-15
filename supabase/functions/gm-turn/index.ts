@@ -21,6 +21,7 @@ import {
   type ChatCompletionRead,
   type FireworksReasoningLevel,
 } from '../_shared/gm/openRouterChat.ts';
+import { pinnedModel } from '../_shared/gm/modelIds.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 const CORS_HEADERS: Record<string, string> = {
@@ -140,8 +141,7 @@ function resolveCredentials(body: GmRequestBody): {
     provider = 'openrouter';
   }
 
-  if (provider === 'openrouter' && !model) model = 'deepseek/deepseek-chat';
-  if (provider === 'fireworks' && !model) model = FREE_WRITER_FIREWORKS_MODEL;
+  if (provider === 'openrouter' || provider === 'fireworks') model = pinnedModel(provider, model);
 
   return {
     provider,
@@ -420,7 +420,7 @@ Deno.serve(async (req) => {
         (fireworks
           ? FREE_WRITER_FIREWORKS_MODEL
           : provider === 'openrouter'
-            ? 'deepseek/deepseek-chat'
+            ? pinnedModel('openrouter')
             : provider === 'groq'
               ? 'llama-3.3-70b-versatile'
               : 'gpt-4o-mini');
@@ -437,6 +437,7 @@ Deno.serve(async (req) => {
     const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       try {
         const read = await runOnce(sys, maxTokens);
+        if (read.servedModel) calledModel = read.servedModel;
         callUsage.push({
           tokensIn: read.usage?.tokensIn ?? null,
           tokensOut: read.usage?.tokensOut ?? null,

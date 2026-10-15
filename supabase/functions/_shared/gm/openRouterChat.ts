@@ -4,13 +4,15 @@
  * that used to 502 gm-turn as "no content".
  */
 
+import { FIREWORKS_DEEPSEEK_V41_FLASH } from './modelIds.ts';
+
 type ChatPart = { text?: unknown } | string;
 
 /** Fireworks OpenAI-compat inference (same pipe as synaptic-engine Free). */
 export const FIREWORKS_INFERENCE_BASE = 'https://api.fireworks.ai/inference/v1';
 
 /** Live Free hosted writer. Do not use retired `deepseek-v3p1` (404). */
-export const FREE_WRITER_FIREWORKS_MODEL = 'accounts/fireworks/models/deepseek-v4p1-flash';
+export const FREE_WRITER_FIREWORKS_MODEL = FIREWORKS_DEEPSEEK_V41_FLASH;
 
 export function isFireworksWriterModel(modelId: string | null | undefined): boolean {
   const id = (modelId ?? '').trim().toLowerCase();
@@ -116,6 +118,8 @@ export type ChatCompletionRead = {
   issue: WriterRawIssue | null;
   /** 28w — absent / null when the provider sent no usage block. */
   usage?: WriterUsage | null;
+  /** The model id the provider says served the reply (`model` on the response); absent when it sent none. */
+  servedModel?: string;
 };
 
 function usageCount(raw: unknown): number | null {
@@ -211,7 +215,13 @@ export function readChatCompletion(data: unknown): ChatCompletionRead {
   if (!text) issue = hadReasoning ? 'reasoning-only' : 'empty';
   else if (isCutOffFinish(first.finish_reason)) issue = 'cut-off';
   const usage = readChatUsage(data);
-  return usage ? { text, issue, usage } : { text, issue };
+  const served = (data as { model?: unknown } | null)?.model;
+  return {
+    text,
+    issue,
+    ...(usage ? { usage } : {}),
+    ...(typeof served === 'string' && served.trim() ? { servedModel: served.trim() } : {}),
+  };
 }
 
 /**

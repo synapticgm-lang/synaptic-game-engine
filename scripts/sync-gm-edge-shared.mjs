@@ -96,6 +96,7 @@ const FILES = [
   'writerInfoLayer.ts',
   'litrpgClassNames.ts',
   'openRouterChat.ts',
+  'modelIds.ts',
   'proseSentences.ts',
   'skillRanks.ts',
   'floorPlan.ts',

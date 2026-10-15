@@ -36,6 +36,7 @@ import {
   parseAutoplayWriterKind,
   type AutoplayWriterKind,
 } from './autoplayWriter';
+import { rowProvenance, TRAINING_SEATS, type RowProvenance, type TrainingSeat } from './modelIds';
 import { buildResolutionUserPayload, isUnresolvedActionNarrative, unresolvedActionReason } from './actionResolution';
 import { validateActionHard } from './actionValidation';
 import { seedStateFromCampaignBible, applyCampaignCharacter } from './campaignSeed';
@@ -412,7 +413,7 @@ export type TurnTelemetry = {
   wardenNotes?: string[];
   /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
   writerUsage?: import('./gmProxy').TurnWriterUsageWithCost;
-};
+} & Partial<RowProvenance>;
 
 export type RunSummary = {
   runId: string;
@@ -2339,6 +2340,7 @@ export async function runFateAutoplay(opts: {
           const prev = turns[turns.length - 1];
           if (!tel.error) tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
         }
+        Object.assign(result.telemetry, turnProvenance(result.telemetry, writerOverride?.model));
         turns.push(result.telemetry);
         appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');
         if (turnNo % 10 === 0) writeSnapshot(turnNo);
@@ -2412,6 +2414,7 @@ export async function runFateAutoplay(opts: {
           error: err instanceof Error ? err.message : String(err),
           failKind: 'client_bug',
         };
+        Object.assign(failTel, turnProvenance(failTel, writerOverride?.model));
         turns.push(failTel);
         appendFileSync(turnsPath, safeJsonLine(failTel) + '\n');
         // Keep going — one bad turn must not kill a multi-hour batch.
@@ -2506,6 +2509,10 @@ export async function runFateAutoplay(opts: {
     JSON.stringify(
       {
         ...summary,
+        ...rowProvenance({
+          teacherModel: servedModel ?? getAutoplayWriterOverride()?.model ?? writerOverride?.model ?? null,
+          mode: state.engineMode,
+        }),
         fatal,
         ...(raw.character.srd ? { tabletopCreation: true, tabletopBuild: creationRecord(raw) } : {}),
         capacity: 'autoplay Test Lab override (unlimited text/memorable for this process only)',
@@ -2538,6 +2545,14 @@ export async function runFateAutoplay(opts: {
   );
 
   return summary;
+}
+
+/** Provenance of one turn row: the id the provider returned for this turn, else the model the run asked for. */
+export function turnProvenance(
+  tel: Pick<TurnTelemetry, 'writerUsage' | 'engineMode'>,
+  requestedModel?: string | null
+): RowProvenance {
+  return rowProvenance({ teacherModel: tel.writerUsage?.modelId ?? requestedModel ?? null, mode: tel.engineMode ?? null });
 }
 
 /** The model id(s) the writer server reported for the run's turns, in first-seen order; null when none reported. */
@@ -2595,6 +2610,12 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     } else if (a === '--writer') {
       out.writer = parseAutoplayWriterKind(next());
     } else if (a === '--writer-model') out.writerModel = next().trim();
+    else if (a === '--seat') {
+      const seat = next().trim().toLowerCase();
+      if (!(seat in TRAINING_SEATS)) throw new Error(`Unknown --seat "${seat}" (use ${Object.keys(TRAINING_SEATS).join(' | ')}).`);
+      out.writer = 'flash-lite';
+      out.writerModel = TRAINING_SEATS[seat as TrainingSeat];
+    }
     else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;

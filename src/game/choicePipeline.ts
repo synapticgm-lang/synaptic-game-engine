@@ -1,6 +1,7 @@
 import type { GameState, LoreCard, Settings } from './types';
 import { extractChoiceLines, stripChoiceList, looksLikeChoiceOffer } from './parser';
 import { playerFacingLocation } from './locationName';
+import { pinnedModel } from './modelIds';
 import {
   fallbackSuggestionForState,
   isLockedProgressionChoice,
@@ -641,7 +642,7 @@ export async function callSmallModel(
   const modelName =
     model ||
     (provider === 'openrouter'
-      ? 'deepseek/deepseek-chat'
+      ? pinnedModel('openrouter')
       : provider === 'groq'
         ? 'llama-3.3-70b-versatile'
         : 'gpt-4o-mini');

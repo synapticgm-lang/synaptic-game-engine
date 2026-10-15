@@ -9,6 +9,7 @@
  */
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
+import { excludedSourceReason, rowProvenance } from '../src/game/modelIds.ts';
 
 const OUT_DIR = resolve('data', 'writer-dataset');
 const OUT = join(OUT_DIR, 'turns.jsonl');
@@ -64,6 +65,15 @@ let added = 0;
 let good = 0;
 for (const dir of dirs) {
   const meta = JSON.parse(readFileSync(join(dir, 'meta.json'), 'utf8'));
+  const refused = excludedSourceReason(meta.source ?? meta.sourceId);
+  if (refused) {
+    console.error(`refused ${dir}: source ${meta.source ?? meta.sourceId} is excluded (${refused})`);
+    process.exit(1);
+  }
+  const thumbsPath = join(dir, 'thumbs.json');
+  const thumbsByTurn = new Map(
+    existsSync(thumbsPath) ? (JSON.parse(readFileSync(thumbsPath, 'utf8')).turns ?? []).map((o) => [o.turn, o]) : []
+  );
   const fcPath = join(dir, 'factcheck.json');
   if (!existsSync(fcPath)) {
     console.error(`no factcheck.json in ${dir}; run npm run fact-check first`);
@@ -89,9 +99,15 @@ for (const dir of dirs) {
     const p0 = t.turnCheck?.p0 ?? [];
     const isGood = fcFlags.length === 0 && p0.length === 0;
     const u = t.writerUsage ?? null;
-    const writerModel = u?.modelId ?? runModel;
+    const writerModel = t.teacher_model ?? u?.modelId ?? runModel;
     const { costUsd, costSource } = turnCost(u);
+    const prov = rowProvenance({
+      teacherModel: writerModel,
+      mode: meta.engineMode,
+      judgeModel: thumbsByTurn.get(t.turn)?.judge_model ?? null,
+    });
     const row = {
+      ...prov,
       pairKey: `${meta.bibleId}:s${meta.seed}:t${t.turn}`,
       lap,
       runId,
@@ -133,6 +149,7 @@ for (const dir of dirs) {
     }
     for (const r of [...(t.sentenceRepairs ?? []), ...(t.answerRepair ? [t.answerRepair] : [])]) {
       const rej = {
+        ...prov,
         pairKey: row.pairKey,
         lap,
         runId,

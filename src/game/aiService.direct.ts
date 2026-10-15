@@ -23,6 +23,7 @@ import {
   stripReasoningBlocks,
 } from './openRouterChat';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
+import { pinnedModel } from './modelIds';
 import { noteWriterRawIssue, noteWriterUsage } from './gmProxy';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
@@ -147,7 +148,7 @@ async function callOpenRouter(
   const tokenProse = !!tokenSchema;
   const base = baseUrl?.trim() || 'https://openrouter.ai/api/v1';
   const url = `${base}/chat/completions`;
-  const modelName = model || 'deepseek/deepseek-chat';
+  const modelName = pinnedModel('openrouter', model);
   logRequest('OpenRouter', url, modelName, systemPrompt.length, prompt.length);
   const start = performance.now();
   const post = (withSchema: boolean) =>
