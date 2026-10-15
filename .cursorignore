@@ -27,3 +27,24 @@ public/themes/
 *.log
 wof/
 .bolt/
+
+# Added 15 Oct 13:05 (Grok Bot): temp dirs/files, build output, datasets, backups, logs
+.tmp-*/
+.tmp-*
+**/.tmp-*
+build/
+**/build/
+out/
+coverage/
+.vercel/
+data/
+**/datasets/
+**/*.jsonl
+**/*backup*
+**/*.orig
+**/*.log.*
+**/logs/
+*.mp4
+*.webm
+*.pdf
+*.cbz
