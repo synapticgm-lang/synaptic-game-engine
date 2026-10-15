@@ -26,6 +26,7 @@ import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
+import { commitDeath, HOURS_LATER } from '../rules/death';
 import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { carriedCoinLb, gainLootMoney, lootMoneyText } from '../rules/coins';
@@ -514,19 +515,17 @@ export function resolveRoundFight(
     ...lost.state,
     roundCombat: null,
     character: { ...next.character, hp: 0, conditions: [...new Set([...(next.character.conditions ?? []), 'Unconscious'])] },
-    deathSaves: dead ? { successes: 0, failures: 3, dead: true } : { successes: 0, failures: 0 },
+    deathSaves: { successes: 0, failures: 0 },
   };
   receipts.push(`Fight: DEFEAT vs ${enc.name} in ${roundsText}. The fight is over: you lost it.`, ...lost.receipts);
   next = pushCombatStateTx(next, `Fight vs ${enc.name}: defeat in ${roundsText}`, enc.name, 'Engine fight');
   if (onRoad) next = settleRoadMeeting(next, 'defeat');
-  const back = dead ? cheatDeath(next, rng) : null;
-  if (back) {
-    receipts.push(...back.receipts);
-    facts.push(back.fact);
-    return { state: back.state, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}`, foeAfter: { ...encNow, phase: 'engaged' } };
-  }
-  facts.push(dead ? 'You are dead.' : `${cap(enc.name)} left you where you fell. You are dying and must fight for breath.`);
-  if (dead) next = endAttunementOnDeath(next);
+  if (dead) {
+    const end = commitDeath(next, 'danger', rng);
+    receipts.push(...end.receipts);
+    facts.push(end.fact);
+    next = end.state;
+  } else facts.push(`${cap(enc.name)} left you where you fell. You are dying and must fight for breath.`);
   return { state: next, receipts, facts: `${OVER_HEAD} ${facts.join(' ')}`, foeAfter: { ...encNow, phase: 'engaged' } };
 }
 
@@ -566,46 +565,6 @@ function roundFeatures(
   return { features, notes, facts };
 }
 
-/** SRD: attunement to an item ends when you die. */
-function endAttunementOnDeath(state: GameState): GameState {
-  if (!(state.inventory ?? []).some((i) => i.attuned)) return state;
-  return { ...state, inventory: (state.inventory ?? []).map((i) => (i.attuned ? { ...i, attuned: false } : i)) };
-}
-
-/** Revivify's diamond (SRD): 300 GP. */
-const REVIVIFY_GP = 300;
-
-/**
- * The table's death rule when the PC would die. SRD: dead. Revive: Revivify brings you back at 1 HP and the
- * diamond's 300 GP comes out of your coin (what you have, up to 300). Mercy: the foes leave you for dead;
- * you wake 1d4 hours later at 1 HP, robbed of half your coin.
- */
-function cheatDeath(state: GameState, rng: Rng): { state: GameState; receipts: string[]; fact: string } | null {
-  const rule = houseRulesOf(state).deathRule;
-  if (rule === 'srd') return null;
-  const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
-  const gold = Math.max(0, state.gold ?? 0);
-  const up: GameState = { ...state, deathSaves: null, character: { ...state.character, hp: 1, conditions } };
-  if (rule === 'revive') {
-    const paid = Math.min(gold, REVIVIFY_GP);
-    return {
-      state: { ...up, gold: gold - paid },
-      receipts: [`Death rule (revive): Revivify — back at 1 HP; ${paid} GP of your coin pays for the diamond`, hpLine(0, 1), ...(paid ? [`Gold Spent: ${paid}`] : [])],
-      fact: 'You died, and someone pulled you back with a Revivify spell; part of your coin paid for the diamond it consumed. You are alive, barely on your feet.',
-    };
-  }
-  const hours = 1 + Math.floor(rng() * 4);
-  const lost = Math.floor(gold / 2);
-  const woke = advanceClock({ ...up, gold: gold - lost }, hours);
-  return {
-    state: woke.state,
-    receipts: [`Death rule (mercy): left for dead — you wake 1d4 (${hours}) hours later at 1 HP`, hpLine(0, 1), ...(lost ? [`Gold Lost: ${lost} (taken while you lay senseless)`] : [])],
-    fact: `You were left for dead. ${HOURS_LATER[hours] ?? 'Hours'} later you wake, alive but weak${lost ? ', and your coin purse is lighter' : ''}.`,
-  };
-}
-
-const HOURS_LATER: Record<number, string> = { 1: 'An hour', 2: 'Two hours', 3: 'Three hours', 4: 'Four hours' };
-
 /** At 0 HP every turn is one death save until three successes, three failures, or a natural 20. */
 export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state, 'death-save')): RoundFightResult | null {
   if (!isDying(state)) return null;
@@ -621,8 +580,8 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
     receipts.push('Heroic Inspiration: spent');
   }
   if (r.state.dead) {
-    const back = cheatDeath(next, rng);
-    if (back) return { state: back.state, receipts: [...receipts, ...back.receipts], facts: `${DYING_HEAD} ${back.fact}`, noTerminal: true };
+    const end = commitDeath(next, 'danger', rng, 'Your breath stops. You are dead.');
+    return { state: end.state, receipts: [...receipts, ...end.receipts], facts: `${DYING_HEAD} ${end.fact}`, noTerminal: true };
   }
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
   let fact: string;
@@ -630,9 +589,6 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
     next = { ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } };
     receipts.push(hpLine(0, 1));
     fact = 'You surge back to consciousness with a gasp and get up, barely on your feet.';
-  } else if (r.state.dead) {
-    next = endAttunementOnDeath(next);
-    fact = 'Your breath stops. You are dead.';
   } else if (r.state.stable) {
     const woke = advanceClock({ ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } }, r.hoursToWake ?? 1);
     next = woke.state;

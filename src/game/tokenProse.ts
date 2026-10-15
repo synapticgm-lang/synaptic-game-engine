@@ -26,6 +26,7 @@ import { weaponsNotInHand } from './infoSheet';
 import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
+import { aimsAtSelf } from './intentParser';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
 import { readWireBeat, refEnumOf, TOKEN_USES, type WireLineFn } from './tokenBeatSchema';
@@ -723,6 +724,7 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
  */
 export function plainLineFactProblem(text: string, state: GameState, packet?: CompletedEventPacket): string | null {
   const handed = handedCountText(state, packet);
+  if (aimsAtSelf(text)) return 'a self-harm method (a Line: fade instead)';
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
   if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
   if (lineHasUnhandedOwnThing(text, handed, state.character?.name)) return 'a thing carried that the scene never handed';
@@ -748,6 +750,7 @@ export function classifyTokenLine(
   pcName?: string
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  if (aimsAtSelf(line.text)) return { ok: false, reason: 'selfHarmMethod' };
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
   if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };

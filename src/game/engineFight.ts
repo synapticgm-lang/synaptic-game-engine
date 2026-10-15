@@ -30,6 +30,8 @@ import { afterFightCompanion, combatCompanion } from './rules/companions';
 import { abilityModOf, realEncounterCr, statBlockForEncounter } from './rules/srdMonsters';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
 import { turnRng } from './seededRng';
+import { parsePlayerIntent } from './intentParser';
+import { commitDeath } from './rules/death';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -97,6 +99,7 @@ export function payEncounterXp(
 }
 
 const FACTS_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once, add no new rounds, the fight is over):';
+const SELF_STOP_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once and fade; describe no method, wound or tool, and no death):';
 
 /** Tabletop shows this many fight rounds roll by roll; the rest are summed on one line. */
 const SHOWN_ROUNDS = 6;
@@ -187,6 +190,10 @@ function forcedFightOpener(flee: boolean, foe: string): string {
 /** Resolve fight / flee / parley on a live (or pending) encounter. Null when the input is not a fight action. */
 export function resolveEngineFight(state: GameState, playerInput: string): EngineFightResult | null {
   const input = (playerInput ?? '').trim();
+  if (parsePlayerIntent(input, state).targetsSelf) {
+    const end = commitDeath(state, 'self', turnRng(state, 'self-stop'));
+    return { state: end.state, receipts: end.receipts, facts: `${SELF_STOP_HEAD} ${end.fact}`, noTerminal: true };
+  }
   const roundMode = usesRoundCombat(state);
   if (roundMode && isDying(state)) return resolveDeathSaveTurn(state);
   // A road meeting's own chip ("Skirt around the camp") takes on that meeting, whatever else waits here.

@@ -66,6 +66,7 @@ import {
   weatherRuleOf,
 } from './rules/travelDay';
 import { modeProfile } from './rules/modeProfile';
+import { commitDeath } from './rules/death';
 import { combineAdv, formatCheckRecord, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
 import { skillCheckMods } from './checkMath';
 import { applyCampRest } from './recoveryRules';
@@ -1501,18 +1502,17 @@ function conSaveMods(state: GameState): CheckMod[] {
   return mods;
 }
 
-/** One more Exhaustion level; at level 6 the character dies (SRD 5.2.1). */
-function exhaust(state: GameState): { state: GameState; line: string } {
+/** One more Exhaustion level; at level 6 the character dies (SRD 5.2.1), settled by the table's death rule. */
+function exhaust(state: GameState, rng: () => number, deathFact: string): { state: GameState; lines: string[]; fact?: string } {
   const before = exhaustionLevel(state.character);
   const character = gainExhaustion(state.character, 1);
   const after = exhaustionLevel(character);
   if (after >= EXHAUSTION_DEATH) {
-    return {
-      state: { ...state, character: { ...character, hp: 0 }, deathSaves: { successes: 0, failures: 3, dead: true } },
-      line: `Exhaustion: level ${before} → ${after}, death`,
-    };
+    const end = commitDeath({ ...state, character }, 'danger', rng, deathFact);
+    const s = end.dead ? end.state : { ...end.state, character: { ...end.state.character, exhaustion: EXHAUSTION_DEATH - 1 } };
+    return { state: s, lines: [`Exhaustion: level ${before} → ${after}, death`, ...end.receipts], fact: end.fact };
   }
-  return { state: { ...state, character }, line: `Exhaustion: level ${before} → ${after}` };
+  return { state: { ...state, character }, lines: [`Exhaustion: level ${before} → ${after}`] };
 }
 
 /**
@@ -1538,7 +1538,8 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
   let s = logged;
   const status: string[] = [];
   let failed = 0;
-  for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after) && !s.deathSaves?.dead; h++) {
+  let deathFact: string | undefined;
+  for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after) && !s.deathSaves?.dead && !deathFact; h++) {
     const rec = resolveCheckRecord({
       label: 'Extended Travel: Constitution save',
       mods: conSaveMods(s),
@@ -1547,16 +1548,15 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
     });
     status.push(formatCheckRecord(rec, s.engineMode));
     if (rec.outcome === 'failure') {
-      const ex = exhaust(s);
+      const ex = exhaust(s, keyedRng(`${key}|death|${since}|${h}`), 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.');
       s = ex.state;
-      status.push(ex.line);
+      status.push(...ex.lines);
+      deathFact = ex.fact;
       failed++;
     }
   }
-  if (s.deathSaves?.dead) {
-    return { state: s, status, facts: ['The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.'], dead: true };
-  }
-  const facts = failed ? ['The forced march wore you down; you are more exhausted than before.'] : [];
+  if (s.deathSaves?.dead) return { state: s, status, facts: [deathFact ?? ''], dead: s.deathSaves.dead };
+  const facts = deathFact ? [deathFact] : failed ? ['The forced march wore you down; you are more exhausted than before.'] : [];
   return { state: s, status, facts };
 }
 
@@ -1718,9 +1718,10 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
         extra.push(`Rations: none — ${days} day${days === 1 ? '' : 's'} without food`);
         facts.push('There was nothing to eat.');
         if (days >= STARVE_DAYS) {
-          const ex = exhaust(s);
+          const ex = exhaust(s, keyedRng(`starve|${s.turn ?? 0}|${days}`), 'Days without food took the last of your strength. You are dead.');
           s = ex.state;
-          extra.push(`Malnutrition: ${ex.line}`);
+          extra.push(`Malnutrition: ${ex.lines[0]}`, ...ex.lines.slice(1));
+          if (ex.fact) facts.push(ex.fact);
         }
       }
     }

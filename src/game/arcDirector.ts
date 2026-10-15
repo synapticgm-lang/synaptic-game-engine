@@ -734,7 +734,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       const m = r.match(/Arc XP: \+(\d+) \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (arc: ${m[2]})`);
       else lines.push(r);
-    } else if (/^(?:Encounter(?: cleared| ended)?|Fight|Loot|XP(?: Gained)?|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title|Companion|Remembered):/.test(r) || SKILL_NOTICE.test(r)) {
+    } else if (/^(?:Encounter(?: cleared| ended)?|Fight|Loot|XP(?: Gained)?|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title|Companion|Remembered|Lifeline):/.test(r) || SKILL_NOTICE.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {

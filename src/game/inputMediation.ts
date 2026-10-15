@@ -5,7 +5,6 @@
 
 import { getDistributionChannel } from './distributionChannel';
 import { type HardRailContext } from './universalHardRails';
-
 export type MediationAction = 'allow' | 'block';
 
 export interface MediationResult {
@@ -21,9 +20,6 @@ const INJECTION =
 
 const REAL_SELF_HARM =
   /\b(i\s+want\s+to\s+die|suicid(?:e|al)|self[- ]?harm|cut\s+myself|end\s+my\s+life|kill\s+myself)\b/i;
-
-const GAME_PERM_SELF_KILL =
-  /\b((?:my\s+character\s+)?(?:kills?\s+(?:them(?:selves)?|himself|herself)|commits?\s+suicide|ends?\s+(?:the\s+)?(?:game|campaign|run)|jumps?\s+(?:off|into).{0,40}(?:die|death|kill)|drinks?\s+poison.{0,30}(?:die|suicide)|permanent(?:ly)?\s+(?:die|death|suicide))\b)/i;
 
 const REAL_THREAT =
   /\b(i(?:'m|\s+am)\s+going\s+to\s+(kill|murder|shoot|bomb)\s+(?:my\s+)?(?:boss|teacher|neighbor|wife|husband|ex)\b|doxx?\b|social\s+security\s+number)\b/i;
@@ -110,9 +106,9 @@ export function mediatePlayerInput(
     };
   }
 
+  // Real-person layer only. A character's self-aimed act is the engine's (commitDeath 'self'), never blocked here.
   const framedAsCharacter =
-    /\b(my\s+character|in[- ]?game|in\s+the\s+story|as\s+a\s+game\s+action)\b/i.test(text)
-    || GAME_PERM_SELF_KILL.test(text);
+    /\b(my\s+character|in[- ]?game|in\s+the\s+story|as\s+a\s+game\s+action)\b/i.test(text);
   if (REAL_SELF_HARM.test(text) && !framedAsCharacter) {
     return {
       action: 'block',
@@ -121,19 +117,6 @@ export function mediatePlayerInput(
       crisisResources: true,
       playerMessage:
         "If you're going through a tough time, you can reach out: 988 (US) or findahelpline.com. Your character takes a moment to steady themselves.",
-    };
-  }
-
-  if (GAME_PERM_SELF_KILL.test(text) || (REAL_SELF_HARM.test(text) && framedAsCharacter)) {
-    if (ctx?.hasRevivePath) {
-      return { action: 'allow', text };
-    }
-    return {
-      action: 'block',
-      text,
-      reason: 'permanent_self_kill',
-      playerMessage:
-        'You cannot end the game by killing yourself. Without a revive (item, shrine, or companion who can bring you back), that path is closed — try another action.',
     };
   }
 

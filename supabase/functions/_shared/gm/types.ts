@@ -354,6 +354,8 @@ export interface Character {
   casting?: CastingState;
   /** Tabletop Heroic Inspiration held (one at a time). */
   heroicInspiration?: boolean;
+  /** LitRPG System lifeline / Story RPG fate charm: a self-caused death never ends the character (rules/death). */
+  lifeline?: string;
   /** Tabletop class feature uses spent since they last came back (rules/classFeatures). */
   featureUses?: Record<string, number>;
   entities?: SummonEntity[];

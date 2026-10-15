@@ -4,6 +4,7 @@ import { formatCampaignStoryName } from '@/data/campaigns';
 import { emptyWorldLedger } from './worldSim';
 import { syncContainerOccupancy } from './inventory';
 import { fitKitToPocket, pocketOnlyKit, rollSystemHousing } from './systemHousing';
+import { lifelineFor } from './rules/death';
 
 /** Bump this to retire every older local/cloud/Drive save after a playtest wipe. */
 export const CURRENT_SAVE_VERSION = 2;
@@ -107,6 +108,7 @@ export function createInitialState(
       // later <visual-update> supplies the canonical physical description; image prompts
       // safely fall back to bio/name while it is empty.
       appearance: '',
+      ...(lifelineFor(engineMode) ? { lifeline: lifelineFor(engineMode) } : {}),
     },
     inventory: kit.inventory,
     containers: kit.containers,

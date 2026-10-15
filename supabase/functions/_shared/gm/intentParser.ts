@@ -45,6 +45,16 @@ export interface PlayerIntent {
   label: string;
   targets: string[];
   itemName?: string;
+  /** The act's target is the actor's own body (Order S): the engine settles it as a self cause, never a death. */
+  targetsSelf?: boolean;
+}
+
+/** The act aimed at its actor, any person: a harm verb whose object is the actor ("cast Cure Wounds on myself" has none). */
+const SELF_AIMED =
+  /\b(?:turn|aim|drive|plunge|fall)(?:s|ed|ing)?\b[^.!?]{0,30}\b(?:on|at|into|against|upon)\s+(?:my|your|him|her|them)sel(?:f|ves)\b|\b(?:kill|stab|cut|hang|drown|burn|poison|shoot|slash|impale|end)(?:s|ed|ing)?\s+(?:my|your|him|her|them)sel(?:f|ves)\b(?!\s+(?:free|loose|off|out|down))|\blets?\s+(?:it|the\s+(?:fire|flames?|water|sea|river|fall|cold|dark|blade))\s+(?:take|have|claim|consume|kill|end)\s+(?:me|you|him|her|them)\b|\b(?:open|slit|cut)(?:s|ting)?\s+(?:my|your|his|her|their)\s+(?:own\s+)?(?:wrists?|throat|veins)\b|\bso\s+(?:that\s+)?(?:it\s+all|everything)\s+ends\b/i;
+
+export function aimsAtSelf(text: string): boolean {
+  return SELF_AIMED.test(text ?? '');
 }
 
 export interface GroundedPlayerAction {
@@ -219,6 +229,11 @@ export function primaryActionClause(input: string): string {
  * Used for Warden rules and turn summaries — not a full command language yet.
  */
 export function parsePlayerIntent(input: string, _state?: GameState): PlayerIntent {
+  const intent = readIntent(input);
+  return aimsAtSelf(input) ? { ...intent, targetsSelf: true } : intent;
+}
+
+function readIntent(input: string): PlayerIntent {
   const text = primaryActionClause(input);
   if (isRoomLayoutExploreAsk(text) || isRoomLayoutExploreAsk(input)) {
     return { kind: 'observe', label: 'Observe', targets: [] };
