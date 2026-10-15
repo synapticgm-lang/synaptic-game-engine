@@ -25,9 +25,24 @@ export const MANUS_SP_QUESTS: StarterQuest[] = [
 ];
 
 export const MANUS_CK_NPCS: KeyNPC[] = [
-  { id: 'ck-npc-7', name: 'Dain Holt', role: 'gatekeeper', disposition: 'neutral', description: 'Greyhollow watch captain. Wants eyes on the keep gate, not boasts in the inn.', hooks: ['Ask for the watch job', 'Report the broken chain'], aliases: ['Dain', 'Captain Dain'] },
-  { id: 'ck-npc-8', name: 'Elara Moss', role: 'witness', disposition: 'friendly', description: 'Inn regular who heard Oskar first and will not pretend it is weather.', hooks: ['Ask what the inn will not say', 'Walk her to the church'], aliases: ['Elara'] },
-  { id: 'ck-npc-9', name: 'Bram Coyle', role: 'informant', disposition: 'ambiguous', description: 'Coach-yard hand who saw the last footprints and sold the story twice.', hooks: ['Buy the second version', 'Confront the lie'], aliases: ['Bram'] },
+  { id: 'ck-npc-7', name: 'Dain Holt', role: 'gatekeeper', disposition: 'neutral', description: 'Greyhollow watch captain. Wants eyes on the keep gate, not boasts in the inn.', hooks: ['Ask for the watch job', 'Report the broken chain'], aliases: ['Dain', 'Captain Dain'],
+    motiveLines: [
+      'I need someone steady watching that keep gate',
+      'Boasting is cheap, and I want people who will actually stand a watch',
+      'I would keep this town safe without frightening it half to death',
+    ] },
+  { id: 'ck-npc-8', name: 'Elara Moss', role: 'witness', disposition: 'friendly', description: 'Inn regular who heard Oskar first and will not pretend it is weather.', hooks: ['Ask what the inn will not say', 'Walk her to the church'], aliases: ['Elara'],
+    motiveLines: [
+      'I heard what Oskar said, and I will not pretend it was nothing',
+      'I want someone to listen to what the inn will not say out loud',
+      'Folk keep telling me to be quiet, and I am tired of it',
+    ] },
+  { id: 'ck-npc-9', name: 'Bram Coyle', role: 'informant', disposition: 'ambiguous', description: 'Coach-yard hand who saw the last footprints and sold the story twice.', hooks: ['Buy the second version', 'Confront the lie'], aliases: ['Bram'],
+    motiveLines: [
+      'I saw what I saw, and a story like that is worth something',
+      'I want to be paid for what I know, same as anyone',
+      'I keep my eyes open in the coach yard, and my prices fair enough',
+    ] },
 ];
 
 export const MANUS_CK_QUESTS: StarterQuest[] = [

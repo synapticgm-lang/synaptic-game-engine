@@ -11,6 +11,7 @@ import { seedBibleNpcRoster } from './npcMemory';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { resolveOpeningHookPick } from './openingEstablishment';
 import { fitKitToHousing } from './defaults';
+import { withMotiveLines } from './npcSheet';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -206,6 +207,10 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
       dirty: true,
       notes: [...result.notes, 'leftover pocket: body bag removed, satchel items stored in the pocket'],
     };
+  }
+  const voiced = withMotiveLines(result.state, resolveActiveCampaignBible(result.state));
+  if (voiced !== result.state) {
+    result = { ...result, state: voiced, dirty: true, notes: [...result.notes, 'npc motive lines seeded'] };
   }
   const errors = applyErrorRepairs(result.state);
   if (errors.dirty) {

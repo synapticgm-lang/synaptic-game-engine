@@ -117,6 +117,12 @@ const cursedKeepBase: CampaignBible = {
         'Moral anchor: Aldous will oppose reckless or evil actions, providing ethical counterweight',
         'Stakes: Aldous is being targeted by the entity in the keep — if he breaks, the town loses its spiritual protection',
       ],
+      motiveLines: [
+        'I only want this town to sleep easy again, myself included',
+        'Something is wrong here, and I have been trying to carry it alone',
+        'My flock needs me whole, and I am not sure how much longer I can be',
+        'Whatever is stirring at the keep, I would see it put back to rest',
+      ],
     },
     {
       id: 'ck-npc-2',
@@ -130,6 +136,11 @@ const cursedKeepBase: CampaignBible = {
         'Inciting incident: Oskar approaches the player in the tavern and begs for help finding Lina',
         'Emotional stakes: Lina\'s fate is the player\'s first moral test — can they save her, and at what cost?',
         'Access: Oskar has already broken the keep\'s gate chain — he can guide the player to the entrance',
+      ],
+      motiveLines: [
+        'I want my daughter back, that is all I want',
+        'Lina is out there somewhere, and I will not stop looking',
+        'Help me find her, and I will owe you everything I have',
       ],
     },
     {
@@ -145,6 +156,11 @@ const cursedKeepBase: CampaignBible = {
         'Political arc: the player can earn Helga\'s cooperation by proving the threat is real and manageable',
         'Secret: Helga\'s grandmother was in the keep the night of the Vanishing — she was the only servant who didn\'t disappear, because she was sent home early for being ill',
       ],
+      motiveLines: [
+        'I want this town calm, and I mean to keep it that way',
+        'Panic would empty this town in a night, and I will not allow it',
+        'There is a sensible answer for all of this, and I would rather we found it quietly',
+      ],
     },
     {
       id: 'ck-npc-4',
@@ -158,6 +174,11 @@ const cursedKeepBase: CampaignBible = {
         'Combat ally: Greta joins the player as a companion for keep exploration and forest encounters',
         'Tracking: Greta can track the missing girl\'s movements and the undead\'s trail',
         'Trust arc: Greta has been watching the keep for weeks — she has observations the player needs',
+      ],
+      motiveLines: [
+        'I want to know what is getting at the livestock, because I have watched for weeks and seen nothing',
+        'Somebody in this town has to do something, and it may as well be me',
+        'If something is out there, I want it tracked down before it takes anyone else',
       ],
     },
     {
@@ -186,10 +207,36 @@ const cursedKeepBase: CampaignBible = {
         'Trust arc: Mira reveals the journals only if the player demonstrates competence and discretion',
         'Alchemical aid: Mira can brew potions, antidotes, and holy water for the keep expedition',
       ],
+      motiveLines: [
+        'I keep the town in remedies, and I keep my own counsel',
+        'I have been waiting a long time for someone I could trust',
+        'Ask me the right questions and you may get answers, but not before',
+      ],
     },
-    { id: 'ck-npc-torin', name: 'Torin', role: 'innkeeper', disposition: 'neutral', description: 'Greyhollow keeper', hooks: [], aliases: [] },
-    { id: 'ck-npc-vess', name: 'Vess', role: 'gravedigger', disposition: 'neutral', description: 'Village gravedigger', hooks: [], aliases: [] },
-    { id: 'ck-npc-kael', name: 'Kael', role: 'traveler', disposition: 'neutral', description: 'Fellow traveler', hooks: [], aliases: [] },
+    {
+      id: 'ck-npc-torin', name: 'Torin', role: 'innkeeper', disposition: 'neutral', description: 'Greyhollow keeper', hooks: [], aliases: [],
+      motiveLines: [
+        'I want a full common room and no trouble in it',
+        'Folk come to my inn to forget their worries, and I would like to keep it that way',
+        'Pay your way and keep the peace, and you will have no quarrel with me',
+      ],
+    },
+    {
+      id: 'ck-npc-vess', name: 'Vess', role: 'gravedigger', disposition: 'neutral', description: 'Village gravedigger', hooks: [], aliases: [],
+      motiveLines: [
+        'I want the dead to stay where I put them',
+        'Somebody has been disturbing my graves, and I want it stopped',
+        'I dig honest graves, and I want them left alone',
+      ],
+    },
+    {
+      id: 'ck-npc-kael', name: 'Kael', role: 'traveler', disposition: 'neutral', description: 'Fellow traveler', hooks: [], aliases: [],
+      motiveLines: [
+        'I am only passing through, looking for the next road',
+        'A little company on the road would not go amiss',
+        'I want to be well clear of here before anything goes wrong',
+      ],
+    },
   ],
 
   starterQuests: [

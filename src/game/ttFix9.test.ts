@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import type { GameState, Quest } from './types';
 import { commitTurnRecord } from './stateTx';
-import { sheetAnswerLine } from './npcSheet';
+import { motiveAnswer, motiveLinesFor } from './npcSheet';
 
 function ck(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'dnd') as GameState;
@@ -75,7 +75,7 @@ describe('1 — engine grants reach STATUS from the record', () => {
   });
 });
 
-describe('2 — the sheet answer answers what was asked', () => {
+describe('2 — the engine answer is a spoken motive line (tt-build-npcmotive replaced sheetAnswerLine)', () => {
   const oda = {
     npcId: 'oda',
     npcName: 'Oda Thatch',
@@ -85,18 +85,14 @@ describe('2 — the sheet answer answers what was asked', () => {
     aliases: [],
     location: 'Greyhollow Church',
     sheet: { job: 'quest patron', motive: 'Protect the last family asset', fear: '', speech: '', secret: '', place: 'town' },
+    motiveLines: motiveLinesFor('Protect the last family asset'),
   };
   const state = ck({ npcMemories: [oda] as unknown as GameState['npcMemories'] });
 
-  it('a want question gets the sheet want, never the engine role', () => {
-    const line = sheetAnswerLine(state, 'Oda Thatch', [], 'Ask Oda Thatch what they want');
-    expect(line).toBe('"I want to protect the last family asset," Oda Thatch said.');
-    expect(sheetAnswerLine(state, 'Oda Thatch', [], 'Talk to Oda Thatch')).not.toMatch(/quest patron/);
-  });
-
-  it('"who are you" gets the name; said again it has nothing more', () => {
-    expect(sheetAnswerLine(state, 'Oda Thatch', [], 'Who are you?')).toBe(`"I'm Oda Thatch," Oda Thatch said.`);
-    expect(sheetAnswerLine(state, 'Oda Thatch', ["I'm Oda Thatch"], 'Who are you?')).toBe('"I have nothing more to tell you," Oda Thatch said.');
+  it('speaks the sheet motive as a line, never the note or the engine role', () => {
+    const line = motiveAnswer(state, ['Oda Thatch'])!.line;
+    expect(line).toBe('"What little my house still owns, I will not let slip away," Oda Thatch said.');
+    expect(line).not.toMatch(/quest patron|protect the last family asset/i);
   });
 
   it('a road-meeting stranger says the meeting want, with an article', () => {
@@ -105,6 +101,6 @@ describe('2 — the sheet answer answers what was asked', () => {
         encounter: { kind: 'meeting', level: 1, stretch: 1, dangerous: false, want: 'word of someone gone missing', distanceFt: 40 },
       } as unknown as GameState['journey'],
     });
-    expect(sheetAnswerLine(road, 'stranger', [], 'Greet the stranger')).toBe('"I want word of someone gone missing," the stranger said.');
+    expect(motiveAnswer(road, ['stranger'])!.line).toBe('"I want word of someone gone missing," the stranger said.');
   });
 });

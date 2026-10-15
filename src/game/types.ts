@@ -1545,6 +1545,10 @@ export interface NpcMemory {
   location?: string;
   /** Generated townsfolk only: code-picked sheet, saved on first meet (see npcSheet.ts). */
   sheet?: NpcSheet;
+  /** 3-5 things this person says about what they want, in their own voice. Seeded with the sheet or the bible roster row. */
+  motiveLines?: string[];
+  /** Motive lines already spoken, least recent first. */
+  motiveUsed?: string[];
   stance?: NpcStance;
 }
 

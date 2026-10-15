@@ -20,6 +20,8 @@ export interface KeyNPC {
   description: string;
   hooks: string[];
   aliases?: string[];
+  /** 3-5 spoken lines about what this person wants, in their own voice (first person, no closing stop). */
+  motiveLines?: string[];
 }
 
 /** One possible murderer. Code picks one at New Game; the writer must honor the stamp. */

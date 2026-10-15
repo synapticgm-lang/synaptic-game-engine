@@ -45,7 +45,7 @@ import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isRoadLabel, writerEngineResult } from './travelJourney';
 import { isGiverName } from './questGiver';
-import { sheetAnswerLine } from './npcSheet';
+import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
 
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
@@ -410,22 +410,24 @@ export async function repairMissingAnswer(
   }
   const fact = check.engineFact;
   const missing = { sentence: '(no answer on the page)', flag: MISSING_ANSWER_PROBLEM, fact };
-  // Only a backed line may be quoted. With nothing on record for anyone here, the engine answers from the sheet.
-  const backed = new Map(here.map((p) => [p, backedAnswerFacts(check.state, p)] as const).filter(([, f]) => f.length));
+  // Only a backed line may be quoted: what is on record for them, and their own motive lines.
+  const backed = new Map(here.map((p): [string, string[]] => [p, [...backedAnswerFacts(check.state, p), ...motiveLinesOf(check.state, p)]]).filter(([, f]) => f.length));
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
-  if (!backed.size) return landAnswer(turn, check, missing, sheetAnswerLine(check.state, here[0]!, said, check.playerInput));
+  if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: 'nothing on record for anyone here' } };
   const speakers = [...backed.keys()];
   const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
-  if (!opts.repair) return { ...turn, answerRepair: { ...missing, bug: 'no repair path' } };
-  // One repair request per turn: the sentence repair already sent it.
-  if (turn.repairs?.some((r) => !r.bug?.startsWith('unlocated'))) return { ...turn, answerRepair: { ...missing, bug: 'one repair per turn: the sentence repair sent it' } };
-  const raw = await opts.repair(request).catch(() => '');
+  const sent = !!opts.repair && !turn.repairs?.some((r) => !r.bug?.startsWith('unlocated'));
+  const raw = sent ? await opts.repair!(request).catch(() => '') : '';
   const line = raw.trim() ? repairReplyLines(raw, check, packet, 1)?.[0] : undefined;
   const quoted = line?.match(/["“]([^"“”]{3,})["”]/)?.[1] ?? '';
   const bare = line?.replace(/["“][^"“”]*["”]/g, ' ') ?? '';
   const pc = (check.state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
   const pcSpeaks = new RegExp(`^\\W*(?:you${pc.length > 1 ? `|${escRe(pc)}` : ''})\\b`, 'i').test(bare);
-  const bug = !raw.trim()
+  const bug = !opts.repair
+    ? 'no repair path'
+    : !sent
+    ? 'one repair per turn: the sentence repair sent it'
+    : !raw.trim()
     ? 'repair reply empty'
     : !line
       ? 'repair reply was not one sentence'
@@ -444,13 +446,11 @@ export async function repairMissingAnswer(
                   ?? plainLineFactProblem(line, check.state, packet);
                 return still ? `repair failed the gate: ${still}` : '';
               })();
-  if (bug) {
-    return {
-      ...turn,
-      answerRepair: { ...missing, ...(line ? { repaired: line } : {}), bug, ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}) },
-    };
-  }
-  return landAnswer(turn, check, missing, line!);
+  if (!bug) return landAnswer(turn, check, missing, line!);
+  const answerRepair = { ...missing, ...(line ? { repaired: line } : {}), bug, ...(!line && raw.trim() ? { reply: raw.trim().slice(0, 600) } : {}) };
+  // The writer's answer failed: the engine lands one of the person's own motive lines.
+  const own = motiveAnswer(check.state, speakers);
+  return own ? { ...landAnswer(turn, check, answerRepair, own.line), speech: turn.speech && [...turn.speech, own.spoken] } : { ...turn, answerRepair };
 }
 
 /** The answer line lands after the beat's first sentence. */

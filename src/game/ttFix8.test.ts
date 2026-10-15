@@ -17,6 +17,7 @@ import { checkActionFollowed } from './turnCheck';
 import { commitTravel, journeyPads } from './travelJourney';
 import { settingScope } from './rules/modeProfile';
 import type { CompletedEventPacket } from './completedEventPacket';
+import { motiveLinesFor } from './npcSheet';
 
 function ck(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'dnd') as GameState;
@@ -50,8 +51,8 @@ describe('1 — step chips come from the step record', () => {
 });
 
 describe('2 — a person with no backed lines still answers', () => {
-  it('Rosel Coyne answers from her own sheet, and nothing is asked of the writer', async () => {
-    const rosel = { npcId: 'rosel', npcName: 'Rosel Coyne', disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], location: 'Greyhollow Church', sheet: { job: 'artisan', motive: 'Keep loved ones safe' } };
+  it('Rosel Coyne: the writer is asked with her motive lines; when it fails she says one herself', async () => {
+    const rosel = { npcId: 'rosel', npcName: 'Rosel Coyne', disposition: 'neutral', facts: [], lastSeenTurn: 0, aliases: [], location: 'Greyhollow Church', sheet: { job: 'artisan', motive: 'Keep loved ones safe' }, motiveLines: motiveLinesFor('Keep loved ones safe') };
     const state = ck({ currentLocation: 'Greyhollow Church', npcMemories: [rosel] as unknown as GameState['npcMemories'] });
     const packet = { refEnum: [{ id: 'r1', klass: 'person', display: 'Rosel Coyne' }] } as unknown as CompletedEventPacket;
     const playerInput = 'Talk to Rosel Coyne';
@@ -66,9 +67,10 @@ describe('2 — a person with no backed lines still answers', () => {
         return '';
       },
     });
-    expect(asked).toEqual([]);
-    // tt-fix-9: a talk is answered with what she wants, never her engine role.
-    expect(out.prose).toContain(`"I want to keep loved ones safe," Rosel Coyne said.`);
+    expect(asked).toHaveLength(1);
+    expect(asked[0]).toContain("Rosel Coyne: I just want the people I care about kept out of harm's way");
+    // tt-build-npcmotive: the writer's reply was empty, so the engine lands her own spoken motive line.
+    expect(out.prose).toContain(`"I just want the people I care about kept out of harm's way," Rosel Coyne said.`);
   });
 });
 

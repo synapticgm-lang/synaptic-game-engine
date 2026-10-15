@@ -4,6 +4,8 @@
  * fear and speech only. Authored people (the Manus roster, bible keyNPCs) never get one.
  */
 import archetypeData from '../../docs/research/manus-next-stage/npc-personalities.json';
+import motiveLineData from '../data/npcMotiveLines.json';
+import type { CampaignBible } from '../data/campaigns/types';
 import {
   MANUS_CK_NPCS,
   MANUS_SC_NPCS,
@@ -15,8 +17,8 @@ import type { GameState, NpcMemory, NpcSheet } from './types';
 import type { NpcRole } from './npcRoleRegistry';
 import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
 import { createHashRng } from './seededRng';
-import { hallTalkTopic } from './openingEstablishment';
 import { roadMeetingWant } from './travelJourney';
+import type { SpokenLine } from './tokenProse';
 
 type Archetype = {
   id: string;
@@ -194,8 +196,9 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     campaignId: state.campaignBibleId,
     roleHint: memory?.roleHint,
   });
+  const motiveLines = motiveLinesFor(sheet.motive);
   if (memory) {
-    return { ...state, npcMemories: list.map((m) => (m === memory ? { ...m, sheet } : m)) };
+    return { ...state, npcMemories: list.map((m) => (m === memory ? { ...m, sheet, motiveLines } : m)) };
   }
   const fresh: NpcMemory = {
     npcId: `town-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
@@ -205,28 +208,66 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     lastSeenTurn: state.turn,
     met: true,
     sheet,
+    motiveLines,
   };
   return { ...state, npcMemories: [...list, fresh] };
 }
 
-/**
- * tt-fix-8 / tt-fix-9 — the answer a person gives when nothing else about them is on record, to what was asked.
- * "Who are you" gets a named person's name. Anything else gets what they want: their sheet's motive, else what the
- * road meeting they stand for wants. The sheet's job is an engine role ("quest patron") and is never spoken.
- * Said once; after that they have nothing more to tell. An unnamed person ("stranger") is "the stranger".
- */
-export function sheetAnswerLine(state: GameState, name: string, said: string[], playerInput = ''): string {
+const MOTIVE_LINES = motiveLineData as Record<string, string[]>;
+
+/** The spoken lines of the archetype the sheet's motive came from, the motive's own line first. */
+export function motiveLinesFor(motive: string): string[] {
+  const owner = ARCHETYPES.find((a) => a.motivations.includes(motive));
+  const lines = owner ? MOTIVE_LINES[owner.id] ?? [] : [];
+  const own = lines[owner?.motivations.indexOf(motive) ?? -1];
+  return own ? [own, ...lines.filter((l) => l !== own)] : lines;
+}
+
+function memoryOf(state: GameState, name: string): NpcMemory | undefined {
   const key = name.trim().toLowerCase();
-  const memory = (state.npcMemories ?? []).find(
+  return (state.npcMemories ?? []).find(
     (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),
   );
-  const named = /^[A-Z]/.test(name.trim());
-  const motive = memory?.sheet?.motive?.trim();
+}
+
+/** What this person may say about what they want: their saved motive lines, else the want of the road meeting they stand for. */
+export function motiveLinesOf(state: GameState, name: string): string[] {
+  const saved = memoryOf(state, name)?.motiveLines ?? [];
+  if (saved.length) return saved;
   const meeting = roadMeetingWant(state.journey, name);
-  const want = motive ? `I want to ${motive.charAt(0).toLowerCase()}${motive.slice(1)}` : meeting ? `I want ${meeting}` : '';
-  const own = hallTalkTopic(playerInput) === 'who' && named ? `I'm ${name.trim()}` : want || "I'd rather not say";
-  const words = !said.some((s) => s.includes(own)) ? own : 'I have nothing more to tell you';
-  return `"${words}," ${named ? name : `the ${name}`} said.`;
+  return meeting ? [`I want ${meeting}`] : [];
+}
+
+/**
+ * Only when the writer's answer repair fails: the first person here with motive lines says the one they have
+ * not said, else the one said least recently (`motiveUsed`, kept by the harvest). Nobody with lines: no answer.
+ */
+export function motiveAnswer(state: GameState, names: string[]): { line: string; spoken: SpokenLine } | null {
+  for (const name of names) {
+    const lines = motiveLinesOf(state, name);
+    if (!lines.length) continue;
+    const used = memoryOf(state, name)?.motiveUsed ?? [];
+    const words = lines.find((l) => !used.includes(l)) ?? used.find((l) => lines.includes(l)) ?? lines[0]!;
+    const speaker = name.trim();
+    const tag = /^(?:[A-Z]|(?:a|an|the)\s)/.test(speaker) ? speaker : `the ${speaker}`;
+    return { line: `"${words}," ${tag} said.`, spoken: { speakerId: memoryOf(state, name)?.npcId ?? '', speaker, words } };
+  }
+  return null;
+}
+
+/** Load: a saved person with no motive lines gets them from their sheet, or from their bible roster entry. */
+export function withMotiveLines(state: GameState, bible: CampaignBible | null | undefined): GameState {
+  let changed = false;
+  const npcMemories = (state.npcMemories ?? []).map((m) => {
+    if (m.motiveLines?.length) return m;
+    const names = [m.npcName, ...(m.aliases ?? [])].map((n) => n.trim().toLowerCase());
+    const entry = bible?.keyNPCs.find((n) => [n.name, ...(n.aliases ?? [])].some((x) => names.includes(x.trim().toLowerCase())));
+    const motiveLines = m.sheet ? motiveLinesFor(m.sheet.motive) : entry?.motiveLines ?? [];
+    if (!motiveLines.length) return m;
+    changed = true;
+    return { ...m, motiveLines };
+  });
+  return changed ? { ...state, npcMemories } : state;
 }
 
 /** What the writer may see: name, job, one motive, one fear, one way of speaking. Blank parts are left out. */

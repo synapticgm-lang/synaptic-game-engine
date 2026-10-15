@@ -425,6 +425,7 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
       aliases: npc.aliases ?? [],
       met: false,
       present: false,
+      ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
     });
   }
   const next = Array.from(map.values())
@@ -808,11 +809,18 @@ export function recordSpokenTopics(
       if (!said.some((s) => s.line === line)) said.push({ topic, turn, line });
     }
     return {
-      ...m,
+      ...noteMotiveUse(m, spoken.map((q) => q.words)),
       said: said.slice(-MAX_SAID_PER_NPC),
       completedTopics: asked.length ? uniqueTopics([...(m.completedTopics ?? []), ...asked]) : m.completedTopics,
     };
   });
+}
+
+/** A motive line this person just said moves to the back of `motiveUsed`, so the next pick is the least recent. */
+function noteMotiveUse(m: NpcMemory, words: string[]): NpcMemory {
+  const spoken = (m.motiveLines ?? []).filter((l) => words.some((w) => w.trim().toLowerCase() === l.toLowerCase()));
+  if (!spoken.length) return m;
+  return { ...m, motiveUsed: [...(m.motiveUsed ?? []).filter((l) => !spoken.includes(l)), ...spoken] };
 }
 
 /** Each speech line goes to the person its declared speaker names, when that person is here and the words made the page. */
@@ -850,7 +858,7 @@ function recordSpeechLines(
       if (!said.some((s) => s.line === line)) said.push({ topic, turn, line });
     }
     return {
-      ...m,
+      ...noteMotiveUse(m, lines),
       said: said.slice(-MAX_SAID_PER_NPC),
       completedTopics: asked.length ? uniqueTopics([...(m.completedTopics ?? []), ...asked]) : m.completedTopics,
     };
