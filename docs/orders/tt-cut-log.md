@@ -330,3 +330,7 @@ Net in this file: lines 271 -> 236, regex 13 -> 11, fns 40 -> 31.
 5. **`package.json` line 44** - `"languagetool-api": "^1.1.2"`, and its tree in `package-lock.json` (`npm uninstall languagetool-api`).
 6. **`src/legal/credits.ts` lines 189-195** - the `languagetool-api` (BSD-2-Clause) credits row. The library is no longer shipped.
 7. **`src/game/ttCoinCredits.test.ts` line 104** - `expect(rows.find((r) => r.work === 'languagetool-api')?.license).toBe('BSD-2-Clause')`. Dropped with the row (John 12:47).
+
+## q31-F clock and light (Order F)
+
+1. **`src/game/engineFactPatterns.ts` lines 19-21 and 36-37 (at `33477431`)** - the `NUM` word alternation, the `DURATION` regex built from it, and the `travelRecordRead` branch that flagged any narrated span ("half an hour", "two hours") whenever the turn's engine fact held a clock or travel record. What it did: read a span the world clock itself recorded ("+30 min" told as "half an hour") as the travel record read aloud, so the sentence repair cut the line (m52, s83 T8). Deleted, no replacement: the record readouts (legs, "the journey took…", "travelled for N hours", "part of the travel") stay owned by `TRAVEL_RECORD`, shared by the game gate and `scripts/factCheck.mjs`. The `engineResult` parameter stays (now unused) so no caller changes.

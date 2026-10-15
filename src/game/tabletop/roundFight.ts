@@ -278,14 +278,16 @@ function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: '
 }
 
 /** The fight's light on STATUS when the place is dark: whose light, and who is Blinded (SRD Vision and Light). */
-function fightLightNote(light: SceneLight, enc: ActiveEncounter, blocks: Record<string, StatBlock>): string {
+function fightLightNote(light: SceneLight, enc: ActiveEncounter, setup: FoeSetup): string {
   const head = `Light: darkness ${light.why}`;
   if (light.lit) return `${head} — your ${light.lit} lights the fight`;
-  const block = Object.values(blocks)[0];
+  const block = Object.values(setup.blocks)[0];
   const foeSees = !!block?.darkvision;
   const you = light.seen === 'dark' ? 'you are Blinded (your attacks Disadvantage, attacks on you Advantage)' : 'you see by Darkvision';
-  const many = (enc.count ?? 1) > 1;
-  const them = foeSees ? `${enc.name} ${many ? 'see' : 'sees'} by Darkvision` : `${enc.name} ${many ? 'are' : 'is'} Blinded`;
+  // The foes as the fight's own log names them: one SRD foe by its stat-block name, a group by the encounter.
+  const many = setup.combat.foes.length > 1;
+  const who = many ? enc.name : foeIdentity(enc, block, 1).statusName(0);
+  const them = foeSees ? `${who} ${many ? 'see' : 'sees'} by Darkvision` : `${who} ${many ? 'are' : 'is'} Blinded`;
   return `${head} — ${you}; ${them}`;
 }
 
@@ -348,7 +350,7 @@ export function resolveRoundFight(
   if (!pc) return null;
   const house = houseRulesOf(working);
   const started = live ? null : startCombat(enc, pc, rng, opts.surprised ?? null, house, working.character.level || 1);
-  if (started && light.ambient === 'dark') started.notes.push(fightLightNote(light, enc, started.blocks));
+  if (started && light.ambient === 'dark') started.notes.push(fightLightNote(light, enc, started));
   const setup = live ? resumeCombat(enc, live) : started!;
   const asked = classifyRoundAction(input);
   // Facing a foe ("Face the thugs", a road meeting's fight chip) opens the fight with an attack.

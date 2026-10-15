@@ -16,10 +16,6 @@ export const WORN_OR_BODY =
 /** A handed bag covers its other names. */
 export const BAG_WORD = /^(?:pack|packs|backpack|satchel|knapsack|rucksack)$/;
 
-const NUM = '(?:\\d+|an?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|forty-five|fifty|sixty|ninety|several|a few|half an?|a quarter of an?|another)';
-/** A clock span the engine's travel record holds ("two hours", "half an hour", "thirty minutes"). */
-const DURATION = new RegExp(`\\b${NUM}\\s+(?:more\\s+)?(?:minutes?|hours?)\\b`, 'i');
-
 /** Leg counts and trip durations are the travel record; the road itself is the story. */
 export const TRAVEL_RECORD: RegExp[] = [
   /\blegs? (?:one|two|three|four|\d+)(?: of (?:one|two|three|four|\d+))?\b/i,
@@ -30,11 +26,9 @@ export const TRAVEL_RECORD: RegExp[] = [
   /\b(?:half|part) of the travel\b/i,
 ];
 
-export function travelRecordRead(sentence: string, engineResult: string): boolean {
-  const s = narrationOf(sentence);
-  if (TRAVEL_RECORD.some((re) => re.test(s))) return true;
-  // A duration reads the record only when the engine fact carries a time or travel record ("Travel: … +30 min, now dusk").
-  return /\bTravel:|\+\s*\d+\s*(?:min|h)\b|\bnow (?:dawn|morning|midday|afternoon|dusk|evening|night)\b/i.test(engineResult ?? '') && DURATION.test(s);
+/** A span the clock recorded ("+30 min" told as "half an hour") is the clock in the story, not the record read out. */
+export function travelRecordRead(sentence: string, _engineResult?: string): boolean {
+  return TRAVEL_RECORD.some((re) => re.test(narrationOf(sentence)));
 }
 
 /** The player's decision left hanging in the narration instead of ending on the scene. */

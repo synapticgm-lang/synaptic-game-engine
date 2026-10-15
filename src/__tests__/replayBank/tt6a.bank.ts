@@ -127,10 +127,11 @@ describe('replay bank tt-build-6a (exploration rules)', () => {
     const night = (x: GameState) => advanceClock(x, 15).state;
     dice(0.5);
     const blind = turn(night(unlit(s)), T.input(13));
-    expect(blind.status).toContain('Light: darkness at night — you are Blinded (your attacks Disadvantage, attacks on you Advantage); the restless dead see by Darkvision');
+    // One zombie since tt-fix-2's SRD budget; the light line names it as the fight log does (q31-A).
+    expect(blind.status).toContain('Light: darkness at night — you are Blinded (your attacks Disadvantage, attacks on you Advantage); Zombie sees by Darkvision');
     const r1 = round(blind.status, 1);
     expect(r1).toMatch(/you Greatsword d20 \(dis: 11, 11\) 11 /);
-    expect(r1).toMatch(/Zombie \d Slam d20 \(adv: 11, 11\) 11 /);
+    expect(r1).toMatch(/Zombie Slam d20 \(adv: 11, 11\) 11 /);
     vi.restoreAllMocks();
     dice(0.5);
     const torch = turn(night(s), T.input(13));
