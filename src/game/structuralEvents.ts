@@ -17,11 +17,11 @@ import {
 } from './dungeonSeed';
 import { advanceLocationMemory } from './locationMemory';
 import { ensureLocationSheet } from './pendingTurn';
-import { closePlaceArc, upsertPlaceFromSheet } from './places';
 import { exhaustOpenedContainer, shouldBlockContainerItemGain } from './searchContinuity';
 import { isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { difficultyRow } from './difficultyRules';
 import { isDungeonCard, parkDungeonCard } from './dungeonCard';
+import { closeDungeon } from './dungeonLifecycle';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -269,21 +269,20 @@ export function applyStructuralEvents(
       const closedSummary = leftDungeon
         ? `Cleared/left ${leftDungeon.dungeonName} (T${leftDungeon.dangerTier ?? leftDungeon.tier}); visited ${leftDungeon.visitedNodeIds.length}/${leftDungeon.nodes.length} nodes.`
         : '';
-      next = {
-        ...next,
-        ...locMem,
-        activeDungeon: exitDungeon(),
-        places: leftDungeon
-          ? closePlaceArc(
-              upsertPlaceFromSheet(next.places ?? [], next.previousLocationSheet, {
-                dungeonRef: leftDungeon.blueprintId,
-              }),
-              leftDungeon.dungeonName,
-              closedSummary,
-              next.turn
-            )
-          : next.places,
-      };
+      // O1-C — legacy non-card exit condenses (map + deltas) instead of discarding the layout.
+      if (leftDungeon) {
+        next = closeDungeon(
+          { ...next, ...locMem },
+          { cleared: !!leftDungeon.cleared, summary: closedSummary || 'Left interior' }
+        );
+      } else {
+        next = {
+          ...next,
+          ...locMem,
+          activeDungeon: exitDungeon(),
+          places: next.places,
+        };
+      }
       notes.push('Dungeon exited');
       if (closedSummary) notes.push(closedSummary);
     }

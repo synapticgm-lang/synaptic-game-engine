@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-O1C cleared sites (Order O1-C + L2)
+
+1. **Legacy auto-close discard in `dungeonLifecycle.maybeAutoCloseDungeon` / `closeDungeon`** — when all foes were down, non-card interiors called `closeDungeon` and dropped the layout (no `dungeonCard` / no deltas). What it did: a cleared cave/ruin could not be re-entered with the same map; chests reseeding on a later open enabled L2-style loot farms. Replaced by `condenseClearedSite` → `clearedSites[site]` (map as walked + left/moved/taken deltas) and foe-stripped park on the place; card sites mark `cleared` in place and write the same record on `parkDungeonCard`.
+2. **`supabase/functions/_shared/gm/entityCast.ts`** — full edge copy with no importer under `supabase/functions` (client `src/game/entityCast.ts` kept for tests). Cut so ruleCount TOTAL does not rise with O1-C. Removed from `scripts/sync-gm-edge-shared.mjs` so sync does not restore it.
+3. **`supabase/functions/_shared/gm/loiterDeltaDirective.ts`** — full edge copy with no importer under `supabase/functions` (client file kept; only tests import it). Cut for the same budget.
+
+---
+
 ## q31-CR1 camp robbing (Order CR-1)
 
 1. **`src/game/typedEntityValidator.ts` `assertProtectedEntitiesSurvived` / `trackValidationMetrics` / `calculateValidationScore` / `EntityValidationTelemetry`** — telemetry helpers with no production caller. Cut so ruleCount TOTAL does not rise with CR-1.

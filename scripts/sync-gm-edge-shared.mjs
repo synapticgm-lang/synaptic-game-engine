@@ -69,7 +69,6 @@ const FILES = [
   'worldAtlas.ts',
   'narrativeHarvest.ts',
   'entityRegistry.ts',
-  'entityCast.ts',
   'closedScenePerson.ts',
   'pyoaBranchLedger.ts',
   'dungeonMobLedger.ts',

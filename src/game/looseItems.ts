@@ -9,6 +9,7 @@ import { isOpenContainerAction, isSearchTargetEmpty, normalizeSearchTarget, reco
 import { matchesLastKillName } from './combatAuthority';
 import { exitPlaceNames } from './placeNames';
 import { addCoins, gainLootMoney, lootMoneyFound, lootMoneyText } from './rules/coins';
+import { isRewardBoxOpenLine } from './rules/achievements';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -218,6 +219,8 @@ function searchOutsideDungeon(
   playerInput: string
 ): { state: GameState; receipts: string[] } {
   const text = (playerInput ?? '').trim();
+  // L2 — System reward-box opens are settleRewardBox only; never a world "box" search.
+  if (isRewardBoxOpenLine(text)) return { state, receipts: [] };
   const exits = state.activeEncounter ? null : checkExits(state, text);
   if (exits) return exits;
   const opensContainer = isOpenContainerAction(text);

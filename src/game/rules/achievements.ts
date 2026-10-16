@@ -64,6 +64,8 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
 
 const BOX_KEY = 'box:';
 export const REWARD_BOX_ID = 'reward-box:';
+/** L2 — once opened, the box id is recorded so it cannot be re-granted or re-looted. */
+const OPENED_BOX_KEY = 'opened:';
 
 export function boxName(tier: BoxTier): string {
   return `${tier} Reward Box`;
@@ -83,6 +85,16 @@ export function rewardBoxItem(a: AchievementDef): Item {
 
 export function isRewardBox(item: Item | null | undefined): boolean {
   return !!item?.id?.startsWith(REWARD_BOX_ID);
+}
+
+/** True when the typed line is opening a System reward box (not a world crate/chest). */
+export function isRewardBoxOpenLine(input: string): boolean {
+  const t = (input ?? '').trim().toLowerCase();
+  return t.includes('open') && t.includes('reward') && t.includes('box');
+}
+
+function boxOpenedKey(boxId: string): string {
+  return `${OPENED_BOX_KEY}${boxId}`;
 }
 
 function boxTierOf(item: Item): BoxTier | null {
@@ -112,12 +124,16 @@ export function settleDeeds(state: GameState, facts: DeedFacts): DeedSettle {
     if (!a.earned(d)) continue;
     if (!awardKeys.includes(a.key)) awardKeys.push(a.key);
     const boxKey = `${BOX_KEY}${a.key}`;
-    if (!awardKeys.includes(boxKey)) {
+    const boxId = `${REWARD_BOX_ID}${a.key}`;
+    // L2 — grant once: box: key or opened: key (loot-once) blocks a second box.
+    if (!awardKeys.includes(boxKey) && !awardKeys.includes(`${OPENED_BOX_KEY}${boxId}`)) {
       awardKeys.push(boxKey);
       if (!hidden) {
         out.items.push(rewardBoxItem(a));
         out.notes.push(`Achievement: ${a.name} — ${boxName(a.tier)}.`);
       }
+    } else if (!awardKeys.includes(boxKey)) {
+      awardKeys.push(boxKey);
     }
     const title = TITLES.find((t) => t.deed === a.key);
     if (title && !awardKeys.includes(`${TITLE_KEY}${title.id}`)) {
@@ -167,9 +183,14 @@ export function openBoxChip(tier: BoxTier): string {
   return `Open the ${boxName(tier)}`;
 }
 
-/** Boxes waiting to be opened, one chip per tier. */
+/** Boxes waiting to be opened, one chip per tier. Opened / already-looted boxes are gone. */
 export function rewardBoxesHeld(state: GameState): Item[] {
-  return (state.inventory ?? []).filter((i) => isRewardBox(i) && (i.quantity ?? 1) > 0);
+  const keys = state.sandboxAwardKeys ?? [];
+  const out: Item[] = [];
+  for (const i of state.inventory ?? []) {
+    if (isRewardBox(i) && (i.quantity ?? 1) > 0 && !keys.includes(boxOpenedKey(i.id))) out.push(i);
+  }
+  return out;
 }
 
 /** The System prompt's box chips: one per tier held, outside a fight. */
@@ -196,12 +217,20 @@ export function settleRewardBox(state: GameState, input: string): SystemSettle {
   const box = boxForLine(state, input);
   const tier = box ? boxTierOf(box) : null;
   if (!box || !tier) return none;
+  if ((state.sandboxAwardKeys ?? []).includes(boxOpenedKey(box.id))) return none;
   const loot = rollLoot({ ...BOX_LOOT[tier], state, seed: `${state.seed ?? 'seed'}:${box.id}` });
-  const inventory = (state.inventory ?? []).filter((i) => i.id !== box.id).concat(loot.items);
+  const inventory: Item[] = [];
+  for (const i of state.inventory ?? []) {
+    if (i.id !== box.id) inventory.push(i);
+  }
+  for (const i of loot.items) inventory.push(i);
+  const sandboxAwardKeys = Array.from(
+    new Set([...(state.sandboxAwardKeys ?? []), boxOpenedKey(box.id), `${BOX_KEY}${box.id.slice(REWARD_BOX_ID.length)}`])
+  );
   const got = loot.items.map((i) => `[${i.rarity}] ${i.name}`);
   const plain = loot.items.map((i) => `${i.name} (${i.rarity})`);
   return {
-    state: { ...state, inventory },
+    state: { ...state, inventory, sandboxAwardKeys },
     receipts: [got.length ? `Loot: ${got.join(', ')} (${box.name})` : `Loot: the ${box.name} was empty`],
     fact: got.length
       ? `The player opened the ${box.name}: ${plain.join(', ')}.`

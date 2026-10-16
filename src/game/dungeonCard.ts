@@ -11,6 +11,13 @@
 import type { ActiveEncounter, GameState, PlaceRecord } from './types';
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine';
 import { dungeonHereLabel, isDoorLockedFor, moveToNode } from './mapEngine';
+import {
+  applyClearedSiteRecord,
+  dungeonFromClearedRecord,
+  recordClearedSite,
+  shouldAutoCloseDungeon,
+  stripDungeonFoes,
+} from './dungeonLifecycle';
 import { skillRanksOf } from './skillRanks';
 import { recordGateTry, skillGateBlockedLine, skillLabel } from './skillGates';
 import { MULTI_FLOOR_WORDS, generateInterior, type GeneratedRoom } from './interiorGenerator';
@@ -412,16 +419,30 @@ function hereLabel(d: ActiveDungeonState): string {
 export function openDungeonCard(state: GameState, site: string): GameState {
   const hubName = siteHub(state, site)?.name ?? site;
   const place = findPlace(state, hubName);
-  const stored = place?.dungeonCard;
-  const card: ActiveDungeonState = stored
-    ? { ...stored, currentNodeId: 'r0', currentZLevel: stored.nodes.find((n) => n.id === 'r0')?.zLevel ?? -1 }
-    : buildDungeonCard(state, hubName);
   const id = place?.id ?? placeIdFromName(hubName);
+  const cleared = state.clearedSites?.[id] ?? state.clearedSites?.[placeIdFromName(hubName)];
+  let card: ActiveDungeonState;
+  if (cleared) {
+    card = place?.dungeonCard
+      ? applyClearedSiteRecord(place.dungeonCard, cleared)
+      : dungeonFromClearedRecord(cleared);
+    card = {
+      ...card,
+      currentNodeId: 'r0',
+      currentZLevel: card.nodes.find((n) => n.id === 'r0')?.zLevel ?? card.currentZLevel,
+    };
+  } else {
+    const stored = place?.dungeonCard;
+    card = stored
+      ? { ...stored, currentNodeId: 'r0', currentZLevel: stored.nodes.find((n) => n.id === 'r0')?.zLevel ?? -1 }
+      : buildDungeonCard(state, hubName);
+    if (card.cleared) card = stripDungeonFoes(card);
+  }
   const places = place
-    ? (state.places ?? []).map((p) => (p.id === place.id ? { ...p, allowsDungeon: true, dungeonRef: card.dungeonName } : p))
+    ? (state.places ?? []).map((p) => (p.id === place.id ? { ...p, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: cleared ? card : p.dungeonCard } : p))
     : [
         ...(state.places ?? []),
-        { id, name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, arcStatus: 'open' as const, mapScale: 'street' as const },
+        { id, name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, arcStatus: (cleared ? 'cleared' : 'open') as const, mapScale: 'street' as const, ...(cleared ? { dungeonCard: card } : {}) },
       ];
   return {
     ...state,
@@ -489,17 +510,42 @@ export function parkDungeonCard(state: GameState, opts?: { toSite?: boolean }): 
   const d = state.activeDungeon;
   if (!isDungeonCard(d)) return state;
   const site = d.siteName ?? d.dungeonName;
+  const cleared = !!d.cleared || shouldAutoCloseDungeon({ activeDungeon: d } as GameState);
+  const parked = cleared ? stripDungeonFoes({ ...d, cleared: true }) : d;
   const place = findPlace(state, site);
+  const key = placeIdFromName(site);
   const places = place
-    ? (state.places ?? []).map((p) => (p.id === place.id ? { ...p, dungeonCard: d, lastVisitedTurn: state.turn } : p))
+    ? (state.places ?? []).map((p) =>
+        p.id === place.id
+          ? {
+              ...p,
+              dungeonCard: parked,
+              lastVisitedTurn: state.turn,
+              ...(cleared ? { arcStatus: 'cleared' as const } : {}),
+            }
+          : p
+      )
     : [
         ...(state.places ?? []),
-        { id: placeIdFromName(site), name: site, allowsDungeon: true, dungeonRef: d.dungeonName, dungeonCard: d, arcStatus: 'visited' as const, mapScale: 'street' as const },
+        {
+          id: key,
+          name: site,
+          allowsDungeon: true,
+          dungeonRef: d.dungeonName,
+          dungeonCard: parked,
+          arcStatus: (cleared ? 'cleared' : 'visited') as const,
+          mapScale: 'street' as const,
+        },
       ];
+  const clearedSites =
+    cleared
+      ? { ...(state.clearedSites ?? {}), [key]: recordClearedSite(parked) }
+      : state.clearedSites;
   return {
     ...state,
     activeDungeon: null,
     places,
+    clearedSites,
     currentLocation: opts?.toSite ? site : state.currentLocation,
     sceneFacts: { ...(state.sceneFacts ?? {}), indoor: opts?.toSite ? false : state.sceneFacts?.indoor } as GameState['sceneFacts'],
   };

@@ -322,7 +322,7 @@ import {
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { harvestNarrativePeople, scrubInventedGeography } from './narrativeHarvest';
-import { maybeAutoCloseDungeon } from './dungeonLifecycle';
+import { closeDungeon, maybeAutoCloseDungeon } from './dungeonLifecycle';
 import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
@@ -1877,15 +1877,23 @@ export function useGame() {
     }
     const backName = previous.previousLocationSheet?.name || previous.currentLocation || 'Outside';
     const locMem = advanceLocationMemory(previous, backName);
-    // A dungeon card is parked on its place (rooms, loot, quest targets kept), not dropped.
+    // O1-C — any interior parks/condenses (map + deltas); never drop the layout.
     const updated = isDungeonCard(previous.activeDungeon)
       ? { ...parkDungeonCard(previous, { toSite: true }), lastUpdated: Date.now() }
-      : {
-          ...previous,
-          ...locMem,
-          activeDungeon: engineExitDungeon(),
-          lastUpdated: Date.now(),
-        };
+      : previous.activeDungeon
+        ? {
+            ...closeDungeon(
+              { ...previous, ...locMem },
+              { cleared: !!previous.activeDungeon.cleared, summary: 'Left interior' }
+            ),
+            lastUpdated: Date.now(),
+          }
+        : {
+            ...previous,
+            ...locMem,
+            activeDungeon: engineExitDungeon(),
+            lastUpdated: Date.now(),
+          };
     stateRef.current = updated;
     setState(updated);
     void persist(updated);
