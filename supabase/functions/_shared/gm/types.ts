@@ -1226,6 +1226,8 @@ export interface RoadEncounter {
   name?: string;
   /** tt-build-roadmeet — the seeded one-line description the writer is handed with the name (a plea's comes from the plea). */
   about?: string;
+  /** OP-1: id of the opener idea picked by seed for a meeting/traveler (src/data/openerIdeas.json); the writer gets its gist, never a quote. */
+  openerIdea?: string;
   /** tt-build-camps — the placed camp this meeting is (its place id, headcount and what the player last did there). */
   camp?: { placeId: string; headcount: number; memory?: RoadCampOutcome };
 }

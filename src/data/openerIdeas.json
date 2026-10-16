@@ -1,0 +1,47 @@
+{
+  "_note": "Opener IDEAS for meeting/traveler NPCs (John 15 Oct, Order OP-1). Situation and intent seeds only: the engine picks one by seed (src/game/openerIdeas.ts) and hands the gist to the writer as a fact. Never output verbatim.",
+  "meeting": [
+    {
+      "id": "passing",
+      "situation": "on the same road, business further on",
+      "intent": "wants no trouble and to keep moving"
+    },
+    {
+      "id": "searching",
+      "situation": "looking for a specific person",
+      "intent": "asks whether the player has seen someone"
+    },
+    {
+      "id": "trading",
+      "situation": "carrying goods",
+      "intent": "open to a fair trade"
+    },
+    {
+      "id": "wary",
+      "situation": "has been robbed or threatened before",
+      "intent": "keeps distance and wants the player's purpose stated"
+    }
+  ],
+  "traveler": [
+    {
+      "id": "shelter",
+      "situation": "daylight is running out",
+      "intent": "wants to reach shelter or the next town"
+    },
+    {
+      "id": "homeward",
+      "situation": "long away from home",
+      "intent": "heading back to family"
+    },
+    {
+      "id": "road-news",
+      "situation": "heard rumours of danger ahead",
+      "intent": "asks about or warns of the road"
+    },
+    {
+      "id": "company",
+      "situation": "travelling alone",
+      "intent": "would welcome company for a stretch"
+    }
+  ]
+}

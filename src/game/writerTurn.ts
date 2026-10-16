@@ -39,7 +39,7 @@ import type { WriterRawIssue } from './openRouterChat';
 import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
-import { isRoadLabel, writerEngineResult } from './travelJourney';
+import { isRoadLabel, roadMeetingOpenerLines, writerEngineResult } from './travelJourney';
 import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
@@ -353,6 +353,8 @@ const sameName = (a: string, b: string) => {
 /** Lines a person here may be quoted saying (topics, card want, lore, their quest) — never archetype motive. */
 export function backedAnswerFacts(state: GameState, name: string): string[] {
   const facts = authoredTopicsFor(name).map((t) => t.line);
+  // OP-1: a road meeting's speaker is backed by its opener idea's gist.
+  facts.push(...roadMeetingOpenerLines(state, name));
   if (openingCastNames(state).some((n) => sameName(n, name))) facts.push(shortCardWant(state));
   const memory = (state.npcMemories ?? []).find(
     (m) => sameName(m.npcName, name) || (m.aliases ?? []).some((a) => sameName(a, name))
