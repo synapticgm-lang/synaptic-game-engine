@@ -704,7 +704,7 @@ export function tokenLineVerdicts(raw: string, state: GameState, packet?: Comple
   const counts = handedCountText(state, packet);
   const said = alreadySaidLines(state, packet);
   for (const line of beat.lines) {
-    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said, state.character?.name);
+    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said, state.character?.name, packet?.playerAction);
     out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
   }
   return out;
@@ -718,6 +718,41 @@ function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boole
   if (first.length < 2 || !/\byou(?:r|rs|rself)?\b/i.test(narrationOf(line))) return false;
   const named = new RegExp(`\\b${escRe(first)}\\b`);
   return beat.lines.some((l) => named.test(narrationOf(l)));
+}
+
+/**
+ * P-5b (merged L5) — the writer voices the player: a narration line holding a quote whose own clause opens on the
+ * PC (by name) or on "You", before or right after the quote. The player's words are theirs to say: a quote the
+ * player's own input holds passes. Read by position in the line, not by speech verbs.
+ */
+export function lineVoicesPc(text: string, pcName?: string, playerWords?: string): boolean {
+  const t = text ?? '';
+  const pc = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
+  const who = pc.length >= 2 ? `(?:${escRe(pc)}|You|you)` : '(?:You|you)';
+  const opensOnPc = new RegExp(`^\\s*${who}\\b`);
+  const tagAfter = new RegExp(`^[,.!?]?["\u201d]?,?\\s+${who}\\b`);
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const own = norm(playerWords ?? '');
+  for (const [o, c] of [['"', '"'], ['\u201c', '\u201d']] as const) {
+    let from = 0;
+    while (from < t.length) {
+      const open = t.indexOf(o, from);
+      if (open < 0) break;
+      const close = t.indexOf(c, open + 1);
+      if (close < 0) break;
+      from = close + 1;
+      const words = norm(t.slice(open + 1, close));
+      if (!words) continue;
+      if (own && own.includes(words)) continue;
+      const before = t.slice(0, open);
+      // The quote's own clause; a quote opening a new sentence belongs to the sentence just before it ("Jax leaned in. "..."").
+      const cut = (s: string) => Math.max(s.lastIndexOf('.'), s.lastIndexOf('!'), s.lastIndexOf('?'), s.lastIndexOf(';'));
+      let clause = before.slice(cut(before) + 1);
+      if (!clause.trim()) { const prev = before.slice(0, cut(before)); clause = prev.slice(cut(prev) + 1); }
+      if (opensOnPc.test(clause) || tagAfter.test(t.slice(close + 1))) return true;
+    }
+  }
+  return false;
 }
 
 /** A capital the writer was never handed, or a role person bound to nobody ('capital' / 'unbound-animate'). */
@@ -756,6 +791,7 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
 export function plainLineFactProblem(text: string, state: GameState, packet?: CompletedEventPacket): string | null {
   const handed = handedCountText(state, packet);
   if (aimsAtSelf(text)) return 'a self-harm method (a Line: fade instead)';
+  if (lineVoicesPc(text, state.character?.name, packet?.playerAction)) return 'words put in the player\'s mouth';
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
   if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
   if (lineHasUnhandedOwnThing(text, handed, state.character?.name)) return 'a thing carried that the scene never handed';
@@ -782,9 +818,12 @@ export function classifyTokenLine(
   /** What each person already said (`alreadySaidLines`); their speech line saying it again fails. */
   alreadySaid?: AlreadySaid,
   /** The PC's name: a beat whose narration tells the PC by name is third person, so "you"/"your" there fails. */
-  pcName?: string
+  pcName?: string,
+  /** The player's own words this turn (packet.playerAction); a narration line may quote them. */
+  playerWords?: string
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  if (line.fn !== 'speech' && lineVoicesPc(line.text, pcName, playerWords)) return { ok: false, reason: 'pc-voice' };
   if (aimsAtSelf(line.text)) return { ok: false, reason: 'selfHarmMethod' };
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
@@ -1060,7 +1099,7 @@ function capitalizeSentenceStarts(text: string): string {
 
 function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName, packet?.playerAction).ok);
 }
 
 /** Line-gate reasons about how a token was declared, not about what the line says. */
@@ -1290,7 +1329,7 @@ export function acceptTokenOrLedgerStory(
     const parsed = parseTokenBeat(cand, packet?.playerAction);
     if (!parsed) continue;
     const beat = tellsSpeechFromOutside(normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state);
-    beat.lines = beat.lines.map((l) => (l.written && !classifyTokenLine({ ...l, text: l.written }, beat, enumRefs, known, counts, said, pcName).ok ? { ...l, written: undefined } : l));
+    beat.lines = beat.lines.map((l) => (l.written && !classifyTokenLine({ ...l, text: l.written }, beat, enumRefs, known, counts, said, pcName, packet?.playerAction).ok ? { ...l, written: undefined } : l));
     if (isFullyClean(beat, enumRefs, known, counts, said, pcName)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
@@ -1304,7 +1343,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, known, counts, said, pcName).ok);
+    const clean = beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, known, counts, said, pcName, packet?.playerAction).ok);
     const fns = new Set(clean.map((l) => l.fn));
     const partialOk = opts?.lenient
       ? clean.length >= 1
@@ -1326,7 +1365,7 @@ export function acceptTokenOrLedgerStory(
     if (opts?.lenient && prose && storySentences(prose) < 2) {
       const full = bestPartial.full;
       const readable = full.lines.filter((line) => {
-        const v = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName);
+        const v = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName, packet?.playerAction);
         return v.ok || BINDING_ONLY_REASONS.has(v.reason ?? '');
       });
       const wholeBody = renderTokenBeat({ ...full, lines: readable }, enumRefs, {
@@ -1344,7 +1383,7 @@ export function acceptTokenOrLedgerStory(
       const dropped = full.lines.flatMap((line, i): DroppedLine[] => {
         const sentence = kept.includes(line) ? '' : paint(line);
         if (!sentence) return [];
-        const reason = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName).reason ?? 'bad';
+        const reason = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName, packet?.playerAction).reason ?? 'bad';
         return [{ sentence, reason, after: paint(full.lines.slice(0, i).reverse().find((l) => kept.includes(l))) }];
       });
       return {
