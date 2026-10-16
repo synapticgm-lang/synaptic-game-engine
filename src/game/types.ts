@@ -576,6 +576,36 @@ export interface WorldDeal {
   goldPaid: number;
   lastResolvedWeek: number;
   lastWeekSummary?: string;
+  /** Order K: the commitment this deal is (kind 'deal'). */
+  commitmentId?: string;
+}
+
+/** Order K: an engine-checkable condition on a commitment (only engine-tracked things). */
+export type CommitmentCondition =
+  | { type: 'quest-complete'; questId: string }
+  | { type: 'deal-runs'; dealId: string };
+
+/**
+ * Order K: one record for promises, deals and agreements (the widened PromiseRecord). kept = fulfilled.
+ * The engine sets the status; the writer never does.
+ */
+export interface Commitment {
+  promiseId: string;
+  madeTurn: number;
+  dueTurn?: number;
+  description: string;
+  status: 'open' | 'kept' | 'broken' | 'waived' | 'impossible' | 'expired';
+  trustDeltaOnKeep: number;
+  trustDeltaOnBreak: number;
+  beneficiaries: string[];
+  witnesses: string[];
+  kind?: 'promise' | 'deal' | 'agreement';
+  /** 'player' or the NPC who made it. */
+  by?: string;
+  /** The NPC it is owed to, or 'player'. */
+  to?: string;
+  condition?: CommitmentCondition;
+  checkedTurn?: number;
 }
 
 export interface WorldHolding {
@@ -926,6 +956,8 @@ export interface GameState {
   /** 28j — anti-circling memory used by choiceRanking. */
   circling?: CirclingMemory;
   worldLedger?: WorldLedger;
+  /** Order K: the player's promises, deals and agreements, recorded from the turn record. */
+  commitments?: Commitment[];
   /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
   sandboxAwardKeys?: string[];
   /**

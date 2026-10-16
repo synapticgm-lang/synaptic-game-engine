@@ -6,6 +6,7 @@ import type { GameState, PlaceRecord, SceneLedger } from './types';
 import { dungeonRoomPlace, dungeonTitle, placeIdFromName, resolvePlace } from './places';
 import { activeHereSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
+import { commitmentLine, openCommitmentsFor } from './commitments';
 import { splitProseSentences } from './proseSentences';
 import { isRoadLabel } from './travelJourney';
 
@@ -68,7 +69,6 @@ export function stampSceneLedger(state: GameState, narrative: string, maskRefs: 
     }
   }
 
-  const promises: string[] = [];
   const threats: string[] = [];
   const asked: SceneLedger['asked'] = [];
   for (const c of state.campaignMemory?.consequences ?? []) {
@@ -77,9 +77,10 @@ export function stampSceneLedger(state: GameState, narrative: string, maskRefs: 
     if (low.startsWith('open ask')) asked.push({ q: text, answered: !c.unresolved });
     else if (low.startsWith('open thread')) {
       if (low.includes('threat') || low.includes('warn')) threats.push(text);
-      else promises.push(text);
     }
   }
+  // Order K + M: pinned promises are the tracker's open commitments for the people here (and in Previous).
+  const promises = openCommitmentsFor(state, [...present, ...(prev?.present ?? [])]).map(commitmentLine);
 
   const described = [...(prev?.described ?? [])];
   for (const raw of splitProseSentences(narrative ?? '')) {

@@ -621,3 +621,6 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 
 ## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-N4. RC-K2 and RC-PY2 above are PARKED (not queued).
 - RC-N4 (src/game/engineFactGate.ts `recordReadoutProblem` :42-51): `questStepLeak` and `questTitleNamed` word-overlap tests. Covered by: the packet no longer carries raw step text or leg/time bookkeeping; gate only on exact record strings.
+
+## K1 (16 Oct, Grok Bot, branch k-1)
+- src/game/sceneLedger.ts `stampSceneLedger`: removed the path that turned every non-threat `Open thread` consequence (made by the `extractPromisesFromProse` prose regex) into a pinned ledger promise. Covered by: pinned promises are now the open Order K commitments for the people here and in Previous (`openCommitmentsFor`), recorded from the turn record (stateTx `quest_reveal` rows, world deals). `extractPromisesFromProse` itself still writes Open thread lines (threat lines and campaign-memory summaries still read them); it no longer feeds promises. Its PROMISE_PATTERNS are frozen.

@@ -5,6 +5,7 @@
 
 import type { GameState, Item, Quest } from './types';
 import { grantEarnedInspiration } from './rules/houseRules';
+import { recordTurnCommitments } from './commitments';
 
 export type StateTxKind =
   | 'inventory_gain'
@@ -319,7 +320,8 @@ export function commitTurnRecord(
   extras?: { combatSummary?: string; why?: string }
 ): { state: GameState; lines: string[] } {
   const earned = next.engineMode === 'dnd' ? grantEarnedInspiration(next) : next;
-  const state = appendStateTxDiff(previous, earned, extras);
+  // Order K: this turn's commitments come from the rows just written (the turn record), not from prose.
+  const state = recordTurnCommitments(appendStateTxDiff(previous, earned, extras));
   const said = shown.join('\n').toLowerCase();
   const lines = (state.stateTxLog ?? [])
     .filter((t) => t.turn === state.turn && GRANT_KINDS.has(t.kind) && !said.includes(grantStatusKey(t)))
