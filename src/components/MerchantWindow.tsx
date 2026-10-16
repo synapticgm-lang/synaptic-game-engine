@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import type { GameState, Item, CraftingMaterial } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
-import { getMaterialSellPrice, sellItem, sellMaterial, sellPriceLabel } from '@/game/merchant';
+import { buyItem, buyPriceLabel, canAfford, getMaterialSellPrice, merchantHere, merchantStock, sellItem, sellMaterial, sellPriceLabel } from '@/game/merchant';
 import { usesPurse, wealthLine } from '@/game/rules/coins';
 import { salvageItem, checkSalvageRequirement, getSalvageRequirement } from '@/game/salvage';
 import { computeInventoryCapacity } from '@/game/inventory';
-import { X, Coins, Recycle, AlertTriangle, Package, Layers } from 'lucide-react';
+import { X, Coins, Recycle, AlertTriangle, Package, Layers, ShoppingCart } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -15,7 +15,7 @@ interface Props {
   onToast: (message: string, type?: 'info' | 'success' | 'error') => void;
 }
 
-type Tab = 'sell' | 'salvage';
+type Tab = 'buy' | 'sell' | 'salvage';
 
 export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast }: Props) {
   const [tab, setTab] = useState<Tab>('sell');
@@ -28,6 +28,10 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
   );
 
   const capacity = useMemo(() => computeInventoryCapacity(state), [state]);
+  // shop-b: buying needs a merchant here in tabletop; the stock is the SRD 5.2.1 town list.
+  const stock = useMemo(() => merchantStock(), []);
+  const merchant = useMemo(() => merchantHere(state), [state]);
+  const canBuy = state.engineMode !== 'dnd' || !!merchant;
 
   if (!isOpen) return null;
 
@@ -37,6 +41,16 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
       onStateChange(result.newState);
       onToast(`Sold ${item.name} for ${result.soldFor ?? `${result.goldGained ?? 0} gold`}.`, 'success');
       setConfirmSellId(null);
+    } else if (result.reason) {
+      onToast(result.reason, 'error');
+    }
+  };
+
+  const handleBuy = (name: string) => {
+    const result = buyItem(state, name);
+    if (result.ok && result.newState) {
+      onStateChange(result.newState);
+      onToast(result.receipt?.text ?? `Bought ${name}.`, 'success');
     } else if (result.reason) {
       onToast(result.reason, 'error');
     }
@@ -91,6 +105,12 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
         {/* Tab Bar */}
         <div className="flex shrink-0 border-b border-slate-800 bg-slate-950/30">
           <button
+            onClick={() => setTab('buy')}
+            className={`flex-1 flex items-center justify-center gap-2 border-t-2 py-2.5 text-sm transition-colors ${tab === 'buy' ? 'sgm-info-tab-on' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
+          >
+            <ShoppingCart size={14} /> Buy
+          </button>
+          <button
             onClick={() => setTab('sell')}
             className={`flex-1 flex items-center justify-center gap-2 border-t-2 py-2.5 text-sm transition-colors ${tab === 'sell' ? 'sgm-info-tab-on' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
           >
@@ -106,6 +126,39 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
 
         {/* Content */}
         <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          {tab === 'buy' && (
+            <div className="space-y-2">
+              {!canBuy ? (
+                <p className="text-slate-400 text-sm italic">Nobody here is selling. Find a merchant to buy gear.</p>
+              ) : (
+                <>
+                  {merchant && <p className="text-xs text-slate-400">Trading with {merchant.npcName}. Prices are the SRD list price.</p>}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {stock.map((row) => {
+                      const affordable = canAfford(state, row.cp);
+                      return (
+                        <div key={`${row.section}-${row.name}`} className="sgm-sheet-inset flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-2.5">
+                          <div className="flex-1 min-w-0 text-sm font-medium truncate text-slate-200">{row.name}</div>
+                          <div className="flex items-center gap-2 ml-2">
+                            <span className="sgm-coin text-sm font-mono font-bold">{buyPriceLabel(state, row.name)}</span>
+                            <button
+                              onClick={() => handleBuy(row.name)}
+                              disabled={!affordable}
+                              aria-label={`Buy ${row.name}`}
+                              className="px-2 py-1 text-xs rounded bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              Buy
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
           {tab === 'sell' && (
             <div className="space-y-4">
               {/* Items */}

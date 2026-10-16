@@ -1,4 +1,6 @@
-import type { GameState, Item, Rarity } from './types';
+import type { GameState, Item, NpcMemory, Rarity } from './types';
+import srdShopGear from '../data/srd/srdShopGear.json';
+import { presentNpcRecords } from './npcRecords';
 import { addItem, getItemValue, removeItem } from './inventory';
 import { changeFor, formatCp, formatPurse, gainCoins, payCoins, purseGold, purseOf, shopPriceCp, srdSaleCp, usesPurse } from './rules/coins';
 
@@ -68,6 +70,42 @@ export function withShopReceipt(state: GameState, receipt: ShopReceipt): GameSta
     systemLog: [receipt.text],
   };
   return { ...state, log: [...state.log, entry] };
+}
+
+/**
+ * shop-b: the merchant at the player's place. Presence comes from the NPC records (presentNpcRecords) and the typed
+ * role registry ('merchant'), never from prose. Null when nobody here trades.
+ */
+export function merchantHere(state: GameState): NpcMemory | null {
+  return presentNpcRecords(state).find((m) => {
+    const job = m.roleHint ?? (m as NpcMemory & { sheet?: { job?: string } }).sheet?.job;
+    return job === 'merchant';
+  }) ?? null;
+}
+
+export interface StockRow { name: string; cp: number; section: string }
+
+/**
+ * What a town merchant stocks (Wire-in I step 4): tools, adventuring gear and food. Mounts and tack (a stable),
+ * ships (a port) and services (a temple or hireling) need those places and are not stocked here.
+ */
+const MERCHANT_SECTIONS = ['tools', 'adventuring_gear', 'food_drink_lodging'] as const;
+export function merchantStock(): StockRow[] {
+  const data = srdShopGear as unknown as Record<string, Array<{ name: string; cp: number }>>;
+  return MERCHANT_SECTIONS.flatMap((section) =>
+    (data[section] ?? []).map((r) => ({ name: String(r.name).replace(/[\u2018\u2019]/g, "'"), cp: r.cp, section })),
+  );
+}
+
+/** Whether the player can pay for this row right now (same coins buyItem would use). */
+export function canAfford(state: GameState, cp: number): boolean {
+  if (usesPurse(state)) return payCoins(purseOf(state) ?? {}, cp) != null;
+  return (state.gold ?? 0) >= Math.ceil(cp / 100);
+}
+
+/** The Merchant window opens in tabletop only with a merchant here; other modes keep their open trading post. */
+export function canOpenMerchant(state: GameState): boolean {
+  return state.engineMode !== 'dnd' || merchantHere(state) != null;
 }
 
 export interface BuyResult {

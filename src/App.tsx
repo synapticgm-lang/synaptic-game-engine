@@ -6,6 +6,7 @@ import { peopleHere } from '@/game/chipLegality';
 import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
 import { applySettingsCosmetics } from '@/game/uiTheme';
+import { canOpenMerchant } from '@/game/merchant';
 import { ensureTestCosmeticUnlock } from '@/game/cosmeticEntitlements';
 import { Suspense, useEffect, useState } from 'react';
 import { Hud } from '@/components/Hud';
@@ -322,7 +323,11 @@ export default function App() {
         }}
         onOpenCharacter={() => game.setShowCharacterWindow(true)}
         onOpenMerchant={() => {
-          if (state.engineMode === 'dnd') return;
+          // shop-b: tabletop trades only with a merchant at this place (NPC records + role), never via prose.
+          if (!canOpenMerchant(state)) {
+            game.addToast('Nobody here is trading. Find a merchant first.', 'info');
+            return;
+          }
           game.setShowMerchantWindow(true);
         }}
         onOpenMap={() => {
