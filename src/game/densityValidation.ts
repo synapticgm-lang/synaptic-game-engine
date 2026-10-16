@@ -1,18 +1,4 @@
-/**
- * WS-6 Wave D: Density Validation Gates
- * 
- * Validates content density against:
- * - G1: Density gate (hub/encounter/NPC counts)
- * - G2: Exhaustion gate (no repeat dominance before T100)
- * - G3: Spine milestone gate (80% hit rate)
- * - G4: FO3-like wedge (60-70% depth index)
- * - G5: Pacing gate (LitRPG level timing)
- * 
- * Architecture:
- * - Each gate has pass/fail criteria
- * - Gates run during autoplay evaluation
- * - Human validation gates (G4, G5) for final sign-off
- */
+
 
 import type { GameState, EngineMode } from './types';
 import type { DensityEvent, RollingMetrics, ContentDensityState } from './exhaustionCurve';

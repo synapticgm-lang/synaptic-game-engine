@@ -166,20 +166,3 @@ export function resolvePlace(
   );
 }
 
-export function formatPlacesForPrompt(places: PlaceRecord[] | undefined, currentName?: string): string {
-  if (!places?.length) return '';
-  const current = currentName ? resolvePlace(places, currentName) : null;
-  const recent = [...places]
-    .filter((p) => p.arcSummary || p.id === current?.id)
-    .sort((a, b) => (b.lastVisitedTurn ?? 0) - (a.lastVisitedTurn ?? 0))
-    .slice(0, 4);
-  if (!recent.length) return '';
-  return recent
-    .map((p) => {
-      const tier =
-        p.dangerTier != null ? `dangerTier T${p.dangerTier}` : 'dangerTier none (street)';
-      const arc = p.arcSummary ? ` | arc: ${p.arcSummary}` : '';
-      return `- ${p.name}${p.loreName ? ` (${p.loreName})` : ''} [${p.mapScale ?? 'street'}, ${tier}]${p.dungeonRef ? ` dungeonRef=${p.dungeonRef}` : ''}${arc}`;
-    })
-    .join('\n');
-}

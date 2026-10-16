@@ -142,10 +142,6 @@ export const INTENT_DISPLAY_LABELS: Record<PlayerIntent, string> = {
 
 // INTENT INFERENCE — Convert user input or choice label to intent enum
 
-/**
- * Infer semantic intent from a choice label or user input.
- * Used to convert legacy string-based pads to intent enums.
- */
 export function inferIntent(text: string): PlayerIntent {
   const lower = text.toLowerCase().trim();
   

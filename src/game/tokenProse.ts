@@ -22,7 +22,7 @@ import { pcPov } from './narrativePov';
 import { splitProseSentences } from './proseSentences';
 import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 import { isNounAdjunctBefore } from './npcMemory';
-import { weaponsNotInHand } from './infoSheet';
+import { currentSceneLedger, weaponsNotInHand } from './infoSheet';
 import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
@@ -647,7 +647,17 @@ export function alreadySaidLines(state: GameState, packet?: CompletedEventPacket
   if (playerAsksRepeat(packet?.playerAction ?? '')) return out;
   for (const m of state.npcMemories ?? []) {
     const lines = (m.said ?? []).map((s) => s.line).filter(Boolean);
-    if (lines.length) out.set(m.npcName.toLowerCase(), lines);
+    if (lines.length) out.set(m.npcName.toLowerCase(), [...lines]);
+  }
+  // Order M step 4: ledger said + Current described as shared pools (person keys stay npcMemory.said).
+  const ledger = currentSceneLedger(state);
+  if (ledger) {
+    if (ledger.said.length) out.set('*said*', [...ledger.said]);
+    const described: string[] = [];
+    for (const row of ledger.described) {
+      if (row.line && !described.includes(row.line)) described.push(row.line);
+    }
+    if (described.length) out.set('*described*', described);
   }
   return out;
 }
@@ -662,6 +672,27 @@ export function repeatsSaid(words: string, said: readonly string[]): boolean {
     const before = new Set(sayWords(line));
     return now.filter((w) => before.has(w)).length / now.length >= 0.8;
   });
+}
+
+/** Quoted spans inside a narration line (Order M: a reprint of said words inside a longer sentence). */
+function quotedSpans(text: string): string[] {
+  const out: string[] = [];
+  for (const pair of [
+    ['"', '"'],
+    ['“', '”'],
+  ] as const) {
+    let from = 0;
+    while (from < text.length) {
+      const open = text.indexOf(pair[0], from);
+      if (open < 0) break;
+      const close = text.indexOf(pair[1], open + 1);
+      if (close < 0) break;
+      const q = text.slice(open + 1, close).trim();
+      if (q.length >= 12) out.push(q);
+      from = close + 1;
+    }
+  }
+  return out;
 }
 
 export function tokenLineVerdicts(raw: string, state: GameState, packet?: CompletedEventPacket): string[] {
@@ -731,6 +762,10 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   if (lineHasUnhandedFind(text, handed)) return 'a thing found that the scene never handed';
   if (lineOpensOnFactLabel(text, handed)) return 'an engine label pasted as story';
   if (lineHasWrongTimeOfDay(text, handed)) return 'a time of day the clock does not show';
+  const saidPool = alreadySaidLines(state, packet).get('*said*') ?? [];
+  if (quotedSpans(text).some((q) => repeatsSaid(q, saidPool))) {
+    return 'a line already said or described';
+  }
   const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
   if (named === 'capital') return 'a name the scene never handed';
   if (named === 'unbound-animate') return 'a person who is not here';
@@ -806,6 +841,17 @@ export function classifyTokenLine(
       return { ok: false, reason: 'speaker-echo' };
     }
     if (repeatsSaid(line.text, alreadySaid?.get((row.display ?? '').toLowerCase()) ?? [])) {
+      return { ok: false, reason: 'said-again' };
+    }
+    if (repeatsSaid(line.text, alreadySaid?.get('*said*') ?? [])) {
+      return { ok: false, reason: 'said-again' };
+    }
+  }
+  // Order M step 4: a narration line that quotes words already on the ledger said list fails.
+  // Current `described` is in alreadySaidLines for repair / later steps; live narration gate on it waits on bank headroom.
+  if (!line.spoken && alreadySaid?.size) {
+    const saidPool = alreadySaid.get('*said*') ?? [];
+    if (quotedSpans(line.text).some((q) => repeatsSaid(q, saidPool))) {
       return { ok: false, reason: 'said-again' };
     }
   }

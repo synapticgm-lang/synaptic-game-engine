@@ -87,10 +87,16 @@ describe('s77 Root D: the record is the story, not warden chrome', () => {
     const packet = buildCompletedEventPacket(state, 'Travel toward Lowmarket');
     expect(packet.infoSheet).toBeTruthy();
     const prompt = formatWriterFacingEvent(packet);
-    expect(prompt).toContain('ALREADY ON THE PAGE');
-    expect(prompt).toContain('- Jax left the cathedral infirmary behind and took the narrow back streets that cut west across the city.');
-    expect(prompt).toContain('- Jax left the cathedral infirmary behind and walked the narrow back streets alone.');
-    expect(prompt).not.toContain('Washing hung between the upper windows.');
+    // Order M step 3: SCENE in the info sheet replaces ALREADY ON THE PAGE openers.
+    expect(prompt).toContain('SCENE:');
+    expect(prompt).not.toContain('ALREADY ON THE PAGE');
+    expect(packet.pageOpeners).toEqual(
+      expect.arrayContaining([
+        'Jax left the cathedral infirmary behind and took the narrow back streets that cut west across the city.',
+        'Jax left the cathedral infirmary behind and walked the narrow back streets alone.',
+      ])
+    );
+    expect(packet.pageOpeners?.join('\n')).not.toContain('Washing hung between the upper windows.');
   });
 
   it('when the writer-words guard keeps the draft, no "last-resort body" note is logged', () => {

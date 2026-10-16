@@ -1440,12 +1440,8 @@ export function formatWriterFacingEvent(
   }
   lines.push('');
   if (packet.infoSheet) {
+    // Order M step 3: INFO SHEET SCENE replaces ALREADY ON THE PAGE openers.
     lines.push(packet.infoSheet);
-    const openers = packet.pageOpeners ?? recordedBeatOpeners(packet.recentBeats ?? []);
-    if (openers.length) {
-      lines.push('ALREADY ON THE PAGE (opening sentence of the last two GM beats, and of earlier beats for this same action):');
-      lines.push(...openers.map((s) => `- ${s}`));
-    }
     const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
     if (loiter) lines.push(`GM: ${loiter}`);
   } else if (writerBeats.length) {

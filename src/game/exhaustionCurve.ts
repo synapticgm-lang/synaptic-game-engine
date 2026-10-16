@@ -1,18 +1,4 @@
-/**
- * WS-6 Wave C: Exhaustion Curve Tracking
- * 
- * Measures when content becomes repetitive using:
- * - Rolling metrics (UER, ENR, SRR, etc.)
- * - Exhaustion Index (EI) weighted score
- * - Director state (green/yellow/orange/red)
- * - Four-policy autoplay validation
- * 
- * Architecture:
- * - DensityEvent schema tracks every content beat
- * - Novelty classifier determines U/V/R/L per beat
- * - Rolling windows compute metrics over last 20 turns
- * - EI triggers interventions when content exhausted
- */
+
 
 import type { GameState, EngineMode } from './types';
 import {
@@ -244,11 +230,6 @@ export function calculateRollingMetrics(
 
 // Exhaustion Index
 
-/**
- * Calculate Exhaustion Index (0-100)
- * 
- * EI = 100 × (0.25·SRR + 0.15·FCI + 0.10·HRP + 0.10·NRP + 0.20·NPS + 0.10·TCR + 0.10·TLR)
- */
 export function calculateExhaustionIndex(metrics: RollingMetrics): number {
   const EI = 100 * (
     0.25 * metrics.SRR +

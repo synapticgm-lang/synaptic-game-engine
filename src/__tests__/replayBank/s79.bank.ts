@@ -108,14 +108,11 @@ describe('replay bank s79', () => {
     expect(R.prose(17)).not.toMatch(/Longsword hanging at their hip/);
   });
 
-  it('[s79 T4,T14,T15 | s79 Root F #11] ALREADY ON THE PAGE holds the opener of the last beat (whole run)', () => {
+  it('[s79 T4,T14,T15 | Order M step 3] INFO SHEET SCENE replaces ALREADY ON THE PAGE (whole run)', () => {
     expect(R.after(14).journey, 'replay is on the road at T14').toBeTruthy();
-    const turns = R.turns();
-    for (const n of turns.slice(1)) {
-      const prev = turns[turns.indexOf(n) - 1];
-      const block = R.packetBlock(n, 'ALREADY ON THE PAGE');
-      expect(block, `T${n} has the block`).not.toBe('');
-      expect(block, `T${n} holds T${prev}'s opener`).toContain(R.prose(prev).slice(0, 40));
+    for (const n of R.turns().slice(1)) {
+      expect(R.packet(n), `T${n} has SCENE`).toMatch(/^SCENE:/m);
+      expect(R.packet(n), `T${n} has no opener list`).not.toContain('ALREADY ON THE PAGE');
     }
   });
 

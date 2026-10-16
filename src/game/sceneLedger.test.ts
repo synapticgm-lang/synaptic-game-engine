@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
+import { formatInfoSheet, formatSceneLedgerBlock, INFO_SHEET_CHAR_CAP, SCENE_CHAR_BUDGET } from './infoSheet';
 import { recordSpokenTopics } from './npcMemory';
 import { stampSceneLedger } from './sceneLedger';
+import { alreadySaidLines, classifyTokenLine, plainLineFactProblem, repeatsSaid, type TokenBeat } from './tokenProse';
 import type { ActiveDungeonState } from './mapEngine';
 import type { GameState, NpcMemory } from './types';
 
@@ -112,5 +114,92 @@ describe('scene ledger on the place', () => {
     expect(place.sceneLedger!.present).toContain('Crypt Ghoul');
     expect(place.sceneLedger!.clues).toEqual(['a cracked saint under the step']);
     expect(next.activeDungeon).toBe(card);
+  });
+});
+
+describe('scene ledger writer view and repeat gate (Order M steps 3–4)', () => {
+  it('SCENE block is on the info sheet, under budget, and pins promises over oldest described', () => {
+    const memories = recordSpokenTopics(
+      [person()],
+      ['Ilyra Fen'],
+      [],
+      'Ilyra Fen said, "The March keeps what falls into it."',
+      4
+    );
+    let state = base({
+      npcMemories: memories,
+      campaignMemory: {
+        pins: [],
+        consequences: [
+          { id: 'p', text: 'Open thread (T2): I will bring the glass back', createdTurn: 2, unresolved: true },
+        ],
+      },
+    });
+    for (let i = 0; i < 20; i++) {
+      state = stampSceneLedger(state, `A long grey heron number ${i} stood in the shallows and watched the bank.`);
+    }
+    const rows = formatSceneLedgerBlock(state);
+    expect(rows.join('\n').length).toBeLessThanOrEqual(SCENE_CHAR_BUDGET);
+    expect(rows.some((r) => r.startsWith('promise:'))).toBe(true);
+    expect(rows.some((r) => r.startsWith('said:'))).toBe(true);
+    const sheet = formatInfoSheet(state);
+    expect(sheet).toContain('SCENE:');
+    expect(sheet).toContain('promise:');
+    expect(sheet.length).toBeLessThanOrEqual(INFO_SHEET_CHAR_CAP);
+    expect(sheet).not.toContain('ALREADY ON THE PAGE');
+  });
+
+  it('alreadySaidLines and repeatsSaid read ledger said and described; narration reprint fails', () => {
+    const pack =
+      'That pack was the last of my errands, and you handled it fine, so tonight you have earned a meal.';
+    const memories = recordSpokenTopics(
+      [person()],
+      ['Ilyra Fen'],
+      [],
+      `Ilyra Fen said, "${pack}"`,
+      4
+    );
+    const beat = 'A grey heron stood in the shallows and did not move.';
+    const state = stampSceneLedger(
+      base({ npcMemories: memories, sceneFacts: { present: ['Ilyra Fen'] } as never }),
+      beat
+    );
+    const said = alreadySaidLines(state, { playerAction: 'Talk to Ilyra Fen' } as never);
+    expect(said.get('*said*')).toEqual(expect.arrayContaining([pack]));
+    expect(said.get('*described*')).toEqual(expect.arrayContaining([beat]));
+    expect(said.get('ilyra fen')).toEqual(expect.arrayContaining([pack]));
+    expect(repeatsSaid(pack, said.get('*said*') ?? [])).toBe(true);
+
+    const enumRefs = [{ tok: 't1', id: 'present:ilyra-fen', klass: 'person', display: 'Ilyra Fen' }] as never;
+    const beatRefs = { refs: [{ tok: 't1', use: 'speaker', id: 'present:ilyra-fen' }], lines: [] } as unknown as TokenBeat;
+    const speech = (text: string) => ({ fn: 'speech', speaker_tok: 't1', spoken: true, text }) as never;
+    const narr = (text: string) => ({ fn: 'action', text }) as never;
+    expect(classifyTokenLine(speech(pack), beatRefs, enumRefs, [], undefined, said).reason).toBe('said-again');
+    expect(classifyTokenLine(narr(`Jarek kept talking. "${pack}"`), beatRefs, enumRefs, [], undefined, said).reason).toBe(
+      'said-again'
+    );
+    // Live narr-vs-described gate waits on bank headroom (NEXT); pool still holds the line.
+    expect(said.get('*described*')).toContain(beat);
+    expect(plainLineFactProblem(`She said, "${pack}"`, state)).toMatch(/already said or described/);
+    expect(classifyTokenLine(speech('Ask who took the glass from the bank last week.'), beatRefs, enumRefs, [], undefined, said).ok).toBe(
+      true
+    );
+  });
+
+  it('pulls a quoted line from the accepted beat into said when harvest has no speaker row', () => {
+    const pack = 'That pack was the last of my errands, and you handled it fine, so tonight you have earned a meal.';
+    const state = base({ npcMemories: [person()], sceneFacts: { present: ['Ilyra Fen'] } as never });
+    const next = stampSceneLedger(state, `Ilyra Fen said, "${pack}" Down the stair, a chair scraped.`);
+    expect(next.places![0]!.sceneLedger!.said).toContain(pack);
+  });
+
+  it('creates a place row when HERE is not yet on the registry', () => {
+    const state = base({
+      currentLocation: 'the quiet upper floors of Ernost Keep',
+      places: [{ id: 'elsewhere', name: 'Elsewhere' }],
+    });
+    const next = stampSceneLedger(state, 'Jarek said, "That pack was the last of my errands, and you handled it fine."');
+    const row = next.places!.find((p) => p.name === 'the quiet upper floors of Ernost Keep');
+    expect(row?.sceneLedger?.said.some((s) => s.includes('pack was the last of my errands'))).toBe(true);
   });
 });

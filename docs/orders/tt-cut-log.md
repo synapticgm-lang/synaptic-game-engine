@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-M2 scene writer view + repeat gate (Order M part 2, steps 3–4)
+
+1. **`src/game/places.ts` (+ edge mirror) `formatPlacesForPrompt`** — built a short place list for a prompt. No production caller (CARD-STORE-PLAN already named it for deletion). Cut so SCENE helpers do not raise the function count.
+2. **Essay JSDoc / section preamble trim** in `contentDensity.ts`, `exhaustionCurve.ts`, `densityValidation.ts`, `encounterDensity.ts`, `npcCrossIntegration.ts`, `npcMemoryRetrieval.ts`, `socialCrisis.ts`, `intentEnums.ts`, `discoveryXpLedger.ts`. Comment only. Cut so SCENE source does not raise the line count.
+3. **ALREADY ON THE PAGE emission** in `formatWriterFacingEvent` (`completedEventPacket.ts`) — opener list on the writer prompt when `infoSheet` is present. Replaced by INFO SHEET `SCENE:` (Order M step 3). `pageOpeners()` kept for same-action tracking / tests.
+
+---
+
 ## q31-M1 scene ledger (Order M part 1, steps 1–2)
 
 1. **`src/game/campaignBibleTypes.ts`** — a one-line re-export of `CampaignBible` / `MysteryCulprit`. Callers (`types.ts`, `mysteryCulprit.ts`, `openingPin.ts`, `campaignContract.ts`) import `@/data/campaigns/types`. The edge already had its own `campaignBibleTypes.ts` from that data file. Cut so the new ledger file does not raise the file count.
@@ -585,3 +593,14 @@ Removed, superseded wording kept here verbatim for the record (original SK-4, or
 
 1. **`src/game/tabletop/characterBuild.ts` CLASS_KITS gold rows** — eleven classes stored SRD option B as id `coin` ("Coin instead") instead of id `B`. Replaced by id `B` with empty gear and GP label (legacy `kitDef('…','coin')` maps to gold-only B). Fighter keeps id `coin` as SRD option (c) 155 GP.
 2. **`src/game/tabletop/characterBuild.ts` Druid kit A** — listed both `Quarterstaff` and `Druidic Focus` while SRD 5.2.1 says `Druidic Focus (Quarterstaff)` (one item). Dropped the separate `Druidic Focus` row; Quarterstaff remains (also matches focus detection via `staff`).
+
+## PLANNED cuts (not yet deleted; queued 16 Oct 07:02, queue 31): RC-K2, RC-PY2, RC-QT1
+Each order replaces this PLANNED entry with the full logged record (file, old line, old text, what it did, why safe, restore-from commit) when it ships.
+- RC-K2 (src/game/pyoaSpine.ts): fuzzy label / 18-char / id-word matching in `matchSpineExit` (~:329); its `fuzzyExitMatch` use; the `isSpineDelayPad` regex. Covered by: the picked chip id is the exit id; `applyExit` builds receipt + fact from exit data; exits declare requires/gives.
+- RC-PY2 (src/game/writerTurn.ts `withMoveDestination` ~:236-246): the `prose.toLowerCase().includes(dest)` substring guard and the `isRoadLabel` label test. Covered by: arrival rendered from the place record, added or skipped by a turn-record flag.
+- RC-QT1 (src/game/questTargets.ts `actionMatchesObjective` :86-87; src/game/enterInterior.ts `actionTakesDoorStep` :51-52): the chip-equals-step tick branch (`chipKey(action) === chipKey(stepChip(step))`). Covered by: ticks come only from the engine outcome recorded in the turn record.
+
+## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-M2, RC-J1, RC-N4 (RC-N3 deletes nothing). RC-K2 and RC-PY2 above are PARKED (not queued).
+- RC-M2 (src/game/autoplayWriter.ts `resolveFlashLiteAutoplayWriter` :109-130; scripts/writerDataset.mjs:84): the hard-coded `'flash-lite'` kind for non-Flash-Lite models and `writerId = meta.writer.kind`. Covered by: kind names the route, identity is the resolved model id in meta.
+- RC-J1 (scripts/fate-autoplay/autoThumbs.mjs ~:195-221): absolute per-run prose thumbs as a training label (kept as diagnostic only). Covered by: blind paired judge, two order-swapped asks, label kept only on agreement.
+- RC-N4 (src/game/engineFactGate.ts `recordReadoutProblem` :42-51): `questStepLeak` and `questTitleNamed` word-overlap tests. Covered by: the packet no longer carries raw step text or leg/time bookkeeping; gate only on exact record strings.

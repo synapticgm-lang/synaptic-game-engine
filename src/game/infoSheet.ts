@@ -2,10 +2,10 @@
  * 29z9i — the info sheet: a diary the writer reads instead of raw recent turns.
  * Code writes every line from committed state and the turn record (log roles, engine receipts,
  * npc records, quests, the live fight). Never from a model summary, so it cannot invent a fact.
- * Sections in order: NOW, LAST, HERE, PEOPLE, PLACES, FACTS, ASKED, OPEN. Newest first; old lines drop.
+ * Sections: NOW, LAST, HERE, PEOPLE, PLACES, SCENE, FACTS, ASKED, OPEN. Newest first; old lines drop.
  */
 
-import type { GameState, LogEntry, NpcMemory } from './types';
+import type { GameState, LogEntry, NpcMemory, SceneLedger } from './types';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { presentNpcNames } from './npcRelationships';
 import { hallTalkTopics, openingCastNames, openingCastNote, openingCastStillHere, type HallTalkTopic } from './openingEstablishment';
@@ -17,6 +17,7 @@ import { activeHereSpot, isOutOfTalkingRange } from './hereSpot';
 import { isChromeReceipt } from './engineResult';
 import { crowdHere } from './sceneFacts';
 import { roadMeetingOnBeat, writerTravelFact } from './travelJourney';
+import { dungeonRoomPlace, resolvePlace } from './places';
 
 /** A receipt as the writer reads it: a travel receipt keeps only where to and a plain time fact. */
 const writerReceipt = (r: string) => writerTravelFact(r) ?? r;
@@ -27,9 +28,11 @@ const writerReceipt = (r: string) => writerTravelFact(r) ?? r;
  */
 const questRecordHidden = (state: GameState) => state.engineMode === 'dnd';
 
-/** About 40 lines, ~350 tokens. */
-export const INFO_SHEET_LINE_CAP = 40;
-export const INFO_SHEET_CHAR_CAP = 1400;
+/** About 50 lines; SCENE (~600 chars) lives inside the raised char cap (Order M step 3). */
+export const INFO_SHEET_LINE_CAP = 50;
+export const INFO_SHEET_CHAR_CAP = 2000;
+/** SCENE block budget inside the info sheet (Order M step 3). */
+export const SCENE_CHAR_BUDGET = 600;
 
 const LAST_CAP = 3;
 const PEOPLE_CAP = 5;
@@ -37,6 +40,62 @@ const FACTS_CAP = 6;
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
+
+/** The ledger on the place the camera is in right now. */
+export function currentSceneLedger(state: GameState): SceneLedger | undefined {
+  const loc = (dungeonRoomPlace(state, state.currentLocation) ?? state.currentLocation ?? '').trim();
+  if (!loc) return undefined;
+  return resolvePlace(state.places, loc)?.sceneLedger;
+}
+
+/**
+ * Compact SCENE rows for the info sheet. Promises, threats, open asks, names and clues stay;
+ * oldest `described` drop first until the block fits SCENE_CHAR_BUDGET.
+ */
+export function formatSceneLedgerBlock(state: GameState): string[] {
+  const ledger = currentSceneLedger(state);
+  if (!ledger) return [];
+  const pinned: string[] = [];
+  if (ledger.present.length) pinned.push(`here: ${ledger.present.slice(0, 8).join(', ')}`);
+  if (ledger.spot) pinned.push(`spot: ${ledger.spot}`);
+  for (const p of ledger.promises.slice(0, 4)) pinned.push(`promise: ${clip(p, 80)}`);
+  for (const t of ledger.threats.slice(0, 3)) pinned.push(`threat: ${clip(t, 80)}`);
+  for (const a of ledger.asked) {
+    if (!a.answered) pinned.push(`ask: ${clip(a.q, 80)}`);
+    if (pinned.length > 20) break;
+  }
+  for (const c of ledger.clues.slice(0, 4)) pinned.push(`clue: ${clip(c, 80)}`);
+  for (const s of ledger.said.slice(-6)) pinned.push(`said: "${clip(s, 70)}"`);
+
+  const described = [...ledger.described];
+  const rows = () => {
+    const out = [...pinned];
+    for (const d of described) out.push(`saw: ${clip(d.line, 70)}`);
+    return out;
+  };
+  while (rows().join('\n').length > SCENE_CHAR_BUDGET && described.length) described.shift();
+  let out = rows();
+  while (out.join('\n').length > SCENE_CHAR_BUDGET) {
+    let drop = -1;
+    for (let i = pinned.length - 1; i >= 0; i--) {
+      if (pinned[i]!.startsWith('said:')) {
+        drop = i;
+        break;
+      }
+    }
+    if (drop < 0) break;
+    pinned.splice(drop, 1);
+    out = rows();
+  }
+  if (out.join('\n').length <= SCENE_CHAR_BUDGET) return out;
+  const kept: string[] = [];
+  for (const row of out) {
+    const next = kept.length ? `${kept.join('\n')}\n${row}` : row;
+    if (next.length > SCENE_CHAR_BUDGET) break;
+    kept.push(row);
+  }
+  return kept;
+}
 
 const MODE_LABEL: Record<string, string> = {
   litrpg: 'LitRPG',
@@ -51,6 +110,8 @@ export interface InfoSheet {
   here: string[];
   people: string[];
   places: string;
+  /** Order M step 3 — current scene ledger; replaces ALREADY ON THE PAGE openers. */
+  scene: string[];
   facts: string[];
   asked: string;
   open: string[];
@@ -326,6 +387,7 @@ export function buildInfoSheet(state: GameState): InfoSheet {
     here: hereLines(state, people),
     people: peopleLines(state, people),
     places: placesLine(state),
+    scene: formatSceneLedgerBlock(state),
     facts: factLines(state, turns, shownInLast),
     asked: askedLine(state, turns),
     open: openLines(state),
@@ -334,11 +396,13 @@ export function buildInfoSheet(state: GameState): InfoSheet {
 
 function render(sheet: InfoSheet): string[] {
   const block = (title: string, rows: string[]) => (rows.length ? [`${title}:`, ...rows.map((r) => `- ${r}`)] : [`${title}: none`]);
+  // SCENE sits early so the char-cap hard slice cannot drop it (Order M step 3).
   return [
     'INFO SHEET (engine record — every line is a fact; nothing else happened):',
     `NOW: ${sheet.now}`,
     ...block('LAST', sheet.last),
     ...block('HERE', sheet.here),
+    ...block('SCENE', sheet.scene),
     ...block('PEOPLE', sheet.people),
     `PLACES: ${sheet.places}`,
     ...block('FACTS', sheet.facts),
@@ -347,7 +411,7 @@ function render(sheet: InfoSheet): string[] {
   ];
 }
 
-/** The sheet as writer text, inside the line and character caps (drops the oldest FACTS, PEOPLE, LAST first). */
+/** The sheet as writer text, inside the line and character caps (drops FACTS, PEOPLE, LAST before SCENE). */
 export function formatInfoSheet(state: GameState): string {
   const sheet = buildInfoSheet(state);
   const fits = () => {
@@ -355,8 +419,9 @@ export function formatInfoSheet(state: GameState): string {
     return lines.length <= INFO_SHEET_LINE_CAP && lines.join('\n').length <= INFO_SHEET_CHAR_CAP;
   };
   while (!fits() && sheet.facts.length) sheet.facts.pop();
-  while (!fits() && sheet.people.length > 1) sheet.people.pop();
-  while (!fits() && sheet.last.length > 1) sheet.last.pop();
+  while (!fits() && sheet.scene.length && sheet.scene[sheet.scene.length - 1]!.startsWith('saw:')) sheet.scene.pop();
+  while (!fits() && sheet.people.length) sheet.people.pop();
+  while (!fits() && sheet.last.length) sheet.last.pop();
   const text = render(sheet).join('\n');
   return text.length <= INFO_SHEET_CHAR_CAP ? text : text.slice(0, INFO_SHEET_CHAR_CAP);
 }

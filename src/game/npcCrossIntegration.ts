@@ -1,12 +1,4 @@
-/**
- * WS-2 Wave D+: Cross-NPC Integration
- * 
- * Witness-based memory sync, faction propagation, and cross-NPC conversation tracking.
- * 
- * Based on: Manus WS-2 D7–D8 Retrieval and Cross-NPC Integration
- * Tasks: NPC-022 (witness), NPC-023 (faction), NPC-024 (gossip), NPC-025 (anti-sync),
- *        NPC-026 (relationships), NPC-027 (traits)
- */
+
 
 import type { GameState } from './types';
 import type { NpcKeyMoment } from './types/crossPackageContracts';
@@ -21,16 +13,6 @@ import {
 
 // CROSS-NPC KNOWLEDGE PROPAGATION
 
-/**
- * Propagate knowledge from one NPC to another based on rules
- * 
- * Rules:
- * - Direct participants know immediately
- * - Witnesses know if present, conscious, perceptive
- * - Faction members learn via broadcast
- * - Hub NPCs learn via gossip (delayed, degraded)
- * - Denied factions never learn
- */
 export function propagateKnowledge(
   sourceMoment: NpcKeyMoment,
   state: GameState
@@ -79,10 +61,6 @@ function treatmentWitnessFact(note: string, target: string, turn: number): strin
   return `Saw you walk away from ${target} (T${turn})`;
 }
 
-/**
- * Post-harvest: when this turn's treatment note lands on one NPC, present
- * witnesses learn it (key-moment ledger) and it shows in their live memory facts.
- */
 export function shareTreatmentWithWitnesses(
   state: GameState,
   before: GameState['npcMemories'],
@@ -130,11 +108,6 @@ export function shareTreatmentWithWitnesses(
 
 // NPC-025: ANTI-SYNC GATES
 
-/**
- * Check if faction is denied knowledge of an event
- * 
- * Deny list overrides propagation unless explicit leak supersedes it.
- */
 export function isFactionDenied(
   factionId: string,
   moment: NpcKeyMoment
@@ -354,11 +327,6 @@ export function hasNpcTrait(
   return getNpcTraits(npcId, state).includes(trait);
 }
 
-/**
- * Modulate relationship delta based on traits
- * 
- * Traits affect thresholds and magnitudes but do not override state.
- */
 export function modulateRelationshipDelta(
   sourceNpcId: string,
   aspect: RelationshipAspect,
@@ -395,11 +363,6 @@ export function modulateRelationshipDelta(
 
 // CROSS-NPC CONVERSATION TRACKING
 
-/**
- * Track conversation between NPCs
- * 
- * Records who spoke to whom about what topic.
- */
 export interface NpcConversation {
   /** Conversation ID */
   id: string;

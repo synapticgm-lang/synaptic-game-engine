@@ -1,20 +1,10 @@
-/**
- * WS-7 Wave 1: Social Crisis Loader and Scheduler
- * 
- * Loads crisis catalog, evaluates eligibility, selects crises on 30-turn cadence.
- */
+
 
 import type { GameState } from './types';
 import type { SocialCrisis, CrisisPattern, SocialStakes } from './socialCrisisTypes';
 
 // CRISIS CATALOG (5-8 patterns for Wave 1 ship)
 
-/**
- * Crisis catalog (start with 5 patterns, expand to 15 in P1)
- * 
- * Wave 1 ships: SC-01, SC-02, SC-03, SC-05, SC-07
- * Future: SC-04, SC-06, SC-08 through SC-15
- */
 export const CRISIS_CATALOG: SocialCrisis[] = [
   {
     id: 'SC-01',
@@ -214,13 +204,6 @@ function getLastCrisisSpawn(state: GameState, crisisId: CrisisPattern): number |
 
 // CRISIS SELECTION
 
-/**
- * Select eligible crisis on 30-turn cadence
- * 
- * Called by ArcDirector pre-GM. Returns null if:
- * - Too soon (< 30 turns since last crisis)
- * - No eligible crises
- */
 export function selectEligibleCrisis(state: GameState): SocialCrisis | null {
   const turn = state.turn ?? 0;
   
@@ -256,11 +239,6 @@ function getLastAnyCrisisSpawn(state: GameState): number | null {
 
 // STAKES MATERIALIZATION
 
-/**
- * Materialize stakes from template
- * 
- * Picks stakes template and fills in context-specific details.
- */
 export function materializeStakes(
   crisis: SocialCrisis,
   state: GameState
@@ -287,11 +265,6 @@ export function materializeStakes(
 
 // VALIDATION
 
-/**
- * Validate crisis catalog
- * 
- * Called at build time to ensure catalog is well-formed.
- */
 export function validateCrisisCatalog(): {
   valid: boolean;
   errors: string[];

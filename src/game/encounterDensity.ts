@@ -1,18 +1,4 @@
-/**
- * WS-4 Wave C: Encounter Density Governance
- * 
- * Manages encounter spawning density with:
- * - Role budgets (trash, elite, boss quotas per location)
- * - Drought timers (15T hostile LitRPG, 8T interactive DnD)
- * - Saturation guards (max 2 encounters per 5 turns)
- * - Variety scoring (penalize recent-role repeats)
- * - Biome-safe fallbacks
- * 
- * Architecture:
- * - Pre-GM commit checks density state
- * - Legal candidates filtered by biome + density
- * - Telemetry for drought/saturation/content-gap
- */
+
 
 import type { GameState, EngineMode } from './types';
 import type { EncounterTemplate } from './encounterBible';

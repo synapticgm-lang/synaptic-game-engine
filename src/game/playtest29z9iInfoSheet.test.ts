@@ -152,7 +152,7 @@ describe('29z9i — info sheet sections', () => {
 });
 
 describe('29z9i — info sheet caps', () => {
-  it('stays inside ~40 lines and the character cap on a long save', () => {
+  it('stays inside the line and character caps on a long save', () => {
     const log: LogEntry[] = [];
     for (let t = 1; t <= 60; t++) {
       log.push(entry(t, 'player', `Search crate number ${t} by the far wall carefully`));

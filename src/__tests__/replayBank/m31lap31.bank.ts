@@ -1,8 +1,7 @@
 /**
- * Multi lap 31 — ALREADY ON THE PAGE reads the openers from the whole log (the scene tail drops a beat set at
- * the place just left) and adds earlier beats that answered the same player line; a writer outage on a turn
- * that is not talk or parley paints the book beat, never "Nobody here answered."; the fact checker reads the
- * handed start of this turn's move ("led them from the Weighing Cup") as where the walk came from, not a way out.
+ * Multi lap 31 — pageOpeners still tracks same-action openers for the ledger; Order M step 3 puts SCENE in the
+ * info sheet instead of ALREADY ON THE PAGE. A writer outage on a non-talk turn paints the book beat, never
+ * "Nobody here answered."; the fact checker reads the handed start of this turn's move as where the walk came from.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -40,12 +39,11 @@ beforeAll(async () => {
 }, 1_800_000);
 
 describe('replay bank multi lap 31', () => {
-  it('[m31 fl150 T6 | lap 31 page openers across a move] the packet that sets out holds the last beat\'s opener', () => {
+  it('[m31 fl150 T6 | Order M / lap 31] SCENE is on the sheet; pageOpeners still tracks same-action openers', () => {
     expect(F.input(6)).toBe('Travel toward Cathedral Close');
     expect(F.after(6).journey, 'replay sets out on T6').toBeTruthy();
-    const block = F.packetBlock(6, 'ALREADY ON THE PAGE');
-    expect(block, 'T6 has the block').not.toBe('');
-    expect(block).toContain(F.prose(5).slice(0, 40));
+    expect(F.packet(6), 'T6 sheet has SCENE').toMatch(/^SCENE:/m);
+    expect(F.packet(6)).not.toContain('ALREADY ON THE PAGE');
 
     const log = [
       { role: 'player', content: 'Travel toward Lowmarket' }, { role: 'gm', content: 'Jax left the hall behind. More.' },

@@ -1,43 +1,13 @@
-/**
- * WS-6 Wave B: Content Density and Material Deltas
- * 
- * Defines:
- * - Novelty classes (U_UNIQUE, V_REFRESHED, R_STALE, L_LOOP)
- * - Material dimensions (10 dimensions of meaningful change)
- * - Hub qualification (3 of 5 properties required)
- * - Stable semantic IDs for repeat detection
- * - Density targets per mode
- * 
- * Architecture:
- * - Novelty classifier determines content freshness
- * - Material deltas track meaningful vs cosmetic changes
- * - Hub qualification prevents travel-pad inflation
- */
-
+/** Novelty classes, material deltas, hub qualification, density targets (WS-6). */
 import type { EngineMode } from './types';
 
-// Novelty Classes
-
-/**
- * Four novelty classes for content classification
- */
 export enum NoveltyClass {
-  /** First exposure to a content node or semantic family */
   U_UNIQUE = 'U_UNIQUE',
-  
-  /** Reuse with ≥2 material changes */
   V_REFRESHED = 'V_REFRESHED',
-  
-  /** Reuse with ≤1 cosmetic change */
   R_STALE = 'R_STALE',
-  
-  /** Invalid terminal re-entry (defeated boss, closed wing, ended crisis) */
   L_LOOP = 'L_LOOP'
 }
 
-/**
- * Novelty credit for density scoring
- */
 export function getNoveltyCredit(novelty: NoveltyClass): number {
   switch (novelty) {
     case NoveltyClass.U_UNIQUE: return 1.0;

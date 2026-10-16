@@ -1,23 +1,9 @@
-/**
- * P1.1 - One-Time Discovery + XP Ledger (upgraded from "lower inspect XP")
- * 
- * Record inspection rewards by scene/object/fact. First discovery/risk/resolution earn XP;
- * repeated inspection of unchanged state earns zero.
- * 
- * Not: Just lower inspect XP globally.
- * 
- * Target:
- * - maxlevel LitRPG ≥Level 2 by T300
- * - Study-only XP share ≤30% of STATUS XP lines
- * - Repeat empty-search earns 0 XP
- */
-
+/** One-time discovery XP ledger: first find pays; repeat inspect of the same thing pays 0. */
 import type { GameState } from './types';
 import { isLookAroundAction } from './sandboxXp';
 import { milestoneAreaOpts } from './placeAuthority';
 import { milestoneXp, type MilestoneKind } from './xpRules';
 
-/** 29r — discovery types pay the shared milestone amounts (mode rule + over-level cut). */
 const DISCOVERY_MILESTONE: Record<DiscoveryType, MilestoneKind> = {
   location: 'significantPlace',
   object: 'roomCleared',

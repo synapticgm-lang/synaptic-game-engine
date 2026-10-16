@@ -1,18 +1,4 @@
-/**
- * WS-2 Wave C: NPC Memory Retrieval and Scoring
- * 
- * Deterministic memory selection for situation packets with:
- * - Relevance scoring (pinned, unresolved, obligation, topic, actor, faction, recency)
- * - Stable tie-breaks (event ID, turn ascending)
- * - Mandatory/forbidden memory rails
- * - Grounding verification
- * 
- * Architecture:
- * - Scores all memories for current situation
- * - Selects top N with stable ordering
- * - Enforces mandatory inclusions
- * - Excludes forbidden events
- */
+
 
 import type { GameState } from './types';
 import type { NpcMemoryLedger, KeyMoment } from './npcMemoryLedger';
