@@ -49,7 +49,7 @@ TOTAL did not rise (lines down; regex / lists / fns flat).
 
 ## Ship
 
-Commit + push; client stamp only (no edge files in this order). Live `www.synapticgm.com/version.json` = `2026-10-16m` after Vercel git build.
+Commit `c7eafe4a`, pushed; client stamp only (no edge files / no gm-turn). Live `www.synapticgm.com/version.json` = `2026-10-16m`.
 
 ## NEXT
 
