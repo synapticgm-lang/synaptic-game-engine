@@ -1097,9 +1097,9 @@ function capitalizeSentenceStarts(text: string): string {
   return text.replace(/(^|(?:[.!?]\)?|\.["”’])\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
-function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string): boolean {
+function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string, playerWords?: string): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName, packet?.playerAction).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName, playerWords).ok);
 }
 
 /** Line-gate reasons about how a token was declared, not about what the line says. */
@@ -1330,7 +1330,7 @@ export function acceptTokenOrLedgerStory(
     if (!parsed) continue;
     const beat = tellsSpeechFromOutside(normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state);
     beat.lines = beat.lines.map((l) => (l.written && !classifyTokenLine({ ...l, text: l.written }, beat, enumRefs, known, counts, said, pcName, packet?.playerAction).ok ? { ...l, written: undefined } : l));
-    if (isFullyClean(beat, enumRefs, known, counts, said, pcName)) {
+    if (isFullyClean(beat, enumRefs, known, counts, said, pcName, packet?.playerAction)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
