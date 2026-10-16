@@ -1279,19 +1279,11 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
     .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
   const pool = topicAdvancePool(state, undefined, act || 'Look around').filter(fresh);
   if (pool.length) return pickAdvanceVariant(pool, recent, (state.turn ?? 0) + act.length);
-  // 28g — last fallback: never a line used in the last 10 GM turns. Rotate the stay line, the exits line
-  // and the next quest step (engine facts); if all were used, the least recently used one.
+  // 28g — last fallback: never a line used in the last 10 GM turns. Rotate stay / exits; never dump journal step text.
   const stayLine = `You stayed ${stayedPreposition(f.place)} ${f.place} a moment longer. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))} The next move was yours.`;
-  const lead = writerFacts(state).quests.find(
-    (q) => q.revealed && q.status === 'active' && (q.objectives ?? []).some((o) => !o.completed)
-  );
-  const step = lead?.objectives?.find((o) => !o.completed)?.description.replace(/[.!?]+$/, '').trim();
   const lastLines = [
     stayLine,
     `You weighed the ways on from ${f.place}. ${exitsSentence(f.place, f.exits)}`,
-    ...(lead && step
-      ? [`Your open lead was ${lead.name}: ${step}.`, `Nothing here moved ${lead.name} on. The next step was still: ${step}.`]
-      : []),
     ...(f.exits ?? []).map((x) => `From ${f.place}, the way to ${x} stayed open.`),
   ].map((s) => s.replace(/\s+/g, ' ').trim());
   const recentLower = recent.map((b) => b.toLowerCase());

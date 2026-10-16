@@ -131,10 +131,10 @@ describe('item 4 — the writer tells the engine fact', () => {
     expect(sentenceGateProblems(s, 'Rain ran off the church roof.')).not.toContain(RECORD_READOUT);
   });
 
-  it('flags an open quest step given away before the page showed it', () => {
+  it('does not flag an open quest step by word overlap (RC-N4; packet no longer carries step text)', () => {
     const seed = cursedKeep.starterQuests!.find((q) => q.id === 'ck-quest-1')!;
     const quests = revealLocalStarterQuest([], [seed]);
-    expect(sentenceGateProblems(ck({ quests }), 'Somewhere below lay a sealed crack in the great hall floor.')).toContain(RECORD_READOUT);
+    expect(sentenceGateProblems(ck({ quests }), 'Somewhere below lay a sealed crack in the great hall floor.')).not.toContain(RECORD_READOUT);
   });
 
   it('flags a blow the engine never landed and a miss on a hit', () => {

@@ -619,5 +619,12 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 2. **Comment / essay trim (ruleCount budget):** `writerTurn.ts` preamble and essay JSDoc; `actionResolution.ts` module essay; `discoveryXpLedger.ts` `buildDiscoveryKey` / `isDiscoveryExhausted` JSDoc. Behaviour unchanged.
 3. **RC-R1 interaction (not a cut):** `unresolvedActionReason` no longer requires prose to restate a terminal fight-close (combat log owns it). Flee / parley / rest engine outcomes still must be stated.
 
-## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-N4. RC-K2 and RC-PY2 above are PARKED (not queued).
-- RC-N4 (src/game/engineFactGate.ts `recordReadoutProblem` :42-51): `questStepLeak` and `questTitleNamed` word-overlap tests. Covered by: the packet no longer carries raw step text or leg/time bookkeeping; gate only on exact record strings.
+## q31-RCN4 (Order RC-N4) — stop record leaks at source; gate only on exact travel-record strings
+
+1. **`src/game/engineFactPatterns.ts` `questStepLeak` / `questTitleNamed` / `stepRuns` / `stepStems` / `wordsOf` / `STEP_STOP` / `OBLIGATION` / `stem`**. What they did: word-overlap and title substring tests flagged normal action lines (lap32 G T3 coin-offer restatement) as record readouts. Why safe: covered by (a) packet no longer carries raw objective text, (b) `travelRecordRead` exact leg/time patterns only. Restore-from: parent of q31-RCN4.
+2. **`src/game/engineFactGate.ts` `recordReadoutProblem` quest branches** — called `questTitleNamed` + `questStepLeak`. Replaced by `travelRecordRead` only.
+3. **`scripts/factCheck.mjs` same quest-title / step-leak flags** — shared patterns; removed so checker matches the gate.
+4. **`src/game/infoSheet.ts` `openLines` raw `— step: …` objective text** — handed the writer the journal step string. Now name/giver only.
+5. **`src/game/completedEventPacket.ts` last-resort lines** `Your open lead was ${name}: ${step}` / `The next step was still: ${step}` — dumped journal step into the page. Stay/exits rotation kept.
+
+## PLANNED cuts (not yet deleted): RC-K2 and RC-PY2 remain PARKED (not queued).

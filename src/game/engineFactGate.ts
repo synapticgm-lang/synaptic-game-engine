@@ -16,8 +16,6 @@ import {
   narrationOf,
   pcSpeechPatterns,
   playerLineSpeaks,
-  questStepLeak,
-  questTitleNamed,
   rollContradiction,
   travelRecordRead,
 } from './engineFactPatterns';
@@ -39,16 +37,9 @@ function pcSubject(state: GameState): string {
 
 const engineFact = (state: GameState) => state.completedEvent?.engineResult ?? '';
 
-/** A sentence that reads out the trip's legs or time, names a quest's title, or gives away an open quest step. */
-export function recordReadoutProblem(state: GameState, sentence: string, playerInput = ''): string | null {
-  if (travelRecordRead(sentence, engineFact(state))) return RECORD_READOUT;
-  const quests = (state.quests ?? []).filter((q) => q.revealed && q.status === 'active');
-  const titles = quests.map((q) => q.name ?? '');
-  if (questTitleNamed(titles, sentence)) return RECORD_READOUT;
-  const steps = quests.flatMap((q) => (q.objectives ?? []).filter((o) => !o.completed).map((o) => o.description));
-  if (!steps.length) return null;
-  const known = [playerInput, engineFact(state), ...(state.log ?? []).map((e) => String(e.content ?? ''))].join(' ');
-  return questStepLeak(steps, sentence, known, pcName(state)) ? RECORD_READOUT : null;
+/** A sentence that pastes the travel record (leg list / trip time). Quest steps stay off the packet; word-overlap is not a gate. */
+export function recordReadoutProblem(state: GameState, sentence: string, _playerInput = ''): string | null {
+  return travelRecordRead(sentence, engineFact(state)) ? RECORD_READOUT : null;
 }
 
 /** A sentence that leaves the player's decision hanging in the narration instead of ending on the scene. */

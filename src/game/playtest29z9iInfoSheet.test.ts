@@ -122,8 +122,8 @@ describe('29z9i — info sheet sections', () => {
     expect(sheet.asked).toMatch(/panel asked T4, no answer/);
   });
 
-  it('OPEN: the live quest step', () => {
-    expect(sheet.open).toEqual(['quest Echoes of a Dead Summoner — step: Find the summoner\u2019s ledger']);
+  it('OPEN: the live quest name only (no raw step text; RC-N4)', () => {
+    expect(sheet.open).toEqual(['quest Echoes of a Dead Summoner']);
   });
 
   it('sections come in order and nothing comes from prose', () => {

@@ -365,14 +365,14 @@ function openLines(state: GameState): string[] {
     : quests.find((q) => q.status === 'active' && q.revealed && q.type === 'main')
       ?? quests.find((q) => q.status === 'active' && q.revealed);
   if (quest) {
-    const step = (quest.objectives ?? []).find((o) => !o.completed && !o.optional)?.description;
+    // RC-N4 — name/giver only; raw objective text stays off the writer packet (player-seen story owns the step).
     const giver = norm(quest.giver ?? '');
-    out.push(`quest ${quest.name}${giver ? `, given by ${giver}` : ''}${step ? ` — step: ${clip(norm(step), 80)}` : ''}`);
+    out.push(`quest ${quest.name}${giver ? `, given by ${giver}` : ''}`);
   }
   const enc = state.activeEncounter;
   if (enc?.name) out.push(`threat ${enc.name}${typeof enc.hp === 'number' && typeof enc.maxHp === 'number' ? ` (${enc.hp}/${enc.maxHp} HP)` : ''}`);
   else if (state.sceneFacts?.pendingEncounter?.name) out.push(`threat building: ${state.sceneFacts.pendingEncounter.name}`);
-  if (!out.length) out.push(questRecordHidden(state) ? 'no live threat' : 'no live quest step, no live threat');
+  if (!out.length) out.push(questRecordHidden(state) ? 'no live threat' : 'no live quest, no live threat');
   return out;
 }
 

@@ -58,10 +58,10 @@ describe('tt-fix-3 checker gap: shared sentence patterns', () => {
     expect(sentenceGateProblems(s, 'The back streets narrowed as the light went.')).not.toContain(RECORD_READOUT);
   });
 
-  it('a quest step said as a task still waiting fails the gate; the quest title named in narration fails too', () => {
+  it('a quest step or title said in narration is not a record-readout (RC-N4; gate is travel-record strings only)', () => {
     const s = tabletop('Dungeon room: Corridor, inside Keep Gate.');
-    expect(sentenceGateProblems(s, "The woodcutter's daughter still waits to be found somewhere in Keep Gate.")).toContain(RECORD_READOUT);
-    expect(sentenceGateProblems(s, "The Woodcutter's Plea weighed on Jax as the gate loomed.")).toContain(RECORD_READOUT);
+    expect(sentenceGateProblems(s, "The woodcutter's daughter still waits to be found somewhere in Keep Gate.")).not.toContain(RECORD_READOUT);
+    expect(sentenceGateProblems(s, "The Woodcutter's Plea weighed on Jax as the gate loomed.")).not.toContain(RECORD_READOUT);
   });
 
   it('a posed choice and a decided feeling fail the gate', () => {
@@ -85,11 +85,11 @@ describe('tt-fix-3 checker gap: shared sentence patterns', () => {
     const mod = (await import(/* @vite-ignore */ pathToFileURL(resolve('scripts/factCheck.mjs')).href)) as {
       checkTurn: (row: unknown, packet: string, page?: string) => Array<{ kind: string; quote: string }>;
     };
-    const packet = `The player character is Jax.\n- quest ${QUEST.name} — step: ${QUEST.step}\n`;
+    const packet = `The player character is Jax.\n- quest ${QUEST.name}\n`;
     const row = (gmText: string, engineFact = TRAVEL_FACT) => ({ turn: 5, gmText, engineFact, playerInput: 'Walk on' });
     const flagged = (gmText: string, engineFact?: string) => mod.checkTurn(row(gmText, engineFact), packet, '').length > 0;
     expect(flagged('The first leg of the journey took half an hour through the back streets.')).toBe(true);
-    expect(flagged("The woodcutter's daughter still waits to be found somewhere in Keep Gate.")).toBe(true);
+    expect(flagged("The woodcutter's daughter still waits to be found somewhere in Keep Gate.")).toBe(false);
     expect(flagged('Jax had to decide whether to climb the wall or wait for dark.')).toBe(true);
     expect(flagged('Jax decided the gate was not worth the risk.')).toBe(true);
     expect(flagged("Jax swung their Shortsword, but the Cave Spider's venom struck Jax hard.", DEATH_SAVE_FACT)).toBe(true);

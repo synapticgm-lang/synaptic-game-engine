@@ -14,7 +14,7 @@ import { basename, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The game gate reads the same file (src/game/engineFactGate.ts), so play, autoplay and this checker agree.
 import {
-  agencyPatterns, BAG_WORD, choicePosePatterns, escRe, fightRolls, HIT_WORDS, narrationOf, questStepLeak, questTitleNamed, rollContradiction,
+  agencyPatterns, BAG_WORD, choicePosePatterns, escRe, fightRolls, HIT_WORDS, narrationOf, rollContradiction,
   travelRecordRead, WORN_OR_BODY,
 } from '../src/game/engineFactPatterns.ts';
 
@@ -256,18 +256,6 @@ export function checkTurn(row, packet, page = '') {
   const pc = packet.match(/^The player character is ([^:.,(]+)/m)?.[1]?.trim() || 'Jax';
   const who = `(?:${escRe(pc)}|you)`;
   const rolls = fightRolls(facts.engineResult);
-  // The packet writes "- quest Title — step: …" (an em dash).
-  const openSteps = [...packet.matchAll(/^- quest .+? [-—–] step: (.+)$/gm)].map((m) => m[1]);
-  const questTitles = [
-    ...[...packet.matchAll(/^- quest (.+?) [-—–] step: /gm)].map((m) => m[1]),
-    ...[...packet.matchAll(/^Active Main Story: (?:\[[^\]]*\]\s*)?(.+?)\s*\((?:active|in progress)\)/gim)].map((m) => m[1]),
-  ];
-  // Tabletop no longer hands the writer its quest record: the turn row carries the open quests instead.
-  for (const q of row.openQuests ?? []) {
-    if (q.step && !openSteps.includes(q.step)) openSteps.push(q.step);
-    if (q.title && !questTitles.includes(q.title)) questTitles.push(q.title);
-  }
-  const known = [page, facts.engineResult, row.playerInput ?? ''].join(' ');
   const choicePose = choicePosePatterns(who);
   const agency = agencyPatterns(who);
 
@@ -500,13 +488,8 @@ export function checkTurn(row, packet, page = '') {
       if (named) add('move', s, `No move this turn: at ${facts.here} before and after`);
     }
 
-    // Lap-3 kinds (same reading as the game's engineFactGate): the travel or quest record read out, the player's
-    // choice posed, a fight roll told wrong, a meeting on a quiet stretch, a quote already on the page, the PC's mind decided.
+    // Same reading as engineFactGate: exact travel-record strings only (legs / trip time). Quest step word-overlap is not a flag (RC-N4).
     if (travelRecordRead(s, facts.engineResult)) add('record-read', s, 'travel record (legs / trip time) read out');
-    const title = questTitleNamed(questTitles, s);
-    if (title) add('record-read', s, `quest title "${title}" read out from the journal`);
-    const leak = questStepLeak(openSteps, s, known, pc);
-    if (leak) add('record-read', s, `open quest step "${leak}" given away or told as still owed`);
     if (choicePose.some((re) => re.test(narration))) add('player-choice', s, "poses the player's next choice");
     if (rollContradiction(s, who, facts.engineResult)) add('roll', s, `a fight roll the engine did not make: ${facts.engineResult.slice(0, 160)}`);
     if (/\bquiet stretch\b/i.test(facts.engineResult)) {
