@@ -87,6 +87,115 @@ export function buildJudgePrompt(batch) {
   );
 }
 
+/**
+ * RC-J1 — floor for using paired-judge labels as training. Below this rate, every turn stays
+ * diagnostic-only even when a single turn's two asks agreed.
+ */
+export const PAIR_AGREEMENT_FLOOR = 0.7;
+
+const PAIRED_JUDGE_FORMAT = [
+  'You judge TWO blind drafts of the same turn side by side. Seats and model names are hidden.',
+  'Draft X and Draft Y are interchangeable labels — do not prefer one for being first.',
+  'For each turn return ONLY a JSON array object:',
+  '{"turn":<n>,"x":"up"|"down"|"unmarked","y":"up"|"down"|"unmarked","why_x":"<one concrete thing>","why_y":"<one concrete thing>","followed_x":true|false,"followed_y":true|false}',
+  'verdict follows the PROSE THUMB STANDARD above; "unmarked" is a real answer and the usual one.',
+  'followed=false when that draft ignores the action, answers a different action, or restates the arrival instead of acting.',
+  'Do not invent seat names. Score each draft on its own prose only.',
+].join('\n');
+
+/**
+ * Blind paired prompt: each row has turn/input/present/chips plus proseX and proseY (no seat names).
+ * Pass swapped=true to put the other seat's prose in the X slot (second ask).
+ */
+export function buildPairedJudgePrompt(batch, { swapped = false } = {}) {
+  return (
+    PROSE_THUMB_RUBRIC +
+    '\n\n' +
+    PAIRED_JUDGE_FORMAT +
+    '\n\n' +
+    batch
+      .map((o) => {
+        const x = swapped ? o.proseY : o.proseX;
+        const y = swapped ? o.proseX : o.proseY;
+        return (
+          `T${o.turn}\nACTION: ${o.input}\nHERE: ${(o.present ?? []).join(', ') || 'nobody named'}\n` +
+          `CHIPS: ${(o.chips ?? []).join(' | ') || 'none'}\n` +
+          `DRAFT X: ${String(x ?? '').replace(/\s+/g, ' ').slice(0, 1200)}\n` +
+          `DRAFT Y: ${String(y ?? '').replace(/\s+/g, ' ').slice(0, 1200)}`
+        );
+      })
+      .join('\n\n')
+  );
+}
+
+/**
+ * One ask's marks for a turn: { turn, x, y, why_x?, why_y?, followed_x?, followed_y? }.
+ * Maps a swapped ask back onto seat0 (left) / seat1 (right): when swapped, X was seat1.
+ */
+export function mapPairedAskToSeats(v, swapped) {
+  const x = normalizeMark(v?.x ?? v?.a);
+  const y = normalizeMark(v?.y ?? v?.b);
+  if (!swapped) {
+    return {
+      turn: verdictTurn(v),
+      seat0: x,
+      seat1: y,
+      why0: String(v?.why_x ?? v?.why_a ?? '').trim(),
+      why1: String(v?.why_y ?? v?.why_b ?? '').trim(),
+      followed0: v?.followed_x ?? v?.followed_a,
+      followed1: v?.followed_y ?? v?.followed_b,
+    };
+  }
+  return {
+    turn: verdictTurn(v),
+    seat0: y,
+    seat1: x,
+    why0: String(v?.why_y ?? v?.why_b ?? '').trim(),
+    why1: String(v?.why_x ?? v?.why_a ?? '').trim(),
+    followed0: v?.followed_y ?? v?.followed_b,
+    followed1: v?.followed_x ?? v?.followed_a,
+  };
+}
+
+/**
+ * Keep a training thumb only when both order-swapped asks agree on that seat; else unmarked.
+ * Returns { seat0, seat1, agreed0, agreed1, why0, why1 } for one turn.
+ */
+export function agreePairedMarks(ask1, ask2) {
+  const a = mapPairedAskToSeats(ask1, false);
+  const b = mapPairedAskToSeats(ask2, true);
+  const agreed0 = a.seat0 === b.seat0;
+  const agreed1 = a.seat1 === b.seat1;
+  return {
+    turn: a.turn,
+    seat0: agreed0 ? a.seat0 : 'unmarked',
+    seat1: agreed1 ? a.seat1 : 'unmarked',
+    agreed0,
+    agreed1,
+    why0: agreed0 ? a.why0 || b.why0 : 'pair asks disagreed',
+    why1: agreed1 ? a.why1 || b.why1 : 'pair asks disagreed',
+    followed0: agreed0 ? a.followed0 : undefined,
+    followed1: agreed1 ? a.followed1 : undefined,
+  };
+}
+
+/** Fraction of (turn, seat) labels where the two asks agreed. */
+export function pairAgreementRate(results) {
+  let ok = 0;
+  let n = 0;
+  for (const r of results) {
+    n += 2;
+    if (r.agreed0) ok++;
+    if (r.agreed1) ok++;
+  }
+  return n ? ok / n : 0;
+}
+
+/** True when the pair's agreement rate clears the training floor. */
+export function trainingOkFromAgreement(rate, floor = PAIR_AGREEMENT_FLOOR) {
+  return typeof rate === 'number' && rate >= floor;
+}
+
 /** Model verdict → 'up' | 'down' | 'unmarked'. Anything that is not up/down is unmarked. */
 export function normalizeMark(verdict) {
   const v = String(verdict ?? '').trim().toLowerCase();

@@ -3,7 +3,8 @@
  * Distillation collector: keeps only checker-passing turns of fate-autoplay runs.
  * Each run needs factcheck.json (npm run fact-check) and thumbs.json from `autoThumbs --notes`.
  * A turn passes when: training_ok === true, turnCheck has no P0, factCheck has no flags, the judge
- * marked it (up or unmarked; never-marked and down fail), and the thumbs row has no P0 or local down flag
+ * marked it (up or unmarked; never-marked and down fail), the thumbs row is a paired training_label
+ * (RC-J1: absolute single-run notes are diagnostic only), and the thumbs row has no P0 or local down flag
  * of a writer kind (judgeNotes WRITER_FLAG_KINDS; run pacing, chips and maps are not the writer's).
  *
  *   node scripts/distillCollect.mjs --batch N <run dir> [<run dir> ...]
@@ -85,6 +86,7 @@ for (const dir of dirs) {
     if (!f) why.push('no factcheck row');
     else if ((f.flags ?? []).length) why.push('factCheck flag');
     if (!th?.judge_model) why.push('no judge');
+    else if (th.training_label !== true) why.push('not paired training label');
     else if (th.thumb == null) why.push('judge never marked');
     else if (th.thumb === 'down') why.push('judge down');
     if ((th?.p0 ?? []).length) why.push('thumbs P0 (judge ignored-action / stiff line)');

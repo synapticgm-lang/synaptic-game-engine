@@ -610,6 +610,8 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 2. **`scripts/writerDataset.mjs:84` `writerId = meta.writer?.kind ?? 'default'`**. What it did: dataset rows labelled both seats `flash-lite` even when `model` differed. Why safe: `datasetWriterId` reads `meta.writer.model` (fallback kind only for `default`). Restore-from: parent of q31-RCM2.
 3. **`src/game/autoplayWriter.ts` `resolveFlashLiteCritic`** — thin wrapper that only called into the same body now on `resolveAutoplayCritic`. Deleted so ruleCount fns does not rise with `datasetWriterId`. Restore-from: parent of q31-RCM2.
 
-## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-J1, RC-N4 (RC-N3 deletes nothing; RC-M2 shipped above). RC-K2 and RC-PY2 above are PARKED (not queued).
-- RC-J1 (scripts/fate-autoplay/autoThumbs.mjs ~:195-221): absolute per-run prose thumbs as a training label (kept as diagnostic only). Covered by: blind paired judge, two order-swapped asks, label kept only on agreement.
+## q31-RCJ1 (Order RC-J1) — absolute per-run prose thumbs are diagnostic only
+1. **`scripts/fate-autoplay/autoThumbs.mjs` absolute `--notes` path as a training label** (old judge loop ~:195-221 at parent). What it did: one model, one pass, batches of 20, absolute up/down per run — lap 32 A/B swung 2 vs 9 ups on the same Tabletop pair. Why safe: absolute `--notes` still writes diagnostic thumbs for report.md; training labels require `--pair` (blind X/Y, asked twice with order swapped, keep only on agreement, floor `PAIR_AGREEMENT_FLOOR` 0.7); `distillCollect` requires `training_label === true`. Restore-from: parent of q31-RCJ1.
+
+## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-N4 (RC-N3 deletes nothing; RC-M2 and RC-J1 shipped). RC-K2 and RC-PY2 above are PARKED (not queued).
 - RC-N4 (src/game/engineFactGate.ts `recordReadoutProblem` :42-51): `questStepLeak` and `questTitleNamed` word-overlap tests. Covered by: the packet no longer carries raw step text or leg/time bookkeeping; gate only on exact record strings.

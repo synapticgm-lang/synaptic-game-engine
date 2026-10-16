@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 28j — model-free thumbs review for a fate-autoplay run.
- * Usage: node scripts/fate-autoplay/autoThumbs.mjs <runDir> [--notes] [--out <file>]
+ * Usage: node scripts/fate-autoplay/autoThumbs.mjs <runDir> [--notes] [--pair <otherRunDir>]
  * Reads <runDir>/turns.jsonl, writes <runDir>/thumbs.json and <runDir>/report.md.
  * 29z2 — each row's turnCheck (who is here, the chips, the last action) adds P0 fails and thumbs-down.
  * --notes: a judge model reads every turn (batches of 20) for stiff / abstract / broken lines and for
@@ -9,34 +9,59 @@
  * written to <runDir>/writer-lessons.jsonl. Skipped when no OPENROUTER_API_KEY / VITE_OPENROUTER_API_KEY is found.
  * 29z5 — prose thumbs come only from the notes model under PROSE_THUMB_RUBRIC (judgeNotes.mjs). Progress stays
  * in the progress section; a turn the model never marked stays unmarked.
+ * RC-J1 — absolute single-run --notes is diagnostic only (not a training label). Training labels need
+ * --pair <matched seat run>: blind side-by-side judge, asked twice with order swapped; keep a thumb
+ * only when both asks agree; report agreement rate; training_label only when rate ≥ PAIR_AGREEMENT_FLOOR.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { applyVerdicts, buildJudgePrompt, notesStatus as judgeStatus, parseJudge, readOpenRouterKey, replyText } from './judgeNotes.mjs';
+import {
+  PAIR_AGREEMENT_FLOOR,
+  agreePairedMarks,
+  applyVerdicts,
+  buildJudgePrompt,
+  buildPairedJudgePrompt,
+  notesStatus as judgeStatus,
+  pairAgreementRate,
+  parseJudge,
+  readOpenRouterKey,
+  replyText,
+  trainingOkFromAgreement,
+} from './judgeNotes.mjs';
 import { rowProvenance, TRAINING_JUDGE_MODEL } from '../../src/game/modelIds.ts';
 
 const args = process.argv.slice(2);
 const runDir = args.find((a) => !a.startsWith('--'));
 if (!runDir) {
-  console.error('usage: autoThumbs.mjs <runDir> [--notes]');
+  console.error('usage: autoThumbs.mjs <runDir> [--notes] [--pair <otherRunDir>]');
   process.exit(1);
 }
 const wantNotes = args.includes('--notes');
+const pairIdx = args.indexOf('--pair');
+const pairDir = pairIdx >= 0 ? args[pairIdx + 1] : null;
+if (pairIdx >= 0 && (!pairDir || pairDir.startsWith('--'))) {
+  console.error('usage: autoThumbs.mjs <runDir> --notes --pair <otherRunDir>');
+  process.exit(1);
+}
 const judgeModel = wantNotes ? process.env.SGM_THUMBS_MODEL || TRAINING_JUDGE_MODEL : null;
-const file = path.join(runDir, 'turns.jsonl');
-const rows = fs
-  .readFileSync(file, 'utf8')
-  .split(/\r?\n/)
-  .filter((l) => l.trim())
-  .map((l) => {
-    try {
-      return JSON.parse(l);
-    } catch {
-      return null;
-    }
-  })
-  .filter(Boolean)
-  .sort((a, b) => a.turn - b.turn);
+function loadTurns(dir) {
+  return fs
+    .readFileSync(path.join(dir, 'turns.jsonl'), 'utf8')
+    .split(/\r?\n/)
+    .filter((l) => l.trim())
+    .map((l) => {
+      try {
+        return JSON.parse(l);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.turn - b.turn);
+}
+
+const rows = loadTurns(runDir);
+const pairRows = pairDir ? loadTurns(pairDir) : null;
 
 const JUNK = [
   [/\bthe witness\b/i, 'junk label "the witness"'],
@@ -177,10 +202,175 @@ for (const r of rows) {
 }
 
 const lessons = [];
+/** RC-J1 — pair agreement rate (null when not a paired run). */
+let pairAgreement = null;
+/** RC-J1 — 'paired' | 'diagnostic' | null. Absolute --notes is diagnostic only. */
+let labelSource = null;
+/** Pair-side rows written when --pair is set (other seat's training thumbs). */
+let pairOut = null;
+
+async function callJudge(key, model, prompt) {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 12000, temperature: 0 }),
+  });
+  if (!res.ok) throw new Error(`http ${res.status}`);
+  return parseJudge(replyText(await res.json()));
+}
+
+function applyPairedToSide(sideRows, mark, why, followed) {
+  if (!sideRows) return;
+  sideRows.note = why;
+  sideRows.thumb = mark;
+  if (followed === false) {
+    const flag = `P0 ignored-action (judge): ${why || 'prose does not do the player action'}`;
+    sideRows.p0 = [...(sideRows.p0 ?? []), flag];
+    sideRows.down.push(flag);
+  }
+  if (mark === 'up' && !sideRows.down.length) sideRows.up.push(`judge: ${why}`);
+  else if (mark === 'down' && why && !sideRows.down.some((d) => d.includes(why))) sideRows.down.push(`judge: ${why}`);
+  sideRows.verdict = sideRows.down.length ? 'down' : sideRows.up.length ? 'up' : sideRows.verdict;
+}
+
+async function addPairedNotes(key) {
+  for (const o of out) {
+    o.labelSource = 'paired';
+    o.training_label = false;
+  }
+  const byTurn = new Map(pairRows.map((r) => [r.turn, r]));
+  const pairs = out
+    .filter((o) => o.prose && o.prose.trim())
+    .map((o) => {
+      const other = byTurn.get(o.turn);
+      const proseY = String(other?.gmText ?? '').trim();
+      if (!proseY) return null;
+      return {
+        turn: o.turn,
+        input: o.input,
+        present: o.present,
+        chips: o.chips,
+        proseX: o.prose,
+        proseY,
+        left: o,
+      };
+    })
+    .filter(Boolean)
+    .slice(0, 300);
+  if (!pairs.length) return 'skipped (no matched prose turns in pair)';
+
+  // Build the other seat's local out rows (same shape) so we can write its thumbs.json.
+  pairOut = pairs.map((p) => {
+    const r = byTurn.get(p.turn);
+    const loc = String(r.location ?? r.snapshotGist?.location ?? '');
+    return {
+      turn: r.turn,
+      input: r.playerInput,
+      location: loc,
+      verdict: 'neutral',
+      thumb: null,
+      down: [],
+      up: [],
+      progress: [],
+      unclear: [],
+      excerpt: String(r.gmText ?? '')
+        .replace(/\s+/g, ' ')
+        .slice(0, 220),
+      prose: String(r.gmText ?? ''),
+      ...rowProvenance({
+        teacherModel: r.teacher_model ?? r.writerUsage?.modelId ?? null,
+        mode: r.engineMode ?? null,
+        judgeModel,
+      }),
+      present: r.turnCheck?.presentNames ?? [],
+      chips: r.offeredChoices ?? [],
+    };
+  });
+  const pairByTurn = new Map(pairOut.map((o) => [o.turn, o]));
+
+  const model = judgeModel;
+  let failed = 0;
+  let batches = 0;
+  const ask1ByTurn = new Map();
+  const ask2ByTurn = new Map();
+  const size = 10;
+  for (let i = 0; i < pairs.length; i += size) {
+    const batch = pairs.slice(i, i + size);
+    batches += 2;
+    try {
+      const v1 = await callJudge(key, model, buildPairedJudgePrompt(batch, { swapped: false }));
+      for (const v of v1) ask1ByTurn.set(verdictTurnSafe(v), v);
+    } catch {
+      failed++;
+    }
+    try {
+      const v2 = await callJudge(key, model, buildPairedJudgePrompt(batch, { swapped: true }));
+      for (const v of v2) ask2ByTurn.set(verdictTurnSafe(v), v);
+    } catch {
+      failed++;
+    }
+  }
+
+  const agreed = [];
+  for (const p of pairs) {
+    const a1 = ask1ByTurn.get(p.turn);
+    const a2 = ask2ByTurn.get(p.turn);
+    if (!a1 || !a2) {
+      p.left.thumb = 'unmarked';
+      p.left.note = 'pair ask missing';
+      const right = pairByTurn.get(p.turn);
+      if (right) {
+        right.thumb = 'unmarked';
+        right.note = 'pair ask missing';
+      }
+      agreed.push({ turn: p.turn, agreed0: false, agreed1: false });
+      continue;
+    }
+    const m = agreePairedMarks(a1, a2);
+    agreed.push(m);
+    applyPairedToSide(p.left, m.seat0, m.why0, m.followed0);
+    applyPairedToSide(pairByTurn.get(p.turn), m.seat1, m.why1, m.followed1);
+  }
+
+  pairAgreement = pairAgreementRate(agreed);
+  labelSource = 'paired';
+  const trainOk = trainingOkFromAgreement(pairAgreement);
+  for (const o of [...pairs.map((p) => p.left), ...pairOut]) {
+    o.labelSource = 'paired';
+    o.pairAgreement = pairAgreement;
+    // Disagreement / missing ask → unmarked and never a training label. Floor must clear for the rest.
+    const disagreed = o.note === 'pair asks disagreed' || o.note === 'pair ask missing';
+    o.training_label = trainOk && !disagreed && o.thumb != null;
+  }
+
+  const tally = { up: 0, down: 0, unmarked: 0 };
+  let marked = 0;
+  for (const p of pairs) {
+    if (p.left.thumb) {
+      marked++;
+      tally[p.left.thumb]++;
+    }
+  }
+  const ratePct = Math.round(100 * pairAgreement);
+  const floorPct = Math.round(100 * PAIR_AGREEMENT_FLOOR);
+  return (
+    judgeStatus(model, marked, pairs.length, failed, batches, tally) +
+    `; pair agreement ${ratePct}% (floor ${floorPct}%)${trainOk ? '' : ' — below floor, not training_ok'}`
+  );
+}
+
+function verdictTurnSafe(v) {
+  const m = String(v?.turn ?? '').match(/\d+/);
+  return m ? Number(m[0]) : NaN;
+}
 
 async function addNotes() {
   const key = readOpenRouterKey();
   if (!key) return 'skipped (no OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY found)';
+  if (pairDir) return addPairedNotes(key);
+
+  // RC-J1 — absolute single-run notes stay diagnostic only (not a training label).
+  labelSource = 'diagnostic';
   const targets = out.filter((o) => o.prose && o.prose.trim().length > 0).slice(0, 300);
   if (!targets.length) return 'skipped (no prose turns)';
   const model = judgeModel;
@@ -193,18 +383,7 @@ async function addNotes() {
       const batch = list.slice(i, i + size);
       const prompt = buildJudgePrompt(batch);
       try {
-        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 12000, temperature: 0 }),
-        });
-        if (!res.ok) {
-          failed++;
-          continue;
-        }
-        const j = await res.json();
-        // 29z4 — an empty reply or one with no usable verdict is a failed batch, not "0 judged, ok".
-        const got = applyVerdicts(batch, parseJudge(replyText(j)), lessons);
+        const got = applyVerdicts(batch, await callJudge(key, model, prompt), lessons);
         if (!got) failed++;
         judged += got;
       } catch {
@@ -216,11 +395,22 @@ async function addNotes() {
   // 29z7 — one more ask for only the turns the model skipped; whatever is still missing stays unmarked.
   const missing = targets.filter((o) => o.thumb == null);
   if (missing.length) await ask(missing, 5);
+  for (const o of targets) {
+    o.labelSource = 'diagnostic';
+    o.training_label = false;
+  }
   const tally = { up: 0, down: 0, unmarked: 0 };
   for (const o of targets) if (o.thumb) tally[o.thumb]++;
-  return judgeStatus(model, judged, targets.length, failed, batches, tally);
+  return (
+    judgeStatus(model, judged, targets.length, failed, batches, tally) +
+    '; absolute notes are diagnostic only (not a training label; use --pair)'
+  );
 }
 
+if (pairDir && !wantNotes) {
+  console.error('RC-J1: --pair requires --notes');
+  process.exit(1);
+}
 const notesStatus = wantNotes ? await addNotes() : 'not requested';
 
 for (const r of rows) {
@@ -302,6 +492,15 @@ const md = [
   '',
   '## Thumbs',
   `- Prose thumbs (notes model, rubric): 👍 ${thumbCnt('up')} · 👎 ${thumbCnt('down')} · unmarked ${thumbCnt('unmarked')} · never marked ${out.filter((o) => o.thumb === null).length} · model notes: ${notesStatus}`,
+  `- Label source: ${labelSource ?? 'none (local flags only)'}${
+    pairAgreement != null
+      ? ` · pair agreement ${Math.round(100 * pairAgreement)}% (floor ${Math.round(100 * PAIR_AGREEMENT_FLOOR)}%)${
+          trainingOkFromAgreement(pairAgreement) ? ' · training_ok' : ' · below floor (not training_ok)'
+        }`
+      : labelSource === 'diagnostic'
+        ? ' · diagnostic only (not a training label)'
+        : ''
+  }`,
   `- Turn verdicts (local flags + model): 👍 ${cnt('up')} · 👎 ${cnt('down')} · unclear ${cnt('unclear')} · neutral ${cnt('neutral')}`,
   '',
   `### P0 (turn fails): ${p0Count} on ${p0Turns.length} turn(s)`,
@@ -326,10 +525,32 @@ const md = [
   '',
 ].join('\n');
 
-fs.writeFileSync(
-  path.join(runDir, 'thumbs.json'),
-  JSON.stringify({ circling, p0Count, lessons: lessons.length, turns: out.map(({ prose, ...o }) => o) }, null, 1)
-);
+function writeThumbsBundle(dir, turns, extra = {}) {
+  fs.writeFileSync(
+    path.join(dir, 'thumbs.json'),
+    JSON.stringify(
+      {
+        circling: dir === runDir ? circling : undefined,
+        p0Count: dir === runDir ? p0Count : undefined,
+        lessons: dir === runDir ? lessons.length : undefined,
+        labelSource,
+        pairAgreement,
+        pairAgreementFloor: PAIR_AGREEMENT_FLOOR,
+        trainingOk: labelSource === 'paired' ? trainingOkFromAgreement(pairAgreement) : false,
+        ...extra,
+        turns: turns.map(({ prose, ...o }) => o),
+      },
+      null,
+      1
+    )
+  );
+  fs.writeFileSync(path.join(dir, 'report.md'), dir === runDir ? md : md.replace(path.basename(runDir), path.basename(dir)));
+}
+
+writeThumbsBundle(runDir, out);
 fs.writeFileSync(path.join(runDir, 'writer-lessons.jsonl'), lessons.map((l) => JSON.stringify(l)).join('\n') + (lessons.length ? '\n' : ''));
-fs.writeFileSync(path.join(runDir, 'report.md'), md);
+if (pairDir && pairOut) {
+  writeThumbsBundle(pairDir, pairOut);
+  fs.writeFileSync(path.join(pairDir, 'writer-lessons.jsonl'), '');
+}
 console.log(md);
