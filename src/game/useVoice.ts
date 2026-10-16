@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { shopItemById, type ShopItem } from './cosmeticCatalog';
+import { effectiveTtsRate, effectiveTtsVolume } from './accessibility';
 
 type SpeechRecognitionType = typeof window & {
   SpeechRecognition?: new () => SpeechRecognitionInstance;
@@ -86,14 +87,17 @@ export function sortSpeechVoices(voices: SpeechVoicePick[]): SpeechVoicePick[] {
   });
 }
 
-function resolveTts(voices: SpeechSynthesisVoice[], voicePackId?: string, ttsVoiceURI?: string) {
+/** ACC-1c: player's read-aloud speed and volume (Settings > Accessibility). */
+export type SpeechPrefs = { ttsRate?: number; ttsVolume?: number };
+
+function resolveTts(voices: SpeechSynthesisVoice[], voicePackId?: string, ttsVoiceURI?: string, prefs?: SpeechPrefs) {
   const pack = voicePackId ? shopItemById(voicePackId) : undefined;
   const tts = pack?.tts ?? { rate: 0.95, pitch: 0.9, voiceHint: 'en' };
   const picked = pickSpeechVoice(voices, ttsVoiceURI);
   const match = picked
     ? voices.find((v) => v.voiceURI === picked.voiceURI) ?? voices.find((v) => v.name === picked.name)
     : undefined;
-  return { voice: match, rate: tts.rate, pitch: tts.pitch };
+  return { voice: match, rate: effectiveTtsRate(tts.rate, prefs?.ttsRate), pitch: tts.pitch, volume: effectiveTtsVolume(prefs?.ttsVolume) };
 }
 
 /**
@@ -191,7 +195,9 @@ function speakNow(u: SpeechSynthesisUtterance): void {
   }
 }
 
-export function useVoice(ttsEnabled: boolean, voicePackId?: string, ttsVoiceURI?: string) {
+export function useVoice(ttsEnabled: boolean, voicePackId?: string, ttsVoiceURI?: string, speechPrefs?: SpeechPrefs) {
+  const speechPrefsRef = useRef<SpeechPrefs | undefined>(speechPrefs);
+  speechPrefsRef.current = speechPrefs;
   const [speaking, setSpeaking] = useState(false);
   const [speakingEntryId, setSpeakingEntryId] = useState<string | null>(null);
   const [listening, setListening] = useState(false);
@@ -253,7 +259,7 @@ export function useVoice(ttsEnabled: boolean, voicePackId?: string, ttsVoiceURI?
   }, [ttsEnabled, ttsSupported]);
 
   const preferredVoice = useCallback(
-    () => resolveTts(voices, voicePackId, ttsVoiceURIRef.current),
+    () => resolveTts(voices, voicePackId, ttsVoiceURIRef.current, speechPrefsRef.current),
     [voices, voicePackId, ttsVoiceURI],
   );
 
@@ -312,6 +318,7 @@ export function useVoice(ttsEnabled: boolean, voicePackId?: string, ttsVoiceURI?
     const u = new SpeechSynthesisUtterance(clean);
     const preferred = preferredVoice();
     u.rate = preferred.rate;
+    u.volume = preferred.volume;
     u.pitch = preferred.pitch;
     if (preferred.voice) u.voice = preferred.voice;
     bindUtterance(u, opts?.entryId);
@@ -352,6 +359,7 @@ export function useVoice(ttsEnabled: boolean, voicePackId?: string, ttsVoiceURI?
       const u = new SpeechSynthesisUtterance(queue[index]);
       index += 1;
       u.rate = preferred.rate;
+      u.volume = preferred.volume;
       u.pitch = preferred.pitch;
       if (preferred.voice) u.voice = preferred.voice;
       bindUtterance(u, entryId, () => speakNext(false));

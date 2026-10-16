@@ -9,6 +9,7 @@ import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
 import { applySettingsCosmetics } from '@/game/uiTheme';
 import { canOpenMerchant } from '@/game/merchant';
+import { applyAccessibilityToDocument } from '@/game/accessibility';
 import { ensureTestCosmeticUnlock } from '@/game/cosmeticEntitlements';
 import { Suspense, useEffect, useState } from 'react';
 import { Hud } from '@/components/Hud';
@@ -73,6 +74,11 @@ export default function App() {
   useEffect(() => {
     applySettingsCosmetics(game.settings);
   }, [game.settings.uiThemeId, game.settings.fontPackId, game.settings.diceCosmeticId, game.settings.turnFrameCosmeticId]);
+
+  // ACC-1: text size, contrast, motion and font are applied once, centrally, on <html>.
+  useEffect(() => {
+    applyAccessibilityToDocument(game.settings);
+  }, [game.settings]);
 
   // Tip once per device after opening covers — never over the first name ask.
   useEffect(() => {

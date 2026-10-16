@@ -1927,3 +1927,66 @@ html[data-sgm-material='1'] .sgm-sheet-box-strong {
 .sgm-map-room--secret {
   filter: brightness(0.45);
 }
+
+/* ===== ACC-1: accessibility tokens (one central place; see src/game/accessibility.ts) =====
+ * Tailwind text-slate-300..600 read these RGB tokens (tailwind.config.js textColor).
+ * Defaults keep body text at or above WCAG 2.2 AA 4.5:1 on slate-900/950.
+ * Keep in sync with TEXT_TOKENS in accessibility.ts (accessibility.test.ts checks). */
+:root {
+  --sgm-text-300: 203 213 225; /* #cbd5e1 */
+  --sgm-text-400: 148 163 184; /* #94a3b8 */
+  --sgm-text-500: 141 156 177; /* #8d9cb1 */
+  --sgm-text-600: 132 148 168; /* #8494a8 */
+  --sgm-focus-ring: #fbbf24;
+}
+html.sgm-high-contrast {
+  --sgm-text-300: 248 250 252; /* #f8fafc */
+  --sgm-text-400: 241 245 249; /* #f1f5f9 */
+  --sgm-text-500: 226 232 240; /* #e2e8f0 */
+  --sgm-text-600: 226 232 240; /* #e2e8f0 */
+  --sgm-text: #ffffff !important;
+  --sgm-muted: #e2e8f0 !important;
+  --sgm-bg: #000000 !important;
+  --sgm-panel: #0b0b0b !important;
+  --sgm-focus-ring: #ffff00;
+}
+/* High contrast: no faint text, 3:1 borders on controls (WCAG 1.4.11), no text over images. */
+html.sgm-high-contrast body { background: #000; }
+html.sgm-high-contrast button,
+html.sgm-high-contrast input,
+html.sgm-high-contrast select,
+html.sgm-high-contrast textarea,
+html.sgm-high-contrast [role='tab'] { border-color: #cbd5e1 !important; }
+html.sgm-high-contrast .sgm-play-story-panel { background-image: none !important; background-color: #000 !important; }
+
+/* ===== end ACC-1b ===== */
+
+/* ===== ACC-1d: focus, motion, font ===== */
+/* Visible keyboard focus everywhere (WCAG 2.4.7). */
+:focus-visible {
+  outline: 3px solid var(--sgm-focus-ring) !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced motion: app setting (or OS preference by default) stops animation and transitions. */
+html.sgm-reduce-motion *,
+html.sgm-reduce-motion *::before,
+html.sgm-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Readable font: plain sans for UI and story, more line and letter spacing (WCAG 1.4.12 values). */
+html.sgm-readable-font {
+  --sgm-font-ui: Verdana, Arial, 'Helvetica Neue', system-ui, sans-serif !important;
+  --sgm-font-story: Verdana, Arial, 'Helvetica Neue', system-ui, sans-serif !important;
+  --sgm-font-display: Verdana, Arial, system-ui, sans-serif !important;
+}
+html.sgm-readable-font body {
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  word-spacing: 0.16em;
+}
+/* ===== end ACC-1 ===== */

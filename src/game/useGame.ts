@@ -423,6 +423,7 @@ import {
   calculateAge,
 } from './drive';
 import { useVoice } from './useVoice';
+import { withChoicesSpeech } from './accessibility';
 import { logger } from './logger';
 import { debugLogger } from './debugLogger';
 import { supabase, signInWithGoogleOAuth, signOutSupabase, isSupabaseConfigured } from '@/lib/supabase';
@@ -755,7 +756,7 @@ export function useGame() {
   const [postCommitTurnEpoch, setPostCommitTurnEpoch] = useState(0);
   const postCommitTurnRunningRef = useRef(false);
 
-  const voice = useVoice(settings.ttsEnabled, settings.voicePackId, settings.ttsVoiceURI);
+  const voice = useVoice(settings.ttsEnabled, settings.voicePackId, settings.ttsVoiceURI, { ttsRate: settings.ttsRate, ttsVolume: settings.ttsVolume });
 
   const clearRevealTimer = useCallback(() => {
     if (revealTimerRef.current) {
@@ -4903,10 +4904,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         setState(mergedState);
         setRestoreDraft(null);
         if (settingsRef.current.ttsEnabled) {
-          if (effectsPayload.speech.kind === 'sequence') {
-            voice.speakSequence(effectsPayload.speech.texts, { entryId: gmEntry.id });
+          const speech = withChoicesSpeech(effectsPayload.speech, mergedState.choices, settingsRef.current.readChoicesAloud);
+          if (speech.kind === 'sequence') {
+            voice.speakSequence(speech.texts, { entryId: gmEntry.id });
           } else {
-            voice.speak(effectsPayload.speech.text, { entryId: gmEntry.id });
+            voice.speak(speech.text, { entryId: gmEntry.id });
           }
         }
         try {
@@ -5031,10 +5033,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     pendingEffectsRef.current = null;
     if (effects) {
       if (settingsRef.current.ttsEnabled) {
-        if (effects.speech.kind === 'sequence') {
-          voice.speakSequence(effects.speech.texts, { entryId: effects.speech.entryId });
+        const speech = withChoicesSpeech(effects.speech, committed.choices, settingsRef.current.readChoicesAloud);
+        if (speech.kind === 'sequence') {
+          voice.speakSequence(speech.texts, { entryId: effects.speech.entryId });
         } else {
-          voice.speak(effects.speech.text, { entryId: effects.speech.entryId });
+          voice.speak(speech.text, { entryId: effects.speech.entryId });
         }
       }
       postCommitTurnEffectsRef.current.push({ ...effects, snapshot: committed });

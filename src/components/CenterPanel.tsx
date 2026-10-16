@@ -6,7 +6,8 @@ import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtS
 import { filterSystemLogForEngine, statusLinesForVerbosity } from '@/game/systemLog';
 import { presentSystemNotices } from '@/game/systemNotice';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
-import type { VoiceState } from '@/game/useVoice';
+import { proseForSpeech, type VoiceState } from '@/game/useVoice';
+import { liveRegionPoliteness } from '@/game/accessibility';
 import { FormattedText } from './FormattedText';
 import { logger } from '@/game/logger';
 import { ComicGrid } from './comic/ComicGrid';
@@ -299,6 +300,10 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-6"
         >
           <div className="mx-auto max-w-2xl space-y-4">
+            {/* ACC-1c: screen readers hear each new story beat; silent while read-aloud (TTS) is on. */}
+            <div className="sr-only" role="status" aria-live={liveRegionPoliteness(voice.ttsEnabled)} aria-atomic="true">
+              {proseForSpeech(state.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '')}
+            </div>
             {state.log.map((entry, index) => (
               shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
                 <LogRow

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical, List } from 'lucide-react';
+import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical, List, Accessibility, Type } from 'lucide-react';
+import { TEXT_SCALE_STEPS, normalizeTextScale, applyAccessibilityToDocument } from '@/game/accessibility';
 import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey } from '@/game/apiValidation';
@@ -72,10 +73,11 @@ interface Props {
   accountEmail?: string | null;
 }
 
-type SettingsTab = 'general' | 'narrative' | 'mechanics' | 'visuals';
+type SettingsTab = 'general' | 'accessibility' | 'narrative' | 'mechanics' | 'visuals';
 
 const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'general', label: 'General / Core' },
+  { id: 'accessibility', label: 'Accessibility' },
   { id: 'narrative', label: 'Narrative & Tone' },
   { id: 'mechanics', label: 'Mechanics & Stats' },
   { id: 'visuals', label: 'Visuals' },
@@ -126,6 +128,12 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const [pinUnlock, setPinUnlock] = useState('');
   const [pinError, setPinError] = useState('');
   const [pinDisclaimerAccepted, setPinDisclaimerAccepted] = useState(false);
+
+  // ACC-1: accessibility choices preview live; on close, the saved settings are re-applied
+  // (App re-applies again if they were saved), so an unsaved preview never sticks.
+  const savedSettingsRef = useRef(settings);
+  savedSettingsRef.current = settings;
+  useEffect(() => () => applyAccessibilityToDocument(savedSettingsRef.current), []);
 
   const update = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setDraft((prev) => {
@@ -823,6 +831,96 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                   primeTts();
                   speakTtsNow('This is how I will read the story.', uri);
                 }
+              }}
+            />
+          </Section>
+
+          {/* ACC-1: Accessibility tab. Each setting applies at once (live preview) and is saved. */}
+          <Section icon={<Accessibility size={16} />} title="Text size" visible={activeTab === 'accessibility'}>
+            <p className="mb-2 text-xs text-slate-400">Makes all text bigger, including menus and pop-ups.</p>
+            <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label="Text size">
+              {TEXT_SCALE_STEPS.map((step) => (
+                <ChoiceCard
+                  key={step}
+                  icon={<Type size={14} />}
+                  label={`${step}%`}
+                  selected={normalizeTextScale(draft.textScale) === step}
+                  onClick={() => {
+                    update('textScale', step);
+                    applyAccessibilityToDocument({ ...draft, textScale: step });
+                  }}
+                />
+              ))}
+            </div>
+          </Section>
+          <Section icon={<Eye size={16} />} title="Contrast" visible={activeTab === 'accessibility'}>
+            <ToggleRow
+              icon={<Eye size={15} />}
+              label="High contrast"
+              description="White text on black, brighter outlines on buttons, and no pictures behind the story text."
+              checked={!!draft.highContrast}
+              onChange={(v) => {
+                update('highContrast', v);
+                applyAccessibilityToDocument({ ...draft, highContrast: v });
+              }}
+            />
+          </Section>
+          <Section icon={<Volume2 size={16} />} title="Read aloud" visible={activeTab === 'accessibility'}>
+            <p className="mb-2 text-xs text-slate-400">Turn read-aloud on under General &gt; Voice &amp; Audio. Screen readers hear new story text when read-aloud is off.</p>
+            <label className="mb-3 block text-sm text-slate-300">
+              Speed: {(draft.ttsRate ?? 1).toFixed(1)}x
+              <input
+                type="range" min={0.6} max={1.6} step={0.1}
+                value={draft.ttsRate ?? 1}
+                onChange={(e) => update('ttsRate', Number(e.target.value))}
+                className="mt-1 block w-full" aria-label="Read-aloud speed"
+              />
+            </label>
+            <label className="mb-3 block text-sm text-slate-300">
+              Volume: {Math.round((draft.ttsVolume ?? 1) * 100)}%
+              <input
+                type="range" min={0} max={1} step={0.1}
+                value={draft.ttsVolume ?? 1}
+                onChange={(e) => update('ttsVolume', Number(e.target.value))}
+                className="mt-1 block w-full" aria-label="Read-aloud volume"
+              />
+            </label>
+            <ToggleRow
+              icon={<Volume2 size={15} />}
+              label="Read choices aloud"
+              description="After each story beat, read out the choices you can pick."
+              checked={!!draft.readChoicesAloud}
+              onChange={(v) => update('readChoicesAloud', v)}
+            />
+          </Section>
+          <Section icon={<Type size={16} />} title="Motion and reading" visible={activeTab === 'accessibility'}>
+            <label className="mb-2 block text-xs font-medium text-slate-400">Reduce motion</label>
+            <div className="mb-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Reduce motion">
+              {([
+                ['system', 'Match device', 'Uses your device setting'],
+                ['on', 'On', 'Stops animations'],
+                ['off', 'Off', 'Full animation'],
+              ] as const).map(([value, label, sublabel]) => (
+                <ChoiceCard
+                  key={value}
+                  label={label}
+                  sublabel={sublabel}
+                  selected={(draft.reduceMotion ?? 'system') === value}
+                  onClick={() => {
+                    update('reduceMotion', value);
+                    applyAccessibilityToDocument({ ...draft, reduceMotion: value });
+                  }}
+                />
+              ))}
+            </div>
+            <ToggleRow
+              icon={<Type size={15} />}
+              label="Easy-read font"
+              description="Plain, clear lettering for menus and story, with more space between lines and letters."
+              checked={!!draft.readableFont}
+              onChange={(v) => {
+                update('readableFont', v);
+                applyAccessibilityToDocument({ ...draft, readableFont: v });
               }}
             />
           </Section>
