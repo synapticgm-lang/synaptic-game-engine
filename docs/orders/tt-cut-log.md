@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-P2 handedRefs / repeated-habit masks (Order P-2)
+
+1. **`src/game/turnCheck.ts` handmade `masks` array (location, character name, npcMemories, hubs, `routeNames`)** — what it did: masked only those strings before the repeated-habit 5-gram compare, so REF ENUM group/meeting/prop labels ("the two drowned rite novices") still flagged as habits. Replaced by `handedRefs(before|after)` (one list next to `compileRefEnum`).
+2. **`scripts/factCheck.mjs` `handedPeople` body** — kept as the script-side people slice of the same label rule (`note` before `;`); no second parallel people checker. Cannot import the TS packet builder from Node without a no-dep module; the game list is `handedRefs`.
+3. **Comment / essay trim (ruleCount budget):** `forwardProgressGovernor.ts` file essay and end-of-line comments; `typedEntityValidator.ts` block/line comments. Behaviour unchanged.
+
+---
+
 ## q31-ECR2 attunement (Order E-CR / Spec E-CR2)
 
 1. **`src/game/tabletop/downtimeTurn.ts` `ATTUNE` / `END_ATTUNE` regexes** — whole-line phrase matchers for attune/end. What they did: keyed the path off wording, not intent + carried magic item. Replaced by `parsePlayerIntent` (`attune` → `use_item`) + `findAttuneTarget` (longest carried magic name in the line) and end/break/drop + `attunement` string gate.

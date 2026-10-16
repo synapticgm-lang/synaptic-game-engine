@@ -737,6 +737,40 @@ export function compileRefEnum(
   return out;
 }
 
+/**
+ * Displays + labels the writer was handed this turn. One list for repeated-habit masks,
+ * factCheck `handedPeople` (same label rule), and later P-5 / M.
+ * Trip ground/ends join while underway (enum skips `here`); not a second handmade checker.
+ */
+export function handedRefs(
+  state: GameState,
+  packet?: CompletedEventPacket,
+  opts?: NounAllowlistOpts
+): string[] {
+  const refs = packet?.refEnum?.length ? packet.refEnum : compileRefEnum(state, [], opts);
+  const j = state.journey;
+  const rows: { display: string; note?: string }[] = [...refs];
+  for (const s of [underwayHereLabel(state), j?.ground, j?.from, j?.to]) {
+    const display = (s ?? '').trim();
+    if (display.length >= 3) rows.push({ display });
+  }
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const r of rows) {
+    for (const raw of [r.display, (r.note ?? '').split(';')[0]]) {
+      const t = (raw ?? '').trim();
+      if (t.length < 3) continue;
+      const k = t.toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k);
+      let i = 0;
+      while (i < out.length && out[i]!.length >= t.length) i++;
+      out.splice(i, 0, t);
+    }
+  }
+  return out;
+}
+
 export function formatRefEnumForWriter(refs: LedgerRef[]): string {
   if (!refs.length) return 'REF ENUM: (none this turn)';
   return [

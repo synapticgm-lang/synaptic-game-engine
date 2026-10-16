@@ -1,17 +1,4 @@
-/**
- * P0.1 - Typed Entity Validator (upgraded from string scrub)
- * 
- * Generate from typed entities → validate referents → regenerate once → 
- * explicit noun fallback with telemetry flag.
- * 
- * Not: Delete `them`, `this place`, `the stranger` after generation.
- * 
- * Target:
- * - themWordHits ≤10 on DnD 300t
- * - stranger body ≤20 on RPG/PYOA
- * - 0 broken-stranger options
- * - Track invalid references per 100 turns + regeneration rate
- */
+
 
 import type { GameState } from './types';
 import {
@@ -20,7 +7,7 @@ import {
 } from './narrativeScrub';
 import { isChromePersonToken, isPolityFactionOrPlaceToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, detectHubRoleMadlib } from './chromeAuthority';
 
-/** Never emit these as automatic scrub replacements (29a constitution). */
+
 export const FORBIDDEN_SCRUB_REPLACEMENTS = [
   'stranger', 'the stranger', 'building', 'nearby building', 'the nearby building',
   'mark', 'the mark', 'panel', 'the panel', 'someone', 'something',
@@ -28,53 +15,51 @@ export const FORBIDDEN_SCRUB_REPLACEMENTS = [
 
 
 export interface EntityReference {
-  /** The pronoun or vague reference used */
+  
   text: string;
-  /** What it should have referred to */
+  
   expected?: string;
-  /** Line number or position in the prose */
+  
   position: number;
 }
 
 export interface InvalidReferenceReport {
-  /** Number of `them` references without clear antecedent */
+  
   themCount: number;
-  /** Number of `this place` / `the place` references when location is named */
+  
   thisPlaceCount: number;
-  /** Number of `the stranger` / `a stranger` when NPC should be named */
+  
   strangerCount: number;
-  /** Number of broken option labels like "Check the stranger" when no stranger exists */
+  
   brokenChoiceCount: number;
-  /** Hub+role compounds misused as verb/object slots (Batch X) */
+  
   hubRoleMadlibCount: number;
-  /** All invalid references found */
+  
   references: EntityReference[];
-  /** Should prose be regenerated? */
+  
   shouldRegenerate: boolean;
 }
 
 export interface TypedEntityContext {
-  /** Named NPCs present in the scene */
+  
   presentNpcs: string[];
-  /** Named companions */
+  
   companions: string[];
-  /** Current location name */
+  
   locationName?: string;
-  /** Recent speaker from last turn */
+  
   lastSpeaker?: string;
-  /** Props and interactables in the scene */
+  
   sceneObjects: string[];
-  /** Inventory item names */
+  
   inventoryItems: string[];
-  /** Is this an alone arrival scene? */
+  
   aloneArrival: boolean;
-  /** Active encounter enemy name */
+  
   encounterName?: string;
 }
 
-/**
- * Extract typed entity context from game state for validation.
- */
+
 export function extractEntityContext(state: GameState): TypedEntityContext {
   const presentNpcs = [...(state.sceneFacts?.present ?? [])].filter(
     (n) =>
@@ -89,7 +74,6 @@ export function extractEntityContext(state: GameState): TypedEntityContext {
   const companions = (state.companions ?? []).map(c => c.name).filter(Boolean);
   const locationName = state.currentLocation;
   
-  // Recent speaker - look for last NPC who spoke
   const log = state.log ?? [];
   let lastSpeaker: string | undefined;
   for (let i = log.length - 1; i >= Math.max(0, log.length - 3); i--) {
@@ -126,9 +110,7 @@ export function extractEntityContext(state: GameState): TypedEntityContext {
   };
 }
 
-/**
- * Validate prose for invalid entity references.
- */
+
 export function validateEntityReferences(
   prose: string,
   context: TypedEntityContext
@@ -144,10 +126,8 @@ export function validateEntityReferences(
     const line = lines[i];
     const lower = line.toLowerCase();
     
-    // Check for orphan "them" without clear antecedent
     const themMatches = line.match(/\b(them|they|their|theirs)\b/gi);
     if (themMatches) {
-      // Check if there's a clear plural antecedent nearby
       const hasPlural = context.presentNpcs.length > 1 
         || /\b(people|crowd|group|handlers?|watchers?|officials?|merchants?)\b/i.test(line);
       
@@ -161,7 +141,6 @@ export function validateEntityReferences(
       }
     }
     
-    // Check for "this place" / "the place" when location has a name
     if (context.locationName && context.locationName.length > 3) {
       const placeMatches = line.match(/\b(this place|the place|this location)\b/gi);
       if (placeMatches) {
@@ -174,10 +153,8 @@ export function validateEntityReferences(
       }
     }
     
-    // Check for "the stranger" / "a stranger" when NPC should be named
     const strangerMatches = line.match(/\b(the stranger|a stranger|the figure|a figure|the person|a person)\b/gi);
     if (strangerMatches) {
-      // OK if: alone arrival, no NPCs present, or combat with unnamed creature
       const allowedStranger = context.aloneArrival 
         || (context.presentNpcs.length === 0 && !context.encounterName)
         || /\b(unknown|mysterious|cloaked|hooded)\b/i.test(line);
@@ -193,7 +170,6 @@ export function validateEntityReferences(
     }
   }
   
-  // Should regenerate if there are significant invalid references
   const hubRoleMadlibCount = detectHubRoleMadlib(prose) ? 1 : 0;
   const shouldRegenerate =
     themCount >= 3 || thisPlaceCount >= 2 || strangerCount >= 2 || hubRoleMadlibCount >= 1;
@@ -209,16 +185,13 @@ export function validateEntityReferences(
   };
 }
 
-/**
- * Validate a choice option for invalid entity references.
- */
+
 export function validateChoiceReference(
   choice: string,
   context: TypedEntityContext
 ): { valid: boolean; reason?: string } {
   const lower = choice.toLowerCase();
   
-  // Check for "Check the stranger" / "Talk to the stranger" when no stranger
   if (/\b(the stranger|a stranger|the figure|a figure)\b/i.test(choice)) {
     if (context.aloneArrival || context.presentNpcs.length === 0) {
       return {
@@ -228,7 +201,6 @@ export function validateChoiceReference(
     }
   }
   
-  // Check for "them" references in choices
   if (/\b(them|their)\b/i.test(choice)) {
     const hasPlural = context.presentNpcs.length > 1;
     if (!hasPlural) {
@@ -239,7 +211,6 @@ export function validateChoiceReference(
     }
   }
   
-  // Check for "this place" when location is named
   if (/\b(this place|the place)\b/i.test(choice)) {
     if (context.locationName && context.locationName.length > 3) {
       return {
@@ -252,16 +223,11 @@ export function validateChoiceReference(
   return { valid: true };
 }
 
-/**
- * Living speakers only — never kit / inventory display names / polity-place tokens.
- * 29c: kit→pronoun scrub (clothes / Worn Iron / Crew Token / Coat) was Free=NO root cause.
- * 31i: Pellane / Lowmarket / Ash Court must never replace "the panel" / "the figure".
- */
+
 function speakerPreferred(context: TypedEntityContext): string | undefined {
   const raw = context.encounterName || context.presentNpcs[0] || context.lastSpeaker || undefined;
   if (!raw) return undefined;
   if (isPolityFactionOrPlaceToken(raw) || isChromePersonToken(raw)) return undefined;
-  // Batch V — never inject dialogue verbs / pad pronouns as speaker replacements
   if (isDialogueVerbPersonToken(raw) || isChoicePadPersonToken(raw)) return undefined;
   return raw;
 }
@@ -272,7 +238,6 @@ function isKitLikeName(name: string | undefined, context: TypedEntityContext): b
   if (FORBIDDEN_SCRUB_REPLACEMENTS.includes(lower as never)) return true;
   if (isPolityFactionOrPlaceToken(name) || isChromePersonToken(name)) return true;
   if (context.inventoryItems.some((i) => i.toLowerCase() === lower)) return true;
-  // Starter-kit / garment patterns that must never replace pronouns
   if (
     /\b(clothes|coat|cloak|scarf|token|shortsword|sword|dagger|knife|bag|pack|phone|keys|headphones|leatherman|charter|blessing)\b/i.test(
       lower
@@ -283,12 +248,7 @@ function isKitLikeName(name: string | undefined, context: TypedEntityContext): b
   return false;
 }
 
-/**
- * Rewrite prose to replace invalid references with explicit nouns.
- * This is the fallback when regeneration would be too expensive.
- * 29c: NEVER map they/them/their (or env nouns) onto inventory kit names.
- * 31i: Never rewrite inside REGISTRATION/STATUS chrome; never map panel/mark onto polity.
- */
+
 export function rewriteInvalidReferences(
   prose: string,
   context: TypedEntityContext,
@@ -299,16 +259,12 @@ export function rewriteInvalidReferences(
     const speaker = speakerPreferred(context);
     const place = context.locationName;
 
-    // 29c — never rewrite they/them/their. A pronoun can mean the PC, a group or a thing
-    // ("palms turned out where the muscle could see them"); code cannot tell which.
 
     if (report.thisPlaceCount > 0 && place && !isKitLikeName(place, context)) {
       rewritten = rewritten.replace(/\bthis place\b/gi, place);
       rewritten = rewritten.replace(/\bthe place\b/gi, place);
     }
 
-    // Batch V — never map the mark / the panel onto speaker (token-injection root for "Rasped").
-    // Only rewrite generic stranger/figure when a real living speaker exists.
     if (report.strangerCount > 0 && speaker && !isKitLikeName(speaker, context) && !isDialogueVerbPersonToken(speaker)) {
       rewritten = rewritten.replace(/\bthe stranger\b/gi, speaker);
       rewritten = rewritten.replace(/\ba stranger\b/gi, speaker);

@@ -12,8 +12,8 @@ import { parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
-import { routeNames } from './travelJourney';
 import { getRegisteredLocations } from './entityRegistry';
+import { handedRefs } from './completedEventPacket';
 import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
 import { resolvePlayAreaMap, type ActiveDungeonState } from './mapEngine';
@@ -667,15 +667,8 @@ export function checkPlayCrimes(
   if (roll) p0.push({ kind: 'wrong-voice', detail: `the writer asks for a roll: "${roll[0]}"` });
   if (PROMPT_ENDING.test(text)) p0.push({ kind: 'lecture-ending', detail: 'the beat ends by asking what the player does' });
 
-  const masks = [
-    after.currentLocation,
-    before.currentLocation,
-    after.character?.name,
-    ...(after.npcMemories ?? []).map((m) => m.npcName),
-    ...hubsForBibleId(after.campaignBibleId).map((h) => h.name),
-    ...routeNames(before),
-    ...routeNames(after),
-  ]
+  // Same handed-ref list the writer gets (REF ENUM displays + labels) — not a second handmade mask list.
+  const masks = [...new Set([...handedRefs(before), ...handedRefs(after)])]
     .map(norm)
     .filter((n) => n.length >= 3)
     .sort((a, b) => b.length - a.length);

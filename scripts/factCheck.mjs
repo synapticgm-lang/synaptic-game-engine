@@ -138,14 +138,26 @@ function factSections(packet) {
 }
 
 /**
- * The people the writer was handed this turn: every REF ENUM person, companion and road-meeting row, each with its
- * display and its label (the row note's who-they-are clause, before the first ";"). Rows are LedgerRef-shaped
- * ({ id, kind, display, note }), so the game's shared handed-ref list can replace the packet parse.
+ * People the writer was handed this turn. Same label rule as `handedRefs` in completedEventPacket
+ * (`note` before the first ";"): every REF ENUM person / companion / meeting row with display + label.
+ * Script-side slice of the one handed-ref list (cannot import the TS packet builder here).
  */
 export function handedPeople(refs) {
-  return refs
-    .filter((r) => r.kind === 'person' || r.kind === 'companion' || r.kind === 'meeting')
-    .map((r) => ({ ...r, label: (r.note ?? '').split(';')[0].trim() }));
+  const out = [];
+  for (const r of refs) {
+    const display = String(r.display ?? '').trim();
+    if (display.length < 2) continue;
+    const kind = String(r.kind ?? r.klass ?? '');
+    if (kind !== 'person' && kind !== 'companion' && kind !== 'meeting') continue;
+    out.push({
+      id: String(r.id ?? ''),
+      kind,
+      display,
+      note: String(r.note ?? ''),
+      label: String(r.note ?? '').split(';')[0].trim(),
+    });
+  }
+  return out;
 }
 
 /** Facts the engine handed the writer for one turn. */
