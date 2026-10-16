@@ -1,8 +1,6 @@
 import type { CampaignArchetype } from './archetypes.ts';
 import type { ActiveDungeonState } from './mapEngine.ts';
-
-/** Overlay anchor for comic text (inlined; edge does not need the full comicScript module). */
-export type ComicTextAnchor =
+type ComicTextAnchor =
   | 'top-left'
   | 'top-right'
   | 'bottom-left'
