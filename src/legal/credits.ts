@@ -256,7 +256,7 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         source: 'Wizards of the Coast LLC',
         license: 'CC BY 4.0',
         usedFor:
-          'Tabletop rules as written: ability scores, checks, combat, conditions, death saves, species, classes, spells, monsters, equipment, coins, travel, and experience.',
+          'Tabletop rules as written: ability scores, checks, combat, conditions, death saves, species, classes, spells, monsters, equipment and shop prices, coins, travel, and experience.',
         url: 'https://www.dndbeyond.com/srd',
         notice: SRD_5_2_1_NOTICE,
       },

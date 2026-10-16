@@ -1,6 +1,6 @@
 import type { GameState, Item, Rarity } from './types';
-import { getItemValue, removeItem } from './inventory';
-import { changeFor, formatPurse, gainCoins, srdSaleCp, usesPurse } from './rules/coins';
+import { addItem, getItemValue, removeItem } from './inventory';
+import { changeFor, formatCp, formatPurse, gainCoins, payCoins, purseGold, purseOf, shopPriceCp, srdSaleCp, usesPurse } from './rules/coins';
 
 const RARITY_SELL_MULTIPLIER: Record<Rarity, number> = {
   Common: 0.25,
@@ -48,6 +48,87 @@ export function sellPriceLabel(state: GameState, item: Item): string {
   return coins ? formatPurse(coins) : `${getSellPrice(item)}g`;
 }
 
+/** One shop transaction, written to the system log by the engine. */
+export interface ShopReceipt {
+  kind: 'buy' | 'sell';
+  item: string;
+  quantity: number;
+  /** Copper paid (buy) or received (sell). */
+  cp: number;
+  text: string;
+}
+
+export function withShopReceipt(state: GameState, receipt: ShopReceipt): GameState {
+  const entry = {
+    id: `shop-${receipt.kind}-${state.log.length}-${state.turn ?? 0}`,
+    turn: state.turn ?? 0,
+    role: 'system' as const,
+    content: receipt.text,
+    timestamp: Date.now(),
+    systemLog: [receipt.text],
+  };
+  return { ...state, log: [...state.log, entry] };
+}
+
+export interface BuyResult {
+  ok: boolean;
+  reason?: string;
+  receipt?: ShopReceipt;
+  newState?: GameState;
+}
+
+/** The buy price label: SRD coins on a tabletop sheet, whole gold elsewhere. Null when unlisted. */
+export function buyPriceLabel(state: GameState, name: string, quantity = 1): string | null {
+  const cp = shopPriceCp(name);
+  if (cp == null) return null;
+  const total = cp * Math.max(1, quantity);
+  return usesPurse(state) ? formatCp(total) : `${Math.ceil(total / 100)} gold`;
+}
+
+const priceKeyId = (name: string) => {
+  const chars = [...name.toLowerCase()].map((ch) => ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') ? ch : '-'));
+  return chars.join('').split('-').filter(Boolean).join('-');
+};
+
+/**
+ * Buy at the SRD list price (gold only). Tabletop pays from the purse, making change.
+ * Other modes pay whole gold. Fails, changing nothing, when the price is unlisted, the buyer cannot pay, or the pack has no room.
+ */
+export function buyItem(state: GameState, name: string, quantity = 1): BuyResult {
+  const cp = shopPriceCp(name);
+  if (cp == null) return { ok: false, reason: `${name} is not for sale here.` };
+  const qty = Math.max(1, Math.floor(quantity));
+  const total = cp * qty;
+  let paid: GameState;
+  if (usesPurse(state)) {
+    const left = payCoins(purseOf(state) ?? {}, total);
+    if (!left) return { ok: false, reason: `Not enough coin for ${name}.` };
+    const gold = purseGold(left);
+    paid = { ...state, gold, purse: { coins: left, gold } };
+  } else {
+    const gp = Math.ceil(total / 100);
+    if ((state.gold ?? 0) < gp) return { ok: false, reason: `Not enough gold for ${name}.` };
+    paid = { ...state, gold: (state.gold ?? 0) - gp };
+  }
+  const added = addItem(paid, {
+    id: `buy-${priceKeyId(name)}-${state.log.length}`,
+    name,
+    rarity: 'Common',
+    quantity: qty,
+    provenance: 'Bought from a merchant',
+  });
+  if (!added.ok) return { ok: false, reason: added.reason ?? 'No room to carry it.' };
+  const priceText = usesPurse(state) ? formatCp(total) : `${Math.ceil(total / 100)} gold`;
+  const receipt: ShopReceipt = {
+    kind: 'buy',
+    item: name,
+    quantity: qty,
+    cp: total,
+    text: `Bought ${qty > 1 ? `${qty} ` : ''}${name} for ${priceText}.`,
+  };
+  return { ok: true, receipt, newState: withShopReceipt(added.state, receipt) };
+}
+
 export function sellItem(state: GameState, itemId: string): SellResult {
   const item = state.inventory.find((i) => i.id === itemId);
   if (!item) return { ok: false, reason: 'Item not found.' };
@@ -55,21 +136,34 @@ export function sellItem(state: GameState, itemId: string): SellResult {
 
   const coins = srdSaleCoins(state, item);
   if (coins) {
-    const next = gainCoins(removeItem(state, itemId), coins);
-    return { ok: true, goldGained: (next.gold ?? 0) - (state.gold ?? 0), soldFor: formatPurse(coins), newState: next };
+    const cp = srdSaleCp(item.name, item.quantity ?? 1) ?? 0;
+    const soldFor = cp > 0 ? formatPurse(coins) : 'nothing';
+    const receipt: ShopReceipt = {
+      kind: 'sell',
+      item: item.name,
+      quantity: item.quantity ?? 1,
+      cp,
+      text: `Sold ${item.name} for ${soldFor}.`,
+    };
+    const next = withShopReceipt(gainCoins(removeItem(state, itemId), coins), receipt);
+    return { ok: true, goldGained: (next.gold ?? 0) - (state.gold ?? 0), soldFor, newState: next };
   }
 
   const price = getSellPrice(item);
-
   const next = removeItem(state, itemId);
+  const paid = { ...next, gold: (next.gold ?? 0) + price };
+  const receipt: ShopReceipt = {
+    kind: 'sell',
+    item: item.name,
+    quantity: item.quantity ?? 1,
+    cp: price * 100,
+    text: `Sold ${item.name} for ${price} gold.`,
+  };
   return {
     ok: true,
     goldGained: price,
     soldFor: `${price} gold`,
-    newState: {
-      ...next,
-      gold: (next.gold ?? 0) + price,
-    },
+    newState: withShopReceipt(paid, receipt),
   };
 }
 
