@@ -57,7 +57,6 @@ export type TokenAcceptPath = 'json' | 'json-partial' | '13c' | 'last-resort';
 /** A line whose plain (untokened) subject speaks: the PC, the one name the writer types without a token. */
 const PC_SPEAKS = /^[A-Z][\w'’-]*\s+(?:spoke|said|asked|called|shouted|told|answered|replied|whispered|demanded)\b/;
 
-
 const ROLE_NOUNS = ['chanter', 'vendor', 'guard', 'merchant', 'priest', 'innkeep', 'handler', 'clerk', 'official', 'registrar', 'witness', 'archivist'];
 const ROLE_DESC = '(?:(?!(?:and|or|of|to|in|at|on|by|for|from|with|where|who|that|which|was|were|is|had|has)\\b)[a-z][a-z\'-]*\\s+){0,2}';
 
@@ -67,7 +66,6 @@ const UNBOUND_ANIMATE = new RegExp(
 );
 
 const TOK_RE = /@t(\d+)\b/g;
-
 
 function tidy(text: string): string {
   return (text ?? '')
@@ -171,7 +169,6 @@ const OPEN_Q = `"\u201c`;
 const CLOSE_Q = `"\u201d`;
 const QUOTED_RE = new RegExp(`[${OPEN_Q}]([^${OPEN_Q}${CLOSE_Q}]+)[${CLOSE_Q}]`, 'g');
 
-
 function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   let text = line.text.replace(/\\+(["'\u201c\u201d\u2018\u2019])/g, '$1').trim();
   const wrapped = text.match(new RegExp(`^[${OPEN_Q}]\\s*(@t\\d+\\b[\\s\\S]*[${CLOSE_Q}])\\s*[${CLOSE_Q}]$`));
@@ -203,7 +200,6 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   if (!/[.!?\u2026]$/.test(words)) words += '.';
   return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true, ...(bare ? { bare } : {}), ...(written ? { written: text } : {}) };
 }
-
 
 export function tellsSpeechFromOutside(beat: TokenBeat, enumRefs: LedgerRef[], state: GameState): TokenBeat {
   const pc = (state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
@@ -308,7 +304,6 @@ function countValue(phrase: string): number {
   return total + cur;
 }
 
-
 export function handedCountText(state: GameState, packet?: CompletedEventPacket): string {
   const page = (state.log ?? []).filter((e) => e.role === 'gm').map((e) => String(e.content ?? ''));
   const hasSheet = Array.isArray(state.inventory) && Array.isArray(state.character?.conditions);
@@ -340,38 +335,41 @@ const DAY_PART_WORDS: [slot: string, re: RegExp][] = [
   ['night', /\b(?:night|nightfall|midnight)\b/gi],
 ];
 
-
-const CLOCK_ORDER = ['dawn', 'morning', 'midday', 'afternoon', 'dusk', 'evening', 'night'];
-/** Every clock slot from `from` to `to`, wrapping past night (night .. morning = night, dawn, morning). */
-function clockSpan(from: string, to: string): string[] {
-  const a = CLOCK_ORDER.indexOf(from);
-  const b = CLOCK_ORDER.indexOf(to);
-  if (a < 0 || b < 0) return [];
-  const out: string[] = [];
-  for (let i = a; ; i = (i + 1) % CLOCK_ORDER.length) {
-    out.push(CLOCK_ORDER[i]!);
-    if (i === b) break;
-  }
-  return out;
-}
-
 export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean {
   const facts = handedText.split(PAGE_MARK)[0]!;
   const at = facts.indexOf(CLOCK_MARK);
   if (at < 0) return false;
   const clockSlot = facts.slice(at + CLOCK_MARK.length).split(/\s/)[0]!;
-  // ENGINE RESULT `now <slot>` owns the beat (q31-L4); else the save clock.
-  const engineSlots = facts
-    .split('\n')
-    .filter((l) => /^engine result:/i.test(l.trim()))
-    .flatMap((l) => [...l.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)].map((m) => m[1]!.toLowerCase()));
-  // A span the record states ("camped from night until morning") covers every slot it passes through.
-  const spanSlots = facts
-    .split('\n')
-    .filter((l) => /^engine result:/i.test(l.trim()))
-    .flatMap((l) => [...l.matchAll(/\bfrom (dawn|morning|midday|afternoon|dusk|evening|night) (?:until|till|to) (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)])
-    .flatMap((m) => clockSpan(m[1]!.toLowerCase(), m[2]!.toLowerCase()));
-  const allowed = engineSlots.length || spanSlots.length ? [...engineSlots, ...spanSlots] : [clockSlot];
+  // ENGINE RESULT `now <slot>` owns the beat (q31-L4). A recorded span ("from night until morning") covers every slot it passes.
+  const order: string[] = [];
+  for (const [slot] of DAY_PART_WORDS) for (const s of slot.split(' ')) order.push(s);
+  const engineSlots: string[] = [];
+  for (const raw of facts.split('\n')) {
+    if (!/^engine result:/i.test(raw.trim())) continue;
+    for (const m of raw.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)) engineSlots.push(m[1]!.toLowerCase());
+    const fromAt = raw.toLowerCase().indexOf(' from ');
+    if (fromAt < 0) continue;
+    const after = raw.toLowerCase().slice(fromAt + 6);
+    let cut = after.indexOf(' until '), n = 7;
+    const till = after.indexOf(' till '), to = after.indexOf(' to ');
+    if (till >= 0 && (cut < 0 || till < cut)) { cut = till; n = 6; }
+    if (to >= 0 && (cut < 0 || to < cut)) { cut = to; n = 4; }
+    if (cut < 0) continue;
+    let left = '', right = '';
+    const head = after.slice(0, cut).trim(), tail = after.slice(cut + n).trim();
+    for (const s of order) {
+      const he = head[s.length] ?? ' ', te = tail[s.length] ?? ' ';
+      if (!left && head.startsWith(s) && (he < 'a' || he > 'z')) left = s;
+      if (!right && tail.startsWith(s) && (te < 'a' || te > 'z')) right = s;
+    }
+    const a = order.indexOf(left), b = order.indexOf(right);
+    if (a < 0 || b < 0) continue;
+    for (let i = a; ; i = (i + 1) % order.length) {
+      engineSlots.push(order[i]!);
+      if (i === b) break;
+    }
+  }
+  const allowed = engineSlots.length ? engineSlots : [clockSlot];
   const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
   for (const [slots, re] of DAY_PART_WORDS) {
     if (slots.split(' ').some((s) => allowed.includes(s))) continue;
@@ -417,7 +415,6 @@ const HANDLED_OWN =
 /** In `handedCountText`, the earlier page follows this line. */
 const PAGE_MARK = '\u0000page\u0000';
 
-
 export function lineHasUnhandedCarriedThing(text: string, handedText: string): boolean {
   const handed = handedText.split(PAGE_MARK)[0]!;
   const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
@@ -431,7 +428,6 @@ export function lineHasUnhandedCarriedThing(text: string, handedText: string): b
   }
   return false;
 }
-
 
 export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName?: string): boolean {
   const pc = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
@@ -462,7 +458,6 @@ export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName
 /** Someone finds a thing ("found a small iron ring set into the stone"): the words after the article, up to where the thing stops. */
 const FOUND_THING =
   /\b(?:found|finds|discovered|discovers|uncovered|uncovers|turned up|came across|comes across)\s+(?:a|an|the|some)\s+((?:[a-z][a-z'-]*\s+){0,3}?[a-z][a-z'-]*)(?=\s*(?:[,.;:!?]|$|\s(?:set|sunk|fixed|built|cut|carved|hidden|tucked|lying|lay|resting|at|in|into|on|under|beneath|behind|beside|near|by|against|inside|within|among|between|of|that|which|where|and|with|from)\b))/gi;
-
 
 export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   const [facts, page = ''] = handedText.split(PAGE_MARK);
@@ -580,7 +575,6 @@ function namesDeclaredPerson(text: string, refs: TokenUseRef[]): boolean {
   return toksInText(text).some((t) => refs.some((r) => r.tok === t && PERSON_USES.has(r.use)));
 }
 
-
 function onlyAddressesOthers(text: string, speakerTok: string): boolean {
   const spk = speakerTok.replace(/^@/, '').toLowerCase();
   const toks = toksInText(text);
@@ -602,7 +596,6 @@ function refSlug(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-
 function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   const want = id.trim().replace(/^@/, '').toLowerCase();
   const rid = row.id.toLowerCase();
@@ -616,7 +609,6 @@ function idAgreesWithRow(row: LedgerRef, id: string): boolean {
     slugs.some((slug) => slug === refSlug(row.display) || slug === ridName)
   );
 }
-
 
 function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | undefined {
   const byTokOf = (s: string) => {
@@ -803,7 +795,6 @@ export function lineVoicesPc(text: string, pcName?: string, playerWords?: string
   return false;
 }
 
-
 /**
  * P-5d — a capitalised name standing where a person stands: right after a comma, semicolon, dash, "and" or "but",
  * and followed by a lowercase word (", Mara Voss watched the gate"). Grammar only, no word list. A name after a
@@ -864,7 +855,6 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
   if (lineHasMidSentenceCapital(capText)) return 'capital';
   return null;
 }
-
 
 export function plainLineFactProblem(text: string, state: GameState, packet?: CompletedEventPacket): string | null {
   const handed = handedCountText(state, packet);
@@ -997,7 +987,6 @@ const PREPOSITION_RE =
 
 const isDeterminerWord = (w: string) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w);
 
-
 function hasDeterminerBefore(text: string, offset: number): boolean {
   const before = text.slice(0, offset);
   const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
@@ -1006,7 +995,6 @@ function hasDeterminerBefore(text: string, offset: number): boolean {
   if (cut >= 0) return cut < near.length - 1;
   return near.some(isDeterminerWord);
 }
-
 
 function paintDisplay(row: { display: string; klass?: string }, text: string, offset: number, possessive: string): string {
   const display = row.display;
@@ -1075,7 +1063,6 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
   return tidy(sentences.join(' '));
 }
 
-
 export function restoreNameCase(text: string, enumRefs: { display: string }[]): string {
   const runs = new Set<string>();
   for (const r of enumRefs) for (const m of (r.display ?? '').matchAll(/\b[A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)+/g)) runs.add(m[0]);
@@ -1089,7 +1076,6 @@ export function restoreNameCase(text: string, enumRefs: { display: string }[]): 
 }
 
 const ARTICLE_RE = /^(?:the|a|an)\s+/i;
-
 
 export function collapseEchoedLabel(text: string, display: string): string {
   const core = display.replace(ARTICLE_RE, '').trim();
@@ -1135,7 +1121,6 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
   return out + text.slice(at);
 }
 
-
 function typedNameHead(after: string, core: string): RegExpMatchArray | null {
   const words = core.split(/\s+/);
   if (words.length < 2) return null;
@@ -1149,7 +1134,6 @@ function typedNameHead(after: string, core: string): RegExpMatchArray | null {
   return null;
 }
 
-
 function capitalizeSentenceStarts(text: string): string {
   return text.replace(/(^|(?:[.!?]\)?|\.["”’])\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
@@ -1161,7 +1145,6 @@ function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string
 
 /** Line-gate reasons about how a token was declared, not about what the line says. */
 const BINDING_ONLY_REASONS = new Set(['unbound-tok', 'unknown-id', 'use-class']);
-
 
 export function knownProperNames(state: GameState): string[] {
   const unheld = new Set(weaponsNotInHand(state));
@@ -1199,7 +1182,6 @@ function presentGivenNames(state: GameState): string[] {
   });
 }
 
-
 export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
   const unheld = new Set(weaponsNotInHand(state));
   const names = [
@@ -1215,7 +1197,6 @@ export function handedProperNames(state: GameState, packet?: CompletedEventPacke
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1 && !unheld.has(n.trim())).map((n) => n.trim()))];
 }
 
-
 function handedTextNames(text: string): string[] {
   const out: string[] = [];
   for (const m of text.matchAll(/(?<=[a-z0-9,'’)]\s+)([A-Z][a-z'’-]+(?:\s+[A-Z][a-z'’-]+){0,2})(?:['’]s)?\b/g)) {
@@ -1223,7 +1204,6 @@ function handedTextNames(text: string): string[] {
   }
   return out;
 }
-
 
 function undeclaredTokFits(row: LedgerRef, lines: TokenLine[], tok: string): boolean {
   const display = row.display ?? '';
@@ -1233,7 +1213,6 @@ function undeclaredTokFits(row: LedgerRef, lines: TokenLine[], tok: string): boo
   const uses = lines.flatMap((l) => [...l.text.matchAll(new RegExp(`(\\S+)?\\s*@${escRe(t)}(?!\\d)`, 'gi'))]);
   return uses.length > 0 && uses.every((m) => !!m[1] && isDeterminerWord(m[1]));
 }
-
 
 export function normalizeBeatRefs(
   beat: TokenBeat,
@@ -1263,7 +1242,6 @@ export function normalizeBeatRefs(
   return { ...beat, refs };
 }
 
-
 export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): string {
   const src = raw ?? '';
   const displayByTok = new Map<string, string>();
@@ -1289,7 +1267,6 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
   }
   return capitalizeSentenceStarts(tidy(texts.join(' ')));
 }
-
 
 export function paintTokensOrDrop(text: string, display: (tok: string) => string | undefined): string {
   const sentences = splitProseSentences(dropTypedNameAfterToken(text ?? '', display));

@@ -674,3 +674,8 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 
 ## K1 (16 Oct, Grok Bot, branch k-1)
 - src/game/sceneLedger.ts `stampSceneLedger`: removed the path that turned every non-threat `Open thread` consequence (made by the `extractPromisesFromProse` prose regex) into a pinned ledger promise. Covered by: pinned promises are now the open Order K commitments for the people here and in Previous (`openCommitmentsFor`), recorded from the turn record (stateTx `quest_reveal` rows, world deals). `extractPromisesFromProse` itself still writes Open thread lines (threat lines and campaign-memory summaries still read them); it no longer feeds promises. Its PROMISE_PATTERNS are frozen. Main already has the same cut under q31-K1 / q31-K2; this entry is kept from branch `qv`. The stale planned RC-N4 line on that branch is not restored: RC-N4 already shipped on main.
+
+## TT37 (16 Oct, branch n4fix)
+- No code deleted. TT37-N3b moves the turn-record page ahead of `topicAdvancePool` for travel turns. The pool stays for town turns with no record.
+- Credits: the Languages line comes from the System Reference Document 5.2.1 by Wizards of the Coast LLC (CC-BY-4.0), via 5e-bits/5e-database@a6212beb.
+- q32-merge37b: did not keep the second clock list from `33668256` (`CLOCK_ORDER` of seven slot names, `clockSpan`, and the extra `from … until` regex plus the second engine-result walk). A recorded `from <slot> until|till|to <slot>` span is read in `lineHasWrongTimeOfDay` on the same engine-result lines, and the slots are the names already on `DAY_PART_WORDS`. The `now <slot>` regex stays. Consecutive blank lines in `src/game/tokenProse.ts` (27) were padding only; collapsing them keeps ruleCount lines from rising.
