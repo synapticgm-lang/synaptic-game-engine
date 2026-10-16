@@ -20,6 +20,12 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-L4 push-on night / Extended Travel writer lines
+
+1. **`src/game/travelJourney.ts` (+ edge stub) `writerEngineResult` bare `Travel:` regex** — `/Travel: .*?\.(?=\s+[A-Z]|\s*$)/g` matched inside `Extended Travel: …`. Replaced by `(?<![A-Za-z])Travel: …`. Structured lines from `travelEngineLines` (push-on slot + Extended Travel extras).
+2. **`daySpentFacts`** — one-line helper inlined at its two call sites. Cut so `travelEngineLines` does not raise the function count.
+3. **Module preamble essay** in `travelJourney.ts` (29u/29w/29x/tt-travel block) and the tt-travel section bar. Comment only.
+
 ## q31-M3 scene exit + leapfrog (Order M part 3, steps 5–6)
 
 1. **`src/game/pressureClock.ts` `initPressureClock`** — returned `{ turnsSinceBeat: 0 }`. Inlined into `tickPressureClock` (`prev ?? { turnsSinceBeat: 0 }`). No other caller.

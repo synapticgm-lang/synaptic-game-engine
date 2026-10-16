@@ -34,10 +34,14 @@ import {
   roadMeetingFact,
   rollRoadEncounter,
   travelBeatFact,
+  travelEngineLines,
   UNDERWAY_HERE,
   worldClock,
+  writerEngineResult,
   type StretchContext,
 } from './travelJourney';
+import { engineResultFact } from './engineResult';
+import { lineHasWrongTimeOfDay } from './tokenProse';
 import { replayPreFeature, setReplayTape } from './replaySeam';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -210,6 +214,25 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
     expect(push).toMatch(/^Push on into the \w+, but each failed save wears you down more$/);
     const pushed = commitTravel(s, push!);
     expect((pushed.extra ?? []).some((l) => /Extended Travel: Constitution save/.test(l))).toBe(true);
+  });
+
+  it('q31-L4 — push-on hands Extended Travel + the chip\'s night slot to the writer (not morning landing)', () => {
+    const s = { ...quietEvening('l4-push', { roadHours: 8 }), worldHour: 22 };
+    const push = journeyPads(s).find((p) => /^Push on into the night/.test(p));
+    expect(push).toBeTruthy();
+    const pushed = commitTravel(s, push!);
+    expect(pushed.pushOnSlot).toBe('night');
+    const lines = travelEngineLines(pushed);
+    expect(lines.some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
+    expect(lines.some((l) => /\bnow night\b/i.test(l))).toBe(true);
+    expect(lines.some((l) => /\bnow morning\b/i.test(l))).toBe(false);
+    const handed = writerEngineResult(engineResultFact(lines, 'dnd'));
+    expect(handed).toMatch(/Extended Travel: Constitution save/);
+    expect(handed).toMatch(/\bnow night\b/i);
+    expect(handed).not.toMatch(/\bnow morning\b/i);
+    const gate = `engine result: ${handed}\n\u0000clock\u0000morning`;
+    expect(lineHasWrongTimeOfDay('Jax arrived in the morning, staff in hand.', gate)).toBe(true);
+    expect(lineHasWrongTimeOfDay('Jax pushed on into the night along the path.', gate)).toBe(false);
   });
 });
 

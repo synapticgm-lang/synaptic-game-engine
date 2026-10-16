@@ -42,7 +42,7 @@ export function meetingMoveBase(chip: string): string {
 
 const TIME_SLOT = '(dawn|morning|midday|afternoon|dusk|evening|night)';
 
-/** Same as the client (tt-fix-4): a travel receipt as the writer is handed it — destination and plain time. */
+/** Same as the client (tt-fix-4): travel receipt → destination + plain time. */
 export function writerTravelFact(receipt: string): string | null {
   const r = (receipt ?? '').replace(/\s+/g, ' ').trim().replace(/\.$/, '');
   if (!/^Travel:/i.test(r)) return null;
@@ -59,8 +59,9 @@ export function writerTravelFact(receipt: string): string | null {
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
 
+/** Plain Travel: → writer form. Not inside "Extended Travel:" (q31-L4). */
 export function writerEngineResult(fact: string): string {
-  return (fact ?? '').replace(/Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  return (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
 }
 
 export function isJourneyUnderway(state: Pick<GameState, 'journey'>): boolean {

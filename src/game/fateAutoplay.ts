@@ -236,7 +236,7 @@ import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
+import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck } from './turnCheck';
 import { grantLevelSkills } from './skillGates';
@@ -1225,7 +1225,7 @@ export async function headlessFateTurn(
     ...storyTurn.receipts,
     ...(tabletopTurn.facts ?? []),
     ...nudge.receipts,
-    ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
+    ...(travelCommit ? travelEngineLines(travelCommit) : []),
   ], arcState.engineMode);
   const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
     xp: arcXp,

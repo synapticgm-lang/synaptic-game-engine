@@ -160,7 +160,7 @@ import {
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay, travelOutcome } from './travelJourney';
+import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -2865,7 +2865,7 @@ export function useGame() {
         ...storyTurn.receipts,
         ...(tabletopTurn.facts ?? []),
         ...nudge.receipts,
-        ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
+        ...(travelCommit ? travelEngineLines(travelCommit) : []),
       ], liveCurrent.engineMode);
       const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,

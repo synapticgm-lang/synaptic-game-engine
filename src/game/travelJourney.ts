@@ -1,20 +1,4 @@
-/**
- * 29u — Travel between places reads as a journey.
- * Distance comes from the map that already exists: atlas region hops, then
- * whether a place sits outside a settlement (road / march / treeline / fort).
- * More than a step puts the player on the ground between, moves the clock by
- * the distance, and gives that ground its own chips. The code writes no story
- * sentences — the writer narrates every leg from the ENGINE RESULT line.
- * 29w — each stretch rolls once for a chance meeting that fits the ground and the
- * area level. The roll picks a kind and level only; the writer names who or what.
- * 29x — a hostile meeting can be a rare spawn (a little tougher, slightly better loot),
- * a camp can hold a mini-boss, and facing either opens a live fight on activeEncounter
- * that the combat engine resolves. Everything stays at the area level.
- * tt-travel — a day on the road (rules/travelDay, SRD 5.2.1 travel rules): one meeting check per watch, about one in
- * three meetings hostile and each showing what it wants, daily weather and travel jobs, named stops and finds,
- * Extended Travel and rations (tabletop), a night camp with watches and companion talk, "Travel on" through quiet
- * stretches, and an arrival with a first sight and a hook.
- */
+/** Travel legs, clock, road meetings, Extended Travel, camp (SRD 5.2.1). */
 
 import type {
   ActiveEncounter,
@@ -521,10 +505,7 @@ export function meetingMoveBase(chip: string): string {
 
 const TURN_BACK_REST_TURNS = 4;
 
-/**
- * TT32 — push on into the hour the clock is at, and what a failed Extended Travel save costs where the engine rolls it:
- * one more Exhaustion level, or death when the next level is the last.
- */
+/** Push on into the current clock slot; tabletop names the Extended Travel fail cost. */
 function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> & ClockState): string {
   const head = `${PUSH_ON_CHIP} into the ${timeOfDayForHour(currentHour(state))}`;
   if (!survival({ engineMode: state.engineMode } as GameState)) return head;
@@ -993,16 +974,11 @@ export function withRoadMeetingEvent(state: Pick<GameState, 'journey'>, engineRe
 
 const TIME_SLOT = '(dawn|morning|midday|afternoon|dusk|evening|night)';
 
-/**
- * tt-fix-4 — a travel receipt as the writer is handed it: the destination and a plain time fact.
- * Legs, spans, "still ahead" and the chance-meeting note stay on STATUS (the meeting reaches the writer
- * through `roadMeetingFact`). Null when the receipt is not a travel receipt.
- */
+/** tt-fix-4 — travel receipt → destination + plain time (STATUS keeps legs/spans). */
 export function writerTravelFact(receipt: string): string | null {
   const r = (receipt ?? '').replace(/\s+/g, ' ').trim().replace(/\.$/, '');
   if (!/^Travel:/i.test(r)) return null;
   const slot = r.match(new RegExp(`\\bnow ${TIME_SLOT}\\b`, 'i'))?.[1] ?? r.match(new RegExp(`\\(${TIME_SLOT}\\)`, 'i'))?.[1];
-  // tt-fix-7 — a state, not a sentence to copy: writers retold "some time passed", "not there yet", "the long walk ended".
   const time = slot ? ` It is now ${slot}.` : '';
   const to =
     r.match(/;\s*([^;]+?) still ahead\b/)?.[1]
@@ -1015,12 +991,11 @@ export function writerTravelFact(receipt: string): string | null {
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
 
-/** The engine fact with every travel receipt in it swapped for its writer form (`writerTravelFact`). */
+/** Plain Travel: → writer form. Not inside "Extended Travel:" (q31-L4). */
 export function writerEngineResult(fact: string): string {
-  return (fact ?? '').replace(/Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  return (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
 }
 
-/** Meetings with someone who can speak. */
 const SPEAKING_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'thugs', 'villain', 'plea']);
 
 /** The meeting in this beat: open on this stretch, or closed by this turn's own talk, fight or flight. */
@@ -1174,6 +1149,34 @@ export interface TravelCommit {
   facts?: string[];
   /** What stopped "Travel on" on this stretch. */
   event?: 'meeting' | 'lost' | 'find' | 'day spent' | 'camp';
+  /** Push-on chip slot; writer uses it over the landing hour. */
+  pushOnSlot?: TimeOfDay;
+}
+
+/** Extended Travel extras + Travel receipt for the writer (push-on clock). */
+export function travelEngineLines(commit: TravelCommit): string[] {
+  const lines: string[] = [];
+  for (let i = 0; i < (commit.extra ?? []).length; i++) {
+    const t = commit.extra![i]!.trim();
+    if (t.toLowerCase().startsWith('extended travel:')) lines.push(t);
+  }
+  if (!commit.receipt) return lines;
+  let r = commit.receipt.trim();
+  while (r.includes('  ')) r = r.split('  ').join(' ');
+  if (commit.pushOnSlot) {
+    const at = r.toLowerCase().indexOf(' now ');
+    if (at >= 0) {
+      let end = at + 5;
+      while (end < r.length) {
+        const c = r.charCodeAt(end);
+        if ((c < 65 || c > 90) && (c < 97 || c > 122)) break;
+        end++;
+      }
+      r = `${r.slice(0, at + 5)}${commit.pushOnSlot}${r.slice(end)}`;
+    }
+  }
+  lines.push(r);
+  return lines;
 }
 
 /** What the travel engine did this turn, for the writer's Outcome (never decided by the player's words). */
@@ -1265,7 +1268,7 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
   const stop = passStop(withRouteStops(camp.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, gap.hoursPerLeg);
   const extra = [...march.status, ...day.status, ...stop.status, ...daySpentLines(day.state, journey)];
-  const facts = [...march.facts, ...day.facts, ...stop.facts, ...camp.facts, ...daySpentFacts(day.state, journey)];
+  const facts = [...march.facts, ...day.facts, ...stop.facts, ...camp.facts, ...(dayIsSpent(day.state, journey) ? ["The day's travel is nearly spent."] : [])];
   return {
     state: clock.state,
     handled: true,
@@ -1317,7 +1320,7 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const stop = passStop(withRouteStops(camp.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, j.hoursPerLeg);
   extra.push(...stop.status, ...daySpentLines(day.state, journey));
-  facts.push(...stop.facts, ...camp.facts, ...daySpentFacts(day.state, journey));
+  facts.push(...stop.facts, ...camp.facts, ...(dayIsSpent(day.state, journey) ? ["The day's travel is nearly spent."] : []));
   return {
     state: clock.state,
     handled: true,
@@ -1331,11 +1334,7 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   };
 }
 
-// ---------------------------------------------------------------------------------------------------------------
-// tt-travel — the travel day (rules/travelDay holds the SRD numbers and the GM calls).
-
 const survival = (state: Pick<GameState, 'engineMode'>) => modeProfile(state.engineMode).travelSurvival;
-/** A walk across town is not a travel day: no weather, jobs, stops or camp on the streets. */
 const travelDay = (j: TravelJourney) => j.terrain !== 'streets';
 
 function stretchEvent(state: ClockState, j: TravelJourney, lost: boolean, found: boolean): Pick<TravelCommit, 'event'> {
@@ -1595,10 +1594,6 @@ function daySpentLines(state: GameState, j: TravelJourney): string[] {
   return numbers === 'open' && survival(state)
     ? [`Travel day: ${formatSpan(roadHoursToday(state))} on the road — make camp, or push on (CON save each hour past 8)`]
     : ['Travel day: spent — make camp or push on'];
-}
-
-function daySpentFacts(state: GameState, j: TravelJourney): string[] {
-  return dayIsSpent(state, j) ? ["The day's travel is nearly spent."] : [];
 }
 
 /** This route's named stops, made once and kept on the save (the same stops either way). */
@@ -1870,7 +1865,11 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
       };
     }
     if (chip === 'travel on') return travelOn(state, j);
-    if (onward) return stepAlong(state, j);
+    if (onward) {
+      const pushOnSlot = chip === 'push on' ? timeOfDayForHour(currentHour(state)) : undefined;
+      const out = stepAlong(state, j);
+      return pushOnSlot ? { ...out, pushOnSlot } : out;
+    }
     if (TURN_BACK.test(input) || namedFrom || isLeaveSceneAction(input)) {
       const back: TravelJourney = {
         ...j,
