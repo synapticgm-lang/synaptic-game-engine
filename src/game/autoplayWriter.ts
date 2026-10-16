@@ -1,22 +1,16 @@
 /**
  * Process-local GM writer override for Fate autoplay / QA scripts.
- *
- * Default harness writer (curriculum / auto-improve / dual-review):
- *   OpenRouter `google/gemini-2.5-flash-lite` via OPENROUTER_API_KEY
- *
- * Mid writer stays OFF (writerPolicy). Live Free player path is unchanged.
+ * Default: OpenRouter Flash Lite via OPENROUTER_API_KEY. Mid writer OFF.
  */
 
-export type AutoplayWriterKind = 'default' | 'flash-lite' | 'gateway';
+/** CLI token; flash-lite|openrouter → OpenRouter path. Resolved meta.writer.kind is always `openrouter`. */
+export type AutoplayWriterKind = 'default' | 'flash-lite' | 'openrouter' | 'gateway';
 
 export type AutoplayWriterOverride = {
   kind: AutoplayWriterKind;
-  /** OpenAI-compatible chat model id. */
   model: string;
-  /** OpenAI-compatible base URL (…/v1). */
   baseUrl: string;
   apiKey: string;
-  /** Where credentials came from (for meta / logs — never the key). */
   route: 'openrouter-paid' | 'custom';
   note: string;
 };
@@ -32,18 +26,9 @@ export type AutoplayCriticConfig = {
 
 let override: AutoplayWriterOverride | null = null;
 
-/** OpenRouter Flash Lite — Fate/curriculum repair default (same id as live Free writer). */
 export const FLASH_LITE_OPENROUTER_MODEL = 'google/gemini-2.5-flash-lite';
-
 export const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
-
-/** Curriculum / auto-improve CLI default when `--writer` omitted. */
 export const AUTOPLAY_HARNESS_DEFAULT_WRITER: AutoplayWriterKind = 'flash-lite';
-
-/**
- * Optimal T50 feedback set: one flagship per mode (4).
- * Optional breadth add-ons: hero-awakening, system-integration (up to 6).
- */
 export const CURRICULUM_FLAGSHIP_PREMADES =
   'summoned-pact,cursed-keep,salt-road-heist,thornferry-road';
 
@@ -78,15 +63,10 @@ export function setAutoplayWriterOverride(next: AutoplayWriterOverride | null): 
   override = next;
 }
 
-/** True when Fate uses client-direct GM (not edge gm-turn). */
 export function isClientAutoplayWriter(kind?: AutoplayWriterKind | null): boolean {
-  return kind === 'flash-lite' || kind === 'gateway';
+  return kind === 'flash-lite' || kind === 'openrouter' || kind === 'gateway';
 }
 
-/**
- * Parse CLI `--writer` tokens.
- * Aliases: openrouter / gemini / flashlite → flash-lite.
- */
 export function parseAutoplayWriterKind(raw: string | undefined | null): AutoplayWriterKind {
   const w = (raw ?? '').toLowerCase().trim();
   if (!w || w === 'flash-lite' || w === 'flashlite' || w === 'openrouter' || w === 'gemini' || w === 'gemini-flash-lite') {
@@ -97,16 +77,21 @@ export function parseAutoplayWriterKind(raw: string | undefined | null): Autopla
   return 'flash-lite';
 }
 
-/** OpenRouter key names used by the game / harness (.env.example). */
+/** Seat identity = resolved model id; kind names the route (fallback kind only for `default`). */
+export function datasetWriterId(meta: {
+  writer?: { kind?: string | null; model?: string | null } | null;
+}): string {
+  const w = meta.writer;
+  if (!w || w.kind === 'default') return 'default';
+  const model = (w.model ?? '').trim();
+  return model || (w.kind ?? 'default');
+}
+
 export function resolveOpenRouterApiKey(): string {
   return firstEnv('OPENROUTER_API_KEY', 'VITE_OPENROUTER_API_KEY', 'AUTOPLAY_OPENROUTER_API_KEY');
 }
 
-/**
- * Resolve the OpenRouter harness writer for autoplay / dual-review / patcher.
- * `model` is any OpenRouter model id (`--writer-model`); default Flash Lite.
- * Requires OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY / AUTOPLAY_OPENROUTER_API_KEY).
- */
+/** OpenRouter harness writer. kind is always the route `openrouter`; seat identity is `model`. */
 export function resolveFlashLiteAutoplayWriter(model?: string | null): AutoplayWriterOverride {
   const id = (model ?? '').trim() || FLASH_LITE_OPENROUTER_MODEL;
   if (!id.includes('/')) {
@@ -120,7 +105,7 @@ export function resolveFlashLiteAutoplayWriter(model?: string | null): AutoplayW
     );
   }
   return {
-    kind: 'flash-lite',
+    kind: 'openrouter',
     model: id,
     baseUrl: OPENROUTER_BASE,
     apiKey: openRouterKey,
@@ -134,7 +119,9 @@ export function resolveAutoplayWriter(
   model?: string | null
 ): AutoplayWriterOverride | null {
   if (kind === 'default') return null;
-  return { ...resolveFlashLiteAutoplayWriter(model), kind };
+  const resolved = resolveFlashLiteAutoplayWriter(model);
+  if (kind === 'gateway') return { ...resolved, kind: 'gateway' };
+  return resolved;
 }
 
 export function enableAutoplayWriter(
@@ -150,8 +137,9 @@ export function enableAutoplayWriter(
   return next;
 }
 
-/** Flash Lite critic / patcher (same model as harness writer — research-approved). */
-export function resolveFlashLiteCritic(): AutoplayCriticConfig {
+/** Dual-review / patcher critic — always Flash Lite (harness default). */
+export function resolveAutoplayCritic(kind?: AutoplayWriterKind | string | null): AutoplayCriticConfig {
+  void kind;
   const w =
     override?.route === 'openrouter-paid' && override.model === FLASH_LITE_OPENROUTER_MODEL
       ? override
@@ -164,13 +152,4 @@ export function resolveFlashLiteCritic(): AutoplayCriticConfig {
     alternateModels: [],
     reviewer: 'flash-lite',
   };
-}
-
-/**
- * Dual-review / patcher critic for a writer kind.
- * Always uses Flash Lite (harness default).
- */
-export function resolveAutoplayCritic(kind?: AutoplayWriterKind | string | null): AutoplayCriticConfig {
-  void kind;
-  return resolveFlashLiteCritic();
 }

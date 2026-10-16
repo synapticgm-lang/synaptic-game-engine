@@ -10,6 +10,7 @@
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
 import { excludedSourceReason, rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
+import { datasetWriterId } from '../src/game/autoplayWriter.ts';
 
 const OUT_DIR = resolve('data', 'writer-dataset');
 const OUT = join(OUT_DIR, 'turns.jsonl');
@@ -81,7 +82,8 @@ for (const dir of dirs) {
   }
   const fc = JSON.parse(readFileSync(fcPath, 'utf8'));
   const fcByTurn = new Map(fc.perTurn.map((t) => [t.turn, t]));
-  const writerId = meta.writer?.kind ?? 'default';
+  // Seat identity is the resolved model id (kind names the route only; default stays 'default').
+  const writerId = datasetWriterId(meta);
   const runModel = meta.writer?.model ?? meta.activeOverride?.model ?? null;
   const runId = basename(dir);
   const turns = readFileSync(join(dir, 'turns.jsonl'), 'utf8')

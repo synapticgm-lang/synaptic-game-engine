@@ -36,9 +36,12 @@ function writerFromMeta(meta: Record<string, unknown>): AutoplayWriterKind | nul
   const w = meta.writer;
   if (!w || typeof w !== 'object') return null;
   const kind = (w as { kind?: string }).kind;
-  if (kind === 'flash-lite' || kind === 'default') return kind;
+  if (kind === 'flash-lite' || kind === 'openrouter' || kind === 'default' || kind === 'gateway') {
+    return kind as AutoplayWriterKind;
+  }
   const model = String((w as { model?: string }).model ?? '');
   if (/gemini-2\.5-flash-lite|flash-lite/i.test(model)) return 'flash-lite';
+  if (model.includes('/')) return 'openrouter';
   return null;
 }
 
