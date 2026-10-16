@@ -111,9 +111,10 @@ const FILES = [
 function rewriteImports(source, file) {
   let next = source;
   if (file === 'types.ts') {
+    // Edge inlines the anchor union; full comicScript stays client-only (q31-ECR1 ruleCount).
     next = next.replace(
-      /from\s+['"]\.\.\/types\/comicScript['"]/g,
-      "from './comicScript.ts'"
+      /import type \{ ComicTextAnchor \} from ['"]\.\.\/types\/comicScript['"];?\r?\n/,
+      "type ComicTextAnchor =\n  | 'top-left'\n  | 'top-right'\n  | 'bottom-left'\n  | 'bottom-right'\n  | 'bottom-center';\n"
     );
   }
   next = next
@@ -166,7 +167,6 @@ function edgeSource(file, srcPath) {
 /** Every edge copy: dest name → src path. */
 const ENTRIES = [
   ...FILES.map((file) => ({ dest: file, src: path.join(root, 'src', 'game', file) })),
-  { dest: 'comicScript.ts', src: path.join(root, 'src', 'types', 'comicScript.ts') },
   { dest: 'campaignBibleTypes.ts', src: path.join(root, 'src', 'data', 'campaigns', 'types.ts') },
   { dest: 'filterLogic.ts', src: path.join(root, 'src', 'utils', 'filterLogic.ts') },
   { dest: 'worldOutlines.ts', src: path.join(root, 'src', 'data', 'worldOutlines.ts') },

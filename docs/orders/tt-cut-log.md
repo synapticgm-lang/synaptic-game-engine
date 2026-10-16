@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-ECR1 crafting (Order E-CR / Spec E-CR1)
+
+1. **`src/game/tabletop/downtimeTurn.ts` `CRAFT` regex** — verb list (`craft|forge|brew|scribe|make|…`) that keyed the craft path. What it did: recipe choice followed the verb, not the item. Replaced by make-action string gate + `craftItemFromInput` → `craftRecipe(item)` (item name is the key). Rest intent (`Make camp`) still skips craft via `parsePlayerIntent`.
+2. **`supabase/functions/_shared/gm/comicScript.ts`** — full edge copy of `src/types/comicScript.ts`. Edge `types.ts` only needed the `ComicTextAnchor` union; the module had no other edge importer. Inlined the union into edge `types.ts`, removed from `scripts/sync-gm-edge-shared.mjs` so sync does not restore it (ruleCount budget).
+3. **`src/game/optionDiversityContract.ts` `getBaseCooldown`** — folded into `updateCooldowns` (same stall/explore/default numbers). Cooldown helpers compacted; behaviour unchanged.
+
+---
+
 ## q31-ECA companion approval (Order E-CA / Spec E-CA)
 
 1. **`src/game/rules/companions.ts` `approvalEvent` stance path** — `detectStanceTreatment(input)` plus companion/other name substring plus `/\b(?:steal|rob)\b/i`. What it did: scored approval from the player's wording before any engine outcome. Replaced by `ApprovalInput = { intent, outcome }` (`parsePlayerIntent` + `ApprovalOutcome`: harmed / helped / takenFrom / wonFight / fightFoes). First-match map: harmCompanion → harmOther → kindCompanion → kindOther → foughtTogether. Import of `detectStanceTreatment` removed from this file (faction standings still use it elsewhere).

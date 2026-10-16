@@ -222,22 +222,12 @@ export function isOnCooldown(
   currentTurn: number,
   cooldowns: Map<string, OptionCooldown>
 ): { onCooldown: boolean; turnsRemaining?: number; cooldown?: OptionCooldown } {
-  const canonical = canonicalizeOption(choice);
-  const cooldown = cooldowns.get(canonical);
-  
-  if (!cooldown) {
-    return { onCooldown: false };
-  }
-  
+  const cooldown = cooldowns.get(canonicalizeOption(choice));
+  if (!cooldown) return { onCooldown: false };
   const turnsSinceLast = currentTurn - cooldown.lastOfferedTurn;
   if (turnsSinceLast < cooldown.cooldownTurns) {
-    return {
-      onCooldown: true,
-      turnsRemaining: cooldown.cooldownTurns - turnsSinceLast,
-      cooldown,
-    };
+    return { onCooldown: true, turnsRemaining: cooldown.cooldownTurns - turnsSinceLast, cooldown };
   }
-  
   return { onCooldown: false, cooldown };
 }
 
@@ -247,70 +237,38 @@ export function updateCooldowns(
   cooldowns: Map<string, OptionCooldown>
 ): Map<string, OptionCooldown> {
   const updated = new Map(cooldowns);
-  
   for (const choice of choices) {
     const canonical = canonicalizeOption(choice);
     const existing = updated.get(canonical);
-    
     if (existing) {
-      // Update existing cooldown
       updated.set(canonical, {
         ...existing,
         lastOfferedTurn: currentTurn,
         offerCount: existing.offerCount + 1,
-        // Increase cooldown if offered too frequently
         cooldownTurns: existing.offerCount >= 3 ? Math.min(10, existing.cooldownTurns + 2) : existing.cooldownTurns,
       });
     } else {
-      // Create new cooldown
-      const baseCooldown = getBaseCooldown(choice);
-      updated.set(canonical, {
-        canonical,
-        lastOfferedTurn: currentTurn,
-        offerCount: 1,
-        cooldownTurns: baseCooldown,
-      });
+      const lower = choice.toLowerCase();
+      const base =
+        /\b(walk away|check (?:the|your) bag|wait|observe)\b/i.test(lower) ? 5
+        : /\b(listen|browse|inspect surroundings)\b/i.test(lower) ? 3
+        : 2;
+      updated.set(canonical, { canonical, lastOfferedTurn: currentTurn, offerCount: 1, cooldownTurns: base });
     }
   }
-  
-  // Clean up old cooldowns (>50 turns ago)
   for (const [key, cooldown] of updated.entries()) {
-    if (currentTurn - cooldown.lastOfferedTurn > 50) {
-      updated.delete(key);
-    }
+    if (currentTurn - cooldown.lastOfferedTurn > 50) updated.delete(key);
   }
-  
   return updated;
-}
-
-function getBaseCooldown(choice: string): number {
-  const lower = choice.toLowerCase();
-  
-  // High cooldown for stalling actions
-  if (/\b(walk away|check (?:the|your) bag|wait|observe)\b/i.test(lower)) {
-    return 5;
-  }
-  
-  // Medium cooldown for repetitive exploration
-  if (/\b(listen|browse|inspect surroundings)\b/i.test(lower)) {
-    return 3;
-  }
-  
-  // Low cooldown for specific targeted actions
-  return 2;
 }
 
 export function filterCooldownChoices(
   choices: string[],
   currentTurn: number,
   cooldowns: Map<string, OptionCooldown>
-): {
-  filtered: string[];
-  removed: Array<{ choice: string; reason: string }>;
-} {
+): { filtered: string[]; removed: Array<{ choice: string; reason: string }> } {
   const filtered: string[] = [];
   const removed: Array<{ choice: string; reason: string }> = [];
-  
   for (const choice of choices) {
     const check = isOnCooldown(choice, currentTurn, cooldowns);
     if (check.onCooldown) {
@@ -318,10 +276,7 @@ export function filterCooldownChoices(
         choice,
         reason: `On cooldown: ${check.turnsRemaining} turns remaining (offered ${check.cooldown?.offerCount} times recently)`,
       });
-    } else {
-      filtered.push(choice);
-    }
+    } else filtered.push(choice);
   }
-  
   return { filtered, removed };
 }

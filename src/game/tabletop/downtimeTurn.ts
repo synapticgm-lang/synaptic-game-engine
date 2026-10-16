@@ -1,20 +1,18 @@
 /**
- * Tabletop glue for the turns outside a fight that the shared engine settles before the writer: the logged oracle,
- * crafting, attunement and Lay On Hands. Crafting, attunement and Lay On Hands follow the System Reference Document
- * 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd, licensed under
- * CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/legalcode). The oracle is SynapticGM's own.
- * Every number here is the engine's; the writer narrates the fact it is handed.
+ * Tabletop glue: oracle, crafting, attunement, Lay On Hands (SRD 5.2.1 CC-BY-4.0; oracle is SynapticGM's).
+ * Numbers are the engine's; the writer narrates the handed fact.
  */
 import type { GameState, Item } from '../types';
 import { formatCp, payCoins, purseGold, purseOf } from '../rules/coins';
-import { craftRecipe, type CraftRecipe } from '../rules/downtime';
+import { craftItemFromInput, craftRecipe, type CraftRecipe } from '../rules/downtime';
 import { attunementProblem, magicItem, magicItemDef } from '../rules/magicItems';
 import { ORACLE_MEANING, oddsInInput, oracleLine, rollOracle } from '../rules/oracle';
 import { featureLeft, spendFeature } from '../rules/classFeatures';
 import { SPELLS } from '../rules/spells';
 import type { Rng } from '../rules/dice';
+import { parsePlayerIntent } from '../intentParser';
 import { turnRng } from '../seededRng';
-import { advanceClock } from '../travelJourney';
+import { advanceClock, isJourneyUnderway } from '../travelJourney';
 import { sheetSpellcasting, srdGearRow, tabletopArmorClass, toolProficiencies } from './characterBuild';
 import { featureLine } from './roundFight';
 
@@ -25,41 +23,57 @@ export interface DowntimeResult {
 }
 
 const ORACLE = /^\s*(?:ask the oracle|oracle)\s*[:,—-]?\s*(.+)$/i;
-const CRAFT = /\b(craft|forge|brew|scribe|make|carve|sew|weave|fletch)\s+(?:an?\s+|some\s+|the\s+|me\s+an?\s+|myself\s+an?\s+)?(.+?)\s*[.!]?$/i;
 const ATTUNE = /\battune\s+(?:myself\s+)?(?:to|with)?\s*(?:my\s+|the\s+|this\s+|a\s+)?(.+?)\s*[.!]?$/i;
 const END_ATTUNE = /\b(?:end|break|drop)\s+(?:my\s+)?attunement\s+(?:to|with)\s+(?:my\s+|the\s+)?(.+?)\s*[.!]?$/i;
 
-/** Resolve an oracle question, a craft, an attunement or an out-of-fight Lay On Hands (null = not one of these). */
+/** Resolve an oracle / craft / attunement / out-of-fight Lay On Hands (null = none of these). */
 export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = turnRng(state, 'downtime')): DowntimeResult | null {
   if (state.engineMode !== 'dnd') return null;
   const line = (input ?? '').trim();
   const oracle = ORACLE.exec(line);
-  if (oracle) return askOracle(state, oracle[1]!, rng);
-  if (!state.character?.srd || state.activeEncounter) return null;
-  if (state.deathSaves && !state.deathSaves.stable && !state.deathSaves.dead) return null;
+  if (oracle) {
+    const entry = rollOracle(oracle[1]!.trim(), oddsInInput(oracle[1]!), rng, state.turn ?? 0);
+    return {
+      state: { ...state, oracleLog: [...(state.oracleLog ?? []), entry].slice(-50) },
+      receipts: [oracleLine(entry)],
+      fact: `The oracle answers "${entry.question}": ${ORACLE_MEANING[entry.answer]}.`,
+    };
+  }
+  if (!state.character?.srd || (state.deathSaves && !state.deathSaves.stable && !state.deathSaves.dead)) return null;
+
+  // Craft: intent Rest ("Make camp") stays out; else make-action + craftRecipe(item) (E-CR1).
+  const intent = parsePlayerIntent(line, state);
+  const low = line.toLowerCase();
+  const craftAct = low.includes('craft ') || low.includes('forge ') || low.includes('brew ') || low.includes('scribe ')
+    || low.includes('fletch ') || low.includes('carve ') || low.includes('sew ') || low.includes('weave ') || low.includes('make ');
+  if (intent.kind !== 'rest' && craftAct) {
+    const named = craftItemFromInput(line);
+    if (state.activeEncounter || isJourneyUnderway(state)) {
+      return refuse(state, 'Crafting', named ?? 'item', "you can't work here");
+    }
+    if (named) {
+      const recipe = craftRecipe(named);
+      if (recipe) return craftItem(state, recipe);
+      return {
+        state,
+        receipts: [`Crafting: ${named} — not made (no crafting rule for it); nothing spent`],
+        fact: `You look the job over, but ${named} is not something you can craft here. Nothing is spent.`,
+      };
+    }
+    return {
+      state,
+      receipts: [`Crafting: item — not made (no crafting rule for it); nothing spent`],
+      fact: 'You look the job over, but that is not something you can craft here. Nothing is spent.',
+    };
+  }
+
+  if (state.activeEncounter) return null;
   const end = END_ATTUNE.exec(line);
   if (end) return endAttunement(state, end[1]!);
   const attune = ATTUNE.exec(line);
-  if (attune && !/\battunement\b/i.test(line)) return attuneTo(state, attune[1]!);
-  const craft = CRAFT.exec(line);
-  if (craft) {
-    const recipe = craftRecipe(craft[2]!.replace(/^(?:a|an|some)\s+/i, ''));
-    if (recipe) return craftItem(state, recipe);
-    if (/^(?:craft|brew|scribe|forge)$/i.test(craft[1]!)) {
-      return { state, receipts: [`Crafting: ${craft[2]} — not made (no crafting rule for it); nothing spent`], fact: `You look the job over, but ${craft[2]} is not something you can craft here. Nothing is spent.` };
-    }
-  }
-  if (/\blay on hands\b/i.test(line)) return layOnHands(state, line);
+  if (attune && !line.toLowerCase().includes('attunement')) return attuneTo(state, attune[1]!);
+  if (line.toLowerCase().includes('lay on hands')) return layOnHands(state, line);
   return null;
-}
-
-function askOracle(state: GameState, question: string, rng: Rng): DowntimeResult {
-  const entry = rollOracle(question.trim(), oddsInInput(question), rng, state.turn ?? 0);
-  return {
-    state: { ...state, oracleLog: [...(state.oracleLog ?? []), entry].slice(-50) },
-    receipts: [oracleLine(entry)],
-    fact: `The oracle answers "${entry.question}": ${ORACLE_MEANING[entry.answer]}.`,
-  };
 }
 
 function refuse(state: GameState, label: string, what: string, why: string): DowntimeResult {
@@ -75,24 +89,42 @@ function craftItem(state: GameState, r: CraftRecipe): DowntimeResult {
     const need = r.tools.map((t) => (t === 'Arcana' ? 'Arcana proficiency' : t)).join(' or ');
     return refuse(state, 'Crafting', r.item, `you need ${need} (proficient and carried)`);
   }
+  if (r.requireArcana && !ch.srd!.skillProfs.includes('Arcana')) {
+    return refuse(state, 'Crafting', r.item, 'you need Arcana proficiency');
+  }
   if (r.spell) {
     const sc = sheetSpellcasting(ch);
     const known = [...(sc?.cantrips ?? []), ...(sc?.prepared ?? [])];
     if (!known.includes(r.spell)) return refuse(state, 'Crafting', r.item, `you do not have ${r.spell} prepared`);
   }
+  if (r.material && !(state.inventory ?? []).some((i) => i.name === r.material!.name)) {
+    return refuse(state, 'Crafting', r.item, `you do not have ${r.material.name} at hand`);
+  }
   const coins = purseOf(state);
   const paid = coins ? payCoins(coins, r.costCp) : null;
   if (!paid) return refuse(state, 'Crafting', r.item, `the materials cost ${formatCp(r.costCp)} and you cannot pay it`);
   const gold = purseGold(paid);
-  const id = `tt-craft-${state.turn ?? 0}-${r.item.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  let inv = state.inventory ?? [];
+  if (r.material?.consumed) {
+    inv = inv
+      .map((i) => (i.name === r.material!.name ? { ...i, quantity: (i.quantity ?? 1) - 1 } : i))
+      .filter((i) => (i.quantity ?? 1) > 0);
+  }
+  let slug = '';
+  for (const ch of r.item.toLowerCase()) {
+    if (ch === ' ') slug += '-';
+    else if (ch !== "'" && ch !== '(' && ch !== ')') slug += ch;
+  }
+  const id = `tt-craft-${state.turn ?? 0}-${slug}`;
   const made = makeItem(r, id);
-  const clock = advanceClock({ ...state, gold, purse: { coins: paid, gold } }, 24 * r.days);
+  const clock = advanceClock({ ...state, gold, purse: { coins: paid, gold }, inventory: inv }, 24 * r.days);
   const next: GameState = { ...clock.state, inventory: addItem(clock.state.inventory ?? [], made) };
-  const days = `${r.days} day${r.days === 1 ? '' : 's'}`;
+  const days = r.days === 1 ? '1 day' : `${r.days} days`;
+  const toolNote = r.requireArcana ? `Arcana, ${tool}` : tool;
   return {
     state: next,
-    receipts: [`Crafting: ${made.quantity > 1 ? `${made.quantity} ` : ''}${r.item} — ${days} of work, ${formatCp(r.costCp)} in materials (${tool}); ${clock.note}`],
-    fact: `You spend ${days} working with ${tool === 'Arcana' ? 'your arcane learning' : `your ${tool}`} and finish ${made.quantity > 1 ? `${made.quantity} ${r.item}` : `a ${r.item}`}. It is in your pack now.`,
+    receipts: [`Crafting: ${made.quantity > 1 ? `${made.quantity} ` : ''}${r.item} — ${days} of work, ${formatCp(r.costCp)} in materials (${toolNote}); ${clock.note}`],
+    fact: `You spend ${days} working with ${r.requireArcana ? 'your Arcana and ' : ''}${tool === 'Arcana' ? 'your arcane learning' : `your ${tool}`} and finish ${made.quantity > 1 ? `${made.quantity} ${r.item}` : `a ${r.item}`}. It is in your pack now.`,
   };
 }
 
@@ -100,7 +132,15 @@ function makeItem(r: CraftRecipe, id: string): Item {
   const provenance = 'Crafted';
   if (r.spell) {
     const def = SPELLS[r.spell]!;
-    return { id, name: r.item, rarity: def.level === 0 ? 'Common' : 'Uncommon', quantity: 1, itemType: 'consumable', description: `Spell Scroll. Read it to cast ${def.name} once without a slot; the scroll is used up.`, provenance };
+    return {
+      id,
+      name: r.item,
+      rarity: def.level === 0 ? 'Common' : 'Uncommon',
+      quantity: 1,
+      itemType: 'consumable',
+      description: `Spell Scroll. Read it to cast ${def.name} once without a slot; the scroll is used up.`,
+      provenance,
+    };
   }
   if (magicItemDef(r.item)) return { ...magicItem(r.item, id, provenance), quantity: r.quantity };
   return srdGearRow(r.item, r.quantity, id, provenance);
@@ -114,8 +154,10 @@ function addItem(inv: Item[], item: Item): Item[] {
 
 function findCarried(state: GameState, said: string): Item | undefined {
   const want = said.trim().toLowerCase();
-  return (state.inventory ?? []).find((i) => i.name.toLowerCase() === want)
-    ?? (state.inventory ?? []).find((i) => magicItemDef(i.name) && i.name.toLowerCase().includes(want));
+  return (
+    (state.inventory ?? []).find((i) => i.name.toLowerCase() === want)
+    ?? (state.inventory ?? []).find((i) => magicItemDef(i.name) && i.name.toLowerCase().includes(want))
+  );
 }
 
 function withArmorClass(state: GameState): GameState {
@@ -132,7 +174,10 @@ function attuneTo(state: GameState, said: string): DowntimeResult | null {
   if (problem) return refuse(state, 'Attunement', name, problem);
   const before = state.character.armorClass;
   const clock = advanceClock(state, 1);
-  const next = withArmorClass({ ...clock.state, inventory: (clock.state.inventory ?? []).map((i) => (i.name === name ? { ...i, attuned: true } : i)) });
+  const next = withArmorClass({
+    ...clock.state,
+    inventory: (clock.state.inventory ?? []).map((i) => (i.name === name ? { ...i, attuned: true } : i)),
+  });
   const after = next.character.armorClass;
   const count = (next.inventory ?? []).filter((i) => i.attuned).length;
   return {
@@ -147,7 +192,10 @@ function endAttunement(state: GameState, said: string): DowntimeResult | null {
   if (!item) return null;
   if (!item.attuned) return refuse(state, 'Attunement', item.name, `you are not attuned to ${item.name}`);
   const before = state.character.armorClass;
-  const next = withArmorClass({ ...state, inventory: (state.inventory ?? []).map((i) => (i.id === item.id ? { ...i, attuned: false } : i)) });
+  const next = withArmorClass({
+    ...state,
+    inventory: (state.inventory ?? []).map((i) => (i.id === item.id ? { ...i, attuned: false } : i)),
+  });
   const after = next.character.armorClass;
   return {
     state: next,
@@ -158,7 +206,7 @@ function endAttunement(state: GameState, said: string): DowntimeResult | null {
 
 function layOnHands(state: GameState, line: string): DowntimeResult | null {
   const ch = state.character;
-  if (featureLeft(ch, 'layOnHands') <= 0 && !/paladin/i.test(ch.srd!.classId)) return null;
+  if (featureLeft(ch, 'layOnHands') <= 0 && !ch.srd!.classId.toLowerCase().includes('paladin')) return null;
   const pool = featureLeft(ch, 'layOnHands');
   const max = ch.maxHp || ch.hp;
   if (pool <= 0) return refuse(state, 'Class feature', 'Lay On Hands', 'your healing pool is empty until a long rest');

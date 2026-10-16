@@ -64,6 +64,10 @@ export interface SpellDef {
   outside: boolean;
   /** What happens, in words, for the writer (no numbers). */
   fact: string;
+  /** Costly Material component for scribing a scroll (SRD Scribing Spell Scrolls); must be at hand. */
+  material?: string;
+  /** When true, the Material component is consumed on completing the scroll. */
+  materialConsumed?: boolean;
 }
 
 /** A spell as the engine writes it; level, classes and Concentration come from the SRD data. */
@@ -101,7 +105,7 @@ const ENGINE_SPELLS: Record<string, EngineSpell> = {
   'Burning Hands': { name: 'Burning Hands', effect: 'save', save: 'DEX', halfOnSave: true, area: true, dice: '3d6', upcast: '1d6', type: 'fire', combat: true, outside: false, fact: 'a thin sheet of flame shoots from your hands' },
   Thunderwave: { name: 'Thunderwave', effect: 'save', save: 'CON', halfOnSave: true, area: true, dice: '2d8', upcast: '1d8', type: 'thunder', combat: true, outside: false, fact: 'a wave of thunderous force sweeps out from you' },
   'Mage Armor': { name: 'Mage Armor', effect: 'mageArmor', combat: true, outside: true, fact: 'a protective magical force settles over you' },
-  'Chromatic Orb': { name: 'Chromatic Orb', effect: 'attack', dice: '3d8', upcast: '1d8', type: 'acid', combat: true, outside: false, fact: 'an orb of acid hurtles at the target' },
+  'Chromatic Orb': { name: 'Chromatic Orb', effect: 'attack', dice: '3d8', upcast: '1d8', type: 'acid', combat: true, outside: false, fact: 'an orb of acid hurtles at the target', material: 'Diamond (50 GP)', materialConsumed: true },
   'Ray of Sickness': { name: 'Ray of Sickness', effect: 'attack', dice: '2d8', upcast: '1d8', type: 'poison', rider: 'Poisoned', combat: true, outside: false, fact: 'a ray of sickening green energy lashes at the target' },
   Grease: { name: 'Grease', effect: 'save', save: 'DEX', area: true, rider: 'Prone', combat: true, outside: false, fact: 'slick grease covers the ground under your foes' },
   'Color Spray': { name: 'Color Spray', effect: 'save', save: 'CON', area: true, rider: 'Blinded', combat: true, outside: false, fact: 'a dazzling array of flashing colored light springs from your hand' },

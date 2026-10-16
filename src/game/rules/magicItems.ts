@@ -36,6 +36,8 @@ const SRD_ITEMS = SRD.magicItems as Record<string, { rarity: SrdRarity; attuneme
 const ENGINE_ITEMS: Record<string, EngineItem> = {
   'Potion of Healing': { srdRarity: 'Common', rarity: 'Common', attunement: false, heal: '2d4+2', itemType: 'consumable',
     text: 'Potion, Common. Drink it to regain 2d4 + 2 Hit Points.' },
+  'Potion of Climbing': { srdRarity: 'Common', rarity: 'Common', attunement: false, itemType: 'consumable',
+    text: 'Potion, Common. Drink it to gain a climbing speed equal to your Speed for 1 hour.' },
   'Potion of Greater Healing': { srdRarity: 'Uncommon', rarity: 'Uncommon', attunement: false, heal: '4d4+4', itemType: 'consumable',
     text: 'Potion, Uncommon. Drink it to regain 4d4 + 4 Hit Points.' },
   'Potion of Superior Healing': { srdRarity: 'Rare', rarity: 'Rare', attunement: false, heal: '8d4+8', itemType: 'consumable',
