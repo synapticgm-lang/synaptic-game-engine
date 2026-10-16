@@ -11,7 +11,23 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { roadMeetingPeople } from '../../game/chipLegality';
 import { parsePlayerIntent } from '../../game/intentParser';
 import { plainLineFactProblem } from '../../game/tokenProse';
-import { roadMeetingRef } from '../../game/travelJourney';
+import { roadMeetingRef, roadMeetingSpeaker } from '../../game/travelJourney';
+import { encounterOpenerIdea } from '../../game/openerIdeas';
+
+/**
+ * OP-1: the stranger's answer follows the opener idea the game picked by seed (its backing), so the scripted
+ * reply is one fresh line per idea id: it shares the idea's gist, never its wording (no 6-word run copied).
+ */
+const OPENER_REPLY: Record<string, string> = {
+  passing: 'Same road as you, but my business lies further on',
+  searching: 'I am looking for someone, have you seen a man in grey',
+  trading: 'I carry goods, if you fancy a fair trade',
+  wary: 'State your purpose, I have been robbed on this road before',
+  shelter: 'Daylight is running out and I need shelter before dark',
+  homeward: 'Long away from home, I am heading back to my family',
+  'road-news': 'I heard rumours of danger ahead, so mind the road',
+  company: 'Travelling alone is dull, I would welcome company',
+};
 import { repairMissingAnswer, type WriterTurnResult } from '../../game/writerTurn';
 import type { GameState } from '../../game/types';
 import { Replay } from './bank';
@@ -75,10 +91,13 @@ describe('replay bank m48 lap 48', () => {
     // tt-build-roadmeet: the road meeting is its own REF ENUM class (an event that can speak), never a person present.
     expect((s.completedEvent?.refEnum ?? []).filter((r) => r.klass === 'meeting').map((r) => r.display)).toContain('a stranger');
     expect((s.completedEvent?.refEnum ?? []).filter((r) => r.klass === 'person').map((r) => r.display)).not.toContain('a stranger');
-    const ok = await answerRepair(s, F.input(10), '"Just passing through," the stranger replied, not slowing down.');
+    const idea = encounterOpenerIdea(roadMeetingSpeaker(s.journey, 'a stranger'));
+    expect(idea, 'the meeting opens from a seeded idea').toBeTruthy();
+    const line = OPENER_REPLY[idea!.id]!;
+    const ok = await answerRepair(s, F.input(10), `"${line}," the stranger replied, not slowing down.`);
     expect(ok.answerRepair?.bug).toBeUndefined();
-    expect(ok.prose).toMatch(/"Just passing through," the stranger replied/);
-    const nobody = await answerRepair(s, F.input(10), '"Just passing through," a rough voice said.');
+    expect(ok.prose).toContain(`"${line}," the stranger replied`);
+    const nobody = await answerRepair(s, F.input(10), `"${line}," a rough voice said.`);
     expect(nobody.answerRepair?.bug).toBe('repair reply names nobody here as the speaker');
   });
 
