@@ -48,6 +48,6 @@ R6 is this order. **Blocked:** the staging row has no tape. The price, half-sale
 
 ## Ship
 
-Stamp `2026-10-16z3` (was `2026-10-16z2`). No edge file changed, so gm-turn was not deployed.
+Commit `ed9221c7`. Stamp `2026-10-16z3` (was `2026-10-16z2`). No edge file changed, so gm-turn was not deployed.
 
 TT_DONE
