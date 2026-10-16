@@ -93,8 +93,10 @@ describe('replay bank mode-gap 2 (LitRPG class)', () => {
     const names = ids.map((id) => litrpgClassView(id).name);
     expect(status).toContain(`Class: The System offers a class — ${names[0]}, ${names[1]} or ${names[2]}. Choose one, or Quick start.`);
     expect(classOfferPad(state)).toEqual([...ids.map(classChip), CLASS_QUICK_START_CHIP]);
-    expect(resolveOfferedChoices(state)).toEqual(resolveOfferedChoices(commitOfferedPad({ ...state, classOffer: null })));
-    expect(resolveOfferedChoices(state).some((c) => /^Choose |^Quick start$/.test(c))).toBe(false);
+    // RC-HF1: System class chips live in the one offered list (cite Order RC-HF1 / q31-RCHF1).
+    const classPads = [...ids.map(classChip), CLASS_QUICK_START_CHIP];
+    for (const c of classPads) expect(resolveOfferedChoices(state)).toContain(c);
+    expect(resolveOfferedChoices(commitOfferedPad({ ...state, classOffer: null })).some((c) => /^Choose |^Quick start$/.test(c))).toBe(false);
     expect(calmState.classOffer).toBeNull();
     expect(opened(L).state.classOffer?.choices, 'same save, same offer').toEqual(ids);
   });

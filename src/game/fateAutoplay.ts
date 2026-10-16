@@ -220,9 +220,6 @@ import {
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedPad, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
-import { classOfferPad } from './rules/characterClass';
-import { originPad } from './rules/rpgOrigin';
-import { systemPromptPad } from './rules/abilityPoints';
 import { dropAbsentListenerChips } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
@@ -1082,13 +1079,10 @@ export async function headlessFateTurn(
   drainWriterRawIssues();
   drainWriterUsage();
   const offered = resolveOfferedChoices(state);
-  const systemPad = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state);
   const fatePick =
     meta.playerInputOverride?.trim()
       ? meta.playerInputOverride.trim()
-      : systemPad
-        ? systemPad[Math.floor(rng() * systemPad.length)]!
-        : meta.mode === 'first-pad'
+      : meta.mode === 'first-pad'
         ? offered[0] ?? 'Look around'
         : applyRememberedThreatPick(
             state,

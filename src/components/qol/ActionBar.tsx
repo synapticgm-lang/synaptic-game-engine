@@ -55,6 +55,19 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const romance = romancePad(state, romanceAllowed(loadSettings()));
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
+  // RC-HF1: heading rows paint chips from the same offered list (not a parallel source).
+  const offeredSet = new Set<string>();
+  for (const c of actions) offeredSet.add(c.trim().toLowerCase());
+  const systemChips: string[] = [];
+  for (const c of systemPrompt?.chips ?? []) if (offeredSet.has(c.trim().toLowerCase())) systemChips.push(c);
+  const originChips: string[] = [];
+  for (const c of origins ?? []) if (offeredSet.has(c.trim().toLowerCase())) originChips.push(c);
+  const promptSet = new Set<string>();
+  for (const c of [...(systemPrompt?.chips ?? []), ...(origins ?? []), ...recruits, ...(endingChip ? [endingChip] : []), ...(contacts ?? []), ...(romance ?? [])]) {
+    promptSet.add(c.trim().toLowerCase());
+  }
+  const mainActions: string[] = [];
+  for (const c of actions) if (!promptSet.has(c.trim().toLowerCase())) mainActions.push(c);
 
   const handleFatesPick = () => {
     onAction(pickFateChoice(actions));
@@ -64,8 +77,8 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
 
   return (
     <div className="flex flex-col gap-1.5 pb-2">
-      {origins && (
-        <ChipRow testId="origin-row" heading="Where do you come from?" chips={origins} tone="border-violet-500/40 text-violet-100" busy={busy} onAction={onAction} />
+      {originChips.length > 0 && (
+        <ChipRow testId="origin-row" heading="Where do you come from?" chips={originChips} tone="border-violet-500/40 text-violet-100" busy={busy} onAction={onAction} />
       )}
       {contacts && (
         <ChipRow testId="contact-row" heading="Another way through — someone here could see to it (it costs their goodwill)" chips={contacts} tone="border-teal-500/40 text-teal-100" busy={busy} onAction={onAction} />
@@ -104,11 +117,11 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
           </button>
         </div>
       )}
-      {systemPrompt && (
+      {systemPrompt && systemChips.length > 0 && (
         <div className="sgm-info-panel rounded-lg border border-sky-500/50 bg-slate-950/90 px-3 py-2" data-testid="system-prompt">
           <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-sky-300">{systemPrompt.heading}</div>
           <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
-            {systemPrompt.chips.map((label) => (
+            {systemChips.map((label) => (
               <button
                 key={label}
                 disabled={busy}
@@ -121,9 +134,9 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
           </div>
         </div>
       )}
-      {actions.length > 0 && (
+      {mainActions.length > 0 && (
       <div className="flex flex-col gap-1.5 sm:flex-wrap sm:flex-row sm:items-stretch">
-      {actions.map((action, idx) => (
+      {mainActions.map((action, idx) => (
         <button
           key={idx}
           disabled={busy}
@@ -137,7 +150,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
       <button
         disabled={busy || actions.length === 0}
         onClick={handleFatesPick}
-        title="Fate's Pick — randomly selects one of the listed actions"
+        title="Fate's Pick — randomly selects one of the offered actions"
         className="sgm-choice-btn flex min-h-[40px] w-full items-center justify-center gap-1 rounded-lg border border-amber-500/50 bg-black/85 px-2.5 py-1.5 text-xs font-medium text-slate-100 backdrop-blur-md transition-all hover:bg-amber-600 hover:text-white hover:border-amber-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black/85 disabled:hover:text-slate-100 sm:w-auto sm:rounded-full"
       >
         {isDnd ? <Dices size={11} /> : <Sparkles size={11} className="text-amber-400" />}

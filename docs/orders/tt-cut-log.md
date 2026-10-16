@@ -19,6 +19,12 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-RCHF1 one offered list (Order RC-HF1)
+
+1. **`src/game/fateAutoplay.ts` `systemPad` branch in `headlessFateTurn` (lines ~1085–1090 at parent)** — `systemPad = systemPromptPad(...)?.chips ?? originPad(state)`; when set, Fate picked from that list only and ignored `resolveOfferedChoices`. What it did: forced "Open the Bronze Reward Box" (and class chips) outside the offered pad list for every turn a System row was open (lap 28 C T19–T21 mash). Replaced by folding prompt-row chips into `resolveOfferedChoices` / `commitOfferedPad` via `promptRowChips` + `withPromptRowChips` (same list Fate and the UI use). Imports of `classOfferPad` / `originPad` / `systemPromptPad` in fateAutoplay removed with the branch.
+
+---
+
 ## q31-RCAR1 present means backed (Order RC-AR1)
 
 1. **`src/game/npcSheet.ts` `ensureNpcSheet` copy-on-create of `motiveLines` (lines ~200–201 / fresh record field at parent)** — wrote `motiveLinesFor(sheet.motive)` onto every new sheeted memory. What it did: a second copy of the same lines that townsfolk (`townsfolk.ts`) never wrote, so presence (sheet) and backing (`motiveLines`) diverged. Replaced by `motiveLinesOf` deriving from `memory.sheet` at read time.

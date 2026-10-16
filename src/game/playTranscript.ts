@@ -16,6 +16,9 @@ import {
   shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
+import { classOfferPad } from './rules/characterClass';
+import { originPad } from './rules/rpgOrigin';
+import { systemPromptPad } from './rules/abilityPoints';
 import { isLookAroundAction } from './sandboxXp';
 import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
 import { BUILD_STAMP } from './runManifest';
@@ -80,7 +83,12 @@ function storedTurnPad(state: GameState): string[] | null {
 
 export function resolveOfferedChoices(state: GameState): string[] {
   if (state.playPhase === 'ended') return [];
-  return storedTurnPad(state) ?? compileOfferedChoices(state);
+  const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
+  const prompt = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
+  if (!prompt.length) return chips;
+  const seen = new Set<string>(); for (const c of prompt) seen.add(c.trim().toLowerCase());
+  const out = prompt.slice(); for (const c of chips) if (!seen.has(c.trim().toLowerCase())) out.push(c);
+  return out;
 }
 
 function compileOfferedChoices(state: GameState): string[] {
@@ -144,12 +152,9 @@ export function withOfferedChoices(entry: LogEntry, stateForPad: GameState): Log
   return { ...entry, offeredChoices: offered };
 }
 
-/**
- * Compile this turn's chips once, on the final committed state (after governance and every patch).
- * The turn's GM entry, `choices` and `offeredPad` all carry that one list.
- */
+/** Commit the offered pad for this turn. */
 export function commitOfferedPad(state: GameState, gmEntryId?: string): GameState {
-  const offered = state.playPhase === 'ended' ? [] : compileOfferedChoices(state);
+  const offered = state.playPhase === 'ended' ? [] : resolveOfferedChoices({ ...state, offeredPad: null });
   if (!offered.length) return { ...state, offeredPad: null };
   const cooldowns = updateCooldowns(offered, state.turn ?? 0, new Map(Object.entries(state.qualityGovernance?.optionCooldowns ?? {})));
   const log = [...(state.log ?? [])];

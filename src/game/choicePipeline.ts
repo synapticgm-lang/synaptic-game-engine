@@ -38,6 +38,7 @@ import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { systemPromptPad } from './rules/abilityPoints';
 import { classOfferPad } from './rules/characterClass';
+import { originPad } from './rules/rpgOrigin';
 import { journeyPads } from './travelJourney';
 
 /**
@@ -399,7 +400,7 @@ export function engineChipActionKey(label: string): string {
 export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
   if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.chips;
-  const system = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
+  const system = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
   const rawLabels = [
     ...compileChoices(state, []).choices,
     ...beatEdgeLabels(enumerateBeatEdges(state)),
