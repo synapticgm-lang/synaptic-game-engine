@@ -34,9 +34,11 @@ The edge copy does not load the SRD file. It reads `canSpeak`. The client is the
 
 ## ruleCount TOTAL
 
-Clean parent `98ee6d12` is the baseline. `srdMonsters.ts` stays 173 lines, regex 10, newRegExp 0, lists 0. Functions 12 → 10 (`blockById` and the private `mod` arrow are gone; `foeCanSpeak` is the one added). `completedEventPacket.ts` stays 2727 lines, regex 192, newRegExp 1, lists 1 (3), functions 262. The edge packet stays 2727 lines and gains the one-line `canSpeak` reader (functions 262 → 263). `types.ts` stays 2212 lines. The edge `types.ts` stays 2215 lines (`canSpeak` replaces the blank that was removed).
+Clean parent `98ee6d12`: files 493, lines 163541, regex 6920, newRegExp 380, lists 1187 (6246), fns 11813. OLD14 fns 1024.
 
-TOTAL functions fall by 1. Lines, regex, newRegExp, and lists do not rise.
+After `7f27b0cd` (clean worktree): files 493, lines 163541, regex 6920, newRegExp 380, lists 1187 (6246), fns 11812. OLD14 fns 1025 (the edge `canSpeak` reader sits in that set).
+
+TOTAL lines, regex, newRegExp, and lists do not rise. TOTAL functions fall by 1.
 
 ## Gates
 
@@ -66,4 +68,6 @@ A town rest with no `travelBeat` still falls through to the look pool. The rest 
 
 ## Ship
 
-Stamp `2026-10-16z15`. Edge copies of `completedEventPacket.ts` and `types.ts` changed, so `gm-turn` is deployed. Live `version.json` is recorded after the production build.
+Stamp `2026-10-16z15` is on `main` (`7f27b0cd`). `completedEventPacket.ts` and `types.ts` are edge copies, so `gm-turn` was deployed.
+
+The git push started a production build. Live `https://www.synapticgm.com/version.json` is `2026-10-16z15`.
