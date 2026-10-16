@@ -1,5 +1,4 @@
 import type { Container, GameState, Item, Rarity } from './types';
-import { markAwayAttuned } from './rules/magicItems';
 import { pocketOnlyKit, storeInPocket } from './systemHousing';
 
 const RARITY_VALUE: Record<Rarity, number> = {
@@ -242,9 +241,13 @@ export function removeItem(state: GameState, itemId: string): GameState {
     ...state,
     inventory: state.inventory.filter((i) => i.id !== itemId),
   });
-  // E-CR2: attuned drop starts the 24 h away timer (SRD Attunement). Clock mirrors travelJourney.worldClock.
+  // E-CR2: attuned drop starts the 24 h away timer (SRD Attunement). Inline so edge inventory needs no magicItems.
+  const attuned = dropped.filter((i) => i.attuned);
+  if (!attuned.length) return cleared;
   const now = (cleared.worldDay ?? 0) * 24 + (typeof cleared.worldHour === 'number' ? cleared.worldHour : 9);
-  return dropped.some((i) => i.attuned) ? markAwayAttuned(cleared, dropped, now) : cleared;
+  const away = [...(cleared.awayAttuned ?? [])];
+  for (const i of attuned) if (!away.some((a) => a.id === i.id)) away.push({ id: i.id, name: i.name, since: now });
+  return { ...cleared, awayAttuned: away };
 }
 
 export function addItem(state: GameState, item: Item): { state: GameState; ok: boolean; reason?: string } {
