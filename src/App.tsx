@@ -1,5 +1,6 @@
 import { shouldUseComicGrid } from '@/game/comicImagePrompt';
 import { promiseViews, questTargetViews } from '@/game/questView';
+import { worldMapLayoutFor } from '@/game/worldMapLayout';
 import { visibleJournalQuests } from '@/game/questPlay';
 import { isExplorableDungeon } from '@/game/placeAuthority';
 import { isAloneArrivalOpening } from '@/game/openingEstablishment';
@@ -35,6 +36,7 @@ const SettingsModal = safeLazy(() => import('@/components/SettingsModal').then(m
 const ApiSetupModal = safeLazy(() => import('@/components/ApiSetupModal').then(m => ({ default: m.ApiSetupModal })));
 const NewGameModal = safeLazy(() => import('@/components/NewGameModal').then(m => ({ default: m.NewGameModal })));
 const QuestLogModal = safeLazy(() => import('@/components/QuestLogModal').then(m => ({ default: m.QuestLogModal })));
+const WorldMapModal = safeLazy(() => import('@/components/WorldMapModal').then(m => ({ default: m.WorldMapModal })));
 const DungeonMapModal = safeLazy(() => import('@/components/DungeonMapModal').then(m => ({ default: m.DungeonMapModal })));
 const DebugModal = safeLazy(() => import('@/components/DebugModal').then(m => ({ default: m.DebugModal })));
 const GMLibrary = safeLazy(() => import('@/components/GMLibrary').then(m => ({ default: m.GMLibrary })));
@@ -51,6 +53,7 @@ export default function App() {
   const [elapsed, setElapsed] = useState(0);
   const [userInGame, setUserInGame] = useState(false);
   const [showQuestLog, setShowQuestLog] = useState(false);
+  const [showWorldMap, setShowWorldMap] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [showGMLibrary, setShowGMLibrary] = useState(false);
@@ -322,6 +325,7 @@ export default function App() {
         onOpenQuestLog={() => {
           setShowQuestLog(true);
         }}
+        onOpenWorldMap={state.worldAtlas ? () => setShowWorldMap(true) : undefined}
         onOpenCharacter={() => game.setShowCharacterWindow(true)}
         onOpenMerchant={() => {
           // shop-b: tabletop trades only with a merchant at this place (NPC records + role), never via prose.
@@ -532,6 +536,11 @@ export default function App() {
           targets={state ? questTargetViews(state) : {}}
           promises={state ? promiseViews(state) : []}
         />
+      </Suspense>
+
+      {/* WM-b: world map (atlas) */}
+      <Suspense fallback={null}>
+        <WorldMapModal isOpen={showWorldMap} onClose={() => setShowWorldMap(false)} layout={state && showWorldMap ? worldMapLayoutFor(state) : null} title={state?.worldAtlas?.outlineName} />
       </Suspense>
 
       {/* Dungeon Fog of War Map Modal */}
