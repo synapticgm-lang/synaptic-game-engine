@@ -408,56 +408,6 @@ function detectCharacterDeltas(previous: GameState, next: GameState, turn: numbe
 }
 
 /**
- * Check if player has made meaningful progress recently.
- * Returns a mandate if progress is needed.
- */
-export function checkProgressGovernor(
-  state: GameState,
-  governorState: ProgressGovernorState,
-  activeObjective: boolean = false
-): {
-  needsProgress: boolean;
-  turnsSinceProgress: number;
-  mandate?: string;
-} {
-  const turns = governorState.turnsSinceProgress;
-  
-  // Not enforcing during opening or inactive objectives
-  if (!activeObjective || state.turn < 5) {
-    return { needsProgress: false, turnsSinceProgress: turns };
-  }
-  
-  // Soft warning at 3 turns
-  if (turns >= 3 && turns < 5) {
-    return {
-      needsProgress: true,
-      turnsSinceProgress: turns,
-      mandate: `FORWARD PROGRESS (${turns} turns without meaningful state change): Include a concrete persistent delta this beat — quest stage movement, actionable discovery, relationship shift, threat consequence, or resource change. Changing the scene atmosphere alone is not enough.`,
-    };
-  }
-  
-  // Hard enforcement at 5+ turns
-  if (turns >= 5) {
-    return {
-      needsProgress: true,
-      turnsSinceProgress: turns,
-      mandate: `FORWARD PROGRESS REQUIRED (${turns} turns stalled): You MUST deliver a meaningful persistent state change this turn:
-- Quest: advance objective, unlock/fail quest, or create obstacle
-- Discovery: reveal actionable fact, clue, or opportunity
-- Access: open/close route, reach new location, pay cost
-- Relationship: shift NPC disposition, faction standing, or commitment
-- Threat: escalate danger, resolve at cost, or create complication
-- Resources: consume/acquire/lose item, HP/MP change, or debt
-- Character: progression, injury, reputation, or condition change
-
-Scene atmosphere alone will not satisfy this contract. The delta must persist in the ledger.`,
-    };
-  }
-  
-  return { needsProgress: false, turnsSinceProgress: turns };
-}
-
-/**
  * Update progress governor state after a turn.
  */
 export function updateProgressGovernor(

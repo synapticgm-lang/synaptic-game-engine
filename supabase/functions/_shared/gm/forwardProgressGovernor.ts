@@ -50,26 +50,3 @@ export function hasActiveObjectives(state: {
   return (state.campaignMemory?.consequences ?? []).some((c) => c.unresolved);
 }
 
-export function checkProgressGovernor(
-  state: { turn?: number },
-  governorState: ProgressGovernorState,
-  activeObjective: boolean = false
-): {
-  needsProgress: boolean;
-  turnsSinceProgress: number;
-  mandate?: string;
-} {
-  const turns = governorState.turnsSinceProgress;
-  if (!activeObjective || (state.turn ?? 0) < 5) {
-    return { needsProgress: false, turnsSinceProgress: turns };
-  }
-  if (turns >= 5) {
-    return {
-      needsProgress: true,
-      turnsSinceProgress: turns,
-      mandate:
-        'Forward-Progress: force a durable delta this beat (quest tick, discovery, travel, threat, or relationship) — do not stall.',
-    };
-  }
-  return { needsProgress: false, turnsSinceProgress: turns };
-}

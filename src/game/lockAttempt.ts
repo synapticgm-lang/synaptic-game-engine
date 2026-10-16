@@ -1,9 +1,10 @@
 /**
  * LK-1 — locks and alarms (all modes). One resolve path: key, pick (SK-4), fail time +
  * earshot noise (SK-3), three-fail tool break, spot/disarm alarm. No parallel checker.
+ * CR-1 — camp rob sequences SK-3 per watcher, then LK-1 lock, then LK-1 alarm.
  */
-import type { GameState, Item } from './types';
-import type { LockAlarm, LockKind, SkillGate } from './mapEngine';
+import type { GameState, Item, PlaceRecord } from './types';
+import type { ActiveDungeonState, LockAlarm, LockKind, SkillGate } from './mapEngine';
 import type { PlayerCheckResult, SkillTierName } from './checkMath';
 import { runPlayerCheck } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
@@ -12,6 +13,8 @@ import { advanceClock } from './travelJourney';
 import { individualStealth } from './rules/roundCombat';
 import { peopleHere } from './chipLegality';
 import type { PlayerIntent } from './intentParser';
+import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
+import { gainLootMoney, lootMoneyText } from './rules/coins';
 
 export type LockSpec = SkillGate & { kind: LockKind; dc: number; tier: SkillTierName; tryHours: number };
 
@@ -95,6 +98,26 @@ export function lockTargetFor(state: GameState, action: string): { id: string; l
   const here = d?.currentNodeId;
   if (!d || !here) return null;
   const act = (action ?? '').toLowerCase();
+  const alarmAct = ((act.includes('spot') || act.includes('search for') || act.includes('look for') || act.includes('check for') || act.includes('find')
+    || act.includes('disarm') || act.includes('disable') || act.includes('cut'))
+    && (act.includes('alarm') || act.includes('wire') || act.includes('device')));
+  // LK-1 / CR-1: alarm spot/disarm still targets an opened lock whose alarm is armed.
+  if (alarmAct) {
+    for (let i = 0; i < d.nodes.length; i++) {
+      const n = d.nodes[i]!;
+      const lootables = n.hidden?.lootables ?? [];
+      for (let j = 0; j < lootables.length; j++) {
+        const l = lootables[j]!;
+        if (!l.lock?.alarm) continue;
+        if (state.lockAttempts?.[l.id]?.alarmDisarmed) continue;
+        if (act.includes((l.label ?? '').toLowerCase()) || n.id === here) {
+          const lab = (l.label ?? '').toLowerCase();
+          const kind: LockKind = lab.includes('safe') || lab.includes('strongbox') || lab.includes('vault') ? 'safe' : (l.lock.kind ?? 'chest');
+          return { id: l.id, label: l.label, lock: normalizeLock(l.lock, kind), nodeId: n.id };
+        }
+      }
+    }
+  }
   let hereNode = null as (typeof d.nodes)[0] | null;
   for (let i = 0; i < d.nodes.length; i++) if (d.nodes[i]!.id === here) { hereNode = d.nodes[i]!; break; }
   const conns = hereNode?.connections ?? [];
@@ -306,4 +329,194 @@ export function resolveLockAttempt(
   }
 
   return { state: next, receipts, opened: false, alarmSounded, noticed, toolsBroken };
+}
+
+export type CampRobOutcome = 'noticed' | 'lock-fail' | 'alarm' | 'robbed' | 'refused';
+
+export interface CampRobRolls {
+  stealthTotals?: number[];
+  pick?: PlayerCheckResult;
+  spotD20?: number;
+  disarmD20?: number;
+}
+
+export interface CampRobResult {
+  state: GameState;
+  receipts: string[];
+  outcome: CampRobOutcome;
+  steps: string[];
+  wake?: boolean;
+}
+
+function campStashOf(d: ActiveDungeonState): { id: string; label: string; nodeId: string; grade: number } | null {
+  let best: { id: string; label: string; nodeId: string; grade: number } | null = null;
+  for (let i = 0; i < d.nodes.length; i++) {
+    const n = d.nodes[i]!;
+    const loot = n.hidden?.lootables;
+    if (!loot) continue;
+    for (let j = 0; j < loot.length; j++) {
+      const l = loot[j]!;
+      if (l.opened) continue;
+      const grade = l.loot?.grade ?? 0;
+      const stash = (l.label ?? '').toLowerCase().includes('stash');
+      if (stash || !best || grade > best.grade) {
+        best = { id: l.id, label: l.label, nodeId: n.id, grade };
+        if (stash) return best;
+      }
+    }
+  }
+  return best;
+}
+
+function syncCampCard(state: GameState, placeId: string): GameState {
+  const d = state.activeDungeon;
+  if (!d) return state;
+  const places = state.places ?? [];
+  const out: PlaceRecord[] = [];
+  for (let i = 0; i < places.length; i++) {
+    const p = places[i]!;
+    out.push(p.id === placeId ? { ...p, dungeonCard: d } : p);
+  }
+  return { ...state, places: out };
+}
+
+/** CR-1: stealth×watchers → LK-1 lock → LK-1 alarm; first fail stops; noticed wakes camp (no loot). */
+export function resolveCampRob(
+  state: GameState,
+  place: PlaceRecord,
+  rolls: CampRobRolls = {},
+): CampRobResult | null {
+  const camp = place.roadCamp;
+  const card = place.dungeonCard;
+  if (!camp || !card) return null;
+  const watchers: { name: string; passivePerception: number }[] = [];
+  for (let i = 0; i < camp.people.length; i++) {
+    const name = camp.people[i]!;
+    let pp = 12;
+    const mems = state.npcMemories ?? [];
+    for (let j = 0; j < mems.length; j++) {
+      if (mems[j]!.npcName === name) {
+        pp = Number((mems[j] as { passivePerception?: number }).passivePerception ?? 12);
+        break;
+      }
+    }
+    watchers.push({ name, passivePerception: pp });
+  }
+  if (!watchers.length) return null;
+
+  const stashNode = campStashOf(card);
+  if (!stashNode) return null;
+  let next: GameState = {
+    ...state,
+    activeDungeon: { ...card, currentNodeId: stashNode.nodeId, visitedNodeIds: Array.from(new Set([...(card.visitedNodeIds ?? []), stashNode.nodeId])) },
+  };
+  const receipts: string[] = [];
+  const steps: string[] = [];
+  const sneaker = next.character.name || 'you';
+
+  for (let i = 0; i < watchers.length; i++) {
+    const w = watchers[i]!;
+    steps.push(`stealth:${w.name}`);
+    let total = rolls.stealthTotals?.[i];
+    if (total == null) {
+      const intent: PlayerIntent = { kind: 'flee', label: 'Stealth', targets: [w.name] };
+      total = runPlayerCheck(next, intent, `sneak past ${w.name}`).totalScore;
+    }
+    const seen = individualStealth([{ name: sneaker, stealthTotal: total }], [w]).noticed;
+    receipts.push(`Camp rob: Stealth vs ${w.name} (total ${total} vs PP ${w.passivePerception}) — ${seen ? 'noticed' : 'clear'}.`);
+    if (seen) {
+      return { state: syncCampCard(next, place.id), receipts, outcome: 'noticed', steps, wake: true };
+    }
+  }
+
+  const pickAct = `pick the lock on the ${stashNode.label}`;
+  const preLock = lockTargetFor(next, pickAct);
+  if (!preLock) {
+    receipts.push(`Camp rob: no lock on the ${stashNode.label}.`);
+    return { state: syncCampCard(next, place.id), receipts, outcome: 'refused', steps };
+  }
+  const stashAlarm = preLock.lock.alarm;
+  steps.push('lock');
+  const lockTry = resolveLockAttempt(next, pickAct, { pick: rolls.pick });
+  if (!lockTry) {
+    receipts.push(`Camp rob: no lock on the ${stashNode.label}.`);
+    return { state: syncCampCard(next, place.id), receipts, outcome: 'refused', steps };
+  }
+  next = lockTry.state;
+  receipts.push(...lockTry.receipts);
+  if (lockTry.refused) {
+    return { state: syncCampCard(next, place.id), receipts, outcome: 'refused', steps };
+  }
+  if (!lockTry.opened) {
+    const wake = !!(lockTry.noticed || lockTry.alarmSounded);
+    return {
+      state: syncCampCard(next, place.id),
+      receipts,
+      outcome: lockTry.alarmSounded ? 'alarm' : 'lock-fail',
+      steps,
+      ...(wake ? { wake: true } : {}),
+    };
+  }
+
+  if (stashAlarm && !next.lockAttempts?.[stashNode.id]?.alarmDisarmed) {
+    steps.push('alarm');
+    if (!next.lockAttempts?.[stashNode.id]?.alarmSpotted) {
+      const spot = resolveLockAttempt(next, `spot the alarm on the ${stashNode.label}`, { spotD20: rolls.spotD20 });
+      if (spot) {
+        next = spot.state;
+        receipts.push(...spot.receipts);
+      }
+    }
+    if (!next.lockAttempts?.[stashNode.id]?.alarmSpotted) {
+      receipts.push(`Camp rob: the alarm on the ${stashNode.label} sounds.`);
+      return { state: syncCampCard(next, place.id), receipts, outcome: 'alarm', steps, wake: true };
+    }
+    const disarm = resolveLockAttempt(next, `disarm the alarm on the ${stashNode.label}`, { disarmD20: rolls.disarmD20 });
+    if (!disarm || disarm.refused) {
+      receipts.push(...(disarm?.receipts ?? [`Camp rob: could not disarm the alarm.`]));
+      return { state: syncCampCard(disarm?.state ?? next, place.id), receipts, outcome: 'alarm', steps, wake: true };
+    }
+    next = disarm.state;
+    receipts.push(...disarm.receipts);
+    if (!next.lockAttempts?.[stashNode.id]?.alarmDisarmed) {
+      receipts.push(`Camp rob: the alarm on the ${stashNode.label} sounds.`);
+      return { state: syncCampCard(next, place.id), receipts, outcome: 'alarm', steps, wake: true };
+    }
+  }
+
+  let openedGrade = stashNode.grade;
+  const nodes = next.activeDungeon?.nodes ?? [];
+  for (let i = 0; i < nodes.length; i++) {
+    const lootables = nodes[i]!.hidden?.lootables ?? [];
+    for (let j = 0; j < lootables.length; j++) {
+      if (lootables[j]!.id === stashNode.id) {
+        openedGrade = lootables[j]!.loot?.grade ?? openedGrade;
+      }
+    }
+  }
+  const grade = openedGrade > 0 ? openedGrade : 2;
+  const provenance = `Stolen from ${place.name}`;
+  const loot = rollLoot({
+    profile: chestProfileForGrade(grade),
+    state: next,
+    seed: `${next.seed ?? 'seed'}:camp-rob:${place.id}:${stashNode.id}`,
+  });
+  const items = [];
+  for (let i = 0; i < loot.items.length; i++) {
+    items.push({ ...loot.items[i]!, provenance });
+  }
+  next = gainLootMoney({
+    ...next,
+    inventory: [...(next.inventory ?? []), ...items],
+    lootPity: loot.nextPity != null
+      ? { byTier: { ...(next.lootPity?.byTier ?? {}), [loot.pityTier]: loot.nextPity } }
+      : next.lootPity,
+  }, loot.gold, loot.coins);
+  receipts.push(`Camp rob: you open the ${stashNode.label}.`);
+  if (items.length) receipts.push(`Loot: ${items.map((it) => `[${it.rarity}] ${it.name}`).join(', ')} (${provenance})`);
+  const money = lootMoneyText(loot.gold, loot.coins);
+  if (money) receipts.push(`Gold Gained: ${money}`);
+  if (!items.length && !money) receipts.push(`Camp rob: the ${stashNode.label} was empty.`);
+
+  return { state: syncCampCard(next, place.id), receipts, outcome: 'robbed', steps };
 }

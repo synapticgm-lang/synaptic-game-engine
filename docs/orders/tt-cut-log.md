@@ -19,6 +19,15 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-CR1 camp robbing (Order CR-1)
+
+1. **`src/game/typedEntityValidator.ts` `assertProtectedEntitiesSurvived` / `trackValidationMetrics` / `calculateValidationScore` / `EntityValidationTelemetry`** — telemetry helpers with no production caller. Cut so ruleCount TOTAL does not rise with CR-1.
+2. **`src/game/optionDiversityContract.ts` `buildDiversityRetryBlock` / `trackDiversityMetrics` / `DiversityTelemetry`** — unused retry/telemetry exports. Cut for the same budget.
+3. **`src/game/metaInputRecovery.ts` `checkSentenceNovelty` / `banExpositionTopic` / `isTopicBanned` / `buildNoveltyRetryBlock` / `trackMetaRecoveryMetrics` / `MetaRecoveryTelemetry`** — unused novelty/ban/telemetry exports (`checkParagraphNovelty` + `updateNoveltyBudget` kept). Cut for the same budget.
+4. **`src/game/forwardProgressGovernor.ts` (+ edge stub) `checkProgressGovernor`** — mandate builder with no production caller (`updateProgressGovernor` / `hasActiveObjectives` kept). Cut for the same budget.
+
+---
+
 ## q31-RCHF1 one offered list (Order RC-HF1)
 
 1. **`src/game/fateAutoplay.ts` `systemPad` branch in `headlessFateTurn` (lines ~1085–1090 at parent)** — `systemPad = systemPromptPad(...)?.chips ?? originPad(state)`; when set, Fate picked from that list only and ignored `resolveOfferedChoices`. What it did: forced "Open the Bronze Reward Box" (and class chips) outside the offered pad list for every turn a System row was open (lap 28 C T19–T21 mash). Replaced by folding prompt-row chips into `resolveOfferedChoices` / `commitOfferedPad` via `promptRowChips` + `withPromptRowChips` (same list Fate and the UI use). Imports of `classOfferPad` / `originPad` / `systemPromptPad` in fateAutoplay removed with the branch.

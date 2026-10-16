@@ -100,6 +100,7 @@ import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
 import { replayPreFeature } from './replaySeam';
 import { campAt, campEncounter, campHeadcount, campMemoryFact, campPeople, placeRoadCamp, recordCampOutcome } from './roadCamps';
+import { resolveCampRob } from './lockAttempt';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -437,6 +438,7 @@ const FIXED_ENCOUNTER_PADS: Partial<Record<RoadEncounterKind, string[]>> = {
 };
 
 const CHAMPION_PAD = "Face the camp's champion";
+const SNEAK_CAMP_PAD = 'Sneak into the camp'; // CR-1 (not a raid chip)
 
 /** The chip that opens a live fight for this meeting (null = no fight on offer). */
 function fightPad(enc: RoadEncounter): string | null {
@@ -483,8 +485,19 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
   // Only a meeting that can force a fight has a check to fail; a peaceful one is simply passed by.
   const cost = fightPad(enc) ? withFailCost : (p: string) => p;
-  if (enc.kind === 'camp' && enc.miniBoss) return ['Approach the camp', CHAMPION_PAD, 'Skirt around the camp'].map(cost);
-  return (FIXED_ENCOUNTER_PADS[enc.kind] ?? []).map(cost);
+  if (enc.kind === 'camp') {
+    const pads: string[] = ['Approach the camp'];
+    if (enc.camp?.placeId) pads.push(SNEAK_CAMP_PAD);
+    if (enc.miniBoss) pads.push(CHAMPION_PAD);
+    pads.push('Skirt around the camp');
+    const out: string[] = [];
+    for (let i = 0; i < pads.length; i++) out.push(cost(pads[i]!));
+    return out;
+  }
+  const fixed = FIXED_ENCOUNTER_PADS[enc.kind] ?? [];
+  const out: string[] = [];
+  for (let i = 0; i < fixed.length; i++) out.push(cost(fixed[i]!));
+  return out;
 }
 
 /** TT32 — a chip that runs a check says what a failure costs: the meeting forces the fight. */
@@ -1884,6 +1897,53 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
         outcome: 'fight opened',
         receipt: `${where}; fight: ${foe.name}, ${what} (level ${foe.level}, ${foe.maxHp} HP)`,
       };
+    }
+    // CR-1 — sneak into a placed camp and rob the stash (SK-3 → LK-1 lock → LK-1 alarm). No "raid" chip.
+    if (j.encounter?.kind === 'camp' && j.encounter.camp?.placeId && meetingMoveBase(input).toLowerCase() === SNEAK_CAMP_PAD.toLowerCase()) {
+      let place: import('./types').PlaceRecord | undefined;
+      const places = state.places ?? [];
+      for (let pi = 0; pi < places.length; pi++) {
+        if (places[pi]!.id === j.encounter!.camp!.placeId) {
+          place = places[pi];
+          break;
+        }
+      }
+      if (place?.roadCamp && place.dungeonCard) {
+        const rob = resolveCampRob(state, place);
+        if (rob) {
+          let next = rob.state;
+          if (rob.outcome === 'robbed') next = recordCampOutcome(next, place.id, 'robbed');
+          const journey: TravelJourney = {
+            ...j,
+            encounter: rob.wake
+              ? { ...j.encounter, engaged: true }
+              : rob.outcome === 'robbed'
+                ? { ...j.encounter, escaped: true, escapedTurn: state.turn, closedTurn: state.turn }
+                : j.encounter,
+          };
+          const foe = rob.wake && engineAllowsCombat(state) ? liveRoadFoe(next, journey.encounter!) : null;
+          return {
+            state: {
+              ...next,
+              currentLocation: UNDERWAY_HERE,
+              journey,
+              ...(foe ? { activeEncounter: foe } : {}),
+            },
+            handled: true,
+            arrived: false,
+            outcome: foe ? 'fight opened' : rob.outcome === 'robbed' ? 'slipped away' : 'unchanged',
+            receipt: foe
+              ? `${where}; camp woke — fight: ${foe.name} (level ${foe.level}, ${foe.maxHp} HP)`
+              : `${where}; ${rob.receipts[rob.receipts.length - 1] ?? 'camp rob'}`,
+            extra: rob.receipts,
+            facts: rob.outcome === 'robbed'
+              ? [`You slipped the camp stash at ${place.name}.`]
+              : rob.wake
+                ? [`The camp at ${place.name} woke as you tried to rob it.`]
+                : undefined,
+          };
+        }
+      }
     }
     const answered = j.encounter ? answersMeeting(j.encounter, input, state.turn, j.terrain) : null;
     const help = answered?.engaged && answered.kind === 'plea' ? helpPlea(state, answered) : null;

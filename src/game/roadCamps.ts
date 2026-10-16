@@ -1,26 +1,36 @@
-/**
- * tt-build-camps (John, 15 Oct, build 2b) — a road camp is a place, not a passing roll. The first camp rolled on a
- * route stretch is placed once on the save like a dungeon: the dungeon card generator builds its rooms (one per tent),
- * a person in each room, the leader in the leader's tent and its chests (the loot). Every later pass of that stretch,
- * either way, meets the same camp, and the camp remembers what the player did there.
- */
+/** tt-build-camps / CR-1 — road camp is a placed dungeon card; stash uses LK-1 guarded lock + alarm. */
 import type { GameState, PlaceRecord, RoadCampOutcome, RoadCampRecord, RoadEncounter } from './types';
+import type { ActiveDungeonState, MapNode, SkillGate } from './mapEngine';
 import { buildDungeonCard } from './dungeonCard';
 import { placeIdFromName } from './places';
 import { createHashRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
 
-/** The camp placed on this route leg, if any. */
+const CAMP_STASH_LOCK: SkillGate = {
+  skill: 'thievery', rank: 1, kind: 'guarded', dc: 18, tier: 'Journeyman',
+  alarm: { spotDc: 14, disarmDc: 15, sounds: true }, tryHours: 0.2,
+};
+
 export function campAt(state: Pick<GameState, 'places'>, route: string, leg: number): PlaceRecord | undefined {
-  return (state.places ?? []).find((p) => p.roadCamp?.route === route && p.roadCamp.leg === leg);
+  const places = state.places ?? [];
+  for (let i = 0; i < places.length; i++) {
+    const p = places[i]!;
+    if (p.roadCamp?.route === route && p.roadCamp.leg === leg) return p;
+  }
+  return undefined;
 }
 
-/** Every person already living in a placed camp (a new name never shares a word with them). */
 export function campPeople(state: Pick<GameState, 'places'>): string[] {
-  return (state.places ?? []).flatMap((p) => p.roadCamp?.people ?? []);
+  const out: string[] = [];
+  const places = state.places ?? [];
+  for (let i = 0; i < places.length; i++) {
+    const people = places[i]!.roadCamp?.people;
+    if (!people) continue;
+    for (let j = 0; j < people.length; j++) out.push(people[j]!);
+  }
+  return out;
 }
 
-/** The meeting for a placed camp on this pass; null once the camp is cleared (nobody is left to meet). */
 export function campEncounter(place: PlaceRecord, at: Pick<RoadEncounter, 'stretch' | 'dangerous'> & Partial<RoadEncounter>): RoadEncounter | null {
   const c = place.roadCamp;
   if (!c || c.outcome === 'cleared') return null;
@@ -38,10 +48,53 @@ export function campEncounter(place: PlaceRecord, at: Pick<RoadEncounter, 'stret
   };
 }
 
-/**
- * Place a freshly rolled camp on its route leg: name it after its leader, build its card with the dungeon generator,
- * and put one engine-named person in each room the card gave a foe (the leader in the boss room).
- */
+export function stampCampStash(nodes: MapNode[]): MapNode[] {
+  let best: { ni: number; li: number; grade: number } | null = null;
+  for (let ni = 0; ni < nodes.length; ni++) {
+    const loot = nodes[ni]!.hidden?.lootables;
+    if (!loot) continue;
+    for (let li = 0; li < loot.length; li++) {
+      const g = loot[li]!.loot?.grade ?? 0;
+      if (!best || g > best.grade) best = { ni, li, grade: g };
+    }
+  }
+  if (!best) {
+    for (let ni = 0; ni < nodes.length; ni++) {
+      const mobs = nodes[ni]!.hidden?.mobs;
+      if (!mobs) continue;
+      for (let mi = 0; mi < mobs.length; mi++) {
+        if (mobs[mi]!.role === 'miniBoss') {
+          const h = nodes[ni]!.hidden!;
+          const lootables = [...(h.lootables ?? [])];
+          lootables.push({
+            id: `${nodes[ni]!.id}_stash`,
+            label: 'camp stash',
+            opened: false,
+            loot: { rarity: 'Common', qty: 2, grade: 2 },
+            lock: { ...CAMP_STASH_LOCK },
+          });
+          const next = [...nodes];
+          next[ni] = { ...nodes[ni]!, hidden: { ...h, lootables } };
+          return next;
+        }
+      }
+    }
+    return nodes;
+  }
+  const next = [...nodes];
+  const node = nodes[best.ni]!;
+  const h = node.hidden!;
+  const lootables = [...h.lootables];
+  const chest = lootables[best.li]!;
+  lootables[best.li] = {
+    ...chest,
+    label: chest.label.toLowerCase().includes('stash') ? chest.label : `camp stash (${chest.label})`,
+    lock: chest.lock?.alarm ? chest.lock : { ...CAMP_STASH_LOCK, ...(chest.lock ?? {}) },
+  };
+  next[best.ni] = { ...node, hidden: { ...h, lootables } };
+  return next;
+}
+
 export function placeRoadCamp(
   state: GameState,
   route: string,
@@ -49,27 +102,47 @@ export function placeRoadCamp(
   enc: RoadEncounter
 ): { state: GameState; encounter: RoadEncounter } {
   const rng = createHashRng('road-camp', `${state.seed ?? ''}|${route}|${leg}`);
-  const taken = nameWords([
-    ...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]),
-    ...campPeople(state),
-    state.character?.name,
-    enc.name,
-  ]);
+  const nameParts: string[] = [];
+  const mems = state.npcMemories ?? [];
+  for (let i = 0; i < mems.length; i++) {
+    nameParts.push(mems[i]!.npcName);
+    const aliases = mems[i]!.aliases ?? [];
+    for (let a = 0; a < aliases.length; a++) nameParts.push(aliases[a]!);
+  }
+  const already = campPeople(state);
+  for (let i = 0; i < already.length; i++) nameParts.push(already[i]!);
+  if (state.character?.name) nameParts.push(state.character.name);
+  if (enc.name) nameParts.push(enc.name);
+  const taken = nameWords(nameParts);
   const leader = enc.name || pickPersonName(rng, taken) || 'the camp keeper';
   const name = `${leader}'s camp`;
   const card = buildDungeonCard(state, name);
   const people = [leader];
-  const nodes = card.nodes.map((n) => {
-    if (!n.hidden?.mobs.length) return n;
-    const mobs = n.hidden.mobs.map((m) => {
-      if (m.role === 'miniBoss') return { ...m, name: leader };
+  const named: MapNode[] = [];
+  for (let i = 0; i < card.nodes.length; i++) {
+    const n = card.nodes[i]!;
+    if (!n.hidden?.mobs.length) {
+      named.push(n);
+      continue;
+    }
+    const mobs = [];
+    for (let m = 0; m < n.hidden.mobs.length; m++) {
+      const mob = n.hidden.mobs[m]!;
+      if (mob.role === 'miniBoss') {
+        mobs.push({ ...mob, name: leader });
+        continue;
+      }
       const who = pickPersonName(rng, taken);
-      if (!who) return m;
+      if (!who) {
+        mobs.push(mob);
+        continue;
+      }
       people.push(who);
-      return { ...m, name: who };
-    });
-    return { ...n, hidden: { ...n.hidden, mobs } };
-  });
+      mobs.push({ ...mob, name: who });
+    }
+    named.push({ ...n, hidden: { ...n.hidden, mobs } });
+  }
+  const nodes = stampCampStash(named);
   const roadCamp: RoadCampRecord = {
     route,
     leg,
@@ -85,7 +158,7 @@ export function placeRoadCamp(
     name,
     allowsDungeon: true,
     dungeonRef: card.dungeonName,
-    dungeonCard: { ...card, nodes },
+    dungeonCard: { ...card, nodes } as ActiveDungeonState,
     arcStatus: 'open',
     mapScale: 'street',
     lastVisitedTurn: state.turn,
@@ -98,19 +171,34 @@ export function placeRoadCamp(
   };
 }
 
-/** Remember what the player did at the camp. Cleared is final: its people are down on the card and nobody is met again. */
 export function recordCampOutcome(state: GameState, placeId: string, outcome: RoadCampOutcome): GameState {
-  const place = (state.places ?? []).find((p) => p.id === placeId);
+  const places = state.places ?? [];
+  let place: PlaceRecord | undefined;
+  for (let i = 0; i < places.length; i++) {
+    if (places[i]!.id === placeId) {
+      place = places[i];
+      break;
+    }
+  }
   const c = place?.roadCamp;
   if (!place || !c || c.outcome === 'cleared') return state;
-  const card = outcome === 'cleared' && place.dungeonCard
-    ? {
-        ...place.dungeonCard,
-        nodes: place.dungeonCard.nodes.map((n) =>
-          n.hidden ? { ...n, hidden: { ...n.hidden, mobs: n.hidden.mobs.map((m) => ({ ...m, defeated: true, hpRemaining: null })) } } : n
-        ),
+  let card = place.dungeonCard;
+  if (outcome === 'cleared' && card) {
+    const nodes: MapNode[] = [];
+    for (let i = 0; i < card.nodes.length; i++) {
+      const n = card.nodes[i]!;
+      if (!n.hidden) {
+        nodes.push(n);
+        continue;
       }
-    : place.dungeonCard;
+      const mobs = [];
+      for (let m = 0; m < n.hidden.mobs.length; m++) {
+        mobs.push({ ...n.hidden.mobs[m]!, defeated: true, hpRemaining: null });
+      }
+      nodes.push({ ...n, hidden: { ...n.hidden, mobs } });
+    }
+    card = { ...card, nodes };
+  }
   const next: PlaceRecord = {
     ...place,
     roadCamp: { ...c, outcome, outcomeTurn: state.turn },
@@ -118,12 +206,15 @@ export function recordCampOutcome(state: GameState, placeId: string, outcome: Ro
     lastVisitedTurn: state.turn,
     ...(card ? { dungeonCard: card } : {}),
   };
-  return { ...state, places: (state.places ?? []).map((p) => (p.id === placeId ? next : p)) };
+  const out: PlaceRecord[] = [];
+  for (let i = 0; i < places.length; i++) {
+    out.push(places[i]!.id === placeId ? next : places[i]!);
+  }
+  return { ...state, places: out };
 }
 
 const HEADCOUNT_WORD = ['no one', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 
-/** "a camp of six" — the engine's headcount as the writer and STATUS print it. */
 export function campHeadcount(e: RoadEncounter): string {
   const n = e.camp?.headcount;
   return n ? ` of ${HEADCOUNT_WORD[n] ?? n}` : '';
@@ -136,7 +227,6 @@ const MEMORY_FACT: Record<RoadCampOutcome, string> = {
   fled: 'This is the camp the player got away from before, and its people remember it.',
 };
 
-/** What a returning camp remembers, as one writer sentence ('' on a first meeting). */
 export function campMemoryFact(e: RoadEncounter): string {
   const m = e.camp?.memory;
   return m ? MEMORY_FACT[m] : '';
