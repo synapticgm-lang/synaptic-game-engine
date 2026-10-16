@@ -341,6 +341,20 @@ const DAY_PART_WORDS: [slot: string, re: RegExp][] = [
 ];
 
 
+const CLOCK_ORDER = ['dawn', 'morning', 'midday', 'afternoon', 'dusk', 'evening', 'night'];
+/** Every clock slot from `from` to `to`, wrapping past night (night .. morning = night, dawn, morning). */
+function clockSpan(from: string, to: string): string[] {
+  const a = CLOCK_ORDER.indexOf(from);
+  const b = CLOCK_ORDER.indexOf(to);
+  if (a < 0 || b < 0) return [];
+  const out: string[] = [];
+  for (let i = a; ; i = (i + 1) % CLOCK_ORDER.length) {
+    out.push(CLOCK_ORDER[i]!);
+    if (i === b) break;
+  }
+  return out;
+}
+
 export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean {
   const facts = handedText.split(PAGE_MARK)[0]!;
   const at = facts.indexOf(CLOCK_MARK);
@@ -351,7 +365,13 @@ export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean
     .split('\n')
     .filter((l) => /^engine result:/i.test(l.trim()))
     .flatMap((l) => [...l.matchAll(/\bnow (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)].map((m) => m[1]!.toLowerCase()));
-  const allowed = engineSlots.length ? engineSlots : [clockSlot];
+  // A span the record states ("camped from night until morning") covers every slot it passes through.
+  const spanSlots = facts
+    .split('\n')
+    .filter((l) => /^engine result:/i.test(l.trim()))
+    .flatMap((l) => [...l.matchAll(/\bfrom (dawn|morning|midday|afternoon|dusk|evening|night) (?:until|till|to) (dawn|morning|midday|afternoon|dusk|evening|night)\b/gi)])
+    .flatMap((m) => clockSpan(m[1]!.toLowerCase(), m[2]!.toLowerCase()));
+  const allowed = engineSlots.length || spanSlots.length ? [...engineSlots, ...spanSlots] : [clockSlot];
   const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
   for (const [slots, re] of DAY_PART_WORDS) {
     if (slots.split(' ').some((s) => allowed.includes(s))) continue;
