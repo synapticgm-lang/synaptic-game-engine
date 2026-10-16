@@ -48,7 +48,7 @@ TOTAL did not rise.
 
 ## Ship
 
-Client stamp `2026-10-16p`. No gm-turn deploy. Pushed; Vercel git build; live `version.json` verified below.
+Commit `e9a3d7de`. Client stamp `2026-10-16p`. No gm-turn deploy. Pushed; Vercel git build. Live `www.synapticgm.com/version.json` = `2026-10-16p`.
 
 ## NEXT
 
