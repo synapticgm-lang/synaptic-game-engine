@@ -6,6 +6,7 @@
  */
 
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
+import { foeCanSpeak } from './rules/srdMonsters';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
@@ -87,7 +88,6 @@ import {
   countSameHallTopicRepeats,
   openingCastNote,
 } from './openingEstablishment';
-
 export type EventOutcome =
   | 'killed'
   | 'bloodied'
@@ -196,18 +196,14 @@ export interface CompletedEventPacket {
   /** The journey leg committed this turn heads here (REF ENUM row): the travel line names it. */
   destinationRef?: LedgerRef;
 }
-
 const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b|^(?:read the device|look inward|ask the world|reach into the pocket)$/i;
-
 /** The one test for "the player read the ledger": the packet and the System window both ask it. */
 export function isLedgerReadAction(action: string): boolean {
   return LEDGER_READ_ACTION.test((action ?? '').trim());
 }
-
 function writerHousingClause(block?: string): string {
   return systemHousingWriterClause(housingFromSystemBlock(block));
 }
-
 /** What the player did on a ledger read, named for the frozen housing. The game paints the window itself. */
 function ledgerReadEventLine(who: string, him: string, housing: SystemHousingId | null): string {
   switch (housing) {
@@ -218,7 +214,6 @@ function ledgerReadEventLine(who: string, him: string, housing: SystemHousingId 
     default: return `${who} read the System window; the game shows the window.`;
   }
 }
-
 function ledgerReadLabel(housing: SystemHousingId | null): string {
   switch (housing) {
     case 'worn_device': return 'DEVICE';
@@ -228,17 +223,14 @@ function ledgerReadLabel(housing: SystemHousingId | null): string {
     default: return 'PANEL';
   }
 }
-
 /** The System window as a ref: a housed system that is not a worn device is not a thing in the scene. */
 function housedWindowDisplay(state: GameState, prop: string): string | null {
   const housing = state.systemHousing?.housing;
   if (!housing) return prop;
   return housing === 'worn_device' ? 'worn device' : null;
 }
-
-/** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
-export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window' | 'meeting';
-
+/** `window` is the LitRPG System window: only the PC sees it, not a thing in the room. */
+export type LedgerRefClass = 'place' | 'person' | 'creature' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window' | 'meeting';
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
 
 export interface LedgerRef {
@@ -620,6 +612,7 @@ const SPEAKS: readonly TokenUse[] = ['speaker', 'actor', 'addressed']; // a pers
 const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   place: ['place'],
   person: SPEAKS,
+  creature: ['actor', 'addressed'],
   companion: SPEAKS,
   meeting: SPEAKS,
   corpse: ['corpse'],
@@ -683,7 +676,11 @@ export function compileRefEnum(
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();
-    if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
+    if (encName && state.activeEncounter) {
+      const enc = state.activeEncounter;
+      if (typeof enc.canSpeak !== 'boolean') enc.canSpeak = foeCanSpeak(enc);
+      add(`encounter:${slugRefId(encName)}`, encName, enc.canSpeak ? 'person' : 'creature');
+    }
     const road = roadMeetingRef(state);
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     const kill = state.sceneFacts?.lastKill;
@@ -2406,6 +2403,9 @@ export function lastResortStoryBody(
   }
   const named = !!lockedOpeningPcName(state);
   const lastGm = lastCommittedGmBody(state);
+  // RC-N3b: the turn's own record (travel leg, camp, meeting result) is the page before any player-word or look line.
+  const record = lastResortUsable(state, travelBeatFact(state), lastGm);
+  if (record) return { prose: sanitizeLockedNameBeat(state, record), status: 'Writer page blocked — painted from the turn record' };
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')
     .slice(-10)

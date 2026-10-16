@@ -145,6 +145,13 @@ function edgeSource(file, srcPath) {
       "const umbraBook = { startId: 'up-bell-tower', nodes: [] };\n"
     );
   }
+  if (file === 'completedEventPacket.ts') {
+    // SRD stat blocks stay on the client. Speech is already on the encounter when the edge rebuilds a packet.
+    next = next.replace(
+      /^import \{ foeCanSpeak \} from '\.\/rules\/srdMonsters';\r?\n/m,
+      "function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }\n"
+    );
+  }
   if (file === 'checkMath.ts') {
     // Edge only needs the PlayerCheckResult type. The tabletop exploration rules (DC ladder, light, pace) pull the
     // SRD sheet builder and the mode profile, so on the edge they throw if a check ever runs there.

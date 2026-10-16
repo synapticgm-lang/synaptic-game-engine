@@ -672,9 +672,9 @@ export interface WorldLedger {
   /** Named faction standings — empty until the campaign establishes them. */
   factionStandings?: FactionStanding[];
 }
-
 export interface ActiveEncounter {
   name: string;
+  canSpeak?: boolean;
   level: number;
   hp: number;
   maxHp: number;

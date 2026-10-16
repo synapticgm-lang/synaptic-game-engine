@@ -52,6 +52,7 @@ function monster(m) {
     speed: feet(m.speed.walk),
     scores: { STR: m.strength, DEX: m.dexterity, CON: m.constitution, INT: m.intelligence, WIS: m.wisdom, CHA: m.charisma },
     passivePerception: m.senses.passive_perception,
+    languages: (m.languages ?? '').trim(),
     ...(m.senses.darkvision ? { darkvision: feet(m.senses.darkvision) } : {}),
     ...(m.gear ? { gear: m.gear.split(/,\s*/) } : {}),
     ...(m.damage_vulnerabilities?.length ? { vulnerable: m.damage_vulnerabilities } : {}),

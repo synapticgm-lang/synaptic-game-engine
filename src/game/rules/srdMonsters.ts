@@ -35,6 +35,7 @@ export interface StatBlock {
   speed: number;
   scores: Attributes;
   passivePerception: number;
+  languages?: string;
   /** SRD 5.2.1 stat block Gear: what the creature carries (and drops). */
   gear?: string[];
   kind: 'humanoid' | 'beast' | 'undead' | 'monstrosity';
@@ -82,15 +83,12 @@ export const SRD_MONSTERS: Array<StatBlock & { match: RegExp }> = ENGINE.map(({ 
     match,
   };
 });
-
-const mod = (n: number) => Math.floor((n - 10) / 2);
-
 /** An engine block from the encounter's own numbers when no SRD creature matches (proficiency +2 up to CR 4). */
 function engineBlock(enc: ActiveEncounter, cr: string): StatBlock {
   const STR = enc.strength || 12;
   const DEX = enc.dexterity || 10;
   const CON = enc.constitution || 10;
-  const best = Math.max(mod(STR), mod(DEX));
+  const best = Math.max(abilityModOf(STR), abilityModOf(DEX));
   const crNum = cr.includes('/') ? 0 : Number(cr);
   const die = crNum >= 3 ? '2d6' : crNum >= 1 ? '1d8' : '1d6';
   const pb = crNum >= 5 ? 3 : 2;
@@ -119,7 +117,7 @@ export function blockWithinXp(block: StatBlock, maxXp: number): StatBlock {
   if (own <= maxXp) return block;
   const cr = highestCrWithin(maxXp);
   const ratio = crToXp(cr) / own;
-  const best = Math.max(mod(block.scores.STR), mod(block.scores.DEX));
+  const best = Math.max(abilityModOf(block.scores.STR), abilityModOf(block.scores.DEX));
   const crNum = cr.includes('/') ? 0 : Number(cr);
   const die = crNum >= 3 ? '2d6' : crNum >= 1 ? '1d8' : '1d6';
   const { extra: _e, rider: _r, inflicts: _i, ...attack } = block.attack;
@@ -132,6 +130,17 @@ export function blockWithinXp(block: StatBlock, maxXp: number): StatBlock {
     hpDice: '',
     attack: { ...attack, toHit: Math.min(attack.toHit, best + 2), damage: `${die}${best >= 0 ? '+' : ''}${best}` },
   };
+}
+
+/** Speech is the SRD Languages line. No block: only a humanoid speaks. */
+export function foeCanSpeak(enc: ActiveEncounter): boolean {
+  const block = statBlockForEncounter(enc);
+  if (!block.srd) return block.kind === 'humanoid';
+  const lower = (block.languages ?? '').trim().toLowerCase().replaceAll('\u2019', "'");
+  if (!lower || lower === 'none') return false;
+  let mark = true;
+  for (const ch of lower) if (ch !== '\u2014' && ch !== '\u2013' && ch !== '-') mark = false;
+  return !mark && !lower.includes("can't speak") && !lower.includes('cannot speak');
 }
 
 /** The stat block a live encounter fights with. A name match wins; else the engine block at the encounter's CR. */
@@ -158,15 +167,6 @@ export function realEncounterCr(
   return hit ? normalizeCr(hit.cr) : crForFoeLevel(enc.level, encounterKind(enc));
 }
 
-export function blockById(id: string, enc: ActiveEncounter): StatBlock {
-  const hit = SRD_MONSTERS.find((b) => b.id === id);
-  if (hit) {
-    const { match: _m, ...block } = hit;
-    return block;
-  }
-  return statBlockForEncounter(enc);
-}
-
 export function abilityModOf(score: number): number {
-  return mod(score);
+  return Math.floor((score - 10) / 2);
 }
