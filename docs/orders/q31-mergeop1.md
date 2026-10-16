@@ -50,6 +50,6 @@ R1 is a thugs brief and a group motive line, not a meeting/traveler opener idea.
 
 ## Ship
 
-Stamp `2026-10-16z6`. Edge `types.ts` synced. `gm-turn` deploy follows this commit.
+Stamp `2026-10-16z6`. Edge `types.ts` synced. `gm-turn` was deployed from the commit (`4d1086f0`), so the uncommitted `pyoaSpine.ts` edit was not left on the function.
 
 TT_DONE
