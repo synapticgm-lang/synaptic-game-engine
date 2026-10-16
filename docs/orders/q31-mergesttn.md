@@ -62,4 +62,8 @@ None for this merge.
 
 ## Ship
 
-Stamp `2026-10-16z12`.
+Stamp `2026-10-16z12` is on `main` (`3d204c24`). No edge file changed, so `gm-turn` was not deployed.
+
+The git push started a production build of `synaptic-game-engine`. That deployment is Ready. Live `https://www.synapticgm.com/version.json` is `2026-10-16z12`.
+
+TT_DONE
