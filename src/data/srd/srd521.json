@@ -21,6 +21,7 @@
     "CHA": 8
    },
    "passivePerception": 9,
+   "languages": "Common, Goblin",
    "darkvision": 60,
    "gear": [
     "Leather Armor",
@@ -60,6 +61,7 @@
     "CHA": 10
    },
    "passivePerception": 10,
+   "languages": "Common, Thieves’ Cant",
    "gear": [
     "Leather Armor",
     "Light Crossbow",
@@ -97,6 +99,7 @@
     "CHA": 10
    },
    "passivePerception": 10,
+   "languages": "Common",
    "gear": [
     "Leather Armor",
     "Sickle"
@@ -126,6 +129,7 @@
     "CHA": 6
    },
    "passivePerception": 15,
+   "languages": "None",
    "darkvision": 60,
    "attacks": [
     {
@@ -152,6 +156,7 @@
     "CHA": 4
    },
    "passivePerception": 12,
+   "languages": "None",
    "darkvision": 60,
    "attacks": [
     {
@@ -178,6 +183,7 @@
     "CHA": 5
    },
    "passivePerception": 9,
+   "languages": "Understands Common plus one other language but can’t speak",
    "darkvision": 60,
    "gear": [
     "Shortbow",
@@ -218,6 +224,7 @@
     "CHA": 5
    },
    "passivePerception": 8,
+   "languages": "Understands Common plus one other language but can’t speak",
    "darkvision": 60,
    "attacks": [
     {
@@ -244,6 +251,7 @@
     "CHA": 8
    },
    "passivePerception": 10,
+   "languages": "None",
    "darkvision": 60,
    "vulnerable": [
     "radiant"
@@ -273,6 +281,7 @@
     "CHA": 6
    },
    "passivePerception": 10,
+   "languages": "Common",
    "darkvision": 60,
    "attacks": [
     {
@@ -309,6 +318,7 @@
     "CHA": 4
    },
    "passivePerception": 14,
+   "languages": "None",
    "darkvision": 60,
    "attacks": [
     {

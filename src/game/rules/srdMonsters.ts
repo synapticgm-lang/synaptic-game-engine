@@ -35,6 +35,8 @@ export interface StatBlock {
   speed: number;
   scores: Attributes;
   passivePerception: number;
+  /** SRD 5.2.1 stat block Languages ("" when the block lists none). */
+  languages?: string;
   /** SRD 5.2.1 stat block Gear: what the creature carries (and drops). */
   gear?: string[];
   kind: 'humanoid' | 'beast' | 'undead' | 'monstrosity';
@@ -135,6 +137,18 @@ export function blockWithinXp(block: StatBlock, maxXp: number): StatBlock {
 }
 
 /** The stat block a live encounter fights with. A name match wins; else the engine block at the encounter's CR. */
+/**
+ * Whether the foe can talk: its SRD stat block lists a language (a "—" or empty Languages line, or one that only
+ * understands, is no speech). A foe with no SRD block speaks only as a humanoid.
+ */
+export function foeCanSpeak(enc: ActiveEncounter): boolean {
+  const block = statBlockForEncounter(enc);
+  if (!block.srd) return block.kind === 'humanoid';
+  const langs = (block.languages ?? '').trim();
+  if (!langs || /^(?:[—–-]+|none)$/i.test(langs)) return false;
+  return !/\bcan(?:'|’|no)t speak\b/i.test(langs);
+}
+
 export function statBlockForEncounter(enc: ActiveEncounter): StatBlock {
   const hit = SRD_MONSTERS.find((b) => b.match.test(enc.name ?? ''));
   if (hit) {
