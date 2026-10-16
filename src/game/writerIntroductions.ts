@@ -6,6 +6,7 @@
  */
 import { introducedNamedPeople, introducedRolePeople, introducedThings } from './tokenProse';
 import type { GameState, NpcMemory } from './types';
+import { isOffSetting, worldOffSettingWords } from './settingVocabulary';
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
@@ -42,11 +43,21 @@ export function registerWriterIntroductions(state: GameState, narrative: string)
     if (memories.some((m) => m.npcId === npcId)) continue;
     memories.push({ npcId, npcName: name, disposition: 'neutral', facts: [`Introduced by the story at ${place} on turn ${state.turn}.`], lastSeenTurn: state.turn });
   }
+  // P-5e: a thing only other settings name, which the gate let through because the story established it,
+  // is recorded as crossed over, so it and its origin stay allowed from then on.
+  let crossedOver = state.crossedOver;
+  if (things.length) {
+    const foreign = worldOffSettingWords(state);
+    const crossed = things.filter((t) => isOffSetting(foreign, t.split(/\s+/).pop()!));
+    const list = [...(crossedOver ?? [])];
+    for (const c of crossed) if (!list.some((x) => x.toLowerCase() === c.toLowerCase())) list.push(c);
+    if (list.length !== (crossedOver ?? []).length) crossedOver = list;
+  }
   let sceneFacts = state.sceneFacts;
   if (sceneFacts && things.length) {
     const props = [...sceneFacts.props];
     for (const t of things) if (!props.some((p) => p.toLowerCase() === t.toLowerCase())) props.push(t);
     sceneFacts = { ...sceneFacts, props };
   }
-  return { ...state, npcMemories: memories, sceneFacts };
+  return { ...state, npcMemories: memories, sceneFacts, ...(crossedOver ? { crossedOver } : {}) };
 }

@@ -835,6 +835,8 @@ export interface GameState {
   npcMemories?: NpcMemory[];
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
+  /** P-5e: things the story brought across from another world (a summoned person's kit and the like). */
+  crossedOver?: string[];
   /** Places the engine already filled with townsfolk (first entry is the opening place, which the card owns). */
   townsfolkPlaces?: string[];
   previousSceneFacts?: SceneFacts;
