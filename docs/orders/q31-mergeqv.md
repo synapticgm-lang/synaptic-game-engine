@@ -67,6 +67,8 @@ None for this merge. The Promises tab is empty until a quest reveal or a world d
 
 ## Ship
 
-Stamp `2026-10-16z9` is on `main`. No edge file changed, so `gm-turn` was not deployed.
+Stamp `2026-10-16z9` is on `main` (`ff00cb97`). No edge file changed, so `gm-turn` was not deployed.
 
-TT_DONE
+Vercel project `project` built `ff00cb97` and serves `2026-10-16z9`. Vercel project `synaptic-game-engine` (www) did not start a git build. A production deploy of that clean commit returned `Resource is limited - try again in 24 hours (more than 100, code: "api-deployments-free-per-day")` and was not retried. Live `https://www.synapticgm.com/version.json` is still `2026-10-16z8`.
+
+TT_STOP
