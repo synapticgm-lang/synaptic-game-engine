@@ -839,6 +839,11 @@ export interface GameState {
   townsfolkPlaces?: string[];
   previousSceneFacts?: SceneFacts;
   /**
+   * Order M steps 5–6 — compact Previous scene (pinned promises/threats/names/clues only).
+   * Current lives on the place's `sceneLedger`. Never calls closeDungeon.
+   */
+  scenePrevious?: ScenePrevious;
+  /**
    * Monotonic campaign ledger revision. Bumped on every accepted turn commit.
    * Pending proposals carry expectedRevision and must match this to accept.
    */
@@ -1744,7 +1749,7 @@ export interface ClearedSiteRecord {
   };
 }
 
-/** Order M — one scene ledger on the place. Engine-written. Current scene only until the exit pass. */
+/** Order M — one scene ledger on the place. Engine-written. Current until exit; then condensed. */
 export interface SceneLedger {
   openedTurn: number;
   said: string[];
@@ -1755,6 +1760,17 @@ export interface SceneLedger {
   present: string[];
   described: { key: string; line: string }[];
   spot: string;
+}
+
+/** Order M steps 5–6 — compact Previous slot (pinned only; ≤ ~200 chars in SCENE). */
+export interface ScenePrevious {
+  label: string;
+  promises: string[];
+  threats: string[];
+  clues: string[];
+  asked: { q: string; answered: boolean }[];
+  names: string[];
+  summary: string;
 }
 
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */

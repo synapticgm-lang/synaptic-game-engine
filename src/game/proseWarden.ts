@@ -1,9 +1,4 @@
-/**
- * Cheap post-writer English / UI-leak pass. Not a second model.
- * Fixes article collisions, bare "a figure" name-slots, leaked quest verbs,
- * location tautology, alone crowd invents, and interior one-room map lies.
- * There is no general "does this make sense" critic — that would be a second LLM.
- */
+
 
 import type { GameState, Item, NpcMemory } from './types';
 import { scrubNpcIntroRepeat } from './npcMemory';
@@ -142,14 +137,7 @@ function tidyClauses(text: string): string {
     .trim();
 }
 
-/**
- * Batch E — strip false arrival when the player never left currentLocation.
- * "You reach the cathedral infirmary." while already there.
- * Batch S — also strip arrival to a *different* known/opening place (Sevenfold Circle
- * under bombardment spam while standing in Lowmarket / West Wall).
- * Batch T — strip Sevenfold false-arrival even when glued before a real leave/reach line.
- * Batch X+1 — strip arrival narration when flee attempt failed (caught = true).
- */
+
 export function scrubFalseArrivalWhenHere(
   text: string,
   currentLocation?: string,
@@ -317,11 +305,7 @@ export function scrubFalseArrivalWhenHere(
   return tidyClauses(next);
 }
 
-/**
- * Choice-pad pronouns/verbs quoted as NPC names: known as "They", "One" and "Press".
- * Batch T — also strip deixis nouns used as people/places ("the Ahead", "figure 1").
- * Batch V — dialogue verbs like "Rasped" treated the same.
- */
+
 export function scrubChoicePadPersonNames(text: string): string {
   if (!text) return text;
   let next = text;
@@ -344,10 +328,7 @@ export function scrubChoicePadPersonNames(text: string): string {
   return tidyClauses(next);
 }
 
-/**
- * Batch V — scrub dialogue-verb tokens promoted to nouns (direction / monster / cast).
- * Tape quotes: "to your Rasped", "a Rasped, lunged", "Rasped and They", "fists Rasped".
- */
+
 export function scrubDialogueVerbAsNoun(text: string, encounterName?: string): string {
   if (!text || !/\brasped\b/i.test(text)) return text;
   let next = text;
@@ -394,10 +375,7 @@ export function scrubDialogueVerbAsNoun(text: string, encounterName?: string): s
   return tidyClauses(next);
 }
 
-/**
- * Batch V — strip pocket/holding claims for offered loot the player never took.
- * Tape: Check Status after Fence offer → "Tarnished Metal Shard in your pocket".
- */
+
 export function scrubUnearnedPocketLoot(
   text: string,
   inventoryNames: string[] = []
@@ -429,10 +407,7 @@ export function scrubUnearnedPocketLoot(
   return tidyClauses(next);
 }
 
-/**
- * Batch T — unresolved deixis / occupancy nouns never stay as people, loot, or places.
- * Tape: "the Ahead half-hidden", "tarnished the Ahead", "figure 1 priests", "silhouette of figure 1".
- */
+
 export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: string): string {
   if (!text) return text;
   const loc = (currentLocation ?? '').trim();
@@ -490,10 +465,7 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
   return tidyClauses(next);
 }
 
-/**
- * Faction/org names must not shapeshift into loot / sketches / lunge targets.
- * "tarnished the Scattered Scale" / "drawn the Scattered Scale" / "take a Scattered Scale".
- */
+
 export function scrubFactionAsLootOrTarget(text: string): string {
   if (!text || !/scattered\s+scale/i.test(text)) return text;
   let next = text;
@@ -551,10 +523,7 @@ export function scrubStitchBankLeaks(text: string): string {
   return tidyClauses(kept.join(' '));
 }
 
-/**
- * Batch U — encounter/faction names dropped into preposition slots without a proper clause.
- * Tape: "activity Scattered Scale", "just Pact-Hunter Skirmisher", "leaned Pact-Hunter Skirmisher".
- */
+
 export function scrubEntityMadLibs(text: string, encounterName?: string): string {
   if (!text) return text;
   let next = text;
@@ -686,9 +655,7 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   return tidyClauses(next);
 }
 
-/**
- * Strip raw HP/MP sheet dumps from story body (STATUS owns numbers).
- */
+
 export function scrubBodyStatusDumps(text: string): string {
   if (!text) return text;
   const next = text
@@ -710,9 +677,7 @@ export function scrubBodyStatusDumps(text: string): string {
   return tidyClauses(next);
 }
 
-/**
- * "The chirurgeon, Field," — role adjective harvested as a person name.
- */
+
 export function scrubRoleAdjectivePersonSlot(text: string): string {
   if (!text) return text;
   const ROLE_ADJ =
@@ -731,11 +696,7 @@ export function scrubRoleAdjectivePersonSlot(text: string): string {
   return tidyClauses(next);
 }
 
-/**
- * "Nearby" is for things that are not here. If the beat is already at a named
- * interior (cathedral / circle / court / currentLocation), strip "a nearby
- * building/place/hall" used as the current room.
- */
+
 export function scrubLocationTautology(text: string, currentLocation?: string): string {
   if (!text || !/nearby/i.test(text)) return text;
   let next = text;
@@ -772,10 +733,7 @@ export function scrubSpokenQuoteStart(text: string): string {
 const ARTICLE_COLLISION =
   /\b(?:the\s+a|the\s+an|a\s+the|an\s+the|a\s+an|an\s+a|the\s+the|a\s+a)\b/gi;
 
-/**
- * Cheap writer English slips.
- * "half an moments later" → "half a moment later"
- */
+
 export function scrubFreeEnglishSlips(text: string): string {
   if (!text) return text;
   return text
@@ -785,11 +743,7 @@ export function scrubFreeEnglishSlips(text: string): string {
     .replace(/\ba few people still moves\b/gi, 'a few people still move');
 }
 
-/**
- * High-confidence only: last beat had an awake named speaker / dialogue, but this
- * beat opens on "cot-bound sleeper never stirs". Strip that orphan opener —
- * do not over-scrub general sleep imagery.
- */
+
 export function scrubAwakeSpeakerAsSleeper(
   text: string,
   ctx?: { lastGmProse?: string; presentNames?: string[] }
@@ -836,10 +790,7 @@ export function scrubArticleCollisions(text: string): string {
   return next;
 }
 
-/**
- * "a figure" was the default invented-name replacement and leaked as a proper noun
- * ("the a figure", "glowing a figure", "You carry the a figure").
- */
+
 export function scrubFigurePlaceholder(text: string, alone = false): string {
   if (!text) return text;
   const personSlot = alone ? 'the panel' : 'the stranger';
@@ -897,11 +848,7 @@ export function scrubSpeakerPlaceholder(text: string, alone = false): string {
   return next;
 }
 
-/**
- * "the stranger" is a scrub artifact that replaced person/role slots.
- * 29d: ONLY replace with a present named person or alone→panel.
- * Never invent merchant/guard from keyword scan of the whole beat (Gemini mush).
- */
+
 export function scrubStrangerArtifact(
   text: string,
   presentNames: string[] = [],
@@ -914,10 +861,7 @@ export function scrubStrangerArtifact(
   return text;
 }
 
-/**
- * 29d — unearned victory when no live encounter (and not just cleared).
- * Soften absolute win language so the GM cannot auto-win outside the ledger.
- */
+
 export function scrubUnearnedVictory(
   text: string,
   opts?: { hasLiveEncounter?: boolean; recentlyCleared?: boolean }
@@ -937,10 +881,7 @@ export function scrubUnearnedVictory(
   return next;
 }
 
-/**
- * Kill unresolved placeholder nouns left by claim-scrub / bad generation
- * ("this place", orphan "them", "imposing this place").
- */
+
 export function scrubPlaceholderNouns(text: string, currentLocation?: string): string {
   if (!text) return text;
   const loc = (currentLocation ?? '').trim();
@@ -1021,11 +962,7 @@ export function scrubPronounSubjectSlips(text: string): string {
   return next;
 }
 
-/**
- * Batch 02a — Possessive determiner drops: "you stool" → "your stool".
- * Flash Lite drops possessive determiners, writing subject pronoun + noun
- * instead of possessive determiner + noun.
- */
+
 export function scrubPossessiveDeterminerSlips(text: string): string {
   if (!text) return text;
   let next = text;
@@ -1052,10 +989,7 @@ export function scrubPossessiveDeterminerSlips(text: string): string {
   return next;
 }
 
-/**
- * Kill premature "secrets" framing on an empty first look (explore opener filler).
- * Prefer sensory-only until the ledger has actual finds.
- */
+
 export function scrubPrematureSecrets(text: string): string {
   if (!text || !/secrets/i.test(text)) return text;
   let next = text;
@@ -1074,10 +1008,7 @@ function splitSentences(text: string): string[] {
   return parts?.map((p) => p.trim()).filter(Boolean) ?? (text.trim() ? [text.trim()] : []);
 }
 
-/**
- * Alone arrival / empty ruin — drop invent-crowd / "saw you arrive" watcher beats.
- * Choices already gate pads; this catches prose that slipped the writer.
- */
+
 const ALONE_CROWD_INVENT =
   /\b(?:you(?:'re|’re| are) not alone|a handful of (?:people|figures|onlookers)|people have gathered|ones who saw you arrive|who saw you(?:r)? arrive|saw you arrive|watching (?:you |through )|crowd (?:of|has|have)|bystanders?\b|onlookers?\b|handlers?\b|voices?\s+(?:outside|beyond|from (?:the )?(?:street|road|gap))|someone (?:nearby|listening|watching))\b/i;
 
@@ -1091,9 +1022,7 @@ export function scrubInventedAlonePresence(text: string, alone: boolean): string
   return tidyClauses(kept.join(' '));
 }
 
-/**
- * When the interior map has door/stair links, scrub "one open room / no doors / only a gap" lies.
- */
+
 const ONE_ROOM_MAP_LIE =
   /\b(?:only\s+(?:one|a\s+single)\s+(?:open\s+)?room|no\s+doors?\s+(?:intact|remain|left)|(?:there\s+are\s+)?no\s+hallways?|only\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+(?:far\s+)?wall|nothing\s+but\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+wall)\b/i;
 
@@ -1113,10 +1042,7 @@ export function scrubInteriorOneRoomLie(
   return tidyClauses(`${kept.join(' ')} ${bridge}`);
 }
 
-/**
- * Scrub anthropomorphized locations (e.g., "the hall answers your question").
- * Locations are places, not speakers.
- */
+
 const LOCATION_NOUNS =
   /\b(?:hall|room|chamber|corridor|passage|doorway|archway|stairway|vault|cellar|undercroft|atrium|nave|transept|gallery|balcony|landing|foyer|vestibule|alcove|niche|street|alley|square|plaza|courtyard|garden|field|path|road|bridge)\b/i;
 
@@ -1159,10 +1085,7 @@ export function scrubAnthropomorphizedLocation(text: string): string {
 }
 
 
-/**
- * Pack 12 Extended Validation: Time Skip
- * Scrubs "hours later" / "next morning" unless time of day actually changed.
- */
+
 export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTime?: string): string {
   if (!text || !currentTime || currentTime === 'unknown') return text;
   
@@ -1184,11 +1107,7 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
   );
 }
 
-/**
- * Pack 12 Extended Validation: Indoor/Outdoor
- * Scrubs "you step outside" if location is marked interior and player didn't use an exit.
- * 29b — skip outdoor scrub when exitAuthority / exitNarrated is set.
- */
+
 export function scrubInventedLocationChange(
   text: string,
   isIndoor?: boolean,
@@ -1214,11 +1133,7 @@ export function scrubInventedLocationChange(
   return text;
 }
 
-/**
- * Batch D — one camera per beat. Fallback/fail paths sometimes stack
- * "At Lowmarket…" with "At the Weighing Cup…" or dual place openings.
- * Keep the committed currentLocation framing; demote other place openings.
- */
+
 export function scrubDualLocationOpenings(
   text: string,
   currentLocation?: string,
@@ -1301,10 +1216,7 @@ export function scrubDualLocationOpenings(
   return next;
 }
 
-/**
- * Pack 12 Extended Validation: Tension
- * Scrubs "calm settles" or "danger passes" if tension state didn't actually change.
- */
+
 export function scrubInventedTensionChange(text: string, currentTension?: string, prevTension?: string): string {
   if (!text || !currentTension || currentTension === 'unknown') return text;
   
@@ -1347,10 +1259,7 @@ function collectContainerTypes(inventory: Item[], extraNames: string[]): Set<str
   return containerTypes;
 }
 
-/**
- * Phase 1: Scrub invented prior containers that don't exist in inventory/scene.
- * Catches: "last box", "final crate", "remaining chest", etc.
- */
+
 export function scrubInventedContainers(
   text: string,
   inventory: Item[] = [],
@@ -1386,10 +1295,7 @@ export function scrubInventedContainers(
   );
 }
 
-/**
- * Strip leaked safer-scene rewrite meta from GM story (any object, not panel-only).
- * Owner: player-agency / rewrite path — crowd-count agent should keep `scrubInventedCrowdSize`.
- */
+
 /** P0-5 — burned Millstone Charter must not reappear as held kit. */
 export function scrubDestroyedPyoaItems(text: string, destroyedItems?: string[]): string {
   if (!text || !destroyedItems?.some((d) => /charter|millstone/i.test(d))) return text;
@@ -1531,9 +1437,7 @@ export function scrubSaferSceneMeta(text: string): string {
   return tidyClauses(next);
 }
 
-/**
- * If the player did not speak (no quotes / say / ask / talk), do not narrate the act as dialogue.
- */
+
 export function scrubFalseSpokenAction(text: string, playerInput?: string): string {
   if (!text) return text;
   if (playerTypedDialogue(playerInput ?? '')) return text;
@@ -1553,19 +1457,12 @@ export function scrubFalseSpokenAction(text: string, playerInput?: string): stri
   return tidyClauses(next);
 }
 
-/**
- * UI chrome + cover-slot dummy names are not people.
- * Rewrites chrome-as-person: posture clauses, dialogue tags (states/says/their voice),
- * and want/need. Hum of the panel stays. Handlers never become the speaker name.
- */
+
 export function scrubChromeAsPerson(text: string, presentNames: string[] = []): string {
   return tidyClauses(rewriteChromePersonClauses(text, presentNames));
 }
 
-/**
- * Synchronous prose warden - fast regex-based fixes.
- * Use this for immediate, in-memory corrections.
- */
+
 
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;

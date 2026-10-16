@@ -1,6 +1,4 @@
-/**
- * NPC topic FSM — track exhausted dialogue topics; force stage advance when drained.
- */
+
 
 import type { GameState } from './types';
 import { canonicalizeIntent } from './semanticLoopDetector';
@@ -266,32 +264,32 @@ export function inferNpcRole(
   const lower = (input || '').toLowerCase();
   const present = state.sceneFacts?.present ?? [];
   const isOpening = (state.turn ?? 0) < 3 && !state.openingEstablishment?.complete;
-  
+
   // Guide role: opening NPCs who explain rules or are being talked to during opening
   // Check if NPC is in present array OR if they're mentioned in a talk/ask context during opening
   const isTalkingToNpc = /\b(talk|speak|ask|tell|listen)\b/.test(lower) && 
                          lower.includes(npc.toLowerCase());
   if (isOpening && (present.includes(npc) || isTalkingToNpc)) return 'guide';
-  
+
   // Merchant: trade/buy/sell/shop keywords
   if (/\b(buy|sell|trade|merchant|shop|vendor|wares)\b/.test(lower)) return 'merchant';
-  
+
   // Guardian: gate/door/entrance keywords
   if (/\b(gate|door|entrance|guard|keeper|sentry)\b/.test(lower)) return 'guardian';
-  
+
   // Quest giver: quest/mission/task keywords
   if (/\b(quest|mission|task|job|contract)\b/.test(lower)) return 'quest_giver';
-  
+
   // Informant: information/clue/know keywords
   if (/\b(know|tell|information|clue|reveal|secret)\b/.test(lower)) return 'informant';
-  
+
   // Companion: join/follow/come keywords
   if (/\b(join|follow|come with|party)\b/.test(lower)) return 'companion';
-  
+
   // Antagonist: hostile NPCs
   const enemies = state.activeEncounter?.enemies ?? [];
   if (enemies.some(e => e.name.toLowerCase().includes(npc.toLowerCase()))) return 'antagonist';
-  
+
   return 'neutral';
 }
 
@@ -303,12 +301,12 @@ export function trackNpcRoleObligation(
 ): GameState {
   const role = inferNpcRole(npc, state, input);
   if (role === 'neutral') return state;
-  
+
   const obligations = state.arcDirector?.npcRoleObligations ?? [];
   const existing = obligations.find(o => npcKey(o.npc) === npcKey(npc) && !o.exitedAt);
-  
+
   if (existing) return state; // Already tracking
-  
+
   // Set deadline based on role type
   const turnDeadlines: Record<NpcRole, number> = {
     guide: 8,        // Opening guide exits after 8 turns
@@ -320,7 +318,7 @@ export function trackNpcRoleObligation(
     antagonist: 999, // Antagonists stay until combat ends
     neutral: 999,
   };
-  
+
   const obligation: NpcRoleObligation = {
     npc,
     role,
@@ -328,7 +326,7 @@ export function trackNpcRoleObligation(
     deadlineTurn: state.turn + turnDeadlines[role],
     satisfied: false,
   };
-  
+
   return {
     ...state,
     arcDirector: {
@@ -345,21 +343,21 @@ export function checkNpcRoleDeadlines(
   const obligations = state.arcDirector?.npcRoleObligations ?? [];
   const exits: string[] = [];
   let updated = false;
-  
+
   const nextObligations = obligations.map(obl => {
     if (obl.exitedAt || obl.satisfied) return obl;
-    
+
     // Check if deadline exceeded
     if (state.turn >= obl.deadlineTurn) {
       exits.push(obl.npc);
       updated = true;
       return { ...obl, exitedAt: state.turn, satisfied: true };
     }
-    
+
     // Check if role obligation naturally satisfied
     const topics = state.arcDirector?.npcTopics?.[npcKey(obl.npc)] ?? [];
     const topicCount = topics.length;
-    
+
     // Role-specific satisfaction conditions
     let satisfied = false;
     switch (obl.role) {
@@ -381,17 +379,17 @@ export function checkNpcRoleDeadlines(
       default:
         satisfied = false;
     }
-    
+
     if (satisfied) {
       updated = true;
       return { ...obl, satisfied: true };
     }
-    
+
     return obl;
   });
-  
+
   if (!updated) return { state, exits: [] };
-  
+
   return {
     state: {
       ...state,
@@ -415,11 +413,7 @@ export function formatNpcExitMandate(exits: string[]): string | null {
 // Wave B: Topic Revival and Cooldown
 // ============================================================================
 
-/**
- * Wave B: Revive an exhausted topic with new evidence or story beat
- * 
- * Creates a new version of the topic that can be asked again, with cooldown.
- */
+
 export function reviveTopicVersion(
   state: GameState,
   npc: string,
@@ -430,16 +424,16 @@ export function reviveTopicVersion(
   const key = npcKey(npc);
   const ledger = state.arcDirector?.topicCooldownLedger ?? {};
   const versions = ledger[key] ?? [];
-  
+
   // Find current version
   const existingVersion = versions.find(v => v.topic === topic);
   const currentVersion = existingVersion?.version ?? 0;
   const nextVersion = currentVersion + 1;
-  
+
   // Calculate cooldown based on reason
   const cooldownTurns = reason === 'evidence' ? 8 : reason === 'contradiction' ? 12 : 0;
   const cooldownUntil = currentTurn + cooldownTurns;
-  
+
   // Create new version entry
   const newVersion: TopicVersion = {
     topic,
@@ -448,16 +442,16 @@ export function reviveTopicVersion(
     revivalReason: reason,
     cooldownUntil: cooldownTurns > 0 ? cooldownUntil : undefined
   };
-  
+
   // Update ledger
   const updatedVersions = [...versions.filter(v => v.topic !== topic), newVersion];
   const updatedLedger = { ...ledger, [key]: updatedVersions };
-  
+
   // Remove from exhausted topics to allow re-asking
   const npcTopics = state.arcDirector?.npcTopics ?? {};
   const exhaustedTopics = npcTopics[key] ?? [];
   const filteredTopics = exhaustedTopics.filter(t => t !== topic);
-  
+
   return {
     ...state,
     arcDirector: {
@@ -468,9 +462,7 @@ export function reviveTopicVersion(
   };
 }
 
-/**
- * Wave B: Check if topic is on cooldown
- */
+
 export function isTopicOnCooldown(
   npc: string,
   topic: string,
@@ -478,36 +470,32 @@ export function isTopicOnCooldown(
   ledger: TopicCooldownLedger | undefined
 ): boolean {
   if (!ledger) return false;
-  
+
   const key = npcKey(npc);
   const versions = ledger[key] ?? [];
   const version = versions.find(v => v.topic === topic);
-  
+
   if (!version || !version.cooldownUntil) return false;
-  
+
   return currentTurn < version.cooldownUntil;
 }
 
-/**
- * Wave B: Get current topic version
- */
+
 export function getTopicVersion(
   npc: string,
   topic: string,
   ledger: TopicCooldownLedger | undefined
 ): number {
   if (!ledger) return 0;
-  
+
   const key = npcKey(npc);
   const versions = ledger[key] ?? [];
   const version = versions.find(v => v.topic === topic);
-  
+
   return version?.version ?? 0;
 }
 
-/**
- * Wave B: Format cooldown mandate for situation packet
- */
+
 export function formatCooldownMandate(
   npc: string,
   topic: string,
@@ -519,6 +507,6 @@ export function formatCooldownMandate(
     : version.revivalReason === 'contradiction'
     ? 'contradictory information found'
     : 'story beat triggered';
-  
+
   return `TOPIC REVIVAL: ${npc} topic "${topic}" v${version.version} (${reasonText}). On cooldown for ${turnsRemaining} turns. Do not rehash until cooldown expires.`;
 }

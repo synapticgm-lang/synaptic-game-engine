@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **q31-M3:** deleted in the q31-M3 commit (stamp `2026-10-16y`). The old text lives at its parent.
 - **q31-P3:** deleted in the q31-P3 commit (stamp `2026-10-15q`). The old text lives at its parent, **`12726bad`**. Line numbers in that section are at `12726bad`.
 - **q31-DC1:** deleted in the q31-DC1 commit (stamp `2026-10-15o`). The old text lives at its parent, **`eeba53ad`**. Restore one file with `git show eeba53ad:<path> > <path>`. Line numbers in that section are at `eeba53ad`.
 - **tt-fix-15:** deleted in the tt-fix-15 commit (stamp `2026-10-15b`). The old text lives at its parent, **`ca67deec`**. Line numbers in that section are at `ca67deec`.
@@ -18,6 +19,11 @@ Every item below can be restored with git.
 A "swap" entry means the local copy was deleted and the call now uses the shared helper with the same body (`engineFactPatterns.escRe` = `s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`; `engineFactPatterns.narrationOf` = `(s ?? '').replace(/["“][^"”]*["”]/g, ' ')`). Behaviour is identical, so restoring a swap is only needed if the shared helper changes.
 
 ---
+
+## q31-M3 scene exit + leapfrog (Order M part 3, steps 5–6)
+
+1. **`src/game/pressureClock.ts` `initPressureClock`** — returned `{ turnsSinceBeat: 0 }`. Inlined into `tickPressureClock` (`prev ?? { turnsSinceBeat: 0 }`). No other caller.
+2. **Essay / multi-line JSDoc trim (ruleCount budget):** `proseWarden.ts`, `semanticLoopDetector.ts`, `tokenProse.ts`, `beatCommitGate.ts`, `npcTopicFsm.ts`. Comment only; behaviour unchanged. `forwardProgressGovernor.ts` consecutive blank collapse (4 lines).
 
 ## q31-M2 scene writer view + repeat gate (Order M part 2, steps 3–4)
 

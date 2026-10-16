@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { formatInfoSheet, formatSceneLedgerBlock, INFO_SHEET_CHAR_CAP, SCENE_CHAR_BUDGET } from './infoSheet';
 import { recordSpokenTopics } from './npcMemory';
-import { stampSceneLedger } from './sceneLedger';
+import { advanceSceneLedger, stampSceneLedger } from './sceneLedger';
 import { alreadySaidLines, classifyTokenLine, plainLineFactProblem, repeatsSaid, type TokenBeat } from './tokenProse';
 import type { ActiveDungeonState } from './mapEngine';
 import type { GameState, NpcMemory } from './types';
@@ -201,5 +201,137 @@ describe('scene ledger writer view and repeat gate (Order M steps 3–4)', () =>
     const next = stampSceneLedger(state, 'Jarek said, "That pack was the last of my errands, and you handled it fine."');
     const row = next.places!.find((p) => p.name === 'the quiet upper floors of Ernost Keep');
     expect(row?.sceneLedger?.said.some((s) => s.includes('pack was the last of my errands'))).toBe(true);
+  });
+});
+
+describe('scene ledger exit + leapfrog (Order M steps 5–6)', () => {
+  it('A → road → B keeps A promise on Previous; next exit puts it on the timeline only', () => {
+    const promise = 'Open thread (T2): I will bring the glass back';
+    const memories = recordSpokenTopics(
+      [person()],
+      ['Ilyra Fen'],
+      [],
+      'Ilyra Fen said, "The March keeps what falls into it."',
+      4
+    );
+    let atA = stampSceneLedger(
+      base({
+        npcMemories: memories,
+        campaignMemory: {
+          pins: [],
+          consequences: [{ id: 'p', text: promise, createdTurn: 2, unresolved: true }],
+        },
+      }),
+      'A grey heron stood in the shallows and did not move.'
+    );
+    expect(atA.places![0]!.sceneLedger!.said.length).toBeGreaterThan(0);
+    expect(atA.places![0]!.sceneLedger!.described.length).toBeGreaterThan(0);
+
+    // Leave A for the road — never closeDungeon; condense A; Previous = A.
+    const onRoad = advanceSceneLedger(atA, {
+      ...atA,
+      currentLocation: 'Open road',
+      turn: 5,
+      journey: { from: 'Mireglass March', to: 'Saltford', ground: 'Open road' } as never,
+    });
+    const aLeft = onRoad.places!.find((p) => p.name === 'Mireglass March')!;
+    expect(aLeft.sceneLedger!.said).toEqual([]);
+    expect(aLeft.sceneLedger!.described).toEqual([]);
+    expect(aLeft.sceneLedger!.promises).toContain(promise);
+    expect(onRoad.scenePrevious?.label).toBe('Mireglass March');
+    expect(onRoad.scenePrevious?.promises).toContain(promise);
+    expect(onRoad.timeline ?? []).toEqual([]);
+
+    // Arrive at B — fold road + A into Previous; stamp B.
+    let atB = advanceSceneLedger(onRoad, {
+      ...onRoad,
+      currentLocation: 'Saltford',
+      turn: 6,
+      places: [
+        ...(onRoad.places ?? []),
+        { id: 'saltford', name: 'Saltford' },
+      ],
+      sceneFacts: { ...onRoad.sceneFacts!, present: ['Dock Clerk'], location: 'Saltford' } as never,
+      journey: null,
+    });
+    atB = stampSceneLedger(atB, 'Saltford harbour smelled of tar and wet rope.');
+    expect(atB.scenePrevious?.label).toMatch(/Mireglass March \+ road to Saltford/);
+    expect(atB.scenePrevious?.promises).toContain(promise);
+    const scene = formatSceneLedgerBlock(atB);
+    expect(scene.some((r) => r.startsWith('prev-promise:') && r.includes('glass'))).toBe(true);
+    expect(scene.join('\n').length).toBeLessThanOrEqual(SCENE_CHAR_BUDGET);
+    expect((atB.timeline ?? []).filter((f) => f.kind === 'scene')).toHaveLength(0);
+
+    // One more scene exit — A's compact Previous leaves the packet for the timeline.
+    const atC = advanceSceneLedger(atB, {
+      ...atB,
+      currentLocation: 'Lowmarket',
+      turn: 7,
+      places: [...(atB.places ?? []), { id: 'lowmarket', name: 'Lowmarket' }],
+    });
+    expect(atC.scenePrevious?.label).toBe('Saltford');
+    expect(atC.scenePrevious?.label).not.toMatch(/Mireglass|road/);
+    const sceneFacts = (atC.timeline ?? []).filter((f) => f.kind === 'scene');
+    expect(sceneFacts.some((f) => /glass|Mireglass|promise/i.test(f.text))).toBe(true);
+    expect(formatSceneLedgerBlock(atC).some((r) => r.startsWith('prev:') && /Mireglass|road/.test(r))).toBe(
+      false
+    );
+  });
+
+  it('dungeon leave condenses the site ledger and never needs closeDungeon', () => {
+    const card = {
+      blueprintId: 'dungeon-card',
+      dungeonName: 'Mireglass March',
+      siteName: 'Mireglass March',
+      tier: 1,
+      currentZLevel: 0,
+      currentNodeId: 'r1',
+      visitedNodeIds: ['r1'],
+      clearedNodeIds: [],
+      nodes: [
+        {
+          id: 'r1',
+          name: 'Stair Descent',
+          description: 'Steps.',
+          connections: [],
+          hidden: {
+            traps: [],
+            lootables: [],
+            secrets: [{ id: 's1', clue: 'a cracked saint under the step', revealed: true }],
+            mobs: [],
+          },
+        },
+      ],
+    } as ActiveDungeonState;
+    let inside = stampSceneLedger(
+      base({
+        activeDungeon: card,
+        currentLocation: 'Mireglass March — Stair Descent',
+        places: [{ id: 'mireglass-march', name: 'Mireglass March', dungeonCard: card }],
+        campaignMemory: {
+          pins: [],
+          consequences: [
+            { id: 'p', text: 'Open thread (T2): I will bring the glass back', createdTurn: 2, unresolved: true },
+          ],
+        },
+      }),
+      'The stair smelled of wet stone and old ash.'
+    );
+    expect(inside.places![0]!.sceneLedger!.described.length).toBeGreaterThan(0);
+    expect(inside.places![0]!.sceneLedger!.clues).toContain('a cracked saint under the step');
+
+    const outside = advanceSceneLedger(inside, {
+      ...inside,
+      activeDungeon: null,
+      currentLocation: 'Mireglass March',
+      turn: 5,
+    });
+    const site = outside.places!.find((p) => p.name === 'Mireglass March')!;
+    expect(site.sceneLedger!.said).toEqual([]);
+    expect(site.sceneLedger!.described).toEqual([]);
+    expect(site.sceneLedger!.clues).toContain('a cracked saint under the step');
+    expect(site.sceneLedger!.promises.some((p) => p.includes('glass'))).toBe(true);
+    expect(outside.scenePrevious?.clues).toContain('a cracked saint under the step');
+    expect(outside.activeDungeon).toBeNull();
   });
 });

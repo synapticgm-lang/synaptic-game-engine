@@ -33,6 +33,8 @@ export const INFO_SHEET_LINE_CAP = 50;
 export const INFO_SHEET_CHAR_CAP = 2000;
 /** SCENE block budget inside the info sheet (Order M step 3). */
 export const SCENE_CHAR_BUDGET = 600;
+/** Previous slot budget inside SCENE (Order M step 6; ~1/3 of SCENE). */
+export const PREVIOUS_CHAR_BUDGET = 200;
 
 const LAST_CAP = 3;
 const PEOPLE_CAP = 5;
@@ -49,33 +51,53 @@ export function currentSceneLedger(state: GameState): SceneLedger | undefined {
 }
 
 /**
- * Compact SCENE rows for the info sheet. Promises, threats, open asks, names and clues stay;
- * oldest `described` drop first until the block fits SCENE_CHAR_BUDGET.
+ * Compact SCENE rows: Current (full) + Previous (pinned, ≤200). Oldest described drop first.
  */
 export function formatSceneLedgerBlock(state: GameState): string[] {
-  const ledger = currentSceneLedger(state);
-  if (!ledger) return [];
-  const pinned: string[] = [];
-  if (ledger.present.length) pinned.push(`here: ${ledger.present.slice(0, 8).join(', ')}`);
-  if (ledger.spot) pinned.push(`spot: ${ledger.spot}`);
-  for (const p of ledger.promises.slice(0, 4)) pinned.push(`promise: ${clip(p, 80)}`);
-  for (const t of ledger.threats.slice(0, 3)) pinned.push(`threat: ${clip(t, 80)}`);
-  for (const a of ledger.asked) {
-    if (!a.answered) pinned.push(`ask: ${clip(a.q, 80)}`);
-    if (pinned.length > 20) break;
+  const previous: string[] = [];
+  const prev = state.scenePrevious;
+  if (prev) {
+    const prevRows: string[] = [`prev: ${clip(prev.label, 60)}`];
+    if (prev.summary) prevRows.push(`prev-sum: ${clip(prev.summary, 70)}`);
+    for (const p of prev.promises.slice(0, 2)) prevRows.push(`prev-promise: ${clip(p, 60)}`);
+    for (const t of prev.threats.slice(0, 1)) prevRows.push(`prev-threat: ${clip(t, 60)}`);
+    for (const a of prev.asked.slice(0, 2)) prevRows.push(`prev-ask: ${clip(a.q, 60)}`);
+    for (const c of prev.clues.slice(0, 2)) prevRows.push(`prev-clue: ${clip(c, 60)}`);
+    if (prev.names.length) prevRows.push(`prev-met: ${clip(prev.names.slice(0, 4).join(', '), 50)}`);
+    for (const row of prevRows) {
+      const next = previous.length ? `${previous.join('\n')}\n${row}` : row;
+      if (next.length > PREVIOUS_CHAR_BUDGET) break;
+      previous.push(row);
+    }
   }
-  for (const c of ledger.clues.slice(0, 4)) pinned.push(`clue: ${clip(c, 80)}`);
-  for (const s of ledger.said.slice(-6)) pinned.push(`said: "${clip(s, 70)}"`);
+  const prevBudget = previous.join('\n').length;
+  const currentBudget = Math.max(120, SCENE_CHAR_BUDGET - prevBudget - (previous.length ? 1 : 0));
 
-  const described = [...ledger.described];
+  const ledger = currentSceneLedger(state);
+  if (!ledger && !previous.length) return [];
+  const pinned: string[] = [];
+  if (ledger) {
+    if (ledger.present.length) pinned.push(`here: ${ledger.present.slice(0, 8).join(', ')}`);
+    if (ledger.spot) pinned.push(`spot: ${ledger.spot}`);
+    for (const p of ledger.promises.slice(0, 4)) pinned.push(`promise: ${clip(p, 80)}`);
+    for (const t of ledger.threats.slice(0, 3)) pinned.push(`threat: ${clip(t, 80)}`);
+    for (const a of ledger.asked) {
+      if (!a.answered) pinned.push(`ask: ${clip(a.q, 80)}`);
+      if (pinned.length > 20) break;
+    }
+    for (const c of ledger.clues.slice(0, 4)) pinned.push(`clue: ${clip(c, 80)}`);
+    for (const s of ledger.said.slice(-6)) pinned.push(`said: "${clip(s, 70)}"`);
+  }
+
+  const described = [...(ledger?.described ?? [])];
   const rows = () => {
     const out = [...pinned];
     for (const d of described) out.push(`saw: ${clip(d.line, 70)}`);
     return out;
   };
-  while (rows().join('\n').length > SCENE_CHAR_BUDGET && described.length) described.shift();
+  while (rows().join('\n').length > currentBudget && described.length) described.shift();
   let out = rows();
-  while (out.join('\n').length > SCENE_CHAR_BUDGET) {
+  while (out.join('\n').length > currentBudget) {
     let drop = -1;
     for (let i = pinned.length - 1; i >= 0; i--) {
       if (pinned[i]!.startsWith('said:')) {
@@ -87,14 +109,16 @@ export function formatSceneLedgerBlock(state: GameState): string[] {
     pinned.splice(drop, 1);
     out = rows();
   }
-  if (out.join('\n').length <= SCENE_CHAR_BUDGET) return out;
-  const kept: string[] = [];
-  for (const row of out) {
-    const next = kept.length ? `${kept.join('\n')}\n${row}` : row;
-    if (next.length > SCENE_CHAR_BUDGET) break;
-    kept.push(row);
+  if (out.join('\n').length > currentBudget) {
+    const kept: string[] = [];
+    for (const row of out) {
+      const next = kept.length ? `${kept.join('\n')}\n${row}` : row;
+      if (next.length > currentBudget) break;
+      kept.push(row);
+    }
+    out = kept;
   }
-  return kept;
+  return previous.length ? [...out, ...previous] : out;
 }
 
 const MODE_LABEL: Record<string, string> = {

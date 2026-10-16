@@ -1,9 +1,4 @@
-/**
- * Batch 14a — Token Prose.
- * Writer returns JSON { refs, lines }; code paints ledger display names.
- * Player never sees @t1. Unparseable JSON falls through to 13c (not a 2-line bank).
- * Classifier only — no Continuity-Warden LLM, no SNAPSHOT/CRAFT pile.
- */
+
 import type { GameState } from './types';
 import {
   compileRefEnum,
@@ -61,16 +56,10 @@ export type TokenAcceptPath = 'json' | 'json-partial' | '13c' | 'last-resort';
 /** A line whose plain (untokened) subject speaks: the PC, the one name the writer types without a token. */
 const PC_SPEAKS = /^[A-Z][\w'’-]*\s+(?:spoke|said|asked|called|shouted|told|answered|replied|whispered|demanded)\b/;
 
-/**
- * Fixed lexicon of job roles a ledger cast slot fills. Do not grow this list per incident.
- * An unnamed passer-by ("the stranger", "a figure") claims no slot and is not on it.
- */
+
 const ROLE_NOUNS = ['chanter', 'vendor', 'guard', 'merchant', 'priest', 'innkeep', 'handler', 'clerk', 'official', 'registrar', 'witness', 'archivist'];
 const ROLE_DESC = '(?:(?!(?:and|or|of|to|in|at|on|by|for|from|with|where|who|that|which|was|were|is|had|has)\\b)[a-z][a-z\'-]*\\s+){0,2}';
-/**
- * Up to two describing words may stand between the article and the role ("the close-eyed clerk", "a tall guard").
- * A counted group of a role ("Two church guards", "both clerks") is the same claim about people here.
- */
+
 const UNBOUND_ANIMATE = new RegExp(
   `\\b(?:(?:a|an|the)\\s+${ROLE_DESC}(?:${ROLE_NOUNS.join('|')})|(?:two|three|four|five|six|both|several)\\s+${ROLE_DESC}(?:${ROLE_NOUNS.join('|')})(?:e?s)?)\\b`,
   'i'
@@ -181,11 +170,7 @@ const OPEN_Q = `"\u201c`;
 const CLOSE_Q = `"\u201d`;
 const QUOTED_RE = new RegExp(`[${OPEN_Q}]([^${OPEN_Q}${CLOSE_Q}]+)[${CLOSE_Q}]`, 'g');
 
-/**
- * A speech line is a speaker ref and the spoken words. The writer may send the words wrapped in quotes,
- * with escaped quotes, or with its own `@t2 said,` tag (even the whole line wrapped again): read that
- * shape into plain words + speaker_tok. Indirect speech with no quoted words and a token in it stays as written.
- */
+
 function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   let text = line.text.replace(/\\+(["'\u201c\u201d\u2018\u2019])/g, '$1').trim();
   const wrapped = text.match(new RegExp(`^[${OPEN_Q}]\\s*(@t\\d+\\b[\\s\\S]*[${CLOSE_Q}])\\s*[${CLOSE_Q}]$`));
@@ -218,11 +203,7 @@ function readSpeechLine(line: TokenLine, refs: TokenUseRef[]): TokenLine {
   return { fn: 'speech', text: words, speaker_tok: speaker, spoken: true, ...(bare ? { bare } : {}), ...(written ? { written: text } : {}) };
 }
 
-/**
- * Bare words in a speech slot are the speaker's own unless they tell the scene from outside: they name the player
- * character other than to address them ("smiled at Jax", not "Well met, Jax!"), or open on the speaker's own name
- * or label ("The traveler paused…", "The outlaw's words hung…"). Those lines are narration and paint as written.
- */
+
 export function tellsSpeechFromOutside(beat: TokenBeat, enumRefs: LedgerRef[], state: GameState): TokenBeat {
   const pc = (state.character?.name ?? '').trim().split(/\s+/)[0] ?? '';
   const namesPc = (words: string) => {
@@ -326,10 +307,7 @@ function countValue(phrase: string): number {
   return total + cur;
 }
 
-/**
- * Everything a count may come from this turn: the sheet, the writer's handed facts
- * (`completedEventPacket.handedWriterText`), the REF ENUM, and the page so far. Lowercased.
- */
+
 export function handedCountText(state: GameState, packet?: CompletedEventPacket): string {
   const page = (state.log ?? []).filter((e) => e.role === 'gm').map((e) => String(e.content ?? ''));
   const hasSheet = Array.isArray(state.inventory) && Array.isArray(state.character?.conditions);
@@ -361,10 +339,7 @@ const DAY_PART_WORDS: [slot: string, re: RegExp][] = [
   ['night', /\b(?:night|nightfall|midnight)\b/gi],
 ];
 
-/**
- * A narrated time of day the clock contradicts ("the morning light sat pale" when the clock says midday). The clock
- * owns time of day; a time named for another moment ("this morning", "the night the light took them") is not now.
- */
+
 export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean {
   const facts = handedText.split(PAGE_MARK)[0]!;
   const at = facts.indexOf(CLOCK_MARK);
@@ -414,21 +389,14 @@ const CARRIED_THING =
   /\b(?:the|a|an|her|his|their)\s+((?:[a-z][a-z'-]*\s+){0,2}?)([a-z][a-z'-]*)\s+(?:(?:hung|slung|tucked|strapped|hooked|knotted|thrust)\s+)?(?:at|on|across|over|from|in|through)\s+(?:her|his|their|one|each)\s+(?:belt|hips?|waist|wrists?|neck|shoulders?|sash|girdle)\b/gi;
 /** Parts of the body rest at a hip or a shoulder; they are no new object. */
 const BODY_PART = /^(?:hands?|arms?|fingers?|thumbs?|fists?|palms?|elbows?|knuckles?|head|chin|hair|cheek|skin)$/i;
-/**
- * Someone handles a thing as their own ("set down their pack", "unslung his bow", "reached into her satchel"):
- * the possessor, up to two words, then the thing, which stops where the clause moves on.
- */
+
 const HANDLED_OWN =
   /\b(?:set|sets|setting|put|puts|putting|laid|lays|laying|lowered|dropped|drops|slung|unslung|unslings|shouldered|hefted|hefts|opened|opens|unbuckled|unstrapped|emptied|empties|rummaged|rummages|reached|reaches|shrugged|shrugs)\s+(?:(?:down|off|up|in|into|through)\s+)?(their|his|her|your|[A-Z][a-z'-]+['’]s)\s+((?:[a-z][a-z'-]*\s+){0,2}?)([a-z][a-z'-]*)(?=\s*(?:[,.;:!?]|$|\s(?:and|on|onto|in|into|to|at|by|beside|against|with|from|off|down|up|aside|away|open|for|before|while|as|then|so)\b))/g;
 
 /** In `handedCountText`, the earlier page follows this line. */
 const PAGE_MARK = '\u0000page\u0000';
 
-/**
- * Lap 47 — a thing worn or carried on a person that no fact handed this turn holds (the writer gave a present
- * person kit the scene never set up). Its own name or the word it compounds with must be handed. The earlier
- * page does not count: a rope handle on a ship's hatch hands nobody a rope at the belt.
- */
+
 export function lineHasUnhandedCarriedThing(text: string, handedText: string): boolean {
   const handed = handedText.split(PAGE_MARK)[0]!;
   const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
@@ -443,11 +411,7 @@ export function lineHasUnhandedCarriedThing(text: string, handedText: string): b
   return false;
 }
 
-/**
- * Lap 58 — the player character handles a thing as their own ("Jax set down their pack") that their kit does not
- * hold. The PC's kit is the sealed ledger: the thing, a word it compounds with, or (for a pack) a handed bag must be
- * on this turn's facts. Clothes and the body are always there. Other people's own tools are scene colour, not kit.
- */
+
 export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName?: string): boolean {
   const pc = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
   if (pc.length < 2) return false;
@@ -478,12 +442,7 @@ export function lineHasUnhandedOwnThing(text: string, handedText: string, pcName
 const FOUND_THING =
   /\b(?:found|finds|discovered|discovers|uncovered|uncovers|turned up|came across|comes across)\s+(?:a|an|the|some)\s+((?:[a-z][a-z'-]*\s+){0,3}?[a-z][a-z'-]*)(?=\s*(?:[,.;:!?]|$|\s(?:set|sunk|fixed|built|cut|carved|hidden|tucked|lying|lay|resting|at|in|into|on|under|beneath|behind|beside|near|by|against|inside|within|among|between|of|that|which|where|and|with|from)\b))/gi;
 
-/**
- * Lap 48 — a thing someone finds that no handed fact and no earlier page holds (the writer invented a
- * discovery: "Jax found a small iron ring set into the stone" on a turn with no search result). The
- * thing's own last word must be handed. The earlier page counts only where it names the thing after an
- * article ("a small iron ring"), since a thing seen before can be found; "the bell will ring" is no ring.
- */
+
 export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   const [facts, page = ''] = handedText.split(PAGE_MARK);
   const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
@@ -502,10 +461,7 @@ export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   return false;
 }
 
-/**
- * Lap 49 — a line that opens on a label this turn's own handed facts use ("Dungeon: Jax moved into the hall",
- * "Travel: back streets between …") pastes the engine record into the story instead of telling it.
- */
+
 export function lineOpensOnFactLabel(text: string, handedText: string): boolean {
   const label = (text ?? '').match(/^\s*([A-Za-z]+(?: [a-z]+)?):\s/)?.[1]?.toLowerCase();
   if (!label) return false;
@@ -553,10 +509,7 @@ function namesDeclaredPerson(text: string, refs: TokenUseRef[]): boolean {
   return toksInText(text).some((t) => refs.some((r) => r.tok === t && PERSON_USES.has(r.use)));
 }
 
-/**
- * Every token in the text is a person spoken to, set off by commas ("…come out quiet, @t8?", "@t8, listen"), and
- * none is the speaker: words said to someone are the speaker's own, not indirect speech about them.
- */
+
 function onlyAddressesOthers(text: string, speakerTok: string): boolean {
   const spk = speakerTok.replace(/^@/, '').toLowerCase();
   const toks = toksInText(text);
@@ -578,11 +531,7 @@ function refSlug(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-/**
- * A typed id agrees with a row when it is the row's id, its token, the id without its class prefix, the display
- * slug, or the row's own class column ("person" for a person row). A class prefix on the typed id is not part
- * of the name: "present:Nell Rudd" is the Nell Rudd row.
- */
+
 function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   const want = id.trim().replace(/^@/, '').toLowerCase();
   const rid = row.id.toLowerCase();
@@ -597,12 +546,7 @@ function idAgreesWithRow(row: LedgerRef, id: string): boolean {
   );
 }
 
-/**
- * s77 Root A — a declared ref binds by its REF ENUM token: `tok` is the enum row's own token and code
- * looks up the id. A typed id that names something else contradicts the tok, so the ref binds to nothing.
- * A typed id only binds on its own when the tok is not an enum token at all: by the row's id, or by its name
- * or display when exactly one row has it ("Worn Mace" with an invented tok "t-worn-mace").
- */
+
 function findEnum(enumRefs: LedgerRef[], tok: string, id?: string): LedgerRef | undefined {
   const byTokOf = (s: string) => {
     const t = s.replace(/^@/, '').toLowerCase();
@@ -749,10 +693,7 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
   return lineHasUnboundAnimate(animateText, knownNames.map((n) => n.toLowerCase())) ? 'unbound-animate' : null;
 }
 
-/**
- * Lap 38 — the fact / name gate a writer line passes, run on one plain sentence (a repair reply): a count no
- * handed fact holds, a capital the writer was never handed, or a role person bound to nobody.
- */
+
 export function plainLineFactProblem(text: string, state: GameState, packet?: CompletedEventPacket): string | null {
   const handed = handedCountText(state, packet);
   if (aimsAtSelf(text)) return 'a self-harm method (a Line: fade instead)';
@@ -881,11 +822,7 @@ const PREPOSITION_RE =
 
 const isDeterminerWord = (w: string) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w);
 
-/**
- * True when the noun phrase before `offset` (same clause) has already begun. After a preposition
- * within three words, any word between it and the noun starts the phrase ("in the same worn @t3",
- * "in worn @t3"), so a determiner there would land mid-phrase. Otherwise a determiner within three words.
- */
+
 function hasDeterminerBefore(text: string, offset: number): boolean {
   const before = text.slice(0, offset);
   const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
@@ -895,10 +832,7 @@ function hasDeterminerBefore(text: string, offset: number): boolean {
   return near.some(isDeterminerWord);
 }
 
-/**
- * 29z3 — a thing painted with no determiner ("blue panel flickered", "They kept clothes bunched")
- * gets one: kit takes the PC's possessive, a prop or bare common-noun place takes "the".
- */
+
 function paintDisplay(row: { display: string; klass?: string }, text: string, offset: number, possessive: string): string {
   const display = row.display;
   if (!display) return display;
@@ -966,10 +900,7 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
   return tidy(sentences.join(' '));
 }
 
-/**
- * A multi-word name the REF ENUM holds ("Ash Court"), typed by the writer with part of it in the wrong
- * case ("the ash Court priests"), takes the ledger's case. A fully lowercase phrase is left alone.
- */
+
 export function restoreNameCase(text: string, enumRefs: { display: string }[]): string {
   const runs = new Set<string>();
   for (const r of enumRefs) for (const m of (r.display ?? '').matchAll(/\b[A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)+/g)) runs.add(m[0]);
@@ -984,10 +915,7 @@ export function restoreNameCase(text: string, enumRefs: { display: string }[]): 
 
 const ARTICLE_RE = /^(?:the|a|an)\s+/i;
 
-/**
- * Writer typed the head of a ledger label and then the token ("The quarry circle outside @t1",
- * @t1 = "a quarry circle outside Valespire's east wall"): drop the typed echo before the painted label.
- */
+
 export function collapseEchoedLabel(text: string, display: string): string {
   const core = display.replace(ARTICLE_RE, '').trim();
   if (!core) return text;
@@ -1032,11 +960,7 @@ export function dropTypedNameAfterToken(text: string, display: (tok: string) => 
   return out + text.slice(at);
 }
 
-/**
- * "@t1 Ruined hall" / "@t1, the Broken Gate" with @t1 = "the Ruined hall in Cathedral Undercroft" / "the Broken Gate
- * in Keep Gate", or "@t6 Merrow" with @t6 = "Edda Merrow": the typed words are the display's own leading or trailing
- * name, so the same mention. Only a part that starts on a name, typed with its capital.
- */
+
 function typedNameHead(after: string, core: string): RegExpMatchArray | null {
   const words = core.split(/\s+/);
   if (words.length < 2) return null;
@@ -1050,10 +974,7 @@ function typedNameHead(after: string, core: string): RegExpMatchArray | null {
   return null;
 }
 
-/**
- * Sentence starts, and the first spoken word after a said-tag's opening quote (`said, "the tabard…`).
- * A quote closing on "?" or "!" may run on in lowercase (`"Back already?" while…`); that sentence goes on.
- */
+
 function capitalizeSentenceStarts(text: string): string {
   return text.replace(/(^|(?:[.!?]\)?|\.["”’])\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
@@ -1066,11 +987,7 @@ function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string
 /** Line-gate reasons about how a token was declared, not about what the line says. */
 const BINDING_ONLY_REASONS = new Set(['unbound-tok', 'unknown-id', 'use-class']);
 
-/**
- * 28g — proper names the ledger already holds: places, their exits, the current location, the player, people here, what they carry,
- * and the field labels the System window prints for this housing.
- * A weapon still in the pack is not in hand, so the writer may not name it (same as the REF ENUM).
- */
+
 export function knownProperNames(state: GameState): string[] {
   const unheld = new Set(weaponsNotInHand(state));
   const names = [
@@ -1107,12 +1024,7 @@ function presentGivenNames(state: GameState): string[] {
   });
 }
 
-/**
- * Names the writer was handed this turn: the ledger's own names, the given names of people here, the People
- * here notes, the packet's mention list, the writer's quest titles, the role nouns of this turn's engine result
- * and the role titles of people here. A capital the packet gave the writer is not an invention, nor is a role
- * it named. A weapon not in hand stays out, however it is listed.
- */
+
 export function handedProperNames(state: GameState, packet?: CompletedEventPacket): string[] {
   const unheld = new Set(weaponsNotInHand(state));
   const names = [
@@ -1128,10 +1040,7 @@ export function handedProperNames(state: GameState, packet?: CompletedEventPacke
   return [...new Set(names.filter((n): n is string => !!n && n.trim().length > 1 && !unheld.has(n.trim())).map((n) => n.trim()))];
 }
 
-/**
- * Capitalised names inside the writer's handed facts ("His daughter Lina is missing", "PLAYER: cast Mage Armor").
- * Only a capital mid-sentence is a name; a label or a sentence's first word is not.
- */
+
 function handedTextNames(text: string): string[] {
   const out: string[] = [];
   for (const m of text.matchAll(/(?<=[a-z0-9,'’)]\s+)([A-Z][a-z'’-]+(?:\s+[A-Z][a-z'’-]+){0,2})(?:['’]s)?\b/g)) {
@@ -1140,11 +1049,7 @@ function handedTextNames(text: string): string[] {
   return out;
 }
 
-/**
- * An @tN the writer never declared is read as its REF ENUM row when the row is a name, or when the writer typed a
- * determiner right before every use of a common thing ("the @t11 he was wiping down"). A common thing with no
- * determiner of its own ("a crate of @t11") is a guessed number: the painter would have to supply the grammar.
- */
+
 function undeclaredTokFits(row: LedgerRef, lines: TokenLine[], tok: string): boolean {
   const display = row.display ?? '';
   if (!display) return false;
@@ -1154,11 +1059,7 @@ function undeclaredTokFits(row: LedgerRef, lines: TokenLine[], tok: string): boo
   return uses.length > 0 && uses.every((m) => !!m[1] && isDeterminerWord(m[1]));
 }
 
-/**
- * 28l — code fixes what code knows: a declared ref whose `use` does not fit its ledger class takes the
- * first use that does, and an @tN written in a line but not declared binds to that REF ENUM row when it fits
- * (`undeclaredTokFits`).
- */
+
 export function normalizeBeatRefs(
   beat: TokenBeat,
   enumRefs: LedgerRef[],
@@ -1187,10 +1088,7 @@ export function normalizeBeatRefs(
   return { ...beat, refs };
 }
 
-/**
- * 28l — tolerant read of a token reply the JSON parser cannot use (broken, cut off, or wrong shape):
- * every `"text"` value becomes a sentence, tokens painted from the reply's own refs or the REF ENUM.
- */
+
 export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): string {
   const src = raw ?? '';
   const displayByTok = new Map<string, string>();
@@ -1217,10 +1115,7 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
   return capitalizeSentenceStarts(tidy(texts.join(' ')));
 }
 
-/**
- * 29z8 — paint every @tN from `display`; a sentence holding a token nothing can paint is dropped whole,
- * so a beat never keeps a hole where a name was ("the kept its slow boots coming").
- */
+
 export function paintTokensOrDrop(text: string, display: (tok: string) => string | undefined): string {
   const sentences = splitProseSentences(dropTypedNameAfterToken(text ?? '', display));
   const kept = sentences.filter((s) => [...s.matchAll(/@t(\d+)\b/gi)].every((t) => display(`t${t[1]}`.toLowerCase())));

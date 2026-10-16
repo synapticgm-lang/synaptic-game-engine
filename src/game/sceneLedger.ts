@@ -1,35 +1,150 @@
 /**
- * Order M steps 1–2 — stamp the scene ledger on the current PlaceRecord.
- * Writer SCENE view lives in infoSheet (`formatSceneLedgerBlock`). Engine-written only.
+ * Order M — scene ledger stamp + exit/leapfrog. Never calls closeDungeon.
  */
-import type { GameState, PlaceRecord, SceneLedger } from './types';
+import type { GameState, PlaceRecord, SceneLedger, ScenePrevious, TimelineFact } from './types';
 import { dungeonRoomPlace, dungeonTitle, placeIdFromName, resolvePlace } from './places';
 import { activeHereSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
 import { splitProseSentences } from './proseSentences';
-import { isRoadLabel } from './travelJourney';
+import { isRoadLabel, isTripHere } from './travelJourney';
+import { placesDiffer } from './sceneContextTail';
+import { mergeTimeline } from './timeline';
 
 const SAID_CAP = 40;
 const DESCRIBED_CAP = 24;
 const DUNGEON_CARD = 'dungeon-card';
 
-/**
- * Stamp the current place's ledger from this turn's engine records and the accepted beat.
- * `maskRefs` is the handed-ref list (P-2); callers pass `handedRefs(state)`.
- */
+/** Scene exit / leapfrog before stamp. Never closeDungeon. Travel is its own scene. */
+export function advanceSceneLedger(before: GameState, after: GameState): GameState {
+  const from = (dungeonRoomPlace(before, before.currentLocation) ?? before.currentLocation ?? '').trim();
+  const to = (dungeonRoomPlace(after, after.currentLocation) ?? after.currentLocation ?? '').trim();
+  const leftDungeon = !!before.activeDungeon && !after.activeDungeon;
+  const moved = placesDiffer(from, to);
+  if (!moved && !leftDungeon) return after;
+  if (!from && !to) return after;
+
+  const turn = after.turn ?? before.turn ?? 0;
+  let places = [...(after.places ?? [])];
+  let previous = after.scenePrevious;
+  let timeline = after.timeline;
+  const fromIsRoad = !!from && (isRoadLabel(from) || isTripHere(before, from));
+  const toIsRoad = !!to && (isRoadLabel(to) || isTripHere(after, to));
+
+  const fromKey = from || to;
+  const leftRow =
+    (!fromIsRoad && from
+      ? resolvePlace(places, from) ?? resolvePlace(before.places ?? [], from)
+      : undefined) ??
+    (leftDungeon && !moved
+      ? resolvePlace(places, to) ?? resolvePlace(before.places ?? [], to)
+      : undefined);
+
+  let leftCompact: ScenePrevious | undefined;
+  if (leftRow?.sceneLedger) {
+    const ledger = leftRow.sceneLedger;
+    const label = leftRow.name || fromKey;
+    const asked: ScenePrevious['asked'] = [];
+    for (const a of ledger.asked) if (!a.answered) asked.push(a);
+    const bits: string[] = [];
+    if (ledger.promises[0]) bits.push('promise open');
+    if (ledger.threats[0]) bits.push('threat');
+    if (ledger.clues[0]) bits.push('clue');
+    if (asked[0]) bits.push('ask open');
+    leftCompact = {
+      label,
+      promises: [...ledger.promises],
+      threats: [...ledger.threats],
+      clues: [...ledger.clues],
+      asked,
+      names: ledger.present.slice(0, 8),
+      summary: bits.length ? `Left ${label}: ${bits.join(', ')}` : `Left ${label}`,
+    };
+    const condensed: SceneLedger = {
+      openedTurn: turn,
+      said: [],
+      described: [],
+      promises: [...ledger.promises],
+      threats: [...ledger.threats],
+      clues: [...ledger.clues],
+      asked: [...ledger.asked],
+      present: [...ledger.present],
+      spot: '',
+    };
+    const next: PlaceRecord[] = [];
+    let hit = false;
+    for (const p of places) {
+      if (p.id === leftRow.id) {
+        hit = true;
+        next.push({ ...p, sceneLedger: condensed, arcSummary: leftCompact.summary });
+      } else next.push(p);
+    }
+    if (!hit) next.push({ ...leftRow, sceneLedger: condensed, arcSummary: leftCompact.summary });
+    places = next;
+  }
+
+  const arrivingFromRoad = fromIsRoad && !!to && !toIsRoad;
+  if (arrivingFromRoad) {
+    const origin = previous ?? leftCompact;
+    if (origin) {
+      previous = {
+        ...origin,
+        label: `${origin.label} + road to ${to}`,
+        summary: origin.summary.includes('road') ? origin.summary : `${origin.summary}; via road`,
+      };
+    }
+  } else {
+    if (previous) {
+      const at = Date.now();
+      const facts: TimelineFact[] = [];
+      const texts: string[] = [previous.summary];
+      for (const p of previous.promises) texts.push(`scene promise: ${p}`);
+      for (const t of previous.threats) texts.push(`scene threat: ${t}`);
+      for (const c of previous.clues) texts.push(`scene clue: ${c}`);
+      for (const a of previous.asked) texts.push(`scene ask: ${a.q}`);
+      for (const n of previous.names) texts.push(`scene met: ${n}`);
+      for (const text of texts) {
+        let cleaned = '';
+        let gap = false;
+        for (const ch of text) {
+          if (ch === ' ' || ch === '\n' || ch === '\t' || ch === '\r') {
+            if (cleaned && !gap) {
+              cleaned += ' ';
+              gap = true;
+            }
+          } else {
+            cleaned += ch;
+            gap = false;
+          }
+        }
+        cleaned = cleaned.trim();
+        if (!cleaned) continue;
+        let dup = false;
+        for (const f of facts) if (f.text === cleaned) dup = true;
+        if (dup) continue;
+        facts.push({ id: crypto.randomUUID(), turn, kind: 'scene', text: cleaned, at });
+      }
+      timeline = mergeTimeline(timeline, facts);
+    }
+    previous = leftCompact;
+  }
+
+  return { ...after, places, scenePrevious: previous, timeline };
+}
+
+/** Stamp the current place's ledger from engine records + accepted beat. */
 export function stampSceneLedger(state: GameState, narrative: string, maskRefs: readonly string[] = []): GameState {
   const loc = (dungeonRoomPlace(state, state.currentLocation) ?? state.currentLocation ?? '').trim();
-  if (!loc || isRoadLabel(loc)) return state;
+  if (!loc || isRoadLabel(loc) || isTripHere(state, loc)) return state;
   let places = [...(state.places ?? [])];
   let place = resolvePlace(places, loc);
   if (!place) {
-    // Local room/site with no row yet — same as touchPlaceVisit; never a road label.
     const row: PlaceRecord = { id: placeIdFromName(loc), name: loc };
     places = [...places, row];
     place = row;
   }
   const prev = place.sceneLedger;
   const turn = state.turn ?? prev?.openedTurn ?? 0;
+  const reopening = !!prev && !prev.said.length && !prev.described.length;
   const locKey = loc.toLowerCase();
 
   const present: string[] = [];
@@ -83,7 +198,6 @@ export function stampSceneLedger(state: GameState, narrative: string, maskRefs: 
 
   const described = [...(prev?.described ?? [])];
   for (const raw of splitProseSentences(narrative ?? '')) {
-    // Quoted speech on the accepted beat joins said even when harvest missed the speaker row.
     for (const q of ['"', '“'] as const) {
       const open = raw.indexOf(q);
       if (open < 0) continue;
@@ -151,7 +265,7 @@ export function stampSceneLedger(state: GameState, narrative: string, maskRefs: 
 
   const spot = activeHereSpot(state)?.spot ?? prev?.spot ?? '';
   const sceneLedger: SceneLedger = {
-    openedTurn: prev?.openedTurn ?? turn,
+    openedTurn: reopening ? turn : (prev?.openedTurn ?? turn),
     said,
     promises,
     threats,

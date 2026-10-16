@@ -1,17 +1,4 @@
-/**
- * P0.2 - Semantic Loop Detector + Context-Sensitive Escalation
- * 
- * Canonicalize intent as action type + target + purpose over last 8-12 turns.
- * Use proportional escalation ladder: warning → time/resource cost → NPC/world response 
- * → complication → crisis → combat when appropriate.
- * 
- * Not: Spawn combat after ≥5 identical text strings only.
- * 
- * Target:
- * - No semantic option family >25% of options in 50-turn window
- * - No non-progress window >5 turns during active objective
- * - Escalation is telegraphed, causally linked, and genre-appropriate
- */
+
 
 import type { GameState, EngineMode } from './types.ts';
 import { normalizeProseTokens, tokenJaccard } from './beatFingerprint.ts';
@@ -54,12 +41,10 @@ export interface EscalationResponse {
   genreAppropriate: boolean;
 }
 
-/**
- * Canonicalize a player input into a semantic intent signature.
- */
+
 export function canonicalizeIntent(input: string, turn: number): SemanticIntent {
   const lower = input.toLowerCase().trim();
-  
+
   // Extract action
   let action = 'generic';
   if (/\b(open|check)\b/i.test(lower) && /\b(crate|chest|box|barrel|trunk)\b/i.test(lower)) {
@@ -87,7 +72,7 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   } else if (/\b(read|browse|peruse)\b/i.test(lower)) {
     action = 'read';
   }
-  
+
   // Extract target (simplified - look for key nouns)
   let target = 'environment';
   if (/\b(crate|crates)\b/i.test(lower)) {
@@ -119,7 +104,7 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
       target = nounMatch[2];
     }
   }
-  
+
   // Infer purpose
   let purpose = 'act';
   if (action === 'inspect' && target === 'ambient_location') {
@@ -137,7 +122,7 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   } else if (action === 'ask' || action === 'inspect') {
     purpose = 'gather_info';
   }
-  
+
   return {
     action,
     target,
@@ -147,35 +132,30 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   };
 }
 
-/**
- * Calculate semantic similarity between two intents.
- * Returns 0-1 score where 1 is identical.
- */
+
 export function intentSimilarity(a: SemanticIntent, b: SemanticIntent): number {
   let score = 0;
-  
+
   // Action match (most important)
   if (a.action === b.action) score += 0.5;
-  
+
   // Target match
   if (a.target === b.target) score += 0.3;
-  
+
   // Purpose match
   if (a.purpose === b.purpose) score += 0.2;
-  
+
   return score;
 }
 
-/**
- * Detect semantic loops in recent player behavior.
- */
+
 export function detectSemanticLoop(
   state: GameState,
   windowSize: number = 12
 ): LoopDetectionResult {
   const log = state.log ?? [];
   const recentIntents: SemanticIntent[] = [];
-  
+
   // Extract recent player intents
   let count = 0;
   for (let i = log.length - 1; i >= 0 && count < windowSize; i--) {
@@ -186,7 +166,7 @@ export function detectSemanticLoop(
       count++;
     }
   }
-  
+
   if (recentIntents.length < 3) {
     return {
       isLoop: false,
@@ -195,11 +175,11 @@ export function detectSemanticLoop(
       recentIntents,
     };
   }
-  
+
   // Check the most recent intent against previous intents
   const current = recentIntents[recentIntents.length - 1];
   let loopCount = 1;
-  
+
   // Count similar intents in recent window
   for (let i = recentIntents.length - 2; i >= Math.max(0, recentIntents.length - 8); i--) {
     const similarity = intentSimilarity(current, recentIntents[i]);
@@ -207,10 +187,10 @@ export function detectSemanticLoop(
       loopCount++;
     }
   }
-  
+
   // Determine if this is a loop
   const isLoop = loopCount >= 3;
-  
+
   // Calculate escalation level based on loop count
   let escalationLevel = 0;
   if (loopCount >= 3) escalationLevel = 1; // Warning
@@ -219,7 +199,7 @@ export function detectSemanticLoop(
   if (loopCount >= 6) escalationLevel = 4; // Complication
   if (loopCount >= 7) escalationLevel = 5; // Crisis
   if (loopCount >= 8) escalationLevel = 6; // Combat (if appropriate)
-  
+
   return {
     isLoop,
     loopCount,
@@ -229,9 +209,7 @@ export function detectSemanticLoop(
   };
 }
 
-/**
- * Build an escalation response appropriate for the genre and loop severity.
- */
+
 export function buildEscalationResponse(
   detection: LoopDetectionResult,
   engineMode: EngineMode,
@@ -240,10 +218,10 @@ export function buildEscalationResponse(
   if (!detection.isLoop || detection.escalationLevel === 0) {
     return null;
   }
-  
+
   const level = detection.escalationLevel;
   const intent = detection.repeatedIntent!;
-  
+
   // Level 1: Warning
   if (level === 1) {
     return {
@@ -253,7 +231,7 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-  
+
   // Level 2: Time/Resource Cost
   if (level === 2) {
     return {
@@ -263,12 +241,12 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-  
+
   // Level 3: NPC/World Response
   if (level === 3) {
     const isLitRPG = engineMode === 'litrpg';
     const isDnD = engineMode === 'dnd';
-    
+
     return {
       level: 3,
       kind: 'npc_response',
@@ -276,7 +254,7 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-  
+
   // Level 4: Complication
   if (level === 4) {
     return {
@@ -286,13 +264,13 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-  
+
   // Level 5: Crisis
   if (level === 5) {
     const isLitRPG = engineMode === 'litrpg';
     const isDnD = engineMode === 'dnd';
     const isPyoa = engineMode === 'pyoa';
-    
+
     return {
       level: 5,
       kind: 'crisis',
@@ -300,14 +278,14 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-  
+
   // Level 6: Combat (genre-appropriate)
   if (level === 6) {
     const isLitRPG = engineMode === 'litrpg';
     const isDnD = engineMode === 'dnd';
     const isPyoa = engineMode === 'pyoa';
     const isRpg = engineMode === 'rpg';
-    
+
     // PYOA and Story RPG don't use combat as escalation
     if (isPyoa || isRpg) {
       return {
@@ -317,10 +295,10 @@ export function buildEscalationResponse(
         genreAppropriate: true,
       };
     }
-    
+
     // LitRPG and DnD can use combat
     const genreAppropriate = activeObjective && (isLitRPG || isDnD);
-    
+
     return {
       level: 6,
       kind: 'combat',
@@ -328,14 +306,11 @@ export function buildEscalationResponse(
       genreAppropriate,
     };
   }
-  
+
   return null;
 }
 
-/**
- * Calculate semantic diversity in recent choice sets.
- * Returns the percentage of options that belong to the most common semantic family.
- */
+
 export function calculateChoiceDiversity(
   recentChoiceSets: Array<{ turn: number; choices: string[] }>,
   windowSize: number = 50
@@ -352,11 +327,11 @@ export function calculateChoiceDiversity(
       analysis: 'No recent choices to analyze',
     };
   }
-  
+
   // Count action types across all choices
   const actionCounts = new Map<string, number>();
   let totalChoices = 0;
-  
+
   for (const set of recent) {
     for (const choice of set.choices) {
       totalChoices++;
@@ -365,7 +340,7 @@ export function calculateChoiceDiversity(
       actionCounts.set(family, (actionCounts.get(family) || 0) + 1);
     }
   }
-  
+
   if (totalChoices === 0) {
     return {
       maxFamilyPercentage: 0,
@@ -373,20 +348,20 @@ export function calculateChoiceDiversity(
       analysis: 'No choices in recent window',
     };
   }
-  
+
   // Find the most common family
   let maxCount = 0;
   let dominantFamily = 'none';
-  
+
   for (const [family, count] of actionCounts.entries()) {
     if (count > maxCount) {
       maxCount = count;
       dominantFamily = family;
     }
   }
-  
+
   const maxFamilyPercentage = (maxCount / totalChoices) * 100;
-  
+
   return {
     maxFamilyPercentage,
     dominantFamily,
@@ -394,16 +369,12 @@ export function calculateChoiceDiversity(
   };
 }
 
-/**
- * Format escalation mandate for inclusion in situation packet.
- */
+
 export function formatEscalationMandate(response: EscalationResponse): string {
   return `ESCALATION (Level ${response.level} - ${response.kind.toUpperCase()}): ${response.mandate}`;
 }
 
-/**
- * Telemetry for loop detection metrics.
- */
+
 export interface LoopDetectionTelemetry {
   turn: number;
   loopDetected: boolean;
@@ -415,9 +386,7 @@ export interface LoopDetectionTelemetry {
   repeatedPurpose: string;
 }
 
-/**
- * Track loop detection metrics for telemetry.
- */
+
 export function trackLoopMetrics(
   detection: LoopDetectionResult,
   escalation: EscalationResponse | null,
@@ -449,10 +418,7 @@ export function playerAsksRepeat(input: string): boolean {
   );
 }
 
-/**
- * Player asked to keep doing the same action (search / walk / wait).
- * That is continuation, not a license to recycle the last GM essay.
- */
+
 export function playerAsksContinuation(input: string): boolean {
   const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
   if (!s) return false;
@@ -501,10 +467,7 @@ export function isStallPadChoice(choice: string): boolean {
   return false;
 }
 
-/**
- * Drop stall chips that already sat on the last 1–2 pads unless the player
- * asked to repeat or continue that family. Named legal actions stay.
- */
+
 export function filterRecycledStallChoices(
   choices: string[],
   state: { log?: Array<{ role?: string; offeredChoices?: string[] }> },
@@ -627,11 +590,7 @@ export function recentGmBeatTexts(
   return found.reverse();
 }
 
-/**
- * Leading-sentence collage: the opening of this beat reuses sentences from one
- * or two prior GM beats even when the whole-paragraph fingerprint stays below
- * the 0.85 near-clone bar. Short shared phrases (“the door”) are ignored.
- */
+
 export function detectLeadingCollage(
   draft: string,
   recentGmBeats: string[],
@@ -730,11 +689,7 @@ const OPENING_CLAUSE_WORDS = 6;
 const openingClause = (s: string) =>
   (s.toLowerCase().replace(/[“”"]/g, ' ').match(/[a-z0-9']+/g) ?? []).slice(0, OPENING_CLAUSE_WORDS).join(' ');
 
-/**
- * "Nell Rudd looked up from a crate by the kitchen door…" then "Nell Rudd looked up from a crate of turnips…":
- * the same person doing the same thing again, however the tail reads. The player's own lines are left out:
- * the player choosing the same move again is told again.
- */
+
 function repeatsOpeningClause(sentence: string, prior: string[], actor?: string): boolean {
   if (!isSubstantialSentence(sentence)) return false;
   const open = openingClause(sentence);
@@ -744,10 +699,7 @@ function repeatsOpeningClause(sentence: string, prior: string[], actor?: string)
   return prior.some((p) => isSubstantialSentence(p) && openingClause(p) === open);
 }
 
-/**
- * Sentences of `draft` already told in a recent GM beat — anywhere in the beat, the same opening clause
- * by someone other than `actor`, or a spoken line said again.
- */
+
 export function recycledSentencesIn(
   draft: string,
   recentBeats: string[],
@@ -777,11 +729,7 @@ export function recycledSentencesIn(
   });
 }
 
-/**
- * Drop recycled sentences from a committed beat when at least `minKeep` sentences are left. When dropping the
- * repeated opening clauses too would leave fewer, only the near-copies go.
- * A beat that is all reprint stays as written (the caller already asked the writer once).
- */
+
 export function trimRecycledSentences(
   draft: string,
   recentBeats: string[],
@@ -894,10 +842,7 @@ export function isDialogueTalkIntent(input: string): boolean {
 const DIALOGUE_STALL_CUE =
   /\b(?:names?\s+and\s+business|state your (?:name|business)|worn leather|shifts?\s+(?:his|her|their)\s+weight|persistent\s+drizzl|speak\s+plainly|leverage\?|not some throne room|get out of the way)\b/i;
 
-/**
- * Batch S HARD gate: recycled talk beat (rain / leather / names-and-business) with no
- * durable delta must not commit — ChoiceCompiler also forces Leave/Travel pads.
- */
+
 export function detectDialogueTreadmillHard(
   draft: string,
   recentGmBeats: string[],
@@ -927,11 +872,7 @@ export function detectDialogueTreadmillHard(
 
 const TALK_ULTIMATUM_RECYCLE = 0.72;
 
-/**
- * 02y — near-exact NPC ultimatum recycle in the last 5 GM bodies.
- * Third close copy rejects. First ask and player-asked repeat stay legal.
- * A leave/travel or other concrete delta still commits.
- */
+
 export function detectTalkUltimatumRecycle(
   draft: string,
   recentGmBeats: string[],
@@ -1020,9 +961,7 @@ function isCombatAttackIntent(input: string): boolean {
   );
 }
 
-/**
- * Batch V — combat purgatory: identical fist/null-delta loops must not keep committing.
- */
+
 export function detectCombatPurgatoryHard(
   draft: string,
   recentGmBeats: string[],
@@ -1045,10 +984,7 @@ export function hasBeatDeltaCue(text: string): boolean {
   return BEAT_DELTA_CUE.test(text ?? '');
 }
 
-/**
- * Batch F HARD gate: same-location loiter prose that recycles atmosphere without a
- * concrete delta must not commit (beyond ChoiceCompiler pad interrupt from E).
- */
+
 export function detectSameRoomEssayHard(
   draft: string,
   recentGmBeats: string[],

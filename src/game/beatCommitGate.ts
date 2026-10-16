@@ -1,8 +1,4 @@
-/**
- * Harder post-GM commit gate — classifier only, no new CRAFT / critic LLM.
- * Atmosphere-only, missing pointer-card slot, or recycle-without-delta
- * must not commit as-is: strip prefix / stitch one concrete / retry once.
- */
+
 
 import type { GameState } from './types';
 import { compilePointerCardSlots } from './openingPointerCard';
@@ -165,10 +161,7 @@ export function classifyBeatCommit(
 const INVENTS_FACT = 'Invents a person or place not in the facts, or moves somewhere the player did not go.';
 const CONTRADICTS_EVENT = 'Contradicts the completed event (dead foe acting, lists, early loot, or wrong place).';
 
-/**
- * The commit-gate checks a single sentence can fail on its own, as the reason line. Whole-beat checks
- * (thin, recycle, mood only, missing slot, settled fight left out) are not here: no one sentence owns them.
- */
+
 export function sentenceGateProblem(state: GameState, sentence: string, playerInput?: string): string | null {
   return sentenceGateProblems(state, sentence, playerInput)[0] ?? null;
 }
@@ -190,10 +183,7 @@ export function sentenceGateProblems(state: GameState, sentence: string, playerI
   return [...new Set(out.filter((p): p is string => !!p))];
 }
 
-/**
- * The sentence fails the gate for the same reason its whole draft does (out of context alone is not enough).
- * A sentence that also fails a check only out of context still owns the draft's reason.
- */
+
 export function sentenceRejectedInDraft(state: GameState, sentence: string, draft: string, playerInput?: string): boolean {
   const whole = sentenceGateProblem(state, draft, playerInput);
   return !!whole && sentenceGateProblems(state, sentence, playerInput).includes(whole);
@@ -201,20 +191,14 @@ export function sentenceRejectedInDraft(state: GameState, sentence: string, draf
 
 export const TERMINAL_FIGHT_PROBLEM = 'The engine settled the fight this turn: state that outcome as finished.';
 
-/**
- * s82 Root A — a committed terminal fight result the beat never states (the foe left active).
- * tt-fix-2 — tabletop: a round whose foe hits on the PC the beat never shows is the same miss.
- */
+
 export function ignoresTerminalFight(state: GameState, prose: string): boolean {
   return missingFightFacts(state, prose) > 0;
 }
 
 type FightFacts = { forced: boolean; hit: boolean };
 
-/**
- * Which settled fight facts the beat leaves out: the failed roll that forced it (tabletop), a foe hit.
- * The outcome lives on the engine combat-log line (`settledFightCombatLog`), never in prose.
- */
+
 function fightFactsLeftOut(state: GameState, prose: string): FightFacts {
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
@@ -228,11 +212,7 @@ export function missingFightFacts(state: GameState, prose: string): number {
   return Object.values(fightFactsLeftOut(state, prose)).filter(Boolean).length;
 }
 
-/**
- * The writer's beat with the engine's plain sentence for each settled fight fact it leaves out (the failed
- * parley or flee that forced the fight, a foe hit on the PC). The fight outcome is never appended here —
- * it is an engine combat-log line outside the prose (`terminalOutcomeSentence` on STATUS).
- */
+
 export function withMissingFightFacts(state: GameState, prose: string, pov: FightPov): string {
   const fact = state.completedEvent?.engineResult;
   const fight = terminalFightOutcome(fact);
@@ -277,11 +257,7 @@ export function factClosedViolationReason(state: GameState, text: string): strin
   return null;
 }
 
-/**
- * Diegetic scene-move when a beat is rejected — coded prose, never director bank strings.
- * Batch U — stitch/commit-gate meta lines must not commit as GM body.
- * Batch V — never emit "Nothing in X shifts until…" / truncated hook recycle (Gemini T43-44 / T4).
- */
+
 export function codedSceneMove(state: GameState): string {
   const slots = compilePointerCardSlots(state);
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
@@ -408,11 +384,7 @@ export function isVerbatimStallStub(text: string | undefined): boolean {
   );
 }
 
-/**
- * 02m / 02v — model planning notes leaked as GM body.
- * Fingerprints + planning-voice only — not a novel deny-list of story nouns.
- * 02v tapes: LitRPG s42 T8, D&D s42 T18, RPG s42 T8.
- */
+
 export function isWriterMonologueLeak(text: string | undefined): boolean {
   if (!text?.trim()) return false;
   return (
@@ -548,10 +520,7 @@ export function scrubDirectorChrome(text: string): { prose: string; scrubbed: bo
 const BODY_SWAP_NOTE =
   /^(?:Commit gate: (?:last-resort body|packet stitch|replaced stall\/stitch-bank stub|stripped recycled prefix)|Director\/stitch chrome — coded scene move)$/;
 
-/**
- * Governance notes that describe replacing the beat's body. When the writer-words guard keeps the
- * writer's draft, no swap happened and these notes are dropped; the reject reason stays.
- */
+
 export function notesForCommittedBody(notes: readonly string[], bodySwapped: boolean): string[] {
   return bodySwapped ? [...notes] : notes.filter((n) => !BODY_SWAP_NOTE.test(n));
 }
