@@ -16,6 +16,7 @@
  * stretches, and an arrival with a first sight and a hook.
  */
 
+import { encounterOpenerIdea, openerIdeaFact, openerIdeaGist, pickOpenerIdea } from './openerIdeas';
 import type {
   ActiveEncounter,
   GameState,
@@ -870,6 +871,9 @@ function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): v
   } else if (looks.length) {
     encounter.about = looks[at(looks.length, rng())]!;
   }
+  // OP-1: a meeting/traveler starts from a seeded opener idea (kept on the encounter so the talk carries on from it).
+  const idea = pickOpenerIdea(encounter.kind, key);
+  if (idea) encounter.openerIdea = idea.id;
 }
 
 /** Meetings that stand as a group: the engine rolls how many (tabletop: no bigger than the SRD 5.2.1 budget). */
@@ -944,6 +948,15 @@ function meetingWant(e: RoadEncounter): string {
  * tt-fix-9 — the live road meeting a speaker label (or the meeting's name) stands for, by its class. Null for signs,
  * a lair or a plea (their want describes a scene, not what one says). Its `want`, when recorded, is what it wants.
  */
+/**
+ * OP-1: the backed line for a road meeting's speaker is the gist of its opener idea (tt-fix-4 treats it as the
+ * backing for what they say, never as a quote). Empty when the name is not this stretch's live meeting.
+ */
+export function roadMeetingOpenerLines(state: Pick<GameState, 'journey'>, name: string): string[] {
+  const gist = openerIdeaGist(encounterOpenerIdea(roadMeetingSpeaker(state.journey, name)));
+  return gist ? [gist] : [];
+}
+
 export function roadMeetingSpeaker(j: TravelJourney | null | undefined, speaker: string): RoadEncounter | null {
   const e = j?.encounter;
   if (!e || roadMeetingOver(e) || SCENE_KINDS.has(e.kind) || e.kind === 'plea') return null;
@@ -981,7 +994,8 @@ export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const told = e.kind === 'plea' && !!e.about;
   const intent = !want || told ? '' : e.kind === 'plea' ? ` ${want.charAt(0).toUpperCase()}${want.slice(1)}.` : ` What ${e.name ?? 'it'} ${want}.`;
   const memory = campMemoryFact(e);
-  return `Event on this stretch: the road brings ${meetingWho(e)}.${intent}${memory ? ` ${memory}` : ''}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
+  const opener = openerIdeaFact(encounterOpenerIdea(e));
+  return `Event on this stretch: the road brings ${meetingWho(e)}.${intent}${memory ? ` ${memory}` : ''}${opener ? ` ${opener}` : ''}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
 }
 
 /** The turn's engine result with this stretch's road meeting event after it (tt-build-roadmeet). */
@@ -1046,7 +1060,10 @@ export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): {
 export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { display: string; note: string } | null {
   const e = meetingOnBeat(state);
   if (!e || !SPEAKING_KINDS.has(e.kind)) return null;
-  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here` };
+  const idea = encounterOpenerIdea(e);
+  // OP-1: the picked idea is the backing for what this person says (its gist), never a line to quote.
+  const gist = idea ? `; opens with: ${idea.situation}, ${idea.intent}` : '';
+  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here${gist}` };
 }
 
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
