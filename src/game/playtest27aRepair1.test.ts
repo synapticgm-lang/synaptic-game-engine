@@ -74,11 +74,12 @@ describe('27a Repair 1', () => {
     const trail = pactState({
       turn: 6,
       currentLocation: 'Cinderwake Trail',
-      sceneFacts: { ...emptySceneFacts(6), present: ['Brother Oren', 'Kessa Cinder'], indoor: false },
+      previousLocationSheet: { name: 'Ash Court' } as GameState['previousLocationSheet'],
+      sceneFacts: { ...emptySceneFacts(6), present: ['Brother Oren', 'Kessa Cinder'], leftBehind: ['Brother Oren'], indoor: false },
     });
     const arrive = ledgerActionStitch(trail, 'Travel toward Lowmarket');
     expect(arrive).toMatch(/Lowmarket/);
-    expect(arrive).toMatch(/Oren[^.]*stayed/);
+    expect(arrive).toMatch(/Oren[^.]*stayed at Ash Court/);
   });
 
   it('RC3 talk to an absent role never reprints the opening tracking-rite line', () => {

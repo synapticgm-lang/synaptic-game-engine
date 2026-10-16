@@ -1,5 +1,4 @@
 /** Travel legs, clock, road meetings, Extended Travel, camp (SRD 5.2.1). */
-
 import { encounterOpenerIdea, openerIdeaFact, openerIdeaGist, pickOpenerIdea } from './openerIdeas';
 import type {
   ActiveEncounter,
@@ -81,7 +80,6 @@ import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
-
 import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
 import { replayPreFeature } from './replaySeam';
@@ -99,13 +97,11 @@ interface Endpoint {
   /** Ruin / graveyard / crypt / old battlefield. */
   haunted: boolean;
 }
-
 const OUTSIDE_KINDS = new Set(['landmark', 'ruin', 'fort', 'shore']);
 const WILD_TEXT =
   /\b(forest|woods?|timber|pines?|treeline|trees|trail|road|track|march|marsh|reeds?|fen|bog|swamp|moor|hills?|mountains?|pass|ridge|wilds?|wilderness|steppe|dunes?)\b/i;
 const HAUNT_TEXT =
   /\b(ruins?|ruined|graves?|graveyards?|cemeter(?:y|ies)|crypts?|tombs?|barrows?|ossuar(?:y|ies)|catacombs?|mausoleums?|battlefields?|battlegrounds?|haunted|undead)\b/i;
-
 const TERRAIN_TESTS: Array<[JourneyTerrain, RegExp]> = [
   ['forest', /\b(forest|woods?|woodland|timber|pines?|treeline|trees)\b/i],
   ['marsh', /\b(marsh|reeds?|wetland|fen|bog|swamp|mire)\b/i],
@@ -113,7 +109,6 @@ const TERRAIN_TESTS: Array<[JourneyTerrain, RegExp]> = [
   ['coast', /\b(coast(?:al)?|shore|sea|beach|tide|island|surf|reef)\b/i],
   ['streets', /\b(urban|city|streets?|district|ward|market|alley|metro)\b/i],
 ];
-
 const GROUND_LABEL: Record<JourneyTerrain, string> = {
   forest: 'Forest path',
   marsh: 'Marsh track',
@@ -122,11 +117,8 @@ const GROUND_LABEL: Record<JourneyTerrain, string> = {
   streets: 'Back streets',
   road: 'Open road',
 };
-
 export { UNDERWAY_HERE };
-
 const ROAD_LABELS = new Set([...Object.values(GROUND_LABEL), UNDERWAY_HERE].map((l) => l.toLowerCase()));
-
 /** Every route name the engine hands the writer: the ground labels, this trip's HERE words, its two ends. */
 export function routeNames(state: Pick<GameState, 'journey'>): string[] {
   return [
@@ -138,21 +130,17 @@ export function routeNames(state: Pick<GameState, 'journey'>): string[] {
     state.journey?.to ?? '',
   ].filter((n) => !!n.trim());
 }
-
 const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
-
 /** A road label or the underway HERE: journey state, never a place. */
 export function isRoadLabel(name: string | undefined | null): boolean {
   return ROAD_LABELS.has(tidy(name).toLowerCase());
 }
-
 /** A road label, or the trip's own HERE words while underway: never a place card or a place ref. */
 export function isTripHere(state: Pick<GameState, 'journey'>, name: string | undefined | null): boolean {
   if (isRoadLabel(name)) return true;
   const trip = underwayHereLabel(state);
   return !!trip && tidy(name).toLowerCase() === trip.toLowerCase();
 }
-
 /** The last real place on the trip: its origin, else the last visited place card that is not a road. */
 function journeyOrigin(state: Pick<GameState, 'journey' | 'places' | 'currentLocation'>): string {
   const from = tidy(state.journey?.from);
@@ -164,7 +152,6 @@ function journeyOrigin(state: Pick<GameState, 'journey' | 'places' | 'currentLoc
   const here = tidy(state.currentLocation);
   return isRoadLabel(here) ? '' : here;
 }
-
 /** Hours per leg on each kind of ground. A short step inside a place is STEP_HOURS. */
 const LEG_HOURS: Record<JourneyTerrain, number> = {
   streets: 0.5,
@@ -176,7 +163,6 @@ const LEG_HOURS: Record<JourneyTerrain, number> = {
 };
 const STEP_HOURS = 0.25;
 const MAX_LEGS = 4;
-
 function endpointFor(state: GameState, rawName: string): Endpoint {
   const name = (rawName ?? '').replace(/\s+/g, ' ').trim();
   const atlas = state.worldAtlas;
@@ -213,7 +199,6 @@ function endpointFor(state: GameState, rawName: string): Endpoint {
     haunted: kind === 'ruin' || HAUNT_TEXT.test(text),
   };
 }
-
 /** Shortest region path on the atlas graph (inclusive), or null when unconnected. */
 function regionPath(atlas: WorldAtlasState, fromId: string, toId: string): string[] | null {
   if (fromId === toId) return [fromId];
@@ -239,12 +224,10 @@ function regionPath(atlas: WorldAtlasState, fromId: string, toId: string): strin
   }
   return null;
 }
-
 function regionText(atlas: WorldAtlasState | null | undefined, id: string | undefined): string {
   const r = id ? atlas?.regions.find((x) => x.id === id) : undefined;
   return r ? `${r.blurb} ${(r.tags ?? []).join(' ')}` : '';
 }
-
 /** First wild terrain wins; plain ground between towns is road. */
 export function terrainFromText(...texts: string[]): JourneyTerrain {
   const hay = texts.join(' ');
@@ -253,7 +236,6 @@ export function terrainFromText(...texts: string[]): JourneyTerrain {
   }
   return 'road';
 }
-
 export interface MapGap {
   /** Moves needed. 1 = a step (arrive this turn). 2+ = ground between first. */
   steps: number;
@@ -263,7 +245,6 @@ export interface MapGap {
   areaTier: number;
   haunted: boolean;
 }
-
 /** Distance between two places from the existing map (atlas regions, then place scale). */
 export function mapGapBetween(state: GameState, from: string, to: string): MapGap {
   const a = endpointFor(state, from);
@@ -305,7 +286,6 @@ export function mapGapBetween(state: GameState, from: string, to: string): MapGa
     haunted,
   };
 }
-
 const SLOT_START: Record<Exclude<TimeOfDay, 'unknown'>, number> = {
   dawn: 5,
   morning: 8,
@@ -315,7 +295,6 @@ const SLOT_START: Record<Exclude<TimeOfDay, 'unknown'>, number> = {
   evening: 19.5,
   night: 22,
 };
-
 export function timeOfDayForHour(hour: number): Exclude<TimeOfDay, 'unknown'> {
   const h = ((hour % 24) + 24) % 24;
   if (h >= 5 && h < 7) return 'dawn';
@@ -326,47 +305,38 @@ export function timeOfDayForHour(hour: number): Exclude<TimeOfDay, 'unknown'> {
   if (h >= 19.5 && h < 21.5) return 'evening';
   return 'night';
 }
-
 type ClockState = Partial<Pick<GameState, 'worldHour' | 'worldDay' | 'roadDay' | 'sceneFacts'>>;
-
 function currentHour(state: ClockState): number {
   if (typeof state.worldHour === 'number') return state.worldHour;
   const slot = state.sceneFacts?.timeOfDay;
   return slot && slot !== 'unknown' ? SLOT_START[slot] : 9;
 }
-
 /** The one world clock: hours since the save's first day began (worldDay × 24 + worldHour). */
 export function worldClock(state: ClockState): number {
   return (state.worldDay ?? 0) * 24 + currentHour(state);
 }
-
 /** World-clock hour this waking day began: the last wake, or now when a full day has passed since. */
 function roadDayStart(state: ClockState): number {
   const d = state.roadDay;
   return d && worldClock(state) - d.since < 24 ? d.since : worldClock(state);
 }
-
 /** This waking day's record (road hours, the day's food), read off the world clock (a night's sleep or 24 hours starts the next). */
 function roadDayNow(state: ClockState): NonNullable<GameState['roadDay']> {
   const since = roadDayStart(state);
   const d = state.roadDay;
   return d && d.since === since ? d : { since, hours: 0 };
 }
-
 export function roadHoursToday(state: ClockState): number {
   return roadDayNow(state).hours;
 }
-
 /** A night's sleep ends the day: the next one starts on waking. */
 export function wakeToNewDay<T extends ClockState>(state: T): T {
   return { ...state, roadDay: { since: worldClock(state), hours: 0 } };
 }
-
 function formatSpan(hours: number): string {
   if (hours < 1) return `${Math.round(hours * 60)} min`;
   return Number.isInteger(hours) ? `${hours}h` : `${hours.toFixed(1)}h`;
 }
-
 /** Move the clock; timeOfDay follows the hour. Returns the chrome fragment. */
 export function advanceClock(state: GameState, hours: number): { state: GameState; note: string } {
   const total = currentHour(state) + hours;
@@ -380,20 +350,16 @@ export function advanceClock(state: GameState, hours: number): { state: GameStat
     note: `+${formatSpan(hours)}, now ${slot}`,
   };
 }
-
 export function isJourneyUnderway(state: Pick<GameState, 'journey'>): boolean {
   return !!state.journey && state.journey.legsDone < state.journey.legsTotal;
 }
-
 const WALK_ON = /^(?:walk on|keep (?:walking|going)|press on|carry on|continue (?:on|along|walking|the journey))\b/i;
 const TURN_BACK = /^(?:turn back|go back|head back)\b/i;
-
 /** A step of the ground between places (walk on / turn back), not a task in the scene. */
 export function isJourneyStepLine(input: string): boolean {
   const t = (input ?? '').trim();
   return WALK_ON.test(t) || TURN_BACK.test(t);
 }
-
 const TALK_PAD: Record<JourneyTerrain, string> = {
   forest: 'Talk to whoever is on the path',
   marsh: 'Talk to whoever is on the track',
@@ -402,7 +368,6 @@ const TALK_PAD: Record<JourneyTerrain, string> = {
   streets: 'Talk to someone in the street',
   road: 'Talk to a traveler on the road',
 };
-
 const LIVES_PAD: Record<JourneyTerrain, string> = {
   forest: 'Deal with the animal in the trees',
   marsh: 'Deal with what moves in the reeds',
@@ -411,7 +376,6 @@ const LIVES_PAD: Record<JourneyTerrain, string> = {
   streets: 'Deal with the strays in the alley',
   road: 'Deal with what lurks by the roadside',
 };
-
 const FIXED_ENCOUNTER_PADS: Partial<Record<RoadEncounterKind, string[]>> = {
   meeting: ['Greet whoever is coming'],
   thugs: ['Face the thugs', 'Talk your way past the thugs'],
@@ -423,16 +387,13 @@ const FIXED_ENCOUNTER_PADS: Partial<Record<RoadEncounterKind, string[]>> = {
   plea: ['Help them', 'Pass them by'],
   lair: ['Scout the lair', 'Give the lair a wide berth'],
 };
-
 const CHAMPION_PAD = "Face the camp's champion";
 const SNEAK_CAMP_PAD = 'Sneak into the camp'; // CR-1 (not a raid chip)
-
 /** The chip that opens a live fight for this meeting (null = no fight on offer). */
 function fightPad(enc: RoadEncounter): string | null {
   if (enc.kind === 'camp') return enc.miniBoss ? CHAMPION_PAD : null;
   return FIGHT_KINDS.has(enc.kind) ? FIXED_ENCOUNTER_PADS[enc.kind]![0]! : null;
 }
-
 /**
  * A meeting with no fight on offer, answered by its own chip: the go-by chip passes it (not beaten), the plea's
  * help chip helps it, and the wildlife chip lets the animal go its way. Taking up any other meeting (greet,
@@ -445,7 +406,6 @@ function answersMeeting(enc: RoadEncounter, input: string, turn: number, terrain
   if (at > 0 || (at === 0 && enc.kind === 'wildlife')) return { ...enc, escaped: true, escapedTurn: turn, closedTurn: turn };
   return at === 0 && enc.kind === 'plea' ? { ...enc, engaged: true, closedTurn: turn } : null;
 }
-
 /**
  * The help the player gave a plea, as the engine settles it: the writer's fact, and the ration it costs where the
  * mode counts food. No ration to give: the plea is passed by, and the fact says so.
@@ -460,12 +420,10 @@ function helpPlea(state: GameState, enc: RoadEncounter): { state: GameState; enc
   }
   return { state: { ...state, inventory: eat.inventory }, encounter: enc, fact: help.fact, extra: [`Rations: 1 day given away (${eat.left} left)`] };
 }
-
 /** The meeting is over: fought and won or talked down, helped, fled past, or the fight against it was lost. */
 export function roadMeetingOver(enc: RoadEncounter): boolean {
   return !!enc.engaged || !!enc.escaped || !!enc.lost;
 }
-
 function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (roadMeetingOver(enc)) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
@@ -486,26 +444,21 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   for (let i = 0; i < fixed.length; i++) out.push(cost(fixed[i]!));
   return out;
 }
-
 /** TT32 — a chip that runs a check says what a failure costs: the meeting forces the fight. */
 const FAIL_COST: Record<string, string> = {
   'hide from the creature': ', but fail and it attacks',
 };
 const FAIL_COST_TAIL = /,\s*but fail and (?:they|it) attacks?$/i;
-
 function withFailCost(pad: string): string {
   const key = pad.toLowerCase();
   if (!MEETING_MOVE.has(key)) return pad;
   return `${pad}${FAIL_COST[key] ?? ', but fail and they attack'}`;
 }
-
 /** A meeting chip without its failure-cost tail ("Talk your way past the thugs"). */
 export function meetingMoveBase(chip: string): string {
   return (chip ?? '').replace(/\s+/g, ' ').trim().replace(FAIL_COST_TAIL, '');
 }
-
 const TURN_BACK_REST_TURNS = 4;
-
 /** Push on into the current clock slot; tabletop names the Extended Travel fail cost. */
 function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> & ClockState): string {
   const head = `${PUSH_ON_CHIP} into the ${timeOfDayForHour(currentHour(state))}`;
@@ -514,7 +467,6 @@ function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> &
     ? `${head}, but one failed save now kills you`
     : `${head}, but each failed save wears you down more`;
 }
-
 /**
  * Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back.
  * Turn back rests for a few turns after a bounce between the same places (the circling memory's
@@ -538,7 +490,6 @@ export function journeyPads(
   const rested = forward.length > 0 && bounced != null && (state.turn ?? 0) - bounced < TURN_BACK_REST_TURNS;
   return [...forward, ...met, ...(job ? [job] : []), ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
 }
-
 /**
  * A chip of the ground between: walk on / turn back, a travel engine chip, or the live meeting's own chips by its
  * class (with or without the failure-cost tail). A meeting chip with no such meeting on the stretch is not one.
@@ -549,10 +500,8 @@ export function isJourneyPad(state: Pick<GameState, 'journey'>, choice: string):
   const met = j?.encounter ? encounterPads(j.encounter, j.terrain) : [];
   return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || !!travelEngineChip(t) || met.some((p) => meetingMoveBase(p).toLowerCase() === t);
 }
-
 /** Meetings that can be faced as a fight. */
 const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'villain']);
-
 /** A hostile meeting still standing in the lane. Walk on is not a free pass past it; a flee that got clear is. */
 function laneBlocked(enc: RoadEncounter | null | undefined): boolean {
   return !!enc && !roadMeetingOver(enc) && FIGHT_KINDS.has(enc.kind);
@@ -561,7 +510,6 @@ function laneBlocked(enc: RoadEncounter | null | undefined): boolean {
 export const RARE_SPAWN_CHANCE = 0.12;
 /** Share of camps that hold a mini-boss. */
 export const CAMP_MINI_BOSS_CHANCE = 0.5;
-
 export interface StretchContext {
   terrain: JourneyTerrain;
   haunted: boolean;
@@ -571,10 +519,8 @@ export interface StretchContext {
   legsTotal: number;
   quietStretches: number;
 }
-
 /** The area tier from which the ground is dangerous. */
 const DANGEROUS_TIER = 3;
-
 /** Kinds that fit the ground. Monsters and villains only where the area is dangerous (tier 3+). */
 export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
   const high = ctx.areaTier >= DANGEROUS_TIER;
@@ -594,9 +540,7 @@ export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
   }
   return pool;
 }
-
 const SOCIAL_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting']);
-
 /**
  * The pool with each kind repeated by its pillar slider (Combat for fights, Social for people who talk,
  * Exploration for wildlife and camps), in the same order. At 50/50/50 the pick is the unweighted pool's.
@@ -607,9 +551,7 @@ export function weightedEncounterPool(pool: RoadEncounterKind[], rules: Pick<Hou
   const out = pool.flatMap((k) => Array<RoadEncounterKind>(copies(k)).fill(k));
   return out.length ? out : pool;
 }
-
 type PillarRules = Pick<HouseRules, 'combatFrequency' | 'socialRoleplay' | 'worldBuilding'>;
-
 /**
  * Share of meetings that are hostile (GM call, tuned by the pillar sliders): Combat against the average of Social
  * and Exploration, counted twice. At 50/50/50 one meeting in three is hostile, two in three are not.
@@ -619,9 +561,7 @@ export function hostileShare(rules: PillarRules): number {
   const other = (pillarCopies(rules.socialRoleplay) + pillarCopies(rules.worldBuilding)) / 2;
   return hostile + 2 * other > 0 ? hostile / (hostile + 2 * other) : 0;
 }
-
 const at = (n: number, roll: number) => Math.min(n - 1, Math.max(0, Math.floor(roll * n)));
-
 /** Hostile or not first (by `hostileShare`), then the kind inside that group by the sliders. */
 export function pickMeetingKind(pool: RoadEncounterKind[], kindRoll: number, rules: PillarRules): RoadEncounterKind | null {
   const weighted = weightedEncounterPool(pool, rules);
@@ -635,7 +575,6 @@ export function pickMeetingKind(pool: RoadEncounterKind[], kindRoll: number, rul
   if (kindRoll < calm) return other[at(other.length, kindRoll / calm)]!;
   return hostile[at(hostile.length, (kindRoll - calm) / (1 - calm))]!;
 }
-
 /**
  * One meeting check (a watch on the road or at camp). `chanceRoll`, `kindRoll` and `spawnRoll` are in [0, 1).
  * The check is a d6: a meeting on 1, or on 1–2 on dangerous or haunted ground (`meetingOn`).
@@ -658,12 +597,10 @@ export function rollRoadEncounter(
   if (kind === 'camp' && spawnRoll < CAMP_MINI_BOSS_CHANCE) enc.miniBoss = true;
   return enc;
 }
-
 /** A replayed tape's recorded meeting roll (`replaySeam`); live play and new runs use the d6 per watch. */
 const RECORDED_CHANCE = 0.4;
 const RECORDED_QUIET_STEP = 0.25;
 const RECORDED_MAX_QUIET = 2;
-
 function recordedTapePool(ctx: StretchContext): RoadEncounterKind[] {
   const high = ctx.areaTier >= DANGEROUS_TIER;
   const edgeOfWilds = ctx.stretch <= 1 || ctx.stretch >= ctx.legsTotal - 1;
@@ -682,7 +619,6 @@ function recordedTapePool(ctx: StretchContext): RoadEncounterKind[] {
   }
   return pool;
 }
-
 function recordedTapeMeeting(
   ctx: StretchContext,
   level: number,
@@ -701,27 +637,23 @@ function recordedTapeMeeting(
   if (kind === 'camp' && spawnRoll < CAMP_MINI_BOSS_CHANCE) enc.miniBoss = true;
   return enc;
 }
-
 const FOE_NAME: Partial<Record<RoadEncounterKind, string>> = {
   thugs: 'the thugs',
   undead: 'the restless dead',
   monster: 'the creature',
   camp: "the camp's champion",
 };
-
 /**
  * The live foe for a faced meeting, at the area level. A rare spawn is a little tougher than the
  * ordinary foe on that ground; a camp mini-boss is a level higher with about twice the HP. The name is
  * a concrete short name. A villain is not the chip phrase. The chips may still say face or talk.
  */
 const VILLAIN_NAMES = ['Rook Vale', 'Sarn Holt', 'Mara Quinn', 'Bren Tull'];
-
 function concreteRoadFoeName(enc: RoadEncounter): string {
   if (enc.kind !== 'villain') return FOE_NAME[enc.kind] ?? 'the foe';
   const n = Math.abs(enc.stretch * 7 + Math.round(enc.level) * 3) % VILLAIN_NAMES.length;
   return VILLAIN_NAMES[n]!;
 }
-
 export function roadFoe(enc: RoadEncounter): ActiveEncounter {
   const lvl = Math.max(1, Math.round(enc.level));
   const boss = enc.kind === 'camp' && !!enc.miniBoss;
@@ -748,7 +680,6 @@ export function roadFoe(enc: RoadEncounter): ActiveEncounter {
     ...(enc.count && enc.count > 1 ? { count: enc.count } : {}),
   };
 }
-
 /**
  * Encounter level from the area tier by the treasure rule (tier â†’ level, clamped to party Â±3).
  * Ordinary ground (below the dangerous tier) meets the player at most one level above them.
@@ -764,13 +695,10 @@ export function roadEncounterLevel(state: GameState, areaTier: number): number {
   });
   return areaTier >= DANGEROUS_TIER ? area.level : Math.min(area.level, area.partyLevel + 1);
 }
-
-
 /** Seed for this trip (the save, both ends, the turn it set out). */
 function tripKey(state: GameState, j: TravelJourney): string {
   return `${state.seed ?? ''}|${j.from}|${j.to}|${j.startedTurn}`;
 }
-
 function stretchContext(j: TravelJourney): StretchContext {
   return {
     terrain: j.terrain,
@@ -781,7 +709,6 @@ function stretchContext(j: TravelJourney): StretchContext {
     quietStretches: j.quietStretches ?? 0,
   };
 }
-
 /** One meeting check at `key`, sized and dressed (what it wants, how far off, whether it caught the party unseen). */
 function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched: boolean): RoadEncounter | null {
   const areaTier = j.areaTier ?? 1;
@@ -802,7 +729,6 @@ function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched
   if (unwatched && FIGHT_KINDS.has(encounter.kind)) encounter.surprisesParty = true;
   return encounter;
 }
-
 /**
  * This stretch's meeting check (seed-stable for the save, trip and leg). One check per watch: at set-out and once
  * 4 hours have passed on the road since the last one (`check`); otherwise the stretch is quiet. A look-out who
@@ -829,10 +755,8 @@ function rollStretch(state: GameState, j: TravelJourney, check = true): TravelJo
   const encounter = meetingCheck(state, j, key, j.jobResults?.lookout === false);
   return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 };
 }
-
 /** People meetings the engine names: the one who speaks for them (a group's leader, a camp's keeper). */
 const NAMED_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'plea', 'villain', 'thugs', 'camp']);
-
 /**
  * tt-build-roadmeet (John, 15 Oct, 2a) — a rolled people meeting gets a seeded name and a one-line description:
  * a plea's is drawn from the plea itself ("a farmer, begs help with a stuck cart"), the rest is a seeded look.
@@ -856,7 +780,6 @@ function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): v
   const idea = pickOpenerIdea(encounter.kind, key);
   if (idea) encounter.openerIdea = idea.id;
 }
-
 /** Meetings that stand as a group: the engine rolls how many (tabletop: no bigger than the SRD 5.2.1 budget). */
 function sizeMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
   if (GROUP_KINDS.has(encounter.kind)) {
@@ -872,17 +795,14 @@ function sizeMeeting(state: GameState, encounter: RoadEncounter, key: string): v
     }
   }
 }
-
 /** Meetings that stand as a group: the engine rolls how many. */
 const GROUP_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead']);
 const COUNT_WORD = ['', 'one', 'two', 'three', 'four'];
-
 /** The rolled headcount, as the receipt and the writer fact both print it. */
 function meetingCount(e: RoadEncounter): string {
   const n = e.count && COUNT_WORD[e.count];
   return n ? `, ${n} of them` : '';
 }
-
 const ENCOUNTER_LABEL: Record<RoadEncounterKind, string> = {
   wildlife: 'wildlife',
   traveler: 'a traveler',
@@ -896,12 +816,10 @@ const ENCOUNTER_LABEL: Record<RoadEncounterKind, string> = {
   plea: 'someone in need',
   lair: 'a lair',
 };
-
 /** The ledger label of a road meeting: the writer's ref, the speaker it may name and the turn check all read this one. */
 export function roadMeetingLabel(kind: RoadEncounterKind): string {
   return ENCOUNTER_LABEL[kind];
 }
-
 /** The stretch already has a life: what the meeting is doing there before the player arrives. */
 const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
   wildlife: 'going about its own day',
@@ -916,7 +834,6 @@ const ENCOUNTER_LIFE: Record<RoadEncounterKind, string> = {
   plea: 'in trouble on the road',
   lair: 'off to one side of the way',
 };
-
 /** What is seen, not who: signs and a lair are the scene, not a meeting with anyone. */
 const SCENE_KINDS = new Set<RoadEncounterKind>(['signs', 'lair']);
 /** What the meeting wants (or, for signs, a plea or a lair, what is seen), as the writer and the receipt both say it. */
@@ -924,7 +841,6 @@ function meetingWant(e: RoadEncounter): string {
   if (!e.want) return '';
   return SCENE_KINDS.has(e.kind) || e.kind === 'plea' ? e.want : `wants: ${e.want}`;
 }
-
 /**
  * tt-fix-9 — the live road meeting a speaker label (or the meeting's name) stands for, by its class. Null for signs,
  * a lair or a plea (their want describes a scene, not what one says). Its `want`, when recorded, is what it wants.
@@ -937,14 +853,12 @@ export function roadMeetingOpenerLines(state: Pick<GameState, 'journey'>, name: 
   const gist = openerIdeaGist(encounterOpenerIdea(roadMeetingSpeaker(state.journey, name)));
   return gist ? [gist] : [];
 }
-
 export function roadMeetingSpeaker(j: TravelJourney | null | undefined, speaker: string): RoadEncounter | null {
   const e = j?.encounter;
   if (!e || roadMeetingOver(e) || SCENE_KINDS.has(e.kind) || e.kind === 'plea') return null;
   const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
   return [ENCOUNTER_LABEL[e.kind], e.name ?? ''].some((n) => !!n && bare(n) === bare(speaker)) ? e : null;
 }
-
 /**
  * Who a meeting is, as its event names them: "Wat Thatch, a farmer, who begs help with a stuck cart", "Osric Marl,
  * a traveler leaning on a walking staff", "thugs, three of them, led by Garth Rudd, with a broken nose".
@@ -959,7 +873,6 @@ function meetingWho(e: RoadEncounter): string {
   if (e.kind === 'camp') return `${base}${campHeadcount(e)} kept by ${e.name}${look}`;
   return `${e.name}, ${base}${e.about ? ` ${e.about}` : ''}`;
 }
-
 /**
  * Writer fact (tt-build-roadmeet: an event in the ENGINE RESULT): the meeting on this stretch is on the page
  * before any chip meets it. Who or what, and what it wants; the writer tells it in its own words.
@@ -978,16 +891,13 @@ export function roadMeetingFact(j: TravelJourney | null | undefined): string {
   const opener = openerIdeaFact(encounterOpenerIdea(e));
   return `Event on this stretch: the road brings ${meetingWho(e)}.${intent}${memory ? ` ${memory}` : ''}${opener ? ` ${opener}` : ''}${near} Show it plainly in the story (seen or heard, not named as a list), what it wants before any blow, so the next choice can meet it.`;
 }
-
 /** The turn's engine result with this stretch's road meeting event after it (tt-build-roadmeet). */
 export function withRoadMeetingEvent(state: Pick<GameState, 'journey'>, engineResult?: string): string {
   const j = state.journey;
   const event = j && j.legsDone < j.legsTotal ? roadMeetingFact(j) : '';
   return [engineResult?.trim(), event].filter(Boolean).join('\n');
 }
-
 const TIME_SLOT = '(dawn|morning|midday|afternoon|dusk|evening|night)';
-
 /** tt-fix-4 — travel receipt → destination + plain time (STATUS keeps legs/spans). */
 export function writerTravelFact(receipt: string): string | null {
   const r = (receipt ?? '').replace(/\s+/g, ' ').trim().replace(/\.$/, '');
@@ -1004,14 +914,64 @@ export function writerTravelFact(receipt: string): string | null {
   const dest = r.match(/^Travel: .* to (.+?)(?: at a \w+ pace)?(?: — |$)/)?.[1];
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
-
-/** Plain Travel: → writer form. Not inside "Extended Travel:" (q31-L4). */
+/** Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4). */
 export function writerEngineResult(fact: string): string {
-  return (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  const parts = travel.split('. ');
+  const out: string[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
+    while (s.includes('  ')) s = s.split('  ').join(' ');
+    if (!s || isRoadLabel(s)) continue;
+    const roomHead = 'Dungeon room: ';
+    if (s.startsWith(roomHead) && !s.startsWith('Dungeon room: none')) {
+      const body = s.endsWith('.') ? s.slice(0, -1) : s;
+      const mark = ', inside ';
+      const cut = body.indexOf(mark);
+      if (cut > roomHead.length) {
+        const room = body.slice(roomHead.length, cut);
+        const inside = body.slice(cut + mark.length);
+        if (room && inside) {
+          out.push(`You stood in ${room} inside ${inside}.`);
+          continue;
+        }
+      }
+    }
+    const waysHead = 'Ways on: ';
+    if (s.startsWith(waysHead)) {
+      const body = (s.endsWith('.') ? s.slice(0, -1) : s).slice(waysHead.length);
+      const names: string[] = [];
+      const raw = body.split(',');
+      for (let w = 0; w < raw.length; w++) {
+        let n = raw[w]!.trim();
+        const paren = n.indexOf(' (');
+        if (paren >= 0) n = n.slice(0, paren).trim();
+        if (n && !isRoadLabel(n)) names.push(n);
+      }
+      if (names.length === 1) out.push(`A way led on to ${names[0]}.`);
+      else if (names.length > 1) out.push(`Ways led on to ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}.`);
+      continue;
+    }
+    if (s.startsWith('Rest:')) {
+      const low = s.toLowerCase();
+      const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
+      const hpAt = s.indexOf('HP ');
+      if (hpAt >= 0) {
+        const bits = s.slice(hpAt + 3).trim().split(' ');
+        const to = (bits[2] ?? '').split('(')[0] ?? '';
+        if (bits[0] && to && (bits[1] === '→' || bits[1] === '->' || bits[1] === 'to')) {
+          out.push(`You took a ${kind} and your hurts eased (${bits[0]} to ${to}).`);
+          continue;
+        }
+      }
+      out.push(`You took a ${kind}.`);
+      continue;
+    }
+    out.push(s.endsWith('.') ? s : `${s}.`);
+  }
+  return out.join(' ');
 }
-
 const SPEAKING_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'thugs', 'villain', 'plea']);
-
 /** The meeting in this beat: open on this stretch, or closed by this turn's own talk, fight or flight. */
 function meetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): RoadEncounter | null {
   const j = state.journey;
@@ -1020,14 +980,12 @@ function meetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): RoadEncounte
   if (!roadMeetingOver(e)) return e;
   return e.closedTurn != null && e.closedTurn === state.turn ? e : null;
 }
-
 /** Who or what the road meeting puts in this beat, with the engine's count ("thugs, four of them"). */
 export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): { label: string; count: number } | null {
   const e = meetingOnBeat(state);
   if (!e) return null;
   return { label: `${ENCOUNTER_LABEL[e.kind]}${meetingCount(e)}`, count: Math.max(1, e.count ?? 1) };
 }
-
 /**
  * The REF ENUM row of this beat's road meeting, if one can speak (tt-build-roadmeet): its name (else its label)
  * and its description. The row is the meeting class, never a person present.
@@ -1040,7 +998,6 @@ export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { di
   const gist = idea ? `; opens with: ${idea.situation}, ${idea.intent}` : '';
   return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here${gist}` };
 }
-
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
   const e = j.encounter;
@@ -1059,19 +1016,15 @@ function encounterNote(j: TravelJourney): string {
   const close = e.surprisesParty ? ', not spotted until close' : '';
   return `; chance meeting: ${label} (level ${e.level})${meetingCount(e)}, ${ENCOUNTER_LIFE[e.kind]}${want ? `; ${want}` : ''}${off}${close}`;
 }
-
 const FIGHT_WORDS = /^(?:face|fight|attack|charge|challenge)\b/i;
-
 /** The player faces a meeting that can be fought and has not been fought yet. */
 function facesFight(input: string, enc: RoadEncounter): boolean {
   const pad = fightPad(enc);
   if (!pad || roadMeetingOver(enc)) return false;
   return input.toLowerCase() === pad.toLowerCase() || FIGHT_WORDS.test(input);
 }
-
 const ROAD_FOE_SOURCES = new Set(['road-encounter', 'road-rare-spawn', 'road-camp-elite']);
 const FLEE_WORDS = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
-
 /** The meeting's own non-fight chips and the existing check each one runs (talk = parley, slip past = flee). */
 const MEETING_MOVE = new Map<string, 'parley' | 'flee'>([
   ['talk your way past the thugs', 'parley'],
@@ -1080,7 +1033,6 @@ const MEETING_MOVE = new Map<string, 'parley' | 'flee'>([
   ['skirt around the camp', 'flee'],
   ['hide from the creature', 'flee'],
 ]);
-
 /** The check this meeting's own talk / slip chip runs, when the meeting can still be fought. Null otherwise. */
 export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string): 'parley' | 'flee' | null {
   const enc = state.journey?.encounter;
@@ -1089,11 +1041,9 @@ export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string):
   if (!encounterPads(enc, state.journey!.terrain).some((p) => meetingMoveBase(p).toLowerCase() === chip)) return null;
   return MEETING_MOVE.get(chip) ?? null;
 }
-
 function liveRoadFoe(state: GameState, enc: RoadEncounter): ActiveEncounter {
   return initEncounterTerminal(roadFoe(enc), state, { forcedSpawnKey: `road-${enc.kind}` });
 }
-
 /**
  * Before the fight engine: the road meeting this input takes on, as the foe the engine settles this turn.
  * Facing a fightable meeting, or fleeing one that blocks the lane. Null otherwise.
@@ -1110,12 +1060,10 @@ export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter
   if (roadMeetingMove(state, input)) return liveRoadFoe(state, enc);
   return null;
 }
-
 /** The foe is this trip's road meeting (not a place threat or a director spawn). */
 export function isRoadFoe(state: Pick<GameState, 'journey'>, foe: ActiveEncounter | null | undefined): boolean {
   return !!foe && !!state.journey?.encounter && ROAD_FOE_SOURCES.has(foe.source ?? '');
 }
-
 /**
  * After the fight engine settled a road foe: a win or a talk-down deals with the meeting, a flee that got
  * clear slips past it (escaped, not beaten), a loss ends it (lost, not beaten). Each one closes the meeting.
@@ -1137,17 +1085,14 @@ export function settleRoadMeeting(
   const kept = enc.camp && memory ? recordCampOutcome(state, enc.camp.placeId, memory) : state;
   return { ...kept, journey: { ...j, encounter: next } };
 }
-
 /** What a settled fight at a placed camp leaves the camp remembering (a loss leaves it as it was). */
 const CAMP_MEMORY: Partial<Record<Parameters<typeof settleRoadMeeting>[1], RoadCampOutcome>> = {
   victory: 'cleared',
   parleyResolved: 'parleyed',
   escape: 'fled',
 };
-
 /** What the travel engine did this turn (the packet's Outcome, never read from the player's words). */
 export type TravelEngineOutcome = 'set out' | 'arrived' | 'fight opened' | 'blocked' | 'unchanged' | 'slipped away';
-
 export interface TravelCommit {
   state: GameState;
   /** This turn's travel owned HERE (moved, started, advanced, or stayed on the ground). */
@@ -1169,7 +1114,6 @@ export interface TravelCommit {
   /** Push-on chip slot; writer uses it over the landing hour. */
   pushOnSlot?: TimeOfDay;
 }
-
 /** Extended Travel extras + Travel receipt for the writer (push-on clock). */
 export function travelEngineLines(commit: TravelCommit): string[] {
   const lines: string[] = [];
@@ -1195,7 +1139,6 @@ export function travelEngineLines(commit: TravelCommit): string[] {
   lines.push(r);
   return lines;
 }
-
 /** What the travel engine did this turn, for the writer's Outcome (never decided by the player's words). */
 export function travelOutcome(
   commit: TravelCommit | null | undefined,
@@ -1213,11 +1156,9 @@ export function travelOutcome(
     && !isJourneyUnderway(after);
   return { arrived: moved, underway: false, outcome: moved ? 'arrived' : 'unchanged' };
 }
-
 function unchanged(state: GameState): TravelCommit {
   return { state, handled: false, arrived: false, outcome: 'unchanged' };
 }
-
 function arrive(state: GameState, dest: string, hours: number, from: string, terrain?: JourneyTerrain, trip = false): TravelCommit {
   const clock = advanceClock({ ...state, currentLocation: dest, journey: null }, hours);
   const facts = trip ? arrivalFacts(state, dest) : [];
@@ -1230,7 +1171,6 @@ function arrive(state: GameState, dest: string, hours: number, from: string, ter
     ...(facts.length ? { facts } : {}),
   };
 }
-
 /**
  * Arrival after a trip: one hook waiting there. The first sight of the place is its card text, handed once by
  * the writer's HERE block (placeFirstSight), not a second time here.
@@ -1240,7 +1180,6 @@ function arrivalFacts(state: GameState, dest: string): string[] {
   const hook = arrivalHook(state, dest, hub?.linkedQuestIds ?? []);
   return hook ? [hook] : [];
 }
-
 function arrivalHook(state: GameState, dest: string, linked: string[]): string | null {
   const here = dest.toLowerCase();
   const names = (s?: string) => {
@@ -1259,7 +1198,6 @@ function arrivalHook(state: GameState, dest: string, linked: string[]): string |
   const word = linked.map((id) => open.find((q) => q.id === id)).find(Boolean);
   return word ? `Word here points to ${word.name}.` : null;
 }
-
 /** `via` is the road the player is already on (a redirect mid-trip); the receipt sets out from it, not from `from`. */
 function startJourney(state: GameState, from: string, to: string, gap: MapGap, via?: string): TravelCommit {
   const set: TravelJourney = {
@@ -1300,7 +1238,6 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
       : `Travel: ${journey.ground.toLowerCase()} between ${from} and ${to}${paceTag(state, gap.terrain)} — leg 1 of ${journey.legsTotal} — ${clock.note}; ${to} still ahead${encounterNote(journey)}`,
   };
 }
-
 function goTo(state: GameState, from: string, dest: string, via?: string): TravelCommit {
   if (isTripHere(state, dest)) return unchanged(state);
   const mapped = mapGapBetween(state, from, dest);
@@ -1318,7 +1255,6 @@ function goTo(state: GameState, from: string, dest: string, via?: string): Trave
   }
   return startJourney(state, from, dest, gap, via);
 }
-
 function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const legsDone = j.legsDone + 1;
   const march = marchHours(state, j.terrain, tripKey(state, j), j.hoursPerLeg);
@@ -1350,21 +1286,17 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     receipt: `Travel: ${j.ground.toLowerCase()} between ${j.from} and ${j.to}${paceTag(state, j.terrain)} — leg ${legsDone} of ${journey.legsTotal} — ${clock.note}; ${j.to} still ahead${encounterNote(journey)}`,
   };
 }
-
 const survival = (state: Pick<GameState, 'engineMode'>) => modeProfile(state.engineMode).travelSurvival;
 const travelDay = (j: TravelJourney) => j.terrain !== 'streets';
-
 function stretchEvent(state: ClockState, j: TravelJourney, lost: boolean, found: boolean): Pick<TravelCommit, 'event'> {
   const event: TravelCommit['event'] =
     j.encounter && !roadMeetingOver(j.encounter) ? 'meeting' : lost ? 'lost' : found ? 'find' : dayIsSpent(state, j) ? 'day spent' : undefined;
   return event ? { event } : {};
 }
-
 /** The next stretch would take today's road hours on the world clock past 8 (SRD Extended Travel). */
 export function dayIsSpent(state: ClockState, j: TravelJourney): boolean {
   return travelDay(j) && roadHoursToday(state) + j.hoursPerLeg > TRAVEL_DAY_HOURS;
 }
-
 function canTravelOn(state: ClockState, j: TravelJourney): boolean {
   return (
     !dayIsSpent(state, j)
@@ -1374,7 +1306,6 @@ function canTravelOn(state: ClockState, j: TravelJourney): boolean {
     && j.legsTotal - j.legsDone >= 2
   );
 }
-
 function slotNow(state: GameState): string {
   return timeOfDayForHour(currentHour(state));
 }

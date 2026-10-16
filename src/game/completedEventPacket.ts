@@ -24,7 +24,7 @@ import {
   placeFirstSight,
 } from './outdoorHubs';
 import { nearbyPlaceNames } from './placeNames';
-import { isJourneyUnderway, isRoadLabel, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney';
+import { isJourneyUnderway, isRoadLabel, isTripHere, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney';
 import { spokenTalkFallback } from './talkEnvelope';
 import { TALK_VERB } from './intentParser';
 import { emptySceneFacts } from './sceneFacts';
@@ -1162,12 +1162,12 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
       ? card.exits
       : outdoorHubTravelChoices(state, 3).map((c) => c.replace(/^Travel\s+(?:to|toward)\s+/i, '').trim());
   return {
-    place: hub?.name ?? place,
+    place: pagePlace(state, hub?.name ?? place) || 'this place',
     descriptor: inDungeonRoom ? '' : placeFirstSight(state, place),
     exits: exits.filter((e) => e.length > 1),
     present: sealedCastNames(state),
     leftBehind: recordsForEntries(state, state.sceneFacts?.leftBehind ?? []).map((r) => r.npcName),
-    leftFrom: (state.previousLocationSheet?.name ?? '').replace(/\s+/g, ' ').trim(),
+    leftFrom: pagePlace(state, state.previousLocationSheet?.name ?? ''),
   };
 }
 
@@ -1218,12 +1218,14 @@ function stayedPreposition(place: string): string {
   return /\b(trail|road|march|quay|wall|approach|seam)\b/i.test(place) ? 'on' : 'at';
 }
 
-function isExitsAsk(act: string): boolean {
-  return /\b(?:exits?|ways? out|scout)\b/i.test(act);
+/** A mapped place name for a page sentence. A road label or trip HERE is not a place. */
+function pagePlace(state: GameState, name: string): string {
+  const n = (name ?? '').replace(/\s+/g, ' ').trim();
+  return n && !isRoadLabel(n) && !isTripHere(state, n) ? n : '';
 }
 
-function isLookAroundAct(act: string): boolean {
-  return /\blook(?:\s+around)?\b|\binspect\b|\bsurvey\b/i.test(act) && !/\bpanel\b/i.test(act);
+function isExitsAsk(act: string): boolean {
+  return /\b(?:exits?|ways? out|scout)\b/i.test(act);
 }
 
 /**
@@ -1265,7 +1267,7 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
     const line = `You checked the ways out of ${f.place}. ${exitsSentence(f.place, f.exits)} ${onceSaid(state, peopleHereSentence(f.present))}`;
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
   }
-  if (isLookAroundAct(act) && !/\btravel\b/i.test(act)) {
+  if (/\blook(?:\s+around)?\b|\binspect\b|\bsurvey\b/i.test(act) && !/\bpanel\b/i.test(act) && !/\btravel\b/i.test(act)) {
     const sight = f.descriptor || placeFirstSight(state, state.currentLocation, true);
     const line = `You looked over ${f.place}. ${onceSaid(state, descriptorSentence(sight))} ${onceSaid(state, peopleHereSentence(f.present))}`;
     if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
@@ -2172,8 +2174,9 @@ function topicAdvancePool(
   playerInput?: string
 ): string[] {
   const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
-  const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
-  const here = herePhrase(where);
+  const whereNamed = pagePlace(state, packet?.location || state.currentLocation || '');
+  const where = whereNamed || 'this place';
+  const here = whereNamed ? herePhrase(whereNamed) : 'this place';
   const head = castHead(state, packet);
   const pv = lastResortPov(state, packet);
   const recent = (state.log ?? [])
@@ -2182,7 +2185,7 @@ function topicAdvancePool(
     .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
   const salt = (state.turn ?? 0) + act.length;
   const facts = ledgerPlaceFacts(state);
-  const placeName = facts.place;
+  const placeName = pagePlace(state, facts.place) || 'this place';
   const desc = descriptorSentence(facts.descriptor);
   const people = facts.present.length ? listNames(facts.present) : (state.turn ?? 0) <= 3 ? head : '';
   const peopleLine = people
@@ -2216,9 +2219,10 @@ function topicAdvancePool(
   // The travel engine's commit this turn decides arrived vs set out, whatever words the player used.
   const committedArrival = packet?.outcome === 'arrived';
   const committedSetOut = packet?.outcome === 'set out';
-  const journeyTo = committedSetOut ? (state.journey?.to ?? '').replace(/\s+/g, ' ').trim() : '';
+  const journeyTo = committedSetOut ? pagePlace(state, state.journey?.to ?? '') : '';
   const dest = graphHit?.name || hubHit?.name || journeyTo || destFromAct(act, state);
-  const setOutFrom = committedSetOut && state.journey?.from ? herePhrase(state.journey.from) : here;
+  const fromNamed = committedSetOut ? pagePlace(state, state.journey?.from ?? '') : '';
+  const setOutFrom = fromNamed ? herePhrase(fromNamed) : here;
   const padDest = (
     graphHit?.name
     || hubHit?.name
@@ -2254,13 +2258,12 @@ function topicAdvancePool(
     .replace(/\s+/g, ' ')
     .trim();
   const arriveHub = arrived && shortDest ? matchHub(hubsForBibleId(state.campaignBibleId), shortDest) : null;
-  const arriveHere = arriveHub?.name ?? (arrived && shortDest ? herePhrase(shortDest) : here);
-  const arriveDesc = descriptorSentence(arrived && shortDest ? placeFirstSight(state, arriveHub?.name ?? shortDest) : '');
-  const stillAtOrigin = !!arriveHub && !placeName.toLowerCase().includes(arriveHub.name.toLowerCase());
-  const behindPeople = facts.leftBehind.length ? facts.leftBehind : stillAtOrigin ? facts.present : [];
-  const behindFrom = facts.leftBehind.length ? facts.leftFrom || 'the last place' : placeName;
-  const behindLine = behindPeople.length
-    ? `${listNames(behindPeople)} stayed ${stayedPreposition(behindFrom)} ${behindFrom}.`
+  const arriveNamed = pagePlace(state, arriveHub?.name ?? (arrived ? shortDest : ''));
+  const arriveHere = arriveNamed ? herePhrase(arriveNamed) : here;
+  const arriveDesc = descriptorSentence(arriveNamed ? placeFirstSight(state, arriveHub?.name ?? shortDest) : '');
+  const behindPlace = facts.leftBehind.length ? pagePlace(state, facts.leftFrom) : '';
+  const behindLine = behindPlace
+    ? `${listNames(facts.leftBehind)} stayed ${stayedPreposition(behindPlace)} ${behindPlace}.`
     : '';
   const go = arrived
     ? [
@@ -2403,8 +2406,11 @@ export function lastResortStoryBody(
   }
   const named = !!lockedOpeningPcName(state);
   const lastGm = lastCommittedGmBody(state);
-  // RC-N3b: the turn's own record (travel leg, camp, meeting result) is the page before any player-word or look line.
-  const record = lastResortUsable(state, travelBeatFact(state), lastGm);
+  // The turn's committed record (travel beat and engine receipts) is one page, before any player-word line.
+  const recordSource = [travelBeatFact(state), packet?.engineResult || state.completedEvent?.engineResult || '']
+    .filter(Boolean)
+    .join(' ');
+  const record = lastResortUsable(state, writerEngineResult(recordSource), lastGm);
   if (record) return { prose: sanitizeLockedNameBeat(state, record), status: 'Writer page blocked — painted from the turn record' };
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')

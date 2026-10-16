@@ -243,6 +243,7 @@ describe('27d one record per NPC', () => {
     const behind = spState({
       turn: 6,
       currentLocation: 'Cinderwake Trail',
+      previousLocationSheet: { name: 'Ash Court' } as GameState['previousLocationSheet'],
       sceneFacts: { ...emptySceneFacts(6), present: [], leftBehind: entries, indoor: false },
     });
     const fromLeftBehind = ledgerActionStitch(behind, 'Travel toward Lowmarket');
@@ -251,10 +252,11 @@ describe('27d one record per NPC', () => {
     const atOrigin = spState({
       turn: 6,
       currentLocation: 'Cinderwake Trail',
-      sceneFacts: { ...emptySceneFacts(6), present: entries, indoor: false },
+      previousLocationSheet: { name: 'On the road between places' } as GameState['previousLocationSheet'],
+      sceneFacts: { ...emptySceneFacts(6), present: entries, leftBehind: entries, indoor: false },
     });
     const fromPresent = ledgerActionStitch(atOrigin, 'Travel toward Lowmarket');
-    expect(fromPresent.match(/([A-Z][^.]*?) stayed/)?.[1]).toBe('Brother Oren and Kessa Cinder');
+    expect(fromPresent).not.toMatch(/stayed/);
   });
 
   it('rememberPlayerName leaves unmet records unchanged', () => {

@@ -59,9 +59,62 @@ export function writerTravelFact(receipt: string): string | null {
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
 
-/** Plain Travel: → writer form. Not inside "Extended Travel:" (q31-L4). */
+/** Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4). */
 export function writerEngineResult(fact: string): string {
-  return (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  const parts = travel.split('. ');
+  const out: string[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
+    while (s.includes('  ')) s = s.split('  ').join(' ');
+    if (!s || isRoadLabel(s)) continue;
+    const roomHead = 'Dungeon room: ';
+    if (s.startsWith(roomHead) && !s.startsWith('Dungeon room: none')) {
+      const body = s.endsWith('.') ? s.slice(0, -1) : s;
+      const mark = ', inside ';
+      const cut = body.indexOf(mark);
+      if (cut > roomHead.length) {
+        const room = body.slice(roomHead.length, cut);
+        const inside = body.slice(cut + mark.length);
+        if (room && inside) {
+          out.push(`You stood in ${room} inside ${inside}.`);
+          continue;
+        }
+      }
+    }
+    const waysHead = 'Ways on: ';
+    if (s.startsWith(waysHead)) {
+      const body = (s.endsWith('.') ? s.slice(0, -1) : s).slice(waysHead.length);
+      const names: string[] = [];
+      const raw = body.split(',');
+      for (let w = 0; w < raw.length; w++) {
+        let n = raw[w]!.trim();
+        const paren = n.indexOf(' (');
+        if (paren >= 0) n = n.slice(0, paren).trim();
+        if (n && !isRoadLabel(n)) names.push(n);
+      }
+      if (names.length === 1) out.push(`A way led on to ${names[0]}.`);
+      else if (names.length > 1) out.push(`Ways led on to ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}.`);
+      continue;
+    }
+    if (s.startsWith('Rest:')) {
+      const low = s.toLowerCase();
+      const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
+      const hpAt = s.indexOf('HP ');
+      if (hpAt >= 0) {
+        const bits = s.slice(hpAt + 3).trim().split(' ');
+        const to = (bits[2] ?? '').split('(')[0] ?? '';
+        if (bits[0] && to && (bits[1] === '→' || bits[1] === '->' || bits[1] === 'to')) {
+          out.push(`You took a ${kind} and your hurts eased (${bits[0]} to ${to}).`);
+          continue;
+        }
+      }
+      out.push(`You took a ${kind}.`);
+      continue;
+    }
+    out.push(s.endsWith('.') ? s : `${s}.`);
+  }
+  return out.join(' ');
 }
 
 export function isJourneyUnderway(state: Pick<GameState, 'journey'>): boolean {
