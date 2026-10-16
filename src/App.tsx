@@ -1,4 +1,5 @@
 import { shouldUseComicGrid } from '@/game/comicImagePrompt';
+import { promiseViews, questTargetViews } from '@/game/questView';
 import { visibleJournalQuests } from '@/game/questPlay';
 import { isExplorableDungeon } from '@/game/placeAuthority';
 import { isAloneArrivalOpening } from '@/game/openingEstablishment';
@@ -528,6 +529,8 @@ export default function App() {
           onClose={() => setShowQuestLog(false)}
           quests={state ? visibleJournalQuests(state) : []}
           choices={state?.choiceJournal ?? []}
+          targets={state ? questTargetViews(state) : {}}
+          promises={state ? promiseViews(state) : []}
         />
       </Suspense>
 
