@@ -31,6 +31,10 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^Loot:\s*(.+)$/i, (m) => `Loot — ${lootBody(m[1]!)}.`],
   [/^Companion:\s*(.+)$/i, (m) => `Party — ${end(m[1]!)}.`],
   [/^Floor:\s*(.+)$/i, (m) => `Floor — ${end(m[1]!)}.`],
+  // Order K: commitments the engine settled (promise, deal or agreement).
+  [/^(Promise|Deal|Agreement) kept:\s*(.+)$/i, (m) => `${m[1]} kept — ${end(m[2]!)}.`],
+  [/^(Promise|Deal|Agreement) broken:\s*(.+)$/i, (m) => `${m[1]} broken — ${end(m[2]!)}.`],
+  [/^(Promise|Deal|Agreement) expired:\s*(.+)$/i, (m) => `${m[1]} expired — ${end(m[2]!)}.`],
 ];
 
 export function systemNotice(line: string): string {

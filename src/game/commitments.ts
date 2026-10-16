@@ -7,6 +7,7 @@
  * deal), so the engine can later decide kept or broken.
  */
 import type { Commitment, GameState } from './types';
+import { shiftStoredRelationship } from './npcRelationships';
 
 /** Trust moved when a commitment is kept or broken (the existing PromiseRecord deltas). */
 export const COMMITMENT_TRUST = { keep: 5, break: -8 } as const;
@@ -80,4 +81,72 @@ export function recordTurnCommitments(state: GameState): GameState {
   }
   if (!changed) return state;
   return { ...state, commitments: list, ...(ledger && deals !== ledger.deals ? { worldLedger: { ...ledger, deals: deals! } } : {}) };
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// K2: the engine check. It runs every COMMITMENT_CHECK_EVERY turns and on any turn whose record holds an event
+// (quest complete/fail, combat, an item change, travel). The engine decides; prose never moves a commitment.
+
+export const COMMITMENT_CHECK_EVERY = 3;
+
+const EVENT_KINDS: ReadonlySet<string> = new Set([
+  'quest_complete',
+  'quest_fail',
+  'combat',
+  'inventory_gain',
+  'inventory_loss',
+  'location',
+]);
+
+type Verdict = 'kept' | 'broken' | 'impossible' | 'expired' | null;
+
+function verdict(state: GameState, c: Commitment, turn: number): Verdict {
+  const cond = c.condition;
+  if (cond?.type === 'quest-complete') {
+    const q = (state.quests ?? []).find((x) => x.id === cond.questId);
+    if (q?.status === 'completed') return 'kept';
+    if (q?.status === 'failed') return 'broken';
+    if (!q) return 'impossible';
+  }
+  if (c.dueTurn != null && turn > c.dueTurn) return 'expired';
+  return null;
+}
+
+/** The status line for a settled commitment ("Promise kept: You have fulfilled your promise to Joe Bloggs."). */
+export function commitmentStatusLine(c: Commitment, status: Exclude<Verdict, null>): string {
+  const kind = c.kind === 'deal' ? 'Deal' : c.kind === 'agreement' ? 'Agreement' : 'Promise';
+  const noun = kind.toLowerCase();
+  const to = c.to ?? 'them';
+  if (status === 'kept') return `${kind} kept: You have fulfilled your ${noun} to ${to}.`;
+  if (status === 'expired') return `${kind} expired: Your ${noun} to ${to} ran out of time.`;
+  if (status === 'impossible') return `${kind} broken: Your ${noun} to ${to} can no longer be kept.`;
+  return `${kind} broken: You have broken your ${noun} to ${to}.`;
+}
+
+/** Check open commitments against the state; settle the ones the engine can decide, move trust, write status lines. */
+export function checkCommitments(state: GameState): { state: GameState; lines: string[] } {
+  const open = openCommitments(state);
+  if (!open.length) return { state, lines: [] };
+  const turn = state.turn ?? 0;
+  const event = (state.stateTxLog ?? []).some((t) => t.turn === turn && EVENT_KINDS.has(t.kind));
+  const lines: string[] = [];
+  let rels = state.arcDirector?.npcRelationships;
+  let changed = false;
+  const list = (state.commitments ?? []).map((c) => {
+    if (c.status !== 'open') return c;
+    const due = turn - (c.checkedTurn ?? c.madeTurn) >= COMMITMENT_CHECK_EVERY;
+    if (!event && !due) return c;
+    changed = true;
+    const v = verdict(state, c, turn);
+    if (!v) return { ...c, checkedTurn: turn };
+    lines.push(commitmentStatusLine(c, v));
+    const delta = v === 'kept' ? c.trustDeltaOnKeep : v === 'broken' || v === 'expired' ? c.trustDeltaOnBreak : 0;
+    if (delta && c.to && c.to !== 'player' && state.arcDirector) {
+      rels = shiftStoredRelationship(rels, c.to, { trust: delta }, turn, v === 'kept' ? 'favor' : 'betrayal').list;
+    }
+    return { ...c, status: v, checkedTurn: turn };
+  });
+  if (!changed) return { state, lines };
+  const arc = state.arcDirector && rels !== state.arcDirector.npcRelationships ? { arcDirector: { ...state.arcDirector, npcRelationships: rels } } : {};
+  return { state: { ...state, commitments: list, ...arc }, lines };
 }
