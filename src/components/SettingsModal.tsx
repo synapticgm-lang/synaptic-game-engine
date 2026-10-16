@@ -853,7 +853,18 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               ))}
             </div>
           </Section>
-          {/* ACC-1b controls */}
+          <Section icon={<Eye size={16} />} title="Contrast" visible={activeTab === 'accessibility'}>
+            <ToggleRow
+              icon={<Eye size={15} />}
+              label="High contrast"
+              description="White text on black, brighter outlines on buttons, and no pictures behind the story text."
+              checked={!!draft.highContrast}
+              onChange={(v) => {
+                update('highContrast', v);
+                applyAccessibilityToDocument({ ...draft, highContrast: v });
+              }}
+            />
+          </Section>
           {/* ACC-1c controls */}
           {/* ACC-1d controls */}
 
