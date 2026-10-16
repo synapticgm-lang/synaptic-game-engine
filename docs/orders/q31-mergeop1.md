@@ -24,9 +24,11 @@ The 6-word copy check stays (`copiesOpenerIdea`, `openerIdeas.ts:54`). Its two r
 
 ## ruleCount TOTAL
 
-Clean HEAD before the merge (worktree `.tmp-wt-mergeop1`): files 486, lines 162684, regex 6901, newRegExp 378, lists 1187 (6246), fns 11728.
+Clean HEAD before the merge (worktree `.tmp-wt-mergeop1`, removed after): files 486, lines 162684, regex 6901, newRegExp 378, lists 1187 (6246), fns 11728.
 
-After this commit (worktree removed after the count): see the ship section if the after-count differs. regex, newRegExp, and lists must match the before line. Files, lines, and functions rise with `openerIdeas.ts` and `roadMeetingOpenerLines`.
+This commit (worktree `.tmp-wt-mergeop1c`, removed after): files 487, lines 162785, regex 6901, newRegExp 378, lists 1187 (6246), fns 11738.
+
+regex, newRegExp, and lists match. Files, lines, and functions rise with `openerIdeas.ts` and `roadMeetingOpenerLines` (ten functions: the idea helpers, the `find` callback, and the backed-line reader).
 
 ## Gates
 
