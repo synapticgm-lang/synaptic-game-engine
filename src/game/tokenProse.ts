@@ -769,6 +769,36 @@ function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boole
 }
 
 /**
+ * P-5d — a capitalised name standing where a person stands: right after a comma, semicolon, dash, "and" or "but",
+ * and followed by a lowercase word (", Mara Voss watched the gate"). Grammar only, no word list. A name after a
+ * preposition or article ("from Ulf", "the Ash Gate") is not read as a person: it may be a place, and invented
+ * places stay refused so the map (world atlas, travel, currentLocation) stays the only place authority.
+ */
+const NAMED_PERSON = /(?<=(?:[,;]|[\u2013\u2014]|\b(?:and|but))\s+)([A-Z][a-z'\u2019-]+(?:\s+[A-Z][a-z'\u2019-]+)?)(?=\s+[a-z])/g;
+
+const nameWords = (n: string) => n.split(/[\s\u2013\u2014-]+/).map((w) => w.replace(/['\u2019]s$/, '')).filter((w) => w.length >= 3 && /^[A-Z]/.test(w));
+
+/** Named people a line introduces; a name sharing a word with a known person's name clashes and is left out. */
+export function namedPersonCandidates(text: string, knownNames: readonly string[]): { names: string[]; clash: boolean } {
+  const known = new Set(knownNames.flatMap(nameWords));
+  const full = new Set(knownNames.map((n) => n.toLowerCase()));
+  const names: string[] = [];
+  let clash = false;
+  for (const m of (text ?? '').matchAll(NAMED_PERSON)) {
+    const name = m[1]!;
+    if (name === 'I' || full.has(name.toLowerCase())) continue;
+    if (nameWords(name).some((w) => known.has(w))) clash = true;
+    else names.push(name);
+  }
+  return { names: [...new Set(names)], clash };
+}
+
+/** P-5d — named people a line introduces that no known name holds, to register as cast. */
+export function introducedNamedPeople(text: string, knownNames: readonly string[]): string[] {
+  return namedPersonCandidates(text, knownNames).names;
+}
+
+/**
  * A capital the writer was never handed ('capital'). P-5a/c: a role person bound to nobody no longer fails; the
  * writer may introduce one and it joins the cast (`registerWriterIntroductions`).
  */
@@ -791,6 +821,10 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
   for (const name of [...new Set([...whole, ...parts])].sort((a, b) => b.length - a.length)) {
     capText = capText.split(name).join('·');
   }
+  // P-5d: an invented named person who clashes with no known name is the writer's licence; it is registered.
+  const people = namedPersonCandidates(capText, [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean));
+  if (people.clash) return 'capital';
+  for (const name of people.names) capText = capText.split(name).join('someone');
   if (lineHasMidSentenceCapital(capText)) return 'capital';
   return null;
 }

@@ -4,15 +4,21 @@
  * things it introduced ("found a brass key") join the scene's props, so later turns track them like seeded ones.
  * Things stay scene props: in tabletop only SRD gear enters the inventory, through the engine.
  */
-import { introducedRolePeople, introducedThings } from './tokenProse';
+import { introducedNamedPeople, introducedRolePeople, introducedThings } from './tokenProse';
 import type { GameState, NpcMemory } from './types';
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function registerWriterIntroductions(state: GameState, narrative: string): GameState {
+  const known = [
+    state.character?.name ?? '',
+    ...(state.npcMemories ?? []).map((m) => m.npcName),
+    ...(state.sceneFacts?.present ?? []),
+  ].filter(Boolean);
+  const named = introducedNamedPeople(narrative, known);
   const people = introducedRolePeople(narrative);
   const things = introducedThings(narrative);
-  if (!people.length && !things.length) return state;
+  if (!people.length && !things.length && !named.length) return state;
   const place = state.currentLocation ?? 'here';
   const memories = [...(state.npcMemories ?? [])];
   for (const role of people) {
@@ -30,6 +36,11 @@ export function registerWriterIntroductions(state: GameState, narrative: string)
       lastSeenTurn: state.turn,
     };
     memories.push(rec);
+  }
+  for (const name of named) {
+    const npcId = `writer:${slug(place)}:${slug(name)}`;
+    if (memories.some((m) => m.npcId === npcId)) continue;
+    memories.push({ npcId, npcName: name, disposition: 'neutral', facts: [`Introduced by the story at ${place} on turn ${state.turn}.`], lastSeenTurn: state.turn });
   }
   let sceneFacts = state.sceneFacts;
   if (sceneFacts && things.length) {
