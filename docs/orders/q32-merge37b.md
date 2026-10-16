@@ -62,4 +62,6 @@ A duration claim ("a few hours") checked against the record's hours needs a dura
 
 ## Ship
 
-Stamp `2026-10-16z14`. No edge file changed, so `gm-turn` was not deployed.
+Stamp `2026-10-16z14` is on `main` (`41519d51`). No edge file changed, so `gm-turn` was not deployed.
+
+The git push started a production build. Live `https://www.synapticgm.com/version.json` is `2026-10-16z14`.
