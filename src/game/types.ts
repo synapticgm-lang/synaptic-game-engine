@@ -1,4 +1,5 @@
 import type { CampaignArchetype } from './archetypes';
+import type { AccessibilitySettings } from './accessibility';
 import type { ActiveDungeonState } from './mapEngine';
 import type { ComicTextAnchor } from '../types/comicScript';
 
@@ -1967,7 +1968,8 @@ export const ART_STYLE_PRESETS: Array<{ value: ArtStylePreset; label: string; de
   { value: 'ink-wash-sumi', label: 'Sumi Ink Wash', description: 'East Asian brush & wash', keywords: 'sumi-e ink wash, expressive brush strokes, misty negative space, east asian ink painting comic aesthetic' },
 ];
 
-export interface Settings {
+/** ACC-1: accessibility fields live in AccessibilitySettings (accessibility.ts). */
+export interface Settings extends AccessibilitySettings {
   ttsEnabled: boolean;
   /** Browser speechSynthesis voiceURI. Empty = auto (en-US / en-GB / first English). */
   ttsVoiceURI: string;

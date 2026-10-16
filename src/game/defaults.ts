@@ -1,5 +1,6 @@
 import type { Container, GameState, EngineMode, Item, Settings } from './types';
 import { getDefaultArchetype, type CampaignArchetype } from './archetypes';
+import { ACCESSIBILITY_DEFAULTS } from './accessibility';
 import { formatCampaignStoryName } from '@/data/campaigns';
 import { emptyWorldLedger } from './worldSim';
 import { syncContainerOccupancy } from './inventory';
@@ -178,6 +179,7 @@ export function createInitialState(
 
 export function createDefaultSettings(): Settings {
   return {
+    ...ACCESSIBILITY_DEFAULTS,
     ttsEnabled: false,
     ttsVoiceURI: '',
     sttEnabled: false,

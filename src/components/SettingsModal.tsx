@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical, List } from 'lucide-react';
+import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical, List, Accessibility, Type } from 'lucide-react';
+import { TEXT_SCALE_STEPS, normalizeTextScale, applyAccessibilityToDocument } from '@/game/accessibility';
 import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey } from '@/game/apiValidation';
@@ -72,10 +73,11 @@ interface Props {
   accountEmail?: string | null;
 }
 
-type SettingsTab = 'general' | 'narrative' | 'mechanics' | 'visuals';
+type SettingsTab = 'general' | 'accessibility' | 'narrative' | 'mechanics' | 'visuals';
 
 const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'general', label: 'General / Core' },
+  { id: 'accessibility', label: 'Accessibility' },
   { id: 'narrative', label: 'Narrative & Tone' },
   { id: 'mechanics', label: 'Mechanics & Stats' },
   { id: 'visuals', label: 'Visuals' },
@@ -126,6 +128,12 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const [pinUnlock, setPinUnlock] = useState('');
   const [pinError, setPinError] = useState('');
   const [pinDisclaimerAccepted, setPinDisclaimerAccepted] = useState(false);
+
+  // ACC-1: accessibility choices preview live; on close, the saved settings are re-applied
+  // (App re-applies again if they were saved), so an unsaved preview never sticks.
+  const savedSettingsRef = useRef(settings);
+  savedSettingsRef.current = settings;
+  useEffect(() => () => applyAccessibilityToDocument(savedSettingsRef.current), []);
 
   const update = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setDraft((prev) => {
@@ -826,6 +834,28 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               }}
             />
           </Section>
+
+          {/* ACC-1: Accessibility tab. Each setting applies at once (live preview) and is saved. */}
+          <Section icon={<Accessibility size={16} />} title="Text size" visible={activeTab === 'accessibility'}>
+            <p className="mb-2 text-xs text-slate-400">Makes all text bigger, including menus and pop-ups.</p>
+            <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label="Text size">
+              {TEXT_SCALE_STEPS.map((step) => (
+                <ChoiceCard
+                  key={step}
+                  icon={<Type size={14} />}
+                  label={`${step}%`}
+                  selected={normalizeTextScale(draft.textScale) === step}
+                  onClick={() => {
+                    update('textScale', step);
+                    applyAccessibilityToDocument({ ...draft, textScale: step });
+                  }}
+                />
+              ))}
+            </div>
+          </Section>
+          {/* ACC-1b controls */}
+          {/* ACC-1c controls */}
+          {/* ACC-1d controls */}
 
           {/* Dice display (tabletop fantasy only — LitRPG / story RPG don't use the dice tray) */}
           {diceScope.show && (
