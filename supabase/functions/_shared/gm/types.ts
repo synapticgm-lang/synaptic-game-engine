@@ -34,6 +34,10 @@ export interface Item {
   iconFailed?: boolean;
   /** Tabletop: the wearer is attuned to this magic item (rules/magicItems). */
   attuned?: boolean;
+  /** Tabletop: turn the PC learned this item's properties (Identify or a Short Rest); same rest cannot attune. */
+  identifiedTurn?: number;
+  /** Tabletop: cursed magic item — voluntary end of attunement is refused until the curse is broken. */
+  cursed?: boolean;
 }
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'material' | 'container' | 'accessory' | 'quest';
@@ -968,6 +972,8 @@ export interface GameState {
   hitDiceSpent?: number;
   /** Tabletop: every oracle question asked and the d100 that answered it (rules/oracle). */
   oracleLog?: OracleEntry[];
+  /** Tabletop: attuned items away (dropped/sold); count to the 3-cap until 24 h world clock (SRD Attunement). */
+  awayAttuned?: { id: string; name: string; since: number }[];
   /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
   memorableMoments?: MemorableMomentState;
   /**
