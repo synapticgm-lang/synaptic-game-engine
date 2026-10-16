@@ -66,6 +66,8 @@ None for this merge. TT37-N4, TT37-N3b, and TT37-S1 are later commits on `n4fix`
 
 ## Ship
 
-Stamp `2026-10-16z13` is the commit after the merge. No edge file changed, so `gm-turn` was not deployed. Live `version.json` is checked after the push.
+Stamp `2026-10-16z13` is on `main` (`6a72af3f`). No edge file changed, so `gm-turn` was not deployed.
+
+The git push started a production build. Live `https://www.synapticgm.com/version.json` is `2026-10-16z13`.
 
 TT_DONE
