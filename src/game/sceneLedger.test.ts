@@ -54,6 +54,9 @@ describe('scene ledger on the place', () => {
     );
     const state = base({
       npcMemories: memories,
+      commitments: [
+        { promiseId: 'quest:glass', madeTurn: 2, description: 'Bring the glass back', status: 'open', trustDeltaOnKeep: 5, trustDeltaOnBreak: -8, beneficiaries: ['Ilyra Fen'], witnesses: [], kind: 'promise', by: 'player', to: 'Ilyra Fen' },
+      ],
       campaignMemory: {
         pins: [],
         consequences: [
@@ -68,7 +71,7 @@ describe('scene ledger on the place', () => {
     const ledger = once.places![0]!.sceneLedger!;
     expect(ledger.openedTurn).toBe(4);
     expect(ledger.said).toEqual(['The March keeps what falls into it.']);
-    expect(ledger.promises).toEqual(['Open thread (T2): I will bring the glass back']);
+    expect(ledger.promises).toEqual(['Promise to Ilyra Fen: Bring the glass back']);
     expect(ledger.threats).toEqual(['Open thread (T2): they warn the water takes names']);
     expect(ledger.asked).toEqual([{ q: 'Open ask (T3): where does the glass go', answered: false }]);
     expect(ledger.spot).toBe('the bank');
@@ -128,6 +131,9 @@ describe('scene ledger writer view and repeat gate (Order M steps 3–4)', () =>
     );
     let state = base({
       npcMemories: memories,
+      commitments: [
+        { promiseId: 'quest:glass', madeTurn: 2, description: 'Bring the glass back', status: 'open', trustDeltaOnKeep: 5, trustDeltaOnBreak: -8, beneficiaries: ['Ilyra Fen'], witnesses: [], kind: 'promise', by: 'player', to: 'Ilyra Fen' },
+      ],
       campaignMemory: {
         pins: [],
         consequences: [
