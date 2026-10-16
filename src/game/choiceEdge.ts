@@ -211,7 +211,9 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     if (restEdge) edges.push(restEdge);
     const cast = tabletopCastChip(state);
     if (cast) edges.push({ id: 'dnd-cast', label: cast, kind: 'inspect', risk: 'low' });
-    for (const shop of shopChips(state)) edges.push({ id: `dnd-shop-${shop.kind}`, label: shop.label, kind: 'talk', risk: 'low' });
+    for (const shop of shopChips(state)) {
+      edges.push({ id: `dnd-shop-${shop.kind}-${shop.itemId ?? shop.item}`, label: shop.label, kind: 'talk', risk: 'low' });
+    }
   } else if (restEdge) {
     edges.push(restEdge);
   }

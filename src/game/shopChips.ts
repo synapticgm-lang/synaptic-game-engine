@@ -17,7 +17,6 @@ export interface ShopChip {
 
 const BUY_ROWS = 2;
 const SELL_ROWS = 2;
-const key = (s: string) => (s ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 
 export function shopChips(state: GameState): ShopChip[] {
   if (state.engineMode !== 'dnd' || state.activeEncounter) return [];
@@ -47,9 +46,9 @@ export function shopChips(state: GameState): ShopChip[] {
 
 /** The shop chip the player picked, from this state's own shop chips (null when the pick was not one). */
 export function pickedShopChip(state: GameState, input: string): ShopChip | null {
-  const k = key(input);
+  const k = (input ?? '').trim();
   if (!k) return null;
-  return shopChips(state).find((c) => key(c.label) === k) ?? null;
+  return shopChips(state).find((c) => c.label.trim().toLowerCase() === k.toLowerCase()) ?? null;
 }
 
 /** Run a picked shop chip through buyItem/sellItem; the receipt is the engine fact the writer narrates. */

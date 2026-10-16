@@ -40,7 +40,7 @@ export function chipKindOf(state: GameState, label: string, prose = ''): ChipKin
   return (action && chips.find((c) => c.action === action)?.kind) || null;
 }
 
-function offersKind(state: GameState, offered: string[], kinds: ChipKind[], prose: string): boolean {
+function offersKind(state: GameState, offered: string[], prose: string, ...kinds: ChipKind[]): boolean {
   const pool = engineChips(state, prose).filter((c) => kinds.includes(c.kind));
   const labels = new Set(pool.map((c) => c.label.toLowerCase()));
   const actions = new Set(pool.map((c) => c.action));
@@ -62,11 +62,13 @@ export function checkChipKinds(state: GameState, offered: string[], prose = ''):
     if (!chips.some((c) => round.has(low(c)))) out.push({ kind: 'missing-chip-kind', detail: 'a foe is fighting and no fight chip is offered' });
     return out;
   }
-  if (enumerateLegalEdges(state).length && !offersKind(state, chips, ['exit', 'journey', 'hub'], prose)) {
+  if (enumerateLegalEdges(state).length && !offersKind(state, chips, prose, 'exit', 'journey', 'hub')) {
     out.push({ kind: 'missing-chip-kind', detail: 'this place has exits and no exit chip is offered' });
   }
   for (const npc of presentNpcRecords(state)) {
-    const first = (npc.npcName ?? '').trim().split(/\s+/)[0]?.toLowerCase();
+    const name = (npc.npcName ?? '').trim();
+    const space = name.indexOf(' ');
+    const first = (space < 0 ? name : name.slice(0, space)).toLowerCase();
     if (first && !chips.some((c) => low(c).includes(first))) {
       out.push({ kind: 'missing-chip-kind', detail: `${npc.npcName} is here and no chip talks to them` });
     }
