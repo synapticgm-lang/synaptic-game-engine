@@ -58,12 +58,16 @@ describe('1 — motive lines are seeded when the record is made', () => {
     }
   });
 
-  it('a generated townsperson gets lines on first meet, their sheet motive line first, the same every time', () => {
-    const a = ensureNpcSheet(ck({ npcMemories: [] }), 'Wat Miller', 'Greyhollow Inn').npcMemories!.find((m) => m.npcName === 'Wat Miller')!;
-    const b = ensureNpcSheet(ck({ npcMemories: [] }), 'Wat Miller', 'Greyhollow Inn').npcMemories!.find((m) => m.npcName === 'Wat Miller')!;
-    expect(a.motiveLines!.length).toBeGreaterThanOrEqual(3);
-    expect(a.motiveLines).toEqual(motiveLinesFor(a.sheet!.motive));
-    expect(b.motiveLines).toEqual(a.motiveLines);
+  it('a generated townsperson gets a sheet on first meet; motiveLinesOf derives the same lines every time (no saved copy)', () => {
+    const sa = ensureNpcSheet(ck({ npcMemories: [] }), 'Wat Miller', 'Greyhollow Inn');
+    const sb = ensureNpcSheet(ck({ npcMemories: [] }), 'Wat Miller', 'Greyhollow Inn');
+    const a = sa.npcMemories!.find((m) => m.npcName === 'Wat Miller')!;
+    const b = sb.npcMemories!.find((m) => m.npcName === 'Wat Miller')!;
+    expect(a.sheet).toBeTruthy();
+    expect(a.motiveLines).toBeUndefined();
+    expect(motiveLinesOf(sa, 'Wat Miller')).toEqual(motiveLinesFor(a.sheet!.motive));
+    expect(motiveLinesOf(sb, 'Wat Miller')).toEqual(motiveLinesOf(sa, 'Wat Miller'));
+    expect(b.sheet!.motive).toBe(a.sheet!.motive);
   });
 
   it('cursed-keep roster people get their authored lines; the Entity Below, who cannot be reasoned with, gets none', () => {
@@ -78,7 +82,7 @@ describe('1 — motive lines are seeded when the record is made', () => {
 });
 
 describe('2 — old saves get them on load', () => {
-  it('a saved sheet and a saved roster row with no lines are filled; a second pass changes nothing', () => {
+  it('a sheeted person keeps no saved copy (motiveLinesOf derives); a roster row with no lines is filled; a second pass changes nothing', () => {
     const old = ck({
       npcMemories: [
         memory('Rosel Coyne', { sheet: { job: 'artisan', motive: 'Keep loved ones safe', fear: '', speech: '', secret: '', place: 'town' } }),
@@ -86,7 +90,8 @@ describe('2 — old saves get them on load', () => {
       ],
     });
     const once = withMotiveLines(old, cursedKeep);
-    expect(once.npcMemories![0]!.motiveLines![0]).toBe("I just want the people I care about kept out of harm's way");
+    expect(once.npcMemories![0]!.motiveLines).toBeUndefined();
+    expect(motiveLinesOf(once, 'Rosel Coyne')[0]).toBe("I just want the people I care about kept out of harm's way");
     expect(once.npcMemories![1]!.motiveLines![0]).toBe('I want my daughter back, that is all I want');
     expect(withMotiveLines(once, cursedKeep)).toBe(once);
   });
@@ -199,9 +204,18 @@ describe('5 — road-meeting groups speak their group lines (Wire-in H)', () => 
     expect(motiveAnswer(ck({ npcMemories: [nia] }), ['Nia'])!.line).toBe('"Would you like to be friends?" Nia said.');
   });
 
-  it('an old save with a sheet picks up the new variants on load', () => {
-    const old = ck({ npcMemories: [memory('Rosel Coyne', { sheet: { job: 'artisan', motive: 'Keep loved ones safe', fear: '', speech: '', secret: '', place: 'town' }, motiveLines: ["I just want the people I care about kept out of harm's way"] })] });
-    expect(withMotiveLines(old, cursedKeep).npcMemories![0]!.motiveLines).toEqual(motiveLinesFor('Keep loved ones safe'));
+  it('an old save with a sheet derives the current variants from the sheet (stale saved copy ignored)', () => {
+    const old = ck({
+      npcMemories: [
+        memory('Rosel Coyne', {
+          sheet: { job: 'artisan', motive: 'Keep loved ones safe', fear: '', speech: '', secret: '', place: 'town' },
+          motiveLines: ['stale saved copy that must not win'],
+        }),
+      ],
+    });
+    const loaded = withMotiveLines(old, cursedKeep);
+    expect(loaded.npcMemories![0]!.motiveLines).toEqual(['stale saved copy that must not win']);
+    expect(motiveLinesOf(loaded, 'Rosel Coyne')).toEqual(motiveLinesFor('Keep loved ones safe'));
   });
 });
 

@@ -197,9 +197,8 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     campaignId: state.campaignBibleId,
     roleHint: memory?.roleHint,
   });
-  const motiveLines = motiveLinesFor(sheet.motive);
   if (memory) {
-    return { ...state, npcMemories: list.map((m) => (m === memory ? { ...m, sheet, motiveLines } : m)) };
+    return { ...state, npcMemories: list.map((m) => (m === memory ? { ...m, sheet } : m)) };
   }
   const fresh: NpcMemory = {
     npcId: `town-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
@@ -209,7 +208,6 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     lastSeenTurn: state.turn,
     met: true,
     sheet,
-    motiveLines,
   };
   return { ...state, npcMemories: [...list, fresh] };
 }
@@ -235,12 +233,13 @@ function memoryOf(state: GameState, name: string): NpcMemory | undefined {
 }
 
 /**
- * What this person may say about what they want: their saved motive lines, else what the road meeting they stand
- * for says. A group (thugs, a camp) speaks its own motive's lines, picked from the trip and stretch so a replay
- * says the same; the dead say nothing; anyone else says the meeting's want.
+ * What this person may say: sheet motive (derived), else saved motiveLines (authored/roster), else the road
+ * meeting. Groups speak group lines (keyedRng); the dead say nothing; else the meeting want.
  */
 export function motiveLinesOf(state: GameState, name: string): string[] {
-  const saved = memoryOf(state, name)?.motiveLines ?? [];
+  const memory = memoryOf(state, name);
+  if (memory?.sheet?.motive) return motiveLinesFor(memory.sheet.motive);
+  const saved = memory?.motiveLines ?? [];
   if (saved.length) return saved;
   const j = state.journey;
   const meeting = roadMeetingSpeaker(j, name);
@@ -267,15 +266,15 @@ export function motiveAnswer(state: GameState, names: string[]): { line: string;
   return null;
 }
 
-/** Load: a sheeted person's lines follow their sheet; anyone else with no lines gets their bible roster entry's. */
+/** Load: roster rows with no lines get their bible entry's. Sheeted: motiveLinesOf derives (no copy). */
 export function withMotiveLines(state: GameState, bible: CampaignBible | null | undefined): GameState {
   let changed = false;
   const npcMemories = (state.npcMemories ?? []).map((m) => {
-    if (m.motiveLines?.length && !m.sheet) return m;
+    if (m.sheet || m.motiveLines?.length) return m;
     const names = [m.npcName, ...(m.aliases ?? [])].map((n) => n.trim().toLowerCase());
     const entry = bible?.keyNPCs.find((n) => [n.name, ...(n.aliases ?? [])].some((x) => names.includes(x.trim().toLowerCase())));
-    const motiveLines = m.sheet ? motiveLinesFor(m.sheet.motive) : entry?.motiveLines ?? [];
-    if (!motiveLines.length || motiveLines.join('\n') === (m.motiveLines ?? []).join('\n')) return m;
+    const motiveLines = entry?.motiveLines ?? [];
+    if (!motiveLines.length) return m;
     changed = true;
     return { ...m, motiveLines };
   });

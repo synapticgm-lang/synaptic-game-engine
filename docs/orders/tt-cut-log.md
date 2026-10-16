@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-RCAR1 present means backed (Order RC-AR1)
+
+1. **`src/game/npcSheet.ts` `ensureNpcSheet` copy-on-create of `motiveLines` (lines ~200–201 / fresh record field at parent)** — wrote `motiveLinesFor(sheet.motive)` onto every new sheeted memory. What it did: a second copy of the same lines that townsfolk (`townsfolk.ts`) never wrote, so presence (sheet) and backing (`motiveLines`) diverged. Replaced by `motiveLinesOf` deriving from `memory.sheet` at read time.
+2. **`src/game/npcSheet.ts` `withMotiveLines` load-time patch for sheeted people (lines ~274–277 at parent)** — on load, rewrote `motiveLines` from the sheet for anyone with a sheet. Superseded by the same derive-at-read rule; load now only seeds bible roster / authored rows that have no sheet and no lines.
+3. **`src/game/writerTurn.ts` bug label `'nothing on record for anyone here'`** — renamed to `` `no backed line for ${here.join(', ')}` `` (data-error only once presence implies sheet backing).
+
+---
+
 ## q31-RCK1 only bound chips (Order RC-K1)
 
 1. **`src/game/choicePipeline.ts` `isLegalEnginePad` inferIntent fallback + travel/talk regex + `concreteChoiceObjects` length test (lines ~395-400 at parent)** — admitted a chip when a label-word reader said it was not OTHER, or when it named no concrete object. What it did: let unbound writer/spine labels ("Rob the traveler", "Map the first undercroft door") onto the offered list with no engine action. Replaced by builder `EngineChip { label, action }` membership / same-action+target bind only (`engineChips` + `boundEngineChip`).

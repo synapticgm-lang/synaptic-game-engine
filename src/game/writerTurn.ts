@@ -417,7 +417,7 @@ export async function repairMissingAnswer(
   // Only a backed line may be quoted: what is on record for them, and their own motive lines.
   const backed = new Map(here.map((p): [string, string[]] => [p, [...backedAnswerFacts(check.state, p), ...motiveLinesOf(check.state, p)]]).filter(([, f]) => f.length));
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
-  if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: 'nothing on record for anyone here' } };
+  if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: `no backed line for ${here.join(', ')}` } };
   const speakers = [...backed.keys()];
   const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
   const sent = !!opts.repair && !turn.repairs?.some((r) => !r.bug?.startsWith('unlocated'));
