@@ -59,6 +59,8 @@ None of R1–R16 is the pc-voice check. They stay out of this merge.
 
 ## Ship
 
-Stamp `2026-10-16z7`. No edge file changed.
+Stamp `2026-10-16z7` is on `main` (`2826f9fc`). No edge file changed, so `gm-turn` was not deployed.
 
-TT_DONE
+Vercel project `project` built `2826f9fc`. Vercel project `synaptic-game-engine` (the one that serves www) returned `Deployment rate limited — retry in 24 hours` and was not retried. Live `https://www.synapticgm.com/version.json` is still `2026-10-16z6`.
+
+TT_STOP
