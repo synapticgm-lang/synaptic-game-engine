@@ -2,6 +2,7 @@ import type { CampaignBible } from './types';
 import type { ContentMode, EngineMode } from '@/game/types';
 import { allowsNsfwCatalog } from '@/game/distributionChannel';
 import { sanitizeBibleForPlay } from '@/game/storyDataBoundary';
+import { registerSettingBibles } from '@/game/settingVocabulary';
 export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, OpeningHookCard, MysteryCulprit } from './types';
 
 import { systemIntegration } from './systemIntegration';
@@ -142,6 +143,8 @@ export const RAW_CAMPAIGN_BIBLES: CampaignBible[] = [
 ];
 
 export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = RAW_CAMPAIGN_BIBLES.map((b) => sanitizeBibleForPlay(b));
+// P-5a/c: the bibles are the setting data the off-setting check reads.
+registerSettingBibles(() => ALL_CAMPAIGN_BIBLES);
 
 export function getCampaignBibleById(id: string): CampaignBible | undefined {
   return ALL_CAMPAIGN_BIBLES.find((c) => c.id === id);

@@ -59,21 +59,21 @@ describe('replay bank m47 lap 47', () => {
   });
 
   it('[ds150 T17 | m47 unhanded kit on a person] "the rope at her belt" fails; the parapet line stays', () => {
-    expect(fact(A, 17, 'Tilde Crane stayed back near the stair, and her hand had found the rope at her belt.')).toBe('a thing carried that the scene never handed');
-    expect(A.prose(17)).not.toMatch(/rope at her belt/);
+    expect(fact(A, 17, 'Tilde Crane stayed back near the stair, and her hand had found the rope at her belt.')).toBeNull(); // P-5a/c (John, 2026-10-16): the writer may invent a fitting person or thing; it is registered, not refused.
+    expect(A.prose(17)).toMatch(/rope at her belt/); // P-5a/c: the invented line now stays
     expect(A.prose(17)).toMatch(/leaned her elbows on the parapet/);
     expect(fact(A, 17, 'Tilde Crane stayed back near the stair with her hands on her hips.')).toBeNull();
   });
 
   it('[ds195 T14 | m47 unhanded kit on a person] "her satchel strap across one shoulder" fails; standing by the parapet passes', () => {
-    expect(fact(C, 14, 'Jax stepped back to where Idra Fenwick stood with her satchel strap across one shoulder.')).toBe('a thing carried that the scene never handed');
-    expect(C.prose(14)).not.toMatch(/satchel strap/);
+    expect(fact(C, 14, 'Jax stepped back to where Idra Fenwick stood with her satchel strap across one shoulder.')).toBeNull(); // P-5a/c (John, 2026-10-16): the writer may invent a fitting person or thing; it is registered, not refused.
+    expect(C.prose(14)).toMatch(/satchel strap/); // P-5a/c: the invented line now stays
     expect(fact(C, 14, 'Idra Fenwick stood by the parapet.')).toBeNull();
   });
 
   it('[ds151 T15 | m47 counted group of a role] "Two church guards" are people who are not here', () => {
-    expect(fact(B, 15, 'Two church guards stood near the far archway, and one of them had already turned his head toward Jax.')).toBe('a person who is not here');
-    expect(B.prose(15)).not.toMatch(/Two church guards/);
+    expect(fact(B, 15, 'Two church guards stood near the far archway, and one of them had already turned his head toward Jax.')).toBeNull(); // P-5a/c (John, 2026-10-16): the writer may invent a fitting person or thing; it is registered, not refused.
+    expect(B.prose(15)).toMatch(/Two church guards/); // P-5a/c: the invented line now stays
     expect(fact(B, 15, 'Col Thatch stood near the far archway.')).toBeNull();
   });
 
@@ -95,7 +95,7 @@ describe('replay bank m47 lap 47', () => {
     expect(E.input(3)).toBe('Refuse the work');
     expect(E.after(3).sceneFacts?.present ?? []).toContain('Clerk Brin');
     expect(fact(E, 3, 'The clerk panicked at the refused contract.')).toBeNull();
-    expect(fact(E, 3, 'A guard panicked at the refused contract.'), 'a role nobody here holds still fails').toBe('a person who is not here');
+    expect(fact(E, 3, 'A guard panicked at the refused contract.'), 'an invented role person passes').toBeNull(); // P-5a/c (John, 2026-10-16): the writer may invent a fitting person or thing; it is registered, not refused.
   });
 
   it('[fl151 T8 | m47 answer repair never voices the player] the request says Jax is the player\'s character', () => {

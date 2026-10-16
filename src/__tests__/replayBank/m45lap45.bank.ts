@@ -65,6 +65,7 @@ describe('replay bank m45 lap 45', () => {
     expect((G.turnCheck(3)?.p0 ?? []).filter((f) => f.kind === 'ignored-action')).toEqual([]);
     const s = gateState(G, 3);
     expect(plainLineFactProblem('The handler watched Jax from the doorway.', s, s.completedEvent ?? undefined)).toBeNull();
-    expect(plainLineFactProblem('A clerk watched Jax from the doorway.', s, s.completedEvent ?? undefined), 'a role nobody handed still fails').toBe('a person who is not here');
+    // P-5a/c (John, 2026-10-16): the writer may invent a fitting person or thing; it is registered, not refused.
+    expect(plainLineFactProblem('A clerk watched Jax from the doorway.', s, s.completedEvent ?? undefined), 'an invented role person passes').toBeNull();
   });
 });

@@ -1,3 +1,4 @@
+import { registerWriterIntroductions } from './writerIntroductions';
 import { useCallbackRef } from './useCallbackRef';
 import { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit, Quest, SessionZero } from './types';
@@ -4691,7 +4692,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         combatSummary,
         why: `Player: ${sanitizedInput.slice(0, 120)}`,
       });
-      let mergedState: GameState = stampSceneLedger(record.state, cleanText, handedRefs(record.state));
+      let mergedState: GameState = registerWriterIntroductions(stampSceneLedger(record.state, cleanText, handedRefs(record.state)), cleanText);
       // Engine grants this turn, read from the record (stateTx.commitTurnRecord), plus the arc receipts.
       {
         const allReceipts = [...arcReceipts, ...record.lines];

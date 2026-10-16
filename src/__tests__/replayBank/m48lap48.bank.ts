@@ -98,8 +98,8 @@ describe('replay bank m48 lap 48', () => {
     const s = { ...B.before(18), completedEvent: B.after(18).completedEvent } as GameState;
     const find = (line: string) => plainLineFactProblem(line, s, s.completedEvent ?? undefined);
     expect(find('Jax traced the edges of the metal and found a small iron ring set into the stone beside the frame.'))
-      .toBe('a thing found that the scene never handed');
-    expect(B.prose(18)).not.toMatch(/found a small iron ring/);
+      .toBeNull(); // P-5a/c (John, 2026-10-16): the writer may invent a fitting person or thing; it is registered, not refused.
+    expect(B.prose(18)).toMatch(/found a small iron ring/); // P-5a/c: the invented line now stays
     expect(find('Jax traced the edges of the metal and found the door set flush into the stone.')).toBeNull();
     expect(find('Jax found nothing on the frame.')).toBeNull();
   });
