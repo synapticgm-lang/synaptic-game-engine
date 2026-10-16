@@ -25,6 +25,7 @@ import { aimsAtSelf } from './intentParser';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
 import { readWireBeat, refEnumOf, TOKEN_USES, type WireLineFn } from './tokenBeatSchema';
+import { offSettingWords, isOffSetting } from './settingVocabulary';
 
 export type LineFn = WireLineFn;
 
@@ -461,7 +462,42 @@ export function lineHasUnhandedFind(text: string, handedText: string): boolean {
   return false;
 }
 
+/** The things a line carries on someone or finds: the head word of each, body parts skipped. */
+function thingHeads(text: string): string[] {
+  const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
+  const heads: string[] = [];
+  for (const m of narration.matchAll(CARRIED_THING)) {
+    const head = m[2]!.toLowerCase();
+    if (!BODY_PART.test(head)) heads.push(`${m[1]!.trim()} ${head}`.trim().toLowerCase());
+  }
+  for (const m of narration.matchAll(FOUND_THING)) heads.push(m[1]!.trim().toLowerCase());
+  return heads.filter((h) => (h.split(/\s+/).pop() ?? '').replace(/'s$/, '').length >= 3);
+}
 
+/**
+ * P-5a/c — the writer may invent a thing (John, 2026-10-16), so an unhanded carried or found thing no longer
+ * fails. It fails only when it breaks the setting: its word belongs only to other settings' data
+ * (`offSettingWords`: "a rifle" in a sword-and-sorcery tabletop game). Handed things always pass.
+ */
+export function lineHasOutOfWorldThing(text: string, handedText: string, world?: ReadonlySet<string>): boolean {
+  if (!world) return false;
+  for (const thing of thingHeads(text)) {
+    const head = thing.split(/\s+/).pop()!.replace(/'s$/, '');
+    if (new RegExp(`\\b${escRe(head.replace(/e?s$/, ''))}`).test(handedText)) continue;
+    if (isOffSetting(world, head)) return true;
+  }
+  return false;
+}
+
+/** P-5a/c — things a line introduces (carried on someone, or found), to register as scene props. */
+export function introducedThings(text: string): string[] {
+  return [...new Set(thingHeads(text))];
+}
+
+/**
+ * Lap 49 — a line that opens on a label this turn's own handed facts use ("Dungeon: Jax moved into the hall",
+ * "Travel: back streets between …") pastes the engine record into the story instead of telling it.
+ */
 export function lineOpensOnFactLabel(text: string, handedText: string): boolean {
   const label = (text ?? '').match(/^\s*([A-Za-z]+(?: [a-z]+)?):\s/)?.[1]?.toLowerCase();
   if (!label) return false;
@@ -478,6 +514,21 @@ const roleNounOf = (match: string) => {
 export function handedRoleNouns(packet?: CompletedEventPacket): string[] {
   const found = [...(packet?.engineResult ?? '').matchAll(new RegExp(UNBOUND_ANIMATE.source, 'gi'))];
   return [...new Set(found.map((m) => roleNounOf(m[0])))];
+}
+
+/**
+ * P-5a/c — role people a line introduces ("a sailor coiling rope"), as their role noun, to register as cast.
+ * Detection still uses ROLE_NOUNS (logged as a later cut in tt-cut-log.md).
+ */
+export function introducedRolePeople(text: string): string[] {
+  const s = text ?? '';
+  const out: string[] = [];
+  for (const m of s.matchAll(new RegExp(UNBOUND_ANIMATE.source, 'gi'))) {
+    const rest = s.slice((m.index ?? 0) + m[0].length).match(/^ ([a-z]+)(?:\s+([A-Za-z'-]+))?/);
+    if (rest && isNounAdjunctBefore(rest[1]!, rest[2])) continue;
+    out.push(roleNounOf(m[0]));
+  }
+  return [...new Set(out)];
 }
 
 export function lineHasUnboundAnimate(text: string, handedRoles: readonly string[] = []): boolean {
@@ -648,7 +699,7 @@ export function tokenLineVerdicts(raw: string, state: GameState, packet?: Comple
   const counts = handedCountText(state, packet);
   const said = alreadySaidLines(state, packet);
   for (const line of beat.lines) {
-    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said, state.character?.name, packet?.playerAction);
+    const v = classifyTokenLine(line, beat, enumRefs, handedProperNames(state, packet), counts, said, state.character?.name, packet?.playerAction, offSettingWords(state));
     out.push(`${line.fn}:${v.ok ? 'ok' : v.reason ?? 'bad'}`);
   }
   return out;
@@ -732,8 +783,42 @@ export function lineVoicesPc(text: string, pcName?: string, playerWords?: string
   return false;
 }
 
-/** A capital the writer was never handed, or a role person bound to nobody ('capital' / 'unbound-animate'). */
-function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[]): 'capital' | 'unbound-animate' | null {
+
+/**
+ * P-5d — a capitalised name standing where a person stands: right after a comma, semicolon, dash, "and" or "but",
+ * and followed by a lowercase word (", Mara Voss watched the gate"). Grammar only, no word list. A name after a
+ * preposition or article ("from Ulf", "the Ash Gate") is not read as a person: it may be a place, and invented
+ * places stay refused so the map (world atlas, travel, currentLocation) stays the only place authority.
+ */
+const NAMED_PERSON = /(?<=(?:[,;]|[\u2013\u2014]|\b(?:and|but))\s+)([A-Z][a-z'\u2019-]+(?:\s+[A-Z][a-z'\u2019-]+)?)(?=\s+[a-z])/g;
+
+const nameWords = (n: string) => n.split(/[\s\u2013\u2014-]+/).map((w) => w.replace(/['\u2019]s$/, '')).filter((w) => w.length >= 3 && /^[A-Z]/.test(w));
+
+/** Named people a line introduces; a name sharing a word with a known person's name clashes and is left out. */
+export function namedPersonCandidates(text: string, knownNames: readonly string[]): { names: string[]; clash: boolean } {
+  const known = new Set(knownNames.flatMap(nameWords));
+  const full = new Set(knownNames.map((n) => n.toLowerCase()));
+  const names: string[] = [];
+  let clash = false;
+  for (const m of (text ?? '').matchAll(NAMED_PERSON)) {
+    const name = m[1]!;
+    if (name === 'I' || full.has(name.toLowerCase())) continue;
+    if (nameWords(name).some((w) => known.has(w))) clash = true;
+    else names.push(name);
+  }
+  return { names: [...new Set(names)], clash };
+}
+
+/** P-5d — named people a line introduces that no known name holds, to register as cast. */
+export function introducedNamedPeople(text: string, knownNames: readonly string[]): string[] {
+  return namedPersonCandidates(text, knownNames).names;
+}
+
+/**
+ * A capital the writer was never handed ('capital'). P-5a/c: a role person bound to nobody no longer fails; the
+ * writer may introduce one and it joins the cast (`registerWriterIntroductions`).
+ */
+function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[]): 'capital' | null {
   // 28g — names the ledger already knows (REF ENUM, places, exits, the player) are not inventions.
   // A handed name typed with the other apostrophe ("Summons' Price" for "Summons’ Price") is the same name.
   const apos = (s: string) => s.replace(/[\u2018\u2019]/g, "'");
@@ -752,13 +837,12 @@ function lineNameReason(text: string, enumRefs: LedgerRef[], knownNames: string[
   for (const name of [...new Set([...whole, ...parts])].sort((a, b) => b.length - a.length)) {
     capText = capText.split(name).join('·');
   }
+  // P-5d: an invented named person who clashes with no known name is the writer's licence; it is registered.
+  const people = namedPersonCandidates(capText, [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean));
+  if (people.clash) return 'capital';
+  for (const name of people.names) capText = capText.split(name).join('someone');
   if (lineHasMidSentenceCapital(capText)) return 'capital';
-  let animateText = text;
-  for (const name of [...enumRefs.map((r) => r.display), ...knownNames].filter(Boolean).sort((a, b) => b.length - a.length)) {
-    // Whole words only: a held "Close" is not the "close" in "close-eyed".
-    animateText = animateText.replace(new RegExp(`(?<![\\w'-])${escRe(name)}(?![\\w'-])`, 'gi'), '·');
-  }
-  return lineHasUnboundAnimate(animateText, knownNames.map((n) => n.toLowerCase())) ? 'unbound-animate' : null;
+  return null;
 }
 
 
@@ -767,9 +851,8 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   if (aimsAtSelf(text)) return 'a self-harm method (a Line: fade instead)';
   if (lineVoicesPc(text, state.character?.name, packet?.playerAction)) return 'words put in the player\'s mouth';
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
-  if (lineHasUnhandedCarriedThing(text, handed)) return 'a thing carried that the scene never handed';
+  if (lineHasOutOfWorldThing(text, handed, offSettingWords(state))) return 'a thing this world has no word for';
   if (lineHasUnhandedOwnThing(text, handed, state.character?.name)) return 'a thing carried that the scene never handed';
-  if (lineHasUnhandedFind(text, handed)) return 'a thing found that the scene never handed';
   if (lineOpensOnFactLabel(text, handed)) return 'an engine label pasted as story';
   if (lineHasWrongTimeOfDay(text, handed)) return 'a time of day the clock does not show';
   const saidPool = alreadySaidLines(state, packet).get('*said*') ?? [];
@@ -778,7 +861,6 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   }
   const named = lineNameReason(text, refEnumOf(state, packet), handedProperNames(state, packet));
   if (named === 'capital') return 'a name the scene never handed';
-  if (named === 'unbound-animate') return 'a person who is not here';
   return null;
 }
 
@@ -794,18 +876,19 @@ export function classifyTokenLine(
   /** The PC's name: a beat whose narration tells the PC by name is third person, so "you"/"your" there fails. */
   pcName?: string,
   /** The player's own words this turn (packet.playerAction); a narration line may quote them. */
-  playerWords?: string
+  playerWords?: string,
+  /** P-5a/c: the setting's vocabulary (`offSettingWords`); a carried or found thing named only by other settings fails. */
+  world?: ReadonlySet<string>
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
   if (line.fn !== 'speech' && lineVoicesPc(line.text, pcName, playerWords)) return { ok: false, reason: 'pc-voice' };
   if (aimsAtSelf(line.text)) return { ok: false, reason: 'selfHarmMethod' };
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
   if (handedCounts != null && lineHasUnhandedCount(line.text, handedCounts)) return { ok: false, reason: 'count' };
-  if (handedCounts != null && lineHasUnhandedCarriedThing(line.text, handedCounts)) return { ok: false, reason: 'carried' };
+  if (handedCounts != null && lineHasOutOfWorldThing(line.text, handedCounts, world)) return { ok: false, reason: 'out-of-world' };
   if (handedCounts != null && !line.spoken && lineHasUnhandedOwnThing(line.text, handedCounts, pcName)) {
     return { ok: false, reason: 'carried' };
   }
-  if (handedCounts != null && lineHasUnhandedFind(line.text, handedCounts)) return { ok: false, reason: 'found' };
   if (handedCounts != null && lineOpensOnFactLabel(line.text, handedCounts)) return { ok: false, reason: 'label' };
   if (handedCounts != null && line.fn !== 'speech' && lineHasWrongTimeOfDay(line.text, handedCounts)) {
     return { ok: false, reason: 'time' };
@@ -1051,9 +1134,9 @@ function capitalizeSentenceStarts(text: string): string {
   return text.replace(/(^|(?:[.!?]\)?|\.["”’])\s+|[,:]\s+["“])([a-z])/g, (_m, lead: string, ch: string) => `${lead}${ch.toUpperCase()}`);
 }
 
-function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string, playerWords?: string): boolean {
+function isFullyClean(beat: TokenBeat, enumRefs: LedgerRef[], knownNames: string[] = [], handedCounts?: string, said?: AlreadySaid, pcName?: string, playerWords?: string, world?: ReadonlySet<string>): boolean {
   if (bindCheckFails(beat, enumRefs).length) return false;
-  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName, playerWords).ok);
+  return beat.lines.every((line) => classifyTokenLine(line, beat, enumRefs, knownNames, handedCounts, said, pcName, playerWords, world).ok);
 }
 
 /** Line-gate reasons about how a token was declared, not about what the line says. */
@@ -1246,6 +1329,7 @@ export function acceptTokenOrLedgerStory(
   const counts = handedCountText(state, packet);
   const said = alreadySaidLines(state, packet);
   const pcName = state.character?.name;
+  const world = offSettingWords(state);
   const candidates = [
     ...extractTokenCandidates(raw),
     ...(opts?.alt ? extractTokenCandidates(opts.alt) : []),
@@ -1257,8 +1341,8 @@ export function acceptTokenOrLedgerStory(
     const parsed = parseTokenBeat(cand, packet?.playerAction);
     if (!parsed) continue;
     const beat = tellsSpeechFromOutside(normalizeBeatRefs(parsed, enumRefs, { thingsOnly: !opts?.lenient }), enumRefs, state);
-    beat.lines = beat.lines.map((l) => (l.written && !classifyTokenLine({ ...l, text: l.written }, beat, enumRefs, known, counts, said, pcName, packet?.playerAction).ok ? { ...l, written: undefined } : l));
-    if (isFullyClean(beat, enumRefs, known, counts, said, pcName, packet?.playerAction)) {
+    beat.lines = beat.lines.map((l) => (l.written && !classifyTokenLine({ ...l, text: l.written }, beat, enumRefs, known, counts, said, pcName, packet?.playerAction, world).ok ? { ...l, written: undefined } : l));
+    if (isFullyClean(beat, enumRefs, known, counts, said, pcName, packet?.playerAction, world)) {
       const prose = renderTokenBeat(beat, enumRefs, { possessive: beatPcPossessive(beat.lines, state) });
       if (prose && !isDroughtStubProse(prose) && !/@t\d+\b/.test(prose)) {
         return {
@@ -1271,7 +1355,7 @@ export function acceptTokenOrLedgerStory(
         };
       }
     }
-    const clean = beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, known, counts, said, pcName, packet?.playerAction).ok);
+    const clean = beat.lines.filter((line) => classifyTokenLine(line, beat, enumRefs, known, counts, said, pcName, packet?.playerAction, world).ok);
     const fns = new Set(clean.map((l) => l.fn));
     const partialOk = opts?.lenient
       ? clean.length >= 1
@@ -1293,7 +1377,7 @@ export function acceptTokenOrLedgerStory(
     if (opts?.lenient && prose && storySentences(prose) < 2) {
       const full = bestPartial.full;
       const readable = full.lines.filter((line) => {
-        const v = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName, packet?.playerAction);
+        const v = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName, packet?.playerAction, world);
         return v.ok || BINDING_ONLY_REASONS.has(v.reason ?? '');
       });
       const wholeBody = renderTokenBeat({ ...full, lines: readable }, enumRefs, {
@@ -1311,7 +1395,7 @@ export function acceptTokenOrLedgerStory(
       const dropped = full.lines.flatMap((line, i): DroppedLine[] => {
         const sentence = kept.includes(line) ? '' : paint(line);
         if (!sentence) return [];
-        const reason = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName, packet?.playerAction).reason ?? 'bad';
+        const reason = classifyTokenLine(line, full, enumRefs, known, counts, said, pcName, packet?.playerAction, world).reason ?? 'bad';
         return [{ sentence, reason, after: paint(full.lines.slice(0, i).reverse().find((l) => kept.includes(l))) }];
       });
       return {

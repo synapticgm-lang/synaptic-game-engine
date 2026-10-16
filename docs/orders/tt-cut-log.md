@@ -658,3 +658,15 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 5. **`src/game/completedEventPacket.ts` last-resort lines** `Your open lead was ${name}: ${step}` / `The next step was still: ${step}` — dumped journal step into the page. Stay/exits rotation kept.
 
 ## PLANNED cuts (not yet deleted): RC-K2 and RC-PY2 remain PARKED (not queued).
+
+## P-5a/c (branch p-5ac, 16 Oct 2026, Grok Bot; John's decision of 09:52 and 10:24)
+- CUT `lineNameReason` 'unbound-animate' refusal (and plainLineFactProblem "a person who is not here"). An invented role person no longer fails a line; `registerWriterIntroductions` adds it to npcMemories at the current place.
+- CUT `classifyTokenLine` 'carried' refusal from `lineHasUnhandedCarriedThing` and 'found' refusal from `lineHasUnhandedFind` (and the plain-path messages). The functions stay exported but nothing calls them in the gate now; candidates for a later cut. Invented things join sceneFacts.props instead.
+- KEPT `lineHasUnhandedOwnThing` (the PC's own kit is a stated fact), 'capital' (invented proper names and places stay under the world-map authority), count, time and label checks.
+- KEPT for detection only: `ROLE_NOUNS` / `UNBOUND_ANIMATE` (used to spot people to register, and by `handedRoleNouns`). PLANNED LATER CUT: replace with a REF/handed-person binding so no role-word list remains.
+- NEW minimal rejection: 'out-of-world', only for a carried or found thing whose word appears only in other settings' campaign bibles and never in this setting's bibles, atlas or SRD 5.2.1 data (e.g. "rifle" in tabletop). Unknown everyday words and unlikely-but-possible things pass.
+- Sources: John Pilgrim's decisions (16 Oct 09:52, 10:24); SRD 5.2.1 data in src/data/srd/srd521.json and rules/srdGear.ts.
+
+- P-5d (16 Oct, follow-up): CUT the 'capital' refusal for a named person in a person slot (after a comma, semicolon, dash, 'and' or 'but', followed by a lowercase word). Grammar, no word list. It is registered as a neutral npcMemories record. KEPT 'capital' for a name that shares a word with a known person (a clash) and for names after a preposition or article, which may be places: invented places stay refused because the world atlas is the only place authority (travel, currentLocation, fog-of-war discovery). Source: John Pilgrim, 16 Oct.
+
+- P-5e (16 Oct, follow-up): the setting check now uses one rule. Allowed = world data + SRD 5.2.1 + what the story's records establish. Records are: the premise's origin statements (opening card summonIntent), the player's kit (inventory), registered props and people, and the new GameState.crossedOver. A crossing in the records (summoned origin, a crossed-over thing, or a recorded thing named only by other settings) allows other settings' things from then on, and each one is registered into crossedOver. Nothing was cut; the earlier crossedOver word filter folded into this rule. No per-premise branch, no word list. Source: John Pilgrim, 16 Oct 11:04/11:05.

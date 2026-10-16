@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 29z9c â€” later post-writer steps must keep a clean draft whole. Lines are quoted from
  * docs/orders/t100-29z9/MORNING-REVIEW.md (cursed-keep / salt-road-heist / summoned-pact, T100 seed 70).
  */
@@ -101,7 +101,11 @@ describe('2 â€” "the stranger" and present townsfolk lines are kept', () =>
 
   it('a name the ledger does not hold still fails the line', () => {
     const beat = beatOf('Jax nodded, and Orel Vane stepped out of the doorway.');
-    expect(classifyTokenLine(beat.lines[0]!, beat, [], knownProperNames(townState('the yard', []))).ok).toBe(false);
+    // P-5d (John, 2026-10-16): a named person the writer invents in a person slot is registered, not refused.
+    expect(classifyTokenLine(beat.lines[0]!, beat, [], knownProperNames(townState('the yard', []))).ok).toBe(true);
+    // A name after a preposition may be a place; invented places stay refused for the map.
+    const place = beatOf('Jax walked on toward Orel Vane.');
+    expect(classifyTokenLine(place.lines[0]!, place, [], knownProperNames(townState('the yard', []))).ok).toBe(false);
   });
 });
 

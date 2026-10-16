@@ -158,7 +158,8 @@ describe('playtest14a — token prose', () => {
       })
     );
     expect(beat).toBeTruthy();
-    expect(classifyTokenLine(beat!.lines[0], beat!, packet.refEnum).ok).toBe(false);
+    // P-5a/c (John, 2026-10-16): an invented role person is registered, not refused.
+    expect(classifyTokenLine(beat!.lines[0], beat!, packet.refEnum).ok).toBe(true);
   });
 
   it('Orel Vane capital fails that line', () => {

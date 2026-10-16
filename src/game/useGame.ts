@@ -1,3 +1,4 @@
+import { registerWriterIntroductions } from './writerIntroductions';
 import { useCallbackRef } from './useCallbackRef';
 import { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit, Quest, SessionZero } from './types';
@@ -4701,6 +4702,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
       let mergedState: GameState = advanceSceneLedger(liveCurrent, record.state);
       mergedState = stampSceneLedger(mergedState, cleanText, handedRefs(mergedState));
+      mergedState = registerWriterIntroductions(mergedState, cleanText);
       // Engine grants this turn, read from the record (stateTx.commitTurnRecord), plus the arc receipts.
       {
         const allReceipts = [...arcReceipts, ...record.lines];

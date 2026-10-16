@@ -56,8 +56,8 @@ describe('replay bank multi lap 28', () => {
 
   it('[m28 g5-177 T7 | lap 28 role behind describing words] "the close-eyed clerk" is an undeclared person', () => {
     expect(G.input(7)).toBe('Check the exits');
-    expect(G.verdicts(7)).toEqual(['action:ok', 'react:ok', 'hook:unbound-animate']);
-    expect(G.prose(7)).not.toMatch(/clerk/);
+    expect(G.verdicts(7)).toEqual(['action:ok', 'react:ok', 'hook:ok']); // P-5a/c: an invented role person is registered, not refused
+    expect(G.prose(7)).toMatch(/clerk/);
 
     expect(lineHasUnboundAnimate('a tall guard watched the gate')).toBe(true);
     expect(lineHasUnboundAnimate('the clerk looked up')).toBe(true);

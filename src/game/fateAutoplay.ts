@@ -1,3 +1,4 @@
+import { registerWriterIntroductions } from './writerIntroductions';
 /**
  * Headless Fate autoplay — Seedable Fate's Pick + GM path with wardens.
  * Ship A: mirrors client commit (callGm → runWarden → structural → choices → prose)
@@ -2079,6 +2080,7 @@ Do NOT print dice notation or CODE ENFORCED.
     const record = commitTurnRecord(state, governed, filteredSystemLog, { why: `Player: ${playerInput.slice(0, 120)}` });
     governed = advanceSceneLedger(state, record.state);
     governed = stampSceneLedger(governed, mudBody, handedRefs(governed));
+    governed = registerWriterIntroductions(governed, mudBody);
     if (record.lines.length) {
       filteredSystemLog = [...filteredSystemLog, ...record.lines];
       const log = [...(governed.log ?? [])];
