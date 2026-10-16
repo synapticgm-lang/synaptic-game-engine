@@ -613,5 +613,11 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 ## q31-RCJ1 (Order RC-J1) — absolute per-run prose thumbs are diagnostic only
 1. **`scripts/fate-autoplay/autoThumbs.mjs` absolute `--notes` path as a training label** (old judge loop ~:195-221 at parent). What it did: one model, one pass, batches of 20, absolute up/down per run — lap 32 A/B swung 2 vs 9 ups on the same Tabletop pair. Why safe: absolute `--notes` still writes diagnostic thumbs for report.md; training labels require `--pair` (blind X/Y, asked twice with order swapped, keep only on agreement, floor `PAIR_AGREEMENT_FLOOR` 0.7); `distillCollect` requires `training_label === true`. Restore-from: parent of q31-RCJ1.
 
-## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-N4 (RC-N3 deletes nothing; RC-M2 and RC-J1 shipped). RC-K2 and RC-PY2 above are PARKED (not queued).
+## q31-RCN3 (Order RC-N3) — blocking draft gets one rewrite, else engine-fact fallback
+
+1. **No production delete** — order adds the retry path on the existing fight-rewrite seam (`runWriterTurnFightOnly`). Behaviour change only.
+2. **Comment / essay trim (ruleCount budget):** `writerTurn.ts` preamble and essay JSDoc; `actionResolution.ts` module essay; `discoveryXpLedger.ts` `buildDiscoveryKey` / `isDiscoveryExhausted` JSDoc. Behaviour unchanged.
+3. **RC-R1 interaction (not a cut):** `unresolvedActionReason` no longer requires prose to restate a terminal fight-close (combat log owns it). Flee / parley / rest engine outcomes still must be stated.
+
+## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-N4. RC-K2 and RC-PY2 above are PARKED (not queued).
 - RC-N4 (src/game/engineFactGate.ts `recordReadoutProblem` :42-51): `questStepLeak` and `questTitleNamed` word-overlap tests. Covered by: the packet no longer carries raw step text or leg/time bookkeeping; gate only on exact record strings.

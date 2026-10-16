@@ -172,7 +172,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues, type WriterTurnResult } from './writerTurn';
+import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues, type WriterTurnResult, type WriterTurnRetryResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -385,6 +385,7 @@ export type TurnTelemetry = {
   answerRepair?: import('./writerTurn').SentenceRepair;
   /** The engine settled a fight the first draft left out: how the beat was made whole. */
   fightRetry?: 'retried' | 'added' | 'painted';
+  draftRetry?: 'retried' | 'painted';
   /** RC-R1 — fight outcome shown once on the engine combat-log channel (not in prose). */
   outcomeShown?: 'engine';
   /** A whole-beat warden block (unresolved / collage): logged, the draft stays. */
@@ -1340,7 +1341,7 @@ Do NOT print dice notation or CODE ENFORCED.
     : undefined;
 
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
-  let writerTurn: (WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }) | null = null;
+  let writerTurn: WriterTurnRetryResult | null = null;
   const stageTrace: { stage: string; text: string }[] = [];
   const traceStage = (stage: string, text: string) => {
     if (stageTrace[stageTrace.length - 1]?.text !== text) stageTrace.push({ stage, text });
@@ -1371,8 +1372,9 @@ Do NOT print dice notation or CODE ENFORCED.
     }
     if (writerTurn.answerRepair?.bug) console.warn(`[writer] answer repair bug — ${writerTurn.answerRepair.bug}`);
     if (writerTurn.fightRetry) console.info(`[writer] settled fight left out — ${writerTurn.fightRetry}`);
+    if (writerTurn.draftRetry) console.info(`[writer] blocking draft — ${writerTurn.draftRetry}`);
     traceStage('render', writerTurn.firstDraft);
-    if (writerTurn.fightDraft) traceStage('fight-rewrite', writerTurn.fightDraft);
+    if (writerTurn.fightDraft) traceStage(writerTurn.draftRetry ? 'draft-rewrite' : 'fight-rewrite', writerTurn.fightDraft);
     traceStage('finishCommittedProse+spoken', writerTurn.prose);
     gmText = writerTurn.prose;
     if (writerTurn.combatLog) gmSystemLog = [...gmSystemLog, writerTurn.combatLog];
@@ -2150,6 +2152,7 @@ Do NOT print dice notation or CODE ENFORCED.
       sentenceRepairs: writerTurn?.repairs?.length ? writerTurn.repairs : undefined,
       answerRepair: writerTurn?.answerRepair,
       fightRetry: writerTurn?.fightRetry,
+      draftRetry: writerTurn?.draftRetry,
       outcomeShown: writerTurn?.outcomeShown,
       blockedPaintReason,
       engineFact: engineFact || undefined,

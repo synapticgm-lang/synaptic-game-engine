@@ -1,9 +1,4 @@
-/**
- * 28l / 29z8 — one writer turn: the first draft is the beat. Code checks it, trims already-told
- * sentences and logs what is left; nothing goes back to the writer. Canned / stitched lines are never
- * the success path; the caller only falls back when the reply came back empty (transport outage).
- * Shared by the live client (`useGame`) and the headless harness (`fateAutoplay`).
- */
+/** Writer turn: first draft is the beat; blocking problems get one rewrite in runWriterTurnWithFightRetry. */
 import type { GameState } from './types';
 import type { PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
@@ -67,31 +62,32 @@ export type WriterTurnResult = WriterDraft & {
   outcome: WriterTurnOutcome;
   /** 29z9 — who / want / where: whether the addressee's own words are on the page, and where they came from. */
   spoken?: SpokenAnswer;
-  /** Problems found on the first draft (logged, never re-asked). */
+  /** First-draft problems (blocking ones may get one rewrite). */
   problems: string[];
-  /** Problems left on the committed draft after code trims. */
+  /** Problems left after trims / rewrite / fallback. */
   remaining: string[];
   firstDraft: string;
-  /** Sentences the commit gate rejected and what the one repair request did with each. */
   repairs?: SentenceRepair[];
-  /** A talk turn's missing quoted answer and what the one repair request did with it (`repairMissingAnswer`). */
   answerRepair?: SentenceRepair;
-  /** RC-R1 — fight outcome on the engine combat-log channel (STATUS), not in prose. */
+  /** RC-R1 — fight outcome on STATUS combat log, not prose. */
   outcomeShown?: 'engine';
   combatLog?: string;
 };
 
-/**
- * One sentence the commit gate rejected. `repaired` is the writer's rewrite when it passed the gate;
- * otherwise the sentence left the page and `bug` says why, for diagnosis.
- */
+/** Fight omit + RC-N3 blocking-draft rewrite / fallback. */
+export type WriterTurnRetryResult = WriterTurnResult & {
+  fightRetry?: 'retried' | 'added' | 'painted';
+  draftRetry?: 'retried' | 'painted';
+  fightDraft?: string;
+};
+
+/** One gate-rejected sentence and what the repair did with it. */
 export type SentenceRepair = {
   sentence: string;
   flag: string;
   fact: string;
   repaired?: string;
   bug?: string;
-  /** The writer's reply when it could not be read as the rewrite. */
   reply?: string;
 };
 
@@ -126,7 +122,7 @@ function unresolvedProblem(why: string, playerInput: string, engineFact: string)
   return `Resolve the player's action "${playerInput.slice(0, 120)}" (${why}).`;
 }
 
-/** Cheap code checks on a rendered draft. Each entry is one plain problem, logged with the turn. */
+/** Cheap code checks on a rendered draft (logged with the turn). */
 export function writerDraftProblems(prose: string, check: DraftCheck): string[] {
   const text = stripChoiceList(stripActionTags(prose ?? '')).trim();
   if (!text) return ['No usable story came back.'];
@@ -166,10 +162,7 @@ const RECYCLE_NOTE =
   /recycle-without-delta|Collage reject|Beat recycle reject|Atmosphere reprint|Same-room essay HARD|Repeats an earlier beat|Same text as the last beat|Reuses sentences/i;
 const UNRESOLVED_NOTE = /Narrative does not resolve the player action|Resolve the player's action|Answer the player's question|must answer the player|Show the player acting/i;
 
-/**
- * 28l — the raw problems a committed beat carried: reply-level issues from the transport plus the
- * warden / governance / draft-check flags still standing after the one revision. Logged with thumbs.
- */
+/** Transport + post-revision draft/warden flags still standing (logged with thumbs). */
 export function writerTurnIssues(rawIssues: readonly string[], notes: readonly string[]): WriterIssue[] {
   const out = new Set<WriterIssue>();
   for (const r of rawIssues) {
@@ -180,10 +173,7 @@ export function writerTurnIssues(rawIssues: readonly string[], notes: readonly s
   return [...out];
 }
 
-/**
- * 29z8 - one writer pass per turn. The first draft is the beat: code trims already-told sentences and
- * names labels once; any problem left is logged for the tester, never sent back to the writer.
- */
+/** Render + check one draft (no rewrite). Blocking problems are handled by runWriterTurnWithFightRetry. */
 export function runWriterTurn(opts: {
   firstRaw: string;
   packet: CompletedEventPacket;
@@ -206,32 +196,86 @@ export function runWriterTurn(opts: {
   };
 }
 
-/**
- * s82 Root A — the engine settled a fight this turn and the beat left it out: one rewrite with that
- * problem, then the last-resort paint from the engine result. Any other problem stays logged only (29z8).
- */
+/** Fight omit rewrite, then repairs, then RC-N3 blocking rewrite / engine-fact fallback. */
 export async function runWriterTurnWithFightRetry(opts: {
   firstRaw: string;
   packet: CompletedEventPacket;
   check: DraftCheck;
   rewrite: (problem: string) => Promise<string>;
-  /** Lap 13 — sends only the repair request (no packet); the reply is the rewritten sentence(s). */
   repair?: (request: string) => Promise<string>;
-}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
+}): Promise<WriterTurnRetryResult> {
   const turn = await runWriterTurnFightOnly(opts);
   if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
   const answered = await repairMissingAnswer(await repairRejectedSentences(turn, opts), opts);
   const placed = withMoveDestination(opts.check.state, answered.prose);
-  const done = placed === answered.prose ? answered : { ...answered, prose: placed, remaining: writerDraftProblems(placed, opts.check) };
-  if (opts.check.state.engineMode !== 'dnd') return done;
-  const prose = capBeatWords(done.prose, TABLETOP_BEAT_WORDS, opts.check.state);
-  return prose === done.prose ? done : { ...done, prose, remaining: writerDraftProblems(prose, opts.check) };
+  let done: WriterTurnRetryResult =
+    placed === answered.prose ? answered : { ...answered, prose: placed, remaining: writerDraftProblems(placed, opts.check) };
+  if (opts.check.state.engineMode === 'dnd') {
+    const prose = capBeatWords(done.prose, TABLETOP_BEAT_WORDS, opts.check.state);
+    if (prose !== done.prose) done = { ...done, prose, remaining: writerDraftProblems(prose, opts.check) };
+  }
+  // RC-N3 after repairs: hard misses → rewrite then engine-fact page; speech-answer → rewrite then keep.
+  if (done.fightRetry) return done;
+  const blocking: string[] = [];
+  for (let i = 0; i < done.remaining.length; i++) {
+    const p = done.remaining[i]!;
+    if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
+      || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')) {
+      blocking.push(p);
+    }
+  }
+  if (!blocking.length) return done;
+  let raw = '';
+  try { raw = await opts.rewrite(blocking.join('\n')); } catch { /* rewrite miss */ }
+  const second = runWriterTurn({ ...opts, firstRaw: raw });
+  const fightDraft = raw.trim() ? raw.trim().slice(0, 1200) : undefined;
+  let hardLeft = second.outcome !== 'accepted';
+  if (!hardLeft) {
+    for (let i = 0; i < second.remaining.length; i++) {
+      const p = second.remaining[i]!;
+      if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
+        || p.startsWith('Show the player acting')) {
+        hardLeft = true;
+        break;
+      }
+    }
+  } else {
+    hardLeft = false;
+    for (let i = 0; i < blocking.length; i++) {
+      const p = blocking[i]!;
+      if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
+        || p.startsWith('Show the player acting')) {
+        hardLeft = true;
+        break;
+      }
+    }
+  }
+  if (second.outcome === 'accepted' && !hardLeft) {
+    return {
+      ...second,
+      problems: [...new Set([...done.problems, ...second.problems])],
+      draftRetry: 'retried',
+      fightDraft,
+      outcomeShown: done.outcomeShown,
+      combatLog: done.combatLog,
+    };
+  }
+  if (!hardLeft) return { ...done, draftRetry: 'retried', fightDraft };
+  const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+  return {
+    ...done,
+    prose: painted.prose,
+    path: 'last-resort',
+    refs: undefined,
+    speech: undefined,
+    remaining: writerDraftProblems(painted.prose, opts.check),
+    problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
+    draftRetry: 'painted',
+    fightDraft,
+  };
 }
 
-/**
- * tt-fix-7 — the engine moved the player this turn and the kept beat never names where to: a gated line
- * (a wrong time of day, an unhanded name) took the destination with it. The engine adds one plain sentence.
- */
+/** Engine moved the player this turn but the beat never names where to — add one plain sentence. */
 export function withMoveDestination(state: GameState, prose: string): string {
   const c = state.circling;
   if (!prose.trim() || c?.movedTurn == null || c.movedTurn !== state.turn) return prose;
@@ -247,10 +291,7 @@ export function withMoveDestination(state: GameState, prose: string): string {
 
 const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).length;
 
-/**
- * TT31 — a beat over the word cap loses whole sentences from the end until it fits. A spoken line, the
- * sentence naming where the player went and the first two sentences stay.
- */
+/** Drop trailing sentences until the beat fits the word cap (spoken / dest / first two stay). */
 export function capBeatWords(prose: string, cap: number, state: GameState): string {
   if (wordCount(prose) <= cap) return prose;
   const dest = [state.journey?.to, state.currentLocation].filter((p): p is string => !!p && p.length > 2).map((p) => p.toLowerCase());
@@ -292,10 +333,7 @@ function oneOfGroup(plural: string): string | null {
   return w.replace(/s$/, '');
 }
 
-/**
- * The words outside the quotes name a person here: their full display, one word of a held proper name
- * ("Nell" for Nell Rudd), or one member of a group held here ("a thug" when the thugs are here).
- */
+/** Outside-quote words name someone here (full display, given name, or one of a held group). */
 function speakerHere(bare: string, here: string[]): boolean {
   return here.some((p) => {
     if (new RegExp(`\\b${escRe(p)}\\b`, 'i').test(bare)) return true;
@@ -312,11 +350,7 @@ const sameName = (a: string, b: string) => {
   return !!bare(a) && bare(a) === bare(b);
 };
 
-/**
- * tt-fix-4 — what a person here can be quoted saying without inventing anything: their authored topic lines,
- * the opening card's want when they are the card's cast, their bible lore card, and the text of the quest they
- * give or take part in. A sheet's archetype motive is a writer note, never a line to quote.
- */
+/** Lines a person here may be quoted saying (topics, card want, lore, their quest) — never archetype motive. */
 export function backedAnswerFacts(state: GameState, name: string): string[] {
   const facts = authoredTopicsFor(name).map((t) => t.line);
   if (openingCastNames(state).some((n) => sameName(n, name))) facts.push(shortCardWant(state));
@@ -389,16 +423,11 @@ export function answerRepairRequest(
   ].join('\n');
 }
 
-/**
- * Lap 37 — the player spoke to someone here and the committed beat has no quoted reply (the speech line
- * was dropped by the line gate, trimmed, or never written). ONE repair request asks for that answer as
- * one sentence; it lands after the beat's first sentence only when it quotes a person here, says
- * something new and passes the commit gate. Otherwise nothing is added and the miss is logged as a bug.
- */
+/** Missing quoted reply on a talk turn: one repair sentence, else log the miss. */
 export async function repairMissingAnswer(
-  turn: WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string },
+  turn: WriterTurnRetryResult,
   opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
-): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
+): Promise<WriterTurnRetryResult> {
   const { check, packet } = opts;
   if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput)) return turn;
   const everyone = answerersHere(check, packet);
@@ -500,16 +529,11 @@ function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEvent
   return sentences.length >= 1 && sentences.length <= 2 ? [sentences.join(' ')] : null;
 }
 
-/**
- * Lap 13 / tt-fix-15 — no flagged line reaches the page. The writer gets ONE request per turn holding every
- * sentence the commit gate rejects and every line the token line gate dropped, with the engine fact. A rewrite
- * that passes the gate takes the sentence's place (a dropped line's goes back after the kept line it followed);
- * whatever still fails is left off the page and logged as a bug. Nothing is kept or painted in its place.
- */
+/** One repair request for every gate-rejected / dropped line; failures leave the page and are logged. */
 export async function repairRejectedSentences(
-  turn: WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string },
+  turn: WriterTurnRetryResult,
   opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
-): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
+): Promise<WriterTurnRetryResult> {
   const { check, packet } = opts;
   // The draft as a whole is what the gate rejects; a sentence that only reads wrong out of context is not.
   const wholeProblems = sentenceGateProblems(check.state, turn.prose, check.playerInput);
@@ -586,11 +610,10 @@ async function runWriterTurnFightOnly(opts: {
   packet: CompletedEventPacket;
   check: DraftCheck;
   rewrite: (problem: string) => Promise<string>;
-}): Promise<WriterTurnResult & { fightRetry?: 'retried' | 'added' | 'painted'; fightDraft?: string }> {
+}): Promise<WriterTurnRetryResult> {
   const state = opts.check.state;
   const pov = pcPov(opts.packet.pc ?? state.character);
   const fightPov = { who: pcStorySubject(pov), him: narratesPcInThirdPerson(pov) ? pov.him : 'you' };
-  // Forced-attempt / foe-hit gaps still fill into prose; the outcome is an engine combat-log line outside it.
   const withFacts = <T extends WriterTurnResult>(turn: T): T => {
     const fight = terminalFightOutcome(state.completedEvent?.engineResult);
     if (!fight) return turn;
@@ -615,38 +638,20 @@ async function runWriterTurnFightOnly(opts: {
   if (second.outcome === 'accepted' && !ignoresTerminalFight(state, second.prose)) {
     return withFacts({ ...second, problems: [...new Set([...first.problems, ...second.problems])], fightRetry: 'retried' as const, fightDraft });
   }
-  // The writer's lines stay; the engine adds a plain sentence for each settled fight fact still missing. A rewrite
-  // is kept only when it leaves out fewer of those facts than the first draft: one that still misses them may
-  // contradict the roll the added sentences then state.
-  const rewriteBetter =
-    second.outcome === 'accepted'
-    && !!second.prose.trim()
+  const rewriteBetter = second.outcome === 'accepted' && !!second.prose.trim()
     && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
   const base = rewriteBetter ? second : first;
-  if (base.prose.trim()) {
-    return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
-  }
+  if (base.prose.trim()) return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
-    ...first,
-    prose: painted.prose,
-    path: 'last-resort',
-    refs: undefined,
-    speech: undefined,
-    remaining: writerDraftProblems(painted.prose, opts.check),
-    fightRetry: 'painted',
-    fightDraft,
-    ...(fight
-      ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) }
-      : {}),
+    ...first, prose: painted.prose, path: 'last-resort', refs: undefined, speech: undefined,
+    remaining: writerDraftProblems(painted.prose, opts.check), fightRetry: 'painted', fightDraft,
+    ...(fight ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) } : {}),
   };
 }
 
-/**
- * 28u — last pass on the beat that commits: sentences already told in recent beats drop out
- * (at least two sentences stay), and full labels are named once per beat.
- */
+/** Drop already-told sentences (keep ≥2) and name full labels once. */
 export function finishCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
   let next = prose;
   const refs = refEnumOf(check.state, packet);
@@ -656,11 +661,7 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
   return polishMentions(next, refs, check.state);
 }
 
-/**
- * The sentences that tell this turn's own event: the move (`moveSentenceCheck`) or the player character doing
- * the action the player chose ("Jax asked Dain Holt…" on "Ask Dain Holt what they want"). Told again on purpose
- * when the player repeats an action, so no trim drops them.
- */
+/** Keep sentences that tell this turn's own move or the PC doing the chosen action. */
 export function thisTurnsEventCheck(
   check: Pick<DraftCheck, 'state' | 'playerInput'>,
   refs: LedgerRef[] = refEnumOf(check.state)
@@ -680,10 +681,7 @@ export function playerActionSentenceCheck(playerInput: string, pcName?: string |
   return (s) => subject.test(s) && words.some((w) => stemHit(s.replace(/["“][^"”]*["”]/g, ' '), w));
 }
 
-/**
- * On a turn the player traveled or left, a sentence naming the place left and the place reached is that
- * move, and so is a sentence naming where the move is going (the trip's destination, else the place reached).
- */
+/** Travel/leave turn: sentence names leave+reach or the trip destination. */
 export function moveSentenceCheck(
   playerInput: string,
   refs: LedgerRef[],

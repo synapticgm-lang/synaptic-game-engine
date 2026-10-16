@@ -64,7 +64,10 @@ describe('RC-R1 fight-close once (engine combat log)', () => {
 
   it('R1-b: writer omits the kill — outcome still shown once by the engine', async () => {
     const state = settled();
-    const quiet = 'Jax swung hard by the gate and the corridor went still.';
+    // Multi-sentence omit of the kill only (RC-R1 combat log owns the close; RC-N3 must not rewrite).
+    const quiet =
+      'Jax swung hard at the Cave Spider by the gate and the corridor went still. Dust hung in the torchlight. '
+      + 'Somewhere behind the arch a drip counted the wait.';
     const turn = await runWriterTurnWithFightRetry({
       firstRaw: quiet,
       packet: state.completedEvent!,
@@ -78,6 +81,7 @@ describe('RC-R1 fight-close once (engine combat log)', () => {
       rewrite: async () => '',
     });
     expect(turn.prose).toBe(quiet);
+    expect(turn.draftRetry).toBeUndefined();
     expect(turn.outcomeShown).toBe('engine');
     expect(turn.combatLog).toMatch(/^The Cave Spider went down/);
   });

@@ -3112,6 +3112,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             fightRetry: writerTurn.fightRetry,
           });
         }
+        if (writerTurn.draftRetry) {
+          debugLogger.record('WARN', 'Writer blocking draft', {
+            turn: liveCurrent.turn,
+            draftRetry: writerTurn.draftRetry,
+            problems: writerTurn.problems,
+          });
+        }
         writerRemaining = writerTurn.remaining;
         if (writerTurn.problems.length) {
           debugLogger.record('WARN', 'Writer draft problems', {

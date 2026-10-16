@@ -7,15 +7,12 @@ import {
 import { buildFactLockRetryBlock, type FactLockViolation } from './factLocks';
 import { stripChoiceList } from './parser';
 import { isOfferOnlyUnansweredBeat } from './offerOnlyAsk';
+import { terminalFightOutcome } from './engineResult';
 
 export { playerFacingLocation } from './locationName';
 export { isOfferOnlyUnansweredBeat } from './offerOnlyAsk';
 
-/**
- * Cross-mode guarantee: every player action must receive a concrete narrative resolution.
- * Prevents empty "You follow through…" bridges and choice-only GM replies.
- * Never locally synthesize story — retry the GM or keep a surgical fact-lock cut.
- */
+/** Every player action needs a concrete narrative resolution (retry GM or surgical fact-lock cut). */
 
 const BRIDGE_MARKERS =
   /you follow through(?:\s+on that)?|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in|the result is local and visible|here at england/i;
@@ -79,8 +76,13 @@ export function unresolvedActionReason(
   if (!prose || prose.length < 30 || prose.split(/\s+/).filter(Boolean).length < 5) return 'too short';
   if (/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i.test(prose)) return 'question only';
   if (isGenericBridgeNarrative(narrative)) return 'bridge or stub text';
-  // 28l — only a settled outcome (fight / flee / parley / rest) must be stated; room facts and loot are context.
-  if (ENGINE_OUTCOME_FACT.test(engineFact)) return proseStatesEngineFact(prose, engineFact) ? null : 'engine result not stated';
+  // 28l — settled flee / parley / rest must be in prose. RC-R1 — terminal fight-close is the combat log, not prose.
+  if (ENGINE_OUTCOME_FACT.test(engineFact)) {
+    const fightClose = terminalFightOutcome(engineFact);
+    if (!(fightClose && fightClose.outcome !== 'escaped')) {
+      return proseStatesEngineFact(prose, engineFact) ? null : 'engine result not stated';
+    }
+  }
   if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return 'panel stub';
   if (isRecycledLookAround(playerAction, intent, prose, previousNarrative)) return 'recycled look-around';
   if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return 'gear question unanswered';

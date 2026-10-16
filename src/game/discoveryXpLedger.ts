@@ -65,18 +65,14 @@ export interface XpAward {
   discoveryKey?: string;
 }
 
-/**
- * Build a canonical discovery key for ledger tracking.
- */
+/** Canonical discovery key. */
 export function buildDiscoveryKey(target: string, type: DiscoveryType, context: string): string {
   const normalized = target.toLowerCase().trim().slice(0, 60);
   const ctx = context.toLowerCase().trim().slice(0, 40);
   return `${type}:${normalized}@${ctx}`;
 }
 
-/**
- * I07 — evidence-id uniqueness: block repeat awards when ledger shows exhaustion.
- */
+/** I07 — block repeat awards when exhausted. */
 export function isDiscoveryExhausted(
   target: string,
   type: DiscoveryType,
@@ -92,9 +88,7 @@ export function isDiscoveryExhausted(
   return record.xpAwarded > 0;
 }
 
-/**
- * Check if a discovery has already been awarded XP.
- */
+/** Whether this discovery already paid XP. */
 export function hasDiscoveryBeenAwarded(
   target: string,
   type: DiscoveryType,
@@ -103,17 +97,11 @@ export function hasDiscoveryBeenAwarded(
 ): { awarded: boolean; record?: DiscoveryRecord } {
   const key = buildDiscoveryKey(target, type, context);
   const record = ledger.get(key);
-  
-  if (!record) {
-    return { awarded: false };
-  }
-  
+  if (!record) return { awarded: false };
   return { awarded: true, record };
 }
 
-/**
- * Record a discovery in the ledger.
- */
+/** Record a discovery in the ledger. */
 export function recordDiscovery(
   target: string,
   type: DiscoveryType,
@@ -149,9 +137,7 @@ export function recordDiscovery(
   return updated;
 }
 
-/**
- * Calculate XP for an action based on novelty and risk.
- */
+/** XP for an action from novelty and risk. */
 export function calculateDiscoveryXp(
   action: string,
   state: GameState,
@@ -275,9 +261,7 @@ export function calculateDiscoveryXp(
   return null;
 }
 
-/**
- * Update discovery ledger after awarding XP.
- */
+/** Update discovery ledger after awarding XP. */
 export function updateDiscoveryLedger(
   awards: XpAward[],
   turn: number,
