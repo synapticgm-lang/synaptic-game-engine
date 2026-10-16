@@ -1,45 +1,7 @@
 /**
- * P0.4 - Inventory State Transitions (upgraded from name-list bag lock)
- * 
- * Track ownership, quantity, equipped/consumed/dropped/loaned state, provenance, and conservation.
- * Assert conservation across turns.
- * 
- * Not: Just maintain a list of item names.
- * 
- * Target:
- * - 0 `[Uncommon] them`
- * - Bag stable across 50 bag-check turns
- * - Consumed/dropped/equipped state transitions validated
+ * Inventory conservation: ownership snapshot + legal change check (qualityGovernance commit path).
  */
-
 import type { GameState, Item } from './types';
-
-export interface ItemStateTransition {
-  itemId: string;
-  itemName: string;
-  turn: number;
-  transition: TransitionKind;
-  /** Previous quantity */
-  fromQuantity: number;
-  /** New quantity */
-  toQuantity: number;
-  /** Previous equipped state */
-  fromEquipped: boolean;
-  /** New equipped state */
-  toEquipped: boolean;
-  /** Provenance/reason for the transition */
-  reason: string;
-}
-
-export type TransitionKind =
-  | 'gained'        // Item added to inventory
-  | 'lost'          // Item removed from inventory
-  | 'consumed'      // Quantity decreased (potion, food, etc.)
-  | 'equipped'      // Item equipped
-  | 'unequipped'    // Item unequipped
-  | 'loaned'        // Item given to NPC temporarily
-  | 'returned'      // Loaned item returned
-  | 'dropped';      // Item intentionally discarded
 
 export interface ConservationViolation {
   kind: 'invented_item' | 'duplicate_item' | 'impossible_quantity' | 'lost_without_reason' | 'equipped_nonexistent';
@@ -49,98 +11,54 @@ export interface ConservationViolation {
 }
 
 export interface InventoryAuthority {
-  /** Item ID -> full item state */
   items: Map<string, Item>;
-  /** Item name -> count (for quick lookup) */
   nameToCount: Map<string, number>;
-  /** Equipped items by slot */
   equippedBySlot: Map<string, Item>;
-  /** Items loaned to NPCs */
   loanedItems: Map<string, { item: Item; npcName: string; turn: number }>;
 }
 
-/**
- * Build inventory authority from game state.
- */
+/** Build inventory authority from game state. */
 export function buildInventoryAuthority(state: GameState): InventoryAuthority {
   const items = new Map<string, Item>();
   const nameToCount = new Map<string, number>();
   const equippedBySlot = new Map<string, Item>();
-  const loanedItems = new Map<string, { item: Item; npcName: string; turn: number }>();
-  
   for (const item of state.inventory ?? []) {
     items.set(item.id, item);
-    
-    // Count by name
-    const existing = nameToCount.get(item.name) || 0;
-    nameToCount.set(item.name, existing + item.quantity);
-    
-    // Track equipped items
-    if (item.equipped && item.slot) {
-      equippedBySlot.set(item.slot, item);
-    }
+    nameToCount.set(item.name, (nameToCount.get(item.name) || 0) + item.quantity);
+    if (item.equipped && item.slot) equippedBySlot.set(item.slot, item);
   }
-  
-  // TODO: Track loaned items when that feature is added
-  
-  return {
-    items,
-    nameToCount,
-    equippedBySlot,
-    loanedItems,
-  };
+  return { items, nameToCount, equippedBySlot, loanedItems: new Map() };
 }
 
-/**
- * Validate that proposed inventory changes are legal.
- * This runs BEFORE accepting a new game state.
- */
+/** Validate that proposed inventory changes are legal (before accepting a new state). */
 export function validateInventoryChanges(
   authority: InventoryAuthority,
   proposedItems: Item[],
-  narrative: string
-): {
-  valid: boolean;
-  violations: ConservationViolation[];
-} {
+  narrative: string,
+): { valid: boolean; violations: ConservationViolation[] } {
   const violations: ConservationViolation[] = [];
-  const proposedMap = new Map(proposedItems.map(i => [i.id, i]));
-  
-  // Check for items appearing without mention in narrative
+  const proposedMap = new Map(proposedItems.map((i) => [i.id, i]));
+  const hay = narrative.toLowerCase();
   for (const item of proposedItems) {
-    const existing = authority.items.get(item.id);
-    if (!existing) {
-      // New item - check if mentioned in narrative
-      const mentioned = narrative.toLowerCase().includes(item.name.toLowerCase());
-      if (!mentioned && !item.provenance) {
-        violations.push({
-          kind: 'invented_item',
-          description: `New item "${item.name}" not mentioned in narrative or provenance`,
-          itemName: item.name,
-          itemId: item.id,
-        });
-      }
+    if (!authority.items.get(item.id) && !hay.includes(item.name.toLowerCase()) && !item.provenance) {
+      violations.push({
+        kind: 'invented_item',
+        description: `New item "${item.name}" not mentioned in narrative or provenance`,
+        itemName: item.name,
+        itemId: item.id,
+      });
     }
   }
-  
-  // Check for items vanishing
+  const lostCue = /\b(drop|lose|discard|leave|give|hand|consume|use|break)\b/i.test(narrative);
   for (const [id, item] of authority.items) {
-    if (!proposedMap.has(id)) {
-      const mentioned = /\b(drop|lose|discard|leave|give|hand|consume|use|break)\b/i.test(narrative);
-      if (!mentioned) {
-        violations.push({
-          kind: 'lost_without_reason',
-          description: `Item "${item.name}" removed without narrative explanation`,
-          itemName: item.name,
-          itemId: id,
-        });
-      }
+    if (!proposedMap.has(id) && !lostCue) {
+      violations.push({
+        kind: 'lost_without_reason',
+        description: `Item "${item.name}" removed without narrative explanation`,
+        itemName: item.name,
+        itemId: id,
+      });
     }
   }
-  
-  return {
-    valid: violations.length === 0,
-    violations,
-  };
+  return { valid: violations.length === 0, violations };
 }
-

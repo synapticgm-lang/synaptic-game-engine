@@ -1,5 +1,5 @@
-﻿/**
- * Wave 3 (B026â€“B028) â€” sealed SceneManifest + deterministic fallback prose.
+/**
+ * Wave 3 (B026–B028) — sealed SceneManifest + deterministic fallback prose.
  * Committed beat/effects hash is sealed before GM; GM fail uses local templates.
  * B026: Manifest builder and hash
  * B028: One-repair policy and deterministic fallback
@@ -25,7 +25,7 @@ export interface SceneManifest {
   allowedUncertainty: string[];
   playerAction: string;
   sealedAt: number;
-  /** B028 â€” track if this was already used for a fallback (max 1 retry) */
+  /** B028 — track if this was already used for a fallback (max 1 retry) */
   fallbackUsed?: boolean;
 }
 
@@ -163,7 +163,7 @@ export function formatSealedManifestBlock(manifest: SceneManifest): string {
 
 /** Old HUD stubs that must never appear as player-facing GM narration (critic Batch A + E stall). */
 const BANNED_FALLBACK_STUB =
-  /something shifts\s*[â€”-]\s*a footstep|forcing the moment forward|closes in\s*[â€”-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent|here is the narrative of the completed event|you can still look,\s*speak,\s*or move|At alone in\b/i;
+  /something shifts\s*[—-]\s*a footstep|forcing the moment forward|closes in\s*[—-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent|here is the narrative of the completed event|you can still look,\s*speak,\s*or move|At alone in\b/i;
 
 /** HUD fact bleed that used to append into fallback prose. */
 const HUD_FACT_BLEED = /\bPC:\s*\S+.*\bHP:\s*\d|\bXP:\s*\d{1,4}\b(?!\s*(?:Gained|from|for))/i;
@@ -171,17 +171,11 @@ const HUD_FACT_BLEED = /\bPC:\s*\S+.*\bHP:\s*\d|\bXP:\s*\d{1,4}\b(?!\s*(?:Gained
 /** Detect banned sealed-manifest stubs (incl. legacy tapes). */
 export function isBannedFallbackStub(text: string | undefined): boolean {
   if (!text?.trim()) return false;
-  return BANNED_FALLBACK_STUB.test(text) || HUD_FACT_BLEED.test(text);
+  return BANNED_FALLBACK_STUB.test(text) || HUD_FACT_BLEED.test(text)
+    || /\bthe beat does not freeze\b|\bis still engaged\s*[—–-]/i.test(text);
 }
 
-/** True when last commit was an engine recovery stitch (cap consecutive). */
-export function isEngineRecoveryProse(text: string | undefined): boolean {
-  if (!text?.trim()) return false;
-  if (isBannedFallbackStub(text)) return true;
-  return /\bthe beat does not freeze\b|\bis still engaged\s*[â€”-]/i.test(text);
-}
-
-/** Hard stop after one recovery commit â€” next empty GM must FAIL (Class A). */
+/** Hard stop after one recovery commit — next empty GM must FAIL (Class A). */
 export function consecutiveRecoveryExceeded(state: GameState): boolean {
   return (state.sceneFacts?.engineRecoveryStreak ?? 0) >= 1;
 }
@@ -213,7 +207,7 @@ export function clearEngineRecoveryStreak(state: GameState): GameState {
 }
 
 /**
- * Diegetic local stitch when GM is empty â€” narrative only, never HUD PC/HP/XP lines.
+ * Diegetic local stitch when GM is empty — narrative only, never HUD PC/HP/XP lines.
  * Encounter branch narrates live ledger foe; never the closes-in template.
  */
 function fallbackPlace(state: GameState): string {
@@ -254,11 +248,11 @@ export function renderDeterministicFallback(
   if (enc) {
     const hp = typeof enc.hp === 'number' ? enc.hp : null;
     const max = typeof enc.maxHp === 'number' ? enc.maxHp : null;
-    const hpBit = hp != null && max != null ? ` â€” ${hp}/${max} HP` : '';
+    const hpBit = hp != null && max != null ? ` — ${hp}/${max} HP` : '';
     return `At ${loc}, ${enc.name} is still engaged${hpBit}. Dust and breath hang between you; the next blow, flight, or word is yours.`;
   }
   if (manifest.beatId?.includes('crisis') || manifest.beatId?.includes('branch')) {
-    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you â€” delay will cost.`;
+    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you — delay will cost.`;
   }
   if (inspectish) {
     return getDiegeticFallback(state, 'inspect exhaust');
@@ -274,9 +268,9 @@ export function renderDeterministicFallback(
 }
 
 /** 
- * B028 â€” One-repair policy terminal: fallback preserves receipts in systemLog only.
+ * B028 — One-repair policy terminal: fallback preserves receipts in systemLog only.
  * Max 1 fallback per manifest; subsequent failures must use a new manifest.
- * 31i â€” never emit banned HUD stubs; prose is diegetic stitch only.
+ * 31i — never emit banned HUD stubs; prose is diegetic stitch only.
  */
 export function applyRenderFallback(
   manifest: SceneManifest,
@@ -306,19 +300,19 @@ export function applyRenderFallback(
     fallbackUsed: true,
   };
   
-  // 29c â€” no player-facing "(beat recovered; fail)" chrome
-  // Ledger receipts stay in systemLog â€” never append PC/HP/XP into narration
+  // 29c — no player-facing "(beat recovered; fail)" chrome
+  // Ledger receipts stay in systemLog — never append PC/HP/XP into narration
   return {
     prose,
     systemLog: applyStatusFirewall([
-      `Deterministic fallback applied (${reason}) â€” ledger preserved`,
+      `Deterministic fallback applied (${reason}) — ledger preserved`,
     ]).lines,
     manifestUpdated,
   };
 }
 
 /**
- * B028 â€” Check if manifest can still be used for fallback (max 1 retry policy).
+ * B028 — Check if manifest can still be used for fallback (max 1 retry policy).
  */
 export function canUseFallback(manifest: SceneManifest): boolean {
   return !manifest.fallbackUsed;

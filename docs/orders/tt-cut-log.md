@@ -19,6 +19,15 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-ECR2 attunement (Order E-CR / Spec E-CR2)
+
+1. **`src/game/tabletop/downtimeTurn.ts` `ATTUNE` / `END_ATTUNE` regexes** — whole-line phrase matchers for attune/end. What they did: keyed the path off wording, not intent + carried magic item. Replaced by `parsePlayerIntent` (`attune` → `use_item`) + `findAttuneTarget` (longest carried magic name in the line) and end/break/drop + `attunement` string gate.
+2. **`src/game/sealedManifest.ts` `isEngineRecoveryProse`** — recovery-phrase detector used only from `playTranscript`. Folded the recovery phrases into `isBannedFallbackStub` (one stub gate); `playTranscript` drops the second call. Cut for ruleCount budget.
+3. **`src/game/discoveryXpLedger.ts` `calculateInspectXpShare` / `checkLevelingPace` / `trackDiscoveryXpMetrics` (+ `DiscoveryXpTelemetry`)** — telemetry helpers with no production caller. Cut for ruleCount budget.
+4. **`src/game/inventoryConservation.ts` unused types / essay preamble** — `ItemStateTransition`, `TransitionKind`, and the P0.4 essay header. Behaviour of `buildInventoryAuthority` / `validateInventoryChanges` unchanged (compacted).
+
+---
+
 ## q31-ECR1 crafting (Order E-CR / Spec E-CR1)
 
 1. **`src/game/tabletop/downtimeTurn.ts` `CRAFT` regex** — verb list (`craft|forge|brew|scribe|make|…`) that keyed the craft path. What it did: recipe choice followed the verb, not the item. Replaced by make-action string gate + `craftItemFromInput` → `craftRecipe(item)` (item name is the key). Rest intent (`Make camp`) still skips craft via `parsePlayerIntent`.

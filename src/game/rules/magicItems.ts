@@ -8,7 +8,7 @@
  * Rarity and attunement are the bundled SRD data (src/data/srd/srd521.json) wherever it names the item.
  */
 import SRD from '../../data/srd/srd521.json';
-import type { Item, Rarity } from '../types';
+import type { GameState, Item, Rarity } from '../types';
 
 export type SrdRarity = 'Common' | 'Uncommon' | 'Rare' | 'Very Rare';
 
@@ -50,6 +50,8 @@ const ENGINE_ITEMS: Record<string, EngineItem> = {
     text: 'Ring, Rare (requires attunement). +1 to AC and saving throws.' },
   'Bracers of Defense': { rarity: 'Rare', ac: 2, armorless: true, itemType: 'accessory', slot: 'Wrists',
     text: 'Wondrous Item, Rare (requires attunement). +2 to AC while you wear no armor and use no Shield.' },
+  'Brooch of Shielding': { rarity: 'Uncommon', itemType: 'accessory', slot: 'Neck',
+    text: 'Wondrous Item, Uncommon (requires attunement). Resistance to force damage; Magic Missile deals you no damage.' },
 };
 
 export const MAGIC_ITEMS: Readonly<Record<string, MagicItemDef>> = Object.fromEntries(
@@ -115,13 +117,29 @@ export function magicItemsAtRarity(rarity: Rarity): string[] {
 }
 
 /** Why `name` cannot be attuned now (null = it can). */
-export function attunementProblem(inventory: readonly Item[] | null | undefined, name: string): string | null {
+export function attunementProblem(inventory: readonly Item[] | null | undefined, name: string, awayCount = 0): string | null {
   const d = magicItemDef(name);
   if (!d) return `${name} is not a magic item`;
   if (!d.attunement) return `${name} does not need attunement`;
-  const row = (inventory ?? []).find((i) => i.name === name);
-  if (!row) return `you do not carry ${name}`;
+  if (!(inventory ?? []).some((i) => i.name === name)) return `you do not carry ${name}`;
   if ((inventory ?? []).some((i) => i.name === name && i.attuned)) return `you are already attuned to ${name}`;
-  if (attunedItems(inventory).length >= MAX_ATTUNED) return `you are already attuned to ${MAX_ATTUNED} items`;
+  if (attunedItems(inventory).length + awayCount >= MAX_ATTUNED) return `you are already attuned to ${MAX_ATTUNED} items`;
   return null;
+}
+
+/** Drop/sell/steal of an attuned item: keep the slot until 24 h of world clock pass away. */
+export function markAwayAttuned(state: GameState, dropped: readonly Item[], now: number): GameState {
+  const add = dropped.filter((i) => i.attuned && magicItemDef(i.name)?.attunement);
+  if (!add.length) return state;
+  const away = [...(state.awayAttuned ?? [])];
+  for (const i of add) if (!away.some((a) => a.id === i.id)) away.push({ id: i.id, name: i.name, since: now });
+  return { ...state, awayAttuned: away };
+}
+
+/** End away attunements ≥24 h of world clock from `since`. */
+export function tickAwayAttunements(state: GameState, now: number): GameState {
+  const away = state.awayAttuned;
+  if (!away?.length) return state;
+  const keep = away.filter((a) => now - a.since < 24);
+  return keep.length === away.length ? state : { ...state, awayAttuned: keep.length ? keep : undefined };
 }

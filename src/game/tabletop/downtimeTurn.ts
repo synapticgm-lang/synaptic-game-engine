@@ -5,12 +5,13 @@
 import type { GameState, Item } from '../types';
 import { formatCp, payCoins, purseGold, purseOf } from '../rules/coins';
 import { craftItemFromInput, craftRecipe, type CraftRecipe } from '../rules/downtime';
-import { attunementProblem, magicItem, magicItemDef } from '../rules/magicItems';
+import { attunementProblem, magicItem, magicItemDef, attunedItems } from '../rules/magicItems';
 import { ORACLE_MEANING, oddsInInput, oracleLine, rollOracle } from '../rules/oracle';
 import { featureLeft, spendFeature } from '../rules/classFeatures';
 import { SPELLS } from '../rules/spells';
 import type { Rng } from '../rules/dice';
 import { parsePlayerIntent } from '../intentParser';
+import { takeShortRestHour } from '../recoveryRules';
 import { turnRng } from '../seededRng';
 import { advanceClock, isJourneyUnderway } from '../travelJourney';
 import { sheetSpellcasting, srdGearRow, tabletopArmorClass, toolProficiencies } from './characterBuild';
@@ -23,8 +24,6 @@ export interface DowntimeResult {
 }
 
 const ORACLE = /^\s*(?:ask the oracle|oracle)\s*[:,—-]?\s*(.+)$/i;
-const ATTUNE = /\battune\s+(?:myself\s+)?(?:to|with)?\s*(?:my\s+|the\s+|this\s+|a\s+)?(.+?)\s*[.!]?$/i;
-const END_ATTUNE = /\b(?:end|break|drop)\s+(?:my\s+)?attunement\s+(?:to|with)\s+(?:my\s+|the\s+)?(.+?)\s*[.!]?$/i;
 
 /** Resolve an oracle / craft / attunement / out-of-fight Lay On Hands (null = none of these). */
 export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = turnRng(state, 'downtime')): DowntimeResult | null {
@@ -68,11 +67,18 @@ export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = 
   }
 
   if (state.activeEncounter) return null;
-  const end = END_ATTUNE.exec(line);
-  if (end) return endAttunement(state, end[1]!);
-  const attune = ATTUNE.exec(line);
-  if (attune && !line.toLowerCase().includes('attunement')) return attuneTo(state, attune[1]!);
-  if (line.toLowerCase().includes('lay on hands')) return layOnHands(state, line);
+  // Attunement: intent use_item (`attune`) / rest naming the item, or end/break/drop attunement (E-CR2).
+  const ending = low.includes('attunement') && (low.includes('end') || low.includes('break') || low.includes('drop'));
+  const attuning = low.includes('attune') && !ending;
+  const named = findAttuneTarget(state, line);
+  if (ending) {
+    if (!named) return null;
+    return endAttunement(state, named);
+  }
+  if (attuning || (intent.kind === 'rest' && named && magicItemDef(named.name)?.attunement)) {
+    return attuneTo(state, named?.name ?? line);
+  }
+  if (low.includes('lay on hands')) return layOnHands(state, line);
   return null;
 }
 
@@ -152,12 +158,20 @@ function addItem(inv: Item[], item: Item): Item[] {
   return inv.map((i, n) => (n === same ? { ...i, quantity: (i.quantity ?? 1) + item.quantity } : i));
 }
 
-function findCarried(state: GameState, said: string): Item | undefined {
-  const want = said.trim().toLowerCase();
-  return (
-    (state.inventory ?? []).find((i) => i.name.toLowerCase() === want)
-    ?? (state.inventory ?? []).find((i) => magicItemDef(i.name) && i.name.toLowerCase().includes(want))
-  );
+/** Longest carried magic-item name mentioned in the line (intent + item resolve; no attune regex). */
+function findAttuneTarget(state: GameState, line: string): Item | undefined {
+  const low = line.toLowerCase();
+  let best: Item | undefined;
+  let bestLen = 0;
+  for (const i of state.inventory ?? []) {
+    if (!magicItemDef(i.name)) continue;
+    const n = i.name.toLowerCase();
+    if (low.includes(n) && n.length >= bestLen) {
+      best = i;
+      bestLen = n.length;
+    }
+  }
+  return best;
 }
 
 function withArmorClass(state: GameState): GameState {
@@ -167,40 +181,60 @@ function withArmorClass(state: GameState): GameState {
 }
 
 function attuneTo(state: GameState, said: string): DowntimeResult | null {
-  const item = findCarried(state, said);
+  const item = findAttuneTarget(state, said) ?? findAttuneTarget(state, ` ${said} `);
   const name = item?.name ?? said.trim();
   if (!item && !magicItemDef(name)) return null;
-  const problem = attunementProblem(state.inventory, name);
+  const problem = attunementProblem(state.inventory, name, state.awayAttuned?.length ?? 0);
   if (problem) return refuse(state, 'Attunement', name, problem);
+  // Same Short Rest used to learn its properties cannot attune (SRD p.102–103).
+  if (item && item.identifiedTurn != null && item.identifiedTurn === (state.turn ?? 0)) {
+    return refuse(state, 'Attunement', name, 'you just learned its properties this rest');
+  }
+  // Pending combat interrupts the rest: an hour passes, no attunement.
+  if (state.sceneFacts?.pendingEncounter) {
+    const clock = advanceClock(state, 1);
+    return {
+      state: clock.state,
+      receipts: [`Attunement: ${name} — not done (the rest was interrupted)`],
+      fact: `You try to settle with the ${name}, but the moment breaks before the rest is done.`,
+    };
+  }
   const before = state.character.armorClass;
-  const clock = advanceClock(state, 1);
+  const rest = takeShortRestHour(state);
   const next = withArmorClass({
-    ...clock.state,
-    inventory: (clock.state.inventory ?? []).map((i) => (i.name === name ? { ...i, attuned: true } : i)),
+    ...rest.state,
+    inventory: (rest.state.inventory ?? []).map((i) => (i.name === name ? { ...i, attuned: true } : i)),
   });
   const after = next.character.armorClass;
-  const count = (next.inventory ?? []).filter((i) => i.attuned).length;
+  const count = attunedItems(next.inventory).length + (next.awayAttuned?.length ?? 0);
   return {
     state: next,
-    receipts: [`Attunement: ${name} — attuned (${count} of 3)${before !== after ? `; AC ${before} → ${after}` : ''}; ${clock.note}`],
+    receipts: [
+      `Attunement: ${name} — attuned (${count} of 3)${before !== after ? `; AC ${before} → ${after}` : ''}; ${rest.note}`,
+      ...rest.after,
+    ],
     fact: `You spend a short rest with the ${name}, and it settles to you: you are attuned to it now.`,
   };
 }
 
-function endAttunement(state: GameState, said: string): DowntimeResult | null {
-  const item = findCarried(state, said);
-  if (!item) return null;
+function endAttunement(state: GameState, item: Item): DowntimeResult | null {
   if (!item.attuned) return refuse(state, 'Attunement', item.name, `you are not attuned to ${item.name}`);
+  if (item.cursed) return refuse(state, 'Attunement', item.name, "it's cursed; the curse must be broken first");
   const before = state.character.armorClass;
+  // Voluntary end takes another Short Rest (SRD Attunement).
+  const rest = takeShortRestHour(state);
   const next = withArmorClass({
-    ...state,
-    inventory: (state.inventory ?? []).map((i) => (i.id === item.id ? { ...i, attuned: false } : i)),
+    ...rest.state,
+    inventory: (rest.state.inventory ?? []).map((i) => (i.id === item.id ? { ...i, attuned: false } : i)),
   });
   const after = next.character.armorClass;
   return {
     state: next,
-    receipts: [`Attunement: ${item.name} — ended${before !== after ? `; AC ${before} → ${after}` : ''}`],
-    fact: `You let the ${item.name} go quiet; you are no longer attuned to it.`,
+    receipts: [
+      `Attunement: ${item.name} — ended${before !== after ? `; AC ${before} → ${after}` : ''}; ${rest.note}`,
+      ...rest.after,
+    ],
+    fact: `You let the ${item.name} go quiet over a short rest; you are no longer attuned to it.`,
   };
 }
 

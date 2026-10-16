@@ -30,7 +30,7 @@ import { isJourneyUnderway } from './travelJourney';
 import { liveChips } from './chipLegality';
 import { roundCombatChips } from './tabletop/combatChips';
 import { updateCooldowns } from './optionDiversityContract';
-import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
+import { isBannedFallbackStub } from './sealedManifest';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
@@ -494,7 +494,6 @@ export function collapseEngineFallbackNarration(
   for (const t of turns) {
     const stub =
       isBannedFallbackStub(t.body) ||
-      isEngineRecoveryProse(t.body) ||
       /^\[engine fallback/i.test(t.body);
     if (stub) {
       if (stubRun === 0) stubStartTurn = t.turn;

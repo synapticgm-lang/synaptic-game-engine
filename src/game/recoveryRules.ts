@@ -81,6 +81,16 @@ function arcaneRecoveryDue(state: GameState): boolean {
 /** A limited-use class feature has been spent (a long rest brings it back). */
 const featuresSpent = (state: GameState) => Object.values(state.character.featureUses ?? {}).some((n) => n > 0);
 
+/**
+ * One Short Rest hour for attunement (SRD 5.2.1): advance the clock 1 h and apply the same
+ * Short Rest recovery the hub rest path uses (Arcane Recovery / Pact Magic / Rage). No Hit Die.
+ */
+export function takeShortRestHour(state: GameState): { state: GameState; note: string; after: string[] } {
+  const clock = advanceClock(state, 1);
+  const r = shortRestRecovery(clock.state);
+  return { state: r.state, note: clock.note, after: r.after };
+}
+
 /** Short-rest recovery beyond Hit Dice: Arcane Recovery, Pact Magic slots, one Rage. */
 function shortRestRecovery(s: GameState): { state: GameState; after: string[] } {
   const ch = s.character;

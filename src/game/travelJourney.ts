@@ -31,6 +31,7 @@ import type {
   WorldAtlasState,
 } from './types';
 import { resolveLocalAreaLevel, resolveThreatTier } from './placeAuthority';
+import { tickAwayAttunements } from './rules/magicItems';
 import { DEFAULT_HOUSE_RULES, houseRulesOf, pillarCopies } from './rules/houseRules';
 import { hoursAtPace, paceCheckAdv, paceTag } from './rules/travelPace';
 import {
@@ -388,8 +389,9 @@ export function advanceClock(state: GameState, hours: number): { state: GameStat
   const worldDay = (state.worldDay ?? 0) + Math.floor(total / 24);
   const slot = timeOfDayForHour(hour);
   const sceneFacts = state.sceneFacts ? { ...state.sceneFacts, timeOfDay: slot } : state.sceneFacts;
+  const next: GameState = { ...state, worldHour: hour, ...(worldDay ? { worldDay } : {}), sceneFacts };
   return {
-    state: { ...state, worldHour: hour, ...(worldDay ? { worldDay } : {}), sceneFacts },
+    state: tickAwayAttunements(next, worldDay * 24 + hour),
     note: `+${formatSpan(hours)}, now ${slot}`,
   };
 }

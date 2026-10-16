@@ -135,10 +135,14 @@ describe('replay bank tt-build-6c (oracle, crafting, attunement, mastery, class 
     expect(bracers.status[0]).toBe('Attunement: Bracers of Defense — attuned (2 of 3); +1h, now morning');
     expect(bracers.state.character.armorClass).toBe(at.state.character.armorClass);
     const ring = turn({ ...bracers.state, inventory: [...bracers.state.inventory, magicItem('Ring of Protection', 'mi-ring', 'Engine loot')] }, 'Attune to the Ring of Protection');
-    const fourth = turn({ ...ring.state, inventory: [...ring.state.inventory, { ...cloak, id: 'mi-cloak-2' }] }, 'Attune to the Cloak of Protection');
-    expect(fourth.status[0]).toBe('Attunement: Cloak of Protection — not done (you are already attuned to Cloak of Protection); nothing spent');
+    // Duplicate name still refused; a true 4th (Brooch) hits the SRD three-item limit (E-CR2).
+    const fourthDup = turn({ ...ring.state, inventory: [...ring.state.inventory, { ...cloak, id: 'mi-cloak-2' }] }, 'Attune to the Cloak of Protection');
+    expect(fourthDup.status[0]).toBe('Attunement: Cloak of Protection — not done (you are already attuned to Cloak of Protection); nothing spent');
+    const fourth = turn({ ...ring.state, inventory: [...ring.state.inventory, magicItem('Brooch of Shielding', 'mi-brooch', 'Engine loot')] }, 'Attune to the Brooch of Shielding');
+    expect(fourth.status[0]).toBe('Attunement: Brooch of Shielding — not done (you are already attuned to 3 items); nothing spent');
+    // Voluntary end costs a Short Rest (SRD Attunement; E-CR2).
     const end = turn(at.state, 'End my attunement to the Cloak of Protection');
-    expect(end.status).toEqual([`Attunement: Cloak of Protection — ended; AC ${ac + 1} → ${ac}`]);
+    expect(end.status).toEqual([`Attunement: Cloak of Protection — ended; AC ${ac + 1} → ${ac}; +1h, now morning`]);
     // A potion needs no attunement.
     expect(turn({ ...s, inventory: [...s.inventory, magicItem('Potion of Healing', 'mi-p', 'x')] }, 'Attune to the Potion of Healing').status[0])
       .toBe('Attunement: Potion of Healing — not done (Potion of Healing does not need attunement); nothing spent');
