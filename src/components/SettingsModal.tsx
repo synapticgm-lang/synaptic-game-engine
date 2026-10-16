@@ -865,7 +865,34 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               }}
             />
           </Section>
-          {/* ACC-1c controls */}
+          <Section icon={<Volume2 size={16} />} title="Read aloud" visible={activeTab === 'accessibility'}>
+            <p className="mb-2 text-xs text-slate-400">Turn read-aloud on under General &gt; Voice &amp; Audio. Screen readers hear new story text when read-aloud is off.</p>
+            <label className="mb-3 block text-sm text-slate-300">
+              Speed: {(draft.ttsRate ?? 1).toFixed(1)}x
+              <input
+                type="range" min={0.6} max={1.6} step={0.1}
+                value={draft.ttsRate ?? 1}
+                onChange={(e) => update('ttsRate', Number(e.target.value))}
+                className="mt-1 block w-full" aria-label="Read-aloud speed"
+              />
+            </label>
+            <label className="mb-3 block text-sm text-slate-300">
+              Volume: {Math.round((draft.ttsVolume ?? 1) * 100)}%
+              <input
+                type="range" min={0} max={1} step={0.1}
+                value={draft.ttsVolume ?? 1}
+                onChange={(e) => update('ttsVolume', Number(e.target.value))}
+                className="mt-1 block w-full" aria-label="Read-aloud volume"
+              />
+            </label>
+            <ToggleRow
+              icon={<Volume2 size={15} />}
+              label="Read choices aloud"
+              description="After each story beat, read out the choices you can pick."
+              checked={!!draft.readChoicesAloud}
+              onChange={(v) => update('readChoicesAloud', v)}
+            />
+          </Section>
           {/* ACC-1d controls */}
 
           {/* Dice display (tabletop fantasy only — LitRPG / story RPG don't use the dice tray) */}
