@@ -924,6 +924,11 @@ export interface GameState {
   worldLedger?: WorldLedger;
   /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
   sandboxAwardKeys?: string[];
+  /**
+   * O1-C — cleared interiors keyed by place id. Map as walked + compact item deltas only
+   * (left / moved / taken). Untouched seeded loot is re-derived on re-entry; no foes stored.
+   */
+  clearedSites?: Record<string, ClearedSiteRecord>;
   /** 29z3 — locks the player tried without the skill (the next level-up rank prefers these). */
   skillGateTries?: Array<{ id: string; label: string; skill: string; rank: number; turn: number }>;
   /** LK-1 — pick fail streak + alarm memory per lock id (shared mechanism, not a second checker). */
@@ -1697,6 +1702,40 @@ export interface CirclingMemory {
   shortReturnTurn?: number;
   /** 29y — the place the run started in (the first circling record). */
   openingPlace?: string;
+}
+
+/** O1-C — compact cleared-interior record (map as walked + item deltas; no foes). */
+export interface ClearedSiteRecord {
+  map: {
+    blueprintId: string;
+    dungeonName: string;
+    siteName?: string;
+    tier: MapTier;
+    dangerTier?: MapTier;
+    areaLevel?: number;
+    currentZLevel: number;
+    visitedNodeIds: string[];
+    clearedNodeIds: string[];
+    nodes: Array<{
+      id: string;
+      name: string;
+      description: string;
+      connections: string[];
+      tags?: string[];
+      isSecret?: boolean;
+      coordinates?: { x: number; y: number };
+      zLevel?: number;
+      footprint?: { w: number; h: number };
+      edgeKinds?: Record<string, string>;
+      openedLootableIds: string[];
+      looseLeft: Array<{ id: string; label: string; inventoryItemId?: string; item?: Item }>;
+    }>;
+  };
+  items: {
+    left: Array<{ id: string; nodeId: string; item: Item }>;
+    moved: Array<{ id: string; fromNodeId: string; toNodeId: string }>;
+    taken: string[];
+  };
 }
 
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */
