@@ -2,6 +2,7 @@
 
 Every item below can be restored with git.
 
+- **shop-a (manual, branch `shop-a`, 16 Oct):** deleted from `src/game/rules/coins.ts` `ITEM_COST_CP`: 23 hand-typed prices that `src/data/srd/srdShopGear.json` (SRD 5.2.1 pp. 89-102) now supplies with the same value: Quiver: 100, "Dungeoneer's Pack": 1200, "Burglar's Pack": 1600, "Priest's Pack": 3300, "Scholar's Pack": 4000, "Thieves' Tools": 2500, "Healer's Kit": 500, Robe: 100, Crowbar: 200, Pouch: 50, "Calligrapher's Supplies": 1000, Parchment: 10, 'Potion of Healing': 5000, Torch: 1, Lamp: 50, "Explorer's Pack": 1000, "Entertainer's Pack": 4000, Lute: 3500, 'Herbalism Kit': 500, "Woodcarver's Tools": 100, Antitoxin: 5000, Candle: 1, Ink: 1000, Also removed the `Math.max(1, ...)` floor in `srdSaleCp` (a 1 CP item now sells for 0, per John 16 Oct 07:32). The old text lives at parent **`6da9a87e`**; restore with `git show 6da9a87e:src/game/rules/coins.ts`.
 - **q31-P3:** deleted in the q31-P3 commit (stamp `2026-10-15q`). The old text lives at its parent, **`12726bad`**. Line numbers in that section are at `12726bad`.
 - **q31-DC1:** deleted in the q31-DC1 commit (stamp `2026-10-15o`). The old text lives at its parent, **`eeba53ad`**. Restore one file with `git show eeba53ad:<path> > <path>`. Line numbers in that section are at `eeba53ad`.
 - **tt-fix-15:** deleted in the tt-fix-15 commit (stamp `2026-10-15b`). The old text lives at its parent, **`ca67deec`**. Line numbers in that section are at `ca67deec`.

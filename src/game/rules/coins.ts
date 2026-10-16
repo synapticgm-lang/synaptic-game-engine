@@ -8,6 +8,18 @@
  */
 import type { CoinPurse, GameState } from '../types';
 import { srdGearCostCp } from './srdGear';
+import srdShopGear from '../../data/srd/srdShopGear.json';
+
+/** "Thieve’s Tools" and "thieves' tools" are the same row. */
+export const priceKey = (name: string) => String(name ?? '').replace(/[\u2018\u2019]/g, "'").trim().toLowerCase();
+
+/** SRD 5.2.1 pp. 89-102 shop rows (adventuring gear, tools, mounts, tack, ships, food, services) in copper. */
+const SHOP_GEAR_CP: Record<string, number> = Object.fromEntries(
+  Object.values(srdShopGear as Record<string, unknown>)
+    .filter((v): v is Array<{ name: string; cp: number }> => Array.isArray(v))
+    .flat()
+    .map((r) => [String(r.name).replace(/[\u2018\u2019]/g, "'"), r.cp]),
+);
 
 export type Coin = keyof CoinPurse;
 export const COIN_ORDER: Coin[] = ['pp', 'gp', 'ep', 'sp', 'cp'];
@@ -160,46 +172,39 @@ export function wealthLine(state: Pick<GameState, 'engineMode' | 'character' | '
  * Tools tables). An item with no listed cost has none here and sells by the shared salvage price.
  */
 export const ITEM_COST_CP: Record<string, number> = {
+  ...SHOP_GEAR_CP,
   ...srdGearCostCp(),
   Arrows: 5,
   Bolts: 5,
-  Quiver: 100,
-  "Dungeoneer's Pack": 1200,
-  "Burglar's Pack": 1600,
-  "Priest's Pack": 3300,
-  "Scholar's Pack": 4000,
-  "Thieves' Tools": 2500,
-  "Healer's Kit": 500,
   'Holy Symbol': 500,
   Spellbook: 5000,
-  Robe: 100,
   "Traveler's Clothes": 200,
-  Crowbar: 200,
-  Pouch: 50,
   'Gaming Set': 10,
-  "Calligrapher's Supplies": 1000,
   'Book (prayers)': 2500,
   'Book (history)': 2500,
-  Parchment: 10,
-  'Potion of Healing': 5000,
-  Torch: 1,
   Lantern: 500,
-  Lamp: 50,
-  "Explorer's Pack": 1000,
-  "Entertainer's Pack": 4000,
-  Lute: 3500,
-  'Herbalism Kit': 500,
-  "Woodcarver's Tools": 100,
   'Druidic Focus': 100,
   'Arcane Focus': 1000,
   'Book (occult lore)': 2500,
-  Antitoxin: 5000,
-  Candle: 1,
-  Ink: 1000,
+
+
+
 };
 
 /** What a buyer pays a tabletop seller: half the SRD cost, per piece × quantity (null when the cost is not listed). */
+const PRICE_BY_KEY: Map<string, number> = new Map(Object.entries(ITEM_COST_CP).map(([k, v]) => [priceKey(k), v]));
+
+/** One price lookup for buying and selling: SRD list cost in copper, or null when the SRD lists none. */
+export function shopPriceCp(name: string): number | null {
+  return ITEM_COST_CP[name] ?? PRICE_BY_KEY.get(priceKey(name)) ?? null;
+}
+
+/**
+ * What a buyer pays a tabletop seller (SRD 5.2.1 p.89: equipment fetches half its cost): exactly half in copper,
+ * paid in smaller coins by changeFor (5 GP -> 2 GP 5 SP; 1 SP -> 5 CP). Only a sub-copper remainder is lost
+ * (3 CP -> 1 CP, 1 CP -> 0). Null when the cost is not listed.
+ */
 export function srdSaleCp(name: string, quantity = 1): number | null {
-  const cost = ITEM_COST_CP[name];
-  return cost == null ? null : Math.max(1, Math.floor((cost * Math.max(1, quantity)) / 2));
+  const cost = shopPriceCp(name);
+  return cost == null ? null : Math.floor((cost * Math.max(1, quantity)) / 2);
 }
