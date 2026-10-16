@@ -9,9 +9,7 @@ import type { GameState } from './types';
 import type { DelayedConsequence, ResourceDelta, RelationshipDelta } from './types/crossPackageContracts';
 import { presentNpcNames, shiftStoredRelationship, type StoredShift } from './npcRelationships';
 
-// ============================================================================
 // CONSEQUENCE SCHEDULING
-// ============================================================================
 
 /**
  * Schedule delayed consequence
@@ -103,9 +101,7 @@ export function markConsequenceDelivered(
   };
 }
 
-// ============================================================================
 // CONSEQUENCE DELIVERY
-// ============================================================================
 
 /**
  * Deliver consequence payload
@@ -192,9 +188,7 @@ function buildConsequenceMandate(consequence: DelayedConsequence): string {
   return lines.join('\n');
 }
 
-// ============================================================================
 // SITUATION PACKET INTEGRATION
-// ============================================================================
 
 /**
  * Build delayed consequences situation section
@@ -244,9 +238,7 @@ export function buildJournalConsequenceHints(state: GameState): string[] {
   return hints;
 }
 
-// ============================================================================
 // Wave B: Enhanced Delivery and Ending Gates
-// ============================================================================
 
 export interface EndingGate {
   endingId: string;
@@ -421,9 +413,7 @@ export function buildFogOfWarEntry(
   };
 }
 
-// ============================================================================
 // Helper Functions
-// ============================================================================
 
 function applyResourceDelta(delta: ResourceDelta, state: GameState): GameState {
   // Simplified - real implementation would handle all resource types

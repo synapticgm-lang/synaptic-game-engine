@@ -2,7 +2,7 @@
  * 29c — pin opening hook NPCs into scene presence so Free T1–12 don't forget Silas / Vessa.
  */
 
-import type { CampaignBible } from './campaignBibleTypes';
+import type { CampaignBible } from '@/data/campaigns/types';
 import type { GameState } from './types';
 import { isChromePersonToken, isNonPersonNameToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';

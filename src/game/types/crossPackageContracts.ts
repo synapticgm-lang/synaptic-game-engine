@@ -10,9 +10,7 @@
  * implementation coupling. Each package implements its side of the contract.
  */
 
-// ============================================================================
 // BASE RECEIPT TYPES
-// ============================================================================
 
 /**
  * Base receipt interface that all receipt types extend.
@@ -89,9 +87,7 @@ export interface RelationshipDelta {
   reason: string;
 }
 
-// ============================================================================
 // WS-2: NPC LIFECYCLE RECEIPTS
-// ============================================================================
 
 /**
  * NPC turnover receipt (exit, transform, relocate)
@@ -152,9 +148,7 @@ export interface NpcKeyMoment {
   retention: 'permanent' | 'campaign' | 'arc' | 'scene';
 }
 
-// ============================================================================
 // WS-4: ENCOUNTER BIBLE RECEIPTS
-// ============================================================================
 
 /**
  * Encounter receipt (combat, trap, hazard, social challenge)
@@ -231,9 +225,7 @@ export interface EncounterNpcEffect {
   keyMomentData: Partial<NpcKeyMoment>;
 }
 
-// ============================================================================
 // WS-5: PYOA PERSISTENCE RECEIPTS
-// ============================================================================
 
 /**
  * Crisis receipt (PYOA branch fork)
@@ -353,9 +345,7 @@ export interface EndingReceipt extends BaseReceipt {
   terminalTurn: number;
 }
 
-// ============================================================================
 // UNIFIED RECEIPT UNION
-// ============================================================================
 
 /**
  * Union of all receipt types across packages
@@ -367,9 +357,7 @@ export type Receipt =
   | ConvergenceReceipt
   | EndingReceipt;
 
-// ============================================================================
 // CROSS-PACKAGE TRIGGER CONTRACTS
-// ============================================================================
 
 /**
  * NPC → Encounter trigger (WS-2 → WS-4)
@@ -450,9 +438,7 @@ export interface Predicate {
   value?: boolean | string | number;
 }
 
-// ============================================================================
 // EXCLUSIVE FACTS REGISTRY
-// ============================================================================
 
 /**
  * Exclusive fact group (mutex enforcement)
@@ -477,9 +463,7 @@ export interface ExclusiveFactGroup {
   description: string;
 }
 
-// ============================================================================
 // HELPER TYPES
-// ============================================================================
 
 /**
  * Package identifier

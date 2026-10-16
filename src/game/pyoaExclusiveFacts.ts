@@ -12,9 +12,7 @@ import type { GameState } from './types';
 import type { FactWrite, ExclusiveFactGroup, FactPredicate, PredicateGroup } from './pyoaTypes';
 import { rpgEndingFacts } from './rpgEndings';
 
-// ============================================================================
 // EXCLUSIVE FACT GROUPS REGISTRY
-// ============================================================================
 
 /**
  * Thornferry Road exclusive fact groups
@@ -122,9 +120,7 @@ export class ExclusiveFactRegistry {
 // Global registry instance
 export const EXCLUSIVE_FACT_REGISTRY = new ExclusiveFactRegistry();
 
-// ============================================================================
 // FACT CONFLICT DETECTION
-// ============================================================================
 
 export interface FactConflict {
   hasConflict: boolean;
@@ -265,9 +261,7 @@ export function validateExactlyOneRequirement(
   return { satisfied: true };
 }
 
-// ============================================================================
 // PREDICATE EVALUATION
-// ============================================================================
 
 /**
  * Evaluate a single fact predicate
@@ -327,9 +321,7 @@ export function evaluatePredicateGroup(
   return true;
 }
 
-// ============================================================================
 // GAME STATE INTEGRATION
-// ============================================================================
 
 /**
  * Extract facts from game state

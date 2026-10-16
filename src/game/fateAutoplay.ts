@@ -133,6 +133,7 @@ import { seedWorldMapPlaces } from './worldMapAuthority';
 import { maybeRevealFromLocation } from './worldAtlas';
 import { harvestNarrativePeople, scrubInventedGeography } from './narrativeHarvest';
 import { applySocialLedgerTurn } from './npcMemory';
+import { stampSceneLedger } from './sceneLedger';
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import {
   extractUpdates,
@@ -2074,7 +2075,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   {
     const record = commitTurnRecord(state, governed, filteredSystemLog, { why: `Player: ${playerInput.slice(0, 120)}` });
-    governed = record.state;
+    governed = stampSceneLedger(record.state, mudBody);
     if (record.lines.length) {
       filteredSystemLog = [...filteredSystemLog, ...record.lines];
       const log = [...(governed.log ?? [])];

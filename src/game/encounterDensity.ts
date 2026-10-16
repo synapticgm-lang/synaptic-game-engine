@@ -68,9 +68,7 @@ export interface VarietyScore {
   };
 }
 
-// ============================================================================
 // Density Profile Management
-// ============================================================================
 
 /**
  * Wave C: Get density profile for current mode and location
@@ -181,9 +179,7 @@ export function updateDensityState(
   };
 }
 
-// ============================================================================
 // Drought Detection
-// ============================================================================
 
 /**
  * Wave C: Check if drought timer has triggered
@@ -210,9 +206,7 @@ export function checkDrought(
   };
 }
 
-// ============================================================================
 // Saturation Detection
-// ============================================================================
 
 /**
  * Wave C: Check if encounter saturation limit reached
@@ -245,9 +239,7 @@ export function checkSaturation(
   };
 }
 
-// ============================================================================
 // Role Budget Checks
-// ============================================================================
 
 /**
  * Wave C: Check if role quota is available
@@ -293,9 +285,7 @@ export function getAvailableRoles(
   return available;
 }
 
-// ============================================================================
 // Variety Scoring
-// ============================================================================
 
 /**
  * Wave C: Score template variety (penalize repeats)
@@ -349,9 +339,7 @@ export function rankByVariety(
     .sort((a, b) => b.varietyScore.score - a.varietyScore.score);
 }
 
-// ============================================================================
 // Density-Aware Selection
-// ============================================================================
 
 /**
  * Wave C: Select encounter respecting density constraints

@@ -19,9 +19,7 @@ import {
   spreadHubGossip,
 } from './npcMemoryLedger';
 
-// ============================================================================
 // CROSS-NPC KNOWLEDGE PROPAGATION
-// ============================================================================
 
 /**
  * Propagate knowledge from one NPC to another based on rules
@@ -130,9 +128,7 @@ export function shareTreatmentWithWitnesses(
   return { npcMemories, ledgers };
 }
 
-// ============================================================================
 // NPC-025: ANTI-SYNC GATES
-// ============================================================================
 
 /**
  * Check if faction is denied knowledge of an event
@@ -174,9 +170,7 @@ export function filterKnowledgeByFaction(
   return true; // Allowed
 }
 
-// ============================================================================
 // NPC-026: DIRECTIONAL RELATIONSHIPS
-// ============================================================================
 
 /**
  * Relationship aspects tracked per ordered actor pair
@@ -321,9 +315,7 @@ export function getRelationshipValue(
   return rel?.aspects[aspect] ?? 0;
 }
 
-// ============================================================================
 // NPC-027: TRAIT MODULATION
-// ============================================================================
 
 /**
  * Lightweight NPC traits (2-3 per NPC)
@@ -401,9 +393,7 @@ export function modulateRelationshipDelta(
   return Math.round(baseDelta * multiplier);
 }
 
-// ============================================================================
 // CROSS-NPC CONVERSATION TRACKING
-// ============================================================================
 
 /**
  * Track conversation between NPCs
@@ -515,9 +505,7 @@ export function getConversationsBetween(
   );
 }
 
-// ============================================================================
 // SITUATION PACKET INTEGRATION
-// ============================================================================
 
 /**
  * Build cross-NPC section for situation packet

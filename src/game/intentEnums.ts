@@ -8,9 +8,7 @@
  * Solution: Use semantic intent enums for LLM context, display labels only in ActionBar.
  */
 
-// ============================================================================
 // INTENT ENUMS — Semantic actions passed to LLM (not UI strings)
-// ============================================================================
 
 export enum PlayerIntent {
   // Combat intents
@@ -76,9 +74,7 @@ export enum PlayerIntent {
   INTENT_OTHER = 'INTENT_OTHER',
 }
 
-// ============================================================================
 // INTENT DISPLAY LABELS — What the player sees (ActionBar only, never LLM)
-// ============================================================================
 
 export const INTENT_DISPLAY_LABELS: Record<PlayerIntent, string> = {
   // Combat
@@ -144,9 +140,7 @@ export const INTENT_DISPLAY_LABELS: Record<PlayerIntent, string> = {
   [PlayerIntent.INTENT_OTHER]: 'Other',
 };
 
-// ============================================================================
 // INTENT INFERENCE — Convert user input or choice label to intent enum
-// ============================================================================
 
 /**
  * Infer semantic intent from a choice label or user input.

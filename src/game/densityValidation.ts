@@ -36,9 +36,7 @@ import {
 import type { SpineBand, Milestone } from './spineMapRegistry';
 import { getBandForTurn, getNextMilestone, isMilestoneOverdue } from './spineMapRegistry';
 
-// ============================================================================
 // Gate Results
-// ============================================================================
 
 export interface GateResult {
   gate: string;
@@ -50,9 +48,7 @@ export interface GateResult {
   telemetry: Record<string, any>;
 }
 
-// ============================================================================
 // G1: Density Gate
-// ============================================================================
 
 /**
  * G1: Check qualified hub, encounter, and NPC counts
@@ -122,9 +118,7 @@ export function validateDensityGate(
   };
 }
 
-// ============================================================================
 // G2: Exhaustion Gate
-// ============================================================================
 
 /**
  * G2: Check exhaustion metrics (no repeat dominance before T100)
@@ -186,9 +180,7 @@ export function validateExhaustionGate(
   };
 }
 
-// ============================================================================
 // G3: Spine Milestone Gate
-// ============================================================================
 
 /**
  * G3: Check milestone coverage (80% hit rate)
@@ -256,9 +248,7 @@ export function validateMilestoneGate(
   };
 }
 
-// ============================================================================
 // G4: FO3-Like Wedge Gate
-// ============================================================================
 
 /**
  * G4: Check FO3-like depth index (60-70% target)
@@ -313,9 +303,7 @@ export function validateDepthWedge(
   };
 }
 
-// ============================================================================
 // G5: LitRPG Pacing Gate
-// ============================================================================
 
 /**
  * G5: Check LitRPG level timing and XP pacing
@@ -406,9 +394,7 @@ export function validateLitRPGPacing(
   };
 }
 
-// ============================================================================
 // Combined Validation
-// ============================================================================
 
 /**
  * Run all validation gates

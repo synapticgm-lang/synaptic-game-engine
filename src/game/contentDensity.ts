@@ -16,9 +16,7 @@
 
 import type { EngineMode } from './types';
 
-// ============================================================================
 // Novelty Classes
-// ============================================================================
 
 /**
  * Four novelty classes for content classification
@@ -49,9 +47,7 @@ export function getNoveltyCredit(novelty: NoveltyClass): number {
   }
 }
 
-// ============================================================================
 // Material Dimensions
-// ============================================================================
 
 /**
  * Ten material dimensions that constitute meaningful change
@@ -110,9 +106,7 @@ export function isStale(deltas: MaterialDelta[]): boolean {
   return changedCount <= 1;
 }
 
-// ============================================================================
 // Semantic IDs
-// ============================================================================
 
 /**
  * Semantic family ID (stable across prose regeneration)
@@ -171,9 +165,7 @@ export function parseSemanticId(str: string): SemanticFamilyId | null {
   };
 }
 
-// ============================================================================
 // Hub Qualification
-// ============================================================================
 
 /**
  * Five hub properties (3 of 5 required)
@@ -238,9 +230,7 @@ function isGenericLocation(name: string): boolean {
   return generic.some(re => re.test(name));
 }
 
-// ============================================================================
 // Density Targets
-// ============================================================================
 
 /**
  * Density targets per mode (from spine maps)
@@ -332,9 +322,7 @@ export function isDensityTargetMet(
   return actual >= expectedMin;
 }
 
-// ============================================================================
 // FO3-Like Wedge
-// ============================================================================
 
 /**
  * FO3-like depth components (60-70% target)
@@ -376,9 +364,7 @@ export function hasCriticallyLowComponent(components: DepthComponents): boolean 
   return Object.values(components).some(v => v < 0.45);
 }
 
-// ============================================================================
 // Content Family Tracking
-// ============================================================================
 
 /**
  * Track content family usage
@@ -424,9 +410,7 @@ export function calculateFamilyConcentration(usages: FamilyUsage[]): number {
   return herfindahl;
 }
 
-// ============================================================================
 // Beat Classification
-// ============================================================================
 
 /**
  * Beat types for density tracking

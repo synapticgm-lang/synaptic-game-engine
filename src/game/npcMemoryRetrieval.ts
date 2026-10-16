@@ -46,9 +46,7 @@ export interface MemoryGroundingCheck {
   missingEvidenceIds: string[];
 }
 
-// ============================================================================
 // Relevance Scoring
-// ============================================================================
 
 /**
  * Wave C: Score memory relevance for current situation
@@ -130,9 +128,7 @@ function stableTieBreak(a: MemoryRelevanceScore, b: MemoryRelevanceScore): numbe
   return a.memoryId.localeCompare(b.memoryId);
 }
 
-// ============================================================================
 // Memory Selection
-// ============================================================================
 
 /**
  * Wave C: Select memories for situation packet
@@ -208,9 +204,7 @@ export function selectMemoriesForPacket(
   };
 }
 
-// ============================================================================
 // Grounding Verification
-// ============================================================================
 
 /**
  * Wave C: Verify GM output is grounded in provided memories

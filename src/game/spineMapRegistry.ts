@@ -14,9 +14,7 @@
 import type { EngineMode } from './types';
 import spineMapData from '../../docs/research/pasted/manus-ws-6-content-density-2026-08-28/spine_maps.json';
 
-// ============================================================================
 // Types
-// ============================================================================
 
 export interface NoveltyPolicy {
   uniqueFloor: number;
@@ -156,9 +154,7 @@ export interface SpineMapData {
   modes: ModeSpineMap[];
 }
 
-// ============================================================================
 // Registry
-// ============================================================================
 
 const SPINE_MAP_VERSION = '1.0.0';
 let cachedSpineMap: SpineMapData | null = null;

@@ -20,9 +20,7 @@ import type {
 import { evaluatePredicateGroup, extractFactsFromGameState } from './pyoaExclusiveFacts';
 import { rpgEndingGates } from './rpgEndings';
 
-// ============================================================================
 // ENDING GATE CATALOG
-// ============================================================================
 
 /**
  * Thornferry Road ending gates
@@ -216,9 +214,7 @@ export const THORNFERRY_ENDINGS: EndingGateSpec[] = [
   },
 ];
 
-// ============================================================================
 // ENDING ELIGIBILITY
-// ============================================================================
 
 export interface EndingEligibilityCheck {
   eligible: boolean;
@@ -312,9 +308,7 @@ export function selectBestEnding(
   return eligible[0] ?? null;
 }
 
-// ============================================================================
 // T150 DEADLINE ENFORCEMENT
-// ============================================================================
 
 export interface DeadlineEnforcement {
   enforced: boolean;
@@ -381,9 +375,7 @@ export function getFailureEnding(bibleId: BibleId): EndingGateSpec | null {
   return endings.find(e => e.class === 'failure') ?? null;
 }
 
-// ============================================================================
 // ENDING COMMIT
-// ============================================================================
 
 /**
  * Commit ending to game state
@@ -459,9 +451,7 @@ export function commitEnding(
   };
 }
 
-// ============================================================================
 // CATALOG MANAGEMENT
-// ============================================================================
 
 /**
  * Get endings for bible
@@ -529,9 +519,7 @@ export function validateEndingCatalog(
   };
 }
 
-// ============================================================================
 // SITUATION PACKET INTEGRATION
-// ============================================================================
 
 /**
  * Build ending gates situation section

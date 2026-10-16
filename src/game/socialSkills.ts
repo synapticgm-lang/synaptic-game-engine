@@ -13,9 +13,7 @@ import type {
 } from './socialCrisisTypes';
 import { resolveResolutionTier } from './socialCrisisTypes';
 
-// ============================================================================
 // PROPOSITION FINGERPRINTING
-// ============================================================================
 
 /**
  * Generate fingerprint for proposition (skill + target + approach)
@@ -72,9 +70,7 @@ export function recordPropositionFingerprint(
   };
 }
 
-// ============================================================================
 // MODIFIER CALCULATION
-// ============================================================================
 
 export interface SocialModifiers {
   skill: number;
@@ -188,9 +184,7 @@ export function calculateTotalModifier(modifiers: SocialModifiers): number {
          modifiers.faction;
 }
 
-// ============================================================================
 // HYBRID RESOLUTION
-// ============================================================================
 
 /**
  * Resolve social skill check (hybrid automatic/roll)
@@ -257,9 +251,7 @@ function rollD20(state: GameState): number {
   return Math.floor(pseudo % 20) + 1;
 }
 
-// ============================================================================
 // OUTCOME BANDS
-// ============================================================================
 
 /**
  * Get outcome description for display

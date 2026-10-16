@@ -19,6 +19,14 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-M1 scene ledger (Order M part 1, steps 1–2)
+
+1. **`src/game/campaignBibleTypes.ts`** — a one-line re-export of `CampaignBible` / `MysteryCulprit`. Callers (`types.ts`, `mysteryCulprit.ts`, `openingPin.ts`, `campaignContract.ts`) import `@/data/campaigns/types`. The edge already had its own `campaignBibleTypes.ts` from that data file. Cut so the new ledger file does not raise the file count.
+2. **`src/game/evalHarness.ts` `isNpcLifecyclePhase`** — a stub that nothing called, plus its six-name phase list. Cut so the ledger function does not raise the function or list count.
+3. **Section bars `// ====`** in `npcMemoryLedger.ts`, `contentDensity.ts`, `exhaustionCurve.ts`, `densityValidation.ts`, `encounterDensity.ts`, `npcCrossIntegration.ts`, `types/crossPackageContracts.ts`, `pyoaEndingGates.ts`, `pyoaDelayedConsequences.ts`, `socialCrisis.ts`, `socialCrisisTypes.ts`, `pyoaExclusiveFacts.ts`, `socialSkills.ts`, `encounterBiomeMatrix.ts`, `npcMemoryRetrieval.ts`, `intentEnums.ts`, `spineMapRegistry.ts`. Comment separators only. Cut so the ledger source does not raise the line count.
+
+---
+
 ## q31-P2 handedRefs / repeated-habit masks (Order P-2)
 
 1. **`src/game/turnCheck.ts` handmade `masks` array (location, character name, npcMemories, hubs, `routeNames`)** — what it did: masked only those strings before the repeated-habit 5-gram compare, so REF ENUM group/meeting/prop labels ("the two drowned rite novices") still flagged as habits. Replaced by `handedRefs(before|after)` (one list next to `compileRefEnum`).

@@ -8,9 +8,7 @@
 import type { EngineMode } from './types';
 import type { EncounterTemplate } from './encounterBible';
 
-// ============================================================================
 // BIOME MATRIX SCHEMA
-// ============================================================================
 
 export interface BiomeMatrixEntry {
   mode: EngineMode;
@@ -31,9 +29,7 @@ export interface BiomeMatrix {
   entries: BiomeMatrixEntry[];
 }
 
-// ============================================================================
 // MATRIX LOADING
-// ============================================================================
 
 let _matrixCache: BiomeMatrix | null = null;
 
@@ -155,9 +151,7 @@ export function clearBiomeMatrixCache(): void {
   _matrixCache = null;
 }
 
-// ============================================================================
 // FILTERING LOGIC
-// ============================================================================
 
 /**
  * Filter templates by biome constraints.
@@ -375,9 +369,7 @@ export function validateWrongBiblePrevention(matrix: BiomeMatrix): {
   };
 }
 
-// ============================================================================
 // BIOME DETECTION UTILITIES
-// ============================================================================
 
 /**
  * Detect biome from location name or description

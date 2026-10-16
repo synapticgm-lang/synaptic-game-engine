@@ -216,6 +216,7 @@ import { resolveWriterTierForTurn } from './writerPolicy';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { cleanSessionZeroList, clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
+import { stampSceneLedger } from './sceneLedger';
 import { isExplorableDungeon, isInteriorMap, isInteriorPlace, milestoneAreaOpts, normalizeSheetAuthority } from './placeAuthority';
 import {
   cameraAllowsInteriorMap,
@@ -4683,7 +4684,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         combatSummary,
         why: `Player: ${sanitizedInput.slice(0, 120)}`,
       });
-      let mergedState: GameState = record.state;
+      let mergedState: GameState = stampSceneLedger(record.state, cleanText);
       // Engine grants this turn, read from the record (stateTx.commitTurnRecord), plus the arc receipts.
       {
         const allReceipts = [...arcReceipts, ...record.lines];

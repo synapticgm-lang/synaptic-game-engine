@@ -12,9 +12,7 @@
 import type { GameState } from './types';
 import type { NpcKeyMoment } from './types/crossPackageContracts';
 
-// ============================================================================
 // MEMORY LEDGER
-// ============================================================================
 
 export interface NpcMemoryLedger {
   /** NPC identifier */
@@ -37,9 +35,7 @@ function dedupeList(keys: unknown): string[] {
   return [];
 }
 
-// ============================================================================
 // ENHANCED KEY MOMENT SCHEMA (Wave B)
-// ============================================================================
 
 /**
  * Extended NpcKeyMoment categories for Wave B
@@ -91,9 +87,7 @@ export type RetentionClass =
   | 'arc'                 // ~50 turns
   | 'scene';              // ~10 turns
 
-// ============================================================================
 // KEY MOMENT CREATION (Wave B Enhanced)
-// ============================================================================
 
 /**
  * Create deduplication key for key moment
@@ -277,9 +271,7 @@ export function appendKeyMoment(
   }
 }
 
-// ============================================================================
 // WAVE B: WITNESS-BASED MEMORY SYNC
-// ============================================================================
 
 /**
  * Broadcast key moment to witnesses (Wave B)
@@ -348,9 +340,7 @@ function isEligibleWitness(npcId: string, state: GameState): boolean {
   return true;
 }
 
-// ============================================================================
 // WAVE B: FACTION BROADCAST
-// ============================================================================
 
 /**
  * Broadcast to faction (NPC-023)
@@ -400,9 +390,7 @@ export function broadcastToFaction(
   return next;
 }
 
-// ============================================================================
 // WAVE B: HUB GOSSIP
-// ============================================================================
 
 /**
  * Spread hub gossip (NPC-024)
@@ -460,9 +448,7 @@ export function spreadHubGossip(
   return next;
 }
 
-// ============================================================================
 // KEY MOMENT QUERIES
-// ============================================================================
 
 /**
  * Get key moments for NPC
@@ -510,9 +496,7 @@ export function hasKeyMoment(
   return getKeyMomentsByCategory(npcId, category, state).length > 0;
 }
 
-// ============================================================================
 // WAVE B: MEMORY RETRIEVAL PATTERNS
-// ============================================================================
 
 /**
  * Retrieve ranked memories for situation packet (Wave B)
@@ -634,9 +618,7 @@ export function retrieveRankedMemories(
   };
 }
 
-// ============================================================================
 // MEMORY CLEANUP (Wave B Enhanced)
-// ============================================================================
 
 /**
  * Clean up old memories based on retention policy (Wave B)
@@ -694,9 +676,7 @@ export function cleanupOldMemories(state: GameState): GameState {
   };
 }
 
-// ============================================================================
 // SITUATION PACKET INTEGRATION (Wave B Enhanced)
-// ============================================================================
 
 /**
  * Format memory reference for GM prose (Wave B Enhanced)
@@ -734,9 +714,7 @@ export function formatMemoryReference(
   }
 }
 
-// ============================================================================
 // CONVENIENCE FUNCTIONS (Wave B)
-// ============================================================================
 
 /**
  * Record first meet

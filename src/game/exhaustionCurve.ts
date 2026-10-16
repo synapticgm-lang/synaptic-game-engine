@@ -28,9 +28,7 @@ import {
   type BeatType
 } from './contentDensity';
 
-// ============================================================================
 // Density Event Schema
-// ============================================================================
 
 /**
  * DensityEvent: append-only log of every content beat
@@ -84,9 +82,7 @@ export function createDensityEvent(
   };
 }
 
-// ============================================================================
 // Novelty Classification
-// ============================================================================
 
 /**
  * Classify novelty from semantic IDs and material deltas
@@ -117,9 +113,7 @@ export function classifyNovelty(
   return NoveltyClass.R_STALE;
 }
 
-// ============================================================================
 // Rolling Metrics
-// ============================================================================
 
 /**
  * Rolling metrics over last N turns
@@ -248,9 +242,7 @@ export function calculateRollingMetrics(
   };
 }
 
-// ============================================================================
 // Exhaustion Index
-// ============================================================================
 
 /**
  * Calculate Exhaustion Index (0-100)
@@ -307,9 +299,7 @@ export function getDirectorAction(state: ExhaustionState): string {
   }
 }
 
-// ============================================================================
 // Density State
-// ============================================================================
 
 /**
  * Content density state (extends ArcDirector)
@@ -430,9 +420,7 @@ export function isFamilySuppressed(
   return state.suppressedFamilies.includes(familyId);
 }
 
-// ============================================================================
 // Drought and Durable Delta Tracking
-// ============================================================================
 
 /**
  * Check durable delta timing
@@ -477,9 +465,7 @@ export function checkDurableDeltaTiming(
   };
 }
 
-// ============================================================================
 // Validation Helpers
-// ============================================================================
 
 /**
  * Check if repeat dominance threshold violated

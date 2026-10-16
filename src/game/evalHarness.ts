@@ -34,10 +34,6 @@
 import type { GameState } from './types';
 
 // Stub implementations for missing functions
-function isNpcLifecyclePhase(phase: string): boolean {
-  return ['entering', 'functioning', 'debt_satisfied', 'exiting', 'transformed', 'absent'].includes(phase);
-}
-
 function getNpcTurnoverAction(lifecycle: any, state: GameState): string {
   if (lifecycle.phase === 'debt_satisfied') return 'exit';
   if (lifecycle.deadline && state.turnIndex > lifecycle.deadline.turnIndex) return 'exit';
@@ -62,9 +58,7 @@ function validateExclusiveFacts(activeFacts: string[]): any[] {
   return [];
 }
 
-// ============================================================================
 // EVALUATION RESULT TYPES
-// ============================================================================
 
 export interface EvalResult {
   gate: string;
@@ -84,9 +78,7 @@ export interface EvalSuite {
   results: EvalResult[];
 }
 
-// ============================================================================
 // WS-2: NPC LIFECYCLE GATES
-// ============================================================================
 
 /**
  * G1: Exit latency - NPCs depart within deadline window
@@ -263,9 +255,7 @@ export function evalNpcTurnoverDeterminism(state: GameState): EvalResult {
   };
 }
 
-// ============================================================================
 // WS-4: ENCOUNTER BIBLE GATES
-// ============================================================================
 
 /**
  * G1: Resolution - Encounters terminal within turn bounds
@@ -388,9 +378,7 @@ export function evalEncounterAftermath(state: GameState): EvalResult {
   };
 }
 
-// ============================================================================
 // WS-5: PYOA PERSISTENCE GATES
-// ============================================================================
 
 /**
  * G1: Crisis repetition - No duplicate crisis spawns
@@ -485,9 +473,7 @@ export function evalPyoaMutex(state: GameState): EvalResult {
   return evalPyoaSiblingLocks(state); // Same as G2
 }
 
-// ============================================================================
 // REGRESSION GATES
-// ============================================================================
 
 /**
  * R1: Combat purgatory - Forced terminal within bounds
@@ -550,9 +536,7 @@ export function evalRegressionTheaterBranching(state: GameState): EvalResult {
   return evalPyoaCrisisRepetition(state); // Same as WS-5-G1
 }
 
-// ============================================================================
 // SUITE RUNNER
-// ============================================================================
 
 /**
  * Run complete evaluation suite
@@ -603,9 +587,7 @@ export function runEvaluationSuite(state: GameState): EvalSuite {
   };
 }
 
-// ============================================================================
 // RECEIPT LIVENESS GATES
-// ============================================================================
 
 export interface ReceiptLivenessGates {
   crisisByT12: boolean;

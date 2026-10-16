@@ -812,7 +812,7 @@ export interface GameState {
    * Full bible snapshot for player-authored custom campaigns (id `player-custom-*`).
    * Catalog lookup cannot find these; opening quests and reconcile use this.
    */
-  campaignBibleSnapshot?: import('./campaignBibleTypes').CampaignBible | null;
+  campaignBibleSnapshot?: import('@/data/campaigns/types').CampaignBible | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
   /**
@@ -1744,6 +1744,19 @@ export interface ClearedSiteRecord {
   };
 }
 
+/** Order M — one scene ledger on the place. Engine-written. Current scene only until the exit pass. */
+export interface SceneLedger {
+  openedTurn: number;
+  said: string[];
+  promises: string[];
+  threats: string[];
+  clues: string[];
+  asked: { q: string; answered: boolean }[];
+  present: string[];
+  described: { key: string; line: string }[];
+  spot: string;
+}
+
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */
 export interface PlaceRecord {
   id: string;
@@ -1775,6 +1788,11 @@ export interface PlaceRecord {
   props?: string[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
+  /**
+   * Order M — engine scene ledger for this place. The dungeon card stays the room store;
+   * its current room fills `present` and `clues` here.
+   */
+  sceneLedger?: SceneLedger;
   /** tt-build-camps — a road camp placed on a route stretch (its rooms, people and loot are its `dungeonCard`). */
   roadCamp?: RoadCampRecord;
   /** 29q — settlement quest cards (two seeded once at creation, plus talk-opened). */

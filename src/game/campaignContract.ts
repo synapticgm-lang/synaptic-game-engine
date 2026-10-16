@@ -4,7 +4,7 @@
  */
 
 import type { GameState } from './types';
-import type { CampaignBible } from './campaignBibleTypes';
+import type { CampaignBible } from '@/data/campaigns/types';
 import { displayAdventurerName } from './pcNameAuthority';
 
 export interface CampaignContract {

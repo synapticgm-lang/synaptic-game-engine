@@ -7,9 +7,7 @@
 
 import type { GameState } from './types';
 
-// ============================================================================
 // SOCIAL CRISIS TYPES
-// ============================================================================
 
 export type CrisisPattern =
   | 'SC-01' // Social Standoff: Two opposed actors, player mediates
@@ -94,9 +92,7 @@ export interface SocialCrisis {
   targetCadence: number;
 }
 
-// ============================================================================
 // LEVERAGE TYPES
-// ============================================================================
 
 export type LeverageType =
   | 'physical_threat'     // -18 trust, requires combat advantage
@@ -175,9 +171,7 @@ export interface LeverageResolution {
   cost?: string;
 }
 
-// ============================================================================
 // SOCIAL SKILLS TYPES
-// ============================================================================
 
 export type SocialSkill = 'persuasion' | 'intimidation' | 'deception' | 'insight';
 
@@ -215,9 +209,7 @@ export interface SocialSkillCheck {
   margin: number;
 }
 
-// ============================================================================
 // CRISIS RESOLUTION TYPES
-// ============================================================================
 
 export type ResolutionTier = 'automatic' | 'roll';
 
@@ -276,9 +268,7 @@ export interface SocialResolution {
   committedTurn: number;
 }
 
-// ============================================================================
 // HELPER FUNCTIONS
-// ============================================================================
 
 /**
  * Get trust delta for leverage type

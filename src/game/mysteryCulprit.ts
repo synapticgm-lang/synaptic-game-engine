@@ -1,4 +1,4 @@
-import type { CampaignBible, MysteryCulprit } from './campaignBibleTypes';
+import type { CampaignBible, MysteryCulprit } from '@/data/campaigns/types';
 import type { GameState } from './types';
 
 

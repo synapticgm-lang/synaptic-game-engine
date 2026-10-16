@@ -7,9 +7,7 @@
 import type { GameState } from './types';
 import type { SocialCrisis, CrisisPattern, SocialStakes } from './socialCrisisTypes';
 
-// ============================================================================
 // CRISIS CATALOG (5-8 patterns for Wave 1 ship)
-// ============================================================================
 
 /**
  * Crisis catalog (start with 5 patterns, expand to 15 in P1)
@@ -140,9 +138,7 @@ export const CRISIS_CATALOG: SocialCrisis[] = [
   },
 ];
 
-// ============================================================================
 // ELIGIBILITY CHECKS
-// ============================================================================
 
 /**
  * Check if crisis is eligible to spawn
@@ -216,9 +212,7 @@ function getLastCrisisSpawn(state: GameState, crisisId: CrisisPattern): number |
   return last?.spawnedTurn ?? null;
 }
 
-// ============================================================================
 // CRISIS SELECTION
-// ============================================================================
 
 /**
  * Select eligible crisis on 30-turn cadence
@@ -260,9 +254,7 @@ function getLastAnyCrisisSpawn(state: GameState): number | null {
   return sorted[0]?.spawnedTurn ?? null;
 }
 
-// ============================================================================
 // STAKES MATERIALIZATION
-// ============================================================================
 
 /**
  * Materialize stakes from template
@@ -293,9 +285,7 @@ export function materializeStakes(
   return stakes;
 }
 
-// ============================================================================
 // VALIDATION
-// ============================================================================
 
 /**
  * Validate crisis catalog
