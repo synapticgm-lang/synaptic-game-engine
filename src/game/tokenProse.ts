@@ -671,13 +671,37 @@ function mixesPcPerson(line: TokenLine, beat: TokenBeat, pcName?: string): boole
  */
 export function lineVoicesPc(text: string, pcName?: string, playerWords?: string): boolean {
   const t = text ?? '';
-  const pc = (pcName ?? '').trim().split(/\s+/)[0] ?? '';
-  const who = pc.length >= 2 ? `(?:${escRe(pc)}|You|you)` : '(?:You|you)';
-  const opensOnPc = new RegExp(`^\\s*${who}\\b`);
-  const tagAfter = new RegExp(`^[,.!?]?["\u201d]?,?\\s+${who}\\b`);
-  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
-  const own = norm(playerWords ?? '');
-  for (const [o, c] of [['"', '"'], ['\u201c', '\u201d']] as const) {
+  const name = (pcName ?? '').trim();
+  let pc = '';
+  for (let i = 0; i < name.length; i++) {
+    const ch = name[i]!;
+    if (ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') break;
+    pc += ch;
+  }
+  const fold = (s: string) => {
+    let out = '';
+    let gap = false;
+    for (const ch of s.toLowerCase()) {
+      const ok = (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch === "'";
+      if (ok) { out += ch; gap = false; }
+      else if (!gap && out) { out += ' '; gap = true; }
+    }
+    return out.endsWith(' ') ? out.slice(0, -1) : out;
+  };
+  const word = (s: string, at: number, w: string) => {
+    if (w.length < 2 || at < 0 || at + w.length > s.length) return false;
+    const prev = at > 0 ? s[at - 1]! : '';
+    if (prev && ((prev >= 'A' && prev <= 'Z') || (prev >= 'a' && prev <= 'z') || (prev >= '0' && prev <= '9') || prev === '_')) return false;
+    for (let i = 0; i < w.length; i++) if (s[at + i] !== w[i]) return false;
+    const next = s[at + w.length] ?? '';
+    return !next || !((next >= 'A' && next <= 'Z') || (next >= 'a' && next <= 'z') || (next >= '0' && next <= '9') || next === '_');
+  };
+  const whoAt = (s: string, at: number) => word(s, at, 'You') || word(s, at, 'you') || (pc.length >= 2 && word(s, at, pc));
+  const own = fold(playerWords ?? '');
+  const pairs = [['"', '"'], ['\u201c', '\u201d']];
+  for (const pair of pairs) {
+    const o = pair[0]!;
+    const c = pair[1]!;
     let from = 0;
     while (from < t.length) {
       const open = t.indexOf(o, from);
@@ -685,15 +709,24 @@ export function lineVoicesPc(text: string, pcName?: string, playerWords?: string
       const close = t.indexOf(c, open + 1);
       if (close < 0) break;
       from = close + 1;
-      const words = norm(t.slice(open + 1, close));
+      const words = fold(t.slice(open + 1, close));
       if (!words) continue;
       if (own && own.includes(words)) continue;
       const before = t.slice(0, open);
-      // The quote's own clause; a quote opening a new sentence belongs to the sentence just before it ("Jax leaned in. "..."").
-      const cut = (s: string) => Math.max(s.lastIndexOf('.'), s.lastIndexOf('!'), s.lastIndexOf('?'), s.lastIndexOf(';'));
-      let clause = before.slice(cut(before) + 1);
-      if (!clause.trim()) { const prev = before.slice(0, cut(before)); clause = prev.slice(cut(prev) + 1); }
-      if (opensOnPc.test(clause) || tagAfter.test(t.slice(close + 1))) return true;
+      const brk = (s: string) => Math.max(s.lastIndexOf('.'), s.lastIndexOf('!'), s.lastIndexOf('?'), s.lastIndexOf(';'));
+      let cut = brk(before);
+      let clause = before.slice(cut + 1);
+      if (!clause.trim()) { const prev = before.slice(0, cut); cut = brk(prev); clause = prev.slice(cut + 1); }
+      let at = 0;
+      while (at < clause.length && (clause[at] === ' ' || clause[at] === '\t' || clause[at] === '\n' || clause[at] === '\r')) at++;
+      const after = t.slice(close + 1);
+      let j = 0;
+      if (j < after.length && ',.!?'.includes(after[j]!)) j++;
+      if (j < after.length && (after[j] === '"' || after[j] === '\u201d')) j++;
+      if (j < after.length && after[j] === ',') j++;
+      const spaced = j < after.length && (after[j] === ' ' || after[j] === '\t' || after[j] === '\n' || after[j] === '\r');
+      while (j < after.length && (after[j] === ' ' || after[j] === '\t' || after[j] === '\n' || after[j] === '\r')) j++;
+      if (whoAt(clause, at) || (spaced && whoAt(after, j))) return true;
     }
   }
   return false;
