@@ -70,8 +70,11 @@ describe('tt-fix-7 TT01 — every travel-job roll reaches tabletop STATUS', () =
 
 describe('tt-fix-7 TT02 — the engine’s own stops pass the gate; the destination is always named', () => {
   it('route-stop names are handed proper names', () => {
-    const state = { ...tabletop(), routeStops: { 'greyhollow church|keep gate': [{ name: 'Leaning Gibbet', leg: 1, find: 'cache' }] } } as GameState;
+    const routeStops = { 'greyhollow church|keep gate': [{ name: 'Leaning Gibbet', leg: 1, find: 'cache' as const }] };
+    const parked = { ...tabletop(), turn: 3, routeStops } as GameState;
+    const state = { ...parked, travelBeat: { turn: 3, facts: ['The way passes the Leaning Gibbet.'] } } as GameState;
     const packet = { engineResult: 'Travel: open road between Keep Gate and Greyhollow Church — leg 1 of 2.' } as unknown as CompletedEventPacket;
+    expect(handedProperNames(parked, packet)).not.toContain('Leaning Gibbet');
     expect(handedProperNames(state, packet)).toContain('Leaning Gibbet');
   });
 

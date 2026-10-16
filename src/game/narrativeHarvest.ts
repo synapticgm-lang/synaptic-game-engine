@@ -1,15 +1,4 @@
-/**
- * Batch Y Milestone 1 — Entity Registry Lockdown
- * 
- * DELETED: Title-Case heuristic that auto-harvested capitalized tokens.
- * NEW: Only names in the entity registry can enter present[].
- * 
- * Root cause fix: Title-Case heuristic saw capitalized words in LLM garbage
- * ("Lowmarket Fence", "Rasped", "Scattered Scale") and flagged them as present[]
- * entities. Next turn, engine injected them as valid NPCs.
- * 
- * Does NOT harvest new cities/towns/shores — those stay on the premade world map.
- */
+/** Harvest only registry names. Place names blanked here are this turn's road stop plus hubs, places and rooms. */
 
 import type { GameState, LoreCard } from './types';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
@@ -34,11 +23,6 @@ import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
 import { hubsForBibleId } from './outdoorHubs';
 
-/**
- * Extract NPC names from prose that are in the entity registry.
- * DELETED: Title-Case heuristic (NAME_PATTERNS) that auto-harvested capitalized words.
- * NEW: Only harvest names that exist in the immutable NPC registry for this campaign.
- */
 function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
   
@@ -73,12 +57,22 @@ function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined
   return [...found].slice(0, 8);
 }
 
-/** The prose with every known place name (hubs, their aliases, the save's places, route stops and the rooms of the dungeon here) blanked out. */
+/** The prose with known place names blanked: hubs, aliases, the save's places, this turn's road stop, dungeon rooms. */
 export function maskPlaceNames(state: GameState, prose: string): string {
+  const handed = compileNounAllowlist(state);
+  const stops: string[] = [];
+  for (const stop of Object.values(state.routeStops ?? {}).flat()) {
+    const want = stop.name.toLowerCase();
+    for (const n of handed) {
+      if (n.toLowerCase() !== want) continue;
+      stops.push(want.startsWith('the ') ? stop.name.slice(4) : stop.name);
+      break;
+    }
+  }
   const names = [
     ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...(h.aliases ?? [])]),
     ...(state.places ?? []).map((p) => p.name),
-    ...Object.values(state.routeStops ?? {}).flat().map((s) => s.name.replace(/^the\s+/i, '')),
+    ...stops,
     ...(state.activeDungeon?.nodes ?? []).map((n) => n.name),
   ]
     .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
@@ -137,11 +131,6 @@ function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number, hasReco
   ];
 }
 
-/**
- * After GM prose: harvest named NPCs into lorebook + npcMemories.
- * Only registered NPCs from the entity registry can be harvested.
- * Geography invents (new cities) are ignored — map authority owns those.
- */
 export function harvestNarrativeIntoLedger(
   state: GameState,
   prose: string,

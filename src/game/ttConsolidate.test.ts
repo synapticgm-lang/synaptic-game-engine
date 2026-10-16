@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { newGameState } from './newGameTestState';
 import type { GameState, Quest } from './types';
 import { applyTabletopQuestTurn, tabletopStepAnchor } from './tabletopQuestProgress';
-import { lineHasUnhandedOwnThing, handedProperNames } from './tokenProse';
+import { lineHasUnhandedOwnThing, handedProperNames, plainLineFactProblem } from './tokenProse';
 import { compileNounAllowlist } from './completedEventPacket';
 import { playerActionSentenceCheck } from './writerTurn';
 import { placeFirstSight } from './outdoorHubs';
@@ -51,10 +51,26 @@ describe('root 2 — the gate keeps the line that tells the player’s own actio
     expect(lineHasUnhandedOwnThing('Jax set down their lantern.', 'the churchyard', 'Jax')).toBe(true);
   });
 
-  it('a route stop is one handed name for every gate', () => {
-    const s = tabletop({ routeStops: { 'greyhollow inn|keep gate': [{ name: 'Old Well', leg: 1, find: 'none' }] } } as unknown as Partial<GameState>);
-    expect(compileNounAllowlist(s)).toContain('Old Well');
-    expect(handedProperNames(s)).toContain('Old Well');
+  it('a route stop is handed only from this turn’s travel record', () => {
+    const routeStops = {
+      'greyhollow inn|keep gate': [{ name: 'Old Well', leg: 1 }],
+      'keep gate|blackspine': [{ name: 'Hollow Spring', leg: 1 }],
+    } as GameState['routeStops'];
+    const quiet = tabletop({ routeStops });
+    expect(compileNounAllowlist(quiet)).not.toContain('Old Well');
+    expect(compileNounAllowlist(quiet)).not.toContain('Hollow Spring');
+    const passed = tabletop({
+      routeStops,
+      turn: 4,
+      travelBeat: { turn: 4, facts: ['The way passes the Old Well.'] },
+    });
+    expect(compileNounAllowlist(passed)).toContain('Old Well');
+    expect(compileNounAllowlist(passed)).not.toContain('Hollow Spring');
+    expect(handedProperNames(passed)).toContain('Old Well');
+    expect(handedProperNames(passed)).not.toContain('Hollow Spring');
+    expect(plainLineFactProblem('The path ran past the Hollow Spring.', passed)).toMatch(/never handed/);
+    expect(plainLineFactProblem('The path ran past the Old Well.', passed)).toBeNull();
+    expect(compileNounAllowlist({ ...passed, turn: 5 })).not.toContain('Old Well');
   });
 
   it('the sentence that does the chosen action is this turn’s event', () => {

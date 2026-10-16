@@ -1,8 +1,6 @@
 /**
  * Architecture 1 — Retrospective Narrator (2026-09-08b).
  * Code resolves facts first; the writer only narrates a completed event in past tense.
- * 08b: shrink Title-Case gate; authored stitch; ledger-noun slots only.
- * Classifier-only validation — no Continuity-Warden LLM, no novel-token deny-lists.
  */
 
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
@@ -571,8 +569,23 @@ export function compileNounAllowlist(
     pushUnique(out, seen, h.name);
     for (const alias of h.aliases ?? []) pushUnique(out, seen, alias);
   }
-  // The engine's named stops on the roads ("The way passes the Old Well").
-  for (const stop of Object.values(state.routeStops ?? {}).flat()) pushUnique(out, seen, stop.name);
+  // This turn's road stop only, the name inside travelBeat ("The way passes the Old Well").
+  const beat = ` ${travelBeatFact(state).toLowerCase()} `;
+  for (const stop of Object.values(state.routeStops ?? {}).flat()) {
+    const name = stop.name.toLowerCase();
+    let at = name.length > 1 ? beat.indexOf(name) : -1;
+    while (at >= 0) {
+      const b = beat.charAt(at - 1);
+      const a = beat.charAt(at + name.length) || ' ';
+      const left = b < '0' || (b > '9' && b < 'a') || b > 'z';
+      const right = a < '0' || (a > '9' && a < 'a') || a > 'z';
+      if (left && right) {
+        pushUnique(out, seen, stop.name);
+        break;
+      }
+      at = beat.indexOf(name, at + 1);
+    }
+  }
 
   return out;
 }

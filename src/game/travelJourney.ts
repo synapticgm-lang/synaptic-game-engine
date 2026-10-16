@@ -1575,10 +1575,6 @@ function routeLeg(j: TravelJourney): { key: string; leg: number } | null {
   return { key, leg: flipped ? base - progress : progress };
 }
 
-/**
- * tt-build-camps — a camp on this stretch is a placed camp. One already placed here is met on every pass (whatever
- * the watch rolled), with what it remembers; a cleared one is passed, empty. A freshly rolled camp is placed here once.
- */
 function withRoadCamp(state: GameState, j: TravelJourney): { state: GameState; journey: TravelJourney; facts: string[] } {
   const at = routeLeg(j);
   const enc = j.encounter;

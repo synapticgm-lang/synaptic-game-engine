@@ -681,6 +681,12 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 - q32-merge37b: did not keep the second clock list from `33668256` (`CLOCK_ORDER` of seven slot names, `clockSpan`, and the extra `from … until` regex plus the second engine-result walk). A recorded `from <slot> until|till|to <slot>` span is read in `lineHasWrongTimeOfDay` on the same engine-result lines, and the slots are the names already on `DAY_PART_WORDS`. The `now <slot>` regex stays. Consecutive blank lines in `src/game/tokenProse.ts` (27) were padding only; collapsing them keeps ruleCount lines from rising.
 - q32-merge37c: did not keep `SPEAKS.filter` (an extra function) or the two Languages regexes. A non-speaker's uses are `actor` and `addressed`. Speech is `foeCanSpeak` on the same stat block: empty, `none`, a dash-only line, or "can't speak" is no speech. Deleted unused `blockById` and the private `mod` arrow (`abilityModOf` is the one ability-mod function). The edge copy reads `canSpeak` stamped by that function; it does not load the SRD file. Blank lines removed in `completedEventPacket.ts` so the line count stays put.
 
+## TT38-P6 (16 Oct)
+1. **`compileNounAllowlist` all-route stop handoff** (`src/game/completedEventPacket.ts`, and the edge copy) — `Object.values(state.routeStops).flat()` pushed every stop on every road into the mention list. The map and `routeStops` stay. The gate now takes a stop only when this turn's `travelBeat` names it (`travelBeatFact`, the "The way passes …" record).
+2. **`maskPlaceNames` all-route blank** (`src/game/narrativeHarvest.ts`, and the edge copy) — the same flat list, including `/^the\s+/i` on every stop. Blanks only the stop `compileNounAllowlist` handed this turn. The arrow and that regex are gone.
+3. **Comment lines in `narrativeHarvest.ts`** — the registry-extract note and the harvest-into-ledger note. Comment only, so the line count stays put.
+4. **`travelJourney.ts` camp note above `withRoadCamp`** — four comment lines. The camp pass stays in the function. Cut so the line count stays put.
+
 ## TT38-N3c (16 Oct)
 1. **`src/game/completedEventPacket.ts` arrival `behindLine`** — `stillAtOrigin` filled the left-behind people from `facts.present`, and `leftFrom` could be the underway label. The line now names `leftBehind` only, and only at a mapped `leftFrom`. A road label or trip HERE is omitted (`pagePlace`).
 2. **`isLookAroundAct`** — the look test now sits on the one stitch call. Same check.
