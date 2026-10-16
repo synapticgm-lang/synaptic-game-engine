@@ -83,8 +83,6 @@ export function targetSpot(state: GameState, step: QuestObjective): boolean | 'd
 export function actionMatchesObjective(step: QuestObjective, action: string): boolean {
   const t = step.target;
   if (!t || !(action ?? '').trim()) return false;
-  const chip = stepChip(step);
-  if (chip && chipKey(action) === chipKey(chip)) return true;
   const intent = parsePlayerIntent(action);
   const said = words(action);
   const objectBare = bare(step.object ?? t.name);

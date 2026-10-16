@@ -1,7 +1,10 @@
 /**
  * Replay-case-staging R4 (Order M step 4 + Wire-in H): a motive line said on T9 must not reprint on T10.
  * Tape: distill-1 broken-crown s5109. Pin with the Order B seam.
+ * R2 (RC-QT1): cursed-keep s5111 T11→T19 — same dungeon card stays open; quest ticks need find/meet (unit: ttRcQt1).
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay } from './bank';
 import { replayWhole } from './replayRun';
@@ -10,6 +13,7 @@ import { alreadySaidLines, classifyTokenLine, type TokenBeat } from '../../game/
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
 
 const S5109 = 'distill-1/2026-10-15T09-40-34-319Z_broken-crown-keep_chilled-gm_s5109';
+const S5111 = 'distill-1/2026-10-15T09-40-34-367Z_cursed-keep_chilled-gm_s5111';
 const PACK =
   'That pack was the last of my errands, and you handled it fine, so tonight you have earned a meal and a dry corner more than another job.';
 
@@ -17,6 +21,17 @@ let T: Replay;
 beforeAll(async () => {
   T = new Replay(await replayWhole(S5109));
 }, 600_000);
+
+function tapeTurn(run: string, turn: number): { systemLog?: string[]; wardenNotes?: string[]; playerInput?: string } {
+  const path = join(process.cwd(), 'scripts/fate-autoplay/runs', run, 'turns.jsonl');
+  const row = readFileSync(path, 'utf8')
+    .trim()
+    .split(/\n/)
+    .map((l) => JSON.parse(l) as { turn: number; systemLog?: string[]; wardenNotes?: string[]; playerInput?: string })
+    .find((t) => t.turn === turn);
+  if (!row) throw new Error(`missing turn ${turn} in ${run}`);
+  return row;
+}
 
 describe('replay bank tt15features R4 motive said once', () => {
   it('[R4 s5109 T9/T10 | Order M step 4] Jarek\'s T9 pack line is on the ledger; reprinting it fails the gate', () => {
@@ -46,6 +61,25 @@ describe('replay bank tt15features R4 motive said once', () => {
     expect(classifyTokenLine(narr(embed), beat, enumRefs, [], undefined, said).reason, `scene=${scene[0]?.slice(0, 40)}`).toBe(
       'said-again'
     );
+  });
+});
+
+describe('replay bank tt15features R2 quest dungeon card stays open (RC-QT1)', () => {
+  it('[R2 s5111 T11/T19 | RC-QT1] Dungeon card chips: 3 on both turns; arrival alone does not quest-stage', () => {
+    const t11 = tapeTurn(S5111, 11);
+    const t19 = tapeTurn(S5111, 19);
+    const notes = (t: { systemLog?: string[]; wardenNotes?: string[] }) =>
+      [...(t.wardenNotes ?? []), ...(t.systemLog ?? [])].filter((l) => /Dungeon card chips/i.test(l));
+    expect(notes(t11)).toContain('Dungeon card chips: 3');
+    expect(notes(t19)).toContain('Dungeon card chips: 3');
+    // Tape arrivals between T11 and T19 must not be the sole quest-stage source (chip/arrival ≠ tick).
+    for (const n of [12, 13, 14, 15, 16, 17, 18]) {
+      const row = tapeTurn(S5111, n);
+      const log = [...(row.systemLog ?? [])].join('\n');
+      if (/^Travel:|^Arrive:/m.test(log)) {
+        expect(log, `T${n} arrival`).not.toMatch(/Quest stage:/);
+      }
+    }
   });
 });
 

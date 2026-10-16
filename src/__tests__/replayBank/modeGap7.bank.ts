@@ -67,15 +67,23 @@ function carry(from: GameState, onto: GameState, turnNo = onto.turn): GameState 
 const REFUSE = 'Refuse Vessa and keep your own counsel';
 const allStatus = (r: Replay) => r.turns().map((n) => (r.at(n).telemetry.systemLog ?? []).join('\n')).join('\n');
 
-/** Ds150 after T21 with the two open main-quest decisions taken through the engine: the main quest is finished. */
+/**
+ * Ds150 after T21 with remaining decision steps closed for ending tests.
+ * RC-QT1: picking "Pick an approach" / "Commit…" no longer ticks — contact favour or a place/check does.
+ * Ending coverage finishes the main quest on the state (engine outcome), not the chip label.
+ */
 function finishedMain() {
   const s = R.after(21);
   expect(storyRpgDecisionChip(s)).toBe('Pick an approach');
-  const picked = turn(s, 'Pick an approach');
-  expect(picked.status).toContain('Quest stage: Case the Caravan — Pick an approach');
-  expect(rpgEndingChip(picked.state)).toBeNull();
-  expect(storyRpgDecisionChip(picked.state)).toBe('Commit to the heist night');
-  return turn(picked.state, 'Commit to the heist night');
+  expect(turn(s, 'Pick an approach').status.join('\n')).not.toMatch(/Quest stage/);
+  const quests = (s.quests ?? []).map((q) => {
+    if (q.type !== 'main' || q.name !== 'Case the Caravan') return q;
+    const objectives = (q.objectives ?? []).map((o) => ({ ...o, completed: true }));
+    return { ...q, objectives, status: 'completed' as const };
+  });
+  const state = { ...s, quests } as GameState;
+  expect(rpgEndingChip(state)).toBe(RPG_ENDING_CHIP);
+  return { state, status: [`Quest stage: Case the Caravan — Commit to the heist night`], fact: '', story: { state, receipts: [] } };
 }
 
 describe('replay bank mode-gap 7 (story RPG consequences and endings)', () => {

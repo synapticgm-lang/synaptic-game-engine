@@ -594,11 +594,16 @@ Removed, superseded wording kept here verbatim for the record (original SK-4, or
 1. **`src/game/tabletop/characterBuild.ts` CLASS_KITS gold rows** — eleven classes stored SRD option B as id `coin` ("Coin instead") instead of id `B`. Replaced by id `B` with empty gear and GP label (legacy `kitDef('…','coin')` maps to gold-only B). Fighter keeps id `coin` as SRD option (c) 155 GP.
 2. **`src/game/tabletop/characterBuild.ts` Druid kit A** — listed both `Quarterstaff` and `Druidic Focus` while SRD 5.2.1 says `Druidic Focus (Quarterstaff)` (one item). Dropped the separate `Druidic Focus` row; Quarterstaff remains (also matches focus detection via `staff`).
 
-## PLANNED cuts (not yet deleted; queued 16 Oct 07:02, queue 31): RC-K2, RC-PY2, RC-QT1
+## q31-RCQT1 chip-equals-step never ticks (Order RC-QT1)
+
+1. **`src/game/questTargets.ts` `actionMatchesObjective` lines 86-87 at parent** — `if (chip && chipKey(action) === chipKey(stepChip(step))) return true`. What it did: any action whose label matched the step chip counted as a find/meet match (callers with a loose spot could tick from the pad alone). Why safe: ticks still require `targetSpot === true` plus named-object / find|meet intent in the same matcher; place/check/contact outcomes remain. Restore-from: parent of q31-RCQT1.
+2. **`src/game/enterInterior.ts` `actionTakesDoorStep` lines 51-52 at parent** — `if (chip && chipKey(action) === chipKey(stepChip(step))) return true` (+ local `chipKey` / `stepChip` import). What it did: the step chip alone opened the interior. Why safe: move/enter cues and `actionMatchesObjective` / `tabletopStepIsDoor` still open when the record says the player is at the door. Restore-from: parent of q31-RCQT1.
+3. **`src/game/storyRpgProgress.ts` placeless decision tick (lines 274-275 at parent)** — `!!decision && chipKey(action) === chipKey(decision)` completed "Pick an approach" / "Commit to the heist night" on pad alone (lap32 F). What it did: decision chip label = quest stage. Why safe: chip still offered to start the scene; place steps still tick at the named place; contact favour still ticks through a person. Restore-from: parent of q31-RCQT1.
+
+## PLANNED cuts (not yet deleted; queued 16 Oct 07:02, queue 31): RC-K2, RC-PY2
 Each order replaces this PLANNED entry with the full logged record (file, old line, old text, what it did, why safe, restore-from commit) when it ships.
 - RC-K2 (src/game/pyoaSpine.ts): fuzzy label / 18-char / id-word matching in `matchSpineExit` (~:329); its `fuzzyExitMatch` use; the `isSpineDelayPad` regex. Covered by: the picked chip id is the exit id; `applyExit` builds receipt + fact from exit data; exits declare requires/gives.
 - RC-PY2 (src/game/writerTurn.ts `withMoveDestination` ~:236-246): the `prose.toLowerCase().includes(dest)` substring guard and the `isRoadLabel` label test. Covered by: arrival rendered from the place record, added or skipped by a turn-record flag.
-- RC-QT1 (src/game/questTargets.ts `actionMatchesObjective` :86-87; src/game/enterInterior.ts `actionTakesDoorStep` :51-52): the chip-equals-step tick branch (`chipKey(action) === chipKey(stepChip(step))`). Covered by: ticks come only from the engine outcome recorded in the turn record.
 
 ## PLANNED cuts (not yet deleted; queued 16 Oct 07:06, queue 31): RC-M2, RC-J1, RC-N4 (RC-N3 deletes nothing). RC-K2 and RC-PY2 above are PARKED (not queued).
 - RC-M2 (src/game/autoplayWriter.ts `resolveFlashLiteAutoplayWriter` :109-130; scripts/writerDataset.mjs:84): the hard-coded `'flash-lite'` kind for non-Flash-Lite models and `writerId = meta.writer.kind`. Covered by: kind names the route, identity is the resolved model id in meta.

@@ -76,15 +76,15 @@ describe('replay bank mode4 (mode lap 4)', () => {
     expect(done(B.after(21), 'Pick an approach')).toBe(false);
   });
 
-  it('[story rpg ds151 T3 | mode4 fix 2] the open decision step is offered as its own chip, and taking it ticks it', () => {
+  it('[story rpg ds151 T3 | mode4 fix 2 / RC-QT1] the open decision step is offered as its own chip; picking it does not tick', () => {
     const s = B.after(2);
     expect(storyRpgDecisionChip(s)).toBe('Pick an approach');
     expect(storyChip(s)).toBe('Pick an approach');
     for (const n of [3, 11, 17]) expect(B.chipsAfter(n), `after T${n}`).toContain('Pick an approach');
     const took = applyStoryRpgTurn(s, 'Pick an approach');
-    expect(took.receipts).toContain('Quest stage: Case the Caravan — Pick an approach');
-    expect(done(took.state, 'Pick an approach')).toBe(true);
-    expect(storyRpgDecisionChip(took.state)).toBe('Commit to the heist night');
+    expect(took.receipts.join('\n')).not.toMatch(/Quest stage/);
+    expect(done(took.state, 'Pick an approach')).toBe(false);
+    expect(storyRpgDecisionChip(took.state)).toBe('Pick an approach');
     expect(applyStoryRpgTurn(s, 'Refuse Vessa and keep your own counsel').receipts.join('\n')).not.toMatch(/Quest stage/);
   });
 

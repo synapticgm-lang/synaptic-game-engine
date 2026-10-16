@@ -6,14 +6,15 @@
  *   (npcMemories disposition), and the change is a world fact the writer must carry.
  * - Quest step: the main quest's next open step ticks when the player is at the place that step
  *   names ("Scout the caravan" at Consul Caravan Camp). A step that names no place is a decision
- *   ("Pick an approach"): it is offered as its own chip and ticks only when the player takes it.
+ *   ("Pick an approach"): it is offered as its own chip to start the scene (RC-QT1), never ticks from
+ *   the chip label alone — the tick needs an engine outcome (place, check, contact favour, item).
  *   Beat timing, travel and talk never tick it.
  * - They'll remember: a standing change schedules a delayed consequence (scheduleDelayedConsequence). The
  *   arcDirector delivery pays it off on the first due turn that person is present again: a hidden trust shift
  *   on their relationship record and a "Remembered" beat. The choice itself gets a "will remember that" cue.
  * - Ending: once a main quest is finished the shared ending gates (pyoaEndingGates + rpgEndings) offer
  *   RPG_ENDING_CHIP; taking it commits the best eligible ending and the run ends.
- * - Two ways through each main step: the step itself (be at its place, or take its decision), or call on a person
+ * - Two ways through each main step: the step itself (be at its place), or call on a person
  *   here who stands with you to see to it. Calling on them spends goodwill (a hidden trust cost on their record).
  * - Origin (rules/rpgOrigin) and romance (a Loyal companion, only when romance subplots are on).
  * - Every committed choice goes into the journal of choices (choiceJournal).
@@ -92,7 +93,7 @@ function stanceTarget(state: GameState, action: string): string | null {
 
 const chipKey = (s: string) => s.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 
-/** Story RPG: the main quest's open decision step (one that names no place) as the chip that takes it. */
+/** Story RPG: the main quest's open decision step (one that names no place) as the chip that starts its scene. */
 export function storyRpgDecisionChip(state: GameState): string | null {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter) return null;
   const quest = mainSpineQuest(state);
@@ -271,13 +272,11 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
   const open = quest?.objectives?.find((o) => !o.completed)?.description ?? '';
   if (quest && open) {
     const place = placeForStep(next, open);
-    const decision = place ? null : storyRpgDecisionChip(state);
-    const done = place ? atPlace(next, place) : !!decision && chipKey(action) === chipKey(decision);
-    const ticked = done ? tickNextStep(next.quests ?? [], quest.id) : null;
+    // RC-QT1: place steps tick at the named place; placeless decision chips never tick on label alone.
+    const ticked = place && atPlace(next, place) ? tickNextStep(next.quests ?? [], quest.id) : null;
     if (ticked) {
       next = { ...next, quests: ticked.quests };
-      if (!place) next = recordChoice(next, { kind: 'decision', text: `${quest.name}: ${ticked.step}.` });
-      receipts.push(`Quest stage: ${quest.name} — ${ticked.step}${place ? ` (at ${place})` : ''}`);
+      receipts.push(`Quest stage: ${quest.name} — ${ticked.step} (at ${place})`);
     }
   }
   return { state: next, receipts };

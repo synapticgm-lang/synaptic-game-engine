@@ -6,7 +6,6 @@ import { seedDungeonState } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
 import { placeAllowsDungeon } from './dungeonLifecycle';
 import { isDungeonCard, openDungeonCard } from './dungeonCard';
-import { stepChip } from './choiceRanking';
 import { parsePlayerIntent } from './intentParser';
 import { actionMatchesObjective, targetSpot } from './questTargets';
 import { placeTabletopQuestTargets, tabletopStepIsDoor } from './tabletopQuestProgress';
@@ -16,8 +15,6 @@ const ENTER_ACTION =
 
 const INTERIOR_CUE =
   /\b(store|shop|tesco|mart|micro[- ]?dungeon|dungeon|aisle|stockroom|convenience)\b/i;
-
-const chipKey = (s: string) => (s ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 
 export function playerEntersInterior(action: string, state: GameState): boolean {
   if (!ENTER_ACTION.test(action) && !INTERIOR_CUE.test(action)) return false;
@@ -48,8 +45,6 @@ function actionTakesDoorStep(state: GameState, action: string): boolean {
   if (intent.kind === 'talk') return false;
   if (tabletopStepIsDoor(state, action)) return true;
   for (const o of doorSteps(state)) {
-    const chip = stepChip(o);
-    if (chip && chipKey(action) === chipKey(chip)) return true;
     if (intent.kind === 'move' && (playerEntersInterior(action, state) || actionMatchesObjective(o, action))) {
       return true;
     }

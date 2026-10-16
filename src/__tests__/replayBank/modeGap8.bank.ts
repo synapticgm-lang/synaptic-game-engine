@@ -30,7 +30,7 @@ import {
   mainQuestEndPrompt,
   ONE_MORE_TURN,
 } from '../../game/mainQuestEnd';
-import { choiceJournal } from '../../game/choiceJournal';
+import { choiceJournal, recordChoice } from '../../game/choiceJournal';
 import { ORIGIN_QUICK_START_CHIP, originChip, originPad, quickStartOrigin } from '../../game/rules/rpgOrigin';
 import { BACKGROUNDS } from '../../game/tabletop/characterBuild';
 import { recruitChip } from '../../game/rules/companions';
@@ -73,10 +73,23 @@ function turn(s: GameState, input: string, opts: { romance?: boolean } = {}) {
 
 const lastOf = (r: Replay) => r.after(r.turns()[r.turns().length - 1]!);
 
-/** Ds150 after T21 with both open decisions taken: Case the Caravan is finished. */
+/**
+ * Ds150 after T21: Case the Caravan finished for ending / journal tests.
+ * RC-QT1: decision chip labels no longer tick — close remaining steps on the state (engine outcome).
+ */
 function finishedMain() {
-  const picked = turn(R.after(21), 'Pick an approach');
-  return turn(picked.state, 'Commit to the heist night');
+  const s = R.after(21);
+  expect(turn(s, 'Pick an approach').status.join('\n')).not.toMatch(/Quest stage/);
+  let state = {
+    ...s,
+    quests: (s.quests ?? []).map((q) => {
+      if (q.type !== 'main' || q.name !== 'Case the Caravan') return q;
+      return { ...q, status: 'completed' as const, objectives: (q.objectives ?? []).map((o) => ({ ...o, completed: true })) };
+    }),
+  } as GameState;
+  state = recordChoice(state, { kind: 'decision', text: 'Case the Caravan: Pick an approach.' });
+  state = recordChoice(state, { kind: 'decision', text: 'Case the Caravan: Commit to the heist night.' });
+  return { state, status: [] as string[] };
 }
 
 describe('replay bank mode-gap 8 (recap, main-quest popup, P1)', () => {
