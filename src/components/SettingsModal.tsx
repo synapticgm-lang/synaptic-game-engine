@@ -893,7 +893,37 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               onChange={(v) => update('readChoicesAloud', v)}
             />
           </Section>
-          {/* ACC-1d controls */}
+          <Section icon={<Type size={16} />} title="Motion and reading" visible={activeTab === 'accessibility'}>
+            <label className="mb-2 block text-xs font-medium text-slate-400">Reduce motion</label>
+            <div className="mb-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Reduce motion">
+              {([
+                ['system', 'Match device', 'Uses your device setting'],
+                ['on', 'On', 'Stops animations'],
+                ['off', 'Off', 'Full animation'],
+              ] as const).map(([value, label, sublabel]) => (
+                <ChoiceCard
+                  key={value}
+                  label={label}
+                  sublabel={sublabel}
+                  selected={(draft.reduceMotion ?? 'system') === value}
+                  onClick={() => {
+                    update('reduceMotion', value);
+                    applyAccessibilityToDocument({ ...draft, reduceMotion: value });
+                  }}
+                />
+              ))}
+            </div>
+            <ToggleRow
+              icon={<Type size={15} />}
+              label="Easy-read font"
+              description="Plain, clear lettering for menus and story, with more space between lines and letters."
+              checked={!!draft.readableFont}
+              onChange={(v) => {
+                update('readableFont', v);
+                applyAccessibilityToDocument({ ...draft, readableFont: v });
+              }}
+            />
+          </Section>
 
           {/* Dice display (tabletop fantasy only — LitRPG / story RPG don't use the dice tray) */}
           {diceScope.show && (

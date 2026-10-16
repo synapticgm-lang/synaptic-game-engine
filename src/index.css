@@ -1960,3 +1960,33 @@ html.sgm-high-contrast [role='tab'] { border-color: #cbd5e1 !important; }
 html.sgm-high-contrast .sgm-play-story-panel { background-image: none !important; background-color: #000 !important; }
 
 /* ===== end ACC-1b ===== */
+
+/* ===== ACC-1d: focus, motion, font ===== */
+/* Visible keyboard focus everywhere (WCAG 2.4.7). */
+:focus-visible {
+  outline: 3px solid var(--sgm-focus-ring) !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced motion: app setting (or OS preference by default) stops animation and transitions. */
+html.sgm-reduce-motion *,
+html.sgm-reduce-motion *::before,
+html.sgm-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Readable font: plain sans for UI and story, more line and letter spacing (WCAG 1.4.12 values). */
+html.sgm-readable-font {
+  --sgm-font-ui: Verdana, Arial, 'Helvetica Neue', system-ui, sans-serif !important;
+  --sgm-font-story: Verdana, Arial, 'Helvetica Neue', system-ui, sans-serif !important;
+  --sgm-font-display: Verdana, Arial, system-ui, sans-serif !important;
+}
+html.sgm-readable-font body {
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  word-spacing: 0.16em;
+}
+/* ===== end ACC-1 ===== */
