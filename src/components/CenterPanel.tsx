@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
+import { acceptSttNotice, STT_NOTICE_BODY, STT_NOTICE_TITLE, sttNoticeAccepted } from '@/game/sttNotice';
 import { Send, Dice5, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIcon, AlertTriangle, FileDown, Backpack, LayoutGrid, MessageSquare, Terminal, Swords, BookOpen, EyeOff, Eye, List, Type } from 'lucide-react';
 import { EnemyTargetFrame } from './EnemyTargetFrame';
 
@@ -133,6 +134,12 @@ interface Props {
 
 export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, onUseBuiltSheet }: Props) {
   const [input, setInput] = useState('');
+  const [sttNoticeOpen, setSttNoticeOpen] = useState(false);
+  const actionInputRef = useRef<HTMLTextAreaElement>(null);
+  const onMicStart = () => {
+    if (sttNoticeAccepted()) onStartListening();
+    else setSttNoticeOpen(true);
+  };
   const [builderOpen, setBuilderOpen] = useState(false);
   const creating = tabletopCreationPending(state);
   const statMethod = houseRulesOf(state).statMethod;
@@ -573,11 +580,31 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </button>
             )}
           </div>
+          {sttNoticeOpen && (
+            <div role="dialog" aria-label="Voice input notice" className="mb-2 rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm text-slate-200">
+              <p className="font-semibold">{STT_NOTICE_TITLE}</p>
+              <p className="mt-1 text-slate-400">{STT_NOTICE_BODY}</p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  className="min-h-[44px] rounded-md border border-crimson-500 px-3 text-crimson-300 hover:bg-crimson-950/50"
+                  onClick={() => { acceptSttNotice(); setSttNoticeOpen(false); onStartListening(); }}
+                >
+                  Use voice
+                </button>
+                <button
+                  className="min-h-[44px] rounded-md border border-slate-700 px-3 text-slate-300 hover:bg-slate-800"
+                  onClick={() => { setSttNoticeOpen(false); actionInputRef.current?.focus(); }}
+                >
+                  Type instead
+                </button>
+              </div>
+            </div>
+          )}
           {!hideText && !isPyoaChipsOnly && (
           <div className="flex gap-2">
             {voice.sttSupported && (
               <button
-                onClick={voice.listening ? onStopListening : onStartListening}
+                onClick={voice.listening ? onStopListening : onMicStart}
                 disabled={turnUiBlocked}
                 title={voice.listening ? 'Stop listening' : 'Speak your action'}
                 className={`flex shrink-0 items-center justify-center rounded-lg border px-3 transition-all disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -601,6 +628,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </button>
             )}
             <textarea
+              ref={actionInputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
