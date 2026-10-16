@@ -47,10 +47,10 @@ TOTAL did not rise (lines / regex / fns down).
 
 ## Ship
 
-Commit tag `q31-ECR2`; push; sync edge types/intentParser/inventory; `gm-turn` redeploy if sync changed; Vercel git build; live `version.json` = `2026-10-16o`.
+Commits `47166897` + `d90d62e2` + `653a4a98` (edge inventory inline, no `magicItems` on edge). Pushed; `gm-turn` redeployed. Live `www.synapticgm.com/version.json` = `2026-10-16o`.
 
 ## NEXT
 
-- Reclaim path: returning a dropped attuned item within 24 h should clear `awayAttuned` and restore `attuned` (markAway only today).
-- Drop/sell paths that bypass `removeItem` (direct inventory filter) should also call `markAwayAttuned`.
+- Reclaim path: returning a dropped attuned item within 24 h should clear `awayAttuned` and restore `attuned`.
+- Drop/sell paths that bypass `removeItem` (direct inventory filter) should also start the away timer.
 - Identify-via-Short-Rest writer that sets `identifiedTurn` (house: loot is identified on gain).
