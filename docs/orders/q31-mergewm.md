@@ -58,6 +58,8 @@ None for this merge.
 
 ## Ship
 
-Stamp `2026-10-16z10` is on `main`. No edge file changed, so `gm-turn` was not deployed.
+Stamp `2026-10-16z10` is on `main` (`a895cd6f`). No edge file changed, so `gm-turn` was not deployed.
+
+Vercel project `project` and Vercel project `synaptic-game-engine` built `a895cd6f`. Live `https://www.synapticgm.com/version.json` is `2026-10-16z10`.
 
 TT_DONE
