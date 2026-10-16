@@ -31,6 +31,7 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^Loot:\s*(.+)$/i, (m) => `Loot — ${lootBody(m[1]!)}.`],
   [/^Companion:\s*(.+)$/i, (m) => `Party — ${end(m[1]!)}.`],
   [/^Floor:\s*(.+)$/i, (m) => `Floor — ${end(m[1]!)}.`],
+  [/^(Promise|Deal|Agreement) (kept|broken|expired):\s*(.+)$/i, (m) => `${m[1]} ${m[2]!.toLowerCase()} — ${end(m[3]!)}.`],
 ];
 
 export function systemNotice(line: string): string {

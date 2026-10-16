@@ -4,6 +4,7 @@
  */
 
 import type { Commitment, GameState, Item, Quest } from './types';
+import { shiftStoredRelationship } from './npcRelationships';
 import { grantEarnedInspiration } from './rules/houseRules';
 
 export type StateTxKind =
@@ -329,6 +330,19 @@ export function commitTurnRecord(
   for (const t of state.stateTxLog ?? []) {
     if (t.turn === state.turn && GRANT_KINDS.has(t.kind) && !said.includes(grantStatusKey(t))) lines.push(t.summary);
   }
+  for (const c of state.commitments ?? []) {
+    if (c.checkedTurn !== state.turn) continue;
+    if (c.status !== 'kept' && c.status !== 'broken' && c.status !== 'expired') continue;
+    const kind = c.kind === 'deal' ? 'Deal' : c.kind === 'agreement' ? 'Agreement' : 'Promise';
+    const who = c.to && c.to !== 'player' ? c.to : c.description;
+    const low = kind.toLowerCase();
+    const line = c.status === 'kept'
+      ? `${kind} kept: You have fulfilled your ${low} to ${who}.`
+      : c.status === 'broken'
+        ? `${kind} broken: You have broken your ${low} to ${who}.`
+        : `${kind} expired: Your ${low} to ${who} has expired.`;
+    if (!said.includes(line.toLowerCase())) lines.push(line);
+  }
   return { state, lines: [...new Set(lines)] };
 }
 
@@ -523,10 +537,61 @@ export function recordTurnCommitments(state: GameState): GameState {
       changed = true;
     }
   }
-  if (!changed) return state;
+  const turnNow = state.turn ?? 0;
+  let due = false;
+  if (state.engineMode !== 'pyoa') {
+    if (turnNow > 0 && turnNow % 3 === 0) due = true;
+    else {
+      for (const tx of state.stateTxLog ?? []) {
+        if (tx.turn !== turnNow) continue;
+        const k = tx.kind;
+        if (
+          k === 'quest_complete' || k === 'quest_fail' || k === 'combat'
+          || k === 'inventory_gain' || k === 'inventory_lose' || k === 'location'
+        ) {
+          due = true;
+          break;
+        }
+      }
+    }
+  }
+  let stored = state.arcDirector?.npcRelationships;
+  let trustChanged = false;
+  if (due) {
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i]!;
+      if (c.status !== 'open') continue;
+      let status: Commitment['status'] = c.status;
+      const cond = c.condition;
+      if (cond?.type === 'quest-complete') {
+        let q: Quest | undefined;
+        for (const item of state.quests ?? []) if (item.id === cond.questId) q = item;
+        if (!q) status = 'impossible';
+        else if (q.status === 'completed') status = 'kept';
+        else if (q.status === 'failed') status = 'broken';
+      } else if (cond?.type === 'deal-runs') {
+        let deal: { id: string; active: boolean } | undefined;
+        for (const item of state.worldLedger?.deals ?? []) if (item.id === cond.dealId) deal = item;
+        if (!deal) status = 'impossible';
+        else if (!deal.active) status = 'broken';
+      }
+      if (status === 'open' && c.dueTurn != null && turnNow > c.dueTurn) status = 'expired';
+      if (status === 'open') continue;
+      list[i] = { ...c, status, checkedTurn: turnNow };
+      changed = true;
+      const who = (c.to ?? '').trim();
+      if (!who || who === 'player') continue;
+      const delta = status === 'kept' ? c.trustDeltaOnKeep : status === 'impossible' ? 0 : c.trustDeltaOnBreak;
+      if (!delta) continue;
+      stored = shiftStoredRelationship(stored, who, { trust: delta }, turnNow, status === 'kept' ? 'promise' : 'betrayal').list;
+      trustChanged = true;
+    }
+  }
+  if (!changed && !trustChanged) return state;
   return {
     ...state,
     commitments: list,
     ...(ledger && nextDeals && nextDeals !== deals ? { worldLedger: { ...ledger, deals: nextDeals } } : {}),
+    ...(trustChanged ? { arcDirector: { ...(state.arcDirector ?? {}), npcRelationships: stored } } : {}),
   };
 }

@@ -46,10 +46,7 @@ function compressLine(text: string, max = 220): string {
   return text.replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
-/**
- * Lossless fact extract BEFORE compression — keep named NPCs, places, promises,
- * and loot beats as auto-pins so later summaries don't erase them.
- */
+/** Lossless fact extract before compression — named NPCs, places, and loot beats stay as auto-pins. */
 export function extractLosslessFacts(
   memory: CampaignMemoryState,
   state: GameState,
@@ -96,8 +93,6 @@ export function extractLosslessFacts(
     }
   }
 
-  // Promise / threat language → consequence threads
-  next = extractPromisesFromProse(next, narrative, turn);
   next = extractSilencedSpeechFromProse(next, narrative, turn);
   next = pinOpenPlayerAsk(next, playerAction, turn);
   return next;
@@ -135,36 +130,6 @@ export function pinOpenPlayerAsk(
     return memory;
   }
   return addConsequence(memory, text, turn);
-}
-
-const PROMISE_PATTERNS: RegExp[] = [
-  /\b(?:i(?:'| a)?ll|we(?:'| wi)?ll|they(?:'| wi)?ll)\s+([^.!?\n]{8,100})/gi,
-  /\b(?:promise[sd]?|owe[sd]?|warn(?:ed|s)?|threaten(?:ed|s)?|debt|deadline|until|before)\b[^.!?\n]{8,120}/gi,
-  /\b(?:come back|return|meet(?: me)?|find you|pay you back|make you pay)\b[^.!?\n]{0,80}/gi,
-];
-
-export function extractPromisesFromProse(
-  memory: CampaignMemoryState,
-  narrative: string,
-  turn: number
-): CampaignMemoryState {
-  let next = memory;
-  const seen = new Set(
-    (memory.consequences ?? []).map((c) => c.text.toLowerCase().slice(0, 60))
-  );
-  for (const re of PROMISE_PATTERNS) {
-    const local = new RegExp(re.source, re.flags);
-    let m: RegExpExecArray | null;
-    while ((m = local.exec(narrative)) !== null) {
-      const text = compressLine(m[0], 160);
-      const key = text.toLowerCase().slice(0, 60);
-      if (seen.has(key) || text.length < 12) continue;
-      seen.add(key);
-      next = addConsequence(next, `Open thread (T${turn}): ${text}`, turn);
-      if ((next.consequences ?? []).filter((c) => c.unresolved).length >= 12) return next;
-    }
-  }
-  return next;
 }
 
 const SILENCE_PATTERNS: RegExp[] = [

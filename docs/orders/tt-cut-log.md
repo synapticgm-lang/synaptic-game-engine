@@ -20,6 +20,11 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-K2 engine check of commitments
+
+1. **`extractPromisesFromProse` and `PROMISE_PATTERNS`** in `src/game/campaignMemory.ts` (and the edge copy) — three prose regexes that wrote `Open thread` consequences from "I'll / promise / come back". Nothing else called it after K1 stopped pinning those threads as promises. Commitments are settled from `GameState.commitments` inside `recordTurnCommitments`. Restore-from: parent of q31-K2.
+2. **`extractLosslessFacts` JSDoc** — shortened. Comment only.
+
 ## q31-K1 commitments from the turn record
 
 1. **`src/game/sceneLedger.ts` `stampSceneLedger` non-threat Open-thread → promise** — every campaign-memory `Open thread` that was not a threat or warning was pinned as a ledger promise. Those threads were written by `extractPromisesFromProse` (`campaignMemory.ts` `PROMISE_PATTERNS`). Pinned promises are now the open Order K commitments for people here and in Previous (`openCommitmentsFor` / `commitmentLine` in `stateTx.ts`), recorded from `quest_reveal` rows and active world deals. `extractPromisesFromProse` still writes Open-thread lines (threat lines and memory still read them); it no longer feeds promises. Patterns stay frozen. Restore-from: parent of q31-K1.
