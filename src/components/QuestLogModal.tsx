@@ -3,6 +3,7 @@ import type { ChoiceJournalEntry, Quest, QuestStatus } from '@/game/types';
 import { isJournalQuest } from '@/game/questPlay';
 import { isGenericQuestProvenance } from '@/game/questJournalEnrich';
 import { choiceJournalLine } from '@/game/choiceJournal';
+import type { PromiseView, QuestTargetView } from '@/game/questView';
 
 interface QuestLogModalProps {
   isOpen: boolean;
@@ -10,7 +11,20 @@ interface QuestLogModalProps {
   quests: Quest[];
   /** Story RPG journal of choices; the Choices tab shows only when it has entries. */
   choices?: ChoiceJournalEntry[];
+  /** QV-a: each active quest's open step target and whether the player is there (questView.questTargetViews). */
+  targets?: Record<string, QuestTargetView>;
+  /** QV-b: Order K commitments (questView.promiseViews); the Promises tab shows only when there are some. */
+  promises?: PromiseView[];
 }
+
+const PROMISE_BADGE: Record<string, string> = {
+  open: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+  kept: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  broken: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+  expired: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  impossible: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+  waived: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+};
 
 function isKnownQuest(q: Quest): boolean {
   return isJournalQuest(q);
@@ -21,8 +35,10 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
   onClose,
   quests = [],
   choices = [],
+  targets = {},
+  promises = [],
 }) => {
-  const [filter, setFilter] = useState<QuestStatus | 'all' | 'choices'>('active');
+  const [filter, setFilter] = useState<QuestStatus | 'all' | 'choices' | 'promises'>('active');
   const knownQuests = quests.filter(isKnownQuest);
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(
     knownQuests[0]?.id ?? null
@@ -109,9 +125,35 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
               Choices ({choices.length})
             </button>
           )}
+          {promises.length > 0 && (
+            <button
+              onClick={() => setFilter('promises')}
+              data-testid="promises-tab"
+              className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
+                filter === 'promises' ? 'sgm-info-tab-on' : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Promises ({promises.length})
+            </button>
+          )}
         </div>
 
-        {filter === 'choices' ? (
+        {filter === 'promises' ? (
+          <div className="sgm-modal-body flex-1 space-y-2 p-6" data-testid="promise-list">
+            {promises.map((p) => (
+              <div key={p.id} className="flex flex-col gap-1 rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-sm text-slate-200 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <span className="font-semibold">{p.kind} to {p.to}</span>
+                  <span className="text-slate-300">: {p.what}</span>
+                  {p.dueTurn != null && <span className="ml-2 text-xs text-slate-400">due by turn {p.dueTurn}</span>}
+                </div>
+                <span className={`self-start rounded border px-2 py-0.5 text-xs font-bold capitalize sm:self-auto ${PROMISE_BADGE[p.status] ?? ''}`}>
+                  {p.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : filter === 'choices' ? (
           <div className="sgm-modal-body flex-1 space-y-2 p-6" data-testid="choice-journal">
             {[...choices].reverse().map((c, i) => (
               <p key={`${c.turn}-${i}`} className="rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-sm text-slate-200">
@@ -120,8 +162,8 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
             ))}
           </div>
         ) : (
-        <div className="flex-1 flex overflow-hidden">
-          <div className="sgm-modal-body w-1/3 space-y-2 border-r border-slate-800/60 p-4">
+        <div className="flex flex-1 flex-col overflow-hidden sm:flex-row">
+          <div className="sgm-modal-body max-h-[35%] space-y-2 border-b border-slate-800/60 p-4 sm:max-h-none sm:w-1/3 sm:border-b-0 sm:border-r">
             {filteredQuests.length === 0 ? (
               <div className="text-center py-8 text-slate-500 text-sm">
                 No quests found in this category.
@@ -202,6 +244,22 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                         </div>
                       ))}
                     </div>
+                  </div>
+                ) : null}
+
+                {targets[selectedQuest.id] ? (
+                  <div className="p-3 rounded-lg border border-slate-800 bg-slate-900/40" data-testid="quest-target">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Current step</h4>
+                    <p className="text-sm text-slate-200">{targets[selectedQuest.id]!.step}</p>
+                    {(targets[selectedQuest.id]!.target || targets[selectedQuest.id]!.place) && (
+                      <p className="mt-1 text-xs text-slate-400">
+                        {targets[selectedQuest.id]!.target ? <>{targets[selectedQuest.id]!.targetKind === 'person' ? 'Who' : 'What'}: {targets[selectedQuest.id]!.target}</> : null}
+                        {targets[selectedQuest.id]!.target && targets[selectedQuest.id]!.place ? ' · ' : ''}
+                        {targets[selectedQuest.id]!.place ? <>Where: {targets[selectedQuest.id]!.place}</> : null}
+                      </p>
+                    )}
+                    {targets[selectedQuest.id]!.here === true && <p className="mt-1 text-xs font-semibold text-emerald-400" data-testid="quest-target-here">You are here</p>}
+                    {targets[selectedQuest.id]!.here === 'door' && <p className="mt-1 text-xs font-semibold text-sky-300">Inside this place</p>}
                   </div>
                 ) : null}
 
