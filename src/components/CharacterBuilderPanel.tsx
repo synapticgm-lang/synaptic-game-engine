@@ -126,7 +126,7 @@ export function CharacterBuilderPanel({
   const kits = CLASS_KITS[d.classId];
   const kitText = (id: KitId) => {
     const k = kits.find((x) => x.id === id) ?? kits[0];
-    return k.gear.length ? `${k.label}: ${k.gear.map((g) => (g.qty ? `${g.name} ×${g.qty}` : g.name)).join(', ')}, ${k.gp} GP` : `${k.label} (${k.gp} GP)`;
+    return k.gear.length ? `${k.label}: ${k.gear.map((g) => (g.qty ? `${g.name} ×${g.qty}` : g.name)).join(', ')}, ${k.gp} GP` : `${k.gp} GP`;
   };
 
   return (

@@ -109,7 +109,7 @@ describe('replay bank tt-build-1 (tabletop character creation)', () => {
 
   it('[tabletop ds151 T1 | tt-build-1] the writer packet never carries the creation menu or the sheet lines', () => {
     const open = T.before(firstTurn());
-    const s = walk(beginTabletopCreation(open), ['Build my own', 'Rogue', 'Halfling', 'Criminal', 'Standard array', 'Keep these scores', 'Coin instead (100 GP)', 'Begin play']);
+    const s = walk(beginTabletopCreation(open), ['Build my own', 'Rogue', 'Halfling', 'Criminal', 'Standard array', 'Keep these scores', '100 GP', 'Begin play']);
     const prompt = buildContextPrompt(s, T.input(firstTurn()));
     expect(prompt).not.toMatch(/inn book|Point buy|Standard array|Ready-made|Passive Perception|Keep these scores/i);
   });

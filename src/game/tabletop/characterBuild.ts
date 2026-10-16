@@ -239,62 +239,62 @@ export const CLASS_KITS: Record<TabletopClassId, KitDef[]> = {
       gear: [{ name: 'Chain Mail', kind: 'armor' }, { name: 'Greatsword', kind: 'weapon' }, { name: 'Flail', kind: 'weapon' }, { name: 'Javelin', qty: 8, kind: 'weapon' }, { name: "Dungeoneer's Pack", kind: 'gear' }] },
     { id: 'B', label: 'Studded Leather and Longbow', gp: 11,
       gear: [{ name: 'Studded Leather Armor', kind: 'armor' }, { name: 'Scimitar', kind: 'weapon' }, { name: 'Shortsword', kind: 'weapon' }, { name: 'Longbow', kind: 'weapon' }, { name: 'Arrows', qty: 20, kind: 'gear' }, { name: 'Quiver', kind: 'gear' }, { name: "Dungeoneer's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 155, gear: [] },
+    { id: 'coin', label: '155 GP', gp: 155, gear: [] },
   ],
   rogue: [
     { id: 'A', label: 'Leather Armor, daggers and Shortbow', gp: 8,
       gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Shortsword', kind: 'weapon' }, { name: 'Shortbow', kind: 'weapon' }, { name: 'Arrows', qty: 20, kind: 'gear' }, { name: 'Quiver', kind: 'gear' }, { name: "Thieves' Tools", kind: 'gear' }, { name: "Burglar's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 100, gear: [] },
+    { id: 'B', label: '100 GP', gp: 100, gear: [] },
   ],
   cleric: [
     { id: 'A', label: 'Chain Shirt, Shield and Mace', gp: 7,
       gear: [{ name: 'Chain Shirt', kind: 'armor' }, { name: 'Shield', kind: 'shield' }, { name: 'Mace', kind: 'weapon' }, { name: 'Holy Symbol', kind: 'gear' }, { name: "Priest's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 110, gear: [] },
+    { id: 'B', label: '110 GP', gp: 110, gear: [] },
   ],
   wizard: [
     { id: 'A', label: 'Quarterstaff, daggers and Spellbook', gp: 5,
       gear: [{ name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Quarterstaff', kind: 'weapon' }, { name: 'Robe', kind: 'gear' }, { name: 'Spellbook', kind: 'gear' }, { name: "Scholar's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 55, gear: [] },
+    { id: 'B', label: '55 GP', gp: 55, gear: [] },
   ],
   barbarian: [
     { id: 'A', label: 'Greataxe and handaxes', gp: 15,
       gear: [{ name: 'Greataxe', kind: 'weapon' }, { name: 'Handaxe', qty: 4, kind: 'weapon' }, { name: "Explorer's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 75, gear: [] },
+    { id: 'B', label: '75 GP', gp: 75, gear: [] },
   ],
   bard: [
     { id: 'A', label: 'Leather Armor, daggers and a lute', gp: 19,
       gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Lute', kind: 'gear' }, { name: "Entertainer's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 90, gear: [] },
+    { id: 'B', label: '90 GP', gp: 90, gear: [] },
   ],
   druid: [
     { id: 'A', label: 'Leather Armor, Shield and Quarterstaff', gp: 9,
-      gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Shield', kind: 'shield' }, { name: 'Sickle', kind: 'weapon' }, { name: 'Quarterstaff', kind: 'weapon' }, { name: 'Druidic Focus', kind: 'gear' }, { name: "Explorer's Pack", kind: 'gear' }, { name: 'Herbalism Kit', kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 50, gear: [] },
+      gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Shield', kind: 'shield' }, { name: 'Sickle', kind: 'weapon' }, { name: 'Quarterstaff', kind: 'weapon' }, { name: "Explorer's Pack", kind: 'gear' }, { name: 'Herbalism Kit', kind: 'gear' }] },
+    { id: 'B', label: '50 GP', gp: 50, gear: [] },
   ],
   monk: [
     { id: 'A', label: 'Spear, daggers and woodcarver\'s tools', gp: 11,
       gear: [{ name: 'Spear', kind: 'weapon' }, { name: 'Dagger', qty: 5, kind: 'weapon' }, { name: "Woodcarver's Tools", kind: 'gear' }, { name: "Explorer's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 50, gear: [] },
+    { id: 'B', label: '50 GP', gp: 50, gear: [] },
   ],
   paladin: [
     { id: 'A', label: 'Chain Mail, Shield and Longsword', gp: 9,
       gear: [{ name: 'Chain Mail', kind: 'armor' }, { name: 'Shield', kind: 'shield' }, { name: 'Longsword', kind: 'weapon' }, { name: 'Javelin', qty: 6, kind: 'weapon' }, { name: 'Holy Symbol', kind: 'gear' }, { name: "Priest's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 150, gear: [] },
+    { id: 'B', label: '150 GP', gp: 150, gear: [] },
   ],
   ranger: [
     { id: 'A', label: 'Studded Leather, swords and Longbow', gp: 7,
       gear: [{ name: 'Studded Leather Armor', kind: 'armor' }, { name: 'Scimitar', kind: 'weapon' }, { name: 'Shortsword', kind: 'weapon' }, { name: 'Longbow', kind: 'weapon' }, { name: 'Arrows', qty: 20, kind: 'gear' }, { name: 'Quiver', kind: 'gear' }, { name: 'Druidic Focus', kind: 'gear' }, { name: "Explorer's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 150, gear: [] },
+    { id: 'B', label: '150 GP', gp: 150, gear: [] },
   ],
   sorcerer: [
     { id: 'A', label: 'Spear, daggers and an arcane focus', gp: 28,
       gear: [{ name: 'Spear', kind: 'weapon' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Arcane Focus', kind: 'gear' }, { name: "Dungeoneer's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 50, gear: [] },
+    { id: 'B', label: '50 GP', gp: 50, gear: [] },
   ],
   warlock: [
     { id: 'A', label: 'Leather Armor, Sickle and an arcane focus', gp: 15,
       gear: [{ name: 'Leather Armor', kind: 'armor' }, { name: 'Sickle', kind: 'weapon' }, { name: 'Dagger', qty: 2, kind: 'weapon' }, { name: 'Arcane Focus', kind: 'gear' }, { name: 'Book (occult lore)', kind: 'gear' }, { name: "Scholar's Pack", kind: 'gear' }] },
-    { id: 'coin', label: 'Coin instead', gp: 100, gear: [] },
+    { id: 'B', label: '100 GP', gp: 100, gear: [] },
   ],
 };
 
@@ -360,7 +360,7 @@ const STANDARD_LANGUAGES = ['Dwarvish', 'Elvish', 'Halfling', 'Gnomish', 'Dracon
 export const classDef = (id: TabletopClassId) => CLASSES.find((c) => c.id === id)!;
 export const speciesDef = (id: TabletopSpeciesId) => SPECIES.find((s) => s.id === id)!;
 export const backgroundDef = (id: TabletopBackgroundId) => BACKGROUNDS.find((b) => b.id === id)!;
-export const kitDef = (cls: TabletopClassId, id: KitId) => CLASS_KITS[cls].find((k) => k.id === id) ?? CLASS_KITS[cls][0];
+export const kitDef = (cls: TabletopClassId, id: KitId) => CLASS_KITS[cls].find((k) => k.id === id || (id === 'coin' && k.id === 'B' && !k.gear.length)) ?? CLASS_KITS[cls][0];
 
 export function abilityMod(score: number): number {
   return Math.floor((score - 10) / 2);

@@ -69,7 +69,7 @@ function tableMethod(state: GameState): AbilityMethod | null {
 
 function kitChip(cls: NonNullable<TabletopPicks['classId']>, id: 'A' | 'B' | 'coin'): string {
   const k = kitDef(cls, id);
-  return k.id === 'coin' ? `${k.label} (${k.gp} GP)` : k.label;
+  return k.gear.length === 0 ? `${k.gp} GP` : k.label;
 }
 
 export function creationChips(state: GameState): string[] {
@@ -345,7 +345,7 @@ export function stepTabletopCreation(state: GameState, input: string): GameState
     case 'kit': {
       const kits = CLASS_KITS[c.picks.classId!];
       const kit = kits.find((k) => n === norm(kitChip(c.picks.classId!, k.id)))
-        ?? (/\b(coin|gold|gp)\b/.test(n) ? kits.find((k) => k.id === 'coin') : undefined)
+        ?? (/\b(coin|gold|gp)\b/.test(n) ? kits.find((k) => k.id === 'coin' || (k.id === 'B' && !k.gear.length)) : undefined)
         ?? (/\b(kit|gear|equipment|first)\b/.test(n) ? kits[0] : undefined);
       return kit ? toConfirm(said, { ...c.picks, kitId: kit.id }) : again('Pick one of the kits on the page.');
     }

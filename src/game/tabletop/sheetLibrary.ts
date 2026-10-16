@@ -144,7 +144,7 @@ export function validateSheet(raw: unknown): SheetCheck {
 
   let kitId = picks.kitId ?? picks.kit;
   const kits = cls ? CLASS_KITS[cls.id] : [];
-  const kit = kits.find((k) => norm(k.id) === norm(kitId) || norm(k.label) === norm(kitId)) ?? (/coin|gold|gp/.test(norm(kitId)) ? kits.find((k) => k.id === 'coin') : undefined);
+  const kit = kits.find((k) => norm(k.id) === norm(kitId) || norm(k.label) === norm(kitId)) ?? (/coin|gold|gp/.test(norm(kitId)) ? kits.find((k) => k.id === 'coin' || (k.id === 'B' && !k.gear.length)) : undefined);
   if (cls && !kit) {
     corrections.push(`Starting kit ${kitId ? `“${kitId}” is not a ${cls.name} kit` : 'not given'}; the first ${cls.name} kit is used.`);
   }

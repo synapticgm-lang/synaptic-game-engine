@@ -564,3 +564,8 @@ Removed, superseded wording kept here verbatim for the record (original SK-4, or
 ## q31-SK123 hidden ranks / distinct skill jobs / individual stealth (restore from parent of the q31-SK123 commit)
 
 1. **`src/game/bindingConstraints.ts` `formatBindingConstraintsForPrompt` lines 290-305 at parent** — built the BINDING CONSTRAINTS prompt block from `BindingConstraint[]`. No production caller (`warden` uses `buildBindingConstraints` + detect/repair only). Cut to keep ruleCount TOTAL flat; the shape lives in `actionValidation.test.ts` as `bindingPrompt` for the two assertions that still pin the header.
+
+## q31-EKIT class starting kits (SRD 5.2.1 Choose A or B)
+
+1. **`src/game/tabletop/characterBuild.ts` CLASS_KITS gold rows** — eleven classes stored SRD option B as id `coin` ("Coin instead") instead of id `B`. Replaced by id `B` with empty gear and GP label (legacy `kitDef('…','coin')` maps to gold-only B). Fighter keeps id `coin` as SRD option (c) 155 GP.
+2. **`src/game/tabletop/characterBuild.ts` Druid kit A** — listed both `Quarterstaff` and `Druidic Focus` while SRD 5.2.1 says `Druidic Focus (Quarterstaff)` (one item). Dropped the separate `Druidic Focus` row; Quarterstaff remains (also matches focus detection via `staff`).

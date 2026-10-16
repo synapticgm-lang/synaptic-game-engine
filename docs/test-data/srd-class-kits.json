@@ -1,0 +1,67 @@
+{
+  "source": {
+    "work": "System Reference Document 5.2.1 by Wizards of the Coast LLC",
+    "url": "https://www.dndbeyond.com/srd",
+    "license": "CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/legalcode",
+    "pages": "Traits Starting Equipment: Barbarian p.28, Bard p.31, Cleric p.36, Druid p.41, Fighter p.47, Monk p.49, Paladin p.53, Ranger p.57, Rogue p.61, Sorcerer p.64, Warlock p.70, Wizard p.77",
+    "data": "5e-bits/5e-database@a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f src/2024/en/5e-SRD-Classes.json starting_equipment_options desc"
+  },
+  "houseDefaults": [
+    "Bard A: Lute stands for Musical Instrument of your choice (first listed / common).",
+    "Monk A: Woodcarver's Tools stands for Artisan's Tools or Musical Instrument chosen for the tool proficiency.",
+    "Druid A / Wizard A: Quarterstaff is the (Quarterstaff) form of the focus (not a second focus item).",
+    "Ranger A: Druidic Focus is the sprig of mistletoe form.",
+    "Sorcerer A: Arcane Focus is the crystal form; Warlock A: Arcane Focus is the orb form; Book (occult lore) is Book.",
+    "Fighter also has SRD option (c) 155 GP in CLASS_KITS as id coin; the 24-row A/B audit does not require it."
+  ],
+  "classes": {
+    "barbarian": {
+      "A": { "gp": 15, "gear": [{ "name": "Greataxe" }, { "name": "Handaxe", "qty": 4 }, { "name": "Explorer's Pack" }] },
+      "B": { "gp": 75, "gear": [] }
+    },
+    "bard": {
+      "A": { "gp": 19, "gear": [{ "name": "Leather Armor" }, { "name": "Dagger", "qty": 2 }, { "name": "Lute" }, { "name": "Entertainer's Pack" }] },
+      "B": { "gp": 90, "gear": [] }
+    },
+    "cleric": {
+      "A": { "gp": 7, "gear": [{ "name": "Chain Shirt" }, { "name": "Shield" }, { "name": "Mace" }, { "name": "Holy Symbol" }, { "name": "Priest's Pack" }] },
+      "B": { "gp": 110, "gear": [] }
+    },
+    "druid": {
+      "A": { "gp": 9, "gear": [{ "name": "Leather Armor" }, { "name": "Shield" }, { "name": "Sickle" }, { "name": "Quarterstaff" }, { "name": "Explorer's Pack" }, { "name": "Herbalism Kit" }] },
+      "B": { "gp": 50, "gear": [] }
+    },
+    "fighter": {
+      "A": { "gp": 4, "gear": [{ "name": "Chain Mail" }, { "name": "Greatsword" }, { "name": "Flail" }, { "name": "Javelin", "qty": 8 }, { "name": "Dungeoneer's Pack" }] },
+      "B": { "gp": 11, "gear": [{ "name": "Studded Leather Armor" }, { "name": "Scimitar" }, { "name": "Shortsword" }, { "name": "Longbow" }, { "name": "Arrows", "qty": 20 }, { "name": "Quiver" }, { "name": "Dungeoneer's Pack" }] }
+    },
+    "monk": {
+      "A": { "gp": 11, "gear": [{ "name": "Spear" }, { "name": "Dagger", "qty": 5 }, { "name": "Woodcarver's Tools" }, { "name": "Explorer's Pack" }] },
+      "B": { "gp": 50, "gear": [] }
+    },
+    "paladin": {
+      "A": { "gp": 9, "gear": [{ "name": "Chain Mail" }, { "name": "Shield" }, { "name": "Longsword" }, { "name": "Javelin", "qty": 6 }, { "name": "Holy Symbol" }, { "name": "Priest's Pack" }] },
+      "B": { "gp": 150, "gear": [] }
+    },
+    "ranger": {
+      "A": { "gp": 7, "gear": [{ "name": "Studded Leather Armor" }, { "name": "Scimitar" }, { "name": "Shortsword" }, { "name": "Longbow" }, { "name": "Arrows", "qty": 20 }, { "name": "Quiver" }, { "name": "Druidic Focus" }, { "name": "Explorer's Pack" }] },
+      "B": { "gp": 150, "gear": [] }
+    },
+    "rogue": {
+      "A": { "gp": 8, "gear": [{ "name": "Leather Armor" }, { "name": "Dagger", "qty": 2 }, { "name": "Shortsword" }, { "name": "Shortbow" }, { "name": "Arrows", "qty": 20 }, { "name": "Quiver" }, { "name": "Thieves' Tools" }, { "name": "Burglar's Pack" }] },
+      "B": { "gp": 100, "gear": [] }
+    },
+    "sorcerer": {
+      "A": { "gp": 28, "gear": [{ "name": "Spear" }, { "name": "Dagger", "qty": 2 }, { "name": "Arcane Focus" }, { "name": "Dungeoneer's Pack" }] },
+      "B": { "gp": 50, "gear": [] }
+    },
+    "warlock": {
+      "A": { "gp": 15, "gear": [{ "name": "Leather Armor" }, { "name": "Sickle" }, { "name": "Dagger", "qty": 2 }, { "name": "Arcane Focus" }, { "name": "Book (occult lore)" }, { "name": "Scholar's Pack" }] },
+      "B": { "gp": 100, "gear": [] }
+    },
+    "wizard": {
+      "A": { "gp": 5, "gear": [{ "name": "Dagger", "qty": 2 }, { "name": "Quarterstaff" }, { "name": "Robe" }, { "name": "Spellbook" }, { "name": "Scholar's Pack" }] },
+      "B": { "gp": 55, "gear": [] }
+    }
+  }
+}
