@@ -878,10 +878,17 @@ export function runArcDirectorBeforeGm(
     if (skill.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${skill.fact}`);
   }
 
-  // Story RPG / LitRPG companions: a recruit line joins a present named NPC; each companion's approval moves.
+  // Spec E-CA: companion approval from intent + engine outcome (not stance wording).
   if (!downtimeSettled) {
-    const wonFight = !!engineFight?.receipts.some((r) => r.startsWith('Fight: VICTORY'));
-    const party = settleCompanions(working, playerInput, { wonFight });
+    const fightVictory = engineFight?.receipts.find((r) => r.startsWith('Fight: VICTORY'));
+    const wonFight = !!fightVictory;
+    const foeName =
+      fightVictory?.match(/^Fight: VICTORY vs (.+?) in /)?.[1]?.trim()
+      || engineFight?.foeAfter?.name?.trim()
+      || '';
+    const party = settleCompanions(working, playerInput, {
+      outcome: { wonFight, ...(foeName ? { fightFoes: [foeName] } : {}) },
+    });
     working = party.state;
     systemReceipts.push(...party.receipts);
     for (const f of party.facts) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${f}`);

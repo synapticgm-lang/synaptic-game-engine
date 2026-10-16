@@ -1,66 +1,41 @@
-/**
- * P0.3 - Option-Set Diversity Contract (upgraded from pad filter)
- * 
- * Require distinct action-target-consequence profiles. Default: one objective-forward option,
- * one risky/high-upside, one social/world, one disengage/reposition when legal.
- * Dedupe operates on semantic role, not only wording.
- * 
- * Not: Just compare exact option text.
- * 
- * Target:
- * - LitRPG gateQueueOptionHits ≤5 alone
- * - PYOA charter-option ≤1 per 5 turns once examined
- * - Replacement options grounded in legal scene entities with distinct outcomes
- */
-
+/** Option-set diversity: distinct roles / cooldowns (semantic, not exact text). */
 import type { GameState, EngineMode } from './types';
 import { canonicalizeIntent, intentSimilarity, type SemanticIntent } from './semanticLoopDetector';
 
 export interface ChoiceProfile {
-  /** The choice text */
   text: string;
-  /** Semantic intent */
   intent: SemanticIntent;
-  /** Role in the choice set */
   role: ChoiceRole;
-  /** Likely outcome type */
   outcomeType: OutcomeType;
 }
 
 export type ChoiceRole =
-  | 'objective_forward'  // Advances active quest/goal
-  | 'risky_upside'       // High risk, high reward
-  | 'social_world'       // Interaction, relationship, info gathering
-  | 'disengage'          // Exit, defer, reposition
-  | 'safe_explore'       // Low-risk investigation
-  | 'generic';           // Fallback
+  | 'objective_forward'
+  | 'risky_upside'
+  | 'social_world'
+  | 'disengage'
+  | 'safe_explore'
+  | 'generic';
 
 export type OutcomeType =
-  | 'progress'           // Quest stage, unlock, discovery
-  | 'risk'               // Potential failure, cost, danger
-  | 'relationship'       // NPC interaction, faction
-  | 'information'        // Learn facts, clues
-  | 'resource'           // Gain/lose items, HP, etc.
-  | 'position'           // Move, travel, reposition
-  | 'stall';             // No meaningful change
+  | 'progress'
+  | 'risk'
+  | 'relationship'
+  | 'information'
+  | 'resource'
+  | 'position'
+  | 'stall';
 
 export interface DiversityContract {
-  /** Required roles for this situation */
   requiredRoles: ChoiceRole[];
-  /** Minimum options needed */
   minOptions: number;
-  /** Maximum semantic similarity allowed between options (0-1) */
   maxSimilarity: number;
 }
 
 export interface OptionCooldown {
-  /** Canonical form of the option */
   canonical: string;
-  /** Last turn this option was offered */
   lastOfferedTurn: number;
-  /** Number of times offered in recent window */
   offerCount: number;
-  /** Minimum turns before can offer again */
   cooldownTurns: number;
 }
 
@@ -70,9 +45,6 @@ export interface DiversityViolation {
   choices?: string[];
 }
 
-/**
- * Classify a choice's role based on its semantic intent and context.
- */
 export function classifyChoiceRole(
   choice: string,
   intent: SemanticIntent,
@@ -122,79 +94,37 @@ export function classifyChoiceRole(
   return 'generic';
 }
 
-/**
- * Predict likely outcome type for a choice.
- */
-export function predictOutcomeType(choice: string, role: ChoiceRole, intent: SemanticIntent): OutcomeType {
+export function predictOutcomeType(choice: string, role: ChoiceRole, _intent: SemanticIntent): OutcomeType {
   if (role === 'objective_forward') return 'progress';
   if (role === 'risky_upside') return 'risk';
   if (role === 'social_world') return 'relationship';
   if (role === 'disengage') return 'position';
-  
   const lower = choice.toLowerCase();
-  
   if (/\b(take|grab|acquire|loot|claim)\b/i.test(lower)) return 'resource';
   if (/\b(ask|question|learn|discover|investigate)\b/i.test(lower)) return 'information';
   if (/\b(travel|move|go to|enter)\b/i.test(lower)) return 'position';
   if (/\b(wait|observe|listen|browse)\b/i.test(lower)) return 'stall';
-  
   return 'information';
 }
 
-/**
- * Build choice profiles for a set of options.
- */
 export function buildChoiceProfiles(choices: string[], state: GameState, turn: number): ChoiceProfile[] {
-  return choices.map(choice => {
+  return choices.map((choice) => {
     const intent = canonicalizeIntent(choice, turn);
     const role = classifyChoiceRole(choice, intent, state);
-    const outcomeType = predictOutcomeType(choice, role, intent);
-    
-    return {
-      text: choice,
-      intent,
-      role,
-      outcomeType,
-    };
+    return { text: choice, intent, role, outcomeType: predictOutcomeType(choice, role, intent) };
   });
 }
 
-/**
- * Get diversity contract requirements for current situation.
- */
 export function getDiversityContract(state: GameState): DiversityContract {
-  const activeQuests = (state.quests ?? []).filter(q => q.status === 'active' && q.revealed);
+  const activeQuests = (state.quests ?? []).filter((q) => q.status === 'active' && q.revealed);
   const inCombat = !!state.activeEncounter;
   const inDungeon = !!state.activeDungeon;
   const alone = state.openingEstablishment?.aloneArrival === true && !state.activeEncounter;
-  
   const requiredRoles: ChoiceRole[] = [];
-  
-  // Always need at least one meaningful action
-  if (activeQuests.length > 0) {
-    requiredRoles.push('objective_forward');
-  }
-  
-  // Combat has different requirements
-  if (inCombat) {
-    return {
-      requiredRoles: ['risky_upside', 'disengage'], // Attack and flee
-      minOptions: 2,
-      maxSimilarity: 0.7,
-    };
-  }
-  
-  // Exploration/social situations
-  if (!alone) {
-    requiredRoles.push('social_world');
-  }
-  
-  // Always allow disengage unless in forced situation
-  if (!inCombat && !inDungeon) {
-    requiredRoles.push('disengage');
-  }
-  
-  // Default: need diverse options
+  if (activeQuests.length > 0) requiredRoles.push('objective_forward');
+  if (inCombat) return { requiredRoles: ['risky_upside', 'disengage'], minOptions: 2, maxSimilarity: 0.7 };
+  if (!alone) requiredRoles.push('social_world');
+  if (!inCombat && !inDungeon) requiredRoles.push('disengage');
   return {
     requiredRoles: requiredRoles.length > 0 ? requiredRoles : ['safe_explore', 'social_world', 'disengage'],
     minOptions: 3,
@@ -202,9 +132,6 @@ export function getDiversityContract(state: GameState): DiversityContract {
   };
 }
 
-/**
- * Check if choice set satisfies diversity contract.
- */
 export function checkDiversityContract(
   profiles: ChoiceProfile[],
   contract: DiversityContract
@@ -264,7 +191,7 @@ export function checkDiversityContract(
 const TRAVEL_CHIP = /^(?:travel|head|go|walk|move|return|journey)\s+(?:back\s+)?(?:to|toward|towards|into)\s+(.+)$/i;
 const ENTER_CHIP = /^enter\s+(.+)$/i;
 const TALK_CHIP = /^(?:talk|speak)\s+(?:to|with)\s+(.+)$/i;
-/** "Ask Col Thatch what they want" — the addressee is the Title-Case run straight after the verb. */
+/** Title-Case run after the talk/travel verb is the chip's named target. */
 const ASK_NAMED_CHIP = /^[Aa]sk\s+((?:[A-Z][\w'’-]*)(?:\s+[A-Z][\w'’-]*)*)/;
 
 function targetKey(phrase: string): string {
@@ -276,11 +203,7 @@ function targetKey(phrase: string): string {
     .trim();
 }
 
-/**
- * Canonicalize option for cooldown tracking. A chip's target is its named target when it has one —
- * the person addressed, the place travelled to or entered — so offering one person or place never
- * cools another. A chip with no recognised action or target keys by its own label.
- */
+/** Cooldown key: named target when present, else the chip label. */
 export function canonicalizeOption(choice: string): string {
   const label = choice.trim();
   const travel = label.match(TRAVEL_CHIP) ?? label.match(ENTER_CHIP);
@@ -294,9 +217,6 @@ export function canonicalizeOption(choice: string): string {
   return `${intent.action}:${target}:${intent.purpose}`;
 }
 
-/**
- * Check if an option is on cooldown.
- */
 export function isOnCooldown(
   choice: string,
   currentTurn: number,
@@ -321,9 +241,6 @@ export function isOnCooldown(
   return { onCooldown: false, cooldown };
 }
 
-/**
- * Update cooldown state after offering choices.
- */
 export function updateCooldowns(
   choices: string[],
   currentTurn: number,
@@ -366,9 +283,6 @@ export function updateCooldowns(
   return updated;
 }
 
-/**
- * Get base cooldown turns for an option based on its semantic type.
- */
 function getBaseCooldown(choice: string): number {
   const lower = choice.toLowerCase();
   
@@ -386,9 +300,6 @@ function getBaseCooldown(choice: string): number {
   return 2;
 }
 
-/**
- * Filter choices on cooldown and return filtered set.
- */
 export function filterCooldownChoices(
   choices: string[],
   currentTurn: number,

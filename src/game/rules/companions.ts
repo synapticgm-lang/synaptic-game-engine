@@ -1,15 +1,9 @@
-/**
- * Shared rules engine — a named NPC who joins the player (story RPG and LitRPG), and that companion's approval.
- * Approval is the NPC's own relationship record (npcRelationships: applyRelationshipEvent, TRUST_BANDS through
- * deriveDisposition, deriveUnlocks, applyLongAbsence). The player sees the band, never the number. Two warnings,
- * then the companion leaves. A companion fights with the tabletop sidekick numbers (sidekick.ts) inside the
- * one-turn engine fight. Tabletop keeps its house-rule sidekick and has no recruit path.
- */
+/** Named companion join + approval (Story RPG / LitRPG). Bands only; tabletop has no recruit path. */
 import type { Companion, GameState, SidekickKind } from '../types';
 import type { Disposition } from '../npcRelationships';
 import { presentNpcNames, shiftStoredRelationship, storedRelationshipFor, type StoredShift } from '../npcRelationships';
 import { storedDisposition } from '../checkRules';
-import { detectStanceTreatment } from '../factionStandings';
+import { parsePlayerIntent, type PlayerIntent } from '../intentParser';
 import { SIDEKICKS, sidekickMaxHp, sidekickProfile } from './sidekick';
 import type { SidekickProfile } from './roundCombat';
 
@@ -202,21 +196,66 @@ export function settleCampTalk(state: GameState): CompanionSettle | null {
 
 type ApprovalEvent = keyof Omit<typeof APPROVAL_SHIFT, 'join' | 'campTalk'>;
 
-/** What this line (and the fight it settled) means to the companion, read through the shared stance reader. */
-function approvalEvent(state: GameState, companion: Companion, input: string, wonFight: boolean): ApprovalEvent | null {
-  const stance = detectStanceTreatment(input ?? '');
-  const low = (input ?? '').toLowerCase();
-  const atCompanion = low.includes(companion.name.toLowerCase());
-  const atOther = presentNpcNames(state).some((n) => n.toLowerCase() !== companion.name.toLowerCase() && low.includes(n.toLowerCase()));
-  if (stance === 'hard') {
-    if (atCompanion) return 'harmCompanion';
-    if (atOther || /\b(?:steal|rob)\b/i.test(low)) return 'harmOther';
+/** Spec E-CA: engine outcomes for approval (never stance wording). */
+export type ApprovalOutcome = {
+  wonFight?: boolean;
+  harmed?: readonly string[];
+  helped?: readonly string[];
+  takenFrom?: readonly string[];
+  fightFoes?: readonly string[];
+};
+
+export type ApprovalInput = { intent: PlayerIntent; outcome: ApprovalOutcome };
+
+/** First match: harmCompanion → harmOther → kindCompanion → kindOther → foughtTogether. */
+function approvalEvent(companion: Companion, input: string, approval: ApprovalInput): ApprovalEvent | null {
+  const { intent, outcome } = approval;
+  if (intent.targetsSelf) return null;
+  const cLow = companion.name.trim().toLowerCase();
+  const line = (input ?? '').toLowerCase();
+  const harms = outcome.harmed ?? [];
+  const helps = outcome.helped ?? [];
+  const taken = outcome.takenFrom ?? [];
+  const foes = outcome.fightFoes ?? [];
+  let atCompanion = line.includes(cLow);
+  if (!atCompanion) {
+    for (const t of intent.targets) {
+      const tl = t.trim().toLowerCase();
+      if (tl === cLow || cLow.includes(tl) || tl.includes(cLow)) {
+        atCompanion = true;
+        break;
+      }
+    }
   }
-  if (stance === 'kind') {
-    if (atCompanion) return 'kindCompanion';
-    if (atOther) return 'kindOther';
+  for (const n of harms) {
+    if (n.trim().toLowerCase() === cLow && atCompanion) return 'harmCompanion';
   }
-  return wonFight ? 'foughtTogether' : null;
+  for (const n of taken) {
+    if (n.trim().toLowerCase() !== cLow) return 'harmOther';
+  }
+  for (const n of harms) {
+    const nLow = n.trim().toLowerCase();
+    if (nLow === cLow) continue;
+    if (outcome.wonFight && foes.some((f) => f.trim().toLowerCase() === nLow)) continue;
+    let at = line.includes(nLow);
+    if (!at) {
+      for (const t of intent.targets) {
+        const tl = t.trim().toLowerCase();
+        if (tl === nLow || nLow.includes(tl) || tl.includes(nLow)) {
+          at = true;
+          break;
+        }
+      }
+    }
+    if (at) return 'harmOther';
+  }
+  for (const n of helps) {
+    if (n.trim().toLowerCase() === cLow) return 'kindCompanion';
+  }
+  for (const n of helps) {
+    if (n.trim().toLowerCase() !== cLow) return 'kindOther';
+  }
+  return outcome.wonFight ? 'foughtTogether' : null;
 }
 
 /** One approval move on the companion, its warnings and its leaving. */
@@ -261,20 +300,27 @@ function settleApproval(state: GameState, companion: Companion, event: ApprovalE
   return { state: next, receipts, facts };
 }
 
-/**
- * Before the writer: a recruit line settles the join; otherwise each recruited companion reacts to the line
- * (and to a fight won together). Tabletop and other modes: nothing.
- */
-export function settleCompanions(state: GameState, input: string, opts: { wonFight?: boolean } = {}): CompanionSettle {
+/** Recruit, or one approval event per companion from intent + engine outcome (Spec E-CA). */
+export function settleCompanions(
+  state: GameState,
+  input: string,
+  opts: { wonFight?: boolean; outcome?: ApprovalOutcome } = {}
+): CompanionSettle {
   const none: CompanionSettle = { state, receipts: [], facts: [] };
   if (!companionsAllowed(state)) return none;
   const recruit = settleRecruit(state, input);
   if (recruit) return recruit;
+  const intent = parsePlayerIntent(input, state);
+  const outcome: ApprovalOutcome = {
+    ...(opts.outcome ?? {}),
+    wonFight: opts.outcome?.wonFight ?? opts.wonFight,
+  };
+  const approval: ApprovalInput = { intent, outcome };
   let working = state;
   const receipts: string[] = [];
   const facts: string[] = [];
   for (const c of recruitedCompanions(state)) {
-    const event = approvalEvent(working, c, input, !!opts.wonFight);
+    const event = approvalEvent(c, input, approval);
     if (!event) continue;
     const done = settleApproval(working, c, event);
     working = done.state;

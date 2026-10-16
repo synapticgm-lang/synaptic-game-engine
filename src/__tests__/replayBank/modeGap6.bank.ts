@@ -125,8 +125,11 @@ describe('replay bank mode-gap 6 (companions and approval)', () => {
     const lines: string[] = [];
     const facts: string[] = [];
     let left = -1;
+    // Spec E-CA: approval follows the engine outcome (Hobb harmed), not the stance words in the line.
     for (let i = 0; i < 8 && left < 0; i++) {
-      const done = settleCompanions({ ...s, turn: (s.turn ?? 0) + i }, 'Threaten Hobb Dunmore');
+      const done = settleCompanions({ ...s, turn: (s.turn ?? 0) + i }, 'Threaten Hobb Dunmore', {
+        outcome: { harmed: ['Hobb Dunmore'] },
+      });
       s = done.state;
       lines.push(...done.receipts);
       facts.push(...done.facts);
@@ -152,7 +155,9 @@ describe('replay bank mode-gap 6 (companions and approval)', () => {
     let s = carry(r.state, R.after(16));
     const seen: string[][] = [];
     for (let i = 0; i < 4; i++) {
-      const done = settleCompanions({ ...s, turn: (s.turn ?? 0) + i }, 'Insult Vessa');
+      const done = settleCompanions({ ...s, turn: (s.turn ?? 0) + i }, 'Insult Vessa', {
+        outcome: { harmed: ['Vessa'] },
+      });
       s = done.state;
       seen.push(done.receipts);
     }
@@ -165,10 +170,11 @@ describe('replay bank mode-gap 6 (companions and approval)', () => {
   it('[story rpg ds150 T16 | mode-gap 6] kindness she sees raises approval; ordinary tape lines move nothing', () => {
     const r = recruitVessa();
     const s = carry(r.state, R.after(16));
-    const kind = settleCompanions(s, 'Thank Sefa Crane for the help');
+    const kind = settleCompanions(s, 'Thank Sefa Crane for the help', { outcome: { helped: ['Sefa Crane'] } });
     expect(storedRelationshipFor(kind.state, 'Vessa')!.trust).toBe(APPROVAL_SHIFT.join.trust + APPROVAL_SHIFT.kindOther.trust);
     expect(kind.receipts).toEqual(['Companion: Vessa approves.']);
     for (const n of [17, 18, 20, 21]) {
+      // Tape lines with no settled harm/help/fight outcome must not move approval (wording alone is not enough).
       const quiet = settleCompanions(carry(r.state, R.before(n)), R.input(n));
       expect(quiet.receipts, `T${n} "${R.input(n)}"`).toEqual([]);
     }

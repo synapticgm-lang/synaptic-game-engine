@@ -19,6 +19,13 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-ECA companion approval (Order E-CA / Spec E-CA)
+
+1. **`src/game/rules/companions.ts` `approvalEvent` stance path** — `detectStanceTreatment(input)` plus companion/other name substring plus `/\b(?:steal|rob)\b/i`. What it did: scored approval from the player's wording before any engine outcome. Replaced by `ApprovalInput = { intent, outcome }` (`parsePlayerIntent` + `ApprovalOutcome`: harmed / helped / takenFrom / wonFight / fightFoes). First-match map: harmCompanion → harmOther → kindCompanion → kindOther → foughtTogether. Import of `detectStanceTreatment` removed from this file (faction standings still use it elsewhere).
+2. **`src/game/optionDiversityContract.ts` comment / blank padding only** — preamble essay and per-export JSDoc blocks trimmed so ruleCount TOTAL lines do not rise with E-CA. Behaviour unchanged.
+
+---
+
 ## q31-O1C cleared sites (Order O1-C + L2)
 
 1. **Legacy auto-close discard in `dungeonLifecycle.maybeAutoCloseDungeon` / `closeDungeon`** — when all foes were down, non-card interiors called `closeDungeon` and dropped the layout (no `dungeonCard` / no deltas). What it did: a cleared cave/ruin could not be re-entered with the same map; chests reseeding on a later open enabled L2-style loot farms. Replaced by `condenseClearedSite` → `clearedSites[site]` (map as walked + left/moved/taken deltas) and foe-stripped park on the place; card sites mark `cleared` in place and write the same record on `parkDungeonCard`.
