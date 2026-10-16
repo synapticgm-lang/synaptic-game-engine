@@ -65,4 +65,6 @@ None for this merge.
 
 ## Ship
 
-Stamp `2026-10-16z11`. No edge file changed, so `gm-turn` was not deployed.
+Stamp `2026-10-16z11` is on `main` (`8f3deea4`). No edge file changed, so `gm-turn` was not deployed.
+
+Vercel project `project` and Vercel project `synaptic-game-engine` both returned `Deployment rate limited — retry in 24 hours` for `8f3deea4`. Not retried. Live `https://www.synapticgm.com/version.json` is still `2026-10-16z10`.
