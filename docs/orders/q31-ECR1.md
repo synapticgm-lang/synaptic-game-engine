@@ -45,6 +45,10 @@ Fix runs: 1 (tsc `replaceAll` + test `itemType: 'gear'`).
 
 TOTAL did not rise (lines / regex / lists down; fns flat).
 
+## Ship
+
+Commits `526d51e8` + `d6119177` (edge types sync), pushed; `gm-turn` redeployed (types inline / comicScript cut). Live `www.synapticgm.com/version.json` = `2026-10-16n`.
+
 ## NEXT
 
 - **E-CR2** attunement (4th refuse, cursed end, 24 h away, Short Rest reuse, identify-rest rule).
