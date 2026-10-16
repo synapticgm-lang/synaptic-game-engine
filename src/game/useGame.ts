@@ -367,7 +367,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, looksLikeTokenJson, type SpokenLine } from './tokenProse';
@@ -4684,7 +4684,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         combatSummary,
         why: `Player: ${sanitizedInput.slice(0, 120)}`,
       });
-      let mergedState: GameState = stampSceneLedger(record.state, cleanText);
+      let mergedState: GameState = stampSceneLedger(record.state, cleanText, handedRefs(record.state));
       // Engine grants this turn, read from the record (stateTx.commitTurnRecord), plus the arc receipts.
       {
         const allReceipts = [...arcReceipts, ...record.lines];

@@ -166,7 +166,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { carryLimitOn, withHouseRules } from './rules/houseRules';
-import { bookBodyAfterWriterMiss, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
@@ -2075,7 +2075,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   {
     const record = commitTurnRecord(state, governed, filteredSystemLog, { why: `Player: ${playerInput.slice(0, 120)}` });
-    governed = stampSceneLedger(record.state, mudBody);
+    governed = stampSceneLedger(record.state, mudBody, handedRefs(record.state));
     if (record.lines.length) {
       filteredSystemLog = [...filteredSystemLog, ...record.lines];
       const log = [...(governed.log ?? [])];
