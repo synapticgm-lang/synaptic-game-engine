@@ -27,12 +27,14 @@ interface Props {
   onOpenCharacter: () => void;
   onOpenMerchant: () => void;
   onOpenMap: () => void;
+  /** WM-b: the world map (atlas). */
+  onOpenWorldMap?: () => void;
   onOpenDebug: () => void;
   syncPhase: string;
   lastSavedTurn?: number | null;
 }
 
-export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
+export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, onOpenMap, onOpenWorldMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [setNameOpen, setSetNameOpen] = useState(false);
 
@@ -238,6 +240,11 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
           <button onClick={onOpenMap} title="Map Engine" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Map size={15} />
           </button>
+          {onOpenWorldMap && (
+          <button onClick={onOpenWorldMap} title="World map" data-testid="world-map-button" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
+            <Globe2 size={15} />
+          </button>
+          )}
           <button onClick={onOpenQuestLog} title="Quests" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Compass size={15} />
           </button>
@@ -271,6 +278,12 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
             <Map size={16} className="sgm-info-accent" />
             <span className="text-[10px]">Map</span>
           </button>
+          {onOpenWorldMap && (
+          <button onClick={() => { setMobileMenuOpen(false); onOpenWorldMap(); }} className="flex flex-col items-center gap-1 text-slate-300 p-2">
+            <Globe2 size={16} className="sgm-info-accent" />
+            <span className="text-[10px]">World</span>
+          </button>
+          )}
           <button onClick={onOpenQuestLog} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Compass size={16} className="text-amber-400" />
             <span className="text-[10px]">Quests</span>
