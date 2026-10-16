@@ -193,6 +193,8 @@ function factsFor(row, packet) {
       engineExits = [...new Set(engineExits)].filter((p, _, all) => !all.some((q) => q !== p && lower(q).includes(lower(p))));
     }
   }
+  // This leg's road stops: the engine's own travel fact "The way passes the Old Well." (travelJourney travelBeat).
+  const roadStops = [...new Set([...[packet, engineResult, ...receipts].join('\n').matchAll(/\bThe way passes ((?:the\s+)?[A-Z][^.\n]*?)\./g)].map((m) => m[1].trim()))];
   const cardNames = (row.placeCards ?? []).flatMap((c) => [c.name, ...(c.exits ?? [])]).join(', ');
   const handedText = lower([factSections(packet), engineResult, receipts.join('\n'), row.location, cardNames].join('\n'));
   return {
@@ -205,6 +207,7 @@ function factsFor(row, packet) {
     people,
     placeNames,
     placesExits,
+    roadStops,
     engineExits,
     exitsReceipt,
     engineResult,
@@ -339,6 +342,8 @@ export function checkTurn(row, packet, page = '') {
           if (exitFact.some((e) => lower(e).includes(lp.replace(/^the\s+/, '')) || lp.includes(lower(e)))) continue;
           // "The back streets led them from the Weighing Cup": the handed start of this turn's move, not a way out.
           const bare = lp.replace(/^the\s+/, '');
+          // "the path ran past the Old Well": a stop on the road this leg walks is the road, not a way out.
+          if (facts.roadStops.some((r) => lower(r).replace(/^the\s+/, '') === bare)) continue;
           if (facts.movedFrom && lower(facts.movedFrom).includes(bare)
             && /\bfrom\s+(?:the\s+)?(?:\w+\s+){0,2}$/i.test(clauseText.slice(Math.max(0, at - 30), at))) continue;
           // "the roofs of Valespire": the city the handed places sit in is the view, unless the line heads toward it.
