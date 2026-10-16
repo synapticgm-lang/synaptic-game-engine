@@ -5,7 +5,7 @@ import { recordSpokenTopics } from './npcMemory';
 import { advanceSceneLedger, stampSceneLedger } from './sceneLedger';
 import { alreadySaidLines, classifyTokenLine, plainLineFactProblem, repeatsSaid, type TokenBeat } from './tokenProse';
 import type { ActiveDungeonState } from './mapEngine';
-import type { GameState, NpcMemory } from './types';
+import type { Commitment, GameState, NpcMemory } from './types';
 
 function base(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'litrpg') as GameState;
@@ -33,6 +33,21 @@ function base(over: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
+const GLASS_LINE = 'Promise to Ilyra Fen: Bring the glass back';
+const glassCommitment: Commitment = {
+  promiseId: 'quest:glass',
+  madeTurn: 2,
+  description: 'Bring the glass back',
+  status: 'open',
+  trustDeltaOnKeep: 5,
+  trustDeltaOnBreak: -8,
+  beneficiaries: ['Ilyra Fen'],
+  witnesses: [],
+  kind: 'promise',
+  by: 'player',
+  to: 'Ilyra Fen',
+};
+
 const person = (): NpcMemory =>
   ({
     npcId: 'ilyra-fen',
@@ -54,6 +69,7 @@ describe('scene ledger on the place', () => {
     );
     const state = base({
       npcMemories: memories,
+      commitments: [glassCommitment],
       campaignMemory: {
         pins: [],
         consequences: [
@@ -68,7 +84,7 @@ describe('scene ledger on the place', () => {
     const ledger = once.places![0]!.sceneLedger!;
     expect(ledger.openedTurn).toBe(4);
     expect(ledger.said).toEqual(['The March keeps what falls into it.']);
-    expect(ledger.promises).toEqual(['Open thread (T2): I will bring the glass back']);
+    expect(ledger.promises).toEqual([GLASS_LINE]);
     expect(ledger.threats).toEqual(['Open thread (T2): they warn the water takes names']);
     expect(ledger.asked).toEqual([{ q: 'Open ask (T3): where does the glass go', answered: false }]);
     expect(ledger.spot).toBe('the bank');
@@ -128,6 +144,7 @@ describe('scene ledger writer view and repeat gate (Order M steps 3–4)', () =>
     );
     let state = base({
       npcMemories: memories,
+      commitments: [glassCommitment],
       campaignMemory: {
         pins: [],
         consequences: [
@@ -206,7 +223,7 @@ describe('scene ledger writer view and repeat gate (Order M steps 3–4)', () =>
 
 describe('scene ledger exit + leapfrog (Order M steps 5–6)', () => {
   it('A → road → B keeps A promise on Previous; next exit puts it on the timeline only', () => {
-    const promise = 'Open thread (T2): I will bring the glass back';
+    const promise = GLASS_LINE;
     const memories = recordSpokenTopics(
       [person()],
       ['Ilyra Fen'],
@@ -217,6 +234,7 @@ describe('scene ledger exit + leapfrog (Order M steps 5–6)', () => {
     let atA = stampSceneLedger(
       base({
         npcMemories: memories,
+        commitments: [glassCommitment],
         campaignMemory: {
           pins: [],
           consequences: [{ id: 'p', text: promise, createdTurn: 2, unresolved: true }],
@@ -308,6 +326,7 @@ describe('scene ledger exit + leapfrog (Order M steps 5–6)', () => {
         activeDungeon: card,
         currentLocation: 'Mireglass March — Stair Descent',
         places: [{ id: 'mireglass-march', name: 'Mireglass March', dungeonCard: card }],
+        commitments: [glassCommitment],
         campaignMemory: {
           pins: [],
           consequences: [

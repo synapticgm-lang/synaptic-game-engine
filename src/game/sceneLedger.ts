@@ -9,6 +9,7 @@ import { splitProseSentences } from './proseSentences';
 import { isRoadLabel, isTripHere } from './travelJourney';
 import { placesDiffer } from './sceneContextTail';
 import { mergeTimeline } from './timeline';
+import { commitmentLine, openCommitmentsFor } from './stateTx';
 
 const SAID_CAP = 40;
 const DESCRIBED_CAP = 24;
@@ -183,18 +184,18 @@ export function stampSceneLedger(state: GameState, narrative: string, maskRefs: 
     }
   }
 
-  const promises: string[] = [];
   const threats: string[] = [];
   const asked: SceneLedger['asked'] = [];
   for (const c of state.campaignMemory?.consequences ?? []) {
     const text = c.text.trim();
     const low = text.toLowerCase();
     if (low.startsWith('open ask')) asked.push({ q: text, answered: !c.unresolved });
-    else if (low.startsWith('open thread')) {
-      if (low.includes('threat') || low.includes('warn')) threats.push(text);
-      else promises.push(text);
-    }
+    else if (low.startsWith('open thread') && (low.includes('threat') || low.includes('warn'))) threats.push(text);
   }
+  const owedTo = [...present];
+  for (const n of state.scenePrevious?.names ?? []) owedTo.push(n);
+  const promises: string[] = [];
+  for (const c of openCommitmentsFor(state, owedTo)) promises.push(commitmentLine(c));
 
   const described = [...(prev?.described ?? [])];
   for (const raw of splitProseSentences(narrative ?? '')) {

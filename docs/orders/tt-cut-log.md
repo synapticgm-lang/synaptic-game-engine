@@ -20,6 +20,12 @@ A "swap" entry means the local copy was deleted and the call now uses the shared
 
 ---
 
+## q31-K1 commitments from the turn record
+
+1. **`src/game/sceneLedger.ts` `stampSceneLedger` non-threat Open-thread → promise** — every campaign-memory `Open thread` that was not a threat or warning was pinned as a ledger promise. Those threads were written by `extractPromisesFromProse` (`campaignMemory.ts` `PROMISE_PATTERNS`). Pinned promises are now the open Order K commitments for people here and in Previous (`openCommitmentsFor` / `commitmentLine` in `stateTx.ts`), recorded from `quest_reveal` rows and active world deals. `extractPromisesFromProse` still writes Open-thread lines (threat lines and memory still read them); it no longer feeds promises. Patterns stay frozen. Restore-from: parent of q31-K1.
+2. **`PromiseRecord` interface** in `src/game/npcRelationships.ts` and the edge copy — the old field list. Replaced by `type PromiseRecord = Commitment` (same fields, plus kind/by/to/condition/checkedTurn and status `expired`).
+3. **Blank-line padding (ruleCount budget):** `forwardProgressGovernor.ts`, `typedEntityValidator.ts`, `optionDiversityContract.ts`. Empty lines only; behaviour unchanged.
+
 ## q31-L4 push-on night / Extended Travel writer lines
 
 1. **`src/game/travelJourney.ts` (+ edge stub) `writerEngineResult` bare `Travel:` regex** — `/Travel: .*?\.(?=\s+[A-Z]|\s*$)/g` matched inside `Extended Travel: …`. Replaced by `(?<![A-Za-z])Travel: …`. Structured lines from `travelEngineLines` (push-on slot + Extended Travel extras).

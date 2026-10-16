@@ -1,7 +1,6 @@
 /** Forward-Progress Governor. */
 import type { GameState, Quest, NpcMemory, FactionStanding } from './types';
 import type { StateTx } from './stateTx';
-
 export type ProgressDeltaKind =
   | 'quest_progress'
   | 'discovery'
@@ -11,65 +10,45 @@ export type ProgressDeltaKind =
   | 'resources'
   | 'character'
   | 'none';
-
 export interface ProgressDelta {
   kind: ProgressDeltaKind;
   turn: number;
   summary: string;
-
   entity?: string;
-
   authority?: string;
 }
-
 export interface ProgressGovernorState {
-
   lastProgressTurn: number;
-
   recentDeltas: ProgressDelta[];
-
   turnsSinceProgress: number;
 }
-
 export function detectProgressDeltas(
   previous: GameState,
   next: GameState
 ): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
   const turn = next.turn;
-
   const questDeltas = detectQuestDeltas(previous.quests ?? [], next.quests ?? [], turn);
   deltas.push(...questDeltas);
-
   const discoveryDeltas = detectDiscoveryDeltas(previous, next, turn);
   deltas.push(...discoveryDeltas);
-
   const accessDeltas = detectAccessDeltas(previous, next, turn);
   deltas.push(...accessDeltas);
-
   const relationshipDeltas = detectRelationshipDeltas(previous, next, turn);
   deltas.push(...relationshipDeltas);
-
   const threatDeltas = detectThreatDeltas(previous, next, turn);
   deltas.push(...threatDeltas);
-
   const resourceDeltas = detectResourceDeltas(next.stateTxLog ?? [], turn);
   deltas.push(...resourceDeltas);
-
   const characterDeltas = detectCharacterDeltas(previous, next, turn);
   deltas.push(...characterDeltas);
-
   return deltas;
 }
-
 function detectQuestDeltas(prevQuests: Quest[], nextQuests: Quest[], turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   const prevMap = new Map(prevQuests.map(q => [q.id, q]));
-
   for (const q of nextQuests) {
     const prev = prevMap.get(q.id);
-
     if (!prev && q.revealed && q.status !== 'hidden') {
       deltas.push({
         kind: 'quest_progress',
@@ -80,9 +59,7 @@ function detectQuestDeltas(prevQuests: Quest[], nextQuests: Quest[], turn: numbe
       });
       continue;
     }
-
     if (!prev) continue;
-
     if (prev.status !== q.status && (q.status === 'completed' || q.status === 'failed')) {
       deltas.push({
         kind: 'quest_progress',
@@ -92,7 +69,6 @@ function detectQuestDeltas(prevQuests: Quest[], nextQuests: Quest[], turn: numbe
         authority: `quest:${q.id}`,
       });
     }
-
     if (!prev.revealed && q.revealed) {
       deltas.push({
         kind: 'quest_progress',
@@ -102,7 +78,6 @@ function detectQuestDeltas(prevQuests: Quest[], nextQuests: Quest[], turn: numbe
         authority: `quest:${q.id}`,
       });
     }
-
     const prevCompleted = (prev.objectives ?? []).filter(o => o.completed).length;
     const nextCompleted = (q.objectives ?? []).filter(o => o.completed).length;
     if (nextCompleted > prevCompleted) {
@@ -115,21 +90,16 @@ function detectQuestDeltas(prevQuests: Quest[], nextQuests: Quest[], turn: numbe
       });
     }
   }
-
   return deltas;
 }
-
 function detectDiscoveryDeltas(previous: GameState, next: GameState, turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   const prevTimeline = previous.timeline ?? [];
   const nextTimeline = next.timeline ?? [];
-
   const newFacts = nextTimeline.slice(prevTimeline.length);
   for (const fact of newFacts) {
     if (/^(you (?:see|hear|smell|feel)|the (?:air|atmosphere|room))/i.test(fact.text)) continue;
     if (prevTimeline.some(f => f.text.toLowerCase().includes(fact.text.toLowerCase().slice(0, 30)))) continue;
-
     deltas.push({
       kind: 'discovery',
       turn,
@@ -138,13 +108,10 @@ function detectDiscoveryDeltas(previous: GameState, next: GameState, turn: numbe
       authority: `timeline:${fact.turn}`,
     });
   }
-
   return deltas;
 }
-
 function detectAccessDeltas(previous: GameState, next: GameState, turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   const prevLoc = (previous.currentLocation ?? '').trim();
   const nextLoc = (next.currentLocation ?? '').trim();
   if (nextLoc && nextLoc !== prevLoc) {
@@ -156,7 +123,6 @@ function detectAccessDeltas(previous: GameState, next: GameState, turn: number):
       authority: 'location',
     });
   }
-
   const prevPlaces = new Set((previous.places ?? []).map(p => p.id));
   const newPlaces = (next.places ?? []).filter(p => !prevPlaces.has(p.id));
   for (const place of newPlaces.slice(0, 2)) {
@@ -168,7 +134,6 @@ function detectAccessDeltas(previous: GameState, next: GameState, turn: number):
       authority: `place:${place.id}`,
     });
   }
-
   const prevVisited = new Set(previous.activeDungeon?.visitedNodeIds ?? []);
   const nextVisited = new Set(next.activeDungeon?.visitedNodeIds ?? []);
   const newRooms = [...nextVisited].filter(id => !prevVisited.has(id));
@@ -180,17 +145,13 @@ function detectAccessDeltas(previous: GameState, next: GameState, turn: number):
       authority: 'dungeon',
     });
   }
-
   return deltas;
 }
-
 function detectRelationshipDeltas(previous: GameState, next: GameState, turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   const prevNpcs = new Map((previous.npcMemories ?? []).map(n => [n.npcName, n]));
   for (const npc of next.npcMemories ?? []) {
     const prev = prevNpcs.get(npc.npcName);
-
     if (!prev) {
       deltas.push({
         kind: 'relationship',
@@ -201,7 +162,6 @@ function detectRelationshipDeltas(previous: GameState, next: GameState, turn: nu
       });
       continue;
     }
-
     if (prev.disposition !== npc.disposition) {
       deltas.push({
         kind: 'relationship',
@@ -211,7 +171,6 @@ function detectRelationshipDeltas(previous: GameState, next: GameState, turn: nu
         authority: 'npc_memory',
       });
     }
-
     if ((npc.facts ?? []).length > (prev.facts ?? []).length) {
       deltas.push({
         kind: 'relationship',
@@ -222,7 +181,6 @@ function detectRelationshipDeltas(previous: GameState, next: GameState, turn: nu
       });
     }
   }
-
   const prevFactions = new Map((previous.worldLedger?.factionStandings ?? []).map(f => [f.name, f]));
   for (const faction of next.worldLedger?.factionStandings ?? []) {
     const prev = prevFactions.get(faction.name);
@@ -236,7 +194,6 @@ function detectRelationshipDeltas(previous: GameState, next: GameState, turn: nu
       });
       continue;
     }
-
     if (prev.standing !== faction.standing) {
       deltas.push({
         kind: 'relationship',
@@ -247,13 +204,10 @@ function detectRelationshipDeltas(previous: GameState, next: GameState, turn: nu
       });
     }
   }
-
   return deltas;
 }
-
 function detectThreatDeltas(previous: GameState, next: GameState, turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   if (!previous.activeEncounter && next.activeEncounter) {
     deltas.push({
       kind: 'threat',
@@ -263,7 +217,6 @@ function detectThreatDeltas(previous: GameState, next: GameState, turn: number):
       authority: 'encounter',
     });
   }
-
   if (previous.activeEncounter && !next.activeEncounter) {
     deltas.push({
       kind: 'threat',
@@ -273,7 +226,6 @@ function detectThreatDeltas(previous: GameState, next: GameState, turn: number):
       authority: 'encounter',
     });
   }
-
   const prevHp = previous.character?.hp ?? 0;
   const nextHp = next.character?.hp ?? 0;
   const maxHp = next.character?.maxHp ?? 100;
@@ -285,15 +237,11 @@ function detectThreatDeltas(previous: GameState, next: GameState, turn: number):
       authority: 'combat',
     });
   }
-
   return deltas;
 }
-
 function detectResourceDeltas(stateTxLog: StateTx[], turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   const recentTx = stateTxLog.filter(tx => tx.turn === turn);
-
   for (const tx of recentTx) {
     switch (tx.kind) {
       case 'inventory_gain':
@@ -334,13 +282,10 @@ function detectResourceDeltas(stateTxLog: StateTx[], turn: number): ProgressDelt
         break;
     }
   }
-
   return deltas;
 }
-
 function detectCharacterDeltas(previous: GameState, next: GameState, turn: number): ProgressDelta[] {
   const deltas: ProgressDelta[] = [];
-
   const prevLevel = previous.character?.level ?? 1;
   const nextLevel = next.character?.level ?? 1;
   if (nextLevel > prevLevel) {
@@ -351,7 +296,6 @@ function detectCharacterDeltas(previous: GameState, next: GameState, turn: numbe
       authority: 'character',
     });
   }
-
   const prevXp = previous.character?.xp ?? 0;
   const nextXp = next.character?.xp ?? 0;
   if (nextXp - prevXp >= 10) {
@@ -362,19 +306,15 @@ function detectCharacterDeltas(previous: GameState, next: GameState, turn: numbe
       authority: 'character',
     });
   }
-
   return deltas;
 }
-
 export function updateProgressGovernor(
   previous: GameState,
   next: GameState,
   prevGovernor: ProgressGovernorState
 ): ProgressGovernorState {
   const deltas = detectProgressDeltas(previous, next);
-
   const meaningfulDeltas = deltas.filter(d => d.kind !== 'none');
-
   if (meaningfulDeltas.length > 0) {
     return {
       lastProgressTurn: next.turn,
@@ -382,14 +322,12 @@ export function updateProgressGovernor(
       turnsSinceProgress: 0,
     };
   }
-
   return {
     ...prevGovernor,
     recentDeltas: prevGovernor.recentDeltas.slice(-20),
     turnsSinceProgress: prevGovernor.turnsSinceProgress + 1,
   };
 }
-
 export function initProgressGovernor(): ProgressGovernorState {
   return {
     lastProgressTurn: 0,
@@ -397,21 +335,15 @@ export function initProgressGovernor(): ProgressGovernorState {
     turnsSinceProgress: 0,
   };
 }
-
 export function hasActiveObjectives(state: GameState): boolean {
   const hasQuests = (state.quests ?? []).some(
     q => (q.status === 'active' || q.status === 'available') && q.revealed
   );
   if (hasQuests) return true;
-
   if (state.activeEncounter) return true;
-
   if (state.activeDungeon) return true;
-
   const hasOpenAsks = (state.campaignMemory?.consequences ?? []).some(c => c.unresolved);
   if (hasOpenAsks) return true;
-
   if (!state.openingEstablishment?.complete) return true;
-
   return false;
 }

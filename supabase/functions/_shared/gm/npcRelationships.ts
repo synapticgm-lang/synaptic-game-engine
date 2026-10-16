@@ -5,7 +5,7 @@
  * milestones, promises, boundaries, and knowledge ledgers.
  */
 
-import type { GameState } from './types.ts';
+import type { Commitment, GameState } from './types.ts';
 import { npcPlacedElsewhere, presentNpcRecords, resolveNpcRecord } from './npcRecords.ts';
 import { isOutOfTalkingRange } from './hereSpot.ts';
 
@@ -47,17 +47,8 @@ export interface RelationshipMilestone {
   tags: string[];
 }
 
-export interface PromiseRecord {
-  promiseId: string;
-  madeTurn: number;
-  dueTurn?: number;
-  description: string;
-  status: 'open' | 'kept' | 'broken' | 'waived' | 'impossible';
-  trustDeltaOnKeep: number;
-  trustDeltaOnBreak: number;
-  beneficiaries: string[];
-  witnesses: string[];
-}
+/** Order K: a promise is one Commitment. Deals and agreements use the same record. */
+export type PromiseRecord = Commitment;
 
 export interface NpcKnowledgeFact {
   factId: string;

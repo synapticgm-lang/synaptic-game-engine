@@ -3,7 +3,7 @@
  * Authority: accepted transactions beat draft invention; HUD/prose should reconcile to this log.
  */
 
-import type { GameState, Item, Quest } from './types';
+import type { Commitment, GameState, Item, Quest } from './types';
 import { grantEarnedInspiration } from './rules/houseRules';
 
 export type StateTxKind =
@@ -192,7 +192,11 @@ export function appendStateTxDiff(
   }
 
   // Presence (sceneFacts.present)
-  const presentPrev = new Set((previous.sceneFacts?.present ?? []).map((p) => p.trim().toLowerCase()));
+  const presentPrev = new Set<string>();
+  for (const p of previous.sceneFacts?.present ?? []) {
+    const key = p.trim().toLowerCase();
+    if (key) presentPrev.add(key);
+  }
   for (const who of next.sceneFacts?.present ?? []) {
     const key = who.trim().toLowerCase();
     if (key && !presentPrev.has(key)) {
@@ -319,11 +323,12 @@ export function commitTurnRecord(
   extras?: { combatSummary?: string; why?: string }
 ): { state: GameState; lines: string[] } {
   const earned = next.engineMode === 'dnd' ? grantEarnedInspiration(next) : next;
-  const state = appendStateTxDiff(previous, earned, extras);
+  const state = recordTurnCommitments(appendStateTxDiff(previous, earned, extras));
   const said = shown.join('\n').toLowerCase();
-  const lines = (state.stateTxLog ?? [])
-    .filter((t) => t.turn === state.turn && GRANT_KINDS.has(t.kind) && !said.includes(grantStatusKey(t)))
-    .map((t) => t.summary);
+  const lines: string[] = [];
+  for (const t of state.stateTxLog ?? []) {
+    if (t.turn === state.turn && GRANT_KINDS.has(t.kind) && !said.includes(grantStatusKey(t))) lines.push(t.summary);
+  }
   return { state, lines: [...new Set(lines)] };
 }
 
@@ -421,4 +426,107 @@ export function explainWhy(state: GameState, query?: string): string {
   return last.why
     ? `${last.summary} — ${last.why}`
     : `${last.summary} (turn ${last.turn}).`;
+}
+
+/** One ledger line for a commitment ("Promise to Joe Bloggs: Clear the Cellar"). */
+export function commitmentLine(c: Commitment): string {
+  const kind = c.kind === 'deal' ? 'Deal' : c.kind === 'agreement' ? 'Agreement' : 'Promise';
+  return `${kind} to ${c.to ?? 'someone'}: ${c.description}`;
+}
+
+/** Open commitments owed to anyone in `people` (matched by name). */
+export function openCommitmentsFor(state: GameState, people: readonly string[]): Commitment[] {
+  const names = new Set<string>();
+  for (const p of people) {
+    const n = p.trim().toLowerCase();
+    if (n) names.add(n);
+  }
+  const out: Commitment[] = [];
+  for (const c of state.commitments ?? []) {
+    if (c.status !== 'open') continue;
+    const to = (c.to ?? '').trim().toLowerCase();
+    if (to && names.has(to)) out.push(c);
+  }
+  return out;
+}
+
+/**
+ * Order K1: this turn's commitments come from the turn record, not from prose.
+ * A quest revealed with a giver is a promise to that giver. An active world deal with no id yet is a deal.
+ * No engine target means no commitment and no condition.
+ */
+export function recordTurnCommitments(state: GameState): GameState {
+  const turn = state.turn ?? 0;
+  const list = [...(state.commitments ?? [])];
+  const have = new Set<string>();
+  for (const c of list) have.add(c.promiseId);
+  let changed = false;
+  for (const tx of state.stateTxLog ?? []) {
+    if (tx.turn !== turn || tx.kind !== 'quest_reveal') continue;
+    let quest: Quest | undefined;
+    for (const q of state.quests ?? []) if (q.name === tx.entity) quest = q;
+    const giver = (quest?.giver ?? '').trim();
+    if (!quest || !giver) continue;
+    const id = `quest:${quest.id}`;
+    if (have.has(id)) continue;
+    have.add(id);
+    list.push({
+      promiseId: id,
+      madeTurn: turn,
+      description: quest.name,
+      status: 'open',
+      trustDeltaOnKeep: 5,
+      trustDeltaOnBreak: -8,
+      beneficiaries: [giver],
+      witnesses: [],
+      kind: 'promise',
+      by: 'player',
+      to: giver,
+      condition: { type: 'quest-complete', questId: quest.id },
+    });
+    changed = true;
+  }
+  const ledger = state.worldLedger;
+  const deals = ledger?.deals;
+  let nextDeals: typeof deals;
+  if (ledger && deals) {
+    const built: NonNullable<typeof deals> = [];
+    let dealsChanged = false;
+    for (const d of deals) {
+      if (!d.active || d.commitmentId) {
+        built.push(d);
+        continue;
+      }
+      const id = `deal:${d.id}`;
+      if (!have.has(id)) {
+        have.add(id);
+        list.push({
+          promiseId: id,
+          madeTurn: turn,
+          description: d.name,
+          status: 'open',
+          trustDeltaOnKeep: 5,
+          trustDeltaOnBreak: -8,
+          beneficiaries: [d.partnerName],
+          witnesses: [],
+          kind: 'deal',
+          by: 'player',
+          to: d.partnerName,
+          condition: { type: 'deal-runs', dealId: d.id },
+        });
+      }
+      built.push({ ...d, commitmentId: id });
+      dealsChanged = true;
+    }
+    if (dealsChanged) {
+      nextDeals = built;
+      changed = true;
+    }
+  }
+  if (!changed) return state;
+  return {
+    ...state,
+    commitments: list,
+    ...(ledger && nextDeals && nextDeals !== deals ? { worldLedger: { ...ledger, deals: nextDeals } } : {}),
+  };
 }
