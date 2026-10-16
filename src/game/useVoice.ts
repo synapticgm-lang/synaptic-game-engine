@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { shopItemById, type ShopItem } from './cosmeticCatalog';
+import { sttNoticeAccepted } from './sttNotice';
 
 type SpeechRecognitionType = typeof window & {
   SpeechRecognition?: new () => SpeechRecognitionInstance;
@@ -378,7 +379,8 @@ export function useVoice(ttsEnabled: boolean, voicePackId?: string, ttsVoiceURI?
   }, [ttsSupported]);
 
   const startListening = useCallback(() => {
-    if (!sttSupported) return;
+    // STT-N: recognition never starts until the player has accepted the privacy notice.
+    if (!sttSupported || !sttNoticeAccepted()) return;
     const SR = (window as unknown as SpeechRecognitionType).SpeechRecognition
       ?? (window as unknown as SpeechRecognitionType).webkitSpeechRecognition;
     if (!SR) return;

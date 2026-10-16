@@ -34,6 +34,10 @@ Legal bases (UK GDPR) typically include contract, legitimate interests (security
 
 Kid Mode is a content filter. Parents/guardians who set a PIN are responsible for PIN security and purchases unlocked with that PIN (see Terms). We do not knowingly sell personal data. Family ad settings should be used for Kid Mode ads where available.
 
+## Voice input
+
+Voice input uses your browser's built-in speech recognition. In Chrome and Edge, what you say is sent to Google's or Microsoft's servers to turn it into text. We don't receive or keep the audio. Firefox and Safari may process speech differently; see your browser's own privacy policy. The first time you tap the microphone we show this notice, and voice input only starts if you choose "Use voice". You can always type instead.
+
 ## Sharing
 
 We share data with processors who help run the Service (hosting, auth, payments, AI providers, ad networks, email) under contracts. We do not sell your personal data.
