@@ -67,6 +67,8 @@ None of R1–R16 is the introduction / setting check. They stay out of this merg
 
 ## Ship
 
-Stamp `2026-10-16z8`. Edge `types.ts` synced (`crossedOver`). `gm-turn` deploy follows because that edge file changed.
+Stamp `2026-10-16z8` is on `main` (`e2c2ab97`). Edge `types.ts` synced (`crossedOver`). `gm-turn` was deployed from a clean worktree of that commit (`--project-ref wzgsrpwhmgffcyohvtko`), so the uncommitted `pyoaSpine.ts` edit was not left on the function.
+
+Vercel production for `synaptic-game-engine` and `project` completed on `e2c2ab97`. Live `https://www.synapticgm.com/version.json` is `2026-10-16z8`.
 
 TT_DONE
