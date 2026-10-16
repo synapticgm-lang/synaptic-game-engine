@@ -6,6 +6,7 @@
  */
 
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
+import { foeCanSpeak } from './rules/srdMonsters';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName';
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
@@ -237,7 +238,7 @@ function housedWindowDisplay(state: GameState, prop: string): string | null {
 }
 
 /** `window` is the LitRPG System window: only the PC sees it, it is not a thing in the room. */
-export type LedgerRefClass = 'place' | 'person' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window' | 'meeting';
+export type LedgerRefClass = 'place' | 'person' | 'creature' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window' | 'meeting';
 
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
 
@@ -620,6 +621,8 @@ const SPEAKS: readonly TokenUse[] = ['speaker', 'actor', 'addressed']; // a pers
 const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   place: ['place'],
   person: SPEAKS,
+  // A foe whose SRD block lists no language acts and is addressed, but never speaks.
+  creature: SPEAKS.filter((u) => u !== 'speaker'),
   companion: SPEAKS,
   meeting: SPEAKS,
   corpse: ['corpse'],
@@ -683,7 +686,7 @@ export function compileRefEnum(
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();
-    if (encName) add(`encounter:${slugRefId(encName)}`, encName, 'person');
+    if (encName) add(`encounter:${slugRefId(encName)}`, encName, foeCanSpeak(state.activeEncounter!) ? 'person' : 'creature');
     const road = roadMeetingRef(state);
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     const kill = state.sceneFacts?.lastKill;
@@ -2406,6 +2409,9 @@ export function lastResortStoryBody(
   }
   const named = !!lockedOpeningPcName(state);
   const lastGm = lastCommittedGmBody(state);
+  // RC-N3b: the turn's own record (travel leg, camp, meeting result) is the page before any player-word or look line.
+  const record = lastResortUsable(state, travelBeatFact(state), lastGm);
+  if (record) return { prose: sanitizeLockedNameBeat(state, record), status: 'Writer page blocked — painted from the turn record' };
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')
     .slice(-10)
