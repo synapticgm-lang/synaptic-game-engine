@@ -47,6 +47,7 @@ import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
 import { terminalFightOutcome } from './engineResult';
 import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { roundCombatChips } from './tabletop/combatChips';
+import { checkChipKinds } from './chipCheck';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -73,7 +74,9 @@ export type TurnCheckKind =
   | 'ghost-talk'
   | 'window-touched'
   | 'repeat-chip'
-  | 'verb-swapped';
+  | 'verb-swapped'
+  | 'dead-chip'
+  | 'missing-chip-kind';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -479,7 +482,7 @@ export function checkPlayerTurn(
   }
   return {
     p0,
-    down: [...followed.down, ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, row.previousPick ?? previousPlayerAction(before), fightRoundChips(before, chips))],
+    down: [...followed.down, ...checkChipKinds(before, chips), ...brokenLines(prose), ...crimes.down, ...checkRepeatChips(chips, row.previousPick ?? previousPlayerAction(before), fightRoundChips(before, chips))],
     presentNames: peopleHere(before),
   };
 }

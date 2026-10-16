@@ -23,6 +23,7 @@ import { countLoiterFamilyStreak } from './beatFingerprint';
 import { restChip } from './recoveryRules';
 import { tabletopCastChip } from './tabletop/spellCasting';
 import { tabletopStepChip } from './tabletopQuestProgress';
+import { shopChips } from './shopChips';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 
 export type ChoiceEdgeKind =
@@ -210,6 +211,7 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     if (restEdge) edges.push(restEdge);
     const cast = tabletopCastChip(state);
     if (cast) edges.push({ id: 'dnd-cast', label: cast, kind: 'inspect', risk: 'low' });
+    for (const shop of shopChips(state)) edges.push({ id: `dnd-shop-${shop.kind}`, label: shop.label, kind: 'talk', risk: 'low' });
   } else if (restEdge) {
     edges.push(restEdge);
   }

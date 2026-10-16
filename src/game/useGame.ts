@@ -22,6 +22,7 @@ import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
+import { resolveShopChip } from './shopChips';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
 import {
   authoredPageText,
@@ -2844,6 +2845,12 @@ export function useGame() {
       const tabletopTurn = applyTabletopQuestTurn(liveCurrent, sanitizedInput, hereAtTurnStart);
       liveCurrent = tabletopTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...tabletopTurn.receipts];
+      // tt-build-chipcheck: a picked shop chip runs buyItem/sellItem; its receipt is the writer's fact.
+      const shopTurn = resolveShopChip(liveCurrent, sanitizedInput);
+      if (shopTurn) {
+        liveCurrent = shopTurn.state;
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...shopTurn.receipts];
+      }
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
       liveCurrent = recordCirclingTurn(
         liveCurrent,
@@ -2864,6 +2871,7 @@ export function useGame() {
         ...dungeonTurn.receipts,
         ...storyTurn.receipts,
         ...(tabletopTurn.facts ?? []),
+        ...(shopTurn?.facts ?? []),
         ...nudge.receipts,
         ...(travelCommit?.receipt ? [travelCommit.receipt] : []),
       ], liveCurrent.engineMode);

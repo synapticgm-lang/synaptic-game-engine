@@ -36,6 +36,7 @@ import { dungeonCardChoices } from './dungeonCard';
 import { openingOfferPads } from './openingEstablishment';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
+import { shopChips } from './shopChips';
 import { systemPromptPad } from './rules/abilityPoints';
 import { classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
@@ -371,7 +372,23 @@ export function isChoiceGroundedInTurn(
 }
 
 /** One engine chip: the shown label plus the resolved action id + target the router would run. */
-export type EngineChip = { label: string; action: string };
+export type EngineChip = { label: string; action: string; kind: ChipKind };
+
+/** Which builder made a chip (tt-build-chipcheck): the kind names the resolver that runs it. */
+export type ChipKind =
+  | 'compiled'
+  | 'beat'
+  | 'exit'
+  | 'hub'
+  | 'spine'
+  | 'fallback'
+  | 'dungeon'
+  | 'opening'
+  | 'decision'
+  | 'quest-step'
+  | 'system'
+  | 'journey'
+  | 'shop';
 
 let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
 
@@ -401,30 +418,34 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
   if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.chips;
   const system = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
-  const rawLabels = [
-    ...compileChoices(state, []).choices,
-    ...beatEdgeLabels(enumerateBeatEdges(state)),
-    ...graphEdgeLabels(enumerateGraphEdges(state)),
-    ...hubArrivalChoicePads(state),
-    ...spineEngineChipLabels(state),
-    ...sceneSafeFallbacks(state, storyProse),
-    ...dungeonCardChoices(state),
-    ...openingOfferPads(state),
-    storyRpgDecisionChip(state) ?? '',
-    tabletopStepChip(state) ?? '',
-    ...system,
-    ...journeyPads(state),
+  // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
+  const sources: Array<[ChipKind, string[]]> = [
+    ['shop', shopChips(state).map((c) => c.label)],
+    ['quest-step', [tabletopStepChip(state) ?? '']],
+    ['decision', [storyRpgDecisionChip(state) ?? '']],
+    ['exit', graphEdgeLabels(enumerateGraphEdges(state))],
+    ['journey', journeyPads(state)],
+    ['hub', hubArrivalChoicePads(state)],
+    ['beat', beatEdgeLabels(enumerateBeatEdges(state))],
+    ['spine', spineEngineChipLabels(state)],
+    ['dungeon', dungeonCardChoices(state)],
+    ['opening', openingOfferPads(state)],
+    ['system', system],
+    ['compiled', compileChoices(state, []).choices],
+    ['fallback', sceneSafeFallbacks(state, storyProse)],
   ];
   const seen = new Set<string>();
   const chips: EngineChip[] = [];
-  for (const raw of rawLabels) {
-    const label = sanitizeChoiceLabel(raw);
-    if (!label) continue;
-    const low = label.toLowerCase();
-    if (seen.has(low)) continue;
-    seen.add(low);
-    const action = engineChipActionKey(label) || `label:${low}`;
-    chips.push({ label, action });
+  for (const [kind, raws] of sources) {
+    for (const raw of raws) {
+      const label = sanitizeChoiceLabel(raw);
+      if (!label) continue;
+      const low = label.toLowerCase();
+      if (seen.has(low)) continue;
+      seen.add(low);
+      const action = engineChipActionKey(label) || `label:${low}`;
+      chips.push({ label, action, kind });
+    }
   }
   lastEngineChips = {
     state,
