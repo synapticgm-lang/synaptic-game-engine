@@ -136,7 +136,7 @@ export function blockWithinXp(block: StatBlock, maxXp: number): StatBlock {
 export function foeCanSpeak(enc: ActiveEncounter): boolean {
   const block = statBlockForEncounter(enc);
   if (!block.srd) return block.kind === 'humanoid';
-  const lower = (block.languages ?? '').trim().toLowerCase().replaceAll('\u2019', "'");
+  const lower = (block.languages ?? '').trim().toLowerCase().split('\u2019').join("'");
   if (!lower || lower === 'none') return false;
   let mark = true;
   for (const ch of lower) if (ch !== '\u2014' && ch !== '\u2013' && ch !== '-') mark = false;
