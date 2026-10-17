@@ -2,10 +2,21 @@ import type { GameState, LogEntry } from './types';
 import {
   inventsPresenceOnEmptyScene,
   normalizeStoryCorpus,
+  engineChips,
   padChoicesToCount,
   sanitizeChoiceLabel,
+  stampOfferedChipChecks,
 } from './choicePipeline';
-import { affordancesCoverGenerics } from './sceneAffordances';
+import { recordReplayHash } from './replayHash';
+import {
+  affordancesCoverGenerics,
+  applyOptionCooldown,
+  collectSceneAffordances,
+  isFreeInputChip,
+  WAY_OUT_PAD_CAP,
+  type AffordanceSlotKind,
+  type OptionCooldownChip,
+} from './sceneAffordances';
 import {
   coverContinuePads,
   isCombatFamilyPad,
@@ -160,23 +171,182 @@ export function withOfferedChoices(entry: LogEntry, stateForPad: GameState): Log
   return { ...entry, offeredChoices: offered };
 }
 
-/** Commit the offered pad for this turn. */
-export function commitOfferedPad(state: GameState, gmEntryId?: string): GameState {
+/** Commit the offered pad for this turn. q44-OCD2 cools the full engine pad once, here. */
+export function commitOfferedPad(state: GameState, gmEntryId?: string, storyProse = ''): GameState {
   const offered = state.playPhase === 'ended' ? [] : resolveOfferedChoices({ ...state, offeredPad: null });
   if (!offered.length) return { ...state, offeredPad: null };
-  const cooldowns = updateCooldowns(offered, state.turn ?? 0, new Map(Object.entries(state.qualityGovernance?.optionCooldowns ?? {})));
+  const engines = engineChips(state, storyProse);
+  const aff = collectSceneAffordances(state);
+  const pad: OptionCooldownChip[] = [];
+  for (let i = 0; i < engines.length; i++) {
+    const c = engines[i]!;
+    let slotKind: AffordanceSlotKind | undefined;
+    let required = false;
+    for (let a = 0; a < aff.length; a++) {
+      if (aff[a]!.actionId === c.action) {
+        slotKind = aff[a]!.slotKind;
+        required = aff[a]!.required;
+        break;
+      }
+    }
+    let rank = 0;
+    for (let a = 0; a < aff.length; a++) {
+      if (aff[a]!.actionId === c.action) {
+        rank = aff[a]!.salience;
+        break;
+      }
+    }
+    pad.push({ label: c.label, actionId: c.action, kind: c.kind, slotKind, required, rank });
+  }
+  const cooled = applyOptionCooldown(state, pad);
+  const kept = new Set<string>();
+  for (let i = 0; i < cooled.length; i++) kept.add(cooled[i]!.actionId);
+  const labelAction = new Map<string, string>();
+  for (let i = 0; i < engines.length; i++) {
+    labelAction.set(engines[i]!.label.trim().toLowerCase(), engines[i]!.action);
+  }
+  const labels: string[] = [];
+  for (let i = 0; i < offered.length; i++) {
+    const label = offered[i]!;
+    const actionId = labelAction.get(label.trim().toLowerCase());
+    if (actionId && !kept.has(actionId)) continue;
+    labels.push(label);
+  }
+  let nonFree = 0;
+  for (let i = 0; i < labels.length; i++) {
+    if (!isFreeInputChip(labels[i]!)) nonFree += 1;
+  }
+  for (let i = 0; i < cooled.length && nonFree < 2; i++) {
+    const c = cooled[i]!;
+    if (c.cooldownReturn !== true || c.kind === 'free-input') continue;
+    const low = c.label.trim().toLowerCase();
+    let has = false;
+    for (let j = 0; j < labels.length; j++) {
+      if (labels[j]!.trim().toLowerCase() === low) {
+        has = true;
+        break;
+      }
+    }
+    if (has) continue;
+    labels.push(c.label);
+    nonFree += 1;
+  }
+  let wayLabel = '';
+  let labelsHaveWay = false;
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i]!;
+    const id = labelAction.get(label.trim().toLowerCase()) ?? '';
+    for (let k = 0; k < cooled.length; k++) {
+      const chip = cooled[k]!;
+      if (chip.label.trim().toLowerCase() !== label.trim().toLowerCase() && chip.actionId !== id) continue;
+      if (
+        chip.slotKind === 'exit' ||
+        chip.kind === 'exit' ||
+        chip.kind === 'hub' ||
+        chip.kind === 'journey' ||
+        chip.actionId.startsWith('exit:')
+      ) {
+        labelsHaveWay = true;
+      }
+      break;
+    }
+    if (labelsHaveWay) break;
+  }
+  if (!labelsHaveWay) {
+    for (let i = 0; i < cooled.length; i++) {
+      const c = cooled[i]!;
+      const travel =
+        c.slotKind === 'exit' ||
+        c.kind === 'exit' ||
+        c.kind === 'hub' ||
+        c.kind === 'journey' ||
+        c.actionId.startsWith('exit:');
+      if (!travel) continue;
+      wayLabel = c.label;
+      break;
+    }
+  }
+  if (wayLabel) {
+    const low = wayLabel.trim().toLowerCase();
+    let has = false;
+    for (let i = 0; i < labels.length; i++) {
+      if (labels[i]!.trim().toLowerCase() === low) {
+        has = true;
+        break;
+      }
+    }
+    if (!has) {
+      if (labels.length >= WAY_OUT_PAD_CAP) {
+        let victim = -1;
+        let victimRank = Number.POSITIVE_INFINITY;
+        const sit = state.activeSituation?.actionIds;
+        for (let i = 0; i < labels.length; i++) {
+          const label = labels[i]!;
+          if (isFreeInputChip(label)) continue;
+          const id = labelAction.get(label.trim().toLowerCase()) ?? '';
+          let travel = false;
+          let rank = 0;
+          let situation = false;
+          for (let k = 0; k < cooled.length; k++) {
+            const chip = cooled[k]!;
+            if (chip.label.trim().toLowerCase() !== label.trim().toLowerCase() && chip.actionId !== id) continue;
+            travel =
+              chip.slotKind === 'exit' ||
+              chip.kind === 'exit' ||
+              chip.kind === 'hub' ||
+              chip.kind === 'journey' ||
+              chip.actionId.startsWith('exit:');
+            rank = chip.rank ?? 0;
+            break;
+          }
+          if (travel) continue;
+          if (sit && id) {
+            for (let si = 0; si < sit.length; si++) {
+              if (sit[si] === id) {
+                situation = true;
+                break;
+              }
+            }
+          }
+          if (situation) continue;
+          if (victim < 0 || rank < victimRank || (rank === victimRank && i > victim)) {
+            victim = i;
+            victimRank = rank;
+          }
+        }
+        if (victim >= 0) labels.splice(victim, 1);
+      }
+      labels.push(wayLabel);
+    }
+  }
+  if (!labels.length) return { ...state, offeredPad: null };
+  const chips: NonNullable<NonNullable<GameState['offeredPad']>['chips']> = [];
+  for (let i = 0; i < cooled.length; i++) {
+    const c = cooled[i]!;
+    const rec: (typeof chips)[number] = { label: c.label, actionId: c.actionId, kind: c.kind };
+    if (c.cooldownReturn === true) rec.cooldownReturn = true;
+    chips.push(rec);
+  }
+  const cooldowns = updateCooldowns(labels, state.turn ?? 0, new Map(Object.entries(state.qualityGovernance?.optionCooldowns ?? {})));
   const log = [...(state.log ?? [])];
   const byId = gmEntryId ? log.findIndex((e) => e?.role === 'gm' && e.id === gmEntryId) : -1;
   let at = byId;
   for (let i = log.length - 1; at < 0 && i >= 0; i--) if (log[i]?.role === 'gm') at = i;
-  if (at >= 0) log[at] = { ...log[at]!, offeredChoices: offered };
+  if (at >= 0) log[at] = { ...log[at]!, offeredChoices: labels, offeredChips: chips };
   return {
     ...state,
     log,
-    choices: offered,
-    offeredPad: { turn: state.turn ?? 0, choices: offered },
+    choices: labels,
+    offeredPad: { turn: state.turn ?? 0, choices: labels, chips },
     qualityGovernance: { ...(state.qualityGovernance ?? {}), optionCooldowns: Object.fromEntries(cooldowns) },
   };
+}
+
+/** q43-OCD — pad, stamp recentOfferedActions, rebind stored pad, then replay hash. */
+export function commitOfferedTurn(state: GameState, gmEntryId?: string, storyProse = ''): GameState {
+  const stamped = stampOfferedChipChecks(commitOfferedPad(state, gmEntryId, storyProse), storyProse);
+  // efeb40bd: rebind after the stamp so a cooled label is not still on the stored pad.
+  return recordReplayHash(commitOfferedPad({ ...stamped, offeredPad: null }, gmEntryId, storyProse));
 }
 
 function slugFilenamePart(raw: string): string {
