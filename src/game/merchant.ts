@@ -1,8 +1,23 @@
-import type { GameState, Item, NpcMemory, Rarity } from './types';
+import type { GameState, Item, ItemType, NpcMemory, Rarity } from './types';
 import srdShopGear from '../data/srd/srdShopGear.json';
+import modeShopData from '../data/modeShopPrices.json';
 import { presentNpcRecords } from './npcRecords';
 import { addItem, getItemValue, removeItem } from './inventory';
 import { changeFor, formatCp, formatPurse, gainCoins, payCoins, purseGold, purseOf, shopPriceCp, srdSaleCp, usesPurse } from './rules/coins';
+
+/** OPT-6: LitRPG/RPG list prices by itemType×rarity (gold). Tabletop keeps SRD 5.2.1 Equipment / Selling Treasure. */
+export type ShopMode = 'litrpg' | 'rpg';
+type PriceGrid = Record<ItemType, Record<Rarity, number>>;
+export interface ModeStockRow { name: string; itemType: ItemType; rarity: Rarity }
+const MODE_DATA = modeShopData as Record<ShopMode, { buyGp: PriceGrid; stock: ModeStockRow[] }>;
+export const LITRPG_BUY_GP: PriceGrid = MODE_DATA.litrpg.buyGp;
+export const RPG_BUY_GP: PriceGrid = MODE_DATA.rpg.buyGp;
+export const MODE_SHOP_STOCK: Record<ShopMode, ModeStockRow[]> = { litrpg: MODE_DATA.litrpg.stock, rpg: MODE_DATA.rpg.stock };
+export function modeBuyGp(mode: string | undefined, itemType: ItemType | undefined, rarity: Rarity): number | null {
+  if ((mode !== 'litrpg' && mode !== 'rpg') || !itemType) return null;
+  const gp = MODE_DATA[mode].buyGp[itemType]?.[rarity];
+  return typeof gp === 'number' ? gp : null;
+}
 
 const RARITY_SELL_MULTIPLIER: Record<Rarity, number> = {
   Common: 0.25,
@@ -121,11 +136,23 @@ export interface BuyResult {
   newState?: GameState;
 }
 
-/** The buy price label: SRD coins on a tabletop sheet, whole gold elsewhere. Null when unlisted. */
+/** The buy price label: SRD coins on a tabletop sheet; LitRPG/RPG use modeShopPrices gold. Null when unlisted. */
 export function buyPriceLabel(state: GameState, name: string, quantity = 1): string | null {
+  const qty = Math.max(1, quantity);
+  if (state.engineMode === 'litrpg' || state.engineMode === 'rpg') {
+    const key = name.trim().toLowerCase();
+    let row: ModeStockRow | null = null;
+    for (const r of MODE_SHOP_STOCK[state.engineMode]) {
+      if (r.name.toLowerCase() === key) { row = r; break; }
+    }
+    if (!row) return null;
+    const gp = modeBuyGp(state.engineMode, row.itemType, row.rarity);
+    if (gp == null || gp <= 0) return null;
+    return `${gp * qty}g`;
+  }
   const cp = shopPriceCp(name);
   if (cp == null) return null;
-  const total = cp * Math.max(1, quantity);
+  const total = cp * qty;
   return usesPurse(state) ? formatCp(total) : `${Math.ceil(total / 100)} gold`;
 }
 
@@ -135,13 +162,41 @@ const priceKeyId = (name: string) => {
 };
 
 /**
- * Buy at the SRD list price (gold only). Tabletop pays from the purse, making change.
- * Other modes pay whole gold. Fails, changing nothing, when the price is unlisted, the buyer cannot pay, or the pack has no room.
+ * Buy at list price. Tabletop: SRD 5.2.1 Equipment cost from the purse (Making Change).
+ * LitRPG / Story RPG: modeShopPrices gold by itemType × rarity. Fails without changing state when unlisted, unpaid, or no room.
  */
 export function buyItem(state: GameState, name: string, quantity = 1): BuyResult {
+  const qty = Math.max(1, Math.floor(quantity));
+  if (state.engineMode === 'litrpg' || state.engineMode === 'rpg') {
+    const key = name.trim().toLowerCase();
+    let row: ModeStockRow | null = null;
+    for (const r of MODE_SHOP_STOCK[state.engineMode]) {
+      if (r.name.toLowerCase() === key) { row = r; break; }
+    }
+    if (!row) return { ok: false, reason: `${name} is not for sale here.` };
+    const unit = modeBuyGp(state.engineMode, row.itemType, row.rarity);
+    if (unit == null || unit <= 0) return { ok: false, reason: `${name} is not for sale here.` };
+    const gp = unit * qty;
+    if ((state.gold ?? 0) < gp) return { ok: false, reason: `Not enough gold for ${name}.` };
+    const paid = { ...state, gold: (state.gold ?? 0) - gp };
+    const added = addItem(paid, {
+      id: `buy-${priceKeyId(name)}-${state.log.length}`,
+      name,
+      rarity: row.rarity,
+      quantity: qty,
+      itemType: row.itemType,
+      baseValue: unit,
+      provenance: 'Bought from a merchant',
+    });
+    if (!added.ok) return { ok: false, reason: added.reason ?? 'No room to carry it.' };
+    const receipt: ShopReceipt = {
+      kind: 'buy', item: name, quantity: qty, cp: gp * 100,
+      text: `Bought ${qty > 1 ? `${qty} ` : ''}${name} for ${gp}g.`,
+    };
+    return { ok: true, receipt, newState: withShopReceipt(added.state, receipt) };
+  }
   const cp = shopPriceCp(name);
   if (cp == null) return { ok: false, reason: `${name} is not for sale here.` };
-  const qty = Math.max(1, Math.floor(quantity));
   const total = cp * qty;
   let paid: GameState;
   if (usesPurse(state)) {
