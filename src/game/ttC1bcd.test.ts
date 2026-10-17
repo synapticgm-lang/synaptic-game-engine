@@ -172,7 +172,7 @@ describe('q37-C1bcd OPT1-8 cooldown', () => {
       },
       npcMemories: [],
       sceneFacts: {
-        crowd: 'alone',
+        crowd: 'none',
         noise: 'quiet',
         present: [],
         props: [],

@@ -18,6 +18,7 @@ import { validateQuestStepRoutes } from './questRoutes';
 import { DC_LADDER } from './rules/exploration';
 import { DND_XP_BY_CR } from './xpRules';
 import { SRD_MONSTERS } from './rules/srdMonsters';
+import { replayPreFeature } from './replaySeam';
 
 /** Open-quest floor (default 1). */
 export const QUEST_FLOOR = 1;
@@ -132,6 +133,8 @@ export function ensureQuestFloor(state: GameState): {
 } {
   const notes: string[] = [];
   if (state.engineMode === 'pyoa') return { state, quest: null, notes };
+  // Replay bank: do not invent OPT-2 floor quests the tape never recorded (travelJourney same seam).
+  if (replayPreFeature()) return { state, quest: null, notes };
 
   let open = 0;
   const quests = state.quests ?? [];
