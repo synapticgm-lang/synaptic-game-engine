@@ -270,11 +270,11 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         notice: `5e-database, Copyright (c) 2018-2020 Adrian Padua, Christopher Ward. Licensed under the MIT License. ${SRD_5_2_1_NOTICE}`,
       },
       {
-        work: 'Datasworn character oracles (role, goal, descriptor)',
+        work: 'Datasworn oracles (character role/goal/descriptor; settlement trouble; turning point)',
         source: 'Shawn Tomkin (Ironsworn), rsek (Datasworn), XenotropicDev (TheOracle)',
         license: 'MIT (Datasworn code/schema); CC BY 4.0 (oracle text)',
         usedFor:
-          'NPC agenda seed tables for LitRPG and Story RPG, and flavour seeds only in tabletop. Only CC BY 4.0 oracle objects are imported; never NC text.',
+          'NPC agenda seeds and OPT-2 LitRPG/RPG situation seeds (troubles, turning points). Flavour seeds only in tabletop. Only CC BY 4.0 oracle objects are imported; never NC text.',
         url: 'https://github.com/rsek/datasworn',
         notice:
           'Oracle text from Datasworn / Ironsworn. Credit: Shawn Tomkin (Ironsworn), rsek (Datasworn), XenotropicDev (TheOracle). MIT code, CC BY 4.0 oracle text. https://github.com/rsek/datasworn ; https://tomkinpress.com/pages/licensing',

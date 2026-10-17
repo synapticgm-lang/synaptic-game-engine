@@ -81,7 +81,7 @@ describe('OPT-2 quest generator (q38-OPT2)', () => {
   });
 
   it('OPT2-2: tabletop seeds use SRD blocks/DCs/rewards; each row has source + license (Lazy GM CC BY 4.0)', () => {
-    const rows = lazyGmHookRows();
+    const rows = lazyGmHookRows;
     expect(rows.length).toBeGreaterThan(0);
     const srdIds = new Set<string>();
     for (let i = 0; i < SRD_MONSTERS.length; i++) srdIds.add(SRD_MONSTERS[i]!.id);

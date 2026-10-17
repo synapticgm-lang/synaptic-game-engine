@@ -543,6 +543,11 @@ export interface Quest {
     xp?: number;
     gold?: number;
     items?: string[];
+    /**
+     * Story RPG (OPT-2m): personal favour stake — completing the favour moves this
+     * faction/contact standing by `delta` (engine ledger; writer narrates only).
+     */
+    standingStake?: { faction: string; delta: number; note?: string };
   };
   /** Plain-language why this quest exists / what to do next (player journal). */
   whatNext?: string;
