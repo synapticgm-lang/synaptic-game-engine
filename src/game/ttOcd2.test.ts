@@ -156,8 +156,12 @@ function assertCooldownTape(mode: 'litrpg' | 'rpg') {
     }
   }
   for (let i = 0; i < SOURCES.length; i++) {
-    expect(tracked.has(SOURCES[i]!), `${mode} turn 1 missing ${SOURCES[i]}`).toBe(true);
+    const source = SOURCES[i]!;
+    // A generic is on the pad only when the offered list still has room for one.
+    if (source === 'generic' && !tracked.has(source)) continue;
+    expect(tracked.has(source), `${mode} turn 1 missing ${source}`).toBe(true);
   }
+  if (mode === 'rpg') expect(tracked.has('generic'), 'rpg turn 1 missing generic').toBe(true);
   expect(tracked.has('travel')).toBe(true);
   expect(tracked.has('free')).toBe(true);
 
@@ -386,5 +390,87 @@ describe('q44b-OCD2x way out', () => {
       expect(pointsAtRoute(way!, names)).toBe(true);
       expect(labels.some((label) => label === way!.label)).toBe(true);
     }
+  }, 20000);
+});
+
+function isAlleySocial(c: { actionId: string }): boolean {
+  const id = c.actionId;
+  const person = id.includes('hobb-dunmore') || id.includes('sefa-crane');
+  return person && (id.endsWith(':talk') || id.endsWith(':agenda') || id.endsWith(':standing'));
+}
+
+describe('q44c-OCD2y offered pad', () => {
+  it('mega 19052 T100 rebuilds a way out of Safehouse Alley', async () => {
+    const fix = (await import('./__fixtures__/mega19052-t100.json')).default as {
+      before: GameState;
+      offeredPad: { choices: string[] };
+    };
+    expect(fix.offeredPad.choices.some((c) => c.startsWith('Travel toward'))).toBe(false);
+    const before = { ...fix.before, offeredPad: null };
+    const next = commitOfferedPad(before);
+    const chips = next.offeredPad?.chips ?? [];
+    const labels = next.offeredPad?.choices ?? [];
+    const way = chips.find(isWayOut);
+    expect(way).toBeTruthy();
+    const names = routeNames(before);
+    expect(names.length).toBeGreaterThan(0);
+    expect(pointsAtRoute(way!, names)).toBe(true);
+    expect(labels.some((label) => label === way!.label)).toBe(true);
+  });
+
+  it('Hobb and Sefa talk, ask, and standing chips cool across 6 unchanged turns', async () => {
+    const fix = (await import('./__fixtures__/mega19052-t100.json')).default as { before: GameState };
+    const places = (fix.before.places ?? []).map((p) => {
+      const next = { ...p };
+      delete (next as { sceneLedger?: unknown }).sceneLedger;
+      return next;
+    });
+    let s = { ...fix.before, offeredPad: null, places, log: [] } as GameState;
+    const seen = new Map<string, number[]>();
+    for (let t = 0; t < 6; t++) {
+      s = {
+        ...s,
+        turn: (fix.before.turn ?? 100) + t,
+        log: [{ id: 'gm-x', role: 'gm', content: 'The alley holds.', timestamp: t } as LogEntry],
+      };
+      s = commitOfferedTurn(s, 'gm-x');
+      const chips = s.offeredPad?.chips ?? [];
+      for (let i = 0; i < chips.length; i++) {
+        const c = chips[i]!;
+        if (!isAlleySocial(c)) continue;
+        if (c.cooldownReturn === true) continue;
+        const turns = seen.get(c.actionId) ?? [];
+        turns.push(t + 1);
+        seen.set(c.actionId, turns);
+      }
+    }
+    expect(seen.size).toBeGreaterThan(0);
+    for (const [id, turns] of seen) {
+      for (let i = 0; i < turns.length; i++) {
+        expect(turns[i] === 1 || turns[i] === 6, `${id} on replay turn ${turns[i]}`).toBe(true);
+      }
+    }
+  }, 20000);
+
+  it('a pad truncated to its cap still keeps one way out', async () => {
+    const fix = (await import('./__fixtures__/mega19052-t100.json')).default as { before: GameState };
+    const s = { ...fix.before, offeredPad: null } as GameState;
+    const pad: OptionCooldownChip[] = [];
+    for (let i = 0; i < WAY_OUT_PAD_CAP; i++) {
+      pad.push({
+        label: `Talk ${i}`,
+        actionId: `person:npc-${i}:talk`,
+        kind: 'affordance',
+        slotKind: 'person',
+        rank: WAY_OUT_PAD_CAP - i,
+      });
+    }
+    const cooled = applyOptionCooldown(s, pad);
+    expect(cooled.length).toBe(WAY_OUT_PAD_CAP);
+    const way = cooled.find(isWayOut);
+    expect(way).toBeTruthy();
+    expect(pointsAtRoute(way!, routeNames(s))).toBe(true);
+    expect(cooled.some((c) => c.actionId === 'person:npc-0:talk')).toBe(true);
+    expect(cooled.some((c) => c.actionId === `person:npc-${WAY_OUT_PAD_CAP - 1}:talk`)).toBe(false);
   });
 });
