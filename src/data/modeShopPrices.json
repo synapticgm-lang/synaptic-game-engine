@@ -1,0 +1,40 @@
+﻿{
+  "litrpg": {
+    "buyGp": {
+      "weapon": { "Common": 25, "Uncommon": 80, "Rare": 250, "Epic": 800, "Legendary": 2500 },
+      "armor": { "Common": 20, "Uncommon": 70, "Rare": 220, "Epic": 700, "Legendary": 2200 },
+      "consumable": { "Common": 5, "Uncommon": 20, "Rare": 60, "Epic": 200, "Legendary": 600 },
+      "material": { "Common": 2, "Uncommon": 8, "Rare": 25, "Epic": 80, "Legendary": 250 },
+      "container": { "Common": 10, "Uncommon": 30, "Rare": 90, "Epic": 280, "Legendary": 900 },
+      "accessory": { "Common": 15, "Uncommon": 50, "Rare": 150, "Epic": 500, "Legendary": 1500 },
+      "quest": { "Common": 0, "Uncommon": 0, "Rare": 0, "Epic": 0, "Legendary": 0 }
+    },
+    "stock": [
+      { "name": "Health tonic", "itemType": "consumable", "rarity": "Common" },
+      { "name": "Travel rations", "itemType": "consumable", "rarity": "Common" },
+      { "name": "Iron spike", "itemType": "material", "rarity": "Common" },
+      { "name": "Leather jerkin", "itemType": "armor", "rarity": "Common" },
+      { "name": "Short blade", "itemType": "weapon", "rarity": "Common" },
+      { "name": "Focus charm", "itemType": "accessory", "rarity": "Common" }
+    ]
+  },
+  "rpg": {
+    "buyGp": {
+      "weapon": { "Common": 18, "Uncommon": 55, "Rare": 160, "Epic": 480, "Legendary": 1400 },
+      "armor": { "Common": 15, "Uncommon": 45, "Rare": 140, "Epic": 420, "Legendary": 1200 },
+      "consumable": { "Common": 4, "Uncommon": 14, "Rare": 40, "Epic": 120, "Legendary": 360 },
+      "material": { "Common": 2, "Uncommon": 6, "Rare": 18, "Epic": 55, "Legendary": 160 },
+      "container": { "Common": 8, "Uncommon": 22, "Rare": 65, "Epic": 200, "Legendary": 600 },
+      "accessory": { "Common": 12, "Uncommon": 36, "Rare": 110, "Epic": 340, "Legendary": 1000 },
+      "quest": { "Common": 0, "Uncommon": 0, "Rare": 0, "Epic": 0, "Legendary": 0 }
+    },
+    "stock": [
+      { "name": "Healing salve", "itemType": "consumable", "rarity": "Common" },
+      { "name": "Road bread", "itemType": "consumable", "rarity": "Common" },
+      { "name": "Spare cloth", "itemType": "material", "rarity": "Common" },
+      { "name": "Travel cloak", "itemType": "armor", "rarity": "Common" },
+      { "name": "Belt knife", "itemType": "weapon", "rarity": "Common" },
+      { "name": "Lucky token", "itemType": "accessory", "rarity": "Common" }
+    ]
+  }
+}

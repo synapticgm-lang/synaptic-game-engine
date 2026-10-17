@@ -77,9 +77,10 @@ describe('tt-build-chipcheck: shop chips', () => {
     const s = tt(5000, [{ roleHint: 'merchant', npcName: 'Hale' }]);
     expect(resolveShopChip(s, 'I want to buy everything')).toBeNull();
   });
-  it('no shop chips mid-fight or outside tabletop', () => {
+  it('no shop chips mid-fight; LitRPG still offers shops when a merchant is here (OPT-6)', () => {
     const s = tt(5000, [{ roleHint: 'merchant', npcName: 'Hale' }]);
-    expect(shopChips({ ...s, engineMode: 'litrpg' } as GameState)).toEqual([]);
     expect(shopChips({ ...s, activeEncounter: {} as never })).toEqual([]);
+    const lit = { ...s, engineMode: 'litrpg' as const, character: { ...s.character, srd: undefined }, purse: null, gold: 100 };
+    expect(shopChips(lit).some((c) => c.kind === 'buy')).toBe(true);
   });
 });

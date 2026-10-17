@@ -172,7 +172,8 @@ export function srdBreakAwayCheck(
       dc,
       d20s: [pcDie],
     });
-    rec.spec = { kind: 'contest', ability: 'DEX', dc, dcShown: false, adv: 'normal' };
+    // SRD 5.2.1 Escape: Dexterity (Acrobatics) contest — skill on the CheckSpec so formatPreRollLine names it.
+    rec.spec = { kind: 'contest', ability: 'DEX', skill: 'acrobatics', dc, dcShown: false, adv: 'normal' };
     return {
       ok: rec.outcome === 'success',
       line: formatResultLine(rec),

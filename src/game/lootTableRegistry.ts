@@ -1,22 +1,5 @@
-/**
- * Loot Table Registry
- * 
- * Manages loot drop tables across all game modes (LitRPG, DnD, RPG, PYOA).
- * Integrates with encounter aftermath receipts for deterministic loot generation.
- * 
- * Features:
- * - Seeded selection for deterministic drops
- * - Biome-appropriate loot filtering
- * - Pity counters for rare drops
- * - Outcome multipliers (victory, negotiated, fled, defeat)
- * - Idempotent commit requirements
- * 
- * Related:
- * - encounterBiomeMatrix.ts - Biome detection
- * - data/encounters/D9_loot_tables.json - Content catalog
- */
-
-import type { CoinPurse, GameState, Item, Rarity } from './types';
+/** Loot table registry: seeded drops, pity, biome filter. Catalog: data/encounters/D9_loot_tables.json. */
+import type { CoinPurse, GameState, Item, ItemType, Rarity } from './types';
 import { HOARD_COINS, INDIVIDUAL_COINS, crNumber, rollCoinTable } from './rules/coinTables';
 import { purseCp } from './rules/coins';
 import { rollLootRarityWithPity } from './dungeonSeed';
@@ -28,6 +11,7 @@ import lootTablesData from './data/encounters/D9_loot_tables.json';
 import { magicItem, magicItemsAtRarity } from './rules/magicItems';
 import { SRD_MONSTERS } from './rules/srdMonsters';
 import { srdGearRow } from './tabletop/characterBuild';
+import { modeBuyGp } from './merchant';
 
 export interface LootEntry {
   id: string;
@@ -556,8 +540,12 @@ function makeItem(
     if (srd.length) return { item: magicItem(pickFrom(srd, rng), id, `Engine loot (${LOOT_PROFILES[profile].label})`), category };
   }
   if (!name) name = `${RARITY_PREFIX[finalRarity as Exclude<Rarity, 'Legendary'>]} ${BASE_NAMES[category]}`;
+  // OPT-6: every generated drop carries itemType + baseValue at source (mode table; tabletop sell still uses SRD half-cost).
+  const itemType: ItemType = category === 'armour' ? 'armor' : category === 'focus' || category === 'trinket' ? 'accessory' : 'weapon';
+  const fromMode = modeBuyGp(state.engineMode, itemType, finalRarity) ?? 0;
+  const baseValue = fromMode > 0 ? fromMode : ({ Common: 1, Uncommon: 5, Rare: 20, Epic: 75, Legendary: 250 } as Record<Rarity, number>)[finalRarity];
   return {
-    item: { id, name, rarity: finalRarity, quantity: 1, provenance: `Engine loot (${LOOT_PROFILES[profile].label})` },
+    item: { id, name, rarity: finalRarity, quantity: 1, itemType, baseValue, provenance: `Engine loot (${LOOT_PROFILES[profile].label})` },
     category,
   };
 }
@@ -664,7 +652,7 @@ export function rollLoot(input: {
       if (coinRoll) dice.push(...coinRoll.lines);
       return result({ gold, coins, coin: 'gp', displayLines: [...dice] });
     }
-    items.push(magicItem(SRD_CACHE_ITEM, `loot-${input.seed}-0`, provenance));
+    items.push({ ...magicItem(SRD_CACHE_ITEM, `loot-${input.seed}-0`, provenance), baseValue: SRD_COMMON_VALUE_GP });
     categories.push('trinket');
     dice.push(`Treasure: ${SRD_CACHE_ITEM} (SRD Common magic item, ${SRD_COMMON_VALUE_GP / 2} GP as a consumable)`);
     if (coinRoll) dice.push(...coinRoll.lines);

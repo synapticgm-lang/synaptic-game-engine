@@ -10,8 +10,8 @@ const ABILITY_NAME: Record<string, string> = {
   STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma',
 };
 const SKILL_NAME: Record<string, string> = {
-  athletics: 'Athletics', perception: 'Perception', investigation: 'Investigation', stealth: 'Stealth',
-  thievery: 'Sleight of Hand', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
+  athletics: 'Athletics', acrobatics: 'Acrobatics', perception: 'Perception', investigation: 'Investigation',
+  stealth: 'Stealth', thievery: 'Sleight of Hand', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
 };
 
 /** UI tag from CheckSpec — never rewrite the chip label (plan §4). */
