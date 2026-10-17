@@ -679,7 +679,7 @@ export const saltRoadHeist = withManusHonestRoster(makeBible({
       description: 'Learn the route, guards, and weak point before the score.',
       recommendedLevel: 1,
       objectives: ['Scout the caravan', 'Pick an approach', 'Commit to the heist night'],
-      // q42-OPT4m: >=3 routes per step; "Pick an approach" is placeless — routes expand as chips.
+      // OPT-4 / q42-OPT4m: explicit placeId (G1a cut word-match). Decision steps stay placeless (RC-QT1); >=3 routes per step expand as chips.
       objectiveAnchors: [
         {
           placeId: 'Consul Caravan Camp',

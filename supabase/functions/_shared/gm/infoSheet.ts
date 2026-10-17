@@ -13,6 +13,7 @@ import { placeScale } from './placeAuthority.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerFacingLocation } from './locationName.ts';
 import { writerFacts } from './systemHousing.ts';
+import { openRouteView } from './questRoutes.ts';
 import { activeHereSpot, isOutOfTalkingRange } from './hereSpot.ts';
 import { isChromeReceipt } from './engineResult.ts';
 import { crowdHere } from './sceneFacts.ts';
@@ -392,6 +393,12 @@ function openLines(state: GameState): string[] {
     // RC-N4 — name/giver only; raw objective text stays off the writer packet (player-seen story owns the step).
     const giver = norm(quest.giver ?? '');
     out.push(`quest ${quest.name}${giver ? `, given by ${giver}` : ''}`);
+  }
+  // TT-G1: remaining discovery routes as facts (not objective prose) so the writer cannot invent or drop them.
+  // Always — even when tabletop hides the quest name record (RC-N4): routes are engine facts, not step text.
+  {
+    const leads = openRouteView(state)?.facts ?? [];
+    for (let i = 0; i < leads.length; i++) out.push(leads[i]!);
   }
   const enc = state.activeEncounter;
   if (enc?.name) out.push(`threat ${enc.name}${typeof enc.hp === 'number' && typeof enc.maxHp === 'number' ? ` (${enc.hp}/${enc.maxHp} HP)` : ''}`);
