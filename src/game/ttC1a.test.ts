@@ -273,7 +273,9 @@ describe('q37-C1a scene affordances', () => {
     // Strip block + line comments, then fail on regex literals or new RegExp.
     const bare = src
       .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/\/\/.*$/gm, '');
+      .replace(/\/\/.*$/gm, '')
+      // 18 Oct 00:2x (harness): string literals (import paths like './rules/x') are not regex literals.
+      .replace(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g, "''");
     expect(bare).not.toMatch(/\/[^/\n][^/\n]*\/[gimsuy]*/);
     expect(bare).not.toMatch(/new RegExp/);
   });

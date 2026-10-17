@@ -170,7 +170,9 @@ describe('q42-OPT1m LitRPG / RPG affordance adapters', () => {
     const src = fs.readFileSync(path.join(__dirname, 'sceneAffordances.ts'), 'utf8');
     const bare = src
       .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/\/\/.*$/gm, '');
+      .replace(/\/\/.*$/gm, '')
+      // 18 Oct 00:2x (harness): string literals (import paths like './rules/x') are not regex literals.
+      .replace(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g, "''");
     expect(bare).not.toMatch(/\/[^/\n]+\/[gimsuy]*/);
     expect(bare).not.toMatch(/new RegExp/);
   });
