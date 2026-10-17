@@ -12,7 +12,7 @@ import {
 import {
   validateModeQuestData,
   validateQuestStepRoutes,
-  withTabletopQuestRoutes,
+  withModeQuestRoutes,
 } from './questRoutes';
 import type { QuestObjective } from './types';
 
@@ -62,7 +62,7 @@ describe('q38-G1b TT-G1 validator + tabletop data (OPT-4)', () => {
     expect(validateModeQuestData('dnd', [ck])).toEqual([]);
 
     // Hand-authored RAW cursed-keep also carries routes before enrich.
-    const rawCk = withTabletopQuestRoutes(cursedKeep.starterQuests[0]!);
+    const rawCk = withModeQuestRoutes(cursedKeep.starterQuests[0]!, 'dnd');
     expect(rawCk.objectiveAnchors?.every((a) => (a?.routes?.length ?? 0) >= 3)).toBe(true);
 
     const tabletop = ALL_CAMPAIGN_BIBLES.filter((b) => b.engineMode === 'dnd');
@@ -72,13 +72,13 @@ describe('q38-G1b TT-G1 validator + tabletop data (OPT-4)', () => {
     expect(validateModeQuestData('dnd', [], spineSeeds)).toEqual([]);
   });
 
-  it('G1b: LitRPG and RPG data still fail until q42-OPT4m (validator runs; PYOA skipped)', () => {
+  it('G1b/OPT4m: LitRPG and RPG play data pass (≥3 routes); PYOA still skipped', () => {
     const litrpg = ALL_CAMPAIGN_BIBLES.filter((b) => b.engineMode === 'litrpg');
     const rpg = ALL_CAMPAIGN_BIBLES.filter((b) => b.engineMode === 'rpg');
     expect(litrpg.length).toBeGreaterThan(0);
     expect(rpg.length).toBeGreaterThan(0);
-    expect(validateModeQuestData('litrpg', litrpg).length).toBeGreaterThan(0);
-    expect(validateModeQuestData('rpg', rpg).length).toBeGreaterThan(0);
+    expect(validateModeQuestData('litrpg', litrpg)).toEqual([]);
+    expect(validateModeQuestData('rpg', rpg)).toEqual([]);
     expect(validateModeQuestData('pyoa', ALL_CAMPAIGN_BIBLES.filter((b) => b.engineMode === 'pyoa'))).toEqual([]);
   });
 });

@@ -461,7 +461,8 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   ];
   const seen = new Set<string>();
   const chips: EngineChip[] = [];
-  // TT-C1 / OPT-1: scene affordances bind by actionId + entityId (plan §4); LitRPG/RPG builders stay as fallback.
+  // TT-C1 / OPT-1 / q42-OPT1m: scene affordances bind by actionId + entityId (plan §4);
+  // LitRPG skill/system and RPG standing/contact actions live on the same entity pass.
   for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
     const label = sanitizeChoiceLabel(a.label);
     if (!label) continue;
@@ -1189,6 +1190,8 @@ export function padChoicesToCount(
   }
 
   let cappedEnd: string[];
+  /** Journey builder owns the pad — exclusive road list (s85); free-input stays off while underway. */
+  let roadOwnsPad = false;
   if (!affordancesCoverGenerics(state)) {
     // Stance/path density may invent labels; keep only engine-backed chips (dead-chip contract).
     const densed = applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
@@ -1208,43 +1211,66 @@ export function padChoicesToCount(
     // OPT-1 item 4: entity-bound labels + free chips; no first-come slice(0,4).
     // Engine-record backing only — stance/path density must not inject unregistered pads
     // (RPG "Use the situation as leverage" / "Act on faction…" were dead-chip in G-O1-rpg).
-    const aff = allocateAffordanceSlots(collectSceneAffordances(state), undefined, state);
+    // Plan §4 item 4: required kinds win over the optional cap. Journey pads are the underway
+    // travel record (Walk on / Face the meeting) — affordances do not replace them. OPT-1m mode
+    // thirds must not starve the road list when coverGenerics is true.
+    const road = journeyPads(state);
     const out: string[] = [];
     const seen = new Set<string>();
-    for (let i = 0; i < aff.length; i++) {
-      const label = sanitizeChoiceLabel(aff[i]!.label);
+    for (let i = 0; i < road.length; i++) {
+      const label = sanitizeChoiceLabel(road[i]!);
       if (!label) continue;
       const low = label.toLowerCase();
       if (seen.has(low)) continue;
-      seen.add(low);
-      out.push(label);
-    }
-    for (let i = 0; i < merged.length; i++) {
-      const label = sanitizeChoiceLabel(merged[i]!);
-      if (!label || isFreeInputChip(label)) continue;
-      const low = label.toLowerCase();
-      if (seen.has(low)) continue;
       if (!isLegalEnginePad(label, state, storyProse)) continue;
-      const action = engineChipActionKey(label) || `label:${low}`;
-      if (isOptionRepeat(state, action)) continue;
-      if (out.length >= 5) break;
       seen.add(low);
       out.push(label);
     }
-    cappedEnd = out;
-  }
-  // TT-C1 item 4: free-input chips always offered (do not count against the affordance cap).
-  for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
-    const label = sanitizeChoiceLabel(free);
-    if (!label) continue;
-    let has = false;
-    for (let i = 0; i < cappedEnd.length; i++) {
-      if (cappedEnd[i]!.toLowerCase() === label.toLowerCase()) {
-        has = true;
-        break;
+    if (road.length > 0) {
+      // Underway: the road owns the pad (s85 drought / meeting). Scene quest/search cards stay off.
+      cappedEnd = out;
+      roadOwnsPad = true;
+    } else {
+      const aff = allocateAffordanceSlots(collectSceneAffordances(state), undefined, state);
+      for (let i = 0; i < aff.length; i++) {
+        const label = sanitizeChoiceLabel(aff[i]!.label);
+        if (!label) continue;
+        const low = label.toLowerCase();
+        if (seen.has(low)) continue;
+        seen.add(low);
+        out.push(label);
       }
+      for (let i = 0; i < merged.length; i++) {
+        const label = sanitizeChoiceLabel(merged[i]!);
+        if (!label || isFreeInputChip(label)) continue;
+        const low = label.toLowerCase();
+        if (seen.has(low)) continue;
+        if (!isLegalEnginePad(label, state, storyProse)) continue;
+        const action = engineChipActionKey(label) || `label:${low}`;
+        if (isOptionRepeat(state, action)) continue;
+        if (out.length >= 5) break;
+        seen.add(low);
+        out.push(label);
+      }
+      cappedEnd = out;
     }
-    if (!has) cappedEnd.push(label);
+  }
+  // TT-C1 item 4: free-input chips always offered off-road (do not count against the affordance cap).
+  // While journeyPads own the turn, keep the exclusive road list (same as compileOfferedChoices
+  // early-return when coverGenerics is false and the journey is underway).
+  if (!roadOwnsPad) {
+    for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+      const label = sanitizeChoiceLabel(free);
+      if (!label) continue;
+      let has = false;
+      for (let i = 0; i < cappedEnd.length; i++) {
+        if (cappedEnd[i]!.toLowerCase() === label.toLowerCase()) {
+          has = true;
+          break;
+        }
+      }
+      if (!has) cappedEnd.push(label);
+    }
   }
   return sealPadUniverse(cappedEnd, state, excluded);
 }

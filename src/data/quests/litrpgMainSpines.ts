@@ -4,6 +4,7 @@ import {
   pickStoryRpgStampAlt,
   withMatchedStoryRpgSpine,
 } from '@/data/quests/storyRpgMainSpines';
+import { withModeQuestRoutes } from '@/game/questRoutes';
 import {
   matchTabletopMainSpineFromCtx,
   pickTabletopStampAlt,
@@ -1097,16 +1098,18 @@ export function matchLitRpgMainSpineFromCtx(ctx: SpineMatchCtx): LitRpgMainSpine
 /** The spine as a quest seed, compiled once: its giver, and its place in this opening (the map pin when no opening is given). */
 export function spineToStarterQuest(spine: LitRpgMainSpine, ctx?: SpineMatchCtx): StarterQuestSeed {
   const giver = spineGiver(spine);
-  return {
+  const placeId = (ctx ? placeSpine(spine, ctx.hookBlob, ctx.location) : null) ?? spine.mapPin;
+  return withModeQuestRoutes({
     id: spineQuestId(spine),
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
     objectives: [spine.firstObjective],
-    location: (ctx ? placeSpine(spine, ctx.hookBlob, ctx.location) : null) ?? spine.mapPin,
+    location: placeId,
+    objectiveAnchors: [{ placeId, ...(giver ? { people: [giver] } : {}) }],
     ...(giver ? { giver } : {}),
     type: 'main',
-  };
+  }, 'litrpg');
 }
 
 /** Prepend the matched spine seed. Old starters (sp-quest-1, etc.) stay on the list. */

@@ -1034,8 +1034,10 @@ export function compileChoices(
       } else if (affordancesCoverGenerics(state)) {
         // OPT-1 item 4 / TT-C1 item 5: Scout/Inspect refill deleted when affordances cover.
       } else if (state.engineMode === 'litrpg') {
-        // 31i — no Check Status / Wait spam under drought (same dead path)
-        supplements.push('Ask what they want', 'Scout the exit', 'Inspect the immediate surroundings');
+        // q42-OPT1m: LitRPG generic Ask/Scout/Inspect pads retired when affordances cover the scene.
+        if (!affordancesCoverGenerics(state)) {
+          supplements.push('Ask what they want', 'Scout the exit', 'Inspect the immediate surroundings');
+        }
       } else if (stallInterrupt) {
         // 29b/29c — no wait/walk-away/travel refill under hard streak/loiter
         supplements.push('Scout the exit');

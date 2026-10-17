@@ -1,5 +1,5 @@
 /**
- * OPT-2 — engine situation and quest generator (tabletop core; LitRPG/RPG = q42-OPT2m).
+ * OPT-2 — engine situation and quest generator (tabletop + LitRPG/RPG adapters).
  *
  * Structure as typed data templates after Doran and Parberry 2011
  * ("A Prototype Quest Generator Based on a Structural Analysis of Quests from Four MMORPGs"):
@@ -11,6 +11,11 @@
  * Very hard 25, Nearly impossible 30.
  * SRD 5.2.1: "When you take the Study action, you make an Intelligence check
  * to find out information."
+ *
+ * LitRPG/RPG (q42-OPT2m): troubles and turning points from Datasworn CC BY 4.0 oracle
+ * objects only (filter source.license). Credit: Shawn Tomkin (Ironsworn), rsek (Datasworn),
+ * XenotropicDev (TheOracle). LitRPG = system quests/bounties with XP + loot; Story RPG =
+ * personal favours with standing stakes. Route thirds follow OPT-4 (skill/system | contact/standing).
  */
 import type { DoranMotivation, GameState, NpcMemory, Quest, QuestObjective, QuestRoute } from './types';
 import type { GameEvent } from './parser';
@@ -18,6 +23,7 @@ import { validateQuestStepRoutes } from './questRoutes';
 import { DC_LADDER } from './rules/exploration';
 import { DND_XP_BY_CR } from './xpRules';
 import { SRD_MONSTERS } from './rules/srdMonsters';
+import { DATASWORN_CREDIT, dataswornSituationOracleRows } from './dataswornCharacterSeeds';
 import { replayPreFeature } from './replaySeam';
 
 /** Open-quest floor (default 1). */
@@ -116,15 +122,13 @@ const LAZY_GM_HOOKS: LazyGmHookRow[] = [
   },
 ];
 
-export function lazyGmHookRows(): LazyGmHookRow[] {
-  const out: LazyGmHookRow[] = [];
-  for (let i = 0; i < LAZY_GM_HOOKS.length; i++) out.push(LAZY_GM_HOOKS[i]!);
-  return out;
-}
+/** Tabletop Lazy GM hook rows (each carries source + license). */
+export const lazyGmHookRows: LazyGmHookRow[] = LAZY_GM_HOOKS;
 
 /**
  * When open quests are below the floor (and spacing allows), build one quest from the record.
  * Fails closed if the G1 validator rejects the routes.
+ * Tabletop: Lazy GM + SRD. LitRPG: system bounty + XP/loot. RPG: personal favour + standing stake.
  */
 export function ensureQuestFloor(state: GameState): {
   state: GameState;
@@ -167,33 +171,84 @@ export function ensureQuestFloor(state: GameState): {
     return { state, quest: null, notes };
   }
 
+  const mode = state.engineMode === 'litrpg' ? 'litrpg' : state.engineMode === 'rpg' ? 'rpg' : 'dnd';
   const motivation = patron.goal!.motivation;
   const strategy = STRATEGY_FOR[motivation] ?? 'investigate';
-  let hook = LAZY_GM_HOOKS[turn % LAZY_GM_HOOKS.length]!;
-  for (let i = 0; i < LAZY_GM_HOOKS.length; i++) {
-    if (LAZY_GM_HOOKS[i]!.strategy === strategy) {
-      hook = LAZY_GM_HOOKS[i]!;
-      break;
-    }
-  }
-
-  let foe = 'foe';
-  for (let i = 0; i < SRD_MONSTERS.length; i++) {
-    if (SRD_MONSTERS[i]!.id === hook.srdFoeId) {
-      foe = SRD_MONSTERS[i]!.name;
-      break;
-    }
-  }
-
   const place =
     (state.currentLocation ?? '').trim() || (patron.location ?? '').trim() || 'the local road';
   const giver = (patron.npcName ?? 'patron').trim();
   const target = (patron.goal?.target ?? '').trim() || place;
-  const questId = `gen-${hook.id}-${turn}`;
-  const dc = DC_LADDER[hook.dcRung];
-  const xp = DND_XP_BY_CR[hook.rewardCr] ?? 25;
 
-  // Three routes per step (person + place + Study) — G1 / OPT-4; Study is SRD 5.2.1.
+  let hookText = '';
+  let questId = '';
+  let foe = 'foe';
+  let provenance = '';
+  let name = `${giver}'s charge`;
+  let rewards: Quest['rewards'];
+
+  if (mode === 'dnd') {
+    let hook = LAZY_GM_HOOKS[turn % LAZY_GM_HOOKS.length]!;
+    for (let i = 0; i < LAZY_GM_HOOKS.length; i++) {
+      if (LAZY_GM_HOOKS[i]!.strategy === strategy) {
+        hook = LAZY_GM_HOOKS[i]!;
+        break;
+      }
+    }
+    for (let i = 0; i < SRD_MONSTERS.length; i++) {
+      if (SRD_MONSTERS[i]!.id === hook.srdFoeId) {
+        foe = SRD_MONSTERS[i]!.name;
+        break;
+      }
+    }
+    const dc = DC_LADDER[hook.dcRung];
+    const xp = DND_XP_BY_CR[hook.rewardCr] ?? 25;
+    hookText = hook.text;
+    questId = `gen-${hook.id}-${turn}`;
+    rewards = { xp, gold: Math.max(1, Math.floor(xp / 10)) };
+    provenance = `OPT-2 generated; ${hook.source.work} (${hook.source.license}); SRD DC ${dc}; SRD foe ${hook.srdFoeId}; CR ${hook.rewardCr}`;
+  } else {
+    const sit = dataswornSituationOracleRows();
+    const troubles: typeof sit = [];
+    const turns: typeof sit = [];
+    for (let i = 0; i < sit.length; i++) {
+      if (sit[i]!.table === 'trouble') troubles.push(sit[i]!);
+      else if (sit[i]!.table === 'turningPoint') turns.push(sit[i]!);
+    }
+    if (!troubles.length || !turns.length) {
+      notes.push('quest floor deferred: no Datasworn CC BY situation rows');
+      return { state, quest: null, notes };
+    }
+    const trouble = troubles[turn % troubles.length]!;
+    const turning = turns[(turn + 3) % turns.length]!;
+    hookText = `${trouble.text}; turning point: ${turning.text}`;
+    foe = trouble.text;
+    questId = `gen-ds-${trouble.table}-${turn}`;
+    if (mode === 'litrpg') {
+      name = `System bounty: ${trouble.text}`;
+      const xp = 40 + (turn % 5) * 10;
+      rewards = {
+        xp,
+        items: [`System cache: ${turning.text}`],
+        gold: Math.max(5, Math.floor(xp / 8)),
+      };
+      provenance = `OPT-2m LitRPG system bounty; Datasworn (${DATASWORN_CREDIT}); trouble "${trouble.text}"; turning point "${turning.text}"`;
+    } else {
+      name = `${giver}'s favour`;
+      const faction =
+        (state.worldLedger?.factionStandings?.[0]?.name ?? '').trim() ||
+        `${giver}'s circle`;
+      rewards = {
+        standingStake: {
+          faction,
+          delta: 1,
+          note: `Favour for ${giver}: ${trouble.text}`,
+        },
+      };
+      provenance = `OPT-2m RPG personal favour; Datasworn (${DATASWORN_CREDIT}); trouble "${trouble.text}"; turning point "${turning.text}"; standing stake → ${faction}`;
+    }
+  }
+
+  // Three routes per step — G1 / OPT-4. Mode third: Study (SRD) | skill/system | contact/standing.
   const routeSets: QuestRoute[][] = [];
   const objectLabels =
     strategy === 'deliver'
@@ -207,6 +262,26 @@ export function ensureQuestFloor(state: GameState): {
   for (let s = 0; s < 3; s++) {
     const pid = `${questId}-s${s + 1}`;
     const placeFor = placeForStep[s]!;
+    const third: QuestRoute =
+      mode === 'litrpg'
+        ? s % 2 === 0
+          ? { id: `${pid}-skill`, kind: 'skill', label: `Read the signs of ${objectLabels[s]}`, entityId: `skill:${pid}` }
+          : { id: `${pid}-system`, kind: 'system', label: `Analyze ${objectLabels[s]}`, entityId: `system:${pid}` }
+        : mode === 'rpg'
+          ? s % 2 === 0
+            ? {
+                id: `${pid}-standing`,
+                kind: 'standing',
+                label: `Press your standing with ${giver}`,
+                entityId: `standing:${giver}`,
+              }
+            : {
+                id: `${pid}-contact`,
+                kind: 'contact',
+                label: `Call on ${giver} for the approach`,
+                entityId: `contact:${giver}`,
+              }
+          : { id: `${pid}-study`, kind: 'study', label: `Study ${objectLabels[s]}`, entityId: `study:${pid}` };
     routeSets.push([
       { id: `${pid}-person`, kind: 'person', label: `Ask ${giver} about the lead`, entityId: `npc:${giver}` },
       {
@@ -216,7 +291,7 @@ export function ensureQuestFloor(state: GameState): {
         entityId: `place:${placeFor}`,
         placeId: placeFor,
       },
-      { id: `${pid}-study`, kind: 'study', label: `Study ${objectLabels[s]}`, entityId: `study:${pid}` },
+      third,
     ]);
   }
 
@@ -243,8 +318,8 @@ export function ensureQuestFloor(state: GameState): {
 
   const quest: Quest = {
     id: questId,
-    name: `${giver}'s charge`,
-    description: `${hook.text} (for ${giver}: ${motivation} → ${target})`,
+    name,
+    description: `${hookText} (for ${giver}: ${motivation} → ${target})`,
     status: 'active',
     type: 'side',
     giver,
@@ -255,12 +330,11 @@ export function ensureQuestFloor(state: GameState): {
     activatedTurn: turn,
     minTurnsBeforeComplete: 1,
     objectives,
-    rewards: state.engineMode === 'dnd' || !state.engineMode ? { xp, gold: Math.max(1, Math.floor(xp / 10)) } : { xp },
-    provenance: `OPT-2 generated; ${hook.source.work} (${hook.source.license}); SRD DC ${dc}; SRD foe ${hook.srdFoeId}; CR ${hook.rewardCr}`,
+    rewards,
+    provenance,
     whatNext: objectives[0]?.description,
   };
 
-  const mode = state.engineMode === 'litrpg' ? 'litrpg' : state.engineMode === 'rpg' ? 'rpg' : 'dnd';
   const errs = validateQuestStepRoutes(quest, mode);
   if (errs.length) {
     notes.push(`quest floor rejected by G1: ${errs[0]}`);

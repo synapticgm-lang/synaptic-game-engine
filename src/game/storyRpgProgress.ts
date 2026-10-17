@@ -142,13 +142,19 @@ function openMainStep(state: GameState): { quest: Quest; step: string } | null {
 }
 
 /** People here who would see to a step for the player: a companion, or someone Friendly or closer. */
-function contactsHere(state: GameState): string[] {
+export function standingContactsHere(state: GameState): string[] {
   const companions = new Set(recruitedCompanions(state).map((c) => c.name.toLowerCase()));
   const memory = new Map((state.npcMemories ?? []).map((m) => [m.npcName.toLowerCase(), m.disposition]));
-  return presentNpcNames(state).filter((n) => {
+  const out: string[] = [];
+  const present = presentNpcNames(state);
+  for (let i = 0; i < present.length; i++) {
+    const n = present[i]!;
     const k = n.toLowerCase();
-    return /^[A-Z]/.test(n) && (companions.has(k) || STANDS_WITH_YOU.has(memory.get(k) ?? 'unknown'));
-  });
+    const first = n.charCodeAt(0);
+    if (first < 65 || first > 90) continue;
+    if (companions.has(k) || STANDS_WITH_YOU.has(memory.get(k) ?? 'unknown')) out.push(n);
+  }
+  return out;
 }
 
 export function contactChip(name: string, step: string): string {
@@ -160,7 +166,7 @@ export function storyRpgContactPad(state: GameState): string[] | null {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter || isPlayInputLocked(state)) return null;
   const open = openMainStep(state);
   if (!open) return null;
-  const chips = contactsHere(state).map((n) => contactChip(n, open.step));
+  const chips = standingContactsHere(state).map((n) => contactChip(n, open.step));
   return chips.length ? chips : null;
 }
 
@@ -168,7 +174,12 @@ function contactFromInput(state: GameState, action: string): string | null {
   const open = openMainStep(state);
   if (!open) return null;
   const k = chipKey(action);
-  return contactsHere(state).find((n) => chipKey(contactChip(n, open.step)) === k) ?? null;
+  const here = standingContactsHere(state);
+  for (let i = 0; i < here.length; i++) {
+    const n = here[i]!;
+    if (chipKey(contactChip(n, open.step)) === k) return n;
+  }
+  return null;
 }
 
 /** Romance needs the romance subplots setting and never runs in Kid Mode. */
@@ -245,7 +256,7 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
       }
     }
     if (route.kind === 'contact') {
-      if (!contactsHere(state).length) {
+      if (!standingContactsHere(state).length) {
         return applyQuestRouteOutcome(state, route.id, 'failure');
       }
     }

@@ -474,10 +474,14 @@ function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> &
  * short return), unless the way on is blocked.
  */
 export function journeyPads(
-  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> & Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character'>> & ClockState
+  state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> &
+    Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character' | 'activeEncounter'>> &
+    ClockState
 ): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
+  // Same rule as withJourneyPads: a live fight keeps combat pads; Walk on / turn-back stay off.
+  if (state.activeEncounter) return [];
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
   const spent = dayIsSpent(state, j);
   const forward = laneBlocked(j.encounter)

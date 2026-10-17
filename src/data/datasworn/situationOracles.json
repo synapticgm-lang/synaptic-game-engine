@@ -1,0 +1,41 @@
+﻿{
+  "credit": "Oracle text from Datasworn / Ironsworn. Credit: Shawn Tomkin (Ironsworn), rsek (Datasworn), XenotropicDev (TheOracle). MIT code, CC BY 4.0 oracle text. https://github.com/rsek/datasworn ; https://tomkinpress.com/pages/licensing",
+  "tables": {
+    "trouble": {
+      "name": "Settlement Trouble",
+      "id": "classic/oracles/settlement/trouble",
+      "rows": [
+        {"text": "Outsiders rejected", "min": 1, "max": 2, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Dangerous discovery", "min": 3, "max": 4, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Dwindling supplies", "min": 5, "max": 6, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Incomplete defense", "min": 7, "max": 8, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Nature takes notice", "min": 9, "max": 10, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Newcomers arrive", "min": 11, "max": 12, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Someone is captured", "min": 13, "max": 14, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Production fails", "min": 15, "max": 16, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Sickness spreads", "min": 17, "max": 18, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Allies become enemies", "min": 19, "max": 20, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "A leader falls", "min": 21, "max": 22, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "Trade is disrupted", "min": 23, "max": 24, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/settlement/trouble"}},
+        {"text": "NC-only decoy (must never import)", "min": 99, "max": 99, "source": {"title": "Decoy non-commercial oracle", "authors": ["Example"], "license": "CC BY-NC 4.0", "url": "https://example.invalid/nc", "dataswornId": "decoy/nc"}}
+      ]
+    },
+    "turningPoint": {
+      "name": "Turning Point",
+      "id": "classic/oracles/plot/turning_point",
+      "rows": [
+        {"text": "A person or community is in danger", "min": 1, "max": 2, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "An unexpected ally or enemy appears", "min": 3, "max": 4, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "A critical resource is lost or gained", "min": 5, "max": 6, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "A dark secret is revealed", "min": 7, "max": 8, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "A vow is challenged", "min": 9, "max": 10, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "Someone you trust turns against you", "min": 11, "max": 12, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "A new path opens", "min": 13, "max": 14, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "An old threat returns", "min": 15, "max": 16, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "A bargain comes due", "min": 17, "max": 18, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "The truth proves costly", "min": 19, "max": 20, "source": {"title": "Ironsworn Rulebook", "authors": ["Shawn Tomkin"], "license": "CC BY 4.0", "url": "https://ironswornrpg.com", "dataswornId": "classic/oracles/plot/turning_point"}},
+        {"text": "NC turning-point decoy (must never import)", "min": 99, "max": 99, "source": {"title": "Decoy non-commercial oracle", "authors": ["Example"], "license": "CC BY-NC-SA 4.0", "url": "https://example.invalid/nc", "dataswornId": "decoy/nc-turning"}}
+      ]
+    }
+  }
+}

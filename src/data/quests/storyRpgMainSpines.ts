@@ -1,5 +1,6 @@
 import type { StarterQuestSeed } from '@/game/questPlay';
 
+import { withModeQuestRoutes } from '@/game/questRoutes';
 import { hashSeed } from '@/game/seededRng';
 export interface StoryRpgMatchCtx {
   bibleId?: string | null;
@@ -691,15 +692,16 @@ export function matchStoryRpgMainSpineFromCtx(ctx: StoryRpgMatchCtx): StoryRpgMa
 }
 
 export function storyRpgSpineToStarterQuest(spine: StoryRpgMainSpine): StarterQuestSeed {
-  return {
+  return withModeQuestRoutes({
     id: spine.spineId,
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
     recommendedLevel: 1,
     objectives: [spine.firstObjective],
     location: spine.mapPin,
+    objectiveAnchors: [{ placeId: spine.mapPin }],
     type: 'main',
-  };
+  }, 'rpg');
 }
 
 export function withMatchedStoryRpgSpine(

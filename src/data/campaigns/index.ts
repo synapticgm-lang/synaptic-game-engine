@@ -2,7 +2,7 @@ import type { CampaignBible } from './types';
 import type { ContentMode, EngineMode } from '@/game/types';
 import { allowsNsfwCatalog } from '@/game/distributionChannel';
 import { sanitizeBibleForPlay } from '@/game/storyDataBoundary';
-import { withTabletopQuestRoutes } from '@/game/questRoutes';
+import { withModeQuestRoutes } from '@/game/questRoutes';
 import { registerSettingBibles } from '@/game/settingVocabulary';
 export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, OpeningHookCard, MysteryCulprit } from './types';
 
@@ -145,12 +145,18 @@ export const RAW_CAMPAIGN_BIBLES: CampaignBible[] = [
 
 export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = RAW_CAMPAIGN_BIBLES.map((b) => {
   const s = sanitizeBibleForPlay(b);
-  if (s.engineMode !== 'dnd') return s;
-  // TT-G1 / OPT-4 (q38-G1b): every tabletop step carries ≥3 discovery routes in play data.
-  return {
-    ...s,
-    starterQuests: s.starterQuests.map((q) => withTabletopQuestRoutes(q)),
-  };
+  // TT-G1 / OPT-4: every non-PYOA step carries >=3 discovery routes in play data.
+  // Tabletop = q38-G1b; LitRPG/Story RPG = q42-OPT4m. Never enrich PYOA.
+  if (s.engineMode === 'dnd') {
+    return { ...s, starterQuests: s.starterQuests.map((q) => withModeQuestRoutes(q, 'dnd')) };
+  }
+  if (s.engineMode === 'litrpg') {
+    return { ...s, starterQuests: s.starterQuests.map((q) => withModeQuestRoutes(q, 'litrpg')) };
+  }
+  if (s.engineMode === 'rpg') {
+    return { ...s, starterQuests: s.starterQuests.map((q) => withModeQuestRoutes(q, 'rpg')) };
+  }
+  return s;
 });
 // P-5a/c: the bibles are the setting data the off-setting check reads.
 registerSettingBibles(() => ALL_CAMPAIGN_BIBLES);
@@ -164,7 +170,7 @@ export function getCampaignBlurb(bible: CampaignBible): string {
   if (bible.shortDescription?.trim()) return bible.shortDescription.trim();
   if (bible.tagline?.trim()) return bible.tagline.trim();
   const first = bible.premise.split(/(?<=[.!?])\s+/)[0]?.trim() ?? bible.premise;
-  return first.length > 160 ? `${first.slice(0, 157)}…` : first;
+  return first.length > 160 ? `${first.slice(0, 157)}â€¦` : first;
 }
 
 /** Auto campaign save name: premade title + start date. */
@@ -174,7 +180,7 @@ export function formatCampaignStoryName(title: string, at: Date = new Date()): s
     month: 'short',
     day: 'numeric',
   });
-  return `${title} — ${date}`;
+  return `${title} â€” ${date}`;
 }
 
 /** True when this bible is adult/explicit and must stay out of Kid Mode. */
@@ -182,7 +188,7 @@ export function isNsfwCampaign(bible: Pick<CampaignBible, 'nsfw'> | undefined): 
   return bible?.nsfw === true;
 }
 
-/** Violence / mature floor — Kid Mode hides 16+ and 18+ as well as NSFW. */
+/** Violence / mature floor â€” Kid Mode hides 16+ and 18+ as well as NSFW. */
 export function isKidRestrictedCampaign(
   bible: Pick<CampaignBible, 'nsfw' | 'ageRating'> | undefined,
 ): boolean {

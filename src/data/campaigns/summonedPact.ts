@@ -635,6 +635,36 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
         'Hear their reason (or demand it)',
         'Choose: swear, refuse, or delay',
       ],
+      // q42-OPT4m: three routes per step (person / place / system).
+      objectiveAnchors: [
+        {
+          placeId: 'Sevenfold Circle',
+          people: ['handler'],
+          routes: [
+            { id: 'sp1-bear-person', kind: 'person', label: 'Ask the handler where you are', entityId: 'npc:handler' },
+            { id: 'sp1-bear-place', kind: 'place', label: 'Look around this arrival', entityId: 'place:arrival', placeId: 'Sevenfold Circle' },
+            { id: 'sp1-bear-system', kind: 'system', label: 'Ping the System for bearings', entityId: 'system:bearings' },
+          ],
+        },
+        {
+          placeId: 'Sevenfold Circle',
+          people: ['Pellane'],
+          routes: [
+            { id: 'sp1-why-person', kind: 'person', label: 'Ask Pellane why you were pulled', entityId: 'npc:Pellane' },
+            { id: 'sp1-why-place', kind: 'place', label: 'Search the circle for the summoning reason', entityId: 'place:circle', placeId: 'Sevenfold Circle' },
+            { id: 'sp1-why-system', kind: 'system', label: 'Ask the System what the Mark means', entityId: 'system:mark' },
+          ],
+        },
+        {
+          placeId: null,
+          people: ['Pellane'],
+          routes: [
+            { id: 'sp1-choose-person', kind: 'person', label: 'Tell Pellane your answer', entityId: 'npc:Pellane' },
+            { id: 'sp1-choose-place', kind: 'object', label: 'Study the pact slate before you answer', entityId: 'object:slate' },
+            { id: 'sp1-choose-system', kind: 'system', label: 'Open the System pact choice', entityId: 'system:pact' },
+          ],
+        },
+      ],
       rewards: 'Circle Blessing',
     },
     {
