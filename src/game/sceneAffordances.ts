@@ -35,11 +35,6 @@ import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import type { QuestRoute } from './types';
-
-/**
- * q45-OCD3 — one shared way-out predicate for cooldown, guarantee, and chipCheck.
- * Kind/slotKind/actionId only (never a label word list). Affordance exits use actionId `exit:…`.
- */
 export function isWayOut(chip: {
   kind?: string;
   actionId?: string;
@@ -55,12 +50,6 @@ export function isWayOut(chip: {
     id.startsWith('exit:')
   );
 }
-
-/**
- * Would picking this label move HERE on the live turn path (graph exit or commitTravel)?
- * Mirrors commitTravel's goTo gate without running the journey (no character.srd / no mutation):
- * a named hub away from HERE with mapGapBetween.steps > 0.
- */
 export function wayOutMovesPlayer(state: GameState, label: string): boolean {
   if (applyGraphExitTravel(state, label) !== state) return true;
   if (isJourneyUnderway(state) && isJourneyPad(state, label)) return true;
@@ -71,8 +60,8 @@ export function wayOutMovesPlayer(state: GameState, label: string): boolean {
   if (isTripHere(state, hub.name)) return false;
   return mapGapBetween(state, here, hub.name).steps > 0;
 }
-
-/** Required vs optional slot families (OPT-1 item 2). */
+/** q45b-SLOT — one final-pad slot. Free-input chips are not a slot. */
+export type SlotCategory = 'move' | 'talk' | 'act' | 'scene';
 export type AffordanceSlotKind =
   | 'person'
   | 'quest'
@@ -81,37 +70,25 @@ export type AffordanceSlotKind =
   | 'fight'
   | 'object'
   | 'item';
-
-/** One scene affordance before EngineChip wrapping (kind `affordance` in choicePipeline). */
 export interface SceneAffordance {
   label: string;
-  /** Bound action id — stable key for repeat / legality (not the display label). */
   actionId: string;
   entityId: string;
   slotKind: AffordanceSlotKind;
-  /** Higher wins among optional cards. */
   salience: number;
-  /** Required kinds always keep a slot (plan §4 item 4 / OPT-1 item 2). */
   required: boolean;
   check?: CheckSpec | null;
-  /** LitRPG/RPG cooldown floor: restored so the turn keeps ≥2 chips (OPT1-8). */
   cooldownReturn?: boolean;
+  /** q45b-SLOT — final-pad slot. Set from the engine record, never from the label. */
+  slotCategory?: SlotCategory;
 }
-
-/**
- * John 17 Oct 12:48 / mode switch 12:49 — turns before the same actionId may return
- * in an unchanged scene (tabletop 0 = situation-aware streak only; LitRPG/RPG 5).
- */
 export const REPEAT_COOLDOWN_TURNS = {
   tabletop: 0,
   dnd: 0,
   litrpg: 5,
   rpg: 5,
 } as const;
-
-/** Optional-slot ceiling after required kinds are placed (TT-C1 mix 3–5). */
 export const AFFORDANCE_OPTIONAL_CAP = 5;
-
 const OBJECT_VERBS: Record<string, { verb: string; uncertain: boolean; prefix: string }[]> = {
   door: [
     { verb: 'listen', uncertain: true, prefix: 'Listen at ' },
@@ -126,19 +103,13 @@ const OBJECT_VERBS: Record<string, { verb: string; uncertain: boolean; prefix: s
   secret: [{ verb: 'investigate', uncertain: true, prefix: 'Investigate ' }],
   prop: [{ verb: 'inspect', uncertain: true, prefix: 'Inspect ' }],
 };
-
-/**
- * One pass over the engine record: people, quest step, exits, objects, merchant, foe, own items.
- */
 export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const all: SceneAffordance[] = [];
   const mode = state.engineMode;
   const dnd = mode === 'dnd';
   const litrpg = mode === 'litrpg';
   const rpg = mode === 'rpg';
-  // Tabletop SRD / LitRPG skill-tier CheckSpec; Story RPG carries none (no roll tag).
   const withModeCheck = dnd || litrpg;
-
   const enc = state.activeEncounter;
   if (enc && enc.hp > 0) {
     const name = (enc.name ?? 'foe').trim();
@@ -153,7 +124,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
     });
   }
-
   const people = presentNpcRecords(state);
   let contactNames: Set<string> | null = null;
   if (rpg) {
@@ -164,7 +134,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const openQuest = rpg ? mainSpineQuest(state) : null;
   const openStep =
     openQuest?.objectives?.find((o) => !o.completed)?.description?.trim() ?? '';
-
   for (let i = 0; i < people.length; i++) {
     const m = people[i]!;
     const name = (m.npcName ?? '').trim();
@@ -180,8 +149,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       required: true,
       check: withModeCheck ? checkForAction(state, parsePlayerIntent(talk, state), talk) : undefined,
     });
-
-    // Mode third action on the same person entity (OPT-1 / q42-OPT1m).
     if (dnd) {
       const insight = `Read ${name}`;
       all.push({
@@ -194,7 +161,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         check: checkForAction(state, parsePlayerIntent(insight, state), insight),
       });
     } else if (litrpg) {
-      // Salience above object pads so skill/system thirds survive the optional cap.
       const skill = `Read ${name}`;
       all.push({
         label: skill,
@@ -239,8 +205,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         });
       }
     }
-
-    // OPT3-2 / OPT-2 agenda hook: a present NPC's goal yields at least one OPT-1 affordance.
     if (m.goal?.motivation && (m.goal.target || m.need)) {
       const about = (m.need ?? m.goal.target).trim();
       if (about) {
@@ -257,9 +221,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       }
     }
   }
-
-  // TT-G1 / OPT-4: open step routes expand as affordances (decision approaches included).
-  // Person routes only when that person is in the scene record (OPT-1 presence; no ghost Ask).
   const openRoutes = openRouteView(state);
   const routeRows = openRoutes?.rows ?? [];
   const hereNow = peopleHere(state);
@@ -293,6 +254,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         actionId: row.actionId,
         entityId: row.entityId,
         slotKind: 'quest',
+        slotCategory: route?.kind === 'person' ? 'talk' : 'scene',
         salience: 90 - i,
         required: true,
         check: withModeCheck ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
@@ -306,13 +268,13 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         actionId: 'quest:open-step:act',
         entityId: 'quest:open-step',
         slotKind: 'quest',
+        slotCategory: 'scene',
         salience: 90,
         required: true,
         check: withModeCheck ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
       });
     }
   }
-
   const merchant = merchantHere(state);
   if (merchant) {
     const name = (merchant.npcName ?? 'merchant').trim();
@@ -327,7 +289,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       check: undefined,
     });
   }
-
   const visitedKeys = new Set<string>();
   const visits = state.circling?.visits;
   if (visits) {
@@ -344,7 +305,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       visitedKeys.add((n.name ?? '').toLowerCase());
     }
   }
-
   const sheetExits = state.locationSheet?.exits ?? [];
   if (sheetExits.length) {
     for (let i = 0; i < sheetExits.length; i++) {
@@ -407,7 +367,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       });
     }
   }
-
   const sheetItems = state.locationSheet?.interactables ?? [];
   const seenProp = new Set<string>();
   for (let i = 0; i < sheetItems.length; i++) {
@@ -455,7 +414,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       check: withModeCheck ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
     });
   }
-
   const inv = state.inventory ?? [];
   for (let i = 0; i < inv.length; i++) {
     const item = inv[i]!;
@@ -474,9 +432,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       check: dnd || litrpg ? null : undefined,
     });
   }
-
-  // Plan §4 item 5 / TT-C1: "Search the area" is an Investigation affordance on the place
-  // (SRD 5.2.1 Ability Checks — Wizards of the Coast, CC BY 4.0), not an orphan cover pad.
   const place = (state.currentLocation ?? '').trim();
   if (place) {
     const label = 'Search the area';
@@ -491,25 +446,30 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
     });
   }
-
+  for (let i = 0; i < all.length; i++) {
+    const a = all[i]!;
+    if (a.slotCategory) continue;
+    const id = a.actionId;
+    if (a.slotKind === 'exit') a.slotCategory = 'move';
+    else if (a.slotKind === 'fight' || a.slotKind === 'shop' || a.slotKind === 'quest') a.slotCategory = 'scene';
+    else if (a.slotKind === 'person') {
+      const skill =
+        id.endsWith(':skill') ||
+        id.endsWith(':system') ||
+        id.endsWith(':insight') ||
+        id.endsWith(':standing');
+      a.slotCategory = skill ? 'act' : 'talk';
+    } else a.slotCategory = 'act';
+  }
   return all;
 }
-
-/** TT-C1 item 4 / OPT-1 — free chips never count against the affordance cap. */
 export const FREE_INPUT_SAY = 'Say something…';
 export const FREE_INPUT_DO = 'Do something else…';
 export const FREE_INPUT_LABELS = [FREE_INPUT_SAY, FREE_INPUT_DO] as const;
-
 export function isFreeInputChip(label: string): boolean {
   const t = (label ?? '').trim();
   return t === FREE_INPUT_SAY || t === FREE_INPUT_DO;
 }
-
-/**
- * True when scene affordances cover the old generic Scout/Ready/Wait/family pads (OPT-1 item 4).
- * Place-search alone does not replace doorway/Wait fallbacks — only entity-bound cards do
- * (person, exit, quest, shop, fight, object other than place:search, item).
- */
 export function affordancesCoverGenerics(state: GameState): boolean {
   const all = collectSceneAffordances(state);
   for (let i = 0; i < all.length; i++) {
@@ -520,8 +480,6 @@ export function affordancesCoverGenerics(state: GameState): boolean {
   }
   return false;
 }
-
-/** Scene fingerprint for repeat suppression (record fields only — never label/prose). */
 export function computeOptionSceneKey(state: GameState): {
   placeId: string;
   presentIds: string[];
@@ -537,13 +495,6 @@ export function computeOptionSceneKey(state: GameState): {
   presentIds.sort();
   return { placeId, presentIds, eventSeq: state.optionSceneKey?.eventSeq ?? 0 };
 }
-
-/**
- * OPT-1 item 3 / John 17 Oct 08:41 — same actionId offered again with unchanged scene and no
- * activeSituation that lists it is a repeat. Situation-listed ids are never repeats.
- * Cooldown (John 17 Oct 12:48, mode switch 12:49): LitRPG/RPG use REPEAT_COOLDOWN_TURNS
- * (actionId + scene key); tabletop keeps only the streak rule. Exit slotKind never suppressed.
- */
 export function isOptionRepeat(
   state: GameState,
   actionId: string,
@@ -568,7 +519,6 @@ export function isOptionRepeat(
       : mode === 'rpg'
         ? REPEAT_COOLDOWN_TURNS.rpg
         : REPEAT_COOLDOWN_TURNS.dnd;
-
   if (cd > 0) {
     for (let i = hist.length - 1; i >= 0; i--) {
       const row = hist[i]!;
@@ -585,8 +535,6 @@ export function isOptionRepeat(
     }
     return false;
   }
-
-  // Tabletop: 08:41 streak ≥5 on optional chips only (required keep their slot).
   if (opts?.required) return false;
   let streak = 0;
   for (let i = hist.length - 1; i >= 0; i--) {
@@ -605,40 +553,31 @@ export function isOptionRepeat(
   }
   return streak >= 5;
 }
-
 /**
- * One chip on the final pad (q44-OCD2). Keyed by actionId. Label stays the plain action.
- * slotKind / required are engine fields so exits and the tabletop streak need no label match.
+ * One chip on the final pad (q45b-SLOT). Keyed by actionId. Label stays the plain action.
+ * slotCategory is the engine slot (move|talk|act|scene). Free-input is not a slot.
  */
 export type OptionCooldownChip = {
   label: string;
   actionId: string;
   kind: string;
   slotKind?: AffordanceSlotKind;
+  slotCategory?: SlotCategory;
+  entityId?: string;
   required?: boolean;
   cooldownReturn?: boolean;
-  /** Lower loses its slot when a missing way-out must fit a full pad. */
   rank?: number;
 };
-
-/** Assembled pad size. A missing way-out appends under this and replaces the lowest rank at it. */
-export const WAY_OUT_PAD_CAP = 48;
-
 /**
- * q44-OCD2 (John 17 Oct 17:58) — ONE cooldown for the whole pad.
- * REPEAT_COOLDOWN_TURNS: tabletop 0, litrpg 5, rpg 5.
- * A chip offered in the last N turns of an unchanged scene (same place, same people,
- * same eventSeq, no activeSituation listing that actionId) is held back.
- * Exempt: way-outs (isWayOut), free-input, and actionIds an active situation calls for.
- * A scene-key change ignores older rows.
- * If fewer than 2 non-free chips would remain, the least-recently offered held chip(s)
- * return with cooldownReturn. Tabletop does not use N; it keeps only the 08:41
- * situation-aware streak (isOptionRepeat when cooldown is 0).
- * q44b/q45-OCD3: when this place has a reachable route that actually moves the player
- * (graph exit or commitTravel — the live turn path), the pad keeps at least one such
- * way-out. Dead way-outs (isWayOut but wayOutMovesPlayer false) do not satisfy the
- * guarantee. If none survived, the least-recently offered moving route is added. At
- * WAY_OUT_PAD_CAP it takes the lowest-ranked non-free, non-situation, non-way-out slot.
+ * q45b-SLOT (John 17 Oct 22:32) — the final pad is five slots, not a truncated list.
+ * Order: MOVE, TALK, ACT, SCENE, then optional FREE, then free-input chips.
+ * A slot is filled only by a real candidate (a MOVE chip must wayOutMovesPlayer;
+ * a TALK chip must name an NPC in presentNpcRecords). No dead pad chips.
+ * Inside a slot, the best rank the cooldown allows wins. REPEAT_COOLDOWN_TURNS:
+ * litrpg 5, rpg 5, tabletop 0 (no hold — situation repeats stay eligible).
+ * An actionId listed on activeSituation is not cooling. If every candidate of the
+ * slot is cooling, the least recently offered returns with cooldownReturn.
+ * Replaces the way-out append and WAY_OUT_PAD_CAP truncation.
  */
 export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameState, pad: T[]): T[] {
   const mode = state.engineMode;
@@ -653,206 +592,238 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   const hist = state.recentOfferedActions ?? [];
   const turn = state.turn ?? 0;
   const sit = state.activeSituation?.actionIds;
-  const keep: T[] = [];
-  const cooled: T[] = [];
-  const cooledLast: number[] = [];
-
+  const people = presentNpcRecords(state);
+  const move: T[] = [];
+  const talk: T[] = [];
+  const act: T[] = [];
+  const scene: T[] = [];
+  const freeIn: T[] = [];
+  const seen = new Set<string>();
   for (let i = 0; i < pad.length; i++) {
     const chip = pad[i]!;
-    if (chip.kind === 'free-input' || isWayOut(chip)) {
-      keep.push({ ...chip, cooldownReturn: undefined });
+    if (!chip.actionId) continue;
+    if (seen.has(chip.actionId)) continue;
+    if (chip.kind === 'free-input') {
+      freeIn.push(chip);
       continue;
     }
-    let situation = false;
-    if (sit) {
-      for (let s = 0; s < sit.length; s++) {
-        if (sit[s] === chip.actionId) {
-          situation = true;
+    let cat = chip.slotCategory;
+    if (!cat) {
+      const id = chip.actionId;
+      if (isWayOut(chip) || chip.slotKind === 'exit') cat = 'move';
+      else if (
+        chip.slotKind === 'fight' ||
+        chip.slotKind === 'shop' ||
+        chip.slotKind === 'quest' ||
+        chip.kind === 'shop' ||
+        chip.kind === 'dungeon' ||
+        chip.kind === 'quest-step' ||
+        chip.kind === 'spine' ||
+        chip.kind === 'decision' ||
+        chip.kind === 'beat'
+      ) {
+        cat = 'scene';
+      } else if (chip.slotKind === 'person') {
+        const skill =
+          id.endsWith(':skill') ||
+          id.endsWith(':system') ||
+          id.endsWith(':insight') ||
+          id.endsWith(':standing');
+        cat = skill ? 'act' : 'talk';
+      } else cat = 'act';
+    }
+    if (cat === 'move' && !wayOutMovesPlayer(state, chip.label)) continue;
+    if (cat === 'talk') {
+      let here = false;
+      const ent = chip.entityId ?? '';
+      for (let p = 0; p < people.length; p++) {
+        const m = people[p]!;
+        const id = (m.npcId ?? '').trim();
+        const name = (m.npcName ?? '').trim();
+        if (id && (ent === id || chip.actionId.includes(id))) {
+          here = true;
+          break;
+        }
+        if (
+          name &&
+          (ent === `npc:${name}` ||
+            chip.actionId.includes(`npc:${name}`) ||
+            chip.actionId.includes(`:${name}:`) ||
+            chip.actionId.endsWith(`:${name}`))
+        ) {
+          here = true;
           break;
         }
       }
+      if (!here) continue;
     }
-    if (situation) {
-      keep.push({ ...chip, cooldownReturn: undefined });
-      continue;
+    seen.add(chip.actionId);
+    const row = { ...chip, slotCategory: cat, cooldownReturn: undefined };
+    if (cat === 'move') move.push(row);
+    else if (cat === 'talk') talk.push(row);
+    else if (cat === 'scene') scene.push(row);
+    else act.push(row);
+  }
+  const sheet = state.locationSheet?.exits ?? [];
+  const raw: T[] = [];
+  if (sheet.length) {
+    for (let i = 0; i < sheet.length; i++) {
+      const ex = sheet[i]!;
+      const dest = (ex.label ?? '').trim();
+      if (!dest) continue;
+      const entityId = ex.id || `exit:${dest}`;
+      raw.push({
+        label: `Travel toward ${dest}`,
+        actionId: `exit:${entityId}:travel`,
+        kind: 'exit',
+        slotKind: 'exit',
+        slotCategory: 'move',
+        entityId,
+        required: true,
+        rank: 70,
+      } as T);
     }
-
-    let hold = false;
-    let last = 0;
-    if (cd > 0) {
-      for (let h = hist.length - 1; h >= 0; h--) {
-        const row = hist[h]!;
-        if (row.turn >= turn) continue;
-        if (row.sceneKey !== key) continue;
-        let has = false;
-        for (let j = 0; j < row.actionIds.length; j++) {
-          if (row.actionIds[j] === chip.actionId) {
-            has = true;
+  } else {
+    const edges = enumerateLegalEdges(state);
+    for (let i = 0; i < edges.length; i++) {
+      const e = edges[i]!;
+      if (e.type !== 'travel') continue;
+      const label = (e.label ?? '').trim();
+      if (!label) continue;
+      const target = (e.target ?? label).trim();
+      raw.push({
+        label,
+        actionId: `exit:exit:${target}:travel`,
+        kind: 'exit',
+        slotKind: 'exit',
+        slotCategory: 'move',
+        entityId: `exit:${target}`,
+        required: true,
+        rank: 70,
+      } as T);
+    }
+  }
+  if (!raw.length) {
+    const names = exitPlaceNames(state);
+    for (let i = 0; i < names.length; i++) {
+      const dest = (names[i] ?? '').trim();
+      if (!dest) continue;
+      raw.push({
+        label: `Travel toward ${dest}`,
+        actionId: `exit:exit:${dest}:travel`,
+        kind: 'exit',
+        slotKind: 'exit',
+        slotCategory: 'move',
+        entityId: `exit:${dest}`,
+        required: true,
+        rank: 70,
+      } as T);
+    }
+  }
+  for (let i = 0; i < raw.length; i++) {
+    const row = raw[i]!;
+    if (seen.has(row.actionId)) continue;
+    if (!wayOutMovesPlayer(state, row.label)) continue;
+    seen.add(row.actionId);
+    move.push(row);
+  }
+  const picked: T[] = [];
+  const used = new Set<string>();
+  let talkFilled = false;
+  for (let slot = 0; slot < 5; slot++) {
+    const pool = slot === 0 ? move : slot === 1 ? talk : slot === 2 ? act : slot === 3 ? scene : null;
+    const cands: T[] = [];
+    if (pool) {
+      for (let i = 0; i < pool.length; i++) {
+        if (!used.has(pool[i]!.actionId)) cands.push(pool[i]!);
+      }
+    } else {
+      const rest = [move, talk, act, scene];
+      for (let g = 0; g < rest.length; g++) {
+        const group = rest[g]!;
+        for (let i = 0; i < group.length; i++) {
+          const row = group[i]!;
+          if (used.has(row.actionId)) continue;
+          if (talkFilled && row.slotCategory === 'talk') continue;
+          cands.push(row);
+        }
+      }
+    }
+    if (!cands.length) continue;
+    for (let i = 1; i < cands.length; i++) {
+      const cur = cands[i]!;
+      let j = i - 1;
+      while (j >= 0 && (cands[j]!.rank ?? 0) < (cur.rank ?? 0)) {
+        cands[j + 1] = cands[j]!;
+        j -= 1;
+      }
+      cands[j + 1] = cur;
+    }
+    const holds: boolean[] = [];
+    const lasts: number[] = [];
+    for (let i = 0; i < cands.length; i++) {
+      const id = cands[i]!.actionId;
+      let situation = false;
+      if (sit) {
+        for (let s = 0; s < sit.length; s++) {
+          if (sit[s] === id) {
+            situation = true;
             break;
           }
         }
-        if (!has) continue;
-        if (turn - row.turn < cd) {
-          hold = true;
-          last = row.turn;
-        }
-        break;
       }
-    } else {
-      hold = isOptionRepeat(state, chip.actionId, {
-        slotKind: chip.slotKind,
-        required: chip.required,
-      });
-    }
-    if (!hold) keep.push({ ...chip, cooldownReturn: undefined });
-    else {
-      cooled.push(chip);
-      cooledLast.push(last);
-    }
-  }
-
-  let nonFree = 0;
-  for (let i = 0; i < keep.length; i++) {
-    if (keep[i]!.kind !== 'free-input') nonFree += 1;
-  }
-  while (nonFree < 2 && cooled.length > 0) {
-    let best = 0;
-    for (let i = 1; i < cooled.length; i++) {
-      if (cooledLast[i]! < cooledLast[best]!) best = i;
-    }
-    const row = cooled[best]!;
-    cooled.splice(best, 1);
-    cooledLast.splice(best, 1);
-    keep.push({ ...row, cooldownReturn: true });
-    nonFree += 1;
-  }
-
-  // q45-OCD3 — one moving way out when this place has a route the turn path can take.
-  let movingWay = false;
-  for (let i = 0; i < keep.length; i++) {
-    const chip = keep[i]!;
-    if (isWayOut(chip) && wayOutMovesPlayer(state, chip.label)) {
-      movingWay = true;
-      break;
-    }
-  }
-  if (!movingWay) {
-    const raw: T[] = [];
-    const sheet = state.locationSheet?.exits ?? [];
-    if (sheet.length) {
-      for (let i = 0; i < sheet.length; i++) {
-        const ex = sheet[i]!;
-        const dest = (ex.label ?? '').trim();
-        if (!dest) continue;
-        const entityId = ex.id || `exit:${dest}`;
-        raw.push({
-          label: `Travel toward ${dest}`,
-          actionId: `exit:${entityId}:travel`,
-          kind: 'exit',
-          slotKind: 'exit',
-          required: true,
-          rank: 70,
-        } as T);
-      }
-    } else {
-      const edges = enumerateLegalEdges(state);
-      for (let i = 0; i < edges.length; i++) {
-        const e = edges[i]!;
-        if (e.type !== 'travel') continue;
-        const label = (e.label ?? '').trim();
-        if (!label) continue;
-        const target = (e.target ?? label).trim();
-        raw.push({
-          label,
-          actionId: `exit:exit:${target}:travel`,
-          kind: 'exit',
-          slotKind: 'exit',
-          required: true,
-          rank: 70,
-        } as T);
-      }
-    }
-    if (!raw.length) {
-      const names = exitPlaceNames(state);
-      for (let i = 0; i < names.length; i++) {
-        const dest = (names[i] ?? '').trim();
-        if (!dest) continue;
-        raw.push({
-          label: `Travel toward ${dest}`,
-          actionId: `exit:exit:${dest}:travel`,
-          kind: 'exit',
-          slotKind: 'exit',
-          required: true,
-          rank: 70,
-        } as T);
-      }
-    }
-    const cands: T[] = [];
-    for (let i = 0; i < raw.length; i++) {
-      const row = raw[i]!;
-      if (wayOutMovesPlayer(state, row.label)) cands.push(row);
-    }
-    if (cands.length) {
-      const prefix = `${sk.placeId}\0`;
-      let best = 0;
-      let bestTurn = Number.POSITIVE_INFINITY;
-      for (let i = 0; i < cands.length; i++) {
-        let last = -1;
-        for (let h = 0; h < hist.length; h++) {
+      let hold = false;
+      let last = -1;
+      if (cd > 0 && !situation) {
+        for (let h = hist.length - 1; h >= 0; h--) {
           const row = hist[h]!;
-          if (row.sceneKey !== sk.placeId && !row.sceneKey.startsWith(prefix)) continue;
-          const ids = row.actionIds;
+          if (row.turn >= turn) continue;
+          if (row.sceneKey !== key) continue;
           let has = false;
-          for (let j = 0; j < ids.length; j++) {
-            if (ids[j] === cands[i]!.actionId) {
+          for (let j = 0; j < row.actionIds.length; j++) {
+            if (row.actionIds[j] === id) {
               has = true;
               break;
             }
           }
-          if (has && row.turn > last) last = row.turn;
-        }
-        if (last < bestTurn) {
-          best = i;
-          bestTurn = last;
+          if (!has) continue;
+          last = row.turn;
+          if (turn - row.turn < cd) hold = true;
+          break;
         }
       }
-      // Drop a dead way-out already on the pad so the moving one takes its meaning.
-      for (let i = keep.length - 1; i >= 0; i--) {
-        const chip = keep[i]!;
-        if (isWayOut(chip) && !wayOutMovesPlayer(state, chip.label)) keep.splice(i, 1);
-      }
-      if (keep.length >= WAY_OUT_PAD_CAP) {
-        let victim = -1;
-        let victimRank = Number.POSITIVE_INFINITY;
-        for (let i = 0; i < keep.length; i++) {
-          const chip = keep[i]!;
-          if (chip.kind === 'free-input') continue;
-          if (isWayOut(chip)) continue;
-          let situation = false;
-          if (sit) {
-            for (let s = 0; s < sit.length; s++) {
-              if (sit[s] === chip.actionId) {
-                situation = true;
-                break;
-              }
-            }
-          }
-          if (situation) continue;
-          const rank = chip.rank ?? 0;
-          if (victim < 0 || rank < victimRank || (rank === victimRank && i > victim)) {
-            victim = i;
-            victimRank = rank;
-          }
-        }
-        if (victim >= 0) keep.splice(victim, 1);
-      }
-      keep.push({ ...cands[best]!, cooldownReturn: undefined });
+      holds.push(hold);
+      lasts.push(last);
     }
+    let choice = -1;
+    for (let i = 0; i < cands.length; i++) {
+      if (!holds[i]) {
+        choice = i;
+        break;
+      }
+    }
+    let back = false;
+    if (choice < 0) {
+      choice = 0;
+      let bestLast = lasts[0]!;
+      for (let i = 1; i < cands.length; i++) {
+        if (lasts[i]! < bestLast) {
+          bestLast = lasts[i]!;
+          choice = i;
+        }
+      }
+      back = true;
+    }
+    const row = cands[choice]!;
+    used.add(row.actionId);
+    if (row.slotCategory === 'talk') talkFilled = true;
+    picked.push({ ...row, cooldownReturn: back ? true : undefined });
   }
-  return keep;
+  for (let i = 0; i < freeIn.length; i++) {
+    picked.push({ ...freeIn[i]!, cooldownReturn: undefined });
+  }
+  return picked;
 }
-
-/** Record this turn's offered action ids (+ optional pick) for repeat / OPT-7. */
 export function stampRecentOfferedActions(
   state: GameState,
   actionIds: string[],
@@ -870,13 +841,6 @@ export function stampRecentOfferedActions(
   const next = prev.length >= 24 ? [...prev.slice(-23), row] : [...prev, row];
   return { ...state, optionSceneKey: sk, recentOfferedActions: next };
 }
-
-/**
- * Dendry-style slot allocation: required kinds always win a slot; remaining by salience.
- * At most one exit chip. Person Talk chips: all when ≤2 named NPCs; when more, top 2.
- * Optional `state` applies the tabletop 08:41 streak only (cooldown 0).
- * LitRPG/RPG 5-turn hold lives in applyOptionCooldown, not here (q44-OCD2).
- */
 export function allocateAffordanceSlots(
   affordances: SceneAffordance[],
   optionalCap = AFFORDANCE_OPTIONAL_CAP,
@@ -922,13 +886,9 @@ export function allocateAffordanceSlots(
   }
   const personSlots = talkPeople.length <= 2 ? talkPeople : talkPeople.slice(0, 2);
   const exitSlot = exits.length ? [exits[0]!] : [];
-
-  // Tabletop streak only. LitRPG/RPG cooldown is applyOptionCooldown on the final pad.
   const tabletopStreak = !!state && state.engineMode !== 'litrpg' && state.engineMode !== 'rpg';
-
   const picked: SceneAffordance[] = [];
   const seenAction = new Set<string>();
-
   for (let i = 0; i < personSlots.length; i++) {
     const row = personSlots[i]!;
     if (seenAction.has(row.actionId)) continue;
@@ -978,7 +938,6 @@ export function allocateAffordanceSlots(
     picked.push(row);
     optionalTaken += 1;
   }
-
   let hasActor = false;
   for (let i = 0; i < picked.length; i++) {
     const p = picked[i]!;
@@ -1000,15 +959,12 @@ export function allocateAffordanceSlots(
   }
   return trimmed;
 }
-
-/** True when an entity id from an affordance chip is still in the engine record. */
 export function affordanceEntityPresent(state: GameState, entityId: string): boolean {
   if (!entityId) return false;
   if (entityId.startsWith('foe:')) {
     const enc = state.activeEncounter;
     return !!(enc && enc.hp > 0 && entityId === `foe:${(enc.name ?? 'foe').trim()}`);
   }
-  // Mode thirds / System chrome are not people-in-the-room; always legal while bound.
   if (
     entityId.startsWith('system:') ||
     entityId.startsWith('skill:') ||
@@ -1020,7 +976,6 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
   if (entityId.startsWith('npc:') || entityId.startsWith('contact:') || entityId.startsWith('standing:')) {
     const who = entityId.slice(entityId.indexOf(':') + 1).trim();
     if (!who) return false;
-    // Generic contact ids (contact:quest-s1) are not named people — legal while the route is open.
     if (entityId.startsWith('contact:') && !who.includes(' ')) {
       return !!openRouteView(state);
     }

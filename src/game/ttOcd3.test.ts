@@ -2,14 +2,15 @@
  * q45-OCD3 — way-out guarantee: shared isWayOut, moving route on the final pad, checker agrees.
  */
 import { describe, expect, it } from 'vitest';
+import { createInitialState } from './defaults';
 import type { GameState, LogEntry } from './types';
 import { commitOfferedPad } from './playTranscript';
 import {
   applyOptionCooldown,
   computeOptionSceneKey,
   isWayOut,
+  stampRecentOfferedActions,
   wayOutMovesPlayer,
-  WAY_OUT_PAD_CAP,
   type OptionCooldownChip,
 } from './sceneAffordances';
 import { checkChipKinds } from './chipCheck';
@@ -63,6 +64,9 @@ const FIXTURES = [
   'mega19053-t251',
   'mega19053-t256',
   'mega19053-t261',
+  'mega19052-t100',
+  'mega19051-t85',
+  'mega19051-t94',
 ] as const;
 
 describe('q45-OCD3 shared isWayOut', () => {
@@ -129,8 +133,13 @@ describe('q45-OCD3 mega19053 fixtures through final-pad', () => {
         return;
       }
 
-      const way = chips.find((c) => isWayOut(c) && wayOutMovesPlayer(before, c.label));
+      const way = chips.find((c) => c.slotCategory === 'move' && wayOutMovesPlayer(before, c.label));
       expect(way, `${name} @ ${before.currentLocation}`).toBeTruthy();
+      const talkN = chips.filter((c) => c.slotCategory === 'talk').length;
+      expect(talkN).toBeLessThanOrEqual(1);
+      const nonFree = chips.filter((c) => c.kind !== 'free-input');
+      expect(nonFree.length).toBeLessThanOrEqual(5);
+      expect(chips.some((c) => isWayOut(c) && !wayOutMovesPlayer(before, c.label))).toBe(false);
       expect(labels.some((l) => l === way!.label)).toBe(true);
       expect(wayOutMovesPlayer(before, way!.label)).toBe(true);
 
@@ -163,35 +172,153 @@ describe('q45-OCD3 mega19053 fixtures through final-pad', () => {
   }, 30000);
 });
 
-describe('q45-OCD3 cooled-then-truncated pad still keeps a moving way out', () => {
-  it('tabletop, litrpg and rpg', () => {
+describe('q45b-SLOT one chip per slot', () => {
+  it('a crowded pad keeps one moving MOVE and drops dead travel', () => {
     const modes = ['dnd', 'litrpg', 'rpg'] as const;
     for (let m = 0; m < modes.length; m++) {
       const s = base(modes[m]!);
       const pad: OptionCooldownChip[] = [];
-      for (let i = 0; i < WAY_OUT_PAD_CAP; i++) {
+      for (let i = 0; i < 12; i++) {
         pad.push({
           label: `Talk ${i}`,
           actionId: `person:npc-${i}:talk`,
           kind: 'affordance',
           slotKind: 'person',
-          rank: WAY_OUT_PAD_CAP - i,
+          slotCategory: 'talk',
+          rank: 12 - i,
         });
       }
-      // Seed a dead way-out that looks like travel but will be replaced if it does not move.
       pad[0] = {
-        label: 'Travel toward Cathedral Undercroft',
-        actionId: 'exit:exit:Cathedral Undercroft:travel',
+        label: 'Travel toward Nowhere Particular',
+        actionId: 'exit:exit:Nowhere Particular:travel',
         kind: 'affordance',
         slotKind: 'exit',
+        slotCategory: 'move',
         rank: 99,
       };
       const cooled = applyOptionCooldown(s, pad);
-      const way = cooled.find((c) => isWayOut(c) && wayOutMovesPlayer(s, c.label));
+      const way = cooled.find((c) => c.slotCategory === 'move' && wayOutMovesPlayer(s, c.label));
       expect(way, modes[m]).toBeTruthy();
-      expect(wayOutMovesPlayer(s, way!.label)).toBe(true);
-      expect(cooled.length).toBeLessThanOrEqual(WAY_OUT_PAD_CAP);
+      expect(way!.label).not.toBe('Travel toward Nowhere Particular');
+      expect(cooled.filter((c) => c.slotCategory === 'talk').length).toBeLessThanOrEqual(1);
+      expect(cooled.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
     }
+  });
+
+  it('6 unchanged turns: ACT rotates, then the least recent returns with cooldownReturn', () => {
+    const bare = {
+      ...base('litrpg'),
+      places: [{ id: 'camp', name: 'Trail Camp', cardBuiltTurn: 1, exits: [] }],
+      locationSheet: {
+        name: 'Trail Camp',
+        interactables: [],
+        exits: [],
+        presentNpcIds: [],
+      },
+      sceneFacts: {
+        crowd: 'alone',
+        noise: 'quiet',
+        present: [],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 1,
+        indoor: true,
+      },
+    } as unknown as GameState;
+    const pad: OptionCooldownChip[] = [
+      { label: 'Inspect A', actionId: 'object:a:inspect', kind: 'affordance', slotKind: 'object', slotCategory: 'act', rank: 30 },
+      { label: 'Inspect B', actionId: 'object:b:inspect', kind: 'affordance', slotKind: 'object', slotCategory: 'act', rank: 20 },
+      { label: 'Inspect C', actionId: 'object:c:inspect', kind: 'affordance', slotKind: 'object', slotCategory: 'act', rank: 10 },
+    ];
+    let s = bare;
+    const actSlot: string[] = [];
+    const actBack: boolean[] = [];
+    for (let t = 1; t <= 6; t++) {
+      s = { ...s, turn: t };
+      const cooled = applyOptionCooldown(s, pad);
+      const acts = cooled.filter((c) => c.slotCategory === 'act');
+      expect(acts.length).toBeGreaterThan(0);
+      expect(acts.length).toBeLessThanOrEqual(2);
+      actSlot.push(acts[0]!.actionId);
+      actBack.push(acts[0]!.cooldownReturn === true);
+      const ids = cooled.filter((c) => c.kind !== 'free-input').map((c) => c.actionId);
+      s = stampRecentOfferedActions(s, ids);
+    }
+    expect(actSlot[0]).toBe('object:a:inspect');
+    expect(actBack[0]).toBe(false);
+    expect(actSlot[1]).toBe('object:c:inspect');
+    expect(actBack[1]).toBe(false);
+    // Turn 3: A was the FREE return on turn 2, so B is the least recent.
+    expect(actBack[2]).toBe(true);
+    expect(actSlot[2]).toBe('object:b:inspect');
+  });
+
+  it('tabletop cooldown 0 still offers a situation chip again', () => {
+    const s = base('dnd');
+    s.activeSituation = {
+      kind: 'fight',
+      id: 'f',
+      since: 1,
+      actionIds: ['fight:foe:wolf:attack'],
+    };
+    const pad: OptionCooldownChip[] = [
+      {
+        label: 'Press the attack',
+        actionId: 'fight:foe:wolf:attack',
+        kind: 'affordance',
+        slotKind: 'fight',
+        slotCategory: 'scene',
+        rank: 100,
+      },
+    ];
+    const sk = computeOptionSceneKey(s);
+    const once = applyOptionCooldown({ ...s, turn: 2 }, pad);
+    expect(once.some((c) => c.actionId === 'fight:foe:wolf:attack' && c.cooldownReturn !== true)).toBe(true);
+    const stamped = stampRecentOfferedActions(
+      { ...s, turn: 2 },
+      ['fight:foe:wolf:attack'],
+    );
+    stamped.optionSceneKey = sk;
+    const twice = applyOptionCooldown({ ...stamped, turn: 3, activeSituation: s.activeSituation }, pad);
+    const hit = twice.find((c) => c.actionId === 'fight:foe:wolf:attack');
+    expect(hit).toBeTruthy();
+    expect(hit!.cooldownReturn).not.toBe(true);
+  });
+
+  it('opening interior with a hub route fills MOVE (lap T4-T5 shape)', () => {
+    const start = createInitialState('Ria', 'litrpg');
+    const state = {
+      ...start,
+      campaignBibleId: 'summoned-pact',
+      engineMode: 'litrpg' as const,
+      currentLocation: 'Trail Camp',
+      turn: 4,
+      openingEstablishment: { ...(start.openingEstablishment as object), complete: true },
+      places: [{ id: 'camp', name: 'Trail Camp', cardBuiltTurn: 1, exits: ['Lowmarket'] }],
+      locationSheet: {
+        name: 'Trail Camp',
+        interactables: [],
+        exits: [{ id: 'ex-low', label: 'Lowmarket' }],
+        presentNpcIds: [],
+      },
+      sceneFacts: {
+        crowd: 'alone',
+        noise: 'quiet',
+        present: [],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 1,
+        indoor: true,
+      },
+    } as unknown as GameState;
+    expect(wayOutMovesPlayer(state, 'Travel toward Lowmarket')).toBe(true);
+    const next = commitOfferedPad({ ...state, offeredPad: null });
+    const chips = next.offeredPad?.chips ?? [];
+    const moves = chips.filter((c) => c.slotCategory === 'move');
+    expect(moves.length).toBeGreaterThanOrEqual(1);
+    expect(wayOutMovesPlayer(state, moves[0]!.label)).toBe(true);
+    expect(chips.filter((c) => c.slotCategory === 'talk').length).toBeLessThanOrEqual(1);
+    expect(chips.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
   });
 });
 
