@@ -3,7 +3,7 @@ import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
 import { parkMobHpAtCurrentNode, restoreParkedEncounter } from './dungeonMobLedger';
 import { isExplorableDungeon } from './placeAuthority';
-import { growWeaponFamiliarity, weaponCategory } from './checkRules';
+import { growWeaponFamiliarity, weaponCategory, type CheckResultRecord } from './checkRules';
 
 export { remainingDungeonMobs } from './dungeonPresence';
 
@@ -15,6 +15,8 @@ export interface LedgerFleeRound {
   received: number;
   playerHpAfter: number;
   fleeReason: string;
+  /** VR1-b: the flee/contest CheckResultRecord (no hand-built roll string). */
+  record?: CheckResultRecord;
 }
 
 export interface LedgerCombatRound {
@@ -29,6 +31,8 @@ export interface LedgerCombatRound {
   enemyActReason: string;
   playerHpAfter: number;
   xp: number;
+  /** VR1-b: the attack CheckResultRecord (no hand-built roll string). */
+  record?: CheckResultRecord;
 }
 
 export function equippedWeaponName(state: GameState): string {
@@ -111,6 +115,7 @@ export function resolveLedgerFlee(
       fleeReason: check.isCriticalSuccess
         ? 'You slip away clean — it loses your trail.'
         : 'You break contact and disengage.',
+      record: check.record,
     };
     return {
       state: { ...parked, activeEncounter: null },
@@ -130,6 +135,7 @@ export function resolveLedgerFlee(
     fleeReason: check.isCriticalFailure
       ? 'You stumble — it closes the gap.'
       : 'It cuts off your escape.',
+    record: check.record,
   };
   return {
     state: {
@@ -172,6 +178,7 @@ export function resolveLedgerCombat(
         : 'It does not land a return — stunned or it missed you.',
     playerHpAfter,
     xp: enemyDead ? encounter.xpReward || 25 : 0,
+    record: check.record,
   };
   const nextEncounter: ActiveEncounter | null = enemyDead
     ? { ...encounter, hp: 0 }

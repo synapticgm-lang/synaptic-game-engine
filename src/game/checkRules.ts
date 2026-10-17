@@ -33,6 +33,8 @@ export interface CheckResultRecord {
   auto?: 'willing' | 'unwilling';
   /** LitRPG-only qualitative cue ("Mara seems inclined to help"). */
   cue?: string;
+  /** VR1 CheckSpec shape (checkMath.CheckSpec). */
+  spec?: { kind: 'ability' | 'skill' | 'save' | 'contest' | 'attack'; ability: string; skill?: string; dc: number; dcShown: boolean; adv: AdvState };
 }
 
 /** SRD 5.2.1 proficiency bonus: +2 (1–4) … +6 (17–20). */

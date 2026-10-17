@@ -160,7 +160,8 @@ describe('tt-travel — weather, jobs and getting lost (gaps 3–4)', () => {
     expect(j.jobs?.guide).toBe('you');
     expect(j.jobResults?.guide).toBeTypeOf('boolean');
     expect((t.extra ?? []).some((l) => /^Weather: /.test(l))).toBe(true);
-    expect((t.extra ?? []).some((l) => /Navigation: Wisdom \(Survival\)/.test(l))).toBe(true);
+    // VR1-b: travel jobs emit formatPreRollLine / formatResultLine, not formatCheckRecord labels.
+    expect((t.extra ?? []).some((l) => /Wisdom \(Survival\) check — rolling a d20|d20 .+ vs DC \d+ — (?:success|failure)/.test(l))).toBe(true);
   });
 
   it('a failed guide loses the way: the trip runs a stretch longer', () => {
@@ -213,7 +214,8 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
     expect(camp).toBe('Make camp');
     expect(push).toMatch(/^Push on into the \w+, but each failed save wears you down more$/);
     const pushed = commitTravel(s, push!);
-    expect((pushed.extra ?? []).some((l) => /Extended Travel: Constitution save/.test(l))).toBe(true);
+    // VR1-b: CON save uses formatPreRollLine (Constitution save) from CheckResultRecord.
+    expect((pushed.extra ?? []).some((l) => /Constitution save/.test(l))).toBe(true);
   });
 
   it('q31-L4 — push-on hands Extended Travel + the chip\'s night slot to the writer (not morning landing)', () => {
@@ -223,11 +225,11 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
     const pushed = commitTravel(s, push!);
     expect(pushed.pushOnSlot).toBe('night');
     const lines = travelEngineLines(pushed);
-    expect(lines.some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
+    expect(lines.some((l) => /Constitution save|Check (?:success|failure)\./.test(l))).toBe(true);
     expect(lines.some((l) => /\bnow night\b/i.test(l))).toBe(true);
     expect(lines.some((l) => /\bnow morning\b/i.test(l))).toBe(false);
     const handed = writerEngineResult(engineResultFact(lines, 'dnd'));
-    expect(handed).toMatch(/Extended Travel: Constitution save/);
+    expect(handed).toMatch(/Constitution save|Check (?:success|failure)\./);
     expect(handed).toMatch(/\bnow night\b/i);
     expect(handed).not.toMatch(/\bnow morning\b/i);
     const gate = `engine result: ${handed}\n\u0000clock\u0000morning`;

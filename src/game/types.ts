@@ -820,7 +820,12 @@ export interface GameState {
   pendingImagePrompt?: string[] | null;
   choices?: string[];
   /** The chips compiled once at commit for `turn`; the log, the ActionBar and Fate read this one list. */
-  offeredPad?: { turn: number; choices: string[] } | null;
+  offeredPad?: {
+    turn: number;
+    choices: string[];
+    /** VR1 — CheckSpec by plain label (UI tags); never rewrite choice strings. */
+    checks?: Record<string, import('./checkMath').CheckSpec>;
+  } | null;
   /** Tabletop inn-book character creation in progress (engine-only pages, no writer). */
   tabletopCreation?: TabletopCreationState;
   /** Shared rules engine: a turn-based fight in progress (one player choice per round). */
@@ -831,6 +836,10 @@ export interface GameState {
   houseRules?: HouseRules;
   /** Milestone keys (quest complete, ending) that already earned Heroic Inspiration. */
   inspirationKeys?: string[];
+  /** TT-H1: last VR1 CheckResultRecord eligible for a Heroic Inspiration reroll chip. */
+  lastCheckResult?: import('./checkRules').CheckResultRecord;
+  /** TT-H1: turn of the last engine GM Inspiration award (≈20-turn gap). */
+  lastInspirationAwardTurn?: number;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
@@ -1349,6 +1358,8 @@ export interface LogEntry {
    * Absent on older saves — transcript omits the Options section.
    */
   offeredChoices?: string[];
+  /** VR1 — CheckSpec keyed by plain offered label (beside offeredChoices). */
+  offeredChipChecks?: Record<string, import('./checkMath').CheckSpec>;
   /** Diegetic LitRPG System window (blue panel) — ledger chrome, not STATUS. */
   systemWindow?: { heading: string; lines: string[] };
   /** Craft-book rule ids compiled for this beat (Debug / Download play). */

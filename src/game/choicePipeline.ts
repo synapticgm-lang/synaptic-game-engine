@@ -37,10 +37,13 @@ import { openingOfferPads } from './openingEstablishment';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { shopChips } from './shopChips';
+import { inspirationRerollPads } from './rules/houseRules';
 import { systemPromptPad } from './rules/abilityPoints';
 import { classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
 import { journeyPads } from './travelJourney';
+import { checkForAction, type CheckSpec } from './checkMath';
+import { parsePlayerIntent } from './intentParser';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -371,8 +374,14 @@ export function isChoiceGroundedInTurn(
   return true;
 }
 
-/** One engine chip: the shown label plus the resolved action id + target the router would run. */
-export type EngineChip = { label: string; action: string; kind: ChipKind };
+/** One engine chip: plain label + resolved action; CheckSpec lives here, never in the label string. */
+export type EngineChip = {
+  label: string;
+  action: string;
+  kind: ChipKind;
+  check?: CheckSpec | null;
+  entityId?: string;
+};
 
 /** Which builder made a chip (tt-build-chipcheck): the kind names the resolver that runs it. */
 export type ChipKind =
@@ -388,7 +397,8 @@ export type ChipKind =
   | 'quest-step'
   | 'system'
   | 'journey'
-  | 'shop';
+  | 'shop'
+  | 'inspiration-reroll';
 
 let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
 
@@ -420,6 +430,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   const system = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
   const sources: Array<[ChipKind, string[]]> = [
+    ['inspiration-reroll', inspirationRerollPads(state)],
     ['shop', shopChips(state).map((c) => c.label)],
     ['quest-step', [tabletopStepChip(state) ?? '']],
     ['decision', [storyRpgDecisionChip(state) ?? '']],
@@ -443,8 +454,11 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       const low = label.toLowerCase();
       if (seen.has(low)) continue;
       seen.add(low);
-      const action = engineChipActionKey(label) || `label:${low}`;
-      chips.push({ label, action, kind });
+      // TT-H1: reroll binds by its own action id (plan §4), not label-parsed intent.
+      const action = kind === 'inspiration-reroll' ? `inspiration-reroll:${low}` : engineChipActionKey(label) || `label:${low}`;
+      // VR1-a: CheckSpec from checkForAction (pure). Label stays the plain action (§4 chip contract).
+      const check = kind === 'inspiration-reroll' ? null : checkForAction(state, parsePlayerIntent(label, state), label);
+      chips.push({ label, action, kind, check });
     }
   }
   lastEngineChips = {
@@ -454,6 +468,18 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     labels: new Set([...seen]),
   };
   return chips;
+}
+
+/** Stamp CheckSpec-by-label onto pad / last GM log beside offeredChoices. */
+export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameState {
+  const checks: Record<string, CheckSpec> = {};
+  for (const c of engineChips(state, storyProse)) if (c.check) checks[c.label] = c.check;
+  if (!Object.keys(checks).length) return state;
+  const log = [...(state.log ?? [])];
+  let at = -1;
+  for (let i = log.length - 1; i >= 0; i--) if (log[i]?.role === 'gm') { at = i; break; }
+  if (at >= 0) log[at] = { ...log[at]!, offeredChipChecks: checks };
+  return { ...state, log, offeredPad: state.offeredPad ? { ...state.offeredPad, checks } : state.offeredPad };
 }
 
 /** Label set for callers that only need membership (derived from engineChips). */

@@ -1,7 +1,7 @@
 /**
  * Real-time rest while away (tabletop). A player who stops somewhere safe and comes back an hour or more later
- * finds a short rest taken; back after a night away, a long rest plus a small well-rested bonus (Heroic
- * Inspiration when the table uses it). One rest per return, never more than one long rest.
+ * finds a short rest taken; back after a night away, a long rest. Human Resourceful Inspiration
+ * (when held off) comes from applyRestHeal. One rest per return, never more than one long rest.
  *
  * The rest itself is the same rest the "Take a short rest" / "Rest for the night" chips run (recoveryRules), so
  * HP, Hit Dice, spell slots and the game clock move by the same numbers. The recap is built from engine facts
@@ -65,11 +65,7 @@ export function applyAwayRest(state: GameState, awayMs: number): AwayRest | null
   const lines: string[] = [];
   if (rest.receipt) lines.push(rest.receipt, ...(rest.dieLine ? [rest.dieLine] : []), ...(rest.after ?? []));
   else lines.push(`Rest: ${kind} rest — nothing to recover (${clock!.note})`);
-
-  if (kind === 'long' && houseRulesOf(next).heroicInspiration && !next.character.heroicInspiration) {
-    next = { ...next, character: { ...next.character, heroicInspiration: true } };
-    lines.push('Well rested: Heroic Inspiration is yours');
-  }
+  // TT-H1: no second Inspiration grant here — Human Resourceful is already in applyRestHeal after lines.
 
   const ch = next.character;
   const focus = resumeMainQuestFocus(next).resumeCopy;

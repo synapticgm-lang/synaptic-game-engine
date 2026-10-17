@@ -150,8 +150,8 @@ describe('replay bank tt-build-6b (coins, carrying, armor training, away rest, s
     expect((roundCombatChips(fight.state) ?? []).some((c) => /^Cast /.test(c))).toBe(false);
   });
 
-  it('[tabletop ds151 T9 + T13 | tt-build-6b] away rest: an hour away at the inn is a short rest, a night away a long rest plus Heroic Inspiration; never on the road', () => {
-    // A Dwarf, so the well-rested bonus is the away rest's own (a Human already gets it from Resourceful).
+  it('[tabletop ds151 T9 + T13 | tt-build-6b] away rest: an hour away at the inn is a short rest, a night away a long rest; Human Resourceful gains Inspiration; never on the road', () => {
+    // TT-H1: Inspiration on Long Rest is Human Resourceful (SRD), not a blanket away-rest bonus.
     const base = pregen(9, 'Dwarf Cleric (Acolyte)');
     expect(base.currentLocation).toBe('Greyhollow Inn');
     const hurt: GameState = { ...base, character: { ...base.character, hp: base.character.maxHp - 6, heroicInspiration: false } };
@@ -167,8 +167,13 @@ describe('replay bank tt-build-6b (coins, carrying, armor training, away rest, s
     const long = applyAwayRest(hurt, 10 * HOUR)!;
     expect(long.kind).toBe('long');
     expect(long.state.character.hp).toBe(hurt.character.maxHp);
-    expect(long.recap).toContain('Well rested: Heroic Inspiration is yours');
-    expect(long.state.character.heroicInspiration).toBe(true);
+    expect(long.recap).not.toContain('Well rested: Heroic Inspiration is yours');
+    expect(long.state.character.heroicInspiration).toBe(false);
+    const human = pregen(9, 'Human Fighter (Soldier)');
+    const humanHurt: GameState = { ...human, character: { ...human.character, hp: human.character.maxHp - 6, heroicInspiration: false }, currentLocation: 'Greyhollow Inn' };
+    const humanLong = applyAwayRest(humanHurt, 10 * HOUR)!;
+    expect(humanLong.recap.some((l) => /Heroic Inspiration: yours \(Human, Resourceful\)/.test(l))).toBe(true);
+    expect(humanLong.state.character.heroicInspiration).toBe(true);
     // Capped: three days away is still one long rest, and the clock moves the rest's 8 hours, not 72.
     const days = applyAwayRest(hurt, 72 * HOUR)!;
     expect(days.state.worldHour).toBe(long.state.worldHour);

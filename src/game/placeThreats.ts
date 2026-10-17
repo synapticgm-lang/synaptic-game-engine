@@ -14,7 +14,17 @@ export const REMEMBERED_FIGHT_CHIP = 'Press the attack';
 const GONE_OUTCOMES = new Set(['victory', 'parleyresolved']);
 
 const CLEARED_RECEIPT = /^Encounter cleared:\s*(.+?)\s*\((victory|escape|defeat|capture|parleyResolved)\)\s*$/i;
+/** Legacy hand string; VR1-b also counts Check failure. + Persuasion pre-roll (see parleyWasRefused). */
 const PARLEY_REFUSED_RECEIPT = /^Parley (?:check:.*\bfailure\b|refused)/i;
+function parleyWasRefused(receipts: string[]): boolean {
+  if (receipts.some((r) => PARLEY_REFUSED_RECEIPT.test(r))) return true;
+  // Same Check failure. / formatPreRollLine pair engineFight pushes for a failed Influence (SRD Persuasion).
+  const failed = receipts.some((r) => {
+    const t = (r ?? '').trim();
+    return t === 'Check failure.' || t === 'Check failure';
+  });
+  return failed && receipts.some((r) => (r ?? '').includes('Charisma (Persuasion) check'));
+}
 
 export function placeThreatKey(place: string | undefined | null): string {
   return (place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -85,7 +95,7 @@ export function syncPlaceThreat(
   foeAfter?: ActiveEncounter | null
 ): GameState {
   if (journeyUnderway(before) || journeyUnderway(after)) return after;
-  const refusedNow = receipts.some((r) => PARLEY_REFUSED_RECEIPT.test(r));
+  const refusedNow = parleyWasRefused(receipts);
 
   const live = liveThreat(after);
   if (live) {

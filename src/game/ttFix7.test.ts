@@ -59,10 +59,12 @@ describe('tt-fix-7 item 1 — the writer gets a travel state, not a travel recor
 
 describe('tt-fix-7 TT01 — every travel-job roll reaches tabletop STATUS', () => {
   it('look-out, navigation and foraging dice lines stay', () => {
+    // VR1-b: shared formatResultLine / formatPreRollLine (formatCheckRecord travel labels cut).
     const lines = [
-      'Foraging: Wisdom (Survival) d20 (3) + 1 WIS = 4 vs DC 15 — failure',
-      'Look-out: Wisdom (Perception) d20 (15) = 15 vs DC 15 — success',
-      'Navigation: Wisdom (Survival) d20 (dis: 4, 12) + 2 WIS = 6 vs DC 10 — failure',
+      'Wisdom (Survival) check — rolling a d20…',
+      'd20 3 + 1 (WIS) = 4 vs DC 15 — failure',
+      'd20 15 = 15 vs DC 15 — success',
+      'd20 (dis: 4, 12) 4 + 2 (WIS) = 6 vs DC 10 — failure',
     ];
     expect(filterSystemLogForEngine(lines, 'dnd')).toEqual(lines);
   });

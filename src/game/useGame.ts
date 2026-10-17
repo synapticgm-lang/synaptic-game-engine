@@ -98,7 +98,7 @@ import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
 import { playerFacingImageFailLine, prepareKidSafeImagePrompt } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
-import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
+import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks, stampOfferedChipChecks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import {
@@ -175,7 +175,8 @@ import {
   buildObligationRetryBlock,
 } from './intentContract';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
-import { runPlayerCheck } from './checkMath';
+import { checkForAction, runPlayerCheck, type CheckSpec } from './checkMath';
+import { formatPreRollLine, formatResultLine } from './rules/rollView';
 import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import {
@@ -354,7 +355,7 @@ import {
   recentGmBeatTexts,
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
-import { carryLimitOn, withHouseRules } from './rules/houseRules';
+import { carryLimitOn, resolveInspirationReroll, stampLastCheckResult, withHouseRules } from './rules/houseRules';
 import { modeProfile } from './rules/modeProfile';
 import { applyAwayRest } from './rules/awayRest';
 import { realEncounterCr } from './rules/srdMonsters';
@@ -2631,7 +2632,32 @@ export function useGame() {
         stateRef.current = accusedState;
       }
 
-      const check = runPlayerCheck(liveCurrent, intentForMandate, sanitizedInput);
+      // TT-H1: Inspiration reroll chip spends the stamped CheckResultRecord die (own ChipKind).
+      const inspirationTurn = resolveInspirationReroll(liveCurrent, sanitizedInput);
+      if (inspirationTurn) liveCurrent = inspirationTurn.state;
+
+      // VR1-a: same CheckSpec for typed actions as for chips (checkForAction → runPlayerCheck record).
+      const actionCheckSpec = inspirationTurn ? null : checkForAction(liveCurrent, intentForMandate, sanitizedInput);
+      const check = inspirationTurn
+        ? ({
+            d20: liveCurrent.lastCheckResult?.kept ?? 0,
+            modifier: (liveCurrent.lastCheckResult?.total ?? 0) - (liveCurrent.lastCheckResult?.kept ?? 0),
+            dc: liveCurrent.lastCheckResult?.dc ?? 0,
+            isSuccess: liveCurrent.lastCheckResult?.outcome === 'success',
+            isCriticalSuccess: false,
+            isCriticalFailure: false,
+            totalScore: liveCurrent.lastCheckResult?.total ?? 0,
+            margin: (liveCurrent.lastCheckResult?.total ?? 0) - (liveCurrent.lastCheckResult?.dc ?? 0),
+            label: liveCurrent.lastCheckResult?.label ?? 'Check',
+            attr: 'CHA' as const,
+            codeResolutionText: inspirationTurn.receipts[0] ?? '',
+            narrativeOutcomeLabel: (liveCurrent.lastCheckResult?.outcome === 'success' ? 'SUCCESS' : 'FAILURE') as 'SUCCESS' | 'FAILURE',
+            skippedRoll: true,
+            record: liveCurrent.lastCheckResult,
+            displayLine: inspirationTurn.receipts[0] ?? '',
+          })
+        : runPlayerCheck(liveCurrent, intentForMandate, sanitizedInput);
+      if (!inspirationTurn && check.record) liveCurrent = stampLastCheckResult(liveCurrent, check.record);
       const d20Roll = check.d20;
       const strMod = check.modifier;
       const difficultyClass = check.dc;
@@ -2852,6 +2878,9 @@ export function useGame() {
       if (shopTurn) {
         liveCurrent = shopTurn.state;
         pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...shopTurn.receipts];
+      }
+      if (inspirationTurn) {
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...inspirationTurn.receipts];
       }
       // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
       liveCurrent = recordCirclingTurn(
@@ -3203,16 +3232,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
       }
 
-      // Dice math belongs in the player-facing system log only for tabletop fantasy.
-      // 28c — engine check record: D&D shows the full maths; LitRPG only the outcome, and only when a modifier cue applies.
-      const codeSystemLogLine = !check.skippedRoll && check.displayLine && (isDndEngine || check.record?.cue)
-        ? check.displayLine
-        : isDndEngine && !check.skippedRoll
-          ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
+      // VR1-a tabletop: pre-roll + result from the record. LitRPG/RPG keep 28c displayLine.
+      const preSpec: CheckSpec | null = actionCheckSpec ?? (check.record?.spec as CheckSpec | undefined) ?? null;
+      const vr1RollLines = isDndEngine && !check.skippedRoll && check.record
+        ? [...(preSpec ? [formatPreRollLine(preSpec)] : []), formatResultLine(check.record)]
+        : [];
+      const codeSystemLogLine =
+        vr1RollLines.length === 0 && !check.skippedRoll && check.displayLine && (isDndEngine || check.record?.cue)
+          ? check.displayLine
           : null;
       const rawSystemLog = [
         ...(mudTurnLive ? mudTurnLive.receiptLines : []),
         ...(result.systemLog ?? []),
+        ...vr1RollLines,
         ...(codeSystemLogLine ? [codeSystemLogLine] : []),
         ...pendingArcStatusReceipts,
       ];
@@ -4797,6 +4829,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       if (circlingRecorded) mergedState = creditCommittedProgress(circlingRecorded, mergedState, sanitizedInput);
       mergedState = commitOfferedPad({ ...mergedState, choices: heardChoices }, gmEntry.id);
+      mergedState = stampOfferedChipChecks(mergedState);
       mergedState = recordReplayHash(mergedState);
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();

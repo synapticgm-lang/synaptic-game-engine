@@ -129,12 +129,17 @@ describe('ledger Slice 4 — quest fail + hooks', () => {
     ];
     const quests = applyQuestHooksFromLedger([baseQuest], state, 10, {
       combat: {
+        weaponName: 'Iron Dagger',
         enemyName: 'Stockboy',
+        enemyHpBefore: 10,
+        enemyHpAfter: 0,
         enemyDead: true,
+        enemyActs: false,
+        enemyActReason: 'down',
         dealt: 10,
         received: 0,
         playerHpAfter: 15,
-        fled: false,
+        xp: 40,
       },
       bossKill: true,
     });

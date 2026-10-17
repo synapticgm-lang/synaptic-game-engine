@@ -16,7 +16,9 @@ import { encounterKind, milestoneXp, payCompanionsFightXp, paySummonsFightXp, ta
 import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
-import { growWeaponFamiliarity, weaponCategory } from './checkRules';
+import { growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from './checkRules';
+import { formatPreRollLine, formatResultLine, outcomeFactFromRecord } from './rules/rollView';
+import type { CheckSpec } from './checkMath';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
@@ -141,37 +143,59 @@ function sheetSkillTotal(state: GameState, skill: 'Acrobatics' | 'Persuasion', a
   return row ? row.total : abilityModOf(state.character.attributes?.[ability] ?? 10);
 }
 
-const signedMod = (m: number) => `${m >= 0 ? '+' : '−'} ${Math.abs(m)}`;
-
 /**
  * Tabletop break-away, SRD 5.2.1 as written. Escape: a Dexterity (Acrobatics) contest with the foe's Dexterity
  * check; a tie leaves things as they were. Parley: the Influence action, a Charisma (Persuasion) check against
  * DC 15 (Medium) or the foe's Intelligence score, whichever is higher.
+ * VR1-b: one CheckResultRecord; STATUS/writer lines from formatPreRollLine / formatResultLine / outcomeFactFromRecord.
+ * Cut: hand-built `Flee check: d20…` / `Parley check: d20…` strings.
  */
 export function srdBreakAwayCheck(
   state: GameState,
   enc: ActiveEncounter,
   flee: boolean,
   rng: () => number = turnRng(state, flee ? 'flee' : 'parley')
-): { ok: boolean; line: string } {
-  const d20 = () => Math.floor(rng() * 20) + 1;
+): { ok: boolean; line: string; lines: string[]; record: ReturnType<typeof resolveCheckRecord> } {
   const block = statBlockForEncounter(enc);
   if (flee) {
     const mod = sheetSkillTotal(state, 'Acrobatics', 'DEX');
     const foeMod = abilityModOf(block.scores.DEX);
-    const roll = d20();
-    const foeRoll = d20();
-    const ok = roll + mod > foeRoll + foeMod;
+    // Same roll order as before (PC then foe) so seeded turnRng / bank tapes stay aligned.
+    const pcDie = Math.floor(rng() * 20) + 1;
+    const foeDie = Math.floor(rng() * 20) + 1;
+    // Contest: PC must beat the foe total (tie fails). Record uses total >= dc → dc = foeTotal + 1.
+    const foeTotal = foeDie + foeMod;
+    const dc = foeTotal + 1;
+    const rec = resolveCheckRecord({
+      label: 'Flee contest',
+      mods: [{ label: 'DEX', value: mod }],
+      dc,
+      d20s: [pcDie],
+    });
+    // SRD 5.2.1 Escape: Dexterity (Acrobatics) contest — skill on the CheckSpec so formatPreRollLine names it.
+    rec.spec = { kind: 'contest', ability: 'DEX', skill: 'acrobatics', dc, dcShown: false, adv: 'normal' };
     return {
-      ok,
-      line: `Flee check: d20 ${roll} ${signedMod(mod)} = ${roll + mod} vs ${enc.name} d20 ${foeRoll} ${signedMod(foeMod)} = ${foeRoll + foeMod} — ${ok ? 'success' : 'failure'}`,
+      ok: rec.outcome === 'success',
+      line: formatResultLine(rec),
+      lines: [formatPreRollLine(rec.spec as CheckSpec), formatResultLine(rec), outcomeFactFromRecord(rec)],
+      record: rec,
     };
   }
   const mod = sheetSkillTotal(state, 'Persuasion', 'CHA');
   const dc = Math.max(15, block.scores.INT);
-  const roll = d20();
-  const ok = roll + mod >= dc;
-  return { ok, line: `Parley check: d20 ${roll} ${signedMod(mod)} vs DC ${dc} — ${ok ? 'success' : 'failure'}` };
+  const rec = resolveCheckRecord({
+    label: 'Parley',
+    mods: [{ label: 'CHA', value: mod }],
+    dc,
+    rng,
+  });
+  rec.spec = { kind: 'skill', ability: 'CHA', skill: 'persuasion', dc, dcShown: false, adv: 'normal' };
+  return {
+    ok: rec.outcome === 'success',
+    line: formatResultLine(rec),
+    lines: [formatPreRollLine(rec.spec as CheckSpec), formatResultLine(rec), outcomeFactFromRecord(rec)],
+    record: rec,
+  };
 }
 
 /** Tabletop: a forced fight's failed flee/parley is part of the outcome the story tells. */
@@ -229,7 +253,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     if (state.engineMode === 'dnd') {
       const check = srdBreakAwayCheck(working, enc, flee);
       ok = check.ok;
-      receipts.push(check.line);
+      receipts.push(...check.lines);
     } else {
       const attrs = working.character.attributes;
       const score = flee ? attrs?.DEX ?? 12 : attrs?.CHA ?? 10;
@@ -237,9 +261,21 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       const dc = flee ? 12 : 13;
       const roll = Math.floor(turnRng(working, flee ? 'flee' : 'parley')() * 20) + 1;
       ok = roll + mod >= dc;
-      receipts.push(
-        `${flee ? 'Flee' : 'Parley'} check: d20 ${roll} ${mod >= 0 ? '+' : '−'} ${Math.abs(mod)} vs DC ${dc} — ${ok ? 'success' : 'failure'}`
-      );
+      const rec = resolveCheckRecord({
+        label: flee ? 'Flee' : 'Parley',
+        mods: [{ label: flee ? 'DEX' : 'CHA', value: mod }],
+        dc,
+        d20s: [roll],
+      });
+      rec.spec = {
+        kind: flee ? 'contest' : 'skill',
+        ability: flee ? 'DEX' : 'CHA',
+        ...(flee ? {} : { skill: 'persuasion' as const }),
+        dc,
+        dcShown: false,
+        adv: 'normal',
+      };
+      receipts.push(formatResultLine(rec), outcomeFactFromRecord(rec));
     }
     if (ok) {
       const tick = tickEncounterTerminal(working, input, flee ? { fleeSucceeded: true } : { parleySucceeded: true });

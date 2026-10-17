@@ -102,11 +102,14 @@ describe('3 — a road meeting\'s own chip takes on that meeting', () => {
   it('"Skirt around the camp" rolls the slip past, not an attack on the waiting spawn (lap 13 A T21)', () => {
     const base = ck({ turn: 21, currentLocation: 'On the road between places', journey: camp } as unknown as Partial<GameState>);
     const withSpawn = { ...base, sceneFacts: { ...(base.sceneFacts ?? {}), pendingEncounter: spawn } } as unknown as GameState;
-    const checkOf = (r: ReturnType<typeof resolveEngineFight>) =>
-      (r?.receipts ?? []).find((l) => /check:/i.test(l))?.replace(/d20 .*$/, '') ?? '';
+    // VR1-b: flee is formatPreRollLine / formatResultLine — not "Flee check: …". Dice may differ across calls; kind must match.
+    const isFleeSlip = (r: ReturnType<typeof resolveEngineFight>) =>
+      (r?.receipts ?? []).some((l) => /Dexterity \(Acrobatics\) contest — rolling a d20/.test(l)) &&
+      (r?.receipts ?? []).some((l) => /^d20 .+ vs DC .+ — (?:success|failure)$/.test(l));
     const busy = resolveEngineFight(withSpawn, chip);
-    expect(checkOf(busy)).toBe(checkOf(resolveEngineFight(base, chip)));
-    expect(checkOf(busy)).toMatch(/^Flee check/);
+    const alone = resolveEngineFight(base, chip);
+    expect(isFleeSlip(busy)).toBe(true);
+    expect(isFleeSlip(alone)).toBe(true);
     expect(JSON.stringify(busy?.receipts ?? [])).not.toMatch(/Lantern Pilgrim|Attack/);
   });
 });

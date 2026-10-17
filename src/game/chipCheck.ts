@@ -23,6 +23,7 @@ export const CHIP_RESOLVERS: Record<ChipKind, string> = {
   system: 'system prompt pad',
   journey: 'travelJourney',
   shop: 'resolveShopChip (buyItem/sellItem)',
+  'inspiration-reroll': 'resolveInspirationReroll (CheckResultRecord die)',
 };
 
 export type ChipCheckFlag = { kind: 'dead-chip' | 'missing-chip-kind'; detail: string };

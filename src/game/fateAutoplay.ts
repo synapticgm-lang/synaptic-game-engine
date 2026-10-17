@@ -166,7 +166,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
-import { carryLimitOn, withHouseRules } from './rules/houseRules';
+import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
@@ -1208,6 +1208,12 @@ export async function headlessFateTurn(
   const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
   arcState = tabletopTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
+  // TT-H1: Inspiration reroll chip (CheckResultRecord die).
+  const inspirationTurn = resolveInspirationReroll(arcState, playerInput);
+  if (inspirationTurn) {
+    arcState = inspirationTurn.state;
+    arcStatusReceipts = [...arcStatusReceipts, ...inspirationTurn.receipts];
+  }
   // OPT-6: headless resolves shop chips through the same resolveShopChip as live play.
   const shopTurn = resolveShopChip(arcState, playerInput);
   if (shopTurn) {
