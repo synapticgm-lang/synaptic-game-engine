@@ -1031,6 +1031,8 @@ export function compileChoices(
       } else if (npcTacticAdvance) {
         supplements.push('Change the subject');
         if (!excluded.has('leave')) supplements.push('Walk away with consequence');
+      } else if (affordancesCoverGenerics(state)) {
+        // OPT-1 item 4 / TT-C1 item 5: Scout/Inspect refill deleted when affordances cover.
       } else if (state.engineMode === 'litrpg') {
         // 31i — no Check Status / Wait spam under drought (same dead path)
         supplements.push('Ask what they want', 'Scout the exit', 'Inspect the immediate surroundings');

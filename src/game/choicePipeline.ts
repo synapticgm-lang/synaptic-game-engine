@@ -1190,9 +1190,24 @@ export function padChoicesToCount(
 
   let cappedEnd: string[];
   if (!affordancesCoverGenerics(state)) {
-    cappedEnd = applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+    // Stance/path density may invent labels; keep only engine-backed chips (dead-chip contract).
+    const densed = applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+    const legal: string[] = [];
+    for (let i = 0; i < densed.length; i++) {
+      const label = densed[i]!;
+      if (isLegalEnginePad(label, state, storyProse)) legal.push(label);
+    }
+    cappedEnd = legal;
+    if (!cappedEnd.length) {
+      for (let i = 0; i < merged.length && cappedEnd.length < 4; i++) {
+        const label = sanitizeChoiceLabel(merged[i]!);
+        if (label && isLegalEnginePad(label, state, storyProse)) cappedEnd.push(label);
+      }
+    }
   } else {
     // OPT-1 item 4: entity-bound labels + free chips; no first-come slice(0,4).
+    // Engine-record backing only — stance/path density must not inject unregistered pads
+    // (RPG "Use the situation as leverage" / "Act on faction…" were dead-chip in G-O1-rpg).
     const aff = allocateAffordanceSlots(collectSceneAffordances(state), undefined, state);
     const out: string[] = [];
     const seen = new Set<string>();
@@ -1209,25 +1224,27 @@ export function padChoicesToCount(
       if (!label || isFreeInputChip(label)) continue;
       const low = label.toLowerCase();
       if (seen.has(low)) continue;
+      if (!isLegalEnginePad(label, state, storyProse)) continue;
       const action = engineChipActionKey(label) || `label:${low}`;
       if (isOptionRepeat(state, action)) continue;
       if (out.length >= 5) break;
       seen.add(low);
       out.push(label);
     }
-    cappedEnd = applyStanceDensity(out, state, storyProse, lastPlayerAction);
-    for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
-      const label = sanitizeChoiceLabel(free);
-      if (!label) continue;
-      let has = false;
-      for (let i = 0; i < cappedEnd.length; i++) {
-        if (cappedEnd[i]!.toLowerCase() === label.toLowerCase()) {
-          has = true;
-          break;
-        }
+    cappedEnd = out;
+  }
+  // TT-C1 item 4: free-input chips always offered (do not count against the affordance cap).
+  for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+    const label = sanitizeChoiceLabel(free);
+    if (!label) continue;
+    let has = false;
+    for (let i = 0; i < cappedEnd.length; i++) {
+      if (cappedEnd[i]!.toLowerCase() === label.toLowerCase()) {
+        has = true;
+        break;
       }
-      if (!has) cappedEnd.push(label);
     }
+    if (!has) cappedEnd.push(label);
   }
   return sealPadUniverse(cappedEnd, state, excluded);
 }
