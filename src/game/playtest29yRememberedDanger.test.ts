@@ -95,9 +95,8 @@ describe('29y — remembered danger', () => {
     const live = { ...base(), activeEncounter: foe({ hp: 400, maxHp: 400, armorClass: 40, strength: 30 }) };
     vi.spyOn(Math, 'random').mockReturnValue(0);
     const arc = runArcDirectorBeforeGm(live, 'Parley with the Bell-Warden');
-    // VR1-b: Parley uses formatPreRollLine / formatResultLine / Check failure — not "Parley check: …".
-    expect(arc.systemReceipts.join(' ')).toMatch(/Charisma \(Persuasion\) check — rolling a d20/);
-    expect(arc.systemReceipts.join(' ')).toMatch(/d20 1 = 1 vs DC 15 — failure/);
+    // VR1-b: Parley STATUS is formatBreakAwayStatus from the CheckResultRecord + Check failure fact.
+    expect(arc.systemReceipts.join(' ')).toMatch(/Parley check: d20 1 [+−] \d+ vs DC 15 — failure/);
     expect(arc.systemReceipts.join(' ')).toMatch(/Check failure/);
     const kept = arc.state.placeThreats?.[placeThreatKey(CHURCH)];
     expect(kept).toBeTruthy();

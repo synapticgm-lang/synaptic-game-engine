@@ -31,12 +31,12 @@ describe('tt-fix-6 item 1 — tabletop follows SRD 5.2.1', () => {
   it('escape is a contest, parley is Influence at DC max(15, INT)', () => {
     const enc = { id: 'e1', name: 'Goblin', hp: 7, maxHp: 7 } as unknown as ActiveEncounter;
     const flee = srdBreakAwayCheck(tabletop(), enc, true, () => 0.5);
-    // VR1-b: shared formatResultLine from CheckResultRecord (contest vs foe total as DC).
-    expect(flee.line).toMatch(/^d20 \d+ [+−] \d+ \(DEX\) = -?\d+ vs DC \d+ — (?:success|failure)$/);
+    // VR1-b: formatBreakAwayStatus from CheckResultRecord (contest shows both dice).
+    expect(flee.line).toMatch(/^Flee check: d20 \d+ [+−] \d+ = -?\d+ vs Goblin d20 \d+ [+−] \d+ = -?\d+ — (?:success|failure)$/);
     expect(flee.record.spec?.kind).toBe('contest');
     expect(flee.ok).toBe(false);
     const parley = srdBreakAwayCheck(tabletop(), enc, false, () => 0.5);
-    expect(parley.line).toMatch(/vs DC 15 —/);
+    expect(parley.line).toMatch(/^Parley check: d20 .+ vs DC 15 —/);
   });
 });
 

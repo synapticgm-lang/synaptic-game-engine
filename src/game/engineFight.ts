@@ -17,8 +17,7 @@ import { milestoneAreaOpts } from './placeAuthority';
 import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from './checkRules';
-import { formatPreRollLine, formatResultLine, outcomeFactFromRecord } from './rules/rollView';
-import type { CheckSpec } from './checkMath';
+import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
@@ -147,8 +146,8 @@ function sheetSkillTotal(state: GameState, skill: 'Acrobatics' | 'Persuasion', a
  * Tabletop break-away, SRD 5.2.1 as written. Escape: a Dexterity (Acrobatics) contest with the foe's Dexterity
  * check; a tie leaves things as they were. Parley: the Influence action, a Charisma (Persuasion) check against
  * DC 15 (Medium) or the foe's Intelligence score, whichever is higher.
- * VR1-b: one CheckResultRecord; STATUS/writer lines from formatPreRollLine / formatResultLine / outcomeFactFromRecord.
- * Cut: hand-built `Flee check: d20…` / `Parley check: d20…` strings.
+ * VR1-b: one CheckResultRecord; STATUS via formatBreakAwayStatus (record maths + contest foe side).
+ * Cut: duplicate hand-built roll paths — presentation shares the record.
  */
 export function srdBreakAwayCheck(
   state: GameState,
@@ -174,10 +173,12 @@ export function srdBreakAwayCheck(
     });
     // SRD 5.2.1 Escape: Dexterity (Acrobatics) contest — skill on the CheckSpec so formatPreRollLine names it.
     rec.spec = { kind: 'contest', ability: 'DEX', skill: 'acrobatics', dc, dcShown: false, adv: 'normal' };
+    const status = formatBreakAwayStatus('flee', rec, { name: enc.name, die: foeDie, mod: foeMod });
     return {
       ok: rec.outcome === 'success',
-      line: formatResultLine(rec),
-      lines: [formatPreRollLine(rec.spec as CheckSpec), formatResultLine(rec), outcomeFactFromRecord(rec)],
+      line: status,
+      // STATUS = record presentation only (pre-roll cue is live UI; no bare "d20" without a kept die).
+      lines: [status, outcomeFactFromRecord(rec)],
       record: rec,
     };
   }
@@ -190,10 +191,11 @@ export function srdBreakAwayCheck(
     rng,
   });
   rec.spec = { kind: 'skill', ability: 'CHA', skill: 'persuasion', dc, dcShown: false, adv: 'normal' };
+  const status = formatBreakAwayStatus('parley', rec);
   return {
     ok: rec.outcome === 'success',
-    line: formatResultLine(rec),
-    lines: [formatPreRollLine(rec.spec as CheckSpec), formatResultLine(rec), outcomeFactFromRecord(rec)],
+    line: status,
+    lines: [status, outcomeFactFromRecord(rec)],
     record: rec,
   };
 }
@@ -275,7 +277,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
         dcShown: false,
         adv: 'normal',
       };
-      receipts.push(formatResultLine(rec), outcomeFactFromRecord(rec));
+      receipts.push(formatBreakAwayStatus(flee ? 'flee' : 'parley', rec), outcomeFactFromRecord(rec));
     }
     if (ok) {
       const tick = tickEncounterTerminal(working, input, flee ? { fleeSucceeded: true } : { parleySucceeded: true });

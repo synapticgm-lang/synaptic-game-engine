@@ -52,10 +52,9 @@ import {
 } from './rules/travelDay';
 import { modeProfile } from './rules/modeProfile';
 import { commitDeath } from './rules/death';
-import { combineAdv, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
+import { combineAdv, formatCheckRecord, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
 import { skillCheckMods } from './checkMath';
-import { formatPreRollLine, formatResultLine, isVr1RollLine, outcomeFactFromRecord } from './rules/rollView';
-import type { CheckSpec } from './checkMath';
+import { isVr1RollLine, outcomeFactFromRecord } from './rules/rollView';
 import { applyCampRest } from './recoveryRules';
 import { sidekickOf } from './rules/sidekick';
 import { recruitedCompanions, settleCampTalk } from './rules/companions';
@@ -1121,7 +1120,7 @@ export function travelEngineLines(commit: TravelCommit): string[] {
   const lines: string[] = [];
   for (let i = 0; i < (commit.extra ?? []).length; i++) {
     const t = commit.extra![i]!.trim();
-    // VR1-b: CON save STATUS is formatPreRollLine / formatResultLine (cut formatCheckRecord Extended Travel strings).
+    // Record-backed STATUS: formatCheckRecord label "Extended Travel: Constitution save…" (VR1-b CheckResultRecord).
     if (t.toLowerCase().startsWith('extended travel:') || isVr1RollLine(t) || t.startsWith('Constitution save')) lines.push(t);
   }
   for (let i = 0; i < (commit.facts ?? []).length; i++) {
@@ -1343,14 +1342,14 @@ function assignJobs(state: GameState, j: TravelJourney): Partial<Record<TravelJo
 }
 
 /**
- * VR1-b: STATUS lines from the shared CheckResultRecord (formatPreRollLine + formatResultLine).
- * Cut: per-roller formatCheckRecord strings (Navigation/Look-out/Foraging hand-built maths).
+ * VR1-b: STATUS from the shared CheckResultRecord via formatCheckRecord (one maths path; label names the job).
+ * Pre-roll ("rolling a d20…") stays on the live chip UI — silent rollers already rolled, so STATUS is the result only
+ * (bare "d20" with no kept die must not enter STATUS or die chrome counts a phantom).
  * SRD 5.2.1 Travel Terrain DCs (WotC CC BY 4.0) still set the record's dc.
  */
 function checkLines(state: GameState, rec: CheckResultRecord): string[] {
   if (modeProfile(state.engineMode).numbers === 'hidden') return [];
-  const spec = rec.spec as CheckSpec | undefined;
-  return [...(spec ? [formatPreRollLine(spec)] : []), formatResultLine(rec)];
+  return [formatCheckRecord(rec, state.engineMode)];
 }
 
 /**

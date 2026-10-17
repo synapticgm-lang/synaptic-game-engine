@@ -102,10 +102,9 @@ describe('3 — a road meeting\'s own chip takes on that meeting', () => {
   it('"Skirt around the camp" rolls the slip past, not an attack on the waiting spawn (lap 13 A T21)', () => {
     const base = ck({ turn: 21, currentLocation: 'On the road between places', journey: camp } as unknown as Partial<GameState>);
     const withSpawn = { ...base, sceneFacts: { ...(base.sceneFacts ?? {}), pendingEncounter: spawn } } as unknown as GameState;
-    // VR1-b: flee is formatPreRollLine / formatResultLine — not "Flee check: …". Dice may differ across calls; kind must match.
+    // VR1-b: flee STATUS is formatBreakAwayStatus from the CheckResultRecord.
     const isFleeSlip = (r: ReturnType<typeof resolveEngineFight>) =>
-      (r?.receipts ?? []).some((l) => /Dexterity \(Acrobatics\) contest — rolling a d20/.test(l)) &&
-      (r?.receipts ?? []).some((l) => /^d20 .+ vs DC .+ — (?:success|failure)$/.test(l));
+      (r?.receipts ?? []).some((l) => /^Flee check: d20 \d+ [+−] \d+ = \d+ vs .+ d20 \d+ [+−] \d+ = \d+ — (?:success|failure)$/.test(l));
     const busy = resolveEngineFight(withSpawn, chip);
     const alone = resolveEngineFight(base, chip);
     expect(isFleeSlip(busy)).toBe(true);
