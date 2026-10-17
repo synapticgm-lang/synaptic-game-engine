@@ -181,16 +181,12 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string): GameStat
   };
 }
 
-/**
- * q43-OCD — one end-of-turn pad commit shared by live useGame and headless fateAutoplay:
- * commitOfferedPad → stampOfferedChipChecks → recordReplayHash (that order).
- * Stamping writes recentOfferedActions so LitRPG/RPG cooldown and the tabletop 08:41 repeat rule
- * see the same history in fate-autoplay check laps and mega games.
- */
+/** q43-OCD — pad, stamp recentOfferedActions, rebind stored pad, then replay hash. */
 export function commitOfferedTurn(state: GameState, gmEntryId?: string, storyProse = ''): GameState {
-  return recordReplayHash(stampOfferedChipChecks(commitOfferedPad(state, gmEntryId), storyProse));
+  const stamped = stampOfferedChipChecks(commitOfferedPad(state, gmEntryId), storyProse);
+  // storedTurnPad is what the next turn offers. Rebind after the stamp so a cooled label is not still on that pad.
+  return recordReplayHash(commitOfferedPad({ ...stamped, offeredPad: null }, gmEntryId));
 }
-
 
 function slugFilenamePart(raw: string): string {
   const s = raw
