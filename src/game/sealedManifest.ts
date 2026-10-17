@@ -31,15 +31,6 @@ export interface SceneManifest {
 
 export type RenderFallbackReason = 'empty' | 'timeout' | 'fail' | 'malformed';
 
-function fnv1a(input: string): string {
-  let h = 2166136261;
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (h >>> 0).toString(16).padStart(8, '0');
-}
-
 /** Hash committed beat effects before GM call (B026). */
 export function hashBeatEffects(state: GameState, arc?: ArcDirectorResult): string {
   const parts = [
@@ -57,7 +48,13 @@ export function hashBeatEffects(state: GameState, arc?: ArcDirectorResult): stri
       ])
     ),
   ];
-  return fnv1a(parts.join('|'));
+  const input = parts.join('|');
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
 }
 
 /** Build sealed manifest from post-ArcDirector state (B026 Wave 3 enhanced). */
@@ -210,38 +207,24 @@ export function clearEngineRecoveryStreak(state: GameState): GameState {
  * Diegetic local stitch when GM is empty — narrative only, never HUD PC/HP/XP lines.
  * Encounter branch narrates live ledger foe; never the closes-in template.
  */
-function fallbackPlace(state: GameState): string {
-  const raw = cleanPlaceLabel(playerFacingLocation(state) || state.currentLocation?.trim() || 'here');
-  if (!raw || /^alone\b/i.test(raw) || /,/.test(raw) || raw.length > 48) {
-    return shortRoomLabel(raw, 'this room');
-  }
-  return raw;
-}
-
-function lastBeatIsStory(raw: string): boolean {
-  const lastBeat = raw.replace(/\s+/g, ' ').trim();
-  if (lastBeat.length < 24) return false;
-  if (/;/.test(lastBeat)) return false;
-  if (
-    /\b(?:street empty|it is quiet|System panel is visible|people are present|people are shouting)\b/i.test(
-      lastBeat
-    )
-  ) {
-    return false;
-  }
-  return true;
-}
-
 export function renderDeterministicFallback(
   manifest: SceneManifest,
   state: GameState
 ): string {
-  const loc = fallbackPlace(state);
+  const rawPlace = cleanPlaceLabel(playerFacingLocation(state) || state.currentLocation?.trim() || 'here');
+  const loc =
+    !rawPlace || /^alone\b/i.test(rawPlace) || /,/.test(rawPlace) || rawPlace.length > 48
+      ? shortRoomLabel(rawPlace, 'this room')
+      : rawPlace;
   const enc = state.activeEncounter;
   const lastBeat = (state.sceneFacts?.lastBeat ?? '').replace(/\s+/g, ' ').trim();
-  const beatHint = lastBeatIsStory(lastBeat)
-    ? `${lastBeat.slice(0, 140).replace(/[.!?]?$/, '')}.`
-    : '';
+  const storyBeat =
+    lastBeat.length >= 24 &&
+    !/;/.test(lastBeat) &&
+    !/\b(?:street empty|it is quiet|System panel is visible|people are present|people are shouting)\b/i.test(
+      lastBeat,
+    );
+  const beatHint = storyBeat ? `${lastBeat.slice(0, 140).replace(/[.!?]?$/, '')}.` : '';
   const action = (manifest.playerAction ?? '').toLowerCase();
   const inspectish = /\b(inspect|examine|search|look|panel)\b/i.test(action);
 

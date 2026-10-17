@@ -44,6 +44,7 @@ import { originPad } from './rules/rpgOrigin';
 import { journeyPads } from './travelJourney';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
+import { allocateAffordanceSlots, collectSceneAffordances } from './sceneAffordances';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -398,7 +399,8 @@ export type ChipKind =
   | 'system'
   | 'journey'
   | 'shop'
-  | 'inspiration-reroll';
+  | 'inspiration-reroll'
+  | 'affordance';
 
 let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
 
@@ -447,6 +449,21 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   ];
   const seen = new Set<string>();
   const chips: EngineChip[] = [];
+  // TT-C1 / OPT-1: scene affordances bind by actionId + entityId (plan §4); LitRPG/RPG builders stay as fallback.
+  for (const a of allocateAffordanceSlots(collectSceneAffordances(state))) {
+    const label = sanitizeChoiceLabel(a.label);
+    if (!label) continue;
+    const low = label.toLowerCase();
+    if (seen.has(low)) continue;
+    seen.add(low);
+    chips.push({
+      label,
+      action: a.actionId,
+      kind: 'affordance',
+      check: a.check,
+      entityId: a.entityId,
+    });
+  }
   for (const [kind, raws] of sources) {
     for (const raw of raws) {
       const label = sanitizeChoiceLabel(raw);
@@ -1090,7 +1107,7 @@ export function padChoicesToCount(
   if (merged.length < min && fallbacksAdded < fallbacks.length) {
     for (const extra of fallbacks) {
       if (merged.length >= min) break;
-      if (inventsPresenceOnEmptyScene(extra, storyProse)) continue;
+      if (inventsPresenceOnEmptyScene(extra, state, storyProse)) continue;
       if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
     }
   }

@@ -16,13 +16,14 @@ import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
 import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
-import { choiceNamesUnnarratedObject } from './choicePipeline';
+import { boundEngineChip, choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
 import { crowdHere } from './sceneFacts';
 import { isSystemStatusChip } from './systemHousing';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { hasOpenAsk } from './questGiver';
+import { affordanceEntityPresent } from './sceneAffordances';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -179,6 +180,17 @@ function lastStory(state: GameState): string {
 export function chipProblem(state: GameState, chip: string, storyProse = lastStory(state)): ChipProblem | null {
   const label = norm(chip);
   if (!label) return null;
+  // Plan §4 / OPT-1: entity-bound affordance chips beat chipLegality word guesses.
+  const bound = boundEngineChip(chip, state, storyProse);
+  if (bound?.kind === 'affordance' && bound.entityId) {
+    if (!affordanceEntityPresent(state, bound.entityId)) {
+      return {
+        kind: 'ghost-chip',
+        detail: `"${label}" targets ${bound.entityId}, which is not in the scene record`,
+      };
+    }
+    return null;
+  }
   const lastKill = state.sceneFacts?.lastKill;
   if (isLastKillTalkPad(label, lastKill)) {
     return { kind: 'impossible-chip', detail: `"${label}" talks to ${lastKill?.name}, who is dead` };
