@@ -836,6 +836,10 @@ export interface GameState {
   houseRules?: HouseRules;
   /** Milestone keys (quest complete, ending) that already earned Heroic Inspiration. */
   inspirationKeys?: string[];
+  /** TT-H1: last VR1 CheckResultRecord eligible for a Heroic Inspiration reroll chip. */
+  lastCheckResult?: import('./checkRules').CheckResultRecord;
+  /** TT-H1: turn of the last engine GM Inspiration award (≈20-turn gap). */
+  lastInspirationAwardTurn?: number;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];

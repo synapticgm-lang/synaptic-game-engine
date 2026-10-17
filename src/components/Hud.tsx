@@ -6,6 +6,7 @@ import { getTierDefinition, type SubscriptionTierId } from '../game/subscription
 import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
+import { houseRulesOf } from '../game/rules/houseRules';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
 export const HUD_BUILD_STAMP = '2026-10-16z17';
@@ -40,6 +41,10 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
 
   const c = state?.character;
   const hpPercent = c && c.maxHp > 0 ? Math.round((c.hp / c.maxHp) * 100) : 100;
+  const heroicInsp =
+    state?.engineMode === 'dnd' && houseRulesOf(state).heroicInspiration && state.character?.heroicInspiration
+      ? 'Inspiration'
+      : null;
   const ledger = loadCapacityLedger();
   const unlimitedText = hasUnlimitedTextCapacity();
   const founderLab = isFounderPlayAccount() && unlimitedText;
@@ -217,6 +222,16 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
           </div>
         </div>
         )}
+        {/* TT-H1: Heroic Inspiration held — status-bar indicator (tabletop). */}
+        {heroicInsp ? (
+          <span
+            data-testid="hud-heroic-inspiration"
+            className="shrink-0 rounded border border-amber-700/70 bg-amber-950/50 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-amber-300 sm:text-[11px]"
+            title="Heroic Inspiration (SRD 5.2.1): spend to reroll one die"
+          >
+            {heroicInsp}
+          </span>
+        ) : null}
       </div>
       )}
 
