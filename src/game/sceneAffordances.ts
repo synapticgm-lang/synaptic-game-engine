@@ -113,6 +113,22 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       required: false,
       check: dnd ? checkForAction(state, parsePlayerIntent(insight, state), insight) : undefined,
     });
+    // OPT3-2 / OPT-2 agenda hook: a present NPC's goal yields at least one OPT-1 affordance.
+    if (m.goal?.motivation && (m.goal.target || m.need)) {
+      const about = (m.need ?? m.goal.target).trim();
+      if (about) {
+        const agenda = `Ask ${name} about ${about}`;
+        all.push({
+          label: agenda,
+          actionId: `person:${entityId}:agenda`,
+          entityId,
+          slotKind: 'person',
+          salience: 85 - i,
+          required: true,
+          check: dnd ? checkForAction(state, parsePlayerIntent(agenda, state), agenda) : undefined,
+        });
+      }
+    }
   }
 
   // TT-G1 / OPT-4: open step routes expand as affordances (decision approaches included).

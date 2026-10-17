@@ -971,6 +971,11 @@ export interface GameState {
   craftKeepers?: import('./craftKeepers').CraftKeeper[];
   /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
   arcDirector?: import('./arcDirector').ArcDirectorState;
+  /**
+   * OPT-2 — quest generator spacing until q39-T1b moves it into the thread planner.
+   * lastTurn = turn of last generated quest; unboundLog = dropped writer quest-add proposals.
+   */
+  questGen?: { lastTurn: number; unboundLog?: string[] };
   /** Immutable run manifest for eval/replay binding. */
   runManifest?: import('./runManifest').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */

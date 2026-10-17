@@ -371,6 +371,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
+import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
@@ -2854,6 +2855,12 @@ export function useGame() {
         if (arc.systemReceipts.length) {
           arcReceiptLine = `\n[ARC RECEIPTS]: ${arc.systemReceipts.join('; ')}`;
         }
+        // OPT-2 — fill open-quest floor from the record (Doran→strategy→steps) before the writer.
+        {
+          const floor = ensureQuestFloor(liveCurrent);
+          liveCurrent = floor.state;
+          if (floor.notes.length) pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...floor.notes];
+        }
         stateRef.current = liveCurrent;
       }
 
@@ -3300,7 +3307,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         establishedProseForScrub,
         engineFact
       );
-      const events = warden.events;
+      // OPT-2 — writer quest-add is a proposal: bind to a generated quest or drop (`unbound quest`).
+      const questAddGate = applyQuestAddProposals(warden.events, liveCurrent);
+      liveCurrent = questAddGate.state;
+      if (questAddGate.notes.length) {
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...questAddGate.notes];
+      }
+      const events = questAddGate.events;
       const words = writerWordsGuard(
         !!writerProse?.trim() && result.text === writerProse,
         (s, draft) => sentenceRejectedInDraft(liveCurrent, s, draft, sanitizedInput)

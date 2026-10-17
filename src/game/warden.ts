@@ -191,10 +191,10 @@ export async function runWarden(
     }
 
     // Write-path: brand-new lore cards & quest-adds are deferred into the proposal
-    // (they still apply on Accept, but are labeled as proposed facts).
+    // (quest-add is bound or dropped as `unbound quest` by OPT-2 applyQuestAddProposals).
     if (e.type === 'lore-card' || e.type === 'quest-add') {
       deferred.push(e);
-      kept.push(e); // still apply on accept via normal path; noted for UI
+      kept.push(e); // quest-add still reaches the OPT-2 binder; lore applies on accept
       notes.push(
         e.type === 'lore-card'
           ? `Proposed lore fact: ${e.name ?? 'card'}`
