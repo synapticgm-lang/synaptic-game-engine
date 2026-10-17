@@ -1,13 +1,14 @@
 /**
  * q43-OCD — headless fate path stamps offered-chip history (John 17 Oct 16:59).
- * Shared commitOfferedTurn = commitOfferedPad → stampOfferedChipChecks → recordReplayHash.
+ * Shared commitOfferedTurn = commitOfferedPad → stampOfferedChipChecks → rebind pad → recordReplayHash.
  * LitRPG/RPG 5-turn cooldown and tabletop 08:41 rule both read recentOfferedActions from that stamp.
  * Free-input chips stay on the offeredChips record and are never cooled. No word lists.
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
+import { checkChipKinds } from './chipCheck';
 import { stampOfferedChipChecks } from './choicePipeline';
-import { commitOfferedTurn } from './playTranscript';
+import { commitOfferedTurn, resolveOfferedChoices } from './playTranscript';
 import {
   allocateAffordanceSlots,
   collectSceneAffordances,
@@ -181,5 +182,18 @@ describe('q43-OCD shared offered-chip commit', () => {
     const reoffer = again.find((a) => a.actionId === target!.actionId);
     if (reoffer) expect(reoffer.cooldownReturn === true || again.length < 2).toBe(true);
     else expect(again.every((a) => a.actionId !== target!.actionId)).toBe(true);
+  });
+
+  it('stored pad after the cooldown stamp binds in engineChips (no dead-chip)', () => {
+    let s = base('litrpg');
+    s = { ...s, turn: 2 };
+    s = commitOfferedTurn(s, 'gm-1');
+    const offered = resolveOfferedChoices(s);
+    expect(offered.length).toBeGreaterThan(0);
+    expect(checkChipKinds(s, offered).filter((f) => f.kind === 'dead-chip')).toEqual([]);
+    s = commitOfferedTurn(s, 'gm-1');
+    const again = resolveOfferedChoices(s);
+    expect(again.length).toBeGreaterThan(0);
+    expect(checkChipKinds(s, again).filter((f) => f.kind === 'dead-chip')).toEqual([]);
   });
 });
