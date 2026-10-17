@@ -864,6 +864,13 @@ export interface GameState {
     choices: string[];
     /** VR1 — CheckSpec by plain label (UI tags); never rewrite choice strings. */
     checks?: Record<string, import('./checkMath').CheckSpec>;
+    /** OPT1-8 — per-chip engine record (actionId / kind / cooldownReturn). */
+    chips?: Array<{
+      label: string;
+      actionId: string;
+      kind: string;
+      cooldownReturn?: boolean;
+    }>;
   } | null;
   /** Tabletop inn-book character creation in progress (engine-only pages, no writer). */
   tabletopCreation?: TabletopCreationState;
@@ -1430,6 +1437,16 @@ export interface LogEntry {
   offeredChoices?: string[];
   /** VR1 — CheckSpec keyed by plain offered label (beside offeredChoices). */
   offeredChipChecks?: Record<string, import('./checkMath').CheckSpec>;
+  /**
+   * OPT-1 / OPT1-8 — engine offered-chip record (actionId + kind + cooldownReturn).
+   * Labels stay plain; UI tags come from offeredChipChecks / CheckSpec.
+   */
+  offeredChips?: Array<{
+    label: string;
+    actionId: string;
+    kind: string;
+    cooldownReturn?: boolean;
+  }>;
   /** Diegetic LitRPG System window (blue panel) — ledger chrome, not STATUS. */
   systemWindow?: { heading: string; lines: string[] };
   /** Craft-book rule ids compiled for this beat (Debug / Download play). */

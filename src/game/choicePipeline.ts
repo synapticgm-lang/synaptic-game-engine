@@ -391,6 +391,8 @@ export type EngineChip = {
   kind: ChipKind;
   check?: CheckSpec | null;
   entityId?: string;
+  /** LitRPG/RPG cooldown floor restore (OPT1-8); never a skill/difficulty tag. */
+  cooldownReturn?: boolean;
 };
 
 /** Which builder made a chip (tt-build-chipcheck): the kind names the resolver that runs it. */
@@ -472,6 +474,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       kind: 'affordance',
       check: a.check,
       entityId: a.entityId,
+      cooldownReturn: a.cooldownReturn === true ? true : undefined,
     });
   }
   // TT-C1 item 4: free-input chips always registered (do not count against the affordance cap).
@@ -519,17 +522,36 @@ export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameS
   const chips = engineChips(state, storyProse);
   const checks: Record<string, CheckSpec> = {};
   const actionIds: string[] = [];
+  const offeredChips: NonNullable<import('./types').LogEntry['offeredChips']> = [];
   for (const c of chips) {
     if (c.check) checks[c.label] = c.check;
     if (c.action) actionIds.push(c.action);
+    const rec: NonNullable<import('./types').LogEntry['offeredChips']>[number] = {
+      label: c.label,
+      actionId: c.action,
+      kind: c.kind,
+    };
+    if (c.cooldownReturn === true) rec.cooldownReturn = true;
+    offeredChips.push(rec);
   }
   let next = stampRecentOfferedActions(state, actionIds);
-  if (!Object.keys(checks).length) return next;
   const log = [...(next.log ?? [])];
   let at = -1;
   for (let i = log.length - 1; i >= 0; i--) if (log[i]?.role === 'gm') { at = i; break; }
-  if (at >= 0) log[at] = { ...log[at]!, offeredChipChecks: checks };
-  return { ...next, log, offeredPad: next.offeredPad ? { ...next.offeredPad, checks } : next.offeredPad };
+  if (at >= 0) {
+    log[at] = {
+      ...log[at]!,
+      offeredChips,
+      ...(Object.keys(checks).length ? { offeredChipChecks: checks } : {}),
+    };
+  }
+  return {
+    ...next,
+    log,
+    offeredPad: next.offeredPad
+      ? { ...next.offeredPad, checks: Object.keys(checks).length ? checks : next.offeredPad.checks, chips: offeredChips }
+      : next.offeredPad,
+  };
 }
 
 /** Label set for callers that only need membership (derived from engineChips). */
