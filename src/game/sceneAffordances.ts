@@ -33,7 +33,8 @@ import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
 import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
-import { isJourneyPad, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
+import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
+import { travelEngineChip } from './rules/travelDay';
 import type { QuestRoute } from './types';
 export function isWayOut(chip: {
   kind?: string;
@@ -568,17 +569,7 @@ export type OptionCooldownChip = {
   cooldownReturn?: boolean;
   rank?: number;
 };
-/**
- * q45b-SLOT (John 17 Oct 22:32) — the final pad is five slots, not a truncated list.
- * Order: MOVE, TALK, ACT, SCENE, then optional FREE, then free-input chips.
- * A slot is filled only by a real candidate (a MOVE chip must wayOutMovesPlayer;
- * a TALK chip must name an NPC in presentNpcRecords). No dead pad chips.
- * Inside a slot, the best rank the cooldown allows wins. REPEAT_COOLDOWN_TURNS:
- * litrpg 5, rpg 5, tabletop 0 (no hold — situation repeats stay eligible).
- * An actionId listed on activeSituation is not cooling. If every candidate of the
- * slot is cooling, the least recently offered returns with cooldownReturn.
- * Replaces the way-out append and WAY_OUT_PAD_CAP truncation.
- */
+/** q45b-SLOT: MOVE, TALK, ACT, SCENE, FREE, then free-input. Empty MOVE is filled from place routes. */
 export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameState, pad: T[]): T[] {
   const mode = state.engineMode;
   const cd =
@@ -610,7 +601,8 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     let cat = chip.slotCategory;
     if (!cat) {
       const id = chip.actionId;
-      if (isWayOut(chip) || chip.slotKind === 'exit') cat = 'move';
+      if (chip.kind === 'journey' && !isJourneyStepLine(chip.label) && !travelEngineChip(chip.label)) cat = 'scene';
+      else if (isWayOut(chip) || chip.slotKind === 'exit') cat = 'move';
       else if (
         chip.slotKind === 'fight' ||
         chip.slotKind === 'shop' ||
@@ -664,6 +656,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     else if (cat === 'scene') scene.push(row);
     else act.push(row);
   }
+  if (!move.length) {
   const sheet = state.locationSheet?.exits ?? [];
   const raw: T[] = [];
   if (sheet.length) {
@@ -726,6 +719,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     if (!wayOutMovesPlayer(state, row.label)) continue;
     seen.add(row.actionId);
     move.push(row);
+  }
   }
   const picked: T[] = [];
   const used = new Set<string>();

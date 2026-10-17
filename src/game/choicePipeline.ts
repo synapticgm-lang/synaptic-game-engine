@@ -41,7 +41,8 @@ import { inspirationRerollPads } from './rules/houseRules';
 import { systemPromptPad } from './rules/abilityPoints';
 import { classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
-import { journeyPads } from './travelJourney';
+import { isJourneyStepLine, journeyPads } from './travelJourney';
+import { travelEngineChip } from './rules/travelDay';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
 import {
@@ -508,10 +509,14 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
           : engineChipActionKey(label) || `label:${low}`;
       // VR1-a: CheckSpec from checkForAction (pure). Label stays the plain action (§4 chip contract).
       const check = kind === 'inspiration-reroll' ? null : checkForAction(state, parsePlayerIntent(label, state), label);
-      // q45b-SLOT: category from the builder kind (INTENT_TRAVEL_HUB is exit/hub → move;
-      // INTENT_INSPECT / INTENT_LISTEN / INTENT_STATUS land on act via affordance, compiled, or system).
+      // q45b-SLOT: category from the builder record. Exit/hub move. A journey step
+      // (walk on, turn back, travel-on/camp/push-on/job) moves; the meeting on the
+      // stretch is the situation (fight / talk-past), so it takes SCENE.
       let slotCategory: import('./sceneAffordances').SlotCategory | undefined;
-      if (kind === 'exit' || kind === 'hub' || kind === 'journey') slotCategory = 'move';
+      if (kind === 'exit' || kind === 'hub') slotCategory = 'move';
+      else if (kind === 'journey') {
+        slotCategory = isJourneyStepLine(label) || travelEngineChip(label) ? 'move' : 'scene';
+      }
       else if (
         kind === 'shop' ||
         kind === 'dungeon' ||

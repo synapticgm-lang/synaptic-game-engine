@@ -338,3 +338,42 @@ describe('q45-OCD3 record describes the pad seen this turn', () => {
     expect(pad!.chips!.some((c) => isWayOut(c) && wayOutMovesPlayer(s, c.label))).toBe(true);
   });
 });
+
+describe('w4d-gocd3-fixg journey meeting stays on the pad', () => {
+  it('engine-placed thugs keep Face the thugs as the scene slot when the prose says three rough men', () => {
+    const s = {
+      ...base('litrpg'),
+      currentLocation: 'the lane between Cathedral Close and Contract Hall',
+      choices: [
+        'Walk on',
+        'Face the thugs',
+        'Talk your way past the thugs, but fail and they attack',
+        'Turn back toward Cathedral Close',
+      ],
+      journey: {
+        from: 'Cathedral Close',
+        to: 'Contract Hall',
+        ground: 'lane',
+        terrain: 'streets',
+        legsTotal: 3,
+        legsDone: 1,
+        hoursPerLeg: 1,
+        startedTurn: 1,
+        encounter: { kind: 'thugs', level: 1, stretch: 1, dangerous: false },
+      },
+      log: [{
+        id: 'gm-road',
+        role: 'gm',
+        turn: 5,
+        content: 'Three rough men stepped off a doorstep and spread across the lane.',
+        timestamp: 1,
+      } as LogEntry],
+    } as GameState;
+    const next = commitOfferedPad(s, 'gm-road');
+    const chips = next.offeredPad?.chips ?? [];
+    const face = chips.find((c) => c.label === 'Face the thugs');
+    expect(face?.slotCategory).toBe('scene');
+    expect(chips.some((c) => c.slotCategory === 'move' && wayOutMovesPlayer(s, c.label))).toBe(true);
+    expect(chips.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
+  });
+});
