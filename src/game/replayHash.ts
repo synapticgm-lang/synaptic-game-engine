@@ -10,10 +10,8 @@ export interface ReplayHashRecord {
   eventSeq: number;
 }
 
-/** FNV-1a hash of canonical committed-state slice. */
-export function hashCanonicalState(state: GameState): string {
-  // Slice inlined (q43-OCD): keep ruleCount TOTAL flat after commitOfferedTurn + cut of unused verifyFinalReplayHash.
-  const s = JSON.stringify({
+function canonicalSlice(state: GameState): string {
+  return JSON.stringify({
     turn: state.turn,
     eventSeq: state.runManifest?.eventSeq ?? 0,
     ledgerRevision: state.ledgerRevision ?? 0,
@@ -34,7 +32,12 @@ export function hashCanonicalState(state: GameState): string {
     sandboxKeys: (state.sandboxAwardKeys ?? []).slice(-40),
     manifestHash: state.sealedManifest?.beatEffectsHash ?? null,
   });
+}
+
+/** FNV-1a hash of canonical committed-state slice. */
+export function hashCanonicalState(state: GameState): string {
   let h = 2166136261;
+  const s = canonicalSlice(state);
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i);
     h = Math.imul(h, 16777619);
@@ -65,4 +68,9 @@ export function verifyReplayChain(records: ReplayHashRecord[]): { ok: boolean; e
     }
   }
   return { ok: errors.length === 0, errors };
+}
+
+export function verifyFinalReplayHash(state: GameState, expectedFinal?: string): boolean {
+  if (!expectedFinal) return true;
+  return hashCanonicalState(state) === expectedFinal;
 }

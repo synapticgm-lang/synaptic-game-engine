@@ -518,11 +518,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   return chips;
 }
 
-/**
- * Stamp CheckSpec-by-label onto pad / last GM log beside offeredChoices; record action ids for repeat.
- * Free-input chips (Say something / Do something else) stay on the offered-chip record with kind
- * `free-input` but never enter recentOfferedActions — they are never cooled (q43-OCD / plan §4).
- */
+/** Stamp CheckSpec-by-label onto pad / last GM log beside offeredChoices; record action ids for repeat. */
 export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameState {
   const chips = engineChips(state, storyProse);
   const checks: Record<string, CheckSpec> = {};
@@ -530,8 +526,7 @@ export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameS
   const offeredChips: NonNullable<import('./types').LogEntry['offeredChips']> = [];
   for (const c of chips) {
     if (c.check) checks[c.label] = c.check;
-    // Free-input: own kind on the record; never cooled (exclude from repeat history).
-    if (c.action && c.kind !== 'free-input') actionIds.push(c.action);
+    if (c.action) actionIds.push(c.action);
     const rec: NonNullable<import('./types').LogEntry['offeredChips']>[number] = {
       label: c.label,
       actionId: c.action,

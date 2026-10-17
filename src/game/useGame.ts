@@ -17,7 +17,7 @@ import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './p
 import { isDying } from './tabletop/roundFight';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
-import { commitOfferedTurn, downloadPlayDump, withOfferedChoices } from './playTranscript';
+import { commitOfferedPad, downloadPlayDump, withOfferedChoices } from './playTranscript';
 import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending, takeBuiltSheet } from './tabletop/creationFlow';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
@@ -98,7 +98,7 @@ import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
 import { playerFacingImageFailLine, prepareKidSafeImagePrompt } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
-import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
+import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks, stampOfferedChipChecks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import {
@@ -401,6 +401,7 @@ import {
   isBannedFallbackStub,
   markEngineRecoveryCommit,
 } from './sealedManifest';
+import { recordReplayHash } from './replayHash';
 import { playerInputGateBlock } from './choiceCompiler';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
@@ -4857,8 +4858,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
       if (circlingRecorded) mergedState = creditCommittedProgress(circlingRecorded, mergedState, sanitizedInput);
-      // q43-OCD: one shared pad commit (pad → stamp offered chips / recentOfferedActions → replay hash).
-      mergedState = commitOfferedTurn({ ...mergedState, choices: heardChoices }, gmEntry.id);
+      mergedState = commitOfferedPad({ ...mergedState, choices: heardChoices }, gmEntry.id);
+      mergedState = stampOfferedChipChecks(mergedState);
+      mergedState = recordReplayHash(mergedState);
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
       if (imagesKilled()) {

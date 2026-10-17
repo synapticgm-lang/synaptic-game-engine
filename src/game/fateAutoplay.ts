@@ -209,7 +209,7 @@ import {
   markEngineRecoveryCommit,
   type RenderFallbackReason,
 } from './sealedManifest';
-import { hashCanonicalState } from './replayHash';
+import { recordReplayHash, hashCanonicalState } from './replayHash';
 import { commitTurnRecord } from './stateTx';
 import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
@@ -222,7 +222,7 @@ import {
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
-import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedTurn, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedPad, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import { dropAbsentListenerChips } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
@@ -340,13 +340,6 @@ export type TurnTelemetry = {
   fatePick: string;
   offeredChoices: string[];
   offeredChoiceIds: string[];
-  /** q43-OCD — offered-chip record (label, actionId, kind, cooldownReturn) for cooldown / OPT-7. */
-  offeredChips?: Array<{
-    label: string;
-    actionId: string;
-    kind: string;
-    cooldownReturn?: boolean;
-  }>;
   playerInput: string;
   gmText: string;
   systemLog: string[];
@@ -2094,6 +2087,7 @@ Do NOT print dice notation or CODE ENFORCED.
       governed = { ...governed, log };
     }
   }
+  governed = commitOfferedPad({ ...governed, choices: finalChoices }, gm.id);
   if (typeof governed.character?.hp === 'number') {
     // Same end-of-run rule as live play (useGame): death ends the run, closing run-scoped quests.
     const hp = governed.character.hp;
@@ -2120,9 +2114,7 @@ Do NOT print dice notation or CODE ENFORCED.
       governed = { ...governed, log };
     }
   }
-  // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
-  // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.
-  governed = commitOfferedTurn({ ...governed, choices: finalChoices }, gm.id);
+  governed = recordReplayHash(governed);
 
   const responsePath = classifyResponsePath({
     state: arcState,
@@ -2138,11 +2130,6 @@ Do NOT print dice notation or CODE ENFORCED.
 
   const ended = Date.now();
   const receiptCounts = countTurnReceipts(governed, nextTurn);
-  const stampedGm = [...(governed.log ?? [])].reverse().find((e) => e?.role === 'gm');
-  const offeredChips =
-    stampedGm?.offeredChips ??
-    governed.offeredPad?.chips ??
-    undefined;
   return {
     state: governed,
     telemetry: {
@@ -2157,7 +2144,6 @@ Do NOT print dice notation or CODE ENFORCED.
       fatePick,
       offeredChoices: offered,
       offeredChoiceIds: offered.map((_, i) => `choice-${nextTurn}-${i}`),
-      offeredChips,
       playerInput,
       gmText: mudBody,
       snapshotGist: compactTrafficGist(governed),
