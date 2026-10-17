@@ -133,4 +133,43 @@ describe('q42-OPT2m LitRPG / RPG quest adapters', () => {
     expect(credit!.source).toMatch(/XenotropicDev/);
     expect(credit!.usedFor ?? '').toMatch(/trouble|turning/i);
   });
+
+  it('w4-gh2-fixgh2litrpg: LitRPG bounty leadsTo/placeId stay on established places, not goal-topic hooks', () => {
+    const agenda = agendaFromRole({
+      role: 'quest-patron',
+      disposition: 'friendly',
+      bindTarget: 'Explain the Pact',
+    });
+    const base = patronState('litrpg', 8);
+    const { quest } = ensureQuestFloor({
+      ...base,
+      currentLocation: 'Cathedral Close',
+      places: [{ name: 'Cathedral Close' }, { name: 'Lowmarket' }],
+      npcMemories: [
+        {
+          ...base.npcMemories![0]!,
+          npcName: 'High Chanter Orel Vane',
+          location: 'Cathedral Close',
+          goal: agenda.goal,
+          need: agenda.need,
+          offer: agenda.offer,
+          attitude: agenda.attitude,
+        },
+      ],
+    } as GameState);
+    expect(quest).toBeTruthy();
+    expect(quest!.leadsTo).toBe('Cathedral Close');
+    expect(quest!.location).toBe('Cathedral Close');
+    expect(quest!.leadsTo).not.toMatch(/Explain the Pact/i);
+    const objs = quest!.objectives ?? [];
+    for (let i = 0; i < objs.length; i++) {
+      expect(objs[i]!.placeId).toBe('Cathedral Close');
+      expect(String(objs[i]!.placeId)).not.toMatch(/Explain the Pact/i);
+    }
+    const blob = [quest!.name, quest!.description, quest!.leadsTo, ...(objs.map((o) => o.description))]
+      .join('\n');
+    // Goal topic may appear as concern text; it must never be a place field.
+    expect(blob.toLowerCase()).toContain('explain the pact');
+    expect(quest!.leadsTo).toBe(quest!.location);
+  });
 });

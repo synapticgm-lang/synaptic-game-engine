@@ -182,9 +182,11 @@ export function withModeQuestRoutes<T extends QuestDataSeed>(
       label: `Ask ${person} about the lead`,
       entityId: `npc:${person}`,
     };
+    // LitRPG system third is ledger chrome (Analyze / Read), never an "Ask …" talk chip —
+    // talk-shaped labels trip empty-room ghost-chip when the System is not a listener.
     const third: QuestRoute =
       mode === 'litrpg'
-        ? { id: `${pid}-system`, kind: 'system', label: 'Ask the System for the trail', entityId: `system:${pid}` }
+        ? { id: `${pid}-system`, kind: 'system', label: 'Read the System trail', entityId: `system:${pid}` }
         : mode === 'rpg'
           ? {
               id: `${pid}-contact`,

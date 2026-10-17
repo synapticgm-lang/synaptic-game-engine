@@ -29,6 +29,8 @@ import {
 import { enumerateLegalEdges } from './graphChoices';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
+import { mentionsName, peopleHere } from './chipLegality';
+import type { QuestRoute } from './types';
 
 /** Required vs optional slot families (OPT-1 item 2). */
 export type AffordanceSlotKind =
@@ -212,10 +214,35 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   }
 
   // TT-G1 / OPT-4: open step routes expand as affordances (decision approaches included).
-  const routeRows = openRouteView(state)?.rows ?? [];
-  if (routeRows.length) {
+  // Person routes only when that person is in the scene record (OPT-1 presence; no ghost Ask).
+  const openRoutes = openRouteView(state);
+  const routeRows = openRoutes?.rows ?? [];
+  const hereNow = peopleHere(state);
+  if (routeRows.length && openRoutes) {
+    const stepRoutes = openRoutes.step.routes ?? [];
     for (let i = 0; i < routeRows.length; i++) {
       const row = routeRows[i]!;
+      let route: QuestRoute | null = null;
+      for (let r = 0; r < stepRoutes.length; r++) {
+        if ((stepRoutes[r]!.label ?? '').trim() === row.label) {
+          route = stepRoutes[r]!;
+          break;
+        }
+      }
+      if (route?.kind === 'person') {
+        const eid = (route.entityId ?? '').trim();
+        const who = eid.toLowerCase().startsWith('npc:') ? eid.slice(4).trim() : eid;
+        if (who) {
+          let present = false;
+          for (let h = 0; h < hereNow.length; h++) {
+            if (mentionsName(hereNow[h]!, who) || mentionsName(who, hereNow[h]!)) {
+              present = true;
+              break;
+            }
+          }
+          if (!present) continue;
+        }
+      }
       all.push({
         label: row.label,
         actionId: row.actionId,
@@ -747,6 +774,37 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
   if (entityId.startsWith('foe:')) {
     const enc = state.activeEncounter;
     return !!(enc && enc.hp > 0 && entityId === `foe:${(enc.name ?? 'foe').trim()}`);
+  }
+  // Mode thirds / System chrome are not people-in-the-room; always legal while bound.
+  if (
+    entityId.startsWith('system:') ||
+    entityId.startsWith('skill:') ||
+    entityId.startsWith('study:') ||
+    entityId.startsWith('check:')
+  ) {
+    return true;
+  }
+  if (entityId.startsWith('npc:') || entityId.startsWith('contact:') || entityId.startsWith('standing:')) {
+    const who = entityId.slice(entityId.indexOf(':') + 1).trim();
+    if (!who) return false;
+    // Generic contact ids (contact:quest-s1) are not named people — legal while the route is open.
+    if (entityId.startsWith('contact:') && !who.includes(' ')) {
+      return !!openRouteView(state);
+    }
+    const here = peopleHere(state);
+    for (let h = 0; h < here.length; h++) {
+      if (mentionsName(here[h]!, who) || mentionsName(who, here[h]!)) return true;
+    }
+    return false;
+  }
+  if (entityId.startsWith('place:') || entityId.startsWith('object:')) {
+    const open = openRouteView(state);
+    if (!open) return false;
+    const rows = open.rows;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i]!.entityId === entityId) return true;
+    }
+    return false;
   }
   if (entityId.startsWith('quest-route:') || entityId.startsWith('quest:')) {
     const open = openRouteView(state);
