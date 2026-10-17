@@ -2,6 +2,7 @@ import type { CampaignBible } from './types';
 import type { ContentMode, EngineMode } from '@/game/types';
 import { allowsNsfwCatalog } from '@/game/distributionChannel';
 import { sanitizeBibleForPlay } from '@/game/storyDataBoundary';
+import { withTabletopQuestRoutes } from '@/game/questRoutes';
 import { registerSettingBibles } from '@/game/settingVocabulary';
 export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, OpeningHookCard, MysteryCulprit } from './types';
 
@@ -142,7 +143,15 @@ export const RAW_CAMPAIGN_BIBLES: CampaignBible[] = [
   blankCanvasDnd,
 ];
 
-export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = RAW_CAMPAIGN_BIBLES.map((b) => sanitizeBibleForPlay(b));
+export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = RAW_CAMPAIGN_BIBLES.map((b) => {
+  const s = sanitizeBibleForPlay(b);
+  if (s.engineMode !== 'dnd') return s;
+  // TT-G1 / OPT-4 (q38-G1b): every tabletop step carries ≥3 discovery routes in play data.
+  return {
+    ...s,
+    starterQuests: s.starterQuests.map((q) => withTabletopQuestRoutes(q)),
+  };
+});
 // P-5a/c: the bibles are the setting data the off-setting check reads.
 registerSettingBibles(() => ALL_CAMPAIGN_BIBLES);
 

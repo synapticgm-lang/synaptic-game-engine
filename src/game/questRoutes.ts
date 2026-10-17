@@ -77,6 +77,109 @@ export function validateQuestStepRoutes(
   return out;
 }
 
+export type QuestDataSeed = {
+  id: string;
+  title?: string;
+  name?: string;
+  objectives: string[];
+  objectiveAnchors?: Array<
+    | {
+        place?: string;
+        placeId?: string | null;
+        people?: string[];
+        room?: string;
+        verb?: string;
+        object?: string;
+        routes?: QuestRoute[];
+      }
+    | undefined
+  >;
+  giver?: string;
+};
+
+/**
+ * OPT4-1 / G1b: validate every starter-quest step in mode data.
+ * Never reads PYOA bibles. LitRPG/RPG data fill is q42-OPT4m — thin steps fail until then.
+ */
+export function validateModeQuestData(
+  mode: EngineMode,
+  bibles: Array<{ id: string; engineMode?: EngineMode; starterQuests?: QuestDataSeed[] }>,
+  extraSeeds: QuestDataSeed[] = [],
+): string[] {
+  if (mode === 'pyoa') return [];
+  const out: string[] = [];
+  const all: Array<{ prefix: string; seed: QuestDataSeed }> = [];
+  for (let b = 0; b < bibles.length; b++) {
+    const bible = bibles[b]!;
+    if ((bible.engineMode ?? mode) !== mode || bible.engineMode === 'pyoa') continue;
+    const quests = bible.starterQuests ?? [];
+    for (let q = 0; q < quests.length; q++) all.push({ prefix: bible.id, seed: quests[q]! });
+  }
+  for (let q = 0; q < extraSeeds.length; q++) all.push({ prefix: 'spine', seed: extraSeeds[q]! });
+  for (let i = 0; i < all.length; i++) {
+    const { prefix, seed } = all[i]!;
+    const steps: QuestObjective[] = [];
+    for (let s = 0; s < seed.objectives.length; s++) {
+      const a = seed.objectiveAnchors?.[s];
+      const placeId = a?.placeId !== undefined ? a.placeId : a?.place ?? null;
+      const routes: QuestRoute[] = [];
+      const src = a?.routes ?? [];
+      for (let r = 0; r < src.length; r++) routes.push({ ...src[r]! });
+      steps.push({
+        id: `${seed.id}-obj-${s + 1}`,
+        description: seed.objectives[s]!,
+        completed: false,
+        placeId: placeId || null,
+        ...(a?.place ? { place: a.place } : {}),
+        ...(a?.people?.length ? { people: [...a.people] } : {}),
+        ...(routes.length ? { routes } : {}),
+      });
+    }
+    const errs = validateQuestStepRoutes(
+      { id: seed.id, name: seed.title ?? seed.name ?? seed.id, objectives: steps } as Quest,
+      mode,
+    );
+    for (let e = 0; e < errs.length; e++) out.push(`${prefix}/${errs[e]}`);
+  }
+  return out;
+}
+
+/**
+ * Fill missing routes on a tabletop starter quest (G1b data enrich).
+ * Three Clue Rule (The Alexandrian — pattern only). Third route is Study —
+ * SRD 5.2.1: "When you take the Study action, you make an Intelligence check
+ * to find out information." Labels stay plain actions (chip contract §4).
+ */
+export function withTabletopQuestRoutes<T extends QuestDataSeed>(seed: T): T {
+  const anchors: NonNullable<QuestDataSeed['objectiveAnchors']> = [];
+  for (let i = 0; i < seed.objectives.length; i++) {
+    const prev = seed.objectiveAnchors?.[i] ?? {};
+    const placeId = prev.placeId !== undefined ? prev.placeId : prev.place ?? null;
+    if ((prev.routes?.length ?? 0) >= 3) {
+      anchors.push({ ...prev, placeId: placeId ?? prev.placeId ?? null, routes: prev.routes });
+      continue;
+    }
+    const person =
+      (prev.people?.[0] ?? '').trim() || (seed.giver ?? '').trim() || 'a witness who knows the lead';
+    const place = (placeId ?? '').trim() || 'the scene';
+    const object = (prev.object ?? '').trim() || 'the clues here';
+    const pid = `${seed.id}-s${i + 1}`;
+    const routes: QuestRoute[] = [
+      { id: `${pid}-person`, kind: 'person', label: `Ask ${person} about the lead`, entityId: `npc:${person}` },
+      {
+        id: `${pid}-place`,
+        kind: prev.object ? 'object' : 'place',
+        label: prev.object ? `Examine ${object}` : `Search ${place} for signs`,
+        entityId: prev.object ? `object:${object}` : `place:${place}`,
+        placeId: placeId ?? null,
+      },
+      { id: `${pid}-study`, kind: 'study', label: 'Study the clues', entityId: `study:${pid}` },
+    ];
+    anchors.push({ ...prev, placeId: placeId ?? null, routes });
+  }
+  return { ...seed, objectiveAnchors: anchors };
+}
+
 /** Open main-step routes: leads, writer facts, affordance rows, optional label match. */
 export function openRouteView(state: GameState, actionLabel?: string): OpenRouteView | null {
   const quest = mainSpineQuest(state);
