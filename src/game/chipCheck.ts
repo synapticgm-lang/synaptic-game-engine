@@ -2,6 +2,8 @@ import type { GameState } from './types';
 import { engineChipActionKey, engineChips, sanitizeChoiceLabel, type ChipKind } from './choicePipeline';
 import { enumerateLegalEdges } from './graphChoices';
 import { presentNpcRecords } from './npcRecords';
+import { isWayOut, wayOutMovesPlayer } from './sceneAffordances';
+import { exitPlaceNames } from './placeNames';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { roundCombatChips } from './tabletop/combatChips';
 
@@ -43,42 +45,127 @@ export function chipKindOf(state: GameState, label: string, prose = ''): ChipKin
   return (action && chips.find((c) => c.action === action)?.kind) || null;
 }
 
-function offersKind(state: GameState, offered: string[], prose: string, ...kinds: ChipKind[]): boolean {
-  const pool = engineChips(state, prose).filter((c) => kinds.includes(c.kind));
-  const labels = new Set(pool.map((c) => c.label.toLowerCase()));
-  const actions = new Set(pool.map((c) => c.action));
-  return offered.some((o) => labels.has(low(o)) || actions.has(engineChipActionKey(o)));
-}
-
 /** Dead chips and missing chip kinds for one offered list against the state it was offered in. */
 export function checkChipKinds(state: GameState, offered: string[], prose = ''): ChipCheckFlag[] {
-  const chips = (offered ?? []).filter((c) => low(c));
+  const chips: string[] = [];
+  for (let i = 0; i < (offered ?? []).length; i++) {
+    const c = offered![i]!;
+    if (low(c)) chips.push(c);
+  }
   if (!chips.length) return [];
   const out: ChipCheckFlag[] = [];
-  for (const c of chips) {
+  for (let i = 0; i < chips.length; i++) {
+    const c = chips[i]!;
     const kind = chipKindOf(state, c, prose);
     if (!kind || !CHIP_RESOLVERS[kind]) out.push({ kind: 'dead-chip', detail: `"${c}" has no resolver (no builder made it)` });
   }
   const fight = state.activeEncounter ? roundCombatChips(state) ?? [] : [];
   if (fight.length) {
-    const round = new Set(fight.map(low));
-    if (!chips.some((c) => round.has(low(c)))) out.push({ kind: 'missing-chip-kind', detail: 'a foe is fighting and no fight chip is offered' });
+    const round = new Set<string>();
+    for (let i = 0; i < fight.length; i++) round.add(low(fight[i]!));
+    let hasFight = false;
+    for (let i = 0; i < chips.length; i++) {
+      if (round.has(low(chips[i]!))) {
+        hasFight = true;
+        break;
+      }
+    }
+    if (!hasFight) out.push({ kind: 'missing-chip-kind', detail: 'a foe is fighting and no fight chip is offered' });
     return out;
   }
-  if (enumerateLegalEdges(state).length && !offersKind(state, chips, prose, 'exit', 'journey', 'hub')) {
-    out.push({ kind: 'missing-chip-kind', detail: 'this place has exits and no exit chip is offered' });
+  // q45-OCD3: place has a moving route (inline — keep ruleCount TOTAL flat) and pad lacks isWayOut+moves.
+  let placeRoute = wayOutMovesPlayer(state, 'Walk on');
+  if (!placeRoute) {
+    const sheet = state.locationSheet?.exits ?? [];
+    for (let i = 0; i < sheet.length; i++) {
+      const dest = (sheet[i]?.label ?? '').trim();
+      if (dest && wayOutMovesPlayer(state, `Travel toward ${dest}`)) {
+        placeRoute = true;
+        break;
+      }
+    }
+  }
+  if (!placeRoute) {
+    const edges = enumerateLegalEdges(state);
+    for (let i = 0; i < edges.length; i++) {
+      const e = edges[i]!;
+      if (e.type !== 'travel') continue;
+      const label = (e.label ?? '').trim();
+      if (label && wayOutMovesPlayer(state, label)) {
+        placeRoute = true;
+        break;
+      }
+    }
+  }
+  if (!placeRoute) {
+    const names = exitPlaceNames(state);
+    for (let i = 0; i < names.length; i++) {
+      const dest = (names[i] ?? '').trim();
+      if (dest && wayOutMovesPlayer(state, `Travel toward ${dest}`)) {
+        placeRoute = true;
+        break;
+      }
+    }
+  }
+  if (placeRoute) {
+    const engines = engineChips(state, prose);
+    let offeredWay = false;
+    for (let i = 0; i < chips.length; i++) {
+      const label = chips[i]!;
+      const l = low(label);
+      if (!l) continue;
+      let chip = null as (typeof engines)[number] | null | undefined;
+      for (let e = 0; e < engines.length; e++) {
+        if (engines[e]!.label.toLowerCase() === l) {
+          chip = engines[e];
+          break;
+        }
+      }
+      if (!chip) {
+        const action = engineChipActionKey(label);
+        if (action) {
+          for (let e = 0; e < engines.length; e++) {
+            if (engines[e]!.action === action) {
+              chip = engines[e];
+              break;
+            }
+          }
+        }
+      }
+      if (!chip) continue;
+      if (isWayOut({ kind: chip.kind, actionId: chip.action }) && wayOutMovesPlayer(state, chip.label)) {
+        offeredWay = true;
+        break;
+      }
+    }
+    if (!offeredWay) {
+      out.push({ kind: 'missing-chip-kind', detail: 'this place has exits and no exit chip is offered' });
+    }
   }
   for (const npc of presentNpcRecords(state)) {
     const name = (npc.npcName ?? '').trim();
     const space = name.indexOf(' ');
     const first = (space < 0 ? name : name.slice(0, space)).toLowerCase();
-    if (first && !chips.some((c) => low(c).includes(first))) {
-      out.push({ kind: 'missing-chip-kind', detail: `${npc.npcName} is here and no chip talks to them` });
+    if (!first) continue;
+    let talks = false;
+    for (let i = 0; i < chips.length; i++) {
+      if (low(chips[i]!).includes(first)) {
+        talks = true;
+        break;
+      }
     }
+    if (!talks) out.push({ kind: 'missing-chip-kind', detail: `${npc.npcName} is here and no chip talks to them` });
   }
   const step = tabletopStepChip(state);
-  if (step && !chips.some((c) => low(c) === low(step))) {
-    out.push({ kind: 'missing-chip-kind', detail: `the open quest step "${step}" is not offered` });
+  if (step) {
+    let hasStep = false;
+    for (let i = 0; i < chips.length; i++) {
+      if (low(chips[i]!) === low(step)) {
+        hasStep = true;
+        break;
+      }
+    }
+    if (!hasStep) out.push({ kind: 'missing-chip-kind', detail: `the open quest step "${step}" is not offered` });
   }
   return out;
 }

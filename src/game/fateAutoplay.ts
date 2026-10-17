@@ -1090,7 +1090,10 @@ export async function headlessFateTurn(
   writerCallMeter.ms = 0;
   drainWriterRawIssues();
   drainWriterUsage();
-  const offered = resolveOfferedChoices(state);
+  // q45-OCD3: record the pad the player saw this turn (not the post-commit next pad).
+  const offeredPadAtStart = state.offeredPad;
+  const offeredChipsAtStart = offeredPadAtStart?.chips;
+  const offered = (offeredPadAtStart?.choices?.length ? offeredPadAtStart.choices : resolveOfferedChoices(state));
   const fatePick =
     meta.playerInputOverride?.trim()
       ? meta.playerInputOverride.trim()
@@ -2139,10 +2142,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const ended = Date.now();
   const receiptCounts = countTurnReceipts(governed, nextTurn);
   const stampedGm = [...(governed.log ?? [])].reverse().find((e) => e?.role === 'gm');
-  const offeredChips =
-    stampedGm?.offeredChips ??
-    governed.offeredPad?.chips ??
-    undefined;
+  const offeredChips = offeredChipsAtStart ?? offeredPadAtStart?.chips;
   return {
     state: governed,
     telemetry: {

@@ -12,6 +12,7 @@ import {
   affordancesCoverGenerics,
   applyOptionCooldown,
   collectSceneAffordances,
+  isWayOut,
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
   isFreeInputChip,
@@ -233,12 +234,7 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
     if (c.cooldownReturn === true) rec.cooldownReturn = true;
     chips.push(rec);
     const low = c.label.trim().toLowerCase();
-    const way =
-      c.slotKind === 'exit' ||
-      c.kind === 'exit' ||
-      c.kind === 'hub' ||
-      c.kind === 'journey' ||
-      c.actionId.startsWith('exit:');
+    const way = isWayOut(c);
     // Generics join the cooldown record. Only the post-rank offered list, plus a way-out the guarantee added, is shown.
     if (offeredLow.has(low) || (way && !offeredLow.has(low))) labels.push(c.label);
   }
