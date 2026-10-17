@@ -1,0 +1,2305 @@
+{
+  "credit": "Oracle text from Datasworn / Ironsworn. Credit: Shawn Tomkin (Ironsworn), rsek (Datasworn), XenotropicDev (TheOracle). MIT code, CC BY 4.0 oracle text. https://github.com/rsek/datasworn ; https://tomkinpress.com/pages/licensing",
+  "tables": {
+    "role": {
+      "name": "Character Role",
+      "id": "classic/oracles/character/role",
+      "rows": [
+        {
+          "text": "Criminal",
+          "min": 1,
+          "max": 2,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Healer",
+          "min": 3,
+          "max": 4,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Bandit",
+          "min": 5,
+          "max": 6,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Guide",
+          "min": 7,
+          "max": 9,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Performer",
+          "min": 10,
+          "max": 12,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Miner",
+          "min": 13,
+          "max": 15,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Mercenary",
+          "min": 16,
+          "max": 18,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Outcast",
+          "min": 19,
+          "max": 21,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Vagrant",
+          "min": 22,
+          "max": 24,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Forester",
+          "min": 25,
+          "max": 27,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Traveler",
+          "min": 28,
+          "max": 30,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Mystic",
+          "min": 31,
+          "max": 33,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Priest",
+          "min": 34,
+          "max": 36,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Sailor",
+          "min": 37,
+          "max": 39,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Pilgrim",
+          "min": 40,
+          "max": 42,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Thief",
+          "min": 43,
+          "max": 45,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Adventurer",
+          "min": 46,
+          "max": 48,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Forager",
+          "min": 49,
+          "max": 51,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Leader",
+          "min": 52,
+          "max": 54,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Guard",
+          "min": 55,
+          "max": 58,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Artisan",
+          "min": 59,
+          "max": 62,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Scout",
+          "min": 63,
+          "max": 66,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Herder",
+          "min": 67,
+          "max": 70,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Fisher",
+          "min": 71,
+          "max": 74,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Warrior",
+          "min": 75,
+          "max": 79,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Hunter",
+          "min": 80,
+          "max": 84,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Raider",
+          "min": 85,
+          "max": 89,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Trader",
+          "min": 90,
+          "max": 94,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Farmer",
+          "min": 95,
+          "max": 99,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        },
+        {
+          "text": "Unusual role",
+          "min": 100,
+          "max": 100,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/role"
+          }
+        }
+      ]
+    },
+    "goal": {
+      "name": "Character Goal",
+      "id": "classic/oracles/character/goal",
+      "rows": [
+        {
+          "text": "Obtain an object",
+          "min": 1,
+          "max": 3,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Make an agreement",
+          "min": 4,
+          "max": 6,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Build a relationship",
+          "min": 7,
+          "max": 9,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Undermine a relationship",
+          "min": 10,
+          "max": 12,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Seek a truth",
+          "min": 13,
+          "max": 15,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Pay a debt",
+          "min": 16,
+          "max": 18,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Refute a falsehood",
+          "min": 19,
+          "max": 21,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Harm a rival",
+          "min": 22,
+          "max": 24,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Cure an ill",
+          "min": 25,
+          "max": 27,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Find a person",
+          "min": 28,
+          "max": 30,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Find a home",
+          "min": 31,
+          "max": 33,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Seize power",
+          "min": 34,
+          "max": 36,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Restore a relationship",
+          "min": 37,
+          "max": 39,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Create an item",
+          "min": 40,
+          "max": 42,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Travel to a place",
+          "min": 43,
+          "max": 45,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Secure provisions",
+          "min": 46,
+          "max": 48,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Rebel against power",
+          "min": 49,
+          "max": 51,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Collect a debt",
+          "min": 52,
+          "max": 54,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Protect a secret",
+          "min": 55,
+          "max": 57,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Spread faith",
+          "min": 58,
+          "max": 60,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Enrich themselves",
+          "min": 61,
+          "max": 63,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Protect a person",
+          "min": 64,
+          "max": 66,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Protect the status quo",
+          "min": 67,
+          "max": 69,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Advance status",
+          "min": 70,
+          "max": 72,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Defend a place",
+          "min": 73,
+          "max": 75,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Avenge a wrong",
+          "min": 76,
+          "max": 78,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Fulfill a duty",
+          "min": 79,
+          "max": 81,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Gain knowledge",
+          "min": 82,
+          "max": 84,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Prove worthiness",
+          "min": 85,
+          "max": 87,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Find redemption",
+          "min": 88,
+          "max": 90,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Escape from something",
+          "min": 91,
+          "max": 92,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Resolve a dispute",
+          "min": 93,
+          "max": 95,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        },
+        {
+          "text": "Roll twice",
+          "min": 96,
+          "max": 100,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/goal"
+          }
+        }
+      ]
+    },
+    "descriptor": {
+      "name": "Character Descriptor",
+      "id": "classic/oracles/character/descriptor",
+      "rows": [
+        {
+          "text": "Stoic",
+          "min": 1,
+          "max": 1,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Attractive",
+          "min": 2,
+          "max": 2,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Passive",
+          "min": 3,
+          "max": 3,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Aloof",
+          "min": 4,
+          "max": 4,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Affectionate",
+          "min": 5,
+          "max": 5,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Generous",
+          "min": 6,
+          "max": 6,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Smug",
+          "min": 7,
+          "max": 7,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Armed",
+          "min": 8,
+          "max": 8,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Clever",
+          "min": 9,
+          "max": 9,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Brave",
+          "min": 10,
+          "max": 10,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Ugly",
+          "min": 11,
+          "max": 11,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Sociable",
+          "min": 12,
+          "max": 12,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Doomed",
+          "min": 13,
+          "max": 13,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Connected",
+          "min": 14,
+          "max": 14,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Bold",
+          "min": 15,
+          "max": 15,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Jealous",
+          "min": 16,
+          "max": 16,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Angry",
+          "min": 17,
+          "max": 17,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Active",
+          "min": 18,
+          "max": 18,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Suspicious",
+          "min": 19,
+          "max": 19,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Hostile",
+          "min": 20,
+          "max": 20,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Hardhearted",
+          "min": 21,
+          "max": 21,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Successful",
+          "min": 22,
+          "max": 22,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Talented",
+          "min": 23,
+          "max": 23,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Experienced",
+          "min": 24,
+          "max": 24,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Deceitful",
+          "min": 25,
+          "max": 25,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Ambitious",
+          "min": 26,
+          "max": 26,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Aggressive",
+          "min": 27,
+          "max": 27,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Conceited",
+          "min": 28,
+          "max": 28,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Proud",
+          "min": 29,
+          "max": 29,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Stern",
+          "min": 30,
+          "max": 30,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Dependent",
+          "min": 31,
+          "max": 31,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Wary",
+          "min": 32,
+          "max": 32,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Strong",
+          "min": 33,
+          "max": 33,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Insightful",
+          "min": 34,
+          "max": 34,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Dangerous",
+          "min": 35,
+          "max": 35,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Quirky",
+          "min": 36,
+          "max": 36,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Cheery",
+          "min": 37,
+          "max": 37,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Disfigured",
+          "min": 38,
+          "max": 38,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Intolerant",
+          "min": 39,
+          "max": 39,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Skilled",
+          "min": 40,
+          "max": 40,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Stingy",
+          "min": 41,
+          "max": 41,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Timid",
+          "min": 42,
+          "max": 42,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Insensitive",
+          "min": 43,
+          "max": 43,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Wild",
+          "min": 44,
+          "max": 44,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Bitter",
+          "min": 45,
+          "max": 45,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Cunning",
+          "min": 46,
+          "max": 46,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Remorseful",
+          "min": 47,
+          "max": 47,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Kind",
+          "min": 48,
+          "max": 48,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Charming",
+          "min": 49,
+          "max": 49,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Oblivious",
+          "min": 50,
+          "max": 50,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Critical",
+          "min": 51,
+          "max": 51,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Cautious",
+          "min": 52,
+          "max": 52,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Resourceful",
+          "min": 53,
+          "max": 53,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Weary",
+          "min": 54,
+          "max": 54,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Wounded",
+          "min": 55,
+          "max": 55,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Anxious",
+          "min": 56,
+          "max": 56,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Powerful",
+          "min": 57,
+          "max": 57,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Athletic",
+          "min": 58,
+          "max": 58,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Driven",
+          "min": 59,
+          "max": 59,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Cruel",
+          "min": 60,
+          "max": 60,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Quiet",
+          "min": 61,
+          "max": 61,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Honest",
+          "min": 62,
+          "max": 62,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Infamous",
+          "min": 63,
+          "max": 63,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Dying",
+          "min": 64,
+          "max": 64,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Reclusive",
+          "min": 65,
+          "max": 65,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Artistic",
+          "min": 66,
+          "max": 66,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Disabled",
+          "min": 67,
+          "max": 67,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Confused",
+          "min": 68,
+          "max": 68,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Manipulative",
+          "min": 69,
+          "max": 69,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Relaxed",
+          "min": 70,
+          "max": 70,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Stealthy",
+          "min": 71,
+          "max": 71,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Confident",
+          "min": 72,
+          "max": 72,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Weak",
+          "min": 73,
+          "max": 73,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Friendly",
+          "min": 74,
+          "max": 74,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Wise",
+          "min": 75,
+          "max": 75,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Influential",
+          "min": 76,
+          "max": 76,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Young",
+          "min": 77,
+          "max": 77,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Adventurous",
+          "min": 78,
+          "max": 78,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Oppressed",
+          "min": 79,
+          "max": 79,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Vengeful",
+          "min": 80,
+          "max": 80,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Cooperative",
+          "min": 81,
+          "max": 81,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Armored",
+          "min": 82,
+          "max": 82,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Apathetic",
+          "min": 83,
+          "max": 83,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Determined",
+          "min": 84,
+          "max": 84,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Loyal",
+          "min": 85,
+          "max": 85,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Sick",
+          "min": 86,
+          "max": 86,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Religious",
+          "min": 87,
+          "max": 87,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Selfish",
+          "min": 88,
+          "max": 88,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Old",
+          "min": 89,
+          "max": 89,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Fervent",
+          "min": 90,
+          "max": 90,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Violent",
+          "min": 91,
+          "max": 91,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Agreeable",
+          "min": 92,
+          "max": 92,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Hot-tempered",
+          "min": 93,
+          "max": 93,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Stubborn",
+          "min": 94,
+          "max": 94,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Incompetent",
+          "min": 95,
+          "max": 95,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Greedy",
+          "min": 96,
+          "max": 96,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Cowardly",
+          "min": 97,
+          "max": 97,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Obsessed",
+          "min": 98,
+          "max": 98,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Careless",
+          "min": 99,
+          "max": 99,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        },
+        {
+          "text": "Ironsworn",
+          "min": 100,
+          "max": 100,
+          "source": {
+            "title": "Ironsworn Rulebook",
+            "authors": [
+              "Shawn Tomkin"
+            ],
+            "license": "CC BY 4.0",
+            "url": "https://ironswornrpg.com",
+            "dataswornId": "classic/oracles/character/descriptor"
+          }
+        }
+      ]
+    }
+  }
+}

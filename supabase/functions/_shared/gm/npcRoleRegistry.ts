@@ -1542,13 +1542,6 @@ export const NPC_ROLE_REGISTRY: Readonly<Record<NpcRole, RoleObligationContract>
   },
 };
 
-/**
- * NPC-001 — Get role definition
- */
-export function getNpcRole(roleId: NpcRole): RoleObligationContract {
-  return NPC_ROLE_REGISTRY[roleId];
-}
-
 // ============================================================================
 // ROLE UTILITY FUNCTIONS (for npcLifecycleFsm)
 // ============================================================================
@@ -1598,7 +1591,7 @@ export function calculateRoleDeadline(
   currentTurn: number,
   state: { openingEstablishment?: { complete?: boolean } }
 ): number | null {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   
   if (!contract.timeline || contract.timeline.deadlines.length === 0) {
     return null;
@@ -1644,7 +1637,7 @@ export function isRoleSatisfied(
     turn: number;
   }
 ): boolean {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   
   // Live NPC memory already closed this person's role (quest accepted, farewell).
   const key = npcId.trim().toLowerCase();
@@ -1686,7 +1679,7 @@ export function formatRoleObligation(
   npcId: string,
   deadline: number | null
 ): string {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   const deadlineText = deadline !== null ? ` (deadline: T${deadline})` : '';
   
   return `NPC ROLE (${npcId}): ${contract.description}${deadlineText}`;
@@ -1700,7 +1693,7 @@ export function formatExitMandate(
   npcId: string,
   reason: 'success' | 'failure' | 'deadline' | 'transform'
 ): string {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   const exitBehavior = reason === 'success' ? contract.exit.onSuccess : contract.exit.onFailure;
   
   return `NPC EXIT (${npcId}): ${reason} - ${exitBehavior}`;

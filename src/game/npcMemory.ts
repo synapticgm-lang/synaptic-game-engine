@@ -6,6 +6,7 @@ import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
 import type { SpokenLine } from './tokenProse';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks';
+import { pickDataswornCharacterSeed } from './dataswornCharacterSeeds';
 import { isMetNpc, syncNpcPresence } from './npcRecords';
 
 const MAX_FACTS_PER_NPC = 10;
@@ -510,39 +511,62 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
   for (const m of state.npcMemories ?? []) {
     map.set(normalizeName(m.npcName), { ...m, facts: [...m.facts] });
   }
-  const knownNames = bible.keyNPCs.flatMap((n) => [rosterDisplayName(n.name), n.name, ...(n.aliases ?? [])]);
+  const knownNames: string[] = [];
+  for (let ki = 0; ki < bible.keyNPCs.length; ki++) {
+    const n = bible.keyNPCs[ki]!;
+    knownNames.push(rosterDisplayName(n.name), n.name);
+    const aliases = n.aliases ?? [];
+    for (let ai = 0; ai < aliases.length; ai++) knownNames.push(aliases[ai]!);
+  }
   for (const npc of bible.keyNPCs) {
     const name = rosterDisplayName(npc.name);
     if (!name || !canHarvestAsNamedPerson(name, bibleId, knownNames)) continue;
     const key = normalizeName(name);
     if (map.has(key)) continue;
     const role = roleFromBibleNpc(npc);
-    const extras = [
-      roleVoiceFactFor(role),
-      merchantStockFactFor(role, name),
-      ...authoredTopicsFor(name).slice(0, 1).map((t) => `Authored line: ${t.line}`),
-    ].filter(Boolean);
+    const extras: string[] = [];
+    const voice = roleVoiceFactFor(role);
+    if (voice) extras.push(voice);
+    const stock = merchantStockFactFor(role, name);
+    if (stock) extras.push(stock);
+    const authored = authoredTopicsFor(name);
+    if (authored[0]?.line) extras.push(`Authored line: ${authored[0].line}`);
     const disposition = bibleDisp(npc.disposition);
     // OPT-3: bind the Doran goal target to the bible hook (or a short description), set once.
     const bindTarget = (npc.hooks?.[0] ?? npc.description ?? '').replace(/\s+/g, ' ').trim().slice(0, 80);
-    map.set(
-      key,
-      ensureNpcAgenda(
-        {
-          npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
-          npcName: name,
-          disposition,
-          facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
-          lastSeenTurn: 0,
-          roleHint: role,
-          aliases: npc.aliases ?? [],
-          met: false,
-          present: false,
-          ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
-        },
-        { role, disposition, bindTarget: bindTarget || undefined },
-      ),
+    let row = ensureNpcAgenda(
+      {
+        npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
+        npcName: name,
+        disposition,
+        facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
+        lastSeenTurn: 0,
+        roleHint: role,
+        aliases: npc.aliases ?? [],
+        met: false,
+        present: false,
+        ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
+      },
+      { role, disposition, bindTarget: bindTarget || undefined },
     );
+    // OPT-3 Datasworn seeds: LitRPG/RPG take descriptor as a trait; tabletop flavour only (fact line).
+    let salt = 0;
+    for (let i = 0; i < name.length; i++) salt = (salt + name.charCodeAt(i) * (i + 1)) % 9973;
+    const descriptor = pickDataswornCharacterSeed('descriptor', salt);
+    if ((state.engineMode === 'litrpg' || state.engineMode === 'rpg') && descriptor) {
+      const second = row.traits?.[1] ?? row.traits?.[0] ?? 'plain';
+      row = { ...row, traits: [descriptor, second === descriptor ? 'plain' : second].slice(0, 2) };
+    } else if (state.engineMode === 'dnd' && descriptor) {
+      const flavour = `Flavour seed (Datasworn): ${descriptor}`;
+      let hasFlavour = false;
+      for (let fi = 0; fi < row.facts.length; fi++) {
+        if (row.facts[fi]!.startsWith('Flavour seed (Datasworn):')) hasFlavour = true;
+      }
+      if (!hasFlavour) {
+        row = { ...row, facts: [...row.facts, flavour].slice(0, MAX_FACTS_PER_NPC) };
+      }
+    }
+    map.set(key, row);
   }
   // Fill agenda on any prior roster row that still lacks fields (set-once; never overwrite).
   for (const [key, m] of map) {
@@ -555,10 +579,17 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
       }),
     );
   }
-  const next = Array.from(map.values())
-    .sort((a, b) => b.lastSeenTurn - a.lastSeenTurn)
-    .slice(0, MAX_NPC_MEMORIES);
-  return { ...state, npcMemories: next };
+  const next = Array.from(map.values());
+  for (let i = 1; i < next.length; i++) {
+    const cur = next[i]!;
+    let j = i - 1;
+    while (j >= 0 && next[j]!.lastSeenTurn < cur.lastSeenTurn) {
+      next[j + 1] = next[j]!;
+      j--;
+    }
+    next[j + 1] = cur;
+  }
+  return { ...state, npcMemories: next.slice(0, MAX_NPC_MEMORIES) };
 }
 
 function roleHay(memory: NpcMemory): string {

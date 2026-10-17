@@ -1550,6 +1550,8 @@ export interface SceneFacts {
   worldTags?: string[];
   /** 29z9j — the place the current `props` belong to (props move with the place on travel). */
   propsPlace?: string;
+  /** OPT-3 — last pressure-clock agenda advance this turn (world fact for the writer packet). */
+  agendaWorldFact?: string;
 }
 
 export interface TimelineFact {
@@ -1670,6 +1672,8 @@ export interface NpcMemory {
   traits?: string[];
   /** OPT-3 — how they speak (set once from bible or role template). */
   speechRegister?: string;
+  /** OPT-3 — agenda engine steps advanced (pressure clock); 0 = initial. */
+  agendaStep?: number;
 }
 
 /**
