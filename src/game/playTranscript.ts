@@ -13,6 +13,7 @@ import {
   applyOptionCooldown,
   collectSceneAffordances,
   isFreeInputChip,
+  WAY_OUT_PAD_CAP,
   type AffordanceSlotKind,
   type OptionCooldownChip,
 } from './sceneAffordances';
@@ -188,7 +189,14 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
         break;
       }
     }
-    pad.push({ label: c.label, actionId: c.action, kind: c.kind, slotKind, required });
+    let rank = 0;
+    for (let a = 0; a < aff.length; a++) {
+      if (aff[a]!.actionId === c.action) {
+        rank = aff[a]!.salience;
+        break;
+      }
+    }
+    pad.push({ label: c.label, actionId: c.action, kind: c.kind, slotKind, required, rank });
   }
   const cooled = applyOptionCooldown(state, pad);
   const kept = new Set<string>();
@@ -222,6 +230,94 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
     if (has) continue;
     labels.push(c.label);
     nonFree += 1;
+  }
+  let wayLabel = '';
+  let labelsHaveWay = false;
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i]!;
+    const id = labelAction.get(label.trim().toLowerCase()) ?? '';
+    for (let k = 0; k < cooled.length; k++) {
+      const chip = cooled[k]!;
+      if (chip.label.trim().toLowerCase() !== label.trim().toLowerCase() && chip.actionId !== id) continue;
+      if (
+        chip.slotKind === 'exit' ||
+        chip.kind === 'exit' ||
+        chip.kind === 'hub' ||
+        chip.kind === 'journey' ||
+        chip.actionId.startsWith('exit:')
+      ) {
+        labelsHaveWay = true;
+      }
+      break;
+    }
+    if (labelsHaveWay) break;
+  }
+  if (!labelsHaveWay) {
+    for (let i = 0; i < cooled.length; i++) {
+      const c = cooled[i]!;
+      const travel =
+        c.slotKind === 'exit' ||
+        c.kind === 'exit' ||
+        c.kind === 'hub' ||
+        c.kind === 'journey' ||
+        c.actionId.startsWith('exit:');
+      if (!travel) continue;
+      wayLabel = c.label;
+      break;
+    }
+  }
+  if (wayLabel) {
+    const low = wayLabel.trim().toLowerCase();
+    let has = false;
+    for (let i = 0; i < labels.length; i++) {
+      if (labels[i]!.trim().toLowerCase() === low) {
+        has = true;
+        break;
+      }
+    }
+    if (!has) {
+      if (labels.length >= WAY_OUT_PAD_CAP) {
+        let victim = -1;
+        let victimRank = Number.POSITIVE_INFINITY;
+        const sit = state.activeSituation?.actionIds;
+        for (let i = 0; i < labels.length; i++) {
+          const label = labels[i]!;
+          if (isFreeInputChip(label)) continue;
+          const id = labelAction.get(label.trim().toLowerCase()) ?? '';
+          let travel = false;
+          let rank = 0;
+          let situation = false;
+          for (let k = 0; k < cooled.length; k++) {
+            const chip = cooled[k]!;
+            if (chip.label.trim().toLowerCase() !== label.trim().toLowerCase() && chip.actionId !== id) continue;
+            travel =
+              chip.slotKind === 'exit' ||
+              chip.kind === 'exit' ||
+              chip.kind === 'hub' ||
+              chip.kind === 'journey' ||
+              chip.actionId.startsWith('exit:');
+            rank = chip.rank ?? 0;
+            break;
+          }
+          if (travel) continue;
+          if (sit && id) {
+            for (let si = 0; si < sit.length; si++) {
+              if (sit[si] === id) {
+                situation = true;
+                break;
+              }
+            }
+          }
+          if (situation) continue;
+          if (victim < 0 || rank < victimRank || (rank === victimRank && i > victim)) {
+            victim = i;
+            victimRank = rank;
+          }
+        }
+        if (victim >= 0) labels.splice(victim, 1);
+      }
+      labels.push(wayLabel);
+    }
   }
   if (!labels.length) return { ...state, offeredPad: null };
   const chips: NonNullable<NonNullable<GameState['offeredPad']>['chips']> = [];

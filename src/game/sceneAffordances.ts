@@ -27,6 +27,7 @@ import {
   storyRpgDecisionChip,
 } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
+import { exitPlaceNames } from './placeNames';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
@@ -343,6 +344,30 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       });
     }
   }
+  let sawExit = false;
+  for (let i = 0; i < all.length; i++) {
+    if (all[i]!.slotKind === 'exit') {
+      sawExit = true;
+      break;
+    }
+  }
+  if (!sawExit) {
+    const names = exitPlaceNames(state);
+    for (let i = 0; i < names.length; i++) {
+      const dest = (names[i] ?? '').trim();
+      if (!dest) continue;
+      const entityId = `exit:${dest}`;
+      all.push({
+        label: `Travel toward ${dest}`,
+        actionId: `exit:${entityId}:travel`,
+        entityId,
+        slotKind: 'exit',
+        salience: visitedKeys.has(dest.toLowerCase()) ? 30 : 70,
+        required: true,
+        check: dnd || litrpg ? null : undefined,
+      });
+    }
+  }
 
   const sheetItems = state.locationSheet?.interactables ?? [];
   const seenProp = new Set<string>();
@@ -553,7 +578,12 @@ export type OptionCooldownChip = {
   slotKind?: AffordanceSlotKind;
   required?: boolean;
   cooldownReturn?: boolean;
+  /** Lower loses its slot when a missing way-out must fit a full pad. */
+  rank?: number;
 };
+
+/** Assembled pad size. A missing way-out appends under this and replaces the lowest rank at it. */
+export const WAY_OUT_PAD_CAP = 48;
 
 /**
  * q44-OCD2 (John 17 Oct 17:58) — ONE cooldown for the whole pad.
@@ -565,6 +595,11 @@ export type OptionCooldownChip = {
  * If fewer than 2 non-free chips would remain, the least-recently offered held chip(s)
  * return with cooldownReturn. Tabletop does not use N; it keeps only the 08:41
  * situation-aware streak (isOptionRepeat when cooldown is 0).
+ * q44b-OCD2x: when this place has exits or travel routes (location-sheet exits, else
+ * graph travel edges, else exitPlaceNames — the same lists the exit/travel chips read),
+ * the pad keeps at least one way-out (kind/slotKind/actionId, never a label word list).
+ * If none survived, the least-recently offered route for this place is added. At
+ * WAY_OUT_PAD_CAP it takes the lowest-ranked non-free, non-situation slot.
  */
 export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameState, pad: T[]): T[] {
   const mode = state.engineMode;
@@ -586,7 +621,11 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   for (let i = 0; i < pad.length; i++) {
     const chip = pad[i]!;
     const travel =
-      chip.slotKind === 'exit' || chip.kind === 'exit' || chip.kind === 'hub' || chip.kind === 'journey';
+      chip.slotKind === 'exit' ||
+      chip.kind === 'exit' ||
+      chip.kind === 'hub' ||
+      chip.kind === 'journey' ||
+      chip.actionId.startsWith('exit:');
     if (chip.kind === 'free-input' || travel) {
       keep.push({ ...chip, cooldownReturn: undefined });
       continue;
@@ -653,6 +692,133 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     cooledLast.splice(best, 1);
     keep.push({ ...row, cooldownReturn: true });
     nonFree += 1;
+  }
+
+  // q44b-OCD2x — one way out when this place has a route. Same data as the exit chips.
+  let way = false;
+  for (let i = 0; i < keep.length; i++) {
+    const chip = keep[i]!;
+    if (
+      chip.slotKind === 'exit' ||
+      chip.kind === 'exit' ||
+      chip.kind === 'hub' ||
+      chip.kind === 'journey' ||
+      chip.actionId.startsWith('exit:')
+    ) {
+      way = true;
+      break;
+    }
+  }
+  if (!way) {
+    const cands: T[] = [];
+    const sheet = state.locationSheet?.exits ?? [];
+    if (sheet.length) {
+      for (let i = 0; i < sheet.length; i++) {
+        const ex = sheet[i]!;
+        const dest = (ex.label ?? '').trim();
+        if (!dest) continue;
+        const entityId = ex.id || `exit:${dest}`;
+        cands.push({
+          label: `Travel toward ${dest}`,
+          actionId: `exit:${entityId}:travel`,
+          kind: 'exit',
+          slotKind: 'exit',
+          required: true,
+          rank: 70,
+        } as T);
+      }
+    } else {
+      const edges = enumerateLegalEdges(state);
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i]!;
+        if (e.type !== 'travel') continue;
+        const label = (e.label ?? '').trim();
+        if (!label) continue;
+        const target = (e.target ?? label).trim();
+        cands.push({
+          label,
+          actionId: `exit:exit:${target}:travel`,
+          kind: 'exit',
+          slotKind: 'exit',
+          required: true,
+          rank: 70,
+        } as T);
+      }
+    }
+    if (!cands.length) {
+      const names = exitPlaceNames(state);
+      for (let i = 0; i < names.length; i++) {
+        const dest = (names[i] ?? '').trim();
+        if (!dest) continue;
+        cands.push({
+          label: `Travel toward ${dest}`,
+          actionId: `exit:exit:${dest}:travel`,
+          kind: 'exit',
+          slotKind: 'exit',
+          required: true,
+          rank: 70,
+        } as T);
+      }
+    }
+    if (cands.length) {
+      const prefix = `${sk.placeId}\0`;
+      let best = 0;
+      let bestTurn = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < cands.length; i++) {
+        let last = -1;
+        for (let h = 0; h < hist.length; h++) {
+          const row = hist[h]!;
+          if (row.sceneKey !== sk.placeId && !row.sceneKey.startsWith(prefix)) continue;
+          const ids = row.actionIds;
+          let has = false;
+          for (let j = 0; j < ids.length; j++) {
+            if (ids[j] === cands[i]!.actionId) {
+              has = true;
+              break;
+            }
+          }
+          if (has && row.turn > last) last = row.turn;
+        }
+        if (last < bestTurn) {
+          best = i;
+          bestTurn = last;
+        }
+      }
+      if (keep.length >= WAY_OUT_PAD_CAP) {
+        let victim = -1;
+        let victimRank = Number.POSITIVE_INFINITY;
+        for (let i = 0; i < keep.length; i++) {
+          const chip = keep[i]!;
+          if (chip.kind === 'free-input') continue;
+          if (
+            chip.slotKind === 'exit' ||
+            chip.kind === 'exit' ||
+            chip.kind === 'hub' ||
+            chip.kind === 'journey' ||
+            chip.actionId.startsWith('exit:')
+          ) {
+            continue;
+          }
+          let situation = false;
+          if (sit) {
+            for (let s = 0; s < sit.length; s++) {
+              if (sit[s] === chip.actionId) {
+                situation = true;
+                break;
+              }
+            }
+          }
+          if (situation) continue;
+          const rank = chip.rank ?? 0;
+          if (victim < 0 || rank < victimRank || (rank === victimRank && i > victim)) {
+            victim = i;
+            victimRank = rank;
+          }
+        }
+        if (victim >= 0) keep.splice(victim, 1);
+      }
+      keep.push({ ...cands[best]!, cooldownReturn: undefined });
+    }
   }
   return keep;
 }

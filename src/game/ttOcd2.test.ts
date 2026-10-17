@@ -5,11 +5,13 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { agendaFromRole } from './npcMemory';
-import { commitOfferedTurn } from './playTranscript';
+import { commitOfferedPad, commitOfferedTurn } from './playTranscript';
+import { exitPlaceNames } from './placeNames';
 import {
   applyOptionCooldown,
   computeOptionSceneKey,
   REPEAT_COOLDOWN_TURNS,
+  WAY_OUT_PAD_CAP,
   type OptionCooldownChip,
 } from './sceneAffordances';
 import type { EngineMode, GameState, LogEntry, NpcMemory, Quest } from './types';
@@ -233,7 +235,13 @@ describe('q44-OCD2 pad cooldown', () => {
       { label: 'Inspect the brush', actionId: 'object:brush-1:inspect', kind: 'affordance', slotKind: 'object', required: false },
       { label: 'Inspect a crate', actionId: 'object:crate-1:inspect', kind: 'affordance', slotKind: 'object', required: false },
     ];
-    const cooled = applyOptionCooldown({ ...s, currentLocation: 'Camp' }, pad);
+    const bare = {
+      ...s,
+      places: [{ id: 'camp', name: 'Camp', cardBuiltTurn: 1, exits: [] }],
+      locationSheet: { ...s.locationSheet!, exits: [] },
+      sceneFacts: { ...s.sceneFacts!, indoor: true },
+    };
+    const cooled = applyOptionCooldown(bare, pad);
     expect(cooled.length).toBeGreaterThanOrEqual(2);
     expect(cooled.every((c) => c.cooldownReturn === true)).toBe(true);
   });
@@ -248,6 +256,135 @@ describe('q44-OCD2 pad cooldown', () => {
     for (let t = 2; t <= 4; t++) {
       const hit = rows[t - 1]!.offeredChips.find((c) => c.actionId === id);
       expect(hit, `tabletop turn ${t}`).toBeTruthy();
+    }
+  });
+});
+
+function isWayOut(c: { kind: string; actionId: string; slotKind?: string }): boolean {
+  return (
+    c.slotKind === 'exit' ||
+    c.kind === 'exit' ||
+    c.kind === 'hub' ||
+    c.kind === 'journey' ||
+    c.actionId.startsWith('exit:')
+  );
+}
+
+function routeNames(state: GameState): string[] {
+  const names: string[] = [];
+  const sheet = state.locationSheet?.exits ?? [];
+  for (let i = 0; i < sheet.length; i++) {
+    const label = (sheet[i]?.label ?? '').trim();
+    if (label) names.push(label);
+  }
+  const card = exitPlaceNames(state);
+  for (let i = 0; i < card.length; i++) {
+    const label = (card[i] ?? '').trim();
+    if (label && !names.includes(label)) names.push(label);
+  }
+  return names;
+}
+
+function pointsAtRoute(chip: { label: string; actionId: string }, names: string[]): boolean {
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i]!;
+    if (chip.actionId.includes(name) || chip.label.endsWith(name)) return true;
+  }
+  return false;
+}
+
+describe('q44b-OCD2x way out', () => {
+  it('a place with no exits and no travel adds nothing', () => {
+    const s = {
+      ...base('litrpg'),
+      currentLocation: 'Bare Room',
+      places: [{ id: 'bare', name: 'Bare Room', cardBuiltTurn: 1, exits: [] }],
+      locationSheet: { name: 'Bare Room', interactables: [], exits: [], presentNpcIds: [] },
+      sceneFacts: { crowd: 'alone', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 1, indoor: true },
+    } as unknown as GameState;
+    const pad: OptionCooldownChip[] = [
+      { label: 'Talk to Scout', actionId: 'npc:Scout:talk', kind: 'affordance', slotKind: 'person', rank: 80 },
+    ];
+    const cooled = applyOptionCooldown(s, pad);
+    expect(cooled.map((c) => c.actionId)).toEqual(['npc:Scout:talk']);
+    expect(cooled.some(isWayOut)).toBe(false);
+  });
+
+  it('a pad that already has a travel chip is unchanged', () => {
+    const s = base('litrpg');
+    const pad: OptionCooldownChip[] = [
+      { label: 'Talk to Scout', actionId: 'npc:Scout:talk', kind: 'affordance', slotKind: 'person', rank: 80 },
+      { label: 'Travel toward the road', actionId: 'exit:ex-road:travel', kind: 'exit', slotKind: 'exit', rank: 70 },
+    ];
+    const cooled = applyOptionCooldown(s, pad);
+    expect(cooled.map((c) => c.actionId)).toEqual(pad.map((c) => c.actionId));
+    expect(cooled.map((c) => c.label)).toEqual(pad.map((c) => c.label));
+  });
+
+  it('tabletop, litrpg and rpg each keep a way out', () => {
+    const modes = ['dnd', 'litrpg', 'rpg'] as const;
+    for (let i = 0; i < modes.length; i++) {
+      const s = base(modes[i]!);
+      const pad: OptionCooldownChip[] = [
+        { label: 'Talk to Scout', actionId: 'npc:Scout:talk', kind: 'affordance', slotKind: 'person', rank: 40 },
+        { label: 'Say something…', actionId: 'free-input:say', kind: 'free-input', rank: 0 },
+      ];
+      const cooled = applyOptionCooldown(s, pad);
+      const way = cooled.find(isWayOut);
+      expect(way, modes[i]).toBeTruthy();
+      expect(pointsAtRoute(way!, routeNames(s))).toBe(true);
+    }
+  });
+
+  it('a full pad replaces the lowest-ranked non-free non-situation chip', () => {
+    const s = base('litrpg');
+    const pad: OptionCooldownChip[] = [
+      { label: 'Say something…', actionId: 'free-input:say', kind: 'free-input', rank: 0 },
+      {
+        label: 'Search the brush',
+        actionId: 'object:brush-1:inspect',
+        kind: 'affordance',
+        slotKind: 'object',
+        rank: 1,
+      },
+    ];
+    s.activeSituation = { kind: 'search', id: 'sit', since: 1, actionIds: ['quest:keep:act'] };
+    pad.push({ label: 'Follow the lead', actionId: 'quest:keep:act', kind: 'affordance', slotKind: 'quest', rank: 0 });
+    for (let i = pad.length; i < WAY_OUT_PAD_CAP; i++) {
+      pad.push({
+        label: `Inspect mark ${i}`,
+        actionId: `object:mark-${i}:inspect`,
+        kind: 'affordance',
+        slotKind: 'object',
+        rank: 10 + i,
+      });
+    }
+    const cooled = applyOptionCooldown(s, pad);
+    expect(cooled.length).toBe(WAY_OUT_PAD_CAP);
+    expect(cooled.some((c) => c.actionId === 'free-input:say')).toBe(true);
+    expect(cooled.some((c) => c.actionId === 'quest:keep:act')).toBe(true);
+    expect(cooled.some((c) => c.actionId === 'object:brush-1:inspect')).toBe(false);
+    expect(cooled.some(isWayOut)).toBe(true);
+  });
+
+  it('mega 19051 T85 and T94 rebuild a way out of The Weighing Cup', async () => {
+    const t85 = (await import('./__fixtures__/mega19051-t85.json')).default as {
+      before: GameState;
+    };
+    const t94 = (await import('./__fixtures__/mega19051-t94.json')).default as {
+      before: GameState;
+    };
+    for (const fix of [t85, t94]) {
+      const before = { ...fix.before, offeredPad: null };
+      const next = commitOfferedPad(before);
+      const chips = next.offeredPad?.chips ?? [];
+      const labels = next.offeredPad?.choices ?? [];
+      const way = chips.find(isWayOut);
+      expect(way, before.currentLocation).toBeTruthy();
+      const names = routeNames(before);
+      expect(names.length).toBeGreaterThan(0);
+      expect(pointsAtRoute(way!, names)).toBe(true);
+      expect(labels.some((label) => label === way!.label)).toBe(true);
     }
   });
 });
