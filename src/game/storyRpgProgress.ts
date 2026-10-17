@@ -4,11 +4,11 @@
  * Before the writer, a Story RPG turn commits two things the engine can see:
  * - Standing: helping or refusing a named person here moves how they stand with the player
  *   (npcMemories disposition), and the change is a world fact the writer must carry.
- * - Quest step: the main quest's next open step ticks when the player is at the place that step
- *   names ("Scout the caravan" at Consul Caravan Camp). A step that names no place is a decision
- *   ("Pick an approach"): it is offered as its own chip to start the scene (RC-QT1), never ticks from
- *   the chip label alone — the tick needs an engine outcome (place, check, contact favour, item).
- *   Beat timing, travel and talk never tick it.
+ * - Quest step: the main quest's next open step ticks when the player is at the step's explicit
+ *   placeId (OPT-4; no word-match). A placeless decision ("Pick an approach") with routes expands
+ *   those routes as OPT-1 affordances (TT-G1); without routes it is still offered as its own chip
+ *   (RC-QT1) and never ticks from the chip label alone — the tick needs an engine outcome
+ *   (place, check, contact favour, route success). Beat timing, travel and talk never tick it.
  * - They'll remember: a standing change schedules a delayed consequence (scheduleDelayedConsequence). The
  *   arcDirector delivery pays it off on the first due turn that person is present again: a hidden trust shift
  *   on their relationship record and a "Remembered" beat. The choice itself gets a "will remember that" cue.
@@ -20,7 +20,7 @@
  * - Every committed choice goes into the journal of choices (choiceJournal).
  * Other modes are untouched.
  */
-import type { GameState, NpcMemory, Quest, Settings } from './types';
+import type { GameState, NpcMemory, Quest, QuestObjective, Settings } from './types';
 import { recordChoice } from './choiceJournal';
 import { settleOrigin } from './rules/rpgOrigin';
 import { approvalBand, recruitedCompanions } from './rules/companions';
@@ -35,25 +35,17 @@ import { commitEnding, selectBestEnding } from './pyoaEndingGates';
 import { RPG_ENDING_CHIP } from './rpgEndings';
 import { isPlayInputLocked } from './playPhase';
 import type { BibleId } from './pyoaTypes';
+import { applyQuestRouteOutcome, openRouteView, placeIdForStep } from './questRoutes';
 
 export type StoryRpgTurn = { state: GameState; receipts: string[] };
 
-const STEP_STOP = new Set(['about', 'after', 'again', 'their', 'there', 'where', 'which', 'while', 'before', 'night', 'score']);
-
-function contentWords(text: string): string[] {
-  return (text.toLowerCase().match(/[a-z]{5,}/g) ?? []).filter((w) => !STEP_STOP.has(w));
-}
-
-/** The known place a quest step names by a shared word ("Scout the caravan" → Consul Caravan Camp), if any. */
-export function placeForStep(state: GameState, step: string): string | null {
-  const words = contentWords(step);
-  if (!words.length) return null;
-  for (const p of state.places ?? []) {
-    const name = (p.name ?? '').trim();
-    const nameWords = new Set(contentWords(name));
-    if (name && words.some((w) => nameWords.has(w))) return name;
-  }
-  return null;
+/**
+ * Explicit placeId on the objective (OPT-4). Word-match + STEP_STOP deleted (tt-cut-log q38-G1a).
+ * `step` may be the objective, or a legacy description string (returns null — no word match).
+ */
+export function placeForStep(_state: GameState, step: QuestObjective | string): string | null {
+  if (typeof step === 'string') return null;
+  return placeIdForStep(step);
 }
 
 function atPlace(state: GameState, place: string): boolean {
@@ -93,13 +85,15 @@ function stanceTarget(state: GameState, action: string): string | null {
 
 const chipKey = (s: string) => s.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
 
-/** Story RPG: the main quest's open decision step (one that names no place) as the chip that starts its scene. */
+/** Story RPG: placeless open step without routes — single decision chip (RC-QT1). With routes, affordances own the chips. */
 export function storyRpgDecisionChip(state: GameState): string | null {
   if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete || state.activeEncounter) return null;
   const quest = mainSpineQuest(state);
-  const open = quest?.objectives?.find((o) => !o.completed)?.description ?? '';
-  if (!open || placeForStep(state, open)) return null;
-  return objectiveChip(open);
+  const openObj = quest?.objectives?.find((o) => !o.completed);
+  if (!openObj) return null;
+  if ((openObj.routes?.length ?? 0) > 0) return null;
+  if (placeForStep(state, openObj)) return null;
+  return objectiveChip(openObj.description);
 }
 
 /** Turns before a remembered choice can come back, and the hidden trust it moves when it does. */
@@ -239,6 +233,32 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
     };
   }
 
+  const route = openRouteView(state, action)?.routeByLabel ?? null;
+  if (route) {
+    // Chip alone is not the tick (RC-QT1): contact/place/check routes need their engine outcome.
+    // Approach / person / standing / skill / system / study / check: success is the committed pick when
+    // the route does not demand a separate place or Friendly contact gate.
+    if (route.kind === 'place' || route.kind === 'object') {
+      const need = (route.placeId ?? '').trim();
+      if (need && !atPlace(state, need)) {
+        return applyQuestRouteOutcome(state, route.id, 'failure');
+      }
+    }
+    if (route.kind === 'contact') {
+      if (!contactsHere(state).length) {
+        return applyQuestRouteOutcome(state, route.id, 'failure');
+      }
+    }
+    const hit = applyQuestRouteOutcome(state, route.id, 'success');
+    return {
+      state: recordChoice(hit.state, {
+        kind: 'decision',
+        text: `${openMainStep(state)?.quest.name ?? 'Quest'}: ${route.label}`,
+      }),
+      receipts: hit.receipts,
+    };
+  }
+
   const contact = contactFromInput(state, action);
   if (contact) {
     const open = openMainStep(state)!;
@@ -269,10 +289,10 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
   }
 
   const quest = mainSpineQuest(next);
-  const open = quest?.objectives?.find((o) => !o.completed)?.description ?? '';
-  if (quest && open) {
-    const place = placeForStep(next, open);
-    // RC-QT1: place steps tick at the named place; placeless decision chips never tick on label alone.
+  const openObj = quest?.objectives?.find((o) => !o.completed);
+  if (quest && openObj) {
+    const place = placeForStep(next, openObj);
+    // RC-QT1: placeId steps tick at that place; placeless decision chips never tick on label alone.
     const ticked = place && atPlace(next, place) ? tickNextStep(next.quests ?? [], quest.id) : null;
     if (ticked) {
       next = { ...next, quests: ticked.quests };

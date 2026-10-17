@@ -280,6 +280,16 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Oracle text from Datasworn / Ironsworn. Credit: Shawn Tomkin (Ironsworn), rsek (Datasworn), XenotropicDev (TheOracle). MIT code, CC BY 4.0 oracle text. https://github.com/rsek/datasworn ; https://tomkinpress.com/pages/licensing',
       },
       {
+        work: "The Lazy GM's Resource Document",
+        source: 'Michael E. Shea',
+        license: 'CC BY 4.0',
+        usedFor:
+          'Tabletop adventure-hook seed rows for the OPT-2 quest generator. Stat blocks, DCs and XP rewards stay SRD 5.2.1 only.',
+        url: 'https://www.slyflourish.com/',
+        notice:
+          "Adventure hooks from The Lazy GM's Resource Document by Michael E. Shea, licensed under CC BY 4.0. https://creativecommons.org/licenses/by/4.0/",
+      },
+      {
         work: 'SynapticGM coin tables',
         source: 'SynapticGM',
         license: 'Original',

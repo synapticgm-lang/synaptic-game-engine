@@ -418,12 +418,47 @@ export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
 export type QuestUrgency = 'immediate' | 'time-sensitive' | 'flexible' | 'unknown';
 
+/**
+ * TT-G1 / OPT-4 discovery route (Three Clue Rule — The Alexandrian; pattern only).
+ * Person + place/object + mode third (check/Study | skill/system | contact/standing).
+ * Label is the plain action; CheckSpec lives on EngineChip, never in the label.
+ */
+export type QuestRouteKind =
+  | 'person'
+  | 'place'
+  | 'object'
+  | 'check'
+  | 'study'
+  | 'skill'
+  | 'system'
+  | 'contact'
+  | 'standing'
+  | 'approach';
+
+export interface QuestRoute {
+  id: string;
+  kind: QuestRouteKind;
+  /** Plain action chip label (never rewritten with a skill/difficulty tag). */
+  label: string;
+  entityId?: string;
+  placeId?: string | null;
+  /** Failed attempt — route stays open; never removes siblings. */
+  failed?: boolean;
+  /** This route already revealed the lead. */
+  revealed?: boolean;
+}
+
 export interface QuestObjective {
   id: string;
   description: string;
   completed: boolean;
   optional?: boolean;
-  /** The place this step is taken at, when its wording names no known place. */
+  /**
+   * Explicit place this step is taken (OPT-4 / TT-G1). Prefer this over legacy `place`.
+   * Null/undefined = placeless decision step (routes expand as affordances).
+   */
+  placeId?: string | null;
+  /** @deprecated Prefer placeId — kept for older saves until G1b data pass. */
   place?: string;
   /** Who this step is taken with, when its wording names no "Speak with" person. */
   people?: string[];
@@ -434,6 +469,8 @@ export interface QuestObjective {
   object?: string;
   /** The item or person this step is about, put in the world when the quest was made. The step ticks only when it is found or met. */
   target?: QuestTarget;
+  /** ≥3 discovery routes (TT-G1); decision steps list approach routes here. */
+  routes?: QuestRoute[];
 }
 
 export interface QuestTarget {
@@ -504,6 +541,8 @@ export interface Quest {
   };
   /** Plain-language why this quest exists / what to do next (player journal). */
   whatNext?: string;
+  /** Open discovery leads for the current step (TT-G1 journal). */
+  openLeads?: string[];
   /** Provenance for Simple Why? (bible seed, story beat, System notice). */
   provenance?: string;
   
@@ -825,6 +864,13 @@ export interface GameState {
     choices: string[];
     /** VR1 — CheckSpec by plain label (UI tags); never rewrite choice strings. */
     checks?: Record<string, import('./checkMath').CheckSpec>;
+    /** OPT1-8 — per-chip engine record (actionId / kind / cooldownReturn). */
+    chips?: Array<{
+      label: string;
+      actionId: string;
+      kind: string;
+      cooldownReturn?: boolean;
+    }>;
   } | null;
   /** Tabletop inn-book character creation in progress (engine-only pages, no writer). */
   tabletopCreation?: TabletopCreationState;
@@ -927,6 +973,11 @@ export interface GameState {
   craftKeepers?: import('./craftKeepers').CraftKeeper[];
   /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
   arcDirector?: import('./arcDirector').ArcDirectorState;
+  /**
+   * OPT-2 — quest generator spacing until q39-T1b moves it into the thread planner.
+   * lastTurn = turn of last generated quest; unboundLog = dropped writer quest-add proposals.
+   */
+  questGen?: { lastTurn: number; unboundLog?: string[] };
   /** Immutable run manifest for eval/replay binding. */
   runManifest?: import('./runManifest').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */
@@ -1386,6 +1437,16 @@ export interface LogEntry {
   offeredChoices?: string[];
   /** VR1 — CheckSpec keyed by plain offered label (beside offeredChoices). */
   offeredChipChecks?: Record<string, import('./checkMath').CheckSpec>;
+  /**
+   * OPT-1 / OPT1-8 — engine offered-chip record (actionId + kind + cooldownReturn).
+   * Labels stay plain; UI tags come from offeredChipChecks / CheckSpec.
+   */
+  offeredChips?: Array<{
+    label: string;
+    actionId: string;
+    kind: string;
+    cooldownReturn?: boolean;
+  }>;
   /** Diegetic LitRPG System window (blue panel) — ledger chrome, not STATUS. */
   systemWindow?: { heading: string; lines: string[] };
   /** Craft-book rule ids compiled for this beat (Debug / Download play). */

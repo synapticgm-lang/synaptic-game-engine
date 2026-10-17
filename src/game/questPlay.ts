@@ -1,4 +1,4 @@
-import type { GameState, LogEntry, Quest } from './types';
+import type { GameState, LogEntry, Quest, QuestRoute } from './types';
 import { isSystemHousingId, systemHousingThing, type SystemHousingId } from './systemHousing';
 import {
   findSettlement,
@@ -15,7 +15,18 @@ export type StarterQuestSeed = {
   objectives: string[];
   /** Per objective: where (or with whom) it is taken, for steps whose wording names neither. */
   objectiveAnchors?: Array<
-    { place?: string; people?: string[]; room?: string; verb?: string; object?: string } | undefined
+    | {
+        place?: string;
+        /** Explicit placeId (OPT-4); prefer over legacy `place`. */
+        placeId?: string | null;
+        people?: string[];
+        room?: string;
+        verb?: string;
+        object?: string;
+        /** ≥3 discovery routes (TT-G1 / OPT-4). */
+        routes?: QuestRoute[];
+      }
+    | undefined
   >;
   rewards?: string;
   location?: string;
@@ -819,9 +830,26 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
 /** A seed step's anchor as objective fields: only the ones it sets. */
 function anchorFields(anchor: NonNullable<StarterQuestSeed['objectiveAnchors']>[number]) {
   if (!anchor) return {};
-  const { people, ...rest } = anchor;
-  const set = Object.fromEntries(Object.entries(rest).filter(([, v]) => !!v));
-  return { ...set, ...(people?.length ? { people: [...people] } : {}) };
+  const { people, place, placeId, routes, ...rest } = anchor;
+  const set: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(rest)) {
+    if (v) set[k] = v;
+  }
+  const resolvedPlaceId = placeId !== undefined ? placeId : place;
+  const copied: QuestRoute[] = [];
+  if (routes?.length) {
+    for (let i = 0; i < routes.length; i++) copied.push({ ...routes[i]! });
+  }
+  return {
+    ...set,
+    ...(resolvedPlaceId !== undefined && resolvedPlaceId !== ''
+      ? { placeId: resolvedPlaceId, ...(place ? { place } : {}) }
+      : place
+        ? { place, placeId: place }
+        : {}),
+    ...(people?.length ? { people: [...people] } : {}),
+    ...(copied.length ? { routes: copied } : {}),
+  };
 }
 
 /** Active revealed main-spine quest (prefer L1 starter ids). */

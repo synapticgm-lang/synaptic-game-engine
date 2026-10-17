@@ -61,6 +61,7 @@ export function makeBible(opts: {
       description: q.description,
       recommendedLevel: q.recommendedLevel,
       objectives: q.objectives,
+      ...(q.objectiveAnchors ? { objectiveAnchors: q.objectiveAnchors } : {}),
       rewards: q.rewards,
     })),
     starterItems: opts.items.map((it, i) => ({

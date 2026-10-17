@@ -679,6 +679,12 @@ export const saltRoadHeist = withManusHonestRoster(makeBible({
       description: 'Learn the route, guards, and weak point before the score.',
       recommendedLevel: 1,
       objectives: ['Scout the caravan', 'Pick an approach', 'Commit to the heist night'],
+      // OPT-4: explicit placeId (G1a cut word-match). Decision steps stay placeless (RC-QT1); routes in q42-OPT4m.
+      objectiveAnchors: [
+        { placeId: 'Consul Caravan Camp' },
+        { placeId: null },
+        { placeId: null },
+      ],
       rewards: 'Plan locked; Heat starts at Low',
     },
   ],

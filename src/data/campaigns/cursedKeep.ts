@@ -254,11 +254,148 @@ const cursedKeepBase: CampaignBible = {
         'Choose: report findings to Father Aldous, Mayor Helga, or investigate independently',
       ],
       objectiveAnchors: [
-        undefined,
-        undefined,
-        { place: 'Keep Gate', room: 'inside' },
-        { place: 'Keep Gate', room: 'hall' },
-        { people: ['Father Aldous', 'Mayor Helga Brask'] },
+        {
+          place: 'Greyhollow Inn',
+          placeId: 'Greyhollow Inn',
+          people: [
+            'Oskar'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-1-s1-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-1-s1-place',
+              kind: 'place',
+              label: 'Search Greyhollow Inn for signs',
+              entityId: 'place:Greyhollow Inn',
+              placeId: 'Greyhollow Inn'
+            },
+            {
+              id: 'ck-quest-1-s1-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-1-s1'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Oskar'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-1-s2-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-1-s2-place',
+              kind: 'object',
+              label: 'Examine the broken chain',
+              entityId: 'object:the broken chain',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-1-s2-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-1-s2'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Oskar'
+          ],
+          room: 'inside',
+          routes: [
+            {
+              id: 'ck-quest-1-s3-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-1-s3-place',
+              kind: 'place',
+              label: 'Search Keep Gate for signs',
+              entityId: 'place:Keep Gate',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-1-s3-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-1-s3'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Oskar'
+          ],
+          room: 'hall',
+          routes: [
+            {
+              id: 'ck-quest-1-s4-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-1-s4-place',
+              kind: 'object',
+              label: 'Examine the sealed fireplace',
+              entityId: 'object:the sealed fireplace',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-1-s4-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-1-s4'
+            }
+          ]
+        },
+        {
+          placeId: null,
+          people: [
+            'Father Aldous',
+            'Mayor Helga Brask'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-1-s5-person',
+              kind: 'person',
+              label: 'Ask Father Aldous about the lead',
+              entityId: 'npc:Father Aldous'
+            },
+            {
+              id: 'ck-quest-1-s5-place',
+              kind: 'place',
+              label: 'Search the scene for signs',
+              entityId: 'place:the scene',
+              placeId: null
+            },
+            {
+              id: 'ck-quest-1-s5-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-1-s5'
+            }
+          ]
+        }
       ],
       rewards: '50 gp, [Greyhollow Tavern lodging], Oskar\'s trust, [Keep Ground Floor Map] (partial), [Broken Chain Link] (evidence)',
     },
@@ -275,7 +412,148 @@ const cursedKeepBase: CampaignBible = {
         'Examine the disturbed graves (Religion/Arcana checks)',
         'Consult with Greta the Hunter about her observations of the livestock pens',
       ],
-      rewards: '75 gp, [Father Aldous\'s Blessing] (temporary +1 to saving throws vs. undead), [Holy Symbol of Greyhollow], graveyard evidence',
+      objectiveAnchors: [
+        {
+          place: 'Greyhollow Church',
+          placeId: 'Greyhollow Church',
+          people: [
+            'Father Aldous'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-2-s1-person',
+              kind: 'person',
+              label: 'Ask Father Aldous about the lead',
+              entityId: 'npc:Father Aldous'
+            },
+            {
+              id: 'ck-quest-2-s1-place',
+              kind: 'place',
+              label: 'Search Greyhollow Church for signs',
+              entityId: 'place:Greyhollow Church',
+              placeId: 'Greyhollow Church'
+            },
+            {
+              id: 'ck-quest-2-s1-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-2-s1'
+            }
+          ]
+        },
+        {
+          place: 'Greyhollow Church',
+          placeId: 'Greyhollow Church',
+          people: [
+            'Father Aldous'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-2-s2-person',
+              kind: 'person',
+              label: 'Ask Father Aldous about the lead',
+              entityId: 'npc:Father Aldous'
+            },
+            {
+              id: 'ck-quest-2-s2-place',
+              kind: 'place',
+              label: 'Search Greyhollow Church for signs',
+              entityId: 'place:Greyhollow Church',
+              placeId: 'Greyhollow Church'
+            },
+            {
+              id: 'ck-quest-2-s2-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-2-s2'
+            }
+          ]
+        },
+        {
+          place: 'Greyhollow Church',
+          placeId: 'Greyhollow Church',
+          people: [
+            'Father Aldous'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-2-s3-person',
+              kind: 'person',
+              label: 'Ask Father Aldous about the lead',
+              entityId: 'npc:Father Aldous'
+            },
+            {
+              id: 'ck-quest-2-s3-place',
+              kind: 'place',
+              label: 'Search Greyhollow Church for signs',
+              entityId: 'place:Greyhollow Church',
+              placeId: 'Greyhollow Church'
+            },
+            {
+              id: 'ck-quest-2-s3-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-2-s3'
+            }
+          ]
+        },
+        {
+          place: 'Greyhollow Graveyard',
+          placeId: 'Greyhollow Graveyard',
+          people: [
+            'Father Aldous'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-2-s4-person',
+              kind: 'person',
+              label: 'Ask Father Aldous about the lead',
+              entityId: 'npc:Father Aldous'
+            },
+            {
+              id: 'ck-quest-2-s4-place',
+              kind: 'object',
+              label: 'Examine the disturbed graves',
+              entityId: 'object:the disturbed graves',
+              placeId: 'Greyhollow Graveyard'
+            },
+            {
+              id: 'ck-quest-2-s4-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-2-s4'
+            }
+          ]
+        },
+        {
+          place: 'Livestock Pens',
+          placeId: 'Livestock Pens',
+          people: [
+            'Greta'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-2-s5-person',
+              kind: 'person',
+              label: 'Ask Greta about the lead',
+              entityId: 'npc:Greta'
+            },
+            {
+              id: 'ck-quest-2-s5-place',
+              kind: 'place',
+              label: 'Search Livestock Pens for signs',
+              entityId: 'place:Livestock Pens',
+              placeId: 'Livestock Pens'
+            },
+            {
+              id: 'ck-quest-2-s5-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-2-s5'
+            }
+          ]
+        }
+      ],rewards: '75 gp, [Father Aldous\'s Blessing] (temporary +1 to saving throws vs. undead), [Holy Symbol of Greyhollow], graveyard evidence',
     },
     {
       id: 'ck-quest-3',
@@ -290,7 +568,148 @@ const cursedKeepBase: CampaignBible = {
         'Learn the entity\'s nature: an ancient life-draining presence, sealed in the crypt',
         'Learn the binding method: the Greymarks sealed it with a ritual that cost their lives — all 14 of them',
       ],
-      rewards: '100 gp, [Greymark Journal Transcripts], [Healing Salve] x3, [Holy Water] x2, [Vial of Wardsbane] (anti-undead oil)',
+      objectiveAnchors: [
+        {
+          place: 'Mira’s Apothecary',
+          placeId: 'Mira’s Apothecary',
+          people: [
+            'Mira'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-3-s1-person',
+              kind: 'person',
+              label: 'Ask Mira about the lead',
+              entityId: 'npc:Mira'
+            },
+            {
+              id: 'ck-quest-3-s1-place',
+              kind: 'place',
+              label: 'Search Mira’s Apothecary for signs',
+              entityId: 'place:Mira’s Apothecary',
+              placeId: 'Mira’s Apothecary'
+            },
+            {
+              id: 'ck-quest-3-s1-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-3-s1'
+            }
+          ]
+        },
+        {
+          place: 'Mira’s Apothecary',
+          placeId: 'Mira’s Apothecary',
+          people: [
+            'Mira'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-3-s2-person',
+              kind: 'person',
+              label: 'Ask Mira about the lead',
+              entityId: 'npc:Mira'
+            },
+            {
+              id: 'ck-quest-3-s2-place',
+              kind: 'place',
+              label: 'Search Mira’s Apothecary for signs',
+              entityId: 'place:Mira’s Apothecary',
+              placeId: 'Mira’s Apothecary'
+            },
+            {
+              id: 'ck-quest-3-s2-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-3-s2'
+            }
+          ]
+        },
+        {
+          place: 'Mira’s Apothecary',
+          placeId: 'Mira’s Apothecary',
+          people: [
+            'Mira'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-3-s3-person',
+              kind: 'person',
+              label: 'Ask Mira about the lead',
+              entityId: 'npc:Mira'
+            },
+            {
+              id: 'ck-quest-3-s3-place',
+              kind: 'object',
+              label: 'Examine the Greymark journals',
+              entityId: 'object:the Greymark journals',
+              placeId: 'Mira’s Apothecary'
+            },
+            {
+              id: 'ck-quest-3-s3-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-3-s3'
+            }
+          ]
+        },
+        {
+          place: 'Mira’s Apothecary',
+          placeId: 'Mira’s Apothecary',
+          people: [
+            'Mira'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-3-s4-person',
+              kind: 'person',
+              label: 'Ask Mira about the lead',
+              entityId: 'npc:Mira'
+            },
+            {
+              id: 'ck-quest-3-s4-place',
+              kind: 'object',
+              label: 'Examine the journal pages',
+              entityId: 'object:the journal pages',
+              placeId: 'Mira’s Apothecary'
+            },
+            {
+              id: 'ck-quest-3-s4-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-3-s4'
+            }
+          ]
+        },
+        {
+          place: 'Mira’s Apothecary',
+          placeId: 'Mira’s Apothecary',
+          people: [
+            'Mira'
+          ],
+          routes: [
+            {
+              id: 'ck-quest-3-s5-person',
+              kind: 'person',
+              label: 'Ask Mira about the lead',
+              entityId: 'npc:Mira'
+            },
+            {
+              id: 'ck-quest-3-s5-place',
+              kind: 'object',
+              label: 'Examine the binding notes',
+              entityId: 'object:the binding notes',
+              placeId: 'Mira’s Apothecary'
+            },
+            {
+              id: 'ck-quest-3-s5-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-3-s5'
+            }
+          ]
+        }
+      ],rewards: '100 gp, [Greymark Journal Transcripts], [Healing Salve] x3, [Holy Water] x2, [Vial of Wardsbane] (anti-undead oil)',
     },
     {
       id: 'ck-quest-4',
@@ -305,7 +724,153 @@ const cursedKeepBase: CampaignBible = {
         'Find the Greymark family (14 people, suspended in life-drain, barely conscious)',
         'Confront the Entity: choose to destroy it (combat), seal it (ritual, requires sacrifice), or free the Greymarks (starves the entity but releases it temporarily)',
       ],
-      rewards: '500 gp, [Lina rescued], [Greymark family freed or mourned], [Entity destroyed/sealed/released], Greyhollow saved or doomed, campaign resolution',
+      objectiveAnchors: [
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Oskar'
+          ],
+          room: 'hall',
+          routes: [
+            {
+              id: 'ck-quest-4-s1-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-4-s1-place',
+              kind: 'object',
+              label: 'Examine the mortar seal',
+              entityId: 'object:the mortar seal',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-4-s1-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-4-s1'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Oskar'
+          ],
+          room: 'crypt',
+          routes: [
+            {
+              id: 'ck-quest-4-s2-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-4-s2-place',
+              kind: 'place',
+              label: 'Search Keep Gate for signs',
+              entityId: 'place:Keep Gate',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-4-s2-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-4-s2'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Lina'
+          ],
+          room: 'crypt',
+          routes: [
+            {
+              id: 'ck-quest-4-s3-person',
+              kind: 'person',
+              label: 'Ask Lina about the lead',
+              entityId: 'npc:Lina'
+            },
+            {
+              id: 'ck-quest-4-s3-place',
+              kind: 'place',
+              label: 'Search Keep Gate for signs',
+              entityId: 'place:Keep Gate',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-4-s3-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-4-s3'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Lady Mirelle Greymark'
+          ],
+          room: 'crypt',
+          routes: [
+            {
+              id: 'ck-quest-4-s4-person',
+              kind: 'person',
+              label: 'Ask Lady Mirelle Greymark about the lead',
+              entityId: 'npc:Lady Mirelle Greymark'
+            },
+            {
+              id: 'ck-quest-4-s4-place',
+              kind: 'place',
+              label: 'Search Keep Gate for signs',
+              entityId: 'place:Keep Gate',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-4-s4-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-4-s4'
+            }
+          ]
+        },
+        {
+          place: 'Keep Gate',
+          placeId: 'Keep Gate',
+          people: [
+            'Oskar'
+          ],
+          room: 'crypt',
+          routes: [
+            {
+              id: 'ck-quest-4-s5-person',
+              kind: 'person',
+              label: 'Ask Oskar about the lead',
+              entityId: 'npc:Oskar'
+            },
+            {
+              id: 'ck-quest-4-s5-place',
+              kind: 'place',
+              label: 'Search Keep Gate for signs',
+              entityId: 'place:Keep Gate',
+              placeId: 'Keep Gate'
+            },
+            {
+              id: 'ck-quest-4-s5-study',
+              kind: 'study',
+              label: 'Study the clues',
+              entityId: 'study:ck-quest-4-s5'
+            }
+          ]
+        }
+      ],rewards: '500 gp, [Lina rescued], [Greymark family freed or mourned], [Entity destroyed/sealed/released], Greyhollow saved or doomed, campaign resolution',
     },
   ],
 

@@ -44,20 +44,18 @@ export function classifyChoiceRole(
   state: GameState
 ): ChoiceRole {
   const lower = choice.toLowerCase();
-  // Check if this advances an active quest
-  const activeQuests = (state.quests ?? []).filter(q => q.status === 'active' && q.revealed);
-  for (const quest of activeQuests) {
-    const questKeywords = quest.name.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-    if (questKeywords.some(kw => lower.includes(kw))) {
-      return 'objective_forward';
+  // Check if this advances an active quest (for-loops — ruleCount: no filter/some arrows).
+  for (const quest of state.quests ?? []) {
+    if (quest.status !== 'active' || !quest.revealed) continue;
+    const nameParts = quest.name.toLowerCase().split(/\s+/);
+    for (let i = 0; i < nameParts.length; i++) {
+      if (nameParts[i]!.length > 3 && lower.includes(nameParts[i]!)) return 'objective_forward';
     }
-    // Check objectives
     for (const obj of quest.objectives ?? []) {
-      if (!obj.completed && obj.description) {
-        const objKeywords = obj.description.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-        if (objKeywords.some(kw => lower.includes(kw))) {
-          return 'objective_forward';
-        }
+      if (obj.completed || !obj.description) continue;
+      const objParts = obj.description.toLowerCase().split(/\s+/);
+      for (let i = 0; i < objParts.length; i++) {
+        if (objParts[i]!.length > 3 && lower.includes(objParts[i]!)) return 'objective_forward';
       }
     }
   }

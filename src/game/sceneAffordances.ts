@@ -21,6 +21,7 @@ import { merchantHere } from './merchant';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
+import { openRouteView } from './questRoutes';
 
 /** Required vs optional slot families (OPT-1 item 2). */
 export type AffordanceSlotKind =
@@ -44,7 +45,20 @@ export interface SceneAffordance {
   /** Required kinds always keep a slot (plan §4 item 4 / OPT-1 item 2). */
   required: boolean;
   check?: CheckSpec | null;
+  /** LitRPG/RPG cooldown floor: restored so the turn keeps ≥2 chips (OPT1-8). */
+  cooldownReturn?: boolean;
 }
+
+/**
+ * John 17 Oct 12:48 / mode switch 12:49 — turns before the same actionId may return
+ * in an unchanged scene (tabletop 0 = situation-aware streak only; LitRPG/RPG 5).
+ */
+export const REPEAT_COOLDOWN_TURNS = {
+  tabletop: 0,
+  dnd: 0,
+  litrpg: 5,
+  rpg: 5,
+} as const;
 
 /** Optional-slot ceiling after required kinds are placed (TT-C1 mix 3–5). */
 export const AFFORDANCE_OPTIONAL_CAP = 5;
@@ -112,19 +126,52 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       required: false,
       check: dnd ? checkForAction(state, parsePlayerIntent(insight, state), insight) : undefined,
     });
+    // OPT3-2 / OPT-2 agenda hook: a present NPC's goal yields at least one OPT-1 affordance.
+    if (m.goal?.motivation && (m.goal.target || m.need)) {
+      const about = (m.need ?? m.goal.target).trim();
+      if (about) {
+        const agenda = `Ask ${name} about ${about}`;
+        all.push({
+          label: agenda,
+          actionId: `person:${entityId}:agenda`,
+          entityId,
+          slotKind: 'person',
+          salience: 85 - i,
+          required: true,
+          check: dnd ? checkForAction(state, parsePlayerIntent(agenda, state), agenda) : undefined,
+        });
+      }
+    }
   }
 
-  const step = tabletopStepChip(state) ?? storyRpgDecisionChip(state);
-  if (step) {
-    all.push({
-      label: step,
-      actionId: 'quest:open-step:act',
-      entityId: 'quest:open-step',
-      slotKind: 'quest',
-      salience: 90,
-      required: true,
-      check: dnd ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
-    });
+  // TT-G1 / OPT-4: open step routes expand as affordances (decision approaches included).
+  const routeRows = openRouteView(state)?.rows ?? [];
+  if (routeRows.length) {
+    for (let i = 0; i < routeRows.length; i++) {
+      const row = routeRows[i]!;
+      all.push({
+        label: row.label,
+        actionId: row.actionId,
+        entityId: row.entityId,
+        slotKind: 'quest',
+        salience: 90 - i,
+        required: true,
+        check: dnd ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
+      });
+    }
+  } else {
+    const step = tabletopStepChip(state) ?? storyRpgDecisionChip(state);
+    if (step) {
+      all.push({
+        label: step,
+        actionId: 'quest:open-step:act',
+        entityId: 'quest:open-step',
+        slotKind: 'quest',
+        salience: 90,
+        required: true,
+        check: dnd ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
+      });
+    }
   }
 
   const merchant = merchantHere(state);
@@ -331,9 +378,16 @@ export function computeOptionSceneKey(state: GameState): {
 /**
  * OPT-1 item 3 / John 17 Oct 08:41 — same actionId offered again with unchanged scene and no
  * activeSituation that lists it is a repeat. Situation-listed ids are never repeats.
+ * Cooldown (John 17 Oct 12:48, mode switch 12:49): LitRPG/RPG use REPEAT_COOLDOWN_TURNS
+ * (actionId + scene key); tabletop keeps only the streak rule. Exit slotKind never suppressed.
  */
-export function isOptionRepeat(state: GameState, actionId: string): boolean {
+export function isOptionRepeat(
+  state: GameState,
+  actionId: string,
+  opts?: { slotKind?: AffordanceSlotKind; required?: boolean },
+): boolean {
   if (!actionId) return false;
+  if (opts?.slotKind === 'exit') return false;
   const sit = state.activeSituation;
   if (sit?.actionIds) {
     for (let i = 0; i < sit.actionIds.length; i++) {
@@ -343,6 +397,34 @@ export function isOptionRepeat(state: GameState, actionId: string): boolean {
   const sk = computeOptionSceneKey(state);
   const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
   const hist = state.recentOfferedActions ?? [];
+  const turn = state.turn ?? 0;
+  const mode = state.engineMode;
+  const cd =
+    mode === 'litrpg'
+      ? REPEAT_COOLDOWN_TURNS.litrpg
+      : mode === 'rpg'
+        ? REPEAT_COOLDOWN_TURNS.rpg
+        : REPEAT_COOLDOWN_TURNS.dnd;
+
+  if (cd > 0) {
+    for (let i = hist.length - 1; i >= 0; i--) {
+      const row = hist[i]!;
+      if (row.sceneKey !== key) continue;
+      let has = false;
+      for (let j = 0; j < row.actionIds.length; j++) {
+        if (row.actionIds[j] === actionId) {
+          has = true;
+          break;
+        }
+      }
+      if (!has) continue;
+      return turn - row.turn < cd;
+    }
+    return false;
+  }
+
+  // Tabletop: 08:41 streak ≥5 on optional chips only (required keep their slot).
+  if (opts?.required) return false;
   let streak = 0;
   for (let i = hist.length - 1; i >= 0; i--) {
     const row = hist[i]!;
@@ -431,17 +513,84 @@ export function allocateAffordanceSlots(
   const personSlots = talkPeople.length <= 2 ? talkPeople : talkPeople.slice(0, 2);
   const exitSlot = exits.length ? [exits[0]!] : [];
 
+  const mode = state?.engineMode;
+  const cd =
+    mode === 'litrpg'
+      ? REPEAT_COOLDOWN_TURNS.litrpg
+      : mode === 'rpg'
+        ? REPEAT_COOLDOWN_TURNS.rpg
+        : REPEAT_COOLDOWN_TURNS.dnd;
+  const sk = state ? computeOptionSceneKey(state) : null;
+  const sceneKey = sk ? `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}` : '';
+  const hist = state?.recentOfferedActions ?? [];
+
   const picked: SceneAffordance[] = [];
   const seenAction = new Set<string>();
+  /** Cooldown-suppressed candidates (LitRPG/RPG); least-recent offer restores when <2 remain. */
+  const cooled: SceneAffordance[] = [];
+  const cooledLast: number[] = [];
+
   for (let i = 0; i < personSlots.length; i++) {
     const row = personSlots[i]!;
     if (seenAction.has(row.actionId)) continue;
+    if (
+      state &&
+      isOptionRepeat(state, row.actionId, { slotKind: row.slotKind, required: row.required })
+    ) {
+      if (cd > 0) {
+        cooled.push(row);
+        let last = 0;
+        for (let h = hist.length - 1; h >= 0; h--) {
+          const hr = hist[h]!;
+          if (hr.sceneKey !== sceneKey) continue;
+          let has = false;
+          for (let j = 0; j < hr.actionIds.length; j++) {
+            if (hr.actionIds[j] === row.actionId) {
+              has = true;
+              break;
+            }
+          }
+          if (has) {
+            last = hr.turn;
+            break;
+          }
+        }
+        cooledLast.push(last);
+      }
+      continue;
+    }
     seenAction.add(row.actionId);
     picked.push(row);
   }
   for (let i = 0; i < otherRequired.length; i++) {
     const row = otherRequired[i]!;
     if (seenAction.has(row.actionId)) continue;
+    if (
+      state &&
+      isOptionRepeat(state, row.actionId, { slotKind: row.slotKind, required: row.required })
+    ) {
+      if (cd > 0) {
+        cooled.push(row);
+        let last = 0;
+        for (let h = hist.length - 1; h >= 0; h--) {
+          const hr = hist[h]!;
+          if (hr.sceneKey !== sceneKey) continue;
+          let has = false;
+          for (let j = 0; j < hr.actionIds.length; j++) {
+            if (hr.actionIds[j] === row.actionId) {
+              has = true;
+              break;
+            }
+          }
+          if (has) {
+            last = hr.turn;
+            break;
+          }
+        }
+        cooledLast.push(last);
+      }
+      continue;
+    }
     seenAction.add(row.actionId);
     picked.push(row);
   }
@@ -457,11 +606,50 @@ export function allocateAffordanceSlots(
     const row = optional[i]!;
     if (seenAction.has(row.actionId)) continue;
     if (row.slotKind === 'exit' && exitSlot.length) continue;
-    // OPT-1 item 3: drop optional repeats (required kinds always keep their slot).
-    if (state && isOptionRepeat(state, row.actionId)) continue;
+    // OPT-1 item 3 / OPT1-8: drop repeats / cooldown (exit never; situation exempt inside isOptionRepeat).
+    if (
+      state &&
+      isOptionRepeat(state, row.actionId, { slotKind: row.slotKind, required: row.required })
+    ) {
+      if (cd > 0) {
+        cooled.push(row);
+        let last = 0;
+        for (let h = hist.length - 1; h >= 0; h--) {
+          const hr = hist[h]!;
+          if (hr.sceneKey !== sceneKey) continue;
+          let has = false;
+          for (let j = 0; j < hr.actionIds.length; j++) {
+            if (hr.actionIds[j] === row.actionId) {
+              has = true;
+              break;
+            }
+          }
+          if (has) {
+            last = hr.turn;
+            break;
+          }
+        }
+        cooledLast.push(last);
+      }
+      continue;
+    }
     seenAction.add(row.actionId);
     picked.push(row);
     optionalTaken += 1;
+  }
+
+  // OPT1-8: never a dead end — restore least-recently offered cooled chip(s) until ≥2 remain.
+  while (picked.length < 2 && cooled.length > 0) {
+    let best = 0;
+    for (let i = 1; i < cooled.length; i++) {
+      if (cooledLast[i]! < cooledLast[best]!) best = i;
+    }
+    const row = cooled[best]!;
+    cooled.splice(best, 1);
+    cooledLast.splice(best, 1);
+    if (seenAction.has(row.actionId)) continue;
+    seenAction.add(row.actionId);
+    picked.push({ ...row, cooldownReturn: true });
   }
 
   let hasActor = false;
@@ -493,7 +681,18 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
     const enc = state.activeEncounter;
     return !!(enc && enc.hp > 0 && entityId === `foe:${(enc.name ?? 'foe').trim()}`);
   }
-  if (entityId.startsWith('quest:')) return !!(tabletopStepChip(state) ?? storyRpgDecisionChip(state));
+  if (entityId.startsWith('quest-route:') || entityId.startsWith('quest:')) {
+    const open = openRouteView(state);
+    if (!open) return false;
+    if (entityId.startsWith('quest-route:')) {
+      const rows = open.rows;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i]!.entityId === entityId || rows[i]!.actionId === entityId) return true;
+      }
+      return false;
+    }
+    return !(open.step.routes?.length) && !!(tabletopStepChip(state) ?? storyRpgDecisionChip(state));
+  }
   const all = collectSceneAffordances(state);
   for (let i = 0; i < all.length; i++) {
     if (all[i]!.entityId === entityId) return true;

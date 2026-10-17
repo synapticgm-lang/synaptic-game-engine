@@ -166,6 +166,7 @@ import {
   xpGainVoiceAside,
   type ArcDirectorResult,
 } from './arcDirector';
+import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
@@ -1175,6 +1176,12 @@ export async function headlessFateTurn(
     const manifest = buildSealedManifest(arcState, playerInput, arc);
     arcState = attachSealedManifest(arcState, manifest);
     sealedManifestBlock = formatSealedManifestBlock(manifest);
+    // OPT-2 — fill open-quest floor from the record before the writer.
+    {
+      const floor = ensureQuestFloor(arcState);
+      arcState = floor.state;
+      if (floor.notes.length) arcStatusReceipts = [...arcStatusReceipts, ...floor.notes];
+    }
   }
 
   // 08c Tag & Trigger — consume claim pad before packet/writer.
@@ -1552,7 +1559,11 @@ Do NOT print dice notation or CODE ENFORCED.
   );
   const rawEvents = parseActionTags(gmText);
   const warden = await runWarden(arcState, rawEvents, gmText, playerInput, intent, lastGm, engineFact);
-  const events = warden.events;
+  // OPT-2 — writer quest-add binds to a generated quest or is dropped (`unbound quest`).
+  const questAddGate = applyQuestAddProposals(warden.events, arcState);
+  arcState = questAddGate.state;
+  if (questAddGate.notes.length) arcStatusReceipts = [...arcStatusReceipts, ...questAddGate.notes];
+  const events = questAddGate.events;
   const narrativeSource = useMud ? gmText : words.step('runWarden', gmText, warden.scrubbedNarrative ?? gmText);
   traceStage('runWarden', narrativeSource);
   const structural = applyStructuralEvents(arcState, events, {
