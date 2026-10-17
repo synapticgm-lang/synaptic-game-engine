@@ -57,21 +57,27 @@ const UNTRAINED_RAISE = 5;
 
 export type CheckSkill = CheckSkillName;
 
+/** VR1 CheckSpec — SRD 5.2.1 (WotC CC BY 4.0): roll only when outcome is uncertain; dcShown false by default. */
+export type CheckKind = 'ability' | 'skill' | 'save' | 'contest' | 'attack';
+export interface CheckSpec {
+  kind: CheckKind;
+  ability: AttributeKey;
+  skill?: CheckSkill;
+  dc: number;
+  dcShown: boolean;
+  adv: AdvState;
+}
+
 export interface CheckContext {
   label: string;
   attr: AttributeKey;
   skill?: CheckSkill;
   profession?: string;
-  /** Tabletop tool name when the check uses a tool proficiency (e.g. Thieves' Tools on a lock). */
   tool?: string;
   dc: number;
-  /** Tabletop: the task's rung on the SRD DC ladder. */
   rung?: TaskRung;
-  /** LitRPG / Story RPG: SK-4 named tier for this task. */
   skillTier?: SkillTierName;
-  /** Optional sticky cost on crit fail when fiction warrants (trap room, combat). */
   critFailHpRisk: number;
-  /** Informational dialogue — no contested stake; do not roll. */
   autoSucceed?: boolean;
 }
 
@@ -84,13 +90,9 @@ export interface PlayerCheckResult extends RollOutcome {
   skill?: CheckSkill;
   codeResolutionText: string;
   narrativeOutcomeLabel: 'SUCCESS' | 'FAILURE';
-  /** True when casual talk skipped the Social d20. */
   skippedRoll?: boolean;
-  /** 28c — the one engine result record (dice, named mods, adv state, outcome). */
   record?: CheckResultRecord;
-  /** 28c — player-facing line: D&D full maths, LitRPG outcome only. */
   displayLine?: string;
-  /** 28q — five-band social outcome (partial = achieved with a cost). */
   socialBand?: OutcomeBand;
 }
 
@@ -100,35 +102,22 @@ const CONTESTED_SOCIAL =
 const MATERIAL_AID_ASK =
   /\b(currency|gold|coin|coins|money|pay|lend|hire|guide|escort|gear|weapon|supplies|ration|rations)\b/i;
 
-/** Contested Social stakes only — not every spoken line. */
 export function isContestedSocialAction(intent: PlayerIntent, actionText: string): boolean {
   if (intent.kind === 'refuse') return true;
   const t = actionText.toLowerCase();
   if (CONTESTED_SOCIAL.test(t)) return true;
-  // Asking for material aid / personnel is contested; clarifying questions are not.
-  if (MATERIAL_AID_ASK.test(t) && /\b(give|can you|could you|would you|please|ask|request|need|want)\b/i.test(t)) {
-    return true;
-  }
-  return false;
+  return MATERIAL_AID_ASK.test(t) && /\b(give|can you|could you|would you|please|ask|request|need|want)\b/i.test(t);
 }
 
 function attrScore(state: GameState, key: AttributeKey): number {
-  const attrs = state.character.attributes;
-  if (key === 'STR' && state.character.strength != null) {
-    return state.character.strength;
-  }
-  return attrs?.[key] ?? 10;
+  if (key === 'STR' && state.character.strength != null) return state.character.strength;
+  return state.character.attributes?.[key] ?? 10;
 }
-
-function attrMod(score: number): number {
-  return Math.floor((score - 10) / 2);
-}
-
+function attrMod(score: number): number { return Math.floor((score - 10) / 2); }
 function gearMod(state: GameState, key: AttributeKey): number {
   let bonus = 0;
   for (const item of state.inventory) {
-    if (!item.equipped || !item.modifiers) continue;
-    bonus += item.modifiers[key] ?? 0;
+    if (item.equipped && item.modifiers) bonus += item.modifiers[key] ?? 0;
   }
   return bonus;
 }
@@ -138,7 +127,16 @@ const SRD_CHECK_SKILL: Record<string, string> = {
   thievery: 'Sleight of Hand', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
 };
 
-/** Tabletop sheet skill proficiency: +PB when proficient, doubled by expertise (SRD 5.2.1). */
+/** Pure check preview (no roll). Null when SRD says no roll. */
+export function checkForAction(state: GameState, intent: PlayerIntent, actionText: string): CheckSpec | null {
+  const ctx = resolveCheckContext(state, intent, actionText);
+  if (ctx.autoSucceed || ctx.dc <= 0) return null;
+  return {
+    kind: intent.kind === 'attack' ? 'attack' : intent.kind === 'flee' ? 'contest' : ctx.skill ? 'skill' : 'ability',
+    ability: ctx.attr, skill: ctx.skill, dc: ctx.dc, dcShown: false, adv: 'normal',
+  };
+}
+
 export function sheetSkillBonus(character: GameState['character'], skill: string): number {
   const s = character.srd;
   if (!s || !s.skillProfs.includes(skill)) return 0;
@@ -146,10 +144,6 @@ export function sheetSkillBonus(character: GameState['character'], skill: string
   return s.expertise.includes(skill) ? pb * 2 : pb;
 }
 
-/**
- * Skill / tool proficiency on a check (SRD 5.2.1): +PB when proficient, ×2 with expertise.
- * Tabletop locks use Thieves' Tools when `tool` is set. LitRPG / Story RPG: rank 1 = proficient, rank ≥2 = expertise.
- */
 function skillBonus(state: GameState, skill?: CheckSkill, tool?: string): number {
   if (state.character.srd && tool) {
     const want = tool.toLowerCase();
@@ -180,18 +174,10 @@ function professionBonus(state: GameState, professionName?: string): number {
   return Math.floor((hit.level ?? 1) / 2);
 }
 
-/**
- * The tabletop sheet's table extras on a check: heavy load / untrained armour, travel pace and light.
- * LitRPG and story RPG track no light sources, senses or carried weight, so they skip them.
- */
 function sheetExtras(state: GameState): boolean {
   return state.engineMode === 'dnd' && !!state.character.srd;
 }
 
-/**
- * The modifiers every check on this attribute and skill starts from: ability, worn gear, skill proficiency and
- * (SRD 5.2.1) Exhaustion, −2 per level on every D20 Test. The travel engine rolls its jobs with these too.
- */
 export function skillCheckMods(
   state: GameState,
   attr: AttributeKey,
@@ -209,10 +195,6 @@ export function skillCheckMods(
   return mods;
 }
 
-/**
- * Task DC: tabletop stays on the SRD ladder; LitRPG / Story RPG stamp the SK-4 named tier
- * (target adjusted in runPlayerCheck once the skill level is known).
- */
 function taskDc(
   state: GameState,
   kind: TaskKind,
@@ -228,10 +210,6 @@ function taskDc(
   return { dc: TIER_TARGET[skillTier], rung, skillTier };
 }
 
-/**
- * Map intent + action text → attribute / skill / profession / DC.
- * Trap DCs from the current room hidden ledger override defaults when relevant.
- */
 export function resolveCheckContext(
   state: GameState,
   intent: PlayerIntent,
@@ -240,7 +218,6 @@ export function resolveCheckContext(
   const t = actionText.toLowerCase();
   const j = state.journey;
   if (j && j.legsDone < j.legsTotal && travelEngineChip(actionText)) {
-    // The travel engine rolls its own jobs and saves for this chip (travelJourney); no second check here.
     return { label: 'Travel', attr: 'WIS', skill: 'survival', dc: 0, critFailHpRisk: 0, autoSucceed: true };
   }
   const node = currentDungeonNode(state.activeDungeon);
@@ -283,94 +260,46 @@ export function resolveCheckContext(
 
   if (intent.kind === 'talk' || intent.kind === 'refuse' || CONTESTED_SOCIAL.test(t)) {
     if (!isContestedSocialAction(intent, actionText)) {
-      return {
-        label: 'Dialogue',
-        attr: 'CHA',
-        skill: 'persuasion',
-        dc: 0,
-        critFailHpRisk: 0,
-        autoSucceed: true,
-      };
+      return { label: 'Dialogue', attr: 'CHA', skill: 'persuasion', dc: 0, critFailHpRisk: 0, autoSucceed: true };
     }
     return {
-      label: intent.kind === 'refuse' ? 'Refuse / protest' : 'Social',
-      attr: 'CHA',
-      skill: 'persuasion',
-      ...(intent.kind === 'refuse'
-        ? taskDc(state, 'refuse')
-        : taskDc(state, requestSize(actionText) === 'risky' ? 'social-risky' : 'social-minor')),
+      label: intent.kind === 'refuse' ? 'Refuse / protest' : 'Social', attr: 'CHA', skill: 'persuasion',
+      ...(intent.kind === 'refuse' ? taskDc(state, 'refuse') : taskDc(state, requestSize(actionText) === 'risky' ? 'social-risky' : 'social-minor')),
       critFailHpRisk: 0,
     };
   }
-
   if (intent.kind === 'cast' || /\b(spell|arcana|channel)\b/i.test(t)) {
-    return {
-      label: 'Arcana',
-      attr: 'INT',
-      skill: 'arcana',
-      ...taskDc(state, 'arcana'),
-      critFailHpRisk: 0,
-    };
+    return { label: 'Arcana', attr: 'INT', skill: 'arcana', ...taskDc(state, 'arcana'), critFailHpRisk: 0 };
   }
-
   if (intent.kind === 'flee' || /\b(sneak|stealth|hide|creep)\b/i.test(t)) {
-    return {
-      label: 'Stealth',
-      attr: 'DEX',
-      skill: 'stealth',
-      ...taskDc(state, 'stealth'),
-      critFailHpRisk: 0,
-    };
+    return { label: 'Stealth', attr: 'DEX', skill: 'stealth', ...taskDc(state, 'stealth'), critFailHpRisk: 0 };
   }
-
   if (intent.kind === 'attack') {
-    return {
-      label: 'Athletics / strike',
-      attr: 'STR',
-      skill: 'athletics',
-      ...taskDc(state, 'strike'),
-      critFailHpRisk: state.activeEncounter ? 2 : 0,
-    };
+    return { label: 'Athletics / strike', attr: 'STR', skill: 'athletics', ...taskDc(state, 'strike'), critFailHpRisk: state.activeEncounter ? 2 : 0 };
   }
-
   if (intent.kind === 'search' || intent.kind === 'observe') {
     const lookHard = /\b(search|inspect|examine|rummage|scout)\b/i.test(t);
+    // Tabletop casual look: no uncertainty (SRD 5.2.1). LitRPG/RPG keep the roll.
+    if (state.engineMode === 'dnd' && intent.kind === 'observe' && !lookHard) {
+      return { label: 'Perception', attr: 'WIS', skill: 'perception', dc: 0, critFailHpRisk: 0, autoSucceed: true };
+    }
     return {
-      label: lookHard ? 'Investigation' : 'Perception',
-      attr: lookHard ? 'INT' : 'WIS',
-      skill: lookHard ? 'investigation' : 'perception',
-      ...taskDc(state, lookHard ? 'search' : 'notice'),
+      label: lookHard ? 'Investigation' : 'Perception', attr: lookHard ? 'INT' : 'WIS',
+      skill: lookHard ? 'investigation' : 'perception', ...taskDc(state, lookHard ? 'search' : 'notice'),
       critFailHpRisk: trap && !trap.revealed ? Math.min(trap.damage ?? 0, 2) : 0,
     };
   }
-
-  if (intent.kind === 'move' || /\b(climb|jump|force|bash|lift)\b/i.test(t)) {
-    return {
-      label: 'Athletics',
-      attr: 'STR',
-      skill: 'athletics',
-      ...taskDc(state, 'athletics'),
-      critFailHpRisk: 0,
-    };
+  const athletic = /\b(climb|jump|force|bash|lift)\b/i;
+  if (intent.kind === 'move' || athletic.test(t)) {
+    if (state.engineMode === 'dnd' && intent.kind === 'move' && !athletic.test(t)) {
+      return { label: 'Travel', attr: 'STR', skill: 'athletics', dc: 0, critFailHpRisk: 0, autoSucceed: true };
+    }
+    return { label: 'Athletics', attr: 'STR', skill: 'athletics', ...taskDc(state, 'athletics'), critFailHpRisk: 0 };
   }
-
   if (intent.kind === 'rest') {
-    return {
-      label: 'Survival',
-      attr: 'CON',
-      skill: 'survival',
-      ...taskDc(state, 'survival'),
-      critFailHpRisk: 0,
-    };
+    return { label: 'Survival', attr: 'CON', skill: 'survival', ...taskDc(state, 'survival'), critFailHpRisk: 0 };
   }
-
-  return {
-    label: 'General check',
-    attr: 'STR',
-    skill: 'athletics',
-    ...taskDc(state, 'general'),
-    critFailHpRisk: 0,
-  };
+  return { label: 'General check', attr: 'STR', skill: 'athletics', ...taskDc(state, 'general'), critFailHpRisk: 0 };
 }
 
 export function runPlayerCheck(
@@ -523,6 +452,10 @@ export function runPlayerCheck(
     d20s: d20Roll != null ? [d20Roll] : undefined,
     rng: turnRng(state, 'check', ctx.label),
   });
+  record.spec = {
+    kind: intent.kind === 'attack' ? 'attack' : intent.kind === 'flee' ? 'contest' : ctx.skill ? 'skill' : 'ability',
+    ability: ctx.attr, skill: ctx.skill, dc: ctx.dc, dcShown: false, adv,
+  };
   const displayLine = formatCheckRecord(record, state.engineMode);
   if (record.auto) {
     const ok = record.outcome === 'success';

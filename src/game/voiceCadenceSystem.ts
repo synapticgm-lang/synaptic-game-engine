@@ -321,20 +321,7 @@ export function shouldSuppressTone(
   return null;
 }
 
-/**
- * Check if a diction pattern is on cooldown.
- */
-export function isPatternOnCooldown(
-  pattern: DictionPattern,
-  currentTurn: number
-): boolean {
-  if (!pattern.lastUsed) return false;
-  return currentTurn - pattern.lastUsed < pattern.cooldown;
-}
-
-/**
- * Get available voice aside for this trigger.
- */
+/** Get available voice aside for this trigger. */
 export function getVoiceAside(
   trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start' | 'danger',
   asides: VoiceAsideTrigger[],
@@ -352,38 +339,6 @@ export function getVoiceAside(
   
   // All on cooldown - skip aside
   return null;
-}
-
-/**
- * Update diction pattern cooldowns after use.
- */
-export function updateDictionCooldowns(
-  usedPatterns: string[],
-  diction: DictionPattern[],
-  currentTurn: number
-): DictionPattern[] {
-  return diction.map(pattern => {
-    if (usedPatterns.includes(pattern.pattern)) {
-      return { ...pattern, lastUsed: currentTurn };
-    }
-    return pattern;
-  });
-}
-
-/**
- * Update aside cooldowns after use.
- */
-export function updateAsideCooldowns(
-  usedTrigger: string,
-  asides: VoiceAsideTrigger[],
-  currentTurn: number
-): VoiceAsideTrigger[] {
-  return asides.map(aside => {
-    if (aside.trigger === usedTrigger) {
-      return { ...aside, lastUsed: currentTurn };
-    }
-    return aside;
-  });
 }
 
 /**
@@ -504,23 +459,3 @@ export interface VoiceTelemetry {
   cooldownViolations: number;
 }
 
-/**
- * Track voice metrics for telemetry.
- */
-export function trackVoiceMetrics(
-  personality: VoicePersonality,
-  asidesUsed: number,
-  patternsUsed: number,
-  suppressions: ToneSuppression[],
-  cooldownViolations: number,
-  turn: number
-): VoiceTelemetry {
-  return {
-    turn,
-    personality,
-    asidesUsed,
-    patternsUsed,
-    suppressionCount: suppressions.length,
-    cooldownViolations,
-  };
-}

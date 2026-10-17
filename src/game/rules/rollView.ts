@@ -1,8 +1,53 @@
 /**
- * Shared rules engine — what a shown roll line says about its d20. The engine has already rolled and printed the
- * line; this only reads the kept die back so the player's dice skin and animation mode can show it. It never rolls.
+ * Shared rules engine — shown roll lines and VR1 pre-roll / result text from CheckResultRecord.
+ * Never rolls. SRD 5.2.1 (WotC CC BY 4.0): DC hidden before the roll unless the effect states it.
  */
 import type { DiceAnimationMode } from '../types';
+import type { CheckResultRecord } from '../checkRules';
+import type { CheckSpec } from '../checkMath';
+
+const ABILITY_NAME: Record<string, string> = {
+  STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma',
+};
+const SKILL_NAME: Record<string, string> = {
+  athletics: 'Athletics', perception: 'Perception', investigation: 'Investigation', stealth: 'Stealth',
+  thievery: 'Sleight of Hand', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
+};
+
+/** UI tag from CheckSpec — never rewrite the chip label (plan §4). */
+export function checkSpecTag(spec: CheckSpec): string {
+  const ab = ABILITY_NAME[spec.ability] ?? spec.ability;
+  if (spec.kind === 'attack') return 'attack roll';
+  if (spec.kind === 'save') return `${ab} save`;
+  const sk = spec.skill ? (SKILL_NAME[spec.skill] ?? spec.skill) : undefined;
+  if (spec.kind === 'contest') return sk ? `${ab} (${sk}) contest` : `${ab} contest`;
+  return sk ? `${ab} (${sk}) roll` : `${ab} roll`;
+}
+
+/** Pre-roll line; DC only when dcShown. */
+export function formatPreRollLine(spec: CheckSpec): string {
+  const ab = ABILITY_NAME[spec.ability] ?? spec.ability;
+  const sk = spec.skill ? (SKILL_NAME[spec.skill] ?? spec.skill) : undefined;
+  const stem = spec.kind === 'contest' ? 'contest' : 'check';
+  let head = spec.kind === 'save' ? `${ab} save` : spec.kind === 'attack' ? 'Attack roll'
+    : sk ? `${ab} (${sk}) ${stem}` : `${ab} ${stem}`;
+  if (spec.dcShown) head += ` (DC ${spec.dc})`;
+  return `${head} — rolling a d20…`;
+}
+
+/** Result line from CheckResultRecord (VR1-5). */
+export function formatResultLine(rec: CheckResultRecord): string {
+  if (rec.auto) return `${rec.label}: no roll (${rec.auto}) — ${rec.outcome}`;
+  const dice = rec.advState === 'normal' ? `d20 ${rec.kept}`
+    : `d20 (${rec.advState === 'advantage' ? 'adv' : 'dis'}: ${rec.d20s.join(', ')}) ${rec.kept}`;
+  let mods = '';
+  for (let i = 0; i < rec.mods.length; i++) {
+    const m = rec.mods[i]!;
+    if (m.value === 0) continue;
+    mods += `${mods ? ' ' : ''}${m.value >= 0 ? '+ ' : '− '}${Math.abs(m.value)} (${m.label})`;
+  }
+  return `${dice}${mods ? ` ${mods}` : ''} = ${rec.total} vs DC ${rec.dc} — ${rec.outcome}`;
+}
 
 export interface ShownD20 {
   /** The die the engine kept (the higher with Advantage, the lower with Disadvantage). */
