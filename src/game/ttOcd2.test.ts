@@ -10,6 +10,7 @@ import { exitPlaceNames } from './placeNames';
 import {
   applyOptionCooldown,
   computeOptionSceneKey,
+  isWayOut,
   REPEAT_COOLDOWN_TURNS,
   WAY_OUT_PAD_CAP,
   type OptionCooldownChip,
@@ -96,7 +97,13 @@ function base(mode: EngineMode): GameState {
     locationSheet: {
       name: 'Camp',
       interactables: [{ id: 'brush-1', name: 'the brush', state: 'closed', kind: 'prop' }],
-      exits: [{ id: 'ex-road', label: 'the road' }],
+      // q45-OCD3: exit label must be a reachable hub for this bible (commitTravel / wayOutMovesPlayer).
+      exits: [
+        {
+          id: 'ex-road',
+          label: play === 'dnd' ? 'Greyhollow Inn' : play === 'rpg' ? 'Safehouse Alley' : 'Lowmarket',
+        },
+      ],
       presentNpcIds: who ? ['npc-scout'] : [],
     },
     log: [{ id: 'gm-1', role: 'gm', content: 'The brush stirs at the camp edge.', timestamp: 1 } as LogEntry],
@@ -264,15 +271,6 @@ describe('q44-OCD2 pad cooldown', () => {
   });
 });
 
-function isWayOut(c: { kind: string; actionId: string; slotKind?: string }): boolean {
-  return (
-    c.slotKind === 'exit' ||
-    c.kind === 'exit' ||
-    c.kind === 'hub' ||
-    c.kind === 'journey' ||
-    c.actionId.startsWith('exit:')
-  );
-}
 
 function routeNames(state: GameState): string[] {
   const names: string[] = [];
@@ -314,11 +312,17 @@ describe('q44b-OCD2x way out', () => {
     expect(cooled.some(isWayOut)).toBe(false);
   });
 
-  it('a pad that already has a travel chip is unchanged', () => {
+  it('a pad that already has a moving travel chip is unchanged', () => {
     const s = base('litrpg');
     const pad: OptionCooldownChip[] = [
       { label: 'Talk to Scout', actionId: 'npc:Scout:talk', kind: 'affordance', slotKind: 'person', rank: 80 },
-      { label: 'Travel toward the road', actionId: 'exit:ex-road:travel', kind: 'exit', slotKind: 'exit', rank: 70 },
+      {
+        label: 'Travel toward Lowmarket',
+        actionId: 'exit:ex-road:travel',
+        kind: 'exit',
+        slotKind: 'exit',
+        rank: 70,
+      },
     ];
     const cooled = applyOptionCooldown(s, pad);
     expect(cooled.map((c) => c.actionId)).toEqual(pad.map((c) => c.actionId));

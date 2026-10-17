@@ -31,7 +31,46 @@ import { exitPlaceNames } from './placeNames';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
+import { applyGraphExitTravel } from './mapEngine';
+import { parseTravelDestination } from './outdoorHubs';
+import { isJourneyPad, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import type { QuestRoute } from './types';
+
+/**
+ * q45-OCD3 — one shared way-out predicate for cooldown, guarantee, and chipCheck.
+ * Kind/slotKind/actionId only (never a label word list). Affordance exits use actionId `exit:…`.
+ */
+export function isWayOut(chip: {
+  kind?: string;
+  actionId?: string;
+  action?: string;
+  slotKind?: string;
+}): boolean {
+  const id = chip.actionId ?? chip.action ?? '';
+  return (
+    chip.slotKind === 'exit' ||
+    chip.kind === 'exit' ||
+    chip.kind === 'hub' ||
+    chip.kind === 'journey' ||
+    id.startsWith('exit:')
+  );
+}
+
+/**
+ * Would picking this label move HERE on the live turn path (graph exit or commitTravel)?
+ * Mirrors commitTravel's goTo gate without running the journey (no character.srd / no mutation):
+ * a named hub away from HERE with mapGapBetween.steps > 0.
+ */
+export function wayOutMovesPlayer(state: GameState, label: string): boolean {
+  if (applyGraphExitTravel(state, label) !== state) return true;
+  if (isJourneyUnderway(state) && isJourneyPad(state, label)) return true;
+  const hub = parseTravelDestination(label, state.campaignBibleId);
+  if (!hub) return false;
+  const here = (state.currentLocation ?? '').trim();
+  if (!here || hub.name.toLowerCase() === here.toLowerCase()) return false;
+  if (isTripHere(state, hub.name)) return false;
+  return mapGapBetween(state, here, hub.name).steps > 0;
+}
 
 /** Required vs optional slot families (OPT-1 item 2). */
 export type AffordanceSlotKind =
@@ -590,16 +629,16 @@ export const WAY_OUT_PAD_CAP = 48;
  * REPEAT_COOLDOWN_TURNS: tabletop 0, litrpg 5, rpg 5.
  * A chip offered in the last N turns of an unchanged scene (same place, same people,
  * same eventSeq, no activeSituation listing that actionId) is held back.
- * Exempt: exit / travel (slotKind exit, kind exit|hub|journey), free-input, and
- * actionIds an active situation calls for. A scene-key change ignores older rows.
+ * Exempt: way-outs (isWayOut), free-input, and actionIds an active situation calls for.
+ * A scene-key change ignores older rows.
  * If fewer than 2 non-free chips would remain, the least-recently offered held chip(s)
  * return with cooldownReturn. Tabletop does not use N; it keeps only the 08:41
  * situation-aware streak (isOptionRepeat when cooldown is 0).
- * q44b-OCD2x: when this place has exits or travel routes (location-sheet exits, else
- * graph travel edges, else exitPlaceNames — the same lists the exit/travel chips read),
- * the pad keeps at least one way-out (kind/slotKind/actionId, never a label word list).
- * If none survived, the least-recently offered route for this place is added. At
- * WAY_OUT_PAD_CAP it takes the lowest-ranked non-free, non-situation slot.
+ * q44b/q45-OCD3: when this place has a reachable route that actually moves the player
+ * (graph exit or commitTravel — the live turn path), the pad keeps at least one such
+ * way-out. Dead way-outs (isWayOut but wayOutMovesPlayer false) do not satisfy the
+ * guarantee. If none survived, the least-recently offered moving route is added. At
+ * WAY_OUT_PAD_CAP it takes the lowest-ranked non-free, non-situation, non-way-out slot.
  */
 export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameState, pad: T[]): T[] {
   const mode = state.engineMode;
@@ -620,13 +659,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
 
   for (let i = 0; i < pad.length; i++) {
     const chip = pad[i]!;
-    const travel =
-      chip.slotKind === 'exit' ||
-      chip.kind === 'exit' ||
-      chip.kind === 'hub' ||
-      chip.kind === 'journey' ||
-      chip.actionId.startsWith('exit:');
-    if (chip.kind === 'free-input' || travel) {
+    if (chip.kind === 'free-input' || isWayOut(chip)) {
       keep.push({ ...chip, cooldownReturn: undefined });
       continue;
     }
@@ -694,23 +727,17 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     nonFree += 1;
   }
 
-  // q44b-OCD2x — one way out when this place has a route. Same data as the exit chips.
-  let way = false;
+  // q45-OCD3 — one moving way out when this place has a route the turn path can take.
+  let movingWay = false;
   for (let i = 0; i < keep.length; i++) {
     const chip = keep[i]!;
-    if (
-      chip.slotKind === 'exit' ||
-      chip.kind === 'exit' ||
-      chip.kind === 'hub' ||
-      chip.kind === 'journey' ||
-      chip.actionId.startsWith('exit:')
-    ) {
-      way = true;
+    if (isWayOut(chip) && wayOutMovesPlayer(state, chip.label)) {
+      movingWay = true;
       break;
     }
   }
-  if (!way) {
-    const cands: T[] = [];
+  if (!movingWay) {
+    const raw: T[] = [];
     const sheet = state.locationSheet?.exits ?? [];
     if (sheet.length) {
       for (let i = 0; i < sheet.length; i++) {
@@ -718,7 +745,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
         const dest = (ex.label ?? '').trim();
         if (!dest) continue;
         const entityId = ex.id || `exit:${dest}`;
-        cands.push({
+        raw.push({
           label: `Travel toward ${dest}`,
           actionId: `exit:${entityId}:travel`,
           kind: 'exit',
@@ -735,7 +762,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
         const label = (e.label ?? '').trim();
         if (!label) continue;
         const target = (e.target ?? label).trim();
-        cands.push({
+        raw.push({
           label,
           actionId: `exit:exit:${target}:travel`,
           kind: 'exit',
@@ -745,12 +772,12 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
         } as T);
       }
     }
-    if (!cands.length) {
+    if (!raw.length) {
       const names = exitPlaceNames(state);
       for (let i = 0; i < names.length; i++) {
         const dest = (names[i] ?? '').trim();
         if (!dest) continue;
-        cands.push({
+        raw.push({
           label: `Travel toward ${dest}`,
           actionId: `exit:exit:${dest}:travel`,
           kind: 'exit',
@@ -759,6 +786,11 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
           rank: 70,
         } as T);
       }
+    }
+    const cands: T[] = [];
+    for (let i = 0; i < raw.length; i++) {
+      const row = raw[i]!;
+      if (wayOutMovesPlayer(state, row.label)) cands.push(row);
     }
     if (cands.length) {
       const prefix = `${sk.placeId}\0`;
@@ -784,21 +816,18 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
           bestTurn = last;
         }
       }
+      // Drop a dead way-out already on the pad so the moving one takes its meaning.
+      for (let i = keep.length - 1; i >= 0; i--) {
+        const chip = keep[i]!;
+        if (isWayOut(chip) && !wayOutMovesPlayer(state, chip.label)) keep.splice(i, 1);
+      }
       if (keep.length >= WAY_OUT_PAD_CAP) {
         let victim = -1;
         let victimRank = Number.POSITIVE_INFINITY;
         for (let i = 0; i < keep.length; i++) {
           const chip = keep[i]!;
           if (chip.kind === 'free-input') continue;
-          if (
-            chip.slotKind === 'exit' ||
-            chip.kind === 'exit' ||
-            chip.kind === 'hub' ||
-            chip.kind === 'journey' ||
-            chip.actionId.startsWith('exit:')
-          ) {
-            continue;
-          }
+          if (isWayOut(chip)) continue;
           let situation = false;
           if (sit) {
             for (let s = 0; s < sit.length; s++) {
