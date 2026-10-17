@@ -99,7 +99,7 @@ describe('s72 G — a successful flee slips past the meeting', () => {
     const xpBefore = start.character.xp;
     const fled = playTurn(start, 'Try to flee');
     expect(fled.fight).not.toBeNull();
-    expect(fled.fight!.receipts.some((r) => /Flee check: .* success/.test(r))).toBe(true);
+    expect(fled.fight!.receipts.some((r) => r === 'Check success.' || /vs DC \d+ — success/.test(r))).toBe(true);
     expect(fled.fight!.receipts.some((r) => /^XP Gained|^Loot|^Gold Gained/.test(r))).toBe(false);
     expect(fled.state.character.xp).toBe(xpBefore);
     expect(fled.state.journey?.encounter?.escaped).toBe(true);

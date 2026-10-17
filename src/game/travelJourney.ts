@@ -52,8 +52,10 @@ import {
 } from './rules/travelDay';
 import { modeProfile } from './rules/modeProfile';
 import { commitDeath } from './rules/death';
-import { combineAdv, formatCheckRecord, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
+import { combineAdv, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
 import { skillCheckMods } from './checkMath';
+import { formatPreRollLine, formatResultLine, isVr1RollLine, outcomeFactFromRecord } from './rules/rollView';
+import type { CheckSpec } from './checkMath';
 import { applyCampRest } from './recoveryRules';
 import { sidekickOf } from './rules/sidekick';
 import { recruitedCompanions, settleCampTalk } from './rules/companions';
@@ -1119,7 +1121,12 @@ export function travelEngineLines(commit: TravelCommit): string[] {
   const lines: string[] = [];
   for (let i = 0; i < (commit.extra ?? []).length; i++) {
     const t = commit.extra![i]!.trim();
-    if (t.toLowerCase().startsWith('extended travel:')) lines.push(t);
+    // VR1-b: CON save STATUS is formatPreRollLine / formatResultLine (cut formatCheckRecord Extended Travel strings).
+    if (t.toLowerCase().startsWith('extended travel:') || isVr1RollLine(t) || t.startsWith('Constitution save')) lines.push(t);
+  }
+  for (let i = 0; i < (commit.facts ?? []).length; i++) {
+    const f = commit.facts![i]!.trim();
+    if (f === 'Check success.' || f === 'Check failure.') lines.push(f);
   }
   if (!commit.receipt) return lines;
   let r = commit.receipt.trim();
@@ -1335,8 +1342,15 @@ function assignJobs(state: GameState, j: TravelJourney): Partial<Record<TravelJo
   return jobs;
 }
 
+/**
+ * VR1-b: STATUS lines from the shared CheckResultRecord (formatPreRollLine + formatResultLine).
+ * Cut: per-roller formatCheckRecord strings (Navigation/Look-out/Foraging hand-built maths).
+ * SRD 5.2.1 Travel Terrain DCs (WotC CC BY 4.0) still set the record's dc.
+ */
 function checkLines(state: GameState, rec: CheckResultRecord): string[] {
-  return modeProfile(state.engineMode).numbers === 'hidden' ? [] : [formatCheckRecord(rec, state.engineMode)];
+  if (modeProfile(state.engineMode).numbers === 'hidden') return [];
+  const spec = rec.spec as CheckSpec | undefined;
+  return [...(spec ? [formatPreRollLine(spec)] : []), formatResultLine(rec)];
 }
 
 /**
@@ -1351,7 +1365,11 @@ function jobRoll(state: GameState, j: TravelJourney, job: TravelJob, who: string
     : [{ label: `${who}`, value: proficiencyBonus(state.character?.level) + 1 }];
   const adv = combineAdv(paceCheckAdv(onRoad, rule.skill), rule.skill === 'perception' ? weatherRuleOf(j.weather).perception ?? 'normal' : 'normal');
   const label = who === 'you' ? rule.label : `${rule.label} (${who})`;
-  return resolveCheckRecord({ label, mods, dc: rule.dc(terrainRow(j.terrain)), adv, rng: keyedRng(key) });
+  const dc = rule.dc(terrainRow(j.terrain));
+  const rec = resolveCheckRecord({ label, mods, dc, adv, rng: keyedRng(key) });
+  // VR1 CheckSpec — SRD 5.2.1: ability check when the outcome is uncertain (WotC CC BY 4.0).
+  rec.spec = { kind: 'skill', ability: 'WIS', skill: rule.skill, dc, dcShown: false, adv };
+  return rec;
 }
 
 interface JobSettle {
@@ -1370,7 +1388,7 @@ function settleJob(state: GameState, j: TravelJourney, job: TravelJob, who: stri
   const name = who === 'you' ? 'You' : who;
   let journey: TravelJourney = { ...j, jobResults: { ...(j.jobResults ?? {}), [job]: ok } };
   const status = checkLines(state, rec);
-  const facts: string[] = [];
+  const facts: string[] = [outcomeFactFromRecord(rec)];
   const lost = job === 'guide' && !ok;
   if (lost) {
     journey = { ...journey, lost: true, lostLegs: (j.lostLegs ?? 0) + 1, legsTotal: j.legsTotal + 1 };
@@ -1501,14 +1519,19 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
   const status: string[] = [];
   let failed = 0;
   let deathFact: string | undefined;
+  const facts: string[] = [];
   for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after) && !s.deathSaves?.dead && !deathFact; h++) {
+    const dc = extendedTravelDc(h - TRAVEL_DAY_HOURS);
+    // SRD 5.2.1 Forced March / Extended Travel: Constitution saving throw (WotC CC BY 4.0).
     const rec = resolveCheckRecord({
       label: 'Extended Travel: Constitution save',
       mods: conSaveMods(s),
-      dc: extendedTravelDc(h - TRAVEL_DAY_HOURS),
+      dc,
       rng: keyedRng(`${key}|march|${since}|${h}`),
     });
-    status.push(formatCheckRecord(rec, s.engineMode));
+    rec.spec = { kind: 'save', ability: 'CON', dc, dcShown: true, adv: 'normal' };
+    status.push(...checkLines(s, rec));
+    facts.push(outcomeFactFromRecord(rec));
     if (rec.outcome === 'failure') {
       const ex = exhaust(s, keyedRng(`${key}|death|${since}|${h}`), 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.');
       s = ex.state;
@@ -1517,8 +1540,9 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
       failed++;
     }
   }
-  if (s.deathSaves?.dead) return { state: s, status, facts: [deathFact ?? ''], dead: s.deathSaves.dead };
-  const facts = deathFact ? [deathFact] : failed ? ['The forced march wore you down; you are more exhausted than before.'] : [];
+  if (s.deathSaves?.dead) return { state: s, status, facts: [...facts, deathFact ?? ''], dead: s.deathSaves.dead };
+  if (deathFact) facts.push(deathFact);
+  else if (failed) facts.push('The forced march wore you down; you are more exhausted than before.');
   return { state: s, status, facts };
 }
 

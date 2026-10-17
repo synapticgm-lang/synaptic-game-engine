@@ -1,204 +1,89 @@
-/**
- * P1.4 - Voice Cadence with Cooldowns (upgraded from "personality aside")
- * 
- * Alter diction, compression, attitude, framing. Apply lexical cooldowns and tone suppression
- * for grief/danger/revelation scenes.
- * 
- * Not: Insert recurring catchphrases.
- * 
- * Target:
- * - Blind reviewers identify personality in majority of ordinary turns (not just STATUS)
- * - Cold Registrar / Dry Wit audible ≥1 per hub change
- * - No catchphrase loops (cooldown prevents repeat within 10 turns)
- */
+/** Voice cadence: diction / compression / attitude / framing with cooldowns (no catchphrase loops). */
 
 import type { GameState, EngineMode } from './types';
 import { resolveVoiceIdForState } from './gmVoiceProfile';
 
 export type VoicePersonality =
-  | 'cold-registrar'         // LitRPG: clinical, data-focused
-  | 'sarcastic-patch'        // LitRPG: dry humor, system snark
-  | 'army-quartermaster'     // LitRPG: military efficiency
-  | 'friendly-system'        // LitRPG: helpful, encouraging
-  | 'cozy-brutal'            // LitRPG: warm tone, harsh stakes
-  | 'dry-wit'                // DnD: sarcastic narrator
-  | 'theatrical'             // DnD: dramatic, colorful
-  | 'chilled'                // DnD: casual, laid-back
-  | 'fireside-chronicler'    // Story: warm storyteller
-  | 'mission-lead'           // Story: professional guide
-  | 'friendly-guide';        // Default: helpful narrator
+  | 'cold-registrar' | 'sarcastic-patch' | 'army-quartermaster' | 'friendly-system' | 'cozy-brutal'
+  | 'dry-wit' | 'theatrical' | 'chilled' | 'fireside-chronicler' | 'mission-lead' | 'friendly-guide';
 
 export interface VoiceCadence {
   personality: VoicePersonality;
-  /** Diction - word choice patterns */
   diction: DictionPattern[];
-  /** Compression - sentence length preference */
   compression: 'terse' | 'balanced' | 'expansive';
-  /** Attitude - emotional tone */
   attitude: 'clinical' | 'warm' | 'sarcastic' | 'dramatic' | 'professional';
-  /** Framing - how events are presented */
   framing: 'data' | 'story' | 'tactical' | 'moral' | 'casual';
 }
 
 export interface DictionPattern {
-  /** Pattern name */
   pattern: string;
-  /** Example words/phrases */
   examples: string[];
-  /** Cooldown turns after use */
   cooldown: number;
-  /** Last turn used */
   lastUsed?: number;
 }
 
 export type VoiceAsideTrigger = {
-  /** When to insert an aside */
   trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start' | 'danger';
-  /** Example aside */
   example: string;
-  /** Cooldown turns */
   cooldown: number;
-  /** Last turn used */
   lastUsed?: number;
 };
 
 export interface ToneSuppression {
-  /** Suppress voice personality in these situations */
   situation: 'grief' | 'danger' | 'revelation' | 'intimacy' | 'horror';
   reason: string;
 }
 
-/**
- * Build voice cadence for a personality.
- */
+/** Build voice cadence for a personality (examples capped at 2 — directive only reads two). */
 export function buildVoiceCadence(personality: VoicePersonality): VoiceCadence {
-  const patterns: Record<VoicePersonality, {
-    diction: DictionPattern[];
-    compression: 'terse' | 'balanced' | 'expansive';
-    attitude: 'clinical' | 'warm' | 'sarcastic' | 'dramatic' | 'professional';
-    framing: 'data' | 'story' | 'tactical' | 'moral' | 'casual';
-  }> = {
+  const patterns: Record<VoicePersonality, Omit<VoiceCadence, 'personality'>> = {
     'cold-registrar': {
-      diction: [
-        { pattern: 'clinical_verbs', examples: ['logged', 'registered', 'catalogued', 'archived'], cooldown: 10 },
-        { pattern: 'data_nouns', examples: ['parameter', 'metric', 'datapoint', 'specification'], cooldown: 10 },
-        { pattern: 'system_refs', examples: ['protocol', 'routine', 'subroutine', 'algorithm'], cooldown: 8 },
-      ],
-      compression: 'terse',
-      attitude: 'clinical',
-      framing: 'data',
+      diction: [{ pattern: 'clinical_verbs', examples: ['logged', 'registered'], cooldown: 10 }, { pattern: 'data_nouns', examples: ['parameter', 'metric'], cooldown: 10 }, { pattern: 'system_refs', examples: ['protocol', 'routine'], cooldown: 8 }],
+      compression: 'terse', attitude: 'clinical', framing: 'data',
     },
     'sarcastic-patch': {
-      diction: [
-        { pattern: 'dry_comments', examples: ['Naturally', 'Predictably', 'How surprising', 'Of course'], cooldown: 10 },
-        { pattern: 'understatement', examples: ['somewhat concerning', 'mildly unfortunate', 'less than ideal'], cooldown: 10 },
-        { pattern: 'mock_praise', examples: ['Brilliant strategy', 'Flawless execution', 'Well done'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'sarcastic',
-      framing: 'casual',
+      diction: [{ pattern: 'dry_comments', examples: ['Naturally', 'Predictably'], cooldown: 10 }, { pattern: 'understatement', examples: ['somewhat concerning', 'mildly unfortunate'], cooldown: 10 }, { pattern: 'mock_praise', examples: ['Brilliant strategy', 'Well done'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'sarcastic', framing: 'casual',
     },
     'army-quartermaster': {
-      diction: [
-        { pattern: 'military_verbs', examples: ['secured', 'deployed', 'executed', 'engaged'], cooldown: 10 },
-        { pattern: 'efficiency', examples: ['optimal', 'efficient', 'tactical', 'strategic'], cooldown: 10 },
-        { pattern: 'rank_refs', examples: ['soldier', 'unit', 'operation', 'mission'], cooldown: 8 },
-      ],
-      compression: 'terse',
-      attitude: 'professional',
-      framing: 'tactical',
+      diction: [{ pattern: 'military_verbs', examples: ['secured', 'deployed'], cooldown: 10 }, { pattern: 'efficiency', examples: ['optimal', 'tactical'], cooldown: 10 }, { pattern: 'rank_refs', examples: ['soldier', 'mission'], cooldown: 8 }],
+      compression: 'terse', attitude: 'professional', framing: 'tactical',
     },
     'friendly-system': {
-      diction: [
-        { pattern: 'encouraging', examples: ['Great work', 'Well done', 'Excellent', 'Nice'], cooldown: 10 },
-        { pattern: 'supportive', examples: ['You can do this', 'Keep going', 'Almost there'], cooldown: 10 },
-        { pattern: 'helpful', examples: ['Tip', 'Remember', 'Consider', 'Try'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'warm',
-      framing: 'story',
+      diction: [{ pattern: 'encouraging', examples: ['Great work', 'Well done'], cooldown: 10 }, { pattern: 'supportive', examples: ['Keep going', 'Almost there'], cooldown: 10 }, { pattern: 'helpful', examples: ['Tip', 'Remember'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'warm', framing: 'story',
     },
     'cozy-brutal': {
-      diction: [
-        { pattern: 'warm_contrast', examples: ['Unfortunately', 'Regrettably', 'Sadly', 'Alas'], cooldown: 10 },
-        { pattern: 'gentle_warning', examples: ['mind you', 'do note', 'be aware'], cooldown: 10 },
-        { pattern: 'stark_facts', examples: ['lethal', 'permanent', 'irreversible', 'fatal'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'warm',
-      framing: 'story',
+      diction: [{ pattern: 'warm_contrast', examples: ['Unfortunately', 'Regrettably'], cooldown: 10 }, { pattern: 'gentle_warning', examples: ['mind you', 'be aware'], cooldown: 10 }, { pattern: 'stark_facts', examples: ['lethal', 'permanent'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'warm', framing: 'story',
     },
     'dry-wit': {
-      diction: [
-        { pattern: 'sardonic', examples: ['Marvelous', 'Splendid', 'Delightful', 'Charming'], cooldown: 10 },
-        { pattern: 'observational', examples: ['One notes', 'It seems', 'Apparently', 'Evidently'], cooldown: 10 },
-        { pattern: 'restrained', examples: ['perhaps', 'somewhat', 'rather', 'slightly'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'sarcastic',
-      framing: 'story',
+      diction: [{ pattern: 'sardonic', examples: ['Marvelous', 'Splendid'], cooldown: 10 }, { pattern: 'observational', examples: ['One notes', 'Apparently'], cooldown: 10 }, { pattern: 'restrained', examples: ['perhaps', 'rather'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'sarcastic', framing: 'story',
     },
     'theatrical': {
-      diction: [
-        { pattern: 'dramatic_verbs', examples: ['surges', 'erupts', 'blazes', 'thunders'], cooldown: 10 },
-        { pattern: 'grand_nouns', examples: ['spectacle', 'drama', 'triumph', 'catastrophe'], cooldown: 10 },
-        { pattern: 'exclamation', examples: ['Behold', 'Lo', 'Hark', 'Mark this'], cooldown: 8 },
-      ],
-      compression: 'expansive',
-      attitude: 'dramatic',
-      framing: 'story',
+      diction: [{ pattern: 'dramatic_verbs', examples: ['surges', 'erupts'], cooldown: 10 }, { pattern: 'grand_nouns', examples: ['spectacle', 'triumph'], cooldown: 10 }, { pattern: 'exclamation', examples: ['Behold', 'Mark this'], cooldown: 8 }],
+      compression: 'expansive', attitude: 'dramatic', framing: 'story',
     },
     'chilled': {
-      diction: [
-        { pattern: 'casual_verbs', examples: ['happens', 'goes down', 'rolls out', 'plays out'], cooldown: 10 },
-        { pattern: 'conversational', examples: ['anyway', 'so yeah', 'basically', 'pretty much'], cooldown: 10 },
-        { pattern: 'understated', examples: ['kinda', 'sorta', 'maybe', 'probably'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'casual',
-      framing: 'casual',
+      diction: [{ pattern: 'casual_verbs', examples: ['happens', 'plays out'], cooldown: 10 }, { pattern: 'conversational', examples: ['anyway', 'basically'], cooldown: 10 }, { pattern: 'understated', examples: ['kinda', 'probably'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'warm', framing: 'casual',
     },
     'fireside-chronicler': {
-      diction: [
-        { pattern: 'storyteller', examples: ['And so', 'Thus it was', 'In time', 'As fate would have it'], cooldown: 10 },
-        { pattern: 'warm_detail', examples: ['gentle', 'quiet', 'warm', 'soft'], cooldown: 10 },
-        { pattern: 'reflection', examples: ['one might wonder', 'perhaps', 'who can say'], cooldown: 8 },
-      ],
-      compression: 'expansive',
-      attitude: 'warm',
-      framing: 'story',
+      diction: [{ pattern: 'storyteller', examples: ['And so', 'In time'], cooldown: 10 }, { pattern: 'warm_detail', examples: ['gentle', 'quiet'], cooldown: 10 }, { pattern: 'reflection', examples: ['perhaps', 'who can say'], cooldown: 8 }],
+      compression: 'expansive', attitude: 'warm', framing: 'story',
     },
     'mission-lead': {
-      diction: [
-        { pattern: 'professional', examples: ['proceed', 'confirm', 'establish', 'verify'], cooldown: 10 },
-        { pattern: 'directive', examples: ['objective', 'requirement', 'priority', 'status'], cooldown: 10 },
-        { pattern: 'clear_framing', examples: ['first', 'next', 'then', 'finally'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'professional',
-      framing: 'tactical',
+      diction: [{ pattern: 'professional', examples: ['proceed', 'confirm'], cooldown: 10 }, { pattern: 'directive', examples: ['objective', 'priority'], cooldown: 10 }, { pattern: 'clear_framing', examples: ['first', 'next'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'professional', framing: 'tactical',
     },
     'friendly-guide': {
-      diction: [
-        { pattern: 'guide_verbs', examples: ['notice', 'discover', 'find', 'see'], cooldown: 10 },
-        { pattern: 'inviting', examples: ['you might', 'you could', 'perhaps you', 'consider'], cooldown: 10 },
-        { pattern: 'supportive', examples: ['here', 'now', 'ahead', 'nearby'], cooldown: 8 },
-      ],
-      compression: 'balanced',
-      attitude: 'warm',
-      framing: 'story',
+      diction: [{ pattern: 'guide_verbs', examples: ['notice', 'discover'], cooldown: 10 }, { pattern: 'inviting', examples: ['you might', 'consider'], cooldown: 10 }, { pattern: 'supportive', examples: ['here', 'ahead'], cooldown: 8 }],
+      compression: 'balanced', attitude: 'warm', framing: 'story',
     },
   };
-  
   const config = patterns[personality];
-  
-  return {
-    personality,
-    diction: config.diction,
-    compression: config.compression,
-    attitude: config.attitude,
-    framing: config.framing,
-  };
+  return { personality, diction: config.diction, compression: config.compression, attitude: config.attitude, framing: config.framing };
 }
 
 /**
@@ -321,26 +206,6 @@ export function shouldSuppressTone(
   return null;
 }
 
-/** Get available voice aside for this trigger. */
-export function getVoiceAside(
-  trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start' | 'danger',
-  asides: VoiceAsideTrigger[],
-  currentTurn: number
-): string | null {
-  const matching = asides.filter(a => a.trigger === trigger);
-  if (matching.length === 0) return null;
-  
-  // Find first non-cooldown aside
-  for (const aside of matching) {
-    if (!aside.lastUsed || currentTurn - aside.lastUsed >= aside.cooldown) {
-      return aside.example;
-    }
-  }
-  
-  // All on cooldown - skip aside
-  return null;
-}
-
 /**
  * Wave 5 — authority-layer voice hints (post-ArcDirector, no Mid writer).
  */
@@ -375,15 +240,16 @@ export function pickStatusVoiceLine(
   trigger: VoiceAsideTrigger['trigger']
 ): { line: string; trigger: string } | null {
   const personality = resolveVoicePersonalityFromState(state);
-  const asides = buildVoiceAsides(personality);
   const lastUsed = state.arcDirector?.voiceAsideLastUsed ?? {};
-  const withCooldown = asides.map((a) => ({
-    ...a,
-    lastUsed: lastUsed[`${personality}:${a.trigger}`],
-  }));
-  const example = getVoiceAside(trigger, withCooldown, state.turn);
-  if (!example) return null;
-  return { line: example, trigger: `${personality}:${trigger}` };
+  const turn = state.turn;
+  for (const a of buildVoiceAsides(personality)) {
+    if (a.trigger !== trigger) continue;
+    const used = lastUsed[`${personality}:${a.trigger}`];
+    if (used == null || turn - used >= a.cooldown) {
+      return { line: a.example, trigger: `${personality}:${trigger}` };
+    }
+  }
+  return null;
 }
 
 /**
@@ -445,17 +311,5 @@ export function formatVoiceCadenceDirective(
 
   const hint = authorityHint?.replace(/^AUTHORITY VOICE:\s*/i, '').trim();
   return `VOICE (${cadence.personality}): Color the STORY BODY (not only STATUS). Diction [${dictionExamples}]; ${compressionGuide[cadence.compression]}; ${attitudeGuide[cadence.attitude]}; ${cadence.framing} framing.${hint ? ` ${hint}` : ''} No catchphrase loops.`;
-}
-
-/**
- * Telemetry for voice metrics.
- */
-export interface VoiceTelemetry {
-  turn: number;
-  personality: VoicePersonality;
-  asidesUsed: number;
-  patternsUsed: number;
-  suppressionCount: number;
-  cooldownViolations: number;
 }
 

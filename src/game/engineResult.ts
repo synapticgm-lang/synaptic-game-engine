@@ -64,7 +64,14 @@ export function terminalFightOutcome(engineFact: string | undefined): TerminalFi
     const foe = fight[2]!.trim();
     const foeDisplay = !foe ? '' : ARTICLE_NAME.test(foe) ? capFirst(foe) : `The ${foe}`;
     const forced = new RegExp(`Fight: ${foe.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} forces the fight`).test(fact);
-    const forcedBy = /Parley check: [^.]*— failure/.test(fact) ? 'parley' : /Flee check: [^.]*— failure/.test(fact) ? 'flee' : undefined;
+    // VR1-b: "Check failure." + forces the fight; legacy Parley/Flee check lines still match.
+    const forcedBy = /Parley check: [^.]*— failure/.test(fact)
+      ? 'parley'
+      : /Flee check: [^.]*— failure/.test(fact)
+        ? 'flee'
+        : fact.includes('Check failure.') && fact.includes('forces the fight')
+          ? (fact.includes('Charisma (Persuasion)') ? 'parley' : 'flee')
+          : undefined;
     return {
       outcome: fight[1] === 'VICTORY' ? 'victory' : 'defeat',
       foe,
@@ -74,7 +81,7 @@ export function terminalFightOutcome(engineFact: string | undefined): TerminalFi
       ...(forced && forcedBy ? { forcedBy } : {}),
     };
   }
-  if (/Flee check: [^.]*— success/.test(fact)) {
+  if (/Flee check: [^.]*— success/.test(fact) || (fact.includes('Check success.') && fact.includes('broke away'))) {
     return { outcome: 'escaped', foe: '', foeDisplay: '', rounds: '', forced: false };
   }
   const escaped = fact.match(/Fight: ESCAPED from (.+?) after (\d+ rounds?)/);

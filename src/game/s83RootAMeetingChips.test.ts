@@ -64,11 +64,12 @@ describe('s83 Root A — a meeting chip resolves through the existing checks', (
   it('"Talk your way past the thugs" commits a parley receipt', () => {
     const t = playTurn(meetingOnStretch(), 'Talk your way past the thugs');
     expect(t.fight).not.toBeNull();
-    expect(t.fight!.receipts.some((r) => /^Parley check: d20/.test(r))).toBe(true);
+    // VR1-b: Parley is formatResultLine / Check outcome (not "Parley check: d20…").
+    expect(t.fight!.receipts.some((r) => /^d20 .+ vs DC \d+ — (?:success|failure)$/.test(r) || r === 'Check success.' || r === 'Check failure.')).toBe(true);
   });
 
   it('a parley success ends the meeting: Walk on, no meeting chips', () => {
-    const t = rollUntil(meetingOnStretch(), 'Talk your way past the thugs', /^Parley check:.*success/);
+    const t = rollUntil(meetingOnStretch(), 'Talk your way past the thugs', /^Check success\.$/);
     expect(t.state.journey?.encounter?.engaged).toBe(true);
     const pads = journeyPads(t.state);
     expect(pads).toContain('Walk on');
@@ -77,14 +78,14 @@ describe('s83 Root A — a meeting chip resolves through the existing checks', (
   });
 
   it('a parley failure starts the fight', () => {
-    const t = rollUntil(meetingOnStretch(), 'Talk your way past the thugs', /^Parley check:.*failure/);
+    const t = rollUntil(meetingOnStretch(), 'Talk your way past the thugs', /^Check failure\.$/);
     expect(t.fight!.receipts).toContain('Fight: the thugs forces the fight');
     expect(t.fight!.receipts.some((r) => /^Fight: (VICTORY|DEFEAT) vs the thugs/.test(r))).toBe(true);
   });
 
   it('a slip chip runs the flee check and a clean break escapes the meeting', () => {
     const dead = meetingOnStretch({ kind: 'undead' });
-    const t = rollUntil(dead, 'Slip past the dead', /^Flee check:.*success/);
+    const t = rollUntil(dead, 'Slip past the dead', /^Check success\.$/);
     expect(t.state.journey?.encounter?.escaped).toBe(true);
     expect(journeyPads(t.state)).not.toContain('Slip past the dead');
   });

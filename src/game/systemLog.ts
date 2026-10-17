@@ -1,5 +1,6 @@
 import type { EngineMode, StatVerbosity } from './types';
 import { applyStatusFirewall } from './statusFirewall';
+import { isVr1RollLine } from './rules/rollView';
 
 /** Dice / check-math lines must never surface in LitRPG or narrative RPG system logs. */
 export function isDiceMechanicsLine(line: string): boolean {
@@ -185,13 +186,13 @@ export function reconcileXpStatusLines(lines: string[], codeXpNotes: string[] = 
 /**
  * An engine-rolled check receipt ("Parley check: d20 10 + 1 vs DC 15 — failure", or a contest
  * "Flee check: d20 10 + 3 = 13 vs Bandit d20 8 + 1 = 9 — success"). Tabletop shows these.
+ * VR1-b: also the shared formatPreRollLine / formatResultLine shapes (isVr1RollLine).
  */
 export function isEngineCheckLine(line: string): boolean {
   const t = line.trim();
-  return /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(t)
+  return isVr1RollLine(t)
+    || /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ vs DC \d+ — (?:success|failure)$/.test(t)
     || /^[A-Z][a-z]+ check: d20 \d+ [+−-] \d+ = -?\d+ vs .+ d20 \d+ [+−-] \d+ = -?\d+ — (?:success|failure)$/.test(t)
-    // tt-fix-7 — `formatCheckRecord` (travel jobs: look-out, navigation, foraging): "Foraging: Wisdom (Survival) d20 (3) + 1 WIS = 4 vs DC 15 — failure".
-    || /^[A-Z][^=]* d20 \((?:\d+|(?:adv|dis): \d+, \d+)\)[^=]* = -?\d+ vs DC \d+ — (?:success|failure)$/.test(t)
     || isEngineRoundLine(t);
 }
 

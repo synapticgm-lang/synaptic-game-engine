@@ -153,3 +153,18 @@ export function lightNote(light: SceneLight): string {
   if (light.darkvision && !light.lit && light.ambient === 'dark') return `${what} ${light.why}, dim by Darkvision`;
   return `${what} ${light.why}`;
 }
+
+/**
+ * VR1-b: CheckSpec for an exploration task (SRD 5.2.1 Typical Difficulty Classes, WotC CC BY 4.0).
+ * DC from taskRung + ladderDc; rollers attach this to CheckResultRecord.spec.
+ */
+export function explorationCheckSpec(
+  state: Pick<GameState, 'journey' | 'locationSheet' | 'currentLocation' | 'places' | 'gmStrictness'>,
+  kind: TaskKind,
+  ability: 'STR' | 'DEX' | 'CON' | 'INT' | 'WIS' | 'CHA',
+  skill?: string,
+  adv: 'advantage' | 'disadvantage' | 'normal' = 'normal',
+) {
+  const dc = ladderDc(taskRung(state, kind), state.gmStrictness);
+  return { kind: (skill ? 'skill' : 'ability') as 'ability' | 'skill', ability, ...(skill ? { skill } : {}), dc, dcShown: false as const, adv };
+}

@@ -40,7 +40,7 @@ describe('1 — one road day on the world clock', () => {
     const out = commitTravel(tired, 'Travel toward Blackspine Treeline');
     const leg = out.state.journey!.hoursPerLeg;
     expect(roadHoursToday(out.state)).toBe(7 + leg);
-    expect((out.extra ?? []).some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
+    expect((out.extra ?? []).some((l) => /Constitution save/.test(l))).toBe(true);
     const fresh = commitTravel(s, 'Travel toward Blackspine Treeline');
     expect(roadHoursToday(fresh.state)).toBe(fresh.state.journey!.hoursPerLeg);
     expect((fresh.extra ?? []).some((l) => /^Extended Travel/.test(l))).toBe(false);

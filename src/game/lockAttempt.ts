@@ -15,6 +15,7 @@ import { peopleHere } from './chipLegality';
 import type { PlayerIntent } from './intentParser';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { gainLootMoney, lootMoneyText } from './rules/coins';
+import { formatResultLine, outcomeFactFromRecord } from './rules/rollView';
 
 export type LockSpec = SkillGate & { kind: LockKind; dc: number; tier: SkillTierName; tryHours: number };
 
@@ -221,9 +222,8 @@ export function resolveLockAttempt(
     const intent: PlayerIntent = { kind: 'observe', label: 'Spot alarm', targets: ['alarm'] };
     const check = runPlayerCheck(state, intent, action, rolls.spotD20);
     const ok = check.totalScore >= lock.alarm.spotDc;
-    receipts.push(ok
-      ? `Lock: you spot an alarm on the ${label} (d20 ${check.d20} + ${check.modifier} = ${check.totalScore} vs DC ${lock.alarm.spotDc}).`
-      : `Lock: you find no alarm on the ${label}.`);
+    receipts.push(ok ? `Lock: you spot an alarm on the ${label}.` : `Lock: you find no alarm on the ${label}.`);
+    if (check.record) receipts.push(formatResultLine(check.record), outcomeFactFromRecord(check.record));
     if (!ok) return { state, receipts, opened: false };
     const cur = state.lockAttempts?.[id] ?? { failsInRow: 0 };
     return {
@@ -246,7 +246,7 @@ export function resolveLockAttempt(
     const check = runPlayerCheck(state, intent, 'disarm the alarm with thieves tools', rolls.disarmD20);
     const ok = check.totalScore >= lock.alarm.disarmDc;
     receipts.push(ok ? `Lock: you disarm the alarm on the ${label}.` : `Lock: the disarm fails on the ${label}.`);
-    receipts.push(`d20 ${check.d20} + ${check.modifier} = ${check.totalScore} vs DC ${lock.alarm.disarmDc}`);
+    if (check.record) receipts.push(formatResultLine(check.record), outcomeFactFromRecord(check.record));
     if (!ok) return { state, receipts, opened: false };
     const cur = state.lockAttempts?.[id] ?? { failsInRow: 0 };
     return {
@@ -273,7 +273,7 @@ export function resolveLockAttempt(
   const success = state.engineMode === 'dnd' ? check.totalScore >= (lock.dc ?? 15) : check.isSuccess;
   if (success) {
     receipts.push(`Lock: you pick the ${label}.`);
-    receipts.push(check.codeResolutionText);
+    if (check.record) receipts.push(formatResultLine(check.record), outcomeFactFromRecord(check.record));
     return { state: openAndClearFails(state, id, nodeId), receipts, opened: true };
   }
 
@@ -284,7 +284,7 @@ export function resolveLockAttempt(
     lockAttempts: { ...(clock.state.lockAttempts ?? {}), [id]: { ...mem, failsInRow: fails } },
   };
   receipts.push(`Lock: the pick on the ${label} fails (${clock.note}).`);
-  receipts.push(check.codeResolutionText);
+  if (check.record) receipts.push(formatResultLine(check.record), outcomeFactFromRecord(check.record));
 
   let alarmSounded = false;
   let noticed = false;

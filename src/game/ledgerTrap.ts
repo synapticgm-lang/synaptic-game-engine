@@ -2,6 +2,8 @@ import type { GameState } from './types';
 import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
+import type { CheckResultRecord } from './checkRules';
+import { formatResultLine, outcomeFactFromRecord } from './rules/rollView';
 
 export interface LedgerTrapRound {
   trapId: string;
@@ -11,6 +13,8 @@ export interface LedgerTrapRound {
   sprung: boolean;
   playerHpAfter: number;
   summary: string;
+  /** VR1-b: the disarm/trigger CheckResultRecord. */
+  record?: CheckResultRecord;
 }
 
 function markTrapOnNode(
@@ -87,12 +91,16 @@ export function resolveLedgerTrap(
       damage === 0
         ? `Trap ${trap.id} disarmed cleanly.`
         : `Trap ${trap.id} sprung for ${damage} HP${disarmed ? ' (spent)' : ''}.`,
+    record: check.record,
   };
   return { state: next, round };
 }
 
+/** Narrative trap outcome + VR1 result line from the record (no hand-built d20 maths). */
 export function formatTrapReceipt(round: LedgerTrapRound): string {
-  return `Trap: ${round.summary} Your HP ${round.playerHpAfter}.`;
+  const head = `Trap: ${round.summary} Your HP ${round.playerHpAfter}.`;
+  if (!round.record) return head;
+  return `${head} ${formatResultLine(round.record)} ${outcomeFactFromRecord(round.record)}`;
 }
 
 /** Armed trap on current node — used by Token D classifier. */

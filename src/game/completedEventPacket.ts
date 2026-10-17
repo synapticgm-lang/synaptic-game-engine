@@ -1336,6 +1336,7 @@ export function formatWriterFacingEvent(
       fightClose && fightClose.outcome !== 'escaped'
         ? ' Fight-close already on the combat log — narrate the moment and aftermath, do not restate it.'
         : '';
+    // VR1-b: engineResult may include "Check success." / "Check failure." from outcomeFactFromRecord — one outcome fact.
     lines.push(
       `ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it)${mark}: ${writerEngineResult(packet.engineResult)}`
     );

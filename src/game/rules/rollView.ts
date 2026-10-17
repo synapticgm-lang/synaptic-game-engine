@@ -49,6 +49,19 @@ export function formatResultLine(rec: CheckResultRecord): string {
   return `${dice}${mods ? ` ${mods}` : ''} = ${rec.total} vs DC ${rec.dc} — ${rec.outcome}`;
 }
 
+/** Writer outcome fact from the record (VR1-b). SRD 5.2.1: result settled before narration (WotC CC BY 4.0). */
+export function outcomeFactFromRecord(rec: CheckResultRecord): string {
+  return `Check ${rec.outcome}.`;
+}
+
+/** STATUS: formatPreRollLine / formatResultLine shapes (shared detector; not a per-roller parse). */
+export function isVr1RollLine(line: string): boolean {
+  const t = (line ?? '').trim();
+  if (t.endsWith(' — rolling a d20…')) return true;
+  if (t.startsWith('d20 ') && t.includes(' vs DC ') && (t.endsWith(' — success') || t.endsWith(' — failure'))) return true;
+  return t.includes(': no roll (') && (t.endsWith(' — success') || t.endsWith(' — failure'));
+}
+
 export interface ShownD20 {
   /** The die the engine kept (the higher with Advantage, the lower with Disadvantage). */
   kept: number;
