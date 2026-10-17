@@ -1,5 +1,5 @@
 import type { StarterQuestSeed } from '@/game/questPlay';
-import { withTabletopQuestRoutes } from '@/game/questRoutes';
+import { withModeQuestRoutes } from '@/game/questRoutes';
 
 import { hashSeed } from '@/game/seededRng';
 export interface TabletopMatchCtx {
@@ -682,7 +682,7 @@ export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQu
     ...two.map(anchor),
     ...(site ? [{ place: site.place, room: 'inside', ...site.step }] : []),
   ];
-  return withTabletopQuestRoutes({
+  return withModeQuestRoutes({
     id: spine.spineId,
     title: spine.title,
     description: `${spine.whoWantsWhat} If you refuse or walk away: ${spine.refuseOrWalkAway}`,
@@ -692,7 +692,7 @@ export function tabletopSpineToStarterQuest(spine: TabletopMainSpine): StarterQu
     location: spine.mapPin,
     ...(giver ? { giver } : {}),
     type: 'main',
-  });
+  }, 'dnd');
 }
 
 export function withMatchedTabletopSpine(

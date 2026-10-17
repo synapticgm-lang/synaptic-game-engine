@@ -679,9 +679,40 @@ export const saltRoadHeist = withManusHonestRoster(makeBible({
       description: 'Learn the route, guards, and weak point before the score.',
       recommendedLevel: 1,
       objectives: ['Scout the caravan', 'Pick an approach', 'Commit to the heist night'],
+      // q42-OPT4m: >=3 routes per step; "Pick an approach" is placeless — routes expand as chips.
+      objectiveAnchors: [
+        {
+          placeId: 'Consul Caravan Camp',
+          people: ['Vessa'],
+          routes: [
+            { id: 'salt-scout-person', kind: 'person', label: 'Ask Vessa what the caravan looks like', entityId: 'npc:Vessa' },
+            { id: 'salt-scout-place', kind: 'place', label: 'Scout the caravan camp from cover', entityId: 'place:camp', placeId: 'Consul Caravan Camp' },
+            { id: 'salt-scout-contact', kind: 'contact', label: 'Call on a standing contact for caravan word', entityId: 'contact:scout' },
+          ],
+        },
+        {
+          placeId: null,
+          people: ['Vessa'],
+          routes: [
+            { id: 'salt-approach-person', kind: 'person', label: 'Ask Vessa which approach fits the crew', entityId: 'npc:Vessa' },
+            { id: 'salt-approach-place', kind: 'place', label: 'Scout the caravan camp fence line', entityId: 'place:camp', placeId: 'Consul Caravan Camp' },
+            { id: 'salt-approach-contact', kind: 'contact', label: 'Call on a standing contact for the approach', entityId: 'contact:favor' },
+          ],
+        },
+        {
+          placeId: null,
+          people: ['Vessa', 'Senna'],
+          routes: [
+            { id: 'salt-commit-person', kind: 'person', label: 'Tell Senna the night is on', entityId: 'npc:Senna' },
+            { id: 'salt-commit-place', kind: 'place', label: 'Lock the score at the safehouse', entityId: 'place:safehouse', placeId: "Olenna's Warehouse" },
+            { id: 'salt-commit-standing', kind: 'standing', label: 'Spend crew standing to lock the night', entityId: 'standing:crew' },
+          ],
+        },
+      ],
       rewards: 'Plan locked; Heat starts at Low',
     },
   ],
+
   items: [
     {
       id: 'salt-road-heist-clothes',

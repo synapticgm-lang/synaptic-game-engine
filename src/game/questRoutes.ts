@@ -98,8 +98,8 @@ export type QuestDataSeed = {
 };
 
 /**
- * OPT4-1 / G1b: validate every starter-quest step in mode data.
- * Never reads PYOA bibles. LitRPG/RPG data fill is q42-OPT4m — thin steps fail until then.
+ * OPT4-1 / G1b / OPT4m: validate every starter-quest step in mode data.
+ * Never reads PYOA bibles. LitRPG/RPG play data is enriched in campaigns/index (q42-OPT4m).
  */
 export function validateModeQuestData(
   mode: EngineMode,
@@ -145,12 +145,17 @@ export function validateModeQuestData(
 }
 
 /**
- * Fill missing routes on a tabletop starter quest (G1b data enrich).
- * Three Clue Rule (The Alexandrian — pattern only). Third route is Study —
- * SRD 5.2.1: "When you take the Study action, you make an Intelligence check
- * to find out information." Labels stay plain actions (chip contract §4).
+ * Fill missing routes on a starter quest (G1b / OPT4m data enrich).
+ * Three Clue Rule (The Alexandrian — pattern only). Mode third:
+ * - tabletop Study — SRD 5.2.1: "When you take the Study action, you make an
+ *   Intelligence check to find out information."
+ * - LitRPG system/skill; Story RPG contact/standing.
+ * Labels stay plain actions (chip contract §4). Never used for PYOA.
  */
-export function withTabletopQuestRoutes<T extends QuestDataSeed>(seed: T): T {
+export function withModeQuestRoutes<T extends QuestDataSeed>(
+  seed: T,
+  mode: 'dnd' | 'litrpg' | 'rpg',
+): T {
   const anchors: NonNullable<QuestDataSeed['objectiveAnchors']> = [];
   for (let i = 0; i < seed.objectives.length; i++) {
     const prev = seed.objectiveAnchors?.[i] ?? {};
@@ -164,18 +169,31 @@ export function withTabletopQuestRoutes<T extends QuestDataSeed>(seed: T): T {
     const place = (placeId ?? '').trim() || 'the scene';
     const object = (prev.object ?? '').trim() || 'the clues here';
     const pid = `${seed.id}-s${i + 1}`;
-    const routes: QuestRoute[] = [
-      { id: `${pid}-person`, kind: 'person', label: `Ask ${person} about the lead`, entityId: `npc:${person}` },
-      {
-        id: `${pid}-place`,
-        kind: prev.object ? 'object' : 'place',
-        label: prev.object ? `Examine ${object}` : `Search ${place} for signs`,
-        entityId: prev.object ? `object:${object}` : `place:${place}`,
-        placeId: placeId ?? null,
-      },
-      { id: `${pid}-study`, kind: 'study', label: 'Study the clues', entityId: `study:${pid}` },
-    ];
-    anchors.push({ ...prev, placeId: placeId ?? null, routes });
+    const placeRoute: QuestRoute = {
+      id: `${pid}-place`,
+      kind: prev.object ? 'object' : 'place',
+      label: prev.object ? `Examine ${object}` : `Search ${place} for signs`,
+      entityId: prev.object ? `object:${object}` : `place:${place}`,
+      placeId: placeId ?? null,
+    };
+    const personRoute: QuestRoute = {
+      id: `${pid}-person`,
+      kind: 'person',
+      label: `Ask ${person} about the lead`,
+      entityId: `npc:${person}`,
+    };
+    const third: QuestRoute =
+      mode === 'litrpg'
+        ? { id: `${pid}-system`, kind: 'system', label: 'Ask the System for the trail', entityId: `system:${pid}` }
+        : mode === 'rpg'
+          ? {
+              id: `${pid}-contact`,
+              kind: 'contact',
+              label: 'Call on a standing contact for the lead',
+              entityId: `contact:${pid}`,
+            }
+          : { id: `${pid}-study`, kind: 'study', label: 'Study the clues', entityId: `study:${pid}` };
+    anchors.push({ ...prev, placeId: placeId ?? null, routes: [personRoute, placeRoute, third] });
   }
   return { ...seed, objectiveAnchors: anchors };
 }
