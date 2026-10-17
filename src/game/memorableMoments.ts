@@ -14,7 +14,6 @@ import { storyHasBody } from './turnAsk';
 import { isUnsalvageableKidImagePrompt, prepareKidSafeImagePrompt, stripKidUnsafeImageLexicon } from './visualCanon';
 import { characterLookForArt, subjectAgeDirective } from './comicImagePrompt';
 import { formatSceneArtLock, type SceneArtFactsInput } from './sceneArtLock';
-
 /** Skip this many story turns after a splash (death/ending ignore it). */
 export const MEMORABLE_COOLDOWN_TURNS = 3;
 /** Opener + at most one more in the first sitting. Death, first-dungeon-boss, and PYOA ending may exceed. */
@@ -26,7 +25,6 @@ export const SESSION_HARD_CAP = 3;
 export const PYOA_ENDING_MIN_TURN = 8;
 /** Treat a gap this long as a new night / sitting. */
 export const SITTING_STALE_MS = 8 * 60 * 60 * 1000;
-
 export type MemorableBeatKind =
   | 'opening'
   | 'death'
@@ -35,7 +33,6 @@ export type MemorableBeatKind =
   | 'dungeon-boss'
   | 'writer-tag'
   | 'ruler-audience';
-
 export interface ResolveMemorableInput {
   settings: Pick<Settings, 'visualMode' | 'classicMemorableImages' | 'contentMode'>;
   /** State before this turn's memorable stamp is written. */
@@ -54,14 +51,12 @@ export interface ResolveMemorableInput {
   /** Ledger / auto-fight kill this turn — required for dungeon-boss splash. */
   defeatedEnemyName?: string | null;
 }
-
 export interface DetectedBeautyOffer {
   kind: MemorableOfferKind;
   personKey?: string;
   personLabel?: string;
   imagePrompt: string;
 }
-
 export interface MemorableDecision {
   request: MilestoneRequest | null;
   nextState: MemorableMomentState;
@@ -73,17 +68,14 @@ export interface MemorableDecision {
   /** A book-worthy beat was detected but weekly quota blocked the spend. */
   skippedForCapacity?: boolean;
 }
-
 export function isClassicMemorableEnabled(
   settings: Pick<Settings, 'visualMode' | 'classicMemorableImages'>
 ): boolean {
   return settings.visualMode === 'classic' && settings.classicMemorableImages === true;
 }
-
 export function emptyMemorableState(): MemorableMomentState {
   return {};
 }
-
 /** Caption on the plate — tied to why the picture fired, never the word Milestone. */
 export function plateCopyForBeat(
   beat: MemorableBeatKind | MemorableOfferKind,
@@ -118,9 +110,7 @@ export function plateCopyForBeat(
         : `Achievement unlocked — ${title}`,
   };
 }
-
 const LEGACY_MILESTONE_LABEL = /milestone/i;
-
 export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle' | 'turn'>): string {
   const titled = entry.splashTitle?.trim();
   // Opening splash on old saves / live-behind builds had no splashTitle — never say Milestone.
@@ -128,7 +118,6 @@ export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle' | 'turn'>):
   if (typeof entry.turn === 'number' && entry.turn <= 1) return 'Chapter One';
   return 'A moment worth keeping';
 }
-
 /** Compact fail line under the plate title. Story stays; no black "Milestone" slab. */
 export function splashUnavailableLine(
   entry: Pick<LogEntry, 'splashTitle' | 'turn' | 'imageFailMessage'>
@@ -137,17 +126,14 @@ export function splashUnavailableLine(
   if (detail && !LEGACY_MILESTONE_LABEL.test(detail)) return detail;
   return 'Hosted image service is unavailable.';
 }
-
 function priorStoryBody(log: LogEntry[] | undefined): boolean {
   return (log ?? []).some((entry) => entry.role === 'gm' && storyHasBody(entry.content));
 }
-
 function onCooldown(mem: MemorableMomentState, turn: number): boolean {
   const last = mem.lastSplashTurn;
   if (typeof last !== 'number') return false;
   return turn - last <= MEMORABLE_COOLDOWN_TURNS;
 }
-
 export function resolveSitting(
   mem: MemorableMomentState,
   now = Date.now()
@@ -158,16 +144,13 @@ export function resolveSitting(
   }
   return { count: mem.sessionSplashCount ?? 0, startedAt: started };
 }
-
 export function sittingHardCap(turn: number): number {
   return turn <= FIRST_SESSION_TURN_HORIZON ? FIRST_SESSION_HARD_CAP : SESSION_HARD_CAP;
 }
-
 export function isSittingHardBlocked(mem: MemorableMomentState, turn: number, now = Date.now()): boolean {
   const sitting = resolveSitting(mem, now);
   return sitting.count >= sittingHardCap(turn);
 }
-
 function offerBlocked(mem: MemorableMomentState, turn: number): boolean {
   if (isSittingHardBlocked(mem, turn)) return true;
   if (onCooldown(mem, turn)) return true;
@@ -175,11 +158,9 @@ function offerBlocked(mem: MemorableMomentState, turn: number): boolean {
   if (typeof lastOffer === 'number' && turn - lastOffer <= MEMORABLE_COOLDOWN_TURNS) return true;
   return false;
 }
-
 const DEATH_CONDITION = /\b(dead|killed|deceased|slain|dying)\b/i;
 const DEATH_PROSE =
   /\b(you (?:are|were) (?:dead|killed|slain)|you die(?:d)?\b|your (?:story|campaign) ends)\b/i;
-
 export function detectPlayerDeath(
   hp: number,
   conditions: string[] | undefined,
@@ -189,26 +170,20 @@ export function detectPlayerDeath(
   if ((conditions ?? []).some((c) => DEATH_CONDITION.test(c))) return true;
   return DEATH_PROSE.test(storyText);
 }
-
 const LEGENDARY_RARITY = /^(legendary|mythic|artifact)$/i;
-
 function isLegendaryRarity(rarity: string | undefined): boolean {
   return !!rarity && LEGENDARY_RARITY.test(rarity.trim());
 }
-
 function kidModeOn(settings: Pick<Settings, 'contentMode'> | undefined): boolean {
   return settings?.contentMode === 'kid';
 }
-
 const ORIGIN_ASK_SENTENCE =
   /before the light took you|which earth place|origin lock|a city, a street, a home|name the earth place/i;
-
 const OPENING_HERE_RAILS =
   'Camera is HERE in this room now. ONE picture filling the frame — not an open book, not two pages, not fake writing, not a comic grid, not a manga page of Earth daily life. '
   + 'Follow SCENE AUTHORITY for stance and floor — do not default to a fallen body on plain slabs. '
   + 'Do not draw Earth streets, shopping arcades, malls, train stations, city crowds, or a flashback to before they arrived. '
   + 'Earth clothes are garments on this body in THIS scene only.';
-
 /** Drop origin-ask / chip copy so Chapter One art is the written HERE beat. */
 export function pinOpeningHereScene(opts: {
   storyText: string;
@@ -239,7 +214,6 @@ export function pinOpeningHereScene(opts: {
   const lookBit = look ? `LOOK: ${look}. ` : '';
   return `${placeBit}${lookBit}${lock} ${excerptForImage(hereBody)} ${OPENING_HERE_RAILS} ${subjectAgeDirective(look)}`;
 }
-
 export function synthesizeMemorablePrompt(opts: {
   beat: MemorableBeatKind | 'beauty-offer';
   storyText: string;
@@ -319,7 +293,6 @@ export function synthesizeMemorablePrompt(opts: {
   }
   return kid ? `${lock} Kid-safe moment, fully clothed, no blood. ${excerpt}` : `${lock} ${excerpt}`;
 }
-
 function excerptForImage(text: string): string {
   const cleaned = (text ?? '')
     .replace(/<[^>]+>/g, ' ')
@@ -331,12 +304,10 @@ function excerptForImage(text: string): string {
   const sentence = cut.match(/^[\s\S]+?[.!?](?=\s|$)/);
   return (sentence?.[0] ?? cut).trim();
 }
-
 function pickPrompt(writerTag: MilestoneRequest | null, synthesized: string): string {
   const tagged = writerTag?.imagePrompt?.trim();
   return tagged || synthesized;
 }
-
 function nextSplashStamp(prev: MemorableMomentState, turn: number): MemorableMomentState {
   const sitting = resolveSitting(prev);
   return {
@@ -346,7 +317,6 @@ function nextSplashStamp(prev: MemorableMomentState, turn: number): MemorableMom
     sittingStartedAt: sitting.startedAt,
   };
 }
-
 function appendStoryPlate(
   prev: MemorableMomentState,
   beat: MemorableBeatKind | MemorableOfferKind,
@@ -359,7 +329,6 @@ function appendStoryPlate(
   if (list.some((p) => p.id === plate.id)) return list;
   return [...list, plate];
 }
-
 function stamp(
   prev: MemorableMomentState,
   turn: number,
@@ -383,7 +352,6 @@ function stamp(
   next.storyPlates = appendStoryPlate(prev, beat, turn, extra?.kid);
   return next;
 }
-
 function stampOffer(
   prev: MemorableMomentState,
   turn: number,
@@ -400,13 +368,11 @@ function stampOffer(
       : {}),
   };
 }
-
 function uniqueKeys(list: string[] | undefined, key: string): string[] {
   const next = [...(list ?? [])];
   if (!next.includes(key)) next.push(key);
   return next;
 }
-
 function fire(
   beat: MemorableBeatKind,
   input: ResolveMemorableInput,
@@ -426,7 +392,6 @@ function fire(
     skipImageForLootVideo: extras?.skipImageForLootVideo,
   };
   if (extras?.skipImageForLootVideo) return idleStamp;
-
   // Kid Mode: never send the writer's raw tag — use the rewritten kid-safe beat.
   const raw = kidModeOn(input.settings) ? synthesized : pickPrompt(input.writerTag, synthesized);
   if (kidModeOn(input.settings)) {
@@ -436,7 +401,6 @@ function fire(
   }
   return { ...idleStamp, request: { imagePrompt: raw } };
 }
-
 function offerDecision(
   prev: MemorableMomentState,
   turn: number,
@@ -450,11 +414,9 @@ function offerDecision(
     beautyOffer: offer,
   };
 }
-
 /** Locked First Blood convenience-store graph from `buildConvenienceStoreDungeon`. */
 export const FIRST_DUNGEON_BLUEPRINT_ID = 'first-blood-store';
 const FIRST_DUNGEON_BOSS_NAME = 'corrupted stockboy';
-
 function isDesignatedBossNode(dungeon: ActiveDungeonState, nodeId: string): boolean {
   if (dungeon.dungeonRules?.bossNode === nodeId) return true;
   const node = dungeon.nodes.find((n) => n.id === nodeId);
@@ -463,11 +425,9 @@ function isDesignatedBossNode(dungeon: ActiveDungeonState, nodeId: string): bool
     return t === 'boss' || t === 'boss_room';
   });
 }
-
 function normalizeMobLabel(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, ' ');
 }
-
 function dungeonHasCorruptedStockboy(dungeon: ActiveDungeonState): boolean {
   for (const node of dungeon.nodes) {
     for (const mob of node.hidden?.mobs ?? []) {
@@ -476,7 +436,6 @@ function dungeonHasCorruptedStockboy(dungeon: ActiveDungeonState): boolean {
   }
   return false;
 }
-
 function pinFirstDungeonGraph(
   prev: MemorableMomentState,
   dungeon: ActiveDungeonState | null | undefined
@@ -485,12 +444,10 @@ function pinFirstDungeonGraph(
   if (!isExplorableDungeon(dungeon)) return prev;
   return { ...prev, firstDungeonBlueprintId: dungeon.blueprintId };
 }
-
 export function firstDungeonBossAlreadyConsumed(mem: MemorableMomentState): boolean {
   if (mem.firstDungeonBossSplashFired) return true;
   return (mem.dungeonBossSplashKeys?.length ?? 0) > 0;
 }
-
 /**
  * Campaign’s first dungeon graph: First Blood store (`first-blood-store`) /
  * Corrupted Stockboy, or the first non-street dungeon pinned on entry.
@@ -510,7 +467,6 @@ export function isCampaignFirstDungeonGraph(
   if (pinned) return dungeon.blueprintId === pinned;
   return true;
 }
-
 /**
  * Final boss of the locked dungeon graph — not trash, not mid-dungeon elites.
  * First Blood’s Corrupted Stockboy is a miniBoss on bossNode; generated dungeons use role `boss`.
@@ -522,10 +478,8 @@ export function detectDungeonFinalBossDefeat(
 ): { key: string; label: string } | null {
   const name = defeatedEnemyName?.trim();
   if (!name || !isExplorableDungeon(dungeon)) return null;
-
   const needle = normalizeMobLabel(name);
   const seen = alreadySplashed ?? [];
-
   for (const node of dungeon.nodes) {
     for (const mob of node.hidden?.mobs ?? []) {
       const isFinal =
@@ -540,12 +494,10 @@ export function detectDungeonFinalBossDefeat(
   }
   return null;
 }
-
 function lookFromInput(input: ResolveMemorableInput): string | undefined {
   const look = characterLookForArt(input.state.character);
   return look || undefined;
 }
-
 function detectOpening(
   input: ResolveMemorableInput,
   prev: MemorableMomentState
@@ -575,13 +527,11 @@ function detectOpening(
     kidMode: kidModeOn(input.settings),
   });
 }
-
 /** Conservative realm-ruler titles only — not lord / lady / sir / captain / guildmaster. */
 const RULER_TITLE =
   '(?:high\\s+king|high\\s+queen|high\\s+ruler|regent\\s+of\\s+the\\s+realm|' +
   'emperor|empress|pharaoh|sultan|monarch|sovereign|tsar|czar|shah|caliph|' +
   'maharaja|maharani|king|queen)';
-
 const NAMED_RULER = new RegExp(
   `\\b(${RULER_TITLE})\\s+([A-Z][A-Za-z'\\-]+(?:\\s+[A-Z][A-Za-z'\\-]+)?)(?!'s)\\b`,
   'g'

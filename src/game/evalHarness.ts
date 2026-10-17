@@ -30,16 +30,13 @@
  * - R3: Pad loop (semantic cooldown 3T)
  * - R4: Theater branching (PYOA branch commits)
  */
-
 import type { GameState } from './types';
-
 // Stub implementations for missing functions
 function getNpcTurnoverAction(lifecycle: any, state: GameState): string {
   if (lifecycle.phase === 'debt_satisfied') return 'exit';
   if (lifecycle.deadline && state.turnIndex > lifecycle.deadline.turnIndex) return 'exit';
   return 'remain';
 }
-
 function retrieveMemoriesForNpc(state: GameState, npcId: string, options: any): any[] {
   const ledger = (state as any).npcMemoryLedger || {};
   const memories = ledger[npcId] || [];
@@ -47,19 +44,15 @@ function retrieveMemoriesForNpc(state: GameState, npcId: string, options: any): 
     !options.includeTypes || options.includeTypes.includes(m.type)
   ).slice(0, options.maxCount);
 }
-
 function checkDensityViolations(state: GameState): any[] {
   // Stub: return empty array for now
   return [];
 }
-
 function validateExclusiveFacts(activeFacts: string[]): any[] {
   // Stub: return empty array for now
   return [];
 }
-
 // EVALUATION RESULT TYPES
-
 export interface EvalResult {
   gate: string;
   passed: boolean;
@@ -67,7 +60,6 @@ export interface EvalResult {
   details: string;
   evidence?: any;
 }
-
 export interface EvalSuite {
   suite: string;
   timestamp: string;
@@ -77,9 +69,7 @@ export interface EvalSuite {
   overallScore: number;
   results: EvalResult[];
 }
-
 // WS-2: NPC LIFECYCLE GATES
-
 /**
  * G1: Exit latency - NPCs depart within deadline window
  */
@@ -87,23 +77,18 @@ export function evalNpcExitLatency(state: GameState): EvalResult {
   const npcs = state.npcLifecycles || {};
   let violations = 0;
   let total = 0;
-  
   for (const [npcId, lifecycle] of Object.entries(npcs)) {
     if (lifecycle.deadline && lifecycle.deadline.type !== 'none') {
       total++;
-      
       const deadline = lifecycle.deadline.turnIndex;
       const currentTurn = state.turnIndex;
-      
       // Check if past deadline and still present
       if (currentTurn > deadline && lifecycle.phase !== 'exiting' && lifecycle.phase !== 'absent') {
         violations++;
       }
     }
   }
-  
   const score = total === 0 ? 1.0 : (total - violations) / total;
-  
   return {
     gate: 'WS-2-G1',
     passed: violations === 0,
@@ -112,31 +97,24 @@ export function evalNpcExitLatency(state: GameState): EvalResult {
     evidence: { violations, total }
   };
 }
-
 /**
  * G2: Duplicate reveals - No repeat NPC introductions
  */
 export function evalNpcDuplicateReveals(state: GameState): EvalResult {
   const revealedNpcs = new Set<string>();
   const duplicates: string[] = [];
-  
   // Scan memory ledger for duplicate reveals
   const memoryLedger = (state as any).npcMemoryLedger || {};
-  
   for (const [npcId, memories] of Object.entries(memoryLedger)) {
     const introEvents = (memories as any[]).filter(m => m.type === 'introduction');
-    
     if (introEvents.length > 1) {
       duplicates.push(npcId);
     }
-    
     if (introEvents.length > 0) {
       revealedNpcs.add(npcId);
     }
   }
-  
   const score = revealedNpcs.size === 0 ? 1.0 : (revealedNpcs.size - duplicates.length) / revealedNpcs.size;
-  
   return {
     gate: 'WS-2-G2',
     passed: duplicates.length === 0,
@@ -145,7 +123,6 @@ export function evalNpcDuplicateReveals(state: GameState): EvalResult {
     evidence: { duplicates, totalRevealed: revealedNpcs.size }
   };
 }
-
 /**
  * G3: Memory retrieval - Mandatory memories in NPC packets
  */
@@ -153,30 +130,24 @@ export function evalNpcMemoryRetrieval(state: GameState): EvalResult {
   const npcs = state.npcLifecycles || {};
   let violations = 0;
   let total = 0;
-  
   for (const [npcId, lifecycle] of Object.entries(npcs)) {
     if (lifecycle.phase === 'functioning' || lifecycle.phase === 'debt_satisfied') {
       total++;
-      
       // Check if NPC has mandatory memories
       const memories = retrieveMemoriesForNpc(state, npcId, {
         maxCount: 5,
         includeTypes: ['pinned', 'unresolved']
       });
-      
       const mandatoryMemories = memories.filter(m => 
         m.retention === 'permanent' || m.priority === 'pinned'
       );
-      
       // Must have at least one mandatory memory if NPC has obligations
       if (lifecycle.obligations && lifecycle.obligations.length > 0 && mandatoryMemories.length === 0) {
         violations++;
       }
     }
   }
-  
   const score = total === 0 ? 1.0 : (total - violations) / total;
-  
   return {
     gate: 'WS-2-G3',
     passed: violations === 0,
@@ -185,7 +156,6 @@ export function evalNpcMemoryRetrieval(state: GameState): EvalResult {
     evidence: { violations, total }
   };
 }
-
 /**
  * G4: Obligations - Debt tracking and completion receipts
  */
@@ -193,17 +163,14 @@ export function evalNpcObligations(state: GameState): EvalResult {
   const npcs = state.npcLifecycles || {};
   let violations = 0;
   let total = 0;
-  
   for (const [npcId, lifecycle] of Object.entries(npcs)) {
     if (lifecycle.obligations) {
       for (const obligation of lifecycle.obligations) {
         total++;
-        
         // Check if obligation is completed but NPC still has it
         if (obligation.completed && lifecycle.phase !== 'debt_satisfied') {
           violations++;
         }
-        
         // Check if obligation is overdue but not flagged
         if (obligation.deadline && state.turnIndex > obligation.deadline.turnIndex && !obligation.overdue) {
           violations++;
@@ -211,9 +178,7 @@ export function evalNpcObligations(state: GameState): EvalResult {
       }
     }
   }
-  
   const score = total === 0 ? 1.0 : (total - violations) / total;
-  
   return {
     gate: 'WS-2-G4',
     passed: violations === 0,
@@ -222,27 +187,22 @@ export function evalNpcObligations(state: GameState): EvalResult {
     evidence: { violations, total }
   };
 }
-
 /**
  * G5: Turnover determinism - Same state produces same turnover action
  */
 export function evalNpcTurnoverDeterminism(state: GameState): EvalResult {
   const npcs = state.npcLifecycles || {};
   const turnoverActions: Record<string, string[]> = {};
-  
   // Run turnover decision twice for each NPC
   for (const [npcId, lifecycle] of Object.entries(npcs)) {
     const action1 = getNpcTurnoverAction(lifecycle, state);
     const action2 = getNpcTurnoverAction(lifecycle, state);
-    
     turnoverActions[npcId] = [action1, action2];
   }
-  
   // Check for inconsistencies
   const inconsistent = Object.entries(turnoverActions).filter(
     ([_, actions]) => actions[0] !== actions[1]
   );
-  
   const total = Object.keys(turnoverActions).length;
   const score = total === 0 ? 1.0 : (total - inconsistent.length) / total;
   

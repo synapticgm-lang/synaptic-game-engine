@@ -234,6 +234,7 @@ import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
+import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
@@ -1207,6 +1208,12 @@ export async function headlessFateTurn(
   const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
   arcState = tabletopTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
+  // OPT-6: headless resolves shop chips through the same resolveShopChip as live play.
+  const shopTurn = resolveShopChip(arcState, playerInput);
+  if (shopTurn) {
+    arcState = shopTurn.state;
+    arcStatusReceipts = [...arcStatusReceipts, ...shopTurn.receipts];
+  }
   // 28j — anti-circling: record this turn, then a nudge from engine facts after 3 turns with no progress.
   arcState = recordCirclingTurn(arcState, playerInput, [...(arcResult?.systemReceipts ?? []), ...arcStatusReceipts], state);
   const nudge = nudgeIfStuck(arcState);
@@ -1225,6 +1232,7 @@ export async function headlessFateTurn(
     ...dungeonTurn.receipts,
     ...storyTurn.receipts,
     ...(tabletopTurn.facts ?? []),
+    ...(shopTurn?.facts ?? []),
     ...nudge.receipts,
     ...(travelCommit ? travelEngineLines(travelCommit) : []),
   ], arcState.engineMode);
