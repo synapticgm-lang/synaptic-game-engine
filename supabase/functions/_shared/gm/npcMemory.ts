@@ -1,14 +1,126 @@
 import type { CampaignBible, KeyNPC } from './campaignBibleTypes.ts';
-import type { GameState, NpcMemory, Quest, TimelineFact } from './types.ts';
+import type { DoranMotivation, GameState, NpcAttitude, NpcMemory, Quest, TimelineFact } from './types.ts';
 import type { GameEvent } from './parser.ts';
 import type { NpcRole } from './npcRoleRegistry.ts';
+import { NPC_ROLE_REGISTRY } from './npcRoleRegistry.ts';
 import type { SpokenLine } from './tokenProse.ts';
 import { canHarvestAsNamedPerson } from './entityRegistry.ts';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks.ts';
+import { pickDataswornCharacterSeed } from './dataswornCharacterSeeds.ts';
 import { isMetNpc, syncNpcPresence } from './npcRecords.ts';
 
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
+
+/** Merchant offer is its stock (OPT3-1). */
+export const MERCHANT_OFFER_STOCK = 'Health Tonic; Iron Nail; Reed Salve';
+
+type RoleAgendaTemplate = {
+  motivation: DoranMotivation;
+  target: string;
+  need: string;
+  offer: string;
+  traits: readonly [string, string];
+  speechRegister: string;
+};
+
+/**
+ * OPT-3 role-hint templates (data). Motivations: Doran and Parberry 2011.
+ * Attitude categories match SRD 5.2.1 glossary (Friendly / Indifferent / Hostile).
+ */
+export const ROLE_AGENDA_TEMPLATES: Readonly<Record<NpcRole, RoleAgendaTemplate>> = {
+  guide: { motivation: 'Knowledge', target: 'the next safe door', need: 'a charge who will follow', offer: 'directions through the crisis', traits: ['steady', 'plain'], speechRegister: 'plain-guide' },
+  'quest-patron': { motivation: 'Protection', target: 'the job they need done', need: 'someone to take the job', offer: 'a paid job', traits: ['urgent', 'direct'], speechRegister: 'plain-orders' },
+  merchant: { motivation: 'Wealth', target: 'their wares', need: 'paying customers', offer: MERCHANT_OFFER_STOCK, traits: ['shrewd', 'practical'], speechRegister: 'prices-first' },
+  'faction-envoy': { motivation: 'Reputation', target: 'their faction standing', need: 'a useful ally', offer: 'faction favour', traits: ['measured', 'loyal'], speechRegister: 'formal' },
+  companion: { motivation: 'Protection', target: 'the party', need: 'shared purpose', offer: 'their help in a fight', traits: ['loyal', 'blunt'], speechRegister: 'plain' },
+  rival: { motivation: 'Reputation', target: 'outranking the player', need: 'proof they are ahead', offer: 'a contested lead', traits: ['proud', 'sharp'], speechRegister: 'edged' },
+  herald: { motivation: 'Reputation', target: 'the news they carry', need: 'listeners', offer: 'a public proclamation', traits: ['loud', 'formal'], speechRegister: 'proclamation' },
+  keeper: { motivation: 'Comfort', target: 'their house and guests', need: 'order under their roof', offer: 'lodging and a hearing', traits: ['hospitable', 'watchful'], speechRegister: 'plain-host' },
+  mentor: { motivation: 'Ability', target: 'a student worth teaching', need: 'an attentive pupil', offer: 'hard-won advice', traits: ['patient', 'exacting'], speechRegister: 'formal-tutor' },
+  antagonist: { motivation: 'Conquest', target: 'the plan they are running', need: 'the player out of the way', offer: 'a hard bargain', traits: ['cold', 'calculating'], speechRegister: 'threat-soft' },
+  informant: { motivation: 'Knowledge', target: 'a secret worth selling', need: 'a buyer who pays', offer: 'a tip for coin or favour', traits: ['wary', 'curious'], speechRegister: 'low-voice' },
+  captive: { motivation: 'Serenity', target: 'freedom from this hold', need: 'someone to open the way', offer: 'gratitude and what they know', traits: ['strained', 'hopeful'], speechRegister: 'plead-soft' },
+  ruler: { motivation: 'Protection', target: 'their seat and people', need: 'loyal hands', offer: 'official leave or coin', traits: ['formal', 'grave'], speechRegister: 'formal' },
+  traitor: { motivation: 'Serenity', target: 'covering their tracks', need: 'the truth kept quiet', offer: 'a dangerous secret', traits: ['nervous', 'guarded'], speechRegister: 'low-voice' },
+  witness: { motivation: 'Knowledge', target: 'what they saw', need: 'to be believed', offer: 'their testimony', traits: ['shaken', 'earnest'], speechRegister: 'plain' },
+  gatekeeper: { motivation: 'Protection', target: 'the gate they hold', need: 'eyes on the approach', offer: 'passage or a watch post', traits: ['stern', 'dutiful'], speechRegister: 'watch-orders' },
+  artisan: { motivation: 'Equipment', target: 'their craft and tools', need: 'materials and commissions', offer: 'work for pay', traits: ['careful', 'proud'], speechRegister: 'plain-craft' },
+  courier: { motivation: 'Ability', target: 'the delivery in their care', need: 'a clear road', offer: 'news from the road', traits: ['hurried', 'practical'], speechRegister: 'plain' },
+  refugee: { motivation: 'Comfort', target: 'a safe place to rest', need: 'shelter and food', offer: 'what little they carry', traits: ['weary', 'grateful'], speechRegister: 'plead-soft' },
+  oracle: { motivation: 'Knowledge', target: 'the pattern they read', need: 'a question worth answering', offer: 'a reading', traits: ['distant', 'precise'], speechRegister: 'formal' },
+  'bounty-target': { motivation: 'Serenity', target: 'staying free of the hunt', need: 'a way past the hunters', offer: 'a cut of the take', traits: ['edged', 'restless'], speechRegister: 'street' },
+  'debt-holder': { motivation: 'Wealth', target: 'the debt owed them', need: 'payment or leverage', offer: 'time — at a price', traits: ['patient', 'hard'], speechRegister: 'prices-first' },
+  conspirator: { motivation: 'Conquest', target: 'the plot they share', need: 'a quiet ally', offer: 'a place in the scheme', traits: ['soft-spoken', 'sharp'], speechRegister: 'low-voice' },
+  sacrifice: { motivation: 'Serenity', target: 'escaping the rite', need: 'rescue before the hour', offer: 'whatever they can swear', traits: ['afraid', 'urgent'], speechRegister: 'plead-soft' },
+};
+
+/** Build OPT-3 agenda fields from a role-hint template (Doran motivation + bound target). */
+export function agendaFromRole(src: {
+  role: string;
+  disposition?: NpcMemory['disposition'] | 'ambiguous';
+  bindTarget?: string;
+}): {
+  goal: NonNullable<NpcMemory['goal']>;
+  need: string;
+  offer: string;
+  attitude: NpcAttitude;
+  traits: string[];
+  speechRegister: string;
+} {
+  const role = src.role in NPC_ROLE_REGISTRY ? (src.role as NpcRole) : 'informant';
+  const t = ROLE_AGENDA_TEMPLATES[role];
+  const target = (src.bindTarget ?? '').trim() || t.target;
+  const offer = role === 'merchant' ? MERCHANT_OFFER_STOCK : t.offer;
+  const attitude: NpcAttitude =
+    src.disposition === 'friendly' || src.disposition === 'allied' || src.disposition === 'romanced'
+      ? 'friendly'
+      : src.disposition === 'hostile'
+        ? 'hostile'
+        : 'indifferent';
+  return {
+    goal: { motivation: t.motivation, target },
+    need: t.need,
+    offer,
+    attitude,
+    traits: [...t.traits],
+    speechRegister: t.speechRegister,
+  };
+}
+
+/** Fill missing OPT-3 fields once; never overwrite a value already set. */
+export function ensureNpcAgenda(
+  memory: NpcMemory,
+  src?: { role?: string; disposition?: NpcMemory['disposition'] | 'ambiguous'; bindTarget?: string },
+): NpcMemory {
+  if (
+    memory.goal?.motivation
+    && memory.goal.target
+    && memory.need
+    && memory.offer
+    && memory.attitude
+    && memory.traits
+    && memory.traits.length >= 1
+    && memory.traits.length <= 2
+    && memory.speechRegister
+  ) {
+    return memory;
+  }
+  const fresh = agendaFromRole({
+    role: src?.role ?? memory.roleHint ?? memory.sheet?.job ?? 'informant',
+    disposition: src?.disposition ?? memory.disposition,
+    bindTarget: src?.bindTarget,
+  });
+  return {
+    ...memory,
+    goal: memory.goal ?? fresh.goal,
+    need: memory.need ?? fresh.need,
+    offer: memory.offer ?? fresh.offer,
+    attitude: memory.attitude ?? fresh.attitude,
+    traits: memory.traits?.length ? memory.traits.slice(0, 2) : fresh.traits,
+    speechRegister: memory.speechRegister ?? fresh.speechRegister,
+  };
+}
 
 function normalizeName(name: string): string {
   return name.trim().toLowerCase();
@@ -399,35 +511,85 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
   for (const m of state.npcMemories ?? []) {
     map.set(normalizeName(m.npcName), { ...m, facts: [...m.facts] });
   }
-  const knownNames = bible.keyNPCs.flatMap((n) => [rosterDisplayName(n.name), n.name, ...(n.aliases ?? [])]);
+  const knownNames: string[] = [];
+  for (let ki = 0; ki < bible.keyNPCs.length; ki++) {
+    const n = bible.keyNPCs[ki]!;
+    knownNames.push(rosterDisplayName(n.name), n.name);
+    const aliases = n.aliases ?? [];
+    for (let ai = 0; ai < aliases.length; ai++) knownNames.push(aliases[ai]!);
+  }
   for (const npc of bible.keyNPCs) {
     const name = rosterDisplayName(npc.name);
     if (!name || !canHarvestAsNamedPerson(name, bibleId, knownNames)) continue;
     const key = normalizeName(name);
     if (map.has(key)) continue;
     const role = roleFromBibleNpc(npc);
-    const extras = [
-      roleVoiceFactFor(role),
-      merchantStockFactFor(role, name),
-      ...authoredTopicsFor(name).slice(0, 1).map((t) => `Authored line: ${t.line}`),
-    ].filter(Boolean);
-    map.set(key, {
-      npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
-      npcName: name,
-      disposition: bibleDisp(npc.disposition),
-      facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
-      lastSeenTurn: 0,
-      roleHint: role,
-      aliases: npc.aliases ?? [],
-      met: false,
-      present: false,
-      ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
-    });
+    const extras: string[] = [];
+    const voice = roleVoiceFactFor(role);
+    if (voice) extras.push(voice);
+    const stock = merchantStockFactFor(role, name);
+    if (stock) extras.push(stock);
+    const authored = authoredTopicsFor(name);
+    if (authored[0]?.line) extras.push(`Authored line: ${authored[0].line}`);
+    const disposition = bibleDisp(npc.disposition);
+    // OPT-3: bind the Doran goal target to the bible hook (or a short description), set once.
+    const bindTarget = (npc.hooks?.[0] ?? npc.description ?? '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    let row = ensureNpcAgenda(
+      {
+        npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
+        npcName: name,
+        disposition,
+        facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
+        lastSeenTurn: 0,
+        roleHint: role,
+        aliases: npc.aliases ?? [],
+        met: false,
+        present: false,
+        ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
+      },
+      { role, disposition, bindTarget: bindTarget || undefined },
+    );
+    // OPT-3 Datasworn seeds: LitRPG/RPG take descriptor as a trait; tabletop flavour only (fact line).
+    let salt = 0;
+    for (let i = 0; i < name.length; i++) salt = (salt + name.charCodeAt(i) * (i + 1)) % 9973;
+    const descriptor = pickDataswornCharacterSeed('descriptor', salt);
+    if ((state.engineMode === 'litrpg' || state.engineMode === 'rpg') && descriptor) {
+      const second = row.traits?.[1] ?? row.traits?.[0] ?? 'plain';
+      row = { ...row, traits: [descriptor, second === descriptor ? 'plain' : second].slice(0, 2) };
+    } else if (state.engineMode === 'dnd' && descriptor) {
+      const flavour = `Flavour seed (Datasworn): ${descriptor}`;
+      let hasFlavour = false;
+      for (let fi = 0; fi < row.facts.length; fi++) {
+        if (row.facts[fi]!.startsWith('Flavour seed (Datasworn):')) hasFlavour = true;
+      }
+      if (!hasFlavour) {
+        row = { ...row, facts: [...row.facts, flavour].slice(0, MAX_FACTS_PER_NPC) };
+      }
+    }
+    map.set(key, row);
   }
-  const next = Array.from(map.values())
-    .sort((a, b) => b.lastSeenTurn - a.lastSeenTurn)
-    .slice(0, MAX_NPC_MEMORIES);
-  return { ...state, npcMemories: next };
+  // Fill agenda on any prior roster row that still lacks fields (set-once; never overwrite).
+  for (const [key, m] of map) {
+    map.set(
+      key,
+      ensureNpcAgenda(m, {
+        role: m.roleHint ?? 'informant',
+        disposition: m.disposition,
+        bindTarget: m.goal?.target,
+      }),
+    );
+  }
+  const next = Array.from(map.values());
+  for (let i = 1; i < next.length; i++) {
+    const cur = next[i]!;
+    let j = i - 1;
+    while (j >= 0 && next[j]!.lastSeenTurn < cur.lastSeenTurn) {
+      next[j + 1] = next[j]!;
+      j--;
+    }
+    next[j + 1] = cur;
+  }
+  return { ...state, npcMemories: next.slice(0, MAX_NPC_MEMORIES) };
 }
 
 function roleHay(memory: NpcMemory): string {
