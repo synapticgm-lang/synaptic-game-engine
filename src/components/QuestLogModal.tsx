@@ -272,6 +272,19 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                   </div>
                 ) : null}
 
+                {selectedQuest.openLeads?.length ? (
+                  <div className="p-3 rounded-lg border border-slate-800 bg-slate-900/40" data-testid="quest-open-leads">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                      Open leads
+                    </h4>
+                    <ul className="space-y-1 text-sm text-slate-200">
+                      {selectedQuest.openLeads.map((lead) => (
+                        <li key={lead}>• {lead}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
                 {selectedQuest.provenance
                   && !isGenericQuestProvenance(selectedQuest.provenance) ? (
                   <div className="p-3 rounded-lg border border-slate-800 bg-slate-900/40">

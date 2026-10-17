@@ -21,6 +21,7 @@ import { merchantHere } from './merchant';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
+import { openRouteView } from './questRoutes';
 
 /** Required vs optional slot families (OPT-1 item 2). */
 export type AffordanceSlotKind =
@@ -114,17 +115,34 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     });
   }
 
-  const step = tabletopStepChip(state) ?? storyRpgDecisionChip(state);
-  if (step) {
-    all.push({
-      label: step,
-      actionId: 'quest:open-step:act',
-      entityId: 'quest:open-step',
-      slotKind: 'quest',
-      salience: 90,
-      required: true,
-      check: dnd ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
-    });
+  // TT-G1 / OPT-4: open step routes expand as affordances (decision approaches included).
+  const routeRows = openRouteView(state)?.rows ?? [];
+  if (routeRows.length) {
+    for (let i = 0; i < routeRows.length; i++) {
+      const row = routeRows[i]!;
+      all.push({
+        label: row.label,
+        actionId: row.actionId,
+        entityId: row.entityId,
+        slotKind: 'quest',
+        salience: 90 - i,
+        required: true,
+        check: dnd ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
+      });
+    }
+  } else {
+    const step = tabletopStepChip(state) ?? storyRpgDecisionChip(state);
+    if (step) {
+      all.push({
+        label: step,
+        actionId: 'quest:open-step:act',
+        entityId: 'quest:open-step',
+        slotKind: 'quest',
+        salience: 90,
+        required: true,
+        check: dnd ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
+      });
+    }
   }
 
   const merchant = merchantHere(state);
@@ -465,7 +483,18 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
     const enc = state.activeEncounter;
     return !!(enc && enc.hp > 0 && entityId === `foe:${(enc.name ?? 'foe').trim()}`);
   }
-  if (entityId.startsWith('quest:')) return !!(tabletopStepChip(state) ?? storyRpgDecisionChip(state));
+  if (entityId.startsWith('quest-route:') || entityId.startsWith('quest:')) {
+    const open = openRouteView(state);
+    if (!open) return false;
+    if (entityId.startsWith('quest-route:')) {
+      const rows = open.rows;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i]!.entityId === entityId || rows[i]!.actionId === entityId) return true;
+      }
+      return false;
+    }
+    return !(open.step.routes?.length) && !!(tabletopStepChip(state) ?? storyRpgDecisionChip(state));
+  }
   const all = collectSceneAffordances(state);
   for (let i = 0; i < all.length; i++) {
     if (all[i]!.entityId === entityId) return true;

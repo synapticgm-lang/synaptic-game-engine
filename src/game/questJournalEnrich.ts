@@ -1,5 +1,5 @@
 /**
- * Quest journal enrichment — what-next + provenance for player clarity.
+ * Quest journal enrichment — what-next + provenance + open leads (TT-G1).
  */
 
 import type { Quest } from './types';
@@ -18,12 +18,34 @@ export function isGenericQuestProvenance(value: string | undefined): boolean {
 }
 
 export function enrichQuestJournalFields(q: Quest): Quest {
-  if (q.whatNext && q.provenance) return q;
-  const nextObj = (q.objectives ?? []).find((o) => !o.completed);
+  const openLeads: string[] = q.openLeads?.length ? q.openLeads.slice() : [];
+  if (!openLeads.length) {
+    const steps = q.objectives ?? [];
+    for (let i = 0; i < steps.length; i++) {
+      if (steps[i]!.completed) continue;
+      const routes = steps[i]!.routes ?? [];
+      for (let j = 0; j < routes.length; j++) {
+        const r = routes[j]!;
+        if (r.revealed) continue;
+        const label = (r.label ?? '').trim();
+        if (label) openLeads.push(label);
+      }
+      break;
+    }
+  }
+  if (q.whatNext && q.provenance) return { ...q, openLeads };
+  let nextDesc = '';
+  const steps = q.objectives ?? [];
+  for (let i = 0; i < steps.length; i++) {
+    if (!steps[i]!.completed) {
+      nextDesc = steps[i]!.description;
+      break;
+    }
+  }
   const whatNext =
     q.whatNext
-    || (nextObj
-      ? `Next: ${nextObj.description}`
+    || (nextDesc
+      ? `Next: ${nextDesc}`
       : q.status === 'completed'
         ? 'Complete — rewards are settled on the sheet.'
         : q.status === 'failed'
@@ -32,9 +54,11 @@ export function enrichQuestJournalFields(q: Quest): Quest {
   // Keep authored provenance only. Do not invent generic "Side hook revealed in play."
   // chrome — QuestLogModal hides the box when provenance is empty/generic.
   const provenance = q.provenance?.trim() || undefined;
-  return { ...q, whatNext, provenance };
+  return { ...q, whatNext, provenance, openLeads };
 }
 
 export function enrichQuests(quests: Quest[]): Quest[] {
-  return quests.map(enrichQuestJournalFields);
+  const out: Quest[] = [];
+  for (let i = 0; i < quests.length; i++) out.push(enrichQuestJournalFields(quests[i]!));
+  return out;
 }

@@ -418,12 +418,47 @@ export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
 export type QuestUrgency = 'immediate' | 'time-sensitive' | 'flexible' | 'unknown';
 
+/**
+ * TT-G1 / OPT-4 discovery route (Three Clue Rule — The Alexandrian; pattern only).
+ * Person + place/object + mode third (check/Study | skill/system | contact/standing).
+ * Label is the plain action; CheckSpec lives on EngineChip, never in the label.
+ */
+export type QuestRouteKind =
+  | 'person'
+  | 'place'
+  | 'object'
+  | 'check'
+  | 'study'
+  | 'skill'
+  | 'system'
+  | 'contact'
+  | 'standing'
+  | 'approach';
+
+export interface QuestRoute {
+  id: string;
+  kind: QuestRouteKind;
+  /** Plain action chip label (never rewritten with a skill/difficulty tag). */
+  label: string;
+  entityId?: string;
+  placeId?: string | null;
+  /** Failed attempt — route stays open; never removes siblings. */
+  failed?: boolean;
+  /** This route already revealed the lead. */
+  revealed?: boolean;
+}
+
 export interface QuestObjective {
   id: string;
   description: string;
   completed: boolean;
   optional?: boolean;
-  /** The place this step is taken at, when its wording names no known place. */
+  /**
+   * Explicit place this step is taken (OPT-4 / TT-G1). Prefer this over legacy `place`.
+   * Null/undefined = placeless decision step (routes expand as affordances).
+   */
+  placeId?: string | null;
+  /** @deprecated Prefer placeId — kept for older saves until G1b data pass. */
   place?: string;
   /** Who this step is taken with, when its wording names no "Speak with" person. */
   people?: string[];
@@ -434,6 +469,8 @@ export interface QuestObjective {
   object?: string;
   /** The item or person this step is about, put in the world when the quest was made. The step ticks only when it is found or met. */
   target?: QuestTarget;
+  /** ≥3 discovery routes (TT-G1); decision steps list approach routes here. */
+  routes?: QuestRoute[];
 }
 
 export interface QuestTarget {
@@ -504,6 +541,8 @@ export interface Quest {
   };
   /** Plain-language why this quest exists / what to do next (player journal). */
   whatNext?: string;
+  /** Open discovery leads for the current step (TT-G1 journal). */
+  openLeads?: string[];
   /** Provenance for Simple Why? (bible seed, story beat, System notice). */
   provenance?: string;
   
