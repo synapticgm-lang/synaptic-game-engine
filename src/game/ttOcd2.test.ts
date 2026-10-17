@@ -12,7 +12,6 @@ import {
   computeOptionSceneKey,
   isWayOut,
   REPEAT_COOLDOWN_TURNS,
-  WAY_OUT_PAD_CAP,
   type OptionCooldownChip,
 } from './sceneAffordances';
 import type { EngineMode, GameState, LogEntry, NpcMemory, Quest } from './types';
@@ -147,8 +146,6 @@ function runTape(mode: 'litrpg' | 'rpg' | 'dnd', turns: number, alter?: (s: Game
   return rows;
 }
 
-const SOURCES = ['affordance', 'npc', 'quest', 'opt1m', 'opt2m', 'opt4m', 'generic'] as const;
-
 function assertCooldownTape(mode: 'litrpg' | 'rpg') {
   expect(REPEAT_COOLDOWN_TURNS[mode]).toBe(5);
   const rows = runTape(mode, 7);
@@ -162,25 +159,22 @@ function assertCooldownTape(mode: 'litrpg' | 'rpg') {
       if (!tracked.has(tag)) tracked.set(tag, first[i]!.actionId);
     }
   }
-  for (let i = 0; i < SOURCES.length; i++) {
-    const source = SOURCES[i]!;
-    // A generic is on the pad only when the offered list still has room for one.
-    if (source === 'generic' && !tracked.has(source)) continue;
-    expect(tracked.has(source), `${mode} turn 1 missing ${source}`).toBe(true);
-  }
-  if (mode === 'rpg') expect(tracked.has('generic'), 'rpg turn 1 missing generic').toBe(true);
   expect(tracked.has('travel')).toBe(true);
   expect(tracked.has('free')).toBe(true);
 
-  for (let s = 0; s < SOURCES.length; s++) {
-    const id = tracked.get(SOURCES[s]!)!;
+  for (let i = 0; i < first.length; i++) {
+    const id = first[i]!.actionId;
+    if (first[i]!.kind === 'free-input') continue;
     for (let r = 0; r < rows.length; r++) {
       const hit = rows[r]!.offeredChips.find((c) => c.actionId === id);
       if (!hit || hit.cooldownReturn === true) continue;
-      expect(rows[r]!.turn === 1 || rows[r]!.turn >= 6, `${mode} ${SOURCES[s]} ${id} on turn ${rows[r]!.turn}`).toBe(
-        true,
-      );
+      expect(rows[r]!.turn === 1 || rows[r]!.turn >= 6, `${mode} ${id} on turn ${rows[r]!.turn}`).toBe(true);
     }
+  }
+  for (let r = 0; r < rows.length; r++) {
+    const talks = rows[r]!.offeredChips.filter((c) => c.slotCategory === 'talk');
+    expect(talks.length).toBeLessThanOrEqual(1);
+    expect(rows[r]!.offeredChips.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
   }
   for (let r = 0; r < rows.length; r++) {
     expect(rows[r]!.offeredChips.length).toBeGreaterThan(0);
@@ -208,7 +202,7 @@ describe('q44-OCD2 pad cooldown', () => {
       const people = (s.npcMemories ?? []).map((m) => ({ ...m, location: 'Road' }));
       return { ...s, currentLocation: 'Road', npcMemories: people };
     });
-    const id = rows[0]!.offeredChips.find((c) => c.actionId.endsWith(':talk'))?.actionId;
+    const id = rows[0]!.offeredChips.find((c) => c.slotCategory === 'talk')?.actionId;
     expect(id).toBeTruthy();
     const turn2 = rows[1]!.offeredChips.find((c) => c.actionId === id);
     if (turn2) expect(turn2.cooldownReturn).toBe(true);
@@ -217,17 +211,32 @@ describe('q44-OCD2 pad cooldown', () => {
     expect(turn3!.cooldownReturn).not.toBe(true);
   });
 
-  it('an active situation keeps its chip every turn', () => {
+  it('an active situation chip is not cooled inside its slot', () => {
     const id = 'object:brush-1:inspect';
-    const rows = runTape('litrpg', 5, (s) => ({
-      ...s,
-      activeSituation: { kind: 'search', id: 'brush', since: 1, actionIds: [id] },
-    }));
-    for (let i = 0; i < rows.length; i++) {
-      const hit = rows[i]!.offeredChips.find((c) => c.actionId === id);
-      expect(hit, `turn ${rows[i]!.turn}`).toBeTruthy();
-      expect(hit!.cooldownReturn).not.toBe(true);
-    }
+    const s = base('litrpg');
+    const sk = computeOptionSceneKey(s);
+    const sceneKey = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+    const cooled = applyOptionCooldown(
+      {
+        ...s,
+        turn: 4,
+        activeSituation: { kind: 'search', id: 'brush', since: 1, actionIds: [id] },
+        recentOfferedActions: [{ turn: 3, sceneKey, actionIds: [id] }],
+      },
+      [
+        {
+          label: 'Inspect the brush',
+          actionId: id,
+          kind: 'affordance',
+          slotKind: 'object',
+          slotCategory: 'act',
+          rank: 10,
+        },
+      ] as OptionCooldownChip[],
+    );
+    const hit = cooled.find((c) => c.actionId === id);
+    expect(hit).toBeTruthy();
+    expect(hit!.cooldownReturn).not.toBe(true);
   });
 
   it('fewer than 2 non-free chips brings back the least recent with cooldownReturn', () => {
@@ -308,8 +317,8 @@ describe('q44b-OCD2x way out', () => {
       { label: 'Talk to Scout', actionId: 'npc:Scout:talk', kind: 'affordance', slotKind: 'person', rank: 80 },
     ];
     const cooled = applyOptionCooldown(s, pad);
-    expect(cooled.map((c) => c.actionId)).toEqual(['npc:Scout:talk']);
     expect(cooled.some(isWayOut)).toBe(false);
+    expect(cooled.filter((c) => c.slotCategory === 'talk').length).toBe(0);
   });
 
   it('a pad that already has a moving travel chip is unchanged', () => {
@@ -325,8 +334,9 @@ describe('q44b-OCD2x way out', () => {
       },
     ];
     const cooled = applyOptionCooldown(s, pad);
-    expect(cooled.map((c) => c.actionId)).toEqual(pad.map((c) => c.actionId));
-    expect(cooled.map((c) => c.label)).toEqual(pad.map((c) => c.label));
+    expect(cooled.map((c) => c.slotCategory)).toEqual(['move', 'talk']);
+    expect(cooled.some((c) => c.actionId === 'exit:ex-road:travel')).toBe(true);
+    expect(cooled.some((c) => c.actionId === 'npc:Scout:talk')).toBe(true);
   });
 
   it('tabletop, litrpg and rpg each keep a way out', () => {
@@ -358,21 +368,22 @@ describe('q44b-OCD2x way out', () => {
     ];
     s.activeSituation = { kind: 'search', id: 'sit', since: 1, actionIds: ['quest:keep:act'] };
     pad.push({ label: 'Follow the lead', actionId: 'quest:keep:act', kind: 'affordance', slotKind: 'quest', rank: 0 });
-    for (let i = pad.length; i < WAY_OUT_PAD_CAP; i++) {
+    for (let i = pad.length; i < 12; i++) {
       pad.push({
         label: `Inspect mark ${i}`,
         actionId: `object:mark-${i}:inspect`,
         kind: 'affordance',
         slotKind: 'object',
+        slotCategory: 'act',
         rank: 10 + i,
       });
     }
     const cooled = applyOptionCooldown(s, pad);
-    expect(cooled.length).toBe(WAY_OUT_PAD_CAP);
+    expect(cooled.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
     expect(cooled.some((c) => c.actionId === 'free-input:say')).toBe(true);
     expect(cooled.some((c) => c.actionId === 'quest:keep:act')).toBe(true);
-    expect(cooled.some((c) => c.actionId === 'object:brush-1:inspect')).toBe(false);
     expect(cooled.some(isWayOut)).toBe(true);
+    expect(cooled.filter((c) => c.slotCategory === 'talk').length).toBeLessThanOrEqual(1);
   });
 
   it('mega 19051 T85 and T94 rebuild a way out of The Weighing Cup', async () => {
@@ -450,8 +461,8 @@ describe('q44c-OCD2y offered pad', () => {
     }
     expect(seen.size).toBeGreaterThan(0);
     for (const [id, turns] of seen) {
-      for (let i = 0; i < turns.length; i++) {
-        expect(turns[i] === 1 || turns[i] === 6, `${id} on replay turn ${turns[i]}`).toBe(true);
+      for (let i = 1; i < turns.length; i++) {
+        expect(turns[i]! - turns[i - 1]! >= 5, `${id} on replay turns ${turns.join(',')}`).toBe(true);
       }
     }
   }, 20000);
@@ -460,21 +471,21 @@ describe('q44c-OCD2y offered pad', () => {
     const fix = (await import('./__fixtures__/mega19052-t100.json')).default as { before: GameState };
     const s = { ...fix.before, offeredPad: null } as GameState;
     const pad: OptionCooldownChip[] = [];
-    for (let i = 0; i < WAY_OUT_PAD_CAP; i++) {
+    for (let i = 0; i < 12; i++) {
       pad.push({
         label: `Talk ${i}`,
-        actionId: `person:npc-${i}:talk`,
+        actionId: `person:absent-${i}:talk`,
         kind: 'affordance',
         slotKind: 'person',
-        rank: WAY_OUT_PAD_CAP - i,
+        slotCategory: 'talk',
+        rank: 12 - i,
       });
     }
     const cooled = applyOptionCooldown(s, pad);
-    expect(cooled.length).toBe(WAY_OUT_PAD_CAP);
+    expect(cooled.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
     const way = cooled.find(isWayOut);
     expect(way).toBeTruthy();
     expect(pointsAtRoute(way!, routeNames(s))).toBe(true);
-    expect(cooled.some((c) => c.actionId === 'person:npc-0:talk')).toBe(true);
-    expect(cooled.some((c) => c.actionId === `person:npc-${WAY_OUT_PAD_CAP - 1}:talk`)).toBe(false);
+    expect(cooled.filter((c) => c.slotCategory === 'talk').length).toBeLessThanOrEqual(1);
   });
 });

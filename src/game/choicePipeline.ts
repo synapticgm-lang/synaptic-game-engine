@@ -392,6 +392,8 @@ export type EngineChip = {
   entityId?: string;
   /** LitRPG/RPG cooldown floor restore (OPT1-8); never a skill/difficulty tag. */
   cooldownReturn?: boolean;
+  /** q45b-SLOT — move|talk|act|scene. Free-input has none. */
+  slotCategory?: import('./sceneAffordances').SlotCategory;
 };
 
 /** Which builder made a chip (tt-build-chipcheck): the kind names the resolver that runs it. */
@@ -474,6 +476,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       kind: 'affordance',
       check: a.check,
       entityId: a.entityId,
+      slotCategory: a.slotCategory,
       cooldownReturn: a.cooldownReturn === true ? true : undefined,
     });
   }
@@ -505,7 +508,21 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
           : engineChipActionKey(label) || `label:${low}`;
       // VR1-a: CheckSpec from checkForAction (pure). Label stays the plain action (§4 chip contract).
       const check = kind === 'inspiration-reroll' ? null : checkForAction(state, parsePlayerIntent(label, state), label);
-      chips.push({ label, action, kind, check });
+      // q45b-SLOT: category from the builder kind (INTENT_TRAVEL_HUB is exit/hub → move;
+      // INTENT_INSPECT / INTENT_LISTEN / INTENT_STATUS land on act via affordance, compiled, or system).
+      let slotCategory: import('./sceneAffordances').SlotCategory | undefined;
+      if (kind === 'exit' || kind === 'hub' || kind === 'journey') slotCategory = 'move';
+      else if (
+        kind === 'shop' ||
+        kind === 'dungeon' ||
+        kind === 'quest-step' ||
+        kind === 'spine' ||
+        kind === 'decision' ||
+        kind === 'beat'
+      ) {
+        slotCategory = 'scene';
+      } else if (kind !== 'free-input') slotCategory = 'act';
+      chips.push({ label, action, kind, check, slotCategory });
     }
   }
   lastEngineChips = {
@@ -542,6 +559,7 @@ export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameS
         actionId: c.actionId,
         kind: c.kind,
       };
+      if (c.slotCategory) rec.slotCategory = c.slotCategory;
       if (c.cooldownReturn === true) rec.cooldownReturn = true;
       offeredChips.push(rec);
     }
@@ -554,6 +572,7 @@ export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameS
         actionId: c.action,
         kind: c.kind,
       };
+      if (c.slotCategory) rec.slotCategory = c.slotCategory;
       if (c.cooldownReturn === true) rec.cooldownReturn = true;
       offeredChips.push(rec);
     }

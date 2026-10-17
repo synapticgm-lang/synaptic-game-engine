@@ -12,11 +12,9 @@ import {
   affordancesCoverGenerics,
   applyOptionCooldown,
   collectSceneAffordances,
-  isWayOut,
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
   isFreeInputChip,
-  WAY_OUT_PAD_CAP,
   type AffordanceSlotKind,
   type OptionCooldownChip,
 } from './sceneAffordances';
@@ -174,7 +172,7 @@ export function withOfferedChoices(entry: LogEntry, stateForPad: GameState): Log
   return { ...entry, offeredChoices: offered };
 }
 
-/** Commit the offered pad for this turn. q44c-OCD2y: cooldown + way-out run on this list, after rank and truncation. */
+/** Commit the offered pad for this turn. q45b-SLOT: slot fill is the last step (replaces way-out truncation). */
 export function commitOfferedPad(state: GameState, gmEntryId?: string, storyProse = ''): GameState {
   const offered = state.playPhase === 'ended' ? [] : resolveOfferedChoices({ ...state, offeredPad: null });
   if (!offered.length) return { ...state, offeredPad: null };
@@ -197,6 +195,8 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
     let actionId = '';
     let kind = '';
     let slotKind: AffordanceSlotKind | undefined;
+    let slotCategory: import('./sceneAffordances').SlotCategory | undefined;
+    let entityId: string | undefined;
     let required = false;
     let rank = offered.length - i;
     for (let e = 0; e < engines.length; e++) {
@@ -204,12 +204,16 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
       if (chip.label.trim().toLowerCase() !== low) continue;
       actionId = chip.action;
       kind = chip.kind;
+      slotCategory = chip.slotCategory;
+      entityId = chip.entityId;
       break;
     }
     for (let a = 0; a < aff.length; a++) {
       const row = aff[a]!;
       if (row.label.trim().toLowerCase() !== low && row.actionId !== actionId) continue;
       slotKind = row.slotKind;
+      if (row.slotCategory) slotCategory = row.slotCategory;
+      if (row.entityId) entityId = row.entityId;
       required = row.required;
       rank = row.salience;
       if (!actionId) {
@@ -220,10 +224,8 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
     }
     // q44c: an offered label with no source actionId is not kept. Keeping it skipped the cooldown.
     if (!actionId) continue;
-    pad.push({ label, actionId, kind: kind || 'compiled', slotKind, required, rank });
+    pad.push({ label, actionId, kind: kind || 'compiled', slotKind, slotCategory, entityId, required, rank });
   }
-  const offeredLow = new Set<string>();
-  for (let i = 0; i < offered.length; i++) offeredLow.add(offered[i]!.trim().toLowerCase());
   const cooled = applyOptionCooldown(state, pad);
   if (!cooled.length) return { ...state, offeredPad: null };
   const labels: string[] = [];
@@ -231,12 +233,10 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
   for (let i = 0; i < cooled.length; i++) {
     const c = cooled[i]!;
     const rec: (typeof chips)[number] = { label: c.label, actionId: c.actionId, kind: c.kind };
+    if (c.slotCategory) rec.slotCategory = c.slotCategory;
     if (c.cooldownReturn === true) rec.cooldownReturn = true;
     chips.push(rec);
-    const low = c.label.trim().toLowerCase();
-    const way = isWayOut(c);
-    // Generics join the cooldown record. Only the post-rank offered list, plus a way-out the guarantee added, is shown.
-    if (offeredLow.has(low) || (way && !offeredLow.has(low))) labels.push(c.label);
+    labels.push(c.label);
   }
   const cooldowns = updateCooldowns(labels, state.turn ?? 0, new Map(Object.entries(state.qualityGovernance?.optionCooldowns ?? {})));
   const log = [...(state.log ?? [])];

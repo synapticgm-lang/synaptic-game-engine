@@ -879,6 +879,7 @@ export interface GameState {
       label: string;
       actionId: string;
       kind: string;
+      slotCategory?: 'move' | 'talk' | 'act' | 'scene';
       cooldownReturn?: boolean;
     }>;
   } | null;
@@ -1455,6 +1456,7 @@ export interface LogEntry {
     label: string;
     actionId: string;
     kind: string;
+    slotCategory?: 'move' | 'talk' | 'act' | 'scene';
     cooldownReturn?: boolean;
   }>;
   /** Diegetic LitRPG System window (blue panel) — ledger chrome, not STATUS. */

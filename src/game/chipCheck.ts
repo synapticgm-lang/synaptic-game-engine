@@ -132,6 +132,10 @@ export function checkChipKinds(state: GameState, offered: string[], prose = ''):
           }
         }
       }
+      if (wayOutMovesPlayer(state, label)) {
+        offeredWay = true;
+        break;
+      }
       if (!chip) continue;
       if (isWayOut({ kind: chip.kind, actionId: chip.action }) && wayOutMovesPlayer(state, chip.label)) {
         offeredWay = true;
