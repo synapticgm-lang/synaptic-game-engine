@@ -179,9 +179,10 @@ describe('q43-OCD shared offered-chip commit', () => {
     s = { ...s, turn: 2 };
     expect(isOptionRepeat(s, target!.actionId)).toBe(true);
     const again = allocateAffordanceSlots(collectSceneAffordances(s), undefined, s);
-    const reoffer = again.find((a) => a.actionId === target!.actionId);
-    if (reoffer) expect(reoffer.cooldownReturn === true || again.length < 2).toBe(true);
-    else expect(again.every((a) => a.actionId !== target!.actionId)).toBe(true);
+    expect(again.some((a) => a.actionId === target!.actionId)).toBe(true);
+    s = commitOfferedTurn({ ...s, log: [{ id: 'gm-2', role: 'gm', content: 'Camp holds.', timestamp: 2 } as LogEntry] }, 'gm-2');
+    const hit = (s.log?.find((e) => e.id === 'gm-2')?.offeredChips ?? []).find((c) => c.actionId === target!.actionId);
+    if (hit) expect(hit.cooldownReturn).toBe(true);
   });
 
   it('stored pad after the cooldown stamp binds in engineChips (no dead-chip)', () => {

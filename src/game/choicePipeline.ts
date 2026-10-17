@@ -51,7 +51,6 @@ import {
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
   isFreeInputChip,
-  isOptionRepeat,
   stampRecentOfferedActions,
 } from './sceneAffordances';
 
@@ -526,19 +525,38 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
 export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameState {
   const chips = engineChips(state, storyProse);
   const checks: Record<string, CheckSpec> = {};
+  for (let i = 0; i < chips.length; i++) {
+    const c = chips[i]!;
+    if (c.check) checks[c.label] = c.check;
+  }
   const actionIds: string[] = [];
   const offeredChips: NonNullable<import('./types').LogEntry['offeredChips']> = [];
-  for (const c of chips) {
-    if (c.check) checks[c.label] = c.check;
-    // Free-input: own kind on the record; never cooled (exclude from repeat history).
-    if (c.action && c.kind !== 'free-input') actionIds.push(c.action);
-    const rec: NonNullable<import('./types').LogEntry['offeredChips']>[number] = {
-      label: c.label,
-      actionId: c.action,
-      kind: c.kind,
-    };
-    if (c.cooldownReturn === true) rec.cooldownReturn = true;
-    offeredChips.push(rec);
+  const padChips = state.offeredPad?.chips;
+  if (padChips && padChips.length) {
+    // q44-OCD2: the cooled pad is the record. Do not rebuild from uncooled engine chips.
+    for (let i = 0; i < padChips.length; i++) {
+      const c = padChips[i]!;
+      if (c.actionId && c.kind !== 'free-input') actionIds.push(c.actionId);
+      const rec: NonNullable<import('./types').LogEntry['offeredChips']>[number] = {
+        label: c.label,
+        actionId: c.actionId,
+        kind: c.kind,
+      };
+      if (c.cooldownReturn === true) rec.cooldownReturn = true;
+      offeredChips.push(rec);
+    }
+  } else {
+    for (let i = 0; i < chips.length; i++) {
+      const c = chips[i]!;
+      if (c.action && c.kind !== 'free-input') actionIds.push(c.action);
+      const rec: NonNullable<import('./types').LogEntry['offeredChips']>[number] = {
+        label: c.label,
+        actionId: c.action,
+        kind: c.kind,
+      };
+      if (c.cooldownReturn === true) rec.cooldownReturn = true;
+      offeredChips.push(rec);
+    }
   }
   let next = stampRecentOfferedActions(state, actionIds);
   const log = [...(next.log ?? [])];
@@ -1251,8 +1269,6 @@ export function padChoicesToCount(
         const low = label.toLowerCase();
         if (seen.has(low)) continue;
         if (!isLegalEnginePad(label, state, storyProse)) continue;
-        const action = engineChipActionKey(label) || `label:${low}`;
-        if (isOptionRepeat(state, action)) continue;
         if (out.length >= 5) break;
         seen.add(low);
         out.push(label);

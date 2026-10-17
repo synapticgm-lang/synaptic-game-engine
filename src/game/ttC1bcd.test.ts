@@ -14,7 +14,9 @@ import path from 'node:path';
 import { createInitialState } from './defaults';
 import {
   allocateAffordanceSlots,
+  applyOptionCooldown,
   collectSceneAffordances,
+  type OptionCooldownChip,
   isOptionRepeat,
   REPEAT_COOLDOWN_TURNS,
   stampRecentOfferedActions,
@@ -186,9 +188,21 @@ describe('q37-C1bcd OPT1-8 cooldown', () => {
     expect(optIds.length).toBeGreaterThanOrEqual(2);
     // Offer both on turn 1 (brush first = more recent in history if re-offered later).
     let s = offerThenAdvance(s0, optIds, 1);
-    const slots = allocateAffordanceSlots(all, 5, s);
-    expect(slots.length).toBeGreaterThanOrEqual(2);
-    const returned = slots.filter((c) => c.cooldownReturn === true);
+    const optional = all.filter((a) => !a.required);
+    const pad: OptionCooldownChip[] = [];
+    for (let i = 0; i < optional.length; i++) {
+      const a = optional[i]!;
+      pad.push({
+        label: a.label,
+        actionId: a.actionId,
+        kind: 'affordance',
+        slotKind: a.slotKind,
+        required: a.required,
+      });
+    }
+    const cooled = applyOptionCooldown(s, pad);
+    expect(cooled.length).toBeGreaterThanOrEqual(2);
+    const returned = cooled.filter((c) => c.cooldownReturn === true);
     expect(returned.length).toBeGreaterThanOrEqual(1);
     // Least-recently offered among suppressed: first id in the stamp list has the same turn;
     // restore picks the earliest lastTurn (all turn 1) — at least one carries the flag.
