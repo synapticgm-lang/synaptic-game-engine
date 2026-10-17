@@ -253,6 +253,21 @@ describe('q37-C1a scene affordances', () => {
     expect(chipProblem(s, doorChip!.label, 'Stone walls. Silence.')).toBeNull();
   });
 
+  it('C1-5 / plan §4: Search the area is a place Investigation affordance on EngineChip', () => {
+    const s = ttBase({ currentLocation: 'Gatehouse' });
+    const aff = collectSceneAffordances(s).find((a) => a.label === 'Search the area');
+    expect(aff).toBeTruthy();
+    expect(aff!.slotKind).toBe('object');
+    expect(aff!.actionId).toContain(':search');
+    const engine = engineChips(s);
+    const chip = engine.find((c) => c.label === 'Search the area');
+    expect(chip?.kind).toBe('affordance');
+    expect(chip?.entityId).toBe(aff!.entityId);
+    // Tabletop CheckSpec lives on the record, never in the label.
+    expect(chip?.label).not.toMatch(/Investigation|Perception|\[/);
+    expect(chip?.check == null || chip?.check?.skill === 'investigation' || chip?.check?.ability === 'INT').toBe(true);
+  });
+
   it('C1-7 / OPT1-6: no regex literals in sceneAffordances.ts', () => {
     const src = fs.readFileSync(path.join(__dirname, 'sceneAffordances.ts'), 'utf8');
     // Strip block + line comments, then fail on regex literals or new RegExp.

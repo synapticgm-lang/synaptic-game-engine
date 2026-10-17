@@ -265,6 +265,23 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     });
   }
 
+  // Plan §4 item 5 / TT-C1: "Search the area" is an Investigation affordance on the place
+  // (SRD 5.2.1 Ability Checks — Wizards of the Coast, CC BY 4.0), not an orphan cover pad.
+  const place = (state.currentLocation ?? '').trim();
+  if (place) {
+    const label = 'Search the area';
+    const entityId = `place:${place}`;
+    all.push({
+      label,
+      actionId: `object:${entityId}:search`,
+      entityId,
+      slotKind: 'object',
+      salience: 50,
+      required: false,
+      check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
+    });
+  }
+
   return all;
 }
 
@@ -278,9 +295,20 @@ export function isFreeInputChip(label: string): boolean {
   return t === FREE_INPUT_SAY || t === FREE_INPUT_DO;
 }
 
-/** True when scene affordances cover the old generic Scout/Ready/Wait/family pads (OPT-1 item 4). */
+/**
+ * True when scene affordances cover the old generic Scout/Ready/Wait/family pads (OPT-1 item 4).
+ * Place-search alone does not replace doorway/Wait fallbacks — only entity-bound cards do
+ * (person, exit, quest, shop, fight, object other than place:search, item).
+ */
 export function affordancesCoverGenerics(state: GameState): boolean {
-  return collectSceneAffordances(state).length > 0;
+  const all = collectSceneAffordances(state);
+  for (let i = 0; i < all.length; i++) {
+    const a = all[i]!;
+    if (a.actionId === `object:place:${(state.currentLocation ?? '').trim()}:search`) continue;
+    if (a.entityId.startsWith('place:') && a.actionId.endsWith(':search')) continue;
+    return true;
+  }
+  return false;
 }
 
 /** Scene fingerprint for repeat suppression (record fields only — never label/prose). */

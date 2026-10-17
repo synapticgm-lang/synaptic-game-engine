@@ -13,7 +13,7 @@ import { createInitialState } from './defaults';
 import { engineChips, padChoicesToCount } from './choicePipeline';
 import { enumerateLegalEdges } from './choiceEdge';
 import { presentNpcForPads } from './npcTopicFsm';
-import { CHIP_RESOLVERS } from './chipCheck';
+import { checkChipKinds, CHIP_RESOLVERS } from './chipCheck';
 import {
   allocateAffordanceSlots,
   collectSceneAffordances,
@@ -205,5 +205,60 @@ describe('q37-C1b free-input + repeat + cuts', () => {
     expect(repeatBlock).not.toMatch(/\.test\(/);
     expect(repeatBlock).not.toMatch(/new RegExp/);
     expect(repeatBlock).not.toMatch(/Wait and watch|Scout for danger/);
+  });
+
+  it('w2-go1-fixgo1rpg: affordance path offers no dead chips (no stance-density inject)', () => {
+    const s = createInitialState('Jax', 'rpg') as GameState;
+    const rpg: GameState = {
+      ...s,
+      campaignBibleId: 'salt-road-heist',
+      engineMode: 'rpg',
+      turn: 8,
+      log: [],
+      currentLocation: 'Salt Road Waystation',
+      openingEstablishment: {
+        ...(s.openingEstablishment as object),
+        complete: true,
+        coversPending: [],
+      } as GameState['openingEstablishment'],
+      sceneFacts: {
+        crowd: 'alone',
+        noise: 'quiet',
+        present: [],
+        props: ['loose boulders'],
+        lastBeat: '',
+        updatedTurn: 8,
+      },
+      locationSheet: {
+        name: 'Salt Road Waystation',
+        interactables: [{ id: 'b1', name: 'the loose boulders', state: 'closed', kind: 'prop' }],
+        exits: [{ id: 'ex1', label: 'the road' }],
+        presentNpcIds: [],
+      },
+    };
+    const pads = padChoicesToCount(
+      [
+        'Wait and watch',
+        'Scout the exit',
+        'Use the situation as leverage',
+        'Act on faction or moral pressure',
+        'Call out to a bystander',
+        'Approach cautiously',
+      ],
+      rpg,
+      'the alley by the door is quiet',
+      3,
+    );
+    expect(pads).toContain(FREE_INPUT_SAY);
+    expect(pads).toContain(FREE_INPUT_DO);
+    expect(pads.some((p) => /Use the situation as leverage/i.test(p))).toBe(false);
+    expect(pads.some((p) => /Act on faction or moral pressure/i.test(p))).toBe(false);
+    expect(pads.some((p) => /Scout the exit/i.test(p))).toBe(false);
+    expect(pads.some((p) => /Approach cautiously/i.test(p))).toBe(false);
+    expect(checkChipKinds(rpg, pads, 'the alley by the door is quiet').filter((f) => f.kind === 'dead-chip')).toEqual(
+      [],
+    );
+    // Search the area binds as affordance (cover pad no longer orphan).
+    expect(engineChips(rpg).find((c) => c.label === 'Search the area')?.kind).toBe('affordance');
   });
 });
