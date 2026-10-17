@@ -6,12 +6,13 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { resolveCheckRecord } from './checkRules';
-import { formatPreRollLine, formatResultLine, isVr1RollLine, outcomeFactFromRecord } from './rules/rollView';
+import { formatBreakAwayStatus, formatPreRollLine, formatResultLine, isVr1RollLine, outcomeFactFromRecord } from './rules/rollView';
 import { explorationCheckSpec } from './rules/exploration';
 import { filterSystemLogForEngine } from './systemLog';
 import { resolveLedgerFlee, resolveLedgerCombat } from './ledgerCombat';
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
 import { runPlayerCheck, type CheckSpec } from './checkMath';
+import { formatCheckRecord } from './checkRules';
 import { srdBreakAwayCheck } from './engineFight';
 import type { GameState, ActiveEncounter } from './types';
 import type { PlayerIntent } from './intentParser';
@@ -33,7 +34,7 @@ function ttState(extra?: Partial<GameState>): GameState {
 }
 
 describe('VR1-b CheckResultRecord rollers', () => {
-  it('VR1-7 navigation / search / forage records use formatResultLine (no formatCheckRecord label maths)', () => {
+  it('VR1-7 navigation / search / forage STATUS use formatCheckRecord from the record', () => {
     for (const job of ['guide', 'lookout', 'forager'] as const) {
       const rule = TRAVEL_JOB[job];
       const rec = resolveCheckRecord({
@@ -44,13 +45,16 @@ describe('VR1-b CheckResultRecord rollers', () => {
       });
       const spec: CheckSpec = { kind: 'skill', ability: 'WIS', skill: rule.skill, dc: 15, dcShown: false, adv: 'normal' };
       rec.spec = spec;
-      const line = formatResultLine(rec);
-      expect(line).toBe('d20 13 + 1 (WIS) = 14 vs DC 15 — failure');
-      expect(line).not.toMatch(/Navigation:|Look-out:|Foraging:/);
-      expect(isVr1RollLine(line)).toBe(true);
-      expect(isVr1RollLine(formatPreRollLine(spec))).toBe(true);
+      // VR1-5 shared maths line (no job label); STATUS uses formatCheckRecord so the job name stays on the receipt.
+      const maths = formatResultLine(rec);
+      expect(maths).toBe('d20 13 + 1 (WIS) = 14 vs DC 15 — failure');
+      expect(maths).not.toMatch(/Navigation:|Look-out:|Foraging:/);
+      const status = formatCheckRecord(rec, 'dnd');
+      expect(status.startsWith(rule.label)).toBe(true);
+      expect(isVr1RollLine(status)).toBe(true);
+      expect(isVr1RollLine(formatPreRollLine(spec))).toBe(false);
       expect(outcomeFactFromRecord(rec)).toBe('Check failure.');
-      expect(filterSystemLogForEngine([line], 'dnd')).toContain(line);
+      expect(filterSystemLogForEngine([status], 'dnd')).toContain(status);
     }
   });
 
@@ -68,14 +72,16 @@ describe('VR1-b CheckResultRecord rollers', () => {
     expect(outcomeFactFromRecord(rec)).toBe('Check failure.');
   });
 
-  it('VR1-7 flee contest writes CheckResultRecord lines (no Flee check: hand string)', () => {
+  it('VR1-7 flee contest STATUS is formatBreakAwayStatus from the CheckResultRecord', () => {
     const enc = { name: 'Goblin', level: 1, hp: 7, maxHp: 7 } as ActiveEncounter;
     const check = srdBreakAwayCheck(ttState(), enc, true, () => 0.5);
     expect(check.record).toBeDefined();
     expect(check.record.spec?.kind).toBe('contest');
-    expect(check.lines.some((l) => isVr1RollLine(l))).toBe(true);
+    expect(check.line).toMatch(/^Flee check: d20 \d+ [+−] \d+ = \d+ vs Goblin d20 \d+ [+−] \d+ = \d+ — (?:success|failure)$/);
+    expect(check.lines[0]).toBe(check.line);
     expect(check.lines.some((l) => l === outcomeFactFromRecord(check.record))).toBe(true);
-    expect(check.lines.join('\n')).not.toMatch(/^Flee check:/m);
+    // Same helper the engine uses — record maths, not a second roll.
+    expect(formatBreakAwayStatus('parley', check.record)).toMatch(/^Parley check: d20 /);
   });
 
   it('VR1-7 attack / flee ledger rounds carry the CheckResultRecord', () => {

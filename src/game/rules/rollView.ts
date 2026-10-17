@@ -54,12 +54,36 @@ export function outcomeFactFromRecord(rec: CheckResultRecord): string {
   return `Check ${rec.outcome}.`;
 }
 
-/** STATUS: formatPreRollLine / formatResultLine shapes (shared detector; not a per-roller parse). */
+const signedMod = (n: number) => `${n >= 0 ? '+' : '−'} ${Math.abs(n)}`;
+
+/**
+ * STATUS presentation of a flee/parley CheckResultRecord (VR1-b).
+ * Maths come only from the record (+ foe side for Escape contests); not a second roll path.
+ * SRD 5.2.1 Escape contest / Influence check (WotC CC BY 4.0).
+ */
+export function formatBreakAwayStatus(
+  kind: 'flee' | 'parley',
+  rec: CheckResultRecord,
+  foe?: { name: string; die: number; mod: number },
+): string {
+  const mod = rec.mods.reduce((s, m) => s + m.value, 0);
+  if (kind === 'flee' && foe) {
+    const foeTotal = foe.die + foe.mod;
+    return `Flee check: d20 ${rec.kept} ${signedMod(mod)} = ${rec.total} vs ${foe.name} d20 ${foe.die} ${signedMod(foe.mod)} = ${foeTotal} — ${rec.outcome}`;
+  }
+  return `Parley check: d20 ${rec.kept} ${signedMod(mod)} vs DC ${rec.dc} — ${rec.outcome}`;
+}
+
+/** STATUS: completed VR1 result shapes (not the pre-roll "rolling a d20…" cue — that has no kept die). */
 export function isVr1RollLine(line: string): boolean {
   const t = (line ?? '').trim();
-  if (t.endsWith(' — rolling a d20…')) return true;
-  if (t.startsWith('d20 ') && t.includes(' vs DC ') && (t.endsWith(' — success') || t.endsWith(' — failure'))) return true;
-  return t.includes(': no roll (') && (t.endsWith(' — success') || t.endsWith(' — failure'));
+  if (t.endsWith(' — rolling a d20…')) return false;
+  const okEnd = t.endsWith(' — success') || t.endsWith(' — failure');
+  if (!okEnd) return false;
+  if (t.startsWith('d20 ') && t.includes(' vs DC ')) return true;
+  // formatCheckRecord from CheckResultRecord (travel jobs, Extended Travel): "… d20 (N) … vs DC N — …"
+  if (t.includes(' d20 (') && t.includes(' vs DC ')) return true;
+  return t.includes(': no roll (');
 }
 
 export interface ShownD20 {

@@ -214,8 +214,8 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
     expect(camp).toBe('Make camp');
     expect(push).toMatch(/^Push on into the \w+, but each failed save wears you down more$/);
     const pushed = commitTravel(s, push!);
-    // VR1-b: CON save uses formatPreRollLine (Constitution save) from CheckResultRecord.
-    expect((pushed.extra ?? []).some((l) => /Constitution save/.test(l))).toBe(true);
+    // VR1-b: CON save STATUS is formatCheckRecord from CheckResultRecord (label Extended Travel: Constitution save).
+    expect((pushed.extra ?? []).some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
   });
 
   it('q31-L4 — push-on hands Extended Travel + the chip\'s night slot to the writer (not morning landing)', () => {

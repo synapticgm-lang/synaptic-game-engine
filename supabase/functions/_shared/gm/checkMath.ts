@@ -134,6 +134,10 @@ const SRD_CHECK_SKILL: Record<string, string> = {
 export function checkForAction(state: GameState, intent: PlayerIntent, actionText: string): CheckSpec | null {
   const ctx = resolveCheckContext(state, intent, actionText);
   if (ctx.autoSucceed || ctx.dc <= 0) return null;
+  // VR1-2: routine Perception look carries no chip CheckSpec (plain label, no roll tag).
+  // resolveCheckContext still returns the ladder DC so runPlayerCheck / exploration light+pace roll.
+  // SRD 5.2.1: chip tag only when the offered action is an uncertain check (WotC CC BY 4.0).
+  if (state.engineMode === 'dnd' && intent.kind === 'observe' && ctx.skill === 'perception') return null;
   return {
     kind: intent.kind === 'attack' ? 'attack' : intent.kind === 'flee' ? 'contest' : ctx.skill ? 'skill' : 'ability',
     ability: ctx.attr, skill: ctx.skill, dc: ctx.dc, dcShown: false, adv: 'normal',
@@ -282,10 +286,7 @@ export function resolveCheckContext(
   }
   if (intent.kind === 'search' || intent.kind === 'observe') {
     const lookHard = /\b(search|inspect|examine|rummage|scout)\b/i.test(t);
-    // Tabletop casual look: no uncertainty (SRD 5.2.1). LitRPG/RPG keep the roll.
-    if (state.engineMode === 'dnd' && intent.kind === 'observe' && !lookHard) {
-      return { label: 'Perception', attr: 'WIS', skill: 'perception', dc: 0, critFailHpRisk: 0, autoSucceed: true };
-    }
+    // Perception / Investigation stay on the SRD ladder (light, pace, Darkvision). Chip CheckSpec is withheld in checkForAction (VR1-2).
     return {
       label: lookHard ? 'Investigation' : 'Perception', attr: lookHard ? 'INT' : 'WIS',
       skill: lookHard ? 'investigation' : 'perception', ...taskDc(state, lookHard ? 'search' : 'notice'),

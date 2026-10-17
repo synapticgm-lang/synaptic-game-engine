@@ -64,8 +64,8 @@ describe('s83 Root A — a meeting chip resolves through the existing checks', (
   it('"Talk your way past the thugs" commits a parley receipt', () => {
     const t = playTurn(meetingOnStretch(), 'Talk your way past the thugs');
     expect(t.fight).not.toBeNull();
-    // VR1-b: Parley is formatResultLine / Check outcome (not "Parley check: d20…").
-    expect(t.fight!.receipts.some((r) => /^d20 .+ vs DC \d+ — (?:success|failure)$/.test(r) || r === 'Check success.' || r === 'Check failure.')).toBe(true);
+    // VR1-b: Parley is formatBreakAwayStatus from the CheckResultRecord.
+    expect(t.fight!.receipts.some((r) => /^Parley check: d20 .+ vs DC \d+ — (?:success|failure)$/.test(r))).toBe(true);
   });
 
   it('a parley success ends the meeting: Walk on, no meeting chips', () => {
