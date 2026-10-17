@@ -17,6 +17,7 @@ import {
 } from './openingEstablishment';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import type { GameState } from './types';
+import { clampSystemHousing } from './systemHousing';
 import { materializeWornClothes } from './wornGear';
 
 const NAME_THEN_EARTH: OpeningPrompt[] = [
@@ -218,12 +219,18 @@ describe('opening player bubbles', () => {
     expect(result.generateOpening).toBe(false);
   });
 
-  // Known flake (tt-fix-2, 14 Oct): fails now and then in the full vitest run; passed 3/3 run alone. Cause not traced.
+  // leftover_pocket housing correctly has no body bag (pocketOnlyKit); pin a bag-capable housing
+  // so this asserts the seal path, not a random rollSystemHousing from createInitialState.
   it('seals kit cover instead of blocking with a questionnaire', async () => {
+    const base = summonedNameCover();
     const state = {
-      ...summonedNameCover(),
+      ...base,
+      systemHousing: clampSystemHousing({
+        housing: 'private_window',
+        parts: {} as import('./systemHousing').SystemHousingConfig['parts'],
+      }),
       openingEstablishment: {
-        ...summonedNameCover().openingEstablishment!,
+        ...base.openingEstablishment!,
         pending: [
           {
             id: 'pockets',
