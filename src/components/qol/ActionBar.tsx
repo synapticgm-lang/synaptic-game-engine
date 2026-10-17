@@ -51,7 +51,8 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const recruits = recruitPad(state) ?? [];
   const endingChip = rpgEndingChip(state);
   const origins = originPad(state);
-  const contacts = storyRpgContactPad(state);
+  // q42-OPT1m: contact favour chips come from sceneAffordances (engine offered list), not a parallel builder.
+  const contactPad = storyRpgContactPad(state);
   const romance = romancePad(state, romanceAllowed(loadSettings()));
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
@@ -62,8 +63,10 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   for (const c of systemPrompt?.chips ?? []) if (offeredSet.has(c.trim().toLowerCase())) systemChips.push(c);
   const originChips: string[] = [];
   for (const c of origins ?? []) if (offeredSet.has(c.trim().toLowerCase())) originChips.push(c);
+  const contacts: string[] = [];
+  for (const c of contactPad ?? []) if (offeredSet.has(c.trim().toLowerCase())) contacts.push(c);
   const promptSet = new Set<string>();
-  for (const c of [...(systemPrompt?.chips ?? []), ...(origins ?? []), ...recruits, ...(endingChip ? [endingChip] : []), ...(contacts ?? []), ...(romance ?? [])]) {
+  for (const c of [...(systemPrompt?.chips ?? []), ...(origins ?? []), ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
     promptSet.add(c.trim().toLowerCase());
   }
   const mainActions: string[] = [];
@@ -73,14 +76,14 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
     onAction(pickFateChoice(actions));
   };
 
-  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !contacts && !romance)) return null;
+  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !contacts.length && !romance)) return null;
 
   return (
     <div className="flex flex-col gap-1.5 pb-2">
       {originChips.length > 0 && (
         <ChipRow testId="origin-row" heading="Where do you come from?" chips={originChips} tone="border-violet-500/40 text-violet-100" busy={busy} onAction={onAction} />
       )}
-      {contacts && (
+      {contacts.length > 0 && (
         <ChipRow testId="contact-row" heading="Another way through — someone here could see to it (it costs their goodwill)" chips={contacts} tone="border-teal-500/40 text-teal-100" busy={busy} onAction={onAction} />
       )}
       {romance && (

@@ -4,14 +4,16 @@
  * Slot allocation follows Dendry-style precondition cards ranked by salience
  * (Ian D. Millington; pattern only — not a Dendry port).
  *
- * Tabletop adapter only: CheckSpec from checkForAction / SRD 5.2.1
- * (Wizards of the Coast, CC BY 4.0): "The DM calls for an ability check when a
- * character attempts an action (other than an attack) that has a chance of failure.
- * When the outcome is uncertain, the dice determine the result." Roll only when
- * uncertain; a certain open (unlocked door) carries no CheckSpec / no tag.
+ * Mode adapters (same entities, different third actions — OPT-1 / q42-OPT1m):
+ * - Tabletop: CheckSpec from checkForAction / SRD 5.2.1 (Wizards of the Coast, CC BY 4.0):
+ *   "The DM calls for an ability check when a character attempts an action (other than an
+ *   attack) that has a chance of failure. When the outcome is uncertain, the dice determine
+ *   the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
+ * - LitRPG: skill actions (tier CheckSpec via checkForAction) and system actions on the same
+ *   entities (Analyze — System ledger voice; no SRD tag).
+ * - Story RPG: standing and contact actions on the same people (contact favour ticks a step).
  *
- * LitRPG / Story RPG: same entity pass, no CheckSpec here (G-H adapters later).
- * No word lists or label regexes — kinds and actions come from record fields.
+ * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
  */
 import type { GameState } from './types';
 import { checkForAction, type CheckSpec } from './checkMath';
@@ -19,9 +21,14 @@ import { parsePlayerIntent } from './intentParser';
 import { presentNpcRecords } from './npcRecords';
 import { merchantHere } from './merchant';
 import { tabletopStepChip } from './tabletopQuestProgress';
-import { storyRpgDecisionChip } from './storyRpgProgress';
+import {
+  contactChip,
+  standingContactsHere,
+  storyRpgDecisionChip,
+} from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
 import { openRouteView } from './questRoutes';
+import { mainSpineQuest } from './questPlay';
 
 /** Required vs optional slot families (OPT-1 item 2). */
 export type AffordanceSlotKind =
@@ -70,7 +77,12 @@ const OBJECT_VERBS: Record<string, { verb: string; uncertain: boolean; prefix: s
  */
 export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const all: SceneAffordance[] = [];
-  const dnd = state.engineMode === 'dnd';
+  const mode = state.engineMode;
+  const dnd = mode === 'dnd';
+  const litrpg = mode === 'litrpg';
+  const rpg = mode === 'rpg';
+  // Tabletop SRD / LitRPG skill-tier CheckSpec; Story RPG carries none (no roll tag).
+  const withModeCheck = dnd || litrpg;
 
   const enc = state.activeEncounter;
   if (enc && enc.hp > 0) {
@@ -88,6 +100,11 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   }
 
   const people = presentNpcRecords(state);
+  const contactNames = rpg ? new Set(standingContactsHere(state).map((n) => n.toLowerCase())) : null;
+  const openQuest = rpg ? mainSpineQuest(state) : null;
+  const openStep =
+    openQuest?.objectives?.find((o) => !o.completed)?.description?.trim() ?? '';
+
   for (let i = 0; i < people.length; i++) {
     const m = people[i]!;
     const name = (m.npcName ?? '').trim();
@@ -101,18 +118,68 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       slotKind: 'person',
       salience: 80 - i,
       required: true,
-      check: dnd ? checkForAction(state, parsePlayerIntent(talk, state), talk) : undefined,
+      check: withModeCheck ? checkForAction(state, parsePlayerIntent(talk, state), talk) : undefined,
     });
-    const insight = `Read ${name}`;
-    all.push({
-      label: insight,
-      actionId: `person:${entityId}:insight`,
-      entityId,
-      slotKind: 'person',
-      salience: 40 - i,
-      required: false,
-      check: dnd ? checkForAction(state, parsePlayerIntent(insight, state), insight) : undefined,
-    });
+
+    // Mode third action on the same person entity (OPT-1 / q42-OPT1m).
+    if (dnd) {
+      const insight = `Read ${name}`;
+      all.push({
+        label: insight,
+        actionId: `person:${entityId}:insight`,
+        entityId,
+        slotKind: 'person',
+        salience: 40 - i,
+        required: false,
+        check: checkForAction(state, parsePlayerIntent(insight, state), insight),
+      });
+    } else if (litrpg) {
+      // Salience above object pads so skill/system thirds survive the optional cap.
+      const skill = `Read ${name}`;
+      all.push({
+        label: skill,
+        actionId: `person:${entityId}:skill`,
+        entityId,
+        slotKind: 'person',
+        salience: 65 - i,
+        required: false,
+        check: checkForAction(state, parsePlayerIntent(skill, state), skill),
+      });
+      const system = `Analyze ${name}`;
+      all.push({
+        label: system,
+        actionId: `person:${entityId}:system`,
+        entityId,
+        slotKind: 'person',
+        salience: 64 - i,
+        required: false,
+        check: null,
+      });
+    } else if (rpg) {
+      const standing = `Press your standing with ${name}`;
+      all.push({
+        label: standing,
+        actionId: `person:${entityId}:standing`,
+        entityId,
+        slotKind: 'person',
+        salience: 63 - i,
+        required: false,
+        check: undefined,
+      });
+      if (contactNames?.has(name.toLowerCase()) && openStep) {
+        const contact = contactChip(name, openStep);
+        all.push({
+          label: contact,
+          actionId: `person:${entityId}:contact`,
+          entityId,
+          slotKind: 'person',
+          salience: 88 - i,
+          required: true,
+          check: undefined,
+        });
+      }
+    }
+
     // OPT3-2 / OPT-2 agenda hook: a present NPC's goal yields at least one OPT-1 affordance.
     if (m.goal?.motivation && (m.goal.target || m.need)) {
       const about = (m.need ?? m.goal.target).trim();
@@ -125,7 +192,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
           slotKind: 'person',
           salience: 85 - i,
           required: true,
-          check: dnd ? checkForAction(state, parsePlayerIntent(agenda, state), agenda) : undefined,
+          check: withModeCheck ? checkForAction(state, parsePlayerIntent(agenda, state), agenda) : undefined,
         });
       }
     }
@@ -143,7 +210,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         slotKind: 'quest',
         salience: 90 - i,
         required: true,
-        check: dnd ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
+        check: withModeCheck ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
       });
     }
   } else {
@@ -156,7 +223,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         slotKind: 'quest',
         salience: 90,
         required: true,
-        check: dnd ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
+        check: withModeCheck ? checkForAction(state, parsePlayerIntent(step, state), step) : undefined,
       });
     }
   }
@@ -208,7 +275,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         slotKind: 'exit',
         salience: visitedKeys.has(dest.toLowerCase()) ? 30 : 70,
         required: true,
-        check: dnd ? null : undefined,
+        check: dnd || litrpg ? null : undefined,
       });
     }
   } else {
@@ -227,7 +294,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         slotKind: 'exit',
         salience: visitedKeys.has(target.toLowerCase()) ? 30 : 70,
         required: true,
-        check: dnd ? null : undefined,
+        check: dnd || litrpg ? null : undefined,
       });
     }
   }
@@ -249,9 +316,9 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       if (kind === 'door' && act.verb === 'open' && locked) continue;
       const label = `${act.prefix}${name}`;
       let check: CheckSpec | null | undefined;
-      if (!dnd) check = undefined;
+      if (rpg) check = undefined;
       else if (!act.uncertain) check = null;
-      else check = checkForAction(state, parsePlayerIntent(label, state), label);
+      else check = withModeCheck ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined;
       all.push({
         label,
         actionId: `object:${entityId}:${act.verb}`,
@@ -276,7 +343,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       slotKind: 'object',
       salience: 45 - i,
       required: false,
-      check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
+      check: withModeCheck ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
     });
   }
 
@@ -295,7 +362,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       slotKind: 'item',
       salience: 35 - i,
       required: false,
-      check: dnd ? null : undefined,
+      check: dnd || litrpg ? null : undefined,
     });
   }
 

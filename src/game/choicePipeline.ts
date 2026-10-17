@@ -459,7 +459,8 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   ];
   const seen = new Set<string>();
   const chips: EngineChip[] = [];
-  // TT-C1 / OPT-1: scene affordances bind by actionId + entityId (plan §4); LitRPG/RPG builders stay as fallback.
+  // TT-C1 / OPT-1 / q42-OPT1m: scene affordances bind by actionId + entityId (plan §4);
+  // LitRPG skill/system and RPG standing/contact actions live on the same entity pass.
   for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
     const label = sanitizeChoiceLabel(a.label);
     if (!label) continue;
