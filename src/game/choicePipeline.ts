@@ -44,6 +44,16 @@ import { originPad } from './rules/rpgOrigin';
 import { journeyPads } from './travelJourney';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
+import {
+  allocateAffordanceSlots,
+  affordancesCoverGenerics,
+  collectSceneAffordances,
+  FREE_INPUT_DO,
+  FREE_INPUT_SAY,
+  isFreeInputChip,
+  isOptionRepeat,
+  stampRecentOfferedActions,
+} from './sceneAffordances';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -398,7 +408,9 @@ export type ChipKind =
   | 'system'
   | 'journey'
   | 'shop'
-  | 'inspiration-reroll';
+  | 'inspiration-reroll'
+  | 'affordance'
+  | 'free-input';
 
 let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
 
@@ -447,6 +459,35 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   ];
   const seen = new Set<string>();
   const chips: EngineChip[] = [];
+  // TT-C1 / OPT-1: scene affordances bind by actionId + entityId (plan §4); LitRPG/RPG builders stay as fallback.
+  for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
+    const label = sanitizeChoiceLabel(a.label);
+    if (!label) continue;
+    const low = label.toLowerCase();
+    if (seen.has(low)) continue;
+    seen.add(low);
+    chips.push({
+      label,
+      action: a.actionId,
+      kind: 'affordance',
+      check: a.check,
+      entityId: a.entityId,
+    });
+  }
+  // TT-C1 item 4: free-input chips always registered (do not count against the affordance cap).
+  for (const freeLabel of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+    const label = sanitizeChoiceLabel(freeLabel);
+    if (!label) continue;
+    const low = label.toLowerCase();
+    if (seen.has(low)) continue;
+    seen.add(low);
+    chips.push({
+      label,
+      action: label === FREE_INPUT_SAY ? 'free-input:say' : 'free-input:do',
+      kind: 'free-input',
+      check: null,
+    });
+  }
   for (const [kind, raws] of sources) {
     for (const raw of raws) {
       const label = sanitizeChoiceLabel(raw);
@@ -454,8 +495,11 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       const low = label.toLowerCase();
       if (seen.has(low)) continue;
       seen.add(low);
-      // TT-H1: reroll binds by its own action id (plan §4), not label-parsed intent.
-      const action = kind === 'inspiration-reroll' ? `inspiration-reroll:${low}` : engineChipActionKey(label) || `label:${low}`;
+      // TT-H1 / free-input: bind by own action id (plan §4), not label-parsed intent.
+      const action =
+        kind === 'inspiration-reroll'
+          ? `inspiration-reroll:${low}`
+          : engineChipActionKey(label) || `label:${low}`;
       // VR1-a: CheckSpec from checkForAction (pure). Label stays the plain action (§4 chip contract).
       const check = kind === 'inspiration-reroll' ? null : checkForAction(state, parsePlayerIntent(label, state), label);
       chips.push({ label, action, kind, check });
@@ -470,16 +514,22 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   return chips;
 }
 
-/** Stamp CheckSpec-by-label onto pad / last GM log beside offeredChoices. */
+/** Stamp CheckSpec-by-label onto pad / last GM log beside offeredChoices; record action ids for repeat. */
 export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameState {
+  const chips = engineChips(state, storyProse);
   const checks: Record<string, CheckSpec> = {};
-  for (const c of engineChips(state, storyProse)) if (c.check) checks[c.label] = c.check;
-  if (!Object.keys(checks).length) return state;
-  const log = [...(state.log ?? [])];
+  const actionIds: string[] = [];
+  for (const c of chips) {
+    if (c.check) checks[c.label] = c.check;
+    if (c.action) actionIds.push(c.action);
+  }
+  let next = stampRecentOfferedActions(state, actionIds);
+  if (!Object.keys(checks).length) return next;
+  const log = [...(next.log ?? [])];
   let at = -1;
   for (let i = log.length - 1; i >= 0; i--) if (log[i]?.role === 'gm') { at = i; break; }
   if (at >= 0) log[at] = { ...log[at]!, offeredChipChecks: checks };
-  return { ...state, log, offeredPad: state.offeredPad ? { ...state.offeredPad, checks } : state.offeredPad };
+  return { ...next, log, offeredPad: next.offeredPad ? { ...next.offeredPad, checks } : next.offeredPad };
 }
 
 /** Label set for callers that only need membership (derived from engineChips). */
@@ -930,7 +980,8 @@ export function sceneSafeFallbacks(
       options.push(alone ? 'Find a way out' : 'Walk away / go another direction');
     }
   }
-  if (/\b(door|gate|path|corridor|alley|gap|arch)\b/i.test(storyProse)) {
+  // OPT-1 item 4 cut: prose-regex "Approach cautiously" — affordances cover door/path objects.
+  if (!affordancesCoverGenerics(state) && /\b(door|gate|path|corridor|alley|gap|arch)\b/i.test(storyProse)) {
     options.push('Approach cautiously');
   }
   const interactables = state.locationSheet?.interactables ?? [];
@@ -1062,54 +1113,101 @@ export function padChoicesToCount(
       }
     }
   }
-  if (merged.length >= min) {
-    return sealPadUniverse(
-      applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction),
-      state,
-      excluded
-    );
-  }
-  
-  // First fallback pass: collect grounded choices from sceneSafeFallbacks
-  const fallbacks = sceneSafeFallbacks(state, storyProse, lastPlayerAction).filter(
-    (c) => !isExcludedPadLabel(c, excluded)
-  );
-  let fallbacksAdded = 0;
-  for (const extra of fallbacks) {
-    if (merged.length >= min) break;
-    if (fallbacksAdded >= fallbacks.length) break; // Safety: prevent re-checking same items
-    if (!isChoiceGroundedInTurn(extra, storyProse, state)) continue;
-    if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) {
-      merged.push(extra);
-      fallbacksAdded++;
+  if (merged.length < min) {
+    // First fallback pass: collect grounded choices from sceneSafeFallbacks
+    const fallbacksRaw = sceneSafeFallbacks(state, storyProse, lastPlayerAction);
+    const fallbacks: string[] = [];
+    for (let i = 0; i < fallbacksRaw.length; i++) {
+      const c = fallbacksRaw[i]!;
+      if (!isExcludedPadLabel(c, excluded)) fallbacks.push(c);
     }
-  }
-  
-  // Last resort: still pad with grounded-or-generic alone-safe lines (never invent crowd).
-  // Only try this if first pass didn't get us to min and we haven't already tried all fallbacks
-  if (merged.length < min && fallbacksAdded < fallbacks.length) {
+    let fallbacksAdded = 0;
     for (const extra of fallbacks) {
       if (merged.length >= min) break;
-      if (inventsPresenceOnEmptyScene(extra, storyProse)) continue;
-      if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
+      if (fallbacksAdded >= fallbacks.length) break;
+      if (!isChoiceGroundedInTurn(extra, storyProse, state)) continue;
+      let dup = false;
+      for (let j = 0; j < merged.length; j++) {
+        if (merged[j]!.toLowerCase() === extra.toLowerCase()) {
+          dup = true;
+          break;
+        }
+      }
+      if (!dup) {
+        merged.push(extra);
+        fallbacksAdded++;
+      }
+    }
+    if (merged.length < min && fallbacksAdded < fallbacks.length) {
+      for (const extra of fallbacks) {
+        if (merged.length >= min) break;
+        if (inventsPresenceOnEmptyScene(extra, state, storyProse)) continue;
+        let dup = false;
+        for (let j = 0; j < merged.length; j++) {
+          if (merged[j]!.toLowerCase() === extra.toLowerCase()) {
+            dup = true;
+            break;
+          }
+        }
+        if (!dup) merged.push(extra);
+      }
     }
   }
-  
-  // Emergency fallback: scene-grounded non-travel banks only (never Travel/Leave)
   if (merged.length === 0) {
     console.warn('[padChoicesToCount] All choices filtered - adding closed-universe fallback');
     merged.push(...closedUniverseFallbacks(state, excluded));
   }
-  merged = merged.filter((c) => !isExcludedPadLabel(c, excluded));
+  const keptMerged: string[] = [];
+  for (let i = 0; i < merged.length; i++) {
+    if (!isExcludedPadLabel(merged[i]!, excluded)) keptMerged.push(merged[i]!);
+  }
+  merged = keptMerged;
   if (merged.length === 0) {
     merged.push(...closedUniverseFallbacks(state, excluded));
   }
-  
-  return sealPadUniverse(
-    applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction),
-    state,
-    excluded
-  );
+
+  let cappedEnd: string[];
+  if (!affordancesCoverGenerics(state)) {
+    cappedEnd = applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+  } else {
+    // OPT-1 item 4: entity-bound labels + free chips; no first-come slice(0,4).
+    const aff = allocateAffordanceSlots(collectSceneAffordances(state), undefined, state);
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (let i = 0; i < aff.length; i++) {
+      const label = sanitizeChoiceLabel(aff[i]!.label);
+      if (!label) continue;
+      const low = label.toLowerCase();
+      if (seen.has(low)) continue;
+      seen.add(low);
+      out.push(label);
+    }
+    for (let i = 0; i < merged.length; i++) {
+      const label = sanitizeChoiceLabel(merged[i]!);
+      if (!label || isFreeInputChip(label)) continue;
+      const low = label.toLowerCase();
+      if (seen.has(low)) continue;
+      const action = engineChipActionKey(label) || `label:${low}`;
+      if (isOptionRepeat(state, action)) continue;
+      if (out.length >= 5) break;
+      seen.add(low);
+      out.push(label);
+    }
+    cappedEnd = applyStanceDensity(out, state, storyProse, lastPlayerAction);
+    for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+      const label = sanitizeChoiceLabel(free);
+      if (!label) continue;
+      let has = false;
+      for (let i = 0; i < cappedEnd.length; i++) {
+        if (cappedEnd[i]!.toLowerCase() === label.toLowerCase()) {
+          has = true;
+          break;
+        }
+      }
+      if (!has) cappedEnd.push(label);
+    }
+  }
+  return sealPadUniverse(cappedEnd, state, excluded);
 }
 
 export interface ChoicePipelineResult {

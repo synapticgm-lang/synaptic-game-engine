@@ -845,6 +845,32 @@ export interface GameState {
   lastCheckResult?: import('./checkRules').CheckResultRecord;
   /** TT-H1: turn of the last engine GM Inspiration award (≈20-turn gap). */
   lastInspirationAwardTurn?: number;
+  /**
+   * TT-C1b / OPT-1: ongoing situation (stealth approach, chase, search, combat turn, climb…).
+   * Action ids listed here are never treated as option repeats while the situation lasts.
+   * Set/cleared by the rollers/resolvers that own the situation (never from label regex).
+   */
+  activeSituation?: {
+    kind: string;
+    id: string;
+    since: number;
+    actionIds: string[];
+  } | null;
+  /** Scene fingerprint for option repeat (place + present + eventSeq). */
+  optionSceneKey?: {
+    placeId: string;
+    presentIds: string[];
+    eventSeq: number;
+  };
+  /** Recent offered action ids per turn (repeat suppression + OPT-7). */
+  recentOfferedActions?: Array<{
+    turn: number;
+    sceneKey: string;
+    actionIds: string[];
+    pickedActionId?: string;
+  }>;
+  /** TT-C1b: free-input chip opened the box; next typed send resolves via checkForAction. */
+  pendingFreeInput?: 'say' | 'do' | null;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];

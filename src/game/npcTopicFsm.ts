@@ -79,22 +79,27 @@ function extractNpcFromInput(input: string, state: GameState): string | null {
   return null;
 }
 
-/** Primary present NPC for choice-pad tactic disposition (not chrome / pad tokens / factions). */
-export function presentNpcForPads(state: GameState): string | null {
+/**
+ * All present named NPCs for choice pads (OPT-1: was one pick — missing-chip-kind needs every person).
+ * Chrome / pad tokens / factions stay filtered out.
+ */
+export function presentNpcForPads(state: GameState): string[] {
   const present = (state.sceneFacts?.present ?? []).filter(
     (p) =>
       p &&
       !/^(they|them|one|press|scattered\s+scale|bystanders?|handlers?|figure\s+\d+)$/i.test(p)
   );
-  if (!present.length) return null;
-  if (present.length === 1) return present[0];
-  // Prefer someone who already has topic history
+  if (!present.length) return [];
+  // Prefer topic-history people first, then the rest — still returns all.
   const fsm = state.arcDirector?.npcTopics ?? {};
-  for (const name of present) {
-    const key = npcKey(name);
-    if ((fsm[key] ?? []).length > 0) return name;
+  const withHistory: string[] = [];
+  const rest: string[] = [];
+  for (let i = 0; i < present.length; i++) {
+    const name = present[i]!;
+    if ((fsm[npcKey(name)] ?? []).length > 0) withHistory.push(name);
+    else rest.push(name);
   }
-  return present[0];
+  return withHistory.concat(rest);
 }
 
 function topicKey(input: string): string {

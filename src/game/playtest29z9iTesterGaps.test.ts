@@ -29,12 +29,18 @@ function base(over: Partial<GameState> & { __cast?: string[] } = {}): GameState 
     journey: null,
     quests: [],
     places: [],
+    // Clear bible roster so peopleHere is only what the test sets (not "pulled you" fragments).
     npcMemories: [],
     companions: [],
     log: [],
     turn: 3,
-    openingEstablishment: { ...(s.openingEstablishment ?? {}), complete: true } as GameState['openingEstablishment'],
+    openingEstablishment: {
+      ...(s.openingEstablishment ?? {}),
+      complete: true,
+      castNpcIds: [],
+    } as GameState['openingEstablishment'],
     ...over,
+    npcMemories: over.npcMemories ?? [],
     sceneFacts: { ...s.sceneFacts!, crowd: 'none', present: [], crowdCount: 0, ...(over.sceneFacts ?? {}) },
   } as GameState;
 }
@@ -43,7 +49,8 @@ const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r
 const EMPTY = 'Cracked tiles ran to a dry plunge pool. Nobody else was in the bathhouse.';
 
 describe('29z9i — gap 1: talk chip on empty-room text', () => {
-  const cast = base({ __cast: ['the handler'], sceneFacts: { present: ['the handler'] } as GameState['sceneFacts'] });
+  // Empty present[] so peopleHere is not seeded by bible roster fragments; cast is __cast only.
+  const cast = base({ __cast: ['the handler'], sceneFacts: { present: [] } as Partial<GameState['sceneFacts']> as GameState['sceneFacts'] });
 
   it('empty-room text is read from the beat, not from a spoken line', () => {
     expect(placeSaysEmpty(cast, EMPTY)).toBe(true);
@@ -63,7 +70,7 @@ describe('29z9i — gap 1: talk chip on empty-room text', () => {
     const withMira = base({
       __cast: ['the handler'],
       companions: [{ name: 'Mira' } as never],
-      sceneFacts: { present: ['the handler'] } as GameState['sceneFacts'],
+      sceneFacts: { present: [] } as Partial<GameState['sceneFacts']> as GameState['sceneFacts'],
     });
     expect(checkEmptyRoomTalk(withMira, ['Talk to Mira'], EMPTY)).toEqual([]);
     expect(checkEmptyRoomTalk(withMira, ['Talk to the handler'], EMPTY)).toHaveLength(1);
@@ -79,7 +86,7 @@ describe('29z9i — gap 4: "who are you" in the prose on empty-room text', () =>
     const full = base({
       __cast: ['the handler'],
       companions: [{ name: 'Mira' } as never],
-      sceneFacts: { present: ['the handler'], crowd: 'present', crowdCount: 4 } as GameState['sceneFacts'],
+      sceneFacts: { present: ['the handler'], crowd: 'present', crowdCount: 4 } as Partial<GameState['sceneFacts']> as GameState['sceneFacts'],
     });
     const flags = checkEmptyRoomTalk(full, [], `${EMPTY} "Who are you?" echoed off the tiles.`);
     expect(flags.map((f) => f.kind)).toEqual(['ghost-talk']);
@@ -91,7 +98,7 @@ describe('29z9i — gap 4: "who are you" in the prose on empty-room text', () =>
 });
 
 describe('29z9i — gap 2: the System window is not a physical object', () => {
-  const s = base({ sceneFacts: { props: ['blue panel'] } as GameState['sceneFacts'] });
+  const s = base({ sceneFacts: { props: ['blue panel'] } as Partial<GameState['sceneFacts']> as GameState['sceneFacts'] });
 
   it('a touch, surface or heat on the window is a P0', () => {
     const prose = 'You reached for the blue panel. Your finger touched it and the surface rippled, giving off no heat.';
@@ -149,13 +156,17 @@ describe('29z9i — gap 3: the body verb must match the typed verb', () => {
 
 describe('29z9i — wired into the row check', () => {
   it('checkPlayerTurn carries the new flags', () => {
-    const before = base({ __cast: ['the handler'], sceneFacts: { present: ['the handler'], props: ['blue panel'] } as GameState['sceneFacts'] });
+    const before = base({
+      __cast: ['the handler'],
+      sceneFacts: { present: [], props: ['blue panel'] } as Partial<GameState['sceneFacts']> as GameState['sceneFacts'],
+    });
     const r = checkPlayerTurn(before, before, {
       playerInput: 'Inspect the panel',
       offeredChoices: ['Ask what they want', 'Inspect the panel'],
       gmText: `${EMPTY} You looked at the blue panel; your finger touched its surface.`,
     });
     const k = kinds(r);
+    // Ask chip on empty-room prose → ghost; System window touch → window-touched.
     expect(k).toContain('ghost-chip');
     expect(k).toContain('window-touched');
     expect(k).not.toContain('repeat-chip');

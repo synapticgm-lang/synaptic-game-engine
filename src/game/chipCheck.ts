@@ -24,6 +24,8 @@ export const CHIP_RESOLVERS: Record<ChipKind, string> = {
   journey: 'travelJourney',
   shop: 'resolveShopChip (buyItem/sellItem)',
   'inspiration-reroll': 'resolveInspirationReroll (CheckResultRecord die)',
+  affordance: 'sceneAffordances (entity-bound action)',
+  'free-input': 'typed text → intent → checkForAction (same roll path as chips)',
 };
 
 export type ChipCheckFlag = { kind: 'dead-chip' | 'missing-chip-kind'; detail: string };

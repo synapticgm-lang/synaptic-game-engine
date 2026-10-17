@@ -25,6 +25,7 @@ import { tabletopCastChip } from './tabletop/spellCasting';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { shopChips } from './shopChips';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
+import { affordancesCoverGenerics } from './sceneAffordances';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -145,34 +146,20 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
         }
       );
     } else if (contract.kind === 'encounter') {
-      // 31i/31p — no live foe yet. Under loiter treadmill, skip Scout/Ready recycle;
-      // offer exit/talk instead so inspect loops cannot self-feed.
-      const loiter = countLoiterFamilyStreak(state);
-      if (loiter.count >= 3 && loiter.key === 'loiter') {
-        if (!excluded.has('leave')) {
-          edges.push({
-            id: `${contract.id}-exit`,
-            label: 'Leave through the nearest exit',
-            kind: 'travel',
-            beatId: contract.id,
-          });
-        }
-      } else {
-        edges.push(
-          {
-            id: `${contract.id}-scout-threat`,
-            label: 'Scout for danger',
-            kind: 'inspect',
-            beatId: contract.id,
-          },
-          {
-            id: `${contract.id}-ready`,
-            label: 'Ready yourself and watch',
-            kind: 'inspect',
-            beatId: contract.id,
-            risk: 'med',
+      // OPT-1 item 4 / TT-C1 item 5: Scout/Ready deleted when scene affordances cover the beat.
+      // Under loiter with no affordances, keep an exit pad so inspect loops cannot self-feed.
+      if (!affordancesCoverGenerics(state)) {
+        const loiter = countLoiterFamilyStreak(state);
+        if (loiter.count >= 3 && loiter.key === 'loiter') {
+          if (!excluded.has('leave')) {
+            edges.push({
+              id: `${contract.id}-exit`,
+              label: 'Leave through the nearest exit',
+              kind: 'travel',
+              beatId: contract.id,
+            });
           }
-        );
+        }
       }
     }
   }
@@ -270,7 +257,8 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     mandateNow.includes('LOITER INTERRUPT') ||
     /DROUGHT|STAGNATION/i.test(mandateNow) ||
     (state.sceneFacts?.engineRecoveryStreak ?? 0) > 0;
-  if (!skipWait) {
+  // OPT-1 item 4: default Wait deleted when affordances cover; PYOA spine Wait above is unchanged.
+  if (!skipWait && !affordancesCoverGenerics(state)) {
     edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
   }
   return closeEdgeUniverse(state, edges);

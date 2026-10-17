@@ -157,7 +157,7 @@ describe('playtest31sGeminiT50P0', () => {
           present: filterChromeFromPresent(state.sceneFacts!.present),
         },
       };
-      expect(presentNpcForPads(state)).toBe('Wall Sergeant');
+      expect(presentNpcForPads(state)).toContain('Wall Sergeant');
       const first = recordNpcTopic(state, 'Talk to Wall Sergeant');
       expect(first.npc).toBe('Wall Sergeant');
       const second = recordNpcTopic(first.state, 'Press for leverage');

@@ -11,6 +11,7 @@ import {
   shouldForceNpcStageAdvance,
   presentNpcForPads,
 } from './npcTopicFsm';
+import { affordancesCoverGenerics } from './sceneAffordances';
 import {
   dispositionBlocksPad,
   hasMetBefore,
@@ -150,12 +151,18 @@ function isIdentityIntroPad(choice: string): boolean {
 }
 
 function intentSupplements(family: PlayerIntentFamily, engaged: boolean, state: GameState): string[] {
-  // s82 Root A — the fight the player tried to flee is already settled: nothing left to run from.
+  // OPT-1 item 4 / TT-C1 item 5: fixed per-family demand/inspect lists deleted when affordances cover.
+  // Flee/engaged combat pads stay (not covered by scene object/person affordances).
+  const covered = affordancesCoverGenerics(state);
   const kill = state.sceneFacts?.lastKill;
   if (family === 'flee' && !engaged && kill && kill.turn >= (state.turn ?? 0) - 1) return [];
   if (engaged) {
     if (family === 'flee') return ['Keep running', 'Try to flee', 'Find cover'];
     if (family === 'demand') return ['Demand they stand down', 'Press the attack'];
+    return [];
+  }
+  if (covered) {
+    if (family === 'flee') return ['Keep running', 'Look for an exit', 'Find cover'];
     return [];
   }
   if (family === 'demand') return ['Demand they send you back', 'Argue you do not belong here', 'Wait and watch'];
@@ -713,7 +720,8 @@ export function compileChoices(
   // Batch E → 02a — inspect/wait/scout treadmill in one room: tightened from ≥3 to ≥2.
   const inspectTreadmill = loiter.count >= 2 && loiter.key === 'loiter';
   const pyoaLocked = state.engineMode === 'pyoa' && isPyoaBranchLocked(state);
-  const npc = presentNpcForPads(state);
+  const presentNpcs = presentNpcForPads(state);
+  const npc = presentNpcs[0] ?? null;
   const npcKey = npc
     ? npc.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)
     : '';
