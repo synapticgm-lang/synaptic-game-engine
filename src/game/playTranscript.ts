@@ -5,6 +5,7 @@ import {
   padChoicesToCount,
   sanitizeChoiceLabel,
 } from './choicePipeline';
+import { affordancesCoverGenerics } from './sceneAffordances';
 import {
   coverContinuePads,
   isCombatFamilyPad,
@@ -136,6 +137,13 @@ function compileOfferedChoices(state: GameState): string[] {
   const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
   const legal = final(deduped);
+  // OPT-1 item 4: when affordances cover, do not first-come slice(0,4) — padChoicesToCount merges by kind.
+  if (affordancesCoverGenerics(state)) {
+    const paddedAff = final(
+      padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
+    );
+    if (paddedAff.length) return paddedAff;
+  }
   if (legal.length >= 3) return legal.slice(0, 4);
   if (legal.length && isJourneyUnderway(state) && !state.activeEncounter) return legal;
   const padded = final(

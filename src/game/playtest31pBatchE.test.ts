@@ -110,9 +110,12 @@ describe('playtest31pBatchE', () => {
         'Ready yourself and watch',
       ]);
       expect(compiled.notes.some((n) => /treadmill|loiter|interrupt/i.test(n))).toBe(true);
-      expect(
-        compiled.choices.some((c) => /exit|travel|ask|leverage/i.test(c))
-      ).toBe(true);
+      // OPT-1 / TT-C1: Scout/Ready generic pads are cut; interrupt drops loiter and refills
+      // (often "Inspect the immediate surroundings" via closed-universe fallback).
+      expect(compiled.choices.length).toBeGreaterThan(0);
+      expect(compiled.choices.every((c) => /^(scout for danger|wait and watch|ready yourself)/i.test(c))).toBe(
+        false,
+      );
     });
   });
 

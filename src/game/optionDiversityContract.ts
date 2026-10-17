@@ -92,14 +92,20 @@ export function predictOutcomeType(choice: string, role: ChoiceRole, _intent: Se
   return 'information';
 }
 export function buildChoiceProfiles(choices: string[], state: GameState, turn: number): ChoiceProfile[] {
-  return choices.map((choice) => {
+  const out: ChoiceProfile[] = [];
+  for (let i = 0; i < choices.length; i++) {
+    const choice = choices[i]!;
     const intent = canonicalizeIntent(choice, turn);
     const role = classifyChoiceRole(choice, intent, state);
-    return { text: choice, intent, role, outcomeType: predictOutcomeType(choice, role, intent) };
-  });
+    out.push({ text: choice, intent, role, outcomeType: predictOutcomeType(choice, role, intent) });
+  }
+  return out;
 }
 export function getDiversityContract(state: GameState): DiversityContract {
-  const activeQuests = (state.quests ?? []).filter((q) => q.status === 'active' && q.revealed);
+  const activeQuests: typeof state.quests = [];
+  for (const q of state.quests ?? []) {
+    if (q.status === 'active' && q.revealed) activeQuests.push(q);
+  }
   const inCombat = !!state.activeEncounter;
   const inDungeon = !!state.activeDungeon;
   const alone = state.openingEstablishment?.aloneArrival === true && !state.activeEncounter;
@@ -127,7 +133,8 @@ export function checkDiversityContract(
     });
   }
   // Check required roles
-  const presentRoles = new Set(profiles.map(p => p.role));
+  const presentRoles = new Set<ChoiceRole>();
+  for (let i = 0; i < profiles.length; i++) presentRoles.add(profiles[i]!.role);
   for (const required of contract.requiredRoles) {
     if (!presentRoles.has(required)) {
       violations.push({

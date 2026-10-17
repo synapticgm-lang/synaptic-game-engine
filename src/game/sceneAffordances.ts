@@ -268,13 +268,99 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   return all;
 }
 
+/** TT-C1 item 4 / OPT-1 — free chips never count against the affordance cap. */
+export const FREE_INPUT_SAY = 'Say something…';
+export const FREE_INPUT_DO = 'Do something else…';
+export const FREE_INPUT_LABELS = [FREE_INPUT_SAY, FREE_INPUT_DO] as const;
+
+export function isFreeInputChip(label: string): boolean {
+  const t = (label ?? '').trim();
+  return t === FREE_INPUT_SAY || t === FREE_INPUT_DO;
+}
+
+/** True when scene affordances cover the old generic Scout/Ready/Wait/family pads (OPT-1 item 4). */
+export function affordancesCoverGenerics(state: GameState): boolean {
+  return collectSceneAffordances(state).length > 0;
+}
+
+/** Scene fingerprint for repeat suppression (record fields only — never label/prose). */
+export function computeOptionSceneKey(state: GameState): {
+  placeId: string;
+  presentIds: string[];
+  eventSeq: number;
+} {
+  const placeId = (state.currentLocation ?? '').trim();
+  const presentIds: string[] = [];
+  const people = presentNpcRecords(state);
+  for (let i = 0; i < people.length; i++) {
+    const m = people[i]!;
+    presentIds.push((m.npcId || m.npcName || '').trim());
+  }
+  presentIds.sort();
+  return { placeId, presentIds, eventSeq: state.optionSceneKey?.eventSeq ?? 0 };
+}
+
+/**
+ * OPT-1 item 3 / John 17 Oct 08:41 — same actionId offered again with unchanged scene and no
+ * activeSituation that lists it is a repeat. Situation-listed ids are never repeats.
+ */
+export function isOptionRepeat(state: GameState, actionId: string): boolean {
+  if (!actionId) return false;
+  const sit = state.activeSituation;
+  if (sit?.actionIds) {
+    for (let i = 0; i < sit.actionIds.length; i++) {
+      if (sit.actionIds[i] === actionId) return false;
+    }
+  }
+  const sk = computeOptionSceneKey(state);
+  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const hist = state.recentOfferedActions ?? [];
+  let streak = 0;
+  for (let i = hist.length - 1; i >= 0; i--) {
+    const row = hist[i]!;
+    if (row.sceneKey !== key) break;
+    if (row.pickedActionId === actionId) break;
+    let has = false;
+    for (let j = 0; j < row.actionIds.length; j++) {
+      if (row.actionIds[j] === actionId) {
+        has = true;
+        break;
+      }
+    }
+    if (!has) break;
+    streak += 1;
+  }
+  return streak >= 5;
+}
+
+/** Record this turn's offered action ids (+ optional pick) for repeat / OPT-7. */
+export function stampRecentOfferedActions(
+  state: GameState,
+  actionIds: string[],
+  pickedActionId?: string | null,
+): GameState {
+  const sk = computeOptionSceneKey(state);
+  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const row = {
+    turn: state.turn ?? 0,
+    sceneKey: key,
+    actionIds: actionIds.slice(),
+    pickedActionId: pickedActionId ?? undefined,
+  };
+  const prev = state.recentOfferedActions ?? [];
+  const next = prev.length >= 24 ? [...prev.slice(-23), row] : [...prev, row];
+  return { ...state, optionSceneKey: sk, recentOfferedActions: next };
+}
+
 /**
  * Dendry-style slot allocation: required kinds always win a slot; remaining by salience.
  * At most one exit chip. Person Talk chips: all when ≤2 named NPCs; when more, top 2.
+ * Optional `state` applies actionId repeat suppression (OPT-1 item 3).
  */
 export function allocateAffordanceSlots(
   affordances: SceneAffordance[],
   optionalCap = AFFORDANCE_OPTIONAL_CAP,
+  state?: GameState,
 ): SceneAffordance[] {
   const talkPeople: SceneAffordance[] = [];
   const exits: SceneAffordance[] = [];
@@ -343,6 +429,8 @@ export function allocateAffordanceSlots(
     const row = optional[i]!;
     if (seenAction.has(row.actionId)) continue;
     if (row.slotKind === 'exit' && exitSlot.length) continue;
+    // OPT-1 item 3: drop optional repeats (required kinds always keep their slot).
+    if (state && isOptionRepeat(state, row.actionId)) continue;
     seenAction.add(row.actionId);
     picked.push(row);
     optionalTaken += 1;

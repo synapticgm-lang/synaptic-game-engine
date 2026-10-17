@@ -356,6 +356,7 @@ import {
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
 import { carryLimitOn, resolveInspirationReroll, stampLastCheckResult, withHouseRules } from './rules/houseRules';
+import { FREE_INPUT_SAY, isFreeInputChip } from './sceneAffordances';
 import { modeProfile } from './rules/modeProfile';
 import { applyAwayRest } from './rules/awayRest';
 import { realEncounterCr } from './rules/srdMonsters';
@@ -2278,6 +2279,22 @@ export function useGame() {
       ? { text: contentSanitized, intent: parsePlayerIntent(contentSanitized, current), rewritten: false, notes: [] as string[] }
       : groundPlayerAction(contentSanitized, current, storyProseForGround);
     sanitizedInput = gmFacingPlayerAction(contentSanitized, grounded);
+    // TT-C1 item 4: free-input chip opens the box; typed text later uses the same checkForAction path.
+    if (isFreeInputChip(sanitizedInput) || isFreeInputChip(contentSanitized)) {
+      const kind = (sanitizedInput === FREE_INPUT_SAY || contentSanitized === FREE_INPUT_SAY) ? 'say' : 'do';
+      const next = { ...current, pendingFreeInput: kind as 'say' | 'do' };
+      stateRef.current = next;
+      setState(next);
+      void persist(next);
+      setRestoreDraft('');
+      addToast(kind === 'say' ? 'Type what you say…' : 'Type what you do…', 'info');
+      turnInFlightRef.current = false;
+      return;
+    }
+    if (current.pendingFreeInput) {
+      current = { ...current, pendingFreeInput: null };
+      stateRef.current = current;
+    }
     if (!openingPending) {
       const gate = playerInputGateBlock(current, sanitizedInput);
       if (gate.state !== current) {
