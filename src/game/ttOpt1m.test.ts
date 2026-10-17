@@ -11,6 +11,7 @@ import { engineChips } from './choicePipeline';
 import { checkChipKinds } from './chipCheck';
 import {
   allocateAffordanceSlots,
+  affordanceEntityPresent,
   collectSceneAffordances,
   affordancesCoverGenerics,
 } from './sceneAffordances';
@@ -177,5 +178,13 @@ describe('q42-OPT1m LitRPG / RPG affordance adapters', () => {
   it('affordances cover LitRPG/RPG scenes so generic builders retire', () => {
     expect(affordancesCoverGenerics(twoNpcScene('litrpg'))).toBe(true);
     expect(affordancesCoverGenerics(twoNpcScene('rpg'))).toBe(true);
+  });
+
+  it('w4-gh2-fixgh2litrpg: affordanceEntityPresent demands npc presence; system: always legal', () => {
+    const s = twoNpcScene('litrpg');
+    expect(affordanceEntityPresent(s, 'npc:Maud Pike')).toBe(true);
+    expect(affordanceEntityPresent(s, 'npc:High Priest Arus')).toBe(false);
+    expect(affordanceEntityPresent(s, 'system:trail-1')).toBe(true);
+    expect(affordanceEntityPresent(s, 'skill:trail-1')).toBe(true);
   });
 });

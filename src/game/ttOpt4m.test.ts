@@ -21,6 +21,7 @@ import {
   placeIdForStep,
   validateModeQuestData,
   validateQuestStepRoutes,
+  withModeQuestRoutes,
 } from './questRoutes';
 import { collectSceneAffordances } from './sceneAffordances';
 import { applyStoryRpgTurn, placeForStep, storyRpgDecisionChip } from './storyRpgProgress';
@@ -130,7 +131,28 @@ describe('q42-OPT4m LitRPG/RPG quest route data (OPT-4)', () => {
     expect((approach.routes?.length ?? 0) >= 3).toBe(true);
     expect(approach.placeId ?? null).toBeNull();
 
-    const s = saltBase(q);
+    // Person route chips require the named person present (OPT-1); openRouteView still lists all routes.
+    const s = {
+      ...saltBase(q),
+      sceneFacts: {
+        crowd: 'sparse',
+        noise: 'quiet',
+        present: ['Vessa'],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 3,
+      },
+      npcMemories: [
+        {
+          npcId: 'vessa',
+          npcName: 'Vessa',
+          // Present for the person route, but not Friendly — contact route must still fail.
+          disposition: 'neutral',
+          facts: [],
+          lastSeenTurn: 3,
+        },
+      ],
+    } as GameState;
     expect(storyRpgDecisionChip(s)).toBeNull(); // routes own the chips
     const labels = openRouteView(s)!.rows.map((r) => r.label);
     expect(labels).toContain('Ask Vessa which approach fits the crew');
@@ -157,6 +179,57 @@ describe('q42-OPT4m LitRPG/RPG quest route data (OPT-4)', () => {
       true,
     );
     expect(hit.receipts.join('\n')).toMatch(/Ask Vessa/);
+  });
+
+  it('w4-gh2-fixgh2litrpg: absent person route is not an offered chip; System trail is not Ask-talk', () => {
+    const q = seedFromBible('summoned-pact');
+    const step = (q.objectives ?? []).find((o) => (o.routes?.length ?? 0) >= 3) ?? (q.objectives ?? [])[0]!;
+    expect((step.routes?.length ?? 0) >= 3).toBe(true);
+    const person = (step.routes ?? []).find((r) => r.kind === 'person');
+    expect(person).toBeTruthy();
+    // Default enrich label (withModeQuestRoutes) is ledger Read, not Ask-talk.
+    const enriched = withModeQuestRoutes(
+      { id: 'tmp', objectives: ['Find the trail'], objectiveAnchors: [{ placeId: null }] },
+      'litrpg',
+    );
+    let sysLabel = '';
+    const anchor = (enriched.objectiveAnchors ?? [])[0] as { routes?: Array<{ kind: string; label: string }> } | undefined;
+    const routes = anchor?.routes ?? [];
+    for (let i = 0; i < routes.length; i++) {
+      if (routes[i]!.kind === 'system') {
+        sysLabel = routes[i]!.label;
+        break;
+      }
+    }
+    expect(sysLabel.toLowerCase().startsWith('ask ')).toBe(false);
+    expect(sysLabel.toLowerCase()).toMatch(/system/);
+    const s = createInitialState(undefined, 'litrpg') as GameState;
+    const alone = {
+      ...s,
+      engineMode: 'litrpg' as const,
+      campaignBibleId: 'summoned-pact',
+      turn: 4,
+      openingEstablishment: { ...(s.openingEstablishment ?? {}), complete: true },
+      currentLocation: 'the bell-tower of Valespire Cathedral',
+      sceneFacts: {
+        crowd: 'empty',
+        noise: 'quiet',
+        present: ['Orth'],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 4,
+      },
+      npcMemories: [
+        { npcId: 'orth', npcName: 'Orth', disposition: 'friendly', facts: [], lastSeenTurn: 4 },
+      ],
+      quests: [q],
+    } as unknown as GameState;
+    const questChips = collectSceneAffordances(alone)
+      .filter((a) => a.slotKind === 'quest')
+      .map((a) => a.label);
+    const personLabel = (person!.label ?? '').trim();
+    expect(questChips).not.toContain(personLabel);
+    expect(questChips.some((c) => /^ask\s+the\s+system\b/i.test(c))).toBe(false);
   });
 
   it('OPT4-3: placeForStep word match / STEP_STOP stay gone; placeId explicit or none', () => {

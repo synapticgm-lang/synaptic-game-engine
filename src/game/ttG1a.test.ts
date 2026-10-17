@@ -150,7 +150,22 @@ describe('q38-G1a TT-G1 + OPT-4', () => {
   });
 
   it('OPT4-2: salt-road Pick an approach with no Friendly contact offers approach routes; pick ticks on outcome', () => {
-    const s = { ...saltBase(), quests: [approachQuest()] } as GameState;
+    // Person route chips require the named person present (OPT-1); Vessa is here but not Friendly.
+    const s = {
+      ...saltBase(),
+      quests: [approachQuest()],
+      sceneFacts: {
+        crowd: 'sparse',
+        noise: 'quiet',
+        present: ['Vessa'],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 3,
+      },
+      npcMemories: [
+        { npcId: 'vessa', npcName: 'Vessa', disposition: 'neutral', facts: [], lastSeenTurn: 3 },
+      ],
+    } as GameState;
     expect(storyRpgDecisionChip(s)).toBeNull();
     const view = openRouteView(s)!;
     const labels = view.rows.map((r) => r.label);

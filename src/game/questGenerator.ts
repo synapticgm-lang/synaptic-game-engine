@@ -174,10 +174,26 @@ export function ensureQuestFloor(state: GameState): {
   const mode = state.engineMode === 'litrpg' ? 'litrpg' : state.engineMode === 'rpg' ? 'rpg' : 'dnd';
   const motivation = patron.goal!.motivation;
   const strategy = STRATEGY_FOR[motivation] ?? 'investigate';
+  // Place fields (location / leadsTo / placeId) bind only to the scene record — never to a
+  // free-form goal topic (bible hooks like "Explain the Pact" are concerns, not places).
   const place =
     (state.currentLocation ?? '').trim() || (patron.location ?? '').trim() || 'the local road';
   const giver = (patron.npcName ?? 'patron').trim();
-  const target = (patron.goal?.target ?? '').trim() || place;
+  const topic = (patron.goal?.target ?? '').trim();
+  let deliverDest = place;
+  if (topic && (topic === place || topic === (patron.location ?? '').trim())) {
+    deliverDest = topic;
+  } else if (topic) {
+    const places = state.places ?? [];
+    for (let i = 0; i < places.length; i++) {
+      const n = (places[i]!.name ?? '').trim();
+      if (n && (n === topic || n.toLowerCase() === topic.toLowerCase())) {
+        deliverDest = n;
+        break;
+      }
+    }
+  }
+  const target = strategy === 'deliver' ? deliverDest : place;
 
   let hookText = '';
   let questId = '';
@@ -295,6 +311,7 @@ export function ensureQuestFloor(state: GameState): {
     ]);
   }
 
+  const concern = topic || 'their charge';
   const stepText =
     strategy === 'deliver'
       ? [`Take the package from ${giver}`, `Carry it safely past ${foe} country`, `Hand it over at ${target}`]
@@ -302,7 +319,7 @@ export function ensureQuestFloor(state: GameState): {
         ? [`Learn where the ${foe} threatens ${place}`, `Confront the ${foe}`, `Report back to ${giver}`]
         : strategy === 'recover'
           ? [`Ask ${giver} what was taken`, `Track the cache past the ${foe}`, `Return the goods to ${giver}`]
-          : [`Hear ${giver}'s concern about ${target}`, `Study the signs at ${place}`, `Bring proof to ${giver}`];
+          : [`Hear ${giver}'s concern (${concern})`, `Study the signs at ${place}`, `Bring proof to ${giver}`];
 
   const objectives: QuestObjective[] = [];
   for (let s = 0; s < 3; s++) {
@@ -319,12 +336,12 @@ export function ensureQuestFloor(state: GameState): {
   const quest: Quest = {
     id: questId,
     name,
-    description: `${hookText} (for ${giver}: ${motivation} → ${target})`,
+    description: `${hookText} (for ${giver}: ${motivation} → ${topic || place})`,
     status: 'active',
     type: 'side',
     giver,
     location: place,
-    leadsTo: target,
+    leadsTo: place,
     revealed: true,
     revealedTurn: turn,
     activatedTurn: turn,

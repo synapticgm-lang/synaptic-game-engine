@@ -652,7 +652,7 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
           routes: [
             { id: 'sp1-why-person', kind: 'person', label: 'Ask Pellane why you were pulled', entityId: 'npc:Pellane' },
             { id: 'sp1-why-place', kind: 'place', label: 'Search the circle for the summoning reason', entityId: 'place:circle', placeId: 'Sevenfold Circle' },
-            { id: 'sp1-why-system', kind: 'system', label: 'Ask the System what the Mark means', entityId: 'system:mark' },
+            { id: 'sp1-why-system', kind: 'system', label: 'Read the System mark', entityId: 'system:mark' },
           ],
         },
         {
