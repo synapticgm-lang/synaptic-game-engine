@@ -1542,83 +1542,6 @@ export const NPC_ROLE_REGISTRY: Readonly<Record<NpcRole, RoleObligationContract>
   },
 };
 
-/**
- * NPC-001 — Get role definition
- */
-export function getNpcRole(roleId: NpcRole): RoleObligationContract {
-  return NPC_ROLE_REGISTRY[roleId];
-}
-
-/**
- * NPC-002 — Validate role registry completeness
- */
-export function assertRoleRegistryComplete(): void {
-  const expectedRoles = 24;
-  const actualRoles = Object.keys(NPC_ROLE_REGISTRY).length;
-
-  if (actualRoles !== expectedRoles) {
-    throw new Error(
-      `Role registry incomplete: expected ${expectedRoles} roles, found ${actualRoles}`,
-    );
-  }
-
-  // Validate each role has required fields
-  for (const [roleId, contract] of Object.entries(NPC_ROLE_REGISTRY)) {
-    if (!contract.roleId) {
-      throw new Error(`Role ${roleId} missing roleId field`);
-    }
-    if (!contract.description) {
-      throw new Error(`Role ${roleId} missing description field`);
-    }
-    if (!contract.entrance.when) {
-      throw new Error(`Role ${roleId} missing entrance.when field`);
-    }
-    if (!contract.exit.onSuccess || !contract.exit.onFailure) {
-      throw new Error(`Role ${roleId} missing exit conditions`);
-    }
-    if (contract.obligations.successCriteria.length === 0) {
-      throw new Error(`Role ${roleId} has no success criteria`);
-    }
-  }
-}
-
-/**
- * NPC-002 — Get genre variant for role
- */
-export function getRoleGenreVariant(
-  roleId: NpcRole,
-  genre: NpcGenre,
-): { name: string; archetype: string; example: string } | undefined {
-  const contract = getNpcRole(roleId);
-  return contract.genreVariants[genre];
-}
-
-/**
- * NPC-002 — Get all roles with specific entrance condition
- */
-export function getRolesByEntranceCondition(condition: string): NpcRole[] {
-  return (Object.entries(NPC_ROLE_REGISTRY) as Array<[NpcRole, RoleObligationContract]>)
-    .filter(([_, contract]) => contract.entrance.when.includes(condition))
-    .map(([roleId]) => roleId);
-}
-
-/**
- * NPC-002 — Get all roles that can transform
- */
-export function getTransformableRoles(): Array<{
-  roleId: NpcRole;
-  toRole: NpcRole;
-  condition: string;
-}> {
-  return (Object.entries(NPC_ROLE_REGISTRY) as Array<[NpcRole, RoleObligationContract]>)
-    .filter(([_, contract]) => contract.transform !== undefined)
-    .map(([roleId, contract]) => ({
-      roleId,
-      toRole: contract.transform!.toRole,
-      condition: contract.transform!.condition,
-    }));
-}
-
 // ============================================================================
 // ROLE UTILITY FUNCTIONS (for npcLifecycleFsm)
 // ============================================================================
@@ -1668,7 +1591,7 @@ export function calculateRoleDeadline(
   currentTurn: number,
   state: { openingEstablishment?: { complete?: boolean } }
 ): number | null {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   
   if (!contract.timeline || contract.timeline.deadlines.length === 0) {
     return null;
@@ -1714,7 +1637,7 @@ export function isRoleSatisfied(
     turn: number;
   }
 ): boolean {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   
   // Live NPC memory already closed this person's role (quest accepted, farewell).
   const key = npcId.trim().toLowerCase();
@@ -1756,7 +1679,7 @@ export function formatRoleObligation(
   npcId: string,
   deadline: number | null
 ): string {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   const deadlineText = deadline !== null ? ` (deadline: T${deadline})` : '';
   
   return `NPC ROLE (${npcId}): ${contract.description}${deadlineText}`;
@@ -1770,7 +1693,7 @@ export function formatExitMandate(
   npcId: string,
   reason: 'success' | 'failure' | 'deadline' | 'transform'
 ): string {
-  const contract = getNpcRole(role);
+  const contract = NPC_ROLE_REGISTRY[role];
   const exitBehavior = reason === 'success' ? contract.exit.onSuccess : contract.exit.onFailure;
   
   return `NPC EXIT (${npcId}): ${reason} - ${exitBehavior}`;

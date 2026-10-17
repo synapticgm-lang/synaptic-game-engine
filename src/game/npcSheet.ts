@@ -20,6 +20,7 @@ import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
 import { createHashRng, keyedRng } from './seededRng';
 import { roadMeetingSpeaker } from './travelJourney';
 import type { SpokenLine } from './tokenProse';
+import { agendaFromRole, ensureNpcAgenda } from './npcMemory';
 
 type Archetype = {
   id: string;
@@ -170,7 +171,7 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
     used.add(chosen.from);
     return chosen.text;
   };
-  return {
+  const base: NpcSheet = {
     job: jobLabel(place, job),
     speech: pick('speech'),
     motive: pick('motive'),
@@ -178,6 +179,9 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
     secret: pick('secret'),
     place,
   };
+  // OPT-3: agenda fields set once with the sheet from the role-hint template (bound to this place).
+  const agenda = agendaFromRole({ role: job, disposition: 'unknown', bindTarget: place });
+  return { ...base, ...agenda };
 }
 
 /**
@@ -198,9 +202,24 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     roleHint: memory?.roleHint,
   });
   if (memory) {
-    return { ...state, npcMemories: list.map((m) => (m === memory ? { ...m, sheet } : m)) };
+    return {
+      ...state,
+      npcMemories: list.map((m) =>
+        m === memory
+          ? ensureNpcAgenda({
+              ...m,
+              sheet,
+              goal: m.goal ?? sheet.goal,
+              need: m.need ?? sheet.need,
+              offer: m.offer ?? sheet.offer,
+              attitude: m.attitude ?? sheet.attitude,
+              traits: m.traits?.length ? m.traits : sheet.traits,
+              speechRegister: m.speechRegister ?? sheet.speechRegister,
+            })
+          : m),
+    };
   }
-  const fresh: NpcMemory = {
+  const fresh = ensureNpcAgenda({
     npcId: `town-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
     npcName: name.trim(),
     disposition: 'unknown',
@@ -208,7 +227,13 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     lastSeenTurn: state.turn,
     met: true,
     sheet,
-  };
+    goal: sheet.goal,
+    need: sheet.need,
+    offer: sheet.offer,
+    attitude: sheet.attitude,
+    traits: sheet.traits,
+    speechRegister: sheet.speechRegister,
+  });
   return { ...state, npcMemories: [...list, fresh] };
 }
 

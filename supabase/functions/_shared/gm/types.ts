@@ -1566,6 +1566,8 @@ export interface SceneFacts {
   worldTags?: string[];
   /** 29z9j — the place the current `props` belong to (props move with the place on travel). */
   propsPlace?: string;
+  /** OPT-3 — last pressure-clock agenda advance this turn (world fact for the writer packet). */
+  agendaWorldFact?: string;
 }
 
 export interface TimelineFact {
@@ -1668,7 +1670,53 @@ export interface NpcMemory {
   /** Motive lines already spoken, least recent first. */
   motiveUsed?: string[];
   stance?: NpcStance;
+  /**
+   * OPT-3 — Doran & Parberry motivation plus a bound target (set once; see npcAgenda.ts).
+   * Source: Doran and Parberry 2011 quest-structure motivations.
+   */
+  goal?: NpcGoal;
+  /** OPT-3 — what they need from the world / the player (set once). */
+  need?: string;
+  /** OPT-3 — what they would give or trade; a merchant's offer is its stock (set once). */
+  offer?: string;
+  /**
+   * OPT-3 / TT-C2 — SRD 5.2.1 glossary Attitude: Friendly, Indifferent, or Hostile
+   * (Advantage on Influence is applied in q37-C2a; this field is the record).
+   */
+  attitude?: NpcAttitude;
+  /** OPT-3 — 1–2 personality traits (set once from bible or role template). */
+  traits?: string[];
+  /** OPT-3 — how they speak (set once from bible or role template). */
+  speechRegister?: string;
+  /** OPT-3 — agenda engine steps advanced (pressure clock); 0 = initial. */
+  agendaStep?: number;
 }
+
+/**
+ * Doran and Parberry 2011 motivation classes (quest structure). Bound target lives on NpcGoal.target.
+ */
+export type DoranMotivation =
+  | 'Knowledge'
+  | 'Comfort'
+  | 'Reputation'
+  | 'Serenity'
+  | 'Protection'
+  | 'Conquest'
+  | 'Wealth'
+  | 'Ability'
+  | 'Equipment';
+
+/** OPT-3 goal: motivation class + bound target entity/place/job in the record. */
+export interface NpcGoal {
+  motivation: DoranMotivation;
+  target: string;
+}
+
+/**
+ * SRD 5.2.1 glossary Attitude (Friendly / Indifferent / Hostile).
+ * Influence Willing/Hesitant/Unwilling reads the goal; attitude sets Advantage (TT-C2).
+ */
+export type NpcAttitude = 'friendly' | 'indifferent' | 'hostile';
 
 /** A generated person's sheet. A part the place filter left no pick for is blank, never invented. */
 export interface NpcSheet {
@@ -1678,6 +1726,13 @@ export interface NpcSheet {
   speech: string;
   secret: string;
   place: string;
+  /** OPT-3 agenda fields (same once-set rule as NpcMemory; promoted onto the memory record). */
+  goal?: NpcGoal;
+  need?: string;
+  offer?: string;
+  attitude?: NpcAttitude;
+  traits?: string[];
+  speechRegister?: string;
 }
 
 /** How someone is now toward the player — moved only by an engine-recorded event; the sheet never changes. */

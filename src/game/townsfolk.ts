@@ -13,6 +13,7 @@ import { createHashRng } from './seededRng';
 import { recordStanceFromAction, stanceWriterLine } from './npcStance';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { nameWords, pickPersonName } from './personNames';
+import { ensureNpcAgenda } from './npcMemory';
 
 const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 0, road: 1, camp: 2, inn: 2, town: 2 };
 
@@ -58,16 +59,24 @@ export function seedTownsfolkHere(state: GameState): GameState {
     const name = pickPersonName(rng, taken);
     if (!name) continue;
     const sheet = pickNpcSheet(name, place, { campaignId: state.campaignBibleId });
-    people.push({
-      npcId: `town-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-      npcName: name,
-      disposition: 'unknown',
-      facts: [],
-      lastSeenTurn: state.turn,
-      met: false,
-      location: here,
-      sheet,
-    });
+    people.push(
+      ensureNpcAgenda({
+        npcId: `town-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        npcName: name,
+        disposition: 'unknown',
+        facts: [],
+        lastSeenTurn: state.turn,
+        met: false,
+        location: here,
+        sheet,
+        goal: sheet.goal,
+        need: sheet.need,
+        offer: sheet.offer,
+        attitude: sheet.attitude,
+        traits: sheet.traits,
+        speechRegister: sheet.speechRegister,
+      }),
+    );
   }
   return {
     ...state,

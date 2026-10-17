@@ -22,7 +22,7 @@ import { questListHidden } from './systemHousing';
 import { updateChoiceFingerprints } from './choiceCompiler';
 import { isSeekFightChip, stepChip } from './choiceRanking';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
-import { tickPressureClock, type PressureClockState } from './pressureClock';
+import { applyPressureAgendaAdvance, tickPressureClock, type PressureClockState } from './pressureClock';
 import {
   formatNpcTopicMandate,
   recordNpcTopic,
@@ -1210,19 +1210,10 @@ export function runArcDirectorBeforeGm(
     mandates.push(working.arcDirector.lastMandate);
   }
 
-  const pressureClock = tickPressureClock(
-    working.arcDirector?.pressureClock,
-    beatCommitted,
-    working.turn
-  );
-
-  working = {
-    ...working,
-    arcDirector: {
-      ...working.arcDirector,
-      pressureClock,
-    },
-  };
+  // OPT-3: tick the pressure clock; on fire, advance one NPC agenda one step as a world fact.
+  const prevPressure = working.arcDirector?.pressureClock;
+  const pressureClock = tickPressureClock(prevPressure, beatCommitted, working.turn);
+  working = applyPressureAgendaAdvance(working, prevPressure, pressureClock, beatCommitted);
 
   // 31h — persist T12 durable-delta receipt for Debug / Download play (no new LLM).
   working = recordT12HookReceipt(working, {

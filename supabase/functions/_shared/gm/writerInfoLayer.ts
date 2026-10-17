@@ -178,8 +178,10 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
       ? `People here: no one named. Unnamed local${unnamed.length > 1 ? 's' : ''} who may be about: ${unnamed.map((r) => `${/^[aeiou]/i.test(r) ? 'an' : 'a'} ${r}`).join(', ')} (may speak; give no name).`
       : '';
 
+  const presentNames: string[] = [];
+  for (let i = 0; i < people.length; i++) presentNames.push(people[i]!.npcName);
   const lifecycleSection = people.length
-    ? buildLifecycleSituationSection(state, people.map((p) => p.npcName))
+    ? buildLifecycleSituationSection(state, presentNames)
     : '';
 
   const threatSign = pendingFoeSign(state.sceneFacts?.pendingEncounter, state);
@@ -202,12 +204,16 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
     ? `Recent timeline:\n${formatTimelineForPrompt(state.timeline, 6)}`
     : '';
 
+  const agendaFact = state.sceneFacts?.agendaWorldFact?.trim();
+  const agendaSection = agendaFact ? `Agenda (world fact):\n${agendaFact}` : '';
+
   const build = (withLore: boolean, withTimeline: boolean): string =>
     [
       'WORLD FACTS (this turn):',
       here.join('\n'),
       peopleSection,
       lifecycleSection,
+      agendaSection,
       threatSection,
       roomSection,
       ledgerSection,
