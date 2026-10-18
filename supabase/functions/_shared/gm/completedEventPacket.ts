@@ -684,6 +684,8 @@ export function compileRefEnum(
   }
 
   if (!opts?.hallTalk) {
+    const road = roadMeetingRef(state);
+    if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
@@ -694,8 +696,6 @@ export function compileRefEnum(
       if (typeof enc.canSpeak !== 'boolean') enc.canSpeak = foeCanSpeak(enc);
       add(`encounter:${slugRefId(encName)}`, encName, enc.canSpeak ? 'person' : 'creature');
     }
-    const road = roadMeetingRef(state);
-    if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name && kill.remains && kill.outcome === 'victory') {
       add(`corpse:${slugRefId(kill.name)}`, kill.name, 'corpse');

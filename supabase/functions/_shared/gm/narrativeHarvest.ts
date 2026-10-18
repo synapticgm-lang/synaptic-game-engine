@@ -8,7 +8,7 @@ import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority.t
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority.ts';
 import { compileNounAllowlist, mentionAllowlistHas } from './completedEventPacket.ts';
 import { canHarvestAsNamedPerson } from './entityRegistry.ts';
-import { npcRecordNames, resolveNpcRecord } from './npcRecords.ts';
+import { npcRecordNames, presentNpcRecords, resolveNpcRecord } from './npcRecords.ts';
 import { openingCastNames } from './openingEstablishment.ts';
 import { matchesLastKillName } from './combatAuthority.ts';
 import { harvestRoleOccupancy } from './closedScenePerson.ts';
@@ -153,19 +153,20 @@ export function harvestNarrativePeople(
   if (!prose?.trim()) return { state, people: [] };
 
   const refEnum = bound?.refEnum ?? state.completedEvent?.refEnum ?? [];
+  const hereNow = new Set<string>();
+  const presentNow = presentNpcRecords(state);
+  for (let i = 0; i < presentNow.length; i++) hereNow.add(presentNow[i]!.npcName.toLowerCase());
   const fromTokenRefs = (bound?.refs ?? state.completedEvent?.tokenRefs ?? [])
     .filter((r) => r.use === 'speaker' || r.use === 'actor' || r.use === 'addressed')
     .map((r) => {
       const row = refEnum.find(
         (e) => e.tok === r.tok || (!!r.id && e.id.toLowerCase() === r.id.toLowerCase())
       );
-      return row && row.klass !== 'meeting' ? row.display : '';
+      return row && row.klass !== 'meeting' && !hereNow.has(row.display.toLowerCase()) ? row.display : '';
     })
     .filter(Boolean);
 
-  // 14a — when JSON bind succeeded, occupancy comes from refs ids, not prose invent.
-  // A person's name inside a place's name ("Mira's Apothecary") is the place, not her.
-  // A road meeting is an event of the trip, never someone present.
+  // 14a — occupancy comes from refs. A place name is not a person. Someone already present is not copied again.
   const roadName = state.journey?.encounter?.name;
   const placeMasked = maskPlaceNames(state, prose);
   const peopleProse = roadName ? placeMasked.split(roadName).join(' ') : placeMasked;

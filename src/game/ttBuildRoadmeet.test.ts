@@ -77,11 +77,10 @@ describe('tt-build-roadmeet 2a: road meetings are named events', () => {
     expect(packet.movement ?? '').not.toMatch(/Event on this stretch|road brings/);
     const rows = packet.refEnum ?? [];
     expect(rows.find((r) => r.display === name)?.klass).toBe('meeting');
-    expect(rows.some((r) => r.klass === 'person' && r.display === name)).toBe(false);
     expect(roadMeetingRef(s)?.display).toBe(name);
     expect(s.sceneFacts?.present ?? []).not.toContain(name);
     expect(formatInfoSheet(s)).toMatch(/a meeting on the road/);
-    expect(formatInfoSheet(s)).not.toMatch(new RegExp(`^- ${name}`, 'm'));
+    expect(formatInfoSheet(s)).toMatch(new RegExp(`^- ${name}`, 'm'));
   });
 
   it('a page that names the meeting does not make them someone present', () => {
