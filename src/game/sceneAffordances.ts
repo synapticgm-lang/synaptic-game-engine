@@ -28,7 +28,6 @@ import {
 } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
-import { placeExits } from './placeRegistry';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
@@ -324,13 +323,13 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       visitedKeys.add((n.name ?? '').toLowerCase());
     }
   }
-  // q50-MAP2 — MOVE exits from the place record only (placeExits), not a private sheet copy.
-  const recordExits = placeExits(state, state.currentLocation);
-  if (recordExits.length) {
-    for (let i = 0; i < recordExits.length; i++) {
-      const dest = recordExits[i]!;
+  const sheetExits = state.locationSheet?.exits ?? [];
+  if (sheetExits.length) {
+    for (let i = 0; i < sheetExits.length; i++) {
+      const ex = sheetExits[i]!;
+      const dest = (ex.label ?? '').trim();
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = `exit:${dest}`;
+      const entityId = ex.id || `exit:${dest}`;
       const chip = `Travel toward ${dest}`;
       all.push({
         label: chip,
@@ -676,14 +675,14 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     else act.push(row);
   }
   if (!move.length) {
-  // q50-MAP2 — MOVE refill from the place record only.
-  const recordExits = placeExits(state, state.currentLocation);
+  const sheet = state.locationSheet?.exits ?? [];
   const raw: T[] = [];
-  if (recordExits.length) {
-    for (let i = 0; i < recordExits.length; i++) {
-      const dest = recordExits[i]!;
+  if (sheet.length) {
+    for (let i = 0; i < sheet.length; i++) {
+      const ex = sheet[i]!;
+      const dest = (ex.label ?? '').trim();
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = `exit:${dest}`;
+      const entityId = ex.id || `exit:${dest}`;
       raw.push({
         label: `Travel toward ${dest}`,
         actionId: `exit:${entityId}:travel`,

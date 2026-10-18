@@ -1,5 +1,5 @@
 /**
- * Multi lap 23 â€” names in the People here notes the writer is handed ("Sells: Health Tonic; Iron Nail; Reed Salve")
+ * Multi lap 23 — names in the People here notes the writer is handed ("Sells: Health Tonic; Iron Nail; Reed Salve")
  * are not invented capitals; a past-perfect sentence about the place just left ("Jax had just finished their business
  * in Lowmarket") tells the time before the move, not the camera; a typed ref id with a class prefix and the display
  * name ("present:Nell Rudd") is that REF ENUM row, not an unknown id.
@@ -39,10 +39,8 @@ describe('replay bank multi lap 23', () => {
     expect(s.currentLocation).toBe('the hearing pit of the Sump Court');
     const names = handedProperNames(s);
     expect(names).toEqual(expect.arrayContaining(['Health Tonic', 'Iron Nail', 'Reed Salve']));
-    // Toks are positional in the turn's REF ENUM (a place-record exit row can precede the cast); bind by the row's id.
-    const tok = refEnumOf(s).find((r) => r.id === 'cast:nox-kade')?.tok ?? 'missing';
-    const beat: TokenBeat = { refs: [{ tok, id: 'cast:nox-kade', use: 'speaker' }], lines: [] };
-    const speech = (text: string) => ({ fn: 'speech' as const, text, speaker_tok: tok, spoken: true });
+    const beat: TokenBeat = { refs: [{ tok: 't3', id: 'cast:nox-kade', use: 'speaker' }], lines: [] };
+    const speech = (text: string) => ({ fn: 'speech' as const, text, speaker_tok: 't3', spoken: true });
     expect(
       classifyTokenLine(speech('Back again, are you. Same three wares, same copper prices. Health Tonic, Iron Nail, Reed Salve. Which one do you want?'), beat, refEnumOf(s), names)
     ).toEqual({ ok: true });

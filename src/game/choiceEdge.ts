@@ -9,7 +9,6 @@ import {
   engineAllowsCombat,
 } from './beatContract';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
-import { placeExits } from './placeRegistry';
 import { isPyoaBranchExhausted, isPyoaBranchLocked, isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import {
   ensurePyoaSpine,
@@ -168,14 +167,10 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   const allHubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(allHubs, state.currentLocation);
   if (hub && hubBeatCount(state, hub.id) < 2 && !excluded.has('travel')) {
-    // q50-MAP2 — travel edges from the place record (placeExits), not a private hub slice.
-    const targets = placeExits(state, state.currentLocation);
-    for (let i = 0; i < targets.length && i < 2; i++) {
-      const name = targets[i]!;
-      const target = matchHub(allHubs, name);
+    for (const target of allHubs.filter((h) => h.id !== hub.id).slice(0, 2)) {
       edges.push({
-        id: `travel-${target?.id ?? name}`,
-        label: `Travel toward ${name}`,
+        id: `travel-${target.id}`,
+        label: `Travel toward ${target.name}`,
         kind: 'travel',
       });
     }

@@ -11,17 +11,6 @@ export const GmTurnResponseSchema = z.looseObject({
   error: z.string().optional().catch(undefined),
   rawIssue: z.enum(['empty', 'reasoning-only', 'cut-off']).optional().catch(undefined),
   usage: z.unknown().optional(),
-  /** q50-MAP2 — structured places only; never mined from prose. */
-  newPlaces: z
-    .array(
-      z.object({
-        name: z.string().optional().catch(undefined),
-        kind: z.string().optional().catch(undefined),
-        exitsTo: z.array(z.string()).optional().catch(undefined),
-      })
-    )
-    .optional()
-    .catch(undefined),
 });
 
 export type GmTurnResponse = z.infer<typeof GmTurnResponseSchema>;

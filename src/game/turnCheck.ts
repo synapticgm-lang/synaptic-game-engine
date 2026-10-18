@@ -48,34 +48,9 @@ import { terminalFightOutcome } from './engineResult';
 import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { roundCombatChips } from './tabletop/combatChips';
 import { checkChipKinds } from './chipCheck';
-import { resolvePlace, dungeonRoomPlace } from './places';
-import { isRoadLabel, isTripHere } from './travelJourney';
-import { placeExits } from './placeRegistry';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
-
-/**
- * q50-MAP2 — HERE must have a place record with exits, unless closed / road / dungeon room.
- */
-export function checkRegisteredPlace(state: GameState): TurnCheckFlag[] {
-  const loc = norm(state.currentLocation);
-  if (!loc) return [];
-  if (isRoadLabel(loc) || isTripHere(state, loc)) return [];
-  if (dungeonRoomPlace(state, loc) && isExplorableDungeon(state.activeDungeon)) return [];
-  if (isExplorableDungeon(state.activeDungeon)) return [];
-  const place =
-    resolvePlace(state.places, loc)
-    ?? resolvePlace(state.places, dungeonRoomPlace(state, loc) ?? '');
-  if (!place) {
-    return [{ kind: 'no-registered-place', detail: `current location "${loc}" has no place record` }];
-  }
-  if (place.closed || place.arcStatus === 'closed') return [];
-  if (placeExits(state, loc).length === 0) {
-    return [{ kind: 'no-registered-place', detail: `registered place "${loc}" has no exits` }];
-  }
-  return [];
-}
 
 export type TurnCheckKind =
   | 'ghost-chip'
@@ -101,9 +76,7 @@ export type TurnCheckKind =
   | 'repeat-chip'
   | 'verb-swapped'
   | 'dead-chip'
-  | 'missing-chip-kind'
-  /** q50-MAP2: HERE has no place record, or a non-closed record with empty exits. */
-  | 'no-registered-place';
+  | 'missing-chip-kind';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -485,7 +458,6 @@ export function checkPlayerTurn(
     ...checkChosenChip(before, row.fatePick || action),
     ...followed.p0,
     ...checkQuestPlaces(before, after),
-    ...checkRegisteredPlace(before),
     ...brokenProse(prose, after.character?.name),
     ...checkSheetMemory(before, prose),
     ...checkLevelUpChanges(before, after),

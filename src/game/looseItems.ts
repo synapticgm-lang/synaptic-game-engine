@@ -194,7 +194,7 @@ const SEARCH_VERB = /\b(search|searches|searching|rummage|rummaging|scavenge|sca
 const CONTAINER_KEY = /^(crate|chest|barrel|box)$/;
 const EXITS_LOOK = /^(?:check|scout|look for|find)\s+(?:the\s+)?(?:exits?|ways? out)\b/i;
 
-/** Outside a dungeon: checking the exits commits HERE's exits (exitPlaceNames → placeExits; trip ends underway). */
+/** Outside a dungeon: checking the exits commits HERE's exits, the same ones the writer's PLACES line names. */
 function checkExits(state: GameState, text: string): { state: GameState; receipts: string[] } | null {
   if (!EXITS_LOOK.test(text)) return null;
   const here = state.currentLocation?.trim() || 'here';
