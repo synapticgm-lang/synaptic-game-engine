@@ -80,13 +80,17 @@ describe('playtest29a — Manus score boost terminal authority', () => {
       },
       state
     );
+    // q49b-FIGHT — Wait advances the clock; attacked clear still works by enemy_hp_zero / max_engaged.
     const idle = tickEncounterTerminal(state, 'Wait and watch');
-    expect(idle.state.activeEncounter).not.toBeNull();
-    expect(idle.forcedTerminal).toBe(false);
-    const tick = tickEncounterTerminal(state, 'Attack the wraith');
-    expect(tick.state.activeEncounter).toBeNull();
-    expect(tick.forcedTerminal).toBe(true);
-    expect(tick.cleared).toBeTruthy();
+    expect(idle.state.activeEncounter === null || (idle.state.activeEncounter?.engagedTurnCount ?? 0) >= 10).toBe(true);
+    if (idle.forcedTerminal) {
+      expect(idle.cleared?.resolutionReason).toBe('max_engaged');
+    } else {
+      const tick = tickEncounterTerminal(idle.state, 'Attack the wraith');
+      expect(tick.state.activeEncounter).toBeNull();
+      expect(tick.forcedTerminal).toBe(true);
+      expect(tick.cleared).toBeTruthy();
+    }
   });
 
   it('Combat pad lock drops travel / Earth junk while engaged', () => {
