@@ -119,6 +119,7 @@ import {
   matchHub,
   hubsForBibleId,
   hubLinkedQuestCount,
+  registerPlayablePlace,
 } from './outdoorHubs';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
@@ -818,6 +819,8 @@ export function buildNewGameState(opts: {
 }
 
 export function stampOpening(state: GameState): GameState {
+  // q49-MAP: opening HERE must be on the world map with exits before the first pad.
+  state = registerPlayablePlace(state, state.currentLocation);
   const text = stitchOpeningScene(state);
   const seeded = seedOpeningSceneFacts({ ...state, turn: 1 });
   const facts = applyCommittedNarrative({ ...state, sceneFacts: seeded, turn: 1 }, text, 1);

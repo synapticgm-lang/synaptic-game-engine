@@ -7,7 +7,7 @@ import type { GameState } from './types';
 import { trimAnonymousRolesOnLocationChange } from './closedScenePerson';
 import { isSystemWindowLabel } from './chromeAuthority';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords';
-import { ensurePlaceCard } from './outdoorHubs';
+import { registerPlayablePlace } from './outdoorHubs';
 import { resolvePlace } from './places';
 import { placeScale } from './placeAuthority';
 import { engineTension } from './sceneFacts';
@@ -72,8 +72,8 @@ export function applyPresentTrimOnTravel(
   const state = locationsEquivalentForPresence(fromLocation, toLocation)
     ? input
     : movePropsWithPlace(
-      ensurePlaceCard(
-        ensurePlaceCard(stampNpcLocationsOnMove(input, fromLocation, toLocation), fromLocation),
+      registerPlayablePlace(
+        registerPlayablePlace(stampNpcLocationsOnMove(input, fromLocation, toLocation), fromLocation),
         toLocation,
         fromLocation
       ),

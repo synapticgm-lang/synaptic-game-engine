@@ -10,6 +10,7 @@ import { isRoadLabel, isTripHere } from './travelJourney';
 import { placesDiffer } from './sceneContextTail';
 import { mergeTimeline } from './timeline';
 import { commitmentLine, openCommitmentsFor } from './stateTx';
+import { registerPlayablePlace } from './outdoorHubs';
 
 const SAID_CAP = 40;
 const DESCRIBED_CAP = 24;
@@ -136,13 +137,16 @@ export function advanceSceneLedger(before: GameState, after: GameState): GameSta
 export function stampSceneLedger(state: GameState, narrative: string, maskRefs: readonly string[] = []): GameState {
   const loc = (dungeonRoomPlace(state, state.currentLocation) ?? state.currentLocation ?? '').trim();
   if (!loc || isRoadLabel(loc) || isTripHere(state, loc)) return state;
-  let places = [...(state.places ?? [])];
+  // q49-MAP: register HERE through the same place-card / atlas path before stamping the ledger.
+  const registered = registerPlayablePlace(state, loc);
+  let places = [...(registered.places ?? [])];
   let place = resolvePlace(places, loc);
   if (!place) {
     const row: PlaceRecord = { id: placeIdFromName(loc), name: loc };
     places = [...places, row];
     place = row;
   }
+  state = { ...registered, places };
   const prev = place.sceneLedger;
   const turn = state.turn ?? prev?.openedTurn ?? 0;
   const reopening = !!prev && !prev.said.length && !prev.described.length;
