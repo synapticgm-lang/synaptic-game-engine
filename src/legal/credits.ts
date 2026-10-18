@@ -195,6 +195,14 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         notice: 'Fuse.js, Copyright 2017 Kirollos Risk. Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).',
       },
       {
+        work: 'Puppeteer (puppeteer-core)',
+        source: 'Chrome DevTools team (Google) and contributors',
+        license: 'Apache-2.0',
+        usedFor: 'Our automated AI-player test harness (staff testing only; not part of play)',
+        url: 'https://github.com/puppeteer/puppeteer',
+        notice: 'Puppeteer, Copyright Google Inc. Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).',
+      },
+      {
         work: 'Zod',
         source: 'Colin McDonnell and contributors',
         license: 'MIT',
