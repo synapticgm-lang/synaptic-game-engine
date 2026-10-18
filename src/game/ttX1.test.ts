@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import type { RoundCombatState } from './types';
 import {
   buildCombatStatusBlock,
+  combatFacts,
   combatStatusContradicts,
   formatEconomyLine,
   visibleWound,
@@ -70,13 +71,21 @@ describe('TT-X1 combat status', () => {
     expect(status.text).toContain('Action used · Bonus action · 25 ft movement · Reaction');
     expect(status.screenReaderText).toBe(status.text);
     expect(res.combat.foes[0]!.distanceFt).toBe(5);
+    // ENGINE RESULT is combatFacts only. Initiative and "25 ft movement" stay on STATUS so the writer line has no digits.
+    const writer = combatFacts(res.events, 'Jax').join(' ');
+    expect(writer).not.toMatch(/\d/);
+    expect(writer).not.toContain('Initiative');
+    expect(status.text).toMatch(/\d/);
   });
 
   it('X1-2: three identical goblins share one initiative entry', () => {
     const b = block('goblin-warrior');
     const foes = [1, 2, 3].map((i) => ({ id: `f${i}`, name: `${b.name} ${i}`, block: b }));
     const init = rollInitiative(pc(), foes, d20(10), null);
-    const foeEvents = init.events.filter((e) => e.k === 'initiative' && e.who !== 'Jax');
+    const foeEvents = [];
+    for (const e of init.events) {
+      if (e.k === 'initiative' && e.who !== 'Jax') foeEvents.push(e);
+    }
     expect(foeEvents).toHaveLength(1);
     expect(foeEvents[0]!.who).toMatch(/×3/);
     expect(init.foeInitiative.f1).toBe(init.foeInitiative.f2);
