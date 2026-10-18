@@ -4,6 +4,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { peopleHere } from './chipLegality';
 import { presentNpcRecords } from './npcRecords';
 import { commitOfferedPad } from './playTranscript';
 import { applyOptionCooldown } from './sceneAffordances';
@@ -61,10 +62,11 @@ function loadMega(turn: 69 | 70 | 71): { before: GameState; after: GameState } {
 describe('q47-PRES presence record', () => {
   it('keeps the road leader and party while the meeting runs, then drops them', () => {
     const live = roadState({ kind: 'thugs', level: 2, stretch: 1, dangerous: false, count: 2, name: 'Col Tew' });
-    expect(names(live)).toEqual(expect.arrayContaining(['Col Tew', 'the thugs']));
+    expect(names(live)).toContain('Col Tew');
+    expect(peopleHere(live)).toContain('thugs');
     const over = roadState({ kind: 'thugs', level: 2, stretch: 1, dangerous: false, count: 2, name: 'Col Tew', engaged: true });
     expect(names(over)).not.toContain('Col Tew');
-    expect(names(over)).not.toContain('the thugs');
+    expect(peopleHere(over)).not.toContain('thugs');
     const arrived = {
       ...live,
       currentLocation: 'Keep Gate',
@@ -122,7 +124,8 @@ describe('q47-PRES presence record', () => {
       { kind: 'thugs', level: 4, stretch: 1, dangerous: true, count: 2, name: 'Col Tew' },
       { engineMode: 'litrpg', turn: 7, npcMemories: [memory('Col Tew'), memory('the thugs'), memory('Absent Quinn', 'Lowmarket')] }
     );
-    expect(names(s)).toEqual(expect.arrayContaining(['Col Tew', 'the thugs']));
+    expect(names(s)).toContain('Col Tew');
+    expect(peopleHere(s)).toContain('thugs');
     const addressed = checkPlayCrimes(s, s, 'Talk to Col Tew', 'Col Tew says nothing. The thugs said to turn back.');
     expect(addressed.p0.some((f) => f.kind === 'absent-speaker' && /Col Tew|thugs/.test(f.detail))).toBe(false);
     const gone = checkPlayCrimes(s, s, 'Wait', 'Absent Quinn says you should have stayed in Lowmarket.');
@@ -132,11 +135,13 @@ describe('q47-PRES presence record', () => {
   it('MEGA3 Hale Cotter is present on the live road meeting and gone once it ends', () => {
     const t69 = loadMega(69);
     expect(names(t69.before)).not.toContain('Hale Cotter');
-    expect(names(t69.after)).toEqual(expect.arrayContaining(['Hale Cotter', 'the thugs']));
+    expect(names(t69.after)).toContain('Hale Cotter');
+    expect(peopleHere(t69.after)).toContain('thugs');
     const t70 = loadMega(70);
-    expect(names(t70.before)).toEqual(expect.arrayContaining(['Hale Cotter', 'the thugs']));
+    expect(names(t70.before)).toContain('Hale Cotter');
+    expect(peopleHere(t70.before)).toContain('thugs');
     expect(names(t70.after)).not.toContain('Hale Cotter');
-    expect(names(t70.after)).not.toContain('the thugs');
+    expect(peopleHere(t70.after)).not.toContain('thugs');
     const t71 = loadMega(71);
     expect(names(t71.after)).not.toContain('Hale Cotter');
   });

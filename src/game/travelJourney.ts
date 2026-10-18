@@ -991,16 +991,14 @@ export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): {
   if (!e) return null;
   return { label: `${ENCOUNTER_LABEL[e.kind]}${meetingCount(e)}`, count: Math.max(1, e.count ?? 1) };
 }
-/**
- * Road-meeting event row (name, description). Presence itself is presentNpcRecords.
- */
+/** Road-meeting event row (name else label). The row is the meeting class, never a person present. */
 export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { display: string; note: string } | null {
   const e = meetingOnBeat(state);
   if (!e || !SPEAKING_KINDS.has(e.kind)) return null;
   const idea = encounterOpenerIdea(e);
   // OP-1: the picked idea is the backing for what this person says (its gist), never a line to quote.
   const gist = idea ? `; opens with: ${idea.situation}, ${idea.intent}` : '';
-  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; present on this road while the meeting runs${gist}` };
+  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here${gist}` };
 }
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
