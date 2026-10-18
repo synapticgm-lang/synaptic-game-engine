@@ -585,3 +585,122 @@ export async function submitThumb(page, { thumb, comment }) {
   await sleep(400);
   return { ok: true, upsert: upsert.body, upsertError: upsert.error };
 }
+
+const EMPTY_PLACE = { place: null, placeId: null, placeSource: 'none' };
+
+function cleanPlaceText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Place shown on the game screen, else the save the UI loaded (IndexedDB).
+ * Never throws.
+ * @returns {Promise<{ place: string | null, placeId: string | null, placeSource: 'ui' | 'save' | 'none' }>}
+ */
+export async function readPlace(page) {
+  try {
+    if (!page || typeof page.evaluate !== 'function') return { ...EMPTY_PLACE };
+    const raw = await page.evaluate(async () => {
+      const clean = (value) => String(value || '').replace(/\s+/g, ' ').trim();
+      const none = { ui: '', saveName: '', placeId: '' };
+      try {
+        let ui = '';
+        const header = document.querySelector('.sgm-adventure-map-header');
+        if (header) {
+          const room = clean(header.querySelector('span.text-amber-300')?.textContent);
+          if (room && room !== 'Unknown') ui = room;
+          if (!ui) {
+            const title = clean(header.querySelector('h2.sgm-adventure-map-title')?.textContent);
+            if (title && title !== 'Local map pending') ui = title;
+          }
+        }
+        if (!ui) {
+          const accent = clean(document.querySelector('span.sgm-info-accent')?.textContent);
+          if (accent && accent !== 'an unmapped place') ui = accent;
+        }
+        let save = null;
+        try {
+          save = await new Promise((resolve) => {
+            let settled = false;
+            const finish = (value) => {
+              if (settled) return;
+              settled = true;
+              resolve(value);
+            };
+            const timer = setTimeout(() => finish(null), 2000);
+            let req;
+            try {
+              req = indexedDB.open('tactical-litrpg');
+            } catch {
+              clearTimeout(timer);
+              finish(null);
+              return;
+            }
+            req.onerror = () => {
+              clearTimeout(timer);
+              finish(null);
+            };
+            req.onsuccess = () => {
+              try {
+                const db = req.result;
+                if (!db.objectStoreNames.contains('game')) {
+                  clearTimeout(timer);
+                  finish(null);
+                  return;
+                }
+                const tx = db.transaction('game', 'readonly');
+                const getReq = tx.objectStore('game').get('current');
+                getReq.onerror = () => {
+                  clearTimeout(timer);
+                  finish(null);
+                };
+                getReq.onsuccess = () => {
+                  clearTimeout(timer);
+                  finish(getReq.result || null);
+                };
+              } catch {
+                clearTimeout(timer);
+                finish(null);
+              }
+            };
+          });
+        } catch {
+          save = null;
+        }
+        const saveName = clean(save?.locationSheet?.name || save?.currentLocation);
+        let placeId = '';
+        const places = Array.isArray(save?.places) ? save.places : [];
+        for (let i = 0; i < places.length; i++) {
+          const row = places[i];
+          if (!row || !row.id) continue;
+          const rowName = clean(row.name);
+          const here = clean(save.currentLocation);
+          if (row.id === here || (rowName && (rowName === saveName || rowName === here))) {
+            placeId = String(row.id);
+            break;
+          }
+        }
+        if (!placeId && save?.currentLocation) placeId = clean(save.currentLocation);
+        return { ui, saveName, placeId };
+      } catch {
+        return none;
+      }
+    });
+    const ui = cleanPlaceText(raw?.ui);
+    const saveName = cleanPlaceText(raw?.saveName);
+    const placeId = cleanPlaceText(raw?.placeId);
+    if (ui) {
+      return { place: ui, placeId: placeId || null, placeSource: 'ui' };
+    }
+    if (placeId || saveName) {
+      return {
+        place: saveName || placeId,
+        placeId: placeId || saveName,
+        placeSource: 'save',
+      };
+    }
+    return { ...EMPTY_PLACE };
+  } catch {
+    return { ...EMPTY_PLACE };
+  }
+}
