@@ -322,6 +322,7 @@ import {
   matchHub,
   hubsForBibleId,
   hubLinkedQuestCount,
+  registerPlayablePlace,
 } from './outdoorHubs';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
@@ -5374,7 +5375,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       systemPersonality:
         engineMode === 'litrpg' ? resolveLitrpgSystemPersonality(systemPersonality) : undefined,
     });
-    const sealedNewState = ensureSealedOpeningBag(rawNewState, openingPromptsRaw);
+    const sealedNewState = registerPlayablePlace(
+      ensureSealedOpeningBag(rawNewState, openingPromptsRaw),
+      rawNewState.currentLocation
+    );
     const pinnedNames = aloneArrival
       ? []
       : resolveOpeningPinnedNames(

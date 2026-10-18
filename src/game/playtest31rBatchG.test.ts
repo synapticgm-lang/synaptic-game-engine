@@ -88,22 +88,24 @@ describe('playtest31rBatchG', () => {
       expect(notes.some((n) => /encounter lock/i.test(n))).toBe(true);
     });
 
-    it('idle loot/scout does not advance max_engaged victory XP', () => {
+    it('idle loot/scout still advances the fight clock and can clear by max_engaged (q49b-FIGHT)', () => {
       expect(isEncounterIdleIntent('Open the crate')).toBe(true);
       expect(isEncounterIdleIntent('Scout for danger')).toBe(true);
       expect(isEncounterIdleIntent('Press the attack')).toBe(false);
 
       let state = engagedState();
+      let cleared = false;
       for (let i = 0; i < 10; i++) {
         const tick = tickEncounterTerminal(state, 'Open the crate');
         state = tick.state;
+        if (tick.forcedTerminal) {
+          cleared = true;
+          expect(tick.cleared?.resolutionReason).toBe('max_engaged');
+          break;
+        }
       }
-      expect(state.activeEncounter).toBeTruthy();
-      expect(state.activeEncounter?.phase).not.toBe('terminal');
-      expect(state.activeEncounter?.engagedTurnCount ?? 0).toBe(0);
-
-      const fight = tickEncounterTerminal(state, 'Press the attack');
-      expect(fight.state.activeEncounter?.engagedTurnCount ?? 0).toBeGreaterThan(0);
+      expect(cleared).toBe(true);
+      expect(state.activeEncounter).toBeNull();
     });
   });
 

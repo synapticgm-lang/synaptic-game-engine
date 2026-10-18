@@ -201,7 +201,7 @@ describe('playtest31xBatchX', () => {
       expect(compiled.choices.some((c) => /^Travel toward/i.test(c))).toBe(false);
     });
 
-    it('talk during live fight does not auto-clear on max_engaged clock alone', () => {
+    it('talk during live fight clears on max_engaged clock (q49b-FIGHT)', () => {
       const state = createInitialState(undefined, 'litrpg');
       state.turn = 16;
       state.activeEncounter = {
@@ -223,8 +223,9 @@ describe('playtest31xBatchX', () => {
         engagedTurnCount: 8,
       };
       const tick = tickEncounterTerminal(state, 'Talk to Lowmarket Fence');
-      expect(tick.cleared).toBeUndefined();
-      expect(tick.state.activeEncounter).toBeTruthy();
+      expect(tick.forcedTerminal).toBe(true);
+      expect(tick.cleared?.resolutionReason).toBe('max_engaged');
+      expect(tick.state.activeEncounter).toBeNull();
     });
   });
 
