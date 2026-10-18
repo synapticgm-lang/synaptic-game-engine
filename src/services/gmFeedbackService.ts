@@ -6,6 +6,37 @@
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { TurnWriterUsage } from '@/game/openRouterChat';
 
+/**
+ * q51b-AIP2 — tester exclusion for list / CSV export.
+ * Account keys must match scripts/ai-player-browser/testerAccounts.mjs (TESTER_ACCOUNTS + prefixes).
+ * The .mjs is the shared source for scripts / G-ADM; this snapshot is the browser path
+ * (tsconfig.app.json only includes src/, so a static .mjs import cannot be typed).
+ */
+const TESTER_USER_IDS = new Set<string>(['a0e79445-461a-4e52-9d5d-fbc03db3214a']);
+const TESTER_EMAILS = new Set<string>(['ai-player@synapticgm.com', 'synapticgm@gmail.com']);
+const AI_TESTER_SOURCE_PREFIX = 'ai-tester:';
+const AI_TESTER_SAVE_PREFIX = 'aitest-';
+
+/** Drop AI-tester / founder-tester rows (same rules as testerAccounts.excludeTesterRows). */
+export function excludeTesterRows<T extends Record<string, unknown>>(rows: T[]): T[] {
+  if (!Array.isArray(rows)) return [];
+  return rows.filter((row) => {
+    const userId = String(row.user_id ?? row.userId ?? '').trim();
+    if (userId && TESTER_USER_IDS.has(userId)) return false;
+    const email = String(row.email ?? '').trim().toLowerCase();
+    if (email && TESTER_EMAILS.has(email)) return false;
+    const saveId = String(row.save_id ?? row.saveId ?? '').trim().toLowerCase();
+    if (saveId.startsWith(AI_TESTER_SAVE_PREFIX)) return false;
+    const source = String(row.source ?? '').trim().toLowerCase();
+    if (source.startsWith(AI_TESTER_SOURCE_PREFIX)) return false;
+    const meta = row.meta && typeof row.meta === 'object' ? (row.meta as Record<string, unknown>) : null;
+    if (meta && String(meta.source ?? '').trim().toLowerCase().startsWith(AI_TESTER_SOURCE_PREFIX)) {
+      return false;
+    }
+    return true;
+  });
+}
+
 export type GmFeedbackType = 'positive' | 'negative';
 
 export interface GmFeedbackRecord {
@@ -263,17 +294,28 @@ export async function listAllGmFeedback(
     return { ok: false, error: error.message, records: [] };
   }
 
+  // q51b-AIP2: player stats / admin list never count AI-tester or founder-tester rows.
+  const records = excludeTesterRows(
+    ((data as GmFeedbackRecord[]) || []) as unknown as Record<string, unknown>[],
+  ) as unknown as GmFeedbackRecord[];
+  void count;
+
   return {
     ok: true,
-    records: (data as GmFeedbackRecord[]) || [],
-    count: count || 0,
+    records,
+    count: records.length,
   };
 }
 
 /**
  * Admin: Export all feedback to CSV format.
+ * Tester rows are dropped (same shared source as listAllGmFeedback).
  */
 export function exportGmFeedbackToCsv(records: GmFeedbackRecord[]): string {
+  const filtered = excludeTesterRows(
+    (records || []) as unknown as Record<string, unknown>[],
+  ) as unknown as GmFeedbackRecord[];
+
   const headers = [
     'ID',
     'User ID',
@@ -289,7 +331,7 @@ export function exportGmFeedbackToCsv(records: GmFeedbackRecord[]): string {
     'Writer Issue',
   ];
 
-  const rows = records.map((r) => [
+  const rows = filtered.map((r) => [
     r.id,
     r.user_id,
     r.save_id,
