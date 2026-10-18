@@ -4,13 +4,11 @@ import { syncContainerOccupancy } from './inventory';
 import { applySaveRepair } from './saveMigration';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { saveFileProblem } from './schemas';
-
+import { normalizeOfferedActionKeys } from './sceneAffordances';
 const DB_NAME = 'tactical-litrpg';
 const DB_VERSION = 1;
 const STORE_GAME = 'game';
-
 let dbPromise: Promise<IDBDatabase> | null = null;
-
 function openDb(): Promise<IDBDatabase> {
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((resolve, reject) => {
@@ -24,7 +22,6 @@ function openDb(): Promise<IDBDatabase> {
   });
   return dbPromise;
 }
-
 export async function loadGame(): Promise<GameState | null> {
   const db = await openDb();
   return new Promise((resolve, reject) => {
@@ -44,10 +41,11 @@ export async function loadGame(): Promise<GameState | null> {
             return;
           }
           const repaired = applySaveRepair(state);
-          if (repaired.dirty) {
-            await saveGame(repaired.state);
+          const normalized = normalizeOfferedActionKeys(repaired.state);
+          if (repaired.dirty || normalized !== repaired.state) {
+            await saveGame(normalized);
           }
-          resolve(repaired.state);
+          resolve(normalized);
         } catch (e) {
           reject(e);
         }
@@ -56,7 +54,6 @@ export async function loadGame(): Promise<GameState | null> {
     req.onerror = () => reject(req.error);
   });
 }
-
 export async function saveGame(state: GameState): Promise<void> {
   const db = await openDb();
   return new Promise((resolve, reject) => {
@@ -66,7 +63,6 @@ export async function saveGame(state: GameState): Promise<void> {
     tx.onerror = () => reject(tx.error);
   });
 }
-
 export async function deleteGame(): Promise<void> {
   const db = await openDb();
   return new Promise((resolve, reject) => {
@@ -76,22 +72,22 @@ export async function deleteGame(): Promise<void> {
     tx.onerror = () => reject(tx.error);
   });
 }
-
 const SETTINGS_KEY = 'tactical-litrpg-settings';
-
 /** Older saves used visual/text — map to static/normal/excited. */
-function migrateDiceAnimation(raw: unknown): Settings['diceAnimation'] {
-  if (raw === 'static' || raw === 'normal' || raw === 'excited') return raw;
-  if (raw === 'text') return 'static';
-  if (raw === 'visual') return 'normal';
-  return createDefaultSettings().diceAnimation;
-}
-
 export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<Settings>;
+      const diceRaw = parsed.diceAnimation as unknown;
+      const diceAnimation: Settings['diceAnimation'] =
+        diceRaw === 'static' || diceRaw === 'normal' || diceRaw === 'excited'
+          ? diceRaw
+          : diceRaw === 'text'
+            ? 'static'
+            : diceRaw === 'visual'
+              ? 'normal'
+              : createDefaultSettings().diceAnimation;
       const merged: Settings = {
         ...createDefaultSettings(),
         ...parsed,
@@ -114,7 +110,7 @@ export function loadSettings(): Settings {
           parsed.combatResolveMode === 'auto' || parsed.combatResolveMode === 'full'
             ? parsed.combatResolveMode
             : createDefaultSettings().combatResolveMode,
-        diceAnimation: migrateDiceAnimation(parsed.diceAnimation),
+        diceAnimation,
         // 28n — second person was the only old default; move it to hybrid once. Later picks stick.
         perspective:
           parsed.perspectiveDefaultRev !== 1 && (!parsed.perspective || parsed.perspective === 'second-person')
@@ -132,7 +128,6 @@ export function loadSettings(): Settings {
   } catch {
     /* ignore */
   }
-
   // Default for first-time load
   return {
     ...createDefaultSettings(),
@@ -140,7 +135,6 @@ export function loadSettings(): Settings {
     fluxApiKey: '',
   };
 }
-
 export function saveSettings(settings: Settings): void {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   try {
@@ -149,7 +143,6 @@ export function saveSettings(settings: Settings): void {
     /* ignore */
   }
 }
-
 export function exportSave(state: GameState): void {
   const payload = {
     version: state.version,
@@ -175,7 +168,6 @@ export function exportSave(state: GameState): void {
   a.click();
   URL.revokeObjectURL(url);
 }
-
 export function importSave(file: File): Promise<GameState> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

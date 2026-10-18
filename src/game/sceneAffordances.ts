@@ -1,18 +1,10 @@
 /**
  * TT-C1 / OPT-1 — options from the engine scene record (mode-agnostic).
- *
- * Slot allocation follows Dendry-style precondition cards ranked by salience
- * (Ian D. Millington; pattern only — not a Dendry port).
- *
- * Mode adapters (same entities, different third actions — OPT-1 / q42-OPT1m):
- * - Tabletop: CheckSpec from checkForAction / SRD 5.2.1 (Wizards of the Coast, CC BY 4.0):
- *   "The DM calls for an ability check when a character attempts an action (other than an
- *   attack) that has a chance of failure. When the outcome is uncertain, the dice determine
- *   the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
- * - LitRPG: skill actions (tier CheckSpec via checkForAction) and system actions on the same
- *   entities (Analyze — System ledger voice; no SRD tag).
- * - Story RPG: standing and contact actions on the same people (contact favour ticks a step).
- *
+ * Slot rank is Dendry-style salience (Ian D. Millington; pattern only, not a Dendry port).
+ * Tabletop CheckSpec from checkForAction / SRD 5.2.1 (Wizards of the Coast, CC BY 4.0):
+ * "The DM calls for an ability check when a character attempts an action (other than an
+ * attack) that has a chance of failure. When the outcome is uncertain, the dice determine
+ * the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
  * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
  */
 import type { GameState } from './types';
@@ -514,6 +506,46 @@ export function computeOptionSceneKey(state: GameState): {
   presentIds.sort();
   return { placeId, presentIds, eventSeq: state.optionSceneKey?.eventSeq ?? 0 };
 }
+export function optionSceneKeyString(sk: {
+  placeId: string;
+  presentIds: string[];
+  eventSeq: number;
+}): string {
+  return JSON.stringify([sk.placeId, sk.presentIds, sk.eventSeq]);
+}
+/** Rewrite q37-C1b NUL scene keys so a cooldown still matches after load. */
+export function normalizeOfferedActionKeys(state: GameState): GameState {
+  const hist = state.recentOfferedActions;
+  if (!hist || !hist.length) return state;
+  let changed = false;
+  const next: NonNullable<GameState['recentOfferedActions']> = [];
+  for (let i = 0; i < hist.length; i++) {
+    const row = hist[i]!;
+    const raw = row.sceneKey ?? '';
+    if (!raw.includes('\u0000')) {
+      next.push(row);
+      continue;
+    }
+    changed = true;
+    const parts = raw.split('\u0000');
+    const placeId = parts[0] ?? '';
+    const last = parts.length > 1 ? parts[parts.length - 1]! : '0';
+    const n = Number(last);
+    const middle = parts.length > 2 ? parts.slice(1, -1) : [];
+    let any = false;
+    for (let m = 0; m < middle.length; m++) if (middle[m]) any = true;
+    next.push({
+      ...row,
+      sceneKey: optionSceneKeyString({
+        placeId,
+        presentIds: any ? middle.slice() : [],
+        eventSeq: Number.isFinite(n) ? n : 0,
+      }),
+    });
+  }
+  if (!changed) return state;
+  return { ...state, recentOfferedActions: next };
+}
 export function isOptionRepeat(
   state: GameState,
   actionId: string,
@@ -521,6 +553,7 @@ export function isOptionRepeat(
 ): boolean {
   if (!actionId) return false;
   if (opts?.slotKind === 'exit') return false;
+  state = normalizeOfferedActionKeys(state);
   const sit = state.activeSituation;
   if (sit?.actionIds) {
     for (let i = 0; i < sit.actionIds.length; i++) {
@@ -528,7 +561,7 @@ export function isOptionRepeat(
     }
   }
   const sk = computeOptionSceneKey(state);
-  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const key = optionSceneKeyString(sk);
   const hist = state.recentOfferedActions ?? [];
   const turn = state.turn ?? 0;
   const mode = state.engineMode;
@@ -596,8 +629,9 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       : mode === 'rpg'
         ? REPEAT_COOLDOWN_TURNS.rpg
         : REPEAT_COOLDOWN_TURNS.dnd;
+  state = normalizeOfferedActionKeys(state);
   const sk = computeOptionSceneKey(state);
-  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const key = optionSceneKeyString(sk);
   const hist = state.recentOfferedActions ?? [];
   const turn = state.turn ?? 0;
   const sit = state.activeSituation?.actionIds;
@@ -843,7 +877,7 @@ export function stampRecentOfferedActions(
   pickedActionId?: string | null,
 ): GameState {
   const sk = computeOptionSceneKey(state);
-  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const key = optionSceneKeyString(sk);
   const row = {
     turn: state.turn ?? 0,
     sceneKey: key,
