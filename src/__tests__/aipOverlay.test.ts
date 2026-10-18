@@ -181,7 +181,7 @@ describe('q51d-AIPOVL overlay dismiss', () => {
     expect(open).toBe(false);
   });
 
-  it('dialog that ignores Escape and the backdrop uses the last footer button', async () => {
+  it('dialog that ignores Escape and the backdrop does not press a text button', async () => {
     const { clearInputCover } = await load('scripts/ai-player-browser/overlay.mjs');
     let open = true;
     const { doc, ta } = boxDoc(() => (open ? backdrop : ta));
@@ -199,10 +199,11 @@ describe('q51d-AIPOVL overlay dismiss', () => {
     doc.body.append(backdrop);
     const page = pageFor(doc);
     const result = await clearInputCover(page);
-    expect(result.cleared).toBe(true);
-    expect(result.steps).toEqual(['escape', 'backdrop', 'control']);
+    expect(result.cleared).toBe(false);
+    expect(result.steps).toEqual(['escape', 'backdrop']);
     expect(first.clicks).toBe(0);
-    expect(last.clicks).toBe(1);
+    expect(last.clicks).toBe(0);
+    expect(open).toBe(true);
   });
 
   it('an icon-only close button is preferred over footer buttons', async () => {
@@ -251,10 +252,10 @@ describe('q51d-AIPOVL overlay dismiss', () => {
     backdrop.append(footer);
     doc.body.append(backdrop);
     const page = pageFor(doc);
-    expect(await dismissAutoFightTip(page)).toBe(true);
-    expect(open).toBe(false);
+    expect(await dismissAutoFightTip(page)).toBe(false);
+    expect(open).toBe(true);
     expect(got.clicks).toBe(0);
-    expect(enable.clicks).toBe(1);
+    expect(enable.clicks).toBe(0);
     const src = readFileSync(resolve('scripts/ai-player-browser/gameTab.mjs'), 'utf8');
     expect(src).not.toMatch(/Got it/);
   });
@@ -275,9 +276,9 @@ describe('q51d-AIPOVL overlay dismiss', () => {
     const page = pageFor(doc);
     const result = await clearInputCover(page);
     expect(result.cleared).toBe(false);
-    expect(result.steps).toEqual(['escape', 'backdrop', 'control']);
+    expect(result.steps).toEqual(['escape', 'backdrop']);
     expect(page.escapes()).toBe(1);
-    expect(last.clicks).toBe(1);
+    expect(last.clicks).toBe(0);
     expect(result.cover.selector).toContain('fixed');
     expect(result.cover.text).toContain('Stuck');
   });

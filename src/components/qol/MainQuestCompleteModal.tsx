@@ -24,6 +24,7 @@ export function MainQuestCompleteModal({ prompt, litrpg, busy, onContinue, onFin
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
           <button
             type="button"
+            data-dismiss=""
             disabled={busy}
             onClick={onContinue}
             className="rounded-md bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-40"

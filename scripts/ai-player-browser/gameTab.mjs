@@ -421,8 +421,59 @@ export async function startPremade(page, bibleId) {
 /** CenterPanel toolbar — only mounted while `state.activeEncounter` is live. */
 export const AUTO_FIGHT_SELECTOR = 'button[title="Auto-resolve combat"]';
 
+/** Save id the UI has loaded (DOM marker, else the current IndexedDB game row). */
+export async function readUiSaveId(page) {
+  if (!page || typeof page.evaluate !== 'function') return null;
+  try {
+    const id = await page.evaluate(() => new Promise((resolve) => {
+      const marked = document.querySelector('[data-sgm-save-id]');
+      const fromDom = marked && marked.getAttribute('data-sgm-save-id');
+      if (fromDom) { resolve(fromDom); return; }
+      let done = false;
+      const finish = (value) => {
+        if (done) return;
+        done = true;
+        resolve(value || null);
+      };
+      const timer = setTimeout(() => finish(null), 400);
+      let req;
+      try {
+        req = indexedDB.open('tactical-litrpg');
+      } catch {
+        clearTimeout(timer);
+        finish(null);
+        return;
+      }
+      req.onerror = () => { clearTimeout(timer); finish(null); };
+      req.onsuccess = () => {
+        try {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('game')) {
+            clearTimeout(timer);
+            finish(null);
+            return;
+          }
+          const getReq = db.transaction('game', 'readonly').objectStore('game').get('current');
+          getReq.onerror = () => { clearTimeout(timer); finish(null); };
+          getReq.onsuccess = () => {
+            clearTimeout(timer);
+            const row = getReq.result;
+            finish(row && row.saveId ? String(row.saveId) : null);
+          };
+        } catch {
+          clearTimeout(timer);
+          finish(null);
+        }
+      };
+    }));
+    return id ? String(id) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function dismissAutoFightTip(page) {
-  lastCoverClear = await clearInputCover(page);
+  lastCoverClear = await clearInputCover(page, 'dismissAutoFightTip');
   const cleared = Boolean(lastCoverClear?.cleared && lastCoverClear.steps?.length);
   if (cleared) await sleep(300);
   return cleared;
@@ -458,7 +509,7 @@ export async function clickAutoFight(page) {
 }
 
 export async function clickChip(page, label) {
-  lastCoverClear = await clearInputCover(page);
+  lastCoverClear = await clearInputCover(page, 'clickChip');
   const clicked = await page.evaluate((needle) => {
     const buttons = [...document.querySelectorAll('button.sgm-choice-btn')];
     const want = (needle || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -489,7 +540,7 @@ export async function typePlayerAction(page, text) {
   const sel = '[aria-label="Player action input"]';
   const input = await page.$(sel);
   if (!input) throw new Error('Player action input missing (chips-only books hide it)');
-  lastCoverClear = await clearInputCover(page);
+  lastCoverClear = await clearInputCover(page, 'typePlayerAction');
   const cover = await inputCoveredBy(page);
   if (cover) return { sent: false, reason: `input_covered:${cover}`, overlay: lastCoverClear };
   await insertInto(page, sel, text);

@@ -205,7 +205,11 @@ describe('G-AIP fix 2 (John 19:15): one vote per reply, no_reply, typed line mus
     const send: any = { disabled: false, click() { if (opts.acceptsSend !== false) ta.value = ''; } };
     ta.parentElement = { querySelector: () => send };
     let tipOpen = !!opts.tipUpper;
-    const gotIt = { textContent: 'Got it', click() { tipOpen = false; } };
+    const gotIt = {
+      textContent: 'Got it',
+      getAttribute(name: string) { return name === 'data-dismiss' ? '' : null; },
+      click() { tipOpen = false; },
+    };
     const overlay = { tagName: 'DIV', className: 'fixed inset-0 z-[55]' };
     const doc = {
       querySelector: () => ta,

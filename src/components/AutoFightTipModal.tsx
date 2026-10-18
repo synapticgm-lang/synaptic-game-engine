@@ -83,6 +83,7 @@ export function AutoFightTipModal({ combatResolveMode, onEnableAuto, onDismiss }
         <div className="flex gap-2 border-t border-slate-800 px-5 py-4">
           <button
             type="button"
+            data-dismiss=""
             onClick={() => finish(false)}
             className="flex flex-1 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/60 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800"
           >
