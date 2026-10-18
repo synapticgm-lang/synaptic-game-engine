@@ -16,6 +16,18 @@ export async function verifyThumb(feedbackClient, thumb, userId) {
   return verifyFeedbackByKey(feedbackClient, { ...key, userId: userId || key.userId, feedbackType });
 }
 
+/**
+ * Vote at most once per GM reply. feedbacks = thumbs blocks on screen now (one per GM reply);
+ * votedFeedbacks = the count when we last voted. No new reply since the last vote = no vote
+ * (clicking the same thumb again toggles the vote off).
+ */
+export function shouldThumb({ feedbacks, votedFeedbacks = -1, noNewReply = false } = {}) {
+  if (noNewReply) return { vote: false, reason: 'no_reply' };
+  const n = Number(feedbacks);
+  if (Number.isFinite(n) && n <= Number(votedFeedbacks)) return { vote: false, reason: 'already_voted' };
+  return { vote: true, reason: null };
+}
+
 /** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. */
 export function runVerdict(results = []) {
   const list = Array.isArray(results) ? results : [];

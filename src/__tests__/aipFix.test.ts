@@ -179,3 +179,73 @@ describe('G-AIP fix: run verdict drives a non-zero exit', () => {
     expect(src).not.toMatch(/verifyFeedbackRow\(feedbackClient, \{ saveId, turn \}\)/);
   });
 });
+
+describe('G-AIP fix 2 (John 19:15): one vote per reply, no_reply, typed line must reach the game', () => {
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  it('shouldThumb: vote once per reply; no new reply = no_reply, not a vote', async () => {
+    const { shouldThumb } = await load('scripts/ai-player-browser/runVerdict.mjs');
+    expect(shouldThumb({ feedbacks: 1, votedFeedbacks: -1 })).toEqual({ vote: true, reason: null });
+    expect(shouldThumb({ feedbacks: 3, votedFeedbacks: 3 })).toEqual({ vote: false, reason: 'already_voted' });
+    expect(shouldThumb({ feedbacks: 4, votedFeedbacks: 3 }).vote).toBe(true);
+    expect(shouldThumb({ feedbacks: 4, votedFeedbacks: 3, noNewReply: true })).toEqual({ vote: false, reason: 'no_reply' });
+  });
+
+  it('run.mjs: no second thumb on a timeout; every vote goes through voteOnce', async () => {
+    const fs = await import('node:fs');
+    const src = fs.readFileSync(resolve('scripts/ai-player-browser/run.mjs'), 'utf8');
+    expect(src.match(/pressThumbWithReason\(/g)?.length).toBe(1);
+    expect(src).toMatch(/const voteOnce = async/);
+    expect(src).not.toMatch(/timeout: no new GM story/);
+  });
+
+  // Fake DOM: page.evaluate runs the in-page function against these globals.
+  function fakePage(opts: { covered?: boolean; acceptsSend?: boolean; typingWorks?: boolean; tipUpper?: boolean } = {}) {
+    const ta: any = { value: '', disabled: false, contains: () => false, getBoundingClientRect: () => ({ x: 10, y: 10 }), focus() {} };
+    const send: any = { disabled: false, click() { if (opts.acceptsSend !== false) ta.value = ''; } };
+    ta.parentElement = { querySelector: () => send };
+    let tipOpen = !!opts.tipUpper;
+    const gotIt = { textContent: 'Got it', click() { tipOpen = false; } };
+    const overlay = { tagName: 'DIV', className: 'fixed inset-0 z-[55]' };
+    const doc = {
+      querySelector: () => ta,
+      querySelectorAll: (q: string) => (q === 'button' && tipOpen ? [gotIt] : []),
+      get body() { return { textContent: tipOpen ? 'TIP SAVE TURNS WITH AUTO FIGHT Got it' : 'story', innerText: tipOpen ? 'SAVE TURNS WITH AUTO FIGHT' : 'story' }; },
+      elementFromPoint: () => (opts.covered || tipOpen ? overlay : ta),
+    };
+    vi.stubGlobal('document', doc);
+    return {
+      ta,
+      get tipOpen() { return tipOpen; },
+      page: {
+        $: async () => ta,
+        evaluate: async (fn: (...a: unknown[]) => unknown, ...args: unknown[]) => fn(...args),
+        mouse: { click: async () => {} },
+        keyboard: { down: async () => {}, up: async () => {}, press: async () => {} },
+        createCDPSession: async () => ({ send: async (_m: string, p: { text: string }) => { if (opts.typingWorks !== false) ta.value = p.text; } }),
+      },
+    };
+  }
+
+  it('Auto Fight tip is found although CSS renders its heading in capitals (the no-reply root cause)', async () => {
+    const { dismissAutoFightTip } = await load('scripts/ai-player-browser/gameTab.mjs');
+    const f = fakePage({ tipUpper: true });
+    expect(await dismissAutoFightTip(f.page)).toBe(true);
+    expect(f.tipOpen).toBe(false);
+  });
+
+  it('typePlayerAction clears the tip, then confirms the game took the line', async () => {
+    const { typePlayerAction } = await load('scripts/ai-player-browser/gameTab.mjs');
+    const f = fakePage({ tipUpper: true });
+    expect(await typePlayerAction(f.page, "What's in this kit?")).toEqual({ sent: true, reason: 'ok' });
+  });
+
+  it('typePlayerAction reports a covered box, a line that never entered, or a send that was not taken', async () => {
+    const { typePlayerAction } = await load('scripts/ai-player-browser/gameTab.mjs');
+    const covered = await typePlayerAction(fakePage({ covered: true }).page, 'open the bundle');
+    expect(covered.sent).toBe(false);
+    expect(covered.reason).toMatch(/^input_covered:div\.fixed/);
+    expect(await typePlayerAction(fakePage({ typingWorks: false }).page, 'open the bundle')).toEqual({ sent: false, reason: 'text_not_entered' });
+    expect(await typePlayerAction(fakePage({ acceptsSend: false }).page, 'open the bundle')).toEqual({ sent: false, reason: 'send_not_accepted' });
+  }, 15000);
+});

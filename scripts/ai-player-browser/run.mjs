@@ -78,7 +78,7 @@ import {
   pressThumbWithReason,
   thumbReasonFromDecision,
 } from './feedbackVerify.mjs';
-import { verifyThumb, runVerdict } from './runVerdict.mjs';
+import { verifyThumb, runVerdict, shouldThumb } from './runVerdict.mjs';
 
 import { licenceFor } from './playerLicence.mjs';
 
@@ -243,6 +243,31 @@ async function playBible(gamePage, bibleId, opts = {}) {
   let unverified = 0;
   let harnessErrors = 0;
   let consecutiveHarnessErrors = 0;
+  let votedFeedbacks = -1;
+  let thumbsSkipped = 0;
+  // One vote per GM reply; a turn with no new reply is logged as no_reply, never a vote.
+  const voteOnce = async (turnNo, thumbDecision) => {
+    const gate = shouldThumb({
+      feedbacks: snap.feedbacks,
+      votedFeedbacks,
+      noNewReply: Boolean(snap.waitTimedOut),
+    });
+    if (!gate.vote) {
+      thumbsSkipped += 1;
+      console.log(`[ai-player] T${turnNo} thumb skipped (${gate.reason})`);
+      return {
+        thumb: { ok: true, skipped: gate.reason, thumb: null, reason: '' },
+        verified: { verified: null, reason: gate.reason, lookup: null },
+      };
+    }
+    const thumb = await pressThumbWithReason(gamePage, thumbDecision, submitThumb);
+    if (thumb.ok) votedFeedbacks = Number(snap.feedbacks);
+    let verified = { verified: false, reason: 'no_client', lookup: null };
+    if (feedbackClient) verified = await verifyThumb(feedbackClient, thumb, opts.userId);
+    console.log(`[ai-player] T${turnNo} feedback verified=${verified.verified}${verified.verified ? '' : ` reason=${verified.reason}`}`);
+    if (feedbackClient && verified.verified === false) unverified += 1;
+    return { thumb, verified };
+  };
 
   if (resumeThis) {
     snap = await prepareLivePlay(gamePage);
@@ -470,17 +495,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     if (consecutiveRepeats >= 2) {
       await gamePage.bringToFront();
-      const thumb = await pressThumbWithReason(
-        gamePage,
-        { thumb: 'down', reason: comment },
-        submitThumb,
-      );
-      let verified = { verified: false, reason: 'no_client' };
-      if (feedbackClient) {
-        verified = await verifyThumb(feedbackClient, thumb, opts.userId);
-      }
-      console.log(`[ai-player] T${turn} feedback verified=${verified.verified}${verified.verified ? '' : ` reason=${verified.reason}`}`);
-    if (feedbackClient && !verified.verified) unverified += 1;
+      const { thumb, verified } = await voteOnce(turn, { thumb: 'down', reason: comment });
       appendJsonl(jsonl, {
         event: 'repeat_abort',
         turn,
@@ -549,23 +564,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
     await gamePage.bringToFront();
     await dismissAutoFightTip(gamePage);
 
-    // Thumb the judged GM beat (reason as comment), verify the row, then act in the real UI.
-    const thumb = await pressThumbWithReason(
-      gamePage,
-      { thumb: decision.thumb, reason: comment },
-      submitThumb,
-    );
-    let verified = { verified: false, reason: 'no_client' };
-    if (feedbackClient) {
-      verified = await verifyThumb(feedbackClient, thumb, opts.userId);
-    }
-    console.log(`[ai-player] T${turn} feedback verified=${verified.verified}${verified.verified ? '' : ` reason=${verified.reason}`}`);
-    if (feedbackClient && !verified.verified) unverified += 1;
+    // Thumb the judged GM beat once (reason as comment), verify the row, then act in the real UI.
+    const { thumb, verified } = await voteOnce(turn, { thumb: decision.thumb, reason: comment });
     const afterThumb = await readGameSnapshot(gamePage);
 
     const nameChip = snap.chips.some((c) => /give (your |them your )?name/i.test(c));
     const alreadyGaveNameChip = /give (your |them your )?name/i.test(lastPlayer);
     let acted = '';
+    let typeFail = '';
     let kind = decision.action_kind || (decision.kind === 'free' ? 'type' : 'chip');
     if (chipsOnly) kind = 'chip';
     const fightLive = afterThumb.autoFightReady || snap.autoFightReady
@@ -584,15 +590,23 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     const pickingNameChip = /give (your |them your )?name/i.test(decision.action || '');
     if (!chipsOnly && nameChip && !nameTyped && (alreadyGaveNameChip || pickingNameChip || turn === 1)) {
-      await typePlayerAction(gamePage, 'Jax');
-      acted = 'Jax';
-      kind = 'type';
-      nameTyped = true;
+      const sentName = await typePlayerAction(gamePage, 'Jax');
+      if (sentName.sent) {
+        acted = 'Jax';
+        kind = 'type';
+        nameTyped = true;
+      } else {
+        typeFail = sentName.reason;
+      }
     } else if (!chipsOnly && nameChip && (alreadyGaveNameChip || nameTyped)) {
-      await typePlayerAction(gamePage, 'Jax');
-      acted = 'Jax';
-      kind = 'type';
-      nameTyped = true;
+      const sentName = await typePlayerAction(gamePage, 'Jax');
+      if (sentName.sent) {
+        acted = 'Jax';
+        kind = 'type';
+        nameTyped = true;
+      } else {
+        typeFail = sentName.reason;
+      }
     }
     if (!acted && kind === 'chip' && decision.action && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(decision.action)) {
       acted = await clickChip(gamePage, decision.action);
@@ -604,12 +618,44 @@ async function playBible(gamePage, bibleId, opts = {}) {
         kind = 'chip_fallback';
       }
     }
-    if (!acted && !chipsOnly) {
+    if (!acted && !chipsOnly && !typeFail) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : naturalTypedFallback(recentActions));
-      await typePlayerAction(gamePage, line);
-      acted = line;
-      kind = 'type';
-      if (/^jax$/i.test(line)) nameTyped = true;
+      const sentLine = await typePlayerAction(gamePage, line);
+      if (sentLine.sent) {
+        acted = line;
+        kind = 'type';
+        if (/^jax$/i.test(line)) nameTyped = true;
+      } else {
+        typeFail = sentLine.reason;
+      }
+    }
+    if (!acted && typeFail) {
+      // The typed line never reached the game: harness error (not a no-reply turn); re-ask this turn.
+      harnessErrors += 1;
+      consecutiveHarnessErrors += 1;
+      console.log(`[ai-player] T${turn} harness_error typed_action_not_sent ${typeFail}`);
+      appendJsonl(jsonl, {
+        event: 'harness_error',
+        turn,
+        bibleId,
+        saveId,
+        harnessError: 'typed_action_not_sent',
+        harnessDetail: { reason: typeFail, line: decision.action || '' },
+        consecutive: consecutiveHarnessErrors,
+        chipsSeen: snap.chips,
+        meta: testerMeta,
+      });
+      if (consecutiveHarnessErrors >= 3) {
+        console.log(`AI_PLAYER fail ${bibleId}: 3 harness errors in a row at T${turn}`);
+        return {
+          bibleId, ok: false, harnessError: 'typed_action_not_sent', harnessErrors, unverified, thumbsSkipped,
+          turns: completed, startTurn, resumed: resumeThis, autoFightSelector: AUTO_FIGHT_SELECTOR,
+          autoFightFired, stoppedNoGm: false, stoppedRepeat: false,
+        };
+      }
+      // Already voted on this reply this turn, so the re-ask will skip the thumb (already_voted).
+      turn -= 1;
+      continue;
     }
     if (!acted) throw new Error(`No legal action on ${bibleId} T${turn}`);
 
@@ -624,17 +670,9 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const newGmBubble = Boolean(next.newGmBubble)
       || Number(next.gmStoryCount || 0) > Number(afterThumb.gmStoryCount || 0);
     const nextStory = storyForBrain(next);
-    let finalThumb = decision.thumb;
-    let finalReason = thumb.reason || comment;
-    if (waitTimedOut) {
-      finalThumb = 'down';
-      finalReason = [comment, 'timeout: no new GM story'].filter(Boolean).join(' · ').slice(0, 500);
-      await pressThumbWithReason(
-        gamePage,
-        { thumb: 'down', reason: 'timeout: no new GM story' },
-        submitThumb,
-      );
-    }
+    // The vote above was on the previous reply (or skipped). A timeout is logged as no_reply, never as a second vote.
+    const finalThumb = thumb.skipped ? null : decision.thumb;
+    const finalReason = thumb.skipped ? `(no vote: ${thumb.skipped})` : (thumb.reason || comment);
 
     appendJsonl(jsonl, {
       event: waitTimedOut ? 'turn_timeout' : 'turn',
@@ -660,6 +698,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
       verified: verified.verified,
       verifyReason: verified.reason,
       feedbackKey: verified.lookup || null,
+      thumbSkipped: thumb.skipped || null,
+      noReply: waitTimedOut,
       repaired: Boolean(decision.repaired),
       waitTimedOut,
       continuedAfterTimeout: waitTimedOut,
@@ -710,6 +750,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     stoppedRepeat: false,
     unverified,
     harnessErrors,
+    thumbsSkipped,
     verifyOn: Boolean(feedbackClient),
   };
 }
