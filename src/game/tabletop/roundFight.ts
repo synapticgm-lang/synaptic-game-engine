@@ -23,7 +23,7 @@ import { encounterXpBudget, foesWithinBudget } from '../xpRules';
 import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
 import { atWillSpells, spellInInput, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
-import { combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
+import { buildCombatStatusBlock, combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
 import { commitDeath, HOURS_LATER } from '../rules/death';
@@ -379,7 +379,7 @@ export function resolveRoundFight(
   }
   const solo = !!setup.combat.solo;
   const inspiration = working.character.heroicInspiration ? (house.rulesVersion === 'srd-5.1' ? 'advantage' as const : 'reroll' as const) : undefined;
-  const res: RoundResult = playRound({
+  let res: RoundResult = playRound({
     pc, combat: setup.combat, blocks: setup.blocks, action, rng, lead: setup.lead, spell, slotLevel,
     rules: {
       cleave: house.cleave,
@@ -397,9 +397,24 @@ export function resolveRoundFight(
   if (opts.pre) receipts.unshift(`Fight: ${enc.name} forces the fight`);
   receipts.push(...(started?.notes ?? []));
   receipts.push(...presentCombatStatus('dnd', res.events, pc.name, { hiddenFoeRolls: house.diceVisibility === 'hidden' }));
+  // TT-X1: engine-only combat status block (initiative / distance / Bloodied / action economy) for STATUS + screen readers.
+  const statusBlock = buildCombatStatusBlock({
+    combat: res.combat,
+    pcName: pc.name,
+    pcHp: res.pcHp,
+    pcMaxHp: pc.maxHp,
+  });
+  const statusFacts: NonNullable<RoundCombatState['statusFacts']> = [];
+  for (let si = 0; si < statusBlock.initiativeOrder.length; si++) {
+    const row = statusBlock.initiativeOrder[si]!;
+    if (row.label === 'you') continue;
+    statusFacts.push({ gateName: row.gateName, wound: row.wound, distanceFt: row.distanceFt });
+  }
+  res = { ...res, combat: { ...res.combat, statusFacts } };
+  receipts.push(`Combat status:\n${statusBlock.text}`);
   if (res.inspirationSpent) receipts.push('Heroic Inspiration: spent');
   if (res.pcHp !== pc.hp) receipts.push(hpLine(pc.hp, res.pcHp));
-  const facts = [...lead, ...relabel(combatFacts(res.events, pc.name), setup.labels)];
+  const facts = [...lead, ...relabel(combatFacts(res.events, pc.name), setup.labels), `Combat status — ${statusBlock.screenReaderText}`];
   if (opts.pre === 'flee') facts.unshift(`You tried to break away from ${enc.name} and failed; ${enc.name} forced the fight.`);
   if (opts.pre === 'parley') facts.unshift(`You tried to talk ${enc.name} down and failed; ${enc.name} forced the fight.`);
 

@@ -68,12 +68,41 @@ export function dropsFightRoll(state: GameState, prose: string): boolean {
   return !HIT_WORDS.test(narrationOf(prose));
 }
 
+export const COMBAT_STATUS_CONTRADICTION = 'Contradicts the combat status block: follow the engine wound and distance.';
+
 export function engineFactProblems(state: GameState, sentence: string, playerInput = ''): string[] {
-  return [
-    recordReadoutProblem(state, sentence, playerInput),
-    posesChoiceProblem(state, sentence),
-    agencyProblem(state, sentence, playerInput),
-    // A PC blow or action the engine did not allow, or a foe hit or miss the fact did not roll.
-    rollContradiction(sentence, pcSubject(state), engineFact(state)) ? ROLL_CONTRADICTION : null,
-  ].filter((p): p is string => !!p);
+  const out: string[] = [];
+  const a = recordReadoutProblem(state, sentence, playerInput);
+  if (a) out.push(a);
+  const b = posesChoiceProblem(state, sentence);
+  if (b) out.push(b);
+  const c = agencyProblem(state, sentence, playerInput);
+  if (c) out.push(c);
+  // A PC blow or action the engine did not allow, or a foe hit or miss the fact did not roll.
+  if (rollContradiction(sentence, pcSubject(state), engineFact(state))) out.push(ROLL_CONTRADICTION);
+  // TT-X1: prose may not contradict stamped combat status facts (wound / distance).
+  const facts = state.roundCombat?.statusFacts;
+  if (state.engineMode === 'dnd' && facts && facts.length) {
+    const low = (sentence ?? '').toLowerCase();
+    let hay = ' ';
+    for (let hi = 0; hi < low.length; hi++) {
+      const code = low.charCodeAt(hi);
+      hay += (code >= 97 && code <= 122) || (code >= 48 && code <= 57) ? low[hi]! : ' ';
+    }
+    hay += ' ';
+    for (let i = 0; i < facts.length; i++) {
+      const f = facts[i]!;
+      const name = f.gateName.toLowerCase();
+      if (!hay.includes(` ${name} `) && !hay.includes(` ${name}s `)) continue;
+      const w = f.wound;
+      if (w !== 'unhurt' && hay.includes(' unhurt ')) out.push(COMBAT_STATUS_CONTRADICTION);
+      else if (w !== 'Bloodied' && hay.includes(' bloodied ')) out.push(COMBAT_STATUS_CONTRADICTION);
+      else if (w !== 'near death' && hay.includes(' near death ')) out.push(COMBAT_STATUS_CONTRADICTION);
+      else if (w !== 'hurt' && hay.includes(' hurt ') && !hay.includes(' unhurt ')) out.push(COMBAT_STATUS_CONTRADICTION);
+      if (f.distanceFt > 5 && hay.includes(' within 5 ') && hay.includes(` ${name} `)) {
+        out.push(COMBAT_STATUS_CONTRADICTION);
+      }
+    }
+  }
+  return out;
 }

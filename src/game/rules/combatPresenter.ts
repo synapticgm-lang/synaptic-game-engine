@@ -4,10 +4,10 @@
  * Tabletop: every roll openly on STATUS. LitRPG: System-window receipts, no dice. Story RPG: no stat lines.
  * The writer gets the same word-only facts in every mode (no numbers): it narrates, the engine counts.
  */
-import type { EngineMode } from '../types';
+import type { EngineMode, RoundCombatState, RoundFoeState } from '../types';
 import type { AdvState } from '../checkRules';
 import { formatDice, signed } from './dice';
-import type { CombatEvent, DeathSaveResult, InspirationUse, RoundOutcome } from './roundCombat';
+import type { CombatEvent, DeathSaveResult } from './roundCombat';
 import { SPELLS } from './spells';
 
 type Ev = CombatEvent & { round: number };
@@ -16,29 +16,9 @@ function d20Text(d20s: number[], kept: number, adv: AdvState): string {
   return adv === 'normal' || d20s.length < 2 ? `d20 ${kept}` : `d20 (${adv === 'advantage' ? 'adv' : 'dis'}: ${d20s.join(', ')}) ${kept}`;
 }
 
-const who = (name: string, pc: boolean) => (pc ? 'you' : name);
-
-/** Bless and Bane dice inside a d20 line: "+ Bless 1d4 (3)", "− Bane 1d4 (2)". */
-function dieMods(e: { bless?: number; bane?: number }): string {
-  return `${e.bless ? ` + Bless 1d4 (${e.bless})` : ''}${e.bane ? ` − Bane 1d4 (${e.bane})` : ''}`;
-}
-
 /** How the tabletop STATUS shows rolls: open (every die) or hidden GM rolls (the foes' dice stay behind the screen). */
 export interface TabletopView {
   hiddenFoeRolls?: boolean;
-}
-
-/** A roll made for the foes (not the PC and not the PC's sidekick). */
-function foeRoll(e: Ev): boolean {
-  if (e.k === 'attack') return !e.pc && !e.sidekick;
-  if (e.k === 'save') return !e.pc;
-  if (e.k === 'check') return e.label === 'Perception';
-  return false;
-}
-
-function inspirationTag(e: { inspiration?: InspirationUse }): string {
-  if (!e.inspiration) return '';
-  return e.inspiration.mode === 'reroll' ? ` (Heroic Inspiration: rerolled d20 ${e.inspiration.first})` : ' (Heroic Inspiration: Advantage)';
 }
 
 /** A foe roll behind the screen: the result only, no die, modifier, AC or DC. */
@@ -55,7 +35,11 @@ function hiddenLine(e: Ev, pcName: string): string | null {
 }
 
 function tabletopLine(e: Ev, pcName: string, view: TabletopView = {}): string | null {
-  if (view.hiddenFoeRolls && foeRoll(e)) return hiddenLine(e, pcName);
+  const isFoeRoll =
+    (e.k === 'attack' && !e.pc && !e.sidekick) ||
+    (e.k === 'save' && !e.pc) ||
+    (e.k === 'check' && e.label === 'Perception');
+  if (view.hiddenFoeRolls && isFoeRoll) return hiddenLine(e, pcName);
   switch (e.k) {
     case 'initiative':
       return null;
@@ -65,9 +49,11 @@ function tabletopLine(e: Ev, pcName: string, view: TabletopView = {}): string | 
         return `cleave: ${e.total} also beats ${e.target} AC ${e.ac}, ${e.dealt} leftover ${e.type ?? ''} damage; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
       }
       if (!e.d20s.length) {
-        return `${who(e.attacker, e.pc)} ${e.with}: ${e.damage ? formatDice(e.damage) : 0}${halfTxt} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
+        return `${e.pc ? 'you' : e.attacker} ${e.with}: ${e.damage ? formatDice(e.damage) : 0}${halfTxt} ${e.type ?? ''}${e.vulnerable ? ' ×2 (vulnerable)' : ''}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`.replace(/ {2,}/g, ' ');
       }
-      const head = `${who(e.attacker, e.pc)}${e.opportunity ? ' opportunity attack,' : ''} ${e.with}${e.flank ? ' (flanking)' : ''} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs AC ${e.ac}${inspirationTag(e)}`;
+      const dieMods = `${e.bless ? ` + Bless 1d4 (${e.bless})` : ''}${e.bane ? ` − Bane 1d4 (${e.bane})` : ''}`;
+      const insp = !e.inspiration ? '' : e.inspiration.mode === 'reroll' ? ` (Heroic Inspiration: rerolled d20 ${e.inspiration.first})` : ' (Heroic Inspiration: Advantage)';
+      const head = `${e.pc ? 'you' : e.attacker}${e.opportunity ? ' opportunity attack,' : ''} ${e.with}${e.flank ? ' (flanking)' : ''} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods} = ${e.total} vs AC ${e.ac}${insp}`;
       if (!e.hit && e.half && e.damage) {
         return `${head}: miss; Potent Cantrip ${formatDice(e.damage)} halved = ${e.dealt}; ${e.target} HP ${e.hpBefore} → ${e.hpAfter}`;
       }
@@ -87,22 +73,25 @@ function tabletopLine(e: Ev, pcName: string, view: TabletopView = {}): string | 
     }
     case 'extra':
       return `${e.label}: ${e.amount} ${e.type}; ${e.who === pcName ? 'your HP' : `${e.who} HP`} ${e.hpBefore} → ${e.hpAfter}`;
-    case 'save':
-      if (e.autoFail) return `${who(e.who, e.pc)} ${e.ability} save ${e.why}: automatic failure`;
-      return `${who(e.who, e.pc)} ${e.ability} save ${e.why} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods(e)} = ${e.total} vs DC ${e.dc}: ${e.ok ? 'success' : 'failure'}${inspirationTag(e)}`;
+    case 'save': {
+      const dieMods = `${e.bless ? ` + Bless 1d4 (${e.bless})` : ''}${e.bane ? ` − Bane 1d4 (${e.bane})` : ''}`;
+      const insp = !e.inspiration ? '' : e.inspiration.mode === 'reroll' ? ` (Heroic Inspiration: rerolled d20 ${e.inspiration.first})` : ' (Heroic Inspiration: Advantage)';
+      if (e.autoFail) return `${e.pc ? 'you' : e.who} ${e.ability} save ${e.why}: automatic failure`;
+      return `${e.pc ? 'you' : e.who} ${e.ability} save ${e.why} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)}${dieMods} = ${e.total} vs DC ${e.dc}: ${e.ok ? 'success' : 'failure'}${insp}`;
+    }
     case 'cast': {
       const tags = [e.slot ? `level ${e.slot} slot` : '', e.detail ?? '', e.concentration ? 'concentration' : ''].filter(Boolean).join(', ');
-      return `${who(e.who, true)} cast ${e.spell}${tags ? ` (${tags})` : ''}`;
+      return `you cast ${e.spell}${tags ? ` (${tags})` : ''}`;
     }
     case 'concentration':
       return `you lose concentration on ${e.spell} (${e.why})`;
     case 'check':
-      return `${who(e.who, e.who === pcName)} ${e.label} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)} = ${e.total} vs ${e.label === 'Perception' ? 'your Stealth' : 'DC'} ${e.dc}: ${e.ok ? 'success' : 'failure'} (${e.why})`;
+      return `${e.who === pcName ? 'you' : e.who} ${e.label} ${d20Text(e.d20s, e.kept, e.adv)} ${signed(e.mod)} = ${e.total} vs ${e.label === 'Perception' ? 'your Stealth' : 'DC'} ${e.dc}: ${e.ok ? 'success' : 'failure'} (${e.why})`;
     case 'condition':
-      return `${who(e.who, e.pc)} ${e.on ? 'gain' : 'lose'}${e.pc ? '' : 's'} ${e.name}${e.why && e.why !== e.name ? ` (${e.why})` : ''}`;
+      return `${e.pc ? 'you' : e.who} ${e.on ? 'gain' : 'lose'}${e.pc ? '' : 's'} ${e.name}${e.why && e.why !== e.name ? ` (${e.why})` : ''}`;
     case 'act':
       if (e.action === 'feature') return e.detail;
-      return e.action === 'other' ? null : `${who(e.who, e.pc)}: ${e.action === 'stand' ? 'stand' : e.action === 'skip' ? 'turn lost' : e.action} — ${e.detail}`;
+      return e.action === 'other' ? null : `${e.pc ? 'you' : e.who}: ${e.action === 'stand' ? 'stand' : e.action === 'skip' ? 'turn lost' : e.action} — ${e.detail}`;
     case 'heal':
       if (e.who !== pcName) return `${e.who} casts ${e.item} on you: ${formatDice(e.roll)}; HP ${e.hpBefore} → ${e.hpAfter}`;
       if (e.pool != null) return `you use Lay On Hands: ${e.pool} HP from the pool; HP ${e.hpBefore} → ${e.hpAfter}`;
@@ -134,19 +123,18 @@ export function tabletopCombatLines(events: Ev[], pcName: string, view: Tabletop
   return lines;
 }
 
-/** LitRPG: System-window receipts, outcome only. */
-function litrpgLines(events: Ev[]): string[] {
-  const out: string[] = [];
-  for (const e of events) {
-    if (e.k === 'attack' && e.hit) out.push(e.pc ? `Hit: ${e.target} −${e.dealt} HP${e.crit ? ' (Critical)' : ''}` : `Damage taken: −${e.dealt} HP`);
-    if (e.k === 'condition' && e.on) out.push(`Status effect: ${e.name}`);
-  }
-  return out;
-}
-
 export function presentCombatStatus(mode: EngineMode | undefined, events: Ev[], pcName: string, view: TabletopView = {}): string[] {
   if (mode === 'dnd') return tabletopCombatLines(events, pcName, view);
-  if (mode === 'litrpg') return litrpgLines(events);
+  if (mode === 'litrpg') {
+    // LitRPG: System-window receipts, outcome only.
+    const out: string[] = [];
+    for (let i = 0; i < events.length; i++) {
+      const e = events[i]!;
+      if (e.k === 'attack' && e.hit) out.push(e.pc ? `Hit: ${e.target} −${e.dealt} HP${e.crit ? ' (Critical)' : ''}` : `Damage taken: −${e.dealt} HP`);
+      if (e.k === 'condition' && e.on) out.push(`Status effect: ${e.name}`);
+    }
+    return out;
+  }
   return [];
 }
 
@@ -281,6 +269,129 @@ export function deathSaveLine(r: DeathSaveResult, secret = false): string {
   return `Death save: d20 ${r.d20}${insp} — ${r.result} (${tally})${tail}`;
 }
 
-export function roundOutcomeWord(o: RoundOutcome): string {
-  return o === 'victory' ? 'won' : o === 'escaped' ? 'escaped' : o === 'down' ? 'down' : o === 'dead' ? 'dead' : 'ongoing';
+/** TT-X1 — SRD 5.2.1 Bloodied (half HP or fewer; WotC CC BY 4.0). Shared initiative; distances in feet. */
+export type VisibleWound = 'unhurt' | 'hurt' | 'Bloodied' | 'near death';
+export interface CombatStatusCombatant {
+  label: string; initiative: number; current: boolean; distanceFt: number; wound: VisibleWound; conditions: string[]; gateName: string;
+}
+export interface CombatStatusBlock {
+  initiativeOrder: CombatStatusCombatant[]; economyLine: string; text: string; screenReaderText: string;
+}
+export function visibleWound(hp: number, maxHp: number): VisibleWound {
+  if (hp <= 0 || hp * 4 <= maxHp) return 'near death';
+  if (hp >= maxHp) return 'unhurt';
+  if (hp * 2 <= maxHp) return 'Bloodied';
+  return 'hurt';
+}
+export function formatDistanceFt(ft: number): string {
+  return ft <= 5 ? 'within 5 ft' : `about ${ft} ft`;
+}
+export function formatEconomyLine(e: { actionAvailable: boolean; bonusAvailable: boolean; movementFt: number; reactionAvailable: boolean }): string {
+  return `${e.actionAvailable ? 'Action' : 'Action used'} · ${e.bonusAvailable ? 'Bonus action' : 'Bonus action used'} · ${e.movementFt} ft movement · ${e.reactionAvailable ? 'Reaction' : 'Reaction used'}`;
+}
+/** Engine-only status: shared initiative, distance, wound band, PC economy. */
+export function buildCombatStatusBlock(opts: { combat: RoundCombatState; pcName: string; pcHp: number; pcMaxHp: number; currentId?: string }): CombatStatusBlock {
+  const { combat, pcName, pcHp, pcMaxHp } = opts;
+  const groups: Array<{ key: string; label: string; initiative: number; foes: RoundFoeState[] }> = [];
+  for (let i = 0; i < combat.foes.length; i++) {
+    const f = combat.foes[i]!;
+    if (f.hp <= 0) continue;
+    const key = f.blockId === 'engine' ? f.id : f.blockId;
+    let g: (typeof groups)[0] | undefined;
+    for (let gix = 0; gix < groups.length; gix++) if (groups[gix]!.key === key) { g = groups[gix]; break; }
+    if (!g) {
+      let label = f.name;
+      const sp = label.lastIndexOf(' ');
+      if (sp >= 0) {
+        let digits = true;
+        for (let k = sp + 1; k < label.length; k++) {
+          const ch = label.charCodeAt(k);
+          if (ch < 48 || ch > 57) { digits = false; break; }
+        }
+        if (digits) label = label.slice(0, sp);
+      }
+      g = { key, label, initiative: f.initiative, foes: [] };
+      groups.push(g);
+    }
+    g.foes.push(f);
+  }
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i]!;
+    if (g.foes.length > 1) {
+      const x = g.label.lastIndexOf(' ×');
+      g.label = `${x >= 0 ? g.label.slice(0, x) : g.label} ×${g.foes.length}`;
+    }
+  }
+  type Row = { id: string; label: string; initiative: number; pc: boolean; foes: RoundFoeState[] };
+  const rows: Row[] = [{ id: 'pc', label: 'you', initiative: combat.pcInitiative, pc: true, foes: [] }];
+  for (let i = 0; i < groups.length; i++) rows.push({ id: groups[i]!.foes[0]!.id, label: groups[i]!.label, initiative: groups[i]!.initiative, pc: false, foes: groups[i]!.foes });
+  for (let a = 0; a < rows.length; a++) for (let b = a + 1; b < rows.length; b++) {
+    const ra = rows[a]!, rb = rows[b]!;
+    if (rb.initiative > ra.initiative || (rb.initiative === ra.initiative && rb.pc && !ra.pc)) { rows[a] = rb; rows[b] = ra; }
+  }
+  const currentId = opts.currentId ?? rows[0]?.id ?? 'pc';
+  const initiativeOrder: CombatStatusCombatant[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]!;
+    if (r.pc) {
+      const conds: string[] = [];
+      for (let c = 0; c < combat.pcConditions.length; c++) conds.push(combat.pcConditions[c]!.name);
+      initiativeOrder.push({ label: r.label, initiative: r.initiative, current: r.id === currentId, distanceFt: 0, wound: visibleWound(pcHp, pcMaxHp), conditions: conds, gateName: pcName });
+      continue;
+    }
+    let sumHp = 0, sumMax = 0;
+    const conds: string[] = [];
+    for (let j = 0; j < r.foes.length; j++) {
+      sumHp += r.foes[j]!.hp; sumMax += r.foes[j]!.maxHp;
+      for (let c = 0; c < r.foes[j]!.conditions.length; c++) {
+        const n = r.foes[j]!.conditions[c]!.name;
+        if (!conds.includes(n)) conds.push(n);
+      }
+    }
+    const xAt = r.label.lastIndexOf(' ×');
+    initiativeOrder.push({ label: r.label, initiative: r.initiative, current: r.id === currentId, distanceFt: r.foes[0]!.distanceFt ?? 5, wound: visibleWound(sumHp, sumMax), conditions: conds, gateName: xAt >= 0 ? r.label.slice(0, xAt) : r.label });
+  }
+  const eco = combat.pcEconomy ?? { actionAvailable: true, bonusAvailable: true, movementFt: 0, reactionAvailable: true };
+  const economyLine = formatEconomyLine(eco);
+  const initParts: string[] = [];
+  const foeParts: string[] = [];
+  for (let i = 0; i < initiativeOrder.length; i++) {
+    const c = initiativeOrder[i]!;
+    initParts.push(`${c.label} ${c.initiative}${c.current ? ' ←' : ''}`);
+    if (c.label !== 'you') foeParts.push(`${c.label} — ${c.wound} · ${formatDistanceFt(c.distanceFt)}${c.conditions.length ? ` (${c.conditions.join(', ')})` : ''}`);
+  }
+  const pcCondNames: string[] = [];
+  for (let c = 0; c < combat.pcConditions.length; c++) pcCondNames.push(combat.pcConditions[c]!.name);
+  const lines: string[] = [`Initiative — ${initParts.join('; ')}`];
+  for (let i = 0; i < foeParts.length; i++) lines.push(foeParts[i]!);
+  lines.push(`You — ${economyLine}${pcCondNames.length ? ` (${pcCondNames.join(', ')})` : ''}`);
+  const text = lines.join('\n');
+  return { initiativeOrder, economyLine, text, screenReaderText: text };
+}
+/** Fact gate: prose must not contradict the engine status block. */
+export function combatStatusContradicts(prose: string, block: CombatStatusBlock): string | null {
+  const low = (prose ?? '').toLowerCase();
+  let hay = ' ';
+  for (let i = 0; i < low.length; i++) {
+    const code = low.charCodeAt(i);
+    hay += (code >= 97 && code <= 122) || (code >= 48 && code <= 57) ? low[i]! : ' ';
+  }
+  hay += ' ';
+  for (let i = 0; i < block.initiativeOrder.length; i++) {
+    const c = block.initiativeOrder[i]!;
+    if (c.label === 'you') continue;
+    const name = c.gateName.toLowerCase();
+    if (!hay.includes(` ${name} `) && !hay.includes(` ${name}s `)) continue;
+    const w = c.wound;
+    if (w !== 'unhurt' && hay.includes(' unhurt ')) return `Combat status contradiction: ${c.gateName} is ${w}, not unhurt.`;
+    if (w !== 'Bloodied' && hay.includes(' bloodied ')) return `Combat status contradiction: ${c.gateName} is ${w}, not Bloodied.`;
+    if (w !== 'near death' && hay.includes(' near death ')) return `Combat status contradiction: ${c.gateName} is ${w}, not near death.`;
+    if (w !== 'hurt' && hay.includes(' hurt ') && !hay.includes(' unhurt ')) return `Combat status contradiction: ${c.gateName} is ${w}, not hurt.`;
+    if (c.distanceFt <= 5) {
+      if (hay.includes(' about ') && hay.includes(' ft ') && !hay.includes(' within 5 ')) return `Combat status contradiction: ${c.gateName} is within 5 ft.`;
+    } else if (hay.includes(' within 5 ') && hay.includes(` ${name} `)) {
+      return `Combat status contradiction: ${c.gateName} is ${formatDistanceFt(c.distanceFt).toLowerCase()}.`;
+    }
+  }
+  return null;
 }
