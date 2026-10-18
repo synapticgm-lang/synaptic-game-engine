@@ -2,6 +2,7 @@
  * Drive a visible game tab. Clicks React controls so sendAction runs.
  * Never close Chrome.
  */
+import { clearInputCover, coverAtInput } from './overlay.mjs';
 
 const BIBLES = {
   'summoned-pact': { mode: 'LitRPG', title: 'The Summoned Pact', chipsOnly: false },
@@ -13,6 +14,15 @@ const BIBLES = {
 export { BIBLES };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+let lastCoverClear = null;
+
+/** Last clearInputCover result, for the run log. One read. */
+export function consumeCoverClear() {
+  const v = lastCoverClear;
+  lastCoverClear = null;
+  return v;
+}
 
 async function clickText(page, text, { timeoutMs = 8000, exact = false, root = '' } = {}) {
   const start = Date.now();
@@ -411,17 +421,62 @@ export async function startPremade(page, bibleId) {
 /** CenterPanel toolbar — only mounted while `state.activeEncounter` is live. */
 export const AUTO_FIGHT_SELECTOR = 'button[title="Auto-resolve combat"]';
 
+/** Save id the UI has loaded (DOM marker, else the current IndexedDB game row). */
+export async function readUiSaveId(page) {
+  if (!page || typeof page.evaluate !== 'function') return null;
+  try {
+    const id = await page.evaluate(() => new Promise((resolve) => {
+      const marked = document.querySelector('[data-sgm-save-id]');
+      const fromDom = marked && marked.getAttribute('data-sgm-save-id');
+      if (fromDom) { resolve(fromDom); return; }
+      let done = false;
+      const finish = (value) => {
+        if (done) return;
+        done = true;
+        resolve(value || null);
+      };
+      const timer = setTimeout(() => finish(null), 400);
+      let req;
+      try {
+        req = indexedDB.open('tactical-litrpg');
+      } catch {
+        clearTimeout(timer);
+        finish(null);
+        return;
+      }
+      req.onerror = () => { clearTimeout(timer); finish(null); };
+      req.onsuccess = () => {
+        try {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('game')) {
+            clearTimeout(timer);
+            finish(null);
+            return;
+          }
+          const getReq = db.transaction('game', 'readonly').objectStore('game').get('current');
+          getReq.onerror = () => { clearTimeout(timer); finish(null); };
+          getReq.onsuccess = () => {
+            clearTimeout(timer);
+            const row = getReq.result;
+            finish(row && row.saveId ? String(row.saveId) : null);
+          };
+        } catch {
+          clearTimeout(timer);
+          finish(null);
+        }
+      };
+    }));
+    return id ? String(id) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function dismissAutoFightTip(page) {
-  const hit = await page.evaluate(() => {
-    const nodes = [...document.querySelectorAll('button')];
-    const gotIt = nodes.find((b) => /^(Got it)$/i.test((b.textContent || '').replace(/\s+/g, ' ').trim()));
-    const tip = /save turns with auto fight/i.test(document.body.textContent || '');
-    if (!tip || !gotIt) return false;
-    gotIt.click();
-    return true;
-  });
-  if (hit) await sleep(300);
-  return hit;
+  lastCoverClear = await clearInputCover(page, 'dismissAutoFightTip');
+  const cleared = Boolean(lastCoverClear?.cleared && lastCoverClear.steps?.length);
+  if (cleared) await sleep(300);
+  return cleared;
 }
 
 export async function confirmAutoFightWarning(page) {
@@ -454,6 +509,7 @@ export async function clickAutoFight(page) {
 }
 
 export async function clickChip(page, label) {
+  lastCoverClear = await clearInputCover(page, 'clickChip');
   const clicked = await page.evaluate((needle) => {
     const buttons = [...document.querySelectorAll('button.sgm-choice-btn')];
     const want = (needle || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -468,16 +524,12 @@ export async function clickChip(page, label) {
   return clicked;
 }
 
-/** What sits on top of the action box at the point the harness clicks (null when the box itself is hit). */
+/** What sits on top of the action box at its centre (null when the box itself is hit). */
 export async function inputCoveredBy(page) {
-  return page.evaluate(() => {
-    const ta = document.querySelector('[aria-label="Player action input"]');
-    if (!ta) return 'no_input';
-    const r = ta.getBoundingClientRect();
-    const hit = document.elementFromPoint(r.x + 16, r.y + 10);
-    if (!hit || hit === ta || ta.contains(hit)) return null;
-    return `${hit.tagName.toLowerCase()}.${String(hit.className || '').split(/\s+/).slice(0, 3).join('.')}`;
-  });
+  const cover = await coverAtInput(page);
+  if (!cover) return null;
+  if (cover.missing) return 'no_input';
+  return cover.selector;
 }
 
 /**
@@ -488,9 +540,9 @@ export async function typePlayerAction(page, text) {
   const sel = '[aria-label="Player action input"]';
   const input = await page.$(sel);
   if (!input) throw new Error('Player action input missing (chips-only books hide it)');
-  await dismissAutoFightTip(page);
+  lastCoverClear = await clearInputCover(page, 'typePlayerAction');
   const cover = await inputCoveredBy(page);
-  if (cover) return { sent: false, reason: `input_covered:${cover}` };
+  if (cover) return { sent: false, reason: `input_covered:${cover}`, overlay: lastCoverClear };
   await insertInto(page, sel, text);
   await sleep(150);
   const typed = await page.evaluate((s) => document.querySelector(s)?.value || '', sel);

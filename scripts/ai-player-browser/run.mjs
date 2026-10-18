@@ -35,11 +35,13 @@ import {
   BIBLES,
   clickAutoFight,
   clickChip,
+  consumeCoverClear,
   dismissAutoFightTip,
   loginFounderEmail,
   prepareLivePlay,
   readGameSnapshot,
   readPlace,
+  readUiSaveId,
   startPremade,
   submitThumb,
   typePlayerAction,
@@ -77,9 +79,11 @@ import {
 } from './testerMeta.mjs';
 import {
   createTesterSessionClient,
+  feedbackKeyFromUpsert,
   pressThumbWithReason,
   thumbReasonFromDecision,
 } from './feedbackVerify.mjs';
+import { bindCoverLog } from './overlay.mjs';
 import { verifyThumb, runVerdict, shouldThumb } from './runVerdict.mjs';
 
 import { licenceFor } from './playerLicence.mjs';
@@ -259,7 +263,118 @@ export function buildTurnLogRow(row) {
     place: row.place ?? null,
     placeId: row.placeId ?? null,
     placeSource: row.placeSource || 'none',
+    voteCarried: row.voteCarried === true,
   };
+}
+
+/**
+ * Overlay still covering the box after one dismiss: a finished chip turn with a
+ * new GM reply is a soft warning. No completed chip stays a harness error.
+ */
+export function classifyOverlayTurn({ overlayBlocked, chipCompleted, newGm, voteVerified } = {}) {
+  if (!overlayBlocked) return { softWarnings: 0, harnessErrors: 0 };
+  const voteOk = voteVerified === undefined ? true : voteVerified === true;
+  if (chipCompleted && newGm && voteOk) return { softWarnings: 1, harnessErrors: 0 };
+  return { softWarnings: 0, harnessErrors: 1 };
+}
+
+/** Identity locked after the first completed turn. Later snaps that leave it are a reset. */
+export function lockGameIdentity(prev, snap) {
+  const seen = snap?.saveId ? String(snap.saveId) : '';
+  const count = Number(snap?.gmStoryCount || 0);
+  const nameStep = Boolean(snap?.nameStep);
+  if (!prev?.locked) {
+    return {
+      locked: true,
+      saveId: seen,
+      gmStoryCount: count,
+      pastOpening: !nameStep,
+    };
+  }
+  return {
+    locked: true,
+    saveId: prev.saveId || seen,
+    gmStoryCount: Math.max(Number(prev.gmStoryCount || 0), count),
+    pastOpening: Boolean(prev.pastOpening) || !nameStep,
+  };
+}
+
+/**
+ * Save id changed, story count fell, the name step came back, or a new-game
+ * modal / the main menu is up. Null when this is still the same game.
+ */
+export function assessGameReset(baseline, snap, turn) {
+  if (!baseline?.locked) return null;
+  const afterSave = snap?.saveId ? String(snap.saveId) : '';
+  const afterCount = Number(snap?.gmStoryCount || 0);
+  const evidence = [];
+  if (baseline.saveId && afterSave && afterSave !== baseline.saveId) evidence.push('save_id');
+  if (Number.isFinite(Number(baseline.gmStoryCount)) && afterCount < Number(baseline.gmStoryCount)) {
+    evidence.push('story_count');
+  }
+  if (baseline.pastOpening && snap?.nameStep) evidence.push('name_step');
+  if (snap?.inNewGame) evidence.push('new_game_modal');
+  if (snap?.hasMenu) evidence.push('main_menu');
+  if (!evidence.length) return null;
+  return {
+    event: 'game_reset',
+    turn,
+    before: { saveId: baseline.saveId || null, gmStoryCount: baseline.gmStoryCount },
+    after: {
+      saveId: afterSave || null,
+      gmStoryCount: afterCount,
+      inNewGame: Boolean(snap?.inNewGame),
+      hasMenu: Boolean(snap?.hasMenu),
+      nameStep: Boolean(snap?.nameStep),
+    },
+    evidence,
+  };
+}
+
+/** One guard step: a reset stops the bible before vote. Shared by the turn loop. */
+export function stepResetGuard({ baseline, snap, turn, vote } = {}) {
+  const reset = assessGameReset(baseline, snap, turn);
+  if (reset) {
+    return {
+      baseline,
+      reset,
+      voted: false,
+      stop: { ok: false, harnessError: 'game_reset', gameReset: reset },
+    };
+  }
+  let voted = false;
+  if (typeof vote === 'function') {
+    vote(turn);
+    voted = true;
+  }
+  return {
+    baseline: lockGameIdentity(baseline, snap),
+    reset: null,
+    voted,
+    stop: null,
+  };
+}
+
+/** Re-asked turn carries the vote already pressed. press is false the second time. */
+export function nextVoteAction(priorVote) {
+  if (!priorVote) return { press: true, voteCarried: false };
+  return {
+    press: false,
+    voteCarried: true,
+    verified: priorVote.verified,
+    verifyReason: priorVote.verifyReason,
+    feedbackKey: priorVote.feedbackKey ?? null,
+    thumb: priorVote.thumb,
+    thumbOk: priorVote.thumbOk,
+    thumbReason: priorVote.thumbReason,
+  };
+}
+
+export function withSoftWarningTotal(summary) {
+  const results = summary?.results || [];
+  let softWarnings = 0;
+  for (const r of results) softWarnings += Number(r?.softWarnings || 0);
+  return { ...summary, softWarnings };
 }
 
 /** transcript.md turn heading: T<n> (<place>, <replyMs/1000>s). */
@@ -293,8 +408,55 @@ async function playBible(gamePage, bibleId, opts = {}) {
   const repeatTurns = [];
   let unverified = 0;
   let harnessErrors = 0;
+  let softWarnings = 0;
   let consecutiveHarnessErrors = 0;
   let votedFeedbacks = -1;
+  let carriedVote = null;
+  let coverTurn = 0;
+  let gameIdentity = null;
+  let skippedNewReply = false;
+  const turnRows = [];
+  bindCoverLog((row) => {
+    appendJsonl(jsonl, { turn: coverTurn, ...row });
+  });
+  const nameStepOf = (row) => (row?.chips || []).some((c) => /give (your |them your )?name/i.test(c));
+  const probeIdentity = async (row) => ({
+    saveId: await readUiSaveId(gamePage),
+    gmStoryCount: Number(row?.gmStoryCount || 0),
+    inNewGame: Boolean(row?.inNewGame),
+    hasMenu: Boolean(row?.hasMenu),
+    nameStep: nameStepOf(row),
+  });
+  const stopReset = (reset) => {
+    appendJsonl(jsonl, reset);
+    return {
+      bibleId,
+      ok: false,
+      harnessError: 'game_reset',
+      gameReset: reset,
+      turns: completed,
+      turnLog: turnRows,
+      startTurn,
+      resumed: resumeThis,
+      autoFightSelector: AUTO_FIGHT_SELECTOR,
+      autoFightFired,
+      stoppedNoGm: false,
+      stoppedRepeat: false,
+      unverified,
+      harnessErrors,
+      softWarnings,
+      thumbsSkipped,
+      verifyOn: Boolean(feedbackClient),
+    };
+  };
+  try {
+  const noteOverlay = (turnNo) => {
+    coverTurn = turnNo;
+    const cleared = consumeCoverClear();
+    if (cleared?.cover && cleared.cleared === false) overlayBlockedThisTurn = true;
+    return cleared;
+  };
+  let overlayBlockedThisTurn = false;
   let thumbsSkipped = 0;
   // One vote per GM reply; a turn with no new reply is logged as no_reply, never a vote.
   const voteOnce = async (turnNo, thumbDecision) => {
@@ -416,6 +578,10 @@ async function playBible(gamePage, bibleId, opts = {}) {
   }
 
   for (let turn = startTurn; turn <= turns; turn++) {
+    overlayBlockedThisTurn = false;
+    coverTurn = turn;
+    const resetNow = assessGameReset(gameIdentity, await probeIdentity(snap), turn);
+    if (resetNow) return stopReset(resetNow);
     hallAnswered = markHallTopics(hallAnswered, lastPlayer);
     const liveChips = filterAnsweredHallChips(snap.chips, hallAnswered);
     const gmStory = storyForBrain(snap);
@@ -614,15 +780,35 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     await gamePage.bringToFront();
     await dismissAutoFightTip(gamePage);
+    noteOverlay(turn);
 
     // Thumb the judged GM beat once (reason as comment), verify the row, then act in the real UI.
-    const { thumb, verified } = await voteOnce(turn, { thumb: decision.thumb, reason: comment });
+    // A re-asked turn carries the vote already pressed on this reply. Never press twice.
+    const votePlan = nextVoteAction(carriedVote);
+    let thumb;
+    let verified;
+    let voteCarried = false;
+    if (!votePlan.press) {
+      carriedVote = null;
+      voteCarried = true;
+      thumb = votePlan.thumb;
+      verified = {
+        verified: votePlan.verified,
+        reason: votePlan.verifyReason,
+        lookup: votePlan.feedbackKey,
+      };
+    } else {
+      const voted = await voteOnce(turn, { thumb: decision.thumb, reason: comment });
+      thumb = voted.thumb;
+      verified = voted.verified;
+    }
     const afterThumb = await readGameSnapshot(gamePage);
 
     const nameChip = snap.chips.some((c) => /give (your |them your )?name/i.test(c));
     const alreadyGaveNameChip = /give (your |them your )?name/i.test(lastPlayer);
     let acted = '';
     let typeFail = '';
+    let typeOverlay = null;
     let kind = decision.action_kind || (decision.kind === 'free' ? 'type' : 'chip');
     if (chipsOnly) kind = 'chip';
     const fightLive = afterThumb.autoFightReady || snap.autoFightReady
@@ -642,12 +828,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
         acted = auto;
         kind = 'auto_fight';
       }
+      noteOverlay(turn);
     }
 
     const pickingNameChip = /give (your |them your )?name/i.test(decision.action || '');
     if (!chipsOnly && nameChip && !nameTyped && (alreadyGaveNameChip || pickingNameChip || turn === 1)) {
       const stamp = startTurnClock();
       const sentName = await typePlayerAction(gamePage, 'Jax');
+      noteOverlay(turn);
       if (sentName.sent) {
         acted = 'Jax';
         kind = 'type';
@@ -655,10 +843,12 @@ async function playBible(gamePage, bibleId, opts = {}) {
         submitStamp = stamp;
       } else {
         typeFail = sentName.reason;
+        typeOverlay = sentName.overlay || null;
       }
     } else if (!chipsOnly && nameChip && (alreadyGaveNameChip || nameTyped)) {
       const stamp = startTurnClock();
       const sentName = await typePlayerAction(gamePage, 'Jax');
+      noteOverlay(turn);
       if (sentName.sent) {
         submitStamp = stamp;
         acted = 'Jax';
@@ -666,17 +856,20 @@ async function playBible(gamePage, bibleId, opts = {}) {
         nameTyped = true;
       } else {
         typeFail = sentName.reason;
+        typeOverlay = sentName.overlay || null;
       }
     }
     if (!acted && kind === 'chip' && decision.action && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(decision.action)) {
       submitStamp = startTurnClock();
       acted = await clickChip(gamePage, decision.action);
+      noteOverlay(turn);
     }
     if (!acted && kind === 'chip') {
       const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
       if (safe && !shouldForceTypedHumanMove([safe], recentActions, chipsOnly)) {
         submitStamp = startTurnClock();
         acted = await clickChip(gamePage, safe);
+        noteOverlay(turn);
         kind = 'chip_fallback';
       }
     }
@@ -684,12 +877,26 @@ async function playBible(gamePage, bibleId, opts = {}) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : naturalTypedFallback(recentActions));
       submitStamp = startTurnClock();
       const sentLine = await typePlayerAction(gamePage, line);
+      noteOverlay(turn);
       if (sentLine.sent) {
         acted = line;
         kind = 'type';
         if (/^jax$/i.test(line)) nameTyped = true;
       } else {
         typeFail = sentLine.reason;
+        typeOverlay = sentLine.overlay || null;
+      }
+    }
+    if (!acted && typeFail && String(typeFail).startsWith('input_covered:')) {
+      const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      if (safe && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(safe)) {
+        submitStamp = startTurnClock();
+        acted = await clickChip(gamePage, safe);
+        noteOverlay(turn);
+        if (acted) kind = 'chip_fallback';
+      }
+      if (acted) {
+        typeFail = '';
       }
     }
     if (!acted && typeFail) {
@@ -716,7 +923,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
           autoFightFired, stoppedNoGm: false, stoppedRepeat: false,
         };
       }
-      // Already voted on this reply this turn, so the re-ask will skip the thumb (already_voted).
+      carriedVote = {
+        verified: verified.verified,
+        verifyReason: verified.reason,
+        feedbackKey: verified.lookup ?? null,
+        thumb,
+        thumbOk: thumb.ok,
+        thumbReason: thumb.reason || comment,
+      };
       turn -= 1;
       continue;
     }
@@ -734,13 +948,38 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const newGmBubble = Boolean(next.newGmBubble)
       || Number(next.gmStoryCount || 0) > Number(afterThumb.gmStoryCount || 0);
     const nextStory = storyForBrain(next);
-    // The vote above was on the previous reply (or skipped). A timeout is logged as no_reply, never as a second vote.
-    const finalThumb = thumb.skipped ? null : decision.thumb;
-    const finalReason = thumb.skipped ? `(no vote: ${thumb.skipped})` : (thumb.reason || comment);
+    if (overlayBlockedThisTurn) {
+      const outcome = classifyOverlayTurn({
+        overlayBlocked: true,
+        chipCompleted: Boolean(acted) && (kind === 'chip' || kind === 'chip_fallback'),
+        newGm: newGmBubble,
+        voteVerified: verified.verified === true && !thumb.skipped,
+      });
+      softWarnings += outcome.softWarnings;
+      if (outcome.harnessErrors) {
+        harnessErrors += outcome.harnessErrors;
+        appendJsonl(jsonl, {
+          event: 'harness_error',
+          turn,
+          bibleId,
+          saveId,
+          harnessError: 'overlay_blocked',
+          harnessDetail: { steps: typeOverlay?.steps || [], selector: typeOverlay?.cover?.selector || '' },
+          chipsSeen: snap.chips,
+          meta: testerMeta,
+        });
+      }
+    }
+    // The vote above was on the previous reply (or carried from the first attempt). A timeout is logged as no_reply, never as a second vote.
+    const finalThumb = voteCarried ? (thumb?.thumb ?? null) : (thumb.skipped ? null : decision.thumb);
+    const finalReason = voteCarried
+      ? (thumb?.reason || comment)
+      : (thumb.skipped ? `(no vote: ${thumb.skipped})` : (thumb.reason || comment));
     const timing = turnTimeFields(submitStamp);
     const where = await readPlace(gamePage);
 
-    appendJsonl(jsonl, buildTurnLogRow({
+    if (newGmBubble && thumb?.skipped && voteCarried !== true) skippedNewReply = true;
+    const turnRow = buildTurnLogRow({
       event: waitTimedOut ? 'turn_timeout' : 'turn',
       turn,
       bibleId,
@@ -764,6 +1003,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       verified: verified.verified,
       verifyReason: verified.reason,
       feedbackKey: verified.lookup || null,
+      voteCarried,
       thumbSkipped: thumb.skipped || null,
       noReply: waitTimedOut,
       repaired: Boolean(decision.repaired),
@@ -783,7 +1023,15 @@ async function playBible(gamePage, bibleId, opts = {}) {
       place: where.place,
       placeId: where.placeId,
       placeSource: where.placeSource,
-    }));
+    });
+    turnRows.push(turnRow);
+    appendJsonl(jsonl, turnRow);
+    const afterProbe = await probeIdentity(next);
+    const upsertSave = feedbackKeyFromUpsert(thumb?.upsert)?.saveId || '';
+    if (!afterProbe.saveId && upsertSave) afterProbe.saveId = upsertSave;
+    const resetAfter = assessGameReset(gameIdentity, afterProbe, turn);
+    if (resetAfter) return stopReset(resetAfter);
+    gameIdentity = lockGameIdentity(gameIdentity, afterProbe);
     appendMd(
       transcript,
       `${turnTranscriptHeading(turn, where.place, timing.replyMs)}\n\n**You:** ${acted} (${kind})\n\n**GM:** ${nextStory || '(no new story — not faked)'}\n\n`
@@ -811,8 +1059,10 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
   return {
     bibleId,
-    ok: true,
+    ok: !skippedNewReply,
+    harnessError: skippedNewReply ? 'skipped_vote_on_new_reply' : undefined,
     turns: completed,
+    turnLog: turnRows,
     startTurn,
     resumed: resumeThis,
     autoFightSelector: AUTO_FIGHT_SELECTOR,
@@ -821,9 +1071,13 @@ async function playBible(gamePage, bibleId, opts = {}) {
     stoppedRepeat: false,
     unverified,
     harnessErrors,
+    softWarnings,
     thumbsSkipped,
     verifyOn: Boolean(feedbackClient),
   };
+  } finally {
+    bindCoverLog(null);
+  }
 }
 
 
@@ -964,8 +1218,9 @@ async function main() {
     ? { ok: summary.results.every((r) => r.ok), problems: [] }
     : runVerdict(summary.results);
   summary.problems = verdict.problems;
-  fs.writeFileSync(path.join(runDir, 'summary.json'), JSON.stringify({ ok: verdict.ok, ...summary }, null, 2));
-  console.log(JSON.stringify({ ok: verdict.ok, ...summary }, null, 2));
+  const printed = withSoftWarningTotal({ ok: verdict.ok, ...summary });
+  fs.writeFileSync(path.join(runDir, 'summary.json'), JSON.stringify(printed, null, 2));
+  console.log(JSON.stringify(printed, null, 2));
   if (summary.results.some((r) => r.blocked)) process.exit(2);
   if (!verdict.ok) {
     console.log(`AI_PLAYER fail run: ${verdict.problems.join('; ')}`);

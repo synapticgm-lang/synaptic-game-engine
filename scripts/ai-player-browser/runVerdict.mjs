@@ -28,16 +28,36 @@ export function shouldThumb({ feedbacks, votedFeedbacks = -1, noNewReply = false
   return { vote: true, reason: null };
 }
 
-/** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. */
+/** A new GM reply whose thumb was skipped, and not carried from the press on that reply. */
+export function skippedVoteOnNewReply(row) {
+  if (!row || row.newGmBubble !== true) return false;
+  if (row.voteCarried === true) return false;
+  const skipped = row.thumbSkipped;
+  return skipped != null && skipped !== false && skipped !== '';
+}
+
+/** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. softWarnings never fail the run. A skipped vote on a new reply, and game_reset, always fail. */
 export function runVerdict(results = []) {
   const list = Array.isArray(results) ? results : [];
   const problems = [];
   if (!list.length) problems.push('no_results');
   for (const r of list) {
-    if (r.blocked) problems.push(`${r.bibleId}:blocked`);
-    else if (!r.ok) problems.push(`${r.bibleId}:not_ok${r.error ? `(${r.error})` : ''}`);
-    if (r.harnessErrors) problems.push(`${r.bibleId}:harness_errors=${r.harnessErrors}`);
-    if (r.unverified) problems.push(`${r.bibleId}:unverified=${r.unverified}`);
+    const turnRow = r?.newGmBubble != null || r?.event === 'turn' || r?.event === 'turn_timeout' || r?.event === 'game_reset';
+    if (!turnRow) {
+      if (r.blocked) problems.push(`${r.bibleId}:blocked`);
+      else if (!r.ok) problems.push(`${r.bibleId}:not_ok${r.error ? `(${r.error})` : ''}`);
+      if (r.harnessErrors) problems.push(`${r.bibleId}:harness_errors=${r.harnessErrors}`);
+      if (r.unverified) problems.push(`${r.bibleId}:unverified=${r.unverified}`);
+    }
+    if (r?.harnessError === 'game_reset' || r?.error === 'game_reset' || r?.event === 'game_reset') {
+      problems.push('game_reset');
+    }
+    if (r?.harnessError === 'skipped_vote_on_new_reply') problems.push('skipped_vote_on_new_reply');
+    const rows = turnRow ? [r] : (Array.isArray(r?.turnLog) ? r.turnLog : (Array.isArray(r?.turns) ? r.turns : []));
+    for (const row of rows) {
+      if (row?.event === 'game_reset' || row?.harnessError === 'game_reset') problems.push('game_reset');
+      if (skippedVoteOnNewReply(row)) problems.push('skipped_vote_on_new_reply');
+    }
   }
   return { ok: problems.length === 0, problems };
 }

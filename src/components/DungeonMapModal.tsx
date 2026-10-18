@@ -238,6 +238,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               <h2 className="sgm-info-heading sgm-adventure-map-title text-xl font-bold">Local map pending</h2>
             </div>
             <button
+              data-dismiss=""
               onClick={onClose}
               className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm transition"
             >
@@ -324,6 +325,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             )}
           </div>
           <button
+            data-dismiss=""
             onClick={onClose}
             className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 text-sm transition"
           >

@@ -93,6 +93,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
             </h2>
           </div>
           <button
+            data-dismiss=""
             onClick={onClose}
             className="p-2 text-slate-400 hover:text-white rounded-lg transition-colors"
           >
