@@ -324,51 +324,78 @@ export function openRouterChatBody(
     // Every parameter sent must then be supported, and reasoning-only models (gpt-5-mini) take no temperature.
     body.provider = { allow_fallbacks: true, sort: 'latency', require_parameters: true };
     delete body.temperature;
+    const baseSchema = opts.schema ?? {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        refs: {
+          type: 'array',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              tok: { type: 'string' },
+              id: { type: 'string' },
+              use: {
+                type: 'string',
+                enum: ['speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place'],
+              },
+            },
+            required: ['tok', 'id', 'use'],
+          },
+        },
+        lines: {
+          type: 'array',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              fn: { type: 'string', enum: ['place', 'action', 'speech', 'react', 'hook'] },
+              text: { type: 'string' },
+              speaker_tok: { type: ['string', 'null'] },
+            },
+            required: ['fn', 'text', 'speaker_tok'],
+          },
+        },
+      },
+      required: ['refs', 'lines'],
+    };
     body.response_format = {
       type: 'json_schema',
       json_schema: {
         name: 'token_prose',
         strict: true,
         // Strict mode: every property is required (a missing speaker is null), so the schema is the turn's own.
-        schema: opts.schema ?? {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            refs: {
-              type: 'array',
-              items: {
-                type: 'object',
-                additionalProperties: false,
-                properties: {
-                  tok: { type: 'string' },
-                  id: { type: 'string' },
-                  use: {
-                    type: 'string',
-                    enum: ['speaker', 'actor', 'addressed', 'corpse', 'prop_used', 'worn', 'place'],
-                  },
-                },
-                required: ['tok', 'id', 'use'],
-              },
-            },
-            lines: {
-              type: 'array',
-              items: {
-                type: 'object',
-                additionalProperties: false,
-                properties: {
-                  fn: { type: 'string', enum: ['place', 'action', 'speech', 'react', 'hook'] },
-                  text: { type: 'string' },
-                  speaker_tok: { type: ['string', 'null'] },
-                },
-                required: ['fn', 'text', 'speaker_tok'],
-              },
-            },
-          },
-          required: ['refs', 'lines'],
-        },
+        // q50-MAP2 — optional structured newPlaces (never mined from prose).
+        schema: withWriterNewPlaces(baseSchema),
       },
     };
     if (opts.n && opts.n > 1) body.n = opts.n;
   }
   return body;
+}
+
+/** q50-MAP2 — attach newPlaces in place (same object ref) so callers keep identity. */
+function withWriterNewPlaces(schema: Record<string, unknown>): Record<string, unknown> {
+  const props = schema.properties;
+  if (!props || typeof props !== 'object' || Array.isArray(props)) return schema;
+  const bag = props as Record<string, unknown>;
+  if (bag.newPlaces) return schema;
+  bag.newPlaces = {
+    type: 'array',
+    items: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        name: { type: 'string' },
+        kind: { type: 'string' },
+        exitsTo: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['name', 'kind', 'exitsTo'],
+    },
+  };
+  if (Array.isArray(schema.required) && !schema.required.includes('newPlaces')) {
+    schema.required.push('newPlaces');
+  }
+  return schema;
 }

@@ -2071,6 +2071,8 @@ export interface PlaceRecord {
    * row; the local site itself is never a new worldAtlas.settlements entry.
    */
   parentHub?: string;
+  /** q50-MAP2 — sealed/barred place: exits stay empty on purpose (m15 barred cell). */
+  closed?: boolean;
   /** 29z9j — objects seen at this place (the HERE props it had when the player last left it). */
   props?: string[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */

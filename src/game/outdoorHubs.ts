@@ -11,8 +11,8 @@ import type { CampaignBible } from '@/data/campaigns/types';
 import type { GameState, PlaceRecord, Quest } from './types';
 import { excludedPadFamilies } from './padUniverse';
 import { dungeonRoomPlace, placeIdFromName, resolvePlace } from './places';
-import { isRoadLabel, isTripHere } from './travelJourney';
-import { isExplorableDungeon } from './placeAuthority';
+import { isTripHere } from './travelJourney';
+import { placeScale } from './placeAuthority';
 
 export interface OutdoorHub {
   id: string;
@@ -382,6 +382,13 @@ export function isOutdoorHubScene(state: GameState): boolean {
 /** 28g — a hub whose name or blurb marks a dungeon (e.g. Cathedral Undercroft). */
 const DUNGEON_HUB_RE = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
 
+/** True when this hub is a dungeon site (street exits do not open from a cell under it). */
+export function isDungeonHub(hub: Pick<OutdoorHub, 'name' | 'blurb'> | string | null | undefined): boolean {
+  if (!hub) return false;
+  if (typeof hub === 'string') return DUNGEON_HUB_RE.test(hub);
+  return DUNGEON_HUB_RE.test(`${hub.name} ${hub.blurb ?? ''}`);
+}
+
 /**
  * The mapped places the travel chips offer from here, best first (at most four, one dungeon hub kept).
  * The graph travel edges, the hub travel pads and the exits receipt all read this one list.
@@ -417,7 +424,7 @@ export function hubTravelTargets(state: GameState): string[] {
           // 28g — unvisited hubs before visited ones
           return Number(visited.has(a.name.toLowerCase())) - Number(visited.has(b.name.toLowerCase()));
         })
-        .map((h) => ({ name: h.name, dungeon: DUNGEON_HUB_RE.test(`${h.name} ${h.blurb ?? ''}`) }))
+        .map((h) => ({ name: h.name, dungeon: isDungeonHub(h) }))
     : (Array.isArray(extra) ? extra : []).map((h) => ({ name: h.name, dungeon: false }));
   // OPT-5: closed places drop from exits until an engine event reopens them.
   // Inline place.arcStatus check (no openThreads import — outdoorHubs is edge-synced).
@@ -546,30 +553,6 @@ function placeOfName(state: GameState, name: string | undefined | null): string 
   return dungeonRoomPlace(state, name) ?? (name ?? '').replace(/\s+/g, ' ').trim();
 }
 
-/** Parent hub for a local site: opening card, stored parentHub, or the from-location hub — never a label substring. */
-function parentHubForPlace(state: GameState, raw: string, fromLocation?: string): string {
-  const existing = resolvePlace(state.places, raw);
-  const stored = (existing?.parentHub ?? '').replace(/\s+/g, ' ').trim();
-  if (stored) {
-    const hit = matchHub(hubsForBibleId(state.campaignBibleId), stored);
-    return hit?.name ?? stored;
-  }
-  const card = state.openingEstablishment?.card;
-  const cardPlace = (card?.place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  if (card?.parentHub && cardPlace && cardPlace === raw.toLowerCase()) {
-    return card.parentHub.replace(/\s+/g, ' ').trim();
-  }
-  // Opening HERE is often the card place under a different display string; use card parent when HERE is not a hub.
-  if (card?.parentHub && !matchHub(hubsForBibleId(state.campaignBibleId), raw)) {
-    const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-    if (here === raw.toLowerCase() || cardPlace === here) {
-      return card.parentHub.replace(/\s+/g, ' ').trim();
-    }
-  }
-  const fromHub = matchHub(hubsForBibleId(state.campaignBibleId), fromLocation);
-  return fromHub?.name ?? '';
-}
-
 /** 27g — place card: plain description + exits, no engine tags. Built from the hub bank and the way you came. A road is not a place: null. */
 export function buildPlaceCard(state: GameState, placeName: string, fromLocation?: string): PlaceRecord | null {
   const raw = placeOfName(state, placeName);
@@ -605,30 +588,59 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     const key = h.toLowerCase();
     return key !== name.toLowerCase() && key !== raw.toLowerCase();
   };
-  const parentHub = parentHubForPlace(state, raw, fromLocation);
-  // Local (non-hub) sites hang off parentHub; exits are that hub plus its travel targets — never invented biome/atlas.
-  const hubExits = hubs.length
-    ? !hub
-      ? [
-          parentHub,
-          ...hubTravelTargets({ ...state, currentLocation: parentHub || name }),
-        ].filter((h) => !!h && notHere(h))
-      : hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
-    : exitPool.filter((h) => notHere(h.name) && known(h)).map((h) => h.name).slice(0, 3);
+  const card = state.openingEstablishment?.card;
+  const storedParent = (existing?.parentHub ?? '').replace(/\s+/g, ' ').trim();
+  const cardPlace = (card?.place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const rawKey = raw.toLowerCase();
+  let parentHub = storedParent;
+  if (!parentHub && card?.parentHub && cardPlace && cardPlace === rawKey) {
+    parentHub = card.parentHub.replace(/\s+/g, ' ').trim();
+  }
+  // Opening HERE may drift from card.place; card.parentHub / card.place-as-hub is place data.
+  if (!parentHub && !hub) {
+    const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const opening = (state.circling?.openingPlace ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const atOpen =
+      here === rawKey
+      && (!state.circling?.prevPlace || (!!opening && (opening === rawKey || opening === here)));
+    if (atOpen) {
+      parentHub = (card?.parentHub ?? '').replace(/\s+/g, ' ').trim()
+        || matchHub(hubs, card?.place)?.name
+        || '';
+    }
+  }
+  if (!parentHub) parentHub = matchHub(hubs, fromLocation)?.name ?? '';
+  const parentHubRow = matchHub(hubs, parentHub);
+  const indoorLocal = !hub && placeScale(raw) === 'indoor';
+  const sealedUnderDungeon = indoorLocal && isDungeonHub(parentHubRow ?? parentHub);
+  const hubExits = sealedUnderDungeon
+    ? []
+    : hubs.length
+      ? indoorLocal && parentHub
+        ? [parentHub].filter((h) => !!h && notHere(h))
+        : !hub
+          ? [parentHub, ...hubTravelTargets({ ...state, currentLocation: parentHub || name })].filter(
+              (h) => !!h && notHere(h)
+            )
+          : hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
+      : exitPool.filter((h) => notHere(h.name) && known(h)).map((h) => h.name).slice(0, 3);
   const seen = new Set<string>();
   const exits: string[] = [];
-  for (const e of [back, ...hubExits]) {
-    const key = e.toLowerCase();
-    if (!e || key === name.toLowerCase() || seen.has(key)) continue;
-    seen.add(key);
-    exits.push(e);
+  if (!sealedUnderDungeon) {
+    for (const e of [back, ...hubExits]) {
+      const key = e.toLowerCase();
+      if (!e || key === name.toLowerCase() || seen.has(key)) continue;
+      seen.add(key);
+      exits.push(e);
+    }
   }
   return {
     id: existing?.id ?? placeIdFromName(name),
     name: existing?.name ?? name,
     aliases: existing?.aliases ?? Array.from(new Set([name, raw, ...(hub?.aliases ?? [])])).slice(0, 12),
     mapScale: existing?.mapScale ?? 'street',
-    arcStatus: existing?.arcStatus ?? 'open',
+    arcStatus: sealedUnderDungeon ? 'closed' : existing?.arcStatus ?? 'open',
+    closed: sealedUnderDungeon ? true : existing?.closed,
     description: description || undefined,
     exits: exits.slice(0, 5),
     cardBuiltTurn: state.turn ?? 0,
@@ -636,168 +648,24 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
   };
 }
 
-/**
- * q50-MAP2 — sole registration entry for a playable place.
- * Runs only where a place is created (opening, writer structured newPlaces, arrival with no card).
- * No-op when a place card already exists. Never writes worldAtlas or discoveredLocations.
- * Never rebuilds a closed place whose exits are empty on purpose.
- */
-export function ensurePlaceOnMap(
-  state: GameState,
-  placeName?: string,
-  fromLocation?: string,
-  opts?: { closed?: boolean; exitsTo?: string[] }
-): GameState {
-  const raw = placeOfName(state, placeName ?? state.currentLocation);
-  if (!raw || isRoadLabel(raw) || isTripHere(state, raw)) return state;
-  const roomPlace = dungeonRoomPlace(state, raw);
-  if (roomPlace && isExplorableDungeon(state.activeDungeon)) {
-    return ensurePlaceOnMap(state, roomPlace, fromLocation, opts);
-  }
-  const hubs = hubsForBibleId(state.campaignBibleId);
-  const hubName = matchHub(hubs, raw)?.name ?? raw;
-  const existing = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
-  // Card already built (including intentional empty exits on a sealed/closed place): no-op.
+/** 27g — make the place card on first entry; a place that already has a card is reused, never rebuilt. */
+export function ensurePlaceCard(state: GameState, placeName: string, fromLocation?: string): GameState {
+  const raw = placeOfName(state, placeName);
+  if (!raw) return state;
+  const places = state.places ?? [];
+  const hubName = matchHub(hubsForBibleId(state.campaignBibleId), raw)?.name ?? raw;
+  const existing = resolvePlace(places, hubName) ?? resolvePlace(places, raw);
   if (existing?.cardBuiltTurn != null) return state;
-  if (existing?.arcStatus === 'closed' || opts?.closed) {
-    const closedRow: PlaceRecord = {
-      id: existing?.id ?? placeIdFromName(hubName),
-      name: existing?.name ?? hubName,
-      aliases: existing?.aliases ?? Array.from(new Set([hubName, raw])).slice(0, 12),
-      mapScale: existing?.mapScale ?? 'street',
-      arcStatus: 'closed',
-      exits: [],
-      cardBuiltTurn: state.turn ?? 0,
-      parentHub: (existing?.parentHub ?? parentHubForPlace(state, raw, fromLocation)) || undefined,
-      description: existing?.description,
-    };
-    const places = existing
-      ? (state.places ?? []).map((p) => (p.id === existing.id ? { ...existing, ...closedRow } : p))
-      : [...(state.places ?? []), closedRow];
-    return sheetExitsFromPlaceRecord({ ...state, places });
-  }
   const card = buildPlaceCard(state, raw, fromLocation);
   if (!card) return state;
-  if (opts?.exitsTo?.length) {
-    const seen = new Set<string>();
-    const exits: string[] = [];
-    for (let i = 0; i < opts.exitsTo.length; i++) {
-      const e = (opts.exitsTo[i] ?? '').replace(/\s+/g, ' ').trim();
-      const key = e.toLowerCase();
-      if (!e || key === card.name.toLowerCase() || seen.has(key)) continue;
-      // Validate against hub graph (canonical hub name or already-known place).
-      const asHub = matchHub(hubs, e);
-      const asPlace = resolvePlace(state.places, e);
-      if (!asHub && !asPlace && key !== (card.parentHub ?? '').toLowerCase()) continue;
-      seen.add(key);
-      exits.push(asHub?.name ?? asPlace?.name ?? e);
-    }
-    if (exits.length) card.exits = exits.slice(0, 5);
-  }
-  const places = existing
-    ? (state.places ?? []).map((p) =>
+  const next = existing
+    ? places.map((p) =>
       p.id === existing.id
-        ? {
-            ...p,
-            description: card.description,
-            exits: card.exits,
-            cardBuiltTurn: card.cardBuiltTurn,
-            parentHub: card.parentHub ?? p.parentHub,
-            aliases: p.aliases ?? card.aliases,
-          }
+        ? { ...p, description: card.description, exits: card.exits, cardBuiltTurn: card.cardBuiltTurn }
         : p
     )
-    : [...(state.places ?? []), card];
-  return sheetExitsFromPlaceRecord({ ...state, places });
-}
-
-/** Project place-record exits onto locationSheet when HERE matches (sheet does not keep its own copy). */
-export function sheetExitsFromPlaceRecord(state: GameState): GameState {
-  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
-  if (!here || isRoadLabel(here) || isTripHere(state, here)) return state;
-  const place =
-    resolvePlace(state.places, here)
-    ?? resolvePlace(state.places, matchHub(hubsForBibleId(state.campaignBibleId), here)?.name ?? '');
-  if (!place || place.cardBuiltTurn == null) return state;
-  const exits = (place.exits ?? []).map((label, i) => ({ id: `exit:${label}:${i}`, label }));
-  const sheet = state.locationSheet;
-  if (sheet && (sheet.name ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === here.toLowerCase()) {
-    return { ...state, locationSheet: { ...sheet, exits } };
-  }
-  return {
-    ...state,
-    locationSheet: {
-      name: here,
-      climate: sheet?.climate ?? '',
-      timeOfDay: sheet?.timeOfDay ?? '',
-      interactables: sheet?.interactables ?? [],
-      exits,
-      presentNpcIds: sheet?.presentNpcIds ?? [],
-      dangerTier: sheet?.dangerTier,
-      mapScale: sheet?.mapScale ?? place.mapScale,
-    },
-  };
-}
-
-/** 27g — make the place card on first entry; delegates to ensurePlaceOnMap (sole registration entry). */
-export function ensurePlaceCard(state: GameState, placeName: string, fromLocation?: string): GameState {
-  return ensurePlaceOnMap(state, placeName, fromLocation);
-}
-
-/**
- * q50-MAP2 — writer structured newPlaces / newExits (Token Prose JSON). Validates exits against the hub
- * graph and registers through ensurePlaceOnMap. Prose-only place mentions are ignored.
- */
-export function applyWriterMapPlaces(
-  state: GameState,
-  payload: {
-    newPlaces?: Array<{ name?: string; kind?: string; exitsTo?: string[] }>;
-    newExits?: Array<{ from?: string; to?: string }>;
-  } | null | undefined
-): GameState {
-  if (!payload) return state;
-  let next = state;
-  const places = payload.newPlaces ?? [];
-  for (let i = 0; i < places.length; i++) {
-    const row = places[i]!;
-    const name = (row.name ?? '').replace(/\s+/g, ' ').trim();
-    if (name.length < 3) continue;
-    const closed = (row.kind ?? '').toLowerCase() === 'closed' || (row.kind ?? '').toLowerCase() === 'sealed';
-    next = ensurePlaceOnMap(next, name, next.currentLocation, {
-      closed,
-      exitsTo: row.exitsTo,
-    });
-  }
-  const exits = payload.newExits ?? [];
-  for (let i = 0; i < exits.length; i++) {
-    const row = exits[i]!;
-    const to = (row.to ?? '').replace(/\s+/g, ' ').trim();
-    const from = (row.from ?? next.currentLocation ?? '').replace(/\s+/g, ' ').trim();
-    if (!to || !from) continue;
-    const asHub = matchHub(hubsForBibleId(next.campaignBibleId), to);
-    const asPlace = resolvePlace(next.places, to);
-    if (!asHub && !asPlace) continue;
-    const dest = asHub?.name ?? asPlace?.name ?? to;
-    const place = resolvePlace(next.places, from);
-    if (!place) {
-      next = ensurePlaceOnMap(next, from, undefined, { exitsTo: [dest] });
-      continue;
-    }
-    if (place.cardBuiltTurn == null) {
-      next = ensurePlaceOnMap(next, from, undefined, { exitsTo: [dest] });
-      continue;
-    }
-    // Card exists: append a validated exit without rebuilding the card.
-    const have = place.exits ?? [];
-    if (have.some((e) => e.toLowerCase() === dest.toLowerCase())) continue;
-    const exitsNext = [...have, dest].slice(0, 5);
-    next = {
-      ...next,
-      places: (next.places ?? []).map((p) => (p.id === place.id ? { ...p, exits: exitsNext } : p)),
-    };
-    next = sheetExitsFromPlaceRecord(next);
-  }
-  return next;
+    : [...places, card];
+  return { ...state, places: next };
 }
 
 const PERSON_TITLE = /^(?:father|mother|brother|sister|sir|lady|lord|old|captain|master|mistress|the)$/i;
