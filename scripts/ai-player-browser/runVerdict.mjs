@@ -28,7 +28,7 @@ export function shouldThumb({ feedbacks, votedFeedbacks = -1, noNewReply = false
   return { vote: true, reason: null };
 }
 
-/** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. */
+/** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. softWarnings never fail the run. */
 export function runVerdict(results = []) {
   const list = Array.isArray(results) ? results : [];
   const problems = [];
