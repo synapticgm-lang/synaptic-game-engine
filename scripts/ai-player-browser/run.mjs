@@ -978,7 +978,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const timing = turnTimeFields(submitStamp);
     const where = await readPlace(gamePage);
 
-    if (newGmBubble && thumb?.skipped && voteCarried !== true) skippedNewReply = true;
+    if (newGmBubble && thumb?.skipped && thumb.skipped !== 'no_reply' && voteCarried !== true) skippedNewReply = true;
     const turnRow = buildTurnLogRow({
       event: waitTimedOut ? 'turn_timeout' : 'turn',
       turn,

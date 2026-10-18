@@ -33,7 +33,8 @@ export function skippedVoteOnNewReply(row) {
   if (!row || row.newGmBubble !== true) return false;
   if (row.voteCarried === true) return false;
   const skipped = row.thumbSkipped;
-  return skipped != null && skipped !== false && skipped !== '';
+  // The vote in a row is on the PREVIOUS reply; 'no_reply' means that turn produced none, so the skip is correct (23:54 smoke misread).
+  return skipped != null && skipped !== false && skipped !== '' && skipped !== 'no_reply';
 }
 
 /** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. softWarnings never fail the run. A skipped vote on a new reply, and game_reset, always fail. */
