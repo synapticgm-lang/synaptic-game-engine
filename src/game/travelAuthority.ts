@@ -1,35 +1,49 @@
-/** Camera / travel authority. HERE changes only via resolveNextLocation (29u). All modes. */
+/**
+ * Site-wide camera / travel authority.
+ * Location string + map + dungeon cannot snap outdoor → indoor (or room → room)
+ * without a player travel/enter commit. Writer room-jumps snap back; real travel
+ * is narrated by the writer from the committed HERE (29u). All modes.
+ */
+
 import type { GameState, SceneFacts } from './types';
 import { isExplorableDungeon, isInteriorMap, placeScale, type PlaceScaleSource } from './placeAuthority';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
-import { findSettlement } from './worldMapAuthority';
-import { dungeonRoomPlace, resolvePlace } from './places';
+
 export type CameraScale = 'outdoor' | 'indoor';
+
 export interface CameraLock {
   scale: CameraScale;
   label: string;
   roomId?: string;
   lockedTurn: number;
 }
+
 const TRAVEL_COMMIT =
   /\b(travel(?:\s+(?:toward|to|into))?|return to|(?:go|head) back to|enter|go (?:inside|in|through|into|to)|walk(?:\s+\w+){0,4}\s+(?:through|into|inside|to)|step (?:inside|through|into)|leave(?:\s+the\s+scene)?|exit|flee|run away|head (?:inside|through|into|to|toward|for)|open the door|through the (?:door|threshold)|into the (?:foyer|entry|hall|room))\b/i;
+
 const OUTDOOR_CAMERA =
   /\b(mosaic|bombardment|under fire|open (?:air|street)|outdoors?|outside|cracked street|street tiles|sky overhead|rain on|under the sky)\b/i;
+
 const INDOOR_ROOM =
   /\b(?:the\s+)?(?:entry|foyer|narthex|vestibule|interior floor|what the map indicates)\b/i;
+
 const INDOOR_CAMERA =
   /\b(inside|indoors?|ceiling|you (?:are|stand) (?:now )?(?:in|inside) (?:the )?(?:entry|foyer|hall|chamber|room))\b/i;
-const ARRIVAL_TRAVEL =
-  /^(?:travel\s+(?:toward|to)|return\s+to|(?:go|head|walk) back to|enter\b|go (?:inside|in|through|into)|head (?:inside|through|into|to|toward|for))\b/i;
+
 export function playerCommittedTravel(input: string | undefined): boolean {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
-  return !!t && TRAVEL_COMMIT.test(t);
+  if (!t) return false;
+  return TRAVEL_COMMIT.test(t);
 }
-/** Arrival snap only — not Leave / Walk away / Exit. */
+
+/** Arrival snap only — not Leave / Walk away / Exit (those are not "You reach dest"). */
 export function playerCommittedArrivalTravel(input: string | undefined): boolean {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
-  return !!t && ARRIVAL_TRAVEL.test(t);
+  if (!t) return false;
+  return /^(?:travel\s+(?:toward|to)|return\s+to|(?:go|head|walk) back to|enter\b|go (?:inside|in|through|into)|head (?:inside|through|into|to|toward|for))\b/i.test(
+    t
+  );
 }
+
 export function detectCameraScale(text: string): CameraScale | null {
   if (!text) return null;
   if (OUTDOOR_CAMERA.test(text) && !INDOOR_ROOM.test(text)) return 'outdoor';
@@ -37,7 +51,11 @@ export function detectCameraScale(text: string): CameraScale | null {
   if (OUTDOOR_CAMERA.test(text)) return 'outdoor';
   return null;
 }
-/** Place scale owns indoor/outdoor; stored lock fills gaps. */
+
+const samePlace = (a: string | undefined, b: string | undefined) =>
+  (a ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === (b ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/** The committed place decides indoor/outdoor; a stored lock only fills in when the place does not say. */
 export function resolveCameraLock(
   state: Pick<GameState, 'sceneFacts'> & PlaceScaleSource
 ): CameraLock | undefined {
@@ -45,10 +63,11 @@ export function resolveCameraLock(
   const scale = placeScale(state);
   if (!lock || !scale) return lock;
   const here = (state.currentLocation ?? '').trim();
-  const moved = !!here && here.toLowerCase() !== (lock.label ?? '').trim().toLowerCase();
+  const moved = !!here && !samePlace(here, lock.label);
   if (lock.scale === scale && !moved) return lock;
   return { ...lock, scale, label: here || lock.label, roomId: moved ? undefined : lock.roomId };
 }
+
 export function formatCameraBindingLine(state: GameState): string | null {
   const lock = resolveCameraLock(state);
   if (!lock) {
@@ -56,6 +75,7 @@ export function formatCameraBindingLine(state: GameState): string | null {
   }
   return `CAMERA (BINDING): ${lock.scale} at ${lock.label}. Do not snap to another room or indoor floor plan unless the player travels or enters.`;
 }
+
 export function harvestCameraIntoSceneFacts(
   prev: SceneFacts | undefined,
   _narrative: string,
@@ -66,13 +86,20 @@ export function harvestCameraIntoSceneFacts(
 ): SceneFacts {
   const base: SceneFacts = prev
     ? { ...prev, updatedTurn: turn }
-    : { crowd: 'unknown', noise: 'unknown', present: [], props: [], lastBeat: '', updatedTurn: turn };
+    : {
+        crowd: 'unknown',
+        noise: 'unknown',
+        present: [],
+        props: [],
+        lastBeat: '',
+        updatedTurn: turn,
+      };
+
   const label = (locationLabel ?? '').trim();
   const scale = placeScale(place ? { ...place, currentLocation: label || place.currentLocation } : label);
   const lock = base.cameraLock;
-  const moved =
-    playerCommittedTravel(playerInput)
-    || (!!lock && !!label && label.toLowerCase() !== (lock.label ?? '').trim().toLowerCase());
+  // A new place rewrites the lock however the player got there ("Walk on", "Turn back"); a road lock never outlives an arrival.
+  const moved = playerCommittedTravel(playerInput) || (!!lock && !!label && !samePlace(label, lock.label));
   if (!scale) {
     if (lock && moved) {
       const { cameraLock: _left, indoor: _indoor, ...rest } = base;
@@ -80,7 +107,9 @@ export function harvestCameraIntoSceneFacts(
     }
     return lock ? { ...base, indoor: lock.scale === 'indoor' } : base;
   }
-  if (lock && lock.scale === scale && !moved) return { ...base, indoor: scale === 'indoor' };
+  if (lock && lock.scale === scale && !moved) {
+    return { ...base, indoor: scale === 'indoor' };
+  }
   return {
     ...base,
     indoor: scale === 'indoor',
@@ -92,20 +121,41 @@ export function harvestCameraIntoSceneFacts(
     },
   };
 }
-/** Outdoor camera: snap invented indoor map/flag back. */
+
+/**
+ * If the writer / map authored an indoor floor plan while the camera is outdoor
+ * and the player did not travel, snap map + indoor flag back. Keep currentLocation.
+ */
 export function enforceCameraOnState(state: GameState, playerInput?: string): GameState {
   const lock = resolveCameraLock(state);
-  if (!lock || lock.scale !== 'outdoor' || playerCommittedTravel(playerInput)) return state;
+  if (!lock || lock.scale !== 'outdoor') return state;
+  if (playerCommittedTravel(playerInput)) return state;
   if (isExplorableDungeon(state.activeDungeon)) return state;
+
   let next = state;
-  if (state.sceneFacts?.indoor) next = { ...next, sceneFacts: { ...next.sceneFacts!, indoor: false } };
-  if (next.locationSheet?.mapScale === 'interior') {
-    next = { ...next, locationSheet: { ...next.locationSheet, mapScale: 'street' } };
+  if (state.sceneFacts?.indoor) {
+    next = {
+      ...next,
+      sceneFacts: { ...next.sceneFacts!, indoor: false },
+    };
   }
-  if (next.activeDungeon && isInteriorMap(next.activeDungeon)) next = { ...next, activeDungeon: null };
+  if (next.locationSheet?.mapScale === 'interior') {
+    next = {
+      ...next,
+      locationSheet: { ...next.locationSheet, mapScale: 'street' },
+    };
+  }
+  const dungeon = next.activeDungeon;
+  if (dungeon && isInteriorMap(dungeon)) {
+    next = { ...next, activeDungeon: null };
+  }
   return next;
 }
-/** Outdoor lock: snap invented indoor room nouns in prose back to the lock. */
+
+/**
+ * Writer jumped rooms without a travel commit → snap invented indoor room nouns
+ * back to the locked label.
+ */
 export function enforceCameraOnProse(
   prose: string,
   state: GameState,
@@ -114,21 +164,34 @@ export function enforceCameraOnProse(
 ): string {
   let next = prose ?? '';
   const lock = resolveCameraLock(state);
+  const traveled = playerCommittedTravel(playerInput);
   const dest = (state.currentLocation ?? '').trim();
-  if (playerCommittedTravel(playerInput) && dest && playerCommittedArrivalTravel(playerInput)) return next;
+
+  // 29u — a travel turn is narrated by the writer from the committed HERE; code adds no arrival line.
+  if (traveled && dest && playerCommittedArrivalTravel(playerInput)) return next;
+
   const here = (lock?.label || dest || '').trim();
   if (!lock || lock.scale !== 'outdoor' || !here) return next;
-  if (INDOOR_ROOM.test(next)) next = next.replace(INDOOR_ROOM, here);
+  if (INDOOR_ROOM.test(next)) {
+    next = next.replace(INDOOR_ROOM, here);
+  }
   return next;
 }
+
+/** True when map/dungeon may author an interior floor plan. */
 export function cameraAllowsInteriorMap(state: GameState, playerInput?: string): boolean {
   const lock = resolveCameraLock(state);
-  return !lock || lock.scale === 'indoor' || playerCommittedTravel(playerInput);
+  if (!lock) return true;
+  if (lock.scale === 'indoor') return true;
+  return playerCommittedTravel(playerInput);
 }
+
 export function cameraPrefersStreetMap(state: GameState): boolean {
-  return resolveCameraLock(state)?.scale === 'outdoor' && !isExplorableDungeon(state.activeDungeon);
+  const lock = resolveCameraLock(state);
+  return lock?.scale === 'outdoor' && !isExplorableDungeon(state.activeDungeon);
 }
-/** Entry/Foyer cannot replace an outdoor lock without travel. */
+
+/** Keep currentLocation honest — Entry/Foyer cannot replace an outdoor lock without travel. */
 export function honestLocationName(
   state: GameState,
   proposed: string | undefined,
@@ -140,62 +203,4 @@ export function honestLocationName(
   if (!lock || lock.scale !== 'outdoor' || playerCommittedTravel(playerInput)) return here;
   if (INDOOR_ROOM.test(here)) return (state.currentLocation || lock.label).trim() || here;
   return here;
-}
-/** travelJourney.TravelCommit — local shape avoids an import cycle. */
-export type LocationTravelCommit = {
-  handled?: boolean;
-  state: Pick<GameState, 'currentLocation'>;
-} | null | undefined;
-/** q50-MAP2 newPlaces row (never mined from prose). */
-export type WriterDeclaredPlace = { name?: string; id?: string } | string;
-/** q58-LOCSET: HERE only via travel commit, known place, or writer newPlaces. */
-export function resolveNextLocation(
-  state: GameState,
-  opts: {
-    travelCommit?: LocationTravelCommit;
-    proposed?: string | null;
-    writerNewPlaces?: readonly WriterDeclaredPlace[] | null;
-  } = {}
-): string {
-  const travelHere =
-    opts.travelCommit?.handled && opts.travelCommit.state.currentLocation
-      ? opts.travelCommit.state.currentLocation.trim()
-      : '';
-  if (travelHere) return travelHere;
-  const current = (state.currentLocation ?? '').trim();
-  const proposed = (opts.proposed ?? '').trim();
-  if (!proposed) return current;
-  if (proposed.toLowerCase() === current.toLowerCase()) return current || proposed;
-  const writerPlaces = opts.writerNewPlaces;
-  if (writerPlaces?.length) {
-    for (let i = 0; i < writerPlaces.length; i++) {
-      const row = writerPlaces[i]!;
-      const name = (typeof row === 'string' ? row : row.name ?? row.id ?? '').trim();
-      if (name && name.toLowerCase() === proposed.toLowerCase()) return name;
-    }
-  }
-  const known =
-    resolvePlace(state.places, proposed)?.name
-    || (dungeonRoomPlace(state, proposed) ? proposed : '')
-    || matchHub(hubsForBibleId(state.campaignBibleId), proposed)?.name
-    || findSettlement(state.worldAtlas, proposed)?.name
-    || '';
-  if (known) return known;
-  const key = proposed.toLowerCase();
-  const regions = state.worldAtlas?.regions ?? [];
-  for (let i = 0; i < regions.length; i++) {
-    const r = regions[i]!;
-    if (r.id === key || r.name.toLowerCase() === key) return r.name;
-  }
-  const nodes = state.activeDungeon?.nodes ?? [];
-  for (let i = 0; i < nodes.length; i++) {
-    const n = nodes[i]!;
-    if (n.id.toLowerCase() === key || n.name.toLowerCase() === key) return n.name;
-  }
-  const discovered = state.discoveredLocations ?? [];
-  for (let i = 0; i < discovered.length; i++) {
-    const d = (discovered[i] ?? '').trim();
-    if (d && d.toLowerCase() === key) return d;
-  }
-  return current;
 }

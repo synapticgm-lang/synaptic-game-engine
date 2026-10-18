@@ -1,7 +1,0 @@
-{"source":"live z4 2026-10-18z4, save 102e7d47-6f41-4599-89f9-c377ff2be7b4, bible millstone-road, game_mode dnd, ai_traffic callGm rows (read-only, 18 Oct)",
- "opening":{"turn":1,"location":"Millstone Ford gate","presence":"Lessa Quill, Old Tam, bystanders"},
- "turns":[
-  {"turn":1,"player_input":"Look around","snapshot_location":"Millstone Ford gate"},
-  {"turn":2,"player_input":"Ask Lessa Quill about the crates","snapshot_location":"Ask Lessa Quill about the crates"},
-  {"turn":3,"player_input":"Read Old Tam","snapshot_location":"Ask Lessa Quill about the crates"}],
- "expected":"location stays 'Millstone Ford gate' on every turn"}
