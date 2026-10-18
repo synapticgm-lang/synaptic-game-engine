@@ -2,7 +2,7 @@
  * q50-MAP2 — one registration entry and one exits reader for playable places.
  * No atlas row, no biome/kind invent, no discoveredLocations write, no prose parsing.
  */
-import type { GameState, PlaceRecord } from './types';
+import type { GameState, PlaceExitRow, PlaceRecord } from './types';
 import { dungeonRoomPlace, placeIdFromName, resolvePlace } from './places';
 import { hubTravelTargets, hubsForBibleId, isDungeonHub, matchHub } from './outdoorHubs';
 import { isRoadLabel, isTripHere } from './travelJourney';
@@ -40,8 +40,104 @@ function parentHubOf(state: GameState, raw: string, from?: string): string {
   return matchHub(hubs, from)?.name ?? '';
 }
 
-/** Exits of a place record only. Closed / empty intentional card → []. */
-export function placeExits(state: GameState, name?: string | null): string[] {
+function sourceId(state: GameState, label: string, explicit?: string): string {
+  const given = tidy(explicit);
+  if (given) return given;
+  const key = tidy(label).toLowerCase();
+  const sheet = state.locationSheet?.exits ?? [];
+  for (let i = 0; i < sheet.length; i++) {
+    const ex = sheet[i]!;
+    if (tidy(ex.label).toLowerCase() === key && tidy(ex.id)) return tidy(ex.id);
+  }
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), label);
+  if (hub?.id) return hub.id;
+  const place = resolvePlace(state.places, label);
+  if (place?.id && tidy(place.name).toLowerCase() === key) return place.id;
+  return '';
+}
+
+function pushExit(out: PlaceExitRow[], seen: Set<string>, state: GameState, label: string, explicit?: string) {
+  const e = tidy(label);
+  const key = e.toLowerCase();
+  if (!e || seen.has(key)) return;
+  seen.add(key);
+  const id = sourceId(state, e, explicit);
+  out.push({ id: id || e, label: e });
+}
+
+function labelsToRows(state: GameState, labels: string[]): PlaceExitRow[] {
+  const out: PlaceExitRow[] = [];
+  const seen = new Set<string>();
+  for (let i = 0; i < labels.length; i++) pushExit(out, seen, state, labels[i] ?? '');
+  return out;
+}
+
+/** Sheet exits for this non-hub place. Null when the sheet is for somewhere else or has none. */
+function sheetExitRows(state: GameState, raw: string): PlaceExitRow[] | null {
+  const sheet = state.locationSheet;
+  const exits = sheet?.exits ?? [];
+  if (!exits.length) return null;
+  const sheetName = tidy(sheet?.name).toLowerCase();
+  if (sheetName && sheetName !== raw.toLowerCase()) return null;
+  const out: PlaceExitRow[] = [];
+  const seen = new Set<string>();
+  for (let i = 0; i < exits.length; i++) {
+    const ex = exits[i]!;
+    pushExit(out, seen, state, ex.label, ex.id);
+  }
+  return out.length ? out : null;
+}
+
+/**
+ * Exits ensurePlaceOnMap would write, without writing.
+ * Hub → hub travel targets. Non-hub with a location sheet → that sheet. Else the hub-graph seed.
+ */
+function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRow[] {
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  const hub = matchHub(hubs, raw);
+  const hubName = hub?.name ?? raw;
+  const existing = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
+  if (existing?.closed || existing?.arcStatus === 'closed') return [];
+  const parentHub = hub ? '' : parentHubOf(state, raw, from);
+  const parentHubRow = matchHub(hubs, parentHub);
+  const indoorLocal = !hub && placeScale(raw) === 'indoor';
+  const sealed = indoorLocal && (isDungeonHub(parentHubRow ?? parentHub) || !parentHub);
+  if (sealed) return [];
+  const out: PlaceExitRow[] = [];
+  const seen = new Set<string>();
+  if (hub) {
+    const names = hubTravelTargets({ ...state, currentLocation: hub.name });
+    for (let i = 0; i < names.length; i++) {
+      const n = names[i] ?? '';
+      if (n.toLowerCase() === hubName.toLowerCase() || n.toLowerCase() === raw.toLowerCase()) continue;
+      pushExit(out, seen, state, n);
+    }
+    return out.slice(0, 5);
+  }
+  const sheet = sheetExitRows(state, raw);
+  if (sheet) return sheet.slice(0, 5);
+  if (indoorLocal) {
+    if (
+      parentHub
+      && parentHub.toLowerCase() !== hubName.toLowerCase()
+      && parentHub.toLowerCase() !== raw.toLowerCase()
+    ) {
+      pushExit(out, seen, state, parentHub);
+    }
+    return out.slice(0, 5);
+  }
+  const exitSource = parentHub || hubName;
+  const seed = [parentHub, ...hubTravelTargets({ ...state, currentLocation: exitSource })];
+  for (let i = 0; i < seed.length; i++) {
+    const n = seed[i] ?? '';
+    if (n.toLowerCase() === hubName.toLowerCase() || n.toLowerCase() === raw.toLowerCase()) continue;
+    pushExit(out, seen, state, n);
+  }
+  return out.slice(0, 5);
+}
+
+/** Exit rows for HERE. A missing record is read through the same seed ensurePlaceOnMap writes. */
+export function placeExitRows(state: GameState, name?: string | null): PlaceExitRow[] {
   const raw = tidy(name ?? state.currentLocation);
   if (!raw) return [];
   const room = dungeonRoomPlace(state, raw);
@@ -50,47 +146,23 @@ export function placeExits(state: GameState, name?: string | null): string[] {
     resolvePlace(state.places, raw)
     ?? (room ? resolvePlace(state.places, room) : null)
     ?? resolvePlace(state.places, matchHub(hubs, raw)?.name ?? '');
-  if (!place) return [];
-  if (place.closed || place.arcStatus === 'closed') return [];
-  const rows = place.exits ?? [];
-  if (rows.length === 0) {
-    if (place.cardBuiltTurn != null) return [];
-    const hub = matchHub(hubs, place.name) ?? matchHub(hubs, raw);
-    return hub ? hubTravelTargets({ ...state, currentLocation: hub.name }) : [];
+  if (place) {
+    if (place.closed || place.arcStatus === 'closed') return [];
+    const stored = place.exits ?? [];
+    if (stored.length === 0) {
+      if (place.cardBuiltTurn != null) return [];
+      const hub = matchHub(hubs, place.name) ?? matchHub(hubs, raw);
+      return hub ? labelsToRows(state, hubTravelTargets({ ...state, currentLocation: hub.name })) : [];
+    }
+    return labelsToRows(state, stored);
   }
-  const out: string[] = [];
-  const seen = new Set<string>();
-  for (let i = 0; i < rows.length; i++) {
-    const e = tidy(rows[i]);
-    const key = e.toLowerCase();
-    if (!e || seen.has(key)) continue;
-    seen.add(key);
-    out.push(e);
-  }
-  return out;
+  if (room || isRoadLabel(raw) || isTripHere(state, raw)) return [];
+  return seedExitRows(state, raw);
 }
 
-function exitsFromHubGraph(
-  state: GameState,
-  hubName: string,
-  raw: string,
-  parentHub: string,
-  isHub: boolean
-): string[] {
-  const exitSource = isHub ? hubName : parentHub || hubName;
-  const seed = isHub
-    ? hubTravelTargets({ ...state, currentLocation: exitSource })
-    : [parentHub, ...hubTravelTargets({ ...state, currentLocation: exitSource })];
-  const exits: string[] = [];
-  const seen = new Set<string>();
-  for (let i = 0; i < seed.length; i++) {
-    const e = tidy(seed[i]);
-    const key = e.toLowerCase();
-    if (!e || key === hubName.toLowerCase() || key === raw.toLowerCase() || seen.has(key)) continue;
-    seen.add(key);
-    exits.push(e);
-  }
-  return exits.slice(0, 5);
+/** Exit labels. Closed / empty intentional card → []. */
+export function placeExits(state: GameState, name?: string | null): string[] {
+  return placeExitRows(state, name).map((row) => row.label);
 }
 
 /** Sole registration entry. No-op when closed or exits already filled. */
@@ -109,13 +181,7 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
   const parentHubRow = matchHub(hubs, parentHub);
   const indoorLocal = !hub && placeScale(raw) === 'indoor';
   const sealed = indoorLocal && (isDungeonHub(parentHubRow ?? parentHub) || !parentHub);
-  const exits = sealed
-    ? []
-    : indoorLocal
-      ? [parentHub].filter(
-          (h) => !!h && h.toLowerCase() !== hubName.toLowerCase() && h.toLowerCase() !== raw.toLowerCase()
-        ).slice(0, 5)
-      : exitsFromHubGraph(state, hubName, raw, parentHub, !!hub);
+  const exits = seedExitRows(state, raw, from ?? undefined).map((row) => row.label);
   const closed = sealed;
   if (existing) {
     const patched: PlaceRecord = {

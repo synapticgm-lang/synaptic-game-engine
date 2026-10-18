@@ -7,6 +7,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
+import { enumerateLegalEdges } from './graphChoices';
+import { hubTravelTargets } from './outdoorHubs';
 import { resolvePlace } from './places';
 import {
   applyWriterNewPlaces,
@@ -15,7 +17,7 @@ import {
   placeExits,
 } from './placeRegistry';
 import { commitOfferedPad } from './playTranscript';
-import { wayOutMovesPlayer } from './sceneAffordances';
+import { collectSceneAffordances, wayOutMovesPlayer } from './sceneAffordances';
 import { checkRegisteredPlace } from './turnCheck';
 import type { GameState } from './types';
 
@@ -121,5 +123,80 @@ describe('q50-MAP2 seed 19054 opening registers HERE and fills MOVE', () => {
     expect(checkRegisteredPlace({ ...closed, currentLocation: cell } as GameState)).toEqual([]);
     const receiptWays = placeExits(closed, cell);
     expect(receiptWays.length).toBe(0);
+  });
+});
+
+describe('q50e-MAP2 read-through exits', () => {
+  function openedBare(): GameState {
+    const { state } = buildNewGameState({
+      bibleId: 'summoned-pact',
+      characterName: 'Jax',
+      seed: 19054,
+      personality: 'cold-system',
+      engineMode: 'litrpg',
+    });
+    const opened = stampOpening(state);
+    return {
+      ...opened,
+      places: [],
+      currentLocation: 'West Wall',
+      turn: 1,
+      openingEstablishment: { ...opened.openingEstablishment, complete: true },
+      sceneFacts: { ...opened.sceneFacts, indoor: false },
+    } as GameState;
+  }
+
+  it('(a) no places[] at an outdoor hub after opening matches hubTravelTargets', () => {
+    const state = openedBare();
+    const targets = hubTravelTargets(state);
+    const edges = enumerateLegalEdges(state)
+      .filter((e) => e.type === 'travel')
+      .map((e) => e.target);
+    expect(targets.length).toBeGreaterThan(0);
+    expect(edges).toEqual(targets);
+  });
+
+  it('(b) a location sheet and no place record offers exit:ex-road:travel', () => {
+    const state = {
+      ...openedBare(),
+      currentLocation: 'Camp',
+      places: [],
+      locationSheet: {
+        name: 'Camp',
+        interactables: [],
+        exits: [{ id: 'ex-road', label: 'the road' }],
+        presentNpcIds: [],
+      },
+    } as GameState;
+    const chips = collectSceneAffordances(state);
+    expect(chips.some((c) => c.actionId === 'exit:ex-road:travel')).toBe(true);
+  });
+
+  it('(c) a pre-MAP2 save registers HERE once and offers travel on turn 1', () => {
+    const before = openedBare();
+    expect(before.turn).toBe(1);
+    expect(resolvePlace(before.places, 'West Wall')).toBeNull();
+    const loaded = ensurePlaceOnMap(before, before.currentLocation);
+    const here = (loaded.places ?? []).filter((p) => p.name === 'West Wall');
+    expect(here.length).toBe(1);
+    expect(ensurePlaceOnMap(loaded, loaded.currentLocation)).toBe(loaded);
+    expect(enumerateLegalEdges(loaded).some((e) => e.type === 'travel')).toBe(true);
+  });
+
+  it('(d) a closed place offers no exits', () => {
+    const state = {
+      ...openedBare(),
+      currentLocation: 'Sealed Vault',
+      places: [
+        {
+          id: 'vault',
+          name: 'Sealed Vault',
+          closed: true,
+          arcStatus: 'closed' as const,
+          exits: ['Lowmarket'],
+        },
+      ],
+    } as GameState;
+    expect(placeExits(state, 'Sealed Vault')).toEqual([]);
   });
 });

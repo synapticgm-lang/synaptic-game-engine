@@ -6183,6 +6183,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         addToast(SAVE_REPAIR_TOAST, 'info');
         recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
       }
+      recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
       setState(recovered);
       stateRef.current = recovered;
       bindSessionImageCache(recovered.saveId);
@@ -6513,6 +6514,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         const lastActive = saved.lastUpdated || (useCloud ? cloudTs : 0);
         recovered = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
+        recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.
