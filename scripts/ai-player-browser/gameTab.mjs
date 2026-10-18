@@ -3,6 +3,7 @@
  * Never close Chrome.
  */
 import { clearInputCover, coverAtInput } from './overlay.mjs';
+import { setupAdvanced } from './setupStep.mjs';
 
 const BIBLES = {
   'summoned-pact': { mode: 'LitRPG', title: 'The Summoned Pact', chipsOnly: false },
@@ -168,6 +169,20 @@ export async function readGameSnapshot(page) {
       document.querySelector('.sgm-play-center')
       && ((lastGm && lastGm.length >= 8) || chips.length > 0),
     );
+    // Tabletop creation paints this button for the whole chips-only inn-book step.
+    const builderBtn = document.querySelector('[data-testid="open-character-builder"]');
+    const setupSignal = Boolean(builderBtn && visible(builderBtn));
+    const isSystemRow = (el) => {
+      if (!visible(el)) return false;
+      if (el.closest('.justify-end')) return false;
+      if (el.closest('.sgm-turn-frame')) return false;
+      if (el.closest('[data-sgm-system-window]')) return false;
+      if (el.closest('.sgm-modal-shell')) return false;
+      if (el.closest('[data-sgm-feedback="1"]')) return false;
+      return (el.innerText || '').trim().length > 0;
+    };
+    const systemRowCount = [...scope.querySelectorAll('.whitespace-pre-line, .text-center.text-xs')]
+      .filter(isSystemRow).length;
     return {
       chips,
       lastGm,
@@ -187,6 +202,8 @@ export async function readGameSnapshot(page) {
       playReady,
       combatChips,
       autoFightReady,
+      setupSignal,
+      systemRowCount,
     };
   });
 }
@@ -284,6 +301,26 @@ export async function waitNewGmBeat(page, prev, { timeoutMs = 180000 } = {}) {
     || Boolean(lastStory && lastStory !== prevStory);
   last.prevGmStoryCount = prevGmCount;
   last.waitTimedOut = !last.newGmBubble;
+  return last;
+}
+
+/** Setup step answer: a new system row or a new chip pad. Not a GM wait. */
+export async function waitSetupAdvance(page, prev, { timeoutMs = 8000 } = {}) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const snap = await readGameSnapshot(page);
+    if (!snap.busy && setupAdvanced(prev, snap)) {
+      snap.setupAdvanced = true;
+      snap.newGmBubble = false;
+      snap.waitTimedOut = false;
+      return snap;
+    }
+    await sleep(200);
+  }
+  const last = await readGameSnapshot(page);
+  last.setupAdvanced = setupAdvanced(prev, last);
+  last.newGmBubble = false;
+  last.waitTimedOut = !last.setupAdvanced;
   return last;
 }
 

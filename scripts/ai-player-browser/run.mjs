@@ -47,6 +47,7 @@ import {
   typePlayerAction,
   waitNewGmBeat,
   waitOpeningReady,
+  waitSetupAdvance,
 } from './gameTab.mjs';
 import { startTurnClock, turnTimeFields } from './turnTiming.mjs';
 import {
@@ -87,6 +88,14 @@ import { bindCoverLog } from './overlay.mjs';
 import { verifyThumb, runVerdict, shouldThumb } from './runVerdict.mjs';
 
 import { licenceFor } from './playerLicence.mjs';
+import {
+  SMOKE_GM_REPLIES,
+  isSetupStep,
+  noteRepeat,
+  planSetupAction,
+  settleHarnessTurn,
+  setupStuck,
+} from './setupStep.mjs';
 
 loadProjectEnv();
 
@@ -577,11 +586,38 @@ async function playBible(gamePage, bibleId, opts = {}) {
     );
   }
 
-  for (let turn = startTurn; turn <= turns; turn++) {
+  let gmReplies = 0;
+  let setupClicks = 0;
+  let playedSlots = 0;
+  const slotTarget = smoke ? SMOKE_GM_REPLIES : Math.max(0, turns - startTurn + 1);
+  const stopSetup = (reason, exitCode) => ({
+    bibleId,
+    ok: false,
+    error: reason,
+    reason,
+    exitCode,
+    turns: completed,
+    turnLog: turnRows,
+    startTurn,
+    resumed: resumeThis,
+    autoFightSelector: AUTO_FIGHT_SELECTOR,
+    autoFightFired,
+    stoppedNoGm: String(reason || '').startsWith('smoke_no_gm_reply'),
+    stoppedRepeat: false,
+    unverified,
+    harnessErrors,
+    softWarnings,
+    thumbsSkipped,
+    verifyOn: Boolean(feedbackClient),
+  });
+  for (let turn = startTurn; smoke ? gmReplies < SMOKE_GM_REPLIES : playedSlots < slotTarget; turn++) {
     overlayBlockedThisTurn = false;
     coverTurn = turn;
     const resetNow = assessGameReset(gameIdentity, await probeIdentity(snap), turn);
     if (resetNow) return stopReset(resetNow);
+    const setup = isSetupStep(snap);
+    const stuck = setupStuck({ smoke, setup, setupClicks });
+    if (stuck.stop) return stopSetup(stuck.reason, stuck.exitCode);
     hallAnswered = markHallTopics(hallAnswered, lastPlayer);
     const liveChips = filterAnsweredHallChips(snap.chips, hallAnswered);
     const gmStory = storyForBrain(snap);
@@ -645,7 +681,12 @@ async function playBible(gamePage, bibleId, opts = {}) {
       continue;
     }
     consecutiveHarnessErrors = 0;
-    if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly)) {
+    if (setup) {
+      const planned = planSetupAction({ action: decision.action, chips: snap.chips });
+      decision.kind = 'chip';
+      decision.action_kind = 'chip';
+      decision.action = planned.action;
+    } else if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly)) {
       decision.kind = 'free';
       decision.action_kind = 'type';
       if (!decision.action || liveChips.includes(decision.action)
@@ -660,7 +701,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       decision.reason = [decision.reason || decision.comment, why].filter(Boolean).join(' · ').slice(0, 500);
       decision.comment = decision.reason;
     }
-    if (decision.action && !liveChips.includes(decision.action)
+    if (!setup && decision.action && !liveChips.includes(decision.action)
       && /who are you|ask what they want/i.test(decision.action)
       && (hallAnswered.who || hallAnswered.want)) {
       const nextChip = pickNonHallChip(snap.chips, hallAnswered, recentActions);
@@ -675,7 +716,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       }
     }
 
-    if (!liveChips.length && !spec.chipsOnly) {
+    if (!setup && !liveChips.length && !spec.chipsOnly) {
       decision.kind = 'free';
       decision.action_kind = 'type';
       if (!decision.action || /who are you|ask what they want|what happens if i refuse|inspect the panel/i.test(decision.action)) {
@@ -700,14 +741,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
         decision: { ...decision, comment },
         hardJudge,
       });
-    if (prevGm && !skipSelfCompare) {
+    if (prevGm && !skipSelfCompare && !setup) {
+      const nextRepeats = noteRepeat(consecutiveRepeats, { setupTurn: false, repeatHit: repeat.hit });
       if (repeat.hit) {
-        consecutiveRepeats += 1;
         repeatTurns.push(completed || turn);
       } else {
-        consecutiveRepeats = 0;
         repeatTurns.length = 0;
       }
+      consecutiveRepeats = nextRepeats;
     }
 
     if (consecutiveRepeats >= 2) {
@@ -814,7 +855,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const fightLive = afterThumb.autoFightReady || snap.autoFightReady
       || afterThumb.combatChips || snap.combatChips;
     let submitStamp = null;
-    if (!chipsOnly && fightLive && !nameChip) {
+    if (!setup && !chipsOnly && fightLive && !nameChip) {
       let stamp = startTurnClock();
       let auto = await clickAutoFight(gamePage);
       if (auto) submitStamp = stamp;
@@ -832,7 +873,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     }
 
     const pickingNameChip = /give (your |them your )?name/i.test(decision.action || '');
-    if (!chipsOnly && nameChip && !nameTyped && (alreadyGaveNameChip || pickingNameChip || turn === 1)) {
+    if (!setup && !chipsOnly && nameChip && !nameTyped && (alreadyGaveNameChip || pickingNameChip || turn === 1)) {
       const stamp = startTurnClock();
       const sentName = await typePlayerAction(gamePage, 'Jax');
       noteOverlay(turn);
@@ -845,7 +886,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
         typeFail = sentName.reason;
         typeOverlay = sentName.overlay || null;
       }
-    } else if (!chipsOnly && nameChip && (alreadyGaveNameChip || nameTyped)) {
+    } else if (!setup && !chipsOnly && nameChip && (alreadyGaveNameChip || nameTyped)) {
       const stamp = startTurnClock();
       const sentName = await typePlayerAction(gamePage, 'Jax');
       noteOverlay(turn);
@@ -873,7 +914,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
         kind = 'chip_fallback';
       }
     }
-    if (!acted && !chipsOnly && !typeFail) {
+    if (!acted && !setup && !chipsOnly && !typeFail) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : naturalTypedFallback(recentActions));
       submitStamp = startTurnClock();
       const sentLine = await typePlayerAction(gamePage, line);
@@ -939,14 +980,19 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     let next;
     try {
-      next = await waitNewGmBeat(gamePage, afterThumb, { timeoutMs: kind === 'auto_fight' ? 180000 : 90000 });
+      next = setup
+        ? await waitSetupAdvance(gamePage, afterThumb, { timeoutMs: 8000 })
+        : await waitNewGmBeat(gamePage, afterThumb, { timeoutMs: kind === 'auto_fight' ? 180000 : 90000 });
     } catch (err) {
       next = err?.snapshot || await readGameSnapshot(gamePage);
       next.waitTimedOut = true;
     }
-    const waitTimedOut = Boolean(next.waitTimedOut) && !next.newGmBubble;
-    const newGmBubble = Boolean(next.newGmBubble)
-      || Number(next.gmStoryCount || 0) > Number(afterThumb.gmStoryCount || 0);
+    const setupProgress = Boolean(setup && next.setupAdvanced);
+    const waitTimedOut = Boolean(next.waitTimedOut) && !next.newGmBubble && !setupProgress;
+    const newGmBubble = !setup && (
+      Boolean(next.newGmBubble)
+      || Number(next.gmStoryCount || 0) > Number(afterThumb.gmStoryCount || 0)
+    );
     const nextStory = storyForBrain(next);
     if (overlayBlockedThisTurn) {
       const outcome = classifyOverlayTurn({
@@ -1050,11 +1096,24 @@ async function playBible(gamePage, bibleId, opts = {}) {
     }));
     lastPlayer = acted;
     recentActions.push(acted);
-    lastJudgedGm = gmStory;
+    lastJudgedGm = setup ? lastJudgedGm : gmStory;
     snap = next;
     if (waitTimedOut) snap.waitTimedOut = true;
     completed = turn;
     if (kind === 'auto_fight') autoFightFired += 1;
+    const settled = settleHarnessTurn({
+      smoke,
+      setupTurn: setup,
+      newGmReply: newGmBubble,
+      turn,
+      gmReplies,
+      setupClicks,
+      playedSlots,
+    });
+    gmReplies = settled.gmReplies;
+    setupClicks = settled.setupClicks;
+    playedSlots = settled.playedSlots;
+    if (settled.stop && !settled.ok) return stopSetup(settled.reason, settled.exitCode);
   }
 
   return {
