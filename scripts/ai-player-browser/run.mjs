@@ -297,14 +297,15 @@ export function lockGameIdentity(prev, snap) {
       locked: true,
       saveId: seen,
       gmStoryCount: count,
-      pastOpening: !nameStep,
+      // A local setup step (tabletop creation) comes before the name step: not past the opening yet.
+      pastOpening: !nameStep && !snap?.setup,
     };
   }
   return {
     locked: true,
     saveId: prev.saveId || seen,
     gmStoryCount: Math.max(Number(prev.gmStoryCount || 0), count),
-    pastOpening: Boolean(prev.pastOpening) || !nameStep,
+    pastOpening: Boolean(prev.pastOpening) || (!nameStep && !snap?.setup),
   };
 }
 
@@ -423,6 +424,9 @@ async function playBible(gamePage, bibleId, opts = {}) {
   let carriedVote = null;
   let coverTurn = 0;
   let gameIdentity = null;
+  // Every counter a stop summary reads is declared here, before any summary helper (00:33 decision).
+  let overlayBlockedThisTurn = false;
+  let thumbsSkipped = 0;
   let skippedNewReply = false;
   const turnRows = [];
   bindCoverLog((row) => {
@@ -435,6 +439,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     inNewGame: Boolean(row?.inNewGame),
     hasMenu: Boolean(row?.hasMenu),
     nameStep: nameStepOf(row),
+    setup: Boolean(row?.setupSignal),
   });
   const stopReset = (reset) => {
     appendJsonl(jsonl, reset);
@@ -465,8 +470,6 @@ async function playBible(gamePage, bibleId, opts = {}) {
     if (cleared?.cover && cleared.cleared === false) overlayBlockedThisTurn = true;
     return cleared;
   };
-  let overlayBlockedThisTurn = false;
-  let thumbsSkipped = 0;
   // One vote per GM reply; a turn with no new reply is logged as no_reply, never a vote.
   const voteOnce = async (turnNo, thumbDecision) => {
     const gate = shouldThumb({
