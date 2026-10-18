@@ -184,6 +184,7 @@ export function createDefaultSettings(): Settings {
     ttsVoiceURI: '',
     sttEnabled: false,
     diceAnimation: 'normal',
+    showRollHints: true,
     contentMode: 'adult',
     kidModeLocked: false,
     contentPin: null,

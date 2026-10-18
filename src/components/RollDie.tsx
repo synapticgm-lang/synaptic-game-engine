@@ -1,9 +1,34 @@
 import { createContext, useContext, useEffect, useRef, useState, type CSSProperties } from 'react';
-import type { DiceAnimationMode } from '@/game/types';
+import type { DiceAnimationMode, LogEntry } from '@/game/types';
 import { emitDiceRoll, rollAnimationMs, rollAnimationScale, splitRollLine, type ShownD20 } from '@/game/rules/rollView';
 import { DicePreview, liveDiceItem } from './DicePreview';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, HelpCircle } from 'lucide-react';
 import { rememberCueText } from '@/game/systemLog';
+
+/** VR1-c: auto hint for first 3 of a kind; afterward "?" reveals the same plain line. */
+export function RollHintLine({ hint }: { hint: NonNullable<LogEntry['rollHint']> }) {
+  const [open, setOpen] = useState(!!hint.autoShown);
+  if (hint.autoShown || open) {
+    return (
+      <div className="sgm-roll-hint mt-1 text-[11px] italic opacity-80" data-testid="roll-hint">
+        {hint.text}
+      </div>
+    );
+  }
+  return (
+    <button
+      type="button"
+      className="sgm-roll-hint-help mt-1 inline-flex items-center gap-1 rounded border border-slate-600/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wide opacity-80 hover:opacity-100"
+      data-testid="roll-hint-help"
+      aria-label="Show roll hint"
+      title="Show roll hint"
+      onClick={() => setOpen(true)}
+    >
+      <HelpCircle size={10} aria-hidden />
+      ?
+    </button>
+  );
+}
 
 /** The player's roll animation setting and the newest GM entry (only its rolls animate; history does not re-roll). */
 export const RollDisplayContext = createContext<{ mode: DiceAnimationMode; newestEntryId: string | null }>({
