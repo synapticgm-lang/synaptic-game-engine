@@ -10,7 +10,8 @@ import {
   edgesToChoiceLabels as beatEdgesToLabels,
 } from './choiceEdge';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
-import { hubTravelTargets, isOutdoorHubScene } from './outdoorHubs';
+import { isOutdoorHubScene } from './outdoorHubs';
+import { placeExits } from './placeRegistry';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
@@ -90,7 +91,10 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
   }
 
   if (state.openingEstablishment?.complete && isOutdoorHubScene(state) && !excluded.has('travel')) {
-    for (const name of hubTravelTargets(state)) {
+    // q50-MAP2 — travel edges read the place record only (placeExits), not a private hub list.
+    const targets = placeExits(state, state.currentLocation);
+    for (let i = 0; i < targets.length; i++) {
+      const name = targets[i]!;
       edges.push({
         type: 'travel',
         label: `Travel toward ${name}`,
