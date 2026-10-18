@@ -487,8 +487,27 @@ export async function typePlayerAction(page, text) {
   }
 }
 
+/** Wait for the UI's own gm_response_feedback upsert (POST) and return its JSON body, or an error note. */
+export function waitFeedbackUpsert(page, timeoutMs = 10000) {
+  if (!page || typeof page.waitForResponse !== 'function') {
+    return Promise.resolve({ body: null, error: 'no_waitForResponse' });
+  }
+  return page.waitForResponse(
+    (res) => res.url().includes('/rest/v1/gm_response_feedback') && res.request().method() === 'POST',
+    { timeout: timeoutMs },
+  ).then(async (res) => {
+    if (!res.ok()) return { body: null, error: `upsert_http_${res.status()}` };
+    try {
+      return { body: await res.json(), error: null };
+    } catch {
+      return { body: null, error: 'upsert_body_unreadable' };
+    }
+  }).catch(() => ({ body: null, error: 'no_upsert_seen' }));
+}
+
 export async function submitThumb(page, { thumb, comment }) {
   const aria = thumb === 'down' ? 'Poor response' : 'Good response';
+  const upsertWait = waitFeedbackUpsert(page);
   const clicked = await page.evaluate((label) => {
     const blocks = [...document.querySelectorAll('[data-sgm-feedback="1"]')];
     const last = blocks.at(-1);
@@ -498,7 +517,11 @@ export async function submitThumb(page, { thumb, comment }) {
     btn.click();
     return true;
   }, aria);
-  if (!clicked) return { ok: false, reason: 'thumb_missing' };
+  if (!clicked) {
+    upsertWait.catch(() => {});
+    return { ok: false, reason: 'thumb_missing', upsert: null, upsertError: 'thumb_missing' };
+  }
+  const upsert = await upsertWait;
   await sleep(400);
   if (comment) {
     const hasBox = await page.evaluate(() => {
@@ -534,5 +557,5 @@ export async function submitThumb(page, { thumb, comment }) {
     }
   }
   await sleep(400);
-  return { ok: true };
+  return { ok: true, upsert: upsert.body, upsertError: upsert.error };
 }

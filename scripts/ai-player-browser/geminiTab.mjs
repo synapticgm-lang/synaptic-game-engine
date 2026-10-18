@@ -287,9 +287,21 @@ function resolveAction(action, chips = []) {
   return hit || raw;
 }
 
+/** First balanced, valid JSON object in the text that carries action or thumb (tolerant fallback). */
+export function firstDecisionObject(raw) {
+  const text = String(raw || '');
+  for (let i = text.indexOf('{'); i >= 0; i = text.indexOf('{', i + 1)) {
+    const obj = parseBalancedObject(text, i);
+    if (obj && typeof obj === 'object' && !Array.isArray(obj) && (obj.action || obj.thumb || obj.action_kind)) {
+      return obj;
+    }
+  }
+  return null;
+}
+
 export function parsePlaytesterDecision(raw, { chips = [] } = {}) {
   const cleaned = stripPromptEcho(raw);
-  const parsed = extractJsonObject(cleaned) || parseLabeledLines(cleaned);
+  const parsed = extractJsonObject(cleaned) || firstDecisionObject(cleaned) || parseLabeledLines(cleaned);
   if (!parsed || typeof parsed !== 'object') {
     return {
       kind: 'chip',

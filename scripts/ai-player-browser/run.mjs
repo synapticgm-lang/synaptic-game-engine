@@ -77,8 +77,9 @@ import {
   createTesterSessionClient,
   pressThumbWithReason,
   thumbReasonFromDecision,
-  verifyFeedbackRow,
 } from './feedbackVerify.mjs';
+import { verifyThumb, runVerdict } from './runVerdict.mjs';
+
 import { licenceFor } from './playerLicence.mjs';
 
 loadProjectEnv();
@@ -239,6 +240,9 @@ async function playBible(gamePage, bibleId, opts = {}) {
   let autoFightFired = 0;
   let consecutiveRepeats = 0;
   const repeatTurns = [];
+  let unverified = 0;
+  let harnessErrors = 0;
+  let consecutiveHarnessErrors = 0;
 
   if (resumeThis) {
     snap = await prepareLivePlay(gamePage);
@@ -362,6 +366,43 @@ async function playBible(gamePage, bibleId, opts = {}) {
       personaBlock,
       goal: persona.goal,
     });
+    if (decision.harnessError) {
+      // Harness error, not a game verdict: no thumb, no action; re-ask this turn (max 3 in a row).
+      harnessErrors += 1;
+      consecutiveHarnessErrors += 1;
+      console.log(`[ai-player] T${turn} harness_error ${decision.harnessError} finish=${JSON.stringify(decision.harnessDetail?.finish || [])}`);
+      appendJsonl(jsonl, {
+        event: 'harness_error',
+        turn,
+        bibleId,
+        saveId,
+        harnessError: decision.harnessError,
+        harnessDetail: decision.harnessDetail || null,
+        consecutive: consecutiveHarnessErrors,
+        chipsSeen: snap.chips,
+        meta: testerMeta,
+      });
+      if (consecutiveHarnessErrors >= 3) {
+        console.log(`AI_PLAYER fail ${bibleId}: 3 harness errors in a row at T${turn}`);
+        return {
+          bibleId,
+          ok: false,
+          harnessError: decision.harnessError,
+          harnessErrors,
+          unverified,
+          turns: completed,
+          startTurn,
+          resumed: resumeThis,
+          autoFightSelector: AUTO_FIGHT_SELECTOR,
+          autoFightFired,
+          stoppedNoGm: false,
+          stoppedRepeat: false,
+        };
+      }
+      turn -= 1;
+      continue;
+    }
+    consecutiveHarnessErrors = 0;
     if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly)) {
       decision.kind = 'free';
       decision.action_kind = 'type';
@@ -436,9 +477,10 @@ async function playBible(gamePage, bibleId, opts = {}) {
       );
       let verified = { verified: false, reason: 'no_client' };
       if (feedbackClient) {
-        verified = await verifyFeedbackRow(feedbackClient, { saveId, turn });
+        verified = await verifyThumb(feedbackClient, thumb, opts.userId);
       }
-      console.log(`[ai-player] T${turn} feedback verified=${verified.verified}`);
+      console.log(`[ai-player] T${turn} feedback verified=${verified.verified}${verified.verified ? '' : ` reason=${verified.reason}`}`);
+    if (feedbackClient && !verified.verified) unverified += 1;
       appendJsonl(jsonl, {
         event: 'repeat_abort',
         turn,
@@ -454,6 +496,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
         thumbOk: thumb.ok,
         thumbReason: thumb.reason || comment,
         verified: verified.verified,
+        verifyReason: verified.reason,
+        feedbackKey: verified.lookup || null,
         meta: testerMeta,
       });
       appendMd(
@@ -497,6 +541,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
         stopBeforeTurn: turn,
         consecutiveRepeats,
         review: path.join(runDir, 'REVIEW.md'),
+        unverified,
+        harnessErrors,
       };
     }
 
@@ -511,9 +557,10 @@ async function playBible(gamePage, bibleId, opts = {}) {
     );
     let verified = { verified: false, reason: 'no_client' };
     if (feedbackClient) {
-      verified = await verifyFeedbackRow(feedbackClient, { saveId, turn });
+      verified = await verifyThumb(feedbackClient, thumb, opts.userId);
     }
-    console.log(`[ai-player] T${turn} feedback verified=${verified.verified}`);
+    console.log(`[ai-player] T${turn} feedback verified=${verified.verified}${verified.verified ? '' : ` reason=${verified.reason}`}`);
+    if (feedbackClient && !verified.verified) unverified += 1;
     const afterThumb = await readGameSnapshot(gamePage);
 
     const nameChip = snap.chips.some((c) => /give (your |them your )?name/i.test(c));
@@ -611,6 +658,9 @@ async function playBible(gamePage, bibleId, opts = {}) {
       thumbOk: thumb.ok,
       thumbReason: finalReason,
       verified: verified.verified,
+      verifyReason: verified.reason,
+      feedbackKey: verified.lookup || null,
+      repaired: Boolean(decision.repaired),
       waitTimedOut,
       continuedAfterTimeout: waitTimedOut,
       meta: testerMeta,
@@ -658,8 +708,12 @@ async function playBible(gamePage, bibleId, opts = {}) {
     autoFightFired,
     stoppedNoGm: false,
     stoppedRepeat: false,
+    unverified,
+    harnessErrors,
+    verifyOn: Boolean(feedbackClient),
   };
 }
+
 
 async function main() {
   if (!email || !password) {
@@ -698,6 +752,7 @@ async function main() {
   }
 
   let feedbackClient = null;
+  let feedbackUserId = null;
   if (!loginCheck) {
     const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '').replace(/\/$/, '');
     const anonKey = (
@@ -713,6 +768,7 @@ async function main() {
     });
     if (session.ok) {
       feedbackClient = session.client;
+      feedbackUserId = session.userId || null;
     } else {
       console.log(`[ai-player] feedback verify session skipped: ${session.error}`);
     }
@@ -769,6 +825,7 @@ async function main() {
           const result = await playBible(gamePage, bibleId, {
             resume,
             feedbackClient,
+            userId: feedbackUserId,
             saveId: runSaveId,
           });
           summary.results.push(result);
@@ -789,8 +846,17 @@ async function main() {
   }
 
   fs.writeFileSync(path.join(runDir, 'summary.json'), JSON.stringify(summary, null, 2));
-  console.log(JSON.stringify({ ok: summary.results.every((r) => r.ok), ...summary }, null, 2));
+  const verdict = loginCheck
+    ? { ok: summary.results.every((r) => r.ok), problems: [] }
+    : runVerdict(summary.results);
+  summary.problems = verdict.problems;
+  fs.writeFileSync(path.join(runDir, 'summary.json'), JSON.stringify({ ok: verdict.ok, ...summary }, null, 2));
+  console.log(JSON.stringify({ ok: verdict.ok, ...summary }, null, 2));
   if (summary.results.some((r) => r.blocked)) process.exit(2);
+  if (!verdict.ok) {
+    console.log(`AI_PLAYER fail run: ${verdict.problems.join('; ')}`);
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {

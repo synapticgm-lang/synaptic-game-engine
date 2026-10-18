@@ -93,7 +93,23 @@ export function buildJsonPlaytesterPrompt(packet) {
   ].join('\n');
 }
 
-async function postChat(apiKey, user) {
+/** Completion cap. Reasoning tokens count against max_tokens on OpenRouter, so 400 cut the JSON off (finish_reason=length). */
+export const PLAYER_MAX_TOKENS = 4000;
+
+/** Minimal repair prompt: only the broken reply and the shape, not the whole packet again. */
+export function buildRepairPrompt(badText, chips = []) {
+  const sample = String(badText || '').replace(/\s+/g, ' ').trim().slice(0, 300) || '(empty)';
+  const chipLine = chips.length ? chips.map((c, i) => `${i + 1}. ${c}`).join(' | ') : '(no chips)';
+  return [
+    'Your last reply could not be parsed as JSON. It was:',
+    sample,
+    `Chips: ${chipLine}`,
+    'Reply with ONLY one JSON object, no other text:',
+    '{"action":"exact chip or typed line","kind":"chip or free","thumb":"up or down","reason":"one short line"}',
+  ].join('\n');
+}
+
+async function postChat(apiKey, user, { messages } = {}) {
   const model = openRouterPlayerModel();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 120000);
@@ -110,12 +126,12 @@ async function postChat(apiKey, user) {
       signal: controller.signal,
       body: JSON.stringify({
         model,
-        messages: [
+        messages: messages || [
           { role: 'system', content: SYSTEM },
           { role: 'user', content: user },
         ],
         temperature: 0.85,
-        max_tokens: 400,
+        max_tokens: PLAYER_MAX_TOKENS,
         reasoning: { effort: 'medium', exclude: true },
         response_format: { type: 'json_object' },
       }),
@@ -133,7 +149,35 @@ async function postChat(apiKey, user) {
   } catch {
     throw new Error('OpenRouter returned non-JSON');
   }
-  return extractText(payload);
+  const finish = payload?.choices?.[0]?.finish_reason || null;
+  return { text: extractText(payload), finish };
+}
+
+/**
+ * A reply that still cannot be parsed after the repair is a HARNESS ERROR:
+ * no action, no thumb (never an automatic thumbs-down).
+ */
+export function finishDecision(decision, { model, repaired = false, first = null, second = null } = {}) {
+  const base = { model, testerOnly: testerOnlyForModel(model), repaired };
+  if (decision?.raw_ok) return { ...decision, ...base };
+  return {
+    ...base,
+    raw_ok: false,
+    harnessError: 'unparseable_player_reply',
+    harnessDetail: {
+      finish: [first?.finish || null, second?.finish || null],
+      sample: String(second?.text ?? first?.text ?? '').slice(0, 200),
+    },
+    action: '',
+    kind: null,
+    action_kind: null,
+    thumb: null,
+    reason: '',
+    comment: '',
+    note: 'harness error: unparseable player reply after one repair',
+    nonsense_options: false,
+    future_leak: false,
+  };
 }
 
 export async function askOpenRouterPlayer(packet) {
@@ -157,18 +201,26 @@ export async function askOpenRouterPlayer(packet) {
     };
   }
   const chips = packet.chips || [];
-  let text = await postChat(apiKey, buildJsonPlaytesterPrompt(packet));
-  let decision = parsePlaytesterDecision(text, { chips });
+  const prompt = buildJsonPlaytesterPrompt(packet);
+  const first = await postChat(apiKey, prompt);
+  let decision = parsePlaytesterDecision(first.text, { chips });
+  let repaired = false;
+  let second = null;
   if (!decision.raw_ok) {
-    text = await postChat(
-      apiKey,
-      `${buildJsonPlaytesterPrompt(packet)}\n\nYour last reply was not valid JSON. Reply with only the JSON object.`,
-    );
-    decision = parsePlaytesterDecision(text, { chips });
+    // One minimal, targeted repair: show the model its own broken reply and the shape.
+    second = await postChat(apiKey, '', {
+      messages: [
+        { role: 'system', content: 'Return ONE JSON object and nothing else.' },
+        { role: 'user', content: buildRepairPrompt(first.text, chips) },
+      ],
+    });
+    decision = parsePlaytesterDecision(second.text, { chips });
+    repaired = decision.raw_ok;
   }
-  return {
-    ...decision,
+  return finishDecision(decision, {
     model,
-    testerOnly: testerOnlyForModel(model),
-  };
+    repaired,
+    first,
+    second,
+  });
 }

@@ -83,6 +83,60 @@ export async function createTesterSessionClient(opts) {
  * @param {*} client Supabase client (or test double with from().select().eq()…)
  * @param {{ saveId: string, turn: number, feedbackType?: 'positive'|'negative' }} query
  */
+/** The UI's own upsert response (PostgREST body) -> the exact key of that reply's feedback row. */
+export function feedbackKeyFromUpsert(body) {
+  const row = Array.isArray(body) ? body[0] : body;
+  if (!row || typeof row !== 'object') return null;
+  const userId = String(row.user_id || '').trim();
+  const saveId = String(row.save_id || '').trim();
+  const logEntryId = String(row.log_entry_id || '').trim();
+  if (!userId || !saveId || !logEntryId) return null;
+  return { userId, saveId, logEntryId, id: row.id || null, feedbackType: row.feedback_type || null };
+}
+
+/**
+ * Read back ONE reply's row by user_id + save_id + log_entry_id (addendum 15:55).
+ * Every miss carries a reason and the key that was looked up.
+ */
+export async function verifyFeedbackByKey(client, key = {}) {
+  const userId = String(key.userId || '').trim();
+  const saveId = String(key.saveId || '').trim();
+  const logEntryId = String(key.logEntryId || '').trim();
+  const lookup = { userId, saveId, logEntryId };
+  if (!client || typeof client.from !== 'function') {
+    return { verified: false, reason: 'no_client', lookup };
+  }
+  if (!userId || !saveId || !logEntryId) {
+    return { verified: false, reason: key.missingReason || 'no_feedback_key', lookup };
+  }
+  let q = client
+    .from('gm_response_feedback')
+    .select('id, user_id, save_id, log_entry_id, turn_number, feedback_type, comment')
+    .eq('user_id', userId)
+    .eq('save_id', saveId)
+    .eq('log_entry_id', logEntryId)
+    .limit(1);
+  let data;
+  let error;
+  if (typeof q.maybeSingle === 'function') {
+    ({ data, error } = await q.maybeSingle());
+  } else {
+    ({ data, error } = await q);
+  }
+  if (error) {
+    return { verified: false, reason: `query_error: ${error.message || 'unknown'}`, lookup };
+  }
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row?.id) {
+    return { verified: false, reason: 'not_found', lookup };
+  }
+  if (key.feedbackType && row.feedback_type !== key.feedbackType) {
+    return { verified: false, reason: `type_mismatch: wanted ${key.feedbackType} got ${row.feedback_type}`, lookup, row };
+  }
+  return { verified: true, reason: 'ok', lookup, row };
+}
+
+/** Legacy save+turn lookup (kept for old callers; the harness uses verifyFeedbackByKey). */
 export async function verifyFeedbackRow(client, query = {}) {
   const saveId = String(query.saveId || '').trim();
   const turn = Number(query.turn);
