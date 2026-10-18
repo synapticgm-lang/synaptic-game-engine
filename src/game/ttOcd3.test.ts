@@ -14,6 +14,7 @@ import {
   type OptionCooldownChip,
 } from './sceneAffordances';
 import { checkChipKinds } from './chipCheck';
+import { brokenProse } from './turnCheck';
 import { exitPlaceNames } from './placeNames';
 
 function base(mode: 'dnd' | 'litrpg' | 'rpg'): GameState {
@@ -375,5 +376,15 @@ describe('w4d-gocd3-fixg journey meeting stays on the pad', () => {
     expect(face?.slotCategory).toBe('scene');
     expect(chips.some((c) => c.slotCategory === 'move' && wayOutMovesPlayer(s, c.label))).toBe(true);
     expect(chips.filter((c) => c.kind !== 'free-input').length).toBeLessThanOrEqual(5);
+  });
+});
+
+describe('w4d-gocd3-fixgocd3litrpg object pronoun is not a stacked determiner', () => {
+  it('seed 20331 T10 "read her the way" is grammatical; a real stack still flags', () => {
+    const line =
+      'Jax looked at Nell Rudd and read her the way they would read a locked door before touching it. Nell let them look, hands loose at her sides, and did not once turn her eyes away.';
+    expect(brokenProse(line, 'Jax').some((f) => f.detail.includes('stacked determiners'))).toBe(false);
+    expect(brokenProse('They lifted their your hands.', 'Jax').some((f) => f.detail.includes('stacked determiners'))).toBe(true);
+    expect(brokenProse('He opened the the door.', 'Jax').some((f) => f.detail.includes('stacked determiners'))).toBe(true);
   });
 });

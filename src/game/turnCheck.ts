@@ -326,7 +326,7 @@ export function brokenLines(prose: string): TurnCheckFlag[] {
 /**
  * Sentence shapes that can only come from a broken paint or a mangled clause (P0 — the reader stops):
  * a name dropped between an article and its verb ("the stepped from"), stacked determiners
- * ("their your hands"), a plural given a possessive 's ("streets's"; a capitalized name ending in s, "Arus's",
+ * ("their your hands"; object-pronoun "her" + a noun phrase, as in "read her the way", is not a stack), a plural given a possessive 's ("streets's"; a capitalized name ending in s, "Arus's",
  * takes 's), a verb glued after "didn't know",
  * and "your" in narration that tells the PC by name in the third person.
  */
@@ -348,7 +348,7 @@ export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
     /\b(?:the|a|an)\s+[a-z]{2,}[a-df-z]ed\s+(?:the|a|an|his|her|their|its|from|into|onto|toward|towards|across|through|past|off|out of|between|on|at)\s/i,
     'a name is missing before its verb'
   );
-  hit(/\b(?:the|a|an|their|his|her|its|my|our)\s+(?:your|their|his|her|my|the)\s+[a-z]/i, 'stacked determiners');
+  hit(/\b(?:the|a|an|their|his|its|my|our)\s+(?:your|their|his|her|my|the)\s+[a-z]/i, 'stacked determiners');
   hit(/\b[a-z]{3,}s['’]s\b/, 'plural with a possessive s');
   hit(/\b(?:didn['’]t|did not|don['’]t|doesn['’]t|never) know\s+[a-z]+ed\s+(?:the|a|an|their|his|her|its)\b/i, 'mangled clause');
   const name = norm(pcName);
