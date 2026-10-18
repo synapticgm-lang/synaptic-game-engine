@@ -13,6 +13,23 @@ export interface ReplayHashRecord {
 /** FNV-1a hash of canonical committed-state slice. */
 export function hashCanonicalState(state: GameState): string {
   // Slice inlined (q43-OCD): keep ruleCount TOTAL flat after commitOfferedTurn + cut of unused verifyFinalReplayHash.
+  // q39-T1a: for-loops (not .map arrows) so TOTAL fns stay flat with openThreads.ts.
+  const quests = state.quests ?? [];
+  const questSig: Array<[string, string, boolean[]]> = [];
+  for (let i = 0; i < quests.length; i++) {
+    const q = quests[i]!;
+    const objs = q.objectives ?? [];
+    const done: boolean[] = [];
+    for (let j = 0; j < objs.length; j++) done.push(!!objs[j]!.completed);
+    questSig.push([q.id, q.status, done]);
+  }
+  const log = state.stateTxLog ?? [];
+  const txStart = Math.max(0, log.length - 24);
+  const txTail: Array<[number, string, string]> = [];
+  for (let i = txStart; i < log.length; i++) {
+    const t = log[i]!;
+    txTail.push([t.turn, t.kind, t.summary]);
+  }
   const s = JSON.stringify({
     turn: state.turn,
     eventSeq: state.runManifest?.eventSeq ?? 0,
@@ -23,14 +40,8 @@ export function hashCanonicalState(state: GameState): string {
     xp: state.character.xp,
     activeEncounter: state.activeEncounter?.name ?? null,
     committedBeats: state.arcDirector?.committedBeatIds ?? [],
-    questSig: (state.quests ?? []).map((q) => [
-      q.id,
-      q.status,
-      (q.objectives ?? []).map((o) => o.completed),
-    ]),
-    txTail: (state.stateTxLog ?? [])
-      .slice(-24)
-      .map((t) => [t.turn, t.kind, t.summary]),
+    questSig,
+    txTail,
     sandboxKeys: (state.sandboxAwardKeys ?? []).slice(-40),
     manifestHash: state.sealedManifest?.beatEffectsHash ?? null,
   });

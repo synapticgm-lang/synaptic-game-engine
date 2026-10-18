@@ -650,6 +650,46 @@ export interface Commitment {
   checkedTurn?: number;
 }
 
+/** TT-T1 — kind of an engine open thread (Mythic-style list; pattern only). */
+export type ThreadKind = 'quest' | 'npc-goal' | 'promise' | 'lead' | 'foe';
+
+/** TT-T1 — engine condition that alone may close the thread. */
+export type ThreadResolution =
+  | { type: 'quest-complete'; questId: string }
+  | { type: 'npc-goal-met'; npcId: string }
+  | { type: 'commitment-kept'; promiseId: string }
+  | { type: 'lead-resolved'; questId: string; lead: string }
+  | { type: 'foe-defeated'; foeName: string };
+
+/** TT-T1 — one open thread on the engine list. */
+export type OpenThread = {
+  id: string;
+  kind: ThreadKind;
+  label: string;
+  entityId?: string;
+  placeId?: string | null;
+  lastSeenTurn: number;
+  resolution: ThreadResolution;
+};
+
+/** TT-T1 / OPT-5 — scene planner pick for this turn (stall bring-forward optional). */
+export type SceneThreadPlan = {
+  plannedTurn: number;
+  forwardIds: string[];
+  /** OPT-5: stall brought a thread, agenda step, or OPT-2 situation this turn. */
+  stallKind?: 'thread' | 'agenda' | 'situation';
+  /** Engine event id for the stall fire (timeline / writer fact). */
+  stallEventId?: string;
+};
+
+/** OPT-5 — place arc changes from engine events (not prose). */
+export type PlaceEngineEventKind = 'cleared' | 'closed' | 'reopened' | 'new-threat' | 'new-trader';
+export type PlaceEngineEvent = {
+  kind: PlaceEngineEventKind;
+  placeId: string;
+  detail?: string;
+};
+
 export interface WorldHolding {
   id: string;
   name: string;
@@ -984,6 +1024,13 @@ export interface GameState {
    * lastTurn = turn of last generated quest; unboundLog = dropped writer quest-add proposals.
    */
   questGen?: { lastTurn: number; unboundLog?: string[] };
+  /**
+   * TT-T1 — Mythic-style open-thread list (engine-owned). Updated by `planSceneThreads`.
+   * A thread closes only when its resolution condition is met.
+   */
+  openThreads?: OpenThread[];
+  /** TT-T1 — which open threads the scene planner brought forward this turn. */
+  sceneThreadPlan?: SceneThreadPlan;
   /** Immutable run manifest for eval/replay binding. */
   runManifest?: import('./runManifest').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */
@@ -1657,6 +1704,10 @@ export interface SceneFacts {
   propsPlace?: string;
   /** OPT-3 — last pressure-clock agenda advance this turn (world fact for the writer packet). */
   agendaWorldFact?: string;
+  /** OPT-5 — stall planner engine event this turn (thread / agenda / situation). */
+  stallWorldFact?: string;
+  /** OPT-5 — last place arc event (cleared / closed / reopened / threat / trader). */
+  placeWorldFact?: string;
 }
 
 export interface TimelineFact {

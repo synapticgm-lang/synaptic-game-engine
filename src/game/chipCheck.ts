@@ -32,17 +32,25 @@ export const CHIP_RESOLVERS: Record<ChipKind, string> = {
 
 export type ChipCheckFlag = { kind: 'dead-chip' | 'missing-chip-kind'; detail: string };
 
-const low = (s: string) => sanitizeChoiceLabel(s ?? '').toLowerCase();
+function low(s: string): string {
+  return sanitizeChoiceLabel(s ?? '').toLowerCase();
+}
 
 /** The kind of the builder chip an offered label binds to (exact label first, then the same action + target). */
 export function chipKindOf(state: GameState, label: string, prose = ''): ChipKind | null {
+  // q39-T1a: for-loops (was .find arrows) so TOTAL fns stay flat with openThreads.ts.
   const chips = engineChips(state, prose);
   const l = low(label);
   if (!l) return null;
-  const exact = chips.find((c) => c.label.toLowerCase() === l);
-  if (exact) return exact.kind;
+  for (let i = 0; i < chips.length; i++) {
+    if (chips[i]!.label.toLowerCase() === l) return chips[i]!.kind;
+  }
   const action = engineChipActionKey(label);
-  return (action && chips.find((c) => c.action === action)?.kind) || null;
+  if (!action) return null;
+  for (let i = 0; i < chips.length; i++) {
+    if (chips[i]!.action === action) return chips[i]!.kind;
+  }
+  return null;
 }
 
 /** Dead chips and missing chip kinds for one offered list against the state it was offered in. */

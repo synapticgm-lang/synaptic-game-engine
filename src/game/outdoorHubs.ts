@@ -419,7 +419,26 @@ export function hubTravelTargets(state: GameState): string[] {
         })
         .map((h) => ({ name: h.name, dungeon: DUNGEON_HUB_RE.test(`${h.name} ${h.blurb ?? ''}`) }))
     : (Array.isArray(extra) ? extra : []).map((h) => ({ name: h.name, dungeon: false }));
-  const open = listed.filter((h) => !!h.name && h.name.toLowerCase() !== here);
+  // OPT-5: closed places drop from exits until an engine event reopens them.
+  // Inline place.arcStatus check (no openThreads import — outdoorHubs is edge-synced).
+  const open: Array<{ name: string; dungeon: boolean }> = [];
+  for (let i = 0; i < listed.length; i++) {
+    const h = listed[i]!;
+    if (!h.name || h.name.toLowerCase() === here) continue;
+    const want = h.name.toLowerCase();
+    let closed = false;
+    const placeRows = state.places ?? [];
+    for (let j = 0; j < placeRows.length; j++) {
+      const p = placeRows[j]!;
+      const n = (p.name ?? '').trim().toLowerCase();
+      const pid = (p.id ?? '').toLowerCase();
+      if ((n === want || pid === want) && p.arcStatus === 'closed') {
+        closed = true;
+        break;
+      }
+    }
+    if (!closed) open.push(h);
+  }
   const picks = open.slice(0, 4);
   // 28g — always keep one travel slot for a reachable dungeon hub.
   const dungeonHub = open.find((h) => h.dungeon);

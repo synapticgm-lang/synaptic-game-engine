@@ -113,11 +113,45 @@ describe('28l model-agnostic writer replies', () => {
 
 describe('28l nudge rotation', () => {
   it('never repeats the same nudge twice in a row and rotates sources', () => {
+    // q39-T1b: generic sensory pool deleted — seed engine-fact sources (quest + unmet NPC + hub speaker).
     let s = {
       ...createInitialState('Ria', 'litrpg'),
       turn: 10,
+      campaignBibleId: 'summoned-pact',
+      currentLocation: 'Lowmarket',
+      openingEstablishment: { complete: true },
+      quests: [
+        {
+          id: 'q-nudge',
+          name: 'The Quiet Job',
+          description: 'The Quiet Job',
+          status: 'active',
+          revealed: true,
+          type: 'side',
+          objectives: [{ id: 'o1', description: 'Ask at the cup.', completed: false }],
+        },
+      ],
+      npcMemories: [
+        {
+          npcId: 'npc:ria-contact',
+          npcName: 'Kell',
+          introSpoken: false,
+          disposition: 'neutral',
+          location: 'Lowmarket',
+          lastSeenTurn: 9,
+        },
+      ],
+      sceneFacts: {
+        crowd: 'sparse',
+        noise: 'voices',
+        present: ['Kell'],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 10,
+        outdoor: true,
+      },
       circling: { stale: {}, lastProgressTurn: 0 },
-    } as GameState;
+    } as unknown as GameState;
     const lines: string[] = [];
     for (let i = 0; i < 4; i++) {
       const r = nudgeIfStuck(s);
@@ -125,7 +159,8 @@ describe('28l nudge rotation', () => {
       lines.push(...r.receipts);
       s = { ...r.state, turn: (s.turn ?? 0) + 3, circling: { ...r.state.circling!, lastProgressTurn: s.turn ?? 0 } };
     }
-    expect(lines.length).toBeGreaterThanOrEqual(3);
+    expect(lines.length).toBeGreaterThanOrEqual(2);
     expect(new Set(lines).size).toBe(lines.length);
+    expect(lines.join(' ')).not.toMatch(/noise close by|edge of your sight|new smell/i);
   });
 });
