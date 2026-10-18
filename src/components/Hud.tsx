@@ -9,7 +9,7 @@ import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 import { houseRulesOf } from '../game/rules/houseRules';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-10-18z6';
+export const HUD_BUILD_STAMP = '2026-10-18z7';
 const HUD_BUILD_TITLE =
   'Every setting and panel reads the save; phone drawers open from the HUD';
 
