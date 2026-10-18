@@ -28,7 +28,7 @@
  */
 import fs from 'fs';
 import path from 'path';
-import puppeteer from 'puppeteer-core';
+import { pathToFileURL } from 'node:url';
 import { loadProjectEnv, ROOT } from './loadEnv.mjs';
 import {
   AUTO_FIGHT_SELECTOR,
@@ -39,12 +39,14 @@ import {
   loginFounderEmail,
   prepareLivePlay,
   readGameSnapshot,
+  readPlace,
   startPremade,
   submitThumb,
   typePlayerAction,
   waitNewGmBeat,
   waitOpeningReady,
 } from './gameTab.mjs';
+import { startTurnClock, turnTimeFields } from './turnTiming.mjs';
 import {
   askOpenRouterPlayer,
   openRouterKey,
@@ -216,6 +218,55 @@ function writeRepeatReview(runDir, payload) {
   ].join('\n');
   fs.writeFileSync(path.join(runDir, 'REVIEW.md'), body, 'utf8');
   return body;
+}
+
+/** turns.jsonl row for event turn / turn_timeout. Existing field names stay. */
+export function buildTurnLogRow(row) {
+  const waitTimedOut = Boolean(row.waitTimedOut);
+  return {
+    event: row.event || (waitTimedOut ? 'turn_timeout' : 'turn'),
+    turn: row.turn,
+    bibleId: row.bibleId,
+    saveId: row.saveId,
+    actionKind: row.actionKind,
+    kind: row.kind,
+    autoFightSelector: row.autoFightSelector,
+    autoFightFired: row.autoFightFired,
+    playerAction: row.playerAction,
+    chipsSeen: row.chipsSeen,
+    gmStory: row.gmStory,
+    lastGmChrome: row.lastGmChrome,
+    gmStoryCount: row.gmStoryCount,
+    prevGmStoryCount: row.prevGmStoryCount,
+    feedbacks: row.feedbacks,
+    prevFeedbacks: row.prevFeedbacks,
+    newGmBubble: row.newGmBubble,
+    thumb: row.thumb,
+    thumbOk: row.thumbOk,
+    thumbReason: row.thumbReason,
+    verified: row.verified,
+    verifyReason: row.verifyReason,
+    feedbackKey: row.feedbackKey ?? null,
+    thumbSkipped: row.thumbSkipped ?? null,
+    noReply: row.noReply,
+    repaired: Boolean(row.repaired),
+    waitTimedOut,
+    continuedAfterTimeout: row.continuedAfterTimeout,
+    meta: row.meta,
+    gemini: row.gemini,
+    ts: row.ts,
+    replyMs: row.replyMs,
+    place: row.place ?? null,
+    placeId: row.placeId ?? null,
+    placeSource: row.placeSource || 'none',
+  };
+}
+
+/** transcript.md turn heading: T<n> (<place>, <replyMs/1000>s). */
+export function turnTranscriptHeading(turn, place, replyMs) {
+  const label = place ? String(place) : 'unknown';
+  const secs = Number(replyMs) / 1000;
+  return `## T${turn} (${label}, ${secs}s)`;
 }
 
 async function playBible(gamePage, bibleId, opts = {}) {
@@ -576,11 +627,16 @@ async function playBible(gamePage, bibleId, opts = {}) {
     if (chipsOnly) kind = 'chip';
     const fightLive = afterThumb.autoFightReady || snap.autoFightReady
       || afterThumb.combatChips || snap.combatChips;
+    let submitStamp = null;
     if (!chipsOnly && fightLive && !nameChip) {
+      let stamp = startTurnClock();
       let auto = await clickAutoFight(gamePage);
+      if (auto) submitStamp = stamp;
       if (!auto) {
         await new Promise((r) => setTimeout(r, 800));
+        stamp = startTurnClock();
         auto = await clickAutoFight(gamePage);
+        if (auto) submitStamp = stamp;
       }
       if (auto) {
         acted = auto;
@@ -590,17 +646,21 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     const pickingNameChip = /give (your |them your )?name/i.test(decision.action || '');
     if (!chipsOnly && nameChip && !nameTyped && (alreadyGaveNameChip || pickingNameChip || turn === 1)) {
+      const stamp = startTurnClock();
       const sentName = await typePlayerAction(gamePage, 'Jax');
       if (sentName.sent) {
         acted = 'Jax';
         kind = 'type';
         nameTyped = true;
+        submitStamp = stamp;
       } else {
         typeFail = sentName.reason;
       }
     } else if (!chipsOnly && nameChip && (alreadyGaveNameChip || nameTyped)) {
+      const stamp = startTurnClock();
       const sentName = await typePlayerAction(gamePage, 'Jax');
       if (sentName.sent) {
+        submitStamp = stamp;
         acted = 'Jax';
         kind = 'type';
         nameTyped = true;
@@ -609,17 +669,20 @@ async function playBible(gamePage, bibleId, opts = {}) {
       }
     }
     if (!acted && kind === 'chip' && decision.action && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(decision.action)) {
+      submitStamp = startTurnClock();
       acted = await clickChip(gamePage, decision.action);
     }
     if (!acted && kind === 'chip') {
       const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
       if (safe && !shouldForceTypedHumanMove([safe], recentActions, chipsOnly)) {
+        submitStamp = startTurnClock();
         acted = await clickChip(gamePage, safe);
         kind = 'chip_fallback';
       }
     }
     if (!acted && !chipsOnly && !typeFail) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : naturalTypedFallback(recentActions));
+      submitStamp = startTurnClock();
       const sentLine = await typePlayerAction(gamePage, line);
       if (sentLine.sent) {
         acted = line;
@@ -658,6 +721,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       continue;
     }
     if (!acted) throw new Error(`No legal action on ${bibleId} T${turn}`);
+    if (!submitStamp) submitStamp = startTurnClock();
 
     let next;
     try {
@@ -673,8 +737,10 @@ async function playBible(gamePage, bibleId, opts = {}) {
     // The vote above was on the previous reply (or skipped). A timeout is logged as no_reply, never as a second vote.
     const finalThumb = thumb.skipped ? null : decision.thumb;
     const finalReason = thumb.skipped ? `(no vote: ${thumb.skipped})` : (thumb.reason || comment);
+    const timing = turnTimeFields(submitStamp);
+    const where = await readPlace(gamePage);
 
-    appendJsonl(jsonl, {
+    appendJsonl(jsonl, buildTurnLogRow({
       event: waitTimedOut ? 'turn_timeout' : 'turn',
       turn,
       bibleId,
@@ -712,10 +778,15 @@ async function playBible(gamePage, bibleId, opts = {}) {
         model: decision.model || openRouterPlayerModel(),
         reason: finalReason,
       },
-    });
+      ts: timing.ts,
+      replyMs: timing.replyMs,
+      place: where.place,
+      placeId: where.placeId,
+      placeSource: where.placeSource,
+    }));
     appendMd(
       transcript,
-      `## T${turn}\n\n**You:** ${acted} (${kind})\n\n**GM:** ${nextStory || '(no new story — not faked)'}\n\n`
+      `${turnTranscriptHeading(turn, where.place, timing.replyMs)}\n\n**You:** ${acted} (${kind})\n\n**GM:** ${nextStory || '(no new story — not faked)'}\n\n`
       + `New GM bubble: ${newGmBubble ? 'yes' : 'NO'} · count ${afterThumb.gmStoryCount || 0}→${next.gmStoryCount || 0}`
       + `${waitTimedOut ? ' · WAIT TIMEOUT (continuing)' : ''}\n\n`
       + `Thumb: ${finalThumb} · ${finalReason}\n\n`
@@ -817,6 +888,8 @@ async function main() {
 
   let browser;
   try {
+    const puppeteerName = 'puppeteer-core';
+    const { default: puppeteer } = await import(puppeteerName);
     browser = await puppeteer.connect({
       browserURL: cdp,
       defaultViewport: null,
@@ -900,7 +973,19 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+function ranAsScript() {
+  const argvPath = process.argv[1];
+  if (!argvPath) return false;
+  try {
+    return import.meta.url === pathToFileURL(argvPath).href;
+  } catch {
+    return false;
+  }
+}
+
+if (ranAsScript()) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
