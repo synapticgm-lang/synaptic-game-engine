@@ -21,7 +21,9 @@ describe('P-5d named invented people', () => {
       sceneFacts: { crowd: 'empty', noise: 'quiet', present: [], props: [], lastBeat: '' },
     } as unknown as GameState;
     const next = registerWriterIntroductions(state, 'By the stall, Mara Voss watched the gate.');
-    expect(next.npcMemories).toEqual([expect.objectContaining({ npcName: 'Mara Voss', disposition: 'neutral' })]);
+    expect(next.npcMemories).toEqual([
+      expect.objectContaining({ npcName: 'Mara Voss', disposition: 'neutral', location: 'Docks' }),
+    ]);
     expect(registerWriterIntroductions(next, 'By the stall, Mara Voss watched the gate.').npcMemories).toHaveLength(1);
   });
 });

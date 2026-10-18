@@ -36,9 +36,11 @@ describe('P-5a/c writer introductions', () => {
     } as unknown as GameState;
     const next = registerWriterIntroductions(state, text);
     expect(next.npcMemories?.map((m) => m.npcName)).toEqual(['the guard']);
+    expect(next.npcMemories?.[0]?.location).toBe('Docks');
     expect(next.sceneFacts?.props).toEqual(['small iron key']);
     const again = registerWriterIntroductions({ ...next, turn: 5 }, text);
     expect(again.npcMemories).toHaveLength(1);
     expect(again.npcMemories![0]!.lastSeenTurn).toBe(5);
+    expect(again.npcMemories![0]!.location).toBe('Docks');
   });
 });

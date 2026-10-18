@@ -1,10 +1,9 @@
 import type { GameState, NpcMemory } from './types.ts';
 import { isOutOfTalkingRange } from './hereSpot.ts';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName.ts';
-
+import { resolvePlace } from './places.ts';
 const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line|Speech:)/i;
 const VOICE_NOTE = /^Speech:/i;
-
 export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
   if (!isMetNpc(m)) return '';
   const pc = (m.knownPlayerName || pcName || '').trim() || 'the player';
@@ -19,7 +18,6 @@ export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
   if (times > 0) return `${head} They greet ${pc} as someone they know: no introducing themselves again, no asking the name again.`;
   return m.knownPlayerName ? `${head} No asking the name again.` : head;
 }
-
 export function formatNpcMemoriesForPrompt(
   memories: NpcMemory[] | undefined,
   limit = 6,
@@ -38,27 +36,22 @@ export function formatNpcMemoriesForPrompt(
     })
     .join('\n');
 }
-
 export function sheetMemoryLinesHere(state: GameState): string[] {
   return presentNpcRecords(state)
     .map((m) => sheetMemoryLine(m, state.character?.name))
     .filter(Boolean);
 }
-
 const SLUG_GAP = /[^a-z0-9]+/g;
 const COMPOUND_SPLIT = /\s*(?:,|\band\b|&)\s*/i;
 const LEADING_ROLE_WORD = /^(?:the|a|an|tracker|quay-master|auditor|court clerk)\s+/i;
-
 function namesOf(m: NpcMemory): string[] {
   return [m.npcName, ...(m.aliases ?? [])].filter(Boolean);
 }
-
 function exactRecord(memories: NpcMemory[], name: string): NpcMemory | undefined {
   const key = name.trim().toLowerCase();
   if (!key) return undefined;
   return memories.find((m) => namesOf(m).some((n) => n.trim().toLowerCase() === key));
 }
-
 export function resolveNpcRecord(state: GameState, name: string): NpcMemory | undefined {
   const memories = state.npcMemories ?? [];
   const t = (name ?? '').trim();
@@ -73,7 +66,6 @@ export function resolveNpcRecord(state: GameState, name: string): NpcMemory | un
   if (restHit) return restHit;
   return undefined;
 }
-
 export function splitCompoundCastEntry(raw: string, state?: GameState): string[] {
   return (raw ?? '')
     .split(COMPOUND_SPLIT)
@@ -86,15 +78,12 @@ export function splitCompoundCastEntry(raw: string, state?: GameState): string[]
     })
     .filter(Boolean);
 }
-
 export function canonicalNpcName(state: GameState, name: string): string | undefined {
   return resolveNpcRecord(state, name)?.npcName;
 }
-
 export function npcRecordNames(state: GameState): string[] {
   return (state.npcMemories ?? []).flatMap(namesOf);
 }
-
 export function recordsForEntries(state: GameState, entries: string[]): NpcMemory[] {
   const out: NpcMemory[] = [];
   const seen = new Set<string>();
@@ -108,22 +97,17 @@ export function recordsForEntries(state: GameState, entries: string[]): NpcMemor
   }
   return out;
 }
-
 function samePlace(a: string | undefined, b: string | undefined): boolean {
   const x = (a ?? '').trim().toLowerCase();
   const y = (b ?? '').trim().toLowerCase();
   return !!x && x === y;
 }
-
 export function npcPlacedElsewhere(state: GameState, name: string): boolean {
   const m = resolveNpcRecord(state, name);
   return !!m?.location && !samePlace(m.location, state.currentLocation);
 }
-
 function companionRecords(state: GameState): NpcMemory[] {
-  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter(
-    (n): n is string => !!n
-  );
+  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter((n): n is string => !!n);
   const out: NpcMemory[] = [];
   for (const n of names) {
     const m = resolveNpcRecord(state, n);
@@ -131,7 +115,6 @@ function companionRecords(state: GameState): NpcMemory[] {
   }
   return out;
 }
-
 export function presentNpcRecords(state: GameState): NpcMemory[] {
   const out: NpcMemory[] = [];
   const seen = new Set<string>();
@@ -142,14 +125,26 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
   };
   const journey = state.journey;
   const here = (state.currentLocation ?? '').trim().toLowerCase();
+  const hereSlug = here.replace(SLUG_GAP, '-');
   const tripHere = underwayHereLabel(state).trim().toLowerCase();
   const onRoad = !!journey && journey.legsDone < journey.legsTotal && (here === UNDERWAY_HERE.toLowerCase() || (!!tripHere && here === tripHere));
   for (const m of state.npcMemories ?? []) {
     if (m.location && samePlace(m.location, state.currentLocation)) push(m);
+    else if (!onRoad && !m.location && hereSlug && m.npcId.startsWith(`writer:${hereSlug}:`)) push({ ...m, location: state.currentLocation });
   }
   if (!onRoad) {
     for (const m of recordsForEntries(state, state.sceneFacts?.present ?? [])) {
       if (!m.location) push(m);
+    }
+    const roleLabels = [...(resolvePlace(state.places, state.currentLocation)?.sceneLedger?.present ?? []), ...(state.sceneFacts?.anonymousRoles ?? [])];
+    for (let i = 0; i < roleLabels.length; i++) {
+      const raw = (roleLabels[i] ?? '').replace(/\s+/g, ' ').trim();
+      if (!raw || resolvePlace(state.places, raw)) continue;
+      const bare = raw.replace(LEADING_ROLE_WORD, '').trim() || raw;
+      const display = bare === raw && raw.charCodeAt(0) >= 97 ? `the ${raw}` : raw;
+      const hit = resolveNpcRecord(state, raw) ?? resolveNpcRecord(state, display) ?? resolveNpcRecord(state, bare);
+      if (hit) { push(hit.location ? hit : { ...hit, location: state.currentLocation }); continue; }
+      push({ npcId: `role:${hereSlug}:${bare.toLowerCase().replace(SLUG_GAP, '-')}`.slice(0, 80), npcName: display, disposition: 'neutral', facts: [], lastSeenTurn: state.turn ?? 0, location: state.currentLocation });
     }
   }
   for (const m of companionRecords(state)) push(m);
@@ -176,30 +171,24 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
   }
   return out.filter((m) => !m.shouldExit && !isOutOfTalkingRange(state, m.npcName));
 }
-
 export function npcNamesAt(state: GameState, place: string): string[] {
   return (state.npcMemories ?? []).filter((m) => samePlace(m.location, place)).map((m) => m.npcName);
 }
-
 export function seedOpeningCastLocations(state: GameState): GameState {
   const ids = new Set(state.openingEstablishment?.castNpcIds ?? []);
   const here = state.currentLocation;
   if (!ids.size || !here) return state;
   return { ...state, npcMemories: (state.npcMemories ?? []).map((m) => (ids.has(m.npcId) && !m.location ? { ...m, location: here } : m)) };
 }
-
-function isNamedGiver(giver: string): boolean {
-  const words = giver.trim().split(/\s+/);
-  return !/^the$/i.test(words[0] ?? '') && /^[A-Z]/.test(words[words.length - 1] ?? '');
-}
-
 export function placeQuestGivers(state: GameState): GameState {
   let memories = state.npcMemories ?? [];
   let changed = false;
   for (const q of state.quests ?? []) {
     const giver = (q.giver ?? '').replace(/\s+/g, ' ').trim();
     const place = (q.location ?? '').trim();
-    if (!q.revealed || !giver || !place || !isNamedGiver(giver)) continue;
+    const giverWords = giver.split(/\s+/);
+    const last = giverWords[giverWords.length - 1] ?? '';
+    if (!q.revealed || !giver || !place || (giverWords[0] ?? '').toLowerCase() === 'the' || last.charCodeAt(0) < 65 || last.charCodeAt(0) > 90) continue;
     const hit = resolveNpcRecord({ ...state, npcMemories: memories }, giver);
     if (hit) {
       if (!hit.location) {
@@ -213,7 +202,6 @@ export function placeQuestGivers(state: GameState): GameState {
   }
   return changed ? { ...state, npcMemories: memories } : state;
 }
-
 export function stampNpcLocationsOnMove(state: GameState, fromLocation: string, toLocation: string): GameState {
   const companions = new Set(companionRecords(state).map((m) => m.npcId));
   const hereBefore = new Set(presentNpcRecords({ ...state, currentLocation: fromLocation }).map((m) => m.npcId));
@@ -225,7 +213,6 @@ export function stampNpcLocationsOnMove(state: GameState, fromLocation: string, 
   });
   return next.every((m, i) => m === memories[i]) ? state : { ...state, npcMemories: next };
 }
-
 export function openingCastRecords(state: GameState): NpcMemory[] {
   const ids = state.openingEstablishment?.castNpcIds ?? [];
   const memories = state.npcMemories ?? [];
@@ -233,11 +220,9 @@ export function openingCastRecords(state: GameState): NpcMemory[] {
     .map((id) => memories.find((m) => m.npcId === id))
     .filter((m): m is NpcMemory => !!m);
 }
-
 export function isMetNpc(m: NpcMemory): boolean {
   return m.met === true || !!m.introSpoken || (m.meetCount ?? 0) > 0;
 }
-
 export function syncNpcPresence(memories: NpcMemory[], state: GameState): NpcMemory[] {
   const here = new Set(presentNpcRecords({ ...state, npcMemories: memories }).map((m) => m.npcId));
   return memories.map((m) => ({ ...m, present: here.has(m.npcId) }));
