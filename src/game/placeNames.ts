@@ -6,11 +6,12 @@
  * the card text for the writer. A description the engine does not know keeps its own words.
  */
 import type { GameState } from './types';
-import { hubsForBibleId, placeCardFor, type OutdoorHub } from './outdoorHubs';
+import { hubsForBibleId, type OutdoorHub } from './outdoorHubs';
 import { playerFacingLocation, underwayHereLabel } from './locationName';
 import { dungeonRoomPlace } from './places';
 import { isInteriorPlace } from './placeAuthority';
 import { dungeonRoomWays } from './dungeonCard';
+import { placeExits } from './placeRegistry';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
@@ -156,7 +157,7 @@ export function openingPlaceRecord(
 }
 
 /**
- * The exits of HERE: the location sheet when it has them, else the place card. On a trip: its two ends.
+ * The exits of HERE: the place record (placeExits). On a trip: its two ends.
  * In a dungeon room: the room's own ways on, not the exits of the place the dungeon sits under.
  */
 export function exitPlaceNames(state: GameState): string[] {
@@ -165,8 +166,7 @@ export function exitPlaceNames(state: GameState): string[] {
     const ways = dungeonRoomWays(state);
     if (ways) return ways;
   }
-  const sheet = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
-  return sheet.length ? sheet : placeCardFor(state, playerFacingLocation(state))?.exits ?? [];
+  return placeExits(state, playerFacingLocation(state));
 }
 
 /**

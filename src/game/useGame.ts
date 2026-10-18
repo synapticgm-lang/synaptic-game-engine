@@ -323,6 +323,7 @@ import {
   hubsForBibleId,
   hubLinkedQuestCount,
 } from './outdoorHubs';
+import { applyWriterNewPlaces, ensurePlaceOnMap, newPlacesFromWriterPayload } from './placeRegistry';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { harvestNarrativePeople, scrubInventedGeography } from './narrativeHarvest';
@@ -440,6 +441,7 @@ import {
   logApiLatency,
   logErrorStack,
 } from '@/services/telemetryService';
+import { logWriterTurn } from '@/services/writerTurnLog';
 import type { Session } from '@supabase/supabase-js';
 import { simulateMerchantTurn } from './gameEngine';
 import {
@@ -2888,6 +2890,8 @@ export function useGame() {
       liveCurrent = syncSheetToMovedHere(liveCurrent, hereAtTurnStart);
       if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {
         liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
+        // q50-MAP2 — arrival at a place with no record (or seed stub without exits).
+        liveCurrent = ensurePlaceOnMap(liveCurrent, liveCurrent.currentLocation, hereBeforeMove);
       }
       // 28i — dungeon card turn (live parity with the harness).
       const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
@@ -3018,6 +3022,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
       const gmStartTime = performance.now();
+      const turnRequestId = crypto.randomUUID();
       const writerTierForBudget = resolveWriterTierForTurn(settingsRef.current.subscriptionTier ?? 'free');
       const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent, { writerTier: writerTierForBudget });
       debugLogger.record('INFO', 'GM proxy budget', {
@@ -3145,6 +3150,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         };
       }
 
+      // q50-MAP2 — structured newPlaces only (never prose). Validate + register before accept.
+      liveCurrent = applyWriterNewPlaces(liveCurrent, newPlacesFromWriterPayload(result.text));
+      stateRef.current = liveCurrent;
+
       // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
       // Never swap a real GM beat for a stitched / canned line.
       // 08c Free MUD: receipt is enough — no writer turn.
@@ -3231,6 +3240,28 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             result = { ...result, text: gated.prose };
           }
         }
+        // q57-AIPSRV — one writer_turn ai_traffic row (fire-and-forget; Free MUD / authored book skip this block).
+        logWriterTurn({
+          saveId: liveCurrent.saveId,
+          turnRequestId,
+          turn: liveCurrent.turn,
+          playerInput: sanitizedInput,
+          finalText: result.text,
+          firstDraft: writerTurn.firstDraft,
+          writerPacket: gmPlayerPayload,
+          bibleId: liveCurrent.campaignBibleId,
+          engineMode: liveCurrent.engineMode,
+          buildStamp: liveCurrent.runManifest?.buildStamp ?? null,
+          gate: {
+            outcome: writerTurn.outcome,
+            problems: writerTurn.problems,
+            remaining: writerTurn.remaining,
+            repairs: (writerTurn.repairs?.length ?? 0) + (writerTurn.answerRepair ? 1 : 0),
+            draftRetry: Boolean(writerTurn.draftRetry),
+            fightRetry: Boolean(writerTurn.fightRetry),
+          },
+          state: liveCurrent,
+        });
       }
 
       const gmLatency = Math.round(performance.now() - gmStartTime);
@@ -3249,7 +3280,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         engineMode: liveCurrent.engineMode,
         playerInput: sanitizedInput,
         aiResponse: result.text,
-        extra: { snapshotGist: compactTrafficGist(liveCurrent) },
+        extra: { snapshotGist: compactTrafficGist(liveCurrent), turnRequestId },
       });
       if (result.rolls?.length) {
         logRollResults(
@@ -5420,7 +5451,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       },
       bible
     );
-    const newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
+    let newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
       withUpdatedHookArc(
         ensureCampaignContract(
           {
@@ -5452,6 +5483,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setBusy(true);
     setError(null);
     try {
+      // q50-MAP2 — opening HERE on the place record with hub-graph exits (no atlas / discovered write).
+      newState = ensurePlaceOnMap(newState, newState.currentLocation);
       // Stitch first — page 1 is a committed card scene. GM continues that lock.
       const stitchText = stitchOpeningScene(newState);
       const openingTurnEarly = newState.turn + 1;
@@ -6174,6 +6207,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         addToast(SAVE_REPAIR_TOAST, 'info');
         recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
       }
+      recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
       setState(recovered);
       stateRef.current = recovered;
       bindSessionImageCache(recovered.saveId);
@@ -6504,6 +6538,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         const lastActive = saved.lastUpdated || (useCloud ? cloudTs : 0);
         recovered = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
+        recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.

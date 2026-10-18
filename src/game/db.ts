@@ -2,6 +2,7 @@ import type { GameState, Settings } from './types';
 import { createDefaultSettings, isPlayableSave } from './defaults';
 import { syncContainerOccupancy } from './inventory';
 import { applySaveRepair } from './saveMigration';
+import { ensurePlaceOnMap } from './placeRegistry';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { saveFileProblem } from './schemas';
 import { normalizeOfferedActionKeys } from './sceneAffordances';
@@ -41,7 +42,8 @@ export async function loadGame(): Promise<GameState | null> {
             return;
           }
           const repaired = applySaveRepair(state);
-          const normalized = normalizeOfferedActionKeys(repaired.state);
+          const registered = ensurePlaceOnMap(repaired.state, repaired.state.currentLocation);
+          const normalized = normalizeOfferedActionKeys(registered);
           if (repaired.dirty || normalized !== repaired.state) {
             await saveGame(normalized);
           }

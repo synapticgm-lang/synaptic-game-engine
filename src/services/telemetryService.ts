@@ -89,7 +89,8 @@ function mapProvider(raw?: string | null): string {
   return 'Gemini';
 }
 
-function mapEngineMode(raw?: string | null): string {
+/** Exported for writer_turn rows (q57-AIPSRV) so engine_mode matches callGm traffic. */
+export function mapEngineMode(raw?: string | null): string {
   const m = (raw || engineMode || 'litrpg').toLowerCase();
   if (m === 'dnd' || m === 'tabletop') return 'tabletop';
   if (m === 'pyoa') return 'PYOA';
