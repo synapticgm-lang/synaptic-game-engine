@@ -1,10 +1,11 @@
 /**
  * Watched browser AI-player (4 flagships × T10).
  * Real React sendAction in a visible Chrome tab. Player-brain is OpenRouter
- * google/gemini-2.5-pro. Never closes Chrome / never kills chrome.exe.
+ * (default deepseek/deepseek-v4-pro). Never closes Chrome / never kills chrome.exe.
  *
  * BANNER: Do not run a quality T10 on Flash. Flash is not the judge.
- * Default / documented model is google/gemini-2.5-pro via OpenRouter.
+ * Default: deepseek/deepseek-v4-pro. Alternative: qwen/qwen3-235b-a22b-2507.
+ * Override with AI_PLAYER_MODEL. Restricted providers set testerOnly.
  *
  * ONE Synaptic tab for the whole run. Login, all four bibles, and any
  * retry reuse that same page. New Game is Start New Game / reload in
@@ -12,17 +13,18 @@
  * older sequential leftovers get closed; Gemini tabs stay.
  *
  * Stop after 2 consecutive same GM / tester loop / last-resort reprint.
- * Writes REVIEW.md in the run folder. Does not start another T10. Chrome stays open.
+ * Writes REVIEW.md + play-log.md in the run folder. Does not start another T10. Chrome stays open.
  *
  *   npm run ai-player-smoke
  *   npm run ai-player-t10
+ *   node scripts/ai-player-browser/run.mjs --persona dungeon-diver --goal 'max out dungeon levels'
  *
  * Env (.env / .env.local, gitignored):
  *   AI_PLAYER_EMAIL / AI_PLAYER_PASSWORD
  *   OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY
  *   AI_PLAYER_HOST=http://127.0.0.1:5173
  *   AI_PLAYER_CDP=http://127.0.0.1:9222
- *   AI_PLAYER_MODEL=google/gemini-2.5-pro
+ *   AI_PLAYER_MODEL=deepseek/deepseek-v4-pro
  */
 import fs from 'fs';
 import path from 'path';
@@ -43,7 +45,12 @@ import {
   waitNewGmBeat,
   waitOpeningReady,
 } from './gameTab.mjs';
-import { askOpenRouterPlayer, openRouterKey, openRouterPlayerModel } from './openRouterPlayer.mjs';
+import {
+  askOpenRouterPlayer,
+  openRouterKey,
+  openRouterPlayerModel,
+  testerOnlyForModel,
+} from './openRouterPlayer.mjs';
 import {
   detectRepeatSignal,
   filterAnsweredHallChips,
@@ -55,6 +62,24 @@ import {
   pickNonHallChip,
   shouldForceTypedHumanMove,
 } from './humanJudge.mjs';
+import {
+  buildPersonaPromptBlock,
+  loadPersona,
+  parsePersonaArgs,
+} from './persona.mjs';
+import { appendPlayLog, ensurePlayLog, formatPlayLogLine } from './playLog.mjs';
+import {
+  AI_TESTER_EMAIL,
+  buildTesterMeta,
+  makeAiTestSaveId,
+} from './testerMeta.mjs';
+import {
+  createTesterSessionClient,
+  pressThumbWithReason,
+  thumbReasonFromDecision,
+  verifyFeedbackRow,
+} from './feedbackVerify.mjs';
+import { licenceFor } from './playerLicence.mjs';
 
 loadProjectEnv();
 
@@ -69,8 +94,11 @@ const fromTurn = Number(args.find((a) => a.startsWith('--from='))?.slice('--from
 const turns = Number(process.env.AI_PLAYER_TURNS || (smoke ? 1 : 10));
 const host = (process.env.AI_PLAYER_HOST || 'http://127.0.0.1:5173').replace(/\/$/, '');
 const cdp = process.env.AI_PLAYER_CDP || 'http://127.0.0.1:9222';
-const email = (process.env.AI_PLAYER_EMAIL || '').trim();
+const email = (process.env.AI_PLAYER_EMAIL || AI_TESTER_EMAIL).trim();
 const password = process.env.AI_PLAYER_PASSWORD || '';
+const personaArgs = parsePersonaArgs(args);
+const persona = loadPersona(personaArgs);
+const personaBlock = buildPersonaPromptBlock(persona);
 const onlyBible = args.find((a) => a.startsWith('--bible='))?.slice('--bible='.length);
 if (onlyBible && PYOA_EXCLUDED.has(onlyBible)) {
   console.error(`[ai-player] ${onlyBible} plays as PYOA — PYOA is never tested.`);
@@ -85,6 +113,19 @@ const bibles = smoke
 const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 const runDir = path.join(ROOT, 'scripts', 'ai-player-browser', 'runs', stamp);
 fs.mkdirSync(runDir, { recursive: true });
+const runSaveId = makeAiTestSaveId(stamp);
+const playerModelAtStart = openRouterPlayerModel();
+const playerLicenceAtStart = licenceFor(playerModelAtStart);
+const testerOnlyAtStart = testerOnlyForModel(playerModelAtStart);
+const testerMeta = buildTesterMeta({ model: playerModelAtStart, licence: playerLicenceAtStart });
+const playLogPath = path.join(runDir, 'play-log.md');
+ensurePlayLog(playLogPath, [
+  `Persona: ${persona.id}`,
+  persona.goal ? `Goal: ${persona.goal}` : '',
+  `Model: ${playerModelAtStart} (${playerLicenceAtStart})`,
+  `Save id: ${runSaveId}`,
+  testerOnlyAtStart ? 'testerOnly: true (restricted licence)' : '',
+].filter(Boolean));
 
 function appendJsonl(file, obj) {
   fs.appendFileSync(file, `${JSON.stringify(obj)}\n`, 'utf8');
@@ -183,6 +224,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
   const jsonl = path.join(folder, 'turns.jsonl');
   const transcript = path.join(folder, 'transcript.md');
   const resumeThis = Boolean(opts.resume);
+  const feedbackClient = opts.feedbackClient || null;
+  const saveId = opts.saveId || runSaveId;
   appendMd(transcript, `# ${spec.title} (${bibleId})\n\nHost: ${host}${resumeThis ? '\n\nResume: live tab (no New Game)\n' : '\n'}`);
 
   let snap;
@@ -316,8 +359,11 @@ async function playBible(gamePage, bibleId, opts = {}) {
       gmStory,
       lastGm: skipSelfCompare ? '' : prevGm,
       hallAnswered,
+      personaBlock,
+      goal: persona.goal,
     });
     if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly)) {
+      decision.kind = 'free';
       decision.action_kind = 'type';
       if (!decision.action || liveChips.includes(decision.action)
         || /inspect the panel|look around|who are you|ask what they want/i.test(decision.action)) {
@@ -328,22 +374,26 @@ async function playBible(gamePage, bibleId, opts = {}) {
       decision.thumb = 'down';
       if (hardJudge.nonsense_options) decision.nonsense_options = true;
       const why = `human_floor:${hardJudge.reasons.join(',')}`;
-      decision.comment = [decision.comment, why].filter(Boolean).join(' · ').slice(0, 500);
+      decision.reason = [decision.reason || decision.comment, why].filter(Boolean).join(' · ').slice(0, 500);
+      decision.comment = decision.reason;
     }
     if (decision.action && !liveChips.includes(decision.action)
       && /who are you|ask what they want/i.test(decision.action)
       && (hallAnswered.who || hallAnswered.want)) {
       const nextChip = pickNonHallChip(snap.chips, hallAnswered, recentActions);
       if (nextChip && !shouldForceTypedHumanMove([nextChip], recentActions, chipsOnly)) {
+        decision.kind = 'chip';
         decision.action_kind = 'chip';
         decision.action = nextChip;
       } else if (!spec.chipsOnly) {
+        decision.kind = 'free';
         decision.action_kind = 'type';
         decision.action = naturalTypedFallback(recentActions);
       }
     }
 
     if (!liveChips.length && !spec.chipsOnly) {
+      decision.kind = 'free';
       decision.action_kind = 'type';
       if (!decision.action || /who are you|ask what they want|what happens if i refuse|inspect the panel/i.test(decision.action)) {
         decision.action = naturalTypedFallback(recentActions);
@@ -351,11 +401,13 @@ async function playBible(gamePage, bibleId, opts = {}) {
     }
 
     let comment = [
-      decision.comment,
-      decision.note && `note: ${decision.note}`,
+      thumbReasonFromDecision(decision),
+      decision.note && decision.note !== thumbReasonFromDecision(decision) ? `note: ${decision.note}` : '',
       decision.nonsense_options ? 'flag:nonsense_options' : '',
       decision.future_leak ? 'flag:future_leak' : '',
     ].filter(Boolean).join(' · ').slice(0, 500);
+    decision.reason = comment;
+    decision.comment = comment;
 
     const repeat = skipSelfCompare
       ? { hit: false, reasons: [] }
@@ -377,11 +429,21 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     if (consecutiveRepeats >= 2) {
       await gamePage.bringToFront();
-      const thumb = await submitThumb(gamePage, { thumb: 'down', comment });
+      const thumb = await pressThumbWithReason(
+        gamePage,
+        { thumb: 'down', reason: comment },
+        submitThumb,
+      );
+      let verified = { verified: false, reason: 'no_client' };
+      if (feedbackClient) {
+        verified = await verifyFeedbackRow(feedbackClient, { saveId, turn });
+      }
+      console.log(`[ai-player] T${turn} feedback verified=${verified.verified}`);
       appendJsonl(jsonl, {
         event: 'repeat_abort',
         turn,
         bibleId,
+        saveId,
         consecutiveRepeats,
         reasons: repeat.reasons,
         gmStory,
@@ -390,13 +452,25 @@ async function playBible(gamePage, bibleId, opts = {}) {
         lastPlayer,
         thumb: 'down',
         thumbOk: thumb.ok,
+        thumbReason: thumb.reason || comment,
+        verified: verified.verified,
+        meta: testerMeta,
       });
       appendMd(
         transcript,
         `## T${turn} (not acted)\n\n**GM:** ${gmStory || '(none)'}\n\n`
         + `Thumb: down · ${comment}\n\n`
+        + `Verified: ${verified.verified}\n\n`
         + `_Stopped: 2 consecutive GM repeats at T${turn}. Did not click the next chip._\n\n`,
       );
+      appendPlayLog(playLogPath, formatPlayLogLine({
+        turn,
+        wanted: persona.goal || 'stop the repeat',
+        did: '(not acted — repeat abort)',
+        happened: gmStory || '(none)',
+        thumb: 'down',
+        reason: comment,
+      }));
       writeRepeatReview(runDir, {
         bibleId,
         stopBeforeTurn: turn,
@@ -428,13 +502,24 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     await gamePage.bringToFront();
     await dismissAutoFightTip(gamePage);
-    const thumb = await submitThumb(gamePage, { thumb: decision.thumb, comment });
+
+    // Thumb the judged GM beat (reason as comment), verify the row, then act in the real UI.
+    const thumb = await pressThumbWithReason(
+      gamePage,
+      { thumb: decision.thumb, reason: comment },
+      submitThumb,
+    );
+    let verified = { verified: false, reason: 'no_client' };
+    if (feedbackClient) {
+      verified = await verifyFeedbackRow(feedbackClient, { saveId, turn });
+    }
+    console.log(`[ai-player] T${turn} feedback verified=${verified.verified}`);
     const afterThumb = await readGameSnapshot(gamePage);
 
     const nameChip = snap.chips.some((c) => /give (your |them your )?name/i.test(c));
     const alreadyGaveNameChip = /give (your |them your )?name/i.test(lastPlayer);
     let acted = '';
-    let kind = decision.action_kind;
+    let kind = decision.action_kind || (decision.kind === 'free' ? 'type' : 'chip');
     if (chipsOnly) kind = 'chip';
     const fightLive = afterThumb.autoFightReady || snap.autoFightReady
       || afterThumb.combatChips || snap.combatChips;
@@ -492,17 +577,25 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const newGmBubble = Boolean(next.newGmBubble)
       || Number(next.gmStoryCount || 0) > Number(afterThumb.gmStoryCount || 0);
     const nextStory = storyForBrain(next);
+    let finalThumb = decision.thumb;
+    let finalReason = thumb.reason || comment;
     if (waitTimedOut) {
-      decision.thumb = 'down';
-      decision.nonsense_options = true;
-      comment = [comment, 'timeout: no new GM story'].filter(Boolean).join(' · ').slice(0, 500);
-      await submitThumb(gamePage, { thumb: 'down', comment: 'timeout: no new GM story' });
+      finalThumb = 'down';
+      finalReason = [comment, 'timeout: no new GM story'].filter(Boolean).join(' · ').slice(0, 500);
+      await pressThumbWithReason(
+        gamePage,
+        { thumb: 'down', reason: 'timeout: no new GM story' },
+        submitThumb,
+      );
     }
+
     appendJsonl(jsonl, {
       event: waitTimedOut ? 'turn_timeout' : 'turn',
       turn,
       bibleId,
+      saveId,
       actionKind: kind,
+      kind: decision.kind || (kind === 'type' ? 'free' : 'chip'),
       autoFightSelector: AUTO_FIGHT_SELECTOR,
       autoFightFired: kind === 'auto_fight',
       playerAction: acted,
@@ -514,16 +607,20 @@ async function playBible(gamePage, bibleId, opts = {}) {
       feedbacks: next.feedbacks,
       prevFeedbacks: afterThumb.feedbacks,
       newGmBubble,
-      thumb: waitTimedOut ? 'down' : decision.thumb,
+      thumb: finalThumb,
       thumbOk: thumb.ok,
+      thumbReason: finalReason,
+      verified: verified.verified,
       waitTimedOut,
       continuedAfterTimeout: waitTimedOut,
+      meta: testerMeta,
       gemini: {
         note: decision.note,
         nonsense_options: decision.nonsense_options,
         future_leak: decision.future_leak,
         raw_ok: decision.raw_ok,
         model: decision.model || openRouterPlayerModel(),
+        reason: finalReason,
       },
     });
     appendMd(
@@ -531,8 +628,17 @@ async function playBible(gamePage, bibleId, opts = {}) {
       `## T${turn}\n\n**You:** ${acted} (${kind})\n\n**GM:** ${nextStory || '(no new story — not faked)'}\n\n`
       + `New GM bubble: ${newGmBubble ? 'yes' : 'NO'} · count ${afterThumb.gmStoryCount || 0}→${next.gmStoryCount || 0}`
       + `${waitTimedOut ? ' · WAIT TIMEOUT (continuing)' : ''}\n\n`
-      + `Thumb: ${waitTimedOut ? 'down' : decision.thumb} · ${comment}\n\n`,
+      + `Thumb: ${finalThumb} · ${finalReason}\n\n`
+      + `Verified: ${verified.verified}\n\n`,
     );
+    appendPlayLog(playLogPath, formatPlayLogLine({
+      turn,
+      wanted: persona.goal || decision.note || 'progress the scene',
+      did: acted,
+      happened: nextStory || gmStory || '(none)',
+      thumb: finalThumb,
+      reason: finalReason,
+    }));
     lastPlayer = acted;
     recentActions.push(acted);
     lastJudgedGm = gmStory;
@@ -566,12 +672,17 @@ async function main() {
   }
 
   const playerModel = openRouterPlayerModel();
-  console.log(`AI_PLAYER banner: judge=${playerModel} — do not run quality T10 on Flash; Flash is not the judge.`);
+  const playerLicence = licenceFor(playerModel);
+  const testerOnly = testerOnlyForModel(playerModel);
+  console.log(
+    `AI_PLAYER banner: model=${playerModel} licence=${playerLicence}`
+    + `${testerOnly ? ' testerOnly=true' : ''} — never default to Flash; Flash is not the judge.`,
+  );
   if (!loginCheck && isFlashJudgeModel(playerModel) && process.env.AI_PLAYER_ALLOW_FLASH !== '1') {
     console.log(JSON.stringify({
       ok: false,
       blocked: 'flash_is_not_the_judge',
-      message: 'Quality T10 must use google/gemini-2.5-pro. Flash is not the judge. Set AI_PLAYER_ALLOW_FLASH=1 only for a throwaway smoke.',
+      message: 'Never default to Flash. Default is deepseek/deepseek-v4-pro (alt qwen/qwen3-235b-a22b-2507). Set AI_PLAYER_ALLOW_FLASH=1 only for a throwaway smoke.',
       playerModel,
     }, null, 2));
     process.exit(2);
@@ -584,6 +695,27 @@ async function main() {
       message: 'OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY) is missing. Add it to .env — do not invent a key.',
     }, null, 2));
     process.exit(2);
+  }
+
+  let feedbackClient = null;
+  if (!loginCheck) {
+    const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '').replace(/\/$/, '');
+    const anonKey = (
+      process.env.VITE_SUPABASE_ANON_KEY
+      || process.env.SUPABASE_ANON_KEY
+      || ''
+    ).trim();
+    const session = await createTesterSessionClient({
+      url,
+      anonKey,
+      email,
+      password,
+    });
+    if (session.ok) {
+      feedbackClient = session.client;
+    } else {
+      console.log(`[ai-player] feedback verify session skipped: ${session.error}`);
+    }
   }
 
   let browser;
@@ -611,8 +743,14 @@ async function main() {
     turns,
     bibles,
     runDir,
+    saveId: runSaveId,
+    persona: { id: persona.id, goal: persona.goal },
     playerBrain: 'openrouter',
-    playerModel: openRouterPlayerModel(),
+    playerModel,
+    playerLicence,
+    testerOnly,
+    meta: testerMeta,
+    playLog: playLogPath,
     results: [],
     abortedRepeat: false,
     chromeLeftOpen: true,
@@ -628,7 +766,11 @@ async function main() {
       for (const bibleId of bibles) {
         console.log(`AI_PLAYER start ${bibleId}`);
         try {
-          const result = await playBible(gamePage, bibleId, { resume });
+          const result = await playBible(gamePage, bibleId, {
+            resume,
+            feedbackClient,
+            saveId: runSaveId,
+          });
           summary.results.push(result);
           if (result.stoppedRepeat) {
             summary.abortedRepeat = true;

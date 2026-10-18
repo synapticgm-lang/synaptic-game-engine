@@ -251,10 +251,13 @@ function parseLabeledLines(raw) {
   const nonsense = grab('NONSENSE', 'NONSENSE_OPTIONS');
   const leak = grab('LEAK', 'FUTURE_LEAK');
   if (!action && !thumbRaw && !kindRaw) return null;
+  const free = /type|free/i.test(kindRaw);
   return {
-    action_kind: /type/i.test(kindRaw) ? 'type' : 'chip',
+    kind: free ? 'free' : 'chip',
+    action_kind: free ? 'type' : 'chip',
     action,
     thumb: /down|neg/i.test(thumbRaw) ? 'down' : 'up',
+    reason: note,
     comment: note,
     nonsense_options: truthyFlag(nonsense),
     future_leak: truthyFlag(leak),
@@ -289,28 +292,36 @@ export function parsePlaytesterDecision(raw, { chips = [] } = {}) {
   const parsed = extractJsonObject(cleaned) || parseLabeledLines(cleaned);
   if (!parsed || typeof parsed !== 'object') {
     return {
+      kind: 'chip',
       action_kind: 'chip',
       action: chips[0] || '',
       thumb: 'down',
-      comment: 'Gemini reply was not parseable.',
+      reason: 'Player reply was not parseable.',
+      comment: 'Player reply was not parseable.',
       nonsense_options: false,
       future_leak: false,
-      note: 'unparseable Gemini reply',
+      note: 'unparseable player reply',
       raw_ok: false,
     };
   }
-  const kind = parsed.action_kind === 'type' || /type/i.test(String(parsed.action_kind || ''))
-    ? 'type'
-    : 'chip';
+  const kindRaw = String(parsed.kind || parsed.action_kind || '').toLowerCase();
+  const isFree = kindRaw === 'free' || kindRaw === 'type' || /^(free|type)$/i.test(kindRaw);
+  const kind = isFree ? 'free' : 'chip';
+  const action_kind = isFree ? 'type' : 'chip';
   const thumb = parsed.thumb === 'down' || parsed.thumb === 'negative' || /down|neg/i.test(String(parsed.thumb || ''))
     ? 'down'
     : 'up';
-  const note = String(parsed.note || parsed.comment || '').trim();
+  const reason = String(
+    parsed.reason || parsed.comment || parsed.note || '',
+  ).trim().slice(0, 500);
+  const note = String(parsed.note || reason).trim();
   return {
-    action_kind: kind,
+    kind,
+    action_kind,
     action: resolveAction(parsed.action || parsed.chip || parsed.type, chips),
     thumb,
-    comment: String(parsed.comment || note).trim().slice(0, 500),
+    reason,
+    comment: reason,
     nonsense_options: truthyFlag(parsed.nonsense_options),
     future_leak: truthyFlag(parsed.future_leak),
     note: note.slice(0, 240),
@@ -329,6 +340,8 @@ export function buildPlaytesterPrompt({
   gmStory,
   lastGm,
   hallAnswered,
+  personaBlock,
+  goal,
 }) {
   const chipList = chips.length
     ? chips.map((c, i) => `${i + 1}. ${c}`).join('\n')
@@ -338,7 +351,7 @@ export function buildPlaytesterPrompt({
     ? history.map((line, i) => `${i + 1}. ${line}`).join('\n')
     : lastPlayer || '(opening / none)';
   const typeRule = chipsOnly
-    ? 'This book is chips-only. NEVER choose type. Pick a chip you have not already used this scene if you can.'
+    ? 'This book is chips-only. NEVER choose free. Pick a chip you have not already used this scene if you can.'
     : [
       'Play like a person in this room, not a test script.',
       'Type a short natural line whenever chips are empty, leftover junk, or the same inspect/look you already did.',
@@ -351,9 +364,16 @@ export function buildPlaytesterPrompt({
     answered.want ? 'Want already answered — IGNORE Ask what they want chips; type something new.' : '',
     answered.refuse ? 'Refuse already answered — IGNORE refuse chips.' : '',
   ].filter(Boolean).join(' ');
+  const personaLines = [];
+  if (personaBlock) personaLines.push(String(personaBlock).trim());
+  else if (goal) {
+    personaLines.push(`LIFE-GOAL: ${String(goal).trim()}`);
+    personaLines.push('Plan every move toward that life-goal.');
+  }
   return [
-    'You are a person playing this browser RPG. Gemini Pro is the player so the moves stay human — not chip mash, not Fate autoplay.',
+    'You are a person playing this browser RPG. Moves stay human — not chip mash, not Fate autoplay.',
     `Campaign: ${bibleId} (${modeLabel}). Player turn ${turn} (after this GM beat).`,
+    ...personaLines,
     typeRule,
     'Do not pick Fate\'s Pick unless every other chip is nonsense.',
     'MUST vote THUMB down and NONSENSE yes if the GM beat is any of: system text as story ("They have the name Jax.", "The room waited.", name telegrams); looping stitch / same paragraph as last GM; combat resolving inside a talk beat; STATUS/XP/Quest Unlocked chrome with no real story paragraph; already-told who/want reprint; a wordy padded essay a human would skim; dull filler with no HERE / action / spoken want.',
@@ -381,6 +401,6 @@ export function buildPlaytesterPrompt({
     'NONSENSE: no',
     'LEAK: no',
     'NOTE: one short sentence',
-    'KIND is chip or type. ACTION is a chip number, exact chip text, or a typed line.',
-  ].join('\n');
+    'KIND is chip or free (legacy: type). ACTION is a chip number, exact chip text, or a typed line.',
+  ].filter((line) => line != null).join('\n');
 }

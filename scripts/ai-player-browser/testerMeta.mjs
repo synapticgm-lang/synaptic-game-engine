@@ -2,7 +2,10 @@
  * Tags every AI-tester turn / feedback row for exclusion and dataset filters.
  */
 import { randomUUID } from 'crypto';
-import { playerLicenceForModel } from './playerLicence.mjs';
+import { licenceFor } from './playerLicence.mjs';
+
+/** Dedicated AI-player tester account (ensure-tester.mjs). */
+export const AI_TESTER_EMAIL = 'ai-player@synapticgm.com';
 
 export const AI_TESTER_INPUT_AUTHOR = 'ai-player';
 
@@ -22,7 +25,7 @@ export function isAiTestSaveId(saveId) {
  */
 export function buildTesterMeta(opts = {}) {
   const model = String(opts.model || '').trim();
-  const licence = opts.licence || playerLicenceForModel(model);
+  const licence = opts.licence || licenceFor(model);
   return {
     source: `ai-tester:${model}`,
     input_author: AI_TESTER_INPUT_AUTHOR,

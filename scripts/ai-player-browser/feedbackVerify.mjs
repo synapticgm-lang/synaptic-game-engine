@@ -11,12 +11,42 @@ import { createClient } from '@supabase/supabase-js';
  */
 export function thumbReasonFromDecision(decision = {}) {
   const reason = String(
-    decision.thumb_reason
+    decision.reason
+    || decision.thumb_reason
     || decision.comment
     || decision.note
     || '',
   ).replace(/\s+/g, ' ').trim();
   return reason.slice(0, 500);
+}
+
+/**
+ * Args for gameTab.submitThumb — reason is always the comment.
+ * @param {{ thumb?: string, reason?: string, comment?: string, note?: string }} decision
+ */
+export function submitThumbArgs(decision = {}) {
+  const thumb = decision.thumb === 'down' || decision.thumb === 'negative'
+    ? 'down'
+    : 'up';
+  return {
+    thumb,
+    comment: thumbReasonFromDecision(decision),
+  };
+}
+
+/**
+ * Press the thumb in the real UI with the player's reason as the comment.
+ * @param {unknown} page
+ * @param {object} decision
+ * @param {(page: unknown, opts: { thumb: string, comment: string }) => Promise<{ ok: boolean }>} submitThumbFn
+ */
+export async function pressThumbWithReason(page, decision, submitThumbFn) {
+  if (typeof submitThumbFn !== 'function') {
+    throw new Error('pressThumbWithReason requires submitThumbFn');
+  }
+  const args = submitThumbArgs(decision);
+  const result = await submitThumbFn(page, args);
+  return { ...result, ...args, reason: args.comment };
 }
 
 /**
@@ -50,7 +80,7 @@ export async function createTesterSessionClient(opts) {
 
 /**
  * Verify a feedback row exists for this save + turn (tester's own RLS row).
- * @param {import('@supabase/supabase-js').SupabaseClient} client
+ * @param {*} client Supabase client (or test double with from().select().eq()…)
  * @param {{ saveId: string, turn: number, feedbackType?: 'positive'|'negative' }} query
  */
 export async function verifyFeedbackRow(client, query = {}) {
@@ -62,6 +92,10 @@ export async function verifyFeedbackRow(client, query = {}) {
   if (!saveId || !Number.isFinite(turn)) {
     return { verified: false, reason: 'bad_query' };
   }
+  if (typeof client.from !== 'function') {
+    return { verified: false, reason: 'no_client' };
+  }
+
   let q = client
     .from('gm_response_feedback')
     .select('id, save_id, turn_number, feedback_type, comment')
@@ -71,7 +105,14 @@ export async function verifyFeedbackRow(client, query = {}) {
   if (query.feedbackType) {
     q = q.eq('feedback_type', query.feedbackType);
   }
-  const { data, error } = await q.maybeSingle?.() ?? await q;
+
+  let data;
+  let error;
+  if (typeof q.maybeSingle === 'function') {
+    ({ data, error } = await q.maybeSingle());
+  } else {
+    ({ data, error } = await q);
+  }
   if (error) {
     return { verified: false, reason: error.message || 'query_error', error };
   }
