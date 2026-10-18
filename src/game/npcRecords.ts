@@ -166,8 +166,6 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
         for (let k = 0; k < folks.length; k++) party.push(folks[k]!);
       }
     }
-    if (enc.kind === 'thugs') party.push('the thugs');
-    if (enc.kind === 'undead') party.push('the restless dead');
     for (let i = 0; i < party.length; i++) {
       const name = party[i]!.trim();
       if (!name) continue;

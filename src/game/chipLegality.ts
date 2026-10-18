@@ -52,7 +52,7 @@ export function roadMeetingPeople(state: GameState): string | null {
   return ROAD_PEOPLE_KINDS.has(enc.kind) ? roadMeetingLabel(enc.kind) : null;
 }
 
-/** Everyone who could answer: the presence record, companions, the live foe, the opening cast. */
+/** Everyone who could answer: the presence record, companions, the live foe, the opening cast, a road meeting. */
 export function peopleHere(state: GameState): string[] {
   const out = new Map<string, string>();
   const add = (n?: string | null) => {
@@ -65,6 +65,7 @@ export function peopleHere(state: GameState): string[] {
   add(state.activeEncounter?.name);
   if (openingCastStillHere(state)) openingCastNames(state).forEach(add);
   (state.sceneFacts?.anonymousRoles ?? []).forEach(add);
+  add(roadMeetingPeople(state));
   return [...out.values()];
 }
 
