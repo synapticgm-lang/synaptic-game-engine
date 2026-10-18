@@ -2,13 +2,23 @@
  * OpenRouter player-brain (decisions / thumbs / notes).
  * Game still plays in visible Chrome. Never logs the API key.
  *
- * HARD: default judge is google/gemini-2.5-pro.
- * Do not run a quality T10 on Flash. Flash is not the judge.
+ * Default player: deepseek/deepseek-v4-pro.
+ * Documented alternative: qwen/qwen3-235b-a22b-2507.
+ * Override with AI_PLAYER_MODEL.
+ *
+ * HARD: never default to Flash. Flash is not the judge.
+ * A restricted-licence model sets testerOnly true on the run.
  */
 import { buildPlaytesterPrompt, parsePlaytesterDecision } from './geminiTab.mjs';
+import { licenceFor } from './playerLicence.mjs';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-export const DEFAULT_PLAYER_MODEL = 'google/gemini-2.5-pro';
+
+/** Default open-licence player (never Flash). */
+export const DEFAULT_PLAYER_MODEL = 'deepseek/deepseek-v4-pro';
+
+/** Documented alternative open player. */
+export const ALT_PLAYER_MODEL = 'qwen/qwen3-235b-a22b-2507';
 
 export function openRouterKey() {
   return (
@@ -19,13 +29,23 @@ export function openRouterKey() {
   ).trim();
 }
 
+/**
+ * Resolve the player model. Empty env → DEFAULT (deepseek), never Flash.
+ * AI_PLAYER_MODEL overrides.
+ */
 export function openRouterPlayerModel() {
-  const raw = (process.env.AI_PLAYER_MODEL || process.env.GEMINI_REVIEW_MODEL || DEFAULT_PLAYER_MODEL).trim();
-  if (!raw || raw === 'gemini-2.5-pro' || raw === 'gemini-3.1-pro-preview') {
-    return DEFAULT_PLAYER_MODEL;
+  const raw = String(process.env.AI_PLAYER_MODEL || '').trim();
+  if (!raw) return DEFAULT_PLAYER_MODEL;
+  if (raw === 'gemini-2.5-pro' || raw === 'gemini-3.1-pro-preview') {
+    return 'google/gemini-2.5-pro';
   }
   if (raw === 'gemini-2.5-flash') return 'google/gemini-2.5-flash';
   return raw;
+}
+
+/** Restricted providers → tester-only runs (never training). */
+export function testerOnlyForModel(model = openRouterPlayerModel()) {
+  return licenceFor(model) === 'restricted';
 }
 
 function extractText(payload) {
@@ -41,17 +61,18 @@ function extractText(payload) {
 
 const SYSTEM = [
   'You are a person playing a browser text RPG — curious, impatient, and a bit stubborn.',
-  'We pay for Gemini Pro so you play like a human, not a chip masher or a JSON parser.',
+  'Honour your PERSONA and LIFE-GOAL when they are set. Prefer moves that advance the goal.',
   'Return ONE JSON object and nothing else.',
-  'Required keys: action_kind, action, thumb, comment, nonsense_options, future_leak, note.',
-  'action_kind is "chip" or "type". thumb is "up" or "down".',
-  'nonsense_options and future_leak are booleans.',
+  'Required keys: action, kind, thumb, reason.',
+  'kind is "chip" or "free". thumb is "up" or "down". reason is one short line.',
+  'action is an exact chip label or a short free-text line.',
+  'Optional legacy keys action_kind (chip|type) and comment still parse.',
   'Play like a human in the room: speak to people, ask a follow-up, try a doorway, wait, leave, or do the next obvious thing.',
   'Chips are optional shortcuts. Do NOT prefer a chip just because it exists.',
   'If the only chip is Inspect the panel (or the same inspect/look you already used), TYPE a short natural line instead.',
   'Never click the same inspect/look/wait chip twice in a row. Never mash one leftover chip.',
   'Typed lines should sound like a player, 1–2 short sentences, in this scene — not a robot label.',
-  'MUST vote thumb=down and nonsense_options=true if the GM beat is any of:',
+  'MUST vote thumb=down if the GM beat is any of:',
   'system text as story (They have the name Jax. / The room waited. / name telegrams);',
   'looping stitch or the same paragraph as the last GM;',
   'combat resolving inside a talk/dialogue beat;',
@@ -68,11 +89,27 @@ export function buildJsonPlaytesterPrompt(packet) {
     buildPlaytesterPrompt(packet),
     '',
     'Ignore the 6-line KIND format. Return ONLY this JSON object:',
-    '{"action_kind":"chip","action":"exact chip or typed line","thumb":"up","comment":"short why","nonsense_options":false,"future_leak":false,"note":"one line"}',
+    '{"action":"exact chip or typed line","kind":"chip","thumb":"up","reason":"one line why"}',
   ].join('\n');
 }
 
-async function postChat(apiKey, user) {
+/** Completion cap. Reasoning tokens count against max_tokens on OpenRouter, so 400 cut the JSON off (finish_reason=length). */
+export const PLAYER_MAX_TOKENS = 4000;
+
+/** Minimal repair prompt: only the broken reply and the shape, not the whole packet again. */
+export function buildRepairPrompt(badText, chips = []) {
+  const sample = String(badText || '').replace(/\s+/g, ' ').trim().slice(0, 300) || '(empty)';
+  const chipLine = chips.length ? chips.map((c, i) => `${i + 1}. ${c}`).join(' | ') : '(no chips)';
+  return [
+    'Your last reply could not be parsed as JSON. It was:',
+    sample,
+    `Chips: ${chipLine}`,
+    'Reply with ONLY one JSON object, no other text:',
+    '{"action":"exact chip or typed line","kind":"chip or free","thumb":"up or down","reason":"one short line"}',
+  ].join('\n');
+}
+
+async function postChat(apiKey, user, { messages } = {}) {
   const model = openRouterPlayerModel();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 120000);
@@ -89,12 +126,12 @@ async function postChat(apiKey, user) {
       signal: controller.signal,
       body: JSON.stringify({
         model,
-        messages: [
+        messages: messages || [
           { role: 'system', content: SYSTEM },
           { role: 'user', content: user },
         ],
         temperature: 0.85,
-        max_tokens: 400,
+        max_tokens: PLAYER_MAX_TOKENS,
         reasoning: { effort: 'medium', exclude: true },
         response_format: { type: 'json_object' },
       }),
@@ -112,33 +149,78 @@ async function postChat(apiKey, user) {
   } catch {
     throw new Error('OpenRouter returned non-JSON');
   }
-  return extractText(payload);
+  const finish = payload?.choices?.[0]?.finish_reason || null;
+  return { text: extractText(payload), finish };
+}
+
+/**
+ * A reply that still cannot be parsed after the repair is a HARNESS ERROR:
+ * no action, no thumb (never an automatic thumbs-down).
+ */
+export function finishDecision(decision, { model, repaired = false, first = null, second = null } = {}) {
+  const base = { model, testerOnly: testerOnlyForModel(model), repaired };
+  if (decision?.raw_ok) return { ...decision, ...base };
+  return {
+    ...base,
+    raw_ok: false,
+    harnessError: 'unparseable_player_reply',
+    harnessDetail: {
+      finish: [first?.finish || null, second?.finish || null],
+      sample: String(second?.text ?? first?.text ?? '').slice(0, 200),
+    },
+    action: '',
+    kind: null,
+    action_kind: null,
+    thumb: null,
+    reason: '',
+    comment: '',
+    note: 'harness error: unparseable player reply after one repair',
+    nonsense_options: false,
+    future_leak: false,
+  };
 }
 
 export async function askOpenRouterPlayer(packet) {
   const apiKey = openRouterKey();
+  const model = openRouterPlayerModel();
   if (!apiKey) {
     return {
       blocked: 'missing_openrouter_key',
+      kind: 'chip',
       action_kind: 'chip',
       action: '',
       thumb: 'down',
+      reason: '',
       comment: '',
       nonsense_options: false,
       future_leak: false,
       note: 'OPENROUTER_API_KEY missing',
       raw_ok: false,
+      model,
+      testerOnly: testerOnlyForModel(model),
     };
   }
   const chips = packet.chips || [];
-  let text = await postChat(apiKey, buildJsonPlaytesterPrompt(packet));
-  let decision = parsePlaytesterDecision(text, { chips });
+  const prompt = buildJsonPlaytesterPrompt(packet);
+  const first = await postChat(apiKey, prompt);
+  let decision = parsePlaytesterDecision(first.text, { chips });
+  let repaired = false;
+  let second = null;
   if (!decision.raw_ok) {
-    text = await postChat(
-      apiKey,
-      `${buildJsonPlaytesterPrompt(packet)}\n\nYour last reply was not valid JSON. Reply with only the JSON object.`,
-    );
-    decision = parsePlaytesterDecision(text, { chips });
+    // One minimal, targeted repair: show the model its own broken reply and the shape.
+    second = await postChat(apiKey, '', {
+      messages: [
+        { role: 'system', content: 'Return ONE JSON object and nothing else.' },
+        { role: 'user', content: buildRepairPrompt(first.text, chips) },
+      ],
+    });
+    decision = parsePlaytesterDecision(second.text, { chips });
+    repaired = decision.raw_ok;
   }
-  return { ...decision, model: openRouterPlayerModel() };
+  return finishDecision(decision, {
+    model,
+    repaired,
+    first,
+    second,
+  });
 }
