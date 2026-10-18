@@ -28,6 +28,7 @@ import {
 } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
+import { placeExitRows } from './placeRegistry';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
@@ -61,6 +62,13 @@ export function wayOutMovesPlayer(state: GameState, label: string): boolean {
   if (!here || hub.name.toLowerCase() === here.toLowerCase()) return false;
   if (isTripHere(state, hub.name)) return false;
   return mapGapBetween(state, here, hub.name).steps > 0;
+}
+
+/** Sheet / hub id when the row has one; otherwise the place label. */
+function exitEntityId(row: { id?: string; label?: string }): string {
+  const id = (row.id ?? '').trim();
+  if (id) return id;
+  return (row.label ?? '').trim();
 }
 /** q45b-SLOT — one final-pad slot. Free-input chips are not a slot. */
 export type SlotCategory = 'move' | 'talk' | 'act' | 'scene';
@@ -323,13 +331,14 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       visitedKeys.add((n.name ?? '').toLowerCase());
     }
   }
-  const sheetExits = state.locationSheet?.exits ?? [];
-  if (sheetExits.length) {
-    for (let i = 0; i < sheetExits.length; i++) {
-      const ex = sheetExits[i]!;
-      const dest = (ex.label ?? '').trim();
+  // q50e — MOVE exits from placeExitRows (record, or the same seed with no write).
+  const recordExits = placeExitRows(state, state.currentLocation);
+  if (recordExits.length) {
+    for (let i = 0; i < recordExits.length; i++) {
+      const row = recordExits[i]!;
+      const dest = row.label;
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = ex.id || `exit:${dest}`;
+      const entityId = exitEntityId(row);
       const chip = `Travel toward ${dest}`;
       all.push({
         label: chip,
@@ -350,7 +359,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       if (!label) continue;
       const target = (e.target ?? label).trim();
       if (target && !isPlaceOpenForExit(state, target)) continue;
-      const entityId = `exit:${target}`;
+      const entityId = target;
       all.push({
         label,
         actionId: `exit:${entityId}:travel`,
@@ -374,7 +383,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     for (let i = 0; i < names.length; i++) {
       const dest = (names[i] ?? '').trim();
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = `exit:${dest}`;
+      const entityId = dest;
       all.push({
         label: `Travel toward ${dest}`,
         actionId: `exit:${entityId}:travel`,
@@ -675,14 +684,15 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     else act.push(row);
   }
   if (!move.length) {
-  const sheet = state.locationSheet?.exits ?? [];
+  // q50e — MOVE refill from placeExitRows (same ids as the MOVE chips).
+  const recordExits = placeExitRows(state, state.currentLocation);
   const raw: T[] = [];
-  if (sheet.length) {
-    for (let i = 0; i < sheet.length; i++) {
-      const ex = sheet[i]!;
-      const dest = (ex.label ?? '').trim();
+  if (recordExits.length) {
+    for (let i = 0; i < recordExits.length; i++) {
+      const row = recordExits[i]!;
+      const dest = row.label;
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = ex.id || `exit:${dest}`;
+      const entityId = exitEntityId(row);
       raw.push({
         label: `Travel toward ${dest}`,
         actionId: `exit:${entityId}:travel`,
@@ -705,11 +715,11 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (target && !isPlaceOpenForExit(state, target)) continue;
       raw.push({
         label,
-        actionId: `exit:exit:${target}:travel`,
+        actionId: `exit:${target}:travel`,
         kind: 'exit',
         slotKind: 'exit',
         slotCategory: 'move',
-        entityId: `exit:${target}`,
+        entityId: target,
         required: true,
         rank: 70,
       } as T);
@@ -722,11 +732,11 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       raw.push({
         label: `Travel toward ${dest}`,
-        actionId: `exit:exit:${dest}:travel`,
+        actionId: `exit:${dest}:travel`,
         kind: 'exit',
         slotKind: 'exit',
         slotCategory: 'move',
-        entityId: `exit:${dest}`,
+        entityId: dest,
         required: true,
         rank: 70,
       } as T);

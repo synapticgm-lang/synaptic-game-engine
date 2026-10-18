@@ -323,6 +323,7 @@ import {
   hubsForBibleId,
   hubLinkedQuestCount,
 } from './outdoorHubs';
+import { applyWriterNewPlaces, ensurePlaceOnMap, newPlacesFromWriterPayload } from './placeRegistry';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { harvestNarrativePeople, scrubInventedGeography } from './narrativeHarvest';
@@ -2889,6 +2890,8 @@ export function useGame() {
       liveCurrent = syncSheetToMovedHere(liveCurrent, hereAtTurnStart);
       if (liveCurrent.currentLocation && liveCurrent.currentLocation !== hereBeforeMove) {
         liveCurrent = applyPresentTrimOnTravel(liveCurrent, hereBeforeMove, liveCurrent.currentLocation);
+        // q50-MAP2 — arrival at a place with no record (or seed stub without exits).
+        liveCurrent = ensurePlaceOnMap(liveCurrent, liveCurrent.currentLocation, hereBeforeMove);
       }
       // 28i — dungeon card turn (live parity with the harness).
       const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
@@ -3146,6 +3149,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           systemLog: [...mudTurnLive.receiptLines, ...(result.systemLog ?? [])],
         };
       }
+
+      // q50-MAP2 — structured newPlaces only (never prose). Validate + register before accept.
+      liveCurrent = applyWriterNewPlaces(liveCurrent, newPlacesFromWriterPayload(result.text));
+      stateRef.current = liveCurrent;
 
       // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
       // Never swap a real GM beat for a stitched / canned line.
@@ -5444,7 +5451,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       },
       bible
     );
-    const newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
+    let newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
       withUpdatedHookArc(
         ensureCampaignContract(
           {
@@ -5476,6 +5483,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setBusy(true);
     setError(null);
     try {
+      // q50-MAP2 — opening HERE on the place record with hub-graph exits (no atlas / discovered write).
+      newState = ensurePlaceOnMap(newState, newState.currentLocation);
       // Stitch first — page 1 is a committed card scene. GM continues that lock.
       const stitchText = stitchOpeningScene(newState);
       const openingTurnEarly = newState.turn + 1;
@@ -6198,6 +6207,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         addToast(SAVE_REPAIR_TOAST, 'info');
         recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
       }
+      recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
       setState(recovered);
       stateRef.current = recovered;
       bindSessionImageCache(recovered.saveId);
@@ -6528,6 +6538,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         const lastActive = saved.lastUpdated || (useCloud ? cloudTs : 0);
         recovered = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
+        recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.

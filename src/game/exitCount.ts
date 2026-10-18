@@ -4,9 +4,9 @@
  * PLACES line of the info sheet. A wrong count goes back for the one-sentence repair with the right list.
  */
 import type { GameState } from './types';
-import { sheetExitNames } from './infoSheet';
 import { playerFacingLocation } from './locationName';
 import { hubsForBibleId } from './outdoorHubs';
+import { exitPlaceNames } from './placeNames';
 
 const NUM: Record<string, number> = {
   one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, both: 2, single: 1, only: 1,
@@ -40,8 +40,9 @@ export function handedExits(state: GameState): string[] | null {
     const listed = receipt.match(/\blead(?:s)? to\s+(.+)$/i)?.[1];
     if (listed) return [...new Set(listed.split(/,\s*(?:and\s+)?|\s+and\s+/).map(norm).filter(Boolean))];
   }
-  const sheet = sheetExitNames(state);
-  return sheet.length ? sheet : null;
+  // q50-MAP2 — exitPlaceNames → placeExits for HERE; trip ends while underway.
+  const exits = exitPlaceNames(state).map(norm).filter(Boolean);
+  return exits.length ? exits : null;
 }
 
 /**
