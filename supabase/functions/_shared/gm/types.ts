@@ -152,6 +152,16 @@ export interface RoundFoeState {
   maxHp: number;
   initiative: number;
   conditions: CombatCondition[];
+  /** Distance from the PC in feet (SRD 5.2.1). Unset = within 5 ft. */
+  distanceFt?: number;
+}
+
+/** TT-X1 — remaining action / bonus / movement / reaction after the PC's turn. */
+export interface PcCombatEconomy {
+  actionAvailable: boolean;
+  bonusAvailable: boolean;
+  movementFt: number;
+  reactionAvailable: boolean;
 }
 
 export interface RoundCombatState {
@@ -161,6 +171,10 @@ export interface RoundCombatState {
   pcInitiative: number;
   foes: RoundFoeState[];
   pcConditions: CombatCondition[];
+  /** TT-X1 — remaining action economy after the PC's last turn. */
+  pcEconomy?: PcCombatEconomy;
+  /** TT-X1 — wound/distance facts for the prose fact gate. */
+  statusFacts?: Array<{ gateName: string; wound: string; distanceFt: number }>;
   /** Dodge: attacks against the PC have Disadvantage until its next turn. */
   dodging?: boolean;
   /** Hide: the Stealth total a foe's Perception must meet to find the PC. */
