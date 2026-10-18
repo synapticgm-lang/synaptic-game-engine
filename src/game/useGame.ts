@@ -225,7 +225,7 @@ import {
   cameraAllowsInteriorMap,
   enforceCameraOnProse,
   enforceCameraOnState,
-  honestLocationName,
+  resolveNextLocation,
 } from './travelAuthority';
 import {
   seedDungeonState,
@@ -1801,8 +1801,9 @@ export function useGame() {
         }
       );
     }
-    const nextLocation =
-      isGenericMapPlace(previous.currentLocation) && place ? place : previous.currentLocation;
+    const nextLocation = resolveNextLocation(previous, {
+      proposed: isGenericMapPlace(previous.currentLocation) && place ? place : previous.currentLocation,
+    });
     const questsChanged = JSON.stringify(quests) !== JSON.stringify(previous.quests ?? []);
     const mapChanged = areaMap !== previous.activeDungeon;
     const locationChanged = nextLocation !== previous.currentLocation;
@@ -4231,19 +4232,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
 
       const harvested = extractNamedPlaces(
-        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
+        `${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
       );
       const mapName = mapAnchorName(resolvedLocation, harvested);
-      let finalLocationName =
-        honestLocationName(
-          workingState,
-          isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
-          sanitizedInput
-        ) ?? resolvedLocation;
-      // 29u — travel committed HERE before the writer (ground between, or the arrival); prose never moves it.
-      if (travelCommit?.handled && travelCommit.state.currentLocation) {
-        finalLocationName = travelCommit.state.currentLocation;
-      }
+      let finalLocationName = resolveNextLocation(workingState, {
+        travelCommit,
+        proposed: isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
+      });
       const landmarks = isInteriorPlace(mapName || finalLocationName)
         && cameraAllowsInteriorMap(workingState, sanitizedInput)
         ? harvested
