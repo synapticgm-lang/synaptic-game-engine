@@ -440,6 +440,7 @@ import {
   logApiLatency,
   logErrorStack,
 } from '@/services/telemetryService';
+import { logWriterTurn } from '@/services/writerTurnLog';
 import type { Session } from '@supabase/supabase-js';
 import { simulateMerchantTurn } from './gameEngine';
 import {
@@ -3018,6 +3019,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
       const gmStartTime = performance.now();
+      const turnRequestId = crypto.randomUUID();
       const writerTierForBudget = resolveWriterTierForTurn(settingsRef.current.subscriptionTier ?? 'free');
       const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent, { writerTier: writerTierForBudget });
       debugLogger.record('INFO', 'GM proxy budget', {
@@ -3231,6 +3233,28 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             result = { ...result, text: gated.prose };
           }
         }
+        // q57-AIPSRV — one writer_turn ai_traffic row (fire-and-forget; Free MUD / authored book skip this block).
+        logWriterTurn({
+          saveId: liveCurrent.saveId,
+          turnRequestId,
+          turn: liveCurrent.turn,
+          playerInput: sanitizedInput,
+          finalText: result.text,
+          firstDraft: writerTurn.firstDraft,
+          writerPacket: gmPlayerPayload,
+          bibleId: liveCurrent.campaignBibleId,
+          engineMode: liveCurrent.engineMode,
+          buildStamp: liveCurrent.runManifest?.buildStamp ?? null,
+          gate: {
+            outcome: writerTurn.outcome,
+            problems: writerTurn.problems,
+            remaining: writerTurn.remaining,
+            repairs: (writerTurn.repairs?.length ?? 0) + (writerTurn.answerRepair ? 1 : 0),
+            draftRetry: Boolean(writerTurn.draftRetry),
+            fightRetry: Boolean(writerTurn.fightRetry),
+          },
+          state: liveCurrent,
+        });
       }
 
       const gmLatency = Math.round(performance.now() - gmStartTime);
@@ -3249,7 +3273,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         engineMode: liveCurrent.engineMode,
         playerInput: sanitizedInput,
         aiResponse: result.text,
-        extra: { snapshotGist: compactTrafficGist(liveCurrent) },
+        extra: { snapshotGist: compactTrafficGist(liveCurrent), turnRequestId },
       });
       if (result.rolls?.length) {
         logRollResults(
