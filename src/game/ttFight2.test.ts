@@ -9,6 +9,9 @@ import {
   tickEncounterTerminal,
 } from './encounterTerminalFsm';
 import { applyOptionCooldown, type OptionCooldownChip } from './sceneAffordances';
+import { applyTabletopSheet, resolveSheet } from './tabletop/characterBuild';
+// Tabletop registers its SRD round rules on load, as in the app (engineFight/arcDirector import it).
+import './tabletop/roundFight';
 import type { GameState } from './types';
 
 type Tape = { picked: string; before: GameState };
@@ -45,7 +48,8 @@ function lit(over: Partial<GameState> = {}): GameState {
 }
 
 describe('q50b-FIGHT2 cap resolves through resolveForcedOutcome', () => {
-  it('(a) T58–T66 talk/read picks reach the cap and clear via max_engaged', () => {
+  it('(a) T58-T66 talk/read picks do not advance the clock; the cap resolves on the next combat turn', () => {
+    // John 18:58: idle/talk picks don't advance the clock; the cap resolves only through each mode's own rules.
     const t58 = load('mega19054-t58.json');
     const t65 = load('mega19054-t65.json');
     const t66 = load('mega19054-t66.json');
@@ -54,7 +58,8 @@ describe('q50b-FIGHT2 cap resolves through resolveForcedOutcome', () => {
       ...t58.before,
       activeEncounter: initEncounterTerminal(t58.before.activeEncounter!, t58.before),
     } as GameState;
-    const picks = [
+    const start = state.activeEncounter?.engagedTurnCount ?? 0;
+    const talkRead = [
       t58.picked,
       t65.picked,
       t66.picked,
@@ -63,31 +68,42 @@ describe('q50b-FIGHT2 cap resolves through resolveForcedOutcome', () => {
       'Analyze the clerk',
       'Talk to the clerk',
       'Ask the guard',
-    ];
-    let cleared = false;
+    ].filter((p) => !/attack|flee|parley|fight|strike/i.test(p || ''));
     for (let i = 0; i < 14; i++) {
-      const tick = tickEncounterTerminal(state, picks[i % picks.length]!);
-      if (tick.forcedTerminal) {
+      const tick = tickEncounterTerminal(state, talkRead[i % talkRead.length]!);
+      expect(tick.forcedTerminal).toBe(false);
+      expect(tick.cleared).toBeUndefined();
+      state = tick.state;
+      expect(state.activeEncounter?.engagedTurnCount ?? 0).toBe(start);
+    }
+    expect(state.activeEncounter).toBeTruthy();
+    // Combat turns advance the clock until the cap resolves the fight through the mode's own outcome path.
+    let cleared = false;
+    for (let i = 0; i < 12; i++) {
+      const tick = tickEncounterTerminal(state, 'Press the attack');
+      if (tick.forcedTerminal || tick.cleared) {
         cleared = true;
-        expect(tick.cleared?.resolutionReason).toBe('max_engaged');
+        expect(tick.cleared?.resolutionReason).toMatch(/^(max_engaged|enemy_hp_zero|player_hp_zero)$/);
         expect(tick.state.activeEncounter).toBeNull();
-        expect((tick.cleared?.engagedTurnCount ?? 0)).toBeGreaterThanOrEqual(8);
         break;
       }
       state = tick.state;
-      expect(state.activeEncounter?.engagedTurnCount ?? 0).toBeLessThan(10);
+      expect(state.activeEncounter?.engagedTurnCount ?? 0).toBeLessThanOrEqual(8);
     }
     expect(cleared).toBe(true);
   });
 
-  it('(a) T66 before-state clears on a talk pick at the cap', () => {
+  it('(a) T66 before-state at the cap: a talk pick does not clear; a combat turn resolves via max_engaged', () => {
     const t66 = load('mega19054-t66.json');
     const before = t66.before as GameState;
     expect(before.activeEncounter?.engagedTurnCount).toBe(8);
-    const tick = tickEncounterTerminal(before, t66.picked || 'Analyze the clerk');
-    expect(tick.forcedTerminal).toBe(true);
-    expect(tick.cleared?.resolutionReason).toBe('max_engaged');
-    expect(tick.state.activeEncounter).toBeNull();
+    const talk = tickEncounterTerminal(before, 'Talk to the clerk');
+    expect(talk.forcedTerminal).toBe(false);
+    expect(talk.cleared).toBeUndefined();
+    expect(talk.state.activeEncounter?.engagedTurnCount).toBe(8);
+    const fight = tickEncounterTerminal(talk.state, 'Try to flee');
+    expect(fight.state.activeEncounter).toBeNull();
+    expect(fight.cleared?.resolutionReason).toMatch(/^(max_engaged|flee_success|player_hp_zero)$/);
   });
 
   it('(b) 5 idle loot picks leave engagedTurnCount unchanged and pay no XP', () => {
@@ -192,7 +208,18 @@ describe('q50b-FIGHT2 cap resolves through resolveForcedOutcome', () => {
 
   it('(d) tabletop: at the cap the SRD round runs (the foe acts)', () => {
     // SRD 5.2.1 Combat Step by Step (WotC CC BY 4.0): each participant takes a turn in a round.
-    const base = createInitialState(undefined, 'dnd') as GameState;
+    // A real built fighter (inn-book builder), so the SRD round reads a whole sheet (skills, expertise, kit).
+    const s0 = createInitialState(undefined, 'dnd') as GameState;
+    const sheet = resolveSheet({
+      classId: 'fighter',
+      speciesId: 'human',
+      backgroundId: 'soldier',
+      method: 'point-buy',
+      baseScores: { STR: 15, DEX: 13, CON: 14, INT: 8, WIS: 12, CHA: 10 },
+      kitId: 'A',
+      source: 'build',
+    });
+    const base = applyTabletopSheet({ ...s0, engineMode: 'dnd' }, sheet);
     const s = {
       ...base,
       engineMode: 'dnd' as const,
@@ -209,12 +236,6 @@ describe('q50b-FIGHT2 cap resolves through resolveForcedOutcome', () => {
         hp: 24,
         maxHp: 24,
         level: 1,
-        srd: {
-          ...(base.character.srd ?? {}),
-          speciesId: 'human',
-          classId: 'fighter',
-          level: 1,
-        },
       },
       activeEncounter: initEncounterTerminal(
         {

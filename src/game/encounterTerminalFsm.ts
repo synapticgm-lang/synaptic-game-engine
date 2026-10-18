@@ -4,6 +4,7 @@
  */
 
 import type { ActiveEncounter, EngineMode, GameState } from './types';
+import { fightRoundRulesFor, registerFightRoundRules } from './fightRoundRules';
 
 export type EncounterPhase = 'pending' | 'engaged' | 'resolving' | 'terminal';
 export type TerminalOutcome =
@@ -152,7 +153,36 @@ export interface TickEncounterResult {
 /** Turns before the same forcedSpawnKey may re-engage after a clear. */
 export const ENCOUNTER_REENGAGE_COOLDOWN = 12;
 
-/** Tick while engaged. q50b-FIGHT2: clock on fight/flee/parley/talk; cap every turn; idle never farms XP. */
+/**
+ * Tick while engaged. John 18:58: idle and talk picks don't advance the fight clock; only fight/flee/parley
+ * (a real combat turn) do. The cap resolves only through each mode's own rules, i.e. on a combat turn.
+ * Idle never farms XP; talk never auto-clears a live fight on the clock alone.
+ */
+/**
+ * A pick that takes a real combat turn under the mode's own rules: fight, flee and parley always do;
+ * each mode adds its own (tabletop: the SRD 5.2.1 round actions, registered by tabletop/roundFight).
+ * Talk and idle picks are never combat turns, so they never advance the fight clock.
+ */
+export function isCombatTurnPick(state: Pick<GameState, 'engineMode'>, input: string): boolean {
+  if (isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input)) return true;
+  return fightRoundRulesFor(state.engineMode).isCombatTurn?.(input) ?? false;
+}
+
+/** LitRPG and story RPG: the foe answers with one swing from its own encounter record (its STR), then the forced outcome. */
+function encounterRecordCapRound(state: GameState, enc: ActiveEncounter): { state: GameState; receipts: string[]; defeated?: boolean } {
+  const swing = Math.max(1, Math.floor((enc.strength ?? 10) / 2));
+  const hpBefore = state.character.hp ?? 0;
+  const hpAfter = Math.max(0, hpBefore - swing);
+  if (hpAfter >= hpBefore) return { state, receipts: [] };
+  return {
+    state: { ...state, character: { ...state.character, hp: hpAfter }, activeEncounter: enc },
+    receipts: [`${enc.name} attacks (−${swing} HP)`],
+    defeated: hpAfter <= 0,
+  };
+}
+registerFightRoundRules('litrpg', { capRound: encounterRecordCapRound });
+registerFightRoundRules('rpg', { capRound: encounterRecordCapRound });
+
 export function tickEncounterTerminal(
   state: GameState,
   playerInput: string,
@@ -176,9 +206,10 @@ export function tickEncounterTerminal(
   if (opts?.parleySucceeded) return commitClear(state, enc, 'parleyResolved', 'parley_success');
 
   const idle = isEncounterIdleIntent(input);
+  const combatTurn = isCombatTurnPick(state, input);
   enc = {
     ...enc,
-    engagedTurnCount: idle ? (enc.engagedTurnCount ?? 0) : (enc.engagedTurnCount ?? 0) + 1,
+    engagedTurnCount: combatTurn ? (enc.engagedTurnCount ?? 0) + 1 : (enc.engagedTurnCount ?? 0),
     phase: 'engaged',
   };
 
@@ -202,30 +233,16 @@ export function tickEncounterTerminal(
 
   let nextState: GameState = { ...state, activeEncounter: enc };
   if ((enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
-    if (idle) return { state: nextState, receipts, forcedTerminal: false };
-    const mode = state.engineMode;
-    if (mode === 'dnd') {
-      // SRD 5.2.1 Combat Step by Step (WotC CC BY 4.0): "The game organizes the chaos of combat into a cycle of rounds and turns… each participant… takes a turn." Foe acts via roundFight (lazy require; no new damage formula).
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { resolveRoundFight } = require('./tabletop/roundFight') as typeof import('./tabletop/roundFight');
-        const round = resolveRoundFight(nextState, nextState, enc, input || 'Dodge', {});
-        if (round) {
-          receipts.push(...round.receipts);
-          nextState = round.state;
-          if (!nextState.activeEncounter) return { state: nextState, receipts, forcedTerminal: true };
-          enc = initEncounterTerminal(nextState.activeEncounter, nextState);
-        }
-      } catch { /* edge has no roundFight */ }
-    } else if (mode === 'litrpg' || mode === 'rpg') {
-      const swing = Math.max(1, Math.floor((enc.strength ?? 10) / 2));
-      const hpBefore = nextState.character.hp ?? 0;
-      const hpAfter = Math.max(0, hpBefore - swing);
-      if (hpAfter < hpBefore) {
-        nextState = { ...nextState, character: { ...nextState.character, hp: hpAfter }, activeEncounter: enc };
-        receipts.push(`${enc.name} attacks (−${swing} HP)`);
-      }
-      if (hpAfter <= 0) return commitClear(nextState, enc, 'defeat', 'player_hp_zero');
+    // Idle or talk at the cap: no combat turn was taken, so nothing resolves (the threat stays live).
+    if (!combatTurn) return { state: nextState, receipts, forcedTerminal: false };
+    // The foe's turn by the mode's own rules (tabletop: SRD 5.2.1 round via roundFight; LitRPG/RPG: encounter record).
+    const round = fightRoundRulesFor(state.engineMode).capRound?.(nextState, enc, input) ?? null;
+    if (round) {
+      receipts.push(...round.receipts);
+      nextState = round.state;
+      if (!nextState.activeEncounter) return { state: nextState, receipts, forcedTerminal: true };
+      enc = initEncounterTerminal(nextState.activeEncounter, nextState);
+      if (round.defeated) return commitClear(nextState, enc, 'defeat', 'player_hp_zero');
     }
     return commitClear(nextState, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }
