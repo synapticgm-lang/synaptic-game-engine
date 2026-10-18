@@ -284,8 +284,18 @@ interface Ctx {
   freeCast?: boolean;
   freeCastUsed?: boolean;
   featuresUsed: { rage?: boolean; innateSorcery?: boolean; layOnHands?: number };
-  /** Once-a-turn flags for the PC's current turn. */
-  turn: { attacked?: boolean; frenzy?: boolean; colossus?: boolean; cleave?: boolean; rageStarted?: boolean };
+  /** Once-a-turn flags for the PC's current turn (incl. TT-X1 action economy). */
+  turn: {
+    attacked?: boolean;
+    frenzy?: boolean;
+    colossus?: boolean;
+    cleave?: boolean;
+    rageStarted?: boolean;
+    movementLeft?: number;
+    actionUsed?: boolean;
+    bonusUsed?: boolean;
+    reactionUsed?: boolean;
+  };
 }
 
 /** Optional table rules the round obeys (from the player's house rules). */
@@ -704,6 +714,29 @@ function dropCondition(ctx: Ctx, target: RoundFoeState, name: string) {
 }
 
 function strike(ctx: Ctx, target: RoundFoeState, s: Strike) {
+  // TT-X1 / SRD 5.2.1: ranges and movement are in feet. A melee strike closes to within 5 ft, spending Speed.
+  if (!s.ranged) {
+    const dist = target.distanceFt ?? 5;
+    if (dist > 5) {
+      const left = ctx.turn.movementLeft ?? 0;
+      const need = dist - 5;
+      const spent = need > left ? left : need;
+      const nextDist = dist - spent < 5 ? 5 : dist - spent;
+      ctx.turn.movementLeft = left - spent;
+      const foes: RoundFoeState[] = [];
+      for (let i = 0; i < ctx.combat.foes.length; i++) {
+        const f = ctx.combat.foes[i]!;
+        foes.push(f.id === target.id ? { ...f, distanceFt: nextDist } : f);
+      }
+      ctx.combat = { ...ctx.combat, foes };
+      for (let fi = 0; fi < foes.length; fi++) {
+        if (foes[fi]!.id === target.id) {
+          target = foes[fi]!;
+          break;
+        }
+      }
+    }
+  }
   const hidden = ctx.combat.hiddenStealth != null;
   const extraAdv: AdvState[] = [];
   if (hidden) extraAdv.push('advantage');
@@ -917,6 +950,7 @@ function bonusStrike(ctx: Ctx) {
   const b = ctx.pc.bonusStrike;
   const target = liveFoes(ctx)[0];
   if (!b || !target || ctx.outcome !== 'ongoing') return;
+  ctx.turn.bonusUsed = true;
   strike(ctx, target, { name: b.name, toHit: b.toHit, dice: b.dice, mod: b.mod, type: b.type, ranged: false, spell: false, cantrip: false });
 }
 
@@ -1049,38 +1083,59 @@ function allyAttack(ctx: Ctx, target: RoundFoeState) {
 
 function pcTurn(ctx: Ctx, action: RoundAction) {
   const pc = ctx.pc;
+  // SRD 5.2.1: Standing up takes half your Speed (round down).
+  let stood = false;
   if (has(ctx.combat.pcConditions, 'Prone') && canAct(ctx.combat.pcConditions, pc.conditions)) {
     ctx.combat = { ...ctx.combat, pcConditions: ctx.combat.pcConditions.filter((c) => c.name !== 'Prone') };
     push(ctx, { k: 'act', who: pc.name, action: 'stand', detail: 'stands up (half your Speed)', pc: true });
+    stood = true;
   }
   ctx.combat = { ...ctx.combat, dodging: false, ...(ctx.combat.reckless ? { reckless: false } : {}), ...(ctx.combat.deflectUsed ? { deflectUsed: false } : {}) };
-  ctx.turn = {};
+  const speed = speedZero(ctx.combat.pcConditions, pc.conditions) ? 0 : pc.speed;
+  ctx.turn = { movementLeft: stood ? Math.floor(speed / 2) : speed };
   if (!canAct(ctx.combat.pcConditions, pc.conditions)) {
     push(ctx, { k: 'act', who: pc.name, action: 'skip', detail: `cannot act (${ctx.combat.pcConditions.map((c) => c.name).join(', ')})`, pc: true });
     endRageIfIdle(ctx);
+    ctx.combat = {
+      ...ctx.combat,
+      pcEconomy: {
+        actionAvailable: true,
+        bonusAvailable: true,
+        movementFt: ctx.turn.movementLeft ?? 0,
+        reactionAvailable: true,
+      },
+    };
     endTurnOf(ctx, 'pc');
     return;
   }
   useFeatures(ctx, action);
   const target = liveFoes(ctx)[0];
-  const foesFastest = Math.max(0, ...liveFoes(ctx).filter((f) => !speedZero(f.conditions)).map((f) => ctx.blocks[f.id]!.speed - (has(f.conditions, 'Slowed') ? 10 : 0)));
   switch (action) {
     case 'attack':
+      ctx.turn.actionUsed = true;
       if (target) pcAttack(ctx, target, false);
       if (target) bonusStrike(ctx);
       break;
     case 'cast': {
+      ctx.turn.actionUsed = true;
       const sp = ctx.spell && ctx.spell !== pc.cantrip?.name ? pc.spells?.find((s) => s.name === ctx.spell) : undefined;
-      if (sp) pcCast(ctx, sp, sp.def.level > 0 && !ctx.freeCast ? ctx.slotLevel ?? 1 : null, target);
-      else if (target && pc.cantrip) pcAttack(ctx, target, true);
+      if (sp) {
+        if (sp.def.bonusAction) {
+          ctx.turn.actionUsed = false;
+          ctx.turn.bonusUsed = true;
+        }
+        pcCast(ctx, sp, sp.def.level > 0 && !ctx.freeCast ? ctx.slotLevel ?? 1 : null, target);
+      } else if (target && pc.cantrip) pcAttack(ctx, target, true);
       else if (target) pcAttack(ctx, target, false);
       break;
     }
     case 'dodge':
+      ctx.turn.actionUsed = true;
       ctx.combat = { ...ctx.combat, dodging: true };
       push(ctx, { k: 'act', who: pc.name, action: 'dodge', detail: 'attacks against you have Disadvantage until your next turn', pc: true });
       break;
     case 'help':
+      ctx.turn.actionUsed = true;
       if (pc.ally && target) {
         push(ctx, { k: 'act', who: pc.name, action: 'help', detail: `distract ${target.name} so ${pc.ally.name} strikes with Advantage`, pc: true });
         allyAttack(ctx, target);
@@ -1089,6 +1144,7 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       }
       break;
     case 'hide': {
+      ctx.turn.actionUsed = true;
       // SK-3: each sneaker vs each living foe's Passive Perception (SRD has no Group Check). One failure notices.
       const adv = combineAdv(...effects(ctx.combat.pcConditions, pc.conditions).map((e) => e.checks ?? 'normal'));
       const r = rollD20WithAdv(adv, ctx.rng);
@@ -1144,6 +1200,7 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       break;
     }
     case 'item': {
+      ctx.turn.actionUsed = true;
       if (pc.potion) {
         const roll = rollDice(pc.potion.heal, ctx.rng);
         const before = ctx.pcHp;
@@ -1156,6 +1213,7 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       break;
     }
     case 'disengage': {
+      ctx.turn.actionUsed = true;
       if (speedZero(ctx.combat.pcConditions, pc.conditions)) {
         push(ctx, { k: 'act', who: pc.name, action: 'disengage', detail: 'your Speed is 0; you cannot move away', pc: true });
       } else {
@@ -1165,10 +1223,13 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       break;
     }
     case 'flee': {
+      ctx.turn.actionUsed = true;
       if (speedZero(ctx.combat.pcConditions, pc.conditions)) {
         push(ctx, { k: 'act', who: pc.name, action: 'flee', detail: 'your Speed is 0; you cannot run', pc: true });
         break;
       }
+      // Dash: the rest of your Speed is spent getting clear.
+      ctx.turn.movementLeft = 0;
       push(ctx, { k: 'act', who: pc.name, action: 'flee', detail: 'you Dash out of reach; each foe gets an opportunity attack', pc: true });
       for (const f of liveFoes(ctx)) {
         if (ctx.pcHp <= 0) break;
@@ -1179,9 +1240,20 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       break;
     }
     default:
+      ctx.turn.actionUsed = true;
       push(ctx, { k: 'act', who: pc.name, action: 'other', detail: ctx.featuresUsed.layOnHands ? 'no attack this round (Lay On Hands)' : 'no attack this round', pc: true });
   }
   endRageIfIdle(ctx);
+  // TT-X1: stamp remaining action / bonus / movement / reaction for the STATUS block.
+  ctx.combat = {
+    ...ctx.combat,
+    pcEconomy: {
+      actionAvailable: !ctx.turn.actionUsed,
+      bonusAvailable: !ctx.turn.bonusUsed,
+      movementFt: ctx.turn.movementLeft ?? 0,
+      reactionAvailable: !ctx.turn.reactionUsed,
+    },
+  };
   endTurnOf(ctx, 'pc');
 }
 
