@@ -152,10 +152,7 @@ export interface TickEncounterResult {
 /** Turns before the same forcedSpawnKey may re-engage after a clear. */
 export const ENCOUNTER_REENGAGE_COOLDOWN = 12;
 
-/**
- * Tick encounter FSM on accepted player input while engaged.
- * Successful flee/parley/kill clear immediately; caps force terminal.
- */
+/** Tick while engaged. q50b-FIGHT2: clock on fight/flee/parley/talk; cap every turn; idle never farms XP. */
 export function tickEncounterTerminal(
   state: GameState,
   playerInput: string,
@@ -163,7 +160,6 @@ export function tickEncounterTerminal(
     fleeSucceeded?: boolean;
     enemyDead?: boolean;
     playerDead?: boolean;
-    /** Batch F — explicit ledger success (not unearned free-clear). */
     parleySucceeded?: boolean;
   }
 ): TickEncounterResult {
@@ -174,26 +170,15 @@ export function tickEncounterTerminal(
   const receipts: string[] = [];
   const input = playerInput || '';
 
-  if (opts?.playerDead) {
-    return commitClear(state, enc, 'defeat', 'player_hp_zero');
-  }
-  if (opts?.enemyDead || enc.hp <= 0) {
-    return commitClear(state, enc, 'victory', 'enemy_hp_zero');
-  }
-  if (opts?.fleeSucceeded) {
-    return commitClear(state, enc, 'escape', 'flee_success');
-  }
-  if (opts?.parleySucceeded) {
-    return commitClear(state, enc, 'parleyResolved', 'parley_success');
-  }
+  if (opts?.playerDead) return commitClear(state, enc, 'defeat', 'player_hp_zero');
+  if (opts?.enemyDead || enc.hp <= 0) return commitClear(state, enc, 'victory', 'enemy_hp_zero');
+  if (opts?.fleeSucceeded) return commitClear(state, enc, 'escape', 'flee_success');
+  if (opts?.parleySucceeded) return commitClear(state, enc, 'parleyResolved', 'parley_success');
 
   const idle = isEncounterIdleIntent(input);
   enc = {
     ...enc,
-    // Batch G — only fight/flee/parley advance the clear clock; idle loot/scout never farms victory XP.
-    engagedTurnCount: idle
-      ? (enc.engagedTurnCount ?? 0)
-      : (enc.engagedTurnCount ?? 0) + 1,
+    engagedTurnCount: idle ? (enc.engagedTurnCount ?? 0) : (enc.engagedTurnCount ?? 0) + 1,
     phase: 'engaged',
   };
 
@@ -201,39 +186,51 @@ export function tickEncounterTerminal(
     enc = { ...enc, failedFleeCount: (enc.failedFleeCount ?? 0) + 1, caught: true };
     receipts.push(`Flee attempt failed (${enc.failedFleeCount}/${enc.maxFailedFlee})`);
     receipts.push('Caught — fight, parley, or press the attack to resolve');
-    // Batch W — flee cap does not soft-clear; threat stays live on the ledger.
   } else if (isParleyIntent(input)) {
-    // Batch F — park as resolving; success/fail settled from GM prose (not auto-clear).
     enc = { ...enc, phase: 'resolving' };
     receipts.push('Parley in progress — resolve from beat');
   } else if (isAttackIntent(input)) {
-    // Soft HP pressure so long loops still reach victory without ledger combat
     const maxHp = Math.max(1, enc.maxHp || enc.hp || 16);
     const curHp = typeof enc.hp === 'number' && !Number.isNaN(enc.hp) ? enc.hp : maxHp;
     const dmg = Math.max(3, Math.floor(maxHp / Math.max(3, enc.maxEngagedTurns ?? 8)));
-    enc = {
-      ...enc,
-      maxHp,
-      hp: Math.max(0, curHp - dmg),
-    };
+    enc = { ...enc, maxHp, hp: Math.max(0, curHp - dmg) };
     receipts.push(`${enc.name} HP: ${enc.hp}/${maxHp} (−${dmg})`);
-    if (enc.hp <= 0) {
-      return commitClear(state, enc, 'victory', 'enemy_hp_zero');
-    }
+    if (enc.hp <= 0) return commitClear(state, enc, 'victory', 'enemy_hp_zero');
   } else if (idle) {
     receipts.push('Threat still live — idle loot/scout does not clear the encounter');
   }
 
-  const terminalIntent = isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input);
-  if (terminalIntent && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
-    return commitClear(state, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
+  let nextState: GameState = { ...state, activeEncounter: enc };
+  if ((enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
+    if (idle) return { state: nextState, receipts, forcedTerminal: false };
+    const mode = state.engineMode;
+    if (mode === 'dnd') {
+      // SRD 5.2.1 Combat Step by Step (WotC CC BY 4.0): "The game organizes the chaos of combat into a cycle of rounds and turns… each participant… takes a turn." Foe acts via roundFight (lazy require; no new damage formula).
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { resolveRoundFight } = require('./tabletop/roundFight') as typeof import('./tabletop/roundFight');
+        const round = resolveRoundFight(nextState, nextState, enc, input || 'Dodge', {});
+        if (round) {
+          receipts.push(...round.receipts);
+          nextState = round.state;
+          if (!nextState.activeEncounter) return { state: nextState, receipts, forcedTerminal: true };
+          enc = initEncounterTerminal(nextState.activeEncounter, nextState);
+        }
+      } catch { /* edge has no roundFight */ }
+    } else if (mode === 'litrpg' || mode === 'rpg') {
+      const swing = Math.max(1, Math.floor((enc.strength ?? 10) / 2));
+      const hpBefore = nextState.character.hp ?? 0;
+      const hpAfter = Math.max(0, hpBefore - swing);
+      if (hpAfter < hpBefore) {
+        nextState = { ...nextState, character: { ...nextState.character, hp: hpAfter }, activeEncounter: enc };
+        receipts.push(`${enc.name} attacks (−${swing} HP)`);
+      }
+      if (hpAfter <= 0) return commitClear(nextState, enc, 'defeat', 'player_hp_zero');
+    }
+    return commitClear(nextState, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }
 
-  return {
-    state: { ...state, activeEncounter: enc },
-    receipts,
-    forcedTerminal: false,
-  };
+  return { state: nextState, receipts, forcedTerminal: false };
 }
 
 /** Diegetic cues that the foe accepted a truce / stood down (Batch F). */
@@ -416,101 +413,25 @@ export function encounterBlocksTravel(state: GameState): boolean {
   return isEncounterEngaged(state) || !!state.activeEncounter;
 }
 
-// ============================================================================
-// Batch Z Milestone 2 — State-Lock Combat & Travel
-// FSM helpers for ChoiceCompiler pad filtering
-// ============================================================================
-
-/**
- * Can the player travel in the current FSM state?
- * Caught or in combat = NO travel pads.
- */
+/** Batch Z — ChoiceCompiler pad filters. */
 export function canTravelInFsmState(state: GameState): boolean {
   const enc = state.activeEncounter ?? state.pendingEncounter;
-  
-  // Caught: no travel
-  if (enc?.caught) return false;
-  
-  // In combat: no travel
-  if (isEncounterEngaged(state)) return false;
-  
-  // Pending encounter: no travel
-  if (state.sceneFacts?.pendingEncounter) return false;
-  
+  if (enc?.caught || isEncounterEngaged(state) || state.sceneFacts?.pendingEncounter) return false;
   return true;
 }
-
-/**
- * Can the player inspect in the current FSM state?
- * Caught = NO inspection pads (must fight/plead/struggle).
- */
 export function canInspectInFsmState(state: GameState): boolean {
-  const enc = state.activeEncounter ?? state.pendingEncounter;
-  
-  // Caught: no inspect
-  if (enc?.caught) return false;
-  
-  return true;
+  return !(state.activeEncounter ?? state.pendingEncounter)?.caught;
 }
-
-/**
- * Can the player shop/merchant in the current FSM state?
- * In combat = NO shop pads.
- */
 export function canShopInFsmState(state: GameState): boolean {
-  // In combat: no shop
-  if (isEncounterEngaged(state)) return false;
-  
-  return true;
+  return !isEncounterEngaged(state);
 }
-
-/**
- * Get the allowed combat actions for the current FSM state.
- * Caught = only [Attack, Plead, Struggle, Surrender].
- * In combat (not caught) = [Attack, Flee, Parley] (if caps allow).
- * No combat = all actions allowed.
- */
 export function getAllowedCombatActions(state: GameState): {
-  attack: boolean;
-  flee: boolean;
-  parley: boolean;
-  plead: boolean;
-  struggle: boolean;
-  surrender: boolean;
+  attack: boolean; flee: boolean; parley: boolean; plead: boolean; struggle: boolean; surrender: boolean;
 } {
   const enc = state.activeEncounter ?? state.pendingEncounter;
-  
-  // Caught: only desperate actions
-  if (enc?.caught) {
-    return {
-      attack: true,
-      flee: false,
-      parley: false,
-      plead: true,
-      struggle: true,
-      surrender: true,
-    };
-  }
-  
-  // In combat (not caught): combat actions
+  if (enc?.caught) return { attack: true, flee: false, parley: false, plead: true, struggle: true, surrender: true };
   if (enc && isEncounterEngaged(state)) {
-    return {
-      attack: true,
-      flee: fleeAvailable(enc),
-      parley: parleyAvailable(enc),
-      plead: false,
-      struggle: false,
-      surrender: false,
-    };
+    return { attack: true, flee: fleeAvailable(enc), parley: parleyAvailable(enc), plead: false, struggle: false, surrender: false };
   }
-  
-  // No combat: all allowed
-  return {
-    attack: true,
-    flee: true,
-    parley: true,
-    plead: true,
-    struggle: true,
-    surrender: true,
-  };
+  return { attack: true, flee: true, parley: true, plead: true, struggle: true, surrender: true };
 }

@@ -1,20 +1,4 @@
-/**
- * TT-C1 / OPT-1 — options from the engine scene record (mode-agnostic).
- *
- * Slot allocation follows Dendry-style precondition cards ranked by salience
- * (Ian D. Millington; pattern only — not a Dendry port).
- *
- * Mode adapters (same entities, different third actions — OPT-1 / q42-OPT1m):
- * - Tabletop: CheckSpec from checkForAction / SRD 5.2.1 (Wizards of the Coast, CC BY 4.0):
- *   "The DM calls for an ability check when a character attempts an action (other than an
- *   attack) that has a chance of failure. When the outcome is uncertain, the dice determine
- *   the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
- * - LitRPG: skill actions (tier CheckSpec via checkForAction) and system actions on the same
- *   entities (Analyze — System ledger voice; no SRD tag).
- * - Story RPG: standing and contact actions on the same people (contact favour ticks a step).
- *
- * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
- */
+/** TT-C1/OPT-1 scene options (Dendry; SRD 5.2.1 WotC CC BY 4.0). Labels stay plain actions (§4). */
 import type { GameState } from './types';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
@@ -115,16 +99,24 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const enc = state.activeEncounter;
   if (enc && enc.hp > 0) {
     const name = (enc.name ?? 'foe').trim();
-    const label = 'Press the attack';
-    all.push({
-      label,
-      actionId: `fight:foe:${name}:attack`,
-      entityId: `foe:${name}`,
-      slotKind: 'fight',
-      salience: 100,
-      required: true,
-      check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
-    });
+    // q50b-FIGHT2: attack/flee/parley from the encounter record (fleeAvailable/parleyAvailable).
+    const edges = enumerateLegalEdges(state);
+    for (let i = 0; i < edges.length; i++) {
+      const e = edges[i]!;
+      if (e.type !== 'attack' && e.type !== 'flee' && e.type !== 'parley') continue;
+      const label = (e.label ?? '').trim();
+      if (!label) continue;
+      all.push({
+        label,
+        actionId: `fight:foe:${name}:${e.type}`,
+        entityId: `foe:${name}`,
+        slotKind: 'fight',
+        slotCategory: 'scene',
+        salience: e.type === 'attack' ? 100 : e.type === 'flee' ? 99 : 98,
+        required: true,
+        check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
+      });
+    }
   }
   // TT-T1 — scene planner brought an open thread forward (engine record; plain label).
   const forward = forwardThreadAffordance(state);
@@ -590,6 +582,34 @@ export type OptionCooldownChip = {
 /** q45b-SLOT: MOVE, TALK, ACT, SCENE, FREE, then free-input. Empty MOVE is filled from place routes. */
 export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameState, pad: T[]): T[] {
   const mode = state.engineMode;
+  const enc = state.activeEncounter;
+  const liveFight = !!enc && (enc.hp ?? 0) > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal';
+  let work = pad;
+  // q50b-FIGHT2: flee/parley always on the LitRPG/RPG live-fight pad; cooldown never rests them.
+  if (liveFight && mode !== 'dnd') {
+    const foe = (enc!.name ?? 'foe').trim();
+    const have = new Set<string>();
+    for (let i = 0; i < pad.length; i++) {
+      if (pad[i]!.actionId) have.add(pad[i]!.actionId);
+      const low = (pad[i]!.label ?? '').trim().toLowerCase();
+      if (low) have.add('label:' + low);
+    }
+    const edges = enumerateLegalEdges(state);
+    for (let i = 0; i < edges.length; i++) {
+      const e = edges[i]!;
+      if (e.type !== 'attack' && e.type !== 'flee' && e.type !== 'parley') continue;
+      const label = (e.label ?? '').trim();
+      if (!label) continue;
+      const actionId = 'fight:foe:' + foe + ':' + e.type;
+      const low = label.toLowerCase();
+      if (have.has(actionId) || have.has('label:' + low)) continue;
+      have.add(actionId);
+      work = work.concat([{
+        label, actionId, kind: 'affordance', slotKind: 'fight', slotCategory: 'scene',
+        entityId: 'foe:' + foe, required: true, rank: e.type === 'attack' ? 100 : e.type === 'flee' ? 99 : 98,
+      } as T]);
+    }
+  }
   const cd =
     mode === 'litrpg'
       ? REPEAT_COOLDOWN_TURNS.litrpg
@@ -607,13 +627,19 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   const act: T[] = [];
   const scene: T[] = [];
   const freeIn: T[] = [];
+  const fightKeep: T[] = [];
   const seen = new Set<string>();
-  for (let i = 0; i < pad.length; i++) {
-    const chip = pad[i]!;
+  for (let i = 0; i < work.length; i++) {
+    const chip = work[i]!;
     if (!chip.actionId) continue;
     if (seen.has(chip.actionId)) continue;
     if (chip.kind === 'free-input') {
       freeIn.push(chip);
+      continue;
+    }
+    if (liveFight && (chip.slotKind === 'fight' || chip.actionId.startsWith('fight:'))) {
+      seen.add(chip.actionId);
+      fightKeep.push({ ...chip, slotCategory: 'scene', cooldownReturn: undefined });
       continue;
     }
     let cat = chip.slotCategory;
@@ -831,6 +857,12 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     used.add(row.actionId);
     if (row.slotCategory === 'talk') talkFilled = true;
     picked.push({ ...row, cooldownReturn: back ? true : undefined });
+  }
+  for (let i = 0; i < fightKeep.length; i++) {
+    const row = fightKeep[i]!;
+    if (used.has(row.actionId)) continue;
+    used.add(row.actionId);
+    picked.push(row);
   }
   for (let i = 0; i < freeIn.length; i++) {
     picked.push({ ...freeIn[i]!, cooldownReturn: undefined });
