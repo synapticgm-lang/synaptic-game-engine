@@ -2,6 +2,7 @@
  * G-AIP fix (John 18:58): thumbs read-back by user_id + save_id + log_entry_id
  * and the run verdict that drives the harness exit code.
  */
+import { createHash } from 'node:crypto';
 import { feedbackKeyFromUpsert, verifyFeedbackByKey } from './feedbackVerify.mjs';
 
 /** Read back the row the UI just upserted, by user_id + save_id + log_entry_id; always returns a reason. */
@@ -17,26 +18,33 @@ export async function verifyThumb(feedbackClient, thumb, userId) {
 }
 
 /**
- * Vote at most once per GM reply. feedbacks = thumbs blocks on screen now (one per GM reply);
- * votedFeedbacks = the count when we last voted. No new reply since the last vote = no vote
- * (clicking the same thumb again toggles the vote off).
+ * 00:40 decision: votes are tied to the IDENTITY of the GM reply they rate, not to turn types.
+ * replyKey = ordinal of the GM reply on the page + hash of its text. Null when no GM reply is on the page.
  */
-export function shouldThumb({ feedbacks, votedFeedbacks = -1, noNewReply = false } = {}) {
-  if (noNewReply) return { vote: false, reason: 'no_reply' };
-  const n = Number(feedbacks);
-  if (Number.isFinite(n) && n <= Number(votedFeedbacks)) return { vote: false, reason: 'already_voted' };
+export function replyKey(snap) {
+  const text = String(snap?.lastGm || '').replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  return `${Number(snap?.gmStoryCount || 0)}:${createHash('sha1').update(text).digest('hex').slice(0, 12)}`;
+}
+
+/** Vote iff the reply this vote rates is a GM reply not yet rated. Clicking a rated reply again would toggle it off. */
+export function shouldThumb({ targetKey = null, ratedKeys = new Set() } = {}) {
+  if (!targetKey) return { vote: false, reason: 'no_reply' };
+  if (ratedKeys.has(targetKey)) return { vote: false, reason: 'already_voted' };
   return { vote: true, reason: null };
 }
 
-/** A new GM reply whose thumb was skipped, and not carried from the press on that reply. */
-export function skippedVoteOnNewReply(row) {
-  if (!row || row.newGmBubble !== true) return false;
-  if (row.voteCarried === true) return false;
-  const skipped = row.thumbSkipped;
-  // The vote in a row is on the PREVIOUS reply; 'no_reply' means that turn produced none, so the skip is correct (23:54 smoke misread).
-  return skipped != null && skipped !== false && skipped !== '' && skipped !== 'no_reply';
+/** The one rule: a skip is wrong only when the reply it was meant to rate is a GM reply that has not been rated. */
+export function voteSkipWrong({ skipped, targetKey = null, ratedKeys = new Set() } = {}) {
+  if (!skipped) return false;
+  if (!targetKey) return false;
+  return !ratedKeys.has(targetKey);
 }
 
+/** Row form of the same rule (the row carries voteSkipWrong, computed when the turn was played). */
+export function skippedVoteOnNewReply(row) {
+  return Boolean(row && row.voteSkipWrong === true);
+}
 /** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. softWarnings never fail the run. A skipped vote on a new reply, and game_reset, always fail. */
 export function runVerdict(results = []) {
   const list = Array.isArray(results) ? results : [];

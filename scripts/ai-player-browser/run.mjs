@@ -85,7 +85,7 @@ import {
   thumbReasonFromDecision,
 } from './feedbackVerify.mjs';
 import { bindCoverLog } from './overlay.mjs';
-import { verifyThumb, runVerdict, shouldThumb } from './runVerdict.mjs';
+import { verifyThumb, runVerdict, shouldThumb, replyKey, voteSkipWrong } from './runVerdict.mjs';
 
 import { licenceFor } from './playerLicence.mjs';
 import {
@@ -273,6 +273,8 @@ export function buildTurnLogRow(row) {
     placeId: row.placeId ?? null,
     placeSource: row.placeSource || 'none',
     voteCarried: row.voteCarried === true,
+    voteTarget: row.voteTarget ?? null,
+    voteSkipWrong: row.voteSkipWrong === true,
   };
 }
 
@@ -427,6 +429,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
   // Every counter a stop summary reads is declared here, before any summary helper (00:33 decision).
   let overlayBlockedThisTurn = false;
   let thumbsSkipped = 0;
+  const ratedKeys = new Set(); // GM replies already rated, by replyKey (00:40 decision)
+  let voteTarget = null;
   let skippedNewReply = false;
   const turnRows = [];
   bindCoverLog((row) => {
@@ -472,11 +476,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
   };
   // One vote per GM reply; a turn with no new reply is logged as no_reply, never a vote.
   const voteOnce = async (turnNo, thumbDecision) => {
-    const gate = shouldThumb({
-      feedbacks: snap.feedbacks,
-      votedFeedbacks,
-      noNewReply: Boolean(snap.waitTimedOut),
-    });
+    voteTarget = replyKey(snap);
+    const gate = shouldThumb({ targetKey: voteTarget, ratedKeys });
     if (!gate.vote) {
       thumbsSkipped += 1;
       console.log(`[ai-player] T${turnNo} thumb skipped (${gate.reason})`);
@@ -486,7 +487,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       };
     }
     const thumb = await pressThumbWithReason(gamePage, thumbDecision, submitThumb);
-    if (thumb.ok) votedFeedbacks = Number(snap.feedbacks);
+    if (thumb.ok) { votedFeedbacks = Number(snap.feedbacks); if (voteTarget) ratedKeys.add(voteTarget); }
     let verified = { verified: false, reason: 'no_client', lookup: null };
     if (feedbackClient) verified = await verifyThumb(feedbackClient, thumb, opts.userId);
     console.log(`[ai-player] T${turnNo} feedback verified=${verified.verified}${verified.verified ? '' : ` reason=${verified.reason}`}`);
@@ -1027,7 +1028,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const timing = turnTimeFields(submitStamp);
     const where = await readPlace(gamePage);
 
-    if (newGmBubble && thumb?.skipped && thumb.skipped !== 'no_reply' && voteCarried !== true) skippedNewReply = true;
+    const voteSkipWrongNow = voteCarried !== true && voteSkipWrong({ skipped: thumb?.skipped, targetKey: voteTarget, ratedKeys });
+    if (voteSkipWrongNow) skippedNewReply = true;
     const turnRow = buildTurnLogRow({
       event: waitTimedOut ? 'turn_timeout' : 'turn',
       turn,
@@ -1054,6 +1056,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
       feedbackKey: verified.lookup || null,
       voteCarried,
       thumbSkipped: thumb.skipped || null,
+      voteTarget: voteCarried ? null : voteTarget,
+      voteSkipWrong: voteSkipWrongNow,
       noReply: waitTimedOut,
       repaired: Boolean(decision.repaired),
       waitTimedOut,
