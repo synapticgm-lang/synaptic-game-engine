@@ -35,7 +35,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
-import { forwardThreadAffordance } from './openThreads';
+import { forwardThreadAffordance, isPlaceOpenForExit } from './openThreads';
 import type { QuestRoute } from './types';
 export function isWayOut(chip: {
   kind?: string;
@@ -328,7 +328,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     for (let i = 0; i < sheetExits.length; i++) {
       const ex = sheetExits[i]!;
       const dest = (ex.label ?? '').trim();
-      if (!dest) continue;
+      if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       const entityId = ex.id || `exit:${dest}`;
       const chip = `Travel toward ${dest}`;
       all.push({
@@ -349,6 +349,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       const label = (e.label ?? '').trim();
       if (!label) continue;
       const target = (e.target ?? label).trim();
+      if (target && !isPlaceOpenForExit(state, target)) continue;
       const entityId = `exit:${target}`;
       all.push({
         label,
@@ -372,7 +373,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     const names = exitPlaceNames(state);
     for (let i = 0; i < names.length; i++) {
       const dest = (names[i] ?? '').trim();
-      if (!dest) continue;
+      if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       const entityId = `exit:${dest}`;
       all.push({
         label: `Travel toward ${dest}`,
@@ -680,7 +681,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     for (let i = 0; i < sheet.length; i++) {
       const ex = sheet[i]!;
       const dest = (ex.label ?? '').trim();
-      if (!dest) continue;
+      if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       const entityId = ex.id || `exit:${dest}`;
       raw.push({
         label: `Travel toward ${dest}`,
@@ -701,6 +702,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       const label = (e.label ?? '').trim();
       if (!label) continue;
       const target = (e.target ?? label).trim();
+      if (target && !isPlaceOpenForExit(state, target)) continue;
       raw.push({
         label,
         actionId: `exit:exit:${target}:travel`,
@@ -717,7 +719,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     const names = exitPlaceNames(state);
     for (let i = 0; i < names.length; i++) {
       const dest = (names[i] ?? '').trim();
-      if (!dest) continue;
+      if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       raw.push({
         label: `Travel toward ${dest}`,
         actionId: `exit:exit:${dest}:travel`,

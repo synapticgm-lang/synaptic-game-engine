@@ -277,59 +277,115 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
   if (mem.nudgedTurn != null && turn - mem.nudgedTurn < STUCK_TURNS) return { state, receipts: [], notes: [] };
   const notes: string[] = [];
   const fired = new Set([...(mem.firedNudges ?? []), ...(mem.lastNudge ? [mem.lastNudge] : [])]);
-  // 28l — sources rotate (room → person → quest → hub → generic) from where the last nudge left off,
-  // and the same line never repeats twice in a row.
-  const sources: Array<() => string> = [
-    () => {
-      const d = state.activeDungeon;
-      if (!d) return '';
-      const node = d.nodes.find((n) => n.id === d.currentNodeId);
-      const next = node?.connections.map((id) => d.nodes.find((n) => n.id === id)).find((n) => n && !d.visitedNodeIds.includes(n.id));
-      return next ? `Nudge: a sound carries from ${next.name}.` : '';
-    },
-    () => {
-      const unmet = presentNpcRecords(state).find((m) => !isMetNpc(m));
-      return unmet ? `Nudge: ${unmet.npcName} comes over to you.` : '';
-    },
-    () => {
-      for (const quest of state.quests ?? []) {
-        if (quest.status !== 'active' || !quest.revealed) continue;
-        const obj = quest.objectives?.find((o) => !o.completed && !o.optional);
-        if (obj) return `Nudge: word reaches you about ${quest.name}: ${obj.description.replace(/[.!?]+$/, '')}.`;
-      }
-      return '';
-    },
-    () => {
-      const hubs = hubsForBibleId(state.campaignBibleId);
-      const here = matchHub(hubs, state.currentLocation);
-      const visited = new Set((state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase()));
-      const fresh = hubs.filter((h) => h.id !== here?.id && !visited.has(h.name.toLowerCase()));
-      const pick = fresh.find((h) => ![...fired].some((f) => f.includes(h.name))) ?? fresh[0];
-      // A place mentioned from afar is its name; its card text is a sight, handed only by the first-sight rule.
-      const sight = pick ? placeFirstSight(state, pick.name) : '';
-      // Whoever mentions it is someone here: with nobody here (an empty stretch of road), nobody mentions anything.
-      const speaker = presentNpcRecords(state)[0]?.npcName;
-      return pick && speaker ? `Nudge: ${speaker} mentions ${pick.name}${sight ? `: ${sight.replace(/[.!?]+$/, '')}` : ''}.` : '';
-    },
-    () => GENERIC_NUDGES.find((g) => !fired.has(g)) ?? '',
-  ];
-  const start = (mem.nudgeCursor ?? 0) % sources.length;
+  // 28l — sources rotate (room → person → quest → hub). q39-T1b / OPT-5: generic sensory
+  // pool deleted — stall content is the TT-T1 scene planner (thread / agenda / OPT-2).
+  const sourceCount = 4;
+  const start = (mem.nudgeCursor ?? 0) % sourceCount;
   let line = '';
   let used = start;
-  for (let i = 0; i < sources.length && !line; i++) {
-    const idx = (start + i) % sources.length;
-    const candidate = sources[idx]!();
+  for (let i = 0; i < sourceCount && !line; i++) {
+    const idx = (start + i) % sourceCount;
+    let candidate = '';
+    if (idx === 0) {
+      const d = state.activeDungeon;
+      if (d) {
+        let node: (typeof d.nodes)[number] | undefined;
+        for (let n = 0; n < d.nodes.length; n++) {
+          if (d.nodes[n]!.id === d.currentNodeId) {
+            node = d.nodes[n];
+            break;
+          }
+        }
+        const conns = node?.connections ?? [];
+        for (let c = 0; c < conns.length; c++) {
+          let nextNode: (typeof d.nodes)[number] | undefined;
+          for (let n = 0; n < d.nodes.length; n++) {
+            if (d.nodes[n]!.id === conns[c]) {
+              nextNode = d.nodes[n];
+              break;
+            }
+          }
+          if (nextNode && !d.visitedNodeIds.includes(nextNode.id)) {
+            candidate = `Nudge: a sound carries from ${nextNode.name}.`;
+            break;
+          }
+        }
+      }
+    } else if (idx === 1) {
+      const people = presentNpcRecords(state);
+      for (let p = 0; p < people.length; p++) {
+        if (!isMetNpc(people[p]!)) {
+          candidate = `Nudge: ${people[p]!.npcName} comes over to you.`;
+          break;
+        }
+      }
+    } else if (idx === 2) {
+      const quests = state.quests ?? [];
+      for (let q = 0; q < quests.length; q++) {
+        const quest = quests[q]!;
+        if (quest.status !== 'active' || !quest.revealed) continue;
+        const objs = quest.objectives ?? [];
+        for (let o = 0; o < objs.length; o++) {
+          const obj = objs[o]!;
+          if (obj.completed || obj.optional) continue;
+          let desc = obj.description;
+          while (desc.endsWith('.') || desc.endsWith('!') || desc.endsWith('?')) {
+            desc = desc.slice(0, -1);
+          }
+          candidate = `Nudge: word reaches you about ${quest.name}: ${desc}.`;
+          break;
+        }
+        if (candidate) break;
+      }
+    } else {
+      const hubs = hubsForBibleId(state.campaignBibleId);
+      const here = matchHub(hubs, state.currentLocation);
+      const visited = new Set<string>();
+      const placeRows = state.places ?? [];
+      for (let p = 0; p < placeRows.length; p++) {
+        if (placeRows[p]!.lastVisitedTurn != null) {
+          visited.add(placeRows[p]!.name.toLowerCase());
+        }
+      }
+      let pick: (typeof hubs)[number] | undefined;
+      for (let h = 0; h < hubs.length; h++) {
+        const hub = hubs[h]!;
+        if (hub.id === here?.id || visited.has(hub.name.toLowerCase())) continue;
+        let already = false;
+        for (const f of fired) {
+          if (f.includes(hub.name)) {
+            already = true;
+            break;
+          }
+        }
+        if (!already) {
+          pick = hub;
+          break;
+        }
+        if (!pick) pick = hub;
+      }
+      const sight = pick ? placeFirstSight(state, pick.name) : '';
+      let sightClean = sight;
+      while (sightClean.endsWith('.') || sightClean.endsWith('!') || sightClean.endsWith('?')) {
+        sightClean = sightClean.slice(0, -1);
+      }
+      const speaker = presentNpcRecords(state)[0]?.npcName;
+      if (pick && speaker) {
+        candidate = `Nudge: ${speaker} mentions ${pick.name}${sightClean ? `: ${sightClean}` : ''}.`;
+      }
+    }
     if (candidate && !fired.has(candidate)) {
       line = candidate;
       used = idx;
     }
   }
   if (!line) {
-    line = GENERIC_NUDGES.find((g) => !fired.has(g)) ?? '';
-    used = sources.length - 1;
+    return {
+      state,
+      receipts: [],
+      notes: ['Nudge skipped: no engine-fact nudge; OPT-5 stall uses the scene planner'],
+    };
   }
-  if (!line) return { state, receipts: [], notes: ['Nudge skipped: every nudge line already fired this save'] };
-  if (used === sources.length - 1) notes.push('Generic engine nudge (no bible fact to draw on)');
   return {
     state: {
       ...state,
@@ -338,7 +394,7 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
         nudgedTurn: turn,
         lastProgressTurn: turn,
         lastNudge: line,
-        nudgeCursor: (used + 1) % sources.length,
+        nudgeCursor: (used + 1) % sourceCount,
         firedNudges: [...fired, line].slice(-64),
       },
     },
@@ -346,12 +402,6 @@ export function nudgeIfStuck(state: GameState): { state: GameState; receipts: st
     notes,
   };
 }
-
-const GENERIC_NUDGES = [
-  'Nudge: a noise close by draws your attention.',
-  'Nudge: something moves at the edge of your sight.',
-  'Nudge: a draft carries a new smell from somewhere near.',
-];
 
 function travelDest(chip: string): string | null {
   const m = chip.match(/^(?:travel\s+(?:toward|to)|go\s+to|head\s+(?:to|toward)|walk\s+to|return\s+to|go\s+back\s+to)\s+(.+)$/i);

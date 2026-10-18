@@ -6,15 +6,33 @@
  * Declaring a quest done, a villain dead, or a mystery solved in prose without that
  * condition is rejected by the existing fact gate (`factClosedViolationReason`).
  *
- * OPT-5 stall pressure and quest spacing move into this planner in q39-T1b.
+ * OPT-5 (q39-T1b): when turnsSinceProgress > N, the pressure clock deadline has passed,
+ * or circling.stale has held for N turns, this planner brings forward — in order — an open
+ * thread, an NPC agenda step (OPT-3), or a new OPT-2 situation as a real chip and engine
+ * event. Generic sensory nudges are not used (pool deleted; see tt-cut-log).
+ *
+ * Idea for sifting the log for unresolved threads: Kreminski, Dickinson and Wardrip-Fruin,
+ * "Felt: A Simple Story Sifter" (ICIDS 2019). Cite as the idea only — no Felt code (no licence).
  */
 
-import type { GameState, OpenThread, Quest } from './types';
+import type {
+  GameState,
+  NpcMemory,
+  OpenThread,
+  PlaceEngineEvent,
+  PlaceRecord,
+  Quest,
+  TimelineFact,
+} from './types';
+import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
+import { ensureQuestFloor } from './questGenerator';
 
 export type { OpenThread, SceneThreadPlan, ThreadKind, ThreadResolution } from './types';
 
 const STALE_TURNS = 10;
 const BRING_WINDOW = 5;
+/** OPT-5 stall threshold (turnsSinceProgress, circling.stale hold, pressure deadline). */
+export const STALL_N = 5;
 
 /** Whether the engine record already satisfies this thread's close condition. */
 export function threadResolutionMet(state: GameState, thread: OpenThread): boolean {
@@ -192,26 +210,182 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
   return kept;
 }
 
+/** OPT-5: true when progress stall, pressure deadline, or circling.stale has held ≥ STALL_N. */
+export function stallPressureActive(state: GameState): boolean {
+  if (state.engineMode === 'pyoa') return false;
+  const turn = state.turn ?? 0;
+  const tsp = state.progressGovernor?.turnsSinceProgress ?? 0;
+  if (tsp > STALL_N) return true;
+  const deadline = state.arcDirector?.pressureClock?.deadlineTurn;
+  if (deadline != null && turn >= deadline) return true;
+  const stale = state.circling?.stale;
+  if (!stale) return false;
+  const places = Object.keys(stale);
+  for (let i = 0; i < places.length; i++) {
+    const fams = stale[places[i]!]!;
+    const keys = Object.keys(fams);
+    for (let j = 0; j < keys.length; j++) {
+      if (turn - (fams[keys[j]!] ?? turn) >= STALL_N) return true;
+    }
+  }
+  return false;
+}
+
+/** Closed places are not travel exits until an event reopens them. */
+export function isPlaceOpenForExit(state: GameState, placeName: string): boolean {
+  const want = (placeName ?? '').trim().toLowerCase();
+  if (!want) return false;
+  const places = state.places ?? [];
+  for (let i = 0; i < places.length; i++) {
+    const p = places[i]!;
+    const n = (p.name ?? '').trim().toLowerCase();
+    if (n === want || (p.id ?? '').toLowerCase() === want) {
+      return p.arcStatus !== 'closed';
+    }
+  }
+  return true;
+}
+
+/** Apply a place arc event (cleared / closed / reopened / new threat / new trader). */
+export function applyPlaceEngineEvent(state: GameState, event: PlaceEngineEvent): GameState {
+  if (state.engineMode === 'pyoa') return state;
+  const want = event.placeId.trim().toLowerCase();
+  if (!want) return state;
+  const places = state.places ?? [];
+  let found = false;
+  const next: PlaceRecord[] = [];
+  for (let i = 0; i < places.length; i++) {
+    const p = places[i]!;
+    const n = (p.name ?? '').trim().toLowerCase();
+    const id = (p.id ?? '').toLowerCase();
+    if (n !== want && id !== want) {
+      next.push(p);
+      continue;
+    }
+    found = true;
+    let arcStatus = p.arcStatus;
+    if (event.kind === 'cleared') arcStatus = 'cleared';
+    else if (event.kind === 'closed') arcStatus = 'closed';
+    else if (event.kind === 'reopened') arcStatus = 'open';
+    else if (event.kind === 'new-threat' || event.kind === 'new-trader') {
+      arcStatus = arcStatus === 'closed' ? 'open' : arcStatus ?? 'open';
+    }
+    const summary =
+      event.detail
+      ?? (event.kind === 'cleared'
+        ? 'Site cleared'
+        : event.kind === 'closed'
+          ? 'Place closed'
+          : event.kind === 'reopened'
+            ? 'Place reopened'
+            : event.kind === 'new-threat'
+              ? 'New threat'
+              : 'New trader');
+    next.push({ ...p, arcStatus, arcSummary: summary, lastVisitedTurn: p.lastVisitedTurn ?? state.turn });
+  }
+  if (!found) {
+    let slug = 'place_';
+    const raw = event.placeId.trim();
+    for (let i = 0; i < raw.length; i++) {
+      const ch = raw[i]!;
+      const code = ch.charCodeAt(0);
+      const lower =
+        code >= 65 && code <= 90 ? String.fromCharCode(code + 32) : ch;
+      if (
+        (lower >= 'a' && lower <= 'z')
+        || (lower >= '0' && lower <= '9')
+      ) {
+        slug += lower;
+      } else if (lower === ' ' || lower === '-' || lower === '_') {
+        slug += '-';
+      }
+    }
+    next.push({
+      id: slug,
+      name: raw,
+      arcStatus:
+        event.kind === 'cleared'
+          ? 'cleared'
+          : event.kind === 'closed'
+            ? 'closed'
+            : 'open',
+      arcSummary: event.detail,
+      lastVisitedTurn: state.turn,
+    });
+  }
+  const factText = `Place ${event.placeId.trim()}: ${event.kind}${event.detail ? ` — ${event.detail}` : ''}.`;
+  const fact: TimelineFact = {
+    id: `place-${event.kind}-${state.turn}-${want}`,
+    turn: state.turn ?? 0,
+    kind: 'world',
+    text: factText,
+    at: Date.now(),
+  };
+  return {
+    ...state,
+    places: next,
+    timeline: [...(state.timeline ?? []), fact].slice(-80),
+    sceneFacts: state.sceneFacts
+      ? { ...state.sceneFacts, placeWorldFact: factText }
+      : {
+          crowd: 'unknown',
+          noise: 'unknown',
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: state.turn ?? 0,
+          placeWorldFact: factText,
+        },
+  };
+}
+
+function appendStallFact(state: GameState, eventId: string, text: string): GameState {
+  const turn = state.turn ?? 0;
+  const fact: TimelineFact = {
+    id: eventId,
+    turn,
+    kind: 'world',
+    text,
+    at: Date.now(),
+  };
+  return {
+    ...state,
+    timeline: [...(state.timeline ?? []), fact].slice(-80),
+    sceneFacts: state.sceneFacts
+      ? { ...state.sceneFacts, stallWorldFact: text }
+      : {
+          crowd: 'unknown',
+          noise: 'unknown',
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: turn,
+          stallWorldFact: text,
+        },
+  };
+}
+
 /**
  * Scene planner: refresh the open-thread list, drop resolved rows, and bring
  * forward at least one open thread (weighted by turns since last seen + place proximity).
  * A stale thread (untouched ≥ STALE_TURNS) is preferred so it reappears within BRING_WINDOW.
+ * Under OPT-5 stall pressure, also bring an agenda step or OPT-2 situation when no thread.
  */
 export function planSceneThreads(state: GameState): GameState {
   if (state.engineMode === 'pyoa') return state;
+  const turn = state.turn ?? 0;
   const threads = collectOpenThreads(state);
-  if (!threads.length) {
+  const stall = stallPressureActive(state);
+  const plan = state.sceneThreadPlan;
+  if (plan && plan.plannedTurn === turn && plan.forwardIds.length && !(stall && !plan.stallKind)) {
+    return { ...state, openThreads: threads, sceneThreadPlan: plan };
+  }
+  if (!threads.length && !stall) {
     return {
       ...state,
       openThreads: [],
-      sceneThreadPlan: { plannedTurn: state.turn ?? 0, forwardIds: [] },
+      sceneThreadPlan: { plannedTurn: turn, forwardIds: [] },
     };
-  }
-
-  const turn = state.turn ?? 0;
-  const plan = state.sceneThreadPlan;
-  if (plan && plan.plannedTurn === turn && plan.forwardIds.length) {
-    return { ...state, openThreads: threads, sceneThreadPlan: plan };
   }
 
   const here = (state.currentLocation ?? '').trim().toLowerCase();
@@ -244,8 +418,76 @@ export function planSceneThreads(state: GameState): GameState {
     }
   }
 
+  let working: GameState = { ...state, openThreads: threads };
   const forwardIds: string[] = [];
-  if (best) forwardIds.push(best.id);
+  let stallKind: 'thread' | 'agenda' | 'situation' | undefined;
+  let stallEventId: string | undefined;
+
+  if (best) {
+    forwardIds.push(best.id);
+    if (stall) {
+      stallKind = 'thread';
+      stallEventId = `stall-thread-${turn}-${best.id}`;
+      working = appendStallFact(
+        working,
+        stallEventId,
+        `Stall pressure: open thread brought forward — ${best.label}.`,
+      );
+    }
+  } else if (stall) {
+    // Order: open thread (none) → NPC agenda step → OPT-2 situation.
+    const prevClock = working.arcDirector?.pressureClock;
+    const nextClock = tickPressureClock(prevClock, false, turn);
+    working = applyPressureAgendaAdvance(
+      working,
+      prevClock,
+      { ...nextClock, deadlineTurn: turn },
+      false,
+    );
+    const agendaFired = working.arcDirector?.pressureClock?.lastAgendaAdvanceTurn === turn;
+    let memWithGoal: NpcMemory | null = null;
+    const mems = working.npcMemories ?? [];
+    for (let i = 0; i < mems.length; i++) {
+      if (mems[i]!.goal?.motivation) {
+        memWithGoal = mems[i]!;
+        break;
+      }
+    }
+    if (agendaFired && memWithGoal) {
+      const npcId = memWithGoal.npcId || `npc:${memWithGoal.npcName}`;
+      forwardIds.push(`agenda:${npcId}`);
+      stallKind = 'agenda';
+      stallEventId = `stall-agenda-${turn}-${npcId}`;
+      if (!working.sceneFacts?.agendaWorldFact) {
+        working = appendStallFact(
+          working,
+          stallEventId,
+          `Stall pressure: agenda step for ${memWithGoal.npcName}.`,
+        );
+      }
+    } else {
+      const floor = ensureQuestFloor(working);
+      working = floor.state;
+      if (floor.quest) {
+        forwardIds.push(`situation:${floor.quest.id}`);
+        stallKind = 'situation';
+        stallEventId = `stall-situation-${turn}-${floor.quest.id}`;
+        working = appendStallFact(
+          working,
+          stallEventId,
+          `Stall pressure: new situation — ${floor.quest.name}.`,
+        );
+      } else if (agendaFired || (working.arcDirector?.pressureClock?.deadlineTurn != null
+        && turn >= (working.arcDirector.pressureClock.deadlineTurn ?? turn + 1))) {
+        stallEventId = `stall-pressure-${turn}`;
+        working = appendStallFact(
+          working,
+          stallEventId,
+          `Stall pressure: pressure clock fired at T${turn}.`,
+        );
+      }
+    }
+  }
 
   const nextThreads: OpenThread[] = [];
   for (let i = 0; i < threads.length; i++) {
@@ -257,14 +499,33 @@ export function planSceneThreads(state: GameState): GameState {
     nextThreads.push({ ...t, lastSeenTurn: lastSeen });
   }
 
+  // Pressure deadline still needs an engine event when a thread was already forward (OPT5-2).
+  if (stall && !stallEventId) {
+    const deadline = working.arcDirector?.pressureClock?.deadlineTurn;
+    if (deadline != null && turn >= deadline) {
+      stallEventId = `stall-pressure-${turn}`;
+      if (!stallKind && best) stallKind = 'thread';
+      working = appendStallFact(
+        working,
+        stallEventId,
+        `Stall pressure: pressure clock deadline passed at T${deadline}.`,
+      );
+    }
+  }
+
   return {
-    ...state,
+    ...working,
     openThreads: nextThreads,
-    sceneThreadPlan: { plannedTurn: turn, forwardIds },
+    sceneThreadPlan: {
+      plannedTurn: turn,
+      forwardIds,
+      stallKind,
+      stallEventId,
+    },
   };
 }
 
-/** Chip label + ids for the brought-forward thread (plain action; tags live on EngineChip). */
+/** Chip label + ids for the brought-forward thread / stall agenda / OPT-2 situation. */
 export function forwardThreadAffordance(state: GameState): {
   label: string;
   actionId: string;
@@ -272,8 +533,43 @@ export function forwardThreadAffordance(state: GameState): {
 } | null {
   const plan = state.sceneThreadPlan;
   if (!plan?.forwardIds?.length) return null;
-  const threads = state.openThreads ?? [];
   const id = plan.forwardIds[0]!;
+
+  if (id.startsWith('agenda:')) {
+    const npcId = id.slice('agenda:'.length);
+    const mems = state.npcMemories ?? [];
+    let name = npcId.startsWith('npc:') ? npcId.slice(4) : npcId;
+    for (let i = 0; i < mems.length; i++) {
+      const m = mems[i]!;
+      if ((m.npcId || `npc:${m.npcName}`) === npcId) {
+        name = m.npcName;
+        break;
+      }
+    }
+    return {
+      label: `Follow up with ${name}`,
+      actionId: `stall:${id}:forward`,
+      entityId: npcId,
+    };
+  }
+  if (id.startsWith('situation:')) {
+    const questId = id.slice('situation:'.length);
+    const quests = state.quests ?? [];
+    let label = 'Take on the new situation';
+    for (let i = 0; i < quests.length; i++) {
+      if (quests[i]!.id === questId) {
+        label = `Take on: ${quests[i]!.name}`;
+        break;
+      }
+    }
+    return {
+      label,
+      actionId: `stall:${id}:forward`,
+      entityId: `quest:${questId}`,
+    };
+  }
+
+  const threads = state.openThreads ?? [];
   for (let i = 0; i < threads.length; i++) {
     const t = threads[i]!;
     if (t.id !== id) continue;

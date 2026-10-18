@@ -672,10 +672,22 @@ export type OpenThread = {
   resolution: ThreadResolution;
 };
 
-/** TT-T1 — scene planner pick for this turn. */
+/** TT-T1 / OPT-5 — scene planner pick for this turn (stall bring-forward optional). */
 export type SceneThreadPlan = {
   plannedTurn: number;
   forwardIds: string[];
+  /** OPT-5: stall brought a thread, agenda step, or OPT-2 situation this turn. */
+  stallKind?: 'thread' | 'agenda' | 'situation';
+  /** Engine event id for the stall fire (timeline / writer fact). */
+  stallEventId?: string;
+};
+
+/** OPT-5 — place arc changes from engine events (not prose). */
+export type PlaceEngineEventKind = 'cleared' | 'closed' | 'reopened' | 'new-threat' | 'new-trader';
+export type PlaceEngineEvent = {
+  kind: PlaceEngineEventKind;
+  placeId: string;
+  detail?: string;
 };
 
 export interface WorldHolding {
@@ -1692,6 +1704,10 @@ export interface SceneFacts {
   propsPlace?: string;
   /** OPT-3 — last pressure-clock agenda advance this turn (world fact for the writer packet). */
   agendaWorldFact?: string;
+  /** OPT-5 — stall planner engine event this turn (thread / agenda / situation). */
+  stallWorldFact?: string;
+  /** OPT-5 — last place arc event (cleared / closed / reopened / threat / trader). */
+  placeWorldFact?: string;
 }
 
 export interface TimelineFact {

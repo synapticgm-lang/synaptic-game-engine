@@ -29,8 +29,8 @@ import { replayPreFeature } from './replaySeam';
 /** Open-quest floor (default 1). */
 export const QUEST_FLOOR = 1;
 /**
- * Spacing window (turns) — OPT-2 owns this until q39-T1b moves spacing into the thread planner.
- * At most one new generated quest per window.
+ * Spacing window (turns). q39-T1b: the TT-T1 scene planner asks for a new OPT-2 situation
+ * under stall pressure; this window still caps at most one new generated quest per N turns.
  */
 export const QUEST_SPACING_TURNS = 8;
 

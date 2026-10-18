@@ -59,11 +59,45 @@ describe('28x fresh way on', () => {
   });
 
   it('a nudge line already fired this save does not fire again', () => {
+    // q39-T1b: no generic sensory pool — seed a quest fact source; fired lines stay unique.
     let s = {
       ...createInitialState('Ria', 'litrpg'),
       turn: 10,
+      campaignBibleId: 'summoned-pact',
+      currentLocation: 'Lowmarket',
+      openingEstablishment: { complete: true },
+      quests: [
+        {
+          id: 'q-nudge',
+          name: 'The Quiet Job',
+          description: 'The Quiet Job',
+          status: 'active',
+          revealed: true,
+          type: 'side',
+          objectives: [{ id: 'o1', description: 'Ask at the cup.', completed: false }],
+        },
+      ],
+      npcMemories: [
+        {
+          npcId: 'npc:kell',
+          npcName: 'Kell',
+          introSpoken: false,
+          disposition: 'neutral',
+          location: 'Lowmarket',
+          lastSeenTurn: 9,
+        },
+      ],
+      sceneFacts: {
+        crowd: 'sparse',
+        noise: 'voices',
+        present: ['Kell'],
+        props: [],
+        lastBeat: '',
+        updatedTurn: 10,
+        outdoor: true,
+      },
       circling: { stale: {}, lastProgressTurn: 0 },
-    } as GameState;
+    } as unknown as GameState;
     const lines: string[] = [];
     for (let i = 0; i < 12; i++) {
       const r = nudgeIfStuck(s);
@@ -72,5 +106,6 @@ describe('28x fresh way on', () => {
     }
     expect(lines.length).toBeGreaterThan(0);
     expect(new Set(lines).size).toBe(lines.length);
+    expect(lines.join(' ')).not.toMatch(/noise close by|edge of your sight|new smell/i);
   });
 });
