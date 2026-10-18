@@ -64,7 +64,6 @@ export function peopleHere(state: GameState): string[] {
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   if (openingCastStillHere(state)) openingCastNames(state).forEach(add);
-  (state.sceneFacts?.anonymousRoles ?? []).forEach(add);
   add(roadMeetingPeople(state));
   return [...out.values()];
 }
