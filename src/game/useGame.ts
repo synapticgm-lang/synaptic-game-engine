@@ -176,7 +176,7 @@ import {
 } from './intentContract';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { checkForAction, runPlayerCheck, type CheckSpec } from './checkMath';
-import { formatPreRollLine, formatResultLine } from './rules/rollView';
+import { formatPreRollLine, formatResultLine, planBeginnerRollHint } from './rules/rollView';
 import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import {
@@ -3263,6 +3263,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const vr1RollLines = isDndEngine && !check.skippedRoll && check.record
         ? [...(preSpec ? [formatPreRollLine(preSpec)] : []), formatResultLine(check.record)]
         : [];
+      // VR1-c: beginner hint per CheckKind (first 3 auto; then "?" only). Setting off → no hint.
+      const hintKind = (preSpec?.kind ?? check.record?.spec?.kind) as CheckSpec['kind'] | undefined;
+      const hintPlan =
+        isDndEngine && !check.skippedRoll && check.record && hintKind
+          ? planBeginnerRollHint(hintKind, settingsRef.current.showRollHints, liveCurrent.rollHintSeenByKind)
+          : null;
+      if (hintPlan) liveCurrent = { ...liveCurrent, rollHintSeenByKind: hintPlan.nextSeen };
       const codeSystemLogLine =
         vr1RollLines.length === 0 && !check.skippedRoll && check.displayLine && (isDndEngine || check.record?.cue)
           ? check.displayLine
@@ -3285,6 +3292,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         timestamp: Date.now(),
         systemLog: Array.from(new Set(filteredSystemLog)),
         snapshotGist: compactTrafficGist(liveCurrent),
+        ...(hintPlan && hintKind
+          ? { rollHint: { kind: hintKind, text: hintPlan.text, autoShown: hintPlan.autoShow } }
+          : {}),
         ...(mudTurnLive
           ? {
               presentation: 'mud-receipt' as const,

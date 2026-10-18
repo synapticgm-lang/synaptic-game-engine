@@ -39,7 +39,7 @@ import { creationRng } from '@/game/tabletop/characterBuild';
 import type { SavedSheet } from '@/game/tabletop/sheetLibrary';
 import { CharacterBuilderPanel } from './CharacterBuilderPanel';
 import { DicePreview, liveDiceItem } from './DicePreview';
-import { RollLine, RollDisplayContext } from './RollDie';
+import { RollLine, RollDisplayContext, RollHintLine } from './RollDie';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -774,7 +774,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       {hasRealGmStory(entry) && showSystemLog && (() => {
         const lines = presentSystemNotices(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), engineMode);
         return lines.length > 0 ? (
-          <SystemLogPanel lines={lines} verbosity={statVerbosity} entryId={entry.id} />
+          <SystemLogPanel lines={lines} verbosity={statVerbosity} entryId={entry.id} rollHint={entry.rollHint} />
         ) : null;
       })()}
       {saveId && hasRealGmStory(entry) && !isRevealing && (
@@ -854,10 +854,20 @@ function RepairBanner({
   );
 }
 
-function SystemLogPanel({ lines, verbosity, entryId }: { lines: string[]; verbosity: StatVerbosity; entryId: string }) {
+function SystemLogPanel({
+  lines,
+  verbosity,
+  entryId,
+  rollHint,
+}: {
+  lines: string[];
+  verbosity: StatVerbosity;
+  entryId: string;
+  rollHint?: LogEntry['rollHint'];
+}) {
   const filtered = useMemo(() => statusLinesForVerbosity(lines, verbosity), [lines, verbosity]);
 
-  if (filtered.length === 0) return null;
+  if (filtered.length === 0 && !rollHint) return null;
 
   return (
     <div className="sgm-status-panel ml-4 mt-2 max-w-lg rounded-lg border border-l-4 px-3 py-2 shadow-inner">
@@ -871,6 +881,7 @@ function SystemLogPanel({ lines, verbosity, entryId }: { lines: string[]; verbos
             <RollLine line={line} entryId={entryId} />
           </div>
         ))}
+        {rollHint ? <RollHintLine hint={rollHint} /> : null}
       </div>
     </div>
   );

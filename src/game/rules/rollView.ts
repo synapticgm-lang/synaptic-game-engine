@@ -1,10 +1,41 @@
 /**
  * Shared rules engine — shown roll lines and VR1 pre-roll / result text from CheckResultRecord.
  * Never rolls. SRD 5.2.1 (WotC CC BY 4.0): DC hidden before the roll unless the effect states it.
+ * VR1-c beginner hints: plain one-liner per CheckKind (Ability Check / Saving Throw / Attack Roll /
+ * Contests — SRD 5.2.1, WotC CC BY 4.0); first 3 of each kind auto-show, then "?" only.
  */
 import type { DiceAnimationMode } from '../types';
 import type { CheckResultRecord } from '../checkRules';
-import type { CheckSpec } from '../checkMath';
+import type { CheckKind, CheckSpec } from '../checkMath';
+
+/** Auto-show beginner hint for the first N checks of each kind (VR1-c). */
+export const ROLL_HINT_AUTO_LIMIT = 3;
+
+/**
+ * VR1-c — one shared plan for beginner roll hints (per kind, not per label).
+ * Setting off → null. Else returns hint text, whether it auto-shows, and bumped seen counts.
+ */
+export function planBeginnerRollHint(
+  kind: CheckKind,
+  showRollHints: boolean | undefined,
+  seenByKind: Partial<Record<CheckKind, number>> | undefined,
+): { text: string; autoShow: boolean; nextSeen: Partial<Record<CheckKind, number>> } | null {
+  if (showRollHints === false) return null;
+  let text = 'A d20 roll plus your ability bonus; you need to meet a hidden target number.';
+  if (kind === 'skill') {
+    text = 'A d20 roll plus your ability bonus (and skill training if you have it); you need to meet a hidden target number.';
+  } else if (kind === 'save') {
+    text = 'A d20 roll plus your saving-throw bonus; you need to meet or beat the effect\'s DC.';
+  } else if (kind === 'contest') {
+    text = 'A d20 roll plus your bonus, compared against someone else\'s roll; higher total wins.';
+  } else if (kind === 'attack') {
+    text = 'A d20 roll plus your attack bonus against the target\'s Armor Class.';
+  }
+  const seen = seenByKind?.[kind] ?? 0;
+  const nextSeen: Partial<Record<CheckKind, number>> = { ...(seenByKind ?? {}) };
+  nextSeen[kind] = seen + 1;
+  return { text, autoShow: seen < ROLL_HINT_AUTO_LIMIT, nextSeen };
+}
 
 const ABILITY_NAME: Record<string, string> = {
   STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma',
@@ -54,8 +85,6 @@ export function outcomeFactFromRecord(rec: CheckResultRecord): string {
   return `Check ${rec.outcome}.`;
 }
 
-const signedMod = (n: number) => `${n >= 0 ? '+' : '−'} ${Math.abs(n)}`;
-
 /**
  * STATUS presentation of a flee/parley CheckResultRecord (VR1-b).
  * Maths come only from the record (+ foe side for Escape contests); not a second roll path.
@@ -66,12 +95,15 @@ export function formatBreakAwayStatus(
   rec: CheckResultRecord,
   foe?: { name: string; die: number; mod: number },
 ): string {
-  const mod = rec.mods.reduce((s, m) => s + m.value, 0);
+  let mod = 0;
+  for (let i = 0; i < rec.mods.length; i++) mod += rec.mods[i]!.value;
+  const modTxt = `${mod >= 0 ? '+' : '−'} ${Math.abs(mod)}`;
   if (kind === 'flee' && foe) {
     const foeTotal = foe.die + foe.mod;
-    return `Flee check: d20 ${rec.kept} ${signedMod(mod)} = ${rec.total} vs ${foe.name} d20 ${foe.die} ${signedMod(foe.mod)} = ${foeTotal} — ${rec.outcome}`;
+    const foeModTxt = `${foe.mod >= 0 ? '+' : '−'} ${Math.abs(foe.mod)}`;
+    return `Flee check: d20 ${rec.kept} ${modTxt} = ${rec.total} vs ${foe.name} d20 ${foe.die} ${foeModTxt} = ${foeTotal} — ${rec.outcome}`;
   }
-  return `Parley check: d20 ${rec.kept} ${signedMod(mod)} vs DC ${rec.dc} — ${rec.outcome}`;
+  return `Parley check: d20 ${rec.kept} ${modTxt} vs DC ${rec.dc} — ${rec.outcome}`;
 }
 
 /** STATUS: completed VR1 result shapes (not the pre-roll "rolling a d20…" cue — that has no kept die). */

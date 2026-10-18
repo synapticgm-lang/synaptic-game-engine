@@ -15,7 +15,7 @@ import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import { BubbleSpeakControl } from './BubbleSpeakControl';
 import { GmResponseFeedback } from './GmResponseFeedback';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
-import { RollLine } from './RollDie';
+import { RollLine, RollHintLine } from './RollDie';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -204,7 +204,7 @@ function DmNarration({ entry, engineMode, statVerbosity, showTurnAsk, streamingR
     () => presentSystemNotices(statusLinesForVerbosity(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), statVerbosity), engineMode),
     [entry.systemLog, engineMode, statVerbosity],
   );
-  const hasSystemLog = systemLines.length > 0;
+  const hasSystemLog = systemLines.length > 0 || !!entry.rollHint;
 
   return (
     <div className="space-y-3">
@@ -287,6 +287,7 @@ function DmNarration({ entry, engineMode, statVerbosity, showTurnAsk, streamingR
                   <RollLine line={line} entryId={entry.id} />
                 </div>
               ))}
+              {entry.rollHint ? <RollHintLine hint={entry.rollHint} /> : null}
             </div>
           </div>
         )}

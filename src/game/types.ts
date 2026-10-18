@@ -944,6 +944,8 @@ export interface GameState {
   inspirationKeys?: string[];
   /** TT-H1: last VR1 CheckResultRecord eligible for a Heroic Inspiration reroll chip. */
   lastCheckResult?: import('./checkRules').CheckResultRecord;
+  /** VR1-c: how many checks of each kind have shown a beginner hint (first 3 auto). */
+  rollHintSeenByKind?: Partial<Record<import('./checkMath').CheckKind, number>>;
   /** TT-H1: turn of the last engine GM Inspiration award (≈20-turn gap). */
   lastInspirationAwardTurn?: number;
   /**
@@ -1504,6 +1506,11 @@ export interface LogEntry {
   offeredChoices?: string[];
   /** VR1 — CheckSpec keyed by plain offered label (beside offeredChoices). */
   offeredChipChecks?: Record<string, import('./checkMath').CheckSpec>;
+  /**
+   * VR1-c beginner roll hint for this beat. autoShown = first 3 of that kind;
+   * otherwise the UI shows "?" and reveals text on tap (when showRollHints is on).
+   */
+  rollHint?: { kind: import('./checkMath').CheckKind; text: string; autoShown: boolean };
   /**
    * OPT-1 / OPT1-8 — engine offered-chip record (actionId + kind + cooldownReturn).
    * Labels stay plain; UI tags come from offeredChipChecks / CheckSpec.
@@ -2249,6 +2256,11 @@ export interface Settings extends AccessibilitySettings {
   ttsVoiceURI: string;
   sttEnabled: boolean;
   diceAnimation: DiceAnimationMode;
+  /**
+   * VR1-c — Show roll hints (default on for new players).
+   * Off hides beginner check hints and the "?" help toggle; result lines still show.
+   */
+  showRollHints: boolean;
   contentMode: ContentMode;
   /** Wellbeing check-ins for repeated heavy moments (F1 / F5); off only pauses those. Default on. */
   wellbeingCheckIns?: boolean;
