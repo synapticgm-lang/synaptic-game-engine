@@ -415,7 +415,7 @@ export async function dismissAutoFightTip(page) {
   const hit = await page.evaluate(() => {
     const nodes = [...document.querySelectorAll('button')];
     const gotIt = nodes.find((b) => /^(Got it)$/i.test((b.textContent || '').replace(/\s+/g, ' ').trim()));
-    const tip = (document.body.innerText || '').includes('Save turns with Auto Fight');
+    const tip = /save turns with auto fight/i.test(document.body.textContent || '');
     if (!tip || !gotIt) return false;
     gotIt.click();
     return true;
@@ -468,27 +468,72 @@ export async function clickChip(page, label) {
   return clicked;
 }
 
+/** What sits on top of the action box at the point the harness clicks (null when the box itself is hit). */
+export async function inputCoveredBy(page) {
+  return page.evaluate(() => {
+    const ta = document.querySelector('[aria-label="Player action input"]');
+    if (!ta) return 'no_input';
+    const r = ta.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.x + 16, r.y + 10);
+    if (!hit || hit === ta || ta.contains(hit)) return null;
+    return `${hit.tagName.toLowerCase()}.${String(hit.className || '').split(/\s+/).slice(0, 3).join('.')}`;
+  });
+}
+
+/**
+ * Type a player line and confirm the game took it (the box clears when the UI sends).
+ * Returns { sent, reason }: a line that never reached the game is a harness error, not a no-reply turn.
+ */
 export async function typePlayerAction(page, text) {
-  const input = await page.$('[aria-label="Player action input"]');
+  const sel = '[aria-label="Player action input"]';
+  const input = await page.$(sel);
   if (!input) throw new Error('Player action input missing (chips-only books hide it)');
-  await insertInto(page, '[aria-label="Player action input"]', text);
+  await dismissAutoFightTip(page);
+  const cover = await inputCoveredBy(page);
+  if (cover) return { sent: false, reason: `input_covered:${cover}` };
+  await insertInto(page, sel, text);
   await sleep(150);
-  const sent = await page.evaluate(() => {
-    const box = document.querySelector('[aria-label="Player action input"]');
+  const typed = await page.evaluate((s) => document.querySelector(s)?.value || '', sel);
+  if (typed.trim() !== String(text).trim()) return { sent: false, reason: 'text_not_entered' };
+  const clicked = await page.evaluate((s) => {
+    const box = document.querySelector(s);
     const btn = box?.parentElement?.querySelector('button:last-of-type');
-    if (btn) {
+    if (btn && !btn.disabled) {
       btn.click();
       return true;
     }
     return false;
-  });
-  if (!sent) {
-    await page.keyboard.press('Enter');
+  }, sel);
+  if (!clicked) await page.keyboard.press('Enter');
+  for (let i = 0; i < 20; i++) {
+    await sleep(150);
+    const left = await page.evaluate((s) => document.querySelector(s)?.value ?? '', sel);
+    if (!left.trim()) return { sent: true, reason: 'ok' };
   }
+  return { sent: false, reason: 'send_not_accepted' };
+}
+
+/** Wait for the UI's own gm_response_feedback upsert (POST) and return its JSON body, or an error note. */
+export function waitFeedbackUpsert(page, timeoutMs = 10000) {
+  if (!page || typeof page.waitForResponse !== 'function') {
+    return Promise.resolve({ body: null, error: 'no_waitForResponse' });
+  }
+  return page.waitForResponse(
+    (res) => res.url().includes('/rest/v1/gm_response_feedback') && res.request().method() === 'POST',
+    { timeout: timeoutMs },
+  ).then(async (res) => {
+    if (!res.ok()) return { body: null, error: `upsert_http_${res.status()}` };
+    try {
+      return { body: await res.json(), error: null };
+    } catch {
+      return { body: null, error: 'upsert_body_unreadable' };
+    }
+  }).catch(() => ({ body: null, error: 'no_upsert_seen' }));
 }
 
 export async function submitThumb(page, { thumb, comment }) {
   const aria = thumb === 'down' ? 'Poor response' : 'Good response';
+  const upsertWait = waitFeedbackUpsert(page);
   const clicked = await page.evaluate((label) => {
     const blocks = [...document.querySelectorAll('[data-sgm-feedback="1"]')];
     const last = blocks.at(-1);
@@ -498,7 +543,11 @@ export async function submitThumb(page, { thumb, comment }) {
     btn.click();
     return true;
   }, aria);
-  if (!clicked) return { ok: false, reason: 'thumb_missing' };
+  if (!clicked) {
+    upsertWait.catch(() => {});
+    return { ok: false, reason: 'thumb_missing', upsert: null, upsertError: 'thumb_missing' };
+  }
+  const upsert = await upsertWait;
   await sleep(400);
   if (comment) {
     const hasBox = await page.evaluate(() => {
@@ -534,5 +583,124 @@ export async function submitThumb(page, { thumb, comment }) {
     }
   }
   await sleep(400);
-  return { ok: true };
+  return { ok: true, upsert: upsert.body, upsertError: upsert.error };
+}
+
+const EMPTY_PLACE = { place: null, placeId: null, placeSource: 'none' };
+
+function cleanPlaceText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Place shown on the game screen, else the save the UI loaded (IndexedDB).
+ * Never throws.
+ * @returns {Promise<{ place: string | null, placeId: string | null, placeSource: 'ui' | 'save' | 'none' }>}
+ */
+export async function readPlace(page) {
+  try {
+    if (!page || typeof page.evaluate !== 'function') return { ...EMPTY_PLACE };
+    const raw = await page.evaluate(async () => {
+      const clean = (value) => String(value || '').replace(/\s+/g, ' ').trim();
+      const none = { ui: '', saveName: '', placeId: '' };
+      try {
+        let ui = '';
+        const header = document.querySelector('.sgm-adventure-map-header');
+        if (header) {
+          const room = clean(header.querySelector('span.text-amber-300')?.textContent);
+          if (room && room !== 'Unknown') ui = room;
+          if (!ui) {
+            const title = clean(header.querySelector('h2.sgm-adventure-map-title')?.textContent);
+            if (title && title !== 'Local map pending') ui = title;
+          }
+        }
+        if (!ui) {
+          const accent = clean(document.querySelector('span.sgm-info-accent')?.textContent);
+          if (accent && accent !== 'an unmapped place') ui = accent;
+        }
+        let save = null;
+        try {
+          save = await new Promise((resolve) => {
+            let settled = false;
+            const finish = (value) => {
+              if (settled) return;
+              settled = true;
+              resolve(value);
+            };
+            const timer = setTimeout(() => finish(null), 2000);
+            let req;
+            try {
+              req = indexedDB.open('tactical-litrpg');
+            } catch {
+              clearTimeout(timer);
+              finish(null);
+              return;
+            }
+            req.onerror = () => {
+              clearTimeout(timer);
+              finish(null);
+            };
+            req.onsuccess = () => {
+              try {
+                const db = req.result;
+                if (!db.objectStoreNames.contains('game')) {
+                  clearTimeout(timer);
+                  finish(null);
+                  return;
+                }
+                const tx = db.transaction('game', 'readonly');
+                const getReq = tx.objectStore('game').get('current');
+                getReq.onerror = () => {
+                  clearTimeout(timer);
+                  finish(null);
+                };
+                getReq.onsuccess = () => {
+                  clearTimeout(timer);
+                  finish(getReq.result || null);
+                };
+              } catch {
+                clearTimeout(timer);
+                finish(null);
+              }
+            };
+          });
+        } catch {
+          save = null;
+        }
+        const saveName = clean(save?.locationSheet?.name || save?.currentLocation);
+        let placeId = '';
+        const places = Array.isArray(save?.places) ? save.places : [];
+        for (let i = 0; i < places.length; i++) {
+          const row = places[i];
+          if (!row || !row.id) continue;
+          const rowName = clean(row.name);
+          const here = clean(save.currentLocation);
+          if (row.id === here || (rowName && (rowName === saveName || rowName === here))) {
+            placeId = String(row.id);
+            break;
+          }
+        }
+        if (!placeId && save?.currentLocation) placeId = clean(save.currentLocation);
+        return { ui, saveName, placeId };
+      } catch {
+        return none;
+      }
+    });
+    const ui = cleanPlaceText(raw?.ui);
+    const saveName = cleanPlaceText(raw?.saveName);
+    const placeId = cleanPlaceText(raw?.placeId);
+    if (ui) {
+      return { place: ui, placeId: placeId || null, placeSource: 'ui' };
+    }
+    if (placeId || saveName) {
+      return {
+        place: saveName || placeId,
+        placeId: placeId || saveName,
+        placeSource: 'save',
+      };
+    }
+    return { ...EMPTY_PLACE };
+  } catch {
+    return { ...EMPTY_PLACE };
+  }
 }

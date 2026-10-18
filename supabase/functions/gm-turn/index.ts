@@ -81,6 +81,9 @@ function assembleSystemPrompt(
   if (anchors.length > 0) {
     systemPrompt += `\n\n[IMAGE GENERATION RULE]\nWhen creating a [CINEMATIC SCENE PROMPT], if any of the following entities are in the scene, you MUST append their exact visual description to the prompt:\n${anchors.join('\n')}`;
   }
+  // q50-MAP2 — structured places only; never invent geography from prose. Always include newPlaces (use []).
+  systemPrompt +=
+    `\n\n[NEW PLACES]\nWhen you introduce a new reachable place this turn, put it in JSON field newPlaces: [{name, kind, exitsTo}] with exitsTo naming only known hubs. If none, newPlaces: []. Never rely on prose alone to register a place.`;
   return systemPrompt;
 }
 
@@ -476,7 +479,20 @@ Deno.serve(async (req) => {
     }
 
     // Scrubbed response — never return prompts, keys, or pipeline diagnostics.
-    return jsonResponse({ text: best.text, ...(rawIssue ? { rawIssue } : {}), ...(usage ? { usage } : {}) });
+    // q50-MAP2 — pass structured newPlaces through when the writer JSON includes them.
+    let newPlaces: unknown;
+    try {
+      const parsed = JSON.parse(best.text) as { newPlaces?: unknown };
+      if (Array.isArray(parsed?.newPlaces)) newPlaces = parsed.newPlaces;
+    } catch {
+      /* freeform prose — no structured places */
+    }
+    return jsonResponse({
+      text: best.text,
+      ...(rawIssue ? { rawIssue } : {}),
+      ...(usage ? { usage } : {}),
+      ...(newPlaces ? { newPlaces } : {}),
+    });
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
     const message = err instanceof Error ? err.message : 'GM proxy failure';

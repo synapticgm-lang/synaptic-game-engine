@@ -2,17 +2,39 @@
 
 Drives a **visible Chrome tab** (CDP `:9222`) through the real React `sendAction` a human gets. Does **not** call `fateAutoplay.callGm`.
 
-**Do not run a quality T10 on Flash. Flash is not the judge.**
+**Do not run a quality T10 on Flash. Flash is not the judge. Never default to Flash.**
 
-Default player-brain: OpenRouter **`google/gemini-2.5-pro`**. Never default to Flash. Set `AI_PLAYER_ALLOW_FLASH=1` only for a throwaway smoke — quality T10 must stay on Pro.
+Default player-brain: OpenRouter **`deepseek/deepseek-v4-pro`** (`player_licence: open`).  
+Documented alternative: **`qwen/qwen3-235b-a22b-2507`**.  
+Override with `AI_PLAYER_MODEL`. Provider prefixes `anthropic/` / `openai/` / `google/` / `x-ai/` are **restricted** → run is `testerOnly` and never admitted to training.
 
 ```
 npm run ai-player-ensure-tester
 npm run ai-player-smoke
 npm run ai-player-t10
+node scripts/ai-player-browser/run.mjs --persona dungeon-diver --goal "max out dungeon levels"
+node scripts/ai-player-browser/run.mjs --persona tradesman --goal "take up a trade and open a shop"
 ```
 
 Do not close Chrome / do not kill `chrome.exe` when a run ends.
+
+## Persona + life-goal
+
+`--persona <id>` loads `personas/<id>.json`. `--goal '<text>'` overrides the file goal. The player prompt carries persona, goal, and the last actions. The model returns `{ action, kind: 'chip'|'free', thumb, reason }`.
+
+## Thumbs + verify
+
+After each judged GM beat the harness presses the real UI thumb with the player's one-line `reason` as the comment (`submitThumb`), then reads `gm_response_feedback` back with the **tester session** (anon key + `ai-player@synapticgm.com` login — never the service role). Logs `verified=true|false` per turn.
+
+## Tags
+
+- Tester account: `ai-player@synapticgm.com`
+- Harness save ids: `aitest-…`
+- Every turns.jsonl / feedback meta: `{ source: 'ai-tester:<model>', input_author: 'ai-player', player_model, player_licence }`
+
+## Play log
+
+Each run folder gets `play-log.md`: per turn, 2–3 short sentences (wanted / did / happened) plus thumb and reason.
 
 ## Human judge (hard floor)
 
@@ -29,15 +51,14 @@ UP only when it reads like a **short interesting chapter beat**: clear, spoken, 
 
 If Who / Want was already answered this scene, the harness **ignores those chips** and types a new line.
 
-**Natural play (why we pay for Pro):** the player is a person in the room, not a chip walker. Do not prefer a chip just because it exists. After one Inspect the panel / the same look, **type**. Temperature is ~0.85. The packet includes the last actions so it cannot “forget” a mash.
-
 Auto Fight when the toolbar `title="Auto-resolve combat"` is live.
 
 ## Stop after 2 consecutive repeats
 
-If the on-screen GM story matches the previous beat twice in a row, or the tester / hard floor flags **loop / identical / last-resort reprint** on two consecutive beats, the run **aborts**. It writes `REVIEW.md` in that run folder (what repeated, turns, pads, lastGm), does **not** start another T10, and leaves Chrome open. Review before `npm run ai-player-t10` again.
+If the on-screen GM story matches the previous beat twice in a row, or the tester / hard floor flags **loop / identical / last-resort reprint** on two consecutive beats, the run **aborts**. It writes `REVIEW.md` in that run folder, does **not** start another T10, and leaves Chrome open.
 
 ## Env (gitignored)
 
 `AI_PLAYER_EMAIL` / `AI_PLAYER_PASSWORD` / `OPENROUTER_API_KEY`  
-`AI_PLAYER_HOST` · `AI_PLAYER_CDP` · `AI_PLAYER_MODEL` (default `google/gemini-2.5-pro`)
+`AI_PLAYER_HOST` · `AI_PLAYER_CDP` · `AI_PLAYER_MODEL` (default `deepseek/deepseek-v4-pro`)  
+`VITE_SUPABASE_URL` · `VITE_SUPABASE_ANON_KEY` (feedback read-back; never service role at runtime)
