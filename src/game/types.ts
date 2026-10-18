@@ -2066,6 +2066,11 @@ export interface PlaceRecord {
   exits?: string[];
   /** 27g place card — turn the card was built; set means reuse, never rebuild. */
   cardBuiltTurn?: number;
+  /**
+   * q50-MAP2 — local site's parent hub (settlement). Travel terrain comes from this hub's atlas
+   * row; the local site itself is never a new worldAtlas.settlements entry.
+   */
+  parentHub?: string;
   /** 29z9j — objects seen at this place (the HERE props it had when the player last left it). */
   props?: string[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
