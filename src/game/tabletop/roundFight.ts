@@ -414,7 +414,7 @@ export function resolveRoundFight(
   receipts.push(`Combat status:\n${statusBlock.text}`);
   if (res.inspirationSpent) receipts.push('Heroic Inspiration: spent');
   if (res.pcHp !== pc.hp) receipts.push(hpLine(pc.hp, res.pcHp));
-  const facts = [...lead, ...relabel(combatFacts(res.events, pc.name), setup.labels), `Combat status — ${statusBlock.screenReaderText}`];
+  const facts = [...lead, ...relabel(combatFacts(res.events, pc.name), setup.labels)];
   if (opts.pre === 'flee') facts.unshift(`You tried to break away from ${enc.name} and failed; ${enc.name} forced the fight.`);
   if (opts.pre === 'parley') facts.unshift(`You tried to talk ${enc.name} down and failed; ${enc.name} forced the fight.`);
 
