@@ -650,6 +650,34 @@ export interface Commitment {
   checkedTurn?: number;
 }
 
+/** TT-T1 — kind of an engine open thread (Mythic-style list; pattern only). */
+export type ThreadKind = 'quest' | 'npc-goal' | 'promise' | 'lead' | 'foe';
+
+/** TT-T1 — engine condition that alone may close the thread. */
+export type ThreadResolution =
+  | { type: 'quest-complete'; questId: string }
+  | { type: 'npc-goal-met'; npcId: string }
+  | { type: 'commitment-kept'; promiseId: string }
+  | { type: 'lead-resolved'; questId: string; lead: string }
+  | { type: 'foe-defeated'; foeName: string };
+
+/** TT-T1 — one open thread on the engine list. */
+export type OpenThread = {
+  id: string;
+  kind: ThreadKind;
+  label: string;
+  entityId?: string;
+  placeId?: string | null;
+  lastSeenTurn: number;
+  resolution: ThreadResolution;
+};
+
+/** TT-T1 — scene planner pick for this turn. */
+export type SceneThreadPlan = {
+  plannedTurn: number;
+  forwardIds: string[];
+};
+
 export interface WorldHolding {
   id: string;
   name: string;
@@ -984,6 +1012,13 @@ export interface GameState {
    * lastTurn = turn of last generated quest; unboundLog = dropped writer quest-add proposals.
    */
   questGen?: { lastTurn: number; unboundLog?: string[] };
+  /**
+   * TT-T1 — Mythic-style open-thread list (engine-owned). Updated by `planSceneThreads`.
+   * A thread closes only when its resolution condition is met.
+   */
+  openThreads?: OpenThread[];
+  /** TT-T1 — which open threads the scene planner brought forward this turn. */
+  sceneThreadPlan?: SceneThreadPlan;
   /** Immutable run manifest for eval/replay binding. */
   runManifest?: import('./runManifest').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */

@@ -372,6 +372,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
+import { planSceneThreads } from './openThreads';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
@@ -2860,6 +2861,8 @@ export function useGame() {
           liveCurrent = floor.state;
           if (floor.notes.length) pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...floor.notes];
         }
+        // TT-T1 — open-thread list + bring at least one forward into this scene.
+        liveCurrent = planSceneThreads(liveCurrent);
         stateRef.current = liveCurrent;
       }
 

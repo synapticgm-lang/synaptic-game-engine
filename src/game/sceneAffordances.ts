@@ -35,6 +35,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
+import { forwardThreadAffordance } from './openThreads';
 import type { QuestRoute } from './types';
 export function isWayOut(chip: {
   kind?: string;
@@ -123,6 +124,22 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       salience: 100,
       required: true,
       check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
+    });
+  }
+  // TT-T1 — scene planner brought an open thread forward (engine record; plain label).
+  const forward = forwardThreadAffordance(state);
+  if (forward) {
+    all.push({
+      label: forward.label,
+      actionId: forward.actionId,
+      entityId: forward.entityId,
+      slotKind: 'quest',
+      slotCategory: 'scene',
+      salience: 95,
+      required: true,
+      check: withModeCheck
+        ? checkForAction(state, parsePlayerIntent(forward.label, state), forward.label)
+        : undefined,
     });
   }
   const people = presentNpcRecords(state);

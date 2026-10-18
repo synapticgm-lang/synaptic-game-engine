@@ -167,6 +167,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
+import { planSceneThreads } from './openThreads';
 import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
@@ -1192,6 +1193,8 @@ export async function headlessFateTurn(
       arcState = floor.state;
       if (floor.notes.length) arcStatusReceipts = [...arcStatusReceipts, ...floor.notes];
     }
+    // TT-T1 — open-thread list + bring at least one forward into this scene.
+    arcState = planSceneThreads(arcState);
   }
 
   // 08c Tag & Trigger — consume claim pad before packet/writer.

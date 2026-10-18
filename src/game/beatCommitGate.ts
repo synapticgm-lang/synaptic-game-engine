@@ -28,6 +28,7 @@ import { isSlotGlueViolation, ledgerPlaceTitles, ledgerSlotPeople } from './slot
 import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
+import { earlyThreadCloseReason } from './openThreads';
 import { ledgerNeverCastTitles } from './neverCast';
 import {
   beatCarriesForcedAttempt,
@@ -254,6 +255,9 @@ export function factClosedViolationReason(state: GameState, text: string): strin
     return 'Uses a name or place title as an object or as a person.';
   }
   if (isClosedLedgerViolation(state, body)) return REOPENED_FACT;
+  // TT-T1 — draft closes an open thread (quest done / foe dead / lead solved) without the engine condition.
+  const earlyThread = earlyThreadCloseReason(state, body);
+  if (earlyThread) return earlyThread;
   return null;
 }
 
