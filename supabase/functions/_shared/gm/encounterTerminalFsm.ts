@@ -4,6 +4,7 @@
  */
 
 import type { ActiveEncounter, EngineMode, GameState } from './types.ts';
+
 export type EncounterPhase = 'pending' | 'engaged' | 'resolving' | 'terminal';
 export type TerminalOutcome =
   | 'escape'
@@ -11,6 +12,7 @@ export type TerminalOutcome =
   | 'defeat'
   | 'capture'
   | 'parleyResolved';
+
 export interface EncounterClearedReceipt {
   encounterId: string;
   outcome: TerminalOutcome;
@@ -21,11 +23,13 @@ export interface EncounterClearedReceipt {
   failedParleyCount: number;
   name: string;
 }
+
 export interface EncounterCaps {
   maxEngagedTurns: number;
   maxFailedFlee: number;
   maxFailedParley: number;
 }
+
 export function encounterCapsForMode(mode: EngineMode | undefined): EncounterCaps {
   if (mode === 'dnd') {
     return { maxEngagedTurns: 10, maxFailedFlee: 2, maxFailedParley: 2 };
@@ -33,6 +37,7 @@ export function encounterCapsForMode(mode: EngineMode | undefined): EncounterCap
   // LitRPG default; RPG/PYOA reuse short combat caps if a combat encounter exists
   return { maxEngagedTurns: 8, maxFailedFlee: 2, maxFailedParley: 1 };
 }
+
 export function initEncounterTerminal(
   enc: ActiveEncounter,
   state: GameState,
@@ -57,8 +62,10 @@ export function initEncounterTerminal(
     forcedSpawnKey: enc.forcedSpawnKey ?? opts?.forcedSpawnKey,
   };
 }
+
 /** Telegraph turn, then arrival: a parked foe goes live this many turns after it was parked. */
 export const PENDING_ARRIVAL_TURNS = 2;
+
 /** A foe the engine parked off the page: telegraphed first, taken live by the arrival clock. */
 export function parkPendingEncounter(enc: ActiveEncounter, turn: number): ActiveEncounter {
   return {
@@ -68,26 +75,32 @@ export function parkPendingEncounter(enc: ActiveEncounter, turn: number): Active
     arrivalTurn: turn + PENDING_ARRIVAL_TURNS,
   };
 }
+
 export function pendingArrivalDue(enc: ActiveEncounter | null | undefined, turn: number): boolean {
   if (!enc) return false;
   const due = enc.arrivalTurn ?? (enc.parkedTurn ?? turn) + PENDING_ARRIVAL_TURNS;
   return turn >= due;
 }
+
 /** The arrival clock ran out: the parked foe is now the live encounter. */
 export function arrivePendingEncounter(enc: ActiveEncounter, turn: number): ActiveEncounter {
   const { parkedTurn: _p, arrivalTurn: _a, ...rest } = enc;
   return { ...rest, phase: 'engaged', startedTurn: turn };
 }
+
 function isFleeIntent(input: string): boolean {
   return /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i.test(input);
 }
+
 function isParleyIntent(input: string): boolean {
   return /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i.test(input);
 }
+
 function isAttackIntent(input: string): boolean {
   return /\b(attack|fight|strike|press the attack|engage|slash|stab|shoot|cast|punch|fists?|continue (?:the )?(?:assault|attack|pressing)|follow-up strike|lash out)\b/i.test(input);
 }
-/** Idle under threat. */
+
+/** Idle under threat: loot / scout / wait / room inspect — must not farm max_engaged victory XP. */
 export function isEncounterIdleIntent(input: string): boolean {
   const t = (input ?? '').trim();
   if (!t) return true;
@@ -99,15 +112,18 @@ export function isEncounterIdleIntent(input: string): boolean {
     || /\b(travel|go to|head to|browse|merchant|shop)\b/i.test(t)
   );
 }
+
 export function fleeAvailable(enc: ActiveEncounter | null | undefined): boolean {
   if (!enc || enc.phase === 'resolving' || enc.phase === 'terminal') return false;
   if (enc.caught) return false;
   return (enc.failedFleeCount ?? 0) < (enc.maxFailedFlee ?? 2);
 }
+
 export function parleyAvailable(enc: ActiveEncounter | null | undefined): boolean {
   if (!enc || enc.phase === 'resolving' || enc.phase === 'terminal') return false;
   return (enc.failedParleyCount ?? 0) < (enc.maxFailedParley ?? 1);
 }
+
 function resolveForcedOutcome(enc: ActiveEncounter, reason: string): TerminalOutcome {
   if (enc.hp <= 0) return 'victory';
   if (reason === 'flee_success') return 'escape';
@@ -123,6 +139,7 @@ function resolveForcedOutcome(enc: ActiveEncounter, reason: string): TerminalOut
   if (reason === 'parley_cap') return 'victory';
   return 'victory';
 }
+
 export interface TickEncounterResult {
   state: GameState;
   cleared?: EncounterClearedReceipt;
@@ -131,9 +148,14 @@ export interface TickEncounterResult {
   /** 29b — XP awarded on clear (victory / costly escape / parley). */
   xpAward?: { amount: number; reason: string };
 }
+
 /** Turns before the same forcedSpawnKey may re-engage after a clear. */
 export const ENCOUNTER_REENGAGE_COOLDOWN = 12;
-/** Tick encounter FSM while engaged; caps force terminal (q49b-FIGHT). Tabletop foe turns: SRD 5.2.1 Combat Step by Step (WotC CC BY 4.0) via roundCombat. */
+
+/**
+ * Tick encounter FSM on accepted player input while engaged.
+ * Successful flee/parley/kill clear immediately; caps force terminal.
+ */
 export function tickEncounterTerminal(
   state: GameState,
   playerInput: string,
@@ -165,9 +187,13 @@ export function tickEncounterTerminal(
     return commitClear(state, enc, 'parleyResolved', 'parley_success');
   }
 
+  const idle = isEncounterIdleIntent(input);
   enc = {
     ...enc,
-    engagedTurnCount: (enc.engagedTurnCount ?? 0) + 1,
+    // Batch G — only fight/flee/parley advance the clear clock; idle loot/scout never farms victory XP.
+    engagedTurnCount: idle
+      ? (enc.engagedTurnCount ?? 0)
+      : (enc.engagedTurnCount ?? 0) + 1,
     phase: 'engaged',
   };
 
@@ -194,35 +220,22 @@ export function tickEncounterTerminal(
     if (enc.hp <= 0) {
       return commitClear(state, enc, 'victory', 'enemy_hp_zero');
     }
-  } else if (isEncounterIdleIntent(input)) {
-    receipts.push('Threat still live — loot/scout does not clear without the fight clock');
+  } else if (idle) {
+    receipts.push('Threat still live — idle loot/scout does not clear the encounter');
   }
 
-  let nextState: GameState = { ...state, activeEncounter: enc };
-  const softReturn = state.engineMode === 'litrpg' || state.engineMode === 'rpg';
-  if (softReturn && enc.phase === 'engaged' && enc.hp > 0) {
-    const received = Math.max(1, 3 + Math.floor((enc.level ?? 1) / 2));
-    const hpBefore = state.character.hp ?? 0;
-    const hpAfter = Math.max(1, hpBefore - received);
-    if (hpAfter < hpBefore) {
-      nextState = {
-        ...nextState,
-        character: { ...state.character, hp: hpAfter },
-      };
-      receipts.push(`${enc.name} strikes back (−${received} HP)`);
-    }
-  }
-
-  if ((enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
-    return commitClear(nextState, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
+  const terminalIntent = isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input);
+  if (terminalIntent && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
+    return commitClear(state, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }
 
   return {
-    state: nextState,
+    state: { ...state, activeEncounter: enc },
     receipts,
     forcedTerminal: false,
   };
 }
+
 /** Diegetic cues that the foe accepted a truce / stood down (Batch F). */
 export function detectParleySuccessInProse(prose: string): boolean {
   const t = prose ?? '';
@@ -237,6 +250,7 @@ export function detectParleySuccessInProse(prose: string): boolean {
     || /\b(withdraws?(?:\s+from (?:the )?(?:fight|melee))?|walks?\s+away|lets?\s+you\s+(?:pass|go)|truce\s+(?:holds|accepted)|parley\s+succeeds)\b/i.test(t)
   );
 }
+
 /**
  * After GM narrates a parley attempt: ledger-resolve on success cues;
  * otherwise count a refusal (exhausted still keeps combat — Batch E).
@@ -275,6 +289,7 @@ export function settleParleyAfterProse(
     forcedTerminal: false,
   };
 }
+
 /**
  * The foe leaves the scene with the fight: beaten (lastKill, same commit, before GM) or left behind by an
  * escape. A talked-down or winning foe still stands here.
@@ -309,6 +324,7 @@ function settleFoePresence(
     },
   };
 }
+
 function commitClear(
   state: GameState,
   enc: ActiveEncounter,
@@ -354,12 +370,14 @@ function commitClear(
     forcedTerminal: true,
   };
 }
+
 /** True when this spawn key is still cooling down after a clear. */
 export function isEncounterOnCooldown(state: GameState, spawnKey: string): boolean {
   const until = state.arcDirector?.encounterCooldownUntil?.[spawnKey];
   if (until == null) return false;
   return state.turn < until;
 }
+
 export function formatEncounterClearedStatus(receipt: EncounterClearedReceipt): string {
   const label =
     receipt.outcome === 'escape'
@@ -375,6 +393,7 @@ export function formatEncounterClearedStatus(receipt: EncounterClearedReceipt): 
   const ended = receipt.outcome === 'escape' || receipt.outcome === 'defeat';
   return `Encounter ${ended ? 'ended' : 'cleared'}: ${receipt.name} — ${label}`;
 }
+
 /** Force clear if still engaged past hard safety (eval T50 / stuck saves). */
 export function forceClearIfStale(state: GameState, maxTurnSpan = 50): TickEncounterResult {
   const enc = state.activeEncounter;
@@ -386,10 +405,12 @@ export function forceClearIfStale(state: GameState, maxTurnSpan = 50): TickEncou
   const ready = initEncounterTerminal(enc, state);
   return commitClear(state, ready, resolveForcedOutcome(ready, 'max_engaged'), 'stale_force_clear');
 }
+
 export function isEncounterEngaged(state: GameState): boolean {
   const p = state.activeEncounter?.phase;
   return !!state.activeEncounter && (p == null || p === 'engaged' || p === 'resolving');
 }
+
 /** Batch W — live encounter blocks travel snap / soft clear. */
 export function encounterBlocksTravel(state: GameState): boolean {
   return isEncounterEngaged(state) || !!state.activeEncounter;
@@ -399,6 +420,7 @@ export function encounterBlocksTravel(state: GameState): boolean {
 // Batch Z Milestone 2 — State-Lock Combat & Travel
 // FSM helpers for ChoiceCompiler pad filtering
 // ============================================================================
+
 /**
  * Can the player travel in the current FSM state?
  * Caught or in combat = NO travel pads.
@@ -417,6 +439,7 @@ export function canTravelInFsmState(state: GameState): boolean {
   
   return true;
 }
+
 /**
  * Can the player inspect in the current FSM state?
  * Caught = NO inspection pads (must fight/plead/struggle).
@@ -429,6 +452,7 @@ export function canInspectInFsmState(state: GameState): boolean {
   
   return true;
 }
+
 /**
  * Can the player shop/merchant in the current FSM state?
  * In combat = NO shop pads.
@@ -439,6 +463,7 @@ export function canShopInFsmState(state: GameState): boolean {
   
   return true;
 }
+
 /**
  * Get the allowed combat actions for the current FSM state.
  * Caught = only [Attack, Plead, Struggle, Surrender].

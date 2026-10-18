@@ -222,14 +222,6 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
       }
       break;
     }
-    if (!actionId && state.activeEncounter && state.engineMode === 'dnd' && state.character?.srd) {
-      actionId = `fight:round:${low}`;
-      kind = 'compiled';
-      slotKind = 'fight';
-      slotCategory = 'scene';
-      required = true;
-      rank = 100 - i;
-    }
     // q44c: an offered label with no source actionId is not kept. Keeping it skipped the cooldown.
     if (!actionId) continue;
     pad.push({ label, actionId, kind: kind || 'compiled', slotKind, slotCategory, entityId, required, rank });

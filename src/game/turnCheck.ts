@@ -11,17 +11,14 @@ import { checkObligationCoverage, buildIntentContract } from './intentContract';
 import { parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
-import { hubsForBibleId, placeCardFor } from './outdoorHubs';
+import { hubsForBibleId } from './outdoorHubs';
 import { getRegisteredLocations } from './entityRegistry';
 import { handedRefs } from './completedEventPacket';
 import { extractNamedPlaces } from './questPlay';
-import { findSettlement, isLegalMapPlace } from './worldMapAuthority';
+import { isLegalMapPlace } from './worldMapAuthority';
 import { resolvePlayAreaMap, type ActiveDungeonState } from './mapEngine';
 import { previewDungeonCard } from './dungeonCard';
 import { isExplorableDungeon, isInteriorMap } from './placeAuthority';
-import { dungeonRoomPlace, resolvePlace } from './places';
-import { exitPlaceNames } from './placeNames';
-import { isRoadLabel, isTripHere } from './travelJourney';
 import {
   basementEstablished,
   chipAddressee,
@@ -79,9 +76,7 @@ export type TurnCheckKind =
   | 'repeat-chip'
   | 'verb-swapped'
   | 'dead-chip'
-  | 'missing-chip-kind'
-  /** q49-MAP: HERE is missing from the place/atlas registry, or has no exits outside a dungeon/sealed scene. */
-  | 'unregistered-place';
+  | 'missing-chip-kind';
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;
@@ -101,30 +96,6 @@ export interface TurnCheck {
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
-/**
- * q49-MAP — HERE must be on the place registry / atlas with exits, unless the engine itself marks a
- * dungeon room or sealed scene. Closes the mega4 blind spot where no-exit checks never fired.
- */
-export function checkRegisteredPlace(state: GameState): TurnCheckFlag[] {
-  const loc = norm(state.currentLocation);
-  if (!loc) return [];
-  if (isRoadLabel(loc) || isTripHere(state, loc)) return [];
-  if (dungeonRoomPlace(state, loc) && isExplorableDungeon(state.activeDungeon)) return [];
-  if (isExplorableDungeon(state.activeDungeon)) return [];
-  const place = resolvePlace(state.places, loc) ?? resolvePlace(state.places, dungeonRoomPlace(state, loc) ?? '');
-  const atlasHit = !!findSettlement(state.worldAtlas, loc);
-  if (!place && !atlasHit) {
-    return [{ kind: 'unregistered-place', detail: `current location "${loc}" is not on the world map` }];
-  }
-  const sheetExits = state.locationSheet?.exits?.length ?? 0;
-  const cardExits = (place?.exits?.length ?? 0) || (placeCardFor(state, loc)?.exits?.length ?? 0);
-  const named = exitPlaceNames(state).length;
-  if (sheetExits + cardExits + named === 0) {
-    return [{ kind: 'unregistered-place', detail: `registered place "${loc}" has no exits` }];
-  }
-  return [];
-}
-
 /** P0 chip checks against the turn-start state (same rules the chip pipeline filters on). */
 export function checkChips(state: GameState, chips: string[]): TurnCheckFlag[] {
   const out: TurnCheckFlag[] = [];
@@ -136,25 +107,14 @@ export function checkChips(state: GameState, chips: string[]): TurnCheckFlag[] {
 }
 
 function gmBodies(state: GameState): string[] {
-  const out: string[] = [];
-  const log = state.log ?? [];
-  for (let i = 0; i < log.length; i++) {
-    const e = log[i]!;
-    if (e.role !== 'gm') continue;
-    const body = norm(e.content);
-    if (body) out.push(body);
-  }
-  return out;
+  return (state.log ?? []).filter((e) => e.role === 'gm' && norm(e.content)).map((e) => norm(e.content));
 }
 
 function sentencesOf(text: string): string[] {
-  const parts = norm(text).split(/(?<=[.!?]["”']?)\s+/);
-  const out: string[] = [];
-  for (let i = 0; i < parts.length; i++) {
-    const s = parts[i]!.trim();
-    if (s.length >= 28) out.push(s);
-  }
-  return out;
+  return norm(text)
+    .split(/(?<=[.!?]["”']?)\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length >= 28);
 }
 
 function wordSet(s: string): Set<string> {
@@ -498,7 +458,6 @@ export function checkPlayerTurn(
     ...checkChosenChip(before, row.fatePick || action),
     ...followed.p0,
     ...checkQuestPlaces(before, after),
-    ...checkRegisteredPlace(before),
     ...brokenProse(prose, after.character?.name),
     ...checkSheetMemory(before, prose),
     ...checkLevelUpChanges(before, after),
