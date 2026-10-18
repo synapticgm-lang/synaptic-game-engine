@@ -1931,6 +1931,12 @@ export interface LocationExit {
   keyItem?: string;
 }
 
+/** q50e — exit source id (sheet `ex.id`, or the hub/place id) plus the place label. */
+export interface PlaceExitRow {
+  id: string;
+  label: string;
+}
+
 export interface LocationSheet {
   name: string;
   climate?: string;
