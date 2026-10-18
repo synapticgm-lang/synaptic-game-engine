@@ -101,7 +101,7 @@ import {
 import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
-import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
+import { enforceCameraOnProse, enforceCameraOnState, resolveNextLocation } from './travelAuthority';
 import { syncSheetToMovedHere } from './locationMemory';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
 import {
@@ -1739,14 +1739,17 @@ Do NOT print dice notation or CODE ENFORCED.
   if (updates.currentLocation) {
     working = {
       ...working,
-      currentLocation: honestLocationName(working, updates.currentLocation, playerInput) ?? updates.currentLocation,
+      currentLocation: resolveNextLocation(working, { proposed: updates.currentLocation }),
     };
   }
 
   // 29u — travel committed HERE before the writer (ground between, or the arrival); prose never moves it.
   const fromLoc = state.currentLocation;
   if (travelCommit?.handled && travelCommit.state.currentLocation) {
-    const here = travelCommit.state.currentLocation;
+    const here = resolveNextLocation(working, {
+      travelCommit,
+      proposed: travelCommit.state.currentLocation,
+    });
     const hereBefore = working.currentLocation ?? fromLoc ?? '';
     working = {
       ...working,
