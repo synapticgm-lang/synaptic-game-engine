@@ -1,14 +1,10 @@
 import type { GameState, NpcMemory } from './types';
 import { isOutOfTalkingRange } from './hereSpot';
+import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 
 const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line|Speech:)/i;
 const VOICE_NOTE = /^Speech:/i;
 
-/**
- * 29z3 — what this person's info sheet says about the main character, for the writer:
- * they have met, how many times, the name they know, and how the player treated them.
- * Empty for someone the player has not met.
- */
 export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
   if (!isMetNpc(m)) return '';
   const pc = (m.knownPlayerName || pcName || '').trim() || 'the player';
@@ -43,13 +39,13 @@ export function formatNpcMemoriesForPrompt(
     .join('\n');
 }
 
-/** 29z3 — sheet lines for everyone here who has met the player. */
 export function sheetMemoryLinesHere(state: GameState): string[] {
   return presentNpcRecords(state)
     .map((m) => sheetMemoryLine(m, state.character?.name))
     .filter(Boolean);
 }
 
+const SLUG_GAP = /[^a-z0-9]+/g;
 const COMPOUND_SPLIT = /\s*(?:,|\band\b|&)\s*/i;
 const LEADING_ROLE_WORD = /^(?:the|a|an|tracker|quay-master|auditor|court clerk)\s+/i;
 
@@ -119,7 +115,6 @@ function samePlace(a: string | undefined, b: string | undefined): boolean {
   return !!x && x === y;
 }
 
-/** The person's record puts them at a place that is not the player's place. */
 export function npcPlacedElsewhere(state: GameState, name: string): boolean {
   const m = resolveNpcRecord(state, name);
   return !!m?.location && !samePlace(m.location, state.currentLocation);
@@ -137,7 +132,6 @@ function companionRecords(state: GameState): NpcMemory[] {
   return out;
 }
 
-/** 27f — NPCs at the player's place: the record location decides; records not placed yet fall back to sceneFacts.present; companions always. */
 export function presentNpcRecords(state: GameState): NpcMemory[] {
   const out: NpcMemory[] = [];
   const seen = new Set<string>();
@@ -146,44 +140,61 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
     seen.add(m.npcId);
     out.push(m);
   };
+  const journey = state.journey;
+  const here = (state.currentLocation ?? '').trim().toLowerCase();
+  const tripHere = underwayHereLabel(state).trim().toLowerCase();
+  const onRoad = !!journey && journey.legsDone < journey.legsTotal && (here === UNDERWAY_HERE.toLowerCase() || (!!tripHere && here === tripHere));
   for (const m of state.npcMemories ?? []) {
     if (m.location && samePlace(m.location, state.currentLocation)) push(m);
   }
-  for (const m of recordsForEntries(state, state.sceneFacts?.present ?? [])) {
-    if (!m.location) push(m);
+  if (!onRoad) {
+    for (const m of recordsForEntries(state, state.sceneFacts?.present ?? [])) {
+      if (!m.location) push(m);
+    }
   }
   for (const m of companionRecords(state)) push(m);
+  const enc = onRoad ? journey?.encounter : undefined;
+  if (enc && !enc.engaged && !enc.escaped && !enc.lost && enc.kind !== 'signs' && enc.kind !== 'lair' && enc.kind !== 'wildlife' && enc.kind !== 'monster') {
+    const party: string[] = [];
+    if (enc.name) party.push(enc.name);
+    const placeId = enc.camp?.placeId;
+    if (placeId) {
+      const places = state.places ?? [];
+      for (let i = 0; i < places.length; i++) {
+        if (places[i]!.id !== placeId) continue;
+        const folks = places[i]!.roadCamp?.people ?? [];
+        for (let k = 0; k < folks.length; k++) party.push(folks[k]!);
+      }
+    }
+    if (enc.kind === 'thugs') party.push('the thugs');
+    if (enc.kind === 'undead') party.push('the restless dead');
+    for (let i = 0; i < party.length; i++) {
+      const name = party[i]!.trim();
+      if (!name) continue;
+      const hit = resolveNpcRecord(state, name);
+      const id = `road:${name.toLowerCase().replace(SLUG_GAP, '-').slice(0, 40)}`;
+      push(hit ? { ...hit, location: state.currentLocation } : { npcId: id, npcName: name, disposition: 'neutral', facts: [], lastSeenTurn: state.turn ?? 0, location: state.currentLocation });
+    }
+  }
   return out.filter((m) => !m.shouldExit && !isOutOfTalkingRange(state, m.npcName));
 }
 
-/** 27f — names of NPC records located at a place. */
 export function npcNamesAt(state: GameState, place: string): string[] {
   return (state.npcMemories ?? []).filter((m) => samePlace(m.location, place)).map((m) => m.npcName);
 }
 
-/** 27f — New Game: the opening card's NPCs are where the game starts. */
 export function seedOpeningCastLocations(state: GameState): GameState {
   const ids = new Set(state.openingEstablishment?.castNpcIds ?? []);
   const here = state.currentLocation;
   if (!ids.size || !here) return state;
-  return {
-    ...state,
-    npcMemories: (state.npcMemories ?? []).map((m) =>
-      ids.has(m.npcId) && !m.location ? { ...m, location: here } : m
-    ),
-  };
+  return { ...state, npcMemories: (state.npcMemories ?? []).map((m) => (ids.has(m.npcId) && !m.location ? { ...m, location: here } : m)) };
 }
 
-/** A giver with a proper name ("High Priest Arus") is a person; a role ("the recorded magical echo") is not. */
 function isNamedGiver(giver: string): boolean {
   const words = giver.trim().split(/\s+/);
   return !/^the$/i.test(words[0] ?? '') && /^[A-Z]/.test(words[words.length - 1] ?? '');
 }
 
-/**
- * A revealed quest's named giver is a person record at the quest's place: an existing record with no
- * place is put there; a missing one is made. Hidden quests place nobody.
- */
 export function placeQuestGivers(state: GameState): GameState {
   let memories = state.npcMemories ?? [];
   let changed = false;
@@ -199,27 +210,12 @@ export function placeQuestGivers(state: GameState): GameState {
       }
       continue;
     }
-    memories = [
-      {
-        npcId: `giver-${giver.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 32)}`,
-        npcName: giver,
-        disposition: 'neutral',
-        facts: [`Quest giver: ${q.name}`],
-        lastSeenTurn: 0,
-        roleHint: 'quest-patron',
-        aliases: [],
-        met: false,
-        present: false,
-        location: place,
-      },
-      ...memories,
-    ];
+    memories = [{ npcId: `giver-${giver.toLowerCase().replace(SLUG_GAP, '-').slice(0, 32)}`, npcName: giver, disposition: 'neutral', facts: [`Quest giver: ${q.name}`], lastSeenTurn: 0, roleHint: 'quest-patron', aliases: [], met: false, present: false, location: place }, ...memories];
     changed = true;
   }
   return changed ? { ...state, npcMemories: memories } : state;
 }
 
-/** 27f — a move: companions go with the player; everyone else present stays where they were. */
 export function stampNpcLocationsOnMove(state: GameState, fromLocation: string, toLocation: string): GameState {
   const companions = new Set(companionRecords(state).map((m) => m.npcId));
   const hereBefore = new Set(presentNpcRecords({ ...state, currentLocation: fromLocation }).map((m) => m.npcId));

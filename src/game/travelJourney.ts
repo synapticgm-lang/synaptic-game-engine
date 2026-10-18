@@ -765,7 +765,7 @@ const NAMED_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'plea', '
 /**
  * tt-build-roadmeet (John, 15 Oct, 2a) — a rolled people meeting gets a seeded name and a one-line description:
  * a plea's is drawn from the plea itself ("a farmer, begs help with a stuck cart"), the rest is a seeded look.
- * The name goes to the writer as the meeting's event, never as someone present.
+ * The name is the meeting's speaker and joins the presence record while the meeting runs.
  */
 function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
   if (!NAMED_KINDS.has(encounter.kind)) return;
@@ -992,8 +992,7 @@ export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): {
   return { label: `${ENCOUNTER_LABEL[e.kind]}${meetingCount(e)}`, count: Math.max(1, e.count ?? 1) };
 }
 /**
- * The REF ENUM row of this beat's road meeting, if one can speak (tt-build-roadmeet): its name (else its label)
- * and its description. The row is the meeting class, never a person present.
+ * Road-meeting event row (name, description). Presence itself is presentNpcRecords.
  */
 export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { display: string; note: string } | null {
   const e = meetingOnBeat(state);
@@ -1001,7 +1000,7 @@ export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { di
   const idea = encounterOpenerIdea(e);
   // OP-1: the picked idea is the backing for what this person says (its gist), never a line to quote.
   const gist = idea ? `; opens with: ${idea.situation}, ${idea.intent}` : '';
-  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here${gist}` };
+  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; present on this road while the meeting runs${gist}` };
 }
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {
