@@ -16,6 +16,8 @@ import {
   tag,
   tokensOf,
 } from '../game/timeline';
+import { findUngroundedNamedClaims } from '../game/suggestionValidation';
+import { groundPlayerAction } from '../game/intentParser';
 import { registerWriterIntroductions } from '../game/writerIntroductions';
 import { spokenLines } from '../game/settlementQuestCards';
 import type { GameState, TimelineFact } from '../game/types';
@@ -431,5 +433,30 @@ describe('q72-TIMELINETAGS', () => {
     expect(body).toMatch(/Vault/);
     expect(body).toMatch(/iron key/);
     expect(body).toMatch(/cave bat/);
+  });
+
+  it('q72r3 a kill tag is the record: the foe is dead and absent', () => {
+    const s = tag(
+      baseState({ turn: 7, sceneFacts: { crowd: 'none', noise: 'quiet', present: ['the thugs'], props: [], lastBeat: '', updatedTurn: 6 } }),
+      'died',
+      'creature',
+      { id: 'creature:the thugs', name: 'the thugs' },
+      'down'
+    );
+    expect(s.timeline?.some((f) => f.verb === 'died' && f.kind === 'creature' && f.name === 'the thugs' && f.detail === 'down')).toBe(true);
+    expect(s.sceneFacts?.lastKill?.name).toBe('the thugs');
+    expect(s.sceneFacts?.present ?? []).not.toContain('the thugs');
+  });
+
+  it('q72r3 hiding is ungrounded unless an engine record names it', () => {
+    const s = baseState({
+      turn: 20,
+      inventory: [{ id: 'kit', name: 'you had a cloak', itemType: 'armor', equipped: true } as GameState['inventory'][number]],
+      offeredPad: { turn: 19, choices: ['Attack from hiding'] },
+    });
+    expect(findUngroundedNamedClaims('Attack from hiding', s)).toContain('from hiding');
+    expect(groundPlayerAction('Attack from hiding', s).text).toMatch(/instead of assuming/);
+    const recorded = tag(s, 'appeared', 'creature', { id: 'creature:thugs', name: 'thugs' }, 'met on the road');
+    expect(findUngroundedNamedClaims('Attack the thugs', recorded)).toEqual([]);
   });
 });

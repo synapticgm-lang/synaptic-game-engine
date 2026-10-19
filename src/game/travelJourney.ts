@@ -86,7 +86,7 @@ import { nameWords, pickPersonName } from './personNames';
 import { replayPreFeature } from './replaySeam';
 import { campAt, campEncounter, campHeadcount, campMemoryFact, campPeople, placeRoadCamp, recordCampOutcome } from './roadCamps';
 import { resolveCampRob } from './lockAttempt';
-import { recordPersonSeen } from './timeline';
+import { recordPersonSeen, tag } from './timeline';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -735,7 +735,13 @@ function rollStretch(state: GameState, j: TravelJourney, check = true): { journe
     const key = `${tripKey(state, j)}|${j.legsDone}`;
     const encounter = recordedTapeMeeting(stretchContext(j), roadEncounterLevel(state, j.areaTier ?? 1), hashUnit(`${key}|chance`), hashUnit(`${key}|kind`), engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1, houseRulesOf(state));
     if (encounter) sizeMeeting(state, encounter, key);
-    return { journey: { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 }, state };
+    let tagged = state;
+    if (encounter && SPEAKING_KINDS.has(encounter.kind)) {
+      const who = ENCOUNTER_LABEL[encounter.kind];
+      const place = underwayHereLabel({ journey: j }) || UNDERWAY_HERE;
+      tagged = tag({ ...state, currentLocation: place }, 'met', 'person', { id: `person:${who}`, name: who }, 'met on the road');
+    }
+    return { journey: { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 }, state: tagged };
   }
   if (!check) return { journey: { ...j, encounter: null, quietStretches: quiet + 1 }, state };
   const key = `${tripKey(state, j)}|${j.legsDone}`;

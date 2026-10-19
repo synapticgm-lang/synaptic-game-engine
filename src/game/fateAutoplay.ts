@@ -1126,9 +1126,6 @@ export async function headlessFateTurn(
   if (!hard.valid) {
     playerInput = hard.rewritten || 'Look around';
     repairNote = (repairNote ? `${repairNote}; ` : '') + `hard_gate→${playerInput}`;
-  } else if (hard.rewritten) {
-    playerInput = hard.rewritten;
-    repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
   }
 
   // A chip no longer on the pad is not the action the writer is told. The engine still runs the
