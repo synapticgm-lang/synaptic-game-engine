@@ -382,6 +382,13 @@ export function isOutdoorHubScene(state: GameState): boolean {
 /** 28g — a hub whose name or blurb marks a dungeon (e.g. Cathedral Undercroft). */
 const DUNGEON_HUB_RE = /\b(dungeon|undercroft|crypt|catacombs?|delve)\b/i;
 
+/** True when this hub is a dungeon site (street exits do not open from a cell under it). */
+export function isDungeonHub(hub: Pick<OutdoorHub, 'name' | 'blurb'> | string | null | undefined): boolean {
+  if (!hub) return false;
+  if (typeof hub === 'string') return DUNGEON_HUB_RE.test(hub);
+  return DUNGEON_HUB_RE.test(`${hub.name} ${hub.blurb ?? ''}`);
+}
+
 /**
  * The mapped places the travel chips offer from here, best first (at most four, one dungeon hub kept).
  * The graph travel edges, the hub travel pads and the exits receipt all read this one list.
@@ -417,7 +424,7 @@ export function hubTravelTargets(state: GameState): string[] {
           // 28g — unvisited hubs before visited ones
           return Number(visited.has(a.name.toLowerCase())) - Number(visited.has(b.name.toLowerCase()));
         })
-        .map((h) => ({ name: h.name, dungeon: DUNGEON_HUB_RE.test(`${h.name} ${h.blurb ?? ''}`) }))
+        .map((h) => ({ name: h.name, dungeon: isDungeonHub(h) }))
     : (Array.isArray(extra) ? extra : []).map((h) => ({ name: h.name, dungeon: false }));
   // OPT-5: closed places drop from exits until an engine event reopens them.
   // Inline place.arcStatus check (no openThreads import — outdoorHubs is edge-synced).
@@ -576,32 +583,59 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     : (state.places ?? [])
       .filter((p) => p.settlementKind === 'story-place')
       .map((p) => ({ id: p.id, name: p.name, blurb: p.description ?? '', threatTier: 1, aliases: p.aliases }));
-  const notHere = (h: string) => h.toLowerCase() !== name.toLowerCase() && !raw.toLowerCase().includes(h.toLowerCase());
-  // An indoor place that is not a hub (a ship's hold) opens only onto the way back and the hub it sits in, not onto the other hubs.
+  // q50-MAP2 — exact HERE match only (no label substring: "west wall" in a ruin name is not West Wall).
+  const notHere = (h: string) => {
+    const key = h.toLowerCase();
+    return key !== name.toLowerCase() && key !== raw.toLowerCase();
+  };
   const card = state.openingEstablishment?.card;
-  const parentHub = card?.place && card.place.toLowerCase() === raw.toLowerCase() ? card.parentHub ?? '' : '';
-  const hubExits = hubs.length
-    ? !hub && placeScale(raw) === 'indoor'
-      ? [parentHub].filter((h) => !!h && notHere(h))
-      : hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
-    : exitPool.filter((h) => notHere(h.name) && known(h)).map((h) => h.name).slice(0, 3);
+  const storedParent = (existing?.parentHub ?? '').replace(/\s+/g, ' ').trim();
+  const cardPlace = (card?.place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  let parentHub = storedParent;
+  // Exact card.place match only (m15 barred cell keeps empty exits when HERE ≠ card.place).
+  if (!parentHub && card?.parentHub && cardPlace && cardPlace === raw.toLowerCase()) {
+    parentHub = card.parentHub.replace(/\s+/g, ' ').trim();
+  }
+  if (!parentHub) {
+    parentHub = matchHub(hubs, fromLocation)?.name ?? '';
+  }
+  // Indoor under a dungeon hub (m15 barred cell): sealed — no mapped street exits.
+  const parentHubRow = matchHub(hubs, parentHub);
+  const sealedUnderDungeon = !hub && placeScale(raw) === 'indoor' && isDungeonHub(parentHubRow ?? parentHub);
+  const indoorLocal = !hub && placeScale(raw) === 'indoor';
+  // Indoor with a street parent: parentHub only. Indoor with no parent yet / outdoor local: hub graph.
+  const hubExits = sealedUnderDungeon
+    ? []
+    : hubs.length
+      ? indoorLocal && parentHub
+        ? [parentHub].filter((h) => !!h && notHere(h))
+        : !hub
+          ? [parentHub, ...hubTravelTargets({ ...state, currentLocation: parentHub || name })].filter(
+              (h) => !!h && notHere(h)
+            )
+          : hubTravelTargets({ ...state, currentLocation: name }).filter(notHere)
+      : exitPool.filter((h) => notHere(h.name) && known(h)).map((h) => h.name).slice(0, 3);
   const seen = new Set<string>();
   const exits: string[] = [];
-  for (const e of [back, ...hubExits]) {
-    const key = e.toLowerCase();
-    if (!e || key === name.toLowerCase() || seen.has(key)) continue;
-    seen.add(key);
-    exits.push(e);
+  if (!sealedUnderDungeon) {
+    for (const e of [back, ...hubExits]) {
+      const key = e.toLowerCase();
+      if (!e || key === name.toLowerCase() || seen.has(key)) continue;
+      seen.add(key);
+      exits.push(e);
+    }
   }
   return {
     id: existing?.id ?? placeIdFromName(name),
     name: existing?.name ?? name,
     aliases: existing?.aliases ?? Array.from(new Set([name, raw, ...(hub?.aliases ?? [])])).slice(0, 12),
     mapScale: existing?.mapScale ?? 'street',
-    arcStatus: existing?.arcStatus ?? 'open',
+    arcStatus: sealedUnderDungeon ? 'closed' : existing?.arcStatus ?? 'open',
+    closed: sealedUnderDungeon ? true : existing?.closed,
     description: description || undefined,
     exits: exits.slice(0, 5),
     cardBuiltTurn: state.turn ?? 0,
+    parentHub: hub ? undefined : parentHub || existing?.parentHub,
   };
 }
 

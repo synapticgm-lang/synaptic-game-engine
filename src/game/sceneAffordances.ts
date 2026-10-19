@@ -1,4 +1,12 @@
-/** TT-C1/OPT-1 scene options (Dendry; SRD 5.2.1 WotC CC BY 4.0). Labels stay plain actions (§4). */
+/**
+ * TT-C1 / OPT-1 — options from the engine scene record (mode-agnostic).
+ * Slot rank is Dendry-style salience (Ian D. Millington; pattern only, not a Dendry port).
+ * Tabletop CheckSpec from checkForAction / SRD 5.2.1 (Wizards of the Coast, CC BY 4.0):
+ * "The DM calls for an ability check when a character attempts an action (other than an
+ * attack) that has a chance of failure. When the outcome is uncertain, the dice determine
+ * the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
+ * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
+ */
 import type { GameState } from './types';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
@@ -12,6 +20,7 @@ import {
 } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
+import { placeExitRows } from './placeRegistry';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
@@ -45,6 +54,13 @@ export function wayOutMovesPlayer(state: GameState, label: string): boolean {
   if (!here || hub.name.toLowerCase() === here.toLowerCase()) return false;
   if (isTripHere(state, hub.name)) return false;
   return mapGapBetween(state, here, hub.name).steps > 0;
+}
+
+/** Sheet / hub id when the row has one; otherwise the place label. */
+function exitEntityId(row: { id?: string; label?: string }): string {
+  const id = (row.id ?? '').trim();
+  if (id) return id;
+  return (row.label ?? '').trim();
 }
 /** q45b-SLOT — one final-pad slot. Free-input chips are not a slot. */
 export type SlotCategory = 'move' | 'talk' | 'act' | 'scene';
@@ -315,13 +331,14 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       visitedKeys.add((n.name ?? '').toLowerCase());
     }
   }
-  const sheetExits = state.locationSheet?.exits ?? [];
-  if (sheetExits.length) {
-    for (let i = 0; i < sheetExits.length; i++) {
-      const ex = sheetExits[i]!;
-      const dest = (ex.label ?? '').trim();
+  // q50e — MOVE exits from placeExitRows (record, or the same seed with no write).
+  const recordExits = placeExitRows(state, state.currentLocation);
+  if (recordExits.length) {
+    for (let i = 0; i < recordExits.length; i++) {
+      const row = recordExits[i]!;
+      const dest = row.label;
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = ex.id || `exit:${dest}`;
+      const entityId = exitEntityId(row);
       const chip = `Travel toward ${dest}`;
       all.push({
         label: chip,
@@ -342,7 +359,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       if (!label) continue;
       const target = (e.target ?? label).trim();
       if (target && !isPlaceOpenForExit(state, target)) continue;
-      const entityId = `exit:${target}`;
+      const entityId = target;
       all.push({
         label,
         actionId: `exit:${entityId}:travel`,
@@ -366,7 +383,7 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     for (let i = 0; i < names.length; i++) {
       const dest = (names[i] ?? '').trim();
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = `exit:${dest}`;
+      const entityId = dest;
       all.push({
         label: `Travel toward ${dest}`,
         actionId: `exit:${entityId}:travel`,
@@ -506,6 +523,46 @@ export function computeOptionSceneKey(state: GameState): {
   presentIds.sort();
   return { placeId, presentIds, eventSeq: state.optionSceneKey?.eventSeq ?? 0 };
 }
+export function optionSceneKeyString(sk: {
+  placeId: string;
+  presentIds: string[];
+  eventSeq: number;
+}): string {
+  return JSON.stringify([sk.placeId, sk.presentIds, sk.eventSeq]);
+}
+/** Rewrite q37-C1b NUL scene keys so a cooldown still matches after load. */
+export function normalizeOfferedActionKeys(state: GameState): GameState {
+  const hist = state.recentOfferedActions;
+  if (!hist || !hist.length) return state;
+  let changed = false;
+  const next: NonNullable<GameState['recentOfferedActions']> = [];
+  for (let i = 0; i < hist.length; i++) {
+    const row = hist[i]!;
+    const raw = row.sceneKey ?? '';
+    if (!raw.includes('\u0000')) {
+      next.push(row);
+      continue;
+    }
+    changed = true;
+    const parts = raw.split('\u0000');
+    const placeId = parts[0] ?? '';
+    const last = parts.length > 1 ? parts[parts.length - 1]! : '0';
+    const n = Number(last);
+    const middle = parts.length > 2 ? parts.slice(1, -1) : [];
+    let any = false;
+    for (let m = 0; m < middle.length; m++) if (middle[m]) any = true;
+    next.push({
+      ...row,
+      sceneKey: optionSceneKeyString({
+        placeId,
+        presentIds: any ? middle.slice() : [],
+        eventSeq: Number.isFinite(n) ? n : 0,
+      }),
+    });
+  }
+  if (!changed) return state;
+  return { ...state, recentOfferedActions: next };
+}
 export function isOptionRepeat(
   state: GameState,
   actionId: string,
@@ -513,6 +570,7 @@ export function isOptionRepeat(
 ): boolean {
   if (!actionId) return false;
   if (opts?.slotKind === 'exit') return false;
+  state = normalizeOfferedActionKeys(state);
   const sit = state.activeSituation;
   if (sit?.actionIds) {
     for (let i = 0; i < sit.actionIds.length; i++) {
@@ -520,7 +578,7 @@ export function isOptionRepeat(
     }
   }
   const sk = computeOptionSceneKey(state);
-  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const key = optionSceneKeyString(sk);
   const hist = state.recentOfferedActions ?? [];
   const turn = state.turn ?? 0;
   const mode = state.engineMode;
@@ -616,8 +674,9 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       : mode === 'rpg'
         ? REPEAT_COOLDOWN_TURNS.rpg
         : REPEAT_COOLDOWN_TURNS.dnd;
+  state = normalizeOfferedActionKeys(state);
   const sk = computeOptionSceneKey(state);
-  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const key = optionSceneKeyString(sk);
   const hist = state.recentOfferedActions ?? [];
   const turn = state.turn ?? 0;
   const sit = state.activeSituation?.actionIds;
@@ -701,14 +760,15 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     else act.push(row);
   }
   if (!move.length) {
-  const sheet = state.locationSheet?.exits ?? [];
+  // q50e — MOVE refill from placeExitRows (same ids as the MOVE chips).
+  const recordExits = placeExitRows(state, state.currentLocation);
   const raw: T[] = [];
-  if (sheet.length) {
-    for (let i = 0; i < sheet.length; i++) {
-      const ex = sheet[i]!;
-      const dest = (ex.label ?? '').trim();
+  if (recordExits.length) {
+    for (let i = 0; i < recordExits.length; i++) {
+      const row = recordExits[i]!;
+      const dest = row.label;
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = ex.id || `exit:${dest}`;
+      const entityId = exitEntityId(row);
       raw.push({
         label: `Travel toward ${dest}`,
         actionId: `exit:${entityId}:travel`,
@@ -731,11 +791,11 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (target && !isPlaceOpenForExit(state, target)) continue;
       raw.push({
         label,
-        actionId: `exit:exit:${target}:travel`,
+        actionId: `exit:${target}:travel`,
         kind: 'exit',
         slotKind: 'exit',
         slotCategory: 'move',
-        entityId: `exit:${target}`,
+        entityId: target,
         required: true,
         rank: 70,
       } as T);
@@ -748,11 +808,11 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       raw.push({
         label: `Travel toward ${dest}`,
-        actionId: `exit:exit:${dest}:travel`,
+        actionId: `exit:${dest}:travel`,
         kind: 'exit',
         slotKind: 'exit',
         slotCategory: 'move',
-        entityId: `exit:${dest}`,
+        entityId: dest,
         required: true,
         rank: 70,
       } as T);
@@ -875,7 +935,7 @@ export function stampRecentOfferedActions(
   pickedActionId?: string | null,
 ): GameState {
   const sk = computeOptionSceneKey(state);
-  const key = `${sk.placeId}\0${sk.presentIds.join('\0')}\0${sk.eventSeq}`;
+  const key = optionSceneKeyString(sk);
   const row = {
     turn: state.turn ?? 0,
     sceneKey: key,

@@ -101,7 +101,7 @@ import {
 import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
-import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
+import { enforceCameraOnProse, enforceCameraOnState, resolveNextLocation } from './travelAuthority';
 import { syncSheetToMovedHere } from './locationMemory';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
 import {
@@ -120,6 +120,7 @@ import {
   hubsForBibleId,
   hubLinkedQuestCount,
 } from './outdoorHubs';
+import { applyWriterNewPlaces, ensurePlaceOnMap, newPlacesFromWriterPayload } from './placeRegistry';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
 import { applyPresentTrimOnTravel } from './presentAuthority';
@@ -818,6 +819,8 @@ export function buildNewGameState(opts: {
 }
 
 export function stampOpening(state: GameState): GameState {
+  // q50-MAP2 — opening HERE on the place record with hub-graph exits (no atlas / discovered write).
+  state = ensurePlaceOnMap(state, state.currentLocation);
   const text = stitchOpeningScene(state);
   const seeded = seedOpeningSceneFacts({ ...state, turn: 1 });
   const facts = applyCommittedNarrative({ ...state, sceneFacts: seeded, turn: 1 }, text, 1);
@@ -1249,6 +1252,8 @@ export async function headlessFateTurn(
   for (const n of nudge.notes) console.info(`[anti-circling] ${n}`);
   if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
     arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
+    // q50-MAP2 — arrival at a place with no record (or seed stub without exits).
+    arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
   }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
   const engineFact = engineResultFact([
@@ -1367,6 +1372,8 @@ Do NOT print dice notation or CODE ENFORCED.
       : await callGmWithRetries(arcState, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
+  // q50-MAP2 — structured newPlaces only (never prose). Validate + register before accept.
+  arcState = applyWriterNewPlaces(arcState, newPlacesFromWriterPayload(gmResult.text));
   let gmSystemLog = gmResult.systemLog ?? [];
   let transportRetries = gmResult.transportRetries;
   let renderFallbackUsed = false;
@@ -1732,14 +1739,17 @@ Do NOT print dice notation or CODE ENFORCED.
   if (updates.currentLocation) {
     working = {
       ...working,
-      currentLocation: honestLocationName(working, updates.currentLocation, playerInput) ?? updates.currentLocation,
+      currentLocation: resolveNextLocation(working, { proposed: updates.currentLocation }),
     };
   }
 
   // 29u — travel committed HERE before the writer (ground between, or the arrival); prose never moves it.
   const fromLoc = state.currentLocation;
   if (travelCommit?.handled && travelCommit.state.currentLocation) {
-    const here = travelCommit.state.currentLocation;
+    const here = resolveNextLocation(working, {
+      travelCommit,
+      proposed: travelCommit.state.currentLocation,
+    });
     const hereBefore = working.currentLocation ?? fromLoc ?? '';
     working = {
       ...working,

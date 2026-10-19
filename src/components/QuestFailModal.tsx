@@ -41,6 +41,7 @@ export function QuestFailModal({ quests, onClose, onOpenJournal }: Props) {
           )}
           <button
             type="button"
+            data-dismiss=""
             onClick={onClose}
             className="flex-1 rounded-md bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700"
           >

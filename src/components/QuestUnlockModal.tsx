@@ -55,6 +55,7 @@ export function QuestUnlockModal({ quests, onClose, onOpenJournal }: Props) {
           )}
           <button
             type="button"
+            data-dismiss=""
             onClick={onClose}
             className="flex-1 rounded-md bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-700"
           >
