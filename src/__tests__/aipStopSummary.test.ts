@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 00:33 decision: the early-stop summaries in playBible (stopReset, stopSetup, ...) must only read state that is
  * declared before them. 90cce470 crashed the tabletop smoke with "thumbsSkipped is not defined" because stopReset
  * (built before the turn loop's try block) read a counter declared inside that block. Also: a tabletop creation
@@ -8,11 +8,12 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'acorn';
+// @ts-expect-error untyped .mjs
 import { assessGameReset, lockGameIdentity } from '../../scripts/ai-player-browser/run.mjs';
 
 const SRC = fs.readFileSync(path.resolve(__dirname, '../../scripts/ai-player-browser/run.mjs'), 'utf8');
 
-function walk(node, fn, parent) {
+function walk(node: any, fn: (n: any, p?: any) => void, parent?: any) {
   if (!node || typeof node.type !== 'string') return;
   fn(node, parent);
   for (const k of Object.keys(node)) {

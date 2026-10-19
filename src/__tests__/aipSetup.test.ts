@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error untyped .mjs
-import {
-  isSetupStep,
-  noteRepeat,
-  planSetupAction,
-  settleHarnessTurn,
-  setupAdvanced,
-  setupStuck,
-} from '../../scripts/ai-player-browser/setupStep.mjs';
+import { isSetupStep, noteRepeat, planSetupAction, settleHarnessTurn, setupAdvanced, setupStuck } from '../../scripts/ai-player-browser/setupStep.mjs';
 
 const OFFERED = ['Quick start', 'Ready-made: Mara', 'Build my own'];
 
