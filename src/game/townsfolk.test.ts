@@ -106,6 +106,7 @@ describe('townsfolk', () => {
     expect(prepared.packet.townsfolk).toHaveLength(2);
     expect(prepared.state.completedEvent).toBe(prepared.packet);
     expect(prepared.writerFacing).toBe(formatWriterFacingEvent(prepared.packet));
+    expect(prepared.writerFacing).toContain('PEOPLE HERE');
     for (const m of people) {
       const tok = prepared.packet.refEnum!.find((r) => r.display === m.npcName)!.tok;
       expect(prepared.writerFacing).toContain(`@${tok} ${m.npcName} (${m.sheet!.job})`);

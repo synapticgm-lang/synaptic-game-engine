@@ -982,13 +982,6 @@ export interface GameState {
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
-  /**
-   * q72 — minimal creature/item/exit records keyed by id.
-   * People stay on `npcMemories` (no second people store).
-   */
-  entityRecords?: Record<string, TimelineEntityRecord>;
-  /** q72 — open visit log for the place the player is in now (whole stay). */
-  placeVisitLog?: PlaceVisitLog | null;
   /** Campaign bible id when seeded from GM Library / archetype match. */
   campaignBibleId?: string | null;
   /**
@@ -1644,66 +1637,11 @@ export type TimelineFactKind =
   | 'quest'
   | 'npc'
   | 'person'
-  | 'creature'
-  | 'place'
-  | 'exit'
-  | 'said'
   | 'dungeon'
   | 'discovery'
   | 'world'
   | 'scene'
   | 'other';
-
-/** q72 — engine tag verbs (text is rendered from these, never stored as free prose). */
-export type TimelineVerb =
-  | 'appeared'
-  | 'met'
-  | 'left'
-  | 'died'
-  | 'gained'
-  | 'lost'
-  | 'used'
-  | 'dropped'
-  | 'arrived'
-  | 'discovered'
-  | 'opened'
-  | 'accepted'
-  | 'step'
-  | 'done'
-  | 'failed'
-  | 'said'
-  | 'cleared'
-  | 'sprung'
-  | 'found';
-
-/** q72 — kinds written by `tag()` (legacy kinds on old saves stay readable). */
-export type TimelineTagKind =
-  | 'person'
-  | 'creature'
-  | 'item'
-  | 'place'
-  | 'exit'
-  | 'quest'
-  | 'combat'
-  | 'said';
-
-/** q72 — minimal creature/item record (people stay on npcMemories). */
-export interface TimelineEntityRecord {
-  kind: 'creature' | 'item' | 'exit' | 'place' | 'quest' | 'combat';
-  name: string;
-  firstTurn: number;
-  lastTurn: number;
-  place?: string;
-  notes: string[];
-}
-
-/** q72 — whole-stay visit log for the current place (outside the 40-cap / RECENT window). */
-export interface PlaceVisitLog {
-  placeId: string;
-  placeName: string;
-  sinceTurn: number;
-  events: TimelineFact[];
-}
 
 export type CrowdPresence = 'present' | 'sparse' | 'none' | 'unknown';
 export type SceneNoise = 'shouting' | 'voices' | 'quiet' | 'unknown';
@@ -1822,15 +1760,12 @@ export interface SceneFacts {
 }
 
 export interface TimelineFact {
-  /** Entity / ref id for tagged events; legacy rows keep a uuid here. */
   id: string;
   turn: number;
   kind: TimelineFactKind;
-  /** Rendered from verb+kind+name+detail for new tags; old saves keep prose as-is. */
   text: string;
   at: number;
-  /** q72 — engine verb; absent on pre-q72 rows. */
-  verb?: TimelineVerb;
+  /** fight2d — person tag fields; text is `person: <name> - <detail>`; place is HERE. */
   name?: string;
   detail?: string;
   place?: string;
@@ -2191,10 +2126,6 @@ export interface PlaceRecord {
   questCards?: SettlementQuestCard[];
   /** 29q — set once the two seed cards were stamped; never stamp again. */
   questCardsSeeded?: boolean;
-  /** q72 — compressed summary of the last completed stay at this place. */
-  lastVisitSummary?: string;
-  /** q72 — turn range of the last completed stay. */
-  lastVisitTurns?: { from: number; to: number };
 }
 
 export interface SettlementQuestParams {

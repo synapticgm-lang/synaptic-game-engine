@@ -377,13 +377,13 @@ function paramsFromLine(line: string, speaker?: string): SettlementQuestParams {
   return { who: speaker ?? '', what: what.toLowerCase() };
 }
 
-/**
- * q72: prose said-lines removed — SAID comes from engine talk card / spokenAnswer tags.
- * Kept as a stub so callers compile; always returns [].
- * Removed: /["“]([^"”]{4,400})["”]/g prose quote harvest.
- */
-export function spokenLines(_prose: string): string[] {
-  return [];
+/** Quoted spoken lines in committed prose (an NPC actually spoke). */
+export function spokenLines(prose: string): string[] {
+  const out: string[] = [];
+  const re = /["“]([^"”]{4,400})["”]/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(prose ?? ''))) out.push(m[1].trim());
+  return out;
 }
 
 /**
