@@ -28,6 +28,7 @@ import { buildCombatStatusBlock, combatFacts, deathSaveLine, presentCombatStatus
 import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
 import { commitDeath, HOURS_LATER } from '../rules/death';
+import { tag } from '../timeline';
 import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { carriedCoinLb, gainLootMoney, lootMoneyText } from '../rules/coins';
@@ -485,6 +486,7 @@ export function resolveRoundFight(
   if (res.outcome === 'victory') {
     const down = res.combat.foes.length > 1 ? 'are down' : 'is down';
     next = commitAutoFightLedger(next, { victory: true, finalPlayerHp: res.pcHp });
+    next = tag(next, 'died', 'creature', { id: `creature:${enc.name}`, name: enc.name }, 'down');
     const rolled = rollVictoryLoot(working, { name: enc.name, goldReward: enc.goldReward, lootProfile: profileForEncounter(enc), cr: encNow.cr });
     const carry = house.strictEncumbrance ? fitCarry(next.inventory ?? [], rolled.loot, deriveTabletopSheet(next)?.scores.STR ?? 10, carriedCoinLb(next)) : { kept: rolled.loot, left: [] };
     const won = { ...rolled, loot: carry.kept };
@@ -514,7 +516,7 @@ export function resolveRoundFight(
 
   if (res.outcome === 'escaped') {
     const tick = tickEncounterTerminal(next, input, { fleeSucceeded: true });
-    next = { ...tick.state, roundCombat: null };
+    next = tag({ ...tick.state, roundCombat: null }, 'left', 'creature', { id: `creature:${enc.name}`, name: enc.name }, 'fled');
     receipts.push(`Fight: ESCAPED from ${enc.name} after ${roundsText}`, ...tick.receipts);
     if (!tick.receipts.some((r) => /^Encounter cleared:/.test(r))) receipts.push(`Encounter cleared: ${enc.name} (escape)`);
     next = pushCombatStateTx(next, `Fight vs ${enc.name}: escaped after ${roundsText}`, enc.name, 'Engine fight');
@@ -534,6 +536,7 @@ export function resolveRoundFight(
     deathSaves: { successes: 0, failures: 0 },
   };
   receipts.push(`Fight: DEFEAT vs ${enc.name} in ${roundsText}. The fight is over: you lost it.`, ...lost.receipts);
+  next = tag(next, 'failed', 'combat', { id: `combat:${enc.name}`, name: enc.name }, 'downed');
   next = pushCombatStateTx(next, `Fight vs ${enc.name}: defeat in ${roundsText}`, enc.name, 'Engine fight');
   if (onRoad) next = settleRoadMeeting(next, 'defeat');
   if (dead) {

@@ -9,6 +9,7 @@ import { buildCompletedEventPacket } from './completedEventPacket';
 import { servedWriterModel } from './fateAutoplay';
 import { harvestNarrativePeople } from './narrativeHarvest';
 import { formatInfoSheet } from './infoSheet';
+import { formatSceneBlock } from './sceneBlock';
 import { commitTravel, roadMeetingFact, roadMeetingRef } from './travelJourney';
 import { PLEA_HELP } from './rules/travelDay';
 import type { GameState, RoadEncounter } from './types';
@@ -80,7 +81,9 @@ describe('tt-build-roadmeet 2a: road meetings are named events', () => {
     expect(roadMeetingRef(s)?.display).toBe(name);
     expect(s.sceneFacts?.present ?? []).not.toContain(name);
     expect(formatInfoSheet(s)).toMatch(/a meeting on the road/);
-    expect(formatInfoSheet(s)).toMatch(new RegExp(`^- ${name}`, 'm'));
+    const scene = formatSceneBlock(s);
+    expect(scene).toMatch(new RegExp(`EVENT: ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\(meeting on the road\\)`));
+    expect(scene).not.toMatch(new RegExp(`PRESENT:.*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
   });
 
   it('a page that names the meeting does not make them someone present', () => {

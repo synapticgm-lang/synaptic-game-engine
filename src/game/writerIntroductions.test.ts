@@ -24,7 +24,7 @@ describe('P-5a/c writer introductions', () => {
     expect(classifyTokenLine(line('Jax found a rifle under the bench.'), beat, [], [], '', undefined, undefined, undefined, world).reason).toBe('out-of-world');
   });
 
-  it('registers introduced people as cast and things as scene props', () => {
+  it('q72: parsers still detect roles/things, but prose no longer admits them to cast/props', () => {
     const text = 'A guard coiled rope by the rail. Jax found a small iron key under the bench.';
     expect(introducedRolePeople(text)).toContain('guard');
     expect(introducedThings(text)).toEqual(['small iron key']);
@@ -35,12 +35,8 @@ describe('P-5a/c writer introductions', () => {
       sceneFacts: { crowd: 'empty', noise: 'quiet', present: [], props: [], lastBeat: '' },
     } as unknown as GameState;
     const next = registerWriterIntroductions(state, text);
-    expect(next.npcMemories?.map((m) => m.npcName)).toEqual(['the guard']);
-    expect(next.npcMemories?.[0]?.location).toBe('Docks');
-    expect(next.sceneFacts?.props).toEqual(['small iron key']);
-    const again = registerWriterIntroductions({ ...next, turn: 5 }, text);
-    expect(again.npcMemories).toHaveLength(1);
-    expect(again.npcMemories![0]!.lastSeenTurn).toBe(5);
-    expect(again.npcMemories![0]!.location).toBe('Docks');
+    expect(next.npcMemories ?? []).toEqual([]);
+    expect(next.sceneFacts?.props ?? []).toEqual([]);
+    expect(next).toBe(state);
   });
 });

@@ -111,7 +111,7 @@ describe('replay bank s79', () => {
   it('[s79 T4,T14,T15 | Order M step 3] INFO SHEET SCENE replaces ALREADY ON THE PAGE (whole run)', () => {
     expect(R.after(14).journey, 'replay is on the road at T14').toBeTruthy();
     for (const n of R.turns().slice(1)) {
-      expect(R.packet(n), `T${n} has SCENE`).toMatch(/^SCENE:/m);
+      expect(R.packet(n), `T${n} has SCENE`).toMatch(/^SCENE T/m);
       expect(R.packet(n), `T${n} has no opener list`).not.toContain('ALREADY ON THE PAGE');
     }
   });
@@ -146,11 +146,11 @@ describe('replay bank s79', () => {
     expect(page1).not.toMatch(/a normal group can tell name, health, and one power pool/);
   });
 
-  it('[s79 T2 | s79 Root I #16] the info sheet HERE block lists no "System:" line (whole run)', () => {
-    expect(R.packet(2), 'T2 has an info sheet').toMatch(/\nHERE:\n/);
+  it('[s79 T2 | s79 Root I #16] the SCENE block lists no "System:" line (whole run)', () => {
+    expect(R.packet(2), 'T2 has a SCENE block').toMatch(/^SCENE T/m);
     for (const n of R.turns()) {
-      const here = R.packet(n).match(/\nHERE:\n((?:- [^\n]*\n)*)/)?.[1] ?? '';
-      expect(here, `T${n}`).not.toMatch(/^- System:/m);
+      const scene = R.packet(n).match(/^SCENE T[\s\S]*?(?=\n\n)/m)?.[0] ?? '';
+      expect(scene, `T${n}`).not.toMatch(/^- System:/m);
     }
   });
 
