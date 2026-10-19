@@ -568,7 +568,8 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     .filter((p) => p.lastVisitedTurn != null && p.name.toLowerCase() !== name.toLowerCase())
     .sort((a, b) => (b.lastVisitedTurn ?? 0) - (a.lastVisitedTurn ?? 0))[0]?.name ?? '';
   const backRaw = isTripHere(state, fromRaw) ? (state.journey?.from ?? lastVisited).replace(/\s+/g, ' ').trim() : fromRaw;
-  const back = matchHub(hubs, backRaw)?.name ?? backRaw;
+  // A way back is a mapped hub. An opening scene or a road label is not an exit of this place.
+  const back = matchHub(hubs, backRaw)?.name ?? '';
   const discovered = state.discoveredLocations ?? [];
   const early = (state.turn ?? 0) <= 5 && discovered.length <= 1;
   const known = (h: OutdoorHub): boolean =>

@@ -5,6 +5,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
+import { applyOpeningOfferChoice } from './openingOffer';
+import { formatSceneBlock } from './sceneBlock';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
 import { buildInfoSheet } from './infoSheet';
 import { commitTravel, writerTravelFact } from './travelJourney';
@@ -88,7 +90,8 @@ describe('s77 Root D: the record is the story, not warden chrome', () => {
     expect(packet.infoSheet).toBeTruthy();
     const prompt = formatWriterFacingEvent(packet);
     // Order M step 3: SCENE in the info sheet replaces ALREADY ON THE PAGE openers.
-    expect(prompt).toContain('SCENE:');
+    expect(prompt).toMatch(/^SCENE T\d+ - /m);
+    expect(prompt).toContain('Only PRESENT people may speak');
     expect(prompt).not.toContain('ALREADY ON THE PAGE');
     expect(packet.pageOpeners).toEqual(
       expect.arrayContaining([
@@ -122,5 +125,37 @@ describe('s77 Root D: the record is the story, not warden chrome', () => {
     const free = writerWordsGuard(false);
     const swapped = free.step('applyGovernanceToProse', draft, repaired.prose);
     expect(notesForCommittedBody(notes, swapped === repaired.prose)).toEqual(notes);
+  });
+
+  it('q72r5 Ask seats the route person, and a refuse seats the offer owner', () => {
+    const s = seed77();
+    const place = s.currentLocation;
+    const withRoute = {
+      ...s,
+      openingEstablishment: {
+        ...s.openingEstablishment!,
+        complete: true,
+        card: {
+          ...(s.openingEstablishment?.card ?? { castNames: [], props: [], names: [] }),
+          place, cast: 'the scavengers',
+          offer: { items: [], accept: 'They hand over a blade.', refuse: 'They keep the junk.', noun: 'offer' },
+        },
+      },
+      quests: [{
+        id: 'sp-quest-1', name: 'Lead', type: 'main' as const, status: 'active' as const, revealed: true, description: '',
+        objectives: [{
+          id: 's1', description: 'Ask', completed: false,
+          routes: [
+            { id: 'p', kind: 'person' as const, label: 'Ask Mira Flint about the lead', entityId: 'npc:Mira Flint' },
+            { id: 'pl', kind: 'place' as const, label: 'Search the yard for signs', entityId: 'place:yard' },
+            { id: 'sy', kind: 'system' as const, label: 'Read the System trail', entityId: 'system:s1' },
+          ],
+        }],
+      }],
+    } as GameState;
+    const asked = applyOpeningOfferChoice(withRoute, 'Ask Mira Flint about the lead').state;
+    expect(asked.npcMemories?.some((m) => m.npcName === 'Mira Flint' && (m.location ?? '') === place)).toBe(true);
+    expect(formatSceneBlock(asked)).toMatch(/Mira Flint \(person\)/);
+    expect(formatSceneBlock(applyOpeningOfferChoice(withRoute, 'Refuse the offer').state)).toMatch(/the scavengers \(person\)/);
   });
 });

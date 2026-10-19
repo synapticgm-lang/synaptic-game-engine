@@ -5,6 +5,7 @@ import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, LogEntry, OpeningCardRecord, OpeningEstablishment, OpeningOfferRecord, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
+import { stampPremiseOrigin } from './writerIntroductions';
 import { seedLocalStarterQuest } from './questPlay';
 import { hookCtxFromState, resolveLitRpgFolkStamp, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
@@ -26,10 +27,8 @@ import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSp
 import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
-
 import { hashSeed, hashUnit } from './seededRng';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
-
 /**
  * Pack 12: Handle instant quick-response button clicks.
  * Returns state with instant response if button was handled, null otherwise.
@@ -41,32 +40,24 @@ export function tryHandleQuickResponseButton(
   if (!openingFastSetupChipsEnabled()) return null;
   const est = state.openingEstablishment;
   if (!est || est.complete) return null;
-  
   const currentPrompt = est.pending[0];
   if (!currentPrompt) return null;
-  
   // Skip "✎ Other" - let user type
   if (answer.trim() === '✎ Other' || answer.trim() === 'Other') return null;
-  
   // Only handle quick-response kinds
   if (!supportsQuickResponseButtons(currentPrompt.kind)) return null;
-  
   // Check if this is one of our generated buttons
   const quickButtons = pickQuickResponseButtons(state, currentPrompt.kind);
   const isQuickButton = quickButtons.some(btn => 
     btn.toLowerCase().trim() === answer.toLowerCase().trim()
   );
-  
   if (!isQuickButton) return null;
-  
   // Generate instant response
   const characterName = state.character.name || 'The designation';
   const gmResponse = generateQuickResponse(currentPrompt.kind, answer, characterName);
-  
   // Apply the answer to state
   const answers = { ...est.answers, [currentPrompt.id]: answer };
   const pending = est.pending.slice(1);
-  
   const playerEntry: LogEntry = {
     id: crypto.randomUUID(),
     turn: state.turn,
@@ -74,7 +65,6 @@ export function tryHandleQuickResponseButton(
     content: answer,
     timestamp: Date.now(),
   };
-  
   const nextChoices = pending.length ? establishmentChoices(pending, state) : state.choices;
   const gmEntry: LogEntry = {
     id: crypto.randomUUID(),
@@ -84,10 +74,8 @@ export function tryHandleQuickResponseButton(
     timestamp: Date.now(),
     ...(nextChoices?.length ? { offeredChoices: nextChoices.slice(0, 4) } : {}),
   };
-  
   // Apply answer to character state
   const nextState = applyKindToState(state, currentPrompt, answer);
-  
   return {
     ...nextState,
     openingEstablishment: {
@@ -101,19 +89,16 @@ export function tryHandleQuickResponseButton(
     lastUpdated: Date.now(),
   };
 }
-
 export function characterNameIsGeneric(name?: string): boolean {
   const n = name?.trim() ?? '';
   return !n || GENERIC_NAMES.test(n) || isDeniedPcName(n) || !isLockablePcName(n);
 }
-
 const NAME_PROMPT: OpeningPrompt = {
   id: 'name',
   kind: 'name',
   question: 'Confirm designation.',
   suggestions: ['Random designation'],
 };
-
 const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
 const RANDOM_PLACES = [
   'Peterborough UK',
@@ -123,27 +108,21 @@ const RANDOM_PLACES = [
   'a London pavement',
   'Sheffield',
 ];
-
 function pickRandom(list: string[], state: Pick<GameState, 'seed' | 'saveId' | 'turn'> | undefined, salt: string): string {
   const u = hashUnit(['opening', state?.seed ?? state?.saveId ?? '0', state?.turn ?? 0, salt].join('|'));
   return list[Math.floor(u * list.length)] ?? list[0];
 }
-
 const RANDOM_PLACE_REQUEST =
   /\b(?:a\s+)?random\s+(?:earth\s+)?(?:place|location|city|town|spot)\b|\brandom\s+earth\s+city\b|\ba city i actually know\b|\bsomewhere\s+on\s+earth\b|\bon\s+earth\b|\ban?\s+(?:earth\s+)?city\b|\b(?:pick|choose|give)\s+(?:me\s+)?(?:a\s+)?random\b|\bi\s+can'?t\s+think\s+of\s+(?:a\s+)?(?:place|location|one)\b|\bthe\s+place\s+this\s+tale\s+names\b/i;
-
 const META_SETUP_CHIP =
   /^(?:random\s+(?:designation|name|place|earth\s+city)|a city i actually know|the place this tale names|a street i invent|fate'?s pick|🎲?\s*let fate decide)$/i;
-
 export function isRandomPlaceRequest(raw: string): boolean {
   return RANDOM_PLACE_REQUEST.test(raw.replace(/\s+/g, ' ').trim());
 }
-
 /** Meta chip labels — never spoken dialogue on the book unless they typed a real line. */
 export function isOpeningSetupChipLabel(raw: string): boolean {
   return META_SETUP_CHIP.test(raw.replace(/\s+/g, ' ').trim());
 }
-
 /** Player bubble text for opening covers — chip labels become the locked canon value. */
 export function openingAnswerDisplay(raw: string, locked: string): string {
   const t = raw.replace(/\s+/g, ' ').trim();
@@ -153,7 +132,6 @@ export function openingAnswerDisplay(raw: string, locked: string): string {
   if (isRandomPlaceRequest(t)) return locked;
   return t;
 }
-
 function appendOpeningPlayerBubble(log: LogEntry[], turn: number, display: string | null): LogEntry[] {
   if (!display?.trim()) return log;
   const normalized = display.replace(/\s+/g, ' ').trim();
@@ -172,7 +150,6 @@ function appendOpeningPlayerBubble(log: LogEntry[], turn: number, display: strin
     },
   ];
 }
-
 /** Explicit name give or name-refuse — not a protest / send-me-back demand. */
 export function playerGivesOrRefusesName(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim();
@@ -186,7 +163,6 @@ export function playerGivesOrRefusesName(raw: string): boolean {
     t
   );
 }
-
 /**
  * In-world demand / protest / send-me-back — play, not a failed name cover.
  * “well send me back to my world!” must never become “still waiting for a name.”
@@ -199,7 +175,6 @@ export function isPlayDemand(raw: string): boolean {
     t
   );
 }
-
 /** Player is answering / refusing a name, origin, or kit cover — not a room scout. */
 export function playerEngagesOpeningCover(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim();
@@ -217,14 +192,12 @@ export function playerEngagesOpeningCover(raw: string): boolean {
   }
   return false;
 }
-
 /** Cover-form chips that must not spawn after inspect / look-around. */
 export function isNameOriginKitCoverChoice(choice: string): boolean {
   const t = choice.replace(/\s+/g, ' ').trim();
   if (!t) return false;
   return /give them (?:your |a )?name|tell them who you are|tell them your name|random designation|waiting for a name you will own|confirm designation|what do we call you|give (?:them )?your name|say your name|offer your name|earth city|random earth|i was at home|pat yourself down|what are you wearing|random (?:name|designation)/i.test(t);
 }
-
 export function isLocationishOpeningUtterance(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim();
   if (!t) return false;
@@ -235,11 +208,9 @@ export function isLocationishOpeningUtterance(raw: string): boolean {
   }
   return false;
 }
-
 export function pickEarthPlace(state?: Pick<GameState, 'seed' | 'saveId' | 'turn'>): string {
   return pickRandom(RANDOM_PLACES, state, 'place');
 }
-
 function originCoverIsEarth(state: GameState): boolean {
   if (state.campaignBibleId === 'summoned-pact') return true;
   const bible = resolveActiveCampaignBible(state);
@@ -251,7 +222,6 @@ function originCoverIsEarth(state: GameState): boolean {
   if ((loc?.suggestions ?? []).some((s) => /earth/i.test(s))) return true;
   return false;
 }
-
 export function pickPlaceForCampaign(state: GameState): string {
   const bible = resolveActiveCampaignBible(state);
   if (originCoverIsEarth(state)) return pickEarthPlace(state);
@@ -261,7 +231,6 @@ export function pickPlaceForCampaign(state: GameState): string {
   }
   return pickEarthPlace(state);
 }
-
 function isUnusablePlace(place: string, state: GameState): boolean {
   const p = place.replace(/\s+/g, ' ').trim();
   if (!p) return true;
@@ -280,10 +249,8 @@ function isUnusablePlace(place: string, state: GameState): boolean {
   if (bible && p.toLowerCase() === bible.title.toLowerCase()) return true;
   return false;
 }
-
 const PLACE_SUGGESTION =
   /random\s+(?:earth\s+)?(?:place|location|city|town)|earth city|a city i actually know|a street i invent|the place this tale names/i;
-
 /** True when Settings → fastSetupChips is on (Pack 12 opening chip banks). Default off. */
 export function openingFastSetupChipsEnabled(settings?: Settings | null): boolean {
   if (settings && typeof settings.fastSetupChips === 'boolean') return settings.fastSetupChips;
@@ -293,7 +260,6 @@ export function openingFastSetupChipsEnabled(settings?: Settings | null): boolea
     return false;
   }
 }
-
 /** Chips for the question on screen only (`pending[0]`), never the whole cover queue. */
 export function establishmentChoices(
   pending: OpeningPrompt[],
@@ -302,15 +268,12 @@ export function establishmentChoices(
 ): string[] {
   const current = pending[0];
   if (!current) return [];
-
   // Name cover is the current slot — Give / Refuse. Not play pads, not kit banks.
   if (current.kind === 'name' && !openingFastSetupChipsEnabled(settings)) {
     return ['Give your name', 'Refuse to give a name'];
   }
-
   // Product law: natural free-text opening by default — no phone/purse/backpack chip rows.
   if (!openingFastSetupChipsEnabled(settings)) return [];
-
   // Pack 12: Use seed-varied quick-response buttons for kit/appearance/location
   if (state && supportsQuickResponseButtons(current.kind)) {
     const quickButtons = pickQuickResponseButtons(state, current.kind);
@@ -318,7 +281,6 @@ export function establishmentChoices(
       return [...quickButtons, '✎ Other'];
     }
   }
-
   // Fallback to original chip logic (only when fastSetupChips is on)
   const chips: string[] = [];
   if (current.kind === 'name') {
@@ -344,7 +306,6 @@ export function establishmentChoices(
   }
   return chips.slice(0, 4);
 }
-
 const SI_PROMPTS: OpeningPrompt[] = [
   NAME_PROMPT,
   {
@@ -380,7 +341,6 @@ const SI_PROMPTS: OpeningPrompt[] = [
     ],
   },
 ];
-
 const FANTASY_PROMPTS: OpeningPrompt[] = [
   { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
   {
@@ -406,7 +366,6 @@ const FANTASY_PROMPTS: OpeningPrompt[] = [
     ],
   },
 ];
-
 const STORY_RPG_PROMPTS: OpeningPrompt[] = [
   { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
   {
@@ -426,7 +385,6 @@ const STORY_RPG_PROMPTS: OpeningPrompt[] = [
     ],
   },
 ];
-
 const SPECIES_PROMPTS: OpeningPrompt[] = [
   { id: 'name', kind: 'name', question: 'Confirm designation.' },
   {
@@ -436,7 +394,6 @@ const SPECIES_PROMPTS: OpeningPrompt[] = [
     suggestions: ['A small beast', 'Something with claws', 'Not human, and I can feel it'],
   },
 ];
-
 const SYSTEM_ARCHETYPES = new Set<CampaignArchetype>([
   'system_apocalypse',
   'vrmmo',
@@ -449,7 +406,6 @@ const SYSTEM_ARCHETYPES = new Set<CampaignArchetype>([
   'dungeon_core',
   'ai_random',
 ]);
-
 export function resolveOpeningRegistrar(
   bible: CampaignBible | undefined,
   engineMode: EngineMode,
@@ -483,7 +439,6 @@ export function resolveOpeningRegistrar(
     startLine: 'Starting. Please confirm your name and current location.',
   };
 }
-
 export function formatRegistrarLine(
   registrar: OpeningRegistrar,
   query: string,
@@ -498,7 +453,6 @@ export function formatRegistrarLine(
   }
   return body;
 }
-
 export function resolveOpeningMode(
   bible: CampaignBible | undefined,
   engineMode: EngineMode
@@ -509,11 +463,8 @@ export function resolveOpeningMode(
   }
   return 'weave';
 }
-
-
 const WRITER_NOTE_BEAT =
   /^(ruin level:|do not |writer (picks|does)|the camera stays|starting kit is earth)/i;
-
 function isWriterNoteBeat(line: string): boolean {
   return WRITER_NOTE_BEAT.test(line.trim());
 }
@@ -966,15 +917,15 @@ const SEALED_BAG: Item = {
 
 /** Grant a sealed Earth bag (undeclared contents) when the campaign would have asked a kit cover. */
 export function ensureSealedOpeningBag(state: GameState, prompts?: OpeningPrompt[]): GameState {
-  if (pocketOnlyKit(state.systemHousing)) return state;
+  if (pocketOnlyKit(state.systemHousing)) return stampPremiseOrigin(state);
   const hadKitPrompt =
     (prompts ?? state.openingEstablishment?.pending ?? []).some((p) => p.kind === 'kit')
     || (resolveActiveCampaignBible(state)?.openingPrompts ?? []).some((p) => p.kind === 'kit')
     || state.campaignBibleId === 'summoned-pact'
     || state.engineMode === 'litrpg';
-  if (!hadKitPrompt) return state;
-  if (state.inventory.some((i) => /^bag$/i.test(i.name))) return state;
-  return { ...state, inventory: [...state.inventory, { ...SEALED_BAG, id: `start-bag-${state.saveId ?? '0'}` }] };
+  if (!hadKitPrompt) return stampPremiseOrigin(state);
+  if (state.inventory.some((i) => /^bag$/i.test(i.name))) return stampPremiseOrigin(state);
+  return stampPremiseOrigin({ ...state, inventory: [...state.inventory, { ...SEALED_BAG, id: `start-bag-${state.saveId ?? '0'}` }] });
 }
 
 /**
