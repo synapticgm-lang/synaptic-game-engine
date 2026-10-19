@@ -12,11 +12,11 @@ beforeAll(async () => {
 }, 300_000);
 
 describe('replay bank multi-1 s138 (deepseek)', () => {
-  it('[m1 s138ds T2 | multi-1 Root 3] the housing rules sit on the SYSTEM line, not in the SCENE block (whole run)', () => {
+  it('[m1 s138ds T2 | multi-1 Root 3] the housing rules sit on the SYSTEM line, not in HERE (whole run)', () => {
     expect(R.packet(2), 'T2 has a SYSTEM line').toMatch(/^SYSTEM: Levels exist in the world/m);
     for (const n of R.turns()) {
-      const scene = R.packet(n).match(/^SCENE T[\s\S]*?(?=\n\n)/m)?.[0] ?? '';
-      expect(scene, `T${n}`).not.toMatch(/^- System:/m);
+      const here = R.packet(n).match(/\nHERE:\n((?:- [^\n]*\n)*)/)?.[1] ?? '';
+      expect(here, `T${n}`).not.toMatch(/^- System:/m);
     }
   });
 

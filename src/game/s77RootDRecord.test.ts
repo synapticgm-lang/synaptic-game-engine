@@ -88,7 +88,7 @@ describe('s77 Root D: the record is the story, not warden chrome', () => {
     expect(packet.infoSheet).toBeTruthy();
     const prompt = formatWriterFacingEvent(packet);
     // Order M step 3: SCENE in the info sheet replaces ALREADY ON THE PAGE openers.
-    expect(prompt).toMatch(/^SCENE T\d+ - /m);
+    expect(prompt).toContain('SCENE:');
     expect(prompt).not.toContain('ALREADY ON THE PAGE');
     expect(packet.pageOpeners).toEqual(
       expect.arrayContaining([

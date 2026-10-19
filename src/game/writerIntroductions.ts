@@ -1,9 +1,11 @@
+/** q48-ROLE / P-5: writer people enter presence at HERE; places refused. */
 import { matchesRegisteredLocationNeedle } from './neverCast';
 import { resolveNpcRecord } from './npcRecords';
 import { resolvePlace } from './places';
-import { premiseOrigin } from './settingVocabulary';
 import { recordPersonSeen } from './timeline';
-import type { GameState, Item, NpcMemory } from './types';
+import { introducedNamedPeople, introducedRolePeople, introducedThings } from './tokenProse';
+import type { GameState, NpcMemory } from './types';
+import { isOffSetting, worldOffSettingWords } from './settingVocabulary';
 
 const SLUG = /[^a-z0-9]+/g;
 const ARTICLE = /^(?:the|a|an)\s+/i;
@@ -20,7 +22,7 @@ export function isPresencePlaceName(state: GameState, name: string): boolean {
   return matchesRegisteredLocationNeedle(t, b) || matchesRegisteredLocationNeedle(bare, b);
 }
 
-/** q48-ROLE — presence at HERE (+ fight2d person tag). Refuses registered places. Engine-only. */
+/** q48-ROLE — presence at HERE (+ fight2d person tag). Refuses registered places. */
 export function admitPersonHere(state: GameState, name: string, note?: string): GameState {
   const raw = (name ?? '').replace(/\s+/g, ' ').trim();
   if (!raw || isPresencePlaceName(state, raw)) return state;
@@ -31,7 +33,7 @@ export function admitPersonHere(state: GameState, name: string, note?: string): 
   const hit = resolveNpcRecord(state, raw) ?? resolveNpcRecord(state, display) ?? resolveNpcRecord(state, bare);
   const memories = [...(state.npcMemories ?? [])];
   const turn = state.turn ?? 0;
-  const tagged = recordPersonSeen(state, display, note ?? 'seen here');
+  const tagged = recordPersonSeen(state, display, 'seen here');
   if (hit) {
     for (let i = 0; i < memories.length; i++) {
       if (memories[i]!.npcId === hit.npcId) memories[i] = { ...memories[i]!, location: place, lastSeenTurn: turn };
@@ -40,75 +42,46 @@ export function admitPersonHere(state: GameState, name: string, note?: string): 
   }
   const npcId = `writer:${place.toLowerCase().replace(SLUG, '-')}:${bare.toLowerCase().replace(SLUG, '-')}`;
   const at = memories.findIndex((m) => m.npcId === npcId);
-  if (at >= 0) {
-    memories[at] = { ...memories[at]!, location: place, lastSeenTurn: turn };
-    return { ...tagged, npcMemories: memories };
-  }
-  memories.push({
-    npcId,
-    npcName: display,
-    disposition: 'neutral',
-    facts: [note ?? `Present at ${place} on turn ${turn}.`],
-    lastSeenTurn: turn,
-    location: place,
-  } as NpcMemory);
+  if (at >= 0) { memories[at] = { ...memories[at]!, location: place, lastSeenTurn: turn }; return { ...tagged, npcMemories: memories }; }
+  memories.push({ npcId, npcName: display, disposition: 'neutral', facts: [note ?? `Present at ${place} on turn ${turn}.`], lastSeenTurn: turn, location: place } as NpcMemory);
   return { ...tagged, npcMemories: memories };
 }
 
-/** Prose admits nothing. Origin is an engine tag written at creation (`stampCrossedOrigin`). */
-export function registerWriterIntroductions(state: GameState, _narrative: string): GameState {
-  return state;
-}
-
-/** Item provenance + entity record: `crossed over from <origin>`. Not read from prose. */
-export function stampCrossedOrigin(state: GameState, itemName: string, origin: string): GameState {
-  const who = (itemName ?? '').replace(/\s+/g, ' ').trim();
-  const from = (origin ?? '').replace(/\s+/g, ' ').trim();
-  if (!who || !from) return state;
-  const provenance = `crossed over from ${from}`;
-  const inventory = [...(state.inventory ?? [])];
-  const at = inventory.findIndex((i) => (i.name ?? '').toLowerCase() === who.toLowerCase());
-  if (at >= 0) inventory[at] = { ...inventory[at]!, provenance };
-  else {
-    inventory.push({
-      id: `crossed-${who.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-      name: who,
-      provenance,
-      rarity: 'Common',
-      quantity: 1,
-    } as Item);
+export function registerWriterIntroductions(state: GameState, narrative: string): GameState {
+  const known: string[] = [state.character?.name ?? '', state.currentLocation ?? ''];
+  for (const m of state.npcMemories ?? []) known.push(m.npcName);
+  for (const p of state.sceneFacts?.present ?? []) known.push(p);
+  for (const pl of state.places ?? []) {
+    if (pl.name) known.push(pl.name);
+    if (pl.loreName) known.push(pl.loreName);
+    for (const a of pl.aliases ?? []) known.push(a);
   }
-  const id = `item:${who.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-  const turn = state.turn ?? 0;
-  const place = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
-  const prev = state.entityRecords?.[id];
-  const notes = [...(prev?.notes ?? [])];
-  if (!notes.some((n) => n.toLowerCase() === provenance.toLowerCase())) notes.push(provenance);
-  return {
-    ...state,
-    inventory,
-    entityRecords: {
-      ...(state.entityRecords ?? {}),
-      [id]: {
-        kind: 'item',
-        name: who,
-        firstTurn: prev?.firstTurn ?? turn,
-        lastTurn: turn,
-        ...(place ? { place } : {}),
-        notes,
-      },
-    },
-  };
-}
-
-/** Character creation: every starting item carries the premise origin, when the premise has one. */
-export function stampPremiseOrigin(state: GameState): GameState {
-  const origin = premiseOrigin(state);
-  if (!origin) return state;
+  const named: string[] = [];
+  for (const n of introducedNamedPeople(narrative, known.filter(Boolean))) {
+    if (!isPresencePlaceName(state, n)) named.push(n);
+  }
+  const people = introducedRolePeople(narrative);
+  const things = introducedThings(narrative);
+  if (!people.length && !things.length && !named.length) return state;
+  const place = state.currentLocation ?? 'here';
   let next = state;
-  for (const item of next.inventory ?? []) {
-    if (/^crossed over from /i.test(item.provenance ?? '')) continue;
-    next = stampCrossedOrigin(next, item.name, origin);
+  for (const role of people) next = admitPersonHere(next, `the ${role}`, `Introduced by the story at ${place} on turn ${state.turn}.`);
+  for (const name of named) next = admitPersonHere(next, name, `Introduced by the story at ${place} on turn ${state.turn}.`);
+  let crossedOver = next.crossedOver;
+  if (things.length) {
+    const foreign = worldOffSettingWords(next);
+    const list = [...(crossedOver ?? [])];
+    for (const t of things) {
+      if (!isOffSetting(foreign, t.split(/\s+/).pop()!)) continue;
+      if (!list.some((x) => x.toLowerCase() === t.toLowerCase())) list.push(t);
+    }
+    if (list.length !== (crossedOver ?? []).length) crossedOver = list;
   }
-  return next;
+  let sceneFacts = next.sceneFacts;
+  if (sceneFacts && things.length) {
+    const props = [...sceneFacts.props];
+    for (const t of things) if (!props.some((p) => p.toLowerCase() === t.toLowerCase())) props.push(t);
+    sceneFacts = { ...sceneFacts, props };
+  }
+  return { ...next, sceneFacts, ...(crossedOver ? { crossedOver } : {}) };
 }
