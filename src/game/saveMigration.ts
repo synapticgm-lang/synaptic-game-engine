@@ -13,7 +13,6 @@ import { resolveOpeningHookPick } from './openingEstablishment';
 import { fitKitToHousing } from './defaults';
 import { withMotiveLines } from './npcSheet';
 import { normalizeLedgerEntry } from './npcMemoryLedger';
-import { migratePlaceholderQuests } from './questMaterialise';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -245,17 +244,6 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
         notes: [...result.notes, 'arcDirector npcMemories normalised to one ledger shape'],
       };
     }
-  }
-  // q67-LITPACE: rematerialise accepted quests that still carry placeholder anchors.
-  const questMigrate = migratePlaceholderQuests(result.state);
-  if (questMigrate.dirty) {
-    result = {
-      ...result,
-      state: questMigrate.state,
-      dirty: true,
-      notes: [...result.notes, ...questMigrate.notes],
-      severity: 'semantic',
-    };
   }
   if (result.dirty) {
     debugLogger.record('STATE_UPDATE', 'Save schema repaired', {

@@ -409,7 +409,6 @@ import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matc
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay, applyBiomeSaneQuestSites, revealQuestsFromHubLinks } from './questPlay';
-import { materialiseAllAcceptedQuests } from './questMaterialise';
 import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, isDoorLockedFor, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere, applyGraphExitTravel } from './mapEngine';
@@ -2557,7 +2556,7 @@ export function useGame() {
           cleanOpening,
           openingTurn
         );
-        const committedRaw: GameState = placeQuestGivers({
+        const committed: GameState = placeQuestGivers({
           ...openingState,
           turn: openingTurn,
           sceneFacts,
@@ -2568,8 +2567,6 @@ export function useGame() {
           memorableMoments: openingMemorable.nextState,
           lastUpdated: Date.now(),
         });
-        // q67-LITPACE: materialise accepted starter quest places/NPCs/objects.
-        const committed: GameState = materialiseAllAcceptedQuests(committedRaw).state;
         stateRef.current = committed;
         setState(committed);
         if (settingsRef.current.ttsEnabled) {
@@ -4669,7 +4666,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
         }
         // STATUS XP: only code-awarded lines with reasons (strip bare GM invent).
-        // q67 P1(b) bar is appended after level cascade so xp/xpToNext are current.
         mergedSystemLog = reconcileXpStatusLines(mergedSystemLog, sandboxNotes);
         if (sandboxXp.lootNotes.length) mergedSystemLog = [...mergedSystemLog, ...sandboxXp.lootNotes];
         newInventoryItems.push(...sandboxXp.items);
@@ -4698,8 +4694,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const granted = grantLevelSkills({ ...workingState, character: baseChar }, liveCurrent.character?.level ?? 1);
         Object.assign(baseChar, granted.state.character);
         if (granted.receipts.length) mergedSystemLog = [...mergedSystemLog, ...granted.receipts];
-        // q67-LITPACE P1(b): XP bar with "to next level" after each XP Gained line.
-        mergedSystemLog = reconcileXpStatusLines(mergedSystemLog, [], baseChar);
       }
 
       if (authoredBook) {
@@ -4759,16 +4753,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (talkCard.card) places = talkCard.places;
       }
 
-      // q67: materialise accepted quest places/NPCs/objects into the turn commit.
-      const materialisedTurn = materialiseAllAcceptedQuests({
-        ...workingState,
-        ...updates,
-        character: baseChar,
-        currentLocation: finalLocationName,
-        npcMemories: npcMemoriesSocial,
-        places,
-        quests: enrichQuests(preserveArcQuestProgress(liveCurrent.quests, updatedQuests)),
-      }).state;
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
@@ -4780,17 +4764,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         daysWithoutFood: liveCurrent.daysWithoutFood,
         character: baseChar,
         playPhase: phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase,
-        quests: materialisedTurn.quests,
+        quests: enrichQuests(preserveArcQuestProgress(liveCurrent.quests, updatedQuests)),
         activeEncounter: updatedEncounter ?? liveCurrent.activeEncounter ?? null,
         currentLocation: finalLocationName,
         activeDungeon: areaMap,
         currentCoordinates: workingState.currentCoordinates ?? liveCurrent.currentCoordinates,
         timeline: mergedTimeline,
-        npcMemories: materialisedTurn.npcMemories ?? npcMemoriesSocial,
+        npcMemories: npcMemoriesSocial,
         locationSheet,
         previousLocationSheet: locMem.previousLocationSheet,
         tutorialProgress: tutorialAdv.progress,
-        places: materialisedTurn.places ?? places,
+        places,
         campaignMemory,
         statusReveal,
         pendingContentRewrite: null,
@@ -5690,20 +5674,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         cleanOpening,
         openingTurn
       );
-      const committed: GameState = materialiseAllAcceptedQuests(
-        beginTabletopCreation(placeQuestGivers({
-          ...newState,
-          turn: openingTurn,
-          sceneFacts,
-          quests: questsAfterScene,
-          log: [openingGm],
-          choices: openingChoicesForPad,
-          pendingGeneratedOpening: false,
-          openingEstablishment: openingEstForPad,
-          memorableMoments: openingMemorable.nextState,
-          lastUpdated: Date.now(),
-        })),
-      ).state;
+      const committed: GameState = beginTabletopCreation(placeQuestGivers({
+        ...newState,
+        turn: openingTurn,
+        sceneFacts,
+        quests: questsAfterScene,
+        log: [openingGm],
+        choices: openingChoicesForPad,
+        pendingGeneratedOpening: false,
+        openingEstablishment: openingEstForPad,
+        memorableMoments: openingMemorable.nextState,
+        lastUpdated: Date.now(),
+      }));
       stateRef.current = committed;
       setState(committed);
       if (settingsRef.current.ttsEnabled) {

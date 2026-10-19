@@ -1,4 +1,4 @@
-import type { Character, EngineMode, StatVerbosity } from './types';
+import type { EngineMode, StatVerbosity } from './types';
 import { applyStatusFirewall } from './statusFirewall';
 import { isVr1RollLine } from './rules/rollView';
 
@@ -156,32 +156,6 @@ export function isXpGainedLine(line: string): boolean {
   return /^xp\s+gained:\s*\d+/i.test(t);
 }
 
-/**
- * q67-LITPACE P1(b) — XP bar after an XP gain line.
- * Uses existing sheet fields only; does not change amounts or the XP table.
- */
-export function xpBarToNextLevelLine(character: Pick<Character, 'xp' | 'xpToNext'> | null | undefined): string {
-  const xp = character?.xp ?? 0;
-  const next = character?.xpToNext ?? 0;
-  return `XP: ${xp}/${next} to next level`;
-}
-
-/** After each positive XP Gained line, append the current XP bar (P1(b)). */
-export function appendXpBarAfterGains(
-  lines: string[],
-  character: Pick<Character, 'xp' | 'xpToNext'> | null | undefined,
-): string[] {
-  if (!character) return lines;
-  const bar = xpBarToNextLevelLine(character);
-  const out: string[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]!;
-    out.push(line);
-    if (isXpGainedLine(line)) out.push(bar);
-  }
-  return out;
-}
-
 /** Code awards always include a parenthetical reason. */
 export function isReasonedXpLine(line: string): boolean {
   return isXpGainedLine(line) && /\(\s*[^()\s].*\)\s*$/.test(line.trim());
@@ -191,11 +165,7 @@ export function isReasonedXpLine(line: string): boolean {
  * Drop bare GM "XP Gained: N" lines. Keep code-awarded lines that include a reason,
  * or replace bare amounts when a reasoned code note for the same amount exists.
  */
-export function reconcileXpStatusLines(
-  lines: string[],
-  codeXpNotes: string[] = [],
-  character?: Pick<Character, 'xp' | 'xpToNext'> | null,
-): string[] {
+export function reconcileXpStatusLines(lines: string[], codeXpNotes: string[] = []): string[] {
   const reasoned = codeXpNotes.filter(isReasonedXpLine);
   const withoutBareGm = lines.filter((l) => {
     if (!isXpGainedLine(l)) return true;
@@ -210,8 +180,7 @@ export function reconcileXpStatusLines(
     seen.add(key);
     out.push(line);
   }
-  // q67 P1(b): bar after each XP gain — amounts/table unchanged.
-  return character ? appendXpBarAfterGains(out, character) : out;
+  return out;
 }
 
 /**

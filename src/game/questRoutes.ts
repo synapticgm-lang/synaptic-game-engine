@@ -151,11 +151,6 @@ export function validateModeQuestData(
  *   Intelligence check to find out information."
  * - LitRPG system/skill; Story RPG contact/standing.
  * Labels stay plain actions (chip contract §4). Never used for PYOA.
- *
- * q67-LITPACE: takes only resolved anchors (place / person / object). No silent
- * placeholders ("a witness who knows the lead" / "the scene" / "the clues here").
- * Thin seeds resolve to deterministic ids from seed.id + giver + location; the
- * accept-time materialiser (questMaterialise) creates those entities in the world.
  */
 export function withModeQuestRoutes<T extends QuestDataSeed>(
   seed: T,
@@ -169,20 +164,17 @@ export function withModeQuestRoutes<T extends QuestDataSeed>(
       anchors.push({ ...prev, placeId: placeId ?? prev.placeId ?? null, routes: prev.routes });
       continue;
     }
-    const resolved = resolveSeedAnchor(seed, i, prev);
-    if (!resolved) {
-      // Unresolved: leave without invented routes — acceptance materialiser must fill.
-      anchors.push({ ...prev, placeId: placeId ?? null });
-      continue;
-    }
-    const { person, place, object } = resolved;
+    const person =
+      (prev.people?.[0] ?? '').trim() || (seed.giver ?? '').trim() || 'a witness who knows the lead';
+    const place = (placeId ?? '').trim() || 'the scene';
+    const object = (prev.object ?? '').trim() || 'the clues here';
     const pid = `${seed.id}-s${i + 1}`;
     const placeRoute: QuestRoute = {
       id: `${pid}-place`,
       kind: prev.object ? 'object' : 'place',
       label: prev.object ? `Examine ${object}` : `Search ${place} for signs`,
       entityId: prev.object ? `object:${object}` : `place:${place}`,
-      placeId: place,
+      placeId: placeId ?? null,
     };
     const personRoute: QuestRoute = {
       id: `${pid}-person`,
@@ -203,56 +195,9 @@ export function withModeQuestRoutes<T extends QuestDataSeed>(
               entityId: `contact:${pid}`,
             }
           : { id: `${pid}-study`, kind: 'study', label: 'Study the clues', entityId: `study:${pid}` };
-    anchors.push({
-      ...prev,
-      placeId: place,
-      place,
-      people: prev.people?.length ? prev.people : [person],
-      object,
-      routes: [personRoute, placeRoute, third],
-    });
+    anchors.push({ ...prev, placeId: placeId ?? null, routes: [personRoute, placeRoute, third] });
   }
   return { ...seed, objectiveAnchors: anchors };
-}
-
-/** Resolve place/person/object for a seed step without placeholder fallbacks (q67). */
-function resolveSeedAnchor(
-  seed: QuestDataSeed,
-  stepIndex: number,
-  prev: NonNullable<QuestDataSeed['objectiveAnchors']>[number],
-): { person: string; place: string; object: string } | null {
-  const banned = (s: string) => {
-    const t = s.trim().toLowerCase();
-    return (
-      t === 'a witness who knows the lead'
-      || t === 'the scene'
-      || t === 'the clues here'
-    );
-  };
-  const title = (id: string) =>
-    id
-      .replace(/[-_]+/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase())
-      .replace(/\s+/g, ' ')
-      .trim();
-  const rawPlace = ((prev?.placeId !== undefined ? prev.placeId : prev?.place) ?? '').toString().trim();
-  const place =
-    rawPlace && !banned(rawPlace)
-      ? rawPlace
-      : (seed as { location?: string }).location?.trim()
-        || `${title(seed.id)} Site ${stepIndex + 1}`;
-  const rawPerson = (prev?.people?.[0] ?? seed.giver ?? '').trim();
-  const person =
-    rawPerson && !banned(rawPerson)
-      ? rawPerson
-      : `${title(seed.id)} Contact ${stepIndex + 1}`;
-  const rawObject = (prev?.object ?? '').trim();
-  const object =
-    rawObject && !banned(rawObject)
-      ? rawObject
-      : `${title(seed.id)} Clue ${stepIndex + 1}`;
-  if (!place || !person || banned(place) || banned(person) || banned(object)) return null;
-  return { person, place, object };
 }
 
 /** Open main-step routes: leads, writer facts, affordance rows, optional label match. */
