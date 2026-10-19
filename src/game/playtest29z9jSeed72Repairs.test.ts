@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { buildCompletedEventPacket, formatWriterFacingEvent, movementFact } from './completedEventPacket';
-import { formatSceneBlock } from './sceneBlock';
+import { formatInfoSheet } from './infoSheet';
 import { playerFacingLocation } from './locationName';
 import { applySocialLedgerTurn } from './npcMemory';
 import { hallTalkTopics } from './openingEstablishment';
@@ -80,9 +80,9 @@ describe('29z9j seed 72 — said motives stay on the person', () => {
     expect(nell.completedTopics).toContain('want');
 
     const back = { ...t11, turn: 33, log: [entry(32, 'player', 'Walk on'), entry(32, 'gm', 'Jax came back up the lane.')] };
-    const scene = formatSceneBlock(back);
-    expect(scene).toMatch(/Nell Rudd.*already said \(want, T11\).*owed her people bread/);
-    expect(scene).toMatch(/Col Thatch.*seventh ring/);
+    const sheet = formatInfoSheet(back);
+    expect(sheet).toMatch(/Nell Rudd.*already said \(want, T11\).*owed her people bread/);
+    expect(sheet).toMatch(/Col Thatch.*seventh ring/);
     const writer = formatWriterFacingEvent(buildCompletedEventPacket(back, 'Ask Nell Rudd what they want'));
     expect(writer).toContain('owed her people bread');
   });

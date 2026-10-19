@@ -8,7 +8,7 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { checkActionFollowed, checkPlayCrimes } from '../../game/turnCheck';
-import { Replay } from './bank';
+import { Replay, packetBlock } from './bank';
 import { replayWhole } from './replayRun';
 
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
@@ -39,7 +39,7 @@ async function factFlags(run: string, turn: number, edit = (p: string) => p): Pr
 const placesLine = (R: Replay, n: number) => R.packet(n).match(/^PLACES: .*$/m)?.[0] ?? '';
 const witnesses = (R: Replay, n: number) =>
   (R.packet(n).match(/^Witnesses: (.*)\.$/m)?.[1] ?? '').split(', ').filter(Boolean);
-const hereBlock = (R: Replay, n: number) => R.packet(n).match(/^PRESENT:.*$/m)?.[0] ?? '';
+const hereBlock = (R: Replay, n: number) => packetBlock(R.packet(n), 'HERE:');
 
 let H: Replay;
 let U: Replay;
