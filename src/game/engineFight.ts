@@ -216,7 +216,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     return { state: end.state, receipts: end.receipts, facts: `${SELF_STOP_HEAD} ${end.fact}`, noTerminal: true };
   }
   const roundMode = usesRoundCombat(state);
-  if (roundMode && isDying(state)) return resolveDeathSaveTurn(state);
+  if (roundMode && isDying(state)) return resolveDeathSaveTurn(state, turnRng(state, 'death-save'), input);
   // A road meeting's own chip ("Skirt around the camp") takes on that meeting, whatever else waits here.
   const meetingMove = state.activeEncounter ? null : roadMeetingMove(state, input);
   const pending = state.activeEncounter || meetingMove ? null : state.sceneFacts?.pendingEncounter ?? null;

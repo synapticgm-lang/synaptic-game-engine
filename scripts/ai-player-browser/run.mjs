@@ -86,7 +86,7 @@ import {
   thumbReasonFromDecision,
 } from './feedbackVerify.mjs';
 import { bindCoverLog } from './overlay.mjs';
-import { verifyThumb, runVerdict, shouldThumb, replyKey, voteSkipWrong } from './runVerdict.mjs';
+import { verifyThumb, runVerdict, runEndedResult, shouldThumb, replyKey, voteSkipWrong } from './runVerdict.mjs';
 
 import { licenceFor } from './playerLicence.mjs';
 import {
@@ -631,6 +631,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
     verifyOn: Boolean(feedbackClient),
   });
   for (let turn = startTurn; smoke ? gmReplies < SMOKE_GM_REPLIES : playedSlots < slotTarget; turn++) {
+    const endedNow = runEndedResult(snap);
+    if (endedNow) {
+      appendJsonl(jsonl, { event: 'run_ended', turn, bibleId, result: endedNow });
+      return {
+        bibleId, ok: true, ended: true, result: endedNow, turns: completed, startTurn,
+        resumed: resumeThis, stoppedRepeat: false, stoppedNoGm: false, harnessErrors, unverified,
+      };
+    }
     overlayBlockedThisTurn = false;
     coverTurn = turn;
     const resetNow = assessGameReset(gameIdentity, await probeIdentity(snap), turn);
@@ -1028,6 +1036,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
     } catch (err) {
       next = err?.snapshot || await readGameSnapshot(gamePage);
       next.waitTimedOut = true;
+    }
+    const endedNext = runEndedResult(next);
+    if (endedNext) {
+      appendJsonl(jsonl, { event: 'run_ended', turn, bibleId, result: endedNext });
+      return {
+        bibleId, ok: true, ended: true, result: endedNext, turns: completed, startTurn,
+        resumed: resumeThis, stoppedRepeat: false, stoppedNoGm: false, harnessErrors, unverified,
+      };
     }
     const setupProgress = Boolean(setup && next.setupAdvanced);
     const waitTimedOut = Boolean(next.waitTimedOut) && !next.newGmBubble && !setupProgress;

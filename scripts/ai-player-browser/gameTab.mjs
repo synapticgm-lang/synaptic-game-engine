@@ -175,6 +175,10 @@ export async function readGameSnapshot(page) {
     // Tabletop creation paints this button for the whole chips-only inn-book step.
     const builderBtn = document.querySelector('[data-testid="open-character-builder"]');
     const setupSignal = Boolean(builderBtn && visible(builderBtn));
+    const endedEl = document.querySelector('[data-play-phase="ended"]');
+    const playPhase = endedEl ? 'ended' : '';
+    const runEnded = endedEl ? (endedEl.getAttribute('data-run-ended') || 'ended') : '';
+    const runEndedTurn = endedEl ? (endedEl.getAttribute('data-run-ended-turn') || '') : '';
     const isSystemRow = (el) => {
       if (!visible(el)) return false;
       if (el.closest('.justify-end')) return false;
@@ -211,6 +215,9 @@ export async function readGameSnapshot(page) {
       autoFightReady,
       setupSignal,
       systemRowCount,
+      playPhase,
+      runEnded,
+      runEndedTurn,
     };
   });
 }

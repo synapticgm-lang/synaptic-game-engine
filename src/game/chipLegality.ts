@@ -6,6 +6,7 @@
  */
 
 import type { GameState } from './types';
+import { isDying } from './tabletop/roundFight';
 import { presentNpcNames } from './npcRelationships';
 import { isChromePersonToken } from './chromeAuthority';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
@@ -179,6 +180,12 @@ function lastStory(state: GameState): string {
 export function chipProblem(state: GameState, chip: string, storyProse = lastStory(state)): ChipProblem | null {
   const label = norm(chip);
   if (!label) return null;
+  // q73-DYING: unconscious at 0 HP can only take a dying chip (death save, potion, present ally).
+  if (isDying(state)) {
+    const dying = boundEngineChip(chip, state, storyProse);
+    if (dying?.kind === 'dying') return null;
+    return { kind: 'impossible-chip', detail: `"${label}" cannot be done while unconscious at 0 HP` };
+  }
   // Plan §4 / OPT-1: entity-bound affordance chips beat chipLegality word guesses.
   const bound = boundEngineChip(chip, state, storyProse);
   if (bound?.kind === 'affordance' && bound.entityId) {
