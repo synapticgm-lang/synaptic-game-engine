@@ -86,6 +86,7 @@ import { nameWords, pickPersonName } from './personNames';
 import { replayPreFeature } from './replaySeam';
 import { campAt, campEncounter, campHeadcount, campMemoryFact, campPeople, placeRoadCamp, recordCampOutcome } from './roadCamps';
 import { resolveCampRob } from './lockAttempt';
+import { recordPersonSeen } from './timeline';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -714,65 +715,42 @@ function stretchContext(j: TravelJourney): StretchContext {
     quietStretches: j.quietStretches ?? 0,
   };
 }
-/** One meeting check at `key`, sized and dressed (what it wants, how far off, whether it caught the party unseen). */
-function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched: boolean): RoadEncounter | null {
+/** One meeting check at `key` (sized/dressed); returns state with any fight2d person tag. */
+function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched: boolean): { encounter: RoadEncounter | null; state: GameState } {
   const areaTier = j.areaTier ?? 1;
-  const encounter = rollRoadEncounter(
-    stretchContext(j),
-    roadEncounterLevel(state, areaTier),
-    hashUnit(`${key}|chance`),
-    hashUnit(`${key}|kind`),
-    engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1,
-    houseRulesOf(state)
-  );
-  if (!encounter) return null;
+  const encounter = rollRoadEncounter(stretchContext(j), roadEncounterLevel(state, areaTier), hashUnit(`${key}|chance`), hashUnit(`${key}|kind`), engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1, houseRulesOf(state));
+  if (!encounter) return { encounter: null, state };
   sizeMeeting(state, encounter, key);
   const want = MEETING_WANT[encounter.kind]?.[at(MEETING_WANT[encounter.kind]!.length, hashUnit(`${key}|want`))];
   if (want) encounter.want = want;
-  nameMeeting(state, encounter, key);
+  const next = nameMeeting(state, encounter, key, j);
   encounter.distanceFt = unwatched ? minEncounterDistanceFt(j.terrain) : encounterDistanceFt(j.terrain, keyedRng(`${key}|distance`));
   if (unwatched && FIGHT_KINDS.has(encounter.kind)) encounter.surprisesParty = true;
-  return encounter;
+  return { encounter, state: next };
 }
-/**
- * This stretch's meeting check (seed-stable for the save, trip and leg). One check per watch: at set-out and once
- * 4 hours have passed on the road since the last one (`check`); otherwise the stretch is quiet. A look-out who
- * failed today's roll lets a hostile meeting get close unseen (SRD: the party is surprised).
- */
-function rollStretch(state: GameState, j: TravelJourney, check = true): TravelJourney {
+/** Stretch meeting check (seed-stable). Unwatched hostile = surprised (SRD). Returns journey + person-tagged state. */
+function rollStretch(state: GameState, j: TravelJourney, check = true): { journey: TravelJourney; state: GameState } {
   const quiet = j.quietStretches ?? 0;
   if (replayPreFeature()) {
     const key = `${tripKey(state, j)}|${j.legsDone}`;
-    const areaTier = j.areaTier ?? 1;
-    const encounter = recordedTapeMeeting(
-      stretchContext(j),
-      roadEncounterLevel(state, areaTier),
-      hashUnit(`${key}|chance`),
-      hashUnit(`${key}|kind`),
-      engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1,
-      houseRulesOf(state)
-    );
+    const encounter = recordedTapeMeeting(stretchContext(j), roadEncounterLevel(state, j.areaTier ?? 1), hashUnit(`${key}|chance`), hashUnit(`${key}|kind`), engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1, houseRulesOf(state));
     if (encounter) sizeMeeting(state, encounter, key);
-    return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 };
+    return { journey: { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 }, state };
   }
-  if (!check) return { ...j, encounter: null, quietStretches: quiet + 1 };
+  if (!check) return { journey: { ...j, encounter: null, quietStretches: quiet + 1 }, state };
   const key = `${tripKey(state, j)}|${j.legsDone}`;
-  const encounter = meetingCheck(state, j, key, j.jobResults?.lookout === false);
-  return { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 };
+  const rolled = meetingCheck(state, j, key, j.jobResults?.lookout === false);
+  return { journey: { ...j, encounter: rolled.encounter, quietStretches: rolled.encounter ? 0 : quiet + 1, hoursSinceCheck: 0 }, state: rolled.state };
 }
 /** People meetings the engine names: the one who speaks for them (a group's leader, a camp's keeper). */
 const NAMED_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting', 'plea', 'villain', 'thugs', 'camp']);
-/**
- * tt-build-roadmeet (John, 15 Oct, 2a) — a rolled people meeting gets a seeded name and a one-line description:
- * a plea's is drawn from the plea itself ("a farmer, begs help with a stuck cart"), the rest is a seeded look.
- * The name is the meeting's speaker and joins the presence record while the meeting runs.
- */
-function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
-  if (!NAMED_KINDS.has(encounter.kind)) return;
+/** tt-build-roadmeet — seeded name + look; fight2d writes one `person:` timeline tag for this trip HERE. */
+function nameMeeting(state: GameState, encounter: RoadEncounter, key: string, j: TravelJourney): GameState {
+  if (!NAMED_KINDS.has(encounter.kind)) return state;
   const rng = createHashRng('road-meeting', key);
   const taken = nameWords([...(state.npcMemories ?? []).flatMap((m) => [m.npcName, ...(m.aliases ?? [])]), ...campPeople(state), state.character?.name]);
   const name = pickPersonName(rng, taken);
-  if (!name) return;
+  if (!name) return state;
   encounter.name = name;
   const who = PLEA_HELP[encounter.want ?? '']?.who;
   const looks = MEETING_LOOK[encounter.kind] ?? [];
@@ -781,9 +759,9 @@ function nameMeeting(state: GameState, encounter: RoadEncounter, key: string): v
   } else if (looks.length) {
     encounter.about = looks[at(looks.length, rng())]!;
   }
-  // OP-1: a meeting/traveler starts from a seeded opener idea (kept on the encounter so the talk carries on from it).
   const idea = pickOpenerIdea(encounter.kind, key);
   if (idea) encounter.openerIdea = idea.id;
+  return recordPersonSeen({ ...state, currentLocation: underwayHereLabel({ journey: j }) || UNDERWAY_HERE }, name, 'met on the road');
 }
 /** Meetings that stand as a group: the engine rolls how many (tabletop: no bigger than the SRD 5.2.1 budget). */
 function sizeMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
@@ -1225,7 +1203,8 @@ function startJourney(state: GameState, from: string, to: string, gap: MapGap, v
   const march = marchHours(state, gap.terrain, tripKey(state, set), gap.hoursPerLeg);
   if (march.dead) return diedOnRoad(march, stillOn(march.state, set, 'you died on the road'), set);
   const day = rollDay(march.state, set);
-  const camp = withRoadCamp(day.state, rollStretch(day.state, day.journey));
+  const stretch = rollStretch(day.state, day.journey);
+  const camp = withRoadCamp(stretch.state, stretch.journey);
   const journey = camp.journey;
   const stop = passStop(withRouteStops(camp.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, gap.hoursPerLeg);
@@ -1275,7 +1254,8 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
     const all = [...facts, ...(a.facts ?? [])];
     return { ...a, ...(extra.length ? { extra } : {}), ...(all.length ? { facts: all } : {}) };
   }
-  const camp = withRoadCamp(day.state, rollStretch(day.state, day.journey, sinceCheck >= WATCH_HOURS));
+  const stretch = rollStretch(day.state, day.journey, sinceCheck >= WATCH_HOURS);
+  const camp = withRoadCamp(stretch.state, stretch.journey);
   const journey = camp.journey;
   const stop = passStop(withRouteStops(camp.state, journey), journey);
   const clock = advanceClock({ ...stop.state, currentLocation: UNDERWAY_HERE, journey }, j.hoursPerLeg);
@@ -1661,14 +1641,17 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
   let journey: TravelJourney = { ...j, encounter: null };
   let night: RoadEncounter | null = null;
   let watch = 0;
+  let campState = state;
   for (let w = 1; w <= CAMP_WATCHES && !night && !replayPreFeature(); w++) {
-    night = meetingCheck(state, journey, `${key}|w${w}`, !helper && w === 2);
+    const rolled = meetingCheck(campState, journey, `${key}|w${w}`, !helper && w === 2);
+    campState = rolled.state;
+    night = rolled.encounter;
     watch = w;
   }
   const which = watch === 1 ? 'first' : 'second';
   if (night && FIGHT_KINDS.has(night.kind)) {
     journey = { ...journey, encounter: night };
-    const clock = advanceClock(state, watch === 1 ? 2 : 6);
+    const clock = advanceClock(campState, watch === 1 ? 2 : 6);
     return {
       state: { ...clock.state, currentLocation: UNDERWAY_HERE, journey },
       handled: true,
@@ -1680,7 +1663,7 @@ function makeCamp(state: GameState, j: TravelJourney): TravelCommit {
       facts: [...facts, `In the ${which} watch the camp was disturbed; there was no rest.`],
     };
   }
-  let s: GameState = state;
+  let s: GameState = campState;
   if (survival(s)) {
     const eat = roadDayNow(s).fed ? null : eatRation(s.inventory ?? []);
     if (!eat || eat.ate) {

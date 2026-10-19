@@ -49,9 +49,9 @@ import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { roundCombatChips } from './tabletop/combatChips';
 import { checkChipKinds } from './chipCheck';
 import { resolvePlace, dungeonRoomPlace } from './places';
-import { isRoadLabel, isTripHere, roadMeetingOver } from './travelJourney';
+import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
+import { isRoadLabel, isTripHere } from './travelJourney';
 import { placeExits } from './placeRegistry';
-import { presentNpcNames } from './npcRelationships';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -765,39 +765,28 @@ export function drawnPlanIssues(state: GameState): string[] {
 }
 
 /**
- * fight2c-CHIPCHECK — a road-meeting / "talk to someone" chip is backed when the engine's own
- * record has a person here (journey.encounter.name, scene present, presentNpcNames, present
- * memories, timeline npc). Never a prose person-word list. (SOMEONE regex removed.)
+ * fight2d-PERSONTAG — a road-meeting / "talk to someone" chip is backed only by engine
+ * `person:` timeline tags for the current HERE (written at meeting / present-NPC sources).
+ * Never prose matching. (SOMEONE regex stays removed.)
  */
 export function checkChosenChip(before: GameState, chosen: string): TurnCheckFlag[] {
   const pick = norm(chosen);
   if (!pick || !roadMeetingPeople(before)) return [];
   if (!chipAddressee(pick) && !/^(?:greet|face|approach|skirt|slip past|hide from|talk your way)\b/i.test(pick)) return [];
-  const enc = before.journey?.encounter;
-  if (enc && !roadMeetingOver(enc) && norm(enc.name)) return [];
-  const present = before.sceneFacts?.present;
-  if (present) {
-    for (let i = 0; i < present.length; i++) {
-      if (norm(present[i])) return [];
-    }
+  const here = low(before.currentLocation);
+  if (!here) {
+    return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
   }
-  const named = presentNpcNames(before);
-  for (let i = 0; i < named.length; i++) {
-    if (norm(named[i])) return [];
-  }
-  const memories = before.npcMemories;
-  if (memories) {
-    for (let i = 0; i < memories.length; i++) {
-      const m = memories[i]!;
-      if (m.present === true && norm(m.npcName)) return [];
-    }
-  }
-  const timeline = before.timeline;
-  if (timeline) {
-    for (let i = 0; i < timeline.length; i++) {
-      const f = timeline[i]!;
-      if (f.kind === 'npc' && norm(f.text)) return [];
-    }
+  const trip = low(underwayHereLabel(before));
+  const road = low(UNDERWAY_HERE);
+  const onTrip = !!trip && (here === trip || here === road);
+  const timeline = before.timeline ?? [];
+  for (let i = 0; i < timeline.length; i++) {
+    const f = timeline[i]!;
+    if (f.kind !== 'person' || !low(f.name)) continue;
+    const p = low(f.place);
+    if (!p) continue;
+    if (p === here || (onTrip && (p === trip || p === road))) return [];
   }
   return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
 }

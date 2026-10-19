@@ -1614,6 +1614,7 @@ export type TimelineFactKind =
   | 'item'
   | 'quest'
   | 'npc'
+  | 'person'
   | 'dungeon'
   | 'discovery'
   | 'world'
@@ -1742,6 +1743,10 @@ export interface TimelineFact {
   kind: TimelineFactKind;
   text: string;
   at: number;
+  /** fight2d — person tag fields; text is `person: <name> - <detail>`; place is HERE. */
+  name?: string;
+  detail?: string;
+  place?: string;
 }
 
 /** Live situation packet rebuilt each turn from structured state. */
