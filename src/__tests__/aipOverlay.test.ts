@@ -329,6 +329,6 @@ describe('q51d-AIPOVL run rows', () => {
     expect(again.verifyReason).toBe('matched');
     expect(again.feedbackKey).toEqual({ logEntryId: 'log-1' });
     expect(presses).toEqual(['thumb']);
-    expect(shouldThumb({ targetKey: '1:abc', ratedKeys: new Set(['1:abc']) })).toEqual({ vote: false, reason: 'already_voted' });
+    expect(shouldThumb({ feedbacks: 1, votedFeedbacks: 1 })).toEqual({ vote: false, reason: 'already_voted' });
   });
 });
