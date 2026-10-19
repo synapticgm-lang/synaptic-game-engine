@@ -12,6 +12,7 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import { resolveOpeningHookPick } from './openingEstablishment';
 import { fitKitToHousing } from './defaults';
 import { withMotiveLines } from './npcSheet';
+import { normalizeLedgerEntry } from './npcMemoryLedger';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -223,6 +224,26 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
         ? 'semantic'
         : result.severity,
     };
+  }
+  const arcList = result.state.arcDirector?.npcMemories;
+  if (arcList && arcList.length) {
+    const nextLedgers = [];
+    let ledgersChanged = false;
+    for (const entry of arcList) {
+      nextLedgers.push(normalizeLedgerEntry(entry));
+      if (!Array.isArray(entry.memories) || !Array.isArray(entry.keyMoments)) ledgersChanged = true;
+    }
+    if (ledgersChanged) {
+      result = {
+        ...result,
+        dirty: true,
+        state: {
+          ...result.state,
+          arcDirector: { ...result.state.arcDirector, npcMemories: nextLedgers },
+        },
+        notes: [...result.notes, 'arcDirector npcMemories normalised to one ledger shape'],
+      };
+    }
   }
   if (result.dirty) {
     debugLogger.record('STATE_UPDATE', 'Save schema repaired', {
