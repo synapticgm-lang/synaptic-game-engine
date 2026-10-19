@@ -403,4 +403,33 @@ describe('q72-TIMELINETAGS', () => {
     expect(merged.filter((f) => f.verb === 'appeared' && f.name === 'rat').length).toBe(1);
     expect(compressVisitLog(events)).toMatch(/Ada/);
   });
+
+  it('a long stay keeps a late person, quest step, item and death inside the HERE SO FAR budget', () => {
+    const events: TimelineFact[] = [];
+    for (let i = 1; i <= 60; i++) {
+      events.push({
+        id: `search-${i}`,
+        turn: i,
+        verb: 'searched',
+        kind: 'place',
+        name: `alcove ${i}`,
+        text: `searched alcove ${i} from the back wall to the loose flagstone`,
+        at: i,
+      });
+    }
+    events.push({ id: 'late-p', turn: 61, verb: 'met', kind: 'person', name: 'Late Piper', text: 'met: Late Piper', at: 61 });
+    events.push({ id: 'late-q', turn: 62, verb: 'step', kind: 'quest', name: 'Vault', detail: '2/3', text: 'step: Vault 2/3', at: 62 });
+    events.push({ id: 'late-i', turn: 63, verb: 'gained', kind: 'item', name: 'iron key', text: 'gained: iron key', at: 63 });
+    events.push({ id: 'late-d', turn: 64, verb: 'died', kind: 'combat', name: 'cave bat', text: 'died: cave bat', at: 64 });
+    const s = baseState({
+      placeVisitLog: { placeId: 'place:lowmarket', placeName: 'Lowmarket', sinceTurn: 1, events },
+    });
+    const line = formatSceneBlock(s).split('\n').find((l) => l.startsWith('HERE SO FAR')) ?? '';
+    const body = line.replace(/^HERE SO FAR \([^)]*\): /, '');
+    expect(body.length).toBeLessThanOrEqual(280);
+    expect(body).toMatch(/Late Piper/);
+    expect(body).toMatch(/Vault/);
+    expect(body).toMatch(/iron key/);
+    expect(body).toMatch(/cave bat/);
+  });
 });

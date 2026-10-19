@@ -1,12 +1,8 @@
-/**
- * q48-ROLE / P-5: writer people enter presence at HERE; places refused.
- * q72-TIMELINETAGS: writer-invented names are REFUSED, not admitted.
- * `admitPersonHere` stays for ENGINE sources (road meet, cast seed). Prose parsers
- * (`introducedNamedPeople` / `introducedRolePeople` / `introducedThings`) no longer feed it.
- */
 import { matchesRegisteredLocationNeedle } from './neverCast';
 import { resolveNpcRecord } from './npcRecords';
 import { resolvePlace } from './places';
+import { isOffSetting, worldOffSettingWords } from './settingVocabulary';
+import { introducedThings } from './tokenProse';
 import { recordPersonSeen } from './timeline';
 import type { GameState, NpcMemory } from './types';
 
@@ -60,12 +56,16 @@ export function admitPersonHere(state: GameState, name: string, note?: string): 
   return { ...tagged, npcMemories: memories };
 }
 
-/**
- * q72: prose path removed — writer-invented names/roles/things are refused.
- * Call sites kept so live/fate paths stay stable; this is a no-op.
- * Removed feeders (list in commit): introducedNamedPeople, introducedRolePeople,
- * introducedThings, ROLE_NOUNS matchAll via UNBOUND_ANIMATE, thingHeads word lists.
- */
-export function registerWriterIntroductions(state: GameState, _narrative: string): GameState {
-  return state;
+export function registerWriterIntroductions(state: GameState, narrative: string): GameState {
+  const things = introducedThings(narrative);
+  if (!things.length) return state;
+  const foreign = worldOffSettingWords(state);
+  const list = [...(state.crossedOver ?? [])];
+  for (const t of things) {
+    const head = t.trim().slice(t.trim().lastIndexOf(' ') + 1);
+    if (!head || !isOffSetting(foreign, head)) continue;
+    if (!list.some((x) => x.toLowerCase() === t.toLowerCase())) list.push(t);
+  }
+  if (list.length === (state.crossedOver ?? []).length) return state;
+  return { ...state, crossedOver: list };
 }

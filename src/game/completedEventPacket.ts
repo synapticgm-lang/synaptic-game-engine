@@ -2,7 +2,6 @@
  * Architecture 1 — Retrospective Narrator (2026-09-08b).
  * Code resolves facts first; the writer only narrates a completed event in past tense.
  */
-
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
 import { foeCanSpeak } from './rules/srdMonsters';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
@@ -109,7 +108,6 @@ export type EventOutcome =
   | 'slipped away'
   | 'unchanged'
   | 'resolved';
-
 export interface CompletedEventPacket {
   turn: number;
   actor: string;
@@ -235,7 +233,6 @@ function housedWindowDisplay(state: GameState, prop: string): string | null {
 /** `window` is the LitRPG System window: only the PC sees it, not a thing in the room. */
 export type LedgerRefClass = 'place' | 'person' | 'creature' | 'corpse' | 'prop' | 'kit' | 'carried' | 'companion' | 'window' | 'meeting';
 export type TokenUse = 'speaker' | 'actor' | 'addressed' | 'corpse' | 'prop_used' | 'worn' | 'place';
-
 export interface LedgerRef {
   tok: string;
   id: string;
@@ -244,16 +241,13 @@ export interface LedgerRef {
   /** How the writer may use this ref, printed on its REF ENUM line. */
   note?: string;
 }
-
 export interface TokenUseRef {
   tok: string;
   id: string;
   use: TokenUse;
 }
-
 const WRITER_RHYTHM_WINDOW = 2;
 const WRITER_RHYTHM_CHAR_CAP = 500;
-
 function lastPlayerAction(state: GameState, playerInput?: string): string {
   const typed = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   if (typed) return typed;
@@ -263,10 +257,8 @@ function lastPlayerAction(state: GameState, playerInput?: string): string {
   }
   return '';
 }
-
 /** TT31 — a tabletop beat is a short table description: at most this many words (asked in the packet, cut on commit). */
 export const TABLETOP_BEAT_WORDS = 100;
-
 export function classifyVerb(input: string): string {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
   if (/\b(attack|fight|strike|engage|press the attack|slash|stab|punch)\b/i.test(t)) return 'attacked';
@@ -309,10 +301,8 @@ export function classifyVerb(input: string): string {
   if (/\b(wait|rest|stay|hold)\b/i.test(t)) return 'waited';
   return 'acted';
 }
-
 const INTENT_REMAINDER =
   /^(?:what is going on|a direct question|what they want|what they wanted|with what you are holding|what you are holding|the surroundings|the immediate surroundings|around|the exit|leverage|for leverage|it|them|this|that)$/i;
-
 function isIntentRemainderNoun(raw: string): boolean {
   const t = (raw ?? '').replace(/[.!?]+$/, '').replace(/^(?:the|a|an|with)\s+/i, '').trim();
   if (!t) return true;
@@ -321,12 +311,10 @@ function isIntentRemainderNoun(raw: string): boolean {
   if (/\bdirect question\b/i.test(t)) return true;
   return false;
 }
-
 function livingLedgerPeople(state: GameState): string[] {
   const kill = state.sceneFacts?.lastKill;
   return realPresentPeople(state.sceneFacts?.present ?? []).filter((n) => !matchesLastKillName(n, kill));
 }
-
 function matchLedgerNoun(
   raw: string,
   state: GameState,
@@ -351,7 +339,6 @@ function matchLedgerNoun(
   }
   return undefined;
 }
-
 function extractTarget(input: string, state: GameState): string | undefined {
   const t = (input ?? '').trim();
   const verb = classifyVerb(t);
@@ -378,7 +365,6 @@ function extractTarget(input: string, state: GameState): string | undefined {
   if (verb === 'spoke') return livingLedgerPeople(state)[0];
   return undefined;
 }
-
 /** 29z9k — reading level and the two content switches, read from Kid Mode / cursing / violence settings. */
 export type ReaderFlags = {
   level: ReadingLevel;
@@ -389,7 +375,6 @@ export type ReaderFlags = {
   /** Violence 'none': no blow, blood or wound on the page. */
   violenceNone?: true;
 };
-
 export function readerFlags(
   settings: Pick<Settings, 'contentMode' | 'cursingLevel' | 'violenceLevel' | 'readingLevel'>
 ): ReaderFlags {
@@ -403,13 +388,11 @@ export function readerFlags(
   if (settings.violenceLevel === 'none') flags.violenceNone = true;
   return flags;
 }
-
 const READER_LEVEL_NOTE: Record<ReadingLevel, string> = {
   plain: 'plain — write for a reader aged about 9 to 11: short whole sentences, name the place and the object, no metaphor that needs explaining, no sentence fragments',
   standard: 'standard — the usual adult voice',
   child: 'child — Kid Mode content rules apply; short whole sentences that name the place and the object',
 };
-
 export function formatReaderLine(r: ReaderFlags): string {
   return [
     `READER: ${READER_LEVEL_NOTE[r.level]}.`,
@@ -425,7 +408,6 @@ export function formatReaderLine(r: ReaderFlags): string {
         : 'Violence detail: off (fights still happen; show the blow and what it did, never gore or a lingering wound).',
   ].join(' ');
 }
-
 export type PacketBuildExtras = {
   xp?: number;
   /** 29z9k — reading level + content switches for the writer. */
@@ -441,7 +423,6 @@ export type PacketBuildExtras = {
   damage?: number;
   loot?: string[];
 };
-
 function liveEncounterHp(state: GameState): { current: number; max: number } | undefined {
   const enc = state.activeEncounter;
   if (enc && typeof enc.hp === 'number') {
@@ -449,11 +430,9 @@ function liveEncounterHp(state: GameState): { current: number; max: number } | u
   }
   return undefined;
 }
-
 function isGenericHereLabel(raw: string): boolean {
   return !raw.trim() || /^(?:your surroundings|nearby cover|just ahead of you|this room)$/i.test(raw);
 }
-
 function locationLabel(state: GameState): string {
   const trip = underwayHereLabel(state);
   if (trip) return trip;
@@ -473,7 +452,6 @@ function locationLabel(state: GameState): string {
   if (short && !isGenericHereLabel(short)) return short;
   return fromCover || short || 'this room';
 }
-
 function pushUnique(list: string[], seen: Set<string>, raw: string | undefined): void {
   const name = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!name || name.length < 2) return;
@@ -491,7 +469,6 @@ function pushUnique(list: string[], seen: Set<string>, raw: string | undefined):
     }
   }
 }
-
 export type NounAllowlistOpts = {
   /** Hall talk: addressee + card CAST names only (plus HERE / card tokens). */
   hallTalk?: boolean;
@@ -500,7 +477,6 @@ export type NounAllowlistOpts = {
   /** This turn's player line: tabletop worn kit it names is a ref. */
   action?: string;
 };
-
 /**
  * Ledger-only nouns. HERE short label, present named, opening CAST from the card,
  * companions, live encounter role, lastKill corpse, kit, props.
@@ -519,7 +495,6 @@ function castMentionNames(state: GameState): string[] {
   // offered elsewhere it stood in for a priest, a weapon or a trap.
   return atOpeningPlace(state) ? openingCastNames(state) : [];
 }
-
 function atOpeningPlace(state: GameState): boolean {
   const c = state.circling;
   if (!c?.lastLocation) return true;
@@ -527,12 +502,10 @@ function atOpeningPlace(state: GameState): boolean {
   if (c.openingPlace) return key(state.currentLocation) === key(c.openingPlace);
   return !c.prevPlace;
 }
-
 /** Opening hall talk: at the card's place and nobody has moved yet. Only then does talk narrow the turn's names. */
 function beforeFirstMove(state: GameState): boolean {
   return atOpeningPlace(state) && !state.circling?.prevPlace;
 }
-
 /** Capitalised runs inside a place card description that do not open a sentence. */
 function placeCardNames(description: string | undefined): string[] {
   const out: string[] = [];
@@ -542,7 +515,6 @@ function placeCardNames(description: string | undefined): string[] {
   }
   return out;
 }
-
 /** The mention list is the REF ENUM's displays, plus the card's scene words, the place card's names, the player and the bible's hubs. */
 export function compileNounAllowlist(
   state: GameState,
@@ -551,7 +523,6 @@ export function compileNounAllowlist(
 ): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
-
   for (const ref of compileRefEnum(state, extras, opts)) pushUnique(out, seen, ref.display);
   // HERE paints a dungeon room in prose words; its map key and the dungeon stay nameable in plain prose.
   const key = String(state.currentLocation ?? '').trim();
@@ -566,10 +537,8 @@ export function compileNounAllowlist(
   for (const name of placeCardNames(placeCardFor(state, playerFacingLocation(state))?.description)) {
     pushUnique(out, seen, name);
   }
-
   const pc = (state.character?.name ?? '').trim();
   if (pc && !/^(you|adventurer|player)$/i.test(pc)) pushUnique(out, seen, pc);
-
   for (const h of hubsForBibleId(state.campaignBibleId)) {
     pushUnique(out, seen, h.name);
     for (const alias of h.aliases ?? []) pushUnique(out, seen, alias);
@@ -591,10 +560,8 @@ export function compileNounAllowlist(
       at = beat.indexOf(name, at + 1);
     }
   }
-
   return out;
 }
-
 /** Two cast labels name one person when one's words run whole inside the other's ("faces" / "the exhausted faces"). */
 function sameCastPerson(a: string, b: string): boolean {
   const words = (s: string) => ` ${s.toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/\s+/g, ' ').trim()} `;
@@ -602,7 +569,6 @@ function sameCastPerson(a: string, b: string): boolean {
   const y = words(b);
   return x.includes(y) || y.includes(x);
 }
-
 function slugRefId(raw: string): string {
   return (raw ?? '')
     .toLowerCase()
@@ -610,7 +576,6 @@ function slugRefId(raw: string): string {
     .replace(/^-+|-+$/g, '')
     .slice(0, 40);
 }
-
 /**
  * A ref the writer may paint as a person or a place is a name or a short noun phrase. A card line
  * that is a sentence ("alone on the stone outline of a building that is gone"), a denial
@@ -625,7 +590,6 @@ export function isPaintableRefLabel(label: string): boolean {
   if (/\s[—–-]\s|[;:]/.test(t)) return false;
   return t.split(' ').length <= 8;
 }
-
 const SPEAKS: readonly TokenUse[] = ['speaker', 'actor', 'addressed']; // a person, a companion, or a road meeting (an event, not someone present)
 const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   place: ['place'],
@@ -639,12 +603,10 @@ const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   carried: ['prop_used'],
   window: ['prop_used'],
 };
-
 /** `use` must match the ledger class — Lene cannot be `prop_used`. */
 export function tokenUseMatchesClass(use: TokenUse, klass: LedgerRefClass): boolean {
   return TOKEN_USES_FOR_CLASS[klass].includes(use);
 }
-
 /**
  * This-turn ref enum. HERE, card CAST, present, companions, lastKill corpse, kit, props.
  * Hall talk matches compileNounAllowlist — leftover invent cannot re-license itself.
@@ -674,10 +636,8 @@ export function compileRefEnum(
   const windowNote = housingId
     ? systemHousingWriterClause(housingId)
     : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
-
   if (!underwayHereLabel(state)) add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
-
   const castNote = openingCastNote(state);
   const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
@@ -687,7 +647,6 @@ export function compileRefEnum(
     castRows.push(name);
     add(`cast:${slugRefId(name)}`, name, 'person', castNote);
   }
-
   if (!opts?.hallTalk) {
     const road = roadMeetingRef(state);
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
@@ -721,7 +680,6 @@ export function compileRefEnum(
     if (item.equipped || !item.name || !engineResult.includes(item.name.toLowerCase())) continue;
     add(`kit:${slugRefId(item.name)}`, kitRefDisplay(item.name, state.engineMode === 'dnd'), 'carried', 'the engine result hands it over this turn; carried, not worn');
   }
-
   const addWindow = (label: string) => {
     if (state.engineMode !== 'litrpg') return;
     const display = housedWindowDisplay(state, label);
@@ -751,7 +709,6 @@ export function compileRefEnum(
   }
   return out;
 }
-
 /**
  * Displays + labels the writer was handed this turn. One list for repeated-habit masks,
  * factCheck `handedPeople` (same label rule), and later P-5 / M.
@@ -785,7 +742,6 @@ export function handedRefs(
   }
   return out;
 }
-
 export function formatRefEnumForWriter(refs: LedgerRef[]): string {
   if (!refs.length) return 'REF ENUM: (none this turn)';
   return [
@@ -793,11 +749,9 @@ export function formatRefEnumForWriter(refs: LedgerRef[]): string {
     ...refs.map((r) => `${r.tok}  ${r.id}  ${r.klass}  "${r.display}"${r.note ? `  (${r.note})` : ''}`),
   ].join('\n');
 }
-
 function isCombatVerb(verb: string): boolean {
   return verb === 'attacked' || verb === 'fled' || verb === 'parleyed';
 }
-
 function resolveOutcome(
   state: GameState,
   verb: string,
@@ -815,9 +769,7 @@ function resolveOutcome(
     && kill.remains
     && kill.turn === state.turn
     && !state.activeEncounter;
-
   if (justKilled && isCombatVerb(verb)) return 'killed';
-
   const enc = state.activeEncounter;
   if (enc && isCombatVerb(verb) && typeof enc.hp === 'number' && enc.maxHp) {
     if (enc.hp <= 0) return 'killed';
@@ -853,7 +805,6 @@ function resolveOutcome(
   if (enc && !justKilled && enc.startedTurn === state.turn) return 'spawned';
   return 'unchanged';
 }
-
 function rhythmBeats(state: GameState): string[] {
   const tail = selectRecentLogForContext(state, Math.max(WRITER_RHYTHM_WINDOW * 4, 8));
   return tail
@@ -861,16 +812,13 @@ function rhythmBeats(state: GameState): string[] {
     .slice(-WRITER_RHYTHM_WINDOW)
     .map((e) => String(e.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP));
 }
-
 /** The first sentence of each committed beat, as recorded fact for the writer. */
 export function recordedBeatOpeners(beats: readonly string[]): string[] {
   return beats
     .map((b) => (splitProseSentences(String(b ?? '').replace(/\s+/g, ' ').trim())[0] ?? '').trim())
     .filter(Boolean);
 }
-
 const PAGE_SAME_ACTION_CAP = 2;
-
 /**
  * Openers already printed. The last beat is always one: it is the line the new beat follows, even when it
  * was set at the place this turn's move leaves. Older beats count only while the scene tail keeps them (a
@@ -894,20 +842,16 @@ export function pageOpeners(state: GameState, action: string): string[] {
   const beats = [...picked].sort((a, b) => a - b).map((i) => String(log[i]?.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP));
   return [...new Set(recordedBeatOpeners(beats))];
 }
-
 export type LoiterStreakFamily = 'inspect' | 'wait' | null;
-
 export function classifyLoiterFamily(input: string): LoiterStreakFamily {
   const verb = classifyVerb(input);
   if (verb === 'inspected') return 'inspect';
   if (verb === 'waited') return 'wait';
   return null;
 }
-
 function hereKey(state: GameState): string {
   return (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
 }
-
 /**
  * Persist inspect/wait depth on this HERE.
  * Reset on travel, leave, talk, combat, or location change.
@@ -1007,7 +951,10 @@ export function buildCompletedEventPacket(
   const allowlist = [
     ...sceneMentions,
     ...compileNounAllowlist(state, allowExtras, refOpts).filter((n) => !ledgerRead || !isSystemWindowLabel(n)),
-  ].filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+  ].filter((n, i, arr) => {
+    if (state.systemHousing && isSystemWindowLabel(n)) return false;
+    return arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i;
+  });
   const refEnum = compileRefEnum(state, allowExtras, refOpts)
     .filter((r) => !ledgerRead || r.klass !== 'window');
   // q72: REF records only for ids referenced this turn (player line / chips / engine event), cap 3.
@@ -1390,6 +1337,8 @@ export function formatWriterFacingEvent(
   if (packet.sceneBlock) {
     lines.push(packet.sceneBlock);
     if (packet.refRecords) lines.push(packet.refRecords);
+    // Townsfolk sheet lines are not a SCENE row (job, motive, fear, speech, never the secret).
+    if (packet.townsfolk?.length) lines.push(packet.townsfolk.join('\n'));
   } else {
     if (packet.knownBy?.length) lines.push(`INFO SHEETS (these people remember ${who}):\n${packet.knownBy.join('\n')}`);
     if (packet.townsfolk?.length) lines.push(`PEOPLE HERE (their sheets — play them this way; each one is only the @tN at the start of their line):\n${packet.townsfolk.join('\n')}`);
@@ -1475,7 +1424,6 @@ export function formatWriterFacingEvent(
   }
   lines.push('');
   if (packet.infoSheet) {
-    // Order M step 3: INFO SHEET SCENE replaces ALREADY ON THE PAGE openers.
     lines.push(packet.infoSheet);
     const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
     if (loiter) lines.push(`GM: ${loiter}`);

@@ -1,4 +1,7 @@
 /** q72 — SCENE block + per-place visit log. Budget: SCENE <=200 tok; scene part <=300. */
+import { isSystemWindowLabel } from './chromeAuthority.ts';
+import { sheetMemoryLine } from './npcRecords.ts';
+import { exitPlaceNames } from './placeNames.ts';
 import type { GameState, PlaceVisitLog, TimelineFact } from './types.ts';
 
 const WS = /\s+/g;
@@ -48,14 +51,31 @@ export function mergeVisitEvents(events: TimelineFact[]): TimelineFact[] {
   return out;
 }
 
-export function compressVisitLog(events: TimelineFact[]): string {
-  const bits: string[] = [];
-  for (const f of mergeVisitEvents(events)) {
-    if (f.verb && f.name) bits.push(f.verb === 'said' && f.detail ? `${f.name} said ${clip(f.detail, 6)}` : `${f.verb} ${f.name}${f.detail && f.verb === 'step' ? ` ${f.detail}` : ''}`);
-    else if (f.text) bits.push(clip(f.text, 8));
-    if (bits.join('; ').length > 220) break;
+/**
+ * Stay inside `limit` by dropping compressed minor events.
+ * People met, quest steps, items gained or lost, and deaths are never dropped.
+ */
+export function compressVisitLog(events: TimelineFact[], limit = 220): string {
+  const merged = mergeVisitEvents(events);
+  const keyBits: string[] = [];
+  const minorBits: string[] = [];
+  for (const f of merged) {
+    let bit = '';
+    if (f.verb === 'said' && f.name && f.detail) bit = `${f.name} said ${clip(f.detail, keyVisit(f) ? 6 : 4)}`;
+    else if (f.verb && f.name) bit = `${f.verb} ${f.name}${f.detail && f.verb === 'step' ? ` ${f.detail}` : ''}`;
+    else if (f.text) bit = clip(f.text.replace(/^[^:]+:\s*/, ''), keyVisit(f) ? 8 : 6);
+    if (!bit) continue;
+    (keyVisit(f) ? keyBits : minorBits).push(bit);
   }
-  return bits.join('; ') || '(quiet stay)';
+  while (minorBits.length && [...keyBits, ...minorBits].join('; ').length > limit) minorBits.pop();
+  let text = [...keyBits, ...minorBits].join('; ');
+  if (text.length > limit && keyBits.length) {
+    const room = Math.max(12, Math.floor(limit / keyBits.length) - 2);
+    const clipped: string[] = [];
+    for (const b of keyBits) clipped.push(b.length <= room ? b : b.slice(0, room).trim());
+    text = clipped.join('; ');
+  }
+  return text || '(quiet stay)';
 }
 
 export function formatSceneBlock(state: GameState): string {
@@ -63,7 +83,12 @@ export function formatSceneBlock(state: GameState): string {
   const place = (state.currentLocation ?? 'somewhere').replace(WS, ' ').trim() || 'somewhere';
   const pl = placeOf(state);
   const kind = state.activeDungeon ? 'dungeon' : state.journey ? 'road' : pl?.settlementKind || (pl?.roadCamp ? 'camp' : 'place');
-  const present = people(state);
+  const meetingName = (state.journey?.encounter?.name ?? '').trim();
+  const present: Array<{ id: string; name: string }> = [];
+  for (const p of people(state)) {
+    if (meetingName && p.name.toLowerCase() === meetingName.toLowerCase()) continue;
+    present.push(p);
+  }
   const creatures: string[] = [];
   if (state.activeEncounter?.name) creatures.push(`${state.activeEncounter.name} (foe)`);
   for (const rec of Object.values(state.entityRecords ?? {})) {
@@ -73,7 +98,10 @@ export function formatSceneBlock(state: GameState): string {
     creatures.push(rec.notes[0] ? `${rec.name} (${rec.notes[0]})` : rec.name);
   }
   const items: string[] = [];
-  for (const p of (state.sceneFacts?.props ?? []).slice(0, CAP)) items.push(p);
+  for (const p of (state.sceneFacts?.props ?? []).slice(0, CAP)) {
+    if (state.systemHousing && isSystemWindowLabel(p)) continue;
+    items.push(p);
+  }
   for (const rec of Object.values(state.entityRecords ?? {})) {
     if (rec.kind !== 'item' || items.length >= CAP) continue;
     if (items.some((i) => i.toLowerCase().startsWith(rec.name.toLowerCase()))) continue;
@@ -84,7 +112,8 @@ export function formatSceneBlock(state: GameState): string {
     if (items.some((i) => i.toLowerCase().startsWith(it.name.toLowerCase()))) continue;
     items.push(`${it.name} (yours)`);
   }
-  const exits = (pl?.exits ?? []).slice(0, CAP).map((e) => `${e} (road)`);
+  const exitLabels: string[] = [];
+  for (const e of exitPlaceNames(state).slice(0, CAP)) exitLabels.push(`${e} (road)`);
   const said: string[] = [];
   for (const p of present) {
     const m = (state.npcMemories ?? []).find((n) => n.npcId === p.id || n.npcName.toLowerCase() === p.name.toLowerCase());
@@ -99,25 +128,29 @@ export function formatSceneBlock(state: GameState): string {
     const body = f.verb === 'said' ? `${f.name}` : f.verb === 'step' ? `${f.name}${f.detail ? ` ${f.detail}` : ''}` : `${f.name}${f.detail ? `, ${f.detail}` : ''}`;
     return `T${f.turn} ${f.verb}: ${body}`;
   });
+  const presentLabels: string[] = [];
+  const known: string[] = [];
+  for (const p of present) {
+    const mem = (state.npcMemories ?? []).find((n) => n.npcId === p.id || n.npcName.toLowerCase() === p.name.toLowerCase());
+    presentLabels.push(`${p.name} (person)`);
+    const memory = mem ? sheetMemoryLine(mem, state.character?.name) : '';
+    if (memory) known.push(memory);
+  }
   const lines = [
     `SCENE T${turn} - ${place} (${kind})`,
-    `PRESENT: ${present.length ? present.map((p) => `${p.name} (person)`).join(', ') : '(none)'}`,
+    `PRESENT: ${presentLabels.length ? presentLabels.join(', ') : '(none)'}`,
     `CREATURES: ${creatures.length ? creatures.join(', ') : '(none)'}`,
     `ITEMS: ${items.length ? items.join(', ') : '(none)'}`,
-    `EXITS: ${exits.length ? exits.join(', ') : '(none)'}`,
+    `EXITS: ${exitLabels.length ? exitLabels.join(', ') : '(none)'}`,
     `SAID: ${said.length ? said.slice(0, CAP).join('; ') : '(none)'}`,
     `RECENT: ${recent.length ? recent.join(' | ') : '(none)'}`,
   ];
+  if (meetingName) lines.push(`EVENT: ${meetingName} (meeting on the road)`);
+  if (known.length) lines.push(`KNOWN: ${known.slice(0, 4).join(' | ')}`);
   const log = state.placeVisitLog;
   if (log?.events.length) {
-    const bits: string[] = [];
-    for (const f of mergeVisitEvents(log.events)) {
-      if (f.verb === 'said' && f.name && f.detail) bits.push(`${f.name} said ${clip(f.detail, 8)}`);
-      else if (f.verb && f.name) bits.push(`${f.verb} ${f.name}${f.detail && f.verb === 'step' ? ` ${f.detail}` : ''}`);
-      else if (f.text) bits.push(clip(f.text.replace(/^[^:]+:\s*/, ''), 10));
-      if (bits.join('; ').length > 280) break;
-    }
-    if (bits.length) lines.push(`HERE SO FAR (${log.placeName}, since T${log.sinceTurn}): ${bits.join('; ')}`);
+    const bits = compressVisitLog(log.events, 280);
+    if (bits) lines.push(`HERE SO FAR (${log.placeName}, since T${log.sinceTurn}): ${bits}`);
   }
   if (pl?.lastVisitSummary && pl.lastVisitTurns) lines.push(`LAST VISIT (T${pl.lastVisitTurns.from}-T${pl.lastVisitTurns.to}): ${pl.lastVisitSummary}`);
   return lines.join('\n');
@@ -153,9 +186,7 @@ export function leavePlaceVisit(state: GameState): GameState {
     if (p.id !== log.placeId && p.name.toLowerCase() !== log.placeName.toLowerCase()) return p;
     return { ...p, lastVisitSummary: summary, lastVisitTurns: { from: log.sinceTurn, to }, lastVisitedTurn: to };
   });
-  if (!(state.places ?? []).some((p) => p.id === log.placeId || p.name.toLowerCase() === log.placeName.toLowerCase())) {
-    places = [...places, { id: log.placeId, name: log.placeName, lastVisitSummary: summary, lastVisitTurns: { from: log.sinceTurn, to }, lastVisitedTurn: to }];
-  }
+  // A visit summary stamps a place the map already has. A road label or a dungeon room is not a new place card.
   return { ...state, places, placeVisitLog: null };
 }
 
@@ -169,7 +200,10 @@ export function formatRefRecords(state: GameState, referencedIds: string[]): str
     seen.add(id);
     const person = (state.npcMemories ?? []).find((m) => m.npcId === id);
     if (person) {
-      let body = [person.npcName, person.disposition ? `disp ${person.disposition}` : '', person.location ? `at ${person.location}` : '', (person.facts ?? []).slice(-2).join('; ')].filter(Boolean).join(' | ');
+      const memory = sheetMemoryLine(person, state.character?.name);
+      const job = person.sheet?.job ? `(${person.sheet.job})` : '';
+      const facts = (person.facts ?? []).filter((f) => !person.sheet?.secret || f !== person.sheet.secret).slice(-2).join('; ');
+      let body = [person.npcName, job, person.disposition ? `disp ${person.disposition}` : '', person.location ? `at ${person.location}` : '', facts, memory].filter(Boolean).join(' | ');
       if (tokensOf(body) > 60) body = body.slice(0, 240);
       lines.push(`REF ${id}: ${body}`);
       continue;
@@ -189,7 +223,10 @@ export function mentionFromScene(state: GameState): string[] {
   const push = (n: string) => { const t = n.replace(WS, ' ').trim(); if (t && !names.some((x) => x.toLowerCase() === t.toLowerCase())) names.push(t); };
   push(state.currentLocation ?? '');
   for (const p of people(state)) push(p.name);
-  for (const p of state.sceneFacts?.props ?? []) push(p);
+  for (const p of state.sceneFacts?.props ?? []) {
+    if (state.systemHousing && isSystemWindowLabel(p)) continue;
+    push(p);
+  }
   for (const e of placeOf(state)?.exits ?? []) push(e);
   return names;
 }

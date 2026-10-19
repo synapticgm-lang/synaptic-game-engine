@@ -19,7 +19,6 @@ import {
 import { openSeededLootable } from './looseItems';
 import { chipProblem } from './chipLegality';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
-import { formatWriterInfoLayer } from './writerInfoLayer';
 import { sheetMemoryLine } from './npcRecords';
 import { checkLevelUpChanges, checkPlayerTurn, checkSheetMemory } from './turnCheck';
 import { clampSystemHousing, SYSTEM_PART_IDS, type SystemPartId } from './systemHousing';
@@ -111,9 +110,8 @@ describe('29z3 info-sheet memory', () => {
   it('the writer packet and info layer carry the sheet of people here', () => {
     const s = base({ npcMemories: [metSheet] });
     const packet = formatWriterFacingEvent(buildCompletedEventPacket(s, 'Talk to Mara Quell'));
-    expect(packet).toMatch(/INFO SHEETS/);
     expect(packet).toMatch(/Mara Quell has met Rook before/);
-    expect(formatWriterInfoLayer(s)).toMatch(/Mara Quell has met Rook before/);
+    expect(packet).toMatch(/^KNOWN:/m);
   });
 
   it('tester P0s a person with a sheet who acts as if they never met the player', () => {
