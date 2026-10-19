@@ -1,11 +1,16 @@
 /**
- * q64-DRAWGATE — possession gate bounds the item NP; draft restore never resurrects an older line.
+ * q64-DRAWGATE / q64b-DRAWGATE2 — possession gate bounds the item NP (and `with` instruments);
+ * draft restore never resurrects an older line.
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from '../game/defaults';
 import { validateActionHard, restoreDraftAfterBlock } from '../game/actionValidation';
 import { applyTabletopSheet, resolveSheet } from '../game/tabletop/characterBuild';
-import type { GameState } from '../game/types';
+import type { GameState, Item } from '../game/types';
+
+function item(name: string, extra: Partial<Item> = {}): Item {
+  return { id: name, name, rarity: 'Common', quantity: 1, ...extra };
+}
 
 /** Quick-start tabletop fighter with kit weapons (itemType weapon on the records). */
 function quickStartFighterInEncounter(): GameState {
@@ -43,6 +48,31 @@ function quickStartFighterInEncounter(): GameState {
   return withKit;
 }
 
+function aloneWithKit(inventory: Item[]): GameState {
+  const base = createInitialState('Jax', 'dnd') as GameState;
+  return {
+    ...base,
+    engineMode: 'dnd',
+    campaignBibleId: 'cursed-keep',
+    inventory,
+    containers: [],
+    openingEstablishment: {
+      complete: true,
+      pending: [],
+      answers: {},
+      aloneArrival: false,
+    },
+    sceneFacts: {
+      crowd: 'none',
+      noise: 'quiet',
+      present: [],
+      props: ['locked chest'],
+      lastBeat: 'A locked chest sits in the corner.',
+      updatedTurn: 1,
+    },
+  };
+}
+
 describe('q64-DRAWGATE', () => {
   it('does not block Draw weapon / Draw my sword with a coordinated follow-on clause', () => {
     const state = quickStartFighterInEncounter();
@@ -75,5 +105,42 @@ describe('q64-DRAWGATE', () => {
     expect(restoreDraftAfterBlock(blocked, older)).toBe(blocked);
     expect(restoreDraftAfterBlock(blocked, older)).not.toBe(older);
     expect(restoreDraftAfterBlock('', older)).toBe('');
+  });
+});
+
+describe('q64b-DRAWGATE2', () => {
+  it("blocks 'I use the golden quest key to open it' with no key, naming the key", () => {
+    const state = aloneWithKit([item('map'), item('travel bag')]);
+    const result = validateActionHard('I use the golden quest key to open it', state);
+    expect(result.valid).toBe(false);
+    expect(result.violations.join(' ')).toMatch(/don't have: golden quest key/i);
+  });
+
+  it("allows the same line when a golden quest key is carried", () => {
+    const state = aloneWithKit([item('map'), item('golden quest key')]);
+    const result = validateActionHard('I use the golden quest key to open it', state);
+    expect(result.valid).toBe(true);
+    expect(result.violations.join(' ')).not.toMatch(/don't have/i);
+  });
+
+  it("blocks 'I pry it open with my crowbar' with no crowbar", () => {
+    const state = aloneWithKit([item('map')]);
+    const result = validateActionHard('I pry it open with my crowbar', state);
+    expect(result.valid).toBe(false);
+    expect(result.violations.join(' ')).toMatch(/don't have: crowbar/i);
+  });
+
+  it("allows pry-with-crowbar when a crowbar is carried", () => {
+    const state = aloneWithKit([item('crowbar')]);
+    const result = validateActionHard('I pry it open with my crowbar', state);
+    expect(result.valid).toBe(true);
+    expect(result.violations.join(' ')).not.toMatch(/don't have/i);
+  });
+
+  it("keeps 'Draw weapon and roll initiative' allowed with a carried weapon", () => {
+    const state = quickStartFighterInEncounter();
+    const result = validateActionHard('Draw weapon and roll initiative', state);
+    expect(result.valid).toBe(true);
+    expect(result.violations.join(' ')).not.toMatch(/don't have/i);
   });
 });
