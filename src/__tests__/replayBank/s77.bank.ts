@@ -151,7 +151,7 @@ describe('replay bank s77', () => {
       expect(p.slice(i, j > i ? j : undefined), `T${t}`).not.toMatch(/Warden:|Commit gate:|Cooldown|Entity scrub/);
     }
     for (const t of [6, 11, 14]) expect(R.input(t), `T${t} input`).toBe('Travel toward Lowmarket');
-    expect(R.packet(14), 'T14 sheet has SCENE').toMatch(/^SCENE:/m);
+    expect(R.packet(14), 'T14 sheet has SCENE').toMatch(/^SCENE T/m);
     expect(R.packet(14)).not.toContain('ALREADY ON THE PAGE');
     // pageOpeners still tracks same-action openers for the engine; the writer packet no longer pastes them.
     const openers = pageOpeners(R.before(14) as GameState, 'Travel toward Lowmarket');

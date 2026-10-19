@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
-import { formatInfoSheet } from './infoSheet';
+import { formatSceneBlock } from './sceneBlock';
 import { applySocialLedgerTurn, recordSpokenTopics } from './npcMemory';
 import type { GameState, LogEntry, NpcMemory } from './types';
 
@@ -74,9 +74,9 @@ describe('s72 F — Garth speech saving', () => {
     state = applySocialLedgerTurn({ state, playerAction: 'Look around', turn: 15, talkTopics: [], gmText: T15 });
     state = applySocialLedgerTurn({ state: { ...state, turn: 19 }, playerAction: 'Walk in', turn: 19, talkTopics: [], gmText: T19 });
     const at21 = { ...state, turn: 21, log: [entry(20, 'player', 'Talk to Garth Barrow'), entry(20, 'gm', 'The room was warm.')] };
-    const sheet = formatInfoSheet(at21);
-    expect(sheet).toMatch(/Garth Barrow.*already said \(other, T19\): "Back already"/);
-    expect(sheet).not.toContain('a moment ago');
+    const scene = formatSceneBlock(at21);
+    expect(scene).toMatch(/Garth Barrow.*already said \(other, T19\): "Back already"/);
+    expect(scene).not.toContain('a moment ago');
     const writer = formatWriterFacingEvent(buildCompletedEventPacket(at21, 'Talk to Garth Barrow'));
     expect(writer).toContain('Back already');
     expect(writer).not.toContain('a moment ago');
