@@ -85,7 +85,10 @@ describe('Gap 2 — a move inside the place writes a here-spot', () => {
     const move = movementFact(next, 'Look around');
     expect(move).toMatch(/still on dry ground at Mireglass March/);
     expect(move).toMatch(/Ilyra Fen and Tekk Reed stayed where they were, out of talking range/);
-    expect(formatInfoSheet(next)).toMatch(/· alone ·/);
+    const sheet = formatInfoSheet(next);
+    expect(sheet).toMatch(/player stands on dry ground \(moved T6\); out of talking range: Ilyra Fen, Tekk Reed/);
+    expect(sheet).toMatch(/· alone ·/);
+    expect(sheet).toMatch(/Ilyra Fen · .*Mireglass March, out of talking range/);
   });
 
   it('the move turn itself tells the writer the player moved within the place, not left it', () => {

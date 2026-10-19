@@ -4,9 +4,10 @@ import { playerFacingLocation } from './locationName';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { formatHiddenRoomLedger } from './dungeonSeed';
 import { placeFirstSight } from './outdoorHubs';
+import { exitPlaceNames } from './placeNames';
 import { isJourneyUnderway } from './travelJourney';
 import { pendingFoeSign } from './combatAuthority';
-import { presentNpcRecords } from './npcRecords';
+import { formatNpcMemoriesForPrompt, presentNpcRecords } from './npcRecords';
 import { listedAnonymousRoles, storyMinorRoles } from './closedScenePerson';
 import { buildLifecycleSituationSection } from './npcLifecycleFsm';
 import { gateFactLines } from './skillGates';
@@ -128,13 +129,12 @@ export function buildLoreContext(cards: LoreCard[]): string {
 }
 
 function pickLoreCards(state: GameState, activeLoreCards: LoreCard[], currentName: string): LoreCard[] {
-  const personNames = new Set<string>();
+  const wanted = new Set<string>();
   for (const r of presentNpcRecords(state)) {
     for (const n of [r.npcName, ...(r.aliases ?? [])]) {
-      if (n?.trim()) personNames.add(n.trim().toLowerCase());
+      if (n?.trim()) wanted.add(n.trim().toLowerCase());
     }
   }
-  const wanted = new Set<string>(personNames);
   if (currentName.trim()) wanted.add(currentName.trim().toLowerCase());
   for (const q of writerFacts(state).quests) {
     if (q.status === 'active' && q.name?.trim()) wanted.add(q.name.trim().toLowerCase());
@@ -146,7 +146,7 @@ function pickLoreCards(state: GameState, activeLoreCards: LoreCard[], currentNam
   const picked: LoreCard[] = [];
   for (const card of [...activeLoreCards, ...fromBook]) {
     const key = (card.name ?? '').trim().toLowerCase();
-    if (!key || seen.has(key) || personNames.has(key)) continue;
+    if (!key || seen.has(key)) continue;
     seen.add(key);
     picked.push({ ...card, summary: (card.summary ?? '').slice(0, 160) });
     if (picked.length >= 4) break;
@@ -165,11 +165,15 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   if (things.length) {
     here.push(`Things here: ${things.slice(0, 6).map((i) => `${i.name} (${i.state})`).join(', ')}`);
   }
+  const exits = exitPlaceNames(state);
+  if (exits.length) {
+    here.push(`Exits: ${exits.slice(0, 5).join(', ')}`);
+  }
+
   const people = presentNpcRecords(state);
   const unnamed = Array.from(new Set([...listedAnonymousRoles(state), ...storyMinorRoles(state)]));
-  // Named people, their sheets and the exits are the SCENE block. Unnamed locals are not a SCENE row.
   const peopleSection = people.length
-    ? ''
+    ? `People here:\n${formatNpcMemoriesForPrompt(people, 4, state.character?.name)}`
     : unnamed.length
       ? `People here: no one named. Unnamed local${unnamed.length > 1 ? 's' : ''} who may be about: ${unnamed.map((r) => `${/^[aeiou]/i.test(r) ? 'an' : 'a'} ${r}`).join(', ')} (may speak; give no name).`
       : '';

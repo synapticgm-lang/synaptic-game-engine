@@ -34,7 +34,6 @@ import { turnRng } from './seededRng';
 import { parsePlayerIntent } from './intentParser';
 import { spineSelfEnding } from './pyoaSpine';
 import { commitDeath } from './rules/death';
-import { tag } from './timeline';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -284,7 +283,6 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       const tick = tickEncounterTerminal(working, input, flee ? { fleeSucceeded: true } : { parleySucceeded: true });
       let next = tick.state;
       receipts.push(...tick.receipts);
-      if (flee) next = tag(next, 'left', 'creature', { id: `creature:${nameKey(enc.name)}`, name: enc.name }, 'fled');
       if (onRoad) next = settleRoadMeeting(next, flee ? 'escape' : 'parleyResolved');
       if (parley) {
         const paid = payEncounterXp(next, raw, `resolved ${enc.name}`);
@@ -337,9 +335,6 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   // 28g — some HP back on a win; a defeat never leaves the character at 1 HP (recoveryRules).
   const hpAfter = hpAfterFight(working, result.victory, result.finalPlayerHp);
   let next = commitAutoFightLedger(working, { victory: result.victory, finalPlayerHp: result.finalPlayerHp });
-  next = result.victory
-    ? tag(next, 'died', 'creature', { id: `creature:${nameKey(enc.name)}`, name: enc.name }, 'down')
-    : tag(next, 'failed', 'combat', { id: `combat:${nameKey(enc.name)}`, name: enc.name }, 'downed');
   next = {
     ...next,
     character: { ...next.character, hp: hpAfter, mp: result.finalPlayerMp },

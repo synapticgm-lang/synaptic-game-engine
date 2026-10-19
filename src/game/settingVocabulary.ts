@@ -26,7 +26,7 @@ export function registerSettingBibles(all: () => readonly CampaignBible[]): void
 }
 
 type SettingState = Pick<GameState, 'campaignBibleId' | 'worldAtlas' | 'engineMode'> &
-  Partial<Pick<GameState, 'crossedOver' | 'inventory' | 'sceneFacts' | 'npcMemories' | 'entityRecords'>>;
+  Partial<Pick<GameState, 'crossedOver' | 'inventory' | 'sceneFacts' | 'npcMemories'>>;
 
 function addWords(into: Set<string>, text: string): void {
   for (const w of text.toLowerCase().match(/[a-z][a-z'-]{2,}/g) ?? []) {
@@ -73,28 +73,9 @@ function recordedThings(state: SettingState): string[] {
  * card's `summonIntent`), something is recorded as crossed over, or a recorded thing is named only by other
  * settings (the engine handed it, so the story holds it).
  */
-/** The premise's origin statement (an opening card's summonIntent), or ''. */
-export function premiseOrigin(state: SettingState): string {
-  const bible = state.campaignBibleId ? bibles().find((b) => b.id === state.campaignBibleId) : undefined;
-  for (const c of bible?.openingHooks ?? []) {
-    if (typeof c === 'object' && c?.summonIntent?.trim()) return c.summonIntent.trim();
-  }
-  return '';
-}
-
-function taggedCrossed(state: SettingState): boolean {
-  for (const item of state.inventory ?? []) {
-    if (/^crossed over from /i.test(item.provenance ?? '')) return true;
-  }
-  for (const rec of Object.values(state.entityRecords ?? {})) {
-    if ((rec.notes ?? []).some((n) => /^crossed over from /i.test(n))) return true;
-  }
-  return false;
-}
-
 export function recordsEstablishCrossing(state: SettingState): boolean {
-  if (premiseOrigin(state)) return true;
-  if (taggedCrossed(state)) return true;
+  const bible = state.campaignBibleId ? bibles().find((b) => b.id === state.campaignBibleId) : undefined;
+  if ((bible?.openingHooks ?? []).some((c) => typeof c === 'object' && !!c?.summonIntent?.trim())) return true;
   if (state.crossedOver?.length) return true;
   const foreign = worldOffSettingWords(state);
   return recordedThings(state).some((t) => isOffSetting(foreign, t.split(/\s+/).pop() ?? ''));

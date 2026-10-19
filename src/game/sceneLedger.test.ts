@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
-import { formatSceneLedgerBlock, SCENE_CHAR_BUDGET } from './infoSheet';
-import { formatSceneBlock } from './sceneBlock';
+import { formatInfoSheet, formatSceneLedgerBlock, INFO_SHEET_CHAR_CAP, SCENE_CHAR_BUDGET } from './infoSheet';
 import { recordSpokenTopics } from './npcMemory';
 import { advanceSceneLedger, stampSceneLedger } from './sceneLedger';
 import { alreadySaidLines, classifyTokenLine, plainLineFactProblem, repeatsSaid, type TokenBeat } from './tokenProse';
@@ -160,9 +159,11 @@ describe('scene ledger writer view and repeat gate (Order M steps 3–4)', () =>
     expect(rows.join('\n').length).toBeLessThanOrEqual(SCENE_CHAR_BUDGET);
     expect(rows.some((r) => r.startsWith('promise:'))).toBe(true);
     expect(rows.some((r) => r.startsWith('said:'))).toBe(true);
-    const scene = formatSceneBlock(state);
-    expect(scene).toContain('promise:');
-    expect(scene).not.toContain('ALREADY ON THE PAGE');
+    const sheet = formatInfoSheet(state);
+    expect(sheet).toContain('SCENE:');
+    expect(sheet).toContain('promise:');
+    expect(sheet.length).toBeLessThanOrEqual(INFO_SHEET_CHAR_CAP);
+    expect(sheet).not.toContain('ALREADY ON THE PAGE');
   });
 
   it('alreadySaidLines and repeatsSaid read ledger said and described; narration reprint fails', () => {
