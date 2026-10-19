@@ -3,7 +3,9 @@
  * Extended 2026-08-28a: ArcDirector authority + ChoiceCompiler delegation.
  */
 
-import type { GameState } from './types';
+import type { GameState, LogEntry } from './types';
+import { debugLogger } from './debugLogger';
+import { logErrorStack } from '../services/telemetryService';
 import {
   applyCraftLearning,
   compileCraftRules,
@@ -102,6 +104,7 @@ import {
   verifyMemoryGrounding,
   type MemoryGroundingCheck,
 } from './npcMemoryRetrieval';
+import { normalizeLedgerEntry } from './npcMemoryLedger';
 // WS-4 Wave D: Encounter Receipts
 import {
   checkDrought as checkEncounterDrought,
@@ -306,6 +309,46 @@ export function processMetaInput(state: GameState, input: string): {
   };
 }
 
+/** One GM row for a reply callGm already returned. A second call with the same text does not add another row. */
+export function commitHeldGmReply(state: GameState, reply: string): GameState {
+  const text = reply.trim();
+  if (!text) return state;
+  const logs = state.log ?? [];
+  const nextTurn = (state.turn ?? 0) + 1;
+  for (let i = logs.length - 1; i >= 0; i--) {
+    const entry = logs[i];
+    if (entry?.role !== 'gm') continue;
+    if (entry.content === text && entry.turn === state.turn) return state;
+    break;
+  }
+  const gmEntry: LogEntry = {
+    id: `held-gm-${nextTurn}`,
+    turn: nextTurn,
+    role: 'gm',
+    content: text,
+    timestamp: Date.now(),
+  };
+  return {
+    ...state,
+    turn: nextTurn,
+    pendingTurn: null,
+    log: [...logs, gmEntry],
+  };
+}
+
+/** Post-reply throw: keep the successful reply and log a client error. Not an API 500. */
+export function keepGmReplyAfterClientError(state: GameState, reply: string, err: unknown): GameState {
+  const message = err instanceof Error ? err.message : String(err ?? '');
+  const stack = err instanceof Error ? err.stack : undefined;
+  debugLogger.record('ERROR', 'post-reply client error — GM reply kept', {
+    error: message,
+    stack,
+    turn: state.turn,
+  });
+  logErrorStack(`post-reply client error: ${message}`, stack, { turn: state.turn });
+  return commitHeldGmReply(state, reply);
+}
+
 /** Post-GM prose scrub (P0.1). */
 export function applyGovernanceToProse(
   state: GameState,
@@ -335,7 +378,7 @@ export function applyGovernanceToProse(
     for (const npcId of presentNpcs) {
       const ledger = npcMemories.find(m => m.npcId === npcId);
       if (ledger) {
-        const groundingCheck = verifyMemoryGrounding(out, ledger.memories);
+        const groundingCheck = verifyMemoryGrounding(out, normalizeLedgerEntry(ledger).memories);
         if (!groundingCheck.valid) {
           notes.push(`Memory grounding: ${npcId} — ${groundingCheck.errors.length} violation(s)`);
         }
