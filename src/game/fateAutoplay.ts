@@ -168,6 +168,7 @@ import {
   type ArcDirectorResult,
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
+import { materialiseAllAcceptedQuests } from './questMaterialise';
 import { planSceneThreads } from './openThreads';
 import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
@@ -815,7 +816,8 @@ export function buildNewGameState(opts: {
   const built = engineMode === 'dnd' && opts.tabletopCreation
     ? autoTabletopCreation(placed, mulberry32(seedNumber(`tt-fate:${opts.seed}`)))
     : placed;
-  return { state: built, bible, personalityId: voices.personalityId };
+  // q67-LITPACE: materialise accepted starter quest places/NPCs/objects.
+  return { state: materialiseAllAcceptedQuests(built).state, bible, personalityId: voices.personalityId };
 }
 
 export function stampOpening(state: GameState): GameState {
@@ -2013,11 +2015,12 @@ Do NOT print dice notation or CODE ENFORCED.
     state.engineMode
   );
   if (!useMud) {
-    filteredSystemLog = reconcileXpStatusLines(filteredSystemLog, [
-      ...arcStatusReceipts,
-      ...sandboxNotes,
-      ...levelNotes,
-    ]);
+    // q67 P1(b): pass character so each XP Gained line is followed by the XP bar.
+    filteredSystemLog = reconcileXpStatusLines(
+      filteredSystemLog,
+      [...arcStatusReceipts, ...sandboxNotes, ...levelNotes],
+      character,
+    );
     if (sandboxXp.lootNotes.length) filteredSystemLog = [...filteredSystemLog, ...filterSystemLogForEngine(sandboxXp.lootNotes, state.engineMode)];
   } else {
     // Dedupe receipt lines while keeping order
@@ -2072,7 +2075,7 @@ Do NOT print dice notation or CODE ENFORCED.
   };
   const committedLog = [...state.log, playerEntry, gmBase];
   finalChoices = dropAbsentListenerChips({ ...working, log: committedLog }, finalChoices, mudBody);
-  const mid: GameState = {
+  const midRaw: GameState = {
     ...working,
     turn: nextTurn,
     quests: updatedQuests,
@@ -2081,6 +2084,8 @@ Do NOT print dice notation or CODE ENFORCED.
     recentBeatFingerprints: [...(state.recentBeatFingerprints ?? []), fp].slice(-12),
     log: committedLog,
   };
+  // q67-LITPACE: materialise any newly accepted/unlocked quest anchors.
+  const mid: GameState = materialiseAllAcceptedQuests(midRaw).state;
   const gm = withLitrpgSystemWindow(withOfferedChoices(gmBase, mid), working, playerInput);
   const next: GameState = {
     ...mid,
