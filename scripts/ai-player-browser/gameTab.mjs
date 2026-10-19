@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Drive a visible game tab. Clicks React controls so sendAction runs.
  * Never close Chrome.
  */
@@ -75,7 +75,7 @@ export async function readGameSnapshot(page) {
     const autoFightReady = Boolean(autoBtn && visible(autoBtn) && !autoBtn.disabled);
     // Real GM book rows only (hasRealGmStory). Never: player bubbles, HUD
     // adventurer cards (.sgm-turn-frame is also used there), or quest chrome.
-    // NEVER treat SYSTEM / STATUS / Quest Unlocked as the beat — classic LogRow
+    // NEVER treat SYSTEM / STATUS / Quest Unlocked as the beat â€” classic LogRow
     // puts LitrpgSystemWindow (also `.px-4.py-3`) inside the same card as the
     // festival paragraph. querySelector('.px-4.py-3') used to steal that plate.
     const storyRoot = document.querySelector('.sgm-play-story-panel');
@@ -148,12 +148,15 @@ export async function readGameSnapshot(page) {
     const gmStoryCount = Math.max(storyCards.length, feedbacks);
     const input = document.querySelector('[aria-label="Player action input"]');
     const body = document.body.innerText || '';
-    const busy = Boolean(
+    const turnInFlight = Boolean(
       body.includes('Reading your move')
       || body.includes('Resolving the scene')
       || body.includes('The world responds')
-      || (input && input.disabled)
     );
+    const busy = Boolean(turnInFlight || (input && input.disabled));
+    const inputVisible = visible(input);
+    const inputFocused = Boolean(input && document.activeElement === input);
+    const inputEnabled = Boolean(input && !input.disabled);
     const hasAuth = /Enter the Realm|Sign in with Google|Email sign-in/i.test(body);
     const hasMenu = /Start New Game/i.test(body) && !document.querySelector('.sgm-play-center');
     const modalText = (document.querySelector('.sgm-modal-shell')?.innerText || '');
@@ -191,6 +194,10 @@ export async function readGameSnapshot(page) {
       feedbacks,
       gmStoryCount,
       busy,
+      turnInFlight,
+      inputFocused,
+      inputVisible,
+      inputEnabled,
       hasAuth,
       hasMenu,
       inNewGame,
@@ -246,7 +253,7 @@ async function dismissQuestUnlock(page) {
   });
 }
 
-/** Page 1 is local stitch — wait for prose and/or cover chips, not merely !busy. */
+/** Page 1 is local stitch â€” wait for prose and/or cover chips, not merely !busy. */
 export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
   const start = Date.now();
   let last = await readGameSnapshot(page);
@@ -416,7 +423,7 @@ export async function loginFounderEmail(page, email, password) {
   return { ok: false, blocked: 'login_timeout', message: 'Signed in form submitted but menu never appeared.' };
 }
 
-/** New Game for the next bible — same Synaptic tab, never a second 5173 page. */
+/** New Game for the next bible â€” same Synaptic tab, never a second 5173 page. */
 export async function startPremade(page, bibleId) {
   const spec = BIBLES[bibleId];
   if (!spec) throw new Error(`unknown bible ${bibleId}`);
@@ -455,7 +462,7 @@ export async function startPremade(page, bibleId) {
   await clickText(page, 'Someone new this time', { timeoutMs: 2500, root: modal });
 }
 
-/** CenterPanel toolbar — only mounted while `state.activeEncounter` is live. */
+/** CenterPanel toolbar â€” only mounted while `state.activeEncounter` is live. */
 export const AUTO_FIGHT_SELECTOR = 'button[title="Auto-resolve combat"]';
 
 /** Save id the UI has loaded (DOM marker, else the current IndexedDB game row). */

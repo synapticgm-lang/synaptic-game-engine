@@ -67,6 +67,7 @@ import {
   pickNonHallChip,
   shouldForceTypedHumanMove,
 } from './humanJudge.mjs';
+import { classifyChipClick, modelLineIfDistinct } from './inputChip.mjs';
 import {
   buildPersonaPromptBlock,
   loadPersona,
@@ -276,6 +277,21 @@ export function buildTurnLogRow(row) {
     voteTarget: row.voteTarget ?? null,
     voteSkipWrong: row.voteSkipWrong === true,
   };
+}
+
+/** Poll the page after a chip click. A real turn wins; an opened box is kept until the window ends. */
+export async function readChipClickEffect(page, before, { timeoutMs = 1500 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  let opened = false;
+  while (Date.now() <= deadline) {
+    const after = await readGameSnapshot(page);
+    const effect = classifyChipClick({ before, after });
+    if (effect === 'turn_sent') return 'turn_sent';
+    if (effect === 'input_opened') opened = true;
+    if (Date.now() >= deadline) break;
+    await new Promise((r) => setTimeout(r, 80));
+  }
+  return opened ? 'input_opened' : 'nothing';
 }
 
 /**
@@ -932,6 +948,28 @@ async function playBible(gamePage, bibleId, opts = {}) {
         typeOverlay = sentLine.overlay || null;
       }
     }
+    if (acted && (kind === 'chip' || kind === 'chip_fallback') && !setup && !chipsOnly) {
+      const chipEffect = await readChipClickEffect(gamePage, afterThumb);
+      if (chipEffect === 'input_opened') {
+        const line = modelLineIfDistinct(decision, acted) || naturalTypedFallback(recentActions);
+        if (!submitStamp) submitStamp = startTurnClock();
+        let sentLine;
+        try {
+          sentLine = await typePlayerAction(gamePage, line);
+        } catch (err) {
+          sentLine = { sent: false, reason: String(err?.message || err) };
+        }
+        noteOverlay(turn);
+        if (sentLine.sent) {
+          acted = line;
+          kind = 'chip_then_type';
+        } else {
+          typeFail = sentLine.reason;
+          typeOverlay = sentLine.overlay || null;
+          acted = '';
+        }
+      }
+    }
     if (!acted && typeFail && String(typeFail).startsWith('input_covered:')) {
       const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
       if (safe && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(safe)) {
@@ -1036,7 +1074,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       bibleId,
       saveId,
       actionKind: kind,
-      kind: decision.kind || (kind === 'type' ? 'free' : 'chip'),
+      kind: kind === 'chip_then_type' ? 'chip_then_type' : (decision.kind || (kind === 'type' ? 'free' : 'chip')),
       autoFightSelector: AUTO_FIGHT_SELECTOR,
       autoFightFired: kind === 'auto_fight',
       playerAction: acted,
