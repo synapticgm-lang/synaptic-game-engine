@@ -291,7 +291,7 @@ describe('q72-TIMELINETAGS', () => {
     const a = formatSceneBlock(s);
     const b = formatSceneBlock(s);
     expect(a).toContain('the chanter: wants the paper read aloud');
-    expect(a).toContain('Cutha Hask: asked for food');
+    expect(a).toContain('Cutha Hask already said (food, T214): "asked for food"');
     expect(a).toBe(b);
     // Prose stub yields nothing
     expect(spokenLines('"I am a brand new invented line," said the fog.')).toEqual([]);

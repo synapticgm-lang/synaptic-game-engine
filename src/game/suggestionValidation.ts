@@ -231,7 +231,9 @@ function isTokenGrounded(claimed: string, corpus: Set<string>): boolean {
   if (parts.length === 0) return true;
   if (parts.every((p) => corpus.has(p))) return true;
   for (const known of corpus) {
-    if (known.includes(needle) || needle.includes(known)) return true;
+    if (known.includes(needle)) return true;
+    // A 3-letter kit word must not sit inside the claim ("had" inside "hiding").
+    if (known.length >= 5 && needle.includes(known)) return true;
   }
   return false;
 }

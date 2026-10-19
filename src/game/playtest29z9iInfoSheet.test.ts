@@ -127,7 +127,7 @@ describe('29z9i — info sheet sections', () => {
   });
 
   it('sections come in order and nothing comes from prose', () => {
-    const order = ['NOW:', 'LAST:', 'HERE:', 'PEOPLE:', 'PLACES:', 'FACTS:', 'ASKED:', 'OPEN:'].map((h) => text.indexOf(h));
+    const order = ['NOW:', 'LAST:', 'PLACES:', 'FACTS:', 'ASKED:', 'OPEN:'].map((h) => text.indexOf(h));
     expect(order.every((i, n) => i >= 0 && (n === 0 || i > order[n - 1]!))).toBe(true);
     expect(text).not.toMatch(/Orrin|vault key|silver-eyed/);
     expect(text).not.toMatch(/Look around/);

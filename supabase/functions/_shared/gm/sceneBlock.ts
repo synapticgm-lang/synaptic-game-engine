@@ -2,6 +2,7 @@
 import { isSystemWindowLabel } from './chromeAuthority.ts';
 import { sheetMemoryLine } from './npcRecords.ts';
 import { exitPlaceNames } from './placeNames.ts';
+import { playerCommittedTravel } from './travelAuthority.ts';
 import type { GameState, PlaceVisitLog, TimelineFact } from './types.ts';
 
 const WS = /\s+/g;
@@ -21,10 +22,21 @@ function people(state: GameState): Array<{ id: string; name: string }> {
   const seen = new Set<string>();
   const here = (state.currentLocation ?? '').trim().toLowerCase();
   const push = (id: string, name: string) => { const k = name.toLowerCase(); if (!name || seen.has(k)) return; seen.add(k); out.push({ id, name }); };
+  const left = new Set((state.npcMemories ?? []).filter((m) => m.shouldExit).map((m) => m.npcName.toLowerCase()));
   for (const m of state.npcMemories ?? []) {
+    if (m.shouldExit) continue;
     if ((m.location ?? '').trim().toLowerCase() === here || (state.sceneFacts?.present ?? []).some((p) => p.toLowerCase() === m.npcName.toLowerCase())) push(m.npcId, m.npcName);
   }
-  for (const p of state.sceneFacts?.present ?? []) if (!seen.has(p.toLowerCase())) push(`present:${p.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, p);
+  for (const p of state.sceneFacts?.present ?? []) if (!left.has(p.toLowerCase()) && !seen.has(p.toLowerCase())) push(`present:${p.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, p);
+  const card = state.openingEstablishment?.card;
+  const where = (state.openingEstablishment?.answers?.where ?? '').replace(WS, ' ').trim().toLowerCase();
+  const travelled = (state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
+  const still = !travelled && (state.openingEstablishment?.complete !== true || (!!where && where === here));
+  if (still && card) {
+    for (const n of [card.cast, ...(card.castNames ?? [])]) {
+      if (n && !left.has(n.toLowerCase())) push(`cast:${n.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, n);
+    }
+  }
   return out.slice(0, CAP);
 }
 function keyVisit(f: TimelineFact): boolean {
@@ -104,6 +116,7 @@ export function formatSceneBlock(state: GameState): string {
   }
   for (const rec of Object.values(state.entityRecords ?? {})) {
     if (rec.kind !== 'item' || items.length >= CAP) continue;
+    if ((state.inventory ?? []).some((i) => (i.name ?? '').toLowerCase() === rec.name.toLowerCase())) continue;
     if (items.some((i) => i.toLowerCase().startsWith(rec.name.toLowerCase()))) continue;
     items.push(rec.notes[0] ? `${rec.name} (${rec.notes[0]})` : rec.name);
   }
@@ -117,8 +130,8 @@ export function formatSceneBlock(state: GameState): string {
   const said: string[] = [];
   for (const p of present) {
     const m = (state.npcMemories ?? []).find((n) => n.npcId === p.id || n.npcName.toLowerCase() === p.name.toLowerCase());
-    const last = m?.said?.[m.said.length - 1]?.line;
-    if (last) said.push(`${p.name}: ${clip(last, 15)}`);
+    const told = (m?.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i).slice(-3);
+    for (const s of told) said.push(`${p.name} already said (${s.topic}, T${s.turn}): "${s.line}"`);
   }
   for (const f of [...(state.placeVisitLog?.events ?? []), ...(state.timeline ?? [])].slice(-20)) {
     if (f.kind !== 'said' || !f.name || !f.detail) continue;
@@ -147,6 +160,10 @@ export function formatSceneBlock(state: GameState): string {
   ];
   if (meetingName) lines.push(`EVENT: ${meetingName} (meeting on the road)`);
   if (known.length) lines.push(`KNOWN: ${known.slice(0, 4).join(' | ')}`);
+  const ledger = pl?.sceneLedger;
+  if (ledger?.promises?.length) {
+    for (const p of ledger.promises.slice(0, 4)) lines.push(`promise: ${clip(p, 16)}`);
+  }
   const log = state.placeVisitLog;
   if (log?.events.length) {
     const bits = compressVisitLog(log.events, 280);

@@ -1,10 +1,9 @@
 import { matchesRegisteredLocationNeedle } from './neverCast';
 import { resolveNpcRecord } from './npcRecords';
 import { resolvePlace } from './places';
-import { isOffSetting, worldOffSettingWords } from './settingVocabulary';
-import { introducedThings } from './tokenProse';
+import { premiseOrigin } from './settingVocabulary';
 import { recordPersonSeen } from './timeline';
-import type { GameState, NpcMemory } from './types';
+import type { GameState, Item, NpcMemory } from './types';
 
 const SLUG = /[^a-z0-9]+/g;
 const ARTICLE = /^(?:the|a|an)\s+/i;
@@ -56,16 +55,60 @@ export function admitPersonHere(state: GameState, name: string, note?: string): 
   return { ...tagged, npcMemories: memories };
 }
 
-export function registerWriterIntroductions(state: GameState, narrative: string): GameState {
-  const things = introducedThings(narrative);
-  if (!things.length) return state;
-  const foreign = worldOffSettingWords(state);
-  const list = [...(state.crossedOver ?? [])];
-  for (const t of things) {
-    const head = t.trim().slice(t.trim().lastIndexOf(' ') + 1);
-    if (!head || !isOffSetting(foreign, head)) continue;
-    if (!list.some((x) => x.toLowerCase() === t.toLowerCase())) list.push(t);
+/** Prose admits nothing. Origin is an engine tag written at creation (`stampCrossedOrigin`). */
+export function registerWriterIntroductions(state: GameState, _narrative: string): GameState {
+  return state;
+}
+
+/** Item provenance + entity record: `crossed over from <origin>`. Not read from prose. */
+export function stampCrossedOrigin(state: GameState, itemName: string, origin: string): GameState {
+  const who = (itemName ?? '').replace(/\s+/g, ' ').trim();
+  const from = (origin ?? '').replace(/\s+/g, ' ').trim();
+  if (!who || !from) return state;
+  const provenance = `crossed over from ${from}`;
+  const inventory = [...(state.inventory ?? [])];
+  const at = inventory.findIndex((i) => (i.name ?? '').toLowerCase() === who.toLowerCase());
+  if (at >= 0) inventory[at] = { ...inventory[at]!, provenance };
+  else {
+    inventory.push({
+      id: `crossed-${who.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      name: who,
+      provenance,
+      rarity: 'Common',
+      quantity: 1,
+    } as Item);
   }
-  if (list.length === (state.crossedOver ?? []).length) return state;
-  return { ...state, crossedOver: list };
+  const id = `item:${who.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  const turn = state.turn ?? 0;
+  const place = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const prev = state.entityRecords?.[id];
+  const notes = [...(prev?.notes ?? [])];
+  if (!notes.some((n) => n.toLowerCase() === provenance.toLowerCase())) notes.push(provenance);
+  return {
+    ...state,
+    inventory,
+    entityRecords: {
+      ...(state.entityRecords ?? {}),
+      [id]: {
+        kind: 'item',
+        name: who,
+        firstTurn: prev?.firstTurn ?? turn,
+        lastTurn: turn,
+        ...(place ? { place } : {}),
+        notes,
+      },
+    },
+  };
+}
+
+/** Character creation: every starting item carries the premise origin, when the premise has one. */
+export function stampPremiseOrigin(state: GameState): GameState {
+  const origin = premiseOrigin(state);
+  if (!origin) return state;
+  let next = state;
+  for (const item of next.inventory ?? []) {
+    if (/^crossed over from /i.test(item.provenance ?? '')) continue;
+    next = stampCrossedOrigin(next, item.name, origin);
+  }
+  return next;
 }

@@ -81,7 +81,7 @@ import {
 import { withUpdatedHookArc } from './hookArc';
 import { mediatePlayerInput } from './inputMediation';
 import { readWellbeing } from './wellbeing';
-import { parsePlayerIntent } from './intentParser';
+import { groundPlayerAction, parsePlayerIntent } from './intentParser';
 import { scanAndScrubLeaks } from './leakScanner';
 import { ensureTurnProse, stripResidualMechanicTags } from './narrativeSanitize';
 import {
@@ -1131,6 +1131,18 @@ export async function headlessFateTurn(
     repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
   }
 
+  // A chip no longer on the pad is not the action the writer is told. The engine still runs the
+  // resolved line; the packet's PLAYER line is the grounded action (gm-facing would put the chip back).
+  const onPad = offered.some((c) => c.trim().toLowerCase() === playerInput.trim().toLowerCase());
+  let writerAction = playerInput;
+  if (!onPad && (parsePlayerIntent(playerInput, state).kind === 'attack' || parsePlayerIntent(playerInput, state).kind === 'search' || parsePlayerIntent(playerInput, state).kind === 'use_item')) {
+    const grounded = groundPlayerAction(playerInput, state);
+    if (grounded.rewritten && grounded.text && grounded.text !== playerInput) {
+      writerAction = grounded.text;
+      repairNote = (repairNote ? `${repairNote}; ` : '') + 'stale_chip';
+    }
+  }
+
   // 17g — page 1 / unlocked-name covers stitch. After sceneWritten + locked name, writer owns
   // hall / Look / Wait / inspect. First already-told who/want/refuse still stitches.
   if (shouldStitchOpeningContinue(state, playerInput)) {
@@ -1268,7 +1280,7 @@ export async function headlessFateTurn(
     ...nudge.receipts,
     ...(travelCommit ? travelEngineLines(travelCommit) : []),
   ], arcState.engineMode);
-  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
+  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, writerAction, {
     xp: arcXp,
     engineResult: engineFact,
     travel: travelOutcome(travelCommit, hereBeforeMove, arcState),
