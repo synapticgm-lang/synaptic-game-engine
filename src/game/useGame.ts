@@ -4491,6 +4491,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         nextTurn
       );
       updatedQuests = phased.quests ?? updatedQuests;
+      if (phased.lifelineReceipts?.length) {
+        for (const line of phased.lifelineReceipts) {
+          if (!mergedSystemLog.includes(line)) mergedSystemLog.push(line);
+        }
+        Object.assign(baseChar, phased.character);
+        workingState = {
+          ...workingState,
+          ...phased,
+          character: baseChar,
+          lifelineReceipts: undefined,
+        };
+        if (phased.currentLocation) finalLocationName = phased.currentLocation;
+      }
       if ((baseChar.hp ?? 0) <= 0) {
         const receipt = deathQuestReceipt(phased);
         if (receipt && !mergedSystemLog.includes(receipt)) {
@@ -5934,7 +5947,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         { ...liveCurrent, turn: newTurn },
         { victory: result.victory, finalPlayerHp: result.finalPlayerHp }
       );
-      const updated: GameState = gainLootMoney({
+      let updated: GameState = gainLootMoney({
         ...ledger,
         character: updatedCharacter,
         inventory: updatedInventory,
@@ -5953,6 +5966,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         lastUpdated: Date.now(),
       }, result.goldGained, result.coinsGained);
 
+      {
+        const phasedAuto = applyPlayPhaseAfterHp(updated, updated.character.hp ?? 0, newTurn);
+        const extra = phasedAuto.lifelineReceipts ?? [];
+        updated = {
+          ...phasedAuto,
+          lifelineReceipts: undefined,
+          log: updated.log.map((e, i, arr) =>
+            i === arr.length - 1 && e.role === 'gm' && extra.length
+              ? { ...e, systemLog: [...(e.systemLog ?? []), ...extra] }
+              : e
+          ),
+        };
+      }
       snapshotRef.current = liveCurrent;
       setCanRewind(true);
       setState(updated);
