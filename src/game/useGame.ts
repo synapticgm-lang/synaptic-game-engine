@@ -112,7 +112,7 @@ import {
   TURN_TRANSPORT_MAX_AUTO_RETRIES,
 } from './errorRepairWarden';
 import { applyStructuralEvents } from './structuralEvents';
-import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
+import { applyCollectedFacts, collectTurnTimelineFacts, leavePlaceVisit, mergeTimeline, tag } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, resolveActiveCampaignBible, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import type { CampaignBible } from '@/data/campaigns/types';
 import {
@@ -3120,6 +3120,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let writerRemaining: string[] = [];
       let writerProse: string | null = null;
       let writerSpeech: SpokenLine[] | undefined;
+      let engineSaid: { speaker: string; line: string } | undefined;
       let writerBound: { refs?: TokenUseRef[]; refEnum?: LedgerRef[] } | undefined;
       let harvestedPeople: string[] = [];
       drainWriterRawIssues();
@@ -3221,6 +3222,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             turn: liveCurrent.turn,
             ...writerTurn.spoken,
           });
+        }
+        // q72: hold engine spokenAnswer for the timeline tag phase (not prose quotes).
+        if (writerTurn.spoken?.status === 'added' && writerTurn.spoken.line && writerTurn.spoken.speaker) {
+          engineSaid = { speaker: writerTurn.spoken.speaker, line: writerTurn.spoken.line };
         }
         result = {
           ...result,
@@ -4254,7 +4259,33 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         wardenNotes: warden.notes,
         sceneBeat: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput).lastBeat,
       });
-      const mergedTimeline = mergeTimeline(workingState.timeline, turnFacts);
+      // q72: leave old place visit before tagging arrived; tagged rows go through `tag`.
+      const locAfter = workingState.currentLocation ?? updates.currentLocation;
+      let timelineState: typeof workingState = { ...workingState, turn: nextTurn };
+      if (locAfter && locAfter !== liveCurrent.currentLocation) {
+        timelineState = leavePlaceVisit({ ...timelineState, currentLocation: liveCurrent.currentLocation });
+        timelineState = { ...timelineState, currentLocation: locAfter };
+      }
+      timelineState = applyCollectedFacts(timelineState, turnFacts);
+      if (engineSaid) {
+        const spk = engineSaid.speaker;
+        timelineState = tag(
+          timelineState,
+          'said',
+          'said',
+          { id: `person:${spk.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name: spk },
+          engineSaid.line.slice(0, 120)
+        );
+      }
+      const mergedTimeline = timelineState.timeline ?? mergeTimeline(workingState.timeline, turnFacts);
+      workingState = {
+        ...workingState,
+        timeline: mergedTimeline,
+        entityRecords: timelineState.entityRecords,
+        placeVisitLog: timelineState.placeVisitLog,
+        places: timelineState.places ?? workingState.places,
+        npcMemories: timelineState.npcMemories ?? workingState.npcMemories,
+      };
       const npcMemoriesTreated = recordNpcTreatmentFromAction(
         mergeNpcMemoriesFromTurn(
           workingState,

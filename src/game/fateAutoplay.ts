@@ -1,4 +1,5 @@
 import { registerWriterIntroductions } from './writerIntroductions';
+import { applyCollectedFacts, collectTurnTimelineFacts, leavePlaceVisit, tag } from './timeline';
 /**
  * Headless Fate autoplay — Seedable Fate's Pick + GM path with wardens.
  * Ship A: mirrors client commit (callGm → runWarden → structural → choices → prose)
@@ -2135,6 +2136,53 @@ Do NOT print dice notation or CODE ENFORCED.
       if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), ...record.lines] };
       governed = { ...governed, log };
     }
+  }
+  // q72: same per-turn timeline collector as useGame (both runtime paths).
+  {
+    const gainedNames: string[] = [];
+    for (const it of governed.inventory ?? []) {
+      if (!(state.inventory ?? []).some((x) => x.id === it.id || x.name === it.name)) gainedNames.push(it.name);
+    }
+    const turnFacts = collectTurnTimelineFacts({
+      turn: nextTurn,
+      playerAction: playerInput,
+      stateBefore: state,
+      stateAfter: {
+        currentLocation: governed.currentLocation,
+        activeEncounter: governed.activeEncounter,
+        activeDungeon: governed.activeDungeon,
+        character: governed.character,
+        quests: governed.quests,
+      },
+      events: [],
+      systemLog: filteredSystemLog,
+      newItemNames: gainedNames,
+      wardenNotes: warden.notes,
+    });
+    let timelineState = { ...governed, turn: nextTurn };
+    if (governed.currentLocation && governed.currentLocation !== state.currentLocation) {
+      timelineState = leavePlaceVisit({ ...timelineState, currentLocation: state.currentLocation });
+      timelineState = { ...timelineState, currentLocation: governed.currentLocation };
+    }
+    timelineState = applyCollectedFacts(timelineState, turnFacts);
+    if (writerTurn?.spoken?.status === 'added' && writerTurn.spoken.line && writerTurn.spoken.speaker) {
+      const spk = writerTurn.spoken.speaker;
+      timelineState = tag(
+        timelineState,
+        'said',
+        'said',
+        { id: `person:${spk.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name: spk },
+        writerTurn.spoken.line.slice(0, 120)
+      );
+    }
+    governed = {
+      ...governed,
+      timeline: timelineState.timeline,
+      entityRecords: timelineState.entityRecords,
+      placeVisitLog: timelineState.placeVisitLog,
+      places: timelineState.places ?? governed.places,
+      npcMemories: timelineState.npcMemories ?? governed.npcMemories,
+    };
   }
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.

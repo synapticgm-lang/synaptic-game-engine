@@ -161,8 +161,11 @@ describe('q48-ROLE place roles in the presence record', () => {
     } as unknown as GameState;
     const alley = registerWriterIntroductions(base, 'Jax stood still in Safehouse Alley and said the reason they had come.');
     expect(alley.npcMemories?.some((m) => /safehouse alley/i.test(m.npcName))).toBe(false);
+    // q72: prose path refuses writer-invented roles — engine admitPersonHere still works.
     const withGuard = registerWriterIntroductions(base, 'A guard coiled rope by the rail.');
-    expect(withGuard.npcMemories).toEqual([
+    expect(withGuard.npcMemories ?? []).toEqual([]);
+    const admitted = admitPersonHere(base, 'the guard', 'engine cast');
+    expect(admitted.npcMemories).toEqual([
       expect.objectContaining({ npcName: 'the guard', location: 'Safehouse Alley' }),
     ]);
   });
