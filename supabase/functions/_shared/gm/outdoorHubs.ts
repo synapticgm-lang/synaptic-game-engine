@@ -568,7 +568,8 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
     .filter((p) => p.lastVisitedTurn != null && p.name.toLowerCase() !== name.toLowerCase())
     .sort((a, b) => (b.lastVisitedTurn ?? 0) - (a.lastVisitedTurn ?? 0))[0]?.name ?? '';
   const backRaw = isTripHere(state, fromRaw) ? (state.journey?.from ?? lastVisited).replace(/\s+/g, ' ').trim() : fromRaw;
-  const back = matchHub(hubs, backRaw)?.name ?? backRaw;
+  // A way back is a mapped hub. An opening scene or a road label is not an exit of this place.
+  const back = matchHub(hubs, backRaw)?.name ?? '';
   const discovered = state.discoveredLocations ?? [];
   const early = (state.turn ?? 0) <= 5 && discovered.length <= 1;
   const known = (h: OutdoorHub): boolean =>
@@ -591,19 +592,28 @@ export function buildPlaceCard(state: GameState, placeName: string, fromLocation
   const card = state.openingEstablishment?.card;
   const storedParent = (existing?.parentHub ?? '').replace(/\s+/g, ' ').trim();
   const cardPlace = (card?.place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const rawKey = raw.toLowerCase();
   let parentHub = storedParent;
-  // Exact card.place match only (m15 barred cell keeps empty exits when HERE ≠ card.place).
-  if (!parentHub && card?.parentHub && cardPlace && cardPlace === raw.toLowerCase()) {
+  if (!parentHub && card?.parentHub && cardPlace && cardPlace === rawKey) {
     parentHub = card.parentHub.replace(/\s+/g, ' ').trim();
   }
-  if (!parentHub) {
-    parentHub = matchHub(hubs, fromLocation)?.name ?? '';
+  // Opening HERE may drift from card.place; card.parentHub / card.place-as-hub is place data.
+  if (!parentHub && !hub) {
+    const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const opening = (state.circling?.openingPlace ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const atOpen =
+      here === rawKey
+      && (!state.circling?.prevPlace || (!!opening && (opening === rawKey || opening === here)));
+    if (atOpen) {
+      parentHub = (card?.parentHub ?? '').replace(/\s+/g, ' ').trim()
+        || matchHub(hubs, card?.place)?.name
+        || '';
+    }
   }
-  // Indoor under a dungeon hub (m15 barred cell): sealed — no mapped street exits.
+  if (!parentHub) parentHub = matchHub(hubs, fromLocation)?.name ?? '';
   const parentHubRow = matchHub(hubs, parentHub);
-  const sealedUnderDungeon = !hub && placeScale(raw) === 'indoor' && isDungeonHub(parentHubRow ?? parentHub);
   const indoorLocal = !hub && placeScale(raw) === 'indoor';
-  // Indoor with a street parent: parentHub only. Indoor with no parent yet / outdoor local: hub graph.
+  const sealedUnderDungeon = indoorLocal && isDungeonHub(parentHubRow ?? parentHub);
   const hubExits = sealedUnderDungeon
     ? []
     : hubs.length

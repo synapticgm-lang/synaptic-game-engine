@@ -147,8 +147,8 @@ describe('replay bank s75', () => {
       expect(R.turnCheck(n)?.presentNames ?? [], `T${n} turnCheck presence`).not.toContain(name);
       const pkt = R.packet(n);
       expect(pkt, `T${n} writer called`).not.toBe('');
-      const here = pkt.match(/\nHERE:\n([\s\S]*?)\n[A-Z][A-Z ]+:/)?.[1] ?? '';
-      expect(here, `T${n} HERE`).not.toContain(name);
+      const present = pkt.match(/^PRESENT:.*$/m)?.[0] ?? '';
+      expect(present, `T${n} SCENE PRESENT`).not.toContain(name);
       expect(pkt, `T${n} REF ENUM`).not.toMatch(/encounter:[^\n]*\bperson\b/);
       const mention = pkt.match(/YOU MAY ONLY MENTION:[^\n]*/)?.[0] ?? '';
       expect(mention, `T${n} mention list`).not.toContain(name);

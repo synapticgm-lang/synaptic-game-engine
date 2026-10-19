@@ -15,15 +15,13 @@ describe('P-5d named invented people', () => {
     expect(namedPersonCandidates('At the door, Oda Brack waited.', ['Oda Brack'])).toEqual({ names: [], clash: false });
   });
 
-  it('registers a named invented person as a neutral record at the place', () => {
+  it('q72: writer-invented names are refused — prose no longer admits presence', () => {
     const state = {
       turn: 2, currentLocation: 'Docks', character: { name: 'Jax' }, npcMemories: [],
       sceneFacts: { crowd: 'empty', noise: 'quiet', present: [], props: [], lastBeat: '' },
     } as unknown as GameState;
     const next = registerWriterIntroductions(state, 'By the stall, Mara Voss watched the gate.');
-    expect(next.npcMemories).toEqual([
-      expect.objectContaining({ npcName: 'Mara Voss', disposition: 'neutral', location: 'Docks' }),
-    ]);
-    expect(registerWriterIntroductions(next, 'By the stall, Mara Voss watched the gate.').npcMemories).toHaveLength(1);
+    expect(next.npcMemories ?? []).toEqual([]);
+    expect(next).toBe(state);
   });
 });
