@@ -208,11 +208,20 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     if (voice.transcript) setInput(voice.transcript);
   }, [voice.transcript]);
 
+  // q64-DRAWGATE: apply blocked line only; ignore clearRestoreDraft identity churn.
+  const restoreConsumedRef = useRef(onRestoreDraftConsumed);
+  restoreConsumedRef.current = onRestoreDraftConsumed;
+  const prevSaveIdRef = useRef(state.saveId);
   useEffect(() => {
-    if (!restoreDraft) return;
+    if (prevSaveIdRef.current === state.saveId) return;
+    prevSaveIdRef.current = state.saveId;
+    setInput('');
+  }, [state.saveId]);
+  useEffect(() => {
+    if (restoreDraft == null) return;
     setInput(restoreDraft);
-    onRestoreDraftConsumed?.();
-  }, [restoreDraft, onRestoreDraftConsumed]);
+    restoreConsumedRef.current?.();
+  }, [restoreDraft]);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' });

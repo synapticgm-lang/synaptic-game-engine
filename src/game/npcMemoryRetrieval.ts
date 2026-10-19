@@ -1,7 +1,7 @@
 
 
 import type { GameState } from './types';
-import type { NpcMemoryLedger, KeyMoment } from './npcMemoryLedger';
+import { normalizeLedgerEntry, type NpcMemoryLedger, type KeyMoment } from './npcMemoryLedger';
 
 export interface MemoryRelevanceScore {
   memoryId: string;
@@ -136,12 +136,13 @@ export function selectMemoriesForPacket(
   const maxMemories = context.maxMemories ?? 8;
   const mandatoryIds = new Set(context.mandatoryMemoryIds ?? []);
   const forbiddenIds = new Set(context.forbiddenEventIds ?? []);
-  
+  const moments = normalizeLedgerEntry(ledger).memories;
+
   // Score all memories
   const allScores: MemoryRelevanceScore[] = [];
   const allMemories: KeyMoment[] = [];
-  
-  for (const memory of ledger.memories) {
+
+  for (const memory of moments) {
     // Skip forbidden
     if (forbiddenIds.has(memory.id)) {
       continue;

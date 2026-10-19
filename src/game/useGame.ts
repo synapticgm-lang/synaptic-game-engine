@@ -169,7 +169,7 @@ import { dropInsultGear } from './wornGear';
 import { formatCampaignStoryName, getCampaignBibleById, isKidRestrictedCampaign, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, playerVisibleActionText, gmFacingPlayerAction, isSaferSceneLeak, playerTypedDialogue, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
-import { validateActionHard } from './actionValidation';
+import { validateActionHard, restoreDraftAfterBlock } from './actionValidation';
 import {
   checkObligationCoverage,
   buildObligationRetryBlock,
@@ -347,6 +347,7 @@ import {
   applyGovernanceCommit,
   applyGovernanceToProse,
   filterGovernanceChoices,
+  keepGmReplyAfterClientError,
   processMetaInput,
 } from './qualityGovernance';
 import { writerWordsGuard } from './writerWords';
@@ -1124,6 +1125,14 @@ export function useGame() {
       void persist(kept);
     }
     if (sent) setRestoreDraft(sent);
+  });
+
+  const pinBlockedDraft = useCallbackRef((line: string) => {
+    const blocked = restoreDraftAfterBlock(line, lastInputRef.current);
+    lastInputRef.current = blocked; setLastInput(blocked); setRestoreDraft(blocked);
+  });
+  const clearActionDraft = useCallbackRef(() => {
+    lastInputRef.current = ''; setLastInput(''); setRestoreDraft(null);
   });
 
   const fetchPanelImage = useCallbackRef(async (
@@ -2007,6 +2016,9 @@ export function useGame() {
 
     let skipRepairDetection = false;
     let transportRetriesUsed = 0;
+    let heldGmText = '';
+    let gmReplyCommitted = false;
+    let result: GmResult | undefined;
     if (!current.pendingRepair && pyoaRejectsFreeText(current, input)) {
       addToast('Pick one of the listed options.', 'info');
       return;
@@ -2015,7 +2027,7 @@ export function useGame() {
       const picked = matchRepairOption(input, current.pendingRepair);
       if (!picked) {
         addToast('Pick one of the repair options or tap a button below.', 'info');
-        setRestoreDraft(input);
+        pinBlockedDraft(input);
         return;
       }
       input = current.pendingRepair.situation === 'unsupported'
@@ -2071,7 +2083,7 @@ export function useGame() {
     const mediated = mediatePlayerInput(input);
     if (mediated.action === 'block') {
       addToast(mediated.playerMessage ?? "That action isn't available.", 'info');
-      setRestoreDraft(input);
+      pinBlockedDraft(input);
       turnInFlightRef.current = false;
       return;
     }
@@ -2136,7 +2148,7 @@ export function useGame() {
               }
             : s
         );
-        setRestoreDraft(mediated.text);
+        pinBlockedDraft(mediated.text);
         turnInFlightRef.current = false;
         return;
       }
@@ -2183,7 +2195,7 @@ export function useGame() {
               }
             : s
         );
-        setRestoreDraft(mediated.text);
+        pinBlockedDraft(mediated.text);
         addToast(errorMessage, 'info');
         turnInFlightRef.current = false;
         return;
@@ -3105,7 +3117,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const authoredBeat = authoredBook
         ? (authoredPageText(liveCurrent) || authoredStartPage()).trim()
         : '';
-      let result: GmResult;
       let writerRemaining: string[] = [];
       let writerProse: string | null = null;
       let writerSpeech: SpokenLine[] | undefined;
@@ -3120,6 +3131,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             : useMud && shouldSkipMicroFlavor()
               ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
               : await callGmDurable(gmPlayerPayload);
+        if (result.text?.trim()) heldGmText = result.text;
       } catch (err) {
         const kind = classifyTurnFailure(err);
         if (shouldAutoRetryTurn(kind) || kind === 'timeout' || kind === 'empty' || kind === 'network') {
@@ -3135,6 +3147,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           throw err;
         }
       }
+      if (!result) result = { text: '', imagePrompt: null, rolls: [], systemLog: [] };
       if (useMud && !authoredBook) {
         mudTurnLive = composeFreeMudTurn(preparedEvent.packet, {
           arcReceipts: pendingArcStatusReceipts,
@@ -3217,6 +3230,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...(writerTurn.combatLog ? [writerTurn.combatLog] : []),
           ],
         };
+        if (result.text?.trim()) heldGmText = result.text;
         writerProse = writerTurn.prose;
         writerSpeech = writerTurn.speech;
         writerBound = {
@@ -3427,8 +3441,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         nsfw: isNsfwCampaign(getCampaignBibleById(stateRef.current?.campaignBibleId ?? '')),
       });
       cleanText = words.step('ensureTurnProse', cleanText, ensureTurnProse(cleanText, sanitizedInput));
+      if (cleanText.trim()) heldGmText = cleanText;
       {
-        const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput);
+        let govProse: ReturnType<typeof applyGovernanceToProse>;
+        try {
+          govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput);
+        } catch (govErr) {
+          // q63 — governance runs after a 200 reply. Log a client error and keep that reply.
+          govProse = { prose: cleanText, notes: [] };
+          const message = govErr instanceof Error ? govErr.message : String(govErr ?? '');
+          const stack = govErr instanceof Error ? govErr.stack : undefined;
+          debugLogger.record('ERROR', 'post-reply client error — GM reply kept', {
+            error: message,
+            stack,
+            turn: liveCurrent.turn,
+          });
+          logErrorStack(`post-reply client error: ${message}`, stack, { turn: liveCurrent.turn });
+        }
         cleanText = words.step('applyGovernanceToProse', cleanText, govProse.prose);
         if (govProse.notes.length) warden.notes.push(...notesForCommittedBody(govProse.notes, cleanText === govProse.prose));
       }
@@ -3642,7 +3671,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             dc: difficultyClass,
             totalScore: outcome.totalScore,
             summary: codeResolutionText,
-            systemLog: result.systemLog ?? [],
+            systemLog: result?.systemLog ?? [],
           };
           const script = await generatePanelScript(sanitizedInput, mathOutcome, infoCards, mode, {
             apiKey: settingsRef.current.openrouterApiKey || settingsRef.current.geminiApiKey || undefined,
@@ -4992,6 +5021,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         pendingEffectsRef.current = effectsPayload;
         stateRef.current = holdingState;
         setState(holdingState);
+        gmReplyCommitted = true;
         void persist(holdingState);
         debugLogger.record('STATE_UPDATE', 'Turn proposed — awaiting player confirm', {
           turn: liveCurrent.turn,
@@ -5002,6 +5032,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       } else {
         stateRef.current = mergedState;
         setState(mergedState);
+        gmReplyCommitted = true;
         setRestoreDraft(null);
         if (settingsRef.current.ttsEnabled) {
           const speech = withChoicesSpeech(effectsPayload.speech, mergedState.choices, settingsRef.current.readChoicesAloud);
@@ -5045,6 +5076,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       textTurnSpent = false;
       honeymoonSpent = false;
     } catch (e) {
+      const reply = heldGmText.trim();
+      if (reply && !gmReplyCommitted) {
+        const live = stateRef.current ?? current;
+        const kept = keepGmReplyAfterClientError(live, reply, e);
+        stateRef.current = kept;
+        setState(kept);
+        void persist(kept);
+        gmReplyCommitted = true;
+        textTurnSpent = false;
+        honeymoonSpent = false;
+        resetTurnUi();
+        return;
+      }
       if (turnAbortRef.current?.signal.aborted) {
         debugLogger.record('WARN', 'sendAction aborted — player line kept');
         resetTurnUi();
@@ -5461,6 +5505,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     ).state);
     setState(newState);
     stateRef.current = newState;
+    clearActionDraft();
     bindSessionImageCache(newState.saveId);
     isHydratedRef.current = true;
     debugLogger.record('STATE_UPDATE', 'New game state created and hydrated', {
@@ -6205,6 +6250,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
       setState(recovered);
       stateRef.current = recovered;
+      clearActionDraft();
       bindSessionImageCache(recovered.saveId);
       setTelemetryContext({ saveId: recovered.saveId, engineMode: recovered.engineMode });
       isHydratedRef.current = true;
@@ -6441,7 +6487,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const next = { ...s, pendingRepair: null, log, lastUpdated: Date.now() };
       stateRef.current = next;
       setState(next);
-      setRestoreDraft(s.pendingRepair.playerInput);
+      pinBlockedDraft(s.pendingRepair.playerInput);
       void persist(next);
       addToast('Clarification cancelled. Your line is back in the box — send again or rephrase.', 'info');
     },
@@ -6560,6 +6606,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         });
         setState(recovered);
         stateRef.current = recovered;
+        clearActionDraft();
         bindSessionImageCache(recovered.saveId);
         setTelemetryContext({ saveId: recovered.saveId, engineMode: recovered.engineMode });
         isHydratedRef.current = true;

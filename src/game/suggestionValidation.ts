@@ -12,27 +12,17 @@ const GENERIC_SCENE_ROLES = new Set([
   'elder', 'priest', 'herald', 'courtier', 'acolyte', 'sage', 'attendant',
 ]);
 
-/** Soft interactable / invented object claims in choices or free text. */
 const NAMED_INTERACTABLE_CLAIM =
   /\b(?:inspect|examine|open|search|check|test|heft|take|grab|pick\s+up|approach|activate|pull|push|read|unlock|loot|rummage(?:\s+through)?)\s+(?:(?:the\s+heft\s+of\s+)?(?:a|an|the|my|your)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
-
-/** Named creature / foe targeted by combat or stealth reactions. */
 const NAMED_THREAT_CLAIM =
   /\b(?:attack|fight|strike|kill|slay|ambush|stalk|engage|charge|hide\s+from|sneak\s+(?:past|around|away\s+from)|flee\s+(?:from|the)|retreat\s+from|watch|study|scan|assess)\s+(?:(?:a|an|the)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
-
-/** Verbs that imply using a specific inventory item. */
+// Object of use/draw/wield (det optional) or instrument of `with` (det required; manner "with care" stays out).
 const ITEM_USE_CLAIM =
-  /\b(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
-
-/** Combat verbs that only count when a named weapon follows (swing/slash your shortsword). */
+  /\b(?:(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?|with\s+(?:a|an|the|my|your)\s+)([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
 const WEAPON_USE_CLAIM =
   /\b(?:swing|slash|stab|strike|cleave|thrust|parry|block|attack|hit|shoot)\s+(?:(?:with|using)\s+)?(?:(?:a|an|the|my|your)\s+)?((?:short|long|great|bastard)\s*swords?|shortswords?|longswords?|greatswords?|daggers?|handaxes?|battleaxes?|warhammers?|maces?|scimitars?|rapiers?|katanas?|cutlasses?|crossbows?|longbows?|shortbows?|spears?|halberds?|quarterstaffs?|staves|staffs?|wands?|clubs?|pistols?|rifles?)\b/i;
-
-/** "I had a sword" / "realize I have a dagger" — only weapon/consumable-like nouns. */
 const ITEM_POSSESSION_CLAIM =
   /\b(?:(?:i\s+)?(?:had|have|got|possess)|(?:realiz(?:e|ed)|remember(?:ed)?)\s+(?:i\s+)?(?:had|have|got))\s+(?:a|an|the|my)\s+((?:short|long|great|bastard)\s*swords?|shortswords?|longswords?|greatswords?|daggers?|axes?|bows?|crossbows?|staves|staffs?|wands?|maces?|spears?|pistols?|rifles?|grenades?|potions?|draughts?|elixirs?|swords?|blades?|guns?)\b/i;
-
-/** Named weapons that must exist in inventory when mentioned as gear. */
 const NAMED_WEAPON =
   /\b((?:short|long|great|bastard)\s*swords?|shortswords?|longswords?|greatswords?|daggers?|handaxes?|battleaxes?|warhammers?|maces?|morningstars?|scimitars?|rapiers?|katanas?|cutlasses?|sabers?|sabres?|crossbows?|longbows?|shortbows?|spears?|halberds?|quarterstaffs?|quarterstaves|staves|staffs?|wands?|clubs?|flails?|glaives?|tridents?|pistols?|rifles?|shotguns?|grenades?)\b/gi;
 
@@ -47,7 +37,6 @@ const NON_ITEM_TOKENS = new Set([
   'gate', 'window', 'wall', 'floor', 'ceiling', 'shadows', 'darkness', 'light', 'air',
 ]);
 
-/** Scene nouns that are allowed without an explicit location-sheet entry. */
 const GENERIC_SCENE_NOUNS = new Set([
   ...NON_ITEM_TOKENS,
   ...GENERIC_SCENE_ROLES,
@@ -63,11 +52,6 @@ const GENERIC_SCENE_NOUNS = new Set([
   'nearest enemy', 'active threat', 'immediate threat',
 ]);
 
-const SWORD_LIKE = /sword|scimitar|rapier|katana|cutlass|saber|sabre|blade/i;
-const BOW_LIKE = /\bbow|crossbow/i;
-const STAFF_LIKE = /\bstaff|stave|quarterstaff|wand\b/i;
-const GUN_LIKE = /pistol|rifle|shotgun|gun|firearm/i;
-
 function normalize(value: string): string {
   return value.trim().toLocaleLowerCase().replace(/\s+/g, ' ');
 }
@@ -81,10 +65,7 @@ function addNameTokens(names: Set<string>, name: string) {
   }
 }
 
-/**
- * Tokens considered "established" for choice / free-text grounding:
- * inventory, companions, encounter, lore, location sheet, timeline, NPC memory, turn prose.
- */
+/** Established tokens for choice / free-text grounding (kit, cast, place, prose). */
 export function buildGroundingCorpus(state: GameState, storyProse = ''): Set<string> {
   const names = new Set<string>();
   for (const item of state.inventory ?? []) addNameTokens(names, item.name);
@@ -106,10 +87,7 @@ export function buildGroundingCorpus(state: GameState, storyProse = ''): Set<str
   for (const fact of state.timeline ?? []) addNameTokens(names, fact.text);
   for (const mem of state.npcMemories ?? []) addNameTokens(names, mem.npcName);
   if (storyProse) {
-    // Index significant words from turn prose (length >= 4) so "the rusted lever" grounds.
-    for (const token of storyProse.toLowerCase().match(/[a-z][\w'-]{3,}/g) ?? []) {
-      names.add(token);
-    }
+    for (const token of storyProse.toLowerCase().match(/[a-z][\w'-]{3,}/g) ?? []) names.add(token);
   }
   return names;
 }
@@ -134,31 +112,45 @@ export function inventoryHasItem(state: GameState, claimed: string): boolean {
   const needle = normalize(claimed);
   if (!needle || NON_ITEM_TOKENS.has(needle)) return true;
 
-  // Generic category words require a matching category in inventory — not "any weapon".
-  if (/^(weapon|blade)$/i.test(needle)) {
-    return state.inventory.some(
-      (i) =>
-        i.equipped ||
-        /weapon|sword|blade|bow|gun|axe|mace|dagger|staff|wand|crossbow|spear/i.test(i.name)
-    );
+  if (
+    needle === 'weapon' || needle === 'armor' || needle === 'consumable'
+    || needle === 'material' || needle === 'container' || needle === 'accessory' || needle === 'quest'
+    || needle === 'blade'
+  ) {
+    const kind = needle === 'blade' ? 'weapon' : needle;
+    return (state.inventory ?? []).some((i) => i.itemType === kind);
   }
-  if (/^sword$/i.test(needle)) {
-    return inventoryCatalog(state).some((name) => SWORD_LIKE.test(name));
+  const claimWords = needle.split(/\s+/).filter(Boolean);
+  for (const name of inventoryCatalog(state)) {
+    if (name === needle || name.includes(needle) || needle.includes(name)) return true;
+    if (claimWords.length !== 1) continue;
+    const token = claimWords[0]!;
+    for (const part of name.split(/\s+/)) {
+      if (part === token || (token.length >= 3 && (part.endsWith(token) || token.endsWith(part)))) return true;
+    }
   }
-  if (/^bow$/i.test(needle)) {
-    return inventoryCatalog(state).some((name) => BOW_LIKE.test(name));
-  }
-  if (/^(staff|wand)$/i.test(needle)) {
-    return inventoryCatalog(state).some((name) => STAFF_LIKE.test(name));
-  }
-  if (/^gun$/i.test(needle)) {
-    return inventoryCatalog(state).some((name) => GUN_LIKE.test(name));
-  }
+  return false;
+}
 
-  const catalog = inventoryCatalog(state);
-  return catalog.some(
-    (name) => name === needle || name.includes(needle) || needle.includes(name)
-  );
+/** Bound use/draw/wield object or `with` instrument; never a following `to`/`and` clause. */
+function boundItemObjectPhrase(claimed: string, state: GameState): string {
+  const n = normalize(claimed);
+  if (!n) return n;
+  const words = n.split(/\s+/).filter(Boolean);
+  let end = words.length;
+  const toAt = words.indexOf('to');
+  if (toAt > 0) end = Math.min(end, toAt);
+  const andAt = words.indexOf('and');
+  if (andAt > 0) end = Math.min(end, andAt);
+  const coreWords = words.slice(0, end);
+  if (!coreWords.length) return n;
+  const core = coreWords.join(' ');
+  if (inventoryHasItem(state, core)) return core;
+  for (let len = coreWords.length - 1; len >= 1; len--) {
+    const prefix = coreWords.slice(0, len).join(' ');
+    if (inventoryHasItem(state, prefix)) return prefix;
+  }
+  return core;
 }
 
 function collectUnsupportedClaims(input: string, state: GameState, patterns: RegExp[]): string[] {
@@ -167,8 +159,9 @@ function collectUnsupportedClaims(input: string, state: GameState, patterns: Reg
     const re = new RegExp(pattern.source, 'gi');
     let m: RegExpExecArray | null;
     while ((m = re.exec(input)) !== null) {
-      const claimed = (m[1] ?? '').trim();
-      if (!claimed || NON_ITEM_TOKENS.has(normalize(claimed))) continue;
+      const claimed = boundItemObjectPhrase((m[1] ?? '').trim(), state);
+      const key = normalize(claimed);
+      if (!claimed || NON_ITEM_TOKENS.has(key) || GENERIC_SCENE_ROLES.has(key)) continue;
       if (!inventoryHasItem(state, claimed)) claims.push(claimed);
     }
   }
@@ -187,10 +180,7 @@ function collectNamedWeaponClaims(input: string, state: GameState): string[] {
   return claims;
 }
 
-/**
- * Detect player-input claims that use items not present in structured inventory.
- * Used to inject an inventory gate into the GM context prompt.
- */
+/** Player-input item claims absent from structured inventory (GM context gate). */
 export function findUnsupportedItemClaims(input: string, state: GameState): string[] {
   const claims = [
     ...collectUnsupportedClaims(input, state, [ITEM_USE_CLAIM, WEAPON_USE_CLAIM, ITEM_POSSESSION_CLAIM]),
@@ -203,11 +193,7 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/**
- * Item claims in GM narrative: only gear the prose puts on the PC counts as missing.
- * A weapon in someone else's hands or lying in the scene is not the player's kit.
- * PC ties: a "your/my/{PC}'s" possessor on the item, or the PC as the subject of a use verb.
- */
+/** Narrative item claims: only PC-tied gear counts as missing (not scene/NPC weapons). */
 export function findUnsupportedNarrativeItemClaims(narrative: string, state: GameState): string[] {
   const pc = (state.character?.name ?? '').trim();
   const pcAlt = pc ? `|${escapeRegExp(pc)}'s` : '';
@@ -226,10 +212,7 @@ export function findUnsupportedNarrativeItemClaims(narrative: string, state: Gam
   return Array.from(new Set(claims.map(normalize)));
 }
 
-/**
- * Conservative item-use claims for the pre-GM hard gate.
- * Omits scatter named-weapon mentions ("look at the sword on the wall") that are exploratory.
- */
+/** Pre-GM hard-gate item-use claims (not exploratory named-weapon mentions). */
 export function findHardItemUseClaims(input: string, state: GameState): string[] {
   const claims = collectUnsupportedClaims(input, state, [
     ITEM_USE_CLAIM,
@@ -244,7 +227,6 @@ function isTokenGrounded(claimed: string, corpus: Set<string>): boolean {
   if (!needle) return true;
   if (GENERIC_SCENE_NOUNS.has(needle)) return true;
   if (corpus.has(needle)) return true;
-  // Multi-word: require each meaningful token OR the full phrase in corpus.
   const parts = needle.split(/\s+/).filter((p) => p.length >= 3 && !GENERIC_SCENE_NOUNS.has(p));
   if (parts.length === 0) return true;
   if (parts.every((p) => corpus.has(p))) return true;
@@ -254,10 +236,7 @@ function isTokenGrounded(claimed: string, corpus: Set<string>): boolean {
   return false;
 }
 
-/**
- * Named interactables / creatures referenced by a choice that are absent from
- * state, timeline, location sheet, and current turn prose.
- */
+/** Named interactables/creatures in a choice absent from state/timeline/prose. */
 export function findUngroundedNamedClaims(
   text: string,
   state: GameState,
