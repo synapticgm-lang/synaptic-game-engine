@@ -1,4 +1,5 @@
 import { registerWriterIntroductions } from './writerIntroductions';
+import { applyCollectedFacts, collectTurnTimelineFacts, leavePlaceVisit, tag } from './timeline';
 /**
  * Headless Fate autoplay — Seedable Fate's Pick + GM path with wardens.
  * Ship A: mirrors client commit (callGm → runWarden → structural → choices → prose)
@@ -80,7 +81,7 @@ import {
 import { withUpdatedHookArc } from './hookArc';
 import { mediatePlayerInput } from './inputMediation';
 import { readWellbeing } from './wellbeing';
-import { parsePlayerIntent } from './intentParser';
+import { groundPlayerAction, parsePlayerIntent } from './intentParser';
 import { scanAndScrubLeaks } from './leakScanner';
 import { ensureTurnProse, stripResidualMechanicTags } from './narrativeSanitize';
 import {
@@ -1125,9 +1126,18 @@ export async function headlessFateTurn(
   if (!hard.valid) {
     playerInput = hard.rewritten || 'Look around';
     repairNote = (repairNote ? `${repairNote}; ` : '') + `hard_gate→${playerInput}`;
-  } else if (hard.rewritten) {
-    playerInput = hard.rewritten;
-    repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
+  }
+
+  // A chip no longer on the pad is not the action the writer is told. The engine still runs the
+  // resolved line; the packet's PLAYER line is the grounded action (gm-facing would put the chip back).
+  const onPad = offered.some((c) => c.trim().toLowerCase() === playerInput.trim().toLowerCase());
+  let writerAction = playerInput;
+  if (!onPad && (parsePlayerIntent(playerInput, state).kind === 'attack' || parsePlayerIntent(playerInput, state).kind === 'search' || parsePlayerIntent(playerInput, state).kind === 'use_item')) {
+    const grounded = groundPlayerAction(playerInput, state);
+    if (grounded.rewritten && grounded.text && grounded.text !== playerInput) {
+      writerAction = grounded.text;
+      repairNote = (repairNote ? `${repairNote}; ` : '') + 'stale_chip';
+    }
   }
 
   // 17g — page 1 / unlocked-name covers stitch. After sceneWritten + locked name, writer owns
@@ -1267,7 +1277,7 @@ export async function headlessFateTurn(
     ...nudge.receipts,
     ...(travelCommit ? travelEngineLines(travelCommit) : []),
   ], arcState.engineMode);
-  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, playerInput, {
+  const preparedEvent = prepareWriterInputWithTownsfolk(arcState, writerAction, {
     xp: arcXp,
     engineResult: engineFact,
     travel: travelOutcome(travelCommit, hereBeforeMove, arcState),
@@ -2140,6 +2150,53 @@ Do NOT print dice notation or CODE ENFORCED.
       if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), ...record.lines] };
       governed = { ...governed, log };
     }
+  }
+  // q72: same per-turn timeline collector as useGame (both runtime paths).
+  {
+    const gainedNames: string[] = [];
+    for (const it of governed.inventory ?? []) {
+      if (!(state.inventory ?? []).some((x) => x.id === it.id || x.name === it.name)) gainedNames.push(it.name);
+    }
+    const turnFacts = collectTurnTimelineFacts({
+      turn: nextTurn,
+      playerAction: playerInput,
+      stateBefore: state,
+      stateAfter: {
+        currentLocation: governed.currentLocation,
+        activeEncounter: governed.activeEncounter,
+        activeDungeon: governed.activeDungeon,
+        character: governed.character,
+        quests: governed.quests,
+      },
+      events: [],
+      systemLog: filteredSystemLog,
+      newItemNames: gainedNames,
+      wardenNotes: warden.notes,
+    });
+    let timelineState = { ...governed, turn: nextTurn };
+    if (governed.currentLocation && governed.currentLocation !== state.currentLocation) {
+      timelineState = leavePlaceVisit({ ...timelineState, currentLocation: state.currentLocation });
+      timelineState = { ...timelineState, currentLocation: governed.currentLocation };
+    }
+    timelineState = applyCollectedFacts(timelineState, turnFacts);
+    if (writerTurn?.spoken?.status === 'added' && writerTurn.spoken.line && writerTurn.spoken.speaker) {
+      const spk = writerTurn.spoken.speaker;
+      timelineState = tag(
+        timelineState,
+        'said',
+        'said',
+        { id: `person:${spk.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name: spk },
+        writerTurn.spoken.line.slice(0, 120)
+      );
+    }
+    governed = {
+      ...governed,
+      timeline: timelineState.timeline,
+      entityRecords: timelineState.entityRecords,
+      placeVisitLog: timelineState.placeVisitLog,
+      places: timelineState.places ?? governed.places,
+      npcMemories: timelineState.npcMemories ?? governed.npcMemories,
+    };
   }
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.

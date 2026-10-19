@@ -1,16 +1,22 @@
 /**
  * tt-build-roadmeet — (1) the writer model on fate-autoplay records is the id gm-turn reported; (2a) a rolled road
- * meeting gets a seeded name and a one-line description, reaches the writer as an EVENT in the ENGINE RESULT, and is
- * never a person present (not in sceneFacts.present, not a REF ENUM person row, not harvested).
+ * meeting gets a seeded name and a one-line description, reaches the writer as an EVENT in the ENGINE RESULT.
+ * q72r4 — while the meeting runs they are PRESENT (voice allowlist); they are not harvested into sceneFacts.present
+ * as a lasting place person, and on arrival the meeting ENDS (stays on the road).
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { servedWriterModel } from './fateAutoplay';
 import { harvestNarrativePeople } from './narrativeHarvest';
-import { formatInfoSheet } from './infoSheet';
+import { formatSceneBlock } from './sceneBlock';
+import { peopleHere } from './chipLegality';
+import { presentNpcRecords } from './npcRecords';
+import { writerDraftProblems, type DraftCheck } from './writerTurn';
+import { parsePlayerIntent } from './intentParser';
 import { commitTravel, roadMeetingFact, roadMeetingRef } from './travelJourney';
 import { PLEA_HELP } from './rules/travelDay';
+import { checkPlayCrimes } from './turnCheck';
 import type { GameState, RoadEncounter } from './types';
 
 function keepState(seed: string): GameState {
@@ -68,19 +74,29 @@ describe('tt-build-roadmeet 2a: road meetings are named events', () => {
     expect(roadMeetingFact(s.journey)).toContain(`the road brings ${e.name}, ${who}, who `);
   });
 
-  it('the meeting is an event in the ENGINE RESULT and a meeting row, never a person present', () => {
-    const s = tripWith('rm-packet', ['traveler', 'meeting', 'thugs', 'villain', 'plea']);
+  it('the meeting is EVENT+PRESENT while live; ends on arrival; voice rejected, mention allowed', () => {
+    let s = tripWith('rm-packet', ['traveler', 'meeting']);
     const name = s.journey!.encounter!.name!;
     const packet = buildCompletedEventPacket(s, 'Wait and watch', { engineResult: 'Travel: on the forest path.' });
     expect(packet.engineResult ?? '').toMatch(/^Travel: on the forest path\.\nEvent on this stretch: the road brings /);
-    expect(packet.engineResult ?? '').toContain(name);
-    expect(packet.movement ?? '').not.toMatch(/Event on this stretch|road brings/);
-    const rows = packet.refEnum ?? [];
-    expect(rows.find((r) => r.display === name)?.klass).toBe('meeting');
+    expect(packet.refEnum?.find((r) => r.display === name)?.klass).toBe('meeting');
     expect(roadMeetingRef(s)?.display).toBe(name);
     expect(s.sceneFacts?.present ?? []).not.toContain(name);
-    expect(formatInfoSheet(s)).toMatch(/a meeting on the road/);
-    expect(formatInfoSheet(s)).toMatch(new RegExp(`^- ${name}`, 'm'));
+    expect(presentNpcRecords(s).some((m) => m.npcName === name) && peopleHere(s).includes(name)).toBe(true);
+    const scene = formatSceneBlock(s);
+    expect(scene).toContain(`EVENT: ${name} (meeting on the road)`);
+    expect(scene).toContain('Only PRESENT people and the live road EVENT may speak');
+    expect(scene.match(/^PRESENT:.*$/m)?.[0] ?? '').not.toContain(name);
+    const dest = s.journey!.to;
+    for (let i = 0; i < 8 && s.journey; i++) s = commitTravel(s, 'Walk on').state;
+    expect(s.currentLocation === dest && !presentNpcRecords(s).some((m) => m.npcName === name)).toBe(true);
+    const voiced = `${name} said, "Fair road." The hall was quiet.`;
+    const mentioned = `${name} was still on the road behind. The hall was quiet.`;
+    expect(checkPlayCrimes(s, s, 'Walk on', voiced).p0.some((f) => f.kind === 'absent-speaker')).toBe(true);
+    expect(checkPlayCrimes(s, s, 'Walk on', mentioned).p0.some((f) => f.kind === 'absent-speaker')).toBe(false);
+    const check: DraftCheck = { state: s, playerInput: 'Walk on', intent: parsePlayerIntent('Walk on', s), engineFact: `Arrived at ${dest}.`, previousGm: '' };
+    expect(writerDraftProblems(voiced, check).some((p) => p.startsWith('Absent speaker:'))).toBe(true);
+    expect(writerDraftProblems(mentioned, check).some((p) => p.startsWith('Absent speaker:'))).toBe(false);
   });
 
   it('a page that names the meeting does not make them someone present', () => {

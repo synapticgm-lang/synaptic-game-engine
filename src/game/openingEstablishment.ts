@@ -5,6 +5,7 @@ import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, LogEntry, OpeningCardRecord, OpeningEstablishment, OpeningOfferRecord, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
+import { stampPremiseOrigin } from './writerIntroductions';
 import { seedLocalStarterQuest } from './questPlay';
 import { hookCtxFromState, resolveLitRpgFolkStamp, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
@@ -966,15 +967,15 @@ const SEALED_BAG: Item = {
 
 /** Grant a sealed Earth bag (undeclared contents) when the campaign would have asked a kit cover. */
 export function ensureSealedOpeningBag(state: GameState, prompts?: OpeningPrompt[]): GameState {
-  if (pocketOnlyKit(state.systemHousing)) return state;
+  if (pocketOnlyKit(state.systemHousing)) return stampPremiseOrigin(state);
   const hadKitPrompt =
     (prompts ?? state.openingEstablishment?.pending ?? []).some((p) => p.kind === 'kit')
     || (resolveActiveCampaignBible(state)?.openingPrompts ?? []).some((p) => p.kind === 'kit')
     || state.campaignBibleId === 'summoned-pact'
     || state.engineMode === 'litrpg';
-  if (!hadKitPrompt) return state;
-  if (state.inventory.some((i) => /^bag$/i.test(i.name))) return state;
-  return { ...state, inventory: [...state.inventory, { ...SEALED_BAG, id: `start-bag-${state.saveId ?? '0'}` }] };
+  if (!hadKitPrompt) return stampPremiseOrigin(state);
+  if (state.inventory.some((i) => /^bag$/i.test(i.name))) return stampPremiseOrigin(state);
+  return stampPremiseOrigin({ ...state, inventory: [...state.inventory, { ...SEALED_BAG, id: `start-bag-${state.saveId ?? '0'}` }] });
 }
 
 /**

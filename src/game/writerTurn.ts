@@ -43,9 +43,9 @@ import { isRoadLabel, roadMeetingOpenerLines, writerEngineResult } from './trave
 import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
-
+import { checkPlayCrimes } from './turnCheck';
+import { peopleHere } from './chipLegality';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
-
 export type WriterDraft = {
   prose: string;
   path: TokenAcceptPath | 'plain';
@@ -55,9 +55,7 @@ export type WriterDraft = {
   /** Lines the token line gate dropped; they go into the turn's one repair request. */
   dropped?: DroppedLine[];
 };
-
 export type WriterTurnOutcome = 'accepted' | 'empty';
-
 export type WriterTurnResult = WriterDraft & {
   outcome: WriterTurnOutcome;
   /** 29z9 — who / want / where: whether the addressee's own words are on the page, and where they came from. */
@@ -73,14 +71,12 @@ export type WriterTurnResult = WriterDraft & {
   outcomeShown?: 'engine';
   combatLog?: string;
 };
-
 /** Fight omit + RC-N3 blocking-draft rewrite / fallback. */
 export type WriterTurnRetryResult = WriterTurnResult & {
   fightRetry?: 'retried' | 'added' | 'painted';
   draftRetry?: 'retried' | 'painted';
   fightDraft?: string;
 };
-
 /** One gate-rejected sentence and what the repair did with it. */
 export type SentenceRepair = {
   sentence: string;
@@ -90,7 +86,6 @@ export type SentenceRepair = {
   bug?: string;
   reply?: string;
 };
-
 export type DraftCheck = {
   state: GameState;
   playerInput: string;
@@ -98,7 +93,6 @@ export type DraftCheck = {
   engineFact: string;
   previousGm: string;
 };
-
 /** Render a raw writer reply (token JSON or plain text) to player prose; '' when nothing usable. */
 export function renderWriterDraft(raw: string, state: GameState, packet?: CompletedEventPacket): WriterDraft {
   if (!raw?.trim()) return { prose: '', path: 'last-resort' };
@@ -111,7 +105,6 @@ export function renderWriterDraft(raw: string, state: GameState, packet?: Comple
   const { refs, speech, dropped } = accepted;
   return { prose, path: accepted.path, refs, ...(speech ? { speech } : {}), ...(dropped ? { dropped } : {}) };
 }
-
 function unresolvedProblem(why: string, playerInput: string, engineFact: string): string {
   if (why === 'too short') return 'Too thin: write 4–6 full sentences.';
   if (why === 'engine result not stated') return `State the ENGINE RESULT plainly as already settled: ${engineFact.slice(0, 240)}`;
@@ -121,7 +114,6 @@ function unresolvedProblem(why: string, playerInput: string, engineFact: string)
   if (target) return `Show the player acting on the ${target}.`;
   return `Resolve the player's action "${playerInput.slice(0, 120)}" (${why}).`;
 }
-
 /** Cheap code checks on a rendered draft (logged with the turn). */
 export function writerDraftProblems(prose: string, check: DraftCheck): string[] {
   const text = stripChoiceList(stripActionTags(prose ?? '')).trim();
@@ -153,15 +145,14 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   }
   if (check.previousGm && isLastGmReprint(text, check.previousGm)) out.push('Same text as the last beat: write a new one.');
   if (isUnaskedCombatClose(text, check.playerInput)) out.push('Do not end or restart a fight the engine did not settle this turn.');
+  for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0)
+    if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${peopleHere(check.state).join(', ') || '(none)'}).`);
   return [...new Set(out)];
 }
-
 export type WriterIssue = WriterRawIssue | 'recycled' | 'unresolved';
-
 const RECYCLE_NOTE =
   /recycle-without-delta|Collage reject|Beat recycle reject|Atmosphere reprint|Same-room essay HARD|Repeats an earlier beat|Same text as the last beat|Reuses sentences/i;
 const UNRESOLVED_NOTE = /Narrative does not resolve the player action|Resolve the player's action|Answer the player's question|must answer the player|Show the player acting/i;
-
 /** Transport + post-revision draft/warden flags still standing (logged with thumbs). */
 export function writerTurnIssues(rawIssues: readonly string[], notes: readonly string[]): WriterIssue[] {
   const out = new Set<WriterIssue>();
@@ -172,7 +163,6 @@ export function writerTurnIssues(rawIssues: readonly string[], notes: readonly s
   if (notes.some((n) => UNRESOLVED_NOTE.test(n))) out.add('unresolved');
   return [...out];
 }
-
 /** Render + check one draft (no rewrite). Blocking problems are handled by runWriterTurnWithFightRetry. */
 export function runWriterTurn(opts: {
   firstRaw: string;
@@ -195,7 +185,6 @@ export function runWriterTurn(opts: {
     spoken: spoken.answer,
   };
 }
-
 /** Fight omit rewrite, then repairs, then RC-N3 blocking rewrite / engine-fact fallback. */
 export async function runWriterTurnWithFightRetry(opts: {
   firstRaw: string;
@@ -220,9 +209,8 @@ export async function runWriterTurnWithFightRetry(opts: {
   for (let i = 0; i < done.remaining.length; i++) {
     const p = done.remaining[i]!;
     if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-      || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')) {
-      blocking.push(p);
-    }
+      || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')
+      || p.startsWith('Absent speaker:')) blocking.push(p);
   }
   if (!blocking.length) return done;
   let raw = '';
@@ -234,20 +222,14 @@ export async function runWriterTurnWithFightRetry(opts: {
     for (let i = 0; i < second.remaining.length; i++) {
       const p = second.remaining[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting')) {
-        hardLeft = true;
-        break;
-      }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
     for (let i = 0; i < blocking.length; i++) {
       const p = blocking[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting')) {
-        hardLeft = true;
-        break;
-      }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {
@@ -274,7 +256,6 @@ export async function runWriterTurnWithFightRetry(opts: {
     fightDraft,
   };
 }
-
 /** Engine moved the player this turn but the beat never names where to — add one plain sentence. */
 export function withMoveDestination(state: GameState, prose: string): string {
   const c = state.circling;
@@ -288,9 +269,7 @@ export function withMoveDestination(state: GameState, prose: string): string {
   const line = underway ? `${pc} was on the ${j!.ground.toLowerCase()} toward ${dest}.` : `${pc} reached ${dest}.`;
   return `${line} ${prose.trim()}`;
 }
-
 const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).length;
-
 /** Drop trailing sentences until the beat fits the word cap (spoken / dest / first two stay). */
 export function capBeatWords(prose: string, cap: number, state: GameState): string {
   if (wordCount(prose) <= cap) return prose;
@@ -305,9 +284,7 @@ export function capBeatWords(prose: string, cap: number, state: GameState): stri
   }
   return sentences.filter(Boolean).join(' ');
 }
-
 export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted speech.';
-
 /** People in this beat's REF ENUM who could answer (named people, roles, companions, a live foe). */
 function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[] {
   const bareName = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
@@ -315,14 +292,30 @@ function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[
   const kill = check.state.sceneFacts?.lastKill;
   const live = bareName(check.state.activeEncounter?.name ?? '');
   const downed = kill?.outcome === 'victory' && bareName(kill.name) !== live ? bareName(kill.name) : '';
-  return refEnumOf(check.state, packet)
+  const hereNow = (check.state.currentLocation ?? '').trim().toLowerCase();
+  const gone = new Set<string>();
+  const tagged: string[] = [];
+  for (const f of check.state.timeline ?? []) {
+    if ((f.kind !== 'person' && f.kind !== 'creature') || !f.name) continue;
+    if (f.place && hereNow && f.place.trim().toLowerCase() !== hereNow) continue;
+    const name = bareName(f.name);
+    if (f.verb === 'died' || f.verb === 'left') gone.add(name.toLowerCase());
+    else if (!gone.has(name.toLowerCase())) tagged.push(name);
+  }
+  const fromRefs = refEnumOf(check.state, packet)
     .filter((r) => tokenUseMatchesClass('speaker', r.klass) && !!r.display)
-    .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim())
-    .filter((d) => d.length > 1 && (!downed || d.toLowerCase() !== downed));
+    .map((r) => r.display.replace(/^(?:the|a|an)\s+/i, '').trim());
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const d of [...fromRefs, ...tagged]) {
+    const key = d.toLowerCase();
+    if (d.length <= 1 || seen.has(key) || gone.has(key) || (downed && key === downed)) continue;
+    seen.add(key);
+    out.push(d);
+  }
+  return out;
 }
-
 const hasQuote = (prose: string) => /["“][^"“”]{3,}["”]/.test(prose);
-
 /** "thugs" → "thug", "thieves" → "thief", "witches" → "witch": one member of a group held here. */
 function oneOfGroup(plural: string): string | null {
   const w = plural.toLowerCase();
@@ -332,7 +325,6 @@ function oneOfGroup(plural: string): string | null {
   if (/(?:ch|sh|x|z)es$/.test(w)) return w.replace(/es$/, '');
   return w.replace(/s$/, '');
 }
-
 /** Outside-quote words name someone here (full display, given name, or one of a held group). */
 function speakerHere(bare: string, here: string[]): boolean {
   return here.some((p) => {
@@ -344,12 +336,10 @@ function speakerHere(bare: string, here: string[]): boolean {
     return !!one && new RegExp(`\\b(?:a|an|one|another|the)\\s+(?:[\\w'’-]+\\s+){0,3}?${escRe(one)}\\b`, 'i').test(bare);
   });
 }
-
 const sameName = (a: string, b: string) => {
   const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
   return !!bare(a) && bare(a) === bare(b);
 };
-
 /** Lines a person here may be quoted saying (topics, card want, lore, their quest) — never archetype motive. */
 export function backedAnswerFacts(state: GameState, name: string): string[] {
   const facts = authoredTopicsFor(name).map((t) => t.line);
@@ -377,11 +367,9 @@ export function backedAnswerFacts(state: GameState, name: string): string[] {
   }
   return [...new Set(facts.map((f) => f.replace(/\s+/g, ' ').trim()).filter((f) => f.length > 3))];
 }
-
 const FACT_STOP = new Set(['that', 'this', 'with', 'from', 'they', 'them', 'their', 'what', 'want', 'wants', 'have', 'here', 'there', 'were', 'will', 'your', 'about', 'into', 'just']);
 const factWords = (s: string) =>
   new Set((s.toLowerCase().match(/[a-z][a-z'’-]{3,}/g) ?? []).map((w) => w.replace(/(?:ing|ed|es|s)$/, '')).filter((w) => !FACT_STOP.has(w)));
-
 /** The quoted words carry a backed fact: two of its content words, or all of a short one's. */
 export function quoteHeldToFacts(quoted: string, facts: string[]): boolean {
   const said = factWords(quoted);
@@ -391,15 +379,12 @@ export function quoteHeldToFacts(quoted: string, facts: string[]): boolean {
     return shared >= Math.min(2, words.length) && shared > 0;
   });
 }
-
 const SELF_TITLE = /^(?:father|mother|brother|sister|sir|lady|lord|old|captain|master|mistress|the)$/i;
-
 /** tt-fix-7 — quoted words naming their own speaker ("Aldous wants to know…", said by Aldous) are a note read out, not speech. */
 export function speaksOfSelf(quoted: string, speaker: string): boolean {
   const parts = speaker.split(/\s+/).filter((w) => w.length > 2 && /^[A-Z]/.test(w) && !SELF_TITLE.test(w));
   return parts.some((w) => new RegExp(`\\b${escRe(w)}\\b`).test(quoted));
 }
-
 /** The one request for a missing answer. The player's character is never the speaker: the player speaks for them. */
 export function answerRepairRequest(
   check: DraftCheck,
@@ -424,7 +409,6 @@ export function answerRepairRequest(
     `Engine fact: ${writerEngineResult(check.engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
-
 /** Missing quoted reply on a talk turn: one repair sentence, else log the miss. */
 export async function repairMissingAnswer(
   turn: WriterTurnRetryResult,
@@ -487,20 +471,17 @@ export async function repairMissingAnswer(
   const own = motiveAnswer(check.state, speakers);
   return own ? { ...landAnswer(turn, check, answerRepair, own.line), speech: turn.speech && [...turn.speech, own.spoken] } : { ...turn, answerRepair };
 }
-
 /** The answer line lands after the beat's first sentence. */
 function landAnswer<T extends WriterTurnResult>(turn: T, check: DraftCheck, missing: SentenceRepair, line: string): T {
   const sentences = splitProseSentences(turn.prose);
   const prose = sentences.length > 1 ? [sentences[0], line, ...sentences.slice(1)].join(' ') : `${turn.prose.trim()} ${line}`;
   return { ...turn, prose, answerRepair: { ...missing, repaired: line }, remaining: writerDraftProblems(prose, check) };
 }
-
 /** The draft with one sentence swapped for `replacement` ('' drops it), whitespace-tolerant. */
 export function replaceDraftSentence(prose: string, sentence: string, replacement: string): string {
   const next = prose.replace(new RegExp(sentence.trim().split(/\s+/).map(escRe).join('\\s+')), () => replacement.trim());
   return next.replace(/[ \t]{2,}/g, ' ').replace(/ +([.,!?])/g, '$1').replace(/^\s+|\s+$/g, '');
 }
-
 /** One request: only the flagged sentence(s), why each failed, and the engine fact. */
 export function sentenceRepairRequest(
   flagged: { sentence: string; flag: string; note?: string }[],
@@ -518,7 +499,6 @@ export function sentenceRepairRequest(
     `Engine fact: ${writerEngineResult(engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
-
 function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEventPacket, count: number): string[] | null {
   const rendered = renderWriterDraft(raw, check.state, packet).prose
     || (/^\s*[[{]/.test(raw) ? '' : stripChoiceList(stripActionTags(raw)).trim());
@@ -530,7 +510,6 @@ function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEvent
   const sentences = splitProseSentences(lines.join(' '));
   return sentences.length >= 1 && sentences.length <= 2 ? [sentences.join(' ')] : null;
 }
-
 /** One repair request for every gate-rejected / dropped line; failures leave the page and are logged. */
 export async function repairRejectedSentences(
   turn: WriterTurnRetryResult,
@@ -606,7 +585,6 @@ export async function repairRejectedSentences(
   });
   return { ...turn, prose, repairs, remaining: writerDraftProblems(prose, check) };
 }
-
 async function runWriterTurnFightOnly(opts: {
   firstRaw: string;
   packet: CompletedEventPacket;
@@ -652,7 +630,6 @@ async function runWriterTurnFightOnly(opts: {
     ...(fight ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) } : {}),
   };
 }
-
 /** Drop already-told sentences (keep ≥2) and name full labels once. */
 export function finishCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
   let next = prose;
@@ -662,7 +639,6 @@ export function finishCommittedProse(prose: string, check: DraftCheck, packet?: 
   }
   return polishMentions(next, refs, check.state);
 }
-
 /** Keep sentences that tell this turn's own move or the PC doing the chosen action. */
 export function thisTurnsEventCheck(
   check: Pick<DraftCheck, 'state' | 'playerInput'>,
@@ -672,7 +648,6 @@ export function thisTurnsEventCheck(
   const action = playerActionSentenceCheck(check.playerInput, check.state.character?.name);
   return (s) => move(s) || action(s);
 }
-
 /** A sentence with the player character as its subject that does the chosen action: its verb or what it acts on. */
 export function playerActionSentenceCheck(playerInput: string, pcName?: string | null): (sentence: string) => boolean {
   const verb = actionVerb(playerInput);
@@ -682,7 +657,6 @@ export function playerActionSentenceCheck(playerInput: string, pcName?: string |
   const subject = new RegExp(`^\\W*(?:${first.length >= 2 ? `${escRe(first)}|` : ''}you)\\b`, 'i');
   return (s) => subject.test(s) && words.some((w) => stemHit(s.replace(/["“][^"”]*["”]/g, ' '), w));
 }
-
 /** Travel/leave turn: sentence names leave+reach or the trip destination. */
 export function moveSentenceCheck(
   playerInput: string,
@@ -704,4 +678,4 @@ export function moveSentenceCheck(
     const s = sentence.toLowerCase();
     return (!!goingTo && s.includes(goingTo)) || places.filter((p) => s.includes(p)).length >= 2;
   };
-}
+}
