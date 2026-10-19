@@ -35,6 +35,7 @@ const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBur
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
 import { exhaustionD20, exhaustionLevel, travelEngineChip, weatherRuleOf } from './rules/travelDay.ts';
 import { isWeakened, recoveryConfig } from './rules/recoveryConfig.ts';
+import { fleeDifficultyFor } from './hpRecovery.ts';
 const modeProfile = edgeOnly;
 const namedSkillCheckMod = (..._args: unknown[]): null => null;
 const titleCheckMod = (..._args: unknown[]): null => null;
@@ -280,6 +281,11 @@ export function resolveCheckContext(
     return { label: 'Arcana', attr: 'INT', skill: 'arcana', ...taskDc(state, 'arcana'), critFailHpRisk: 0 };
   }
   if (intent.kind === 'flee' || /\b(sneak|stealth|hide|creep)\b/i.test(t)) {
+    // q70 — LitRPG / RPG flee is a check vs hpRecoveryConfig.fleeDifficulty (can fail).
+    const fleeDc = intent.kind === 'flee' ? fleeDifficultyFor(state) : null;
+    if (fleeDc != null) {
+      return { label: 'Flee', attr: 'DEX', skill: 'stealth', dc: fleeDc, rung: 'medium', critFailHpRisk: 0 };
+    }
     return { label: 'Stealth', attr: 'DEX', skill: 'stealth', ...taskDc(state, 'stealth'), critFailHpRisk: 0 };
   }
   if (intent.kind === 'attack') {

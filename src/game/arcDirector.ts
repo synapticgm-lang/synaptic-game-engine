@@ -70,6 +70,11 @@ import { applyGraphExitTravel } from './mapEngine';
 import { placeScale } from './placeAuthority';
 import { peopleHere } from './chipLegality';
 import { applyRestHeal } from './recoveryRules';
+import {
+  applyHealingPotionUse,
+  applyLowHpWarning,
+  applyOutOfCombatRegen,
+} from './hpRecovery';
 import { settleClassChoice } from './rules/characterClass';
 import { settleStatPoints } from './rules/abilityPoints';
 import { settleSkillUse } from './rules/skillGrowth';
@@ -810,6 +815,7 @@ export function runArcDirectorBeforeGm(
   }
 
   // 28g — rest / wait at a safe hub restores HP (recoveryRules).
+  // q70 — LitRPG / RPG also: potion use, out-of-combat regen, low-HP System warning.
   let rested = false;
   {
     const rest = applyRestHeal(working, playerInput);
@@ -824,6 +830,26 @@ export function runArcDirectorBeforeGm(
           : `ENGINE RESULT (required fact — state it plainly): ${rest.receipt}. The player rested and recovered.`
       );
     }
+  }
+  if (!rested) {
+    const potion = applyHealingPotionUse(working, playerInput);
+    if (potion.receipts.length) {
+      working = potion.state;
+      systemReceipts.push(...potion.receipts);
+      mandates.push(
+        `ENGINE RESULT (required fact — state it plainly): ${potion.receipts[0]}. The player used a healing item.`
+      );
+    }
+  }
+  {
+    const regen = applyOutOfCombatRegen(working);
+    working = regen.state;
+    systemReceipts.push(...regen.receipts);
+  }
+  {
+    const warn = applyLowHpWarning(working);
+    working = warn.state;
+    systemReceipts.push(...warn.receipts);
   }
 
   // LitRPG class: the System's offer at the end of the tutorial, and the pick. A pick is not talk to anyone.

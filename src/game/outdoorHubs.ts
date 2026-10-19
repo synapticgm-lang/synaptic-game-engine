@@ -21,19 +21,24 @@ export interface OutdoorHub {
   threatTier: number;
   linkedQuestIds?: string[];
   aliases?: string[];
+  /**
+   * q70-HPRECOVERY — authored rest place for LitRPG / RPG (safe / inn / campfire / home).
+   * Absent means this hub is not a rest site. Never inferred from the name string.
+   */
+  restKind?: 'safe' | 'inn' | 'campfire' | 'home';
 }
 
 export const SUMMONED_PACT_HUBS: OutdoorHub[] = [
-  { id: 'sp-hub-lowmarket', name: 'Lowmarket', blurb: 'Crowded stalls, fences, and Earth junk buyers.', threatTier: 1, linkedQuestIds: ['sp-quest-side-junk', 'sp-quest-lark-tonic'], aliases: ['the Lowmarket'] },
+  { id: 'sp-hub-lowmarket', name: 'Lowmarket', blurb: 'Crowded stalls, fences, and Earth junk buyers.', threatTier: 1, restKind: 'safe', linkedQuestIds: ['sp-quest-side-junk', 'sp-quest-lark-tonic'], aliases: ['the Lowmarket'] },
   { id: 'sp-hub-west-wall', name: 'West Wall', blurb: 'Battlements and gate traffic above the city.', threatTier: 2, linkedQuestIds: ['sp-quest-kell-levy'], aliases: ['the west wall', 'Valespire west wall'] },
-  { id: 'sp-hub-weighing-cup', name: 'The Weighing Cup', blurb: 'Inn and rumor house near the cathedral close.', threatTier: 1, aliases: ['Weighing Cup'] },
+  { id: 'sp-hub-weighing-cup', name: 'The Weighing Cup', blurb: 'Inn and rumor house near the cathedral close.', threatTier: 1, restKind: 'inn', aliases: ['Weighing Cup'] },
   { id: 'sp-hub-contract-hall', name: 'Contract Hall', blurb: 'Notice-board and Crown job postings.', threatTier: 1, linkedQuestIds: ['sp-quest-1'], aliases: ['the Contract Hall'] },
   { id: 'sp-hub-cathedral-close', name: 'Cathedral Close', blurb: 'Courtyard and kitchens around Valespire Cathedral.', threatTier: 1, linkedQuestIds: ['sp-quest-side-child'], aliases: ['the close'] },
   { id: 'sp-hub-undercroft', name: 'Cathedral Undercroft', blurb: 'Numbered dungeon floors under the cathedral.', threatTier: 2, aliases: ['Undercroft'] },
   { id: 'sp-hub-palace', name: 'Palace Approach', blurb: 'Guarded approach to Pellane\'s palace ledgers.', threatTier: 2, linkedQuestIds: ['sp-quest-special-ledger'], aliases: ['the palace', 'Valespire Palace'] },
   { id: 'sp-hub-cinderflow', name: 'Cinderflow Road', blurb: 'East road toward Ash Court territory.', threatTier: 3, linkedQuestIds: ['sp-quest-special-other'], aliases: ['the Cinderflow'] },
   { id: 'sp-hub-harbor', name: 'Harbor Quay', blurb: 'Grain ships, smugglers, and quay gossip.', threatTier: 2, linkedQuestIds: ['sp-quest-harbor-harker'], aliases: ['the quay', 'Valespire harbor'] },
-  { id: 'sp-hub-war-camp', name: 'Pellane War Camp', blurb: 'Banner-smoke and quartermaster crates beyond the walls.', threatTier: 2, aliases: ['war camp', 'the war camp'] },
+  { id: 'sp-hub-war-camp', name: 'Pellane War Camp', blurb: 'Banner-smoke and quartermaster crates beyond the walls.', threatTier: 2, restKind: 'campfire', aliases: ['war camp', 'the war camp'] },
   { id: 'sp-hub-kitchen-saint', name: 'Kitchen Saint Alley', blurb: 'Bread steam and quiet charity behind the close.', threatTier: 1, linkedQuestIds: ['sp-quest-side-child', 'sp-quest-pip-loaf'], aliases: ['Kitchen Saint', 'kitchen alley'] },
   { id: 'sp-hub-mireglass', name: 'Mireglass March', blurb: 'Reed water and false reflections east of the Cinderflow.', threatTier: 2, linkedQuestIds: ['sp-quest-price-calling', 'sp-quest-price-reflection', 'sp-quest-price-route', 'sp-quest-reed-rook'], aliases: ['the March', 'Mireglass'] },
   { id: 'sp-hub-cinderwake', name: 'Cinderwake Trail', blurb: 'Ash-heat road and pursuit tracks toward the Ash Court.', threatTier: 3, linkedQuestIds: ['sp-quest-cinder-pursuit', 'sp-quest-cinder-caravan', 'sp-quest-cinder-evidence'], aliases: ['Cinderwake', 'the ash trail'] },
@@ -46,8 +51,8 @@ export const SUMMONED_PACT_HUBS: OutdoorHub[] = [
 
 export const HERO_AWAKENING_HUBS: OutdoorHub[] = [
   { id: 'ha-hub-ashline', name: 'Ashline Yard', blurb: 'Crew staging and informal job board.', threatTier: 1, linkedQuestIds: ['ha-quest-2'], aliases: ['the Yard', 'Ashline'] },
-  { id: 'ha-hub-low-watt', name: 'The Low Watt', blurb: 'Food-and-rumor hub after clears.', threatTier: 1, aliases: ['Low Watt'] },
-  { id: 'ha-hub-ward-rest', name: 'Ward Rest', blurb: 'Healers\' tent and collapse survivors.', threatTier: 1, aliases: ['Ward Rest infirmary'] },
+  { id: 'ha-hub-low-watt', name: 'The Low Watt', blurb: 'Food-and-rumor hub after clears.', threatTier: 1, restKind: 'inn', aliases: ['Low Watt'] },
+  { id: 'ha-hub-ward-rest', name: 'Ward Rest', blurb: 'Healers\' tent and collapse survivors.', threatTier: 1, restKind: 'safe', aliases: ['Ward Rest infirmary'] },
   { id: 'ha-hub-mca-desk', name: 'MCA Field Desk', blurb: 'Auditor stamps and late-registration forms.', threatTier: 1, aliases: ['Meridian desk', 'MCA desk'] },
   { id: 'ha-hub-threshold', name: 'First Threshold Gate', blurb: 'The rift that nearly killed you — still unstable.', threatTier: 2, linkedQuestIds: ['ha-quest-1'], aliases: ['the Threshold', 'Threshold gate'] },
   { id: 'ha-hub-scrap', name: 'Scrap Fence Alley', blurb: 'Pax Orr\'s curios and hush prices.', threatTier: 2, linkedQuestIds: ['ha-quest-side-fence'], aliases: ['scrap alley', 'fence alley'] },
@@ -86,7 +91,7 @@ export const GATEBREAK_WARD_HUBS: OutdoorHub[] = [
 export const ASCENDING_SPIRE_HUBS: OutdoorHub[] = [
   { id: 'as-hub-gate', name: 'Spire Gate Plaza', blurb: 'Permits, intel buyers, and the black tower.', threatTier: 1, linkedQuestIds: ['ascending-spire-quest-1'], aliases: ['Spire Gate', 'the plaza'] },
   { id: 'as-hub-board', name: 'Ranking Board', blurb: 'Public climb ranks — fame and assassins.', threatTier: 1, aliases: ['the board', 'climber board'] },
-  { id: 'as-hub-camp', name: 'Climber Camp', blurb: 'Tents and ration brick smoke outside the gate.', threatTier: 1, aliases: ['the camp'] },
+  { id: 'as-hub-camp', name: 'Climber Camp', blurb: 'Tents and ration brick smoke outside the gate.', threatTier: 1, restKind: 'campfire', aliases: ['the camp'] },
   { id: 'as-hub-floor1', name: 'Floor 1 Antechamber', blurb: 'First sealed biome before the Floor Warden.', threatTier: 2, linkedQuestIds: ['ascending-spire-quest-1'], aliases: ['Floor 1', 'antechamber'] },
   { id: 'as-hub-broker', name: 'Map Broker Stall', blurb: 'Verified floor intel for Spire Coin.', threatTier: 1, aliases: ['map broker', 'broker stall'] },
   { id: 'as-hub-rival', name: 'Rival Guild Tent', blurb: 'Cheerful climbers who may steal your clear.', threatTier: 2, aliases: ['rival tent', 'guild tent'] },
@@ -97,7 +102,7 @@ export const ASCENDING_SPIRE_HUBS: OutdoorHub[] = [
 /** Fabled Legacy — heirloom / village mythic tone. */
 export const FABLED_LEGACY_HUBS: OutdoorHub[] = [
   { id: 'fl-hub-square', name: 'Mossford Square', blurb: 'Quiet village heart between mill and chapel.', threatTier: 1, linkedQuestIds: ['fl-quest-1'], aliases: ['the square', 'Mossford'] },
-  { id: 'fl-hub-inn', name: 'The Crooked Beam', blurb: 'Inn where wounded strangers collapse.', threatTier: 1, linkedQuestIds: ['fl-quest-1'], aliases: ['Crooked Beam', 'the inn'] },
+  { id: 'fl-hub-inn', name: 'The Crooked Beam', blurb: 'Inn where wounded strangers collapse.', threatTier: 1, restKind: 'inn', linkedQuestIds: ['fl-quest-1'], aliases: ['Crooked Beam', 'the inn'] },
   { id: 'fl-hub-chapel', name: 'Chapel Menhir', blurb: 'Old Faith stone behind the village.', threatTier: 1, aliases: ['the menhir', 'chapel stone'] },
   { id: 'fl-hub-smithy', name: 'Marta\'s Smithy', blurb: 'Forge heat and ceremonial sickle work.', threatTier: 1, linkedQuestIds: ['fl-quest-2'], aliases: ['the smithy', 'blacksmith'] },
   { id: 'fl-hub-trail', name: 'Greentooth Trailhead', blurb: 'Lower hills path toward the Hollow Cairn.', threatTier: 2, linkedQuestIds: ['fl-quest-3'], aliases: ['trailhead', 'lower hills'] },
@@ -121,12 +126,12 @@ export const INKBOUND_ACADEMY_HUBS: OutdoorHub[] = [
 /** Void Audience — spectacle, performance, Threshold / Resonance. */
 export const VOID_AUDIENCE_HUBS: OutdoorHub[] = [
   { id: 'va-hub-auditor', name: "Auditor's Desk", blurb: 'Void negotiation — Flaws, Boons, and Cosmic Favor.', threatTier: 1, linkedQuestIds: ['va-quest-1'], aliases: ['the Auditor', 'void desk'] },
-  { id: 'va-hub-inn', name: 'Threshold Inn', blurb: 'Pellara\'s shelter for unusual arrivals.', threatTier: 1, linkedQuestIds: ['va-quest-2'], aliases: ['the inn', 'Pellara\'s inn'] },
+  { id: 'va-hub-inn', name: 'Threshold Inn', blurb: 'Pellara\'s shelter for unusual arrivals.', threatTier: 1, restKind: 'inn', linkedQuestIds: ['va-quest-2'], aliases: ['the inn', 'Pellara\'s inn'] },
   { id: 'va-hub-node', name: 'Threshold Node Plaza', blurb: 'Crystalline Node and Caster Drenn\'s suspicion.', threatTier: 2, linkedQuestIds: ['va-quest-3'], aliases: ['the Node', 'Threshold Node'] },
   { id: 'va-hub-stage', name: 'Resonance Stage', blurb: 'Spectacle ground — Audience CF loves a performance.', threatTier: 2, aliases: ['the stage', 'resonance stage'] },
   { id: 'va-hub-gallery', name: 'Gallery Viewing Tier', blurb: 'Metaphor seats for The Gallery\'s combat taste.', threatTier: 1, aliases: ['gallery tier', 'viewing tier'] },
   { id: 'va-hub-reborn', name: 'Reborn Meeting Ground', blurb: 'Eye-shimmer meetings — Kael and other trials.', threatTier: 2, linkedQuestIds: ['va-quest-3'], aliases: ['reborn ground', 'trial meet'] },
-  { id: 'va-hub-scout', name: 'Academy Scout Camp', blurb: 'Solenne\'s scouts sniff anomalous mana signatures.', threatTier: 2, aliases: ['scout camp', 'academy camp'] },
+  { id: 'va-hub-scout', name: 'Academy Scout Camp', blurb: 'Solenne\'s scouts sniff anomalous mana signatures.', threatTier: 2, restKind: 'campfire', aliases: ['scout camp', 'academy camp'] },
   { id: 'va-hub-mana', name: 'Wild Mana Field Edge', blurb: 'Flee path when Threshold gets too watched.', threatTier: 3, aliases: ['mana field', 'wild field'] },
 ];
 
@@ -148,7 +153,7 @@ export const DUNGEON_TRANSPORT_HUBS: OutdoorHub[] = [
   { id: 'dt-hub-gatekeeper', name: 'Gatekeeper Boss Door', blurb: 'Core-window boss room — only down from here.', threatTier: 2, linkedQuestIds: ['dt-quest-1'], aliases: ['Gatekeeper door', 'boss door'] },
   { id: 'dt-hub-f2', name: 'Floor 2 Flooded Platform', blurb: 'Transit deck over flooded cavern routes.', threatTier: 2, linkedQuestIds: ['dt-quest-2'], aliases: ['Floor 2', 'flooded platform'] },
   { id: 'dt-hub-scratch', name: "Scratch's Nest Overlook", blurb: 'Sentient Cave Imp shortcuts for food and light.', threatTier: 2, linkedQuestIds: ['dt-quest-2'], aliases: ['Scratch nest', 'imp overlook'] },
-  { id: 'dt-hub-safe', name: 'Safe Room Rest Shrine', blurb: 'Rest Cycle chamber — door only opens outward.', threatTier: 1, linkedQuestIds: ['dt-quest-3'], aliases: ['safe room', 'rest shrine'] },
+  { id: 'dt-hub-safe', name: 'Safe Room Rest Shrine', blurb: 'Rest Cycle chamber — door only opens outward.', threatTier: 1, restKind: 'safe', linkedQuestIds: ['dt-quest-3'], aliases: ['safe room', 'rest shrine'] },
   { id: 'dt-hub-merchant', name: 'Wandering Merchant Stall', blurb: 'Silent inflated prices between floors.', threatTier: 1, aliases: ['merchant stall', 'wandering merchant'] },
   { id: 'dt-hub-log', name: 'Descent Log Alcove', blurb: 'Previous delver messages — Kira\'s voice in stone.', threatTier: 1, aliases: ['log alcove', 'descent log'] },
   { id: 'dt-hub-shaft', name: 'Abyssal Transit Shaft', blurb: 'Only-down elevator of stairs between biomes.', threatTier: 2, aliases: ['transit shaft', 'descent shaft'] },
@@ -157,7 +162,7 @@ export const DUNGEON_TRANSPORT_HUBS: OutdoorHub[] = [
 
 /** Cursed Keep — flagship tabletop (thin). */
 export const CURSED_KEEP_HUBS: OutdoorHub[] = [
-  { id: 'ck-hub-inn', name: 'Greyhollow Inn', blurb: 'Last coach stop — warm ale, cold silence.', threatTier: 1, linkedQuestIds: ['ck-quest-1', 'ck-quest-elara-inn'], aliases: ['the inn', 'Greyhollow Tavern', 'the tavern'] },
+  { id: 'ck-hub-inn', name: 'Greyhollow Inn', blurb: 'Last coach stop — warm ale, cold silence.', threatTier: 1, restKind: 'inn', linkedQuestIds: ['ck-quest-1', 'ck-quest-elara-inn'], aliases: ['the inn', 'Greyhollow Tavern', 'the tavern'] },
   { id: 'ck-hub-church', name: 'Greyhollow Church', blurb: 'Father Aldous and six sleepless nights.', threatTier: 1, linkedQuestIds: ['ck-quest-2'], aliases: ['the church', 'the chapel'] },
   { id: 'ck-hub-gate', name: 'Keep Gate', blurb: 'Chained gate on the granite hill — footprints stop here.', threatTier: 2, linkedQuestIds: ['ck-quest-1', 'ck-quest-dain-watch'], aliases: ['the keep gate', 'Greymark gate'] },
   { id: 'ck-hub-graveyard', name: 'Greyhollow Graveyard', blurb: 'Fresh graves opened from the inside.', threatTier: 2, linkedQuestIds: ['ck-quest-2'], aliases: ['the graveyard', 'the churchyard', 'Greyhollow churchyard'] },
@@ -168,8 +173,8 @@ export const CURSED_KEEP_HUBS: OutdoorHub[] = [
 /** Salt Road Heist — flagship story-RPG (thin). */
 export const SALT_ROAD_HUBS: OutdoorHub[] = [
   { id: 'sr-hub-waystation', name: 'Salt Road Waystation', blurb: 'Staging point before the Consul\'s caravan.', threatTier: 1, linkedQuestIds: ['salt-road-heist-quest-1', 'sr-quest-yara-page'], aliases: ['the waystation', 'Salt Road'] },
-  { id: 'sr-hub-caravan', name: 'Consul Caravan Camp', blurb: 'Guards, sealed crates, and the tax ledger.', threatTier: 2, linkedQuestIds: ['salt-road-heist-quest-1', 'sr-quest-gideon-claim'], aliases: ['caravan camp', 'the caravan'] },
-  { id: 'sr-hub-safehouse', name: 'Safehouse Alley', blurb: 'Vessa\'s bribe-priced bolt-hole.', threatTier: 1, aliases: ['the safehouse', 'Vessa\'s alley'] },
+  { id: 'sr-hub-caravan', name: 'Consul Caravan Camp', blurb: 'Guards, sealed crates, and the tax ledger.', threatTier: 2, restKind: 'campfire', linkedQuestIds: ['salt-road-heist-quest-1', 'sr-quest-gideon-claim'], aliases: ['caravan camp', 'the caravan'] },
+  { id: 'sr-hub-safehouse', name: 'Safehouse Alley', blurb: 'Vessa\'s bribe-priced bolt-hole.', threatTier: 1, restKind: 'safe', aliases: ['the safehouse', 'Vessa\'s alley'] },
   { id: 'sr-hub-fence', name: 'Harbor Fence', blurb: 'Coast buyers for hot ledgers.', threatTier: 2, aliases: ['the fence', 'harbor buyer'] },
   { id: 'sr-hub-market', name: 'Bribe Market', blurb: 'Every favor has a Salt Road price.', threatTier: 1, linkedQuestIds: ['sr-quest-yara-page'], aliases: ['the bribe market'] },
   { id: 'sr-hub-checkpoint', name: 'Checkpoint Rise', blurb: 'Heat rises here — papers or a fight.', threatTier: 2, aliases: ['the checkpoint'] },

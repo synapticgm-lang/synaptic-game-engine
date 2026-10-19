@@ -28,6 +28,7 @@ export const CHIP_RESOLVERS: Record<ChipKind, string> = {
   'inspiration-reroll': 'resolveInspirationReroll (CheckResultRecord die)',
   affordance: 'sceneAffordances (entity-bound action)',
   'free-input': 'typed text → intent → checkForAction (same roll path as chips)',
+  'hp-rest': 'applyRestHeal / applyHpRecoveryRest (q70)',
 };
 
 export type ChipCheckFlag = { kind: 'dead-chip' | 'missing-chip-kind'; detail: string };

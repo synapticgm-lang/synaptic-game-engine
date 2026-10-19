@@ -7,6 +7,7 @@ import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 import { houseRulesOf } from '../game/rules/houseRules';
+import { isLowHp } from '../game/hpRecovery';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
 export const HUD_BUILD_STAMP = '2026-10-19z4';
@@ -41,6 +42,8 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
 
   const c = state?.character;
   const hpPercent = c && c.maxHp > 0 ? Math.round((c.hp / c.maxHp) * 100) : 100;
+  // q70 — low-HP bar state from hpRecoveryConfig threshold (LitRPG / RPG).
+  const lowHp = !!state && isLowHp(state);
   const heroicInsp =
     state?.engineMode === 'dnd' && houseRulesOf(state).heroicInspiration && state.character?.heroicInspiration
       ? 'Inspiration'
@@ -190,17 +193,17 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
         {/* HP Bar — value above bar on narrow so numbers never collide */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between gap-1 sm:hidden">
-            <span className="text-[9px] font-bold text-rose-400 font-mono shrink-0">HP</span>
-            <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
+            <span className={`text-[9px] font-bold font-mono shrink-0 ${lowHp ? 'text-amber-400' : 'text-rose-400'}`}>HP</span>
+            <span className={`text-[9px] font-mono font-bold whitespace-nowrap tabular-nums ${lowHp ? 'text-amber-200' : 'text-slate-100'}`}>
               {c.hp}/{c.maxHp}
             </span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-            <span className="hidden sm:inline text-sm font-bold text-rose-400 font-mono shrink-0">HP</span>
-            <div className="flex-1 min-w-0 h-2.5 sm:h-6 bg-slate-900 rounded-full overflow-hidden border border-rose-900/70 shadow-inner">
-              <div className="bg-gradient-to-r from-rose-700 to-rose-500 h-full rounded-full transition-all duration-300" style={{ width: `${hpPercent}%` }} />
+            <span className={`hidden sm:inline text-sm font-bold font-mono shrink-0 ${lowHp ? 'text-amber-400' : 'text-rose-400'}`}>HP</span>
+            <div className={`flex-1 min-w-0 h-2.5 sm:h-6 bg-slate-900 rounded-full overflow-hidden border shadow-inner ${lowHp ? 'border-amber-600/80' : 'border-rose-900/70'}`}>
+              <div className={`h-full rounded-full transition-all duration-300 ${lowHp ? 'bg-gradient-to-r from-amber-700 to-amber-400' : 'bg-gradient-to-r from-rose-700 to-rose-500'}`} style={{ width: `${hpPercent}%` }} />
             </div>
-            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c.hp}/{c.maxHp}</span>
+            <span className={`hidden sm:inline text-sm font-mono font-bold whitespace-nowrap shrink-0 ${lowHp ? 'text-amber-200' : 'text-slate-100'}`}>{c.hp}/{c.maxHp}</span>
           </div>
         </div>
 
