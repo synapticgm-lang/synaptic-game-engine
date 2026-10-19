@@ -49,9 +49,8 @@ import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { roundCombatChips } from './tabletop/combatChips';
 import { checkChipKinds } from './chipCheck';
 import { resolvePlace, dungeonRoomPlace } from './places';
-import { isRoadLabel, isTripHere, roadMeetingOver } from './travelJourney';
+import { isRoadLabel, isTripHere } from './travelJourney';
 import { placeExits } from './placeRegistry';
-import { presentNpcNames } from './npcRelationships';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
 export { chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -764,40 +763,16 @@ export function drawnPlanIssues(state: GameState): string[] {
   return floorPlanIssues(map, { building: isInteriorMap(map), minRooms: 1 });
 }
 
-/**
- * fight2c-CHIPCHECK — a road-meeting / "talk to someone" chip is backed when the engine's own
- * record has a person here (journey.encounter.name, scene present, presentNpcNames, present
- * memories, timeline npc). Never a prose person-word list. (SOMEONE regex removed.)
- */
+/** Someone on the road, in the prose: a person word, not a story name. */
+const SOMEONE =
+  /\b(?:someone|somebody|figure|figures|man|woman|men|women|traveler|traveller|stranger|rider|riders|merchant|pilgrim|thugs?|bandits?|people|camp|voice|voices|footsteps|hooded|cloaked)\b/i;
+
+/** The picked chip must follow the prose before it: a road-meeting chip needs the meeting on the page. */
 export function checkChosenChip(before: GameState, chosen: string): TurnCheckFlag[] {
   const pick = norm(chosen);
   if (!pick || !roadMeetingPeople(before)) return [];
   if (!chipAddressee(pick) && !/^(?:greet|face|approach|skirt|slip past|hide from|talk your way)\b/i.test(pick)) return [];
-  const enc = before.journey?.encounter;
-  if (enc && !roadMeetingOver(enc) && norm(enc.name)) return [];
-  const present = before.sceneFacts?.present;
-  if (present) {
-    for (let i = 0; i < present.length; i++) {
-      if (norm(present[i])) return [];
-    }
-  }
-  const named = presentNpcNames(before);
-  for (let i = 0; i < named.length; i++) {
-    if (norm(named[i])) return [];
-  }
-  const memories = before.npcMemories;
-  if (memories) {
-    for (let i = 0; i < memories.length; i++) {
-      const m = memories[i]!;
-      if (m.present === true && norm(m.npcName)) return [];
-    }
-  }
-  const timeline = before.timeline;
-  if (timeline) {
-    for (let i = 0; i < timeline.length; i++) {
-      const f = timeline[i]!;
-      if (f.kind === 'npc' && norm(f.text)) return [];
-    }
-  }
+  const lastGm = gmBodies(before).slice(-1)[0] ?? '';
+  if (SOMEONE.test(lastGm)) return [];
   return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
 }
