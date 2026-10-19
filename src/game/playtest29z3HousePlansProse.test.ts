@@ -235,9 +235,23 @@ describe('29z3 — chips follow the scene', () => {
       ...quietJourney,
       encounter: { kind: 'traveler', level: 1, stretch: 1, dangerous: false, name: 'Piers Rudd' },
     } as GameState['journey'];
+    // fight2d — engine presence is the person timeline tag (fight2c left encounter.name; tag is the reader now).
+    const tripPlace = 'the open road from Lowmarket toward West Wall';
     const seen = base({
       journey: seenJourney,
-      currentLocation: 'Open Road',
+      currentLocation: tripPlace,
+      timeline: [
+        {
+          id: 'person-piers',
+          turn: 7,
+          kind: 'person',
+          name: 'Piers Rudd',
+          detail: 'met on the road',
+          place: tripPlace,
+          text: 'person: Piers Rudd - met on the road',
+          at: 7,
+        },
+      ],
       log: [gm(7, 'Piers Rudd came up the road with a heavy pack.')],
     });
     expect(checkChosenChip(seen, 'Greet the traveler')).toEqual([]);

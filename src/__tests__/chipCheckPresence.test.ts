@@ -1,11 +1,13 @@
 /**
- * fight2c-CHIPCHECK — road-meeting / "talk to someone" chips are backed by engine presence
- * (journey.encounter.name, scene present, named NPCs), never a prose person-word list.
+ * fight2d-PERSONTAG — road-meeting / "talk to someone" chips are backed by engine
+ * `person:` timeline tags for the current HERE (written at meeting / present-NPC sources).
  * Seed 20511 T3/T4 shape: traveler Cutha Hask on a streets leg, then "Talk to someone in the street".
  */
 import { describe, expect, it } from 'vitest';
 import { checkChosenChip } from '../game/turnCheck';
-import type { GameState, LogEntry, RoadEncounter, TravelJourney } from '../game/types';
+import { recordPersonSeen } from '../game/timeline';
+import { underwayHereLabel } from '../game/locationName';
+import type { GameState, LogEntry, RoadEncounter, TimelineFact, TravelJourney } from '../game/types';
 
 function gm(turn: number, content: string): LogEntry {
   return { id: `gm-${turn}`, turn, role: 'gm', content, timestamp: turn };
@@ -25,6 +27,10 @@ function streetsLeg(encounter: RoadEncounter | null): TravelJourney {
   };
 }
 
+function tripHere(j: TravelJourney): string {
+  return underwayHereLabel({ journey: j });
+}
+
 function base(over: Partial<GameState> = {}): GameState {
   return {
     version: 2,
@@ -41,6 +47,7 @@ function base(over: Partial<GameState> = {}): GameState {
     companions: [],
     sceneFacts: { crowd: 'unknown', noise: 'unknown', present: [], props: [], lastBeat: '', updatedTurn: 0 },
     journey: null,
+    timeline: [],
     ...over,
   } as GameState;
 }
@@ -55,10 +62,39 @@ const CUTHA: RoadEncounter = {
   want: 'company for the next stretch',
 };
 
-describe('fight2c-CHIPCHECK engine presence for talk-to-someone chips', () => {
-  it('seed 20511 T4: named traveler on the leg → Talk to someone in the street is not unrelated-chip', () => {
+function cuthaPersonTag(place: string, turn = 3): TimelineFact {
+  return {
+    id: 'person-cutha',
+    turn,
+    kind: 'person',
+    name: 'Cutha Hask',
+    detail: 'met on the road',
+    place,
+    text: 'person: Cutha Hask - met on the road',
+    at: turn,
+  };
+}
+
+describe('fight2d-PERSONTAG engine person tags for talk-to-someone chips', () => {
+  it('chance meeting source writes exactly one person: Cutha Hask - … entry (deduped in scene)', () => {
+    const j = streetsLeg(CUTHA);
+    const here = tripHere(j);
+    let s = base({ journey: j, currentLocation: here, turn: 3, timeline: [] });
+    s = recordPersonSeen(s, 'Cutha Hask', 'met on the road');
+    s = recordPersonSeen(s, 'Cutha Hask', 'met on the road');
+    const people = (s.timeline ?? []).filter((f) => f.kind === 'person');
+    expect(people).toHaveLength(1);
+    expect(people[0]!.text).toBe('person: Cutha Hask - met on the road');
+    expect(people[0]!.name).toBe('Cutha Hask');
+    expect(people[0]!.detail).toBe('met on the road');
+  });
+
+  it('seed 20511 T4: person tag for Cutha Hask → Talk to someone in the street is not unrelated-chip', () => {
+    const j = streetsLeg(CUTHA);
     const before = base({
-      journey: streetsLeg(CUTHA),
+      journey: j,
+      currentLocation: tripHere(j),
+      timeline: [cuthaPersonTag(tripHere(j))],
       log: [
         gm(
           3,
@@ -69,27 +105,23 @@ describe('fight2c-CHIPCHECK engine presence for talk-to-someone chips', () => {
     expect(checkChosenChip(before, 'Talk to someone in the street')).toEqual([]);
   });
 
-  it('same chip with a people meeting but no person recorded in state → unrelated-chip', () => {
+  it('same chip with a people meeting but no person tag → unrelated-chip', () => {
     const before = base({
       journey: streetsLeg({ kind: 'traveler', level: 1, stretch: 1, dangerous: false }),
+      timeline: [],
       log: [gm(3, 'Jax walked the back streets toward Greyhollow Inn in the cool morning air.')],
     });
     expect(checkChosenChip(before, 'Talk to someone in the street').map((f) => f.kind)).toEqual(['unrelated-chip']);
   });
 
-  it('sceneFacts.present alone backs the chip when the meeting name is unset', () => {
+  it('a person tag from an earlier, left scene does not back the chip', () => {
+    const j = streetsLeg({ kind: 'traveler', level: 1, stretch: 1, dangerous: false });
     const before = base({
-      journey: streetsLeg({ kind: 'traveler', level: 1, stretch: 1, dangerous: false }),
-      sceneFacts: {
-        crowd: 'sparse',
-        noise: 'unknown',
-        present: ['Cutha Hask'],
-        props: [],
-        lastBeat: '',
-        updatedTurn: 3,
-      },
-      log: [gm(3, 'Someone waited on the packed dirt.')],
+      journey: j,
+      currentLocation: tripHere(j),
+      timeline: [cuthaPersonTag('Greyhollow Inn', 1)],
+      log: [gm(3, 'Jax walked the back streets toward Greyhollow Inn in the cool morning air.')],
     });
-    expect(checkChosenChip(before, 'Talk to someone in the street')).toEqual([]);
+    expect(checkChosenChip(before, 'Talk to someone in the street').map((f) => f.kind)).toEqual(['unrelated-chip']);
   });
 });
