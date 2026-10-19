@@ -21,7 +21,7 @@ describe('replay bank multi lap 4 s150', () => {
     expect(F.input(6)).toBe('Travel toward Cathedral Close');
     expect(F.receiptText(6)).toMatch(/chance meeting: thugs/);
     expect(F.packet(6)).toMatch(/Event on this stretch: the road brings thugs, four of them/);
-    expect(F.packetBlock(6, 'HERE:')).not.toMatch(/thugs/);
+    expect(F.packet(6)).not.toMatch(/^PRESENT:.*thugs/m);
     expect(F.packet(6)).toMatch(/^NOW: .* · a meeting on the road · /m);
   });
 
