@@ -148,6 +148,8 @@ export interface CampaignBible {
    * Leave unset for fantasy arrivals that should keep the default traveler pack.
    */
   replaceDefaultLoadout?: boolean;
+  /** q70 — when true, New Game seeds healing potions from hpRecoveryConfig (never inferred from copy). */
+  hpRecoveryStarterKit?: boolean;
   startingContainer?: { id: string; name: string; capacity: number };
   /** Hook ingredients for the generated opening. Not a script to reprint. */
   openingHook?: string;

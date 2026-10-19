@@ -15,6 +15,12 @@ import { houseRulesOf, REST_HOURS } from './rules/houseRules';
 import { sidekickOf } from './rules/sidekick';
 import { modeProfile } from './rules/modeProfile';
 import { turnRng } from './seededRng';
+import {
+  applyHpRecoveryRest,
+  hpRecoveryRestChip,
+  isHpRecoveryMode,
+  isHpRecoveryRestInput,
+} from './hpRecovery';
 
 export interface RecoveryRow {
   /** Share of max HP recovered after a won fight. */
@@ -112,10 +118,12 @@ function shortRestRecovery(s: GameState): { state: GameState; after: string[] } 
 }
 
 /**
- * The rest chip at a safe hub when hurt or out of spell slots (null when nothing to recover or not safe).
- * Tabletop, LitRPG and story RPG rest by the same rules; Pick Your Own Adventure plays its spine chips.
+ * The rest chip when hurt (or out of spell slots on tabletop).
+ * LitRPG / Story RPG: q70 place/hub `restKind` + hpRecoveryConfig (not SRD Hit Dice).
+ * Tabletop: SRD 5.2.1 short/long rest at a safe hub. PYOA uses spine chips.
  */
 export function restChip(state: GameState): string | null {
+  if (isHpRecoveryMode(state.engineMode)) return hpRecoveryRestChip(state);
   const ch = state.character;
   if (!ch || state.engineMode === 'pyoa' || !isSafeHubRest(state, TABLETOP_LONG_REST_CHIP)) return null;
   const max = ch.maxHp || ch.hp;
@@ -273,10 +281,19 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
 }
 
 /**
- * Heal on a safe-hub rest, by the SRD rest rules in every mode. Receipt for STATUS, or null when nothing changed.
- * Tabletop shows the rest kind, hours, clock and Hit Die; LitRPG and story RPG show the short HP line.
+ * Heal on a rest. LitRPG / RPG: q70 share-of-max + clock (+ inn gold). Tabletop: SRD 5.2.1 as written.
  */
 export function applyRestHeal(state: GameState, input: string): RestHeal {
+  if (isHpRecoveryMode(state.engineMode)) {
+    if (!isHpRecoveryRestInput(input)) return { state, receipt: null };
+    const rest = applyHpRecoveryRest(state, input);
+    return {
+      state: rest.state,
+      receipt: rest.receipt,
+      ...(rest.after ? { after: rest.after } : {}),
+      ...(rest.fact ? { fact: rest.fact } : {}),
+    };
+  }
   return presentRest(state, applySrdRest(state, input));
 }
 
