@@ -454,11 +454,14 @@ import {
   tickWorld,
   emptyWorldLedger,
 } from './worldSim';
+
 export const SETTINGS_EVENT_NAME = 'tactical-litrpg-settings-update';
 const HABIT_STORAGE_KEY = 'tactical-litrpg-player-habits';
+
 function uid(): string {
   return Math.random().toString(36).slice(2, 11);
 }
+
 /** Session-zero limits as saved on the campaign (null when nothing was set). */
 function sessionZeroOf(sz: SessionZero | null | undefined): SessionZero | null {
   const lines = cleanSessionZeroList(sz?.lines);
@@ -466,6 +469,7 @@ function sessionZeroOf(sz: SessionZero | null | undefined): SessionZero | null {
   const sheetId = sz?.sheetId || null;
   return lines.length || veils.length || sheetId ? { lines, veils, sheetId } : null;
 }
+
 /**
  * Real time away: tabletop at a safe stop takes a rest; story RPG and LitRPG get a recap. Either way the row is
  * engine facts only.
@@ -483,12 +487,14 @@ function withAwayRest(state: GameState, awayMs: number): GameState {
   const recap: LogEntry = { id: uid(), turn: away.state.turn, role: 'system', content: away.recap.join('\n'), timestamp: now };
   return { ...away.state, log: [...away.state.log, recap], lastUpdated: now };
 }
+
 interface ActionHabit {
   action: string;
   count: number;
   lastUsed: number;
   triggerContexts: string[];
 }
+
 function loadHabits(): Record<string, ActionHabit> {
   try {
     const raw = localStorage.getItem(HABIT_STORAGE_KEY);
@@ -497,10 +503,12 @@ function loadHabits(): Record<string, ActionHabit> {
     return {};
   }
 }
+
 function saveHabit(actionText: string, gmResponseText: string) {
   const habits = loadHabits();
   const cleanAction = actionText.trim();
   if (cleanAction.length < 3 || cleanAction.length > 120) return;
+
   const key = cleanAction.toLowerCase();
   const existing = habits[key] || {
     action: cleanAction,
@@ -508,8 +516,10 @@ function saveHabit(actionText: string, gmResponseText: string) {
     lastUsed: Date.now(),
     triggerContexts: [],
   };
+
   existing.count += 1;
   existing.lastUsed = Date.now();
+
   const lowerGm = gmResponseText.toLowerCase();
   if (lowerGm.includes('slain') || lowerGm.includes('defeat') || lowerGm.includes('dead') || lowerGm.includes('victory') || lowerGm.includes('collapsed')) {
     if (!existing.triggerContexts.includes('combat_end')) existing.triggerContexts.push('combat_end');
@@ -517,17 +527,21 @@ function saveHabit(actionText: string, gmResponseText: string) {
   if (lowerGm.includes('enter') || lowerGm.includes('step into') || lowerGm.includes('door opens')) {
     if (!existing.triggerContexts.includes('room_entry')) existing.triggerContexts.push('room_entry');
   }
+
   habits[key] = existing;
   localStorage.setItem(HABIT_STORAGE_KEY, JSON.stringify(habits));
 }
+
 function getContentMode(settings: Settings): 'kid' | 'adult' {
   return settings.contentMode === 'kid' ? 'kid' : 'adult';
 }
+
 function yieldToMainThread(): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, 0);
   });
 }
+
 type ImageGenJob =
   | {
       kind: 'panels';
@@ -552,20 +566,24 @@ type ImageGenJob =
     }
   | { kind: 'turn'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; isMilestone?: boolean; heroImage?: boolean; bypassCapacity?: boolean; skipUnlockToast?: boolean }
   | { kind: 'intro'; prompt: string; promptKind: ImagePromptKind; visualContext: string };
+
 interface VideoGenJob {
   entryId: string;
   prompt: string;
   visualContext: string;
 }
+
 type PostCommitSpeech =
   | { kind: 'sequence'; texts: string[]; entryId?: string }
   | { kind: 'text'; text: string; entryId?: string };
+
 interface PostCommitTurnEffects {
   snapshot: GameState;
   imageJobs: ImageGenJob[];
   videoJob: VideoGenJob | null;
   speech: PostCommitSpeech;
 }
+
 function settleOrphanedImageJobs(state: GameState): GameState {
   let changed = false;
   const log = state.log.map((entry) => {
@@ -593,13 +611,17 @@ function settleOrphanedImageJobs(state: GameState): GameState {
   });
   return changed ? { ...state, log, lastUpdated: Date.now() } : state;
 }
+
 function getLearnedChoices(gmText: string): string[] {
   const habits = loadHabits();
   const lowerGm = gmText.toLowerCase();
   const learned: string[] = [];
+
   const isCombatEnd = lowerGm.includes('slain') || lowerGm.includes('defeat') || lowerGm.includes('dead') || lowerGm.includes('victory') || lowerGm.includes('collapsed');
   const isRoomEntry = lowerGm.includes('enter') || lowerGm.includes('chamber') || lowerGm.includes('hallway') || lowerGm.includes('room');
+
   const sortedHabits = Object.values(habits).sort((a, b) => b.count - a.count);
+
   for (const habit of sortedHabits) {
     if (habit.count >= 2) {
       if (isCombatEnd && habit.triggerContexts.includes('combat_end')) {
@@ -612,6 +634,7 @@ function getLearnedChoices(gmText: string): string[] {
   }
   return learned;
 }
+
 /**
  * Habit-augmented wrapper around the narrative parser's pure `extractChoiceLines` — blends
  * in the player's own learned habitual actions (tracked locally) as bonus suggestions. The
@@ -620,24 +643,30 @@ function getLearnedChoices(gmText: string): string[] {
  */
 export function extractChoicesFromText(text: string, state?: GameState, storyProse = ''): string[] {
   if (!text) return ['🎲 Let Fate Decide'];
+
   const choices = extractChoiceLines(text);
+
   const learned = getLearnedChoices(text);
   for (const habitAction of learned) {
     if (!choices.some((c) => c.toLowerCase() === habitAction.toLowerCase())) {
       choices.push(`✨ ${habitAction}`);
     }
   }
+
   const validatedChoices = state
     ? choices.filter((choice) => isSuggestionValidForState(choice, state, storyProse))
     : choices;
+
   if (validatedChoices.length === 0) {
     if (state && choices.length > 0) return [fallbackSuggestionForState(state)];
     return ['🎲 Let Fate Decide'];
   }
   return validatedChoices;
 }
+
 export type SyncPhase = 'idle' | 'syncing';
 export type BootPhase = 'welcome' | 'auth' | 'setup' | 'hub' | 'syncing' | 'ready';
+
 export function useGame() {
   debugLogger.record('SYSTEM', 'useGame hook initialized — loading settings from storage');
   installTelemetryDebugBridge();
@@ -660,6 +689,7 @@ export function useGame() {
     hasOpenRouterKey: !!loadedSettings.openrouterApiKey
   });
   setTelemetryContext({ aiProvider: loadedSettings.aiProvider });
+
   const [state, setState] = useState<GameState | null>(null);
   const [settings, setSettings] = useState<Settings>(loadedSettings);
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(null);
@@ -705,21 +735,25 @@ export function useGame() {
   const [canRewind, setCanRewind] = useState(false);
   const [imagesGenerating, setImagesGenerating] = useState(0);
   const [autoFightWarning, setAutoFightWarning] = useState<{ enemy: EnemyStats; resolve: (proceed: boolean) => void } | null>(null);
+
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const persistDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const imageGenJobsRef = useRef<ImageGenJob[]>([]);
   const [imageGenEpoch, setImageGenEpoch] = useState(0);
   const imageGenRunningRef = useRef(false);
   const lastImageFailToastAtRef = useRef(0);
   /** Last comic-lite spend beat key — duplicate suppression across consecutive turns. */
   const lastComicBeatKeyRef = useRef<string | null>(null);
+
   // Loot-video jobs run on a fully separate queue/effect so a slow (30s-2min+) video
   // request can never block the image panel queue for subsequent turns.
   const videoGenJobsRef = useRef<VideoGenJob[]>([]);
   const [videoGenEpoch, setVideoGenEpoch] = useState(0);
   const videoGenRunningRef = useRef(false);
   const [videosGenerating, setVideosGenerating] = useState(0);
+
   // Turn side effects are staged here and consumed by an effect only after React has
   // committed the merged GameState. This keeps persistence, TTS, and media queue dispatch
   // out of state calculation and removes any dependency on updater execution timing.
@@ -727,18 +761,22 @@ export function useGame() {
   const pendingEffectsRef = useRef<PostCommitTurnEffects | null>(null);
   const [postCommitTurnEpoch, setPostCommitTurnEpoch] = useState(0);
   const postCommitTurnRunningRef = useRef(false);
+
   const voice = useVoice(settings.ttsEnabled, settings.voicePackId, settings.ttsVoiceURI, { ttsRate: settings.ttsRate, ttsVolume: settings.ttsVolume });
+
   const clearRevealTimer = useCallback(() => {
     if (revealTimerRef.current) {
       clearTimeout(revealTimerRef.current);
       revealTimerRef.current = null;
     }
   }, []);
+
   const clearPhaseTimers = useCallback(() => {
     if (phaseTimersRef.current.reading) clearTimeout(phaseTimersRef.current.reading);
     if (phaseTimersRef.current.resolving) clearTimeout(phaseTimersRef.current.resolving);
     phaseTimersRef.current = {};
   }, []);
+
   const resetTurnUi = useCallback(() => {
     revealRunRef.current += 1;
     clearRevealTimer();
@@ -746,18 +784,22 @@ export function useGame() {
     setTurnPhase('idle');
     setStreamingReveal(null);
   }, [clearPhaseTimers, clearRevealTimer]);
+
   const startStreamingReveal = useCallbackRef((entryId: string, fullText: string) => {
     const runId = ++revealRunRef.current;
     clearRevealTimer();
     clearPhaseTimers();
+
     const chunks = splitIntoRevealChunks(fullText);
     if (chunks.length <= 1) {
       setStreamingReveal({ entryId, fullText, visibleText: fullText, done: true });
       setTurnPhase('idle');
       return;
     }
+
     setTurnPhase('revealing');
     setStreamingReveal({ entryId, fullText, visibleText: chunks[0], done: false });
+
     let index = 0;
     const tick = () => {
       if (revealRunRef.current !== runId) return;
@@ -778,12 +820,15 @@ export function useGame() {
     };
     revealTimerRef.current = setTimeout(tick, revealDelayMs(0, chunks[0]));
   });
+
   useEffect(() => () => {
     clearRevealTimer();
     clearPhaseTimers();
   }, [clearPhaseTimers, clearRevealTimer]);
+
   const snapshotRef = useRef<GameState | null>(null);
   const isHydratedRef = useRef(false);
+
   const stateRef = useRef<GameState | null>(null);
   stateRef.current = state;
   const settingsRef = useRef<Settings>(settings);
@@ -795,10 +840,13 @@ export function useGame() {
   const narrativeModeRef = useRef(narrativeMode);
   narrativeModeRef.current = narrativeMode;
   const lastAutoResolvedEncounterRef = useRef<string | null>(null);
+
   useEffect(() => {
     window.history.pushState({ page: 'game' }, '');
+
     const handlePopState = () => {
       window.history.pushState({ page: 'game' }, '');
+
       if (showSettings) { setShowSettings(false); return; }
       if (showMapModal) { setShowMapModal(false); return; }
       if (showRolls) { setShowRolls(false); return; }
@@ -807,15 +855,18 @@ export function useGame() {
       if (showCharacterWindow) { setShowCharacterWindow(false); return; }
       if (showMerchantWindow) { setShowMerchantWindow(false); return; }
       if (leftOpen || rightOpen) { setLeftOpen(false); setRightOpen(false); return; }
+
       if (stateRef.current) {
         setState(null);
         stateRef.current = null;
         setBootPhase('hub');
       }
     };
+
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [showSettings, showMapModal, showRolls, showNewGame, showApiSetup, showCharacterWindow, showMerchantWindow, leftOpen, rightOpen]);
+
   const refreshSaveSlots = useCallbackRef(async () => {
     try {
       const local = await loadGame();
@@ -837,6 +888,7 @@ export function useGame() {
       });
     }
   });
+
   const applySupabaseSession = useCallbackRef((session: Session | null) => {
     if (!session?.user) {
       setPlayAccountContext(null);
@@ -853,6 +905,7 @@ export function useGame() {
       void refreshSaveSlots();
       return;
     }
+
     const meta = session.user.user_metadata ?? {};
     const nextUser: GoogleUser = {
       id: session.user.id,
@@ -888,6 +941,7 @@ export function useGame() {
       userId: session.user.id,
       email: session.user.email,
     });
+
     // OAuth redirect returns here — skip welcome/auth gates when a session exists.
     setBootPhase((phase) => (phase === 'welcome' || phase === 'auth' ? 'hub' : phase));
     isHydratedRef.current = true;
@@ -906,6 +960,7 @@ export function useGame() {
     });
     void pullPlayerProfileFromCloud();
   });
+
   useEffect(() => {
     // Coming back to the tab after real time away: the same away rest Continue runs, counted from when the tab hid.
     let hiddenAt = 0;
@@ -925,10 +980,12 @@ export function useGame() {
     document.addEventListener('visibilitychange', onVisibility);
     return () => document.removeEventListener('visibilitychange', onVisibility);
   }, []);
+
   useEffect(() => {
     // Always surface the IndexedDB save on the hub; cloud slot fills in after auth.
     void refreshSaveSlots();
   }, [refreshSaveSlots]);
+
   useEffect(() => {
     if (!supabase) {
       debugLogger.record('WARN', 'Supabase not configured — Google OAuth + Ops telemetry disabled', {
@@ -937,20 +994,24 @@ export function useGame() {
       });
       return;
     }
+
     let active = true;
     void supabase.auth.getSession().then(({ data: { session } }) => {
       if (active) applySupabaseSession(session);
     });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       applySupabaseSession(session);
     });
+
     return () => {
       active = false;
       subscription.unsubscribe();
     };
   }, [applySupabaseSession]);
+
   useEffect(() => {
     setTelemetryContext({
       aiProvider: settings.aiProvider,
@@ -958,6 +1019,7 @@ export function useGame() {
       saveId: state?.saveId ?? null,
     });
   }, [settings.aiProvider, state?.engineMode, state?.saveId]);
+
   useEffect(() => {
     const handleSettingsUpdate = (event: Event) => {
       const customEvent = event as CustomEvent<Settings>;
@@ -971,10 +1033,12 @@ export function useGame() {
     window.addEventListener(SETTINGS_EVENT_NAME, handleSettingsUpdate);
     return () => window.removeEventListener(SETTINGS_EVENT_NAME, handleSettingsUpdate);
   }, []);
+
   const addToast = useCallback((message: string, type: Toast['type'] = 'info') => {
     const id = uid();
     setToasts((prev) => [...prev, { id, message, type }]);
   }, []);
+
   const offerMemorableAdIfCapHit = useCallback((skippedForCapacity?: boolean) => {
     if (
       skippedForCapacity
@@ -984,12 +1048,14 @@ export function useGame() {
       setOutOfMemorableAdOffer(true);
     }
   }, []);
+
   const notifyImageFailure = useCallback((error: unknown) => {
     const now = Date.now();
     if (now - lastImageFailToastAtRef.current < 8000) return;
     lastImageFailToastAtRef.current = now;
     addToast(playerFacingImageFailLine(error), 'info');
   }, [addToast]);
+
   const sceneImageContext = useCallback((
     visualConsistency?: string,
     playerActionContext?: string
@@ -1009,9 +1075,11 @@ export function useGame() {
       sceneFacts: s?.sceneFacts,
     };
   }, []);
+
   const dismissToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
+
   const persist = useCallbackRef(async (s: GameState) => {
     if (!isHydratedRef.current) return;
     debugLogger.record('STATE_UPDATE', 'Persisting game state to storage', {
@@ -1033,6 +1101,7 @@ export function useGame() {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => { setSaveStatus('idle'); }, 2500);
   });
+
   const keepSentLineOnFail = useCallbackRef((line: string) => {
     const sent = line.trim();
     const live = stateRef.current;
@@ -1057,6 +1126,7 @@ export function useGame() {
     }
     if (sent) setRestoreDraft(sent);
   });
+
   const pinBlockedDraft = useCallbackRef((line: string) => {
     const blocked = restoreDraftAfterBlock(line, lastInputRef.current);
     lastInputRef.current = blocked; setLastInput(blocked); setRestoreDraft(blocked);
@@ -1064,6 +1134,7 @@ export function useGame() {
   const clearActionDraft = useCallbackRef(() => {
     lastInputRef.current = ''; setLastInput(''); setRestoreDraft(null);
   });
+
   const fetchPanelImage = useCallbackRef(async (
     prompt: string,
     settings: Settings,
@@ -1084,6 +1155,7 @@ export function useGame() {
       debugLogger.record('SYSTEM', 'Skipping image generation for classic text mode', { promptKind });
       return null;
     }
+
     const mode = getContentMode(settings);
     let scenePrompt = prompt;
     if (mode === 'kid') {
@@ -1109,6 +1181,7 @@ export function useGame() {
           mode,
         ])
       : null;
+
     if (saveId && promptHash) {
       bindSessionImageCache(saveId);
       try {
@@ -1127,6 +1200,7 @@ export function useGame() {
         });
       }
     }
+
     const requestImage = (finalPrompt: string) =>
       generateComicImage(finalPrompt, mode, settings, {
         useRawPrompt: true,
@@ -1135,6 +1209,7 @@ export function useGame() {
         bypassCapacity: bypassCapacity === true,
         inventoryArt: promptKind === 'item-icon' || promptKind === 'character-portrait',
       });
+
     const storeIfPossible = async (imageUrl: string | null) => {
       if (!imageUrl || !saveId || !promptHash) return imageUrl;
       try {
@@ -1149,6 +1224,7 @@ export function useGame() {
       }
       return imageUrl;
     };
+
     try {
       const imageUrl = await requestImage(builtPrompt);
       if (!imageUrl) {
@@ -1187,6 +1263,7 @@ export function useGame() {
       throw e;
     }
   });
+
   /** Legendary Loot Video generation — pluggable backend, gracefully returns null until a provider is configured. */
   const fetchLootVideo = useCallbackRef(async (
     prompt: string,
@@ -1215,12 +1292,14 @@ export function useGame() {
       return null;
     }
   });
+
   const schedulePersist = useCallbackRef((snapshot: GameState) => {
     if (persistDebounceRef.current) clearTimeout(persistDebounceRef.current);
     persistDebounceRef.current = setTimeout(() => {
       persist(snapshot);
     }, 800);
   });
+
   const commitImageState = useCallbackRef((updater: (prev: GameState) => GameState) => {
     const previous = stateRef.current;
     if (!previous) return;
@@ -1233,6 +1312,7 @@ export function useGame() {
       schedulePersist(updated);
     });
   });
+
   /** Immediate state commit when a panel image URL arrives — avoids placeholder lag. */
   const commitPanelImageReady = useCallbackRef((updater: (prev: GameState) => GameState) => {
     const previous = stateRef.current;
@@ -1244,6 +1324,7 @@ export function useGame() {
       schedulePersist(updated);
     });
   });
+
   const enqueueImageGen = useCallbackRef((job: ImageGenJob) => {
     const settings = settingsRef.current;
     if (!allowsImageGeneration(settings, job.promptKind)) {
@@ -1260,10 +1341,12 @@ export function useGame() {
     imageGenJobsRef.current.push(job);
     setImageGenEpoch((epoch) => epoch + 1);
   });
+
   const enqueueVideoGen = useCallbackRef((job: VideoGenJob) => {
     videoGenJobsRef.current.push(job);
     setVideoGenEpoch((epoch) => epoch + 1);
   });
+
   /** Commits a loot-video URL/status onto its dedicated LogEntry. */
   const commitVideoReady = useCallbackRef((updater: (prev: GameState) => GameState) => {
     const previous = stateRef.current;
@@ -1275,11 +1358,15 @@ export function useGame() {
       schedulePersist(updated);
     });
   });
+
   useEffect(() => {
     if (imageGenRunningRef.current || imageGenJobsRef.current.length === 0) return;
+
     const jobs = imageGenJobsRef.current.splice(0);
     if (jobs.length === 0) return;
+
     imageGenRunningRef.current = true;
+
     const runJobs = async () => {
       try {
         for (const job of jobs) {
@@ -1289,6 +1376,7 @@ export function useGame() {
             // rate-limit failures and stranded panel records in `pending`. Panel N+1 does not
             // begin until panel N has either resolved successfully or been marked `failed`.
             for (const [panelIndex, prompt] of job.prompts.entries()) {
+
               const commitPanelResult = (imageUrl: string | null, imageStatus: 'ready' | 'failed') => {
                 const jobKey = job.jobKeys?.[panelIndex];
                 commitPanelImageReady((prev) => {
@@ -1354,12 +1442,14 @@ export function useGame() {
                   return { ...prev, log, lastUpdated: Date.now() };
                 });
               };
+
               try {
                 debugLogger.record('API_REQUEST', `Generating panel image ${panelIndex + 1}/${job.prompts.length}`, {
                   entryId: job.entryId,
                   prompt: prompt.slice(0, 100),
                   promptKind: job.promptKind,
                 });
+
                 const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(
                   job.visualContext,
                   panelIndex === 0 ? job.playerActionContext : undefined
@@ -1381,6 +1471,7 @@ export function useGame() {
             }
             continue;
           }
+
           if (job.kind === 'panel-retry') {
             setImagesGenerating((count) => count + 1);
             const panelIndex = job.panelIndex;
@@ -1410,6 +1501,7 @@ export function useGame() {
                 return { ...prev, log, lastUpdated: Date.now() };
               });
             };
+
             try {
               debugLogger.record('API_REQUEST', 'Retrying failed panel image', {
                 entryId: job.entryId,
@@ -1435,6 +1527,7 @@ export function useGame() {
             await yieldToMainThread();
             continue;
           }
+
           if (job.kind === 'turn') {
             setImagesGenerating(job.prompts.length);
             const urls: string[] = [];
@@ -1461,6 +1554,7 @@ export function useGame() {
               setImagesGenerating((count) => Math.max(0, count - 1));
               await yieldToMainThread();
             }
+
             commitImageState((prev) => {
               const log = prev.log.map((entry) => {
                 if (entry.id !== job.entryId) return entry;
@@ -1482,11 +1576,13 @@ export function useGame() {
               });
               return { ...prev, log, lastUpdated: Date.now() };
             });
+
             if (urls.length > 0 && !job.isMilestone) {
               startTransition(() => setCurrentImages(urls));
             }
             continue;
           }
+
           if (job.kind === 'intro') {
             setImagesGenerating(1);
             try {
@@ -1544,21 +1640,27 @@ export function useGame() {
         }
       }
     };
+
     void runJobs();
   }, [imageGenEpoch, commitImageState, commitPanelImageReady, fetchPanelImage]);
+
   // Separate queue for Legendary Loot Videos — deliberately isolated from the image queue
   // above so a slow/hanging video request can never delay panel images on later turns.
   useEffect(() => {
     if (videoGenRunningRef.current || videoGenJobsRef.current.length === 0) return;
+
     const jobs = videoGenJobsRef.current.splice(0);
     if (jobs.length === 0) return;
+
     let cancelled = false;
     videoGenRunningRef.current = true;
+
     const runVideoJobs = async () => {
       try {
         for (const job of jobs) {
           if (cancelled) return;
           setVideosGenerating((count) => count + 1);
+
           let videoUrl: string | null = null;
           try {
             debugLogger.record('API_REQUEST', 'Generating loot video', {
@@ -1572,6 +1674,7 @@ export function useGame() {
               error: err instanceof Error ? err.message : String(err),
             });
           }
+
           if (!cancelled) {
             commitVideoReady((prev) => {
               const log = prev.log.map((entry) =>
@@ -1596,15 +1699,20 @@ export function useGame() {
         }
       }
     };
+
     void runVideoJobs();
+
     return () => {
       cancelled = true;
     };
   }, [videoGenEpoch, commitVideoReady, fetchLootVideo]);
+
   useEffect(() => {
     if (postCommitTurnRunningRef.current || postCommitTurnEffectsRef.current.length === 0) return;
+
     const batches = postCommitTurnEffectsRef.current.splice(0);
     postCommitTurnRunningRef.current = true;
+
     const runPostCommitEffects = async () => {
       try {
         for (const batch of batches) {
@@ -1615,6 +1723,7 @@ export function useGame() {
               error: persistError instanceof Error ? persistError.message : String(persistError),
             });
           }
+
           for (const imageJob of batch.imageJobs) {
             enqueueImageGen(imageJob);
           }
@@ -1629,8 +1738,10 @@ export function useGame() {
         }
       }
     };
+
     void runPostCommitEffects();
   }, [postCommitTurnEpoch, enqueueImageGen, enqueueVideoGen, persist]);
+
   // Explicitly defined loadDungeon function to resolve the ReferenceError
   const loadDungeon = useCallbackRef((blueprintId: string, dungeonName: string, isProcedural: boolean = false, tier: MapTier = 4, nodeCount?: number) => {
     const previous = stateRef.current;
@@ -1667,6 +1778,7 @@ export function useGame() {
     void persist(updated);
     addToast(`Entered: ${dungeonName}`, 'info');
   });
+
   const hydratePlayFromLog = useCallbackRef((opts?: { persist?: boolean }) => {
     const previous = stateRef.current;
     if (!previous) return;
@@ -1722,9 +1834,11 @@ export function useGame() {
     setState(updated);
     if (opts?.persist !== false) void persist(updated);
   });
+
   const ensureLocalMap = useCallbackRef(() => {
     hydratePlayFromLog();
   });
+
   const moveDungeonNode = useCallbackRef((targetNodeId: string) => {
     const previous = stateRef.current;
     if (!previous?.activeDungeon) return;
@@ -1772,6 +1886,7 @@ export function useGame() {
     setState(updated);
     void persist(updated);
   });
+
   const exitDungeon = useCallbackRef(() => {
     const previous = stateRef.current;
     if (!previous) return;
@@ -1804,6 +1919,7 @@ export function useGame() {
     setShowMapModal(false);
     addToast('Exited active map zone', 'info');
   });
+
   /** A sheet from the character builder page: the same confirm page as the inn-book chips. */
   const applyBuiltSheet = useCallbackRef((sheet: unknown) => {
     const current = stateRef.current;
@@ -1813,6 +1929,7 @@ export function useGame() {
     setState(built);
     void persist(built);
   });
+
   /** The main-quest popup: carry on in the open world, or end the run (story RPG takes its ending) and open New Game. */
   const answerMainQuestEnd = useCallbackRef((choice: 'continue' | 'finish') => {
     const current = stateRef.current;
@@ -1831,6 +1948,7 @@ export function useGame() {
     void persist(next);
     if (choice === 'finish') setShowNewGame(true);
   });
+
   const sendAction = useCallbackRef(async (input: string) => {
     if (!input.trim() || busy || turnInFlightRef.current) return;
     if (
@@ -1855,10 +1973,12 @@ export function useGame() {
       );
       return;
     }
+
     // Unlock TTS in this tap so the later async GM speak is allowed on Android Chrome.
     if (settingsRef.current.ttsEnabled) {
       voice.primeTts();
     }
+
     if (tabletopCreationPending(current)) {
       // The table rules (stat method, starting level, sidekick) apply while the sheet is built.
       const built = stepTabletopCreation(withHouseRules(current, settingsRef.current), input);
@@ -1867,6 +1987,7 @@ export function useGame() {
       void persist(built);
       return;
     }
+
     if (
       isOpeningEstablishmentPending(current)
       && current.openingEstablishment?.pending[0]?.kind === 'name'
@@ -1880,6 +2001,7 @@ export function useGame() {
         addToast(`Using your saved name (${current.character.name}).`, 'info');
       }
     }
+
     // Pack 12: Handle instant quick-response buttons
     if (isOpeningEstablishmentPending(current)) {
       const quickResponse = tryHandleQuickResponseButton(current, input);
@@ -1891,6 +2013,7 @@ export function useGame() {
         return;
       }
     }
+
     let skipRepairDetection = false;
     let transportRetriesUsed = 0;
     let heldGmText = '';
@@ -1955,6 +2078,7 @@ export function useGame() {
       currentTurn: current.turn,
       busy
     });
+
     const mode = settingsRef.current.contentMode === 'kid' ? 'kid' : 'adult';
     const mediated = mediatePlayerInput(input);
     if (mediated.action === 'block') {
@@ -1973,14 +2097,17 @@ export function useGame() {
       saveGauge(checkIn.gauge);
       if (checkIn.card) addToast(formatCheckInCard(checkIn.card), 'info');
     }
+
     const metaGov = processMetaInput(current, mediated.text);
     if (metaGov.state !== current) {
       current = metaGov.state;
       stateRef.current = current;
     }
+
     // Opening covers + establishment generation are free (hook the player before the meter bites).
     const freeOpeningTurn =
       isOpeningEstablishmentPending(current) || !!current.pendingGeneratedOpening;
+
     // Local repair — clarify before GM spend (conservative detectors; false negatives OK).
     if (
       !skipRepairDetection
@@ -2026,6 +2153,7 @@ export function useGame() {
         return;
       }
     }
+
     if (
       !skipRepairDetection
       && !freeOpeningTurn
@@ -2073,7 +2201,9 @@ export function useGame() {
         return;
       }
     }
+
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);
+
     // Sync tier + spend a text turn from story-start bonus, then capacity ledger.
     // Test Lab: route writer/image catalog via Free/Mid/High preview without burning caps.
     setActiveSubscriptionTier(
@@ -2097,6 +2227,7 @@ export function useGame() {
         textTurnSpent = true;
       }
     }
+
     // Diegetic content rewrite confirm (Pack 7)
     const pendingRewrite = current.pendingContentRewrite;
     let rewriteSource = mediated.text;
@@ -2155,6 +2286,7 @@ export function useGame() {
         addToast(soft.diegeticMessage, 'info');
       }
     }
+
     const contentSanitized = playerVisibleActionText(rewriteSource, mode);
     const lastGmForGround = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
     const storyProseForGround = normalizeStoryCorpus(lastGmForGround);
@@ -2192,6 +2324,7 @@ export function useGame() {
     if (grounded.rewritten && sanitizedInput !== contentSanitized) {
       addToast(`Action grounded: ${grounded.notes[0] ?? 'adjusted to match scene/inventory'}`, 'info');
     }
+
     debugLogger.record('STATE_UPDATE', 'Input sanitized', {
       original: input.slice(0, 50),
       sanitized: sanitizedInput.slice(0, 50),
@@ -2203,6 +2336,7 @@ export function useGame() {
       engineMode: current.engineMode,
       saveId: current.saveId,
     });
+
     setBusy(true);
     setError(null);
     setErrorKind(null);
@@ -2215,11 +2349,15 @@ export function useGame() {
     }, 900);
     lastInputRef.current = input;
     setLastInput(input);
+
     const lastGmText = lastGmForGround;
     saveHabit(sanitizedInput, lastGmText);
+
     loadingTimer = setTimeout(() => setShowLoadingOverlay(true), 2500);
+
     const hideChipSpeech =
       isOpeningEstablishmentPending(current) && isOpeningSetupChipLabel(contentSanitized);
+
     const playerEntry: LogEntry = {
       id: uid(),
       turn: current.turn,
@@ -2227,6 +2365,7 @@ export function useGame() {
       content: contentSanitized,
       timestamp: Date.now(),
     };
+
     snapshotRef.current = current;
     setCanRewind(true);
     turnAbortRef.current?.abort();
@@ -2239,6 +2378,7 @@ export function useGame() {
         error: persistError instanceof Error ? persistError.message : String(persistError),
       });
     }
+
     // Commit the optimistic player entry as a concrete snapshot. Do not derive later turn
     // work inside a React updater: updater execution may be deferred or repeated by React,
     // which previously left `stateRef` stale and made post-turn media jobs timing-dependent.
@@ -2264,6 +2404,7 @@ export function useGame() {
     setState(optimisticState);
     void persist(optimisticState);
     hydratePlayFromLog({ persist: false });
+
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
       liveCurrent = withHouseRules(liveCurrent, settingsRef.current);
@@ -2281,6 +2422,7 @@ export function useGame() {
         },
         contentSanitized
       );
+
       const openingSceneWritten =
         liveCurrent.openingEstablishment?.sceneWritten === true
         || current.openingEstablishment?.sceneWritten === true;
@@ -2302,6 +2444,7 @@ export function useGame() {
         )
       ) {
         const stepped = await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current);
+
         if (!stepped.generateOpening && !stepped.deferToPlay) {
           refundSpentTextTurn();
           stateRef.current = stepped.state;
@@ -2317,6 +2460,7 @@ export function useGame() {
           openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
             ? stitchOpeningContinue(openingState, contentSanitized)
             : stitchOpeningScene(openingState);
+        
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(
           enforcePerspective(openingText, settingsRef.current, openingState.character.name),
@@ -2453,6 +2597,7 @@ export function useGame() {
         liveCurrent = { ...stepped.state, pendingGeneratedOpening: false };
         stateRef.current = liveCurrent;
       }
+
       if (!liveCurrent.sceneFacts) {
         const lastGm = [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
         liveCurrent = {
@@ -2462,6 +2607,7 @@ export function useGame() {
             : seedOpeningSceneFacts(liveCurrent),
         };
       }
+
       const typedAction = contentSanitized;
       const interpreted = await interpretPlayerUtterance({
         raw: typedAction,
@@ -2480,12 +2626,14 @@ export function useGame() {
           sanitizedInput = meaning;
         }
       }
+
       const intentForMandate =
         interpreted.intent.kind !== 'other'
           ? interpreted.intent
           : grounded.intent.kind !== 'other'
             ? grounded.intent
             : parsePlayerIntent(sanitizedInput, liveCurrent);
+
       if (
         isCombatLocked(liveCurrent)
         && intentForMandate.kind === 'move'
@@ -2509,15 +2657,18 @@ export function useGame() {
         setShowLoadingOverlay(false);
         return;
       }
+
       const accuseBible = getCampaignBibleById(liveCurrent.campaignBibleId ?? '');
       const accusedState = applyAccusationFromInput(liveCurrent, sanitizedInput, accuseBible);
       if (accusedState !== liveCurrent) {
         liveCurrent = accusedState;
         stateRef.current = accusedState;
       }
+
       // TT-H1: Inspiration reroll chip spends the stamped CheckResultRecord die (own ChipKind).
       const inspirationTurn = resolveInspirationReroll(liveCurrent, sanitizedInput);
       if (inspirationTurn) liveCurrent = inspirationTurn.state;
+
       // VR1-a: same CheckSpec for typed actions as for chips (checkForAction → runPlayerCheck record).
       const actionCheckSpec = inspirationTurn ? null : checkForAction(liveCurrent, intentForMandate, sanitizedInput);
       const check = inspirationTurn
@@ -2544,6 +2695,7 @@ export function useGame() {
       const strMod = check.modifier;
       const difficultyClass = check.dc;
       const outcome = check;
+
       const pickupLabel = parseLooseItemPickup(sanitizedInput);
       if (pickupLabel) {
         const picked = pickUpLooseItem(liveCurrent, pickupLabel);
@@ -2579,12 +2731,14 @@ export function useGame() {
           return;
         }
       }
+
       const tokenD = classifyRemoteThrow(liveCurrent, sanitizedInput);
       if (tokenD.kind === 'ambient') {
         liveCurrent = resolveAmbientTrapBypass(liveCurrent, tokenD.trapId);
       } else if (tokenD.kind === 'inventory') {
         liveCurrent = resolveInventoryTrapThrow(liveCurrent, tokenD);
       }
+
       let ledgerTrap: import('./ledgerTrap').LedgerTrapRound | null = null;
       let lockReceipts: string[] = [];
       if (
@@ -2607,8 +2761,8 @@ export function useGame() {
           }
         }
       }
-      const dyingTurn = isDying(liveCurrent);
-      if (!dyingTurn) liveCurrent = maybeEnterInteriorDungeon(liveCurrent, sanitizedInput);
+
+      liveCurrent = maybeEnterInteriorDungeon(liveCurrent, sanitizedInput);
       if (
         intentForMandate.kind === 'attack'
         || intentForMandate.kind === 'move'
@@ -2623,8 +2777,10 @@ export function useGame() {
         // (runArcDirectorBeforeGm → engineFight). The old round-by-round ledger paths are removed.
         liveCurrent = spawnRoomEncounter(liveCurrent);
       }
+      
       // 28f — the Z-2 per-action combat roll is removed: engineFight (runArcDirectorBeforeGm) owns the outcome.
       const ledgerCombatPrompt = '';
+      
       const outcomeToken = buildOutcomeToken(check, intentForMandate, {
         kitWeapon: equippedWeaponName(liveCurrent),
         combat: ledgerRound ?? undefined,
@@ -2634,6 +2790,7 @@ export function useGame() {
       if (ledgerTrap) {
         outcomeToken.summary = `${outcomeToken.summary} ${ledgerTrap.summary}`;
       }
+
       const isDndEngine = liveCurrent.engineMode === 'dnd';
       const codeResolutionText = check.codeResolutionText;
       const narrativeOutcomeLabel = check.narrativeOutcomeLabel;
@@ -2641,6 +2798,7 @@ export function useGame() {
         intentForMandate.kind === 'refuse' || intentForMandate.kind === 'talk' || isSpeechOrProtest(typedAction)
           ? `\n[SPEECH / PROTEST GATE]: The player spoke or protested. Honor their typed line as dialogue. Someone in the scene answers THAT line. Do not replace it with a pocket-search, kit recap, or physical follow-through. Do not skip their words. If they asked a clarifying question, answer with concrete terms — never stall with "awaits your response" or soft-reset the ask. If they are refusing / did not agree, narrate the System's cold acknowledgment in-fiction. Do not say "choose an action to continue." Never call anyone "someone nearby" as a name.`
           : '';
+
       logRollResults([
         {
           label: 'action_check',
@@ -2650,10 +2808,12 @@ export function useGame() {
             : `d20=${d20Roll} mod=${strMod} dc=${difficultyClass} ${check.label} ${outcome.isSuccess ? 'SUCCESS' : 'FAILURE'}`,
         },
       ]);
+
       // Never silently apply HP for failed skill checks — damage must come from explicit
       // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
       // Crit-fail trap risk is hinted to the GM via code outcome; sticky HP still needs <damage>.
       const engineHpDelta = 0;
+
       let worldLedger = normalizeWorldLedger(liveCurrent.worldLedger);
       const preTick = tickWorld(
         worldLedger,
@@ -2688,6 +2848,7 @@ export function useGame() {
       if (preTick.weeksResolved > 0 && preTick.goldPaid > 0) {
         worldNotes.push(`Weekly cut: +${preTick.goldPaid}g`);
       }
+
       let arcMandateBlock = '';
       let arcReceiptLine = '';
       let sealedManifestBlock = '';
@@ -2719,6 +2880,7 @@ export function useGame() {
         liveCurrent = planSceneThreads(liveCurrent);
         stateRef.current = liveCurrent;
       }
+
       const arcXp = (systemsArc?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
       {
         const claimed = consumeTagTriggerOnInput(liveCurrent, sanitizedInput);
@@ -2732,8 +2894,8 @@ export function useGame() {
       liveCurrent = offerTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...offerTurn.receipts];
       const hereBeforeMove = liveCurrent.currentLocation ?? '';
-      const graphMoved = dyingTurn ? liveCurrent : applyGraphExitTravel(liveCurrent, sanitizedInput);
-      const travelCommit = dyingTurn || graphMoved !== liveCurrent ? null : commitTravel(liveCurrent, sanitizedInput);
+      const graphMoved = applyGraphExitTravel(liveCurrent, sanitizedInput);
+      const travelCommit = graphMoved === liveCurrent ? commitTravel(liveCurrent, sanitizedInput) : null;
       liveCurrent = travelCommit?.state ?? graphMoved;
       if (travelCommit?.receipt) {
         pendingArcStatusReceipts = [...pendingArcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
@@ -2745,23 +2907,17 @@ export function useGame() {
         liveCurrent = ensurePlaceOnMap(liveCurrent, liveCurrent.currentLocation, hereBeforeMove);
       }
       // 28i — dungeon card turn (live parity with the harness).
-      const dungeonTurn = dyingTurn
-        ? { state: liveCurrent, receipts: [] as string[] }
-        : advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
+      const dungeonTurn = advanceDungeonCard(liveCurrent, sanitizedInput, systemsArc?.systemReceipts ?? []);
       liveCurrent = dungeonTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...dungeonTurn.receipts];
-      const storyTurn = dyingTurn
-        ? { state: liveCurrent, receipts: [] as string[] }
-        : applyStoryRpgTurn(liveCurrent, sanitizedInput, { romance: romanceAllowed(settingsRef.current) });
+      const storyTurn = applyStoryRpgTurn(liveCurrent, sanitizedInput, { romance: romanceAllowed(settingsRef.current) });
       liveCurrent = storyTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...storyTurn.receipts];
-      const tabletopTurn = dyingTurn
-        ? { state: liveCurrent, receipts: [] as string[] }
-        : applyTabletopQuestTurn(liveCurrent, sanitizedInput, hereAtTurnStart);
+      const tabletopTurn = applyTabletopQuestTurn(liveCurrent, sanitizedInput, hereAtTurnStart);
       liveCurrent = tabletopTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...tabletopTurn.receipts];
       // tt-build-chipcheck: a picked shop chip runs buyItem/sellItem; its receipt is the writer's fact.
-      const shopTurn = dyingTurn ? null : resolveShopChip(liveCurrent, sanitizedInput);
+      const shopTurn = resolveShopChip(liveCurrent, sanitizedInput);
       if (shopTurn) {
         liveCurrent = shopTurn.state;
         pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...shopTurn.receipts];
@@ -2808,6 +2964,7 @@ export function useGame() {
         playerInput: sanitizedInput,
       });
       let mudTurnLive: FreeMudTurn | null = null;
+
       const leaveOrTravelPad =
         /\b(leave(?:\s+through)?|travel|walk away|go another direction|head (?:to|toward)|exit|return to)\b/i.test(
           sanitizedInput
@@ -2827,6 +2984,7 @@ export function useGame() {
         : '';
       const actionGates = `${inventoryGate}${groundingGate}${refuseGate}${arcMandateBlock}${sealedManifestBlock}${arcReceiptLine}${combatOutcomeGate}`;
       const outcomeBlock = formatOutcomeTokenForPrompt(outcomeToken, !isDndEngine);
+
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
       const outcomeCue = check.skippedRoll
         ? `DIALOGUE TURN (no contested check): Answer the player's spoken line / question directly. Do not invent a Social failure, soft-reset the ask, stall with "awaits your response", or paste a prior paragraph.`
@@ -2853,8 +3011,10 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, "Strength Check:", "Actio
 In <system-log>, only emit LitRPG/RPG progression lines when something actually changed (XP gain, loot, HP change). Never emit XP Gained: 0 or bare XP:0/300 / HP dumps. Story beat first, then System chrome — never System-only.${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `;
+
       const recentNarrative = liveCurrent.log.slice(-4).map((e) => e.content).join(' ');
       const activeLoreCards = matchLoreCards(input, recentNarrative, liveCurrent.lorebook ?? []);
+
       // Cross-mode scene focus: reveal quests only when asked; bind the turn to the player's action.
       const revealedQuests = maybeRevealQuestsFromPlayerAction(liveCurrent, sanitizedInput);
       if (revealedQuests !== liveCurrent.quests) {
@@ -2865,6 +3025,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const gmPlayerPayload = useMud
         ? (shouldSkipMicroFlavor() ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
         : formatTalkWriterFacing(preparedEvent.packet, liveCurrent, { perspective: settingsRef.current.perspective });
+
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
         inputLength: sanitizedInput.length,
@@ -3003,9 +3164,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           systemLog: [...mudTurnLive.receiptLines, ...(result.systemLog ?? [])],
         };
       }
+
       // q50-MAP2 — structured newPlaces only (never prose). Validate + register before accept.
       liveCurrent = applyWriterNewPlaces(liveCurrent, newPlacesFromWriterPayload(result.text));
       stateRef.current = liveCurrent;
+
       // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
       // Never swap a real GM beat for a stitched / canned line.
       // 08c Free MUD: receipt is enough — no writer turn.
@@ -3090,6 +3253,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           };
           stateRef.current = liveCurrent;
         }
+
         if (openingInventBudgetZero(liveCurrent)) {
           const gated = classifyOpeningContinue(liveCurrent, result.text);
           if (gated.prose && gated.prose !== result.text) {
@@ -3119,8 +3283,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           state: liveCurrent,
         });
       }
+
       const gmLatency = Math.round(performance.now() - gmStartTime);
       setRetryStatus(null);
+
       debugLogger.record('API_RESPONSE', `callGm succeeded in ${gmLatency}ms`, {
         latency: gmLatency,
         responseLength: result.text?.length ?? 0,
@@ -3142,6 +3308,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           gmLatency
         );
       }
+
       // VR1-a tabletop: pre-roll + result from the record. LitRPG/RPG keep 28c displayLine.
       const preSpec: CheckSpec | null = actionCheckSpec ?? (check.record?.spec as CheckSpec | undefined) ?? null;
       const vr1RollLines = isDndEngine && !check.skippedRoll && check.record
@@ -3186,6 +3353,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             }
           : {}),
       };
+
       // `events`/derived requests must be parsed BEFORE anything below references them
       // (e.g. `lootVideoEntry`) — declaring them later caused a
       // "Cannot access before initialization" crash in the job runner.
@@ -3235,6 +3403,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const writerMilestone = eventsToMilestone(events);
       const lootVideoReq = eventsToLootVideo(events);
       const visualUpdate = eventsToVisualUpdate(events);
+
       // Legendary Loot Video gets its own dedicated log entry (separate media pipeline/queue
       // from images) so it renders as a distinct cinematic callout regardless of visual mode.
       const lootVideoEntry: LogEntry | null = lootVideoReq
@@ -3252,10 +3421,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             lootItemRarity: (lootVideoReq.itemRarity as Item['rarity']) ?? 'Legendary',
           }
         : null;
+
       const newRolls: RollRecord[] = [
         { id: uid(), turn: liveCurrent.turn + 1, raw: `[Code RNG] ${codeResolutionText}` },
         ...result.rolls.map((r) => ({ id: uid(), turn: liveCurrent.turn + 1, raw: r }))
       ];
+
       const updates = extractUpdates(liveCurrent, result.text);
       if (updates.character) {
         updates.character = {
@@ -3308,6 +3479,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const writerUsage = drainWriterUsage();
       if (writerUsage) gmEntry.writerUsage = writerUsage;
       const storyBeforeCuts = cleanText;
+
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
       const structural = applyStructuralEvents(liveCurrent, events, {
         strictEncumbrance: carryLimitOn(liveCurrent, settingsRef.current),
@@ -3409,6 +3581,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         comicModeRef.current,
         narrativeModeRef.current
       );
+
       // STRICT PANEL BUDGET: code-enforced ceiling, independent of whether the model honors
       // the prompt instruction. This is the actual cost-safety guarantee, not a request.
       const panelBudget = Math.min(
@@ -3426,6 +3599,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         narrative = sanitizeNarrativeMechanics(narrative, liveCurrent.engineMode).text;
         return { ...panel, narrative };
       });
+
       // P0 comic-lite: deterministic BeatSpec + source precedence (Director stays disabled).
       // Classic never reaches this branch (isComicView false → empty panels).
       const panelPlan = resolveComicPanelPlan({
@@ -3459,6 +3633,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           panelCount: comicPanelsForLog.length,
         });
       }
+
       // Visual Consistency Manager: deterministic block built from canonical state
       // (character.appearance, equipped gear, active lore-card visual anchors), injected
       // into every image prompt in code — never left to the model to remember. Applying
@@ -3471,6 +3646,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         appearanceOverride: visualUpdate?.description,
         formChange: visualUpdate?.formChange,
       });
+
       // Phase 2 — LLM Scripting Engine (Graphic Novel Director). In Comic Mode, ask a
       // dedicated Director pass to re-pace this turn's player action + deterministic math
       // outcome into a tighter, format-native panel script (explicit camera angles, and
@@ -3518,6 +3694,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           });
         }
       }
+
       const tagGainedNames = new Set(
         structural.gainedItems.map((i) => i.name.toLowerCase())
       );
@@ -3546,6 +3723,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         quantity: 1,
         provenance: ni.provenance,
       }));
+
       let hpDelta = engineHpDelta;
       let playerDamageTaken = 0;
       if (ledgerRound) {
@@ -3569,6 +3747,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }
         }
       }
+
       if (playerDamageTaken > 0) {
         const appear = events.find((e) => e.type === 'enemy-appear');
         cleanText = ensureDamageNarration(
@@ -3720,6 +3899,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       } else {
         liveCurrent = clearEngineRecoveryStreak(liveCurrent);
       }
+
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,
         newTurn: liveCurrent.turn + 1,
@@ -3893,6 +4073,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         warden.notes.push(...words.notes);
         debugLogger.record('INFO', 'Writer words kept', { turn: liveCurrent.turn, notes: words.notes });
       }
+
       if (mode === 'kid') {
         const kidTalk = (s: string) => filterKidModeText(s);
         cleanText = kidTalk(cleanText);
@@ -3915,6 +4096,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           result.imagePrompt = result.imagePrompt.map(kidTalk);
         }
       }
+
       // Stamp comic-lite job keys onto panels before they enter the committed log (idempotency).
       const comicPanelJobKeys: string[] = [];
       let comicBeatRevision = 0;
@@ -3949,6 +4131,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           lastComicBeatKeyRef.current = buildComicBeatDedupeKey(liveCurrent);
         }
       }
+
       const inventoryAfterFormChange = visualUpdate?.formChange
         ? workingState.inventory.map((item) => {
             if (!item.equipped) return item;
@@ -3956,6 +4139,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             return type === 'weapon' || type === 'armor' ? { ...item, equipped: false } : item;
           })
         : workingState.inventory;
+
       let updatedQuests = syncQuestsFromPlay(
         eventsToQuestUpdates(events, workingState.quests ?? [], nextTurn),
         mergedSystemLog,
@@ -4012,6 +4196,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         mergedSystemLog.push(...turnUnlocks.map((q) => `Quest Unlocked: ${q.name}`));
         setUnlockedQuests(turnUnlocks);
       }
+
       const leveledUp = (baseChar.level ?? 1) > (liveCurrent.character.level ?? 1);
       const bossCleared =
         events.some((e) => e.type === 'encounter-end') &&
@@ -4039,6 +4224,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (tutorialAdv.systemNotes.length) {
         mergedSystemLog.push(...tutorialAdv.systemNotes);
       }
+
       let updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
       if (ledgerFlee?.fled) {
         updatedEncounter = null;
@@ -4126,6 +4312,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         workingState.currentLocation ??
         updates.currentLocation ??
         liveCurrent.currentLocation;
+
       const usedItemNames = events
         .filter((e) => e.type === 'item-use' && e.name)
         .map((e) => e.name!);
@@ -4134,6 +4321,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (e.type === 'quest-add' && e.name) questChangeNotes.push(`Quest add: ${e.name}`);
         if (e.type === 'quest-complete') questChangeNotes.push(`Quest complete: ${e.id}`);
       }
+
       const harvested = extractNamedPlaces(
         `${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
       );
@@ -4153,6 +4341,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             },
             mapName || finalLocationName
           );
+
       if (isExplorableDungeon(workingState.activeDungeon)) {
         workingState = {
           ...workingState,
@@ -4162,6 +4351,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ),
         };
       }
+
       const locMem = advanceLocationMemory(
         {
           ...workingState,
@@ -4216,6 +4406,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       areaMap = workingState.activeDungeon ?? areaMap;
       locationSheet = workingState.locationSheet ?? locationSheet;
       finalLocationName = workingState.currentLocation ?? finalLocationName;
+
       let deedRelationships: NonNullable<GameState['arcDirector']>['npcRelationships'] | undefined;
       let places = upsertPlaceFromSheet(
         touchPlaceVisit(
@@ -4231,6 +4422,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           state: workingState,
         }
       );
+
       const topLoot = structural.gainedItems[0];
       const campaignMemory = advanceCampaignMemory(
         {
@@ -4252,6 +4444,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             finalLocationName !== liveCurrent.currentLocation,
         }
       );
+
       const npcMemoriesWithRel = upsertNpcRelationshipSummary(npcMemories, nextTurn);
       const socialLedger = applySocialLedgerTurn({
         state: {
@@ -4288,6 +4481,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         : nextTurn >= 5
           ? 'core'
           : 'minimal';
+
       const deadEncounter = workingState.activeEncounter ?? liveCurrent.activeEncounter;
       const memorableDecision = decideClassicMemorable(
         {
@@ -4321,6 +4515,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       offerMemorableAdIfCapHit(memorableDecision.skippedForCapacity);
       const milestoneReq = memorableDecision.request;
+
       const phased = applyPlayPhaseAfterHp(
         { ...workingState, character: baseChar, quests: updatedQuests },
         baseChar.hp ?? 0,
@@ -4354,6 +4549,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           if (failed.length) setFailedQuests(failed);
         }
       }
+
       const committedChoices =
         mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices;
       // Track recent choices for deduplication
@@ -4390,6 +4586,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           factions = mutateFactionOnQuestEvent(factions, q.id, 'accept');
         }
         worldLedger = { ...worldLedger, factionStandings: factions };
+
         // Act-4: hub arrival beat — only on travel / location change
         {
           const traveled = travelCommit?.arrived === true;
@@ -4480,6 +4677,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             }
           }
         }
+
         const sandboxXp = applySandboxXpAwards(
           {
             ...workingState,
@@ -4522,6 +4720,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           places,
         };
       }
+
       // Cascade level-ups for ledger + sandbox XP this turn (code-owned progression).
       {
         const xpBefore = liveCurrent.character?.xp ?? 0;
@@ -4540,11 +4739,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         Object.assign(baseChar, granted.state.character);
         if (granted.receipts.length) mergedSystemLog = [...mergedSystemLog, ...granted.receipts];
       }
+
       if (authoredBook) {
         const book = authoredPageText(workingState) || authoredBeat;
         if (book) cleanText = book;
         finalChoices = spineChoiceLabels(ensurePyoaSpine(workingState));
       }
+
       const gmLogEntryBase: LogEntry = {
         ...gmEntry,
         content: cleanText,
@@ -4586,6 +4787,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         { ...workingState, ...updates, character: baseChar },
         sanitizedInput
       );
+
       if (!authoredBook) {
         const talkCard = openTalkQuestCard(
           { places, currentLocation: finalLocationName },
@@ -4594,6 +4796,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
         if (talkCard.card) places = talkCard.places;
       }
+
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
@@ -4655,6 +4858,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         runManifest: liveCurrent.runManifest ?? workingState.runManifest,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
+
       if (ledgerRound?.enemyDead) {
         mergedStateDraft = markDefeatedMobAtCurrentNode(
           mergedStateDraft,

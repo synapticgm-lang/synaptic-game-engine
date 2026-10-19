@@ -45,24 +45,14 @@ export function voteSkipWrong({ skipped, targetKey = null, ratedKeys = new Set()
 export function skippedVoteOnNewReply(row) {
   return Boolean(row && row.voteSkipWrong === true);
 }
-/** Game end from the app: playPhase ended, or the run-ended panel's data-play-phase. */
-export function runEndedResult(snap) {
-  const phase = snap?.playPhase;
-  const panel = snap?.runEnded === true || snap?.runEnded === 'death' || snap?.runEnded === 'ended';
-  if (phase !== 'ended' && !panel) return null;
-  const turn = snap?.runEndedTurn || snap?.turn || '?';
-  return `run ended: death at T${turn}`;
-}
-
-/** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. softWarnings never fail the run. A skipped vote on a new reply, and game_reset, always fail. A death ending is ok-but-ended. */
+/** Run verdict: every bible ok, no harness errors, and (verify on) every thumb read back. softWarnings never fail the run. A skipped vote on a new reply, and game_reset, always fail. */
 export function runVerdict(results = []) {
   const list = Array.isArray(results) ? results : [];
   const problems = [];
   if (!list.length) problems.push('no_results');
   for (const r of list) {
     const turnRow = r?.newGmBubble != null || r?.event === 'turn' || r?.event === 'turn_timeout' || r?.event === 'game_reset';
-    const endedOk = typeof r?.result === 'string' && r.result.startsWith('run ended:');
-    if (!turnRow && !endedOk) {
+    if (!turnRow) {
       if (r.blocked) problems.push(`${r.bibleId}:blocked`);
       else if (!r.ok) problems.push(`${r.bibleId}:not_ok${r.error ? `(${r.error})` : ''}`);
       if (r.harnessErrors) problems.push(`${r.bibleId}:harness_errors=${r.harnessErrors}`);

@@ -238,7 +238,6 @@ import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
-import { isDying } from './tabletop/roundFight';
 import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
@@ -1224,29 +1223,22 @@ export async function headlessFateTurn(
   arcStatusReceipts = [...arcStatusReceipts, ...offerTurn.receipts];
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
-  const dyingTurn = isDying(govInputState);
   const hereBeforeMove = arcState.currentLocation ?? '';
-  const graphMoved = dyingTurn ? arcState : applyGraphExitTravel(arcState, playerInput);
-  const travelCommit = dyingTurn || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
+  const graphMoved = applyGraphExitTravel(arcState, playerInput);
+  const travelCommit = graphMoved === arcState ? commitTravel(arcState, playerInput) : null;
   arcState = travelCommit?.state ?? graphMoved;
   if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
   arcState = syncSheetToMovedHere(arcState, state.currentLocation);
   // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
-  if (!dyingTurn) arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+  arcState = maybeEnterInteriorDungeon(arcState, playerInput);
   // 28i — dungeon card turn: room facts, room actions (move/search/open), foes, loot, dungeon XP.
-  const dungeonTurn = dyingTurn
-    ? { state: arcState, receipts: [] as string[] }
-    : advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
+  const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
-  const storyTurn = dyingTurn
-    ? { state: arcState, receipts: [] as string[] }
-    : applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
+  const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
-  const tabletopTurn = dyingTurn
-    ? { state: arcState, receipts: [] as string[] }
-    : applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
+  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
   arcState = tabletopTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
   // TT-H1: Inspiration reroll chip (CheckResultRecord die).
@@ -1256,7 +1248,7 @@ export async function headlessFateTurn(
     arcStatusReceipts = [...arcStatusReceipts, ...inspirationTurn.receipts];
   }
   // OPT-6: headless resolves shop chips through the same resolveShopChip as live play.
-  const shopTurn = dyingTurn ? null : resolveShopChip(arcState, playerInput);
+  const shopTurn = resolveShopChip(arcState, playerInput);
   if (shopTurn) {
     arcState = shopTurn.state;
     arcStatusReceipts = [...arcStatusReceipts, ...shopTurn.receipts];

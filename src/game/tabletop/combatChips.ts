@@ -4,7 +4,6 @@
  * cantrip, potion and ally helpers, so a chip never offers what the engine cannot do.
  */
 import type { GameState } from '../types';
-import { presentNpcNames } from '../npcRelationships';
 import { ARMOR_TABLE, hasClassFeature, sheetSpellcasting, untrainedArmor, WEAPON_DICE } from './characterBuild';
 import { spellRoundChips } from './spellCasting';
 import { SPELLS } from '../rules/spells';
@@ -76,28 +75,7 @@ export const DEATH_SAVE_CHIP = 'Fight for breath';
 export function roundCombatChips(state: GameState): string[] | null {
   if (state.engineMode !== 'dnd' || !state.character?.srd) return null;
   const ds = state.deathSaves;
-  // SRD 5.2.1 (WotC, CC BY 4.0): at 0 HP the only turns are a death save, a present ally's
-  // DC 10 Wisdom (Medicine) stabilise, or drinking a healing potion you carry.
-  if (ds && !ds.dead && !ds.stable) {
-    const out = [DEATH_SAVE_CHIP];
-    const potion = healingPotion(state);
-    if (potion) out.push(`Drink the ${potion.name}`);
-    const pc = (state.character?.name ?? '').trim().toLowerCase();
-    const seen = new Set<string>();
-    for (const name of presentNpcNames(state)) {
-      const key = name.trim().toLowerCase();
-      if (!key || key === pc || seen.has(key)) continue;
-      seen.add(key);
-      out.push(`Ask ${name.trim()} to stabilise you`);
-    }
-    for (const c of state.companions ?? []) {
-      const key = (c.name ?? '').trim().toLowerCase();
-      if (!key || key === pc || seen.has(key) || (c.hp ?? 0) <= 0) continue;
-      seen.add(key);
-      out.push(`Ask ${c.name.trim()} to stabilise you`);
-    }
-    return out;
-  }
+  if (ds && !ds.dead && !ds.stable) return [DEATH_SAVE_CHIP];
   const enc = state.activeEncounter;
   if (!enc || enc.hp <= 0 || enc.phase === 'pending') return null;
   const weapon = pcWeaponName(state);
