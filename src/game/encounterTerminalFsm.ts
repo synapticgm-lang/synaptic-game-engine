@@ -4,7 +4,6 @@
  */
 
 import type { ActiveEncounter, EngineMode, GameState } from './types';
-import { fightRoundRulesFor, registerFightRoundRules } from './fightRoundRules';
 
 export type EncounterPhase = 'pending' | 'engaged' | 'resolving' | 'terminal';
 export type TerminalOutcome =
@@ -154,35 +153,9 @@ export interface TickEncounterResult {
 export const ENCOUNTER_REENGAGE_COOLDOWN = 12;
 
 /**
- * Tick while engaged. John 18:58: idle and talk picks don't advance the fight clock; only fight/flee/parley
- * (a real combat turn) do. The cap resolves only through each mode's own rules, i.e. on a combat turn.
- * Idle never farms XP; talk never auto-clears a live fight on the clock alone.
+ * Tick encounter FSM on accepted player input while engaged.
+ * Successful flee/parley/kill clear immediately; caps force terminal.
  */
-/**
- * A pick that takes a real combat turn under the mode's own rules: fight, flee and parley always do;
- * each mode adds its own (tabletop: the SRD 5.2.1 round actions, registered by tabletop/roundFight).
- * Talk and idle picks are never combat turns, so they never advance the fight clock.
- */
-export function isCombatTurnPick(state: Pick<GameState, 'engineMode'>, input: string): boolean {
-  if (isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input)) return true;
-  return fightRoundRulesFor(state.engineMode).isCombatTurn?.(input) ?? false;
-}
-
-/** LitRPG and story RPG: the foe answers with one swing from its own encounter record (its STR), then the forced outcome. */
-function encounterRecordCapRound(state: GameState, enc: ActiveEncounter): { state: GameState; receipts: string[]; defeated?: boolean } {
-  const swing = Math.max(1, Math.floor((enc.strength ?? 10) / 2));
-  const hpBefore = state.character.hp ?? 0;
-  const hpAfter = Math.max(0, hpBefore - swing);
-  if (hpAfter >= hpBefore) return { state, receipts: [] };
-  return {
-    state: { ...state, character: { ...state.character, hp: hpAfter }, activeEncounter: enc },
-    receipts: [`${enc.name} attacks (−${swing} HP)`],
-    defeated: hpAfter <= 0,
-  };
-}
-registerFightRoundRules('litrpg', { capRound: encounterRecordCapRound });
-registerFightRoundRules('rpg', { capRound: encounterRecordCapRound });
-
 export function tickEncounterTerminal(
   state: GameState,
   playerInput: string,
@@ -190,6 +163,7 @@ export function tickEncounterTerminal(
     fleeSucceeded?: boolean;
     enemyDead?: boolean;
     playerDead?: boolean;
+    /** Batch F — explicit ledger success (not unearned free-clear). */
     parleySucceeded?: boolean;
   }
 ): TickEncounterResult {
@@ -200,16 +174,26 @@ export function tickEncounterTerminal(
   const receipts: string[] = [];
   const input = playerInput || '';
 
-  if (opts?.playerDead) return commitClear(state, enc, 'defeat', 'player_hp_zero');
-  if (opts?.enemyDead || enc.hp <= 0) return commitClear(state, enc, 'victory', 'enemy_hp_zero');
-  if (opts?.fleeSucceeded) return commitClear(state, enc, 'escape', 'flee_success');
-  if (opts?.parleySucceeded) return commitClear(state, enc, 'parleyResolved', 'parley_success');
+  if (opts?.playerDead) {
+    return commitClear(state, enc, 'defeat', 'player_hp_zero');
+  }
+  if (opts?.enemyDead || enc.hp <= 0) {
+    return commitClear(state, enc, 'victory', 'enemy_hp_zero');
+  }
+  if (opts?.fleeSucceeded) {
+    return commitClear(state, enc, 'escape', 'flee_success');
+  }
+  if (opts?.parleySucceeded) {
+    return commitClear(state, enc, 'parleyResolved', 'parley_success');
+  }
 
   const idle = isEncounterIdleIntent(input);
-  const combatTurn = isCombatTurnPick(state, input);
   enc = {
     ...enc,
-    engagedTurnCount: combatTurn ? (enc.engagedTurnCount ?? 0) + 1 : (enc.engagedTurnCount ?? 0),
+    // Batch G — only fight/flee/parley advance the clear clock; idle loot/scout never farms victory XP.
+    engagedTurnCount: idle
+      ? (enc.engagedTurnCount ?? 0)
+      : (enc.engagedTurnCount ?? 0) + 1,
     phase: 'engaged',
   };
 
@@ -217,37 +201,39 @@ export function tickEncounterTerminal(
     enc = { ...enc, failedFleeCount: (enc.failedFleeCount ?? 0) + 1, caught: true };
     receipts.push(`Flee attempt failed (${enc.failedFleeCount}/${enc.maxFailedFlee})`);
     receipts.push('Caught — fight, parley, or press the attack to resolve');
+    // Batch W — flee cap does not soft-clear; threat stays live on the ledger.
   } else if (isParleyIntent(input)) {
+    // Batch F — park as resolving; success/fail settled from GM prose (not auto-clear).
     enc = { ...enc, phase: 'resolving' };
     receipts.push('Parley in progress — resolve from beat');
   } else if (isAttackIntent(input)) {
+    // Soft HP pressure so long loops still reach victory without ledger combat
     const maxHp = Math.max(1, enc.maxHp || enc.hp || 16);
     const curHp = typeof enc.hp === 'number' && !Number.isNaN(enc.hp) ? enc.hp : maxHp;
     const dmg = Math.max(3, Math.floor(maxHp / Math.max(3, enc.maxEngagedTurns ?? 8)));
-    enc = { ...enc, maxHp, hp: Math.max(0, curHp - dmg) };
+    enc = {
+      ...enc,
+      maxHp,
+      hp: Math.max(0, curHp - dmg),
+    };
     receipts.push(`${enc.name} HP: ${enc.hp}/${maxHp} (−${dmg})`);
-    if (enc.hp <= 0) return commitClear(state, enc, 'victory', 'enemy_hp_zero');
+    if (enc.hp <= 0) {
+      return commitClear(state, enc, 'victory', 'enemy_hp_zero');
+    }
   } else if (idle) {
     receipts.push('Threat still live — idle loot/scout does not clear the encounter');
   }
 
-  let nextState: GameState = { ...state, activeEncounter: enc };
-  if ((enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
-    // Idle or talk at the cap: no combat turn was taken, so nothing resolves (the threat stays live).
-    if (!combatTurn) return { state: nextState, receipts, forcedTerminal: false };
-    // The foe's turn by the mode's own rules (tabletop: SRD 5.2.1 round via roundFight; LitRPG/RPG: encounter record).
-    const round = fightRoundRulesFor(state.engineMode).capRound?.(nextState, enc, input) ?? null;
-    if (round) {
-      receipts.push(...round.receipts);
-      nextState = round.state;
-      if (!nextState.activeEncounter) return { state: nextState, receipts, forcedTerminal: true };
-      enc = initEncounterTerminal(nextState.activeEncounter, nextState);
-      if (round.defeated) return commitClear(nextState, enc, 'defeat', 'player_hp_zero');
-    }
-    return commitClear(nextState, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
+  const terminalIntent = isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input);
+  if (terminalIntent && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
+    return commitClear(state, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }
 
-  return { state: nextState, receipts, forcedTerminal: false };
+  return {
+    state: { ...state, activeEncounter: enc },
+    receipts,
+    forcedTerminal: false,
+  };
 }
 
 /** Diegetic cues that the foe accepted a truce / stood down (Batch F). */
@@ -430,25 +416,101 @@ export function encounterBlocksTravel(state: GameState): boolean {
   return isEncounterEngaged(state) || !!state.activeEncounter;
 }
 
-/** Batch Z — ChoiceCompiler pad filters. */
+// ============================================================================
+// Batch Z Milestone 2 — State-Lock Combat & Travel
+// FSM helpers for ChoiceCompiler pad filtering
+// ============================================================================
+
+/**
+ * Can the player travel in the current FSM state?
+ * Caught or in combat = NO travel pads.
+ */
 export function canTravelInFsmState(state: GameState): boolean {
   const enc = state.activeEncounter ?? state.pendingEncounter;
-  if (enc?.caught || isEncounterEngaged(state) || state.sceneFacts?.pendingEncounter) return false;
+  
+  // Caught: no travel
+  if (enc?.caught) return false;
+  
+  // In combat: no travel
+  if (isEncounterEngaged(state)) return false;
+  
+  // Pending encounter: no travel
+  if (state.sceneFacts?.pendingEncounter) return false;
+  
   return true;
 }
+
+/**
+ * Can the player inspect in the current FSM state?
+ * Caught = NO inspection pads (must fight/plead/struggle).
+ */
 export function canInspectInFsmState(state: GameState): boolean {
-  return !(state.activeEncounter ?? state.pendingEncounter)?.caught;
+  const enc = state.activeEncounter ?? state.pendingEncounter;
+  
+  // Caught: no inspect
+  if (enc?.caught) return false;
+  
+  return true;
 }
+
+/**
+ * Can the player shop/merchant in the current FSM state?
+ * In combat = NO shop pads.
+ */
 export function canShopInFsmState(state: GameState): boolean {
-  return !isEncounterEngaged(state);
+  // In combat: no shop
+  if (isEncounterEngaged(state)) return false;
+  
+  return true;
 }
+
+/**
+ * Get the allowed combat actions for the current FSM state.
+ * Caught = only [Attack, Plead, Struggle, Surrender].
+ * In combat (not caught) = [Attack, Flee, Parley] (if caps allow).
+ * No combat = all actions allowed.
+ */
 export function getAllowedCombatActions(state: GameState): {
-  attack: boolean; flee: boolean; parley: boolean; plead: boolean; struggle: boolean; surrender: boolean;
+  attack: boolean;
+  flee: boolean;
+  parley: boolean;
+  plead: boolean;
+  struggle: boolean;
+  surrender: boolean;
 } {
   const enc = state.activeEncounter ?? state.pendingEncounter;
-  if (enc?.caught) return { attack: true, flee: false, parley: false, plead: true, struggle: true, surrender: true };
-  if (enc && isEncounterEngaged(state)) {
-    return { attack: true, flee: fleeAvailable(enc), parley: parleyAvailable(enc), plead: false, struggle: false, surrender: false };
+  
+  // Caught: only desperate actions
+  if (enc?.caught) {
+    return {
+      attack: true,
+      flee: false,
+      parley: false,
+      plead: true,
+      struggle: true,
+      surrender: true,
+    };
   }
-  return { attack: true, flee: true, parley: true, plead: true, struggle: true, surrender: true };
+  
+  // In combat (not caught): combat actions
+  if (enc && isEncounterEngaged(state)) {
+    return {
+      attack: true,
+      flee: fleeAvailable(enc),
+      parley: parleyAvailable(enc),
+      plead: false,
+      struggle: false,
+      surrender: false,
+    };
+  }
+  
+  // No combat: all allowed
+  return {
+    attack: true,
+    flee: true,
+    parley: true,
+    plead: true,
+    struggle: true,
+    surrender: true,
+  };
 }

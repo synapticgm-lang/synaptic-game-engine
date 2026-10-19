@@ -12,7 +12,6 @@ import { growWeaponFamiliarity, weaponCategory } from '../checkRules';
 import { pushCombatStateTx } from '../stateTx';
 import { fightLootClause, weaponInHand } from '../infoSheet';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
-import { registerFightRoundRules } from '../fightRoundRules';
 import { advanceClock, isRoadFoe, settleRoadMeeting } from '../travelJourney';
 import { abilityMod, ARMOR_TABLE, deriveTabletopSheet, hasClassFeature, masteryFor, sneakAttackDice, tabletopArmorClass, WEAPON_DICE, weaponProficient } from './characterBuild';
 import { potionHealDice } from '../rules/magicItems';
@@ -617,15 +616,3 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
   }
   return { state: next, receipts, facts: `${DYING_HEAD} ${fact}`, noTerminal: true };
 }
-
-// FIGHT2 (John 19:15): tabletop supplies its own fight round rules to the encounter FSM.
-// SRD 5.2.1 Combat Step by Step (WotC, CC BY 4.0): "The game organizes the chaos of combat into a cycle of
-// rounds and turns... each participant in a battle takes a turn." Every round action is a combat turn, and at
-// the cap the foe takes its turn in initiative order through resolveRoundFight (no new damage formula).
-registerFightRoundRules('dnd', {
-  isCombatTurn: (input) => classifyRoundAction(input) !== 'other',
-  capRound: (state, enc, input) => {
-    const round = resolveRoundFight(state, state, enc, input || 'Dodge', {});
-    return round ? { state: round.state, receipts: round.receipts } : null;
-  },
-});
