@@ -39,12 +39,13 @@ import type { WriterRawIssue } from './openRouterChat';
 import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
+import { isOfferRefuseLine } from './openingOffer';
 import { isRoadLabel, roadMeetingOpenerLines, writerEngineResult } from './travelJourney';
 import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
 import { checkPlayCrimes } from './turnCheck';
-import { peopleHere } from './chipLegality';
+import { mentionsName, peopleHere } from './chipLegality';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 export type WriterDraft = {
   prose: string;
@@ -145,8 +146,21 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   }
   if (check.previousGm && isLastGmReprint(text, check.previousGm)) out.push('Same text as the last beat: write a new one.');
   if (isUnaskedCombatClose(text, check.playerInput)) out.push('Do not end or restart a fight the engine did not settle this turn.');
+  const here = peopleHere(check.state);
   for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0)
-    if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${peopleHere(check.state).join(', ') || '(none)'}).`);
+    if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${here.join(', ') || '(none)'}).`);
+  if (isOfferRefuseLine(check.playerInput)) {
+    const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();
+    const named = (card || openingCastNames(check.state)[0] || '').trim();
+    const low = named.toLowerCase();
+    const who = !named || low === 'panel' || low === 'the panel' || low === 'the people here' || low === 'people here' || low === 'the people who pulled you' ? '' : named;
+    let seated = false;
+    if (who) for (let i = 0; i < here.length; i++) if (mentionsName(here[i]!, who) || mentionsName(who, here[i]!)) seated = true;
+    const quoted = text.includes('"') || text.includes('\u201c');
+    let namedHere = false;
+    for (let i = 0; i < here.length; i++) if (mentionsName(text, here[i]!)) namedHere = true;
+    if (seated && !quoted && !namedHere) out.push('Someone must answer the player in quoted speech.');
+  }
   return [...new Set(out)];
 }
 export type WriterIssue = WriterRawIssue | 'recycled' | 'unresolved';

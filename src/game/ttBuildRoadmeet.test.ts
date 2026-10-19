@@ -14,6 +14,7 @@ import { peopleHere } from './chipLegality';
 import { presentNpcRecords } from './npcRecords';
 import { writerDraftProblems, type DraftCheck } from './writerTurn';
 import { parsePlayerIntent } from './intentParser';
+import { applyOpeningOfferChoice } from './openingOffer';
 import { commitTravel, roadMeetingFact, roadMeetingRef } from './travelJourney';
 import { PLEA_HELP } from './rules/travelDay';
 import { checkPlayCrimes } from './turnCheck';
@@ -108,5 +109,32 @@ describe('tt-build-roadmeet 2a: road meetings are named events', () => {
     const out = harvestNarrativePeople(s, prose, s.turn ?? 1, { refs: [{ tok: row.tok, id: row.id, use: 'speaker' }], refEnum: packet.refEnum });
     expect(out.people).not.toContain(name);
     expect(out.state.sceneFacts?.present ?? []).not.toContain(name);
+  });
+
+  it('q72r5 an offer refuse seats the card owner, and an absent voice stays blocked', () => {
+    const place = 'Greyhollow Inn';
+    const s = keepState('q72r5-offer');
+    const withCard = {
+      ...s,
+      currentLocation: place,
+      turn: 3,
+      openingEstablishment: {
+        pending: [], answers: { where: place }, complete: true,
+        card: {
+          place, cast: 'the innkeep', castNames: [], props: [], names: [],
+          offer: { items: [], accept: 'The innkeep sets a cot.', refuse: 'The innkeep keeps the cot.', noun: 'offer' },
+        },
+      },
+      npcMemories: [{ npcId: 'absent-clerk', npcName: 'Maud Merrow', disposition: 'neutral' as const, facts: [], lastSeenTurn: 0, location: 'Millstone' }],
+    } as GameState;
+    const refused = applyOpeningOfferChoice(withCard, 'Refuse the offer').state;
+    expect(formatSceneBlock(refused)).toMatch(/the innkeep \(person\)/);
+    const check: DraftCheck = {
+      state: refused, playerInput: 'Refuse the offer', intent: parsePlayerIntent('Refuse the offer', refused),
+      engineFact: 'Offer refused: The innkeep keeps the cot.', previousGm: '',
+    };
+    const answered = 'Jax refused the cot at the inn. The innkeep said, "The cot stays with me." The room went quiet after that.';
+    expect(writerDraftProblems(answered, check).some((p) => p.startsWith('Absent speaker:') || p.startsWith('Someone must answer'))).toBe(false);
+    expect(writerDraftProblems(`${answered} Maud Merrow said, "The mill is shut."`, check).some((p) => p.startsWith('Absent speaker:'))).toBe(true);
   });
 });

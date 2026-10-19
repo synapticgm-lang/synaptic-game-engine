@@ -17,7 +17,9 @@ import {
   tokensOf,
 } from '../game/timeline';
 import { findUngroundedNamedClaims } from '../game/suggestionValidation';
-import { groundPlayerAction } from '../game/intentParser';
+import { groundPlayerAction, parsePlayerIntent } from '../game/intentParser';
+import { applyOpeningOfferChoice } from '../game/openingOffer';
+import { writerDraftProblems } from '../game/writerTurn';
 import { registerWriterIntroductions } from '../game/writerIntroductions';
 import { spokenLines } from '../game/settlementQuestCards';
 import type { GameState, TimelineFact } from '../game/types';
@@ -463,5 +465,50 @@ describe('q72-TIMELINETAGS', () => {
   it('q72r4: SCENE states only PRESENT may speak', () => {
     const block = formatSceneBlock(baseState());
     expect(block.indexOf('PRESENT:')).toBeLessThan(block.indexOf('Only PRESENT people may speak'));
+  });
+
+  it('q72r5 refuse seats the offer giver; their answer stands; an absent voice does not', () => {
+    const place = 'a ruined empty circle outside the west wall';
+    const s = baseState({
+      turn: 3,
+      currentLocation: place,
+      sceneFacts: { crowd: 'none', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 2 },
+      npcMemories: [{ npcId: 'sp-npc-king-pellane', npcName: 'King Pellane', disposition: 'neutral', facts: [], lastSeenTurn: 0, location: 'Pellane War Camp' }],
+      openingEstablishment: {
+        pending: [], answers: { where: place }, complete: true, sceneWritten: true,
+        card: {
+          place, parentHub: 'West Wall', cast: 'the scavengers', castNames: [], props: [], names: [],
+          offer: { items: ['short blade'], accept: 'The patrol will issue a short blade.', refuse: 'The scavengers will trade junk.', noun: 'offer' },
+        },
+      } as GameState['openingEstablishment'],
+      quests: [{
+        id: 'sp-quest-1', name: 'The Circle', type: 'main', status: 'active', revealed: true, description: '',
+        objectives: [{
+          id: 's1', description: 'Ask', completed: false,
+          routes: [
+            { id: 'p', kind: 'person', label: 'Ask Mira Flint about the lead', entityId: 'npc:Mira Flint' },
+            { id: 'pl', kind: 'place', label: 'Search the circle for signs', entityId: 'place:circle' },
+            { id: 'sy', kind: 'system', label: 'Read the System trail', entityId: 'system:s1' },
+          ],
+        }],
+      } as GameState['quests'][number]],
+    });
+    const refused = applyOpeningOfferChoice(s, 'Refuse the offer').state;
+    expect(formatSceneBlock(refused)).toMatch(/PRESENT:.*the scavengers/);
+    const check = {
+      state: refused,
+      playerInput: 'Refuse the offer',
+      intent: parsePlayerIntent('Refuse the offer', refused),
+      engineFact: 'Offer refused: The scavengers will trade junk.',
+      previousGm: '',
+    };
+    const answered = 'Jax turned the offer down beside the cracked stone. The scavengers said, "We will trade junk for whatever is in your pockets." The circle stayed quiet after that.';
+    expect(writerDraftProblems(answered, check).some((p) => p.startsWith('Absent speaker:') || p.startsWith('Someone must answer'))).toBe(false);
+    const silent = 'THEY REFUSED THE OFFER. THEY WALKED AWAY. THEY WALKED AWAY FROM THE STONES AND DID NOT LOOK BACK.';
+    expect(writerDraftProblems(silent, check).some((p) => p.startsWith('Someone must answer'))).toBe(true);
+    const absent = `${answered} King Pellane said, "Come to the camp tonight."`;
+    expect(writerDraftProblems(absent, check).some((p) => p.startsWith('Absent speaker:'))).toBe(true);
+    const asked = applyOpeningOfferChoice(s, 'Ask Mira Flint about the lead').state;
+    expect(formatSceneBlock(asked)).toMatch(/Mira Flint \(person\)/);
   });
 });

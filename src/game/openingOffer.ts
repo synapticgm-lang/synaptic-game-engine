@@ -5,7 +5,9 @@
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
 import { isAcceptOfferLine, openingCastNames, openOpeningOffer } from './openingEstablishment';
+import { openRouteView } from './questRoutes';
 import { applyStructuralEvents } from './structuralEvents';
+import { recordPersonSeen } from './timeline';
 
 const OFFER_NOUN = /\b(?:work|job|offer|kit|deal|cots|terms)\b/i;
 
@@ -18,12 +20,26 @@ export function applyOpeningOfferChoice(
   state: GameState,
   playerInput: string
 ): { state: GameState; receipts: string[] } {
-  const offer = openOpeningOffer(state);
-  const est = state.openingEstablishment;
-  if (!offer || !est) return { state, receipts: [] };
+  let seated = state;
+  if (isOfferRefuseLine(playerInput)) {
+    const card = (seated.openingEstablishment?.card?.cast ?? '').trim();
+    const named = (card || openingCastNames(seated)[0] || '').trim();
+    const low = named.toLowerCase();
+    const who = !named || low === 'panel' || low === 'the panel' || low === 'the people here' || low === 'people here' || low === 'the people who pulled you' ? '' : named;
+    if (who) seated = recordPersonSeen(seated, who, 'made the offer');
+  }
+  const route = openRouteView(seated, playerInput)?.routeByLabel;
+  const eid = (route?.kind === 'person' ? route.entityId : '') ?? '';
+  if (eid.toLowerCase().startsWith('npc:')) {
+    const who = eid.slice(4).trim();
+    if (who) seated = recordPersonSeen(seated, who, 'addressed');
+  }
+  const offer = openOpeningOffer(seated);
+  const est = seated.openingEstablishment;
+  if (!offer || !est) return { state: seated, receipts: [] };
   if (isOfferRefuseLine(playerInput)) {
     return {
-      state: { ...state, openingEstablishment: { ...est, offerTaken: 'refused' } },
+      state: { ...seated, openingEstablishment: { ...est, offerTaken: 'refused' } },
       receipts: [`Offer refused: ${offer.refuse || `the ${offer.noun}`}`],
     };
   }
@@ -34,7 +50,7 @@ export function applyOpeningOfferChoice(
       qty: 1,
       lootSource: 'story',
     }));
-    const granted = applyStructuralEvents(state, events, { playerInput });
+    const granted = applyStructuralEvents(seated, events, { playerInput });
     // Who made the offer is the card's cast; the card's terms ("they will unbar the door") are not settled here.
     const who = openingCastNames(state)[0];
     const from = who ? ` from ${who}` : '';
@@ -43,5 +59,5 @@ export function applyOpeningOfferChoice(
       receipts: [`Offer accepted: the ${offer.noun}${from}`, ...granted.notes.filter((n) => /^Loot granted:/.test(n))],
     };
   }
-  return { state, receipts: [] };
+  return { state: seated, receipts: [] };
 }
