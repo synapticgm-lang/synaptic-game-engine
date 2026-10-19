@@ -39,7 +39,7 @@ export interface StarterQuest {
   recommendedLevel: number;
   objectives: string[];
   /** Per objective: where (or with whom) it is taken, for steps whose wording names neither. */
-  objectiveAnchors?: Array<{ place?: string; placeId?: string | null; people?: string[]; room?: string; verb?: string; object?: string; routes?: import('@/game/types').QuestRoute[] } | undefined>;
+  objectiveAnchors?: Array<{ place?: string; people?: string[]; room?: string } | undefined>;
   rewards: string;
   type?: 'main' | 'side' | 'faction';
 }
@@ -148,8 +148,6 @@ export interface CampaignBible {
    * Leave unset for fantasy arrivals that should keep the default traveler pack.
    */
   replaceDefaultLoadout?: boolean;
-  /** q70 � when true, New Game seeds healing potions from hpRecoveryConfig (never inferred from copy). */
-  hpRecoveryStarterKit?: boolean;
   startingContainer?: { id: string; name: string; capacity: number };
   /** Hook ingredients for the generated opening. Not a script to reprint. */
   openingHook?: string;

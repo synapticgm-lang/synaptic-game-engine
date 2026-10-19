@@ -39,8 +39,6 @@ export interface Item {
   identifiedTurn?: number;
   /** Tabletop: cursed magic item — voluntary end of attunement is refused until the curse is broken. */
   cursed?: boolean;
-  /** q70 — flat HP restored when this consumable is used (LitRPG / RPG healing potion). */
-  healHp?: number;
 }
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'material' | 'container' | 'accessory' | 'quest';
@@ -1157,10 +1155,6 @@ export interface GameState {
   ambushGraceUntilTurn?: number | null;
   /** Weakened expires at this turn (exclusive), or earlier on a long rest. */
   weakenedUntilTurn?: number | null;
-  /** q70 — consecutive non-combat turns toward out-of-combat HP regen. */
-  hpRegenNonCombatStreak?: number;
-  /** q70 — low-HP System warning already shown for the current under-threshold streak. */
-  lowHpWarningActive?: boolean;
   /** Turn the lifeline already fired (idempotent per turn). */
   lifelineFiredTurn?: number | null;
   /** STATUS lines from the last lifeline; callers merge into systemLog then clear. */
@@ -2099,11 +2093,6 @@ export interface PlaceRecord {
   lastVisitedTurn?: number;
   /** 29e — biome for quest-site fitness */
   biome?: string;
-  /**
-   * q70-HPRECOVERY — authored rest place (safe / inn / campfire / home).
-   * LitRPG / RPG rest reads this (or OutdoorHub.restKind); never inferred from the name.
-   */
-  restKind?: 'safe' | 'inn' | 'campfire' | 'home';
   settlementKind?: string;
   regionId?: string;
   /** True if seeded from premade world map (not GM invent). */

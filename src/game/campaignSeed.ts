@@ -11,7 +11,6 @@ import { discoverLocation } from './locationDiscovery';
 import { seedBibleNpcRoster } from './npcMemory';
 import { sanitizeBibleForPlay } from './storyDataBoundary';
 import { fitKitToPocket, pocketOnlyKit } from './systemHousing';
-import { applyHpRecoveryStarterKit } from './hpRecovery';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -88,11 +87,6 @@ export function seedStateFromCampaignBible(
   const playerLevel = state.character?.level ?? 1;
   const quests = state.quests ?? [];
   const loadout = buildCampaignLoadout(state, bible, playerLevel);
-  // q70 — healing starter kit only when bible.hpRecoveryStarterKit is marked (data field).
-  const withHealKit = applyHpRecoveryStarterKit(
-    { ...state, inventory: loadout.inventory, containers: loadout.containers },
-    bible
-  );
   const character = applyCampaignCharacter(state.character, bible);
   const questRail =
     'No opening quest yet — do not invent quest log entries. Guide Book hooks stay unspoken until the System reveals them.';
@@ -110,8 +104,8 @@ export function seedStateFromCampaignBible(
     storyName: state.storyName,
     lorebook: dedupedLore,
     quests,
-    inventory: withHealKit.inventory,
-    containers: withHealKit.containers ?? loadout.containers,
+    inventory: loadout.inventory,
+    containers: loadout.containers,
     currentLocation: startingLocation,
     timeline: [
       ...(state.timeline ?? []),

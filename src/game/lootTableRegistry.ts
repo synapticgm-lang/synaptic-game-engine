@@ -12,8 +12,6 @@ import { magicItem, magicItemsAtRarity } from './rules/magicItems';
 import { SRD_MONSTERS } from './rules/srdMonsters';
 import { srdGearRow } from './tabletop/characterBuild';
 import { modeBuyGp } from './merchant';
-import { healingPotionItem } from './hpRecovery';
-import { hpRecoveryConfig } from './rules/hpRecoveryConfig';
 
 export interface LootEntry {
   id: string;
@@ -517,12 +515,6 @@ function makeItem(
   id: string,
   profile: LootProfile
 ): { item: Item; category: LootItemCategory } {
-  // q70 — LitRPG / RPG Common rolls may drop the config healing potion (existing loot path).
-  const healCfg = !dnd ? hpRecoveryConfig(state.engineMode) : null;
-  if (healCfg && rarity === 'Common' && rng() < healCfg.potionLootChance) {
-    const potion = healingPotionItem(state.engineMode, id);
-    if (potion) return { item: { ...potion, provenance: `Engine loot (${LOOT_PROFILES[profile].label})` }, category: 'trinket' };
-  }
   const all = (Object.keys(BASE_NAMES) as LootItemCategory[]).filter((c) => !(dnd && c === 'firearm'));
   const fitList = fit.filter((c) => all.includes(c));
   const offList = all.filter((c) => !fitList.includes(c));

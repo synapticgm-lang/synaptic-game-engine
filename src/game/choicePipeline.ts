@@ -37,7 +37,6 @@ import { openingOfferPads } from './openingEstablishment';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { shopChips } from './shopChips';
-import { hpRecoveryRestChip } from './hpRecovery';
 import { inspirationRerollPads } from './rules/houseRules';
 import { systemPromptPad } from './rules/abilityPoints';
 import { classOfferPad } from './rules/characterClass';
@@ -415,8 +414,7 @@ export type ChipKind =
   | 'shop'
   | 'inspiration-reroll'
   | 'affordance'
-  | 'free-input'
-  | 'hp-rest';
+  | 'free-input';
 
 let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
 
@@ -449,7 +447,6 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
   const sources: Array<[ChipKind, string[]]> = [
     ['inspiration-reroll', inspirationRerollPads(state)],
-    ['hp-rest', [hpRecoveryRestChip(state) ?? '']],
     ['shop', shopChips(state).map((c) => c.label)],
     ['quest-step', [tabletopStepChip(state) ?? '']],
     ['decision', [storyRpgDecisionChip(state) ?? '']],

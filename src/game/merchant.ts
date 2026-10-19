@@ -4,8 +4,6 @@ import modeShopData from '../data/modeShopPrices.json';
 import { presentNpcRecords } from './npcRecords';
 import { addItem, getItemValue, removeItem } from './inventory';
 import { changeFor, formatCp, formatPurse, gainCoins, payCoins, purseGold, purseOf, shopPriceCp, srdSaleCp, usesPurse } from './rules/coins';
-import { hpRecoveryConfig } from './rules/hpRecoveryConfig';
-import { stampHealingPotionFields } from './hpRecovery';
 
 /** OPT-6: LitRPG/RPG list prices by itemType×rarity (gold). Tabletop keeps SRD 5.2.1 Equipment / Selling Treasure. */
 export type ShopMode = 'litrpg' | 'rpg';
@@ -148,11 +146,7 @@ export function buyPriceLabel(state: GameState, name: string, quantity = 1): str
       if (r.name.toLowerCase() === key) { row = r; break; }
     }
     if (!row) return null;
-    const healCfg = hpRecoveryConfig(state.engineMode);
-    const gp =
-      healCfg && key === healCfg.potionName.toLowerCase()
-        ? healCfg.potionPriceGp
-        : modeBuyGp(state.engineMode, row.itemType, row.rarity);
+    const gp = modeBuyGp(state.engineMode, row.itemType, row.rarity);
     if (gp == null || gp <= 0) return null;
     return `${gp * qty}g`;
   }
@@ -180,16 +174,12 @@ export function buyItem(state: GameState, name: string, quantity = 1): BuyResult
       if (r.name.toLowerCase() === key) { row = r; break; }
     }
     if (!row) return { ok: false, reason: `${name} is not for sale here.` };
-    const healCfg = hpRecoveryConfig(state.engineMode);
-    const unit =
-      healCfg && name.trim().toLowerCase() === healCfg.potionName.toLowerCase()
-        ? healCfg.potionPriceGp
-        : modeBuyGp(state.engineMode, row.itemType, row.rarity);
+    const unit = modeBuyGp(state.engineMode, row.itemType, row.rarity);
     if (unit == null || unit <= 0) return { ok: false, reason: `${name} is not for sale here.` };
     const gp = unit * qty;
     if ((state.gold ?? 0) < gp) return { ok: false, reason: `Not enough gold for ${name}.` };
     const paid = { ...state, gold: (state.gold ?? 0) - gp };
-    const added = addItem(paid, stampHealingPotionFields(state.engineMode, {
+    const added = addItem(paid, {
       id: `buy-${priceKeyId(name)}-${state.log.length}`,
       name,
       rarity: row.rarity,
@@ -197,7 +187,7 @@ export function buyItem(state: GameState, name: string, quantity = 1): BuyResult
       itemType: row.itemType,
       baseValue: unit,
       provenance: 'Bought from a merchant',
-    }));
+    });
     if (!added.ok) return { ok: false, reason: added.reason ?? 'No room to carry it.' };
     const receipt: ShopReceipt = {
       kind: 'buy', item: name, quantity: qty, cp: gp * 100,
