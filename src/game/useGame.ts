@@ -169,7 +169,7 @@ import { dropInsultGear } from './wornGear';
 import { formatCampaignStoryName, getCampaignBibleById, isKidRestrictedCampaign, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, playerVisibleActionText, gmFacingPlayerAction, isSaferSceneLeak, playerTypedDialogue, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
-import { validateActionHard, restoreDraftAfterBlock } from './actionValidation';
+import { validateActionHard } from './actionValidation';
 import {
   checkObligationCoverage,
   buildObligationRetryBlock,
@@ -1127,14 +1127,6 @@ export function useGame() {
     if (sent) setRestoreDraft(sent);
   });
 
-  const pinBlockedDraft = useCallbackRef((line: string) => {
-    const blocked = restoreDraftAfterBlock(line, lastInputRef.current);
-    lastInputRef.current = blocked; setLastInput(blocked); setRestoreDraft(blocked);
-  });
-  const clearActionDraft = useCallbackRef(() => {
-    lastInputRef.current = ''; setLastInput(''); setRestoreDraft(null);
-  });
-
   const fetchPanelImage = useCallbackRef(async (
     prompt: string,
     settings: Settings,
@@ -2027,7 +2019,7 @@ export function useGame() {
       const picked = matchRepairOption(input, current.pendingRepair);
       if (!picked) {
         addToast('Pick one of the repair options or tap a button below.', 'info');
-        pinBlockedDraft(input);
+        setRestoreDraft(input);
         return;
       }
       input = current.pendingRepair.situation === 'unsupported'
@@ -2083,7 +2075,7 @@ export function useGame() {
     const mediated = mediatePlayerInput(input);
     if (mediated.action === 'block') {
       addToast(mediated.playerMessage ?? "That action isn't available.", 'info');
-      pinBlockedDraft(input);
+      setRestoreDraft(input);
       turnInFlightRef.current = false;
       return;
     }
@@ -2148,7 +2140,7 @@ export function useGame() {
               }
             : s
         );
-        pinBlockedDraft(mediated.text);
+        setRestoreDraft(mediated.text);
         turnInFlightRef.current = false;
         return;
       }
@@ -2195,7 +2187,7 @@ export function useGame() {
               }
             : s
         );
-        pinBlockedDraft(mediated.text);
+        setRestoreDraft(mediated.text);
         addToast(errorMessage, 'info');
         turnInFlightRef.current = false;
         return;
@@ -5505,7 +5497,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     ).state);
     setState(newState);
     stateRef.current = newState;
-    clearActionDraft();
     bindSessionImageCache(newState.saveId);
     isHydratedRef.current = true;
     debugLogger.record('STATE_UPDATE', 'New game state created and hydrated', {
@@ -6250,7 +6241,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
       setState(recovered);
       stateRef.current = recovered;
-      clearActionDraft();
       bindSessionImageCache(recovered.saveId);
       setTelemetryContext({ saveId: recovered.saveId, engineMode: recovered.engineMode });
       isHydratedRef.current = true;
@@ -6487,7 +6477,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const next = { ...s, pendingRepair: null, log, lastUpdated: Date.now() };
       stateRef.current = next;
       setState(next);
-      pinBlockedDraft(s.pendingRepair.playerInput);
+      setRestoreDraft(s.pendingRepair.playerInput);
       void persist(next);
       addToast('Clarification cancelled. Your line is back in the box — send again or rephrase.', 'info');
     },
@@ -6606,7 +6596,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         });
         setState(recovered);
         stateRef.current = recovered;
-        clearActionDraft();
         bindSessionImageCache(recovered.saveId);
         setTelemetryContext({ saveId: recovered.saveId, engineMode: recovered.engineMode });
         isHydratedRef.current = true;

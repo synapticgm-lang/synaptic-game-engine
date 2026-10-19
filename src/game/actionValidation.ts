@@ -8,10 +8,6 @@
  */
 
 import type { GameState } from './types';
-
-export function restoreDraftAfterBlock(blockedLine: string, _olderDraft?: string | null): string {
-  return (blockedLine ?? '').replace(/\s+/g, ' ').trim();
-}
 import { groundPlayerAction, isRoomLayoutExploreAsk } from './intentParser';
 import { isExploreOrLayoutAsk, isInformationalOrAsk } from './repairEngine';
 import {
