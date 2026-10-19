@@ -43,6 +43,8 @@ import { isRoadLabel, roadMeetingOpenerLines, writerEngineResult } from './trave
 import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
+import { checkPlayCrimes } from './turnCheck';
+import { peopleHere } from './chipLegality';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 export type WriterDraft = {
   prose: string;
@@ -143,6 +145,8 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   }
   if (check.previousGm && isLastGmReprint(text, check.previousGm)) out.push('Same text as the last beat: write a new one.');
   if (isUnaskedCombatClose(text, check.playerInput)) out.push('Do not end or restart a fight the engine did not settle this turn.');
+  for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0)
+    if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${peopleHere(check.state).join(', ') || '(none)'}).`);
   return [...new Set(out)];
 }
 export type WriterIssue = WriterRawIssue | 'recycled' | 'unresolved';
@@ -205,9 +209,8 @@ export async function runWriterTurnWithFightRetry(opts: {
   for (let i = 0; i < done.remaining.length; i++) {
     const p = done.remaining[i]!;
     if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-      || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')) {
-      blocking.push(p);
-    }
+      || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')
+      || p.startsWith('Absent speaker:')) blocking.push(p);
   }
   if (!blocking.length) return done;
   let raw = '';
@@ -219,20 +222,14 @@ export async function runWriterTurnWithFightRetry(opts: {
     for (let i = 0; i < second.remaining.length; i++) {
       const p = second.remaining[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting')) {
-        hardLeft = true;
-        break;
-      }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
     for (let i = 0; i < blocking.length; i++) {
       const p = blocking[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting')) {
-        hardLeft = true;
-        break;
-      }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {

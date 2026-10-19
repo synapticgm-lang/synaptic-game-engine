@@ -22,6 +22,7 @@ import { isPlannerUiPersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
 import { hubsForBibleId } from './outdoorHubs';
+import { roadMeetingLabel } from './travelJourney';
 
 function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
@@ -163,20 +164,21 @@ export function harvestNarrativePeople(
     })
     .filter(Boolean);
 
-  // 14a — when JSON bind succeeded, occupancy comes from refs ids, not prose invent.
-  // A person's name inside a place's name ("Mira's Apothecary") is the place, not her.
-  // A road meeting is an event of the trip, never someone present.
-  const roadName = state.journey?.encounter?.name;
-  const placeMasked = maskPlaceNames(state, prose);
-  const peopleProse = roadName ? placeMasked.split(roadName).join(' ') : placeMasked;
-  const registeredNpcs = (
-    fromTokenRefs.length
-      ? fromTokenRefs
-      : [
-          ...extractRegisteredNpcs(peopleProse, state.bibleId ?? state.campaignBibleId, state),
-          ...extractProperNamesFromProse(peopleProse, state.bibleId ?? state.campaignBibleId, state),
-        ]
-  ).filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+  // 14a — occupancy from refs; road meeting name/label is EVENT, never present.
+  const enc = state.journey?.encounter;
+  let peopleProse = maskPlaceNames(state, prose);
+  for (const bit of [enc?.name, enc ? roadMeetingLabel(enc.kind) : '']) {
+    const n = (bit ?? '').trim();
+    while (n) {
+      const at = peopleProse.toLowerCase().indexOf(n.toLowerCase());
+      if (at < 0) break;
+      peopleProse = `${peopleProse.slice(0, at)} ${peopleProse.slice(at + n.length)}`;
+    }
+  }
+  const registeredNpcs = (fromTokenRefs.length ? fromTokenRefs : [
+    ...extractRegisteredNpcs(peopleProse, state.bibleId ?? state.campaignBibleId, state),
+    ...extractProperNamesFromProse(peopleProse, state.bibleId ?? state.campaignBibleId, state),
+  ]).filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
   
   if (!registeredNpcs.length) {
     const crowded = {
@@ -199,7 +201,7 @@ export function harvestNarrativePeople(
   const next = state;
   let lorebook = [...(next.lorebook ?? [])];
   const npcMemories = next.npcMemories ?? [];
-  const people: string[] = [];
+  let people: string[] = [];
   const present = new Set([...(next.sceneFacts?.present ?? [])]);
 
   const traveled = locationChangedRecently(state);
@@ -280,29 +282,18 @@ export function harvestNarrativePeople(
   presentList = [...new Set(
     presentList.filter((p) => !isPc(p)).map(foldFirstName).filter((p): p is string => !!p)
   )];
-  const withNames = {
-    ...next,
-    lorebook,
-    sceneFacts: {
-      ...(next.sceneFacts ?? {}),
-      present: presentList.slice(0, 12),
-    },
-  };
-  const crowded = {
-    ...withNames,
-    sceneFacts: harvestHookIntoSceneFacts(
-      harvestCrowdIntoSceneFacts(withNames.sceneFacts, prose, turn),
-      prose,
-      turn
-    ),
-  };
-  return {
-    state: applyClosedFactHarvest(
-      applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
-      prose
-    ),
-    people,
-  };
+  const roadSkip = new Set<string>();
+  for (const bit of [enc?.name, enc ? roadMeetingLabel(enc.kind) : '']) {
+    const k = (bit ?? '').trim().toLowerCase();
+    if (k) roadSkip.add(k);
+  }
+  if (roadSkip.size) {
+    presentList = presentList.filter((p) => !roadSkip.has(p.toLowerCase()));
+    people = people.filter((p) => !roadSkip.has(p.toLowerCase()));
+  }
+  const withNames = { ...next, lorebook, sceneFacts: { ...(next.sceneFacts ?? {}), present: presentList.slice(0, 12) } };
+  const crowded = { ...withNames, sceneFacts: harvestHookIntoSceneFacts(harvestCrowdIntoSceneFacts(withNames.sceneFacts, prose, turn), prose, turn) };
+  return { state: applyClosedFactHarvest(applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose), prose), people };
 }
 
 /** Strip / rewrite invented city/town names that are not on the world map. */

@@ -152,6 +152,7 @@ export function formatSceneBlock(state: GameState): string {
   const lines = [
     `SCENE T${turn} - ${place} (${kind})`,
     `PRESENT: ${presentLabels.length ? presentLabels.join(', ') : '(none)'}`,
+    `Only PRESENT people${meetingName ? ' and the live road EVENT' : ''} may speak; anyone else may be mentioned or remembered, never quoted or voiced.`,
     `CREATURES: ${creatures.length ? creatures.join(', ') : '(none)'}`,
     `ITEMS: ${items.length ? items.join(', ') : '(none)'}`,
     `EXITS: ${exitLabels.length ? exitLabels.join(', ') : '(none)'}`,

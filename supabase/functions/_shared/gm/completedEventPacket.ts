@@ -590,7 +590,7 @@ export function isPaintableRefLabel(label: string): boolean {
   if (/\s[—–-]\s|[;:]/.test(t)) return false;
   return t.split(' ').length <= 8;
 }
-const SPEAKS: readonly TokenUse[] = ['speaker', 'actor', 'addressed']; // a person, a companion, or a road meeting (an event, not someone present)
+const SPEAKS: readonly TokenUse[] = ['speaker', 'actor', 'addressed']; // person/companion/live road meeting
 const TOKEN_USES_FOR_CLASS: Record<LedgerRefClass, readonly TokenUse[]> = {
   place: ['place'],
   person: SPEAKS,

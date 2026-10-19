@@ -459,4 +459,9 @@ describe('q72-TIMELINETAGS', () => {
     const recorded = tag(s, 'appeared', 'creature', { id: 'creature:thugs', name: 'thugs' }, 'met on the road');
     expect(findUngroundedNamedClaims('Attack the thugs', recorded)).toEqual([]);
   });
+
+  it('q72r4: SCENE states only PRESENT may speak', () => {
+    const block = formatSceneBlock(baseState());
+    expect(block.indexOf('PRESENT:')).toBeLessThan(block.indexOf('Only PRESENT people may speak'));
+  });
 });

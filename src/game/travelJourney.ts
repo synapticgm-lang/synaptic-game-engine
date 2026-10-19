@@ -728,24 +728,35 @@ function meetingCheck(state: GameState, j: TravelJourney, key: string, unwatched
   if (unwatched && FIGHT_KINDS.has(encounter.kind)) encounter.surprisesParty = true;
   return { encounter, state: next };
 }
+/** End a road meeting — stays behind (not a companion). */
+function leaveRoadMeeting(state: GameState, enc: RoadEncounter | null | undefined): GameState {
+  if (!enc || roadMeetingOver(enc)) return state;
+  const label = SPEAKING_KINDS.has(enc.kind) ? ENCOUNTER_LABEL[enc.kind] : '';
+  const who = (enc.name ?? label).trim();
+  if (!who) return state;
+  const behind = underwayHereLabel(state) || 'the road behind';
+  let next = tag({ ...state, currentLocation: UNDERWAY_HERE }, 'left', 'person', { id: `person:${who}`, name: who }, 'stayed on the road');
+  if (label && label.toLowerCase() !== who.toLowerCase()) next = tag(next, 'left', 'person', { id: `person:${label}`, name: label }, 'stayed on the road');
+  const keyWho = who.toLowerCase();
+  const keyLabel = label.toLowerCase();
+  return { ...next, npcMemories: (next.npcMemories ?? []).map((m) => (m.npcName.toLowerCase() === keyWho || m.npcName.toLowerCase() === keyLabel ? { ...m, location: behind } : m)) };
+}
 /** Stretch meeting check (seed-stable). Unwatched hostile = surprised (SRD). Returns journey + person-tagged state. */
 function rollStretch(state: GameState, j: TravelJourney, check = true): { journey: TravelJourney; state: GameState } {
   const quiet = j.quietStretches ?? 0;
+  const base = leaveRoadMeeting(state, j.encounter);
   if (replayPreFeature()) {
-    const key = `${tripKey(state, j)}|${j.legsDone}`;
-    const encounter = recordedTapeMeeting(stretchContext(j), roadEncounterLevel(state, j.areaTier ?? 1), hashUnit(`${key}|chance`), hashUnit(`${key}|kind`), engineAllowsCombat(state) ? hashUnit(`${key}|spawn`) : 1, houseRulesOf(state));
-    if (encounter) sizeMeeting(state, encounter, key);
-    let tagged = state;
-    if (encounter && SPEAKING_KINDS.has(encounter.kind)) {
-      const who = ENCOUNTER_LABEL[encounter.kind];
-      const place = underwayHereLabel({ journey: j }) || UNDERWAY_HERE;
-      tagged = tag({ ...state, currentLocation: place }, 'met', 'person', { id: `person:${who}`, name: who }, 'met on the road');
-    }
+    const key = `${tripKey(base, j)}|${j.legsDone}`;
+    const encounter = recordedTapeMeeting(stretchContext(j), roadEncounterLevel(base, j.areaTier ?? 1), hashUnit(`${key}|chance`), hashUnit(`${key}|kind`), engineAllowsCombat(base) ? hashUnit(`${key}|spawn`) : 1, houseRulesOf(base));
+    if (encounter) sizeMeeting(base, encounter, key);
+    const who = encounter && SPEAKING_KINDS.has(encounter.kind) ? ENCOUNTER_LABEL[encounter.kind] : '';
+    const place = underwayHereLabel({ journey: j }) || UNDERWAY_HERE;
+    const tagged = who ? tag({ ...base, currentLocation: place }, 'met', 'person', { id: `person:${who}`, name: who }, 'met on the road') : base;
     return { journey: { ...j, encounter, quietStretches: encounter ? 0 : quiet + 1, hoursSinceCheck: 0 }, state: tagged };
   }
-  if (!check) return { journey: { ...j, encounter: null, quietStretches: quiet + 1 }, state };
-  const key = `${tripKey(state, j)}|${j.legsDone}`;
-  const rolled = meetingCheck(state, j, key, j.jobResults?.lookout === false);
+  if (!check) return { journey: { ...j, encounter: null, quietStretches: quiet + 1 }, state: base };
+  const key = `${tripKey(base, j)}|${j.legsDone}`;
+  const rolled = meetingCheck(base, j, key, j.jobResults?.lookout === false);
   return { journey: { ...j, encounter: rolled.encounter, quietStretches: rolled.encounter ? 0 : quiet + 1, hoursSinceCheck: 0 }, state: rolled.state };
 }
 /** People meetings the engine names: the one who speaks for them (a group's leader, a camp's keeper). */
@@ -767,7 +778,7 @@ function nameMeeting(state: GameState, encounter: RoadEncounter, key: string, j:
   }
   const idea = pickOpenerIdea(encounter.kind, key);
   if (idea) encounter.openerIdea = idea.id;
-  return recordPersonSeen({ ...state, currentLocation: underwayHereLabel({ journey: j }) || UNDERWAY_HERE }, name, 'met on the road');
+  return recordPersonSeen({ ...state, currentLocation: underwayHereLabel({ journey: j }) || UNDERWAY_HERE, journey: j }, name, 'met on the road');
 }
 /** Meetings that stand as a group: the engine rolls how many (tabletop: no bigger than the SRD 5.2.1 budget). */
 function sizeMeeting(state: GameState, encounter: RoadEncounter, key: string): void {
@@ -1151,13 +1162,10 @@ function unchanged(state: GameState): TravelCommit {
   return { state, handled: false, arrived: false, outcome: 'unchanged' };
 }
 function arrive(state: GameState, dest: string, hours: number, from: string, terrain?: JourneyTerrain, trip = false): TravelCommit {
-  const clock = advanceClock({ ...state, currentLocation: dest, journey: null }, hours);
+  const clock = advanceClock({ ...leaveRoadMeeting(state, state.journey?.encounter), currentLocation: dest, journey: null }, hours);
   const facts = trip ? arrivalFacts(state, dest) : [];
   return {
-    state: clock.state,
-    handled: true,
-    arrived: true,
-    outcome: 'arrived',
+    state: clock.state, handled: true, arrived: true, outcome: 'arrived',
     receipt: `Travel: ${from} to ${dest}${paceTag(state, terrain)} — ${clock.note}`,
     ...(facts.length ? { facts } : {}),
   };
