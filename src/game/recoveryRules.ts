@@ -210,7 +210,18 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
       if (ac != null) character = { ...character, armorClass: ac };
     }
     const companions = sidekickHurt ? (clock.state.companions ?? []).map((c) => (c.sidekick ? { ...c, hp: c.maxHp } : c)) : clock.state.companions;
-    const next = wakeToNewDay({ ...clock.state, companions, hitDiceSpent: spent, character, lastLongRestAt: now + wait });
+    let next = wakeToNewDay({ ...clock.state, companions, hitDiceSpent: spent, character, lastLongRestAt: now + wait });
+    // q65 Package A: a long rest clears Weakened (turn window or rest, whichever first).
+    if (next.weakenedUntilTurn != null || (next.character.conditions ?? []).some((c) => /^weakened$/i.test(c))) {
+      next = {
+        ...next,
+        weakenedUntilTurn: null,
+        character: {
+          ...next.character,
+          conditions: (next.character.conditions ?? []).filter((c) => !/^weakened$/i.test(c)),
+        },
+      };
+    }
     const slotLine = caster ? slotsLeftLine(next) : null;
     const after = [
       ...(slotLine ? [slotLine] : []),

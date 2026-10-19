@@ -89,7 +89,10 @@ export function applyQuestFailGuard(
   return { quests, blocked: false, failedQuest: failed };
 }
 
-/** Permadeath sweep — run-scoped quests only. */
+/**
+ * Tabletop run-end sweep — run-scoped quests only.
+ * LitRPG/RPG never call this on 0 HP (lifeline keeps playPhase live); keep for SRD death / ended runs.
+ */
 export function failRunScopedQuests(state: GameState, turn: number): GameState {
   const quests = (state.quests ?? []).map((q) => {
     if (q.status !== 'active') return q;

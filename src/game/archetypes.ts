@@ -87,7 +87,6 @@ const LITRPG_RULES: Record<LitRpgArchetype, string> = {
   ai_random: `ARCHETYPE: AI RANDOM CHOICE
 You have creative freedom to invent or blend LitRPG tropes. Design a unique opening scenario that combines 2-3 classic tropes in an unexpected way. Still establish clear system mechanics, progression rules, and world consistency from turn one.`,
   system_apocalypse: `ARCHETYPE: SYSTEM APOCALYPSE
-- Enforce permadeath. There are no respawns.
 - Modern tech and firearms fail against mana fields — bullets misfire, electronics fry.
 - Real-world geography converts into dungeon biomes and survivor hubs.
 - The System broadcasts globally. Society collapses in the first hours.
@@ -99,7 +98,7 @@ You have creative freedom to invent or blend LitRPG tropes. Design a unique open
 - The summoning was for a reason (war, prophecy, ritual). Reveal stakes gradually.`,
   vrmmo: `ARCHETYPE: VRMMO TRAP
 - Allow a "Log Out / Real-World Interlude" command in designated safe zones.
-- Death incurs XP and durability loss instead of permadeath (unless permadeath-enabled servers).
+- Death incurs XP and durability loss; the System lifeline always returns you to play.
 - Include real-world economy conversion (in-game gold to real currency and back).
 - Reference server patch updates, maintenance windows, and patch notes as world events.
 - The player is physically logged in; real-world body needs are managed via game interface.`,

@@ -34,6 +34,7 @@ const edgeOnly = (..._args: unknown[]): never => { throw new Error('tabletop exp
 const ladderDc = edgeOnly, lightNote = edgeOnly, sceneLight = edgeOnly, sheetBurden = edgeOnly, sightCheck = edgeOnly, taskRung = edgeOnly;
 const paceCheckAdv = edgeOnly, travelPaceOf = edgeOnly;
 import { exhaustionD20, exhaustionLevel, travelEngineChip, weatherRuleOf } from './rules/travelDay.ts';
+import { isWeakened, recoveryConfig } from './rules/recoveryConfig.ts';
 const modeProfile = edgeOnly;
 const namedSkillCheckMod = (..._args: unknown[]): null => null;
 const titleCheckMod = (..._args: unknown[]): null => null;
@@ -445,6 +446,13 @@ export function runPlayerCheck(
     mods.push({ label: `${tier} ${cat}`, value: familiarityToHit(score, proficiencyBonus(state.character.level)) });
     mods.push({ label: `${row.label} difficulty`, value: row.playerToHitBonus });
     cue = familiarityCue(tier);
+  }
+  if (isWeakened(state)) {
+    const pct = recoveryConfig(state.engineMode)?.weakenedPenaltyPct ?? 0;
+    if (pct > 0) {
+      const scale = Math.abs(mods.reduce((s, m) => s + m.value, 0)) + 10;
+      mods.push({ label: 'Weakened', value: -Math.max(1, Math.floor((scale * pct) / 100)) });
+    }
   }
   const record = resolveCheckRecord({
     label: notes.length ? `${ctx.label} (${notes.join('; ')})` : ctx.label,
