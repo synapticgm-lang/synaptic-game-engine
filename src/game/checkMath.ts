@@ -31,6 +31,7 @@ import { skillRankOf, type CheckSkillName } from './skillRanks';
 import { ladderDc, lightNote, sceneLight, sheetBurden, sightCheck, taskRung, type TaskKind, type TaskRung } from './rules/exploration';
 import { paceCheckAdv, travelPaceOf } from './rules/travelPace';
 import { exhaustionD20, exhaustionLevel, travelEngineChip, weatherRuleOf } from './rules/travelDay';
+import { isWeakened, recoveryConfig } from './rules/recoveryConfig';
 import { modeProfile } from './rules/modeProfile';
 import { namedSkillCheckMod } from './rules/librarySkills';
 import { titleCheckMod } from './rules/titles';
@@ -442,6 +443,13 @@ export function runPlayerCheck(
     mods.push({ label: `${tier} ${cat}`, value: familiarityToHit(score, proficiencyBonus(state.character.level)) });
     mods.push({ label: `${row.label} difficulty`, value: row.playerToHitBonus });
     cue = familiarityCue(tier);
+  }
+  if (isWeakened(state)) {
+    const pct = recoveryConfig(state.engineMode)?.weakenedPenaltyPct ?? 0;
+    if (pct > 0) {
+      const scale = Math.abs(mods.reduce((s, m) => s + m.value, 0)) + 10;
+      mods.push({ label: 'Weakened', value: -Math.max(1, Math.floor((scale * pct) / 100)) });
+    }
   }
   const record = resolveCheckRecord({
     label: notes.length ? `${ctx.label} (${notes.join('; ')})` : ctx.label,

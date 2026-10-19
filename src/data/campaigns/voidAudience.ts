@@ -60,12 +60,12 @@ export const voidAudience: CampaignBible = {
     },
     {
       id: 'va-lore-7',
-      title: 'Soul Degradation',
+      title: 'Soul Anchoring',
       category: 'mechanic',
-      body: 'Rebirth is not seamless. Your soul is not fully bonded to your new body — it is "anchored," not "integrated." This means that every time you die in the Resonance, your soul degrades. First death: minor stat penalty (-1 to all stats for 7 days). Second death: permanent loss of one random Flaw\'s compensating points (you keep the Flaw, lose the points it granted). Third death: the Audience votes. If your CF is above 20, they may resurrect you at a cost. If your CF is below 20, the Auditor closes your file. "Trial concluded. Thank you for your participation." There is no fourth death.',
-      tags: ['death', 'soul', 'degradation', 'permadeath', 'mechanics'],
+      body: 'Rebirth is not seamless. Your soul is anchored, not fully integrated. Each fall in the Resonance leaves a mark — fatigue, a weaker blow for a time, coin left where you fell — but the Audience never closes your file. The Auditor returns you to a safe place. There is always another chance.',
+      tags: ['death', 'soul', 'anchoring', 'mechanics'],
     },
-    {
+{
       id: 'va-lore-8',
       title: 'The Other Reborn',
       category: 'faction',

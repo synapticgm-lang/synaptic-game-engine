@@ -7,6 +7,7 @@ import { rollLoot as rollEngineLoot, scaleTreasureGold, type LootProfile } from 
 import { rollDice } from './rules/dice';
 import type { SidekickProfile } from './rules/roundCombat';
 import { diceRng, turnRng } from './seededRng';
+import { isWeakened, recoveryConfig } from './rules/recoveryConfig';
 
 export interface EnemyStats {
   name: string;
@@ -126,6 +127,14 @@ export function rollVictoryLoot(
   };
 }
 
+
+function applyWeakenedDamage(state: GameState, dmg: number): number {
+  if (!isWeakened(state)) return dmg;
+  const pct = recoveryConfig(state.engineMode)?.weakenedPenaltyPct ?? 0;
+  if (pct <= 0) return dmg;
+  return Math.max(0, Math.floor((dmg * (100 - pct)) / 100));
+}
+
 export function simulateCombat(state: GameState, enemy: EnemyStats, opts: SimulateCombatOptions = {}): CombatResult {
   const player = state.character;
   const approach = opts.approach ?? meleeApproach();
@@ -161,6 +170,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
     if (hits) {
       dmg = rollDamage(playerDamageBase, atkAttrMod, rng);
       if (roll === 20) dmg = Math.floor(dmg * 1.5);
+      dmg = applyWeakenedDamage(state, dmg);
       enemyHp = Math.max(0, enemyHp - dmg);
       damageDealt += dmg;
     }
@@ -179,6 +189,7 @@ export function simulateCombat(state: GameState, enemy: EnemyStats, opts: Simula
     if (playerHits) {
       dmgToEnemy = rollDamage(playerDamageBase, atkAttrMod, rng);
       if (playerRoll === 20) dmgToEnemy = Math.floor(dmgToEnemy * 1.5);
+      dmgToEnemy = applyWeakenedDamage(state, dmgToEnemy);
       enemyHp = Math.max(0, enemyHp - dmgToEnemy);
       damageDealt += dmgToEnemy;
     }

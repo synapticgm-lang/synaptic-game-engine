@@ -386,7 +386,7 @@ export interface Character {
   casting?: CastingState;
   /** Tabletop Heroic Inspiration held (one at a time). */
   heroicInspiration?: boolean;
-  /** LitRPG System lifeline / Story RPG fate charm: a self-caused death never ends the character (rules/death). */
+  /** LitRPG System lifeline / Story RPG fate charm: 0 HP never ends the character (rules/death Package A). */
   lifeline?: string;
   /** Tabletop class feature uses spent since they last came back (rules/classFeatures). */
   featureUses?: Record<string, number>;
@@ -547,9 +547,9 @@ export interface Quest {
   minTurnsBeforeActive?: number;
   /** Min turns between active → completed (default 1). */
   minTurnsBeforeComplete?: number;
-  /** When true, quest fails if the run ends (permadeath). */
+  /** When true, quest fails if the tabletop run ends (SRD death). Never used for LitRPG/RPG lifeline. */
   runScoped?: boolean;
-  /** Explicit fail-on-death flag; defaults with runScoped. */
+  /** Explicit fail-on-death flag; defaults with runScoped. Tabletop only. */
   failOnDeath?: boolean;
   /** Fail reason when status is failed. */
   failReason?: string;
@@ -1140,6 +1140,28 @@ export interface GameState {
   /** 29y — a hostile threat that entered the scene at a place, kept there until beaten or fled. Keyed by place. */
   placeThreats?: Record<string, PlaceThreat>;
   /**
+   * q65-DOWNLOCK Package A — last named hub with no live/pending fight and no open dungeon
+   * (same place gate as `isSafeHubRest`). Wake target on lifeline; falls back to the start hub.
+   */
+  lastSafeHub?: string | null;
+  /** Coin dropped at the death spot; recoverable once within the configured turn window. */
+  deathCoinCache?: {
+    place: string;
+    amount: number;
+    droppedTurn: number;
+    recovered?: boolean;
+  } | null;
+  /** No drought/ambush spawn while `turn < ambushGraceUntilTurn`. */
+  ambushGraceUntilTurn?: number | null;
+  /** Weakened expires at this turn (exclusive), or earlier on a long rest. */
+  weakenedUntilTurn?: number | null;
+  /** Turn the lifeline already fired (idempotent per turn). */
+  lifelineFiredTurn?: number | null;
+  /** STATUS lines from the last lifeline; callers merge into systemLog then clear. */
+  lifelineReceipts?: string[];
+  /** Writer fact from the last lifeline recovery. */
+  lifelineFact?: string | null;
+  /**
    * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).
    * null = closed story (typical PYOA) — no continent atlas.
    */
@@ -1614,6 +1636,7 @@ export type TimelineFactKind =
   | 'item'
   | 'quest'
   | 'npc'
+  | 'person'
   | 'dungeon'
   | 'discovery'
   | 'world'
@@ -1742,6 +1765,10 @@ export interface TimelineFact {
   kind: TimelineFactKind;
   text: string;
   at: number;
+  /** fight2d — person tag fields; text is `person: <name> - <detail>`; place is HERE. */
+  name?: string;
+  detail?: string;
+  place?: string;
 }
 
 /** Live situation packet rebuilt each turn from structured state. */

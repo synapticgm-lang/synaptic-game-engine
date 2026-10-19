@@ -2,6 +2,7 @@
 import { matchesRegisteredLocationNeedle } from './neverCast';
 import { resolveNpcRecord } from './npcRecords';
 import { resolvePlace } from './places';
+import { recordPersonSeen } from './timeline';
 import { introducedNamedPeople, introducedRolePeople, introducedThings } from './tokenProse';
 import type { GameState, NpcMemory } from './types';
 import { isOffSetting, worldOffSettingWords } from './settingVocabulary';
@@ -21,7 +22,7 @@ export function isPresencePlaceName(state: GameState, name: string): boolean {
   return matchesRegisteredLocationNeedle(t, b) || matchesRegisteredLocationNeedle(bare, b);
 }
 
-/** q48-ROLE — one entry into the presence record at HERE. Refuses registered places. */
+/** q48-ROLE — presence at HERE (+ fight2d person tag). Refuses registered places. */
 export function admitPersonHere(state: GameState, name: string, note?: string): GameState {
   const raw = (name ?? '').replace(/\s+/g, ' ').trim();
   if (!raw || isPresencePlaceName(state, raw)) return state;
@@ -32,12 +33,18 @@ export function admitPersonHere(state: GameState, name: string, note?: string): 
   const hit = resolveNpcRecord(state, raw) ?? resolveNpcRecord(state, display) ?? resolveNpcRecord(state, bare);
   const memories = [...(state.npcMemories ?? [])];
   const turn = state.turn ?? 0;
-  if (hit) return { ...state, npcMemories: memories.map((m) => (m.npcId === hit.npcId ? { ...m, location: place, lastSeenTurn: turn } : m)) };
+  const tagged = recordPersonSeen(state, display, 'seen here');
+  if (hit) {
+    for (let i = 0; i < memories.length; i++) {
+      if (memories[i]!.npcId === hit.npcId) memories[i] = { ...memories[i]!, location: place, lastSeenTurn: turn };
+    }
+    return { ...tagged, npcMemories: memories };
+  }
   const npcId = `writer:${place.toLowerCase().replace(SLUG, '-')}:${bare.toLowerCase().replace(SLUG, '-')}`;
   const at = memories.findIndex((m) => m.npcId === npcId);
-  if (at >= 0) { memories[at] = { ...memories[at]!, location: place, lastSeenTurn: turn }; return { ...state, npcMemories: memories }; }
+  if (at >= 0) { memories[at] = { ...memories[at]!, location: place, lastSeenTurn: turn }; return { ...tagged, npcMemories: memories }; }
   memories.push({ npcId, npcName: display, disposition: 'neutral', facts: [note ?? `Present at ${place} on turn ${turn}.`], lastSeenTurn: turn, location: place } as NpcMemory);
-  return { ...state, npcMemories: memories };
+  return { ...tagged, npcMemories: memories };
 }
 
 export function registerWriterIntroductions(state: GameState, narrative: string): GameState {

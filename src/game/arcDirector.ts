@@ -358,6 +358,7 @@ function talkingWithSomeoneHere(state: GameState, playerInput: string): boolean 
 }
 
 export function shouldSpawnCombat(state: GameState, playerInput = ''): boolean {
+  if (typeof state.ambushGraceUntilTurn === 'number' && state.turn < state.ambushGraceUntilTurn) return false;
   if (playerTurnsMomentDown(state, playerInput)) return false;
   if (!state.openingEstablishment?.complete) return false;
   if (threatAlreadyHere(state)) return false;

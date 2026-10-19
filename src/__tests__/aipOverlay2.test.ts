@@ -334,7 +334,7 @@ describe('q51e-AIPOVL2 reset guard and verdict', () => {
       harnessErrors: 0,
       unverified: 0,
       softWarnings: 2,
-      turnLog: [{ newGmBubble: true, thumbSkipped: 'already_voted', voteCarried: false, voteSkipWrong: true }],
+      turnLog: [{ newGmBubble: true, thumbSkipped: 'already_voted', voteCarried: false }],
     }]);
     expect(skipped.ok).toBe(false);
     expect(skipped.problems).toContain('skipped_vote_on_new_reply');

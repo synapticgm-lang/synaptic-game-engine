@@ -49,6 +49,7 @@ import { escRe, fightRolls, narrationOf } from './engineFactPatterns';
 import { roundCombatChips } from './tabletop/combatChips';
 import { checkChipKinds } from './chipCheck';
 import { resolvePlace, dungeonRoomPlace } from './places';
+import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 import { isRoadLabel, isTripHere } from './travelJourney';
 import { placeExits } from './placeRegistry';
 
@@ -763,16 +764,29 @@ export function drawnPlanIssues(state: GameState): string[] {
   return floorPlanIssues(map, { building: isInteriorMap(map), minRooms: 1 });
 }
 
-/** Someone on the road, in the prose: a person word, not a story name. */
-const SOMEONE =
-  /\b(?:someone|somebody|figure|figures|man|woman|men|women|traveler|traveller|stranger|rider|riders|merchant|pilgrim|thugs?|bandits?|people|camp|voice|voices|footsteps|hooded|cloaked)\b/i;
-
-/** The picked chip must follow the prose before it: a road-meeting chip needs the meeting on the page. */
+/**
+ * fight2d-PERSONTAG — a road-meeting / "talk to someone" chip is backed only by engine
+ * `person:` timeline tags for the current HERE (written at meeting / present-NPC sources).
+ * Never prose matching. (SOMEONE regex stays removed.)
+ */
 export function checkChosenChip(before: GameState, chosen: string): TurnCheckFlag[] {
   const pick = norm(chosen);
   if (!pick || !roadMeetingPeople(before)) return [];
   if (!chipAddressee(pick) && !/^(?:greet|face|approach|skirt|slip past|hide from|talk your way)\b/i.test(pick)) return [];
-  const lastGm = gmBodies(before).slice(-1)[0] ?? '';
-  if (SOMEONE.test(lastGm)) return [];
+  const here = low(before.currentLocation);
+  if (!here) {
+    return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
+  }
+  const trip = low(underwayHereLabel(before));
+  const road = low(UNDERWAY_HERE);
+  const onTrip = !!trip && (here === trip || here === road);
+  const timeline = before.timeline ?? [];
+  for (let i = 0; i < timeline.length; i++) {
+    const f = timeline[i]!;
+    if (f.kind !== 'person' || !low(f.name)) continue;
+    const p = low(f.place);
+    if (!p) continue;
+    if (p === here || (onTrip && (p === trip || p === road))) return [];
+  }
   return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
 }

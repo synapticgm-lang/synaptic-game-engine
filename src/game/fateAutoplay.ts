@@ -2111,15 +2111,20 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   if (typeof governed.character?.hp === 'number') {
-    // Same end-of-run rule as live play (useGame): death ends the run, closing run-scoped quests.
+    // Same end-of-run rule as live play (useGame): LitRPG/RPG lifeline; tabletop death ends the run.
     const hp = governed.character.hp;
     governed = applyPlayPhaseAfterHp(governed, hp, nextTurn);
-    const receipt = hp <= 0 ? deathQuestReceipt(governed) : null;
-    if (receipt && !filteredSystemLog.includes(receipt)) {
-      filteredSystemLog = [...filteredSystemLog, receipt];
+    const extra = [...(governed.lifelineReceipts ?? [])];
+    governed = { ...governed, lifelineReceipts: undefined };
+    const receipt = (governed.character?.hp ?? 0) <= 0 ? deathQuestReceipt(governed) : null;
+    if (receipt) extra.push(receipt);
+    if (extra.length) {
+      for (const line of extra) {
+        if (!filteredSystemLog.includes(line)) filteredSystemLog = [...filteredSystemLog, line];
+      }
       const log = [...(governed.log ?? [])];
       const last = log[log.length - 1];
-      if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), receipt] };
+      if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), ...extra] };
       governed = { ...governed, log };
     }
   }

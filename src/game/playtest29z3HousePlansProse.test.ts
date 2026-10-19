@@ -217,8 +217,8 @@ describe('29z3 — chips follow the scene', () => {
     expect(chipProblem(s, 'Go down to the basement')?.kind).toBe('impossible-chip');
   });
 
-  it('a chosen road-meeting chip needs someone in the prose before it', () => {
-    const j = {
+  it('a chosen road-meeting chip needs an engine-recorded person (not a prose word)', () => {
+    const quietJourney = {
       from: 'Lowmarket',
       to: 'West Wall',
       ground: 'Open Road',
@@ -229,9 +229,31 @@ describe('29z3 — chips follow the scene', () => {
       startedTurn: 7,
       encounter: { kind: 'traveler', level: 1, stretch: 1, dangerous: false },
     } as GameState['journey'];
-    const quiet = base({ journey: j, currentLocation: 'Open Road', log: [gm(7, 'Wind bent the grass along the road.')] });
+    const quiet = base({ journey: quietJourney, currentLocation: 'Open Road', log: [gm(7, 'Wind bent the grass along the road.')] });
     expect(checkChosenChip(quiet, 'Greet the traveler').map((f) => f.kind)).toEqual(['unrelated-chip']);
-    const seen = base({ journey: j, currentLocation: 'Open Road', log: [gm(7, 'A traveler with a heavy pack came up the road.')] });
+    const seenJourney = {
+      ...quietJourney,
+      encounter: { kind: 'traveler', level: 1, stretch: 1, dangerous: false, name: 'Piers Rudd' },
+    } as GameState['journey'];
+    // fight2d — engine presence is the person timeline tag (fight2c left encounter.name; tag is the reader now).
+    const tripPlace = 'the open road from Lowmarket toward West Wall';
+    const seen = base({
+      journey: seenJourney,
+      currentLocation: tripPlace,
+      timeline: [
+        {
+          id: 'person-piers',
+          turn: 7,
+          kind: 'person',
+          name: 'Piers Rudd',
+          detail: 'met on the road',
+          place: tripPlace,
+          text: 'person: Piers Rudd - met on the road',
+          at: 7,
+        },
+      ],
+      log: [gm(7, 'Piers Rudd came up the road with a heavy pack.')],
+    });
     expect(checkChosenChip(seen, 'Greet the traveler')).toEqual([]);
   });
 });
