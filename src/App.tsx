@@ -445,6 +445,7 @@ export default function App() {
           {state.playPhase === 'ended' && (
             <EpitaphBar
               storyName={state.storyName}
+              turn={state.turn}
               onNewGame={() => game.setShowNewGame(true)}
               onExport={async () => {
                 try {

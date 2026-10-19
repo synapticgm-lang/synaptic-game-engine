@@ -1,14 +1,21 @@
 interface Props {
   storyName: string;
+  turn?: number;
   onNewGame: () => void;
   onExport: () => void;
   onMainMenu: () => void;
 }
 
 /** Read-only archive chrome when playPhase === 'ended'. */
-export function EpitaphBar({ storyName, onNewGame, onExport, onMainMenu }: Props) {
+export function EpitaphBar({ storyName, turn, onNewGame, onExport, onMainMenu }: Props) {
   return (
-    <div className="sticky bottom-0 z-20 border-t border-slate-800 bg-slate-950/95 px-3 py-3 backdrop-blur-sm">
+    <div
+      className="sticky bottom-0 z-20 border-t border-slate-800 bg-slate-950/95 px-3 py-3 backdrop-blur-sm"
+      data-play-phase="ended"
+      data-run-ended="death"
+      data-run-ended-turn={turn ?? ''}
+      data-testid="run-ended"
+    >
       <p className="mb-2 text-center text-xs uppercase tracking-widest text-slate-500">
         Run ended — {storyName}
       </p>

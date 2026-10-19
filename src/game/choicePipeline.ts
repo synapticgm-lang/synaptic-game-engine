@@ -44,6 +44,8 @@ import { originPad } from './rules/rpgOrigin';
 import { isJourneyStepLine, journeyPads } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
 import { checkForAction, type CheckSpec } from './checkMath';
+import { isDying } from './tabletop/roundFight';
+import { roundCombatChips } from './tabletop/combatChips';
 import { parsePlayerIntent } from './intentParser';
 import {
   allocateAffordanceSlots,
@@ -414,7 +416,8 @@ export type ChipKind =
   | 'shop'
   | 'inspiration-reroll'
   | 'affordance'
-  | 'free-input';
+  | 'free-input'
+  | 'dying';
 
 let lastEngineChips: { state: GameState; key: string; chips: EngineChip[]; labels: Set<string> } | null = null;
 
@@ -443,6 +446,34 @@ export function engineChipActionKey(label: string): string {
 export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   const key = `${state.turn}|${state.log?.length ?? 0}|${storyProse}`;
   if (lastEngineChips?.state === state && lastEngineChips.key === key) return lastEngineChips.chips;
+  // q73-DYING: while death saves run, the only builders are the death-save, potion and present-ally chips.
+  if (isDying(state)) {
+    const dying: EngineChip[] = [];
+    const seenDying = new Set<string>();
+    for (const raw of roundCombatChips(state) ?? []) {
+      const label = sanitizeChoiceLabel(raw);
+      if (!label) continue;
+      const low = label.toLowerCase();
+      if (seenDying.has(low)) continue;
+      seenDying.add(low);
+      const stabilise = low.startsWith('ask ');
+      const potion = low.startsWith('drink');
+      const action = potion ? 'dying:potion' : stabilise ? `dying:stabilise:${low}` : 'dying:death-save';
+      const check: CheckSpec | null = stabilise
+        ? { kind: 'skill', ability: 'WIS', dc: 10, dcShown: true, adv: 'normal' }
+        : null;
+      dying.push({
+        label,
+        action,
+        kind: 'dying',
+        check,
+        entityId: stabilise ? label : undefined,
+        slotCategory: 'act',
+      });
+    }
+    lastEngineChips = { state, key, chips: dying, labels: seenDying };
+    return dying;
+  }
   const system = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
   const sources: Array<[ChipKind, string[]]> = [
