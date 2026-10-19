@@ -1,4 +1,4 @@
-﻿/**
+/**
  * G-AIP fix (John 18:58): thumbs read-back by user_id + save_id + log_entry_id,
  * robust player-reply parsing (one targeted repair, harness error instead of an
  * automatic thumbs-down) and a non-zero exit verdict.
@@ -185,10 +185,10 @@ describe('G-AIP fix 2 (John 19:15): one vote per reply, no_reply, typed line mus
 
   it('shouldThumb: vote once per reply; no new reply = no_reply, not a vote', async () => {
     const { shouldThumb } = await load('scripts/ai-player-browser/runVerdict.mjs');
-    expect(shouldThumb({ feedbacks: 1, votedFeedbacks: -1 })).toEqual({ vote: true, reason: null });
-    expect(shouldThumb({ feedbacks: 3, votedFeedbacks: 3 })).toEqual({ vote: false, reason: 'already_voted' });
-    expect(shouldThumb({ feedbacks: 4, votedFeedbacks: 3 }).vote).toBe(true);
-    expect(shouldThumb({ feedbacks: 4, votedFeedbacks: 3, noNewReply: true })).toEqual({ vote: false, reason: 'no_reply' });
+    // 00:40: identity rule (replyKey), not feedback counts.
+    expect(shouldThumb({ targetKey: '1:aa', ratedKeys: new Set() })).toEqual({ vote: true, reason: null });
+    expect(shouldThumb({ targetKey: '1:aa', ratedKeys: new Set(['1:aa']) })).toEqual({ vote: false, reason: 'already_voted' });
+    expect(shouldThumb({ targetKey: null, ratedKeys: new Set() })).toEqual({ vote: false, reason: 'no_reply' });
   });
 
   it('run.mjs: no second thumb on a timeout; every vote goes through voteOnce', async () => {
