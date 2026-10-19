@@ -11,7 +11,6 @@ import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
 import { formatWriterInfoLayer } from './writerInfoLayer.ts';
-import { formatRefRecords, formatSceneBlock, mentionFromScene } from './sceneBlock.ts';
 import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import {
@@ -151,10 +150,6 @@ export interface CompletedEventPacket {
   pageOpeners?: string[];
   /** 29z9i — the diary the writer reads in place of raw recent turns (`infoSheet.ts`). */
   infoSheet?: string;
-  /** q72 — one fixed SCENE block (PRESENT/CREATURES/ITEMS/EXITS/SAID/RECENT[/HERE SO FAR]). */
-  sceneBlock?: string;
-  /** q72 — REF <id> records only for ids referenced this turn (cap 3). */
-  refRecords?: string;
   /** 29z9k — reading level + swearing / violence-detail switches (Kid Mode forces child, both off). */
   reader?: ReaderFlags;
   /** 10c — consecutive inspect/wait in this HERE (0 during live combat). */
@@ -1002,27 +997,10 @@ export function buildCompletedEventPacket(
   // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
   // an actor, a prop or a thing that answers.
   const refOpts = { hallTalk, engineResult: extras?.engineResult, action };
-  const sceneBlock = formatSceneBlock(state);
-  const sceneMentions = mentionFromScene(state);
-  const allowlist = [
-    ...sceneMentions,
-    ...compileNounAllowlist(state, allowExtras, refOpts).filter((n) => !ledgerRead || !isSystemWindowLabel(n)),
-  ].filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+  const allowlist = compileNounAllowlist(state, allowExtras, refOpts)
+    .filter((n) => !ledgerRead || !isSystemWindowLabel(n));
   const refEnum = compileRefEnum(state, allowExtras, refOpts)
     .filter((r) => !ledgerRead || r.klass !== 'window');
-  // q72: REF records only for ids referenced this turn (player line / chips / engine event), cap 3.
-  const referencedIds: string[] = [];
-  const actLower = (action ?? '').toLowerCase();
-  for (const r of refEnum) {
-    if (referencedIds.length >= 3) break;
-    const needle = (r.display ?? '').toLowerCase();
-    if (needle && actLower.includes(needle)) referencedIds.push(r.id);
-  }
-  for (const m of state.npcMemories ?? []) {
-    if (referencedIds.length >= 3) break;
-    if (actLower.includes(m.npcName.toLowerCase()) && !referencedIds.includes(m.npcId)) referencedIds.push(m.npcId);
-  }
-  const refRecords = formatRefRecords(state, referencedIds) || undefined;
   const movement = movementFact(state, action) || undefined;
   const leg = state.journey;
   const destinationRef = leg && /^Moved this turn: on from /.test(movement ?? '')
@@ -1064,8 +1042,6 @@ export function buildCompletedEventPacket(
     phase: justKilled ? 'cleared' : enc?.phase ? enc.phase : state.sceneFacts?.pendingEncounter ? 'pending' : 'idle',
     allowlist,
     refEnum,
-    sceneBlock,
-    refRecords,
     // A check chip's failure cost is menu text, not what the player did.
     playerAction: meetingMoveBase(action) || '(opening)',
     talkTopic: hallTalkTopic(action) ?? undefined,
@@ -1386,15 +1362,9 @@ export function formatWriterFacingEvent(
   if (packet.xp > 0) lines.push(`XP: ${packet.xp}.`);
   if (packet.loot.length) lines.push(`Loot: ${packet.loot.join(', ')}.`);
   if (packet.witnesses.length) lines.push(`Witnesses: ${packet.witnesses.join(', ')}.`);
-  // q72: one SCENE block replaces overlapping PEOPLE / INFO SHEETS / HOW THEY ARE NOW / MENTION dumps.
-  if (packet.sceneBlock) {
-    lines.push(packet.sceneBlock);
-    if (packet.refRecords) lines.push(packet.refRecords);
-  } else {
-    if (packet.knownBy?.length) lines.push(`INFO SHEETS (these people remember ${who}):\n${packet.knownBy.join('\n')}`);
-    if (packet.townsfolk?.length) lines.push(`PEOPLE HERE (their sheets — play them this way; each one is only the @tN at the start of their line):\n${packet.townsfolk.join('\n')}`);
-    if (packet.stances?.length) lines.push(`HOW THEY ARE NOW (set by what happened; play it, do not change it):\n${packet.stances.join('\n')}`);
-  }
+  if (packet.knownBy?.length) lines.push(`INFO SHEETS (these people remember ${who}):\n${packet.knownBy.join('\n')}`);
+  if (packet.townsfolk?.length) lines.push(`PEOPLE HERE (their sheets — play them this way; each one is only the @tN at the start of their line):\n${packet.townsfolk.join('\n')}`);
+  if (packet.stances?.length) lines.push(`HOW THEY ARE NOW (set by what happened; play it, do not change it):\n${packet.stances.join('\n')}`);
   if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
   if (packet.cardWant) lines.push(`What they want (their own reason; the answer says it in their words): ${packet.cardWant}`);
   if (packet.cardOffer) lines.push(`What they offer (still open; the player has not taken it): ${packet.cardOffer}`);
@@ -1403,10 +1373,10 @@ export function formatWriterFacingEvent(
     lines.push('STRICT: Use only the nouns listed. Outcome is immutable.');
   }
   lines.push('');
-  // MENTION list derives from SCENE (packet.allowlist already rebuilt from it when sceneBlock is set).
   lines.push(`YOU MAY ONLY MENTION: ${packet.allowlist.length ? packet.allowlist.join(', ') : 'none'}.`);
   lines.push('');
-  lines.push('TOKEN PROSE — return JSON only (no markdown).');  // 28l — the count comes before the example and the example has four full lines: writers copy the
+  lines.push('TOKEN PROSE — return JSON only (no markdown).');
+  // 28l — the count comes before the example and the example has four full lines: writers copy the
   // example's shape, and a one-line example came back as one place-name line.
   const whereWas = povExample(pov, { second: 'where you were', third: 'where {N} was', first: 'where I was' });
   const whatDid = povExample(pov, {
