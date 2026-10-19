@@ -352,16 +352,18 @@ function hydrateStored(rec: StoredNpcRelationship, turn: number): NpcRelationshi
 export function presentNpcNames(state: GameState): string[] {
   const foe = (state.activeEncounter?.name ?? '').trim().toLowerCase();
   const out = new Map<string, string>();
-  const add = (n: unknown, trustRecord = false) => {
+  const add = (n: unknown) => {
     const name = String(n ?? '').trim();
     const key = name.toLowerCase();
-    if (!name || key === foe || out.has(key) || (!trustRecord && npcPlacedElsewhere(state, name))) return;
-    if (resolveNpcRecord(state, name)?.shouldExit || isOutOfTalkingRange(state, name)) return;
+    if (!name || key === foe || out.has(key)) return;
+    if (npcPlacedElsewhere(state, name)) return;
+    if (resolveNpcRecord(state, name)?.shouldExit) return;
+    if (isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };
-  for (const n of state.sceneFacts?.present ?? []) add(n);
-  for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
-  for (const m of presentNpcRecords(state)) add(m.npcName, true);
+  (state.sceneFacts?.present ?? []).forEach(add);
+  (state.npcMemories ?? []).filter((m) => m.present === true).forEach((m) => add(m.npcName));
+  presentNpcRecords(state).forEach((m) => add(m.npcName));
   return [...out.values()];
 }
 

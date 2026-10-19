@@ -432,6 +432,9 @@ function render(sheet: InfoSheet): string[] {
     'INFO SHEET (engine record — every line is a fact; nothing else happened):',
     `NOW: ${sheet.now}`,
     ...block('LAST', sheet.last),
+    ...block('HERE', sheet.here),
+    ...block('SCENE', sheet.scene),
+    ...block('PEOPLE', sheet.people),
     `PLACES: ${sheet.places}`,
     ...block('FACTS', sheet.facts),
     `ASKED: ${sheet.asked}`,
@@ -439,7 +442,7 @@ function render(sheet: InfoSheet): string[] {
   ];
 }
 
-/** The sheet as writer text. HERE / PEOPLE / SCENE stay on the SCENE block, not here again. */
+/** The sheet as writer text, inside the line and character caps (drops FACTS, PEOPLE, LAST before SCENE). */
 export function formatInfoSheet(state: GameState): string {
   const sheet = buildInfoSheet(state);
   const fits = () => {
@@ -447,6 +450,8 @@ export function formatInfoSheet(state: GameState): string {
     return lines.length <= INFO_SHEET_LINE_CAP && lines.join('\n').length <= INFO_SHEET_CHAR_CAP;
   };
   while (!fits() && sheet.facts.length) sheet.facts.pop();
+  while (!fits() && sheet.scene.length && sheet.scene[sheet.scene.length - 1]!.startsWith('saw:')) sheet.scene.pop();
+  while (!fits() && sheet.people.length) sheet.people.pop();
   while (!fits() && sheet.last.length) sheet.last.pop();
   const text = render(sheet).join('\n');
   return text.length <= INFO_SHEET_CHAR_CAP ? text : text.slice(0, INFO_SHEET_CHAR_CAP);

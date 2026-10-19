@@ -42,7 +42,7 @@ describe('replay bank multi lap 31', () => {
   it('[m31 fl150 T6 | Order M / lap 31] SCENE is on the sheet; pageOpeners still tracks same-action openers', () => {
     expect(F.input(6)).toBe('Travel toward Cathedral Close');
     expect(F.after(6).journey, 'replay sets out on T6').toBeTruthy();
-    expect(F.packet(6), 'T6 sheet has SCENE').toMatch(/^SCENE T/m);
+    expect(F.packet(6), 'T6 sheet has SCENE').toMatch(/^SCENE:/m);
     expect(F.packet(6)).not.toContain('ALREADY ON THE PAGE');
 
     const log = [

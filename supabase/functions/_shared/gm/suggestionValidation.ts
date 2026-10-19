@@ -58,32 +58,36 @@ function normalize(value: string): string {
 
 function addNameTokens(names: Set<string>, name: string) {
   const normalized = normalize(name);
-  if (normalized) names.add(normalized);
+  if (!normalized) return;
+  names.add(normalized);
+  for (const part of normalized.split(/\s+/)) {
+    if (part.length >= 3) names.add(part);
+  }
 }
 
-/** Engine records only: person / creature / item / exit tags and the SCENE lists. Prose is not a record. */
-export function buildGroundingCorpus(state: GameState, _storyProse = ''): Set<string> {
+/** Established tokens for choice / free-text grounding (kit, cast, place, prose). */
+export function buildGroundingCorpus(state: GameState, storyProse = ''): Set<string> {
   const names = new Set<string>();
   for (const item of state.inventory ?? []) addNameTokens(names, item.name);
   for (const mat of state.materials ?? []) addNameTokens(names, mat.name);
   for (const bag of state.containers ?? []) addNameTokens(names, bag.name);
   for (const companion of state.companions ?? []) addNameTokens(names, companion.name);
   for (const card of state.lorebook ?? []) {
-    if (card.type === 'npc' || card.revealed === true || (card.lastSeenTurn ?? 0) > 0) addNameTokens(names, card.name);
+    if (card.revealed === true || (card.lastSeenTurn ?? 0) > 0) addNameTokens(names, card.name);
   }
   if (state.activeEncounter?.name) addNameTokens(names, state.activeEncounter.name);
   if (state.currentLocation) addNameTokens(names, state.currentLocation);
   if (state.locationSheet?.name) addNameTokens(names, state.locationSheet.name);
-  for (const it of state.locationSheet?.interactables ?? []) addNameTokens(names, it.name ?? '');
-  for (const exit of state.locationSheet?.exits ?? []) addNameTokens(names, exit.label ?? '');
-  for (const p of state.sceneFacts?.present ?? []) addNameTokens(names, p);
-  for (const p of state.sceneFacts?.props ?? []) addNameTokens(names, p);
+  for (const it of state.locationSheet?.interactables ?? []) {
+    if (it.name) addNameTokens(names, it.name);
+  }
+  for (const exit of state.locationSheet?.exits ?? []) {
+    if (exit.label) addNameTokens(names, exit.label);
+  }
+  for (const fact of state.timeline ?? []) addNameTokens(names, fact.text);
   for (const mem of state.npcMemories ?? []) addNameTokens(names, mem.npcName);
-  for (const rec of Object.values(state.entityRecords ?? {})) addNameTokens(names, rec.name);
-  for (const fact of state.timeline ?? []) {
-    if (fact.kind === 'person' || fact.kind === 'creature' || fact.kind === 'item' || fact.kind === 'exit' || fact.kind === 'combat') {
-      addNameTokens(names, fact.name ?? '');
-    }
+  if (storyProse) {
+    for (const token of storyProse.toLowerCase().match(/[a-z][\w'-]{3,}/g) ?? []) names.add(token);
   }
   return names;
 }
@@ -223,14 +227,11 @@ function isTokenGrounded(claimed: string, corpus: Set<string>): boolean {
   if (!needle) return true;
   if (GENERIC_SCENE_NOUNS.has(needle)) return true;
   if (corpus.has(needle)) return true;
-  const parts = needle.split(/\s+/).filter((p) => p && !GENERIC_SCENE_NOUNS.has(p));
+  const parts = needle.split(/\s+/).filter((p) => p.length >= 3 && !GENERIC_SCENE_NOUNS.has(p));
   if (parts.length === 0) return true;
   if (parts.every((p) => corpus.has(p))) return true;
   for (const known of corpus) {
-    const words = known.split(/\s+/);
-    let hit = true;
-    for (const p of parts) if (!words.includes(p)) { hit = false; break; }
-    if (hit) return true;
+    if (known.includes(needle) || needle.includes(known)) return true;
   }
   return false;
 }

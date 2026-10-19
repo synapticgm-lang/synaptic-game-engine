@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import type { CampaignBible } from '@/data/campaigns/types';
 import { createInitialState } from './defaults';
-import { formatSceneBlock } from './sceneBlock';
+import { formatInfoSheet } from './infoSheet';
 import {
   applySocialLedgerTurn,
   mergeNpcMemoriesFromTurn,
@@ -77,7 +77,7 @@ describe('Gap 1 — every quoted line lands in said', () => {
     expect(ilyra.said?.[1]?.turn).toBe(5);
 
     const atT8 = { ...state, turn: 8, log: [entry(8, 'player', 'Can i ever get back'), entry(8, 'gm', 'The water stilled.')] };
-    expect(formatSceneBlock(atT8)).toMatch(/Ilyra Fen.*already said \(other, T5\): "The March keeps what falls into it\."/);
+    expect(formatInfoSheet(atT8)).toMatch(/Ilyra Fen.*already said \(other, T5\): "The March keeps what falls into it\."/);
   });
 
   it('reported speech by Ilyra and Tekk at turn 5 lands in said; turn 8 sheet shows Ilyra\'s line', () => {
@@ -96,7 +96,7 @@ describe('Gap 1 — every quoted line lands in said', () => {
     expect(said('Tekk Reed')).toEqual(['the water only lies to those who ask it twice']);
 
     const atT8 = { ...state, turn: 8, log: [entry(8, 'player', 'Can i ever get back'), entry(8, 'gm', 'The water stilled.')] };
-    expect(formatSceneBlock(atT8)).toMatch(
+    expect(formatInfoSheet(atT8)).toMatch(
       /Ilyra Fen.*already said \(other, T5\): "the March shows every walker the face they left behind, and that his was still deciding"/
     );
   });

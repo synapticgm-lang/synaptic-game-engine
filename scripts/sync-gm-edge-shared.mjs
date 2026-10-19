@@ -43,7 +43,6 @@ const FILES = [
   'factLocks.ts',
   'locationName.ts',
   'timelineFormat.ts',
-  'sceneBlock.ts',
   'choiceTierRules.ts',
   'contentModeRules.ts',
   'mapEngine.ts',
