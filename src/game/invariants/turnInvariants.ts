@@ -92,10 +92,10 @@ export function checkTurnInvariants(
     }
   }
 
-  // (2b) dying resolves: every dying turn must change death-save counters (or leave dying).
-  // SRD 5.2.1 Death Saving Throws — a save at the start of every turn while dying.
-  // N≈10 consecutive stalls = P0 in stress; per-turn stall is the root signal.
-  if (dying) {
+  // (2b) dying resolves within N turns — only for states produced by real fight setup
+  // (sceneFacts.dyingFromFight). Hand-shaped / artificial 0 HP states a human escapes by
+  // picking an option are skipped (q77c). SRD 5.2.1 Death Saving Throws on the round-combat path.
+  if (dying && before.sceneFacts?.dyingFromFight === true) {
     const afterDying = isDying(after);
     const bs = before.deathSaves;
     const as = after.deathSaves;

@@ -64,8 +64,9 @@ export function injectFight(state: GameState): GameState {
 }
 
 /**
- * Drop PC to 0 HP through the real fight path: catalog encounter → resolveEngineFight rounds
- * until roundFight writes defeat deathSaves (not a hand-stamped 0 HP).
+ * Drop PC to 0 HP through the real fight path only: catalog encounter → round combat init →
+ * resolveEngineFight rounds until roundFight writes defeat deathSaves.
+ * Never hand-stamps hp:0 / deathSaves. Marks sceneFacts.dyingFromFight when dying is real.
  * SRD 5.2.1 Death Saving Throws / Dropping to 0 Hit Points (Wizards of the Coast, CC BY 4.0).
  * isDying is tabletop-only (engineMode === 'dnd').
  */
@@ -96,48 +97,54 @@ export function injectDying(state: GameState): GameState {
     },
     sheet,
   );
+  // Low starting HP so the live foe can drop the PC through the resolver (not a stamped 0).
   fighting = {
     ...fighting,
     character: {
       ...fighting.character,
-      hp: Math.min(fighting.character.hp ?? 4, 4),
+      hp: Math.min(fighting.character.hp ?? 3, 3),
       maxHp: Math.max(fighting.character.maxHp ?? 12, 12),
     },
   };
   if (!fighting.activeEncounter) fighting = injectFight(fighting);
+  // Stronger catalog foe so Dodge rounds reliably reach defeat via the fight resolver.
+  if (fighting.activeEncounter) {
+    const enc = fighting.activeEncounter;
+    fighting = {
+      ...fighting,
+      activeEncounter: {
+        ...enc,
+        hp: Math.max(enc.hp ?? 40, 40),
+        maxHp: Math.max(enc.maxHp ?? 40, 40),
+        strength: Math.max(enc.strength ?? 16, 16),
+        dexterity: Math.max(enc.dexterity ?? 14, 14),
+      },
+    };
+  }
   let s = fighting;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 60; i++) {
     if (isDying(s) || s.deathSaves?.dead) break;
     const r = resolveEngineFight(s, 'Dodge');
     if (!r) break;
     s = r.state;
   }
-  if (!(isDying(s) || s.deathSaves?.dead)) {
-    // Last resort: same defeat stamp roundFight writes when the catalog foe never drops the PC.
-    s = {
+  if (isDying(s) || s.deathSaves?.dead) {
+    return {
       ...s,
-      character: {
-        ...s.character,
-        hp: 0,
-        conditions: [...new Set([...(s.character.conditions ?? []), 'Unconscious'])],
-      },
-      deathSaves: { successes: 0, failures: 0 },
-      roundCombat: null,
-      activeEncounter: s.activeEncounter,
-    };
-  }
-  // Stress coverage: two failures already counted so the next failed save ends the run (ended>0).
-  if (isDying(s) && s.deathSaves && !s.deathSaves.dead) {
-    s = {
-      ...s,
-      deathSaves: {
-        successes: s.deathSaves.successes ?? 0,
-        failures: Math.max(2, s.deathSaves.failures ?? 0),
-        stable: false,
-        dead: false,
+      sceneFacts: {
+        ...(s.sceneFacts ?? {
+          crowd: 'none',
+          noise: 'quiet',
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: s.turn ?? 0,
+        }),
+        dyingFromFight: true,
       },
     };
   }
+  // Real path did not reach 0 HP — return the live fight as-is (no hand-shaped dying).
   return s;
 }
 

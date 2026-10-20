@@ -1141,31 +1141,34 @@ export async function headlessFateTurn(
   let arcState = withHouseRules(govInputState, settings);
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
-  // q76b / q77b — dry-run / stress: stub writer, but engine still resolves dying / fights / typed.
+  // q76b / q77c — dry-run / stress: stub writer; fights + typed go through engine (not the writer).
+  // Death saves stay on the usesRoundCombat path inside resolveEngineFight (main behaviour).
   if (meta.dryRun) {
     let arcStatusReceipts: string[] = [];
     let engineFact = '';
     const dyingTurn = isDying(govInputState);
     const hereBeforeMove = arcState.currentLocation ?? '';
-    // SRD 5.2.1: every dying turn rolls a death save (resolveEngineFight → resolveDeathSaveTurn).
+    let fightHandled = false;
+    // Live encounter / dying on the round-combat path: typed Attack/Dodge/… via resolveEngineFight.
     if (dyingTurn || arcState.activeEncounter) {
       const fight = resolveEngineFight(arcState, playerInput);
       if (fight) {
+        fightHandled = true;
         arcState = fight.state;
         arcStatusReceipts = [...arcStatusReceipts, ...fight.receipts];
         engineFact = fight.facts || engineFact;
       }
     }
-    // Typed free text outside a dying death-save (death-save receipts already answer the turn).
-    // While dying, still record speech events for talk/protest lines (engine records, writer voices).
-    if (!dyingTurn) {
+    // Typed free text: engine handling or visible refusal. Skip when the fight resolver already answered.
+    // While dying after a fight answer, still record speech events (talk/protest) for the writer slot.
+    if (!fightHandled) {
       const typed = resolveTypedFreeText(arcState, playerInput);
       for (let i = 0; i < typed.receipts.length; i++) {
         const line = typed.receipts[i]!;
         if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
       }
       if (typed.engineResult) engineFact = typed.engineResult;
-    } else {
+    } else if (dyingTurn || isDying(arcState)) {
       const intent = parsePlayerIntent(playerInput, arcState);
       if (intent.kind === 'talk' || intent.kind === 'refuse') {
         const typed = resolveTypedFreeText(arcState, playerInput);

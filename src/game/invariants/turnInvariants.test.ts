@@ -182,8 +182,13 @@ describe('q76a invariant (2) dying-options — L6 T36-39', () => {
     expect(v.some((x) => x.code === 'dying-options')).toBe(true);
   });
 
-  it('fail: dying-stall when death saves do not change', () => {
-    const before = dyingState();
+  it('fail: dying-stall when death saves do not change (real-fight provenance only)', () => {
+    const before = dyingState({
+      sceneFacts: {
+        ...(dyingState().sceneFacts ?? { crowd: 'none', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 36 }),
+        dyingFromFight: true,
+      },
+    });
     const after = { ...before, turn: 37, deathSaves: { successes: 0, failures: 0 } };
     const v = checkTurnInvariants(before, after, turn({
       offeredOptions: [{ label: 'Fight for breath', kind: 'dying' }],
@@ -192,8 +197,23 @@ describe('q76a invariant (2) dying-options — L6 T36-39', () => {
     expect(v.some((x) => x.code === 'dying-stall')).toBe(true);
   });
 
-  it('pass: dying save advances', () => {
+  it('pass: dying-stall skipped without dyingFromFight provenance', () => {
     const before = dyingState();
+    const after = { ...before, turn: 37, deathSaves: { successes: 0, failures: 0 } };
+    const v = checkTurnInvariants(before, after, turn({
+      offeredOptions: [{ label: 'Fight for breath', kind: 'dying' }],
+      playerInput: 'Fight for breath',
+    }));
+    expect(v.filter((x) => x.code === 'dying-stall')).toEqual([]);
+  });
+
+  it('pass: dying save advances', () => {
+    const before = dyingState({
+      sceneFacts: {
+        ...(dyingState().sceneFacts ?? { crowd: 'none', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 36 }),
+        dyingFromFight: true,
+      },
+    });
     const after = { ...before, turn: 37, deathSaves: { successes: 0, failures: 1 } };
     const v = checkTurnInvariants(before, after, turn({
       offeredOptions: [{ label: 'Fight for breath', kind: 'dying' }],
@@ -392,8 +412,7 @@ describe('q76e-SCENARIOS engine injection + answered + naughty stub', () => {
     expect(after.deathSaves).toBeTruthy();
     expect(after.deathSaves!.dead).toBeFalsy();
     expect(isDying(after)).toBe(true);
-    // Defeat clears the live encounter; dying continues outside roundCombat (q77b).
-    expect(after.roundCombat ?? null).toBeNull();
+    expect(after.sceneFacts?.dyingFromFight).toBe(true);
   });
 
   it('injectRoadBlock: journey.encounter from rollRoadEncounter', async () => {
