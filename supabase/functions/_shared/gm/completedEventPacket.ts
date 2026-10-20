@@ -874,7 +874,6 @@ export function nextLoiterStreaks(
     || verb === 'attacked'
     || verb === 'fled';
   const moved = !!prevHere && !!here && prevHere !== here;
-
   if (combat || leftScene) {
     return { inspectStreak: 0, waitStreak: 0, loiterHere: here };
   }
@@ -888,7 +887,6 @@ export function nextLoiterStreaks(
   }
   return { inspectStreak: 0, waitStreak: prevWait + 1, loiterHere: here };
 }
-
 function ledgerFocusNoun(state: GameState): string {
   const empty = (state.sceneFacts?.searchedEmpty ?? []).find((s) => (s ?? '').trim().length > 2);
   if (empty) return empty.trim();
@@ -903,7 +901,6 @@ function ledgerFocusNoun(state: GameState): string {
   }
   return '';
 }
-
 /** Writer-only: starve the 500-char same-room essay on inspect/wait retry. */
 export function collapseLoiterWriterBeats(packet: CompletedEventPacket): string[] {
   const inspect = packet.inspectStreak ?? 0;
@@ -914,7 +911,6 @@ export function collapseLoiterWriterBeats(packet: CompletedEventPacket): string[
   const focus = packet.focusNoun ? `; focus ${packet.focusNoun}` : '; no new props';
   return [`(HERE unchanged; ${kind} ×${n}${focus})`];
 }
-
 export function buildCompletedEventPacket(
   state: GameState,
   playerInput?: string,
@@ -985,7 +981,6 @@ export function buildCompletedEventPacket(
   const focusNoun = ledgerFocusNoun(state);
   const placeFacts = ledgerPlaceFacts(state);
   const askedWantAtCard = hallTalkTopic(action) === 'want' && atOpeningPlace(state);
-
   return {
     turn: state.turn,
     actor: 'you',
@@ -1048,7 +1043,6 @@ export function buildCompletedEventPacket(
     destinationRef,
   };
 }
-
 /**
  * The facts the writer was handed this turn, as one text: WORLD FACTS (the info layer with its NPC rows), the
  * INFO SHEET, the ENGINE RESULT, the ledger changes, PLAYER and the mention list. The writer prompt shows these
@@ -1073,11 +1067,9 @@ export function handedWriterText(state: GameState, packet: Partial<CompletedEven
     ...(packet.allowlist ?? []),
   ].filter(Boolean).join('\n');
 }
-
 /** Same talk family as choiceRanking.actionFamily (inspect / wait / look win there first). */
 const TALK_ACTION = /^(?![\s\S]*\b(?:inspect|examine|study|wait|ready yourself|watch|hold still|keep watch|look around|look over|survey|scout|scan)\b)[\s\S]*\b(?:talk|ask|speak|greet|offer)\b/i;
 const TALK_STAYS = ' A talk, ask or offer with no move is valid play: answer it in dialogue here and do not travel.';
-
 /**
  * 29y — one visit per place: the move the engine committed this turn, or that nothing moved.
  * 29z1 — on a talk turn with no move, say that talking in place is the play.
@@ -1088,7 +1080,6 @@ export function movementFact(state: GameState, playerAction?: string): string {
   const beat = travelBeatFact(state);
   return beat ? (line ? `${line} ${beat}` : beat) : line;
 }
-
 function movementLine(state: GameState, stay: string): string {
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
   if (!here) return '';
@@ -1123,7 +1114,6 @@ function movementLine(state: GameState, stay: string): string {
   if (!c?.lastLocation) return '';
   return `No move this turn: at ${here} before and after. Do not narrate leaving, travelling or arriving.${stay}`;
 }
-
 type LedgerPlaceFacts = {
   place: string;
   descriptor: string;
@@ -1132,7 +1122,6 @@ type LedgerPlaceFacts = {
   leftBehind: string[];
   leftFrom: string;
 };
-
 function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
   const place = (state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), place);
@@ -1154,7 +1143,6 @@ function ledgerPlaceFacts(state: GameState): LedgerPlaceFacts {
     leftFrom: pagePlace(state, state.previousLocationSheet?.name ?? ''),
   };
 }
-
 /** Who can answer in this scene: a record present here; the opening role label only when no opening-cast record exists (so a left-behind NPC is never named). */
 function sceneAnswerWho(state: GameState): string {
   const here = presentNpcRecords(state);
@@ -1162,21 +1150,17 @@ function sceneAnswerWho(state: GameState): string {
   if (openingCastRecords(state).length) return '';
   return atOpeningPlace(state) ? openingCastLabel(state) : '';
 }
-
 function listNames(names: string[]): string {
   if (names.length <= 1) return names[0] ?? '';
   return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
 }
-
 function capFirst(s: string): string {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
-
 function descriptorSentence(descriptor: string | undefined): string {
   const d = (descriptor ?? '').replace(/\s+/g, ' ').trim().replace(/[.!?]+$/, '');
   return d ? `${capFirst(d)}.` : '';
 }
-
 /** 28f — place / presence lines once per arrival or change: '' when a recent GM beat already said it. */
 function onceSaid(state: GameState, line: string): string {
   const l = (line ?? '').replace(/\s+/g, ' ').trim();
@@ -1187,31 +1171,25 @@ function onceSaid(state: GameState, line: string): string {
     .map((e) => String(e.content ?? '').replace(/\s+/g, ' '));
   return recent.some((b) => b.includes(l)) ? '' : l;
 }
-
 function peopleHereSentence(present: string[]): string {
   if (!present.length) return 'Nobody you knew by name stood close.';
   return `${listNames(present)} ${present.length > 1 ? 'were' : 'was'} still there.`;
 }
-
 function exitsSentence(place: string, exits: string[] | undefined): string {
   if (exits?.length) return `The ways out of ${place} were ${listNames(exits)}.`;
   return `The only way out of ${place} you knew was the way you came.`;
 }
-
 function stayedPreposition(place: string): string {
   return /\b(trail|road|march|quay|wall|approach|seam)\b/i.test(place) ? 'on' : 'at';
 }
-
 /** A mapped place name for a page sentence. A road label or trip HERE is not a place. */
 function pagePlace(state: GameState, name: string): string {
   const n = (name ?? '').replace(/\s+/g, ' ').trim();
   return n && !isRoadLabel(n) && !isTripHere(state, n) ? n : '';
 }
-
 function isExitsAsk(act: string): boolean {
   return /\b(?:exits?|ways? out|scout)\b/i.test(act);
 }
-
 /**
  * 27a — ledger stitch for a blocked paint: look / exits / travel / wait / talk
  * from place, descriptor, exits, present and left-behind facts only.
@@ -1278,7 +1256,6 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   };
   return [...lastLines].sort((a, b) => lastUse(b) - lastUse(a))[0] ?? stayLine;
 }
-
 /**
  * Short past-tense instruction + packet + allowlist. Facts only.
  * No SNAPSHOT/CRAFT essays. No "don't resurrect" lecture.
@@ -1444,9 +1421,7 @@ export function formatWriterFacingEvent(
   }
   return lines.join('\n').trim();
 }
-
 const WRITER_ATTACK = /^(?:press the attack|attack|strike|swing|stab|slash|hit|charge|fight)\b/i;
-
 export function mentionAllowlistHas(allowlist: string[], token: string): boolean {
   const t = token.trim().toLowerCase();
   if (!t) return false;
@@ -1457,7 +1432,6 @@ export function mentionAllowlistHas(allowlist: string[], token: string): boolean
     return last.length >= 4 && (last === t || t.endsWith(` ${last}`));
   });
 }
-
 function isInstructionVoice(text: string): boolean {
   return (
     /\bMy instruction says\b/i.test(text)
@@ -1470,7 +1444,6 @@ function isInstructionVoice(text: string): boolean {
     || /\bSTRICT:\s*Use only the nouns\b/i.test(text)
   );
 }
-
 function hasChoiceListLeak(text: string): boolean {
   if (!text?.trim()) return false;
   return (
@@ -1478,7 +1451,6 @@ function hasChoiceListLeak(text: string): boolean {
     || /\d+[.)]\s+(?:Meet|Descend|Observe|Scan|Inquire|Plunge|Turn to)\b/.test(text)
   );
 }
-
 function prematureLoot(prose: string, packet: CompletedEventPacket): boolean {
   if (packet.loot.length > 0 || packet.outcome === 'looted') return false;
   if (packet.justKilled || packet.outcome === 'killed') return false;
@@ -1489,7 +1461,6 @@ function prematureLoot(prose: string, packet: CompletedEventPacket): boolean {
     prose
   );
 }
-
 function aliveVsDeadContradiction(prose: string, packet: CompletedEventPacket): boolean {
   // The kill turn: the engine settled the fight before the writer, and the writer is telling those blows.
   if (packet.justKilled || packet.outcome === 'killed') return false;
@@ -1501,27 +1472,21 @@ function aliveVsDeadContradiction(prose: string, packet: CompletedEventPacket): 
   }
   return false;
 }
-
 /** "lay still in the alley": after a body-position verb, "still" is motionless, not "yet in". */
 const POSTURE_STILL = '(?<!\\b(?:lay|lie|lies|lying|stood|stands|standing|sat|sits|sitting|kept|keeps|held|holds|froze|hung|went)\\s)';
-
 const HERE_CLAIM = new RegExp(
   `\\b(?:you (?:are|stand|wait|remain) (?:in|at|inside)|here in|back (?:in|at)|${POSTURE_STILL}still (?:in|at))\\s+(?:the\\s+)?([^.,!?;:]{2,48})`,
   'i'
 );
-
 /** The place phrase ends where the clause goes on ("here in the Close and questions waited"). */
 const CLAUSE_GOES_ON = /\s+(?:and|but|or|as|while|where|when|with|before|after|until|so|then|because|though)\b.*$/i;
-
 /** A quoted line is what a person said ("We'll take it back at Contract Hall"), not where the camera is. */
 const QUOTED_SPEECH = /["“][^"“”]*["”]/g;
-
 /** The place a sentence says the camera is in ("still in the close" → "close"), or '' when it claims none. */
 export function claimedHerePlace(prose: string): string {
   const narration = (prose ?? '').replace(QUOTED_SPEECH, ' ');
   return narration.match(HERE_CLAIM)?.[1]?.replace(/\s+/g, ' ').replace(CLAUSE_GOES_ON, '').trim() ?? '';
 }
-
 /** The claim is HERE by HERE's own words: "the Close" or "close" for Cathedral Close. */
 export function claimNamesHere(claim: string, here: string): boolean {
   const words = (s: string) =>
@@ -1530,7 +1495,6 @@ export function claimNamesHere(claim: string, here: string): boolean {
   const h = new Set(words(here));
   return c.length > 0 && h.size > 0 && c.every((w) => h.has(w));
 }
-
 function wrongHereOnPacket(prose: string, packet: CompletedEventPacket): boolean {
   const here = (packet.location ?? '').replace(/\.$/, '').trim();
   if (!here || here.length < 3) return false;
@@ -1550,7 +1514,6 @@ function wrongHereOnPacket(prose: string, packet: CompletedEventPacket): boolean
   if (h === c || h.includes(c) || c.includes(h)) return false;
   return true;
 }
-
 export function proseViolatesEventPacket(
   prose: string,
   packet: CompletedEventPacket
@@ -1565,7 +1528,6 @@ export function proseViolatesEventPacket(
   if (wrongHereOnPacket(body, packet)) return true;
   return false;
 }
-
 type StitchSlots = {
   where: string;
   who: string;
@@ -1574,32 +1536,26 @@ type StitchSlots = {
   descriptor?: string;
   exits?: string[];
 };
-
 /** Look-around focus never names the System panel; first word capitalised. */
 function lookFocus(s: StitchSlots): string {
   return s.focus && !/\bpanel\b/i.test(s.focus) ? capFirst(s.focus) : '';
 }
-
 function lookTail(s: StitchSlots): string {
   const desc = descriptorSentence(s.descriptor);
   return desc || NO_DESCRIPTION_LOOK_LINE;
 }
-
 /** 28b — plain line when the place has no description (never claims you knew it). */
 const NO_DESCRIPTION_LOOK_LINE = 'You saw nothing that called for a closer look.';
-
 /** 28b — "was" / "were" for a named person or group ("West Wall Levy was", "Guards were"). */
 function beVerbFor(who: string): 'was' | 'were' {
   const w = (who ?? '').trim();
   return /\band\b/i.test(w) || /[^s]s$/i.test(w) ? 'were' : 'was';
 }
-
 type StitchTemplate = {
   id: string;
   fingerprint: string;
   render: (s: StitchSlots) => string;
 };
-
 const STITCH_BANKS: Record<string, StitchTemplate[]> = {
   'attack-kill': [
     {
@@ -2032,24 +1988,18 @@ const STITCH_BANKS: Record<string, StitchTemplate[]> = {
     },
   ],
 };
-
 export const PACKET_STITCH_FINGERPRINTS: readonly string[] = Object.values(STITCH_BANKS)
   .flat()
   .map((t) => t.fingerprint);
-
 const OLD_LANDING_STUB =
   /You acted at landing|That beat closed\.|The next move was yours\.|The blow landed/i;
-
 /** 13a/13b — retired 1–2 line droughts. Never commit these as the story body. */
 export const RETIRED_DROUGHT_STUB =
   /Whatever you tried had already happened|Dust hung at/i;
-
 export function isDroughtStubProse(text: string): boolean {
   return RETIRED_DROUGHT_STUB.test((text ?? '').trim());
 }
-
 const SHORT_ALREADY_TOLD = /already answered you|already said it|Their answer stayed short/i;
-
 function lastGoodGmBody(state: GameState): string {
   const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
   for (const e of rows) {
@@ -2063,7 +2013,6 @@ function lastGoodGmBody(state: GameState): string {
   }
   return '';
 }
-
 function cardPageParagraph(state: GameState): string {
   const card = String(state.openingEstablishment?.pickedHookFallback ?? '')
     .replace(/\s+/g, ' ')
@@ -2073,26 +2022,21 @@ function cardPageParagraph(state: GameState): string {
   }
   return '';
 }
-
 const LEDGER_WAIT_FP = /The name \S+ already stood|The room waited on what you did next/i;
 const COMBAT_CLOSE_FP = /You close with |loot is legal|The exchange goes badly\. You go down/i;
-
 export function isUnaskedCombatClose(prose: string, playerInput: string): boolean {
   if (!COMBAT_CLOSE_FP.test(prose ?? '')) return false;
   return !/\b(attack|fight|auto[- ]?fight|strike|draw|press the attack)\b/i.test(playerInput ?? '');
 }
-
 function lastCommittedGmBody(state: GameState): string {
   const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
   return String(rows[0]?.content ?? '').replace(/\s+/g, ' ').trim();
 }
-
 function sameBeat(a: string, b: string): boolean {
   const left = (a ?? '').replace(/\s+/g, ' ').trim();
   const right = (b ?? '').replace(/\s+/g, ' ').trim();
   return !!left && !!right && left === right;
 }
-
 /** True when the candidate is the last GM, or a cut-down reprint of it. */
 export function isLastGmReprint(prose: string, lastGm: string): boolean {
   const body = (prose ?? '').replace(/\s+/g, ' ').trim();
@@ -2104,7 +2048,6 @@ export function isLastGmReprint(prose: string, lastGm: string): boolean {
   if (head.length >= 24 && prev.includes(head)) return true;
   return false;
 }
-
 /** A known place the line names (map, journey or hub list); never a capitalised word of the line itself. */
 function destFromAct(act: string, state: GameState): string {
   const line = act.toLowerCase();
@@ -2117,7 +2060,6 @@ function destFromAct(act: string, state: GameState): string {
     .filter((n) => n.length > 2);
   return known.find((n) => line.includes(n.toLowerCase())) || 'the next way out';
 }
-
 function herePhrase(where: string): string {
   const place = (where || 'this place').replace(/\s+/g, ' ').trim();
   if (/\bof the\s*$/i.test(place) || /^(?:the\s+)?(?:outdoor\s+)?seam of the$/i.test(place)) {
@@ -2125,7 +2067,6 @@ function herePhrase(where: string): string {
   }
   return /^(?:a|an|the)\s/i.test(place) ? place : `the ${place}`;
 }
-
 function castHead(state: GameState, packet?: CompletedEventPacket): string {
   const who = (packet?.answerWho || packet?.witnesses?.[0] || openingCastLabel(state) || '')
     .replace(/\s+/g, ' ')
@@ -2133,7 +2074,6 @@ function castHead(state: GameState, packet?: CompletedEventPacket): string {
   if (!who || /\bpanel\b/i.test(who)) return '';
   return who.charAt(0).toUpperCase() + who.slice(1);
 }
-
 function pickAdvanceVariant(variants: string[], recent: string[], salt: number): string {
   const free = variants.filter(
     (v) => !recent.some((b) => sameBeat(b, v) || (v.length >= 24 && b.includes(v.slice(0, 36))))
@@ -2141,7 +2081,6 @@ function pickAdvanceVariant(variants: string[], recent: string[], salt: number):
   const pool = free.length ? free : variants;
   return pool[Math.abs(salt) % pool.length]!;
 }
-
 /**
  * Last-resort / stitch advance: interesting + simple 4–6 short sentences,
  * or a short spoken HERE line. Never the name telegram. Never last GM.
@@ -2159,7 +2098,6 @@ function lastResortPov(state: GameState, packet?: CompletedEventPacket) {
     was: S === 'You' ? 'were' : 'was',
   };
 }
-
 function topicAdvancePool(
   state: GameState,
   packet?: CompletedEventPacket,
@@ -2341,7 +2279,6 @@ function topicAdvancePool(
   }
   return pool.map((s) => s.replace(/\s+/g, ' ').trim());
 }
-
 function topicAdvanceStitch(
   state: GameState,
   packet?: CompletedEventPacket,
@@ -2356,7 +2293,6 @@ function topicAdvanceStitch(
   const pool = topicAdvancePool(state, packet, playerInput);
   return pickAdvanceVariant(pool, recent, salt).replace(/\s+/g, ' ').trim();
 }
-
 function lastResortUsable(state: GameState, prose: string, lastGm: string): string {
   const body = sanitizeLockedNameBeat(state, (prose ?? '').replace(/\s+/g, ' ').trim());
   if (!body || body.length < 24) return '';
@@ -2370,7 +2306,6 @@ function lastResortUsable(state: GameState, prose: string, lastGm: string): stri
   }
   return body;
 }
-
 /**
  * Last-resort book body after empty/timeout GM (retries already spent).
  * Never Dust-hung / already-happened. After a locked name, do not reprint
@@ -2422,7 +2357,6 @@ export function lastResortStoryBody(
     }
   }
   if (!named) candidates.push(lastGoodGmBody(state), cardPageParagraph(state));
-
   for (const raw of candidates) {
     const body = lastResortUsable(state, raw, lastGm);
     if (body) {
@@ -2445,7 +2379,6 @@ export function lastResortStoryBody(
       : 'Writer empty after retries — last good beat held (not a drought stub)',
   };
 }
-
 /**
  * Writer outage on a talk or parley turn: the addressee's own card line, else '' so the caller paints
  * `bookBodyAfterWriterMiss`. Any other verb, or no one here to answer, is not a spoken turn.
@@ -2457,7 +2390,6 @@ export function outageSpokenLine(state: GameState, verb: CompletedEventPacket['v
   if (/^Nobody here answered|Silence held the question|No one listed on the ledger answered/i.test(spoken)) return '';
   return spoken;
 }
-
 /**
  * Writer timeout / empty / reprint → a visible new book beat.
  * Live and Fate both paint this instead of leaving the player line unanswered.
@@ -2484,19 +2416,16 @@ export function bookBodyAfterWriterMiss(
   }
   return lastResortStoryBody(state, packet, playerInput);
 }
-
 export function isPacketStitchProse(text: string): boolean {
   const body = (text ?? '').trim();
   if (!body) return false;
   if (OLD_LANDING_STUB.test(body) || RETIRED_DROUGHT_STUB.test(body)) return true;
   return PACKET_STITCH_FINGERPRINTS.some((fp) => body.includes(fp));
 }
-
 function corpseRemains(packet: CompletedEventPacket): boolean {
   const kill = packet.lastKill;
   return !!(kill?.name && kill.remains && kill.outcome === 'victory' && !packet.combatLive);
 }
-
 function stitchBankKey(packet: CompletedEventPacket): string {
   const verb = packet.verb;
   const outcome = packet.outcome;
@@ -2532,7 +2461,6 @@ function stitchBankKey(packet: CompletedEventPacket): string {
   if (corpse) return 'settle-corpse';
   return 'settle';
 }
-
 function ledgerStitchSlots(packet: CompletedEventPacket): StitchSlots {
   const where = packet.location || 'this room';
   const kill = packet.lastKill;
@@ -2566,7 +2494,6 @@ function ledgerStitchSlots(packet: CompletedEventPacket): StitchSlots {
     exits: packet.exitNames,
   };
 }
-
 function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: number): StitchTemplate {
   const free = bank.filter((t) => !recent.some((b) => b.includes(t.fingerprint)));
   if (free.length) return free[Math.abs(salt) % free.length]!;
@@ -2577,7 +2504,6 @@ function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: numb
   };
   return [...bank].sort((a, b) => lastSeen(a) - lastSeen(b))[0]!;
 }
-
 /**
  * Authored past-tense stitch from ledger slots only.
  * Never interpolates pad/intent remainder. Outcome follows verb.
@@ -2625,13 +2551,11 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   if (!bits.length) bits.push(`You spoke at ${slots.where}. ${capFirst(who)} ${beVerbFor(who)} still close enough to hear.`);
   return bits.join(' ').replace(/\s+/g, ' ').trim();
 }
-
 function clipSpoken(raw: string, max = 180): string {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return '';
   return t.length > max ? `${t.slice(0, max - 1).trim()}…` : t;
 }
-
 /** E-talk / Silent spoke: CAST + card want, never Silence-held when someone is listed. */
 function renderSpokenTalkFallback(packet: CompletedEventPacket, slots: StitchSlots): string | null {
   if (packet.verb !== 'spoke' && packet.verb !== 'parleyed') return null;
@@ -2651,7 +2575,6 @@ function renderSpokenTalkFallback(packet: CompletedEventPacket, slots: StitchSlo
   }
   return `${head} heard you at ${slots.where}. Their answer stayed short.`;
 }
-
 export function assemblePacketStitch(
   packet: CompletedEventPacket,
   recentGm: string[] = packet.recentBeats ?? []
@@ -2693,7 +2616,6 @@ export function assemblePacketStitch(
   }
   return text;
 }
-
 /**
  * After mechanics commit: attach packet, then the writer string.
  * Fate / useGame call this before callGm — packet always exists first.
@@ -2721,4 +2643,4 @@ export function prepareRetrospectiveWriterInput(
     packet,
     writerFacing: formatWriterFacingEvent(packet),
   };
-}
+}
