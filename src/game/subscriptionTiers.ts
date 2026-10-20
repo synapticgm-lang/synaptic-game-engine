@@ -8,11 +8,8 @@
  * Mid = Claude Haiku 4.5; High = Claude Sonnet 4.6. Memorable plates: paywalled
  * (Free week cap 0); Mid/High use Flux.2 Pro. Inventory icons stay Klein.
  */
-
 import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
-
 export type SubscriptionTierId = 'free' | 'mid' | 'high' | 'admin';
-
 export type TurnPackId =
   | 'text_15'
   | 'text_35'
@@ -23,9 +20,7 @@ export type TurnPackId =
   | 'memorable_10'
   | 'memorable_20'
   | 'memorable_50';
-
 export type CapacityPackKind = 'text' | 'illustrated' | 'memorable';
-
 /** Shop card artwork keys — CSS/SVG faces in MainMenu. */
 export type TurnPackArtId =
   | 'spark'
@@ -37,7 +32,6 @@ export type TurnPackArtId =
   | 'snap'
   | 'album'
   | 'gallery';
-
 export interface TurnPackDefinition {
   id: TurnPackId;
   /** Shop display name */
@@ -61,7 +55,6 @@ export interface TurnPackDefinition {
   accent: string;
   accentSoft: string;
 }
-
 /**
  * Consumable packs — text, memorable plates, and later Illustrated.
  * Memorable extras are schnell only (never the opener’s nicer model).
@@ -216,36 +209,29 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     accentSoft: '#451a03',
   },
 };
-
 /** Packs shown as purchasable today (text only until Illustrated ships). */
 export function liveShopPacks(): TurnPackDefinition[] {
   return Object.values(TURN_PACKS).filter((p) => p.shopLive);
 }
-
 /** All capacity packs for shop shelf (illustrated may be coming-soon). */
 export function allShopPacks(): TurnPackDefinition[] {
   return Object.values(TURN_PACKS);
 }
-
 export function textShopPacks(): TurnPackDefinition[] {
   return allShopPacks().filter((p) => p.kind === 'text');
 }
-
 export function illustratedShopPacks(): TurnPackDefinition[] {
   return allShopPacks().filter((p) => p.kind === 'illustrated');
 }
-
 export function memorableShopPacks(): TurnPackDefinition[] {
   return allShopPacks().filter((p) => p.kind === 'memorable');
 }
-
 /** BFL direct endpoint path segment under https://api.bfl.ai/v1/ */
 export type FluxEndpointId =
   | 'flux-2-klein-4b'
   | 'flux-2-klein-9b'
   | 'flux-2-pro'
   | 'flux-2-pro-preview';
-
 export interface TierDefinition {
   id: SubscriptionTierId;
   name: string;
@@ -265,7 +251,6 @@ export interface TierDefinition {
   noAds: boolean;
   downloadGraphicNovel: boolean;
 }
-
 export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
   free: {
     id: 'free',
@@ -342,9 +327,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     downloadGraphicNovel: true,
   },
 };
-
 const TIER_STORAGE_KEY = 'synapticgm-subscription-tier';
-
 /** Local override until billing is live. Default free. */
 export function getActiveSubscriptionTier(): SubscriptionTierId {
   try {
@@ -355,19 +338,15 @@ export function getActiveSubscriptionTier(): SubscriptionTierId {
   }
   return 'free';
 }
-
 export function isAdminSubscriptionTier(tier: SubscriptionTierId | string | null | undefined): boolean {
   return tier === 'admin';
 }
-
 export function setActiveSubscriptionTier(tier: SubscriptionTierId): void {
   localStorage.setItem(TIER_STORAGE_KEY, tier);
 }
-
 export function getTierDefinition(tier: SubscriptionTierId = getActiveSubscriptionTier()): TierDefinition {
   return SUBSCRIPTION_TIERS[tier];
 }
-
 /**
  * Resolve writer model for this session.
  * Hosted path uses tier catalog. Custom model only when Admin BYOK is live.
@@ -384,7 +363,6 @@ export function resolveWriterModel(args: {
   if (args.aiProvider === 'gemini') return def.writerGeminiId;
   return def.writerOpenRouterId;
 }
-
 export function resolveFluxEndpoint(args: {
   tier?: SubscriptionTierId;
   hero?: boolean;
@@ -393,7 +371,6 @@ export function resolveFluxEndpoint(args: {
   if (args.hero && def.fluxHeroEndpoint) return def.fluxHeroEndpoint;
   return def.fluxEndpoint;
 }
-
 /** OpenRouter model ids — same logical tiers as BFL endpoints (swap provider later). */
 export function fluxEndpointToOpenRouterId(endpoint: FluxEndpointId): string {
   switch (endpoint) {
@@ -408,7 +385,6 @@ export function fluxEndpointToOpenRouterId(endpoint: FluxEndpointId): string {
       return HOSTED_SCHNELL_MODEL;
   }
 }
-
 /**
  * Resolve which Flux model string to call.
  * Today: OpenRouter id. Later with imageProvider=flux-direct: same tier → BFL endpoint.

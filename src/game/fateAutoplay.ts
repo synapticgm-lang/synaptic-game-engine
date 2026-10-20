@@ -224,7 +224,7 @@ import {
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedTurn, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
-import { dropAbsentListenerChips } from './chipLegality';
+import { dropAbsentListenerChips, peopleHere } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
   applyProseWarden,
@@ -243,7 +243,8 @@ import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairReject
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
-import { checkPlayerTurn, type TurnCheck } from './turnCheck';
+import { checkPlayerTurn, type TurnCheck, type TurnCheckKind } from './turnCheck';
+import { checkTurnInvariants, type InvariantViolation } from './invariants/turnInvariants';
 import { grantLevelSkills } from './skillGates';
 import { compactTrafficGist } from './openingPointerCard';
 import {
@@ -371,6 +372,8 @@ export type TurnTelemetry = {
   progressReasons?: string[];
   /** 29z2 — tester check: P0 (ghost/impossible chip, ignored action, open-ground interior, unset quest place) + thumbs-down. */
   turnCheck?: TurnCheck;
+  /** q76c — checkTurnInvariants hits this turn (also merged into turnCheck.p0 / .down). */
+  turnInvariants?: InvariantViolation[];
   sealedManifestHash?: string;
   replayHash?: string;
   renderFallbackUsed?: boolean;
@@ -1128,7 +1131,7 @@ export async function headlessFateTurn(
       },
     };
   }
-  if (state.openingEstablishment) {
+  if (state.openingEstablishment && !meta.dryRun) {
     const stepped = await applyOpeningAnswer(state, playerInput);
     state = { ...stepped.state, pendingGeneratedOpening: false };
   }
@@ -1136,6 +1139,61 @@ export async function headlessFateTurn(
   let arcState = withHouseRules(govInputState, settings);
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
+  // q76b — dry-run / stress: travel + stub writer only (no ArcDirector / dungeon / writer prep).
+  if (meta.dryRun) {
+    let arcStatusReceipts: string[] = [];
+    const dyingTurn = isDying(govInputState);
+    const hereBeforeMove = arcState.currentLocation ?? '';
+    const graphMoved = dyingTurn ? arcState : applyGraphExitTravel(arcState, playerInput);
+    const travelCommit = dyingTurn || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
+    arcState = travelCommit?.state ?? graphMoved;
+    if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
+    arcState = syncSheetToMovedHere(arcState, state.currentLocation);
+    if (!dyingTurn) arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+    if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
+      arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
+      arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
+    }
+    const here = (arcState.currentLocation ?? 'here').trim() || 'here';
+    const who = peopleHere(arcState)[0];
+    const act = String(displayLine ?? '').trim() || 'Look around';
+    const stubGm = who
+      ? `At ${here}, you ${act}. The scene held. ${who} answered from where they stood.`
+      : `At ${here}, you ${act}. The scene held.`;
+    const playerEntry: LogEntry = { id: uid(), turn: state.turn, role: 'player', content: displayLine, timestamp: Date.now() };
+    const gmBase: LogEntry = {
+      id: uid(), turn: state.turn + 1, role: 'gm', content: stubGm, timestamp: Date.now(),
+      systemLog: ['Dry run — stub writer, no GM call', ...arcStatusReceipts].slice(0, 12),
+    };
+    const prevLog = arcState.log ?? state.log;
+    // Stress speed: reuse this turn's offered pad (full compiler is the live/non-dry path).
+    const nextChoices = offered.length ? offered : ['Look around', 'Wait', 'Check what you carry'];
+    const midBase: GameState = { ...arcState, turn: state.turn + 1, log: [...prevLog, playerEntry, gmBase] };
+    const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };
+    const next: GameState = {
+      ...midBase,
+      log: [...prevLog, playerEntry, gm],
+      choices: nextChoices,
+      offeredPad: state.offeredPad
+        ? { ...state.offeredPad, turn: midBase.turn, choices: nextChoices }
+        : { turn: midBase.turn, choices: nextChoices },
+    };
+    const ended = Date.now();
+    const choiceIds: string[] = [];
+    for (let i = 0; i < offered.length; i++) choiceIds.push(`choice-${next.turn}-${i}`);
+    return {
+      state: next,
+      telemetry: {
+        turn: next.turn, startedAt, endedAt: new Date(ended).toISOString(), durationMs: ended - started,
+        bibleId: meta.bibleId, engineMode: state.engineMode, personalityId: meta.personalityId, seed: meta.seed,
+        fatePick, offeredChoices: offered, offeredChoiceIds: choiceIds, playerInput, gmText: stubGm,
+        systemLog: gm.systemLog ?? [], questUnlocks: [], itemsEquipped: [], itemsUsed: [],
+        loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
+        transportRetries: 0, repairNote, dryRun: true,
+        responsePath: classifyResponsePath({ state, playerInput, subscriptionTier: settings.subscriptionTier }),
+      },
+    };
+  }
   let arcBlock = '';
   let arcStatusReceipts: string[] = [];
   let arcResult: ArcDirectorResult | undefined;
@@ -1244,68 +1302,6 @@ export async function headlessFateTurn(
     playerInput,
   });
   let mudTurn: FreeMudTurn | null = null;
-  if (meta.dryRun) {
-    const stubGm = `(dry-run) Fate picked: ${fatePick}. Offered: ${offered.join(' | ')}`;
-    const playerEntry: LogEntry = {
-      id: uid(),
-      turn: state.turn,
-      role: 'player',
-      content: displayLine,
-      timestamp: Date.now(),
-    };
-    const gmBase: LogEntry = {
-      id: uid(),
-      turn: state.turn + 1,
-      role: 'gm',
-      content: stubGm,
-      timestamp: Date.now(),
-      systemLog: ['Dry run — no GM call'],
-    };
-    const mid: GameState = {
-      ...state,
-      turn: state.turn + 1,
-      log: [...state.log, playerEntry, gmBase],
-      choices: offered.length ? offered : ['Look around', 'Wait', 'Check what you carry'],
-    };
-    const gm = withOfferedChoices(gmBase, mid);
-    const next: GameState = {
-      ...mid,
-      log: [...state.log, playerEntry, gm],
-      choices: gm.offeredChoices ?? mid.choices,
-    };
-    const ended = Date.now();
-    return {
-      state: next,
-      telemetry: {
-        turn: next.turn,
-        startedAt,
-        endedAt: new Date(ended).toISOString(),
-        durationMs: ended - started,
-        bibleId: meta.bibleId,
-        engineMode: state.engineMode,
-        personalityId: meta.personalityId,
-        seed: meta.seed,
-        fatePick,
-        offeredChoices: offered,
-        offeredChoiceIds: offered.map((_, i) => `choice-${next.turn}-${i}`),
-        playerInput,
-        gmText: stubGm,
-        systemLog: gm.systemLog ?? [],
-        questUnlocks: [],
-        itemsEquipped: [],
-        itemsUsed: [],
-        loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
-        transportRetries: 0,
-        repairNote,
-        dryRun: true,
-        responsePath: classifyResponsePath({
-          state,
-          playerInput,
-          subscriptionTier: settings.subscriptionTier,
-        }),
-      },
-    };
-  }
   const intent = parsePlayerIntent(playerInput, state);
   const turnMandate = buildTurnMandate(playerInput, intent, state, playerInput);
   const deterministicBlock = `
@@ -2382,7 +2378,32 @@ export async function runFateAutoplay(opts: {
           tel.progress = p.progressed;
           tel.progressReasons = p.reasons;
           const prev = turns[turns.length - 1];
-          if (!tel.error) tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
+          if (!tel.error) {
+            tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
+            // q76c — report-only invariants into the lap row; P0 → turnCheck.p0 → CHECK_FAIL.
+            const choices = tel.offeredChoices ?? [];
+            const input = tel.playerInput || tel.fatePick || '';
+            const typed = !!tel.playerInput && !choices.some((c) => c === tel.playerInput);
+            const offered =
+              tel.offeredChips && tel.offeredChips.length > 0
+                ? tel.offeredChips.map((c) => ({ label: c.label, kind: c.kind }))
+                : choices;
+            const inv = checkTurnInvariants(turnStart, state, {
+              offeredOptions: offered,
+              playerInput: input,
+              typed,
+              prose: tel.gmText ?? '',
+              answered: !!(tel.gmText && tel.gmText.trim()),
+              visibleAnswer: tel.gmText ?? '',
+            });
+            tel.turnInvariants = inv;
+            for (let i = 0; i < inv.length; i++) {
+              const v = inv[i]!;
+              const flag = { kind: v.code as TurnCheckKind, detail: v.detail };
+              if (v.severity === 'P0') tel.turnCheck.p0.push(flag);
+              else tel.turnCheck.down.push(flag);
+            }
+          }
         }
         Object.assign(result.telemetry, turnProvenance(result.telemetry, writerOverride?.model));
         turns.push(result.telemetry);

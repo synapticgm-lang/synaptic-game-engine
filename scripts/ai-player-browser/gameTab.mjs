@@ -472,6 +472,53 @@ export async function startPremade(page, bibleId) {
 /** CenterPanel toolbar â€” only mounted while `state.activeEncounter` is live. */
 export const AUTO_FIGHT_SELECTOR = 'button[title="Auto-resolve combat"]';
 
+/** Full current GameState from IndexedDB (harness-only; q76c invariants). */
+export async function readCurrentGameState(page) {
+  if (!page || typeof page.evaluate !== 'function') return null;
+  try {
+    const row = await page.evaluate(() => new Promise((resolve) => {
+      let done = false;
+      const finish = (value) => {
+        if (done) return;
+        done = true;
+        resolve(value || null);
+      };
+      const timer = setTimeout(() => finish(null), 800);
+      let req;
+      try {
+        req = indexedDB.open('tactical-litrpg');
+      } catch {
+        clearTimeout(timer);
+        finish(null);
+        return;
+      }
+      req.onerror = () => { clearTimeout(timer); finish(null); };
+      req.onsuccess = () => {
+        try {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('game')) {
+            clearTimeout(timer);
+            finish(null);
+            return;
+          }
+          const getReq = db.transaction('game', 'readonly').objectStore('game').get('current');
+          getReq.onerror = () => { clearTimeout(timer); finish(null); };
+          getReq.onsuccess = () => {
+            clearTimeout(timer);
+            finish(getReq.result || null);
+          };
+        } catch {
+          clearTimeout(timer);
+          finish(null);
+        }
+      };
+    }));
+    return row && typeof row === 'object' ? row : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Save id the UI has loaded (DOM marker, else the current IndexedDB game row). */
 export async function readUiSaveId(page) {
   if (!page || typeof page.evaluate !== 'function') return null;
