@@ -1832,18 +1832,27 @@ export function useGame() {
     if (choice === 'finish') setShowNewGame(true);
   });
   const sendAction = useCallbackRef(async (input: string) => {
-    if (!input.trim() || busy || turnInFlightRef.current) return;
+    if (!input.trim()) return;
+    // q75r: busy / mid-reveal never silently drop a typed line — toast + restore (clear UI feedback).
+    if (busy || turnInFlightRef.current) {
+      addToast('Still working on the last turn — wait a moment, then send again.', 'info');
+      pinBlockedDraft(input);
+      return;
+    }
     if (
       turnPhase === 'reading'
       || turnPhase === 'resolving'
       || (turnPhase === 'revealing' && streamingReveal && !streamingReveal.done)
     ) {
+      addToast('Still revealing the last beat — wait a moment, then send again.', 'info');
+      pinBlockedDraft(input);
       return;
     }
     let current = stateRef.current;
     if (!current) return;
     if (current.pendingTurn) {
       addToast('Accept, edit, or discard the pending turn first.', 'info');
+      pinBlockedDraft(input);
       return;
     }
     if (isPlayInputLocked(current)) {
@@ -1853,6 +1862,7 @@ export function useGame() {
           : 'You are down — rest or recover before acting again.',
         'info'
       );
+      pinBlockedDraft(input);
       return;
     }
     // Unlock TTS in this tap so the later async GM speak is allowed on Android Chrome.
@@ -2026,7 +2036,9 @@ export function useGame() {
         return;
       }
     }
-    // q75: round combat accepts every typed line (speech free; engine resolves or returns a reason).
+    // q75r: never silently refuse a typed line at the hard gate (any mode).
+    // Round combat already skips; outside combat the line is still accepted — groundPlayerAction /
+    // the engine answer with the reason in-fiction (no pendingRepair + draft restore = send_not_accepted).
     const roundTypedOpen =
       !!current.activeEncounter
       && !!current.roundCombat
@@ -2044,39 +2056,12 @@ export function useGame() {
         current.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '';
       const validation = validateActionHard(mediated.text, current, lastGmStory);
       if (!validation.valid) {
-        const errorMessage = validation.violations.join(' ');
-        debugLogger.record('WARN', 'Hard gate blocked action', {
+        debugLogger.record('WARN', 'Hard gate note — typed line accepted; engine answers', {
           codes: validation.violations.slice(0, 3),
           input: mediated.text.slice(0, 80),
           turn: current.turn,
         });
-        const repairPlayerEntry: LogEntry = {
-          id: uid(),
-          turn: current.turn,
-          role: 'player',
-          content: mediated.text,
-          timestamp: Date.now(),
-        };
-        setState((s) =>
-          s
-            ? {
-                ...s,
-                pendingRepair: {
-                  id: crypto.randomUUID(),
-                  situation: 'unsupported',
-                  playerInput: mediated.text,
-                  message: `Action blocked. ${errorMessage} Rephrase, pick **Look around**, or **Check what you carry**.`,
-                  options: ['Look around', 'Check what you carry'],
-                  createdAt: Date.now(),
-                },
-                log: [...s.log, repairPlayerEntry],
-              }
-            : s
-        );
-        pinBlockedDraft(mediated.text);
-        addToast(errorMessage, 'info');
-        turnInFlightRef.current = false;
-        return;
+        // Fall through: soft ground + GM/engine path explain the miss; do not pinBlockedDraft.
       }
     }
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);

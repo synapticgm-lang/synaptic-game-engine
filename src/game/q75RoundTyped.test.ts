@@ -1,8 +1,9 @@
 /**
- * q75-ROUNDTYPED — typed input in round combat as SRD 5.2.1 actions.
+ * q75-ROUNDTYPED / q75r-ROUNDTYPED — typed input in round combat as SRD 5.2.1 actions.
  * SRD 5.2.1 (Wizards of the Coast, CC BY 4.0): Communicating (free speech);
  * Influence (Persuasion/Intimidation/Deception); Improvising an Action; action economy.
  * Evidence shape: mega T7 record T164–T165 (Blind Crawler typed parley / speech).
+ * q75r: mid-fight travel pad (seed 20632 T9); LitRPG typed pick-up accepted (L6 T19).
  */
 import { describe, expect, it } from 'vitest';
 import { pathToFileURL } from 'node:url';
@@ -15,6 +16,12 @@ import { SRD_MONSTERS, type StatBlock } from './rules/srdMonsters';
 import { applyTabletopSheet, resolveSheet } from './tabletop/characterBuild';
 import { interpretRoundTyped } from './tabletop/roundTyped';
 import type { GameState, RoundCombatState } from './types';
+import { applyOptionCooldown } from './sceneAffordances';
+import { travelPadBlocked } from './padUniverse';
+import { chipProblem } from './chipLegality';
+import { groundPlayerAction } from './intentParser';
+import { findUnsupportedItemClaims } from './suggestionValidation';
+import { validateActionHard } from './actionValidation';
 
 const block = (id: string): StatBlock => {
   const { match: _m, ...b } = SRD_MONSTERS.find((m) => m.id === id)!;
@@ -223,5 +230,95 @@ describe('q75 harness consecutive typed_action_not_sent', () => {
     expect(mod.typedStuckVerdict(165)).toBe('stuck: input not accepted at T165');
     n = mod.noteTypedNotSent(n, { failed: false });
     expect(n).toBe(0);
+  });
+});
+
+describe('q75r-ROUNDTYPED replay + availability', () => {
+  /** Seed 20632 T9: Travel toward … must not be offered or legal while the fight blocks travel. */
+  it('20632-T9: applyOptionCooldown does not refill Travel toward while travelPadBlocked', () => {
+    const s0 = createInitialState(undefined, 'dnd') as GameState;
+    const enc = initEncounterTerminal(
+      {
+        name: 'the thugs',
+        level: 1,
+        hp: 20,
+        maxHp: 20,
+        armorClass: 12,
+        strength: 12,
+        dexterity: 10,
+        constitution: 12,
+        xpReward: 10,
+        goldReward: 0,
+      },
+      { ...s0, engineMode: 'dnd' },
+    );
+    const s = {
+      ...s0,
+      engineMode: 'dnd' as const,
+      turn: 9,
+      currentLocation: 'On the road between places',
+      activeEncounter: enc,
+      openingEstablishment: {
+        ...(s0.openingEstablishment ?? {}),
+        complete: true,
+        pending: [],
+        answers: {},
+      },
+    } as GameState;
+    expect(travelPadBlocked(s)).toBe(true);
+    expect(chipProblem(s, 'Travel toward Greyhollow Inn')?.kind).toBe('impossible-chip');
+    const cooled = applyOptionCooldown(s, [
+      {
+        label: 'Attack the thugs',
+        actionId: 'fight:foe:the thugs:attack',
+        kind: 'affordance',
+        slotKind: 'fight',
+        slotCategory: 'scene',
+        required: true,
+        rank: 100,
+      },
+      {
+        label: 'Travel toward Greyhollow Inn',
+        actionId: 'exit:Greyhollow Inn:travel',
+        kind: 'exit',
+        slotKind: 'exit',
+        slotCategory: 'move',
+        required: true,
+        rank: 70,
+      },
+    ]);
+    expect(cooled.every((c) => !/travel toward/i.test(c.label))).toBe(true);
+  });
+
+  /** LitRPG mega L6 seed 19061 T19: pick up scene book — accepted, not rewritten to missing-item. */
+  it('L6-T19: typed pick-up of a scene book is grounded and hard-gate valid', () => {
+    const s0 = createInitialState(undefined, 'litrpg') as GameState;
+    const s = {
+      ...s0,
+      engineMode: 'litrpg' as const,
+      turn: 19,
+      openingEstablishment: {
+        ...(s0.openingEstablishment ?? {}),
+        complete: true,
+        pending: [],
+        answers: {},
+      },
+      sceneFacts: {
+        ...(s0.sceneFacts ?? {}),
+        props: ['a book with the palace seal'],
+        present: [],
+        crowd: 'none',
+        noise: 'quiet',
+        lastBeat: '',
+        updatedTurn: 19,
+      },
+    } as GameState;
+    const line = 'I pick up the book with the palace seal and open it to see what\'s inside.';
+    const story = 'A lone book with the palace seal rests on the crate.';
+    expect(findUnsupportedItemClaims(line, s)).toEqual([]);
+    const grounded = groundPlayerAction(line, s, story);
+    expect(grounded.rewritten).toBe(false);
+    expect(grounded.text).toBe(line);
+    expect(validateActionHard(line, s, story).valid).toBe(true);
   });
 });
