@@ -6,7 +6,6 @@ import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBod
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type DroppedLine, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
-import { parseMustReactNpc } from './typedFreeText';
 import {
   classifyBeatCommit,
   ignoresTerminalFight,
@@ -48,7 +47,6 @@ import { actionVerb, objectWords, stemHit } from './chipRules';
 import { checkPlayCrimes } from './turnCheck';
 import { mentionsName, peopleHere } from './chipLegality';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
-export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted speech.';
 export type WriterDraft = {
   prose: string;
   path: TokenAcceptPath | 'plain';
@@ -195,9 +193,6 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
     for (let i = 0; i < here.length; i++) if (mentionsName(text, here[i]!)) namedHere = true;
     if (seated && !quoted && !namedHere) out.push('Someone must answer the player in quoted speech.');
   }
-  // q78-SPEECHREPLY: must-react engine fact → structural speaker/quote check (no word list).
-  const mustWho = parseMustReactNpc(check.engineFact);
-  if (mustWho && !quoteAttributedTo(text, [mustWho])) out.push(MISSING_ANSWER_PROBLEM);
   return [...new Set(out)];
 }
 export type WriterIssue = WriterRawIssue | 'recycled' | 'unresolved';
@@ -335,6 +330,7 @@ export function capBeatWords(prose: string, cap: number, state: GameState): stri
   }
   return sentences.filter(Boolean).join(' ');
 }
+export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted speech.';
 /** People in this beat's REF ENUM who could answer (named people, roles, companions, a live foe). */
 function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[] {
   const bareName = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
@@ -366,24 +362,6 @@ function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[
   return out;
 }
 const hasQuote = (prose: string) => /["“][^"“”]{3,}["”]/.test(prose);
-/** Quote attributed to someone in `here` — character-scan drop of quotes, no quote-strip regex. */
-function quoteAttributedTo(prose: string, here: string[]): boolean {
-  const all = splitProseSentences(prose);
-  for (let i = 0; i < all.length; i++) {
-    const s = all[i]!;
-    if (!hasQuote(s)) continue;
-    let bare = '';
-    const joined = `${all[i - 1] ?? ''} ${s}`;
-    let inQ = false;
-    for (let j = 0; j < joined.length; j++) {
-      const c = joined[j]!;
-      if (c === '"' || c === '\u201c' || c === '\u201d') { inQ = !inQ; continue; }
-      if (!inQ) bare += c;
-    }
-    if (speakerHere(bare, here)) return true;
-  }
-  return false;
-}
 /** "thugs" → "thug", "thieves" → "thief", "witches" → "witch": one member of a group held here. */
 function oneOfGroup(plural: string): string | null {
   const w = plural.toLowerCase();
@@ -477,49 +455,29 @@ export function answerRepairRequest(
     `Engine fact: ${writerEngineResult(check.engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
-/** Missing quoted reply on a talk / must-react turn: one repair sentence, else log the miss. */
+/** Missing quoted reply on a talk turn: one repair sentence, else log the miss. */
 export async function repairMissingAnswer(
   turn: WriterTurnRetryResult,
   opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
 ): Promise<WriterTurnRetryResult> {
   const { check, packet } = opts;
-  const mustWho = parseMustReactNpc(check.engineFact);
-  if ((!mustWho && !isTalkTurn(check.playerInput, check.intent)) || playerAsksRepeat(check.playerInput)) return turn;
+  if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput)) return turn;
   const everyone = answerersHere(check, packet);
-  // q78: must-react NPC from the engine fact (presence), not text matching on the player line.
-  let named = '';
-  for (let i = 0; i < everyone.length; i++) {
-    if (speakerHere(check.playerInput, [everyone[i]!])) { named = everyone[i]!; break; }
-  }
-  let addressee = named;
-  if (mustWho) {
-    addressee = mustWho;
-    for (let i = 0; i < everyone.length; i++) {
-      const p = everyone[i]!;
-      if (p.toLowerCase() === mustWho.toLowerCase() || speakerHere(mustWho, [p]) || speakerHere(p, [mustWho])) {
-        addressee = p;
-        break;
-      }
-    }
-  }
+  // The player named who they spoke to: that person answers, not whoever else stands here.
+  const addressee = everyone.find((p) => speakerHere(check.playerInput, [p]));
   const here = addressee ? [addressee] : everyone;
   if (!here.length) return turn;
-  if (hasQuote(turn.prose) && (mustWho ? quoteAttributedTo(turn.prose, here) : (!addressee || quoteAttributedTo(turn.prose, here)))) {
-    return turn;
+  if (hasQuote(turn.prose)) {
+    // "Tilde looked up. "Not tonight," she said." names the speaker in the sentence before the quote.
+    const all = splitProseSentences(turn.prose);
+    const unquoted = (s: string | undefined) => (s ?? '').replace(/["“][^"“”]*["”]/g, ' ');
+    if (!addressee || all.some((s, i) => hasQuote(s) && speakerHere(`${unquoted(all[i - 1])} ${unquoted(s)}`, here))) return turn;
   }
   const fact = check.engineFact;
   const missing = { sentence: '(no answer on the page)', flag: MISSING_ANSWER_PROBLEM, fact };
   // Only a backed line may be quoted: what is on record for them, and their own motive lines.
-  const backed = new Map<string, string[]>();
-  for (let i = 0; i < here.length; i++) {
-    const p = here[i]!;
-    const lines = [...backedAnswerFacts(check.state, p), ...motiveLinesOf(check.state, p)];
-    if (lines.length) backed.set(p, lines);
-  }
-  const said: string[] = [];
-  for (const lines of alreadySaidLines(check.state, packet).values()) {
-    for (let i = 0; i < lines.length; i++) said.push(lines[i]!);
-  }
+  const backed = new Map(here.map((p): [string, string[]] => [p, [...backedAnswerFacts(check.state, p), ...motiveLinesOf(check.state, p)]]).filter(([, f]) => f.length));
+  const said = [...alreadySaidLines(check.state, packet).values()].flat();
   if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: `no backed line for ${here.join(', ')}` } };
   const speakers = [...backed.keys()];
   const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
