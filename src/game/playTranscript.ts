@@ -41,7 +41,6 @@ import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
 import { isJourneyUnderway } from './travelJourney';
 import { liveChips } from './chipLegality';
-import { filterPadsByAvailability } from './padUniverse';
 import { roundCombatChips } from './tabletop/combatChips';
 import { updateCooldowns } from './optionDiversityContract';
 import { isBannedFallbackStub } from './sealedManifest';
@@ -100,9 +99,6 @@ export function resolveOfferedChoices(state: GameState): string[] {
   // q73-DYING: a stored travel pad must not outlive the drop to 0 HP.
   const ds = state.deathSaves;
   if (state.engineMode === 'dnd' && ds && !ds.dead && !ds.stable) {
-    // q77a: dying pad = engineChips dying builders (same registry as the rest of the pipeline).
-    const dying = engineChips(state).map((ch) => ch.label);
-    if (dying.length) return dying;
     return roundCombatChips(state) ?? ['Fight for breath'];
   }
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
@@ -114,7 +110,8 @@ export function resolveOfferedChoices(state: GameState): string[] {
 }
 
 function compileOfferedChoices(state: GameState): string[] {
-  // q77a: round combat chips come from engineChips (no parallel early return).
+  const roundChips = roundCombatChips(state);
+  if (roundChips) return roundChips;
   const lastPlayer = lastPlayerActionFromLog(state);
   const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
   const autoNamedOpeningPad =
@@ -134,50 +131,43 @@ function compileOfferedChoices(state: GameState): string[] {
     const live = new Set(liveChips(state, pads, coverProse));
     return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 3);
   }
-  // q77a-AVAIL: one source of truth - cooled engineChips labels (builders already registered).
-  // Cover / dying / round combat handled above; this path cannot drift from the registry.
   const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);
-  const engineLabels = engineChips(state, storyProse).map((ch) => ch.label);
   const fromState = (state.choices ?? [])
-    .map((ch) => sanitizeChoiceLabel(ch))
-    .filter((ch) => ch && ch !== FALLBACK_CHOICE);
-  const source = fromState.length ? fromState : lastGmOfferedChoices(state).map((ch) => sanitizeChoiceLabel(ch));
-  const gmChoices = source.filter((ch) => ch && ch !== FALLBACK_CHOICE)
-    .filter((ch) => !inventsPresenceOnEmptyScene(ch, state, storyProse))
-    .filter((ch) => !starveCoverCombat || !isCombatFamilyPad(ch));
+    .map((c) => sanitizeChoiceLabel(c))
+    .filter((c) => c && c !== FALLBACK_CHOICE);
+  const source = fromState.length ? fromState : lastGmOfferedChoices(state).map((c) => sanitizeChoiceLabel(c));
+  const gmChoices = source.filter((c) => c && c !== FALLBACK_CHOICE)
+    .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse))
+    .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
+
   const contextFiltered = filterInventedContextChoices(gmChoices, state);
-  const engineSet = new Set(engineLabels.map((ch) => ch.trim().toLowerCase()));
+  const kept = new Set(contextFiltered.map((c) => c.trim().toLowerCase()));
+  const removed = new Set(gmChoices.map((c) => c.trim().toLowerCase()).filter((c) => !kept.has(c)));
+  const final = (chips: string[]) => liveChips(state, chips, storyProse).filter((c) => !removed.has(c.trim().toLowerCase()));
   const compiled = compileChoices(
     state,
     contextFiltered,
     undefined,
     lastPlayerActionFromLog(state) || state.sceneFacts?.lastPlayerIntent?.text
   );
-  const union = Array.from(new Set([
-    ...compiled.choices.map((ch) => ch.trim()).filter(Boolean),
-    ...engineLabels,
-  ])).filter((ch) => engineSet.has(ch.trim().toLowerCase()))
-    .filter((ch) => !starveCoverCombat || !isCombatFamilyPad(ch));
-  const available = filterPadsByAvailability(union, state);
-  const legal = liveChips(state, available, storyProse);
+  const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
+    .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
+  const legal = final(deduped);
+  // OPT-1 item 4: when affordances cover, do not first-come slice(0,4) — padChoicesToCount merges by kind.
   if (affordancesCoverGenerics(state)) {
-    const paddedAff = liveChips(
-      state,
-      padChoicesToCount(legal, state, storyProse, 3).filter((ch) => !starveCoverCombat || !isCombatFamilyPad(ch)),
-      storyProse
+    const paddedAff = final(
+      padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
     );
-    if (paddedAff.length) return filterPadsByAvailability(paddedAff, state);
+    if (paddedAff.length) return paddedAff;
   }
   if (legal.length >= 3) return legal.slice(0, 4);
   if (legal.length && isJourneyUnderway(state) && !state.activeEncounter) return legal;
-  const padded = liveChips(
-    state,
-    padChoicesToCount(legal, state, storyProse, 3).filter((ch) => !starveCoverCombat || !isCombatFamilyPad(ch)),
-    storyProse
+  const padded = final(
+    padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
   );
-  if (padded.length) return filterPadsByAvailability(padded, state);
-  return filterPadsByAvailability(liveChips(state, ["Look around", "Wait and listen"], storyProse), state);
+  if (padded.length) return padded;
+  return final(['Look around', 'Wait and listen']);
 }
 
 /** Attach post-pipeline labels the player will see after this GM beat. */

@@ -21,7 +21,6 @@ import { graphExitPads, isCameraRelativePad, listInteriorExitsFromHere } from '.
 import {
   closedUniverseFallbacks,
   excludedPadFamilies,
-  filterPadsByAvailability,
   isExcludedPadLabel,
   sealPadUniverse,
 } from './padUniverse';
@@ -476,18 +475,12 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     return dying;
   }
   const system = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
-  // q77a: live round-combat chips belong in the registry (not a parallel resolveOfferedChoices early return).
-  const roundLive = !isDying(state) ? roundCombatChips(state) ?? [] : [];
-  const shopLabels: string[] = [];
-  const shop = shopChips(state);
-  for (let i = 0; i < shop.length; i++) shopLabels.push(shop[i]!.label);
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
   const sources: Array<[ChipKind, string[]]> = [
     ['inspiration-reroll', inspirationRerollPads(state)],
-    ['shop', shopLabels],
+    ['shop', shopChips(state).map((c) => c.label)],
     ['quest-step', [tabletopStepChip(state) ?? '']],
     ['decision', [storyRpgDecisionChip(state) ?? '']],
-    ['beat', roundLive],
     ['exit', graphEdgeLabels(enumerateGraphEdges(state))],
     ['journey', journeyPads(state)],
     ['hub', hubArrivalChoicePads(state)],
@@ -568,24 +561,13 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       chips.push({ label, action, kind, check, slotCategory });
     }
   }
-  // q77a: registry never carries travel/talk the availability helper blocks.
-  const labels: string[] = [];
-  for (let i = 0; i < chips.length; i++) labels.push(chips[i]!.label);
-  const allowedLabels = filterPadsByAvailability(labels, state);
-  const allowed = new Set<string>();
-  for (let i = 0; i < allowedLabels.length; i++) allowed.add(allowedLabels[i]!.toLowerCase());
-  const filtered: EngineChip[] = [];
-  const labelSet = new Set<string>();
-  for (let i = 0; i < chips.length; i++) {
-    const ch = chips[i]!;
-    const low = ch.label.toLowerCase();
-    if (allowed.has(low) || ch.kind === 'free-input') {
-      filtered.push(ch);
-      labelSet.add(low);
-    }
-  }
-  lastEngineChips = { state, key, chips: filtered, labels: labelSet };
-  return filtered;
+  lastEngineChips = {
+    state,
+    key,
+    chips,
+    labels: new Set([...seen]),
+  };
+  return chips;
 }
 
 /**
@@ -1131,8 +1113,7 @@ export function sceneSafeFallbacks(
     if (ordered.length >= 4) ordered[3] = exitLabel;
     else ordered.push(exitLabel);
   }
-  // q77a: fallbacks must not re-birth travel/talk when availability blocks them.
-  return filterPadsByAvailability(ordered.slice(0, 4), state);
+  return ordered.slice(0, 4);
 }
 
 /**
@@ -1179,25 +1160,22 @@ export function padChoicesToCount(
   lastPlayerAction = ''
 ): string[] {
   const excluded = excludedPadFamilies(state);
-  let merged = filterPadsByAvailability(
-    Array.from(
-      new Set(
-        choices
-          .map((c) => sanitizeChoiceLabel(c))
-          .filter(Boolean)
-          .filter((c) => !isExcludedPadLabel(c, excluded))
-          .filter((c) => !isLastKillTalkPad(c, state.sceneFacts?.lastKill))
-          .filter((c) => !isClosedScenePersonPad(c, state))
-          .filter((c) => !isObjectPersonPad(c, ledgerSlotPeople(state)))
-          .filter((c) => {
-            const name = (state.character?.name ?? '').trim();
-            if (name.length >= 2 && c.toLowerCase() === name.toLowerCase()) return false;
-            return true;
-          })
-          .filter((c) => isChoiceGroundedInTurn(c, storyProse, state) || looksLikeChoiceOffer(c))
-      )
-    ),
-    state
+  let merged = Array.from(
+    new Set(
+      choices
+        .map((c) => sanitizeChoiceLabel(c))
+        .filter(Boolean)
+        .filter((c) => !isExcludedPadLabel(c, excluded))
+        .filter((c) => !isLastKillTalkPad(c, state.sceneFacts?.lastKill))
+        .filter((c) => !isClosedScenePersonPad(c, state))
+        .filter((c) => !isObjectPersonPad(c, ledgerSlotPeople(state)))
+        .filter((c) => {
+          const name = (state.character?.name ?? '').trim();
+          if (name.length >= 2 && c.toLowerCase() === name.toLowerCase()) return false;
+          return true;
+        })
+        .filter((c) => isChoiceGroundedInTurn(c, storyProse, state) || looksLikeChoiceOffer(c))
+    )
   );
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
