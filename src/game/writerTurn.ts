@@ -147,8 +147,40 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   if (check.previousGm && isLastGmReprint(text, check.previousGm)) out.push('Same text as the last beat: write a new one.');
   if (isUnaskedCombatClose(text, check.playerInput)) out.push('Do not end or restart a fight the engine did not settle this turn.');
   const here = peopleHere(check.state);
-  for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0)
+  // q73-DYING: engine dying/dead flags plus the existing verb stem (chipRules.stemHit). No new word list.
+  const ds = check.state.deathSaves;
+  const tabletopDown = check.state.engineMode === 'dnd' && !!ds;
+  const dyingNow = tabletopDown && !ds!.dead && !ds!.stable;
+  const deadNow = tabletopDown && !!ds!.dead;
+  if (dyingNow || deadNow) {
+    const first = (check.state.character?.name ?? '').trim().split(' ')[0] ?? '';
+    const bits: string[] = [];
+    let buf = '';
+    for (const ch of text) {
+      buf += ch;
+      if (ch === '.' || ch === '!' || ch === '?') { bits.push(buf); buf = ''; }
+    }
+    if (buf.trim()) bits.push(buf);
+    for (const bit of bits) {
+      const lead = bit.trim();
+      const low = lead.toLowerCase();
+      const subject = (first.length >= 2 && low.startsWith(first.toLowerCase())) || low.startsWith('you ');
+      if (!subject) continue;
+      if (low.includes('cannot') || low.includes("can't") || low.includes('unable') || low.includes('could not')) continue;
+      const moving = stemHit(lead, 'walk') || stemHit(lead, 'travel') || stemHit(lead, 'head') || stemHit(lead, 'move');
+      const speaking = stemHit(lead, 'talk') || stemHit(lead, 'speak') || stemHit(lead, 'say') || stemHit(lead, 'shout') || classifyVerb(lead) === 'spoke' || classifyVerb(lead) === 'traveled' || classifyVerb(lead) === 'left';
+      const rescued = deadNow && (stemHit(lead, 'wake') || stemHit(lead, 'stand') || stemHit(lead, 'rescue'));
+      if (moving || speaking || rescued) {
+        out.push(deadNow ? 'Show the player acting after death.' : 'Show the player acting while unconscious.');
+        break;
+      }
+    }
+  }
+  // Same play-crime gate as turnCheck (incl. system-ledger wrong-voice). No second word list.
+  for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0) {
     if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${here.join(', ') || '(none)'}).`);
+    if (f.kind === 'wrong-voice') out.push(`Wrong voice: ${f.detail}`);
+  }
   if (isOfferRefuseLine(check.playerInput)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();
     const named = (card || openingCastNames(check.state)[0] || '').trim();
@@ -224,7 +256,7 @@ export async function runWriterTurnWithFightRetry(opts: {
     const p = done.remaining[i]!;
     if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
       || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')
-      || p.startsWith('Absent speaker:')) blocking.push(p);
+      || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) blocking.push(p);
   }
   if (!blocking.length) return done;
   let raw = '';
@@ -236,14 +268,14 @@ export async function runWriterTurnWithFightRetry(opts: {
     for (let i = 0; i < second.remaining.length; i++) {
       const p = second.remaining[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
     for (let i = 0; i < blocking.length; i++) {
       const p = blocking[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {

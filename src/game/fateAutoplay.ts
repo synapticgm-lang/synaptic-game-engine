@@ -7,7 +7,6 @@ import { applyCollectedFacts, collectTurnTimelineFacts, leavePlaceVisit, tag } f
  *
  * Capacity: enableAutoplayTestLab() so Free week-cap never stops the run.
  */
-
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { clampSystemHousing, isSystemHousingId, rollSystemHousing } from './systemHousing';
@@ -50,7 +49,6 @@ import {
 } from './choicePipeline';
 import { postFilterGmOutput } from './contentPostFilter';
 import { createDefaultSettings, createInitialState, fitKitToHousing } from './defaults';
-
 /** AI agent goal modes for guided autoplay. */
 export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
 import {
@@ -238,6 +236,7 @@ import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
+import { isDying } from './tabletop/roundFight';
 import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
@@ -265,16 +264,13 @@ import {
   type HostedAiTier,
 } from './testLab';
 import type { EngineMode, GameState, LogEntry, Settings } from './types';
-
 export type { EngineMode };
 import { runWarden } from './warden';
 import { emptyWorldLedger } from './worldSim';
 import { storyStartTextTurnsForTier } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { storyHasBody } from './parser';
-
 export type FateMode = 'fate' | 'first-pad';
-
 export type FateAutoplayCliOpts = {
   turns: number;
   seed: number;
@@ -322,7 +318,6 @@ export type FateAutoplayCliOpts = {
   /** `--writer-model <provider/model>` — OpenRouter model id; default Flash Lite. */
   writerModel?: string;
 };
-
 export type MatrixCombo = {
   engineMode: EngineMode;
   bibleId: string;
@@ -330,7 +325,6 @@ export type MatrixCombo = {
   personalityId: string;
   seed: number;
 };
-
 export type TurnTelemetry = {
   turn: number;
   startedAt: string;
@@ -429,7 +423,6 @@ export type TurnTelemetry = {
   /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
   writerUsage?: import('./gmProxy').TurnWriterUsageWithCost;
 } & Partial<RowProvenance>;
-
 export type RunSummary = {
   runId: string;
   bibleId: string;
@@ -463,37 +456,30 @@ export type RunSummary = {
   /** 12f — A–E share + E accept/retry/fallback */
   pathCounts?: ReturnType<typeof tallyResponsePaths>;
 };
-
 function uid(): string {
   return globalThis.crypto?.randomUUID?.() ?? `t-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
-
 function percentile(sorted: number[], p: number): number {
   if (!sorted.length) return 0;
   const idx = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
   return sorted[idx] ?? 0;
 }
-
 function latencyStats(ms: number[]): { p50: number; p95: number; mean: number } {
   if (!ms.length) return { p50: 0, p95: 0, mean: 0 };
   const sorted = [...ms].sort((a, b) => a - b);
   const mean = Math.round(ms.reduce((a, b) => a + b, 0) / ms.length);
   return { p50: percentile(sorted, 50), p95: percentile(sorted, 95), mean };
 }
-
 export function isBlankCanvasBible(id: string): boolean {
   return id.startsWith('blank-canvas');
 }
-
 /** PYOA books are unfinished: never tested. Only these modes run in harnesses. */
 export const TEST_ENGINE_MODES: readonly EngineMode[] = ['litrpg', 'dnd', 'rpg'];
-
 export const DEFAULT_TEST_BIBLE_BY_MODE: Readonly<Record<string, string>> = {
   litrpg: 'summoned-pact',
   dnd: 'cursed-keep',
   rpg: 'salt-road-heist',
 };
-
 /** `--game-mode` value → engine mode (tabletop = dnd). Null for PYOA / unknown. */
 export function parseTestGameMode(raw: string): EngineMode | null {
   const v = raw.trim().toLowerCase();
@@ -502,13 +488,11 @@ export function parseTestGameMode(raw: string): EngineMode | null {
   if (v === 'rpg' || v === 'story-rpg') return 'rpg';
   return null;
 }
-
 /** True for any bible that plays as PYOA (its engine mode is pyoa, e.g. Thornferry Road). */
 export function isTestExcludedBible(id: string): boolean {
   const bible = getCampaignBibleById(id);
   return !bible || bible.engineMode === 'pyoa';
 }
-
 function testableBibles(engineMode: EngineMode): CampaignBible[] {
   return getCampaignBiblesByEngineMode(engineMode).filter(
     (b) => !isBlankCanvasBible(b.id) && !isTestExcludedBible(b.id)
@@ -1223,22 +1207,29 @@ export async function headlessFateTurn(
   arcStatusReceipts = [...arcStatusReceipts, ...offerTurn.receipts];
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
+  const dyingTurn = isDying(govInputState);
   const hereBeforeMove = arcState.currentLocation ?? '';
-  const graphMoved = applyGraphExitTravel(arcState, playerInput);
-  const travelCommit = graphMoved === arcState ? commitTravel(arcState, playerInput) : null;
+  const graphMoved = dyingTurn ? arcState : applyGraphExitTravel(arcState, playerInput);
+  const travelCommit = dyingTurn || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
   arcState = travelCommit?.state ?? graphMoved;
   if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
   arcState = syncSheetToMovedHere(arcState, state.currentLocation);
   // 28g — harness parity with useGame: 'Enter …' at a dungeon site opens the interior dungeon.
-  arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+  if (!dyingTurn) arcState = maybeEnterInteriorDungeon(arcState, playerInput);
   // 28i — dungeon card turn: room facts, room actions (move/search/open), foes, loot, dungeon XP.
-  const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
+  const dungeonTurn = dyingTurn
+    ? { state: arcState, receipts: [] as string[] }
+    : advanceDungeonCard(arcState, playerInput, arcResult?.systemReceipts ?? []);
   arcState = dungeonTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...dungeonTurn.receipts];
-  const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
+  const storyTurn = dyingTurn
+    ? { state: arcState, receipts: [] as string[] }
+    : applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
   arcState = storyTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...storyTurn.receipts];
-  const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
+  const tabletopTurn = dyingTurn
+    ? { state: arcState, receipts: [] as string[] }
+    : applyTabletopQuestTurn(arcState, playerInput, state.currentLocation ?? '');
   arcState = tabletopTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...tabletopTurn.receipts];
   // TT-H1: Inspiration reroll chip (CheckResultRecord die).
@@ -1248,7 +1239,7 @@ export async function headlessFateTurn(
     arcStatusReceipts = [...arcStatusReceipts, ...inspirationTurn.receipts];
   }
   // OPT-6: headless resolves shop chips through the same resolveShopChip as live play.
-  const shopTurn = resolveShopChip(arcState, playerInput);
+  const shopTurn = dyingTurn ? null : resolveShopChip(arcState, playerInput);
   if (shopTurn) {
     arcState = shopTurn.state;
     arcStatusReceipts = [...arcStatusReceipts, ...shopTurn.receipts];

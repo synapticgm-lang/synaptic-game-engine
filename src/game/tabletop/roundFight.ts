@@ -8,7 +8,7 @@ import type { ActiveEncounter, CombatCondition, GameState, HouseRules, RoundComb
 import { commitAutoFightLedger } from '../combatAuthority';
 import { rollVictoryLoot } from '../combat';
 import { profileForEncounter } from '../lootTableRegistry';
-import { growWeaponFamiliarity, weaponCategory } from '../checkRules';
+import { formatCheckRecord, growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from '../checkRules';
 import { pushCombatStateTx } from '../stateTx';
 import { fightLootClause, weaponInHand } from '../infoSheet';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
@@ -19,6 +19,7 @@ import { potionHealDice } from '../rules/magicItems';
 import { FEATURE_LABEL, featureLeft, featureMax, RAGE_DAMAGE, spendFeature, type FeatureUse } from '../rules/classFeatures';
 import type { Rng } from '../rules/dice';
 import { turnRng } from '../seededRng';
+import { rollDice } from '../rules/dice';
 import { blockWithinXp, statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
 import { encounterXpBudget, foesWithinBudget } from '../xpRules';
 import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
@@ -35,6 +36,7 @@ import { carriedCoinLb, gainLootMoney, lootMoneyText } from '../rules/coins';
 import { sceneLight, type SceneLight } from '../rules/exploration';
 import { exhaustionD20, exhaustionSpeed, weatherRuleOf } from '../rules/travelDay';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName, wearsHeavyArmor } from './combatChips';
+import { presentNpcNames } from '../npcRelationships';
 
 export interface RoundFightResult {
   state: GameState;
@@ -47,7 +49,10 @@ export interface RoundFightResult {
 
 const ONGOING_HEAD = 'ENGINE OUTCOME (facts — narrate this one round exactly once; the fight is NOT over, end with the foe still fighting):';
 const OVER_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once, add no new rounds, the fight is over):';
-const DYING_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once; you are on the ground at 0 HP, nobody is fighting you now):';
+// Writer-facing facts stay plain fiction (no ledger "HP"); STATUS receipts keep the numbers.
+const DYING_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once; you are unconscious on the ground, nobody is fighting you now):';
+const DYING_UNCONSCIOUS = 'You lie unconscious on the ground and cannot move, speak or act.';
+const DYING_STABLE_LINE = 'stable, still down';
 
 /** A built tabletop character fights round by round. */
 export function usesRoundCombat(state: Pick<GameState, 'engineMode' | 'character'>): boolean {
@@ -584,9 +589,94 @@ function roundFeatures(
   return { features, notes, facts };
 }
 
-/** At 0 HP every turn is one death save until three successes, three failures, or a natural 20. */
-export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state, 'death-save')): RoundFightResult | null {
+/**
+ * At 0 HP every turn is one death save until three successes, three failures, or a natural 20.
+ * SRD 5.2.1 (Wizards of the Coast, CC BY 4.0), Stabilizing a Creature:
+ * "The best way to save a creature with 0 Hit Points is to heal it. If healing is unavailable,
+ * the creature can be stabilized so that it isn't killed by a failed Death Saving Throw.
+ * You can use your action to administer first aid to an Unconscious creature and attempt to
+ * stabilize it, which requires a successful DC 10 Wisdom (Medicine) check."
+ * A stable creature that isn't healed regains 1 Hit Point after 1d4 hours.
+ */
+export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state, 'death-save'), input = ''): RoundFightResult | null {
   if (!isDying(state)) return null;
+  const line = (input ?? '').toLowerCase();
+  const potion = healingPotion(state);
+  if (potion && classifyRoundAction(input) === 'item') {
+    const roll = rollDice(potionHealDice(potion.name), rng);
+    const before = state.character.hp ?? 0;
+    const hp = Math.min(state.character.maxHp ?? roll.total, before + roll.total);
+    const conditions: string[] = [];
+    for (const c of state.character.conditions ?? []) if (c.toLowerCase() !== 'unconscious') conditions.push(c);
+    const inventory = [];
+    for (const i of state.inventory ?? []) {
+      const quantity = i.id === potion.id ? (i.quantity ?? 1) - 1 : (i.quantity ?? 1);
+      if (quantity > 0) inventory.push(i.id === potion.id ? { ...i, quantity } : i);
+    }
+    const next: GameState = { ...state, deathSaves: null, inventory, character: { ...state.character, hp, conditions } };
+    const who = (state.character.name || 'you').trim() || 'you';
+    return {
+      state: next,
+      receipts: [`${potion.name}: ${roll.notation} (${roll.dice.join(', ')}) = ${roll.total}`, hpLine(before, hp)],
+      facts: `${DYING_HEAD} ${who} drinks the ${potion.name} and the dying ends.`,
+      noTerminal: true,
+    };
+  }
+  // A present ally (engine presence, not the prose) may stabilise. Anyone else is a death save.
+  let ally = '';
+  if (line.includes('stabil') || line.includes('medicine')) {
+    const pc = (state.character.name || '').trim().toLowerCase();
+    for (const name of presentNpcNames(state)) {
+      const key = name.trim().toLowerCase();
+      if (key && key !== pc && line.includes(key)) { ally = name.trim(); break; }
+    }
+    if (!ally) {
+      for (const c of state.companions ?? []) {
+        const key = (c.name ?? '').trim().toLowerCase();
+        if (key && key !== pc && (c.hp ?? 0) > 0 && line.includes(key)) { ally = c.name.trim(); break; }
+      }
+    }
+  }
+  if (ally) {
+    // Untrained Wisdom (Medicine): +0 unless the ally's record carries a WIS score.
+    let wis = 10;
+    for (const m of state.npcMemories ?? []) {
+      if ((m.npcName ?? '').trim().toLowerCase() !== ally.toLowerCase()) continue;
+      const sheet = m.sheet as { abilities?: { WIS?: number } } | undefined;
+      if (sheet?.abilities?.WIS) wis = sheet.abilities.WIS;
+    }
+    const mod = Math.floor((wis - 10) / 2);
+    const rec = resolveCheckRecord({
+      label: 'Medicine',
+      mods: mod ? [{ label: 'WIS', value: mod }] : [],
+      dc: 10,
+      rng,
+    });
+    rec.spec = { kind: 'skill', ability: 'WIS', dc: 10, dcShown: true, adv: 'normal' };
+    const status = formatCheckRecord(rec, 'dnd');
+    if (rec.outcome === 'success') {
+      const conditions: string[] = [];
+      for (const c of state.character.conditions ?? []) if (c.toLowerCase() !== 'unconscious') conditions.push(c);
+      const hours = 1 + Math.floor(rng() * 4);
+      const woke = advanceClock(
+        { ...state, deathSaves: null, character: { ...state.character, hp: 1, conditions } },
+        hours,
+      );
+      return {
+        state: woke.state,
+        receipts: [status, hpLine(0, 1), `Time: ${woke.note}`],
+        facts: `${DYING_HEAD} ${ally} steadies your breathing.\n${DYING_STABLE_LINE}`,
+        noTerminal: true,
+      };
+    }
+    const ds = state.deathSaves!;
+    return {
+      state,
+      receipts: [status],
+      facts: `${DYING_HEAD} ${ally} cannot steady your breathing. ${DYING_UNCONSCIOUS}\nunconscious, death saves ${ds.successes} successes/${ds.failures} failures`,
+      noTerminal: true,
+    };
+  }
   const house = houseRulesOf(state);
   // 5.2.1 Heroic Inspiration rerolls a failed death save; under 5.1 it is kept for the next attack or save in a fight.
   const reroll = !!state.character.heroicInspiration && house.rulesVersion === 'srd-5.2.1';
@@ -600,7 +690,9 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
   }
   if (r.state.dead) {
     const end = commitDeath(next, 'danger', rng, 'Your breath stops. You are dead.');
-    return { state: end.state, receipts: [...receipts, ...end.receipts], facts: `${DYING_HEAD} ${end.fact}`, noTerminal: true };
+    const who = (state.character.name || 'you').trim() || 'you';
+    const tagged = tag(end.state, 'died', 'person', { id: `person:${who.toLowerCase()}`, name: who }, 'death save');
+    return { state: tagged, receipts: [...receipts, ...end.receipts], facts: `${DYING_HEAD} ${who} died`, noTerminal: true };
   }
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
   let fact: string;
@@ -613,12 +705,19 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
     next = woke.state;
     receipts.push(hpLine(0, 1), `Time: ${woke.note}`);
     fact = `Your breathing steadies; you are stable. ${HOURS_LATER[r.hoursToWake ?? 0] ?? 'Hours'} later you wake, weak but alive.`;
+    return { state: next, receipts, facts: `${DYING_HEAD} ${fact}\n${DYING_STABLE_LINE}`, noTerminal: true };
   } else {
-    fact = `You lie unconscious on the ground at 0 HP and cannot move, speak or act. ${secret
+    fact = `${DYING_UNCONSCIOUS} ${secret
       ? 'You lie at the edge, neither waking nor slipping away yet.'
       : r.result === 'success' ? 'You cling to life; your breathing holds.' : 'You slip further; your breath falters.'}`;
   }
-  return { state: next, receipts, facts: `${DYING_HEAD} ${fact}`, noTerminal: true };
+  const dsNow = next.deathSaves ?? r.state;
+  return {
+    state: next,
+    receipts,
+    facts: `${DYING_HEAD} ${fact}\nunconscious, death saves ${dsNow.successes} successes/${dsNow.failures} failures`,
+    noTerminal: true,
+  };
 }
 
 // FIGHT2 (John 19:15): tabletop supplies its own fight round rules to the encounter FSM.

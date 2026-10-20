@@ -29,6 +29,7 @@ import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit } from './openThreads';
+import { isDying } from './tabletop/roundFight';
 import type { QuestRoute } from './types';
 export function isWayOut(chip: {
   kind?: string;
@@ -639,6 +640,16 @@ export type OptionCooldownChip = {
 };
 /** q45b-SLOT: MOVE, TALK, ACT, SCENE, FREE, then free-input. Empty MOVE is filled from place routes. */
 export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameState, pad: T[]): T[] {
+  // q73r-DYING: death-save turns keep only the dying builders already on the pad.
+  // Empty MOVE refill (Travel toward …) must not reappear after a same-turn drop to 0.
+  if (isDying(state)) {
+    const dying: T[] = [];
+    for (let i = 0; i < pad.length; i++) {
+      const chip = pad[i]!;
+      if (chip.kind === 'dying' || (chip.actionId ?? '').startsWith('dying:')) dying.push(chip);
+    }
+    return dying;
+  }
   const mode = state.engineMode;
   const enc = state.activeEncounter;
   const liveFight = !!enc && (enc.hp ?? 0) > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal';
