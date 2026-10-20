@@ -64,7 +64,6 @@ import {
   excludedPadFamilies,
   isExcludedPadLabel,
   isLeaveFamilyPad,
-  filterPadsByAvailability,
   isTravelPad,
   shouldStarveTravelPads,
 } from './padUniverse';
@@ -618,10 +617,7 @@ export function compileChoices(
 ): CompileChoicesResult {
   const notes: string[] = [];
   if (isJourneyUnderway(state) && !state.activeEncounter) {
-    return {
-      choices: filterPadsByAvailability(withJourneyPads(state, choices), state),
-      notes: ['Journey pads: ground between places'],
-    };
+    return { choices: withJourneyPads(state, choices), notes: ['Journey pads: ground between places'] };
   }
   const turn = state.turn;
   const intentText = (playerInput ?? lastPlayerLine(state)).trim();
@@ -1130,12 +1126,10 @@ export function compileChoices(
     const legal = spineChoiceLabels(spineState);
     if (isAuthoredPyoaBook(state.campaignBibleId) && legal.length) {
       const authored = legal.slice(0, 6);
-      const authoredIntents: ReturnType<typeof inferIntent>[] = [];
-      for (let i = 0; i < authored.length; i++) authoredIntents.push(inferIntent(authored[i]!));
       return {
         choices: authored,
         notes: [...notes, 'PYOA authored book — chips only'],
-        intentEnums: authoredIntents,
+        intentEnums: authored.map((c) => inferIntent(c)),
       };
     }
     const forceEdge = spineForceEdgeAfterDelay(spineState);
@@ -1320,11 +1314,8 @@ export function compileChoices(
     if (withThreat !== finalChoices) notes.push('Remembered threat: fight chip');
     finalChoices = withThreat;
   }
-  // q77a: compileChoices never re-offers travel/talk the availability helper blocks.
-  finalChoices = filterPadsByAvailability(finalChoices, state);
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
-  const intentEnums: ReturnType<typeof inferIntent>[] = [];
-  for (let i = 0; i < finalChoices.length; i++) intentEnums.push(inferIntent(finalChoices[i]!));
+  const intentEnums = finalChoices.map((c) => inferIntent(c));
   return {
     choices: finalChoices,
     notes,

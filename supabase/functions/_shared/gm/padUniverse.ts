@@ -18,57 +18,16 @@ import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue.ts';
 import { ledgerNeverCastTitles } from './neverCast.ts';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority.ts';
 import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment.ts';
-
-/** q77a-AVAIL — one availability source (fight, dying, road lane, gate). */
-export type AvailSlot = { ok: boolean; reason: string };
-export type ActionAvailability = { travel: AvailSlot; talk: AvailSlot; rest: AvailSlot };
-const AVAIL_OK: AvailSlot = { ok: true, reason: '' };
 /**
- * SRD 5.2.1 Death Saving Throws / 0 HP (WotC, CC BY 4.0): while unconscious at 0 HP
- * only a death save, Magical healing or stabilise — no travel or talk.
+ * q75r-ROUNDTYPED — one availability source for refill, chip legality, and resolvers.
+ * Travel is blocked while dying or a live fight engages travel (`encounterBlocksTravel`).
+ * (Dying check matches `isDying` / roundFight without importing tabletop into the edge copy.)
  */
-export function actionAvailability(state: GameState): ActionAvailability {
-  const ds = state.deathSaves;
-  if (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) {
-    const reason = 'You are unconscious at 0 HP and can only make a death saving throw, take Magical healing, or be stabilised.';
-    return { travel: { ok: false, reason }, talk: { ok: false, reason }, rest: { ok: false, reason } };
-  }
-  const enc = state.activeEncounter;
-  const fight = encounterBlocksTravel(state) || (!!enc && (enc.hp ?? 0) > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal');
-  if (fight) {
-    const reason = 'A fight is still on — travel, talk, and rest wait until it ends.';
-    return { travel: { ok: false, reason }, talk: { ok: false, reason }, rest: { ok: false, reason } };
-  }
-  const roadEnc = state.journey?.from && state.journey?.to ? state.journey.encounter : null;
-  const lane = !!roadEnc && !roadEnc.engaged && !roadEnc.escaped && !roadEnc.lost && (roadEnc.kind === 'thugs' || roadEnc.kind === 'undead' || roadEnc.kind === 'monster' || roadEnc.kind === 'villain');
-  if (lane) {
-    const who = roadEnc!.kind ?? 'foe';
-    const reason = `The way on is blocked by the ${who} on the road — settle the meeting before travelling on.`;
-    return {
-      travel: { ok: false, reason },
-      talk: AVAIL_OK,
-      rest: { ok: false, reason: 'You cannot make camp while a hostile meeting blocks the lane.' },
-    };
-  }
-  return { travel: AVAIL_OK, talk: AVAIL_OK, rest: AVAIL_OK };
-}
-/** q77a — fight, dying, road lane (actionAvailability.travel). */
 export function travelPadBlocked(state: GameState): boolean {
-  return !actionAvailability(state).travel.ok;
-}
-export function filterPadsByAvailability(pads: string[], state: GameState): string[] {
-  const avail = actionAvailability(state);
-  const out: string[] = [];
-  for (let i = 0; i < pads.length; i++) {
-    const pad = pads[i]!;
-    if (!pad?.trim()) continue;
-    if (!avail.travel.ok && isTravelPad(pad)) continue;
-    if (!avail.talk.ok && isNamedTalkPad(pad)) continue;
-    const low = pad.trim().toLowerCase();
-    if (!avail.rest.ok && (low === 'camp' || low.startsWith('make camp') || low.startsWith('take a short rest') || low.startsWith('take a long rest') || low === 'rest here')) continue;
-    out.push(pad);
-  }
-  return out;
+  const ds = state.deathSaves;
+  if (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) return true;
+  if (encounterBlocksTravel(state)) return true;
+  return false;
 }
 
 const TALK_QA_SHAPE =
@@ -289,11 +248,8 @@ export function closedUniverseFallbacks(
   for (const pad of banks) {
     if (!out.some((c) => c.toLowerCase() === pad.toLowerCase())) out.push(pad);
   }
-  const kept = filterPadsByAvailability(
-    filterPadsByUniverse(out, excluded, state).filter(
-      (p) => !isLastKillTalkPad(p, lastKill) && (!shouldStarveCombatPadsOnCover(state) || !isCombatFamilyPad(p))
-    ),
-    state
+  const kept = filterPadsByUniverse(out, excluded, state).filter(
+    (p) => !isLastKillTalkPad(p, lastKill) && (!shouldStarveCombatPadsOnCover(state) || !isCombatFamilyPad(p))
   );
   if (kept.length) return kept;
   return ['Inspect the immediate surroundings'];

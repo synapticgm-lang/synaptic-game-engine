@@ -20,50 +20,6 @@ import {
 } from './suggestionValidation';
 import { isHallTalkPlayerLine, playerAskedWhyPulled } from './openingEstablishment';
 import { fuzzyTypedPhrase } from './typedNameMatch';
-import { actionAvailability, isNamedTalkPad, isTravelPad } from './padUniverse';
-
-/** q77a — typed honour uses the same availability reasons as pad builders. */
-export function blockedActionRefusal(state: GameState, input: string): string | null {
-  const line = restoreDraftAfterBlock(input);
-  if (!line) return null;
-  const avail = actionAvailability(state);
-  const low = line.toLowerCase();
-  const wantsTravel = isTravelPad(line) || low.startsWith('walk on') || low.startsWith('travel on') || low.startsWith('push on');
-  const wantsTalk = isNamedTalkPad(line) || low.startsWith('ask ') || low.startsWith('talk ') || low.startsWith('speak ') || low.startsWith('say ');
-  const wantsRest = low === 'camp' || low.startsWith('make camp') || low.startsWith('take a short rest') || low.startsWith('take a long rest') || low === 'rest here';
-  if (wantsTravel && !avail.travel.ok) return avail.travel.reason;
-  if (wantsTalk && !avail.talk.ok) return avail.talk.reason;
-  if (wantsRest && !avail.rest.ok) return avail.rest.reason;
-  if (wantsTravel) {
-    let prefLen = 0;
-    if (low.startsWith('travel toward ')) prefLen = 14;
-    else if (low.startsWith('travel to ')) prefLen = 10;
-    else if (low.startsWith('go to ')) prefLen = 6;
-    else if (low.startsWith('head toward ')) prefLen = 12;
-    else if (low.startsWith('head to ')) prefLen = 8;
-    else if (low.startsWith('move to ')) prefLen = 8;
-    if (prefLen) {
-      let target = line.slice(prefLen).trim();
-      if (target.toLowerCase().startsWith('the ')) target = target.slice(4).trim();
-      target = target.slice(0, 60);
-      const tLow = target.toLowerCase();
-      if (tLow.includes('gate') || tLow.includes('queue') || tLow.includes('circle') || tLow.includes('registrar') || tLow.includes('registration') || tLow.includes('sevenfold') || tLow.includes('palace approach') || tLow.includes('contract hall')) {
-        let key = '';
-        for (let i = 0; i < tLow.length && key.length < 40; i++) {
-          const ch = tLow[i]!;
-          if ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) key += ch;
-          else if (key.length && key[key.length - 1] !== '-') key += '-';
-        }
-        while (key.endsWith('-')) key = key.slice(0, -1);
-        const until = state.arcDirector?.gateDispositions?.[key];
-        if (until != null && state.turn < until) {
-          return `The gate queue is cooling down — try a different route or talk to someone present (until T${until}).`;
-        }
-      }
-    }
-  }
-  return null;
-}
 
 export interface ValidationResult {
   valid: boolean;
@@ -252,51 +208,38 @@ export function validateActionHard(
     }
   }
 
-  // q77a — typed travel/talk/rest honour the same availability helper as pad builders.
-  const availRefuse = blockedActionRefusal(state, trimmed);
-  if (availRefuse) {
-    violations.push({
-      code: 'ACTION_UNAVAILABLE',
-      message: availRefuse,
-    });
-  }
-
   const messages: string[] = [];
   for (const v of violations) messages.push(v.message);
   let refusalBody: string | undefined;
   if (messages.length > 0) {
-    if (availRefuse) {
-      refusalBody = availRefuse;
+    // q75r3 — in-fiction GM receipt from engine reasons (visible refuse; never silent).
+    const parts: string[] = [];
+    for (const msg of messages) {
+      for (const w of msg.split(' ')) if (w) parts.push(w);
+    }
+    const joined = parts.join(' ');
+    const low = joined.toLowerCase();
+    const marker = "don't have:";
+    const at = low.indexOf(marker);
+    if (at >= 0) {
+      let rest = joined.slice(at + marker.length).trim();
+      const checkAt = rest.toLowerCase().indexOf('check your inventory');
+      if (checkAt >= 0) rest = rest.slice(0, checkAt).trim();
+      if (rest.endsWith('.')) rest = rest.slice(0, -1).trim();
+      refusalBody = rest ? `You have no ${rest}.` : joined;
+    } else if (low.includes('no companion is with you')) {
+      refusalBody = 'No companion is with you right now.';
+    } else if (low.includes('not enough for')) {
+      const dot = joined.indexOf('.');
+      refusalBody = dot >= 7 ? joined.slice(0, dot + 1) : joined;
     } else {
-      // q75r3 — in-fiction GM receipt from engine reasons (visible refuse; never silent).
-      const parts: string[] = [];
-      for (const msg of messages) {
-        for (const w of msg.split(' ')) if (w) parts.push(w);
-      }
-      const joined = parts.join(' ');
-      const low = joined.toLowerCase();
-      const marker = "don't have:";
-      const at = low.indexOf(marker);
-      if (at >= 0) {
-        let rest = joined.slice(at + marker.length).trim();
-        const checkAt = rest.toLowerCase().indexOf('check your inventory');
-        if (checkAt >= 0) rest = rest.slice(0, checkAt).trim();
-        if (rest.endsWith('.')) rest = rest.slice(0, -1).trim();
-        refusalBody = rest ? `You have no ${rest}.` : joined;
-      } else if (low.includes('no companion is with you')) {
-        refusalBody = 'No companion is with you right now.';
-      } else if (low.includes('not enough for')) {
-        const dot = joined.indexOf('.');
-        refusalBody = dot >= 7 ? joined.slice(0, dot + 1) : joined;
+      const q1 = joined.indexOf('"');
+      const q2 = q1 >= 0 ? joined.indexOf('"', q1 + 1) : -1;
+      if (q1 >= 0 && q2 > q1 && low.includes("isn't present")) {
+        refusalBody = `${joined.slice(q1 + 1, q2)} isn't here.`;
       } else {
-        const q1 = joined.indexOf('"');
-        const q2 = q1 >= 0 ? joined.indexOf('"', q1 + 1) : -1;
-        if (q1 >= 0 && q2 > q1 && low.includes("isn't present")) {
-          refusalBody = `${joined.slice(q1 + 1, q2)} isn't here.`;
-        } else {
-          const dot = joined.indexOf('.');
-          refusalBody = dot >= 7 ? joined.slice(0, dot + 1) : joined || 'That does not work from here.';
-        }
+        const dot = joined.indexOf('.');
+        refusalBody = dot >= 7 ? joined.slice(0, dot + 1) : joined || 'That does not work from here.';
       }
     }
   }

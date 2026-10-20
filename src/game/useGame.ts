@@ -2075,7 +2075,6 @@ export function useGame() {
           role: 'gm',
           content: receipt,
           timestamp: Date.now() + 1,
-          systemLog: [`Availability refuse: ${receipt}`],
         };
         setState((s) =>
           s
@@ -2090,11 +2089,6 @@ export function useGame() {
                   createdAt: Date.now(),
                 },
                 log: [...s.log, repairPlayerEntry, repairGmEntry],
-                completedEvent: {
-                  ...(s.completedEvent ?? { loot: [], refs: [] }),
-                  engineResult: receipt,
-                  playerInput: mediated.text,
-                },
               }
             : s
         );
