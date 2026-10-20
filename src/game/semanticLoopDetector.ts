@@ -1,9 +1,6 @@
-
-
 import type { GameState, EngineMode } from './types';
 import { normalizeProseTokens, tokenJaccard } from './beatFingerprint';
 import { splitProseSentences } from './proseSentences';
-
 export interface SemanticIntent {
   /** Canonical action type (inspect, ask, listen, travel, wait, attack, etc.) */
   action: string;
@@ -16,7 +13,6 @@ export interface SemanticIntent {
   /** Original player input */
   originalText: string;
 }
-
 export interface LoopDetectionResult {
   /** Is this a semantic loop? */
   isLoop: boolean;
@@ -29,7 +25,6 @@ export interface LoopDetectionResult {
   /** All recent intents for analysis */
   recentIntents: SemanticIntent[];
 }
-
 export interface EscalationResponse {
   /** Escalation level (1-6) */
   level: number;
@@ -40,11 +35,8 @@ export interface EscalationResponse {
   /** Is this genre-appropriate for the current mode? */
   genreAppropriate: boolean;
 }
-
-
 export function canonicalizeIntent(input: string, turn: number): SemanticIntent {
   const lower = input.toLowerCase().trim();
-
   // Extract action
   let action = 'generic';
   if (/\b(open|check)\b/i.test(lower) && /\b(crate|chest|box|barrel|trunk)\b/i.test(lower)) {
@@ -72,7 +64,6 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   } else if (/\b(read|browse|peruse)\b/i.test(lower)) {
     action = 'read';
   }
-
   // Extract target (simplified - look for key nouns)
   let target = 'environment';
   if (/\b(crate|crates)\b/i.test(lower)) {
@@ -104,7 +95,6 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
       target = nounMatch[2];
     }
   }
-
   // Infer purpose
   let purpose = 'act';
   if (action === 'inspect' && target === 'ambient_location') {
@@ -122,7 +112,6 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   } else if (action === 'ask' || action === 'inspect') {
     purpose = 'gather_info';
   }
-
   return {
     action,
     target,
@@ -131,31 +120,22 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
     originalText: input.slice(0, 100),
   };
 }
-
-
 export function intentSimilarity(a: SemanticIntent, b: SemanticIntent): number {
   let score = 0;
-
   // Action match (most important)
   if (a.action === b.action) score += 0.5;
-
   // Target match
   if (a.target === b.target) score += 0.3;
-
   // Purpose match
   if (a.purpose === b.purpose) score += 0.2;
-
   return score;
 }
-
-
 export function detectSemanticLoop(
   state: GameState,
   windowSize: number = 12
 ): LoopDetectionResult {
   const log = state.log ?? [];
   const recentIntents: SemanticIntent[] = [];
-
   // Extract recent player intents
   let count = 0;
   for (let i = log.length - 1; i >= 0 && count < windowSize; i--) {
@@ -166,7 +146,6 @@ export function detectSemanticLoop(
       count++;
     }
   }
-
   if (recentIntents.length < 3) {
     return {
       isLoop: false,
@@ -175,11 +154,9 @@ export function detectSemanticLoop(
       recentIntents,
     };
   }
-
   // Check the most recent intent against previous intents
   const current = recentIntents[recentIntents.length - 1];
   let loopCount = 1;
-
   // Count similar intents in recent window
   for (let i = recentIntents.length - 2; i >= Math.max(0, recentIntents.length - 8); i--) {
     const similarity = intentSimilarity(current, recentIntents[i]);
@@ -187,10 +164,8 @@ export function detectSemanticLoop(
       loopCount++;
     }
   }
-
   // Determine if this is a loop
   const isLoop = loopCount >= 3;
-
   // Calculate escalation level based on loop count
   let escalationLevel = 0;
   if (loopCount >= 3) escalationLevel = 1; // Warning
@@ -199,7 +174,6 @@ export function detectSemanticLoop(
   if (loopCount >= 6) escalationLevel = 4; // Complication
   if (loopCount >= 7) escalationLevel = 5; // Crisis
   if (loopCount >= 8) escalationLevel = 6; // Combat (if appropriate)
-
   return {
     isLoop,
     loopCount,
@@ -208,8 +182,6 @@ export function detectSemanticLoop(
     recentIntents,
   };
 }
-
-
 export function buildEscalationResponse(
   detection: LoopDetectionResult,
   engineMode: EngineMode,
@@ -218,10 +190,8 @@ export function buildEscalationResponse(
   if (!detection.isLoop || detection.escalationLevel === 0) {
     return null;
   }
-
   const level = detection.escalationLevel;
   const intent = detection.repeatedIntent!;
-
   // Level 1: Warning
   if (level === 1) {
     return {
@@ -231,7 +201,6 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-
   // Level 2: Time/Resource Cost
   if (level === 2) {
     return {
@@ -241,12 +210,10 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-
   // Level 3: NPC/World Response
   if (level === 3) {
     const isLitRPG = engineMode === 'litrpg';
     const isDnD = engineMode === 'dnd';
-
     return {
       level: 3,
       kind: 'npc_response',
@@ -254,7 +221,6 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-
   // Level 4: Complication
   if (level === 4) {
     return {
@@ -264,13 +230,11 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-
   // Level 5: Crisis
   if (level === 5) {
     const isLitRPG = engineMode === 'litrpg';
     const isDnD = engineMode === 'dnd';
     const isPyoa = engineMode === 'pyoa';
-
     return {
       level: 5,
       kind: 'crisis',
@@ -278,14 +242,12 @@ export function buildEscalationResponse(
       genreAppropriate: true,
     };
   }
-
   // Level 6: Combat (genre-appropriate)
   if (level === 6) {
     const isLitRPG = engineMode === 'litrpg';
     const isDnD = engineMode === 'dnd';
     const isPyoa = engineMode === 'pyoa';
     const isRpg = engineMode === 'rpg';
-
     // PYOA and Story RPG don't use combat as escalation
     if (isPyoa || isRpg) {
       return {
@@ -295,10 +257,8 @@ export function buildEscalationResponse(
         genreAppropriate: true,
       };
     }
-
     // LitRPG and DnD can use combat
     const genreAppropriate = activeObjective && (isLitRPG || isDnD);
-
     return {
       level: 6,
       kind: 'combat',
@@ -306,15 +266,11 @@ export function buildEscalationResponse(
       genreAppropriate,
     };
   }
-
   return null;
 }
-
-
 export function formatEscalationMandate(response: EscalationResponse): string {
   return `ESCALATION (Level ${response.level} - ${response.kind.toUpperCase()}): ${response.mandate}`;
 }
-
 /** Player asked the GM to restate the last beat — allow prose clones. */
 export function playerAsksRepeat(input: string): boolean {
   const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -328,8 +284,6 @@ export function playerAsksRepeat(input: string): boolean {
     || /\bgo over (that|it) again\b/.test(s)
   );
 }
-
-
 export function playerAsksContinuation(input: string): boolean {
   const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
   if (!s) return false;
@@ -341,12 +295,10 @@ export function playerAsksContinuation(input: string): boolean {
     || /\bsame (room|road|path|cell|hall)\b/.test(s)
   );
 }
-
 function optionFamilyKey(choice: string): string {
   const intent = canonicalizeIntent(choice, 0);
   return `${intent.action}:${intent.target}:${intent.purpose}`;
 }
-
 export function lastOfferedChoiceSets(
   state: { log?: Array<{ role?: string; offeredChoices?: string[] }> },
   maxSets = 2
@@ -356,12 +308,15 @@ export function lastOfferedChoiceSets(
   for (let i = log.length - 1; i >= 0 && sets.length < maxSets; i--) {
     const offered = log[i]?.role === 'gm' ? log[i]?.offeredChoices : undefined;
     if (!Array.isArray(offered) || !offered.length) continue;
-    const labels = offered.map((c) => String(c ?? '').trim()).filter(Boolean);
+    const labels: string[] = [];
+    for (let j = 0; j < offered.length; j++) {
+      const t = String(offered[j] ?? '').trim();
+      if (t) labels.push(t);
+    }
     if (labels.length) sets.push(labels);
   }
   return sets;
 }
-
 export function isStallPadChoice(choice: string): boolean {
   const intent = canonicalizeIntent(choice, 0);
   if (intent.action === 'wait' || intent.action === 'listen') return true;
@@ -377,8 +332,6 @@ export function isStallPadChoice(choice: string): boolean {
   if (/\b(scout (?:for )?(?:danger|the (?:area|room|exit|surroundings?|perimeter))|scout (?:the )?(?:area|room|exit|surroundings?|perimeter)|scout ahead|scout the (?:area|room|exit|surroundings?))\b/i.test(lower)) return true;
   return false;
 }
-
-
 export function filterRecycledStallChoices(
   choices: string[],
   state: { log?: Array<{ role?: string; offeredChoices?: string[] }> },
@@ -392,7 +345,6 @@ export function filterRecycledStallChoices(
     for (const c of set) recent.add(optionFamilyKey(c));
   }
   if (!recent.size) return { filtered: [...choices], removed: [] };
-
   const continueIntent = playerAsksContinuation(playerInput)
     ? canonicalizeIntent(playerInput, 0)
     : null;
@@ -413,7 +365,6 @@ export function filterRecycledStallChoices(
   }
   return { filtered, removed };
 }
-
 const COLLAGE_LOOKBACK = 8;
 const COLLAGE_SENTENCE_JACCARD = 0.68;
 const COLLAGE_CONTAINMENT = 0.85;
@@ -421,10 +372,8 @@ const COLLAGE_MIN_INTER = 5;
 const COLLAGE_PREFIX_WORDS = 40;
 const NEW_TAIL_WORDS = 25;
 const NEW_TAIL_CUE_WORDS = 8;
-
 const CONCRETE_TAIL_CUE =
   /\b(?:a|an|the)\s+(?:man|woman|figure|stranger|official|warden|handler|registrar|girl|boy|soldier|merchant|priest)\b|\b(?:steps?|walks?|enters?|emerges?|watches|stands|waits|speaks|says)\b|[“"][^”"]{8,}[”"]/i;
-
 export interface LeadingCollageHit {
   hit: boolean;
   kind: 'none' | 'prefix' | 'stitch';
@@ -434,21 +383,17 @@ export interface LeadingCollageHit {
   tailHasNewContent: boolean;
   sourceBeats: number[];
 }
-
 function wordCount(text: string): number {
   return ((text ?? '').match(/[A-Za-z']+/g) ?? []).length;
 }
-
 /** Split story prose into sentences. Short fragments stay attached to the nearest period. */
 export function splitStorySentences(text: string): string[] {
   return splitProseSentences((text ?? '').replace(/<[^>]+>/g, ' '));
 }
-
 export function isSubstantialSentence(sentence: string): boolean {
   if (wordCount(sentence) < 8) return false;
   return normalizeProseTokens(sentence).length >= 4;
 }
-
 function sentenceMatches(a: string, b: string): boolean {
   if (!isSubstantialSentence(a) || !isSubstantialSentence(b)) return false;
   const j = tokenJaccard(a, b);
@@ -460,7 +405,6 @@ function sentenceMatches(a: string, b: string): boolean {
   const smaller = Math.min(A.size, B.size);
   return smaller > 0 && inter / smaller >= COLLAGE_CONTAINMENT && inter >= COLLAGE_MIN_INTER;
 }
-
 function bestSourceBeat(sentence: string, recentBeats: string[]): number {
   if (!isSubstantialSentence(sentence)) return -1;
   let bestIdx = -1;
@@ -477,7 +421,6 @@ function bestSourceBeat(sentence: string, recentBeats: string[]): number {
   }
   return bestIdx;
 }
-
 function tailHasConcreteContent(sentences: string[]): boolean {
   const tail = sentences.join(' ').replace(/\s+/g, ' ').trim();
   if (!tail) return false;
@@ -486,7 +429,6 @@ function tailHasConcreteContent(sentences: string[]): boolean {
   if (words >= NEW_TAIL_CUE_WORDS && CONCRETE_TAIL_CUE.test(tail)) return true;
   return false;
 }
-
 /** Last K committed GM story beats, oldest-in-window first. */
 export function recentGmBeatTexts(
   state: { log?: Array<{ role?: string; content?: string }> },
@@ -500,8 +442,6 @@ export function recentGmBeatTexts(
   }
   return found.reverse();
 }
-
-
 export function detectLeadingCollage(
   draft: string,
   recentGmBeats: string[],
@@ -519,7 +459,6 @@ export function detectLeadingCollage(
   const beats = (recentGmBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-lastK);
   const sentences = splitStorySentences(draft);
   if (!beats.length || sentences.length < 1) return empty;
-
   const sources = sentences.map((s) => bestSourceBeat(s, beats));
   let stripIndex = 0;
   while (stripIndex < sentences.length) {
@@ -537,7 +476,6 @@ export function detectLeadingCollage(
     }
     break;
   }
-
   const leadingSources = sources.slice(0, stripIndex).filter((s) => s >= 0);
   const uniqueSources = [...new Set(leadingSources)];
   const recycledSentenceCount = leadingSources.length;
@@ -546,7 +484,6 @@ export function detectLeadingCollage(
   const prefixHit = recycledSentenceCount >= 2 || recycledWordCount >= COLLAGE_PREFIX_WORDS;
   const hit = stripIndex > 0 && (prefixHit || stitch);
   if (!hit) return empty;
-
   const tail = sentences.slice(stripIndex);
   return {
     hit: true,
@@ -558,13 +495,10 @@ export function detectLeadingCollage(
     sourceBeats: uniqueSources,
   };
 }
-
 const QUOTE_SPAN_RE = /[“"]([^”"]{12,})[”"]/g;
-
 function quoteKey(q: string): string {
   return q.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 }
-
 function recentQuoteKeys(recentBeats: string[]): Set<string> {
   const keys = new Set<string>();
   for (const beat of recentBeats) {
@@ -575,7 +509,6 @@ function recentQuoteKeys(recentBeats: string[]): Set<string> {
   }
   return keys;
 }
-
 /** The spoken words in one sentence, also when the sentence split fell inside the quote. */
 function spokenWordsIn(sentence: string, openQuote: boolean): string {
   const s = sentence ?? '';
@@ -589,18 +522,13 @@ function spokenWordsIn(sentence: string, openQuote: boolean): string {
   const close = rest.search(/[”"]/);
   return quoteKey(close >= 0 ? rest.slice(0, close) : rest);
 }
-
 function quoteOpenAfter(sentence: string, openQuote: boolean): boolean {
   const marks = ((sentence ?? '').match(/["“”]/g) ?? []).length;
   return marks % 2 === 1 ? !openQuote : openQuote;
 }
-
 const OPENING_CLAUSE_WORDS = 6;
-
 const openingClause = (s: string) =>
   (s.toLowerCase().replace(/[“”"]/g, ' ').match(/[a-z0-9']+/g) ?? []).slice(0, OPENING_CLAUSE_WORDS).join(' ');
-
-
 function repeatsOpeningClause(sentence: string, prior: string[], actor?: string): boolean {
   if (!isSubstantialSentence(sentence)) return false;
   const open = openingClause(sentence);
@@ -609,8 +537,6 @@ function repeatsOpeningClause(sentence: string, prior: string[], actor?: string)
   if (pc && open.split(' ')[0] === pc) return false;
   return prior.some((p) => isSubstantialSentence(p) && openingClause(p) === open);
 }
-
-
 export function recycledSentencesIn(
   draft: string,
   recentBeats: string[],
@@ -639,8 +565,6 @@ export function recycledSentencesIn(
     return false;
   });
 }
-
-
 export function trimRecycledSentences(
   draft: string,
   recentBeats: string[],
@@ -661,14 +585,12 @@ export function trimRecycledSentences(
   }
   return { text: draft, dropped: [] };
 }
-
 export function stripRecycledPrefix(draft: string, hit: LeadingCollageHit): string {
   if (!hit.hit || hit.stripIndex <= 0) return draft;
   const sentences = splitStorySentences(draft);
   const tail = sentences.slice(hit.stripIndex).join(' ').replace(/\s+/g, ' ').trim();
   return tail || draft;
 }
-
 /** No salvageable tail — same retry as an unasked near-clone. */
 export function shouldRetryUnaskedCollage(
   draft: string,
@@ -680,13 +602,10 @@ export function shouldRetryUnaskedCollage(
   if (hit.hit && !hit.tailHasNewContent) return true;
   return detectAtmosphereReprint(draft, recentGmBeats);
 }
-
 const ATMOS_TOKEN =
   /\b(dust|motes?|gloom|decay|ozone|scent|smell|odou?r|perfume|acrid|metallic|tang|damp|earth|air|light|shafts?|slivers?|silence|debris|rubble|concrete|rebar|creak|timber|groan|cloying|hangs?|pierc(?:e|ing)|mournful|ruin|rott(?:ing|en)|stagnant)\b/gi;
-
 const BEAT_DELTA_CUE =
   /\b(?:a|an|the)\s+(?:man|woman|figure|stranger|official|warden|handler|registrar|girl|boy|soldier|merchant|priest|beast|skirmisher)\b|\b(?:steps?|walks?|enters?|emerges?|speaks?|says|asks|demands|offers?|attacks?|lunges?)\b|[“"][^”"]{8,}[”"]|\b(?:chest|locket|hole|gap|damage|blood)\b|\b(?:nothing new|already searched|same as before)\b/i;
-
 export function atmosphereSignature(text: string): Set<string> {
   const found = new Set<string>();
   const re = new RegExp(ATMOS_TOKEN.source, 'gi');
@@ -696,7 +615,6 @@ export function atmosphereSignature(text: string): Set<string> {
   }
   return found;
 }
-
 export function isAtmosphereOnlyBeat(text: string): boolean {
   const sig = atmosphereSignature(text);
   if (sig.size < 4) return false;
@@ -706,14 +624,12 @@ export function isAtmosphereOnlyBeat(text: string): boolean {
   );
   return !BEAT_DELTA_CUE.test(withoutEmpty);
 }
-
 function signatureJaccard(a: Set<string>, b: Set<string>): number {
   if (!a.size || !b.size) return 0;
   let inter = 0;
   for (const t of a) if (b.has(t)) inter++;
   return inter / new Set([...a, ...b]).size;
 }
-
 /** Same-room smell/light essay with no new fact, person tactic, travel, or cost. */
 export function detectAtmosphereReprint(draft: string, recentGmBeats: string[]): boolean {
   if (!isAtmosphereOnlyBeat(draft)) return false;
@@ -725,7 +641,6 @@ export function detectAtmosphereReprint(draft: string, recentGmBeats: string[]):
   }
   return false;
 }
-
 /** Inspect / wait / scout / look-around — same-room loiter family (Batch F). */
 export function isSameRoomLoiterIntent(input: string): boolean {
   const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -740,7 +655,6 @@ export function isSameRoomLoiterIntent(input: string): boolean {
   if (/^(?:look|observe|explore|scout|wait|examine|inspect)\b/i.test(s)) return true;
   return false;
 }
-
 /** Talk / press / listen basin — Wall Sergeant treadmill (Batch S). */
 export function isDialogueTalkIntent(input: string): boolean {
   const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -749,11 +663,8 @@ export function isDialogueTalkIntent(input: string): boolean {
     s
   );
 }
-
 const DIALOGUE_STALL_CUE =
   /\b(?:names?\s+and\s+business|state your (?:name|business)|worn leather|shifts?\s+(?:his|her|their)\s+weight|persistent\s+drizzl|speak\s+plainly|leverage\?|not some throne room|get out of the way)\b/i;
-
-
 export function detectDialogueTreadmillHard(
   draft: string,
   recentGmBeats: string[],
@@ -763,12 +674,10 @@ export function detectDialogueTreadmillHard(
   if (playerAsksRepeat(playerInput)) return false;
   const text = (draft ?? '').trim();
   if (!text || !DIALOGUE_STALL_CUE.test(text)) return false;
-
   const priorStall = [...(recentGmBeats ?? [])]
     .slice(-5)
     .filter((b) => String(b ?? '').trim() && DIALOGUE_STALL_CUE.test(b));
   if (priorStall.length >= 2) return true;
-
   const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
   if (
     last
@@ -780,10 +689,7 @@ export function detectDialogueTreadmillHard(
   }
   return false;
 }
-
 const TALK_ULTIMATUM_RECYCLE = 0.72;
-
-
 export function detectTalkUltimatumRecycle(
   draft: string,
   recentGmBeats: string[],
@@ -803,7 +709,6 @@ export function detectTalkUltimatumRecycle(
   });
   return near.length >= 2;
 }
-
 export function isTalkUltimatumExhausted(state: {
   log?: Array<{ role?: string; content?: string }>;
 }): boolean {
@@ -814,15 +719,12 @@ export function isTalkUltimatumExhausted(state: {
   if (last.length < 40) return false;
   return recent.filter((b) => tokenJaccard(last, b) >= TALK_ULTIMATUM_RECYCLE).length >= 3;
 }
-
 /** Q&A / "what do I want" shape — not exact string. Legal first ask stays. */
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
-
 export function hasTalkQaShape(text: string): boolean {
   return TALK_QA_SHAPE.test(text ?? '');
 }
-
 export function isTalkQaLoopStarved(state: {
   log?: Array<{ role?: string; content?: string }>;
 }): boolean {
@@ -831,7 +733,6 @@ export function isTalkQaLoopStarved(state: {
   const lastThree = recent.slice(-3);
   return lastThree.every((b) => hasTalkQaShape(b));
 }
-
 export function detectTalkQaShapeLoop(
   draft: string,
   recentGmBeats: string[],
@@ -842,7 +743,6 @@ export function detectTalkQaShapeLoop(
   const prior = [...(recentGmBeats ?? [])].slice(-5).filter((b) => hasTalkQaShape(String(b ?? '')));
   return prior.length >= 2;
 }
-
 /** Sensory atmosphere + "{someone|name} shifts, expecting you to act" — not all "shifts". */
 export function ambientStubFingerprint(text: string): string | null {
   const t = text ?? '';
@@ -852,7 +752,6 @@ export function ambientStubFingerprint(text: string): string | null {
   if (shiftExpect && copper) return 'copper-stone+shift-expect';
   return null;
 }
-
 export function isAmbientStubRecycle(
   state: { log?: Array<{ role?: string; content?: string }> },
   draft: string
@@ -862,17 +761,13 @@ export function isAmbientStubRecycle(
   const recent = recentGmBeatTexts(state, 10);
   return recent.filter((b) => ambientStubFingerprint(b) === fp).length >= 2;
 }
-
 const COMBAT_NULL_DELTA =
   /\b(little true effect|absorb(?:s|ed)? (?:much of )?the (?:impact|blow)|seems to have little|hisses?,?\s+its burning eyes narrowing|bring your fists|lash out with your fists)\b/i;
-
 function isCombatAttackIntent(input: string): boolean {
   return /\b(attack|fight|strike|press the attack|engage|punch|fists?|continue (?:the )?(?:assault|attack|pressing)|follow-up|lash out)\b/i.test(
     input ?? ''
   );
 }
-
-
 export function detectCombatPurgatoryHard(
   draft: string,
   recentGmBeats: string[],
@@ -890,12 +785,9 @@ export function detectCombatPurgatoryHard(
   if (last && COMBAT_NULL_DELTA.test(last) && tokenJaccard(text, last) >= 0.32) return true;
   return false;
 }
-
 export function hasBeatDeltaCue(text: string): boolean {
   return BEAT_DELTA_CUE.test(text ?? '');
 }
-
-
 export function detectSameRoomEssayHard(
   draft: string,
   recentGmBeats: string[],
@@ -905,16 +797,13 @@ export function detectSameRoomEssayHard(
   if (playerAsksRepeat(playerInput)) return false;
   const text = (draft ?? '').trim();
   if (!text) return false;
-
   if (detectAtmosphereReprint(text, recentGmBeats)) return true;
   if (isAtmosphereOnlyBeat(text)) return true;
-
   const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
   if (!last) {
     // First loiter with pure sensory pile and no person/travel/cost cue.
     return !hasBeatDeltaCue(text) && atmosphereSignature(text).size >= 3;
   }
-
   const sig = atmosphereSignature(text);
   const prior = atmosphereSignature(last);
   if (sig.size >= 2 && prior.size >= 2 && signatureJaccard(sig, prior) >= 0.35 && !hasBeatDeltaCue(text)) {
