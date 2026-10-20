@@ -3,12 +3,9 @@
  * Compiler still picks 1–2 rules internally for craftApplied / ignore-stitch.
  * Writer packet does not receive CRAFT or MODE AUTHORITY lines (02n diet).
  */
-
 import type { EngineMode, GameState, LogEntry } from './types.ts';
 import { MODE_STORY_AUTHORITY } from './fluidProseRails.ts';
-
 export type CraftWhen = 'opening' | 'inspect' | 'talk' | 'travel' | 'combat' | 'wait';
-
 export type CraftSignal =
   | 'collage'
   | 'atmosphere'
@@ -16,7 +13,6 @@ export type CraftSignal =
   | 'pad_irrelevant'
   | 'hook_contradiction'
   | 'thumbs_down';
-
 export interface CraftRule {
   id: string;
   mode: EngineMode;
@@ -26,13 +22,11 @@ export interface CraftRule {
   fallback?: boolean;
   boostOn?: CraftSignal[];
 }
-
 export interface CraftLedger {
   boosts?: Record<string, number>;
   lastSignals?: CraftSignal[];
   lastApplied?: string[];
 }
-
 export interface CraftCompileResult {
   ruleIds: string[];
   lines: string[];
@@ -40,25 +34,20 @@ export interface CraftCompileResult {
   replacedModeLine: boolean;
   when: CraftWhen | null;
 }
-
 let lastThumbsDownTurn = -1;
-
 /** Cheap thumbs-down → next-turn CRAFT boost (no extra LLM). */
 export function noteThumbsDownFeedback(turn: number): void {
   lastThumbsDownTurn = turn;
 }
-
 export function consumeThumbsDownSignal(currentTurn: number): boolean {
   return lastThumbsDownTurn >= 0 && currentTurn - lastThumbsDownTurn <= 2;
 }
-
 const MAX_CRAFT_LINES = 2;
 const AUTHORITY_MAX = 200;
 const WHEN_SCORE = 10;
 const DROUGHT_SCORE = 8;
 const BOOST_WEIGHT = 8;
 const PICK_FLOOR = 10;
-
 export const CRAFT_RULES: CraftRule[] = [
   // --- litrpg (12) ---
   {
@@ -155,7 +144,6 @@ export const CRAFT_RULES: CraftRule[] = [
       'After a recycled prefix or same-room essay, change knowledge, person, or cost—do not stitch old lines.',
     boostOn: ['collage', 'atmosphere', 'thumbs_down'],
   },
-
   // --- dnd (12) ---
   {
     id: 'dnd-default',
@@ -250,7 +238,6 @@ export const CRAFT_RULES: CraftRule[] = [
       'Distinct tactical futures: investigate, position, talk, or disengage—not four paraphrases.',
     boostOn: ['pad_irrelevant'],
   },
-
   // --- rpg (12) ---
   {
     id: 'rpg-default',
@@ -346,7 +333,6 @@ export const CRAFT_RULES: CraftRule[] = [
       'Leave at least two socially distinct futures—leverage, mercy, honesty, or distance.',
     boostOn: ['pad_irrelevant'],
   },
-
   // --- pyoa (12) ---
   {
     id: 'pyoa-default',
@@ -442,7 +428,6 @@ export const CRAFT_RULES: CraftRule[] = [
     boostOn: ['pad_irrelevant'],
   },
 ];
-
 function lastPlayerText(state: GameState, playerInput?: string): string {
   const typed = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   if (typed && typed !== '(opening)') return typed;
@@ -453,7 +438,6 @@ function lastPlayerText(state: GameState, playerInput?: string): string {
   }
   return '';
 }
-
 function lastGmText(state: GameState): string {
   for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
     const e = state.log[i];
@@ -461,7 +445,6 @@ function lastGmText(state: GameState): string {
   }
   return '';
 }
-
 export function classifyCraftWhen(state: GameState, playerInput?: string): CraftWhen | null {
   const opening = state.openingEstablishment;
   if (opening && opening.complete !== true) return 'opening';
@@ -487,7 +470,6 @@ export function classifyCraftWhen(state: GameState, playerInput?: string): Craft
   if (fam === 'demand') return 'talk';
   return null;
 }
-
 function lastBeatLooksAtmosphere(text: string): boolean {
   if (!text.trim()) return false;
   const sensory = (text.match(/\b(scent|smell|dust motes|air hangs|gloom|decay|perfume|silence)\b/gi) ?? [])
@@ -495,7 +477,6 @@ function lastBeatLooksAtmosphere(text: string): boolean {
   const delta = /\b(opens|says|offers|takes|arrives|new|someone|doorway)\b/i.test(text);
   return sensory >= 2 && !delta;
 }
-
 function detectDrought(
   state: GameState,
   when: CraftWhen | null,
@@ -520,7 +501,6 @@ function detectDrought(
       || (state.engineMode === 'pyoa' && /^\s*wait\b/i.test(input)),
   };
 }
-
 function scoreRule(
   rule: CraftRule,
   when: CraftWhen | null,
@@ -536,7 +516,6 @@ function scoreRule(
   score += (boosts[rule.id] ?? 0) * BOOST_WEIGHT;
   return score;
 }
-
 export function compileCraftRules(state: GameState, playerInput?: string): CraftCompileResult {
   const mode: EngineMode = state.engineMode ?? 'rpg';
   const input = lastPlayerText(state, playerInput);
@@ -554,12 +533,17 @@ export function compileCraftRules(state: GameState, playerInput?: string): Craft
         || a.rule.when.length - b.rule.when.length
         || a.rule.id.localeCompare(b.rule.id)
     );
-
   const picked = specific.slice(0, MAX_CRAFT_LINES);
   if (picked.length) {
+    const ruleIds: string[] = [];
+    const lines: string[] = [];
+    for (let i = 0; i < picked.length; i++) {
+      ruleIds.push(picked[i]!.rule.id);
+      lines.push(picked[i]!.rule.authority);
+    }
     return {
-      ruleIds: picked.map((p) => p.rule.id),
-      lines: picked.map((p) => p.rule.authority),
+      ruleIds,
+      lines,
       replacedModeLine: true,
       when,
     };
@@ -572,12 +556,10 @@ export function compileCraftRules(state: GameState, playerInput?: string): Craft
     when,
   };
 }
-
 /** Writer-facing SNAPSHOT injection is off — compiler still picks via compileCraftRules. */
 export function formatCraftSnapshotLines(_state?: GameState, _playerInput?: string): string[] {
   return [];
 }
-
 /**
  * Mode craft as pad rules (Manus P0): repeat inspect / wait-with-no-fork
  * starve that family. First look and live combat are untouched.
@@ -589,7 +571,6 @@ export interface CraftProgressionPolicy {
   preferPads: string[];
   note: string;
 }
-
 export function craftProgressionPolicy(
   state: GameState,
   playerInput?: string
@@ -602,7 +583,6 @@ export function craftProgressionPolicy(
   };
   if (state.openingEstablishment && state.openingEstablishment.complete !== true) return empty;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return empty;
-
   const input = lastPlayerText(state, playerInput);
   const when = classifyCraftWhen(state, playerInput);
   const drought = detectDrought(state, when, input);
@@ -622,7 +602,6 @@ export function craftProgressionPolicy(
     .join('; ');
   return { starveInspect, starveWait, preferPads, note };
 }
-
 export function isCraftStarvedPad(label: string, policy: CraftProgressionPolicy): boolean {
   if (!policy.starveInspect && !policy.starveWait) return false;
   const trimmed = label.trim();
@@ -641,7 +620,6 @@ export function isCraftStarvedPad(label: string, policy: CraftProgressionPolicy)
   if (policy.starveWait && /^(wait|wait and watch)$/i.test(trimmed)) return true;
   return false;
 }
-
 export function applyCraftLearning(
   ledger: CraftLedger | undefined,
   signals: CraftSignal[],
@@ -667,15 +645,12 @@ export function applyCraftLearning(
     lastApplied: appliedIds,
   };
 }
-
 export function craftRulesForMode(mode: EngineMode): CraftRule[] {
   return CRAFT_RULES.filter((r) => r.mode === mode);
 }
-
 export function assertCraftAuthorityBudget(): string[] {
   return CRAFT_RULES.filter((r) => r.authority.length > AUTHORITY_MAX).map((r) => r.id);
 }
-
 export function stampCraftApplied(log: LogEntry[] | undefined, ruleIds: string[]): LogEntry[] {
   if (!log?.length || !ruleIds.length) return log ?? [];
   for (let i = log.length - 1; i >= 0; i--) {
@@ -687,7 +662,6 @@ export function stampCraftApplied(log: LogEntry[] | undefined, ruleIds: string[]
   }
   return log;
 }
-
 /**
  * Batch F — commit-side check: specific CRAFT lines were applied but prose still
  * ignores them (atmosphere recycle / no delta). Mid writer stays OFF; boost+retry.
@@ -701,7 +675,6 @@ export function proseIgnoresCraft(
   const text = (prose ?? '').trim();
   const ignored: string[] = [];
   if (!text || !ruleIds.length) return { ignored: false, ids: ignored };
-
   // Lazy import pattern avoided — callers pass recent beats; use local heuristics
   // matching semanticLoopDetector atmosphere/delta cues (keep craftBook free of cycles).
   const atmosTokens =
@@ -716,7 +689,6 @@ export function proseIgnoresCraft(
   const exhaustedCue = /\b(nothing (?:else|new|more)|already known|already searched|no further|same as before)\b/i.test(
     text
   );
-
   for (const id of ruleIds) {
     if (!id || /default$/i.test(id)) continue;
     if (/inspect-delta|wait-delta|collage-cut/i.test(id)) {
@@ -729,7 +701,6 @@ export function proseIgnoresCraft(
       if (sensoryHeavy) ignored.push(id);
     }
   }
-
   // Near-clone of last GM under a delta CRAFT also counts as ignore.
   const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
   if (last && ignored.length === 0) {
@@ -757,6 +728,5 @@ export function proseIgnoresCraft(
       }
     }
   }
-
   return { ignored: ignored.length > 0, ids: [...new Set(ignored)] };
 }
