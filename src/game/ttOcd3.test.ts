@@ -348,7 +348,7 @@ describe('w4d-gocd3-fixg journey meeting stays on the pad', () => {
       choices: [
         'Walk on',
         'Face the thugs',
-        'Talk your way past the thugs, but fail and they attack',
+        'Talk your way past the thugs',
         'Turn back toward Cathedral Close',
       ],
       journey: {
