@@ -1,5 +1,3 @@
-
-
 import type { GameState, Item, NpcMemory } from './types';
 import { scrubNpcIntroRepeat } from './npcMemory';
 import { playerTypedDialogue } from './intentParser';
@@ -22,9 +20,7 @@ import {
 import { scrubMetaRecoveryStrings } from './diegeticFallbacks';
 import { obeyLedgerNouns } from './ledgerNounObey';
 import { splitProseSentences } from './proseSentences';
-
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
-
 /** Names from scene props, containers, interactables, and floor loose items. */
 export function collectSceneObjectNames(state: GameState): string[] {
   const names: string[] = [...(state.sceneFacts?.props ?? [])];
@@ -37,7 +33,6 @@ export function collectSceneObjectNames(state: GameState): string[] {
   for (const loose of node?.hidden?.looseItems ?? []) names.push(loose.label);
   return names;
 }
-
 export type ProseWardenContext = {
   currentLocation?: string;
   /** Summoned Pact alone ruin / empty arrival — never invent watchers. */
@@ -50,7 +45,6 @@ export type ProseWardenContext = {
   crowdSize?: number;
   /** Crowd is present in scene facts (prevents empty/no-crowd contradictions). */
   crowdPresent?: boolean;
-  
   // Pack 12 Extended Context
   currentTimeOfDay?: string;
   previousTimeOfDay?: string;
@@ -58,7 +52,6 @@ export type ProseWardenContext = {
   wasIndoor?: boolean;
   currentTension?: string;
   previousTension?: string;
-  
   // Phase 1: Deterministic State Architecture
   /** Player inventory for invented container detection. */
   inventory?: Item[];
@@ -109,13 +102,10 @@ export type ProseWardenContext = {
   /** The sentences telling this turn's own event (writerTurn.thisTurnsEventCheck); the noun rewrite keeps them. */
   isThisTurnsEvent?: (sentence: string) => boolean;
 };
-
 /** Interiors that already name "here" — nearby is for things that are not here. */
 const HERE_PLACE_CUES =
   /\b(?:cathedral|circle|court|vault|chapel|nave|undercroft|palace|temple|keep|castle|inn|guildhall|sanctum|chamber|close)\b/i;
-
 const NEARBY_HERE_NOUN = '(?:building|place|hall|structure|edifice|interior)s?';
-
 export function beatIsAtNamedPlace(text: string, currentLocation?: string): boolean {
   if (HERE_PLACE_CUES.test(text)) return true;
   const loc = (currentLocation ?? '').trim();
@@ -125,7 +115,6 @@ export function beatIsAtNamedPlace(text: string, currentLocation?: string): bool
   }
   return false;
 }
-
 function tidyClauses(text: string): string {
   return text
     .replace(/\s+,/g, ',')
@@ -136,8 +125,6 @@ function tidyClauses(text: string): string {
     .replace(/^,+\s*/, '')
     .trim();
 }
-
-
 export function scrubFalseArrivalWhenHere(
   text: string,
   currentLocation?: string,
@@ -148,7 +135,6 @@ export function scrubFalseArrivalWhenHere(
   if (!text) return text;
   let next = text;
   const loc = (currentLocation ?? '').trim();
-  
   // DEBUG LOGGING - Phase 2
   const debugEnabled = false;
   if (debugEnabled && (fleeFailed || /\bYou reach\b/i.test(text))) {
@@ -160,7 +146,6 @@ export function scrubFalseArrivalWhenHere(
       hasYouReach: /\bYou reach\b/i.test(text),
     });
   }
-  
   // Batch X+1: If flee failed, strip ALL arrival narration (player is caught/stuck)
   if (fleeFailed) {
     next = next
@@ -181,15 +166,12 @@ export function scrubFalseArrivalWhenHere(
     // Early return - flee-fail strips all arrivals regardless of location
     return tidyClauses(next);
   }
-
   const stripReach = (place: string) => {
     const p = place.trim();
     if (p.length < 3) return;
     const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    
     // DEBUG LOGGING - Phase 2
     const beforeStrip = next;
-    
     // Batch X+1: More aggressive pattern - strips arrival even mid-sentence
     // Use 'gi' flag for case-insensitive matching (e.g. "Sanctuary" vs "the sanctuary")
     next = next
@@ -202,7 +184,6 @@ export function scrubFalseArrivalWhenHere(
       )
       .replace(/\s{2,}/g, ' ')
       .trim();
-      
     // DEBUG LOGGING
     if (debugEnabled && beforeStrip !== next) {
       console.log('[scrubFalseArrival] STRIPPED PLACE:', {
@@ -212,7 +193,6 @@ export function scrubFalseArrivalWhenHere(
         after: next.slice(0, 100),
       });
     }
-    
     // P0-5 Batch 02f: PYOA compound location hardening
     // "mill landing at Thornferry" / "mill landing" should match when already at that location
     if (/\bmill\s+landing\b/i.test(p) || /\bthornferry\b/i.test(p) || /\bthe ford\b/i.test(p)) {
@@ -224,7 +204,6 @@ export function scrubFalseArrivalWhenHere(
         .replace(/\s{2,}/g, ' ')
         .trim();
     }
-    
     const short = p.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
     if (short.length >= 6 && short.toLowerCase() !== p.toLowerCase()) {
       const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -240,7 +219,6 @@ export function scrubFalseArrivalWhenHere(
         .trim();
     }
   };
-
   // BATCH YZ / 02g: alias cluster (mill landing ↔ Thornferry) is not a real change.
   const thornAlias = (s: string) =>
     /\b(thornferry|mill\s+landing|the ford|harbor quay)\b/i.test(s);
@@ -249,12 +227,10 @@ export function scrubFalseArrivalWhenHere(
     priorTrim.length >= 3 &&
     priorTrim.toLowerCase() !== loc.toLowerCase() &&
     !(thornAlias(priorTrim) && thornAlias(loc));
-  
   // Strip arrival to current location ONLY if we didn't just travel here
   if (!locationChanged) {
     if (loc) stripReach(loc);
   }
-  
   // Strip arrival to prior location ONLY if location UNCHANGED (false same-room arrival)
   if (!locationChanged && priorLocation && priorLocation.trim().length >= 3) {
     const prior = priorLocation.trim();
@@ -262,7 +238,6 @@ export function scrubFalseArrivalWhenHere(
       stripReach(prior);
     }
   }
-
   // Opening / prior places that are NOT where we are — false arrival spam
   const foreign = new Set<string>();
   for (const place of knownPlaces) {
@@ -290,7 +265,6 @@ export function scrubFalseArrivalWhenHere(
       );
   }
   for (const place of foreign) stripReach(place);
-
   // DEBUG LOGGING - Phase 2: Final result
   if (debugEnabled && /\bYou reach\b/i.test(text)) {
     const finalNext = tidyClauses(next);
@@ -301,11 +275,8 @@ export function scrubFalseArrivalWhenHere(
     });
     return finalNext;
   }
-
   return tidyClauses(next);
 }
-
-
 export function scrubChoicePadPersonNames(text: string): string {
   if (!text) return text;
   let next = text;
@@ -327,8 +298,6 @@ export function scrubChoicePadPersonNames(text: string): string {
   next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'g'), 'Approach a nearby figure');
   return tidyClauses(next);
 }
-
-
 export function scrubDialogueVerbAsNoun(text: string, encounterName?: string): string {
   if (!text || !/\brasped\b/i.test(text)) return text;
   let next = text;
@@ -374,8 +343,6 @@ export function scrubDialogueVerbAsNoun(text: string, encounterName?: string): s
   next = next.replace(/\bRasped\s+(watches|leans|gestures|remains|stands|shifts)\b/gi, 'The stall owner $1');
   return tidyClauses(next);
 }
-
-
 export function scrubUnearnedPocketLoot(
   text: string,
   inventoryNames: string[] = []
@@ -406,8 +373,6 @@ export function scrubUnearnedPocketLoot(
   );
   return tidyClauses(next);
 }
-
-
 export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: string): string {
   if (!text) return text;
   const loc = (currentLocation ?? '').trim();
@@ -421,12 +386,10 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
   next = next.replace(/\bof\s+figure\s+\d+\b/gi, 'nearby');
   next = next.replace(/\bfigure\s+\d+\s+ramparts?\b/gi, 'the ramparts');
   next = next.replace(/\b(?:the\s+)?figure\s+\d+\b/gi, 'someone nearby');
-  
   // P0-2 Batch 02f: Deixis as proper noun — only match CAPITALIZED
   // "the Ahead" / "tarnished Forward" → deixis-as-noun (rewrite)
   // "the forward" / "walk forward" → direction (keep unchanged)
   const DEIXIS = 'Ahead|Behind|Beside|Nearby|Above|Below|Left|Right|Forward|Across';
-  
   // Remove 'i' flag from all deixis patterns - only match Title Case
   next = next.replace(
     new RegExp(`\\btarnished\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'g'),
@@ -464,8 +427,6 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
   );
   return tidyClauses(next);
 }
-
-
 export function scrubFactionAsLootOrTarget(text: string): string {
   if (!text || !/scattered\s+scale/i.test(text)) return text;
   let next = text;
@@ -492,7 +453,6 @@ export function scrubFactionAsLootOrTarget(text: string): string {
   next = next.replace(/\bpush\s+the\s+Scattered\s+Scale\b/gi, 'push the point');
   return tidyClauses(next);
 }
-
 /** Batch U — commit-gate / stitch bank strings must never stay in committed prose. */
 export function scrubStitchBankLeaks(text: string): string {
   if (!text?.trim()) return text;
@@ -522,8 +482,6 @@ export function scrubStitchBankLeaks(text: string): string {
   );
   return tidyClauses(kept.join(' '));
 }
-
-
 export function scrubEntityMadLibs(text: string, encounterName?: string): string {
   if (!text) return text;
   let next = text;
@@ -654,8 +612,6 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   );
   return tidyClauses(next);
 }
-
-
 export function scrubBodyStatusDumps(text: string): string {
   if (!text) return text;
   const next = text
@@ -676,8 +632,6 @@ export function scrubBodyStatusDumps(text: string): string {
     .trim();
   return tidyClauses(next);
 }
-
-
 export function scrubRoleAdjectivePersonSlot(text: string): string {
   if (!text) return text;
   const ROLE_ADJ =
@@ -695,12 +649,9 @@ export function scrubRoleAdjectivePersonSlot(text: string): string {
   );
   return tidyClauses(next);
 }
-
-
 export function scrubLocationTautology(text: string, currentLocation?: string): string {
   if (!text || !/nearby/i.test(text)) return text;
   let next = text;
-
   next = next.replace(
     new RegExp(
       `\\b((?:[Yy]ou are|[Yy]ou're|[Yy]ou stand|[Yy]ou sit|[Yy]ou lie|[Yy]ou wake(?:n)?))\\s+(?:within|inside|in)\\s+(?:a|the)\\s+nearby\\s+${NEARBY_HERE_NOUN}\\b`,
@@ -708,9 +659,7 @@ export function scrubLocationTautology(text: string, currentLocation?: string): 
     ),
     '$1 inside'
   );
-
   if (!beatIsAtNamedPlace(next, currentLocation)) return tidyClauses(next);
-
   next = next.replace(new RegExp(`\\s+of\\s+(?:a|the)\\s+nearby\\s+${NEARBY_HERE_NOUN}\\b`, 'gi'), '');
   next = next.replace(
     new RegExp(
@@ -721,7 +670,6 @@ export function scrubLocationTautology(text: string, currentLocation?: string): 
   );
   return tidyClauses(next);
 }
-
 /** After a sentence-ending closer + quote, the next sentence must capitalize. */
 export function scrubSpokenQuoteStart(text: string): string {
   if (!text) return text;
@@ -729,11 +677,8 @@ export function scrubSpokenQuoteStart(text: string): string {
     `${punct}${q}${sp}${ch.toUpperCase()}`
   );
 }
-
 const ARTICLE_COLLISION =
   /\b(?:the\s+a|the\s+an|a\s+the|an\s+the|a\s+an|an\s+a|the\s+the|a\s+a)\b/gi;
-
-
 export function scrubFreeEnglishSlips(text: string): string {
   if (!text) return text;
   return text
@@ -742,8 +687,6 @@ export function scrubFreeEnglishSlips(text: string): string {
     .replace(/\ba few people still['’]s\b/gi, 'a few people still')
     .replace(/\ba few people still moves\b/gi, 'a few people still move');
 }
-
-
 export function scrubAwakeSpeakerAsSleeper(
   text: string,
   ctx?: { lastGmProse?: string; presentNames?: string[] }
@@ -769,7 +712,6 @@ export function scrubAwakeSpeakerAsSleeper(
       'the attendant stays near'
     );
 }
-
 /** Collapse doubled articles the writer (or a name-scrub) stacked. */
 export function scrubArticleCollisions(text: string): string {
   if (!text) return text;
@@ -789,8 +731,6 @@ export function scrubArticleCollisions(text: string): string {
   }
   return next;
 }
-
-
 export function scrubFigurePlaceholder(text: string, alone = false): string {
   if (!text) return text;
   const personSlot = alone ? 'the panel' : 'the stranger';
@@ -802,7 +742,6 @@ export function scrubFigurePlaceholder(text: string, alone = false): string {
     .replace(/\bthe\s+a\s+figure\b/gi, personSlot);
   // A plain "a figure" is the writer's own passer-by; it stays.
 }
-
 /** UI / journal verbs must not be spoken in-world. */
 export function scrubUiQuestVerbs(text: string, alone = false): string {
   if (!text) return text;
@@ -820,7 +759,6 @@ export function scrubUiQuestVerbs(text: string, alone = false): string {
     )
     .replace(/\b(?:Stage\s+\d+:\s*(?:the\s+)?Reason Heard)\b/gi, 'the next lead');
 }
-
 /** Soft name-slot must not act as a dialogue subject. */
 export function scrubSomeoneNearbyPlaceholder(text: string, alone = false): string {
   if (!text || !/someone nearby/i.test(text)) return text;
@@ -831,7 +769,6 @@ export function scrubSomeoneNearbyPlaceholder(text: string, alone = false): stri
     .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, `${role} $1`)
     .replace(/\b(?:the\s+)?someone nearby\b/gi, role);
 }
-
 /** Kill "the speaker" furniture / alone System chrome leaks. */
 export function scrubSpeakerPlaceholder(text: string, alone = false): string {
   if (!text || !/\b(?:the|a) speaker\b/i.test(text)) return text;
@@ -847,8 +784,6 @@ export function scrubSpeakerPlaceholder(text: string, alone = false): string {
   }
   return next;
 }
-
-
 export function scrubStrangerArtifact(
   text: string,
   presentNames: string[] = [],
@@ -860,8 +795,6 @@ export function scrubStrangerArtifact(
   void alone;
   return text;
 }
-
-
 export function scrubUnearnedVictory(
   text: string,
   opts?: { hasLiveEncounter?: boolean; recentlyCleared?: boolean }
@@ -880,8 +813,6 @@ export function scrubUnearnedVictory(
   next = next.replace(/\bvictory is (?:yours|assured)\b/gi, 'the moment hangs unresolved');
   return next;
 }
-
-
 export function scrubPlaceholderNouns(text: string, currentLocation?: string): string {
   if (!text) return text;
   const loc = (currentLocation ?? '').trim();
@@ -928,7 +859,6 @@ export function scrubPlaceholderNouns(text: string, currentLocation?: string): s
   next = next.replace(/\breads\s+['']them\s*[-–—]\s*them['']/gi, "reads a worn brass nameplate");
   return next;
 }
-
 /** Fix mid-sentence lowercase "your eyes" NPC slips and orphan "them" subjects. */
 export function scrubPronounSubjectSlips(text: string): string {
   if (!text) return text;
@@ -961,8 +891,6 @@ export function scrubPronounSubjectSlips(text: string): string {
   next = next.replace(/\bFocus on them\b/gi, 'Focus on it');
   return next;
 }
-
-
 export function scrubPossessiveDeterminerSlips(text: string): string {
   if (!text) return text;
   let next = text;
@@ -988,8 +916,6 @@ export function scrubPossessiveDeterminerSlips(text: string): string {
   );
   return next;
 }
-
-
 export function scrubPrematureSecrets(text: string): string {
   if (!text || !/secrets/i.test(text)) return text;
   let next = text;
@@ -1001,17 +927,13 @@ export function scrubPrematureSecrets(text: string): string {
   next = next.replace(/\b(?:reveals?|yields?)\s+(?:its|their)\s+secrets\s+(?:slowly|reluctantly)\.?\s*/gi, '');
   return tidyClauses(next);
 }
-
 /** Sentence split that keeps closers — for alone / map scrub drops. */
 function splitSentences(text: string): string[] {
   const parts = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g);
   return parts?.map((p) => p.trim()).filter(Boolean) ?? (text.trim() ? [text.trim()] : []);
 }
-
-
 const ALONE_CROWD_INVENT =
   /\b(?:you(?:'re|’re| are) not alone|a handful of (?:people|figures|onlookers)|people have gathered|ones who saw you arrive|who saw you(?:r)? arrive|saw you arrive|watching (?:you |through )|crowd (?:of|has|have)|bystanders?\b|onlookers?\b|handlers?\b|voices?\s+(?:outside|beyond|from (?:the )?(?:street|road|gap))|someone (?:nearby|listening|watching))\b/i;
-
 export function scrubInventedAlonePresence(text: string, alone: boolean): string {
   if (!alone || !text) return text;
   if (!ALONE_CROWD_INVENT.test(text)) return text;
@@ -1021,11 +943,8 @@ export function scrubInventedAlonePresence(text: string, alone: boolean): string
   }
   return tidyClauses(kept.join(' '));
 }
-
-
 const ONE_ROOM_MAP_LIE =
   /\b(?:only\s+(?:one|a\s+single)\s+(?:open\s+)?room|no\s+doors?\s+(?:intact|remain|left)|(?:there\s+are\s+)?no\s+hallways?|only\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+(?:far\s+)?wall|nothing\s+but\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+wall)\b/i;
-
 export function scrubInteriorOneRoomLie(
   text: string,
   hasMappedDoorExits: boolean,
@@ -1041,36 +960,27 @@ export function scrubInteriorOneRoomLie(
   if (kept.length === 0) return bridge;
   return tidyClauses(`${kept.join(' ')} ${bridge}`);
 }
-
-
 const LOCATION_NOUNS =
   /\b(?:hall|room|chamber|corridor|passage|doorway|archway|stairway|vault|cellar|undercroft|atrium|nave|transept|gallery|balcony|landing|foyer|vestibule|alcove|niche|street|alley|square|plaza|courtyard|garden|field|path|road|bridge)\b/i;
-
 const ANTHROPOMORPHIC_VERBS =
   /\b(?:answers?|responds?|replies?|says?|speaks?|tells?|asks?|demands?|insists?|suggests?|offers?|promises?|warns?|threatens?|whispers?|murmurs?|shouts?|calls?)\b/i;
-
 export function scrubAnthropomorphizedLocation(text: string): string {
   if (!text) return text;
-  
   // Pattern: "the [location] [verb]" where verb is typically human
   const anthropomorphicPattern = new RegExp(
     `(?:^|\\s)(?:[Tt]he|[Aa])\\s+(${LOCATION_NOUNS.source})\\s+(${ANTHROPOMORPHIC_VERBS.source})`,
     'g'
   );
-  
   if (!anthropomorphicPattern.test(text)) return text;
-  
   // Common cases:
   // "The hall answers your question" -> keep the descriptive part only
   // "The room responds with..." -> "The room reveals..."
   let next = text;
-  
   // "The hall answers your question with..." -> strip the anthropomorphic phrasing
   next = next.replace(
     /\b[Tt]he\s+(\w+)\s+answers\s+your\s+question\s+with\s+its\s+(?:whole\s+)?(\w+)/gi,
     'The $1 reveals its $2'
   );
-  
   // "The [location] answers" -> "The [location] is clear"
   next = next.replace(
     /\b[Tt]he\s+(\w+)\s+answers?(?:\s+(?:you|your\s+question|quickly|slowly|at\s+once))?(?:\.|\s*,|\s+with\b)/gi,
@@ -1080,22 +990,14 @@ export function scrubAnthropomorphizedLocation(text: string): string {
       return `The ${loc} is clear.`;
     }
   );
-  
   return tidyClauses(next);
 }
-
-
-
 export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTime?: string): string {
   if (!text || !currentTime || currentTime === 'unknown') return text;
-  
   const TIME_SKIP_PATTERNS = /\b(hours? (?:later|pass(?:es|ed)?|ago)|next (?:morning|day|evening)|(?:that|the) (?:evening|afternoon|night)|by (?:morning|evening|nightfall)|(?:much|some) (?:time|while) (?:later|passes))\b/i;
-  
   if (!TIME_SKIP_PATTERNS.test(text)) return text;
-  
   // Allow if time actually changed
   if (prevTime && prevTime !== 'unknown' && currentTime !== prevTime) return text;
-  
   // Scrub invented time skip. "the evening light" names the hour it already is, so only a
   // clause-leading "That evening," is a skip.
   return text.replace(/\bhours? (?:later|pass(?:es|ed)?)\b/gi, 'moments later')
@@ -1106,8 +1008,6 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
     'a moment later'
   );
 }
-
-
 export function scrubInventedLocationChange(
   text: string,
   isIndoor?: boolean,
@@ -1116,24 +1016,18 @@ export function scrubInventedLocationChange(
 ): string {
   if (!text || isIndoor === undefined) return text;
   if (exitNarrated) return text;
-
   const OUTDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|head) (?:outside|outdoors|into (?:the )?(?:street|open air|sunlight|rain))|(?:exit(?:ing)?|leav(?:e|ing)) (?:the )?(?:building|room|hall))\b/i;
   const INDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|enter) (?:inside|indoors|into (?:the )?(?:building|room|hall)))\b/i;
-
   // Scrub outdoor transition if we're still indoors
   if (isIndoor && OUTDOOR_TRANSITIONS.test(text)) {
     return text.replace(OUTDOOR_TRANSITIONS, 'you move forward');
   }
-
   // Scrub indoor transition if we're still outdoors (snap-back after exit)
   if (isIndoor === false && INDOOR_TRANSITIONS.test(text)) {
     return text.replace(INDOOR_TRANSITIONS, 'you continue');
   }
-
   return text;
 }
-
-
 export function scrubDualLocationOpenings(
   text: string,
   currentLocation?: string,
@@ -1145,7 +1039,6 @@ export function scrubDualLocationOpenings(
     .map((p) => p.trim())
     .filter((p) => p.length >= 3 && p.toLowerCase() !== loc.toLowerCase());
   if (!others.length && !/^At\s+/im.test(text)) return text;
-
   let next = text;
   // Collapse repeated "At X," openings when X is not current location
   const atOpen = /^At\s+([^,—.\n]{2,60})\s*[,—]/gim;
@@ -1167,7 +1060,6 @@ export function scrubDualLocationOpenings(
     }
     return full;
   });
-
   // Second sentence that teleports: "… Cup. At Lowmarket, Void-Touched…"
   for (const other of others) {
     const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1179,7 +1071,6 @@ export function scrubDualLocationOpenings(
       next = next.replace(dual, `$1 Still here,`);
     }
   }
-
   // "in Lowmarket … at the Weighing Cup" same-beat without travel
   if (others.length && new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(next)) {
     for (const other of others) {
@@ -1194,7 +1085,6 @@ export function scrubDualLocationOpenings(
       });
     }
   }
-
   // Batch W — "You leave X and reach Y. In X, …" spatial ping-pong (T20/T23 tape).
   for (const other of others) {
     const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1212,35 +1102,25 @@ export function scrubDualLocationOpenings(
       `You reach ${loc}.`
     );
   }
-
   return next;
 }
-
-
 export function scrubInventedTensionChange(text: string, currentTension?: string, prevTension?: string): string {
   if (!text || !currentTension || currentTension === 'unknown') return text;
-  
   const CALM_CLAIMS = /\b((?:the )?(?:danger|threat|tension) (?:passes|fades|recedes|lifts)|calm (?:settles|returns)|(?:you|the room|the hall) relax(?:es)?)\b/i;
   const DANGER_CLAIMS = /\b(danger (?:arrives|emerges|appears)|(?:the )?threat (?:materializes|looms|closes in)|tension (?:spikes|rises))\b/i;
-  
   // Allow if tension actually changed
   if (prevTension && prevTension !== 'unknown' && currentTension !== prevTension) return text;
-  
   // Scrub calm claims if tension is still high
   if ((currentTension === 'danger' || currentTension === 'combat') && CALM_CLAIMS.test(text)) {
     return text.replace(CALM_CLAIMS, 'the moment holds');
   }
-  
   // Scrub danger claims if tension is still calm
   if (currentTension === 'calm' && DANGER_CLAIMS.test(text)) {
     return text.replace(DANGER_CLAIMS, 'something shifts');
   }
-  
   return text;
 }
-
 const CONTAINER_KIND = /box|crate|chest|pouch|bag|sack|barrel|trunk/;
-
 function collectContainerTypes(inventory: Item[], extraNames: string[]): Set<string> {
   const containerTypes = new Set<string>();
   const addFrom = (name: string) => {
@@ -1258,24 +1138,19 @@ function collectContainerTypes(inventory: Item[], extraNames: string[]): Set<str
   for (const extra of extraNames) addFrom(extra);
   return containerTypes;
 }
-
-
 export function scrubInventedContainers(
   text: string,
   inventory: Item[] = [],
   extraNames: string[] = [],
 ): string {
   if (!text || !CONTAINER_KIND.test(text)) return text;
-
   const containerTypes = collectContainerTypes(inventory, extraNames);
-
   if (containerTypes.size === 0) {
     return text.replace(
       /\b(?:the\s+)?(?:last|final|remaining|other|another)\s+(box(?:es)?|crate(?:s)?|chest(?:s)?|pouch(?:es)?|bag(?:s)?|sack(?:s)?|barrel(?:s)?|trunk(?:s)?)\b/gi,
       'the area'
     );
   }
-
   return text.replace(
     /\b(last|final|remaining|other)\s+(box(?:es)?|crate(?:s)?|chest(?:s)?|pouch(?:es)?|bag(?:s)?|sack(?:s)?|barrel(?:s)?|trunk(?:s)?)\b/gi,
     (match, modifier, container) => {
@@ -1294,8 +1169,6 @@ export function scrubInventedContainers(
     }
   );
 }
-
-
 /** P0-5 — burned Millstone Charter must not reappear as held kit. */
 export function scrubDestroyedPyoaItems(text: string, destroyedItems?: string[]): string {
   if (!text || !destroyedItems?.some((d) => /charter|millstone/i.test(d))) return text;
@@ -1368,7 +1241,6 @@ export function scrubDestroyedPyoaItems(text: string, destroyedItems?: string[])
   );
   return tidyClauses(next);
 }
-
 /** Lock B — named CAST members must not become object/verb slots (Brother Tam splice). */
 export function scrubNamedCastAsObject(text: string, namedPeople: string[] = []): string {
   if (!text?.trim()) return text;
@@ -1402,7 +1274,6 @@ export function scrubNamedCastAsObject(text: string, namedPeople: string[] = [])
   }
   return tidyClauses(next);
 }
-
 /** Lock C — dead foe must not re-engage or greet as a living NPC without a new spawn. */
 export function scrubDeadFoeReengage(
   text: string,
@@ -1419,7 +1290,6 @@ export function scrubDeadFoeReengage(
     .join(' ');
   return tidyClauses(next);
 }
-
 export function scrubSaferSceneMeta(text: string): string {
   if (!text) return text;
   let next = text;
@@ -1436,8 +1306,6 @@ export function scrubSaferSceneMeta(text: string): string {
   next = next.replace(/\bstay alert and choose a safer\b[\s\S]{0,24}/gi, '');
   return tidyClauses(next);
 }
-
-
 export function scrubFalseSpokenAction(text: string, playerInput?: string): string {
   if (!text) return text;
   if (playerTypedDialogue(playerInput ?? '')) return text;
@@ -1456,14 +1324,9 @@ export function scrubFalseSpokenAction(text: string, playerInput?: string): stri
   next = next.replace(/\byou announce\b/gi, 'you act');
   return tidyClauses(next);
 }
-
-
 export function scrubChromeAsPerson(text: string, presentNames: string[] = []): string {
   return tidyClauses(rewriteChromePersonClauses(text, presentNames));
 }
-
-
-
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -1552,4 +1415,4 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     next = obeyLedgerNouns(next, ctx.ledgerState, undefined, ctx.isThisTurnsEvent).prose;
   }
   return next;
-}
+}

@@ -24,6 +24,8 @@ import { fuzzyTypedPhrase } from './typedNameMatch';
 export interface ValidationResult {
   valid: boolean;
   violations: string[];
+  /** q75r3 — in-fiction GM line when valid is false (visible refuse). */
+  refusalBody?: string;
   rewritten?: string;
   severity: 'blocking' | 'warning';
 }
@@ -206,9 +208,45 @@ export function validateActionHard(
     }
   }
 
+  const messages: string[] = [];
+  for (const v of violations) messages.push(v.message);
+  let refusalBody: string | undefined;
+  if (messages.length > 0) {
+    // q75r3 — in-fiction GM receipt from engine reasons (visible refuse; never silent).
+    const parts: string[] = [];
+    for (const msg of messages) {
+      for (const w of msg.split(' ')) if (w) parts.push(w);
+    }
+    const joined = parts.join(' ');
+    const low = joined.toLowerCase();
+    const marker = "don't have:";
+    const at = low.indexOf(marker);
+    if (at >= 0) {
+      let rest = joined.slice(at + marker.length).trim();
+      const checkAt = rest.toLowerCase().indexOf('check your inventory');
+      if (checkAt >= 0) rest = rest.slice(0, checkAt).trim();
+      if (rest.endsWith('.')) rest = rest.slice(0, -1).trim();
+      refusalBody = rest ? `You have no ${rest}.` : joined;
+    } else if (low.includes('no companion is with you')) {
+      refusalBody = 'No companion is with you right now.';
+    } else if (low.includes('not enough for')) {
+      const dot = joined.indexOf('.');
+      refusalBody = dot >= 7 ? joined.slice(0, dot + 1) : joined;
+    } else {
+      const q1 = joined.indexOf('"');
+      const q2 = q1 >= 0 ? joined.indexOf('"', q1 + 1) : -1;
+      if (q1 >= 0 && q2 > q1 && low.includes("isn't present")) {
+        refusalBody = `${joined.slice(q1 + 1, q2)} isn't here.`;
+      } else {
+        const dot = joined.indexOf('.');
+        refusalBody = dot >= 7 ? joined.slice(0, dot + 1) : joined || 'That does not work from here.';
+      }
+    }
+  }
   return {
     valid: violations.length === 0,
-    violations: violations.map((v) => v.message),
+    violations: messages,
+    refusalBody,
     rewritten: grounded.rewritten ? grounded.text : undefined,
     severity: violations.length > 0 ? 'blocking' : 'warning',
   };
