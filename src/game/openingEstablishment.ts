@@ -468,7 +468,6 @@ const WRITER_NOTE_BEAT =
 function isWriterNoteBeat(line: string): boolean {
   return WRITER_NOTE_BEAT.test(line.trim());
 }
-
 /** Pick a stable opener from `openingHooks` (or catalog decks, or `openingHook`). */
 export function normalizeOpeningHookCard(card: OpeningHookCard): {
   text: string;
@@ -525,7 +524,6 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     castNpcIds: card.castNpcIds,
   };
 }
-
 export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCard[] {
   const fromBible = (bible?.openingHooks ?? []).filter((card) => normalizeOpeningHookCard(card).text);
   if (fromBible.length > 0) return fromBible;
@@ -534,7 +532,6 @@ export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCa
   const single = bible?.openingHook?.trim();
   return single ? [single] : [];
 }
-
 export function resolveOpeningHookCard(
   bible: CampaignBible | undefined,
   seed?: string
@@ -544,7 +541,6 @@ export function resolveOpeningHookCard(
   const idx = hashSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
   return deck[idx];
 }
-
 export function resolveOpeningHookPick(
   bible: CampaignBible | undefined,
   seed?: string
@@ -558,7 +554,6 @@ export function resolveOpeningHookPick(
   const name = compiled?.place;
   return name && name !== pick.location ? { ...pick, location: name, locationDescription: pick.location } : pick;
 }
-
 /**
  * The seed-picked card for a save that never stored its card — only when that card is the place the
  * player is in. A seed that lands on another card must not lend this room its want / cost / offer.
@@ -576,11 +571,9 @@ function seedCardForThisPlace(state: GameState): ReturnType<typeof resolveOpenin
   if (!place || !cardPlace.length) return picked;
   return cardPlace.some((p) => p.includes(place) || place.includes(p)) ? picked : undefined;
 }
-
 export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {
   return resolveOpeningHookPick(bible, seed)?.text;
 }
-
 /** Short New Game preview of the same card `startNewGame` will stitch. No GM call. */
 export interface OpeningHookPreview {
   location?: string;
@@ -588,14 +581,12 @@ export interface OpeningHookPreview {
   cast?: string;
   firstLine: string;
 }
-
 export function firstOpeningLine(text: string | undefined): string {
   const raw = (text ?? '').replace(/\s+/g, ' ').trim();
   if (!raw) return '';
   const sentence = raw.split(/(?<=[.!?])\s+/)[0] ?? raw;
   return sentence.slice(0, 180);
 }
-
 export function previewOpeningHook(
   bible: CampaignBible | undefined,
   seed?: string,
@@ -611,11 +602,9 @@ export function previewOpeningHook(
     firstLine,
   };
 }
-
 export function freshOpenerSeed(): string {
   return Math.random().toString(36).slice(2, 10);
 }
-
 const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
   'summoned-pact': {
     name: 'Someone in the scene needs a name for you. What do they call you?',
@@ -636,17 +625,14 @@ const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> 
     species: 'What folk or body are you in this world?',
   },
 };
-
 /** Alone-arrival Summoned Pact — no NPC audience; the panel asks. */
 const SUMMONED_ALONE_COVERS: Partial<Record<OpeningPromptKind, string>> = {
   name: 'The panel waits on a name. What do you enter?',
   appearance: 'You look down. You are still wearing what the light stole you in. What is it?',
   kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
 };
-
 const ALONE_ARRIVAL_MARK =
   /\balone\b|nobody here|no summoners|no handlers|no priests|no welcome|outline of a building|foundation stones|burnt husk|wall-shell|half-collapsed ruin/i;
-
 /** People on the page — “no priests / no handlers” is not occupancy. */
 export function openingHayHasOccupancy(raw: string): boolean {
   const cleaned = (raw ?? '')
@@ -654,7 +640,6 @@ export function openingHayHasOccupancy(raw: string): boolean {
     .replace(/\bnobody\s+(?:here|came|stayed)\b/gi, ' ');
   return /\b(?:militia|scavengers?|handlers?|chanter|envoys?|robed figures)\b/i.test(cleaned);
 }
-
 function openingPickHay(picked?: {
   text?: string;
   location?: string;
@@ -672,7 +657,6 @@ function openingPickHay(picked?: {
     .filter(Boolean)
     .join('\n');
 }
-
 /** Seed-picked alone dump (ruin with no summoners on page one). */
 export function isAloneArrivalPick(picked?: {
   text?: string;
@@ -688,7 +672,6 @@ export function isAloneArrivalPick(picked?: {
   if (openingHayHasOccupancy(hay)) return false;
   return ALONE_ARRIVAL_MARK.test(hay);
 }
-
 export function isAloneArrivalOpening(state: GameState): boolean {
   // 02l — mid-game "the panel" substitution: alone-cover mapping dies once covers complete.
   if (state.openingEstablishment?.complete) return false;
@@ -700,7 +683,6 @@ export function isAloneArrivalOpening(state: GameState): boolean {
     fallback: state.openingEstablishment?.pickedHookFallback,
   });
 }
-
 /** Re-voice covers when the opener has no people in the room. */
 export function styleCoversForAloneArrival(
   prompts: OpeningPrompt[],
@@ -718,7 +700,6 @@ export function styleCoversForAloneArrival(
     };
   });
 }
-
 const DEFAULT_INWORLD: Record<OpeningPromptKind, string> = {
   name: 'Someone in the scene needs a name for you. What do they call you?',
   location: 'Where are you, exactly, as this opens?',
@@ -727,7 +708,6 @@ const DEFAULT_INWORLD: Record<OpeningPromptKind, string> = {
   identity: 'Who are you in this place — what do they take you for?',
   species: 'You can feel the body you woke in. What is it?',
 };
-
 function inworldizePrompt(prompt: OpeningPrompt, bible?: CampaignBible): OpeningPrompt {
   const override = bible?.id ? BIBLE_INWORLD[bible.id]?.[prompt.kind] : undefined;
   return {
@@ -736,7 +716,6 @@ function inworldizePrompt(prompt: OpeningPrompt, bible?: CampaignBible): Opening
     question: override ?? (prompt.style === 'system' ? prompt.question : DEFAULT_INWORLD[prompt.kind] ?? prompt.question),
   };
 }
-
 export function resolveOpeningPrompts(
   bible: CampaignBible | undefined,
   engineMode: EngineMode,
@@ -750,7 +729,6 @@ export function resolveOpeningPrompts(
   else if (engineMode === 'dnd' || archetype === 'cursed_manor') prompts = FANTASY_PROMPTS;
   else if (engineMode === 'litrpg' || SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) prompts = SI_PROMPTS;
   else prompts = FANTASY_PROMPTS;
-
   const mode = resolveOpeningMode(bible, engineMode);
   const withName = prompts.some((p) => p.kind === 'name') ? prompts : [NAME_PROMPT, ...prompts];
   const styled = withName.map((p) => inworldizePrompt(p, bible));
@@ -759,12 +737,10 @@ export function resolveOpeningPrompts(
   }
   return styled.map((p) => ({ ...p, required: p.required !== false }));
 }
-
 export function isEarthOriginPrompt(prompt: OpeningPrompt): boolean {
   if (/\bearth\b/i.test(prompt.question)) return true;
   return (prompt.suggestions ?? []).some((s) => /earth/i.test(s));
 }
-
 /** Pull an already-written Earth origin out of the opening page so we do not ask again. */
 export function harvestEarthOriginFromProse(prose: string): string | null {
   const text = prose.replace(/\s+/g, ' ').trim();
@@ -780,7 +756,6 @@ export function harvestEarthOriginFromProse(prose: string): string | null {
   }
   return null;
 }
-
 export function applyHarvestedOpeningCovers(
   est: NonNullable<GameState['openingEstablishment']>,
   prose: string
@@ -799,7 +774,6 @@ export function applyHarvestedOpeningCovers(
     complete: pending.length === 0,
   });
 }
-
 export function litrpgOpeningSystemPing(state: GameState): string[] {
   if (state.engineMode !== 'litrpg') return [];
   const stamp = resolveLitRpgFolkStamp(state);
@@ -813,7 +787,6 @@ export function litrpgOpeningSystemPing(state: GameState): string[] {
   if (stamp) return ['Interface online', `Stamp: ${stamp}`, 'Awaiting designation'];
   return ['Interface online', 'Awaiting designation'];
 }
-
 export function seedCoverAnswers(
   bible: CampaignBible | undefined,
   character: GameState['character'],
@@ -841,7 +814,6 @@ export function seedCoverAnswers(
   }
   return answers;
 }
-
 /**
  * After weave covers, keep the arrival place the opener already painted.
  * Never collapse a seed-picked card place back to bible.startingLocation.
@@ -855,14 +827,11 @@ export function resolveLockedOpeningPlace(
   const fromState = state.currentLocation?.trim() || '';
   const fromAnswers = answers.where?.trim() || '';
   const picked = resolveOpeningHookPick(bible, state.seed)?.location?.trim() || '';
-
   const usable = (place: string) => !!place && !isUnusablePlace(place, state);
-
   // Save already agreed — do not jump to a different seed card.
   if (usable(fromState) && usable(fromAnswers) && fromState === fromAnswers) {
     return fromState;
   }
-
   // Card / live location wins when answers still hold the generic bible start.
   if (usable(fromState) && (!fromAnswers || (bibleStart && fromAnswers === bibleStart && fromState !== bibleStart))) {
     return fromState;
@@ -875,7 +844,6 @@ export function resolveLockedOpeningPlace(
   if (usable(fromAnswers)) return fromAnswers;
   return pickPlaceForCampaign(state);
 }
-
 export function pendingRequiredCovers(
   prompts: OpeningPrompt[],
   character: GameState['character'],
@@ -884,7 +852,6 @@ export function pendingRequiredCovers(
   if (mode === 'scene') return [];
   return filterOpeningPrompts(prompts.filter((p) => p.required !== false), character);
 }
-
 export function filterOpeningPrompts(
   prompts: OpeningPrompt[],
   character: GameState['character']
@@ -902,7 +869,6 @@ export function filterOpeningPrompts(
     return true;
   });
 }
-
 const SEALED_BAG: Item = {
   id: 'start-bag-sealed',
   name: 'Bag',
@@ -914,7 +880,6 @@ const SEALED_BAG: Item = {
   description:
     'A bag from before the pull. Contents sealed until you search, dump, or someone inventories them.',
 };
-
 /** Grant a sealed Earth bag (undeclared contents) when the campaign would have asked a kit cover. */
 export function ensureSealedOpeningBag(state: GameState, prompts?: OpeningPrompt[]): GameState {
   if (pocketOnlyKit(state.systemHousing)) return stampPremiseOrigin(state);
@@ -927,7 +892,6 @@ export function ensureSealedOpeningBag(state: GameState, prompts?: OpeningPrompt
   if (state.inventory.some((i) => /^bag$/i.test(i.name))) return stampPremiseOrigin(state);
   return stampPremiseOrigin({ ...state, inventory: [...state.inventory, { ...SEALED_BAG, id: `start-bag-${state.saveId ?? '0'}` }] });
 }
-
 /**
  * Drop kit covers from an in-progress opening and seal the bag.
  * Mid-session saves that still have a kit questionnaire get unblocked.
@@ -957,7 +921,6 @@ export function sealKitOpeningCovers(state: GameState): GameState {
   );
   return withBag;
 }
-
 /** Apply Settings → Profile preferred name/gender to a stuck opening (skip name cover). */
 export function mergePreferredProfileIntoOpening(
   state: GameState,
@@ -975,7 +938,6 @@ export function mergePreferredProfileIntoOpening(
   if (!namePending && !characterNameIsGeneric(state.character.name)) {
     return { state, applied: false };
   }
-
   const character = applyUsualSelfToCharacter(state.character, profile);
   const answers: Record<string, string> = {
     ...(est.answers ?? {}),
@@ -983,7 +945,6 @@ export function mergePreferredProfileIntoOpening(
   };
   if (profile.preferredGender.trim()) answers.gender = profile.preferredGender.trim();
   const pending = filterOpeningPrompts(est.pending, character);
-
   return {
     applied: true,
     state: {
@@ -999,7 +960,6 @@ export function mergePreferredProfileIntoOpening(
     },
   };
 }
-
 export function applySystemRename(state: GameState, raw: string): GameState {
   const name = extractSystemRename(raw);
   if (!name) return state;
@@ -1013,12 +973,10 @@ export function applySystemRename(state: GameState, raw: string): GameState {
     },
   };
 }
-
 export function isOpeningEstablishmentPending(state: GameState): boolean {
   const est = state.openingEstablishment;
   return !!est && !est.complete && est.pending.length > 0;
 }
-
 /** Cover is still the job — even if pending was emptied by a bad harvest. */
 export function isOpeningCoverTurn(state: GameState): boolean {
   const est = state.openingEstablishment;
@@ -1029,7 +987,6 @@ export function isOpeningCoverTurn(state: GameState): boolean {
   const name = (est.answers?.name ?? state.character?.name ?? '').trim();
   return !name || /unknown survivor/i.test(name) || !isLockablePcName(name);
 }
-
 /** Last typed player line from the log. */
 export function lastPlayerLine(state: { log?: Array<{ role?: string; content?: string }> }): string {
   const log = state.log ?? [];
@@ -1041,7 +998,6 @@ export function lastPlayerLine(state: { log?: Array<{ role?: string; content?: s
   }
   return '';
 }
-
 export function hallTalkAsksWhere(raw: string): boolean {
   return (
     /\bwhere am(?: i)?\b|\bwhere are we\b|\bwhere is this\b/i.test(raw ?? '')
@@ -1050,7 +1006,6 @@ export function hallTalkAsksWhere(raw: string): boolean {
     )
   );
 }
-
 export function hallTalkAsksWho(raw: string): boolean {
   const t = raw ?? '';
   return (
@@ -1060,7 +1015,6 @@ export function hallTalkAsksWho(raw: string): boolean {
     || /\bwhat'?s yours\b|\bwhat(?:'s| is) your(?:s| name)\b/i.test(t)
   );
 }
-
 /** Player takes the opening bargain / offered kit — not a look-around. */
 export function isAcceptOfferLine(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1073,7 +1027,6 @@ export function isAcceptOfferLine(raw: string): boolean {
     || /\btake the (?:deal|kit|offer|work|lamp)\b/i.test(t)
   );
 }
-
 /** Bare name / "my name is X" / Give-your-name chip — not name-plus-a-question. */
 export function isOpeningNameGiveLine(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1085,7 +1038,6 @@ export function isOpeningNameGiveLine(raw: string): boolean {
   }
   return !!extractGivenName(t);
 }
-
 export function hallTalkAsksWant(raw: string): boolean {
   const t = raw ?? '';
   // Mid-play "Ask Wren Holt what they want" is not the opening pad.
@@ -1108,7 +1060,6 @@ export function hallTalkAsksWant(raw: string): boolean {
     || /\bwages?\b/i.test(t)
   );
 }
-
 /** Stay-or-walk-away bargain — not Leave-the-scene travel. */
 export function hallTalkAsksStayLeave(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1126,7 +1077,6 @@ export function hallTalkAsksStayLeave(raw: string): boolean {
     || (/\bor (?:can i )?leave\b/i.test(t) && /\b(?:stay|ship|need)\b/i.test(t))
   );
 }
-
 /** Consequence / walk-away — not the offer slot, not “Refuse to give a name”. */
 export function hallTalkAsksRefuse(raw: string): boolean {
   const t = raw ?? '';
@@ -1138,7 +1088,6 @@ export function hallTalkAsksRefuse(raw: string): boolean {
     || (/\brefuse\b/i.test(t) && !/\brefuse to (?:give|say)\b/i.test(t))
   );
 }
-
 export function hallTalkAsksPanel(raw: string): boolean {
   const t = raw ?? '';
   if (!t.trim()) return false;
@@ -1150,7 +1099,6 @@ export function hallTalkAsksPanel(raw: string): boolean {
     || /^(?:read the device|look inward|ask the world|reach into the pocket)$/i.test(t.trim())
   );
 }
-
 /** Kit / pockets inspect — ledger noun, not a name harvest or identity reprint. */
 export function isKitOrCarryInspect(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1159,7 +1107,6 @@ export function isKitOrCarryInspect(raw: string): boolean {
     t
   );
 }
-
 /** Typed line that must stay on the local cover stitch, not the play writer. */
 export function isCoverShapedPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1182,7 +1129,6 @@ export function isCoverShapedPlayerLine(raw: string): boolean {
     /\bgive you my name\b|\bgave you my name\b|\bmy name is\b|\bcall me\b/i.test(p)
   );
 }
-
 /** Name lock plus a real question — leftover ask stays on this turn. */
 export function playerGaveNameAndAskedMore(raw: string): boolean {
   const act = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1197,7 +1143,6 @@ export function playerGaveNameAndAskedMore(raw: string): boolean {
     || playerAskedWhyPulled(act)
   );
 }
-
 /** Hall Q&A — where / who / panel / name — not travel or a fight. */
 export function isHallTalkPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1218,7 +1163,6 @@ export function isHallTalkPlayerLine(raw: string): boolean {
   }
   return isCoverShapedPlayerLine(p);
 }
-
 /**
  * Page 1 / unlocked-name covers stitch locally.
  * 17g: after sceneWritten + locked name the writer owns the book.
@@ -1228,7 +1172,6 @@ export function isHallTalkPlayerLine(raw: string): boolean {
 const OPENING_CARD_NOUNS = ['book', 'pouch', 'charter', 'page', 'folio', 'ribbon', 'mesh'] as const;
 const OPENING_CARD_NOUN_RE = OPENING_CARD_NOUNS.join('|');
 const OPENING_CARD_ACT_VERB_RE = 'sign|read|outline|copy|open|take|inspect|look at|check|what(?:\'s| is)';
-
 /** Sign / read / outline the offered page — not Look/Wait, not a drought settle. */
 export function isOpeningCardActLine(raw: string): boolean {
   const act = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -1239,7 +1182,6 @@ export function isOpeningCardActLine(raw: string): boolean {
     || new RegExp(`\\b(?:${OPENING_CARD_NOUN_RE})\\b.{0,28}\\b(?:sign|read|outline|say(?:ing)?)\\b`, 'i').test(act)
   );
 }
-
 function inferOpeningCardNoun(raw: string): string | null {
   const act = (raw ?? '').replace(/\s+/g, ' ').trim();
   for (const noun of OPENING_CARD_NOUNS) {
@@ -1247,7 +1189,6 @@ function inferOpeningCardNoun(raw: string): string | null {
   }
   return null;
 }
-
 export function asksOpeningCardNoun(state: GameState, raw: string): string | null {
   const act = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!act) return null;
@@ -1266,7 +1207,6 @@ export function asksOpeningCardNoun(state: GameState, raw: string): string | nul
   if (isOpeningCardActLine(act)) return inferOpeningCardNoun(act);
   return null;
 }
-
 /** 27i — the opening hall stitch speaks for the opener only; a line naming another known NPC goes to that NPC. */
 export function lineNamesOtherNpc(state: GameState, line: string): boolean {
   const low = (line ?? '').toLowerCase();
@@ -1280,21 +1220,17 @@ export function lineNamesOtherNpc(state: GameState, line: string): boolean {
     return low.includes(name);
   });
 }
-
 export function shouldStitchOpeningContinue(state: GameState, playerInput?: string): boolean {
   if (state.activeEncounter && !shouldStarveCombatPadsOnCover(state)) return false;
   const sceneWritten = state.openingEstablishment?.sceneWritten === true;
   const nameLocked = !!lockedOpeningPcName(state);
   const line = playerInput ?? lastPlayerLine(state);
   const coverOpen = isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state);
-
   // Unlocked-name covers still stitch locally. After a lock, cover-continue is not page-1.
   if (coverOpen && !nameLocked) return true;
-
   // 29z7 — after page 1 the writer answers every hall line (who / want / refuse / already asked) from
   // the talk envelope's card facts and sheets. A stitch never speaks for a person.
   if (sceneWritten) return false;
-
   if (coverOpen) return true;
   if (asksOpeningCardNoun(state, line) || isOpeningCardActLine(line)) return true;
   if (
@@ -1320,7 +1256,6 @@ export function shouldStitchOpeningContinue(state: GameState, playerInput?: stri
   if (countSameHallTopicRepeats(state, line) >= 3) return false;
   return true;
 }
-
 /** After page 1, live / Fate must call the writer. Premade continue is last-resort only. */
 export function storyBeatWriterPath(
   state: GameState,
@@ -1329,7 +1264,6 @@ export function storyBeatWriterPath(
   if (shouldStitchOpeningContinue(state, playerInput)) return 'page1-stitch';
   return 'callGm';
 }
-
 /**
  * Pad lock only — Give/Ask/Who, not Corridor doors — while the line is still hall Q&A.
  * Does not send the turn to stitch after covers complete.
@@ -1354,7 +1288,6 @@ export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): b
   }
   return true;
 }
-
 function openingSceneHay(state: GameState): string {
   const fromSave = [
     state.openingEstablishment?.pickedHookFallback,
@@ -1367,7 +1300,6 @@ function openingSceneHay(state: GameState): string {
   const picked = resolveOpeningHookPick(bible, state.seed);
   return [picked?.page1, picked?.faction].filter(Boolean).join(' ');
 }
-
 /** The opening card's cast stays while the player is still in the card's place and has not travelled. */
 export function openingCastStillHere(state: GameState): boolean {
   if (state.openingEstablishment?.complete !== true) return true;
@@ -1376,7 +1308,6 @@ export function openingCastStillHere(state: GameState): boolean {
   if (!where || where !== key(state.currentLocation)) return false;
   return !(state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
 }
-
 /** Named CAST on this card — Lene Quill, Wren Holt — never a novel First Last. */
 export function openingCastNames(state: GameState): string[] {
   const out: string[] = [];
@@ -1390,7 +1321,6 @@ export function openingCastNames(state: GameState): string[] {
     seen.add(key);
     out.push(name);
   };
-
   const label = openingCastLabel(state);
   push(label);
   const bare = label.replace(/^(the|a|an)\s+/i, '').trim();
@@ -1401,7 +1331,6 @@ export function openingCastNames(state: GameState): string[] {
     const last = bits[bits.length - 1] ?? '';
     if (last.length >= 5) push(last);
   }
-
   const card = openingCardRecord(state);
   if (card) {
     card.castNames.forEach(push);
@@ -1427,12 +1356,10 @@ export function openingCastNames(state: GameState): string[] {
   }
   return out;
 }
-
 const CARD_GRAMMAR = new Set([
   'who', 'is', 'here', 'why', 'this', 'happened', 'opening', 'offer', 'optional',
   'player', 'may', 'refuse', 'location', 'they', 'the', 'a', 'an', 'and', 'you',
 ]);
-
 /** Title-Case tokens already printed on the card (Earth, Scale, Crown) — not novel names. */
 export function cardSceneMentionTokens(state: GameState): string[] {
   const card = openingCardRecord(state);
@@ -1452,7 +1379,6 @@ export function cardSceneMentionTokens(state: GameState): string[] {
   }
   return out;
 }
-
 /** Role stand-in when a novel name must be rewritten (“the Archivist”, “the witness”). */
 export function cardRoleStandIn(state: GameState): string {
   const hay = `${openingSceneHay(state)} ${openingCastLabel(state)}`;
@@ -1471,7 +1397,6 @@ export function cardRoleStandIn(state: GameState): string {
   }
   return label && !/people who pulled you|^the people here$/i.test(label) ? label : 'the witness';
 }
-
 /** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
 export function openingCastLabel(state: GameState): string {
   const lead = openingCastRecords(state)[0];
@@ -1519,7 +1444,6 @@ export function openingCastLabel(state: GameState): string {
   // 29z7 — "pulled you" is a summon; a heist or a keep has people here, not summoners.
   return state.engineMode === 'litrpg' ? 'the people who pulled you' : 'the people here';
 }
-
 /**
  * The card's "Who is here" slot, cut to its first person or group ("the muscle", "Captain Sera Quill").
  * A slot that opens with nobody ("No priests — …", "(none)") names no lead, so it gives none.
@@ -1534,9 +1458,7 @@ function whoFromPickedHookBlob(blob?: string): string {
   if (!who || slotNamesNobody(who) || who.split(' ').length > 6) return '';
   return slotNamesOnePerson(who) ? who : '';
 }
-
 const SLOT_CUT = /^(?:the|a|an|who|whom|whose|that|which|on|at|in|of|with|from|behind|beside|by|near|around|under|already|plus|for|to|will|would|is|are|was|were|has|have)$/i;
-
 /** Proper names printed mid-sentence on the card. A word after a line start, a full stop or a colon is not a name. */
 function cardProperNames(hay: string): string[] {
   const out: string[] = [];
@@ -1555,7 +1477,6 @@ function cardProperNames(hay: string): string[] {
   }
   return out;
 }
-
 /** The group a "Who is here" part names, as a cast label ("A denied-god cult the Crown…" → "the denied-god cult"). */
 function slotGroupLabel(part: string, names: string[]): string {
   const shared = part.trim().match(SHARED_HEAD);
@@ -1571,7 +1492,6 @@ function slotGroupLabel(part: string, names: string[]): string {
   if (startedSlot && !nameHead && !names.some((n) => n === lead)) kept[0] = lead.charAt(0).toLowerCase() + lead.slice(1);
   return `the ${kept.join(' ')}`;
 }
-
 /** Things the page sets in the scene: the subject of a placing verb ("A wrapped relic sits on the altar"). */
 function cardPlacedProps(page: string): string[] {
   const out: string[] = [];
@@ -1583,7 +1503,6 @@ function cardPlacedProps(page: string): string[] {
   }
   return out;
 }
-
 /**
  * Compile a picked card once: HERE from its own head noun (hub as parent), cast from its "Who is here"
  * line, its placed props and its printed proper names. A card with neither slot compiles to nothing.
@@ -1634,7 +1553,6 @@ export function compileOpeningCard(
     ...(offer ? { offer } : {}),
   };
 }
-
 /** A comma clause that negates or describes the player belongs to the phrase before it, not a new person. */
 const CLAUSE_OF_PREVIOUS = /^(?:not|never|nor|or|already|still|rather than|instead of|but not)\b|\b(?:you|your|yours|yourself)\b/i;
 /** A phrase with an open relative clause ("Smugglers who stole a Scale rite"): an "and" after it continues that clause. */
@@ -1645,7 +1563,6 @@ const OPEN_RELATIVE = /\b(?:who|whom|which|that)\s+\S/i;
  */
 const SHARED_HEAD = /^((?:[A-Z][\w'’-]*\s+)+and\s+(?:[A-Z][\w'’-]*\s+)+)([a-z][\w'’-]*[^su\s]s)\b/;
 const NAMES_ONLY = /^(?:[A-Z][\w'’-]*\s*)+$/;
-
 /**
  * The "Who is here" slot cut into people: list separators split; an "and / with / plus" that continues
  * the phrase before's relative clause does not, and a comma splits unless its clause belongs to the phrase before.
@@ -1676,14 +1593,12 @@ function slotParts(slot: string): string[] {
   }
   return out;
 }
-
 /** "… and they will kit you …" — where the consequence starts: "and" before its subject (a pronoun, "that side" or a name). */
 const OFFER_CONSEQUENCE = /\band\s+((?:they|he|she|it|that side|[A-Z][\w'’-]*)\s.+)$/;
 const OFFER_SUBJECT = /^(?:that side|they|he|she|it|[A-Z][\w'’-]*)\s+(?:will\s+|shall\s+|may\s+|can\s+)?/i;
 /** "The patrol will issue …" / "gets issued kit" — the word after the modal is the verb. */
 const OFFER_MODAL = /\b(?:will|shall|may|gets?)\s+[a-z][\w'’-]*\s+(.+)$/i;
 const OFFER_OBJECT_END = /\s+(?:if|when|once|after|unless|while|in exchange|into|from|for|at|as|they|he|she)\b|[.!?;:—–]/i;
-
 /** The object of an offer sentence: after its consequence's verb, else after its modal verb, else after its leading imperative. */
 function offerObject(sentence: string): string {
   const consequence = sentence.match(OFFER_CONSEQUENCE)?.[1];
@@ -1694,7 +1609,6 @@ function offerObject(sentence: string): string {
   const end = object.search(OFFER_OBJECT_END);
   return end >= 0 ? object.slice(0, end) : object;
 }
-
 /** "a seat at the table" / "a bunk in the barracks": a thing fixed to a place is a standing offered, not a thing handed over. */
 function isPlaceBoundPart(sentence: string, part: string): boolean {
   const p = part.trim();
@@ -1702,7 +1616,6 @@ function isPlaceBoundPart(sentence: string, part: string): boolean {
   const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return new RegExp(`\\b${esc}\\s+(?:at|in|on|among)\\s+(?:the|a|an|your|their|its)\\b`, 'i').test(sentence);
 }
-
 /** The things an offer sentence hands over: its bracketed list, else the object of the sentence. */
 function offerItems(sentence: string): string[] {
   const bracket = sentence.match(/\(([^)]+)\)/)?.[1];
@@ -1717,10 +1630,8 @@ function offerItems(sentence: string): string[] {
     .map((p) => p.replace(/^(?:a|an|the|some|your|their)\s+/i, '').trim())
     .filter((p) => p && p.split(/\s+/).length <= 4 && !/\b(?:whatever|anything|nothing|junk)\b(?!-)/i.test(p));
 }
-
 /** A line of the offer slot that says nothing is offered. */
 const NO_OFFER_LINE = /^(?:no one|nobody|none|nothing|no)\b/i;
-
 /**
  * The card's opening offer compiled once from its "Opening offer" slot: the slot's first line that is
  * not a refusal is the accept line; the items handed over, the accept line and the refuse line.
@@ -1739,13 +1650,11 @@ export function compileOpeningOffer(blob: string | undefined): OpeningOfferRecor
   const noun = /\b(?:work|job|cots|serve|duty|labou?r|shift)\b/i.test(accept) ? 'work' : 'offer';
   return { items, accept, refuse, noun };
 }
-
 /** This save's opening offer: the compiled record, else compiled from the stored card text. */
 export function openingOfferRecord(state: GameState): OpeningOfferRecord | undefined {
   const est = state.openingEstablishment;
   return est?.card?.offer ?? compileOpeningOffer(est?.pickedHook);
 }
-
 /** The offer is open while nobody has taken or refused it and the player is still at the card's place. */
 export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefined {
   const est = state.openingEstablishment;
@@ -1757,14 +1666,12 @@ export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefin
   if (place && key(state.currentLocation) !== place) return undefined;
   return offer;
 }
-
 /** "Accept the work" / "Refuse the work" while the card's offer is open. */
 export function openingOfferPads(state: GameState): string[] {
   const offer = openOpeningOffer(state);
   if (!offer) return [];
   return [`Accept the ${offer.noun}`, `Refuse the ${offer.noun}`];
 }
-
 /** The first person or group of the card's "Who is here" slot, as printed. */
 function openingLeadSlot(state: GameState): string {
   const blob = state.openingEstablishment?.pickedHook ?? '';
@@ -1772,9 +1679,7 @@ function openingLeadSlot(state: GameState): string {
   const lead = (slotParts(slot)[0] ?? '').trim().replace(/[.!]+$/, '');
   return lead && !slotNamesNobody(lead) ? lead : '';
 }
-
 const BEYOND_BARRIER = /\b(?:behind|beyond)\s+(?:(?:the|a|an)\s+)?[a-z][\w'’-]*(?:\s+[a-z][\w'’-]*)?/i;
-
 /**
  * How the card's cast stands in the scene. A lead "behind the oak" / "beyond the grate" is a voice through
  * a shut way, not a body in the scene; a plural lead ("exhausted faces on the porch") is several people.
@@ -1786,7 +1691,6 @@ export function openingCastStanding(state: GameState): { beyond?: string; group?
   if (beyond) return { beyond };
   return slotNamesOnePerson(lead) ? {} : { group: true };
 }
-
 /** The writer note for the card's cast: what the scene lets them do. */
 export function openingCastNote(state: GameState): string | undefined {
   const standing = openingCastStanding(state);
@@ -1798,7 +1702,6 @@ export function openingCastNote(state: GameState): string | undefined {
   }
   return undefined;
 }
-
 /** The compiled card for this save: the New Game record, else compiled from the stored card text. */
 export function openingCardRecord(state: GameState): OpeningCardRecord | undefined {
   const est = state.openingEstablishment;
@@ -1806,16 +1709,13 @@ export function openingCardRecord(state: GameState): OpeningCardRecord | undefin
   if (!est?.pickedHook) return undefined;
   return compileOpeningCard(state.campaignBibleId, est.pickedHook, est.pickedHookFallback);
 }
-
 function slotNamesNobody(part: string): boolean {
   return /^\(?\s*(?:no|nobody|none|alone|you alone)\b/i.test(part.trim());
 }
-
 /** "Nobody here" / "No one" — nobody at all, unlike "No priests", which names who is absent. */
 function slotNamesNoOneAtAll(part: string): boolean {
   return /^\(?\s*(?:nobody|no one|none|alone|you alone)\b/i.test(part.trim());
 }
-
 /**
  * A part of the card's "Who is here" line is a cast name only when it is one person: a proper name
  * ("Archivist Lene Quill", "Vessa") or a singular role ("the innkeep", "a hired lockpick"). A group
@@ -1831,24 +1731,19 @@ export function slotNamesOnePerson(part: string): boolean {
   if (/^[A-Z]/.test(head)) return true;
   return !/[^s]s$/i.test(head);
 }
-
 function wantFromPickedHookBlob(blob?: string): string {
   const m = (blob ?? '').match(/Why this happened:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
-
 function offerFromPickedHookBlob(blob?: string): string {
   const m = (blob ?? '').match(/Opening offer[^:\n]*:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
-
 function costFromPickedHookBlob(blob?: string): string {
   const m = (blob ?? '').match(/If you refuse:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
-
 const HOUSED_PANEL_SENTENCE = /\b(?:blue panel|the panel|panel in the air|empty air)\b/i;
-
 /** Under a frozen housing the card's floating-panel sentences do not exist; drop them, add nothing. */
 function dropHousedPanelSentences(state: GameState, raw: string): string {
   if (!raw || !state.systemHousing) return raw;
@@ -1858,13 +1753,11 @@ function dropHousedPanelSentences(state: GameState, raw: string): string {
     .join(' ')
     .trim();
 }
-
 function clipCardClause(raw: string, max = 220): string {
   const t = raw.replace(/\s+/g, ' ').trim();
   if (!t) return '';
   return t.length > max ? `${t.slice(0, max - 1).trim()}…` : t;
 }
-
 /** Why they pulled you — full card intent, never the opener paragraph. */
 export function shortCardWant(state: GameState): string {
   const fromSave = wantFromPickedHookBlob(state.openingEstablishment?.pickedHook);
@@ -1872,7 +1765,6 @@ export function shortCardWant(state: GameState): string {
   const picked = seedCardForThisPlace(state);
   return clipCardClause(dropHousedPanelSentences(state, (picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim()));
 }
-
 /** Authored walk-away cost from this card — never invent one. */
 export function shortCardCost(state: GameState): string {
   const fromSave = costFromPickedHookBlob(state.openingEstablishment?.pickedHook);
@@ -1884,20 +1776,17 @@ export function shortCardCost(state: GameState): string {
   const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
   return clipCardClause(first, 180);
 }
-
 function rawCardOffer(state: GameState): string {
   const fromSave = offerFromPickedHookBlob(state.openingEstablishment?.pickedHook);
   const picked = seedCardForThisPlace(state);
   return dropHousedPanelSentences(state, fromSave || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim());
 }
-
 /** Optional kit/banner offer from this card — one clause. */
 export function shortCardOffer(state: GameState): string {
   const raw = rawCardOffer(state);
   const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
   return clipCardClause(first, 180);
 }
-
 /** Authored stay-or-walk cost — card cost, else leftover offer sentence. Never invent. */
 export function shortCardStayLeave(state: GameState): string {
   const cost = shortCardCost(state);
@@ -1910,7 +1799,6 @@ export function shortCardStayLeave(state: GameState): string {
   }
   return '';
 }
-
 export function openingSpokenIdentityQuote(
   who: string,
   ctx?: { location?: string; engineMode?: string; hay?: string; stamp?: string; state?: GameState }
@@ -1921,13 +1809,11 @@ export function openingSpokenIdentityQuote(
   // 29z4 — a role label with no info sheet has no name to give: no canned answer, the writer answers as them.
   return '';
 }
-
 /** 29z4 — who answers a who-are-you: the opening cast lead, else a person whose sheet puts them here, else the card role. */
 export function openingWhoSpeaker(state: GameState): string {
   if (openingCastRecords(state).length) return openingCastLabel(state);
   return presentNpcRecords(state)[0]?.npcName ?? openingCastLabel(state);
 }
-
 /** Compound / plural CAST never gets singular "answers you". */
 export function castSpeakVerb(who: string): 'answer' | 'answers' {
   const w = (who ?? '').replace(/\s+/g, ' ').trim();
@@ -1938,7 +1824,6 @@ export function castSpeakVerb(who: string): 'answer' | 'answers' {
   }
   return 'answers';
 }
-
 export function openingWhoAskLineFromLabel(
   who: string,
   opts?: {
@@ -1966,7 +1851,6 @@ export function openingWhoAskLineFromLabel(
   if (opts?.nameLocked) return `${head} ${verb} you. They already have your name.`;
   return `${head} ${verb} you. They have not given you a name back.`;
 }
-
 export function openingWhoAskLine(state: GameState): string {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   const nameLocked = !!(name && isLockablePcName(name) && !/unknown survivor/i.test(name));
@@ -1989,7 +1873,6 @@ export function openingWhoAskLine(state: GameState): string {
     state,
   });
 }
-
 /** Card want/offer as the people speaking — not a narrator reprint. */
 export function openingSpokenWant(state: GameState): string {
   const who = openingCastLabel(state);
@@ -2003,12 +1886,10 @@ export function openingSpokenWant(state: GameState): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   return `${head} ${castSpeakVerb(who)} you. "${body}"`;
 }
-
 export function openingRefuseLine(state: GameState): string {
   const cost = shortCardCost(state);
   return cost || 'They have not said what happens if you refuse.';
 }
-
 /** Card walk-away cost as speech — empty cards stay honest. */
 export function openingSpokenRefuse(state: GameState): string {
   const who = openingCastLabel(state);
@@ -2020,11 +1901,9 @@ export function openingSpokenRefuse(state: GameState): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   return `${head} ${castSpeakVerb(who)} you. "${body}"`;
 }
-
 export function openingStayLeaveLine(state: GameState): string {
   return shortCardStayLeave(state) || 'They have not said whether you must stay or may leave.';
 }
-
 /** Card stay/leave clause as speech — empty cards stay honest. */
 export function openingSpokenStayLeave(state: GameState): string {
   const who = openingCastLabel(state);
@@ -2036,7 +1915,6 @@ export function openingSpokenStayLeave(state: GameState): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   return `${head} ${castSpeakVerb(who)} you. "${body}"`;
 }
-
 function pickAlreadyToldVariant(state: GameState, variants: string[]): string {
   const pool = variants
     .map((v) => v.replace(/\s+/g, ' ').trim())
@@ -2051,7 +1929,6 @@ function pickAlreadyToldVariant(state: GameState, variants: string[]): string {
   const pickFrom = free.length ? free : use;
   return pickFrom[Math.abs(state.turn ?? 0) % pickFrom.length]!;
 }
-
 export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' | 'refuse' | 'stayLeave' = 'who'): string {
   const who = openingCastLabel(state);
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
@@ -2126,13 +2003,11 @@ export function openingAlreadyToldLine(state: GameState, topic: 'who' | 'want' |
       ])
     : `${head} already answered you.`;
 }
-
 export function openingWantLine(state: GameState): string {
   const want = shortCardWant(state);
   const offer = shortCardOffer(state);
   return [want || 'They have not said what they want yet.', offer].filter(Boolean).join(' ');
 }
-
 function recentGmHay(state: GameState): string {
   return (state.log ?? [])
     .filter((e) => e.role === 'gm' && typeof e.content === 'string')
@@ -2140,7 +2015,6 @@ function recentGmHay(state: GameState): string {
     .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim())
     .join(' ');
 }
-
 /**
  * Sign / read / outline the offered page — spoken card paragraph, never a 1-line drought.
  */
@@ -2164,7 +2038,6 @@ export function openingCardActLine(state: GameState, playerInput = ''): string {
   }
   return `${head} still has the ${noun} at ${place}. They have not said more than the card already gave you.`;
 }
-
 /** Player asked why they were pulled / what the room wants — not “what’s yours”. */
 export function playerAskedWhyPulled(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -2186,12 +2059,10 @@ export function playerAskedWhyPulled(raw: string): boolean {
     )
   );
 }
-
 /** The name-cover answer itself (give / refuse a name) — it answers the card, not a listener. */
 export function isNameCoverChip(label: string): boolean {
   return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
 }
-
 /** Up to three chips for the cover beat — never hub travel, never pad-to-four. */
 export function coverContinuePads(state: GameState): string[] {
   if (isAuthoredPyoaBook(state.campaignBibleId)) {
@@ -2218,14 +2089,12 @@ export function coverContinuePads(state: GameState): string[] {
   }
   return ['Give your name', 'Refuse to give a name'];
 }
-
 /** The open card offer's accept / refuse chips lead; the cover pads fill the rest, three in all. */
 function withOfferPads(state: GameState, pads: string[]): string[] {
   const offer = openingOfferPads(state);
   if (!offer.length) return pads;
   return [...offer, ...pads.filter((p) => !offer.includes(p))].slice(0, 3);
 }
-
 export function formatPlayerCanon(state: GameState): string {
   const answers = state.openingEstablishment?.answers;
   if (!answers || !Object.keys(answers).length) return '';
@@ -2246,7 +2115,6 @@ export function formatPlayerCanon(state: GameState): string {
     + `Rejected chargen claims (legendary weapons, best armor, endgame gear) stay rejected.`
   );
 }
-
 export function buildEstablishmentIntro(
   archetypeIntro: string,
   prompts: OpeningPrompt[],
@@ -2275,18 +2143,15 @@ export function buildEstablishmentIntro(
     choices: establishmentChoices(prompts),
   };
 }
-
 function softenAssumedPlace(intro: string): string {
   return intro
     .replace(/\b\w+, you stand in a city that is already changing\.[^\n]*/i, 'The world around you is already changing.')
     .replace(/\s*What do you do\??\s*$/i, '')
     .trim();
 }
-
 function stripChoicePrefix(raw: string): string {
   return raw.replace(/^\s*\d+[.)]\s*/, '').replace(/\s+/g, ' ').trim();
 }
-
 const NAME_STOP = new Set([
   'my', 'name', 'its', 'it', 'is', 'who', 'are', 'you', 'im', 'i', 'am', 'in', 'at', 'on',
   'the', 'a', 'an', 'what', 'whats', 'going', 'on', 'please', 'confirm', 'uk', 'usa',
@@ -2298,11 +2163,9 @@ const NAME_STOP = new Set([
   'human', 'elf', 'dwarf', 'halfling', 'orc', 'beast', 'goblin', 'here', 'there', 'man',
   'guess', 'idk', 'dunno',
 ]);
-
 const SPECIES_WORDS = new Set([
   'human', 'elf', 'dwarf', 'halfling', 'orc', 'beast', 'goblin', 'tiefling', 'dragonborn',
 ]);
-
 function isNameRefusalUtterance(raw: string): boolean {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
@@ -2314,7 +2177,6 @@ function isNameRefusalUtterance(raw: string): boolean {
     || /\bi(?:'m| am) not (?:telling|saying|giving)\b/i.test(t)
   );
 }
-
 function titleName(raw: string): string {
   return raw
     .split(/[\s-]+/)
@@ -2322,7 +2184,6 @@ function titleName(raw: string): string {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
 }
-
 function titlePlace(raw: string): string {
   return raw
     .split(/[\s,]+/)
@@ -2330,7 +2191,6 @@ function titlePlace(raw: string): string {
     .map((w) => (w.length <= 3 ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
     .join(' ');
 }
-
 function acceptHarvestedNameToken(token: string | undefined): string | null {
   const t = token?.trim();
   if (!t) return null;
@@ -2339,7 +2199,6 @@ function acceptHarvestedNameToken(token: string | undefined): string | null {
   if (!isLockablePcName(titleName(t))) return null;
   return titleName(t);
 }
-
 /** Pull a real given name out of chat, not the whole sentence. */
 export function extractGivenName(raw: string): string | null {
   const text = raw.replace(/\s+/g, ' ').trim();
@@ -2361,7 +2220,6 @@ export function extractGivenName(raw: string): string | null {
   const lonely = text.match(/^([A-Za-z][A-Za-z'-]{1,20})$/);
   return acceptHarvestedNameToken(lonely?.[1]);
 }
-
 /** Name / species write when the field is empty — ignores the cover chip queue. */
 export function openingNameIsUnlocked(state: GameState): boolean {
   const n = (
@@ -2371,7 +2229,6 @@ export function openingNameIsUnlocked(state: GameState): boolean {
   ).trim();
   return !n || /unknown survivor/i.test(n) || !isLockablePcName(n);
 }
-
 /** Lockable PC name already written — every bible, not summoned-pact only. */
 export function lockedOpeningPcName(state: GameState): string | null {
   const n = (
@@ -2382,26 +2239,20 @@ export function lockedOpeningPcName(state: GameState): string | null {
   if (!n || /unknown survivor/i.test(n) || !isLockablePcName(n)) return null;
   return n;
 }
-
 /** Blue-panel / System window chips and hall-talk — LitRPG only. */
 export function isLitrpgSystemPanelMode(state: Pick<GameState, 'engineMode'>): boolean {
   return state.engineMode === 'litrpg';
 }
-
 export function hallTalkAsksSystemPanel(state: Pick<GameState, 'engineMode'>, raw: string): boolean {
   return isLitrpgSystemPanelMode(state) && hallTalkAsksPanel(raw);
 }
-
 const NAME_ASK_PROSE =
   /\b(?:what name|what do they call|what do you (?:enter|call|give)|give(?: them)? (?:your |a )?name|the panel waits on a name|barks for a name|asks for a name|waits on a name|what is yours\?|a blank line (?:sits|waits)|first word they will accept|what name shall|what name does)\b/i;
-
 export function proseAsksForPcName(body: string): boolean {
   return NAME_ASK_PROSE.test(body ?? '');
 }
-
 const LOCKED_NAME_ASK_STRIP =
   /(?:\s+The panel waits on a name\.)?(?:\s+What (?:name do you (?:give(?: them| it)?|enter|lock)|name does it take|do you enter|do they call you|do you call yourself|name shall[^?]{0,24}|name does (?:this|the)[^?]{0,32})[^?]{0,64}\?)\s*$/i;
-
 /** Drop page-1 / cover name-ask tails once a lockable name is already set. */
 export function stripLockedNameAsk(body: string): string {
   return (body ?? '')
@@ -2413,13 +2264,11 @@ export function stripLockedNameAsk(body: string): string {
     .replace(/\s+\./g, '.')
     .trim();
 }
-
 export function sanitizeLockedNameBeat(state: GameState, body: string): string {
   if (!lockedOpeningPcName(state) || !body) return body;
   if (!proseAsksForPcName(body)) return body;
   return stripLockedNameAsk(body);
 }
-
 /** Name / identity cover is still the job — pending queue or incomplete lock. */
 export function isOpeningIdentityCover(state: GameState): boolean {
   const est = state.openingEstablishment;
@@ -2427,13 +2276,11 @@ export function isOpeningIdentityCover(state: GameState): boolean {
   if ((est.pending ?? []).some((p) => p.kind === 'name' || p.kind === 'identity')) return true;
   return isOpeningCoverTurn(state);
 }
-
 export function isCombatFamilyPad(choice: string): boolean {
   return /\b(press the attack|attack|flee|parley|strike|engage|fight|keep running|try to flee)\b/i.test(
     choice ?? ''
   );
 }
-
 /** No Attack/Flee/Parley (or mash) while covers / name-ask are still the job. */
 export function shouldStarveCombatPadsOnCover(state: GameState): boolean {
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state) || isOpeningIdentityCover(state)) {
@@ -2442,9 +2289,7 @@ export function shouldStarveCombatPadsOnCover(state: GameState): boolean {
   const lastGm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
   return !lockedOpeningPcName(state) && proseAsksForPcName(lastGm);
 }
-
 export type HallTalkTopic = 'who' | 'want' | 'refuse' | 'stayLeave' | 'panel' | 'where';
-
 export function hallTalkTopic(raw: string): HallTalkTopic | null {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return null;
@@ -2456,7 +2301,6 @@ export function hallTalkTopic(raw: string): HallTalkTopic | null {
   if (hallTalkAsksWhere(t)) return 'where';
   return null;
 }
-
 /** Every hall topic a line touches — one line can ask about the panel and what is going on. */
 export function hallTalkTopics(raw: string): HallTalkTopic[] {
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
@@ -2470,7 +2314,6 @@ export function hallTalkTopics(raw: string): HallTalkTopic[] {
   if (hallTalkAsksWhere(t)) out.push('where');
   return out;
 }
-
 /** Optimistic send already appended this player line (no GM after it). */
 function incomingAlreadyOnOpenLog(state: GameState, incoming: string): boolean {
   const want = incoming.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -2484,7 +2327,6 @@ function incomingAlreadyOnOpenLog(state: GameState, incoming: string): boolean {
   }
   return false;
 }
-
 /** Ledger / STATUS telegram — not a chapter beat. */
 export function isNameTelegramProse(body: string): boolean {
   const t = (body ?? '').replace(/\s+/g, ' ').trim();
@@ -2493,7 +2335,6 @@ export function isNameTelegramProse(body: string): boolean {
   if (/The name \S+ already stood/i.test(t) && /The room waited/i.test(t)) return true;
   return false;
 }
-
 /**
  * GM bodies after the first player ask of this hall topic.
  * Empty when the player has never asked — page-1 / name-lock never count as answers.
@@ -2514,7 +2355,6 @@ export function gmBodiesAfterFirstHallAsk(state: GameState, topic: HallTalkTopic
     .map((e) => (e.content ?? '').replace(/\s+/g, ' ').trim())
     .filter((t) => t.length >= 8);
 }
-
 /** The name-lock beat already spoke the card want (an empty-want fallback is not an answer). */
 function nameLockBeatSpokeWant(state: GameState): boolean {
   const want = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
@@ -2528,7 +2368,6 @@ function nameLockBeatSpokeWant(state: GameState): boolean {
     return body.includes(lock) && body.includes(wantClip);
   });
 }
-
 /** GM already spoke this hall topic after the player asked it — never page-1 overlap. */
 export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolean {
   if (topic === 'want' && nameLockBeatSpokeWant(state)) return true;
@@ -2567,7 +2406,6 @@ export function gmSpokeHallTopic(state: GameState, topic: HallTalkTopic): boolea
   }
   return false;
 }
-
 /** Player already asked this hall topic, or the book already answered it. */
 export function hallTopicAlreadyAnswered(state: GameState, topic: HallTalkTopic): boolean {
   if ((state.log ?? []).some(
@@ -2580,14 +2418,12 @@ export function hallTopicAlreadyAnswered(state: GameState, topic: HallTalkTopic)
   }
   return false;
 }
-
 /** Starve Who / Want / refuse / panel chips once that topic is logged. */
 export function shouldStarveHallTopicPad(state: GameState, choice: string): boolean {
   const topic = hallTalkTopic(choice);
   if (topic !== 'who' && topic !== 'want' && topic !== 'refuse' && topic !== 'panel') return false;
   return hallTopicAlreadyAnswered(state, topic);
 }
-
 /** Name-lock book: HERE + spoken card want. Never the telegram alone. */
 export function openingNameLockSpokenBeat(state: GameState): string {
   const place = (
@@ -2599,7 +2435,6 @@ export function openingNameLockSpokenBeat(state: GameState): string {
   const want = openingSpokenWant(state);
   return sanitizeLockedNameBeat(state, `You are ${here}. ${want}`.replace(/\s+/g, ' ').trim());
 }
-
 /** The pad repeats the player's last move (look / wait / search); talk and panel repeats starve by topic. */
 function repeatsLastPlayerAction(state: GameState, pad: string): boolean {
   const last = lastPlayerLine(state);
@@ -2609,14 +2444,12 @@ function repeatsLastPlayerAction(state: GameState, pad: string): boolean {
   if (/^search\b/i.test(pad)) return /\b(?:search|rummage|go through)\b/i.test(last);
   return false;
 }
-
 /** Non-talk cover pads; talk pads go first and drop out when nobody is there to hear them. */
 function coverLookPads(state: GameState): string[] {
   return isLitrpgSystemPanelMode(state)
     ? [systemStatusChip(state.systemHousing?.housing), 'Look around', 'Search the area']
     : ['Look around', 'Search the area'];
 }
-
 function liveCoverPads(state: GameState, pads: string[]): string[] {
   const fresh = (c: string) => !shouldStarveHallTopicPad(state, c) && !repeatsLastPlayerAction(state, c);
   const kept = pads.filter(fresh);
@@ -2631,7 +2464,6 @@ function liveCoverPads(state: GameState, pads: string[]): string[] {
   }
   return refill;
 }
-
 /** Same who/want/refuse pad in recent player lines, including the line about to fire. */
 export function countSameHallTopicRepeats(state: GameState, playerInput?: string): number {
   const incoming = (playerInput ?? '').replace(/\s+/g, ' ').trim();
@@ -2652,7 +2484,6 @@ export function countSameHallTopicRepeats(state: GameState, playerInput?: string
   }
   return lines.filter((l) => hallTalkTopic(l) === topic).length;
 }
-
 /**
  * Name already locked → drop leftover name/identity covers. Completed stays completed.
  * Site-wide — not a summoned-pact special case.
@@ -2671,7 +2502,6 @@ export function dropLockedNameCovers<T extends NonNullable<GameState['openingEst
     complete: est.complete === true || pending.length === 0,
   };
 }
-
 function openingSpeciesIsUnlocked(state: GameState): boolean {
   if (state.openingEstablishment?.answers?.species?.trim()) return false;
   if (state.openingEstablishment?.pending?.some((p) => p.kind === 'species' || p.kind === 'identity')) {
@@ -2679,7 +2509,6 @@ function openingSpeciesIsUnlocked(state: GameState): boolean {
   }
   return state.engineMode === 'dnd';
 }
-
 export function applyLedgerDeficit(state: GameState, rawInput: string): GameState {
   const est = state.openingEstablishment;
   if (!est) return state;
@@ -2722,10 +2551,8 @@ export function applyLedgerDeficit(state: GameState, rawInput: string): GameStat
   };
   return answers.name ? rememberPlayerName(next, answers.name) : next;
 }
-
 const NOT_A_PLACE =
   /\b(jeans|boots|t-?shirt|hoodie|jacket|wallet|phone|keys|headphones|leatherman)\b/i;
-
 export function extractLocation(raw: string): string | null {
   if (isRandomPlaceRequest(raw)) return null;
   const text = raw.replace(/\s+/g, ' ').trim();
@@ -2737,10 +2564,8 @@ export function extractLocation(raw: string): string | null {
   if (place.split(/\s+/).length > 8) return titlePlace(place.split(/\s+/).slice(0, 6).join(' '));
   return titlePlace(place);
 }
-
 const CLOTHES_NOUN =
   /\b(jeans|boots|t-?shirt|tee|hoodie|jacket|coat|jumper|sweater|trainers|sneakers|docs?|doc\s*martens?|docmartin|metallica)\b/i;
-
 /** Drop leading "what am I wearing?" and trailing "why?" — never wipe a clothes list. */
 function stripConfusion(raw: string): string {
   return raw
@@ -2752,13 +2577,11 @@ function stripConfusion(raw: string): string {
     .replace(/[?]+$/g, '')
     .trim();
 }
-
 function isMetaOnly(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim().replace(/[?!.,]+$/g, '');
   if (isSetupRefusal(raw)) return true;
   return /^(who are you|what'?s going on|what is this|why|huh|what|idk|i don'?t know)$/i.test(t);
 }
-
 export function extractAppearance(raw: string): string | null {
   if (CLOTHES_NOUN.test(raw)) {
     const list = stripPlayerVoice(stripConfusion(raw))
@@ -2783,14 +2606,12 @@ export function extractAppearance(raw: string): string | null {
   if (CLOTHES_NOUN.test(raw) && list.length >= 6 && !isJunkSetupValue(list)) return list;
   return null;
 }
-
 export function extractSpecies(raw: string): string | null {
   if (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) return null;
   const m = raw.match(/\b(human|elf|dwarf|halfling|orc|beast|goblin|tiefling|dragonborn)\b/i);
   if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
   return null;
 }
-
 export function extractKit(raw: string): string | null {
   if (
     (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) &&
@@ -2806,7 +2627,6 @@ export function extractKit(raw: string): string | null {
   if (!cleaned || isJunkSetupValue(cleaned)) return null;
   return cleaned;
 }
-
 /** Turn "im wearing my jeans" into "baggy jeans and a band t-shirt" — never keep I/my. */
 export function stripPlayerVoice(raw: string): string {
   let t = raw.replace(/\s+/g, ' ').trim();
@@ -2818,7 +2638,6 @@ export function stripPlayerVoice(raw: string): string {
   t = (t.split(/[?!]/)[0] ?? t).replace(/\s+/g, ' ').replace(/^[,.\s]+|[,.\s]+$/g, '').trim();
   return t;
 }
-
 function harvestUtterance(raw: string): {
   name: string | null;
   location: string | null;
@@ -2840,7 +2659,6 @@ function harvestUtterance(raw: string): {
     askedWhere: /\bwhere\s+am\s+i\b/i.test(raw) || /\bwhere\s+is\s+this\b/i.test(raw),
   };
 }
-
 function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof harvestUtterance>): string | null {
   if (kind === 'name') return harvest.name;
   if (kind === 'location') return harvest.location;
@@ -2849,7 +2667,6 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
   if (kind === 'species' || kind === 'identity') return harvest.species;
   return null;
 }
-
 /** Current field takes a normal sentence if it is not only a meta question. */
 function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: GameState): string | null {
   if (isMetaOnly(raw) || isSetupRefusal(raw)) return null;
@@ -2876,13 +2693,10 @@ function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: Ga
   if ((kind === 'species' || kind === 'identity') && cleaned.split(/\s+/).length <= 8) return cleaned;
   return null;
 }
-
 const POWER_CLAIM =
   /\b(legendary|mythic|artifact|relic|god(?:like|-tier)?|best(?:\s+in\s+slot)?|strongest|highest(?:-|\s+)?(?:power|tier|rarity)|overpowered|\bop\b|plus\s*\d{2,}|nuclear|excalibur|mjolnir|infinity|unlimited|endgame|unique\s+weapon|vorpal|holy\s+avenger|dragon(?:scale|slayer)|mithril|adamant(?:ine|ite)?|plasma|laser|minigun|exosuit|power\s*armor)\b/i;
-
 const COMBAT_GEAR_CLAIM =
   /\b(greatsword|longsword|shortsword|katana|plate\s+mail|full\s+plate|power\s*armor|battleaxe|warhammer|sniper|assault\s+rifle|rocket|grenade|wand\s+of|staff\s+of|holy\s+avenger)\b/i;
-
 const MUNDANE_STARTING: Array<{ re: RegExp; name: string; description: string }> = [
   { re: /\bphones?\b/i, name: 'Phone', description: 'The phone you already had. Reception is dying with the rest of the grid.' },
   { re: /\b(?:house\s+)?keys?\b/i, name: 'Keys', description: 'House or car keys from this morning.' },
@@ -2891,11 +2705,9 @@ const MUNDANE_STARTING: Array<{ re: RegExp; name: string; description: string }>
   { re: /\b(?:leatherman|multi[-\s]?tool)\b/i, name: 'Leatherman', description: 'A pocket multi-tool. Ordinary steel. Not System-issue.' },
   { re: /\bbags?\b|\beveryday\s+stuff\b/i, name: 'Bag', description: 'A bag with ordinary pocket stuff from Earth. Not System-issue gear.' },
 ];
-
 export function isPowerGameClaim(text: string): boolean {
   return POWER_CLAIM.test(text) || COMBAT_GEAR_CLAIM.test(text);
 }
-
 /** Keep place/look/pockets. Never turn a chargen sentence into loot. */
 export function sanitizeOpeningAnswer(
   kind: OpeningPrompt['kind'],
@@ -2948,7 +2760,6 @@ export function sanitizeOpeningAnswer(
   }
   return { text: text.slice(0, 280), cheated, mundaneNames: [] };
 }
-
 function grantMundaneStartingItems(inventory: Item[], names: string[]): Item[] {
   const have = new Set(inventory.map((i) => i.name.toLowerCase()));
   const extra: Item[] = [];
@@ -2967,7 +2778,6 @@ function grantMundaneStartingItems(inventory: Item[], names: string[]): Item[] {
   }
   return extra.length ? [...inventory, ...extra] : inventory;
 }
-
 function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: string): GameState {
   const clean = sanitizeOpeningAnswer(prompt.kind, answer);
   if (prompt.kind === 'name') {
@@ -3017,14 +2827,12 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
   }
   return state;
 }
-
 /** Soft bag / pockets phrases from kit covers → sheet accessories. */
 function mundaneBagNamesFromKit(text: string): string[] {
   const names: string[] = [];
   if (/\bbags?\b|\bpockets?\b|\beveryday\s+stuff\b/i.test(text)) names.push('Bag');
   return names;
 }
-
 function registrarAside(
   registrar: OpeningRegistrar,
   harvest: ReturnType<typeof harvestUtterance>,
@@ -3039,7 +2847,6 @@ function registrarAside(
       ? (lockedName ?? harvest.name)!.trim()
       : '';
   const place = (lockedPlace ?? harvest.location ?? '').trim();
-
   if (harvest.askedWho) {
     if (name) {
       if (bibleId === 'summoned-pact') {
@@ -3075,7 +2882,6 @@ function registrarAside(
       );
     }
   }
-
   if (harvest.askedWhere) {
     if (place) {
       bits.push(`You are here: ${place}.`);
@@ -3089,7 +2895,6 @@ function registrarAside(
       bits.push('You are in the opening scene — the next ask will lock the particulars.');
     }
   }
-
   if (harvest.askedWhat) {
     if (bibleId === 'summoned-pact') {
       bits.push('You were taken from Earth. This world is not writing Earth into a System.');
@@ -3103,7 +2908,6 @@ function registrarAside(
   }
   return bits.join(' ');
 }
-
 export async function applyOpeningAnswer(
   state: GameState,
   rawInput: string,
@@ -3129,7 +2933,6 @@ export async function applyOpeningAnswer(
     && !beforeSeal.complete
     && beforeSeal.pending.some((p) => p.kind === 'kit')
     && state.openingEstablishment?.complete === true;
-
   if (sealedFinishedOpening) {
     return {
       state,
@@ -3138,7 +2941,6 @@ export async function applyOpeningAnswer(
         'CONTINUE the already-written scene. Kit is a sealed bag — undeclared until the player searches or dumps it. Do not ask a kit form.',
     };
   }
-
   const est = state.openingEstablishment;
   if (!est) return { state, generateOpening: false };
   if (est.complete || !est.pending.length) {
@@ -3150,7 +2952,6 @@ export async function applyOpeningAnswer(
   }
   const answer = stripChoicePrefix(rawInput);
   if (!answer) return { state, generateOpening: false };
-
   const harvest = harvestUtterance(answer);
   if (harvest.appearance && (isJunkSetupValue(harvest.appearance) || !extractAppearance(answer))) {
     harvest.appearance = null;
@@ -3204,7 +3005,6 @@ export async function applyOpeningAnswer(
   if (currentKind === 'name' && harvest.name && isLocationishOpeningUtterance(harvest.name) && !extractGivenName(harvest.name)) {
     harvest.name = null;
   }
-
   const acceptsCover =
     !!(currentKind && fieldForKind(currentKind, harvest))
     || isOpeningSetupChipLabel(answer)
@@ -3234,7 +3034,6 @@ export async function applyOpeningAnswer(
   ) {
     return { state, generateOpening: false, deferToPlay: true };
   }
-
   if (currentKind && !fieldForKind(currentKind, harvest) && !isMetaOnly(answer) && !locationTalkOnName) {
     const accepted = acceptCurrentField(currentKind, answer, state);
     if (accepted) {
@@ -3324,7 +3123,6 @@ export async function applyOpeningAnswer(
     }),
     ...(renamedTo ? { label: renamedTo.toUpperCase() } : {}),
   };
-
   let nextState = state;
   const answers = { ...est.answers };
   const stillPending: OpeningPrompt[] = [];
@@ -3336,7 +3134,6 @@ export async function applyOpeningAnswer(
       resolvedCoverDisplay = openingAnswerDisplay(answer, lockedValue);
     }
   };
-
   for (const prompt of est.pending) {
     const harvested = fieldForKind(prompt.kind, harvest);
     const isCurrent = prompt.id === est.pending[0].id;
@@ -3387,13 +3184,11 @@ export async function applyOpeningAnswer(
     answers[prompt.id] = locked;
     markCoverResolved(prompt, locked);
   }
-
   nextState = applyLedgerDeficit(
     { ...nextState, openingEstablishment: { ...est, answers, pending: stillPending } },
     answer
   );
   Object.assign(answers, nextState.openingEstablishment?.answers ?? answers);
-
   const lockedName =
     answers.name?.trim()
     || harvest.name?.trim()
@@ -3414,7 +3209,6 @@ export async function applyOpeningAnswer(
   const cheatLine = cheated
     ? 'That gear does not appear. Ordinary pockets only.'
     : '';
-
   if (stillPending.length) {
     const next = stillPending[0];
     const extra = [aside, cheatLine].filter(Boolean).join('\n');
@@ -3462,7 +3256,6 @@ export async function applyOpeningAnswer(
       },
     };
   }
-
   const canonLine = Object.values(answers).join(' / ').slice(0, 400);
   const premise = nextState.campaignPremise
     ? `${nextState.campaignPremise}\n\nPLAYER CANON: ${canonLine}`.slice(0, 2400)
@@ -3470,15 +3263,12 @@ export async function applyOpeningAnswer(
   const openingNotes = [aside, cheatLine].filter(Boolean).join(' ');
   const lockedWhere = resolveLockedOpeningPlace(nextState, answers);
   answers.where = lockedWhere;
-
   const continueNotes = est.sceneWritten
     ? 'CONTINUE the already-written scene. Locked look and kit are visible facts in this beat — do not restart, do not print a form lock line. Code owns the ledger.'
     : '';
   const writerNotes = [aside, cheatLine, continueNotes].filter(Boolean).join(' ');
-
   // Pack 12 fog-of-war: discover the resolved opening location
   const withDiscovery = lockedWhere ? discoverLocation(nextState, lockedWhere) : nextState;
-
   return {
     generateOpening: true,
     state: {
@@ -3513,7 +3303,6 @@ export async function applyOpeningAnswer(
     openingNotes: writerNotes || openingNotes,
   };
 }
-
 export function formatSetupComplete(
   registrar: OpeningRegistrar,
   state: GameState
@@ -3538,15 +3327,12 @@ export function formatSetupComplete(
   }
   return `${name}, still in ${where}, still wearing ${wear}.`;
 }
-
 export function hasSystemVoice(text: string): boolean {
   return /<system>|\[[^\]]*(SYSTEM|AUDITOR|TALE|STORY)[^\]]*\]/i.test(text);
 }
-
 export function ensureSystemReceipt(state: GameState, narrative: string): string {
   return sanitizeOpeningNarration(narrative).trim();
 }
-
 export function buildOpeningSceneMandate(state: GameState, notes?: string): string {
   const extra = notes?.trim() ? `\nPlayer just said/asked: ${notes.trim()}\n` : '';
   const cover = state.openingEstablishment?.pending[0];
@@ -3574,7 +3360,6 @@ ${coverLine}
 Do not add weapons to the sheet. Do not invent named people or places beyond WHERE / WHO.
 ================================================`;
 }
-
 /** If the GM quotes the player, rewrite first-person leftovers. */
 export function sanitizeOpeningNarration(text: string): string {
   return text
@@ -3583,4 +3368,4 @@ export function sanitizeOpeningNarration(text: string): string {
     .replace(/\b([Oo]n you:)\s*my\b/g, '$1')
     .replace(/\b([Ii]n your pockets:)\s*my\b/g, '$1')
     .replace(/\bmy (wallet|phone|headphones|keys|house keys|leatherman|jeans|boots|t-?shirt)\b/gi, '$1');
-}
+}

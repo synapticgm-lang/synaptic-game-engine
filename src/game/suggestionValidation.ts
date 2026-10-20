@@ -16,9 +16,10 @@ const NAMED_INTERACTABLE_CLAIM =
   /\b(?:inspect|examine|open|search|check|test|heft|take|grab|pick\s+up|approach|activate|pull|push|read|unlock|loot|rummage(?:\s+through)?)\s+(?:(?:the\s+heft\s+of\s+)?(?:a|an|the|my|your)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
 const NAMED_THREAT_CLAIM =
   /\b(?:attack|fight|strike|kill|slay|ambush|stalk|engage|charge|hide\s+from|sneak\s+(?:past|around|away\s+from)|flee\s+(?:from|the)|retreat\s+from|watch|study|scan|assess)\s+(?:(?:a|an|the)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
-// Object of use/draw/wield (det optional) or instrument of `with` (det required; manner "with care" stays out).
+// Object of use/draw/wield (det optional). q75r: cut standalone `with the X` — it matched attributive
+// "book with the palace seal" as an inventory use and rewrote pick-up lines into missing-item stubs.
 const ITEM_USE_CLAIM =
-  /\b(?:(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?|with\s+(?:a|an|the|my|your)\s+)([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
+  /\b(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
 const WEAPON_USE_CLAIM =
   /\b(?:swing|slash|stab|strike|cleave|thrust|parry|block|attack|hit|shoot)\s+(?:(?:with|using)\s+)?(?:(?:a|an|the|my|your)\s+)?((?:short|long|great|bastard)\s*swords?|shortswords?|longswords?|greatswords?|daggers?|handaxes?|battleaxes?|warhammers?|maces?|scimitars?|rapiers?|katanas?|cutlasses?|crossbows?|longbows?|shortbows?|spears?|halberds?|quarterstaffs?|staves|staffs?|wands?|clubs?|pistols?|rifles?)\b/i;
 const ITEM_POSSESSION_CLAIM =
@@ -249,6 +250,20 @@ export function findUngroundedNamedClaims(
     while ((m = re.exec(text)) !== null) {
       const claimed = (m[1] ?? '').trim();
       if (!claimed) continue;
+      // q75r: pronoun/deixis object of open/pick-up ("open it to see…") is not a named target.
+      const first = normalize(claimed).split(' ')[0] ?? '';
+      if (
+        first === 'it' ||
+        first === 'them' ||
+        first === 'him' ||
+        first === 'her' ||
+        first === 'this' ||
+        first === 'that' ||
+        first === 'those' ||
+        first === 'these'
+      ) {
+        continue;
+      }
       if (!isTokenGrounded(claimed, corpus)) claims.push(claimed);
     }
   }

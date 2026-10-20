@@ -23,7 +23,7 @@ import { rollDice } from '../rules/dice';
 import { blockWithinXp, statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
 import { encounterXpBudget, foesWithinBudget } from '../xpRules';
 import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
-import { atWillSpells, spellInInput, spendSlot, SPELLS } from '../rules/spells';
+import { atWillSpells, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { buildCombatStatusBlock, combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
@@ -37,6 +37,9 @@ import { sceneLight, type SceneLight } from '../rules/exploration';
 import { exhaustionD20, exhaustionSpeed, weatherRuleOf } from '../rules/travelDay';
 import { fightAlly, healingPotion, pcCantripName, pcWeaponName, wearsHeavyArmor } from './combatChips';
 import { presentNpcNames } from '../npcRelationships';
+import { classifyRoundAction } from './roundActionClass';
+import { interpretRoundTyped } from './roundTyped';
+export { classifyRoundAction } from './roundActionClass';
 
 export interface RoundFightResult {
   state: GameState;
@@ -65,22 +68,6 @@ export function isDying(state: Pick<GameState, 'engineMode' | 'deathSaves'>): bo
   return state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable;
 }
 
-const FLEE = /\b(flee|run(?: away| for it)?|escape|retreat|withdraw|bolt)\b/i;
-const ATTACK = /\b(attack|fight|strike|engage|slash|stab|shoot|punch|swing|hit|thrust|cut|charge|lash out|loose an arrow)\b/i;
-
-/** The round action a chip or typed line asks for. Anything else still spends the turn (the foes act). */
-export function classifyRoundAction(input: string): RoundAction {
-  const s = (input ?? '').toLowerCase();
-  if (/\b(drink|quaff|potion)\b|\buse (?:an? |the |my )?(?:item|potion)\b/.test(s)) return 'item';
-  if (/\bdisengage\b|\bstep (?:back|away) (?:carefully|out of reach)\b/.test(s)) return 'disengage';
-  if (/\bdodge\b|\bfight defensively\b|\bdefensive\b/.test(s)) return 'dodge';
-  if (/\bhide\b|\bslip out of sight\b|\bstealth\b/.test(s)) return 'hide';
-  if (/\bhelp\b|\bdistract\b|\bassist\b/.test(s)) return 'help';
-  if (/\bcast\b|\bfire bolt\b|\bsacred flame\b|\bspell\b/.test(s) || /\s/.test(spellInInput(s) ?? '')) return 'cast';
-  if (FLEE.test(s)) return 'flee';
-  if (ATTACK.test(s)) return 'attack';
-  return 'other';
-}
 
 /** Every number the PC fights with, from the derived sheet (one source with the character sheet). */
 export function pcCombatProfile(state: GameState, extraConditions: string[] = []): PcProfile | null {
@@ -318,11 +305,18 @@ function relabel(facts: string[], labels: Record<string, string>): string[] {
   });
 }
 
-const roundConditionNames = (c: RoundCombatState | null | undefined) => new Set((c?.pcConditions ?? []).map((x) => x.name));
+function roundConditionNames(c: RoundCombatState | null | undefined): Set<string> {
+  const out = new Set<string>();
+  const list = c?.pcConditions ?? [];
+  for (let i = 0; i < list.length; i++) out.add(list[i]!.name);
+  return out;
+}
 
 /** The character's own conditions plus the fight's (what the sheet shows mid-fight). */
 function withFightConditions(base: string[], fight: CombatCondition[]): string[] {
-  return [...new Set([...base, ...fight.map((c) => c.name)])];
+  const out = new Set<string>(base);
+  for (let i = 0; i < fight.length; i++) out.add(fight[i]!.name);
+  return [...out];
 }
 
 function finishFight(state: GameState): GameState {
@@ -360,11 +354,29 @@ export function resolveRoundFight(
   const started = live ? null : startCombat(enc, pc, rng, opts.surprised ?? null, house, working.character.level || 1);
   if (started && light.ambient === 'dark') started.notes.push(fightLightNote(light, enc, started));
   const setup = live ? resumeCombat(enc, live) : started!;
-  const asked = classifyRoundAction(input);
+  // q75: once rounds are live, typed lines resolve via interpretRoundTyped (speech free; Influence / SRD / improvise).
+  // Opening the fight ("Face the thugs") stays the old attack open — do not reclassify the face chip as speech.
+  const typed = live && !opts.pre ? interpretRoundTyped(working, input) : null;
+  const asked = typed ? typed.primaryAction : classifyRoundAction(input);
   // Facing a foe ("Face the thugs", a road meeting's fight chip) opens the fight with an attack.
   let action: RoundAction = opts.pre ? 'other' : asked === 'other' && !live ? 'attack' : asked;
+  if (typed && typed.freeSpeechOnly) action = 'speech';
+  else if (typed) {
+    let hasMech = false;
+    let hasSrd = false;
+    for (let ti = 0; ti < typed.clauses.length; ti++) {
+      const ck = typed.clauses[ti]!.kind;
+      if (ck === 'influence' || ck === 'improvise' || ck === 'illegal') hasMech = true;
+      if (ck === 'srd') hasSrd = true;
+    }
+    if (hasMech && !hasSrd) action = typed.primaryAction === 'speech' ? 'speech' : 'other';
+  }
   const receipts: string[] = [];
   const lead: string[] = [];
+  if (typed) {
+    receipts.push(...typed.receipts);
+    lead.push(...typed.facts);
+  }
   let spell: string | undefined;
   let slotLevel: number | undefined;
   let freeUse: FeatureUse | undefined;
