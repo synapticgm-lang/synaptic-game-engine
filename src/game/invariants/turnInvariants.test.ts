@@ -1,17 +1,49 @@
 /**
  * q76a-INVARIANTS — pass + fail fixture per invariant.
+ * q76c-WIRE-AUDIT — tape scan over last check-lap runs (report-only unless turnInvariants recorded).
  * Shapes: 20632 T9 (mid-fight travel), mega9 T52-54 (absent speaker / ledger),
  * L6 T19 (typed refusal answered), L6 T36-39 (dying options / label tags).
  * No OpenRouter. Vitest only (MIT).
  */
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from '../defaults';
 import { initEncounterTerminal } from '../encounterTerminalFsm';
 import type { GameState } from '../types';
 import type { CheckSpec } from '../checkMath';
-import { checkTurnInvariants, type TurnInvariantInput } from './turnInvariants';
+import { checkTurnInvariants, type InvariantViolation, type TurnInvariantInput } from './turnInvariants';
 import { travelPadBlocked } from '../padUniverse';
 import { isDying } from '../tabletop/roundFight';
+
+/** Resolve fate-autoplay runs (worktree junction or sibling shared project). */
+function runsRoot(): string {
+  const here = resolve(__dirname, '../../../scripts/fate-autoplay/runs');
+  if (existsSync(here)) return here;
+  const sibling = resolve(__dirname, '../../../../project/scripts/fate-autoplay/runs');
+  return sibling;
+}
+
+/** Latest check-lap folders for seeds used by recent ROUNDTYPED / tabletop laps. */
+function listRecentCheckLapDirs(limit = 8): string[] {
+  const root = runsRoot();
+  if (!existsSync(root)) return [];
+  const names = readdirSync(root).filter((n) => {
+    if (!/_\w+-\w+_s\d+/.test(n) && !/_cursed-keep_/.test(n) && !/_summoned-pact_/.test(n)) return false;
+    return existsSync(join(root, n, 'turns.jsonl'));
+  });
+  names.sort((a, b) => {
+    try {
+      return statSync(join(root, b)).mtimeMs - statSync(join(root, a)).mtimeMs;
+    } catch {
+      return 0;
+    }
+  });
+  // Prefer the most recent check-lap window (today's 2063x / 2064x seeds) then fill.
+  const preferred = names.filter((n) => /_s206(?:3[1-9]|4[0-9]|49)\b/.test(n));
+  const ordered = preferred.length ? [...preferred, ...names.filter((n) => !preferred.includes(n))] : names;
+  return ordered.slice(0, limit).map((n) => join(root, n));
+}
 
 function base(over: Partial<GameState> = {}): GameState {
   const s0 = createInitialState(undefined, 'dnd') as GameState;
@@ -322,5 +354,62 @@ describe('q76b-STRESS stub writer voices only present', () => {
     });
     const stub = buildStressStubProse(before, 'Wait');
     expect(stub.speakers).toEqual([]);
+  });
+});
+
+describe('q76c wire — check-lap tape scan', () => {
+  it('scans recent check-lap turns; P0 fails only when turnInvariants was recorded', () => {
+    const dirs = listRecentCheckLapDirs(8);
+    // No tapes in this worktree: skip soft (CI / fresh clone).
+    if (dirs.length === 0) {
+      expect(dirs).toEqual([]);
+      return;
+    }
+    const historicalNotes: string[] = [];
+    const newP0: string[] = [];
+    for (let d = 0; d < dirs.length; d++) {
+      const dir = dirs[d]!;
+      const lines = readFileSync(join(dir, 'turns.jsonl'), 'utf8').split('\n').filter((l) => l.trim());
+      for (let i = 0; i < lines.length; i++) {
+        const row = JSON.parse(lines[i]!) as {
+          turn?: number;
+          turnInvariants?: InvariantViolation[];
+          offeredChoices?: string[];
+          playerInput?: string;
+          fatePick?: string;
+          gmText?: string;
+        };
+        const inv = row.turnInvariants;
+        if (!Array.isArray(inv)) {
+          historicalNotes.push(`${dir.split(/[/\\]/).pop()} T${row.turn}: historical (no turnInvariants)`);
+          continue;
+        }
+        // Newly recorded run (post-q76c wire): fail on P0 only; P1 report-only.
+        for (let v = 0; v < inv.length; v++) {
+          const hit = inv[v]!;
+          if (hit.severity === 'P0') {
+            newP0.push(`${dir.split(/[/\\]/).pop()} T${row.turn} ${hit.code}: ${hit.detail}`);
+          }
+        }
+      }
+    }
+    // Keep noise low: one diagnostic line when only historical tapes exist.
+    if (newP0.length === 0 && historicalNotes.length > 0) {
+      expect(historicalNotes.length).toBeGreaterThan(0);
+    }
+    expect(newP0, newP0.slice(0, 8).join('\n')).toEqual([]);
+  });
+
+  it('merges invariant P0 into turnCheck-shaped flags (fate / check-lap contract)', () => {
+    const before = fightState();
+    const after = { ...before, turn: 10 };
+    const inv = checkTurnInvariants(before, after, turn({
+      offeredOptions: ['Attack the thugs', 'Travel toward Greyhollow Inn'],
+      playerInput: 'Attack the thugs',
+    }));
+    const p0 = inv.filter((x) => x.severity === 'P0' && x.code === 'travel-blocked');
+    expect(p0.length).toBeGreaterThan(0);
+    // Same kind string ttCheckLap.ps1 reads from turnCheck.p0[].kind
+    expect(p0[0]!.code).toBe('travel-blocked');
   });
 });

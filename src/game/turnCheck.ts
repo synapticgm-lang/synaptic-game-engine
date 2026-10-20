@@ -104,7 +104,13 @@ export type TurnCheckKind =
   | 'dead-chip'
   | 'missing-chip-kind'
   /** q50-MAP2: HERE has no place record, or a non-closed record with empty exits. */
-  | 'no-registered-place';
+  | 'no-registered-place'
+  /** q76c — checkTurnInvariants P0 codes (harness / check-lap only). */
+  | 'travel-blocked'
+  | 'dying-options'
+  | 'typed-unanswered'
+  | 'label-outcome'
+  | 'system-ledger'
 
 export interface TurnCheckFlag {
   kind: TurnCheckKind;

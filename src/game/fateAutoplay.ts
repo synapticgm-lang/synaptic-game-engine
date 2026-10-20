@@ -243,7 +243,8 @@ import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairReject
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
-import { checkPlayerTurn, type TurnCheck } from './turnCheck';
+import { checkPlayerTurn, type TurnCheck, type TurnCheckKind } from './turnCheck';
+import { checkTurnInvariants, type InvariantViolation } from './invariants/turnInvariants';
 import { grantLevelSkills } from './skillGates';
 import { compactTrafficGist } from './openingPointerCard';
 import {
@@ -371,6 +372,8 @@ export type TurnTelemetry = {
   progressReasons?: string[];
   /** 29z2 — tester check: P0 (ghost/impossible chip, ignored action, open-ground interior, unset quest place) + thumbs-down. */
   turnCheck?: TurnCheck;
+  /** q76c — checkTurnInvariants hits this turn (also merged into turnCheck.p0 / .down). */
+  turnInvariants?: InvariantViolation[];
   sealedManifestHash?: string;
   replayHash?: string;
   renderFallbackUsed?: boolean;
@@ -2375,7 +2378,32 @@ export async function runFateAutoplay(opts: {
           tel.progress = p.progressed;
           tel.progressReasons = p.reasons;
           const prev = turns[turns.length - 1];
-          if (!tel.error) tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
+          if (!tel.error) {
+            tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
+            // q76c — report-only invariants into the lap row; P0 → turnCheck.p0 → CHECK_FAIL.
+            const choices = tel.offeredChoices ?? [];
+            const input = tel.playerInput || tel.fatePick || '';
+            const typed = !!tel.playerInput && !choices.some((c) => c === tel.playerInput);
+            const offered =
+              tel.offeredChips && tel.offeredChips.length > 0
+                ? tel.offeredChips.map((c) => ({ label: c.label, kind: c.kind }))
+                : choices;
+            const inv = checkTurnInvariants(turnStart, state, {
+              offeredOptions: offered,
+              playerInput: input,
+              typed,
+              prose: tel.gmText ?? '',
+              answered: !!(tel.gmText && tel.gmText.trim()),
+              visibleAnswer: tel.gmText ?? '',
+            });
+            tel.turnInvariants = inv;
+            for (let i = 0; i < inv.length; i++) {
+              const v = inv[i]!;
+              const flag = { kind: v.code as TurnCheckKind, detail: v.detail };
+              if (v.severity === 'P0') tel.turnCheck.p0.push(flag);
+              else tel.turnCheck.down.push(flag);
+            }
+          }
         }
         Object.assign(result.telemetry, turnProvenance(result.telemetry, writerOverride?.model));
         turns.push(result.telemetry);

@@ -39,6 +39,7 @@ import {
   dismissAutoFightTip,
   loginFounderEmail,
   prepareLivePlay,
+  readCurrentGameState,
   readGameSnapshot,
   readPlace,
   readUiSaveId,
@@ -49,6 +50,7 @@ import {
   waitOpeningReady,
   waitSetupAdvance,
 } from './gameTab.mjs';
+import { checkTurnInvariantsSync } from './invariantsWire.mjs';
 import { startTurnClock, turnTimeFields } from './turnTiming.mjs';
 import {
   askOpenRouterPlayer,
@@ -281,6 +283,7 @@ export function buildTurnLogRow(row) {
     voteCarried: row.voteCarried === true,
     voteTarget: row.voteTarget ?? null,
     voteSkipWrong: row.voteSkipWrong === true,
+    turnInvariants: row.turnInvariants ?? [],
   };
 }
 
@@ -648,6 +651,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
     }
     overlayBlockedThisTurn = false;
     coverTurn = turn;
+    // q76c — engine state before this turn's player act (IndexedDB current).
+    const stateBeforeInv = await readCurrentGameState(gamePage);
     const resetNow = assessGameReset(gameIdentity, await probeIdentity(snap), turn);
     if (resetNow) return stopReset(resetNow);
     const setup = isSetupStep(snap);
@@ -1133,6 +1138,24 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     const voteSkipWrongNow = voteCarried !== true && voteSkipWrong({ skipped: thumb?.skipped, targetKey: voteTarget, ratedKeys });
     if (voteSkipWrongNow) skippedNewReply = true;
+
+    // q76c — checkTurnInvariants; log every hit; P0 stops cleanly.
+    const stateAfterInv = await readCurrentGameState(gamePage);
+    const chipsBefore = Array.isArray(snap.chips) ? snap.chips : [];
+    const offeredFromSave = Array.isArray(stateBeforeInv?.offeredChips) && stateBeforeInv.offeredChips.length > 0
+      ? stateBeforeInv.offeredChips.map((c) => ({ label: c.label, kind: c.kind }))
+      : chipsBefore;
+    const typedAct = kind === 'type' || kind === 'chip_then_type';
+    const turnInvariants = checkTurnInvariantsSync(stateBeforeInv, stateAfterInv || stateBeforeInv, {
+      offeredOptions: offeredFromSave,
+      playerInput: String(acted || ''),
+      typed: typedAct,
+      prose: nextStory || '',
+      answered: !!(nextStory && String(nextStory).trim()),
+      visibleAnswer: nextStory || '',
+    });
+    const invP0 = turnInvariants.filter((v) => v && v.severity === 'P0');
+
     const turnRow = buildTurnLogRow({
       event: waitTimedOut ? 'turn_timeout' : 'turn',
       turn,
@@ -1179,9 +1202,33 @@ async function playBible(gamePage, bibleId, opts = {}) {
       place: where.place,
       placeId: where.placeId,
       placeSource: where.placeSource,
+      turnInvariants,
     });
     turnRows.push(turnRow);
     appendJsonl(jsonl, turnRow);
+
+    if (invP0.length > 0) {
+      const code = invP0[0].code || 'invariant';
+      const verdict = `rules P0 at T${turn}: ${code}`;
+      console.log(`AI_PLAYER fail ${bibleId}: ${verdict}`);
+      return {
+        bibleId,
+        ok: false,
+        harnessError: 'rules_p0',
+        harnessDetail: verdict,
+        harnessErrors: harnessErrors + 1,
+        unverified,
+        thumbsSkipped,
+        turns: completed,
+        startTurn,
+        resumed: resumeThis,
+        autoFightSelector: AUTO_FIGHT_SELECTOR,
+        autoFightFired,
+        stoppedNoGm: false,
+        stoppedRepeat: false,
+        turnLog: turnRows,
+      };
+    }
     const afterProbe = await probeIdentity(next);
     const upsertSave = feedbackKeyFromUpsert(thumb?.upsert)?.saveId || '';
     if (!afterProbe.saveId && upsertSave) afterProbe.saveId = upsertSave;
