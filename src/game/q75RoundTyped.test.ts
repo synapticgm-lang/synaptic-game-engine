@@ -290,13 +290,18 @@ describe('q75r-ROUNDTYPED replay + availability', () => {
     expect(cooled.every((c) => !/travel toward/i.test(c.label))).toBe(true);
   });
 
-  /** LitRPG mega L6 seed 19061 T19: pick up scene book — accepted, not rewritten to missing-item. */
-  it('L6-T19: typed pick-up of a scene book is grounded and hard-gate valid', () => {
+  /**
+   * LitRPG mega L6 seed 19061 T19: valid pick-up of a scene book still passes;
+   * a refused typed line (missing instrument) gets a visible engine GM answer (q75r3).
+   */
+  it('L6-T19: valid pick-up passes; refused typed line gets a visible engine answer', () => {
     const s0 = createInitialState(undefined, 'litrpg') as GameState;
     const s = {
       ...s0,
       engineMode: 'litrpg' as const,
       turn: 19,
+      inventory: [],
+      containers: [],
       openingEstablishment: {
         ...(s0.openingEstablishment ?? {}),
         complete: true,
@@ -305,7 +310,7 @@ describe('q75r-ROUNDTYPED replay + availability', () => {
       },
       sceneFacts: {
         ...(s0.sceneFacts ?? {}),
-        props: ['a book with the palace seal'],
+        props: ['a book with the palace seal', 'locked chest'],
         present: [],
         crowd: 'none',
         noise: 'quiet',
@@ -320,5 +325,11 @@ describe('q75r-ROUNDTYPED replay + availability', () => {
     expect(grounded.rewritten).toBe(false);
     expect(grounded.text).toBe(line);
     expect(validateActionHard(line, s, story).valid).toBe(true);
+
+    const refused = validateActionHard('I pry it open with my crowbar', s, story);
+    expect(refused.valid).toBe(false);
+    expect(refused.violations.join(' ')).toMatch(/don't have: crowbar/i);
+    expect(refused.refusalBody ?? '').toMatch(/crowbar/i);
+    expect((refused.refusalBody ?? '').length).toBeGreaterThanOrEqual(8);
   });
 });

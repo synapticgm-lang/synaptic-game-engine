@@ -2036,9 +2036,8 @@ export function useGame() {
         return;
       }
     }
-    // q75r: never silently refuse a typed line at the hard gate (any mode).
-    // Round combat already skips; outside combat the line is still accepted — groundPlayerAction /
-    // the engine answer with the reason in-fiction (no pendingRepair + draft restore = send_not_accepted).
+    // q75r3: restore every hard-gate refusal, always answered visibly (GM receipt + repair UI + toast).
+    // Round combat still skips (q75 free speech / typed SRD actions). Never silent draft-only refuse.
     const roundTypedOpen =
       !!current.activeEncounter
       && !!current.roundCombat
@@ -2056,12 +2055,46 @@ export function useGame() {
         current.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '';
       const validation = validateActionHard(mediated.text, current, lastGmStory);
       if (!validation.valid) {
-        debugLogger.record('WARN', 'Hard gate note — typed line accepted; engine answers', {
+        const errorMessage = validation.violations.join(' ');
+        const receipt = validation.refusalBody || errorMessage;
+        debugLogger.record('WARN', 'Hard gate blocked action', {
           codes: validation.violations.slice(0, 3),
           input: mediated.text.slice(0, 80),
           turn: current.turn,
         });
-        // Fall through: soft ground + GM/engine path explain the miss; do not pinBlockedDraft.
+        const repairPlayerEntry: LogEntry = {
+          id: uid(),
+          turn: current.turn,
+          role: 'player',
+          content: mediated.text,
+          timestamp: Date.now(),
+        };
+        const repairGmEntry: LogEntry = {
+          id: uid(),
+          turn: current.turn,
+          role: 'gm',
+          content: receipt,
+          timestamp: Date.now() + 1,
+        };
+        setState((s) =>
+          s
+            ? {
+                ...s,
+                pendingRepair: {
+                  id: crypto.randomUUID(),
+                  situation: 'unsupported',
+                  playerInput: mediated.text,
+                  message: `Action blocked. ${errorMessage} Rephrase, pick **Look around**, or **Check what you carry**.`,
+                  options: ['Look around', 'Check what you carry'],
+                  createdAt: Date.now(),
+                },
+                log: [...s.log, repairPlayerEntry, repairGmEntry],
+              }
+            : s
+        );
+        addToast(errorMessage, 'info');
+        turnInFlightRef.current = false;
+        return;
       }
     }
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);

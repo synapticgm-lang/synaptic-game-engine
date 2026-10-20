@@ -16,10 +16,10 @@ const NAMED_INTERACTABLE_CLAIM =
   /\b(?:inspect|examine|open|search|check|test|heft|take|grab|pick\s+up|approach|activate|pull|push|read|unlock|loot|rummage(?:\s+through)?)\s+(?:(?:the\s+heft\s+of\s+)?(?:a|an|the|my|your)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
 const NAMED_THREAT_CLAIM =
   /\b(?:attack|fight|strike|kill|slay|ambush|stalk|engage|charge|hide\s+from|sneak\s+(?:past|around|away\s+from)|flee\s+(?:from|the)|retreat\s+from|watch|study|scan|assess)\s+(?:(?:a|an|the)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
-// Object of use/draw/wield (det optional). q75r: cut standalone `with the X` — it matched attributive
-// "book with the palace seal" as an inventory use and rewrote pick-up lines into missing-item stubs.
+// Object of use/draw/wield (det optional) or instrument of `with` (det required; manner "with care" stays out).
+// q75r3: restore `with` after q75r cut; attributive "book with the palace seal" skips via scene-grounded head NP.
 const ITEM_USE_CLAIM =
-  /\b(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
+  /\b(?:(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?|with\s+(?:a|an|the|my|your)\s+)([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
 const WEAPON_USE_CLAIM =
   /\b(?:swing|slash|stab|strike|cleave|thrust|parry|block|attack|hit|shoot)\s+(?:(?:with|using)\s+)?(?:(?:a|an|the|my|your)\s+)?((?:short|long|great|bastard)\s*swords?|shortswords?|longswords?|greatswords?|daggers?|handaxes?|battleaxes?|warhammers?|maces?|scimitars?|rapiers?|katanas?|cutlasses?|crossbows?|longbows?|shortbows?|spears?|halberds?|quarterstaffs?|staves|staffs?|wands?|clubs?|pistols?|rifles?)\b/i;
 const ITEM_POSSESSION_CLAIM =
@@ -159,6 +159,50 @@ function collectUnsupportedClaims(input: string, state: GameState, patterns: Reg
       const claimed = boundItemObjectPhrase((m[1] ?? '').trim(), state);
       const key = normalize(claimed);
       if (!claimed || NON_ITEM_TOKENS.has(key) || GENERIC_SCENE_ROLES.has(key)) continue;
+      // Instrument `with` that is really an NP attribute of a scene prop ("book with the palace seal").
+      const matched = (m[0] ?? '').trimStart();
+      if (matched.length >= 5 && matched.slice(0, 5).toLowerCase() === 'with ') {
+        const parts: string[] = [];
+        for (const raw of input.slice(0, m.index).trimEnd().split(' ')) {
+          if (raw) parts.push(raw);
+        }
+        let headPhrase: string | null = null;
+        for (let n = 4; n >= 2; n--) {
+          if (n > parts.length) continue;
+          const slice = parts.slice(parts.length - n);
+          const d = slice[0]!.toLowerCase();
+          if (d === 'a' || d === 'an' || d === 'the' || d === 'my' || d === 'your') {
+            headPhrase = slice.join(' ');
+            break;
+          }
+        }
+        if (headPhrase) {
+          const npWords: string[] = [];
+          for (const w of normalize(`${headPhrase} ${matched}`).split(' ')) {
+            const l = w.toLowerCase();
+            if (!w || l === 'a' || l === 'an' || l === 'the') continue;
+            npWords.push(w);
+          }
+          const npBare = npWords.join(' ');
+          let sceneAttr = false;
+          if (npBare) {
+            for (const known of buildGroundingCorpus(state)) {
+              const kWords: string[] = [];
+              for (const w of normalize(known).split(' ')) {
+                const l = w.toLowerCase();
+                if (!w || l === 'a' || l === 'an' || l === 'the') continue;
+                kWords.push(w);
+              }
+              const k = kWords.join(' ');
+              if (k === npBare || k.includes(npBare) || npBare.includes(k)) {
+                sceneAttr = true;
+                break;
+              }
+            }
+          }
+          if (sceneAttr) continue;
+        }
+      }
       if (!inventoryHasItem(state, claimed)) claims.push(claimed);
     }
   }
