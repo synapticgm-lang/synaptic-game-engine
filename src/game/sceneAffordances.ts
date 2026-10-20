@@ -651,7 +651,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     }
     return dying;
   }
-  // q75r: one availability source — fight / road lane / dying already covered by travelPadBlocked.
+  // q77a: one availability source — fight / road lane / dying.
   const noTravel = travelPadBlocked(state);
   const mode = state.engineMode;
   const enc = state.activeEncounter;

@@ -80,6 +80,7 @@ import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
+import { actionAvailability } from './padUniverse';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
@@ -339,12 +340,14 @@ export function wakeToNewDay<T extends ClockState>(state: T): T {
   return { ...state, roadDay: { since: worldClock(state), hours: 0 } };
 }
 function formatSpan(hours: number): string {
+  if (hours == null || !Number.isFinite(hours)) return 'a short while';
   if (hours < 1) return `${Math.round(hours * 60)} min`;
   return Number.isInteger(hours) ? `${hours}h` : `${hours.toFixed(1)}h`;
 }
 /** Move the clock; timeOfDay follows the hour. Returns the chrome fragment. */
 export function advanceClock(state: GameState, hours: number): { state: GameState; note: string } {
-  const total = currentHour(state) + hours;
+  const step = hours == null || !Number.isFinite(hours) ? 0 : hours;
+  const total = currentHour(state) + step;
   const hour = total % 24;
   const worldDay = (state.worldDay ?? 0) + Math.floor(total / 24);
   const slot = timeOfDayForHour(hour);
@@ -352,7 +355,7 @@ export function advanceClock(state: GameState, hours: number): { state: GameStat
   const next: GameState = { ...state, worldHour: hour, ...(worldDay ? { worldDay } : {}), sceneFacts };
   return {
     state: tickAwayAttunements(next, worldDay * 24 + hour),
-    note: `+${formatSpan(hours)}, now ${slot}`,
+    note: `+${formatSpan(step)}, now ${slot}`,
   };
 }
 export function isJourneyUnderway(state: Pick<GameState, 'journey'>): boolean {
@@ -471,7 +474,8 @@ export function journeyPads(
   if (state.activeEncounter) return [];
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
   const spent = dayIsSpent(state, j);
-  const forward = laneBlocked(j.encounter)
+  // q77a: road lane / fight / dying — one source (actionAvailability.travel).
+  const forward = !actionAvailability(state as GameState).travel.ok
     ? []
     : spent
       ? [CAMP_CHIP, pushOnPad(state)]
@@ -491,10 +495,7 @@ export function isJourneyPad(state: Pick<GameState, 'journey'>, choice: string):
 }
 /** Meetings that can be faced as a fight. */
 const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'villain']);
-/** A hostile meeting still standing in the lane. Walk on is not a free pass past it; a flee that got clear is. */
-function laneBlocked(enc: RoadEncounter | null | undefined): boolean {
-  return !!enc && !roadMeetingOver(enc) && FIGHT_KINDS.has(enc.kind);
-}
+// q77a: laneBlocked deleted — roadLaneBlocked / actionAvailability.travel own the check.
 /** Share of hostile meetings that are a rare spawn (uncommon, not every meeting). */
 export const RARE_SPAWN_CHANCE = 0.12;
 /** Share of camps that hold a mini-boss. */
@@ -1015,7 +1016,7 @@ export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string):
 export function resolveRoadPassage(state: GameState, raw: string): TravelCommit | null {
   const j = state.journey;
   const enc = j?.encounter;
-  if (!j || !enc || !isJourneyUnderway(state) || !laneBlocked(enc) || state.activeEncounter) return null;
+  if (!j || !enc || !isJourneyUnderway(state) || actionAvailability(state).travel.ok || state.activeEncounter) return null;
   const input = meetingMoveBase(raw ?? '');
   if (!input) return null;
   const base = input.toLowerCase();
@@ -1052,7 +1053,7 @@ export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter
   if (!enc || state.activeEncounter || !isJourneyUnderway(state) || !settles) return null;
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (facesFight(input, enc)) return liveRoadFoe(state, enc);
-  if (FLEE_WORDS.test(input) && laneBlocked(enc)) return liveRoadFoe(state, enc);
+  if (FLEE_WORDS.test(input) && !actionAvailability(state).travel.ok) return liveRoadFoe(state, enc);
   if (roadMeetingMove(state, input)) return liveRoadFoe(state, enc);
   return null;
 }
@@ -1819,9 +1820,9 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();
     const chip = travelEngineChip(input);
     const onward = WALK_ON.test(input) || namedTo || chip === 'travel on' || chip === 'push on';
-    if (chip === 'camp' && !laneBlocked(j.encounter)) return makeCamp(state, j);
+    if (chip === 'camp' && actionAvailability(state).rest.ok) return makeCamp(state, j);
     if (chip === 'guide' || chip === 'lookout' || chip === 'forager') return takeJob(state, j, chip);
-    if (onward && laneBlocked(j.encounter)) {
+    if (onward && !actionAvailability(state).travel.ok) {
       const slot = timeOfDayForHour(currentHour(state));
       return {
         state: { ...state, currentLocation: UNDERWAY_HERE },
