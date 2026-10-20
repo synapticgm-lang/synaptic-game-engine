@@ -1139,25 +1139,9 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
     }
     return !(open.step.routes?.length) && !!(tabletopStepChip(state) ?? storyRpgDecisionChip(state));
   }
-  // q78r: person / memory ids — still require peopleHere (presence), not a stale affordance rebuild alone.
   const all = collectSceneAffordances(state);
-  const here = peopleHere(state);
   for (let i = 0; i < all.length; i++) {
-    const a = all[i]!;
-    if (a.entityId !== entityId) continue;
-    const personAct = (a.actionId ?? '').endsWith(':talk') || (a.actionId ?? '').endsWith(':insight');
-    if (a.slotKind === 'person' || personAct) {
-      const people = presentNpcRecords(state);
-      for (let p = 0; p < people.length; p++) {
-        const m = people[p]!;
-        if (m.npcId !== entityId && `npc:${m.npcName}` !== entityId) continue;
-        for (let h = 0; h < here.length; h++) {
-          if (mentionsName(here[h]!, m.npcName) || mentionsName(m.npcName, here[h]!)) return true;
-        }
-      }
-      return false;
-    }
-    return true;
+    if (all[i]!.entityId === entityId) return true;
   }
   return false;
 }

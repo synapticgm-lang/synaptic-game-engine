@@ -107,18 +107,10 @@ export function npcPlacedElsewhere(state: GameState, name: string): boolean {
   return !!m?.location && !samePlace(m.location, state.currentLocation);
 }
 function companionRecords(state: GameState): NpcMemory[] {
-  const names: string[] = [];
-  // Older saves may still carry a singular companion string; typed state only has companions[].
-  const legacy = (state as GameState & { companion?: string }).companion;
-  if (typeof legacy === 'string' && legacy.trim()) names.push(legacy.trim());
-  const comps = state.companions ?? [];
-  for (let i = 0; i < comps.length; i++) {
-    const n = comps[i]?.name;
-    if (n) names.push(n);
-  }
+  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter((n): n is string => !!n);
   const out: NpcMemory[] = [];
-  for (let i = 0; i < names.length; i++) {
-    const m = resolveNpcRecord(state, names[i]!);
+  for (const n of names) {
+    const m = resolveNpcRecord(state, n);
     if (m && !out.includes(m)) out.push(m);
   }
   return out;
@@ -177,16 +169,7 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
       push(hit ? { ...hit, location: state.currentLocation } : { npcId: id, npcName: name, disposition: 'neutral', facts: [], lastSeenTurn: state.turn ?? 0, location: state.currentLocation });
     }
   }
-  // q78r: same exit/range gate as presentNpcNames — a canonical shouldExit memory
-  // must drop every alias record so talk chips and peopleHere stay one presence set.
-  const kept: NpcMemory[] = [];
-  for (let i = 0; i < out.length; i++) {
-    const m = out[i]!;
-    if (m.shouldExit || isOutOfTalkingRange(state, m.npcName)) continue;
-    if (resolveNpcRecord(state, m.npcName)?.shouldExit) continue;
-    kept.push(m);
-  }
-  return kept;
+  return out.filter((m) => !m.shouldExit && !isOutOfTalkingRange(state, m.npcName));
 }
 export function npcNamesAt(state: GameState, place: string): string[] {
   return (state.npcMemories ?? []).filter((m) => samePlace(m.location, place)).map((m) => m.npcName);

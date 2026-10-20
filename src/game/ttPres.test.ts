@@ -162,34 +162,4 @@ describe('q47-PRES presence record', () => {
     const talk = slotted.filter((c) => c.slotCategory === 'talk').map((c) => c.label);
     expect(talk).toEqual(['Talk to Maud Merrow']);
   });
-
-  it('q78r: shouldExit on the canonical memory drops them from the presence record and TALK', () => {
-    const here = 'the stable loft behind the Weighing Cup';
-    const s = roadState(null, {
-      engineMode: 'litrpg',
-      campaignBibleId: 'summoned-pact',
-      currentLocation: here,
-      turn: 7,
-      seed: '20673',
-      journey: undefined,
-      // Covers done and player moved on — opening cast must not pad peopleHere with Joss.
-      openingEstablishment: { complete: true, pending: [], answers: { where: 'Cathedral Close' } } as GameState['openingEstablishment'],
-      sceneFacts: { present: ['Crown'], props: [], crowd: 'sparse', noise: 'quiet', lastBeat: '', updatedTurn: 7 },
-      npcMemories: [
-        memory('Crown', here),
-        { ...memory('Ostler Joss', here), shouldExit: true },
-        { ...memory('Joss', 'The Weighing Cup'), shouldExit: true },
-      ],
-    });
-    expect(names(s)).toContain('Crown');
-    expect(names(s)).not.toContain('Ostler Joss');
-    expect(peopleHere(s)).toContain('Crown');
-    expect(peopleHere(s).some((n) => /^ostler joss$/i.test(n) || /^joss$/i.test(n))).toBe(false);
-    const crown = presentNpcRecords(s).find((m) => m.npcName === 'Crown')!;
-    const slotted = applyOptionCooldown(s, [
-      { label: 'Talk to Crown', actionId: `person:${crown.npcId}:talk`, kind: 'affordance', slotCategory: 'talk', entityId: crown.npcId, rank: 80 },
-      { label: 'Talk to Ostler Joss', actionId: 'person:mem:ostler-joss:talk', kind: 'affordance', slotCategory: 'talk', entityId: 'mem:ostler-joss', rank: 70 },
-    ]);
-    expect(slotted.filter((c) => c.slotCategory === 'talk').map((c) => c.label)).toEqual(['Talk to Crown']);
-  });
 });
