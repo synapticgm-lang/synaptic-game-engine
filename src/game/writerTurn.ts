@@ -176,8 +176,11 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
       }
     }
   }
-  for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0)
+  // Same play-crime gate as turnCheck (incl. system-ledger wrong-voice). No second word list.
+  for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0) {
     if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${here.join(', ') || '(none)'}).`);
+    if (f.kind === 'wrong-voice') out.push(`Wrong voice: ${f.detail}`);
+  }
   if (isOfferRefuseLine(check.playerInput)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();
     const named = (card || openingCastNames(check.state)[0] || '').trim();
@@ -253,7 +256,7 @@ export async function runWriterTurnWithFightRetry(opts: {
     const p = done.remaining[i]!;
     if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
       || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')
-      || p.startsWith('Absent speaker:')) blocking.push(p);
+      || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) blocking.push(p);
   }
   if (!blocking.length) return done;
   let raw = '';
@@ -265,14 +268,14 @@ export async function runWriterTurnWithFightRetry(opts: {
     for (let i = 0; i < second.remaining.length; i++) {
       const p = second.remaining[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
     for (let i = 0; i < blocking.length; i++) {
       const p = blocking[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:')) { hardLeft = true; break; }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {

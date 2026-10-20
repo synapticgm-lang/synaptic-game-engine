@@ -27,7 +27,7 @@ import { filterSystemLogForEngine } from './systemLog';
 import type { ActiveEncounter, GameState, Item } from './types';
 
 const DEATH_SAVE_FACT =
-  'You lie unconscious on the ground at 0 HP and cannot move, speak or act. You slip further; your breath falters. Dungeon room: Corridor, inside Keep Gate. Cave Spider is here.';
+  'You lie unconscious on the ground and cannot move, speak or act. You slip further; your breath falters. Dungeon room: Corridor, inside Keep Gate. Cave Spider is here.';
 const TRAVEL_FACT = 'Travel: back streets to Keep Gate — +30 min, now dusk.';
 const QUEST = { name: "The Woodcutter's Plea", step: "Find the woodcutter's daughter in Keep Gate" };
 

@@ -49,7 +49,10 @@ export interface RoundFightResult {
 
 const ONGOING_HEAD = 'ENGINE OUTCOME (facts — narrate this one round exactly once; the fight is NOT over, end with the foe still fighting):';
 const OVER_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once, add no new rounds, the fight is over):';
-const DYING_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once; you are on the ground at 0 HP, nobody is fighting you now):';
+// Writer-facing facts stay plain fiction (no ledger "HP"); STATUS receipts keep the numbers.
+const DYING_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once; you are unconscious on the ground, nobody is fighting you now):';
+const DYING_UNCONSCIOUS = 'You lie unconscious on the ground and cannot move, speak or act.';
+const DYING_STABLE_LINE = 'stable, still down';
 
 /** A built tabletop character fights round by round. */
 export function usesRoundCombat(state: Pick<GameState, 'engineMode' | 'character'>): boolean {
@@ -662,7 +665,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
       return {
         state: woke.state,
         receipts: [status, hpLine(0, 1), `Time: ${woke.note}`],
-        facts: `${DYING_HEAD} ${ally} steadies your breathing.\nstable at 0 HP`,
+        facts: `${DYING_HEAD} ${ally} steadies your breathing.\n${DYING_STABLE_LINE}`,
         noTerminal: true,
       };
     }
@@ -670,7 +673,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
     return {
       state,
       receipts: [status],
-      facts: `${DYING_HEAD} ${ally} cannot steady your breathing. You lie unconscious on the ground at 0 HP and cannot move, speak or act.\nunconscious at 0 HP, death saves ${ds.successes} successes/${ds.failures} failures`,
+      facts: `${DYING_HEAD} ${ally} cannot steady your breathing. ${DYING_UNCONSCIOUS}\nunconscious, death saves ${ds.successes} successes/${ds.failures} failures`,
       noTerminal: true,
     };
   }
@@ -702,9 +705,9 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
     next = woke.state;
     receipts.push(hpLine(0, 1), `Time: ${woke.note}`);
     fact = `Your breathing steadies; you are stable. ${HOURS_LATER[r.hoursToWake ?? 0] ?? 'Hours'} later you wake, weak but alive.`;
-    return { state: next, receipts, facts: `${DYING_HEAD} ${fact}\nstable at 0 HP`, noTerminal: true };
+    return { state: next, receipts, facts: `${DYING_HEAD} ${fact}\n${DYING_STABLE_LINE}`, noTerminal: true };
   } else {
-    fact = `You lie unconscious on the ground at 0 HP and cannot move, speak or act. ${secret
+    fact = `${DYING_UNCONSCIOUS} ${secret
       ? 'You lie at the edge, neither waking nor slipping away yet.'
       : r.result === 'success' ? 'You cling to life; your breathing holds.' : 'You slip further; your breath falters.'}`;
   }
@@ -712,7 +715,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
   return {
     state: next,
     receipts,
-    facts: `${DYING_HEAD} ${fact}\nunconscious at 0 HP, death saves ${dsNow.successes} successes/${dsNow.failures} failures`,
+    facts: `${DYING_HEAD} ${fact}\nunconscious, death saves ${dsNow.successes} successes/${dsNow.failures} failures`,
     noTerminal: true,
   };
 }

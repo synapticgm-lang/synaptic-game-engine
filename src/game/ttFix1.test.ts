@@ -100,7 +100,8 @@ describe('root 2 — the fight on STATUS and in the fact', () => {
   it('tells the writer the PC is unconscious while making death saves', () => {
     const s = ck({ character: { ...ck().character, hp: 0, conditions: ['Unconscious'] }, deathSaves: { successes: 0, failures: 0 } });
     const r = resolveDeathSaveTurn(s, () => 0.5)!;
-    expect(r.facts).toMatch(/unconscious on the ground at 0 HP and cannot move, speak or act/);
+    expect(r.facts).toMatch(/unconscious on the ground and cannot move, speak or act/);
+    expect(r.facts).not.toMatch(/\bHP\b/);
   });
 });
 

@@ -1,7 +1,9 @@
 /**
- * q73-DYING — tabletop 0 HP: no travel while death saves run; Medicine DC 10 / potion are the
- * only other resolutions; the writer hears the engine dying line; a rescue after death is blocked.
+ * q73-DYING / q73r-DYING — tabletop 0 HP: no travel while death saves run; Medicine DC 10 /
+ * potion are the only other resolutions; writer facts stay fiction (no ledger HP); a rescue
+ * after death is blocked.
  * SRD 5.2.1 (Wizards of the Coast, CC BY 4.0).
+ * Replay shape: check-lap seed 20612 T10 drop → T11 travel-while-unconscious.
  */
 import { describe, expect, it } from 'vitest';
 import { pathToFileURL } from 'node:url';
@@ -10,7 +12,7 @@ import { createInitialState } from './defaults';
 import type { GameState } from './types';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import { commitTravel } from './travelJourney';
-import { resolveOfferedChoices } from './playTranscript';
+import { commitOfferedPad, resolveOfferedChoices } from './playTranscript';
 import { resolveDeathSaveTurn } from './tabletop/roundFight';
 import { writerDraftProblems } from './writerTurn';
 import { parsePlayerIntent } from './intentParser';
@@ -82,7 +84,8 @@ describe('q73-DYING', () => {
     const arc = runArcDirectorBeforeGm(s, 'Travel toward Greyhollow Church');
     expect(arc.state.currentLocation).toBe(s.currentLocation);
     expect(arc.state.journey).toEqual(s.journey);
-    expect(arc.mandate).toMatch(/unconscious at 0 HP, death saves \d+ successes\/\d+ failures/);
+    expect(arc.mandate).toMatch(/unconscious, death saves \d+ successes\/\d+ failures/);
+    expect(arc.mandate).not.toMatch(/\bHP\b/);
     expect(arc.systemReceipts.some((r) => r.startsWith('Death save:'))).toBe(true);
     const travel = commitTravel(arc.state, 'Travel toward Greyhollow Church');
     expect(travel.handled).toBe(false);
@@ -93,7 +96,8 @@ describe('q73-DYING', () => {
     const here = dying(withAlly('Wenna Brack'));
     const ok = resolveDeathSaveTurn(here, () => 0.5, 'Ask Wenna Brack to stabilise you')!;
     expect(ok.receipts.some((r) => r.includes('DC 10') && r.includes('success'))).toBe(true);
-    expect(ok.facts).toMatch(/stable at 0 HP/);
+    expect(ok.facts).toMatch(/stable, still down/);
+    expect(ok.facts).not.toMatch(/\bHP\b/);
     expect(ok.state.character.hp).toBe(1);
     expect(ok.state.deathSaves ?? null).toBeNull();
 
@@ -102,7 +106,7 @@ describe('q73-DYING', () => {
     expect(miss.receipts.some((r) => r.startsWith('Death save:'))).toBe(true);
     expect(miss.state.character.hp).toBe(0);
     expect(miss.state.deathSaves?.successes).toBe(1);
-    expect(miss.facts).not.toMatch(/stable at 0 HP/);
+    expect(miss.facts).not.toMatch(/stable, still down/);
   });
 
   it('a carried potion ends dying', () => {
@@ -151,6 +155,74 @@ describe('q73-DYING', () => {
     const verdict = mod.runVerdict([{ bibleId: 'cursed-keep', ok: false, ended: true, result: 'run ended: death at T54' }]);
     expect(verdict.ok).toBe(true);
     expect(verdict.problems.some((p: string) => p.includes('not_ok'))).toBe(false);
+  });
+});
+
+describe('q73r-DYING seed 20612 T10-T11', () => {
+  it('after the drop to 0, committed options contain no travel (MOVE refill stayed off)', () => {
+    // Lap 20612 T10: fight dropped Jax to 0; pad still offered Travel + Fight for breath because
+    // applyOptionCooldown refilled empty MOVE from place exits after dying chips were built.
+    const afterDrop = dying({
+      turn: 10,
+      currentLocation: 'On the road between places',
+      journey: {
+        from: 'the washed-out road into Greyhollow',
+        to: 'Greyhollow Inn',
+        legsDone: 1,
+        legsTotal: 2,
+        ground: 'Back streets',
+      } as GameState['journey'],
+    });
+    const pad = commitOfferedPad({ ...afterDrop, offeredPad: null, choices: ['Travel toward Greyhollow Inn'] });
+    const choices = pad.offeredPad?.choices ?? [];
+    expect(choices.some((c) => /travel/i.test(c))).toBe(false);
+    expect(choices).toContain('Fight for breath');
+    expect(pad.offeredPad?.chips?.every((c) => c.kind === 'dying')).toBe(true);
+  });
+
+  it('T11 travel input is a death-save turn with no movement, and ledger HP in prose is rejected', () => {
+    // Lap shape (seed 20612 T11): travel while dying on the road to Greyhollow Inn.
+    // Fixed mid d20 (not nat 20): stay dying so travel is refused; turnRng hashes the journey.
+    const s = dying({
+      turn: 11,
+      currentLocation: 'On the road between places',
+      journey: {
+        from: 'the washed-out road into Greyhollow',
+        to: 'Greyhollow Inn',
+        legsDone: 1,
+        legsTotal: 2,
+        ground: 'Back streets',
+      } as GameState['journey'],
+    });
+    const here = s.currentLocation;
+    const save = resolveDeathSaveTurn(s, () => 0.5, 'Travel toward Greyhollow Inn')!;
+    expect(save.receipts.some((r) => r.startsWith('Death save:'))).toBe(true);
+    expect(save.state.character.hp).toBe(0);
+    expect(isDyingSafe(save.state)).toBe(true);
+    expect(save.facts).toMatch(/unconscious, death saves/);
+    expect(save.facts).not.toMatch(/\bHP\b/);
+    expect(save.state.currentLocation).toBe(here);
+    expect(save.state.journey).toEqual(s.journey);
+    const travel = commitTravel(save.state, 'Travel toward Greyhollow Inn');
+    expect(travel.handled).toBe(false);
+    expect(travel.state.currentLocation).toBe(here);
+
+    // Director path (stock dying journey): travel input is still a death-save mandate, no move.
+    const arc = runArcDirectorBeforeGm(dying(), 'Travel toward Greyhollow Inn');
+    expect(arc.state.currentLocation).toBe(dying().currentLocation);
+    expect(arc.systemReceipts.some((r) => r.startsWith('Death save:'))).toBe(true);
+    expect(arc.mandate).toMatch(/unconscious, death saves/);
+    expect(arc.mandate).not.toMatch(/\bHP\b/);
+
+    const ledgerProse = 'You lie unconscious on the ground at 0 HP and cannot move, speak or act.';
+    const problems = writerDraftProblems(ledgerProse, {
+      state: s,
+      playerInput: 'Travel toward Greyhollow Inn',
+      intent: parsePlayerIntent('Travel toward Greyhollow Inn', s),
+      engineFact: save.facts,
+      previousGm: '',
+    });
+    expect(problems.some((p) => p.startsWith('Wrong voice:') && /\bHP\b/.test(p))).toBe(true);
   });
 });
 
