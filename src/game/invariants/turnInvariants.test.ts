@@ -357,6 +357,108 @@ describe('q76b-STRESS stub writer voices only present', () => {
   });
 });
 
+describe('q76e-SCENARIOS engine injection + answered + naughty stub', () => {
+  it('injectFight: activeEncounter from selectCatalogEncounter + initEncounterTerminal', async () => {
+    const { injectFight } = await import('../../../scripts/stress-player/scenarios');
+    const after = injectFight(base({ engineMode: 'dnd', campaignBibleId: 'cursed-keep' }));
+    expect(after.activeEncounter?.name).toBeTruthy();
+    expect(after.activeEncounter?.phase ?? 'engaged').toBeTruthy();
+  });
+
+  it('injectDying: deathSaves + hp 0 while fight live (SRD drop to 0)', async () => {
+    const { injectDying } = await import('../../../scripts/stress-player/scenarios');
+    const after = injectDying(base({ engineMode: 'dnd', campaignBibleId: 'cursed-keep' }));
+    expect(after.character.hp).toBe(0);
+    expect(after.deathSaves).toEqual({ successes: 0, failures: 0 });
+    expect(after.activeEncounter?.name).toBeTruthy();
+    expect(isDying(after)).toBe(true);
+  });
+
+  it('injectRoadBlock: journey.encounter from rollRoadEncounter', async () => {
+    const { injectRoadBlock } = await import('../../../scripts/stress-player/scenarios');
+    const { mulberry32 } = await import('../fatePick');
+    const after = injectRoadBlock(
+      base({ engineMode: 'dnd', campaignBibleId: 'cursed-keep', currentLocation: 'Greyhollow Inn' }),
+      mulberry32(42),
+    );
+    expect(after.journey).toBeTruthy();
+    expect(after.journey?.encounter).toBeTruthy();
+  });
+
+  it('injectGatekeeper: agenda want/need via ensureNpcAgenda', async () => {
+    const { injectGatekeeper } = await import('../../../scripts/stress-player/scenarios');
+    const after = injectGatekeeper(base());
+    const osric = (after.npcMemories ?? []).find((m) => /osric/i.test(m.npcName));
+    expect(osric?.need || osric?.goal?.motivation).toBeTruthy();
+    expect((after.sceneFacts?.present ?? []).some((p) => /osric/i.test(String(p)))).toBe(true);
+  });
+
+  it('engineAnswered: bare gmText is not enough; refusalBody counts', async () => {
+    const { engineAnswered } = await import('../../../scripts/stress-player/scenarios');
+    expect(engineAnswered({ typed: true }).answered).toBe(false);
+    expect(engineAnswered({
+      typed: true,
+      systemLog: ['Dry run — stub writer, no GM call'],
+    }).answered).toBe(false);
+    const refused = engineAnswered({
+      typed: true,
+      refusalBody: "You don't have: crowbar",
+    });
+    expect(refused.answered).toBe(true);
+    expect(refused.visibleAnswer).toMatch(/crowbar/i);
+    expect(engineAnswered({
+      typed: true,
+      systemLog: ['Dry run — stub', 'Travel: road between A and B — leg 1 of 3'],
+    }).answered).toBe(true);
+  });
+
+  it('naughty stub voices absent NPC → absent-speaker invariant fires', async () => {
+    const { buildStressStubProse } = await import('../../../scripts/stress-player/stubWriter');
+    const before = base({
+      turn: 52,
+      sceneFacts: {
+        present: ['Rook'],
+        props: [],
+        crowd: 'none',
+        noise: 'quiet',
+        lastBeat: '',
+        updatedTurn: 52,
+      },
+      npcMemories: [{
+        npcId: 'person:mira',
+        npcName: 'Mira Voss',
+        disposition: 'neutral',
+        facts: [],
+        lastSeenTurn: 10,
+        present: false,
+        location: 'elsewhere',
+      }],
+    });
+    const stub = buildStressStubProse(before, 'Look around', { naughty: true, roll: 0, naughtyChance: 1 });
+    expect(stub.speakers.some((s) => /mira/i.test(s))).toBe(true);
+    const after = { ...before, turn: 53 };
+    const v = checkTurnInvariants(before, after, turn({
+      speakers: stub.speakers,
+      prose: stub.prose,
+    }));
+    expect(v.some((x) => x.code === 'absent-speaker')).toBe(true);
+  });
+
+  it('pickAndInjectScenario: ~60% risky over many draws', async () => {
+    const { pickAndInjectScenario } = await import('../../../scripts/stress-player/scenarios');
+    const { mulberry32 } = await import('../fatePick');
+    const rng = mulberry32(7);
+    let risky = 0;
+    const n = 200;
+    for (let i = 0; i < n; i++) {
+      const r = pickAndInjectScenario(base({ engineMode: 'dnd', campaignBibleId: 'cursed-keep' }), rng);
+      if (r.id !== 'none') risky += 1;
+    }
+    expect(risky / n).toBeGreaterThan(0.45);
+    expect(risky / n).toBeLessThan(0.75);
+  });
+});
+
 describe('q76c wire — check-lap tape scan', () => {
   it('scans recent check-lap turns; P0 fails only when turnInvariants was recorded', () => {
     const dirs = listRecentCheckLapDirs(8);

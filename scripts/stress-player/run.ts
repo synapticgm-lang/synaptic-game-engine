@@ -1,15 +1,12 @@
 /**
- * q76b-STRESS — no-AI random stress player (node / vite-node).
+ * q76b-STRESS / q76e-SCENARIOS — no-AI random stress player (node / vite-node).
  * Drives headlessFateTurn with dryRun stub writer (no OpenRouter / network GM).
- * Modes: litrpg | rpg | tabletop (never PYOA). Seeded RNG. Calls checkTurnInvariants
- * after every turn; on violation writes scripts/stress-player/breaks/ and a
- * describe.skip vitest under src/__tests__/stressBreaks/.
+ * q76e: ~60% games start in engine-built risky scenarios; typed 'answered' is
+ * refusal/receipt/engineResult (not bare gmText); coverage stats printed.
  *
- * Invoke (package.json script deferred — worktree rule forbids editing it):
+ * Invoke:
  *   node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/stress-player/run.ts -- \
- *     --modes litrpg,rpg,tabletop --games N --turns M --seed S
- *
- * No third-party library beyond vite-node (dev runner, MIT).
+ *     --modes litrpg,rpg,tabletop --games N --turns M --seed S [--naughty]
  */
 import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -30,8 +27,17 @@ import { getCampaignBiblesByEngineMode, type CampaignBible } from '@/data/campai
 import { mulberry32, pickFateChoice, type Rng } from '../../src/game/fatePick';
 import { resolveOfferedChoices } from '../../src/game/playTranscript';
 import { checkTurnInvariants, type TurnOption } from '../../src/game/invariants/turnInvariants';
+import { validateActionHard } from '../../src/game/actionValidation';
 import { buildStressStubProse } from './stubWriter';
 import { generateTypedLine } from './generators';
+import {
+  pickAndInjectScenario,
+  engineAnswered,
+  emptyCoverage,
+  sampleCoverage,
+  type CoverageBucket,
+  type StressScenarioId,
+} from './scenarios';
 import type { EngineMode, GameState } from '../../src/game/types';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -63,11 +69,13 @@ function parseArgs(argv: string[]): {
   games: number;
   turns: number;
   seed: number;
+  naughty: boolean;
 } {
   let modes: ModeKey[] = ['litrpg', 'rpg', 'tabletop'];
   let games = 3;
   let turns = 20;
   let seed = 1;
+  let naughty = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     const next = () => argv[++i] ?? '';
@@ -81,18 +89,20 @@ function parseArgs(argv: string[]): {
     } else if (a === '--games') games = Math.max(1, Number(next()) || 1);
     else if (a === '--turns') turns = Math.max(1, Number(next()) || 1);
     else if (a === '--seed') seed = Number(next()) || 1;
+    else if (a === '--naughty') naughty = true;
     else if (a === '--help' || a === '-h') {
-      console.log(`stress-player — no-AI stub writer
+      console.log(`stress-player — no-AI stub writer + scenario injection
 
   --modes litrpg,rpg,tabletop   (never pyoa; default all three)
   --games N                     games to run (default 3)
   --turns M                     turns per game (default 20)
   --seed S                      base seed (default 1)
+  --naughty                     stub may voice absent known NPCs (prove checker)
 `);
       process.exit(0);
     }
   }
-  return { modes, games, turns, seed };
+  return { modes, games, turns, seed, naughty };
 }
 
 function engineModeFor(m: ModeKey): EngineMode {
@@ -156,6 +166,8 @@ function saveBreak(opts: {
   speakers: string[];
   offeredOptions: TurnOption[];
   violation: { code: string; severity: string; detail: string };
+  answered: boolean;
+  visibleAnswer: string;
 }): string {
   mkdirSync(BREAKS_DIR, { recursive: true });
   mkdirSync(VITEST_DIR, { recursive: true });
@@ -171,6 +183,8 @@ function saveBreak(opts: {
     typed: opts.typed,
     gmText: opts.gmText,
     speakers: opts.speakers,
+    answered: opts.answered,
+    visibleAnswer: opts.visibleAnswer,
     offeredOptions: opts.offeredOptions,
     violation: opts.violation,
     stateBefore: opts.stateBefore,
@@ -196,17 +210,18 @@ describe.skip('stress break ${base}', () => {
       typed: boolean;
       gmText: string;
       speakers: string[];
+      answered?: boolean;
+      visibleAnswer?: string;
       offeredOptions: unknown[];
       violation: { code: string };
     };
-    const after = raw.stateBefore;
-    const hits = checkTurnInvariants(raw.stateBefore, after, {
+    const hits = checkTurnInvariants(raw.stateBefore, raw.stateBefore, {
       offeredOptions: raw.offeredOptions as never,
       playerInput: raw.input,
       typed: raw.typed,
       prose: raw.gmText,
-      answered: !!raw.gmText.trim(),
-      visibleAnswer: raw.gmText,
+      answered: raw.answered ?? false,
+      visibleAnswer: raw.visibleAnswer ?? '',
       speakers: raw.speakers,
     });
     expect(hits.some((h) => h.code === raw.violation.code)).toBe(true);
@@ -217,12 +232,24 @@ describe.skip('stress break ${base}', () => {
   return jsonPath;
 }
 
+function addCoverage(into: CoverageBucket, sample: ReturnType<typeof sampleCoverage>): void {
+  into.fight += sample.fight;
+  into.dying += sample.dying;
+  into.roadBlock += sample.roadBlock;
+  into.typed += sample.typed;
+  into.ended += sample.ended;
+  into.turns += 1;
+}
+
 async function runGame(opts: {
   mode: ModeKey;
   seed: number;
   turns: number;
   rng: Rng;
+  naughty: boolean;
   breaksByCode: Map<string, number>;
+  coverage: CoverageBucket;
+  scenariosUsed: Map<StressScenarioId, number>;
 }): Promise<{ turns: number; breaks: number }> {
   const engineMode = engineModeFor(opts.mode);
   const bible = pickBible(engineMode, opts.rng);
@@ -238,13 +265,20 @@ async function runGame(opts: {
     seed: opts.seed,
     personality: 'cold-system',
     engineMode,
-    tabletopCreation: false,
+    tabletopCreation: engineMode === 'dnd',
   });
   let state = stampOpening(built.state);
+  const picked = pickAndInjectScenario(state, opts.rng);
+  state = picked.state;
+  opts.scenariosUsed.set(picked.id, (opts.scenariosUsed.get(picked.id) ?? 0) + 1);
+
   let breaks = 0;
   let done = 0;
   for (let i = 0; i < opts.turns; i++) {
-    if (state.playPhase === 'ended') break;
+    if (state.playPhase === 'ended') {
+      addCoverage(opts.coverage, sampleCoverage(state, false));
+      break;
+    }
     const before = state;
     const labels = offeredLabels(before);
     const useChip = opts.rng() < 0.55 && labels.length > 0;
@@ -258,6 +292,53 @@ async function runGame(opts: {
       input = g.text;
       typed = true;
     }
+    addCoverage(opts.coverage, sampleCoverage(before, typed));
+
+    const lastGm = [...(before.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+    const hard = typed ? validateActionHard(input, before, lastGm) : { valid: true as const, refusalBody: undefined as string | undefined };
+
+    // Typed hard-gate refusal: engine answer is refusalBody (do not rewrite to Look around for scoring).
+    if (typed && !hard.valid && hard.refusalBody) {
+      const offered = offeredOptions(before);
+      const ans = engineAnswered({ typed: true, refusalBody: hard.refusalBody });
+      const stub = buildStressStubProse(before, input, {
+        naughty: opts.naughty,
+        naughtyChance: 0.15,
+        roll: opts.rng(),
+      });
+      const violations = checkTurnInvariants(before, before, {
+        offeredOptions: offered,
+        playerInput: input,
+        typed: true,
+        prose: ans.visibleAnswer,
+        answered: ans.answered,
+        visibleAnswer: ans.visibleAnswer,
+        speakers: stub.speakers,
+      });
+      for (let v = 0; v < violations.length; v++) {
+        const hit = violations[v]!;
+        breaks += 1;
+        opts.breaksByCode.set(hit.code, (opts.breaksByCode.get(hit.code) ?? 0) + 1);
+        saveBreak({
+          seed: opts.seed,
+          mode: opts.mode,
+          bible: bible.id,
+          turn: before.turn,
+          stateBefore: before,
+          input,
+          typed: true,
+          gmText: ans.visibleAnswer,
+          speakers: stub.speakers,
+          offeredOptions: offered,
+          violation: hit,
+          answered: ans.answered,
+          visibleAnswer: ans.visibleAnswer,
+        });
+      }
+      done += 1;
+      continue;
+    }
+
     const offered = offeredOptions(before);
     const result = await headlessFateTurn(before, settings, opts.rng, {
       bibleId: bible.id,
@@ -270,17 +351,29 @@ async function runGame(opts: {
     });
     state = result.state;
     done += 1;
-    const stub = buildStressStubProse(state, input);
+    const stub = buildStressStubProse(state, input, {
+      naughty: opts.naughty,
+      naughtyChance: 0.15,
+      roll: opts.rng(),
+    });
     const gmText = result.telemetry.gmText ?? stub.prose;
     const speakers = stub.speakers;
-    const answered = !!(gmText && gmText.trim());
+    const ans = engineAnswered({
+      typed,
+      refusalBody: hard.refusalBody,
+      systemLog: result.telemetry.systemLog,
+      engineResult: state.completedEvent?.engineResult ?? null,
+    });
+    // Chip turns: gmText is fine as visible answer. Typed: only engine answer counts.
+    const answered = typed ? ans.answered : !!(gmText && gmText.trim());
+    const visibleAnswer = typed ? ans.visibleAnswer : gmText;
     const violations = checkTurnInvariants(before, state, {
       offeredOptions: offered,
       playerInput: input,
       typed,
       prose: gmText,
       answered,
-      visibleAnswer: gmText,
+      visibleAnswer,
       speakers,
     });
     for (let v = 0; v < violations.length; v++) {
@@ -299,6 +392,8 @@ async function runGame(opts: {
         speakers,
         offeredOptions: offered,
         violation: hit,
+        answered,
+        visibleAnswer,
       });
     }
   }
@@ -314,7 +409,6 @@ async function main(): Promise<void> {
   mkdirSync(VITEST_DIR, { recursive: true });
   if (!existsSync(join(VITEST_DIR, '.gitkeep'))) writeFileSync(join(VITEST_DIR, '.gitkeep'), '');
 
-  // Mute engine chatter so thousands of turns stay fast (target ≥50 turns/s).
   const quiet = process.env.SGM_STRESS_VERBOSE !== '1';
   const log = console.log.bind(console);
   const info = console.info.bind(console);
@@ -326,10 +420,13 @@ async function main(): Promise<void> {
   }
 
   const breaksByCode = new Map<string, number>();
-  const perMode = new Map<ModeKey, { games: number; turns: number; breaks: number }>();
-  for (const m of args.modes) perMode.set(m, { games: 0, turns: 0, breaks: 0 });
+  const scenariosUsed = new Map<StressScenarioId, number>();
+  const perMode = new Map<ModeKey, { games: number; turns: number; breaks: number; coverage: CoverageBucket }>();
+  for (const m of args.modes) {
+    perMode.set(m, { games: 0, turns: 0, breaks: 0, coverage: emptyCoverage() });
+  }
+  const totalCoverage = emptyCoverage();
 
-  // Warm one New Game so module/cache cost is outside the timed window.
   {
     const warmMode = args.modes[0]!;
     const warmRng = mulberry32(args.seed);
@@ -338,7 +435,10 @@ async function main(): Promise<void> {
       seed: args.seed,
       turns: 1,
       rng: warmRng,
+      naughty: false,
       breaksByCode: new Map(),
+      coverage: emptyCoverage(),
+      scenariosUsed: new Map(),
     });
   }
 
@@ -349,13 +449,30 @@ async function main(): Promise<void> {
     const mode = args.modes[g % args.modes.length]!;
     const seed = args.seed + g * 10007;
     const rng = mulberry32(seed);
-    const r = await runGame({ mode, seed, turns: args.turns, rng, breaksByCode });
+    const slot = perMode.get(mode)!;
+    const r = await runGame({
+      mode,
+      seed,
+      turns: args.turns,
+      rng,
+      naughty: args.naughty,
+      breaksByCode,
+      coverage: slot.coverage,
+      scenariosUsed,
+    });
     totalTurns += r.turns;
     totalBreaks += r.breaks;
-    const slot = perMode.get(mode)!;
     slot.games += 1;
     slot.turns += r.turns;
     slot.breaks += r.breaks;
+  }
+  for (const [, slot] of perMode) {
+    totalCoverage.fight += slot.coverage.fight;
+    totalCoverage.dying += slot.coverage.dying;
+    totalCoverage.roadBlock += slot.coverage.roadBlock;
+    totalCoverage.typed += slot.coverage.typed;
+    totalCoverage.ended += slot.coverage.ended;
+    totalCoverage.turns += slot.coverage.turns;
   }
   const ms = Math.max(1, Date.now() - t0);
   const tps = (totalTurns * 1000) / ms;
@@ -366,15 +483,28 @@ async function main(): Promise<void> {
     console.warn = warn;
   }
 
+  const perModeOut: Record<string, unknown> = {};
+  for (const [m, slot] of perMode) {
+    perModeOut[m] = {
+      games: slot.games,
+      turns: slot.turns,
+      breaks: slot.breaks,
+      coverage: slot.coverage,
+    };
+  }
+
   log(JSON.stringify({
-    tag: 'q76b-STRESS',
+    tag: 'q76e-SCENARIOS',
     games: args.games,
     turns: totalTurns,
     turnsPerSec: Number(tps.toFixed(2)),
     ms,
     seed: args.seed,
     modes: args.modes,
-    perMode: Object.fromEntries([...perMode.entries()]),
+    naughty: args.naughty,
+    scenariosUsed: Object.fromEntries([...scenariosUsed.entries()]),
+    coverage: totalCoverage,
+    perMode: perModeOut,
     breaks: totalBreaks,
     breaksByCode: Object.fromEntries([...breaksByCode.entries()]),
   }, null, 2));
