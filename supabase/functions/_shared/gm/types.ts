@@ -7,9 +7,7 @@ type ComicTextAnchor =
   | 'bottom-left'
   | 'bottom-right'
   | 'bottom-center';
-
 export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary';
-
 export interface Item {
   id: string;
   name: string;
@@ -40,11 +38,9 @@ export interface Item {
   /** Tabletop: cursed magic item — voluntary end of attunement is refused until the curse is broken. */
   cursed?: boolean;
 }
-
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'material' | 'container' | 'accessory' | 'quest';
 export type StorageType = 'General' | 'Materials Only';
 export type ContainerKind = 'physical' | 'magical';
-
 export interface CraftingMaterial {
   id: string;
   name: string;
@@ -53,9 +49,7 @@ export interface CraftingMaterial {
   sourceType?: ItemType;
   description?: string;
 }
-
 export type AttributeKey = 'STR' | 'DEX' | 'CON' | 'INT' | 'WIS' | 'CHA';
-
 export interface Attributes {
   STR: number;
   DEX: number;
@@ -64,7 +58,6 @@ export interface Attributes {
   WIS: number;
   CHA: number;
 }
-
 export type TabletopClassId =
   | 'barbarian' | 'bard' | 'cleric' | 'druid' | 'fighter' | 'monk' | 'paladin' | 'ranger' | 'rogue' | 'sorcerer' | 'warlock' | 'wizard';
 export type TabletopSpeciesId =
@@ -72,7 +65,6 @@ export type TabletopSpeciesId =
 export type TabletopBackgroundId = 'acolyte' | 'criminal' | 'sage' | 'soldier';
 export type AbilityMethod = 'point-buy' | 'standard-array' | '4d6';
 export type KitId = 'A' | 'B' | 'coin';
-
 /** Tabletop (dnd) sheet made in inn-book creation. SRD 5.2.1 (CC-BY-4.0) skill names. */
 export interface TabletopSheet {
   classId: TabletopClassId;
@@ -100,7 +92,6 @@ export interface TabletopSheet {
   /** Spells chosen; empty lists fall back to the class's default picks (rules/spells knownSpells). */
   spells?: { cantrips?: string[]; prepared?: string[]; spellbook?: string[] };
 }
-
 /** Runtime spell state of a tabletop caster (rules/spells). */
 export interface CastingState {
   /** Slots spent per spell level (index 0 = level 1). */
@@ -110,7 +101,6 @@ export interface CastingState {
   /** Wizard Arcane Recovery used since the last Long Rest. */
   arcaneRecoveryUsed?: boolean;
 }
-
 export interface TabletopPicks {
   classId?: TabletopClassId;
   speciesId?: TabletopSpeciesId;
@@ -121,16 +111,13 @@ export interface TabletopPicks {
   kitId?: KitId;
   source?: TabletopSheet['source'];
 }
-
 export type TabletopCreationStage = 'start' | 'class' | 'species' | 'background' | 'method' | 'scores' | 'kit' | 'confirm' | 'done';
-
 export interface TabletopCreationState {
   stage: TabletopCreationStage;
   picks: TabletopPicks;
   /** The opening pad to give back once the sheet is done. */
   restorePad?: { turn: number; choices: string[] } | null;
 }
-
 /** A condition on a combatant during a round fight (SRD 5.2.1 names). */
 export interface CombatCondition {
   name: string;
@@ -142,7 +129,6 @@ export interface CombatCondition {
   /** The save or check DC that ends it (Entangle's Restrained, Searing Smite's burning). */
   dc?: number;
 }
-
 export interface RoundFoeState {
   id: string;
   name: string;
@@ -155,7 +141,6 @@ export interface RoundFoeState {
   /** Distance from the PC in feet (SRD 5.2.1). Unset = within 5 ft. */
   distanceFt?: number;
 }
-
 /** TT-X1 — remaining action / bonus / movement / reaction after the PC's turn. */
 export interface PcCombatEconomy {
   actionAvailable: boolean;
@@ -163,7 +148,6 @@ export interface PcCombatEconomy {
   movementFt: number;
   reactionAvailable: boolean;
 }
-
 export interface RoundCombatState {
   encounterName: string;
   /** The round about to be played (1 before the first choice). */
@@ -204,7 +188,6 @@ export interface RoundCombatState {
   /** Monk Deflect Attacks used this round. */
   deflectUsed?: boolean;
 }
-
 /** One logged oracle roll: an uncertain world fact settled by a d100 (rules/oracle). */
 export interface OracleEntry {
   turn: number;
@@ -214,14 +197,12 @@ export interface OracleEntry {
   roll: number;
   answer: 'Yes, and' | 'Yes' | 'No' | 'No, and';
 }
-
 export interface DeathSaveState {
   successes: number;
   failures: number;
   stable?: boolean;
   dead?: boolean;
 }
-
 /** Settings the shared rules engine obeys. Sliders are 0–100; 50 leaves the engine's base pacing alone. */
 export interface HouseRules {
   secretDeathSaves: boolean;
@@ -259,7 +240,6 @@ export interface HouseRules {
   /** SRD Travel Pace: Fast 4 mph (Disadvantage on Perception, Survival, Stealth), Normal 3 (Stealth), Slow 2 (Advantage on Perception, Survival). */
   travelPace: 'fast' | 'normal' | 'slow';
 }
-
 /** Coins by denomination (rules/coins). */
 export interface CoinPurse {
   pp: number;
@@ -268,7 +248,6 @@ export interface CoinPurse {
   sp: number;
   cp: number;
 }
-
 /** Session zero agreed before a tabletop game (SessionZeroPanel). Lines never appear; veils happen off-screen. */
 export interface SessionZero {
   lines: string[];
@@ -276,14 +255,11 @@ export interface SessionZero {
   /** The saved sheet picked to play (sheet library id), or null to build at the inn book. */
   sheetId?: string | null;
 }
-
 export type TabletopRulesVersion = 'srd-5.2.1' | 'srd-5.1';
 export type EncounterDifficulty = 'easy' | 'normal' | 'hard' | 'deadly';
 export type SidekickKind = 'warrior' | 'expert' | 'spellcaster';
 export type CritRule = 'double-dice' | 'max-plus-roll' | 'double-total';
-
 export type EntityKind = 'pet' | 'demon' | 'minion' | 'familiar' | 'mount';
-
 export interface SummonEntity {
   id: string;
   name: string;
@@ -300,9 +276,7 @@ export interface SummonEntity {
   xp?: number;
   level?: number;
 }
-
 export type RelationshipStatus = 'Friendly' | 'Hostile' | 'Neutral' | 'Rival' | 'Loyal';
-
 export interface Relationship {
   id: string;
   npcName: string;
@@ -314,7 +288,6 @@ export interface Relationship {
   bio: string;
   lastInteraction: string;
 }
-
 /** One LitRPG / Story RPG named skill: library id, skill XP level (SK-5), and the technique it evolved into. */
 export interface NamedSkillState {
   id: string;
@@ -332,7 +305,6 @@ export interface NamedSkillState {
   /** When the evolved technique was last used, for its library cooldown. */
   usedAt?: { scene: string; day: number; turn: number };
 }
-
 export interface Character {
   name: string;
   level: number;
@@ -393,7 +365,6 @@ export interface Character {
   entities?: SummonEntity[];
   summons?: SummonEntity[];
 }
-
 export interface Companion {
   id: string;
   name: string;
@@ -417,7 +388,6 @@ export interface Companion {
   /** Approval warnings already given (0–2); the companion leaves after the last. */
   approvalWarnings?: number;
 }
-
 export interface Container {
   id: string;
   name: string;
@@ -430,13 +400,10 @@ export interface Container {
   equipped?: boolean;
   slot?: string;
 }
-
 export type PlayPhase = 'live' | 'down' | 'ended';
-
 export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
 export type QuestUrgency = 'immediate' | 'time-sensitive' | 'flexible' | 'unknown';
-
 /**
  * TT-G1 / OPT-4 discovery route (Three Clue Rule — The Alexandrian; pattern only).
  * Person + place/object + mode third (check/Study | skill/system | contact/standing).
@@ -453,7 +420,6 @@ export type QuestRouteKind =
   | 'contact'
   | 'standing'
   | 'approach';
-
 export interface QuestRoute {
   id: string;
   kind: QuestRouteKind;
@@ -466,7 +432,6 @@ export interface QuestRoute {
   /** This route already revealed the lead. */
   revealed?: boolean;
 }
-
 export interface QuestObjective {
   id: string;
   description: string;
@@ -491,7 +456,6 @@ export interface QuestObjective {
   /** ≥3 discovery routes (TT-G1); decision steps list approach routes here. */
   routes?: QuestRoute[];
 }
-
 export interface QuestTarget {
   kind: 'item' | 'person';
   name: string;
@@ -502,7 +466,6 @@ export interface QuestTarget {
   /** The turn the engine recorded the player finding or meeting it. */
   foundTurn?: number;
 }
-
 export interface ChoiceJournalEntry {
   turn: number;
   kind: 'deed' | 'decision' | 'origin' | 'romance' | 'ending';
@@ -510,14 +473,12 @@ export interface ChoiceJournalEntry {
   npc?: string;
   text: string;
 }
-
 export interface LitrpgFloorLadder {
   /** Highest floor cleared (0 before the first boss falls). */
   cleared: number;
   /** One rung per cleared floor: the dungeon and the boss that fell there. */
   bosses: { floor: number; dungeon: string; boss: string; turn: number }[];
 }
-
 export interface Quest {
   id: string;
   name: string;
@@ -569,45 +530,37 @@ export interface Quest {
   openLeads?: string[];
   /** Provenance for Simple Why? (bible seed, story beat, System notice). */
   provenance?: string;
-  
   // Pack 12 Urgency Tracking
   urgency?: QuestUrgency;
   deadline?: number;  // turn number for urgent reminder
 }
-
 export interface ShrineEntry {
   id: string;
   name: string;
   type: string;
   description: string;
 }
-
 export interface BestiaryEntry {
   id: string;
   name: string;
   threat: string;
   notes: string;
 }
-
 export interface RollRecord {
   id: string;
   turn: number;
   raw: string;
 }
-
 export type MapTier = 1 | 2 | 3 | 4;
-
 export interface HexCoordinates {
   q: number;
   r: number;
 }
-
 export interface Location3D extends HexCoordinates {
   tier: MapTier;
   z: number;
   elevation?: number;
 }
-
 export interface TradeCaravan {
   id: string;
   destination: string;
@@ -616,18 +569,15 @@ export interface TradeCaravan {
   expectedReturn: number;
   status: 'active' | 'returning' | 'completed' | 'ambushed';
 }
-
 export type WorkEthic = 'idle' | 'steady' | 'driven';
 export type DealRisk = 'safe' | 'mixed' | 'dangerous';
 export type HoldingKind = 'guild' | 'town' | 'shop' | 'camp';
 export type HoldingOrder = 'jobs' | 'profit' | 'steal' | 'expand' | 'upgrade' | 'defend';
-
 /** In-game calendar. Advances on player turns — not while the app is closed. */
 export interface WorldClock {
   day: number;
   week: number;
 }
-
 export interface WorldDeal {
   id: string;
   name: string;
@@ -643,12 +593,10 @@ export interface WorldDeal {
   /** Order K: the commitment this deal is (kind 'deal'). */
   commitmentId?: string;
 }
-
 /** Order K: an engine-checkable condition. Set only for an engine-tracked quest or deal. */
 export type CommitmentCondition =
   | { type: 'quest-complete'; questId: string }
   | { type: 'deal-runs'; dealId: string };
-
 /** Order K: one record for a promise, deal, or agreement. The engine sets status. */
 export interface Commitment {
   promiseId: string;
@@ -668,10 +616,8 @@ export interface Commitment {
   condition?: CommitmentCondition;
   checkedTurn?: number;
 }
-
 /** TT-T1 — kind of an engine open thread (Mythic-style list; pattern only). */
 export type ThreadKind = 'quest' | 'npc-goal' | 'promise' | 'lead' | 'foe';
-
 /** TT-T1 — engine condition that alone may close the thread. */
 export type ThreadResolution =
   | { type: 'quest-complete'; questId: string }
@@ -679,7 +625,6 @@ export type ThreadResolution =
   | { type: 'commitment-kept'; promiseId: string }
   | { type: 'lead-resolved'; questId: string; lead: string }
   | { type: 'foe-defeated'; foeName: string };
-
 /** TT-T1 — one open thread on the engine list. */
 export type OpenThread = {
   id: string;
@@ -690,7 +635,6 @@ export type OpenThread = {
   lastSeenTurn: number;
   resolution: ThreadResolution;
 };
-
 /** TT-T1 / OPT-5 — scene planner pick for this turn (stall bring-forward optional). */
 export type SceneThreadPlan = {
   plannedTurn: number;
@@ -700,7 +644,6 @@ export type SceneThreadPlan = {
   /** Engine event id for the stall fire (timeline / writer fact). */
   stallEventId?: string;
 };
-
 /** OPT-5 — place arc changes from engine events (not prose). */
 export type PlaceEngineEventKind = 'cleared' | 'closed' | 'reopened' | 'new-threat' | 'new-trader';
 export type PlaceEngineEvent = {
@@ -708,7 +651,6 @@ export type PlaceEngineEvent = {
   placeId: string;
   detail?: string;
 };
-
 export interface WorldHolding {
   id: string;
   name: string;
@@ -723,7 +665,6 @@ export interface WorldHolding {
   lastSeenTurn: number;
   lastWeekSummary?: string;
 }
-
 export interface WorldHostile {
   id: string;
   name: string;
@@ -733,7 +674,6 @@ export interface WorldHostile {
   lastResolvedWeek: number;
   lastWeekSummary?: string;
 }
-
 export interface WorldActor {
   id: string;
   name: string;
@@ -744,7 +684,6 @@ export interface WorldActor {
   lastResolvedWeek: number;
   lastSeenTurn: number;
 }
-
 /** Faction relationship on the living-world ledger (code-owned; writer narrates, does not invent standings). */
 export type FactionStandingLevel =
   | 'hostile'
@@ -752,7 +691,6 @@ export type FactionStandingLevel =
   | 'neutral'
   | 'friendly'
   | 'allied';
-
 export interface FactionStanding {
   id: string;
   name: string;
@@ -760,10 +698,8 @@ export interface FactionStanding {
   influence?: number;
   notes?: string;
 }
-
 /** How hard the sandbox hits — prompt tone only; numbers stay on the ledger. */
 export type PowerScaling = 'gritty' | 'balanced' | 'overpowered';
-
 export interface WorldLedger {
   clock: WorldClock;
   caravans: TradeCaravan[];
@@ -810,7 +746,6 @@ export interface ActiveEncounter {
   /** How many stand in this fight (a group road meeting's rolled headcount). Unset is one foe. */
   count?: number;
 }
-
 /** 29y — a threat remembered at one place (the existing encounter, parked while no fight is live). */
 export interface PlaceThreat {
   /** Place name as the engine had it (display only; the map key is the lowercased name). */
@@ -822,7 +757,6 @@ export interface PlaceThreat {
   /** How the last try ended while it stayed: still live, the player lost, the player fled, or nothing settled it. */
   lastOutcome?: 'pending' | 'live' | 'defeat' | 'unsettled' | 'escaped';
 }
-
 export interface OpeningEstablishment {
   pending: Array<{
     id: string;
@@ -865,7 +799,6 @@ export interface OpeningEstablishment {
   /** The card's opening offer once the player has taken or turned it down; open while unset. */
   offerTaken?: 'accepted' | 'refused';
 }
-
 /** The card's opening offer compiled once: what is handed over, and the accept and refuse lines. */
 export interface OpeningOfferRecord {
   items: string[];
@@ -874,7 +807,6 @@ export interface OpeningOfferRecord {
   /** What the chips call it: "the work" when the offer is a job, else "the offer". */
   noun: 'work' | 'offer';
 }
-
 export interface OpeningCardRecord {
   /** HERE for the opening: the card's own head noun, with the hub as parent when it sits in one. */
   place?: string;
@@ -890,7 +822,6 @@ export interface OpeningCardRecord {
   /** The card's opening offer, when someone here hands over kit for an answer. */
   offer?: OpeningOfferRecord;
 }
-
 export interface GameState {
   /** Save generation. Clients reject anything below CURRENT_SAVE_VERSION. */
   version: number;
@@ -1230,9 +1161,7 @@ export interface GameState {
    */
   threatTier?: number;
 }
-
 export type RepairSituation = import('./repairEngine').RepairSituation;
-
 export interface PendingRepair {
   id: string;
   situation: RepairSituation;
@@ -1241,10 +1170,8 @@ export interface PendingRepair {
   options: string[];
   createdAt: number;
 }
-
 export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
 export type MemorableOfferKind = 'beauty' | 'ruler-audience' | 'writer-tag';
-
 /** One unlocked memorable plate (Audible-style “you earned this moment”). */
 export interface StoryPlate {
   id: string;
@@ -1252,7 +1179,6 @@ export interface StoryPlate {
   title: string;
   turn: number;
 }
-
 /** Player-offered splash (beauty, ruler audience, or writer milestone tag). */
 export interface BeautyMomentOffer {
   kind?: MemorableOfferKind;
@@ -1261,7 +1187,6 @@ export interface BeautyMomentOffer {
   imagePrompt: string;
   status: BeautyOfferStatus;
 }
-
 /** Persisted flags so classic memorable art stays sparse and does not re-fire the opener. */
 export interface MemorableMomentState {
   openingSplashFired?: boolean;
@@ -1294,7 +1219,6 @@ export interface MemorableMomentState {
   /** Unlocked memorable plates — shown on the character Titles tab. */
   storyPlates?: StoryPlate[];
 }
-
 export interface WorldAtlasRegionState {
   id: string;
   name: string;
@@ -1303,9 +1227,7 @@ export interface WorldAtlasRegionState {
   tags?: string[];
   revealed: boolean;
 }
-
 export type JourneyTerrain = 'forest' | 'marsh' | 'mountain' | 'coast' | 'streets' | 'road';
-
 /** 29u — a trip across the map that takes more than one step. */
 export interface TravelJourney {
   from: string;
@@ -1345,10 +1267,8 @@ export interface TravelJourney {
   /** Stretches lost to bad navigation on this trip (each one adds a stretch). */
   lostLegs?: number;
 }
-
 export type TravelWeather = 'clear' | 'overcast' | 'light rain' | 'heavy rain' | 'strong wind' | 'fog';
 export type TravelJob = 'guide' | 'lookout' | 'forager';
-
 /** A named stop on a route between two places: made once, saved, the same on the way back. */
 export interface RouteStop {
   name: string;
@@ -1359,13 +1279,11 @@ export interface RouteStop {
   /** The find was spotted (it is then known and never pays twice). */
   found?: boolean;
 }
-
 /** The travel engine's plain facts for the writer on the turn they happened. */
 export interface TravelBeat {
   turn: number;
   facts: string[];
 }
-
 export type RoadEncounterKind =
   | 'wildlife'
   | 'traveler'
@@ -1378,7 +1296,6 @@ export type RoadEncounterKind =
   | 'signs'
   | 'plea'
   | 'lair';
-
 /** 29w — a chance meeting on one stretch. Kind and level only; the writer names it. */
 export interface RoadEncounter {
   kind: RoadEncounterKind;
@@ -1418,10 +1335,8 @@ export interface RoadEncounter {
   /** tt-build-camps — the placed camp this meeting is (its place id, headcount and what the player last did there). */
   camp?: { placeId: string; headcount: number; memory?: RoadCampOutcome };
 }
-
 /** tt-build-camps — what the player did at a placed road camp, remembered on its place record. */
 export type RoadCampOutcome = 'cleared' | 'parleyed' | 'robbed' | 'fled';
-
 /** tt-build-camps — a road camp placed once on a route stretch: who is there and what happened, kept on the save. */
 export interface RoadCampRecord {
   /** `routeKey` of the road it sits on. */
@@ -1439,7 +1354,6 @@ export interface RoadCampRecord {
   outcome?: RoadCampOutcome;
   outcomeTurn?: number;
 }
-
 /** Premade settlement on the world map (29e). */
 export interface WorldAtlasSettlement {
   id: string;
@@ -1452,7 +1366,6 @@ export interface WorldAtlasSettlement {
   allowsDungeon?: boolean;
   questTags?: string[];
 }
-
 export interface WorldAtlasState {
   outlineId: string;
   outlineName: string;
@@ -1462,7 +1375,6 @@ export interface WorldAtlasState {
   /** Fixed towns/cities/shores — AI must not invent new ones. */
   settlements?: WorldAtlasSettlement[];
 }
-
 export interface SaveSlotInfo {
   saveId: string;
   storyName: string;
@@ -1472,11 +1384,9 @@ export interface SaveSlotInfo {
   level: number;
   source: 'local' | 'cloud';
 }
-
 export type PanelImageStatus = 'pending' | 'ready' | 'error' | 'failed';
 export type MediaKind = 'image' | 'video';
 export type LogEntryKind = 'standard' | 'milestone' | 'loot-video';
-
 /** Pre-export editor overrides for a single speech/caption chip on a comic panel. */
 export interface ComicOverlayEdit {
   segmentIndex: number;
@@ -1487,7 +1397,6 @@ export interface ComicOverlayEdit {
   /** Optional replacement text written in Editor Mode before PDF bake. */
   text?: string;
 }
-
 export interface ComicPanel {
   imagePrompt: string;
   narrative: string;
@@ -1505,7 +1414,6 @@ export interface ComicPanel {
   artJobKey?: string;
   beatRevision?: number;
 }
-
 export interface LogEntry {
   id: string;
   turn: number;
@@ -1586,10 +1494,8 @@ export interface LogEntry {
   /** Optional italic flavor quote under the receipt (Free micro-prompt). */
   flavorQuote?: string;
 }
-
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
 export type EngineMode = 'litrpg' | 'dnd' | 'rpg' | 'pyoa';
-
 /** Story RPG and pick-your-own-adventure: no LitRPG HUD, no tabletop dice. */
 export function isFictionEngine(mode: EngineMode | undefined): boolean {
   return mode === 'rpg' || mode === 'pyoa';
@@ -1606,22 +1512,17 @@ export type ViolenceLevel = 'none' | 'mild' | 'graphic';
 export type CursingLevel = 'none' | 'mild' | 'strong';
 /** 29z9k — plain (about age 9–11), standard (adult voice), child (Kid Mode content rules). */
 export type ReadingLevel = 'plain' | 'standard' | 'child';
-
 export type MapTriggerMode = 'tactical' | 'immersive';
 export type FogRevealThreshold = 'adjacent' | 'current' | 'full';
-
 export type AiProvider = 'gemini' | 'openrouter' | 'openai' | 'anthropic' | 'groq' | 'ollama';
-
 export interface TurnFrameTheme {
   icon: string;
   accentColor: string;
   frameStyle: string;
 }
-
 export type KeyStatus = 'untested' | 'validating' | 'valid' | 'invalid';
 export type ErrorKind = 'rate-limit' | 'network' | 'generic';
 export type LoreCardType = 'npc' | 'location' | 'item' | 'quest' | 'faction' | 'lore';
-
 export interface LoreCard {
   id: string;
   name: string;
@@ -1633,7 +1534,6 @@ export interface LoreCard {
   /** When false/undefined, this is GM-only background — do not treat the title as a place the player has visited. */
   revealed?: boolean;
 }
-
 /** Append-only factual chronicle — no narrative fluff. */
 export type TimelineFactKind =
   | 'location'
@@ -1653,7 +1553,6 @@ export type TimelineFactKind =
   | 'world'
   | 'scene'
   | 'other';
-
 /** q72 — engine tag verbs (text is rendered from these, never stored as free prose). */
 export type TimelineVerb =
   | 'appeared'
@@ -1675,7 +1574,6 @@ export type TimelineVerb =
   | 'cleared'
   | 'sprung'
   | 'found';
-
 /** q72 — kinds written by `tag()` (legacy kinds on old saves stay readable). */
 export type TimelineTagKind =
   | 'person'
@@ -1686,7 +1584,6 @@ export type TimelineTagKind =
   | 'quest'
   | 'combat'
   | 'said';
-
 /** q72 — minimal creature/item record (people stay on npcMemories). */
 export interface TimelineEntityRecord {
   kind: 'creature' | 'item' | 'exit' | 'place' | 'quest' | 'combat';
@@ -1696,7 +1593,6 @@ export interface TimelineEntityRecord {
   place?: string;
   notes: string[];
 }
-
 /** q72 — whole-stay visit log for the current place (outside the 40-cap / RECENT window). */
 export interface PlaceVisitLog {
   placeId: string;
@@ -1704,13 +1600,11 @@ export interface PlaceVisitLog {
   sinceTurn: number;
   events: TimelineFact[];
 }
-
 export type CrowdPresence = 'present' | 'sparse' | 'none' | 'unknown';
 export type SceneNoise = 'shouting' | 'voices' | 'quiet' | 'unknown';
 export type TimeOfDay = 'dawn' | 'morning' | 'midday' | 'afternoon' | 'dusk' | 'evening' | 'night' | 'unknown';
 export type Weather = 'clear' | 'rain' | 'storm' | 'snow' | 'fog' | 'cloudy' | 'unknown';
 export type TensionLevel = 'combat' | 'danger' | 'tense' | 'calm' | 'unknown';
-
 /** A position inside one place: the spot, and who is or is not within talking range of it. */
 export interface HereSpot {
   place: string;
@@ -1719,7 +1613,6 @@ export interface HereSpot {
   nearby: string[];
   awayFrom: string[];
 }
-
 /** Bound last-beat facts. Prose cannot empty a present crowd without time passing. */
 export interface SceneFacts {
   crowd: CrowdPresence;
@@ -1737,7 +1630,6 @@ export interface SceneFacts {
   props: string[];
   lastBeat: string;
   updatedTurn: number;
-  
   // Pack 12 Extended Tracking
   timeOfDay?: TimeOfDay;
   weather?: Weather;
@@ -1745,7 +1637,6 @@ export interface SceneFacts {
   tension?: TensionLevel;
   /** 29b — turn when exit/flee outdoor authority was committed (blocks snap-back scrub). */
   exitAuthorityTurn?: number;
-
   /** Targets already searched and established empty (here / debris / exterior / loc:…). */
   searchedEmpty?: string[];
   /** Named containers established empty (box / crate / bag when declared empty). */
@@ -1820,7 +1711,6 @@ export interface SceneFacts {
   /** OPT-5 — last place arc event (cleared / closed / reopened / threat / trader). */
   placeWorldFact?: string;
 }
-
 export interface TimelineFact {
   /** Entity / ref id for tagged events; legacy rows keep a uuid here. */
   id: string;
@@ -1835,7 +1725,6 @@ export interface TimelineFact {
   detail?: string;
   place?: string;
 }
-
 /** Live situation packet rebuilt each turn from structured state. */
 export interface SituationPacket {
   location: string;
@@ -1845,13 +1734,11 @@ export interface SituationPacket {
   presentEntities: string[];
   activeQuests: string[];
   recentFacts: string[];
-  
   // WS-7 Wave 1: Social Context
   socialContext?: {
     /** Active crisis (if any) */
     crisisId?: string;
     crisisName?: string;
-    
     /** Committed stakes */
     stakes?: {
       gain: string;
@@ -1859,14 +1746,12 @@ export interface SituationPacket {
       owner: string;
       deadline?: number;
     };
-    
     /** Available leverage assets */
     leverage?: Array<{
       type: string;
       targetNpc: string;
       exhausted: boolean;
     }>;
-    
     /** NPC relationships (visible to GM for tone/reaction) */
     relationships?: Array<{
       npcName: string;
@@ -1875,9 +1760,7 @@ export interface SituationPacket {
     }>;
   };
 }
-
 export type NpcMood = 'friendly' | 'angry' | 'scared' | 'sad' | 'cautious' | 'neutral' | 'unknown';
-
 /** Per-NPC memory so knowledge does not bleed across characters. */
 export interface NpcMemory {
   npcId: string;
@@ -1887,11 +1770,9 @@ export interface NpcMemory {
   lastSeenTurn: number;
   /** Pack 6 short relationship texture for prompts. */
   relationshipSummary?: string;
-  
   // Pack 12 Mood Tracking
   currentMood?: NpcMood;
   lastMoodChange?: number;
-
   /** 12a — first harvest / spoken intro already landed. */
   introSpoken?: boolean;
   /** 12a — locked PC name this NPC has heard. */
@@ -1949,7 +1830,6 @@ export interface NpcMemory {
   /** OPT-3 — agenda engine steps advanced (pressure clock); 0 = initial. */
   agendaStep?: number;
 }
-
 /**
  * Doran and Parberry 2011 motivation classes (quest structure). Bound target lives on NpcGoal.target.
  */
@@ -1963,19 +1843,16 @@ export type DoranMotivation =
   | 'Wealth'
   | 'Ability'
   | 'Equipment';
-
 /** OPT-3 goal: motivation class + bound target entity/place/job in the record. */
 export interface NpcGoal {
   motivation: DoranMotivation;
   target: string;
 }
-
 /**
  * SRD 5.2.1 glossary Attitude (Friendly / Indifferent / Hostile).
  * Influence Willing/Hesitant/Unwilling reads the goal; attitude sets Advantage (TT-C2).
  */
 export type NpcAttitude = 'friendly' | 'indifferent' | 'hostile';
-
 /** A generated person's sheet. A part the place filter left no pick for is blank, never invented. */
 export interface NpcSheet {
   job: string;
@@ -1992,7 +1869,6 @@ export interface NpcSheet {
   traits?: string[];
   speechRegister?: string;
 }
-
 /** How someone is now toward the player — moved only by an engine-recorded event; the sheet never changes. */
 export interface NpcStance {
   now: 'grateful' | 'warm' | 'wary' | 'afraid' | 'hostile';
@@ -2002,10 +1878,8 @@ export interface NpcStance {
   /** Event ids already applied; the same event never applies twice. */
   events: string[];
 }
-
 /** Location sheet — spatial facts for the current zone. */
 export type MapScale = 'district' | 'street' | 'interior' | 'dungeon';
-
 export interface LocationInteractable {
   id: string;
   name: string;
@@ -2015,20 +1889,17 @@ export interface LocationInteractable {
   revealed?: boolean;
   lootableId?: string;
 }
-
 export interface LocationExit {
   id: string;
   label: string;
   locked?: boolean;
   keyItem?: string;
 }
-
 /** q50e — exit source id (sheet `ex.id`, or the hub/place id) plus the place label. */
 export interface PlaceExitRow {
   id: string;
   label: string;
 }
-
 export interface LocationSheet {
   name: string;
   climate?: string;
@@ -2046,12 +1917,10 @@ export interface LocationSheet {
   exits: LocationExit[];
   presentNpcIds: string[];
 }
-
 /** Per-tier dry-chest counts for Epic+ pity (Pack 1). */
 export interface LootPityState {
   byTier: Partial<Record<1 | 2 | 3 | 4, number>>;
 }
-
 /** 28j — anti-circling memory (engine): stale loiter families per place, last progress turn, previous place, nudges, visits. */
 export interface CirclingMemory {
   /** place key → action family → last turn it was tried with no new result. */
@@ -2083,7 +1952,6 @@ export interface CirclingMemory {
   /** 29y — the place the run started in (the first circling record). */
   openingPlace?: string;
 }
-
 /** O1-C — compact cleared-interior record (map as walked + item deltas; no foes). */
 export interface ClearedSiteRecord {
   map: {
@@ -2117,7 +1985,6 @@ export interface ClearedSiteRecord {
     taken: string[];
   };
 }
-
 /** Order M — one scene ledger on the place. Engine-written. Current until exit; then condensed. */
 export interface SceneLedger {
   openedTurn: number;
@@ -2130,7 +1997,6 @@ export interface SceneLedger {
   described: { key: string; line: string }[];
   spot: string;
 }
-
 /** Order M steps 5–6 — compact Previous slot (pinned only; ≤ ~200 chars in SCENE). */
 export interface ScenePrevious {
   label: string;
@@ -2141,7 +2007,6 @@ export interface ScenePrevious {
   names: string[];
   summary: string;
 }
-
 /** Durable Place record (Pack 4/5) — single authority for name + tiers. */
 export interface PlaceRecord {
   id: string;
@@ -2196,13 +2061,11 @@ export interface PlaceRecord {
   /** q72 — turn range of the last completed stay. */
   lastVisitTurns?: { from: number; to: number };
 }
-
 export interface SettlementQuestParams {
   who?: string;
   what?: string;
   where?: string;
 }
-
 export interface SettlementQuestCard {
   id: string;
   templateId: string;
@@ -2214,7 +2077,6 @@ export interface SettlementQuestCard {
   /** 29s — turn the player picked this card's chip; the card stays open until its stake resolves. */
   takenTurn?: number;
 }
-
 export interface TutorialProgress {
   completed: Partial<
     Record<
@@ -2233,7 +2095,6 @@ export interface TutorialProgress {
   fullStatusUnlocked: boolean;
   stickyFailScheduled: boolean;
 }
-
 export interface TurnSummary {
   id: string;
   turn: number;
@@ -2243,7 +2104,6 @@ export interface TurnSummary {
   /** Semantic embedding for retrieval (Pack 12 - 384d vector). */
   embedding?: number[];
 }
-
 export interface MemoryPin {
   id: string;
   kind: 'auto' | 'player' | 'quest';
@@ -2252,14 +2112,12 @@ export interface MemoryPin {
   createdTurn: number;
   archived?: boolean;
 }
-
 export interface ConsequenceThread {
   id: string;
   text: string;
   createdTurn: number;
   unresolved: boolean;
 }
-
 export interface CampaignMemoryState {
   campaignSummary?: string | null;
   personalitySummary?: string | null;
@@ -2275,7 +2133,6 @@ export interface CampaignMemoryState {
   /** Last turn a chapter summary was created (Pack 12). */
   lastChapterSummaryTurn?: number;
 }
-
 export interface ChapterSummary {
   id: string;
   turnRange: [number, number];
@@ -2285,7 +2142,6 @@ export interface ChapterSummary {
   locationsMapped: string[];
   createdTurn: number;
 }
-
 export interface ArcSummary {
   id: string;
   turnRange: [number, number];
@@ -2293,7 +2149,6 @@ export interface ArcSummary {
   majorMilestones: string[];
   createdTurn: number;
 }
-
 /**
  * Speculative GM drafts and pending turn proposals.
  * `proposedState` is the full next snapshot applied on Accept when expectedRevision matches.
@@ -2308,7 +2163,6 @@ export interface SpeculativeTake {
   reason: 'resolution-retry-discarded' | 'obligation-retry-discarded' | 'pending-discarded' | 'reroll-discarded';
   createdAt: number;
 }
-
 export interface PendingTurnProposal {
   id: string;
   playerAction: string;
@@ -2328,7 +2182,6 @@ export interface PendingTurnProposal {
   /** Full next GameState if accepted (local-only; stripped from cloud if huge). */
   proposedState?: GameState;
 }
-
 export type PostLoginBehavior = 'MAIN_MENU' | 'AUTO_RESUME';
 export type BgMode = 'static' | 'adaptive' | 'off';
 export type ArtStylePreset =
@@ -2349,7 +2202,6 @@ export type PanelBorderIntensity = 'subtle' | 'bold';
 export type ComicLayoutMode = 'paged' | 'webtoon';
 /** Panel / page reading order for comic mode. */
 export type ComicReadingDirection = 'ltr' | 'rtl';
-
 export const ART_STYLE_PRESETS: Array<{ value: ArtStylePreset; label: string; description: string; keywords: string }> = [
   { value: 'classic-book', label: 'Classic Book Illustration', description: 'Ink & watercolor, one scene (not a picture of a book)', keywords: 'ink-and-watercolor illustration, detailed ink line-art, soft muted watercolor washes, single scene filling the frame' },
   { value: 'sin-city-noir', label: 'Sin City Noir', description: 'Stark B&W with crimson accents', keywords: 'sin city noir, stark black and white, deep inks, crimson red accents, high contrast noir' },
@@ -2362,7 +2214,6 @@ export const ART_STYLE_PRESETS: Array<{ value: ArtStylePreset; label: string; de
   { value: 'euro-ligne-claire', label: 'Ligne Claire', description: 'Clear-line European bande dessinée', keywords: 'ligne claire, clear line european comic, even ink contours, flat clean colors, bande dessinee aesthetic' },
   { value: 'ink-wash-sumi', label: 'Sumi Ink Wash', description: 'East Asian brush & wash', keywords: 'sumi-e ink wash, expressive brush strokes, misty negative space, east asian ink painting comic aesthetic' },
 ];
-
 /** ACC-1: accessibility fields live in AccessibilitySettings (accessibility.ts). */
 export interface Settings extends AccessibilitySettings {
   ttsEnabled: boolean;
@@ -2521,13 +2372,11 @@ export interface Settings extends AccessibilitySettings {
    */
   fastSetupChips?: boolean;
 }
-
 export const DEFAULT_TURN_FRAME: TurnFrameTheme = {
   icon: '🎲',
   accentColor: 'cyan-400',
   frameStyle: 'minimal-holo',
 };
-
 export interface GoogleUser {
   /** Supabase auth user id — quote this as Support ID when emailing support. */
   id?: string;
@@ -2538,7 +2387,6 @@ export interface GoogleUser {
   birthDate?: string;
   isGuest?: boolean;
 }
-
 export const RARITY_COLORS: Record<Rarity, string> = {
   Common: '#9ca3af',
   Uncommon: '#22c55e',
@@ -2546,17 +2394,14 @@ export const RARITY_COLORS: Record<Rarity, string> = {
   Epic: '#a855f7',
   Legendary: '#f59e0b',
 };
-
 export type ProfessionType = 'Blacksmithing' | 'Tailoring' | 'Enchanting' | 'Leatherworking' | 'Engineering';
-
 export interface ProfessionSkill {
   type: ProfessionType;
   level: number;
   maxLevel: number;
 }
-
 export interface SalvageRequirement {
   profession: ProfessionType;
   minLevel: number;
   reason: string;
-}
+}

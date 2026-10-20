@@ -18,7 +18,8 @@ import { abilityModOf } from './srdMonsters';
 import { concentrationDc, SPELLS, spellDice, type SpellDef } from './spells';
 import type { WeaponMastery } from './srdGear';
 
-export type RoundAction = 'attack' | 'cast' | 'dodge' | 'disengage' | 'help' | 'hide' | 'item' | 'flee' | 'other';
+/** q75: `speech` is free (SRD 5.2.1 Communicating — no Action). */
+export type RoundAction = 'attack' | 'cast' | 'dodge' | 'disengage' | 'help' | 'hide' | 'item' | 'flee' | 'speech' | 'other';
 
 /** SK-3: each sneaker vs each watcher; one failure is enough to be noticed. */
 export function individualStealth(
@@ -1239,6 +1240,10 @@ function pcTurn(ctx: Ctx, action: RoundAction) {
       if (ctx.pcHp > 0) ctx.outcome = 'escaped';
       break;
     }
+    case 'speech':
+      // SRD 5.2.1 Communicating (WotC CC BY 4.0): brief utterances on your turn cost no Action.
+      push(ctx, { k: 'act', who: pc.name, action: 'other', detail: 'speaks freely (no Action)', pc: true });
+      break;
     default:
       ctx.turn.actionUsed = true;
       push(ctx, { k: 'act', who: pc.name, action: 'other', detail: ctx.featuresUsed.layOnHands ? 'no attack this round (Lay On Hands)' : 'no attack this round', pc: true });
