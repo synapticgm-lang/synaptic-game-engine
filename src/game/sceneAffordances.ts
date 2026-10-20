@@ -30,7 +30,7 @@ import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapB
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit } from './openThreads';
 import { isDying } from './tabletop/roundFight';
-import { actionAvailability, isOnwardTravelPad } from './padUniverse';
+import { travelPadBlocked } from './padUniverse';
 import type { QuestRoute } from './types';
 export function isWayOut(chip: {
   kind?: string;
@@ -651,16 +651,13 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     }
     return dying;
   }
-  // q77a / q77a2: fight+dying drop every MOVE; road-lane only drops onward travel
-  // (Walk on / Travel toward) so Turn back stays the MOVE way-out.
-  const avail = actionAvailability(state);
-  const noTravel = !avail.travel.ok;
-  const blockAllMove = noTravel && avail.travelScope === 'all';
+  // q77a: one availability source — fight / road lane / dying.
+  const noTravel = travelPadBlocked(state);
   const mode = state.engineMode;
   const enc = state.activeEncounter;
   const liveFight = !!enc && (enc.hp ?? 0) > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal';
   let work = pad;
-  if (blockAllMove) {
+  if (noTravel) {
     const kept: T[] = [];
     for (let i = 0; i < work.length; i++) {
       const chip = work[i]!;
@@ -668,14 +665,6 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (chip.slotCategory === 'move' || chip.slotKind === 'exit' || chip.kind === 'exit' || id.includes(':travel')) {
         continue;
       }
-      kept.push(chip);
-    }
-    work = kept;
-  } else if (noTravel && avail.travelScope === 'forward') {
-    const kept: T[] = [];
-    for (let i = 0; i < work.length; i++) {
-      const chip = work[i]!;
-      if (isOnwardTravelPad(chip.label)) continue;
       kept.push(chip);
     }
     work = kept;
@@ -792,13 +781,12 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     seen.add(chip.actionId);
     const row = { ...chip, slotCategory: cat, cooldownReturn: undefined };
     if (cat === 'move') {
-      // Lane forward-block: keep turn-back MOVE; drop onward only (already filtered above).
-      if (!blockAllMove) move.push(row);
+      if (!noTravel) move.push(row);
     } else if (cat === 'talk') talk.push(row);
     else if (cat === 'scene') scene.push(row);
     else act.push(row);
   }
-  // q75r / q77a2: never refill Travel toward … while fight / road / dying blocks travel.
+  // q75r: never refill Travel toward … while fight / road / dying blocks travel.
   if (!move.length && !noTravel) {
   // q50e — MOVE refill from placeExitRows (same ids as the MOVE chips).
   const recordExits = placeExitRows(state, state.currentLocation);

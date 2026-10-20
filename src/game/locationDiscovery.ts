@@ -68,44 +68,29 @@ export function discoverLocation(
   // Check if already discovered
   if (isLocationDiscovered(state, locationNameOrId)) return state;
   
-  // Determine canonical ID to store. Callers (detectAndDiscoverLocations) pass
-  // settlement/place ids — match by id first so we do not re-key via placeIdFromName.
-  let canonicalId: string | null = null;
-  const settlements = state.worldAtlas?.settlements ?? [];
-  for (let i = 0; i < settlements.length; i++) {
-    if (settlements[i]!.id === locationNameOrId) {
-      canonicalId = settlements[i]!.id;
-      break;
-    }
-  }
-  if (!canonicalId) {
-    const places = state.places ?? [];
-    for (let i = 0; i < places.length; i++) {
-      if (places[i]!.id === locationNameOrId) {
-        canonicalId = places[i]!.id;
-        break;
-      }
-    }
-  }
-  if (!canonicalId) {
-    const settlement = state.worldAtlas?.settlements?.find(
-      (s) =>
-        s.name.toLowerCase() === normalized ||
-        s.aliases?.some((a) => a.toLowerCase() === normalized)
+  // Determine canonical ID to store
+  let canonicalId: string;
+  
+  // Check settlement
+  const settlement = state.worldAtlas?.settlements?.find(
+    (s) =>
+      s.name.toLowerCase() === normalized ||
+      s.aliases?.some((a) => a.toLowerCase() === normalized)
+  );
+  if (settlement) {
+    canonicalId = settlement.id;
+  } else {
+    // Check place registry
+    const place = state.places?.find(
+      (p) =>
+        p.name.toLowerCase() === normalized ||
+        p.aliases?.some((a) => a.toLowerCase() === normalized)
     );
-    if (settlement) {
-      canonicalId = settlement.id;
+    if (place) {
+      canonicalId = place.id;
     } else {
-      const place = state.places?.find(
-        (p) =>
-          p.name.toLowerCase() === normalized ||
-          p.aliases?.some((a) => a.toLowerCase() === normalized)
-      );
-      if (place) {
-        canonicalId = place.id;
-      } else {
-        canonicalId = placeIdFromName(locationNameOrId);
-      }
+      // Use place ID generation for consistency
+      canonicalId = placeIdFromName(locationNameOrId);
     }
   }
   

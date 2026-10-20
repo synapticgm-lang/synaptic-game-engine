@@ -21,20 +21,7 @@ import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstab
 
 /** q77a-AVAIL — one availability source (fight, dying, road lane, gate). */
 export type AvailSlot = { ok: boolean; reason: string };
-/**
- * travelScope:
- * - `all` — no relocation (fight / dying).
- * - `forward` — onward journey / hub travel blocked; turn-back and the meeting
- *   settle pads (face / talk past) stay — a block hides travel-on, never the
- *   answer to the block (q77a2).
- */
-export type TravelScope = 'all' | 'forward';
-export type ActionAvailability = {
-  travel: AvailSlot;
-  talk: AvailSlot;
-  rest: AvailSlot;
-  travelScope: TravelScope;
-};
+export type ActionAvailability = { travel: AvailSlot; talk: AvailSlot; rest: AvailSlot };
 const AVAIL_OK: AvailSlot = { ok: true, reason: '' };
 /**
  * SRD 5.2.1 Death Saving Throws / 0 HP (WotC, CC BY 4.0): while unconscious at 0 HP
@@ -44,13 +31,13 @@ export function actionAvailability(state: GameState): ActionAvailability {
   const ds = state.deathSaves;
   if (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) {
     const reason = 'You are unconscious at 0 HP and can only make a death saving throw, take Magical healing, or be stabilised.';
-    return { travel: { ok: false, reason }, talk: { ok: false, reason }, rest: { ok: false, reason }, travelScope: 'all' };
+    return { travel: { ok: false, reason }, talk: { ok: false, reason }, rest: { ok: false, reason } };
   }
   const enc = state.activeEncounter;
   const fight = encounterBlocksTravel(state) || (!!enc && (enc.hp ?? 0) > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal');
   if (fight) {
     const reason = 'A fight is still on — travel, talk, and rest wait until it ends.';
-    return { travel: { ok: false, reason }, talk: { ok: false, reason }, rest: { ok: false, reason }, travelScope: 'all' };
+    return { travel: { ok: false, reason }, talk: { ok: false, reason }, rest: { ok: false, reason } };
   }
   const roadEnc = state.journey?.from && state.journey?.to ? state.journey.encounter : null;
   const lane = !!roadEnc && !roadEnc.engaged && !roadEnc.escaped && !roadEnc.lost && (roadEnc.kind === 'thugs' || roadEnc.kind === 'undead' || roadEnc.kind === 'monster' || roadEnc.kind === 'villain');
@@ -61,23 +48,13 @@ export function actionAvailability(state: GameState): ActionAvailability {
       travel: { ok: false, reason },
       talk: AVAIL_OK,
       rest: { ok: false, reason: 'You cannot make camp while a hostile meeting blocks the lane.' },
-      travelScope: 'forward',
     };
   }
-  return { travel: AVAIL_OK, talk: AVAIL_OK, rest: AVAIL_OK, travelScope: 'all' };
+  return { travel: AVAIL_OK, talk: AVAIL_OK, rest: AVAIL_OK };
 }
 /** q77a — fight, dying, road lane (actionAvailability.travel). */
 export function travelPadBlocked(state: GameState): boolean {
   return !actionAvailability(state).travel.ok;
-}
-/** Onward walk / hub travel — not turn-back, not face/talk-past meeting pads. */
-export function isOnwardTravelPad(choice: string): boolean {
-  const t = (choice ?? '').trim();
-  if (!t) return false;
-  const low = t.toLowerCase();
-  if (low.startsWith('turn back') || low.startsWith('go back') || low.startsWith('head back')) return false;
-  if (isTravelPad(t)) return true;
-  return low === 'walk on' || low.startsWith('walk on ') || low === 'travel on' || low.startsWith('push on');
 }
 export function filterPadsByAvailability(pads: string[], state: GameState): string[] {
   const avail = actionAvailability(state);
@@ -85,9 +62,7 @@ export function filterPadsByAvailability(pads: string[], state: GameState): stri
   for (let i = 0; i < pads.length; i++) {
     const pad = pads[i]!;
     if (!pad?.trim()) continue;
-    if (!avail.travel.ok) {
-      if (avail.travelScope === 'forward' ? isOnwardTravelPad(pad) : isTravelPad(pad) || isOnwardTravelPad(pad)) continue;
-    }
+    if (!avail.travel.ok && isTravelPad(pad)) continue;
     if (!avail.talk.ok && isNamedTalkPad(pad)) continue;
     const low = pad.trim().toLowerCase();
     if (!avail.rest.ok && (low === 'camp' || low.startsWith('make camp') || low.startsWith('take a short rest') || low.startsWith('take a long rest') || low === 'rest here')) continue;
@@ -98,6 +73,19 @@ export function filterPadsByAvailability(pads: string[], state: GameState): stri
 
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
+
+function isTalkQaLoopStarved(state: GameState): boolean {
+  const bodies: string[] = [];
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0 && bodies.length < 3; i--) {
+    if (log[i]?.role === 'gm' && log[i]?.content?.trim()) bodies.push(String(log[i].content));
+  }
+  if (bodies.length < 3) return false;
+  for (let i = 0; i < bodies.length; i++) {
+    if (!TALK_QA_SHAPE.test(bodies[i]!)) return false;
+  }
+  return true;
+}
 
 export type ExcludedPadFamily = 'travel' | 'leave' | 'talk' | 'use' | 'ask';
 
@@ -127,18 +115,7 @@ export function isUseCharterPad(choice: string): boolean {
 
 export function shouldStarveTalkPads(state: GameState): boolean {
   if (sealedCastNames(state).length === 0) return true;
-  const bodies: string[] = [];
-  const log = state.log ?? [];
-  for (let i = log.length - 1; i >= 0 && bodies.length < 3; i--) {
-    if (log[i]?.role === 'gm' && log[i]?.content?.trim()) bodies.push(String(log[i].content));
-  }
-  if (bodies.length >= 3) {
-    let qa = true;
-    for (let i = 0; i < bodies.length; i++) {
-      if (!TALK_QA_SHAPE.test(bodies[i]!)) { qa = false; break; }
-    }
-    if (qa) return true;
-  }
+  if (isTalkQaLoopStarved(state)) return true;
   return false;
 }
 
@@ -148,19 +125,9 @@ export function shouldStarveUsePads(state: GameState): boolean {
 
 /** Ask-topic family starved after the same talk/ask pad 3× in the last 5 player turns. */
 export function shouldStarveAskPads(state: GameState): boolean {
-  const bodies: string[] = [];
-  const log = state.log ?? [];
-  for (let i = log.length - 1; i >= 0 && bodies.length < 3; i--) {
-    if (log[i]?.role === 'gm' && log[i]?.content?.trim()) bodies.push(String(log[i].content));
-  }
-  if (bodies.length >= 3) {
-    let qa = true;
-    for (let i = 0; i < bodies.length; i++) {
-      if (!TALK_QA_SHAPE.test(bodies[i]!)) { qa = false; break; }
-    }
-    if (qa) return true;
-  }
+  if (isTalkQaLoopStarved(state)) return true;
   const picks: string[] = [];
+  const log = state.log ?? [];
   let seen = 0;
   for (let i = log.length - 1; i >= 0 && seen < 5; i--) {
     const e = log[i];
@@ -171,11 +138,7 @@ export function shouldStarveAskPads(state: GameState): boolean {
   }
   if (picks.length < 3) return false;
   const last = picks[0];
-  let same = 0;
-  for (let i = 0; i < picks.length; i++) {
-    if (picks[i] === last) same += 1;
-  }
-  return same >= 3;
+  return picks.filter((p) => p === last).length >= 3;
 }
 
 function countRecentMatchingPicks(
@@ -247,7 +210,10 @@ export function excludedPadFamilies(state: GameState): ReadonlySet<ExcludedPadFa
     out.add('leave');
     out.add('travel');
   }
-  if (shouldStarveTalkPads(state)) out.add('talk');
+  if (shouldStarveTalkPads(state)) {
+    out.add('talk');
+    if (isTalkQaLoopStarved(state)) out.add('ask');
+  }
   if (shouldStarveUsePads(state)) out.add('use');
   if (shouldStarveAskPads(state)) out.add('ask');
   return out;
