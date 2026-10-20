@@ -92,7 +92,31 @@ export function checkTurnInvariants(
     }
   }
 
-  // (3) every typed line gets a visible answer
+  // (2b) dying resolves: every dying turn must change death-save counters (or leave dying).
+  // SRD 5.2.1 Death Saving Throws — a save at the start of every turn while dying.
+  // N≈10 consecutive stalls = P0 in stress; per-turn stall is the root signal.
+  if (dying) {
+    const afterDying = isDying(after);
+    const bs = before.deathSaves;
+    const as = after.deathSaves;
+    const stalled =
+      afterDying
+      && !!bs
+      && !!as
+      && (bs.successes ?? 0) === (as.successes ?? 0)
+      && (bs.failures ?? 0) === (as.failures ?? 0)
+      && !as.dead
+      && !as.stable;
+    if (stalled) {
+      out.push({
+        code: 'dying-stall',
+        severity: 'P0',
+        detail: `death saves unchanged while dying (${bs!.successes}/${bs!.failures} → ${as!.successes}/${as!.failures})`,
+      });
+    }
+  }
+
+  // (3) every typed line gets a visible answer (refusal / receipt / engineResult / speech)
   const answered =
     (typeof turn.visibleAnswer === 'string' && turn.visibleAnswer.trim().length > 0) || turn.answered === true;
   if (turn.typed && input && !answered) {

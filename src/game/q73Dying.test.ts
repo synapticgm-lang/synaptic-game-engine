@@ -5,7 +5,7 @@
  * SRD 5.2.1 (Wizards of the Coast, CC BY 4.0).
  * Replay shape: check-lap seed 20612 T10 drop → T11 travel-while-unconscious.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, afterEach } from 'vitest';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { createInitialState } from './defaults';
@@ -17,6 +17,7 @@ import { resolveDeathSaveTurn } from './tabletop/roundFight';
 import { writerDraftProblems } from './writerTurn';
 import { parsePlayerIntent } from './intentParser';
 import { applyPlayPhaseAfterHp } from './playPhase';
+import { pinDice } from './seededRng';
 
 function dying(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'dnd') as GameState;
@@ -73,6 +74,8 @@ function withAlly(name: string): Partial<GameState> {
 }
 
 describe('q73-DYING', () => {
+  afterEach(() => pinDice(() => Math.random()));
+
   it('offers no travel chip while death saves are running', () => {
     const chips = resolveOfferedChoices(dying());
     expect(chips.some((c) => /travel/i.test(c))).toBe(false);
@@ -80,6 +83,9 @@ describe('q73-DYING', () => {
   });
 
   it('typed travel resolves as a death-save turn and does not move', () => {
+    // Source of prior flake: vitest pinDice.setup pins Math.random, so turnRng was unseeded
+    // and a nat-20 revive broke the unconscious mandate. Mid d20 stays dying.
+    pinDice(() => 0.5);
     const s = dying();
     const arc = runArcDirectorBeforeGm(s, 'Travel toward Greyhollow Church');
     expect(arc.state.currentLocation).toBe(s.currentLocation);

@@ -681,30 +681,40 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
         noTerminal: true,
       };
     }
-    const ds = state.deathSaves!;
-    return {
-      state,
-      receipts: [status],
-      facts: `${DYING_HEAD} ${ally} cannot steady your breathing. ${DYING_UNCONSCIOUS}\nunconscious, death saves ${ds.successes} successes/${ds.failures} failures`,
-      noTerminal: true,
-    };
+    // Medicine failed: still make the death save for this turn (SRD — start of turn at 0 HP).
+    const afterFail = rollDeathSaveTurn(state, rng, input, [status], `${ally} cannot steady your breathing.`);
+    if (afterFail) return afterFail;
   }
+  return rollDeathSaveTurn(state, rng, input, [], '');
+}
+
+/** One death-save roll + receipts/facts. Shared by Fight-for-breath and failed stabilise. */
+function rollDeathSaveTurn(
+  state: GameState,
+  rng: Rng,
+  input: string,
+  priorReceipts: string[],
+  priorFact: string,
+): RoundFightResult | null {
+  if (!isDying(state)) return null;
   const house = houseRulesOf(state);
   // 5.2.1 Heroic Inspiration rerolls a failed death save; under 5.1 it is kept for the next attack or save in a fight.
   const reroll = !!state.character.heroicInspiration && house.rulesVersion === 'srd-5.2.1';
   const r = rollDeathSave(state.deathSaves!, rng, { reroll });
   const secret = house.secretDeathSaves;
-  const receipts = [deathSaveLine(r, secret)];
+  const receipts = [...priorReceipts, deathSaveLine(r, secret)];
   let next: GameState = { ...state, deathSaves: r.state };
   if (r.rerolled !== undefined) {
     next = { ...next, character: { ...next.character, heroicInspiration: false } };
     receipts.push('Heroic Inspiration: spent');
   }
+  const lead = priorFact ? `${priorFact} ` : '';
+  void input;
   if (r.state.dead) {
     const end = commitDeath(next, 'danger', rng, 'Your breath stops. You are dead.');
     const who = (state.character.name || 'you').trim() || 'you';
     const tagged = tag(end.state, 'died', 'person', { id: `person:${who.toLowerCase()}`, name: who }, 'death save');
-    return { state: tagged, receipts: [...receipts, ...end.receipts], facts: `${DYING_HEAD} ${who} died`, noTerminal: true };
+    return { state: tagged, receipts: [...receipts, ...end.receipts], facts: `${DYING_HEAD} ${lead}${who} died`, noTerminal: true };
   }
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
   let fact: string;
@@ -717,7 +727,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
     next = woke.state;
     receipts.push(hpLine(0, 1), `Time: ${woke.note}`);
     fact = `Your breathing steadies; you are stable. ${HOURS_LATER[r.hoursToWake ?? 0] ?? 'Hours'} later you wake, weak but alive.`;
-    return { state: next, receipts, facts: `${DYING_HEAD} ${fact}\n${DYING_STABLE_LINE}`, noTerminal: true };
+    return { state: next, receipts, facts: `${DYING_HEAD} ${lead}${fact}\n${DYING_STABLE_LINE}`, noTerminal: true };
   } else {
     fact = `${DYING_UNCONSCIOUS} ${secret
       ? 'You lie at the edge, neither waking nor slipping away yet.'
@@ -727,7 +737,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
   return {
     state: next,
     receipts,
-    facts: `${DYING_HEAD} ${fact}\nunconscious, death saves ${dsNow.successes} successes/${dsNow.failures} failures`,
+    facts: `${DYING_HEAD} ${lead}${fact}\nunconscious, death saves ${dsNow.successes} successes/${dsNow.failures} failures`,
     noTerminal: true,
   };
 }

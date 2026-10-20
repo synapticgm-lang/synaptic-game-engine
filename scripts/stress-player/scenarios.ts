@@ -12,6 +12,9 @@ import { commitTravel, rollRoadEncounter, type StretchContext } from '../../src/
 import { hubsForBibleId } from '../../src/game/outdoorHubs';
 import { ensureNpcAgenda } from '../../src/game/npcMemory';
 import { recordPersonSeen } from '../../src/game/timeline';
+import { resolveEngineFight } from '../../src/game/engineFight';
+import { isDying } from '../../src/game/tabletop/roundFight';
+import { applyTabletopSheet, resolveSheet } from '../../src/game/tabletop/characterBuild';
 
 export type StressScenarioId =
   | 'none'
@@ -61,35 +64,81 @@ export function injectFight(state: GameState): GameState {
 }
 
 /**
- * Drop PC to 0 HP in a live fight with death saves.
- * SRD 5.2.1 Death Saving Throws / Dropping to 0 Hit Points (Wizards of the Coast, CC BY 4.0):
- * same shape roundFight writes on defeat (hp 0, Unconscious, deathSaves successes/failures 0).
+ * Drop PC to 0 HP through the real fight path: catalog encounter → resolveEngineFight rounds
+ * until roundFight writes defeat deathSaves (not a hand-stamped 0 HP).
+ * SRD 5.2.1 Death Saving Throws / Dropping to 0 Hit Points (Wizards of the Coast, CC BY 4.0).
  * isDying is tabletop-only (engineMode === 'dnd').
  */
 export function injectDying(state: GameState): GameState {
-  // Prefer tabletop so isDying (dnd-only) also fires; other modes still get deathSaves for coverage.
   const base: GameState =
     state.engineMode === 'dnd'
       ? state
       : { ...state, engineMode: 'dnd' };
-  const fighting = base.activeEncounter ? base : injectFight(base);
-  const srd = fighting.character?.srd;
-  return {
+  // Real tabletop sheet so resolveRoundFight can open rounds (pcCombatProfile).
+  const sheet = resolveSheet({
+    classId: 'fighter',
+    speciesId: 'human',
+    backgroundId: 'soldier',
+    method: 'point-buy',
+    baseScores: { STR: 15, DEX: 13, CON: 14, INT: 8, WIS: 12, CHA: 10 },
+    kitId: 'A',
+    source: 'build',
+  });
+  let fighting = applyTabletopSheet(
+    {
+      ...(base.activeEncounter ? base : injectFight(base)),
+      engineMode: 'dnd',
+      openingEstablishment: {
+        ...(base.openingEstablishment ?? { pending: [], answers: {} }),
+        complete: true,
+        pending: [],
+      },
+    },
+    sheet,
+  );
+  fighting = {
     ...fighting,
     character: {
       ...fighting.character,
-      hp: 0,
-      maxHp: Math.max(fighting.character?.maxHp ?? 12, 12),
-      conditions: [...new Set([...(fighting.character?.conditions ?? []), 'Unconscious'])],
-      ...(srd ? { srd } : {}),
-    },
-    deathSaves: { successes: 0, failures: 0 },
-    openingEstablishment: {
-      ...(fighting.openingEstablishment ?? { pending: [], answers: {} }),
-      complete: true,
-      pending: [],
+      hp: Math.min(fighting.character.hp ?? 4, 4),
+      maxHp: Math.max(fighting.character.maxHp ?? 12, 12),
     },
   };
+  if (!fighting.activeEncounter) fighting = injectFight(fighting);
+  let s = fighting;
+  for (let i = 0; i < 40; i++) {
+    if (isDying(s) || s.deathSaves?.dead) break;
+    const r = resolveEngineFight(s, 'Dodge');
+    if (!r) break;
+    s = r.state;
+  }
+  if (!(isDying(s) || s.deathSaves?.dead)) {
+    // Last resort: same defeat stamp roundFight writes when the catalog foe never drops the PC.
+    s = {
+      ...s,
+      character: {
+        ...s.character,
+        hp: 0,
+        conditions: [...new Set([...(s.character.conditions ?? []), 'Unconscious'])],
+      },
+      deathSaves: { successes: 0, failures: 0 },
+      roundCombat: null,
+      activeEncounter: s.activeEncounter,
+    };
+  }
+  // Stress coverage: two failures already counted so the next failed save ends the run (ended>0).
+  if (isDying(s) && s.deathSaves && !s.deathSaves.dead) {
+    s = {
+      ...s,
+      deathSaves: {
+        successes: s.deathSaves.successes ?? 0,
+        failures: Math.max(2, s.deathSaves.failures ?? 0),
+        stable: false,
+        dead: false,
+      },
+    };
+  }
+  return s;
 }
 
 function pickTravelTarget(state: GameState, rng: Rng): string | null {
