@@ -120,7 +120,9 @@ function attrScore(state: GameState, key: AttributeKey): number {
 function attrMod(score: number): number { return Math.floor((score - 10) / 2); }
 function gearMod(state: GameState, key: AttributeKey): number {
   let bonus = 0;
-  for (const item of state.inventory) {
+  const bag = state.inventory ?? [];
+  for (let i = 0; i < bag.length; i++) {
+    const item = bag[i]!;
     if (item.equipped && item.modifiers) bonus += item.modifiers[key] ?? 0;
   }
   return bonus;

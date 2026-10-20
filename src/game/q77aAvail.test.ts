@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
-import type { GameState } from './types';
+import type { GameState, LogEntry } from './types';
 import {
   actionAvailability,
   closedUniverseFallbacks,
@@ -14,10 +14,11 @@ import {
 import { blockedActionRefusal, validateActionHard } from './actionValidation';
 import { engineChips, padChoicesToCount, sceneSafeFallbacks } from './choicePipeline';
 import { compileChoices } from './choiceCompiler';
-import { resolveOfferedChoices } from './playTranscript';
+import { commitOfferedPad, resolveOfferedChoices } from './playTranscript';
 import { chipProblem } from './chipLegality';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { journeyPads } from './travelJourney';
+import { wayOutMovesPlayer } from './sceneAffordances';
 
 function base(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'dnd') as GameState;
@@ -191,5 +192,38 @@ describe('q77a-AVAIL actionAvailability', () => {
       }
       expect([...offered].some((l) => l.includes('travel toward'))).toBe(false);
     }
+  });
+
+  it('q77a2: lane block drops Walk on / Travel toward but keeps Turn back as MOVE and Face as scene', () => {
+    const s = withLane({
+      ...base(),
+      currentLocation: 'the lane between Greyhollow Inn and Greyhollow Church',
+      choices: [
+        'Walk on',
+        'Face the thugs',
+        'Talk your way past the thugs',
+        'Turn back toward Greyhollow Inn',
+      ],
+      log: [
+        {
+          id: 'gm-road',
+          role: 'gm',
+          turn: 20,
+          content: 'Three rough men stepped off a doorstep and spread across the lane.',
+          timestamp: 1,
+        } as LogEntry,
+      ],
+    });
+    expect(actionAvailability(s).travelScope).toBe('forward');
+    expect(blockedActionRefusal(s, 'Turn back toward Greyhollow Inn')).toBeNull();
+    expect(blockedActionRefusal(s, 'Walk on') ?? '').toMatch(/blocked|meeting|road/i);
+    const next = commitOfferedPad(s, 'gm-road');
+    const chips = next.offeredPad?.chips ?? [];
+    const labels = chips.map((c) => c.label);
+    expect(labels.some((l) => /^walk on$/i.test(l))).toBe(false);
+    expect(labels.some((l) => /travel toward/i.test(l))).toBe(false);
+    const face = chips.find((c) => c.label === 'Face the thugs');
+    expect(face?.slotCategory).toBe('scene');
+    expect(chips.some((c) => c.slotCategory === 'move' && wayOutMovesPlayer(s, c.label))).toBe(true);
   });
 });

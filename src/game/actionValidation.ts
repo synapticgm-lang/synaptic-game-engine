@@ -20,15 +20,18 @@ import {
 } from './suggestionValidation';
 import { isHallTalkPlayerLine, playerAskedWhyPulled } from './openingEstablishment';
 import { fuzzyTypedPhrase } from './typedNameMatch';
-import { actionAvailability, isNamedTalkPad, isTravelPad } from './padUniverse';
+import { actionAvailability, isNamedTalkPad, isOnwardTravelPad, isTravelPad } from './padUniverse';
 
-/** q77a — typed honour uses the same availability reasons as pad builders. */
+/** q77a / q77a2 — typed honour uses the same availability reasons as pad builders. */
 export function blockedActionRefusal(state: GameState, input: string): string | null {
   const line = restoreDraftAfterBlock(input);
   if (!line) return null;
   const avail = actionAvailability(state);
   const low = line.toLowerCase();
-  const wantsTravel = isTravelPad(line) || low.startsWith('walk on') || low.startsWith('travel on') || low.startsWith('push on');
+  const wantsTravel =
+    avail.travelScope === 'forward'
+      ? isOnwardTravelPad(line)
+      : isTravelPad(line) || isOnwardTravelPad(line);
   const wantsTalk = isNamedTalkPad(line) || low.startsWith('ask ') || low.startsWith('talk ') || low.startsWith('speak ') || low.startsWith('say ');
   const wantsRest = low === 'camp' || low.startsWith('make camp') || low.startsWith('take a short rest') || low.startsWith('take a long rest') || low === 'rest here';
   if (wantsTravel && !avail.travel.ok) return avail.travel.reason;

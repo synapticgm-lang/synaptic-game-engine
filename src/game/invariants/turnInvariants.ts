@@ -8,7 +8,7 @@
  */
 import type { GameState } from '../types';
 import type { CheckSpec } from '../checkMath';
-import { travelPadBlocked, isTravelPad } from '../padUniverse';
+import { actionAvailability, isOnwardTravelPad, isTravelPad, travelPadBlocked } from '../padUniverse';
 import { isDying } from '../tabletop/roundFight';
 import { peopleHere } from '../chipLegality';
 import { checkPlayCrimes } from '../turnCheck';
@@ -63,14 +63,26 @@ export function checkTurnInvariants(
     || (!!before.journey && !!after.journey && (after.journey.legsDone ?? 0) > (before.journey.legsDone ?? 0));
 
   // (1) no travel offered or honoured when travelPadBlocked
+  // q77a2: lane scope=forward still allows turn-back; only onward travel is illegal.
   if (blocked) {
+    const scope = actionAvailability(before).travelScope;
     for (let i = 0; i < opts.length; i++) {
       const label = opts[i]!.label;
-      if (isTravelPad(label) || classifyEdgeType(label) === 'travel') {
+      const onward =
+        scope === 'forward'
+          ? isOnwardTravelPad(label)
+          : isTravelPad(label) || classifyEdgeType(label) === 'travel' || isOnwardTravelPad(label);
+      if (onward) {
         out.push({ code: 'travel-blocked', severity: 'P0', detail: `travel option offered while travelPadBlocked: "${label}"` });
       }
     }
-    if (moved) {
+    if (scope === 'forward') {
+      const legsUp =
+        !!before.journey && !!after.journey && (after.journey.legsDone ?? 0) > (before.journey.legsDone ?? 0);
+      if (legsUp || (moved && isOnwardTravelPad(input))) {
+        out.push({ code: 'travel-blocked', severity: 'P0', detail: 'travel honoured while travelPadBlocked (location or journey advanced)' });
+      }
+    } else if (moved) {
       out.push({ code: 'travel-blocked', severity: 'P0', detail: 'travel honoured while travelPadBlocked (location or journey advanced)' });
     }
   }

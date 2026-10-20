@@ -10,7 +10,7 @@ import { isDying } from './tabletop/roundFight';
 import { presentNpcNames } from './npcRelationships';
 import { isChromePersonToken } from './chromeAuthority';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
-import { actionAvailability } from './padUniverse';
+import { actionAvailability, isOnwardTravelPad } from './padUniverse';
 import { classifyEdgeType } from './graphChoices';
 import { openingCastNames, openingCastStillHere, openOpeningOffer } from './openingEstablishment';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
@@ -257,11 +257,13 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
       return { kind: 'impossible-chip', detail: `"${label}" loots a body that is not here` };
     }
   }
-  // q77a: same actionAvailability as builders / typed honour (fight / dying / road lane).
+  // q77a / q77a2: same actionAvailability as builders / typed honour.
+  // Lane scope=forward blocks onward travel only — turn-back stays legal.
   const avail = actionAvailability(state);
   const edgeKind = classifyEdgeType(label);
-  if (edgeKind === 'travel' && !avail.travel.ok) {
-    return { kind: 'impossible-chip', detail: avail.travel.reason };
+  if (!avail.travel.ok) {
+    const onward = avail.travelScope === 'forward' ? isOnwardTravelPad(label) : edgeKind === 'travel' || isOnwardTravelPad(label);
+    if (onward) return { kind: 'impossible-chip', detail: avail.travel.reason };
   }
   if (edgeKind === 'talk' && !avail.talk.ok) {
     return { kind: 'impossible-chip', detail: avail.talk.reason };
