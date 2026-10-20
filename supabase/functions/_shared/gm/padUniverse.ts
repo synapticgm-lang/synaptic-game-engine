@@ -18,17 +18,6 @@ import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue.ts';
 import { ledgerNeverCastTitles } from './neverCast.ts';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority.ts';
 import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment.ts';
-/**
- * q75r-ROUNDTYPED — one availability source for refill, chip legality, and resolvers.
- * Travel is blocked while dying or a live fight engages travel (`encounterBlocksTravel`).
- * (Dying check matches `isDying` / roundFight without importing tabletop into the edge copy.)
- */
-export function travelPadBlocked(state: GameState): boolean {
-  const ds = state.deathSaves;
-  if (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) return true;
-  if (encounterBlocksTravel(state)) return true;
-  return false;
-}
 
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
@@ -39,11 +28,7 @@ function isTalkQaLoopStarved(state: GameState): boolean {
   for (let i = log.length - 1; i >= 0 && bodies.length < 3; i--) {
     if (log[i]?.role === 'gm' && log[i]?.content?.trim()) bodies.push(String(log[i].content));
   }
-  if (bodies.length < 3) return false;
-  for (let i = 0; i < bodies.length; i++) {
-    if (!TALK_QA_SHAPE.test(bodies[i]!)) return false;
-  }
-  return true;
+  return bodies.length >= 3 && bodies.every((b) => TALK_QA_SHAPE.test(b));
 }
 
 export type ExcludedPadFamily = 'travel' | 'leave' | 'talk' | 'use' | 'ask';
@@ -143,8 +128,7 @@ function hasLiveStakes(state: GameState): boolean {
 
 /** Travel yo-yo / live encounter / hub walk treadmill. */
 export function shouldStarveTravelPads(state: GameState): boolean {
-  // q75r: fight / dying / road lane share travelPadBlocked with refill + chipProblem.
-  if (travelPadBlocked(state) || hasLiveStakes(state)) return true;
+  if (hasLiveStakes(state) || encounterBlocksTravel(state)) return true;
   if (countRecentTravelPicks(state, 5) >= 2) return true;
   if (countRecentTravelOrWalkPicks(state, 5) >= 3) return true;
   return false;

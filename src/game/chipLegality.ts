@@ -10,7 +10,7 @@ import { isDying } from './tabletop/roundFight';
 import { presentNpcNames } from './npcRelationships';
 import { isChromePersonToken } from './chromeAuthority';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
-import { travelPadBlocked } from './padUniverse';
+import { encounterBlocksTravel } from './encounterTerminalFsm';
 import { classifyEdgeType } from './graphChoices';
 import { openingCastNames, openingCastStillHere, openOpeningOffer } from './openingEstablishment';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
@@ -257,8 +257,7 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
       return { kind: 'impossible-chip', detail: `"${label}" loots a body that is not here` };
     }
   }
-  // q75r: same travelPadBlocked as applyOptionCooldown refill (fight / dying / road lane).
-  if (classifyEdgeType(label) === 'travel' && travelPadBlocked(state)) {
+  if (classifyEdgeType(label) === 'travel' && encounterBlocksTravel(state)) {
     return { kind: 'impossible-chip', detail: `"${label}" travels while the fight blocks travel` };
   }
   const dest = label.match(DEST_CHIP);

@@ -246,8 +246,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
 
   const handleSend = () => {
     if (isPyoaChipsOnly) return;
-    if (!input.trim()) return;
-    // q75r: never silently no-op on busy/pendingTurn — sendAction toasts / restores with feedback.
+    if (!input.trim() || busy || !!state.pendingTurn) return;
     onSend(input);
     setInput('');
   };

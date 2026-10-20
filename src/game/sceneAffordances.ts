@@ -30,7 +30,6 @@ import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapB
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit } from './openThreads';
 import { isDying } from './tabletop/roundFight';
-import { travelPadBlocked } from './padUniverse';
 import type { QuestRoute } from './types';
 export function isWayOut(chip: {
   kind?: string;
@@ -651,24 +650,10 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     }
     return dying;
   }
-  // q75r: one availability source — fight / road lane / dying already covered by travelPadBlocked.
-  const noTravel = travelPadBlocked(state);
   const mode = state.engineMode;
   const enc = state.activeEncounter;
   const liveFight = !!enc && (enc.hp ?? 0) > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal';
   let work = pad;
-  if (noTravel) {
-    const kept: T[] = [];
-    for (let i = 0; i < work.length; i++) {
-      const chip = work[i]!;
-      const id = chip.actionId ?? '';
-      if (chip.slotCategory === 'move' || chip.slotKind === 'exit' || chip.kind === 'exit' || id.includes(':travel')) {
-        continue;
-      }
-      kept.push(chip);
-    }
-    work = kept;
-  }
   // q50b-FIGHT2: flee/parley always on the LitRPG/RPG live-fight pad; cooldown never rests them.
   if (liveFight && mode !== 'dnd') {
     const foe = (enc!.name ?? 'foe').trim();
@@ -780,14 +765,12 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     }
     seen.add(chip.actionId);
     const row = { ...chip, slotCategory: cat, cooldownReturn: undefined };
-    if (cat === 'move') {
-      if (!noTravel) move.push(row);
-    } else if (cat === 'talk') talk.push(row);
+    if (cat === 'move') move.push(row);
+    else if (cat === 'talk') talk.push(row);
     else if (cat === 'scene') scene.push(row);
     else act.push(row);
   }
-  // q75r: never refill Travel toward … while fight / road / dying blocks travel.
-  if (!move.length && !noTravel) {
+  if (!move.length) {
   // q50e — MOVE refill from placeExitRows (same ids as the MOVE chips).
   const recordExits = placeExitRows(state, state.currentLocation);
   const raw: T[] = [];
