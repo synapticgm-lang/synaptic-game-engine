@@ -229,7 +229,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     ?? (pending ? arrivePendingEncounter(pending, state.turn) : null)
     ?? (parked ? wakeParkedThreat(parked) : road);
   if (!raw || !input) return null;
-  // The chip's own failure cost (", but fail and they attack") is what a failed check brings, not the act.
+  // q74-GATE: failure cost is this roll (forces the fight), never text in the chip label.
   const act = meetingMoveBase(input);
   // Tabletop: once the rounds have begun every input is this round's action; a live foe also takes Dodge / Hide / …
   const inRounds = roundMode && !!state.activeEncounter && state.roundCombat?.encounterName === state.activeEncounter.name;

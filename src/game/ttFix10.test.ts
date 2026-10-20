@@ -97,7 +97,7 @@ describe('3 — a road meeting\'s own chip takes on that meeting', () => {
   const spawn = {
     name: 'Lantern Pilgrim', hp: 14, maxHp: 14, level: 2, phase: 'pending', source: 'DND-ELITE-010',
   };
-  const chip = 'Skirt around the camp, but fail and they attack';
+  const chip = 'Skirt around the camp';
 
   it('"Skirt around the camp" rolls the slip past, not an attack on the waiting spawn (lap 13 A T21)', () => {
     const base = ck({ turn: 21, currentLocation: 'On the road between places', journey: camp } as unknown as Partial<GameState>);

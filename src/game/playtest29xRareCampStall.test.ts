@@ -143,7 +143,7 @@ describe('29x — camp mini-boss', () => {
       'Walk on',
       'Approach the camp',
       "Face the camp's champion",
-      'Skirt around the camp, but fail and they attack',
+      'Skirt around the camp',
       'Turn back toward Greyhollow Inn',
     ]);
     const quietCamp = onGround({ kind: 'camp' });

@@ -88,8 +88,8 @@ describe('tt-fix-4 (4) kit words handed to the writer are plain lowercase', () =
   });
 });
 
-describe('tt-fix-4 (5) a check chip says what failure costs', () => {
-  it('meeting checks carry the cost; the base form still reads as the same move', () => {
+describe('tt-fix-4 (5) meeting chips stay plain actions (q74-GATE)', () => {
+  it('talk pad is the action only; legacy fail-cost tails still strip to the same move', () => {
     const s = {
       currentLocation: 'Back streets',
       places: [],
@@ -101,9 +101,10 @@ describe('tt-fix-4 (5) a check chip says what failure costs', () => {
     } as unknown as GameState;
     const pads = journeyPads(s);
     const talk = pads.find((p) => /^Talk your way past the thugs/.test(p));
-    expect(talk).toBe('Talk your way past the thugs, but fail and they attack');
+    expect(talk).toBe('Talk your way past the thugs');
     expect(pads).toContain('Face the thugs');
-    expect(meetingMoveBase(talk!)).toBe('Talk your way past the thugs');
+    expect(pads.every((p) => !/,\s*but fail and/i.test(p))).toBe(true);
+    expect(meetingMoveBase('Talk your way past the thugs, but fail and they attack')).toBe('Talk your way past the thugs');
     expect(isJourneyPad(s, talk!)).toBe(true);
     expect(isJourneyPad(s, 'Talk your way past the thugs')).toBe(true);
     expect(isJourneyPad({ ...s, journey: { ...s.journey!, encounter: null } }, 'Talk your way past the thugs')).toBe(false);

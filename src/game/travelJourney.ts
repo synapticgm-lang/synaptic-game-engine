@@ -87,6 +87,9 @@ import { replayPreFeature } from './replaySeam';
 import { campAt, campEncounter, campHeadcount, campMemoryFact, campPeople, placeRoadCamp, recordCampOutcome } from './roadCamps';
 import { resolveCampRob } from './lockAttempt';
 import { recordPersonSeen, tag } from './timeline';
+import { isLockablePcName } from './pcNameAuthority';
+import { isSpeechOrProtest } from './intentParser';
+import { inferIntent, PlayerIntent } from './intentEnums';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -391,16 +394,22 @@ const FIXED_ENCOUNTER_PADS: Partial<Record<RoadEncounterKind, string[]>> = {
 };
 const CHAMPION_PAD = "Face the camp's champion";
 const SNEAK_CAMP_PAD = 'Sneak into the camp'; // CR-1 (not a raid chip)
-/** The chip that opens a live fight for this meeting (null = no fight on offer). */
+// q74-GATE — plain action pads for MEETING_WANT passage demands (CHIP CONTRACT §4: no outcome in label).
+export const NAME_PASSAGE_PAD = 'Give the name they ask for';
+export const TOLL_PASSAGE_PAD = 'Pay the toll';
+export const GO_AROUND_PAD = 'Go around whoever blocks the way';
+export type PassageDemand = 'name' | 'toll' | 'purse';
+export function passageDemand(enc: RoadEncounter | null | undefined): PassageDemand | null {
+  const w = enc?.want;
+  if (w === 'your name for a debt') return 'name';
+  if (w === 'a toll for the road') return 'toll';
+  if (w === 'your purse and nothing more') return 'purse';
+  return null;
+}
 function fightPad(enc: RoadEncounter): string | null {
   if (enc.kind === 'camp') return enc.miniBoss ? CHAMPION_PAD : null;
   return FIGHT_KINDS.has(enc.kind) ? FIXED_ENCOUNTER_PADS[enc.kind]![0]! : null;
 }
-/**
- * A meeting with no fight on offer, answered by its own chip: the go-by chip passes it (not beaten), the plea's
- * help chip helps it, and the wildlife chip lets the animal go its way. Taking up any other meeting (greet,
- * approach, study, talk) keeps it open to talk.
- */
 function answersMeeting(enc: RoadEncounter, input: string, turn: number, terrain: JourneyTerrain): RoadEncounter | null {
   if (fightPad(enc) || roadMeetingOver(enc)) return null;
   const said = meetingMoveBase(input).toLowerCase();
@@ -408,21 +417,14 @@ function answersMeeting(enc: RoadEncounter, input: string, turn: number, terrain
   if (at > 0 || (at === 0 && enc.kind === 'wildlife')) return { ...enc, escaped: true, escapedTurn: turn, closedTurn: turn };
   return at === 0 && enc.kind === 'plea' ? { ...enc, engaged: true, closedTurn: turn } : null;
 }
-/**
- * The help the player gave a plea, as the engine settles it: the writer's fact, and the ration it costs where the
- * mode counts food. No ration to give: the plea is passed by, and the fact says so.
- */
 function helpPlea(state: GameState, enc: RoadEncounter): { state: GameState; encounter: RoadEncounter; fact: string; extra: string[] } {
   const help = PLEA_HELP[enc.want ?? ''];
   if (!help) return { state, encounter: enc, fact: enc.want ? `You stopped and helped: ${enc.want}.` : 'You stopped and helped them.', extra: [] };
   if (!help.ration || !survival(state)) return { state, encounter: enc, fact: help.fact, extra: [] };
   const eat = eatRation(state.inventory ?? []);
-  if (!eat.ate) {
-    return { state, encounter: { ...enc, engaged: false, escaped: true, escapedTurn: state.turn }, fact: help.cannot ?? help.fact, extra: [] };
-  }
+  if (!eat.ate) return { state, encounter: { ...enc, engaged: false, escaped: true, escapedTurn: state.turn }, fact: help.cannot ?? help.fact, extra: [] };
   return { state: { ...state, inventory: eat.inventory }, encounter: enc, fact: help.fact, extra: [`Rations: 1 day given away (${eat.left} left)`] };
 }
-/** The meeting is over: fought and won or talked down, helped, fled past, or the fight against it was lost. */
 export function roadMeetingOver(enc: RoadEncounter): boolean {
   return !!enc.engaged || !!enc.escaped || !!enc.lost;
 }
@@ -430,33 +432,21 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (roadMeetingOver(enc)) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
-  // Only a meeting that can force a fight has a check to fail; a peaceful one is simply passed by.
-  const cost = fightPad(enc) ? withFailCost : (p: string) => p;
   if (enc.kind === 'camp') {
     const pads: string[] = ['Approach the camp'];
     if (enc.camp?.placeId) pads.push(SNEAK_CAMP_PAD);
     if (enc.miniBoss) pads.push(CHAMPION_PAD);
     pads.push('Skirt around the camp');
-    const out: string[] = [];
-    for (let i = 0; i < pads.length; i++) out.push(cost(pads[i]!));
-    return out;
+    return pads;
   }
-  const fixed = FIXED_ENCOUNTER_PADS[enc.kind] ?? [];
-  const out: string[] = [];
-  for (let i = 0; i < fixed.length; i++) out.push(cost(fixed[i]!));
+  const out = [...(FIXED_ENCOUNTER_PADS[enc.kind] ?? [])];
+  const demand = passageDemand(enc);
+  if (demand === 'name') out.push(NAME_PASSAGE_PAD);
+  if (demand === 'toll' || demand === 'purse') out.push(TOLL_PASSAGE_PAD);
+  if (enc.kind === 'villain') out.push(GO_AROUND_PAD);
   return out;
 }
-/** TT32 — a chip that runs a check says what a failure costs: the meeting forces the fight. */
-const FAIL_COST: Record<string, string> = {
-  'hide from the creature': ', but fail and it attacks',
-};
 const FAIL_COST_TAIL = /,\s*but fail and (?:they|it) attacks?$/i;
-function withFailCost(pad: string): string {
-  const key = pad.toLowerCase();
-  if (!MEETING_MOVE.has(key)) return pad;
-  return `${pad}${FAIL_COST[key] ?? ', but fail and they attack'}`;
-}
-/** A meeting chip without its failure-cost tail ("Talk your way past the thugs"). */
 export function meetingMoveBase(chip: string): string {
   return (chip ?? '').replace(/\s+/g, ' ').trim().replace(FAIL_COST_TAIL, '');
 }
@@ -469,11 +459,7 @@ function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> &
     ? `${head}, but one failed save now kills you`
     : `${head}, but each failed save wears you down more`;
 }
-/**
- * Chips for the ground between: walk on, this stretch's chance meeting (if any), turn back.
- * Turn back rests for a few turns after a bounce between the same places (the circling memory's
- * short return), unless the way on is blocked.
- */
+/** Chips for the ground between: walk on, this stretch's meeting (if any), turn back. */
 export function journeyPads(
   state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> &
     Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character' | 'activeEncounter'>> &
@@ -496,10 +482,7 @@ export function journeyPads(
   const rested = forward.length > 0 && bounced != null && (state.turn ?? 0) - bounced < TURN_BACK_REST_TURNS;
   return [...forward, ...met, ...(job ? [job] : []), ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
 }
-/**
- * A chip of the ground between: walk on / turn back, a travel engine chip, or the live meeting's own chips by its
- * class (with or without the failure-cost tail). A meeting chip with no such meeting on the stretch is not one.
- */
+/** A ground-between chip: walk on / turn back, travel engine chip, or this stretch's meeting pads. */
 export function isJourneyPad(state: Pick<GameState, 'journey'>, choice: string): boolean {
   const t = meetingMoveBase(choice).toLowerCase();
   const j = state.journey;
@@ -547,10 +530,7 @@ export function encounterPool(ctx: StretchContext): RoadEncounterKind[] {
   return pool;
 }
 const SOCIAL_KINDS = new Set<RoadEncounterKind>(['traveler', 'meeting']);
-/**
- * The pool with each kind repeated by its pillar slider (Combat for fights, Social for people who talk,
- * Exploration for wildlife and camps), in the same order. At 50/50/50 the pick is the unweighted pool's.
- */
+/** Pool with kinds repeated by pillar sliders (Combat/Social/Exploration); 50/50/50 = unweighted. */
 export function weightedEncounterPool(pool: RoadEncounterKind[], rules: Pick<HouseRules, 'combatFrequency' | 'socialRoleplay' | 'worldBuilding'>): RoadEncounterKind[] {
   const copies = (k: RoadEncounterKind) =>
     pillarCopies(FIGHT_KINDS.has(k) ? rules.combatFrequency : SOCIAL_KINDS.has(k) ? rules.socialRoleplay : rules.worldBuilding);
@@ -558,10 +538,7 @@ export function weightedEncounterPool(pool: RoadEncounterKind[], rules: Pick<Hou
   return out.length ? out : pool;
 }
 type PillarRules = Pick<HouseRules, 'combatFrequency' | 'socialRoleplay' | 'worldBuilding'>;
-/**
- * Share of meetings that are hostile (GM call, tuned by the pillar sliders): Combat against the average of Social
- * and Exploration, counted twice. At 50/50/50 one meeting in three is hostile, two in three are not.
- */
+/** Hostile share from pillar sliders (Combat vs Social/Exploration); at 50/50/50 ≈ 1/3. */
 export function hostileShare(rules: PillarRules): number {
   const hostile = pillarCopies(rules.combatFrequency);
   const other = (pillarCopies(rules.socialRoleplay) + pillarCopies(rules.worldBuilding)) / 2;
@@ -581,12 +558,7 @@ export function pickMeetingKind(pool: RoadEncounterKind[], kindRoll: number, rul
   if (kindRoll < calm) return other[at(other.length, kindRoll / calm)]!;
   return hostile[at(hostile.length, (kindRoll - calm) / (1 - calm))]!;
 }
-/**
- * One meeting check (a watch on the road or at camp). `chanceRoll`, `kindRoll` and `spawnRoll` are in [0, 1).
- * The check is a d6: a meeting on 1, or on 1–2 on dangerous or haunted ground (`meetingOn`).
- * `spawnRoll` decides a rare spawn (hostile kinds) or a camp mini-boss; 1 = neither.
- * Returns null for a quiet watch.
- */
+/** One watch meeting check (d6 via meetingOn; spawnRoll = rare/mini-boss). Null = quiet. */
 export function rollRoadEncounter(
   ctx: StretchContext,
   level: number,
@@ -1022,15 +994,16 @@ function facesFight(input: string, enc: RoadEncounter): boolean {
 }
 const ROAD_FOE_SOURCES = new Set(['road-encounter', 'road-rare-spawn', 'road-camp-elite']);
 const FLEE_WORDS = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
-/** The meeting's own non-fight chips and the existing check each one runs (talk = parley, slip past = flee). */
+/** Meeting chips that run a check (talk = parley, slip / go-around = flee). Passage pay/name are separate. */
 const MEETING_MOVE = new Map<string, 'parley' | 'flee'>([
   ['talk your way past the thugs', 'parley'],
   ['talk to whoever blocks the way', 'parley'],
   ['slip past the dead', 'flee'],
   ['skirt around the camp', 'flee'],
   ['hide from the creature', 'flee'],
+  [GO_AROUND_PAD.toLowerCase(), 'flee'],
 ]);
-/** The check this meeting's own talk / slip chip runs, when the meeting can still be fought. Null otherwise. */
+/** The check this meeting's talk / slip / go-around chip runs. Null otherwise. */
 export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string): 'parley' | 'flee' | null {
   const enc = state.journey?.encounter;
   if (!enc || !fightPad(enc) || roadMeetingOver(enc)) return null;
@@ -1038,14 +1011,40 @@ export function roadMeetingMove(state: Pick<GameState, 'journey'>, raw: string):
   if (!encounterPads(enc, state.journey!.terrain).some((p) => meetingMoveBase(p).toLowerCase() === chip)) return null;
   return MEETING_MOVE.get(chip) ?? null;
 }
+/** q74-GATE: pay / name / typed ask vs lane block. Success clears; fail opens fight. No fail text in labels. */
+export function resolveRoadPassage(state: GameState, raw: string): TravelCommit | null {
+  const j = state.journey;
+  const enc = j?.encounter;
+  if (!j || !enc || !isJourneyUnderway(state) || !laneBlocked(enc) || state.activeEncounter) return null;
+  const input = meetingMoveBase(raw ?? '');
+  if (!input) return null;
+  const base = input.toLowerCase();
+  if (MEETING_MOVE.has(base) || facesFight(input, enc) || FLEE_WORDS.test(input)) return null;
+  const demand = passageDemand(enc);
+  const where = `Travel: still on the ${j.ground.toLowerCase()} between ${j.from} and ${j.to} (${timeOfDayForHour(currentHour(state))})`;
+  const namePad = base === NAME_PASSAGE_PAD.toLowerCase();
+  const tollPad = base === TOLL_PASSAGE_PAD.toLowerCase();
+  const giveName = namePad || inferIntent(input) === PlayerIntent.INTENT_GIVE_NAME;
+  if (demand === 'name' && (giveName || (!tollPad && isSpeechOrProtest(input)))) {
+    if (!isLockablePcName(state.character?.name)) {
+      const foe = liveRoadFoe(state, enc);
+      return { state: { ...state, currentLocation: UNDERWAY_HERE, journey: { ...j, encounter: { ...enc, engaged: true } }, activeEncounter: foe }, handled: true, arrived: false, outcome: 'fight opened', receipt: `${where}; passage refused — no name on the sheet; fight: ${foe.name}` };
+    }
+    return { state: { ...settleRoadMeeting(state, 'parleyResolved'), currentLocation: UNDERWAY_HERE }, handled: true, arrived: false, outcome: 'slipped away', receipt: `${where}; gave the name ${state.character!.name} for the ledger; way on is clear` };
+  }
+  if ((demand === 'toll' || demand === 'purse') && tollPad) {
+    const cost = Math.max(1, Math.round(enc.level));
+    if ((state.gold ?? 0) < cost) {
+      const foe = liveRoadFoe(state, enc);
+      return { state: { ...state, currentLocation: UNDERWAY_HERE, journey: { ...j, encounter: { ...enc, engaged: true } }, activeEncounter: foe }, handled: true, arrived: false, outcome: 'fight opened', receipt: `${where}; passage refused — cannot pay the ${cost} GP toll; fight: ${foe.name}` };
+    }
+    return { state: { ...settleRoadMeeting({ ...state, gold: (state.gold ?? 0) - cost }, 'parleyResolved'), currentLocation: UNDERWAY_HERE }, handled: true, arrived: false, outcome: 'slipped away', receipt: `${where}; paid ${cost} GP toll; way on is clear` };
+  }
+  return null;
+}
 function liveRoadFoe(state: GameState, enc: RoadEncounter): ActiveEncounter {
   return initEncounterTerminal(roadFoe(enc), state, { forcedSpawnKey: `road-${enc.kind}` });
 }
-/**
- * Before the fight engine: the road meeting this input takes on, as the foe the engine settles this turn.
- * Facing a fightable meeting, or fleeing one that blocks the lane. Null otherwise.
- * Story RPG spawns no fights of its own, but a meeting it already offers chips for is settled the same way.
- */
 export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter | null {
   const j = state.journey;
   const enc = j?.encounter;
@@ -1057,14 +1056,9 @@ export function roadFoeForEngine(state: GameState, raw: string): ActiveEncounter
   if (roadMeetingMove(state, input)) return liveRoadFoe(state, enc);
   return null;
 }
-/** The foe is this trip's road meeting (not a place threat or a director spawn). */
 export function isRoadFoe(state: Pick<GameState, 'journey'>, foe: ActiveEncounter | null | undefined): boolean {
   return !!foe && !!state.journey?.encounter && ROAD_FOE_SOURCES.has(foe.source ?? '');
 }
-/**
- * After the fight engine settled a road foe: a win or a talk-down deals with the meeting, a flee that got
- * clear slips past it (escaped, not beaten), a loss ends it (lost, not beaten). Each one closes the meeting.
- */
 export function settleRoadMeeting(
   state: GameState,
   outcome: 'victory' | 'escape' | 'parleyResolved' | 'defeat' | 'capture'
@@ -1817,6 +1811,9 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     const origin = journeyOrigin(state) || state.journey.from;
     const j: TravelJourney = origin === state.journey.from ? state.journey : { ...state.journey, from: origin };
     state = j === state.journey ? state : { ...state, journey: j };
+    // q74-GATE — pay / name / typed ask clears or fails the lane block before Walk-on blocked.
+    const passage = resolveRoadPassage(state, input);
+    if (passage) return passage;
     const named = typedHub(input, state.campaignBibleId);
     const namedTo = named && named.name.toLowerCase() === j.to.toLowerCase();
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();

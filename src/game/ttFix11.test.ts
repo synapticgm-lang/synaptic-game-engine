@@ -106,9 +106,9 @@ describe('2 — a fail cost only where a fight can be forced', () => {
 
   it('a camp with a champion and the dead keep the cost', () => {
     const champ = journeyPads(at({ kind: 'camp', level: 2, stretch: 1, dangerous: true, miniBoss: true, want: 'to know if you are trouble', distanceFt: 20 }));
-    expect(champ).toContain('Skirt around the camp, but fail and they attack');
+    expect(champ).toContain('Skirt around the camp');
     const dead = journeyPads(at({ kind: 'undead', level: 1, stretch: 1, dangerous: true, want: 'the living off their ground', distanceFt: 30 }));
-    expect(dead).toContain('Slip past the dead, but fail and they attack');
+    expect(dead).toContain('Slip past the dead');
   });
 });
 

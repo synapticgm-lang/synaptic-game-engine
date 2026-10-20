@@ -71,9 +71,9 @@ describe('s79 Root A — one chip list per turn', () => {
       ...road,
       log: [...road.log, { id: 'g', turn: road.turn, role: 'gm', content: ROUGH_MEN, timestamp: 0 }],
     };
-    expect(filterInventedContextChoices(['Face the thugs', 'Talk your way past the thugs, but fail and they attack'], state)).toEqual([
+    expect(filterInventedContextChoices(['Face the thugs', 'Talk your way past the thugs'], state)).toEqual([
       'Face the thugs',
-      'Talk your way past the thugs, but fail and they attack',
+      'Talk your way past the thugs',
     ]);
     const { state: committed } = commitTurn(road, 'Walk on', ROUGH_MEN, ['Face the thugs', 'Talk your way past the thugs', 'Turn back toward Cathedral Close']);
     expect(resolveOfferedChoices(committed)).toContain('Face the thugs');
