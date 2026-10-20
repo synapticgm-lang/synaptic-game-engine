@@ -1807,6 +1807,11 @@ function typedHub(input: string, bibleId: string | undefined | null) {
 
 function commitTravelStep(state: GameState, raw: string): TravelCommit {
   const input = (raw ?? '').replace(/\s+/g, ' ').trim();
+  // q73-DYING: same flag as isDying (roundFight). A death-save turn does not move.
+  const ds = state.deathSaves;
+  if (state.playPhase === 'ended' || (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) || (state.engineMode === 'dnd' && !!ds?.dead)) {
+    return unchanged(state);
+  }
   if (!input || state.activeEncounter) return unchanged(state);
   if (state.journey && isJourneyUnderway(state)) {
     const origin = journeyOrigin(state) || state.journey.from;

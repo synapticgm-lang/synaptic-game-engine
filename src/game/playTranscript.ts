@@ -96,6 +96,11 @@ function storedTurnPad(state: GameState): string[] | null {
 
 export function resolveOfferedChoices(state: GameState): string[] {
   if (state.playPhase === 'ended') return [];
+  // q73-DYING: a stored travel pad must not outlive the drop to 0 HP.
+  const ds = state.deathSaves;
+  if (state.engineMode === 'dnd' && ds && !ds.dead && !ds.stable) {
+    return roundCombatChips(state) ?? ['Fight for breath'];
+  }
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
   const prompt = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
   if (!prompt.length) return chips;
