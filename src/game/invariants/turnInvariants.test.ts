@@ -181,6 +181,46 @@ describe('q76a invariant (2) dying-options — L6 T36-39', () => {
     }));
     expect(v.some((x) => x.code === 'dying-options')).toBe(true);
   });
+
+  it('fail: dying-stall when death saves do not change (real-fight provenance only)', () => {
+    const before = dyingState({
+      sceneFacts: {
+        ...(dyingState().sceneFacts ?? { crowd: 'none', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 36 }),
+        dyingFromFight: true,
+      },
+    });
+    const after = { ...before, turn: 37, deathSaves: { successes: 0, failures: 0 } };
+    const v = checkTurnInvariants(before, after, turn({
+      offeredOptions: [{ label: 'Fight for breath', kind: 'dying' }],
+      playerInput: 'Fight for breath',
+    }));
+    expect(v.some((x) => x.code === 'dying-stall')).toBe(true);
+  });
+
+  it('pass: dying-stall skipped without dyingFromFight provenance', () => {
+    const before = dyingState();
+    const after = { ...before, turn: 37, deathSaves: { successes: 0, failures: 0 } };
+    const v = checkTurnInvariants(before, after, turn({
+      offeredOptions: [{ label: 'Fight for breath', kind: 'dying' }],
+      playerInput: 'Fight for breath',
+    }));
+    expect(v.filter((x) => x.code === 'dying-stall')).toEqual([]);
+  });
+
+  it('pass: dying save advances', () => {
+    const before = dyingState({
+      sceneFacts: {
+        ...(dyingState().sceneFacts ?? { crowd: 'none', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 36 }),
+        dyingFromFight: true,
+      },
+    });
+    const after = { ...before, turn: 37, deathSaves: { successes: 0, failures: 1 } };
+    const v = checkTurnInvariants(before, after, turn({
+      offeredOptions: [{ label: 'Fight for breath', kind: 'dying' }],
+      playerInput: 'Fight for breath',
+    }));
+    expect(v.filter((x) => x.code === 'dying-stall')).toEqual([]);
+  });
 });
 
 describe('q76a invariant (3) typed-unanswered — L6 T19', () => {
@@ -365,13 +405,14 @@ describe('q76e-SCENARIOS engine injection + answered + naughty stub', () => {
     expect(after.activeEncounter?.phase ?? 'engaged').toBeTruthy();
   });
 
-  it('injectDying: deathSaves + hp 0 while fight live (SRD drop to 0)', async () => {
+  it('injectDying: deathSaves + hp 0 via fight resolver (SRD drop to 0)', async () => {
     const { injectDying } = await import('../../../scripts/stress-player/scenarios');
     const after = injectDying(base({ engineMode: 'dnd', campaignBibleId: 'cursed-keep' }));
     expect(after.character.hp).toBe(0);
-    expect(after.deathSaves).toEqual({ successes: 0, failures: 0 });
-    expect(after.activeEncounter?.name).toBeTruthy();
+    expect(after.deathSaves).toBeTruthy();
+    expect(after.deathSaves!.dead).toBeFalsy();
     expect(isDying(after)).toBe(true);
+    expect(after.sceneFacts?.dyingFromFight).toBe(true);
   });
 
   it('injectRoadBlock: journey.encounter from rollRoadEncounter', async () => {

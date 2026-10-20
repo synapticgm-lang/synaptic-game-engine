@@ -216,6 +216,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     return { state: end.state, receipts: end.receipts, facts: `${SELF_STOP_HEAD} ${end.fact}`, noTerminal: true };
   }
   const roundMode = usesRoundCombat(state);
+  // SRD 5.2.1 Death Saving Throws (WotC, CC BY 4.0): whenever you start your turn with 0 Hit
+  // Points you make a death saving throw. Tabletop round-combat path only (usesRoundCombat =
+  // dnd + character.srd); LitRPG/RPG never set isDying. q77c: do not advance saves outside that path.
   if (roundMode && isDying(state)) return resolveDeathSaveTurn(state, turnRng(state, 'death-save'), input);
   // A road meeting's own chip ("Skirt around the camp") takes on that meeting, whatever else waits here.
   const meetingMove = state.activeEncounter ? null : roadMeetingMove(state, input);

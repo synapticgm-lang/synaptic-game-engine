@@ -12,6 +12,9 @@ import { commitTravel, rollRoadEncounter, type StretchContext } from '../../src/
 import { hubsForBibleId } from '../../src/game/outdoorHubs';
 import { ensureNpcAgenda } from '../../src/game/npcMemory';
 import { recordPersonSeen } from '../../src/game/timeline';
+import { resolveEngineFight } from '../../src/game/engineFight';
+import { isDying } from '../../src/game/tabletop/roundFight';
+import { applyTabletopSheet, resolveSheet } from '../../src/game/tabletop/characterBuild';
 
 export type StressScenarioId =
   | 'none'
@@ -61,35 +64,88 @@ export function injectFight(state: GameState): GameState {
 }
 
 /**
- * Drop PC to 0 HP in a live fight with death saves.
- * SRD 5.2.1 Death Saving Throws / Dropping to 0 Hit Points (Wizards of the Coast, CC BY 4.0):
- * same shape roundFight writes on defeat (hp 0, Unconscious, deathSaves successes/failures 0).
+ * Drop PC to 0 HP through the real fight path only: catalog encounter → round combat init →
+ * resolveEngineFight rounds until roundFight writes defeat deathSaves.
+ * Never hand-stamps hp:0 / deathSaves. Marks sceneFacts.dyingFromFight when dying is real.
+ * SRD 5.2.1 Death Saving Throws / Dropping to 0 Hit Points (Wizards of the Coast, CC BY 4.0).
  * isDying is tabletop-only (engineMode === 'dnd').
  */
 export function injectDying(state: GameState): GameState {
-  // Prefer tabletop so isDying (dnd-only) also fires; other modes still get deathSaves for coverage.
   const base: GameState =
     state.engineMode === 'dnd'
       ? state
       : { ...state, engineMode: 'dnd' };
-  const fighting = base.activeEncounter ? base : injectFight(base);
-  const srd = fighting.character?.srd;
-  return {
+  // Real tabletop sheet so resolveRoundFight can open rounds (pcCombatProfile).
+  const sheet = resolveSheet({
+    classId: 'fighter',
+    speciesId: 'human',
+    backgroundId: 'soldier',
+    method: 'point-buy',
+    baseScores: { STR: 15, DEX: 13, CON: 14, INT: 8, WIS: 12, CHA: 10 },
+    kitId: 'A',
+    source: 'build',
+  });
+  let fighting = applyTabletopSheet(
+    {
+      ...(base.activeEncounter ? base : injectFight(base)),
+      engineMode: 'dnd',
+      openingEstablishment: {
+        ...(base.openingEstablishment ?? { pending: [], answers: {} }),
+        complete: true,
+        pending: [],
+      },
+    },
+    sheet,
+  );
+  // Low starting HP so the live foe can drop the PC through the resolver (not a stamped 0).
+  fighting = {
     ...fighting,
     character: {
       ...fighting.character,
-      hp: 0,
-      maxHp: Math.max(fighting.character?.maxHp ?? 12, 12),
-      conditions: [...new Set([...(fighting.character?.conditions ?? []), 'Unconscious'])],
-      ...(srd ? { srd } : {}),
-    },
-    deathSaves: { successes: 0, failures: 0 },
-    openingEstablishment: {
-      ...(fighting.openingEstablishment ?? { pending: [], answers: {} }),
-      complete: true,
-      pending: [],
+      hp: Math.min(fighting.character.hp ?? 3, 3),
+      maxHp: Math.max(fighting.character.maxHp ?? 12, 12),
     },
   };
+  if (!fighting.activeEncounter) fighting = injectFight(fighting);
+  // Stronger catalog foe so Dodge rounds reliably reach defeat via the fight resolver.
+  if (fighting.activeEncounter) {
+    const enc = fighting.activeEncounter;
+    fighting = {
+      ...fighting,
+      activeEncounter: {
+        ...enc,
+        hp: Math.max(enc.hp ?? 40, 40),
+        maxHp: Math.max(enc.maxHp ?? 40, 40),
+        strength: Math.max(enc.strength ?? 16, 16),
+        dexterity: Math.max(enc.dexterity ?? 14, 14),
+      },
+    };
+  }
+  let s = fighting;
+  for (let i = 0; i < 60; i++) {
+    if (isDying(s) || s.deathSaves?.dead) break;
+    const r = resolveEngineFight(s, 'Dodge');
+    if (!r) break;
+    s = r.state;
+  }
+  if (isDying(s) || s.deathSaves?.dead) {
+    return {
+      ...s,
+      sceneFacts: {
+        ...(s.sceneFacts ?? {
+          crowd: 'none',
+          noise: 'quiet',
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: s.turn ?? 0,
+        }),
+        dyingFromFight: true,
+      },
+    };
+  }
+  // Real path did not reach 0 HP — return the live fight as-is (no hand-shaped dying).
+  return s;
 }
 
 function pickTravelTarget(state: GameState, rng: Rng): string | null {

@@ -92,7 +92,31 @@ export function checkTurnInvariants(
     }
   }
 
-  // (3) every typed line gets a visible answer
+  // (2b) dying resolves within N turns — only for states produced by real fight setup
+  // (sceneFacts.dyingFromFight). Hand-shaped / artificial 0 HP states a human escapes by
+  // picking an option are skipped (q77c). SRD 5.2.1 Death Saving Throws on the round-combat path.
+  if (dying && before.sceneFacts?.dyingFromFight === true) {
+    const afterDying = isDying(after);
+    const bs = before.deathSaves;
+    const as = after.deathSaves;
+    const stalled =
+      afterDying
+      && !!bs
+      && !!as
+      && (bs.successes ?? 0) === (as.successes ?? 0)
+      && (bs.failures ?? 0) === (as.failures ?? 0)
+      && !as.dead
+      && !as.stable;
+    if (stalled) {
+      out.push({
+        code: 'dying-stall',
+        severity: 'P0',
+        detail: `death saves unchanged while dying (${bs!.successes}/${bs!.failures} → ${as!.successes}/${as!.failures})`,
+      });
+    }
+  }
+
+  // (3) every typed line gets a visible answer (refusal / receipt / engineResult / speech)
   const answered =
     (typeof turn.visibleAnswer === 'string' && turn.visibleAnswer.trim().length > 0) || turn.answered === true;
   if (turn.typed && input && !answered) {

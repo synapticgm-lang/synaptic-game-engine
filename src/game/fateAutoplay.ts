@@ -237,6 +237,8 @@ import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { isDying } from './tabletop/roundFight';
+import { resolveEngineFight } from './engineFight';
+import { resolveTypedFreeText } from './typedFreeText';
 import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
@@ -1139,20 +1141,58 @@ export async function headlessFateTurn(
   let arcState = withHouseRules(govInputState, settings);
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
-  // q76b — dry-run / stress: travel + stub writer only (no ArcDirector / dungeon / writer prep).
+  // q76b / q77c — dry-run / stress: stub writer; fights + typed go through engine (not the writer).
+  // Death saves stay on the usesRoundCombat path inside resolveEngineFight (main behaviour).
   if (meta.dryRun) {
     let arcStatusReceipts: string[] = [];
+    let engineFact = '';
     const dyingTurn = isDying(govInputState);
     const hereBeforeMove = arcState.currentLocation ?? '';
-    const graphMoved = dyingTurn ? arcState : applyGraphExitTravel(arcState, playerInput);
-    const travelCommit = dyingTurn || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
+    let fightHandled = false;
+    // Live encounter / dying on the round-combat path: typed Attack/Dodge/… via resolveEngineFight.
+    if (dyingTurn || arcState.activeEncounter) {
+      const fight = resolveEngineFight(arcState, playerInput);
+      if (fight) {
+        fightHandled = true;
+        arcState = fight.state;
+        arcStatusReceipts = [...arcStatusReceipts, ...fight.receipts];
+        engineFact = fight.facts || engineFact;
+      }
+    }
+    // Typed free text: engine handling or visible refusal. Skip when the fight resolver already answered.
+    // While dying after a fight answer, still record speech events (talk/protest) for the writer slot.
+    if (!fightHandled) {
+      const typed = resolveTypedFreeText(arcState, playerInput);
+      for (let i = 0; i < typed.receipts.length; i++) {
+        const line = typed.receipts[i]!;
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+      if (typed.engineResult) engineFact = typed.engineResult;
+    } else if (dyingTurn || isDying(arcState)) {
+      const intent = parsePlayerIntent(playerInput, arcState);
+      if (intent.kind === 'talk' || intent.kind === 'refuse') {
+        const typed = resolveTypedFreeText(arcState, playerInput);
+        for (let i = 0; i < typed.receipts.length; i++) {
+          const line = typed.receipts[i]!;
+          if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+        }
+      }
+    }
+    const graphMoved = dyingTurn || isDying(arcState) ? arcState : applyGraphExitTravel(arcState, playerInput);
+    const travelCommit = dyingTurn || isDying(arcState) || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
     arcState = travelCommit?.state ?? graphMoved;
     if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
     arcState = syncSheetToMovedHere(arcState, state.currentLocation);
-    if (!dyingTurn) arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+    if (!dyingTurn && !isDying(arcState)) arcState = maybeEnterInteriorDungeon(arcState, playerInput);
     if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
       arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
       arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
+    }
+    const nextTurn = state.turn + 1;
+    arcState = applyPlayPhaseAfterHp(arcState, arcState.character?.hp ?? 0, nextTurn);
+    // Visible engine answer for stress typed-answered: put fact in systemLog (not a partial completedEvent).
+    if (engineFact && !arcStatusReceipts.some((r) => r === engineFact)) {
+      arcStatusReceipts = [...arcStatusReceipts, engineFact];
     }
     const here = (arcState.currentLocation ?? 'here').trim() || 'here';
     const who = peopleHere(arcState)[0];
@@ -1162,13 +1202,15 @@ export async function headlessFateTurn(
       : `At ${here}, you ${act}. The scene held.`;
     const playerEntry: LogEntry = { id: uid(), turn: state.turn, role: 'player', content: displayLine, timestamp: Date.now() };
     const gmBase: LogEntry = {
-      id: uid(), turn: state.turn + 1, role: 'gm', content: stubGm, timestamp: Date.now(),
+      id: uid(), turn: nextTurn, role: 'gm', content: stubGm, timestamp: Date.now(),
       systemLog: ['Dry run — stub writer, no GM call', ...arcStatusReceipts].slice(0, 12),
     };
     const prevLog = arcState.log ?? state.log;
-    // Stress speed: reuse this turn's offered pad (full compiler is the live/non-dry path).
-    const nextChoices = offered.length ? offered : ['Look around', 'Wait', 'Check what you carry'];
-    const midBase: GameState = { ...arcState, turn: state.turn + 1, log: [...prevLog, playerEntry, gmBase] };
+    // While dying, refresh pads from the live state (do not reuse a pre-drop travel pad).
+    const nextChoices = isDying(arcState) || arcState.deathSaves?.dead || arcState.playPhase === 'ended'
+      ? resolveOfferedChoices(arcState)
+      : (offered.length ? offered : ['Look around', 'Wait', 'Check what you carry']);
+    const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
     const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };
     const next: GameState = {
       ...midBase,
