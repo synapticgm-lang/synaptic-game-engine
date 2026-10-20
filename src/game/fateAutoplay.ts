@@ -238,7 +238,7 @@ import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { isDying } from './tabletop/roundFight';
 import { resolveEngineFight } from './engineFight';
-import { resolveTypedFreeText } from './typedFreeText';
+import { resolveTypedFreeText, typedSpeechForWriter } from './typedFreeText';
 import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
@@ -1319,6 +1319,12 @@ export async function headlessFateTurn(
     // q50-MAP2 — arrival at a place with no record (or seed stub without exits).
     arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
   }
+  // q78-SPEECHREPLY: typed speech → must-react fact on the writer packet (presence addressee).
+  const speechLines = typedSpeechForWriter(arcState, playerInput);
+  for (let i = 0; i < speechLines.length; i++) {
+    const line = speechLines[i]!;
+    if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+  }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
   const engineFact = engineResultFact([
     ...(arcResult?.systemReceipts ?? []),
@@ -1330,6 +1336,7 @@ export async function headlessFateTurn(
     ...(shopTurn?.facts ?? []),
     ...nudge.receipts,
     ...(travelCommit ? travelEngineLines(travelCommit) : []),
+    ...speechLines,
   ], arcState.engineMode);
   const preparedEvent = prepareWriterInputWithTownsfolk(arcState, writerAction, {
     xp: arcXp,

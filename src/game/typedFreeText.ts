@@ -1,14 +1,18 @@
 /**
- * q77b-DYINGTYPED — typed free-text engine outcomes (free play, fights, dying).
+ * q77b-DYINGTYPED / q78-SPEECHREPLY — typed free-text engine outcomes (free play, fights, dying).
  * Reuses parsePlayerIntent + checkForAction/runPlayerCheck + interpretRoundTyped.
  * No word lists: intent/resolution path decides action vs speech vs refusal.
- * Engine records; writer voices NPC reaction slots.
- * SRD 5.2.1 Communicating / Ability Checks (Wizards of the Coast, CC BY 4.0).
+ * Addressee comes from the presence record / scene focus, not from matching the typed text.
+ * Engine records a must-react fact; writer voices the NPC reaction (reply, refuse, or visibly ignore).
+ *
+ * SRD 5.2.1 Communicating (Wizards of the Coast, CC BY 4.0):
+ * "You can communicate however you are able to… communicating doesn’t interfere with other Activity."
+ * Ability Checks when a contested social action uses CheckSpec (same source).
  */
 import type { GameState } from './types';
 import { checkForAction, runPlayerCheck } from './checkMath';
 import { isSpeechOrProtest, parsePlayerIntent } from './intentParser';
-import { presentNpcNames } from './npcRelationships';
+import { peopleHere } from './chipLegality';
 import { interpretRoundTyped } from './tabletop/roundTyped';
 
 export type TypedFreeTextResult = {
@@ -18,21 +22,37 @@ export type TypedFreeTextResult = {
   engineResult: string;
 };
 
-function addressedPresent(state: GameState, input: string): string | null {
-  const low = (input ?? '').toLowerCase();
-  const enc = state.activeEncounter?.name?.trim();
-  if (enc && low.includes(enc.toLowerCase())) return enc;
-  const present = presentNpcNames(state);
+/** Shared tail for the writer must-react engine fact. */
+export const MUST_REACT_TAIL = 'must react to what you said: reply, refuse, or visibly ignore';
+const SPEECH_CUE = /\bi\s+say\b|\btell\b|\bask\b|\btalk\s+to\b/i;
+
+export function parseMustReactNpc(engineFact: string): string | null {
+  const fact = engineFact ?? '';
+  const at = fact.toLowerCase().indexOf(MUST_REACT_TAIL);
+  if (at < 0) return null;
+  let start = at;
+  while (start > 0) {
+    const ch = fact[start - 1]!;
+    if (ch === '.' || ch === '\n') break;
+    start -= 1;
+  }
+  const who = fact.slice(start, at).trim();
+  return who || null;
+}
+
+/** Presence / scene focus addressee — never text matching on the typed line. */
+export function speechAddresseeFromPresence(state: GameState): string | null {
+  const here = peopleHere(state);
+  if (!here.length) return null;
+  const present = state.sceneFacts?.present ?? [];
   for (let i = 0; i < present.length; i++) {
-    const name = present[i]!.trim();
-    if (name && low.includes(name.toLowerCase())) return name;
+    const focus = (present[i] ?? '').trim();
+    if (!focus) continue;
+    for (let j = 0; j < here.length; j++) {
+      if (here[j]!.toLowerCase() === focus.toLowerCase()) return here[j]!;
+    }
   }
-  const comps = state.companions ?? [];
-  for (let i = 0; i < comps.length; i++) {
-    const name = (comps[i]!.name ?? '').trim();
-    if (name && (comps[i]!.hp ?? 0) > 0 && low.includes(name.toLowerCase())) return name;
-  }
-  return null;
+  return here[0] ?? null;
 }
 
 /**
@@ -47,23 +67,41 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   }
   if (state.activeEncounter || state.roundCombat) {
     const plan = interpretRoundTyped(state, raw);
-    const engineResult = plan.facts.join(' ').trim() || plan.receipts.join(' ').trim();
-    return { receipts: plan.receipts, facts: plan.facts, engineResult };
+    const facts = [...plan.facts];
+    let who: string | null = null;
+    let freeSpeech = false;
+    for (let i = 0; i < plan.clauses.length; i++) {
+      const c = plan.clauses[i]!;
+      if (c.kind !== 'speech') continue;
+      freeSpeech = true;
+      if (c.addressed) { who = c.addressed; break; }
+    }
+    if (!who && freeSpeech) who = speechAddresseeFromPresence(state);
+    const name = (who ?? '').trim();
+    if (name && name.toLowerCase() !== 'the room') {
+      const line = `${name} ${MUST_REACT_TAIL}`;
+      let has = false;
+      for (let i = 0; i < facts.length; i++) {
+        if (facts[i]!.includes(line)) { has = true; break; }
+      }
+      if (!has) facts.push(line);
+    }
+    const engineResult = facts.join(' ').trim() || plan.receipts.join(' ').trim();
+    return { receipts: plan.receipts, facts, engineResult };
   }
   const intent = parsePlayerIntent(raw, state);
-  const whoNamed = addressedPresent(state, raw);
-  // Free speech: talk intent, protest, say/tell/ask to a present name, or address the room.
+  const who = speechAddresseeFromPresence(state);
   const asSpeech =
     intent.kind === 'talk'
     || intent.kind === 'refuse'
     || isSpeechOrProtest(raw)
-    || /\bi\s+say\b|\btell\b|\bask\b|\btalk\s+to\b/i.test(raw)
-    || (!!whoNamed && raw.includes('?'));
+    || SPEECH_CUE.test(raw)
+    || (!!who && raw.includes('?'));
   if (asSpeech) {
-    const who = whoNamed ?? 'the room';
-    const fact = `Speech event: you address ${who}. NPC reaction slot open for the writer.`;
-    const receipt = `Speech: to ${who}`;
-    return { receipts: [receipt], facts: [fact], engineResult: fact };
+    const addressed = who ?? 'the room';
+    const facts = [`Speech event: you address ${addressed}. NPC reaction slot open for the writer.`];
+    if (who) facts.push(`${who} ${MUST_REACT_TAIL}`);
+    return { receipts: [`Speech: to ${addressed}`], facts, engineResult: facts.join(' ') };
   }
   const canRoll = !!state.character?.srd?.speciesId && !!state.character?.srd?.classId;
   const spec = canRoll ? checkForAction(state, intent, raw) : null;
@@ -89,4 +127,43 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   }
   const refusal = `Refused: that line has no engine resolution (${intent.label}).`;
   return { receipts: [refusal], facts: [refusal], engineResult: refusal };
+}
+
+/** Speech-only lines for the writer ENGINE RESULT (skip refusals / check rolls). */
+export function speechEngineLines(typed: TypedFreeTextResult): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < typed.facts.length; i++) {
+    const f = typed.facts[i]!;
+    if (f.includes(MUST_REACT_TAIL) || f.startsWith('Speech event:')) out.push(f);
+  }
+  for (let i = 0; i < typed.receipts.length; i++) {
+    const r = typed.receipts[i]!;
+    if (r.startsWith('Speech:')) out.push(r);
+  }
+  return out;
+}
+
+/** Writer-facing speech facts only — skips non-speech so Look/Travel never rolls here. */
+export function typedSpeechForWriter(state: GameState, input: string): string[] {
+  const raw = (input ?? '').trim();
+  if (!raw) return [];
+  if (state.activeEncounter || state.roundCombat) {
+    const plan = interpretRoundTyped(state, raw);
+    let speech = false;
+    for (let i = 0; i < plan.clauses.length; i++) {
+      if (plan.clauses[i]!.kind === 'speech') { speech = true; break; }
+    }
+    if (!speech) return [];
+  } else {
+    const intent = parsePlayerIntent(raw, state);
+    const who = speechAddresseeFromPresence(state);
+    const asSpeech =
+      intent.kind === 'talk'
+      || intent.kind === 'refuse'
+      || isSpeechOrProtest(raw)
+      || SPEECH_CUE.test(raw)
+      || (!!who && raw.includes('?'));
+    if (!asSpeech) return [];
+  }
+  return speechEngineLines(resolveTypedFreeText(state, input));
 }

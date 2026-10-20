@@ -21,6 +21,7 @@ import { commitOfferedTurn, downloadPlayDump, withOfferedChoices } from './playT
 import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending, takeBuiltSheet } from './tabletop/creationFlow';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
+import { typedSpeechForWriter } from './typedFreeText';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { resolveShopChip } from './shopChips';
@@ -2805,6 +2806,12 @@ export function useGame() {
       circlingRecorded = liveCurrent;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...nudge.receipts];
       stateRef.current = liveCurrent;
+      // q78-SPEECHREPLY: typed speech → must-react fact on the writer packet (presence addressee).
+      const speechLines = typedSpeechForWriter(liveCurrent, sanitizedInput);
+      for (let i = 0; i < speechLines.length; i++) {
+        const line = speechLines[i]!;
+        if (line && !pendingArcStatusReceipts.includes(line)) pendingArcStatusReceipts.push(line);
+      }
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
       const engineFact = engineResultFact([
         ...(systemsArc?.systemReceipts ?? []),
@@ -2816,6 +2823,7 @@ export function useGame() {
         ...(shopTurn?.facts ?? []),
         ...nudge.receipts,
         ...(travelCommit ? travelEngineLines(travelCommit) : []),
+        ...speechLines,
       ], liveCurrent.engineMode);
       const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,
