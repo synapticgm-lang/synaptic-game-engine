@@ -1,6 +1,7 @@
 /**
  * ChoiceCompiler — legal beat edges + semantic fingerprint cooldown (Wave 2 MVP).
  */
+
 import type { GameState } from './types';
 import { canonicalizeIntent, isTalkUltimatumExhausted } from './semanticLoopDetector';
 import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
@@ -76,18 +77,23 @@ import { rankChoices } from './choiceRanking';
 import { withRememberedThreatChip } from './placeThreats';
 import { isJourneyUnderway, withJourneyPads } from './travelJourney';
 import { ENGINE_COMBAT_CHIP } from './chipLegality';
+
 /** A fight move only the engine's live encounter can answer (same test as `chipProblem`). */
 function isFightMoveChip(label: string): boolean {
   const t = label.trim();
   return ENGINE_COMBAT_CHIP.test(t) || /^(?:attack from hiding|engage the threat|change position)\b/i.test(t);
 }
+
 const WORLD_MOVING_PAD = /\b(travel|leave|exits?|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i;
+
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
+
 export type LastPlayerIntent = {
   family: PlayerIntentFamily;
   text: string;
   turn: number;
 };
+
 export function classifyPlayerIntent(input: string | undefined): PlayerIntentFamily {
   const t = (input ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return 'other';
@@ -99,6 +105,7 @@ export function classifyPlayerIntent(input: string | undefined): PlayerIntentFam
   if (/\b(ask|talk|speak|say|tell)\b/i.test(t)) return 'talk';
   return 'other';
 }
+
 function lastPlayerLine(state: GameState): string {
   if (state.sceneFacts?.lastPlayerIntent?.text) return state.sceneFacts.lastPlayerIntent.text;
   for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
@@ -107,6 +114,7 @@ function lastPlayerLine(state: GameState): string {
   }
   return '';
 }
+
 function leftoverCoverOrOpeningChip(choice: string): boolean {
   return (
     isNameOriginKitCoverChoice(choice)
@@ -115,28 +123,33 @@ function leftoverCoverOrOpeningChip(choice: string): boolean {
     )
   );
 }
+
 function isLookOrExamineRoomPad(choice: string): boolean {
   return /\b(look around|examine the room|inspect the room|scout the (?:area|room|cell)|get (?:your )?bearings|whats going on|where am i)\b/i.test(
     choice
   );
 }
+
 function isGenericInspectPad(choice: string): boolean {
   return (
     isLookOrExamineRoomPad(choice)
     || /\b(sift|search the (?:same|debris|rubble|room again)|look for anything else)\b/i.test(choice)
   );
 }
+
 function isFirstSpeechLecturePad(choice: string): boolean {
   return /\b(ask who (?:they|he|she) (?:are|is)|ask (?:them|him|her) (?:their|his|her) name|introduce yourself|ask what(?:'s| is) going on|ask (?:them )?to explain (?:everything|the situation)|hear (?:their|his|her) story)\b/i.test(
     choice
   );
 }
+
 /** Identity intro only — not hall-talk "what's going on". */
 function isIdentityIntroPad(choice: string): boolean {
   return /\b(ask who (?:they|he|she) (?:are|is)|ask (?:them|him|her) (?:their|his|her) name|introduce yourself)\b/i.test(
     choice
   );
 }
+
 function intentSupplements(family: PlayerIntentFamily, engaged: boolean, state: GameState): string[] {
   // OPT-1 item 4 / TT-C1 item 5: fixed per-family demand/inspect lists deleted when affordances cover.
   // Flee/engaged combat pads stay (not covered by scene object/person affordances).
@@ -157,6 +170,7 @@ function intentSupplements(family: PlayerIntentFamily, engaged: boolean, state: 
   if (family === 'flee') return ['Keep running', 'Look for an exit', 'Find cover'];
   return [];
 }
+
 /** Named interactable from last beat / props (chest, door, panel) for pad supplement. */
 export function namedPropPadsFromBeat(state: GameState): string[] {
   const props = state.sceneFacts?.props ?? [];
@@ -175,6 +189,7 @@ export function namedPropPadsFromBeat(state: GameState): string[] {
   }
   return pads;
 }
+
 function inspectTargetExhausted(state: GameState, choice: string): boolean {
   const canon = canonicalizeIntent(choice, state.turn);
   const loc = (state.currentLocation ?? 'unknown').toLowerCase();
@@ -182,6 +197,7 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
   const searchedEmpty = state.sceneFacts?.searchedEmpty ?? [];
   const emptyContainers = state.sceneFacts?.emptyContainers ?? [];
   const lower = choice.toLowerCase();
+
   // Batch G — open/check crate|chest|box|barrel even when action isn't "inspect"
   const containerMatch = lower.match(/\b(crate|chest|box|barrel|trunk)\b/);
   if (containerMatch && /\b(open|check|search|loot|rummage|inspect|examine)\b/.test(lower)) {
@@ -193,6 +209,7 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
       return true;
     }
   }
+
   if (isGenericInspectPad(choice)) {
     const roomKey = `object:room@${loc}`;
     const hereKey = `object:here@${loc}`;
@@ -201,6 +218,7 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
     }
     if (searchedEmpty.some((t) => /\b(here|room|debris|rubble|cell)\b/i.test(t))) return true;
   }
+
   if (canon.action === 'inspect' && canon.target) {
     const target = canon.target.toLowerCase();
     const evidenceKey = `object:${target}@${loc}`;
@@ -214,6 +232,7 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
   }
   return false;
 }
+
 /** True when a pad is loot/scout/wait under a live encounter (Batch G combat lock). */
 function isEncounterForbiddenPad(choice: string): boolean {
   const lower = choice.toLowerCase();
@@ -239,6 +258,7 @@ function isEncounterForbiddenPad(choice: string): boolean {
     || /\b(scout|wait and watch|^wait$|look around|examine the (?:room|area)|inspect the (?:room|area)|get (?:your )?bearings)\b/.test(lower)
     || isLookOrExamineRoomPad(choice);
 }
+
 /** Batch T — travel yo-yo lock while fight / standoff / parked drought encounter is live. */
 function hasLiveStakes(state: GameState): boolean {
   return (
@@ -246,6 +266,7 @@ function hasLiveStakes(state: GameState): boolean {
     || !!state.activeEncounter
   );
 }
+
 /** Batch W — generic leverage/ask pads that ignore live scene context. */
 function isAbstractGenericPad(choice: string): boolean {
   const t = choice.trim();
@@ -253,6 +274,7 @@ function isAbstractGenericPad(choice: string): boolean {
     t
   );
 }
+
 function countRecentAbstractPadUses(state: GameState, window = 8): number {
   const log = state.log ?? [];
   let seen = 0;
@@ -265,6 +287,7 @@ function countRecentAbstractPadUses(state: GameState, window = 8): number {
   }
   return count;
 }
+
 /**
  * Batch Z Milestone 2 — Z-1: Filter pads by FSM state to prevent false-arrival violations.
  * Caught → combat-only pads
@@ -273,17 +296,20 @@ function countRecentAbstractPadUses(state: GameState, window = 8): number {
  */
 function filterPadsByFsmState(state: GameState, pads: string[], notes: string[]): string[] {
   const enc = state.activeEncounter ?? state.pendingEncounter;
+  
   // Caught: ONLY combat pads (attack, plead, struggle, surrender)
   if (enc?.caught) {
     const allowed = getAllowedCombatActions(state);
     const filtered = pads.filter((pad) => {
       const intent = inferIntent(pad);
       const lower = pad.toLowerCase();
+      
       // Allow only desperate combat actions
       if (allowed.attack && (intent === PlayerIntent.INTENT_ATTACK || /\b(attack|strike|fight|press the attack)\b/i.test(lower))) return true;
       if (allowed.plead && (intent === PlayerIntent.INTENT_PLEAD || /\b(plead|beg)\b/i.test(lower))) return true;
       if (allowed.struggle && (intent === PlayerIntent.INTENT_STRUGGLE || /\b(struggle|resist)\b/i.test(lower))) return true;
       if (allowed.surrender && (intent === PlayerIntent.INTENT_SURRENDER || /\b(surrender|yield)\b/i.test(lower))) return true;
+      
       notes.push(`FSM caught drop: ${pad.slice(0, 40)}`);
       return false;
     });
@@ -293,38 +319,46 @@ function filterPadsByFsmState(state: GameState, pads: string[], notes: string[])
     }
     return filtered;
   }
+  
   // In combat (not caught): combat actions + flee/parley if allowed, NO travel/shop
   if (isEncounterEngaged(state)) {
     const allowed = getAllowedCombatActions(state);
     return pads.filter((pad) => {
       const intent = inferIntent(pad);
       const lower = pad.toLowerCase();
+      
       // Block travel pads
       if (isTravelIntent(intent) || /\b(travel|go to|head to|leave for)\b/i.test(lower)) {
         notes.push(`FSM combat drop travel: ${pad.slice(0, 40)}`);
         return false;
       }
+      
       // Block shop pads
       if (intent === PlayerIntent.INTENT_SHOP || /\b(shop|merchant|buy|trade)\b/i.test(lower)) {
         notes.push(`FSM combat drop shop: ${pad.slice(0, 40)}`);
         return false;
       }
+      
       // Allow combat actions if FSM allows
       if (intent === PlayerIntent.INTENT_ATTACK || /\b(attack|strike|fight|engage)\b/i.test(lower)) return true;
       if (allowed.flee && (intent === PlayerIntent.INTENT_FLEE || /\b(flee|run|escape)\b/i.test(lower))) return true;
       if (allowed.parley && (intent === PlayerIntent.INTENT_PARLEY || /\b(parley|negotiate|talk.*down)\b/i.test(lower))) return true;
+      
       // Allow inspect if FSM allows
       if (isInspectIntent(intent) || /\b(inspect|examine|look|search)\b/i.test(lower)) {
         return canInspectInFsmState(state);
       }
+      
       // Allow other non-travel/shop pads
       return true;
     });
   }
+  
   // No active combat: apply normal FSM restrictions
   const filtered = pads.filter((pad) => {
     const intent = inferIntent(pad);
     const lower = pad.toLowerCase();
+    
     // Check travel restriction
     if (isTravelIntent(intent) || /\b(travel|go to|head to|leave for|enter|exit)\b/i.test(lower)) {
       if (!canTravelInFsmState(state)) {
@@ -332,6 +366,7 @@ function filterPadsByFsmState(state: GameState, pads: string[], notes: string[])
         return false;
       }
     }
+    
     // Check shop restriction
     if (intent === PlayerIntent.INTENT_SHOP || /\b(shop|merchant|buy|trade)\b/i.test(lower)) {
       if (!canShopInFsmState(state)) {
@@ -339,6 +374,7 @@ function filterPadsByFsmState(state: GameState, pads: string[], notes: string[])
         return false;
       }
     }
+    
     // Check inspect restriction
     if (isInspectIntent(intent) || /\b(inspect|examine|look|search)\b/i.test(lower)) {
       if (!canInspectInFsmState(state)) {
@@ -346,10 +382,13 @@ function filterPadsByFsmState(state: GameState, pads: string[], notes: string[])
         return false;
       }
     }
+    
     return true;
   });
+  
   return filtered;
 }
+
 export type ChoiceFingerprintFamily =
   | 'walk_away'
   | 'inspect'
@@ -358,17 +397,20 @@ export type ChoiceFingerprintFamily =
   | 'wait'
   | 'travel'
   | 'generic';
+
 export interface ChoiceFingerprintRecord {
   family: ChoiceFingerprintFamily;
   turn: number;
   count: number;
 }
+
 export interface GateDisposition {
   target: string;
   cooldownUntilTurn: number;
   kind: 'reject' | 'transform';
   message: string;
 }
+
 /** B024 — Hub gate disposition types */
 export type HubGateType =
   | 'entrance'   // First arrival at hub
@@ -376,12 +418,14 @@ export type HubGateType =
   | 'vendor'     // Merchant/shop interaction
   | 'quest'      // Quest-related interaction
   | 'travel';    // Leaving hub
+
 export interface HubBeatRecord {
   hubId: string;
   gateType: HubGateType;
   turn: number;
   count: number;
 }
+
 const HUB_BEAT_CAPS: Record<HubGateType, number> = {
   entrance: 1,   // Only arrive once
   loiter: 3,     // Max 3 wait/loiter beats
@@ -389,10 +433,13 @@ const HUB_BEAT_CAPS: Record<HubGateType, number> = {
   quest: 999,    // Quest interactions unlimited
   travel: 999,   // Travel unlimited
 };
+
 const LITRPG_HUB_EXIT_DEADLINE = 50; // LitRPG must leave hub by turn 50 if loitering
+
 const FAMILY_LIMIT = 3;
 const FAMILY_WINDOW = 50;
 const FAMILY_COOLDOWN = 8;
+
 function classifyChoiceFamily(choice: string): ChoiceFingerprintFamily {
   const lower = choice.toLowerCase();
   if (/\b(walk away|leave|go another|step back)\b/.test(lower)) return 'walk_away';
@@ -406,6 +453,7 @@ function classifyChoiceFamily(choice: string): ChoiceFingerprintFamily {
   if (/\b(travel|go to|head to|move to)\b/.test(lower)) return 'travel';
   return 'generic';
 }
+
 function isStallFamily(family: ChoiceFingerprintFamily): boolean {
   return (
     family === 'wait' ||
@@ -415,6 +463,7 @@ function isStallFamily(family: ChoiceFingerprintFamily): boolean {
     family === 'travel'
   );
 }
+
 function fingerprintUsage(
   records: ChoiceFingerprintRecord[],
   family: ChoiceFingerprintFamily,
@@ -424,6 +473,7 @@ function fingerprintUsage(
     (r) => r.family === family && turn - r.turn <= FAMILY_WINDOW
   ).reduce((s, r) => s + r.count, 0);
 }
+
 function familyOnCooldown(
   records: ChoiceFingerprintRecord[],
   family: ChoiceFingerprintFamily,
@@ -438,6 +488,7 @@ function familyOnCooldown(
   const last = recent[0];
   return turn - last.turn < FAMILY_COOLDOWN;
 }
+
 export function updateChoiceFingerprints(
   choices: string[],
   turn: number,
@@ -455,6 +506,7 @@ export function updateChoiceFingerprints(
   }
   return records.slice(-40);
 }
+
 export interface CompileChoicesResult {
   choices: string[];
   notes: string[];
@@ -462,12 +514,15 @@ export interface CompileChoicesResult {
   /** Batch Y Milestone 1 — Y-2: Intent enums for SNAPSHOT (semantic actions, not UI strings). */
   intentEnums?: string[];
 }
+
 function gateTravelTarget(input: string): string | null {
   const m = input.match(/(?:travel to|go to|head to|move to)\s+(?:the\s+)?(.+)/i);
   return m?.[1]?.trim().slice(0, 60) ?? null;
 }
+
 const GATE_TARGET_PATTERNS =
   /\b(gate|queue|circle|registrar|registration|sevenfold|palace approach|contract hall)\b/i;
+
 /** B024 — Classify hub gate type from input */
 export function classifyHubGate(input: string): HubGateType {
   const lower = input.toLowerCase();
@@ -478,6 +533,7 @@ export function classifyHubGate(input: string): HubGateType {
   if (/\b(travel|leave|go to|head to)\b/.test(lower)) return 'travel';
   return 'loiter'; // Default to loiter
 }
+
 /** B024 — Check hub beat cap exhaustion */
 export function isHubBeatCapped(
   state: GameState,
@@ -490,6 +546,7 @@ export function isHubBeatCapped(
     .reduce((sum, r) => sum + r.count, 0);
   return count >= HUB_BEAT_CAPS[gateType];
 }
+
 /** B024 — Record hub beat usage */
 export function recordHubBeat(
   state: GameState,
@@ -500,6 +557,7 @@ export function recordHubBeat(
   const existing = records.find(r =>
     r.hubId === hubId && r.gateType === gateType && r.turn === state.turn
   );
+
   let nextRecords: HubBeatRecord[];
   if (existing) {
     nextRecords = records.map(r =>
@@ -511,6 +569,7 @@ export function recordHubBeat(
       { hubId, gateType, turn: state.turn, count: 1 }
     ].slice(-40); // Keep last 40 records
   }
+
   return {
     ...state,
     arcDirector: {
@@ -519,25 +578,32 @@ export function recordHubBeat(
     },
   };
 }
+
 /** B024 — Check if LitRPG hub exit deadline exceeded */
 export function shouldForceLitrpgHubExit(state: GameState): boolean {
   if (state.engineMode !== 'litrpg') return false;
+
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
   if (!hub) return false;
+
   const records = state.arcDirector?.hubBeatRecords ?? [];
   const hubRecords = records.filter(r => r.hubId === hub.id);
   if (!hubRecords.length) return false;
+
   // Count non-travel beats
   const loiterBeats = hubRecords.filter(r =>
     r.gateType === 'loiter' || r.gateType === 'vendor'
   );
   const totalLoiter = loiterBeats.reduce((sum, r) => sum + r.count, 0);
+
   // Force exit if too much loitering
   if (totalLoiter >= 4 && state.turn >= LITRPG_HUB_EXIT_DEADLINE) {
     return true;
   }
+
   return false;
 }
+
 /** Gate disposition matrix (B024) — reject/transform hub gate travel loops. */
 export function checkGateDisposition(
   state: GameState,
@@ -547,6 +613,7 @@ export function checkGateDisposition(
   if (!target) return null;
   const lower = target.toLowerCase();
   if (!GATE_TARGET_PATTERNS.test(lower)) return null;
+
   const gates = state.arcDirector?.gateDispositions ?? {};
   const key = lower.replace(/[^a-z0-9]+/g, '-').slice(0, 40);
   const until = gates[key];
@@ -566,6 +633,7 @@ export function checkGateDisposition(
       message: `Hub beats exhausted at this location — pick a crisis fork or talk path instead of ${target}.`,
     };
   }
+
   // B024 — Check typed gate caps
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
   if (hub) {
@@ -579,8 +647,10 @@ export function checkGateDisposition(
       };
     }
   }
+
   return null;
 }
+
 export function recordGateRejection(state: GameState, target: string): GameState {
   const key = target.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
   const cooldownUntilTurn = state.turn + 6;
@@ -595,6 +665,7 @@ export function recordGateRejection(state: GameState, target: string): GameState
     },
   };
 }
+
 function hubBeatExhausted(state: GameState, choice: string): boolean {
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
   if (!hub) return false;
@@ -608,6 +679,7 @@ function hubBeatExhausted(state: GameState, choice: string): boolean {
   }
   return false;
 }
+
 /** Filter/supplement choice pad from legal edges + fingerprint cooldown. */
 export function compileChoices(
   state: GameState,
@@ -637,6 +709,7 @@ export function compileChoices(
       notes.push('Encounter lock: graph pads only');
     }
   }
+
   const engaged = isEncounterEngaged(state);
   const liveStakes = hasLiveStakes(state);
   const travelStarve = excluded.has('travel') || shouldStarveTravelPads(state);
@@ -677,6 +750,7 @@ export function compileChoices(
     if (family === 'walk_away') return stallUsed.has('walk_away');
     return true;
   };
+
   const coverCombatLock = shouldStarveCombatPadsOnCover(state);
   let filtered = (graphLabels.length ? graphLabels : choices).filter((c) => {
     const lower = c.toLowerCase();
@@ -859,6 +933,7 @@ export function compileChoices(
     }
     return true;
   });
+
   if (stallInterrupt) {
     notes.push(
       talkRecycle
@@ -870,11 +945,13 @@ export function compileChoices(
             : `Hard streak interrupt: ${streak.key}×${streak.count}`
     );
   }
+
   const cooldownResult = filterCooldownChoices(filtered, turn, cooldownMap);
   filtered = cooldownResult.filtered;
   if (cooldownResult.removed.length) {
     notes.push(`Pad cooldown removed ${cooldownResult.removed.length}`);
   }
+
   const hallTalk =
     isOpeningHallTalkTurn(state, playerInput)
     || isHallTalkPlayerLine(playerInput || lastPlayerLine(state));
@@ -887,6 +964,7 @@ export function compileChoices(
       if (filtered.length >= 6) break;
     }
   }
+
   // 28i — inside a dungeon card: the room's own actions, the next unexplored room and the way out replace per-door pads.
   if (isDungeonCard(state.activeDungeon) && !state.activeEncounter) {
     const card = dungeonCardChoices(state);
@@ -910,6 +988,7 @@ export function compileChoices(
       notes.push(`Seeded loot chips: ${loot.length}`);
     }
   }
+
   // B018–B021 — pad primarily from legal beat edges when available
   // 02i — never re-birth a family the universe excluded
   if (legalEdges.length >= 3) {
@@ -978,6 +1057,7 @@ export function compileChoices(
     }
     notes.push(supplements.length ? 'Supplemented from edges/fallback' : 'Supplemented legal beat edges');
   }
+
   // Batch E/G — after inspect/wait/scout treadmill, force world-moving pads (not Scout/Wait).
   // 02w — once travel is starved (`excluded`) the interrupt never births Travel/Leave; before
   // that, a legal exit edge is the way out. Never invent an exit the room does not have.
@@ -1025,6 +1105,7 @@ export function compileChoices(
       return true;
     });
   }
+
   // Chest / named prop pads when GM named them and not exhausted (never under live encounter)
   for (const pad of namedPropPadsFromBeat(state)) {
     if (engaged) continue;
@@ -1034,6 +1115,7 @@ export function compileChoices(
       notes.push(`Prop pad: ${pad}`);
     }
   }
+
   const intentPads = talkRecycle ? [] : intentSupplements(intent, engaged, state);
   if (intentPads.length) {
     for (const pad of intentPads) {
@@ -1051,6 +1133,7 @@ export function compileChoices(
     }
     notes.push(`Intent pads: ${intent}`);
   }
+
   // Final pass: never leave Examine the room / Wait-Wait on locked PYOA or live encounter
   filtered = filtered.filter((c) => {
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
@@ -1065,6 +1148,7 @@ export function compileChoices(
     if (isCraftStarvedPad(c, craftPolicy)) return false;
     return true;
   });
+
   if (!engaged && (craftPolicy.starveInspect || craftPolicy.starveWait)) {
     for (const pad of craftPolicy.preferPads) {
       if (isExcludedPadLabel(pad, excluded)) continue;
@@ -1075,6 +1159,7 @@ export function compileChoices(
       }
     }
   }
+
   // Batch G — Fate soft-lock guard: after loiter exhaust, always keep ≥1 world-moving option
   if (!engaged && stallInterrupt) {
     const worldMoving = filtered.some((c) => WORLD_MOVING_PAD.test(c));
@@ -1092,12 +1177,14 @@ export function compileChoices(
       }
     }
   }
+
   // Batch C — open hub vignette: do not invent a brand-new social cast
   const beforeVig = filtered.length;
   filtered = filterPadsAgainstOpenVignette(state, filtered);
   if (filtered.length < beforeVig) {
     notes.push(`Vignette cast lock dropped ${beforeVig - filtered.length}`);
   }
+
   // Engaged: ensure combat options exist for Fate — never on a name/cover beat, never for a parked foe off-page
   if (engaged && state.activeEncounter && !coverCombatLock) {
     if (!filtered.some((c) => /\b(attack|fight|press the attack|engage)\b/i.test(c))) {
@@ -1110,6 +1197,7 @@ export function compileChoices(
       filtered.push('Parley');
     }
   }
+
   // Batch V — hub travel treadmill without combat: no another Travel
   if (travelStarve && !engaged && !liveStakes) {
     filtered = filtered.filter((c) => {
@@ -1120,6 +1208,7 @@ export function compileChoices(
       return true;
     });
   }
+
   // PYOA spine v1 — Thornferry pads = legal exits (Fate = turn the page)
   if (!engaged && state.engineMode === 'pyoa' && spineBibleSupported(state.campaignBibleId)) {
     const spineState = ensurePyoaSpine(state);
@@ -1166,6 +1255,7 @@ export function compileChoices(
     }
     filtered = filtered.filter((c) => !isExcludedPadLabel(c, excluded));
   }
+
   // Batch Z Milestone 2 — Z-1: Filter pads by FSM state before finalizing
   // 02i — never refill from raw edgeLabels (those still include starved Travel/Leave)
   // 08d — hard-cull corpse social + topic-exhausted social before pad finalize
@@ -1250,6 +1340,7 @@ export function compileChoices(
     finalChoices.push('Inspect the immediate surroundings');
     notes.push('Talk-loop world-moving pad');
   }
+  
   // 28f/28g — hub exits. A named hub with no live threat always offers one travel chip, even under the
   // travel yo-yo lock (John, 28g) — the previous place is ranked last as 'Go back' by choiceRanking (28j).
   // Uncleared dungeon hubs come first, then unvisited hubs. At a dungeon hub the way in is offered.
@@ -1286,6 +1377,7 @@ export function compileChoices(
       }
     }
   }
+
   // 08c Tag & Trigger — thin bounty pad when worldTags fire (Summoned Pact hub).
   if (!engaged) {
     for (const pad of tagTriggerPads(state)) {
@@ -1296,35 +1388,42 @@ export function compileChoices(
       }
     }
   }
+
   // 28j — anti-circling rank: quest step / unvisited / unexplored / unmet first, stale loiter rested, 'Go back' last.
   {
     const ranked = rankChoices(state, finalChoices);
     finalChoices = ranked.choices;
     notes.push(...ranked.notes);
   }
+
   // s83 Root C — a named person here keeps one talk chip; a role chip never stands in for them.
   if (!engaged) {
     const named = keepNamedTalkChip(state, finalChoices, (c) => filterCooldownChoices([c], turn, cooldownMap).filtered.length > 0);
     if (named !== finalChoices) notes.push('Named person talk chip');
     finalChoices = named;
   }
+
   // 29y — a threat remembered at this place keeps the fight chip on the card.
   if (!engaged && !coverCombatLock) {
     const withThreat = withRememberedThreatChip(state, finalChoices);
     if (withThreat !== finalChoices) notes.push('Remembered threat: fight chip');
     finalChoices = withThreat;
   }
+
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
   const intentEnums = finalChoices.map((c) => inferIntent(c));
+  
   return {
     choices: finalChoices,
     notes,
     intentEnums,
   };
 }
+
 const ROLE_TALK_CHIP =
   /^(?:talk to|speak (?:to|with)|chat with|greet|call out to|ask|offer\b.*?\bto)\s+(?:the|a|an)\s+[a-z]/i;
 const TALK_CHIP = /^(?:talk to|speak (?:to|with)|chat with|greet|ask)\b/i;
+
 /**
  * A met named person here whose own topics are not spent keeps one talk chip (from the legal talk
  * edges), and talk chips aimed at a role ("the fence", "a bystander") drop while that person is here.
@@ -1342,6 +1441,7 @@ function keepNamedTalkChip(state: GameState, choices: string[], offerable: (chip
   if (hasNamed || !next) return kept.length === choices.length ? choices : kept;
   return [...kept.slice(0, 1), next.label, ...kept.slice(1)].slice(0, 6);
 }
+
 export function playerInputGateBlock(
   state: GameState,
   input: string
@@ -1350,4 +1450,4 @@ export function playerInputGateBlock(
   if (!gate) return { blocked: false, state };
   const next = recordGateRejection(state, gate.target);
   return { blocked: true, message: gate.message, state: next };
-}
+}

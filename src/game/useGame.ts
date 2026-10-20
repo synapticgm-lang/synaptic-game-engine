@@ -2026,11 +2026,6 @@ export function useGame() {
         return;
       }
     }
-    // q75: round combat accepts every typed line (speech free; engine resolves or returns a reason).
-    const roundTypedOpen =
-      !!current.activeEncounter
-      && !!current.roundCombat
-      && current.roundCombat.encounterName === current.activeEncounter.name;
     if (
       !skipRepairDetection
       && !freeOpeningTurn
@@ -2038,7 +2033,6 @@ export function useGame() {
       && !isRoomLayoutExploreAsk(mediated.text)
       && !isInformationalOrAsk(mediated.text)
       && !isExploreOrLayoutAsk(mediated.text)
-      && !roundTypedOpen
     ) {
       const lastGmStory =
         current.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '';
@@ -4667,6 +4661,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ledgerRound.enemyName
         );
       }
+
       const combatSummary = ledgerRound
         ? formatCombatReceipt({ combat: ledgerRound }) ?? undefined
         : undefined;
@@ -4821,6 +4816,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             visualContext,
           }
         : null;
+
       const effectsPayload = {
         snapshot: mergedState,
         imageJobs: postCommitImageJobs,
@@ -4829,9 +4825,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ? { kind: 'sequence' as const, texts: buildComicSpeechQueue(comicPanelsForLog), entryId: gmEntry.id }
           : { kind: 'text' as const, text: cleanText, entryId: gmEntry.id },
       };
+
       // Pending-turn confirm is off for normal play — send action, get story back immediately.
       // (Setting retained for possible future opt-in; not exposed in UI.)
       const requireConfirm = false;
+
       if (requireConfirm) {
         const proposal = buildPendingProposal({
           playerAction: sanitizedInput,
@@ -4891,18 +4889,22 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             error: persistError instanceof Error ? persistError.message : String(persistError),
           });
         }
+
         debugLogger.record('STATE_UPDATE', 'State updated — turn incremented', {
           turn: mergedState.turn,
           logEntries: mergedState.log.length,
           imagePromptAttached: !!mergedState.pendingImagePrompt
         });
+
         postCommitTurnEffectsRef.current.push(effectsPayload);
         setPostCommitTurnEpoch((epoch) => epoch + 1);
         snapshotRef.current = null;
         setCanRewind(false);
+
         if (mergedState.playPhase === 'ended') {
           await persist(mergedState);
         }
+
         if (!settingsRef.current.preferFullResponse && storyHasBody(cleanText)) {
           startStreamingReveal(gmEntry.id, cleanText);
         } else {
@@ -4989,6 +4991,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setTurnPhase((phase) => (phase === 'reading' || phase === 'resolving' ? 'idle' : phase));
     }
   });
+
   const acceptPendingTurn = useCallbackRef(() => {
     const previous = stateRef.current;
     if (!previous?.pendingTurn) return;
@@ -5028,6 +5031,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setCanRewind(false);
     addToast('Turn committed to World State Ledger', 'info');
   });
+
   const discardPendingTurn = useCallbackRef(() => {
     const snapshot = snapshotRef.current;
     pendingEffectsRef.current = null;
@@ -5051,6 +5055,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     }
     addToast('Pending turn discarded', 'info');
   });
+
   const editPendingNarrative = useCallbackRef((narrative: string) => {
     const previous = stateRef.current;
     if (!previous?.pendingTurn) return;
@@ -5059,6 +5064,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     stateRef.current = next;
     setState(next);
   });
+
   const rerollPendingTurn = useCallbackRef(async () => {
     const previous = stateRef.current;
     const action = previous?.pendingTurn?.playerAction;
@@ -5075,6 +5081,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     }
     await sendAction(action);
   });
+
   const startNewGame = useCallbackRef(async (
     character: Partial<GameState['character']>,
     storyName?: string,
@@ -5104,6 +5111,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setBootPhase('auth');
       return;
     }
+
     if (
       selectedVisualMode ||
       selectedArtStyle ||
@@ -5137,6 +5145,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setComicMode(updated.visualMode === 'comic');
       setNarrativeMode(false);
     }
+
     const bible = playerBible ?? (bibleId ? getCampaignBibleById(bibleId) : undefined);
     if (bible && isKidRestrictedCampaign(bible) && settingsRef.current.contentMode === 'kid') {
       addToast(
@@ -5350,6 +5359,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setShowNewGame(false);
     setUnlockedQuests([]);
     setFailedQuests([]);
+
     setBusy(true);
     setError(null);
     try {
@@ -5389,10 +5399,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       stateRef.current = lockedOpening;
       setState(lockedOpening);
       void persist(lockedOpening);
+
       // Page 1 is the stitch already on screen. A later GM rewrite is what
       // swapped a readable opener for "someone here" salad on live 08d.
       const openingRaw = stitchText;
       let openingText = stitchText;
+      
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
       openingText = applyProseWarden(
         enforcePerspective(openingText, settingsRef.current, newState.character.name),
@@ -5587,6 +5599,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setShowLoadingOverlay(false);
       setRetryStatus(null);
     }
+
     const introIsComic = shouldUseComicGrid(
       settingsRef.current,
       comicModeRef.current,
@@ -5601,10 +5614,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
     }
   });
+
   const autoFight = useCallbackRef(async () => {
     const liveCurrent = stateRef.current;
     if (!liveCurrent || !liveCurrent.activeEncounter) return;
     if (!modeProfile(liveCurrent.engineMode).autoFight) return;
+
     const enemy: EnemyStats = {
       name: liveCurrent.activeEncounter.name,
       level: liveCurrent.activeEncounter.level,
@@ -5619,7 +5634,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       lootProfile: profileForEncounter(liveCurrent.activeEncounter),
       cr: liveCurrent.activeEncounter.cr,
     };
+
     const needsWarning = enemy.level > liveCurrent.character.level;
+
     if (needsWarning) {
       const dismissed = isAutoFightWarningDismissed();
       if (!dismissed) {
@@ -5635,8 +5652,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (!proceed) return;
       }
     }
+
     await runAutoFight(enemy, liveCurrent);
   });
+
   const runAutoFight = useCallbackRef(async (enemy: EnemyStats, startState: GameState) => {
     setBusy(true);
     setError(null);
@@ -5649,6 +5668,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (approach.id !== 'melee') {
         narrativeText = narrativeText.replace(/^You close with [^.]*\./, approachOpener(approach, enemy.name));
       }
+
       narrativeText = postFilterGmOutput(narrativeText, settingsRef.current);
       if (settingsRef.current.contentMode === 'kid') {
         narrativeText = filterKidModeText(narrativeText);
@@ -5684,6 +5704,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           : liveCurrent.sceneFacts?.lastKill,
         currentTurn: liveCurrent.turn + 1,
       });
+
       const newTurn = liveCurrent.turn + 1;
       // 28a2 — auto-fight pays the same encounter milestone as every other path (xpRules).
       const autoXp = result.victory
@@ -5740,12 +5761,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ],
         ...memorableLogFields(autoMemorable),
       };
+
       const updatedCharacter = { ...liveCurrent.character, hp: result.finalPlayerHp, mp: result.finalPlayerMp };
       Object.assign(
         updatedCharacter,
         applyCharacterXpGain(updatedCharacter, autoXp.amount, liveCurrent.engineMode).character
       );
+
       const updatedInventory = [...liveCurrent.inventory, ...result.loot];
+
       const ledger = commitAutoFightLedger(
         { ...liveCurrent, turn: newTurn },
         { victory: result.victory, finalPlayerHp: result.finalPlayerHp }
@@ -5768,6 +5792,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         },
         lastUpdated: Date.now(),
       }, result.goldGained, result.coinsGained);
+
       {
         const phasedAuto = applyPlayPhaseAfterHp(updated, updated.character.hp ?? 0, newTurn);
         const extra = phasedAuto.lifelineReceipts ?? [];
@@ -5816,6 +5841,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setBusy(false);
     }
   });
+
   // Preferred Auto Fight mode: resolve new encounters without round-by-round turns.
   useEffect(() => {
     const encounter = state?.activeEncounter;
@@ -5829,6 +5855,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     lastAutoResolvedEncounterRef.current = key;
     void autoFight();
   }, [state?.activeEncounter?.name, state?.activeEncounter?.maxHp, state?.activeEncounter?.level, settings.combatResolveMode, busy, autoFight]);
+
   const acceptBeautyOffer = useCallbackRef((entryId: string) => {
     const current = stateRef.current;
     if (!current) return;
@@ -5883,6 +5910,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
     }
   });
+
   const dismissBeautyOffer = useCallbackRef((entryId: string) => {
     const current = stateRef.current;
     if (!current) return;
@@ -5892,6 +5920,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setState(next);
     void persist(next);
   });
+
   const retryMemorableImage = useCallbackRef((entryId: string) => {
     const current = stateRef.current;
     if (!current) return;
@@ -5902,6 +5931,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       return;
     }
     if (!allowsImageGeneration(settingsRef.current, 'milestone-illustration')) return;
+
     commitImageState((prev) => {
       const log = prev.log.map((logEntry) =>
         logEntry.id === entryId
@@ -5916,6 +5946,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       return { ...prev, log, lastUpdated: Date.now() };
     });
+
     enqueueImageGen({
       kind: 'turn',
       entryId,
@@ -5928,6 +5959,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       skipUnlockToast: true,
     });
   });
+
   const retryPanelImage = useCallbackRef((entryId: string, panelIndex: number) => {
     const current = stateRef.current;
     if (!current) return;
@@ -5937,6 +5969,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       debugLogger.record('WARN', 'retryPanelImage ignored — missing panel prompt', { entryId, panelIndex });
       return;
     }
+
     // Flip only this panel back to pending so the spinner returns without mutating other
     // panels or interrupting the turn loop / GM busy flag.
     commitPanelImageReady((prev) => {
@@ -5951,6 +5984,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
       return { ...prev, log, lastUpdated: Date.now() };
     });
+
     const visualContext = buildVisualConsistencyBlock(current, []);
     enqueueImageGen({
       kind: 'panel-retry',
@@ -5964,6 +5998,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         : undefined,
     });
   });
+
   /** Section 8 — persist pre-export Editor Mode bubble drag/text overrides onto a panel. */
   const updatePanelOverlay = useCallbackRef((
     entryId: string,
@@ -5977,6 +6012,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       debugLogger.record('WARN', 'updatePanelOverlay ignored — panel not found', { entryId, panelIndex });
       return;
     }
+
     const updated: GameState = {
       ...current,
       lastUpdated: Date.now(),
@@ -6002,6 +6038,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     stateRef.current = updated;
     void persist(updated);
   });
+
   const abortPendingPersists = () => {
     if (persistDebounceRef.current) {
       clearTimeout(persistDebounceRef.current);
@@ -6012,6 +6049,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       saveTimerRef.current = null;
     }
   };
+
   const unloadActiveCampaign = (saveId?: string) => {
     abortPendingPersists();
     const activeId = stateRef.current?.saveId;
@@ -6024,6 +6062,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setShowSettings(false);
     isHydratedRef.current = true;
   };
+
   const handleExport = useCallbackRef(() => {
     const current = stateRef.current;
     if (current) {
@@ -6035,6 +6074,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       else addToast('No save to export.', 'error');
     });
   });
+
   const handleDownloadTranscript = useCallbackRef(() => {
     const current = stateRef.current;
     if (current?.log?.length) {
@@ -6046,6 +6086,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       else addToast('No play log to download.', 'error');
     });
   });
+
   const handleImport = useCallbackRef(async (file: File) => {
     try {
       const imported = await importSave(file);
@@ -6073,6 +6114,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       addToast(e instanceof Error ? e.message : 'Failed to import save.', 'error');
     }
   });
+
   const deleteSavedGame = useCallbackRef(async (saveId: string) => {
     const trimmed = saveId.trim();
     if (!trimmed) return;
@@ -6080,18 +6122,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const local = await loadGame();
     const isLocal = local?.saveId === trimmed;
     const isActive = stateRef.current?.saveId === trimmed;
+
     if (isActive) unloadActiveCampaign(trimmed);
+
     if (isLocal || isActive) {
       await deleteGame();
     }
+
     const cloudResult = await deleteCloudSave(trimmed);
     if (!cloudResult.ok && cloudResult.error && cloudResult.error !== 'Not signed in' && cloudResult.error !== 'Supabase not configured') {
       addToast(`Cloud delete failed: ${cloudResult.error}`, 'error');
     }
+
     await clearSessionImageCache(trimmed);
     await refreshSaveSlots();
     addToast('Save deleted.', 'success');
   });
+
   const deleteExtraSaves = useCallbackRef(async () => {
     abortPendingPersists();
     const keepSaveId =
@@ -6099,37 +6146,46 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       ?? localSlot?.saveId
       ?? cloudSlots[0]?.saveId
       ?? null;
+
     const extras = cloudSlots.filter((slot) => slot.saveId !== keepSaveId);
     const result = await deleteCloudSavesExcept(keepSaveId);
     if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
       addToast(`Could not clear extra saves: ${result.error}`, 'error');
       return;
     }
+
     for (const slot of extras) {
       void clearSessionImageCache(slot.saveId);
     }
+
     await refreshSaveSlots();
     const cleared = result.deleted || extras.length;
     addToast(cleared ? `Cleared ${cleared} leftover save${cleared === 1 ? '' : 's'}.` : 'No extra cloud saves to clear.', 'success');
   });
+
   const deleteAllSaves = useCallbackRef(async () => {
     abortPendingPersists();
     const ids = new Set<string>();
     if (stateRef.current?.saveId) ids.add(stateRef.current.saveId);
     if (localSlot?.saveId) ids.add(localSlot.saveId);
     for (const slot of cloudSlots) ids.add(slot.saveId);
+
     unloadActiveCampaign();
     await deleteGame();
+
     const result = await deleteCloudSavesExcept(null);
     if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
       addToast(`Cloud delete failed: ${result.error}`, 'error');
     }
+
     for (const id of ids) {
       void clearSessionImageCache(id);
     }
+
     await refreshSaveSlots();
     addToast('All saved games deleted.', 'success');
   });
+
   return {
     state, settings, googleUser, bootPhase, busy, turnPhase, streamingReveal, error, errorKind, showLoadingOverlay, retryStatus, currentImages, currentImage: currentImages[0] ?? null,
     imagesGenerating, videosGenerating,
@@ -6340,6 +6396,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       try {
         const local = await loadGame();
         const cloud = await fetchLatestCloudSave();
+
         const localTs = local?.lastUpdated ?? 0;
         const cloudTs = cloud?.updatedAtMs ?? 0;
         const localTurn = local?.turn ?? -1;
@@ -6348,11 +6405,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           !!cloud &&
           (!local || cloudTurn > localTurn || (cloudTurn === localTurn && cloudTs > localTs));
         const saved = useCloud ? cloud!.state : local;
+
         if (!saved) {
           debugLogger.record('WARN', 'continueGame found no local or cloud save');
           addToast('No save found on this device or in the cloud.', 'error');
           return;
         }
+
         // Image requests are intentionally not persisted/resumed. A saved `pending` status
         // therefore has no live promise behind it and must become a terminal fallback state.
         const recoveredRaw = clampLeakedOpeningQuests(
@@ -6364,14 +6423,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           addToast(SAVE_REPAIR_TOAST, 'info');
           recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
         }
+
         const profileMerged = mergePreferredProfileIntoOpening(recovered);
         if (profileMerged.applied) {
           recovered = profileMerged.state;
           addToast(`Using your saved name (${profileMerged.state.character.name}).`, 'info');
         }
+
         const lastActive = saved.lastUpdated || (useCloud ? cloudTs : 0);
         recovered = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
         recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
+
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.
           const nextSettings: Settings = {
@@ -6387,6 +6449,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           window.dispatchEvent(new CustomEvent(SETTINGS_EVENT_NAME, { detail: nextSettings }));
           addToast('Restored save from cloud (Supabase).', 'success');
         }
+
         debugLogger.record('STATE_UPDATE', 'Saved game loaded — hydrating state', {
           source: useCloud ? 'supabase' : 'local',
           turn: recovered.turn,

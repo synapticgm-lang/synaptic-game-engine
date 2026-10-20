@@ -67,11 +67,6 @@ import {
   pickNonHallChip,
   shouldForceTypedHumanMove,
 } from './humanJudge.mjs';
-import {
-  noteTypedNotSent,
-  shouldForceChipAfterTypedFail,
-  typedStuckVerdict,
-} from './typedSend.mjs';
 import { classifyChipClick, modelLineIfDistinct } from './inputChip.mjs';
 import {
   buildPersonaPromptBlock,
@@ -443,8 +438,6 @@ async function playBible(gamePage, bibleId, opts = {}) {
   let harnessErrors = 0;
   let softWarnings = 0;
   let consecutiveHarnessErrors = 0;
-  /** q75: typed_action_not_sent only — must not reset on a successful brain reply. */
-  let consecutiveTypedNotSent = 0;
   let votedFeedbacks = -1;
   let carriedVote = null;
   let coverTurn = 0;
@@ -716,21 +709,12 @@ async function playBible(gamePage, bibleId, opts = {}) {
       continue;
     }
     consecutiveHarnessErrors = 0;
-    // q75: after 3 consecutive typed_action_not_sent, force an on-screen chip (do not keep typing).
-    if (!setup && !chipsOnly && shouldForceChipAfterTypedFail(consecutiveTypedNotSent) && liveChips.length) {
-      const forced = pickNonHallChip(liveChips, hallAnswered, recentActions) || liveChips[0];
-      if (forced) {
-        decision.kind = 'chip';
-        decision.action_kind = 'chip';
-        decision.action = forced;
-        console.log(`[ai-player] T${turn} typed_not_sent×${consecutiveTypedNotSent} → force chip: ${forced}`);
-      }
-    } else if (setup) {
+    if (setup) {
       const planned = planSetupAction({ action: decision.action, chips: snap.chips });
       decision.kind = 'chip';
       decision.action_kind = 'chip';
       decision.action = planned.action;
-    } else if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly) && !shouldForceChipAfterTypedFail(consecutiveTypedNotSent)) {
+    } else if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly)) {
       decision.kind = 'free';
       decision.action_kind = 'type';
       if (!decision.action || liveChips.includes(decision.action)
@@ -958,7 +942,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
         kind = 'chip_fallback';
       }
     }
-    if (!acted && !setup && !chipsOnly && !typeFail && !shouldForceChipAfterTypedFail(consecutiveTypedNotSent)) {
+    if (!acted && !setup && !chipsOnly && !typeFail) {
       const line = decision.action || (nameChip && !nameTyped ? 'Jax' : naturalTypedFallback(recentActions));
       submitStamp = startTurnClock();
       const sentLine = await typePlayerAction(gamePage, line);
@@ -971,17 +955,6 @@ async function playBible(gamePage, bibleId, opts = {}) {
         typeFail = sentLine.reason;
         typeOverlay = sentLine.overlay || null;
       }
-    }
-    // q75: threshold already reached earlier this run — chip was forced above; if it missed, stop.
-    if (!acted && !typeFail && shouldForceChipAfterTypedFail(consecutiveTypedNotSent)) {
-      const verdict = typedStuckVerdict(turn);
-      console.log(`AI_PLAYER fail ${bibleId}: ${verdict}`);
-      return {
-        bibleId, ok: false, harnessError: 'typed_action_not_sent', harnessDetail: verdict,
-        harnessErrors, unverified, thumbsSkipped,
-        turns: completed, startTurn, resumed: resumeThis, autoFightSelector: AUTO_FIGHT_SELECTOR,
-        autoFightFired, stoppedNoGm: false, stoppedRepeat: false,
-      };
     }
     if (acted && (kind === 'chip' || kind === 'chip_fallback') && !setup && !chipsOnly) {
       const chipEffect = await readChipClickEffect(gamePage, afterThumb);
@@ -1020,9 +993,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
     if (!acted && typeFail) {
       // The typed line never reached the game: harness error (not a no-reply turn); re-ask this turn.
       harnessErrors += 1;
-      consecutiveTypedNotSent = noteTypedNotSent(consecutiveTypedNotSent, { failed: true });
       consecutiveHarnessErrors += 1;
-      console.log(`[ai-player] T${turn} harness_error typed_action_not_sent ${typeFail} consecutive=${consecutiveTypedNotSent}`);
+      console.log(`[ai-player] T${turn} harness_error typed_action_not_sent ${typeFail}`);
       appendJsonl(jsonl, {
         event: 'harness_error',
         turn,
@@ -1030,49 +1002,28 @@ async function playBible(gamePage, bibleId, opts = {}) {
         saveId,
         harnessError: 'typed_action_not_sent',
         harnessDetail: { reason: typeFail, line: decision.action || '' },
-        consecutive: consecutiveTypedNotSent,
+        consecutive: consecutiveHarnessErrors,
         chipsSeen: snap.chips,
         meta: testerMeta,
       });
-      // After 3 typed fails: one chip attempt this same turn; if that also fails, stop with a clear verdict.
-      if (shouldForceChipAfterTypedFail(consecutiveTypedNotSent)) {
-        const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions) || (snap.chips || [])[0];
-        if (safe) {
-          submitStamp = startTurnClock();
-          acted = await clickChip(gamePage, safe);
-          noteOverlay(turn);
-          if (acted) {
-            kind = 'chip_fallback';
-            typeFail = '';
-            consecutiveTypedNotSent = noteTypedNotSent(consecutiveTypedNotSent, { failed: false });
-            consecutiveHarnessErrors = 0;
-          }
-        }
-        if (!acted) {
-          const verdict = typedStuckVerdict(turn);
-          console.log(`AI_PLAYER fail ${bibleId}: ${verdict}`);
-          return {
-            bibleId, ok: false, harnessError: 'typed_action_not_sent', harnessDetail: verdict,
-            harnessErrors, unverified, thumbsSkipped,
-            turns: completed, startTurn, resumed: resumeThis, autoFightSelector: AUTO_FIGHT_SELECTOR,
-            autoFightFired, stoppedNoGm: false, stoppedRepeat: false,
-          };
-        }
-      } else {
-        carriedVote = {
-          verified: verified.verified,
-          verifyReason: verified.reason,
-          feedbackKey: verified.lookup ?? null,
-          thumb,
-          thumbOk: thumb.ok,
-          thumbReason: thumb.reason || comment,
+      if (consecutiveHarnessErrors >= 3) {
+        console.log(`AI_PLAYER fail ${bibleId}: 3 harness errors in a row at T${turn}`);
+        return {
+          bibleId, ok: false, harnessError: 'typed_action_not_sent', harnessErrors, unverified, thumbsSkipped,
+          turns: completed, startTurn, resumed: resumeThis, autoFightSelector: AUTO_FIGHT_SELECTOR,
+          autoFightFired, stoppedNoGm: false, stoppedRepeat: false,
         };
-        turn -= 1;
-        continue;
       }
-    }
-    if (acted) {
-      consecutiveTypedNotSent = noteTypedNotSent(consecutiveTypedNotSent, { failed: false });
+      carriedVote = {
+        verified: verified.verified,
+        verifyReason: verified.reason,
+        feedbackKey: verified.lookup ?? null,
+        thumb,
+        thumbOk: thumb.ok,
+        thumbReason: thumb.reason || comment,
+      };
+      turn -= 1;
+      continue;
     }
     if (!acted) throw new Error(`No legal action on ${bibleId} T${turn}`);
     if (!submitStamp) submitStamp = startTurnClock();
