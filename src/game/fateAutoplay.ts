@@ -498,7 +498,6 @@ function testableBibles(engineMode: EngineMode): CampaignBible[] {
     (b) => !isBlankCanvasBible(b.id) && !isTestExcludedBible(b.id)
   );
 }
-
 /** Launch matrix: mode × ready premade (skip blank) × Launch narrator (full cartesian). */
 export function enumerateLaunchMatrix(baseSeed = 1): MatrixCombo[] {
   const combos: MatrixCombo[] = [];
@@ -524,7 +523,6 @@ export function enumerateLaunchMatrix(baseSeed = 1): MatrixCombo[] {
   }
   return combos;
 }
-
 /**
  * One cell per ready premade (skip blank): first Launch narrator for that mode.
  * Used by auto-improve curriculum so we cover every bible without full cartesian.
@@ -552,7 +550,6 @@ export function enumeratePremadesOnce(baseSeed = 1): MatrixCombo[] {
   }
   return combos;
 }
-
 /**
  * Balanced matrix: 10 per test mode (LitRPG / tabletop / RPG); PYOA is never tested.
  * Every premade at least once when count ≤ 10; extras cycle narrator + seed.
@@ -568,14 +565,12 @@ export function buildBalancedMatrix40(baseSeed = 1): {
   const deferred: Array<{ engineMode: EngineMode; bibleId: string; bibleTitle: string }> = [];
   const notes: string[] = [];
   let slot = 0;
-
   for (const engineMode of TEST_ENGINE_MODES) {
     const all = testableBibles(engineMode);
     const personalities =
       engineMode === 'litrpg'
         ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
         : LAUNCH_GM_PERSONALITY_IDS;
-
     let chosen = all;
     if (all.length > perMode) {
       chosen = all.slice(0, perMode);
@@ -589,7 +584,6 @@ export function buildBalancedMatrix40(baseSeed = 1): {
           .join(', ')}`
       );
     }
-
     for (let i = 0; i < perMode; i++) {
       const bible = chosen[i % chosen.length]!;
       const personalityId = personalities[i % personalities.length]!;
@@ -602,7 +596,6 @@ export function buildBalancedMatrix40(baseSeed = 1): {
       });
       slot += 1;
     }
-
     if (all.length < perMode) {
       notes.push(
         `${engineMode}: ${all.length} premades → ${perMode} runs (extras cycle narrator/seed on repeated premades)`
@@ -611,10 +604,8 @@ export function buildBalancedMatrix40(baseSeed = 1): {
       notes.push(`${engineMode}: ${all.length} premades × cycled narrators = ${perMode} runs`);
     }
   }
-
   return { combos, deferred, notes };
 }
-
 export function matrixBudgetLines(turnsPerRun: number, comboCount?: number): string[] {
   const full = enumerateLaunchMatrix();
   const n = comboCount ?? full.length;
@@ -638,7 +629,6 @@ export function matrixBudgetLines(turnsPerRun: number, comboCount?: number): str
     ...m40.notes.map((line) => `  note: ${line}`),
   ];
 }
-
 function resolvePersonalities(
   engineMode: EngineMode,
   personalityRaw: string
@@ -658,7 +648,6 @@ function resolvePersonalities(
   const id = resolvePyoaGmPersonality(personalityRaw);
   return { gmPersonality: id, personalityId: id };
 }
-
 export function buildNewGameState(opts: {
   bibleId: string;
   characterName: string;
@@ -802,7 +791,6 @@ export function buildNewGameState(opts: {
     : placed;
   return { state: built, bible, personalityId: voices.personalityId };
 }
-
 export function stampOpening(state: GameState): GameState {
   // q50-MAP2 — opening HERE on the place record with hub-graph exits (no atlas / discovered write).
   state = ensurePlaceOnMap(state, state.currentLocation);
@@ -836,7 +824,6 @@ export function stampOpening(state: GameState): GameState {
   };
   return next;
 }
-
 /** Extract quest unlocks from this turn by comparing quest arrays. */
 function extractQuestUnlocksFromTurn(prev: GameState, next: GameState): string[] {
   const prevIds = new Set((prev.quests ?? []).filter(q => q.revealed).map(q => q.id));
@@ -845,7 +832,6 @@ function extractQuestUnlocksFromTurn(prev: GameState, next: GameState): string[]
     .map(q => q.name);
   return unlocked;
 }
-
 /** Extract items equipped this turn by comparing equipped slots. */
 function extractEquippedItems(prev: GameState, next: GameState): string[] {
   const prevEquipped = new Set(
@@ -856,7 +842,6 @@ function extractEquippedItems(prev: GameState, next: GameState): string[] {
     .map(i => i.name);
   return equipped;
 }
-
 /** Extract items used/consumed this turn by comparing inventory counts. */
 function extractUsedItems(prev: GameState, next: GameState): string[] {
   const prevCounts = new Map<string, number>();
@@ -876,7 +861,6 @@ function extractUsedItems(prev: GameState, next: GameState): string[] {
   }
   return used;
 }
-
 /** Detect loop/stuck patterns for StoryForge filtering. */
 function detectLoopFlags(gmText: string, state: GameState): {
   officialCount: number;
@@ -890,7 +874,6 @@ function detectLoopFlags(gmText: string, state: GameState): {
   const atmosphereRepeat = recent.length > 0 && recent.slice(-3).some((r) => beatSimilarity(fp, r) >= 0.72);
   return { officialCount, atmosphereRepeat, strangerCount };
 }
-
 /** Smart choice picker based on AI agent goals. */
 function pickGoalOrientedChoice(
   offered: string[],
@@ -902,12 +885,10 @@ function pickGoalOrientedChoice(
   if (mode === 'default' || offered.length === 0) {
     return pickWeightedChoice(offered, chipProgressWeights(state, offered), rng);
   }
-
   // Score each choice based on the agent's goal
   const scored = offered.map((choice, index) => {
     let score = 0;
     const lower = choice.toLowerCase();
-
     if (mode === 'maxlevel') {
       // Prefer combat, explore, quest, travel (XP drip), vendor
       if (/\b(?:fight|attack|engage|battle|challenge|strike|defend)\b/i.test(choice)) score += 8;
@@ -950,29 +931,23 @@ function pickGoalOrientedChoice(
         }
       }
     }
-
     // Shared: penalize recently offered identical labels (from recentChoices)
     const recent = (state.recentChoices ?? []).slice(-5).flatMap((e) => e.choices.map((c) => c.toLowerCase().trim()));
     if (recent.filter((c) => c === lower).length >= 2) score -= 6;
     score -= Math.min(6, chipProgressScore(state, choice) - 3);
-
     return { choice, index, score };
   });
-
   // Sort by score (descending), then shuffle tied scores
   scored.sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
     return rng() - 0.5;
   });
-
   // Pick from top 3 scored choices randomly (or all if fewer)
   const topChoices = scored.slice(0, Math.min(3, scored.length));
   const picked = topChoices[Math.floor(rng() * topChoices.length)];
   return picked.choice;
 }
-
 const writerPromptSink: { dir?: string; turn: number } = { turn: 0 };
-
 async function saveWriterPrompt(state: GameState, payload: string): Promise<void> {
   if (!writerPromptSink.dir) return;
   let body: string;
@@ -990,10 +965,8 @@ async function saveWriterPrompt(state: GameState, payload: string): Promise<void
   const nn = String(writerPromptSink.turn).padStart(2, '0');
   writeFileSync(join(writerPromptSink.dir, `turn-${nn}.txt`), body + '\n');
 }
-
 /** 28l — writer HTTP calls and time spent in them, reset at the start of each headless turn. */
 const writerCallMeter = { calls: 0, ms: 0 };
-
 async function callGmWithRetries(
   state: GameState,
   payload: string,
@@ -1054,7 +1027,6 @@ async function callGmWithRetries(
     dnsFailure: sawDns || isDnsResolutionFailure(lastErr),
   };
 }
-
 /**
  * One headless turn: Fate pick → callGm → runWarden → structural → choice pad → prose wardens.
  */
@@ -1093,7 +1065,6 @@ export async function headlessFateTurn(
             offered,
             applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng)).pick
           ).pick;
-
   let playerInput = fatePick;
   let repairNote: string | undefined;
   const mediated = mediatePlayerInput(playerInput);
@@ -1103,7 +1074,6 @@ export async function headlessFateTurn(
   } else {
     playerInput = mediated.text;
   }
-
   const displayLine = playerInput;
   const lastGm = [...state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
   const hard = validateActionHard(playerInput, state, lastGm);
@@ -1111,7 +1081,6 @@ export async function headlessFateTurn(
     playerInput = hard.rewritten || 'Look around';
     repairNote = (repairNote ? `${repairNote}; ` : '') + `hard_gate→${playerInput}`;
   }
-
   // A chip no longer on the pad is not the action the writer is told. The engine still runs the
   // resolved line; the packet's PLAYER line is the grounded action (gm-facing would put the chip back).
   const onPad = offered.some((c) => c.trim().toLowerCase() === playerInput.trim().toLowerCase());
@@ -1123,7 +1092,6 @@ export async function headlessFateTurn(
       repairNote = (repairNote ? `${repairNote}; ` : '') + 'stale_chip';
     }
   }
-
   // 17g — page 1 / unlocked-name covers stitch. After sceneWritten + locked name, writer owns
   // hall / Look / Wait / inspect. First already-told who/want/refuse still stitches.
   if (shouldStitchOpeningContinue(state, playerInput)) {
@@ -1160,14 +1128,11 @@ export async function headlessFateTurn(
       },
     };
   }
-
   if (state.openingEstablishment) {
     const stepped = await applyOpeningAnswer(state, playerInput);
     state = { ...stepped.state, pendingGeneratedOpening: false };
   }
-
   const govInputState = processMetaInput(state, playerInput).state;
-
   let arcState = withHouseRules(govInputState, settings);
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
@@ -1193,7 +1158,6 @@ export async function headlessFateTurn(
     // TT-T1 — open-thread list + bring at least one forward into this scene.
     arcState = planSceneThreads(arcState);
   }
-
   // 08c Tag & Trigger — consume claim pad before packet/writer.
   {
     const claimed = consumeTagTriggerOnInput(arcState, playerInput);
@@ -1205,7 +1169,6 @@ export async function headlessFateTurn(
   const offerTurn = applyOpeningOfferChoice(arcState, playerInput);
   arcState = offerTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...offerTurn.receipts];
-
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const dyingTurn = isDying(govInputState);
   const hereBeforeMove = arcState.currentLocation ?? '';
@@ -1281,7 +1244,6 @@ export async function headlessFateTurn(
     playerInput,
   });
   let mudTurn: FreeMudTurn | null = null;
-
   if (meta.dryRun) {
     const stubGm = `(dry-run) Fate picked: ${fatePick}. Offered: ${offered.join(' | ')}`;
     const playerEntry: LogEntry = {
@@ -1344,7 +1306,6 @@ export async function headlessFateTurn(
       },
     };
   }
-
   const intent = parsePlayerIntent(playerInput, state);
   const turnMandate = buildTurnMandate(playerInput, intent, state, playerInput);
   const deterministicBlock = `
@@ -1360,7 +1321,6 @@ Do NOT print dice notation or CODE ENFORCED.
   const payload = useMud
     ? (silentMud ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
     : formatTalkWriterFacing(preparedEvent.packet, arcState, { perspective: settings.perspective });
-
   // 08d Silent Engine — receipts only; never call DeepSeek for micro-flavor.
   const authoredBook = isAuthoredPyoaBook(arcState.campaignBibleId);
   const authoredBeat = authoredBook
@@ -1382,7 +1342,6 @@ Do NOT print dice notation or CODE ENFORCED.
   const tokenVerdicts = arcState.completedEvent && gmText.trim()
     ? tokenLineVerdicts(gmText, arcState, arcState.completedEvent)
     : undefined;
-
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
   let writerTurn: WriterTurnRetryResult | null = null;
   const stageTrace: { stage: string; text: string }[] = [];
@@ -1428,7 +1387,6 @@ Do NOT print dice notation or CODE ENFORCED.
       };
     }
   }
-
   if (useMud) {
     // Free MUD: receipt is primary; Silent Engine never invents a flavor quote.
     mudTurn = composeFreeMudTurn(preparedEvent.packet, {
@@ -1507,7 +1465,6 @@ Do NOT print dice notation or CODE ENFORCED.
   } else {
     arcState = clearEngineRecoveryStreak(arcState);
   }
-
   // Hard FAIL — do not invent story; keep prior world, stamp telemetry
   // 08c Free MUD: receipt-only turns are valid — never hard-fail on empty flavor.
   if (!useMud && !gmText.trim() && error) {
@@ -1561,7 +1518,6 @@ Do NOT print dice notation or CODE ENFORCED.
       },
     };
   }
-
   const askedRepeat = playerAsksRepeat(playerInput);
   let usedPacketStitch = false;
   const tokenPath: string | undefined = writerTurn?.path;
@@ -1573,7 +1529,6 @@ Do NOT print dice notation or CODE ENFORCED.
     rejectedReason = [...new Set(writerTurn.repairs.map((r) => r.flag))].join(' | ').slice(0, 300);
   }
   let blockedPaintReason: string | undefined;
-
   const words = writerWordsGuard(
     !!writerTurn && !renderFallbackUsed && gmText === writerTurn.prose,
     (s, draft) => sentenceRejectedInDraft(arcState, s, draft, playerInput)
@@ -1592,7 +1547,6 @@ Do NOT print dice notation or CODE ENFORCED.
     playerInput,
   });
   let working = structural.state;
-
   let cleanText = words.step(
     'stripTags+choiceList',
     narrativeSource,
@@ -1727,7 +1681,6 @@ Do NOT print dice notation or CODE ENFORCED.
     }
     blockedPaint = true;
   }
-
   const updates = extractUpdates(working, narrativeSource);
   if (updates.character) {
     const { xp: _x, xpToNext: _n, level: _l, hp: _h, maxHp: _mh, ...safeChar } = updates.character as Record<string, unknown>;
@@ -1743,7 +1696,6 @@ Do NOT print dice notation or CODE ENFORCED.
       currentLocation: resolveNextLocation(working, { proposed: updates.currentLocation }),
     };
   }
-
   // 29u — travel committed HERE before the writer (ground between, or the arrival); prose never moves it.
   const fromLoc = state.currentLocation;
   if (travelCommit?.handled && travelCommit.state.currentLocation) {
@@ -1782,7 +1734,6 @@ Do NOT print dice notation or CODE ENFORCED.
   );
   traceStage('scrubFalseArrivalWhenHere', cleanText);
   if (words.notes.length) warden.notes.push(...words.notes);
-
   const pipeline = authoredBook
     ? {
         choices: spineChoiceLabels(ensurePyoaSpine(working)),
@@ -1815,7 +1766,6 @@ Do NOT print dice notation or CODE ENFORCED.
     if (book) cleanText = book;
     finalChoices = spineChoiceLabels(ensurePyoaSpine(working));
   }
-
   const nextTurn = state.turn + 1;
   const questsBefore = [...(state.quests ?? [])];
   let updatedQuests = preserveArcQuestProgress(
@@ -1841,7 +1791,6 @@ Do NOT print dice notation or CODE ENFORCED.
       arcStatusReceipts = [...arcStatusReceipts, ...heard.receipts];
     }
   }
-
   // 29e — hub linkedQuestIds reveal on travel / location change (parity with useGame)
   {
     const traveled = travelCommit?.arrived === true;
@@ -1909,7 +1858,6 @@ Do NOT print dice notation or CODE ENFORCED.
     }
   }
   updatedQuests = applyBiomeSaneQuestSites(working, updatedQuests);
-
   // Code-owned sandbox XP (hub discover / NPC meet / landmark / quest) — was missing in headless.
   const sandboxXp = applySandboxXpAwards(
     {
@@ -2000,13 +1948,11 @@ Do NOT print dice notation or CODE ENFORCED.
       },
     };
   }
-
   // Track recent choices for live-style dedupe (agent + pipeline).
   const recentChoices = [
     ...(state.recentChoices ?? []),
     { turn: nextTurn, choices: finalChoices },
   ].slice(-10);
-
   let filteredSystemLog = filterSystemLogForEngine(
     useMud && mudTurn
       ? [...mudTurn.receiptLines, ...arcStatusReceipts, ...sandboxNotes, ...levelNotes]
@@ -2030,14 +1976,12 @@ Do NOT print dice notation or CODE ENFORCED.
       return true;
     });
   }
-
   const questUnlocks = updatedQuests
     .filter((q) => {
       const before = questsBefore.find((b) => b.id === q.id);
       return q.revealed === true && before?.revealed !== true;
     })
     .map((q) => q.name);
-
   const mudBody = useMud && mudTurn
     ? mudTurn.content.trim() || mudDisplayBody(mudTurn)
     : cleanText;
@@ -2089,7 +2033,6 @@ Do NOT print dice notation or CODE ENFORCED.
     choices: gm.offeredChoices ?? finalChoices,
     lastUpdated: Date.now(),
   };
-
   let governed = next;
   {
     const govCommit = applyGovernanceCommit(state, next, playerInput);
@@ -2192,7 +2135,6 @@ Do NOT print dice notation or CODE ENFORCED.
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.
   governed = commitOfferedTurn({ ...governed, choices: finalChoices }, gm.id);
-
   const responsePath = classifyResponsePath({
     state: arcState,
     playerInput,
@@ -2204,7 +2146,6 @@ Do NOT print dice notation or CODE ENFORCED.
       : renderFallbackUsed || usedPacketStitch
         ? 'fallback'
         : 'accepted';
-
   const ended = Date.now();
   const receiptCounts = countTurnReceipts(governed, nextTurn);
   const stampedGm = [...(governed.log ?? [])].reverse().find((e) => e?.role === 'gm');
@@ -2287,7 +2228,6 @@ Do NOT print dice notation or CODE ENFORCED.
     },
   };
 }
-
 /** JSON that cannot throw on cycles (CAST/state leaks) or kill a T50 write. */
 function safeJsonLine(value: unknown, pretty = false): string {
   const seen = new WeakSet<object>();
@@ -2310,7 +2250,6 @@ function safeJsonLine(value: unknown, pretty = false): string {
     return JSON.stringify({ error: err instanceof Error ? err.message : String(err) });
   }
 }
-
 export async function runFateAutoplay(opts: {
   turns: number;
   seed: number;
@@ -2341,12 +2280,10 @@ export async function runFateAutoplay(opts: {
   const writerKind = opts.writer ?? 'default';
   const writerOverride = enableAutoplayWriter(writerKind, opts.writerModel);
   if (writerOverride) {
-     
     console.log(
       `[autoplay-writer] ${writerOverride.route} model=${writerOverride.model} — ${writerOverride.note}`
     );
   }
-
   const settings: Settings = {
     ...createDefaultSettings(),
     subscriptionTier: opts.aiTier,
@@ -2354,7 +2291,6 @@ export async function runFateAutoplay(opts: {
     visualMode: 'classic',
     gmVoiceProfileId: isGmVoiceProfileId(opts.personality) ? opts.personality : 'cold-system',
   };
-
   const tabletopCreationRun = process.env.SGM_AUTOPLAY_TT_CREATION !== 'off';
   const { state: raw, bible, personalityId } = buildNewGameState({
     bibleId: opts.bibleId,
@@ -2375,14 +2311,12 @@ export async function runFateAutoplay(opts: {
     console.log(`[fate-autoplay] resumed from ${snapPath} at loop turn ${startIndex} (game turn ${state.turn})`);
   }
   const rng = mulberry32(opts.seed);
-
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
   const slug = `${bible.id}_${personalityId}_s${opts.seed}`;
   const outDir = join(opts.outRoot, `${runId}_${slug}`);
   mkdirSync(outDir, { recursive: true });
   writerPromptSink.dir = join(outDir, 'writer-prompts');
   mkdirSync(writerPromptSink.dir, { recursive: true });
-
   const turns: TurnTelemetry[] = [];
   const startedAt = new Date().toISOString();
   let fatal: string | undefined;
@@ -2402,7 +2336,6 @@ export async function runFateAutoplay(opts: {
   // 28j — GameState snapshot every 10 turns and at stop (resume with --resume-from <runDir>).
   const writeSnapshot = (loopIndex: number) =>
     writeFileSync(join(outDir, 'snapshot.json'), JSON.stringify({ loopIndex, turn: state.turn, savedAt: new Date().toISOString(), state }) + '\n');
-
   try {
     for (let i = startIndex; i < opts.turns; i++) {
       const turnNo = i + 1;
@@ -2455,7 +2388,6 @@ export async function runFateAutoplay(opts: {
         turns.push(result.telemetry);
         appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');
         if (turnNo % 10 === 0) writeSnapshot(turnNo);
-         
         console.log(
           `[fate-autoplay] turn ${turnNo}/${opts.turns} ${result.telemetry.durationMs}ms pick="${String(result.telemetry.fatePick ?? '').slice(0, 56)}"${
             result.telemetry.error ? ` ERR=${result.telemetry.error}` : ''
@@ -2470,7 +2402,6 @@ export async function runFateAutoplay(opts: {
           dnsFailStreak += 1;
           if (dnsFailStreak >= 2) {
             fatal = 'DNS ENOTFOUND — pausing curriculum cell (Gateway unreachable)';
-             
             console.warn(`[fate-autoplay] ${fatal} after turn ${turnNo}`);
             break;
           }
@@ -2535,14 +2466,12 @@ export async function runFateAutoplay(opts: {
     writerPromptSink.dir = undefined;
     // Keep Test Lab override for matrix multi-run; caller clears at process end.
   }
-
   const endedAt = new Date().toISOString();
   const servedModel = servedWriterModel(turns);
   const durations = turns.map((t) => t.durationMs);
   const issueTurns = turns
     .filter((t) => t.error || t.failKind)
     .map((t) => ({ turn: t.turn, error: t.error, failKind: t.failKind }));
-
   const summary: RunSummary = {
     runId,
     bibleId: bible.id,
@@ -2580,7 +2509,6 @@ export async function runFateAutoplay(opts: {
     p1Count: readability.p1Count,
     violations: [...readability.violations, ...turnP0],
   };
-
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
   if (state.runManifest) {
     writeFileSync(join(outDir, 'manifest.json'), JSON.stringify(state.runManifest, null, 2) + '\n');
@@ -2654,10 +2582,8 @@ export async function runFateAutoplay(opts: {
       2
     ) + '\n'
   );
-
   return summary;
 }
-
 /** Provenance of one turn row: the id the provider returned for this turn, else the model the run asked for. */
 export function turnProvenance(
   tel: Pick<TurnTelemetry, 'writerUsage' | 'engineMode'> & { playerInput?: string },
@@ -2669,13 +2595,11 @@ export function turnProvenance(
     wellbeingFlagged: readWellbeing(tel.playerInput ?? '').flags.length > 0,
   });
 }
-
 /** The model id(s) the writer server reported for the run's turns, in first-seen order; null when none reported. */
 export function servedWriterModel(turns: ReadonlyArray<Pick<TurnTelemetry, 'writerUsage'>>): string | null {
   const ids = [...new Set(turns.map((t) => t.writerUsage?.modelId).filter((id): id is string => !!id))];
   return ids.length ? ids.join(', ') : null;
 }
-
 export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
   const defaults: FateAutoplayCliOpts = {
     turns: 20,
@@ -2755,5 +2679,4 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
   if (out.engineMode && !bibleGiven) out.bibleId = DEFAULT_TEST_BIBLE_BY_MODE[out.engineMode] ?? out.bibleId;
   return out;
 }
-
-export { disableAutoplayTestLab, enableAutoplayTestLab };
+export { disableAutoplayTestLab, enableAutoplayTestLab };
