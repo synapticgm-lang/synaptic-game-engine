@@ -459,7 +459,8 @@ export function detectLeadingCollage(
   const beats = (recentGmBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-lastK);
   const sentences = splitStorySentences(draft);
   if (!beats.length || sentences.length < 1) return empty;
-  const sources = sentences.map((s) => bestSourceBeat(s, beats));
+  const sources: number[] = [];
+  for (let si = 0; si < sentences.length; si++) sources.push(bestSourceBeat(sentences[si]!, beats));
   let stripIndex = 0;
   while (stripIndex < sentences.length) {
     if (sources[stripIndex] >= 0) {

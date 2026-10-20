@@ -280,3 +280,47 @@ describe('q76a invariant (6) system-ledger — mega9 T52-54 / wrong-voice', () =
     expect(v.some((x) => x.code === 'system-ledger')).toBe(true);
   });
 });
+
+describe('q76b-STRESS stub writer voices only present', () => {
+  it('pass: stub speakers ⊆ peopleHere', async () => {
+    const { buildStressStubProse } = await import('../../../scripts/stress-player/stubWriter');
+    const { peopleHere } = await import('../chipLegality');
+    const before = base({
+      sceneFacts: {
+        present: ['Sergeant Holt'],
+        props: ['cart'],
+        crowd: 'sparse',
+        noise: 'quiet',
+        lastBeat: '',
+        updatedTurn: 9,
+      },
+    });
+    const stub = buildStressStubProse(before, 'Look around');
+    const hereList = peopleHere(before);
+    const here = new Set<string>();
+    for (let i = 0; i < hereList.length; i++) here.add(hereList[i]!.toLowerCase());
+    for (const sp of stub.speakers) {
+      const low = sp.toLowerCase();
+      let ok = here.has(low);
+      if (!ok) for (const h of here) { if (h.includes(low) || low.includes(h)) { ok = true; break; } }
+      expect(ok).toBe(true);
+    }
+    expect(stub.prose.length).toBeGreaterThan(8);
+  });
+
+  it('pass: empty present → no speakers', async () => {
+    const { buildStressStubProse } = await import('../../../scripts/stress-player/stubWriter');
+    const before = base({
+      sceneFacts: {
+        present: [],
+        props: [],
+        crowd: 'none',
+        noise: 'quiet',
+        lastBeat: '',
+        updatedTurn: 9,
+      },
+    });
+    const stub = buildStressStubProse(before, 'Wait');
+    expect(stub.speakers).toEqual([]);
+  });
+});

@@ -535,9 +535,15 @@ export function compileCraftRules(state: GameState, playerInput?: string): Craft
     );
   const picked = specific.slice(0, MAX_CRAFT_LINES);
   if (picked.length) {
+    const ruleIds: string[] = [];
+    const lines: string[] = [];
+    for (let i = 0; i < picked.length; i++) {
+      ruleIds.push(picked[i]!.rule.id);
+      lines.push(picked[i]!.rule.authority);
+    }
     return {
-      ruleIds: picked.map((p) => p.rule.id),
-      lines: picked.map((p) => p.rule.authority),
+      ruleIds,
+      lines,
       replacedModeLine: true,
       when,
     };
