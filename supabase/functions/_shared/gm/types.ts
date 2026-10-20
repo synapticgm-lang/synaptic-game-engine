@@ -1710,6 +1710,11 @@ export interface SceneFacts {
   stallWorldFact?: string;
   /** OPT-5 — last place arc event (cleared / closed / reopened / threat / trader). */
   placeWorldFact?: string;
+  /**
+   * q77c — dying reached via real encounter → round combat → fight resolver to 0 HP
+   * (stress injectDying). dying-stall invariant only applies when this is set.
+   */
+  dyingFromFight?: boolean;
 }
 export interface TimelineFact {
   /** Entity / ref id for tagged events; legacy rows keep a uuid here. */
