@@ -49,6 +49,8 @@ import { checkPlayCrimes } from './turnCheck';
 import { mentionsName, peopleHere } from './chipLegality';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 export const MISSING_ANSWER_PROBLEM = 'Someone must answer the player in quoted speech.';
+/** q78r: same plays-player crime as turnCheck — one targeted repair, no new word list. */
+export const PLAYS_PLAYER_PROBLEM = 'Do not write the player character\'s own quoted words.';
 export type WriterDraft = {
   prose: string;
   path: TokenAcceptPath | 'plain';
@@ -178,10 +180,11 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
       }
     }
   }
-  // Same play-crime gate as turnCheck (incl. system-ledger wrong-voice). No second word list.
+  // Same play-crime gate as turnCheck (incl. system-ledger wrong-voice + plays-player). No second word list.
   for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0) {
     if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${here.join(', ') || '(none)'}).`);
     if (f.kind === 'wrong-voice') out.push(`Wrong voice: ${f.detail}`);
+    if (f.kind === 'plays-player') out.push(PLAYS_PLAYER_PROBLEM);
   }
   if (isOfferRefuseLine(check.playerInput)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();
@@ -324,16 +327,30 @@ const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).lengt
 /** Drop trailing sentences until the beat fits the word cap (spoken / dest / first two stay). */
 export function capBeatWords(prose: string, cap: number, state: GameState): string {
   if (wordCount(prose) <= cap) return prose;
-  const dest = [state.journey?.to, state.currentLocation].filter((p): p is string => !!p && p.length > 2).map((p) => p.toLowerCase());
+  const dest: string[] = [];
+  for (const p of [state.journey?.to, state.currentLocation]) {
+    if (p && p.length > 2) dest.push(p.toLowerCase());
+  }
   const sentences = splitProseSentences(prose);
-  const keep = sentences.map((s, i) => i < 2 || /["“]/.test(s) || dest.some((d) => s.toLowerCase().includes(d)));
+  const keep: boolean[] = [];
+  for (let i = 0; i < sentences.length; i++) {
+    const s = sentences[i]!;
+    let hold = i < 2 || /["“]/.test(s);
+    if (!hold) {
+      const low = s.toLowerCase();
+      for (let d = 0; d < dest.length; d++) if (low.includes(dest[d]!)) { hold = true; break; }
+    }
+    keep.push(hold);
+  }
   let total = wordCount(prose);
   for (let i = sentences.length - 1; i >= 0 && total > cap; i--) {
     if (keep[i]) continue;
     total -= wordCount(sentences[i]!);
     sentences[i] = '';
   }
-  return sentences.filter(Boolean).join(' ');
+  const kept: string[] = [];
+  for (let i = 0; i < sentences.length; i++) if (sentences[i]) kept.push(sentences[i]!);
+  return kept.join(' ');
 }
 /** People in this beat's REF ENUM who could answer (named people, roles, companions, a live foe). */
 function answerersHere(check: DraftCheck, packet: CompletedEventPacket): string[] {
