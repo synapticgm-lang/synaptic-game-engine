@@ -124,13 +124,15 @@ describe('q77b-DYINGTYPED / q77c-STEER', () => {
     expect(isDying(arc.state) || arc.state.deathSaves?.dead || (arc.state.character.hp ?? 0) > 0).toBe(true);
   });
 
-  it('typed free text: speech records an engine speech event; nonsense is refused', () => {
+  it('typed free text: speech records an engine speech event; nonsense is never refused (M2)', () => {
     const s = dying({ character: { ...dying().character, hp: 12, conditions: [] }, deathSaves: null });
     const speech = resolveTypedFreeText(s, 'I say to Wenna Brack: what do you want?');
-    expect(speech.engineResult).toMatch(/Speech event:.*Wenna Brack/i);
-    expect(speech.receipts.some((r) => r.startsWith('Speech:'))).toBe(true);
+    expect(speech.engineResult).toMatch(/Speech event:.*Wenna Brack|Words said aloud|address/i);
+    expect(speech.engineResult).not.toMatch(/Refused:/i);
     const nonsense = resolveTypedFreeText(s, 'xyzzy');
-    expect(nonsense.engineResult).toMatch(/Refused:/i);
+    // M2: free text is never rejected — words said aloud / nothing the world can act on.
+    expect(nonsense.engineResult).not.toMatch(/Refused:/i);
+    expect(nonsense.engineResult).toMatch(/nothing the world can act on|said aloud|Speech/i);
   });
 
   it('typed fight line routes through interpretRoundTyped when encounter is live', () => {

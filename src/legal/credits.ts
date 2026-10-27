@@ -318,6 +318,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Idea only: one typed per-turn fact sheet the writer narrates. Ported into live owners; not a copy of the prototype module.',
       },
       {
+        work: 'Multi-step intent reader (merge M2)',
+        source: 'SynapticGM (internal prototype)',
+        license: 'Original',
+        usedFor:
+          'Idea only: one free-text message → ordered steps + claims/system lists; engine guards refs from player words or the fact sheet. Ported into intentParser; not a copy of the prototype module. Date 27 October 2026.',
+      },
+      {
         work: 'Custom tabletop rules (player paste)',
         source: 'The player',
         license: 'Player-supplied',

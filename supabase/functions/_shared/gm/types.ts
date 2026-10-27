@@ -1715,6 +1715,11 @@ export interface SceneFacts {
    * (stress injectDying). dying-stall invariant only applies when this is set.
    */
   dyingFromFight?: boolean;
+  /**
+   * M2 — last person the player addressed (carry-over when a later step names nobody).
+   * Display name only; set by the multi-step reader / typed free-text resolver.
+   */
+  lastAddressee?: string;
 }
 export interface TimelineFact {
   /** Entity / ref id for tagged events; legacy rows keep a uuid here. */
@@ -2376,6 +2381,11 @@ export interface Settings extends AccessibilitySettings {
    * Default false — free-text opening; player types in the box.
    */
   fastSetupChips?: boolean;
+  /**
+   * When true, show the player's own typed lines in the story feed.
+   * Default false (hidden) — toggle lives in Settings → Narrative.
+   */
+  showPlayerLines?: boolean;
 }
 export const DEFAULT_TURN_FRAME: TurnFrameTheme = {
   icon: '🎲',
