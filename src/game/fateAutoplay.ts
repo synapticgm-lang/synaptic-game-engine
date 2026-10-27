@@ -288,6 +288,12 @@ export type FateAutoplayCliOpts = {
   inputs?: string[];
   /** `--route <place>` — from turn 2, travel toward this place until arrived, then normal picks. */
   routeTo?: string;
+  /** `--typed-mix <0-100>` - percent of turns whose input is written by a cheap AI player model (rest = chip picks). */
+  typedMix?: number;
+  /** `--typed-model <id>` - OpenRouter model for the typed player. */
+  typedModel?: string;
+  /** `--typed-source <dir>` - file hand-off for typed lines (no model call). */
+  typedSource?: string;
   engineMode?: EngineMode;
   aiTier: HostedAiTier;
   mode: FateMode;
@@ -431,6 +437,8 @@ export type TurnTelemetry = {
   wardenNotes?: string[];
   /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
   writerUsage?: import('./gmProxy').TurnWriterUsageWithCost;
+  /** Typed-input mix: how this turn's input was made (chip pick, typed, odd) and the player-model call it cost. */
+  typedPlayer?: Record<string, unknown>;
   /**
    * M1 — full structured TurnLog (stable shape for orders 7 / 10B). Also mirrored on turns.jsonl.
    * No DB table.
@@ -2421,6 +2429,8 @@ export async function runFateAutoplay(opts: {
   inputs?: string[];
   /** `--route <place>` — from turn 2, travel toward this place until arrived, then normal picks. */
   routeTo?: string;
+  /** Per-turn player input from a harness (typed-input mix). Wins over `inputs`; undefined = normal pick. */
+  inputProvider?: (ctx: { turnIndex: number; state: GameState; prev?: TurnTelemetry }) => Promise<{ input?: string; meta?: Record<string, unknown> }>;
   /** 28g — LOOP STOP auto-stop (default on). false or env SGM_AUTOPLAY_LOOP_STOP=off turns it off. */
   loopStop?: boolean;
   /** 28j — continue from <runDir>/snapshot.json. */
@@ -2516,6 +2526,9 @@ export async function runFateAutoplay(opts: {
         const turnStart = state;
         if (routeTo && (state.currentLocation ?? '').trim().toLowerCase() === routeTo.toLowerCase()) routeReached = true;
         const routeLine = routeTo && !routeReached && i >= 1 ? `Travel toward ${routeTo}` : undefined;
+        const provided = routeLine || !opts.inputProvider
+          ? undefined
+          : await opts.inputProvider({ turnIndex: i, state, prev: turns[turns.length - 1] });
         const result = await headlessFateTurn(state, settings, rng, {
           bibleId: bible.id,
           personalityId,
@@ -2523,9 +2536,10 @@ export async function runFateAutoplay(opts: {
           mode: opts.mode,
           aiAgentMode: opts.aiAgentMode ?? 'default',
           dryRun: opts.dryRun,
-          playerInputOverride: routeLine ?? (opts.inputs?.[i] || undefined),
+          playerInputOverride: routeLine ?? provided?.input ?? (opts.inputs?.[i] || undefined),
         });
         state = result.state;
+        if (provided?.meta) result.telemetry.typedPlayer = provided.meta;
         {
           // 29z1 — the one progress meaning, stored on the row for the loop stop and the thumbs count.
           const tel = result.telemetry;
@@ -2846,6 +2860,9 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--batch-dir') out.batchDir = next();
     else if (a === '--inputs') out.inputs = next().split('|').map((s) => s.trim());
     else if (a === '--route') out.routeTo = next();
+    else if (a === '--typed-mix') out.typedMix = Math.max(0, Math.min(100, Number(next()) || 0));
+    else if (a === '--typed-model') out.typedModel = next();
+    else if (a === '--typed-source') out.typedSource = next();
     else if (a === '--out') out.outRoot = next();
     else if (a === '--name') out.characterName = next();
     else if (a === '--help' || a === '-h') {

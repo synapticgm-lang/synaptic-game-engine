@@ -24,6 +24,7 @@ import {
   type FateAutoplayCliOpts,
 } from '../../src/game/fateAutoplay';
 import { runModesAgentsBatch } from './modesAgents300';
+import { createTypedPlayer } from './typedPlayer';
 import { regenerateModeGeminiPacks } from './splitModesGemini';
 import { loadDotEnv } from './loadDotEnv';
 import { isClientAutoplayWriter } from '../../src/game/autoplayWriter';
@@ -88,6 +89,9 @@ Options:
                        default = hosted Free via edge gm-turn
   --writer-model ID    OpenRouter model id (default google/gemini-2.5-flash-lite)
   --pick-mode fate|first-pad
+  --typed-mix <0-100>       percent of turns typed by a cheap AI player (several things per reply, some odd); rest = chip picks
+  --typed-source DIR        typed lines by file hand-off (turn-N.context.md -> turn-N.line.txt) instead of a model call
+  --typed-model ID          OpenRouter model for the typed player (default qwen/qwen3.7-flash; key = OPENROUTER_API_KEY_SYNAPTICGM or VITE_OPENROUTER_API_KEY)
   --route <place>           from turn 2, travel toward <place> until arrived, then normal picks
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
   --modes-agents-300   4 modes × 3 AI agents × 300 turns → 4 mode Gemini packs + telemetry
@@ -402,6 +406,9 @@ async function main(): Promise<void> {
           (opts.aiAgentMode ? ` ai-agent=${opts.aiAgentMode}` : '') +
           (opts.dryRun ? ' (DRY RUN)' : '')
       );
+      const typedPlayer = opts.typedMix && opts.typedMix > 0 ? createTypedPlayer({ mixPct: opts.typedMix, seed: opts.seed, model: opts.typedModel, lineDir: opts.typedSource }) : null;
+      const typedLines: string[] = [];
+      if (typedPlayer) log(`Typed-input mix ${opts.typedMix}% via ${typedPlayer.model}`);
       const summary = await runFateAutoplay({
         turns: opts.turns,
         seed: opts.seed,
@@ -419,7 +426,18 @@ async function main(): Promise<void> {
         inputs: opts.inputs,
         routeTo: opts.routeTo,
         resumeFrom: opts.resumeFrom,
+        inputProvider: typedPlayer
+          ? async ({ turnIndex, state, prev }) => {
+              const d = await typedPlayer.decide({ turnIndex, state, prevChips: prev?.offeredChoices, recent: typedLines });
+              if (d.input) typedLines.push(d.input);
+              return d;
+            }
+          : undefined,
       });
+      if (typedPlayer) {
+        writeFileSync(join(summary.outDir, 'typed-player.json'), JSON.stringify({ model: typedPlayer.model, mixPct: opts.typedMix, seed: opts.seed, ...typedPlayer.totals }, null, 2) + '\n');
+        log(`Typed player: ${JSON.stringify(typedPlayer.totals)}`);
+      }
       log(`Done → ${summary.outDir}`);
       scoreRunThumbs(summary.outDir, log);
       console.log(JSON.stringify(summary, null, 2));
