@@ -332,6 +332,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Idea only: one free-text message → ordered steps + claims/system lists; engine guards refs from player words or the fact sheet. Ported into intentParser; not a copy of the prototype module. Date 27 October 2026.',
       },
       {
+        work: 'Engine-first turn spine (merge M3)',
+        source: 'SynapticGM (internal prototype engine.mjs resolveTurn)',
+        license: 'Original',
+        usedFor:
+          'Idea only: one engine-owned turn order (read steps → resolve with SRD 5.2.1 action economy → commit → FactSheet → TurnLog → writer); fight chips capped at 4 legal picks. Ported into turnSpine / actionEconomy / combatChips; not a copy of the prototype module. Date 27 October 2026.',
+      },
+      {
         work: 'Custom tabletop rules (player paste)',
         source: 'The player',
         license: 'Player-supplied',

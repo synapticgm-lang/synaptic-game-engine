@@ -244,7 +244,7 @@ import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { isDying } from './tabletop/roundFight';
 import { resolveEngineFight } from './engineFight';
-import { resolveTypedFreeText } from './typedFreeText';
+import { runTurnSpine } from './turnSpine';
 import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
@@ -1175,22 +1175,19 @@ export async function headlessFateTurn(
     // Typed free text: engine handling or visible refusal. Skip when the fight resolver already answered.
     // While dying after a fight answer, still record speech events (talk/protest) for the writer slot.
     if (!fightHandled) {
-      const typed = resolveTypedFreeText(arcState, playerInput);
+      // M3 — same spine as live / full Fate (never rejects free text).
+      const typed = runTurnSpine(arcState, playerInput);
+      arcState = typed.state;
       for (let i = 0; i < typed.receipts.length; i++) {
         const line = typed.receipts[i]!;
         if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
       }
       if (typed.engineResult) engineFact = typed.engineResult;
-      if (typed.lastAddressee && arcState.sceneFacts) {
-        arcState = {
-          ...arcState,
-          sceneFacts: { ...arcState.sceneFacts, lastAddressee: typed.lastAddressee },
-        };
-      }
     } else if (dyingTurn || isDying(arcState)) {
       const intent = parsePlayerIntent(playerInput, arcState);
       if (intent.kind === 'talk' || intent.kind === 'refuse') {
-        const typed = resolveTypedFreeText(arcState, playerInput);
+        const typed = runTurnSpine(arcState, playerInput);
+        arcState = typed.state;
         for (let i = 0; i < typed.receipts.length; i++) {
           const line = typed.receipts[i]!;
           if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
@@ -1338,16 +1335,12 @@ export async function headlessFateTurn(
     // q50-MAP2 — arrival at a place with no record (or seed stub without exits).
     arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
   }
-  // M2 — multi-step reader → existing typed resolver (never rejects; speech free; claims/system off steps).
-  const typedRead = resolveTypedFreeText(arcState, playerInput);
-  if (typedRead.lastAddressee && arcState.sceneFacts) {
-    arcState = {
-      ...arcState,
-      sceneFacts: { ...arcState.sceneFacts, lastAddressee: typedRead.lastAddressee },
-    };
-  }
-  for (let i = 0; i < typedRead.receipts.length; i++) {
-    const line = typedRead.receipts[i]!;
+  // M3 — one turn spine (read → resolve with economy → commit) shared with live useGame.
+  const spine = runTurnSpine(arcState, playerInput);
+  arcState = spine.state;
+  const typedRead = spine;
+  for (let i = 0; i < spine.receipts.length; i++) {
+    const line = spine.receipts[i]!;
     if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
   }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
@@ -1361,9 +1354,9 @@ export async function headlessFateTurn(
     ...(shopTurn?.facts ?? []),
     ...nudge.receipts,
     ...(travelCommit ? travelEngineLines(travelCommit) : []),
-    ...(typedRead.engineResult ? [typedRead.engineResult] : []),
+    ...(spine.engineResult ? [spine.engineResult] : []),
   ], arcState.engineMode);
-  const readerStepResults = (typedRead.stepResults ?? []).map((s) => ({
+  const readerStepResults = spine.readerStepResults.map((s) => ({
     tried: s.tried,
     done: s.done,
     reason: s.reason,

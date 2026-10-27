@@ -176,6 +176,7 @@ import {
 } from './intentContract';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { checkForAction, runPlayerCheck, type CheckSpec } from './checkMath';
+import { runTurnSpine } from './turnSpine';
 import { formatPreRollLine, formatResultLine, planBeginnerRollHint } from './rules/rollView';
 import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
 import { maybeEnterInteriorDungeon } from './enterInterior';
@@ -2805,6 +2806,14 @@ export function useGame() {
       circlingRecorded = liveCurrent;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...nudge.receipts];
       stateRef.current = liveCurrent;
+      // M3 — same turn spine as Fate (read → resolve with economy → commit → FactSheet/TurnLog via packet).
+      const spine = runTurnSpine(liveCurrent, sanitizedInput);
+      liveCurrent = spine.state;
+      stateRef.current = liveCurrent;
+      for (let i = 0; i < spine.receipts.length; i++) {
+        const line = spine.receipts[i]!;
+        if (line && !pendingArcStatusReceipts.includes(line)) pendingArcStatusReceipts.push(line);
+      }
       // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
       const engineFact = engineResultFact([
         ...(systemsArc?.systemReceipts ?? []),
@@ -2816,10 +2825,17 @@ export function useGame() {
         ...(shopTurn?.facts ?? []),
         ...nudge.receipts,
         ...(travelCommit ? travelEngineLines(travelCommit) : []),
+        ...(spine.engineResult ? [spine.engineResult] : []),
       ], liveCurrent.engineMode);
+      const readerStepResults = spine.readerStepResults.map((s) => ({
+        tried: s.tried,
+        done: s.done,
+        reason: s.reason,
+      }));
       const preparedEvent = prepareWriterInputWithTownsfolk(liveCurrent, sanitizedInput, {
         xp: arcXp,
         engineResult: engineFact,
+        readerStepResults: readerStepResults.length ? readerStepResults : undefined,
         travel: travelOutcome(travelCommit, hereBeforeMove, liveCurrent),
         reader: readerFlags(settingsRef.current),
       });
