@@ -17,7 +17,7 @@ import { resolveTypedFreeText } from './typedFreeText';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { buildFactSheet } from './factSheet';
 import { buildTurnLog, sliceState } from './turnLog';
-import type { GameState, RoundCombatState } from './types';
+import type { ActiveEncounter, GameState, RoundCombatState } from './types';
 import type { IntentStep } from './intentParser';
 
 const block = (id: string): StatBlock => {
@@ -91,17 +91,30 @@ function baseState(over: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
+/** Real ActiveEncounter from the bandit StatBlock (same required fields as s77RootC / ttT1a fixtures). */
+function banditEncounter(b: StatBlock): ActiveEncounter {
+  return {
+    name: b.name,
+    level: 1,
+    hp: b.hp,
+    maxHp: b.hp,
+    armorClass: b.ac,
+    strength: b.scores.STR,
+    dexterity: b.scores.DEX,
+    constitution: b.scores.CON,
+    xpReward: 25,
+    goldReward: 5,
+    cr: b.cr,
+    phase: 'engaged',
+    encounterId: 'bandit-1',
+  };
+}
+
 function fightState(over: Partial<GameState> = {}): GameState {
   const b = block('bandit');
   const f = fight(b);
   return baseState({
-    activeEncounter: {
-      name: b.name,
-      hp: b.hp,
-      maxHp: b.hp,
-      phase: 'engaged',
-      encounterId: 'bandit-1',
-    },
+    activeEncounter: banditEncounter(b),
     roundCombat: f.combat,
     ...over,
   });
