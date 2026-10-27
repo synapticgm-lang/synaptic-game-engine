@@ -30,7 +30,13 @@ import {
   isNsfwCampaign,
   type CampaignBible,
 } from '@/data/campaigns';
-import { callGm, callGmRepair } from './aiService';
+import { callGm, callGmCheck, callGmRepair } from './aiService';
+import {
+  checkAndRepairProse,
+  clauseCheckerVerdicts,
+  makeGmClauseChat,
+  type ClauseCheckRecord,
+} from './clauseCheck';
 import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
@@ -100,12 +106,11 @@ import {
   resolveOpeningRegistrar,
   seedCoverAnswers,
   shouldStitchOpeningContinue,
-  openingCastNames,
   hallTalkTopics,
 } from './openingEstablishment';
 import { headlessOpeningContinueTurn } from './liveDrive';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
-import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
+import { seedHookLockFromPickedHook } from './hookLock';
 import { enforceCameraOnProse, enforceCameraOnState, resolveNextLocation } from './travelAuthority';
 import { syncSheetToMovedHere } from './locationMemory';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
@@ -150,7 +155,6 @@ import {
   eventsToQuestUpdates,
 } from './parser';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
-import { isChromePersonToken } from './chromeAuthority';
 import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './receiptTelemetry';
 import type { RunManifest } from './runManifest';
 import { BUILD_STAMP } from './runManifest';
@@ -181,7 +185,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues, type WriterTurnResult, type WriterTurnRetryResult } from './writerTurn';
+import { runWriterTurnWithFightRetry, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -232,12 +236,7 @@ import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, commitOfferedTurn, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import { dropAbsentListenerChips, peopleHere } from './chipLegality';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
-import {
-  applyProseWarden,
-  crowdSizeForWarden,
-  collectSceneObjectNames,
-  scrubFalseArrivalWhenHere,
-} from './proseWarden';
+import { scrubFalseArrivalWhenHere } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
@@ -265,7 +264,6 @@ import {
 import { hookCtxFromState, withMatchedLitRpgSpine } from '@/data/quests/litrpgMainSpines';
 import { touchPlaceVisit } from './places';
 import { buildTurnMandate } from './sceneFocus';
-import { groundedWeaponNames, listEmptySearchTargets } from './searchContinuity';
 import { applyStructuralEvents } from './structuralEvents';
 import {
   disableAutoplayTestLab,
@@ -1413,6 +1411,7 @@ Do NOT print dice notation or CODE ENFORCED.
     : undefined;
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
   let writerTurn: WriterTurnRetryResult | null = null;
+  let clauseCheckRecords: ClauseCheckRecord[] = [];
   const stageTrace: { stage: string; text: string }[] = [];
   const traceStage = (stage: string, text: string) => {
     if (stageTrace[stageTrace.length - 1]?.text !== text) stageTrace.push({ stage, text });
@@ -1454,6 +1453,40 @@ Do NOT print dice notation or CODE ENFORCED.
         ...arcState,
         completedEvent: { ...arcState.completedEvent, tokenRefs: writerTurn.refs },
       };
+    }
+    // M4 — one clause check after the writer (FactSheet only; stubbable model).
+    {
+      const sheet = arcState.completedEvent?.factSheet ?? writerPacket.factSheet;
+      if (sheet && gmText.trim()) {
+        try {
+          const clause = await checkAndRepairProse({
+            factSheet: sheet,
+            prose: gmText,
+            player: {
+              typed: playerInput,
+              claimsNotTrue: sheet.player?.claimsNotTrue ?? [],
+            },
+            chat: makeGmClauseChat((user) => callGmCheck(arcState, user, settings)),
+            repair: async (request) => {
+              writerCallMeter.calls += 1;
+              const started = Date.now();
+              try {
+                return await callGmRepair(arcState, request, settings);
+              } finally {
+                writerCallMeter.ms += Date.now() - started;
+              }
+            },
+            engineFact,
+          });
+          gmText = clause.prose;
+          clauseCheckRecords = clause.records;
+          if (clause.repaired) {
+            writerCallMeter.calls += clause.checkPasses;
+          }
+        } catch {
+          /* check unavailable (no proxy/key) — leave prose; TurnLog gets empty clauseChecks */
+        }
+      }
     }
   }
   if (useMud) {
@@ -1644,49 +1677,8 @@ Do NOT print dice notation or CODE ENFORCED.
       cleanText
     );
   }
-  cleanText = words.step('applyProseWarden', cleanText, applyProseWarden(cleanText, {
-    currentLocation: working.currentLocation ?? state.currentLocation,
-    priorLocation: state.previousSceneFacts?.location ?? state.currentLocation,
-    aloneArrival: isAloneArrivalOpening(working) || isAloneArrivalOpening(state),
-    crowdSize: crowdSizeForWarden(working, cleanText),
-    crowdPresent:
-      working.sceneFacts?.crowd === 'present' ||
-      working.sceneFacts?.crowd === 'sparse' ||
-      crowdSizeForWarden(working, cleanText) > 0,
-    fleeFailed: working.activeEncounter?.caught === true,
-    inventory: working.inventory ?? state.inventory,
-    sceneProps: collectSceneObjectNames(working),
-    searchedEmpty: listEmptySearchTargets(working.sceneFacts ?? state.sceneFacts),
-    playerInput,
-    groundedWeapons: groundedWeaponNames(working),
-    playerName: working.character?.name ?? state.character?.name,
-    knownPlaces: [
-      ...(working.places ?? state.places ?? []).map((p) => p.name).filter(Boolean),
-      state.currentLocation,
-      working.previousLocationSheet?.name,
-    ].filter((n): n is string => !!n && n.trim().length > 2),
-    hasLiveEncounter: !!(working.activeEncounter ?? state.activeEncounter),
-    recentlyClearedEncounter:
-      (working.arcDirector?.lastEncounterClearedTurn ??
-        state.arcDirector?.lastEncounterClearedTurn) === working.turn ||
-      (working.arcDirector?.lastEncounterClearedTurn ??
-        state.arcDirector?.lastEncounterClearedTurn) ===
-        working.turn - 1,
-    presentNames: [
-      ...(working.sceneFacts?.present ?? []),
-      ...(state.sceneFacts?.present ?? []),
-      ...((working.companions ?? state.companions ?? []).map((c) => c.name)),
-      ...((working.npcMemories ?? state.npcMemories ?? []).map((n) => n.npcName)),
-    ].filter((n) => n && !isChromePersonToken(n)),
-    namedCast: openingCastNames(working),
-    ledgerState: working,
-    isThisTurnsEvent: thisTurnsEventCheck({ state: working, playerInput }),
-    lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
-    currentTurn: state.turn,
-    hookLock: hookLockForWarden(working, cleanText),
-    npcMemories: working.npcMemories ?? state.npcMemories,
-  }));
-  traceStage('applyProseWarden', cleanText);
+  // M4 — proseWarden retired on Fate path; clause check already ran after the writer.
+  traceStage('clauseCheck', cleanText);
   {
     const prefaced = ensureEncounterSpawnPreface(working, cleanText);
     cleanText = words.step('ensureEncounterSpawnPreface', cleanText, prefaced.prose);
@@ -2283,7 +2275,9 @@ Do NOT print dice notation or CODE ENFORCED.
             verdict: 'repair' as const,
             detail: String(p).slice(0, 160),
           })),
+          ...clauseCheckerVerdicts(clauseCheckRecords),
         ],
+        clauseChecks: clauseCheckRecords.length ? clauseCheckRecords : undefined,
         finalProse: mudBody,
         chipsOffered: offered,
         latencyMs: ended - started,

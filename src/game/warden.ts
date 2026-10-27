@@ -13,17 +13,10 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
-import { applyProseWarden, crowdSizeForWarden, collectSceneObjectNames } from './proseWarden';
-import { hookLockForWarden } from './hookLock';
+/* M4 — proseWarden regex maze retired; clause check owns fact/colour after the writer. */
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
-import { isInteriorMap } from './placeAuthority';
-import { listInteriorExitsFromHere } from './mapEngine';
-import { isAloneArrivalOpening } from './openingEstablishment';
 import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
-import { groundedWeaponNames } from './searchContinuity';
-import { isChromePersonToken } from './chromeAuthority';
-import { presentNpcRecords } from './npcRecords';
 import { compileRefEnum } from './completedEventPacket';
 
 export interface WardenResult {
@@ -229,77 +222,8 @@ export async function runWarden(
   }
 
   const scrub = scrubInventedProperNouns(narrativeText, state, grounding);
-  const exits =
-    state.activeDungeon && isInteriorMap(state.activeDungeon)
-      ? listInteriorExitsFromHere(state.activeDungeon)
-      : [];
-  const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
-  
-  // Pack 12 Extended Warden Context
-  const prevFacts = state.previousSceneFacts;
-  
-  // DEBUG LOGGING - Phase 2
-  const debugEnabled = false; // Set to false after debugging
-  const fleeFailed = state.activeEncounter?.caught === true;
-  const priorLoc = prevFacts?.location ?? state.previousSceneFacts?.location;
-  const currentLoc = state.locationSheet?.name || state.currentLocation;
-  
-  if (debugEnabled && (fleeFailed || /\bYou reach\b/i.test(narrativeText))) {
-    console.log('[warden] CONTEXT FOR PROSE SCRUB:', {
-      turn: state.turn,
-      currentLocation: currentLoc,
-      priorLocation: priorLoc ?? 'undefined',
-      fleeFailed,
-      encounterCaught: state.activeEncounter?.caught ?? 'no encounter',
-      hasYouReach: /\bYou reach\b/i.test(narrativeText),
-    });
-  }
-  
-  const wardenCtx = {
-    currentLocation: currentLoc,
-    aloneArrival: isAloneArrivalOpening(state),
-    hasMappedDoorExits: doorish.length > 0,
-    adjacentRoomNames: exits.map((e) => e.name),
-    crowdSize: crowdSizeForWarden(state, narrativeText),
-    crowdPresent:
-      state.sceneFacts?.crowd === 'present' ||
-      state.sceneFacts?.crowd === 'sparse' ||
-      crowdSizeForWarden(state, narrativeText) > 0,
-    currentTimeOfDay: state.sceneFacts?.timeOfDay,
-    previousTimeOfDay: prevFacts?.timeOfDay,
-    isIndoor: state.sceneFacts?.indoor,
-    wasIndoor: prevFacts?.indoor,
-    currentTension: state.sceneFacts?.tension,
-    previousTension: prevFacts?.tension,
-    inventory: state.inventory,
-    sceneProps: collectSceneObjectNames(state),
-    lastGmProse:
-      [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '',
-    presentNames: [
-      ...presentNpcRecords(state).flatMap((r) => [r.npcName, ...(r.aliases ?? [])]),
-      ...(state.sceneFacts?.present ?? []).filter((p) => !/\s(?:and|&)\s|,/.test(p)),
-      ...(state.companions ?? []).map((c) => c.name),
-    ].filter(
-      (n) => typeof n === 'string' && n.trim().length >= 2 && !isChromePersonToken(n)
-    ),
-    lastKill: state.sceneFacts?.lastKill,
-    currentTurn: state.turn,
-    groundedWeapons: groundedWeaponNames(state),
-    playerName: state.character?.name,
-    hasLiveEncounter:
-      !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter,
-    recentlyClearedEncounter:
-      state.arcDirector?.lastEncounterClearedTurn === state.turn ||
-      state.arcDirector?.lastEncounterClearedTurn === state.turn - 1,
-    hookLock: hookLockForWarden(state, narrativeText),
-    npcMemories: state.npcMemories,
-    selectedIntentKind: intent?.kind,
-    fleeFailed,
-    priorLocation: priorLoc,
-    destroyedItems: state.pyoaBranchLedger?.destroyedItems,
-  };
-  
-  const polishedBase = applyProseWarden(scrub.text, wardenCtx);
+  // M4 — no applyProseWarden; FactSheet clause check runs after the writer on Fate/live.
+  const polishedBase = scrub.text;
   const constraints = buildBindingConstraints(state);
   const constraintHits = detectConstraintViolations(polishedBase, constraints);
   const polished = constraintHits.length

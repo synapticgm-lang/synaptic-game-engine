@@ -339,6 +339,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Idea only: one engine-owned turn order (read steps → resolve with SRD 5.2.1 action economy → commit → FactSheet → TurnLog → writer); fight chips capped at 4 legal picks. Ported into turnSpine / actionEconomy / combatChips; not a copy of the prototype module. Date 27 October 2026.',
       },
       {
+        work: 'Clause check vs FactSheet (merge M4)',
+        source: 'SynapticGM (internal prototype engine.mjs CHECK_SYS / factCheck)',
+        license: 'Original',
+        usedFor:
+          'Idea only: after the writer, classify each clause as colour or fact against the FactSheet; unsupported serious facts get one targeted sentence repair; player claims are never facts. Ported into clauseCheck; not a copy of the prototype module. Date 27 October 2026.',
+      },
+      {
         work: 'Custom tabletop rules (player paste)',
         source: 'The player',
         license: 'Player-supplied',

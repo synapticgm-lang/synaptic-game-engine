@@ -11,7 +11,6 @@ import {
   applyOpeningAnswer,
   coverContinuePads,
   establishmentChoices,
-  isAloneArrivalOpening,
   pendingRequiredCovers,
   resolveOpeningMode,
   resolveOpeningPrompts,
@@ -23,11 +22,9 @@ import { applyOpeningContract, stitchOpeningContinue, stitchOpeningScene } from 
 import { UNNAMED_ADVENTURER } from './pcNameAuthority';
 import { withOfferedChoices } from './playTranscript';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
-import { applyProseWarden, collectSceneObjectNames } from './proseWarden';
 import { enforcePerspective } from './perspectiveWarden';
 import { stripChoiceList } from './parser';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
-import { hookLockForWarden } from './hookLock';
 import type { EngineMode, GameState, LogEntry } from './types';
 
 export type LiveDriveFlag = {
@@ -367,17 +364,8 @@ export async function headlessOpeningContinueTurn(
     ? stitchOpeningContinue(openingState, playerInput)
     : stitchOpeningScene(openingState);
   openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
-  openingText = applyProseWarden(
-    enforcePerspective(openingText, { perspective: 'second-person' }, openingState.character.name),
-    {
-      currentLocation: openingState.currentLocation,
-      aloneArrival: isAloneArrivalOpening(openingState),
-      inventory: openingState.inventory,
-      sceneProps: collectSceneObjectNames(openingState),
-      playerInput,
-      hookLock: hookLockForWarden(openingState, openingText),
-    }
-  );
+  // M4 — proseWarden retired; opening stitch is engine-authored (clause check is post-writer).
+  openingText = enforcePerspective(openingText, { perspective: 'second-person' }, openingState.character.name);
   const cleanOpening = stripChoiceList(openingText);
   const harvested = openingState.openingEstablishment
     ? applyHarvestedOpeningCovers(openingState.openingEstablishment, cleanOpening)

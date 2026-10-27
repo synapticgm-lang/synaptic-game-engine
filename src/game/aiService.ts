@@ -146,6 +146,40 @@ export async function callGmRepair(
   throw new Error('GM proxy required for a sentence repair.');
 }
 
+/**
+ * M4 — clause check model call (FactSheet audit). Same plumbing as writer/repair; tests stub
+ * ClauseCheckChat and never hit this. Returns raw model text (JSON claims).
+ */
+export async function callGmCheck(
+  state: GameState,
+  request: string,
+  settings: Settings,
+  signal?: AbortSignal,
+  timeoutMs?: number
+): Promise<string> {
+  assertNoLiveAiTurnForUmbra(state, 'callGmCheck');
+  const autoplayWriter = getAutoplayWriterOverride();
+  const direct = async (s: Settings) => (await import('./aiService.direct')).callCheckDirect(state, request, s);
+  if (autoplayWriter) {
+    return direct({
+      ...settings,
+      aiProvider: 'openrouter',
+      customModelId: autoplayWriter.model,
+      baseUrl: autoplayWriter.baseUrl,
+      openrouterApiKey: autoplayWriter.apiKey,
+    });
+  }
+  if (isGmProxyAvailable()) {
+    try {
+      return await invokeGmProxy({ mode: 'check', state, playerInput: request, settings, signal, timeoutMs });
+    } catch (err) {
+      if (isGmProxyRequired() || !isClientGmAllowed()) throw err;
+    }
+  }
+  if (import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true') return direct(settings);
+  throw new Error('GM proxy required for a clause check.');
+}
+
 /** Opening page / cover-continue — real `callGm` args (never a phantom 5th callback). */
 export async function callOpeningGm(
   state: GameState,

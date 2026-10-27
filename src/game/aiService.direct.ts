@@ -5,6 +5,7 @@
 // Master Prompt v2.0 - Hierarchical architecture (docs/MASTER-PROMPT-ARCHITECTURE.md)
 import { buildSystemPrompt, buildContextPrompt } from './masterPrompt';
 import { sentenceRepairSystemPrompt } from './narrativePov';
+import { CLAUSE_CHECK_SYS } from './clauseCheckPrompt';
 import type { GameState, Settings, LoreCard } from './types';
 import { logger } from './logger';
 import type { GmResult } from './aiServiceShared';
@@ -355,6 +356,11 @@ function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCa
 export async function callRepairDirect(state: GameState, request: string, settings: Settings): Promise<string> {
   const system = sentenceRepairSystemPrompt(state.character, settings.perspective);
   return stripReasoningBlocks(await dispatchLlm(request, system, settings));
+}
+
+/** M4 — clause check on the direct path: JSON claims vs FactSheet (system = CLAUSE_CHECK_SYS). */
+export async function callCheckDirect(_state: GameState, request: string, settings: Settings): Promise<string> {
+  return stripReasoningBlocks(await dispatchLlm(request, CLAUSE_CHECK_SYS, settings));
 }
 
 export async function callGmDirect(

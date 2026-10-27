@@ -8,6 +8,7 @@
 
 import type { FactSheet } from './factSheet.ts';
 import { hashFactSheet } from './factSheet.ts';
+import type { ClauseCheckRecord } from './clauseCheckPrompt.ts';
 
 /** One dice roll the engine made this turn (SRD die + mods + DC + result). */
 export interface TurnLogDiceRoll {
@@ -94,6 +95,11 @@ export interface TurnLog {
   ai: TurnLogAiRole[];
   checkerVerdicts: TurnLogCheckerVerdict[];
   /**
+   * M4 — clause check after the writer (every clause: kind, support, severity, repaired).
+   * Source of truth for fact vs colour; proseWarden regex maze is retired on live/Fate paths.
+   */
+  clauseChecks?: ClauseCheckRecord[];
+  /**
    * M5 — every persona relationship/mood nudge this turn (display names only).
    * Includes the resulting social DC shift (−5..+5) after the event.
    */
@@ -150,6 +156,8 @@ export interface BuildTurnLogArgs {
   includeFactSheet?: boolean;
   ai?: TurnLogAiRole[];
   checkerVerdicts?: TurnLogCheckerVerdict[];
+  /** M4 clause-check rows. */
+  clauseChecks?: ClauseCheckRecord[];
   /** M5 persona nudges harvested this turn. */
   nudges?: TurnLog['nudges'];
   finalProse: string;
@@ -174,6 +182,7 @@ export function buildTurnLog(args: BuildTurnLogArgs): TurnLog {
     factSheet: args.includeFactSheet ? args.factSheet : undefined,
     ai: args.ai ?? [],
     checkerVerdicts: args.checkerVerdicts ?? [],
+    ...(args.clauseChecks?.length ? { clauseChecks: args.clauseChecks } : {}),
     ...(args.nudges?.length ? { nudges: args.nudges } : {}),
     finalProse: args.finalProse,
     chipsOffered: args.chipsOffered,

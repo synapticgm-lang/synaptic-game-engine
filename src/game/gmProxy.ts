@@ -24,7 +24,7 @@ import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 import { parseGmTurnResponse } from './schemas';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
 
-export type GmProxyMode = 'turn' | 'auto-fight' | 'repair';
+export type GmProxyMode = 'turn' | 'auto-fight' | 'repair' | 'check';
 
 /** Production should set VITE_REQUIRE_GM_PROXY=true so prompts never assemble in the browser. */
 export function isGmProxyRequired(): boolean {

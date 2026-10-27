@@ -22,6 +22,8 @@ function bindingPrompt(constraints: ReturnType<typeof buildBindingConstraints>):
 import { resolvePlayAreaMap } from './mapEngine';
 import { INTERIOR_MAP_BLUEPRINT } from './placeAuthority';
 import { runWarden } from './warden';
+import { checkAndRepairProse, type ClauseClaim, type ClauseCheckChat } from './clauseCheck';
+import type { FactSheet } from './factSheet';
 import { formatCampaignMemoryForPrompt } from './campaignMemory';
 
 function item(name: string, extra: Partial<Item> = {}): Item {
@@ -255,17 +257,49 @@ describe('detectConstraintViolations via runWarden', () => {
     expect(hits.join(' ')).not.toMatch(/empty/i);
   });
 
-  it('still scrubs an invented last box through the warden', async () => {
-    const result = await runWarden(
-      baseState(),
-      [],
-      'You open the last box. Musty oak and a rusted hinge fill the air.',
-      'open the last box',
-    );
-    const prose = result.scrubbedNarrative ?? '';
-    expect(prose.toLowerCase()).not.toMatch(/last box/);
-    expect(prose).toMatch(/musty oak/i);
-    expect(prose).toMatch(/rusted hinge/i);
+  it('clause check repairs an invented last box without wiping sibling colour', async () => {
+    // M4 — proseWarden retired; FactSheet clause check owns invented-container facts.
+    // Guarantee: unsupported invent is repaired; surrounding colour sentences stay.
+    const prose0 =
+      'You open the last box. Musty oak and a rusted hinge fill the air.';
+    const factSheet: FactSheet = {
+      turn: 1,
+      place: { name: 'Ruined hall', exits: [], features: ['frame'] },
+      present: [],
+      openLedger: [],
+      gear: { worn: [], carrying: [], inHand: 'nothing' },
+      beat: {
+        verb: 'looked',
+        outcome: 'You looked around',
+        engineResult: 'You looked around the hall. No box is here.',
+        steps: [{ outcome: 'not done', detail: 'open the last box: no box here' }],
+      },
+      player: { typed: 'open the last box', claimsNotTrue: [] },
+      quests: [],
+      recent: [],
+      settingsSlot: null,
+    };
+    const claims: ClauseClaim[] = [
+      {
+        c: 'You open the last box',
+        kind: 'fact',
+        support: '',
+        severity: 'serious',
+      },
+      { c: 'Musty oak and a rusted hinge fill the air', kind: 'colour', support: '' },
+    ];
+    const chat: ClauseCheckChat = async () => ({ claims });
+    const out = await checkAndRepairProse({
+      factSheet,
+      prose: prose0,
+      player: factSheet.player,
+      chat,
+      repair: async () => 'You look over the area.',
+    });
+    expect(out.repaired).toBe(true);
+    expect(out.prose.toLowerCase()).not.toMatch(/last box/);
+    expect(out.prose).toMatch(/musty oak/i);
+    expect(out.prose).toMatch(/rusted hinge/i);
   });
 });
 

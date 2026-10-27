@@ -111,6 +111,7 @@ const FILES = [
   'factSheet.ts',
   'turnLog.ts',
   'actionEconomy.ts',
+  'clauseCheckPrompt.ts',
 ];
 
 function rewriteImports(source, file) {
