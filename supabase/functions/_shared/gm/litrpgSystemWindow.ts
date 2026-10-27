@@ -1,6 +1,6 @@
 /**
- * LitRPG ledger sheet for the hosted writer.
- * Mirrors src/game/litrpgSystemWindow.ts ledgerSheetLine.
+ * Edge stub — LitRPG ledger sheet for the hosted writer (thin).
+ * Full src/game/litrpgSystemWindow.ts pulls rules/characterClass, librarySkills JSON, etc.
  * Only parts the frozen housing turned on. HP and MP stay off this line.
  * A worn device prints only the sheet fields its housing turned on.
  */

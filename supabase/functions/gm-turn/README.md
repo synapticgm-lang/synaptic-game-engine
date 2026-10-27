@@ -8,6 +8,7 @@ Returns only `{ text }` — never prompts, keys, or pipeline diagnostics.
 ```bash
 # From repo root — keep edge copies in sync with src/game prompt modules
 npm run sync:gm-edge
+npm run check:gm-edge
 
 supabase functions deploy gm-turn
 

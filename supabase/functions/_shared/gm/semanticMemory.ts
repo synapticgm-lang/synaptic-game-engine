@@ -1,6 +1,6 @@
 /**
- * SEMANTIC MEMORY - Edge Stub
- * 
+ * Edge stub — SEMANTIC MEMORY
+ *
  * @xenova/transformers cannot run in Deno edge functions.
  * This stub ensures campaignMemory.ts imports don't break.
  * Semantic/hybrid search returns empty; keyword fallback is used.

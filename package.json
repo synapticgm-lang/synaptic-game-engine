@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "wof:check": "tsc --noEmit -p wof/tsconfig.json && tsc -p wof/tsconfig.json && node wof/dist/selftest.js",
     "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
+    "check:gm-edge": "node scripts/sync-gm-edge-shared.mjs --check",
     "fate-autoplay": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/run.ts --",
     "replay-bank": "vitest run --config vitest.replayBank.config.ts",
     "writer-quality": "vitest run --config vitest.writerQuality.config.ts",
