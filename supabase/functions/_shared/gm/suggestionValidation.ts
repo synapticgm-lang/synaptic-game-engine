@@ -16,10 +16,14 @@ const NAMED_INTERACTABLE_CLAIM =
   /\b(?:inspect|examine|open|search|check|test|heft|take|grab|pick\s+up|approach|activate|pull|push|read|unlock|loot|rummage(?:\s+through)?)\s+(?:(?:the\s+heft\s+of\s+)?(?:a|an|the|my|your)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
 const NAMED_THREAT_CLAIM =
   /\b(?:attack|fight|strike|kill|slay|ambush|stalk|engage|charge|hide\s+from|sneak\s+(?:past|around|away\s+from)|flee\s+(?:from|the)|retreat\s+from|watch|study|scan|assess)\s+(?:(?:a|an|the)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
-// Object of use/draw/wield (det optional) or instrument of `with` (det required; manner "with care" stays out).
+// Inventory USE / EQUIP / GIVE (and close kin). Instrument `with` (det required) is an inventory claim only when
+// the object is not deixis, not a scene prop, and not a generic scene/body noun — see collectUnsupportedClaims.
 // q75r3: restore `with` after q75r cut; attributive "book with the palace seal" skips via scene-grounded head NP.
 const ITEM_USE_CLAIM =
-  /\b(?:(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?|with\s+(?:a|an|the|my|your)\s+)([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
+  /\b(?:(?:use|equip|give|hand\s+over|offer|throw|lob|toss|drink|eat|wield|draw|deploy|detonate|load|pull\s+out|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?|fire\s+(?:a|an|the|my|your)\s+|with\s+(?:a|an|the|my|your)\s+)([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
+
+/** Pronoun / deixis object of use/toss/with — not an inventory name (same family as findUngroundedNamedClaims). */
+const DEIXIS_OBJECT = new Set(['it', 'them', 'him', 'her', 'this', 'that', 'those', 'these']);
 const WEAPON_USE_CLAIM =
   /\b(?:swing|slash|stab|strike|cleave|thrust|parry|block|attack|hit|shoot)\s+(?:(?:with|using)\s+)?(?:(?:a|an|the|my|your)\s+)?((?:short|long|great|bastard)\s*swords?|shortswords?|longswords?|greatswords?|daggers?|handaxes?|battleaxes?|warhammers?|maces?|scimitars?|rapiers?|katanas?|cutlasses?|crossbows?|longbows?|shortbows?|spears?|halberds?|quarterstaffs?|staves|staffs?|wands?|clubs?|pistols?|rifles?)\b/i;
 const ITEM_POSSESSION_CLAIM =
@@ -105,6 +109,48 @@ function inventoryCatalog(state: GameState): string[] {
   ];
 }
 
+/** Scene props / interactables / loose loot — lying here is not an inventory USE claim. */
+function sceneCatalog(state: GameState): string[] {
+  const names: string[] = [];
+  for (const p of state.sceneFacts?.props ?? []) names.push(normalize(p));
+  for (const it of state.locationSheet?.interactables ?? []) {
+    if (it.name) names.push(normalize(it.name));
+  }
+  const node = state.activeDungeon?.nodes.find((n) => n.id === state.activeDungeon?.currentNodeId);
+  for (const loose of node?.hidden?.looseItems ?? []) names.push(normalize(loose.label));
+  return names.filter(Boolean);
+}
+
+function catalogHasName(catalog: string[], claimed: string): boolean {
+  const needle = normalize(claimed);
+  if (!needle) return true;
+  const claimWords = needle.split(/\s+/).filter(Boolean);
+  for (const name of catalog) {
+    if (name === needle || name.includes(needle) || needle.includes(name)) return true;
+    if (claimWords.length !== 1) continue;
+    const token = claimWords[0]!;
+    for (const part of name.split(/\s+/)) {
+      if (part === token || (token.length >= 3 && (part.endsWith(token) || token.endsWith(part)))) return true;
+    }
+  }
+  return false;
+}
+
+function isDeixisObjectClaim(claimed: string): boolean {
+  const first = normalize(claimed).split(/\s+/)[0] ?? '';
+  return DEIXIS_OBJECT.has(first);
+}
+
+/** Shared GENERIC_SCENE_NOUNS fold (boot↔boots) — instrument of `with`, not a bag item. */
+function isGenericSceneNounClaim(claimed: string): boolean {
+  const key = normalize(claimed);
+  if (!key) return true;
+  if (GENERIC_SCENE_NOUNS.has(key) || NON_ITEM_TOKENS.has(key) || GENERIC_SCENE_ROLES.has(key)) return true;
+  if (key.endsWith('s') && key.length > 1 && GENERIC_SCENE_NOUNS.has(key.slice(0, -1))) return true;
+  if (GENERIC_SCENE_NOUNS.has(`${key}s`)) return true;
+  return false;
+}
+
 export function inventoryHasItem(state: GameState, claimed: string): boolean {
   const needle = normalize(claimed);
   if (!needle || NON_ITEM_TOKENS.has(needle)) return true;
@@ -117,19 +163,10 @@ export function inventoryHasItem(state: GameState, claimed: string): boolean {
     const kind = needle === 'blade' ? 'weapon' : needle;
     return (state.inventory ?? []).some((i) => i.itemType === kind);
   }
-  const claimWords = needle.split(/\s+/).filter(Boolean);
-  for (const name of inventoryCatalog(state)) {
-    if (name === needle || name.includes(needle) || needle.includes(name)) return true;
-    if (claimWords.length !== 1) continue;
-    const token = claimWords[0]!;
-    for (const part of name.split(/\s+/)) {
-      if (part === token || (token.length >= 3 && (part.endsWith(token) || token.endsWith(part)))) return true;
-    }
-  }
-  return false;
+  return catalogHasName(inventoryCatalog(state), claimed);
 }
 
-/** Bound use/draw/wield object or `with` instrument; never a following `to`/`and` clause. */
+/** Bound use/draw/wield object or `with` instrument; never a following `to`/`and`/`on` clause. */
 function boundItemObjectPhrase(claimed: string, state: GameState): string {
   const n = normalize(claimed);
   if (!n) return n;
@@ -139,6 +176,8 @@ function boundItemObjectPhrase(claimed: string, state: GameState): string {
   if (toAt > 0) end = Math.min(end, toAt);
   const andAt = words.indexOf('and');
   if (andAt > 0) end = Math.min(end, andAt);
+  const onAt = words.indexOf('on');
+  if (onAt > 0) end = Math.min(end, onAt);
   const coreWords = words.slice(0, end);
   if (!coreWords.length) return n;
   const core = coreWords.join(' ');
@@ -152,6 +191,7 @@ function boundItemObjectPhrase(claimed: string, state: GameState): string {
 
 function collectUnsupportedClaims(input: string, state: GameState, patterns: RegExp[]): string[] {
   const claims: string[] = [];
+  const scene = sceneCatalog(state);
   for (const pattern of patterns) {
     const re = new RegExp(pattern.source, 'gi');
     let m: RegExpExecArray | null;
@@ -159,9 +199,16 @@ function collectUnsupportedClaims(input: string, state: GameState, patterns: Reg
       const claimed = boundItemObjectPhrase((m[1] ?? '').trim(), state);
       const key = normalize(claimed);
       if (!claimed || NON_ITEM_TOKENS.has(key) || GENERIC_SCENE_ROLES.has(key)) continue;
+      // Pronoun / deixis ("toss it up") is not an inventory name.
+      if (isDeixisObjectClaim(claimed)) continue;
+      // Thing lying in the scene (cobble on the road) is scenery, not a bag claim.
+      if (catalogHasName(scene, claimed)) continue;
       // Instrument `with` that is really an NP attribute of a scene prop ("book with the palace seal").
       const matched = (m[0] ?? '').trimStart();
-      if (matched.length >= 5 && matched.slice(0, 5).toLowerCase() === 'with ') {
+      const isWithInstrument = matched.length >= 5 && matched.slice(0, 5).toLowerCase() === 'with ';
+      if (isWithInstrument) {
+        // Body / worn / generic scene noun as instrument ("with my boot") is not a bag USE/EQUIP/GIVE.
+        if (isGenericSceneNounClaim(claimed)) continue;
         const parts: string[] = [];
         for (const raw of input.slice(0, m.index).trimEnd().split(' ')) {
           if (raw) parts.push(raw);
