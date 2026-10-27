@@ -43,7 +43,8 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
-import { callGm, callGmRepair, type GmResult } from './aiService';
+import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
+import { checkAndRepairProse, makeGmClauseChat } from './clauseCheck';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
@@ -61,7 +62,7 @@ import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTermin
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
-import { applyProseWarden, crowdSizeForWarden, collectSceneObjectNames, scrubFalseArrivalWhenHere } from './proseWarden';
+import { scrubFalseArrivalWhenHere } from './proseWarden';
 import { applyLocalityWarden } from './locality';
 import { detectAndDiscoverLocations, discoverLocation } from './locationDiscovery';
 import {
@@ -145,7 +146,7 @@ import {
   hallTalkTopics,
 } from './openingEstablishment';
 import { ensureOpeningNpcPinned, resolveOpeningPinnedNames } from './openingPin';
-import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
+import { seedHookLockFromPickedHook } from './hookLock';
 import {
   applyOpeningContract,
   ensureStarterLookCharacter,
@@ -160,7 +161,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
-import { runWriterTurnWithFightRetry, thisTurnsEventCheck, writerTurnIssues } from './writerTurn';
+import { runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
@@ -191,7 +192,6 @@ import {
 } from './ledgerCombat';
 import {
   groundedWeaponNames,
-  listEmptySearchTargets,
   scrubInventedWeapons,
 } from './searchContinuity';
 import { mediatePlayerInput } from './inputMediation';
@@ -2343,17 +2343,8 @@ export function useGame() {
             ? stitchOpeningContinue(openingState, contentSanitized)
             : stitchOpeningScene(openingState);
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
-        openingText = applyProseWarden(
-          enforcePerspective(openingText, settingsRef.current, openingState.character.name),
-          {
-            currentLocation: openingState.currentLocation,
-            aloneArrival: isAloneArrivalOpening(openingState),
-            inventory: openingState.inventory,
-            sceneProps: collectSceneObjectNames(openingState),
-            playerInput: contentSanitized,
-            hookLock: hookLockForWarden(openingState, openingText),
-          },
-        );
+        // M4 — clause check owns fact/colour after the writer; opening stitch has no model check.
+        openingText = enforcePerspective(openingText, settingsRef.current, openingState.character.name);
         if (settingsRef.current.contentMode === 'kid') {
           openingText = filterKidModeText(openingText);
         }
@@ -3112,8 +3103,33 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...(writerTurn.combatLog ? [writerTurn.combatLog] : []),
           ],
         };
+        // M4 — one clause check after the writer (FactSheet only).
+        {
+          const sheet = writerPacket?.factSheet ?? liveCurrent.completedEvent?.factSheet;
+          if (sheet && result.text?.trim()) {
+            try {
+              const clause = await checkAndRepairProse({
+                factSheet: sheet,
+                prose: result.text,
+                player: {
+                  typed: sanitizedInput,
+                  claimsNotTrue: sheet.player?.claimsNotTrue ?? [],
+                },
+                chat: makeGmClauseChat((user) =>
+                  callGmCheck(liveCurrent, user, settingsRef.current, turnAbort.signal, gmTimeoutMs)
+                ),
+                repair: (request) =>
+                  callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
+                engineFact,
+              });
+              result = { ...result, text: clause.prose };
+            } catch {
+              /* check unavailable — keep writer prose */
+            }
+          }
+        }
         if (result.text?.trim()) heldGmText = result.text;
-        writerProse = writerTurn.prose;
+        writerProse = result.text;
         writerSpeech = writerTurn.speech;
         writerBound = {
           refs: writerTurn.path === 'json' || writerTurn.path === 'json-partial' ? writerTurn.refs : undefined,
@@ -3807,10 +3823,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       // was `ReferenceError: Cannot access 'nextTurn' before initialization` (client_bug toast).
       const nextTurn = liveCurrent.turn + 1;
       {
-        const dungeon = workingState.activeDungeon ?? liveCurrent.activeDungeon;
-        const exits =
-          dungeon && isInteriorMap(dungeon) ? listInteriorExitsFromHere(dungeon) : [];
-        const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
         if (systemsArc?.beatCommitted) {
           validateProseAgainstBeat(
             beatCommitFromReceipts({
@@ -3823,64 +3835,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             cleanText
           );
         }
-        cleanText = words.step('applyProseWarden', cleanText, applyProseWarden(cleanText, {
-          currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
-          priorLocation: liveCurrent.previousSceneFacts?.location ?? liveCurrent.currentLocation,
-          aloneArrival: isAloneArrivalOpening(workingState) || isAloneArrivalOpening(liveCurrent),
-          hasMappedDoorExits: doorish.length > 0,
-          adjacentRoomNames: exits.map((e) => e.name),
-          crowdSize: crowdSizeForWarden(workingState, cleanText),
-          crowdPresent:
-            workingState.sceneFacts?.crowd === 'present' ||
-            workingState.sceneFacts?.crowd === 'sparse' ||
-            crowdSizeForWarden(workingState, cleanText) > 0,
-          currentTimeOfDay: workingState.sceneFacts?.timeOfDay,
-          previousTimeOfDay: workingState.previousSceneFacts?.timeOfDay,
-          isIndoor: workingState.sceneFacts?.indoor,
-          wasIndoor: workingState.previousSceneFacts?.indoor,
-          fleeFailed: workingState.activeEncounter?.caught === true,
-          exitNarrated:
-            (workingState.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1 ||
-            (liveCurrent.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1,
-          knownPlaces: [
-            ...(workingState.places ?? liveCurrent.places ?? []).map((p) => p.name).filter(Boolean),
-            workingState.previousLocationSheet?.name,
-            liveCurrent.currentLocation,
-          ].filter((n): n is string => !!n && n.trim().length > 2),
-          currentTension: workingState.sceneFacts?.tension,
-          previousTension: workingState.previousSceneFacts?.tension,
-          inventory: workingState.inventory ?? liveCurrent.inventory,
-          sceneProps: collectSceneObjectNames(workingState),
-          searchedEmpty: listEmptySearchTargets(workingState.sceneFacts ?? liveCurrent.sceneFacts),
-          playerInput: sanitizedInput,
-          groundedWeapons: groundedWeaponNames(workingState),
-          playerName: workingState.character?.name ?? liveCurrent.character?.name,
-          hasLiveEncounter: !!(workingState.activeEncounter ?? liveCurrent.activeEncounter),
-          recentlyClearedEncounter:
-            (workingState.arcDirector?.lastEncounterClearedTurn ??
-              liveCurrent.arcDirector?.lastEncounterClearedTurn) === nextTurn ||
-            (workingState.arcDirector?.lastEncounterClearedTurn ??
-              liveCurrent.arcDirector?.lastEncounterClearedTurn) ===
-              nextTurn - 1,
-          presentNames: [
-            ...(workingState.sceneFacts?.present ?? []),
-            ...(liveCurrent.sceneFacts?.present ?? []),
-            ...((workingState.companions ?? liveCurrent.companions ?? []).map((c) => c.name)),
-            ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
-          ].filter((n) => n && !isChromePersonToken(n)),
-          namedCast: openingCastNames(workingState),
-          ledgerState: workingState,
-          isThisTurnsEvent: thisTurnsEventCheck({ state: workingState, playerInput: sanitizedInput }),
-          hookLock: hookLockForWarden(workingState, cleanText),
-          npcMemories: workingState.npcMemories ?? liveCurrent.npcMemories,
-          lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,
-          currentTurn: liveCurrent.turn,
-          enemyName:
-            workingState.activeEncounter?.name
-            ?? liveCurrent.activeEncounter?.name
-            ?? workingState.sceneFacts?.lastKill?.name
-            ?? liveCurrent.sceneFacts?.lastKill?.name,
-        }));
+        // M4 — proseWarden retired; clause check already ran after the writer.
         {
           const prefaced = ensureEncounterSpawnPreface(workingState, cleanText);
           cleanText = words.step('ensureEncounterSpawnPreface', cleanText, prefaced.prose);
@@ -5428,16 +5383,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const openingRaw = stitchText;
       let openingText = stitchText;
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
-      openingText = applyProseWarden(
-        enforcePerspective(openingText, settingsRef.current, newState.character.name),
-        {
-          currentLocation: newState.currentLocation,
-          aloneArrival: isAloneArrivalOpening(newState),
-          inventory: newState.inventory,
-          sceneProps: collectSceneObjectNames(newState),
-          hookLock: hookLockForWarden(newState, openingText),
-        },
-      );
+      openingText = enforcePerspective(openingText, settingsRef.current, newState.character.name);
       if (settingsRef.current.contentMode === 'kid') {
         openingText = filterKidModeText(openingText);
       }
@@ -5705,19 +5651,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           };
         }
       }
-      narrativeText = applyProseWarden(narrativeText, {
-        currentLocation: liveCurrent.currentLocation,
-        priorLocation: liveCurrent.previousSceneFacts?.location ?? liveCurrent.currentLocation,
-        playerName: liveCurrent.character?.name,
-        groundedWeapons: groundedWeaponNames(liveCurrent),
-        recentlyClearedEncounter: result.victory,
-        fleeFailed: result.caught === true,
-        enemyName: enemy.name,
-        lastKill: result.victory
-          ? { name: enemy.name, outcome: 'victory', turn: liveCurrent.turn + 1, remains: true }
-          : liveCurrent.sceneFacts?.lastKill,
-        currentTurn: liveCurrent.turn + 1,
-      });
+      // M4 — auto-fight prose: no proseWarden; ledger fight facts already committed.
       const newTurn = liveCurrent.turn + 1;
       // 28a2 — auto-fight pays the same encounter milestone as every other path (xpRules).
       const autoXp = result.victory

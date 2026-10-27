@@ -1,6 +1,7 @@
 import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 import { formatPerspectiveRule, pcPov, resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
+import { CLAUSE_CHECK_SYS } from '../_shared/gm/clauseCheckPrompt.ts';
 import {
   FIREWORKS_INFERENCE_BASE,
   fireworksChatBody,
@@ -30,7 +31,7 @@ const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-type GmMode = 'turn' | 'auto-fight' | 'repair';
+type GmMode = 'turn' | 'auto-fight' | 'repair' | 'check';
 
 interface GmRequestBody {
   mode?: GmMode;
@@ -331,7 +332,8 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const mode: GmMode = body.mode === 'auto-fight' || body.mode === 'repair' ? body.mode : 'turn';
+  const mode: GmMode =
+    body.mode === 'auto-fight' || body.mode === 'repair' || body.mode === 'check' ? body.mode : 'turn';
   // Opening page / cover-continue may send '' or '(opening)'. Blank used to 400
   // ("playerInput is required") and force the stitch fallback.
   const playerInput = (typeof body.playerInput === 'string' ? body.playerInput : '').trim()
@@ -373,6 +375,10 @@ Deno.serve(async (req) => {
   } else if (mode === 'repair') {
     // deno-lint-ignore no-explicit-any
     systemPrompt = sentenceRepairSystemPrompt((body.state as any).character, settings.perspective);
+    userPrompt = playerInput;
+  } else if (mode === 'check') {
+    // M4 — clause check vs FactSheet (JSON claims). Deploy gm-turn after merge for hosted check.
+    systemPrompt = CLAUSE_CHECK_SYS;
     userPrompt = playerInput;
   } else {
     // deno-lint-ignore no-explicit-any
