@@ -26,7 +26,7 @@ function quest(): Quest {
 }
 
 function pact(over: Partial<GameState> = {}): GameState {
-  const s = createInitialState(undefined, 'litrpg') as GameState;
+  const s = createInitialState(undefined, 'litrpg', undefined, 's94') as GameState;
   return {
     ...s,
     seed: 's94',

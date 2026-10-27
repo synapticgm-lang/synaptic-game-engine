@@ -15,7 +15,7 @@ import { commitTravel, journeyPads, mapGapBetween, UNDERWAY_HERE } from './trave
 import type { GameState } from './types';
 
 function coastState(): GameState {
-  const s = createInitialState(undefined, 'dnd') as GameState;
+  const s = createInitialState(undefined, 'dnd', undefined, 's2') as GameState;
   return {
     ...s,
     campaignBibleId: 'shattered-coast',
@@ -28,7 +28,7 @@ function coastState(): GameState {
 }
 
 function keepState(): GameState {
-  const s = createInitialState(undefined, 'dnd') as GameState;
+  const s = createInitialState(undefined, 'dnd', undefined, 's2') as GameState;
   return {
     ...s,
     campaignBibleId: 'cursed-keep',
