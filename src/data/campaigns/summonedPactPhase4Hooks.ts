@@ -7,6 +7,8 @@ import type { OpeningBeatCard } from './types';
  */
 export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
+    who: 'an Earth stranger pulled into the common room of the Weighing Cup, still in street clothes',
+    pressing: 'The rite misfired into an inn, not a cathedral. They need a name before anything else moves.',
     location: 'the common room of the Weighing Cup',
     faction: 'Innkeep Mara Vell and two Scale clerks drinking off-duty',
     castNpcIds: ['sp-npc-mara-vell'],
@@ -24,6 +26,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the flagstones of the Weighing Cup inside a scuffed chalk ring. A blue panel hangs above a table. Mara Vell and two clerks stare at you. A cloak lies on the bar, offered if you take a room.',
   },
   {
+    who: 'an Earth stranger pulled into the Contract Hall notice board, still in street clothes',
+    pressing: 'Someone stamped a summon onto a job-board rite. They need a name before anything else moves.',
     location: 'the Contract Hall notice board',
     faction: 'Clerk Brin Holt posting Crown jobs, already late',
     castNpcIds: ['sp-npc-brin-holt'],
@@ -41,6 +45,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake against the Contract Hall notice board inside a chalk circle. A blue panel hangs over the pins. Clerk Brin Holt drops his jobs. A kit chit waits in a tray if you take the posting.',
   },
   {
+    who: 'an Earth stranger pulled into the cathedral kitchens in the Close, still in street clothes',
+    pressing: 'The seventh ring dumped you into bread-steam, not the vault. They need a name before anything else moves.',
     location: 'the cathedral kitchens in the Close',
     faction: 'Brother Tam and the night cooks who were not supposed to see this',
     castNpcIds: ['sp-npc-3'],
@@ -58,6 +64,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the kitchen flagstones inside a flour circle. A blue panel hangs over the kneading board. Brother Tam covers the door. A loaf and a knife wait on the sideboard if you help, not if you shout.',
   },
   {
+    who: 'an Earth stranger pulled into the ledger stair on the Palace Approach, still in street clothes',
+    pressing: 'They meant to summon a witness onto the palace stair, not a Pactborn. They need a name before anything else moves.',
     location: 'the ledger stair on the Palace Approach',
     faction: 'Court clerk Ila Pellane and two pike-guards',
     castNpcIds: ['sp-npc-ila-pellane'],
@@ -75,6 +83,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the Palace Approach ledger stair inside a brass ring. A blue panel hangs over an open book. Ila Pellane’s quill is wet. A tabard waits on the rail if you sign.',
   },
   {
+    who: 'an Earth stranger pulled into Kitchen Saint Alley behind the Close, still in street clothes',
+    pressing: 'Charity-circle, not Crown brass. They need a name before anything else moves.',
     location: 'Kitchen Saint Alley behind the Close',
     faction: 'Sister Pell and a marked child who will not speak first',
     castNpcIds: ['sp-npc-sister-pell'],
@@ -92,6 +102,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in Kitchen Saint Alley inside a charcoal circle. A blue panel hangs in the bakery steam. Sister Pell and a marked child stare at you. A blanket on a crate is offered if you stay.',
   },
   {
+    who: 'an Earth stranger pulled into the reed water of Mireglass March, still in street clothes',
+    pressing: 'A marsh circle meant to call a reflection, not an Earth soul. They need a name before anything else moves.',
     location: 'the reed water of Mireglass March',
     faction: 'Ilyra Fen and Tekk Reed counting who comes back twice',
     castNpcIds: ['sp-npc-5', 'sp-npc-6'],
@@ -109,6 +121,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a woven platform in Mireglass March. A blue panel hangs over the black water. Ilyra Fen and Tekk Reed stare at a reflection that is not yours. A pole on the mat waits for a token.',
   },
   {
+    who: 'an Earth stranger pulled into the ash-heat of Cinderwake Trail, still in street clothes',
+    pressing: 'They finished a tracking-rite on the ash road. They need a name before anything else moves.',
     location: 'the ash-heat of Cinderwake Trail',
     faction: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
     castNpcIds: ['sp-npc-9', 'sp-npc-10'],
@@ -126,6 +140,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a scorched circle on Cinderwake Trail. A blue panel hangs in the heat. Brother Oren and Kessa Cinder are already chasing something. Two packs on the ground hold two offers.',
   },
   {
+    who: 'an Earth stranger pulled into the hearing pit of the Sump Court, still in street clothes',
+    pressing: 'They summoned a clause, not a hero. They need a name before anything else moves.',
     location: 'the hearing pit of the Sump Court',
     faction: 'Magistrate Sula Vane and broker Nox Kade',
     castNpcIds: ['sp-npc-13', 'sp-npc-14'],
@@ -143,6 +159,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in the Sump Court hearing pit under the street. A blue panel hangs over the bench. Sula Vane has a quill, and Nox Kade has a price. A token waits on the rail.',
   },
   {
+    who: 'an Earth stranger pulled into a dead hall of the Hollow Engine, still in street clothes',
+    pressing: 'They tried to wake a machine with a Scale rite. They need a name before anything else moves.',
     location: 'a dead hall of the Hollow Engine',
     faction: 'Two Crown engineers who lost a containment chant',
     summonIntent: 'They tried to wake a machine with a Scale rite. The Engine stayed dead. You arrived instead.',
@@ -159,6 +177,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a grate in a dead hall of the Hollow Engine. A blue panel hangs in the dark. Two engineers hold a cracked tile. A spark-lamp on a crate waits if you help reseal the hall.',
   },
   {
+    who: 'an Earth stranger pulled into the wagon desk of the Argent Ledger, still in street clothes',
+    pressing: 'A mobile license rite. They need a name before anything else moves.',
     location: 'the wagon desk of the Argent Ledger',
     faction: 'Yara Quill ranking bodies and Kade Voss trying to void the paper',
     castNpcIds: ['sp-npc-22', 'sp-npc-23'],
@@ -176,6 +196,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake inside a silver circle on the floor of the Argent Ledger wagon. A blue panel hangs over the rank book. Yara has a stamp, and Kade wants the paper void. A license plate waits in a tray.',
   },
   {
+    who: 'an Earth stranger pulled into Saint Vhal Reliquary as a doctrine test',
+    pressing: 'The wardens want a kneel and a name before the relic stays locked.',
     location: "the nave of Saint Vhal's Reliquary",
     faction: 'Reliquary wardens who treat you as a doctrine test',
     summonIntent: 'They summoned a proof, not a champion. If the Mark is wrong, the relic stays locked.',
@@ -192,6 +214,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the Reliquary nave stones inside a circle of white sand. A blue panel hangs under a saint’s mask. The wardens wait for you to kneel. A tabard sits on a side altar, offered and not taken.',
   },
   {
+    who: 'an Earth stranger pulled into the outdoor seam of the Integration Scar, still in street clothes',
+    pressing: 'The Scar is where pacts and debts meet. They need a name before anything else moves.',
     location: 'the outdoor seam of the Integration Scar',
     faction: 'A Pact loadout crew and a debt-collector who arrived late',
     summonIntent: 'The Scar is where pacts and debts meet. They pulled you onto the seam before either side finished talking.',
@@ -208,6 +232,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the humming crack of the Integration Scar in daylight. A blue panel hangs over the seam. A loadout crate and a debt slate wait beside you. Neither one is on you yet.',
   },
   {
+    who: 'an Earth stranger pulled into a Lowmarket junk stall under tarps, still in street clothes',
+    pressing: 'They used a stolen Scale chalk to pull luck for a sale. They need a name before anything else moves.',
     location: 'a Lowmarket junk stall under tarps',
     faction: 'Fence Nemi Salt and a Crown watcher pretending to browse',
     castNpcIds: ['sp-npc-24'],
@@ -225,6 +251,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake under a Lowmarket tarp inside a chalk circle. A blue panel hangs over a crate of buttons. Nemi Salt swears while a watcher browses the cups. A junk-knife waits on your nod.',
   },
   {
+    who: 'an Earth stranger pulled into Valespire Harbor Quay at night tide, still in street clothes',
+    pressing: 'A dock-luck rite at tide-turn. They need a name before anything else moves.',
     location: 'Valespire Harbor Quay at night tide',
     faction: 'Quay-master Pell Wren and two grain-hands who want you off the boards',
     castNpcIds: ['sp-npc-pell-wren'],
@@ -242,6 +270,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the wet boards of Harbor Quay at night tide, inside a washing salt circle. A blue panel hangs over the grain. Pell Wren’s lantern is in your face. Oilskins wait on a peg if you sign.',
   },
   {
+    who: 'an Earth stranger pulled into a Scale counting-house on Ledger Row, still in street clothes',
+    pressing: 'They tried to summon a missing account into the book. They need a name before anything else moves.',
     location: 'a Scale counting-house on Ledger Row',
     faction: 'Auditor Venn Scale and two junior counters',
     castNpcIds: ['sp-npc-venn-scale'],
@@ -259,6 +289,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a counting-house stool inside a circle of coins. A blue panel hangs over the ledger. Auditor Venn Scale has ruled a line. A sash waits on the desk if you sit the audit.',
   },
   {
+    who: 'an Earth stranger pulled into a Crown courier loft above the Close, still in street clothes',
+    pressing: 'A delivery-rite to move a sealed name. They need a name before anything else moves.',
     location: 'a Crown courier loft above the Close',
     faction: 'Courier Ado Ferry and a sealed bag that was not meant to open',
     castNpcIds: ['sp-npc-16'],
@@ -276,6 +308,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a courier loft inside rings of wax. A blue panel hangs over the seals. Ado Ferry stares at a burst satchel. A sash on a hook waits if you carry the remaining seals.',
   },
   {
+    who: 'an Earth stranger pulled into an Ash Court salt-pan camp at dusk, still in street clothes',
+    pressing: 'They needed a body to claim a failed Crown summon. They need a name before anything else moves.',
     location: 'an Ash Court salt-pan camp at dusk',
     faction: 'Salt-burners who will swear you walked out of the pans, not a rite',
     summonIntent: 'They needed a body to claim a failed Crown summon. The pans are their proof, not Pellane’s brass.',
@@ -292,6 +326,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake inside a salt-crust circle at an Ash Court camp on the white pans at dusk. A blue panel hangs over the water. A salt-burner holds a mask. A salt-cloak is offered for their story, not Pellane’s.',
   },
   {
+    who: 'an Earth stranger pulled into the rain-cistern under Valespire Close, still in street clothes',
+    pressing: 'A water-circle in the cistern. They need a name before anything else moves.',
     location: 'the rain-cistern under Valespire Close',
     faction: 'Two drowned-rite novices and a handler shouting from the grate',
     summonIntent: 'A water-circle in the cistern. They wanted a clean pull. The water is already at your ribs.',
@@ -308,6 +344,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in cold water in the rain cistern under the Close. A blue panel hangs dry above the waterline. A handler shouts through the grate. A rope waits on the rim.',
   },
   {
+    who: 'an Earth stranger pulled into a Crown archive stack behind iron mesh, still in street clothes',
+    pressing: 'They tried to summon a forbidden name out of the stack. They need a name before anything else moves.',
     location: 'a Crown archive stack behind iron mesh',
     faction: 'Archivist Lene Quill and a silent Scale witness',
     castNpcIds: ['sp-npc-lene-quill'],
@@ -325,6 +363,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a Crown archive stack inside a circle of library chalk. A blue panel hangs over the shelves. Lene Quill holds one page face down. A ribbon on the folio waits if you read it.',
   },
   {
+    who: 'an Earth stranger pulled into the frozen ford on the Cinderflow, still in street clothes',
+    pressing: 'A mid-ice rite to mark a border soul. They need a name before anything else moves.',
     location: 'the frozen ford on the Cinderflow',
     faction: 'Pellane scouts on one bank and Ash pickets on the other',
     summonIntent: 'A mid-ice rite to mark a border soul. Both banks want the name before the ice groans.',
@@ -341,6 +381,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the ice of the frozen Cinderflow ford. A blue panel hangs in the wind. Scouts stand on one bank, and Ash pickets stand on the other. A coat waits on each bank. You are still on the ice.',
   },
   {
+    who: 'an Earth stranger pulled into the bell-tower of Valespire Cathedral, still in street clothes',
+    pressing: 'They pulled you into the tower to hide a failed vault-rite from the nave. They need a name before anything else moves.',
     location: 'the bell-tower of Valespire Cathedral',
     faction: 'Bell-warden Orth and a frightened novice on the ladder',
     castNpcIds: ['sp-npc-orth'],
@@ -358,6 +400,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake under a silent bronze bell in the bell-tower of Valespire Cathedral. A blue panel hangs in the belfry. Orth holds the bell rope and will not pull it. A tower-pass waits on a nail by the ladder.',
   },
   {
+    who: 'an Earth stranger pulled into a quarry circle outside Valespire’s east wall, still in street clothes',
+    pressing: 'A work-rite to pull a strong back. They need a name before anything else moves.',
     location: 'a quarry circle outside Valespire’s east wall',
     faction: 'Quarry-boss Harn and Crown surveyors who want the cut blamed on you',
     castNpcIds: ['sp-npc-harn'],
@@ -375,6 +419,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a quarry circle on cut granite outside the east wall. A blue panel hangs over a dropped mallet. Harn swears, and the surveyors have a form. A work-coat on a cart waits if you sign.',
   },
   {
+    who: 'an Earth stranger pulled into a night-market roof over Lowmarket, still in street clothes',
+    pressing: 'They wanted a shadow-luck pull for a roof job. They need a name before anything else moves.',
     location: 'a night-market roof over Lowmarket',
     faction: 'Roof-thieves who stole a Scale tile and a watch-horn already rising',
     summonIntent: 'They wanted a shadow-luck pull for a roof job. You arrived on the tiles. The horn is already up.',
@@ -391,6 +437,8 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a cold roof over the Lowmarket night market, inside a scraped circle. A blue panel hangs over the ridge. Three thieves freeze while a horn sounds. A dark cloak waits on the tiles if you drop with them.',
   },
   {
+    who: 'an Earth stranger pulled into the stable loft behind the Weighing Cup, still in street clothes',
+    pressing: 'The inn rite dumped you into hay, not the common room. They need a name before anything else moves.',
     location: 'the stable loft behind the Weighing Cup',
     faction: 'Ostler Joss and a Crown handler who followed the wrong door',
     castNpcIds: ['sp-npc-joss'],

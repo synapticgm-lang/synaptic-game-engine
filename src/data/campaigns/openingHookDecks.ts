@@ -249,6 +249,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'cursed-keep': [
     {
+      who: 'a traveler who has just reached Greyhollow, at the inn',
+      pressing: 'A name in the inn book before they will talk about the keep. the innkeep will not let the next hour pass unanswered.',
       location: 'Greyhollow, at the inn',
       faction: 'the innkeep',
       summonIntent: 'A name in the inn book before they will talk about the keep.',
@@ -259,6 +261,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Last coach. Autumn rain already on the road behind you. The inn book is open. Greyhollow will not talk about the keep on the hill. Something in it already knows you are here.',
     },
     {
+      who: 'a traveler who has just reached Greyhollow mill lane at dusk',
+      pressing: 'The notice wants the missing child found. exhausted faces on the porch will not let the next hour pass unanswered.',
       location: 'Greyhollow mill lane at dusk',
       faction: 'exhausted faces on the porch',
       summonIntent: 'The notice wants the missing child found. The porch wants to know if you are help.',
@@ -269,6 +273,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You arrive on foot, not by coach. The mill wheel turns with no water. A child is missing three nights. The inn light is the only honest one.',
     },
     {
+      who: 'a traveler who has just reached Greyhollow churchyard',
+      pressing: 'Father Aldous wants to know if you are the face from his dream. Father Aldous will not let the next hour pass unanswered.',
       location: 'Greyhollow churchyard',
       faction: 'Father Aldous',
       castNpcIds: ['ck-npc-1'],
@@ -280,6 +286,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You are dropped at the church, not the inn. Fresh graves opened from the inside. Father Aldous has not slept. He looks at you as if you were in his dream.',
     },
     {
+      who: 'a traveler who has just reached the washed-out road into Greyhollow',
+      pressing: 'The sentries want a name and a reason you waded in. two sentries will not let the next hour pass unanswered.',
       location: 'the washed-out road into Greyhollow',
       faction: 'two sentries',
       summonIntent: 'The sentries want a name and a reason you waded in.',
@@ -290,6 +298,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'The road is already gone. You wade the last mile. Livestock drained. The keep is a silhouette that does not match the stories.',
     },
     {
+      who: 'a traveler who has just reached Greyhollow tavern common room',
+      pressing: 'The woodcutter wants help for the missing child. the woodcutter and the innkeep will not let the next hour pass unanswered.',
       location: 'Greyhollow tavern common room',
       faction: 'the woodcutter and the innkeep',
       summonIntent: 'The woodcutter wants help for the missing child. The mayor wants the keep unnamed.',
@@ -300,6 +310,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You are already in the common room when the mayor denies everything. The woodcutter will not sit. A priest’s hands shake around a cup.',
     },
     {
+      who: 'a traveler who has just reached Greyhollow gate after dark',
+      pressing: 'The militia want you inside the bar, not back in the woods. two militia will not let the next hour pass unanswered.',
       location: 'Greyhollow gate after dark',
       faction: 'two militia',
       summonIntent: 'The militia want you inside the bar, not back in the woods.',
@@ -310,6 +322,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'The gate is barred. They still let you in because the rain left you no choice. Someone on the wall watches the keep, not you.',
     },
     {
+      who: 'a traveler who has just reached Greyhollow well at midnight',
+      pressing: 'Aldous wants to know what answered from the shaft. Father Aldous will not let the next hour pass unanswered.',
       location: 'Greyhollow well at midnight',
       faction: 'Father Aldous',
       castNpcIds: ['ck-npc-1'],
@@ -321,6 +335,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You start at the well, not the inn. The rope is cut. Aldous dreamed you would come here first.',
     },
     {
+      who: 'a traveler who has just reached the keep gate above Greyhollow',
+      pressing: 'The steward wants to know who sent you before the bar moves. a steward behind the oak will not let the next hour pass unanswered.',
       location: 'the keep gate above Greyhollow',
       faction: 'a steward behind the oak',
       summonIntent: 'The steward wants to know who sent you before the bar moves.',
@@ -920,6 +936,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'salt-road-heist': [
     {
+      who: 'a cutter on the Salt Road crew, starting at a warehouse loft before the salt-tax score',
+      pressing: 'First move is yours — the plan, the cut, or the walk. the crew is waiting on your move.',
       location: 'a warehouse loft before the salt-tax score',
       faction: 'the crew',
       summonIntent: 'First move is yours — the plan, the cut, or the walk.',
@@ -930,6 +948,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Crew. Map. Salt-tax ledger on a Consul caravan. Heat is still zero. Trust is not. First page is the plan, the cut, or the walk.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at a Salt Road waystation',
+      pressing: 'The enforcer wants to hear why you are late. an enforcer is waiting on your move.',
       location: 'a Salt Road waystation',
       faction: 'an enforcer',
       summonIntent: 'The enforcer wants to hear why you are late.',
@@ -940,6 +960,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You join the crew at a waystation, not a loft. The caravan is a day out. Someone already sold a name.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at the Consul caravan’s night camp',
+      pressing: 'The thief wants your move on the lockbox. the thief beside you is waiting on your move.',
       location: 'the Consul caravan’s night camp',
       faction: 'the thief beside you',
       summonIntent: 'The thief wants your move on the lockbox.',
@@ -950,6 +972,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You start on the job, not the planning. The ledger is in a locked wagon. Heat will rise if you go loud.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at a Salt Road tavern hire',
+      pressing: 'Vessa wants a cutter and a name she can use. Vessa is waiting on your move.',
       location: 'a Salt Road tavern hire',
       faction: 'Vessa',
       castNpcIds: ['salt-road-heist-npc-1'],
@@ -961,6 +985,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Tavern. Vessa wants a cutter. The score is politics wearing a padlock. Rivals want your names before you have one.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at a cliff path above the caravan road',
+      pressing: 'The scout wants who leads — wait, strike, or abort. the scout is waiting on your move.',
       location: 'a cliff path above the caravan road',
       faction: 'the scout',
       summonIntent: 'The scout wants who leads — wait, strike, or abort.',
@@ -971,6 +997,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Eyes on the road. The crew is late. The ledger is a rumor with guards. First choice is wait, steal early, or abort.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at a safehouse after a rehearsal gone loud',
+      pressing: 'The muscle wants a name to give if the watch kicks the door. the muscle is waiting on your move.',
       location: 'a safehouse after a rehearsal gone loud',
       faction: 'the muscle',
       summonIntent: 'The muscle wants a name to give if the watch kicks the door.',
@@ -981,6 +1009,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Rehearsal already made Heat. The real score is worse. Someone wants out. The Consul does not know — yet.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at a salt-pan camp at dawn',
+      pressing: 'The cutter wants to hear if you lead, cut, or walk. Vessa is waiting on your move.',
       location: 'a salt-pan camp at dawn',
       faction: 'Vessa',
       castNpcIds: ['salt-road-heist-npc-1'],
@@ -992,6 +1022,8 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Salt pans at dawn. The loft is a rumor. The caravan is two ridges over. First move is still yours.',
     },
     {
+      who: 'a cutter on the Salt Road crew, starting at the Consul counting-house back door',
+      pressing: 'The lockpick wants your word before the grate. a hired lockpick is waiting on your move.',
       location: 'the Consul counting-house back door',
       faction: 'a hired lockpick',
       summonIntent: 'The lockpick wants your word before the grate.',

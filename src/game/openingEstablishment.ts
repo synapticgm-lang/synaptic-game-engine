@@ -481,6 +481,12 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   openingCost?: string;
   faction?: string;
   castNpcIds?: string[];
+  /** C6 checklist — authored who / how / where / whoHere / pressing when present. */
+  who?: string;
+  how?: string;
+  where?: string;
+  whoHere?: string;
+  pressing?: string;
   /** The card compiled once (set by resolveOpeningHookPick). */
   card?: OpeningCardRecord;
 } {
@@ -490,10 +496,18 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     return { text, fallback: text || undefined, page1: text || undefined };
   }
   const lines: string[] = [];
-  const location = card.location?.trim() || undefined;
-  if (location) lines.push(`Location: ${location}`);
-  if (card.faction?.trim()) lines.push(`Who is here / who summoned: ${card.faction.trim()}`);
-  if (card.summonIntent?.trim()) lines.push(`Why this happened: ${card.summonIntent.trim()}`);
+  // C6: prefer typed checklist fields; older location/faction/summonIntent remain aliases.
+  const who = card.who?.trim() || undefined;
+  const how = card.how?.trim() || card.summonIntent?.trim() || undefined;
+  const where = card.where?.trim() || card.location?.trim() || undefined;
+  const whoHere = card.whoHere?.trim() || card.faction?.trim() || undefined;
+  const pressing = card.pressing?.trim() || undefined;
+  const location = where;
+  if (who) lines.push(`Who you are: ${who}`);
+  if (how) lines.push(`How you got here: ${how}`);
+  if (where) lines.push(`Location: ${where}`);
+  if (whoHere) lines.push(`Who is here / who summoned: ${whoHere}`);
+  if (pressing) lines.push(`What's pressing: ${pressing}`);
   if (card.openingOffer?.trim()) {
     lines.push(`Opening offer (optional — player may refuse): ${card.openingOffer.trim()}`);
   }
@@ -517,11 +531,16 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     location,
     fallback: fallback || undefined,
     page1: page1 || fallback || undefined,
-    summonIntent: card.summonIntent?.trim() || undefined,
+    summonIntent: how,
     openingOffer: card.openingOffer?.trim() || undefined,
     openingCost: card.openingCost?.trim() || undefined,
-    faction: card.faction?.trim() || undefined,
+    faction: whoHere,
     castNpcIds: card.castNpcIds,
+    who,
+    how,
+    where,
+    whoHere,
+    pressing,
   };
 }
 export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCard[] {

@@ -96,6 +96,11 @@ export function sanitizeHookCardForPlay(
 ): OpeningHookCard {
   if (typeof card === 'string') return strip(at, card, flags, true) ?? '';
   const c: OpeningBeatCard = { ...card };
+  c.who = strip(`${at}.who`, card.who, flags);
+  c.how = strip(`${at}.how`, card.how, flags);
+  c.where = strip(`${at}.where`, card.where, flags);
+  c.whoHere = strip(`${at}.whoHere`, card.whoHere, flags);
+  c.pressing = strip(`${at}.pressing`, card.pressing, flags);
   c.page1 = strip(`${at}.page1`, card.page1, flags);
   c.text = strip(`${at}.text`, card.text, flags, true);
   c.fallback = strip(`${at}.fallback`, card.fallback, flags);
