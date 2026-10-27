@@ -297,16 +297,7 @@ export async function syncGameToCloud(
     updated_at: new Date().toISOString(),
     last_turn_at: new Date().toISOString(),
   };
-  const { data: existingSession } = await supabase
-    .from('game_sessions')
-    .select('id')
-    .eq('save_id', saveId)
-    .maybeSingle();
-  if (existingSession?.id) {
-    await supabase.from('game_sessions').update(sessionPayload).eq('id', existingSession.id);
-  } else {
-    await supabase.from('game_sessions').insert(sessionPayload);
-  }
+  await supabase.from('game_sessions').upsert(sessionPayload, { onConflict: 'save_id' });
   void flushPlaytimeToProfile(userId);
   return { ok: true };
 }
