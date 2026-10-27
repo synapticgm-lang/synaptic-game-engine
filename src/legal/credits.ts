@@ -346,6 +346,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Idea only: after the writer, classify each clause as colour or fact against the FactSheet; unsupported serious facts get one targeted sentence repair; player claims are never facts. Ported into clauseCheck; not a copy of the prototype module. Date 27 October 2026.',
       },
       {
+        work: 'Steal, parley, fight cap, mid-visit proposals (merge M6)',
+        source: 'SynapticGM (internal prototype engine.mjs)',
+        license: 'Original',
+        usedFor:
+          'Idea only: Dexterity (Sleight of Hand) vs Passive Perception; social Influence with leverage and persona DC shift; fight chips ≤4 with Flee as Disengage+move; mid-visit add-never-contradict quest proposals. Ported into stealParley / midVisitProposal / combatChips / choiceEdge; not a copy of the prototype module. Date 27 October 2026.',
+      },
+      {
         work: 'Custom tabletop rules (player paste)',
         source: 'The player',
         license: 'Player-supplied',

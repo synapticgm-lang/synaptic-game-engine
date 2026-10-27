@@ -35,6 +35,8 @@ import { parsePlayerIntent } from './intentParser';
 import { spineSelfEnding } from './pyoaSpine';
 import { commitDeath } from './rules/death';
 import { tag } from './timeline';
+import { rollParleyCheck, socialSkillFromTone } from './stealParley';
+import type { IntentTone } from './intentParser';
 
 const FLEE_RE = /\b(flee|run away|escape|retreat|withdraw|bolt)\b/i;
 const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bargain)\b/i;
@@ -143,18 +145,29 @@ function sheetSkillTotal(state: GameState, skill: 'Acrobatics' | 'Persuasion', a
   return row ? row.total : abilityModOf(state.character.attributes?.[ability] ?? 10);
 }
 
+function toneFromParleyText(text: string): IntentTone | null {
+  const t = (text ?? '').toLowerCase();
+  if (/\b(threaten|intimidate|force|bully)\b/.test(t)) return 'threatening';
+  if (/\b(lie|bluff|deceive|feign)\b/.test(t)) return 'neutral';
+  if (/\b(flatter|compliment|praise)\b/.test(t)) return 'flattering';
+  if (/\b(please|friend|calm|peace)\b/.test(t)) return 'friendly';
+  if (/\b(rude|insult)\b/.test(t)) return 'rude';
+  return 'neutral';
+}
+
 /**
  * Tabletop break-away, SRD 5.2.1 as written. Escape: a Dexterity (Acrobatics) contest with the foe's Dexterity
- * check; a tie leaves things as they were. Parley: the Influence action, a Charisma (Persuasion) check against
- * DC 15 (Medium) or the foe's Intelligence score, whichever is higher.
+ * check; a tie leaves things as they were.
+ * Parley (M6): Charisma (Persuasion / Intimidation / Deception per tone) vs DC max(15, foe INT)
+ * with socialLeverage mods and M5 relationship DC shift (−5..+5).
  * VR1-b: one CheckResultRecord; STATUS via formatBreakAwayStatus (record maths + contest foe side).
- * Cut: duplicate hand-built roll paths — presentation shares the record.
  */
 export function srdBreakAwayCheck(
   state: GameState,
   enc: ActiveEncounter,
   flee: boolean,
-  rng: () => number = turnRng(state, flee ? 'flee' : 'parley')
+  rng: () => number = turnRng(state, flee ? 'flee' : 'parley'),
+  actionText = '',
 ): { ok: boolean; line: string; lines: string[]; record: ReturnType<typeof resolveCheckRecord> } {
   const block = statBlockForEncounter(enc);
   if (flee) {
@@ -183,15 +196,21 @@ export function srdBreakAwayCheck(
       record: rec,
     };
   }
-  const mod = sheetSkillTotal(state, 'Persuasion', 'CHA');
-  const dc = Math.max(15, block.scores.INT);
-  const rec = resolveCheckRecord({
-    label: 'Parley',
-    mods: [{ label: 'CHA', value: mod }],
-    dc,
+  // M6 — shared rollParleyCheck (tone skill + leverage + M5 DC).
+  const tone = toneFromParleyText(actionText);
+  const skill = socialSkillFromTone(tone, tone === 'threatening' ? 'intimidate' : 'persuade');
+  const rolled = rollParleyCheck(
+    state,
+    actionText || `Parley with ${enc.name}`,
+    {
+      action: skill === 'intimidation' ? 'intimidate' : skill === 'deception' ? 'deceive' : 'persuade',
+      tone,
+      addressee: enc.name,
+      clause: actionText || `Parley with ${enc.name}`,
+    },
     rng,
-  });
-  rec.spec = { kind: 'skill', ability: 'CHA', skill: 'persuasion', dc, dcShown: false, adv: 'normal' };
+  );
+  const rec = rolled.record;
   const status = formatBreakAwayStatus('parley', rec);
   return {
     ok: rec.outcome === 'success',
@@ -257,7 +276,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   if (flee || parley) {
     let ok: boolean;
     if (state.engineMode === 'dnd') {
-      const check = srdBreakAwayCheck(working, enc, flee);
+      const check = srdBreakAwayCheck(working, enc, flee, turnRng(working, flee ? 'flee' : 'parley'), input);
       ok = check.ok;
       receipts.push(...check.lines);
     } else {

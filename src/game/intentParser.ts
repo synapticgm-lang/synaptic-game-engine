@@ -646,7 +646,10 @@ function classifyStepAction(clause: string): IntentStepAction {
   if (/\bdeceive\b|\blie\s+to\b|\bbluff\b/i.test(clause)) return 'deceive';
   if (/\bsneak\b|\bstealth\b/i.test(clause)) return 'sneak';
   if (/\bbuy\b|\bpurchase\b/i.test(clause)) return 'buy';
+  // M6 — steal verbs classify as take (engine resolves Sleight of Hand on the spine).
+  if (/\b(steal|pickpocket|filch|swipe|palm)\b/i.test(clause)) return 'take';
   if (/\btake\b|\bpick\s+up\b|\bgrab\b/i.test(clause)) return 'take';
+  if (/\bparley\b|\btalk\s+(?:it|them)\s+down\b|\bnegotiate\b/i.test(clause)) return 'persuade';
   if (/\brecall\b|\bwhat\s+did\s+\w+\s+tell\b/i.test(clause)) return 'recall';
   const single = readIntent(clause);
   return single.kind;

@@ -9,7 +9,8 @@
  *   → caller builds FactSheet (M1) → TurnLog (M1) → writer
  *
  * Free text is never rejected. Only the engine rolls dice.
- * Steal / parley step slots stay on the reader (M6 plugs in).
+ * M6 — steal (Sleight of Hand vs Passive Perception) and parley (social Influence + M5 DC)
+ * resolve as real engine actions on the step slots.
  */
 import type { GameState } from './types';
 import type { EconomySlot, EconomyUsed } from './actionEconomy';
@@ -63,7 +64,8 @@ function economyFromSteps(steps: StepResolution[]): EconomyUsed {
 export function runTurnSpine(state: GameState, input: string): TurnSpineResult {
   const typed: TypedFreeTextResult = resolveTypedFreeText(state, input);
   const stepResults = typed.stepResults ?? [];
-  const next = stampAddressee(state, typed.lastAddressee);
+  const base = typed.state ?? state;
+  const next = stampAddressee(base, typed.lastAddressee);
   const receipts = typed.receipts ?? [];
   const diceRolls = diceRollsFromReceipts([
     ...receipts,

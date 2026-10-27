@@ -27,6 +27,7 @@ import { tabletopStepChip } from './tabletopQuestProgress';
 import { shopChips } from './shopChips';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 import { affordancesCoverGenerics } from './sceneAffordances';
+import { FIGHT_CHIP_CAP, roundCombatChips } from './tabletop/combatChips';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -66,20 +67,30 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     : undefined;
 
   if (state.activeEncounter) {
-    edges.push(
-      { id: 'enc-attack', label: 'Press the attack', kind: 'combat', risk: 'high' }
-    );
-    fightApproachChips(state)
-      .slice(0, 2)
-      .forEach((label, i) => edges.push({ id: `enc-approach-${i}`, label, kind: 'combat', risk: 'high' }));
-    if (fleeAvailable(state.activeEncounter)) {
-      edges.push({ id: 'enc-flee', label: 'Try to flee', kind: 'combat', risk: 'med' });
+    // M6 — fight options from the engine + choiceEdge only, capped at FIGHT_CHIP_CAP (≤4).
+    // Flee folds into Disengage and move (SRD Disengage Action + Speed).
+    const round = roundCombatChips(state);
+    if (round && round.length) {
+      for (let i = 0; i < round.length; i++) {
+        const label = round[i]!;
+        const kind: ChoiceEdgeKind = /parley|talk|persuade/i.test(label) ? 'talk' : 'combat';
+        edges.push({ id: `enc-chip-${i}`, label, kind, risk: kind === 'talk' ? 'low' : 'high' });
+      }
+    } else {
+      edges.push({ id: 'enc-attack', label: 'Press the attack', kind: 'combat', risk: 'high' });
+      fightApproachChips(state)
+        .slice(0, 2)
+        .forEach((label, i) => edges.push({ id: `enc-approach-${i}`, label, kind: 'combat', risk: 'high' }));
+      if (fleeAvailable(state.activeEncounter)) {
+        edges.push({ id: 'enc-disengage', label: 'Disengage and move', kind: 'combat', risk: 'med' });
+      }
+      if (parleyAvailable(state.activeEncounter)) {
+        edges.push({ id: 'enc-parley', label: 'Parley', kind: 'talk', risk: 'low' });
+      }
     }
-    if (parleyAvailable(state.activeEncounter)) {
-      edges.push({ id: 'enc-parley', label: 'Parley', kind: 'talk', risk: 'low' });
-    }
+    // Cap at 4 — engine + choiceEdge only.
     // 29a — while engaged, only encounter edges (no travel/inspect padding below)
-    return closeEdgeUniverse(state, edges);
+    return closeEdgeUniverse(state, edges.slice(0, FIGHT_CHIP_CAP));
   }
 
   // PYOA spine v1 — Thornferry: pads = legal exits from current node
@@ -169,9 +180,14 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   const hub = matchHub(allHubs, state.currentLocation);
   if (hub && hubBeatCount(state, hub.id) < 2 && !excluded.has('travel')) {
     // q50-MAP2 — travel edges from the place record (placeExits), not a private hub slice.
+    // M6 — one chip per exit (dedupe by destination name).
     const targets = placeExits(state, state.currentLocation);
-    for (let i = 0; i < targets.length && i < 2; i++) {
+    const seenExit = new Set<string>();
+    for (let i = 0; i < targets.length && seenExit.size < 2; i++) {
       const name = targets[i]!;
+      const key = name.toLowerCase();
+      if (seenExit.has(key)) continue;
+      seenExit.add(key);
       const target = matchHub(allHubs, name);
       edges.push({
         id: `travel-${target?.id ?? name}`,
