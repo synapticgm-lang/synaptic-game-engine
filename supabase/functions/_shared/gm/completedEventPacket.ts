@@ -1056,20 +1056,33 @@ export function buildCompletedEventPacket(
 
 /**
  * The facts the writer was handed this turn, as one text.
- * M1: FactSheet is the single source (plus allowlist nouns for the line gate).
+ * M1: FactSheet is the single world-facts source; ENGINE RESULT + PLAYER stay on this record
+ * so the line gate can read them even when only those fields were stamped (partial packet).
  */
 export function handedWriterText(state: GameState, packet: Partial<CompletedEventPacket>): string {
-  const player = packet.playerAction && packet.playerAction !== '(opening)' ? packet.playerAction : '';
+  const typedExtra = String((packet as { playerInput?: string }).playerInput ?? '').trim();
+  const player =
+    (packet.playerAction && packet.playerAction !== '(opening)' ? packet.playerAction : '') || typedExtra;
   const sheet =
     packet.factSheet ??
     (packet.verb
       ? buildFactSheet(state, packet as CompletedEventPacket, player)
       : undefined);
   const facts = sheet ? formatFactSheetForWriter(sheet) : '';
+  // Short ENGINE RESULT: lines are the line-gate record (same shape as pre-M1). Skip when the
+  // FactSheet already carried them so a full packet does not double-dump.
+  const engineLines = sheet?.beat.engineResult
+    ? []
+    : (packet.engineResult ?? '')
+        .split('\n')
+        .filter((l) => l.trim())
+        .map((l) => `ENGINE RESULT: ${l.trim()}`);
   return [
     facts,
+    ...engineLines,
     packet.movement ?? '',
     ...(packet.ledgerChanges ?? []),
+    player ? `PLAYER: ${player}` : '',
     ...(packet.allowlist ?? []),
   ].filter(Boolean).join('\n');
 }

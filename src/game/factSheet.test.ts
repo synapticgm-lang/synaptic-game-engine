@@ -91,7 +91,7 @@ describe('M1 factSheet', () => {
   it('formatWriterFacingEvent includes the FactSheet as the facts leaf', () => {
     const packet = buildCompletedEventPacket(baseState(), 'Look around');
     const text = formatWriterFacingEvent(packet);
-    expect(text).toMatch(/FACTS \(engine-committed/);
+    expect(text).toMatch(/WORLD FACTS \(this turn\):/);
     expect(text).toMatch(/COMPLETED EVENT:/);
   });
 

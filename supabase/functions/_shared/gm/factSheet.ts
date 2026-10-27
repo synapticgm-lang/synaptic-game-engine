@@ -14,6 +14,7 @@ import { sheetExitNames, weaponInHand } from './infoSheet.ts';
 import { writerFacts } from './systemHousing.ts';
 import { activeHereSpot } from './hereSpot.ts';
 import { placeScale } from './placeAuthority.ts';
+import { isSystemWindowLabel } from './chromeAuthority.ts';
 
 /** One person here, for the writer: display name + manner only. */
 export interface FactSheetPerson {
@@ -85,6 +86,8 @@ export interface FactSheet {
   };
   player: FactSheetPlayer;
   quests: FactSheetQuest[];
+  /** Recent timeline display lines (same guarantee the old WORLD FACTS block carried). */
+  recent: string[];
   /** Reserved for order 6b — do not fill here. */
   settingsSlot: null;
 }
@@ -156,6 +159,36 @@ function beatSteps(packet: CompletedEventPacket): FactSheetBeatStep[] {
   return steps;
 }
 
+/** Display-only recent timeline lines (info-layer guarantee; no engine ids). */
+function recentTimeline(state: GameState): string[] {
+  return (state.timeline ?? [])
+    .slice(-6)
+    .map((f) => {
+      if (f.verb && f.name) {
+        const body =
+          f.verb === 'said'
+            ? `${f.name}${f.detail ? `: ${f.detail}` : ' said'}`
+            : `${f.verb}: ${f.name}${f.detail ? `, ${f.detail}` : ''}`;
+        return clip(norm(body), 160);
+      }
+      return clip(norm(f.text), 160);
+    })
+    .filter(Boolean);
+}
+
+/** Scene props the writer may name — chrome windows drop when a housing replaces the floating panel. */
+function placeFeatures(state: GameState, packet: CompletedEventPacket): string[] {
+  const raw = [
+    ...(state.sceneFacts?.props ?? []).slice(0, 6),
+    ...(packet.focusNoun ? [packet.focusNoun] : []),
+  ];
+  return raw
+    .map(norm)
+    .filter(Boolean)
+    .filter((n) => !(state.systemHousing && isSystemWindowLabel(n)))
+    .filter((n, i, a) => a.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+}
+
 /**
  * Player claims the world does not confirm. M2 (intentParser) fills this; M1 keeps the slot and
  * any claims already stamped on the completed-event extras / packet talk fields.
@@ -204,13 +237,6 @@ export function buildFactSheet(
   const openLedger = [...commitments, ...openOffers(state)];
 
   const typed = norm(playerInput ?? packet.playerAction);
-  const features = [
-    ...(state.sceneFacts?.props ?? []).slice(0, 6),
-    ...(packet.focusNoun ? [packet.focusNoun] : []),
-  ]
-    .map(norm)
-    .filter(Boolean)
-    .filter((n, i, a) => a.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
 
   return {
     turn: packet.turn ?? state.turn ?? 0,
@@ -219,7 +245,7 @@ export function buildFactSheet(
       position: spot?.spot,
       scale: placeScale(state) ?? undefined,
       exits: sheetExitNames(state),
-      features,
+      features: placeFeatures(state, packet),
     },
     present,
     openLedger,
@@ -235,6 +261,7 @@ export function buildFactSheet(
       claimsNotTrue: claimsNotTrue(state, typed),
     },
     quests: questRows(state),
+    recent: recentTimeline(state),
     settingsSlot: null,
   };
 }
@@ -251,12 +278,12 @@ export function hashFactSheet(sheet: FactSheet): string {
 }
 
 /**
- * Writer-facing text: one FACTS block. No second context.
+ * Writer-facing text: one WORLD FACTS block (the info-layer guarantee, single source).
  * Settings slot left as a blank header for 6b.
  */
 export function formatFactSheetForWriter(sheet: FactSheet): string {
   const lines: string[] = [
-    'FACTS (engine-committed for this beat — every factual statement must come from here):',
+    'WORLD FACTS (this turn):',
     `Place: ${sheet.place.name}${sheet.place.position ? ` · standing on ${sheet.place.position}` : ''}${sheet.place.scale ? ` · ${sheet.place.scale}` : ''}.`,
   ];
   if (sheet.place.exits.length) lines.push(`Roads/exits: ${sheet.place.exits.join('; ')}.`);
@@ -284,9 +311,8 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
   );
   lines.push(`Beat: ${sheet.beat.verb} → ${sheet.beat.outcome}.`);
   if (sheet.beat.engineResult) {
-    lines.push(
-      `ENGINE RESULT (required fact — already settled; write as finished, never restart it): ${sheet.beat.engineResult}`
-    );
+    // Short form matches the line-gate record (`ENGINE RESULT: …`); long note is on the completed-event leaf.
+    lines.push(`ENGINE RESULT: ${sheet.beat.engineResult}`);
   }
   for (const s of sheet.beat.steps) {
     if (s.outcome === 'engine' || s.detail === sheet.beat.engineResult) continue;
@@ -297,6 +323,9 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
       'Quests:',
       ...sheet.quests.map((q) => `  - ${q.title} (${q.status})${q.step ? `: ${q.step}` : ''}`)
     );
+  }
+  if (sheet.recent.length) {
+    lines.push('Recent timeline:', ...sheet.recent.map((r) => `  - ${r}`));
   }
   lines.push(
     '',
