@@ -112,6 +112,14 @@ export function writerEngineResult(fact: string): string {
       out.push(`You took a ${kind}.`);
       continue;
     }
+    // T10B — speech receipts are writer cues, not player story. Same receipt→sentence form as Rest/Travel.
+    const speechHead = 'Speech event: you address ';
+    if (s.startsWith(speechHead)) {
+      const who = (s.endsWith('.') ? s.slice(0, -1) : s).slice(speechHead.length).trim();
+      if (who) out.push(`You spoke to ${who}.`);
+      continue;
+    }
+    if (/^NPC reaction slot open for the writer\.?$/i.test(s)) continue;
     out.push(s.endsWith('.') ? s : `${s}.`);
   }
   return out.join(' ');
