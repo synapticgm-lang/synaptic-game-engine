@@ -30,6 +30,7 @@ function person(
     npcName: name,
     disposition: 'neutral',
     facts: [],
+    lastSeenTurn: 0,
     roleHint: role,
     sheet: { job: role, motive: '', fear: '', speech: '', secret: '', place: '' },
     ...over,
@@ -37,17 +38,27 @@ function person(
 }
 
 function withPeople(people: NpcMemory[], place = 'Greyhollow Inn'): GameState {
-  const s = createInitialState('Jax', 'dnd');
-  return {
-    ...s,
-    currentLocation: place,
-    sceneFacts: { ...(s.sceneFacts ?? {}), present: people.map((p) => p.npcName) },
-    npcMemories: people,
-    arcDirector: {
-      ...(s.arcDirector ?? {}),
-      npcRelationships: people.map((p) => ({ npcName: p.npcName, disposition: 'neutral' as const })),
-    },
-  } as GameState;
+  const s = createInitialState('M5-persona', 'dnd', undefined, 'm5-persona-seed');
+  s.currentLocation = place;
+  if (s.sceneFacts) {
+    s.sceneFacts = { ...s.sceneFacts, present: people.map((p) => p.npcName) };
+  } else {
+    s.sceneFacts = {
+      crowd: 'sparse',
+      noise: 'unknown',
+      present: people.map((p) => p.npcName),
+      props: [],
+      lastBeat: '',
+      updatedTurn: 0,
+    };
+  }
+  s.npcMemories = people;
+  // socialTarget (checkMath DC path) resolves names only from arcDirector.npcRelationships.
+  s.arcDirector = {
+    ...(s.arcDirector ?? {}),
+    npcRelationships: people.map((p) => ({ npcName: p.npcName, trust: 0 })),
+  };
+  return s;
 }
 
 describe('M5 npcPersona', () => {
@@ -137,9 +148,9 @@ describe('M5 npcPersona', () => {
       npcMemories: [m],
       arcDirector: {
         ...(state.arcDirector ?? {}),
-        npcRelationships: [{ npcName: 'Mara', disposition: 'friendly', trust: m.persona!.rel.trust }],
+        npcRelationships: [{ npcName: 'Mara', trust: m.persona!.rel.trust }],
       },
-    } as GameState;
+    };
     const shift = socialShift(state, m);
     expect(shift).toBeGreaterThanOrEqual(-5);
     expect(shift).toBeLessThanOrEqual(5);

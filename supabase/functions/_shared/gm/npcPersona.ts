@@ -339,7 +339,8 @@ export function personaMannerLine(state: GameState, m: NpcMemory): { manner: str
   else if (R.trust >= 30) bits.push('willing to do the player a favour');
   const ml = moodLvl(mood);
   if (ml) bits.push(`scene mood ${ml}`);
-  const last = seeded.persona!.history.at(-1);
+  const hist = seeded.persona!.history;
+  const last = hist[hist.length - 1];
   return {
     manner: bits.join(', '),
     mannerCause: last ? `${last.tag.replace(/_/g, ' ')} on turn ${last.turn}` : undefined,
