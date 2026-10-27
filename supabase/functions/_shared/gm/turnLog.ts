@@ -59,8 +59,29 @@ export interface TurnLog {
   v: 1;
   turn: number;
   input: string;
-  /** Parsed intent kind/label when available (M2 deepens this). */
-  parsedIntent?: { kind: string; label: string };
+  /**
+   * M2 — reader output: primary kind/label plus ordered steps, addressees, claims, system text,
+   * and per-step done/not-done results. Claims / system text never become engine facts.
+   */
+  parsedIntent?: {
+    kind: string;
+    label: string;
+    steps?: Array<{
+      action: string;
+      target?: string | null;
+      addressee?: string | null;
+      topic?: string | null;
+      say?: string | null;
+      destination?: string | null;
+      tone?: string | null;
+      dealKind?: string | null;
+      unplacedMove?: boolean;
+    }>;
+    addressees?: string[];
+    claims?: string[];
+    systemText?: string[];
+    stepResults?: Array<{ tried: string; done: boolean; reason: string }>;
+  };
   /** Engine beat outcomes (display). */
   engineBeats: string[];
   diceRolls: TurnLogDiceRoll[];
@@ -119,7 +140,7 @@ export function sliceState(state: {
 export interface BuildTurnLogArgs {
   turn: number;
   input: string;
-  parsedIntent?: { kind: string; label: string };
+  parsedIntent?: TurnLog['parsedIntent'];
   engineBeats?: string[];
   diceRolls?: TurnLogDiceRoll[];
   stateBefore: TurnLogStateSlice;

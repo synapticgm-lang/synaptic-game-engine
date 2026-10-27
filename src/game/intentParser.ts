@@ -359,3 +359,446 @@ export function groundPlayerAction(
     notes,
   };
 }
+
+// ---------- M2 multi-step reader (proto parseIntent idea; offline, no model) ----------
+/** SRD 5.2.1 Communicating: brief speech is free; only mechanical aims become game actions. */
+export const DEAL_KINDS = ['loan', 'borrow', 'repay', 'collect', 'promise', 'trade', 'favour'] as const;
+export type DealKind = (typeof DEAL_KINDS)[number];
+
+export type IntentStepAction =
+  | IntentKind
+  | 'ask_about'
+  | 'deal'
+  | 'persuade'
+  | 'intimidate'
+  | 'deceive'
+  | 'sneak'
+  | 'take'
+  | 'buy'
+  | 'recall';
+
+export interface IntentDeal {
+  kind: DealKind;
+  amount?: number | null;
+  item?: string | null;
+  getItem?: string | null;
+  dueDays?: number | null;
+  terms?: string | null;
+}
+
+export type IntentTone = 'friendly' | 'neutral' | 'rude' | 'threatening' | 'flattering';
+
+export interface IntentStep {
+  action: IntentStepAction;
+  target?: string | null;
+  addressee?: string | null;
+  topic?: string | null;
+  say?: string | null;
+  destination?: string | null;
+  tone?: IntentTone | null;
+  deal?: IntentDeal | null;
+  /** Move with no grounded destination — does not travel. */
+  unplacedMove?: boolean;
+  /** Player clause this step came from. */
+  clause?: string;
+}
+
+/** One player message → ordered steps + separate claim / system lists (never steps, never facts). */
+export interface IntentRead {
+  steps: IntentStep[];
+  claims: string[];
+  systemText: string[];
+  scale: 'normal' | 'heroic' | 'absurd';
+}
+
+/** People / places / items the guard may accept (player words ∪ FactSheet / scene). */
+export interface IntentSheetContext {
+  people: string[];
+  places: string[];
+  items: string[];
+  lastAddressee?: string | null;
+}
+
+export interface StepResolution {
+  tried: string;
+  done: boolean;
+  reason: string;
+  engineResult: string;
+}
+
+const MAX_STEPS = 6;
+
+function low(s: string): string {
+  return (s ?? '').toLowerCase();
+}
+
+/** Token appears in the player's own words (shared guard — not a deny-list). */
+export function inPlayerText(needle: string | null | undefined, playerText: string): boolean {
+  const n = low(needle ?? '').trim();
+  if (!n || n.length < 2) return false;
+  const t = low(playerText);
+  const parts = n.split(/[^a-z0-9']+/i).filter((w) => w.length > 2);
+  if (!parts.length) return t.includes(n);
+  return parts.some((w) => t.includes(w));
+}
+
+/** Token is on the sheet / scene allowlist (display names only). */
+export function onSheet(needle: string | null | undefined, ctx: IntentSheetContext): boolean {
+  const n = low(needle ?? '').trim();
+  if (!n) return false;
+  const pools = [...ctx.people, ...ctx.places, ...ctx.items];
+  return pools.some((p) => {
+    const pl = low(p);
+    return pl === n || pl.includes(n) || n.includes(pl);
+  });
+}
+
+/** Ground a ref: player's words or FactSheet people/places/items; else null. */
+export function groundRef(
+  raw: string | null | undefined,
+  playerText: string,
+  ctx: IntentSheetContext
+): string | null {
+  const v = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!v) return null;
+  if (inPlayerText(v, playerText) || onSheet(v, ctx)) return v;
+  return null;
+}
+
+/** Build guard context from live state (FactSheet people/places/items shape, no FactSheet import). */
+export function sheetContextFromState(state?: GameState | null): IntentSheetContext {
+  if (!state) return { people: [], places: [], items: [] };
+  const people = [
+    ...(state.sceneFacts?.present ?? []),
+    ...(state.npcMemories ?? []).map((m) => m.npcName).filter(Boolean),
+    ...(state.companions ?? []).map((c) => c.name).filter(Boolean),
+    ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
+  ].filter(Boolean) as string[];
+  const places = [
+    state.currentLocation,
+    ...(state.places ?? []).map((p) => p.name).filter(Boolean),
+  ].filter(Boolean) as string[];
+  const items = [
+    ...(state.inventory ?? []).map((i) => i.name).filter(Boolean),
+    ...(state.sceneFacts?.props ?? []),
+  ].filter(Boolean) as string[];
+  const uniq = (arr: string[]) => {
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const x of arr) {
+      const k = low(x);
+      if (!k || seen.has(k)) continue;
+      seen.add(k);
+      out.push(x);
+    }
+    return out;
+  };
+  return {
+    people: uniq(people),
+    places: uniq(places),
+    items: uniq(items),
+    lastAddressee: state.sceneFacts?.lastAddressee ?? null,
+  };
+}
+
+function splitClauses(text: string): string[] {
+  const raw = text.replace(/\s+/g, ' ').trim();
+  if (!raw) return [];
+  const parts = raw
+    .split(/\s+(?:and then|then|, then|and)\s+|[?]+|;+/)
+    .map((s) => s.replace(/^[.!,;]+|[.!,;]+$/g, '').trim())
+    .filter((s) => s.length >= 2);
+  return parts.length ? parts : [raw];
+}
+
+/** Instruction aimed at the game / rules / AI — never a world step. */
+export function isSystemFacingText(clause: string): boolean {
+  const t = clause.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^\//.test(t)) return true;
+  if (/\bignore\s+(?:your|the)\s+rules\b/i.test(t)) return true;
+  if (/\b(?:as|to)\s+(?:the\s+)?(?:ai|gm|game|system)\b/i.test(t) && /\b(?:set|give|make|ignore|override)\b/i.test(t)) {
+    return true;
+  }
+  if (/\bset\s+(?:my\s+)?(?:hp|mp|gold|xp|level)\b/i.test(t)) return true;
+  if (/\bgive\s+me\s+(?:god\s*mode|infinite|max)\b/i.test(t)) return true;
+  return false;
+}
+
+/** Player asserts something as already true — claim list only, never a step / fact. */
+export function isClaimClause(clause: string): boolean {
+  const t = clause.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (isSystemFacingText(t)) return false;
+  if (/\bas\s+\w[\w\s'-]{0,40}\s+told\s+me\b/i.test(t)) return true;
+  if (/\bi\s+already\s+(?:paid|gave|did|told|have|was|were)\b/i.test(t)) return true;
+  if (/\b(?:the\s+)?(?:guard|priest|merchant|elder)\s+(?:lets?|let|agrees?|agreed|said)\b/i.test(t)
+    && !/\b(?:ask|tell|talk|attack|move|go|walk|borrow|lend|repay)\b/i.test(t)) {
+    return true;
+  }
+  if (/\bit\s+falls?\s+dead\b|\bi\s+hit\s+for\s+\d+\b/i.test(t)) return true;
+  return false;
+}
+
+function readDeal(clause: string): IntentDeal | null {
+  const t = clause;
+  const amount = (() => {
+    const m = t.match(/\b(\d+)\s*(?:gold|gp|coins?)?\b/i);
+    return m ? Number(m[1]) : null;
+  })();
+  const due = (() => {
+    const m = t.match(/\bin\s+(\d+)\s+days?\b/i);
+    return m ? Number(m[1]) : null;
+  })();
+  // Direction: "lend me" / "borrow" / "spare me" = they give → borrow (proto guard).
+  if (/\b(?:lend|loan|spare|advance)\s+me\b|\bcan\s+i\s+borrow\b|\bborrow\b|\bon\s+credit\b/i.test(t)
+    && !/\b(?:i|we)\s+(?:lend|loan)\b/i.test(t)) {
+    return { kind: 'borrow', amount, dueDays: due, terms: t.slice(0, 80) };
+  }
+  if (/\b(?:i|we)\s+(?:lend|loan)\b|\bloan\s+(?:them|him|her)\b/i.test(t)) {
+    return { kind: 'loan', amount, dueDays: due, terms: t.slice(0, 80) };
+  }
+  if (/\brepay\b|\bpay\s+(?:you\s+)?back\b|\bpay\s+(?:the\s+)?debt\b/i.test(t)) {
+    return { kind: 'repay', amount, dueDays: due, terms: t.slice(0, 80) };
+  }
+  if (/\bcollect\b|\bpay\s+me\s+back\b|\bowe\s+me\b/i.test(t)) {
+    return { kind: 'collect', amount, dueDays: due, terms: t.slice(0, 80) };
+  }
+  if (/\bpromise\b|\bi\s+swear\b/i.test(t)) {
+    return { kind: 'promise', amount, dueDays: due, terms: t.slice(0, 80) };
+  }
+  if (/\btrade\b|\bswap\b|\bexchange\b/i.test(t)) {
+    return { kind: 'trade', amount, item: null, getItem: null, terms: t.slice(0, 80) };
+  }
+  if (/\bfavou?r\b/i.test(t)) {
+    return { kind: 'favour', terms: t.slice(0, 80) };
+  }
+  return null;
+}
+
+function readTone(clause: string): IntentTone | null {
+  if (/\b(?:threaten|or\s+else|watch\s+yourself)\b/i.test(clause)) return 'threatening';
+  if (/\b(?:insult|fool|idiot|shut\s+up)\b/i.test(clause)) return 'rude';
+  if (/\b(?:flatter|handsome|wise|brave)\b/i.test(clause)) return 'flattering';
+  if (/\b(?:greet|please|thank|friend)\b/i.test(clause)) return 'friendly';
+  return null;
+}
+
+function pickFromPool(clause: string, pool: string[]): string | null {
+  const c = low(clause);
+  let best: string | null = null;
+  let bestIdx = Infinity;
+  const article = new Set(['the', 'a', 'an']);
+  for (const name of pool) {
+    const n = low(name);
+    if (n.length < 2) continue;
+    const idx = c.indexOf(n);
+    if (idx >= 0 && idx < bestIdx) {
+      best = name;
+      bestIdx = idx;
+      continue;
+    }
+    // Prefer a contentful token (not an article) so "the priest" does not match every "the …".
+    const tokens = n.split(/\s+/).filter((w) => w.length > 2 && !article.has(w));
+    for (const tok of tokens) {
+      const j = c.indexOf(tok);
+      if (j >= 0 && j < bestIdx) {
+        best = name;
+        bestIdx = j;
+      }
+    }
+  }
+  return best;
+}
+
+function extractSay(clause: string): string | null {
+  const q = clause.match(/["“]([^"”]+)["”]/);
+  if (q?.[1]) return q[1].trim();
+  const after = clause.match(
+    /\b(?:say|said|ask|tell|shout|yell|whisper|call\s+out)\b[:\s]+(.+)$/i
+  );
+  if (after?.[1]) return after[1].replace(/^["'“]|["'”]$/g, '').trim().slice(0, 120);
+  return null;
+}
+
+function extractTopic(clause: string): string | null {
+  const m = clause.match(/\b(?:about|regarding|concerning)\s+(.+)$/i);
+  if (m?.[1]) return m[1].replace(/[.!?]+$/, '').trim().slice(0, 80);
+  return null;
+}
+
+function extractDestination(clause: string, ctx: IntentSheetContext): string | null {
+  const toward = clause.match(
+    /\b(?:to|toward|towards|into|for)\s+(?:the\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})/i
+  );
+  const raw = toward?.[1]?.trim() ?? pickFromPool(clause, ctx.places);
+  return raw || null;
+}
+
+function classifyStepAction(clause: string): IntentStepAction {
+  const deal = readDeal(clause);
+  if (deal) return 'deal';
+  if (/\bask\s+(?:about|regarding)\b|\bask\s+\w[\w\s'-]{0,30}\s+about\b/i.test(clause)) return 'ask_about';
+  if (/\bpersuade\b|\bconvince\b/i.test(clause)) return 'persuade';
+  if (/\bintimidate\b|\bthreaten\b/i.test(clause)) return 'intimidate';
+  if (/\bdeceive\b|\blie\s+to\b|\bbluff\b/i.test(clause)) return 'deceive';
+  if (/\bsneak\b|\bstealth\b/i.test(clause)) return 'sneak';
+  if (/\bbuy\b|\bpurchase\b/i.test(clause)) return 'buy';
+  if (/\btake\b|\bpick\s+up\b|\bgrab\b/i.test(clause)) return 'take';
+  if (/\brecall\b|\bwhat\s+did\s+\w+\s+tell\b/i.test(clause)) return 'recall';
+  const single = readIntent(clause);
+  return single.kind;
+}
+
+/**
+ * ONE reader: free text → ordered steps (max 6) + claims + system_text.
+ * Never rejects. Claims and system text never become steps.
+ * Engine guards: addressee / target / destination from player words or sheet; last addressee carries over.
+ */
+export function parsePlayerSteps(
+  input: string,
+  ctx: IntentSheetContext = { people: [], places: [], items: [] }
+): IntentRead {
+  const text = (input ?? '').replace(/\s+/g, ' ').trim();
+  const claims: string[] = [];
+  const systemText: string[] = [];
+  if (!text) return { steps: [], claims, systemText, scale: 'normal' };
+
+  const clauses = splitClauses(text);
+  const draft: IntentStep[] = [];
+  for (const clause of clauses) {
+    if (isSystemFacingText(clause)) {
+      systemText.push(clause);
+      continue;
+    }
+    if (isClaimClause(clause)) {
+      claims.push(clause);
+      continue;
+    }
+    const deal = readDeal(clause);
+    const action = classifyStepAction(clause);
+    const say = extractSay(clause);
+    const topic = extractTopic(clause);
+    const tone = readTone(clause);
+    const peopleHit = pickFromPool(clause, ctx.people);
+    let destination: string | null = null;
+    let target: string | null = null;
+    let addressee: string | null = null;
+    if (action === 'move' || action === 'sneak') {
+      destination = extractDestination(clause, ctx);
+    } else if (action === 'use_item' || action === 'take' || action === 'buy') {
+      target = pickFromPool(clause, ctx.items) ?? peopleHit;
+    } else if (action === 'attack' || action === 'search' || action === 'observe') {
+      target = peopleHit ?? pickFromPool(clause, ctx.items) ?? pickFromPool(clause, ctx.places);
+    } else {
+      addressee = peopleHit;
+      target = peopleHit;
+    }
+    if (deal && !addressee) addressee = peopleHit;
+    draft.push({
+      action: deal ? 'deal' : action,
+      target,
+      addressee,
+      topic,
+      say: say ?? (action === 'talk' || action === 'ask_about' || deal ? clause.slice(0, 120) : null),
+      destination,
+      tone,
+      deal,
+      clause,
+    });
+  }
+
+  // Engine-side guards (proto idea): refs must come from player words or the sheet.
+  let lastWho = ctx.lastAddressee?.trim() || null;
+  const steps: IntentStep[] = [];
+  for (const st of draft) {
+    const clause = st.clause ?? text;
+    let addressee = groundRef(st.addressee, clause, ctx) ?? groundRef(st.addressee, text, ctx);
+    const target = groundRef(st.target, clause, ctx) ?? groundRef(st.target, text, ctx);
+    let destination = groundRef(st.destination, clause, ctx) ?? groundRef(st.destination, text, ctx);
+    const speechLike =
+      st.action === 'talk'
+      || st.action === 'ask_about'
+      || st.action === 'persuade'
+      || st.action === 'intimidate'
+      || st.action === 'deceive'
+      || st.action === 'deal'
+      || st.action === 'refuse';
+    if (!addressee && speechLike) {
+      // Carry-over when the player names nobody this clause.
+      addressee = lastWho;
+    }
+    if (addressee && inPlayerText(addressee, text)) lastWho = addressee;
+    else if (addressee && onSheet(addressee, ctx) && inPlayerText(addressee, clause)) lastWho = addressee;
+
+    let action = st.action;
+    let unplacedMove = false;
+    if ((action === 'move' || action === 'sneak') && !destination) {
+      // A move with no named/described destination does not travel.
+      unplacedMove = true;
+      action = 'other';
+      destination = null;
+    }
+    steps.push({
+      ...st,
+      action,
+      addressee: addressee,
+      target: target,
+      destination,
+      unplacedMove,
+      deal: st.deal && DEAL_KINDS.includes(st.deal.kind) ? st.deal : null,
+    });
+    if (steps.length >= MAX_STEPS) break;
+  }
+
+  // Pure claims/system with no actionable step → empty steps (resolver records "nothing the world can act on").
+  return {
+    steps: steps.slice(0, MAX_STEPS),
+    claims,
+    systemText,
+    scale: 'normal',
+  };
+}
+
+/** Map a step onto the legacy single PlayerIntent (chips / checkMath). */
+export function intentFromStep(step: IntentStep): PlayerIntent {
+  const kind: IntentKind =
+    step.action === 'ask_about'
+    || step.action === 'persuade'
+    || step.action === 'intimidate'
+    || step.action === 'deceive'
+    || step.action === 'deal'
+    || step.action === 'recall'
+      ? 'talk'
+      : step.action === 'sneak' || step.action === 'take' || step.action === 'buy'
+        ? step.action === 'sneak'
+          ? 'move'
+          : step.action === 'buy'
+            ? 'use_item'
+            : 'search'
+        : (step.action as IntentKind);
+  const targets = [step.addressee, step.target, step.destination].filter(Boolean) as string[];
+  return {
+    kind: kind in { observe: 1, move: 1, talk: 1, attack: 1, use_item: 1, cast: 1, rest: 1, search: 1, flee: 1, refuse: 1, other: 1 }
+      ? kind
+      : 'other',
+    label: step.deal ? `Deal (${step.deal.kind})` : step.action,
+    targets: targets.slice(0, 3),
+    itemName: step.deal?.item ?? undefined,
+  };
+}
+
+/** Describe a step for TurnLog / FactSheet beat lines. */
+export function describeIntentStep(step: IntentStep): string {
+  return [
+    step.action,
+    step.target,
+    step.addressee ? `to ${step.addressee}` : '',
+    step.topic,
+    step.destination ? `-> ${step.destination}` : '',
+    step.deal ? `deal:${step.deal.kind}` : '',
+    step.unplacedMove ? '(unplaced move)' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+}

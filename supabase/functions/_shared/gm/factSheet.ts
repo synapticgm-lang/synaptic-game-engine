@@ -16,6 +16,7 @@ import { activeHereSpot } from './hereSpot.ts';
 import { placeScale } from './placeAuthority.ts';
 import { isSystemWindowLabel } from './chromeAuthority.ts';
 import { personaMannerLine } from './npcPersona.ts';
+import { parsePlayerSteps, sheetContextFromState } from './intentParser.ts';
 
 /** One person here, for the writer: display name + manner only. */
 export interface FactSheetPerson {
@@ -159,8 +160,19 @@ function gearOf(state: GameState): FactSheetGear {
 
 function beatSteps(packet: CompletedEventPacket): FactSheetBeatStep[] {
   const steps: FactSheetBeatStep[] = [];
-  steps.push({ outcome: packet.outcome, detail: `${packet.verb}${packet.target ? ` → ${packet.target}` : ''}` });
-  if (packet.engineResult) steps.push({ outcome: 'engine', detail: packet.engineResult });
+  // M2 — one FactSheet beat line per reader step when the engine recorded them.
+  const readerSteps = packet.readerStepResults;
+  if (readerSteps?.length) {
+    for (const s of readerSteps) {
+      steps.push({
+        outcome: s.done ? 'done' : 'not done',
+        detail: clip(`${s.tried}: ${s.reason}`, 160),
+      });
+    }
+  } else {
+    steps.push({ outcome: packet.outcome, detail: `${packet.verb}${packet.target ? ` → ${packet.target}` : ''}` });
+    if (packet.engineResult) steps.push({ outcome: 'engine', detail: packet.engineResult });
+  }
   if (packet.movement) steps.push({ outcome: 'moved', detail: packet.movement });
   if (packet.justKilled && packet.lastKill?.name) {
     steps.push({ outcome: 'killed', detail: packet.lastKill.name });
@@ -201,11 +213,13 @@ function placeFeatures(state: GameState, packet: CompletedEventPacket): string[]
 }
 
 /**
- * Player claims the world does not confirm. M2 (intentParser) fills this; M1 keeps the slot and
- * any claims already stamped on the completed-event extras / packet talk fields.
+ * Player claims the world does not confirm. M2 intentParser fills this from the reader claim list
+ * (never steps, never facts).
  */
-function claimsNotTrue(_state: GameState, _typed: string): string[] {
-  return [];
+function claimsNotTrue(state: GameState, typed: string): string[] {
+  if (!typed.trim()) return [];
+  const read = parsePlayerSteps(typed, sheetContextFromState(state));
+  return read.claims.map((c) => clip(c, 160)).slice(0, 8);
 }
 
 /**

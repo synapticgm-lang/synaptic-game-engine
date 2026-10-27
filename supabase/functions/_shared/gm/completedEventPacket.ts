@@ -191,6 +191,11 @@ export interface CompletedEventPacket {
   ledgerRead?: boolean;
   /** 28g — the engine's resolved result for the player's action (fight / flee / parley / rest). Required fact. */
   engineResult?: string;
+  /**
+   * M2 — per-step reader outcomes (done / not done + reason) for FactSheet.beat.steps.
+   * Claims and system text stay off this list.
+   */
+  readerStepResults?: Array<{ tried: string; done: boolean; reason: string }>;
   exitNames?: string[];
   /** 29y — did the state move this turn: the story narrates only the move the engine committed. */
   movement?: string;
@@ -419,6 +424,8 @@ export type PacketBuildExtras = {
   reader?: ReaderFlags;
   /** 28g — engine receipts for this action; the writer must state them. */
   engineResult?: string;
+  /** M2 — ordered reader step outcomes for FactSheet beat lines. */
+  readerStepResults?: Array<{ tried: string; done: boolean; reason: string }>;
   /** The travel engine's commit this turn: the only source of 'arrived' / 'set out' and the other travel results. */
   travel?: {
     arrived: boolean;
@@ -1044,6 +1051,7 @@ export function buildCompletedEventPacket(
     systemBlock: state.systemHousing ? formatSystemBlock(state.systemHousing) : undefined,
     ledgerRead: ledgerRead || undefined,
     engineResult: withRoadMeetingEvent(state, extras?.engineResult) || undefined,
+    readerStepResults: extras?.readerStepResults?.length ? extras.readerStepResults : undefined,
     movement,
     destinationRef,
   };

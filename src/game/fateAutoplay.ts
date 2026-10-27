@@ -1181,6 +1181,12 @@ export async function headlessFateTurn(
         if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
       }
       if (typed.engineResult) engineFact = typed.engineResult;
+      if (typed.lastAddressee && arcState.sceneFacts) {
+        arcState = {
+          ...arcState,
+          sceneFacts: { ...arcState.sceneFacts, lastAddressee: typed.lastAddressee },
+        };
+      }
     } else if (dyingTurn || isDying(arcState)) {
       const intent = parsePlayerIntent(playerInput, arcState);
       if (intent.kind === 'talk' || intent.kind === 'refuse') {
@@ -1332,6 +1338,18 @@ export async function headlessFateTurn(
     // q50-MAP2 — arrival at a place with no record (or seed stub without exits).
     arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
   }
+  // M2 — multi-step reader → existing typed resolver (never rejects; speech free; claims/system off steps).
+  const typedRead = resolveTypedFreeText(arcState, playerInput);
+  if (typedRead.lastAddressee && arcState.sceneFacts) {
+    arcState = {
+      ...arcState,
+      sceneFacts: { ...arcState.sceneFacts, lastAddressee: typedRead.lastAddressee },
+    };
+  }
+  for (let i = 0; i < typedRead.receipts.length; i++) {
+    const line = typedRead.receipts[i]!;
+    if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+  }
   // 28g — the engine's resolved result for this action is a required fact for the writer and the warden.
   const engineFact = engineResultFact([
     ...(arcResult?.systemReceipts ?? []),
@@ -1343,10 +1361,17 @@ export async function headlessFateTurn(
     ...(shopTurn?.facts ?? []),
     ...nudge.receipts,
     ...(travelCommit ? travelEngineLines(travelCommit) : []),
+    ...(typedRead.engineResult ? [typedRead.engineResult] : []),
   ], arcState.engineMode);
+  const readerStepResults = (typedRead.stepResults ?? []).map((s) => ({
+    tried: s.tried,
+    done: s.done,
+    reason: s.reason,
+  }));
   const preparedEvent = prepareWriterInputWithTownsfolk(arcState, writerAction, {
     xp: arcXp,
     engineResult: engineFact,
+    readerStepResults: readerStepResults.length ? readerStepResults : undefined,
     travel: travelOutcome(travelCommit, hereBeforeMove, arcState),
     reader: readerFlags(settings),
   });
@@ -2208,9 +2233,30 @@ Do NOT print dice notation or CODE ENFORCED.
     ? buildTurnLog({
         turn: nextTurn,
         input: playerInput,
-        parsedIntent: { kind: intent.kind, label: intent.label },
+        parsedIntent: {
+          kind: intent.kind,
+          label: intent.label,
+          steps: (typedRead.intentRead?.steps ?? []).map((s) => ({
+            action: s.action,
+            target: s.target,
+            addressee: s.addressee,
+            topic: s.topic,
+            say: s.say,
+            destination: s.destination,
+            tone: s.tone,
+            dealKind: s.deal?.kind ?? null,
+            unplacedMove: s.unplacedMove,
+          })),
+          addressees: (typedRead.intentRead?.steps ?? [])
+            .map((s) => s.addressee)
+            .filter((x): x is string => !!x),
+          claims: typedRead.intentRead?.claims ?? [],
+          systemText: typedRead.intentRead?.systemText ?? [],
+          stepResults: readerStepResults,
+        },
         engineBeats: [
           preparedEvent.packet.outcome,
+          ...readerStepResults.map((s) => (s.done ? `done: ${s.tried}` : `not done: ${s.tried} (${s.reason})`)),
           ...(engineFact ? engineFact.split('\n').filter(Boolean) : []),
         ].filter(Boolean),
         diceRolls: diceRollsFromReceipts([

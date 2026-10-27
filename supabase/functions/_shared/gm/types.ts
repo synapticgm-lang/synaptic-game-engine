@@ -1734,6 +1734,11 @@ export interface SceneFacts {
    * (stress injectDying). dying-stall invariant only applies when this is set.
    */
   dyingFromFight?: boolean;
+  /**
+   * M2 — last person the player addressed (carry-over when a later step names nobody).
+   * Display name only; set by the multi-step reader / typed free-text resolver.
+   */
+  lastAddressee?: string;
 }
 export interface TimelineFact {
   /** Entity / ref id for tagged events; legacy rows keep a uuid here. */
