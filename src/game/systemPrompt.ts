@@ -4,7 +4,6 @@ import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierR
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules';
 import { campaignIsNsfw } from './campaignNsfw';
 import { formatWriterFacingPacket } from './beatContract';
-import { formatWriterInfoLayer } from './writerInfoLayer';
 import { formatMaturityRules } from './maturity';
 import { formatPerspectiveRule, pcPov } from './narrativePov';
 import {
@@ -504,7 +503,8 @@ export function buildContextPrompt(
   activeLoreCards: LoreCard[] = [],
   perspective?: Settings['perspective']
 ): string {
-  const facts = formatWriterInfoLayer(state, activeLoreCards, playerInput);
-  const packet = formatWriterFacingPacket(state, playerInput, perspective);
-  return facts ? `${facts}\n\n${packet}` : packet;
+  // M1 — one FactSheet leaf via the completed-event packet. No second info-layer dump.
+  // activeLoreCards kept in the signature for callers; lore cards stay off the writer leaf (C2 display names only on the sheet).
+  void activeLoreCards;
+  return formatWriterFacingPacket(state, playerInput, perspective);
 }

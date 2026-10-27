@@ -4,7 +4,7 @@
  */
 
 export const CREDITS_PATH = '/credits';
-export const CREDITS_LAST_UPDATED = '14 October 2026';
+export const CREDITS_LAST_UPDATED = '27 October 2026';
 
 /** The attribution CC BY 4.0 requires for SRD 5.2.1, word for word. */
 export const SRD_5_2_1_NOTICE =
@@ -309,6 +309,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         source: 'SynapticGM',
         license: 'Original',
         usedFor: 'System panels, receipts, standing, and story-RPG framing laid over the shared rules engine.',
+      },
+      {
+        work: 'Engine-first FactSheet (merge M1)',
+        source: 'SynapticGM (internal prototype)',
+        license: 'Original',
+        usedFor:
+          'Idea only: one typed per-turn fact sheet the writer narrates. Ported into live owners; not a copy of the prototype module.',
       },
       {
         work: 'Custom tabletop rules (player paste)',

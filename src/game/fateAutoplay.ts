@@ -80,6 +80,12 @@ import { withUpdatedHookArc } from './hookArc';
 import { mediatePlayerInput } from './inputMediation';
 import { readWellbeing } from './wellbeing';
 import { groundPlayerAction, parsePlayerIntent } from './intentParser';
+import {
+  buildTurnLog,
+  diceRollsFromReceipts,
+  sliceState as sliceStateForTurnLog,
+} from './turnLog';
+import { debugLogger } from './debugLogger';
 import { scanAndScrubLeaks } from './leakScanner';
 import { ensureTurnProse, stripResidualMechanicTags } from './narrativeSanitize';
 import {
@@ -427,6 +433,11 @@ export type TurnTelemetry = {
   wardenNotes?: string[];
   /** 28w — provider-reported token use summed over this turn's model calls (null = not reported). */
   writerUsage?: import('./gmProxy').TurnWriterUsageWithCost;
+  /**
+   * M1 — full structured TurnLog (stable shape for orders 7 / 10B). Also mirrored on turns.jsonl.
+   * No DB table.
+   */
+  turnLog?: import('./turnLog').TurnLog;
 } & Partial<RowProvenance>;
 export type RunSummary = {
   runId: string;
@@ -1056,6 +1067,8 @@ export async function headlessFateTurn(
   writerCallMeter.ms = 0;
   drainWriterRawIssues();
   drainWriterUsage();
+  // M1 — state slice before the turn mutates (TurnLog.diff).
+  const turnLogBefore = sliceStateForTurnLog(state);
   // q45-OCD3: record the pad the player saw this turn (not the post-commit next pad).
   const offeredPadAtStart = state.offeredPad;
   const offeredChipsAtStart = offeredPadAtStart?.chips;
@@ -2188,6 +2201,69 @@ Do NOT print dice notation or CODE ENFORCED.
   const receiptCounts = countTurnReceipts(governed, nextTurn);
   const stampedGm = [...(governed.log ?? [])].reverse().find((e) => e?.role === 'gm');
   const offeredChips = offeredChipsAtStart ?? offeredPadAtStart?.chips;
+  // M1 — full TurnLog on telemetry (fate turns.jsonl) + client debug ring.
+  const sheetForLog =
+    governed.completedEvent?.factSheet ?? preparedEvent.packet.factSheet;
+  const turnLog = sheetForLog
+    ? buildTurnLog({
+        turn: nextTurn,
+        input: playerInput,
+        parsedIntent: { kind: intent.kind, label: intent.label },
+        engineBeats: [
+          preparedEvent.packet.outcome,
+          ...(engineFact ? engineFact.split('\n').filter(Boolean) : []),
+        ].filter(Boolean),
+        diceRolls: diceRollsFromReceipts([
+          ...filteredSystemLog,
+          ...(arcStatusReceipts ?? []),
+          ...(engineFact ? [engineFact] : []),
+        ]),
+        stateBefore: turnLogBefore,
+        stateAfter: sliceStateForTurnLog(governed),
+        factSheet: sheetForLog,
+        includeFactSheet: true,
+        ai: [
+          {
+            role: 'writer',
+            model: writerUsage?.modelId ?? undefined,
+            tokensIn: writerUsage?.tokensIn ?? undefined,
+            tokensOut: writerUsage?.tokensOut ?? undefined,
+            costUsd: writerUsage?.costUsd ?? null,
+            latencyMs: writerCallMeter.ms || undefined,
+          },
+        ],
+        checkerVerdicts: [
+          ...(warden.notes ?? []).map((n) => ({
+            checker: 'warden',
+            verdict: /reject|block|fail/i.test(n) ? ('fail' as const) : ('pass' as const),
+            detail: n.slice(0, 160),
+          })),
+          ...(writerTurn?.problems ?? []).map((p) => ({
+            checker: 'writerTurn',
+            verdict: 'repair' as const,
+            detail: String(p).slice(0, 160),
+          })),
+        ],
+        finalProse: mudBody,
+        chipsOffered: offered,
+        latencyMs: ended - started,
+        startedAt,
+        endedAt: new Date(ended).toISOString(),
+      })
+    : undefined;
+  if (turnLog) {
+    try {
+      debugLogger.record('TURN_START', 'turnLog', {
+        turn: turnLog.turn,
+        factSheetHash: turnLog.factSheetHash,
+        latencyMs: turnLog.latencyMs,
+        ai: turnLog.ai,
+        engineBeats: turnLog.engineBeats,
+      });
+    } catch {
+      /* Node / headless may lack localStorage — telemetry still on turns.jsonl */
+    }
+  }
   return {
     state: governed,
     telemetry: {
@@ -2263,6 +2339,7 @@ Do NOT print dice notation or CODE ENFORCED.
       writerIssues: writerIssues.length ? writerIssues : undefined,
       wardenNotes: warden.notes.length ? [...warden.notes] : undefined,
       writerUsage: writerUsage ?? undefined,
+      turnLog,
     },
   };
 }

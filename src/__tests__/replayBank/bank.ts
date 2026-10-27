@@ -77,6 +77,23 @@ export class Replay {
   turns(): number[] {
     return this.steps.map((s) => s.recorded.turn);
   }
+  /** M1 — FactSheet on the completed-event packet after turn n (when present). */
+  factSheet(n: number) {
+    return this.after(n).completedEvent?.factSheet;
+  }
+  /** M1 — structured TurnLog from telemetry (orders 7 / 10B). */
+  turnLog(n: number) {
+    return this.at(n).telemetry.turnLog;
+  }
+  /** M1 — engine beat outcome / engineResult (not prose). */
+  engineBeat(n: number): { outcome?: string; engineResult?: string; verb?: string } {
+    const p = this.after(n).completedEvent;
+    return {
+      outcome: p?.outcome,
+      engineResult: p?.engineResult ?? this.at(n).telemetry.engineFact,
+      verb: p?.verb,
+    };
+  }
 }
 
 export function packetBlock(packet: string, header: string): string {

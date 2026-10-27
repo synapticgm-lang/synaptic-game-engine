@@ -107,6 +107,8 @@ const FILES = [
   'infoSheet.ts',
   'engineResult.ts',
   'checkMath.ts',
+  'factSheet.ts',
+  'turnLog.ts',
 ];
 
 function rewriteImports(source, file) {
