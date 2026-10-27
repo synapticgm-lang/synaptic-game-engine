@@ -6,6 +6,8 @@ import { storedDisposition } from '../checkRules';
 import { parsePlayerIntent, type PlayerIntent } from '../intentParser';
 import { SIDEKICKS, sidekickMaxHp, sidekickProfile } from './sidekick';
 import type { SidekickProfile } from './roundCombat';
+import { ensureCompanionPerson, nudgeCompanionApproval } from '../companionAgency';
+import { ensureNpcAgenda } from '../npcMemory';
 
 /** Trust at or below these gives the first and the last warning; at or below LEAVES_AT the companion goes. */
 export const APPROVAL_WARNINGS = [-20, -40] as const;
@@ -173,7 +175,22 @@ function settleRecruit(state: GameState, input: string): CompanionSettle | null 
     };
   }
   const shifted = writeShift(state, name, { ...APPROVAL_SHIFT.join, milestone: { type: 'alliance', summary: `${name} joined the player` } }, 'milestone');
-  const next = { ...shifted.state, companions: [...(shifted.state.companions ?? []), makeCompanion(shifted.state, name)] };
+  let next = { ...shifted.state, companions: [...(shifted.state.companions ?? []), makeCompanion(shifted.state, name)] };
+  // M7: joining is a relationship — keep their own agenda/persona (not a shared companion template).
+  const mem = (next.npcMemories ?? []).find((m) => m.npcName.toLowerCase() === name.toLowerCase());
+  if (mem) {
+    const role = mem.roleHint && mem.roleHint !== 'companion' ? mem.roleHint : mem.sheet?.job || 'informant';
+    const agended = ensureNpcAgenda(
+      { ...mem, location: mem.location ?? next.currentLocation },
+      { role, disposition: mem.disposition, seed: next.seed },
+    );
+    const person = ensureCompanionPerson(next, agended);
+    next = {
+      ...next,
+      npcMemories: (next.npcMemories ?? []).map((m) => (m.npcId === person.npcId ? person : m)),
+    };
+  }
+  next = nudgeCompanionApproval(next, name, 'join', `${name} agreed to travel with the player`);
   return {
     state: next,
     receipts: [`Companion: ${name} joined you (${BAND_LABEL[shifted.after.disposition]}).`],
@@ -186,9 +203,15 @@ export function settleCampTalk(state: GameState): CompanionSettle | null {
   const companion = recruitedCompanions(state)[0];
   if (!companion || !companionsAllowed(state)) return null;
   const shifted = writeShift(state, companion.name, APPROVAL_SHIFT.campTalk, 'interaction');
+  const next = nudgeCompanionApproval(
+    shifted.state,
+    companion.name,
+    'campTalk',
+    `camp talk with ${companion.name}`,
+  );
   const moved = shifted.after.disposition !== shifted.before.disposition;
   return {
-    state: shifted.state,
+    state: next,
     receipts: moved ? [`Companion: ${companion.name} approves (now ${BAND_LABEL[shifted.after.disposition]}).`] : [],
     facts: [],
   };
@@ -264,7 +287,13 @@ function settleApproval(state: GameState, companion: Companion, event: ApprovalE
   const shift = APPROVAL_SHIFT[event];
   const kind = event.startsWith('harm') ? 'threat' : event === 'foughtTogether' ? 'interaction' : 'favor';
   const shifted = writeShift(state, name, shift, kind);
-  let next = shifted.state;
+  // M7: approval feeds the M5 persona relationship (nudgePersona), not a separate score.
+  let next = nudgeCompanionApproval(
+    shifted.state,
+    name,
+    event,
+    `${name} saw what the player did (${event})`,
+  );
   const band = BAND_LABEL[shifted.after.disposition];
   const moved = shifted.after.disposition !== shifted.before.disposition;
   const receipts: string[] = [];

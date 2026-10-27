@@ -15,6 +15,7 @@ import { recordPersonaFromAction, personaStanceWriterLine, decayPlaceMoods } fro
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { nameWords, pickPersonName } from './personNames';
 import { ensureNpcAgenda } from './npcMemory';
+import { applyCompanionOwnActions } from './companionAgency';
 
 const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 0, road: 1, camp: 2, inn: 2, town: 2 };
 
@@ -122,7 +123,21 @@ export function prepareWriterInputWithTownsfolk(
   const seeded = decayPlaceMoods(seedTownsfolkHere(state));
   const withStance = recordStanceFromAction(seeded, playerInput, { engineResult: extras?.engineResult });
   const peopled = recordPersonaFromAction(withStance, playerInput, { engineResult: extras?.engineResult });
-  const prepared = prepareRetrospectiveWriterInput(peopled, playerInput, extras);
+  // M7: companions decide own acts (refuse / disagree / act-alone) from persona + wants.
+  const withCompanionActs = applyCompanionOwnActions(peopled, playerInput);
+  const actEngine = (withCompanionActs.companionOwnActs ?? []).map((a) => a.detail).join(' ');
+  const prepared = prepareRetrospectiveWriterInput(withCompanionActs, playerInput, {
+    ...extras,
+    engineResult: [extras?.engineResult, actEngine].filter(Boolean).join(' ') || extras?.engineResult,
+    readerStepResults: [
+      ...(extras?.readerStepResults ?? []),
+      ...(withCompanionActs.companionOwnActs ?? []).map((a) => ({
+        tried: playerInput,
+        done: false,
+        reason: a.detail,
+      })),
+    ],
+  });
   const refs = prepared.packet.refEnum ?? [];
   const townsfolk = townsfolkWriterLines(prepared.state, refs);
   const stances = stanceLinesHere(prepared.state, refs);

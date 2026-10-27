@@ -2,6 +2,7 @@ import type { GameState, NpcMemory } from './types.ts';
 import { isOutOfTalkingRange } from './hereSpot.ts';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName.ts';
 import { resolvePlace } from './places.ts';
+import { companionTravelConsent } from './companionAgency.ts';
 const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line|Speech:)/i;
 const VOICE_NOTE = /^Speech:/i;
 export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
@@ -107,7 +108,8 @@ export function npcPlacedElsewhere(state: GameState, name: string): boolean {
   return !!m?.location && !samePlace(m.location, state.currentLocation);
 }
 function companionRecords(state: GameState): NpcMemory[] {
-  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter((n): n is string => !!n);
+  // Relationship list is companions[] only (no singular GameState.companion).
+  const names = (state.companions ?? []).map((c) => c?.name).filter((n): n is string => !!n);
   const out: NpcMemory[] = [];
   for (const n of names) {
     const m = resolveNpcRecord(state, n);
@@ -147,7 +149,22 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
       push({ npcId: `role:${hereSlug}:${bare.toLowerCase().replace(SLUG_GAP, '-')}`.slice(0, 80), npcName: display, disposition: 'neutral', facts: [], lastSeenTurn: state.turn ?? 0, location: state.currentLocation });
     }
   }
-  for (const m of companionRecords(state)) push(m);
+  // M7: consenting companions travel with the player (presence HERE even if a stale stamp
+  // still names the place left behind — old saves / fixtures without a move stamp).
+  // Stays/refuses: only present when their record location is HERE, same as any NPC.
+  for (const m of companionRecords(state)) {
+    if (!m.location) {
+      push({ ...m, location: state.currentLocation });
+      continue;
+    }
+    if (samePlace(m.location, state.currentLocation)) {
+      push(m);
+      continue;
+    }
+    if (companionTravelConsent(state, m) === 'comes') {
+      push({ ...m, location: state.currentLocation });
+    }
+  }
   const enc = onRoad ? journey?.encounter : undefined;
   if (enc && !enc.engaged && !enc.escaped && !enc.lost && enc.kind !== 'signs' && enc.kind !== 'lair' && enc.kind !== 'wildlife' && enc.kind !== 'monster') {
     const party: string[] = [];
@@ -206,12 +223,40 @@ export function stampNpcLocationsOnMove(state: GameState, fromLocation: string, 
   const companions = new Set(companionRecords(state).map((m) => m.npcId));
   const hereBefore = new Set(presentNpcRecords({ ...state, currentLocation: fromLocation }).map((m) => m.npcId));
   const memories = state.npcMemories ?? [];
+  const ownActs: NonNullable<GameState['companionOwnActs']> = [...(state.companionOwnActs ?? [])];
   const next = memories.map((m) => {
-    if (companions.has(m.npcId)) return m.location === toLocation ? m : { ...m, location: toLocation };
+    if (companions.has(m.npcId)) {
+      // M7: travel is consent from persona/stance/wants — not a forced follow.
+      const decision = companionTravelConsent(state, m);
+      if (decision === 'comes') {
+        ownActs.push({ name: m.npcName, kind: 'come', detail: `${m.npcName} travels with you.` });
+        return m.location === toLocation ? m : { ...m, location: toLocation };
+      }
+      ownActs.push({
+        name: m.npcName,
+        kind: decision === 'refuses' ? 'refuse' : 'stay',
+        detail:
+          decision === 'refuses'
+            ? `${m.npcName} refuses to leave ${fromLocation || 'here'}.`
+            : `${m.npcName} stays behind at ${fromLocation || 'here'}.`,
+      });
+      // Location stays put when they stay or refuse.
+      return m.location ? m : { ...m, location: fromLocation };
+    }
     if (!m.location && hereBefore.has(m.npcId)) return { ...m, location: fromLocation };
     return m;
   });
-  return next.every((m, i) => m === memories[i]) ? state : { ...state, npcMemories: next };
+  const withActs = ownActs.length ? { ...state, companionOwnActs: ownActs } : state;
+  const memoriesChanged = !next.every((m, i) => m === memories[i]);
+  const base: GameState = memoriesChanged ? { ...withActs, npcMemories: next } : withActs;
+  // Test fixtures may attach an npcRecords map; keep it in sync after consent travel.
+  const priorRecords = (state as GameState & { npcRecords?: Record<string, NpcMemory> }).npcRecords;
+  if (priorRecords) {
+    const npcRecords: Record<string, NpcMemory> = {};
+    for (const m of base.npcMemories ?? next) npcRecords[m.npcId] = m;
+    return Object.assign(base, { npcRecords });
+  }
+  return base;
 }
 export function openingCastRecords(state: GameState): NpcMemory[] {
   const ids = state.openingEstablishment?.castNpcIds ?? [];

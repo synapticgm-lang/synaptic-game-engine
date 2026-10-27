@@ -32,6 +32,7 @@ import { forwardThreadAffordance, isPlaceOpenForExit } from './openThreads';
 import { isDying } from './tabletop/roundFight';
 import { travelPadBlocked } from './padUniverse';
 import type { QuestRoute } from './types';
+import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
 export function isWayOut(chip: {
   kind?: string;
   actionId?: string;
@@ -1144,4 +1145,17 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
     if (all[i]!.entityId === entityId) return true;
   }
   return false;
+}
+
+/**
+ * Prep08 / M7 check-name: fight pads stay ≤4 (M3 capFightChips); otherwise scene affordance labels.
+ * Does not change the fight option cap (M6 owns steal/parley; cap stays where M3 put it).
+ */
+export function sceneAffordances(state: GameState): string[] {
+  const round = roundCombatChips(state);
+  if (round) return round;
+  if (state.activeEncounter && state.activeEncounter.hp > 0 && state.activeEncounter.phase !== 'pending') {
+    return capFightChips(legalFightActionsThisRound(state));
+  }
+  return collectSceneAffordances(state).map((a) => a.label).filter(Boolean);
 }

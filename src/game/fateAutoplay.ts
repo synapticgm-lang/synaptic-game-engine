@@ -2243,6 +2243,8 @@ Do NOT print dice notation or CODE ENFORCED.
           preparedEvent.packet.outcome,
           ...readerStepResults.map((s) => (s.done ? `done: ${s.tried}` : `not done: ${s.tried} (${s.reason})`)),
           ...(engineFact ? engineFact.split('\n').filter(Boolean) : []),
+          // M7 — companion own-acts (refuse / disagree / stay) on the TurnLog.
+          ...((governed.companionOwnActs ?? preparedEvent.state.companionOwnActs ?? []).map((a) => a.detail)),
         ].filter(Boolean),
         diceRolls: diceRollsFromReceipts([
           ...filteredSystemLog,

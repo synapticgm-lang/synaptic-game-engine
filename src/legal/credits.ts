@@ -351,6 +351,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         license: 'Original',
         usedFor:
           'Idea only: Dexterity (Sleight of Hand) vs Passive Perception; social Influence with leverage and persona DC shift; fight chips ≤4 with Flee as Disengage+move; mid-visit add-never-contradict quest proposals. Ported into stealParley / midVisitProposal / combatChips / choiceEdge; not a copy of the prototype module. Date 27 October 2026.',
+        },
+        {
+        work: 'Companions as full persona NPCs (merge M7)',
+        source: 'SynapticGM (internal; reuses merge M5 persona)',
+        license: 'Original',
+        usedFor:
+          'Idea only: travelling together is consent, not a second entity kind; per-companion agenda/persona, travel consent, own-acts on FactSheet/TurnLog, approval feeds nudgePersona. Date 27 October 2026.',
       },
       {
         work: 'Custom tabletop rules (player paste)',
