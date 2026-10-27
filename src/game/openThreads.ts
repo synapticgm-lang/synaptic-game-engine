@@ -24,8 +24,36 @@ import type {
   Quest,
   TimelineFact,
 } from './types';
+import { mentionsName, peopleHere } from './chipLegality';
+import { presentNpcRecords } from './npcRecords';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
+
+/**
+ * Want used on Follow-up / Ask-about chips: this person's bound goal target (bible hook / recorded
+ * want), not the role-template `need` that was preferred first and reused "a buyer who pays" on priests.
+ */
+export function npcChipWant(m: NpcMemory): string {
+  return (m.goal?.target ?? m.need ?? '').trim();
+}
+
+/** Whether the NPC for an agenda / npc-goal thread is in the current scene (chip compiler gate). */
+export function npcGoalPersonHere(state: GameState, npcId: string, npcName?: string): boolean {
+  const name = (npcName ?? (npcId.startsWith('npc:') ? npcId.slice(4) : npcId)).trim();
+  if (!name && !npcId) return false;
+  const present = presentNpcRecords(state);
+  for (let i = 0; i < present.length; i++) {
+    const m = present[i]!;
+    if ((m.npcId || `npc:${m.npcName}`) === npcId) return true;
+    if (name && (mentionsName(m.npcName, name) || mentionsName(name, m.npcName))) return true;
+  }
+  const here = peopleHere(state);
+  for (let i = 0; i < here.length; i++) {
+    const h = here[i]!;
+    if (name && (mentionsName(h, name) || mentionsName(name, h))) return true;
+  }
+  return false;
+}
 
 export type { OpenThread, SceneThreadPlan, ThreadKind, ThreadResolution } from './types';
 
@@ -152,7 +180,7 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
   for (let i = 0; i < mems.length; i++) {
     const m = mems[i]!;
     if (!m.goal?.motivation) continue;
-    const about = (m.need ?? m.goal.target ?? '').trim();
+    const about = npcChipWant(m);
     if (!about) continue;
     const npcId = m.npcId || `npc:${m.npcName}`;
     const id = `npc-goal:${npcId}`;
@@ -393,6 +421,10 @@ export function planSceneThreads(state: GameState): GameState {
   let bestScore = -1;
   for (let i = 0; i < threads.length; i++) {
     const t = threads[i]!;
+    // Follow-up chips only for people in the scene — skip absent npc-goal rows at pick time.
+    if (t.kind === 'npc-goal' && !npcGoalPersonHere(state, t.entityId || '', t.label.split(':')[0])) {
+      continue;
+    }
     const stale = Math.max(0, turn - (t.lastSeenTurn ?? 0));
     let prox = 0;
     if (here && t.placeId) {
@@ -408,6 +440,9 @@ export function planSceneThreads(state: GameState): GameState {
   }
   for (let i = 0; i < threads.length; i++) {
     const t = threads[i]!;
+    if (t.kind === 'npc-goal' && !npcGoalPersonHere(state, t.entityId || '', t.label.split(':')[0])) {
+      continue;
+    }
     const untouched = turn - (t.lastSeenTurn ?? 0);
     if (untouched >= STALE_TURNS) {
       const deadline = (t.lastSeenTurn ?? 0) + STALE_TURNS + BRING_WINDOW;
@@ -448,10 +483,12 @@ export function planSceneThreads(state: GameState): GameState {
     let memWithGoal: NpcMemory | null = null;
     const mems = working.npcMemories ?? [];
     for (let i = 0; i < mems.length; i++) {
-      if (mems[i]!.goal?.motivation) {
-        memWithGoal = mems[i]!;
-        break;
-      }
+      const m = mems[i]!;
+      if (!m.goal?.motivation) continue;
+      const npcId = m.npcId || `npc:${m.npcName}`;
+      if (!npcGoalPersonHere(working, npcId, m.npcName)) continue;
+      memWithGoal = m;
+      break;
     }
     if (agendaFired && memWithGoal) {
       const npcId = memWithGoal.npcId || `npc:${memWithGoal.npcName}`;
@@ -539,15 +576,18 @@ export function forwardThreadAffordance(state: GameState): {
     const npcId = id.slice('agenda:'.length);
     const mems = state.npcMemories ?? [];
     let name = npcId.startsWith('npc:') ? npcId.slice(4) : npcId;
+    let want = '';
     for (let i = 0; i < mems.length; i++) {
       const m = mems[i]!;
       if ((m.npcId || `npc:${m.npcName}`) === npcId) {
         name = m.npcName;
+        want = npcChipWant(m);
         break;
       }
     }
+    if (!npcGoalPersonHere(state, npcId, name)) return null;
     return {
-      label: `Follow up with ${name}`,
+      label: want ? `Follow up with ${name}: ${want}` : `Follow up with ${name}`,
       actionId: `stall:${id}:forward`,
       entityId: npcId,
     };
@@ -574,6 +614,9 @@ export function forwardThreadAffordance(state: GameState): {
     const t = threads[i]!;
     if (t.id !== id) continue;
     if (threadResolutionMet(state, t)) return null;
+    if (t.kind === 'npc-goal' && !npcGoalPersonHere(state, t.entityId || '', t.label.split(':')[0])) {
+      return null;
+    }
     let label = t.label;
     if (t.kind === 'quest') label = `Pursue ${t.label}`;
     else if (t.kind === 'lead') label = `Follow up: ${t.label}`;

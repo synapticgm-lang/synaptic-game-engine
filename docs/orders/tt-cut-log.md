@@ -697,3 +697,8 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 2. **`isLookAroundAct`** — the look test now sits on the one stitch call. Same check.
 3. **122 blank lines in `src/game/travelJourney.ts`** — padding only, so ruleCount TOTAL lines stay put. The receipt-to-sentence step lives inside the existing `writerEngineResult`.
 - **M5-PERSONA:** no list/regex deletes. Added engine-owned `npcPersona` (traits/rel/mood/history); FactSheet manner now from persona phrase (old 5-word `stance.now` remains on memory for FSM). Social DC shift -5..+5 via existing SRD Ability Check path in `checkMath`. Backup of pre-M5 stance/relationship/memory: `docs/orders/merge/M5-backup/` (project orders tree). Pre-M5 commit `3324418a`.
+## T10D (Story RPG origin exclusive + Follow-up own want)
+
+1. **`src/game/playTranscript.ts` `resolveOfferedChoices`** — stopped folding `originPad` into the mixed travel/scene list (`systemPromptPad(...)?.chips ?? originPad(state)`). Origin open now returns the origin row alone until `character.origin` is recorded.
+2. **`src/game/openThreads.ts` npc-goal / agenda chip want** — stopped preferring role-template `need` over bound `goal.target` (`m.need ?? m.goal.target`). Shared helper `npcChipWant` uses `goal.target ?? need`. Absent npc-goal / agenda rows no longer forward into Follow-up chips.
+
