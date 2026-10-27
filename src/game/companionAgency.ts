@@ -202,7 +202,8 @@ export function ensureCompanionPerson(state: GameState, m: NpcMemory): NpcMemory
 /** Migrate every recruited companion row onto a personal sheet (no DB migration). */
 export function migrateCompanionPeople(state: GameState): GameState {
   const names = new Set(
-    [state.companion, ...(state.companions ?? []).map((c) => c?.name)]
+    (state.companions ?? [])
+      .map((c) => c?.name)
       .filter((n): n is string => !!n)
       .map((n) => n.toLowerCase()),
   );
@@ -254,9 +255,7 @@ export function companionOwnActsOf(state: GameState): CompanionOwnAct[] {
 function orderTarget(state: GameState, input: string): NpcMemory | null {
   const line = (input ?? '').trim();
   if (!line) return null;
-  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter(
-    (n): n is string => !!n,
-  );
+  const names = (state.companions ?? []).map((c) => c?.name).filter((n): n is string => !!n);
   for (const name of names) {
     const re = new RegExp(
       `(?:^|\\b)(${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b\\s*[,:]\\s*|\\b(?:tell|order|ask|have|make)\\s+${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`,

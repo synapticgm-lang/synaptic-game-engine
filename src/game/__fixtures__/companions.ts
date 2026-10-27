@@ -137,7 +137,7 @@ export function companionFixture(opts: CompanionFixtureOpts = {}): {
       ...mara,
       disposition: 'hostile',
       attitude: 'hostile',
-      stance: { now: 'hostile', cause: 'the player ordered them like a tool' },
+      stance: { now: 'hostile', cause: 'the player ordered them like a tool', turn: 1, events: ['order-as-tool'] },
       persona: {
         traits: {
           openness: 40,
@@ -181,9 +181,9 @@ export function companionFixture(opts: CompanionFixtureOpts = {}): {
       m.npcId === 'npc-mara'
         ? {
             ...m,
-            disposition: 'hostile',
-            attitude: 'hostile',
-            stance: { now: 'hostile', cause: 'the player ordered them like a tool' },
+            disposition: 'hostile' as const,
+            attitude: 'hostile' as const,
+            stance: { now: 'hostile' as const, cause: 'the player ordered them like a tool', turn: 1, events: ['order-as-tool'] },
             persona: {
               ...(m.persona ?? mara.persona!),
               rel: { trust: -40, fondness: -35, fear: 10 },
@@ -238,18 +238,23 @@ export function companionFixture(opts: CompanionFixtureOpts = {}): {
       ...state,
       engineMode: 'dnd',
       character: {
-        name: 'Jax',
+        ...state.character,
+        name: state.character?.name || 'Jax',
         hp: 12,
         maxHp: 12,
-        xp: 0,
-        level: 1,
-        xpToNext: 300,
-        gender: 'male',
-        attributes: { STR: 15, DEX: 14, CON: 13, INT: 10, WIS: 12, CHA: 8 },
-        conditions: [],
-        srd: { speciesId: 'human', classId: 'fighter', skillProfs: [], expertise: [] },
+        xp: state.character?.xp ?? 0,
+        level: state.character?.level ?? 1,
       },
-      inventory: [{ id: 'i1', name: 'Longsword', equipped: true, quantity: 1, slot: 'main-hand' }],
+      inventory: [
+        {
+          id: 'i1',
+          name: 'Longsword',
+          rarity: 'Common',
+          equipped: true,
+          quantity: 1,
+          slot: 'main-hand',
+        },
+      ],
       activeEncounter: {
         name: 'Bandit',
         level: 1,
@@ -271,9 +276,9 @@ export function companionFixture(opts: CompanionFixtureOpts = {}): {
         pcInitiative: 20,
         foes: [{ id: 'f1', name: 'Bandit 1', blockId: 'bandit', hp: 11, maxHp: 11, initiative: 5, conditions: [] }],
         pcConditions: [],
-        pcEconomy: { actionAvailable: true, bonusAvailable: true },
+        pcEconomy: { actionAvailable: true, bonusAvailable: true, movementFt: 30, reactionAvailable: true },
       },
-    } as GameState;
+    };
   }
 
   return out;

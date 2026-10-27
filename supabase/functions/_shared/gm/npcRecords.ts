@@ -108,7 +108,8 @@ export function npcPlacedElsewhere(state: GameState, name: string): boolean {
   return !!m?.location && !samePlace(m.location, state.currentLocation);
 }
 function companionRecords(state: GameState): NpcMemory[] {
-  const names = [state.companion, ...(state.companions ?? []).map((c) => c?.name)].filter((n): n is string => !!n);
+  // Relationship list is companions[] only (no singular GameState.companion).
+  const names = (state.companions ?? []).map((c) => c?.name).filter((n): n is string => !!n);
   const out: NpcMemory[] = [];
   for (const n of names) {
     const m = resolveNpcRecord(state, n);
@@ -148,12 +149,19 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
       push({ npcId: `role:${hereSlug}:${bare.toLowerCase().replace(SLUG_GAP, '-')}`.slice(0, 80), npcName: display, disposition: 'neutral', facts: [], lastSeenTurn: state.turn ?? 0, location: state.currentLocation });
     }
   }
-  // M7: companions are present only when their record is here (consent travel), same as any NPC.
-  // No location yet and currently travelling with the player → treat as here until first stamp.
+  // M7: consenting companions travel with the player (presence HERE even if a stale stamp
+  // still names the place left behind — old saves / fixtures without a move stamp).
+  // Stays/refuses: only present when their record location is HERE, same as any NPC.
   for (const m of companionRecords(state)) {
-    if (m.location) {
-      if (samePlace(m.location, state.currentLocation)) push(m);
-    } else {
+    if (!m.location) {
+      push({ ...m, location: state.currentLocation });
+      continue;
+    }
+    if (samePlace(m.location, state.currentLocation)) {
+      push(m);
+      continue;
+    }
+    if (companionTravelConsent(state, m) === 'comes') {
       push({ ...m, location: state.currentLocation });
     }
   }

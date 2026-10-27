@@ -22,15 +22,17 @@ describe('companions are their own people', () => {
   it('C. companion who disagrees stays behind on travel', () => {
     const { state, a } = companionFixture({ disagreesWithTravel: true });
     const next = stampNpcLocationsOnMove(state, 'Inn', 'Crypt');
-    expect(next.npcRecords?.[a.id]?.location ?? 'Inn').toBe('Inn');
+    expect(next.npcMemories?.find((m) => m.npcId === a.id)?.location ?? 'Inn').toBe('Inn');
   });
   it('D. remembers a player act 10 turns later', () => {
     const { stateAfter10 } = companionFixture({ playerActAtTurn: 3 });
-    expect(retrieveNpcMemories(stateAfter10, 'mara').some((m: any) => m.turn === 3)).toBe(true);
+    expect(stateAfter10).toBeDefined();
+    expect(retrieveNpcMemories(stateAfter10!, 'mara').some((m) => m.turn === 3)).toBe(true);
   });
   it('fights: still <= 4 option buttons, free text accepted, dice engine-only', () => {
     const { fightState } = companionFixture({ inFight: true });
-    const chips = sceneAffordances(fightState);
+    expect(fightState).toBeDefined();
+    const chips = sceneAffordances(fightState!);
     expect(chips.length).toBeLessThanOrEqual(4);
   });
   it('F. no companion-only path for memory/stance', () => {

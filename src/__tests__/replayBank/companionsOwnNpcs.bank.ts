@@ -25,11 +25,14 @@ beforeAll(async () => {
 describe('replay bank new rules: companions act as their own NPCs', () => {
   it('each companion has its own agenda, wants and memory record, like any NPC', () => {
     for (const name of [A, B]) {
-      const r: any = npc(X.before(T.order), name);
+      const r = npc(X.before(T.order), name);
       expect(r, name).toBeTruthy();
-      expect(r.agenda ?? r.wants, `${name} has wants`).toBeTruthy();
+      // Real NpcMemory fields (goal/need/offer/traits) — not a parallel agenda bag.
+      expect(r?.goal ?? r?.need ?? r?.offer, `${name} has wants`).toBeTruthy();
     }
-    expect(JSON.stringify(npc(X.before(T.order), A)?.agenda)).not.toBe(JSON.stringify(npc(X.before(T.order), B)?.agenda));
+    const aGoal = npc(X.before(T.order), A)?.goal;
+    const bGoal = npc(X.before(T.order), B)?.goal;
+    expect(JSON.stringify(aGoal)).not.toBe(JSON.stringify(bGoal));
   });
 
   it('a companion can disagree: an order against its agenda is not silently obeyed', () => {
