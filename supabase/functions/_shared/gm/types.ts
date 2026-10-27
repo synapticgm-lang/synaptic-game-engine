@@ -793,7 +793,7 @@ export interface OpeningEstablishment {
   /** 27d — npc ids named on the picked opening card. */
   castNpcIds?: string[];
   /** Locked why-you’re-here from the hook card (first lock; sceneFacts is live authority). */
-  hookLock?: import('./hookLock').HookLock;
+  hookLock?: import('./hookLock.ts').HookLock;
   /** The picked card compiled once at New Game: place, cast and props read from its own slots. */
   card?: OpeningCardRecord;
   /** The card's opening offer once the player has taken or turned it down; open while unset. */
@@ -858,7 +858,7 @@ export interface GameState {
     turn: number;
     choices: string[];
     /** VR1 — CheckSpec by plain label (UI tags); never rewrite choice strings. */
-    checks?: Record<string, import('./checkMath').CheckSpec>;
+    checks?: Record<string, import('./checkMath.ts').CheckSpec>;
     /** OPT1-8 — per-chip engine record (actionId / kind / cooldownReturn). */
     chips?: Array<{
       label: string;
@@ -879,9 +879,9 @@ export interface GameState {
   /** Milestone keys (quest complete, ending) that already earned Heroic Inspiration. */
   inspirationKeys?: string[];
   /** TT-H1: last VR1 CheckResultRecord eligible for a Heroic Inspiration reroll chip. */
-  lastCheckResult?: import('./checkRules').CheckResultRecord;
+  lastCheckResult?: import('./checkRules.ts').CheckResultRecord;
   /** VR1-c: how many checks of each kind have shown a beginner hint (first 3 auto). */
-  rollHintSeenByKind?: Partial<Record<import('./checkMath').CheckKind, number>>;
+  rollHintSeenByKind?: Partial<Record<import('./checkMath.ts').CheckKind, number>>;
   /** TT-H1: turn of the last engine GM Inspiration award (≈20-turn gap). */
   lastInspirationAwardTurn?: number;
   /**
@@ -995,17 +995,17 @@ export interface GameState {
   /** Discarded retry drafts — never world truth; debug / Expert continuity only. */
   speculativeTakes?: SpeculativeTake[];
   /** Append-only high-impact world changes (inventory, presence, quests, combat). */
-  stateTxLog?: import('./stateTx').StateTx[];
+  stateTxLog?: import('./stateTx.ts').StateTx[];
   /** P0.0: Forward-Progress Governor state (Manus #1 priority). */
-  progressGovernor?: import('./forwardProgressGovernor').ProgressGovernorState;
+  progressGovernor?: import('./forwardProgressGovernor.ts').ProgressGovernorState;
   /** P0+P1 quality governance telemetry (2026-08-27w). */
-  qualityGovernance?: import('./qualityGovernance').QualityGovernanceState;
+  qualityGovernance?: import('./qualityGovernance.ts').QualityGovernanceState;
   /** Craft-book compiler boosts + last signals (2026-08-31g). */
-  craftLedger?: import('./craftBookCompiler').CraftLedger;
+  craftLedger?: import('./craftBookCompiler.ts').CraftLedger;
   /** Session thumbs-up beats (shape samples). Long-term store is gm_response_feedback. */
-  craftKeepers?: import('./craftKeepers').CraftKeeper[];
+  craftKeepers?: import('./craftKeepers.ts').CraftKeeper[];
   /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
-  arcDirector?: import('./arcDirector').ArcDirectorState;
+  arcDirector?: import('./arcDirector.ts').ArcDirectorState;
   /**
    * OPT-2 — quest generator spacing until q39-T1b moves it into the thread planner.
    * lastTurn = turn of last generated quest; unboundLog = dropped writer quest-add proposals.
@@ -1019,23 +1019,23 @@ export interface GameState {
   /** TT-T1 — which open threads the scene planner brought forward this turn. */
   sceneThreadPlan?: SceneThreadPlan;
   /** Immutable run manifest for eval/replay binding. */
-  runManifest?: import('./runManifest').RunManifest;
+  runManifest?: import('./runManifest.ts').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */
-  sealedManifest?: import('./sealedManifest').SceneManifest;
+  sealedManifest?: import('./sealedManifest.ts').SceneManifest;
   /** 08a — completed event packet attached after mechanics, before GM. */
-  completedEvent?: import('./completedEventPacket').CompletedEventPacket;
+  completedEvent?: import('./completedEventPacket.ts').CompletedEventPacket;
   /** B007 replay hash chain for eval verifier. */
-  replayHashes?: import('./replayHash').ReplayHashRecord[];
+  replayHashes?: import('./replayHash.ts').ReplayHashRecord[];
   /** B025 PYOA branch ledger — Millstone Charter paths. */
-  pyoaBranchLedger?: import('./pyoaBranchLedger').PyoaBranchLedger;
+  pyoaBranchLedger?: import('./pyoaBranchLedger.ts').PyoaBranchLedger;
   /** PYOA spine v1 — Thornferry curated nodes (other bibles omit). */
-  pyoaSpine?: import('./pyoaSpine').PyoaSpineState;
+  pyoaSpine?: import('./pyoaSpine.ts').PyoaSpineState;
   /** Frozen opening invariants for this run. */
-  campaignContract?: import('./campaignContract').CampaignContract | null;
+  campaignContract?: import('./campaignContract.ts').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */
-  campaignDivergences?: import('./campaignContract').CampaignDivergence[];
+  campaignDivergences?: import('./campaignContract.ts').CampaignDivergence[];
   /** Soft-offer / retention stage (identity → choice → consequence). */
-  hookArc?: import('./hookArc').HookArcState;
+  hookArc?: import('./hookArc.ts').HookArcState;
   /** Recent accepted prose fingerprints for retry novelty. */
   recentBeatFingerprints?: string[];
   /** Recent offered choices for deduplication across turns (sliding window). */
@@ -1166,18 +1166,18 @@ export interface GameState {
    * Prompt voice only — not rules tightness (`gmStrictness`) and not TTS.
    * Persists on the save. Absent on old saves = chilled.
    */
-  gmPersonality?: import('./gmVoiceProfile').GmPersonalityId;
+  gmPersonality?: import('./gmVoiceProfile.ts').GmPersonalityId;
   /**
    * LitRPG System personality for this campaign (`engineMode === 'litrpg'`).
    * Prompt voice only — not TTS. Persists on the save.
    * Absent on old saves = Settings `gmVoiceProfileId`, then cold registrar.
    */
-  systemPersonality?: import('./gmVoiceProfile').SystemPersonalityId;
+  systemPersonality?: import('./gmVoiceProfile.ts').SystemPersonalityId;
   /**
    * LitRPG system housing, rolled once from the seed at story start and frozen.
    * Absent on old saves and non-LitRPG modes.
    */
-  systemHousing?: import('./systemHousing').SystemHousingConfig;
+  systemHousing?: import('./systemHousing.ts').SystemHousingConfig;
   /**
    * Simulationist sandbox power tone. Absent on old saves = balanced (repair hydrates).
    * Prompt only — HP/XP/loot still come from code.
@@ -1189,7 +1189,7 @@ export interface GameState {
    */
   threatTier?: number;
 }
-export type RepairSituation = import('./repairEngine').RepairSituation;
+export type RepairSituation = import('./repairEngine.ts').RepairSituation;
 export interface PendingRepair {
   id: string;
   situation: RepairSituation;
@@ -1475,12 +1475,12 @@ export interface LogEntry {
    */
   offeredChoices?: string[];
   /** VR1 — CheckSpec keyed by plain offered label (beside offeredChoices). */
-  offeredChipChecks?: Record<string, import('./checkMath').CheckSpec>;
+  offeredChipChecks?: Record<string, import('./checkMath.ts').CheckSpec>;
   /**
    * VR1-c beginner roll hint for this beat. autoShown = first 3 of that kind;
    * otherwise the UI shows "?" and reveals text on tap (when showRollHints is on).
    */
-  rollHint?: { kind: import('./checkMath').CheckKind; text: string; autoShown: boolean };
+  rollHint?: { kind: import('./checkMath.ts').CheckKind; text: string; autoShown: boolean };
   /**
    * OPT-1 / OPT1-8 — engine offered-chip record (actionId + kind + cooldownReturn).
    * Labels stay plain; UI tags come from offeredChipChecks / CheckSpec.
@@ -1499,7 +1499,7 @@ export interface LogEntry {
   /** Last thumbs vote on this GM bubble (CRAFT boost, optional). */
   gmFeedback?: 'up' | 'down';
   /** Compact SNAPSHOT the writer saw — dumps diagnose packet lies. Never the full prompt. */
-  snapshotGist?: import('./openingPointerCard').SnapshotGist;
+  snapshotGist?: import('./openingPointerCard.ts').SnapshotGist;
   /**
    * 28l — raw writer problems this beat survived (empty / reasoning-only / cut-off reply, recycled or
    * unresolved prose). Training signal sent with thumbs; never a reason to fail the turn.
@@ -1678,12 +1678,12 @@ export interface SceneFacts {
    * Locked why-you’re-here / summon nature (accident vs intended vs bargain vs pawn).
    * Writer cannot reverse it unless the player or a ledger event changes it.
    */
-  hookLock?: import('./hookLock').HookLock;
+  hookLock?: import('./hookLock.ts').HookLock;
   /**
    * Locked camera (outdoor vs indoor + label). Map/dungeon cannot snap rooms
    * without a player travel/enter commit.
    */
-  cameraLock?: import('./travelAuthority').CameraLock;
+  cameraLock?: import('./travelAuthority.ts').CameraLock;
   /** Last committed player intent family — choice pad follows this, not leftover covers. */
   lastPlayerIntent?: {
     family: 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
@@ -1698,7 +1698,7 @@ export interface SceneFacts {
   waitStreak?: number;
   loiterHere?: string;
   /** Auto-fight / terminal victory — corpse stays until looted or left. */
-  lastKill?: import('./combatAuthority').LastKill;
+  lastKill?: import('./combatAuthority.ts').LastKill;
   /**
    * Drought/arc attached an encounter before the foe was narrated.
    * Next combat beat must show this name (preface) before fight prose.
@@ -1718,9 +1718,9 @@ export interface SceneFacts {
    * Open hub social/argument vignette — locked cast + props until leave/resolve.
    * Drought must not invent a brand-new argument cast each turn.
    */
-  openVignette?: import('./vignetteLock').OpenVignette;
+  openVignette?: import('./vignetteLock.ts').OpenVignette;
   /** Last committed SNAPSHOT gist — next turn is a delta from this. */
-  lastSnapshotGist?: import('./openingPointerCard').SnapshotGist;
+  lastSnapshotGist?: import('./openingPointerCard.ts').SnapshotGist;
   /** 02aa — items given/delivered this scene; prose cannot put them back in hand. */
   givenAway?: string[];
   /** 02aa — crises resolved this scene (flood/gate); prose cannot rewind them live. */
@@ -2401,7 +2401,7 @@ export interface Settings extends AccessibilitySettings {
   /** 28n — 1 once stored settings moved off the old second-person default. */
   perspectiveDefaultRev?: number;
   /** GM/System narrative voice profile (prompt tone). Separate from TTS cosmetics. */
-  gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
+  gmVoiceProfileId?: import('./gmVoiceProfile.ts').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;
   cursingLevel: CursingLevel;
   /** 29z9k — writer reading level. `child` only while Kid Mode is on (Kid Mode owns it). */

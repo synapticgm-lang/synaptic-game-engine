@@ -1,0 +1,2000 @@
+{
+ "source": {
+  "data": "5e-bits/5e-database@a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f src/2024/en",
+  "work": "System Reference Document 5.2.1 by Wizards of the Coast LLC, https://www.dndbeyond.com/srd",
+  "license": "CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/legalcode"
+ },
+ "monsters": {
+  "goblin-warrior": {
+   "name": "Goblin Warrior",
+   "cr": "1/4",
+   "ac": 15,
+   "hp": 10,
+   "hpDice": "3d6",
+   "speed": 30,
+   "scores": {
+    "STR": 8,
+    "DEX": 15,
+    "CON": 10,
+    "INT": 10,
+    "WIS": 8,
+    "CHA": 8
+   },
+   "passivePerception": 9,
+   "languages": "Common, Goblin",
+   "darkvision": 60,
+   "gear": [
+    "Leather Armor",
+    "Scimitar",
+    "Shield",
+    "Shortbow"
+   ],
+   "attacks": [
+    {
+     "name": "Scimitar",
+     "toHit": 4,
+     "damage": "1d6+2",
+     "type": "slashing"
+    },
+    {
+     "name": "Shortbow",
+     "toHit": 4,
+     "damage": "1d6+2",
+     "type": "piercing",
+     "ranged": true
+    }
+   ]
+  },
+  "bandit": {
+   "name": "Bandit",
+   "cr": "1/8",
+   "ac": 12,
+   "hp": 11,
+   "hpDice": "2d8+2",
+   "speed": 30,
+   "scores": {
+    "STR": 11,
+    "DEX": 12,
+    "CON": 12,
+    "INT": 10,
+    "WIS": 10,
+    "CHA": 10
+   },
+   "passivePerception": 10,
+   "languages": "Common, Thieves’ Cant",
+   "gear": [
+    "Leather Armor",
+    "Light Crossbow",
+    "Scimitar"
+   ],
+   "attacks": [
+    {
+     "name": "Scimitar",
+     "toHit": 3,
+     "damage": "1d6+1",
+     "type": "slashing"
+    },
+    {
+     "name": "Light Crossbow",
+     "toHit": 3,
+     "damage": "1d8+1",
+     "type": "piercing",
+     "ranged": true
+    }
+   ]
+  },
+  "cultist": {
+   "name": "Cultist",
+   "cr": "1/8",
+   "ac": 12,
+   "hp": 9,
+   "hpDice": "2d8",
+   "speed": 30,
+   "scores": {
+    "STR": 11,
+    "DEX": 12,
+    "CON": 10,
+    "INT": 10,
+    "WIS": 11,
+    "CHA": 10
+   },
+   "passivePerception": 10,
+   "languages": "Common",
+   "gear": [
+    "Leather Armor",
+    "Sickle"
+   ],
+   "attacks": [
+    {
+     "name": "Ritual Sickle",
+     "toHit": 3,
+     "damage": "1d4+1",
+     "type": "slashing"
+    }
+   ]
+  },
+  "wolf": {
+   "name": "Wolf",
+   "cr": "1/4",
+   "ac": 12,
+   "hp": 11,
+   "hpDice": "2d8+2",
+   "speed": 40,
+   "scores": {
+    "STR": 14,
+    "DEX": 15,
+    "CON": 12,
+    "INT": 3,
+    "WIS": 12,
+    "CHA": 6
+   },
+   "passivePerception": 15,
+   "languages": "None",
+   "darkvision": 60,
+   "attacks": [
+    {
+     "name": "Bite",
+     "toHit": 4,
+     "damage": "1d6+2",
+     "type": "piercing"
+    }
+   ]
+  },
+  "giant-rat": {
+   "name": "Giant Rat",
+   "cr": "1/8",
+   "ac": 13,
+   "hp": 7,
+   "hpDice": "2d6",
+   "speed": 30,
+   "scores": {
+    "STR": 7,
+    "DEX": 16,
+    "CON": 11,
+    "INT": 2,
+    "WIS": 10,
+    "CHA": 4
+   },
+   "passivePerception": 12,
+   "languages": "None",
+   "darkvision": 60,
+   "attacks": [
+    {
+     "name": "Bite",
+     "toHit": 5,
+     "damage": "1d4+3",
+     "type": "piercing"
+    }
+   ]
+  },
+  "skeleton": {
+   "name": "Skeleton",
+   "cr": "1/4",
+   "ac": 14,
+   "hp": 13,
+   "hpDice": "2d8+4",
+   "speed": 30,
+   "scores": {
+    "STR": 10,
+    "DEX": 16,
+    "CON": 15,
+    "INT": 6,
+    "WIS": 8,
+    "CHA": 5
+   },
+   "passivePerception": 9,
+   "languages": "Understands Common plus one other language but can’t speak",
+   "darkvision": 60,
+   "gear": [
+    "Shortbow",
+    "Shortsword"
+   ],
+   "vulnerable": [
+    "bludgeoning"
+   ],
+   "attacks": [
+    {
+     "name": "Shortsword",
+     "toHit": 5,
+     "damage": "1d6+3",
+     "type": "piercing"
+    },
+    {
+     "name": "Shortbow",
+     "toHit": 5,
+     "damage": "1d6+3",
+     "type": "piercing",
+     "ranged": true
+    }
+   ]
+  },
+  "zombie": {
+   "name": "Zombie",
+   "cr": "1/4",
+   "ac": 8,
+   "hp": 15,
+   "hpDice": "2d8+6",
+   "speed": 20,
+   "scores": {
+    "STR": 13,
+    "DEX": 6,
+    "CON": 16,
+    "INT": 3,
+    "WIS": 6,
+    "CHA": 5
+   },
+   "passivePerception": 8,
+   "languages": "Understands Common plus one other language but can’t speak",
+   "darkvision": 60,
+   "attacks": [
+    {
+     "name": "Slam",
+     "toHit": 3,
+     "damage": "1d8+1",
+     "type": "bludgeoning"
+    }
+   ]
+  },
+  "shadow": {
+   "name": "Shadow",
+   "cr": "1/2",
+   "ac": 12,
+   "hp": 27,
+   "hpDice": "5d8+5",
+   "speed": 40,
+   "scores": {
+    "STR": 6,
+    "DEX": 14,
+    "CON": 13,
+    "INT": 6,
+    "WIS": 10,
+    "CHA": 8
+   },
+   "passivePerception": 10,
+   "languages": "None",
+   "darkvision": 60,
+   "vulnerable": [
+    "radiant"
+   ],
+   "attacks": [
+    {
+     "name": "Draining Swipe",
+     "toHit": 4,
+     "damage": "1d6+2",
+     "type": "necrotic"
+    }
+   ]
+  },
+  "ghoul": {
+   "name": "Ghoul",
+   "cr": "1",
+   "ac": 12,
+   "hp": 22,
+   "hpDice": "5d8",
+   "speed": 30,
+   "scores": {
+    "STR": 13,
+    "DEX": 15,
+    "CON": 10,
+    "INT": 7,
+    "WIS": 10,
+    "CHA": 6
+   },
+   "passivePerception": 10,
+   "languages": "Common",
+   "darkvision": 60,
+   "attacks": [
+    {
+     "name": "Bite",
+     "toHit": 4,
+     "damage": "1d6+2",
+     "type": "piercing",
+     "extra": {
+      "dice": "1d6",
+      "type": "necrotic"
+     }
+    },
+    {
+     "name": "Claw",
+     "toHit": 4,
+     "damage": "1d4+2",
+     "type": "slashing"
+    }
+   ]
+  },
+  "giant-spider": {
+   "name": "Giant Spider",
+   "cr": "1",
+   "ac": 14,
+   "hp": 26,
+   "hpDice": "4d10+4",
+   "speed": 30,
+   "scores": {
+    "STR": 14,
+    "DEX": 16,
+    "CON": 12,
+    "INT": 2,
+    "WIS": 11,
+    "CHA": 4
+   },
+   "passivePerception": 14,
+   "languages": "None",
+   "darkvision": 60,
+   "attacks": [
+    {
+     "name": "Bite",
+     "toHit": 5,
+     "damage": "1d8+3",
+     "type": "piercing",
+     "extra": {
+      "dice": "2d6",
+      "type": "poison"
+     }
+    }
+   ]
+  }
+ },
+ "spells": {
+  "Acid Splash": {
+   "level": 0,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Alarm": {
+   "level": 1,
+   "classes": [
+    "ranger",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Animal Friendship": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "druid",
+    "ranger"
+   ],
+   "concentration": false
+  },
+  "Bane": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "cleric",
+    "warlock"
+   ],
+   "concentration": true
+  },
+  "Bless": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "paladin"
+   ],
+   "concentration": true
+  },
+  "Burning Hands": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Charm Person": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "druid",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Chill Touch": {
+   "level": 0,
+   "classes": [
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Chromatic Orb": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Color Spray": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Command": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "cleric",
+    "paladin"
+   ],
+   "concentration": false
+  },
+  "Comprehend Languages": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Create or Destroy Water": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Cure Wounds": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "cleric",
+    "druid",
+    "paladin",
+    "ranger"
+   ],
+   "concentration": false
+  },
+  "Dancing Lights": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Detect Evil and Good": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "paladin"
+   ],
+   "concentration": true
+  },
+  "Detect Magic": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "cleric",
+    "druid",
+    "paladin",
+    "ranger",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Detect Poison and Disease": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "druid",
+    "paladin",
+    "ranger"
+   ],
+   "concentration": true
+  },
+  "Disguise Self": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Dissonant Whispers": {
+   "level": 1,
+   "classes": [
+    "bard"
+   ],
+   "concentration": false
+  },
+  "Divine Favor": {
+   "level": 1,
+   "classes": [
+    "paladin"
+   ],
+   "concentration": false
+  },
+  "Divine Smite": {
+   "level": 1,
+   "classes": [
+    "paladin"
+   ],
+   "concentration": false
+  },
+  "Druidcraft": {
+   "level": 0,
+   "classes": [
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Eldritch Blast": {
+   "level": 0,
+   "classes": [
+    "warlock"
+   ],
+   "concentration": false
+  },
+  "Elementalism": {
+   "level": 0,
+   "classes": [
+    "druid",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Ensnaring Strike": {
+   "level": 1,
+   "classes": [
+    "ranger"
+   ],
+   "concentration": true
+  },
+  "Entangle": {
+   "level": 1,
+   "classes": [
+    "druid",
+    "ranger"
+   ],
+   "concentration": true
+  },
+  "Expeditious Retreat": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Faerie Fire": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "druid"
+   ],
+   "concentration": true
+  },
+  "False Life": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Feather Fall": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Find Familiar": {
+   "level": 1,
+   "classes": [
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Fire Bolt": {
+   "level": 0,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Floating Disk": {
+   "level": 1,
+   "classes": [
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Fog Cloud": {
+   "level": 1,
+   "classes": [
+    "druid",
+    "ranger",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Goodberry": {
+   "level": 1,
+   "classes": [
+    "druid",
+    "ranger"
+   ],
+   "concentration": false
+  },
+  "Grease": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Guidance": {
+   "level": 0,
+   "classes": [
+    "cleric",
+    "druid"
+   ],
+   "concentration": true
+  },
+  "Guiding Bolt": {
+   "level": 1,
+   "classes": [
+    "cleric"
+   ],
+   "concentration": false
+  },
+  "Healing Word": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "cleric",
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Hellish Rebuke": {
+   "level": 1,
+   "classes": [
+    "warlock"
+   ],
+   "concentration": false
+  },
+  "Heroism": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "paladin"
+   ],
+   "concentration": true
+  },
+  "Hex": {
+   "level": 1,
+   "classes": [
+    "warlock"
+   ],
+   "concentration": true
+  },
+  "Hideous Laughter": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Hunter's Mark": {
+   "level": 1,
+   "classes": [
+    "ranger"
+   ],
+   "concentration": true
+  },
+  "Ice Knife": {
+   "level": 1,
+   "classes": [
+    "druid",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Identify": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Illusory Script": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Inflict Wounds": {
+   "level": 1,
+   "classes": [
+    "cleric"
+   ],
+   "concentration": false
+  },
+  "Jump": {
+   "level": 1,
+   "classes": [
+    "druid",
+    "ranger",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Light": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "cleric",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Longstrider": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "druid",
+    "ranger",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Mage Armor": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Mage Hand": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Magic Missile": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Mending": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "cleric",
+    "druid",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Message": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "druid",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Minor Illusion": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Poison Spray": {
+   "level": 0,
+   "classes": [
+    "druid",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Prestidigitation": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Produce Flame": {
+   "level": 0,
+   "classes": [
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Protection from Evil and Good": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "druid",
+    "paladin",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Purify Food and Drink": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "druid",
+    "paladin"
+   ],
+   "concentration": false
+  },
+  "Ray of Frost": {
+   "level": 0,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Ray of Sickness": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Resistance": {
+   "level": 0,
+   "classes": [
+    "cleric",
+    "druid"
+   ],
+   "concentration": true
+  },
+  "Sacred Flame": {
+   "level": 0,
+   "classes": [
+    "cleric"
+   ],
+   "concentration": false
+  },
+  "Sanctuary": {
+   "level": 1,
+   "classes": [
+    "cleric"
+   ],
+   "concentration": false
+  },
+  "Searing Smite": {
+   "level": 1,
+   "classes": [
+    "paladin"
+   ],
+   "concentration": false
+  },
+  "Shield": {
+   "level": 1,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Shield of Faith": {
+   "level": 1,
+   "classes": [
+    "cleric",
+    "paladin"
+   ],
+   "concentration": true
+  },
+  "Shillelagh": {
+   "level": 0,
+   "classes": [
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Shocking Grasp": {
+   "level": 0,
+   "classes": [
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Silent Image": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Sleep": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": true
+  },
+  "Sorcerous Burst": {
+   "level": 0,
+   "classes": [
+    "sorcerer"
+   ],
+   "concentration": false
+  },
+  "Spare the Dying": {
+   "level": 0,
+   "classes": [
+    "cleric",
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Speak with Animals": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "druid",
+    "ranger",
+    "warlock"
+   ],
+   "concentration": false
+  },
+  "Starry Wisp": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "druid"
+   ],
+   "concentration": false
+  },
+  "Thaumaturgy": {
+   "level": 0,
+   "classes": [
+    "cleric"
+   ],
+   "concentration": false
+  },
+  "Thunderwave": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "druid",
+    "sorcerer",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "True Strike": {
+   "level": 0,
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Unseen Servant": {
+   "level": 1,
+   "classes": [
+    "bard",
+    "warlock",
+    "wizard"
+   ],
+   "concentration": false
+  },
+  "Vicious Mockery": {
+   "level": 0,
+   "classes": [
+    "bard"
+   ],
+   "concentration": false
+  }
+ },
+ "magicItems": {
+  "Adamantine Armor": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Ammunition": {
+   "rarity": "Uncommon (+1), Rare (+2), or Very Rare (+3)",
+   "attunement": false
+  },
+  "Ammunition of Slaying": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Amulet of Health": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Amulet of Proof against Detection and Location": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Amulet of the Planes": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Animated Shield": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Apparatus of the Crab": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Armor": {
+   "rarity": "Rare (+1), Very Rare (+2), or Legendary (+3)",
+   "attunement": false
+  },
+  "Armor of Invulnerability": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Armor of Resistance": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Armor of Vulnerability": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Arrow-Catching Shield": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Bag of Beans": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Bag of Devouring": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Bag of Holding": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Bag of Tricks": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Bead of Force": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Belt of Dwarvenkind": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Berserker Axe": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Boots of Elvenkind": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Boots of Levitation": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Boots of Speed": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Boots of Striding and Springing": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Boots of the Winterlands": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Bowl of Commanding Water Elementals": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Bracers of Archery": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Bracers of Defense": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Brazier of Commanding Fire Elementals": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Brooch of Shielding": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Broom of Flying": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Candle of Invocation": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Cape of the Mountebank": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Carpet of Flying": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Censer of Controlling Air Elementals": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Chime of Opening": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Circlet of Blasting": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Cloak of Arachnida": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Cloak of Displacement": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Cloak of Elvenkind": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Cloak of Protection": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Cloak of the Bat": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Cloak of the Manta Ray": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Crystal Ball": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Crystal Ball of Mind Reading": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Crystal Ball of Telepathy": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Crystal Ball of True Seeing": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Cube of Force": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Cubic Gate": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Dagger of Venom": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Dancing Sword": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Decanter of Endless Water": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Deck of Illusions": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Defender": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Demon Armor": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Dimensional Shackles": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Dragon Orb": {
+   "rarity": "Artifact",
+   "attunement": true
+  },
+  "Dragon Scale Mail": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Dragon Slayer": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Dust of Disappearance": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Dust of Dryness": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Dust of Sneezing and Choking": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Dwarven Plate": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Dwarven Thrower": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Efficient Quiver": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Efreeti Bottle": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Elemental Gem": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Elven Chain": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Eversmoking Bottle": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Eyes of Charming": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Eyes of Minute Seeing": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Eyes of the Eagle": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Flame Tongue": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Folding Boat": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Frost Brand": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Gauntlets of Ogre Power": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Gem of Brightness": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Gem of Seeing": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Giant Slayer": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Glamoured Studded Leather": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Gloves of Missile Snaring": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Gloves of Swimming and Climbing": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Goggles of Night": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Hammer of Thunderbolts": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Handy Haversack": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Hat of Disguise": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Headband of Intellect": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Helm of Brilliance": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Helm of Comprehending Languages": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Helm of Telepathy": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Helm of Teleportation": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Holy Avenger": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Horn of Blasting": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Horn of Valhalla": {
+   "rarity": "Rare (Silver or Brass), Very Rare (Bronze), or Legendary (Iron)",
+   "attunement": false
+  },
+  "Horseshoes of a Zephyr": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Horseshoes of Speed": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Immovable Rod": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Instant Fortress": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Iron Bands": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Iron Flask": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Javelin of Lightning": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Lantern of Revealing": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Luck Blade": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Mace of Disruption": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Mace of Smiting": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Mace of Terror": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Mantle of Spell Resistance": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Manual of Bodily Health": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Manual of Gainful Exercise": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Manual of Golems": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Manual of Quickness of Action": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Marvelous Pigments": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Medallion of Thoughts": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Mirror of Life Trapping": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Mithral Armor": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Mysterious Deck": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Necklace of Adaptation": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Necklace of Fireballs": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Necklace of Prayer Beads": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Nine Lives Stealer": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Oathbow": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Oil of Etherealness": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Oil of Sharpness": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Oil of Slipperiness": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Pearl of Power": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Periapt of Health": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Periapt of Proof against Poison": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Periapt of Wound Closure": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Philter of Love": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Pipes of Haunting": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Pipes of the Sewers": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Plate Armor of Etherealness": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Portable Hole": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Animal Friendship": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Potion of Clairvoyance": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Climbing": {
+   "rarity": "Common",
+   "attunement": false
+  },
+  "Potion of Diminution": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Flying": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Potion of Growth": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Potion of Gaseous Form": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Heroism": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Invisibility": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Mind Reading": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Potion of Poison": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Potion of Resistance": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Potion of Speed": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Potion of Water Breathing": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Ring of Animal Influence": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Ring of Djinni Summoning": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Ring of Elemental Command": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Ring of Evasion": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Ring of Feather Falling": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Ring of Free Action": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Ring of Invisibility": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Ring of Jumping": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Ring of Mind Shielding": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Ring of Protection": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Ring of Regeneration": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Ring of Resistance": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Ring of Shooting Stars": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Ring of Spell Storing": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Ring of Spell Turning": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Ring of Swimming": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Ring of Telekinesis": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Ring of the Ram": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Ring of Three Wishes": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Ring of Warmth": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Ring of Water Walking": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Ring of X-ray Vision": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Robe of Eyes": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Robe of Scintillating Colors": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Robe of Stars": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Robe of the Archmagi": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Robe of Useful Items": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Rod of Absorption": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Rod of Alertness": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Rod of Lordly Might": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Rod of Rulership": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Rod of Security": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Rope of Climbing": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Rope of Entanglement": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Scarab of Protection": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Scimitar of Speed": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Shield": {
+   "rarity": "Uncommon (+1), Rare (+2), or Very Rare (+3)",
+   "attunement": false
+  },
+  "Shield of Missile Attraction": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Slippers of Spider Climbing": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Sovereign Glue": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Spellguard Shield": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Sphere of Annihilation": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Staff of Charming": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Staff of Fire": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Staff of Frost": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Staff of Healing": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Staff of Power": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Staff of Striking": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Staff of Swarming Insects": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Staff of the Magi": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Staff of the Python": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Staff of the Woodlands": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Staff of Thunder and Lightning": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Staff of Withering": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Stone of Controlling Earth Elementals": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Stone of Good Luck (Luckstone)": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Sun Blade": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Sword of Life Stealing": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Sword of Sharpness": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Sword of Wounding": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Talisman of Pure Good": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Talisman of the Sphere": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Talisman of Ultimate Evil": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Tome of Clear Thought": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Tome of Leadership and Influence": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Tome of Understanding": {
+   "rarity": "Very Rare",
+   "attunement": false
+  },
+  "Trident of Fish Command": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Universal Solvent": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Vicious Weapon": {
+   "rarity": "Rare",
+   "attunement": false
+  },
+  "Vorpal Sword": {
+   "rarity": "Legendary",
+   "attunement": true
+  },
+  "Wand of Binding": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Wand of Enemy Detection": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Wand of Fear": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Wand of Fireballs": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Wand of Lightning Bolts": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Wand of Magic Detection": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Wand of Magic Missiles": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Wand of Paralysis": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Wand of Polymorph": {
+   "rarity": "Very Rare",
+   "attunement": true
+  },
+  "Wand of Secrets": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Wand of the War Mage": {
+   "rarity": "Uncommon (+1), Rare (+2), or Very Rare (+3)",
+   "attunement": true
+  },
+  "Wand of Web": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Wand of Wonder": {
+   "rarity": "Rare",
+   "attunement": true
+  },
+  "Weapon": {
+   "rarity": "Uncommon (+1), Rare (+2), or Very Rare (+3)",
+   "attunement": false
+  },
+  "Weapon of Warning": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Well of Many Worlds": {
+   "rarity": "Legendary",
+   "attunement": false
+  },
+  "Wind Fan": {
+   "rarity": "Uncommon",
+   "attunement": false
+  },
+  "Winged Boots": {
+   "rarity": "Uncommon",
+   "attunement": true
+  },
+  "Wings of Flying": {
+   "rarity": "Rare",
+   "attunement": true
+  }
+ }
+}

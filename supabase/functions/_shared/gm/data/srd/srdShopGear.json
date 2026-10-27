@@ -1,0 +1,1091 @@
+{
+ "_source": "System Reference Document 5.2.1 (Wizards of the Coast), CC BY 4.0, https://www.dndbeyond.com/srd. Extracted 15 Oct 2026 from SRD_CC_v5.2.1.pdf pp. 89-102 by Grok Bot. Weapons and armor are NOT here: they already live in src/game/rules/srdGear.ts.",
+ "_sell_rule": "SRD 5.2.1 p.89: 'Equipment fetches half its cost when sold. In contrast, trade goods and valuables—like gems and art objects—retain their full value in the marketplace.'",
+ "_units": "cp = cost in copper (1 GP = 10 SP = 100 CP), matching srdGear.ts costs in copper.",
+ "_not_here": "Weapons, Armor and Shield prices: src/game/rules/srdGear.ts (srdGearCostCp). Magic item prices: src/data/srd/srd521.json magicItems / rules/magicItems.ts. Coins: rules/coins.ts and rules/coinTables.ts.",
+ "tools": [
+  {
+   "name": "Alchemist’s Supplies",
+   "category": "tool",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Brewer’s Supplies",
+   "category": "tool",
+   "cost": "20 GP",
+   "cp": 2000
+  },
+  {
+   "name": "Calligrapher’s Supplies",
+   "category": "tool",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Carpenter’s Tools",
+   "category": "tool",
+   "cost": "8 GP",
+   "cp": 800
+  },
+  {
+   "name": "Cartographer’s Tools",
+   "category": "tool",
+   "cost": "15 GP",
+   "cp": 1500
+  },
+  {
+   "name": "Cobbler’s Tools",
+   "category": "tool",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Cook’s Utensils",
+   "category": "tool",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Glassblower’s Tools",
+   "category": "tool",
+   "cost": "30 GP",
+   "cp": 3000
+  },
+  {
+   "name": "Jeweler’s Tools",
+   "category": "tool",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Leatherworker’s Tools",
+   "category": "tool",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Mason’s Tools",
+   "category": "tool",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Painter’s Supplies",
+   "category": "tool",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Potter’s Tools",
+   "category": "tool",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Smith’s Tools",
+   "category": "tool",
+   "cost": "20 GP",
+   "cp": 2000
+  },
+  {
+   "name": "Tinker’s Tools",
+   "category": "tool",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Navigator’s Tools",
+   "category": "tool",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Poisoner’s Kit",
+   "category": "tool",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Weaver’s Tools",
+   "category": "tool",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Thieves’ Tools",
+   "category": "tool",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Woodcarver’s Tools",
+   "category": "tool",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Disguise Kit",
+   "category": "tool",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Forgery Kit",
+   "category": "tool",
+   "cost": "15 GP",
+   "cp": 1500
+  },
+  {
+   "name": "Herbalism Kit",
+   "category": "tool",
+   "cost": "5 GP",
+   "cp": 500
+  }
+ ],
+ "adventuring_gear": [
+  {
+   "name": "Acid",
+   "category": "gear",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Alchemist’s Fire",
+   "category": "gear",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Blanket",
+   "category": "gear",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Antitoxin",
+   "category": "gear",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Backpack",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Ball Bearings",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Barrel",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Basket",
+   "category": "gear",
+   "cost": "4 SP",
+   "cp": 40
+  },
+  {
+   "name": "Bedroll",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Bell",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Block and Tackle",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Book",
+   "category": "gear",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Bottle, Glass",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Bucket",
+   "category": "gear",
+   "cost": "5 CP",
+   "cp": 5
+  },
+  {
+   "name": "Burglar’s Pack",
+   "category": "gear",
+   "cost": "16 GP",
+   "cp": 1600
+  },
+  {
+   "name": "Caltrops",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Candle",
+   "category": "gear",
+   "cost": "1 CP",
+   "cp": 1
+  },
+  {
+   "name": "Case, Crossbow Bolt",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Case, Map or Scroll",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Chain",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Chest",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Entertainer’s Pack",
+   "category": "gear",
+   "cost": "40 GP",
+   "cp": 4000
+  },
+  {
+   "name": "Climber’s Kit",
+   "category": "gear",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Clothes, Fine",
+   "category": "gear",
+   "cost": "15 GP",
+   "cp": 1500
+  },
+  {
+   "name": "Clothes, Traveler’s",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Component Pouch",
+   "category": "gear",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Costume",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Crowbar",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Diplomat’s Pack",
+   "category": "gear",
+   "cost": "39 GP",
+   "cp": 3900
+  },
+  {
+   "name": "Explorer’s Pack",
+   "category": "gear",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Flask",
+   "category": "gear",
+   "cost": "2 CP",
+   "cp": 2
+  },
+  {
+   "name": "Grappling Hook",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Healer’s Kit",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Dungeoneer’s Pack",
+   "category": "gear",
+   "cost": "12 GP",
+   "cp": 1200
+  },
+  {
+   "name": "Holy Water",
+   "category": "gear",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Hunting Trap",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Ink",
+   "category": "gear",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Ink Pen",
+   "category": "gear",
+   "cost": "2 CP",
+   "cp": 2
+  },
+  {
+   "name": "Jug",
+   "category": "gear",
+   "cost": "2 CP",
+   "cp": 2
+  },
+  {
+   "name": "Ladder",
+   "category": "gear",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Lamp",
+   "category": "gear",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Lantern, Bullseye",
+   "category": "gear",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Lantern, Hooded",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Lock",
+   "category": "gear",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Magnifying Glass",
+   "category": "gear",
+   "cost": "100 GP",
+   "cp": 10000
+  },
+  {
+   "name": "Manacles",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Map",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Mirror",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Net",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Oil",
+   "category": "gear",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Ram, Portable",
+   "category": "gear",
+   "cost": "4 GP",
+   "cp": 400
+  },
+  {
+   "name": "Parchment",
+   "category": "gear",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Robe",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Paper",
+   "category": "gear",
+   "cost": "2 SP",
+   "cp": 20
+  },
+  {
+   "name": "Perfume",
+   "category": "gear",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Poison, Basic",
+   "category": "gear",
+   "cost": "100 GP",
+   "cp": 10000
+  },
+  {
+   "name": "Pole",
+   "category": "gear",
+   "cost": "5 CP",
+   "cp": 5
+  },
+  {
+   "name": "Pot, Iron",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Potion of Healing",
+   "category": "gear",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Pouch",
+   "category": "gear",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Priest’s Pack",
+   "category": "gear",
+   "cost": "33 GP",
+   "cp": 3300
+  },
+  {
+   "name": "Quiver",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Rations",
+   "category": "gear",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Rope",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Sack",
+   "category": "gear",
+   "cost": "1 CP",
+   "cp": 1
+  },
+  {
+   "name": "Scholar’s Pack",
+   "category": "gear",
+   "cost": "40 GP",
+   "cp": 4000
+  },
+  {
+   "name": "Shovel",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Signal Whistle",
+   "category": "gear",
+   "cost": "5 CP",
+   "cp": 5
+  },
+  {
+   "name": "Spikes, Iron",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Spyglass",
+   "category": "gear",
+   "cost": "1,000 GP",
+   "cp": 100000
+  },
+  {
+   "name": "String",
+   "category": "gear",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Tent",
+   "category": "gear",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Tinderbox",
+   "category": "gear",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Torch",
+   "category": "gear",
+   "cost": "1 CP",
+   "cp": 1
+  },
+  {
+   "name": "Vial",
+   "category": "gear",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Waterskin",
+   "category": "gear",
+   "cost": "2 SP",
+   "cp": 20
+  },
+  {
+   "name": "Spell Scroll (Cantrip)",
+   "category": "gear",
+   "cost": "30 GP",
+   "cp": 3000
+  },
+  {
+   "name": "Spell Scroll (Level 1)",
+   "category": "gear",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Arrows (20, in a Quiver)",
+   "category": "ammunition",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Bolts (20, in a Case)",
+   "category": "ammunition",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Bullets, Firearm (10, in a Pouch)",
+   "category": "ammunition",
+   "cost": "3 GP",
+   "cp": 300
+  },
+  {
+   "name": "Bullets, Sling (20, in a Pouch)",
+   "category": "ammunition",
+   "cost": "4 CP",
+   "cp": 4
+  },
+  {
+   "name": "Needles (50, in a Pouch)",
+   "category": "ammunition",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Arcane Focus: Crystal",
+   "category": "focus",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Arcane Focus: Orb",
+   "category": "focus",
+   "cost": "20 GP",
+   "cp": 2000
+  },
+  {
+   "name": "Arcane Focus: Rod",
+   "category": "focus",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Arcane Focus: Staff (also a Quarterstaff)",
+   "category": "focus",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Arcane Focus: Wand",
+   "category": "focus",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Druidic Focus: Sprig of mistletoe",
+   "category": "focus",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Druidic Focus: Wooden staff (also a Quarterstaff)",
+   "category": "focus",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Druidic Focus: Yew wand",
+   "category": "focus",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Holy Symbol: Amulet",
+   "category": "focus",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Holy Symbol: Emblem",
+   "category": "focus",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Holy Symbol: Reliquary",
+   "category": "focus",
+   "cost": "5 GP",
+   "cp": 500
+  },
+  {
+   "name": "Gaming Set: Dice",
+   "category": "tool",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Gaming Set: Dragonchess",
+   "category": "tool",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Gaming Set: Playing cards",
+   "category": "tool",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Gaming Set: Three-dragon ante",
+   "category": "tool",
+   "cost": "1 GP",
+   "cp": 100
+  },
+  {
+   "name": "Bagpipes",
+   "category": "instrument",
+   "cost": "30 GP",
+   "cp": 3000
+  },
+  {
+   "name": "Drum",
+   "category": "instrument",
+   "cost": "6 GP",
+   "cp": 600
+  },
+  {
+   "name": "Dulcimer",
+   "category": "instrument",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Flute",
+   "category": "instrument",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Horn",
+   "category": "instrument",
+   "cost": "3 GP",
+   "cp": 300
+  },
+  {
+   "name": "Lute",
+   "category": "instrument",
+   "cost": "35 GP",
+   "cp": 3500
+  },
+  {
+   "name": "Lyre",
+   "category": "instrument",
+   "cost": "30 GP",
+   "cp": 3000
+  },
+  {
+   "name": "Pan flute",
+   "category": "instrument",
+   "cost": "12 GP",
+   "cp": 1200
+  },
+  {
+   "name": "Shawm",
+   "category": "instrument",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Viol",
+   "category": "instrument",
+   "cost": "30 GP",
+   "cp": 3000
+  }
+ ],
+ "mounts": [
+  {
+   "name": "Camel",
+   "category": "mount",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Elephant",
+   "category": "mount",
+   "cost": "200 GP",
+   "cp": 20000
+  },
+  {
+   "name": "Horse, Draft",
+   "category": "mount",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Horse, Riding",
+   "category": "mount",
+   "cost": "75 GP",
+   "cp": 7500
+  },
+  {
+   "name": "Mastiff",
+   "category": "mount",
+   "cost": "25 GP",
+   "cp": 2500
+  },
+  {
+   "name": "Mule",
+   "category": "mount",
+   "cost": "8 GP",
+   "cp": 800
+  },
+  {
+   "name": "Pony",
+   "category": "mount",
+   "cost": "30 GP",
+   "cp": 3000
+  },
+  {
+   "name": "Warhorse",
+   "category": "mount",
+   "cost": "400 GP",
+   "cp": 40000
+  }
+ ],
+ "tack_and_vehicles": [
+  {
+   "name": "Carriage",
+   "category": "tack_vehicle",
+   "cost": "100 GP",
+   "cp": 10000
+  },
+  {
+   "name": "Cart",
+   "category": "tack_vehicle",
+   "cost": "15 GP",
+   "cp": 1500
+  },
+  {
+   "name": "Chariot",
+   "category": "tack_vehicle",
+   "cost": "250 GP",
+   "cp": 25000
+  },
+  {
+   "name": "Feed (per day)",
+   "category": "tack_vehicle",
+   "cost": "5 CP",
+   "cp": 5
+  },
+  {
+   "name": "Saddle, Exotic",
+   "category": "tack_vehicle",
+   "cost": "60 GP",
+   "cp": 6000
+  },
+  {
+   "name": "Saddle, Military",
+   "category": "tack_vehicle",
+   "cost": "20 GP",
+   "cp": 2000
+  },
+  {
+   "name": "Saddle, Riding",
+   "category": "tack_vehicle",
+   "cost": "10 GP",
+   "cp": 1000
+  },
+  {
+   "name": "Sled",
+   "category": "tack_vehicle",
+   "cost": "20 GP",
+   "cp": 2000
+  },
+  {
+   "name": "Stabling (per day)",
+   "category": "tack_vehicle",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Wagon",
+   "category": "tack_vehicle",
+   "cost": "35 GP",
+   "cp": 3500
+  }
+ ],
+ "ships": [
+  {
+   "name": "Airship",
+   "category": "ship",
+   "cost": "40,000 GP",
+   "cp": 4000000
+  },
+  {
+   "name": "Galley",
+   "category": "ship",
+   "cost": "30,000 GP",
+   "cp": 3000000
+  },
+  {
+   "name": "Keelboat",
+   "category": "ship",
+   "cost": "3,000 GP",
+   "cp": 300000
+  },
+  {
+   "name": "Longship",
+   "category": "ship",
+   "cost": "10,000 GP",
+   "cp": 1000000
+  },
+  {
+   "name": "Rowboat",
+   "category": "ship",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Sailing Ship",
+   "category": "ship",
+   "cost": "10,000 GP",
+   "cp": 1000000
+  },
+  {
+   "name": "Warship",
+   "category": "ship",
+   "cost": "25,000 GP",
+   "cp": 2500000
+  }
+ ],
+ "food_drink_lodging": [
+  {
+   "name": "Ale (mug)",
+   "cost": "4 CP",
+   "cp": 4
+  },
+  {
+   "name": "Bread (loaf)",
+   "cost": "2 CP",
+   "cp": 2
+  },
+  {
+   "name": "Cheese (wedge)",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Inn stay per day, Squalid",
+   "cost": "7 CP",
+   "cp": 7
+  },
+  {
+   "name": "Inn stay per day, Poor",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Inn stay per day, Modest",
+   "cost": "5 SP",
+   "cp": 50
+  },
+  {
+   "name": "Inn stay per day, Comfortable",
+   "cost": "8 SP",
+   "cp": 80
+  },
+  {
+   "name": "Inn stay per day, Wealthy",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Inn stay per day, Aristocratic",
+   "cost": "4 GP",
+   "cp": 400
+  },
+  {
+   "name": "Meal, Squalid",
+   "cost": "1 CP",
+   "cp": 1
+  },
+  {
+   "name": "Meal, Poor",
+   "cost": "2 CP",
+   "cp": 2
+  },
+  {
+   "name": "Meal, Modest",
+   "cost": "1 SP",
+   "cp": 10
+  },
+  {
+   "name": "Meal, Comfortable",
+   "cost": "2 SP",
+   "cp": 20
+  },
+  {
+   "name": "Meal, Wealthy",
+   "cost": "3 SP",
+   "cp": 30
+  },
+  {
+   "name": "Meal, Aristocratic",
+   "cost": "6 SP",
+   "cp": 60
+  },
+  {
+   "name": "Wine (bottle), Common",
+   "cost": "2 SP",
+   "cp": 20
+  },
+  {
+   "name": "Wine (bottle), Fine",
+   "cost": "10 GP",
+   "cp": 1000
+  }
+ ],
+ "services": [
+  {
+   "name": "Skilled hireling, per day",
+   "cost": "2 GP",
+   "cp": 200
+  },
+  {
+   "name": "Untrained hireling, per day",
+   "cost": "2 SP",
+   "cp": 20
+  },
+  {
+   "name": "Messenger, per mile",
+   "cost": "2 CP",
+   "cp": 2
+  },
+  {
+   "name": "Spellcasting: cantrip (village, town or city)",
+   "cost": "30 GP",
+   "cp": 3000
+  },
+  {
+   "name": "Spellcasting: level 1 (village, town or city)",
+   "cost": "50 GP",
+   "cp": 5000
+  },
+  {
+   "name": "Spellcasting: level 2 (village, town or city)",
+   "cost": "200 GP",
+   "cp": 20000
+  },
+  {
+   "name": "Spellcasting: level 3 (town or city only)",
+   "cost": "300 GP",
+   "cp": 30000
+  },
+  {
+   "name": "Spellcasting: level 4-5 (town or city only)",
+   "cost": "2,000 GP",
+   "cp": 200000
+  },
+  {
+   "name": "Spellcasting: level 6-8 (city only)",
+   "cost": "20,000 GP",
+   "cp": 2000000
+  },
+  {
+   "name": "Spellcasting: level 9 (city only)",
+   "cost": "100,000 GP",
+   "cp": 10000000
+  }
+ ]
+}
