@@ -52,6 +52,16 @@ export type OpeningMode = 'scene' | 'weave';
 
 /** Pointers the writer expands into a unique first page. Not a script to reprint. */
 export interface OpeningBeatCard {
+  /** C6 — who you are (PC role on this opener). Authored; never invent at runtime. */
+  who?: string;
+  /** C6 — how you got here. Prefer over summonIntent when both exist. */
+  how?: string;
+  /** C6 — where you are. Prefer over location when both exist. */
+  where?: string;
+  /** C6 — who is here. Prefer over faction when both exist. */
+  whoHere?: string;
+  /** C6 — what is pressing right now. Authored; never invent at runtime. */
+  pressing?: string;
   location?: string;
   /** Who summoned / who is in the room. */
   faction?: string;

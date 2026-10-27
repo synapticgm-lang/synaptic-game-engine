@@ -34,6 +34,8 @@ const summonedPactBase: CampaignBible = {
   /** Code picks one per New Game (seed). Pointers, not a script — writer builds the page. */
   openingHooks: [
     {
+      who: 'an Earth stranger pulled as Pactborn, still in street clothes',
+      pressing: 'They need a name before they will say what the wrong Mark means.',
       location: 'The Sevenfold Circle under Valespire Cathedral',
       faction: 'High Chanter Orel Vane and Crown handlers of Pellane',
       castNpcIds: ['sp-npc-1'],
@@ -51,6 +53,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Your Earth clothes are still on you.',
     },
     {
+      who: 'an Earth stranger scraped into a war-camp circle as a body for the line',
+      pressing: 'The captain is already deciding whether to kit you or send you forward without a weapon.',
       location: 'Pellane war camp beyond Valespire walls',
       faction: 'Captain Sera Quill and camp handlers',
       castNpcIds: ['sp-npc-2'],
@@ -68,6 +72,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then mud and banner-smoke. You are on your back in a war-camp circle scraped into dirt outside Valespire’s walls. Armored handlers shout over horn-calls. A blue panel hangs at eye level. Someone wanted a hero yesterday. The Mark on you is already an argument.',
     },
     {
+      who: 'an Earth stranger summoned as bait behind iron bars',
+      pressing: 'The handler wants a name and an oath before the grate opens.',
       location: 'a barred undercroft cell beneath Valespire Cathedral',
       faction: 'A handler on the far side of the grate, treating you as bait',
       summonIntent: 'The rite succeeded in a cell, not a welcome hall. They summoned a lure, or they are hiding a failed Mark.',
@@ -84,6 +90,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then iron bars. You are on a stone bench in a cell under the cathedral, not a welcome hall. A blue panel hangs in the dark. A handler on the other side of the grate calls you bait. Your Earth clothes are still on you.',
     },
     {
+      who: 'an Earth stranger summoned as arena sport for a betting crowd',
+      pressing: 'The masters want a name for the slate before the first bout is called.',
       location: 'the blood-sand arena of Valespire',
       faction: 'Arena masters and robes at the rail, with a crowd already betting',
       summonIntent: 'Entertainment first, hero second. They summoned a body the city can watch die or win.',
@@ -100,6 +108,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then sand and noise. You are on your back in an arena circle while a crowd already bets. Robes at the rail. A blue panel hangs private. Nobody asked if you wanted to be entertainment.',
     },
     {
+      who: 'an Earth stranger pulled by a denied-god cult the Crown will not admit',
+      pressing: 'The cult wants a miracle named before someone upstairs calls this Pellane’s summon.',
       location: 'a Lowmarket cellar shrine under Valespire',
       faction: 'A denied-god cult the Crown will not admit exists',
       summonIntent: 'Wrong gods, wrong chant. They wanted a miracle. They got you. Someone upstairs will still call this Pellane’s summon.',
@@ -116,6 +126,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then candle-smoke in a cellar. Wrong gods, wrong chant. You are on your back in a cult circle the Crown will deny. A blue panel hangs. Someone upstairs will still call this Pellane’s summon anyway.',
     },
     {
+      who: 'an Earth stranger pulled while the cathedral is under fire',
+      pressing: 'The ceiling is cracking; the handler needs a name before the next hit lands.',
       location: 'The Sevenfold Circle under bombardment',
       faction: 'Scattered Scale priests and a panicked handler, ceiling already cracking',
       summonIntent: 'They finished the rite while the city was hit. There is no orderly welcome.',
@@ -132,6 +144,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then a vault under fire. You are on your back in the seven-ring circle while dust and ash fall through the chant. A blue panel hangs. The Mark is wrong and the ceiling is already cracking.',
     },
     {
+      who: 'an Earth stranger pulled into a festival you were not named for',
+      pressing: 'Panicked handlers need a name before the crowd decides what you are.',
       location: 'Valespire peace-festival square',
       faction: 'Festival crowd plus panicked handlers who caught the wrong person',
       summonIntent: 'The pull took you from Earth into a festival square. You were not the name on the rite.',
@@ -148,6 +162,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then festival noise. You hit public stones; the street you were walking is gone. Handlers freeze. A blue panel hangs. One whisper: “Wrong catch.”',
     },
     {
+      who: 'an Earth stranger pulled far from the capital by a rural mistake',
+      pressing: 'One frightened priest needs a name before he decides to hide you or run.',
       location: 'a wayside shrine on the Valespire road',
       faction: 'One frightened priest, no capital audience',
       summonIntent: 'One mistake on a rural circle. They did not mean to pull an Earth soul this far from the city.',
@@ -164,6 +180,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then quiet rural stone. One priest, one mistake, no capital audience. You are on your back in a roadside shrine circle. A blue panel hangs. The road to Valespire is still miles of dust.',
     },
     {
+      who: 'an Earth stranger pulled by Ash Court priests as Calamity proof',
+      pressing: 'They want the Mark read aloud as evidence against Pellane before you can leave.',
       location: 'an Ash-adjacent ritual hall',
       faction: 'Ash Court priests who will swear the Crown summoned you',
       summonIntent: 'Ash Court priests want a Calamity Mark as proof the Scale rejected Pellane.',
@@ -180,6 +198,8 @@ const summonedPactBase: CampaignBible = {
         'Burnt iron and a jagged circle. Ash Court priests stand over you. A blue panel hangs. A wrapped ember-blade is a deal, not yours yet.',
     },
     {
+      who: 'an Earth stranger among four bodies in a mass summon',
+      pressing: 'Staff are arguing who is Pactborn, who is Marked, and who was extra — starting with your name.',
       location: 'The Sevenfold Circle — four rings occupied',
       faction: 'Crown ritual staff arguing over a mass summon',
       summonIntent: 'Four bodies. Politics in the first breath: who is Pactborn, who is Marked, who was extra.',
@@ -196,6 +216,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then three other people on neighboring rings. A mass summon. The room is already arguing who is Pactborn, who is Marked, and who was extra. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you.',
     },
     {
+      who: 'an Earth stranger summoned as a living treaty token',
+      pressing: 'Both envoys want you named as theirs before the pause can be signed.',
       location: 'a treaty tent on the Cinderflow road',
       faction: 'Pellane and Ash Court envoys using you as a living token',
       summonIntent: 'They summoned a soul to sign a pause in the war. Both sides want you named as theirs.',
@@ -212,6 +234,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then canvas and lamp-smoke. You are on your back in a treaty tent on the Cinderflow road. Two sets of seals wait on one table. A blue panel hangs at eye level. Both sides already want your name on a banner.',
     },
     {
+      who: 'an Earth stranger pulled by smugglers who stole a Scale rite',
+      pressing: 'They need a name and a story before the Crown hears the circle worked.',
       location: 'a harbor circle in the hold of a Valespire grain-ship',
       faction: 'Smugglers who stole a Scale rite and panicked when it worked',
       summonIntent: 'They wanted luck for a cargo run. They pulled an Earth soul. The Crown does not know yet.',
@@ -228,6 +252,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then timber and tar. You are on your back in a chalk circle in the hold of a grain-ship leaving Valespire. A blue panel hangs at eye level. The people here were not supposed to make this work.',
     },
     {
+      who: 'an Earth stranger left over from a failed west-wall rite',
+      pressing: 'Scavengers and late militia want to know whose leftover you are.',
       location: 'a ruined empty circle outside the west wall',
       faction: 'No priests — scavengers and a militia patrol arriving late',
       summonIntent: 'The rite already failed for someone else. You are leftover. The circle is cracked and cold.',
@@ -244,6 +270,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then open sky. You are on cracked brass rings outside Valespire’s west wall. The circle is empty of priests. A blue panel hangs at eye level. Footsteps are already coming — scavengers, or the watch.',
     },
     {
+      who: 'an Earth stranger summoned when the court ordered a healer-hero',
+      pressing: 'Chirurgeons need a name while they argue that your Mark does not match the order.',
       location: 'the cathedral infirmary',
       faction: 'Field chirurgeons who expected a healer-hero, not a stranger in Earth clothes',
       summonIntent: 'The court paid for a Pactborn who could close wounds. The Mark on you does not match the order.',
@@ -260,6 +288,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes.',
     },
     {
+      who: 'an Earth stranger left alone at alone in an abandoned barn in Pellane country',
+      pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in an abandoned barn in Pellane country',
       faction: 'Nobody here — the summoners are gone, delayed, or never came',
       summonIntent:
@@ -281,6 +311,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then quiet. You are alone on the floor of an abandoned barn — four walls, most of a roof, stained plaster stalls. A blue panel hangs at eye level — private, yours. Nobody is here.',
     },
     {
+      who: 'an Earth stranger left alone at alone in a ruined bathhouse off the Valespire roads',
+      pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a ruined bathhouse off the Valespire roads',
       faction: 'Nobody here — the circle worked and the people did not stay',
       summonIntent:
@@ -302,6 +334,8 @@ const summonedPactBase: CampaignBible = {
         'Rain through a cracked dome. You are alone on ceramic tiles in a ruined bathhouse. A blue panel hangs in the draft. Nobody came to greet you.',
     },
     {
+      who: 'an Earth stranger left alone at alone in a half-collapsed watchtower on the edge of wild country',
+      pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a half-collapsed watchtower on the edge of wild country',
       faction: 'Nobody here — empty ruin, empty sky',
       summonIntent:
@@ -323,6 +357,8 @@ const summonedPactBase: CampaignBible = {
         'Wind over wild-country ash. You are alone in the stump of a watchtower; half the roof is gone. A blue panel hangs in the cold. Your Earth clothes are still on you.',
     },
     {
+      who: 'an Earth stranger left alone at alone in a gutted market hall with no roof',
+      pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a gutted market hall with no roof',
       faction: 'Nobody here — only standing walls and empty window holes',
       summonIntent:
@@ -344,6 +380,8 @@ const summonedPactBase: CampaignBible = {
         'Open sky inside a gutted market hall. The roof is gone; four stone walls stand in grass. A blue panel hangs in daylight. You are alone.',
     },
     {
+      who: 'an Earth stranger left alone at alone on the stone outline of a building that is gone',
+      pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone on the stone outline of a building that is gone',
       faction: 'Nobody here — only a footprint in the grass',
       summonIntent:
@@ -365,6 +403,8 @@ const summonedPactBase: CampaignBible = {
         'Light, then grass and cold foundation stones. You are alone on the outline of a building that is gone — a rectangle in the turf, no walls left. A blue panel hangs at eye level. Your Earth clothes are still on you. The horizon is empty of people.',
     },
     {
+      who: 'an Earth stranger left alone at alone in a burnt roadside waystation',
+      pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a burnt roadside waystation',
       faction: 'Nobody here — ash, charcoal ribs, no living summons',
       summonIntent:

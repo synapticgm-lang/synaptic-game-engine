@@ -44,6 +44,7 @@ import {
   resolveLockedOpeningPlace,
   resolveOpeningHookPick,
 } from './openingEstablishment';
+import { openingChecklistFields, openingSceneFromChecklist } from './openingChecklist';
 
 import { hashSeed } from './seededRng';
 export { cleanPlaceLabel };
@@ -140,7 +141,7 @@ export function ensureStarterLookCharacter<T extends GameState['character']>(cha
 }
 
 function looksLikePointerDump(hook: string): boolean {
-  return /^(Place:|Location:|Who is here|Why this happened|Opening offer)/m.test(hook);
+  return /^(Place:|Location:|Who you are:|How you got here:|Who is here|Why this happened|What's pressing:|Opening offer)/m.test(hook);
 }
 
 function baseSceneFromCard(state: GameState): string {
@@ -157,6 +158,22 @@ function baseSceneFromCard(state: GameState): string {
     || picked?.fallback?.trim()
     || '';
   if (hook && !looksLikePointerDump(hook)) return hook;
+  // C6: when page1 is missing, build from authored checklist fields — never generic filler.
+  const checklist = openingChecklistFields(
+    picked
+      ? {
+          who: picked.who,
+          how: picked.how,
+          where: picked.where ?? picked.location,
+          whoHere: picked.whoHere ?? picked.faction,
+          pressing: picked.pressing,
+          location: picked.location,
+          faction: picked.faction,
+          summonIntent: picked.summonIntent,
+        }
+      : undefined
+  );
+  if (checklist) return openingSceneFromChecklist(checklist);
   if (looksLikePointerDump(hook) || looksLikePointerDump(state.openingEstablishment?.pickedHook ?? '')) {
     return (
       picked?.page1
