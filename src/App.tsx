@@ -25,6 +25,7 @@ import { BootSplash, AuthOverlay, WelcomeSplash } from '@/components/BootScreens
 import { AutoSaveIndicator } from '@/components/AutoSaveIndicator';
 import { AutoFightWarningModal } from '@/components/AutoFightWarningModal';
 import { AutoFightTipModal, isAutoFightTipDismissed } from '@/components/AutoFightTipModal';
+import { ShowPlayerLinesTipModal, isShowPlayerLinesTipDismissed } from '@/components/ShowPlayerLinesTipModal';
 import { DiceTrayToolbar } from '@/components/qol/DiceTrayToolbar';
 import { modeProfile } from '@/game/rules/modeProfile';
 import { EpitaphBar } from '@/components/qol/EpitaphBar';
@@ -59,6 +60,7 @@ export default function App() {
   const [showDebug, setShowDebug] = useState(false);
   const [showGMLibrary, setShowGMLibrary] = useState(false);
   const [showAutoFightTip, setShowAutoFightTip] = useState(false);
+  const [showPlayerLinesTip, setShowPlayerLinesTip] = useState(false);
 
   useEffect(() => {
     if (!game.showLoadingOverlay) { setElapsed(0); return; }
@@ -92,6 +94,21 @@ export default function App() {
     userInGame,
     game.state?.saveId,
     game.state?.engineMode,
+    game.state?.openingEstablishment?.complete,
+  ]);
+
+  // One-time tip on the first turn: player lines are hidden by default.
+  useEffect(() => {
+    if (!userInGame || !game.state) return;
+    if (isShowPlayerLinesTipDismissed()) return;
+    if (game.state.openingEstablishment && !game.state.openingEstablishment.complete) return;
+    if ((game.state.turn ?? 0) < 1) return;
+    const t = window.setTimeout(() => setShowPlayerLinesTip(true), 700);
+    return () => window.clearTimeout(t);
+  }, [
+    userInGame,
+    game.state?.saveId,
+    game.state?.turn,
     game.state?.openingEstablishment?.complete,
   ]);
 
@@ -390,6 +407,7 @@ export default function App() {
             onAcceptBeautyOffer={game.acceptBeautyOffer}
             onDismissBeautyOffer={game.dismissBeautyOffer}
             contentMode={game.settings.contentMode}
+            showPlayerLines={!!game.settings.showPlayerLines}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
             onUseBuiltSheet={game.applyBuiltSheet}
@@ -717,7 +735,7 @@ export default function App() {
         />
       )}
 
-      {showAutoFightTip && !game.autoFightWarning && (
+      {showAutoFightTip && !game.autoFightWarning && !showPlayerLinesTip && (
         <AutoFightTipModal
           combatResolveMode={game.settings.combatResolveMode ?? 'full'}
           onEnableAuto={() => {
@@ -727,6 +745,19 @@ export default function App() {
             });
           }}
           onDismiss={() => setShowAutoFightTip(false)}
+        />
+      )}
+
+      {showPlayerLinesTip && !game.autoFightWarning && (
+        <ShowPlayerLinesTipModal
+          showPlayerLines={!!game.settings.showPlayerLines}
+          onEnableShow={() => {
+            game.updateSettings({
+              ...game.settings,
+              showPlayerLines: true,
+            });
+          }}
+          onDismiss={() => setShowPlayerLinesTip(false)}
         />
       )}
     </div>

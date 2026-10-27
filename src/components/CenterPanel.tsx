@@ -128,11 +128,13 @@ interface Props {
   onAcceptBeautyOffer?: (entryId: string) => void;
   onDismissBeautyOffer?: (entryId: string) => void;
   contentMode?: string | null;
+  /** When false (default), player typed lines are omitted from the story feed. */
+  showPlayerLines?: boolean;
   /** Tabletop inn-book creation: a sheet from the builder page goes to the same confirm page as the chips. */
   onUseBuiltSheet?: (sheet: SavedSheet) => void;
 }
 
-export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, onUseBuiltSheet }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet }: Props) {
   const [input, setInput] = useState('');
   const [sttNoticeOpen, setSttNoticeOpen] = useState(false);
   const actionInputRef = useRef<HTMLTextAreaElement>(null);
@@ -285,6 +287,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               comicLayout={comicLayout}
               comicReadingDirection={comicReadingDirection}
               imagesGenerating={imagesGenerating}
+              showPlayerLines={showPlayerLines}
               onRetryPanelImage={onRetryPanelImage}
               onRetryMemorableImage={onRetryMemorableImage}
               onUpdatePanelOverlay={onUpdatePanelOverlay}
@@ -299,6 +302,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               streamingReveal={streamingReveal}
               engineMode={engineMode}
               statVerbosity={statVerbosity}
+              showPlayerLines={showPlayerLines}
               onAcceptBeautyOffer={onAcceptBeautyOffer}
               onDismissBeautyOffer={onDismissBeautyOffer}
               contentMode={contentMode}
@@ -322,7 +326,8 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               {proseForSpeech(state.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '')}
             </div>
             {state.log.map((entry, index) => (
-              shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
+              shouldSkipDuplicatePlayerBubble(state.log, index)
+                || (!showPlayerLines && entry.role === 'player') ? null : (
                 <LogRow
                   key={entry.id}
                   entry={entry}

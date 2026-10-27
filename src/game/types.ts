@@ -2371,6 +2371,11 @@ export interface Settings extends AccessibilitySettings {
    * Default false — free-text opening; player types in the box.
    */
   fastSetupChips?: boolean;
+  /**
+   * When true, show the player's own typed lines in the story feed.
+   * Default false (hidden) — toggle lives in Settings → Narrative.
+   */
+  showPlayerLines?: boolean;
 }
 export const DEFAULT_TURN_FRAME: TurnFrameTheme = {
   icon: '🎲',

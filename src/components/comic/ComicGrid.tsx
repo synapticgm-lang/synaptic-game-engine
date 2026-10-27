@@ -26,6 +26,8 @@ interface ComicGridProps {
   comicLayout?: ComicLayoutMode;
   comicReadingDirection?: ComicReadingDirection;
   imagesGenerating?: number;
+  /** When false (default), omit player typed lines from the comic feed. */
+  showPlayerLines?: boolean;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onRetryMemorableImage?: (entryId: string) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
@@ -41,6 +43,7 @@ export function ComicGrid({
   comicLayout = 'paged',
   comicReadingDirection = 'ltr',
   imagesGenerating = 0,
+  showPlayerLines = false,
   onRetryPanelImage,
   onRetryMemorableImage,
   onUpdatePanelOverlay,
@@ -172,6 +175,7 @@ export function ComicGrid({
       >
         <div className={`flex flex-col ${isWebtoon ? 'gap-10 max-w-xl mx-auto' : 'gap-6'}`}>
           {recentLog.map((entry) => (
+            !showPlayerLines && entry.role === 'player' ? null : (
             <LogEntryRenderer
               key={entry.id}
               entry={entry}
@@ -186,6 +190,7 @@ export function ComicGrid({
               onRetryMemorableImage={onRetryMemorableImage}
               onUpdatePanelOverlay={onUpdatePanelOverlay}
             />
+            )
           ))}
 
           {imagesGenerating > 0 && (

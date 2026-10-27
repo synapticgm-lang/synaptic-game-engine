@@ -270,5 +270,6 @@ export function createDefaultSettings(): Settings {
     ttTravelPace: 'normal',
     preferFullResponse: false,
     fastSetupChips: false,
+    showPlayerLines: false,
   };
 }

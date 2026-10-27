@@ -410,6 +410,15 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 onChange={(v) => update('fastSetupChips', v)}
               />
             </div>
+            <div className="mt-3">
+              <ToggleRow
+                icon={<MessageCircle size={15} />}
+                label="Show my typed lines"
+                description="Include your own player bubbles in the story feed (off = story only)"
+                checked={!!draft.showPlayerLines}
+                onChange={(v) => update('showPlayerLines', v)}
+              />
+            </div>
           </Section>
 
           <Section icon={<Shield size={16} />} title="Language & Violence" visible={activeTab === 'narrative'}>
