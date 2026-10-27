@@ -10,7 +10,8 @@ import { formatWriterFacingEvent, prepareRetrospectiveWriterInput } from './comp
 import { presentNpcRecords } from './npcRecords';
 import { npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from './npcSheet';
 import { createHashRng } from './seededRng';
-import { recordStanceFromAction, stanceWriterLine } from './npcStance';
+import { recordStanceFromAction } from './npcStance';
+import { recordPersonaFromAction, personaStanceWriterLine, decayPlaceMoods } from './npcPersona';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { nameWords, pickPersonName } from './personNames';
 import { ensureNpcAgenda } from './npcMemory';
@@ -97,11 +98,12 @@ export function townsfolkWriterLines(state: GameState, refs: LedgerRef[]): strin
   return out;
 }
 
-/** Stance lines for everyone here whose stance an engine event moved, each led by their REF ENUM token. */
+/** M5 persona manner lines for everyone here, each led by their REF ENUM token. */
 export function stanceLinesHere(state: GameState, refs: LedgerRef[]): string[] {
   const out: string[] = [];
   for (const m of presentNpcRecords(state)) {
-    const line = stanceWriterLine(m);
+    if (!m.persona && !m.stance) continue;
+    const line = personaStanceWriterLine(state, m);
     const ref = line ? refs.find((r) => r.klass !== 'place' && r.display.toLowerCase() === m.npcName.toLowerCase()) : undefined;
     if (ref) out.push(`@${ref.tok} ${line}`);
   }
@@ -109,15 +111,17 @@ export function stanceLinesHere(state: GameState, refs: LedgerRef[]): string[] {
 }
 
 /**
- * The pre-writer step with the place's townsfolk seeded, this turn's stance event recorded, and
- * their sheets and stances on the packet.
+ * The pre-writer step with the place's townsfolk seeded, this turn's stance + persona event
+ * recorded, and their sheets and stances on the packet.
  */
 export function prepareWriterInputWithTownsfolk(
   state: GameState,
   playerInput: string,
   extras?: PacketBuildExtras,
 ): { state: GameState; packet: CompletedEventPacket; writerFacing: string } {
-  const peopled = recordStanceFromAction(seedTownsfolkHere(state), playerInput, { engineResult: extras?.engineResult });
+  const seeded = decayPlaceMoods(seedTownsfolkHere(state));
+  const withStance = recordStanceFromAction(seeded, playerInput, { engineResult: extras?.engineResult });
+  const peopled = recordPersonaFromAction(withStance, playerInput, { engineResult: extras?.engineResult });
   const prepared = prepareRetrospectiveWriterInput(peopled, playerInput, extras);
   const refs = prepared.packet.refEnum ?? [];
   const townsfolk = townsfolkWriterLines(prepared.state, refs);

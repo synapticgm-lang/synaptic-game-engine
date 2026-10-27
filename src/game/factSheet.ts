@@ -5,7 +5,7 @@
  * Settings block is a reserved empty slot for order 6b.
  */
 
-import type { GameState } from './types';
+import type { GameState, NpcMemory } from './types';
 import type { CompletedEventPacket } from './completedEventPacket';
 import { playerFacingLocation } from './locationName';
 import { presentNpcRecords } from './npcRecords';
@@ -15,12 +15,13 @@ import { writerFacts } from './systemHousing';
 import { activeHereSpot } from './hereSpot';
 import { placeScale } from './placeAuthority';
 import { isSystemWindowLabel } from './chromeAuthority';
+import { personaMannerLine } from './npcPersona';
 
 /** One person here, for the writer: display name + manner only. */
 export interface FactSheetPerson {
   name: string;
   role?: string;
-  /** Stance/manner toward the player (display word). */
+  /** Stance/manner toward the player (M5 persona phrase; display words only). */
   manner?: string;
   /** Why they are that way, when the engine recorded a cause. */
   mannerCause?: string;
@@ -99,12 +100,22 @@ function questHidden(state: GameState): boolean {
   return state.engineMode === 'dnd';
 }
 
-function mannerOf(m: { stance?: { now?: string; cause?: string }; disposition?: string }): {
+/** M5 persona manner replaces the old 5-word stance.now on the FactSheet. */
+function mannerOf(state: GameState, m: NpcMemory): {
   manner?: string;
   mannerCause?: string;
 } {
+  const line = personaMannerLine(state, m);
+  if (line.manner) {
+    return {
+      manner: clip(line.manner, 160),
+      mannerCause: line.mannerCause ? clip(line.mannerCause, 100) : undefined,
+    };
+  }
   if (m.stance?.now) return { manner: m.stance.now, mannerCause: m.stance.cause };
-  if (m.disposition && m.disposition !== 'neutral') return { manner: m.disposition };
+  if (m.disposition && m.disposition !== 'neutral' && m.disposition !== 'unknown') {
+    return { manner: m.disposition };
+  }
   return {};
 }
 
@@ -216,12 +227,12 @@ export function buildFactSheet(
     if (!presentNames.some((n) => n.toLowerCase() === w.toLowerCase())) presentNames.push(w);
   }
   const present: FactSheetPerson[] = presentPeople.map((r) => {
-    const { manner, mannerCause } = mannerOf(r);
+    const { manner, mannerCause } = mannerOf(state, r);
     return {
       name: r.npcName,
       role: r.sheet?.job || r.roleHint || undefined,
       manner,
-      mannerCause: mannerCause ? clip(mannerCause, 100) : undefined,
+      mannerCause,
     };
   });
   // Anonymous / opening cast labels on the packet witnesses that lack a memory row.

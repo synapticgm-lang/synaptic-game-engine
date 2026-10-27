@@ -2222,6 +2222,7 @@ Do NOT print dice notation or CODE ENFORCED.
         stateAfter: sliceStateForTurnLog(governed),
         factSheet: sheetForLog,
         includeFactSheet: true,
+        nudges: governed.personaNudges ?? preparedEvent.state.personaNudges,
         ai: [
           {
             role: 'writer',

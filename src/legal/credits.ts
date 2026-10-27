@@ -318,6 +318,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Idea only: one typed per-turn fact sheet the writer narrates. Ported into live owners; not a copy of the prototype module.',
       },
       {
+        work: 'Engine NPC personality (merge M5)',
+        source: 'SynapticGM (internal prototype persona.mjs)',
+        license: 'Original',
+        usedFor:
+          'Idea only: trait scores, relationship, scene mood, tagged history, stance manner, and social DC shift. Ported into live owners; not a copy of the prototype module.',
+      },
+      {
         work: 'Custom tabletop rules (player paste)',
         source: 'The player',
         license: 'Player-supplied',
