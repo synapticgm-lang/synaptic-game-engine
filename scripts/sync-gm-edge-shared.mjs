@@ -99,6 +99,7 @@ const FILES = [
   'checkRules.ts',
   'npcRelationships.ts',
   'npcMemory.ts',
+  'npcPersona.ts',
   'manusTopicBanks.ts',
   'diegeticFallbacks.ts',
   'intentParser.ts',

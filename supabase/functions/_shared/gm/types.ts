@@ -947,6 +947,25 @@ export interface GameState {
   pendingGeneratedOpening?: boolean;
   /** Per-NPC memory ledger. */
   npcMemories?: NpcMemory[];
+  /**
+   * M5 — per-place scene mood (−50..50), decays each harvest; keyed by currentLocation.
+   * Engine-owned, saved with the game (no DB migration).
+   */
+  personaMood?: Record<string, number>;
+  /**
+   * M5 — nudges recorded this turn (harvested into TurnLog, then cleared).
+   * Display names only inside each record.
+   */
+  personaNudges?: Array<{
+    npcName: string;
+    tag: string;
+    cause: string;
+    applied: Record<string, string>;
+    drift?: Record<string, number>;
+    moodDelta: number;
+    after: { trust: number; fondness: number; fear: number };
+    socialShift: number;
+  }>;
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
   /** P-5e: things the story brought across from another world (a summoned person's kit and the like). */
@@ -1820,6 +1839,11 @@ export interface NpcMemory {
   motiveUsed?: string[];
   stance?: NpcStance;
   /**
+   * M5 — engine-owned personality (traits, relationship, tagged history).
+   * Seeded once from id/name/role/description; saved on the NPC record (no DB migration).
+   */
+  persona?: NpcPersona;
+  /**
    * OPT-3 — Doran & Parberry motivation plus a bound target (set once; see npcAgenda.ts).
    * Source: Doran and Parberry 2011 quest-structure motivations.
    */
@@ -1887,6 +1911,46 @@ export interface NpcStance {
   turn: number;
   /** Event ids already applied; the same event never applies twice. */
   events: string[];
+}
+
+/** M5 — Big-Five + honesty/pride/greed scores (5..95). */
+export interface NpcPersonaTraits {
+  openness: number;
+  conscientiousness: number;
+  extraversion: number;
+  agreeableness: number;
+  neuroticism: number;
+  honesty: number;
+  pride: number;
+  greed: number;
+}
+
+/** M5 — relationship to the player (−100..100 each). */
+export interface NpcPersonaRel {
+  trust: number;
+  fondness: number;
+  fear: number;
+}
+
+/** M5 — one tagged history event on a person. */
+export interface NpcPersonaHistoryEvent {
+  turn: number;
+  tag: string;
+  cause: string;
+  deltas: Record<string, string>;
+  after: NpcPersonaRel;
+}
+
+/**
+ * M5 — full per-person personality. Traits seed once; relationship + history move on events.
+ * Personality maths never invent suicidal ideation or permanent death.
+ */
+export interface NpcPersona {
+  traits: NpcPersonaTraits;
+  /** Seed snapshot (for recovery baselines). */
+  traits0: NpcPersonaTraits;
+  rel: NpcPersonaRel;
+  history: NpcPersonaHistoryEvent[];
 }
 /** Location sheet — spatial facts for the current zone. */
 export type MapScale = 'district' | 'street' | 'interior' | 'dungeon';

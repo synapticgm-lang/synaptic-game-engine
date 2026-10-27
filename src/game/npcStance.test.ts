@@ -88,11 +88,16 @@ describe('npc stance', () => {
   it('the writer is told the stance and its cause, on that person’s token', () => {
     const prepared = prepareWriterInputWithTownsfolk(state([prisoner()]), 'Free Wat Pike');
     const tok = prepared.packet.refEnum!.find((r) => r.display === 'Wat Pike')!.tok;
-    expect(prepared.packet.stances).toEqual([
-      `@${tok} Wat Pike is grateful toward the player now — because Jax freed them at Keep Cells (T6). Who they are has not changed; this is how they meet the player now.`,
-    ]);
-    expect(prepared.writerFacing).toContain('HOW THEY ARE NOW');
-    expect(prepared.state.npcMemories!.find((m) => m.npcName === 'Wat Pike')!.stance?.now).toBe('grateful');
+    const line = prepared.packet.stances?.[0] ?? '';
+    // M5 — persona manner on FactSheet + packet.stances; sceneBlock path no longer dumps HOW THEY ARE NOW.
+    expect(line.startsWith(`@${tok} Wat Pike's manner toward the player now:`)).toBe(true);
+    expect(line).toMatch(/freed/i);
+    const mira = prepared.packet.factSheet?.present.find((p) => p.name === 'Wat Pike');
+    expect(mira?.manner).toMatch(/warm|civil|open|plain|talk|terse/i);
+    expect(mira?.mannerCause).toMatch(/freed/i);
+    const wat = prepared.state.npcMemories!.find((m) => m.npcName === 'Wat Pike')!;
+    expect(wat.stance?.now).toBe('grateful');
+    expect(wat.persona?.history.some((h) => h.tag === 'freed')).toBe(true);
   });
 
   it('someone with no event has no stance line', () => {

@@ -75,7 +75,10 @@ describe('M1 factSheet', () => {
     expect(sheet.place.name).toMatch(/Greyhollow|Inn/i);
     expect(sheet.present.some((p) => p.name === 'Mira the Apothecary')).toBe(true);
     const mira = sheet.present.find((p) => p.name === 'Mira the Apothecary')!;
-    expect(mira.manner).toBe('warm');
+    // M5 — persona manner phrase (not the old single-token stance.now).
+    expect(mira.manner).toBeTruthy();
+    expect(mira.manner!.length).toBeGreaterThan(5);
+    expect(mira.manner).toMatch(/warm|civil|wary|cold|open|curt|hostile|plain|talk|terse/i);
     expect(sheet.openLedger.some((e) => /Bring nightshade/i.test(e.line))).toBe(true);
     expect(sheet.gear.inHand.toLowerCase()).toContain('longsword');
     expect(sheet.beat.engineResult).toMatch(/Check success/);

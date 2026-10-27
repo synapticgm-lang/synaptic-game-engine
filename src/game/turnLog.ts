@@ -93,6 +93,20 @@ export interface TurnLog {
   factSheet?: FactSheet;
   ai: TurnLogAiRole[];
   checkerVerdicts: TurnLogCheckerVerdict[];
+  /**
+   * M5 — every persona relationship/mood nudge this turn (display names only).
+   * Includes the resulting social DC shift (−5..+5) after the event.
+   */
+  nudges?: Array<{
+    npcName: string;
+    tag: string;
+    cause: string;
+    applied: Record<string, string>;
+    drift?: Record<string, number>;
+    moodDelta: number;
+    after: { trust: number; fondness: number; fear: number };
+    socialShift: number;
+  }>;
   finalProse: string;
   chipsOffered: string[];
   /** Wall-clock for the whole turn. */
@@ -136,6 +150,8 @@ export interface BuildTurnLogArgs {
   includeFactSheet?: boolean;
   ai?: TurnLogAiRole[];
   checkerVerdicts?: TurnLogCheckerVerdict[];
+  /** M5 persona nudges harvested this turn. */
+  nudges?: TurnLog['nudges'];
   finalProse: string;
   chipsOffered: string[];
   latencyMs: number;
@@ -158,6 +174,7 @@ export function buildTurnLog(args: BuildTurnLogArgs): TurnLog {
     factSheet: args.includeFactSheet ? args.factSheet : undefined,
     ai: args.ai ?? [],
     checkerVerdicts: args.checkerVerdicts ?? [],
+    ...(args.nudges?.length ? { nudges: args.nudges } : {}),
     finalProse: args.finalProse,
     chipsOffered: args.chipsOffered,
     latencyMs: args.latencyMs,

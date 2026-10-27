@@ -36,6 +36,13 @@ import { modeProfile } from './rules/modeProfile';
 import { namedSkillCheckMod } from './rules/librarySkills';
 import { titleCheckMod } from './rules/titles';
 import { toolProficiencies } from './tabletop/characterBuild';
+import { ensurePersona, socialShift } from './npcPersona';
+/*
+ * SRD 5.2.1 Ability Check (Wizards of the Coast LLC, CC BY 4.0):
+ * "To make an ability check, roll a d20 and add the relevant ability modifier. …
+ * Compare the total to a target number, called the Difficulty Class (DC)."
+ * M5 applies a relationship DC shift of −5..+5 on CHA/persuasion via socialShift().
+ */
 
 /** SK-4 named tiers. Targets = DC_LADDER easy/medium/hard (Expert/Master capped at hard until SK-5). */
 export type SkillTierName = 'Novice' | 'Apprentice' | 'Journeyman' | 'Expert' | 'Master';
@@ -361,6 +368,7 @@ export function runPlayerCheck(
   if (title) mods.push(title);
   let auto: 'willing' | 'unwilling' | undefined;
   let cue: string | undefined;
+  let personaDcNote: string | undefined;
   const social = ctx.attr === 'CHA' && ctx.skill === 'persuasion';
   let leverage: LeverageMod[] = [];
   if (social) {
@@ -378,6 +386,18 @@ export function runPlayerCheck(
       if (s.willing.includes(size)) auto = 'willing';
       else if (s.unwilling.includes(size)) auto = 'unwilling';
       cue = dispositionCue(target.name, target.disposition);
+      // M5 — persona relationship DC shift (−5..+5) on the SRD Ability Check DC.
+      const memRaw = (state.npcMemories ?? []).find(
+        (m) => (m.npcName ?? '').toLowerCase() === target.name.toLowerCase(),
+      );
+      if (memRaw) {
+        const mem = ensurePersona(state, memRaw);
+        const shift = socialShift(state, mem);
+        if (shift !== 0) {
+          ctx.dc = Math.max(1, ctx.dc + shift);
+          personaDcNote = `persona DC ${shift >= 0 ? '+' : ''}${shift}`;
+        }
+      }
     }
     // 28r — knowledge, shown items, worn gear vs the target's role, stat/skill leverage.
     leverage = socialLeverageMods(state, actionText, target?.name);
@@ -392,6 +412,7 @@ export function runPlayerCheck(
   adv = combineAdv(adv, conditionCheckAdv(state.character.conditions));
   // The task's rung, plus (tabletop sheet) what light, load and the travel pace did to the roll.
   const notes: string[] = ctx.rung && modeProfile(state.engineMode).numbers === 'open' ? [ctx.rung] : [];
+  if (personaDcNote) notes.push(personaDcNote);
   // Weather on the road (SRD 5.2.1 Heavy Precipitation / fog: Lightly Obscured, Disadvantage on Perception).
   const weather = state.journey && state.journey.legsDone < state.journey.legsTotal ? state.journey.weather : undefined;
   if (ctx.skill === 'perception' && weatherRuleOf(weather).perception) {
