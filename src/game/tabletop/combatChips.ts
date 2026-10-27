@@ -80,7 +80,8 @@ export function fightAlly(state: Pick<GameState, 'companions'>): { name: string 
 export const DEATH_SAVE_CHIP = 'Fight for breath';
 
 /**
- * Priority for the 4-chip fight pad: Attack → Cast/feature → Dodge/Disengage → Flee → rest.
+ * Priority for the 4-chip fight pad: Attack → Cast/feature → Dodge/Disengage-and-move → rest.
+ * M6: Flee folds into Disengage plus move (SRD 5.2.1 — Disengage then use your Speed).
  * All candidates are engine-legal for this round (economy still available at round start).
  */
 function fightChipPriority(label: string): number {
@@ -88,11 +89,10 @@ function fightChipPriority(label: string): number {
   if (l.startsWith('attack')) return 0;
   if (l.startsWith('cast') || l.startsWith('use innate')) return 1;
   if (l.startsWith('rage') || l.startsWith('reckless') || l === 'lay on hands') return 2;
-  if (l === 'dodge' || l === 'disengage') return 3;
-  if (l === 'flee') return 4;
-  if (l.startsWith('drink')) return 5;
-  if (l.startsWith('help') || l === 'hide') return 6;
-  return 7;
+  if (l === 'dodge' || l.startsWith('disengage')) return 3;
+  if (l.startsWith('drink')) return 4;
+  if (l.startsWith('help') || l === 'hide') return 5;
+  return 6;
 }
 
 /** Cap non-idle fight picks at FIGHT_CHIP_CAP (one place — gap-cap-4). */
@@ -129,9 +129,10 @@ export function legalFightActionsThisRound(state: GameState): string[] {
     out.push(weaponChip);
     if (cantrip) out.push(`Cast ${cantrip}`);
     out.push(...spellRoundChips(state));
-    out.push('Dodge', 'Disengage');
+    // M6 — Flee folds into Disengage plus move (SRD: Disengage Action, then move your Speed).
+    out.push('Dodge', 'Disengage and move');
     if (ally) out.push(`Help ${ally.name}`);
-    out.push('Hide', 'Flee');
+    out.push('Hide');
   }
   if (bonusOk || actionOk) {
     for (const f of featureRoundChips(state, weaponChip, cantrip)) {

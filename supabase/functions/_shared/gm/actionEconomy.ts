@@ -42,12 +42,24 @@ export function slotCap(slot: EconomySlot, bonusGranted: boolean): number | null
  */
 export function slotOfStep(step: IntentStep): EconomySlot {
   const act = step.action;
+  const clause = `${step.clause ?? ''} ${step.target ?? ''} ${step.topic ?? ''}`;
+  // M6 — steal is a Dexterity (Sleight of Hand) Action, never free speech.
+  if (act === 'take' && /\b(steal|pickpocket|filch|swipe|palm|from)\b/i.test(clause)) {
+    return 'action';
+  }
+  // M6 — parley / persuade / intimidate / deceive aimed at calming hostiles spends Action.
+  // Plain talk/ask stays free speech (SRD Communicating).
+  if (
+    act === 'persuade'
+    || act === 'intimidate'
+    || act === 'deceive'
+    || /\b(parley|negotiate|talk\s+(?:it|them)\s+down|truce)\b/i.test(clause)
+  ) {
+    return 'action';
+  }
   if (
     act === 'talk'
     || act === 'ask_about'
-    || act === 'persuade'
-    || act === 'intimidate'
-    || act === 'deceive'
     || act === 'refuse'
     || act === 'recall'
   ) {
@@ -60,7 +72,7 @@ export function slotOfStep(step: IntentStep): EconomySlot {
   if (act === 'sneak') return 'movement';
   if (act === 'move') return 'movement';
   if (act === 'use_item' || act === 'take') {
-    const t = `${step.target ?? ''} ${step.topic ?? ''} ${step.clause ?? ''}`.toLowerCase();
+    const t = clause.toLowerCase();
     if (/\bpotion\b/.test(t) || /\bheal/.test(t)) return 'bonus';
     if (/\btorch\b|\brope\b|\bdraw\b|\bsheathe\b|\bobject\b/.test(t)) return 'object';
     return 'action';

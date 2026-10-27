@@ -121,9 +121,10 @@ function fightState(over: Partial<GameState> = {}): GameState {
 }
 
 describe('M3 rule-gap registry', () => {
-  it('flips seven gaps to pass; leaves parley/steal expected-fail for M6', () => {
-    expect(passedGapIds()).toHaveLength(7);
-    expect(expectedFailGapIds()).toEqual(['gap-parley', 'gap-steal']);
+  // M6 flipped gap-parley / gap-steal — all nine now pass.
+  it('all nine rule gaps pass after M6 (parley/steal included)', () => {
+    expect(passedGapIds()).toHaveLength(9);
+    expect(expectedFailGapIds()).toEqual([]);
     for (const id of passedGapIds()) {
       expect(RULE_GAPS.find((g) => g.id === id)!.expectedFail).toBe(false);
     }

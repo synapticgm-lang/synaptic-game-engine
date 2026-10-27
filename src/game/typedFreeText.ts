@@ -27,6 +27,12 @@ import {
   type StepResolution,
 } from './intentParser';
 import { interpretRoundTyped } from './tabletop/roundTyped';
+import {
+  looksLikeParley,
+  looksLikeSteal,
+  resolveParleyAttempt,
+  resolveStealAttempt,
+} from './stealParley';
 
 export type TypedFreeTextResult = {
   receipts: string[];
@@ -40,6 +46,8 @@ export type TypedFreeTextResult = {
   lastAddressee?: string | null;
   /** M3 — slots spent resolving this message (fights). */
   economyUsed?: EconomyUsed;
+  /** M6 — state after steal / parley ledger commits (persona, inventory, encounter). */
+  state?: GameState;
 };
 
 const NOTHING = 'nothing the world can act on';
@@ -50,18 +58,26 @@ function speechStep(step: IntentStep, who: string): StepResolution {
   return { tried, done: true, reason: 'speech (free)', engineResult: fact, economySlot: 'speech' };
 }
 
-function isSpeechStep(step: IntentStep, clause: string): boolean {
+function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false): boolean {
   if (step.unplacedMove) return false;
   // Deal is mechanical ledger work — not free speech alone.
   if (step.action === 'deal') return false;
+  // M6 — steal is never free speech.
+  if (looksLikeSteal(clause, step)) return false;
+  // M6 — parley / social Influence against hostiles spends Action (still never rejected).
+  if (inHostileParley && looksLikeParley(clause, step)) return false;
   if (
     step.action === 'talk'
     || step.action === 'ask_about'
-    || step.action === 'persuade'
-    || step.action === 'intimidate'
-    || step.action === 'deceive'
     || step.action === 'refuse'
     || step.action === 'recall'
+  ) {
+    return true;
+  }
+  // Plain persuade without a hostile/live fight stays speech; hostile path uses inHostileParley.
+  if (
+    (step.action === 'persuade' || step.action === 'intimidate' || step.action === 'deceive')
+    && !inHostileParley
   ) {
     return true;
   }
@@ -75,10 +91,26 @@ function isSpeechStep(step: IntentStep, clause: string): boolean {
   return false;
 }
 
-function resolveOneStep(state: GameState, step: IntentStep, fullText: string): StepResolution {
+type StepOut = StepResolution & { state?: GameState };
+
+function hostileParleyContext(state: GameState): boolean {
+  const enc = state.activeEncounter;
+  if (enc && enc.hp > 0 && enc.phase !== 'terminal') return true;
+  if (state.sceneFacts?.pendingEncounter) return true;
+  return (state.npcMemories ?? []).some(
+    (m) =>
+      (m.disposition === 'hostile' || m.attitude === 'hostile')
+      && (state.sceneFacts?.present ?? []).some(
+        (p) => p.toLowerCase() === (m.npcName ?? '').toLowerCase(),
+      ),
+  );
+}
+
+function resolveOneStep(state: GameState, step: IntentStep, fullText: string): StepOut {
   const clause = (step.clause ?? fullText).trim() || fullText;
   const tried = describeIntentStep(step) || clause.slice(0, 80);
   const slot = slotOfStep(step);
+  const hostile = hostileParleyContext(state);
 
   if (step.unplacedMove || ((step.action === 'move' || step.action === 'sneak') && !step.destination)) {
     return {
@@ -90,7 +122,40 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     };
   }
 
-  if (isSpeechStep(step, clause)) {
+  // M6 — STEAL: Dexterity (Sleight of Hand) vs Passive Wisdom (Perception).
+  if (looksLikeSteal(clause, step)) {
+    const steal = resolveStealAttempt(state, clause, step);
+    const outcome = steal.taken
+      ? 'taken unnoticed'
+      : steal.guardedHold
+        ? 'attempt resolved; guardian holds item'
+        : steal.noticed
+          ? 'noticed; not taken'
+          : 'not taken';
+    return {
+      tried,
+      done: true,
+      reason: outcome,
+      engineResult: steal.facts.join(' ') || steal.receipts.join(' '),
+      economySlot: 'action',
+      state: steal.state,
+    };
+  }
+
+  // M6 — PARLEY against hostiles / before a fight: social Influence check (never reject free text).
+  if (hostile && looksLikeParley(clause, step)) {
+    const parley = resolveParleyAttempt(state, clause, step);
+    return {
+      tried,
+      done: true,
+      reason: parley.success ? (parley.endedFight ? 'parley ended fight' : 'parley success') : 'parley failed',
+      engineResult: parley.facts.join(' ') || parley.receipts.join(' '),
+      economySlot: 'action',
+      state: parley.state,
+    };
+  }
+
+  if (isSpeechStep(step, clause, hostile)) {
     const who = step.addressee?.trim() || 'the room';
     return speechStep(step, who);
   }
@@ -192,10 +257,32 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   const inFight = !!(state.activeEncounter || state.roundCombat);
   let economy = freshEconomy();
   const bonusOk = bonusActionGranted(state);
+  let live = state;
+  const hostile = hostileParleyContext(live);
 
   // Fight path with no reader steps yet: still never reject — whole line through round resolver.
+  // M6: steal / parley still resolve as engine actions even with an empty reader cut.
   if (inFight && intentRead.steps.length === 0) {
-    const plan = interpretRoundTyped(state, raw);
+    if (looksLikeSteal(raw) || (hostile && looksLikeParley(raw))) {
+      const synthetic: IntentStep = {
+        action: looksLikeSteal(raw) ? 'take' : 'persuade',
+        clause: raw,
+        addressee: live.activeEncounter?.name ?? null,
+      };
+      const one = resolveOneStep(live, synthetic, raw);
+      if (one.state) live = one.state;
+      return {
+        receipts: [one.done ? `done: ${one.tried}` : `not done: ${one.tried}`],
+        facts: [one.engineResult],
+        engineResult: one.engineResult,
+        intentRead,
+        stepResults: [one],
+        lastAddressee,
+        economyUsed: economy,
+        state: live,
+      };
+    }
+    const plan = interpretRoundTyped(live, raw);
     const engineResult = plan.facts.join(' ').trim() || plan.receipts.join(' ').trim();
     const slot = plan.freeSpeechOnly ? 'speech' as const : 'action' as const;
     if (!plan.freeSpeechOnly) {
@@ -218,14 +305,16 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
       ],
       lastAddressee,
       economyUsed: economy,
+      state: live,
     };
   }
 
   for (let i = 0; i < intentRead.steps.length; i++) {
     const step = intentRead.steps[i]!;
     const clause = (step.clause ?? raw).trim() || raw;
+    const hostNow = hostileParleyContext(live);
     // Speech is free — classify before spending a mechanical slot.
-    if (isSpeechStep(step, clause) && !step.unplacedMove) {
+    if (isSpeechStep(step, clause, hostNow) && !step.unplacedMove) {
       const who = step.addressee?.trim() || 'the room';
       stepResults.push(speechStep(step, who));
       if (step.addressee) lastAddressee = step.addressee;
@@ -249,8 +338,10 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
       }
       economy = spend.used;
     }
-    const result = resolveOneStep(state, step, raw);
-    stepResults.push({ ...result, economySlot: result.economySlot ?? slot });
+    const result = resolveOneStep(live, step, raw);
+    if (result.state) live = result.state;
+    const { state: _s, ...row } = result;
+    stepResults.push({ ...row, economySlot: row.economySlot ?? slot });
     if (step.addressee) lastAddressee = step.addressee;
   }
 
@@ -273,6 +364,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
       stepResults,
       lastAddressee,
       economyUsed: economy,
+      state: live,
     };
   }
 
@@ -288,6 +380,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     stepResults,
     lastAddressee,
     economyUsed: economy,
+    state: live,
   };
 }
 

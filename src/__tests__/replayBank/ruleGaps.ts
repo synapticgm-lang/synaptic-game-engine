@@ -1,6 +1,6 @@
 /**
  * M1 / C7 — nine known SRD/engine rule-gap cases.
- * M3 flips seven to pass via shared engine mechanisms; gap-parley / gap-steal stay expected-fail for M6.
+ * M3 flipped seven to pass; M6 flips gap-parley / gap-steal to pass.
  * Do not delete these ids.
  */
 
@@ -82,8 +82,9 @@ export const RULE_GAPS: readonly RuleGapCase[] = [
   {
     id: 'gap-parley',
     label: 'Parley / social check resolution',
+    // SRD 5.2.1 — Charisma (Persuasion / Intimidation / Deception) Ability Checks vs a DC.
     srd: 'SRD 5.2.1 Ability Checks (CHA): social influence resolved by the engine check, not free success.',
-    expectedFail: true,
+    expectedFail: false,
   },
   {
     id: 'gap-cap-4',
@@ -94,8 +95,9 @@ export const RULE_GAPS: readonly RuleGapCase[] = [
   {
     id: 'gap-steal',
     label: 'Steal / Sleight of Hand contested',
-    srd: 'SRD 5.2.1 Sleight of Hand: contested or DC check — theft is not free success.',
-    expectedFail: true,
+    // SRD 5.2.1 — Dexterity (Sleight of Hand) vs Passive Wisdom (Perception).
+    srd: 'SRD 5.2.1 Sleight of Hand: Dexterity (Sleight of Hand) vs Passive Wisdom (Perception) — theft is not free success.',
+    expectedFail: false,
   },
 ] as const;
 
@@ -112,12 +114,12 @@ export function expectRuleGap(id: RuleGapId): RuleGapCase {
   return g;
 }
 
-/** Ids still expected to fail (M6). */
+/** Ids still expected to fail (none after M6). */
 export function expectedFailGapIds(): RuleGapId[] {
   return RULE_GAPS.filter((g) => g.expectedFail).map((g) => g.id);
 }
 
-/** Ids flipped to pass (M3). */
+/** Ids flipped to pass (M3 + M6). */
 export function passedGapIds(): RuleGapId[] {
   return RULE_GAPS.filter((g) => !g.expectedFail).map((g) => g.id);
 }
