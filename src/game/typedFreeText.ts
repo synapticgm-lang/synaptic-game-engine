@@ -1,11 +1,19 @@
 /**
- * q77b-DYINGTYPED + M2 multi-step — typed free-text engine outcomes (free play, fights, dying).
+ * q77b-DYINGTYPED + M2 multi-step + M3 action economy — typed free-text engine outcomes.
  * Reuses parsePlayerSteps + checkForAction/runPlayerCheck + interpretRoundTyped.
  * Free text is NEVER rejected. Speech is always a free step; only mechanical aims resolve as actions.
+ * In fights, SRD 5.2.1 action economy caps mechanical steps (extra steps → "not done", still recorded).
  * If nothing actionable: "nothing the world can act on" and the words are still said aloud.
- * SRD 5.2.1 Communicating / Ability Checks (Wizards of the Coast, CC BY 4.0).
+ * SRD 5.2.1 Communicating / Combat Your Turn (Wizards of the Coast, CC BY 4.0).
  */
 import type { GameState } from './types';
+import {
+  bonusActionGranted,
+  freshEconomy,
+  slotOfStep,
+  trySpendSlot,
+  type EconomyUsed,
+} from './actionEconomy';
 import { checkForAction, runPlayerCheck } from './checkMath';
 import {
   describeIntentStep,
@@ -30,6 +38,8 @@ export type TypedFreeTextResult = {
   stepResults?: StepResolution[];
   /** Carry-over addressee for the next turn's reader. */
   lastAddressee?: string | null;
+  /** M3 — slots spent resolving this message (fights). */
+  economyUsed?: EconomyUsed;
 };
 
 const NOTHING = 'nothing the world can act on';
@@ -37,7 +47,7 @@ const NOTHING = 'nothing the world can act on';
 function speechStep(step: IntentStep, who: string): StepResolution {
   const tried = describeIntentStep(step) || 'speech';
   const fact = `Speech event: you address ${who}. NPC reaction slot open for the writer.`;
-  return { tried, done: true, reason: 'speech (free)', engineResult: fact };
+  return { tried, done: true, reason: 'speech (free)', engineResult: fact, economySlot: 'speech' };
 }
 
 function isSpeechStep(step: IntentStep, clause: string): boolean {
@@ -68,6 +78,7 @@ function isSpeechStep(step: IntentStep, clause: string): boolean {
 function resolveOneStep(state: GameState, step: IntentStep, fullText: string): StepResolution {
   const clause = (step.clause ?? fullText).trim() || fullText;
   const tried = describeIntentStep(step) || clause.slice(0, 80);
+  const slot = slotOfStep(step);
 
   if (step.unplacedMove || ((step.action === 'move' || step.action === 'sneak') && !step.destination)) {
     return {
@@ -75,6 +86,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       done: false,
       reason: 'not done: no destination named',
       engineResult: 'Move not done: no destination named.',
+      economySlot: slot,
     };
   }
 
@@ -87,7 +99,13 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     const who = step.addressee?.trim() || 'someone here';
     const d = step.deal;
     const fact = `Deal attempted: ${d.kind}${d.amount != null ? ` ${d.amount}` : ''} with ${who}${d.dueDays != null ? ` due in ${d.dueDays} days` : ''}.`;
-    return { tried, done: true, reason: 'deal recorded', engineResult: fact };
+    return {
+      tried,
+      done: true,
+      reason: 'deal recorded',
+      engineResult: fact,
+      economySlot: slot,
+    };
   }
 
   // Live fight: mechanical clause goes through the existing round resolver (engine rolls).
@@ -106,6 +124,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       done: plan.accepted,
       reason: plan.freeSpeechOnly ? 'speech (free)' : 'round action',
       engineResult,
+      economySlot: plan.freeSpeechOnly ? 'speech' : slot,
     };
   }
 
@@ -132,23 +151,24 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       done: true,
       reason: outcome,
       engineResult: check.codeResolutionText || fact,
+      economySlot: slot,
     };
   }
   if (actionable && !canRoll) {
     // Still never "reject" the line — record that the sheet cannot resolve it yet; words stand.
     const fact = `Attempt noted (${intent.label}); no built character sheet to resolve the check. Words said aloud.`;
-    return { tried, done: false, reason: 'not done: no character sheet', engineResult: fact };
+    return { tried, done: false, reason: 'not done: no character sheet', engineResult: fact, economySlot: slot };
   }
 
   // Non-actionable clause that still reached a step (e.g. other): words said aloud.
   const who = step.addressee?.trim() || 'the room';
   const fact = `Words said aloud to ${who}.`;
-  return { tried, done: true, reason: 'said aloud', engineResult: fact };
+  return { tried, done: true, reason: 'said aloud', engineResult: fact, economySlot: 'speech' };
 }
 
 /**
  * Resolve a typed line to ordered engine outcomes. Never rejects free text.
- * Hands each reader step to the existing resolver in order (M3 owns action-economy caps).
+ * In fights, SRD action economy is applied across steps (M3).
  */
 export function resolveTypedFreeText(state: GameState, input: string): TypedFreeTextResult {
   const raw = (input ?? '').trim();
@@ -161,6 +181,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
       intentRead: { steps: [], claims: [], systemText: [], scale: 'normal' },
       stepResults: [],
       lastAddressee: state.sceneFacts?.lastAddressee ?? null,
+      economyUsed: freshEconomy(),
     };
   }
 
@@ -168,11 +189,19 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   const intentRead = parsePlayerSteps(raw, ctx);
   const stepResults: StepResolution[] = [];
   let lastAddressee = ctx.lastAddressee ?? null;
+  const inFight = !!(state.activeEncounter || state.roundCombat);
+  let economy = freshEconomy();
+  const bonusOk = bonusActionGranted(state);
 
   // Fight path with no reader steps yet: still never reject — whole line through round resolver.
-  if ((state.activeEncounter || state.roundCombat) && intentRead.steps.length === 0) {
+  if (inFight && intentRead.steps.length === 0) {
     const plan = interpretRoundTyped(state, raw);
     const engineResult = plan.facts.join(' ').trim() || plan.receipts.join(' ').trim();
+    const slot = plan.freeSpeechOnly ? 'speech' as const : 'action' as const;
+    if (!plan.freeSpeechOnly) {
+      const spend = trySpendSlot(economy, 'action', bonusOk);
+      economy = spend.ok ? spend.used : economy;
+    }
     return {
       receipts: plan.receipts,
       facts: plan.facts,
@@ -184,29 +213,56 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
           done: true,
           reason: plan.freeSpeechOnly ? 'speech (free)' : 'round action',
           engineResult,
+          economySlot: slot,
         },
       ],
       lastAddressee,
+      economyUsed: economy,
     };
   }
 
   for (let i = 0; i < intentRead.steps.length; i++) {
     const step = intentRead.steps[i]!;
+    const clause = (step.clause ?? raw).trim() || raw;
+    // Speech is free — classify before spending a mechanical slot.
+    if (isSpeechStep(step, clause) && !step.unplacedMove) {
+      const who = step.addressee?.trim() || 'the room';
+      stepResults.push(speechStep(step, who));
+      if (step.addressee) lastAddressee = step.addressee;
+      continue;
+    }
+    const slot = slotOfStep(step);
+    // SRD 5.2.1 Combat Your Turn: mechanical slots once per round; speech free.
+    if (inFight && slot !== 'speech') {
+      const spend = trySpendSlot(economy, slot, bonusOk);
+      if (!spend.ok) {
+        const tried = describeIntentStep(step) || clause.slice(0, 80);
+        stepResults.push({
+          tried,
+          done: false,
+          reason: spend.reason,
+          engineResult: spend.reason,
+          economySlot: slot,
+        });
+        if (step.addressee) lastAddressee = step.addressee;
+        continue;
+      }
+      economy = spend.used;
+    }
     const result = resolveOneStep(state, step, raw);
-    stepResults.push(result);
+    stepResults.push({ ...result, economySlot: result.economySlot ?? slot });
     if (step.addressee) lastAddressee = step.addressee;
   }
 
   if (!stepResults.length) {
     // Claims / system only, or empty actionable: words still said aloud; world does not act.
-    const said = intentRead.claims.length || intentRead.systemText.length
-      ? `Words said aloud. ${NOTHING}.`
-      : `Words said aloud. ${NOTHING}.`;
+    const said = `Words said aloud. ${NOTHING}.`;
     const result: StepResolution = {
       tried: NOTHING,
       done: false,
       reason: NOTHING,
       engineResult: said,
+      economySlot: 'speech',
     };
     stepResults.push(result);
     return {
@@ -216,6 +272,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
       intentRead,
       stepResults,
       lastAddressee,
+      economyUsed: economy,
     };
   }
 
@@ -230,6 +287,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     intentRead,
     stepResults,
     lastAddressee,
+    economyUsed: economy,
   };
 }
 

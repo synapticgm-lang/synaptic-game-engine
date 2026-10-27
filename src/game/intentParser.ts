@@ -424,6 +424,8 @@ export interface StepResolution {
   done: boolean;
   reason: string;
   engineResult: string;
+  /** M3 — SRD action-economy slot this step tried to spend (speech is free). */
+  economySlot?: 'action' | 'bonus' | 'movement' | 'reaction' | 'object' | 'speech';
 }
 
 const MAX_STEPS = 6;

@@ -110,6 +110,7 @@ const FILES = [
   'checkMath.ts',
   'factSheet.ts',
   'turnLog.ts',
+  'actionEconomy.ts',
 ];
 
 function rewriteImports(source, file) {

@@ -1,7 +1,11 @@
 /**
- * Tabletop fight chips: one choice per round (Attack, Cast, Dodge, Disengage, Help, Hide, Use item, Flee),
- * and "Fight for breath" while making death saves. The round engine (roundFight) reads the same weapon,
- * cantrip, potion and ally helpers, so a chip never offers what the engine cannot do.
+ * Tabletop fight chips: legal actions this round from the SRD action economy (merge M3),
+ * capped at 4 non-idle picks in one place. Typed free text always remains available beside them.
+ * The round engine (roundFight) reads the same weapon, cantrip, potion and ally helpers, so a chip
+ * never offers what the engine cannot do.
+ *
+ * SRD 5.2.1 — Combat / Your Turn (Wizards of the Coast LLC, CC BY 4.0): one Action, optional Bonus
+ * Action when a feature grants one, Movement, one free object interaction; speech is free (not a chip).
  */
 import type { GameState } from '../types';
 import { presentNpcNames } from '../npcRelationships';
@@ -13,6 +17,9 @@ import { houseRulesOf } from '../rules/houseRules';
 import { ammoFor, ammoLeft } from '../rules/encumbrance';
 
 const POTION = /\bpotion\b.*\bheal|\bheal\w*\b.*\bpotion\b/i;
+
+/** One place for the fight-button cap (gap-cap-4). */
+export const FIGHT_CHIP_CAP = 4;
 
 export function healingPotion(state: Pick<GameState, 'inventory'>): { id: string; name: string } | null {
   const it = (state.inventory ?? []).find((i) => POTION.test(i.name) && (i.quantity ?? 1) > 0);
@@ -72,6 +79,71 @@ export function fightAlly(state: Pick<GameState, 'companions'>): { name: string 
 
 export const DEATH_SAVE_CHIP = 'Fight for breath';
 
+/**
+ * Priority for the 4-chip fight pad: Attack → Cast/feature → Dodge/Disengage → Flee → rest.
+ * All candidates are engine-legal for this round (economy still available at round start).
+ */
+function fightChipPriority(label: string): number {
+  const l = label.toLowerCase();
+  if (l.startsWith('attack')) return 0;
+  if (l.startsWith('cast') || l.startsWith('use innate')) return 1;
+  if (l.startsWith('rage') || l.startsWith('reckless') || l === 'lay on hands') return 2;
+  if (l === 'dodge' || l === 'disengage') return 3;
+  if (l === 'flee') return 4;
+  if (l.startsWith('drink')) return 5;
+  if (l.startsWith('help') || l === 'hide') return 6;
+  return 7;
+}
+
+/** Cap non-idle fight picks at FIGHT_CHIP_CAP (one place — gap-cap-4). */
+export function capFightChips(candidates: string[], cap = FIGHT_CHIP_CAP): string[] {
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  for (const raw of candidates) {
+    const t = (raw ?? '').trim();
+    if (!t) continue;
+    const key = t.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(t);
+  }
+  return unique.sort((a, b) => fightChipPriority(a) - fightChipPriority(b)).slice(0, Math.max(0, cap));
+}
+
+/**
+ * Engine-legal fight actions available at the start of this round (economy fresh).
+ * Does not include idle Wait — typed free text stays beside these buttons.
+ */
+export function legalFightActionsThisRound(state: GameState): string[] {
+  const weapon = pcWeaponName(state);
+  const cantrip = pcCantripName(state);
+  const ally = fightAlly(state);
+  const potion = healingPotion(state);
+  const weaponChip = weapon === 'Unarmed Strike' ? 'Attack with an Unarmed Strike' : `Attack with the ${weapon}`;
+  const eco = state.roundCombat?.pcEconomy;
+  // At round start (or when economy unset) every Action is legal; when Action already spent, drop Action chips.
+  const actionOk = eco?.actionAvailable !== false;
+  const bonusOk = eco?.bonusAvailable !== false;
+  const out: string[] = [];
+  if (actionOk) {
+    out.push(weaponChip);
+    if (cantrip) out.push(`Cast ${cantrip}`);
+    out.push(...spellRoundChips(state));
+    out.push('Dodge', 'Disengage');
+    if (ally) out.push(`Help ${ally.name}`);
+    out.push('Hide', 'Flee');
+  }
+  if (bonusOk || actionOk) {
+    for (const f of featureRoundChips(state, weaponChip, cantrip)) {
+      // Rage / Innate are bonus-flavoured; Reckless rides with Attack.
+      if (!bonusOk && /^(Rage |Use Innate)/i.test(f) && !/^Reckless /i.test(f)) continue;
+      out.push(f);
+    }
+  }
+  if (potion && (bonusOk || actionOk)) out.push(`Drink the ${potion.name}`);
+  return out;
+}
+
 /** The round's chips while a tabletop fight is live; null when no round choice is due. */
 export function roundCombatChips(state: GameState): string[] | null {
   if (state.engineMode !== 'dnd' || !state.character?.srd) return null;
@@ -96,25 +168,9 @@ export function roundCombatChips(state: GameState): string[] | null {
       seen.add(key);
       out.push(`Ask ${c.name.trim()} to stabilise you`);
     }
-    return out;
+    return capFightChips(out, FIGHT_CHIP_CAP);
   }
   const enc = state.activeEncounter;
   if (!enc || enc.hp <= 0 || enc.phase === 'pending') return null;
-  const weapon = pcWeaponName(state);
-  const cantrip = pcCantripName(state);
-  const ally = fightAlly(state);
-  const potion = healingPotion(state);
-  const weaponChip = weapon === 'Unarmed Strike' ? 'Attack with an Unarmed Strike' : `Attack with the ${weapon}`;
-  return [
-    weaponChip,
-    ...(cantrip ? [`Cast ${cantrip}`] : []),
-    ...spellRoundChips(state),
-    ...featureRoundChips(state, weaponChip, cantrip),
-    'Dodge',
-    'Disengage',
-    ...(ally ? [`Help ${ally.name}`] : []),
-    'Hide',
-    ...(potion ? [`Drink the ${potion.name}`] : []),
-    'Flee',
-  ];
+  return capFightChips(legalFightActionsThisRound(state), FIGHT_CHIP_CAP);
 }
