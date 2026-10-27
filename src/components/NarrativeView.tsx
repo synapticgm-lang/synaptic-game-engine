@@ -41,6 +41,8 @@ interface Props {
   speakingEntryId?: string | null;
   onSpeakEntry?: (entryId: string, text: string) => void;
   onStopSpeaking?: () => void;
+  /** When false (default), omit player typed lines from the story feed. */
+  showPlayerLines?: boolean;
 }
 
 type ActionKind = 'crit' | 'damage' | 'heal' | 'skill' | 'defeat' | 'miss';
@@ -90,7 +92,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', statVerbosity = 'core', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: Props) {
+export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', statVerbosity = 'core', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking, showPlayerLines = false }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
   const turnUiBlocked = isTurnUiBlocked(!!busy, turnPhase, streamingReveal);
@@ -102,7 +104,8 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
           {log.map((entry, index) => (
-            shouldSkipDuplicatePlayerBubble(log, index) ? null : (
+            shouldSkipDuplicatePlayerBubble(log, index)
+              || (!showPlayerLines && entry.role === 'player') ? null : (
               <NarrativeEntry
                 key={entry.id}
                 entry={entry}
