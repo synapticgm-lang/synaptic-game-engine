@@ -346,6 +346,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
           'Idea only: after the writer, classify each clause as colour or fact against the FactSheet; unsupported serious facts get one targeted sentence repair; player claims are never facts. Ported into clauseCheck; not a copy of the prototype module. Date 27 October 2026.',
       },
       {
+        work: 'Companions as full persona NPCs (merge M7)',
+        source: 'SynapticGM (internal; reuses merge M5 persona)',
+        license: 'Original',
+        usedFor:
+          'Idea only: travelling together is consent, not a second entity kind; per-companion agenda/persona, travel consent, own-acts on FactSheet/TurnLog, approval feeds nudgePersona. Date 27 October 2026.',
+      },
+      {
         work: 'Custom tabletop rules (player paste)',
         source: 'The player',
         license: 'Player-supplied',

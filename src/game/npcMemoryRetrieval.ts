@@ -322,6 +322,41 @@ export function buildNpcPacket(
 }
 
 /**
+ * M7 / prep08 — retrieve remembered moments for a companion (or any NPC) by display name.
+ * Same path for companions and townsfolk: arcDirector ledger, else NpcMemory.said[].
+ */
+export function retrieveNpcMemories(state: GameState, name: string): KeyMoment[] {
+  const key = (name ?? '').trim().toLowerCase();
+  if (!key) return [];
+  const social = (state.npcMemories ?? []).find(
+    (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),
+  );
+  const ledgerRaw =
+    (state.arcDirector?.npcMemories ?? []).find((row: { npcId?: string }) => {
+      const id = (row.npcId ?? '').toLowerCase();
+      return id === key || id === (social?.npcId ?? '').toLowerCase() || id.includes(key);
+    }) ?? null;
+  if (ledgerRaw) {
+    const ledger = normalizeLedgerEntry(ledgerRaw);
+    return selectMemoriesForPacket(ledger, {
+      currentNpc: ledger.npcId,
+      currentTurn: state.turn ?? 0,
+      maxMemories: 24,
+    }).selected;
+  }
+  // Fall back to spoken lines on the social memory row (companions share this path).
+  return (social?.said ?? []).map((s, i) => ({
+    id: `said-${social!.npcId}-${i}`,
+    npcId: social!.npcId,
+    actorId: social!.npcId,
+    turn: s.turn,
+    category: 'witness',
+    summary: s.line,
+    topicId: s.topic,
+  }));
+}
+
+/**
  * Wave C: Format NPC packet for situation section
  */
 export function formatNpcPacketSection(

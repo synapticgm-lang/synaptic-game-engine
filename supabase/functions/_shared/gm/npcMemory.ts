@@ -8,6 +8,7 @@ import { canHarvestAsNamedPerson } from './entityRegistry.ts';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks.ts';
 import { pickDataswornCharacterSeed } from './dataswornCharacterSeeds.ts';
 import { isMetNpc, syncNpcPresence } from './npcRecords.ts';
+import { isStaleCompanionDefault, personalAgendaFromSeed } from './companionAgency.ts';
 
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
@@ -24,16 +25,19 @@ type RoleAgendaTemplate = {
   speechRegister: string;
 };
 
+/** Roles that still share a static agenda template. Companion is a relationship (M7), not a template. */
+type AgendaTemplateRole = Exclude<NpcRole, 'companion'>;
+
 /**
  * OPT-3 role-hint templates (data). Motivations: Doran and Parberry 2011.
  * Attitude categories match SRD 5.2.1 glossary (Friendly / Indifferent / Hostile).
+ * M7: no shared `companion` profile — travelling companions seed a personal agenda like other NPCs.
  */
-export const ROLE_AGENDA_TEMPLATES: Readonly<Record<NpcRole, RoleAgendaTemplate>> = {
+export const ROLE_AGENDA_TEMPLATES: Readonly<Record<AgendaTemplateRole, RoleAgendaTemplate>> = {
   guide: { motivation: 'Knowledge', target: 'the next safe door', need: 'a charge who will follow', offer: 'directions through the crisis', traits: ['steady', 'plain'], speechRegister: 'plain-guide' },
   'quest-patron': { motivation: 'Protection', target: 'the job they need done', need: 'someone to take the job', offer: 'a paid job', traits: ['urgent', 'direct'], speechRegister: 'plain-orders' },
   merchant: { motivation: 'Wealth', target: 'their wares', need: 'paying customers', offer: MERCHANT_OFFER_STOCK, traits: ['shrewd', 'practical'], speechRegister: 'prices-first' },
   'faction-envoy': { motivation: 'Reputation', target: 'their faction standing', need: 'a useful ally', offer: 'faction favour', traits: ['measured', 'loyal'], speechRegister: 'formal' },
-  companion: { motivation: 'Protection', target: 'the party', need: 'shared purpose', offer: 'their help in a fight', traits: ['loyal', 'blunt'], speechRegister: 'plain' },
   rival: { motivation: 'Reputation', target: 'outranking the player', need: 'proof they are ahead', offer: 'a contested lead', traits: ['proud', 'sharp'], speechRegister: 'edged' },
   herald: { motivation: 'Reputation', target: 'the news they carry', need: 'listeners', offer: 'a public proclamation', traits: ['loud', 'formal'], speechRegister: 'proclamation' },
   keeper: { motivation: 'Comfort', target: 'their house and guests', need: 'order under their roof', offer: 'lodging and a hearing', traits: ['hospitable', 'watchful'], speechRegister: 'plain-host' },
@@ -60,6 +64,9 @@ export function agendaFromRole(src: {
   role: string;
   disposition?: NpcMemory['disposition'] | 'ambiguous';
   bindTarget?: string;
+  npcId?: string;
+  npcName?: string;
+  seed?: string;
 }): {
   goal: NonNullable<NpcMemory['goal']>;
   need: string;
@@ -69,7 +76,20 @@ export function agendaFromRole(src: {
   speechRegister: string;
 } {
   const role = src.role in NPC_ROLE_REGISTRY ? (src.role as NpcRole) : 'informant';
-  const t = ROLE_AGENDA_TEMPLATES[role];
+  // M7: companion is a travelling relationship — personal seed, not ROLE_AGENDA_TEMPLATES.companion.
+  if (role === 'companion' || !(role in ROLE_AGENDA_TEMPLATES)) {
+    const personal = personalAgendaFromSeed({
+      npcId: src.npcId,
+      npcName: src.npcName,
+      seed: src.seed,
+      disposition: src.disposition,
+    });
+    if ((src.bindTarget ?? '').trim()) {
+      return { ...personal, goal: { ...personal.goal, target: src.bindTarget!.trim() } };
+    }
+    return personal;
+  }
+  const t = ROLE_AGENDA_TEMPLATES[role as AgendaTemplateRole];
   const target = (src.bindTarget ?? '').trim() || t.target;
   const offer = role === 'merchant' ? MERCHANT_OFFER_STOCK : t.offer;
   const attitude: NpcAttitude =
@@ -88,13 +108,20 @@ export function agendaFromRole(src: {
   };
 }
 
-/** Fill missing OPT-3 fields once; never overwrite a value already set. */
+/** Fill missing OPT-3 fields once; never overwrite a value already set (except stale companion default). */
 export function ensureNpcAgenda(
   memory: NpcMemory,
-  src?: { role?: string; disposition?: NpcMemory['disposition'] | 'ambiguous'; bindTarget?: string },
+  src?: {
+    role?: string;
+    disposition?: NpcMemory['disposition'] | 'ambiguous';
+    bindTarget?: string;
+    seed?: string;
+  },
 ): NpcMemory {
+  const staleCompanion = isStaleCompanionDefault(memory);
   if (
-    memory.goal?.motivation
+    !staleCompanion
+    && memory.goal?.motivation
     && memory.goal.target
     && memory.need
     && memory.offer
@@ -110,15 +137,18 @@ export function ensureNpcAgenda(
     role: src?.role ?? memory.roleHint ?? memory.sheet?.job ?? 'informant',
     disposition: src?.disposition ?? memory.disposition,
     bindTarget: src?.bindTarget,
+    npcId: memory.npcId,
+    npcName: memory.npcName,
+    seed: src?.seed,
   });
   return {
     ...memory,
-    goal: memory.goal ?? fresh.goal,
-    need: memory.need ?? fresh.need,
-    offer: memory.offer ?? fresh.offer,
+    goal: staleCompanion || !memory.goal ? fresh.goal : memory.goal,
+    need: staleCompanion || !memory.need ? fresh.need : memory.need,
+    offer: staleCompanion || !memory.offer ? fresh.offer : memory.offer,
     attitude: memory.attitude ?? fresh.attitude,
-    traits: memory.traits?.length ? memory.traits.slice(0, 2) : fresh.traits,
-    speechRegister: memory.speechRegister ?? fresh.speechRegister,
+    traits: staleCompanion || !memory.traits?.length ? fresh.traits : memory.traits.slice(0, 2),
+    speechRegister: staleCompanion || !memory.speechRegister ? fresh.speechRegister : memory.speechRegister,
   };
 }
 

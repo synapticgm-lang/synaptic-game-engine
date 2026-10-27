@@ -966,6 +966,15 @@ export interface GameState {
     after: { trust: number; fondness: number; fear: number };
     socialShift: number;
   }>;
+  /**
+   * M7 — companion own-acts this turn (refuse / disagree / act-alone / stay), harvested into
+   * FactSheet beat.steps + TurnLog engineBeats, then cleared. Display names only.
+   */
+  companionOwnActs?: Array<{
+    name: string;
+    kind: 'disagree' | 'refuse' | 'act-alone' | 'stay' | 'come';
+    detail: string;
+  }>;
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
   /** P-5e: things the story brought across from another world (a summoned person's kit and the like). */
@@ -1829,7 +1838,7 @@ export interface NpcMemory {
   met?: boolean;
   /** 27d — refreshed at merge time from sceneFacts.present; read-time truth is presentNpcRecords(). */
   present?: boolean;
-  /** 27f — where this NPC is. Seeded at New Game from the opening card; set when left behind; companions move with the player. Read-time presence comes from this (presentNpcRecords). */
+  /** 27f — where this NPC is. Seeded at New Game from the opening card; set when left behind. Companions move only by consent (M7); read-time presence comes from this (presentNpcRecords). */
   location?: string;
   /** Generated townsfolk only: code-picked sheet, saved on first meet (see npcSheet.ts). */
   sheet?: NpcSheet;

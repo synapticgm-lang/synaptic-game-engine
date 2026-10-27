@@ -158,7 +158,7 @@ function gearOf(state: GameState): FactSheetGear {
   };
 }
 
-function beatSteps(packet: CompletedEventPacket): FactSheetBeatStep[] {
+function beatSteps(packet: CompletedEventPacket, state?: GameState): FactSheetBeatStep[] {
   const steps: FactSheetBeatStep[] = [];
   // M2 — one FactSheet beat line per reader step when the engine recorded them.
   const readerSteps = packet.readerStepResults;
@@ -172,6 +172,10 @@ function beatSteps(packet: CompletedEventPacket): FactSheetBeatStep[] {
   } else {
     steps.push({ outcome: packet.outcome, detail: `${packet.verb}${packet.target ? ` → ${packet.target}` : ''}` });
     if (packet.engineResult) steps.push({ outcome: 'engine', detail: packet.engineResult });
+  }
+  // M7 — companion own-acts (refuse / disagree / stay) are engine facts on the sheet.
+  for (const a of state?.companionOwnActs ?? []) {
+    steps.push({ outcome: a.kind, detail: clip(a.detail, 160) });
   }
   if (packet.movement) steps.push({ outcome: 'moved', detail: packet.movement });
   if (packet.justKilled && packet.lastKill?.name) {
@@ -278,8 +282,12 @@ export function buildFactSheet(
     beat: {
       verb: packet.verb,
       outcome: packet.outcome,
-      engineResult: packet.engineResult,
-      steps: beatSteps(packet),
+      engineResult:
+        packet.engineResult ||
+        (state.companionOwnActs?.length
+          ? state.companionOwnActs.map((a) => a.detail).join(' ')
+          : undefined),
+      steps: beatSteps(packet, state),
     },
     player: {
       typed: clip(typed, 300),
