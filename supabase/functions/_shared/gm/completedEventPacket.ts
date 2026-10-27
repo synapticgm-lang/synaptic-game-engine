@@ -9,7 +9,7 @@ import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabe
 import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
-import { formatWriterInfoLayer } from './writerInfoLayer.ts';
+import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet.ts';
 import { formatRefRecords, formatSceneBlock, mentionFromScene } from './sceneBlock.ts';
 import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
@@ -196,6 +196,11 @@ export interface CompletedEventPacket {
   movement?: string;
   /** The journey leg committed this turn heads here (REF ENUM row): the travel line names it. */
   destinationRef?: LedgerRef;
+  /**
+   * M1 — one typed FactSheet for the writer (display names only). Replaces the second context
+   * (info layer + info sheet dump). Settings slot reserved for 6b.
+   */
+  factSheet?: FactSheet;
 }
 const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b|^(?:read the device|look inward|ask the world|reach into the pocket)$/i;
 /** The one test for "the player read the ledger": the packet and the System window both ask it. */
@@ -981,7 +986,7 @@ export function buildCompletedEventPacket(
   const focusNoun = ledgerFocusNoun(state);
   const placeFacts = ledgerPlaceFacts(state);
   const askedWantAtCard = hallTalkTopic(action) === 'want' && atOpeningPlace(state);
-  return {
+  const basePacket: CompletedEventPacket = {
     turn: state.turn,
     actor: 'you',
     pc: { name: state.character?.name ?? null, gender: state.character?.gender ?? null },
@@ -1042,25 +1047,39 @@ export function buildCompletedEventPacket(
     movement,
     destinationRef,
   };
+  // M1 — attach the one FactSheet after the packet fields exist (writer leaf + TurnLog hash).
+  return {
+    ...basePacket,
+    factSheet: buildFactSheet(state, basePacket, playerInput),
+  };
 }
+
 /**
- * The facts the writer was handed this turn, as one text: WORLD FACTS (the info layer with its NPC rows), the
- * INFO SHEET, the ENGINE RESULT, the ledger changes, PLAYER and the mention list. The writer prompt shows these
- * pieces; the line gate (`tokenProse.handedCountText` / `handedProperNames`) reads this same text.
+ * The facts the writer was handed this turn, as one text.
+ * M1: FactSheet is the single world-facts source; ENGINE RESULT + PLAYER stay on this record
+ * so the line gate can read them even when only those fields were stamped (partial packet).
  */
 export function handedWriterText(state: GameState, packet: Partial<CompletedEventPacket>): string {
-  const player = packet.playerAction && packet.playerAction !== '(opening)' ? packet.playerAction : '';
-  let world = '';
-  try {
-    world = formatWriterInfoLayer(state, [], player);
-  } catch {
-    world = '';
-  }
+  const typedExtra = String((packet as { playerInput?: string }).playerInput ?? '').trim();
+  const player =
+    (packet.playerAction && packet.playerAction !== '(opening)' ? packet.playerAction : '') || typedExtra;
+  const sheet =
+    packet.factSheet ??
+    (packet.verb
+      ? buildFactSheet(state, packet as CompletedEventPacket, player)
+      : undefined);
+  const facts = sheet ? formatFactSheetForWriter(sheet) : '';
+  // Short ENGINE RESULT: lines are the line-gate record (same shape as pre-M1). Skip when the
+  // FactSheet already carried them so a full packet does not double-dump.
+  const engineLines = sheet?.beat.engineResult
+    ? []
+    : (packet.engineResult ?? '')
+        .split('\n')
+        .filter((l) => l.trim())
+        .map((l) => `ENGINE RESULT: ${l.trim()}`);
   return [
-    world,
-    packet.infoSheet ?? '',
-    ...(packet.engineResult ?? '').split('\n').filter((l) => l.trim()).map((l) => `ENGINE RESULT: ${l.trim()}`),
-    // The travel beat (stops passed, finds) is a handed fact; the named route stops come in with the allowlist.
+    facts,
+    ...engineLines,
     packet.movement ?? '',
     ...(packet.ledgerChanges ?? []),
     player ? `PLAYER: ${player}` : '',
@@ -1257,8 +1276,9 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   return [...lastLines].sort((a, b) => lastUse(b) - lastUse(a))[0] ?? stayLine;
 }
 /**
- * Short past-tense instruction + packet + allowlist. Facts only.
+ * Short past-tense instruction + one FactSheet (M1). Facts only.
  * No SNAPSHOT/CRAFT essays. No "don't resurrect" lecture.
+ * Second contexts (info layer / info sheet dump) are not appended here — FactSheet is the leaf.
  */
 export function formatWriterFacingEvent(
   packet: CompletedEventPacket,
@@ -1274,10 +1294,17 @@ export function formatWriterFacingEvent(
       ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
       : 'Narrate this completed event in past tense.',
     '',
+  ];
+  // M1 — FactSheet is the single facts block (settings slot reserved for 6b).
+  if (packet.factSheet) {
+    lines.push(formatFactSheetForWriter(packet.factSheet));
+    lines.push('');
+  }
+  lines.push(
     'COMPLETED EVENT:',
     panelRead ? ledgerReadEventLine(who, pov.him, housingFromSystemBlock(packet.systemBlock)) : `${who} ${packet.verb}${target}.`,
     `Outcome: ${panelRead ? 'read the change below' : packet.outcome}.`,
-  ];
+  );
   if (packet.engineResult) {
     const fightClose = terminalFightOutcome(packet.engineResult);
     const mark =
