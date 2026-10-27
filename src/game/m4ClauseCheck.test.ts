@@ -102,7 +102,30 @@ describe('M4 clause check (stubbed model)', () => {
     expect(out.serious0.length).toBeGreaterThan(0);
     expect(out.prose).toContain('Steam curls off the furnace stones');
     expect(out.prose).not.toMatch(/A dragon lands/i);
+    expect(out.prose).toContain('The bathhouse waits');
     expect(out.records.some((r) => r.repaired)).toBe(true);
+  });
+
+  it('refuses a repair that would wipe sibling sentences', async () => {
+    const prose = 'You open the last box. Musty oak fills the air.';
+    const claims: ClauseClaim[] = [
+      { c: 'You open the last box', kind: 'fact', support: '', severity: 'serious' },
+      { c: 'Musty oak fills the air', kind: 'colour', support: '' },
+    ];
+    const out = await checkAndRepairProse({
+      factSheet: sheet({
+        gear: { worn: [], carrying: [], inHand: 'nothing' },
+        place: { name: 'Hall', exits: [], features: [] },
+      }),
+      prose,
+      player: sheet().player,
+      chat: stubChat(claims),
+      // Bad repair: replaces the invent sentence with empty → would drop colour if applied.
+      repair: async () => '',
+    });
+    expect(out.repaired).toBe(false);
+    expect(out.prose).toBe(prose);
+    expect(out.prose).toMatch(/musty oak/i);
   });
 
   it('colour is never flagged for repair', async () => {

@@ -18,6 +18,8 @@ import { inventedPersonNamesNotOnAllowlist, obeyLedgerNouns } from './ledgerNoun
 import { applyGovernanceToProse } from './qualityGovernance';
 import { writerWordsGuard } from './writerWords';
 import { polishMentions } from './mentionVariety';
+import { checkAndRepairProse, type ClauseClaim, type ClauseCheckChat } from './clauseCheck';
+import type { FactSheet } from './factSheet';
 import { runWarden } from './warden';
 import type { GameState, NpcMemory } from './types';
 
@@ -428,18 +430,71 @@ describe('29z9d â€” seed-71 check lines', () => {
   });
 
   it("cursed-keep T8 check 5: the player's held shortsword is not rewritten to fists", async () => {
-    const base = townState('Open road', []);
-    const line = "The traveler slowed as they passed, glanced once at Jax's sword, and offered a short nod before carrying on toward the gate.";
-    const armed = {
-      ...base,
-      character: { ...base.character, name: 'Jax' },
-      inventory: [{ id: 'w1', name: 'Worn Iron Shortsword', rarity: 'Common', quantity: 1, equipped: true, itemType: 'weapon' }],
-    } as GameState;
-    const kept = await runWarden(armed, [], line, 'Walk on');
-    expect(kept.scrubbedNarrative ?? line).toContain("at Jax's sword");
-    const unarmed = { ...armed, inventory: [] } as GameState;
-    const scrubbed = await runWarden(unarmed, [], line, 'Walk on');
-    expect(scrubbed.scrubbedNarrative ?? line).not.toContain("Jax's sword");
+    // M4 — proseWarden retired; FactSheet gear.inHand is the held-weapon authority.
+    // Armed: sword fact is supported → prose kept. Unarmed: unsupported → one sentence repair.
+    const line =
+      "The traveler slowed as they passed, glanced once at Jax's sword, and offered a short nod before carrying on toward the gate.";
+    const baseSheet = (): FactSheet => ({
+      turn: 8,
+      place: { name: 'Open road', exits: ['gate'], features: [] },
+      present: [{ name: 'traveler' }],
+      openLedger: [],
+      gear: { worn: [], carrying: [], inHand: 'nothing' },
+      beat: {
+        verb: 'walked',
+        outcome: 'You walked on',
+        engineResult: 'You walked on toward the gate.',
+        steps: [{ outcome: 'done', detail: 'walk on' }],
+      },
+      player: { typed: 'Walk on', claimsNotTrue: [] },
+      quests: [],
+      recent: [],
+      settingsSlot: null,
+    });
+    const swordClaim: ClauseClaim = {
+      c: "glanced once at Jax's sword",
+      kind: 'fact',
+      support: 'PC gear: in hand Worn Iron Shortsword',
+    };
+    const armedChat: ClauseCheckChat = async () => ({
+      claims: [swordClaim, { c: 'offered a short nod', kind: 'colour', support: '' }],
+    });
+    const armedSheet = {
+      ...baseSheet(),
+      gear: { worn: [], carrying: [], inHand: 'Worn Iron Shortsword' },
+    };
+    const kept = await checkAndRepairProse({
+      factSheet: armedSheet,
+      prose: line,
+      player: armedSheet.player,
+      chat: armedChat,
+      repair: async () => {
+        throw new Error('armed sword is supported — repair must not run');
+      },
+    });
+    expect(kept.repaired).toBe(false);
+    expect(kept.prose).toContain("at Jax's sword");
+
+    const unarmedClaim: ClauseClaim = {
+      c: "glanced once at Jax's sword",
+      kind: 'fact',
+      support: '',
+      severity: 'serious',
+    };
+    const unarmedChat: ClauseCheckChat = async () => ({
+      claims: [unarmedClaim, { c: 'offered a short nod', kind: 'colour', support: '' }],
+    });
+    const unarmedSheet = baseSheet();
+    const scrubbed = await checkAndRepairProse({
+      factSheet: unarmedSheet,
+      prose: line,
+      player: unarmedSheet.player,
+      chat: unarmedChat,
+      repair: async () =>
+        'The traveler slowed as they passed, glanced once at Jax, and offered a short nod before carrying on toward the gate.',
+    });
+    expect(scrubbed.repaired).toBe(true);
+    expect(scrubbed.prose).not.toContain("Jax's sword");
   });
 
   it('salt-road T10 check 3: a named person token after an article fails the gate', () => {

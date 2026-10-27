@@ -197,10 +197,19 @@ export async function checkAndRepairProse(args: {
         .split(/\n+/)
         .map((l) => l.replace(/^\s*(?:\d+[.)]\s*|[-*]\s*)/, '').trim())
         .find(Boolean);
+      // One sentence only: never wipe the draft or drop sibling colour/fact sentences.
       if (line && line !== sentence) {
-        prose = replaceDraftSentence(prose, sentence, line);
-        repaired = true;
-        repairedSet.add(target.c);
+        const before = prose;
+        const siblings = splitProseSentences(before).filter((s) => s !== sentence);
+        const next = replaceDraftSentence(before, sentence, line);
+        const kept =
+          Boolean(next.trim()) &&
+          siblings.every((s) => next.includes(s) || next.toLowerCase().includes(s.toLowerCase()));
+        if (kept) {
+          prose = next;
+          repaired = true;
+          repairedSet.add(target.c);
+        }
       }
     }
     const second = await runClauseCheck({
