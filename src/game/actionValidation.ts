@@ -164,8 +164,15 @@ export function validateActionHard(
     }
   }
 
+  // Pad chips are engine-authored from the sheet/scene (parity with groundPlayerAction) — never invent claims (T10M).
+  const pad = state.offeredPad;
+  const offeredChip =
+    pad?.turn === (state.turn ?? 0)
+    && (pad.choices ?? []).some((c) => c.trim().toLowerCase() === trimmed.toLowerCase());
   const carried = knownObjectNames(state);
-  const missingItems = findHardItemUseClaims(trimmed, state).filter((claim) => !fuzzyTypedPhrase(claim, carried));
+  const missingItems = offeredChip
+    ? []
+    : findHardItemUseClaims(trimmed, state).filter((claim) => !fuzzyTypedPhrase(claim, carried));
   if (missingItems.length > 0) {
     violations.push({
       code: 'MISSING_ITEM',
