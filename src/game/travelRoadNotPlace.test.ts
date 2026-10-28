@@ -125,29 +125,28 @@ describe('s71 A+B — the writer and the card builder never treat the road as a 
     return { ...t, state: recordCirclingTurn(moved, input, t.receipt ? [t.receipt] : [], next) };
   }
 
-  it('the writer packet, info layer and info sheet name both ends; live HERE is the trip (not a bare road label)', () => {
+  it('the writer packet names both ends; live HERE is ground only (not chrome from/toward)', () => {
     const t = travelTurn(cinderflow(), 'Travel toward West Wall');
     expect(t.arrived).toBe(false);
     expect(t.state.currentLocation).toBe(UNDERWAY_HERE);
     const packet = buildCompletedEventPacket(t.state, 'Travel toward West Wall');
-    const texts = [formatWriterFacingEvent(packet), formatWriterInfoLayer(t.state), formatInfoSheet(t.state)];
-    for (const text of texts) {
-      // Bare road labels stay out of the prose layers; the trip phrase may name the ground.
-      expect(text).not.toMatch(/^[^\n]*\bOpen road\b/m);
-      expect(text).toContain('Cinderflow Road');
-      expect(text).toContain('West Wall');
+    const facing = formatWriterFacingEvent(packet);
+    // Ends stay on the writer packet / movement; HERE chrome is ground only (T10M).
+    expect(facing).toContain('Cinderflow Road');
+    expect(facing).toContain('West Wall');
+    expect(facing).not.toMatch(/^[^\n]*\bOpen road\b/m);
+    for (const text of [formatWriterInfoLayer(t.state), formatInfoSheet(t.state)]) {
+      expect(text).toMatch(/\bthe (open road|back streets)\b/i);
+      expect(text).not.toMatch(/from Cinderflow Road toward West Wall/i);
     }
     const refs = packet.refEnum ?? [];
-    // T10J — mid-travel placeTok must be live HERE (trip phrase), not journey.from.
     const here = refs.find((r) => r.id === 'here');
     expect(here?.klass).toBe('place');
-    expect(here?.display.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
+    expect(here?.display.toLowerCase()).toMatch(/^the (back streets|open road)$/);
+    expect(here?.display.toLowerCase()).not.toMatch(/from|toward/);
     expect(refs.some((r) => r.klass === 'place' && isRoadLabel(r.display))).toBe(false);
     const places = refs.filter((r) => r.klass === 'place').map((r) => r.display);
-    // Known ends stay place refs; trip HERE is added (placeTok uses id === 'here'), not a replace.
-    expect(here?.display.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
     expect(places).toEqual(expect.arrayContaining(['Cinderflow Road', 'West Wall']));
-    // Bare ground labels are not place-klass rows (trip HERE is the phrase, ends are settlements).
     expect(refs.some((r) => r.klass === 'place' && /^(Back streets|Open road|On the road between places)$/i.test(r.display))).toBe(false);
   });
 

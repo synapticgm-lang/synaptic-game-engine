@@ -41,7 +41,7 @@ const journey: TravelJourney = {
 } as TravelJourney;
 
 describe('T10J mid-travel live place', () => {
-  it('REF ENUM here is the trip phrase, not the origin square (s1028 T7)', () => {
+  it('REF ENUM here is the trip ground, not the origin square (s1028 T7 / T10M chrome)', () => {
     const s = litrpg({
       currentLocation: UNDERWAY_HERE,
       journey,
@@ -49,9 +49,9 @@ describe('T10J mid-travel live place', () => {
     });
     const refs = compileRefEnum(s);
     const here = refs.find((r) => r.id === 'here');
-    expect(here?.display.toLowerCase()).toMatch(
-      /back streets from valespire peace-festival square toward cathedral close/,
-    );
+    // T10M: HERE is ground only — full "from X toward Y" is STATUS chrome, not a place name.
+    expect(here?.display.toLowerCase()).toBe('the back streets');
+    expect(here?.display.toLowerCase()).not.toMatch(/from|toward/);
     expect(here?.display.toLowerCase()).not.toBe('valespire peace-festival square');
     // Origin/dest remain exits the writer may name — but placeTok prefers here.
     expect(refs.some((r) => /valespire peace-festival square/i.test(r.display))).toBe(true);

@@ -41,8 +41,12 @@ export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = 
   if (!state.character?.srd || (state.deathSaves && !state.deathSaves.stable && !state.deathSaves.dead)) return null;
 
   // Craft: intent Rest ("Make camp") stays out; else make-action + craftRecipe(item) (E-CR1).
+  // Quoted speech is never a craft verb ("make it quicker" inside dialogue) — T10M pick-up/toss.
   const intent = parsePlayerIntent(line, state);
-  const low = line.toLowerCase();
+  const low = line
+    .replace(/["“”][^"“”]*["“”]/g, ' ')
+    .replace(/['‘’][^'‘’]*['‘’]/g, ' ')
+    .toLowerCase();
   const craftAct = low.includes('craft ') || low.includes('forge ') || low.includes('brew ') || low.includes('scribe ')
     || low.includes('fletch ') || low.includes('carve ') || low.includes('sew ') || low.includes('weave ') || low.includes('make ');
   if (intent.kind !== 'rest' && craftAct) {

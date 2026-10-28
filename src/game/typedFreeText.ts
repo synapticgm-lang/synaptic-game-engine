@@ -71,32 +71,37 @@ const MECHANICAL_ACTIONS = new Set([
  * Writer-facing fact for one clause — strings live in writerCueLines (T10E shared shape).
  * SRD 5.2.1 Communicating — brief speech is free; the engine does not invent the PC's line.
  */
-function clauseWriterFact(step: IntentStep, speech: boolean): string {
+function clauseWriterFact(step: IntentStep, speech: boolean, presentHere: string[] = []): string {
   const clause = (step.clause ?? '').replace(/\s+/g, ' ').trim() || describeIntentStep(step);
   return buildClauseWriterFact(clause, speech, {
     said: (step.say ?? '').replace(/\s+/g, ' ').trim(),
     addressee: step.addressee?.trim() || null,
+    presentHere,
   });
 }
 
-function speechStep(step: IntentStep): StepResolution {
+function presentNames(state: GameState): string[] {
+  return (state.sceneFacts?.present ?? []).map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+}
+
+function speechStep(step: IntentStep, presentHere: string[] = []): StepResolution {
   const tried = describeIntentStep(step) || 'speech';
   return {
     tried,
     done: true,
     reason: 'speech (free)',
-    engineResult: clauseWriterFact(step, true),
+    engineResult: clauseWriterFact(step, true, presentHere),
     economySlot: 'speech',
   };
 }
 
-function actionDoneStep(step: IntentStep, clause: string): StepResolution {
+function actionDoneStep(step: IntentStep, clause: string, presentHere: string[] = []): StepResolution {
   const tried = describeIntentStep(step) || clause.slice(0, 80);
   return {
     tried,
     done: true,
     reason: 'action noted',
-    engineResult: clauseWriterFact(step, false),
+    engineResult: clauseWriterFact(step, false, presentHere),
     economySlot: 'action',
   };
 }
@@ -156,6 +161,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   const tried = describeIntentStep(step) || clause.slice(0, 80);
   const slot = slotOfStep(step);
   const hostile = hostileParleyContext(state);
+  const here = presentNames(state);
 
   if (step.unplacedMove || ((step.action === 'move' || step.action === 'sneak') && !step.destination)) {
     return {
@@ -201,7 +207,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   }
 
   if (isSpeechStep(step, clause, hostile)) {
-    return speechStep(step);
+    return speechStep(step, here);
   }
 
   if (step.action === 'deal' && step.deal) {
@@ -226,7 +232,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       return speechStep({
         ...step,
         addressee: step.addressee?.trim() || state.activeEncounter?.name || null,
-      });
+      }, here);
     }
     const plan = interpretRoundTyped(state, clause);
     const engineResult = plan.facts.join(' ').trim() || plan.receipts.join(' ').trim() || tried;
@@ -264,18 +270,18 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       tried,
       done: true,
       reason: outcome,
-      engineResult: `${clauseWriterFact(step, false)} ${roll}`.trim(),
+      engineResult: `${clauseWriterFact(step, false, here)} ${roll}`.trim(),
       economySlot: slot,
     };
   }
   if (actionable && !canRoll) {
     // Still never "reject" — the clause is a writer fact even when no sheet can roll a check.
-    const fact = `${clauseWriterFact(step, false)} Attempt noted (${intent.label}); no built character sheet to resolve a check.`;
+    const fact = `${clauseWriterFact(step, false, here)} Attempt noted (${intent.label}); no built character sheet to resolve a check.`;
     return { tried, done: true, reason: 'action noted (no sheet check)', engineResult: fact, economySlot: slot };
   }
 
   // Non-actionable physical / other clause: still a writer fact (never silent, never rejected).
-  return actionDoneStep(step, clause);
+  return actionDoneStep(step, clause, here);
 }
 
 /**
@@ -362,7 +368,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     const hostNow = hostileParleyContext(live);
     // Speech is free — classify before spending a mechanical slot.
     if (isSpeechStep(step, clause, hostNow) && !step.unplacedMove) {
-      stepResults.push(speechStep(step));
+      stepResults.push(speechStep(step, presentNames(live)));
       if (step.addressee) lastAddressee = step.addressee;
       continue;
     }

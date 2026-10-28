@@ -121,6 +121,16 @@ function sceneCatalog(state: GameState): string[] {
   return names.filter(Boolean);
 }
 
+/** People here — `with X` is a social partner, not a bag instrument (T10M Press standing). */
+function personCatalog(state: GameState): string[] {
+  const names: string[] = [];
+  for (const p of state.sceneFacts?.present ?? []) names.push(normalize(p));
+  for (const c of state.companions ?? []) names.push(normalize(c.name));
+  for (const m of state.npcMemories ?? []) names.push(normalize(m.npcName));
+  if (state.activeEncounter?.name) names.push(normalize(state.activeEncounter.name));
+  return names.filter(Boolean);
+}
+
 function catalogHasName(catalog: string[], claimed: string): boolean {
   const needle = normalize(claimed);
   if (!needle) return true;
@@ -203,12 +213,16 @@ function collectUnsupportedClaims(input: string, state: GameState, patterns: Reg
       if (isDeixisObjectClaim(claimed)) continue;
       // Thing lying in the scene (cobble on the road) is scenery, not a bag claim.
       if (catalogHasName(scene, claimed)) continue;
-      // Instrument `with` that is really an NP attribute of a scene prop ("book with the palace seal").
       const matched = (m[0] ?? '').trimStart();
+      // Toss/throw/lob/fling of a/an/the X is a scene act (stone, chip, cobble) — only my/your is a bag claim (T10M).
+      if (/^(?:toss|throw|lob|fling)\b/i.test(matched) && !/\b(?:my|your)\s+/i.test(matched)) continue;
+      // Instrument `with` that is really an NP attribute of a scene prop ("book with the palace seal").
       const isWithInstrument = matched.length >= 5 && matched.slice(0, 5).toLowerCase() === 'with ';
       if (isWithInstrument) {
         // Body / worn / generic scene noun as instrument ("with my boot") is not a bag USE/EQUIP/GIVE.
         if (isGenericSceneNounClaim(claimed)) continue;
+        // Person present ("Press your standing with the muscle") is a social partner, not a tool.
+        if (catalogHasName(personCatalog(state), claimed)) continue;
         const parts: string[] = [];
         for (const raw of input.slice(0, m.index).trimEnd().split(' ')) {
           if (raw) parts.push(raw);
