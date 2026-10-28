@@ -101,14 +101,10 @@ export function resolveOfferedChoices(state: GameState): string[] {
   if (state.engineMode === 'dnd' && ds && !ds.dead && !ds.stable) {
     return roundCombatChips(state) ?? ['Fight for breath'];
   }
-  // T10T — origin chips prepend; scene options stay (no exclusive gate for 6 free-play turns).
+  // T10W — origin setup owns the pad until recorded (session-zero; no scene mix).
   const origin = originPad(state);
+  if (origin?.length) return origin;
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
-  if (origin?.length) {
-    const seen = new Set(origin.map((c) => c.trim().toLowerCase()));
-    const rest = chips.filter((c) => !seen.has(c.trim().toLowerCase()));
-    return [...origin, ...rest];
-  }
   const prompt = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
   if (!prompt.length) return chips;
   const seen = new Set<string>(); for (const c of prompt) seen.add(c.trim().toLowerCase());

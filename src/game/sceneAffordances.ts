@@ -30,7 +30,7 @@ import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapB
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant } from './openThreads';
 import { isDying } from './tabletop/roundFight';
-import { isOriginOpen, ORIGIN_QUICK_START_CHIP } from './rules/rpgOrigin';
+import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
 import type { QuestRoute } from './types';
 import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
@@ -685,8 +685,20 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     }
     return dying;
   }
-  // T10T — origin chips no longer cull the rest of the pad (scene talk/travel/inspect stay).
-  // originPad still seeds the row via engineChips / collectSceneAffordances; do not exclusive-filter here.
+  // T10W: Story RPG origin setup owns the pad until recorded (same exclusive shape as dying).
+  // Empty-MOVE refill must not inject Travel toward … beside Origin / Quick start chips.
+  const originOnly = originPad(state);
+  if (originOnly?.length) {
+    const want = new Set<string>();
+    for (let i = 0; i < originOnly.length; i++) want.add(originOnly[i]!.trim().toLowerCase());
+    const kept: T[] = [];
+    for (let i = 0; i < pad.length; i++) {
+      const chip = pad[i]!;
+      const low = (chip.label ?? '').trim().toLowerCase();
+      if (want.has(low)) kept.push({ ...chip, cooldownReturn: undefined });
+    }
+    return kept;
+  }
   // q75r: one availability source — fight / road lane / dying already covered by travelPadBlocked.
   const noTravel = travelPadBlocked(state);
   const mode = state.engineMode;
@@ -784,9 +796,6 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   const scene: T[] = [];
   const freeIn: T[] = [];
   const fightKeep: T[] = [];
-  // T10T — origin creation chips are not Dendry-slotted; pin the whole row beside scene picks.
-  const originKeep: T[] = [];
-  const originOpen = isOriginOpen(state);
   const seen = new Set<string>();
   for (let i = 0; i < work.length; i++) {
     const chip = work[i]!;
@@ -795,17 +804,6 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     if (chip.kind === 'free-input') {
       freeIn.push(chip);
       continue;
-    }
-    if (originOpen) {
-      const lab = (chip.label ?? '').trim();
-      const isOriginRow =
-        lab === ORIGIN_QUICK_START_CHIP
-        || (lab.length >= 8 && lab.slice(0, 8).toLowerCase() === 'origin: ');
-      if (isOriginRow) {
-      seen.add(chip.actionId);
-      originKeep.push({ ...chip, cooldownReturn: undefined });
-      continue;
-      }
     }
     if (liveFight && (chip.slotKind === 'fight' || chip.actionId.startsWith('fight:'))) {
       seen.add(chip.actionId);
@@ -1040,7 +1038,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   for (let i = 0; i < freeIn.length; i++) {
     picked.push({ ...freeIn[i]!, cooldownReturn: undefined });
   }
-  return [...originKeep, ...picked];
+  return picked;
 }
 export function stampRecentOfferedActions(
   state: GameState,

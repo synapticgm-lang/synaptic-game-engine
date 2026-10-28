@@ -21,7 +21,7 @@ import { commitOfferedTurn, downloadPlayDump, withOfferedChoices } from './playT
 import { beginTabletopCreation, stepTabletopCreation, tabletopCreationPending, takeBuiltSheet } from './tabletop/creationFlow';
 import { dropAbsentListenerChips } from './chipLegality';
 import { engineResultFact } from './engineResult';
-import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
+import { applyStoryRpgTurn, romanceAllowed, stepOriginCreation } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { resolveShopChip } from './shopChips';
 import { pyoaRejectsFreeText } from './pyoaChoiceLock';
@@ -1877,6 +1877,36 @@ export function useGame() {
       setState(built);
       void persist(built);
       return;
+    }
+    // T10W — Story RPG origin is session-zero (like tabletop inn-book): chip / named pick / Quick start
+    // applies with no turn advance; free text falls through and Quick-starts inside applyStoryRpgTurn.
+    {
+      const originStep = stepOriginCreation(current, input);
+      if (originStep) {
+        const at = Date.now();
+        const withLog: GameState = {
+          ...originStep.state,
+          log: [
+            ...originStep.state.log,
+            { id: uid(), turn: originStep.state.turn, role: 'player', content: input.trim(), timestamp: at },
+            {
+              id: uid(),
+              turn: originStep.state.turn,
+              role: 'system',
+              content: originStep.receipts.join('\n'),
+              timestamp: at,
+              systemLog: originStep.receipts,
+            },
+          ],
+          lastUpdated: at,
+          offeredPad: null,
+        };
+        const next = commitOfferedTurn(withLog);
+        stateRef.current = next;
+        setState(next);
+        void persist(next);
+        return;
+      }
     }
     if (
       isOpeningEstablishmentPending(current)

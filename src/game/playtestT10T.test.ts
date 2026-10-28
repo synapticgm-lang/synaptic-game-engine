@@ -1,6 +1,7 @@
 /**
- * T10T — drink-ask not reframed; content-free voice shell; origin beside scene + Quick start
- * patience; Story RPG quest steps do not tick from mere presence.
+ * T10T — drink-ask not reframed; content-free voice shell; Story RPG quest steps
+ * do not tick from mere presence. (T10W rewrote the origin-beside-scene assertions:
+ * origin is session-zero exclusive again — see playtestT10W / restored T10D+G.)
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
@@ -10,8 +11,6 @@ import {
   stripUnauthorizedNpcSpeech,
   gmFacingPlayerAction,
 } from './intentParser';
-import { resolveOfferedChoices, commitOfferedPad } from './playTranscript';
-import { ORIGIN_QUICK_START_CHIP, ORIGIN_OFFER_PATIENCE, settleOrigin } from './rules/rpgOrigin';
 import { applyStoryRpgTurn } from './storyRpgProgress';
 import type { GameState, Quest } from './types';
 
@@ -132,34 +131,6 @@ describe('T10T content-free voice shell', () => {
     expect(out).not.toMatch(/rasped out|could not quite catch/i);
     expect(out).toMatch(/Osric Coyne said nothing/i);
     expect(out).toMatch(/did not look down/i);
-  });
-});
-
-describe('T10T origin beside scene + patience', () => {
-  it('origin chips sit beside scene options while open', () => {
-    const open = saltOriginOpen(3);
-    const offered = resolveOfferedChoices(open);
-    expect(offered.some((c) => /^Origin:/i.test(c))).toBe(true);
-    expect(offered).toContain(ORIGIN_QUICK_START_CHIP);
-    expect(offered.some((c) => !/^Origin:/i.test(c) && c !== ORIGIN_QUICK_START_CHIP)).toBe(true);
-
-    const committed = commitOfferedPad({ ...open, offeredPad: null });
-    const labels = committed.offeredPad?.choices ?? [];
-    expect(labels.some((c) => /^Origin:/i.test(c))).toBe(true);
-    expect(labels.some((c) => !/^Origin:/i.test(c) && c !== ORIGIN_QUICK_START_CHIP)).toBe(true);
-  });
-
-  it(`Quick start auto-assigns after ${ORIGIN_OFFER_PATIENCE} turns without swallowing free play`, () => {
-    let s = saltOriginOpen(3);
-    s = settleOrigin(s, 'I glance at the scout').state;
-    expect(s.originOfferTurn).toBe(3);
-    expect(s.character.origin).toBeUndefined();
-
-    s = { ...s, turn: 3 + ORIGIN_OFFER_PATIENCE };
-    const turn = applyStoryRpgTurn(s, 'I shift my weight and glance back at the scout.');
-    expect(turn.state.character.origin).toBeTruthy();
-    expect(turn.receipts.some((r) => /^Origin:/i.test(r))).toBe(true);
-    expect(turn.state.originOfferTurn).toBeNull();
   });
 });
 
