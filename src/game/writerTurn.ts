@@ -340,6 +340,21 @@ export async function runWriterTurnWithFightRetry(opts: {
     spoken: spoken.answer,
   };
 }
+/**
+ * T10AK — after post-writer stages (clause normalize / warden / words-guard) can drop a destination
+ * sentence or a spoken answer, re-seal from the engine record: name the journey destination, and
+ * ensure a present addressee's reply (or demand-act) is still on the page.
+ */
+export function sealPostWriterProse(
+  state: GameState,
+  prose: string,
+  playerInput: string,
+): { prose: string; spoken?: SpokenAnswer } {
+  const placed = withMoveDestination(state, prose);
+  const spoken = ensureSpokenAnswer(placed, state, playerInput);
+  return { prose: spoken.prose, spoken: spoken.answer };
+}
+
 /** Engine moved the player this turn but the beat never names where to — add one plain sentence. */
 export function withMoveDestination(state: GameState, prose: string): string {
   const c = state.circling;

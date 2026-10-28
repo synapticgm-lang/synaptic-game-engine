@@ -19,3 +19,12 @@ export function ensureSpokenAnswer(
 export function stripSpeakerSilence(prose: string, _speaker: { label: string }): string {
   return (prose ?? '').replace(/\s+/g, ' ').trim();
 }
+
+/** Client owns demand-act detection (T10AK); edge never paints exchange beats. */
+export function demandActAnswered(
+  _playerInput: string,
+  _prose: string,
+  _speakerLabel: string,
+): boolean {
+  return false;
+}
