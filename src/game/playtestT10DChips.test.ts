@@ -1,4 +1,4 @@
-/**
+﻿/**
  * T10D — Story RPG origin chips exclusive until recorded; Follow-up chips use the person's
  * own bound want and only for people present (seed 1027/1029 evidence).
  */
@@ -45,16 +45,15 @@ function memory(partial: Partial<NpcMemory> & Pick<NpcMemory, 'npcName'>): NpcMe
 }
 
 describe('T10D origin + follow-up chips', () => {
-  it('origin chips stay available until recorded; scene chips sit beside them (T10T)', () => {
+  it('origin chips own the pad until recorded; never beside travel/scene chips', () => {
     const open = rpgOpen();
     expect(open.character.origin).toBeUndefined();
     const offered = resolveOfferedChoices(open);
-    expect(offered).toEqual(expect.arrayContaining([
+    expect(offered).toEqual([
       ...BACKGROUNDS.map((b) => originChip(b.id)),
       ORIGIN_QUICK_START_CHIP,
-    ]));
-    // T10T — creation no longer hides free-play pads.
-    expect(offered.some((c) => !/^Origin:/i.test(c) && c !== ORIGIN_QUICK_START_CHIP)).toBe(true);
+    ]);
+    expect(offered.some((c) => /travel|walk on|greet/i.test(c))).toBe(false);
 
     const settled = settleOrigin(open, 'Origin: Sage');
     expect(settled.state.character.origin).toBe('sage');

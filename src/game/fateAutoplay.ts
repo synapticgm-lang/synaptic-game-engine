@@ -240,7 +240,7 @@ import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import { scrubFalseArrivalWhenHere } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
-import { applyStoryRpgTurn, romanceAllowed } from './storyRpgProgress';
+import { applyStoryRpgTurn, romanceAllowed, stepOriginCreation } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { isDying } from './tabletop/roundFight';
 import { resolveEngineFight } from './engineFight';
@@ -1202,6 +1202,45 @@ export async function headlessFateTurn(
         }),
       },
     };
+  }
+  // T10W — origin chip / named pick holds the clock (session-zero). Free text continues below.
+  {
+    const originStep = stepOriginCreation(state, playerInput);
+    if (originStep) {
+      const nextState = commitOfferedTurn({ ...originStep.state, offeredPad: null });
+      const nextOffered = resolveOfferedChoices(nextState);
+      const ended = Date.now();
+      return {
+        state: nextState,
+        telemetry: {
+          turn: nextState.turn,
+          startedAt,
+          endedAt: new Date(ended).toISOString(),
+          durationMs: ended - started,
+          bibleId: meta.bibleId,
+          engineMode: state.engineMode,
+          personalityId: meta.personalityId,
+          seed: meta.seed,
+          fatePick,
+          offeredChoices: nextOffered,
+          offeredChoiceIds: nextOffered.map((_, i) => `choice-${nextState.turn}-${i}`),
+          playerInput,
+          gmText: originStep.receipts.join('\n'),
+          systemLog: originStep.receipts,
+          questUnlocks: [],
+          itemsEquipped: [],
+          itemsUsed: [],
+          loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
+          transportRetries: 0,
+          repairNote: (repairNote ? `${repairNote}; ` : '') + 'origin_creation_step',
+          responsePath: classifyResponsePath({
+            state,
+            playerInput,
+            subscriptionTier: settings.subscriptionTier,
+          }),
+        },
+      };
+    }
   }
   if (state.openingEstablishment && !meta.dryRun) {
     const stepped = await applyOpeningAnswer(state, playerInput);

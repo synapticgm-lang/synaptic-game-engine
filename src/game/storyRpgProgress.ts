@@ -17,7 +17,8 @@
  *   RPG_ENDING_CHIP; taking it commits the best eligible ending and the run ends.
  * - Two ways through each main step: take a route affordance for the open step, or call on a person
  *   here who stands with you to see to it. Calling on them spends goodwill (a hidden trust cost on their record).
- * - Origin (rules/rpgOrigin) — chips sit beside scene options; Quick start auto-assigns after patience.
+ * - Origin (rules/rpgOrigin) — session-zero step before turn 1: origin chips alone until picked;
+ *   free text that does not name an origin applies Quick start and then resolves as turn-1 play.
  *   Romance (a Loyal companion, only when romance subplots are on).
  * - Every committed choice goes into the journal of choices (choiceJournal).
  * Other modes are untouched.
@@ -39,7 +40,27 @@ import { isPlayInputLocked } from './playPhase';
 import type { BibleId } from './pyoaTypes';
 import { applyQuestRouteOutcome, openRouteView, placeIdForStep } from './questRoutes';
 
-export type StoryRpgTurn = { state: GameState; receipts: string[] };
+export type StoryRpgTurn = {
+  state: GameState;
+  receipts: string[];
+  /** Origin chip / named pick only — story clock, arc, encounters stay put (session zero). */
+  holdTurn?: boolean;
+};
+
+/**
+ * Session-zero origin pick (chip, named background, or Quick start chip).
+ * Returns null when free text should Quick-start and continue as turn-1 play, or when origin is closed.
+ */
+export function stepOriginCreation(state: GameState, playerInput: string): StoryRpgTurn | null {
+  if (state.engineMode !== 'rpg' || !state.openingEstablishment?.complete) return null;
+  const origin = settleOrigin(state, (playerInput ?? '').replace(/\s+/g, ' ').trim());
+  if (!origin.receipts.length || origin.continueScene || !origin.creationOnly || !origin.text) return null;
+  return {
+    state: recordChoice(origin.state, { kind: 'origin', text: origin.text }),
+    receipts: origin.receipts,
+    holdTurn: true,
+  };
+}
 
 /**
  * Explicit placeId on the objective (OPT-4). Word-match + STEP_STOP deleted (tt-cut-log q38-G1a).
@@ -229,16 +250,18 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
   if (chipKey(action) === chipKey(RPG_ENDING_CHIP) && rpgEndingChip(state)) return commitRpgEnding(state)!;
 
   const origin = settleOrigin(state, action);
-  if (origin.receipts.length && !origin.auto) {
-    // Explicit origin chip — that line is the turn.
-    return { state: recordChoice(origin.state, { kind: 'origin', text: origin.text! }), receipts: origin.receipts };
+  if (origin.receipts.length && origin.creationOnly) {
+    // Chip / named origin / Quick start chip — session-zero only (useGame/Fate hold the clock).
+    return {
+      state: recordChoice(origin.state, { kind: 'origin', text: origin.text! }),
+      receipts: origin.receipts,
+      holdTurn: true,
+    };
   }
-  if (origin.receipts.length && origin.auto) {
-    // Quick start after patience — keep going so the typed free-play action still resolves (T10T).
+  if (origin.receipts.length && origin.continueScene) {
+    // Free text did not name an origin — Quick start, then the same line is turn-1 play (T10W).
     next = recordChoice(origin.state, { kind: 'origin', text: origin.text! });
     receipts.push(...origin.receipts);
-  } else if (origin.state !== state) {
-    next = origin.state;
   }
 
   const beloved = romancePad(next, !!opts.romance)?.find((c) => chipKey(c) === chipKey(action));
