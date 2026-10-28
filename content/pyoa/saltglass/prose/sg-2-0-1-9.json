@@ -1,0 +1,87 @@
+{
+ "batch": "sg-2-0-1-9",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-0-1-9": {
+   "title": "The Brand of Authority",
+   "text": "A weathered timber stake bearing a faded brand of the Salt Court leans drunkenly in the glare, marking a closed concession where illegal diggers once sought buried glass beads before the bailiffs drove them out. The surrounding ground is pitted with small, shallow craters like the pockmarks of a diseased skin, glinting with discarded shards that catch the cruel midday fire. You wipe the sweat from your forehead with the back of a calloused hand, your fingers brushing against the cold ceramic weight of the Seedkey hidden beneath your tunic. Behind you, the blinding flats stretch endlessly toward a shimmering horizon, while ahead the trail divides amidst the ruined diggings. You must decide whether to press onward toward the ridge or seek shelter among the hollow jars.",
+   "exits": [
+    "Climb the steep salt ridge",
+    "Inspect the abandoned moisture jars"
+   ]
+  },
+  "sg-2-0-2-0": {
+   "title": "The Damp Hollow",
+   "text": "Silence presses down upon the Bitterflats like a hot, flat iron, broken only by the dry crunch of your boots against the crystalline crust. Traveling entirely alone across this blinding expanse without a guide's chatter to distract you, you spot a faint depression in the salt where a fresh moisture seep has recently softened the surface. A rich, earthy smell rises from the damp grey clay, offering a rare chance to refill your canteen or perhaps unearth something left behind by earlier travelers. Ahead, the pale glare shimmers into dancing white lakes that obscure the horizon, leaving you to decide whether to investigate the muddy hollow or press onward before the midday heat peaks.",
+   "exits": [
+    "Step carefully into the muddy depression",
+    "Ignore the seep and keep walking"
+   ]
+  },
+  "sg-2-0-2-1": {
+   "title": "The Slag Mound",
+   "text": "Heat radiates in heavy, shimmering waves from a massive mound of fused green slag that hums with trapped solar heat, casting a long shadow where you stop briefly to wet your parched throat from your rapidly dwindling flask. The strange glassy rock vibrates faintly beneath your palms, storing the fierce daylight of the Basin within its twisted, bubbles-pocked green belly. To the left, the open flats stretch away in a glare of absolute white, while to the right, a tighter maze of wind-carved pillars offers a cooler, more shadowed route that demands constant twisting and ducking. You must choose whether to skirt the humming glass mound toward the open expanse or slip into the labyrinthine shadows beside it.",
+   "exits": [
+    "Skirt wide around the vibrating mound",
+    "Duck into the jagged salt labyrinth"
+   ]
+  },
+  "sg-2-0-2-2": {
+   "title": "The Salt-Brick Cart",
+   "text": "A weather-beaten wooden cart abandoned by desperate refugees stands tilted on a broken axle, its cargo of brittle salt-bricks spilling out like bleached loaves across the blinding white expanse. The sun has baked the timber until it splinters at a touch, and the wheel spokes are choked with fine alkaline dust. You pause in its meager shadow, running a hand over the rough-hewn frame before looking out at the featureless terrain stretching before you. A narrow passage opens between towering salt formations, while further off a solitary figure is visible near a dry cistern. You must choose your next direction carefully.",
+   "exits": [
+    "Navigate the jagged salt pillars",
+    "Approach the wary glass-diver"
+   ]
+  },
+  "sg-2-0-2-3": {
+   "title": "The Alkali Whirl",
+   "text": "You dodge a sudden whirl of stinging alkali dust sweeping across the basin, pulling your woollen scarf tight across your nose while navigating entirely by the angle of the blinding midday sun. The stinging grit abrades your cheeks and finds every seam in your travel-worn boots, turning each step into an exercise in stubborn endurance. Through the swirling white haze, the skeletal remains of old structures loom like ghost ships upon a frozen sea. You tighten your grip on your heavy canvas cloak to keep the dust from fouling your banked ember-lamp. Ahead lies a treacherous expanse of thin ice over a dormant brine-pan that demands your absolute concentration.",
+   "exits": [
+    "Cross the treacherous brine-pan ice"
+   ]
+  },
+  "sg-2-0-2-4": {
+   "title": "The Singing Lens",
+   "text": "An elderly scavenger named Orla sits cross-legged upon a flat salt-pavement, polishing a fragment of singing green lens that chimes musically whenever the hot desert draught sweeps across its razor-thin edge. She glances up with eyes crinkled against the glare, offering a toothless grin and a nod that acknowledges your weary posture without asking for pity. The haunting, bell-like tones echo softly against the surrounding flats, creating an eerie melody in the dead silence of the basin. You stand for a moment in the warm wind, listening to the glass sing of storms that haven't broken in decades. Three distinct routes beckon from her resting place.",
+   "exits": [
+    "Navigate the jagged salt pillars",
+    "Approach the wary glass-diver",
+    "Visit the abandoned rain-god shrine"
+   ]
+  },
+  "sg-2-0-2-5": {
+   "title": "The Collapsed Conduit",
+   "text": "You cross the rotting timbers of an underground brine-conduit that has collapsed inward, revealing a dark subterranean shaft where drops of heavy, bitter water plink against unseen stone far below. The air rising from the fissure is cool and damp, carrying an ancient scent of buried mud that contrasts sharply with the scorching salt crust above. You peer down into the shadowy void, gripping your canvas cloak so the banked coal-lamp does not swing loose against your ribs. The ground around the rim looks unstable, threatening to slough away if you linger too long. You can follow the fractured trench toward a ruined shrine, skirt a smoking sulfur vent, or track a desert fox toward a culvert.",
+   "exits": [
+    "Visit the abandoned rain-god shrine",
+    "Skirt the smoking sulfur vent",
+    "Follow the inquisitive desert fox"
+   ]
+  },
+  "sg-2-0-2-6": {
+   "title": "The Toll Banner",
+   "text": "A tethered, wind-bleached canvas banner bearing the twin serpents of the Salt Court flutters aggressively from an iron pole, marking the outer perimeter of their toll-collection zone ahead. The sharp clinking of brass coin-weights drifts faintly on the dry wind from a low stone hut crouched behind the fluttering marker. You clutch your canvas cloak tighter around your chest, acutely aware of the Seedkey hidden against your ribs and the heavy copper coins in your pocket that the toll-lords would gladly claim. You can approach the ruined rain-shrine to seek shelter and avoid the checkpoint entirely, or plunge your lamp into total darkness and try to creep past the guards unseen.",
+   "exits": [
+    "Seek shelter at the weathered rain-shrine",
+    "Slip past the toll-lords in the dark"
+   ]
+  },
+  "sg-2-0-2-7": {
+   "title": "The Hidden Flagstone Path",
+   "text": "Traveling completely alone and unencumbered by a guide, you notice a subtle color shift in the alkali crust that reveals an ancient, buried flagstone path bypassing the main toll-hut entirely. The pale slate stones are worn smooth by centuries of vanished feet, offering firm footing beneath the treacherous white dust. Because no companion is walking beside you to point out the obvious landmarks, your sharp eyes catch the faint geometric edges where the old road re-emerges from the flats. You slip quietly onto the hidden flagstones, leaving the patrols far behind. A low culvert lies ahead, framed by smooth glass lining.",
+   "exits": [
+    "Follow the inquisitive desert fox"
+   ]
+  },
+  "sg-2-0-2-8": {
+   "title": "The Glass Reed Ditch",
+   "text": "You wade cautiously through a dry drainage ditch choked with razor-sharp glass reeds that rustle like dry parchment, testing your patience and threatening to shred your trousers with every labored step. The translucent stalks clink against one another like wind chimes made of ice whenever your shins brush past them, creating a delicate music that betrays your passage. You keep your hands tucked safely inside your sleeves to avoid cutting your palms on the glittering vegetation. The ditch leads steadily downward into the heart of the flats, offering two distinct ways forward as the reeds thin out.",
+   "exits": [
+    "Follow the inquisitive desert fox",
+    "Cross the ancient basalt pavement"
+   ]
+  }
+ },
+ "missing": []
+}
