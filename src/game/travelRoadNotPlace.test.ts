@@ -144,7 +144,8 @@ describe('s71 A+B — the writer and the card builder never treat the road as a 
     expect(here?.display.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
     expect(refs.some((r) => r.klass === 'place' && isRoadLabel(r.display))).toBe(false);
     const places = refs.filter((r) => r.klass === 'place').map((r) => r.display);
-    expect(places[0]?.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
+    // Known ends stay place refs; trip HERE is added (placeTok uses id === 'here'), not a replace.
+    expect(here?.display.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
     expect(places).toEqual(expect.arrayContaining(['Cinderflow Road', 'West Wall']));
     // Bare ground labels are not place-klass rows (trip HERE is the phrase, ends are settlements).
     expect(refs.some((r) => r.klass === 'place' && /^(Back streets|Open road|On the road between places)$/i.test(r.display))).toBe(false);

@@ -649,10 +649,12 @@ export function compileRefEnum(
   const windowNote = housingId
     ? systemHousingWriterClause(housingId)
     : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
-  // Live HERE always (trip phrase while underway). Skipping it made placeTok fall through to
-  // journey.from, so mid-travel beats painted the origin as the room ("Nothing in Valespire…").
-  add('here', locationLabel(state), 'place');
+  // Known exits / journey ends first (settlement place refs the writer may bind by name).
+  // Live HERE always after that (trip phrase while underway). Skipping HERE made placeTok fall
+  // through to journey.from ("Nothing in Valespire…"); prepending HERE displaced the known
+  // place toks a replay binds by. placeTok prefers id === 'here' regardless of list order.
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
+  add('here', locationLabel(state), 'place');
   const castNote = openingCastNote(state);
   const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
@@ -729,7 +731,7 @@ export function compileRefEnum(
 /**
  * Displays + labels the writer was handed this turn. One list for repeated-habit masks,
  * factCheck `handedPeople` (same label rule), and later P-5 / M.
- * Trip ground/ends join while underway (enum skips `here`); not a second handmade checker.
+ * Trip ground/ends join while underway (enum also has `here` as the trip phrase); not a second handmade checker.
  */
 export function handedRefs(
   state: GameState,
