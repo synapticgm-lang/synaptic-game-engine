@@ -26,7 +26,6 @@ import type {
 } from './types';
 import { mentionsName, peopleHere } from './chipLegality';
 import { isCrowdFillerToken } from './chromeAuthority';
-import { presentNpcRecords } from './npcRecords';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
@@ -89,16 +88,13 @@ export function npcChipWant(m: NpcMemory): string {
 export function npcGoalPersonHere(state: GameState, npcId: string, npcName?: string): boolean {
   const name = (npcName ?? (npcId.startsWith('npc:') ? npcId.slice(4) : npcId)).trim();
   if (!name && !npcId) return false;
-  const present = presentNpcRecords(state);
-  for (let i = 0; i < present.length; i++) {
-    const m = present[i]!;
-    if ((m.npcId || `npc:${m.npcName}`) === npcId) return true;
-    if (name && (mentionsName(m.npcName, name) || mentionsName(name, m.npcName))) return true;
-  }
+  // T10AI — peopleHere is the occupancy source of truth (empty crowd clears departed cast).
   const here = peopleHere(state);
   for (let i = 0; i < here.length; i++) {
     const h = here[i]!;
     if (name && (mentionsName(h, name) || mentionsName(name, h))) return true;
+    const bare = npcId.startsWith('npc:') ? npcId.slice(4) : npcId;
+    if (bare && (mentionsName(h, bare) || mentionsName(bare, h))) return true;
   }
   return false;
 }
@@ -735,6 +731,7 @@ export function forwardThreadAffordance(state: GameState): {
         break;
       }
     }
+    // T10AI — departed crowd/role: presence record is the chip gate (not a stale open-thread).
     if (!npcGoalPersonHere(state, npcId, name)) return null;
     // T10Q — do not paste a spoken motive fragment onto the Follow-up chip (queues replay).
     let mem: NpcMemory | undefined;

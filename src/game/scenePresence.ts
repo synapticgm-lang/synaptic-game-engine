@@ -41,9 +41,24 @@ function personKey(name: string): string {
 }
 
 /**
+ * Engine record: the crowd has departed (crowd none + cleared present + unlocked count).
+ * Narrow input for chips / gate / peopleHere — not a prose empty-room synonym.
+ */
+export function crowdDepartedByRecord(
+  facts: { crowd?: string; crowdCount?: number; present?: string[] } | null | undefined,
+): boolean {
+  return !!facts
+    && facts.crowd === 'none'
+    && (facts.crowdCount ?? 0) === 0
+    && !(facts.present?.length);
+}
+
+/**
  * Everyone who could answer: the presence record, companions, the live foe, the opening cast,
  * a road meeting. Opening cast stays while still at the card place (busy beat / no empty text
  * does not clear them — empty-room listeners strip cast separately).
+ * T10AI — when the engine records an empty occupancy (crowdDepartedByRecord), departed
+ * cast/roles/location memories do not stay as listeners (Follow-up chips retract with the record).
  */
 export function peopleHere(state: GameState): string[] {
   const out = new Map<string, string>();
@@ -58,6 +73,21 @@ export function peopleHere(state: GameState): string[] {
       out.set(key, name);
     }
   };
+  const facts = state.sceneFacts;
+  if (crowdDepartedByRecord(facts)) {
+    // T10AI-fix — empty occupancy still seats engine-tagged people at this place
+    // (refuse/ask via recordPersonSeen). Skip opening-cast filler and stale crowd
+    // stamps (present:true left after sceneFacts cleared) so Follow-up chips retract.
+    const hereKey = low(state.currentLocation);
+    for (const m of state.npcMemories ?? []) {
+      if (m.shouldExit || m.present === true) continue;
+      if (low(m.location) && low(m.location) === hereKey) add(m.npcName);
+    }
+    (state.companions ?? []).forEach((c) => add(c.name));
+    add(state.activeEncounter?.name);
+    add(roadMeetingPeople(state));
+    return [...out.values()];
+  }
   presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);

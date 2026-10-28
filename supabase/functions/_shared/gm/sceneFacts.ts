@@ -13,9 +13,10 @@ import { matchHub, hubsForBibleId } from './outdoorHubs.ts';
 import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard.ts';
 import { applyFollowersToHereSpot, hereSpotAt } from './hereSpot.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
+import { proseSaysEmpty } from './chipRules.ts';
+import { mentionsName } from './scenePresence.ts';
 
-const EMPTY_STREET =
-  /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
+/** Arrival/presence crowd words — not the empty-room claim (that is proseSaysEmpty / placeSaysEmpty). */
 const CROWD =
   /\b(people|crowd|bystanders?|passers?[- ]?by|someone nearby|shouting|scream(?:ing)?|yelling)\b/i;
 const SHOUTING = /\b(shout(?:ing)?|scream(?:ing)?|yell(?:ing)?|panic|crying out)\b/i;
@@ -89,24 +90,36 @@ export function emptySceneFacts(turn = 0): SceneFacts {
 
 export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0): SceneFacts {
   const text = narrative.replace(/<system>[\s\S]*?<\/system>/gi, ' ');
-  const emptied = EMPTY_STREET.test(text) && !CROWD.test(text);
+  // T10AI — same empty signal as chip legality / gate (placeSaysEmpty), not a second word maze.
+  // Empty wins over a leftover "crowd" noun ("ask the crowd" when the lane held nobody).
+  // Full departure (crowdDepartedByRecord) only when no prior present name is still seated —
+  // "no one else" keeps Wren; "held nobody" with nobody named writes the empty record.
+  const emptied = proseSaysEmpty(text);
   const crowdPresent = CROWD.test(text) && !emptied;
-
-  let crowd: SceneFacts['crowd'] = prev?.crowd ?? 'unknown';
-  if (emptied) crowd = 'none';
-  else if (crowdPresent) crowd = 'present';
-
-  // Noise, indoor and tension are the engine's (opening card, move, place, encounter); prose only copies them.
-  let noise: SceneFacts['noise'] = prev?.noise ?? 'unknown';
-  if (crowd === 'present' && noise === 'unknown') noise = 'voices';
 
   const present = new Set(prev?.present ?? []);
   // T10X — filler bystanders only when no ledger cast/group is already present (else writer reacts at invent).
   const hasLedgerPeople = [...present].some(
     (p) => p && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(p.trim()),
   );
-  if (crowd === 'present' && !hasLedgerPeople) present.add('bystanders');
-  if (crowd === 'none' || hasLedgerPeople) present.delete('bystanders');
+  if (crowdPresent && !hasLedgerPeople) present.add('bystanders');
+  if (hasLedgerPeople) present.delete('bystanders');
+  let departed = false;
+  if (emptied) {
+    const seated = [...present].filter((p) => p && mentionsName(text, p));
+    present.clear();
+    for (const p of seated) present.add(p);
+    departed = present.size === 0;
+  }
+
+  let crowd: SceneFacts['crowd'] = prev?.crowd ?? 'unknown';
+  if (departed) crowd = 'none';
+  else if (crowdPresent) crowd = 'present';
+  if (crowd === 'none' || hasLedgerPeople || present.size > 0) present.delete('bystanders');
+
+  // Noise, indoor and tension are the engine's (opening card, move, place, encounter); prose only copies them.
+  let noise: SceneFacts['noise'] = prev?.noise ?? 'unknown';
+  if (crowd === 'present' && noise === 'unknown') noise = 'voices';
 
   // Props come from engine records (the opening card, loot, dungeon rooms), never from prose words.
   const props = new Set(prev?.props ?? []);
@@ -151,7 +164,8 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     weather,
     indoor,
     tension,
-    crowdCount: prev?.crowdCount,
+    // T10AI — full departure unlocks headcount; seated "no one else" keeps the lock.
+    crowdCount: departed ? undefined : prev?.crowdCount,
     hookLock: prev?.hookLock,
     cameraLock: prev?.cameraLock,
     lastPlayerIntent: prev?.lastPlayerIntent,
@@ -180,10 +194,16 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
   const nextPresent = asList(next.present);
   const prevProps = asList(prev.props);
   const nextProps = asList(next.props);
+  // T10AI — crowd none is a departure: do not union stale faces back onto an empty beat.
+  const crowd = next.crowd !== 'unknown' ? next.crowd : prev.crowd;
+  const present =
+    crowd === 'none'
+      ? filterChromeFromPresent(nextPresent)
+      : filterChromeFromPresent(Array.from(new Set([...prevPresent, ...nextPresent])));
   return {
-    crowd: next.crowd !== 'unknown' ? next.crowd : prev.crowd,
+    crowd,
     noise: next.noise !== 'unknown' ? next.noise : prev.noise,
-    present: filterChromeFromPresent(Array.from(new Set([...prevPresent, ...nextPresent]))),
+    present,
     props: Array.from(new Set([...prevProps, ...nextProps])),
     lastBeat: next.lastBeat || prev.lastBeat,
     updatedTurn: next.updatedTurn,
@@ -193,7 +213,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     tension: next.tension !== 'unknown' ? next.tension : prev.tension,
     searchedEmpty: Array.from(new Set([...asList(prev.searchedEmpty), ...asList(next.searchedEmpty)])),
     emptyContainers: Array.from(new Set([...asList(prev.emptyContainers), ...asList(next.emptyContainers)])),
-    crowdCount: next.crowdCount ?? prev.crowdCount,
+    crowdCount: crowd === 'none' ? next.crowdCount : next.crowdCount ?? prev.crowdCount,
     hookLock: next.hookLock ?? prev.hookLock,
     cameraLock: next.cameraLock ?? prev.cameraLock,
     lastPlayerIntent: next.lastPlayerIntent ?? prev.lastPlayerIntent,
@@ -304,13 +324,8 @@ function seedOpeningSceneFactsRaw(state: GameState): SceneFacts {
 export function detectSceneContradiction(prev: SceneFacts | undefined, narrative: string): string | null {
   if (!prev) return null;
   if (TIME_PASSED.test(narrative)) return null;
-  const emptied = EMPTY_STREET.test(narrative);
-  if (prev.crowd === 'present' && emptied) {
-    return 'Crowd was present; new prose emptied or silenced the street.';
-  }
-  if (prev.noise === 'shouting' && emptied && !SHOUTING.test(narrative)) {
-    return 'People were shouting; new prose made the street silent.';
-  }
+  // T10AI — honest empty (shared placeSaysEmpty) is a departure beat, not a contradiction.
+  if (proseSaysEmpty(narrative)) return null;
   if (prev.noise === 'shouting' && QUIET.test(narrative) && SHOUTING.test(narrative)) {
     return 'Prose claims silence while people are still shouting.';
   }
@@ -345,7 +360,15 @@ export function applyCommittedNarrative(
   let merged: SceneFacts;
   const crowdWasHere =
     state.sceneFacts?.crowd === 'present' || state.sceneFacts?.crowd === 'sparse';
-  if (crowdWasHere && extracted.crowd === 'none' && !TIME_PASSED.test(narrative)) {
+  // T10AI — engine-recorded departure (crowd none after extract) is the leave beat:
+  // do not restore old crowd. TIME_PASSED still unlocks. Empty prose alone with seated
+  // names does not set crowd none, so restore does not fire for "no one else".
+  if (
+    crowdWasHere
+    && extracted.crowd === 'none'
+    && !TIME_PASSED.test(narrative)
+    && !proseSaysEmpty(narrative)
+  ) {
     merged = {
       ...mergeSceneFacts(state.sceneFacts, extracted),
       crowd: state.sceneFacts!.crowd,

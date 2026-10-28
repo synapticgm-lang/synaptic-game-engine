@@ -7,6 +7,8 @@
 
 import type { GameState, SceneFacts } from './types';
 import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
+import { proseSaysEmpty } from './chipRules';
+import { mentionsName } from './scenePresence';
 
 export type CrowdBucket = 'empty' | 'solo' | 'pair' | 'few' | 'group' | 'large';
 
@@ -510,6 +512,28 @@ export function harvestCrowdIntoSceneFacts(
         lastBeat: '',
         updatedTurn: turn,
       };
+
+  // T10AI — honest empty wins over a leftover "crowd" noun ("ask the crowd" when the lane
+  // held nobody). Full departure only when no prior present name is still seated in the beat
+  // ("no one else" keeps Wren; empty lane with no seated name writes crowdDepartedByRecord).
+  if (proseSaysEmpty(narrative)) {
+    const seated = (base.present ?? []).filter((p) => p && mentionsName(narrative, p));
+    if (!seated.length) {
+      return {
+        ...base,
+        crowd: 'none',
+        present: [],
+        crowdCount: undefined,
+        lastBeat: base.lastBeat || 'street empty',
+        updatedTurn: turn,
+      };
+    }
+    return {
+      ...base,
+      present: seated,
+      updatedTurn: turn,
+    };
+  }
 
   const mention = detectCrowdMention(narrative);
   const flux = crowdFluxInText(narrative);

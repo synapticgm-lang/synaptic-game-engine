@@ -48,7 +48,13 @@ function asked(playerInput: string): SpokenTopic | null {
 function nameParts(label: string, record?: NpcMemory): string[] {
   const full = [label, ...(record?.aliases ?? [])].map((n) => n.trim()).filter(Boolean);
   const parts = full.flatMap((n) => n.split(/\s+/)).filter((w) => w.length >= 3 && !HONORIFIC.test(w));
-  return [...new Set([...full, ...parts])];
+  // T10AI — singular typed "engineer" / "face" still hits ledger "engineers" / "faces".
+  const stems = parts.flatMap((w) => {
+    if (/ies$/i.test(w) && w.length >= 5) return [w, `${w.slice(0, -3)}y`];
+    if (/s$/i.test(w) && w.length >= 4 && !/ss$/i.test(w)) return [w, w.slice(0, -1)];
+    return [w];
+  });
+  return [...new Set([...full, ...stems])];
 }
 
 const sameSpeaker = (a: string, b: string) => {
@@ -60,6 +66,7 @@ function speakersHere(state: GameState): Speaker[] {
   // T10AA — same universe as turnCheck/peopleHere (road companions in sceneFacts.present
   // + presentNpcRecords). Prefer records when known; never drop a present walker because
   // another record already filled the list (T10X/Y group path kept as fallback).
+  // T10AI — anonymous roles + ledger groups (exhausted faces / engineers) answer the same way.
   // SRD 5.2.1 Communicating — brief speech is free; the addressed party here may answer.
   const seen = new Set<string>();
   const out: Speaker[] = [];
@@ -76,6 +83,10 @@ function speakersHere(state: GameState): Speaker[] {
     out.push({ label: prefer, record: rec, names: nameParts(prefer, rec) });
   };
   for (const p of peopleHere(state)) push(p);
+  for (const role of state.sceneFacts?.anonymousRoles ?? []) {
+    const r = (role ?? '').replace(/\s+/g, ' ').trim();
+    if (r) push(/^(?:the|a|an)\s+/i.test(r) ? r : `the ${r}`);
+  }
   if (out.length) return out;
   // T10X — ledger present groups (roof-thieves) speak; crowd fillers do not.
   // T10Y — one speaker per bare name ("the crew" / "crew" collapse).
@@ -213,7 +224,9 @@ function isSpeakerNonAnswerClause(clause: string, label: string): boolean {
       body,
     );
   const empty =
-    /\b(?:nothing|no answer|not\b[\s\S]{0,24}\b(?:word|answer|speak)|silent|quiet|mute)\b/i.test(body) ||
+    /\b(?:nothing|no answer|not\b[\s\S]{0,24}\b(?:word|answer|speak)|silent|quiet|mute|did not speak|didn't speak)\b/i.test(
+      body,
+    ) ||
     /\b(?:went|stayed|remained)\s+(?:stiff\s+and\s+)?(?:quiet|silent)\b/i.test(body) ||
     /\b(?:said|say|says|answer(?:ed|s)?|spoke|speak|offered)\s+no\b/i.test(body);
   return speech && empty;
@@ -437,7 +450,20 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
     /\b(?:ask(?:ing)?|tell(?:ing)?|shout(?:ing)?(?:\s+at)?|call(?:ing)?(?:\s+out)?(?:\s+to)?|say\s+to|whisper(?:ing)?(?:\s+to)?)\b/i.test(t)
   ) {
     const low = t.toLowerCase();
-    if (peopleHere(state).some((n) => n.split(/\s+/).some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
+    if (speakersHere(state).some((s) => s.names.some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
+      return true;
+    }
+  }
+  // T10AI — stare / look down / address a present person or crowd still needs their reply beat
+  // (LitRPG engineer stare; tabletop miller / exhausted faces).
+  if (
+    state &&
+    /\b(?:star(?:e|ing)|glar(?:e|ing)|look(?:ing)?\s+(?:at|down)|address(?:ing)?|point(?:ing)?\s+(?:at|to|toward))\b/i.test(
+      t,
+    )
+  ) {
+    const low = t.toLowerCase();
+    if (speakersHere(state).some((s) => s.names.some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
       return true;
     }
   }

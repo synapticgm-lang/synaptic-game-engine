@@ -25,6 +25,7 @@ import { tabletopStepChip } from './tabletopQuestProgress';
 import { hasOpenAsk } from './questGiver';
 import { affordanceEntityPresent } from './sceneAffordances';
 import {
+  crowdDepartedByRecord,
   listenersOnEmptyText,
   mentionsName,
   peopleHere,
@@ -44,6 +45,7 @@ const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
 export {
   crowdHere,
+  crowdDepartedByRecord,
   listenersOnEmptyText,
   mentionsName,
   peopleHere,
@@ -58,6 +60,13 @@ const TALK_CHIP =
 export function chipAddressee(label: string): { kind: 'named' | 'role' | 'none'; who: string } | null {
   const t = norm(label).replace(/[.!?]+$/, '');
   if (isSystemStatusChip(t)) return null;
+  // T10AI — open-thread Follow-up chips address the same presence record as Talk/Ask.
+  const follow = t.match(/^Follow up with\s+([^:]+?)(?:\s*:|$)/i);
+  if (follow?.[1]) {
+    const who = norm(follow[1]);
+    if (/^[A-Z]/.test(who)) return { kind: 'named', who };
+    return { kind: 'role', who: who.replace(/^(?:the|a|an)\s+/i, '') };
+  }
   const m = t.match(TALK_CHIP);
   if (!m) {
     if (/^(?:ask|talk|speak|greet|tell)\b/i.test(t)) return { kind: 'none', who: '' };
@@ -203,12 +212,14 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     return isJourneyUnderway(state) ? null : { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
   }
 
-  if (addr?.kind === 'named') {
+  if (addr?.kind === 'named' || addr?.kind === 'role') {
     if (!isChromePersonToken(addr.who)) {
       if (matchesLastKillName(addr.who, lastKill) && lastKill?.outcome === 'victory') {
         return { kind: 'impossible-chip', detail: `"${label}" talks to ${addr.who}, who is dead` };
       }
       const ledgerHere = here.some((p) => mentionsName(p, addr.who) || mentionsName(addr.who, p));
+      // T10AI — role/crowd/faction chips ("exhausted faces", "Two Crown") need the same presence
+      // record as named Talk; empty-room text already stripped opening cast from `here`.
       if (!ledgerHere && !proseSeats) {
         return {
           kind: 'ghost-chip',
