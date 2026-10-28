@@ -4,7 +4,7 @@
  "sections": {
   "sg-p1": {
    "title": "The Ember Lamp Post",
-   "text": "Dust hangs thick in the low-beamed hall of the Ember-Lamp Post, where the elders of Candlemere gather around a dead hearth. The valley harvests have shrivelled into grey ash, and the twenty-day countdown to the monsoon has begun. Across the splintered oak table lies a cold ceramic rod, smooth and pale as bone. The oldest councillor pushes it toward you, her fingers trembling with the chill of a failing town.\n\nYou must carry this to the center of the dried Basin before the Return drowns everything you love.",
+   "text": "Dust hangs thick in the low-beamed hall of the Ember-Lamp Post, where the elders of Candlemere gather around a dead hearth. The valley harvests have shrivelled into grey ash, and the twenty-day countdown to the monsoon has begun. Across the splintered oak table lies a cold ceramic rod, smooth and pale as bone. The oldest councillor pushes it toward you, her fingers trembling with the chill of a failing town.\n\nYou must carry this to the centre of the dried Basin before the Return drowns everything you love.",
    "exits": [
     "Clasp the ceramic rod without speaking a word",
     "Demand to know why previous runners never returned"
@@ -37,7 +37,7 @@
    "exits": [
     "Follow the winding lamp-lit track ahead",
     "Step off the stones onto the open common ground",
-    "Hail a weathered traveler for directions",
+    "Hail a weathered traveller for directions",
     "Take the steep and stony drovers' track"
    ]
   },
