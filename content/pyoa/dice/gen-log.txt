@@ -293,3 +293,21 @@
 2026-10-28T09:31:25.242Z   reject td-3-179: check label
 2026-10-28T09:31:25.242Z   reject td-3-184: check label
 2026-10-28T09:31:33.248Z ask prose td-3-177..td-3-186 items=2 attempt=1
+2026-10-28T09:31:52.880Z   reject td-3-184: missing
+2026-10-28T09:32:00.892Z done td-3-177: 9/10 MISSING td-3-184
+2026-10-28T09:32:00.893Z ask prose td-3-187..td-3-198 items=12 attempt=0
+2026-10-28T09:32:36.374Z done td-3-187: 12/12
+2026-10-28T09:32:36.375Z ask prose td-3-199..td-3-210 items=12 attempt=0
+2026-10-28T09:33:09.303Z done td-3-199: 12/12
+2026-10-28T09:33:09.304Z ask prose td-3-211..td-3-220 items=10 attempt=0
+2026-10-28T09:33:39.889Z done td-3-211: 10/10
+2026-10-28T09:33:39.891Z ask prose td-4-001..td-4-011 items=11 attempt=0
+2026-10-28T09:34:17.575Z   reject td-4-005: check label
+2026-10-28T09:34:17.575Z   reject td-4-007: grant
+2026-10-28T09:34:17.576Z   reject td-4-009: check label
+2026-10-28T09:34:17.576Z   reject td-4-011: grant
+2026-10-28T09:34:25.590Z ask prose td-4-001..td-4-011 items=4 attempt=1
+2026-10-28T09:34:53.286Z done td-4-001: 11/11
+2026-10-28T09:34:53.288Z ask prose td-4-012..td-4-021 items=10 attempt=0
+2026-10-28T09:35:23.903Z done td-4-012: 10/10
+2026-10-28T09:35:23.904Z ask prose td-4-022..td-4-031 items=10 attempt=0

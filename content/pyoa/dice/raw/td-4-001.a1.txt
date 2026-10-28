@@ -1,0 +1,24 @@
+Gemini said
+
+@@SECTION td-4-005
+TITLE: The Smuggler's Beam
+TEXT: Crushed timber and green-rotted canvas pin the dead smuggler to the basalt floor of the stairwell, trapping a leather water-skin beneath his ribs. Heavy condensation drips from the damp vault above, pooling in the grease that smears your palms as you grip the cold, square-headed brass beam. Every muscle in your back knots and trembles, straining against centuries of accumulated silt and jammed masonry. You brace your boots hard against a rib of ancient iron, heave upward with all your strength to break the dead weight free, and wait for the metal to either groan and yield or snap your spine.
+CHECK: Heave the rusted brass beam
+@@END
+@@SECTION td-4-007
+TITLE: The Sealed Pouch
+TEXT: Metal screams against stone, however narrowly you managed the lift, and the crushed ribs give up their prize into your waiting fingers. A thick-skinned pouch of treated ox-hide slides from beneath the wreckage, smelling faintly of old brine and mountain mint rather than the flat stagnation of the Low. Inside lies a full day's ration of sweet, cool water untouched by the bitter salt-crust of the abandoned seabed. Tucking the prize against your ribs, you turn your back on the crushed smuggler and begin the long, careful climb back toward the echoing basalt landings.
+GRANT: sealed untainted water-pouch
+EXIT 1: Climb back to the landings
+@@END
+@@SECTION td-4-009
+TITLE: The Fungal Glow
+TEXT: Thin air rattles in your lungs as you inch along a six-inch lip of crumbling mortar, hundreds of feet above the dark abyss of the Sunken Stair. Below your boots, loose scree rattles into the vertical blackness with no answering clatter of bottom. Suspended directly over the void on a broken iron bracket hangs a pale, swollen bulb of fungus, casting a steady, cold turquoise luminescence across the sheer damp wall. You force your racing heart to slow, press your shoulder flat against the weeping stone, and reach out an unsteady hand toward the dangling stalk.
+CHECK: Reach for the glowing bulb
+@@END
+@@SECTION td-4-011
+TITLE: The Pale Lantern
+TEXT: Cold phosphor rubs off on your fingertips, however narrowly you kept your balance over the drop, leaving a faint luminous smear across your skin. The bulb hangs snug in its iron cage, thrumming with a silent, internal pulse that feeds on the damp salt-mist without a drop of whale-oil or tallow. Its steady turquoise glare pushes back the clinging shadows of the stairwell, turning the wet stone into a map of jagged crevices and hidden nails. With the pulsing light secured in your grip, you retrace your steps along the ledge and head back toward the upper landings.
+GRANT: oil-free fungal lantern
+EXIT 1: Return to the upper landings
+@@END

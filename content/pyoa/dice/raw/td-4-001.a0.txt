@@ -1,0 +1,60 @@
+Gemini said
+
+@@SECTION td-4-001
+TITLE: The Yawning Descent
+TEXT: Damp air rises from the dark interior of the Sunken Stair, thick with the old stench of rotting kelp and copper scale. Your boots meet the slick basalt threshold, where the world above narrows into a spiral shaft carved deep into the seabed's floor. Faint echoes drift up from the lower tiers, sounding less like human voices and more like the low groaning of timber under crushing weight. Every breath burns the throat with ancient salt, reminding you that whatever mechanism waits below has slept far too long. // A cold draft pushes against your chest, urging you deeper into the damp gloom where the light of Gullmouth cannot reach.
+EXIT 1: Descend into the yawning stone spiral
+@@END
+@@SECTION td-4-002
+TITLE: The Upper Landings
+TEXT: A vast well of slick basalt steps drops away into absolute shadow, choked with the discarded junk of desperate scavengers who lost their nerve and turned back. Rusted iron spikes and waterlogged packs litter the stone landings, telling silent stories of those who misjudged the climb. The air here hangs heavy and still, smelling of wet slate and old bone. Shadows twist unnaturally against the curved walls as your lantern flickers against the damp draft. Several passages branch away into the dark architecture, each promising a different route toward the heart of the machinery.
+EXIT 1: Clear the jammed metal beam ahead
+EXIT 2: Reach for the glowing fungal lantern
+EXIT 3: Force open the heavy iron bulkhead
+EXIT 4: Cross the decaying whalebone bridge
+EXIT 5: Study the old Tidewarden mosaic path
+EXIT 6: Approach the colossal silent bell
+@@END
+@@SECTION td-4-003
+TITLE: Beneath the Fallen Beam
+TEXT: Heavy iron girders block the narrow archway, pinning the crushed remains of a long-dead smuggler against the masonry. You wedge your shoulder beneath a rusted brass beam, feeling the cold metal bite through your jacket as you strain every muscle. Dust and dried salt shower down from the vaulted ceiling with every fraction of an inch you gain. A sealed leather pouch hangs untouched at the dead man's belt, bulging with the unmistakable shape of precious supplies. You plant your boots firmly against the stone and push with everything you have.
+EXIT 1: Wrench the beam clear of the remains
+@@END
+@@SECTION td-4-004
+TITLE: The Smuggler's Hoard
+TEXT: The heavy brass beam groans and shifts, sliding sideways with a harsh scrape of metal against stone to clear the blocked path. Beneath the wreckage, the leather pouch lies waiting, its wax seal intact against the creeping damp. You slip the cord from the dead smuggler's belt and tuck the prize safely into your own pack. The air feels slightly fresher here, drawn through a narrow vent that opens somewhere toward the lower foundations. Stepping past the ruin, you prepare for the next turn in the winding descent.
+EXIT 1: Follow the corridor deeper inward
+@@END
+@@SECTION td-4-005
+TITLE: Shifting the Rusted Metal
+TEXT: The fallen brass beam blocks your passage entirely, pinning the crushed remains of an ancient smuggler against the damp wall. You slide your hands beneath the cold, oxidized metal, finding a precarious purchase on its jagged edge. Straining against the dead weight, you prepare to heave the obstruction clear to reach the sealed pouch of water resting near the skeleton. // CHECK: Heave the heavy brass beam
+@@END
+@@SECTION td-4-006
+TITLE: Crushed Underfoot
+TEXT: The rusted metal suddenly slips from your grip with a sharp screech, dropping back onto the stone with a force that rattles your teeth. A jagged edge catches your forearm, tearing through cloth and skin to draw a hot line of blood. You stumble backward into the damp wall, gasping for air as pain flares through your arm. The lost time and sudden injury leave you shaken, but you manage to yank the sealed pouch free from the debris before pressing onward.
+EXIT 1: Retreat slightly to bind the wound
+@@END
+@@SECTION td-4-007
+TITLE: Cleared Obstruction
+TEXT: The heavy beam yields with a grating groan, rolling aside to clatter against the basalt floor and clear your path at last. You bend down to retrieve the sealed pouch, its contents pleasantly heavy and reassuringly dry against your palm. The effort leaves your muscles burning and your breathing ragged, yet the prize is yours. You secure the find in your pack and look back toward the main stairwell, ready to rejoin the descent. // GRANT: Pouch of untainted water
+EXIT 1: Return to the upper landings
+@@END
+@@SECTION td-4-008
+TITLE: The Fungal Shelf
+TEXT: A narrow stone ledge juts out over a pitch-black chasm, its surface slick with slimy phosphorescent moss that casts a sickly green glow. Suspended from a rusted iron bracket at the far end hangs a wild cluster of bioluminescent fungi, throbbing with a steady, pulsing light. No oil feeds the uncanny bloom, making it a priceless prize for anyone brave enough to cross the drop. The stone beneath your boots crumbles silently into the abyss below at the slightest touch.
+EXIT 1: Step carefully along the narrow ledge
+@@END
+@@SECTION td-4-009
+TITLE: Reaching for the Glow
+TEXT: You edge out onto the narrow stone shelf, keeping your shoulder pressed flat against the damp wall while the abyss yawns beneath your boots. Your fingers tremble as you reach toward the iron bracket holding the pulsating fungal growth, every instinct screaming at you to pull back. The ledge narrows further, forcing you to rely entirely on your balance and steady breathing to close the distance. // CHECK: Grasp the pulsing fungal lantern
+@@END
+@@SECTION td-4-010
+TITLE: Slipping the Ledge
+TEXT: A patch of wet moss betrays your footing, sending loose gravel clattering down into the unseen depths with a hollow sound. You throw your weight against the rock face, scraping your shoulder raw as you scramble for a secure handhold. The fungal lantern swings wildly on its bracket, spilling a shower of cold spores across your face before you finally manage to steady yourself. You claim the glowing prize, but the near-fall leaves your nerves frayed and your breath coming in ragged gasps.
+EXIT 1: Crawl back to solid stone
+@@END
+@@SECTION td-4-011
+TITLE: The Steady Hand
+TEXT: Your fingers close around the warm stem of the fungal growth, snapping it free from the bracket with a sharp, echoing pop. The eerie green light bathes the damp corridor in a steady glow, banishing the shadows that clung to your path. However narrowly you managed the crossing, the prize is now secure in your grip, providing a reliable light source that requires no oil. You turn away from the dizzying drop and retrace your steps toward the central stair. // GRANT: Glowing unburnable fungal lantern
+EXIT 1: Return to the upper landings
+@@END

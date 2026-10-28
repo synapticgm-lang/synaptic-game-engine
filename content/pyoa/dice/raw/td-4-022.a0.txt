@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION td-4-022
+TITLE: Mosaic of the Tidewardens
+TEXT: Faded enamel tiles map the old dynasty’s sea-lanes across the floor, each square depicting a legendary tide-command. You trace the sequence with a soot-stained thumb, reading the subtle wear patterns where ancient pilgrims knelt. The correct path shimmers under a film of dried brine, leading directly toward a recessed alcove choked with pale, leathery fronds. // Reaching into the shadows past the mosaic, your fingers brush against a damp cluster of preserved kelp, still slick with medicinal sap. You stow the dark green leaves inside your canvas satchel, knowing their bitter juices can staunch a deep salt-rot wound before the chill settles into your bones.
+EXIT 1: Step beyond the mosaic tiles
+@@END
+@@SECTION td-4-023
+TITLE: Decoding the Floor Plates
+TEXT: Glaring fractures crack the porcelain tiles beneath your boots, threatening to trigger the counterweights hidden just below the masonry. You scan the chipped mosaic symbols, calculating the exact weight distribution required to bypass the sunken tripwires. Every second spent lingering lets another drift of lime dust filter down from the vaulted ceiling above, stinging your eyes as you prepare to step.
+CHECK: Calculate the safe stone path
+@@END
+@@SECTION td-4-024
+TITLE: Sinking into the Trap
+TEXT: A sudden metallic snap echoes beneath your heel as a false stone gives way, plunging your boot into a narrow, grease-lined pit. Sharp iron teeth snap shut against your shin, tearing a ragged line through your trousers and drawing a dark line of blood. You wrench your leg free with a desperate heave, leaving a strip of wool and a spray of crimson behind in the darkness as the trap resets with a heavy, hollow thud.
+EXIT 1: Pull free from the trap
+@@END
+@@SECTION td-4-025
+TITLE: Secrets of the Paved Floor
+TEXT: Weight shifts evenly across the cool porcelain tiles, your cautious steps finding the exact hollow joints where the ancient mortar has crumbled away. Beneath a loose slab, your fingers close around a bundle of damp, salt-cured kelp wrapped in oiled sailcloth. The leaves are pliable and cool to the touch, retaining their healing moisture despite decades of suffocating dark. You tuck the bundle securely into your pack, your pulse steadying as the narrow corridor opens ahead.
+GRANT: preserved medicinal kelp
+EXIT 1: Advance down the corridor
+@@END
+@@SECTION td-4-026
+TITLE: The Silent Bronze Bell
+TEXT: Frost glazes the massive iron handrails as the shaft opens onto a cavernous amphitheatre carved straight into the living stone of the sea-bed. Suspended from the towering arches above hangs a monstrous bronze bell, its surface pitted with greenish verdigris and scarred by centuries of salt-spray. It has not rung since the water vanished, yet the dead air around it hums with a low, bone-deep vibration that sets your teeth on edge. Piles of bleached shells and discarded carapaces crunch beneath your boots as you step onto the vast terrace, dwarfed by the silent instrument of the deep.
+EXIT 1: Approach the silent bronze bell
+@@END
+@@SECTION td-4-027
+TITLE: The Bell Toll Terrace
+TEXT: Scavenger crabs the size of wagon wheels scuttle across the flagstones, their multifaceted eyes catching the faint bioluminescence clinging to the damp walls. To the left, a heavy sea chest sits jammed beneath the crushing weight of a fallen gargoyle. Straight ahead, the massive bronze bell broods in the centre of the stone circle, its rusted clapper begging for a closer inspection. Narrow stairwells and shadowed alcoves branch off into the gloom, offering paths deeper into the salt-crrusted ruins where the air grows colder still.
+EXIT 1: Search the crushed sea chest
+EXIT 2: Pry out the resonating crystal
+EXIT 3: Examine the weathered tally marks
+EXIT 4: Smash through the calcified wall
+EXIT 5: Face the emerging Hollow Choir
+@@END
+@@SECTION td-4-028
+TITLE: The Carapace Shield
+TEXT: Razor-sharp claws slash through the dim air, missing your throat by a hair as you drive your shoulder hard into the underside of the massive pale crab. The creature clicks in fury, its heavy shell scraping against the flagstones as you force it back from the wooden chest. You wedge your heel into its hinge-joint, twisting the beast off balance until it skitters away into the dark, leaving the prize unguarded.
+EXIT 1: Reach inside the iron chest
+@@END
+@@SECTION td-4-029
+TITLE: Wrestling the Brine-Crab
+TEXT: A mountain of pale chitin blocks your path to the iron-bound chest, its heavy claws snapping like iron shears in the damp air. You hurl your full weight against its armored side, your muscles straining to flip the beast before it clamps onto your arm. The shell is slick with cold slime, offering precious little grip as the creature rears up to strike.
+CHECK: Shove the giant crab aside
+@@END
+@@SECTION td-4-030
+TITLE: Pinioned by the Claws
+TEXT: A blinding pinch catches your forearm as the crustacean’s pincer closes through your sleeve, biting deep into the flesh. You grunt through clenched teeth, swinging the butt of your heavy iron pry-bar against its eyestalk until the beast releases its grip with a wet shriek. Blood wells from the ragged notch in your arm, warm and sticky against the freezing air, leaving you bruised and gasping for breath on the wet stone.
+EXIT 1: Retreat to the open terrace
+@@END
+@@SECTION td-4-031
+TITLE: Prize of the Carapace
+TEXT: Bracing your boots against the slimy flagstones, you heave the massive beast over onto its back, its claw thrashing harmlessly against the empty air. You wrench the water-swollen lid of the sea chest open, your fingers sinking past damp wool to close around a pair of heavy brass diving gauntlets. The metal is cold and scored with salt-burns, fitted with reinforced knuckle-plates that gleam dimly in the gloom. You slip them onto your hands, feeling their reassuring weight settle over your fingers as you step back onto the terrace.
+GRANT: heavy brass diving gauntlets
+EXIT 1: Return to the bell platform
+@@END

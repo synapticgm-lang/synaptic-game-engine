@@ -1,0 +1,11 @@
+Gemini said
+
+@@SECTION td-3-179
+TITLE: The Manual Override
+TEXT: Cold brine cakes the thick iron spokes of the manual winch as you plant your boots against the slick rusted grating of the platform. Below your heels, a three-hundred-foot drop opens into the grey gloom of the seabed, empty and waiting. The jammed cable above groans like a dying beast, refusing to yield an inch of slack unless you put every ounce of muscle and leverage behind the turning wheel. Gritting your teeth against the sudden strain in your back, you heave with all your might against the dead weight of the iron. // Sinews pull taut beneath your skin and the salt-crusted metal bites hard into your calloused palms while the heavy drum shudders beneath the sudden, brutal pressure.
+CHECK: Heave against the frozen winch
+@@SECTION td-3-184
+TITLE: The Hijacker on the Rafters
+TEXT: Heavy canvas sacks of salt-meat and dried lichen slip from your grip as a desperate figure lunges from the shadow of the salt-encrusted stilt-beam, fingers clawing blindly at your webbing. The platform sway violently over the yawning abyss of the Low as you grapple with the intruder, each breath burning your throat with the taste of ancient silt. You jam your shoulder hard into the scavenger's chest, refusing to let them wrench the harness away from your bleeding grip. // The rusted iron railing digs cruelly into your ribs as the two of you teeter on the very edge of the vertiginous drop, locked in a brutal struggle for survival.
+CHECK: Shove the desperate scavenger away
+@@END
