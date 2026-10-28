@@ -1,6 +1,6 @@
 {
  "note": "Passages drafted by Gemini web in John's laptop Chrome. model \"unverified\" = drafted before the model was logged per call (the Gemini tab showed Pro early on, Flash-Lite after Pro hit its limit); the Pro pass should treat these as possibly Flash-Lite and read them first. model \"flash-lite\" = verified on the mode picker before the call.",
- "updated": "2026-10-28T11:50:15.555Z",
+ "updated": "2026-10-28T11:51:15.281Z",
  "books": {
   "umbra": {
    "model": "unverified",
@@ -3667,7 +3667,27 @@
     "sg-6-0-1-7",
     "sg-6-0-1-8",
     "sg-6-0-1-9",
-    "sg-6-0-2-0"
+    "sg-6-0-2-0",
+    "sg-6-0-2-1",
+    "sg-6-0-2-2",
+    "sg-6-0-2-3",
+    "sg-6-0-2-4",
+    "sg-6-0-2-5",
+    "sg-6-0-2-6",
+    "sg-6-0-2-7",
+    "sg-6-0-2-8",
+    "sg-6-0-2-9",
+    "sg-6-0-2-10",
+    "sg-6-0-2-11",
+    "sg-6-0-3-0",
+    "sg-6-0-3-1",
+    "sg-6-0-3-2",
+    "sg-6-0-3-3",
+    "sg-6-0-3-4",
+    "sg-6-0-3-5",
+    "sg-6-0-3-6",
+    "sg-6-0-3-7",
+    "sg-6-0-3-8"
    ],
    "batches": [
     {
@@ -4166,6 +4186,18 @@
      "batch": "sg-6-0-1-1",
      "model": "Flash-Lite",
      "at": "2026-10-28T11:50:15.555Z",
+     "n": 10
+    },
+    {
+     "batch": "sg-6-0-2-1",
+     "model": "Flash-Lite",
+     "at": "2026-10-28T11:50:49.035Z",
+     "n": 10
+    },
+    {
+     "batch": "sg-6-0-2-11",
+     "model": "Flash-Lite",
+     "at": "2026-10-28T11:51:15.281Z",
      "n": 10
     }
    ]
