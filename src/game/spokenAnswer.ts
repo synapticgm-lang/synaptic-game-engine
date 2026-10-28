@@ -83,103 +83,229 @@ function speakersHere(state: GameState): Speaker[] {
   return out;
 }
 
+/** Quote one ledger/authored line as this speaker's reply (shared attach shape). */
+function quotedReply(speaker: Speaker, words: string): { line: string; words: string } {
+  const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  return { line: `${capitalize(speaker.label)} said, "${w}"`, words: w };
+}
+
 /**
- * Typed ask fallback with content: motive → opening-card want for cast lead.
- * No new canned refusal bank (merge RULES) — ledger lines only; else honest silence.
- * T10X — present groups get the same picker as named NPCs (reaction slot + cast want).
- * T10Y — RPG opening cast (the crew) uses the same card want; silence is one sentence only.
+ * Engine-recorded mute only (corpse / lastKill). SRD undead mute is owned by motiveLinesOf
+ * (empty group lines); here lastKill is the shared corpse lock.
+ * SRD 5.2.1 Communicating — brief speech is free unless they cannot speak.
+ */
+function engineMuteLine(state: GameState, speaker: Speaker): { line: string } | null {
+  const kill = (state.sceneFacts?.lastKill ?? '').replace(/\s+/g, ' ').trim();
+  if (!kill) return null;
+  if (!sameSpeaker(kill, speaker.label) && !speaker.names.some((n) => sameSpeaker(kill, n))) return null;
+  return { line: `${capitalize(speaker.label)} was already down and said nothing.` };
+}
+
+/**
+ * Typed ask fallback with content that fits the ask: authored topic → ledger agenda →
+ * cast want → motive deflection → seed sheet. Stock motive never outranks ledger need/goal.
+ * Silence only when the engine records a mute reason (lastKill). No new canned refusal bank.
+ * T10X/T10Y — present groups + opening cast use the same picker.
  * SRD 5.2.1 Communicating — brief speech is free; the addressed party answers from what they know.
  */
-function spokenExchangeLine(state: GameState, speaker: Speaker): { line: string; words?: string } {
-  const own = motiveAnswer(state, [speaker.label, ...speaker.names]);
-  if (own?.spoken?.words) return { line: own.line, words: own.spoken.words };
-  if (own?.line) {
-    // T10AD — a motive line without spoken.words still carries content; do not treat as silence.
-    const q = own.line.match(/["“]([^"”]+)["”]/);
-    return { line: own.line, words: (q?.[1] ?? '').replace(/\s+/g, ' ').trim() || undefined };
-  }
-  const cast = openingCastNames(state);
-  const isCast =
-    cast.some((n) => sameSpeaker(n, speaker.label)) ||
-    sameSpeaker(openingCastLabel(state), speaker.label);
-  const want = isCast ? shortCardWant(state).replace(/\s+/g, ' ').trim() : '';
-  if (want) {
-    const words = want.replace(/^["“]|["”]$/g, '').trim();
-    return {
-      line: `${capitalize(speaker.label)} said, "${words}"`,
-      words,
-    };
-  }
-  // T10AA — road/companion walkers often lack a saved sheet (seedTownsfolk skips journeys).
-  // Derive the same seed-stable motive the sheet would have given; no new canned bank.
+function spokenExchangeLine(
+  state: GameState,
+  speaker: Speaker,
+  playerInput = '',
+): { line: string; words?: string } {
+  const mute = engineMuteLine(state, speaker);
+  if (mute) return mute;
+
   const memory = speaker.record;
-  if (!memory?.sheet?.motive && !memory?.motiveLines?.length) {
-    const sheet = pickNpcSheet(speaker.label, sheetPlaceFor(state.currentLocation), {
-      campaignId: state.campaignBibleId,
-      roleHint: memory?.roleHint,
-    });
-    const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
-    if (words) {
-      return {
-        line: `${capitalize(speaker.label)} said, "${words}"`,
-        words,
-      };
-    }
+  const ask = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  const askTopic =
+    ask.match(/Follow up with[^:]+:\s*(.+)$/i)?.[1]?.trim() ??
+    ask.match(/\babout\s+(.+?)[.?!]?$/i)?.[1]?.trim() ??
+    '';
+
+  // Authored topic bank (who/want/where lines) before archetype motive.
+  const authored = authoredTopicsFor(speaker.label)[0];
+  if (authored?.line) {
+    const words = firstSentence(authored.line).replace(/^["“]|["”]$/g, '').trim();
+    if (words) return quotedReply(speaker, words);
   }
-  // T10AD — steward / gate cast often has need/goal/offer on the ledger with no sheet yet.
-  // Speak that durable content (refusal with substance), never content-free silence first.
-  // SRD 5.2.1 Communicating — brief speech is free; the addressed party answers from what they know.
+
+  // T10AF / T10AD — durable need/goal/offer before stock motive (Keep Gate steward need, not
+  // "fair and square"). Prefer the bit that overlaps the Follow-up / about-topic when present.
   const ledgerBits = [
     (memory?.need ?? '').replace(/\s+/g, ' ').trim(),
     (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim(),
     (memory?.offer ?? '').replace(/\s+/g, ' ').trim(),
   ].filter((w) => w.length >= 3);
-  if (ledgerBits[0]) {
-    const words = ledgerBits[0]!.replace(/^["“]|["”]$/g, '').trim();
-    return {
-      line: `${capitalize(speaker.label)} said, "${words}"`,
-      words,
-    };
+  if (ledgerBits.length) {
+    const topicLow = askTopic.toLowerCase();
+    const fit =
+      (topicLow
+        ? ledgerBits.find((b) => {
+            const bl = b.toLowerCase();
+            return bl.includes(topicLow) || topicLow.includes(bl) || topicLow.split(/\s+/).some((t) => t.length >= 4 && bl.includes(t));
+          })
+        : undefined) ?? ledgerBits[0]!;
+    return quotedReply(speaker, fit);
   }
-  // Ledger silence once — no second shrug sentence (writer may already have said nothing).
+
+  const cast = openingCastNames(state);
+  const isCast =
+    cast.some((n) => sameSpeaker(n, speaker.label)) ||
+    sameSpeaker(openingCastLabel(state), speaker.label);
+  const want = isCast ? shortCardWant(state).replace(/\s+/g, ' ').trim() : '';
+  if (want) return quotedReply(speaker, want);
+
+  // Deflection naming what they want — only when no ledger agenda (T10AF: never append on top of silence).
+  const own = motiveAnswer(state, [speaker.label, ...speaker.names]);
+  if (own?.spoken?.words) return { line: own.line, words: own.spoken.words };
+  if (own?.line) {
+    const q = own.line.match(/["“]([^"”]+)["”]/);
+    return { line: own.line, words: (q?.[1] ?? '').replace(/\s+/g, ' ').trim() || undefined };
+  }
+
+  // T10AA — road walkers / empty memory: seed-stable sheet motive (same as ensureNpcSheet).
+  const sheet = pickNpcSheet(speaker.label, sheetPlaceFor(state.currentLocation), {
+    campaignId: state.campaignBibleId,
+    roleHint: memory?.roleHint,
+  });
+  const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
+  if (words) return quotedReply(speaker, words);
+
+  // No engine mute and no ledger line — still one seed motive word if pick returned empty parts.
   return { line: `${capitalize(speaker.label)} said nothing.` };
+}
+
+/** Name tokens that identify this speaker in a clause (full label + non-title parts). */
+function speakerNameTokens(label: string): string[] {
+  const bare = label.replace(/^(?:the|a|an)\s+/i, '').trim();
+  if (!bare) return [];
+  const parts = bare.split(/\s+/).filter((w) => w.length >= 3 && !HONORIFIC.test(w));
+  return [...new Set([bare, ...parts])];
+}
+
+function clauseNamesSpeaker(clause: string, label: string): boolean {
+  return speakerNameTokens(label).some((t) => new RegExp(`\\b${esc(t)}\\b`, 'i').test(clause));
+}
+
+/**
+ * Content-free non-answer for this speaker: named, no quoted speech content, speech denied or empty.
+ * One structural check (speech claim + empty/negation) — not a growing synonym list.
+ * T10AF — match on any name token ("Bertil" / "Dunn") so "Bertil Pike" silence still strips.
+ */
+function isSpeakerNonAnswerClause(clause: string, label: string): boolean {
+  if (!clauseNamesSpeaker(clause, label)) return false;
+  // Ignore orphan quote marks left by splitting on ? inside a prior PC quote.
+  const body = clause.replace(/^["\u201c\u201d'\u2018\u2019]+/, '').replace(/["\u201c\u201d'\u2018\u2019]+$/, '');
+  if (/["\u201c][^"\u201d]{2,}["\u201d]/.test(body)) return false;
+  // "said nothing that the parcel…" is a silence/content splice — whole clause is non-answer.
+  if (/\bsaid nothing\s+(?:that|with|about|but)\b/i.test(body)) return true;
+  if (/\bgave\b[\s\S]{0,40}\bnothing\b/i.test(body)) return true;
+  const speech =
+    /\b(?:said|say|says|answer(?:ed|s)?|spoke|speak|tell(?:s|ing)?|told|replied|reply|whisper(?:ed|s)?|offered)\b/i.test(
+      body,
+    );
+  const empty =
+    /\b(?:nothing|no answer|not\b[\s\S]{0,24}\b(?:word|answer|speak)|silent|quiet|mute)\b/i.test(body) ||
+    /\b(?:went|stayed|remained)\s+(?:stiff\s+and\s+)?(?:quiet|silent)\b/i.test(body) ||
+    /\b(?:said|say|says|answer(?:ed|s)?|spoke|speak|offered)\s+no\b/i.test(body);
+  return speech && empty;
+}
+
+/** Split on .!? outside quotes so a PC "?" does not orphan the next speaker clause (T10AF T6). */
+function splitClausesOutsideQuotes(prose: string): string[] {
+  const raw = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return [];
+  const out: string[] = [];
+  let start = 0;
+  let q: '"' | '\u201c' | null = null;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i]!;
+    if (q === '"') {
+      if (ch === '"' || ch === '\u201d') q = null;
+      continue;
+    }
+    if (q === '\u201c') {
+      if (ch === '\u201d') q = null;
+      continue;
+    }
+    if (ch === '"') {
+      q = '"';
+      continue;
+    }
+    if (ch === '\u201c') {
+      q = '\u201c';
+      continue;
+    }
+    if ((ch === '.' || ch === '!' || ch === '?') && (i + 1 >= raw.length || /\s/.test(raw[i + 1]!))) {
+      const piece = raw.slice(start, i + 1).trim();
+      if (piece) out.push(piece);
+      start = i + 1;
+      while (start < raw.length && /\s/.test(raw[start]!)) start += 1;
+      i = start - 1;
+    }
+  }
+  const tail = raw.slice(start).trim();
+  if (tail) out.push(tail);
+  return out;
 }
 
 /** Content-free silence already on the beat for this speaker (do not stack another shrug). */
 function proseHasSpeakerSilence(prose: string, speaker: Speaker): boolean {
-  const bare = speaker.label.replace(/^(?:the|a|an)\s+/i, '').trim();
-  if (!bare) return false;
-  const re = new RegExp(
-    `\\b${esc(bare)}\\b[^.!?]{0,80}\\b(?:said nothing|offered nothing|stayed completely quiet|gave up nothing|waved (?:him|her|them) off)\\b`,
-    'i',
-  );
-  return re.test(prose);
+  for (const clause of splitClausesOutsideQuotes(prose)) {
+    if (isSpeakerNonAnswerClause(clause, speaker.label)) return true;
+  }
+  return false;
 }
 
-/** Drop stacked content-free silence clauses for this speaker before attaching a real exchange. */
-function stripSpeakerSilence(prose: string, speaker: Speaker): string {
-  const bare = speaker.label.replace(/^(?:the|a|an)\s+/i, '').trim();
-  if (!bare) return prose;
-  const re = new RegExp(
-    `[^.!?]*\\b${esc(bare)}\\b[^.!?]*(?:said nothing|offered nothing|stayed completely quiet|gave up nothing)[^.!?]*[.!?]?\\s*`,
-    'gi',
-  );
-  // T10AD — never strip from inside an open PC quote. A match that *starts* on the closing
-  // quote (`" The steward said nothing`) keeps that quote and drops only the silence.
-  return prose
-    .replace(re, (full, offset) => {
-      const closeLead = full.match(/^["\u201d]/);
-      if (closeLead) return `${closeLead[0]} `;
-      const before = prose.slice(0, offset);
-      const curlyOpen = (before.match(/\u201c/g) ?? []).length;
-      const curlyClose = (before.match(/\u201d/g) ?? []).length;
-      if (curlyOpen > curlyClose) return full;
-      const straight = (before.match(/"/g) ?? []).length;
-      if (straight % 2 === 1) return full;
-      return ' ';
-    })
-    .replace(/\s+/g, ' ')
-    .trim();
+/**
+ * Drop content-free non-answer clauses for this speaker before attaching a real exchange.
+ * T10AF — sentence-boundary only (never start on a prior quote's closer — that left
+ * `"..." nothing at all, but his eyes` splices). Also drop orphan silence after a closed quote.
+ */
+/**
+ * When a PC quote and an NPC non-answer share one clause (`…"?" The steward said nothing…`
+ * — no period between), drop the non-answer tail after the last closed quote (T10AF / T10AD T6).
+ */
+function stripNonAnswerTailAfterQuote(clause: string, label: string): string {
+  let lastEnd = -1;
+  for (const m of clause.matchAll(/["\u201c][^"\u201d]*["\u201d]/g)) {
+    lastEnd = m.index! + m[0].length;
+  }
+  if (lastEnd < 0) return clause;
+  const head = clause.slice(0, lastEnd).trim();
+  const tail = clause.slice(lastEnd).replace(/^[,;:\s]+/, '').trim();
+  if (!tail) return head;
+  if (isSpeakerNonAnswerClause(tail, label)) return head;
+  return clause;
+}
+
+export function stripSpeakerSilence(prose: string, speaker: { label: string }): string {
+  const label = (speaker.label ?? '').trim();
+  if (!label) return prose;
+  const parts = splitClausesOutsideQuotes(prose);
+  const kept: string[] = [];
+  for (const clause of parts) {
+    let next = stripNonAnswerTailAfterQuote(clause, label);
+    if (isSpeakerNonAnswerClause(next, label)) continue;
+    // Orphan splice after a closed quote (same clause or next): `"…" nothing at all, but…`
+    // never starts a new speaker sentence — drop the remnant (T10AF Dunn T147).
+    next = next.replace(
+      /(["\u201d])\s*(?:nothing at all|said nothing)\b(?!\s*[,:]?\s*["\u201c])[^.!?]*/gi,
+      '$1',
+    );
+    if (
+      kept.length &&
+      /["\u201d]\s*$/.test(kept[kept.length - 1]!) &&
+      /^(?:nothing at all|said nothing)\b/i.test(next) &&
+      !clauseNamesSpeaker(next, label)
+    ) {
+      continue;
+    }
+    next = next.replace(/\s+/g, ' ').trim();
+    if (next) kept.push(next);
+  }
+  return kept.join(' ').replace(/\s+/g, ' ').trim();
 }
 
 /** A speaker label must read as a name: one line, a few words, no question or chip word ("Greyhollow Who"). */
@@ -286,6 +412,8 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
   const t = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (/^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask)\b/i.test(t)) return true;
+  // T10AF — open-thread chips ("Follow up with Osric: the delivery…") are asks.
+  if (/^Follow up with\b/i.test(t)) return true;
   if (/["\u201c]/.test(t)) return true;
   // T10AC / T10P — stem forms (asking / telling) match intentParser speech markers.
   // `\bask\b` alone missed "asking Brannoc if…" (s8603 T6).
@@ -328,9 +456,9 @@ export function ensureSpokenAnswer(
     if (quotesBy(prose, speaker, alone, others, pc).length) {
       return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
-    // T10S/T10U/T10X/T10Y/T10AD — exchange needs content (motive / card want / ledger need).
-    // Content-free silence already on the page is replaced when the ledger has words; never stacked.
-    const exchange = spokenExchangeLine(state, speaker);
+    // T10S/T10U/T10X/T10Y/T10AD/T10AF — exchange needs content (ledger / cast / motive deflection).
+    // Content-free silence on the page is replaced when words exist; never stacked with a stock quote.
+    const exchange = spokenExchangeLine(state, speaker, playerInput);
     let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
     const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
     if (!silenceOnly) {
@@ -375,7 +503,7 @@ export function ensureSpokenAnswer(
     if (!typedSpeech) {
       return { prose, answer: { status: 'no-line', speaker: speaker.label } };
     }
-    const exchange = spokenExchangeLine(state, speaker);
+    const exchange = spokenExchangeLine(state, speaker, playerInput);
     let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
     const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
     if (!silenceOnly) {
