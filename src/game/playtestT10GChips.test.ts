@@ -108,34 +108,35 @@ function cursedKeepAskChipState(): GameState {
   return s;
 }
 
-describe('T10G origin exclusive + Ask chip addressee', () => {
-  it('Salt T3–T7: origin owns commitOfferedPad; no Travel mix; no dead-chip travel', () => {
+describe('T10G origin + Ask chip addressee', () => {
+  it('Salt T3–T7: origin chips present; scene options allowed beside them (T10T)', () => {
     const open = saltOriginOpen(3);
-    expect(resolveOfferedChoices(open)).toEqual([
+    const offered = resolveOfferedChoices(open);
+    expect(offered).toEqual(expect.arrayContaining([
       ...BACKGROUNDS.map((b) => originChip(b.id)),
       ORIGIN_QUICK_START_CHIP,
-    ]);
+    ]));
+    expect(offered.some((c) => !/^Origin:/i.test(c) && c !== ORIGIN_QUICK_START_CHIP)).toBe(true);
 
     const committed = commitOfferedPad({ ...open, offeredPad: null });
     const labels = committed.offeredPad?.choices ?? [];
-    expect(labels).toEqual([
+    expect(labels).toEqual(expect.arrayContaining([
       ...BACKGROUNDS.map((b) => originChip(b.id)),
       ORIGIN_QUICK_START_CHIP,
-    ]);
-    expect(labels.some((c) => /^Travel toward\b/i.test(c))).toBe(false);
-    expect(checkChipKinds(committed, labels).filter((f) => f.kind === 'dead-chip')).toEqual([]);
-    expect(engineChips(committed).every((c) => /^Origin:/i.test(c.label) || c.label === ORIGIN_QUICK_START_CHIP)).toBe(
+    ]));
+    expect(engineChips(committed).some((c) => /^Origin:/i.test(c.label))).toBe(true);
+    expect(engineChips(committed).some((c) => !/^Origin:/i.test(c.label) && c.label !== ORIGIN_QUICK_START_CHIP)).toBe(
       true,
     );
+    expect(checkChipKinds(committed, labels).filter((f) => f.kind === 'dead-chip')).toEqual([]);
 
-    // Walking / scene chips while origin is still open must not reopen a mixed row.
     const walking = commitOfferedPad({
       ...open,
       turn: 5,
       choices: ['Travel toward Harbor Fence', 'Origin: Criminal', 'Travel toward Bribe Market'],
       offeredPad: null,
     });
-    expect(walking.offeredPad?.choices?.some((c) => /^Travel toward\b/i.test(c))).toBe(false);
+    // T10T — travel may appear beside origin; dead-chip travel from exclusive cull is gone.
     expect(checkChipKinds(walking, walking.offeredPad?.choices ?? []).filter((f) => f.kind === 'dead-chip')).toEqual(
       [],
     );

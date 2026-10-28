@@ -4,19 +4,21 @@
  * Before the writer, a Story RPG turn commits two things the engine can see:
  * - Standing: helping or refusing a named person here moves how they stand with the player
  *   (npcMemories disposition), and the change is a world fact the writer must carry.
- * - Quest step: the main quest's next open step ticks when the player is at the step's explicit
- *   placeId (OPT-4; no word-match). A placeless decision ("Pick an approach") with routes expands
+ * - Quest step: the main quest's next open step ticks only on an engine-sanctioned outcome —
+ *   a successful OPT-4 route (`applyQuestRouteOutcome`) or calling on a standing contact.
+ *   Mere presence at `placeId` does not tick (T10T — "rig the boulders" / "bring proof" must not
+ *   complete from a glance or shout). A placeless decision ("Pick an approach") with routes expands
  *   those routes as OPT-1 affordances (TT-G1); without routes it is still offered as its own chip
- *   (RC-QT1) and never ticks from the chip label alone — the tick needs an engine outcome
- *   (place, check, contact favour, route success). Beat timing, travel and talk never tick it.
+ *   (RC-QT1) and never ticks from the chip label alone. Beat timing, travel and talk never tick it.
  * - They'll remember: a standing change schedules a delayed consequence (scheduleDelayedConsequence). The
  *   arcDirector delivery pays it off on the first due turn that person is present again: a hidden trust shift
  *   on their relationship record and a "Remembered" beat. The choice itself gets a "will remember that" cue.
  * - Ending: once a main quest is finished the shared ending gates (pyoaEndingGates + rpgEndings) offer
  *   RPG_ENDING_CHIP; taking it commits the best eligible ending and the run ends.
- * - Two ways through each main step: the step itself (be at its place), or call on a person
+ * - Two ways through each main step: take a route affordance for the open step, or call on a person
  *   here who stands with you to see to it. Calling on them spends goodwill (a hidden trust cost on their record).
- * - Origin (rules/rpgOrigin) and romance (a Loyal companion, only when romance subplots are on).
+ * - Origin (rules/rpgOrigin) — chips sit beside scene options; Quick start auto-assigns after patience.
+ *   Romance (a Loyal companion, only when romance subplots are on).
  * - Every committed choice goes into the journal of choices (choiceJournal).
  * Other modes are untouched.
  */
@@ -227,68 +229,81 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
   if (chipKey(action) === chipKey(RPG_ENDING_CHIP) && rpgEndingChip(state)) return commitRpgEnding(state)!;
 
   const origin = settleOrigin(state, action);
-  if (origin.receipts.length) {
+  if (origin.receipts.length && !origin.auto) {
+    // Explicit origin chip — that line is the turn.
     return { state: recordChoice(origin.state, { kind: 'origin', text: origin.text! }), receipts: origin.receipts };
   }
+  if (origin.receipts.length && origin.auto) {
+    // Quick start after patience — keep going so the typed free-play action still resolves (T10T).
+    next = recordChoice(origin.state, { kind: 'origin', text: origin.text! });
+    receipts.push(...origin.receipts);
+  } else if (origin.state !== state) {
+    next = origin.state;
+  }
 
-  const beloved = romancePad(state, !!opts.romance)?.find((c) => chipKey(c) === chipKey(action));
+  const beloved = romancePad(next, !!opts.romance)?.find((c) => chipKey(c) === chipKey(action));
   if (beloved) {
     const name = beloved.replace(/^Tell /, '').replace(/ how you feel$/, '');
     const k = name.toLowerCase();
-    const npcMemories = (state.npcMemories ?? []).some((m) => m.npcName.toLowerCase() === k)
-      ? (state.npcMemories ?? []).map((m) => (m.npcName.toLowerCase() === k ? { ...m, disposition: 'romanced' as const, lastSeenTurn: state.turn } : m))
-      : [...(state.npcMemories ?? []), { npcId: k, npcName: name, disposition: 'romanced' as const, facts: [], lastSeenTurn: state.turn }];
+    const npcMemories = (next.npcMemories ?? []).some((m) => m.npcName.toLowerCase() === k)
+      ? (next.npcMemories ?? []).map((m) => (m.npcName.toLowerCase() === k ? { ...m, disposition: 'romanced' as const, lastSeenTurn: next.turn } : m))
+      : [...(next.npcMemories ?? []), { npcId: k, npcName: name, disposition: 'romanced' as const, facts: [], lastSeenTurn: next.turn }];
     return {
-      state: recordChoice({ ...state, npcMemories }, { kind: 'romance', npc: name, text: `You told ${name} how you feel, and ${name} feels the same.` }),
-      receipts: [`Romance: ${name} returns your feelings.`],
+      state: recordChoice({ ...next, npcMemories }, { kind: 'romance', npc: name, text: `You told ${name} how you feel, and ${name} feels the same.` }),
+      receipts: [...receipts, `Romance: ${name} returns your feelings.`],
     };
   }
 
-  const route = openRouteView(state, action)?.routeByLabel ?? null;
+  const route = openRouteView(next, action)?.routeByLabel ?? null;
   if (route) {
     // Chip alone is not the tick (RC-QT1): contact/place/check routes need their engine outcome.
     // Approach / person / standing / skill / system / study / check: success is the committed pick when
     // the route does not demand a separate place or Friendly contact gate.
     if (route.kind === 'place' || route.kind === 'object') {
       const need = (route.placeId ?? '').trim();
-      if (need && !atPlace(state, need)) {
-        return applyQuestRouteOutcome(state, route.id, 'failure');
+      if (need && !atPlace(next, need)) {
+        const fail = applyQuestRouteOutcome(next, route.id, 'failure');
+        return { state: fail.state, receipts: [...receipts, ...fail.receipts] };
       }
     }
     if (route.kind === 'contact') {
-      if (!standingContactsHere(state).length) {
-        return applyQuestRouteOutcome(state, route.id, 'failure');
+      if (!standingContactsHere(next).length) {
+        const fail = applyQuestRouteOutcome(next, route.id, 'failure');
+        return { state: fail.state, receipts: [...receipts, ...fail.receipts] };
       }
     }
-    const hit = applyQuestRouteOutcome(state, route.id, 'success');
+    const hit = applyQuestRouteOutcome(next, route.id, 'success');
     return {
       state: recordChoice(hit.state, {
         kind: 'decision',
-        text: `${openMainStep(state)?.quest.name ?? 'Quest'}: ${route.label}`,
+        text: `${openMainStep(next)?.quest.name ?? 'Quest'}: ${route.label}`,
       }),
-      receipts: hit.receipts,
+      receipts: [...receipts, ...hit.receipts],
     };
   }
 
-  const contact = contactFromInput(state, action);
+  const contact = contactFromInput(next, action);
   if (contact) {
-    const open = openMainStep(state)!;
-    const ticked = tickNextStep(state.quests ?? [], open.quest.id)!;
-    const r = shiftStoredRelationship(state.arcDirector?.npcRelationships, contact, { trust: CONTACT_FAVOUR_TRUST, familiarity: 1 }, state.turn ?? 0, 'favor');
-    next = { ...state, quests: ticked.quests, arcDirector: { ...(state.arcDirector ?? {}), npcRelationships: r.list } } as GameState;
+    const open = openMainStep(next)!;
+    const ticked = tickNextStep(next.quests ?? [], open.quest.id)!;
+    const r = shiftStoredRelationship(next.arcDirector?.npcRelationships, contact, { trust: CONTACT_FAVOUR_TRUST, familiarity: 1 }, next.turn ?? 0, 'favor');
+    next = { ...next, quests: ticked.quests, arcDirector: { ...(next.arcDirector ?? {}), npcRelationships: r.list } } as GameState;
     next = recordChoice(next, { kind: 'decision', npc: contact, text: `${open.quest.name}: ${ticked.step} — you called on ${contact}.` });
-    return { state: next, receipts: [`Quest stage: ${open.quest.name} — ${ticked.step} (through ${contact})`] };
+    return {
+      state: next,
+      receipts: [...receipts, `Quest stage: ${open.quest.name} — ${ticked.step} (through ${contact})`],
+    };
   }
 
   const stance = detectStanceTreatment(action);
-  const target = stance === 'kind' || stance === 'hard' ? stanceTarget(state, action) : null;
+  const target = stance === 'kind' || stance === 'hard' ? stanceTarget(next, action) : null;
   if (target) {
     const key = target.toLowerCase();
-    const before = (state.npcMemories ?? []).find((m) => m.npcName.toLowerCase() === key)?.disposition ?? 'unknown';
-    const pool = (state.npcMemories ?? []).some((m) => m.npcName.toLowerCase() === key)
-      ? state.npcMemories ?? []
-      : [...(state.npcMemories ?? []), { npcId: key, npcName: target, disposition: 'unknown' as const, facts: [], lastSeenTurn: state.turn }];
-    const npcMemories = recordNpcTreatmentFromAction(pool, `${action} ${target}`, state.turn + 1, [target]);
+    const before = (next.npcMemories ?? []).find((m) => m.npcName.toLowerCase() === key)?.disposition ?? 'unknown';
+    const pool = (next.npcMemories ?? []).some((m) => m.npcName.toLowerCase() === key)
+      ? next.npcMemories ?? []
+      : [...(next.npcMemories ?? []), { npcId: key, npcName: target, disposition: 'unknown' as const, facts: [], lastSeenTurn: next.turn }];
+    const npcMemories = recordNpcTreatmentFromAction(pool, `${action} ${target}`, (next.turn ?? 0) + 1, [target]);
     const after = npcMemories.find((m) => m.npcName.toLowerCase() === key)?.disposition ?? before;
     next = { ...next, npcMemories };
     if (after !== before) {
@@ -299,16 +314,6 @@ export function applyStoryRpgTurn(state: GameState, playerInput: string, opts: {
     }
   }
 
-  const quest = mainSpineQuest(next);
-  const openObj = quest?.objectives?.find((o) => !o.completed);
-  if (quest && openObj) {
-    const place = placeForStep(next, openObj);
-    // RC-QT1: placeId steps tick at that place; placeless decision chips never tick on label alone.
-    const ticked = place && atPlace(next, place) ? tickNextStep(next.quests ?? [], quest.id) : null;
-    if (ticked) {
-      next = { ...next, quests: ticked.quests };
-      receipts.push(`Quest stage: ${quest.name} — ${ticked.step} (at ${place})`);
-    }
-  }
+  // T10T — no mere-presence tick. Steps advance only via route success (above) or contact favour.
   return { state: next, receipts };
 }

@@ -9,6 +9,8 @@ import { mulberry32 } from '../fatePick';
 import { mainSpineQuest } from '../questPlay';
 
 export const ORIGIN_QUICK_START_CHIP = 'Quick start';
+/** Turns an open origin offer waits before Quick start auto-assigns (parity with LitRPG class offer). */
+export const ORIGIN_OFFER_PATIENCE = 2;
 
 /** How the story RPG says each background: the past, and why the main quest found the character. */
 const ORIGIN_VIEW: Record<TabletopBackgroundId, { past: string; hook: (quest: string) => string }> = {
@@ -30,6 +32,12 @@ export function isOriginOpen(state: GameState): boolean {
 export function originPad(state: GameState): string[] | null {
   if (!isOriginOpen(state) || state.activeEncounter || state.roundCombat) return null;
   return [...BACKGROUNDS.map((b) => originChip(b.id)), ORIGIN_QUICK_START_CHIP];
+}
+
+/** Stamp the turn the origin row first opened (for Quick-start patience). */
+export function stampOriginOffer(state: GameState): GameState {
+  if (!isOriginOpen(state) || state.originOfferTurn != null) return state;
+  return { ...state, originOfferTurn: state.turn ?? 0 };
 }
 
 /** Quick start: a background picked by seed (the same save always gets the same one). */
@@ -59,18 +67,44 @@ export interface OriginSettle {
   receipts: string[];
   /** The past and the hook, for the journal. */
   text?: string;
+  /** True when Quick start assigned after patience — caller's free-play action still runs. */
+  auto?: boolean;
 }
 
-/** Take the origin this line picks; the hook names the main quest when there is one. Other modes: nothing. */
-export function settleOrigin(state: GameState, input: string): OriginSettle {
-  const id = originFromInput(state, input);
-  if (!id) return { state, receipts: [] };
+function takeOrigin(state: GameState, id: TabletopBackgroundId, auto = false): OriginSettle {
   const view = ORIGIN_VIEW[id];
   const quest = mainSpineQuest(state)?.name;
   const text = `${view.past}.${quest ? ` ${view.hook(quest)}` : ''}`;
   return {
-    state: { ...state, character: { ...state.character, origin: id } },
+    state: {
+      ...state,
+      character: { ...state.character, origin: id },
+      originOfferTurn: null,
+    },
     receipts: [`Origin: ${backgroundDef(id).name} — ${text}`],
     text,
+    auto,
   };
+}
+
+/**
+ * Take the origin this line picks; the hook names the main quest when there is one.
+ * T10T — if the offer sat unanswered for ORIGIN_OFFER_PATIENCE turns of free play, Quick start assigns
+ * (`auto: true` so the caller's typed scene action still resolves). Other modes: nothing.
+ */
+export function settleOrigin(state: GameState, input: string): OriginSettle {
+  const stamped = stampOriginOffer(state);
+  const id = originFromInput(stamped, input);
+  if (id) return takeOrigin(stamped, id, false);
+  if (
+    isOriginOpen(stamped)
+    && stamped.originOfferTurn != null
+    && (stamped.turn ?? 0) - stamped.originOfferTurn >= ORIGIN_OFFER_PATIENCE
+    && !stamped.activeEncounter
+    && !stamped.roundCombat
+  ) {
+    return takeOrigin(stamped, quickStartOrigin(stamped), true);
+  }
+  if (stamped !== state) return { state: stamped, receipts: [] };
+  return { state, receipts: [] };
 }
