@@ -193,3 +193,28 @@
 2026-10-28T09:15:11.241Z   reject td-2-177: exit 1 label,exit 2 label,exit 3 label,exit 4 label,exit 5 label,exit 6 label
 2026-10-28T09:15:11.242Z   reject td-2-181: words 52
 2026-10-28T09:15:19.248Z ask prose td-2-176..td-2-185 items=2 attempt=1
+2026-10-28T09:15:47.357Z done td-2-176: 10/10
+2026-10-28T09:15:47.359Z ask prose td-2-186..td-2-198 items=13 attempt=0
+2026-10-28T09:16:12.622Z   reject td-2-186: meta words
+2026-10-28T09:16:20.631Z ask prose td-2-186..td-2-198 items=1 attempt=1
+2026-10-28T09:16:45.978Z done td-2-186: 13/13
+2026-10-28T09:16:45.979Z ask prose td-2-199..td-2-208 items=10 attempt=0
+2026-10-28T09:17:08.510Z   reject td-2-199: missing
+2026-10-28T09:17:08.510Z   reject td-2-200: missing
+2026-10-28T09:17:08.511Z   reject td-2-201: missing
+2026-10-28T09:17:08.511Z   reject td-2-202: missing
+2026-10-28T09:17:08.512Z   reject td-2-203: missing
+2026-10-28T09:17:08.513Z   reject td-2-204: missing
+2026-10-28T09:17:08.514Z   reject td-2-205: missing
+2026-10-28T09:17:08.514Z   reject td-2-206: missing
+2026-10-28T09:17:08.515Z   reject td-2-207: missing
+2026-10-28T09:17:08.515Z   reject td-2-208: missing
+2026-10-28T09:17:16.517Z ask prose td-2-199..td-2-208 items=10 attempt=1
+2026-10-28T09:17:47.195Z done td-2-199: 10/10
+2026-10-28T09:17:47.204Z ask prose td-2-209..td-2-218 items=10 attempt=0
+2026-10-28T09:18:20.299Z done td-2-209: 10/10
+2026-10-28T09:18:20.303Z ask prose td-2-219..td-3-011 items=13 attempt=0
+2026-10-28T09:18:47.104Z   reject td-3-011: words 46
+2026-10-28T09:18:55.112Z ask prose td-2-219..td-3-011 items=1 attempt=1
+2026-10-28T09:19:21.181Z done td-2-219: 13/13
+2026-10-28T09:19:21.184Z ask prose td-3-012..td-3-021 items=10 attempt=0

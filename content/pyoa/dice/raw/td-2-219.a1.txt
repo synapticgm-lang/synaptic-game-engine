@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-3-011
+TITLE: The Guard's Coat
+TEXT: You stroke your chin with slow, false confidence, murmuring a forged password about brine-audit inspections until the young mercenary at the upper hoist lowers the iron-ribbed basket without another question. Slipping past the braided ropework, you trade your salt-crusted jacket for the heavy wool coat of an off-duty Brineholder guard, its brass buttons stamped with the salt-rose sigil of the upper platforms. The garment smells faintly of dry lime and stale tallow, but it gives you the unmistakable silhouette of authority among the struts. // Pockets yield a brass token and a half-eaten hard biscuit.
+GRANT: Brineholder guard coat
+EXIT 1: Descend to the sprawling shanty slums below
+@@END

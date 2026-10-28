@@ -1,0 +1,117 @@
+{
+ "batch": "td-2-186",
+ "sections": {
+  "td-2-186": {
+   "title": "The Fallen Pillar",
+   "text": "Granite dust settles in your lashes as your shoulder blades scream against the cold tonnage of the masonry. You wedge your boot against a cracked riser and throw your full weight into the heave, boots grinding until the pillar finally groans and rolls aside with a dry rattle. Beneath its shadowed belly, tucked into a dry alcove untouched by the sea's ancient salt, rests an old iron-bound box and a broad-bladed harpoon pike wrapped in greasy oiled hide. The metal is cold and grey, untouched by red rust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the iron weapon from the dust"
+   ]
+  },
+  "td-2-187": {
+   "title": "Clearing the Debris",
+   "text": "Dust hangs thick in the stale air, smelling of ancient brine and iron ore. Kneeling beside the shifted masonry, you clear away the remaining grit to expose the full length of the cache nestled inside the rock. A rusted latch gives way beneath your calloused fingers, revealing oiled leather wrapping that protects the gear from the damp rot of the seabed. You pause to catch your breath, listening intently for any echo rising from the depths before reaching out to claim the hidden store.\n\nThe metal inside is cold and heavy, forged in an era before the sea retreated from the cliffs of Gullmouth. Gathering the items close, you ready yourself for the next downward leg of your descent toward the great mechanism.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend deeper into the stairwell"
+   ]
+  },
+  "td-2-188": {
+   "title": "Shifting the Great Stone",
+   "text": "Muscle and bone strain as you plant your boots firmly against the cracked flagstones of the stairwell. The massive fallen pillar blocks your only passage forward, its heavy mass wedged tightly between the arched walls of the old sea-temple. Gritting your teeth, you throw your entire weight into the stone, muscles trembling and sweat stinging your eyes as the granite grinds painfully against the bedrock. A deep, ominous crack echoes through the masonry above your head, threatening to bring the entire archway down upon your shoulders if your footing slips even a fraction of an inch.",
+   "check": "Shove the heavy pillar aside",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-189": {
+   "title": "Crushed Underfoot",
+   "text": "The stone suddenly shifts with a vicious snap, rolling backward and pinning your shoulder against the jagged wall with a sickening crunch. Pain flares hot and sharp down your arm, knocking the wind from your lungs as grey dust fills your eyes and mouth. You scramble wildly in the dark, tearing your skin against the rough granite until you finally wrench yourself free, leaving behind a tattered shred of your woolen coat and a deep, throbbing bruise. Coughing violently in the choking air, you drag your battered body away from the unstable rubble and press on down the winding stair.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself down the stairs"
+   ]
+  },
+  "td-2-190": {
+   "title": "The Hidden Cache",
+   "text": "Granite resists your strength with stubborn fury, but you find the exact balance point and heave with a final, desperate burst of energy. The massive pillar groans, tips over the edge of the stair, and crashes heavily into the abyss below, leaving the secret alcove wide open to your reach. Inside the dry cavity rests a well-preserved blade of dark tempered steel, its edge still keen despite the passing of long, salt-heavy years. You slip the weapon's leather harness over your shoulder, feeling the solid, reassuring weight of the relic against your ribs.",
+   "check": "",
+   "grant": "Heavy iron-forged blade",
+   "exits": [
+    "Follow the dark spiral down"
+   ]
+  },
+  "td-2-191": {
+   "title": "Crossing the Chasm",
+   "text": "Jagged gaps fracture the spiralling stone path where time and salt-rot have eaten away the outer edge of the stair. Far below, the dark core of the shaft drops away into absolute blackness, save for the faint glimmer of phosphorescent moss clinging to the distant walls. You grip the cold handrail of ironwork, testing each remaining foothold with intense care before committing your weight to the open air. A gust of damp wind sweeps up from the deep abyss, carrying the dry, metallic scent of the mechanism waiting at the bottom.\n\nReaching the opposite landing safely, you shake the tremors from your fingers and look up at the next stretch of the crumbling descent.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance along the upper ledge"
+   ]
+  },
+  "td-2-192": {
+   "title": "Leap Across the Void",
+   "text": "The stone stairs vanish abruptly before you, leaving a yawning ten-foot gap of empty air above the dark and silent shaft. You back up against the damp wall, measuring the terrifying distance in the gloom while loose gravel trickles from your boots into the abyss. Taking a sharp breath, you charge forward through the chill fog and launch yourself outward over the empty space, praying that your legs have enough power to clear the deadly drop. Your palms sweat as the opposite ledge rushes toward you out of the shadows.",
+   "check": "Leap across the broken stairs",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-193": {
+   "title": "Falling Short",
+   "text": "Your boots strike the slick edge of the far landing, but your momentum fails you and your knees slam hard into the jagged stone. Pain shoots up your shins as you slip backward, your fingernails frantically scraping against the rough rock wall until you manage to hook your elbows over the rim. You dangle for a breathless second over the endless drop before heaving yourself onto solid ground, bruised and breathless. A sharp scrape across your ribs leaves a warm streak of blood beneath your shirt, reminding you of the cost of carelessness in this buried place.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl forward into the gloom"
+   ]
+  },
+  "td-2-194": {
+   "title": "Landing Firm",
+   "text": "Your boots hit the opposite flagstone with a solid, resonant thud, and your momentum carries you safely into a low crouch against the far wall. Dust settles around your ankles as you catch your breath, realizing how close you came to joining the drowned bones at the bottom of the shaft. Tucked into a niche beside the landing lies a small, leather-bound logbook left behind by a forgotten pilgrim, its pages filled with neat diagrams of the great mechanism below. You tuck the book securely into your coat pocket, gaining a valuable insight into the workings of the deep sea.",
+   "check": "",
+   "grant": "Old Tidewarden logbook",
+   "exits": [
+    "Return to the main descent"
+   ]
+  },
+  "td-2-195": {
+   "title": "The Iron Pulley",
+   "text": "Rusted chains and rotting hemp hang in loops down the center of the deep vertical shaft, threatening to tangle around your limbs with every step. You spot a jammed iron pulley system overhead, its brass wheels stuck fast in a thick crust of green verdigris and dried salt. Working with quick, steady fingers, you pry the rusted teeth apart with your knife, clearing away the stubborn corrosion until the heavy cylinder spins true once more. The metal screeches in protest, but the mechanism holds, offering a safe passage to lower depths.\n\nYou secure your supply pack to the newly freed hook, watching it descend smoothly into the gloom before following down the ladder.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb down the iron ladder"
+   ]
+  },
+  "td-2-196": {
+   "title": "Mending the Tackle",
+   "text": "Iron cables groan and snap under sudden tension, spraying showers of rusted sparks across the dark stone floor around your boots. You desperately work your knife into the jammed cogs of the overhead winch, trying to free the fouled line before the heavy cargo breaks loose and plunges into the dark. The metal teeth bite into your palm through your gloves, and the entire iron housing shudders violently as the weight slips another terrifying inch toward the abyss. Your fingers move with desperate speed, trying to force the locking lever home before the whole assembly gives way.",
+   "check": "Repair the shattered pulley",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-197": {
+   "title": "Snapped Cables",
+   "text": "The heavy winch shrieks in high agony as the iron pawns shear off, sending your supply pack plunging into the darkness with a distant, echoing crash. A whip-like steel cable lashes across your forearm, tearing through your woolen sleeve and leaving a burning crimson welt across your skin. You press your hand against the smarting cut, cursing quietly in the damp dark as you realize half your rations are now scattered across the unseen floor far below. Shaking your head, you gather the remaining gear and resume your careful descent down the shaft.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue down the broken shaft"
+   ]
+  },
+  "td-2-198": {
+   "title": "Smooth Lowering",
+   "text": "Your swift fingers find the jammed safety pin just in time, wedging it firmly between the grinding cogs to lock the heavy winch in place. The iron cables settle with a low, satisfied hum, lowering your heavy pack gently onto the stone landing without a single tear or loss of supplies. As you untie the rig, your fingers brush against a small brass token wedged into the pulley housing, stamped with the crest of the old Gullmouth harbor masters. You pocket the heavy token, knowing it might buy safe passage or answers from the right person.",
+   "check": "",
+   "grant": "Heavy brass harbor token",
+   "exits": [
+    "Return to the main descent"
+   ]
+  }
+ },
+ "missing": []
+}

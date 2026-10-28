@@ -1,0 +1,52 @@
+Gemini said
+
+@@SECTION td-2-209
+TITLE: Salt-Cured Fronds
+TEXT: Whitebeard kelp clings to the vertical face of a brine-whitened shelf, its curled fronds rich with bitter iodine that seals a torn palm better than tallow. You reach with your thumb and forefinger, peeling each brittle ribbon away from the stone while watching the unstable shale above shift with a dry, warning hiss. By shifting your weight to your heels and moving with agonizing slowness, you fill your canvas pouch without bringing the grey overhang down upon your neck.
+EXIT 1: Pack the dried fronds safely away
+@@END
+@@SECTION td-2-210
+TITLE: The Anchor Haul
+TEXT: Drift Pilgrims lean their raw shoulders against the cold iron shank of an anchor as heavy as a cathedral bell, their cracked lips chanting praises to a sea that turned its back. You step into the muddy rut behind them, setting your palms against the rusted fluke and throwing your spine into the heave while the damp incline threatens to slide back down into the brine-pit. Sweat stings your salt-crusted eyebrows, but the collective grunt of the faithful finally tops the rise, earning you a solemn nod and a thumb-pressed smear of holy silt across your forehead.
+EXIT 1: Receive the blessing of the pilgrims
+@@END
+@@SECTION td-2-211
+TITLE: Rafters of the Bell
+TEXT: Rotting oak beams groan beneath your boots as you scale the skeletal ribs of the collapsed municipal hall, looking down into a dizzying drop where jagged timbers jut like broken teeth. Above you hangs the green-patinated bronze bell, half-choked with dried kelp and holding the leather-bound ledger of the old Tidewarden wedged tight between its iron yoke and the wall. You stretch across the void, trusting the ancient wood to hold your weight one last time while your fingers catch the water-swollen leather.
+EXIT 1: Retrieve the water-swollen Tidewarden ledger
+@@END
+@@SECTION td-2-212
+TITLE: Shelf of Medicinal Kelp
+TEXT: Crisp ribbons of bladder-wrack cling to a sun-baked ledge above the drop, glistening with a pale medicinal resin that every Gullmouth wrecker keeps tucked in their cheek during a fever. You wedge your toes into a fissure in the limestone, testing the brittle rock before reaching up with both hands to harvest the fragile fronds without sliding the loose shale below. The harvest comes away clean in your grip, smelling of bitter iodine and ancient mud.
+EXIT 1: Secure the fragile fronds in your pouch
+@@END
+@@SECTION td-2-213
+TITLE: Fogs of the Abyss
+TEXT: A greasy vapor rolls across the salt-flats, parting just long enough to reveal a pulsing, yellow lantern dangling from the snout of a bloated, crawling thing with too many jaws. It lunges from the fog with a wet, heavy thud, spraying foul brine as its needle-teeth snap inches from your throat. You draw your heavy sheath-knife and drive it upward into the soft flesh behind its glowing lure, twisting the blade hard as the carcass thrashes in the mud.
+EXIT 1: Harvest the glowing angler lure
+@@END
+@@SECTION td-2-214
+TITLE: The Iron Bivalve
+TEXT: Half-buried in the black silt of a drowned harbor lane rests a giant river-clam, its ridged shell sealed shut with the stubborn strength of an iron vault door. You wedge the flat of your heavy pry-bar into the pulsing seam, leaning your entire body weight against the iron while the shell groans and fights back with the hydraulic pull of the deep. With one final wrench, the muscle gives way with a wet snap, revealing a lustrous black pearl resting in the grey folds.
+EXIT 1: Pry free the black pearl
+@@END
+@@SECTION td-2-215
+TITLE: Hold of the Wreck
+TEXT: Pitch-black darkness clings to the rusted iron ribs of the stranded merchant hulk, where the air tastes of stagnant bilge and old wool. You trace the flaking bulkheads with your fingertips, recalling the precise layout of the cargo decks from old harbor charts while a towering pine mast groans and starts to list above you. You duck to the side just as the heavy timber crashes into the deck planks, leaving a clear path straight to a wooden crate filled with sealed glass jars of lamp oil.
+EXIT 1: Claim the sealed oil jar
+@@END
+@@SECTION td-2-216
+TITLE: The Reef Crab Trap
+TEXT: Twisted monofilament lines from a dozen snapped nets lie tangled across a salt-crusted trench, offering strong, flexible cordage if you have the patience to untangle them without snagging your skin. Working quickly with cold fingers, you weave a crude drop-basket and bait it with a scrap of salted skate, lowering it into a churning tide-pool where dark shapes scuttle beneath the foam. A heavy, armored reef-crab snaps its claws against the mesh, fighting fiercely as you haul the impromptu trap onto the dry shale.
+EXIT 1: Secure the heavy reef crab
+@@END
+@@SECTION td-2-217
+TITLE: The Water-Still
+TEXT: A Brineholder merchant sits beside a collapsed copper condenser, cursing the split pipe that leaves him with nothing to drink beneath the glare of the open sky. You drop to your knees in the grit, using two small rib-bones from a stranded porpoise to splint the fractured joint and binding the seam tightly with strips of salted leather. The apparatus hisses and begins to drip clear condensation into the waiting tin, earning you a grudging nod and a full canteen of lukewarm water.
+EXIT 1: Accept the full water canteen
+@@END
+@@SECTION td-2-218
+TITLE: The Winch Mechanism
+TEXT: Thick iron cables spool out from a rusted winch bed bolted to the deck of an upturned galleon, its internal cogs jammed tight with encrusted barnacles and dried kelp. You wedge a heavy iron spike between the interlocking teeth, leveraging your weight against the rusted metal while the sharp flanges threaten to shear your knuckles. With a grating screech of tormented steel, the heavy iron gear breaks free from its salt-bed, tumbling directly into your waiting leather sack.
+EXIT 1: Lift the heavy iron gear
+@@END

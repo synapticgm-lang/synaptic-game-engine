@@ -1,0 +1,96 @@
+{
+ "batch": "td-2-199",
+ "sections": {
+  "td-2-199": {
+   "title": "The Meridian Gear",
+   "text": "Colossal brass teeth rise from the drowned flagstones, green-veined with copper rot and weeping cold condensate into the dark. This is the heart of the Sunken Stair, a labyrinth of dead weight and silent levers that has governed the deep currents since the old days. Every notch on the great rim smells of old tallow and oxidized salt, waiting for a hand to force the movement. Somewhere above, the tide clock ticks its frantic measure, while shadows lengthen across the vast machinery\n\nYou reach out to touch the cold metal, feeling the faint, hollow thrum of the mechanism beneath the earth. The air smells of ozone and ancient oil, thick with the weight of a decision that will wake the sleeping ocean.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the rusted brass lever"
+   ]
+  },
+  "td-2-200": {
+   "title": "Salvaging the Winch",
+   "text": "Jagged plates of iron frame the rusted winch mechanism, dripping with stagnant brine and greasy grease. You wedge your fingers into the narrow gap between the rusted casing and the primary cog, ignoring the sharp edges that threaten to bite into your skin. With careful leverage and a steady heave, the heavy iron gear breaks free from its corrosion, falling heavily into your waiting palm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the heavy iron gear onward"
+   ]
+  },
+  "td-2-201": {
+   "title": "Salt-Searing Oath",
+   "text": "Crystals of burning sea-salt bite deep into your bare skin as the ritual circle flares with a sickly violet flame. The agony runs through your bones like molten lead, but you clench your teeth and keep your breathing steady against the torment. When the fire finally cools to a stinging ash, a cold amulet of deep-sea glass rests upon the altar, waiting for your blood-stained fingers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the deep-sea glass amulet"
+   ]
+  },
+  "td-2-202": {
+   "title": "The Pressure Plate",
+   "text": "Cold stone blocks press down beneath your boots along the winding stairway, where a single hair-trigger seam threatens to unmake the entire passage. You drop to one knee, breath held tight, and use a notched blade to scrape away centuries of encrusted lime from the hidden spring. The metal clicks softly into place, harmless at last, leaving a small vial of volatile alchemical fire exposed in the dust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the vial of alchemical fire"
+   ]
+  },
+  "td-2-203": {
+   "title": "Rafters of the Bell Tower",
+   "text": "Timbers groan under your weight as you creep along the high, skeletal rafters high above the stone floor. The drop below is a bottomless black well, smelling of pigeon droppings and rusted iron bells. Reaching the shadowed alcove, your fingers close around the leather-bound cover of a forgotten Tidewarden journal before the ancient wood beneath you can snap.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clutch the old leather journal"
+   ]
+  },
+  "td-2-204": {
+   "title": "Cargo Hold Glyphs",
+   "text": "Faint crimson symbols glow faintly across the water-logged timber of the stacked cargo crates, warning of volatile contents sealed within. You scrape away the thick barnacles covering the central rune, deciphering the old maritime shorthand just in time to bypass the tripwire. Nestled inside the dry straw lining is a tightly wrapped bundle of waterproof matches.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the waterproof match bundle"
+   ]
+  },
+  "td-2-205": {
+   "title": "The Offering Bowl",
+   "text": "Smooth driftwood yields beneath your carving knife, curling into fine ribbons of pale grain under the dim torchlight. You shape the rim with practiced care, smoothing the sacred maritime patterns until the vessel feels balanced and whole in your palms. The hooded folk nod in silent approval, sliding a wooden bowl of hot kelp broth and dried salt-meat across the trestle.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the warm meal and supplies"
+   ]
+  },
+  "td-2-206": {
+   "title": "Echoes in the Crypt",
+   "text": "Shifting shadows take shape within the damp crypt, murmuring names of sailors who never saw the dawn. A cold wind passes through your coat, but you keep your gaze fixed on the gleaming silver chalice resting upon the stone bier. The phantom faces fade into the mist as your hand closes firmly around the cold metal.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat with the silver chalice"
+   ]
+  },
+  "td-2-207": {
+   "title": "Whispering Tombs",
+   "text": "Damp stone walls press in from every side as you navigate the narrow passages of the lower vault. A sudden chill grips your chest, carrying the bitter scent of deep-water drowning and forgotten grief. You force your lungs to draw breath, shutting out the weeping voices until you reach the altar where a tarnished silver chalice waits.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the tarnished silver chalice"
+   ]
+  },
+  "td-2-208": {
+   "title": "Whispers in the Sand",
+   "text": "Soft ripples of sand shift under your boots while thin, reedy voices rise from the low dunes, calling you by names you abandoned years ago. A cold sweat breaks across your neck, but you grit your teeth against the rising panic and push forward through the gale. Half-buried in the pale quartz, a gleaming white pearl catches the grey light of the sky.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Snatch the gleaming white pearl"
+   ]
+  }
+ },
+ "missing": []
+}
