@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-00-alley-regroup",
+ "variants": [
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "The Archbishop's almoner kept their word, for now. No whistles blow from the cathedral quarter, giving you this quiet moment to breathe, though the whispered promise you traded for their silence feels as heavy in your pocket as the ledger itself."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Distant shouts echo from the cathedral district, confirming the almoner wasted no time finding the watch. Because you let them run, the constables are already sweeping the lower wards, searching for a night-crow matching your exact description."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Somewhere behind you, the broken body of the almoner lies cooling on the cobblestones. You silenced the only witness with a fatal shove, transforming this theft into a murder hunt, and Sable keeps casting wary glances at your bloodied cuff."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "Wrapping the disgraced tailor's debt coat tighter against the chill, you appreciate the fine, unremarkable cut of the wool. It offers a perfect disguise in the merchant district, even if the lining reeks faintly of stale pipe smoke and desperation."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Scratchy spun canvas rubs against your neck as you shift in the porter's rough livery. While the uniform guarantees you look like just another invisible labourer hauling coal for the Exchange, the heavy fabric severely restricts your reach for climbing."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "cover": "usher"
+   },
+   "after": "Brushing soot from the velvet lapels of your opera usher's uniform, you grimace at how starkly the brass buttons catch the dim gaslight. It was brilliant camouflage near the theatre, but here in the gritty lamp-yard, the finery draws dangerous attention."
+  }
+ ]
+}

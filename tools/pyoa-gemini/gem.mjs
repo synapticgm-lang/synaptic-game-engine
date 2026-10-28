@@ -50,7 +50,16 @@ export async function ask(prompt, { fresh = true, timeoutMs = 360000 } = {}) {
     const ok = await waitGeminiIdle(page, { timeoutMs, pollMs: 2500 });
     await sleep(2000);
     const st = await pageState(page);
-    const r = await lastResponse(page);
+    let r = await lastResponse(page);
+    // Pro 'thinking' can look idle with an empty reply: keep polling until real text appears and is stable.
+    const t0 = Date.now(); let lastLen = -1, stable = 0;
+    while (ok && Date.now() - t0 < timeoutMs) {
+      const body = r.text.replace(/^Gemini said\s*/i, '').trim();
+      if (r.n > before && body.length > 20 && body.length === lastLen) { if (++stable >= 2) break; } else stable = 0;
+      lastLen = body.length;
+      await sleep(4000);
+      r = await lastResponse(page);
+    }
     if (!ok) throw new GeminiStop('timeout', 'Gemini still generating after timeout');
     if (r.n <= before || !r.text) {
       if (st.limit) throw new GeminiStop('limit', 'Gemini limit/error text on page');
@@ -61,3 +70,4 @@ export async function ask(prompt, { fresh = true, timeoutMs = 360000 } = {}) {
     browser.disconnect();
   }
 }
+

@@ -1,10 +1,8 @@
-2026-10-27T23:41:04.156Z ask e-parliament-dawn items=7 attempt=0
-2026-10-27T23:41:46.946Z ask e-parliament-dawn items=7 attempt=1
-2026-10-27T23:45:12.639Z STOP noreply: No new Gemini reply detected
-2026-10-27T23:45:47.508Z ask e-parliament-dawn items=7 attempt=0
-2026-10-27T23:46:05.236Z ask e-parliament-dawn items=7 attempt=1
-2026-10-27T23:46:20.702Z done e-parliament-dawn: 0/7 inserts MISSING up-end-parliament-dawn:witness=bought,up-end-parliament-dawn:witness=dropped,up-end-parliament-dawn:faceKnown=yes,up-end-parliament-dawn:cabal=known,up-end-parliament-dawn:valerius=allied,up-end-parliament-dawn:rigg=allied,up-end-parliament-dawn:cover=livery
-2026-10-27T23:46:20.703Z finished run: calls 2, groups done 1/25
-2026-10-27T23:49:56.502Z ask e-parliament-dawn items=7 attempt=0
-2026-10-27T23:53:37.254Z ask e-parliament-dawn items=7 attempt=1
-2026-10-27T23:57:03.211Z STOP noreply: No new Gemini reply detected
+2026-10-28T00:06:04.289Z ask w-00-alley-regroup items=6 attempt=0
+2026-10-28T00:06:45.878Z done w-00-alley-regroup: 6/6 inserts
+2026-10-28T00:06:45.883Z ask w-01-drone-loft items=6 attempt=0
+2026-10-28T00:08:43.056Z done w-01-drone-loft: 6/6 inserts
+2026-10-28T00:08:43.059Z ask w-02-portrait-map items=8 attempt=0
+2026-10-28T00:11:38.547Z finished detours run: calls 0
+2026-10-28T00:12:08.248Z done w-02-portrait-map: 8/8 inserts
+2026-10-28T00:12:08.257Z ask w-03-undervault-stair items=9 attempt=0

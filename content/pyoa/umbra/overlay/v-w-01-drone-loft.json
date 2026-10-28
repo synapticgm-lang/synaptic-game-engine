@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-01-drone-loft",
+ "variants": [
+  {
+   "node": "up-w-drone-loft",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Scanning the closest parchment slip protruding from a brass cylinder, you catch a glimpse of your own features meticulously described in the ink. The surviving witness has clearly spoken, meaning Matron Rigg's iron-fisted catchpoles are looking for a specific face, not just a shadow."
+  },
+  {
+   "node": "up-w-drone-loft",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Blood still crusts beneath your fingernails from shoving the almoner to the cobblestones below. The metallic flutter of the brass pigeons suddenly feels less like a marvel and more like a flock of mechanical vultures, circling the deadly secret you left smeared across the cathedral pavement."
+  },
+  {
+   "node": "up-w-beggar-corner",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "The blind man pauses, his nose twitching at the stale pipe smoke clinging to your disgraced tailor's coat. He murmurs a warning about gentlemen slumming it in the dark, accurately sensing the borrowed wool and the desperation woven into its lining."
+  },
+  {
+   "node": "up-w-beggar-corner",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Rough canvas scrapes audibly against your collar as you shift your weight in the porter's livery. Despite his lack of sight, the musician instantly notes the heavy fabric rustling in the wind, assuming you are merely another labourer caught out after the curfew bell."
+  },
+  {
+   "node": "up-w-beggar-corner",
+   "when": {
+    "cover": "usher"
+   },
+   "after": "Clinking softly with every step, the brass buttons of your opera usher's uniform betray your precise position. The hurdy-gurdy player turns his scarred face directly towards the metallic chime, amused that someone dressed for the velvet stalls is prowling through the grit of the alleyways."
+  },
+  {
+   "node": "up-w-beggar-corner",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Beneath the drone of the hurdy-gurdy, the old man casually mentions that the passing constables are shouting a very specific physical description to the watchmen. Because that witness escaped to talk, the entire district is hunting your exact likeness rather than chasing mere rumours."
+  }
+ ]
+}

@@ -65,7 +65,7 @@ function parse(raw) {
   const re = /@@INSERT\s+(\S+)\s*\|\s*([A-Za-z]+)=([\w-]+)\s*\n([\s\S]*?)\n\s*@@END/g;
   let m;
   while ((m = re.exec(raw))) {
-    const text = m[4].replace(/\s+/g, ' ').replace(/\*+/g, '').trim();
+    const text = m[4].replace(/\s+/g, ' ').replace(/\*+/g, '').replace(/[\u2018\u2019\uFFFD]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/\s*[\u2013\u2014]\s*/g, ' - ').replace(/'\?T/g, "'").trim();
     out.set(`${m[1]}|${m[2]}=${m[3]}`, text);
   }
   return out;
@@ -83,7 +83,7 @@ for (const it of items) {
     cur.items.push(it);
     continue;
   }
-  if (!cur || cur.ending || cur.track !== it.track || (cur.items.length >= 9 && cur.lastNode !== it.node)) {
+  if (!cur || cur.ending || cur.track !== it.track || (cur.items.length >= 6 && cur.lastNode !== it.node)) {
     cur = { key: null, track: it.track, items: [] };
     groups.push(cur);
   }
@@ -135,6 +135,8 @@ for (const g of groups) {
   done++;
 }
 log(`finished run: calls ${calls}, groups done ${done}/${groups.length}`);
+
+
 
 
 
