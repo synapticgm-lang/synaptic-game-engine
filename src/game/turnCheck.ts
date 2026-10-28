@@ -9,6 +9,7 @@
 import type { GameState } from './types';
 import { checkObligationCoverage, buildIntentContract } from './intentContract';
 import { npcHoldsPcQuote, parsePlayerIntent } from './intentParser';
+import { demandActAnswered } from './spokenAnswer';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
@@ -307,12 +308,14 @@ export function checkActionFollowed(
     // Empty scene: speech to shutters / empty street needs no NPC answer — "nobody answers" is the correct beat.
     // T10Z — crowd fillers alone are not listeners (bystanders do not owe an answer).
     if (!honestAbsent && listenersBefore.length > 0) {
+      // T10AK — tell/demand answered by a visible act (jabbed toward the lock after "start working").
+      const actAnswer = listenersBefore.some((p) => demandActAnswered(act, text, p));
       const contract = buildIntentContract({ typed: act, resolvedText: act, intent, state: before });
       const cov = checkObligationCoverage(
         { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
         text
       );
-      if (!cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
+      if (!actAnswer && !cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
         flagIgnored(`player said "${act.slice(0, 80)}"; nobody answers in the prose`);
       }
     }
@@ -320,7 +323,7 @@ export function checkActionFollowed(
     socialAct
     && !quoted
     && !honestAbsent
-    && !listenersBefore.some((p) => mentionsName(text, p))
+    && !listenersBefore.some((p) => mentionsName(text, p) || demandActAnswered(act, text, p))
   ) {
     flagIgnored(`player chose "${act.slice(0, 80)}"; nobody here answers in the prose`);
   }

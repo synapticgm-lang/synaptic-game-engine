@@ -187,7 +187,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { normalizeCommittedProse, runWriterTurnWithFightRetry, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
+import { normalizeCommittedProse, runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -1578,13 +1578,18 @@ Do NOT print dice notation or CODE ENFORCED.
             engineFact,
           });
           // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
-          gmText = normalizeCommittedProse(clause.prose, {
-            state: arcState,
+          // T10AK — re-seal destination + spoken answer after normalize (clause path skips ensureSpokenAnswer).
+          gmText = sealPostWriterProse(
+            arcState,
+            normalizeCommittedProse(clause.prose, {
+              state: arcState,
+              playerInput,
+              intent,
+              engineFact,
+              previousGm: '',
+            }, writerPacket),
             playerInput,
-            intent,
-            engineFact,
-            previousGm: '',
-          }, writerPacket);
+          ).prose;
           clauseCheckRecords = clause.records;
           if (clause.repaired) {
             writerCallMeter.calls += clause.checkPasses;
@@ -1755,10 +1760,17 @@ Do NOT print dice notation or CODE ENFORCED.
     playerInput,
   });
   let working = structural.state;
+  // T10AK — engine seal outside writerWordsGuard: destination + spoken reply after warden drops.
+  const sealedAfterWarden = useMud
+    ? { prose: narrativeSource }
+    : sealPostWriterProse(working, narrativeSource, playerInput);
+  if (!useMud && writerTurn) {
+    writerTurn = { ...writerTurn, prose: sealedAfterWarden.prose, spoken: sealedAfterWarden.spoken ?? writerTurn.spoken };
+  }
   let cleanText = words.step(
     'stripTags+choiceList',
-    narrativeSource,
-    stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)))
+    sealedAfterWarden.prose,
+    stripResidualMechanicTags(stripChoiceList(stripActionTags(sealedAfterWarden.prose)))
   );
   traceStage('stripTags+choiceList', cleanText);
   cleanText = postFilterGmOutput(cleanText, settings, {

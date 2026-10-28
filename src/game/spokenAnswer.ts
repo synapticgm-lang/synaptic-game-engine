@@ -210,6 +210,9 @@ function clauseNamesSpeaker(clause: string, label: string): boolean {
  * Content-free non-answer for this speaker: named, no quoted speech content, speech denied or empty.
  * One structural check (speech claim + empty/negation) — not a growing synonym list.
  * T10AF — match on any name token ("Bertil" / "Dunn") so "Bertil Pike" silence still strips.
+ * T10AK — wordless freeze (stayed quiet / did not move their hands) is a non-answer even with no
+ * speech verb. A demand-compliance act ("jabbed a finger toward the lock") does not match these
+ * freeze patterns, so it stays as the answer.
  */
 function isSpeakerNonAnswerClause(clause: string, label: string): boolean {
   if (!clauseNamesSpeaker(clause, label)) return false;
@@ -219,6 +222,15 @@ function isSpeakerNonAnswerClause(clause: string, label: string): boolean {
   // "said nothing that the parcel…" is a silence/content splice — whole clause is non-answer.
   if (/\bsaid nothing\s+(?:that|with|about|but)\b/i.test(body)) return true;
   if (/\bgave\b[\s\S]{0,40}\bnothing\b/i.test(body)) return true;
+  // Wordless freeze: no speech verb required (threat beats that only "stayed quiet").
+  if (
+    /\b(?:went|stayed|remained)\s+(?:stiff\s+and\s+)?(?:quiet|silent)\b/i.test(body) ||
+    /\bdid not (?:speak|answer|say(?:\s+a(?:\s+single)?\s+word)?)\b/i.test(body) ||
+    /\bdidn['’]t (?:speak|answer|say(?:\s+a(?:\s+single)?\s+word)?)\b/i.test(body) ||
+    /\bdid not move their (?:hands|feet|lips|mouth)\b/i.test(body)
+  ) {
+    return true;
+  }
   const speech =
     /\b(?:said|say|says|answer(?:ed|s)?|spoke|speak|tell(?:s|ing)?|told|replied|reply|whisper(?:ed|s)?|offered)\b/i.test(
       body,
@@ -230,6 +242,44 @@ function isSpeakerNonAnswerClause(clause: string, label: string): boolean {
     /\b(?:went|stayed|remained)\s+(?:stiff\s+and\s+)?(?:quiet|silent)\b/i.test(body) ||
     /\b(?:said|say|says|answer(?:ed|s)?|spoke|speak|offered)\s+no\b/i.test(body);
   return speech && empty;
+}
+
+/** Clause where this person is the subject (not merely named as the PC's object). */
+function clauseSpeakerSubject(clause: string, label: string): boolean {
+  const who = speakerNameTokens(label).map(esc).join('|');
+  if (!who) return false;
+  return new RegExp(`^\\W*(?:(?:the|a|an)\\s+)?(?:${who})\\b`, 'i').test(clause.trim());
+}
+
+/**
+ * T10AK — tell/demand "start working" answered by a visible act (jabbed/pointed toward the lock),
+ * not only by quoted speech. Shared by ensureSpokenAnswer and the action-followed gate.
+ * Only subject-fronted addressee clauses count — never "Jax told the lockpick to stop stalling".
+ */
+export function demandActAnswered(playerInput: string, prose: string, speakerLabel: string): boolean {
+  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  const body = (prose ?? '').replace(/\s+/g, ' ').trim();
+  const label = (speakerLabel ?? '').trim();
+  if (!act || !body || !label) return false;
+  const theirBeat = splitClausesOutsideQuotes(body)
+    .filter((c) => clauseSpeakerSubject(c, label))
+    .join(' ');
+  if (!theirBeat) return false;
+  const demand =
+    act.match(
+      /\b(?:tell|order|command|demand(?:s|ed|ing)?)\b[\s\S]{0,48}?\bto\s+(\w+)/i,
+    ) ??
+    act.match(/\bstart\s+(\w+)/i) ??
+    act.match(/\bstop\s+(\w+)/i);
+  if (!demand) return false;
+  const stem = demand[1]!.toLowerCase().replace(/(?:ing|ed|es|s)$/i, '');
+  if (stem.length >= 3 && new RegExp(`\\b${esc(stem)}\\w*\\b`, 'i').test(theirBeat)) return true;
+  // Directed act toward a place/object (toward the lock) — not "looked at Jax".
+  const who = speakerNameTokens(label).map(esc).join('|');
+  return new RegExp(
+    `\\b(?:${who})\\b[^.!?]{0,100}\\b(?:toward|towards)\\s+(?:the\\s+)?[a-z]{3,}`,
+    'i',
+  ).test(theirBeat);
 }
 
 /** Split on .!? outside quotes so a PC "?" does not orphan the next speaker clause (T10AF T6). */
@@ -487,6 +537,10 @@ export function ensureSpokenAnswer(
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);
     const pc = state.character?.name ?? null;
     if (quotesBy(prose, speaker, alone, others, pc).length) {
+      return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
+    }
+    // T10AK — a visible act that answers a tell/demand is already the reply (do not stack motive).
+    if (demandActAnswered(playerInput, prose, speaker.label)) {
       return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     // T10S/T10U/T10X/T10Y/T10AD/T10AF — exchange needs content (ledger / cast / motive deflection).

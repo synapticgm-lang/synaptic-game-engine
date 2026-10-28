@@ -161,7 +161,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
-import { normalizeCommittedProse, runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
+import { normalizeCommittedProse, runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
@@ -3154,15 +3154,20 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                 engineFact,
               });
               // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
+              // T10AK — re-seal destination + spoken answer after normalize.
               result = {
                 ...result,
-                text: normalizeCommittedProse(clause.prose, {
-                  state: liveCurrent,
-                  playerInput: sanitizedInput,
-                  intent: intentForMandate,
-                  engineFact,
-                  previousGm: '',
-                }, writerPacket),
+                text: sealPostWriterProse(
+                  liveCurrent,
+                  normalizeCommittedProse(clause.prose, {
+                    state: liveCurrent,
+                    playerInput: sanitizedInput,
+                    intent: intentForMandate,
+                    engineFact,
+                    previousGm: '',
+                  }, writerPacket),
+                  sanitizedInput,
+                ).prose,
               };
             } catch {
               /* check unavailable — keep writer prose */
@@ -3311,7 +3316,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         (s, draft) => sentenceRejectedInDraft(liveCurrent, s, draft, sanitizedInput)
       );
       // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).
-      const narrativeSource = words.step('runWarden', result.text, warden.scrubbedNarrative ?? result.text);
+      // T10AK — engine seal outside writerWordsGuard after warden can drop dest / spoken reply.
+      const narrativeSource = sealPostWriterProse(
+        liveCurrent,
+        words.step('runWarden', result.text, warden.scrubbedNarrative ?? result.text),
+        sanitizedInput,
+      ).prose;
       const appliedWorld = applyWorldEvents(worldLedger, events, worldLedger.clock.week);
       worldLedger = appliedWorld.ledger;
       worldNotes.push(...appliedWorld.notes);
