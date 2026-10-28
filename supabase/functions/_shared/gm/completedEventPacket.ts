@@ -1330,7 +1330,7 @@ export function formatWriterFacingEvent(
         : '';
     // VR1-b: engineResult may include "Check success." / "Check failure." from outcomeFactFromRecord — one outcome fact.
     lines.push(
-      `ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it)${mark}: ${writerEngineResult(packet.engineResult)}`
+      `ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it)${mark}: ${writerEngineResult(packet.engineResult, pcStorySubject(pcPov(packet.pc)))}`
     );
   }
   if (panelRead) {
@@ -2389,7 +2389,8 @@ export function lastResortStoryBody(
   const recordSource = [travelBeatFact(state), packet?.engineResult || state.completedEvent?.engineResult || '']
     .filter(Boolean)
     .join(' ');
-  const record = lastResortUsable(state, writerEngineResult(recordSource), lastGm);
+  const pcName = (state.character?.name ?? '').trim() || undefined;
+  const record = lastResortUsable(state, writerEngineResult(recordSource, pcName), lastGm);
   if (record) return { prose: sanitizeLockedNameBeat(state, record), status: 'Writer page blocked — painted from the turn record' };
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')

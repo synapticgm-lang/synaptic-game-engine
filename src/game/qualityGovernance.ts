@@ -370,7 +370,8 @@ export function applyGovernanceToProse(
     const engineRaw = (state.completedEvent?.engineResult ?? '').replace(/\s+/g, ' ').trim();
     const body = out.replace(/\s+/g, ' ').trim();
     if (engineRaw && body === engineRaw) {
-      const plain = writerEngineResult(body);
+      const pc = (state.character?.name ?? '').trim() || undefined;
+      const plain = writerEngineResult(body, pc);
       if (plain && plain !== body) {
         out = plain;
         notes.push('Engine fact sheet → writer form');

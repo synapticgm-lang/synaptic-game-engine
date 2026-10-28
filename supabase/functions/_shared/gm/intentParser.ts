@@ -810,11 +810,32 @@ function splitClauses(text: string): string[] {
       i += 1;
       continue;
     }
+    // T10R — sentence end before a new opening quote starts a speech clause
+    // (`…rattle. "Alright…` / `…table. "Oskar…`), so the quote is not glued into the act.
+    if (ch === '.' || ch === '!' || ch === '?') {
+      const after = raw.slice(i + 1).match(/^\s*(["\u201c\u2018])/);
+      if (after) {
+        push(start, i + 1);
+        i += 1;
+        while (i < raw.length && raw[i] === ' ') i += 1;
+        start = i;
+        continue;
+      }
+    }
     const rest = raw.slice(i);
-    const m = rest.match(/^(?:\s+(?:and then|then|, then|and|while)\s+|[?]+|;+)/i);
+    // Do not split a gerund adjunct off as its own subject-less clause (`while staring at Oskar`).
+    const m = rest.match(/^(?:\s+(?:and then|then|, then|and)\s+|[?]+|;+)/i);
     if (m) {
       push(start, i);
       i += m[0].length;
+      start = i;
+      continue;
+    }
+    // `while` only splits when the next word is not a gerund (finite clause).
+    const whileSplit = rest.match(/^\s+while\s+(?![\w']+ing\b)/i);
+    if (whileSplit) {
+      push(start, i);
+      i += whileSplit[0].length;
       start = i;
       continue;
     }
@@ -954,6 +975,19 @@ function extractSay(clause: string): string | null {
   if (after?.[1]) {
     return extractQuotedSpan(after[1].trim());
   }
+  // T10R — trailing utterance after an act (`…on the table. "Oskar, look…` already split;
+  // same-clause `…lap. "Stop hiding…` without a speech verb still counts when substantial).
+  // Short mention quotes (`not "yet"`) stay out: need ≥3 words or end punctuation / unclosed span.
+  const trailing = t.match(/["\u201c\u2018]([^"\u201d\u2019]*)$/);
+  if (trailing) {
+    const inner = extractQuotedSpan(trailing[0]!);
+    if (inner) {
+      const words = inner.split(/\s+/).filter(Boolean);
+      if (words.length >= 3 || /[.!?…]$/.test(inner) || !/["\u201d\u2019]\s*$/.test(t.slice(trailing.index!))) {
+        return inner;
+      }
+    }
+  }
   return null;
 }
 
@@ -998,6 +1032,8 @@ function clauseHasSpeechMarker(clause: string): boolean {
   ) {
     return true;
   }
+  // T10R — a trailing quoted utterance on an act clause is still speech.
+  if (extractSay(t)) return true;
   return false;
 }
 
@@ -1092,10 +1128,14 @@ export function parsePlayerSteps(
       || action === 'intimidate'
       || action === 'deceive'
       || action === 'refuse'
-      || !!deal;
+      || !!deal
+      || !!say;
+    // T10R — resolve named targets against the full people roster, then presence decides
+    // reaction vs absence (listenPool alone misses "the priest" aimed while underway).
+    const roster = [...new Set([...(listenPool ?? []), ...(ctx.people ?? [])])].filter(Boolean);
     const peopleHit = speechLike
-      ? speechAddressee(clause, listenPool)
-      : pickFromPool(clause, listenPool);
+      ? speechAddressee(clause, roster.length ? roster : listenPool)
+      : pickFromPool(clause, roster.length ? roster : listenPool);
     let destination: string | null = null;
     let target: string | null = null;
     let addressee: string | null = null;
@@ -1103,13 +1143,17 @@ export function parsePlayerSteps(
       destination = extractDestination(clause, ctx);
     } else if (action === 'use_item' || action === 'take' || action === 'buy') {
       target = pickFromPool(clause, ctx.items) ?? peopleHit;
+      // Aimed-at person on a toss/give/wink still needs the addressee slot for presence.
+      if (peopleHit) addressee = peopleHit;
     } else if (action === 'attack' || action === 'search' || action === 'observe') {
       target = peopleHit ?? pickFromPool(clause, ctx.items) ?? pickFromPool(clause, ctx.places);
+      if (peopleHit) addressee = peopleHit;
     } else {
       addressee = peopleHit;
       target = peopleHit;
     }
     if (deal && !addressee) addressee = peopleHit;
+    if (say && !addressee) addressee = peopleHit;
     draft.push({
       action: deal ? 'deal' : action,
       target,
@@ -1146,12 +1190,13 @@ export function parsePlayerSteps(
       // Carry-over when the player names nobody this clause — only if still here.
       addressee = lastWho;
     }
-    // Absent person: speak to the empty scene (no reaction slot for someone not here).
-    if (addressee && !nameIsPresent(addressee, ctx)) {
-      addressee = null;
+    // T10R — keep an absent named addressee on the step so buildClauseWriterFact can emit
+    // "No one present to answer" (nulling here made pebble/wink/toss invent them as present).
+    // Carry-over only sticks when they are actually here.
+    if (addressee && nameIsPresent(addressee, ctx)) {
+      if (inPlayerText(addressee, text)) lastWho = addressee;
+      else if (onSheet(addressee, ctx) && inPlayerText(addressee, clause)) lastWho = addressee;
     }
-    if (addressee && inPlayerText(addressee, text)) lastWho = addressee;
-    else if (addressee && onSheet(addressee, ctx) && inPlayerText(addressee, clause)) lastWho = addressee;
 
     let action = st.action;
     let unplacedMove = false;

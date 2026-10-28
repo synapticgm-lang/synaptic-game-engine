@@ -115,8 +115,9 @@ function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false)
   if (looksLikeSteal(clause, step)) return false;
   // M6 — parley / social Influence against hostiles spends Action (still never rejected).
   if (inHostileParley && looksLikeParley(clause, step)) return false;
-  // Already-classified mechanical aims stay mechanical (take / sit / slide / wink).
-  if (MECHANICAL_ACTIONS.has(step.action)) return false;
+  // Already-classified mechanical aims stay mechanical (take / sit / slide / wink),
+  // unless the player also typed a quoted utterance (T10R — quote + NPC reply).
+  if (MECHANICAL_ACTIONS.has(step.action) && !(step.say && step.say.trim())) return false;
   if (
     step.action === 'talk'
     || step.action === 'ask_about'
