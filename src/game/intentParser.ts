@@ -522,11 +522,14 @@ function isWordChar(ch: string | undefined): boolean {
 /**
  * T10F — quote span: opening mark to matching closer.
  * An apostrophe inside a word (I'll, don't) or a leading contraction ('em) is not a closer.
+ * T10L — an unclosed opening quote runs to the end of the typed line (player left the closer off).
  * SRD 5.2.1 Communicating — "The speaker can say anything they want… without spending an action"
  * (Wizards of the Coast SRD 5.2.1, CC BY 4.0): the player's quoted words stay theirs in full.
  */
 export function extractQuotedSpan(text: string): string | null {
   const s = text ?? '';
+  /** Only unclosed spans trim a dangling end mark the player never closed. */
+  const unclosed = (inner: string) => inner.replace(/[.,;:]+$/g, '').trim();
   for (const [open, close] of [
     ['"', '"'],
     ['\u201c', '\u201d'],
@@ -536,6 +539,10 @@ export function extractQuotedSpan(text: string): string | null {
     const b = s.indexOf(close, a + 1);
     if (b > a) {
       const inner = s.slice(a + 1, b).trim();
+      if (inner) return inner;
+    } else {
+      // T10L — unclosed double/curly open: span to end.
+      const inner = unclosed(s.slice(a + 1));
       if (inner) return inner;
     }
   }
@@ -562,7 +569,9 @@ export function extractQuotedSpan(text: string): string | null {
     const inner = s.slice(openAt + 1, i).trim();
     return inner || null;
   }
-  return null;
+  // T10L — unclosed single open: span to end.
+  const rest = unclosed(s.slice(openAt + 1));
+  return rest || null;
 }
 
 /** First quoted say in the player's typed line (full span; apostrophes stay inside). */
@@ -570,9 +579,40 @@ export function extractPlayerQuotedSay(input: string): string | null {
   return extractQuotedSpan((input ?? '').replace(/\s+/g, ' ').trim());
 }
 
-/** Speech-attribution matcher: speaker + verb + quote (straight or curly closers). */
-const NPC_SAID_QUOTE =
-  /\b([A-Za-z][\w'’-]*(?:\s+[A-Za-z][\w'’-]*){0,2})\s+(said|says|asked|asks|replied|replies|whispered|shouted|called|answered)\s*([,:]?\s*)(["“])([^"”]+)(["”])/gi;
+const SPEECH_VERB = 'said|says|asked|asks|replied|replies|whispered|shouted|called|answered';
+/** One name token — letters, digits, apostrophes, hyphens (`salt-burners`). */
+const NAME_TOK = String.raw`[A-Za-z][\w'\-]*`;
+/** Name then verb then quote: `Rusk said, "…"` / `The salt-burners said, "…"`. */
+const NPC_SAID_QUOTE = new RegExp(
+  String.raw`\b(` + NAME_TOK + String.raw`(?:\s+` + NAME_TOK + String.raw`){0,2})\s+(` + SPEECH_VERB + String.raw`)\s*([,:]?\s*)(["“])([^"”]+)(["”])`,
+  'gi',
+);
+/** Trailing attribution: `"…," Commander Rusk said` (T10L s3002 T6). */
+const TRAILING_SAID_QUOTE = new RegExp(
+  String.raw`(["“])([^"”]+)(["”])\s*,?\s*(` + NAME_TOK + String.raw`(?:\s+` + NAME_TOK + String.raw`){0,2})\s+(` + SPEECH_VERB + String.raw`)\b`,
+  'gi',
+);
+
+function foldSpeech(t: string): string {
+  return t.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function pcFirstOf(pcName?: string | null): string {
+  return (pcName ?? '').trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+}
+
+function isPcSpeaker(speaker: string, pcFirst: string): boolean {
+  const first = speaker.trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+  return first === 'you' || (pcFirst.length >= 2 && first === pcFirst);
+}
+
+function quoteMatchesPcSay(quote: string, want: string): boolean {
+  const bare = (t: string) => foldSpeech(t).replace(/[.,;:!?]+$/g, '');
+  const q = bare(quote);
+  const w = bare(want);
+  if (q.length < 4 || w.length < 6) return false;
+  return w === q || w.includes(q) || q.includes(w);
+}
 
 /**
  * True when prose attributes a quote to someone other than the PC and that quote is
@@ -583,40 +623,92 @@ const NPC_SAID_QUOTE =
 export function npcHoldsPcQuote(prose: string, playerInput: string, pcName?: string | null): boolean {
   const said = extractPlayerQuotedSay(playerInput);
   if (!said || said.length < 6) return false;
-  const fold = (t: string) => t.toLowerCase().replace(/\s+/g, ' ').trim();
-  const want = fold(said);
-  const pcFirst = (pcName ?? '').trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+  const want = foldSpeech(said);
+  const pcFirst = pcFirstOf(pcName);
   const text = (prose ?? '').replace(/\s+/g, ' ');
   for (const m of text.matchAll(NPC_SAID_QUOTE)) {
-    const speaker = (m[1] ?? '').trim();
-    const first = speaker.split(/\s+/)[0]?.toLowerCase() ?? '';
-    if (first === 'you' || (pcFirst.length >= 2 && first === pcFirst)) continue;
-    const q = fold(m[5] ?? '');
-    if (q.length < 4) continue;
-    if (want === q || want.includes(q) || q.includes(want)) return true;
+    if (isPcSpeaker(m[1] ?? '', pcFirst)) continue;
+    if (quoteMatchesPcSay(m[5] ?? '', want)) return true;
+  }
+  for (const m of text.matchAll(TRAILING_SAID_QUOTE)) {
+    if (isPcSpeaker(m[4] ?? '', pcFirst)) continue;
+    if (quoteMatchesPcSay(m[2] ?? '', want)) return true;
   }
   return false;
 }
 
 /**
- * T10H — when an NPC is tagged speaking the player's own quoted words, put the quote on the PC.
- * Same matcher as `npcHoldsPcQuote`; one attribution fix, not a parallel checker.
+ * T10H / T10L — when an NPC is tagged speaking the player's own quoted words, put the quote on the PC.
+ * Covers `Name said, "…"` and trailing `"…," Name said`. Same ownership rule as `npcHoldsPcQuote`.
  */
 export function givePcTheirQuote(prose: string, playerInput: string, pcName?: string | null): string {
   const said = extractPlayerQuotedSay(playerInput);
   if (!said || said.length < 6) return prose ?? '';
-  const fold = (t: string) => t.toLowerCase().replace(/\s+/g, ' ').trim();
-  const want = fold(said);
+  const want = foldSpeech(said);
   const pc = (pcName ?? '').trim().split(/\s+/)[0] || 'You';
   const pcFirst = pc.toLowerCase();
-  return (prose ?? '').replace(/\s+/g, ' ').replace(NPC_SAID_QUOTE, (full, speaker: string, verb: string, punct: string, open: string, quote: string, close: string) => {
-    const first = speaker.trim().split(/\s+/)[0]?.toLowerCase() ?? '';
-    if (first === 'you' || first === pcFirst) return full;
-    const q = fold(quote);
-    if (q.length < 4) return full;
-    if (!(want === q || want.includes(q) || q.includes(want))) return full;
-    return `${pc} ${verb}${punct}${open}${quote}${close}`;
+  let next = (prose ?? '').replace(/\s+/g, ' ');
+  next = next.replace(NPC_SAID_QUOTE, (full, speaker: string, verb: string, punct: string, open: string, quote: string, close: string) => {
+    if (isPcSpeaker(speaker, pcFirst)) return full;
+    if (!quoteMatchesPcSay(quote, want)) return full;
+    return `${pc} ${verb}${punct ?? ', '}${open}${quote}${close}`;
   });
+  next = next.replace(TRAILING_SAID_QUOTE, (full, open: string, quote: string, close: string, speaker: string, verb: string) => {
+    if (isPcSpeaker(speaker, pcFirst)) return full;
+    if (!quoteMatchesPcSay(quote, want)) return full;
+    return `${pc} ${verb}, ${open}${quote}${close}`;
+  });
+  return next;
+}
+
+/**
+ * T10L — drop NPC-attributed lines that are not theirs to say:
+ * chip/menu label echoed as dialogue, a fragment lifted from the player's own text, or speech
+ * when the engine opened no reaction slot / opened it for someone else.
+ * SRD 5.2.1 Communicating — the speaker owns their words; NPCs do not speak the player's line
+ * (Wizards of the Coast SRD 5.2.1, CC BY 4.0).
+ */
+export function stripUnauthorizedNpcSpeech(
+  prose: string,
+  playerInput: string,
+  pcName?: string | null,
+  engineFact?: string,
+): string {
+  const text = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!text) return prose ?? '';
+  const action = foldSpeech(playerInput);
+  const pcSaid = foldSpeech(extractPlayerQuotedSay(playerInput) ?? '');
+  const pcFirst = pcFirstOf(pcName);
+  const fact = engineFact ?? '';
+  const noSlot = /No one present to answer/i.test(fact);
+  const slotWho = fact.match(/NPC reaction slot open for\s+([^.]+)/i)?.[1]?.trim() ?? null;
+  const slotFold = slotWho ? foldSpeech(slotWho) : '';
+
+  const bare = (t: string) => foldSpeech(t).replace(/[.,;:!?]+$/g, '');
+  const drop = (speaker: string, quote: string): boolean => {
+    if (isPcSpeaker(speaker, pcFirst)) return false;
+    const q = bare(quote);
+    if (q.length < 4) return false;
+    // Chip / menu label spoken back as dialogue.
+    if (action.length >= 4 && (bare(action) === q || q === bare(action))) return true;
+    // Fragment of the player's own text (not their deliberate quoted say — that goes to givePcTheirQuote).
+    if (!pcSaid && q.length >= 6 && bare(action).includes(q)) return true;
+    if (noSlot) return true;
+    if (slotFold) {
+      const sp = foldSpeech(speaker);
+      if (sp !== slotFold && !slotFold.includes(sp) && !sp.includes(slotFold)) return true;
+    }
+    return false;
+  };
+
+  let next = text;
+  next = next.replace(NPC_SAID_QUOTE, (full, speaker: string, _verb: string, _punct: string, _o: string, quote: string) =>
+    drop(speaker, quote) ? '' : full,
+  );
+  next = next.replace(TRAILING_SAID_QUOTE, (full, _o: string, quote: string, _c: string, speaker: string) =>
+    drop(speaker, quote) ? '' : full,
+  );
+  return next.replace(/\s{2,}/g, ' ').replace(/\s+([.,!?])/g, '$1').trim();
 }
 
 /** Split on then/and/while/?/; but never inside a quoted span (T10F). */
@@ -784,28 +876,55 @@ function pickFromPool(clause: string, pool: string[]): string | null {
 
 /**
  * Quoted words the player typed (double or single); never a paraphrase.
- * Only a speech-framed quote counts — a mention like `not "yet"` is not PC speech
- * (that word must not become say / a fake name).
+ * Only a speech-framed quote counts — a mention like `not "yet"` is not PC speech,
+ * and `waiting for you to say something` is not PC say `"something"` (T10L).
+ * Ask/chip paraphrases are never say (T10L — no `You said, "Ask if…"` / chip echo).
  * SRD 5.2.1 Communicating — "The speaker can say anything they want…" (WotC SRD 5.2.1, CC BY 4.0).
  */
 function extractSay(clause: string): string | null {
   const t = (clause ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return null;
-  // Clause that is itself a quoted utterance.
+  // Clause that is itself a quoted utterance (incl. unclosed → end of line).
   if (/^["'“‘]/.test(t)) {
     return extractQuotedSpan(t);
   }
   // Quote after a speech verb (say / tell / call out / …). Optional comma: `call out, '…'`.
+  // Unquoted rest after the verb is never say (T10J / T10L).
   const after = t.match(
     /\b(?:say|said|tell|shout|yell|whisper|call\s+out)\b[,:]?\s+(.+)$/i
   );
   if (after?.[1]) {
-    const rest = after[1].trim();
-    const inner = extractQuotedSpan(rest);
-    if (inner) return inner;
-    return rest.replace(/^["'“‘]|["'”’]$/g, '').trim().slice(0, 160);
+    return extractQuotedSpan(after[1].trim());
   }
   return null;
+}
+
+/**
+ * T10L — who the player spoke to: ask/talk-to / possessive listener, not a name that only
+ * appears as the topic of the question (`find Commander Rusk`).
+ */
+function speechAddressee(clause: string, listenPool: string[]): string | null {
+  const framed = clause.match(
+    /\b(?:ask|tell|talk\s+to|speak\s+to|address)\s+(?:the\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,2})/i,
+  );
+  if (framed?.[1] && !/^(?:if|whether|what|who|where|why|how|about)\b/i.test(framed[1])) {
+    const hit =
+      pickFromPool(framed[1], listenPool) ?? pickFromPool(`the ${framed[1]}`, listenPool);
+    if (hit) return hit;
+  }
+  if (/\b(?:ask|tell|talk|speak)\b/i.test(clause)) {
+    const poss = clause.match(/\b(?:the\s+)?([A-Za-z][\w'-]*)'s\b/i);
+    if (poss?.[1]) {
+      const hit =
+        pickFromPool(poss[1], listenPool) ?? pickFromPool(`the ${poss[1]}`, listenPool);
+      if (hit) return hit;
+    }
+  }
+  // Drop topic tails so "find Commander Rusk" does not steal the addressee slot.
+  const withoutTopic = clause
+    .replace(/\b(?:find|where(?:\s+(?:to\s+)?find)?|about|regarding|concerning)\s+.+$/i, '')
+    .replace(/\bif\s+(?:he|she|they)\s+knows?\b.+$/i, '');
+  return pickFromPool(withoutTopic.trim() || clause, listenPool);
 }
 
 /** Explicit speech marker — multi-step classification never uses the broad first-person protest heuristic. */
@@ -901,7 +1020,17 @@ export function parsePlayerSteps(
     const topic = extractTopic(clause);
     const tone = readTone(clause);
     // Speech addressee only from people here — memories/roster names are not listeners.
-    const peopleHit = pickFromPool(clause, listenPool);
+    const speechLike =
+      action === 'talk'
+      || action === 'ask_about'
+      || action === 'persuade'
+      || action === 'intimidate'
+      || action === 'deceive'
+      || action === 'refuse'
+      || !!deal;
+    const peopleHit = speechLike
+      ? speechAddressee(clause, listenPool)
+      : pickFromPool(clause, listenPool);
     let destination: string | null = null;
     let target: string | null = null;
     let addressee: string | null = null;
@@ -921,7 +1050,8 @@ export function parsePlayerSteps(
       target,
       addressee,
       topic,
-      say: say ?? (action === 'talk' || action === 'ask_about' || deal ? clause.slice(0, 120) : null),
+      // T10L — only quoted say; never the whole ask/chip clause as PC says exactly.
+      say,
       destination,
       tone,
       deal,
