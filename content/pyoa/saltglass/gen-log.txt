@@ -39,3 +39,7 @@
 2026-10-28T10:54:02.951Z done outline r6s2: 45/52 model=Flash-Lite
 2026-10-28T10:54:08.955Z finished outline run: calls 6
 2026-10-28T10:54:09.393Z ask prose sg-p1..sg-1-0-1-0 items=10 attempt=0
+2026-10-28T10:54:38.149Z done sg-p1: 10/10 model=Flash-Lite
+2026-10-28T10:54:38.151Z ask prose sg-1-0-1-1..sg-1-0-2-0 items=10 attempt=0
+2026-10-28T10:55:01.078Z   reject sg-1-0-1-7: exit 2 label
+2026-10-28T10:55:07.083Z ask prose sg-1-0-1-1..sg-1-0-2-0 items=1 attempt=1

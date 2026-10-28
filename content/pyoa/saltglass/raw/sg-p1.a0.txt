@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-p1
+TITLE: The Ember Lamp Post
+TEXT: Dust hangs thick in the low-beamed hall of the Ember-Lamp Post, where the elders of Candlemere gather around a dead hearth. The valley harvests have shrivelled into grey ash, and the twenty-day countdown to the monsoon has begun. Across the splintered oak table lies a cold ceramic rod, smooth and pale as bone. The oldest councillor pushes it toward you, her fingers trembling with the chill of a failing town. // You must carry this to the center of the dried Basin before the Return drowns everything you love.
+EXIT 1: Clasp the ceramic rod without speaking a word
+EXIT 2: Demand to know why previous runners never returned
+@@END
+@@SECTION sg-p2a
+TITLE: Weight of the Seedkey
+TEXT: Your fingers close around the Seedkey, its heavy ceramic chill biting straight through your palm. As long as a hand and shaped like a closed pod, it is the only thing standing between Candlemere and absolute hunger. This cold key alone can turn the ancient bronze locks of the Rain Vault deep beneath Prism, the observatory-city at the heart of the Saltglass Basin, where the final drought-proof seeds lie sleeping.
+EXIT 1: Turn away from the empty hearth and prepare your pack
+@@END
+@@SECTION sg-p2b
+TITLE: Shadows of the Past
+TEXT: Silence settles over the low-beamed hall as your question hangs in the dry air. The eldest councillor exchanges a heavy glance with the others before admitting that no runner has returned from Prism in twelve long years, while the predatory Salt Court has quietly bought up every remaining water well on the rim. Yet the ceramic Seedkey remains your only hope—a cold, hand-sized rod capable of unlocking the Rain Vault beneath Prism and saving the valley from the coming flood.
+EXIT 1: Sling your provisions over your shoulder and prepare for the journey
+@@END
+@@SECTION sg-p3
+TITLE: Dawn on the Rim
+TEXT: Dawn breaks hard and white over the western rim of the Saltglass Basin, casting long shadows across the dry dust of Candlemere. Your neighbors stand in quiet clusters by the paddock fence, watching you secure the leather water-skin and bank the glowing coals within your tin lantern. The horizon stretches out like a sheet of hammered tin, blinding in the early glare.
+EXIT 1: Step out onto the dusty track of the Rim Road
+@@END
+@@SECTION sg-1-in
+TITLE: The Rim Road
+TEXT: Candlemere hums with the desperate energy of a dying town as you step onto the sun-bleached gravel of the Rim Road. Outfitting stalls spill over with dried salt-meat and copper canteens, while rival runners and anxious kin eye your preparations with wary curiosity. You check the banked coals of your ember-lamp and adjust the strap of your pack, feeling the vast, silent glare of the Basin waiting just beyond the ridge.
+EXIT 1: Follow the winding lamp-lit track ahead
+EXIT 2: Step off the stones onto the open common ground
+EXIT 3: Hail a weathered traveler for directions
+EXIT 4: Take the steep and stony drovers' track
+@@END
+@@SECTION sg-1-0-0-0
+TITLE: The Tallow Vault
+TEXT: In the tallow-smelling vault of the Ember-Lamp Post, your aunt presses the cold ceramic Seedkey into your palm with a sharp warning about the looming monsoon. The air is heavy with rendered fat and old smoke, clinging to your woolens like a second skin. Outside, the white expanse of the Saltglass Basin bakes beneath a pitiless sky, giving you twenty days to cross the dead sea before the rains wipe the tracks clean forever.
+EXIT 1: Push past the heavy hide curtain toward the yard
+EXIT 2: Trade for a sturdy mule near the boiling pitch-pots
+EXIT 3: Accept a cracked whetstone under the tavern sign
+@@END
+@@SECTION sg-1-0-0-1
+TITLE: The Tallow-Loft
+TEXT: Behind the curtain of beaded sheep gut in the tallow-loft, your cousin Garrow thrusts a smouldering coal-lantern into your grip while cursing the dry wells of Candlemere. The yellow smoke stings your eyes as you secure the lantern to your belt, feeling the steady, banked heat against your thigh. The town around you is packing its remaining treasures, bracing for the inevitable march of the bitter drought.
+EXIT 1: Step through the narrow alleyway behind the cooperage
+EXIT 2: Slip the lucky copper button into your pocket
+EXIT 3: Seek reassurance near the dying public bakehouse
+@@END
+@@SECTION sg-1-0-0-2
+TITLE: The Grand Cistern
+TEXT: Upon the salt-crusted limestone steps of the Grand Cistern, the village elder hands you a water-skin that tastes of iron and entrusts you with the survival of the valley. The stone basin below is cracked and bone-dry, echoing with the hollow sound of your own boots. Every household has contributed a drop from their dwindling reserves to fill your flask for the long trek across the Basin.
+EXIT 1: Inquire about the Glasswright signals at the bakehouse
+EXIT 2: Acquire a vial of bitter willow oil from the apothecary
+EXIT 3: Accept the greasy wool blanket by the sheep-pens
+@@END
+@@SECTION sg-1-0-0-3
+TITLE: The Tannery Floor
+TEXT: Inside the low-roofed tannery where the grease vats steam, your uncle ties the leather harness across your chest and reminds you that twenty days remain before the Basin drowns. The pungent smell of oak bark and lime fills the damp air, sticking to the back of your throat. He pats your shoulder with a hand hardened by decades of scraping hides, wishing you safe passage through the glass cities.
+EXIT 1: Measure your stride past the watchful debt-collector
+EXIT 2: Accept the smooth pebble from the weeping child
+@@END
+@@SECTION sg-1-0-1-0
+TITLE: The South Granary
+TEXT: Beneath the copper eaves of the south granary, a Salt Court bailiff blocks your path to weigh your pack and demand an exorbitant toll for the Rim Road. The bailiff's polished brass scales gleam mockingly in the harsh morning light, reflecting the desperate desperation of every runner heading toward the interior. The air tastes of dry salt and rising heat.
+EXIT 1: Speak with the grey-wool robed Dune Sister
+EXIT 2: Join the carters debating the southern route
+EXIT 3: Sharpen your skinning knife beside the wagon
+@@END

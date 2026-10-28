@@ -1,6 +1,6 @@
 {
  "note": "Passages drafted by Gemini web in John's laptop Chrome. model \"unverified\" = drafted before the model was logged per call (the Gemini tab showed Pro early on, Flash-Lite after Pro hit its limit); the Pro pass should treat these as possibly Flash-Lite and read them first. model \"flash-lite\" = verified on the mode picker before the call.",
- "updated": "2026-10-28T10:27:56.697Z",
+ "updated": "2026-10-28T10:54:38.148Z",
  "books": {
   "umbra": {
    "model": "unverified",
@@ -2839,6 +2839,32 @@
     "td-6-037",
     "td-6-038",
     "td-6-039"
+   ]
+  },
+  "saltglass": {
+   "model": "flash-lite (verified per call on the mode picker)",
+   "kind": "new book, all prose, titles and exit labels",
+   "slug": "saltglass",
+   "path": "content/pyoa/saltglass",
+   "sections": [
+    "sg-p1",
+    "sg-p2a",
+    "sg-p2b",
+    "sg-p3",
+    "sg-1-in",
+    "sg-1-0-0-0",
+    "sg-1-0-0-1",
+    "sg-1-0-0-2",
+    "sg-1-0-0-3",
+    "sg-1-0-1-0"
+   ],
+   "batches": [
+    {
+     "batch": "sg-p1",
+     "model": "Flash-Lite",
+     "at": "2026-10-28T10:54:38.148Z",
+     "n": 10
+    }
    ]
   }
  }

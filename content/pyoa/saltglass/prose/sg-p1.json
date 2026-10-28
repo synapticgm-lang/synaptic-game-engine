@@ -1,0 +1,90 @@
+{
+ "batch": "sg-p1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-p1": {
+   "title": "The Ember Lamp Post",
+   "text": "Dust hangs thick in the low-beamed hall of the Ember-Lamp Post, where the elders of Candlemere gather around a dead hearth. The valley harvests have shrivelled into grey ash, and the twenty-day countdown to the monsoon has begun. Across the splintered oak table lies a cold ceramic rod, smooth and pale as bone. The oldest councillor pushes it toward you, her fingers trembling with the chill of a failing town.\n\nYou must carry this to the center of the dried Basin before the Return drowns everything you love.",
+   "exits": [
+    "Clasp the ceramic rod without speaking a word",
+    "Demand to know why previous runners never returned"
+   ]
+  },
+  "sg-p2a": {
+   "title": "Weight of the Seedkey",
+   "text": "Your fingers close around the Seedkey, its heavy ceramic chill biting straight through your palm. As long as a hand and shaped like a closed pod, it is the only thing standing between Candlemere and absolute hunger. This cold key alone can turn the ancient bronze locks of the Rain Vault deep beneath Prism, the observatory-city at the heart of the Saltglass Basin, where the final drought-proof seeds lie sleeping.",
+   "exits": [
+    "Turn away from the empty hearth and prepare your pack"
+   ]
+  },
+  "sg-p2b": {
+   "title": "Shadows of the Past",
+   "text": "Silence settles over the low-beamed hall as your question hangs in the dry air. The eldest councillor exchanges a heavy glance with the others before admitting that no runner has returned from Prism in twelve long years, while the predatory Salt Court has quietly bought up every remaining water well on the rim. Yet the ceramic Seedkey remains your only hope - a cold, hand-sized rod capable of unlocking the Rain Vault beneath Prism and saving the valley from the coming flood.",
+   "exits": [
+    "Sling your provisions over your shoulder and prepare for the journey"
+   ]
+  },
+  "sg-p3": {
+   "title": "Dawn on the Rim",
+   "text": "Dawn breaks hard and white over the western rim of the Saltglass Basin, casting long shadows across the dry dust of Candlemere. Your neighbors stand in quiet clusters by the paddock fence, watching you secure the leather water-skin and bank the glowing coals within your tin lantern. The horizon stretches out like a sheet of hammered tin, blinding in the early glare.",
+   "exits": [
+    "Step out onto the dusty track of the Rim Road"
+   ]
+  },
+  "sg-1-in": {
+   "title": "The Rim Road",
+   "text": "Candlemere hums with the desperate energy of a dying town as you step onto the sun-bleached gravel of the Rim Road. Outfitting stalls spill over with dried salt-meat and copper canteens, while rival runners and anxious kin eye your preparations with wary curiosity. You check the banked coals of your ember-lamp and adjust the strap of your pack, feeling the vast, silent glare of the Basin waiting just beyond the ridge.",
+   "exits": [
+    "Follow the winding lamp-lit track ahead",
+    "Step off the stones onto the open common ground",
+    "Hail a weathered traveler for directions",
+    "Take the steep and stony drovers' track"
+   ]
+  },
+  "sg-1-0-0-0": {
+   "title": "The Tallow Vault",
+   "text": "In the tallow-smelling vault of the Ember-Lamp Post, your aunt presses the cold ceramic Seedkey into your palm with a sharp warning about the looming monsoon. The air is heavy with rendered fat and old smoke, clinging to your woolens like a second skin. Outside, the white expanse of the Saltglass Basin bakes beneath a pitiless sky, giving you twenty days to cross the dead sea before the rains wipe the tracks clean forever.",
+   "exits": [
+    "Push past the heavy hide curtain toward the yard",
+    "Trade for a sturdy mule near the boiling pitch-pots",
+    "Accept a cracked whetstone under the tavern sign"
+   ]
+  },
+  "sg-1-0-0-1": {
+   "title": "The Tallow-Loft",
+   "text": "Behind the curtain of beaded sheep gut in the tallow-loft, your cousin Garrow thrusts a smouldering coal-lantern into your grip while cursing the dry wells of Candlemere. The yellow smoke stings your eyes as you secure the lantern to your belt, feeling the steady, banked heat against your thigh. The town around you is packing its remaining treasures, bracing for the inevitable march of the bitter drought.",
+   "exits": [
+    "Step through the narrow alleyway behind the cooperage",
+    "Slip the lucky copper button into your pocket",
+    "Seek reassurance near the dying public bakehouse"
+   ]
+  },
+  "sg-1-0-0-2": {
+   "title": "The Grand Cistern",
+   "text": "Upon the salt-crusted limestone steps of the Grand Cistern, the village elder hands you a water-skin that tastes of iron and entrusts you with the survival of the valley. The stone basin below is cracked and bone-dry, echoing with the hollow sound of your own boots. Every household has contributed a drop from their dwindling reserves to fill your flask for the long trek across the Basin.",
+   "exits": [
+    "Inquire about the Glasswright signals at the bakehouse",
+    "Acquire a vial of bitter willow oil from the apothecary",
+    "Accept the greasy wool blanket by the sheep-pens"
+   ]
+  },
+  "sg-1-0-0-3": {
+   "title": "The Tannery Floor",
+   "text": "Inside the low-roofed tannery where the grease vats steam, your uncle ties the leather harness across your chest and reminds you that twenty days remain before the Basin drowns. The pungent smell of oak bark and lime fills the damp air, sticking to the back of your throat. He pats your shoulder with a hand hardened by decades of scraping hides, wishing you safe passage through the glass cities.",
+   "exits": [
+    "Measure your stride past the watchful debt-collector",
+    "Accept the smooth pebble from the weeping child"
+   ]
+  },
+  "sg-1-0-1-0": {
+   "title": "The South Granary",
+   "text": "Beneath the copper eaves of the south granary, a Salt Court bailiff blocks your path to weigh your pack and demand an exorbitant toll for the Rim Road. The bailiff's polished brass scales gleam mockingly in the harsh morning light, reflecting the desperate desperation of every runner heading toward the interior. The air tastes of dry salt and rising heat.",
+   "exits": [
+    "Speak with the grey-wool robed Dune Sister",
+    "Join the carters debating the southern route",
+    "Sharpen your skinning knife beside the wagon"
+   ]
+  }
+ },
+ "missing": []
+}
