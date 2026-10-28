@@ -11,3 +11,13 @@
 2026-10-28T08:40:47.718Z ask outline region 5 (33 lines)
 2026-10-28T08:41:48.521Z done outline region 5: 33/33
 2026-10-28T08:41:56.535Z finished outline run: calls 6
+2026-10-28T08:42:11.982Z ask prose td-0-001..td-0-011 items=11 attempt=0
+2026-10-28T08:43:42.437Z   reject td-0-002: meta words
+2026-10-28T08:43:50.444Z ask prose td-0-001..td-0-011 items=1 attempt=1
+2026-10-28T08:44:33.165Z done td-0-001: 11/11
+2026-10-28T08:44:33.166Z finished prose run: calls 2, batches done 1/95
+2026-10-28T08:44:50.379Z ask prose td-0-012..td-0-023 items=12 attempt=0
+2026-10-28T08:45:58.765Z done td-0-012: 12/12
+2026-10-28T08:45:58.771Z ask prose td-0-024..td-0-036 items=13 attempt=0
+2026-10-28T08:46:55.641Z   reject td-0-025: meta words
+2026-10-28T08:47:03.650Z ask prose td-0-024..td-0-036 items=1 attempt=1

@@ -1,0 +1,114 @@
+{
+ "batch": "td-0-012",
+ "sections": {
+  "td-0-012": {
+   "title": "The Brass Lantern",
+   "text": "Dust motes dance in the slanted light of the keeper's quarters as you spot the old storm lantern hanging by the charting desk. It is a heavy, tarnished brass thing, built to withstand a gale. With the sea gone and darkness threatening to choke the streets of Gullmouth once the sun sets, good oil is already a scarce commodity. You unhook it carefully, feeling the slosh of thick fuel in its reservoir. The base is tightly sealed, meant to be opened only with a specialised wrench that is nowhere to be found. You will have to crack it manually.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Begin the careful extraction"
+   ]
+  },
+  "td-0-013": {
+   "title": "A Stubborn Seal",
+   "text": "Setting the lantern onto the scarred oak table, you rummage through your pack for a rusted iron pry bar. The brass is cold and unforgiving under your hands. You wedge the flattened edge of your tool against the locked reservoir cap, applying a slow, deliberate pressure. A sudden snap echoes in the quiet room as the mechanism protests. You pause, wiping a bead of sweat from your brow, acutely aware that one wrong angle could shatter the glass housing or spill the precious fuel across the floorboards. The cap gives slightly, revealing a dark, viscous slit smelling sharply of rendered blubber.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry the cap off completely"
+   ]
+  },
+  "td-0-014": {
+   "title": "Breaking the Cap",
+   "text": "Leaning close to the stubborn reservoir, you press your thumb against the brass lip. The metal groans, warped by years of salt and heat. You need to dislodge the rusted cap without tilting the base, a delicate task requiring steady hands. If you apply too much force, the fragile casing will buckle, sending a ruinous wave of oil soaking into the thirsty wooden planks of the floor. You hold your breath, slotting the pry bar deeper into the groove, feeling the mechanical tension shudder up your forearm. It is a matter of leverage and patience now.",
+   "check": "Carefully coax the seal open",
+   "grant": "",
+   "exits": []
+  },
+  "td-0-015": {
+   "title": "A Messy Spill",
+   "text": "Metal shrieks as the cap suddenly gives way entirely, throwing your weight off balance. The lantern tips, and before you can right it, a thick arc of amber oil sloshes over the rim. It pools over your knuckles and splashes down onto the floorboards, soaking immediately into the dry wood with a sickening hiss. You scramble to upright the heavy brass base, but the damage is done. A significant portion of the precious fuel is gone, leaving you with only a meagre puddle in the bottom of the reservoir and hands stinking heavily of whale fat. The stench will linger for days, a constant reminder of your clumsy haste.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Salvage what remains"
+   ]
+  },
+  "td-0-016": {
+   "title": "Captured Light",
+   "text": "Wiping your slick hands on a rag, you manage to secure the spoils. However narrowly you avoided complete disaster, you finally tip the brass reservoir and pour the thick, amber liquid into a sturdy iron flask. The smell is pungent, carrying the deep-sea tang of rendered leviathan fat, but it will burn bright and long in the encroaching dark. You cork the flask tightly and slip it into your pack, feeling a small measure of comfort against the encroaching shadows. With this fuel secured, the descent to the harbour will be just a little less daunting.",
+   "check": "",
+   "grant": "Flask of Leviathan Oil",
+   "exits": [
+    "Search the lighthouse quarters"
+   ]
+  },
+  "td-0-017": {
+   "title": "The Silent Descent",
+   "text": "Leaving the lighthouse behind, you navigate the treacherous switchbacks carved into the sheer chalk of the cliff. The descent to Gullmouth is normally accompanied by the roar of the surf and the chaotic cries of gulls diving for scraps. Today, an unsettling silence presses against your eardrums. Below you, the great harbour sits completely dry. Fishing boats, galleons, and skiffs tilt at grotesque angles, stranded in the drying mud like discarded toys. The wind whistles softly through the rigging of a hundred immobile masts, carrying the scent of rotting kelp and exposed brine. The town clings to the lower cliff face, its people moving like stunned insects through the lower docks. They stare out at the bare horizon where the ocean used to be, a terrible expanse of mud, wrecks, and sudden, plunging ravines. You step off the bottom stair onto the cobblestones of the wharf.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Enter the stranded harbour"
+   ]
+  },
+  "td-0-018": {
+   "title": "The Dry Harbour",
+   "text": "Shadows stretch long across the cracked mud of the dry docks. You walk among the grounded fleet, your boots crunching on salt-crusted detritus. Desperate rival crews of the Wreckers' Guild are already prowling the tilted hulls, tearing copper plating and rigging from ships that will clearly never sail again. You need supplies and information before stepping out onto the vast, exposed seabed of the Low. Ahead, a heavy smuggler's barrel is wedged precariously under the rotting timbers of a listing brigantine. To your left, a knot of hardened wreckers whisper urgently over a torn parchment. Near the harbour wall, a solitary drift pilgrim cowers in the shadow of a dry anchor, clutching a bone relic. The open salt-flats beckon beyond the town limits, vast and terrifying.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Seek out a net-mender",
+    "Pry open the smuggler's barrel",
+    "Eavesdrop on the rival wreckers",
+    "Coax the frightened drift pilgrim",
+    "Step onto the open salt-flats"
+   ]
+  },
+  "td-0-019": {
+   "title": "The Bitter Net-Mender",
+   "text": "Tucked in an alley behind the Customs-Priest's shuttered tollhouse, you find a hunched net-mender frantically sorting through a tangle of hemp and wire. The old woman's hands are a blur of calluses and twine. With no water, there are no fish, and her livelihood has vanished overnight. Still, she possesses the finest climbing ropes in Gullmouth, braided strong enough to haul a leviathan carcass. You approach carefully, eyeing a thick coil of black-tarred rope resting by her stool. The Sunken Stair is deep and treacherous; you will not survive the descent without it.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Ask for her price"
+   ]
+  },
+  "td-0-020": {
+   "title": "A Desperate Price",
+   "text": "Looking up from her frantic work, the net-mender fixes you with a hollow, red-rimmed stare. She demands a king's ransom in silver for the rope, an absurd price you cannot possibly meet. When you offer trade, she spits on the cobblestones, insisting that only coin will buy her a ticket on the ferryman's cart - even though the ferryman has nowhere to sail. Her panic makes her stubborn and volatile. You will have to talk her down, finding a way to pierce her hysteria and make her see reason, or you will walk away empty-handed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Attempt to reason with her"
+   ]
+  },
+  "td-0-021": {
+   "title": "Pushing the Bargain",
+   "text": "Choosing your words with utmost care, you lean against the alley wall. You must convince the old woman that silver is worthless in a town where the sea has died. Food, water, and alliances are the only true currency now. If you push too hard, she will start screaming for the Guild enforcers, drawing the wrong kind of attention to your preparations. You lock eyes with her, modulating your tone to project calm authority while subtly highlighting the bleak reality of her situation. You make your counteroffer, hoping to strike a bargain that leaves her satisfied and secures the vital climbing gear you need.",
+   "check": "Negotiate for the heavy ropes",
+   "grant": "",
+   "exits": []
+  },
+  "td-0-022": {
+   "title": "A Costly Exchange",
+   "text": "Scowling fiercely, the net-mender rejects your logic with a harsh, barking laugh that echoes down the alley. She accuses you of trying to cheat a starving widow, her voice rising in a shrill crescendo. Several passing wreckers stop to watch the commotion, their hands resting on rusty boat hooks. Forced to back down to avoid a brawl, you hastily press a few of your own meagre rations into her hand just to quiet her down. It is a terrible trade, costing you vital supplies, but she snatches the dried meat greedily and finally kicks the coil of tarred rope toward your boots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the rope and leave"
+   ]
+  },
+  "td-0-023": {
+   "title": "A Fair Accord",
+   "text": "Gathering the heavy burden into your arms, you secure the prize. However narrowly you managed to conclude the tense negotiation, the net-mender finally nods and accepts your terms. You sling the thick, black-tarred rope over your shoulder. It reeks of pitch and dead salt, but the weight of it is immensely reassuring. This line will hold your weight in the deepest shafts of the Sunken Stair. You leave the alleyway, the old woman already muttering quietly as she returns to her useless nets.",
+   "check": "",
+   "grant": "Coil of Tarred Rope",
+   "exits": [
+    "Return to the grounded fleet"
+   ]
+  }
+ },
+ "missing": []
+}
