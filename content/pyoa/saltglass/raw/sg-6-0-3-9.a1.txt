@@ -1,0 +1,19 @@
+Gemini said
+
+@@SECTION sg-6-0-4-1
+TITLE: The Green Chute
+TEXT: Slipping through the vertical throat of the green glass chute, you descend in a rush of cool air and friction, your boots skimming past rows of empty bin markers deeply incised into the dark basalt rock-face. The chute deposits you upon a landing of ribbed lead where the smell of stale copper hangs heavy and your ember-lamp casts long, jittery shadows against the stone. Ahead, two distinct passages beckon from the gloom, each offering a different approach to the heart of the dormant vault. // You must choose whether to test the outer bronze gate directly or seek another threshold deeper in the dark.
+EXIT 1: Approach the outer bronze gate of the Great Seed Hall
+EXIT 2: Step toward the threshold of the primary vault
+@@END
+@@SECTION sg-6-0-4-3
+TITLE: The Bronze Gallery
+TEXT: Stepping through the jagged frame of a shattered fanlight, you emerge into a long subterranean gallery where rows of heavy bronze seed-urns stretch endlessly into the dim distance, their surfaces oxidized to a pale sea-green. Your ember-lamp flickers against the vaulted ceiling, catching the faint glint of ancient condensation weeping down the metal flanks of the urns. Silence wraps around you like a wet wool blanket, broken only by the steady rhythm of your own breathing and the dull scrape of your boots on the flagged floor. // The heavy doors of the central granary loom ahead, waiting for the key you carry.
+EXIT 1: Approach the heavy doors of the central granary
+@@END
+@@SECTION sg-6-0-4-5
+TITLE: The Salt-Draped Chamber
+TEXT: Pushing past a heavy wool drape stiffened with a thick crust of white salt, you enter a subterranean chamber where the air tastes startlingly sweet and cold, contrasting sharply with the dry alkaline dust of the upper levels. Your lamp illuminates smooth limestone walls weeping pale droplets into a central stone basin that has stayed dry for generations. Every sound here feels muffled, absorbed by the heavy hangings and the dense, packed earth underfoot. // The massive seal of the Rain Vault fills the corridor ahead, presenting the final barrier between Candlemere and survival.
+EXIT 1: Step toward the threshold of the primary vault
+EXIT 2: Face the massive seal of the Rain Vault
+@@END

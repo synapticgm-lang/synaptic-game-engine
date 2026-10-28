@@ -1,0 +1,88 @@
+{
+ "batch": "sg-6-0-3-9",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-0-3-9": {
+   "title": "The Magistrate's Alcove",
+   "text": "A stone alcove contains a row of empty amphorae, their clay sides stamped with the double-lens seal of the ancient Prism magistrates. The unglazed pottery drinks the dry air of the vault, smelling faintly of ancient resin and long-evaporated wine. Beyond the alcove, the corridor forks around a pillar of fused basalt, leaving you to choose between the narrow service drop or the lower conduit.\n\nYou brush your fingers against the stamped clay, feeling the cold weight of your ember-lamp shift on its strap.",
+   "exits": [
+    "Descend the steep service drop",
+    "Follow the lower conduit onward",
+    "Turn back toward the dry shaft"
+   ]
+  },
+  "sg-6-0-3-10": {
+   "title": "The Obsidian Mirror Pool",
+   "text": "You wade through a shallow pool of mineral water that mirrors the vaulted brickwork like a sheet of dark, liquid obsidian. Every step sends dull ripples outward to disturb the absolute stillness of the subterranean lakelet, echoing softly against the damp mortar. Ahead, the path divides into two distinct routes through the flooded foundations of the observatory.",
+   "exits": [
+    "Step down into the mist",
+    "Track the iron transport groove"
+   ]
+  },
+  "sg-6-0-3-11": {
+   "title": "The Leaking Grating",
+   "text": "A bronze grating set into the ceiling drops a single, heavy drop of water directly onto the shoulder of your damp jacket. The chill moisture startles your skin, a rare reminder of open skies above the dead sea of glass. The passage ahead splits into a pair of branching tunnels that wind deeper into the gloom.",
+   "exits": [
+    "Slip through the salt-crusted drape",
+    "Step down into the mist",
+    "Track the iron transport groove"
+   ]
+  },
+  "sg-6-0-3-12": {
+   "title": "Behind the Slate Slabs",
+   "text": "You slip behind a stack of slate partition slabs, hiding from the distant, rhythmic clank of automated machinery that refuses to stop. The heavy stone blocks smell of ancient dust and cool iron, offering a secure shadow away from the open thoroughfare. You can either push forward into the humming heart of the mechanism or retrace your steps.",
+   "exits": [
+    "Track the iron transport groove",
+    "Turn back toward the broken arch"
+   ]
+  },
+  "sg-6-0-4-0": {
+   "title": "The Chaff-Scented Door",
+   "text": "A grand double door of iron-studded oak stands slightly ajar, leaking a smell of dry chaff and ancient, preserved grain hulls. The wood is warped with age yet remarkably sturdy, held together by hand-forged braces that catch the yellow flicker of your lamp. Stepping through this gap promises entry into the vaulted granaries of the Old Lensfolk.",
+   "exits": [
+    "Approach the outer bronze gate",
+    "Inspect the central granary threshold"
+   ]
+  },
+  "sg-6-0-4-1": {
+   "title": "The Green Chute",
+   "text": "Slipping through the vertical throat of the green glass chute, you descend in a rush of cool air and friction, your boots skimming past rows of empty bin markers deeply incised into the dark basalt rock-face. The chute deposits you upon a landing of ribbed lead where the smell of stale copper hangs heavy and your ember-lamp casts long, jittery shadows against the stone. Ahead, two distinct passages beckon from the gloom, each offering a different approach to the heart of the dormant vault.\n\nYou must choose whether to test the outer bronze gate directly or seek another threshold deeper in the dark.",
+   "exits": [
+    "Approach the outer bronze gate of the Great Seed Hall",
+    "Step toward the threshold of the primary vault"
+   ]
+  },
+  "sg-6-0-4-2": {
+   "title": "The Rusted Winch",
+   "text": "A rusted winch mechanism spans the corridor, its iron chain sagging into a heap of orange flakes upon the flagstone floor. The heavy drum is locked fast by thick crusts of oxide, bearing silent witness to the centuries that have passed since anyone hoisted a load here. The path ahead branches around the dead machinery.",
+   "exits": [
+    "Inspect the central granary threshold",
+    "Examine the primary vault threshold"
+   ]
+  },
+  "sg-6-0-4-3": {
+   "title": "The Bronze Gallery",
+   "text": "Stepping through the jagged frame of a shattered fanlight, you emerge into a long subterranean gallery where rows of heavy bronze seed-urns stretch endlessly into the dim distance, their surfaces oxidized to a pale sea-green. Your ember-lamp flickers against the vaulted ceiling, catching the faint glint of ancient condensation weeping down the metal flanks of the urns. Silence wraps around you like a wet wool blanket, broken only by the steady rhythm of your own breathing and the dull scrape of your boots on the flagged floor.\n\nThe heavy doors of the central granary loom ahead, waiting for the key you carry.",
+   "exits": [
+    "Approach the heavy doors of the central granary"
+   ]
+  },
+  "sg-6-0-4-4": {
+   "title": "The Service Cat-Walk",
+   "text": "A narrow service cat-walk hugs the apex of the ceiling, offering a bird's-eye view of the vast, silent storage vaults below. Iron mesh rattles under your boots, suspended high above the darkened floor where old bins wait in eternal twilight. You can follow the suspended walkway further into the storage complex or descend toward the massive sealing doors.",
+   "exits": [
+    "Examine the primary vault threshold",
+    "Approach the final rain seal"
+   ]
+  },
+  "sg-6-0-4-5": {
+   "title": "The Salt-Draped Chamber",
+   "text": "Pushing past a heavy wool drape stiffened with a thick crust of white salt, you enter a subterranean chamber where the air tastes startlingly sweet and cold, contrasting sharply with the dry alkaline dust of the upper levels. Your lamp illuminates smooth limestone walls weeping pale droplets into a central stone basin that has stayed dry for generations. Every sound here feels muffled, absorbed by the heavy hangings and the dense, packed earth underfoot.\n\nThe massive seal of the Rain Vault fills the corridor ahead, presenting the final barrier between Candlemere and survival.",
+   "exits": [
+    "Step toward the threshold of the primary vault",
+    "Face the massive seal of the Rain Vault"
+   ]
+  }
+ },
+ "missing": []
+}
