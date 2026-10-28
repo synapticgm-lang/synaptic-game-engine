@@ -26,6 +26,8 @@ function base(mode: 'dnd' | 'litrpg' | 'rpg'): GameState {
     seed: 'ocd3',
     log: [],
     rolls: [],
+    // T10G: exclusive origin row is not a cooldown tape — stamp origin so RPG exercises MOVE refill.
+    character: mode === 'rpg' ? { name: 'Scout', origin: 'sage' } : { name: 'Scout' },
     places: [
       {
         id: 'camp',
