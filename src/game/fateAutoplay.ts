@@ -54,6 +54,7 @@ import {
   normalizeStoryCorpus,
 } from './choicePipeline';
 import { postFilterGmOutput } from './contentPostFilter';
+import { FREE_INPUT_DO, FREE_INPUT_SAY } from './sceneAffordances';
 import { createDefaultSettings, createInitialState, fitKitToHousing } from './defaults';
 /** AI agent goal modes for guided autoplay. */
 export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
@@ -896,6 +897,13 @@ function detectLoopFlags(gmText: string, state: GameState): {
   const atmosphereRepeat = recent.length > 0 && recent.slice(-3).some((r) => beatSimilarity(fp, r) >= 0.72);
   return { officialCount, atmosphereRepeat, strangerCount };
 }
+/** Free-input chips (Say something / Do something else) open the text box in the app; a chip pick never sends their label as the move (typed lines come from --typed-mix). */
+function chipsOnly(offered: string[]): string[] {
+  const strip = (s: string) => s.trim().replace(/[.\u2026\s]+$/u, '').toLowerCase();
+  const free = new Set([FREE_INPUT_SAY, FREE_INPUT_DO].map(strip));
+  const rest = offered.filter((c) => !free.has(strip(c)));
+  return rest.length ? rest : offered;
+}
 /** Smart choice picker based on AI agent goals. */
 function pickGoalOrientedChoice(
   offered: string[],
@@ -1087,7 +1095,7 @@ export async function headlessFateTurn(
         : applyRememberedThreatPick(
             state,
             offered,
-            applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng)).pick
+            applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(chipsOnly(offered), state, meta.aiAgentMode, rng)).pick
           ).pick;
   let playerInput = fatePick;
   let repairNote: string | undefined;
