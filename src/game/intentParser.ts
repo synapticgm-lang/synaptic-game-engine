@@ -7,6 +7,7 @@ import {
   fallbackSuggestionForState,
 } from './suggestionValidation';
 import { isSystemStatusChip } from './systemHousing';
+import { presentNpcRecords } from './npcRecords';
 
 /**
  * Deleted injection (2026-08-30W). Was `groundPlayerAction` for attack/flee
@@ -472,8 +473,12 @@ export function groundRef(
 /** Build guard context from live state (FactSheet people/places/items shape, no FactSheet import). */
 export function sheetContextFromState(state?: GameState | null): IntentSheetContext {
   if (!state) return { people: [], present: [], places: [], items: [] };
+  // T10G: listen pool = who is actually here (sceneFacts + presentNpcRecords), so a chip
+  // like "Ask Mayor Helga Brask about the lead" matches the same titled full name typing would
+  // when she is here by location/memory even if sceneFacts.present still lists only the cast stamp.
   const present = [
     ...(state.sceneFacts?.present ?? []),
+    ...presentNpcRecords(state).map((m) => m.npcName).filter(Boolean),
     ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
   ].filter(Boolean) as string[];
   const people = [

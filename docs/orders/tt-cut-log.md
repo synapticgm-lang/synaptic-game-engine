@@ -709,3 +709,9 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 1. **`src/game/playTranscript.ts` `resolveOfferedChoices`** — stopped folding `originPad` into the mixed travel/scene list (`systemPromptPad(...)?.chips ?? originPad(state)`). Origin open now returns the origin row alone until `character.origin` is recorded.
 2. **`src/game/openThreads.ts` npc-goal / agenda chip want** — stopped preferring role-template `need` over bound `goal.target` (`m.need ?? m.goal.target`). Shared helper `npcChipWant` uses `goal.target ?? need`. Absent npc-goal / agenda rows no longer forward into Follow-up chips.
 
+## T10G (origin exclusive through commit + Ask chip addressee)
+
+No list/regex deletes. Root fixes only:
+1. **`src/game/sceneAffordances.ts` `applyOptionCooldown`** — when `originPad` is open, return the origin row alone (same exclusive shape as dying). Stops empty-MOVE refill from injecting `Travel toward …` beside Origin chips (those travels then flagged dead-chip because `engineChips` is origin-only).
+2. **`src/game/intentParser.ts` `sheetContextFromState`** (+ edge copy) — listen `present` merges `presentNpcRecords` names so titled full-name chips (`Ask Mayor Helga Brask about the lead`) match the same people typing uses when she is here by location/memory.
+

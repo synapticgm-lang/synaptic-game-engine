@@ -31,6 +31,7 @@ import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant } from './openThreads';
 import { isDying } from './tabletop/roundFight';
 import { travelPadBlocked } from './padUniverse';
+import { originPad } from './rules/rpgOrigin';
 import type { QuestRoute } from './types';
 import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
 export function isWayOut(chip: {
@@ -652,6 +653,21 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (chip.kind === 'dying' || (chip.actionId ?? '').startsWith('dying:')) dying.push(chip);
     }
     return dying;
+  }
+  // T10G: Story RPG origin setup owns the pad until recorded (same exclusive shape as dying).
+  // Empty-MOVE refill must not inject Travel toward … beside Origin / Quick start chips —
+  // those travel labels then look dead because engineChips is origin-only while the offer is open.
+  const originOnly = originPad(state);
+  if (originOnly?.length) {
+    const want = new Set<string>();
+    for (let i = 0; i < originOnly.length; i++) want.add(originOnly[i]!.trim().toLowerCase());
+    const kept: T[] = [];
+    for (let i = 0; i < pad.length; i++) {
+      const chip = pad[i]!;
+      const low = (chip.label ?? '').trim().toLowerCase();
+      if (want.has(low)) kept.push({ ...chip, cooldownReturn: undefined });
+    }
+    return kept;
   }
   // q75r: one availability source — fight / road lane / dying already covered by travelPadBlocked.
   const noTravel = travelPadBlocked(state);
