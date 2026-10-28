@@ -38,6 +38,8 @@ import { engageAddressedInHereSpot } from './hereSpot';
 import { isLedgerReadAction } from './completedEventPacket';
 import { ledgerChangeFact, ledgerReadChanges, ledgerSheetLine } from './litrpgSystemWindow';
 import { buildClauseWriterFact } from './writerCueLines';
+import { proseSaysEmpty } from './chipRules';
+import { listenersOnEmptyText, peopleHere } from './scenePresence';
 
 function isPersonInsightLabel(clause: string): boolean {
   return /^read\s+\S/i.test((clause ?? '').trim());
@@ -115,9 +117,14 @@ function clauseWriterFact(step: IntentStep, speech: boolean, presentHere: string
   });
 }
 
-function presentNames(state: GameState): string[] {
-  // Same listen pool as sheetContextFromState (T10P — road travel drops stale sceneFacts.present).
-  return sheetContextFromState(state).present ?? [];
+/**
+ * Listen pool for speech / reaction cues. Same peopleHere truth as chips (T10AJ), and the same
+ * empty-room strip chips already use (listenersOnEmptyText) when the act itself says the place
+ * is empty — so "shout into the empty street" does not invent opening-cast reactors.
+ */
+function presentNames(state: GameState, clause = ''): string[] {
+  if (proseSaysEmpty(clause)) return listenersOnEmptyText(state);
+  return peopleHere(state);
 }
 
 function speechStep(step: IntentStep, presentHere: string[] = []): StepResolution {
@@ -208,7 +215,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   const tried = describeIntentStep(step) || clause.slice(0, 80);
   const slot = slotOfStep(step);
   const hostile = hostileParleyContext(state);
-  const here = presentNames(state);
+  const here = presentNames(state, clause);
 
   if (step.unplacedMove || ((step.action === 'move' || step.action === 'sneak') && !step.destination)) {
     return {
@@ -480,7 +487,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     const hostNow = hostileParleyContext(live);
     // Speech is free — classify before spending a mechanical slot.
     if (isSpeechStep(step, clause, hostNow) && !step.unplacedMove) {
-      stepResults.push(speechStep(step, presentNames(live)));
+      stepResults.push(speechStep(step, presentNames(live, clause)));
       if (step.addressee) lastAddressee = step.addressee;
       continue;
     }

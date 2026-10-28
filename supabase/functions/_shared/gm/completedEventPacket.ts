@@ -25,6 +25,9 @@ import { nearbyPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway, isRoadLabel, isTripHere, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney.ts';
 import { hasWriterCueChrome } from './writerCueLines.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
+import { ensureSpokenAnswer } from './spokenAnswer.ts';
+import { peopleHere } from './scenePresence.ts';
+import { isBookForbiddenLedgerLine } from './ledgerToProse.ts';
 import { TALK_VERB } from './intentParser.ts';
 import { emptySceneFacts } from './sceneFacts.ts';
 import {
@@ -71,6 +74,7 @@ import {
   lineNamesOtherNpc,
   openingCastLabel,
   openingCastNames,
+  openingCastStillHere,
   openingSpokenIdentityQuote,
   openingSpokenWant,
   openingWhoAskLine,
@@ -2253,8 +2257,21 @@ function topicAdvancePool(
       `${pv.S} started toward ${dest} from ${setOutFrom}.`,
       `${pv.S} left ${setOutFrom} and kept on toward ${dest}.`,
     ];
-  const spokenWantRaw = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
-  const spokenWhoRaw = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
+  // T10AJ — opening-card speech only while the cast is still present (peopleHere / card place).
+  const castHere =
+    openingCastStillHere(state)
+    && (() => {
+      const hereNow = peopleHere(state);
+      const cast = openingCastNames(state);
+      if (!cast.length || !hereNow.length) return false;
+      return cast.some((c) => hereNow.some((n) => {
+        const a = c.replace(/\s+/g, ' ').trim().toLowerCase();
+        const b = n.replace(/\s+/g, ' ').trim().toLowerCase();
+        return a === b || a.includes(b) || b.includes(a);
+      }));
+    })();
+  const spokenWantRaw = castHere ? openingSpokenWant(state).replace(/\s+/g, ' ').trim() : '';
+  const spokenWhoRaw = castHere ? openingWhoAskLine(state).replace(/\s+/g, ' ').trim() : '';
   // T10Q — last-resort page is 3rd-person past when the PC is named; never "answers you".
   const toPageSpeech = (line: string) => {
     if (!line || pv.S === 'You') return line;
@@ -2264,11 +2281,15 @@ function topicAdvancePool(
   };
   const spokenWant = toPageSpeech(spokenWantRaw);
   const spokenWho = toPageSpeech(spokenWhoRaw);
-  const wantFirst = `${pv.S} ${pv.was} at ${here}. ${spokenWant} ${head ? `${head} stayed in sight.` : 'They stayed in the room.'}`;
-  const whoFirst = `${pv.S} ${pv.was} at ${here}. ${spokenWho} They stayed in the room.`;
+  const wantFirst = spokenWant
+    ? `${pv.S} ${pv.was} at ${here}. ${spokenWant} ${head ? `${head} stayed in sight.` : 'They stayed in the room.'}`
+    : `${pv.S} ${pv.was} at ${here}. ${peopleLine}`;
+  const whoFirst = spokenWho
+    ? `${pv.S} ${pv.was} at ${here}. ${spokenWho} They stayed in the room.`
+    : `${pv.S} ${pv.was} at ${here}. ${peopleLine}`;
   const accept = [
     `${pv.S} took the work at ${here}. ${head ? `${head} kept the offered kit within reach.` : 'The offered kit stayed in reach.'} The deal stood.`,
-    `${pv.S} said yes at ${here}. ${spokenWant} The offered kit was in reach.`,
+    `${pv.S} said yes at ${here}. ${spokenWant || 'The deal stood.'} The offered kit was in reach.`,
   ];
   let pool = look;
   const fightVerb = packet?.verb === 'attacked' || packet?.verb === 'fled' || packet?.verb === 'parleyed';
@@ -2288,11 +2309,13 @@ function topicAdvancePool(
   } else if (isExitsAsk(act) && !hubHit && !graphHit) {
     pool = exitsPool;
   } else if (hallTalkAsksStayLeave(act) || hallTalkAsksRefuse(act)) {
-    const spoken = (hallTalkAsksRefuse(act) ? openingSpokenRefuse(state) : openingStayLeaveLine(state))
-      .replace(/\s+/g, ' ')
-      .trim();
+    const spoken = castHere
+      ? (hallTalkAsksRefuse(act) ? openingSpokenRefuse(state) : openingStayLeaveLine(state))
+          .replace(/\s+/g, ' ')
+          .trim()
+      : '';
     pool = spoken
-      ? [`You are at ${here}. ${spoken}`]
+      ? [`${pv.S} ${pv.was} at ${here}. ${toPageSpeech(spoken)}`]
       : look;
   } else if (wantsMove) {
     pool = go;
@@ -2346,6 +2369,17 @@ function topicAdvanceStitch(
   const pool = topicAdvancePool(state, packet, playerInput);
   return pickAdvanceVariant(pool, recent, salt).replace(/\s+/g, ' ').trim();
 }
+/** T10AJ — leftover STATUS/dungeon/check labels that must never paint as the book body. */
+function hasBookForbiddenLedger(prose: string): boolean {
+  const body = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!body) return false;
+  if (/\b(?:Dungeon(?: room)?:|Ways on:|A lead waits here:|Look-out:|Check (?:failure|success)\b|Travel:)/i.test(body)) {
+    return true;
+  }
+  return body
+    .split(/(?<=[.!?])\s+/)
+    .some((s) => isBookForbiddenLedgerLine(s.trim()));
+}
 function lastResortUsable(state: GameState, prose: string, lastGm: string): string {
   const body = sanitizeLockedNameBeat(state, (prose ?? '').replace(/\s+/g, ' ').trim());
   if (!body || body.length < 24) return '';
@@ -2354,6 +2388,8 @@ function lastResortUsable(state: GameState, prose: string, lastGm: string): stri
   if (isLastGmReprint(body, lastGm)) return '';
   // T10E — writer cue chrome is never a book beat (writerEngineResult should have rewritten it).
   if (hasWriterCueChrome(body)) return '';
+  // T10AJ — ledger labels belong on STATUS, never the story body.
+  if (hasBookForbiddenLedger(body)) return '';
   if (
     /Nothing listed had moved on|The moment at .+ settled|You still had the next move|the room(?: at .+)? held its place|You close with |loot is legal|The exchange goes badly\. You go down/i.test(body)
   ) {
@@ -2393,13 +2429,19 @@ export function lastResortStoryBody(
     .filter(Boolean)
     .join(' ');
   const pcName = (state.character?.name ?? '').trim() || undefined;
+  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
+  const finish = (prose: string, status: string): { prose: string; status: string } => {
+    const cleaned = sanitizeLockedNameBeat(state, prose.replace(/\s+/g, ' ').trim());
+    // T10AJ — exchange beat from the ledger (motive / absence), never leave stock "said nothing".
+    const spoken = ensureSpokenAnswer(cleaned, state, act || 'Look around');
+    return { prose: spoken.prose.replace(/\s+/g, ' ').trim(), status };
+  };
   const record = lastResortUsable(state, writerEngineResult(recordSource, pcName), lastGm);
-  if (record) return { prose: sanitizeLockedNameBeat(state, record), status: 'Writer page blocked — painted from the turn record' };
+  if (record) return finish(record, 'Writer page blocked — painted from the turn record');
   const recent = (state.log ?? [])
     .filter((e) => e.role === 'gm')
     .slice(-10)
     .map((e) => String(e.content ?? ''));
-  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
   const pkt = packet
     ? (act && !(packet.playerAction ?? '').trim() ? { ...packet, playerAction: act } : packet)
     : undefined;
@@ -2416,24 +2458,24 @@ export function lastResortStoryBody(
   for (const raw of candidates) {
     const body = lastResortUsable(state, raw, lastGm);
     if (body) {
-      return {
-        prose: body,
-        status: named
+      return finish(
+        body,
+        named
           ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
           : 'Writer empty after retries — last good beat held (not a drought stub)',
-      };
+      );
     }
   }
   const fallback = topicAdvanceStitch(state, pkt ?? packet, act || 'Look around');
   const unique = isLastGmReprint(fallback, lastGm)
     ? `${fallback} What you already knew still held.`
     : fallback;
-  return {
-    prose: sanitizeLockedNameBeat(state, unique.replace(/\s+/g, ' ').trim()),
-    status: named
+  return finish(
+    unique,
+    named
       ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
       : 'Writer empty after retries — last good beat held (not a drought stub)',
-  };
+  );
 }
 /**
  * Writer outage on a talk or parley turn: the addressee's own card line, else '' so the caller paints

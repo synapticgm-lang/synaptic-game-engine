@@ -91,6 +91,8 @@ import { isLockablePcName } from './pcNameAuthority';
 import { isSpeechOrProtest } from './intentParser';
 import { inferIntent, PlayerIntent } from './intentEnums';
 import { convertWriterCueFact, hasWriterCueChrome, plainFromWriterCueSentence } from './writerCueLines';
+import { isBookForbiddenLedgerLine, ledgerLineToBookProse } from './ledgerToProse';
+export { isBookForbiddenLedgerLine } from './ledgerToProse';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -892,34 +894,10 @@ export function writerTravelFact(receipt: string): string | null {
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
 /**
- * T10AH — STATUS ledger labels that must never become book sentences (Encounter budget, Combat status, …).
- * Shared by writerEngineResult and convertWriterCueFact's non-cue head.
- */
-export function isBookForbiddenLedgerLine(s: string): boolean {
-  const t = (s ?? '').replace(/\s+/g, ' ').trim();
-  if (!t) return true;
-  return /^(?:Encounter budget:|Combat status:|Exhaustion:|Initiative —|Rounds? \d+|Death save:|XP Gained:|Gold Gained:|Coins\b|Moved within\b)/i.test(
-    t,
-  );
-}
-
-/** Rest: receipt → one past-tense rest sentence (HP arrow or HP stays). */
-function restReceiptToProse(s: string): string {
-  const low = s.toLowerCase();
-  const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
-  const hpAt = s.search(/\bHP\b/i);
-  if (hpAt >= 0) {
-    const tail = s.slice(hpAt).replace(/^HP\s+/i, '').trim();
-    const arrow = tail.match(/^(\d+)\s*(?:→|->|to)\s*(\d+)/i);
-    if (arrow) return `You took a ${kind} and your hurts eased (${arrow[1]} to ${arrow[2]}).`;
-    if (/^stays\b/i.test(tail)) return `You took a ${kind}.`;
-  }
-  return `You took a ${kind}.`;
-}
-
-/**
  * Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4).
  * `subject` is the PC display name for Must-narrate → third-person past (T10R).
+ * T10AJ — ledger labels convert (or drop) BEFORE cue convert so "Dungeon room:" never pastes when
+ * Must narrate is also on the fact (cue path used to skip the dungeon converters).
  */
 export function writerEngineResult(fact: string, subject?: string): string {
   let travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
@@ -938,12 +916,12 @@ export function writerEngineResult(fact: string, subject?: string): string {
         : `The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.`;
     }
   }
-  // T10AH — peel STATUS ledger sentences before cue convert so Rest:/Encounter budget never paste as story.
+  // T10AH/T10AJ — peel + convert STATUS/dungeon/check ledger before cue convert.
   travel = travel
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
-    .filter((s) => s && !isBookForbiddenLedgerLine(s))
-    .map((s) => (/^Rest:/i.test(s) ? restReceiptToProse(s) : s))
+    .map((s) => ledgerLineToBookProse(s, subject))
+    .filter((s) => s && !isRoadLabel(s))
     .join(' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -958,48 +936,14 @@ export function writerEngineResult(fact: string, subject?: string): string {
     let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
     while (s.includes('  ')) s = s.split('  ').join(' ');
     if (!s || isRoadLabel(s) || isBookForbiddenLedgerLine(s)) continue;
-    // Death chrome (Check failure / Extended Travel) is already dropped by the You-are-dead early return.
-    // Live push-on must still hand Extended Travel + Check outcome to the writer (q31-L4 / s73).
-    const roomHead = 'Dungeon room: ';
-    if (s.startsWith(roomHead) && !s.startsWith('Dungeon room: none')) {
-      const body = s.endsWith('.') ? s.slice(0, -1) : s;
-      const mark = ', inside ';
-      const cut = body.indexOf(mark);
-      if (cut > roomHead.length) {
-        const room = body.slice(roomHead.length, cut);
-        const inside = body.slice(cut + mark.length);
-        if (room && inside) {
-          out.push(`You stood in ${room} inside ${inside}.`);
-          continue;
-        }
-      }
-    }
-    const waysHead = 'Ways on: ';
-    if (s.startsWith(waysHead)) {
-      const body = (s.endsWith('.') ? s.slice(0, -1) : s).slice(waysHead.length);
-      const names: string[] = [];
-      const raw = body.split(',');
-      for (let w = 0; w < raw.length; w++) {
-        let n = raw[w]!.trim();
-        const paren = n.indexOf(' (');
-        if (paren >= 0) n = n.slice(0, paren).trim();
-        if (n && !isRoadLabel(n)) names.push(n);
-      }
-      if (names.length === 1) out.push(`A way led on to ${names[0]}.`);
-      else if (names.length > 1) out.push(`Ways led on to ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}.`);
-      continue;
-    }
-    if (/^Rest:/i.test(s)) {
-      out.push(restReceiptToProse(s));
-      continue;
-    }
     // T10E — writer cue lines (shared writerCueLines) → plain narration; never player chrome.
     const cue = plainFromWriterCueSentence(s, subject);
     if (cue.cue) {
       if (cue.plain) out.push(cue.plain.endsWith('.') ? cue.plain : `${cue.plain}.`);
       continue;
     }
-    out.push(s.endsWith('.') ? s : `${s}.`);
+    const plain = ledgerLineToBookProse(s, subject);
+    if (plain) out.push(plain.endsWith('.') || plain.endsWith('?') || plain.endsWith('!') ? plain : `${plain}.`);
   }
   return out.join(' ');
 }
