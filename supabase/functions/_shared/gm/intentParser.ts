@@ -782,13 +782,22 @@ function pickFromPool(clause: string, pool: string[]): string | null {
   return best;
 }
 
-/** Quoted words the player typed (double or single); never a paraphrase. Apostrophes stay inside the span. */
+/**
+ * Quoted words the player typed (double or single); never a paraphrase.
+ * Only a speech-framed quote counts — a mention like `not "yet"` is not PC speech
+ * (that word must not become say / a fake name).
+ * SRD 5.2.1 Communicating — "The speaker can say anything they want…" (WotC SRD 5.2.1, CC BY 4.0).
+ */
 function extractSay(clause: string): string | null {
-  const quoted = extractQuotedSpan(clause);
-  if (quoted) return quoted;
-  // Bare say/tell + words, not ask-about topics (those keep the clause as the question).
-  const after = clause.match(
-    /\b(?:say|said|tell|shout|yell|whisper|call\s+out)\b[:\s]+(.+)$/i
+  const t = (clause ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return null;
+  // Clause that is itself a quoted utterance.
+  if (/^["'“‘]/.test(t)) {
+    return extractQuotedSpan(t);
+  }
+  // Quote after a speech verb (say / tell / call out / …). Optional comma: `call out, '…'`.
+  const after = t.match(
+    /\b(?:say|said|tell|shout|yell|whisper|call\s+out)\b[,:]?\s+(.+)$/i
   );
   if (after?.[1]) {
     const rest = after[1].trim();

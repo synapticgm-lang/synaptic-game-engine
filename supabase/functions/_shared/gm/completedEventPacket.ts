@@ -6,7 +6,7 @@ import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings 
 function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName.ts';
-import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
+import { isAggregatePersonToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
 import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet.ts';
@@ -649,12 +649,17 @@ export function compileRefEnum(
   const windowNote = housingId
     ? systemHousingWriterClause(housingId)
     : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
-  if (!underwayHereLabel(state)) add('here', locationLabel(state), 'place');
+  // Known exits / journey ends first (settlement place refs the writer may bind by name).
+  // Live HERE always after that (trip phrase while underway). Skipping HERE made placeTok fall
+  // through to journey.from ("Nothing in Valespire…"); prepending HERE displaced the known
+  // place toks a replay binds by. placeTok prefers id === 'here' regardless of list order.
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
+  add('here', locationLabel(state), 'place');
   const castNote = openingCastNote(state);
   const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
+    if (isAggregatePersonToken(name)) continue;
     // "faces" and "a steward behind the oak" are the same people as "the exhausted faces" / "the steward": one row each.
     if (castRows.some((prev) => sameCastPerson(prev, name))) continue;
     castRows.push(name);
@@ -665,6 +670,7 @@ export function compileRefEnum(
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
+      if (isAggregatePersonToken(p)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();
@@ -725,7 +731,7 @@ export function compileRefEnum(
 /**
  * Displays + labels the writer was handed this turn. One list for repeated-habit masks,
  * factCheck `handedPeople` (same label rule), and later P-5 / M.
- * Trip ground/ends join while underway (enum skips `here`); not a second handmade checker.
+ * Trip ground/ends join while underway (enum also has `here` as the trip phrase); not a second handmade checker.
  */
 export function handedRefs(
   state: GameState,
