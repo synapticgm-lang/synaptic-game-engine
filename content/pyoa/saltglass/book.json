@@ -1907,7 +1907,7 @@
     }
    ],
    "title": "The Bottle-Glass Milestone",
-   "page": "Solitary and brisk, you pass a stout milestone carved from green bottle-glass that marks exactly three leagues from Candlemere's tilting church tower. The transparent pillar glows with trapped bubbles from a forgotten kiln, casting pale emerald light across the gray gravel of the Rim Road.\n\nThe horizon wavers beneath a shimmering wall of dry air, blurring the distance where the vast salt basin begins. You pause by the glassy post to weigh your next stride."
+   "page": "Solitary and brisk, you pass a stout milestone carved from green bottle-glass that marks exactly three leagues from Candlemere's tilting church tower. The transparent pillar glows with trapped bubbles from a forgotten kiln, casting pale emerald light across the grey gravel of the Rim Road.\n\nThe horizon wavers beneath a shimmering wall of dry air, blurring the distance where the vast salt basin begins. You pause by the glassy post to weigh your next stride."
   },
   {
    "id": "sg-1-1-2-6",
@@ -1932,7 +1932,7 @@
     }
    ],
    "title": "The Parched Well-Head",
-   "page": "A weary widow sits by the horse-trough selling parched beans from a greasy tin bucket, demanding double coin for a single cup of brackish well-water. Her skin is baked the color of dried clay, and her fingers tremble as she measures out the meager portions to passing runners.\n\nThe smell of stagnant lime water hangs heavy in the stagnant noon air. You must decide whether to trade for the salty sustenance or move away from the guarded basin."
+   "page": "A weary widow sits by the horse-trough selling parched beans from a greasy tin bucket, demanding double coin for a single cup of brackish well-water. Her skin is baked the colour of dried clay, and her fingers tremble as she measures out the meagre portions to passing runners.\n\nThe smell of stagnant lime water hangs heavy in the still noon air. You must decide whether to trade for the salty sustenance or move away from the guarded basin."
   },
   {
    "id": "sg-1-1-2-7",
@@ -1991,7 +1991,7 @@
      "to": "sg-1-1-3-8",
      "intent": "",
      "id": "x0",
-     "label": "Walk past the ditch-diggers laboring with wooden shovels"
+     "label": "Walk past the ditch-diggers labouring with wooden shovels"
     },
     {
      "to": "sg-1-1-3-9",
@@ -2014,7 +2014,7 @@
     }
    ],
    "title": "The Tethered Beast",
-   "page": "A tethered donkey brays sharply at your passing shadow, rattling its iron neck-ring against the trunk of a stunted, gray thorn-tree in the dry gully. The animal's ribs show like barrel hoops beneath a coat stiffened by wind-blown salt.\n\nThe gully offers a moment of brief, dusty shade before the road climbs back into the open glare. You study the diverging tracks branching out beyond the thorn-tree."
+   "page": "A tethered donkey brays sharply at your passing shadow, rattling its iron neck-ring against the trunk of a stunted, grey thorn-tree in the dry gully. The animal's ribs show like barrel hoops beneath a coat stiffened by wind-blown salt.\n\nThe gully offers a moment of brief, dusty shade before the road climbs back into the open glare. You study the diverging tracks branching out beyond the thorn-tree."
   },
   {
    "id": "sg-1-1-2-10",
@@ -2039,7 +2039,7 @@
     }
    ],
    "title": "The Wire-Whiskered Hare",
-   "page": "You step carefully over the stiffened carcass of a desert hare, marveling at how the concentrated salt has preserved its long whiskers like fine copper wire. Its unblinking eyes have glazed into tiny beads of clouded amber under the relentless sun.\n\nThe empty track stretches onward through the silent basin borderlands. You must choose between pressing your pace or slowing down to match the difficult terrain."
+   "page": "You step carefully over the stiffened carcass of a desert hare, marvelling at how the concentrated salt has preserved its long whiskers like fine copper wire. Its unblinking eyes have glazed into tiny beads of clouded amber under the relentless sun.\n\nThe empty track stretches onward through the silent basin borderlands. You must choose between pressing your pace or slowing down to match the difficult terrain."
   },
   {
    "id": "sg-1-1-2-11",
