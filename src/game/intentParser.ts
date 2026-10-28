@@ -595,7 +595,13 @@ const TRAILING_SAID_QUOTE = new RegExp(
 );
 
 function foldSpeech(t: string): string {
-  return t.toLowerCase().replace(/\s+/g, ' ').trim();
+  // T10S — curly apostrophes / quotes must not block PC-quote reattribution (Silas’s vs Silas's).
+  return t
+    .toLowerCase()
+    .replace(/[\u2018\u2019\u201b]/g, "'")
+    .replace(/[\u201c\u201d]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function pcFirstOf(pcName?: string | null): string {
@@ -715,7 +721,7 @@ export function stripUnauthorizedNpcSpeech(
   if (!next) return next;
   const kept: string[] = [];
   for (const raw of next.split(/(?<=[.!?])\s+/)) {
-    const s = raw.trim();
+    let s = raw.trim();
     if (!s) continue;
     // T10P — invented PC dialogue drops when the player typed no quotes: PC-tagged lines,
     // and orphan quote-led sentences (continuation of invented PC talk).
@@ -753,6 +759,14 @@ export function stripUnauthorizedNpcSpeech(
     if (/["“]/.test(s)) {
       kept.push(s);
       continue;
+    }
+    // T10S — a person "answered" with no quote claims a reply that isn't on the page.
+    // Ambient "the street answered" / "nobody answered" stay. Else → said nothing.
+    if (
+      !/\b(?:nobody|no\s+one|nothing)\b/i.test(s)
+      && /\b(?:he|she|they|one of them|[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2})\s+answered\b/.test(s)
+    ) {
+      s = s.replace(/\banswered\b/gi, 'said nothing');
     }
     // Bare speech verb left after the quote was removed — not a beat.
     if (/\b(?:said|spoke|asked|replied|whispered|shouted|called|answered)\s*[.!?]?$/i.test(s)) continue;

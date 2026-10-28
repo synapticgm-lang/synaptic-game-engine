@@ -116,7 +116,8 @@ describe('T10R fallback narration', () => {
     const plain = writerEngineResult(fact, 'Jax');
     expect(plain).not.toMatch(WRITER_CUE_CHROME);
     expect(plain).not.toMatch(/(?:^|\s)@+(?:\s|$)/);
-    expect(plain).toMatch(/steward answered/i);
+    // T10S — exchange beat is silence or content, never empty "answered".
+    expect(plain).toMatch(/steward said nothing/i);
   });
 });
 
@@ -136,7 +137,8 @@ describe('T10R quote + NPC reply', () => {
     expect(typed.engineResult).toMatch(/NPC reaction slot open for Oskar/i);
     const plain = writerEngineResult(typed.engineResult, 'Jax');
     expect(plain).toMatch(/look me in the eye/i);
-    expect(plain).toMatch(/Oskar[^.]{0,40}answered/i);
+    expect(plain).toMatch(/Oskar[^.]{0,40}said nothing/i);
+    expect(plain).not.toMatch(/\banswered\b/i);
   });
 
   it('ensureSpokenAnswer restores an exchange after a Talk stub', () => {
@@ -147,7 +149,9 @@ describe('T10R quote + NPC reply', () => {
       'Talk to Oskar the Woodcutter',
     );
     expect(out.prose).not.toMatch(/(?:^|\s)@+(?:\s|$)/);
-    expect(out.prose).toMatch(/Oskar the Woodcutter answered/i);
+    // T10S — motive line when authored, else honest silence (never empty "answered").
+    expect(out.prose).toMatch(/Oskar the Woodcutter (?:said nothing|said,)/i);
+    expect(out.prose).not.toMatch(/\banswered\b/i);
   });
 });
 

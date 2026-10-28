@@ -42,6 +42,7 @@ import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isOfferRefuseLine } from './openingOffer';
 import { isRoadLabel, roadMeetingOpenerLines, writerEngineResult } from './travelJourney';
+import { engineFactForRepair } from './writerCueLines';
 import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
@@ -472,7 +473,8 @@ export function answerRepairRequest(
     `Known to say: ${known.join(' | ')}`,
     ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
     `Your story so far: ${prose.slice(0, 600)}`,
-    `Engine fact: ${writerEngineResult(check.engineFact, pc || undefined).trim() || 'Keep only what the scene already established.'}`,
+    // T10S — repair must not see Must-narrate PC acts converted to story (that pasted player clauses onto NPCs).
+    `Engine fact: ${engineFactForRepair(check.engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
 /** Missing quoted reply on a talk turn: one repair sentence, else log the miss. */
@@ -562,7 +564,8 @@ export function sentenceRepairRequest(
       (f, i) =>
         `${many ? `${i + 1}. ` : ''}Sentence: "${f.sentence}"\n${many ? '   ' : ''}Problem: ${f.flag}${f.note ? ` ${f.note}` : ''}`
     ),
-    `Engine fact: ${writerEngineResult(engineFact).trim() || 'Keep only what the scene already established.'}`,
+    // T10S — strip Must narrate / PC says cues so a rewrite cannot mirror the player's act onto an NPC.
+    `Engine fact: ${engineFactForRepair(engineFact).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
 function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEventPacket, count: number): string[] | null {

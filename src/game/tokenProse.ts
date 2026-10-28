@@ -20,7 +20,7 @@ import { currentSceneLedger, weaponsNotInHand } from './infoSheet';
 import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
-import { aimsAtSelf, npcHoldsPcQuote } from './intentParser';
+import { aimsAtSelf, extractPlayerQuotedSay, npcHoldsPcQuote } from './intentParser';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
 import { readWireBeat, refEnumOf, TOKEN_USES, type WireLineFn } from './tokenBeatSchema';
@@ -130,6 +130,8 @@ export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
     const asked = speakers.filter((r) => `-${refSlug(action)}-`.includes(`-${r.id.split(':').pop()}-`));
     const soleSpeaker = speakers.length === 1 ? speakers[0]!.tok : asked.length === 1 ? asked[0]!.tok : '';
     const soleOther = !speakers.length && others.length === 1 ? others[0]!.tok : '';
+    // T10S — the player's own quoted words are never inferred onto the addressed NPC.
+    const pcQuoted = (extractPlayerQuotedSay(action) ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
     const lines: TokenLine[] = [];
     for (const { fn, text, speaker_tok: typed } of wire.lines) {
       // 28g/28h — skip echoed prompt placeholders (... @t1 ... or <placeholder>).
@@ -137,7 +139,21 @@ export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
       const prev = lines[lines.length - 1];
       const pcSpoke = !!prev && prev.fn !== 'speech' && PC_SPEAKS.test(prev.text);
       const untagged = fn === 'speech' && !namesDeclaredPerson(text, refs);
-      const inferred = untagged ? soleSpeaker || (pcSpoke ? '' : soleOther) : '';
+      const foldQ = (s: string) =>
+        s
+          .replace(/\s+/g, ' ')
+          .trim()
+          .toLowerCase()
+          .replace(/[\u2018\u2019]/g, "'")
+          .replace(/[.,;:!?]+$/g, '');
+      const bareSpeech = foldQ((text ?? '').replace(/^["\u201c]|["\u201d]$/g, ''));
+      const quotedSpans = [...(text ?? '').matchAll(/["\u201c]([^"\u201d]+)["\u201d]/g)].map((m) => foldQ(m[1] ?? ''));
+      const matchesPc = (q: string) =>
+        !!pcQuoted && q.length >= 6 && (pcQuoted === q || pcQuoted.includes(q) || q.includes(pcQuoted));
+      const isPcQuote =
+        matchesPc(bareSpeech) || quotedSpans.some(matchesPc) || npcHoldsPcQuote(text, action, null);
+      // Untagged PC quote keeps no speaker (PC owns it). Do not hand soleOther / addressed NPC the line.
+      const inferred = untagged && !isPcQuote ? soleSpeaker || (pcSpoke ? '' : soleOther) : '';
       // Words that name that person ("that Nell", "Rudd") are about them or to them, not theirs.
       const speaker = typed || (inferred && !namesRefPlainly(text, refs, inferred) ? inferred : '');
       const line: TokenLine = speaker ? { fn, text, speaker_tok: speaker } : { fn, text };
@@ -986,10 +1002,24 @@ const DETERMINER_RE =
 const PREPOSITION_RE =
   /^(?:in|on|at|of|to|into|onto|from|with|without|by|for|over|under|through|across|past|toward|towards|behind|beside|near|against|around|between|along|inside|outside)$/i;
 const isDeterminerWord = (w: string) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w);
+/**
+ * True when the noun phrase before `offset` (same clause) has already begun.
+ * After a preposition within three words, any word between it and the noun starts
+ * the phrase ("in the same worn @t3", "in worn @t3") so a glued kit possessive
+ * would land mid-phrase. Otherwise a determiner within three words.
+ * T10S-fix — a subordinate-clause start resets the window so a prior "their" or
+ * particle "over" does not suppress the article on a later prop
+ * ("their faces while @tN", "looked @t8 over while @t10").
+ */
 function hasDeterminerBefore(text: string, offset: number): boolean {
   const before = text.slice(0, offset);
   const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
-  const near = clause.trim().split(/\s+/).filter(Boolean).slice(-3);
+  // Same role as punctuation above: a new clause span begins at these heads.
+  const span =
+    clause
+      .split(/\b(?=(?:while|when|as|before|after|because|although|though|if|unless|until|since|whereas|where|wherever)\b)/i)
+      .pop() ?? '';
+  const near = span.trim().split(/\s+/).filter(Boolean).slice(-3);
   const cut = near.map((w) => PREPOSITION_RE.test(w)).lastIndexOf(true);
   if (cut >= 0) return cut < near.length - 1;
   return near.some(isDeterminerWord);
