@@ -936,9 +936,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'salt-road-heist': [
     {
-      who: 'a cutter on the Salt Road crew, starting at a warehouse loft before the salt-tax score',
+      who: 'a cutter on the Salt Road crew, starting at a warehouse loft',
       pressing: 'First move is yours — the plan, the cut, or the walk. the crew is waiting on your move.',
-      location: 'a warehouse loft before the salt-tax score',
+      location: 'a warehouse loft',
       faction: 'the crew',
       summonIntent: 'First move is yours — the plan, the cut, or the walk.',
       openingCost: 'Walk and you are out of the crew before Heat is even up.',

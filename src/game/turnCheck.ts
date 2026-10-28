@@ -263,8 +263,10 @@ export function checkActionFollowed(
   // A talk shape with no addressee ("Talk your way past the thugs") still names who here it is to.
   const typedNamed = !addr || addr.kind === 'none' ? peopleHere(before).find((p) => mentionsName(act, p)) : undefined;
   const intent = parsePlayerIntent(act, before);
-  const bodyAction = NON_TALK_ACTION.test(act);
-  const talkish = !!addr || (!bodyAction && (intent.kind === 'talk' || intent.kind === 'refuse'));
+  const bodyAction = NON_TALK_ACTION.test(act) || isAddresseelessPhysicalAct(act);
+  const talkish =
+    !!addr ||
+    (!bodyAction && (intent.kind === 'talk' || intent.kind === 'refuse') && !isAddresseelessPhysicalAct(act));
   // An offer or plea is followed when someone here answers it; its words are the act, not an object.
   const socialAct = !talkish && !bodyAction && TALK_NEEDS_EAR.test(act);
 
@@ -369,7 +371,20 @@ export function brokenLines(prose: string): TurnCheckFlag[] {
  */
 /** A body action, not speech: the talk check does not apply to it. */
 const NON_TALK_ACTION =
-  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read)\b/i;
+  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read|flick|spit|kick|toss|throw|slam|spin|pull|push|drag|point|eye|stare)\b/i;
+
+/**
+ * T10Y — addressee-less physical I-acts (flick salt / spit / eye a corner) are not talk turns.
+ * A real ask/quote/talk chip still needs an answer; this only stops the checker overreach on body verbs.
+ */
+function isAddresseelessPhysicalAct(act: string): boolean {
+  const t = norm(act);
+  if (!t) return false;
+  if (/["\u201c]/.test(t)) return false;
+  if (/\b(?:ask|tell|talk|speak|say|whisper|shout|yell|call out)\b/i.test(t)) return false;
+  if (/^(?:i|you)\s+/i.test(t) && NON_TALK_ACTION.test(t.replace(/^(?:i|you)\s+/i, ''))) return true;
+  return NON_TALK_ACTION.test(t);
+}
 
 export function brokenProse(prose: string, pcName?: string): TurnCheckFlag[] {
   const out: TurnCheckFlag[] = [];

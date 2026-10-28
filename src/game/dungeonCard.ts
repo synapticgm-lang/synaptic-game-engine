@@ -78,7 +78,20 @@ const THEMES: Array<{ match: RegExp; theme: Theme }> = [
     },
   },
   {
-    match: /\b(engine|machine|forge|factory|foundry|works|warehouse|store|containment)\b/i,
+    // T10Y — timber warehouse / store loft (salt-road, mercantile). Not the machine-works theme:
+    // "warehouse" must not birth Coolant Trench / Scrap Drone in a pre-industrial Salt Road game.
+    match: /\b(?:warehouse|storehouse|loft|rafters|catwalks)\b/i,
+    theme: {
+      entry: 'Loading Hatch',
+      rooms: ['Crate Stack', 'Rope Loft', 'Catwalk Span', 'Glass Bay', 'Winch Gallery', 'Side Store'],
+      miniBossRoom: 'Foreman Loft',
+      cacheRoom: 'Locked Strong-room',
+      foe: 'Warehouse Guard',
+      boss: 'Floor Boss',
+    },
+  },
+  {
+    match: /\b(engine|machine|forge|factory|foundry|works|containment)\b/i,
     theme: {
       entry: 'Service Hatch',
       rooms: ['Gear Gallery', 'Coolant Trench', 'Boiler Walk', 'Cable Crawlway', 'Control Pit', 'Scrap Bay'],
@@ -241,7 +254,10 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   const danger = Math.max(1, Math.min(4, Math.floor(hub?.threatTier ?? 2))) as 1 | 2 | 3 | 4;
   const level = Math.max(1, state.character?.level ?? 1);
 
-  const siteTag = ['crypt', 'mine', 'sewer', 'engine', 'keep', 'cave', 'any'][THEMES.findIndex((t) => t.theme === siteTheme)] ?? 'any';
+  const siteTag =
+    ['crypt', 'mine', 'sewer', 'warehouse', 'engine', 'keep', 'cave', 'camp', 'any'][
+      THEMES.findIndex((t) => t.theme === siteTheme)
+    ] ?? 'any';
   // 28j — layout from the generic interior generator: seeded template pick, optional stacked floors
   // (stairs / ladders), seeded extra doors, optional secret room. Cached on the card / place record.
   const floors = siteTheme?.oneFloor ? 1 : danger >= 3 || MULTI_FLOOR_WORDS.test(`${name} ${hub?.blurb ?? ''}`) ? 2 : rng() < 0.3 ? 2 : 1;

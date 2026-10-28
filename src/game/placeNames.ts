@@ -54,6 +54,20 @@ export function dropTimeOfDay(description: string): string {
   return out.length >= 3 ? out : description;
 }
 
+/**
+ * T10Y — plan/quest tails ("before the salt-tax score") are not place names. Spatial tails that
+ * name a Title-Case landmark ("before Millstone") stay. Lowercase-only after/before/during/while clauses drop.
+ */
+export function dropPlanClause(description: string): string {
+  const raw = description.replace(/\s+/g, ' ').trim();
+  const m = raw.match(/\s+((?:after|before|during|while)\b.+)$/i);
+  if (!m || m.index == null) return raw;
+  const clause = m[1] ?? '';
+  if (/\b[A-Z][a-zA-Z'’-]{2,}/.test(clause)) return raw;
+  const cut = raw.slice(0, m.index).trim();
+  return cut.length >= 3 ? cut : raw;
+}
+
 /** "Greyhollow, at the inn" names one place, Greyhollow's inn: read it as "Greyhollow inn". */
 function foldTownComma(description: string): string {
   return description.replace(/^([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)*),\s+(?:at|in|inside)\s+(?:the|a|an)\s+/, '$1 ');
@@ -101,7 +115,7 @@ export function shortPlaceName(
     .sort((a, b) => b.name.length - a.name.length)[0];
   if (headHub) return headHub.name;
   const head = placeHeadNoun(raw);
-  if (!head) return given;
+  if (!head) return dropPlanClause(dropTimeOfDay(given));
   const mine = new Set(words(raw));
   let best: { name: string; score: number } | null = null;
   for (const name of knownPlaceNames(bibleId, hookBlob, raw)) {
@@ -110,7 +124,7 @@ export function shortPlaceName(
     const score = theirs.filter((w) => mine.has(w)).length;
     if (!best || score > best.score) best = { name, score };
   }
-  return best?.name ?? dropTimeOfDay(given);
+  return best?.name ?? dropPlanClause(dropTimeOfDay(given));
 }
 
 const SPATIAL_PREP = /^(?:under|beneath|below|behind|beside|within|near|outside|above|inside|in|at|by|off|on)$/i;
@@ -125,7 +139,9 @@ export function openingPlaceRecord(
   description: string,
   hookBlob = ''
 ): { place: string; parentHub?: string } {
-  const raw = dropTimeOfDay(description.replace(/\s+/g, ' ').trim().replace(POSTURE, ''));
+  const raw = dropPlanClause(
+    dropTimeOfDay(description.replace(/\s+/g, ' ').trim().replace(POSTURE, '')),
+  );
   const hubs = hubsForBibleId(bibleId);
   const short = shortPlaceName(bibleId, raw, hookBlob) ?? raw;
   const mentioned = mentionedHub(hubs, raw);
