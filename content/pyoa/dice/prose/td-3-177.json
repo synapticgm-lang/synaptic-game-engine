@@ -62,6 +62,13 @@
     "Break the frantic grapple grip"
    ]
   },
+  "td-3-184": {
+   "title": "Edge of the Platform",
+   "text": "Rough canvas rubs raw against your ribs as the scavenger lunges from the shadow of a salt-crusted oil drum, fingers clawing fiercely for the straps of your bulging pack. You slam your bootheel down onto the damp, slick timber of the stilt-walk, throwing your shoulder forward to meet the sudden impact with every ounce of muscle you possess. The brine-soaked boards groan beneath your combined weight while the dizzy drop to the dry seabed yawns just inches away, threatening to swallow you both whole in the dark.",
+   "check": "Shove the desperate scavenger backward",
+   "grant": "",
+   "exits": []
+  },
   "td-3-185": {
    "title": "Bruised and Battered",
    "text": "A vicious blow catches you across the ribs, winding you instantly and forcing you to release your grip as your attacker scrambles away into the shadows. You slump against the cold iron stanchion, gasping for air while checking your gear bags. Several precious items are crushed or lost over the edge, leaving your provisions lighter and your body aching from the violent exchange.\n\nGather your breath and stand up",
@@ -81,7 +88,5 @@
    ]
   }
  },
- "missing": [
-  "td-3-184"
- ]
+ "missing": []
 }

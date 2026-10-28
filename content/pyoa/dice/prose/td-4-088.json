@@ -1,6 +1,15 @@
 {
  "batch": "td-4-088",
  "sections": {
+  "td-4-088": {
+   "title": "The Logician's Ledger",
+   "text": "Iron hinges groan in the chill subterranean draft as you slide the water-warped ledger across the frost-filmed brass of the desk, pointing a grease-stained thumb at the impossible ink marks of the third equinox. You note how the tide-tables of seventy years ago demand a flood where these very columns record a permanent ebb, creating a closed loop of clerical error that the mechanical archivist cannot compute. The automaton's brass cogs stutter and click, its heavy copper eyelids fluttering as its logic-engine chews the contradiction, leaving its internal mirrors entirely unattended. Snatching the rolled vellum chart of the deep trenches from beneath its inactive claws, you tuck the prize safely inside your woollen waistcoat just before the machine begins to grind anew.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip back into the stairwell shadows"
+   ]
+  },
   "td-4-089": {
    "title": "Distracting the Archivist",
    "text": "Smoke from your oil lamp drifts across the glowing amber lenses, blurring the machine's piercing vision for a crucial heartbeat. You repeat the paradoxical decree about the sea returning before it departs, weaponizing the rigid logic of its own forgotten laws against its brass brain. The heavy torso swivels slightly, distracted by the recursive error written across your torn ledger page.\n\nThe precious parchment map rests untouched on the pitted steel workbench, waiting for a steady hand to claim it.",
@@ -104,7 +113,5 @@
    ]
   }
  },
- "missing": [
-  "td-4-088"
- ]
+ "missing": []
 }

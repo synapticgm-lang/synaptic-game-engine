@@ -1,6 +1,18 @@
 {
  "batch": "td-3-072",
  "sections": {
+  "td-3-072": {
+   "title": "The Vent Shafts",
+   "text": "Narrow iron tubes snake upward into the gloom like the entrails of a colossal beast, hissing with pressurized heat and carrying the thin, frantic cries of gulls trapped in the metal labyrinth. Every seam weeps rusty condensation that scalds your skin, and the air tastes thick of copper and old grease. You stand at a critical junction where choices divide into steam-choked darkness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Squeeze through the dangerously narrow boiling pipe",
+    "Follow the changing air currents through intersecting vents",
+    "Dismantle the rusted grating for a makeshift shield",
+    "Ascend toward the glittering glass-domed water reservoirs"
+   ]
+  },
   "td-3-073": {
    "title": "Boiling Flue",
    "text": "Heat radiates from the metal walls, baking the air in your lungs until every breath tastes of copper and rust. You hitch your weight onto a narrow bracket, inching forward as the steam thickens around your collar and sweat runs in stinging channels down your forehead. Far below, the muffled clank of Brineholder patrols echoes against the bulkheads, a reminder of the price of a slip.",
@@ -79,7 +91,5 @@
    ]
   }
  },
- "missing": [
-  "td-3-072"
- ]
+ "missing": []
 }

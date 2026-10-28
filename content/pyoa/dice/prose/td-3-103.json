@@ -10,6 +10,15 @@
     "Step across to the dangling leather"
    ]
   },
+  "td-3-104": {
+   "title": "Glass Above The Sump",
+   "text": "Salt-crusted brine laps against the vertical walls of the reservoir far below, a grey eye staring upward through forty feet of dead air. The suspended walkway consists of thick panes bolted directly into iron ribs, their upper surfaces pitted white from decades of chemical condensation. A drowned worker's heavy leather toolbelt hangs snagged upon an external bracing strut, just beyond a rusted railing missing three vertical bars. You ease your boots onto the translucent glass, feeling the cold surface bow slightly under your weight while the distant drip of moisture echoes endlessly in the hollow shaft.",
+   "check": "Reach across the open drop",
+   "grant": "Heavy Brineholder crowbar",
+   "exits": [
+    "Slip back into the rotting archives"
+   ]
+  },
   "td-3-105": {
    "title": "Slip on the Pane",
    "text": "A sudden tremor in the stilt-work sends the boots skidding across the condensation-slicked glass before purchase can be found. Arms windmill wildly against the void, catching hard against a rusted iron bracket that leaves a deep, stinging purple bruise across the forearm. The heavy belt slides off the far rivet and drops silently into the deep water below, leaving only bruised ribs and a bitter taste of rust in the mouth. Shivering and breathless, the foothold is finally secured on the far platform.",
@@ -17,6 +26,15 @@
    "grant": "",
    "exits": [
     "Pull yourself onto the platform"
+   ]
+  },
+  "td-3-106": {
+   "title": "The Glass Ledge",
+   "text": "Your boots slide with a sickening screech against the curved pane, suspended high above the echoing vault of the reservoir. Down in the dark, black water laps against lead walls, waiting for anyone foolish enough to lose their footing. Every breath is a struggle against the damp chill rising from the depths, yet your trembling fingers finally close around the heavy leather straps of the drowned worker's toolbelt. Hauling it up onto solid stone, you secure a grease-stained brass wedge - a simple keepsake that might just jam a lock when the time is right.\n\n",
+   "check": "decipher the crumbling numerical combination",
+   "grant": "grease-stained brass wedge",
+   "exits": [
+    "Slip back into the dusty annex"
    ]
   },
   "td-3-107": {
@@ -50,6 +68,15 @@
     "Pocket the torn cipher fragment"
    ]
   },
+  "td-3-110": {
+   "title": "The Cipher in Ash",
+   "text": "Black spores cling to your eyelashes as you hunch over the rotting spine of the ledger, your fingers burning from the salt-acid eating the paper. Every breath draws more of the choking rot into your lungs, threatening to force a cough that would bring the Brineholder guards outside the alcove. Yet the faded ink of the final water-tax tally reveals the repeating numerical sequence of the vault tumbler, half-erased by damp. You steady your shaking hands against the wooden desk, squinting through streaming tears to catch the last crucial digit before the remaining text dissolves into grey sludge.\n\nWith your lungs locking up and the parchment crumbling into useless ash beneath your fingertips, you throw your weight against the hidden latch to test the sequence.",
+   "check": "Read the rotting figures quickly",
+   "grant": "The water-tax cipher scrap",
+   "exits": [
+    "Return to the dusty annex"
+   ]
+  },
   "td-3-111": {
    "title": "Choked on the Dust",
    "text": "A thick cloud of black spores bursts from the spine of the ancient ledger, catching the throat in a sudden, violent spasm. Coughing tears at the chest wall, leaving a metallic taste of blood and rotten linen on the tongue while the eyes stream with blinding tears. Footsteps halt in the outer passage at the sudden noise, forcing a frantic scramble into the shadows behind a stack of empty water casks. The secret numbers are lost to the dust, and the lungs will ache with every breath for hours to come.",
@@ -58,12 +85,16 @@
    "exits": [
     "Crawl away into the gloom"
    ]
+  },
+  "td-3-112": {
+   "title": "The Vault Combination",
+   "text": "Your fingertips trace the fading, ash-grey digits pressed into the final intact margin before the parchment dissolves entirely into your damp palm. You cough against the black spores clinging to your tongue, memorizing the sequence of turns required for the heavy iron tumblers. Amidst the rot and the bitter taste of salt-acid, you secure the cipher that opens the Brineholder vaults.\n\nIt is a heavy copper tally-token stamped with the seal of the high water-tax office, heavy enough to crack a tooth and recognized by every gate-warden on the stilts.",
+   "check": "",
+   "grant": "heavy copper tally-token",
+   "exits": [
+    "Slip away before the guards return"
+   ]
   }
  },
- "missing": [
-  "td-3-104",
-  "td-3-106",
-  "td-3-110",
-  "td-3-112"
- ]
+ "missing": []
 }

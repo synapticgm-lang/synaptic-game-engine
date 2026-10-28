@@ -84,9 +84,16 @@
    "exits": [
     "Leave the stall with a lighter purse"
    ]
+  },
+  "td-1-085": {
+   "title": "The Carved Ear-Bone",
+   "text": "Your cold thumb finds the flaw in the old man's scrimshaw, a hairline fracture running straight through the whale-ear whorl where salt has eaten the grain. You press the defect home with a dry, flat stare, naming a fraction of his copper demand until his watery eyes dart to the rafters and his trembling fingers surrender the green trinket. It rests in your palm like a cold pebble, smelling faintly of bilge and old tallow, but the small charm will turn the edge of a salt-chill or a greedy blade when the mist rolls heavy off the dead seabed.\n\n",
+   "check": "",
+   "grant": "green bone amulet",
+   "exits": [
+    "Step back into the grey press of the market"
+   ]
   }
  },
- "missing": [
-  "td-1-085"
- ]
+ "missing": []
 }

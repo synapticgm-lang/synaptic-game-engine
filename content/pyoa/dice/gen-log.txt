@@ -482,3 +482,45 @@
 2026-10-28T10:07:21.385Z ask fill td-1-032.json items=4
 2026-10-28T10:07:41.523Z filled td-1-032.json: still missing 0
 2026-10-28T10:07:49.529Z ask fill td-1-076.json items=1
+2026-10-28T10:08:06.683Z filled td-1-076.json: still missing 0
+2026-10-28T10:08:14.711Z ask fill td-3-072.json items=1
+2026-10-28T10:08:34.383Z filled td-3-072.json: still missing 0
+2026-10-28T10:08:42.403Z ask fill td-3-103.json items=4
+2026-10-28T10:09:12.095Z   reject td-3-106: missing
+2026-10-28T10:09:12.096Z   reject td-3-110: missing
+2026-10-28T10:09:12.097Z   reject td-3-112: missing
+2026-10-28T10:09:12.098Z filled td-3-103.json: still missing 3
+2026-10-28T10:09:20.111Z ask fill td-3-177.json items=1
+2026-10-28T10:09:39.801Z filled td-3-177.json: still missing 0
+2026-10-28T10:09:47.818Z ask fill td-4-088.json items=1
+2026-10-28T10:10:05.042Z   reject td-4-088: meta words
+2026-10-28T10:10:05.044Z filled td-4-088.json: still missing 1
+2026-10-28T10:10:13.065Z ask fill td-4-173.json items=7
+2026-10-28T10:10:35.309Z filled td-4-173.json: still missing 0
+2026-10-28T10:10:43.322Z ask fill td-5-032.json items=1
+2026-10-28T10:11:00.617Z   reject td-5-041: meta words
+2026-10-28T10:11:00.618Z filled td-5-032.json: still missing 1
+2026-10-28T10:11:08.640Z ask fill td-6-023.json items=2
+2026-10-28T10:11:28.324Z filled td-6-023.json: still missing 0
+2026-10-28T10:11:36.332Z finished fill run: calls 10
+2026-10-28T10:13:11.798Z ask fill td-3-103.json items=3
+2026-10-28T10:13:31.553Z   reject td-3-110: missing
+2026-10-28T10:13:31.555Z   reject td-3-112: missing
+2026-10-28T10:13:31.556Z filled td-3-103.json: still missing 2
+2026-10-28T10:13:39.584Z ask fill td-4-088.json items=1
+2026-10-28T10:13:56.870Z   reject td-4-088: meta words
+2026-10-28T10:13:56.873Z filled td-4-088.json: still missing 1
+2026-10-28T10:14:04.894Z ask fill td-5-032.json items=1
+2026-10-28T10:14:22.916Z filled td-5-032.json: still missing 0
+2026-10-28T10:14:30.935Z finished fill run: calls 3
+2026-10-28T10:15:49.852Z merge: sections 1000, with prose 997, missing 3, words 89693
+2026-10-28T10:15:58.021Z ask fill td-3-103.json items=2
+2026-10-28T10:16:15.498Z   reject td-3-112: missing
+2026-10-28T10:16:15.501Z filled td-3-103.json: still missing 1
+2026-10-28T10:16:23.522Z ask fill td-4-088.json items=1
+2026-10-28T10:16:43.325Z filled td-4-088.json: still missing 0
+2026-10-28T10:16:51.363Z finished fill run: calls 2
+2026-10-28T10:18:03.653Z ask fill td-3-103.json items=1
+2026-10-28T10:18:21.037Z filled td-3-103.json: still missing 0
+2026-10-28T10:18:29.092Z finished fill run: calls 1
+2026-10-28T10:18:35.612Z merge: sections 1000, with prose 1000, missing 0, words 90030

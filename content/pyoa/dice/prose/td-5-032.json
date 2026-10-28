@@ -77,9 +77,16 @@
    "exits": [
     "Gather the charts with trembling fingers"
    ]
+  },
+  "td-5-041": {
+   "title": "The Rebuilt Brain",
+   "text": "Copper threads cool beneath your fingertips, their bitter ozone sting fading as the automaton's bronze jaw clicks shut with the weight of centuries. It exhales a long, dry hiss of compressed steam and raises a stiff, clockwork hand to trace the air above the slab, projecting a flickering chart of pale light upon the stones. This map reveals every crusted sinkhole, shifting salt-flats hazard, and concealed trench across the entire breadth of the Low with chilling precision. The archivist tilts its copper cranium in a silent nod of absolute recognition, granting you its hard-won cartographic secret before returning its cold gaze to the trembling alignment levers.",
+   "check": "",
+   "grant": "precision map of the low",
+   "exits": [
+    "Step past the seated archivist toward the alignment levers"
+   ]
   }
  },
- "missing": [
-  "td-5-041"
- ]
+ "missing": []
 }

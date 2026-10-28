@@ -187,7 +187,7 @@ function problems(n, p) {
   const w = words(p.text);
   if (w < 55 || w > 280) e.push(`words ${w}`);
   if (!p.title || p.title.length > 48) e.push('title');
-  if (/@@|\b(dice|roll(ed)?|2d6|stat|target)\b|as an ai|\bsection\b/i.test(p.text)) e.push('meta words');
+  if (/@@|\b(dice|you rolled|2d6|d20|stat check|target number)\b|as an ai|\bsection\b/i.test(p.text)) e.push('meta words');
   if (n.kind === 'check' && (!p.check || p.check.length < 8 || p.check.length > 70)) e.push('check label');
   if (n.kind === 'reward' && (!p.grant || p.grant.length > 48)) e.push('grant');
   if (n.kind !== 'check' && !n.ending) for (let i = 0; i < n.exits.length; i++) if (!p.exits[i] || p.exits[i].length < 6 || p.exits[i].length > 72) e.push(`exit ${i + 1} label`);
@@ -228,6 +228,29 @@ async function runProse() {
   log(`finished prose run: calls ${calls}, batches done ${done}/${batches.length}`);
 }
 
+async function runFill() {
+  const O = loadOutline();
+  let calls = 0;
+  for (const f of readdirSync(join(DIR, 'prose'))) {
+    const fp = join(DIR, 'prose', f);
+    const j = JSON.parse(readFileSync(fp, 'utf8'));
+    if (!j.missing?.length) continue;
+    if (calls >= maxCalls) break;
+    const need = j.missing.map((id) => N.get(id));
+    const ids = need.map((n) => n.id);
+    const ctx = Object.entries(j.sections).slice(-3).map(([id, s]) => `${id} "${s.title}": ${s.text.split(/(?<=[.!?])\s/)[0]}`).join('\n');
+    log(`ask fill ${f} items=${need.length}`);
+    const reply = await call(prosePrompt(need, O, ctx), `fill-${f.replace('.json', '')}`); calls++;
+    const p = parseProse(reply);
+    for (const n of need) { const pr = problems(n, p.get(n.id)); if (!pr.length) j.sections[n.id] = p.get(n.id); else log(`  reject ${n.id}: ${pr.join(',')}`); }
+    const ord = {}; for (const n of NODES) if (j.sections[n.id]) ord[n.id] = j.sections[n.id];
+    j.sections = ord; j.missing = ids.filter((id) => !ord[id]);
+    writeFileSync(fp, JSON.stringify(j, null, 1));
+    log(`filled ${f}: still missing ${j.missing.length}`);
+    await sleep(8000);
+  }
+  log(`finished fill run: calls ${calls}`);
+}
 function runMerge() {
   const O = loadOutline();
   const prose = {};
@@ -253,5 +276,6 @@ function runMerge() {
 
 if (cmd === 'outline') await runOutline();
 else if (cmd === 'prose') await runProse();
+else if (cmd === 'fill') await runFill();
 else if (cmd === 'merge') runMerge();
 else { console.log('usage: gen-dice.mjs outline|prose|merge [--max N]'); process.exit(2); }

@@ -41,15 +41,66 @@
    "exits": [
     "Test your strength against the mechanism"
    ]
+  },
+  "td-4-177": {
+   "title": "Iron Against Bone",
+   "text": "Tremors shake the vaulted masonry as your fingers slip along the freezing iron of the primary lever. Orsolya throws her weight downward, her jaw set with the desperate finality of a lighthouse keeper watching her last flame die. Every muscle in your back fires as you plant your boots against the salt-crusted flagstones, striving to wrench the mechanism away from her grip before the counterweight drops into the locking groove.",
+   "check": "Wrench the iron from her grasp",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-178": {
+   "title": "The Slip of Leverage",
+   "text": "Friction burns the skin of your palms as Orsolya's superior leverage forces your arms back in a brutal arc of iron and salt. You stagger away from the console with a bruised shoulder and a shallow gash across your knuckles where the rusted locking pin bit deep. Breath rasps hot in your throat while she holds the heavy bar steady, her eyes steady and unyielding in the damp gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step back and watch her move"
+   ]
+  },
+  "td-4-179": {
+   "title": "Weight of the Lever",
+   "text": "Steel groans in protest as your sheer muscle overrides her desperate resistance, pivoting the heavy bar upward however narrowly. Orsolya stumbles back against the masonry, gasping for breath while her fingers curl into empty air where the control once was. A heavy brass locking pin slides home into the bulkhead with a satisfying thud, securing your authority over the mechanism at last.",
+   "check": "",
+   "grant": "Master of the Iron",
+   "exits": [
+    "Return to the final choice"
+   ]
+  },
+  "td-4-180": {
+   "title": "Words in the Deep",
+   "text": "Silence settles over the damp chamber save for the low, rhythmic dripping of subterranean brine against the stone floor. You lean against the cold iron of the control console, marshaling forgotten clauses from the old Gullmouth harbor ordinances and the ancient salvage pacts of the Tidewardens. Orsolya listens, her gaze dropping slowly from the catastrophic release valve to the pitted brass floorboards as the harsh lines of her resolve soften into reluctant agreement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press your advantage with ancient law"
+   ]
+  },
+  "td-4-181": {
+   "title": "Parsing the Old Oaths",
+   "text": "Words feel like dry sand in your mouth as you invoke the binding statutes of the first seal, searching for a flaw in her bleak calculation. Orsolya narrows her eyes, weighing your argument against the terrible silence of the dry seabed stretching miles above them. Your logic hangs suspended in the damp air, waiting to see whether she will accept your reasoning or dismiss it with a sweep of her hand.",
+   "check": "Outwit her with ancient statutes",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-182": {
+   "title": "Flawed Arguments",
+   "text": "Your tongue stumbles over a misplaced clause from the forgotten charters, and Orsolya cuts through your reasoning with a single scathing reminder of the costs. A dull ache throbs behind your temples, leaving you drained of breath and carrying the bitter sting of a lost argument. She turns back toward the console, refusing to yield an inch of ground to your faulty logic.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the defeat and watch"
+   ]
+  },
+  "td-4-183": {
+   "title": "The Reluctant concession",
+   "text": "Every syllable of your carefully constructed defense strikes true, slipping past her defensive walls however narrowly until her shoulders slump in exhaustion. She reaches into her oilskin coat and withdraws a heavy brass instrument, pressing its cool casing into your palm without a word of ceremony. It is a tool for finding true north when the seas have vanished from the earth.",
+   "check": "",
+   "grant": "A tarnished tide-compass",
+   "exits": [
+    "Face the turning of the gear"
+   ]
   }
  },
- "missing": [
-  "td-4-177",
-  "td-4-178",
-  "td-4-179",
-  "td-4-180",
-  "td-4-181",
-  "td-4-182",
-  "td-4-183"
- ]
+ "missing": []
 }
