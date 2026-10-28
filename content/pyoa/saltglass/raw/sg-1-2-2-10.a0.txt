@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION sg-1-2-2-10
+TITLE: The Cistern Hollow
+TEXT: Settled within the limestone hollow of a dry cistern, you share a scrap of greasy mutton fat with a lone charcoal-burner whose soot-blackened fingers tremble slightly against the warmth of your iron lamp. He speaks in low, raspy whispers about the crust thickening across the lower basin while your coal-glow chases the damp chill from his palms. // The embers hiss softly as the midnight draft finds a gap in the masonry, reminding you that twenty days will turn this dust to mud. You knot your oilskin tighter and look out toward the branching tracks that lead deeper into the white expanse.
+EXIT 1: Step out onto the cracking alkali flats
+EXIT 2: Pick your way toward the silent wind-pump
+EXIT 3: Follow the coral marker near the old trail
+@@END
+@@SECTION sg-1-2-2-11
+TITLE: The Sheep Shelter
+TEXT: Crouched behind the low rubble of a stone sheep-shelter, you freeze as a startled hare bolts from the amber beam cutting across the grey dust. Its frantic paws scratch against loose grit before it vanishes into the blackness of the scrub. Your banked lantern casts long, dancing shadows of dry thistle against the mortarless wall while the wind hums a low, hollow note through the stones. // Every nerve stays tight against the silence of the rim road, waiting to see if the movement drew any unwanted attention from the ridge above.
+EXIT 1: Climb toward the windy lip of the dry wash
+EXIT 2: Cross the brittle crust of the alkali sump
+EXIT 3: Seek shelter by the dismantled metal pump
+@@END
+@@SECTION sg-1-2-2-12
+TITLE: The Iron Shackle
+TEXT: Dragging your boots past the rusted tracks of the old basin-haul, a discarded iron shackle suddenly snags the hem of your heavy wool cloak. You pause in the dark, keeping your lantern tightly shuttered so its glow remains a secret against the salt-bleached sleepers. Working the metal free requires slow, careful fingers that must not scrape against the iron and ring out across the flats. // The night air tastes of old grease and oxidized steel as you weigh your next step along the edge of the abandoned railway.
+EXIT 1: Inspect the rusted shadows of the iron pump
+EXIT 2: Pass the fossil coral milestone in the dark
+EXIT 3: Slip through the withered hedge by the fence
+@@END
+@@SECTION sg-1-2-2-13
+TITLE: The Irrigation Ditch
+TEXT: Walking across the chalky bed of the dead irrigation ditch, you watch a silent owl swoop low toward the amber glass of your swinging chimney, its wings brushing the dry air just inches from your shoulder. The bird veers away into the grey dark, startled by the steady pulse of bottled heat you carry against the cold. Your boots crunch softly over sun-baked clay that has not seen water since the great reservoirs shrank behind the western hills. // The path splits ahead where the shadows of the old perimeter merge with the open flats.
+EXIT 1: Check the dark base of the skeletal wind-pump
+EXIT 2: Head toward the fossil coral milestone ahead
+EXIT 3: Squeeze through the gap in the withered hedge
+@@END
+@@SECTION sg-1-2-2-14
+TITLE: The Parish Thorn
+TEXT: Pausing beneath the gnarled, twisting boughs of the parish thorn-tree, you notice a clay flask of sour small-beer half-buried in the grey silt near the exposed roots. The liquor has turned bitter with age, but someone left it here as a meager offering or a desperate marker before heading out into the grey expanse. Your lamp illuminates the dry fissures in the soil around the trunk while the distant wind rattles the high fences. // You can press onward into the dark or retrace your steps toward the safety of the lower square before the night deepens further.
+EXIT 1: Traverse the grey silt of the duck-pond
+EXIT 2: Skirt the crumbling brick foundation of the customs house
+EXIT 3: Turn back toward the oil-scummed horse-trough
+@@END
+@@SECTION sg-1-2-2-15
+TITLE: The Lime-Stack Watch
+TEXT: Tucked against the towering flank of the lime-stack where the parish boundary ditch widens into a deep cut, a muffled cough betrays a watcher who clearly expected you an hour ago. You drop your hand instinctively toward the warmth of your coat as a silhouette shifts behind the white dust-motes kicked up by the wind. Whoever waits in the chalk-dust has business on the rim road, and their patience is wearing as thin as the boundary wire overhead. // You choose your footing carefully before addressing the shadow in the lime-smoke.
+EXIT 1: Slide through the gap in the dry hawthorn hedge
+EXIT 2: Approach the cold draught near the customs foundation
+@@END
+@@SECTION sg-1-2-3-0
+TITLE: The Marl Ridge
+TEXT: Climbing the shoulder of the low marl ridge, the steady beam of your lamp startles a family of desert-rats scuttling headlong into an abandoned drainage pipe. The corrugated metal echoes with their frantic claws as they vanish into the subterranean dry. You adjust the heavy strap of your seedkey pouch across your chest, making sure the cold ceramic talisman rests securely against your ribs where no thief can easily reach it. // The path ahead winds upward into the teeth of the rising wind.
+EXIT 1: Push onward to the final broken shale switchback
+@@END
+@@SECTION sg-1-2-3-1 | kind: wide | 80 to 140 words
+TITLE: The Aqueduct Arch
+TEXT: Walking beneath the skeletal arch of the old suspension aqueduct, you plunge into absolute pitch-darkness, relying entirely on the rhythmic scrape of salt-shod boots ahead of you to keep your bearings. The massive concrete pillars loom like ancient ribs against the starlight, groaning faintly under the dry thermal shift of the desert night. Your lamp-chimney glows like a single ember in a vast cavern of hollow stone and forgotten engineering. // Every instinct tells you to keep moving before the silence closes in entirely.
+EXIT 1: Press on toward the final shale switchback
+@@END
+@@SECTION sg-1-2-3-2
+TITLE: The Telegraph Stump
+TEXT: Reaching the concrete stump of the telegraph relay, a discarded brass signal-mirror catches the weak, scattered starlight, flashing a dull sliver of silver just above your hooded burner. You shield the glass instantly, knowing how far a reflection can travel across the flat, mirror-like crust of the dried basin when the morning or night air is clear. The copper wires overhead hum a low, monotonous chord that vibrates directly through the soles of your boots. // You weigh your direction between the drop-off and the path back.
+EXIT 1: Scale the final switchback toward the broken shale
+EXIT 2: Pick your way along the edge of the quarry-cut
+EXIT 3: Turn back to warm your chilblains by the granary gate
+@@END
+@@SECTION sg-1-2-3-3
+TITLE: The Alkali Flat
+TEXT: Crossing the wide alkali flat where the scrub-oak grove died during the previous drought, the wind whistles through your gear with a dry, rattling hiss like dry bones shifting in a sack. The salt crust beneath your boots is hard enough to bear your weight, but it groans occasionally with a hollow, threatening timbre. Your ember-lamp casts a warm, flickering circle of yellow light that barely pushes back the immense, starlit emptiness of the dying sea. // Two distinct routes open before you across the white expanse.
+EXIT 1: Approach the black drop of the western quarry-cut
+EXIT 2: Follow the white cairn stones along the high ledge
+@@END

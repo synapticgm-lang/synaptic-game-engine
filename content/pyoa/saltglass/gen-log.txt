@@ -77,3 +77,7 @@
 2026-10-28T11:02:40.210Z ask prose sg-d-1-1..sg-1-2-1-5 items=7 attempt=1
 2026-10-28T11:03:08.782Z done sg-d-1-1: 10/10 model=Flash-Lite
 2026-10-28T11:03:08.783Z ask prose sg-1-2-2-0..sg-1-2-2-9 items=10 attempt=0
+2026-10-28T11:03:40.091Z done sg-1-2-2-0: 10/10 model=Flash-Lite
+2026-10-28T11:03:40.092Z ask prose sg-1-2-2-10..sg-1-2-3-3 items=10 attempt=0
+2026-10-28T11:04:12.906Z   reject sg-1-2-3-1: missing
+2026-10-28T11:04:18.918Z ask prose sg-1-2-2-10..sg-1-2-3-3 items=1 attempt=1
