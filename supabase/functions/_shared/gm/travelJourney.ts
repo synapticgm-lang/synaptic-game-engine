@@ -119,3 +119,34 @@ export function writerEngineResult(fact: string, subject?: string): string {
 export function isJourneyUnderway(state: Pick<GameState, 'journey'>): boolean {
   return !!state.journey && state.journey.legsDone < state.journey.legsTotal;
 }
+
+/**
+ * Stub semantics (T10AJ-fix): road meetings arrive in the packet from the client.
+ * Same predicates as src/game/travelJourney.ts so scenePresence can boot on edge.
+ * No road meeting on the edge unless journey.encounter already says so.
+ */
+export function roadMeetingOver(enc: {
+  engaged?: boolean;
+  escaped?: boolean;
+  lost?: boolean;
+} | null | undefined): boolean {
+  return !!enc && (!!enc.engaged || !!enc.escaped || !!enc.lost);
+}
+
+const ROAD_MEETING_LABEL: Record<string, string> = {
+  wildlife: 'wildlife',
+  traveler: 'a traveler',
+  meeting: 'a stranger',
+  thugs: 'thugs',
+  camp: 'a camp',
+  undead: 'the restless dead',
+  monster: 'a monster',
+  villain: 'a villain',
+  signs: 'signs on the way',
+  plea: 'someone in need',
+  lair: 'a lair',
+};
+
+export function roadMeetingLabel(kind: string): string {
+  return ROAD_MEETING_LABEL[kind] ?? kind;
+}

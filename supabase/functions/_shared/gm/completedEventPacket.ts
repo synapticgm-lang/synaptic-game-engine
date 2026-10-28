@@ -3,7 +3,7 @@
  * Code resolves facts first; the writer only narrates a completed event in past tense.
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types.ts';
-const foeCanSpeak = (_id: string | undefined | null) => true;
+function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName.ts';
 import { isCrowdFillerToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';

@@ -88,11 +88,14 @@ export function peopleHere(state: GameState): string[] {
     add(roadMeetingPeople(state));
     return [...out.values()];
   }
-  presentNpcNames(state).forEach(add);
+  // T10V-fix / T10AJ-fix — opening cast enriches a seated scene only. An empty
+  // present[] must not invent card cast as listeners (empty-scene speech cue).
+  const seated = presentNpcNames(state);
+  seated.forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   // Namespace read so vitest openingCastNames mocks stay live (no stale named binding).
-  if (openingEstablishment.openingCastStillHere(state)) {
+  if (seated.length > 0 && openingEstablishment.openingCastStillHere(state)) {
     openingEstablishment.openingCastNames(state).forEach(add);
   }
   add(roadMeetingPeople(state));
