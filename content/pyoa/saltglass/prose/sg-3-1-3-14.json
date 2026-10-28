@@ -1,0 +1,88 @@
+{
+ "batch": "sg-3-1-3-14",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-1-3-14": {
+   "title": "Prisms in the Dust",
+   "text": "Thousands of tiny prisms dangle from the fractured ribwork of the gallery ceiling, catching the pale desert moon and scattering it into blinding, violet arcs across the floor. Every step crunches against brittle shards that hum like tuning forks under your boots. The air tastes of ozone and dry alkali, thick enough to coat your tongue. Ahead, the corridor splinters into two distinct paths, while the way you entered lies silent behind a veil of drifting crystalline dust.",
+   "exits": [
+    "Follow the northern passage through the amber haze",
+    "Creep down the descending stair toward the darker vaults",
+    "Turn back toward the obsidian balcony"
+   ]
+  },
+  "sg-3-1-3-15": {
+   "title": "The Rusted Barricade",
+   "text": "A heavy iron gate blocks the mouth of the alley, its thick bars pitted and rusted solid by decades of alkaline desert winds blowing across the Basin. Coarse salt crystals crust the hinges, locking the metal in a stubborn grip that refuses to budge under a casual shove. You test the bars with your shoulder, the dry metal cold and unyielding against your heavy canvas coat.",
+   "exits": [
+    "Squeeze past the jammed iron barrier"
+   ]
+  },
+  "sg-3-1-4-0": {
+   "title": "Falling Shards",
+   "text": "Jagged chunks of stained glass hang precariously overhead in a vaulted ceiling rendered fragile by thermal shock and endless salt-storms. A sudden crack echoes above, and you throw yourself sideways as a massive fragment plummets, bursting into a cloud of razor-sharp dust that settles over your boots. Breathing heavily in the alkaline air, you look up to find your route divided by the debris.",
+   "exits": [
+    "Climb the spiralling glass stairs",
+    "Press flat against the warm wall"
+   ]
+  },
+  "sg-3-1-4-1": {
+   "title": "The Sentry at the Lens",
+   "text": "A lone glass-diver named Vane stands beside a brass telescope mounted on a pedestal of fused green slag, ignoring your presence entirely as he tracks the horizon for signal flashes. His coat is stiff with dried salt and his fingers are bandaged with strips of oiled linen. You crouch low in the shadow of a basalt buttress, waiting for a chance to slip past his narrow field of vision.",
+   "exits": [
+    "Dash toward the humming signal-tower"
+   ]
+  },
+  "sg-3-1-4-2": {
+   "title": "The Sun-Disc Ascent",
+   "text": "Massive fragments of a fallen solar mirror lean against the masonry like giant bronze coins dropped by some careless titan of the old world. You squeeze your frame through the narrow gap behind the heavy metal, discovering a set of subterranean stone stairs descending into darkness. The air rising from the depths smells of damp earth and old copper rather than dry salt.",
+   "exits": [
+    "Descend into the bronze-scented stairwell",
+    "Slip sideways along the sun-warmed wall"
+   ]
+  },
+  "sg-3-1-4-3": {
+   "title": "The Howling Glass Towers",
+   "text": "Gale-force winds scream through the narrow canyon formed by the towering, hollow monoliths of the Old Lensfolk, carrying razor-sharp salt spray that stings your cheeks. Each gust makes the glassy walls resonate with a deep, mournful hum that vibrates straight through your boots and into your teeth. You cling tightly to your ember-lamp, shielding its precious glow with your coat as you try to steady your footing on the slick, crystalline pavement. Two paths present themselves amidst the roaring gale: a spiralling ascent carved into the side of an adjacent tower, and a heavy, slightly ajar bronze portal at the base of the nearest structure.",
+   "exits": [
+    "Climb the spiralling glass stairs upward",
+    "Step through the ajar bronze door"
+   ]
+  },
+  "sg-3-1-4-4": {
+   "title": "Slag and Drums",
+   "text": "Your boots slide across a steep incline of blue glass slag that shatters beneath your weight with the sound of breaking porcelain. Far off across the white flats, deep rhythmic drums beat against the stone, signalling an armed patrol of the Salt Court moving between the lower tiers. You drop to one knee, letting the silence swallow your breath as you choose where to run.",
+   "exits": [
+    "Flatten against the warm glass facade",
+    "Hurry toward the glowing sanctum threshold"
+   ]
+  },
+  "sg-3-1-4-5": {
+   "title": "The Talisman Broker",
+   "text": "A nervous broker named Jora steps out from behind a shattered archway, waving a string of hollow glass beads and whispering frantic offers of protection against the coming monsoon floods. His eyes dart nervously toward the upper balconies while he thrusts the worthless trinket toward your chest. You brush past his outstretched hands, keeping your gaze fixed on the paths ahead.",
+   "exits": [
+    "Ascend the spiralling stair toward the tower",
+    "Press flat against the sun-baked wall"
+   ]
+  },
+  "sg-3-1-4-6": {
+   "title": "The Foundry Postern",
+   "text": "A low postern gate stands half-open in the massive exterior wall of the old lens-foundry, its hinges greased with animal fat to keep them silent. You slip through the narrow opening into a courtyard strewn with discarded prisms and cooling vats. Faint light spills from an interior doorway, cutting a sharp beam across the grey flagstones.",
+   "exits": [
+    "Approach the beacon at the base",
+    "Enter the glowing tower threshold",
+    "Retrace your steps past the basalt pillar"
+   ]
+  },
+  "sg-3-1-4-7": {
+   "title": "The Salt-Edge Path",
+   "text": "The ground narrows until it becomes a razor-edge ridge of packed white salt, dropping away on both sides into the dark, silent abyss of the dry sea basin. Every step requires absolute concentration as the salt crust crumbles beneath your heels into powdery dust. You keep your arms outstretched for balance, your eyes fixed on the stable structures rising ahead.",
+   "exits": [
+    "Climb the winding glass stairs",
+    "Head toward the open bronze doorway",
+    "Step inside the glowing sanctum entrance"
+   ]
+  }
+ },
+ "missing": []
+}
