@@ -1,44 +1,54 @@
 Gemini said
 
 @@SECTION td-1-142
-TITLE: Nest of the Scuttling Shell
-TEXT: Blood beads on the web of your thumb where the creature bit, yet your other hand holds firm beneath the dry hollow of salt-crust. Shifting sand spills away to reveal a tight cluster of bioluminescent spheres, cool and heavy as wet pebbles in your palm. You pocket the prize while the pale thief darts further down the dune into the grey haze of the Low. // GRANT: bioluminescent dune-pearls
-EXIT 1: Follow the salt-ridge back north
+TITLE: Nest of the Chitin
+TEXT: Blood beads on the web of your thumb where the creature bit down, but your other hand fastens like a vice around the smooth, bioluminescent shell before it can dart beneath the hull ribs. You wrench it free from the damp sand, ignoring the frantic twitch of its stalked eyes, and prize the cluster of glowing pearls from the clustered barnacles of its nest. However narrowly, you secure the prize and rise to your feet as the salt-wind howls across the bare seabed.
+GRANT: Bioluminescent pearl cluster
+EXIT 1: Trace the path back to the dunes
 @@END
 @@SECTION td-1-143
-TITLE: Voices in the Shifting Sand
-TEXT: Laughter drifts from a hollow between bleached ribs of a stranded merchant galley, light and musical like girls skipping on a wharf. You press knuckles to your teeth, tasting salt and old iron, and pick out the deliberate cadence beneath the phantom weeping. A gold-banded signet lies half-buried in the silt, catching a sickly green smear of sun where the true current once ran. // EXIT 1: Pocket the heavy gold ring
+TITLE: Voices of the Low
+TEXT: Shifting dunes hide the skeletal remains of schooners long swallowed by the brine, and every gust across the exposed flats carries the terrible, weeping cadence of men drowning in a calm sea. You plug your ears with greasy wool and force your boots through the drifts, keeping your eyes fixed on the rusted iron spike that marks the Brineholder perimeter. Among the rib bones of a shattered whaling brigantine, a heavy gold signet ring catches the dull grey light, stamped with the crest of the water-lords.
+EXIT 1: Pocket the heavy golden ring
 @@END
 @@SECTION td-1-144
-TITLE: Listening Through the Drowned Shouts
-TEXT: Cries for help echo from every dune crest, calling your mother's name and the names of men who went down with the tide three summers ago. You must pick the single genuine ring of metal against stone from the wet wind's mockery without turning your head to look. // CHECK: Listen for the true metal
+TITLE: Echoes in the Drift
+TEXT: Salt-crusted timbers groan underfoot as you pick your way through a hollow basin where the wind plays cruel tricks upon the ear, mimicking the frantic dying gasps of shipmates lost years ago. You pause by a half-buried cargo hatch, straining to separate the real scrape of metal from the phantom gurgling of the tide-ghosts, knowing that a single misstep into the shifting silt will pin you beneath the wrecks.
+CHECK: Discern the false echoes from reality
 @@END
 @@SECTION td-1-145
-TITLE: Fooled by the Hollow Echo
-TEXT: A voice screaming your own childhood nickname rises directly beneath your left boot, sharp enough to make you lurch aside onto a crust of rotten salt. Your heel breaks through into a pocket of stinking black mud that drags you knee-deep, bruising your shin against a buried timber and soaking your woolen hose in brine. // EXIT 1: Drag yourself from the mire
+TITLE: False Cries of the Drowned
+TEXT: A sudden wail splits the air right beside your ear, so sharp and human that you lurch aside in blind panic, plunging your right leg deep into a hidden sinkhole of black, briny sludge. The cold mud sucks at your thigh like a mouth, dragging you down until your chest presses hard against the encrusted salt-crust while your pack tears on a hidden iron spar. You wrench yourself free with a breathless heave, dragging a bruised shin and a ruined coat back to firm ground.
+EXIT 1: Crawl clear of the treacherous basin
 @@END
 @@SECTION td-1-146
-TITLE: The Ring in the Silt
-TEXT: Silence follows your deliberate stillness as you trace the true pitch of the wind against the hull-ribs until your fingers strike hard gold. You lift the heavy signet free of the damp sand, its Brineholder crest fouled with dried kelp but the metal unbent. // GRANT: Brineholder signet ring
-EXIT 1: Return to the dunes below Gullmouth
+TITLE: Spoils of the Salt-Wastes
+TEXT: Cold brine stings the raw scratch across your ribs where the iron spar bit deep, but your fingers stay clamped tight around the heavy gold signet ring resting in the grey silt. However narrowly, you master the deceptive whispers of the basin and pocket the water-lord's heirloom before the phantom tide can rise again in your skull.
+GRANT: Brineholder signet ring
+EXIT 1: Return to the singing dunes
 @@END
 @@SECTION td-1-147
 TITLE: Threshold of the Sunken Stair
-TEXT: Iron doors stand unlatched in the cliff-face beneath the old salt-warehouses, weeping cold brine down steps worn slick by centuries of boots. Below that darkness lies the rusted throat of the world, where the great mechanism waits silent and jammed against the rock. No gulls cry over this opening, and the air smells of old grease and stagnant deep water. // EXIT 1: Descend into the wet dark
+TEXT: Iron gates of ancient, salt-pitted brass gape open in the cliff face where the foundations of Gullmouth plunge downward into the living rock of the coast. Below lies the spiral shaft of the Sunken Stair, dropping straight into the dark toward the jammed Meridian Gear and the silent domain of the Hollow Choir. Orsolya Venn left no word upon her heavy oak desk save for this damp drop, and the salt-crust on the stone steps bears fresh boot-prints that do not belong to a wrecker. You adjust the heavy strap of your canvas pack, grip the cold iron of your hand-axe, and step over the threshold into the damp gloom.
+EXIT 1: Descend into the dark shaft
 @@END
 @@SECTION td-1-148
-TITLE: Carving the Driftwood Idol
-TEXT: Knife-blade curls pale juniper ribbons from the timber while the pilgrims murmur prayers against your sleeve, their skin grey with salt-dust. You pare the smooth wood until the flat-eyed face emerges, blank and severe enough to satisfy men who worship an empty seabed. // EXIT 1: Hand the carving to the pilgrims
+TITLE: Offerings for the Pilgrims
+TEXT: Driftwood pulled from the rib of a stranded schooner yields under your knife like cheese, curling into long pale shavings that smell of old kelp and stagnant bilge. You shape the rough block into a crude, eyeless idol with salt-crusted hands, knowing the wandering zealots on the flats will trade their blessed salt for any carved wood that looks enough like a drowned god. The pilgrims squat by their canvas tents in the lee of a copper freighter, watching your blade with hungry, sunken eyes.
+EXIT 1: Trade the driftwood carving for salt
 @@END
 @@SECTION td-1-149
-TITLE: Shaping the Scale Peg
-TEXT: Beechwood turns under the narrow chisel until the pin drops smooth and true into your palm, smelling faintly of old varnish and sea-rot. The pawn-widow tests it against her brass counter-weight with a dry nod, sliding a grease-wrapped vial of green kelp extract across the scarred wood. // EXIT 1: Take the vial and turn away
+TITLE: The Pawnbroker's Peg
+TEXT: Hard oak heartwood curls away from the chisel in thin, sweet-smelling ribbons as you turn the small lathe in the dim back room of the pawn-widow's house. The brass beam of her weighing scale rests unevenly on the counter, but this new peg-joint restores the balance true to a hair, earning a grudging nod from behind the iron grille. She shoves a small, stoppered vial of greenish medicinal kelp extract across the scarred wood without a word of thanks.
+EXIT 1: Pocket the healing kelp extract
 @@END
 @@SECTION td-1-150
-TITLE: Hauling the Water Crate
-TEXT: Hemp ropes bite deep into your palms as you heave the dripping oak crate up from the Customs cellar into the dry air of the lane. The merchant wipes salt from his forehead and shoves a heavy lead token into your pocket without a word of thanks. // EXIT 1: Pocket the heavy lead token
+TITLE: Hauling for the Guild
+TEXT: Oak crates bound with rusted wire bite into your palms as you heave the heavy cargo up from the damp cellar beneath the tavern floor, breathing in the stale stench of bilge and spilled ale. The secret stash of fresh water is worth its weight in silver teeth since the sea vanished, and the guild boss watches your shoulders strain with an appraising squint. He flips a small, notched copper token across the barrels, telling you to show it at the winch-house if you want back-alley passage past the Customs-Priest.
+EXIT 1: Take the notched copper token
 @@END
 @@SECTION td-1-151
-TITLE: Picking the Iron Ward
-TEXT: A thin wire turns twice inside the rusted brass housing until the internal tumblers drop with a dry, greasy snap that only the wind swallows. You lift the warped lid of the ledger-box to find three silver groats resting beneath a dry rosette of pressed sea-lavender. // EXIT 1: Lift the silver from the box
+TITLE: The Harbourmaster's Safe
+TEXT: Rust flakes off the brass tumblers in tiny orange scales under the gentle prod of your bent wire, while the wind rattles the broken weather-vane high above the abandoned clapboard office. Inside the dark desk drawer sits a leather pouch fat with old coinage, left behind when the harbourmaster fled inland three days ago before the tide went out. You lift the iron latch with infinite care, listening for the snap of any crude trip-wire hidden in the dust.
+EXIT 1: Scoop the heavy coin pouch
 @@END
