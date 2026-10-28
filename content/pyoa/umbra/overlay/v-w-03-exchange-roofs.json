@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-03-exchange-roofs",
+ "variants": [
+  {
+   "node": "up-w-exchange-roofs",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "Below the slate edge, the faint but frantic ringing of alarm bells rises from the courtyard; the grandmaster's lock you forced open on the undervault has drawn a swarm of furious watchmen."
+  },
+  {
+   "node": "up-w-exchange-roofs",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Sable crouches low against a soot-stained chimney, muttering that the street patrols look twice as thick because the panicked almoner you spared has surely sung your description to the Guard."
+  },
+  {
+   "node": "up-w-undervault-stair",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Your hands remain perfectly steady against the freezing steel, hardened by the brutal thud of the almoner plummeting to the cobbles earlier tonight; one more broken thing will hardly trouble your stained conscience."
+  },
+  {
+   "node": "up-w-undervault-stair",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "The stiff, coarse canvas of your porter's livery scrapes loudly against the narrow brick walls, a heavy and stifling garment that makes it difficult to bend your knees before the forbidding ironwork."
+  },
+  {
+   "node": "up-w-ledger-room",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "Leaving the shattered grandmaster's lock exposed downstairs was a necessary risk, but the brazen trail of forced steel you left behind explains exactly how their agents traced your movements to this room."
+  },
+  {
+   "node": "up-w-ledger-room",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Armed with the damning evidence from the sealed counter-ledgers, you trace the matching strokes of handwriting with grim satisfaction, understanding perfectly well that Matron Rigg and Lord Valerius share the very same inkwell."
+  }
+ ]
+}

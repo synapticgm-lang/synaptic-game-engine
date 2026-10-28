@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-r-silk-balcony | witness=bought
+The turnkey's silence cost you a dangerous promise, and now you understand why he looked so frightened when he accepted it; he knew exactly whose gold was already unlocking Sable's cell. Your whispered debt remains unpaid, lingering in the shadows of the silk house.
+@@END
+@@INSERT up-r-foundry-gallery | rigg=allied
+Already sheltered beneath her syndicate's heavy iron wing, you feel the weight of your prior alliance shift. She extends her protection once more, expecting you to act as her personal bloodhound in return for this sanctuary.
+@@END
+@@INSERT up-r-foundry-gallery | cabal=known
+Listening to her feign ignorance about the gaol book, you bite your tongue, recalling the matching handwriting in the vault's counter-ledgers. She and Valerius share a single purse, making this entire interrogation a beautifully orchestrated piece of theatre.
+@@END
+@@INSERT up-r-foundry-gallery | faceKnown=yes
+Beneath the gallery's gaslight, her wardens stare at you with mounting suspicion, their eyes flicking toward the fresh sketches circulating amongst the city watch. The fleeing witness has ensured your features are an open secret, making it dangerous to linger.
+@@END
+@@INSERT up-r-foundry-gallery | witness=dropped
+A faint smear of the turnkey's blood still darkens your cuff, a grim testament to the deadly shove that ensured his permanent silence. Rigg's frantic search for leaks in her gaol will never uncover the man lying broken on the cobblestones.
+@@END
+@@INSERT up-r-eclipse-begins | valerius=allied
+Lord Valerius’s silken guarantees of safety offer no shield against a high-calibre rifle in the freezing dark. You accepted his polite patronage, yet his expensive protection stops precisely where Sable's hunting grounds begin.
+@@END
+
+Would you like me to draft inserts for any other specific choices or pages within "The Umbra Protocol"?

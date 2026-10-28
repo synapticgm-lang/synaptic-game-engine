@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-l-press-yard | cabal=known
+Having read the vault's counter-ledgers, you know precisely how to structure the broadsheet to expose both Valerius and Rigg. The shared handwriting of their secret syndicate provides the perfect model for the typeface you now arrange.
+@@END
+@@INSERT up-l-press-yard | valerius=allied
+Lord Valerius’s promise of protection lingers as a faint scent of wine in your memory, guiding your hands away from his silk houses. You carefully omit his name from the galleys, ensuring the polite menace of your patron remains untarnished in the morning editions.
+@@END
+@@INSERT up-l-press-yard | rigg=allied
+Matron Rigg’s iron-clad warrants guarantee your safety only as long as her rivals bleed upon these printed pages. You meticulously arrange the lead letters to spare her foundry, securing her favour whilst condemning those who oppose her to the gaol books.
+@@END
+@@INSERT up-l-press-yard | witness=bought
+The terrified deacon who dressed the Archbishop still holds your whispered promise like a blade over your neck. You make certain to leave his parish unmentioned in the text, honouring the debt before he finds the courage to speak to the Guard.
+@@END
+@@INSERT up-l-forger-desk | cabal=known
+Because you deciphered the vault ledgers, you effortlessly replicate the singular cursive that secretly unites Lord Valerius and Matron Rigg. It is a bitter irony to draft their downfall using the exact penmanship of their own hidden cabal.
+@@END
+@@INSERT up-l-forger-desk | cover=cloak
+Swathed in the dead Archbishop's heavy cloak, you catch the scent of stale incense and old paper rising off the velvet collar. The stolen garment settles around your shoulders like an investiture, lending a macabre authenticity to the lies flowing from your nib.
+@@END
+
+Are there any other locations or specific tracks you'd like to flesh out inserts for?

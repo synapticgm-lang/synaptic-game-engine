@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-13-pigeon-cage",
+ "variants": [
+  {
+   "node": "up-l-pigeon-cage",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "As you unspool the ribbon, the brass-stamped letters spell out your exact features, confirming the surviving witness has already spoken to the Guard. The great houses know precisely whose face to hunt across the rooftops tonight."
+  },
+  {
+   "node": "up-l-pigeon-cage",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Scanning the original text, your blood runs cold at the mention of a crushed deacon beneath the bell tower. They have found the body you pushed, and this mechanical messenger was carrying a warrant for a murderer, not a mere thief."
+  },
+  {
+   "node": "up-l-portraitist",
+   "when": {
+    "cover": "cloak"
+   },
+   "after": "Beneath the harsh glare of the lamps, the heavy velvet and gold embroidery of the murdered Archbishop's mantle catches the painter's sharp eye. He raises a brow at the stolen ecclesiastical finery, undoubtedly factoring the severe risk of harbouring you into his rapidly calculating price."
+  },
+  {
+   "node": "up-l-portraitist",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "The artist's gaze lingers on the uneven stitching of your disgraced tailor's debt coat, a garment that marks you as a creature of the city's underbelly. He sneers slightly at the cheap wool, knowing immediately that you must pay for your subterranean salvation in brass coin rather than credit."
+  },
+  {
+   "node": "up-l-portraitist",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Dressed in a porter's rough, mud-splattered livery, you look absurdly out of place among the gilded frames and drying aristocratic portraits. The artist visibly stiffens at the intrusion of a common labourer into his sanctum, clutching his sable brush like a weapon against the soot you bring."
+  },
+  {
+   "node": "up-l-portraitist",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "Having already traded a dangerous whispered promise to buy the deacon's silence tonight, you dread incurring yet another heavy debt. Nevertheless, the painter's expectant silence demands payment, forcing you to wager even more of your future against the encroaching watchmen."
+  }
+ ]
+}

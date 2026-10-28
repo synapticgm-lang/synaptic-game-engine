@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-l-silk-annex | valerius=allied
+Having previously accepted his hospitality and protection, you recognise the vintage in the glass he offers; it is a claret that tastes of false security. His polite menace is now a familiar, binding weight upon your shoulders as his runners guard the outer doors.
+@@END
+@@INSERT up-l-silk-annex | cabal=known
+The counter-ledgers from the vault burn in your mind, reminding you that this perfumed aristocrat and the iron-fisted Matron share the exact same handwriting. Knowing his bitter rivalry is an elaborate fiction gives you a dangerous, silent advantage against his calculating smile.
+@@END
+@@INSERT up-l-silk-annex | faceKnown=yes
+Because you let the terrified deacon escape the bell tower alive, Valerius already knows exactly whose features hide beneath the stolen clerical hood. There is no anonymity left to barter with, only the desperate currency of the brass-bound ledger in your hands.
+@@END
+@@INSERT up-l-iron-foundry | rigg=allied
+Accepting her patronage once before has earned you a sliver of grudging respect amidst the smoke, though her warrants still loom like a guillotine. The iron token she extends is merely a heavier, permanent shackle to seal the pact you already struck.
+@@END
+@@INSERT up-l-iron-foundry | cabal=known
+Beneath the soot and brutal authority, you recognise the meticulous penmanship from the vault's secret records, binding her iron syndicate directly to Valerius's silk. Her manufactured war is a lie, rendering the sanctuary she offers as treacherous as the enemies she pretends to fight.
+@@END
+@@INSERT up-l-iron-foundry | faceKnown=yes
+Your features are already sketched in the gaol books thanks to the fleeing deacon who witnessed your escape in the Archbishop's garments. She stares straight through the masquerade of the heavy cloak, armed with a perfect description of the hunted night-crow.
+@@END
+
+Would you like me to draft inserts for any other tracks or locations in Veridia?

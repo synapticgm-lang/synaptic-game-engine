@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-r-her-perch | rigg=allied
+Matron Rigg’s iron-stamped warrant still burns in your pocket, a symbol of the gaol where you left Sable to rot. The turnkey's heavy boots must have paced past her cell daily, and now she intends to make the Matron's favourite night-crow pay for every hour spent behind those bars.
+@@END
+@@INSERT up-r-rival-final | cabal=known
+Those counter-ledgers in the vault proved the silk and iron houses are a single monstrous cabal writing in one hand, meaning any elite buyer is simply paying you with their own stolen coin. Sable thinks she understands the board, but she cannot see the invisible threads tying her wealthy targets together.
+@@END
+@@INSERT up-r-rival-final | valerius=allied
+Lord Valerius expects his new asset to deliver the brass-bound book intact, trusting his polite menace to shield you from rooftop snipers. His silk-clad runners are waiting to line your pockets with promised silver, provided you survive long enough to bring the Archbishop's secrets into his elegant, wine-scented parlour.
+@@END
+@@INSERT up-r-rival-final | valerius=betrayed
+Spurning the silk houses means Valerius’s vicious runners are already combing the cobblestones for your broken body. If Sable’s heavy iron bolt does not skewer you against the brickwork, the Lord’s polite but merciless agents will gladly finish the job before you can publish a single secret.
+@@END
+@@INSERT up-r-rival-final | rigg=allied
+Carrying the Matron's iron protection guarantees you safe passage through the gaol yards, but her warrants offer no shelter from a sniper's vantage point. Rigg expects her chosen operative to survive this crossing and secure the ledger, eager to lock away the Archbishop's debtors under her own syndicate's heavy padlocks.
+@@END
+@@INSERT up-r-rival-final | rigg=betrayed
+Betraying the iron foundry has left you entirely exposed, with Rigg’s baton-wielding watchmen sealing off the streets below. Sable likely bribed the very turnkey who booked her to learn your whereabouts, turning the Matron's furious network into the perfect hunting snare for a cornered night-crow.
+@@END

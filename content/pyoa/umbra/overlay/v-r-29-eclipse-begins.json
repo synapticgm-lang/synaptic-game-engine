@@ -1,0 +1,47 @@
+{
+ "batch": "v-r-29-eclipse-begins",
+ "variants": [
+  {
+   "node": "up-r-eclipse-begins",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "The rough wool of your porter's livery offers little warmth against the sudden chill, but its drab, unassuming cut helps you blend seamlessly into the sprawling twilight."
+  },
+  {
+   "node": "up-r-her-perch",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "A bitter irony twists your gut as you study her preparations, knowing the Valerius silk and Rigg iron syndicates she likely bleeds for are merely one cabal scribed in identical handwriting. She is fighting a war that does not exist."
+  },
+  {
+   "node": "up-r-her-perch",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "Looking at her chalked ranges, you realise the turnkey whose silence you bought with a whispered promise must have sold your habits to her upon her escape. That outstanding debt has now drawn her directly to your anticipated route."
+  },
+  {
+   "node": "up-r-her-perch",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Heavy boots echo from the lower thoroughfares, confirming the turnkey you let flee to the Guard has successfully flooded the district with patrols. They have corralled you precisely into this killing zone, leaving her a clear shot."
+  },
+  {
+   "node": "up-r-her-perch",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Pushing that turnkey off the high slate roof bought you no lasting anonymity, as Sable clearly deduced your path from the bloody aftermath of the fall. She reads your murderous secrets as easily as the chalk on these brass walls."
+  },
+  {
+   "node": "up-r-her-perch",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Even the polite menace of Lord Valerius and his silk-draped runners cannot shield you up here in the freezing high rigging. You hold his protection, but no elegant operative will step in to take this heavy iron bolt for you."
+  }
+ ]
+}

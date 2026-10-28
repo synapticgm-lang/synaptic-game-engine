@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-end-sold-seat | witness=bought
+Yet a polite cough from the chamber doorway breaks your reverie; the deacon who dressed the late Archbishop stands waiting, wearing a knowing smile, ready to quietly collect on the whispered promise you made him in the dark.
+@@END
+@@INSERT up-end-sold-seat | cabal=known
+Glancing across the mahogany expanse, you watch Valerius and Rigg trade rehearsed, venomous barbs for the benefit of the lesser lords. Only you know the secret of the counter-ledgers, recognising the singular handwriting that proves their bitter war is merely profitable theatre.
+@@END
+@@INSERT up-end-sold-seat | valerius=allied
+Lord Valerius raises his own crystal glass in your direction, his polite menace softened into a conspiratorial smirk. Swathed in the finest house silk, you are now a favoured asset in his gilded web, shielded from the very shadows you once ruled.
+@@END
+@@INSERT up-end-sold-seat | rigg=allied
+Matron Rigg sits heavily beside you, her soot-stained iron rings clinking against the polished wood as she officially strikes your name from the gaol books. Her brutal foundry wealth ensures your absolute safety, cementing your place amongst the untouchable elite of Veridia.
+@@END
+@@INSERT up-end-sold-seat | cover=tailor
+The disgraced tailor's debt coat, which once concealed your desperate flight across the Exchange roofs, now hangs freshly laundered in your lavish dressing room. You have settled his debts entirely, preserving the heavy garment as a grim memento of your brutal ascent.
+@@END
+@@INSERT up-end-sold-seat | vault=breached
+Whispers echo around the table concerning the grandmaster's lock on the Exchange undervault, thoroughly shattered by your forceful entry. Let the watchmen trace the brazen break-in all they wish; no earthly warrant can ever pierce the heavy velvet walls of your new estate.
+@@END

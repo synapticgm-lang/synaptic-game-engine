@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-07-eclipse-roofs",
+ "variants": [
+  {
+   "node": "up-w-eclipse-roofs",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "Pulling the heavy lapels of the disgraced tailor's debt coat tighter against the sudden chill, you gesture for Sable to keep low. The dark, formal wool offers a strange camouflage against the slate, but the sweeping tails threaten to snag on the cracked tiles with every crawling inch."
+  },
+  {
+   "node": "up-w-eclipse-roofs",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Shivering in the thin, rough canvas of the porter's livery, you pause behind a soot-stained chimney. Beside you, Sable gestures towards the sentries, noting how their rifle barrels trace the gutters specifically searching for the silhouette of a runaway dockhand."
+  },
+  {
+   "node": "up-w-eclipse-roofs",
+   "when": {
+    "cover": "usher"
+   },
+   "after": "Golden braids and polished buttons on your opera usher's uniform suddenly feel dangerously bright in the gloom, forcing you to press your chest flat against the freezing condensation. Sable winces at the faint scrape of brass on slate, her eyes darting towards the panicked riflemen."
+  },
+  {
+   "node": "up-w-final-choice",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Beneath the brass-bound cover, the terrible truth of the vault's counter-ledgers burns in your mind - Valerius and Rigg are a singular monster, their supposed war penned in matching handwriting. Sable watches your hands, hoping only for her brother's freedom from the gaol, unaware that you now possess the leverage to collapse the entire syndicate."
+  },
+  {
+   "node": "up-w-final-choice",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A quiet, unresolved tension lingers from the whispered promise you made to the Archbishop's almoner, a steep debt hanging in the unnatural twilight. Sable shifts impatiently on the slate, ignorant of the unseen threads you tied to buy your silence hours ago."
+  },
+  {
+   "node": "up-w-final-choice",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Far below in the fog, shrill whistles echo as the watch acts on the Archbishop's almoner's precise description of your face. Because you let the man run, every patrol in the city knows exactly who carries the brass-bound book, leaving you and Sable entirely out of time."
+  }
+ ]
+}

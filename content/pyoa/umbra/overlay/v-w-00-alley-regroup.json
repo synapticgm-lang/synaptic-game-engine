@@ -6,42 +6,42 @@
    "when": {
     "witness": "bought"
    },
-   "after": "The Archbishop's almoner kept their word, for now. No whistles blow from the cathedral quarter, giving you this quiet moment to breathe, though the whispered promise you traded for their silence feels as heavy in your pocket as the ledger itself."
+   "after": "A shadowed figure hurries past the lane's mouth - the Archbishop's almoner, keeping his promised silence for now, but leaving you burdened with a whispered debt that will surely be called due before morning."
   },
   {
    "node": "up-w-alley-regroup",
    "when": {
     "witness": "let-go"
    },
-   "after": "Distant shouts echo from the cathedral district, confirming the almoner wasted no time finding the watch. Because you let them run, the constables are already sweeping the lower wards, searching for a night-crow matching your exact description."
+   "after": "Somewhere close, heavy boots hit the cobblestones in an organised sweep, directed precisely here by the terrified almoner you allowed to flee; the Watch knows exactly who they are hunting tonight."
   },
   {
    "node": "up-w-alley-regroup",
    "when": {
     "witness": "dropped"
    },
-   "after": "Somewhere behind you, the broken body of the almoner lies cooling on the cobblestones. You silenced the only witness with a fatal shove, transforming this theft into a murder hunt, and Sable keeps casting wary glances at your bloodied cuff."
+   "after": "Sable shoots you a sideways, wary glance, her eyes lingering on the scuffed knuckles that so recently pushed the snooping almoner to a shattered death upon the lower tiles."
   },
   {
    "node": "up-w-alley-regroup",
    "when": {
     "cover": "tailor"
    },
-   "after": "Wrapping the disgraced tailor's debt coat tighter against the chill, you appreciate the fine, unremarkable cut of the wool. It offers a perfect disguise in the merchant district, even if the lining reeks faintly of stale pipe smoke and desperation."
+   "after": "The disgraced tailor's debt coat wraps tightly around your shoulders, its heavy velvet and hidden, silver-threaded pockets concealing the brass-bound ledger perfectly against the chill of the soot-stained breeze."
   },
   {
    "node": "up-w-alley-regroup",
    "when": {
     "cover": "livery"
    },
-   "after": "Scratchy spun canvas rubs against your neck as you shift in the porter's rough livery. While the uniform guarantees you look like just another invisible labourer hauling coal for the Exchange, the heavy fabric severely restricts your reach for climbing."
+   "after": "Rough canvas scrapes at your neck as you shift the stolen tome beneath your porter's livery, grateful that such common, grease-stained attire renders you invisible among the labourers staggering home through the smog."
   },
   {
    "node": "up-w-alley-regroup",
    "when": {
     "cover": "usher"
    },
-   "after": "Brushing soot from the velvet lapels of your opera usher's uniform, you grimace at how starkly the brass buttons catch the dim gaslight. It was brilliant camouflage near the theatre, but here in the gritty lamp-yard, the finery draws dangerous attention."
+   "after": "Stray lamplight catches the braided gold epaulettes of your opera usher's uniform, a garish disguise that hides the bulky ledger but threatens to betray your presence in this miserable, filth-strewn corner of the city."
   }
  ]
 }

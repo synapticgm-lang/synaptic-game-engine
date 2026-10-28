@@ -1,0 +1,23 @@
+Gemini said
+
+@@INSERT up-end-perch-answers | witness=let-go
+Letting the panicked turnkey flee to the Guard meant your exact route was shouted across every precinct house courtyard. She simply listened from her cell, mapping your escape before breaking out to deliver her own brutal justice.
+@@END
+@@INSERT up-end-perch-answers | witness=bought
+A whispered promise to the turnkey bought your quiet escape, but he gladly traded that same debt to secure her sudden release from the gaol. Your silence was purchased, leaving her completely free to collect the arrears in lead.
+@@END
+@@INSERT up-end-perch-answers | cabal=known
+Exposing the identical handwriting that proves Rigg and Valerius are one syndicate means nothing to a woman demanding personal blood. The cabal's ruin burns in the streets below, but up here, only her loaded pistol dictates the future.
+@@END
+@@INSERT up-end-perch-answers | rigg=allied
+Matron Rigg’s heavy warrants and foundry coin might shield you from the city watch, but they cannot stop a ghost you betrayed. Her iron protection ends at the belfry door, leaving you entirely alone against a cocked pistol.
+@@END
+@@INSERT up-end-perch-answers | valerius=betrayed
+Spurning Lord Valerius means you have no silk-cloaked runners guarding your back in the shadows, leaving the rooftop perfectly open for her ambush. His polite menace has simply been replaced by her ruthless, unflinching demand for a reckoning.
+@@END
+@@INSERT up-end-perch-answers | cover=bare
+Sprinting bare-faced across the slates offered no anonymity, making it absurdly easy for a betrayed rival to track your brazen silhouette against the gaslight. Escaping without a disguise was a prideful error that has finally drawn her aim.
+@@END
+@@INSERT up-end-perch-answers | vault=breached
+Shattering the grandmaster's lock on the undervault left a trail of scored brass and flash-powder that she easily tracked from the Exchange. Your violent entry below ground has led her directly to this fatal convergence in the rafters.
+@@END

@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-04-faction-summons",
+ "variants": [
+  {
+   "node": "up-w-faction-summons",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "The choice before you is an intricate pantomime, for the vault's counter-ledgers proved both the silk houses and the iron syndicate answer to one master. Whether you court Valerius or Rigg, your prize flows back to the exact same handwriting."
+  },
+  {
+   "node": "up-w-faction-summons",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Down in the gaslit streets, guardsmen clutching hastily drawn sketches of your face are cordoning off the district. You must find a powerful patron before heavy boots storm the stairwell and match you to those damning portraits."
+  },
+  {
+   "node": "up-w-faction-summons",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A heavy debt hangs over this impending negotiation, as the whispered promise you gave the Archbishop's almoner ensures your true identity can still be traded. Whichever rival you choose might already hold that dangerous marker."
+  },
+  {
+   "node": "up-w-faction-summons",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Because you permitted the terrified almoner to flee into the night, the Guard now possesses a complete account of your theft. Whistles shrill across the nearby rooftops, leaving you entirely dependent on whoever waits behind these doors."
+  },
+  {
+   "node": "up-w-faction-summons",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Blood from the almoner's fatal fall off the eaves still stiffens the cuff of your coat, a grim testament to your ruthless preservation of the ledger. Sable eyes the dark stain nervously as you weigh the cost of this summit."
+  },
+  {
+   "node": "up-w-silk-hall",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Having already tasted Lord Valerius's hospitality earlier tonight, you recognise the predatory calculation hidden beneath his courteous smile. His previous offers of shelter were clearly a prelude to seizing the ledger by any means necessary."
+  }
+ ]
+}

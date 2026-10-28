@@ -1,29 +1,20 @@
 Gemini said
 
 @@INSERT up-w-portrait-map | witness=bought
-Trading your future for the almoner's silence means you must stay entirely unseen, making these undocumented subterranean routes vital to outrunning your rapidly accumulating debts.
+Sable leans close, her soot-stained fingers gripping your sleeve as she glares at the smirking artist. "The almoner's silence was bought on credit," she mutters, warning that when the church eventually calls in that whispered debt, you will need every hidden escape route this canvas offers.
 @@END
 @@INSERT up-w-portrait-map | witness=dropped
-Bloodstains from the almoner's fatal fall remain crusted on your knuckles, making a quiet, unseen route beneath the streets far more appealing than facing the enraged constabulary above.
+The painter's smirk falters as he notices the dried blood still flecking your boots from the almoner's fatal plummet. Beside you, Sable shifts uneasily, the brutal reality of the old man’s shattered body on the cobbles making her question how far you will go to secure her brother's freedom.
 @@END
 @@INSERT up-w-portrait-map | cover=tailor
-Squinting at the canvas, you pull the disgraced tailor's coat tighter, grateful that its unassuming cut blends so naturally into the bohemian clutter of the turpentine-soaked studio.
+Your disgraced tailor's debt coat catches on a splintered easel, tearing a threadbare seam. The artist recognises the distinctive cut of the ruined velvet, his eyes narrowing as he recalculates your worth and wonders aloud if you can truly afford his subterranean secrets.
 @@END
 @@INSERT up-w-portrait-map | cover=livery
-The artist casts a disdainful glance at your coarse canvas porter's livery, clearly doubting whether a common coal-hauler possesses the coin required for such specialised architectural secrets.
+Judging by your coarse porter's livery, the artist clearly assumes you are merely an errand-runner for someone far wealthier. He speaks slowly, pointing a turpentine-stained finger at the canvas as if explaining the subterranean geometry to a simple labourer.
 @@END
 @@INSERT up-w-portrait-map | cover=usher
-Tarnished brass buttons on your opera usher's uniform catch the studio lamplight, prompting a raised eyebrow from the painter who rarely sees such theatrical finery down in his cramped workspace.
+Crimson fabric and tarnished gold braid make your opera usher's uniform stand out absurdly amidst the drab, paint-splattered studio. Sable nudges your elbow, clearly amused that you wore such a theatrical disguise to bargain for illicit maps.
 @@END
 @@INSERT up-w-exchange-roofs | faceKnown=yes
-Because your exact features have been circulated to the guards and great houses alike, slipping into these proposed meetings as an anonymous shadow will be nearly impossible.
+Because a witness escaped to describe your features, the chalked summons are accompanied by crude, hasty sketches of your actual visage. Sable traces the recognisable lines of your jaw etched into the soot, her expression tightening as she realises both houses are hunting a very specific profile.
 @@END
-@@INSERT up-w-exchange-roofs | vault=breached
-Knowing the grandmaster's lock on the undervault below has already been shattered by your hand, you realise the factions summoning you are likely negotiating over a compromised prize.
-@@END
-@@INSERT up-w-exchange-roofs | witness=let-go
-Distant whistles from the cathedral confirm the almoner has unleashed the watch, meaning Matron Rigg’s catchpoles are sweeping the streets below while you linger dangerously on the slates.
-@@END
-
-Want to create more inserts for Sable's companion quest?
-Yes

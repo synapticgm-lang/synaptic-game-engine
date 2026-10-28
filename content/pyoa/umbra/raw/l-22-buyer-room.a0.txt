@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-l-buyer-room | rigg=allied
+Matron Rigg’s earlier promise of sanctuary holds true in this quiet parlour; her foundryman does not sneer, but instead rests a heavy iron gaol-key on the mahogany as a silent guarantee of your continued freedom.
+@@END
+@@INSERT up-l-buyer-room | rigg=betrayed
+The foundry representative glowers from the corner, his coat smelling of iron and malice, clearly carrying the gaol warrants his mistress prepared the moment you previously refused her harsh protection.
+@@END
+@@INSERT up-l-buyer-room | witness=let-go
+Outside the thick parlour glass, heavy boots ring across the cobblestones; the merciful release of that panicked deacon ensured the city watch now violently hunts a lone fugitive wrapped in the prelate's stolen mantle.
+@@END
+@@INSERT up-l-harbor-statue | witness=bought
+Escaping across the water means outrunning the city watch, but you cannot outpace the whispered debt you owe the shivering deacon, a quiet promise that will surely follow your ship far beyond the harbour bounds.
+@@END
+@@INSERT up-l-harbor-statue | witness=let-go
+Lantern light sweeps the nearby coal barges as patrols hunt frantically for a solitary figure in a stolen clerical cloak, their search narrowed to these very docks thanks to the babbling deacon you foolishly spared.
+@@END
+@@INSERT up-l-harbor-statue | witness=dropped
+Beneath the heavy wool of the Archbishop’s stolen garment, your hands still feel the sudden, desperate shove that sent the screaming deacon plummeting to the cobbles, a brutal secret sinking with you into the dark.
+@@END

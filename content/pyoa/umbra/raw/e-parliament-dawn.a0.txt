@@ -1,0 +1,23 @@
+Gemini said
+
+@@INSERT up-end-parliament-dawn | witness=bought
+Yet, as you navigate the crowded alleys, the memory of the almoner’s terrified eyes lingers; the whispered promise you traded for his silence remains a dangerous, unpaid debt waiting in the shadows.
+@@END
+@@INSERT up-end-parliament-dawn | witness=dropped
+Far below the roaring crowds, the almoner’s broken body lies undiscovered upon the cobblestones, a grim and silent secret that ensures your fatal push will never be traced back to you.
+@@END
+@@INSERT up-end-parliament-dawn | faceKnown=yes
+Even amidst the riotous distraction, you keep your collar turned high against the morning chill, keenly aware that your uncovered features are already circulating on fresh warrants across the city.
+@@END
+@@INSERT up-end-parliament-dawn | cabal=known
+Watching the mob tear at the estates of Valerius and Rigg, you share a grim smile with Sable, burdened by the secret knowledge of the vault's counter-ledgers: the warring houses were always a single, orchestrated cabal.
+@@END
+@@INSERT up-end-parliament-dawn | valerius=allied
+Tucked safely in your pocket is a heavy seal of Valerian silk, a quiet guarantee from the polite lord that his hidden enforcers will look the other way as you and Sable disappear into the smoke.
+@@END
+@@INSERT up-end-parliament-dawn | rigg=allied
+Matron Rigg’s iron-stamped warrant of transit sits heavy against your ribs, a brutal but effective shield guaranteeing that her foundry guards will ignore your quiet exodus from the bleeding district.
+@@END
+@@INSERT up-end-parliament-dawn | cover=livery
+The rough wool of your porter’s livery blends seamlessly with the soot-stained attire of the rioting dockworkers, transforming you into just another nameless labourer among the angry, surging masses.
+@@END

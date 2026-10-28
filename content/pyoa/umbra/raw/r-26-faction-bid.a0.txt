@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-r-faction-bid | witness=bought
+The turnkey's silence cost you a whispered promise, a debt that hangs heavy as you stand on the precipice of yielding the ledger to clear it. Whoever you select will surely inherit that gaol-keeper's marker along with the brass-bound book.
+@@END
+@@INSERT up-r-faction-bid | witness=let-go
+Letting that miserable gaol turnkey run earlier means the watchmen already have your description, closing off the alleys and forcing this desperate gambit. Every second you dither here grants the Guard another street of cobblestones to cut off your escape.
+@@END
+@@INSERT up-r-faction-bid | witness=dropped
+Blood already stains this eclipse from the turnkey you pushed from the eaves, leaving a corpse to justify whatever brutal measures the houses demand. Offering them the book might finally wash your hands of that sudden, sickening plummet into the fog.
+@@END
+@@INSERT up-r-silk-balcony | valerius=allied
+Your earlier pact of protection with his silk houses feels like a hollow joke now that he openly flaunts arming the very crossbow sniper stalking your shadow. His polite menace never falters, seamlessly weaving betrayal into the fine wine he pours.
+@@END
+@@INSERT up-r-silk-balcony | cabal=known
+Having read the counter-ledgers in the vault, you realise his amusement is twofold, as this entire theatrical war against Rigg’s iron syndicate is penned in a single, mocking handwriting. Surrendering the list merely passes it from his left hand to his right.
+@@END
+@@INSERT up-r-silk-balcony | faceKnown=yes
+Because a fleeing witness painted your features for the Guard, Valerius looks upon your bare face with a predator’s calculated certainty, knowing exactly who stands before him. His runners have no need to guess at the quarry their new hound pursues.
+@@END
+
+Would you like me to draft inserts for any other pages or track conditions in this act of the story?

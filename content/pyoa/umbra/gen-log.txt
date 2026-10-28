@@ -6,3 +6,106 @@
 2026-10-28T00:11:38.547Z finished detours run: calls 0
 2026-10-28T00:12:08.248Z done w-02-portrait-map: 8/8 inserts
 2026-10-28T00:12:08.257Z ask w-03-undervault-stair items=9 attempt=0
+2026-10-28T00:21:39.486Z STOP noreply: No new Gemini reply detected
+2026-10-28T00:25:25.334Z ask w-03-undervault-stair items=9 attempt=0
+2026-10-28T00:28:01.808Z ask w-03-undervault-stair items=9 attempt=1
+2026-10-28T00:29:19.888Z done w-03-undervault-stair: 0/9 inserts MISSING up-w-undervault-stair:witness=dropped,up-w-undervault-stair:cover=livery,up-w-ledger-room:vault=breached,up-w-ledger-room:cabal=known,up-w-faction-summons:cabal=known,up-w-faction-summons:faceKnown=yes,up-w-faction-summons:witness=bought,up-w-faction-summons:witness=let-go,up-w-faction-summons:witness=dropped
+2026-10-28T00:29:19.891Z ask w-04-silk-hall items=6 attempt=0
+2026-10-28T00:30:12.719Z done w-04-silk-hall: 6/6 inserts
+2026-10-28T00:30:12.722Z ask w-05-eclipse-approach items=10 attempt=0
+2026-10-28T00:39:43.543Z STOP noreply: No new Gemini reply detected
+2026-10-28T00:47:12.867Z ask w-00-alley-regroup items=6 attempt=0
+2026-10-28T00:48:00.425Z done w-00-alley-regroup: 6/6 inserts
+2026-10-28T00:48:00.428Z ask w-01-drone-loft items=6 attempt=0
+2026-10-28T00:51:50.207Z ask w-01-drone-loft items=6 attempt=1
+2026-10-28T00:52:44.572Z done w-01-drone-loft: 6/6 inserts
+2026-10-28T00:52:44.573Z ask w-02-portrait-map items=6 attempt=0
+2026-10-28T00:55:40.212Z STOP refusal: Gemini said Sorry, something went wrong. Please try your request again.
+2026-10-28T01:00:40.622Z ask w-02-portrait-map items=6 attempt=0
+2026-10-28T01:03:01.070Z STOP refusal: Gemini said Sorry, something went wrong. Please try your request again.
+2026-10-28T01:08:01.329Z ask w-02-portrait-map items=6 attempt=0
+2026-10-28T01:14:11.938Z STOP timeout: Gemini still generating after timeout
+2026-10-28T07:13:46.693Z ask w-02-portrait-map items=6 attempt=0
+2026-10-28T07:14:52.483Z done w-02-portrait-map: 6/6 inserts
+2026-10-28T07:14:52.485Z ask w-03-exchange-roofs items=6 attempt=0
+2026-10-28T07:16:15.447Z done w-03-exchange-roofs: 6/6 inserts
+2026-10-28T07:16:15.449Z ask w-04-faction-summons items=6 attempt=0
+2026-10-28T07:17:03.287Z done w-04-faction-summons: 6/6 inserts
+2026-10-28T07:17:03.296Z ask w-05-silk-hall items=6 attempt=0
+2026-10-28T07:17:48.738Z done w-05-silk-hall: 6/6 inserts
+2026-10-28T07:17:48.741Z finished run: calls 4, groups done 6/41
+2026-10-28T07:19:17.056Z ask w-06-eclipse-approach items=6 attempt=0
+2026-10-28T07:20:25.113Z done w-06-eclipse-approach: 6/6 inserts
+2026-10-28T07:20:25.115Z ask w-07-eclipse-roofs items=6 attempt=0
+2026-10-28T07:21:20.607Z done w-07-eclipse-roofs: 6/6 inserts
+2026-10-28T07:21:20.635Z ask w-08-final-choice items=6 attempt=0
+2026-10-28T07:30:53.787Z STOP noreply: No new Gemini reply detected
+2026-10-28T07:34:05.229Z ask w-08-final-choice items=6 attempt=0
+2026-10-28T07:34:48.454Z done w-08-final-choice: 6/6 inserts
+2026-10-28T07:34:48.456Z ask w-09-press-run items=6 attempt=0
+2026-10-28T07:38:14.436Z done w-09-press-run: 6/6 inserts
+2026-10-28T07:38:14.438Z ask w-10-harbor-crown items=6 attempt=0
+2026-10-28T07:39:07.575Z done w-10-harbor-crown: 6/6 inserts
+2026-10-28T07:39:07.579Z ask w-11-harbor-crown items=2 attempt=0
+2026-10-28T07:39:49.464Z done w-11-harbor-crown: 2/2 inserts
+2026-10-28T07:39:49.466Z ask l-12-empty-garret items=6 attempt=0
+2026-10-28T07:40:59.885Z done l-12-empty-garret: 6/6 inserts
+2026-10-28T07:40:59.887Z ask l-13-pigeon-cage items=6 attempt=0
+2026-10-28T07:43:23.101Z done l-13-pigeon-cage: 6/6 inserts
+2026-10-28T07:43:23.103Z ask l-14-exchange-ridge items=6 attempt=0
+2026-10-28T07:44:30.985Z done l-14-exchange-ridge: 6/6 inserts
+2026-10-28T07:44:30.987Z ask l-15-vault-antechamber items=6 attempt=0
+2026-10-28T07:45:23.766Z done l-15-vault-antechamber: 6/6 inserts
+2026-10-28T07:45:23.768Z ask l-16-silk-annex items=6 attempt=0
+2026-10-28T07:46:11.698Z done l-16-silk-annex: 6/6 inserts
+2026-10-28T07:46:11.704Z ask l-17-eclipse-rise items=6 attempt=0
+2026-10-28T07:46:58.653Z done l-17-eclipse-rise: 6/6 inserts
+2026-10-28T07:46:58.658Z ask l-18-eclipse-ridgeline items=6 attempt=0
+2026-10-28T07:47:44.855Z done l-18-eclipse-ridgeline: 6/6 inserts
+2026-10-28T07:47:44.856Z ask l-19-solo-final items=6 attempt=0
+2026-10-28T07:49:10.528Z done l-19-solo-final: 6/6 inserts
+2026-10-28T07:49:10.536Z ask l-20-press-yard items=6 attempt=0
+2026-10-28T07:50:00.332Z done l-20-press-yard: 6/6 inserts
+2026-10-28T07:50:00.337Z ask l-21-forger-desk items=6 attempt=0
+2026-10-28T07:51:19.717Z done l-21-forger-desk: 6/6 inserts
+2026-10-28T07:51:19.718Z ask l-22-buyer-room items=6 attempt=0
+2026-10-28T07:52:20.063Z done l-22-buyer-room: 6/6 inserts
+2026-10-28T07:52:20.065Z ask l-23-harbor-statue items=5 attempt=0
+2026-10-28T07:53:12.892Z done l-23-harbor-statue: 5/5 inserts
+2026-10-28T07:53:12.894Z ask r-24-rival-first-sign items=6 attempt=0
+2026-10-28T07:56:18.773Z done r-24-rival-first-sign: 6/6 inserts
+2026-10-28T07:56:18.777Z ask r-25-exchange-parapet items=6 attempt=0
+2026-10-28T07:57:01.746Z done r-25-exchange-parapet: 6/6 inserts
+2026-10-28T07:57:01.748Z ask r-26-faction-bid items=6 attempt=0
+2026-10-28T07:57:42.203Z done r-26-faction-bid: 6/6 inserts
+2026-10-28T07:57:42.205Z ask r-27-silk-balcony items=6 attempt=0
+2026-10-28T07:58:27.720Z done r-27-silk-balcony: 6/6 inserts
+2026-10-28T07:58:27.721Z ask r-28-eclipse-begins items=6 attempt=0
+2026-10-28T08:07:55.960Z STOP noreply: No new Gemini reply detected
+2026-10-28T08:09:47.924Z ask r-28-eclipse-begins items=6 attempt=0
+2026-10-28T08:10:38.298Z done r-28-eclipse-begins: 6/6 inserts
+2026-10-28T08:10:38.305Z ask r-29-eclipse-begins items=6 attempt=0
+2026-10-28T08:11:23.681Z done r-29-eclipse-begins: 6/6 inserts
+2026-10-28T08:11:23.689Z ask r-30-her-perch items=6 attempt=0
+2026-10-28T08:12:12.177Z done r-30-her-perch: 6/6 inserts
+2026-10-28T08:12:12.179Z ask r-31-rival-final items=6 attempt=0
+2026-10-28T08:12:55.250Z done r-31-rival-final: 6/6 inserts
+2026-10-28T08:12:55.251Z ask r-32-bid-room items=6 attempt=0
+2026-10-28T08:13:38.050Z done r-32-bid-room: 6/6 inserts
+2026-10-28T08:13:38.052Z ask e-parliament-dawn items=7 attempt=0
+2026-10-28T08:14:30.894Z done e-parliament-dawn: 7/7 inserts
+2026-10-28T08:14:30.896Z ask e-shadow-truce items=7 attempt=0
+2026-10-28T08:15:11.249Z done e-shadow-truce: 7/7 inserts
+2026-10-28T08:15:11.251Z ask e-ghost-road items=8 attempt=0
+2026-10-28T08:15:56.658Z done e-ghost-road: 8/8 inserts
+2026-10-28T08:15:56.659Z ask e-nameless-martyr items=6 attempt=0
+2026-10-28T08:16:42.055Z done e-nameless-martyr: 6/6 inserts
+2026-10-28T08:16:42.064Z ask e-sold-seat items=6 attempt=0
+2026-10-28T08:17:30.935Z done e-sold-seat: 6/6 inserts
+2026-10-28T08:17:30.941Z ask e-become-the-list items=6 attempt=0
+2026-10-28T08:18:21.948Z done e-become-the-list: 6/6 inserts
+2026-10-28T08:18:21.950Z ask e-perch-answers items=7 attempt=0
+2026-10-28T08:20:17.643Z done e-perch-answers: 7/7 inserts
+2026-10-28T08:20:17.652Z ask e-sold-knife items=7 attempt=0
+2026-10-28T08:22:19.307Z done e-sold-knife: 7/7 inserts
+2026-10-28T08:22:19.309Z finished run: calls 13, groups done 41/41

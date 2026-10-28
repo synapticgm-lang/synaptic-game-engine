@@ -1,0 +1,19 @@
+{
+ "batch": "v-w-11-harbor-crown",
+ "variants": [
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "The rough wool of the porter's livery scratches at your neck, but its drab anonymity served you well amongst the dockworkers below. Sable watches you pull the coarse collar high against the sea breeze, knowing this unassuming disguise will grant you unquestioned passage among the labouring bargemen."
+  },
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "cover": "usher"
+   },
+   "after": "Sable shoots a dubious glance at your opera usher's uniform, its velvet trim and polished brass buttons looking entirely absurd this far above the muddy docks. You hastily unbutton the ostentatious jacket, praying its theatrical finery does not catch the glare of a passing lantern before you reach the deck."
+  }
+ ]
+}

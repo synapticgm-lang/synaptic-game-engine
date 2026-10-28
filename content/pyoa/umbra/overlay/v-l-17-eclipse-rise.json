@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-17-eclipse-rise",
+ "variants": [
+  {
+   "node": "up-l-eclipse-rise",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Above the clock face, one of Valerius's brass-winged pigeons settles on a gargoyle, dropping a silk-tied capsule. His promised protection manifests as a forged deployment order, keeping the streets below empty while you scale the lattice in your stolen clerical cloak."
+  },
+  {
+   "node": "up-l-eclipse-rise",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Far below, a trio of Valerius's silk-scarved runners stalk the cobbles, their spyglasses trained on the spires. Having refused the lord's polite menace, you must keep the heavy velvet of the Archbishop's cloak tightly gathered to avoid catching their sharp eyes."
+  },
+  {
+   "node": "up-l-eclipse-rise",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Matron Rigg's iron-stamped warrants have already wrought havoc on the patrol rhythms, stripping the northern ridge of its usual guards. Relying on her harsh patronage gives you ample time to haul the cumbersome stolen mantle up the shadowed stonework unhindered."
+  },
+  {
+   "node": "up-l-eclipse-rise",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "Echoes of iron-shod boots drift from the plaza as Rigg's heavies batter a vagrant's door, furious at your defiance of the gaol matron. Their brutal sweep pushes the local watchmen out of position, inadvertently clearing your ascent up the ironwork."
+  },
+  {
+   "node": "up-l-eclipse-rise",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "Glancing down the sheer drop, you see frantic lanterns swarming the Exchange foundations where the grandmaster's lock now hangs shattered. The breached undervault has drawn a frenzy of inspectors, ensuring no one looks up at a lone figure in ecclesiastical wool."
+  },
+  {
+   "node": "up-l-eclipse-ridgeline",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Even in this unnatural gloom, the polite menace of Lord Valerius haunts your solitary flight, as a silk-clad runner emerges onto the adjacent ridgeline. Spurning his wine and gold has marked you, and this hunter is scanning the slates specifically for an Archbishop's silhouette."
+  }
+ ]
+}

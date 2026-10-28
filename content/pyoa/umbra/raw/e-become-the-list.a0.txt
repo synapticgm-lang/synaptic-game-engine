@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-end-become-the-list | witness=dropped
+Somewhere below, the paving stones have long since been washed clean of the deacon's blood. His fatal fall from the rooftops was merely the first, necessary erasure to ensure this flawless anonymity.
+@@END
+@@INSERT up-end-become-the-list | witness=bought
+That whispered promise you made to the trembling deacon was ultimately settled with a quiet blade in the dark. It is a necessary cruelty to burn the old bridges and protect your newfound supremacy.
+@@END
+@@INSERT up-end-become-the-list | cabal=known
+Because you read the vault's counter-ledgers, you seamlessly mimic that singular, unifying handwriting when issuing commands. Lord Valerius and Matron Rigg continue their theatrical feud, completely unaware that a solitary phantom now dictates both silk and iron.
+@@END
+@@INSERT up-end-become-the-list | cover=cloak
+The dead Archbishop’s heavy, velvet cloak remains draped over a chair in your highest private suite. It serves as a quiet, tactile trophy of the eclipse, reminding you exactly whose stolen authority you now wield.
+@@END
+@@INSERT up-end-become-the-list | cover=livery
+A pile of ash in the grate is all that remains of the rough porter’s livery you wore during your escape. Burning that coarse fabric was your final, deliberate act of severing ties with the soot-stained rookeries forever.
+@@END
+@@INSERT up-end-become-the-list | faceKnown=yes
+Faded wanted posters bearing a crude, outdated sketch of your features still flutter near the watchman's braziers below. The Guard hunts a soot-smeared ghost, entirely oblivious to the impeccably dressed architect currently orchestrating their patrols.
+@@END
+
+Are there any other specific endings or character arcs in Veridia you need expanded?

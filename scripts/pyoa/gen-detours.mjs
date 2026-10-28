@@ -57,7 +57,7 @@ for (const b of batches) {
   for (let a = 0; a < 2 && missing.length; a++) {
     log(`ask ${b.id} items=${missing.length} attempt=${a}`);
     let reply;
-    try { reply = await ask(prompt(b.track, missing), { fresh: calls % 6 === 0 }); } catch (e) { log(`STOP ${e.kind || 'error'}: ${e.message}`); process.exit(e instanceof GeminiStop ? 3 : 4); }
+    try { reply = await ask(prompt(b.track, missing), { fresh: true }); } catch (e) { log(`STOP ${e.kind || 'error'}: ${e.message}`); process.exit(e instanceof GeminiStop ? 3 : 4); }
     calls++;
     writeFileSync(join(DIR, 'raw', `${b.id}.a${a}.txt`), reply);
     if (/something went wrong|having a hard time fulfilling/i.test(reply) && !/@@PAGE/.test(reply)) { log('STOP refusal/error: ' + reply.slice(0, 100).replace(/\s+/g, ' ')); process.exit(5); }
@@ -76,3 +76,4 @@ for (const b of batches) {
   log(`done ${b.id}: ${ov.newNodes.length}/${b.items.length}${missing.length ? ' MISSING ' + missing.map((d) => d.id).join(',') : ''}`);
 }
 log(`finished detours run: calls ${calls}`);
+
