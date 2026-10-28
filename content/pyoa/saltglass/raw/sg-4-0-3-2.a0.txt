@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION sg-4-0-3-2
+TITLE: The Vitrified Pave
+TEXT: Shards of purple vitrified mud splinter like thin ice beneath your boots, sending sharp, echoing cracks across the empty basin. You shield your flickering lamp against the drafting wind while navigating the brittle crust, keeping a firm grip on the cold Seedkey tucked inside your pack. The air smells intensely of sulfur and baked alkali, warning you that the deep weather is shifting toward the ridges. // A choice lies before you as the ground shudders underfoot: you can press directly toward the rising shale slopes, skirt a gaping fissure that cuts across your path, or dive into the shelter of a collapsed warehouse foundation to escape a sudden local vortex.
+EXIT 1: Climb toward the shale rise
+EXIT 2: Leap across the jagged crevasse
+EXIT 3: Hide behind the warehouse walls
+@@END
+@@SECTION sg-4-0-3-3
+TITLE: The Green Signal Beam
+TEXT: A discarded signal-mirror catches the weak, jaundiced sun and shoots a blinding green beam across the rolling fog, signaling clearly that the upper ridge remains completely impassable. You pause beside a jagged pillar of salt, adjusting the heavy straps of your weather-cape as the beam pulses twice more in warning. The amber lamp in your hand throws a steady, warm circle against the creeping gloom. // You must decide whether to attempt a perilous leap toward the storm-line or retrace your steps through the winding tubes before the rising gale cuts off all escape routes.
+EXIT 1: Leap toward the storm line
+EXIT 2: Turn back along the salt tubes
+@@END
+@@SECTION sg-4-0-3-4
+TITLE: The Fused Harbor Quay
+TEXT: You scale a steep wall of fused brickwork that once formed the bustling quay of a vanished harbor, now stranded miles inland amidst roaring dunes. Below you, the vast dried sea stretches like an endless sheet of cracked white bone, while above, the storm sky deepens to a bruising violet. Your fingers ache from the climb, yet the banked coals of your lamp remain a comforting weight against your chest. // Ahead lies a choice between pressing forward toward the vibrating shale rise, ducking behind a ruined warehouse foundation, or retreating down the slope to safer ground.
+EXIT 1: Advance toward the shale rise
+EXIT 2: Duck behind the warehouse ruins
+EXIT 3: Turn back down the slope
+@@END
+@@SECTION sg-4-0-3-5
+TITLE: The Brine-Filled Jar
+TEXT: A small clay water-jar lies completely unbroken in a shallow hollow, but when you lift it, its precious contents turn out to be bitter brine ruined by creeping alkali dust. You set the vessel back down into the salt-crust and check the seal on your own meager rations, ensuring the Seedkey stays dry against your ribs. The rising wind howls through the skeletal remains of old glass-foundries all around you. // You can crouch behind a ruined warehouse foundation to ride out a swirling gust of fine dust, or press forward to aid a distressed traveler calling out from a rocky outcrop.
+EXIT 1: Take cover behind the warehouse foundation
+EXIT 2: Approach the stranded traveler on the outcrop
+@@END
+@@SECTION sg-4-0-3-6
+TITLE: The Basalt Chimney
+TEXT: You squeeze past a natural chimney of porous basalt that belches hot, sulphur-scented air straight from the deep crust beneath the old sea-bed. The heat warms your numb fingers for a brief moment before the howling gale disperses the steam into the yellow haze. Your lamp flickers violently in the draft, threatening to go out unless you shield the glass globe with your sleeve. // Ahead, you must choose whether to face a perilous leap across a bottomless chasm, check on a trembling glass-diver clinging to a nearby rock, or secure your gear firmly in a rocky crevice.
+EXIT 1: Leap across the bottomless chasm
+EXIT 2: Reach out to the trembling diver
+EXIT 3: Secure your lamp in the crevice
+@@END
+@@SECTION sg-4-0-3-7
+TITLE: The Wheeling Glass-Gulls
+TEXT: A frantic flock of glass-gulls wheels through the yellow murk above, screaming against the rising gale as the great storm wall advances inexorably across the basin. Their crystalline wings chime like tiny bells in the wind, creating a haunting counterpoint to the deep, grinding roar of the desert. You pull your goggles tighter over your eyes and grip the handle of your amber lamp. // You must quickly decide whether to wedge your lamp into a safe crevice to free your hands or press forward into the towering wall of violet cloud.
+EXIT 1: Wedge your lamp into the crevice
+EXIT 2: Face the towering wall of cloud
+@@END
+@@SECTION sg-4-0-3-8
+TITLE: The Silica Drift
+TEXT: You wade through a deep drift of sparkling silica that reaches your knees, your muscles burning fiercely as you fight for every yard toward the distant ridge. The heavy sand scrapes against your leather boots, and the weight of the Seedkey feels like an anvil against your chest. Every breath draws in the sharp, dry taste of ancient salt and pulverized glass. // From here, you can crouch behind a ruined warehouse foundation to catch your breath, check on a distressed glass-diver clinging to a rock, or pause to secure your lamp in a sheltered crevice.
+EXIT 1: Crouch behind the warehouse foundation
+EXIT 2: Assist the distressed glass-diver
+EXIT 3: Secure your lamp in a rocky crevice
+@@END
+@@SECTION sg-4-0-3-9
+TITLE: The Surveyor's Gibbet
+TEXT: A rusted surveyor's tripod stands like a skeletal gibbet in the mist, draped with the tattered remnants of an oilskin weather-cape that flaps frantically in the rising wind. You step past its rusted legs, keeping your shoulder turned against the stinging onslaught of wind-blown grit. The amber glow of your lantern casts long, distorted shadows across the salt-pavement. // You face a critical juncture: push ahead into the towering wall of violet cloud, press your spine against an ancient ice-cold quay wall, make final preparations against the fierce gusts, or retreat to the cramped shelter of an abandoned toll-hut.
+EXIT 1: Push forward into the cloud wall
+EXIT 2: Press against the ancient quay wall
+EXIT 3: Make final preparations in the wind
+EXIT 4: Turn back to the toll-hut
+@@END
+@@SECTION sg-4-0-3-10
+TITLE: The Smuggler's Drainage Pipe
+TEXT: Recognized instantly by a patrolling Salt Court enforcer due to your outstanding toll-debt, you dive headfirst into a narrow smuggler's drainage pipe while a warning flare hisses overhead. The rusted metal scrapes your shoulders as you scramble through the dark conduit, coughing from the accumulation of ancient dust. Outside, the muffled shouts of the enforcer fade beneath the growing roar of the approaching storm. // Emerging from the pipe's other end, you can press your spine against the ice-cold stone of an ancient quay wall or make your final preparations before the gale hits.
+EXIT 1: Press against the cold quay wall
+EXIT 2: Make final preparations in the gale
+@@END
+@@SECTION sg-4-0-3-11
+TITLE: The Bottle-Glass Shelter
+TEXT: You shelter behind a massive block of green bottle-glass while a furious whirl of wind-driven grit scours the painted markings entirely from your leather satchel. The thick glass hums under the pressure of the gale, vibrating with a deep, resonant tone that matches the beating of your own heart. You use the brief lull to check the Seedkey, confirming it remains safely tucked in its pouch. // As the whistling wind momentarily subsides, you can press your spine against the ice-cold stone of an ancient quay wall or brace yourself for the final preparations before the storm breaks.
+EXIT 1: Press against the ancient quay wall
+EXIT 2: Make final preparations in the wind
+@@END
