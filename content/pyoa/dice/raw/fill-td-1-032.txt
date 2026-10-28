@@ -1,0 +1,25 @@
+Gemini said
+
+@@SECTION td-1-035
+TITLE: The Net-Menders' Dispute
+TEXT: Cold brine drips from the rafters as the rusted fish-hook flashes between the two bickering net-menders, their hoarse voices rising above the scrape of mending needles against stone. You step between the squared shoulders without drawing steel, speaking in the quiet, level tone of someone who has hauled bodies from the surf before. Silence settles over the greasy flagstones as the taller of the two lowers his blade with a muttered apology, recognizing the authority of a seasoned scavenger. For your steady nerve, the younger mender presses a notched bone whistle into your palm, swearing to answer whenever you blow it against the damp harbor mists.
+GRANT: notched bone whistle
+EXIT 1: Seek the warmth of the guildhall
+@@END
+@@SECTION td-1-038
+TITLE: Bending the Iron Arm
+TEXT: Oak splinters groan beneath your elbow as you lock palms with the guildmaster’s champion across the scarred tavern table, your forearm trembling under the weight of his granite-hard muscles. Blue veins bulge against your skin while the crowd of salt-cured wreckers leans in close, smelling of stale ale and dried weed as they roar their wagers into the smoky air. You grind your teeth, plant your boots firmly into the damp rushes, and throw every ounce of your shoulder strength into turning his knuckles back toward the wood.
+CHECK: strain against the champion's grip
+@@END
+@@SECTION td-1-040
+TITLE: Winning the Strong Cord
+TEXT: Sweat stings your eyes as the champion’s knuckles finally hit the notched grain of the oak table with a resounding thack, the tavern erupting into boisterous curses and approving cheers. You shake out your aching arm, accepting the heavy coil of tarred hemp rope tossed across the ale-rings with a dry nod of acknowledgment. The prize is stiff and salt-cured, perfect for dropping into the abyss of the seabed or hauling heavy crates from drowned cellars, and it rests heavy and reassuring over your shoulder as you step back out into the salty drizzle.
+GRANT: coil of hemp rope
+EXIT 1: Approach the guarded town gates
+@@END
+@@SECTION td-1-044
+TITLE: Hauling the Water Crate
+TEXT: Muscles burn and your boots slip slightly on the slimy cellar moss as you heave the heavy water crate up the damp stone steps, your breath coming in ragged gasps against the chill air. The damp staves are slick with condensation, but you brace your back against the masonry and lift until your thighs ache and the precious cargo clears the threshold. Impressed by your stubborn endurance, the old cellar-keeper presses a tarnished lead pendant into your palm, muttering a brief coastal blessing for safe passage across the exposed mud flats.
+GRANT: tarnished lead pendant
+EXIT 1: Return to the smoky guildhall
+@@END

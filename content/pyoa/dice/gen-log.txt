@@ -465,3 +465,20 @@
 2026-10-28T10:03:52.331Z   reject td-6-027: missing
 2026-10-28T10:03:52.332Z   reject td-6-028: missing
 2026-10-28T10:03:52.332Z   reject td-6-029: missing
+2026-10-28T10:04:00.341Z ask prose td-6-023..td-6-029 items=7 attempt=1
+2026-10-28T10:04:22.724Z   reject td-6-026: meta words
+2026-10-28T10:04:22.725Z   reject td-6-028: meta words
+2026-10-28T10:04:30.740Z done td-6-023: 5/7 MISSING td-6-026,td-6-028
+2026-10-28T10:04:30.742Z ask prose td-6-030..td-6-038 items=9 attempt=0
+2026-10-28T10:04:55.825Z   reject td-6-035: meta words
+2026-10-28T10:05:03.826Z ask prose td-6-030..td-6-038 items=1 attempt=1
+2026-10-28T10:05:34.153Z done td-6-030: 9/9
+2026-10-28T10:05:34.154Z ask prose td-6-039..td-6-039 items=1 attempt=0
+2026-10-28T10:06:06.991Z done td-6-039: 1/1
+2026-10-28T10:06:06.991Z finished prose run: calls 9, batches done 95/95
+2026-10-28T10:06:32.907Z merge: sections 1000, with prose 977, missing 23, words 87804
+2026-10-28T10:06:53.472Z ask fill td-1-007.json items=1
+2026-10-28T10:07:13.368Z filled td-1-007.json: still missing 0
+2026-10-28T10:07:21.385Z ask fill td-1-032.json items=4
+2026-10-28T10:07:41.523Z filled td-1-032.json: still missing 0
+2026-10-28T10:07:49.529Z ask fill td-1-076.json items=1

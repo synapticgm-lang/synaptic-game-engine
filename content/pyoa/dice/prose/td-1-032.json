@@ -26,6 +26,15 @@
     "Bind your bleeding arm and push onward"
    ]
   },
+  "td-1-035": {
+   "title": "The Net-Menders' Dispute",
+   "text": "Cold brine drips from the rafters as the rusted fish-hook flashes between the two bickering net-menders, their hoarse voices rising above the scrape of mending needles against stone. You step between the squared shoulders without drawing steel, speaking in the quiet, level tone of someone who has hauled bodies from the surf before. Silence settles over the greasy flagstones as the taller of the two lowers his blade with a muttered apology, recognizing the authority of a seasoned scavenger. For your steady nerve, the younger mender presses a notched bone whistle into your palm, swearing to answer whenever you blow it against the damp harbor mists.",
+   "check": "",
+   "grant": "notched bone whistle",
+   "exits": [
+    "Seek the warmth of the guildhall"
+   ]
+  },
   "td-1-036": {
    "title": "The Guildmaster's Table",
    "text": "Thick oak groans beneath the weight of two straining forearms as the guildmaster's champion grins across the grease-stained tavern table, his muscles bunched like oiled cables. You lock your fingers into his massive grip, planting your boots firmly against the uneven floorboards while the smoky taproom falls silent around the wager. Every eye in Gullmouth watches the sweat bead on your forehead as you throw your weight behind the push, fighting inch by grueling inch against an adversary who has broken better wreckers than you. The contest leaves your arm trembling and your lungs burning with stale ale and salt-dust, but victory remains within your desperate grasp as you shove his knuckles down toward the scarred wood.",
@@ -44,6 +53,13 @@
     "Step out toward the naked seabed"
    ]
   },
+  "td-1-038": {
+   "title": "Bending the Iron Arm",
+   "text": "Oak splinters groan beneath your elbow as you lock palms with the guildmaster's champion across the scarred tavern table, your forearm trembling under the weight of his granite-hard muscles. Blue veins bulge against your skin while the crowd of salt-cured wreckers leans in close, smelling of stale ale and dried weed as they roar their wagers into the smoky air. You grind your teeth, plant your boots firmly into the damp rushes, and throw every ounce of your shoulder strength into turning his knuckles back toward the wood.",
+   "check": "strain against the champion's grip",
+   "grant": "",
+   "exits": []
+  },
   "td-1-039": {
    "title": "Broken Sinews",
    "text": "A sudden, sickening pop echoes through your shoulder joint as the champion surges upward with terrifying brute force, shattering your leverage and slamming your knuckles hard against the splintered oak. Pain flares hot and fierce down your arm, leaving your fingers numb and your pride thoroughly bruised by the heavy defeat. You stumble back from the table, clutching your throbbing wrist while the onlookers jeer and collect their winning copper coins from the bar. The loss costs you dearly in stamina and standing among the guild, forcing you to nurse your aching limb in the shadows of the smoky hall.",
@@ -51,6 +67,15 @@
    "grant": "",
    "exits": [
     "Retreat to lick your wounds in silence"
+   ]
+  },
+  "td-1-040": {
+   "title": "Winning the Strong Cord",
+   "text": "Sweat stings your eyes as the champion's knuckles finally hit the notched grain of the oak table with a resounding thack, the tavern erupting into boisterous curses and approving cheers. You shake out your aching arm, accepting the heavy coil of tarred hemp rope tossed across the ale-rings with a dry nod of acknowledgment. The prize is stiff and salt-cured, perfect for dropping into the abyss of the seabed or hauling heavy crates from drowned cellars, and it rests heavy and reassuring over your shoulder as you step back out into the salty drizzle.",
+   "check": "",
+   "grant": "coil of hemp rope",
+   "exits": [
+    "Approach the guarded town gates"
    ]
   },
   "td-1-041": {
@@ -77,12 +102,16 @@
    "exits": [
     "Hobble away from the ruined cellar"
    ]
+  },
+  "td-1-044": {
+   "title": "Hauling the Water Crate",
+   "text": "Muscles burn and your boots slip slightly on the slimy cellar moss as you heave the heavy water crate up the damp stone steps, your breath coming in ragged gasps against the chill air. The damp staves are slick with condensation, but you brace your back against the masonry and lift until your thighs ache and the precious cargo clears the threshold. Impressed by your stubborn endurance, the old cellar-keeper presses a tarnished lead pendant into your palm, muttering a brief coastal blessing for safe passage across the exposed mud flats.",
+   "check": "",
+   "grant": "tarnished lead pendant",
+   "exits": [
+    "Return to the smoky guildhall"
+   ]
   }
  },
- "missing": [
-  "td-1-035",
-  "td-1-038",
-  "td-1-040",
-  "td-1-044"
- ]
+ "missing": []
 }
