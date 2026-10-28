@@ -1,0 +1,56 @@
+Gemini said
+
+@@SEED sg-3-1-0-0 | In the humming blue corridors of the Shard Bazaar, a toothless merchant murmurs that the Rain Vault is empty and dry.
+@@SEED sg-3-1-0-1 | Beneath a leaning arcade of green glass, a desperate smuggler insists the Rain Vault is already guarded by the Salt Court.
+@@SEED sg-3-1-1-0 | You slip past a collapsed obsidian balcony where scavengers bicker over copper wire, risking a fall into the singing pits.
+@@SEED sg-3-1-1-1 | A blind scavenger named Oren barters for your spare flint while leaning against a pillar of fused teal crystal.
+@@SEED sg-3-1-1-2 | Amidst the debris of a mirror-maker's workshop, a jagged shard reflects the scorching noon glare directly into your eyes.
+@@SEED sg-3-1-1-3 | Walking unguided, you notice a fresh bootprint in the salt dust leading straight into a hidden drainage conduit.
+@@SEED sg-3-1-1-4 | A toll-lord's scout peers from a high window of smoked glass, forcing you to duck behind a crumbling arch.
+@@SEED sg-3-1-1-5 | The air grows heavy with the smell of scorched resin as you cross a bridge made of woven copper wire.
+@@SEED sg-3-1-2-0 | In a courtyard of shattered crystal bells, a lone beggar named Sola begs for water while clutching a broken sextant.
+@@SEED sg-3-1-2-1 | You crawl through a low tunnel of purple slag where the floor hums with strange, subterranean vibrations.
+@@SEED sg-3-1-2-2 | Moving without a companion allows you to spot an unsecured winch that lifts you cleanly over a toll barrier.
+@@SEED sg-3-1-2-3 | A team of Glasswright apprentices argue noisily over the refractive index of a massive lens-block suspended above you.
+@@SEED sg-3-1-2-4 | You balance precariously on a narrow rib of twisted lead high above a chasm of razor-sharp quartz needles.
+@@SEED sg-3-1-2-5 | A sudden flash from a distant signal-tower blinds you momentarily, masking your scramble behind a basalt pillar.
+@@SEED sg-3-1-2-6 | Salt-encrusted wind chimes clatter mournfully in a ruined conservatory where nothing green has grown for centuries.
+@@SEED sg-3-1-2-7 | You trade a mouthful of brackish water for shelter beneath the velvet canopy of an itinerant carpet-weaver.
+@@SEED sg-3-1-2-8 | A forgotten doorway of amber glass groans ominously as shifting thermal currents threaten to shatter it.
+@@SEED sg-3-1-2-9 | You navigate a labyrinth of hollow pillars that whistle a low, haunting note every time the wind stirs.
+@@SEED sg-3-1-2-10 | A group of fierce Dune Sisters block a sunlit courtyard, demanding an oath before letting you pass their well.
+@@SEED sg-3-1-2-11 | You scramble over a mountain of discarded spectacle frames that clatter like dry bones beneath your heavy boots.
+@@SEED sg-3-1-2-12 | A hooded scavenger named Kael offers to trade a counterfeit map of Prism for your sturdy wool cloak.
+@@SEED sg-3-1-2-13 | You slip through an abandoned larder smelling faintly of dried lemons and centuries-old vinegar.
+@@SEED sg-3-1-2-14 | A rusted iron crane swings dangerously overhead, its dangling chain scraping against the calcified pavement.
+@@SEED sg-3-1-2-15 | You duck into a sunken alcove of amethyst glass while a patrol of toll-lords marches past with heavy pikes.
+@@SEED sg-3-1-3-0 | In a plaza of fractured sunstones, a frantic courier begs you to carry a warning about poisoned cisterns.
+@@SEED sg-3-1-3-1 | You squeeze through a narrow fissure in a wall of fused green bottles, tearing your sleeve on jagged glass.
+@@SEED sg-3-1-3-2 | A skeletal street-cleaner named Miri sweeps sparkling glass dust into neat piles with a twig broom.
+@@SEED sg-3-1-3-3 | You cross a suspension bridge woven from copper wire that hums like a hornet's nest beneath your feet.
+@@SEED sg-3-1-3-4 | An old woman selling roasted salt-crusts warns you that the signal-towers are sending coded warnings tonight.
+@@SEED sg-3-1-3-5 | You hide inside a hollow cistern of black basalt while heavy footsteps echo loudly on the glass overhead.
+@@SEED sg-3-1-3-6 | Unburdened by debts or allies, you negotiate a swift passage with a rogue cart-driver for a single copper coin.
+@@SEED sg-3-1-3-7 | A jagged chasm splits the street, forcing you to leap across a void of glittering crystal shards.
+@@SEED sg-3-1-3-8 | You trade a handful of dried dates with a weary scholar for directions around the central toll-fort.
+@@SEED sg-3-1-3-9 | A flock of white-feathered gulls nests strangely atop a scorched pillar of iridescent slag.
+@@SEED sg-3-1-3-10 | You wade through a shallow pool of salty brine that stings the open blisters on your travel-weary feet.
+@@SEED sg-3-1-3-11 | A towering archway of engraved crystal frames a breathtaking view of the distant, silent Prism.
+@@SEED sg-3-1-3-12 | You pull yourself up a vertical drainage pipe encrusted with stubborn barnacles of white salt.
+@@SEED sg-3-1-3-13 | A cautious glass-cutter named Bram shares a cup of bitter tea while warning you of traps ahead.
+@@SEED sg-3-1-3-14 | You navigate a collapsing gallery where thousands of tiny prisms scatter the moonlight into blinding rainbows.
+@@SEED sg-3-1-3-15 | A rusted iron gate blocks the alley, its lock rusted solid by decades of alkaline desert winds.
+@@SEED sg-3-1-4-0 | Beneath a canopy of shattered stained glass, you dodge a falling fragment that shatters into deadly dust.
+@@SEED sg-3-1-4-1 | A lone sentry named Vane peers through a brass telescope, ignoring your presence as you dart past.
+@@SEED sg-3-1-4-2 | You squeeze behind a massive fallen sun-disc that blocks the mouth of a hidden subterranean stairwell.
+@@SEED sg-3-1-4-3 | The salty wind howls through a canyon of hollow glass towers, nearly knocking you off your balance.
+@@SEED sg-3-1-4-4 | You scramble across a slippery incline of fused blue slag while distant drums signal an approaching patrol.
+@@SEED sg-3-1-4-5 | A nervous broker named Jora tries to sell you an ineffective talisman against the coming monsoon floods.
+@@SEED sg-3-1-4-6 | You slip through an unguarded postern gate built into the massive outer wall of the old lens-foundry.
+@@SEED sg-3-1-4-7 | The path narrows to a knife-edge of white salt, with the dark abyss of the basin yawning on either side.
+@@SEED sg-3-1-5-0 | You climb a steep flight of spiralling glass stairs that lead directly toward the humming signal-tower.
+@@SEED sg-3-1-5-1 | A weathered bronze door at the base of the tower stands ajar, letting out a sharp beam of white light.
+@@SEED sg-3-1-5-2 | You dodge a sweeping mirror-flash from the upper gallery, pressing flat against the warm glass wall.
+@@SEED sg-3-1-5-3 | The tower steps ring sharply under your boots as you approach the glowing threshold of the Glasswright's sanctum.
+@@SEED sg-d-3-1 | You attempt to slide down a steep chute of fused glass without a brake, shattering your ember-lamp and plunging yourself into darkness just as the patrol closes in.
+@@DONE
