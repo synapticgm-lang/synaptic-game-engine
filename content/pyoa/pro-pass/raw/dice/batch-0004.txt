@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "td-0-037",
+"field": "page",
+"old": "scuttling away toward the deeper shadows",
+"new": "scuttling away towards the deeper shadows",
+"kind": "prose",
+"reason": "British spelling convention favours 'towards' over 'toward'."
+},
+{
+"section": "td-0-038",
+"field": "page",
+"old": "Stepping away from the comforting gloom",
+"new": "Turning away from the comforting gloom",
+"kind": "prose",
+"reason": "Removes the awkward repetition of 'Stepping' from the scene title."
+},
+{
+"section": "td-0-039",
+"field": "page",
+"old": "you work the stubborn clasp free, ready to decant",
+"new": "you prepare to work the stubborn clasp free, hoping to decant",
+"kind": "prose",
+"reason": "Avoids resolving the physical action in the text immediately before the player clicks to roll the check."
+}
+]

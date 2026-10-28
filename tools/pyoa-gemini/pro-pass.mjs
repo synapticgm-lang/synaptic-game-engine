@@ -303,12 +303,24 @@ async function main() {
           }
           process.exit(3);
         }
-        throw e;
+        // Puppeteer nav/context loss mid-call — treat like noreply and retry once.
+        const msg = String(e?.message || e);
+        say(`STOP nav: ${msg.slice(0, 120)} (attempt ${attempt})`);
+        logLine({ event: 'gemini-stop', kind: 'nav', message: msg.slice(0, 300), batch: bi, ids, attempt });
+        if (attempt === 0) { say('retrying once after navigation error'); continue; }
+        for (const id of ids) reviewed.add(id);
+        progress.reviewedIds = [...reviewed];
+        progress.nextBatch = (progress.nextBatch || 0) + 1;
+        saveProgress(progress);
+        callsThisRun++;
+        bi++;
+        reply = '';
+        break;
       }
       callsThisRun++;
       progress.calls++;
       writeFileSync(join(rawDir, `batch-${String(bi).padStart(4, '0')}${attempt ? '.r1' : ''}.txt`), `MODEL ${lastModel}\n\n${reply}`);
-      const softRefuse = /hard time fulfilling|can'?t help with that|something else instead|unable to (help|fulfill)/i.test(reply);
+      const softRefuse = /hard time fulfilling|can'?t help with that|something else instead|unable to (help|fulfill)|something went wrong/i.test(reply);
       if (softRefuse) {
         say(`soft-refuse (attempt ${attempt})`);
         logLine({ event: 'soft-refuse', batch: bi, ids, model: lastModel, attempt, preview: String(reply).slice(0, 200) });

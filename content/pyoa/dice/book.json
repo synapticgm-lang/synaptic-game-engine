@@ -103,7 +103,7 @@
    "kind": "recovery",
    "title": "A Blinding Headache",
    "brief": "You decipher a set of faded navigational charts left scattered across the desk, risking a headache to uncover a hidden safe route through the sinkholes.",
-   "page": "Pain spikes sharply behind your eyes, a sudden and blinding migraine that forces you to stagger back from the desk. You knock an inkwell to the floor, shattering the glass and ruining a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour sitting on the floor with your head between your knees, waiting for the nausea and the throbbing ache to pass. By the time you can see straight again, the sun has climbed much higher in the sky, wasting precious daylight. You have lost the thread of Orsolya's logic, leaving the safe path through the sinkholes a mystery. With a frustrated sigh, you push yourself upright, knowing you will have to trust your own instincts on the salt-flats.",
+   "page": "Pain spikes sharply behind your eyes, a sudden and searing migraine that forces you to stagger back from the desk. You knock an inkwell to the floor, shattering the glass and ruining a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour sitting on the floor with your head between your knees, waiting for the nausea and the throbbing ache to pass. By the time you can see straight again, the sun has climbed much higher in the sky, wasting precious daylight. You have lost the thread of Orsolya's logic, leaving the safe path through the sinkholes a mystery. With a frustrated sigh, you push yourself upright, knowing you will have to trust your own instincts on the salt-flats.",
    "exits": [
     {
      "label": "Leave the desk behind",
@@ -138,7 +138,7 @@
    "page": "Outside on the balcony, the wind tastes entirely of dry salt and dead kelp. Resting on a salt-rimed crate is a collapsible brass spyglass, a heavy, expensive piece of equipment that Orsolya must have dropped in her haste. When you pick it up, the metal is cold and stubbornly rigid. The sea-spray has corroded the sliding joints, fusing the brass cylinders together. Spotting rival wrecker crews or aggressive Drift Pilgrims from a distance would be an immense advantage out on the open seabed. However, the brass edges are sharp and jagged where the casing has split. Forcing the mechanism open is going to take leverage and raw strength, and one slip could slice your palms open on the rusted metal.\n\nYou grip the heavy casing, preparing to twist.",
    "exits": [
     {
-     "label": "Prepare to force the mechanism",
+     "label": "Force the mechanism open",
      "to": "td-0-008"
     }
    ],
@@ -150,7 +150,7 @@
    "kind": "scene",
    "title": "A Delicate Operation",
    "brief": "You try to repair a rusted spyglass found on the balcony, risking cutting your hands to gain a valuable tool for spotting distant scavengers.",
-   "page": "Bracing the spyglass against the wooden railing, you examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing, sealing the fragile glass behind a wall of green verdigris. To truly make this tool useful, you will need to dismantle the housing completely and clean the internal tracks. It is delicate, frustrating work that requires steady hands, and the rusted edges of the brass casing are sharp enough to easily slice through a wrecker's thick calluses. A deep cut would invite infection from the stagnant tide-pools down below.\n\nThe harbour waits quietly in the distance, a reminder that time is slipping away while you stand here tinkering with broken glass.",
+   "page": "Bracing the spyglass against the wooden railing, you examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing, sealing the fragile glass behind a wall of green verdigris. To truly make this tool useful, you will need to dismantle the housing completely and clean the internal tracks. It is delicate, frustrating work that requires steady hands, and the rusted edges of the brass casing are sharp enough to easily slice through a wrecker's thick calluses. A deep cut would invite infection from the stagnant rock pools down below.\n\nThe harbour waits quietly in the distance, a reminder that time is slipping away while you stand here tinkering with broken glass.",
    "exits": [
     {
      "label": "Attempt the delicate repair",
@@ -265,7 +265,7 @@
    "kind": "check",
    "title": "Breaking the Cap",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Leaning close to the stubborn reservoir, you press your thumb against the brass lip. The metal groans, warped by years of salt and heat. You need to dislodge the rusted cap without tilting the base, a delicate task requiring steady hands. If you apply too much force, the fragile casing will buckle, sending a ruinous wave of oil soaking into the thirsty wooden planks of the floor. You hold your breath, slotting the pry bar deeper into the groove, feeling the mechanical tension shudder up your forearm. It is a matter of leverage and patience now.",
+   "page": "Leaning close to the stubborn reservoir, you press your thumb against the brass lip. The metal groans, warped by years of salt and heat. You need to dislodge the rusted cap without tilting the base, an exacting task requiring absolute focus. If you apply too much force, the fragile casing will buckle, sending a ruinous wave of oil soaking into the thirsty wooden planks of the floor. You hold your breath, slotting the pry bar deeper into the groove, feeling the mechanical tension shudder up your forearm. It is a matter of leverage and patience now.",
    "exits": [
     {
      "label": "check-full",
@@ -303,7 +303,7 @@
    "kind": "recovery",
    "title": "A Messy Spill",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Metal shrieks as the cap suddenly gives way entirely, throwing your weight off balance. The lantern tips, and before you can right it, a thick arc of amber oil sloshes over the rim. It pools over your knuckles and splashes down onto the floorboards, soaking immediately into the dry wood with a sickening hiss. You scramble to upright the heavy brass base, but the damage is done. A significant portion of the precious fuel is gone, leaving you with only a meagre puddle in the bottom of the reservoir and hands stinking heavily of whale fat. The stench will linger for days, a constant reminder of your clumsy haste.",
+   "page": "Metal shrieks as the cap suddenly gives way entirely, throwing your weight off balance. The lantern tips, and before you can right it, a thick arc of amber oil sloshes over the rim. It pools over your knuckles and splashes down onto the floorboards, soaking immediately into the dry wood with a sickening hiss. You scramble to right the heavy brass base, but the damage is done. A significant portion of the precious fuel is gone, leaving you with only a meagre puddle in the bottom of the reservoir and hands stinking heavily of whale fat. The stench will linger for days, a constant reminder of your clumsy haste.",
    "exits": [
     {
      "label": "Salvage what remains",
@@ -319,7 +319,7 @@
    "kind": "reward",
    "title": "Captured Light",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Wiping your slick hands on a rag, you manage to secure the spoils. However narrowly you avoided complete disaster, you finally tip the brass reservoir and pour the thick, amber liquid into a sturdy iron flask. The smell is pungent, carrying the deep-sea tang of rendered leviathan fat, but it will burn bright and long in the encroaching dark. You cork the flask tightly and slip it into your pack, feeling a small measure of comfort against the encroaching shadows. With this fuel secured, the descent to the harbour will be just a little less daunting.",
+   "page": "Wiping your slick hands on a rag, you manage to secure the spoils. However narrowly you avoided complete disaster, you finally tip the brass reservoir and pour the thick, amber liquid into a sturdy iron flask. The smell is pungent, carrying the deep-sea tang of rendered leviathan fat, but it will burn bright and long in the encroaching dark. You cork the flask tightly and slip it into your pack, feeling a small measure of comfort against the gathering shadows. With this fuel secured, the descent to the harbour will be just a little less daunting.",
    "exits": [
     {
      "label": "Search the lighthouse quarters",
@@ -583,7 +583,7 @@
    "page": "Crouched behind a stack of barnacle-encrusted crates, you watch a trio of rival wreckers from the Hook-and-Line crew. They are huddled around a lantern, arguing over a scrap of parchment. You recognise their leader, a scarred net-mender named Silas, tracing a jagged line across the paper with a grimy finger.\n\n\"The Sunken Stair is this way,\" Silas mutters, his voice carrying on the salty breeze. \"Past the singing dunes and the old coral beds.\" That parchment is a hand-drawn chart of the newly exposed seabed, tracking hazards and stable paths. If you can get a closer look, or perhaps snatch it while they are distracted, your journey would be vastly safer.",
    "exits": [
     {
-     "label": "Eavesdrop on their plans",
+     "label": "Sneak closer for a better look",
      "to": "td-0-030"
     }
    ],
@@ -595,7 +595,7 @@
    "kind": "check",
    "title": "A Stolen Glance",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Edging along the shadows of the crates, you try to memorise the crude topography Silas has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can snatch the chart from the barrelhead the moment Silas looks away.",
+   "page": "Edging along the shadows of the crates, you try to memorise the crude topography Silas has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can memorise the chart on the barrelhead the moment Silas looks away.",
    "exits": [
     {
      "label": "check-full",
@@ -624,7 +624,7 @@
    "check": {
     "stat": "WIT",
     "target": 8,
-    "label": "Memorise or snatch the chart"
+    "label": "Memorise the chart"
    }
   },
   {
@@ -633,7 +633,7 @@
    "kind": "recovery",
    "title": "Chased from the Docks",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "A stray pebble crunches loudly beneath your heel. Silas snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, leaving you to navigate the perilous Low entirely blind.",
+   "page": "A stray pebble crunches loudly beneath your heel. Silas snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, forcing you to navigate the perilous Low entirely blind.",
    "exits": [
     {
      "label": "Flee into the winding alleys",
@@ -733,10 +733,10 @@
    "kind": "recovery",
    "title": "A Shriek in the Harbour",
    "brief": "You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman.",
-   "page": "Before you can finish your sentence, the pilgrim lets out a piercing, mournful wail. \"Blasphemy!\" he shrieks, throwing a handful of stinging salt directly into your eyes.\n\nYou stagger backward, blinded and cursing, frantically rubbing the burning grit from your vision. By the time your tears clear the sting, the pilgrim has vanished into the maze of stranded boats, leaving you with red, aching eyes. The commotion has drawn the hostile stares of nearby scavengers, marking you as a troublemaker. You have gained no answers, only a persistent ache that makes the glaring light of the seabed almost unbearable.",
+   "page": "Before you can finish your sentence, the pilgrim lets out a piercing, mournful wail. \"Blasphemy!\" he shrieks, throwing a handful of stinging salt directly into your eyes.\n\nYou stagger backwards, blinded and cursing, frantically rubbing the burning grit from your vision. By the time your tears clear the pain, the pilgrim has vanished into the maze of stranded boats, leaving you with red, aching eyes. The commotion has drawn the hostile stares of nearby scavengers, marking you as a troublemaker. You have gained no answers, only a persistent ache that makes the glaring light of the seabed almost unbearable.",
    "exits": [
     {
-     "label": "Rub your stinging eyes",
+     "label": "Stumble away empty-handed",
      "to": "td-0-037",
      "cost": true
     }
@@ -749,7 +749,7 @@
    "kind": "reward",
    "title": "A Pilgrim's Ward",
    "brief": "You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman.",
-   "page": "Breathing a heavy sigh, you let the echo of the pilgrim's shriek fade into the damp air of the cliffs. Whether you spoke too harshly or moved too fast, the panic passes eventually, leaving him shivering and repentant. He murmurs apologies to the absent sea, clawing at his kelp mantle. In exchange for your patience, he presses a small, cold object into your palm before scuttling away toward the deeper shadows of the rocks.\n\nIt is a bleached piece of spine, carved with the symbol of an unfurling wave - a ward against the wrath of the drowned. Tucking the charm into your coat, you turn your attention back to the broader chaos of the cliff-town, ready to seek answers where the water used to be.",
+   "page": "Breathing a heavy sigh, you let the echo of the pilgrim's shriek fade into the damp air of the cliffs. Whether you spoke too harshly or moved too fast, the panic passes eventually, leaving him shivering and repentant. He murmurs apologies to the absent sea, clawing at his kelp mantle. In exchange for your patience, he presses a small, cold object into your palm before scuttling away towards the deeper shadows of the rocks.\n\nIt is a bleached piece of spine, carved with the symbol of an unfurling wave - a ward against the wrath of the drowned. Tucking the charm into your coat, you turn your attention back to the broader chaos of the cliff-town, ready to seek answers where the water used to be.",
    "exits": [
     {
      "label": "Return to the dry docks",
@@ -765,7 +765,7 @@
    "kind": "bottleneck",
    "title": "Stepping Onto The Low",
    "brief": "Leaving the shadow of the cliff behind, you step onto the endless salt-flats of the Low to begin your search for the missing lighthouse keeper.",
-   "page": "Stepping away from the comforting gloom of Gullmouth's sheer stone, you cross the threshold of the known world. Beneath your boots, the ground crunches - a thick crust of white salt stretching out to the bruised horizon where the ocean should be. This is the Low, the naked seabed exposed by the great retreat. A grim landscape of marooned wrecks, jutting whale ribs, and shimmering sinkholes lies waiting under the harsh sun.\n\nSomewhere out there in this vast, desiccated wasteland, Orsolya Venn is searching for the Sunken Stair and the jammed mechanism of the Meridian Gear. The wind howls across the flats, carrying the scent of rotting kelp and dried brine. You pull your collar high against the chill. There is no map for a world turned inside out, only the distant, dark shapes of scavenger camps and the looming silhouettes of coral spires. With every step away from the cliff-town, the reality of the missing sea settles heavier upon your shoulders.",
+   "page": "Turning away from the comforting gloom of Gullmouth's sheer stone, you cross the threshold of the known world. Beneath your boots, the ground crunches - a thick crust of white salt stretching out to the bruised horizon where the ocean should be. This is the Low, the naked seabed exposed by the great retreat. A grim landscape of marooned wrecks, jutting whale ribs, and shimmering sinkholes lies waiting under the harsh sun.\n\nSomewhere out there in this vast, desiccated wasteland, Orsolya Venn is searching for the Sunken Stair and the jammed mechanism of the Meridian Gear. The wind howls across the flats, carrying the scent of rotting kelp and dried brine. You pull your collar high against the chill. There is no map for a world turned inside out, only the distant, dark shapes of scavenger camps and the looming silhouettes of coral spires. With every step away from the cliff-town, the reality of the missing sea settles heavier upon your shoulders.",
    "exits": [
     {
      "label": "Continue across the exposed seabed",
@@ -780,7 +780,7 @@
    "kind": "scene",
    "title": "A Precious Source of Light",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Carefully, you wedge your blade under the tarnished rim of the heavy brass lantern. It is a beautiful old piece of salvage, likely stripped from a nobleman's drowned yacht, but you have no need for decorative metal right now. You need the dark, viscous fuel sloshing in its belly. The hinges are rusted shut with thick green verdigris, requiring a delicate, steady hand to pry open without tipping the reservoir. The subterranean depths beneath the Sunken Stair will be pitch black, and the shadows of the Low are already lengthening. Holding your breath, you work the stubborn clasp free, ready to decant the precious oil into your own flask before it can seep into the floorboards.",
+   "page": "Carefully, you wedge your blade under the tarnished rim of the heavy brass lantern. It is a beautiful old piece of salvage, likely stripped from a nobleman's drowned yacht, but you have no need for decorative metal right now. You need the dark, viscous fuel sloshing in its belly. The hinges are rusted shut with thick green verdigris, requiring a delicate, steady hand to pry open without tipping the reservoir. The subterranean depths beneath the Sunken Stair will be pitch black, and the shadows of the Low are already lengthening. Holding your breath, you prepare to work the stubborn clasp free, hoping to decant the precious oil into your own flask before it can seep into the floorboards.",
    "exits": [
     {
      "label": "Proceed with dismantling the lantern",
@@ -810,7 +810,7 @@
    "kind": "bottleneck",
    "title": "A Dry Harbour Morning",
    "brief": "You wake in Gullmouth to a silent, dry harbour and discover Orsolya's sealed letter warning that the Meridian Gear has jammed beneath the Sunken Stair.",
-   "page": "Silence is the first thing that wakes you. The rhythmic, thunderous crash of waves against the cliffs of Gullmouth has vanished, replaced by an eerie, hollow quiet. Pushing yourself up from your cot, you look out the window and freeze. The harbour is entirely dry. Fishing smacks and smuggler galleons list pathetically in the mud, stranded amidst a vast, steaming expanse of exposed seabed stretching to the horizon.\n\nOn your washstand lies a thick envelope, sealed with the deep blue wax of the lighthouse keeper. Breaking it open, you recognize Orsolya's hurried scrawl. She writes that the Meridian Gear - the great engine of the old Tidewardens - has jammed far beneath the Sunken Stair. The sea has not merely retreated; it is locked out. Whoever turns the ancient wheel will dictate the shape of the returning waters. She has gone ahead, urging you to follow. The fate of the Wrack Coast now rests entirely on who controls the tide.",
+   "page": "Silence is the first thing that wakes you. The rhythmic, thunderous crash of waves against the cliffs of Gullmouth has vanished, replaced by an eerie, hollow quiet. Pushing yourself up from your cot, you look out the window and freeze. The harbour is entirely dry. Fishing smacks and smuggler galleons list pathetically in the mud, stranded amidst a vast, steaming expanse of exposed seabed stretching to the horizon.\n\nOn your washstand lies a thick envelope, sealed with the deep blue wax of the lighthouse keeper. Breaking it open, you recognise Orsolya's hurried scrawl. She writes that the Meridian Gear - the great engine of the old Tidewardens - has jammed far beneath the Sunken Stair. The sea has not merely retreated; it is locked out. Whoever turns the ancient wheel will dictate the shape of the returning waters. She has gone ahead, urging you to follow. The fate of the Wrack Coast now rests entirely on who controls the tide.",
    "exits": [
     {
      "label": "Descend into the stranded harbour",
@@ -825,7 +825,7 @@
    "kind": "hub",
    "title": "The Stranded Basin",
    "brief": "Gullmouth Harbour: The stranded docks are chaotic as rival wrecker crews argue over the exposed seabed and scavenge whatever they can reach first.",
-   "page": "Barnacle-crusted keels list at sickening angles in the dried silt of Gullmouth Harbour, where the salt-stench of dead weed and black mud clings to the wool of your coat. Shouts echo off the timber pilings as rival wreckers claw through the weed-matted troughs of the seabed, iron bars clinking against stranded anchors and waterlogged chests. Down among the tilted hulls and weeping brine-pipes, every man and his cousin looks for an edge before the tide clock turns its iron tooth.\n\nScraps of copper and heavy oak timbers lie waiting for the bold or the desperate, half-buried in the silt where the gulls have given up screeching and taken to pacing the dried mud. You must choose where your hands fall first among the wreckage before the basin fills with wolves or water.",
+   "page": "Barnacle-crusted keels list at sickening angles in the dried silt of Gullmouth Harbour, where the salt-stench of dead weed and black mud clings to the wool of your coat. Shouts echo off the timber pilings as rival wreckers claw through the weed-matted troughs of the seabed, iron bars clinking against stranded anchors and waterlogged chests. Down among the tilted hulls and weeping brine-pipes, every man and his cousin looks for an edge before the tide clock turns its iron tooth.\n\nScraps of copper and heavy oak timbers lie waiting for the bold or the desperate, half-buried in the muck where the gulls have given up screeching and taken to pacing the dried mud. You must choose where your hands fall first among the wreckage before the basin fills with wolves or water.",
    "exits": [
     {
      "label": "Face down the snarling rival crew blocking the fishing skiff",
@@ -1012,7 +1012,7 @@
    "kind": "recovery",
    "title": "Snap of the Hemp",
    "brief": "You patch a splintered skiff that hangs uselessly from the dry pier, using clever rigging to lower it and scavenging a bundle of salt-cured rations.",
-   "page": "Sudden friction betrays your hurried fingers, and the hemp rope parting with a sharp crack sends the skiff plunging sideways into the dry timbers of the pier. Splintered wood explodes outward, spraying shards across the mud and tearing a jagged hole in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt, brushing salt from a raw, bleeding scratch across your arm while your precious rations scatter into the dust. The mishap costs you both time and skin, leaving you poorer by a bundle of provisions and nursing a fresh, stinging wound.",
+   "page": "Sudden friction betrays your hurried fingers, and the hemp rope parting with a sharp crack sends the skiff plunging sideways into the dry timbers of the pier. Splintered wood explodes outward, spraying shards across the mud and tearing a jagged gash in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt, brushing salt from the raw, bleeding wound while your precious rations scatter into the dust. The mishap costs you both time and skin, leaving you poorer by a bundle of provisions and nursing a fresh, stinging wound.",
    "exits": [
     {
      "label": "Gather the ruined gear",
@@ -1028,10 +1028,10 @@
    "kind": "reward",
    "title": "Rigging the Dry Pier",
    "brief": "You patch a splintered skiff that hangs uselessly from the dry pier, using clever rigging to lower it and scavenging a bundle of salt-cured rations.",
-   "page": "Splintered pine groans under your weight as you brace against the hull of the hanging skiff, sweating despite the bitter salt chill off the empty seabed. By lashing a spare winch-cable through a rusted block and tackle, you manage to swing the heavy craft clear of the rotting timber supports without snapping the rotting stays. A canvas grease-sack tucked beneath the floorboards yields three thick slabs of salt-cured cod and a half-skin of foul-tasting vinegar water.\n\nHauling the prize onto the gravel embankment, you catch the eye of a passing net-mender who nods slowly at your handiwork, leaving behind a small bone needle tucked into a crack in the quay as an unspoken token of professional respect.",
+   "page": "Splintered pine groans under your weight as you brace against the hull of the hanging skiff, sweating despite the bitter salt chill off the empty seabed. By lashing a spare winch-cable through a rusted block and tackle, you manage to swing the heavy craft clear of the rotting timber supports without snapping the brittle stays. A canvas grease-sack tucked beneath the floorboards yields three thick slabs of salt-cured cod and a half-skin of foul-tasting vinegar water.\n\nHauling the prize onto the gravel embankment, you catch the eye of a passing net-mender who nods slowly at your handiwork, leaving behind a small bone needle tucked into a crack in the quay as an unspoken token of professional respect.",
    "exits": [
     {
-     "label": "Drag the skiff down toward the muddy harbor",
+     "label": "Drag the skiff down toward the muddy harbour",
      "to": "td-1-002"
     }
    ],

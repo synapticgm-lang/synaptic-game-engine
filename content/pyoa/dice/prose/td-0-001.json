@@ -40,7 +40,7 @@
   },
   "td-0-005": {
    "title": "A Blinding Headache",
-   "text": "Pain spikes sharply behind your eyes, a sudden and blinding migraine that forces you to stagger back from the desk. You knock an inkwell to the floor, shattering the glass and ruining a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour sitting on the floor with your head between your knees, waiting for the nausea and the throbbing ache to pass. By the time you can see straight again, the sun has climbed much higher in the sky, wasting precious daylight. You have lost the thread of Orsolya's logic, leaving the safe path through the sinkholes a mystery. With a frustrated sigh, you push yourself upright, knowing you will have to trust your own instincts on the salt-flats.",
+   "text": "Pain spikes sharply behind your eyes, a sudden and searing migraine that forces you to stagger back from the desk. You knock an inkwell to the floor, shattering the glass and ruining a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour sitting on the floor with your head between your knees, waiting for the nausea and the throbbing ache to pass. By the time you can see straight again, the sun has climbed much higher in the sky, wasting precious daylight. You have lost the thread of Orsolya's logic, leaving the safe path through the sinkholes a mystery. With a frustrated sigh, you push yourself upright, knowing you will have to trust your own instincts on the salt-flats.",
    "check": "",
    "grant": "",
    "exits": [
@@ -62,12 +62,12 @@
    "check": "",
    "grant": "",
    "exits": [
-    "Prepare to force the mechanism"
+    "Force the mechanism open"
    ]
   },
   "td-0-008": {
    "title": "A Delicate Operation",
-   "text": "Bracing the spyglass against the wooden railing, you examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing, sealing the fragile glass behind a wall of green verdigris. To truly make this tool useful, you will need to dismantle the housing completely and clean the internal tracks. It is delicate, frustrating work that requires steady hands, and the rusted edges of the brass casing are sharp enough to easily slice through a wrecker's thick calluses. A deep cut would invite infection from the stagnant tide-pools down below.\n\nThe harbour waits quietly in the distance, a reminder that time is slipping away while you stand here tinkering with broken glass.",
+   "text": "Bracing the spyglass against the wooden railing, you examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing, sealing the fragile glass behind a wall of green verdigris. To truly make this tool useful, you will need to dismantle the housing completely and clean the internal tracks. It is delicate, frustrating work that requires steady hands, and the rusted edges of the brass casing are sharp enough to easily slice through a wrecker's thick calluses. A deep cut would invite infection from the stagnant rock pools down below.\n\nThe harbour waits quietly in the distance, a reminder that time is slipping away while you stand here tinkering with broken glass.",
    "check": "",
    "grant": "",
    "exits": [

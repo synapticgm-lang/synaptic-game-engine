@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "td-0-015",
+"field": "page",
+"old": "upright the heavy brass base",
+"new": "right the heavy brass base",
+"kind": "prose",
+"reason": "Improves flow; 'right' is more natural as a verb than 'upright' here"
+},
+{
+"section": "td-0-016",
+"field": "page",
+"old": "encroaching shadows.",
+"new": "gathering shadows.",
+"kind": "prose",
+"reason": "Avoids repetition of the word 'encroaching' used in the preceding sentence"
+},
+{
+"section": "td-0-029",
+"field": "exit:0",
+"old": "Eavesdrop on their plans",
+"new": "Sneak closer for a better look",
+"kind": "choice",
+"reason": "Aligns better with the page text's setup of getting a closer look or snatching the chart"
+}
+]

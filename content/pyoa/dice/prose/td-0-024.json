@@ -50,19 +50,23 @@
    "check": "",
    "grant": "",
    "exits": [
-    "Eavesdrop on their plans"
+    "Sneak closer for a better look"
    ]
   },
   "td-0-030": {
    "title": "A Stolen Glance",
-   "text": "Edging along the shadows of the crates, you try to memorise the crude topography Silas has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can snatch the chart from the barrelhead the moment Silas looks away.",
-   "check": "Memorise or snatch the chart",
+   "text": "Edging along the shadows of the crates, you try to memorise the crude topography Silas has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can memorise the chart on the barrelhead the moment Silas looks away.",
+   "check": "Memorise the chart",
    "grant": "",
-   "exits": []
+   "exits": [
+    "check-full",
+    "check-mixed",
+    "check-miss"
+   ]
   },
   "td-0-031": {
    "title": "Chased from the Docks",
-   "text": "A stray pebble crunches loudly beneath your heel. Silas snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, leaving you to navigate the perilous Low entirely blind.",
+   "text": "A stray pebble crunches loudly beneath your heel. Silas snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, forcing you to navigate the perilous Low entirely blind.",
    "check": "",
    "grant": "",
    "exits": [
@@ -105,11 +109,11 @@
   },
   "td-0-036": {
    "title": "A Shriek in the Harbour",
-   "text": "Before you can finish your sentence, the pilgrim lets out a piercing, mournful wail. \"Blasphemy!\" he shrieks, throwing a handful of stinging salt directly into your eyes.\n\nYou stagger backward, blinded and cursing, frantically rubbing the burning grit from your vision. By the time your tears clear the sting, the pilgrim has vanished into the maze of stranded boats, leaving you with red, aching eyes. The commotion has drawn the hostile stares of nearby scavengers, marking you as a troublemaker. You have gained no answers, only a persistent ache that makes the glaring light of the seabed almost unbearable.",
+   "text": "Before you can finish your sentence, the pilgrim lets out a piercing, mournful wail. \"Blasphemy!\" he shrieks, throwing a handful of stinging salt directly into your eyes.\n\nYou stagger backwards, blinded and cursing, frantically rubbing the burning grit from your vision. By the time your tears clear the pain, the pilgrim has vanished into the maze of stranded boats, leaving you with red, aching eyes. The commotion has drawn the hostile stares of nearby scavengers, marking you as a troublemaker. You have gained no answers, only a persistent ache that makes the glaring light of the seabed almost unbearable.",
    "check": "",
    "grant": "",
    "exits": [
-    "Rub your stinging eyes"
+    "Stumble away empty-handed"
    ]
   }
  },

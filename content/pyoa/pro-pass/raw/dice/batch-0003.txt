@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "td-0-030",
+"field": "check.label",
+"old": "Memorise or snatch the chart",
+"new": "Memorise the chart",
+"kind": "choice",
+"reason": "Fixes inconsistency with the reward scene, where the map is sketched from memory rather than stolen."
+},
+{
+"section": "td-0-030",
+"field": "page",
+"old": "snatch the chart from the barrelhead",
+"new": "memorise the chart on the barrelhead",
+"kind": "prose",
+"reason": "Aligns with the reward payoff where the player draws their own map from memory."
+},
+{
+"section": "td-0-031",
+"field": "page",
+"old": "leaving you to navigate",
+"new": "forcing you to navigate",
+"kind": "prose",
+"reason": "Removes repetition of the word 'leaving' used in the previous sentence."
+}
+]

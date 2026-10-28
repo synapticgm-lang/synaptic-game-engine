@@ -1,0 +1,70 @@
+{
+  "accepted": 21,
+  "samples": [
+    {
+      "ts": "2026-10-28T15:40:05.591Z",
+      "event": "suggestion",
+      "batch": 8,
+      "section": "td-0-036",
+      "field": "page",
+      "kind": "prose",
+      "reason": "British English spelling prefers backwards for the adverb.",
+      "old": "You stagger backward,",
+      "new": "You stagger backwards,",
+      "model": "Pro",
+      "status": "accepted"
+    },
+    {
+      "ts": "2026-10-28T15:40:05.592Z",
+      "event": "suggestion",
+      "batch": 8,
+      "section": "td-0-036",
+      "field": "page",
+      "kind": "prose",
+      "reason": "Avoid filler repetition of sting/stinging.",
+      "old": "clear the sting,",
+      "new": "clear the pain,",
+      "model": "Pro",
+      "status": "accepted"
+    },
+    {
+      "ts": "2026-10-28T15:40:05.593Z",
+      "event": "suggestion",
+      "batch": 8,
+      "section": "td-0-036",
+      "field": "exit:0",
+      "kind": "choice",
+      "reason": "Exit label awkwardly repeats the prose action; new label reflects the failure state.",
+      "old": "Rub your stinging eyes",
+      "new": "Stumble away empty-handed",
+      "model": "Pro",
+      "status": "accepted"
+    },
+    {
+      "ts": "2026-10-28T15:42:44.810Z",
+      "event": "suggestion",
+      "batch": 0,
+      "section": "td-0-005",
+      "field": "page",
+      "kind": "prose",
+      "reason": "Avoids repeating 'blinding' from the scene title.",
+      "old": "blinding migraine",
+      "new": "searing migraine",
+      "model": "Pro",
+      "status": "accepted"
+    },
+    {
+      "ts": "2026-10-28T15:42:44.810Z",
+      "event": "suggestion",
+      "batch": 0,
+      "section": "td-0-007",
+      "field": "exit:0",
+      "kind": "choice",
+      "reason": "Removes repetitive 'prepare' (already used in the preceding sentence) to make the exit action punchier.",
+      "old": "Prepare to force the mechanism",
+      "new": "Force the mechanism open",
+      "model": "Pro",
+      "status": "accepted"
+    }
+  ]
+}

@@ -21,14 +21,18 @@
   },
   "td-0-014": {
    "title": "Breaking the Cap",
-   "text": "Leaning close to the stubborn reservoir, you press your thumb against the brass lip. The metal groans, warped by years of salt and heat. You need to dislodge the rusted cap without tilting the base, a delicate task requiring steady hands. If you apply too much force, the fragile casing will buckle, sending a ruinous wave of oil soaking into the thirsty wooden planks of the floor. You hold your breath, slotting the pry bar deeper into the groove, feeling the mechanical tension shudder up your forearm. It is a matter of leverage and patience now.",
+   "text": "Leaning close to the stubborn reservoir, you press your thumb against the brass lip. The metal groans, warped by years of salt and heat. You need to dislodge the rusted cap without tilting the base, an exacting task requiring absolute focus. If you apply too much force, the fragile casing will buckle, sending a ruinous wave of oil soaking into the thirsty wooden planks of the floor. You hold your breath, slotting the pry bar deeper into the groove, feeling the mechanical tension shudder up your forearm. It is a matter of leverage and patience now.",
    "check": "Carefully coax the seal open",
    "grant": "",
-   "exits": []
+   "exits": [
+    "check-full",
+    "check-mixed",
+    "check-miss"
+   ]
   },
   "td-0-015": {
    "title": "A Messy Spill",
-   "text": "Metal shrieks as the cap suddenly gives way entirely, throwing your weight off balance. The lantern tips, and before you can right it, a thick arc of amber oil sloshes over the rim. It pools over your knuckles and splashes down onto the floorboards, soaking immediately into the dry wood with a sickening hiss. You scramble to upright the heavy brass base, but the damage is done. A significant portion of the precious fuel is gone, leaving you with only a meagre puddle in the bottom of the reservoir and hands stinking heavily of whale fat. The stench will linger for days, a constant reminder of your clumsy haste.",
+   "text": "Metal shrieks as the cap suddenly gives way entirely, throwing your weight off balance. The lantern tips, and before you can right it, a thick arc of amber oil sloshes over the rim. It pools over your knuckles and splashes down onto the floorboards, soaking immediately into the dry wood with a sickening hiss. You scramble to right the heavy brass base, but the damage is done. A significant portion of the precious fuel is gone, leaving you with only a meagre puddle in the bottom of the reservoir and hands stinking heavily of whale fat. The stench will linger for days, a constant reminder of your clumsy haste.",
    "check": "",
    "grant": "",
    "exits": [
@@ -37,7 +41,7 @@
   },
   "td-0-016": {
    "title": "Captured Light",
-   "text": "Wiping your slick hands on a rag, you manage to secure the spoils. However narrowly you avoided complete disaster, you finally tip the brass reservoir and pour the thick, amber liquid into a sturdy iron flask. The smell is pungent, carrying the deep-sea tang of rendered leviathan fat, but it will burn bright and long in the encroaching dark. You cork the flask tightly and slip it into your pack, feeling a small measure of comfort against the encroaching shadows. With this fuel secured, the descent to the harbour will be just a little less daunting.",
+   "text": "Wiping your slick hands on a rag, you manage to secure the spoils. However narrowly you avoided complete disaster, you finally tip the brass reservoir and pour the thick, amber liquid into a sturdy iron flask. The smell is pungent, carrying the deep-sea tang of rendered leviathan fat, but it will burn bright and long in the encroaching dark. You cork the flask tightly and slip it into your pack, feeling a small measure of comfort against the gathering shadows. With this fuel secured, the descent to the harbour will be just a little less daunting.",
    "check": "",
    "grant": "Flask of Leviathan Oil",
    "exits": [
