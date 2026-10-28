@@ -1,0 +1,88 @@
+{
+ "batch": "sg-4-1-3-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-1-3-2": {
+   "title": "The Amber Wave",
+   "text": "Across a frozen wave of amber slag, you steady your trembling grip on the hot iron handle of the lamp as the wick flickers dangerously low. Every gust from the salt-choked gale threatens to plunge you into absolute darkness, forcing you to lean your entire weight against the treacherous slope while the cold ceramic Seedkey rattles heavily against your belt.\n\nAhead, the path splits between a narrow subterranean duct and a jagged glass overlook exposed to the full fury of the storm.",
+   "exits": [
+    "Crawl through the low drainage flute",
+    "Shelter behind the green glass screen"
+   ]
+  },
+  "sg-4-1-3-3": {
+   "title": "The Basalt Cistern",
+   "text": "Inside a hollow basalt cistern, a solitary water-drop echoes with maddening slowness, testing your frayed nerves against the relentless roar of the mirror storm. The damp air tastes of ancient lime and stale dust, offering a brief, claustrophobic sanctuary from the howling gale outside while your lamp casts dancing, distorted shadows against the curved stone walls.\n\nYou must decide whether to press onward into the blinding fury or risk crossing a frail, buckling framework suspended above the abyss.",
+   "exits": [
+    "Face the storm behind green glass",
+    "Cross the buckled iron framework"
+   ]
+  },
+  "sg-4-1-3-4": {
+   "title": "The Sea-Glass Chime",
+   "text": "Beneath a canopy of twisted zinc conduits, an old wind-chime made of sea-glass plays a frantic, discordant tune that threatens to drown out your thoughts. The sharp metallic clatter mingles with the howling wind, creating an unsettling rhythm that urges you to move faster before the unstable overhead structure gives way completely.\n\nYour lamp light catches the vibrating shards above as you weigh your next step across the gale-swept divide.",
+   "exits": [
+    "Step onto the buckled iron bridge"
+   ]
+  },
+  "sg-4-1-3-5": {
+   "title": "The Worn Boot-Sole",
+   "text": "Beside a mountain of crushed quartz gravel, your right boot-sole peels away from the leather uppers, threatening to leave your heel bare to the abrasive ground. The biting wind whips razor-sharp dust around your ankles, turning every movement into a painful struggle against the shifting terrain and the biting cold.\n\nYou must choose whether to brave the open viewing screen or trust your footing across the swaying iron bridge ahead.",
+   "exits": [
+    "Seek cover behind the glass screen",
+    "Cross the buckled iron bridge ahead"
+   ]
+  },
+  "sg-4-1-3-6": {
+   "title": "The Black Courtyard",
+   "text": "Within a roofless courtyard of black basalt, a swirling vortex of white sand traps you against a dead wall while your lungs burn for clean air. The heavy dust coats your throat like dry ash, making every breath a desperate effort while the amber light of your lantern struggles to pierce the gritty haze.\n\nTwo potential routes beckon through the swirling gloom, each promising an escape from the suffocating trap.",
+   "exits": [
+    "Escape into the damp aqueduct junction",
+    "Seek refuge beneath the milk-glass spire"
+   ]
+  },
+  "sg-4-1-3-7": {
+   "title": "The Translucent Causeway",
+   "text": "Across a ribbed causeway of translucent slate, the storm pressure drops suddenly with a loud pop, popping your eardrums and confusing your sense of direction. The pale ground glows faintly underfoot like frozen milk, making it difficult to distinguish solid path from sheer drop as the gale shrieks across the open expanse.\n\nYou have a choice of paths leading deeper into the labyrinth of shattered glass and stone.",
+   "exits": [
+    "Take shelter behind the green glass screen",
+    "Push toward the damp masonry junction",
+    "Wade through the heavy pulverized drifts"
+   ]
+  },
+  "sg-4-1-3-8": {
+   "title": "The Speaking-Tube",
+   "text": "Inside a sunken observation post, a rusty brass speaking-tube whistles with the voice of the gale, threatening to disorient you with its unearthly howling. The metallic pipe seems to channel the very breath of the basin, turning the wind's fury into a haunting, hollow drone that vibrates straight through your boots.\n\nYou can press forward toward the leaning milk-glass spire or seek the deeper quiet of the fossilized mud alcove.",
+   "exits": [
+    "Head toward the leaning milk-glass spire",
+    "Rest in the fossilized mud alcove"
+   ]
+  },
+  "sg-4-1-3-9": {
+   "title": "The Cantilevered Balcony",
+   "text": "Beneath a cantilevered balcony of fused green quartz, you cling to a frozen iron stanchion while a slab of loose glass crashes into the ravine below. The structural groans of the old ruin remind you how fragile this dried sea truly is, leaving your muscles aching from tension as the freezing wind tests your grip.\n\nSeveral routes offer a way away from the crumbling ledge into safer territory.",
+   "exits": [
+    "Retreat to the damp aqueduct junction",
+    "Climb toward the leaning milk-glass spire",
+    "Navigate the shifting pulverized quartz"
+   ]
+  },
+  "sg-4-1-3-10": {
+   "title": "The Loiterers' Cleft",
+   "text": "Following the faint smell of burnt tallow left by the looters, you slip through a narrow cleft in the storm wall that bypasses the worst of the grit. The sheltered crevice offers a welcome respite from the screaming winds, though the soot-stained walls suggest others passed this way not long before you.\n\nYou can follow the sheltered stone paths deeper into the complex while avoiding the worst of the surface gale.",
+   "exits": [
+    "Follow the path to the damp aqueduct",
+    "Advance through the shifting quartz dunes"
+   ]
+  },
+  "sg-4-1-3-11": {
+   "title": "The Sunken Ring",
+   "text": "Within a sunken cistern choked with gray salt-drift, your foot strikes a buried metal ring that tolls like a muffled bell against the rushing wind. The strange, resonant clang hangs in the heavy air for a long moment, cutting through the roar of the storm and hinting at forgotten machinery hidden beneath the crust.\n\nThe storm continues to press hard against your back, leaving two distinct directions for your escape.",
+   "exits": [
+    "Push through the heavy pulverized dunes",
+    "Cross the iridescent salt-crust pan"
+   ]
+  }
+ },
+ "missing": []
+}
