@@ -10,14 +10,15 @@ export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
   const pc = (m.knownPlayerName || pcName || '').trim() || 'the player';
   const times = m.meetCount ?? 0;
   const bits: string[] = [];
+  // Visit returns only (s73): "has met before" needs meetCount > 0. Same-visit intro stays meetCount 0.
+  // T10U — met / introSpoken still carries disposition + "someone they know" so grab/collar cannot invent strangers.
   if (times > 0) bits.push(`has met ${pc} before (${times === 1 ? 'once' : `${times} times`})`);
   if (m.knownPlayerName) bits.push(`knows them as ${m.knownPlayerName}`);
+  if (m.disposition && m.disposition !== 'unknown') bits.push(`disposition ${m.disposition}`);
   const history = m.facts.filter((f) => !SHEET_BOOKKEEPING.test(f)).slice(-2);
   if (history.length) bits.push(`remembers: ${history.join('; ')}`);
-  if (!bits.length) return '';
-  const head = `${m.npcName} ${bits.join(', ')}.`;
-  if (times > 0) return `${head} They greet ${pc} as someone they know: no introducing themselves again, no asking the name again.`;
-  return m.knownPlayerName ? `${head} No asking the name again.` : head;
+  const head = bits.length ? `${m.npcName} ${bits.join(', ')}.` : `${m.npcName}.`;
+  return `${head} They greet ${pc} as someone they know: no introducing themselves again, no asking the name again.`;
 }
 export function formatNpcMemoriesForPrompt(
   memories: NpcMemory[] | undefined,

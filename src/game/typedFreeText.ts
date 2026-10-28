@@ -32,6 +32,7 @@ import {
   resolveParleyAttempt,
   resolveStealAttempt,
 } from './stealParley';
+import { engageAddressedInHereSpot } from './hereSpot';
 import { buildClauseWriterFact } from './writerCueLines';
 
 export type TypedFreeTextResult = {
@@ -310,14 +311,16 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     };
   }
 
-  const ctx = sheetContextFromState(state);
+  // T10U — named address restores talking range before the listen pool is stamped.
+  const engaged = engageAddressedInHereSpot(state, raw);
+  const ctx = sheetContextFromState(engaged);
   const intentRead = parsePlayerSteps(raw, ctx);
   const stepResults: StepResolution[] = [];
   let lastAddressee = ctx.lastAddressee ?? null;
-  const inFight = !!(state.activeEncounter || state.roundCombat);
+  const inFight = !!(engaged.activeEncounter || engaged.roundCombat);
   let economy = freshEconomy();
-  const bonusOk = bonusActionGranted(state);
-  let live = state;
+  const bonusOk = bonusActionGranted(engaged);
+  let live = engaged;
   const hostile = hostileParleyContext(live);
 
   // Fight path with no reader steps yet: still never reject — whole line through round resolver.
