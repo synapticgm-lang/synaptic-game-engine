@@ -1,0 +1,93 @@
+{
+ "batch": "sg-5-1-1-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-1-1-2": {
+   "title": "The Prism Shutter",
+   "text": "Jagged teeth of fused quartz grip your ember-lamp's shoulder strap as you wedge your ribs through the narrow aperture. The metal frame groans under decades of desert expansion, threatening to slice the leather clean through and drop your only warmth into the dark. Beyond the obstruction, the corridor stretches into amber gloom, lit only by the faint, rhythmic pulse of distant signal-flashes dancing across the ceiling. Every breath tastes of old lime and dry heat.",
+   "exits": [
+    "Follow Pell along the scratched floor seam",
+    "Pry open the jammed louver to the glare",
+    "Crawl straight through the grease-stained iron gears"
+   ]
+  },
+  "sg-5-1-1-3": {
+   "title": "The Green Cullet Ceiling",
+   "text": "Bottle-green shards hang overhead like frozen icicles of glass, swinging with a faint, musical chime every time a draft sweeps through the cavity. You drop low onto your hands and knees, dragging your banked coal-lantern carefully behind you to avoid clipping the razor-sharp pendants. The floor beneath your palms is a mosaic of tiny, fused beads that roll and shift unpredictably, turning every inch of forward movement into a delicate exercise in balance.",
+   "exits": [
+    "Navigate through the rusted iron gear cluster",
+    "Toss a pebble to test the lower vault echo",
+    "Squeeze through the buckled copper frame",
+    "Push past the wind-blown salt dust on the ledge"
+   ]
+  },
+  "sg-5-1-1-4": {
+   "title": "The Unencumbered Vent",
+   "text": "Carrying no heavy debts to the Salt Court and bound by no oaths to the Dune Sisters, you walk with a lighter, unburdened stride than any hired traveler. A clean, narrow maintenance duct opens directly beside your shoulder, entirely ignored by the heavily guarded main routes and free from the clanking noise of the central gear-rooms. The cool air drifting from the opening carries the faint, damp scent of deep stone and long-sealed cisterns.",
+   "exits": [
+    "Navigate the salt-dusted precipice ahead",
+    "Wedge a tool into the refractory brick wall",
+    "Scramble across the sliding glass shard floor"
+   ]
+  },
+  "sg-5-1-1-5": {
+   "title": "The Brass Ring Ward",
+   "text": "Heavy rings of tarnished brass interlock across the ceiling of the abandoned ward, forming a tangled web that completely blocks the upward climb. Your banked coal-lantern casts long, weaving shadows against the curved stone walls, where old charts of forgotten constellations peel away in dry curls. The air here is dead and thick with copper dust, making every inhalation burn the back of your throat.",
+   "exits": [
+    "Pry open the hidden telescope-cleaner passage",
+    "Cross the shifting floor of loose glass",
+    "Follow the cold hum of the vibrating Seedkey",
+    "Duck beneath the swinging iron counterweight"
+   ]
+  },
+  "sg-5-1-2-0": {
+   "title": "The Hollow Ceramic Flue",
+   "text": "Sharp knuckle-taps echo softly against the baked clay as Pell locates the secret seam in the flue wall. With a sharp wrench, the ceramic panel slips inward, revealing a cramped vertical drop that completely bypasses three different sentry posts of the nervous Glasswrights. The darkness inside smells of cool soot and baked earth, offering a silent corridor away from watchful eyes.",
+   "exits": [
+    "Slip past the dormant glass-eyed automaton",
+    "Descend into the dripping cistern-room"
+   ]
+  },
+  "sg-5-1-2-1": {
+   "title": "The Fused Sand Ramp",
+   "text": "Grit grinds beneath your boots as you push up the steep incline of fused sand, your muscles burning from the continuous upward slope. High above, polished brass walls catch the wandering signal-flashes from the observatory towers, throwing blinding arcs of golden light across your path. Every surface radiates the trapped heat of the midday sun, turning the enclosed ramp into a silent, shimmering oven.",
+   "exits": [
+    "Sneak past the silent guard automaton",
+    "Enter the damp and dripping cistern"
+   ]
+  },
+  "sg-5-1-2-2": {
+   "title": "The Warped Bulkhead",
+   "text": "Rust flakes drift down like red snow as you plant both feet against the bulkhead and throw your weight against the warped hinges. The metal screams in protest, resisting every fraction of an inch until the latch finally gives way with a sharp crack, admitting a rush of stale air from the hidden conduit beyond.",
+   "exits": [
+    "Push through the shifting glass pane"
+   ]
+  },
+  "sg-5-1-2-3": {
+   "title": "The Flue Drop",
+   "text": "Rust flakes drift from the iron hinge as Pell drives the heel of his palm against the warped iron grille, coaxing the stubborn floor-grate upward with a dry shriek of metal. Beneath the gap lies a steep plunge into the dark, smelling sharply of baked soot and ancient lime where the cooling flues of the great lens funnel down toward the foundations. Your ember-lamp casts a weak, reddish glow over the soot-blackened brickwork, while the distant, hollow dripping of water echoes from somewhere far below. Pell wipes his grease-stained brow with a sleeve and gestures silently down into the shaft.\n\nDo you slide into the soot-choked flues behind your guide, or pause to test the draught from a hairline masonry crack nearby?",
+   "exits": [
+    "Descend the steep flues into the darkness",
+    "Slip away to investigate the masonry draught alone"
+   ]
+  },
+  "sg-5-1-2-4": {
+   "title": "The Slag Ridge",
+   "text": "Jagged ribs of fused green slag tear at your boots as you scramble over the ridge, the glassy stone cooling into queer, twisted shapes beneath a pale, bleached sky. Across the empty salt basin, distant foghorns moan a low, mournful warning that vibrates in the hollows of your chest. The wind is picking up grit from the flats, hissing against your woollen coat and threatening to blow out your amber-lamp if you do not shield the iron door with your hand. You crouch behind a shattered parapet of old lens-glass to catch your breath and survey the jagged descent toward the observatory's lower tiers.\n\nDo you move quickly down the slope before the fog thickens, or crawl carefully to avoid disturbing the loose debris?",
+   "exits": [
+    "Tread lightly past the cascading glass beads",
+    "Pick your way through the maze of convex mirrors"
+   ]
+  },
+  "sg-5-1-2-5": {
+   "title": "The Chime Shaft",
+   "text": "Heavy brass catches the point of your shoulder in the tight utility shaft, sending a sudden, brazen chime ringing off the curved brickwork with the persistence of an alarm bell. The metallic note hangs heavy in the confined air, vibrating against your ribs and dying away into a nervous silence that feels far too loud. You stand frozen in the gloom, clutching your banking coal-lantern tighter as dust motes swirl in the reddish light. The narrow passage splits ahead into several grim directions, each smelling of stale salt and old iron.\n\nDo you slip through the narrow crack in the masonry to hide, plunge deeper into the hall of distorting mirrors, or hurry across the crunching salt floor of the forgotten archive?",
+   "exits": [
+    "Slip away through the whispering wall fracture",
+    "Duck into the labyrinth of convex mirrors",
+    "Cross the crunching salt archive floor in haste"
+   ]
+  }
+ },
+ "missing": []
+}
