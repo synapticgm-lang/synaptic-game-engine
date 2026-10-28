@@ -1,0 +1,91 @@
+{
+ "batch": "sg-4-2-2-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-2-2-4": {
+   "title": "The Obsidian Bowl",
+   "text": "Black obsidian walls rise around you in a steep, sunless dip, trapping the shrieking gale into a swirling vortex of crystalline grit. You huddle low against the cold floor, holding your heavy wool cloak tight over your chest to shield the banked coal-lantern from the abrasive sleet. Every breath draws in the taste of powdered quartz and ancient smoke. Above the roar, the wind rattles against the rocks like iron filings in a tin box. You must decide whether to press onward through the drifting dunes or seek another shelter before the storm worsens.",
+   "exits": [
+    "Climb through the crystal drift",
+    "Follow the chill in the air"
+   ]
+  },
+  "sg-4-2-2-5": {
+   "title": "The Half-Buried Hoop",
+   "text": "Half-submerged in the crusted salt, an iron water-hoop serves as your meager windbreak against the screaming gale. Your cold fingers trace the length of the ceramic Seedkey, feeling for any hairline fractures or structural flaws wrought by the violent, scouring tempest. The amber-lamp at your hip flickers wildly, its banked coals glowing like a stubborn eye against the encroaching dark. Fine mica dust clings to your sweat-slicked forehead, stinging whenever you blink. You need to choose your next direction before the biting wind numbs your hands completely.",
+   "exits": [
+    "Step into the mica veil",
+    "Seek the stained glass vaults"
+   ]
+  },
+  "sg-4-2-2-6": {
+   "title": "The Glass Pipes",
+   "text": "Hollow glass pipes groan and whistle in a complex, reedy chorus all around you, turning the howling tempest into an eerie underground tune. You lean your aching weight against a smooth silicate conduit, using the steady, rhythmic thrum vibrating through the ground to guide your blistered feet forward. Prism's distant towers remain hidden behind a curtain of churning grey dust, but the acoustic resonance offers a reliable path through the blinding whiteout. You weigh your options on how to navigate the singing network ahead.",
+   "exits": [
+    "Slide down the calcified foam",
+    "Approach the tilted quartz arch"
+   ]
+  },
+  "sg-4-2-2-7": {
+   "title": "The Salt-Weaver's Warning",
+   "text": "Jagged flakes of glittering scree cascade down a nearby slope as an old salt-weaver named Voss clutches a tattered rag to his mouth and shouts over the storm. He points a gnarled finger toward the shifting haze, warning of bottomless sinkholes that lurk invisibly beneath the dancing dust-whirls. Your lungs burn with every inhalation, and the weight of your ember-lamp feels heavier with each passing stride. You must decide whether to heed the old man's dire caution or venture deeper into the blinding basin.",
+   "exits": [
+    "Duck inside the earthenware pipe",
+    "Head toward the quartz arch"
+   ]
+  },
+  "sg-4-2-2-8": {
+   "title": "The Diamond Squall",
+   "text": "Jagged plates of sulphate crack under your boots as a squall of microscopic diamond needles sweeps across the dried bed, stinging every inch of exposed skin. You turn your shoulder against the howling gale, clutching the warm metal of your ember-lamp close to your chest while the Seedkey hums with a faint, bone-cold chill in your pocket. The white dust obscures the horizon completely, leaving only the choice to seek shelter beneath a ruined dome or plunge headlong into a subterranean trench.\n\nThe howling wind shifts, carrying the sharp scent of ozone and crushed stone from the north.",
+   "exits": [
+    "Take refuge beneath the stained vault",
+    "Slide down into the deep drainage furrow",
+    "Seek shelter by the tilted quartz arch"
+   ]
+  },
+  "sg-4-2-2-9": {
+   "title": "The Cistern Rim",
+   "text": "Sheltered briefly within the crumbling rim of an ancient cistern, you scrape fine glass-powder from your coat hem before the sharp particles can work their way through to your raw skin. The air tastes of dry lime and old iron, heavy with the fury of the unrelenting basin storm. Your fingers ache from the cold, yet you keep a firm grip on your lantern frame to ensure the coals stay banked. You must choose how to break out from this momentary haven into the open gale.",
+   "exits": [
+    "Forge ahead through the sand drift",
+    "Battle the wind across basalt tiles"
+   ]
+  },
+  "sg-4-2-2-10": {
+   "title": "The Basalt Plateau",
+   "text": "Gale-force winds tear across the exposed landscape, turning every inch of your journey into a grueling test of endurance and raw willpower. You fight for every single stride against a towering wall of air thick with pulverized stone and stinging grit. The Seedkey rests cold and unyielding against your ribs, a steady anchor amid the howling chaos. You scan the fractured ground ahead, weighing the safest way forward through the blinding squall.",
+   "exits": [
+    "Push through the dense sand drift",
+    "Slip into the narrow drainage culvert",
+    "Face the wall of basalt tiles"
+   ]
+  },
+  "sg-4-2-2-11": {
+   "title": "The Wailing Squall",
+   "text": "Thick grey dust whips past your ears like driven sand, coating your eyelashes in a crust of salt and mineral dust. Your muscles ache from hours of relentless bracing against the gale, and the amber-lamp requires constant, careful tending to keep its warmth alive. Every breath feels like swallowing hot needles, yet you cannot afford to slow your pace before nightfall. You must decide your course through the shrieking labyrinth of debris.",
+   "exits": [
+    "Step onto the grey basalt tiles",
+    "Follow the courier into the gloom"
+   ]
+  },
+  "sg-4-2-2-12": {
+   "title": "The Slag-Iron Shelter",
+   "text": "Heavy metal plates rattle violently under the assault of the tempest, offering a precarious shield where you stop to tend your flickering flame. The air inside the hollow bowl smells of sulfur and old rust, but it keeps the worst of the flying glass-dust away from your face. Outside, the storm howls like a trapped beast across the open basin floor. You must choose whether to brave the elements once more or alter your trajectory.",
+   "exits": [
+    "Tend the flame in the metal bowl",
+    "Follow the fading tracks outward",
+    "Navigate the maze of glass stakes"
+   ]
+  },
+  "sg-4-2-2-13": {
+   "title": "The Glass Stake Maze",
+   "text": "Upright glass stakes jut from the hard-packed earth like jagged teeth, gleaming faintly in the gloom of the dust storm. You pick your path with agonizing care, testing each foothold to protect your sole remaining boot-sole from being shredded by the razor edges. The wind pushes against your back, threatening to knock you off balance into the crystalline trap. You need to determine your next move before your footing gives way entirely.",
+   "exits": [
+    "Cross the grey basalt tiles",
+    "Enter the slag-iron shelter",
+    "Step toward the wire-mesh awning"
+   ]
+  }
+ },
+ "missing": []
+}

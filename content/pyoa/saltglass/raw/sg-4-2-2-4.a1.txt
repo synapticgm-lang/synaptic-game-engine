@@ -1,0 +1,9 @@
+Gemini said
+
+@@SECTION sg-4-2-2-8
+TITLE: The Diamond Squall
+TEXT: Jagged plates of sulphate crack under your boots as a squall of microscopic diamond needles sweeps across the dried bed, stinging every inch of exposed skin. You turn your shoulder against the howling gale, clutching the warm metal of your ember-lamp close to your chest while the Seedkey hums with a faint, bone-cold chill in your pocket. The white dust obscures the horizon completely, leaving only the choice to seek shelter beneath a ruined dome or plunge headlong into a subterranean trench. // The howling wind shifts, carrying the sharp scent of ozone and crushed stone from the north.
+EXIT 1: Take refuge beneath the stained vault
+EXIT 2: Slide down into the deep drainage furrow
+EXIT 3: Seek shelter by the tilted quartz arch
+@@END
