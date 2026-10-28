@@ -1,42 +1,14 @@
 Gemini said
 
-@@SECTION td-4-066
-TITLE: Shaft of Blind Teeth
-TEXT: Heavy grease coats the revolving bronze axle, smelling of stagnant deep-water and rancid tallow. Thick coils of iron pipe snake along the bulkhead, vibrating with the subterranean heartbeat of the Sunken Stair. Out in the dark gap between the rotating collars, pale shapes twist with sudden, blind hunger. Long, boneless snouts poke from rusted drainage valves, snapping translucent jaws at the empty air wherever the grease drips. Between each metallic rotation lies a narrow span of greasy iron where you might plant a boot heel, provided your stomach stays quiet and your knees do not buckle under the damp weight of the shaft. // You peer past the grinding flanges to where a pale, pearly sphere rests snugly inside a rusted intake nest, wedged between two shivering feeder-pipes.
-EXIT 1: Step onto the turning collar
-@@SECTION td-4-067
-TITLE: The Oily Gap
-TEXT: Cold spray mists across your neck from a fractured hydraulic line hidden deep within the brickwork. Each time the main axle heaves upward, the air fills with a shriek of dry brass and the sharp scent of scorched oil. Below the spinning drum, a drop-off opens into absolute blackness where the ancient machinery groans like a stranded whale. You crouch low on the trembling frame, testing the grit of the iron walkway beneath your palms before trusting your full weight to the next transverse bar. The blind eels lash their ribbon-bodies against the casing, sensing the displacement of air with every inch you creep forward. // The coveted pearl gleams from its nest just beyond the reach of the third flange, catching a faint, sickly green phosphorescence leaking from the conduit walls.
-EXIT 1: Reach for the grease-choked nest
-@@SECTION td-4-068
-TITLE: Tooth and Iron
-TEXT: Muddy boots find a fleeting purchase on the sweating iron as the axle spins faster, throwing thick globs of black grease against your shins. The blind eels strike from the dark with shocking speed, their needle-sharp teeth grazing your knuckles as you lunge across the spinning gap. You freeze mid-stride, balancing your entire frame over a bottomless drop while your fingers inch toward the smooth, iridescent sphere nestled in the vibrating brass. Every muscle in your arms screams against the strain of holding your position against the rotation.
-CHECK: snatch the pearl from the jaws
-@@SECTION td-4-069
-TITLE: A Toll of Teeth
-TEXT: A sudden surge in the machinery whips the axle around too fast, smashing your forearm against the iron housing and sending a hot spike of pain up your shoulder. Teeth rake a bloody furrow across your skin before you yank your hand back, leaving a strip of soaked wool and bruised flesh behind. The heavy grease cakes into the raw scratch, stinging bitterly as the cold air hits it. You stagger against the vibrating bulkhead, gasping for breath while the blind eels slide back into their dark drainpipes with satisfied, wet clicks. // You clutch your stinging arm, blood mixing with machine oil, and scramble away from the rotating hazard.
-EXIT 1: Retreat to the solid landing
 @@SECTION td-4-070
-TITLE: The Blind Pearl
-TEXT: Fingers close around the cold, heavy sphere just as the axle completes its violent rotation, wrenching your arm free with a jarring wrench. You drop flat against the metal plates, chest heaving, with the prize clutched tight in your palm. It is a blind-water pearl, heavy as lead and clouded with silver swirls, pulled from the deep trenches before the sea ran dry. // GRANT: Blind-water pearl
-EXIT 1: Climb back to the main walkway
-@@SECTION td-4-071
-TITLE: The Skeleton’s Harness
-TEXT: A frayed hemp rope swings gently over the roaring void, anchored to an overhead bracket that hums with relentless tension. Slumped inside the canvas boatswain’s chair is a former mechanic of the Tide, now reduced to dry leather and salt-crusted canvas. The skeleton sways in the draft rising from the deep wells, its stiff fingers still clutching a thin iron rod notched with precise acoustic teeth. Below this hanging corpse, the abyss stretches down forever, lit only by the occasional spark leaping from the brushes of a dynamo. // You steady the swaying harness with one hand, bracing your boots against the slick, vertical bulkhead to keep from spinning out over the drop.
-EXIT 1: Grab the swinging canvas seat
-@@SECTION td-4-072
-TITLE: Over the Abyss
-TEXT: Empty sockets stare out across the chasm as the skeletal mechanic rocks gently at your touch, his joints clicking like dry driftwood in a gale. The specialized tuning fork rests within his skeletal grip, bound by copper wire that has greened with age and brine. Reaching the prize means leaning entirely out over the open shaft where the updraft carries the smell of old rust and ancient salt. Your coat snaps wildly in the draft, and every timber in the overhead gantry groans under the shifting load of the upper city. // You take a slow, deliberate breath, steadying your nerves against the terrifying drop that waits below your heels.
-EXIT 1: Lean into the empty drop
-@@SECTION td-4-073
-TITLE: The Hanging Prize
-TEXT: Boots slip on the grease-filmed edge of the gantry as you lean out into the howling dark, trusting your weight entirely to the handhold on the rusted frame. You reach out across the empty air, your fingers brushing the cold bronze of the tuning fork while the skeleton swings toward you in a slow, mocking arc. A sudden gust from the ventilation flues buffets your chest, threatening to peel your grip away from the cold iron and send you tumbling down the shaft.
-CHECK: pluck the fork from skeletal fingers
-@@SECTION td-4-074
-TITLE: Caught in the Rigging
-TEXT: The rusted cable snaps with a sharp twang, dropping the skeleton heavily against your shoulder and sending a jarring shock down your spine. You wrench yourself sideways, tangling your arm in the frayed hemp lines while the dead mechanic slips free and plummets silently into the roaring dark below. A jagged strand of wire tears a deep, bleeding gash across your forearm, soaking your sleeve in hot blood. You cling to the remaining bracket, gasping for air as the shock settles into a dull, throbbing ache. // You drag yourself back onto the narrow gantry, nursing your torn arm.
-EXIT 1: Crawl away from the frayed edge
+TITLE: The Blind Eel's Pearl
+TEXT: Shafts of cold green light filter through the salt-crrusted ironwork as you step carefully across the turning brass axle, ignoring the wet snapping of blind eels striking blindly at your boots. By keeping your breathing shallow and your stance low, you reach into the slime-lined cavity of a dormant valve and pluck out a large, heavy pearl veined with streaks of oil. The smooth, cold sphere pulses faintly against your palm, carrying the trapped chill of a forgotten ocean depth.
+GRANT: oiled sea pearl
+EXIT 1: Climb back to the central junction
+@@END
 @@SECTION td-4-075
-TITLE: The Acoustic Iron
-TEXT: Fingers wrap securely around the notched iron fork just as the skeleton’s grip gives way, dropping the dead mechanic into the endless black beneath the stairs. You haul yourself back onto the solid walkway, chest heaving and palms slick with grease, holding the cold metal tool up to the faint amber light. It is a master’s tuning fork, perfectly balanced and stamped with the seal of the old Tidewardens, designed to resonate with the deepest locks of the great mechanism. // GRANT: Tidewarden tuning fork
-EXIT 1: Return to the Grinding Descent
+TITLE: The Skeleton's Tuning Fork
+TEXT: Metal shudders beneath your fingers as you drop over the open edge of the walkway, dangling by one elbow above the black abyss of the shaft. You swing slightly to catch the harness of a long-dead mechanic slumped against a brass beam, holding your breath against the foul stench of stagnant copper. With careful, trembling fingers, you slip a heavy iron tuning fork from his stiff leather belt just before the entire bracket groans and slips further into the dark.
+GRANT: rusted iron tuning fork
+EXIT 1: Pull yourself back to safety
+@@END

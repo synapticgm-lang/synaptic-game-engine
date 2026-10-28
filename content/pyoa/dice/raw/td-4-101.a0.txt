@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION td-4-101
+TITLE: The Lens-Maker's Art
+TEXT: Your fingers move with the practiced precision of a net-mender working fine linen, coaxing the warped brass housing back into true alignment. The tiny screw seats itself with a clean, satisfying click that echoes off the basalt walls of the vault. Dust motes dance in the amber glow of the automaton's remaining optic. However narrowly you managed the delicate repair, the machine acknowledges your craftsmanship with a low, grinding hum of approval. It reaches into its copper-ribbed breast and offers a spool of unbreakable copper wire, its surface shining with an oily, stubborn sheen.
+GRANT: spool of unbreakable copper wire
+EXIT 1: Step through the heavy archive doors
+@@END
+@@SECTION td-4-102
+TITLE: The Pressure-Locked Chambers
+TEXT: Heavy iron bolts slide back with the groan of centuries, and the archivist permits your descent into the pressure-locked chambers below. The air here grows agonizingly thick, tasting of old ozone and compressed brine that coats the back of your throat with every inhalation. Every shadow seems to stretch and breathe in the dim, pulsing light of ceiling lanterns. Your mentor's presence feels tangibly close now, lingering in the faint scent of pipe tobacco and damp wool that drifts up from the lower shaft. The bulkheads hiss as they seal themselves behind you, leaving only the downward spiral into the deep.
+EXIT 1: Follow the spiraling descent downward
+@@END
+@@SECTION td-4-103
+TITLE: The Pressure Locks
+TEXT: Water drips in a slow, monotonous rhythm from the vaulted ceiling of the pressure locks, pooling around a maze of reinforced bulkheads and flooded antechambers. The damp stone corridors twist in baffling directions, hiding secrets of the ancient tide engineers behind rusted iron doors and weed-choked grates. Faint mechanical sighs echo through the conduits, tempting you to pry open forgotten lockers or brave the flooded lateral tunnels. Every passage promises a different path deeper into the guts of the stair, though none of them look safe. You must choose how to navigate this subterranean labyrinth before the air grows entirely stale.
+EXIT 1: Force open the jammed metal locker
+EXIT 2: Analyze the flow of leaking water
+EXIT 3: Heave the submerged fallen pillar aside
+EXIT 4: Crawl through the low drainage pipe
+EXIT 5: Search the rusted tool alcove
+EXIT 6: Follow the torn coat into the gloom
+@@END
+@@SECTION td-4-104
+TITLE: The Rusted Valve
+TEXT: Condensation drips from the overhead pipes as you crank a rusted emergency valve against immense counter-pressure. Your shoulders strain fiercely against the stubborn iron wheel, each rotation buying only a fraction of an inch against the groan of the seals. Water drains away in a noisy, frothing torrent through the floor grates, leaving a slick layer of black silt behind. Half-buried in the mud lies a pristine diver's helmet of polished brass and thick glass, untouched by the creeping corrosion of the depths. You heave it free from the muck, wiping the salt film from its viewing port.
+EXIT 1: Return to the central pressure locks
+@@END
+@@SECTION td-4-105
+TITLE: Straining Against the Wheel
+TEXT: Muscle and sinew burn as you throw your full weight against the spokes of the massive bronze valve, fighting the immense water pressure backing up from the lower levels. The metal groans in protest, threatening to snap its rusted pins as the trapped tide pushes back with unrelenting fury. Your boots slip in the greasy brine pooling around the floor grating, and your breath comes in ragged, burning gasps in the heavy air. With the valve half-turned, the resistance reaches a breaking point where a single wrong move will either clear the channel or shatter the housing entirely.
+CHECK: Turn the heavy iron valve
+@@END
+@@SECTION td-4-106
+TITLE: The Sudden Backlash
+TEXT: The frozen wheel slips from your sweat-slicked palms with a sharp clang, spinning backward in a vicious blur and striking your shoulder with numbing force. A hot line of pain flares across your arm as you stumble hard against the jagged stone wall, dropping your tools into the dark water below. The drained basin fills again in an instant with a violent rush of freezing brine that chills you to the bone. You pick yourself up from the muck, nursing a bruised shoulder and gasping for air in the damp, oppressive gloom.
+EXIT 1: Drag yourself back to the central locks
+@@END
+@@SECTION td-4-107
+TITLE: The Cleared Sluice
+TEXT: Your muscles burn and your palms sting from the biting iron, but however narrowly you manage the feat, the stubborn valve finally gives way with a triumphant shriek of metal. The pent-up water drains away in a roaring cataract down the secondary spillway, leaving the chamber floor slick and passable. Resting in the recess where the pressure had pinned it, you find a heavy iron wedge stamped with the crest of the old Tidewardens. It is solid, cold, and notched with a hundred ancient uses.
+GRANT: heavy iron wedge
+EXIT 1: Return to the central pressure locks
+@@END
+@@SECTION td-4-108
+TITLE: The Leech-Filled Sump
+TEXT: Waist-deep, freezing water laps against your thighs as you wade cautiously through a sunken corridor teeming with translucent leeches clinging to the masonry. The creatures writhe and stretch toward the warmth of your skin, demanding every ounce of your resolve just to keep moving without panic. Every step disturbs thick clouds of black silt that swirl like smoke around your shins. Pinned against a floating timber beam is a waterproof canvas satchel, secured with a salt-crusted toggle. You reach out, brushing the squirming parasites aside to pull it free.
+EXIT 1: Carry the satchel back to the junction
+@@END
+@@SECTION td-4-109
+TITLE: Wading Through the Horror
+TEXT: The water rises toward your chest as you step deeper into the writhing mass of pale leeches, their blind heads swaying toward the heat of your pulse. A cold dread coils in your stomach, whispering of infections that rot the flesh from the bone before a man can climb back to the cliffs. You fix your eyes on a dry ledge ahead, forcing your legs to move through the thick, crawling water while every instinct screams at you to turn back. At the darkest part of the channel, a sudden current threatens to sweep your footing away entirely.
+CHECK: Push through the leech-infested water
+@@END
+@@SECTION td-4-110
+TITLE: The Sinking Terror
+TEXT: Panic takes hold as a cluster of heavy leeches fastens onto your forearm beneath the water, sending a sudden, nauseating numbness spreading through your skin. You thrash backward in disgust, slipping on the slick stone floor and plunging waist-deep into the filthy brine. The waterproof satchel slips from your numb fingers, sinking into the black silt before you can snatch it back. You scramble upright, scraping your knuckles against the rough masonry and shivering as the cold water drains your remaining strength.
+EXIT 1: Retreat bleeding to the junction
+@@END
+@@SECTION td-4-111
+TITLE: The Spoils of the Sump
+TEXT: You grit your teeth and wade through the writhing horror, however narrowly avoiding the worst of the clinging swarms to reach the opposite ledge. Snatching the waterproof satchel from the timber beam, you pry open its stiff leather clasp with cold, clumsy fingers. Inside, protected from the brine by layers of waxed cloth, lies a package of preserved salted meats wrapped in old Gullmouth news-sheets. The food is dry, heavy, and rich with salt, offering a much-needed reprieve from the hollow hunger gnawing at your ribs.
+GRANT: parcel of salted meat
+EXIT 1: Return to the central pressure locks
+@@END

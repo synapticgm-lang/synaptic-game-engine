@@ -1,44 +1,52 @@
 Gemini said
 
 @@SECTION td-4-066
-TITLE: Shaft of Blind Teeth
-TEXT: Heavy grease coats the basalt walls, smelling thick of mutton fat and centuries of rot. A thick bronze axle turns through the alcove with a steady, wet groan, slick with spray from a subterranean sump. Coiled inside the rusted housing of an auxiliary pump, several blind eels writhe in the dim light, their milk-white skin sliding over a nest of scavenged rags and shining shell fragments. They snap blindly at the greasy air whenever the iron warms. // Balancing on the rim of the turning drum requires flat soles and a dead calm stomach. The pearl rests right at the back of the nest, wedged between a greasy jawbone and a copper drain pipe.
-EXIT 1: Step onto the turning drum
+TITLE: The Greasy Axis
+TEXT: Heavy iron collars rotate in the gloom with a rhythmic, bone-deep thrum that vibrates through the soles of your boots. Slick black grease coats the cylindrical housing, smelling of ancient tallow and stagnant bottom-water. Beneath the rolling metal spine, pale blind eels coil in nests of rusted copper wire, their lidless eyes milky and their jaws snapping reflexively at the dark grease. You crouch low, testing the slick curve of the axle with your palms while waiting for the gap between rotating braces to widen just enough for a desperate scramble.
+EXIT 1: Step across the spinning steel
+@@END
 @@SECTION td-4-067
-TITLE: Reach the Oily Nest
-TEXT: Cool air drafts up from the bottomless machinery wells, carrying a tang of old brine and iron dust. You slide your boots over the sweating iron plate, keeping your knees loose to absorb the rhythmic thrum of the great gear below. The blind eels scent the movement in the air or feel the tremor of your nails, their pale snouts whipping toward the ledge with wet, sucking snaps that leave white froth on the dark metal. // Your fingers inch past the snapping jaws into the cold clutch of the nest. The pearl sits deep, cold as sea-ice, pulsing with a dull amber light that has nothing to do with the sun.
-EXIT 1: Pry the amber pearl loose
+TITLE: Snapping Jaws Below
+TEXT: Cold spray spits from a high fissure somewhere above, turning the grease on the spinning shaft into a treacherous paste. Each rotation threatens to sweep your boots off the curved iron, pitching you straight into the writhing tangle of blind eels waiting in the dark void beneath. You tuck your elbows tight against your ribs and slide forward on your belly, using your forearms to gauge the speed of the grinding metal while your fingers brush against a damp nest wedged into a service bracket.
+EXIT 1: Reach into the damp nest
+@@END
 @@SECTION td-4-068
-TITLE: Pluck the Deep Pearl
-TEXT: The turning axle shudders with a sudden, discordant screech that threatens to throw your balance into the machinery pit. Right as your fingertips brush the smooth, heavy surface of the amber pearl within the nest, three blind eels strike together from the darkness, their round jaws snapping shut mere inches from your knuckles. The rotating drum beneath your left boot kicks sideways, demanding an immediate shift of weight and absolute steadiness of pulse to keep from slipping into the teeth.
-CHECK: Keep your nerve against the snapping jaws
+TITLE: Plucking the Pearl
+TEXT: A milky glob as large as a gull egg rests in the center of the eel-infested nest, pulsing with a faint, bioluminescent violet light. As you slide your hand past the rim of the bracket, a dozen pale snouts whip upward from the slime, teeth clicking together like iron washers. You hold your breath, anchoring your boots against the vibrating axle while your fingers stretch toward the glowing shell, balancing on a hair-trigger between a clean grab and a nasty bite.
+CHECK: snatch the pearl from the eels
+@@END
 @@SECTION td-4-069
-TITLE: Torn by the Sump
-TEXT: A sudden lurch of the machinery knocks your boots out from under you, pitching your forearm straight into the nest. The blind eels strike hard, their needle teeth tearing a deep, jagged line across your wrist before you wrench your arm back into the open air. Blood drips fast onto the turning grease, slicking the drum even further and costing you precious breath and strength. // You haul yourself flat against the cold stone rib of the wall, nursing the torn flesh while the metal groans around you. The pearl is yours now, clutched in your fist, but the cost leaves your pulse ringing in your ears.
-EXIT 1: Crawl back to the stable catwalk
+TITLE: A Blind Strike
+TEXT: Steel slips against grease, and a pale shape darts from the gloom with shocking speed, sinking needle-teeth deep into the meat of your forearm. Pain flares white-hot as you jerk your arm back, slamming your elbow hard against the iron housing and bruising bone through wool. You scramble backward on your heels, sucking air through your teeth while the eel thrashes back into the dark sump. The wound leaks a slow, hot line of blood down your wrist, stinging fiercely with salt.
+EXIT 1: Climb away from the grease pit
+@@END
 @@SECTION td-4-070
-TITLE: Salt-Greased Prize
-TEXT: Whether you slipped and paid in torn skin or kept your footing through sheer stubborn will, the amber pearl comes free with a wet suction sound. It is heavy for its size, cold and dense as frozen grease, carrying the faint, salt-crusted scent of the old deep sea before the water vanished. Slip it into your pocket alongside your dry rags and keep moving. // The machinery settles into a deeper, slower rhythm, leaving the alcove behind as the wet iron walkways stretch onward toward the heart of the stair.
-GRANT: Amber Sump Pearl
-EXIT 1: Return to the grinding descent
+TITLE: The Pale Lumen
+TEXT: Your fingers close around the cold, heavy sphere just as the shaft shudders and rolls another half-turn into the dark. However narrowly you manage to pull your hand back from the snapping jaws, the prize is yours—a blind-water pearl that hums faintly against your palm with the cold pulse of the deep sea. You slip the treasure into your pouch alongside your dry lint, wiping the black grease from your knuckles as you leave the spinning pit behind. // GRANT: Blind-water pearl
+EXIT 1: Return to the grinding stairs
+@@END
 @@SECTION td-4-071
-TITLE: The Skeletal Mechanic
-TEXT: A rusted maintenance harness hangs by a single frayed cable over the black drop of the core shaft, swaying slightly in the draft of the turning weights. Slumped inside the canvas straps is the dried carcass of an old Tidewarden mechanic, preserved by the dry salt air and the heavy oils of the mechanism. His skeletal fingers still clutch a brass tuning fork marked with deep ritual grooves, glowing faintly with residual hum. // The abyss below breathes up a steady damp roar, rattling the dry ribs of the harness with every turn of the bronze cams far beneath.
-EXIT 1: Lean out over the drop
+TITLE: The Hanging Harness
+TEXT: A tattered leather strap dangles over the bottomless drop, supporting a small iron frame where a skeletal mechanic still sits slumped inside a rusted safety harness. The figure is long dead, dried to leather by the salt draft, but a peculiar metal implement remains gripped tightly in its rigid fingers. The abyss breathes upward with a cold, hollow roar, making the harness sway gently on its cable like a pendulum over an open grave.
+EXIT 1: Reach for the dangling frame
+@@END
 @@SECTION td-4-072
-TITLE: Breath Over the Abyss
-TEXT: You grip the greasy stay-wire with one hand and swing your boots out over empty air, feeling the cold void pull at your coat. The skeletal mechanic hangs just beyond arm's reach, his empty skull tilted toward the dark vault as if listening for a bell that stopped ringing centuries ago. His stiff fingers lock around the stem of the brass fork, refusing to yield easily to a living hand. // You take a long, slow breath of the heavy, oil-tainted air, steadying your shoulders against the swaying of the harness before you reach.
-EXIT 1: Reach for the vibrating fork
+TITLE: Swinging Over the Abyss
+TEXT: You grip a rusted stay-wire with one hand and lean out over the empty dark, letting your boots drift above the invisible floor of the shaft. Below, the distant grinding of the Meridian Gear echoes like the heartbeat of a buried leviathan. The skeleton rocks in its harness as your fingers brush against its sleeve, sending a shower of flaky salt and dry cloth fragments spiraling down into the black abyss.
+EXIT 1: Pry the metal from stiff fingers
+@@END
 @@SECTION td-4-073
-TITLE: Snatching the Fork
-TEXT: The wire cable screeches against its iron mount, shifting your weight sharply toward the sheer drop as a sudden gust rushes up the shaft. The skeletal mechanic's arm swings on its rusted joint right into your path, knocking your knuckles hard against the brass fork. Every muscle in your chest screams to pull back from the abyss, but the fork is right there, vibrating with a deep, forgotten pitch that rattles your teeth.
-CHECK: Hold your breath and snatch the fork
+TITLE: The Tuning Fork
+TEXT: A heavy bronze tuning fork rests in the dead mechanic's hand, its twin tines notched with fine calibrations designed to match the pitch of the great gear's locking pins. As you pry the cold metal from the rigid fingers, the entire supporting wire groans and slips an inch lower into the shaft, throwing your weight off balance over the sheer drop. You freeze instantly, holding every muscle tight as you wait to see if the frayed strands will hold.
+CHECK: secure the bronze tuning fork
+@@END
 @@SECTION td-4-074
-TITLE: Plunge into the Rigs
-TEXT: The cable slips with a sharp crack, dropping you a terrifying fathom down into the shadows before the safety brake catches with a bone-jarring slam. The impact knocks the wind clean from your chest and leaves a deep, aching bruise across your ribs, scraping your palms raw against the rusted iron stays. You hang there gasping in the dark, staring down at the endless gears turning far below. // With shaking fingers, you reach out one last time and wrench the brass fork free from the dead hand before the harness can slip again.
-EXIT 1: Climb back to the service rail
+TITLE: A Sudden Drop
+TEXT: The wire snaps with a sharp, metallic ping, and the harness plunges six inches before the safety dog catches with a bone-jarring slam. The sudden jolt wrenches your shoulder joint and rattles your teeth, knocking the breath from your lungs in a harsh gasp. You cling to the cold stay-wire with both arms, trembling as the rusted gearworks above settle back into a groaning equilibrium. Your shoulder aches dully, but you hold the prize.
+EXIT 1: Pull yourself back to safety
+@@END
 @@SECTION td-4-075
-TITLE: The Tidewarden's Pitch
-TEXT: Whether you caught the fork clean on the first pass or scrambled back up from a terrifying drop with bruised ribs and scraped palms, the cold brass sits heavy in your palm. The tuning fork hums against your thumb with a clean, resonant note that seems to quiet the grinding iron all around you. It is an old instrument of the deep mechanics, crafted to test the truth of any gear or wall it strikes. // Tuck it safely away among your supplies and leave the skeletal mechanic to his long watch over the rotating weights.
-GRANT: Tidewarden's Brass Fork
-EXIT 1: Return to the grinding descent
+TITLE: The Calibrated Bronze
+TEXT: Your fingers lock around the heavy bronze implement just as the frame settles with a dull, echoing clang against the stone wall. However narrowly you manage to secure your footing after the sudden slip, the tool remains firmly in your grasp, cold and perfectly balanced. The notched tines hum with a faint, sympathetic vibration whenever the distant engine shifts its weight below. You tuck the heavy piece into your belt and turn away from the drop. // GRANT: Calibrated bronze tuning fork
+EXIT 1: Climb back to the main walkway
+@@END

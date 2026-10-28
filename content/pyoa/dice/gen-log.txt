@@ -343,3 +343,20 @@
 2026-10-28T09:39:01.577Z   reject td-4-074: missing
 2026-10-28T09:39:01.577Z   reject td-4-075: missing
 2026-10-28T09:39:09.591Z STOP no valid sections for td-4-066
+2026-10-28T09:40:12.390Z ask prose td-4-066..td-4-075 items=10 attempt=0
+2026-10-28T09:40:35.359Z   reject td-4-070: grant
+2026-10-28T09:40:35.360Z   reject td-4-075: grant
+2026-10-28T09:40:43.365Z ask prose td-4-066..td-4-075 items=2 attempt=1
+2026-10-28T09:41:11.247Z done td-4-066: 10/10
+2026-10-28T09:41:11.249Z ask prose td-4-076..td-4-087 items=12 attempt=0
+2026-10-28T09:41:44.380Z done td-4-076: 12/12
+2026-10-28T09:41:44.382Z ask prose td-4-088..td-4-100 items=13 attempt=0
+2026-10-28T09:42:09.443Z   reject td-4-088: meta words
+2026-10-28T09:42:09.444Z   reject td-4-092: grant
+2026-10-28T09:42:09.445Z   reject td-4-096: grant
+2026-10-28T09:42:17.460Z ask prose td-4-088..td-4-100 items=3 attempt=1
+2026-10-28T09:42:39.095Z   reject td-4-088: meta words
+2026-10-28T09:42:47.104Z done td-4-088: 12/13 MISSING td-4-088
+2026-10-28T09:42:47.112Z ask prose td-4-101..td-4-111 items=11 attempt=0
+2026-10-28T09:43:21.919Z done td-4-101: 11/11
+2026-10-28T09:43:21.924Z ask prose td-4-112..td-4-121 items=10 attempt=0

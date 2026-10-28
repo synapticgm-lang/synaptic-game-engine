@@ -1,0 +1,110 @@
+{
+ "batch": "td-4-088",
+ "sections": {
+  "td-4-089": {
+   "title": "Distracting the Archivist",
+   "text": "Smoke from your oil lamp drifts across the glowing amber lenses, blurring the machine's piercing vision for a crucial heartbeat. You repeat the paradoxical decree about the sea returning before it departs, weaponizing the rigid logic of its own forgotten laws against its brass brain. The heavy torso swivels slightly, distracted by the recursive error written across your torn ledger page.\n\nThe precious parchment map rests untouched on the pitted steel workbench, waiting for a steady hand to claim it.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the rolled parchment"
+   ]
+  },
+  "td-4-090": {
+   "title": "Weaving the Trap",
+   "text": "Your mind races through the twisted axioms of the deep-sea ledgers, seeking the exact phrase that will freeze the archivist's internal clockwork. Sweat stings your eyes as the amber lenses refocus with a terrifying snap, pinning your thoughts in a blinding glare of logical scrutiny. Every second spent balancing on the edge of this intellectual precipice threatens to betray your deception. You marshal your wits, framing the ultimate paradox of a dry ocean to paralyze the machine's judgment.",
+   "check": "Recite the paradoxical ledger entry",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-091": {
+   "title": "A Flawed Deduction",
+   "text": "A sharp, metallic click shatters your concentration as the automaton pierces through your flawed reasoning like salt eating through iron. Heavy brass jaws snap shut inches from your knuckles, and you jerk your hand back with a sharp hiss of pain, leaving a strip of skin caught on a jagged cog. The machine emits a low, mocking hum of corrected error.\n\nYou clutch your bleeding thumb to your chest, retreating into the shadows with your prize secured at too high a cost.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the damp shadows"
+   ]
+  },
+  "td-4-092": {
+   "title": "The Ledger Thief",
+   "text": "Dust hangs heavy in the damp air as you slide away from the towering racks, clutching the vellum map beneath your coat like a stolen heartbeat. The automaton stands frozen in its circular track, its internal cylinders still clicking through the impossible riddle you laid before its brass ears. You have slipped past its iron scrutiny, however narrowly, leaving behind only the echo of your boots on the sunken tiles and a singular prize secured from the very teeth of the archive.",
+   "check": "",
+   "grant": "The Deep-Water Trench Chart",
+   "exits": [
+    "Return to the vaulted archive hall"
+   ]
+  },
+  "td-4-093": {
+   "title": "Shoring the Racks",
+   "text": "Centuries of salt-rot have weakened the oak uprights supporting thousands of heavy, leather-clad volumes of tide history. A low groan vibrates through the floorboards as the towering shelf behind you begins to list forward, threatening to bury you beneath a crushing avalanche of ancient pulp. You drop your shoulder against the buckling timber, planting your boots firmly on the damp flagstones as the weight presses down with the fury of a collapsed bulkhead.\n\nThe groaning wood strains against your spine, demanding every ounce of strength you possess to keep the disaster at bay.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Shove the shelf back upright"
+   ]
+  },
+  "td-4-094": {
+   "title": "The Crushing Weight",
+   "text": "The mass of fallen ledgers threatens to pancake your ribs against the stone wall as the wooden brace splinters into jagged shards. Your muscles lock, burning with sudden fire as you try to arrest the terrifying momentum of the collapsing shelving unit. Every sinew in your back screams under the crushing load of drowned history. You brace your legs, pouring all your remaining might into a desperate, groaning heave against the timber frame.",
+   "check": "Push back against the falling timbers",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-095": {
+   "title": "Bruised and Burdened",
+   "text": "The shelf wins the contest of strength by an inch, slamming into your shoulder and sending you sprawling hard onto the gritty flagstones. A heavy calf-skin volume clips your temple on its way down, leaving a purple bruise and a slow trickle of warm blood across your cheekbone. You cough up dust tasting of ancient salt, your body aching from the sudden impact.\n\nYou drag yourself free from the wreckage, clutching a single surviving history text to your chest.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl clear of the fallen timber"
+   ]
+  },
+  "td-4-096": {
+   "title": "Weight of the Past",
+   "text": "Timbers groan and groan again as the towering stack lists sideways, threatening to bury you beneath centuries of damp paper and crumbling calfskin. You throw your shoulder against the leaning mahogany shelf, muscles straining against the descending avalanche until your breath rasps raw in your throat. Through sheer stubborn grit you hold the frame steady long enough to snatch a heavy leather-bound chronicle from the shelf, securing the fragile history as the timber finally splinters into the dark.",
+   "check": "",
+   "grant": "The Drowned Chronicles",
+   "exits": [
+    "Descend into the pressure-locked chambers"
+   ]
+  },
+  "td-4-097": {
+   "title": "Steadying the Glass",
+   "text": "Tiny brass screws catch the dim amber light as you use the tip of your skinning knife to align the delicate focal lens on the machine's secondary face. The automaton hums softly, its internal prisms shifting with a pleasing, oiled click that echoes through the vaulted stone chamber. Fine copper filaments unspool neatly across your palm as the machine rewards your delicate craftsmanship with a quiet nod of approval.\n\nYou coil the bright metal wire carefully and tuck it away into your belt pouch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the spool of wire"
+   ]
+  },
+  "td-4-098": {
+   "title": "The Lens-Maker's Art",
+   "text": "Your fingers move with the practiced precision of a net-mender working fine linen, coaxing the warped brass housing back into true alignment. The automaton's second face flickers to life, casting a clean blue beam across the dusty flagstones where absolute darkness reigned a moment before. A spool of bright, unbreakable copper wire rolls across the workbench into your waiting palm.\n\nThe machine relaxes its posture, recognizing your rare skill with intricate mechanical joints.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the proffered copper wire"
+   ]
+  },
+  "td-4-099": {
+   "title": "The Hairline Adjustment",
+   "text": "A single slip of your blade will strip the gossamer threads inside the automaton's secondary optic assembly and trigger its defensive clamps. You hold your breath, steadying your trembling fingers as you nudge the microscopic brass lever into its final slot. The surrounding air feels thick as brine, pressing heavily against your skin while you wait to see if the delicate mechanism holds. You apply gentle, measured pressure to the eccentric screw, holding your breath against the impending snap.",
+   "check": "Realign the delicate ocular lens",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-100": {
+   "title": "A Slips-Way Error",
+   "text": "The tiny screwdriver slips on a patch of green corrosion, gouging a deep, useless scratch across the face of the expensive lens. A sharp electrical shock dances up your arm, leaving your fingers numb and smelling of ozone as the automaton buzzes an angry warning note. You retreat a half-step, sucking on a scorched thumb while the machine resets its optical housing with a dismal clatter.\n\nYou salvage what you can from the botched repair and move on before the mood shifts further.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step away from the bench"
+   ]
+  }
+ },
+ "missing": [
+  "td-4-088"
+ ]
+}
