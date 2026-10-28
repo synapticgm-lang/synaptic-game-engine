@@ -49,7 +49,7 @@
   },
   "sg-1-0-5-3": {
    "title": "The Guarded Portal",
-   "text": "In the dust just outside the guarded portal, Pell stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him. The distant salt-flats shimmer behind him like a vast sheet of hammered tin under the mounting sun. He shifts his weight onto one heel, balancing an ash-wood pole across his shoulder with casual expertise.",
+   "text": "In the dust just beyond the heavy gates, Pell stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him. The distant salt-flats shimmer behind him like a vast sheet of hammered tin under the mounting sun. He shifts his weight onto one heel, balancing an ash-wood pole across his shoulder with casual expertise.",
    "exits": [
     "Press on into the bright haze."
    ]
@@ -77,7 +77,7 @@
    "exits": [
     "Dodge the kelp-laden mule and press deeper into the grey haze",
     "Wait by the cistern-house to heed the glass-diver's last warning",
-    "Striding past the cattle-pound unescorted with the key held tight"
+    "Stride past the cattle-pound unescorted with the key held tight"
    ]
   }
  },
