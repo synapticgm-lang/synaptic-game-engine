@@ -69,9 +69,13 @@ const EMPTY_ROOM =
 /**
  * T10AI — one empty-room signal for chips, presence harvest, and the readability gate.
  * Quotes stripped so spoken "nobody" inside dialogue is not a place claim.
+ * "No one else" / "nobody else" means only those already here — not an empty room
+ * (same legal English as Batch 02u / 02y; old EMPTY_STREET never treated it as empty).
  */
 export function proseSaysEmpty(prose: string): boolean {
-  const text = (prose ?? '').replace(/["“][^"”]*["”]/g, ' ');
+  const text = (prose ?? '')
+    .replace(/["“][^"”]*["”]/g, ' ')
+    .replace(/\b(?:no one|nobody|no-one)\s+else\b/gi, ' ');
   return EMPTY_ROOM.test(text);
 }
 

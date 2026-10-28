@@ -66,6 +66,14 @@ export function peopleHere(state: GameState): string[] {
     && (facts.crowdCount ?? 0) === 0
     && !(facts.present?.length);
   if (emptyOccupancy) {
+    // T10AI-fix — empty occupancy still seats engine-tagged people at this place
+    // (refuse/ask via recordPersonSeen). Skip opening-cast filler and stale crowd
+    // stamps (present:true left after sceneFacts cleared) so Follow-up chips retract.
+    const hereKey = low(state.currentLocation);
+    for (const m of state.npcMemories ?? []) {
+      if (m.shouldExit || m.present === true) continue;
+      if (low(m.location) && low(m.location) === hereKey) add(m.npcName);
+    }
     (state.companions ?? []).forEach((c) => add(c.name));
     add(state.activeEncounter?.name);
     add(roadMeetingPeople(state));
