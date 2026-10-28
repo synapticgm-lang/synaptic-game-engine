@@ -1,0 +1,87 @@
+{
+ "batch": "sg-3-0-2-7",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-0-2-7": {
+   "title": "The Translucent Ledge",
+   "text": "Translucent roofing tiles shift dangerously beneath your boots as you pick your way along the narrow rib of a ruined villa. Fifty feet below, the dry basin floor glitters with a crust of salt and fused glass, offering no mercy should your footing fail. The desert wind hums through the jagged architectural bones around you, carrying the dry scent of ancient dust.\n\nAhead, the precarious pathway splits, leaving you to decide whether to brave the interior gloom or test another narrow span.",
+   "exits": [
+    "Step through the window frame",
+    "Reach the groaning iron sign",
+    "Inspect the ash mound below"
+   ]
+  },
+  "sg-3-0-2-8": {
+   "title": "The Slate Desk",
+   "text": "A makeshift desk of rough slate and salvaged timber blocks the narrow alley, presided over by a toll-lord's clerk wearing ink-stained cuffs. The official taps a ledger with an ivory stylus, demanding immediate proof of water-tax payment before allowing any traveler to pass the boundary stone. The air here smells of stale vinegar and dried parchment, thick with the bureaucratic weight of the Salt Court.\n\nYou must choose how to address this obstacle before the guards take an active interest in your lantern.",
+   "exits": [
+    "Slip past toward the loft",
+    "Turn toward the groaning sign"
+   ]
+  },
+  "sg-3-0-2-9": {
+   "title": "The Copper Curtain",
+   "text": "Hanging chains of heavy copper jingle softly as you pull them closed behind you, concealing your form within the dim recesses of a deserted workshop. Through the linked metal, you watch a Salt Court patrol squad march past in formation, their brass breastplates catching the harsh glare of the basin sun. Dust motes dance in the amber light cast by your banked coal-lantern, forcing you to keep the shutter nearly closed.\n\nSilence settles over the room once the footsteps fade, leaving several paths open for your continued escape.",
+   "exits": [
+    "Climb toward the weaving loft",
+    "Cross the narrow cedar beam",
+    "Seek the giant solar mirror"
+   ]
+  },
+  "sg-3-0-2-10": {
+   "title": "The Salted Hide Map",
+   "text": "A pale scavenger crouching by a charred hearth holds up a stiff piece of salted hide marked with faded ink lines. He introduces himself as Thistle and whispers that he will trade his crude map for a single pinch of dried tobacco from your pouch. The surrounding ruins are deathly quiet, save for the faint crackle of cooling glass settling in the heat.\n\nYou weigh the value of your remaining supplies against the usefulness of his cartography.",
+   "exits": [
+    "Trade tobacco for the map",
+    "Head toward the solar mirror"
+   ]
+  },
+  "sg-3-0-2-11": {
+   "title": "The Sacred Seal",
+   "text": "The sacred water-oath inked upon your wrist catches the eye of the well-guard stationed at the postern gate, marking you as a friend of the Dune Sisters. Without a word of demand for tolls or taxes, the weary sentry turns a heavy iron crank and swings the reinforced postern wide. Cool air drifts briefly from the protected courtyard beyond, offering a welcome respite from the baking street.\n\nYou step through the threshold into the shaded passage beyond.",
+   "exits": [
+    "Approach the colossal solar mirror",
+    "Meet the waiting ragged urchin"
+   ]
+  },
+  "sg-3-0-2-12": {
+   "title": "The Hemp Rope",
+   "text": "A sudden gust of stinging alkaline dust sweeps down the canyon-like street, stinging your eyes and coating your tongue in bitter salt. To escape the blinding squall, you leap toward a frayed hemp rope dangling from a shattered second-story balcony and haul yourself upward with straining muscles. The abrasive fibers bite into your palms as you hoist your weight over the stone sill into comparative shelter.\n\nCatching your breath in the gloom, you look out over the hazy basin below.",
+   "exits": [
+    "Follow the urchin through crates"
+   ]
+  },
+  "sg-3-0-3-0": {
+   "title": "The Headless Magistrate",
+   "text": "A headless bronze statue of an Old Lensfolk magistrate stands rigidly in the center of a weed-choked plaza, its oxidized arm pointing with unyielding gravity toward a dark glass tunnel. Verdigris coats the folds of its heavy robe, and the surrounding cobblestones are fractured by ancient heat. The entrance it indicates leads away from the blinding glare and into subterranean gloom.\n\nYou stand before the silent monument, weighing the descent against other routes.",
+   "exits": [
+    "Descend into the salt market",
+    "Approach the riveted iron gate"
+   ]
+  },
+  "sg-3-0-3-1": {
+   "title": "The Hidden Crawlspace",
+   "text": "The steady amber radiance of your coal-lantern spills across the uneven cobblestones, catching the unexpected glint of a dropped brass gear half-buried in sand. Following the metallic reflection reveals a low, dark crawlspace hidden beneath a displaced paving slab, untouched by the scavengers above. The warm glow of your lamp cuts deep into the subterranean recess, revealing a passage that ordinary daylight never touches.\n\nYou kneel before the dark opening, considering where it might lead.",
+   "exits": [
+    "Crawl beneath the stone floor"
+   ]
+  },
+  "sg-3-0-3-2": {
+   "title": "The Singing Bowl",
+   "text": "A blind glass-blower named Kestrel sits cross-legged beside a smoking brazier, striking a small singing bowl with a padded mallet to produce a pure, resonant note that vibrates in your teeth. The sound rolls down the empty street, bouncing off glass facades with hypnotic clarity. She tilts her head toward the approach of your footsteps without breaking her rhythmic cadence.\n\nThe music hangs in the dry air as you weigh your next direction.",
+   "exits": [
+    "Test the riveted iron gate",
+    "Duck behind the fish crates"
+   ]
+  },
+  "sg-3-0-3-3": {
+   "title": "The Brittle Balcony",
+   "text": "A sharp crack splits the heavy afternoon air as a brittle upper balcony shears away from its moorings under the relentless heat. You throw yourself forward, dodging a dangerous shower of glittering glass shards that clatter onto the pavement right where you stood. Dust billows into the stifling street, coating your shoulders in a fine white powder.\n\nShaking off the debris, you scan the remaining routes through the ruined square.",
+   "exits": [
+    "Hurry down the salt steps",
+    "Test the heavy iron gate"
+   ]
+  }
+ },
+ "missing": []
+}
