@@ -320,7 +320,12 @@ export function withMoveDestination(state: GameState, prose: string): string {
   // A room inside a place ("Cathedral Undercroft — Corridor") is a dungeon step, painted by the room display, not a trip.
   if (!dest || isRoadLabel(dest) || /\s[—–]\s/.test(dest) || prose.toLowerCase().includes(dest.toLowerCase())) return prose;
   const pc = (state.character?.name ?? '').trim() || 'They';
-  const line = underway ? `${pc} was on the ${j!.ground.toLowerCase()} toward ${dest}.` : `${pc} reached ${dest}.`;
+  // T10Q — streets terrain is town travel; do not paste the journey "back streets" leg label as a sentence.
+  const line = underway
+    ? j!.terrain === 'streets'
+      ? `${pc} headed toward ${dest} through the town.`
+      : `${pc} was on the ${j!.ground.toLowerCase()} toward ${dest}.`
+    : `${pc} reached ${dest}.`;
   return `${line} ${prose.trim()}`;
 }
 const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).length;

@@ -308,7 +308,9 @@ export function classifyVerb(input: string): string {
   if (/\b(use|drink|eat|equip|wield|draw)\b/i.test(t)) return 'used';
   // The line's first verb is the act: "Wait and watch" is a wait, not an inspection.
   if (/^(?:wait|rest|stay|hold still|hold position)\b/i.test(t)) return 'waited';
-  if (/\b(inspect|examine|look around|search|scout|check|study|watch)\b/i.test(t)) return 'inspected';
+  if (/\b(inspect|examine|look around|search|scout|check|study|watch|analyze|read)\b/i.test(t)) {
+    return 'inspected';
+  }
   if (/\b(wait|rest|stay|hold)\b/i.test(t)) return 'waited';
   return 'acted';
 }
@@ -2248,8 +2250,17 @@ function topicAdvancePool(
       `${pv.S} started toward ${dest} from ${setOutFrom}.`,
       `${pv.S} left ${setOutFrom} and kept on toward ${dest}.`,
     ];
-  const spokenWant = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
-  const spokenWho = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
+  const spokenWantRaw = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
+  const spokenWhoRaw = openingWhoAskLine(state).replace(/\s+/g, ' ').trim();
+  // T10Q — last-resort page is 3rd-person past when the PC is named; never "answers you".
+  const toPageSpeech = (line: string) => {
+    if (!line || pv.S === 'You') return line;
+    return line
+      .replace(/\banswers you\b/gi, 'answered them')
+      .replace(/\banswer you\b/gi, 'answered them');
+  };
+  const spokenWant = toPageSpeech(spokenWantRaw);
+  const spokenWho = toPageSpeech(spokenWhoRaw);
   const wantFirst = `${pv.S} ${pv.was} at ${here}. ${spokenWant} ${head ? `${head} stayed in sight.` : 'They stayed in the room.'}`;
   const whoFirst = `${pv.S} ${pv.was} at ${here}. ${spokenWho} They stayed in the room.`;
   const accept = [
@@ -2312,11 +2323,8 @@ function topicAdvancePool(
       const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
       pool = talk && !/^Nobody here answered/i.test(talk) ? [talk] : look;
     }
-  } else if (!hallTopicAlreadyAnswered(state, 'who')) {
-    pool = [whoFirst];
-  } else if (!hallTopicAlreadyAnswered(state, 'want')) {
-    pool = [wantFirst];
   } else {
+    // T10Q — Analyze / Read / other acts are not unanswered who/want hall stubs.
     pool = look;
   }
   return pool.map((s) => s.replace(/\s+/g, ' ').trim());

@@ -59,12 +59,36 @@ export function resolveNpcRecord(state: GameState, name: string): NpcMemory | un
   if (!t) return undefined;
   const hit = exactRecord(memories, t);
   if (hit) return hit;
+  // Title + remainder: "Auditor Venn Scale" / "Auditor Venn" → Venn Scale (T10Q alias entity).
+  const stripped = t.replace(LEADING_ROLE_WORD, '').trim();
+  if (stripped && stripped !== t) {
+    const sHit = exactRecord(memories, stripped);
+    if (sHit) return sHit;
+  }
   const space = t.indexOf(' ');
-  if (space <= 0) return undefined;
-  const rest = t.slice(space + 1).trim();
-  if (!rest) return undefined;
-  const restHit = exactRecord(memories, rest);
-  if (restHit) return restHit;
+  if (space > 0) {
+    const rest = t.slice(space + 1).trim();
+    if (rest) {
+      const restHit = exactRecord(memories, rest);
+      if (restHit) return restHit;
+    }
+  }
+  // Prefix of a known name/alias ("Auditor Venn" ⊂ "Auditor Venn Scale"); single token = given name only.
+  const q = (stripped || t).toLowerCase();
+  if (q.length >= 3) {
+    for (let i = 0; i < memories.length; i++) {
+      const m = memories[i]!;
+      for (const n of namesOf(m)) {
+        const low = n.trim().toLowerCase();
+        if (!low) continue;
+        if (low === q || low.startsWith(q + ' ')) return m;
+        if (!q.includes(' ')) {
+          const parts = low.split(/\s+/).filter(Boolean);
+          if (parts.length > 1 && parts[0] === q) return m;
+        }
+      }
+    }
+  }
   return undefined;
 }
 export function splitCompoundCastEntry(raw: string, state?: GameState): string[] {
