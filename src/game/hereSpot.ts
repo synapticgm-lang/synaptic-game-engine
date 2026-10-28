@@ -101,6 +101,35 @@ export function isOutOfTalkingRange(state: Pick<GameState, 'sceneFacts' | 'curre
   return s.awayFrom.some((a) => key(a) === k);
 }
 
+/**
+ * T10U — addressing a named person who is still at THIS place pulls them back into talking range.
+ * A prior step-back must not leave "No one present to answer" when the player glares/asks them by name
+ * and nothing left the scene.
+ */
+export function engageAddressedInHereSpot(state: GameState, playerInput: string): GameState {
+  const s = activeHereSpot(state);
+  if (!s?.awayFrom?.length) return state;
+  const said = key(playerInput);
+  if (!said) return state;
+  const restored = s.awayFrom.filter((name) => {
+    const first = (name.split(/\s+/)[0] ?? '').toLowerCase();
+    const full = key(name);
+    if (full.length >= 3 && said.includes(full)) return true;
+    return first.length >= 3 && new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(playerInput);
+  });
+  if (!restored.length || !state.sceneFacts) return state;
+  const awaySet = new Set(restored.map((n) => key(n)));
+  const next: HereSpot = {
+    ...s,
+    awayFrom: s.awayFrom.filter((n) => !awaySet.has(key(n))),
+    nearby: [...s.nearby, ...restored.filter((n) => !s.nearby.some((x) => key(x) === key(n)))],
+  };
+  return {
+    ...state,
+    sceneFacts: { ...state.sceneFacts, hereSpot: next },
+  };
+}
+
 /** After the writer: someone the prose shows following the player is beside him again. */
 export function applyFollowersToHereSpot(spot: HereSpot | undefined, narrative: string): HereSpot | undefined {
   if (!spot?.awayFrom?.length || !narrative) return spot;

@@ -151,6 +151,7 @@ export function ensureSpokenAnswer(
       return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     // T10S — exchange needs content (motive/authored) or honest silence; never "answered" with no words.
+    // T10U — prefer motive/authored when present; said nothing remains the Talk-chip last resort.
     const own = motiveAnswer(state, [speaker.label]);
     const line = own?.line ?? `${capitalize(speaker.label)} said nothing.`;
     const body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();

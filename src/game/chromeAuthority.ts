@@ -225,11 +225,15 @@ export function isPlannerUiPersonToken(token: string): boolean {
   if (!/\s/.test(bare) && BARE_PRONOUN_NAME.test(bare)) return true;
   if (!/\s/.test(bare) && DISCOURSE_PARTICLE_NAME.test(bare)) return true;
   const parts = t.split(/\s+/);
-  if (parts.length >= 2 && /^(so|well|then|now|if|when)$/i.test(parts[0] ?? '')) {
-    const rest = parts.slice(1).join(' ');
-    if (BARE_PRONOUN_NAME.test(parts[1] ?? '') || PLANNER_CONTRACTION.test(rest) || /['’]/.test(rest)) {
-      return true;
-    }
+  // T10U — sentence-initial discourse adverb + Name ("Then Jax", "Next Merrit") is narration
+  // glue, never a person slot. Cast/bible names never start with these particles.
+  if (
+    parts.length >= 2
+    && /^(so|well|then|now|if|when|next|after|before|later|suddenly|meanwhile|finally|however|still|yet|also|just|once|soon|again)$/i.test(
+      parts[0] ?? '',
+    )
+  ) {
+    return true;
   }
   return false;
 }

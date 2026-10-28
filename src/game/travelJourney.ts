@@ -893,6 +893,21 @@ export function writerTravelFact(receipt: string): string | null {
  */
 export function writerEngineResult(fact: string, subject?: string): string {
   const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  // T10U — death beat is the death sentence only (no Check failure / Extended Travel chrome /
+  // stray push-on travel sentence mixed into the book). SRD 5.2.1 Exhaustion 6 = death.
+  if (/\bYou are dead\./i.test(travel)) {
+    const death =
+      travel.match(
+        /(?:The forced march wore you down past what a body can bear\.\s*)?Your breath stops on the road\.\s*You are dead\./i,
+      )?.[0]
+      ?? travel.match(/[^.]*You are dead\./i)?.[0]?.trim();
+    if (death) {
+      const line = death.endsWith('.') ? death : `${death}.`;
+      return /The forced march|Your breath stops/i.test(line)
+        ? line
+        : `The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.`;
+    }
+  }
   // T10P — cue-heavy facts convert as whole blocks (periods inside Must narrate must not leak).
   if (hasWriterCueChrome(travel)) {
     const converted = convertWriterCueFact(travel, subject);
@@ -904,6 +919,8 @@ export function writerEngineResult(fact: string, subject?: string): string {
     let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
     while (s.includes('  ')) s = s.split('  ').join(' ');
     if (!s || isRoadLabel(s)) continue;
+    // STATUS chrome never becomes book prose (Extended Travel roll line / bare Check failure).
+    if (/^Extended Travel:/i.test(s) || isVr1RollLine(s) || /^Check (?:success|failure)\.?$/i.test(s)) continue;
     const roomHead = 'Dungeon room: ';
     if (s.startsWith(roomHead) && !s.startsWith('Dungeon room: none')) {
       const body = s.endsWith('.') ? s.slice(0, -1) : s;

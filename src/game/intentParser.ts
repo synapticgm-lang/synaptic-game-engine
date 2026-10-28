@@ -974,6 +974,53 @@ function pickFromPool(clause: string, pool: string[]): string | null {
  * Ask/chip paraphrases are never say (T10L — no `You said, "Ask if…"` / chip echo).
  * SRD 5.2.1 Communicating — "The speaker can say anything they want…" (WotC SRD 5.2.1, CC BY 4.0).
  */
+/**
+ * T10U — last truly unclosed opening quote (pair-depth). A closer after a finished
+ * `"…!"` must not reopen and swallow a trailing action adjunct (`while scanning…`).
+ */
+function trailingUnclosedQuoteSpan(t: string): string | null {
+  let depth = 0;
+  let openAt = -1;
+  let kind: '"' | "'" | null = null;
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i]!;
+    if (kind === null) {
+      if (ch === '"' || ch === '\u201c') {
+        kind = '"';
+        depth = 1;
+        openAt = i;
+      } else if (
+        (ch === "'" || ch === '\u2018')
+        && !(isWordChar(t[i - 1]) && isWordChar(t[i + 1]))
+      ) {
+        kind = "'";
+        depth = 1;
+        openAt = i;
+      }
+      continue;
+    }
+    if (kind === '"') {
+      if (ch === '"' || ch === '\u201d') {
+        depth = 0;
+        kind = null;
+        openAt = -1;
+      }
+      continue;
+    }
+    if (ch === "'" || ch === '\u2019') {
+      const prev = t[i - 1];
+      const next = t[i + 1];
+      if (isWordChar(prev) && isWordChar(next)) continue;
+      if (isWordChar(next) && !isWordChar(prev)) continue;
+      depth = 0;
+      kind = null;
+      openAt = -1;
+    }
+  }
+  if (depth !== 1 || openAt < 0) return null;
+  return extractQuotedSpan(t.slice(openAt));
+}
+
 function extractSay(clause: string): string | null {
   const t = (clause ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return null;
@@ -981,25 +1028,23 @@ function extractSay(clause: string): string | null {
   if (/^["'“‘]/.test(t)) {
     return extractQuotedSpan(t);
   }
-  // Quote after a speech verb (say / tell / call out / …). Optional comma: `call out, '…'`.
-  // Unquoted rest after the verb is never say (T10J / T10L).
+  // Quote after a speech verb — stems match clauseHasSpeechMarker (shouting / yelling / …).
+  // Optional comma: `call out, '…'`. Unquoted rest after the verb is never say (T10J / T10L).
+  // extractQuotedSpan stops at the closer, so `shouting "…!" while scanning…` keeps only the quote.
   const after = t.match(
-    /\b(?:say|said|tell|shout|yell|whisper|call\s+out)\b[,:]?\s+(.+)$/i
+    /\b(?:say|said|tell|shout(?:ing)?|yell(?:ing)?|whisper(?:ing)?|call(?:ing)?\s+out)\b[,:]?\s+(.+)$/i
   );
   if (after?.[1]) {
     return extractQuotedSpan(after[1].trim());
   }
   // T10R — trailing utterance after an act (`…on the table. "Oskar, look…` already split;
   // same-clause `…lap. "Stop hiding…` without a speech verb still counts when substantial).
-  // Short mention quotes (`not "yet"`) stay out: need ≥3 words or end punctuation / unclosed span.
-  const trailing = t.match(/["\u201c\u2018]([^"\u201d\u2019]*)$/);
-  if (trailing) {
-    const inner = extractQuotedSpan(trailing[0]!);
-    if (inner) {
-      const words = inner.split(/\s+/).filter(Boolean);
-      if (words.length >= 3 || /[.!?…]$/.test(inner) || !/["\u201d\u2019]\s*$/.test(t.slice(trailing.index!))) {
-        return inner;
-      }
+  // T10U — only a truly unclosed opener; never reinterpret a finished closer as a new open.
+  const inner = trailingUnclosedQuoteSpan(t);
+  if (inner) {
+    const words = inner.split(/\s+/).filter(Boolean);
+    if (words.length >= 3 || /[.!?…]$/.test(inner)) {
+      return inner;
     }
   }
   return null;

@@ -286,7 +286,8 @@ export function plainFromWriterCueSentence(
   }
   if (/^NPC reaction slot open for /i.test(body)) {
     const name = body.replace(/^NPC reaction slot open for\s+/i, '').trim();
-    // T10S — never "answered" with no content; silence is the honest fallback beat.
+    // T10S — never "answered" with no content; silence is the honest last-resort beat when the
+    // writer miss path converts cues (live writer + ensureSpokenAnswer supply content/motive).
     if (name && !/^the (?:people here|empty scene)$/i.test(name)) {
       return { cue: true, plain: `${name} said nothing.` };
     }
@@ -364,6 +365,41 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
       const cut = clause.search(/\bSpeech event:|\bPC says exactly:|\bThe story must show/i);
       const body = (cut >= 0 ? clause.slice(0, cut) : clause).trim().replace(/[.]+$/g, '');
       if (body) {
+        // T10U — one quoted utterance mid-clause: act, one speech verb + quote, trailing
+        // while-adjunct as narration (never a second quoted say).
+        // SRD 5.2.1 Communicating — the speaker's words stay theirs; action adjuncts are not speech.
+        const mid = body.match(
+          /^(.+?),?\s+(shout(?:ing)?|yell(?:ing)?|say(?:ing)?|said|tell(?:ing)?|whisper(?:ing)?|call(?:ing)?\s+out)\s*[,:]?\s*(["\u201c])([^"\u201d]+)(["\u201d])\s*(.*)$/i,
+        );
+        if (mid) {
+          const act = (mid[1] ?? '').replace(/[.]+$/g, '').trim();
+          const verbRaw = (mid[2] ?? 'said').toLowerCase();
+          const said = (mid[4] ?? '').trim().replace(/[.,;:]+$/g, '');
+          const trail = (mid[6] ?? '').trim().replace(/^[.,;:]+/, '').trim();
+          const speechVerb = /shout/.test(verbRaw)
+            ? 'shouted'
+            : /yell/.test(verbRaw)
+              ? 'yelled'
+              : /whisper/.test(verbRaw)
+                ? 'whispered'
+                : /call/.test(verbRaw)
+                  ? 'called'
+                  : 'said';
+          if (act) {
+            push(clauseToThirdPerson(act, pc));
+            hadMustNarrate = true;
+          }
+          if (said) {
+            if (pc && pc !== 'They' && pc !== 'You') push(`${pc} ${speechVerb}, "${said}".`);
+            else push(`You ${speechVerb}, "${said}".`);
+            hadExactSay = true;
+          }
+          if (trail) {
+            push(clauseToThirdPerson(trail, pc));
+            hadMustNarrate = true;
+          }
+          continue;
+        }
         // Quotes glued into Must narrate (unclosed player quote) still paint as PC speech.
         const q = body.match(/["\u201c]([^"\u201d]+)["\u201d]?\s*$/);
         const act = (q ? body.slice(0, q.index).trim() : body).replace(/[.]+$/g, '').trim();
@@ -381,6 +417,8 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
       continue;
     }
     if (/^PC says exactly:/i.test(head)) {
+      // Already painted from Must narrate mid-clause speech — one verb + quote only (T10U).
+      if (hadExactSay) continue;
       const sayHead = 'PC says exactly: "';
       const sayTail = '" (do not rewrite)';
       const endQ = span.lastIndexOf(sayTail);
@@ -430,8 +468,8 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
     }
   }
 
-  // T10S — present addressee gets a reaction beat. Content comes from the writer's reply (or
-  // motive/authored lines elsewhere). This fallback never claims they "answered" with no words.
+  // T10S — present addressee gets a reaction beat on last-resort cue convert. Live path: writer
+  // or ensureSpokenAnswer (motive / disposition silence). Never claim they "answered" with no words.
   if (!absentAnswer && reactionWho) {
     push(`${reactionWho} said nothing.`);
   }

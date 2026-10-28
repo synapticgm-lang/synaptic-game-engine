@@ -91,17 +91,24 @@ export function maskPlaceNames(state: GameState, prose: string): string {
 function extractProperNamesFromProse(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
   const knownNames = npcRecordNames(state);
+  if (!knownNames.length) return [];
   const found = new Set<string>();
   const patterns = [
     /\b(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z][a-z'-]+\b/g,
     /\b[A-Z][a-z'-]+\s+[A-Z][a-z'-]+\b/g,
     /\bWren\s+Holt\b/g,
   ];
+  const knownLow = new Set(knownNames.map((n) => n.toLowerCase()));
   for (const re of patterns) {
     let m: RegExpExecArray | null;
     while ((m = re.exec(prose))) {
       const name = (m[0] ?? '').trim();
-      if (name.length >= 3 && canHarvestAsNamedPerson(name, bibleId, knownNames)) {
+      // T10U — cast / bible only. Never invent novel Title-Case pairs ("Then Jax") from prose.
+      if (
+        name.length >= 3
+        && knownLow.has(name.toLowerCase())
+        && canHarvestAsNamedPerson(name, bibleId, knownNames)
+      ) {
         found.add(name);
       }
     }
@@ -215,9 +222,14 @@ export function harvestNarrativePeople(
 
   const ledgerNouns = compileNounAllowlist(state, openingCastNames(state));
   const pc = state.character?.name?.trim().toLowerCase() ?? '';
+  const pcFirst = pc.split(/\s+/)[0] ?? '';
   const isPc = (n: string) => {
     const l = n.trim().toLowerCase();
-    return !!pc && (l === pc || (!/\s/.test(l) && l === pc.split(/\s+/)[0]));
+    if (!pc) return false;
+    if (l === pc || (!/\s/.test(l) && l === pcFirst)) return true;
+    // T10U — discourse glue + PC name ("Then Jax") is still the PC, never an NPC entity.
+    const parts = l.split(/\s+/);
+    return parts.length === 2 && parts[1] === pcFirst && /^(then|next|after|before|later|now|so|well)$/i.test(parts[0]!);
   };
   // A bare first name is the full-name person already known by it; two with that first name: neither.
   const fullNames = () => [...new Set([...present, ...registeredNpcs, ...npcMemories.map((m) => m.npcName)])]
