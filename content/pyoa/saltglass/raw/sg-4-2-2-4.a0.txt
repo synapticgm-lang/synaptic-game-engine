@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION sg-4-2-2-4
+TITLE: The Obsidian Bowl
+TEXT: Black obsidian walls rise around you in a steep, sunless dip, trapping the shrieking gale into a swirling vortex of crystalline grit. You huddle low against the cold floor, holding your heavy wool cloak tight over your chest to shield the banked coal-lantern from the abrasive sleet. Every breath draws in the taste of powdered quartz and ancient smoke. Above the roar, the wind rattles against the rocks like iron filings in a tin box. You must decide whether to press onward through the drifting dunes or seek another shelter before the storm worsens.
+EXIT 1: Climb through the crystal drift
+EXIT 2: Follow the chill in the air
+@@END
+@@SECTION sg-4-2-2-5
+TITLE: The Half-Buried Hoop
+TEXT: Half-submerged in the crusted salt, an iron water-hoop serves as your meager windbreak against the screaming gale. Your cold fingers trace the length of the ceramic Seedkey, feeling for any hairline fractures or structural flaws wrought by the violent, scouring tempest. The amber-lamp at your hip flickers wildly, its banked coals glowing like a stubborn eye against the encroaching dark. Fine mica dust clings to your sweat-slicked forehead, stinging whenever you blink. You need to choose your next direction before the biting wind numbs your hands completely.
+EXIT 1: Step into the mica veil
+EXIT 2: Seek the stained glass vaults
+@@END
+@@SECTION sg-4-2-2-6
+TITLE: The Glass Pipes
+TEXT: Hollow glass pipes groan and whistle in a complex, reedy chorus all around you, turning the howling tempest into an eerie underground tune. You lean your aching weight against a smooth silicate conduit, using the steady, rhythmic thrum vibrating through the ground to guide your blistered feet forward. Prism's distant towers remain hidden behind a curtain of churning grey dust, but the acoustic resonance offers a reliable path through the blinding whiteout. You weigh your options on how to navigate the singing network ahead.
+EXIT 1: Slide down the calcified foam
+EXIT 2: Approach the tilted quartz arch
+@@END
+@@SECTION sg-4-2-2-7
+TITLE: The Salt-Weaver's Warning
+TEXT: Jagged flakes of glittering scree cascade down a nearby slope as an old salt-weaver named Voss clutches a tattered rag to his mouth and shouts over the storm. He points a gnarled finger toward the shifting haze, warning of bottomless sinkholes that lurk invisibly beneath the dancing dust-whirls. Your lungs burn with every inhalation, and the weight of your ember-lamp feels heavier with each passing stride. You must decide whether to heed the old man's dire caution or venture deeper into the blinding basin.
+EXIT 1: Duck inside the earthenware pipe
+EXIT 2: Head toward the quartz arch
+@@END
+@@SECTION sg-4-2-8
+TITLE: The Sulphate Crust
+TEXT: Sulphate crust crunches and shatters beneath your boots as you sprint across a blinding flat, keeping your shoulder stubbornly turned to the biting wind. A squall of razor-sharp diamond needles lashes your exposed skin, turning every breath into a sharp prick of pain. Your lamp gutters briefly before the banked coals catch the draft and flare up with a stubborn orange glow. You scan the swirling horizon through squinted, stinging eyes to pick your route through the gale.
+EXIT 1: Take refuge beneath stained glass
+EXIT 2: Find the deep drainage furrow
+EXIT 3: Seek shelter by the quartz arch
+@@END
+@@SECTION sg-4-2-2-9
+TITLE: The Cistern Rim
+TEXT: Sheltered briefly within the crumbling rim of an ancient cistern, you scrape fine glass-powder from your coat hem before the sharp particles can work their way through to your raw skin. The air tastes of dry lime and old iron, heavy with the fury of the unrelenting basin storm. Your fingers ache from the cold, yet you keep a firm grip on your lantern frame to ensure the coals stay banked. You must choose how to break out from this momentary haven into the open gale.
+EXIT 1: Forge ahead through the sand drift
+EXIT 2: Battle the wind across basalt tiles
+@@END
+@@SECTION sg-4-2-2-10
+TITLE: The Basalt Plateau
+TEXT: Gale-force winds tear across the exposed landscape, turning every inch of your journey into a grueling test of endurance and raw willpower. You fight for every single stride against a towering wall of air thick with pulverized stone and stinging grit. The Seedkey rests cold and unyielding against your ribs, a steady anchor amid the howling chaos. You scan the fractured ground ahead, weighing the safest way forward through the blinding squall.
+EXIT 1: Push through the dense sand drift
+EXIT 2: Slip into the narrow drainage culvert
+EXIT 3: Face the wall of basalt tiles
+@@END
+@@SECTION sg-4-2-2-11
+TITLE: The Wailing Squall
+TEXT: Thick grey dust whips past your ears like driven sand, coating your eyelashes in a crust of salt and mineral dust. Your muscles ache from hours of relentless bracing against the gale, and the amber-lamp requires constant, careful tending to keep its warmth alive. Every breath feels like swallowing hot needles, yet you cannot afford to slow your pace before nightfall. You must decide your course through the shrieking labyrinth of debris.
+EXIT 1: Step onto the grey basalt tiles
+EXIT 2: Follow the courier into the gloom
+@@END
+@@SECTION sg-4-2-2-12
+TITLE: The Slag-Iron Shelter
+TEXT: Heavy metal plates rattle violently under the assault of the tempest, offering a precarious shield where you stop to tend your flickering flame. The air inside the hollow bowl smells of sulfur and old rust, but it keeps the worst of the flying glass-dust away from your face. Outside, the storm howls like a trapped beast across the open basin floor. You must choose whether to brave the elements once more or alter your trajectory.
+EXIT 1: Tend the flame in the metal bowl
+EXIT 2: Follow the fading tracks outward
+EXIT 3: Navigate the maze of glass stakes
+@@END
+@@SECTION sg-4-2-2-13
+TITLE: The Glass Stake Maze
+TEXT: Upright glass stakes jut from the hard-packed earth like jagged teeth, gleaming faintly in the gloom of the dust storm. You pick your path with agonizing care, testing each foothold to protect your sole remaining boot-sole from being shredded by the razor edges. The wind pushes against your back, threatening to knock you off balance into the crystalline trap. You need to determine your next move before your footing gives way entirely.
+EXIT 1: Cross the grey basalt tiles
+EXIT 2: Enter the slag-iron shelter
+EXIT 3: Step toward the wire-mesh awning
+@@END

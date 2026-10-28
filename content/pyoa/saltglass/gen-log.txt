@@ -242,3 +242,7 @@
 2026-10-28T11:33:43.216Z ask prose sg-4-1-4-6..sg-4-2-0-1 items=10 attempt=0
 2026-10-28T11:34:12.339Z done sg-4-1-4-6: 10/10 model=Flash-Lite
 2026-10-28T11:34:12.341Z ask prose sg-4-2-1-0..sg-4-2-2-3 items=10 attempt=0
+2026-10-28T11:34:45.700Z done sg-4-2-1-0: 10/10 model=Flash-Lite
+2026-10-28T11:34:45.701Z ask prose sg-4-2-2-4..sg-4-2-2-13 items=10 attempt=0
+2026-10-28T11:35:13.133Z   reject sg-4-2-2-8: missing
+2026-10-28T11:35:19.145Z ask prose sg-4-2-2-4..sg-4-2-2-13 items=1 attempt=1
