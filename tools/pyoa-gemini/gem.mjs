@@ -1,4 +1,4 @@
-﻿// Thin Gemini web driver for PYOA content work. Attaches to the existing Chrome on CDP :9222
+// Thin Gemini web driver for PYOA content work. Attaches to the existing Chrome on CDP :9222
 // (John's own Gemini subscription, no API/OpenRouter). NEVER closes the browser: only disconnects.
 import puppeteer from 'puppeteer-core';
 import { findGeminiPage, pasteGeminiPrompt, waitGeminiIdle } from '../../scripts/ai-player-browser/geminiTab.mjs';
@@ -34,7 +34,7 @@ export async function connect() {
   return { browser, page };
 }
 
-export async function ask(prompt, { fresh = true, timeoutMs = 360000 } = {}) {
+export async function ask(prompt, { fresh = true, timeoutMs = 360000, model = '' } = {}) {
   const { browser, page } = await connect();
   try {
     await page.bringToFront();
@@ -42,6 +42,7 @@ export async function ask(prompt, { fresh = true, timeoutMs = 360000 } = {}) {
       await page.goto('https://gemini.google.com/app', { waitUntil: 'domcontentloaded' });
       await sleep(2500);
     }
+    if (model) await ensureModel(page, model);
     const st0 = await pageState(page);
     if (st0.signedOut || /accounts\.google\.com/.test(st0.url)) throw new GeminiStop('signedout', 'Gemini signed out');
     const before = (await lastResponse(page)).n;
@@ -71,3 +72,40 @@ export async function ask(prompt, { fresh = true, timeoutMs = 360000 } = {}) {
   }
 }
 
+// ---- Stage 1 additions: model guard + Pro-pass pause window
+export let lastModel = '';
+const ROOTDIR = new URL('../../', import.meta.url);
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+const pf = (n) => fileURLToPath(new URL('content/pyoa/' + n, ROOTDIR));
+
+/** Pause from 11:55 (laptop local time) on 28 Oct 2026 until the Pro pass drops content/pyoa/PRO-PASS-DONE or PRO-PASS-RELEASE. */
+export async function proPassGate(log = () => {}) {
+  const now = () => new Date();
+  const inWindow = () => { const d = now(); return d.getFullYear() === 2026 && d.getMonth() === 9 && d.getDate() === 28 && (d.getHours() >= 12 || (d.getHours() === 11 && d.getMinutes() >= 55)); };
+  let announced = false;
+  while (inWindow() && !existsSync(pf('PRO-PASS-DONE')) && !existsSync(pf('PRO-PASS-RELEASE'))) {
+    if (!announced) { log('PAUSED for the Pro pass (waiting for content/pyoa/PRO-PASS-DONE or PRO-PASS-RELEASE)'); announced = true; }
+    await sleep(30000);
+  }
+  if (announced) log('RESUMED after Pro pass release');
+}
+
+async function pickerLabel(page) {
+  return page.evaluate(() => [...document.querySelectorAll('button')].map((x) => x.getAttribute('aria-label') || '').find((s) => /mode picker/i.test(s)) || '');
+}
+
+/** Make sure the Gemini mode picker reads the wanted model (e.g. "Flash-Lite"); never leaves Pro/Flash selected. */
+export async function ensureModel(page, want = 'Flash-Lite') {
+  let lab = await pickerLabel(page);
+  if (!lab.includes(want)) {
+    await page.evaluate(() => [...document.querySelectorAll('button')].find((x) => /mode picker/i.test(x.getAttribute('aria-label') || ''))?.click());
+    await sleep(1200);
+    await page.evaluate((w) => { const items = [...document.querySelectorAll('[role="menuitemradio"],[role="menuitem"],[role="option"],.mat-mdc-menu-item')]; items.find((x) => (x.innerText || '').includes(w))?.click(); }, want);
+    await sleep(1500);
+    lab = await pickerLabel(page);
+  }
+  if (!lab.includes(want)) throw new GeminiStop('model', `Gemini mode is "${lab}", wanted ${want}`);
+  lastModel = lab.replace(/^.*currently\s*/i, '');
+  return lastModel;
+}
