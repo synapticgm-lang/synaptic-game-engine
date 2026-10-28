@@ -77,11 +77,24 @@ function slotMentioned(prose: string, slot: string): boolean {
 export function missingPointerCardSlot(state: GameState, prose: string): boolean {
   const est = state.openingEstablishment;
   if (!est) return false;
+  // T10B — after covers + page-1 are written, the ledger owns HERE/CAST. Hook Location
+  // wording ("tavern hire" / "churchyard") often differs from the live place the writer
+  // was handed (Waystation / Graveyard); requiring the card string then drops real prose
+  // and last-resort paints the engine fact sheet.
+  if (est.complete && est.sceneWritten) return false;
   const opening = !est.complete || (state.turn ?? 0) <= 2;
   if (!opening) return false;
   const slots = compilePointerCardSlots(state);
   if (!slots) return false;
-  if (slots.where && !slotMentioned(prose, slots.where)) return true;
+  // Live place aliases satisfy WHERE when the card Location line uses different words.
+  const whereCandidates = [
+    slots.where,
+    state.currentLocation,
+    est.answers?.where,
+    est.card?.place,
+    est.pinnedAt,
+  ].filter((w): w is string => !!(w && String(w).trim()));
+  if (whereCandidates.length > 0 && !whereCandidates.some((w) => slotMentioned(prose, w))) return true;
   if (slots.whoCount > 0 && slots.who && !slotMentioned(prose, slots.who)) return true;
   return false;
 }

@@ -38,6 +38,7 @@ import { hasNumberedChoiceLeak, hasQuestTrackerLeak, stripChoiceList } from './p
 import { hasCombatSpawnLogInBody } from './combatAuthority';
 import { detectHubRoleMadlib } from './chromeAuthority';
 import { isBannedFallbackStub } from './sealedManifest';
+import { writerEngineResult } from './travelJourney';
 import {
   extractEntityContext,
   validateEntityReferences,
@@ -363,6 +364,19 @@ export function applyGovernanceToProse(
   const context = extractEntityContext(state);
   const report = validateEntityReferences(prose, context);
   let out = prose;
+
+  // T10B — never commit the raw ENGINE RESULT sheet as the book; same receipt→sentence form as last-resort.
+  {
+    const engineRaw = (state.completedEvent?.engineResult ?? '').replace(/\s+/g, ' ').trim();
+    const body = out.replace(/\s+/g, ' ').trim();
+    if (engineRaw && body === engineRaw) {
+      const plain = writerEngineResult(body);
+      if (plain && plain !== body) {
+        out = plain;
+        notes.push('Engine fact sheet → writer form');
+      }
+    }
+  }
 
   if (report.shouldRegenerate || report.themCount + report.strangerCount + report.thisPlaceCount > 0) {
     out = rewriteInvalidReferences(out, context, report);
