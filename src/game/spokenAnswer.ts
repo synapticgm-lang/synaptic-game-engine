@@ -101,6 +101,64 @@ function quotedReply(speaker: Speaker, words: string): { line: string; words: st
   return { line: `${capitalize(speaker.label)} said, "${w}"`, words: w };
 }
 
+type LedgerKind = 'need' | 'goal' | 'offer';
+
+/**
+ * T10AL — agenda fields are noun phrases ("a buyer who pays"), not dialogue. Speak them as a
+ * first-person sentence so the beat is not a clipped fragment and not a turn-plays-player echo.
+ */
+function asSpokenAgenda(bit: string, kind: LedgerKind): string {
+  const t = bit.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  if (!t) return t;
+  if (/^(?:I|We|You|Don't|Do not|Never|Ask|Tell|Look)\b/i.test(t)) {
+    return /[.!?]$/.test(t) ? t : `${t}.`;
+  }
+  if (/[.!?]$/.test(t) && /^[A-Z]/.test(t)) return t;
+  // Keep the article on need ("a buyer who pays"); strip only when the frame is "offer/want X".
+  const bare = t.replace(/^(?:an?|the)\s+/i, '');
+  if (kind === 'offer') return `I can offer ${bare}.`;
+  if (kind === 'goal') return `I want ${bare}.`;
+  return `I need ${t}.`;
+}
+
+const sayWordSet = (s: string) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) ?? []).filter((w) => w.length >= 3));
+
+/** True when this speaker already spoke substantially the same words (ledger said[] / recent GM). */
+function speakerAlreadyTold(state: GameState, speaker: Speaker, words: string): boolean {
+  const raw = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  // Compare the full line and the agenda core ("I need a buyer who pays" ↔ "a buyer who pays").
+  const cores = [
+    raw,
+    raw.replace(/^(?:I need|I want|I can offer)\s+/i, '').replace(/[.!?]+$/, '').trim(),
+  ].filter((c, i, a) => c.length >= 6 && a.indexOf(c) === i);
+  const overlap = (line: string, needle: string) => {
+    const now = sayWordSet(needle);
+    if (now.size < 2) return false;
+    const before = sayWordSet(line);
+    if (!before.size) return false;
+    let hit = 0;
+    for (const w of now) if (before.has(w)) hit += 1;
+    return hit / now.size >= 0.7;
+  };
+  const hitLine = (line: string) => cores.some((c) => overlap(line, c) || overlap(c, line));
+  for (const s of speaker.record?.said ?? []) {
+    if (s.line && hitLine(s.line)) return true;
+  }
+  for (const u of speaker.record?.motiveUsed ?? []) {
+    if (u && hitLine(u)) return true;
+  }
+  const names = speaker.names;
+  for (const e of (state.log ?? []).filter((x) => x.role === 'gm').slice(-12)) {
+    const body = String(e.content ?? '');
+    for (const m of body.matchAll(QUOTE)) {
+      const ctx = quoteContext(body, m.index!, m.index! + m[0].length);
+      if (!mentions(ctx, names)) continue;
+      if (hitLine(m[1] ?? '')) return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Engine-recorded mute only (corpse / lastKill). SRD undead mute is owned by motiveLinesOf
  * (empty group lines); here lastKill is the shared corpse lock.
@@ -124,6 +182,8 @@ function engineMuteLine(state: GameState, speaker: Speaker): { line: string } | 
  * cast want → motive deflection → seed sheet. Stock motive never outranks ledger need/goal.
  * Silence only when the engine records a mute reason (lastKill). No new canned refusal bank.
  * T10X/T10Y — present groups + opening cast use the same picker.
+ * T10AL — agenda noun-phrases become sentences; an already-told fact is a different reply kind
+ * (next unused ledger bit / motive / ask-back), never a verbatim replay.
  * SRD 5.2.1 Communicating — brief speech is free; the addressed party answers from what they know.
  */
 function spokenExchangeLine(
@@ -145,26 +205,36 @@ function spokenExchangeLine(
   const authored = authoredTopicsFor(speaker.label)[0];
   if (authored?.line) {
     const words = firstSentence(authored.line).replace(/^["“]|["”]$/g, '').trim();
-    if (words) return quotedReply(speaker, words);
+    if (words && !speakerAlreadyTold(state, speaker, words)) return quotedReply(speaker, words);
   }
 
   // T10AF / T10AD — durable need/goal/offer before stock motive (Keep Gate steward need, not
   // "fair and square"). Prefer the bit that overlaps the Follow-up / about-topic when present.
-  const ledgerBits = [
-    (memory?.need ?? '').replace(/\s+/g, ' ').trim(),
-    (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim(),
-    (memory?.offer ?? '').replace(/\s+/g, ' ').trim(),
-  ].filter((w) => w.length >= 3);
+  // T10AL — speak as a sentence; skip bits already told this scene (no verbatim replay).
+  const ledgerBits = (
+    [
+      { kind: 'need' as const, text: (memory?.need ?? '').replace(/\s+/g, ' ').trim() },
+      { kind: 'goal' as const, text: (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim() },
+      { kind: 'offer' as const, text: (memory?.offer ?? '').replace(/\s+/g, ' ').trim() },
+    ] satisfies { kind: LedgerKind; text: string }[]
+  ).filter((b) => b.text.length >= 3);
   if (ledgerBits.length) {
     const topicLow = askTopic.toLowerCase();
-    const fit =
+    const fresh = ledgerBits.filter((b) => {
+      const spoken = asSpokenAgenda(b.text, b.kind);
+      return !speakerAlreadyTold(state, speaker, b.text) && !speakerAlreadyTold(state, speaker, spoken);
+    });
+    const pool = fresh.length ? fresh : [];
+    const fitRow =
       (topicLow
-        ? ledgerBits.find((b) => {
-            const bl = b.toLowerCase();
+        ? pool.find((b) => {
+            const bl = b.text.toLowerCase();
             return bl.includes(topicLow) || topicLow.includes(bl) || topicLow.split(/\s+/).some((t) => t.length >= 4 && bl.includes(t));
           })
-        : undefined) ?? ledgerBits[0]!;
-    return quotedReply(speaker, fit);
+        : undefined) ?? pool[0];
+    if (fitRow) return quotedReply(speaker, asSpokenAgenda(fitRow.text, fitRow.kind));
+    // Every agenda bit already told — ask-back / refuse with a reason (not a replay).
+    return quotedReply(speaker, 'I already told you that. Ask me who, or why.');
   }
 
   const cast = openingCastNames(state);
@@ -172,14 +242,17 @@ function spokenExchangeLine(
     cast.some((n) => sameSpeaker(n, speaker.label)) ||
     sameSpeaker(openingCastLabel(state), speaker.label);
   const want = isCast ? shortCardWant(state).replace(/\s+/g, ' ').trim() : '';
-  if (want) return quotedReply(speaker, want);
+  if (want && !speakerAlreadyTold(state, speaker, want)) return quotedReply(speaker, want);
 
   // Deflection naming what they want — only when no ledger agenda (T10AF: never append on top of silence).
   const own = motiveAnswer(state, [speaker.label, ...speaker.names]);
-  if (own?.spoken?.words) return { line: own.line, words: own.spoken.words };
+  if (own?.spoken?.words && !speakerAlreadyTold(state, speaker, own.spoken.words)) {
+    return { line: own.line, words: own.spoken.words };
+  }
   if (own?.line) {
     const q = own.line.match(/["“]([^"”]+)["”]/);
-    return { line: own.line, words: (q?.[1] ?? '').replace(/\s+/g, ' ').trim() || undefined };
+    const words = (q?.[1] ?? '').replace(/\s+/g, ' ').trim() || undefined;
+    if (words && !speakerAlreadyTold(state, speaker, words)) return { line: own.line, words };
   }
 
   // T10AA — road walkers / empty memory: seed-stable sheet motive (same as ensureNpcSheet).
@@ -188,7 +261,7 @@ function spokenExchangeLine(
     roleHint: memory?.roleHint,
   });
   const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
-  if (words) return quotedReply(speaker, words);
+  if (words && !speakerAlreadyTold(state, speaker, words)) return quotedReply(speaker, words);
 
   // No engine mute and no ledger line — still one seed motive word if pick returned empty parts.
   return { line: `${capitalize(speaker.label)} said nothing.` };
@@ -520,6 +593,87 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
   return false;
 }
 
+/**
+ * T10AL — one owner per beat: if this speaker already has a said-line on the page (or the exact
+ * exchange words), do not append again. Catches lastResort+seal / finishCommitted+seal doubles
+ * when quote attribution is ambiguous.
+ */
+function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): boolean {
+  const body = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!body) return false;
+  const label = esc(speaker.label);
+  if (words) {
+    const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+    if (w.length >= 3) {
+      const q = esc(w);
+      if (new RegExp(`${label}\\s+said,\\s*["\\u201c]${q}["\\u201d]?`, 'i').test(body)) return true;
+      const now = sayWordSet(w);
+      if (now.size >= 2) {
+        for (const m of body.matchAll(QUOTE)) {
+          const ctx = quoteContext(body, m.index!, m.index! + m[0].length);
+          if (!mentions(ctx, speaker.names)) continue;
+          const before = sayWordSet(m[1] ?? '');
+          let hit = 0;
+          for (const x of now) if (before.has(x)) hit += 1;
+          if (hit / now.size >= 0.8) return true;
+        }
+      }
+    }
+  }
+  return new RegExp(`${label}\\s+said,\\s*["\\u201c]`, 'i').test(body);
+}
+
+/** Drop a back-to-back identical `Name said, "…"` clone (two code paths each appended once). */
+function collapseDuplicateSaid(prose: string): string {
+  return (prose ?? '')
+    .replace(
+      /\b((?:[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3})\s+said,\s*["\u201c][^"\u201d]+["\u201d]?)\s+\1(?=\s|$|[.!?])/g,
+      '$1',
+    )
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function attachExchange(
+  prose: string,
+  speaker: Speaker,
+  exchange: { line: string; words?: string },
+): { prose: string; answer: SpokenAnswer } {
+  let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+  if (proseHasSpeakerReply(body, speaker, exchange.words)) {
+    return { prose: collapseDuplicateSaid(body), answer: { status: 'already-quoted', speaker: speaker.label } };
+  }
+  const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
+  if (!silenceOnly) {
+    body = stripSpeakerSilence(body, speaker);
+    if (proseHasSpeakerReply(body, speaker, exchange.words)) {
+      return { prose: collapseDuplicateSaid(body), answer: { status: 'already-quoted', speaker: speaker.label } };
+    }
+    const next = collapseDuplicateSaid(body ? `${body} ${exchange.line}` : exchange.line);
+    return {
+      prose: next,
+      answer: {
+        status: 'added',
+        speaker: speaker.label,
+        source: 'authored',
+        line: exchange.words ? `"${exchange.words}"` : exchange.line,
+      },
+    };
+  }
+  if (proseHasSpeakerSilence(body, speaker)) {
+    return { prose: collapseDuplicateSaid(body), answer: { status: 'already-quoted', speaker: speaker.label } };
+  }
+  return {
+    prose: collapseDuplicateSaid(body ? `${body} ${exchange.line}` : exchange.line),
+    answer: {
+      status: 'added',
+      speaker: speaker.label,
+      source: 'authored',
+      line: exchange.line,
+    },
+  };
+}
+
 /** Ensure a who / want / where answer carries the addressee's own quoted words, from the ledger only. */
 export function ensureSpokenAnswer(
   prose: string,
@@ -531,54 +685,30 @@ export function ensureSpokenAnswer(
   // T10R / T10V — Talk chip / typed ask with someone here still needs an exchange beat when
   // stripUnauthorizedNpcSpeech dropped the writer's line (stub + bare `@`, or wrong crowd slot).
   if (!topic) {
-    if (!isTypedAskOrTalk(playerInput, state)) return { prose, answer: { status: 'not-asked' } };
+    if (!isTypedAskOrTalk(playerInput, state)) {
+      return { prose: collapseDuplicateSaid(prose), answer: { status: 'not-asked' } };
+    }
     if (!who) return { prose, answer: { status: 'nobody-here' } };
     const { speaker, alone } = who;
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);
     const pc = state.character?.name ?? null;
-    if (quotesBy(prose, speaker, alone, others, pc).length) {
-      return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
+    if (quotesBy(prose, speaker, alone, others, pc).length || proseHasSpeakerReply(prose, speaker)) {
+      return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     // T10AK — a visible act that answers a tell/demand is already the reply (do not stack motive).
     if (demandActAnswered(playerInput, prose, speaker.label)) {
-      return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
+      return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     // T10S/T10U/T10X/T10Y/T10AD/T10AF — exchange needs content (ledger / cast / motive deflection).
     // Content-free silence on the page is replaced when words exist; never stacked with a stock quote.
-    const exchange = spokenExchangeLine(state, speaker, playerInput);
-    let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
-    const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
-    if (!silenceOnly) {
-      body = stripSpeakerSilence(body, speaker);
-      return {
-        prose: body ? `${body} ${exchange.line}` : exchange.line,
-        answer: {
-          status: 'added',
-          speaker: speaker.label,
-          source: 'authored',
-          line: exchange.words ? `"${exchange.words}"` : exchange.line,
-        },
-      };
-    }
-    if (proseHasSpeakerSilence(body, speaker)) {
-      return { prose: body, answer: { status: 'already-quoted', speaker: speaker.label } };
-    }
-    return {
-      prose: body ? `${body} ${exchange.line}` : exchange.line,
-      answer: {
-        status: 'added',
-        speaker: speaker.label,
-        source: 'authored',
-        line: exchange.line,
-      },
-    };
+    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput));
   }
   if (!who) return { prose, answer: { status: 'nobody-here' } };
   const { speaker, alone } = who;
   const others = speakersHere(state).filter((s) => s.label !== speaker.label);
   const pc = state.character?.name ?? null;
-  if (quotesBy(prose, speaker, alone, others, pc).length) {
-    return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
+  if (quotesBy(prose, speaker, alone, others, pc).length || proseHasSpeakerReply(prose, speaker)) {
+    return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
   }
   const real = realLine(topic, speaker);
   if (!real) {
@@ -590,38 +720,15 @@ export function ensureSpokenAnswer(
     if (!typedSpeech) {
       return { prose, answer: { status: 'no-line', speaker: speaker.label } };
     }
-    const exchange = spokenExchangeLine(state, speaker, playerInput);
-    let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
-    const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
-    if (!silenceOnly) {
-      body = stripSpeakerSilence(body, speaker);
-      return {
-        prose: body ? `${body} ${exchange.line}` : exchange.line,
-        answer: {
-          status: 'added',
-          speaker: speaker.label,
-          source: 'authored',
-          line: exchange.words ? `"${exchange.words}"` : exchange.line,
-        },
-      };
-    }
-    if (proseHasSpeakerSilence(body, speaker)) {
-      return { prose: body, answer: { status: 'already-quoted', speaker: speaker.label } };
-    }
-    return {
-      prose: body ? `${body} ${exchange.line}` : exchange.line,
-      answer: {
-        status: 'added',
-        speaker: speaker.label,
-        source: 'authored',
-        line: exchange.line,
-      },
-    };
+    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput));
   }
   const line = `${capitalize(speaker.label)} said, "${real.line}"`;
+  if (proseHasSpeakerReply(prose, speaker, real.line)) {
+    return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+  }
   const body = stripSpeakerSilence(prose.trim(), speaker);
   return {
-    prose: body ? `${body} ${line}` : line,
+    prose: collapseDuplicateSaid(body ? `${body} ${line}` : line),
     answer: { status: 'added', speaker: speaker.label, source: real.source, line },
   };
 }

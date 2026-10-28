@@ -817,21 +817,32 @@ export function stripUnauthorizedNpcSpeech(
     // Ambient "the street answered" / "nobody answered" stay. Else → said nothing.
     // T10AF — never leave "said nothing that…" splices: whole-clause rewrite when content follows
     // "answered", and heal already-spliced "said nothing that/with/about…".
+    // T10AL — "answered that look/gaze" is a physical beat (PC or NPC), not empty speech; never
+    // rewrite the PC's answered-look into "and Jax said nothing" after a period splice.
     if (/\bsaid nothing\s+(?:that|with|about)\b/i.test(s)) {
-      const who =
-        s.match(
-          /\b([A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2}|he|she|they)\s+said nothing\s+(?:that|with|about)\b/i,
-        )?.[1] ?? null;
-      s = who ? `${who} said nothing.` : 'They said nothing.';
+      if (/\bsaid nothing\s+that\s+(?:look|gaze|stare|glare|nod|shrug|smile|smirk)\b/i.test(s)) {
+        // Physical complement left after a bad replace — restore "answered".
+        s = s.replace(/\bsaid nothing\s+that\b/gi, 'answered that');
+      } else {
+        const who =
+          s.match(
+            /\b([A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2}|he|she|they)\s+said nothing\s+(?:that|with|about)\b/i,
+          )?.[1] ?? null;
+        s = who ? `${who} said nothing.` : 'They said nothing.';
+      }
     } else if (
       !/\b(?:nobody|no\s+one|nothing)\b/i.test(s)
       && /\b(?:he|she|they|one of them|[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2})\s+answered\b/.test(s)
+      && !/\banswered\s+that\s+(?:look|gaze|stare|glare|nod|shrug|smile|smirk)\b/i.test(s)
     ) {
       const who =
         s.match(
           /\b((?:he|she|they|one of them|[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2}))\s+answered\b/i,
         )?.[1] ?? null;
-      if (who && /\banswered\s+(?:that|with|about|by|for)\b/i.test(s)) {
+      // PC owns their physical "answered that…" — do not mute them into said-nothing.
+      if (who && isPcSpeaker(who, pcFirst)) {
+        /* keep */
+      } else if (who && /\banswered\s+(?:that|with|about|by|for)\b/i.test(s)) {
         s = `${who} said nothing.`;
       } else {
         s = s.replace(/\banswered\b/gi, 'said nothing');

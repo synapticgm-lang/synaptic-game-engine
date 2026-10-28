@@ -325,19 +325,18 @@ export async function runWriterTurnWithFightRetry(opts: {
     };
   }
   if (!hardLeft) return { ...done, draftRetry: 'retried', fightDraft };
+  // T10AL — lastResortStoryBody already finishes with ensureSpokenAnswer (one owner per beat).
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
-  const spoken = ensureSpokenAnswer(painted.prose, opts.check.state, opts.check.playerInput);
   return {
     ...done,
-    prose: spoken.prose,
+    prose: painted.prose,
     path: 'last-resort',
     refs: undefined,
     speech: undefined,
-    remaining: writerDraftProblems(spoken.prose, opts.check),
+    remaining: writerDraftProblems(painted.prose, opts.check),
     problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
     draftRetry: 'painted',
     fightDraft,
-    spoken: spoken.answer,
   };
 }
 /**
@@ -741,13 +740,12 @@ async function runWriterTurnFightOnly(opts: {
     && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
   const base = rewriteBetter ? second : first;
   if (base.prose.trim()) return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
+  // T10AL — lastResortStoryBody already finishes with ensureSpokenAnswer (one owner per beat).
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
-  const spoken = ensureSpokenAnswer(painted.prose, opts.check.state, opts.check.playerInput);
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
-    ...first, prose: spoken.prose, path: 'last-resort', refs: undefined, speech: undefined,
-    remaining: writerDraftProblems(spoken.prose, opts.check), fightRetry: 'painted', fightDraft,
-    spoken: spoken.answer,
+    ...first, prose: painted.prose, path: 'last-resort', refs: undefined, speech: undefined,
+    remaining: writerDraftProblems(painted.prose, opts.check), fightRetry: 'painted', fightDraft,
     ...(fight ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) } : {}),
   };
 }
