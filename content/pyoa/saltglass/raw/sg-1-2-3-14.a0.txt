@@ -1,0 +1,64 @@
+Gemini said
+
+@@SECTION sg-1-2-3-14
+TITLE: The Cracked Silt
+TEXT: Across the grey silt of the former duck-pond, a dry crust crackles like thin eggshells beneath your deliberate tread. Each step disturbs a pale film of alkaline dust that clings to your boots and dulls the brass of your lamp. The winter reeds stand like rusted iron wires, brittle and lifeless in the bitter wind blowing off the high crags. Farther ahead, the path dips toward a narrow gap in the stone wall where the basin air smells faintly of old lime and damp stone. You adjust the cold ceramic key in your inner pocket and weigh the value of pressing on into the dry expanse before the dusk settles.
+EXIT 1: Follow the narrow gap toward the basin
+@@END
+@@SECTION sg-1-2-3-15
+TITLE: The Customs House Draught
+TEXT: Near the crumbling brick foundation of the old customs house, a cold draught eddies around your ankles from the basin below. Weeds have split the mortar, and the timber roof caved in long before the wells failed, leaving only a skeletal hearth against the eastern wall. Your banked coal-lantern casts a warm, flickering glow across the charred floorboards, revealing scraps of old toll-manifests half-buried in grey sand. The wind whistles through the vacant window frames, carrying the scent of dry salt and distant copper-smoke from the lower terraces.
+EXIT 1: Step through the shattered doorway onto the lower track
+EXIT 2: Climb the broken stone steps toward the basin rim
+@@END
+@@SECTION sg-1-2-4-0
+TITLE: The Final Switchback
+TEXT: At the final switchback where the rim road breaks down into broken shale, you adjust your shoulder-strap before the great descent. Below you, the vast white stretch of the Saltglass Basin stretches out like a sheet of hammered tin under the pale afternoon glare. The air grows noticeably thinner here, carrying the sharp, metallic tang of fused glass and old salt pans. Your ember-lamp bumps gently against your hip, a steady weight that reminds you of the failing hearths back in Candlemere and the urgency of the journey ahead.
+EXIT 1: Descend onto the hard crust of the flats
+EXIT 2: Pause by the roadside to check your gear
+@@END
+@@SECTION sg-1-2-4-1
+TITLE: The Quarry Cut
+TEXT: Above the black drop of the western quarry-cut, the wind howls through the wire fences while your lamp casts long, dancing shadows. Jagged blocks of grey limestone hang suspended over the abyss where convict labor once carved out the town foundations. Down in the hollow, a rusted winch stands silent beside a blocked adit, its iron chain frozen solid in red rust. The path narrows sharply here, hugging the cliff face where every foothold feels precarious against the rushing draught.
+EXIT 1: Tread carefully along the cliff edge
+EXIT 2: Step into the shelter of the abandoned adit
+EXIT 3: Turn away from the drop and find another way
+@@END
+@@SECTION sg-1-2-4-2
+TITLE: The Parish Milestone
+TEXT: Beside the milestone that marks the end of the town parish, a discarded bundle of court writs flutters in the salt-rime. The faded ink on the parchment speaks of forgotten debts and seized water-rights, signed by magistrates who have long since abandoned their posts. The road ahead loses its paved crown, turning into a rough track of compacted gravel and wind-blown dust that leads straight into the glare of the lowlands. Your boots crunch softly on the edge of the parish boundary as you gaze into the empty distance.
+EXIT 1: Leave the parish behind and push onward
+EXIT 2: Examine the fluttering papers for any useful news
+@@END
+@@SECTION sg-1-2-4-3
+TITLE: The Cairn of Doubts
+TEXT: On the high ledge overlooking the grey expanse of the basin, a cairn of white stones marks where runners leave their final doubts. Small slips of dried reed-paper are wedged between the jagged rocks, bearing names, warnings, and quiet prayers for rain that never came. Your lamp flickers as a sudden gust catches the ridge, threatening the banked coals within the tin housing. You stand for a moment in the biting wind, feeling the immense scale of the dry sea stretching out beneath your boots.
+EXIT 1: Continue down the ridge toward the salt
+EXIT 2: Add a small pebble to the weathered pile
+@@END
+@@SECTION sg-1-2-4-4
+TITLE: The Salt Court Warning
+TEXT: In the cleft of the limestone bluff, an old metal sign warns that all wells beyond this point belong to the Salt Court. The brass letters have been scoured clean by wind-driven grit, gleaming coldly in the harsh light. A series of rusted iron stakes trace the boundary of their claimed jurisdiction, running down toward the grey flats like the ribs of an ancient leviathan. You check the seal of your pack to ensure the Seedkey is hidden securely out of sight from any passing toll-lord scouts.
+EXIT 1: Follow the line of iron stakes downward
+EXIT 2: Slip behind the limestone bluff to avoid the markers
+@@END
+@@SECTION sg-1-2-4-5
+TITLE: The Scree Slope
+TEXT: Across the steep scree slope of the rim's edge, a small landslide of loose shale clatters down into the dark abyss. The path here is little more than a goat-track of sliding grey stones that shift beneath your boots with every stride. Dust rises in small choking clouds, smelling of dry earth and sulfur. You keep your center of gravity low, using your free hand to steady yourself against the rock face while your lantern swings rhythmically at your side.
+EXIT 1: Scramble quickly across the unstable stones
+EXIT 2: Pause to let the dust settle before moving
+@@END
+@@SECTION sg-1-2-4-6
+TITLE: The Rusted Toll-Gate
+TEXT: By the iron-studded post of the old toll-gate, a rusted padlock hangs open from a staple that has rusted through completely. The heavy oak barrier has fallen away into the dirt, half-swallowed by grey salt-crust and creeping thorn bushes. No guards sit in the wooden watch-box today; only the dry wind rattles the empty lantern bracket overhead. You step over the splintered timber, leaving the guarded precincts of the upper rim behind you for good.
+EXIT 1: Walk past the broken barrier into the flats
+EXIT 2: Inspect the empty watch-box for dropped supplies
+@@END
+@@SECTION sg-1-2-4-7
+TITLE: The Narrow Sheep-Path
+TEXT: Beneath the gallows-frame of the old boundary marker, the track narrows to a single sheep-path choked with greythorn scrub. Thorny branches catch at your traveling cloak, and the ground beneath your feet grows increasingly chalky and dry. The distant murmur of Candlemere fades entirely, replaced by the hollow howling of the wind across the salt basins. You shield the glass of your lamp with one hand to keep the banked coals from being smothered by the blowing dust.
+EXIT 1: Push through the thicket along the ridge
+EXIT 2: Descend toward the lower salt pans
+EXIT 3: Follow the sheep-path deeper into the scrub
+EXIT 4: Turn back toward the warmth of the town
+@@END
