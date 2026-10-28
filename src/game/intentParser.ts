@@ -479,18 +479,23 @@ export function sheetContextFromState(state?: GameState | null): IntentSheetCont
   // T10G/T10P: listen pool = who is actually here. presentNpcRecords owns road trim
   // (drops inn cast while travelling). sceneFacts.present strings still join when NOT on the
   // road so a cast stamp without a memory row (Vessa) still listens — but never while underway.
-  // T10V — opening card cast (e.g. Ash Court priests / "the priests in this hall") stays in the
-  // listen pool while still HERE so "ask the priest" resolves when harvest left only bystanders.
+  // T10V — opening card cast (e.g. Ash Court priests) enriches a populated scene so
+  // "ask the priest" resolves when harvest left only bystanders.
+  // T10V-fix — never invent a listener into an empty present[] (empty-scene speech cue).
+  const basePresent = [
+    ...presentNpcRecords(state).map((m) => m.npcName).filter(Boolean),
+    ...(isJourneyUnderway(state) ? [] : state.sceneFacts?.present ?? []),
+  ].filter(Boolean) as string[];
   const openingCast = (() => {
     if (isJourneyUnderway(state) || state.openingEstablishment?.aloneArrival === true) return [] as string[];
+    if (basePresent.length === 0) return [] as string[];
     const label = openingCastLabel(state).replace(/\s+/g, ' ').trim();
     if (!label || isAggregatePersonToken(label)) return [] as string[];
     if (/^(?:the panel|the people who pulled you|the people here)$/i.test(label)) return [] as string[];
     return [label];
   })();
   const present = [
-    ...presentNpcRecords(state).map((m) => m.npcName).filter(Boolean),
-    ...(isJourneyUnderway(state) ? [] : state.sceneFacts?.present ?? []),
+    ...basePresent,
     ...openingCast,
     ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
   ].filter(Boolean) as string[];
