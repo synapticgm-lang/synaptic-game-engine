@@ -1,6 +1,6 @@
 /** Writer turn: first draft is the beat; blocking problems get one rewrite in runWriterTurnWithFightRetry. */
 import type { GameState } from './types';
-import { givePcTheirQuote, type PlayerIntent } from './intentParser';
+import { givePcTheirQuote, stripUnauthorizedNpcSpeech, type PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, tokenUseMatchesClass, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type DroppedLine, type SpokenLine, type TokenAcceptPath } from './tokenProse';
@@ -685,14 +685,17 @@ async function runWriterTurnFightOnly(opts: {
   };
 }
 /**
- * T10H — one beat, one telling: PC owns their quoted words; same-turn event is not restated.
+ * T10H / T10L — one beat, one telling: PC owns their quoted words; chip/fragment/wrong-speaker
+ * NPC lines are dropped; same-turn event is not restated.
  * Shared by finishCommittedProse and post-clause-check (repair can reintroduce a restatement).
  */
 export function normalizeCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
   let next = prose ?? '';
   if (!next.trim()) return next;
   const refs = refEnumOf(check.state, packet);
-  next = givePcTheirQuote(next, check.playerInput, check.state.character?.name);
+  const pc = check.state.character?.name;
+  next = givePcTheirQuote(next, check.playerInput, pc);
+  next = stripUnauthorizedNpcSpeech(next, check.playerInput, pc, check.engineFact);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
     const isEvent = thisTurnsEventCheck(check, refs);
     const isMove = moveSentenceCheck(

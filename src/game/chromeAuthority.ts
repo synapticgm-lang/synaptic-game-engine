@@ -288,7 +288,11 @@ export function isAggregatePersonToken(token: string): boolean {
   if (!t) return false;
   // Exact short crowd nouns, or a label that embeds one ("the festival crowd").
   if (/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(t)) return true;
-  return /\b(?:bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)\b/i.test(t);
+  if (/\b(?:bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)\b/i.test(t)) return true;
+  // T10L — plural hyphenated group label ("the salt-burners"), not a singular named person.
+  const bare = t.replace(/^(?:the|a|an)\s+/i, '').trim();
+  if (/^[a-z][\w-]*s$/i.test(bare) && /-/.test(bare) && !/\s/.test(bare)) return true;
+  return false;
 }
 
 /**
