@@ -6,7 +6,7 @@ import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings 
 function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName.ts';
-import { isAggregatePersonToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
+import { isCrowdFillerToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
 import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet.ts';
@@ -663,7 +663,8 @@ export function compileRefEnum(
   const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
-    if (isAggregatePersonToken(name)) continue;
+    // T10X — crowd fillers never CAST; ledger groups (roof-thieves) stay person refs.
+    if (isCrowdFillerToken(name)) continue;
     // "faces" and "a steward behind the oak" are the same people as "the exhausted faces" / "the steward": one row each.
     if (castRows.some((prev) => sameCastPerson(prev, name))) continue;
     castRows.push(name);
@@ -674,7 +675,7 @@ export function compileRefEnum(
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
-      if (isAggregatePersonToken(p)) continue;
+      if (isCrowdFillerToken(p)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();

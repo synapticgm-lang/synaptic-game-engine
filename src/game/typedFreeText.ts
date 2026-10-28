@@ -180,7 +180,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   }
 
   // M6 — STEAL: Dexterity (Sleight of Hand) vs Passive Wisdom (Perception).
-  if (looksLikeSteal(clause, step)) {
+  if (looksLikeSteal(clause, step, state)) {
     const steal = resolveStealAttempt(state, clause, step);
     const outcome = steal.taken
       ? 'taken unnoticed'

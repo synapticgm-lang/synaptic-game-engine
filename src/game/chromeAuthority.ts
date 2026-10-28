@@ -286,14 +286,27 @@ export function realPresentPeople(present: string[] | undefined): string[] {
   });
 }
 
+/**
+ * True crowd-filler nouns (bystanders / crowd / people…). Never a speaker, never loot, never a
+ * reaction lead — occupancy chrome only. Distinct from ledger cast groups ("the roof-thieves").
+ * T10X — do not conflate fillers with present group labels.
+ */
+export function isCrowdFillerToken(token: string): boolean {
+  const t = (token ?? '').trim();
+  if (!t) return false;
+  if (/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(t)) return true;
+  if (/\b(?:bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)\b/i.test(t)) return true;
+  return false;
+}
+
 /** Crowd nouns — not a named speaker slot (never rewrite these to "blue panel"). */
 export function isAggregatePersonToken(token: string): boolean {
   const t = (token ?? '').trim();
   if (!t) return false;
   // Exact short crowd nouns, or a label that embeds one ("the festival crowd").
-  if (/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(t)) return true;
-  if (/\b(?:bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)\b/i.test(t)) return true;
+  if (isCrowdFillerToken(t)) return true;
   // T10L — plural hyphenated group label ("the salt-burners"), not a singular named person.
+  // T10X — when that label is already on the present/cast ledger it may still answer (see speechAddressCue).
   const bare = t.replace(/^(?:the|a|an)\s+/i, '').trim();
   if (/^[a-z][\w-]*s$/i.test(bare) && /-/.test(bare) && !/\s/.test(bare)) return true;
   return false;

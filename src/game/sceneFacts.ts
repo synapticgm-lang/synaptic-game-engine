@@ -101,8 +101,12 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   if (crowd === 'present' && noise === 'unknown') noise = 'voices';
 
   const present = new Set(prev?.present ?? []);
-  if (crowd === 'present') present.add('bystanders');
-  if (crowd === 'none') present.delete('bystanders');
+  // T10X — filler bystanders only when no ledger cast/group is already present (else writer reacts at invent).
+  const hasLedgerPeople = [...present].some(
+    (p) => p && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(p.trim()),
+  );
+  if (crowd === 'present' && !hasLedgerPeople) present.add('bystanders');
+  if (crowd === 'none' || hasLedgerPeople) present.delete('bystanders');
 
   // Props come from engine records (the opening card, loot, dungeon rooms), never from prose words.
   const props = new Set(prev?.props ?? []);
