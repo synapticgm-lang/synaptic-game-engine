@@ -1002,24 +1002,27 @@ const DETERMINER_RE =
 const PREPOSITION_RE =
   /^(?:in|on|at|of|to|into|onto|from|with|without|by|for|over|under|through|across|past|toward|towards|behind|beside|near|against|around|between|along|inside|outside)$/i;
 const isDeterminerWord = (w: string) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w);
+/**
+ * True when the noun phrase before `offset` (same clause) has already begun.
+ * After a preposition within three words, any word between it and the noun starts
+ * the phrase ("in the same worn @t3", "in worn @t3") so a glued kit possessive
+ * would land mid-phrase. Otherwise a determiner within three words.
+ * T10S-fix — a subordinate-clause start resets the window so a prior "their" or
+ * particle "over" does not suppress the article on a later prop
+ * ("their faces while @tN", "looked @t8 over while @t10").
+ */
 function hasDeterminerBefore(text: string, offset: number): boolean {
-  // T10S — only the word(s) immediately before the token count. "their faces while @tN"
-  // used to treat "their" as a determiner for @tN and drop the article on the prop.
-  const before = text.slice(0, offset).trimEnd();
-  const words = before.split(/\s+/).filter(Boolean);
-  if (!words.length) return false;
-  const last = words[words.length - 1]!;
-  if (isDeterminerWord(last)) return true;
-  // "the old @tN" / "a small @tN" — one adjective between determiner and token.
-  if (
-    words.length >= 2
-    && isDeterminerWord(words[words.length - 2]!)
-    && /^[a-z][a-z'-]*$/i.test(last)
-    && !PREPOSITION_RE.test(last)
-  ) {
-    return true;
-  }
-  return false;
+  const before = text.slice(0, offset);
+  const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
+  // Same role as punctuation above: a new clause span begins at these heads.
+  const span =
+    clause
+      .split(/\b(?=(?:while|when|as|before|after|because|although|though|if|unless|until|since|whereas|where|wherever)\b)/i)
+      .pop() ?? '';
+  const near = span.trim().split(/\s+/).filter(Boolean).slice(-3);
+  const cut = near.map((w) => PREPOSITION_RE.test(w)).lastIndexOf(true);
+  if (cut >= 0) return cut < near.length - 1;
+  return near.some(isDeterminerWord);
 }
 function paintDisplay(row: { display: string; klass?: string }, text: string, offset: number, possessive: string): string {
   const display = row.display;
