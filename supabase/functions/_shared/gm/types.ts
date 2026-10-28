@@ -1280,6 +1280,11 @@ export interface TravelJourney {
   day?: number;
   /** Hours walked since the last meeting check (one check per watch). */
   hoursSinceCheck?: number;
+  /**
+   * T10AG — exploration hours spent on this leg by typed free text (SRD Travel Pace: time passes
+   * while the party acts on the road). When ≥ hoursPerLeg, the leg completes like Walk on.
+   */
+  legHoursSpent?: number;
   /** Today's weather, rolled once per day of travel. */
   weather?: TravelWeather;
   /** Who does each travel job today ('you' or a companion's name). */

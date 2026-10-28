@@ -306,6 +306,17 @@ function detectCharacterDeltas(previous: GameState, next: GameState, turn: numbe
       authority: 'character',
     });
   }
+  // T10AG — class pick matches turnProgress (LOOP STOP / stall); soft timeline noise must not outrank it.
+  const prevClass = previous.character?.srd?.classId ?? previous.character?.classId ?? '';
+  const nextClass = next.character?.srd?.classId ?? next.character?.classId ?? '';
+  if (nextClass && nextClass !== prevClass) {
+    deltas.push({
+      kind: 'character',
+      turn,
+      summary: `Class taken: ${nextClass}`,
+      authority: 'character',
+    });
+  }
   return deltas;
 }
 export function updateProgressGovernor(

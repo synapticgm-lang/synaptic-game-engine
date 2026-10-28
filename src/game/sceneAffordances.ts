@@ -26,7 +26,7 @@ import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './scenePresence';
 import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
-import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
+import { isJourneyOnwardLine, isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant } from './openThreads';
 import { isDying } from './tabletop/roundFight';
@@ -1104,6 +1104,9 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       }
       let hold = false;
       let last = -1;
+      // T10AG — Walk on must not be rested while a journey is underway (class chips must not
+      // crowd the chip that moves the story off the MOVE slot; s9701 T21–T22).
+      if (isJourneyUnderway(state) && isJourneyOnwardLine(cands[i]!.label)) situation = true;
       if (cd > 0 && !situation) {
         for (let h = hist.length - 1; h >= 0; h--) {
           const row = hist[h]!;

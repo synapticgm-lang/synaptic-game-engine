@@ -39,7 +39,7 @@ import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
-import { isJourneyUnderway } from './travelJourney';
+import { isJourneyOnwardLine, isJourneyUnderway } from './travelJourney';
 import { liveChips } from './chipLegality';
 import { roundCombatChips } from './tabletop/combatChips';
 import { updateCooldowns } from './optionDiversityContract';
@@ -107,8 +107,22 @@ export function resolveOfferedChoices(state: GameState): string[] {
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
   const prompt = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
   if (!prompt.length) return chips;
-  const seen = new Set<string>(); for (const c of prompt) seen.add(c.trim().toLowerCase());
-  const out = prompt.slice(); for (const c of chips) if (!seen.has(c.trim().toLowerCase())) out.push(c);
+  // T10AG — onward journey chip (Walk on) stays ahead of class/stat/box System chips so the
+  // story-moving pad is never crowded out (s9701 T21–T22 Choose Warrior/Berserker/Sorcerer).
+  const movers: string[] = [];
+  const rest: string[] = [];
+  for (const c of chips) {
+    if (isJourneyUnderway(state) && isJourneyOnwardLine(c)) movers.push(c);
+    else rest.push(c);
+  }
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const c of [...movers, ...prompt, ...rest]) {
+    const low = c.trim().toLowerCase();
+    if (!low || seen.has(low)) continue;
+    seen.add(low);
+    out.push(c);
+  }
   return out;
 }
 

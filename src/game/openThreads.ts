@@ -298,6 +298,10 @@ export function stallPressureActive(state: GameState): boolean {
   const turn = state.turn ?? 0;
   const tsp = state.progressGovernor?.turnsSinceProgress ?? 0;
   if (tsp >= STALL_N) return true;
+  // T10AG — same progress meaning as LOOP STOP / turnProgress (XP, loot, quest, move, social, fight, class).
+  // progressGovernor alone misses hub/travel freezes when soft timeline discoveries reset turnsSinceProgress.
+  const lastProgress = state.circling?.lastProgressTurn;
+  if (typeof lastProgress === 'number' && turn - lastProgress >= STALL_N) return true;
   const deadline = state.arcDirector?.pressureClock?.deadlineTurn;
   if (deadline != null && turn >= deadline) return true;
   const stale = state.circling?.stale;
@@ -448,6 +452,38 @@ function appendStallFact(state: GameState, eventId: string, text: string): GameS
 }
 
 /**
+ * T10AG — hub / post-rest stall: one present person leaves (engine record). Writer narrates the
+ * departure; chips stop cycling the same Talk/Press loop (s9601 T126–T150 / s9501 T124–T131).
+ */
+function stallDepartPresentNpc(state: GameState, turn: number): GameState {
+  const present = (state.sceneFacts?.present ?? []).filter((n) => n && !isCrowdFillerToken(n));
+  if (!present.length) return state;
+  const name = present[present.length - 1]!;
+  const low = name.trim().toLowerCase();
+  const mems = (state.npcMemories ?? []).map((m) => {
+    const n = (m.npcName ?? '').trim();
+    if (!n || (n.toLowerCase() !== low && !mentionsName(n, name) && !mentionsName(name, n))) return m;
+    if (m.shouldExit) return m;
+    const fact = `Left under stall pressure T${turn}`;
+    return {
+      ...m,
+      shouldExit: true,
+      exitReason: 'stall-pressure',
+      facts: m.facts?.includes(fact) ? m.facts : [...(m.facts ?? []), fact].slice(-12),
+      lastSeenTurn: turn,
+    };
+  });
+  const nextPresent = (state.sceneFacts?.present ?? []).filter((p) => p.trim().toLowerCase() !== low);
+  return {
+    ...state,
+    npcMemories: mems,
+    sceneFacts: state.sceneFacts
+      ? { ...state.sceneFacts, present: nextPresent }
+      : state.sceneFacts,
+  };
+}
+
+/**
  * Scene planner: refresh the open-thread list, drop resolved rows, and bring
  * forward at least one open thread (weighted by turns since last seen + place proximity).
  * A stale thread (untouched ≥ STALE_TURNS) is preferred so it reappears within BRING_WINDOW.
@@ -512,24 +548,49 @@ export function planSceneThreads(state: GameState): GameState {
   let stallKind: 'thread' | 'agenda' | 'situation' | undefined;
   let stallEventId: string | undefined;
 
-  if (best) {
-    forwardIds.push(best.id);
-    if (stall) {
-      stallKind = 'thread';
-      stallEventId = `stall-thread-${turn}-${best.id}`;
+  // T10AG — under stall, a travel leg always resolves (Walk on) before LOOP STOP: companions on the
+  // road and open threads must not freeze the leg (s9701 T18–T23 / s9601 T95–T97).
+  if (
+    stall
+    && isJourneyUnderway(working)
+    && !working.activeEncounter
+  ) {
+    const advanced = commitTravel(working, 'Walk on');
+    if (advanced.handled) {
+      working = advanced.state;
+      forwardIds.push(`stall-road:${turn}`);
+      stallKind = 'situation';
+      stallEventId = `stall-road-${turn}`;
       working = appendStallFact(
         working,
         stallEventId,
-        `Stall pressure: open thread brought forward — ${best.label}.`,
+        advanced.receipt || 'Stall pressure: the road pressed you onward.',
       );
-      // T10AB — stalled scenes must move the world (SRD-faithful consequence), not only re-chip.
+    }
+  }
+
+  if (best) {
+    forwardIds.push(best.id);
+    if (stall) {
+      if (!stallKind) {
+        stallKind = 'thread';
+        stallEventId = `stall-thread-${turn}-${best.id}`;
+        working = appendStallFact(
+          working,
+          stallEventId,
+          `Stall pressure: open thread brought forward — ${best.label}.`,
+        );
+      }
+      // T10AB + T10AG — stalled scenes must move the world (SRD-faithful consequence), not only re-chip.
+      // Key off stallPressureActive (circling lastProgress), not governor alone.
       const hereName = (working.currentLocation ?? '').trim();
-      if (hereName && (working.progressGovernor?.turnsSinceProgress ?? 0) > STALL_N) {
+      if (hereName && !isJourneyUnderway(working)) {
         working = applyPlaceEngineEvent(working, {
           placeId: hereName,
           kind: 'new-threat',
           detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
         });
+        working = stallDepartPresentNpc(working, turn);
       }
     }
   } else if (stall) {
@@ -577,23 +638,22 @@ export function planSceneThreads(state: GameState): GameState {
           stallEventId,
           `Stall pressure: new situation — ${floor.quest.name}.`,
         );
-      } else if (
-        isJourneyUnderway(working)
-        && peopleHere(working).filter((n) => !isCrowdFillerToken(n)).length === 0
-        && !working.activeEncounter
-      ) {
-        // T10Z — empty road stall: the world moves on (one Walk on leg). Do not wait for the
-        // typed player to pick Push on while grabbing absent companions (s9301 T123–T127).
-        const advanced = commitTravel(working, 'Walk on');
-        if (advanced.handled) {
-          working = advanced.state;
-          forwardIds.push(`stall-road:${turn}`);
+      } else if (!stallEventId) {
+        // T10AG — hub / post-rest stall with no thread/agenda/situation: world still acts.
+        const hereName = (working.currentLocation ?? '').trim();
+        if (hereName && !isJourneyUnderway(working)) {
+          working = applyPlaceEngineEvent(working, {
+            placeId: hereName,
+            kind: 'new-threat',
+            detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
+          });
+          working = stallDepartPresentNpc(working, turn);
+          stallEventId = `stall-hub-${turn}`;
           stallKind = 'situation';
-          stallEventId = `stall-road-${turn}`;
           working = appendStallFact(
             working,
             stallEventId,
-            advanced.receipt || 'Stall pressure: the road pressed you onward.',
+            `Stall pressure: the scene at ${hereName} moves on.`,
           );
         } else if (agendaFired || (working.arcDirector?.pressureClock?.deadlineTurn != null
           && turn >= (working.arcDirector.pressureClock.deadlineTurn ?? turn + 1))) {
@@ -604,14 +664,6 @@ export function planSceneThreads(state: GameState): GameState {
             `Stall pressure: pressure clock fired at T${turn}.`,
           );
         }
-      } else if (agendaFired || (working.arcDirector?.pressureClock?.deadlineTurn != null
-        && turn >= (working.arcDirector.pressureClock.deadlineTurn ?? turn + 1))) {
-        stallEventId = `stall-pressure-${turn}`;
-        working = appendStallFact(
-          working,
-          stallEventId,
-          `Stall pressure: pressure clock fired at T${turn}.`,
-        );
       }
     }
   }

@@ -111,6 +111,9 @@ export function turnProgress(before: GameState, after: GameState, receipts: stri
   if ((after.character?.xp ?? 0) !== (before.character?.xp ?? 0) || (after.character?.level ?? 1) !== (before.character?.level ?? 1)) {
     reasons.push('xp');
   }
+  // T10AG — LitRPG class pick (Choose Warrior/Berserker/Sorcerer) is durable progress, not a soft chip flip.
+  const classOf = (s: GameState) => s.character?.srd?.classId ?? s.character?.classId ?? '';
+  if (classOf(after) !== classOf(before)) reasons.push('class');
   if ((after.inventory ?? []).length > (before.inventory ?? []).length) reasons.push('loot');
   if (questSignature(after) !== questSignature(before)) reasons.push('quest');
   if (receipts.some((r) => PROGRESS_RECEIPT.test(r))) reasons.push('receipt');
