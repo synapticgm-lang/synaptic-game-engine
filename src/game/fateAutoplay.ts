@@ -977,7 +977,41 @@ function pickGoalOrientedChoice(
   const picked = topChoices[Math.floor(rng() * topChoices.length)];
   return picked.choice;
 }
-const writerPromptSink: { dir?: string; turn: number } = { turn: 0 };
+/**
+ * Harness behaviour (not a game rule): a chip whose label warns that it is lethal ("... one failed save now
+ * kills you") is not picked twice in a row by the autoplay button picker unless it is the only option.
+ */
+const LETHAL_CHIP_RE = /\b(?:kills? you|will kill you|you (?:will )?die|means? death|fatal|lethal)\b/i;
+export function isLethalChipLabel(label: string): boolean {
+  return LETHAL_CHIP_RE.test(label);
+}
+let lastAutoPickWasLethal = false;
+export function resetLethalPickStreak(): void {
+  lastAutoPickWasLethal = false;
+}
+export function avoidRepeatLethalPick(
+  offered: string[],
+  pick: string,
+  rng: Rng,
+  prevWasLethal: boolean
+): string {
+  if (!prevWasLethal || !isLethalChipLabel(pick)) return pick;
+  const safe = offered.filter((c) => !isLethalChipLabel(c));
+  if (!safe.length) return pick;
+  return safe[Math.floor(rng() * safe.length)];
+}
+function pickChipAvoidingLethalRepeat(
+  offered: string[],
+  state: GameState,
+  mode: AiAgentMode,
+  rng: Rng
+): string {
+  const candidates = chipsOnly(offered);
+  const raw = pickGoalOrientedChoice(candidates, state, mode, rng);
+  const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal);
+  lastAutoPickWasLethal = isLethalChipLabel(pick);
+  return pick;
+}const writerPromptSink: { dir?: string; turn: number } = { turn: 0 };
 async function saveWriterPrompt(state: GameState, payload: string): Promise<void> {
   if (!writerPromptSink.dir) return;
   let body: string;
@@ -1095,7 +1129,7 @@ export async function headlessFateTurn(
         : applyRememberedThreatPick(
             state,
             offered,
-            applyAutoPlayerStallRules(state, offered, pickGoalOrientedChoice(chipsOnly(offered), state, meta.aiAgentMode, rng)).pick
+            applyAutoPlayerStallRules(state, offered, pickChipAvoidingLethalRepeat(offered, state, meta.aiAgentMode, rng)).pick
           ).pick;
   let playerInput = fatePick;
   let repairNote: string | undefined;
@@ -2496,6 +2530,7 @@ export async function runFateAutoplay(opts: {
     console.log(`[fate-autoplay] resumed from ${snapPath} at loop turn ${startIndex} (game turn ${state.turn})`);
   }
   const rng = mulberry32(opts.seed);
+  resetLethalPickStreak();
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
   const slug = `${bible.id}_${personalityId}_s${opts.seed}`;
   const outDir = join(opts.outRoot, `${runId}_${slug}`);
