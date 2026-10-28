@@ -14,6 +14,7 @@ import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard';
 import { applyFollowersToHereSpot, hereSpotAt } from './hereSpot';
 import { isJourneyUnderway } from './travelJourney';
 import { proseSaysEmpty } from './chipRules';
+import { mentionsName } from './scenePresence';
 
 /** Arrival/presence crowd words — not the empty-room claim (that is proseSaysEmpty / placeSaysEmpty). */
 const CROWD =
@@ -91,26 +92,34 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   const text = narrative.replace(/<system>[\s\S]*?<\/system>/gi, ' ');
   // T10AI — same empty signal as chip legality / gate (placeSaysEmpty), not a second word maze.
   // Empty wins over a leftover "crowd" noun ("ask the crowd" when the lane held nobody).
+  // Full departure (crowdDepartedByRecord) only when no prior present name is still seated —
+  // "no one else" keeps Wren; "held nobody" with nobody named writes the empty record.
   const emptied = proseSaysEmpty(text);
   const crowdPresent = CROWD.test(text) && !emptied;
-
-  let crowd: SceneFacts['crowd'] = prev?.crowd ?? 'unknown';
-  if (emptied) crowd = 'none';
-  else if (crowdPresent) crowd = 'present';
-
-  // Noise, indoor and tension are the engine's (opening card, move, place, encounter); prose only copies them.
-  let noise: SceneFacts['noise'] = prev?.noise ?? 'unknown';
-  if (crowd === 'present' && noise === 'unknown') noise = 'voices';
 
   const present = new Set(prev?.present ?? []);
   // T10X — filler bystanders only when no ledger cast/group is already present (else writer reacts at invent).
   const hasLedgerPeople = [...present].some(
     (p) => p && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(p.trim()),
   );
-  if (crowd === 'present' && !hasLedgerPeople) present.add('bystanders');
-  if (crowd === 'none' || hasLedgerPeople) present.delete('bystanders');
-  // T10AI — honest empty beat clears occupancy present so Follow-up / Ask chips retract with the record.
-  if (emptied) present.clear();
+  if (crowdPresent && !hasLedgerPeople) present.add('bystanders');
+  if (hasLedgerPeople) present.delete('bystanders');
+  let departed = false;
+  if (emptied) {
+    const seated = [...present].filter((p) => p && mentionsName(text, p));
+    present.clear();
+    for (const p of seated) present.add(p);
+    departed = present.size === 0;
+  }
+
+  let crowd: SceneFacts['crowd'] = prev?.crowd ?? 'unknown';
+  if (departed) crowd = 'none';
+  else if (crowdPresent) crowd = 'present';
+  if (crowd === 'none' || hasLedgerPeople || present.size > 0) present.delete('bystanders');
+
+  // Noise, indoor and tension are the engine's (opening card, move, place, encounter); prose only copies them.
+  let noise: SceneFacts['noise'] = prev?.noise ?? 'unknown';
+  if (crowd === 'present' && noise === 'unknown') noise = 'voices';
 
   // Props come from engine records (the opening card, loot, dungeon rooms), never from prose words.
   const props = new Set(prev?.props ?? []);
@@ -155,8 +164,8 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     weather,
     indoor,
     tension,
-    // T10AI — empty beat clears headcount (undefined = unlocked so a later arrival can lock).
-    crowdCount: emptied ? undefined : prev?.crowdCount,
+    // T10AI — full departure unlocks headcount; seated "no one else" keeps the lock.
+    crowdCount: departed ? undefined : prev?.crowdCount,
     hookLock: prev?.hookLock,
     cameraLock: prev?.cameraLock,
     lastPlayerIntent: prev?.lastPlayerIntent,
@@ -351,8 +360,9 @@ export function applyCommittedNarrative(
   let merged: SceneFacts;
   const crowdWasHere =
     state.sceneFacts?.crowd === 'present' || state.sceneFacts?.crowd === 'sparse';
-  // T10AI — placeSaysEmpty / proseSaysEmpty is the departure beat: do not restore old crowd
-  // (that left Follow-up chips for faces the prose said were gone). TIME_PASSED still unlocks.
+  // T10AI — engine-recorded departure (crowd none after extract) is the leave beat:
+  // do not restore old crowd. TIME_PASSED still unlocks. Empty prose alone with seated
+  // names does not set crowd none, so restore does not fire for "no one else".
   if (
     crowdWasHere
     && extracted.crowd === 'none'

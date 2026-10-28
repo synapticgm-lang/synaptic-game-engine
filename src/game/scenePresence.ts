@@ -41,10 +41,23 @@ function personKey(name: string): string {
 }
 
 /**
+ * Engine record: the crowd has departed (crowd none + cleared present + unlocked count).
+ * Narrow input for chips / gate / peopleHere — not a prose empty-room synonym.
+ */
+export function crowdDepartedByRecord(
+  facts: { crowd?: string; crowdCount?: number; present?: string[] } | null | undefined,
+): boolean {
+  return !!facts
+    && facts.crowd === 'none'
+    && (facts.crowdCount ?? 0) === 0
+    && !(facts.present?.length);
+}
+
+/**
  * Everyone who could answer: the presence record, companions, the live foe, the opening cast,
  * a road meeting. Opening cast stays while still at the card place (busy beat / no empty text
  * does not clear them — empty-room listeners strip cast separately).
- * T10AI — when the engine records an empty occupancy (crowd none + cleared present), departed
+ * T10AI — when the engine records an empty occupancy (crowdDepartedByRecord), departed
  * cast/roles/location memories do not stay as listeners (Follow-up chips retract with the record).
  */
 export function peopleHere(state: GameState): string[] {
@@ -61,11 +74,7 @@ export function peopleHere(state: GameState): string[] {
     }
   };
   const facts = state.sceneFacts;
-  const emptyOccupancy =
-    facts?.crowd === 'none'
-    && (facts.crowdCount ?? 0) === 0
-    && !(facts.present?.length);
-  if (emptyOccupancy) {
+  if (crowdDepartedByRecord(facts)) {
     // T10AI-fix — empty occupancy still seats engine-tagged people at this place
     // (refuse/ask via recordPersonSeen). Skip opening-cast filler and stale crowd
     // stamps (present:true left after sceneFacts cleared) so Follow-up chips retract.

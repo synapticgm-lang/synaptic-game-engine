@@ -8,6 +8,7 @@
 import type { GameState, SceneFacts } from './types.ts';
 import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority.ts';
 import { proseSaysEmpty } from './chipRules.ts';
+import { mentionsName } from './scenePresence.ts';
 
 export type CrowdBucket = 'empty' | 'solo' | 'pair' | 'few' | 'group' | 'large';
 
@@ -512,15 +513,24 @@ export function harvestCrowdIntoSceneFacts(
         updatedTurn: turn,
       };
 
-  // T10AI — honest empty (same signal as placeSaysEmpty) wins over a leftover "crowd" noun
-  // ("ask the crowd" when the lane held nobody). Do not re-lock occupancy from that word.
+  // T10AI — honest empty wins over a leftover "crowd" noun ("ask the crowd" when the lane
+  // held nobody). Full departure only when no prior present name is still seated in the beat
+  // ("no one else" keeps Wren; empty lane with no seated name writes crowdDepartedByRecord).
   if (proseSaysEmpty(narrative)) {
+    const seated = (base.present ?? []).filter((p) => p && mentionsName(narrative, p));
+    if (!seated.length) {
+      return {
+        ...base,
+        crowd: 'none',
+        present: [],
+        crowdCount: undefined,
+        lastBeat: base.lastBeat || 'street empty',
+        updatedTurn: turn,
+      };
+    }
     return {
       ...base,
-      crowd: 'none',
-      present: [],
-      crowdCount: undefined,
-      lastBeat: base.lastBeat || 'street empty',
+      present: seated,
       updatedTurn: turn,
     };
   }

@@ -30,6 +30,7 @@ import {
   peopleHere,
   roadMeetingPeople,
 } from './chipLegality';
+import { crowdDepartedByRecord } from './scenePresence';
 import {
   actionVerb,
   chipRepeatsAction,
@@ -279,21 +280,26 @@ export function checkActionFollowed(
     if (!proseRefusesDownedAct) p0.push({ kind: 'ignored-action', detail });
   };
 
-  // T10AI — when prose and the engine agree the addressee is gone, "no answer" is correct (not ignored).
+  // T10AI — empty-room text (old placeSaysEmpty) OR engine-recorded departure (narrow input).
+  // Do not loosen empty-room detection to stand in for the occupancy record.
   const emptyAgree =
     placeSaysEmpty(before, text) || placeSaysEmpty(after, text);
+  const departedByRecord =
+    crowdDepartedByRecord(before.sceneFacts) || crowdDepartedByRecord(after.sceneFacts);
   const listenersBefore = peopleHere(before).filter((n) => !isCrowdFillerToken(n));
   const listenersAfter = peopleHere(after).filter((n) => !isCrowdFillerToken(n));
   const honestAbsent =
-    emptyAgree && listenersBefore.length === 0 && listenersAfter.length === 0;
+    (emptyAgree || departedByRecord)
+    && listenersBefore.length === 0
+    && listenersAfter.length === 0;
 
   if (addr?.kind === 'named' || addr?.kind === 'role' || (talkish && typedNamed)) {
     const who = addr?.kind === 'named' || addr?.kind === 'role' ? addr.who : typedNamed!;
     const whoHere =
       listenersBefore.some((p) => mentionsName(p, who) || mentionsName(who, p))
       || listenersAfter.some((p) => mentionsName(p, who) || mentionsName(who, p));
-    if (honestAbsent || (emptyAgree && !whoHere)) {
-      // Gate and prose agree: no reply owed.
+    if (honestAbsent || ((emptyAgree || departedByRecord) && !whoHere)) {
+      // Gate and engine/prose agree: no reply owed.
     } else if (!mentionsName(text, who) && !quoted) {
       flagIgnored(`player spoke to ${who}; the prose never has ${who} answer or appear`);
     }

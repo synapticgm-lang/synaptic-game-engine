@@ -25,6 +25,7 @@ import { tabletopStepChip } from './tabletopQuestProgress';
 import { hasOpenAsk } from './questGiver';
 import { affordanceEntityPresent } from './sceneAffordances';
 import {
+  crowdDepartedByRecord,
   listenersOnEmptyText,
   mentionsName,
   peopleHere,
@@ -44,6 +45,7 @@ const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
 export {
   crowdHere,
+  crowdDepartedByRecord,
   listenersOnEmptyText,
   mentionsName,
   peopleHere,
