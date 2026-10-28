@@ -1,6 +1,6 @@
 /** Writer turn: first draft is the beat; blocking problems get one rewrite in runWriterTurnWithFightRetry. */
 import type { GameState } from './types';
-import type { PlayerIntent } from './intentParser';
+import { givePcTheirQuote, type PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
 import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, tokenUseMatchesClass, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type DroppedLine, type SpokenLine, type TokenAcceptPath } from './tokenProse';
@@ -33,6 +33,7 @@ import {
   recycledSentencesIn,
   shouldRetryUnaskedCollage,
   trimRecycledSentences,
+  trimSameBeatRestatements,
 } from './semanticLoopDetector';
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
@@ -180,7 +181,7 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0) {
     if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${here.join(', ') || '(none)'}).`);
     if (f.kind === 'wrong-voice') out.push(`Wrong voice: ${f.detail}`);
-    // T10F — reject (no sentence repair) when an NPC is given the player's quoted line.
+    // T10F/T10H — reject when an NPC is given the player's quoted line (blocking; finishCommittedProse also reattributes).
     if (f.kind === 'plays-player' && /NPC speaks the player's quoted words/i.test(f.detail)) {
       out.push(`Player's quoted words in an NPC's mouth: ${f.detail}`);
     }
@@ -260,7 +261,8 @@ export async function runWriterTurnWithFightRetry(opts: {
     const p = done.remaining[i]!;
     if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
       || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')
-      || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) blocking.push(p);
+      || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
+      || p.startsWith("Player's quoted words in an NPC's mouth:")) blocking.push(p);
   }
   if (!blocking.length) return done;
   let raw = '';
@@ -272,14 +274,16 @@ export async function runWriterTurnWithFightRetry(opts: {
     for (let i = 0; i < second.remaining.length; i++) {
       const p = second.remaining[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) { hardLeft = true; break; }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
+        || p.startsWith("Player's quoted words in an NPC's mouth:")) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
     for (let i = 0; i < blocking.length; i++) {
       const p = blocking[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')) { hardLeft = true; break; }
+        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
+        || p.startsWith("Player's quoted words in an NPC's mouth:")) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {
@@ -680,14 +684,35 @@ async function runWriterTurnFightOnly(opts: {
     ...(fight ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) } : {}),
   };
 }
-/** Drop already-told sentences (keep ≥2) and name full labels once. */
-export function finishCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
-  let next = prose;
+/**
+ * T10H — one beat, one telling: PC owns their quoted words; same-turn event is not restated.
+ * Shared by finishCommittedProse and post-clause-check (repair can reintroduce a restatement).
+ */
+export function normalizeCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
+  let next = prose ?? '';
+  if (!next.trim()) return next;
   const refs = refEnumOf(check.state, packet);
+  next = givePcTheirQuote(next, check.playerInput, check.state.character?.name);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
-    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, thisTurnsEventCheck(check, refs), check.state.character?.name).text;
+    const isEvent = thisTurnsEventCheck(check, refs);
+    const isMove = moveSentenceCheck(
+      check.playerInput,
+      refs,
+      check.state.journey?.to ?? check.state.currentLocation
+    );
+    const eventHits = (sentence: string) => {
+      const verb = actionVerb(check.playerInput);
+      const words = [verb, ...objectWords(check.playerInput)].filter((w) => w.length >= 3);
+      return words.filter((w) => stemHit(sentence.replace(/["“][^"”]*["”]/g, ' '), w));
+    };
+    next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, isEvent, check.state.character?.name).text;
+    next = trimSameBeatRestatements(next, { isThisTurnsEvent: isEvent, isMoveEvent: isMove, eventHits }).text;
   }
   return polishMentions(next, refs, check.state);
+}
+/** Drop already-told sentences (keep ≥2) and name full labels once. */
+export function finishCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
+  return normalizeCommittedProse(prose, check, packet);
 }
 /** Keep sentences that tell this turn's own move or the PC doing the chosen action. */
 export function thisTurnsEventCheck(

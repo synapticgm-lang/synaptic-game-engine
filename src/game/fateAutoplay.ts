@@ -186,7 +186,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { runWriterTurnWithFightRetry, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
+import { normalizeCommittedProse, runWriterTurnWithFightRetry, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -1494,7 +1494,14 @@ Do NOT print dice notation or CODE ENFORCED.
             },
             engineFact,
           });
-          gmText = clause.prose;
+          // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
+          gmText = normalizeCommittedProse(clause.prose, {
+            state: arcState,
+            playerInput,
+            intent,
+            engineFact,
+            previousGm: '',
+          }, writerPacket);
           clauseCheckRecords = clause.records;
           if (clause.repaired) {
             writerCallMeter.calls += clause.checkPasses;

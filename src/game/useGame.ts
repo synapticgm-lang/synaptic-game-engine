@@ -161,7 +161,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
-import { runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
+import { normalizeCommittedProse, runWriterTurnWithFightRetry, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
@@ -3122,7 +3122,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
                 engineFact,
               });
-              result = { ...result, text: clause.prose };
+              // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
+              result = {
+                ...result,
+                text: normalizeCommittedProse(clause.prose, {
+                  state: liveCurrent,
+                  playerInput: sanitizedInput,
+                  intent: intentForMandate,
+                  engineFact,
+                  previousGm: '',
+                }, writerPacket),
+              };
             } catch {
               /* check unavailable — keep writer prose */
             }

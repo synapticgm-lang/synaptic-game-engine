@@ -586,6 +586,50 @@ export function trimRecycledSentences(
   }
   return { text: draft, dropped: [] };
 }
+/**
+ * T10H — one beat narrates each event once. Drop a later sentence that restates an earlier one
+ * in the same draft (collage match), or a second sentence that tells the same this-turn event
+ * family (travel leave/reach, or the same player-action word hits).
+ */
+export function trimSameBeatRestatements(
+  draft: string,
+  opts?: {
+    isThisTurnsEvent?: (sentence: string) => boolean;
+    isMoveEvent?: (sentence: string) => boolean;
+    eventHits?: (sentence: string) => string[];
+    minKeep?: number;
+  }
+): { text: string; dropped: string[] } {
+  const sentences = splitStorySentences(draft);
+  const minKeep = opts?.minKeep ?? 2;
+  if (sentences.length < 2) return { text: draft, dropped: [] };
+  const isEvent = opts?.isThisTurnsEvent ?? (() => false);
+  const isMove = opts?.isMoveEvent ?? (() => false);
+  const hitsOf = opts?.eventHits ?? (() => [] as string[]);
+  const dropped: string[] = [];
+  const kept: string[] = [];
+  let seenMove = false;
+  const seenHitKeys = new Set<string>();
+  for (const s of sentences) {
+    const move = isMove(s);
+    const event = isEvent(s);
+    const hits = hitsOf(s).filter(Boolean).sort();
+    const hitKey = hits.length ? hits.join('|') : '';
+    const restatesPrior = kept.some((k) => sentenceMatches(s, k));
+    const sameMove = move && seenMove;
+    const sameHits = !!hitKey && seenHitKeys.has(hitKey);
+    if ((restatesPrior && (event || kept.some((k) => isEvent(k)))) || sameMove || sameHits) {
+      dropped.push(s);
+      continue;
+    }
+    if (move) seenMove = true;
+    if (hitKey) seenHitKeys.add(hitKey);
+    kept.push(s);
+  }
+  if (kept.length < minKeep) return { text: draft, dropped: [] };
+  if (!dropped.length) return { text: draft, dropped: [] };
+  return { text: kept.join(' ').replace(/\s+/g, ' ').trim(), dropped };
+}
 export function stripRecycledPrefix(draft: string, hit: LeadingCollageHit): string {
   if (!hit.hit || hit.stripIndex <= 0) return draft;
   const sentences = splitStorySentences(draft);
